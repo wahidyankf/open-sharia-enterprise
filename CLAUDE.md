@@ -159,9 +159,7 @@ Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.
 
 ### Diagram Convention
 
-Use Mermaid diagrams with color-blind friendly palette and proper accessibility practices. **CRITICAL rules**: Use verified accessible colors (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161), escape special characters in node text, avoid `style` commands in sequence diagrams. See [Diagrams Convention](./docs/explanation/conventions/formatting/ex-co-fo__diagrams.md) and [Color Accessibility Convention](./docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) for complete details.
-
-**Note**: Skill `docs__creating-accessible-diagrams` auto-loads when creating diagrams, providing accessible palette, Mermaid best practices, escaping rules, and working examples.
+Use Mermaid diagrams with color-blind friendly palette and proper accessibility. Skill `docs__creating-accessible-diagrams` auto-loads when creating diagrams. See [Diagrams Convention](./docs/explanation/conventions/formatting/ex-co-fo__diagrams.md) and [Color Accessibility Convention](./docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) for complete details.
 
 ### Emoji Usage Convention
 
@@ -185,9 +183,7 @@ When documenting markdown structure, use **4 backticks for outer fence, 3 for in
 
 ### Tutorial Standards
 
-Seven tutorial types with progressive coverage levels (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example). By Example tutorials use 75-90 annotated code examples with 1-2.25 comment lines per code line PER EXAMPLE and five-part structure for experienced developers. Coverage percentages indicate depth, NOT time. No time estimates in educational content. See [Tutorial Naming Convention](./docs/explanation/conventions/tutorial/ex-co-tu__naming.md) for complete details.
-
-**Note**: Skill `docs__creating-by-example-tutorials` auto-loads when creating programming tutorials, providing annotation standards, example structure patterns, and quality guidelines.
+Seven tutorial types with progressive coverage levels (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example). By Example tutorials require 75-90 annotated code examples with specific comment ratios. Skill `docs__creating-by-example-tutorials` auto-loads for programming tutorials. See [Tutorial Naming Convention](./docs/explanation/conventions/tutorial/ex-co-tu__naming.md) for complete details.
 
 ### Content Quality Principles
 
@@ -195,91 +191,47 @@ All markdown content must follow quality standards: active voice, single H1, pro
 
 ### Factual Validation Convention
 
-Universal methodology for verifying factual correctness using WebSearch/WebFetch. Validates command syntax, versions, code examples, and external references with confidence classification ([Verified], [Unverified], [Error], [Outdated]). See [Factual Validation Convention](./docs/explanation/conventions/content/ex-co-co__factual-validation.md) for complete methodology.
-
-**Note**: Skill `docs__validating-factual-accuracy` auto-loads when validating documentation accuracy, providing validation workflow, source prioritization, confidence classifications, and integration patterns.
+Universal methodology for verifying factual correctness using WebSearch/WebFetch. Validates command syntax, versions, code examples, and external references with confidence classification. Skill `docs__validating-factual-accuracy` auto-loads when validating documentation accuracy. See [Factual Validation Convention](./docs/explanation/conventions/content/ex-co-co__factual-validation.md) for complete methodology.
 
 ### Hugo Content Convention
 
-Three specialized documents for Hugo sites:
-
-- [Shared](./docs/explanation/conventions/hugo/ex-co-hu__shared.md) - Common conventions for all Hugo sites
-- [ayokoding-web](./docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) - Hextra theme, bilingual content, level-based weight system, 2-layer navigation depth, absolute path linking
-- [ose-platform-web](./docs/explanation/conventions/hugo/ex-co-hu__ose-platform.md) - PaperMod theme, English-only landing page
-
-Programming languages follow [Programming Language Content Standard](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md) with dual-path organization ([by-concept and by-example](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-structure.md)). See [Tutorial Folder Arrangement Standard](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-structure.md#tutorial-folder-arrangement-standard) for 5-item arrangement details.
-
-**Note**: Skill `apps__ayokoding-web__developing-content` auto-loads for ayokoding-web tasks (bilingual strategy, weight system, annotation standards). Skill `apps__ose-platform-web__developing-content` auto-loads for ose-platform-web tasks (PaperMod patterns, date-based structure).
+Three specialized documents for Hugo sites: [Shared](./docs/explanation/conventions/hugo/ex-co-hu__shared.md), [ayokoding-web](./docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md) (Hextra theme, bilingual), [ose-platform-web](./docs/explanation/conventions/hugo/ex-co-hu__ose-platform.md) (PaperMod theme). Skills `apps__ayokoding-web__developing-content` and `apps__ose-platform-web__developing-content` auto-load for site-specific tasks. See [Programming Language Content Standard](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md) and [Tutorial Folder Arrangement](./docs/explanation/conventions/tutorial/ex-co-tu__programming-language-structure.md) for programming tutorials.
 
 ### README Quality Convention
 
-All README.md files must be engaging, accessible, and scannable. Problem-solution hooks, plain language (no jargon), acronym context, paragraph limits (≤5 lines), benefits-focused language. See [README Quality Convention](./docs/explanation/conventions/content/ex-co-co__readme-quality.md) for complete standards.
+All README.md files must be engaging, accessible, and scannable. Problem-solution hooks, plain language, acronym context, paragraph limits, benefits-focused language. See [README Quality Convention](./docs/explanation/conventions/content/ex-co-co__readme-quality.md) for complete standards.
 
 ### Convention References
 
-For comprehensive standards, see [Vision](./docs/explanation/vision/ex-vi__open-sharia-enterprise.md) (foundational purpose), [Core Principles Index](./docs/explanation/principles/README.md) (10 foundational principles), [Conventions Index](./docs/explanation/conventions/README.md) (24 documentation conventions), and [Development Index](./docs/explanation/development/README.md) (15 development practices).
+See [Conventions Index](./docs/explanation/conventions/README.md) for 24 documentation conventions and [Development Index](./docs/explanation/development/README.md) for 15 development practices.
 
 ## AI Agent Standards
 
-All AI agents in `.claude/agents/` must follow the convention defined in `docs/explanation/development/`:
-
-- **AI Agents Convention:** [`docs/explanation/development/agents/ex-de-ag__ai-agents.md`](./docs/explanation/development/agents/ex-de-ag__ai-agents.md)
-- Defines agent file structure, naming (including scope prefixes), tool access patterns, and model selection
-- **Agent naming**: General agents use `agent-name.md`, app-scoped agents use `apps__[app-name]__agent-name.md`
-- Required reading for all agent creators and maintainers
+All AI agents in `.claude/agents/` must follow [AI Agents Convention](./docs/explanation/development/agents/ex-de-ag__ai-agents.md) defining file structure, naming, tool access, and model selection.
 
 ### Key Requirements
 
-All agents must have `name`, `description`, `tools`, `model`, and `color` frontmatter fields. The `color` field (blue/green/yellow/purple) provides visual categorization by role. Agent frontmatter must be comment-free (no # symbols in YAML).
+All agents must have `name`, `description`, `tools`, `model`, and `color` frontmatter fields. Agent `name` field MUST exactly match filename (without .md extension).
 
-**Name-Filename Matching**: Agent `name` field MUST exactly match the filename (without .md extension). Example: `agent__maker.md` → `name: agent__maker`.
-
-**Bash Tools for .claude Writes**: Agents creating/updating files in `.claude/` folders must use Bash tools (heredoc, sed, awk), NOT Write/Edit tools. This enables autonomous operation without user approval prompts. See [AI Agents Convention - Writing to .claude Folders](./docs/explanation/development/agents/ex-de-ag__ai-agents.md#writing-to-claude-folders).
+**Bash Tools for .claude Writes**: Agents creating/updating files in `.claude/` folders must use Bash tools (heredoc, sed, awk), NOT Write/Edit tools. Enables autonomous operation without user approval prompts. See [AI Agents Convention - Writing to .claude Folders](./docs/explanation/development/agents/ex-de-ag__ai-agents.md#writing-to-claude-folders).
 
 **Agent File Sizes**: Three tiers based on complexity - Simple (<800 lines), Standard (<1,200 lines), Complex (<1,800 lines). Agents approaching limits should link to convention docs instead of duplicating content.
 
-**Token Budget**: When invoking agents and workflows, don't think about token budget constraints. We have "unlimited" token budget through reliable compaction. Focus on execution quality over token efficiency. See [AI Agents Convention - Token Budget Philosophy](./docs/explanation/development/agents/ex-de-ag__ai-agents.md#token-budget-philosophy) for details.
+**Token Budget**: When invoking agents and workflows, don't think about token budget constraints. We have "unlimited" token budget through reliable compaction. Focus on execution quality over token efficiency. See [AI Agents Convention - Token Budget Philosophy](./docs/explanation/development/agents/ex-de-ag__ai-agents.md#token-budget-philosophy).
 
-**Traceability Requirements**: Convention documents MUST include "Principles Implemented/Respected" section. Development documents MUST include both "Principles Implemented/Respected" and "Conventions Implemented/Respected" sections. Ensures traceability from practices back to foundational values. See [Convention Writing Convention](./docs/explanation/conventions/content/ex-co-co__convention-writing.md) and [AI Agents Convention](./docs/explanation/development/agents/ex-de-ag__ai-agents.md) for requirements.
-
-See [AI Agents Convention](./docs/explanation/development/agents/ex-de-ag__ai-agents.md) for complete details.
+**Traceability Requirements**: Convention documents MUST include "Principles Implemented/Respected" section. Development documents MUST include both "Principles Implemented/Respected" and "Conventions Implemented/Respected" sections. See [Convention Writing Convention](./docs/explanation/conventions/content/ex-co-co__convention-writing.md) and [AI Agents Convention](./docs/explanation/development/agents/ex-de-ag__ai-agents.md).
 
 ### Skills Infrastructure
 
-**Claude Code Skills** provide progressive knowledge delivery to agents. Skills are **delivery infrastructure**, not a governance layer. They enable on-demand depth without upfront loading of all details.
-
-**Delivery Model:**
-
-- **CLAUDE.md**: Loaded into Orchestrator at startup (main conversation context)
-- **Agents**: Spawned by Orchestrator with isolated contexts (do NOT inherit CLAUDE.md)
-- **Skills**: Deliver to agents ONLY via explicit `skills:` field in agent frontmatter
-
-**Key Characteristics:**
-
-- Auto-load based on task description matching (when listed in agent's `skills:` field)
-- Enable progressive disclosure (name/description at startup, full content on-demand)
-- Reduce agent file sizes through shared knowledge packages
-- Support knowledge composition (multiple Skills work together)
-- Portable across platforms (open standard at agentskills.io)
-
-**Available Skills:** See [Skills Directory](./.claude/skills/README.md) for complete catalog, creation patterns, and usage guidance. All agents must include `skills:` frontmatter field (can be empty `[]` for backward compatibility).
+**Claude Code Skills** provide progressive knowledge delivery to agents. Skills are **delivery infrastructure**, not a governance layer. They enable on-demand depth without upfront loading of all details. Skills auto-load based on task description matching when listed in agent's `skills:` frontmatter field. See [Skills Directory](./.claude/skills/README.md) for complete catalog and usage guidance.
 
 ### Temporary Files for AI Agents
 
-AI agents creating temporary uncommitted files must use designated directories to prevent repository clutter:
-
-- **`generated-reports/`** - For validation, audit, and check reports (report-generating agents). **CRITICAL**: Any agent writing to this directory MUST have both Write and Bash tools (Write for files, Bash for UTC+7 timestamps).
-- **`local-temp/`** - For miscellaneous temporary files and scratch work (general agents)
-
-**MANDATORY for ALL \*-checker agents**: All checker agents (wow**rules-checker, apps**ayokoding-web**general-checker, apps**ayokoding-web**by-example-checker, apps**ayokoding-web**facts-checker, apps**ayokoding-web**link-checker, apps**ayokoding-web**structure-checker, apps**ose-platform-web**content-checker, docs**checker, docs**tutorial-checker, readme**checker, plan**checker, plan**execution-checker) MUST write validation/audit reports to `generated-reports/` using 4-part pattern `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`. The UUID chain (6-char hex UUIDs separated by dots) enables parallel execution without file collisions. NO conversation-only output. All validation findings MUST be persisted in report files.
-
-**PROGRESSIVE WRITING REQUIREMENT**: All \*-checker agents MUST initialize report files at execution start and write findings progressively throughout execution (not buffer and write once at the end). This ensures audit history survives context compaction during long validation runs.
-
-These directories are gitignored and provide organized storage for temporary outputs. See [Temporary Files Convention](./docs/explanation/development/infra/ex-de-in__temporary-files.md) for complete details on naming patterns, tool requirements, progressive writing patterns, and when to use each directory.
+AI agents creating temporary uncommitted files must use designated directories: `generated-reports/` (validation/audit reports, requires Write and Bash tools) and `local-temp/` (miscellaneous temporary files). All \*-checker agents MUST write validation/audit reports to `generated-reports/` using 4-part pattern `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md` with progressive writing throughout execution. See [Temporary Files Convention](./docs/explanation/development/infra/ex-de-in__temporary-files.md) for complete details.
 
 ### Maker-Checker-Fixer Pattern
 
-Seven agent families follow a three-stage workflow for content quality: Maker (create/update) → Checker (validate, generate audit) → User review → Fixer (apply validated fixes with confidence levels). Families: repo-rules, ayokoding-web, docs-tutorial, ose-platform-web-content, readme, docs, plan. Checkers categorize findings by criticality (CRITICAL/HIGH/MEDIUM/LOW) indicating importance/urgency. Fixers combine criticality with confidence (HIGH/MEDIUM/FALSE_POSITIVE) to determine priority (P0-P4) and execution order. See [Maker-Checker-Fixer Pattern](./docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md) for complete workflow, [Criticality Levels](./docs/explanation/development/quality/ex-de-qu__criticality-levels.md) for severity classification, and [Fixer Confidence Levels](./docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md) for assessment criteria.
+Seven agent families follow three-stage workflow for content quality: Maker (create/update) → Checker (validate, generate audit) → User review → Fixer (apply validated fixes with confidence levels). Checkers categorize findings by criticality (CRITICAL/HIGH/MEDIUM/LOW), fixers assess confidence (HIGH/MEDIUM/FALSE_POSITIVE) to determine priority (P0-P4). See [Maker-Checker-Fixer Pattern](./docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md), [Criticality Levels](./docs/explanation/development/quality/ex-de-qu__criticality-levels.md), and [Fixer Confidence Levels](./docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md).
 
 ### Available Agents
 
@@ -305,15 +257,11 @@ See [Agents Index](./.claude/agents/README.md) for descriptions and workflows.
 
 ### Workflow Invocation
 
-Workflows orchestrate multiple agents in sequence, parallel, or conditionally. All workflows support standard input parameters:
-
-- **max-concurrency** (optional, default: 2) - Maximum number of agents/tasks that can run in parallel during workflow execution
-
-**YAML Frontmatter Syntax**: All frontmatter values containing special characters (especially colons `:`) must be quoted. See [Workflow Pattern Convention - YAML Syntax Requirements](./docs/explanation/workflows/meta/ex-wf-me__workflow-pattern.md#yaml-syntax-requirements) for complete quoting rules.Currently, workflows require manual orchestration (run agents in order). Future enhancement: Automated workflow executor agent. See [Workflow Pattern Convention](./docs/explanation/workflows/meta/ex-wf-me__workflow-pattern.md) for complete structure and [Workflows Index](./docs/explanation/workflows/README.md) for available workflows.
+Workflows orchestrate multiple agents in sequence, parallel, or conditionally. All workflows support `max-concurrency` parameter (optional, default: 2) for controlling parallel execution. YAML frontmatter values containing special characters must be quoted. See [Workflow Pattern Convention](./docs/explanation/workflows/meta/ex-wf-me__workflow-pattern.md) and [Workflows Index](./docs/explanation/workflows/README.md).
 
 ### Resources
 
-See [AI Agents Convention](./docs/explanation/development/agents/ex-de-ag__ai-agents.md), [Maker-Checker-Fixer Pattern](./docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md), [Fixer Confidence Levels](./docs/explanation/development/quality/ex-de-qu__fixer-confidence-levels.md), [Repository Validation](./docs/explanation/development/quality/ex-de-qu__repository-validation.md), [Content Preservation](./docs/explanation/development/quality/ex-de-qu__content-preservation.md), [Development Index](./docs/explanation/development/README.md), and [Agents Index](./.claude/agents/README.md).
+See [AI Agents Convention](./docs/explanation/development/agents/ex-de-ag__ai-agents.md), [Maker-Checker-Fixer Pattern](./docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md), [Repository Validation](./docs/explanation/development/quality/ex-de-qu__repository-validation.md), and [Agents Index](./.claude/agents/README.md).
 
 ## CLAUDE.md Maintenance
 
@@ -351,7 +299,7 @@ When adding new conventions, rules, or standards:
 
 ## Planning Without Timelines
 
-When planning tasks or creating educational content, provide concrete steps without time estimates. Never suggest timelines like "this will take 2-3 weeks" or "complete this in 30 minutes." Focus on WHAT needs to be done or learned, not HOW LONG it takes. This applies to project planning (plans/) and educational content (tutorials, learning materials). Break work into actionable steps and let users decide their own pace. See [Content Quality - No Time Estimates](./docs/explanation/conventions/content/ex-co-co__quality.md#no-time-estimates) for educational content specifics.
+When planning tasks or creating educational content, provide concrete steps without time estimates. Never suggest timelines. Focus on WHAT needs to be done or learned, not HOW LONG it takes. Break work into actionable steps and let users decide their own pace. See [Content Quality - No Time Estimates](./docs/explanation/conventions/content/ex-co-co__quality.md#no-time-estimates).
 
 ## Important Notes
 

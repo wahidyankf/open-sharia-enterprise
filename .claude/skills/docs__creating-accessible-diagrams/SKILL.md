@@ -1,8 +1,7 @@
 ---
 name: docs__creating-accessible-diagrams
 description: WCAG-compliant Mermaid diagrams using verified accessible color palette. Use when creating diagrams, flowcharts, or any color-dependent visualizations requiring accessibility compliance for color blindness.
-allowed-tools: [Read, Write, Edit]
-allowed-tools: [Read, Grep]
+allowed-tools: [Read, Write, Edit, Grep]
 model: sonnet
 ---
 
