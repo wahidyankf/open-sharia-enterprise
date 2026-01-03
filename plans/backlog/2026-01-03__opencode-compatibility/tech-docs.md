@@ -152,16 +152,22 @@
 }
 ```
 
-## Skills Compatibility Analysis
+## Skills and Agents Compatibility Analysis
 
-### CRITICAL: Skill Naming Issue
+### CRITICAL: Naming Convention Issues
 
-**Both Claude Code AND OpenCode enforce the same naming rules:**
+**Both Claude Code AND OpenCode enforce the same naming rules for skills AND agents:**
 
-| Tool        | Regex Pattern              | Underscores Allowed? |
-| ----------- | -------------------------- | -------------------- |
-| Claude Code | `[a-z0-9-]{1,64}`          | **NO**               |
-| OpenCode    | `^[a-z0-9]+(-[a-z0-9]+)*$` | **NO**               |
+| Type   | Tool        | Regex Pattern              | Underscores Allowed? |
+| ------ | ----------- | -------------------------- | -------------------- |
+| Skills | Claude Code | `[a-z0-9-]{1,64}`          | **NO**               |
+| Skills | OpenCode    | `^[a-z0-9]+(-[a-z0-9]+)*$` | **NO**               |
+| Agents | Claude Code | `[a-z0-9-]+`               | **NO**               |
+| Agents | OpenCode    | `^[a-z0-9]+(-[a-z0-9]+)*$` | **NO**               |
+
+**Impact**: 65 files total need renaming (19 skills + 46 agents)
+
+### CRITICAL: Skill Naming Issue (19 files)
 
 **Current skill names are INVALID:**
 
@@ -240,6 +246,93 @@ name: docs-applying-content-quality
 - Documentation files
 - CLAUDE.md
 - Skills README.md
+
+### CRITICAL: Agent Naming Issue (46 files) ⚠️ **HIGHER IMPACT**
+
+**Current agent names are INVALID (same rules as skills):**
+
+| Current Name (INVALID)                  | Required Name (VALID)                 |
+| --------------------------------------- | ------------------------------------- |
+| `docs__checker.md`                      | `docs-checker.md`                     |
+| `apps__ayokoding-web__general-maker.md` | `apps-ayokoding-web-general-maker.md` |
+| `wow__workflow-checker.md`              | `wow-workflow-checker.md`             |
+| `plan__executor.md`                     | `plan-executor.md`                    |
+| `agent__maker.md`                       | `agent-maker.md`                      |
+
+**Impact Assessment:**
+
+- **Scope**: 46 agent files (more than double the 19 skill files)
+- **Criticality**: HIGHER than skills - agents are core automation infrastructure
+- **Dependencies**: Agent renaming affects:
+  - Agent filenames (`.claude/agents/*.md`)
+  - Agent frontmatter `name:` fields
+  - **Workflow agent references** (all `.claude/workflows/*.md` files)
+  - `.claude/agents/README.md`
+  - CLAUDE.md agent listings
+  - Documentation mentioning agent names
+
+**Why This Is More Critical Than Skills:**
+
+1. **Workflow Dependencies**: Workflows reference agents by name - ALL workflows must be updated
+2. **Invocation Frequency**: Agents are invoked more frequently than skills
+3. **Core Automation**: Agents are the primary automation mechanism
+4. **Cross-References**: Agents have more cross-references than skills
+
+### Agent Renaming Strategy
+
+**Step 1**: Rename all 46 agent files
+
+```bash
+# Rename using git mv to preserve history
+for agent in .claude/agents/*__*.md; do
+  newname=$(echo "$agent" | sed 's/__/-/g')
+  git mv "$agent" "$newname"
+done
+```
+
+**Step 2**: Update agent frontmatter `name:` fields
+
+```bash
+# Update name field in each agent file
+for agent in .claude/agents/*.md; do
+  sed -i 's/^name: .*__/name: /' "$agent" | sed 's/__/-/g'
+done
+```
+
+**Step 3**: Update all workflow agent references
+
+```bash
+# Find all workflow files and update agent references
+for workflow in .claude/workflows/*.md; do
+  # Update agent references in workflow frontmatter
+  sed -i 's/agent: [a-z]*__/agent: /' "$workflow" | sed 's/__/-/g'
+  # Update agent references in workflow steps
+  sed -i 's/subagent_type: [a-z]*__/subagent_type: /' "$workflow" | sed 's/__/-/g'
+done
+```
+
+**Step 4**: Update all references in:
+
+- `.claude/agents/README.md` (agent index)
+- CLAUDE.md (agent descriptions)
+- Documentation files mentioning agents
+- Plan files referencing agent names
+
+**Step 5**: Validate with comprehensive checks
+
+```bash
+# Validate no underscores remain
+find .claude/agents -name "*_*" | grep -v README.md
+
+# Validate no consecutive hyphens
+find .claude/agents -name "*--*"
+
+# Validate agent count is correct
+ls -1 .claude/agents/*.md | wc -l  # Should be 46
+
+# Validate workflows reference correct names
+grep -h "subagent_type:" .claude/workflows/*.md | grep "__"  # Should return empty
+```
 
 ## Agent Format Translation
 

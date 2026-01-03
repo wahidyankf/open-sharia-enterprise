@@ -20,9 +20,11 @@ This plan establishes **dual-tool compatibility** between Claude Code and OpenCo
 
 ## Key Findings
 
-### CRITICAL ISSUE: Skill Naming
+### CRITICAL ISSUE: Naming Convention (Skills + Agents)
 
-**Both Claude Code AND OpenCode require skill names matching `[a-z0-9-]+`:**
+**Both Claude Code AND OpenCode require names matching `[a-z0-9-]+`:**
+
+#### Skills (19 files)
 
 - Underscores (`_`) are **NOT allowed** in skill names
 - Consecutive hyphens (`--`) are **NOT allowed** in skill names
@@ -30,6 +32,19 @@ This plan establishes **dual-tool compatibility** between Claude Code and OpenCo
 - **ALL 19 skills MUST be renamed** before OpenCode compatibility
 - **Correct format**: Replace `__` with **SINGLE hyphen** `-`
 - Example: `docs__applying-content-quality` → `docs-applying-content-quality` (NOT `docs--applying-content-quality`)
+
+#### Agents (46 files) ⚠️ **EVEN MORE CRITICAL**
+
+- **Agents have the SAME naming restrictions as skills**
+- Underscores (`_`) are **NOT allowed** in agent names
+- Consecutive hyphens (`--`) are **NOT allowed** in agent names
+- Our current agents use `domain__agent-name` format - **THIS IS INVALID**
+- **ALL 46 agents MUST be renamed** before OpenCode compatibility
+- **Correct format**: Replace `__` with **SINGLE hyphen** `-`
+- Example: `docs__checker` → `docs-checker` (NOT `docs--checker`)
+- **Impact**: Agent renaming is MORE critical because agents are core automation infrastructure
+
+**Total renaming required**: 65 files (19 skills + 46 agents)
 
 ### Compatible After Renaming
 
@@ -59,27 +74,33 @@ See [tech-docs.md](./tech-docs.md#symlink-strategies-research-findings) for deta
 ## Success Criteria
 
 ```gherkin
-# Prerequisite: Skills renamed with hyphens
+# Prerequisite: Skills and agents renamed with hyphens
 Given all 19 skills have been renamed to use hyphens instead of underscores
+And all 46 agents have been renamed to use hyphens instead of underscores
 When Claude Code loads the repository
 Then all skills load with new hyphenated names
+And all agents load with new hyphenated names
 And skill invocation works correctly
+And agent invocation works correctly
 
 # OpenCode compatibility
 Given the repository has OpenCode configuration
 And skills have been renamed to hyphen format
+And agents have been renamed to hyphen format
 When a developer runs `opencode` in the project root
 Then OpenCode initializes with correct model settings
 And loads all 19 skills from .claude/skills/
+And loads all 46 agents from .claude/agents/
 And recognizes project instructions from AGENTS.md
 And connects to configured MCP servers
 
 # No regression
 Given OpenCode configuration has been added
+And all skills and agents have been renamed
 When a developer runs `claude` in the project root
 Then Claude Code works exactly as before
-And all agents function correctly
-And all skills load properly
+And all agents function correctly with new names
+And all skills load properly with new names
 And MCP servers connect successfully
 ```
 

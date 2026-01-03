@@ -100,6 +100,29 @@ Scenario: Skill behavior matches
   And both produce equivalent quality output
 ```
 
+### US-05: Agent Renaming for Compatibility
+
+```gherkin
+Feature: Agent Naming Convention Compliance
+
+Scenario: Rename all agents to OpenCode-compatible format
+  Given the repository has 46 agents with underscore-based names
+  And OpenCode requires names matching [a-z0-9-]+ (no underscores)
+  When the renaming script is executed
+  Then all 46 agent files are renamed from __ to - format
+  And agent frontmatter name fields are updated
+  And workflow agent references are updated
+  And all agents load successfully in OpenCode
+
+Scenario: Validate agent naming after rename
+  Given all 46 agents have been renamed
+  When a validation script checks agent names
+  Then no agent names contain underscores
+  And no agent names contain consecutive hyphens
+  And all agent names match [a-z0-9]+(-[a-z0-9]+)* pattern
+  And all agents are discoverable by both tools
+```
+
 ## Functional Requirements
 
 ### FR-01: Configuration Files
@@ -129,14 +152,18 @@ Scenario: Skill behavior matches
 | FR-03.3     | Document agent format differences                 | Should   |
 | FR-03.4     | Create agent creation guide for OpenCode          | Could    |
 
-### FR-04: Skills Validation
+### FR-04: Skills and Agents Validation
 
 | Requirement | Description                                        | Priority |
 | ----------- | -------------------------------------------------- | -------- |
 | FR-04.1     | Verify all 19 skills load in OpenCode              | Must     |
 | FR-04.2     | Test skill invocation works correctly              | Must     |
 | FR-04.3     | Document any skill compatibility issues            | Should   |
-| FR-04.4     | Fix skill naming if needed (lowercase requirement) | Must     |
+| FR-04.4     | Fix skill naming (rename 19 skills from \_\_ to -) | Must     |
+| FR-04.5     | Verify all 46 agents load in OpenCode              | Must     |
+| FR-04.6     | Test agent invocation works correctly              | Must     |
+| FR-04.7     | Fix agent naming (rename 46 agents from \_\_ to -) | Must     |
+| FR-04.8     | Update workflow agent references after renaming    | Must     |
 
 ## Non-Functional Requirements
 
@@ -172,7 +199,7 @@ Scenario: OpenCode starts successfully
   And MCP servers are listed as available
 ```
 
-### AC-02: Skills Discovery
+### AC-02: Skills and Agents Discovery
 
 ```gherkin
 Scenario: All skills are discoverable
@@ -181,6 +208,14 @@ Scenario: All skills are discoverable
   Then all 19 skills appear in the list
   And skill descriptions match SKILL.md content
   And skills can be invoked successfully
+
+Scenario: All agents are discoverable
+  Given 46 agents exist in .claude/agents/
+  And all agents have been renamed to hyphen format
+  When OpenCode lists available agents
+  Then all 46 agents appear in the list
+  And agent descriptions match frontmatter content
+  And agents can be invoked successfully
 ```
 
 ### AC-03: MCP Server Connection
@@ -199,11 +234,32 @@ Scenario: MCP servers connect
 ```gherkin
 Scenario: Claude Code still works
   Given OpenCode configuration has been added
+  And all skills and agents have been renamed
   When the developer runs `claude` command
   Then Claude Code works exactly as before
-  And all agents load correctly
-  And all skills function properly
+  And all agents load correctly with new names
+  And all skills function properly with new names
   And MCP servers connect successfully
+```
+
+### AC-05: Naming Convention Compliance
+
+```gherkin
+Scenario: All names are OpenCode-compatible
+  Given renaming scripts have been executed
+  When validation checks all skill and agent names
+  Then no skill names contain underscores
+  And no agent names contain underscores
+  And no names contain consecutive hyphens
+  And all names match pattern [a-z0-9]+(-[a-z0-9]+)*
+  And both tools discover all 65 files (19 skills + 46 agents)
+
+Scenario: Workflow references updated
+  Given all agents have been renamed
+  When workflow files reference agents
+  Then all workflow agent references use new hyphenated names
+  And workflows execute successfully in Claude Code
+  And workflows execute successfully in OpenCode
 ```
 
 ## Constraints
