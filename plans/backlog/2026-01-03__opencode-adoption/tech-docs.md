@@ -1,4 +1,4 @@
-# Technical Documentation: OpenCode Compatibility
+# Technical Documentation: OpenCode Adoption
 
 ## Architecture Overview
 
