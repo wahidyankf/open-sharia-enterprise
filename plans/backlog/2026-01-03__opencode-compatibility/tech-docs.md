@@ -1,0 +1,638 @@
+# Technical Documentation: OpenCode Compatibility
+
+## Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        Repository Configuration                         │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  ┌─────────────────────┐         ┌─────────────────────┐               │
+│  │    Claude Code      │         │     OpenCode        │               │
+│  ├─────────────────────┤         ├─────────────────────┤               │
+│  │ .claude/            │         │ .opencode/          │               │
+│  │   settings.json     │         │   agent/            │               │
+│  │   settings.local    │         │   plugin/           │               │
+│  │   agents/*.md       │         │   skill/            │               │
+│  │   skills/*/SKILL.md │◄───────►│                     │               │
+│  │                     │ shared! │ opencode.json       │               │
+│  │ .mcp.json           │         │                     │               │
+│  │ CLAUDE.md           │         │ AGENTS.md           │               │
+│  └─────────────────────┘         └─────────────────────┘               │
+│                                                                         │
+│  ┌─────────────────────────────────────────────────────────────────┐   │
+│  │                    Shared Infrastructure                         │   │
+│  ├─────────────────────────────────────────────────────────────────┤   │
+│  │  .claude/skills/*/SKILL.md  ─────► Both tools read skills       │   │
+│  │  MCP Servers (Playwright, Context7)  ─► Both can connect        │   │
+│  │  Project conventions  ─────────────────► Defined in both .md    │   │
+│  └─────────────────────────────────────────────────────────────────┘   │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+## Configuration Mapping
+
+### Model Configuration
+
+| Setting          | Claude Code            | OpenCode                       |
+| ---------------- | ---------------------- | ------------------------------ |
+| Default model    | Configured in settings | `model` in opencode.json       |
+| Fast model       | -                      | `small_model` in opencode.json |
+| Provider timeout | -                      | `provider.*.options.timeout`   |
+
+**Claude Code** (implicit from environment/settings):
+
+```json
+// No explicit model config in settings.json
+// Model selection via CLI or Anthropic account
+```
+
+**OpenCode** (opencode.json):
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "anthropic/claude-sonnet-4-5",
+  "small_model": "anthropic/claude-haiku-4-5",
+  "provider": {
+    "anthropic": {
+      "options": {
+        "timeout": 600000
+      }
+    }
+  }
+}
+```
+
+### MCP Server Configuration
+
+**Claude Code** (.mcp.json):
+
+```json
+{
+  "mcpServers": {
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@context7/mcp-server"]
+    }
+  }
+}
+```
+
+**OpenCode** (opencode.json):
+
+```json
+{
+  "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "@playwright/mcp@latest"],
+      "enabled": true
+    },
+    "context7": {
+      "type": "local",
+      "command": ["npx", "-y", "@context7/mcp-server"],
+      "enabled": true
+    }
+  }
+}
+```
+
+### Key Differences
+
+| Aspect         | Claude Code              | OpenCode               |
+| -------------- | ------------------------ | ---------------------- |
+| Command format | `command` + `args` array | Single `command` array |
+| Type values    | `stdio`                  | `local` / `remote`     |
+| Enable toggle  | Not present              | `enabled: true/false`  |
+| Environment    | `env` object             | `environment` object   |
+| Authentication | Manual                   | OAuth auto-detection   |
+
+### Tool Permissions
+
+**Claude Code** (.claude/settings.json):
+
+```json
+{
+  "enableAllProjectMcpServers": true,
+  "enabledPlugins": {
+    "playwright@claude-plugins-official": true,
+    "context7@claude-plugins-official": true
+  }
+}
+```
+
+**OpenCode** (opencode.json):
+
+```json
+{
+  "tools": {
+    "bash": true,
+    "read": true,
+    "write": true,
+    "edit": true,
+    "grep": true,
+    "glob": true,
+    "webfetch": true,
+    "todowrite": true,
+    "skill": true
+  },
+  "permission": {
+    "bash": "allow",
+    "write": "allow",
+    "edit": "allow"
+  }
+}
+```
+
+## Skills Compatibility Analysis
+
+### CRITICAL: Skill Naming Issue
+
+**Both Claude Code AND OpenCode enforce the same naming rules:**
+
+| Tool        | Regex Pattern              | Underscores Allowed? |
+| ----------- | -------------------------- | -------------------- |
+| Claude Code | `[a-z0-9-]{1,64}`          | **NO**               |
+| OpenCode    | `^[a-z0-9]+(-[a-z0-9]+)*$` | **NO**               |
+
+**Current skill names are INVALID:**
+
+- `docs__applying-content-quality` ❌ (double underscore)
+- `apps__ayokoding-web__developing-content` ❌ (multiple underscores)
+- `wow__understanding-repository-architecture` ❌ (underscore)
+
+**Required new names:**
+
+- `docs-applying-content-quality` ✓
+- `apps-ayokoding-web-developing-content` ✓
+- `wow-understanding-repository-architecture` ✓
+
+### Format Comparison
+
+**Claude Code SKILL.md** (required format):
+
+```yaml
+---
+name: domain-skill-name # HYPHENS ONLY, must match directory
+description: Skill description for auto-loading (1-64 chars)
+allowed-tools: [Read, Write, Edit] # Optional
+---
+# Skill Content
+```
+
+**OpenCode SKILL.md** (compatible format):
+
+```yaml
+---
+name: domain-skill-name # HYPHENS ONLY, must match directory
+description: Skill description (1-1024 chars)
+license: MIT # Optional
+---
+# Skill Content
+```
+
+### Discovery Locations
+
+OpenCode searches these locations (in order):
+
+1. `.opencode/skill/<name>/SKILL.md` (project-local, highest priority)
+2. **`.claude/skills/<name>/SKILL.md`** (Claude-compatible project format) ✓
+3. `~/.config/opencode/skill/<name>/SKILL.md` (global)
+4. `~/.claude/skills/<name>/SKILL.md` (Claude-compatible global)
+
+**Key Finding**: OpenCode natively supports `.claude/skills/` directory - skills WILL work once renamed.
+
+### Skill Renaming Strategy
+
+**Step 1**: Rename all 18 skill directories
+
+```bash
+# Example for one skill
+mv .claude/skills/docs__applying-content-quality .claude/skills/docs-applying-content-quality
+```
+
+**Step 2**: Update SKILL.md `name` field in each
+
+```yaml
+# Before
+name: docs__applying-content-quality
+
+# After
+name: docs-applying-content-quality
+```
+
+**Step 3**: Update all references in:
+
+- Agent files (`.claude/agents/*.md`) - `skills:` field
+- Documentation files
+- CLAUDE.md
+- Skills README.md
+
+## Agent Format Translation
+
+### Claude Code Agent Format
+
+```yaml
+---
+name: agent__maker
+description: Creates new AI agents following conventions
+tools: [Read, Glob, Grep, Bash]
+model: sonnet
+color: blue
+updated: 2025-12-15
+skills:
+  - agent__developing-agents
+---
+# Agent prompt content...
+```
+
+### OpenCode Agent Format
+
+```yaml
+---
+description: Creates new AI agents following conventions
+mode: primary
+model: anthropic/claude-sonnet-4-5
+temperature: 0.7
+tools:
+  read: true
+  glob: true
+  grep: true
+  bash: true
+permission:
+  bash: "ask"
+---
+# Agent prompt content...
+```
+
+### Key Differences
+
+| Aspect       | Claude Code             | OpenCode                      |
+| ------------ | ----------------------- | ----------------------------- |
+| Location     | `.claude/agents/`       | `.opencode/agent/`            |
+| Name field   | Required in frontmatter | Filename-based                |
+| Model format | `sonnet`                | `anthropic/claude-sonnet-4-5` |
+| Tools format | Array of names          | Object with booleans          |
+| Permissions  | Not in frontmatter      | `permission` object           |
+| Modes        | Not present             | `mode: primary/subagent`      |
+| Temperature  | Not present             | `temperature: 0.0-1.0`        |
+| Color        | Present                 | Not present                   |
+| Skills       | `skills` array          | Not present (separate)        |
+
+### Translation Strategy
+
+For high-priority agents, create OpenCode equivalents:
+
+```
+.opencode/agent/
+├── agent-maker.md          # Translated from agent__maker
+├── docs-maker.md           # Translated from docs__maker
+└── plan-executor.md        # Translated from plan__executor
+```
+
+## Instructions File Strategy
+
+### Current Status
+
+| File      | Claude Code Support              | OpenCode Support |
+| --------- | -------------------------------- | ---------------- |
+| CLAUDE.md | ✓ Native                         | ✗ Not read       |
+| AGENTS.md | ✗ Not native (workarounds exist) | ✓ Native         |
+
+**Key Finding**: Claude Code does NOT officially support AGENTS.md (issue #6235 with 1,615+ upvotes is open). OpenCode does NOT read CLAUDE.md.
+
+### CLAUDE.md (Existing - Keep)
+
+- Comprehensive 35KB+ document
+- Six-layer governance architecture
+- All conventions and development practices
+- Agent and workflow documentation
+- Navigation links to detailed docs
+- **Keep as-is for Claude Code**
+
+### AGENTS.md (New - Create)
+
+Purpose: Provide essential guidance for OpenCode (and 25+ other AGENTS.md-compatible tools)
+
+Strategy:
+
+1. **Concise summary** of project structure and conventions
+2. **Reference CLAUDE.md** for comprehensive details
+3. **Focus on actionable guidance** for AI coding agents
+4. **~5-10KB target size** (not a duplication of CLAUDE.md)
+
+### Workaround for Claude Code to Read AGENTS.md
+
+Add to CLAUDE.md:
+
+```markdown
+@AGENTS.md
+```
+
+This loads AGENTS.md content into Claude Code context (community workaround with 200+ upvotes).
+
+### Symlink Strategies (Research Findings)
+
+#### Option A: AGENTS.md as Primary (Industry Standard)
+
+```bash
+# Rename CLAUDE.md to AGENTS.md, create symlink
+mv CLAUDE.md AGENTS.md
+ln -s AGENTS.md CLAUDE.md
+
+# Add to .gitignore
+echo "CLAUDE.md" >> .gitignore
+echo "**/CLAUDE.md" >> .gitignore
+```
+
+**Pros**: Industry standard, single source of truth, 25+ tools support AGENTS.md
+**Cons**: Requires restructuring our comprehensive CLAUDE.md
+
+#### Option B: Separate Files (Recommended for This Project)
+
+Keep CLAUDE.md as-is, create condensed AGENTS.md:
+
+```bash
+# Keep CLAUDE.md unchanged
+# Create new AGENTS.md with essential guidance
+# Both files committed to git
+```
+
+**Pros**: No disruption to existing Claude Code setup, AGENTS.md tailored for OpenCode
+**Cons**: Two files to maintain (but AGENTS.md is condensed, low maintenance)
+
+#### Option C: AGENTS.md → CLAUDE.md Reference
+
+```markdown
+# In AGENTS.md
+
+@CLAUDE.md
+```
+
+**Pros**: Single source in CLAUDE.md
+**Cons**: OpenCode doesn't support `@` imports (Claude Code only)
+
+### Recommendation for This Project
+
+**Use Option B (Separate Files)** because:
+
+1. Our CLAUDE.md is 35KB+ with comprehensive project-specific content
+2. CLAUDE.md includes agent definitions, workflows, and governance architecture
+3. OpenCode needs simpler, more focused guidance
+4. Minimal maintenance burden (AGENTS.md is ~5-10KB condensed version)
+
+### Cross-Platform Symlink Considerations
+
+If using symlinks in the future:
+
+**Linux/macOS**:
+
+```bash
+ln -s AGENTS.md CLAUDE.md
+```
+
+**Windows (requires Admin or Developer Mode)**:
+
+```cmd
+mklink CLAUDE.md AGENTS.md
+```
+
+**Git Configuration** (for cross-platform repos):
+
+```gitattributes
+# .gitattributes
+CLAUDE.md symlink=true
+```
+
+**Setup Script** (for team consistency):
+
+```bash
+#!/bin/bash
+# utils/setup-symlinks.sh
+find . -name "AGENTS.md" | while read f; do
+  dir=$(dirname "$f")
+  rm -f "$dir/CLAUDE.md"
+  ln -s AGENTS.md "$dir/CLAUDE.md"
+done
+```
+
+### Proposed AGENTS.md Structure
+
+```markdown
+# AGENTS.md
+
+## Project Overview
+
+Open Sharia Enterprise - democratizing Shariah-compliant enterprise through
+open-source solutions. See [Vision](docs/explanation/vision/ex-vi__open-sharia-enterprise.md).
+
+## Quick Reference
+
+- **Node.js**: 24.11.1, **npm**: 11.6.3 (Volta-managed)
+- **Monorepo**: Nx with apps/ and libs/
+- **Commits**: Conventional Commits required
+- **Git**: Trunk Based Development on main branch
+
+## Repository Architecture
+
+Six-layer governance hierarchy:
+
+1. **Vision** (Layer 0) - WHY we exist
+2. **Principles** (Layer 1) - Foundational values (10 principles)
+3. **Conventions** (Layer 2) - Documentation rules (24 conventions)
+4. **Development** (Layer 3) - Software practices (15 practices)
+5. **Agents** (Layer 4) - AI task executors (40+ agents)
+6. **Workflows** (Layer 5) - Multi-step processes
+
+See [Repository Architecture](docs/explanation/ex__repository-governance-architecture.md).
+
+## Key Conventions
+
+- Documentation follows Diátaxis framework (tutorials, how-to, reference, explanation)
+- All code follows functional programming principles
+- File naming: `[prefix]__[content-identifier].[extension]`
+- Markdown: Active voice, single H1, proper heading hierarchy
+
+## File Structure
+
+- `apps/` - Deployable applications
+- `libs/` - Reusable libraries
+- `docs/` - Documentation (Diátaxis framework)
+- `.claude/agents/` - AI agent definitions
+- `.claude/skills/` - Reusable skill packages
+- `plans/` - Project planning (backlog/, in-progress/, done/)
+
+## Skills Available
+
+19 skills in .claude/skills/ covering content creation, quality assurance,
+standards application, and process execution. Skills auto-load based on task.
+
+## For Comprehensive Details
+
+See CLAUDE.md for complete documentation including detailed conventions,
+development practices, agent definitions, and workflow patterns.
+```
+
+## Proposed opencode.json
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "model": "anthropic/claude-sonnet-4-5",
+  "small_model": "anthropic/claude-haiku-4-5",
+
+  "provider": {
+    "anthropic": {
+      "options": {
+        "timeout": 600000
+      }
+    }
+  },
+
+  "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "@playwright/mcp@latest"],
+      "enabled": true
+    },
+    "context7": {
+      "type": "local",
+      "command": ["npx", "-y", "@context7/mcp-server"],
+      "enabled": true
+    }
+  },
+
+  "tools": {
+    "bash": true,
+    "read": true,
+    "write": true,
+    "edit": true,
+    "grep": true,
+    "glob": true,
+    "list": true,
+    "patch": true,
+    "webfetch": true,
+    "todowrite": true,
+    "todoread": true,
+    "skill": true
+  },
+
+  "permission": {
+    "bash": "allow",
+    "write": "allow",
+    "edit": "allow"
+  },
+
+  "instructions": ["AGENTS.md", "docs/explanation/conventions/README.md", "docs/explanation/development/README.md"],
+
+  "tui": {
+    "scroll_speed": 3,
+    "diff_style": "auto"
+  },
+
+  "autoupdate": "notify",
+  "share": "disabled"
+}
+```
+
+## File Structure After Implementation
+
+```
+open-sharia-enterprise/
+├── CLAUDE.md                    # Claude Code instructions (existing)
+├── AGENTS.md                    # OpenCode instructions (new)
+├── opencode.json                # OpenCode configuration (new)
+├── .mcp.json                    # Claude Code MCP (may exist)
+├── .claude/
+│   ├── settings.json            # Claude settings (existing)
+│   ├── settings.local.json      # Personal settings (gitignored)
+│   ├── agents/                  # Claude agents (existing, 40+)
+│   │   └── *.md
+│   └── skills/                  # Skills (existing, shared, 18)
+│       └── */SKILL.md
+├── .opencode/                   # OpenCode-specific (new)
+│   ├── agent/                   # OpenCode agents (optional)
+│   │   └── *.md
+│   └── plugin/                  # OpenCode plugins (optional)
+└── ...
+```
+
+## Testing Plan
+
+### Phase 1: Skills Compatibility
+
+```bash
+# Install OpenCode
+npm install -g @opencode/cli
+
+# Test skill discovery
+opencode
+# In TUI: Check if skills are listed
+
+# Test skill invocation
+# Ask OpenCode to use a specific skill
+```
+
+### Phase 2: Configuration Validation
+
+```bash
+# Validate JSON schema
+npx ajv validate -s https://opencode.ai/config.json -d opencode.json
+
+# Start OpenCode and verify:
+# 1. Model is correct
+# 2. MCP servers connect
+# 3. Tools are available
+```
+
+### Phase 3: Functional Testing
+
+Test each key workflow:
+
+1. Create documentation (uses skills)
+2. Run bash commands (tool permissions)
+3. Browser automation (MCP servers)
+4. Library docs lookup (Context7 MCP)
+
+### Phase 4: Regression Testing
+
+Verify Claude Code still works:
+
+```bash
+claude
+# Test existing workflows
+# Verify agents load
+# Check MCP connections
+```
+
+## Maintenance Considerations
+
+### Updates to Sync
+
+When updating Claude Code configuration:
+
+- [ ] Update AGENTS.md if CLAUDE.md changes significantly
+- [ ] Update opencode.json if MCP servers change
+- [ ] Test OpenCode after significant changes
+
+When updating OpenCode configuration:
+
+- [ ] Ensure changes don't conflict with Claude Code
+- [ ] Document OpenCode-specific settings
+
+### Automated Validation
+
+Consider extending `wow__rules-checker` to:
+
+- Verify opencode.json is valid
+- Check AGENTS.md references are correct
+- Detect configuration drift between tools
