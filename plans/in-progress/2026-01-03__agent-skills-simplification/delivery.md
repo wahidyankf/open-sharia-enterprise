@@ -378,8 +378,29 @@ Scenario: Rollout metrics tracked
   - Provide examples of good separation (from pilot and rollout)
   - Document patterns: What belongs in Skills, what belongs in agents
   - Update Skills README if new Skills were created
+  - Update docs/explanation/ex\_\_repository-governance-architecture.md:
+    - Change Skills count from "17-18 Skills" to "22-25 Skills" (line 313)
+    - Add "Validation Standards" category to Skills Categories (lines 316-321)
+    - List new Skills: generating-checker-reports, validating-frontmatter, validating-hugo-content, validating-nested-code-fences, validating-rule-references, validating-mathematical-notation
 
-- [ ] **5.5: Generate final report**
+- [ ] **5.5: Enhance wow\_\_rules-\* agents for ongoing duplication prevention**
+  - Update wow\_\_rules-checker agent to include agent-Skill duplication detection:
+    - Add systematic comparison of agent content against Skills catalog
+    - Detect verbatim, paraphrased, and conceptual duplication
+    - Report findings with CRITICAL/HIGH/MEDIUM severity
+    - Provide remediation guidance (remove from agent, reference Skill)
+  - Update wow\_\_rules-checker agent to include Skills coverage gap analysis:
+    - Identify knowledge patterns appearing in 3+ agents
+    - Check if patterns are covered by existing Skills
+    - Report gaps with recommendations (create new Skill, extend existing)
+  - Update wow\_\_rules-fixer agent to apply duplication fixes:
+    - Remove duplicated content from agents
+    - Add/update skills: frontmatter field with appropriate Skill references
+    - Preserve task-specific instructions
+  - Ensures ongoing maintenance of agent-Skill separation (prevents duplication creep)
+  - Enables automated detection in future wow**rules**quality-gate runs
+
+- [ ] **5.6: Generate final report**
   - Summary of simplification impact:
     - Size reduction metrics (average, per-family, per-agent)
     - Duplication elimination count
@@ -461,7 +482,9 @@ Scenario: Final report generated
 
 **Documentation Updates**: [To be filled after 5.4]
 
-**Final Report**: [To be filled after 5.5]
+**wow\_\_rules-\* Agent Enhancements**: [To be filled after 5.5]
+
+**Final Report**: [To be filled after 5.6]
 
 ---
 

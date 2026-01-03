@@ -426,6 +426,195 @@ graph TD
 
 ---
 
+### Before and After Changes
+
+#### Repository Components Affected
+
+**Skills Infrastructure**:
+
+- **Before**: 18 Skills
+- **After**: 22-25 Skills (4-7 new Skills created based on gap analysis)
+- **Changes**: Create generating-checker-reports, validating-frontmatter, validating-hugo-content, validating-nested-code-fences, validating-rule-references, validating-mathematical-notation; Extend assessing-criticality-confidence, creating-accessible-diagrams, creating-by-example-tutorials, applying-content-quality, developing-ayokoding-content
+
+**Agent Files**:
+
+- **Before**: 48 agents with embedded convention/pattern knowledge (avg ~800-1,200 lines)
+- **After**: 48 agents with Skill references (avg ~560-840 lines, 30-50% reduction)
+- **Changes**: Remove duplicated content, add/update `skills:` frontmatter field
+
+**Documentation**:
+
+- **Before**: [Repository Architecture](../../docs/explanation/ex__repository-governance-architecture.md) references 17-18 Skills
+- **After**: Updated to reflect 22-25 Skills with new categories
+- **Changes**: Update Skills count, add new Skills to categories list
+
+#### Example Agent Transformation
+
+**Before** (apps**ayokoding-web**by-example-checker.md - ~1,100 lines):
+
+```markdown
+---
+name: apps__ayokoding-web__by-example-checker
+description: Validates by-example tutorial quality...
+tools: [Read, Glob, Grep, Write, Bash]
+model: sonnet
+color: yellow
+skills: []
+---
+
+# Apps - ayokoding-web - By-Example Checker
+
+...
+
+## Annotation Density Standards
+
+**Target**: 1.0-2.25 comment lines per code line PER EXAMPLE
+
+**Measurement**: Each code block is measured independently
+
+- **Minimum**: 1.0 (examples below this need enhancement)
+- **Optimal**: 1-2.25 (target range for educational value)
+- **Upper bound**: 2.5 (examples exceeding this need reduction)
+
+[~150 lines of annotation density validation logic]
+
+## Criticality Levels
+
+**Four Levels**:
+
+- CRITICAL 🔴: Blocking issues (no examples, wrong format)
+- HIGH 🟠: Important quality issues (low density, missing diagrams)
+- MEDIUM 🟡: Quality improvements (suboptimal annotations)
+- LOW 🟢: Minor enhancements (formatting suggestions)
+
+[~200 lines of criticality assessment logic]
+
+## Hugo Weight System
+
+ayokoding-web uses level-based weight system with powers of 10...
+[~100 lines of weight system explanation]
+```
+
+**After** (apps**ayokoding-web**by-example-checker.md - ~650 lines):
+
+```markdown
+---
+name: apps__ayokoding-web__by-example-checker
+description: Validates by-example tutorial quality...
+tools: [Read, Glob, Grep, Write, Bash]
+model: sonnet
+color: yellow
+skills:
+  - creating-by-example-tutorials
+  - assessing-criticality-confidence
+  - developing-ayokoding-content
+  - generating-checker-reports
+---
+
+# Apps - ayokoding-web - By-Example Checker
+
+Validates by-example tutorial quality using annotation density standards
+and educational value criteria from Skills.
+
+**Annotation Density**: See `creating-by-example-tutorials` Skill for
+complete standards (1.0-2.25 comment lines per code line PER EXAMPLE).
+
+**Criticality Levels**: See `assessing-criticality-confidence` Skill for
+four-level system (CRITICAL/HIGH/MEDIUM/LOW).
+
+**Hugo Conventions**: See `developing-ayokoding-content` Skill for
+weight system and content structure rules.
+
+**Report Generation**: See `generating-checker-reports` Skill for
+4-part filename pattern and progressive writing requirements.
+
+[~200 lines of agent-specific validation logic]
+```
+
+**Reduction**: ~450 lines removed (41% reduction), replaced with Skill references
+
+#### Example New Skill
+
+**New Skill**: `generating-checker-reports/SKILL.md` (~300 lines)
+
+```markdown
+---
+name: generating-checker-reports
+description: Report generation standards for all checker agents (4-part
+  filename, progressive writing, UUID chains)
+tags: [validation, reporting, checkers]
+---
+
+# Generating Checker Reports
+
+Standards for all \*-checker agents to generate consistent,
+progressive audit reports.
+
+## 4-Part Filename Pattern
+
+`{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
+
+## UUID Chain Generation
+
+Generate 6-char hex UUID: `uuidgen | cut -c1-6`
+
+## Progressive Writing
+
+Initialize report at execution start, write findings incrementally
+(not buffer and write once at end).
+
+[~200 lines of detailed standards]
+```
+
+**Impact**: Eliminates ~1,000 lines of duplication across 12+ checker agents
+
+#### Documentation Updates
+
+**File**: `docs/explanation/ex__repository-governance-architecture.md`
+
+**Before** (line 313):
+
+```markdown
+**17 Skills Available**: See [Skills Directory](../.claude/skills/README.md)
+for complete catalog.
+```
+
+**After**:
+
+```markdown
+**22-25 Skills Available**: See [Skills Directory](../.claude/skills/README.md)
+for complete catalog.
+```
+
+**Before** (lines 316-321):
+
+```markdown
+**Skills Categories**:
+
+- **Content Creation**: applying-content-quality, creating-by-example-tutorials,
+  developing-ayokoding-content, developing-ose-content, writing-readme-files
+- **Quality Assurance**: applying-maker-checker-fixer,
+  assessing-criticality-confidence, validating-factual-accuracy,
+  validating-links
+```
+
+**After**:
+
+```markdown
+**Skills Categories**:
+
+- **Content Creation**: applying-content-quality, creating-by-example-tutorials,
+  developing-ayokoding-content, developing-ose-content, writing-readme-files
+- **Quality Assurance**: applying-maker-checker-fixer,
+  assessing-criticality-confidence, validating-factual-accuracy,
+  validating-links
+- **Validation Standards**: generating-checker-reports, validating-frontmatter,
+  validating-hugo-content, validating-nested-code-fences,
+  validating-rule-references, validating-mathematical-notation
+```
+
+---
+
 ### Phase 1: Pilot (One Agent Family)
 
 **Goal**: Validate simplification approach on pilot agent family before full rollout.
