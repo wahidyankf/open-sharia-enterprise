@@ -25,9 +25,11 @@ This plan establishes **dual-tool compatibility** between Claude Code and OpenCo
 **Both Claude Code AND OpenCode require skill names matching `[a-z0-9-]+`:**
 
 - Underscores (`_`) are **NOT allowed** in skill names
+- Consecutive hyphens (`--`) are **NOT allowed** in skill names
 - Our current skills use `domain__skill-name` format - **THIS IS INVALID**
 - **ALL 19 skills MUST be renamed** before OpenCode compatibility
-- Example: `docs__applying-content-quality` → `docs-applying-content-quality`
+- **Correct format**: Replace `__` with **SINGLE hyphen** `-`
+- Example: `docs__applying-content-quality` → `docs-applying-content-quality` (NOT `docs--applying-content-quality`)
 
 ### Compatible After Renaming
 

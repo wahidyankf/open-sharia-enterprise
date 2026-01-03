@@ -169,11 +169,16 @@
 - `apps__ayokoding-web__developing-content` ❌ (multiple underscores)
 - `wow__understanding-repository-architecture` ❌ (underscore)
 
-**Required new names:**
+**Required new names (SINGLE hyphen -, NOT double hyphen --):**
 
-- `docs-applying-content-quality` ✓
-- `apps-ayokoding-web-developing-content` ✓
-- `wow-understanding-repository-architecture` ✓
+- `docs-applying-content-quality` ✓ (replace `__` with single `-`)
+- `apps-ayokoding-web-developing-content` ✓ (replace all `__` with single `-`)
+- `wow-understanding-repository-architecture` ✓ (replace `__` with single `-`)
+
+**INVALID new names (consecutive hyphens not allowed):**
+
+- `docs--applying-content-quality` ❌ (double hyphen)
+- `apps--ayokoding-web--developing-content` ❌ (multiple double hyphens)
 
 ### Format Comparison
 

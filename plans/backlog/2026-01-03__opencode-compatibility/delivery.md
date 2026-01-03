@@ -24,21 +24,49 @@ This plan is divided into 6 phases, ordered by priority and dependency:
 **CONFIRMED**: Both Claude Code AND OpenCode require skill names matching `[a-z0-9-]+`:
 
 - Underscores (`_`) are **NOT allowed**
+- Consecutive hyphens (`--`) are **NOT allowed**
 - Current names like `docs__applying-content-quality` are **INVALID**
+- **Correct format**: Replace `__` with **SINGLE hyphen** `-` (e.g., `docs-applying-content-quality`)
 - Skills will NOT load in OpenCode until renamed
 - Skills may already be working in Claude Code only due to legacy support
 
 ### Renaming Tasks
 
-- [ ] **0.1 Create skill renaming script**
+- [ ] **0.1 Create and validate skill renaming script**
 
   ```bash
   #!/bin/bash
   # Rename all skill directories from underscore to hyphen format
+  # CRITICAL: Replace __ with SINGLE hyphen -, NOT double hyphen --
+
+  echo "Renaming skills from __ to - format..."
   for dir in .claude/skills/*__*; do
     newname=$(echo "$dir" | sed 's/__/-/g')
+    echo "  $dir -> $newname"
     git mv "$dir" "$newname"
   done
+
+  echo ""
+  echo "Validating: checking for invalid patterns..."
+
+  # Validate no double hyphens
+  invalid=$(find .claude/skills -type d -name "*--*" | wc -l)
+  if [ "$invalid" -gt 0 ]; then
+    echo "ERROR: Found skills with double hyphens (--)"
+    find .claude/skills -type d -name "*--*"
+    exit 1
+  fi
+
+  # Validate no underscores
+  invalid=$(find .claude/skills -type d -name "*_*" | wc -l)
+  if [ "$invalid" -gt 0 ]; then
+    echo "ERROR: Found skills with underscores (_)"
+    find .claude/skills -type d -name "*_*"
+    exit 1
+  fi
+
+  echo "✓ All skill names are valid (no __ or --)"
+  echo "✓ Skill renaming complete!"
   ```
 
 - [ ] **0.2 Rename all 19 skill directories**
@@ -67,7 +95,18 @@ This plan is divided into 6 phases, ordered by priority and dependency:
 
 - [ ] **0.3 Update SKILL.md `name` field in each skill**
   - Each SKILL.md must have `name:` matching directory name
-  - Example: `name: docs-applying-content-quality`
+  - Example: `name: docs-applying-content-quality` (SINGLE hyphen, not `--`)
+  - Validation command:
+
+    ```bash
+    # Check all SKILL.md name fields match regex [a-z0-9-]+ (no __ or --)
+    for skill in .claude/skills/*/SKILL.md; do
+      name=$(grep "^name:" "$skill" | cut -d: -f2 | xargs)
+      if echo "$name" | grep -E '__|--' > /dev/null; then
+        echo "ERROR: Invalid name in $skill: $name"
+      fi
+    done
+    ```
 
 - [ ] **0.4 Update all agent files**
   - Search for `skills:` field in `.claude/agents/*.md`
@@ -82,6 +121,52 @@ This plan is divided into 6 phases, ordered by priority and dependency:
   - Run `claude` and verify skills load
   - Invoke a skill and verify it works
   - Document any issues
+
+- [ ] **0.7 Final validation - Prevent double hyphens**
+
+  Run comprehensive validation to ensure no `__` or `--` patterns:
+
+  ```bash
+  #!/bin/bash
+  # Final validation script for skill renaming
+
+  echo "=== Skill Renaming Validation ==="
+  echo ""
+
+  # 1. Check directory names
+  echo "1. Validating skill directory names..."
+  invalid_dirs=$(find .claude/skills -maxdepth 1 -type d \( -name "*__*" -o -name "*--*" \) | wc -l)
+  if [ "$invalid_dirs" -gt 0 ]; then
+    echo "   ❌ FAILED: Found invalid directory names"
+    find .claude/skills -maxdepth 1 -type d \( -name "*__*" -o -name "*--*" \)
+    exit 1
+  fi
+  echo "   ✓ All directory names valid (19 skills)"
+
+  # 2. Check SKILL.md name fields
+  echo "2. Validating SKILL.md name fields..."
+  for skill in .claude/skills/*/SKILL.md; do
+    name=$(grep "^name:" "$skill" | cut -d: -f2 | xargs)
+    if echo "$name" | grep -E '__|--' > /dev/null; then
+      echo "   ❌ FAILED: Invalid name in $skill: $name"
+      exit 1
+    fi
+  done
+  echo "   ✓ All SKILL.md name fields valid"
+
+  # 3. Verify count
+  echo "3. Validating skill count..."
+  skill_count=$(find .claude/skills -maxdepth 1 -type d | tail -n +2 | wc -l)
+  if [ "$skill_count" -ne 19 ]; then
+    echo "   ❌ FAILED: Expected 19 skills, found $skill_count"
+    exit 1
+  fi
+  echo "   ✓ Correct count (19 skills)"
+
+  echo ""
+  echo "=== ✓ ALL VALIDATIONS PASSED ==="
+  echo "Skills are ready for OpenCode compatibility!"
+  ```
 
 ### Phase 0 Completion Criteria
 
