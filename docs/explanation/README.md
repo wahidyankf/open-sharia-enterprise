@@ -47,28 +47,58 @@ This directory contains conceptual documentation across multiple areas:
 The repository follows a **six-layer governance architecture** where each layer builds on the foundation of the layer above. See [Repository Governance Architecture](./ex-ru__repository-governance-architecture.md) for comprehensive explanation.
 
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 graph TD
-	L0[Layer 0: Vision<br/>WHY WE EXIST]
-	L1[Layer 1: Principles<br/>WHY - Values]
-	L2[Layer 2: Conventions<br/>WHAT - Documentation Rules]
-	L3[Layer 3: Development<br/>HOW - Software Practices]
-	L4[Layer 4: AI Agents<br/>WHO - Atomic Executors]
-	L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes]
+    subgraph Governance["Six-Layer Governance Architecture"]
+        L0[Layer 0: Vision<br/>WHY WE EXIST]
+        L1[Layer 1: Principles<br/>WHY - Values]
+        L2[Layer 2: Conventions<br/>WHAT - Documentation Rules]
+        L3[Layer 3: Development<br/>HOW - Software Practices]
+        L4[Layer 4: AI Agents<br/>WHO - Atomic Executors<br/>.claude/agents/ + .opencode/agent/]
+        L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes]
+    end
 
-	L0 -->|inspires| L1
-	L1 -->|governs| L2
-	L1 -->|governs| L3
-	L2 -->|governs| L4
-	L3 -->|governs| L4
-	L4 -->|orchestrated by| L5
+    subgraph Delivery["Delivery Infrastructure"]
+        CM[CLAUDE.md<br/>Claude Code context]
+        AM[AGENTS.md<br/>OpenCode context]
+        SK[Skills<br/>Shared knowledge<br/>.claude/skills/]
+        DR[Direct References<br/>Explicit links]
+    end
 
-	style L0 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:3px
-	style L1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style L2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style L3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style L4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style L5 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    L0 -->|inspires| L1
+    L1 -->|governs| L2
+    L1 -->|governs| L3
+    L2 -->|governs| L3
+    L2 -->|governs| L4
+    L3 -->|governs| L4
+    L4 -->|orchestrated by| L5
+
+    L2 -->|summarized in| CM
+    L2 -->|summarized in| AM
+    L2 -->|encoded in| SK
+    L3 -->|summarized in| CM
+    L3 -->|summarized in| AM
+    L3 -->|encoded in| SK
+    CM -->|loaded at startup| OCC[Claude Code]
+    AM -->|loaded at startup| OOC[OpenCode]
+    OCC -->|spawns| L4
+    OOC -->|spawns| L4
+    SK -->|auto-loads| OCC
+    SK -->|on-demand via skill tool| OOC
+    DR -->|explicitly delivers to| L4
+
+    style L0 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:3px
+    style L1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style L2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style L3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style L4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style L5 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style OCC fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style OOC fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style CM fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style AM fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style SK fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:3px
+    style DR fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 **Documentation Layers**:
