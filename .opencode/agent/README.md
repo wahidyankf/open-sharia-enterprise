@@ -217,10 +217,10 @@ All agents leverage Skills from `.claude/skills/` for:
 ## Reference Documentation
 
 - **Project Instructions**: [AGENTS.md](../../AGENTS.md) (condensed) or [CLAUDE.md](../../CLAUDE.md) (comprehensive)
-- **AI Agents Convention**: [docs/explanation/development/agents/ex-de-ag\_\_ai-agents.md](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md)
-- **Maker-Checker-Fixer Pattern**: [docs/explanation/development/pattern/ex-de-pa\_\_maker-checker-fixer.md](../../docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md)
+- **AI Agents Convention**: [docs/explanation/rules/development/agents/ex-ru-de-ag\_\_ai-agents.md](../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md)
+- **Maker-Checker-Fixer Pattern**: [docs/explanation/rules/development/pattern/ex-ru-de-pa\_\_maker-checker-fixer.md](../../docs/explanation/rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md)
 - **Skills Catalog**: [.claude/skills/README.md](../../.claude/skills/README.md)
-- **Workflows**: [docs/explanation/workflows/README.md](../../docs/explanation/workflows/README.md)
+- **Workflows**: [docs/explanation/rules/workflows/README.md](../../docs/explanation/rules/workflows/README.md)
 
 ## Maintenance
 
