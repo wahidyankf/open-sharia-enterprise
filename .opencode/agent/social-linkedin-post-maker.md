@@ -8,12 +8,14 @@ tools:
   grep: true
 permission:
   todowrite: deny
+  edit: deny
+  write: deny
+  websearch: deny
   glob: deny
   bash: deny
-  write: deny
-  edit: deny
   webfetch: deny
-  websearch: deny
+  skill:
+    docs-applying-content-quality: allow
 ---
 
 ## Agent Metadata

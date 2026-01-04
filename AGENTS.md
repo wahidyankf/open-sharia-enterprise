@@ -63,7 +63,22 @@ Instructions for AI agents working with this repository via OpenCode.
 - **apps\_\_** (2 skills): ayokoding-web content (Hextra theme), ose-platform-web content (PaperMod theme)
 - **agent\_\_** (1 skill): AI agent development
 
-**Auto-loading**: Skills load on-demand based on agent task description.
+**OpenCode Skills Architecture** (different from Claude Code):
+
+- **Access Method**: Skills accessed via `skill` tool (not auto-loaded from frontmatter)
+- **Permission Control**: Use `permission.skill` in agent frontmatter to control access
+- **On-Demand Loading**: Agents explicitly call `skill({ name: "skill-name" })` when needed
+
+**Example OpenCode agent frontmatter**:
+
+```yaml
+permission:
+  skill:
+    wow-applying-maker-checker-fixer: allow
+    docs-validating-factual-accuracy: allow
+```
+
+**Claude Code Difference**: Claude Code declares skills in frontmatter (`skills: [skill-1, skill-2]`) and auto-loads them. OpenCode uses permission-based on-demand loading.
 
 **Full skills catalog**: See [`.claude/skills/README.md`](./.claude/skills/README.md)
 

@@ -11,9 +11,12 @@ tools:
   grep: true
   bash: true
 permission:
-  todowrite: deny
   websearch: deny
+  todowrite: deny
   webfetch: deny
+  skill:
+    apps-ayokoding-web-developing-content: allow
+    apps-ose-platform-web-developing-content: allow
 ---
 
 ## Agent Metadata

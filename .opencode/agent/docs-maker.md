@@ -9,10 +9,14 @@ tools:
   glob: true
   grep: true
 permission:
-  todowrite: deny
   websearch: deny
+  todowrite: deny
   bash: deny
   webfetch: deny
+  skill:
+    docs-applying-content-quality: allow
+    docs-creating-accessible-diagrams: allow
+    wow-applying-maker-checker-fixer: allow
 ---
 
 ## Agent Metadata

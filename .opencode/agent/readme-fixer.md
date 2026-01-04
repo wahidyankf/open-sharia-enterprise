@@ -11,9 +11,14 @@ tools:
   write: true
   bash: true
 permission:
-  todowrite: deny
   websearch: deny
+  todowrite: deny
   webfetch: deny
+  skill:
+    readme-writing-readme-files: allow
+    wow-assessing-criticality-confidence: allow
+    wow-applying-maker-checker-fixer: allow
+    wow-generating-validation-reports: allow
 ---
 
 ## Agent Metadata

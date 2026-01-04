@@ -22,6 +22,10 @@ tools:
   bash: true
 permission:
   todowrite: deny
+  skill:
+    docs-validating-links: allow
+    wow-assessing-criticality-confidence: allow
+    wow-generating-validation-reports: allow
 ---
 
 ## Agent Metadata

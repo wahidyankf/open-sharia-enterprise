@@ -11,9 +11,14 @@ tools:
   glob: true
   bash: true
 permission:
-  todowrite: deny
   websearch: deny
+  todowrite: deny
   webfetch: deny
+  skill:
+    docs-applying-diataxis-framework: allow
+    docs-applying-content-quality: allow
+    docs-creating-accessible-diagrams: allow
+    docs-creating-by-example-tutorials: allow
 ---
 
 ## Agent Metadata

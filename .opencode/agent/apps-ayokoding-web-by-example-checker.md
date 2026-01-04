@@ -13,10 +13,15 @@ tools:
   write: true
   bash: true
 permission:
-  edit: deny
-  todowrite: deny
   websearch: deny
+  todowrite: deny
+  edit: deny
   webfetch: deny
+  skill:
+    apps-ayokoding-web-developing-content: allow
+    docs-creating-by-example-tutorials: allow
+    wow-assessing-criticality-confidence: allow
+    wow-generating-validation-reports: allow
 ---
 
 ## Agent Metadata

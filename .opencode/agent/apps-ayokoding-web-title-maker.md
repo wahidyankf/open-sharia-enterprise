@@ -9,11 +9,13 @@ tools:
 permission:
   todowrite: deny
   grep: deny
+  write: deny
+  websearch: deny
   glob: deny
   bash: deny
-  write: deny
   webfetch: deny
-  websearch: deny
+  skill:
+    apps-ayokoding-web-developing-content: allow
 ---
 
 ## Agent Metadata
