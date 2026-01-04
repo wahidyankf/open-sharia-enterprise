@@ -1,216 +1,203 @@
 # AGENTS.md
 
-This file provides guidance to AI coding assistants that support the AGENTS.md standard (OpenCode, Aider, Continue, etc.). For comprehensive Claude Code-specific guidance, see [CLAUDE.md](./CLAUDE.md).
+Instructions for AI agents working with this repository via OpenCode.
+
+**For complete project documentation, see [CLAUDE.md](./CLAUDE.md)**.
 
 ## Project Overview
 
-**Open Sharia Enterprise** - Democratizing Shariah-compliant enterprise through open-source solutions.
+**open-sharia-enterprise** - Enterprise platform built with Node.js, using **Nx monorepo** structure.
 
-**Vision**: Build enterprise-grade platforms that enable Shariah-compliant business operations through accessible, open-source technology.
+- **Node.js**: 24.11.1 (LTS, managed by Volta)
+- **npm**: 11.6.3
+- **Monorepo**: Nx with `apps/` and `libs/` structure
+- **Git Workflow**: Trunk Based Development (all work on `main` branch)
 
-See [Vision](./docs/explanation/vision/ex-vi__open-sharia-enterprise.md) for complete vision.
+## Agent Organization
 
-## Quick Reference
+**45 specialized agents** organized into **7 families**:
 
-| Aspect             | Value                                                |
-| ------------------ | ---------------------------------------------------- |
-| **Node.js**        | 24.11.1 (Volta-managed)                              |
-| **npm**            | 11.6.3 (Volta-managed)                               |
-| **Monorepo**       | Nx with apps/ and libs/                              |
-| **Commits**        | Conventional Commits required                        |
-| **Git Workflow**   | Trunk Based Development on main branch               |
-| **Docs Framework** | Diátaxis (tutorials, how-to, reference, explanation) |
+1. **Documentation** (8 agents): `docs-maker`, `docs-checker`, `docs-fixer`, `docs-tutorial-maker`, `docs-tutorial-checker`, `docs-tutorial-fixer`, `docs-link-general-checker`, `docs-file-manager`
+2. **README** (3 agents): `readme-maker`, `readme-checker`, `readme-fixer`
+3. **Project Planning** (5 agents): `plan-maker`, `plan-checker`, `plan-executor`, `plan-execution-checker`, `plan-fixer`
+4. **Hugo Content - ayokoding-web** (17 agents): Bilingual content creators, validators, deployers
+5. **Hugo Content - ose-platform-web** (4 agents): Landing page content creators, validators, deployers
+6. **Repository Rules** (6 agents): `wow-rules-checker`, `wow-rules-fixer`, `wow-rules-maker`, `wow-workflow-checker`, `wow-workflow-fixer`, `wow-workflow-maker`
+7. **Meta/Specialized** (2 agents): `agent-maker`, `swe-hugo-developer`, `social-linkedin-post-maker`
 
-## Repository Architecture: Six-Layer Hierarchy
+**Full agent catalog**: See [`.opencode/agent/README.md`](./.opencode/agent/README.md)
 
-This repository follows a six-layer governance architecture where each layer builds on the foundation of the layer above:
+## Maker-Checker-Fixer Pattern
 
-| Layer | Name        | Purpose                              | Location                      |
-| ----- | ----------- | ------------------------------------ | ----------------------------- |
-| 0     | Vision      | WHY we exist                         | docs/explanation/vision/      |
-| 1     | Principles  | Foundational values (10 principles)  | docs/explanation/principles/  |
-| 2     | Conventions | Documentation rules (24 conventions) | docs/explanation/conventions/ |
-| 3     | Development | Software practices (15 practices)    | docs/explanation/development/ |
-| 4     | Agents      | AI task executors (40+ agents)       | .claude/agents/               |
-| 5     | Workflows   | Multi-step orchestrated processes    | docs/explanation/workflows/   |
+**Three-stage quality workflow** used across all content families:
 
-See [Repository Architecture](./docs/explanation/ex__repository-governance-architecture.md) for complete explanation.
+\`\`\`
+
+1. Maker (creates content)
+   ↓
+2. Checker (validates, generates audit report to generated-reports/)
+   ↓
+3. User Review (approves fixes)
+   ↓
+4. Fixer (applies validated fixes with confidence assessment)
+   ↓
+5. Re-check (verify fixes resolved issues)
+   \`\`\`
+
+**Key Mechanisms**:
+
+- **Criticality Levels**: CRITICAL, HIGH, MEDIUM, LOW
+- **Confidence Assessment**: HIGH (auto-apply), MEDIUM (manual review), FALSE_POSITIVE (skip)
+- **Progressive Reporting**: Write findings immediately during execution
+- **UUID Chains**: Prevent parallel execution collisions
+
+**See**: [Maker-Checker-Fixer Pattern](./docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md)
+
+## Skills (Knowledge Packages)
+
+**18 Skills** provide progressive knowledge delivery from \`.claude/skills/\`:
+
+- **docs\_\_** (6 skills): Content quality, accessible diagrams, by-example tutorials, Diátaxis framework, factual accuracy, link validation
+- **wow\_\_** (7 skills): Maker-checker-fixer workflow, criticality-confidence assessment, workflow definition, validation reports, trunk-based development, repository architecture
+- **plan\_\_** (2 skills): Project planning, Gherkin criteria
+- **apps\_\_** (2 skills): ayokoding-web content (Hextra theme), ose-platform-web content (PaperMod theme)
+- **agent\_\_** (1 skill): AI agent development
+
+**Auto-loading**: Skills load on-demand based on agent task description.
+
+**Full skills catalog**: See [`.claude/skills/README.md`](./.claude/skills/README.md)
 
 ## Core Principles
 
-All work follows foundational principles:
+All work follows **10 foundational principles** from \`docs/explanation/principles/\`:
 
-- **Documentation First**: Undocumented knowledge is lost knowledge
-- **Simplicity Over Complexity**: Favor minimum viable abstraction
-- **Explicit Over Implicit**: Choose explicit configuration over magic
-- **Automation Over Manual**: Automate repetitive tasks for consistency
-- **Accessibility First**: Design for universal access (WCAG compliance)
+- **Documentation First**: Documentation is mandatory, not optional
+- **Accessibility First**: WCAG AA compliance, color-blind friendly palettes
+- **Simplicity Over Complexity**: Minimum viable abstraction, no over-engineering
+- **Explicit Over Implicit**: Explicit configuration over magic behavior
+- **Automation Over Manual**: Automate repetitive tasks
 
-See [Principles Index](./docs/explanation/principles/README.md) for all 10 principles.
+**Full list**: [Core Principles Index](./docs/explanation/principles/README.md)
 
-## Project Structure
+## Documentation Standards
 
-```
-open-sharia-enterprise/
-├── apps/              # Deployable applications (Nx)
-├── apps-labs/         # Experimental apps (NOT in Nx)
-├── libs/              # Reusable libraries (Nx, flat structure)
-├── docs/              # Documentation (Diátaxis framework)
-│   ├── tutorials/     # Learning-oriented
-│   ├── how-to/        # Problem-solving
-│   ├── reference/     # Technical reference
-│   └── explanation/   # Conceptual (vision, principles, conventions, development, workflows)
-├── plans/             # Project planning (backlog/, in-progress/, done/)
-├── .claude/
-│   ├── agents/        # AI agent definitions (40+ agents)
-│   └── skills/        # Reusable skill packages (19 skills)
-└── .husky/            # Git hooks
-```
+**Diátaxis Framework** organizes all docs into 4 categories:
 
-## Key Conventions
+- **Tutorials** (\`docs/tutorials/\`): Learning-oriented
+- **How-to Guides** (\`docs/how-to/\`): Problem-solving
+- **Reference** (\`docs/reference/\`): Technical specifications
+- **Explanation** (\`docs/explanation/\`): Conceptual understanding
 
-### File Naming
+**Key conventions**:
 
-- Format: `[prefix]__[content-identifier].[extension]`
-- Prefix encodes directory path (e.g., `ex-de-wo__implementation.md`)
-- See [File Naming Convention](./docs/explanation/conventions/meta/ex-co-me__file-naming.md)
+- **File Naming**: \`[prefix]\_\_[content-identifier].md\` (prefix encodes directory path)
+- **Linking**: GitHub-compatible markdown with \`.md\` extension, relative paths
+- **Indentation**: 2 spaces for YAML/nested bullets, language-specific for code
+- **Emoji Usage**: Allowed in docs/README/plans, forbidden in agents/config/code
+- **Content Quality**: Active voice, single H1, proper heading nesting, alt text for images, WCAG AA color contrast
 
-### Documentation
+**See**: [Conventions Index](./docs/explanation/conventions/README.md) (24 documentation standards)
 
-- Uses [Diátaxis framework](https://diataxis.fr/): tutorials, how-to, reference, explanation
-- Active voice, single H1, proper heading hierarchy
-- Alt text for images, WCAG AA color contrast
-- See [Content Quality Principles](./docs/explanation/conventions/content/ex-co-co__quality.md)
+## Development Practices
 
-### Git Commits
+**15 software practices** from \`docs/explanation/development/\`:
 
-- Format: `<type>(<scope>): <description>`
-- Types: feat, fix, docs, refactor, test, chore
-- Split work into multiple logical commits by type and domain
-- See [Commit Message Convention](./docs/explanation/development/workflow/ex-de-wo__commit-messages.md)
+- **Functional Programming**: Prefer immutability, pure functions, functional core/imperative shell
+- **Code Quality**: Pre-commit hooks (Prettier, Commitlint, tests), conventional commits
+- **Trunk Based Development**: All work on \`main\` branch, small frequent commits
+- **Implementation Workflow**: Make it work → Make it right → Make it fast
+- **Reproducible Environments**: Volta for Node.js/npm pinning, package-lock.json, .env.example
 
-### Development Workflow
+**See**: [Development Index](./docs/explanation/development/README.md)
 
-1. **Make it work**: Simplest solution that works
-2. **Make it right**: Refactor for quality and maintainability
-3. **Make it fast**: Optimize only if measurements prove necessary
+## Repository Architecture
 
-- See [Implementation Workflow](./docs/explanation/development/workflow/ex-de-wo__implementation.md)
+**Six-layer governance hierarchy**:
 
-## Common Commands
+- **Layer 0: Vision** - WHY we exist (democratize Shariah-compliant enterprise)
+- **Layer 1: Principles** - WHY we value specific approaches (10 core principles)
+- **Layer 2: Conventions** - WHAT documentation rules (24 standards)
+- **Layer 3: Development** - HOW we develop software (15 practices)
+- **Layer 4: AI Agents** - WHO enforces rules (45 specialized agents)
+- **Layer 5: Workflows** - WHEN we run multi-step processes (orchestrated agent sequences)
 
-```bash
+**Skills**: Delivery infrastructure supporting agents (not a governance layer)
+
+**See**: [Repository Architecture](./docs/explanation/ex__repository-governance-architecture.md)
+
+## Common Development Commands
+
+\`\`\`bash
+
 # Install dependencies
+
 npm install
 
 # Build/test/lint all projects
+
 npm run build
 npm run test
 npm run lint
 
-# Build/test specific project
+# Specific project operations
+
 nx build [project-name]
 nx test [project-name]
+nx dev [project-name]
 
-# Build/test only affected projects
+# Affected projects only
+
 nx affected:build
 nx affected:test
 
-# View dependency graph
+# Dependency graph
+
 nx graph
-```
+\`\`\`
 
-## Monorepo Rules
+## Git Workflow
 
-- **apps/** - Deployable apps (`[domain]-[type]` naming)
-- **libs/** - Reusable libraries (`ts-[name]` for TypeScript)
-- Apps can import libs, libs can import libs
-- No circular dependencies
-- Apps never import other apps
-- See [Monorepo Structure](./docs/reference/re__monorepo-structure.md)
+**Trunk Based Development** - all development on \`main\` branch:
 
-## Skills and Agents
+- **Default branch**: \`main\` (AI agents assume this unless told otherwise)
+- **Environment branches**: \`prod-ayokoding-web\`, \`prod-ose-platform-web\` (deployment only, never commit directly)
+- **Commit format**: Conventional Commits \`<type>(<scope>): <description>\`
+- **Pre-commit hooks**: Format (Prettier), validate (Commitlint), test (affected projects)
 
-### Skills (19 available)
+**See**: [Trunk Based Development](./docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md)
 
-Located in `.claude/skills/`. Skills auto-load based on task context. Each skill provides progressive knowledge delivery for specific domains.
+## Plans Organization
 
-Examples:
+Project planning in \`plans/\` folder:
 
-- `docs-applying-content-quality` - Markdown content quality standards
-- `plan-creating-project-plans` - Project planning conventions
-- `wow-understanding-repository-architecture` - Six-layer governance
+- **ideas.md**: 1-3 liner ideas
+- **backlog/**: Future plans
+- **in-progress/**: Active work
+- **done/**: Completed plans
 
-See [Skills Directory](./.claude/skills/README.md) for complete catalog.
+**Folder naming**: \`YYYY-MM-DD\_\_[project-identifier]/\`
 
-### Agents (40+ available)
+**See**: [Plans Organization](./docs/explanation/conventions/project/ex-co-pr__plans-organization.md)
 
-Located in `.claude/agents/`. Agents handle specific tasks autonomously.
+## Temporary Files
 
-Key agent families:
+AI agents use designated temporary directories:
 
-- **Content Creation**: docs-maker, readme-maker, apps-\*-maker
-- **Validation**: docs-checker, readme-checker, apps-\*-checker
-- **Fixing**: docs-fixer, rules-fixer, apps-\*-fixer
-- **Planning**: plan-maker, plan-executor, plan-checker
-- **Operations**: file-manager, deployer
+- **\`generated-reports/\`**: Validation/audit reports (Write + Bash tools required)
+- **\`local-temp/\`**: Miscellaneous temporary files
 
-See [Agents Index](./.claude/agents/README.md) for complete catalog.
+**Checker agents**: MUST write progressive reports to \`generated-reports/\` with pattern \`{agent-family}**{uuid-chain}**{YYYY-MM-DD--HH-MM}\_\_audit.md\`
 
-## Workflows
+**See**: [Temporary Files Convention](./docs/explanation/development/infra/ex-de-in__temporary-files.md)
 
-Multi-step orchestrated processes that coordinate multiple agents:
+## Important Notes
 
-- **Maker-Checker-Fixer**: Three-stage quality workflow
-- **Plan Execution**: Execute plans with iterative validation
-- **Repository Validation**: Cross-check consistency
+- **No staging/commits** unless explicitly instructed
+- **License**: MIT
+- **OpenCode settings**: Configuration in \`.opencode/opencode.json\`
+- **Agent catalog**: 45 agents in \`.opencode/agent/\` (OpenCode format) and \`.claude/agents/\` (Claude Code format)
+- **Shared skills**: Both OpenCode and Claude Code read from \`.claude/skills/\`
 
-See [Workflows Index](./docs/explanation/workflows/README.md) for complete list.
+---
 
-## Git Workflow: Trunk Based Development
-
-- All development on `main` branch
-- Small, frequent commits
-- Minimal branching (environment branches for deployment only)
-- AI agents assume `main` branch by default
-
-See [Trunk Based Development](./docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md).
-
-## Quality Standards
-
-### Code Quality
-
-- Functional programming principles (immutability, pure functions)
-- TypeScript for type safety
-- Prettier formatting (enforced via pre-commit hook)
-- Linting via ESLint
-
-### Documentation Quality
-
-- Active voice, clear language
-- Single H1 heading per file
-- Proper heading hierarchy (H1 → H2 → H3)
-- Alt text for all images
-- WCAG AA color contrast
-
-### Testing
-
-- Pre-push hook runs `test:quick` for affected projects
-- Nx detects affected projects automatically
-
-## For Comprehensive Details
-
-[CLAUDE.md](./CLAUDE.md) provides complete documentation including:
-
-- Detailed conventions (24 documentation standards)
-- Development practices (15 software practices)
-- Complete agent and workflow definitions
-- MCP server configuration
-- Troubleshooting guides
-
-## Notes
-
-- This file is optimized for AI coding assistants supporting AGENTS.md
-- CLAUDE.md remains the authoritative source for Claude Code
-- Both files should be kept in sync when conventions change
-- See [Maker-Checker-Fixer Pattern](./docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md) for quality workflow
+**For complete guidance, see [CLAUDE.md](./CLAUDE.md) (~30,000 lines with comprehensive details).**
