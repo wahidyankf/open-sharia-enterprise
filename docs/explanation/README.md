@@ -16,7 +16,7 @@ Conceptual documentation for the open-sharia-enterprise project. These documents
 
 ## 🎯 Understanding the Six-Layer Architecture
 
-The repository follows a **six-layer architecture** where each layer builds on the foundation of the layer above. See [Repository Governance Architecture](./ex__repository-governance-architecture.md) for comprehensive explanation.
+The repository follows a **six-layer architecture** where each layer builds on the foundation of the layer above. See [Repository Governance Architecture](./ex-ru__repository-governance-architecture.md) for comprehensive explanation.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -45,25 +45,27 @@ graph TD
 
 **Documentation Layers**:
 
-0. **[Vision](./vision/README.md)** (WHY WE EXIST) - Foundational purpose that **inspires** everything
+**All governance layers are now organized under [Rules](./rules/README.md)**:
+
+0. **[Vision](./rules/vision/README.md)** (WHY WE EXIST) - Foundational purpose that **inspires** everything
    - WHY the project exists, WHAT change we seek
    - Nearly immutable - changes only if mission fundamentally shifts
    - **Vision**: Democratize Shariah-compliant enterprise, making ethical Islamic business solutions accessible to everyone
 
-1. **[Core Principles](./principles/README.md)** (WHY) - Foundational values that **govern** everything
+1. **[Core Principles](./rules/principles/README.md)** (WHY) - Foundational values that **govern** everything
    - The WHY behind our decisions (serve the vision)
    - Six principles: Explicit Over Implicit, Accessibility First, Simplicity Over Complexity, Automation Over Manual, Progressive Disclosure, No Time Estimates
    - Each principle includes "Vision Supported" section
    - **Role**: Governance layer - all lower layers must align with these principles
 
-2. **[Conventions](./conventions/README.md)** (WHAT) - How we **write and structure documentation**
+2. **[Conventions](./rules/conventions/README.md)** (WHAT) - How we **write and structure documentation**
    - Documentation format, style, and organization rules implementing principles
    - File naming, linking, content quality implementing principles
    - Applies to: docs/, Hugo content, plans/, README files
    - **Role**: Documentation rules layer - implements principles in concrete WHAT standards
    - **Implemented by**: AI agents (docs**maker, docs**checker, etc.)
 
-3. **[Development](./development/README.md)** (HOW) - How we **develop software and systems**
+3. **[Development](./rules/development/README.md)** (HOW) - How we **develop software and systems**
    - Software development practices implementing principles
    - Build processes, tooling, workflows implementing principles
    - Applies to: source code, Hugo themes/layouts, build systems, AI agents
@@ -76,14 +78,14 @@ graph TD
    - Validate compliance and apply fixes
    - **Role**: Implementation and enforcement layer - ensures principles are followed
 
-5. **[Workflows](./workflows/README.md)** (WHEN) - Multi-step orchestrated processes
+5. **[Workflows](./rules/workflows/README.md)** (WHEN) - Multi-step orchestrated processes
    - Compose AI agents into reusable sequences
    - Define goals, steps, termination criteria
    - Support sequential, parallel, conditional execution
    - **Role**: Orchestration layer - coordinates agents to achieve complex goals
    - **Example**: Maker-Checker-Fixer workflow orchestrates creation, validation, fixing
 
-**Complete Architecture**: See [Repository Governance Architecture](./ex__repository-governance-architecture.md) for layer characteristics, complete traceability examples, usage guidance, troubleshooting, and verification methods.
+**Complete Architecture**: See [Repository Governance Architecture](./ex-ru__repository-governance-architecture.md) for layer characteristics, complete traceability examples, usage guidance, troubleshooting, and verification methods.
 
 ## 🧪 The Layer Test: Where Does My Document Belong?
 
@@ -93,7 +95,7 @@ Use these questions to determine the correct directory for a new document:
 
 **Question**: Can you ask "**WHY do we value this?**" about the content?
 
-- ✅ **YES** → Place in `principles/` - It's a foundational value
+- ✅ **YES** → Place in `rules/principles/` - It's a foundational value
 - ❌ **NO** → It's not a principle, continue to next test
 
 **Examples**:
@@ -106,7 +108,7 @@ Use these questions to determine the correct directory for a new document:
 
 **Question**: Can you ask "**WHAT are the documentation rules?**" about the content?
 
-- ✅ **YES** → Place in `conventions/` - It's a documentation standard
+- ✅ **YES** → Place in `rules/conventions/` - It's a documentation standard
 - ❌ **NO** → It's not a convention, continue to next test
 
 **Examples**:
@@ -119,7 +121,7 @@ Use these questions to determine the correct directory for a new document:
 
 **Question**: Can you ask "**HOW do we develop software?**" about the content?
 
-- ✅ **YES** → Place in `development/` - It's a software practice
+- ✅ **YES** → Place in `rules/development/` - It's a software practice
 - ❌ **NO** → It's not a development practice, continue to next test
 
 **Examples**:
@@ -132,7 +134,7 @@ Use these questions to determine the correct directory for a new document:
 
 **Question**: Can you ask "**WHEN do we orchestrate multiple agents?**" about the content?
 
-- ✅ **YES** → Place in `workflows/` - It's a multi-step process
+- ✅ **YES** → Place in `rules/workflows/` - It's a multi-step process
 - ❌ **NO** → It doesn't belong in explanation/ - consider how-to/ or reference/
 
 **Examples**:
@@ -145,13 +147,13 @@ Use these questions to determine the correct directory for a new document:
 
 ```
 Is it about WHY we value something?
-├─ YES → principles/
+├─ YES → rules/principles/
 └─ NO → Is it about WHAT documentation rules to follow?
-    ├─ YES → conventions/
+    ├─ YES → rules/conventions/
     └─ NO → Is it about HOW to develop software?
-        ├─ YES → development/
+        ├─ YES → rules/development/
         └─ NO → Is it about WHEN to orchestrate multiple agents?
-            ├─ YES → workflows/
+            ├─ YES → rules/workflows/
             └─ NO → Wrong category (try how-to/ or reference/)
 ```
 
@@ -159,16 +161,17 @@ Is it about WHY we value something?
 
 ### Architecture
 
-- [Repository Governance Architecture](./ex__repository-governance-architecture.md) - Comprehensive guide to the six-layer architecture (Vision → Principles → Conventions → Development → Agents → Workflows)
+- [Repository Governance Architecture](./ex-ru__repository-governance-architecture.md) - Comprehensive guide to the six-layer architecture (Vision → Principles → Conventions → Development → Agents → Workflows)
 
-### Layer Documentation
+### Governance Rules
 
-- [Vision](./vision/README.md) - Layer 0: Foundational purpose (WHY we exist)
-- [Core Principles](./principles/README.md) - Layer 1: Foundational values guiding all conventions and development
-- [Conventions](./conventions/README.md) - Layer 2: Documentation writing and organization standards
-- [Development](./development/README.md) - Layer 3: Software development practices and workflows
-- [Workflows](./workflows/README.md) - Layer 5: Multi-step orchestrated processes composing AI agents
+- **[Rules](./rules/README.md)** - All governance layers (Vision, Principles, Conventions, Development, Workflows) organized together
+  - [Vision](./rules/vision/README.md) - Layer 0: Foundational purpose (WHY we exist)
+  - [Core Principles](./rules/principles/README.md) - Layer 1: Foundational values guiding all conventions and development
+  - [Conventions](./rules/conventions/README.md) - Layer 2: Documentation writing and organization standards
+  - [Development](./rules/development/README.md) - Layer 3: Software development practices and workflows
+  - [Workflows](./rules/workflows/README.md) - Layer 5: Multi-step orchestrated processes composing AI agents
 
 ---
 
-**Last Updated**: 2025-12-24
+**Last Updated**: 2026-01-04

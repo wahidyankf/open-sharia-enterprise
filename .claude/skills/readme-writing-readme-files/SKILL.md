@@ -224,12 +224,12 @@ License type with link to LICENSE file
 
 ## References
 
-**Primary Convention**: [README Quality Convention](../../../docs/explanation/conventions/content/ex-co-co__readme-quality.md)
+**Primary Convention**: [README Quality Convention](../../../docs/explanation/rules/conventions/content/ex-ru-co-co__readme-quality.md)
 
 **Related Conventions**:
 
-- [Content Quality Principles](../../../docs/explanation/conventions/content/ex-co-co__quality.md) - Universal markdown standards
-- [Accessibility First Principle](../../../docs/explanation/principles/content/ex-pr-co__accessibility-first.md) - Accessibility requirements
+- [Content Quality Principles](../../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - Universal markdown standards
+- [Accessibility First Principle](../../../docs/explanation/rules/principles/content/ex-ru-pr-co__accessibility-first.md) - Accessibility requirements
 
 **Related Skills**:
 

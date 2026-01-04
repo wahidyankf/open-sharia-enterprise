@@ -489,13 +489,13 @@ Step 3: Compare and classify
 
 ## Reference Documentation
 
-**Primary Convention**: [Factual Validation Convention](../../../docs/explanation/conventions/content/ex-co-co__factual-validation.md)
+**Primary Convention**: [Factual Validation Convention](../../../docs/explanation/rules/conventions/content/ex-ru-co-co__factual-validation.md)
 
 **Related Conventions**:
 
-- [Content Quality Principles](../../../docs/explanation/conventions/content/ex-co-co__quality.md) - Universal content standards
-- [Criticality Levels](../../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md) - Severity classification system
-- [Timestamp Format](../../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md) - Validation metadata timestamps
+- [Content Quality Principles](../../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - Universal content standards
+- [Criticality Levels](../../../docs/explanation/rules/development/quality/ex-ru-de-qu__criticality-levels.md) - Severity classification system
+- [Timestamp Format](../../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__timestamp.md) - Validation metadata timestamps
 
 **Related Skills**:
 
@@ -513,13 +513,13 @@ This Skill packages critical factual validation methodology for maintaining accu
 
 ## References
 
-**Primary Convention**: [Factual Validation Convention](../../../docs/explanation/conventions/content/ex-co-co__factual-validation.md)
+**Primary Convention**: [Factual Validation Convention](../../../docs/explanation/rules/conventions/content/ex-ru-co-co__factual-validation.md)
 
 **Related Conventions**:
 
-- [Content Quality Principles](../../../docs/explanation/conventions/content/ex-co-co__quality.md) - Universal content standards
-- [Criticality Levels](../../../docs/explanation/development/quality/ex-de-qu__criticality-levels.md) - Severity classification
-- [Timestamp Format](../../../docs/explanation/conventions/formatting/ex-co-fo__timestamp.md) - Validation metadata timestamps
+- [Content Quality Principles](../../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - Universal content standards
+- [Criticality Levels](../../../docs/explanation/rules/development/quality/ex-ru-de-qu__criticality-levels.md) - Severity classification
+- [Timestamp Format](../../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__timestamp.md) - Validation metadata timestamps
 
 **Related Skills**:
 

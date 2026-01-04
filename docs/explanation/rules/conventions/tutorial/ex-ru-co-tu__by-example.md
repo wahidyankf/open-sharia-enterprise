@@ -1,0 +1,1089 @@
+---
+title: By-Example Tutorial Convention
+description: Standards for creating code-first by-example tutorials with 95% coverage, self-contained examples, and educational annotations
+category: explanation
+subcategory: conventions
+tags:
+  - convention
+  - tutorial
+  - by-example
+  - education
+  - code-first
+date: 2025-12-25T00:00:00+07:00
+lastmod: 2026-01-03
+draft: false
+weight: 2300
+---
+
+## Purpose
+
+This convention **extends the [Tutorials Convention](./ex-ru-co-tu__general.md) for the By Example tutorial type**, defining specialized standards for code-first learning through 75-90 heavily annotated, self-contained, runnable examples achieving 95% coverage.
+
+**Base requirements**: By-example tutorials inherit general tutorial standards (learning-oriented approach, visual completeness, hands-on elements from [Tutorials Convention](./ex-ru-co-tu__general.md)) and add code-specific specializations defined below.
+
+**Target audience**: Experienced developers (seasonal programmers, software engineers) switching languages or frameworks who prefer learning through working code rather than narrative explanations.
+
+## Structure Integration with General Tutorial Standards
+
+By-example tutorials adapt the general [Tutorial Convention](./ex-ru-co-tu__general.md) structure for code-first learning:
+
+### Adaptation of General Structure
+
+**Traditional Tutorial Structure** (from [Tutorials Convention](./ex-ru-co-tu__general.md)):
+
+- Introduction → Prerequisites → Objectives → Content Sections → Challenges → Summary → Next Steps
+
+**By-Example Structure Adaptation**:
+
+1. **overview.md** (serves as introduction):
+   - Hook and motivation (why this language/framework matters)
+   - Prerequisites (required programming experience level)
+   - Learning approach explanation (code-first via 75-90 examples)
+   - Comparison to by-concept path (narrative-driven alternative)
+   - Links to by-concept tutorials for those preferring comprehensive explanations
+
+2. **beginner.md / intermediate.md / advanced.md** (replace traditional content sections):
+   - Contains 75-90 annotated examples across three complexity levels
+   - Each example is self-contained and runnable (not sequential sections)
+   - Examples progress from fundamental syntax (beginner) to expert mastery (advanced)
+   - Coverage: beginner (0-40%), intermediate (40-75%), advanced (75-95%)
+
+3. **Hands-on elements integrated into examples**:
+   - No separate "Challenges" section - each example IS a hands-on exercise
+   - Self-contained code means learners can copy, run, and modify immediately
+   - Educational annotations guide experimentation
+
+4. **Summary and next steps** (included in overview.md or advanced.md):
+   - Links to by-concept path for deeper narrative explanations
+   - Links to related frameworks/tools
+   - Production application guidance
+
+### Inherited Requirements from General Tutorial Convention
+
+By-example tutorials MUST follow these general tutorial standards:
+
+- ✅ **Learning-oriented approach** (Diátaxis framework): Teach through experience, not just reference
+- ✅ **Progressive Disclosure**: Complexity increases gradually (beginner → intermediate → advanced)
+- ✅ **Visual completeness**: Diagrams when appropriate (30-50% of examples)
+- ✅ **Hands-on elements**: Every example is runnable code (inherently hands-on)
+- ✅ **No time estimates**: Use coverage percentages (0-40%, 40-75%, 75-95%), not time
+- ✅ **Accessibility**: Color-blind friendly diagrams, clear structure
+- ✅ **Real-world relevance**: "Why It Matters" sections connect to production use
+
+### Specialized Requirements for By-Example
+
+Beyond general tutorial standards, by-example adds:
+
+- ✅ **Annotation density**: 1-2.25 comment lines per code line (reduce if > 2.5)
+- ✅ **Self-containment**: Examples runnable within chapter scope
+- ✅ **Five-part structure**: Explanation → Diagram → Annotated Code → Takeaway → Why It Matters
+- ✅ **Coverage target**: 95% through 75-90 examples (higher than other tutorial types)
+- ✅ **Code-first approach**: Show code first, explain through annotations
+
+## Core Characteristics
+
+### 1. Code-First Approach
+
+**Philosophy**: Show the code first, run it second, understand through direct interaction.
+
+Examples prioritize:
+
+- Working, runnable code over explanatory text
+- Inline annotations over separate documentation
+- Immediate execution over theoretical discussion
+- Pattern demonstration over concept explanation
+
+### 2. Coverage Target: 95%
+
+**What 95% means**: Depth and breadth of language/framework features needed for production work.
+
+**Included in 95%**:
+
+- Core syntax and semantics
+- Standard library essentials
+- Production patterns and best practices
+- Common frameworks and tools
+- Modern language features
+- Testing and debugging
+- Concurrency and parallelism
+- Error handling patterns
+- Performance considerations
+
+**Excluded from 95% (the remaining 5%)**:
+
+- Rare edge cases
+- Framework internals and source code
+- Specialized libraries outside standard use
+- Language implementation details
+- Platform-specific advanced features
+- Deprecated features
+
+**Coverage verification**: The ayokoding-web-by-example-checker agent validates coverage against comprehensive checklists for each language/framework.
+
+### 3. Example Count: 75-90 Total
+
+**Target range**: 75-90 examples per language or framework
+
+**Distribution across levels**:
+
+- **Beginner**: 25-30 examples (0-40% coverage) - Fundamentals and syntax
+- **Intermediate**: 25-30 examples (40-75% coverage) - Production patterns
+- **Advanced**: 25-30 examples (75-95% coverage) - Expert mastery
+
+**Rationale**:
+
+- 60 examples (previous target) provided good coverage but left gaps
+- 75-90 examples allows more granular progression and comprehensive reference
+- Equal distribution ensures balanced depth at each level
+- Beyond 90 becomes maintenance burden without proportional value gain
+
+## Example Structure
+
+Every example follows a **mandatory five-part format**:
+
+### Part 1: Brief Explanation (2-3 sentences)
+
+**Purpose**: Provide context and motivation
+
+**Must answer**:
+
+- What is this concept/pattern?
+- Why does it matter in production code?
+- When should you use it?
+
+**Example**:
+
+```markdown
+### Example 23: Context-Aware Cancellation
+
+Go's `context` package provides a standardized way to pass cancellation signals, deadlines, and request-scoped values across API boundaries. Context enables graceful shutdown of operations when requests are cancelled or time out, preventing resource leaks in production systems.
+```
+
+### Part 2: Mermaid Diagram (when appropriate)
+
+**When to include**:
+
+- Data flow between components is non-obvious
+- State transitions need visualization
+- Concurrency patterns involve multiple goroutines/processes
+- Request/response cycles span multiple layers
+- Memory layout or pointer relationships clarify behavior
+- Architecture patterns benefit from visual representation
+
+**When NOT to include**:
+
+- Simple syntax demonstrations (variable declaration, basic loops)
+- Single-function examples with clear linear flow
+- Trivial transformations or calculations
+
+**Diagram requirements**:
+
+- Use color-blind friendly palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+- Include descriptive labels on nodes and edges
+- Keep diagrams focused on the specific concept (avoid overwhelming detail)
+- Use appropriate diagram type (graph LR/TD, sequenceDiagram, stateDiagram)
+
+### Part 3: Heavily Annotated Code
+
+**Core requirement**: Every significant line must have an inline comment
+
+**CRITICAL REQUIREMENT: Annotation Density Standard**
+
+- **Density target**: 1-2.25 lines of comment for every line of code
+- **Simple lines**: 1 line of annotation (variable declarations, simple operations)
+- **Complex lines**: 2 lines of annotation (method calls with multiple effects, state changes)
+- **Focus**: Concise explanations that scale naturally with code complexity
+
+**Annotation Quality Over Quantity**:
+
+- Each line of code gets 1-2 lines explaining what it does and why
+- Simple lines get brief explanations, complex lines get detailed breakdowns
+- Annotations remain focused without repetitive patterns across similar code
+
+**Comment annotations use `// =>` or `# =>` notation**:
+
+```go
+x := 10                          // => x is now 10 (type: int)
+y := x * 2                       // => y is 20 (x remains unchanged at 10)
+result := transform(y)           // => result is "20-transformed" (string)
+fmt.Println(result)              // => Output: 20-transformed
+```
+
+**Required annotations**:
+
+- **Annotation density**: 1-2.25 lines of comment per line of code
+- **Pattern matching**: Document which branch matched and why
+- **Execution flow**: Show control flow decisions (which if/case branch taken)
+
+- **Variable states**: Show value and type after assignment
+- **Intermediate values**: Document values at each transformation step
+- **Function outputs**: Show return values inline
+- **Side effects**: Document mutations, I/O operations, state changes
+- **Expected outputs**: Show stdout/stderr content with `=> Output:` prefix
+- **Timing (compile vs runtime)**: Distinguish compile-time checks from runtime execution
+- **Best practices**: Use ✅ GOOD vs ❌ BAD indicators for pattern comparisons
+- **Error cases**: Document when errors occur and how they're handled
+
+**Code organization**:
+
+- Include full imports (no "assume this is imported")
+- Define helper functions if needed for self-containment
+- Use descriptive variable names (avoid single-letter unless idiomatic)
+- Format code with language-standard tools (gofmt, mix format, etc.)
+
+### Part 4: Key Takeaway (1-2 sentences)
+
+**Purpose**: Distill the core insight to its essence
+
+**Must highlight**:
+
+- The most important pattern or concept
+- When to apply this in production
+- Common pitfalls to avoid
+
+**Example**:
+
+```markdown
+**Key Takeaway**: Use `context.WithTimeout` for operations that must complete within a deadline, and always pass context as the first parameter to functions that perform I/O or long-running operations to enable cancellation.
+```
+
+### Part 5: Why It Matters (2-3 sentences, 50-100 words)
+
+**Purpose**: Connect the concept to production relevance and real-world impact
+
+**Must explain**:
+
+- Why professionals care about this in real systems (sentence 1: production relevance)
+- How it compares to alternatives or what problems it solves (sentence 2: comparative insight)
+- Consequences for quality/performance/safety/scalability (sentence 3: practical impact)
+
+**Quality guidelines**:
+
+- **Active voice**: Use concrete, active language
+- **Length**: 50-100 words (2-3 sentences)
+- **Contextual**: Specific to the concept, NOT generic statements
+- **Production-focused**: Reference real usage, companies, or measurable impacts
+
+**Example**:
+
+```markdown
+**Why It Matters**: Goroutines enable servers to handle 10,000+ concurrent connections on a single machine with minimal memory overhead (2KB stack per goroutine vs 1MB+ per thread in Java), making Go the language of choice for high-throughput network services like Kubernetes, Docker, and Prometheus. The channel-based communication model prevents race conditions that plague shared-memory concurrency, while select statements enable sophisticated timeout and cancellation patterns essential for production resilience.
+```
+
+## Self-Containment Rules
+
+**Critical requirement**: Examples must be copy-paste-runnable within their chapter scope.
+
+### Beginner Level Self-Containment
+
+**Rule**: Each example is completely standalone
+
+**Requirements**:
+
+- Full package declaration and imports
+- All helper functions defined in-place
+- No references to previous examples
+- Runnable with single command (go run, iex, java, etc.)
+
+**Example structure**:
+
+```go
+package main
+
+import (
+    "fmt"
+    "strings"
+)
+
+// Helper function defined inline
+func helper(s string) string {
+    return strings.ToUpper(s)
+}
+
+func main() {
+    result := helper("go")  // => result is "GO"
+    fmt.Println(result)     // => Output: GO
+}
+```
+
+### Intermediate Level Self-Containment
+
+**Rule**: Examples assume beginner concepts but include all necessary code
+
+**Allowed assumptions**:
+
+- Reader knows basic syntax (covered in beginner)
+- Reader understands fundamental types and control flow
+- Reader can run basic commands
+
+**Requirements**:
+
+- Full imports and necessary helper code
+- Can reference beginner concepts conceptually ("as we saw with slices")
+- Must be runnable without referring to previous examples
+- Include type definitions and setup code needed
+
+### Advanced Level Self-Containment
+
+**Rule**: Examples assume beginner + intermediate knowledge but remain runnable
+
+**Allowed assumptions**:
+
+- Reader knows language fundamentals and production patterns
+- Reader understands framework basics and architecture
+- Reader can navigate documentation for context
+
+**Requirements**:
+
+- Full runnable code with imports and setup
+- Can reference patterns by name ("using the middleware pattern")
+- Include all interfaces, types, and configurations needed
+- Provide complete example even if building on earlier concepts
+
+### Cross-Reference Guidelines
+
+**Acceptable cross-references**:
+
+```markdown
+This builds on the middleware pattern from Example 30, but here's the complete code including the middleware setup...
+```
+
+**Unacceptable cross-references**:
+
+```markdown
+Use the `handleRequest` function from Example 12 (code not shown).
+```
+
+**Golden rule**: If you delete all other examples, this example should still compile and run.
+
+### CRITICAL: Per-Example Annotation Density Measurement
+
+**Density is measured PER INDIVIDUAL EXAMPLE, not as file average**
+
+This is a CRITICAL distinction that affects validation and content creation:
+
+- ✅ **CORRECT**: Each example (Example 1, Example 2, etc.) must individually achieve 1.0-2.25 comment lines per code line
+- ❌ **INCORRECT**: Averaging density across entire file (beginner.md, intermediate.md, advanced.md)
+
+**Why per-example measurement matters**:
+
+1. **Consistent learning experience**: Users learn from individual examples. Every example should have consistent annotation depth.
+2. **Quality enforcement**: File averages hide problems - a few over-annotated examples can mask many under-annotated ones.
+3. **Fixer precision**: Validation reports must identify which specific examples need more/fewer annotations, not just file totals.
+
+**Validation approach**:
+
+- Measure code lines and comment lines for EACH example separately
+- Flag examples below 1.0 density (under-annotated, needs enhancement)
+- Flag examples above 2.5 density (over-annotated, needs condensing)
+- Target range: 1.0-2.25 per example (optimal educational value)
+- File averages are informative but NOT the validation criteria
+
+**Content creation approach**:
+
+When creating examples, ensure EACH example meets density target:
+
+- Simple example (basic variable assignment): ~1.0 density
+- Complex example (concurrency with channels): ~2.0-2.25 density
+- Do NOT rely on file averages to "balance out" sparse examples
+
+### Where to Place Extensive Explanations
+
+**CRITICAL**: Code block annotations should focus on WHAT the code does and returns. Extensive WHY explanations go in designated markdown text sections.
+
+**Code block purpose** (inside ` ```language ` fence):
+
+- Show WHAT each line does: `x := 10 // => x is now 10 (type: int)`
+- Show return values: `result := fn() // => result is "output" (string)`
+- Show state changes: `counter++ // => counter is now 5`
+- Show outputs: `fmt.Println(x) // => Output: 10`
+
+**Text section purpose** (outside code blocks):
+
+- **Brief Explanation**: WHY this concept matters, WHEN to use it (2-3 sentences)
+- **Why It Matters**: Production relevance, comparisons, practical impact (50-100 words)
+- **Key Takeaway**: Core insight and common pitfalls (1-2 sentences)
+
+**Anti-pattern** (verbose tutorial-style comments in code):
+
+```go
+// Go's goroutines are lightweight threads managed by the Go runtime.
+// Unlike OS threads which consume 1MB+ of stack space, goroutines
+// start with only 2KB and grow dynamically. This allows Go servers
+// to handle 10,000+ concurrent connections on a single machine.
+go processRequest(req)  // => Goroutine spawned (runs concurrently)
+```
+
+**Correct pattern** (concise code annotations + text sections):
+
+```go
+go processRequest(req)  // => Goroutine spawned (runs concurrently with minimal overhead)
+```
+
+**Why It Matters**: Goroutines enable servers to handle 10,000+ concurrent connections on a single machine with minimal memory overhead (2KB stack per goroutine vs 1MB+ per thread in Java), making Go the language of choice for high-throughput network services like Kubernetes, Docker, and Prometheus.
+
+**Density control**:
+
+- If code annotations exceed 2.5 density, MOVE explanatory content to text sections
+- Keep code annotations focused on state tracking (`// =>` notation)
+- Reserve extensive explanations for "Brief Explanation" and "Why It Matters" sections
+
+**Note**: This annotation density standard (1-2.25 per example) is the general [ayokoding-web code annotation standard](../hugo/ex-ru-co-hu__ayokoding.md#code-annotation-standards) applied to all content. By-example tutorials follow the same standard as other tutorial types, with additional requirements for self-containment and five-part format.
+
+### Output Annotation Pattern
+
+Use `// =>` or `# =>` to show outputs, states, and intermediate values:
+
+```go
+// Variable assignment
+age := 25                        // => age is 25 (type: int)
+
+// Transformation
+doubled := age * 2               // => doubled is 50 (age still 25)
+
+// Function call with return
+greeting := fmt.Sprintf("Age: %d", doubled)
+                                 // => greeting is "Age: 50" (string)
+
+// Output to stdout
+fmt.Println(greeting)            // => Output: Age: 50
+
+// Multiple returns
+result, err := parseValue("42")  // => result is 42, err is nil
+
+// Error case
+result, err := parseValue("bad") // => result is 0, err is "invalid input"
+```
+
+### State Documentation Pattern
+
+Show how state changes through execution:
+
+```go
+// Initial state
+counter := 0                     // => counter is 0
+
+// First increment
+counter++                        // => counter is now 1
+
+// Conditional modification
+if counter > 0 {
+    counter *= 10                // => counter is now 10 (condition was true)
+}
+
+// Final state
+fmt.Println(counter)             // => Output: 10
+```
+
+### Collection Annotation Pattern
+
+Show collection contents at each step:
+
+```go
+// Initialize
+nums := []int{1, 2, 3}           // => nums is [1, 2, 3] (len=3, cap=3)
+
+// Append
+nums = append(nums, 4)           // => nums is [1, 2, 3, 4] (len=4, cap=6)
+
+// Slice
+subset := nums[1:3]              // => subset is [2, 3] (len=2, cap=5)
+                                 // => nums unchanged: [1, 2, 3, 4]
+
+// Modify slice
+subset[0] = 99                   // => subset is [99, 3]
+                                 // => nums is [1, 99, 3, 4] (backing array shared!)
+```
+
+### Concurrency Annotation Pattern
+
+Document goroutine execution and channel operations:
+
+```go
+// Channel creation
+ch := make(chan int)             // => ch is unbuffered channel (blocks on send until receive)
+
+// Goroutine spawn
+go func() {
+    ch <- 42                     // => Blocks until main goroutine receives
+}()                              // => Goroutine now running concurrently
+
+// Receive
+value := <-ch                    // => Blocks until goroutine sends, then value is 42
+fmt.Println(value)               // => Output: 42
+```
+
+## Mermaid Diagram Guidelines
+
+### When to Include Diagrams
+
+**INCLUDE diagram when**:
+
+- **Data flow** spans multiple functions/components
+- **State machines** have multiple states and transitions
+- **Concurrency** involves multiple goroutines/processes/actors
+- **Request flow** traverses multiple layers (HTTP → router → controller → model)
+- **Memory layout** clarifies pointer behavior or data structures
+- **Pipeline patterns** show data transformation stages
+- **Error propagation** shows error handling across function calls
+
+**SKIP diagram when**:
+
+- Single function with linear execution
+- Simple variable assignment or calculation
+- Trivial control flow (basic if/else, simple loops)
+- Concept is clearer from code alone
+
+### Diagram Frequency Target
+
+**Guideline**: 30-50% of examples should include diagrams
+
+**Beginner level**: ~30% (simpler concepts, fewer diagrams needed)
+**Intermediate level**: ~40% (more complex patterns benefit from visualization)
+**Advanced level**: ~50% (complex architectures require visual aids)
+
+### Diagram Types by Use Case
+
+**Data flow**: `graph LR` or `graph TD`
+
+```mermaid
+graph LR
+    A[Input] --> B[Transform]
+    B --> C[Validate]
+    C --> D[Output]
+```
+
+**State transitions**: `stateDiagram-v2`
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Running: start()
+    Running --> Paused: pause()
+    Paused --> Running: resume()
+    Running --> [*]: stop()
+```
+
+**Sequence of operations**: `sequenceDiagram`
+
+```mermaid
+sequenceDiagram
+    Client->>+Server: Request
+    Server->>+Database: Query
+    Database-->>-Server: Result
+    Server-->>-Client: Response
+```
+
+**Memory layout**: `graph TD` with annotations
+
+```mermaid
+graph TD
+    A["slice header<br/>ptr, len=3, cap=5"]
+    B["backing array<br/>[10, 20, 30, _, _]"]
+    A -->|points to| B
+```
+
+### Color-Blind Friendly Palette
+
+**Mandatory colors** (WCAG AA compliant):
+
+- **Blue** #0173B2 - Primary elements, starting states
+- **Orange** #DE8F05 - Secondary elements, processing states
+- **Teal** #029E73 - Success states, outputs
+- **Purple** #CC78BC - Alternative paths, options
+- **Brown** #CA9161 - Neutral elements, helpers
+
+**Forbidden colors**: Red, green, yellow (not color-blind accessible)
+
+**Comment syntax**: Use `%%` for comments (NOT `%%{ }%%` which causes syntax errors)
+
+```mermaid
+%% This is a correct comment
+graph LR
+    A[Start] --> B[End]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#029E73,color:#fff
+```
+
+## Coverage Progression by Level
+
+### Beginner (0-40% coverage)
+
+**Focus**: Language/framework fundamentals and core syntax
+
+**Topics**:
+
+- Variable declaration and types
+- Control flow (if, loops, switch)
+- Functions and methods
+- Basic data structures (arrays, slices, maps, structs)
+- Error handling basics
+- Package/module structure
+- Basic testing
+- Standard library essentials
+
+**Example count**: 25-30 examples
+
+### Intermediate (40-75% coverage)
+
+**Focus**: Production patterns and framework features
+
+**Topics**:
+
+- Advanced data structures and patterns
+- Concurrency primitives
+- I/O and networking
+- HTTP clients and servers
+- Database access patterns
+- Testing strategies (integration, mocking)
+- Common frameworks and libraries
+- Error wrapping and custom errors
+- Configuration and environment handling
+
+**Example count**: 25-30 examples
+
+### Advanced (75-95% coverage)
+
+**Focus**: Expert mastery and optimization
+
+**Topics**:
+
+- Advanced concurrency patterns (pipelines, fan-out/fan-in)
+- Performance optimization and profiling
+- Reflection and metaprogramming
+- Generic programming (where applicable)
+- Advanced framework features
+- Production deployment patterns
+- Observability (metrics, tracing, logging)
+- Security patterns
+- Internals and debugging
+- Best practices synthesis
+
+**Example count**: 25-30 examples
+
+## File Naming and Organization
+
+### Directory Structure
+
+```
+content/
+└── en/
+    └── learn/
+        └── software-engineering/
+            └── programming-language/
+                └── {language}/
+                    └── tutorials/
+                        └── by-example/
+                            ├── _index.md          # Landing page
+                            ├── overview.md        # What is by-example, how to use
+                            ├── beginner.md        # Examples 1-25/30
+                            ├── intermediate.md    # Examples 26-50/60
+                            └── advanced.md        # Examples 51-75/90
+```
+
+### File Naming Pattern
+
+- `overview.md`: Always named "Overview" (weight: 10000000)
+- `beginner.md`: Always named "Beginner" (weight: 10000001)
+- `intermediate.md`: Always named "Intermediate" (weight: 10000002)
+- `advanced.md`: Always named "Advanced" (weight: 10000003)
+
+### Example Numbering
+
+**Sequential numbering across all levels**: Examples 1-75/90
+
+**Beginner**: Examples 1-25 or 1-30
+**Intermediate**: Examples 26-50 or 31-60
+**Advanced**: Examples 51-75 or 61-90
+
+**Rationale**: Sequential numbering creates a unified reference system across the entire tutorial series.
+
+## Frontmatter Requirements
+
+### Overview Page
+
+```yaml
+---
+title: "Overview"
+date: YYYY-MM-DDTHH:MM:SS+07:00
+draft: false
+weight: 10000000
+description: "Learn {Language/Framework} through {N}+ annotated code examples covering 95% of the language - ideal for experienced developers"
+tags: ["language-tag", "tutorial", "by-example", "examples", "code-first"]
+---
+```
+
+### Tutorial Level Pages
+
+```yaml
+---
+title: "Beginner" | "Intermediate" | "Advanced"
+date: YYYY-MM-DDTHH:MM:SS+07:00
+draft: false
+weight: 10000001 | 10000002 | 10000003
+description: "Examples {range}: {Topic summary} ({coverage}% coverage)"
+tags: ["language-tag", "tutorial", "by-example", "level-tag", "topic-tags"]
+---
+```
+
+## Quality Checklist
+
+Before publishing by-example content, verify:
+
+### Coverage
+
+- [ ] 75-90 total examples across three levels
+- [ ] Each level has 25-30 examples
+- [ ] 95% coverage of language/framework achieved
+- [ ] Coverage gaps documented and justified
+
+### Self-Containment
+
+- [ ] Every beginner example is fully standalone
+- [ ] Every intermediate example runs without external references
+- [ ] Every advanced example is copy-paste-runnable
+- [ ] All imports and helper code included
+
+### Code Quality
+
+- [ ] Every significant line has inline comment
+- [ ] Annotation density meets target PER EXAMPLE (1.0-2.25 comment lines per code line, reduce if >2.5, enhance if <1.0)
+- [ ] Annotations explain WHY (not just WHAT)
+- [ ] Pattern matching branches documented (which matched, why)
+- [ ] Execution flow decisions shown (if/case branches, timing)
+- [ ] Best practices indicated (✅ GOOD vs ❌ BAD where relevant)
+- [ ] `// =>` or `# =>` notation shows outputs and states
+- [ ] Variable states documented at each step
+- [ ] Code is formatted with standard tools
+- [ ] Examples compile/run successfully
+
+### Educational Value
+
+- [ ] Brief explanation (2-3 sentences) present
+- [ ] Key takeaway (1-2 sentences) present
+- [ ] Comments explain WHY, not just WHAT
+- [ ] Production relevance clear
+
+### Diagrams
+
+- [ ] 30-50% of examples include Mermaid diagrams
+- [ ] Diagrams use color-blind friendly palette
+- [ ] Diagrams clarify non-obvious concepts
+- [ ] No diagrams for trivial examples
+
+### Structure
+
+- [ ] Five-part format followed consistently
+- [ ] Examples numbered sequentially
+- [ ] File naming convention followed
+- [ ] Frontmatter complete and accurate
+
+## Validation and Enforcement
+
+### Automated Validation
+
+The **ayokoding-web-by-example-checker** agent validates:
+
+- Coverage percentage against target (95%)
+- Example count within range (75-90)
+- Self-containment (imports present, runnable)
+- Comment annotation density (1-2.25 comment lines per code line)
+- Comment annotation quality (`// =>` notation, explains WHY)
+- Diagram presence frequency (30-50%)
+- Color-blind palette compliance
+- Frontmatter completeness
+
+### Quality Gate Workflow
+
+The **by-example-quality-gate** workflow orchestrates:
+
+1. **ayokoding-web-by-example-maker**: Creates/updates examples
+2. **ayokoding-web-by-example-checker**: Validates against standards
+3. **User review**: Reviews audit report
+4. **ayokoding-web-by-example-fixer**: Applies validated fixes
+
+## Relationship to Other Tutorial Types
+
+By-example tutorials complement other learning approaches:
+
+| Type              | Coverage         | Approach                | Target Audience            |
+| ----------------- | ---------------- | ----------------------- | -------------------------- |
+| **Initial Setup** | 0-5%             | Environment setup       | All users                  |
+| **Quick Start**   | 5-30%            | Project-based           | Newcomers                  |
+| **Beginner**      | 0-60%            | Narrative explanations  | Complete beginners         |
+| **By Example**    | **95%**          | **Code-first examples** | **Experienced developers** |
+| **Intermediate**  | 60-85%           | Production patterns     | Past basics                |
+| **Advanced**      | 85-95%           | Expert topics           | Experienced users          |
+| **Cookbook**      | Problem-specific | Recipe solutions        | All levels                 |
+
+**Key distinction**: By-example achieves 95% coverage through examples while beginner achieves 60% through narrative. Advanced tutorials reach 85-95% through deep dives into specialized topics.
+
+## Cross-Language Consistency
+
+When creating by-example tutorials for multiple languages:
+
+**Maintain consistency in**:
+
+- Overall structure (overview + 3 levels)
+- Example count range (75-90)
+- Coverage target (95%)
+- Five-part example format
+- Self-containment rules
+- Comment annotation patterns
+
+**Allow variation in**:
+
+- Language-specific idioms and patterns
+- Framework-specific features
+- Standard library organization
+- Testing approaches
+- Tooling and ecosystem
+
+## Principles Implemented/Respected
+
+This convention implements and respects:
+
+- **[Automation Over Manual](../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Automated validation via ayokoding-web-by-example-checker agent
+- **[Progressive Disclosure](../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
+- **[No Time Estimates](../principles/content/ex-ru-pr-co__no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
+- **[Accessibility First](../principles/content/ex-ru-pr-co__accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
+- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Self-contained examples with explicit imports and clear context
+
+## Scope
+
+### What This Convention Covers
+
+- **By Example tutorial structure** - 75-90 annotated code examples
+- **Target audience** - Experienced developers (95% topic coverage)
+- **Example annotation** - How to explain code examples effectively
+- **Code organization** - How to sequence examples for learning
+- **Example selection** - Which examples to include
+- **Dual-path integration** - How By Example works with by-concept tutorials
+
+### What This Convention Does NOT Cover
+
+- **General tutorial standards** - Covered in [Tutorials Convention](./ex-ru-co-tu__general.md)
+- **Tutorial naming** - Covered in [Tutorial Naming Convention](./ex-ru-co-tu__naming.md)
+- **Hugo implementation** - Hextra specifics in [ayokoding-web convention](../hugo/ex-ru-co-hu__ayokoding.md)
+- **Code quality** - Source code standards in development conventions
+- **Tutorial validation** - Covered by apps**ayokoding-web**by-example-checker agent
+
+## Related Documentation
+
+- [Tutorial Naming Convention](./ex-ru-co-tu__naming.md): Tutorial type definitions and naming standards
+- [Content Quality Principles](../content/ex-ru-co-co__quality.md): General content quality standards
+- [Diagrams Convention](../formatting/ex-ru-co-fo__diagrams.md): Mermaid diagram standards
+- [Color Accessibility Convention](../formatting/ex-ru-co-fo__color-accessibility.md): Color-blind friendly palette
+- [Diátaxis Framework](../meta/ex-ru-co-me__diataxis-framework.md): Tutorial categorization framework
+
+## Multiple Code Blocks Pattern
+
+**CRITICAL NEW RULE**: Examples comparing multiple approaches, libraries, or implementations should use MULTIPLE CODE BLOCKS with markdown text between them, NOT cramming all explanations into comments within a single code block.
+
+### Pattern Structure
+
+When demonstrating alternatives or comparisons:
+
+1. **Brief explanation** (markdown text) - What are we comparing and why
+2. **Code Block 1**: Approach A with minimal annotations (1.0-2.25 density)
+3. **Explanation of Approach A** (markdown text) - WHY this approach, trade-offs
+4. **Code Block 2**: Approach B with minimal annotations (1.0-2.25 density)
+5. **Explanation of Approach B** (markdown text) - WHY this approach, trade-offs
+6. **Comparison/Summary** (markdown text) - When to use each
+
+### Benefits
+
+- **Syntax highlighting works properly** - Each block gets correct language highlighting
+- **Code is copy-paste runnable** - No need to extract from comment-heavy blocks
+- **Clear separation of WHAT vs WHY** - Code shows WHAT (with state annotations), text explains WHY
+- **Each code block maintains density target** - 1.0-2.25 annotations per code line per block
+- **Better scannability** - Readers can quickly compare code side-by-side
+
+### Anti-Pattern: Single Block with Excessive Comments
+
+**BAD EXAMPLE** (violates density target and readability):
+
+```java
+// Library A approach - low-level API
+import lib.A;
+// => Uses library A
+// => Requires manual configuration
+// => Low-level API but powerful
+// => More complex but flexible
+ClassA a = new ClassA();
+// => Creates instance of ClassA
+// => Parameter 1: configuration object
+// => Parameter 2: callback handler
+// => This approach gives you full control
+
+// Library B approach - high-level API
+import lib.B;
+// => Uses library B
+// => Automatic configuration
+// => High-level API but limited
+// => Simpler but less flexible
+ClassB b = ClassB.create();
+// => Creates instance via factory method
+// => No parameters needed (auto-configured)
+// => This approach is easier but less powerful
+```
+
+**Problems**:
+
+- Single code block has excessive comments (density > 2.5)
+- Syntax highlighting broken (imports mixed with comments)
+- Code not runnable (two incompatible approaches in one block)
+- Hard to scan (comments overwhelm code)
+- Explanations buried in code instead of structured text
+
+### Correct Pattern: Multiple Blocks with Text
+
+**GOOD EXAMPLE** (maintains density, clear structure):
+
+**Brief explanation**: Compare two libraries for HTTP client implementation - Library A offers low-level control while Library B provides convenience.
+
+**Approach A: Library A (Low-Level Control)**
+
+```java
+import lib.A;
+
+ClassA client = new ClassA();
+// => Creates client instance
+// => Requires manual configuration
+
+client.configure(config);
+// => Applies configuration
+// => Sets timeout, headers, etc.
+
+Response response = client.execute(request);
+// => Executes HTTP request
+// => Returns response object
+```
+
+**Library A Trade-offs**: Provides fine-grained control over connection pooling, retry logic, and request lifecycle. Requires manual configuration but enables advanced use cases like custom authentication schemes and request interceptors. Best for complex production systems needing precise control.
+
+**Approach B: Library B (High-Level Convenience)**
+
+```java
+import lib.B;
+
+ClassB client = ClassB.create();
+// => Creates auto-configured client
+// => Sensible defaults applied
+
+Response response = client.get(url);
+// => Executes GET request
+// => Returns response object
+```
+
+**Library B Trade-offs**: Prioritizes developer experience with automatic configuration and fluent API. Limited customization options but handles 80% of use cases. Best for rapid prototyping and simple integrations.
+
+**Comparison Summary**: Use Library A when you need complete control over HTTP behavior (custom protocols, advanced retry logic, connection management). Use Library B for standard REST API consumption where defaults suffice. Library A has steeper learning curve but scales to complex requirements.
+
+**Benefits of this approach**:
+
+- **Each code block**: ~1.5 density (3 annotations for 2 code lines)
+- **Syntax highlighting**: Works correctly for each block
+- **Runnable code**: Each block is independently executable
+- **Structured explanations**: WHY and trade-offs in text sections
+- **Easy comparison**: Readers can see code side-by-side
+
+### When to Split Code Blocks to Avoid Excessive Comments
+
+**CRITICAL RULE**: When a single code block contains multiple distinct concepts, approaches, or language implementations, split into separate code blocks with markdown text between them. This prevents comment overload and maintains syntax highlighting.
+
+**Indicators for splitting**:
+
+1. **Commented-out code for alternative implementations** - `/* ... */` or `// ...` showing different approaches
+2. **Code in different languages** - Java + C, Java + SQL, Go + Assembly
+3. **Multiple library approaches** - ASM vs ByteBuddy, JNI vs Panama Foreign Function API
+4. **Excessive comments explaining alternatives/trade-offs** - >30% comment lines explaining options rather than showing state
+5. **Multiple distinct patterns in one example** - Strategy + Observer + Decorator combined
+
+**Why this matters**:
+
+- **Syntax highlighting breaks** when mixing languages or commented-out alternatives
+- **Density measurement becomes meaningless** when comments explain alternatives instead of annotating code
+- **Code isn't runnable** when showing multiple incompatible approaches in one block
+- **Scannability suffers** when readers must mentally parse which code is active
+
+**Solution**: Split into multiple code blocks with explanatory text between:
+
+````markdown
+**Approach A: Low-Level Library**
+
+```java
+import lib.A;
+ClassA client = new ClassA();  // => Creates client instance
+client.configure(config);      // => Applies configuration
+```
+
+**Trade-offs**: Provides fine-grained control but requires manual setup.
+
+**Approach B: High-Level Library**
+
+```java
+import lib.B;
+ClassB client = ClassB.create();  // => Auto-configured client
+Response res = client.get(url);   // => Executes GET request
+```
+
+**Trade-offs**: Automatic configuration but limited customization.
+````
+
+This maintains 1.0-2.25 density PER BLOCK while separating WHAT (code annotations) from WHY (explanatory text).
+
+### When to Use Multiple Code Blocks
+
+**Use multiple code blocks when**:
+
+- Comparing different libraries (Library A vs Library B)
+- Showing alternative implementations (approach 1 vs approach 2)
+- Demonstrating evolution (before refactoring → after refactoring)
+- Illustrating different language features (for loop vs stream API)
+- Contrasting patterns (✅ GOOD vs ❌ BAD examples)
+
+**Still use single code block when**:
+
+- Showing one approach with progressive state changes
+- Demonstrating linear execution flow
+- Building up a single concept step by step
+- Code doesn't involve comparisons or alternatives
+
+### Integration with Five-Part Format
+
+When using multiple code blocks within an example:
+
+1. **Brief Explanation** - Introduce the comparison
+2. **Diagram (optional)** - Show conceptual difference if helpful
+3. **Multiple Annotated Code Blocks** - Each approach as separate block with text between
+4. **Key Takeaway** - Summarize when to use each approach
+5. **Why It Matters** - Production implications of the choice
+
+### Annotation Density Measurement
+
+**IMPORTANT**: Density is measured PER CODE BLOCK when using multiple blocks:
+
+- Code Block 1 (Approach A): Should have 1.0-2.25 density
+- Code Block 2 (Approach B): Should have 1.0-2.25 density
+- Text sections between blocks: Do NOT count toward density
+
+**Example measurement**:
+
+```
+Code Block 1: 5 code lines, 6 annotation lines = 1.2 density ✅
+Text Section: 3 sentences of explanation (NOT counted)
+Code Block 2: 4 code lines, 8 annotation lines = 2.0 density ✅
+Overall: Both blocks meet 1.0-2.25 target
+```
+
+## Principles Implemented/Respected
+
+This convention implements and respects:
+
+- **[Automation Over Manual](../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Automated validation via ayokoding-web-by-example-checker agent
+- **[Progressive Disclosure](../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
+- **[No Time Estimates](../principles/content/ex-ru-pr-co__no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
+- **[Accessibility First](../principles/content/ex-ru-pr-co__accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
+- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Self-contained examples with explicit imports and clear context

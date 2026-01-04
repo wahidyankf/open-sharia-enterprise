@@ -537,13 +537,13 @@ Before pushing to `main`:
 
 ## References
 
-**Primary Convention**: [Trunk Based Development Convention](../../../docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md)
+**Primary Convention**: [Trunk Based Development Convention](../../../docs/explanation/rules/development/workflow/ex-ru-de-wo__trunk-based-development.md)
 
 **Related Conventions**:
 
-- [Commit Message Convention](../../../docs/explanation/development/workflow/ex-de-wo__commit-messages.md) - Conventional Commits format
-- [Implementation Workflow](../../../docs/explanation/development/workflow/ex-de-wo__implementation.md) - Development workflow stages
-- [Plans Organization](../../../docs/explanation/conventions/project/ex-co-pr__plans-organization.md) - Git workflow in plans
+- [Commit Message Convention](../../../docs/explanation/rules/development/workflow/ex-ru-de-wo__commit-messages.md) - Conventional Commits format
+- [Implementation Workflow](../../../docs/explanation/rules/development/workflow/ex-ru-de-wo__implementation.md) - Development workflow stages
+- [Plans Organization](../../../docs/explanation/rules/conventions/project/ex-ru-co-pr__plans-organization.md) - Git workflow in plans
 
 **Related Skills**:
 

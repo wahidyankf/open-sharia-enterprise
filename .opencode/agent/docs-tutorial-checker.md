@@ -89,7 +89,7 @@ This agent leverages Skills from `.claude/skills/`:
 
 You are an expert tutorial quality validator specializing in pedagogical assessment, narrative flow analysis, and instructional design evaluation.
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/development/quality/ex-de-qu-criticality-levels.md) and `wow-assessing-criticality-confidence` Skill for assessment guidance.
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu-criticality-levels.md) and `wow-assessing-criticality-confidence` Skill for assessment guidance.
 
 ## Temporary Report Files
 
@@ -108,8 +108,8 @@ The `wow-generating-validation-reports` Skill provides:
 
 This agent validates tutorials against standards defined in:
 
-- [Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu-general.md) - Complete tutorial standards and validation criteria
-- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu-naming.md) - Standardized tutorial types and depth levels
+- [Tutorial Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-general.md) - Complete tutorial standards and validation criteria
+- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-naming.md) - Standardized tutorial types and depth levels
 
 The Tutorial Convention defines what to validate:
 
@@ -150,7 +150,7 @@ Validate tutorial documents to ensure they are **learning-oriented, well-narrate
 
 ## Validation Criteria
 
-This agent validates using criteria from [Tutorial Convention - Validation Criteria](../../docs/explanation/conventions/tutorial/ex-co-tu-general.md#-validation-criteria).
+This agent validates using criteria from [Tutorial Convention - Validation Criteria](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-general.md#-validation-criteria).
 
 **Validation Categories:**
 
@@ -165,7 +165,7 @@ See convention for complete checklist and pass/fail criteria.
 
 ### Quick Reference - Key Checks
 
-All validation criteria are defined in [Tutorial Convention - Validation Criteria](../../docs/explanation/conventions/tutorial/ex-co-tu-general.md#-validation-criteria).
+All validation criteria are defined in [Tutorial Convention - Validation Criteria](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-general.md#-validation-criteria).
 
 **Six Validation Categories:**
 
@@ -279,7 +279,7 @@ Use `wow-generating-validation-reports` Skill for:
    - Do colors work in both light and dark mode?
    - Is shape differentiation used (not color alone)?
 
-3. **Check color accessibility** (validate against [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo-color-accessibility.md))
+3. **Check color accessibility** (validate against [Color Accessibility Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-color-accessibility.md))
    - Uses accessible palette: blue (#0173B2), orange (#DE8F05), teal (#029E73), purple (#CC78BC), brown (#CA9161)
    - Avoids inaccessible colors: red, green, yellow
    - Includes black borders (#000000) for definition
@@ -287,7 +287,7 @@ Use `wow-generating-validation-reports` Skill for:
    - Has comment documenting color scheme
    - Uses shape differentiation (not color alone)
 
-4. **Check diagram splitting** (validate against [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/conventions/formatting/ex-co-fo-diagrams.md#diagram-size-and-splitting))
+4. **Check diagram splitting** (validate against [Diagrams Convention - Diagram Size and Splitting](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-diagrams.md#diagram-size-and-splitting))
    - No subgraphs (renders too small on mobile)
    - Limited branching (≤4-5 branches from single node)
    - One concept per diagram
@@ -372,7 +372,7 @@ See `wow-generating-validation-reports` Skill for complete report template struc
 
 ## Anti-Patterns to Check For
 
-Validate against common mistakes defined in [Tutorial Convention - Anti-Patterns](../../docs/explanation/conventions/tutorial/ex-co-tu-general.md#-anti-patterns).
+Validate against common mistakes defined in [Tutorial Convention - Anti-Patterns](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-general.md#-anti-patterns).
 
 **Key anti-patterns include:**
 

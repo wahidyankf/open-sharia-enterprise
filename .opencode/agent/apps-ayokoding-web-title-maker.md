@@ -7,12 +7,12 @@ tools:
   read: true
   edit: true
 permission:
-  todowrite: deny
-  grep: deny
-  write: deny
-  websearch: deny
-  glob: deny
   bash: deny
+  glob: deny
+  websearch: deny
+  todowrite: deny
+  write: deny
+  grep: deny
   webfetch: deny
   skill:
     apps-ayokoding-web-developing-content: allow
@@ -51,4 +51,4 @@ Create titles following conventions for tutorial types and levels.
 
 ## Reference
 
-- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu-naming.md)
+- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-naming.md)

@@ -1275,17 +1275,17 @@ def test_validate_agent_definition():
 
 ### Files to Update
 
-| File                                                         | Changes Required                                             |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `CLAUDE.md`                                                  | Update agent source location, sync workflow                  |
-| `AGENTS.md`                                                  | Update agent source location, sync workflow                  |
-| `docs/explanation/development/agents/ex-de-ag__ai-agents.md` | Add "Source of Truth" section, document tool-agnostic format |
-| `docs/explanation/ex__repository-governance-architecture.md` | Update Layer 4 to reference docs source                      |
-| `.claude/agents/README.md`                                   | Add generated banner, link to source                         |
-| `.opencode/agent/README.md`                                  | Add generated banner, link to source                         |
-| `docs/explanation/agents/README.md`                          | New file: canonical agent catalog                            |
-| `docs/explanation/skills/README.md`                          | New file: canonical skills catalog                           |
-| `docs/explanation/agents/meta/ex-ag-me__architecture.md`     | New file: agent architecture documentation                   |
+| File                                                                  | Changes Required                                             |
+| --------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `CLAUDE.md`                                                           | Update agent source location, sync workflow                  |
+| `AGENTS.md`                                                           | Update agent source location, sync workflow                  |
+| `docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md` | Add "Source of Truth" section, document tool-agnostic format |
+| `docs/explanation/ex-ru__repository-governance-architecture.md`       | Update Layer 4 to reference docs source                      |
+| `.claude/agents/README.md`                                            | Add generated banner, link to source                         |
+| `.opencode/agent/README.md`                                           | Add generated banner, link to source                         |
+| `docs/explanation/agents/README.md`                                   | New file: canonical agent catalog                            |
+| `docs/explanation/skills/README.md`                                   | New file: canonical skills catalog                           |
+| `docs/explanation/agents/meta/ex-ag-me__architecture.md`              | New file: agent architecture documentation                   |
 
 ### Example CLAUDE.md Update
 

@@ -51,7 +51,7 @@ Instructions for AI agents working with this repository via OpenCode.
 - **Progressive Reporting**: Write findings immediately during execution
 - **UUID Chains**: Prevent parallel execution collisions
 
-**See**: [Maker-Checker-Fixer Pattern](./docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md)
+**See**: [Maker-Checker-Fixer Pattern](./docs/explanation/rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md)
 
 ## Skills (Knowledge Packages)
 
@@ -84,7 +84,7 @@ permission:
 
 ## Core Principles
 
-All work follows **10 foundational principles** from \`docs/explanation/principles/\`:
+All work follows **10 foundational principles** from \`docs/explanation/rules/principles/\`:
 
 - **Documentation First**: Documentation is mandatory, not optional
 - **Accessibility First**: WCAG AA compliance, color-blind friendly palettes
@@ -92,7 +92,7 @@ All work follows **10 foundational principles** from \`docs/explanation/principl
 - **Explicit Over Implicit**: Explicit configuration over magic behavior
 - **Automation Over Manual**: Automate repetitive tasks
 
-**Full list**: [Core Principles Index](./docs/explanation/principles/README.md)
+**Full list**: [Core Principles Index](./docs/explanation/rules/principles/README.md)
 
 ## Documentation Standards
 
@@ -111,11 +111,11 @@ All work follows **10 foundational principles** from \`docs/explanation/principl
 - **Emoji Usage**: Allowed in docs/README/plans, forbidden in agents/config/code
 - **Content Quality**: Active voice, single H1, proper heading nesting, alt text for images, WCAG AA color contrast
 
-**See**: [Conventions Index](./docs/explanation/conventions/README.md) (24 documentation standards)
+**See**: [Conventions Index](./docs/explanation/rules/conventions/README.md) (24 documentation standards)
 
 ## Development Practices
 
-**15 software practices** from \`docs/explanation/development/\`:
+**15 software practices** from \`docs/explanation/rules/development/\`:
 
 - **Functional Programming**: Prefer immutability, pure functions, functional core/imperative shell
 - **Code Quality**: Pre-commit hooks (Prettier, Commitlint, tests), conventional commits
@@ -123,7 +123,7 @@ All work follows **10 foundational principles** from \`docs/explanation/principl
 - **Implementation Workflow**: Make it work → Make it right → Make it fast
 - **Reproducible Environments**: Volta for Node.js/npm pinning, package-lock.json, .env.example
 
-**See**: [Development Index](./docs/explanation/development/README.md)
+**See**: [Development Index](./docs/explanation/rules/development/README.md)
 
 ## Repository Architecture
 
@@ -138,7 +138,7 @@ All work follows **10 foundational principles** from \`docs/explanation/principl
 
 **Skills**: Delivery infrastructure supporting agents (not a governance layer)
 
-**See**: [Repository Architecture](./docs/explanation/ex__repository-governance-architecture.md)
+**See**: [Repository Architecture](./docs/explanation/ex-ru__repository-governance-architecture.md)
 
 ## Common Development Commands
 
@@ -179,7 +179,7 @@ nx graph
 - **Commit format**: Conventional Commits \`<type>(<scope>): <description>\`
 - **Pre-commit hooks**: Format (Prettier), validate (Commitlint), test (affected projects)
 
-**See**: [Trunk Based Development](./docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md)
+**See**: [Trunk Based Development](./docs/explanation/rules/development/workflow/ex-ru-de-wo__trunk-based-development.md)
 
 ## Plans Organization
 
@@ -192,7 +192,7 @@ Project planning in \`plans/\` folder:
 
 **Folder naming**: \`YYYY-MM-DD\_\_[project-identifier]/\`
 
-**See**: [Plans Organization](./docs/explanation/conventions/project/ex-co-pr__plans-organization.md)
+**See**: [Plans Organization](./docs/explanation/rules/conventions/project/ex-ru-co-pr__plans-organization.md)
 
 ## Temporary Files
 
@@ -203,7 +203,7 @@ AI agents use designated temporary directories:
 
 **Checker agents**: MUST write progressive reports to \`generated-reports/\` with pattern \`{agent-family}**{uuid-chain}**{YYYY-MM-DD--HH-MM}\_\_audit.md\`
 
-**See**: [Temporary Files Convention](./docs/explanation/development/infra/ex-de-in__temporary-files.md)
+**See**: [Temporary Files Convention](./docs/explanation/rules/development/infra/ex-ru-de-in__temporary-files.md)
 
 ## Important Notes
 

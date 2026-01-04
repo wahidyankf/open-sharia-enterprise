@@ -225,13 +225,13 @@ description: "Workflow name: detailed description"
 
 ## Workflow File Naming
 
-**Convention**: `ex-wf-[scope]__[workflow-name].md`
+**Convention**: `ex-ru-wf-[scope]__[workflow-name].md`
 
 **Examples**:
 
-- `ex-wf-pl__quality-gate.md` - Plan quality gate workflow
-- `ex-wf-do__quality-gate.md` - Docs quality gate workflow
-- `ex-wf-wo__rules-quality-gate.md` - Repo rules quality gate workflow
+- `ex-ru-wf-pl__quality-gate.md` - Plan quality gate workflow
+- `ex-ru-wf-do__quality-gate.md` - Docs quality gate workflow
+- `ex-ru-wf-wo__rules-quality-gate.md` - Repo rules quality gate workflow
 
 ## Quality Checklist
 
@@ -250,12 +250,12 @@ Before publishing workflow:
 
 ## References
 
-**Primary Convention**: [Workflow Pattern Convention](../../../docs/explanation/workflows/meta/ex-wf-me__workflow-pattern.md)
+**Primary Convention**: [Workflow Pattern Convention](../../../docs/explanation/rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
 
 **Related Conventions**:
 
-- [Maker-Checker-Fixer Pattern](../../../docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md) - Three-stage workflow pattern
-- [Acceptance Criteria Convention](../../../docs/explanation/development/infra/ex-de-in__acceptance-criteria.md) - Gherkin format
+- [Maker-Checker-Fixer Pattern](../../../docs/explanation/rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md) - Three-stage workflow pattern
+- [Acceptance Criteria Convention](../../../docs/explanation/rules/development/infra/ex-ru-de-in__acceptance-criteria.md) - Gherkin format
 
 **Related Skills**:
 

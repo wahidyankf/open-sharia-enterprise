@@ -444,7 +444,7 @@ graph TD
 
 **Documentation**:
 
-- **Before**: [Repository Architecture](../../docs/explanation/ex__repository-governance-architecture.md) references 17 Skills
+- **Before**: [Repository Architecture](../../docs/explanation/ex-ru__repository-governance-architecture.md) references 17 Skills
 - **After**: Updated to reflect 21-24 Skills with new categories
 - **Changes**: Update Skills count, add new Skills to categories list
 
@@ -570,7 +570,7 @@ Initialize report at execution start, write findings incrementally
 
 #### Documentation Updates
 
-**File**: `docs/explanation/ex__repository-governance-architecture.md`
+**File**: `docs/explanation/ex-ru__repository-governance-architecture.md`
 
 **Before** (line 313):
 
@@ -886,22 +886,22 @@ Skills don't grant agents additional tool access. Skill references are knowledge
 
 This plan implements the following core principles:
 
-- **[Simplicity Over Complexity](../../docs/explanation/principles/general/ex-pr-ge__simplicity-over-complexity.md)**: Single source of truth (Skills) instead of duplication. Simpler agents focusing on tasks only.
+- **[Simplicity Over Complexity](../../docs/explanation/rules/principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Single source of truth (Skills) instead of duplication. Simpler agents focusing on tasks only.
 
-- **[Documentation First](../../docs/explanation/principles/content/ex-pr-co__documentation-first.md)**: Skills encode conventions systematically. Agent-Skill separation guidelines documented.
+- **[Documentation First](../../docs/explanation/rules/principles/content/ex-ru-pr-co__documentation-first.md)**: Skills encode conventions systematically. Agent-Skill separation guidelines documented.
 
-- **[Explicit Over Implicit](../../docs/explanation/principles/software-engineering/ex-pr-se__explicit-over-implicit.md)**: Clear Skill references in frontmatter. Explicit separation between agent content and Skill content.
+- **[Explicit Over Implicit](../../docs/explanation/rules/principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Clear Skill references in frontmatter. Explicit separation between agent content and Skill content.
 
-- **[Automation Over Manual](../../docs/explanation/principles/software-engineering/ex-pr-se__automation-over-manual.md)**: Automated duplication detection. Automated validation (quality gates, regression testing).
+- **[Automation Over Manual](../../docs/explanation/rules/principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Automated duplication detection. Automated validation (quality gates, regression testing).
 
 ### Conventions Respected
 
 This plan respects the following conventions:
 
-- **[AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md)**: Agent structure, size limits, Skills integration, frontmatter requirements
+- **[AI Agents Convention](../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md)**: Agent structure, size limits, Skills integration, frontmatter requirements
 
-- **[Repository Architecture](../../docs/explanation/ex__repository-governance-architecture.md)**: Six-layer hierarchy with Skills as delivery infrastructure (not governance)
+- **[Repository Architecture](../../docs/explanation/ex-ru__repository-governance-architecture.md)**: Six-layer hierarchy with Skills as delivery infrastructure (not governance)
 
-- **[Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in__temporary-files.md)**: Progressive writing of audit reports to generated-reports/
+- **[Temporary Files Convention](../../docs/explanation/rules/development/infra/ex-ru-de-in__temporary-files.md)**: Progressive writing of audit reports to generated-reports/
 
-- **[Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md)**: All Mermaid diagrams use accessible palette
+- **[Color Accessibility Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__color-accessibility.md)**: All Mermaid diagrams use accessible palette

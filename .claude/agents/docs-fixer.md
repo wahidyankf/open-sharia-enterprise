@@ -48,13 +48,13 @@ Your primary job is to:
 
 **Criticality Levels**: See `wow-assessing-criticality-confidence` Skill for complete four-level system (CRITICAL/HIGH/MEDIUM/LOW) indicating importance/urgency of findings.
 
-**Confidence Levels**: See [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu-fixer-confidence-levels.md) for universal three-level system:
+**Confidence Levels**: See [Fixer Confidence Levels Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) for universal three-level system:
 
 - **HIGH_CONFIDENCE** → Apply fix automatically (objective, verifiable issues)
 - **MEDIUM_CONFIDENCE** → Skip, flag for manual review (subjective, ambiguous, risky)
 - **FALSE_POSITIVE** → Skip, report to improve checker (re-validation disproves issue)
 
-**Priority Execution**: See [Fixer Confidence Levels - Integration](../../docs/explanation/development/quality/ex-de-qu-fixer-confidence-levels.md#integration-with-criticality-levels) for how criticality + confidence determine fix order (P0-P4).
+**Priority Execution**: See [Fixer Confidence Levels - Integration](../../docs/explanation/rules/development/quality/ex-ru-de-qu-fixer-confidence-levels.md#integration-with-criticality-levels) for how criticality + confidence determine fix order (P0-P4).
 
 ### Domain-Specific Confidence Examples
 
@@ -85,7 +85,7 @@ Your primary job is to:
 
 ## Mode Parameter Handling
 
-**CRITICAL**: Support `mode` parameter for quality-gate workflows per [Fixer Confidence Levels - Mode Parameter](../../docs/explanation/development/quality/ex-de-qu-fixer-confidence-levels.md#mode-parameter-handling).
+**CRITICAL**: Support `mode` parameter for quality-gate workflows per [Fixer Confidence Levels - Mode Parameter](../../docs/explanation/rules/development/quality/ex-ru-de-qu-fixer-confidence-levels.md#mode-parameter-handling).
 
 **Mode Levels**:
 
@@ -151,7 +151,7 @@ Your primary job is to:
 
 3. **Verify report exists** before proceeding
 
-**Note**: Report filenames use 4-part format per [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in-temporary-files.md): `{agent}-{uuid-chain}-{timestamp}-{type}.md`
+**Note**: Report filenames use 4-part format per [Temporary Files Convention](../../docs/explanation/rules/development/infra/ex-ru-de-in-temporary-files.md): `{agent}-{uuid-chain}-{timestamp}-{type}.md`
 
 ### 2. Validation Strategy
 
@@ -314,14 +314,14 @@ Generate fix report in `generated-reports/`:
 ### Pattern 5: Mathematical Notation Fix
 
 **Finding**: LaTeX delimiter error (single `$` on own line)
-**Validation**: Pattern match against [Mathematical Notation Convention](../../docs/explanation/conventions/formatting/ex-co-fo-mathematical-notation.md)
+**Validation**: Pattern match against [Mathematical Notation Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-mathematical-notation.md)
 **Confidence**: HIGH (objective syntax error)
 **Action**: Replace single `$` on own line with `$$`
 
 ### Pattern 6: Diagram Color Accessibility Fix
 
 **Finding**: Inaccessible color used in diagram (red, green, yellow)
-**Validation**: Check against accessible palette from [Color Accessibility Convention](../../docs/explanation/conventions/formatting/ex-co-fo-color-accessibility.md)
+**Validation**: Check against accessible palette from [Color Accessibility Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-color-accessibility.md)
 **Confidence**: HIGH (objective palette violation)
 **Action**: Replace with accessible color from verified palette
 
@@ -434,20 +434,20 @@ Generate fix report in `generated-reports/`:
 
 **Agent Conventions**:
 
-- `docs/explanation/development/agents/ex-de-ag-ai-agents.md` - AI agents convention
+- `docs/explanation/rules/development/agents/ex-ru-de-ag-ai-agents.md` - AI agents convention
 
 **Quality Conventions**:
 
-- `docs/explanation/development/quality/ex-de-qu-fixer-confidence-levels.md` - Universal confidence levels system
-- `docs/explanation/development/quality/ex-de-qu-criticality-levels.md` - Criticality categorization
-- `docs/explanation/development/pattern/ex-de-pa-maker-checker-fixer.md` - Three-stage pattern
-- `docs/explanation/development/infra/ex-de-in-temporary-files.md` - Report file naming
+- `docs/explanation/rules/development/quality/ex-ru-de-qu-fixer-confidence-levels.md` - Universal confidence levels system
+- `docs/explanation/rules/development/quality/ex-ru-de-qu-criticality-levels.md` - Criticality categorization
+- `docs/explanation/rules/development/pattern/ex-ru-de-pa-maker-checker-fixer.md` - Three-stage pattern
+- `docs/explanation/rules/development/infra/ex-ru-de-in-temporary-files.md` - Report file naming
 
 **Documentation Conventions**:
 
-- `docs/explanation/conventions/content/ex-co-co-factual-validation.md` - Factual validation methodology
-- `docs/explanation/conventions/formatting/ex-co-fo-mathematical-notation.md` - LaTeX notation rules
-- `docs/explanation/conventions/formatting/ex-co-fo-color-accessibility.md` - Accessible color palette
+- `docs/explanation/rules/conventions/content/ex-ru-co-co-factual-validation.md` - Factual validation methodology
+- `docs/explanation/rules/conventions/formatting/ex-ru-co-fo-mathematical-notation.md` - LaTeX notation rules
+- `docs/explanation/rules/conventions/formatting/ex-ru-co-fo-color-accessibility.md` - Accessible color palette
 
 **Related Agents**:
 

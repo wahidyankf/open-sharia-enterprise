@@ -15,7 +15,7 @@ Create new AI agent files following AI Agents Convention.
 
 ## Reference
 
-- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag-ai-agents.md)
+- [AI Agents Convention](../../docs/explanation/rules/development/agents/ex-ru-de-ag-ai-agents.md)
 - Skill: `docs-applying-diataxis-framework`
 
 ## Workflow

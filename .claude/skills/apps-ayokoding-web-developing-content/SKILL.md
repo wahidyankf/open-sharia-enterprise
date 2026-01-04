@@ -368,14 +368,14 @@ title: "Software Engineering"
 
 ## References
 
-**Primary Convention**: [Hugo Content Convention - ayokoding-web](../../../docs/explanation/conventions/hugo/ex-co-hu__ayokoding.md)
+**Primary Convention**: [Hugo Content Convention - ayokoding-web](../../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
 
 **Related Conventions**:
 
-- [Programming Language Tutorial Structure](../../../docs/explanation/conventions/tutorial/ex-co-tu__programming-language-structure.md) - Dual-path organization
-- [By Example Tutorial Convention](../../../docs/explanation/conventions/tutorial/ex-co-tu__by-example.md) - Annotation standards
-- [Hugo Content Shared](../../../docs/explanation/conventions/hugo/ex-co-hu__shared.md) - Shared Hugo patterns
-- [Content Quality Principles](../../../docs/explanation/conventions/content/ex-co-co__quality.md) - Universal quality standards
+- [Programming Language Tutorial Structure](../../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__programming-language-structure.md) - Dual-path organization
+- [By Example Tutorial Convention](../../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__by-example.md) - Annotation standards
+- [Hugo Content Shared](../../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__shared.md) - Shared Hugo patterns
+- [Content Quality Principles](../../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - Universal quality standards
 
 **Related Skills**:
 

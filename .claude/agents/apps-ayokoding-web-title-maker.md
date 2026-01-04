@@ -21,4 +21,4 @@ Create titles following conventions for tutorial types and levels.
 
 ## Reference
 
-- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu-naming.md)
+- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-naming.md)

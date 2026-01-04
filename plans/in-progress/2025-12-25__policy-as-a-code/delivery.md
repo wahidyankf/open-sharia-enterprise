@@ -38,7 +38,7 @@ Design policy schema and establish governance model
    - Naming: Semantic IDs (e.g., `file-naming-v1`, `frontmatter-v1`)
 
 2. **Schema Structure Documentation**
-   - File: `docs/explanation/development/infra/ex-de-in__policy-as-code.md`
+   - File: `docs/explanation/rules/development/infra/ex-ru-de-in__policy-as-code.md`
    - Content: Complete policy schema specification
    - Sections:
      - Policy format and structure
@@ -94,7 +94,7 @@ Design policy schema and establish governance model
   - YAML parsing patterns (internal/markdown/frontmatter.go)
   - Testing approach (table-driven tests)
   - Nx integration patterns (project.json reference)
-- [ ] Create `docs/explanation/development/infra/ex-de-in__policy-as-code.md`
+- [ ] Create `docs/explanation/rules/development/infra/ex-ru-de-in__policy-as-code.md`
 - [ ] Create `apps/governance-cli/internal/policy/policy-schema.json` (JSON Schema for policy validation)
   - Define schema for policy YAML structure
   - Include required fields validation
@@ -584,7 +584,7 @@ Finalize architecture and enable future scaling
   - Coverage map (which agents consume which policies)
   - Usage examples
   - Best practices
-- **Important**: Actual policies remain embedded in `docs/explanation/conventions/*.md` and `docs/explanation/development/*.md`, NOT in a separate policies/ directory
+- **Important**: Actual policies remain embedded in `docs/explanation/rules/conventions/*.md` and `docs/explanation/rules/development/*.md`, NOT in a separate policies/ directory
 
 **2. policy-coverage-analyzer Agent**
 
@@ -1031,16 +1031,16 @@ Phase 5 (consolidation)
 ### Phase 0
 
 - `apps/governance-cli/` (NEW - entire app with Nx + Cobra)
-- `docs/explanation/development/infra/ex-de-in__policy-as-code.md` (NEW)
+- `docs/explanation/rules/development/infra/ex-ru-de-in__policy-as-code.md` (NEW)
 - `apps/governance-cli/internal/policy/types.go` (NEW)
 - `apps/governance-cli/internal/policy/engine.go` (NEW)
 - `apps/governance-cli/internal/policy/engine_test.go` (NEW)
 - `apps/governance-cli/cmd/root.go` (NEW)
 - `apps/governance-cli/cmd/policy.go` (NEW)
 - `.claude/agents/policy-validator.md` (NEW)
-- `docs/explanation/conventions/meta/ex-co-me__file-naming.md` (MODIFY)
-- `docs/explanation/conventions/content/ex-co-co__convention-writing.md` (MODIFY)
-- `docs/explanation/conventions/content/ex-co-co__quality.md` (MODIFY)
+- `docs/explanation/rules/conventions/meta/ex-ru-co-me__file-naming.md` (MODIFY)
+- `docs/explanation/rules/conventions/content/ex-ru-co-co__convention-writing.md` (MODIFY)
+- `docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md` (MODIFY)
 
 ### Phase 1
 
@@ -1091,7 +1091,7 @@ Phase 5 (consolidation)
 - `.claude/agents/wow__workflow-checker.md` (MODIFY)
 - `.claude/agents/wow__workflow-fixer.md` (MODIFY)
 - `.claude/agents/wow__workflow-maker.md` (MODIFY)
-- `docs/explanation/workflows/*.md` (SOURCE: workflow definitions that will have embedded policies)
+- `docs/explanation/rules/workflows/*.md` (SOURCE: workflow definitions that will have embedded policies)
 
 **Convention files:**
 
@@ -1103,5 +1103,5 @@ Phase 5 (consolidation)
 - `.claude/agents/policy-coverage-analyzer.md` (NEW)
 - `apps/governance-cli/cmd/policy.go` (ENHANCE - add coverage, docs commands)
 - `.claude/agents/agent__maker.md` (MODIFY)
-- `docs/explanation/ex__repository-governance-architecture.md` (MODIFY)
+- `docs/explanation/ex-ru__repository-governance-architecture.md` (MODIFY)
 - `CLAUDE.md` (MODIFY)

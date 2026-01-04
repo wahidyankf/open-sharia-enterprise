@@ -146,16 +146,16 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 
 ## Reference
 
-**Conventions**: All conventions in `docs/explanation/conventions/`
+**Conventions**: All conventions in `docs/explanation/rules/conventions/`
 
-**Development Practices**: All practices in `docs/explanation/development/`
+**Development Practices**: All practices in `docs/explanation/rules/development/`
 
 **Skills**: `docs-applying-diataxis-framework`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`
 
 **Related Documentation**:
 
-- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag-ai-agents.md) - Agent-Skill separation patterns
-- [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in-temporary-files.md) - Report generation standards
+- [AI Agents Convention](../../docs/explanation/rules/development/agents/ex-ru-de-ag-ai-agents.md) - Agent-Skill separation patterns
+- [Temporary Files Convention](../../docs/explanation/rules/development/infra/ex-ru-de-in-temporary-files.md) - Report generation standards
 - [Skills Directory](../.claude/skills/README.md) - Complete Skills catalog
 
 ## Validation Process

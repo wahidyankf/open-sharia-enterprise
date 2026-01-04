@@ -32,5 +32,5 @@ Skill: `wow-generating-validation-reports`
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu-ayokoding.md)
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md)
 - Skills: `apps-ayokoding-web-developing-content`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`

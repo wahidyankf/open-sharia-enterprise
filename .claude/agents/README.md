@@ -2,11 +2,11 @@
 
 This directory contains specialized AI agents for repository maintenance and documentation tasks. Each agent has specific responsibilities and tools to ensure consistency, quality, and adherence to project conventions.
 
-**Hierarchy Position**: AI agents are the **implementation layer** (Layer 4 in the six-layer hierarchy) that enforces conventions (Layer 2) and development practices (Layer 3). Each agent implements and validates specific rules, which ultimately trace back through [Core Principles](../docs/explanation/principles/README.md) (Layer 1) to the [Vision](../docs/explanation/vision/ex-vi-open-sharia-enterprise.md) (Layer 0) of democratizing Shariah-compliant enterprise.
+**Hierarchy Position**: AI agents are the **implementation layer** (Layer 4 in the six-layer hierarchy) that enforces conventions (Layer 2) and development practices (Layer 3). Each agent implements and validates specific rules, which ultimately trace back through [Core Principles](../docs/explanation/rules/principles/README.md) (Layer 1) to the [Vision](../docs/explanation/rules/vision/ex-ru-vi-open-sharia-enterprise.md) (Layer 0) of democratizing Shariah-compliant enterprise.
 
 **Traceability**: Every agent should document which conventions/practices it enforces. When creating new agents, reference the specific rules being implemented. This creates a clear chain: Vision → Principle → Convention/Practice → Agent.
 
-**Token Budget**: When invoking agents and workflows, don't think about token budget constraints. We have "unlimited" token budget through reliable compaction mechanism. Focus on execution quality, not token efficiency. See [AI Agents Convention - Token Budget Philosophy](../docs/explanation/development/agents/ex-de-ag-ai-agents.md#token-budget-philosophy) for complete details.
+**Token Budget**: When invoking agents and workflows, don't think about token budget constraints. We have "unlimited" token budget through reliable compaction mechanism. Focus on execution quality, not token efficiency. See [AI Agents Convention - Token Budget Philosophy](../docs/explanation/rules/development/agents/ex-ru-de-ag-ai-agents.md#token-budget-philosophy) for complete details.
 
 ## Available Agents
 
@@ -211,7 +211,7 @@ Applies validated fixes from ayokoding-web-facts-checker audit reports. Re-valid
 - **IMPORTANT:** Cache requirement applies universally to ALL invocations - whether spawned by other agents, processes, or direct user invocation
 - **Works with:** `ayokoding-web-general-maker` for content creation, `ayokoding-web-general-checker` for content quality
 - **References:** Hugo Content Convention, Linking Convention (adapted for Hugo)
-- **See Also:** [AI Agents Convention - Hybrid Agents Exception](../docs/explanation/development/agents/ex-de-ag-ai-agents.md#hybrid-agents-exception) for complete rationale
+- **See Also:** [AI Agents Convention - Hybrid Agents Exception](../docs/explanation/rules/development/agents/ex-ru-de-ag-ai-agents.md#hybrid-agents-exception) for complete rationale
 
 ### 🟡 `apps-ayokoding-web-link-fixer.md`
 
@@ -539,7 +539,7 @@ Expert tutorial writer specializing in learning-oriented content with narrative 
   - After file renames or directory restructuring
   - Automatic cache maintenance (prunes orphaned links, updates locations, updates lastFullScan)
 - **IMPORTANT:** Cache requirement applies universally to ALL invocations - whether spawned by other agents, processes, or direct user invocation
-- **See Also:** [AI Agents Convention - Hybrid Agents Exception](../docs/explanation/development/agents/ex-de-ag-ai-agents.md#hybrid-agents-exception) for complete rationale
+- **See Also:** [AI Agents Convention - Hybrid Agents Exception](../docs/explanation/rules/development/agents/ex-ru-de-ag-ai-agents.md#hybrid-agents-exception) for complete rationale
 
 ### 🟩 `docs-tutorial-checker.md`
 
@@ -654,7 +654,7 @@ Creates and updates README.md content while maintaining engagement, accessibilit
 
 ### 🟦 `wow-workflow-maker.md`
 
-Expert at creating and updating workflow definition files in docs/explanation/workflows/ following Workflow Pattern Convention.
+Expert at creating and updating workflow definition files in docs/explanation/rules/workflows/ following Workflow Pattern Convention.
 
 - **Primary Use:** Defining multi-agent orchestration processes with clear termination criteria
 - **Specialization:** Workflow structure design, agent orchestration, execution modes (Sequential/Parallel/Conditional), state management, error handling, principle alignment, agent reference validation
@@ -673,7 +673,7 @@ Expert at creating and updating workflow definition files in docs/explanation/wo
 
 ### 🟩 `wow-workflow-checker.md`
 
-Expert at validating workflow definition files in docs/explanation/workflows/ against Workflow Pattern Convention and quality standards.
+Expert at validating workflow definition files in docs/explanation/rules/workflows/ against Workflow Pattern Convention and quality standards.
 
 - **Primary Use:** Validating workflow files for structure, semantics, and completeness
 - **Specialization:** YAML frontmatter schema validation, agent reference verification, state reference checking, termination criteria validation, principle traceability, execution mode consistency, dependency cycle detection
@@ -851,11 +851,11 @@ Understanding which agents enforce which conventions helps trace decisions from 
 
 ### Example 1: Color Accessibility
 
-**Vision**: [Democratize Shariah-compliant enterprise](../docs/explanation/vision/ex-vi-open-sharia-enterprise.md) - accessible to everyone
+**Vision**: [Democratize Shariah-compliant enterprise](../docs/explanation/rules/vision/ex-ru-vi-open-sharia-enterprise.md) - accessible to everyone
 
-**Principle**: [Accessibility First](../docs/explanation/principles/content/ex-pr-co-accessibility-first.md)
+**Principle**: [Accessibility First](../docs/explanation/rules/principles/content/ex-ru-pr-co-accessibility-first.md)
 
-**Convention**: [Color Accessibility Convention](../docs/explanation/conventions/formatting/ex-co-fo-color-accessibility.md)
+**Convention**: [Color Accessibility Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-color-accessibility.md)
 
 **Enforcing Agents**:
 
@@ -866,11 +866,11 @@ Understanding which agents enforce which conventions helps trace decisions from 
 
 ### Example 2: Explicit Configuration
 
-**Vision**: [Transparent, verifiable Islamic finance](../docs/explanation/vision/ex-vi-open-sharia-enterprise.md)
+**Vision**: [Transparent, verifiable Islamic finance](../docs/explanation/rules/vision/ex-ru-vi-open-sharia-enterprise.md)
 
-**Principle**: [Explicit Over Implicit](../docs/explanation/principles/software-engineering/ex-pr-se-explicit-over-implicit.md)
+**Principle**: [Explicit Over Implicit](../docs/explanation/rules/principles/software-engineering/ex-ru-pr-se-explicit-over-implicit.md)
 
-**Practice**: [AI Agents Convention](../docs/explanation/development/agents/ex-de-ag-ai-agents.md)
+**Practice**: [AI Agents Convention](../docs/explanation/rules/development/agents/ex-ru-de-ag-ai-agents.md)
 
 **Enforcing Agents**:
 
@@ -880,11 +880,11 @@ Understanding which agents enforce which conventions helps trace decisions from 
 
 ### Example 3: Automation
 
-**Vision**: [Scale Islamic enterprise knowledge globally](../docs/explanation/vision/ex-vi-open-sharia-enterprise.md)
+**Vision**: [Scale Islamic enterprise knowledge globally](../docs/explanation/rules/vision/ex-ru-vi-open-sharia-enterprise.md)
 
-**Principle**: [Automation Over Manual](../docs/explanation/principles/software-engineering/ex-pr-se-automation-over-manual.md)
+**Principle**: [Automation Over Manual](../docs/explanation/rules/principles/software-engineering/ex-ru-pr-se-automation-over-manual.md)
 
-**Practice**: [Code Quality Convention](../docs/explanation/development/quality/ex-de-qu-code.md), [Maker-Checker-Fixer Pattern](../docs/explanation/development/pattern/ex-de-pa-maker-checker-fixer.md)
+**Practice**: [Code Quality Convention](../docs/explanation/rules/development/quality/ex-ru-de-qu-code.md), [Maker-Checker-Fixer Pattern](../docs/explanation/rules/development/pattern/ex-ru-de-pa-maker-checker-fixer.md)
 
 **Enforcing Agents** (Checker family):
 
@@ -948,7 +948,7 @@ The repository uses a three-stage workflow for content creation and quality assu
 - **Audit Trail:** Both audit and fix reports saved in `generated-reports/` for transparency
 - **Quality Improvement Loop:** False positive reports improve checker accuracy over time
 
-**See Also:** [Fixer Confidence Levels Convention](../docs/explanation/development/quality/ex-de-qu-fixer-confidence-levels.md) for universal confidence assessment criteria.
+**See Also:** [Fixer Confidence Levels Convention](../docs/explanation/rules/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) for universal confidence assessment criteria.
 
 ### 📋 Project Planning and Implementation Workflow
 
@@ -1075,7 +1075,7 @@ The repository uses a three-stage workflow for content creation and quality assu
 - **Quality assurance workflow:** Maker-checker at both stages (planning and implementation)
 - **After adding new conventions:** Use `wow-rules-maker` → `wow-rules-checker` → `wow-rules-fixer` (if issues found)
 - **CLAUDE.md maintenance:** Keep under 30k characters (target), never exceed 40k (hard limit). Brief summaries only, link to detailed docs. Use `wow-rules-maker` to check size when adding rules
-- **Agent file size limits:** Three tiers - Simple (<800 lines), Standard (<1,200 lines), Complex (<1,800 lines). Link to convention docs instead of duplicating content. See [AI Agents Convention](../docs/explanation/development/agents/ex-de-ag-ai-agents.md) for complete size guidelines
+- **Agent file size limits:** Three tiers - Simple (<800 lines), Standard (<1,200 lines), Complex (<1,800 lines). Link to convention docs instead of duplicating content. See [AI Agents Convention](../docs/explanation/rules/development/agents/ex-ru-de-ag-ai-agents.md) for complete size guidelines
 - **Before major releases:** Run `wow-rules-checker` for full audit and `docs-link-general-checker` to verify all links
 - **When creating tutorials:** Use `docs-tutorial-maker` for learning-oriented content with narrative flow and diagrams
 - **When creating other documentation:** Use `docs-maker` for how-to guides, reference, or explanations
@@ -1097,9 +1097,9 @@ The repository uses a three-stage workflow for content creation and quality assu
 
 ## 📚 Resources
 
-- [AI Agents Convention](../docs/explanation/development/agents/ex-de-ag-ai-agents.md) - Complete agent specification and standards
+- [AI Agents Convention](../docs/explanation/rules/development/agents/ex-ru-de-ag-ai-agents.md) - Complete agent specification and standards
 - [CLAUDE.md](../CLAUDE.md) - Project guidance for all agents
-- [Documentation Conventions](../docs/explanation/conventions/README.md) - File naming, linking, and Diátaxis framework
+- [Documentation Conventions](../docs/explanation/rules/conventions/README.md) - File naming, linking, and Diátaxis framework
 - [Plans Organization](../plans/README.md) - Planning document structure and conventions
 
 ## 🔄 Agent Lifecycle
@@ -1141,7 +1141,7 @@ Agents follow a structured lifecycle from creation to deprecation:
 When creating new agents:
 
 1. Use `agent-maker` to automate creation with proper structure, size verification, and README updates
-2. Follow the [AI Agents Convention](../docs/explanation/development/agents/ex-de-ag-ai-agents.md) for all standards
+2. Follow the [AI Agents Convention](../docs/explanation/rules/development/agents/ex-ru-de-ag-ai-agents.md) for all standards
 3. Verify agent size within tier limits (Simple: <800, Standard: <1,200, Complex: <1,800 lines)
 4. Use `wow-rules-maker` to propagate references to CLAUDE.md and other files
 5. Use `wow-rules-checker` to validate the new agent follows all conventions
@@ -1150,4 +1150,4 @@ When creating new agents:
 
 ---
 
-**Note:** This README follows the naming exception for README.md files documented in the [File Naming Convention](../docs/explanation/conventions/meta/ex-co-me-file-naming.md).
+**Note:** This README follows the naming exception for README.md files documented in the [File Naming Convention](../docs/explanation/rules/conventions/meta/ex-ru-co-me-file-naming.md).

@@ -3,7 +3,7 @@
 <!--
   MAINTENANCE NOTE: Brief landing page
   For comprehensive documentation, see:
-  docs/explanation/conventions/project/ex-co-pr__plans-organization.md
+  docs/explanation/rules/conventions/project/ex-ru-co-pr__plans-organization.md
 -->
 
 This folder contains temporary, ephemeral project planning documents, distinct from permanent documentation in `docs/`.
@@ -19,7 +19,7 @@ This folder contains temporary, ephemeral project planning documents, distinct f
 
 For detailed information on plans organization, structure, naming conventions, and workflow, see:
 
-**[Plans Organization Convention](../docs/explanation/conventions/project/ex-co-pr__plans-organization.md)**
+**[Plans Organization Convention](../docs/explanation/rules/conventions/project/ex-ru-co-pr__plans-organization.md)**
 
 ## Plan Folder Naming
 

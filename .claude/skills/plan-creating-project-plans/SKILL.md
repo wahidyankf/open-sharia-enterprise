@@ -230,13 +230,13 @@ After implementation steps, add validation:
 
 ## References
 
-**Primary Convention**: [Plans Organization Convention](../../../docs/explanation/conventions/project/ex-co-pr__plans-organization.md)
+**Primary Convention**: [Plans Organization Convention](../../../docs/explanation/rules/conventions/project/ex-ru-co-pr__plans-organization.md)
 
 **Related Conventions**:
 
-- [Trunk Based Development](../../../docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md) - Git workflow for plans
-- [Acceptance Criteria Convention](../../../docs/explanation/development/infra/ex-de-in__acceptance-criteria.md) - Gherkin format details
-- [File Naming Convention](../../../docs/explanation/conventions/meta/ex-co-me__file-naming.md) - Naming standards
+- [Trunk Based Development](../../../docs/explanation/rules/development/workflow/ex-ru-de-wo__trunk-based-development.md) - Git workflow for plans
+- [Acceptance Criteria Convention](../../../docs/explanation/rules/development/infra/ex-ru-de-in__acceptance-criteria.md) - Gherkin format details
+- [File Naming Convention](../../../docs/explanation/rules/conventions/meta/ex-ru-co-me__file-naming.md) - Naming standards
 
 **Related Skills**:
 

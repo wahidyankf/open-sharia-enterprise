@@ -648,7 +648,7 @@ The following are explicitly **not** included in this plan:
 
 1. **Agent execution runtime changes**: Agents continue to execute via Claude Code and OpenCode CLIs unchanged
 2. **Skill loading mechanism**: Skills continue to load from `.claude/skills/` (generated location)
-3. **Workflow definitions**: Workflows remain in `docs/explanation/workflows/` (separate concern)
+3. **Workflow definitions**: Workflows remain in `docs/explanation/rules/workflows/` (separate concern)
 4. **AGENTS.md / CLAUDE.md content**: Delivery mechanism documents updated to reference new source locations, but core content unchanged
 5. **Agent capabilities**: No changes to what agents can do, only where definitions are stored
 6. **Tool CLI behavior**: No modifications to Claude Code or OpenCode CLI tools themselves
@@ -665,8 +665,8 @@ The following are explicitly **not** included in this plan:
   - `scripts/convert-agents-to-opencode.py` (reference for format mapping)
   - `scripts/validate-opencode-agents.py` (validation patterns)
 - Documentation:
-  - `docs/explanation/development/agents/ex-de-ag__ai-agents.md` (agent conventions)
-  - `docs/explanation/ex__repository-governance-architecture.md` (governance model)
+  - `docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md` (agent conventions)
+  - `docs/explanation/ex-ru__repository-governance-architecture.md` (governance model)
 - Git hooks: `.husky/pre-commit` (integration point)
 
 ### External Dependencies

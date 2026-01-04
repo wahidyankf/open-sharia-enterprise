@@ -17,5 +17,5 @@ Deploy ose-platform-web to production.
 
 ## Reference
 
-- [Trunk Based Development](../../docs/explanation/development/workflow/ex-de-wo-trunk-based-development.md)
-- [ose-platform-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu-ose-platform.md)
+- [Trunk Based Development](../../docs/explanation/rules/development/workflow/ex-ru-de-wo-trunk-based-development.md)
+- [ose-platform-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ose-platform.md)
