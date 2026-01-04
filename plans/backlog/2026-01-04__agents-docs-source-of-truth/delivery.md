@@ -792,7 +792,7 @@ git checkout main -- .husky/pre-commit
   git add .husky/pre-commit
   git add CLAUDE.md AGENTS.md
   git add docs/explanation/rules/development/agents/
-  git add docs/explanation/ex-ru__repository-governance-architecture.md
+  git add docs/explanation/rules/ex-ru__repository-governance-architecture.md
   ```
 
 - [ ] Create comprehensive commit message:
