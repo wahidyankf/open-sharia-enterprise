@@ -7,13 +7,13 @@ tools:
   read: true
   edit: true
 permission:
-  bash: deny
-  glob: deny
-  websearch: deny
-  todowrite: deny
   write: deny
-  grep: deny
+  glob: deny
+  todowrite: deny
   webfetch: deny
+  bash: deny
+  websearch: deny
+  grep: deny
   skill:
     apps-ayokoding-web-developing-content: allow
 ---

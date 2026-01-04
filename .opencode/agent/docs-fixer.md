@@ -12,9 +12,9 @@ tools:
   write: true
   bash: true
 permission:
-  websearch: deny
   todowrite: deny
   webfetch: deny
+  websearch: deny
   skill:
     wow-applying-maker-checker-fixer: allow
     wow-assessing-criticality-confidence: allow

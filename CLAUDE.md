@@ -99,7 +99,7 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detail
 
 **Special Directories**:
 
-- **`metadata/`** - Operational metadata committed to git (NOT temporary). Contains `external-links-status.yaml` cache for link verification (6-month expiry, mandatory for docs**link-general-checker agent). See [docs**link-general-checker agent](./.claude/agents/docs\_\_link-general-checker.md) for details.
+- **`metadata/`** - Operational metadata committed to git (NOT temporary). Contains `external-links-status.yaml` cache for link verification (6-month expiry, mandatory for docs\*\*link-general-checker agent). See [docs-link-general-checker agent](./.claude/agents/docs-link-general-checker.md) for details.
 
 ## Plans Organization
 
@@ -109,7 +109,7 @@ Project planning documents in `plans/` folder: `ideas.md` (1-3 liner ideas), `ba
 
 The repository follows a six-layer architecture where each layer builds on the foundation of the layer above. Each layer governs the layer below, creating complete traceability from foundational purpose (Layer 0: Vision) through values (Layer 1: Principles) to concrete standards (Layers 2-3), automated enforcement (Layer 4: Agents), and orchestrated processes (Layer 5: Workflows).
 
-See [Repository Architecture](./docs/explanation/ex-ru__repository-governance-architecture.md) for comprehensive explanation including layer characteristics, complete traceability examples, usage guidance, and verification methods.
+See [Repository Architecture](./docs/explanation/rules/ex-ru__repository-governance-architecture.md) for comprehensive explanation including layer characteristics, complete traceability examples, usage guidance, and verification methods.
 
 **Layer 0: Vision** - WHY we exist, WHAT change we seek
 **Layer 1: Principles** - WHY we value specific approaches (governs layers 2-3)
@@ -122,10 +122,10 @@ See [Repository Architecture](./docs/explanation/ex-ru__repository-governance-ar
 
 **Key Documents**:
 
-- [Vision](./docs/explanation/rules/vision/ex-vi__open-sharia-enterprise.md) - Foundational purpose
+- [Vision](./docs/explanation/rules/vision/ex-ru-vi__open-sharia-enterprise.md) - Foundational purpose
 - [Core Principles Index](./docs/explanation/rules/principles/README.md) - 10 foundational principles
 - [Conventions Index](./docs/explanation/rules/conventions/README.md) - 24 documentation standards
-- [Development Index](./docs/explanation/rules/development/README.md) - 15 software practices
+- [Development Index](./docs/explanation/rules/development/README.md) - 16 software practices
 - [Agents Index](./.claude/agents/README.md) - All agents and responsibilities
 - [Workflows Index](./docs/explanation/rules/workflows/README.md) - All orchestrated processes
 
@@ -203,7 +203,7 @@ All README.md files must be engaging, accessible, and scannable. Problem-solutio
 
 ### Convention References
 
-See [Conventions Index](./docs/explanation/rules/conventions/README.md) for 24 documentation conventions and [Development Index](./docs/explanation/rules/development/README.md) for 15 development practices.
+See [Conventions Index](./docs/explanation/rules/conventions/README.md) for 24 documentation conventions and [Development Index](./docs/explanation/rules/development/README.md) for 16 development practices.
 
 ## AI Agent Standards
 
@@ -239,7 +239,7 @@ Seven agent families follow three-stage workflow for content quality: Maker (cre
 
 **Navigation**: apps**ayokoding-web**navigation-maker, apps**ayokoding-web**structure-maker
 
-**Validation**: docs**checker, docs**tutorial-checker, docs**link-general-checker, readme**checker, apps**ayokoding-web**general-checker, apps**ayokoding-web**by-example-checker, apps**ayokoding-web**facts-checker, apps**ayokoding-web**link-checker, apps**ayokoding-web**structure-checker, apps**ose-platform-web**content-checker, wow\_\_rules-checker
+**Validation**: docs**checker, docs**tutorial-checker, docs**link-general-checker, readme**checker, apps**ayokoding-web**general-checker, apps**ayokoding-web**by-example-checker, apps**ayokoding-web**facts-checker, apps**ayokoding-web**link-checker, apps**ayokoding-web**structure-checker, apps**ose-platform-web**content-checker, wow\_\_rules-checker (validates CLAUDE.md size/duplication and rules governance: contradictions, inaccuracies, inconsistencies, traceability violations, layer coherence)
 
 **Fixing**: wow**rules-fixer, apps**ayokoding-web**general-fixer, apps**ayokoding-web**by-example-fixer, apps**ayokoding-web**facts-fixer, apps**ayokoding-web**link-fixer, apps**ayokoding-web**structure-fixer, docs**tutorial-fixer, apps**ose-platform-web**content-fixer, readme**fixer, docs**fixer, plan\_\_fixer
 
@@ -247,9 +247,9 @@ Seven agent families follow three-stage workflow for content quality: Maker (cre
 
 **Development**: swe**hugo**developer
 
-**Operations**: docs\_\_file-manager, apps**ayokoding-web**deployer, apps**ose-platform-web**deployer
+**Operations**: docs-file-manager, apps**ayokoding-web**deployer, apps**ose-platform-web**deployer
 
-**Workflows**: wow**workflow-maker, wow**workflow-checker, wow\_\_workflow-fixer
+**Workflows**: wow**workflow-maker, wow**workflow-checker, wow-workflow-fixer
 
 **Meta**: agent**maker, wow**rules-maker
 
@@ -291,8 +291,8 @@ When adding new conventions, rules, or standards:
 
 - When updating convention docs, review CLAUDE.md summary for accuracy (keep it brief)
 - When CLAUDE.md exceeds 35k characters, trigger review and condensation
-- Use `wow__rules-checker` periodically to detect duplication between CLAUDE.md and convention docs
-- Use `wow__rules-fixer` to apply validated fixes from audit reports (after user review)
+- Use `wow__rules-checker` periodically to detect duplication between CLAUDE.md and convention docs, plus validate rules governance (contradictions, inaccuracies, inconsistencies, traceability violations, layer coherence)
+- Use `wow__rules-fixer` to apply validated fixes from audit reports for CLAUDE.md issues and rules governance problems (after user review)
 - `wow__rules-maker` should check CLAUDE.md size when adding rules (warn if approaching limits)
 
 **Example**: Bad - Detailed examples duplicating convention docs. Good - Brief summary with link to detailed documentation.

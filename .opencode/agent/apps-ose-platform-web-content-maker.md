@@ -10,10 +10,10 @@ tools:
   glob: true
   grep: true
 permission:
-  bash: deny
   todowrite: deny
-  websearch: deny
+  bash: deny
   webfetch: deny
+  websearch: deny
   skill:
     apps-ose-platform-web-developing-content: allow
     docs-creating-accessible-diagrams: allow

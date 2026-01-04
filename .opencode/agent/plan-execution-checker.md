@@ -13,10 +13,10 @@ tools:
   bash: true
   write: true
 permission:
-  websearch: deny
   todowrite: deny
   edit: deny
   webfetch: deny
+  websearch: deny
   skill:
     docs-applying-diataxis-framework: allow
     wow-assessing-criticality-confidence: allow

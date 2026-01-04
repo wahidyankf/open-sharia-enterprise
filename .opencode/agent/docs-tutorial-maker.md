@@ -11,9 +11,9 @@ tools:
   glob: true
   bash: true
 permission:
-  websearch: deny
   todowrite: deny
   webfetch: deny
+  websearch: deny
   skill:
     docs-applying-diataxis-framework: allow
     docs-applying-content-quality: allow

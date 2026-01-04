@@ -13,10 +13,10 @@ tools:
   write: true
   bash: true
 permission:
-  websearch: deny
   todowrite: deny
   edit: deny
   webfetch: deny
+  websearch: deny
   skill:
     readme-writing-readme-files: allow
     wow-assessing-criticality-confidence: allow

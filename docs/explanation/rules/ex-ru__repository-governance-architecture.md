@@ -30,7 +30,7 @@ The six-layer architecture provides:
 ## 📊 The Six Layers
 
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teaee#029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 graph TD
     subgraph Governance["Six-Layer Governance Architecture"]
         L0[Layer 0: Vision<br/>WHY WE EXIST]

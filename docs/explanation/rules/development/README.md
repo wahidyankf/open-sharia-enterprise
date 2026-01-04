@@ -9,7 +9,7 @@ tags:
   - conventions
   - ai-agents
 created: 2025-11-23
-updated: 2025-12-28
+updated: 2026-01-04
 ---
 
 # Development
@@ -112,6 +112,7 @@ Development practices in this directory fall into several categories:
 - [Repository Validation Methodology Convention](./quality/ex-ru-de-qu__repository-validation.md) - Standard validation methods and patterns for repository consistency checking. Covers frontmatter extraction, validation checks, and best practices
 - [Criticality Levels Convention](./quality/ex-ru-de-qu__criticality-levels.md) - Universal criticality level system for categorizing validation findings by importance and urgency (CRITICAL/HIGH/MEDIUM/LOW)
 - [Fixer Confidence Levels Convention](./quality/ex-ru-de-qu__fixer-confidence-levels.md) - Universal confidence level system for fixer agents to assess and apply validated fixes (HIGH/MEDIUM/FALSE_POSITIVE)
+- [Claude Folder Tool Usage Convention](./quality/ex-ru-de-qu__claude-folder-tool-usage.md) - Standards for AI agents writing to .claude/ folders using Bash tools instead of Write/Edit tools for autonomous operation
 
 ### Pattern Documentation
 

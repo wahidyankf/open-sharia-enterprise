@@ -1,7 +1,8 @@
 ---
 description: Validates repository-wide consistency including file naming, linking,
-  emoji usage, convention compliance, and agent-Skill duplication detection. Outputs
-  to generated-reports/ with progressive streaming.
+  emoji usage, convention compliance, agent-Skill duplication detection, and rules
+  governance (contradictions, inaccuracies, inconsistencies). Outputs to generated-reports/
+  with progressive streaming.
 mode: subagent
 model: zai/glm-4.7
 temperature: 0.1
@@ -13,10 +14,10 @@ tools:
   write: true
   bash: true
 permission:
-  websearch: deny
   todowrite: deny
   edit: deny
   webfetch: deny
+  websearch: deny
   skill:
     docs-applying-diataxis-framework: allow
     wow-assessing-criticality-confidence: allow
@@ -27,7 +28,7 @@ permission:
 
 - **Role**: Checker (green)
 - **Created**: 2025-12-01
-- **Last Updated**: 2026-01-03
+- **Last Updated**: 2026-01-04
 
 ## Workflow Integration (Maker-Checker-Fixer)
 
@@ -102,9 +103,86 @@ Skill: `wow-generating-validation-reports` (progressive streaming)
 - Convention compliance
 - CLAUDE.md size limits (30k target, 40k hard limit)
 
-### Agent-Skill Duplication Detection
+### Rules Governance Validation
 
-**CRITICAL NEW CAPABILITY**: Detect duplication between agents and Skills to prevent knowledge creep.
+**Scope**: All governance documentation
+
+- `docs/explanation/rules/vision/` - Layer 0: WHY we exist
+- `docs/explanation/rules/principles/` - Layer 1: WHY values
+- `docs/explanation/rules/conventions/` - Layer 2: WHAT documentation rules
+- `docs/explanation/rules/development/` - Layer 3: HOW software practices
+- `docs/explanation/rules/workflows/` - Layer 5: WHEN multi-step processes
+- `docs/explanation/rules/ex-ru__repository-governance-architecture.md` - Architecture guide
+- `docs/explanation/rules/README.md` - Rules index
+- `docs/explanation/README.md` - Explanation index
+
+**Validation Categories**:
+
+1. **Contradictions**: Conflicting statements between documents
+2. **Inaccuracies**: Factually incorrect information, outdated references
+3. **Inconsistencies**: Misaligned terminology, broken cross-references
+4. **Traceability Violations**: Missing required sections (Principles/Conventions Implemented)
+5. **Layer Coherence**: Ensure each layer properly governs/implements layers below
+
+**Detection Methods**:
+
+**Contradictions**:
+
+- Cross-reference principle definitions with their implementations
+- Check if conventions contradict each other
+- Verify practices don't contradict conventions they claim to implement
+- Compare vision statements across documents for consistency
+
+**Inaccuracies**:
+
+- Validate file path references (e.g., in "See X" links)
+- Check layer numbering is consistent (0, 1, 2, 3, 5)
+- Verify agent names match actual agent files
+- Validate skill names match actual skill files
+- Check frontmatter field requirements match actual agent frontmatter
+
+**Inconsistencies**:
+
+- Terminology alignment (e.g., "Principles Implemented" vs "Principles Respected")
+- Cross-reference completeness (broken links to conventions/principles/practices)
+- Index files match directory contents
+- README summaries match detailed documents
+
+**Traceability Violations**:
+
+- **Principles**: Must have "Vision Supported" section
+- **Conventions**: Must have "Principles Implemented/Respected" section
+- **Development**: Must have both "Principles Implemented/Respected" AND "Conventions Implemented/Respected" sections
+- **Workflows**: Must reference which agents they orchestrate
+
+**Layer Coherence**:
+
+- Vision (Layer 0) inspires Principles (Layer 1)
+- Principles (Layer 1) govern Conventions (Layer 2) and Development (Layer 3)
+- Conventions (Layer 2) govern Agents (Layer 4)
+- Development (Layer 3) govern Agents (Layer 4)
+- Agents (Layer 4) orchestrated by Workflows (Layer 5)
+
+**Report Format for Rules Governance Findings**:
+
+```markdown
+### Finding: [Contradiction/Inaccuracy/Inconsistency/Traceability Violation/Layer Coherence]
+
+**Category**: [specific category]
+**Files Affected**: [file1.md, file2.md]
+**Criticality**: [CRITICAL/HIGH/MEDIUM/LOW]
+
+**Issue**:
+[Description of the specific contradiction/inaccuracy/inconsistency]
+
+**Evidence**:
+[Relevant quotes from affected files showing the issue]
+
+**Recommendation**:
+[Specific fix to resolve the issue]
+```
+
+### Agent-Skill Duplication Detection
 
 **Validation Method**:
 
@@ -155,8 +233,6 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 ```
 
 ### Skills Coverage Gap Analysis
-
-**NEW CAPABILITY**: Identify knowledge patterns that should be extracted to Skills.
 
 **Detection Method**:
 
@@ -278,6 +354,52 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 3. Calculate percentage of limits
 4. Assess status (Within Target / Warning / CRITICAL)
 5. Write finding if over target
+
+### Step 4.5: Rules Governance Validation
+
+**Validate contradictions, inaccuracies, and inconsistencies** across all governance layers:
+
+1. **Read all governance files**:
+   - `docs/explanation/rules/vision/**/*.md`
+   - `docs/explanation/rules/principles/**/*.md`
+   - `docs/explanation/rules/conventions/**/*.md`
+   - `docs/explanation/rules/development/**/*.md`
+   - `docs/explanation/rules/workflows/**/*.md`
+   - `docs/explanation/rules/ex-ru__repository-governance-architecture.md`
+   - `docs/explanation/rules/README.md`
+   - `docs/explanation/README.md`
+
+2. **Contradiction Detection**:
+   - Extract key statements from each document
+   - Cross-reference related documents (e.g., principle → conventions implementing it)
+   - Identify conflicting statements
+   - Assess criticality based on impact
+
+3. **Inaccuracy Detection**:
+   - Validate all file path references
+   - Check agent/skill name references against actual files
+   - Verify layer numbering consistency
+   - Validate frontmatter requirements match actual usage
+
+4. **Inconsistency Detection**:
+   - Check terminology consistency across documents
+   - Validate cross-references resolve correctly
+   - Verify index files match directory contents
+   - Check README summaries align with detailed documents
+
+5. **Traceability Validation**:
+   - For each principle: Check "Vision Supported" section exists
+   - For each convention: Check "Principles Implemented/Respected" section exists
+   - For each development practice: Check both "Principles" AND "Conventions" sections exist
+   - For each workflow: Check agent references are correct
+
+6. **Layer Coherence Validation**:
+   - Verify vision → principles alignment
+   - Verify principles → conventions/development alignment
+   - Verify conventions/development → agents alignment
+   - Verify agents → workflows alignment
+
+7. **Write findings progressively** using report format above
 
 ### Step 5: Finalize Report
 
