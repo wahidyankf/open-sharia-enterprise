@@ -1280,7 +1280,7 @@ def test_validate_agent_definition():
 | `CLAUDE.md`                                                           | Update agent source location, sync workflow                  |
 | `AGENTS.md`                                                           | Update agent source location, sync workflow                  |
 | `docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md` | Add "Source of Truth" section, document tool-agnostic format |
-| `docs/explanation/ex-ru__repository-governance-architecture.md`       | Update Layer 4 to reference docs source                      |
+| `docs/explanation/rules/ex-ru__repository-governance-architecture.md` | Update Layer 4 to reference docs source                      |
 | `.claude/agents/README.md`                                            | Add generated banner, link to source                         |
 | `.opencode/agent/README.md`                                           | Add generated banner, link to source                         |
 | `docs/explanation/agents/README.md`                                   | New file: canonical agent catalog                            |

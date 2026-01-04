@@ -265,7 +265,7 @@ This plan is organized into four documents:
 ## References
 
 - [AI Agents Convention](../../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md)
-- [Repository Governance Architecture](../../../docs/explanation/ex-ru__repository-governance-architecture.md)
+- [Repository Governance Architecture](../../../docs/explanation/rules/ex-ru__repository-governance-architecture.md)
 - [Plans Organization Convention](../../../docs/explanation/rules/conventions/project/ex-ru-co-pr__plans-organization.md)
 - Current conversion script: `scripts/convert-agents-to-opencode.py`
 - Current validation script: `scripts/validate-opencode-agents.py`
