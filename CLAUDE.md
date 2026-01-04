@@ -301,6 +301,31 @@ When adding new conventions, rules, or standards:
 
 When planning tasks or creating educational content, provide concrete steps without time estimates. Never suggest timelines. Focus on WHAT needs to be done or learned, not HOW LONG it takes. Break work into actionable steps and let users decide their own pace. See [Content Quality - No Time Estimates](./docs/explanation/conventions/content/ex-co-co__quality.md#no-time-estimates).
 
+## OpenCode Agents
+
+This repository supports **dual-format** AI agents compatible with both Claude Code and OpenCode:
+
+- **Claude Code format**: `.claude/agents/` (45 agents) - Primary source of truth
+- **OpenCode format**: `.opencode/agent/` (45 agents) - Generated from Claude Code format
+- **Shared Skills**: `.claude/skills/` (18 skills) - Used by both tool formats
+
+**OpenCode-specific files**:
+
+- **Configuration**: `.opencode/opencode.json` - OpenCode settings (model, MCP servers, agent paths)
+- **Instructions**: `AGENTS.md` - Condensed project guidance (~1,000 lines vs CLAUDE.md ~30,000 lines)
+- **Agent Index**: `.opencode/agent/README.md` - Complete agent catalog with usage examples
+
+**Dual-format maintenance**:
+
+- Source of truth: `.claude/agents/` (Claude Code format)
+- Conversion: `python scripts/convert-agents-to-opencode.py` (automated frontmatter translation + body augmentation)
+- Validation: `python scripts/validate-opencode-agents.py` (verify OpenCode agent correctness)
+- Sync: `python scripts/sync-claude-opencode.py` (maintain consistency between formats)
+
+**Capability preservation**: All sophisticated patterns (Maker-Checker-Fixer workflows, UUID chains, progressive reporting, criticality assessment, confidence levels) preserved through body augmentation in OpenCode agents.
+
+See [AI Agents Convention - OpenCode Format](./docs/explanation/development/agents/ex-de-ag__ai-agents.md#opencode-format) for frontmatter mapping, capability preservation strategies, and sync workflows.
+
 ## Important Notes
 
 - Do not stage or commit changes unless explicitly instructed. Per-request commits are one-time only
