@@ -45,15 +45,15 @@ All agents must have non-empty `skills:` field (agents need skills like employee
 
 Create Skills to cover all agent domain families (using gerund form):
 
-| New Skill                     | Convention Source                 | Target Agents       |
-| ----------------------------- | --------------------------------- | ------------------- |
-| `applying-content-quality`    | `ex-co-co__quality.md`            | All content agents  |
-| `applying-diataxis-framework` | `ex-co-me__diataxis-framework.md` | `docs__*` agents    |
-| `creating-project-plans`      | `ex-co-pr__plans-organization.md` | `plan__*` agents    |
-| `writing-readme-files`        | `ex-co-co__readme-quality.md`     | `readme__*` agents  |
-| `defining-workflows`          | `ex-wf-me__workflow-pattern.md`   | `wow__workflow__*`  |
-| `developing-agents`           | `ex-de-ag__ai-agents.md`          | `agent__maker`      |
-| `validating-links`            | `ex-co-fo__linking.md`            | Link-checker agents |
+| New Skill                     | Convention Source                    | Target Agents       |
+| ----------------------------- | ------------------------------------ | ------------------- |
+| `applying-content-quality`    | `ex-ru-co-co__quality.md`            | All content agents  |
+| `applying-diataxis-framework` | `ex-ru-co-me__diataxis-framework.md` | `docs__*` agents    |
+| `creating-project-plans`      | `ex-ru-co-pr__plans-organization.md` | `plan__*` agents    |
+| `writing-readme-files`        | `ex-ru-co-co__readme-quality.md`     | `readme__*` agents  |
+| `defining-workflows`          | `ex-ru-wf-me__workflow-pattern.md`   | `wow__workflow__*`  |
+| `developing-agents`           | `ex-ru-de-ag__ai-agents.md`          | `agent__maker`      |
+| `validating-links`            | `ex-ru-co-fo__linking.md`            | Link-checker agents |
 
 ### FR-4: Factual Accuracy
 
@@ -93,8 +93,8 @@ Merge related tutorial convention documents to reduce duplication and improve ma
 
 **Current State**: Two separate documents with overlapping content:
 
-- `ex-co-tu__programming-language-content.md` - Content requirements for language tutorials
-- `ex-co-tu__programming-language-structure.md` - Structural organization
+- `ex-ru-co-tu__programming-language-content.md` - Content requirements for language tutorials
+- `ex-ru-co-tu__programming-language-structure.md` - Structural organization
 
 **Target State**: Single consolidated document with both content and structure guidance.
 
@@ -153,7 +153,7 @@ All Skills must have `allowed-tools` frontmatter to restrict tool access when ac
 
 **CRITICAL**: All file operations in `.claude/` folders MUST use Bash tools (heredoc, sed, awk), NOT Write/Edit tools.
 
-**Rationale**: This enables autonomous agent operation without user approval prompts. See [AI Agents Convention - Writing to .claude Folders](../../../docs/explanation/development/agents/ex-de-ag__ai-agents.md#writing-to-claude-folders).
+**Rationale**: This enables autonomous agent operation without user approval prompts. See [AI Agents Convention - Writing to .claude Folders](../../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md#writing-to-claude-folders).
 
 **Applies to**:
 
@@ -204,10 +204,10 @@ All Skills must have `allowed-tools` frontmatter to restrict tool access when ac
 
 ### Phase 4: Fix Factual Inaccuracies
 
-- [ ] `ex__repository-governance-architecture.md` corrected
+- [ ] `ex-ru__repository-governance-architecture.md` corrected
 - [ ] `CLAUDE.md` corrected
 - [ ] `.claude/skills/README.md` corrected
-- [ ] `ex-de-ag__ai-agents.md` corrected
+- [ ] `ex-ru-de-ag__ai-agents.md` corrected
 
 ### Phase 5: Enhance Validation
 
@@ -223,7 +223,7 @@ All Skills must have `allowed-tools` frontmatter to restrict tool access when ac
 
 ### Phase 7: Consolidate Tutorial Documentation
 
-- [ ] `ex-co-tu__programming-language-content.md` merged into `ex-co-tu__programming-language-structure.md`
+- [ ] `ex-ru-co-tu__programming-language-content.md` merged into `ex-ru-co-tu__programming-language-structure.md`
 - [ ] Original content file deleted or redirected
 - [ ] All references updated across codebase
 - [ ] Conventions README updated
@@ -301,9 +301,9 @@ And CLAUDE.md agent list includes it
 
 ```gherkin
 Given tutorial convention documents have been consolidated
-When I check docs/explanation/conventions/tutorial/
-Then ex-co-tu__programming-language-structure.md contains both content and structure guidance
-And ex-co-tu__programming-language-content.md no longer exists
+When I check docs/explanation/rules/conventions/tutorial/
+Then ex-ru-co-tu__programming-language-structure.md contains both content and structure guidance
+And ex-ru-co-tu__programming-language-content.md no longer exists
 And all references to the old file point to the consolidated file
 ```
 

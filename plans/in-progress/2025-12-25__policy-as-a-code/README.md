@@ -137,16 +137,16 @@ Big-bang implementation with logical phases completed sequentially on main branc
 
 **Current Architecture:**
 
-- [Repository Governance Architecture](../../../docs/explanation/ex__repository-governance-architecture.md) - Six-layer hierarchy
+- [Repository Governance Architecture](../../../docs/explanation/ex-ru__repository-governance-architecture.md) - Six-layer hierarchy
 
 **Conventions:**
 
-- [Plans Organization Convention](../../../docs/explanation/conventions/project/ex-co-pr__plans-organization.md) - Plan structure standards
+- [Plans Organization Convention](../../../docs/explanation/rules/conventions/project/ex-ru-co-pr__plans-organization.md) - Plan structure standards
 
 **Development Practices:**
 
-- [Maker-Checker-Fixer Pattern](../../../docs/explanation/development/pattern/ex-de-pa__maker-checker-fixer.md) - Seven agent families
-- [AI Agents Convention](../../../docs/explanation/development/agents/ex-de-ag__ai-agents.md) - Agent standards
+- [Maker-Checker-Fixer Pattern](../../../docs/explanation/rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md) - Seven agent families
+- [AI Agents Convention](../../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md) - Agent standards
 
 ## Next Steps
 

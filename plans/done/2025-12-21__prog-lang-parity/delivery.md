@@ -238,12 +238,12 @@ Feature: Comprehensive analysis of all programming language content
   - Link to specific example files
   - Add any new metrics discovered during analysis
   - Update quality benchmarks if higher standards found
-  - Expected output: Updated `docs/explanation/conventions/tutorial/ex-co-tu__programming-language-content.md`
+  - Expected output: Updated `docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__programming-language-content.md`
   - **Implementation Notes**: Added comprehensive "Highest Standards Reference" section to Programming Language Content Standard before "Related Conventions". Documents Elixir as highest standard (8/11 categories), alternative excellence (Golang cheat sheet/diagrams, Java glossary/resources), complete reference table link, usage guidance (when creating/improving/validating content), quality gaps even in highest standards (front hooks 0%, cross-references low, color violations), and analysis report link. Updated frontmatter date to 2025-12-21.
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - docs/explanation/conventions/ex-co\_\_programming-language-content.md (modified)
+    - docs/explanation/rules/conventions/ex-co\_\_programming-language-content.md (modified)
     - plans/in-progress/2025-12-21\_\_prog-lang-parity/parity-standards.md (new)
 
 #### Validation Checklist
@@ -265,7 +265,7 @@ Feature: Comprehensive analysis of all programming language content
   - **Date**: 2025-12-21
   - **Result**: Pass
 - [x] Programming Language Content Standard updated
-  - **Validation Notes**: docs/explanation/conventions/ex-co\_\_programming-language-content.md now has "Highest Standards Reference" section with Elixir as primary reference (8/11 categories), alternative excellence documented, complete reference table link, usage guidance, quality gaps identification, and analysis report link. Frontmatter updated to 2025-12-21.
+  - **Validation Notes**: docs/explanation/rules/conventions/ex-co\_\_programming-language-content.md now has "Highest Standards Reference" section with Elixir as primary reference (8/11 categories), alternative excellence documented, complete reference table link, usage guidance, quality gaps identification, and analysis report link. Frontmatter updated to 2025-12-21.
   - **Date**: 2025-12-21
   - **Result**: Pass
 - [x] All standards measurable (objective criteria)

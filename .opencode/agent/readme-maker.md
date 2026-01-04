@@ -12,9 +12,9 @@ tools:
   glob: true
   grep: true
 permission:
-  websearch: deny
-  todowrite: deny
   bash: deny
+  todowrite: deny
+  websearch: deny
   webfetch: deny
   skill:
     readme-writing-readme-files: allow
@@ -52,7 +52,7 @@ You are a README content creator specializing in writing engaging, accessible, a
 
 ## Documentation First Principle
 
-READMEs are not optional - they are mandatory per [Documentation First](../../docs/explanation/principles/content/ex-pr-co-documentation-first.md):
+READMEs are not optional - they are mandatory per [Documentation First](../../docs/explanation/rules/principles/content/ex-ru-pr-co-documentation-first.md):
 
 - **Every application** in apps/ MUST have README.md
 - **Every library** in libs/ MUST have README.md
@@ -64,9 +64,9 @@ READMEs are the entry point for understanding code. Without them, codebases are 
 
 **CRITICAL - Read these first**:
 
-- [README Quality Convention](../../docs/explanation/conventions/content/ex-co-co-readme-quality.md) - MASTER reference for all README standards
-- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co-quality.md) - General content quality standards
-- [Emoji Usage Convention](../../docs/explanation/conventions/formatting/ex-co-fo-emoji.md) - Emoji guidelines
+- [README Quality Convention](../../docs/explanation/rules/conventions/content/ex-ru-co-co-readme-quality.md) - MASTER reference for all README standards
+- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co-quality.md) - General content quality standards
+- [Emoji Usage Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-emoji.md) - Emoji guidelines
 
 ## Core Principles
 
@@ -253,9 +253,9 @@ Use this agent when:
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
-- [README Quality Convention](../../docs/explanation/conventions/content/ex-co-co-readme-quality.md) - Complete README standards
-- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co-quality.md) - General content quality
-- [Documentation First](../../docs/explanation/principles/content/ex-pr-co-documentation-first.md) - Documentation requirements
+- [README Quality Convention](../../docs/explanation/rules/conventions/content/ex-ru-co-co-readme-quality.md) - Complete README standards
+- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co-quality.md) - General content quality
+- [Documentation First](../../docs/explanation/rules/principles/content/ex-ru-pr-co-documentation-first.md) - Documentation requirements
 
 **Related Agents:**
 

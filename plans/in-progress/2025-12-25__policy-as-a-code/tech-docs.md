@@ -5,12 +5,12 @@
 ### Current Six-Layer Architecture
 
 ```
-Layer 0: Vision (WHY) → docs/explanation/vision/
-Layer 1: Principles (WHY values) → docs/explanation/principles/
-Layer 2: Conventions (WHAT docs rules) → docs/explanation/conventions/
-Layer 3: Development (HOW software) → docs/explanation/development/
+Layer 0: Vision (WHY) → docs/explanation/rules/vision/
+Layer 1: Principles (WHY values) → docs/explanation/rules/principles/
+Layer 2: Conventions (WHAT docs rules) → docs/explanation/rules/conventions/
+Layer 3: Development (HOW software) → docs/explanation/rules/development/
 Layer 4: AI Agents (WHO enforces) → .claude/agents/
-Layer 5: Workflows (WHEN orchestrate) → docs/explanation/workflows/
+Layer 5: Workflows (WHEN orchestrate) → docs/explanation/rules/workflows/
 ```
 
 **Key Characteristics:**
@@ -67,7 +67,7 @@ Layer 5: Workflows (WHEN)
 
 ### Storage Format Example
 
-**File**: `docs/explanation/conventions/meta/ex-co-me__file-naming.md`
+**File**: `docs/explanation/rules/conventions/meta/ex-ru-co-me__file-naming.md`
 
 ````markdown
 ---
@@ -100,11 +100,11 @@ policy:
   traceability:
     principles:
       - id: explicit-over-implicit
-        path: docs/explanation/principles/software-engineering/ex-pr-se__explicit-over-implicit.md
+        path: docs/explanation/rules/principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md
         reason: "Explicit prefixes make file locations transparent without opening files"
     conventions:
       - id: ex-co__file-naming-convention
-        path: docs/explanation/conventions/meta/ex-co-me__file-naming.md
+        path: docs/explanation/rules/conventions/meta/ex-ru-co-me__file-naming.md
         section: "Prefix Pattern Rules"
 
   scope:
@@ -127,14 +127,14 @@ policy:
 
       validation:
         type: regex
-        pattern: '^(tu|hoto|re|ex|ex-pr-ge|ex-pr-co|ex-pr-se|ex-co|ex-de|ex-wf)__[\w\-]+\.md$'
+        pattern: '^(tu|hoto|re|ex|ex-ru-pr-ge|ex-ru-pr-co|ex-ru-pr-se|ex-co|ex-de|ex-wf)__[\w\-]+\.md$'
 
       examples:
         valid:
-          - "docs/explanation/conventions/formatting/ex-co-fo__indentation.md"
+          - "docs/explanation/rules/conventions/formatting/ex-ru-co-fo__indentation.md"
           - "docs/tutorials/tu__getting-started.md"
         invalid:
-          - "docs/explanation/conventions/wrong-prefix__example.md"
+          - "docs/explanation/rules/conventions/wrong-prefix__example.md"
           - "docs/tutorials/tutorial__example.md"
 
       autofix: false
@@ -271,7 +271,7 @@ Based on analysis of existing agents, policies must support seven distinct rule 
 **Examples**: Frontmatter structure, agent references, state validation, termination criteria
 **Validation**: Schema validation, reference checking, dependency analysis
 
-Workflows orchestrate agents and have structural requirements similar to agents themselves. The workflow family (workflow-maker, workflow-checker, workflow-fixer) validates workflow definitions in `docs/explanation/workflows/`.
+Workflows orchestrate agents and have structural requirements similar to agents themselves. The workflow family (workflow-maker, workflow-checker, workflow-fixer) validates workflow definitions in `docs/explanation/rules/workflows/`.
 
 **Example 1: Frontmatter Structure**
 
@@ -444,15 +444,15 @@ Every policy MUST link back to principles (Layer 1) and conventions (Layer 2):
 traceability:
   principles:
     - id: accessibility-first
-      path: docs/explanation/principles/content/ex-pr-co__accessibility-first.md
+      path: docs/explanation/rules/principles/content/ex-ru-pr-co__accessibility-first.md
       reason: "Active voice benefits non-native speakers and screen readers"
     - id: simplicity-over-complexity
-      path: docs/explanation/principles/general/ex-pr-ge__simplicity-over-complexity.md
+      path: docs/explanation/rules/principles/general/ex-ru-pr-ge__simplicity-over-complexity.md
       reason: "Clear language reduces cognitive load"
 
   conventions:
     - id: ex-co__content-quality
-      path: docs/explanation/conventions/content/ex-co-co__quality.md
+      path: docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md
       section: "Writing Style and Tone > Active Voice"
       line_range: "77-106" # Optional: specific line references
 ```
@@ -1005,7 +1005,7 @@ echo "$COVERAGE" | jq -r '"## Policy Coverage Report\n**Policies Evaluated**: \(
 **Location**: docs/example.md:1
 **Severity**: Critical
 **Issue**: Prefix 'wrong' does not match directory path
-**Policy Source**: docs/explanation/conventions/ex-co\_\_file-naming-convention.md#policy-fn001
+**Policy Source**: docs/explanation/rules/conventions/ex-co\_\_file-naming-convention.md#policy-fn001
 **Auto-fixable**: No
 **Confidence**: MEDIUM (requires human judgment for correct prefix)
 
@@ -1037,10 +1037,10 @@ echo "$COVERAGE" | jq -r '"## Policy Coverage Report\n**Policies Evaluated**: \(
 # Example: "Add new rule for emoji usage in agent files"
 
 # 2. repo-rules-maker updates convention prose
-# (Uses Edit tool to update docs/explanation/conventions/formatting/ex-co-fo__emoji.md)
+# (Uses Edit tool to update docs/explanation/rules/conventions/formatting/ex-ru-co-fo__emoji.md)
 
 # 3. repo-rules-maker generates policy YAML
-cat >> docs/explanation/conventions/formatting/ex-co-fo__emoji.md << 'EOF'
+cat >> docs/explanation/rules/conventions/formatting/ex-ru-co-fo__emoji.md << 'EOF'
 
 ## Policy Definition
 
@@ -1058,11 +1058,11 @@ policy:
   traceability:
     principles:
       - id: accessibility-first
-        path: docs/explanation/principles/content/ex-pr-co__accessibility-first.md
+        path: docs/explanation/rules/principles/content/ex-ru-pr-co__accessibility-first.md
         reason: "Semantic emojis improve scannability for readers"
     conventions:
       - id: ex-co__emoji-usage
-        path: docs/explanation/conventions/formatting/ex-co-fo__emoji.md
+        path: docs/explanation/rules/conventions/formatting/ex-ru-co-fo__emoji.md
         section: "Usage Rules"
 
   scope:
@@ -1093,7 +1093,7 @@ EOF
 
 # 4. Validate policy syntax
 
-governance-cli policy validate-schema docs/explanation/conventions/ex-co\_\_emoji-usage.md
+governance-cli policy validate-schema docs/explanation/rules/conventions/ex-co\_\_emoji-usage.md
 
 # 5. Update CLAUDE.md summary (if needed)
 
@@ -1105,7 +1105,7 @@ governance-cli policy validate-schema docs/explanation/conventions/ex-co\_\_emoj
 
 # 7. Commit changes atomically
 
-git add docs/explanation/conventions/ex-co\_\_emoji-usage.md CLAUDE.md
+git add docs/explanation/rules/conventions/ex-co\_\_emoji-usage.md CLAUDE.md
 git commit -m "feat(conventions): add emoji usage policy
 
 - Add prose explanation of emoji usage rules
@@ -1175,8 +1175,8 @@ cat >> "generated-reports/repo-rules__2025-12-24--10-35__fix.md" << EOF
 **Confidence**: HIGH (objective structural rule)
 **File**: $FILE
 **Change**: Renamed file from wrong__example.md to ex-co__example.md
-**Policy Source**: docs/explanation/conventions/meta/ex-co-me__file-naming.md#policy-fn001
-**Rationale**: Policy specifies files in docs/explanation/conventions/ must use ex-co__ prefix
+**Policy Source**: docs/explanation/rules/conventions/meta/ex-ru-co-me__file-naming.md#policy-fn001
+**Rationale**: Policy specifies files in docs/explanation/rules/conventions/ must use ex-co__ prefix
 EOF
 ````
 
@@ -1193,8 +1193,8 @@ EOF
 %%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '16px'}}}%%
 graph TB
     %% Storage Layer
-    ConvDocs["Convention Docs<br/>(docs/explanation/conventions/)<br/>Markdown + Embedded YAML Policies"]
-    DevDocs["Development Docs<br/>(docs/explanation/development/)<br/>Markdown + Embedded YAML Policies"]
+    ConvDocs["Convention Docs<br/>(docs/explanation/rules/conventions/)<br/>Markdown + Embedded YAML Policies"]
+    DevDocs["Development Docs<br/>(docs/explanation/rules/development/)<br/>Markdown + Embedded YAML Policies"]
 
     %% Policy Engine
     PolicyEngine["PolicyEngine Library<br/>(apps/governance-cli/internal/policy/)<br/>Go + Cobra"]
@@ -1327,7 +1327,7 @@ governance-cli policy coverage --reports=generated-reports/*__audit.md
   - Nx project configuration
   - Go module setup with Cobra
 
-- `docs/explanation/development/infra/ex-de-in__policy-as-code.md` (NEW)
+- `docs/explanation/rules/development/infra/ex-ru-de-in__policy-as-code.md` (NEW)
   - Policy schema documentation
   - Authoring guidelines
   - Agent consumption patterns
@@ -1360,7 +1360,7 @@ governance-cli policy coverage --reports=generated-reports/*__audit.md
 
 **Phase 1 (Pilot - repo-rules Family):**
 
-- `docs/explanation/conventions/meta/ex-co-me__file-naming.md` (MODIFY)
+- `docs/explanation/rules/conventions/meta/ex-ru-co-me__file-naming.md` (MODIFY)
   - Add ## Policy Definition section with YAML
 
 - `.claude/agents/wow__rules-checker.md` (MODIFY: 953→400 lines)
@@ -1436,7 +1436,7 @@ func TestValidateFile_PrefixMismatch(t *testing.T) {
 	engine.LoadPolicies("../../docs/explanation/conventions")
 
 	content := []byte("# Example File\nContent here")
-	results, err := engine.ValidateFile("docs/explanation/conventions/wrong__example.md", content)
+	results, err := engine.ValidateFile("docs/explanation/rules/conventions/wrong__example.md", content)
 
 	require.NoError(t, err)
 	require.NotEmpty(t, results)

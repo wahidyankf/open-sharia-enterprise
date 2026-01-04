@@ -249,9 +249,9 @@ fill: #de8f05; /* CORRECT */
 
 This Skill integrates with:
 
-- **[Color Accessibility Convention](../../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md)** - Complete color accessibility standards
-- **[Diagrams Convention](../../../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md)** - Mermaid diagram standards, comment syntax, special character escaping
-- **[Content Quality Principles](../../../docs/explanation/conventions/content/ex-co-co__quality.md)** - Quality standards for all content including diagrams
+- **[Color Accessibility Convention](../../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__color-accessibility.md)** - Complete color accessibility standards
+- **[Diagrams Convention](../../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__diagrams.md)** - Mermaid diagram standards, comment syntax, special character escaping
+- **[Content Quality Principles](../../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md)** - Quality standards for all content including diagrams
 
 ## Quick Reference
 
@@ -302,9 +302,9 @@ See `examples.md` in this Skill directory for complete working examples:
 
 ## References
 
-- **[Color Accessibility Convention](../../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md)** - Complete standards, research citations, WCAG compliance
-- **[Diagrams Convention](../../../docs/explanation/conventions/formatting/ex-co-fo__diagrams.md)** - Mermaid syntax, comment rules, special character escaping
-- **[Accessibility First Principle](../../../docs/explanation/principles/content/ex-pr-co__accessibility-first.md)** - Foundational accessibility principle
+- **[Color Accessibility Convention](../../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__color-accessibility.md)** - Complete standards, research citations, WCAG compliance
+- **[Diagrams Convention](../../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__diagrams.md)** - Mermaid syntax, comment rules, special character escaping
+- **[Accessibility First Principle](../../../docs/explanation/rules/principles/content/ex-ru-pr-co__accessibility-first.md)** - Foundational accessibility principle
 
 ## Related Skills
 

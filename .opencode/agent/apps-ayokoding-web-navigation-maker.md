@@ -8,10 +8,10 @@ tools:
   glob: true
   grep: true
 permission:
+  bash: deny
+  websearch: deny
   todowrite: deny
   write: deny
-  websearch: deny
-  bash: deny
   webfetch: deny
   skill:
     apps-ayokoding-web-developing-content: allow
@@ -52,4 +52,4 @@ Calculate and update prev/next links based on weight ordering.
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu-ayokoding.md)
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md)

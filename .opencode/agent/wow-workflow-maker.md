@@ -1,5 +1,5 @@
 ---
-description: Creates workflow documentation in docs/explanation/workflows/ following
+description: Creates workflow documentation in docs/explanation/rules/workflows/ following
   workflow pattern convention.
 mode: all
 model: zai/glm-4.7
@@ -10,9 +10,9 @@ tools:
   glob: true
   grep: true
 permission:
-  websearch: deny
-  todowrite: deny
   bash: deny
+  todowrite: deny
+  websearch: deny
   webfetch: deny
   skill:
     docs-applying-diataxis-framework: allow
@@ -50,7 +50,7 @@ Create workflow documentation following workflow pattern convention.
 
 ## Reference
 
-- [Workflow Pattern Convention](../../docs/explanation/workflows/meta/ex-wf-me-workflow-pattern.md)
+- [Workflow Pattern Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me-workflow-pattern.md)
 - Skills: `docs-applying-diataxis-framework`, `docs-applying-content-quality`
 
 ## Workflow

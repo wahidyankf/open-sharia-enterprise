@@ -93,5 +93,5 @@ Skill: `wow-generating-validation-reports`
 
 ## Reference
 
-- [ose-platform-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu-ose-platform.md)
+- [ose-platform-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ose-platform.md)
 - Skills: `apps-ose-platform-web-developing-content`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`

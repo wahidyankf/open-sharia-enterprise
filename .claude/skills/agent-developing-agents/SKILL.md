@@ -17,4 +17,4 @@ Comprehensive guidance for creating AI agents following repository conventions.
 
 ## References
 
-[AI Agents Convention](../../../docs/explanation/development/agents/ex-de-ag__ai-agents.md)
+[AI Agents Convention](../../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md)

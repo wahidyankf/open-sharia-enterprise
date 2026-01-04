@@ -398,12 +398,12 @@ And repository MCP servers connect successfully
 
 These documents define our project's governance and should inform AGENTS.md content:
 
-- [Repository Architecture: Six-Layer Hierarchy](../../docs/explanation/ex__repository-governance-architecture.md) - Complete governance architecture
-- [Vision: Open Sharia Enterprise](../../docs/explanation/vision/ex-vi__open-sharia-enterprise.md) - WHY we exist
-- [Core Principles Index](../../docs/explanation/principles/README.md) - 10 foundational values
-- [Conventions Index](../../docs/explanation/conventions/README.md) - 24 documentation standards
-- [Development Index](../../docs/explanation/development/README.md) - 15 software practices
-- [Workflows Index](../../docs/explanation/workflows/README.md) - Multi-step orchestrated processes
+- [Repository Architecture: Six-Layer Hierarchy](../../docs/explanation/ex-ru__repository-governance-architecture.md) - Complete governance architecture
+- [Vision: Open Sharia Enterprise](../../docs/explanation/rules/vision/ex-vi__open-sharia-enterprise.md) - WHY we exist
+- [Core Principles Index](../../docs/explanation/rules/principles/README.md) - 10 foundational values
+- [Conventions Index](../../docs/explanation/rules/conventions/README.md) - 24 documentation standards
+- [Development Index](../../docs/explanation/rules/development/README.md) - 15 software practices
+- [Workflows Index](../../docs/explanation/rules/workflows/README.md) - Multi-step orchestrated processes
 
 ### OpenCode Documentation
 

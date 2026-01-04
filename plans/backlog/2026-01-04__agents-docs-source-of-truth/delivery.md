@@ -613,13 +613,13 @@ cp -r .claude/skills.backup .claude/skills
   - [ ] Same updates as CLAUDE.md
   - [ ] Add sync workflow for OpenCode users
 
-- [ ] Update `docs/explanation/development/agents/ex-de-ag__ai-agents.md`:
+- [ ] Update `docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md`:
   - [ ] Add "Source of Truth" section
   - [ ] Document tool-agnostic format
   - [ ] Document sync process
   - [ ] Keep dual-format section (OpenCode format)
 
-- [ ] Update `docs/explanation/ex__repository-governance-architecture.md`:
+- [ ] Update `docs/explanation/ex-ru__repository-governance-architecture.md`:
   - [ ] Layer 4 references `docs/explanation/agents/` as source
   - [ ] Mention generated formats in `.claude/agents/` and `.opencode/agent/`
   - [ ] Update Mermaid diagram if needed
@@ -791,8 +791,8 @@ git checkout main -- .husky/pre-commit
   git add .claude/skills/
   git add .husky/pre-commit
   git add CLAUDE.md AGENTS.md
-  git add docs/explanation/development/agents/
-  git add docs/explanation/ex__repository-governance-architecture.md
+  git add docs/explanation/rules/development/agents/
+  git add docs/explanation/ex-ru__repository-governance-architecture.md
   ```
 
 - [ ] Create comprehensive commit message:

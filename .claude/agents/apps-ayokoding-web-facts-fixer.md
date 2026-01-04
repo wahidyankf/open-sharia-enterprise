@@ -50,7 +50,7 @@ The `wow-assessing-criticality-confidence` Skill provides definitions.
 ## Reference Documentation
 
 - [CLAUDE.md](../../CLAUDE.md)
-- [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu-fixer-confidence-levels.md)
+- [Fixer Confidence Levels Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu-fixer-confidence-levels.md)
 
 **Skills:**
 

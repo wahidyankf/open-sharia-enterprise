@@ -198,14 +198,14 @@ npm install
 
 ## References
 
-**Primary Convention**: [Content Quality Principles](../../../docs/explanation/conventions/content/ex-co-co__quality.md)
+**Primary Convention**: [Content Quality Principles](../../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md)
 
 **Related Conventions**:
 
-- [Accessibility First Principle](../../../docs/explanation/principles/content/ex-pr-co__accessibility-first.md) - Foundational accessibility principle
-- [No Time Estimates Principle](../../../docs/explanation/principles/content/ex-pr-co__no-time-estimates.md) - Rationale for avoiding time framing
-- [README Quality Convention](../../../docs/explanation/conventions/content/ex-co-co__readme-quality.md) - README-specific quality standards
-- [Color Accessibility Convention](../../../docs/explanation/conventions/formatting/ex-co-fo__color-accessibility.md) - WCAG color contrast requirements
+- [Accessibility First Principle](../../../docs/explanation/rules/principles/content/ex-ru-pr-co__accessibility-first.md) - Foundational accessibility principle
+- [No Time Estimates Principle](../../../docs/explanation/rules/principles/content/ex-ru-pr-co__no-time-estimates.md) - Rationale for avoiding time framing
+- [README Quality Convention](../../../docs/explanation/rules/conventions/content/ex-ru-co-co__readme-quality.md) - README-specific quality standards
+- [Color Accessibility Convention](../../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__color-accessibility.md) - WCAG color contrast requirements
 
 **Related Skills**:
 

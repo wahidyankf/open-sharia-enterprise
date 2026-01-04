@@ -20,5 +20,5 @@ Skill: `wow-generating-validation-reports`
 
 ## Reference
 
-- [Workflow Pattern Convention](../../docs/explanation/workflows/meta/ex-wf-me-workflow-pattern.md)
+- [Workflow Pattern Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me-workflow-pattern.md)
 - Skills: `docs-applying-diataxis-framework`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`

@@ -15,7 +15,7 @@ Create repository rules and conventions.
 
 ## Reference
 
-- [Convention Writing Convention](../../docs/explanation/conventions/content/ex-co-co-convention-writing.md)
+- [Convention Writing Convention](../../docs/explanation/rules/conventions/content/ex-ru-co-co-convention-writing.md)
 - Skills: `docs-applying-diataxis-framework`, `docs-applying-content-quality`
 
 ## Workflow

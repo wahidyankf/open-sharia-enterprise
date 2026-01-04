@@ -15,7 +15,7 @@ Create landing page content for ose-platform-web (PaperMod theme, English-only).
 
 ## Reference
 
-- [ose-platform-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu-ose-platform.md)
+- [ose-platform-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ose-platform.md)
 - Skills: `apps-ose-platform-web-developing-content` (PaperMod patterns, date structure), `docs-creating-accessible-diagrams`, `docs-applying-content-quality`
 
 ## Workflow

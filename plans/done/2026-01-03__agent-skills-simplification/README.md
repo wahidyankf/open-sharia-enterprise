@@ -77,7 +77,7 @@ graph TD
 
 **Trunk Based Development**: All work happens on `main` branch with small, frequent commits. No feature branches unless absolutely necessary.
 
-See [Trunk Based Development Convention](../../docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md) for complete details.
+See [Trunk Based Development Convention](../../docs/explanation/rules/development/workflow/ex-ru-de-wo__trunk-based-development.md) for complete details.
 
 ## Final Results
 
@@ -147,14 +147,14 @@ This plan delivered agent simplification through direct commits to main branch:
 
 **Core Principles Implemented:**
 
-- [Simplicity Over Complexity](../../docs/explanation/principles/general/ex-pr-ge__simplicity-over-complexity.md) - Remove duplication, favor single source of truth
-- [Documentation First](../../docs/explanation/principles/content/ex-pr-co__documentation-first.md) - Skills encode knowledge systematically
-- [Explicit Over Implicit](../../docs/explanation/principles/software-engineering/ex-pr-se__explicit-over-implicit.md) - Clear Skill references instead of embedded knowledge
+- [Simplicity Over Complexity](../../docs/explanation/rules/principles/general/ex-ru-pr-ge__simplicity-over-complexity.md) - Remove duplication, favor single source of truth
+- [Documentation First](../../docs/explanation/rules/principles/content/ex-ru-pr-co__documentation-first.md) - Skills encode knowledge systematically
+- [Explicit Over Implicit](../../docs/explanation/rules/principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md) - Clear Skill references instead of embedded knowledge
 
 **Key Conventions:**
 
-- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag__ai-agents.md) - Agent structure, size limits, Skills integration
-- [Repository Architecture](../../docs/explanation/ex__repository-governance-architecture.md) - Six-layer hierarchy with Skills as infrastructure
+- [AI Agents Convention](../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md) - Agent structure, size limits, Skills integration
+- [Repository Architecture](../../docs/explanation/ex-ru__repository-governance-architecture.md) - Six-layer hierarchy with Skills as infrastructure
 
 **Skills Infrastructure:**
 

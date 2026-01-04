@@ -161,12 +161,12 @@ The explanation directory has special subdirectories:
 
 ## References
 
-**Primary Convention**: [Diátaxis Framework Convention](../../../docs/explanation/conventions/meta/ex-co-me__diataxis-framework.md)
+**Primary Convention**: [Diátaxis Framework Convention](../../../docs/explanation/rules/conventions/meta/ex-ru-co-me__diataxis-framework.md)
 
 **Related Conventions**:
 
-- [Content Quality Principles](../../../docs/explanation/conventions/content/ex-co-co__quality.md) - Universal content standards
-- [File Naming Convention](../../../docs/explanation/conventions/meta/ex-co-me__file-naming.md) - Naming documentation files
+- [Content Quality Principles](../../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - Universal content standards
+- [File Naming Convention](../../../docs/explanation/rules/conventions/meta/ex-ru-co-me__file-naming.md) - Naming documentation files
 
 **Related Skills**:
 

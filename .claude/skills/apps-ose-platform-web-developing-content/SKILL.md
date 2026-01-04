@@ -451,12 +451,12 @@ cover:
 
 ## Reference Documentation
 
-**Primary Convention**: [Hugo Content Convention - ose-platform-web](../../../docs/explanation/conventions/hugo/ex-co-hu__ose-platform.md)
+**Primary Convention**: [Hugo Content Convention - ose-platform-web](../../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
 
 **Related Conventions**:
 
-- [Hugo Content Shared](../../../docs/explanation/conventions/hugo/ex-co-hu__shared.md) - Shared Hugo patterns
-- [Content Quality Principles](../../../docs/explanation/conventions/content/ex-co-co__quality.md) - Universal quality standards
+- [Hugo Content Shared](../../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__shared.md) - Shared Hugo patterns
+- [Content Quality Principles](../../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - Universal quality standards
 
 **Related Skills**:
 
@@ -480,12 +480,12 @@ This Skill packages essential ose-platform-web development knowledge for creatin
 
 ## References
 
-**Primary Convention**: [Hugo Content Convention - ose-platform-web](../../../docs/explanation/conventions/hugo/ex-co-hu__ose-platform.md)
+**Primary Convention**: [Hugo Content Convention - ose-platform-web](../../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
 
 **Related Conventions**:
 
-- [Hugo Content Shared](../../../docs/explanation/conventions/hugo/ex-co-hu__shared.md) - Shared Hugo patterns
-- [Content Quality Principles](../../../docs/explanation/conventions/content/ex-co-co__quality.md) - Universal quality standards
+- [Hugo Content Shared](../../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__shared.md) - Shared Hugo patterns
+- [Content Quality Principles](../../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - Universal quality standards
 
 **Related Skills**:
 

@@ -461,7 +461,7 @@ L5: Workflow - Maker-Checker-Fixer (docs)
 3. **Define scope** - What does it cover? What doesn't it?
 4. **Add traceability** - Principles Implemented/Respected section
 5. **Create examples** - Clear, concrete illustrations
-6. **Update index** - Add to docs/explanation/conventions/README.md
+6. **Update index** - Add to docs/explanation/rules/conventions/README.md
 7. **Consider agents** - Which agents need to enforce this?
 
 ### Adding New Development Practices
@@ -472,7 +472,7 @@ L5: Workflow - Maker-Checker-Fixer (docs)
 4. **Add traceability** - BOTH Principles and Conventions sections
 5. **Consider automation** - Git hooks? CI/CD? Agents?
 6. **Create examples** - Clear, concrete illustrations
-7. **Update index** - Add to docs/explanation/development/README.md
+7. **Update index** - Add to docs/explanation/rules/development/README.md
 
 ### Adding New Agents
 
@@ -491,8 +491,8 @@ L5: Workflow - Maker-Checker-Fixer (docs)
 3. **Define termination** - Clear exit conditions
 4. **Add approval checkpoints** - Where does user review?
 5. **Document state flow** - How state passes between steps
-6. **Create workflow file** - docs/explanation/workflows/
-7. **Update index** - Add to docs/explanation/workflows/README.md
+6. **Create workflow file** - docs/explanation/rules/workflows/
+7. **Update index** - Add to docs/explanation/rules/workflows/README.md
 
 ---
 

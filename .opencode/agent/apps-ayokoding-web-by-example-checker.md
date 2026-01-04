@@ -101,9 +101,9 @@ The `wow-generating-validation-reports` Skill provides UUID generation, timestam
 
 **CRITICAL - Read these first**:
 
-- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu-ayokoding.md) - Hextra theme standards
-- [By Example Content Standard](../../docs/explanation/conventions/tutorial/ex-co-tu-programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu-naming.md) - By Example definition
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md) - Hextra theme standards
+- [By Example Content Standard](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
+- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-naming.md) - By Example definition
 
 ## Validation Scope
 
@@ -187,8 +187,8 @@ Update status, add summary, prioritize findings.
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu-ayokoding.md) - Complete standards
-- [By Example Content Standard](../../docs/explanation/conventions/tutorial/ex-co-tu-programming-language-content.md) - Annotation requirements
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md) - Complete standards
+- [By Example Content Standard](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
 
 **Related Agents:**
 

@@ -8,11 +8,11 @@ tools:
   bash: true
   grep: true
 permission:
-  todowrite: deny
-  edit: deny
-  write: deny
   websearch: deny
   glob: deny
+  todowrite: deny
+  write: deny
+  edit: deny
   webfetch: deny
   skill:
     apps-ayokoding-web-developing-content: allow
@@ -54,5 +54,5 @@ Deploy ayokoding-web to production.
 
 ## Reference
 
-- [Trunk Based Development](../../docs/explanation/development/workflow/ex-de-wo-trunk-based-development.md)
-- [ayokoding-web Hugo Convention](../../docs/explanation/conventions/hugo/ex-co-hu-ayokoding.md)
+- [Trunk Based Development](../../docs/explanation/rules/development/workflow/ex-ru-de-wo-trunk-based-development.md)
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md)

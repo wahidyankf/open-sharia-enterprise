@@ -12,7 +12,7 @@ This implementation consists of 2 phases delivered through direct commits to `ma
 
 **Trunk Based Development**: All work happens on `main` branch with small, frequent commits. Each phase consists of multiple atomic commits. Validation checkpoints between phases ensure quality before proceeding.
 
-See [Trunk Based Development Convention](../../docs/explanation/development/workflow/ex-de-wo__trunk-based-development.md) for complete details.
+See [Trunk Based Development Convention](../../docs/explanation/rules/development/workflow/ex-ru-de-wo__trunk-based-development.md) for complete details.
 
 ### Delivery Summary
 
@@ -73,7 +73,7 @@ See [Trunk Based Development Convention](../../docs/explanation/development/work
   - **Date**: 2026-01-02
   - **Status**: Completed
   - **Files Changed**:
-    - docs/explanation/development/agents/ex-de-ag\_\_ai-agents.md (modified)
+    - docs/explanation/rules/development/agents/ex-ru-de-ag\_\_ai-agents.md (modified)
   - **Sections Added**:
     - Agent Skills References (complete section with subsections)
     - Skills Field Format
@@ -269,7 +269,7 @@ And existing agents should continue working without modification
   - **Date**: 2026-01-02
   - **Status**: Completed
   - **Files Changed**:
-    - 41 agent files updated (agent**maker, all apps**ayokoding-web**\*, all apps**ose-platform-web**\*, all docs**_, all plan\_\__, all readme**\*, social**linkedin**post-maker, swe**hugo**developer, wow**workflow-\*)
+    - 41 agent files updated (agent**maker, all apps**ayokoding-web**\*, all apps**ose-platform-web**\*, all docs**\_, all plan\_\_\_, all readme**\*, social**linkedin**post-maker, swe**hugo**developer, wow**workflow-\*)
     - 3 agents already had field (wow**rules-maker, wow**rules-checker, wow\_\_rules-fixer)
   - **Verification**:
     - Total agents: 44 (excluding README.md)

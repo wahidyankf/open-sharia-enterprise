@@ -353,7 +353,7 @@ awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' tutorial.md | \
 
 ## Validation Re-implementation Guide
 
-**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../docs/explanation/development/quality/ex-de-qu-repository-validation.md) and [Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu-general.md).
+**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu-repository-validation.md) and [Tutorial Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-general.md).
 
 **Key points:**
 
@@ -401,7 +401,7 @@ Always provide:
 
 **Agent Conventions:**
 
-- [AI Agents Convention](../../docs/explanation/development/agents/ex-de-ag-ai-agents.md) - AI agents convention (all agents must follow)
+- [AI Agents Convention](../../docs/explanation/rules/development/agents/ex-ru-de-ag-ai-agents.md) - AI agents convention (all agents must follow)
 
 **Related Agents:**
 
@@ -411,13 +411,13 @@ Always provide:
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../docs/explanation/development/quality/ex-de-qu-fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
-- [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/development/pattern/ex-de-pa-maker-checker-fixer.md) - Three-stage quality workflow
-- [Tutorial Convention](../../docs/explanation/conventions/tutorial/ex-co-tu-general.md) - Complete tutorial standards and validation criteria (primary reference)
-- [Tutorial Naming Convention](../../docs/explanation/conventions/tutorial/ex-co-tu-naming.md) - Tutorial types and naming patterns
-- [Repository Validation Methodology Convention](../../docs/explanation/development/quality/ex-de-qu-repository-validation.md) - Standard validation patterns
-- [Temporary Files Convention](../../docs/explanation/development/infra/ex-de-in-temporary-files.md) - Where to store fix reports
-- [Content Quality Principles](../../docs/explanation/conventions/content/ex-co-co-quality.md) - Content standards (no time estimates rule)
+- [Fixer Confidence Levels Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
+- [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/rules/development/pattern/ex-ru-de-pa-maker-checker-fixer.md) - Three-stage quality workflow
+- [Tutorial Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-general.md) - Complete tutorial standards and validation criteria (primary reference)
+- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-naming.md) - Tutorial types and naming patterns
+- [Repository Validation Methodology Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu-repository-validation.md) - Standard validation patterns
+- [Temporary Files Convention](../../docs/explanation/rules/development/infra/ex-ru-de-in-temporary-files.md) - Where to store fix reports
+- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co-quality.md) - Content standards (no time estimates rule)
 
 ---
 

@@ -7,12 +7,12 @@ tools:
   read: true
   grep: true
 permission:
-  todowrite: deny
-  edit: deny
-  write: deny
-  websearch: deny
-  glob: deny
   bash: deny
+  glob: deny
+  websearch: deny
+  todowrite: deny
+  write: deny
+  edit: deny
   webfetch: deny
   skill:
     docs-applying-content-quality: allow
