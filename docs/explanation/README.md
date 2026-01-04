@@ -12,9 +12,37 @@ updated: 2026-01-04
 
 # Explanation
 
-Conceptual documentation for the open-sharia-enterprise project. These documents provide context, deep dives, and understanding of how systems work and why design decisions were made.
+**Understanding-oriented documentation** that provides background, context, and conceptual knowledge about the open-sharia-enterprise project.
 
-## 🎯 Understanding the Six-Layer Architecture
+## What is Explanation Documentation?
+
+Per the [Diátaxis framework](./rules/conventions/meta/ex-ru-co-me__diataxis-framework.md), Explanation documentation:
+
+- **Deepens understanding** of concepts, design decisions, and systems
+- **Answers "why?"** questions and provides context
+- **Clarifies background** and alternative approaches
+- **Discusses trade-offs** and decision rationale
+
+This is distinct from:
+
+- **Tutorials** (learning by doing)
+- **How-to Guides** (solving specific problems)
+- **Reference** (technical specifications)
+
+## Documentation Scope
+
+This directory contains conceptual documentation across multiple areas:
+
+- **Repository Governance** - How we organize, validate, and enforce standards
+- **Project Architecture** - System design and technical decisions
+- **Domain Concepts** - Shariah-compliant enterprise principles and Islamic business foundations
+- **Technical Background** - Technologies, patterns, and frameworks used in the project
+
+---
+
+## 🏛️ Repository Governance
+
+### Six-Layer Architecture
 
 The repository follows a **six-layer architecture** where each layer builds on the foundation of the layer above. See [Repository Governance Architecture](./ex-ru__repository-governance-architecture.md) for comprehensive explanation.
 
@@ -158,20 +186,36 @@ Is it about WHY we value something?
             └─ NO → Wrong category (try how-to/ or reference/)
 ```
 
-## 📋 Contents
+---
 
-### Architecture
+## 📋 Documentation Index
+
+### Repository Governance
+
+**Core Architecture:**
 
 - [Repository Governance Architecture](./ex-ru__repository-governance-architecture.md) - Comprehensive guide to the six-layer architecture (Vision → Principles → Conventions → Development → Agents → Workflows)
 
-### Governance Rules
+**Governance Layers:**
 
-- **[Rules](./rules/README.md)** - All governance layers (Vision, Principles, Conventions, Development, Workflows) organized together
+- **[Rules](./rules/README.md)** - All governance layers organized together
   - [Vision](./rules/vision/README.md) - Layer 0: Foundational purpose (WHY we exist)
   - [Core Principles](./rules/principles/README.md) - Layer 1: Foundational values guiding all conventions and development
   - [Conventions](./rules/conventions/README.md) - Layer 2: Documentation writing and organization standards
   - [Development](./rules/development/README.md) - Layer 3: Software development practices and workflows
   - [Workflows](./rules/workflows/README.md) - Layer 5: Multi-step orchestrated processes composing AI agents
+
+### Project Architecture
+
+_Documentation for overall system architecture and design decisions to be added as the project evolves._
+
+### Domain Concepts
+
+_Documentation for Shariah-compliant enterprise principles and Islamic business foundations to be added as the project evolves._
+
+### Technical Background
+
+_Documentation for key technologies, patterns, and frameworks to be added as the project evolves._
 
 ---
 
