@@ -8,12 +8,12 @@ tools:
   bash: true
   grep: true
 permission:
-  websearch: deny
+  write: deny
   glob: deny
   todowrite: deny
-  write: deny
-  edit: deny
   webfetch: deny
+  websearch: deny
+  edit: deny
   skill:
     apps-ayokoding-web-developing-content: allow
 ---

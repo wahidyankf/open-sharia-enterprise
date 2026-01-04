@@ -7,7 +7,7 @@ tags:
   - explanation
   - concepts
 created: 2025-11-22
-updated: 2025-12-23
+updated: 2026-01-04
 ---
 
 # Explanation
@@ -54,7 +54,8 @@ graph TD
 
 1. **[Core Principles](./rules/principles/README.md)** (WHY) - Foundational values that **govern** everything
    - The WHY behind our decisions (serve the vision)
-   - Six principles: Explicit Over Implicit, Accessibility First, Simplicity Over Complexity, Automation Over Manual, Progressive Disclosure, No Time Estimates
+   - 10 principles across 3 categories (General, Content, Software Engineering)
+   - Examples: Simplicity Over Complexity, Accessibility First, Documentation First, Automation Over Manual, Explicit Over Implicit, Immutability Over Mutability, Pure Functions Over Side Effects, Reproducibility First, No Time Estimates, Progressive Disclosure
    - Each principle includes "Vision Supported" section
    - **Role**: Governance layer - all lower layers must align with these principles
 

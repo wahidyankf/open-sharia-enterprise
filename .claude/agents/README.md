@@ -16,7 +16,7 @@ Expert at creating new AI agents following all repository conventions.
 
 - **Primary Use:** Adding a new agent to .claude/agents/ directory
 - **Specialization:** Agent scaffolding, automatic README updates, convention compliance, validation integration
-- **Tools:** Read, Glob, Grep, Bash
+- **Tools:** Read, Glob, Grep, Write, Bash
 - **When to Use:**
   - Creating a new AI agent with proper structure and frontmatter
   - Auto-generating agent files following all naming and format conventions
@@ -713,13 +713,14 @@ Applies validated fixes from wow\_\_workflow-checker audit reports. Re-validates
 
 ### 🟩 `wow-rules-checker.md`
 
-Expert at validating consistency between agents, CLAUDE.md, conventions, and documentation. Generates detailed audit reports in `generated-reports/repo-rules-audit-{timestamp}.md` for historical tracking.
+Expert at validating repository-wide consistency, CLAUDE.md maintenance (size limits, duplication), and rules governance across all governance layers. Detects contradictions, inaccuracies, inconsistencies, traceability violations, and layer coherence issues. Generates detailed audit reports in generated-reports/.
 
 - **Primary Use:** Checking for inconsistencies, contradictions, or verifying compliance
-- **Specialization:** Cross-file validation, duplication detection, convention enforcement, emoji consistency, persistent audit reporting
+- **Specialization:** Cross-file validation, duplication detection, convention enforcement, emoji consistency, CLAUDE.md size monitoring, rules governance validation (contradictions, inaccuracies, inconsistencies, traceability violations, layer coherence across vision/, principles/, conventions/, development/, workflows/), persistent audit reporting
 - **Tools:** Read, Glob, Grep, Write
 - **When to Use:**
   - After making changes to conventions or CLAUDE.md
+  - Validating rules governance (contradictions, inaccuracies, inconsistencies, traceability violations, layer coherence)
   - Periodic audits of repository consistency
   - Validating that all files follow documented standards (including emoji usage)
   - Detecting contradictions or outdated references
@@ -729,11 +730,10 @@ Expert at validating consistency between agents, CLAUDE.md, conventions, and doc
 
 ### 🟪 `wow-rules-fixer.md`
 
-Applies validated fixes from wow\_\_rules-checker audit reports. Re-validates findings before applying changes to prevent false positives. Uses bash commands for file editing.
+Applies validated fixes from wow\_\_rules-checker audit reports including CLAUDE.md issues and rules governance problems (contradictions, inaccuracies, inconsistencies, traceability violations, layer coherence). Re-validates findings before applying changes. Uses bash tools for .claude/ files, Edit tool for docs/explanation/ files.
 
-- **Primary Use:** Applying validated fixes from wow\_\_rules-checker audit reports after user review
-- **Specialization:** Fix validation, confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), automated fix application with safety checks using bash text manipulation
-- **Tools:** Read, Glob, Grep, Bash
+- **Specialization:** Fix validation, confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), automated fix application with safety checks using bash for .claude/ files and Edit for docs/ files, rules governance fixes (contradictions, inaccuracies, inconsistencies, traceability violations, layer coherence)
+- **Tools:** Read, Glob, Grep, Write, Bash
 - **When to Use:**
   - After reviewing wow\_\_rules-checker audit report
   - Applying validated fixes automatically with re-validation
@@ -749,7 +749,7 @@ Expert at making rule and convention changes effective across CLAUDE.md, convent
 
 - **Primary Use:** Adding/modifying rules, conventions, or standards affecting multiple files
 - **Specialization:** Systematic propagation, cascade updates, consistency maintenance, CLAUDE.md size management (40k hard limit, 30k target), bash-based file operations
-- **Tools:** Read, Glob, Grep, Bash
+- **Tools:** Read, Glob, Grep, Write, Bash
 - **When to Use:**
   - Adding new conventions or standards (including emoji vocabulary)
   - Modifying existing rules that affect multiple files
@@ -795,7 +795,7 @@ Expert at validating plan implementations against requirements, performing compr
 
 - **Primary Use:** Independent final validation of completed plan implementations
 - **Specialization:** Requirements verification, code quality assessment, integration testing, comprehensive validation reporting
-- **Tools:** Read, Glob, Grep, Bash
+- **Tools:** Read, Glob, Grep, Write, Bash
 - **When to Use:**
   - After plan\_\_executor completes all implementation tasks
   - Validating implementation meets all requirements from requirements.md

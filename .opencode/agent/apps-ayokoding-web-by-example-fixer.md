@@ -12,9 +12,9 @@ tools:
   grep: true
   bash: true
 permission:
-  websearch: deny
   todowrite: deny
   webfetch: deny
+  websearch: deny
   skill:
     apps-ayokoding-web-developing-content: allow
     docs-creating-by-example-tutorials: allow

@@ -11,9 +11,9 @@ tools:
   grep: true
   bash: true
 permission:
-  websearch: deny
   todowrite: deny
   webfetch: deny
+  websearch: deny
   skill:
     apps-ose-platform-web-developing-content: allow
     wow-assessing-criticality-confidence: allow

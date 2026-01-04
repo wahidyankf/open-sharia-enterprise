@@ -1,12 +1,12 @@
 ---
 name: wow-rules-fixer
-description: Applies validated fixes from repository rules audit reports including agent-Skill duplication removal and Skills coverage gap remediation. Uses bash tools for .claude folder modifications.
+description: Applies validated fixes from repository rules audit reports including agent-Skill duplication removal, Skills coverage gap remediation, and rules governance fixes (contradictions, inaccuracies, inconsistencies). Uses bash tools for .claude folder modifications.
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
 color: purple
 skills: [wow-applying-maker-checker-fixer, wow-assessing-criticality-confidence, wow-generating-validation-reports]
 created: 2025-12-01
-updated: 2026-01-03
+updated: 2026-01-04
 ---
 
 # Repository Rules Fixer Agent
@@ -21,8 +21,9 @@ Fix repository-wide consistency issues including:
 - Linking errors
 - Emoji usage violations
 - Convention compliance issues
-- **Agent-Skill duplication removal** (NEW)
-- **Skills coverage gap remediation** (NEW)
+- **Agent-Skill duplication removal**
+- **Skills coverage gap remediation**
+- **Rules governance fixes** - contradictions, inaccuracies, inconsistencies, traceability violations, layer coherence
 
 ## Critical Requirements
 
@@ -41,8 +42,6 @@ Fix repository-wide consistency issues including:
 See [AI Agents Convention - Writing to .claude Folders](../../docs/explanation/rules/development/agents/ex-ru-de-ag-ai-agents.md#writing-to-claude-folders).
 
 ## Agent-Skill Duplication Fixes
-
-**NEW CAPABILITY**: Remove duplicated content from agents and add Skill references.
 
 ### Fix Pattern
 
@@ -65,8 +64,6 @@ See [AI Agents Convention - Writing to .claude Folders](../../docs/explanation/r
 
 ## Skills Coverage Gap Remediation
 
-**NEW CAPABILITY**: Create new Skills or extend existing Skills to eliminate gaps.
-
 ### Remediation Process
 
 **For each gap finding** (HIGH/CRITICAL confidence):
@@ -86,6 +83,78 @@ See [AI Agents Convention - Writing to .claude Folders](../../docs/explanation/r
    - Add Skill to skills: frontmatter
    - Add brief reference comment
    - Use bash heredoc for updates
+
+## Rules Governance Fixes
+
+### Fix Categories
+
+1. **Contradictions**: Resolve conflicting statements between documents
+2. **Inaccuracies**: Correct factually incorrect information, update outdated references
+3. **Inconsistencies**: Align terminology, fix broken cross-references
+4. **Traceability Violations**: Add missing required sections
+5. **Layer Coherence**: Ensure proper governance relationships
+
+### Fix Patterns
+
+**Contradictions**:
+
+1. Re-validate contradiction still exists
+2. Identify authoritative source (higher layer governs lower layer)
+3. Update non-authoritative document to align
+4. Use Edit tool for docs/ files (not in .claude/)
+5. Assess confidence:
+   - HIGH: Clear contradiction, obvious authoritative source
+   - MEDIUM: Subtle difference, unclear which is authoritative
+   - FALSE_POSITIVE: Not actually contradictory, just different contexts
+
+**Inaccuracies**:
+
+1. Re-validate inaccuracy (file path, agent name, etc.)
+2. Correct the reference/information
+3. Use Edit tool for docs/ files
+4. Assess confidence:
+   - HIGH: Verifiable correction (file exists, agent exists)
+   - MEDIUM: Unable to verify correction
+   - FALSE_POSITIVE: Reference is actually correct
+
+**Inconsistencies**:
+
+1. Re-validate inconsistency
+2. Standardize terminology/references
+3. Choose canonical form (check conventions for guidance)
+4. Update all instances
+5. Assess confidence:
+   - HIGH: Clear inconsistency, obvious canonical form
+   - MEDIUM: Multiple valid forms exist
+   - FALSE_POSITIVE: Inconsistency is intentional
+
+**Traceability Violations**:
+
+1. Identify missing section (e.g., "Principles Implemented/Respected")
+2. Analyze document content to identify relevant principles/conventions
+3. Add section with appropriate content
+4. Assess confidence:
+   - HIGH: Clear which principles/conventions apply
+   - MEDIUM: Unclear which principles apply
+   - FALSE_POSITIVE: Section exists but named differently
+
+**Layer Coherence**:
+
+1. Verify governance relationship is broken
+2. Add missing references to higher layers
+3. Update traceability sections
+4. Assess confidence:
+   - HIGH: Clear which higher layer should be referenced
+   - MEDIUM: Multiple higher layers could apply
+   - FALSE_POSITIVE: Relationship exists but not explicitly stated
+
+### Important Guidelines for Rules Fixes
+
+1. **Edit Tool Usage**: Use Edit tool for `docs/explanation/` files (NOT Bash tools)
+2. **Bash Tool Usage**: Use Bash tools ONLY for `.claude/` files
+3. **Preserve Meaning**: Don't change intended meaning when fixing inconsistencies
+4. **Document Changes**: Explain fixes clearly in fix report
+5. **Traceability**: When adding traceability sections, analyze content carefully
 
 ## Mode Parameter Handling
 

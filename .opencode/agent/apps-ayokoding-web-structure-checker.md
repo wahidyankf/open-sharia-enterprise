@@ -12,10 +12,10 @@ tools:
   write: true
   bash: true
 permission:
-  websearch: deny
   todowrite: deny
   edit: deny
   webfetch: deny
+  websearch: deny
   skill:
     apps-ayokoding-web-developing-content: allow
     wow-assessing-criticality-confidence: allow

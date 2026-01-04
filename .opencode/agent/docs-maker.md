@@ -9,10 +9,10 @@ tools:
   glob: true
   grep: true
 permission:
-  bash: deny
   todowrite: deny
-  websearch: deny
+  bash: deny
   webfetch: deny
+  websearch: deny
   skill:
     docs-applying-content-quality: allow
     docs-creating-accessible-diagrams: allow

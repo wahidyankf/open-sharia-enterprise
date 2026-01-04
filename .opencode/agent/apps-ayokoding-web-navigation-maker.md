@@ -8,11 +8,11 @@ tools:
   glob: true
   grep: true
 permission:
+  write: deny
+  todowrite: deny
+  webfetch: deny
   bash: deny
   websearch: deny
-  todowrite: deny
-  write: deny
-  webfetch: deny
   skill:
     apps-ayokoding-web-developing-content: allow
 ---
