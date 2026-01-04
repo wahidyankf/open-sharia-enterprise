@@ -9,11 +9,13 @@ tools:
   grep: true
 permission:
   todowrite: deny
-  glob: deny
-  write: deny
   edit: deny
-  webfetch: deny
+  write: deny
   websearch: deny
+  glob: deny
+  webfetch: deny
+  skill:
+    apps-ose-platform-web-developing-content: allow
 ---
 
 ## Agent Metadata

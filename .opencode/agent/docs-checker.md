@@ -17,8 +17,13 @@ tools:
   webfetch: true
   websearch: true
 permission:
-  edit: deny
   todowrite: deny
+  edit: deny
+  skill:
+    wow-applying-maker-checker-fixer: allow
+    wow-assessing-criticality-confidence: allow
+    docs-applying-content-quality: allow
+    docs-validating-factual-accuracy: allow
 ---
 
 ## Agent Metadata

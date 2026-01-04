@@ -131,14 +131,28 @@ def validate_agent(filepath: Path, strict: bool = False) -> ValidationResult:
                     result.passed = False
                     result.errors.append(f"Permission tool must be lowercase: {tool_name}")
 
-                # Check valid tool
-                if tool_name.lower() not in VALID_TOOLS:
-                    result.warnings.append(f"Unknown permission tool: {tool_name}")
+                # Handle skill permissions (nested dict) vs regular permissions (string)
+                if tool_name == 'skill':
+                    # Skill permissions: permission.skill: {skill-name: allow}
+                    if not isinstance(action, dict):
+                        result.passed = False
+                        result.errors.append(f"Skill permission must be a dict, got {type(action).__name__}")
+                    else:
+                        # Validate each skill permission
+                        for skill_name, skill_action in action.items():
+                            if skill_action not in {'allow', 'deny', 'ask'}:
+                                result.passed = False
+                                result.errors.append(f"Invalid skill permission action for {skill_name}: {skill_action} (must be allow/deny/ask)")
+                else:
+                    # Regular tool permissions
+                    # Check valid tool
+                    if tool_name.lower() not in VALID_TOOLS:
+                        result.warnings.append(f"Unknown permission tool: {tool_name}")
 
-                # Check valid action
-                if action not in {'allow', 'deny', 'ask'}:
-                    result.passed = False
-                    result.errors.append(f"Invalid permission action for {tool_name}: {action} (must be allow/deny/ask)")
+                    # Check valid action
+                    if action not in {'allow', 'deny', 'ask'}:
+                        result.passed = False
+                        result.errors.append(f"Invalid permission action for {tool_name}: {action} (must be allow/deny/ask)")
 
     # 7. Checker agents must have workflow instructions
     if 'checker' in agent_name.lower():

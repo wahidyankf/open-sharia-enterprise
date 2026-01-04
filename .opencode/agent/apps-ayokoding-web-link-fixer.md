@@ -14,6 +14,12 @@ tools:
   websearch: true
 permission:
   todowrite: deny
+  skill:
+    apps-ayokoding-web-developing-content: allow
+    docs-validating-links: allow
+    wow-assessing-criticality-confidence: allow
+    wow-applying-maker-checker-fixer: allow
+    wow-generating-validation-reports: allow
 ---
 
 ## Agent Metadata

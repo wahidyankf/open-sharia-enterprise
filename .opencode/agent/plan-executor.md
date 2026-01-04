@@ -13,9 +13,11 @@ tools:
   grep: true
   bash: true
 permission:
-  todowrite: deny
   websearch: deny
+  todowrite: deny
   webfetch: deny
+  skill:
+    docs-applying-diataxis-framework: allow
 ---
 
 ## Agent Metadata

@@ -10,10 +10,13 @@ tools:
   glob: true
   grep: true
 permission:
-  todowrite: deny
   websearch: deny
+  todowrite: deny
   bash: deny
   webfetch: deny
+  skill:
+    docs-applying-diataxis-framework: allow
+    docs-applying-content-quality: allow
 ---
 
 ## Agent Metadata

@@ -339,6 +339,15 @@ def generate_opencode_agent(metadata: AgentMetadata) -> str:
 
     # Add permissions (denylist)
     permissions = calculate_permissions(metadata.tools)
+
+    # Add skill permissions (OpenCode uses permission.skill for access control)
+    if metadata.skills:
+        skill_permissions = {skill: 'allow' for skill in metadata.skills}
+        if permissions:
+            permissions['skill'] = skill_permissions
+        else:
+            permissions = {'skill': skill_permissions}
+
     if permissions:
         frontmatter['permission'] = permissions
 
