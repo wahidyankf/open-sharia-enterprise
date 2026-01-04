@@ -42,9 +42,9 @@ This directory contains conceptual documentation across multiple areas:
 
 ## 🏛️ Repository Governance
 
-### Six-Layer Architecture
+### Six-Layer Governance Architecture
 
-The repository follows a **six-layer architecture** where each layer builds on the foundation of the layer above. See [Repository Governance Architecture](./ex-ru__repository-governance-architecture.md) for comprehensive explanation.
+The repository follows a **six-layer governance architecture** where each layer builds on the foundation of the layer above. See [Repository Governance Architecture](./ex-ru__repository-governance-architecture.md) for comprehensive explanation.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -114,7 +114,15 @@ graph TD
    - **Role**: Orchestration layer - coordinates agents to achieve complex goals
    - **Example**: Maker-Checker-Fixer workflow orchestrates creation, validation, fixing
 
-**Complete Architecture**: See [Repository Governance Architecture](./ex-ru__repository-governance-architecture.md) for layer characteristics, complete traceability examples, usage guidance, troubleshooting, and verification methods.
+**Delivery Infrastructure** (not governance layers):
+
+- **CLAUDE.md / AGENTS.md** - Project instructions loaded at startup (Claude Code / OpenCode)
+- **[Skills](../.claude/skills/README.md)** - Progressive knowledge packages that serve agents (18 shared Skills)
+- **Direct References** - Explicit links to convention docs in agent prompts
+
+These deliver knowledge to agents but don't govern them. Skills SERVE agents with on-demand depth, they don't enforce rules.
+
+**Complete Architecture**: See [Repository Governance Architecture](./ex-ru__repository-governance-architecture.md) for layer characteristics, delivery infrastructure details, complete traceability examples, usage guidance, and verification methods.
 
 ## 🧪 The Layer Test: Where Does My Document Belong?
 
