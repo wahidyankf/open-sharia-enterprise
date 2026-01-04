@@ -37,13 +37,14 @@ graph TD
         L1[Layer 1: Principles<br/>WHY - Values]
         L2[Layer 2: Conventions<br/>WHAT - Documentation Rules]
         L3[Layer 3: Development<br/>HOW - Software Practices]
-        L4[Layer 4: AI Agents<br/>WHO - Atomic Executors]
+        L4[Layer 4: AI Agents<br/>WHO - Atomic Executors<br/>.claude/agents/ + .opencode/agent/]
         L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes]
     end
 
     subgraph Delivery["Delivery Infrastructure"]
-        CM[CLAUDE.md<br/>Startup context]
-        SK[Skills<br/>On-demand knowledge]
+        CM[CLAUDE.md<br/>Claude Code context]
+        AM[AGENTS.md<br/>OpenCode context]
+        SK[Skills<br/>Shared knowledge<br/>.claude/skills/]
         DR[Direct References<br/>Explicit links]
     end
 
@@ -56,12 +57,17 @@ graph TD
     L4 -->|orchestrated by| L5
 
     L2 -->|summarized in| CM
+    L2 -->|summarized in| AM
     L2 -->|encoded in| SK
     L3 -->|summarized in| CM
+    L3 -->|summarized in| AM
     L3 -->|encoded in| SK
-    CM -->|loaded at startup| O[Orchestrator]
-    O -->|spawns| L4
-    SK -->|delivers via skills: field| L4
+    CM -->|loaded at startup| OCC[Claude Code]
+    AM -->|loaded at startup| OOC[OpenCode]
+    OCC -->|spawns| L4
+    OOC -->|spawns| L4
+    SK -->|auto-loads| OCC
+    SK -->|on-demand via skill tool| OOC
     DR -->|explicitly delivers to| L4
 
     style L0 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:3px
@@ -70,8 +76,10 @@ graph TD
     style L3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style L4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style L5 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style O fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style OCC fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style OOC fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style CM fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style AM fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style SK fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:3px
     style DR fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
@@ -191,7 +199,7 @@ Agent: docs__file-manager (enforces naming when renaming files)
 - Source code (JavaScript, TypeScript, future: Java, Kotlin, Python)
 - Hugo themes and layouts
 - Build systems and tooling
-- AI agents (.claude/agents/)
+- AI agents (`.claude/agents/`, `.opencode/agent/`)
 - Git workflows
 
 **Example Practices**:
@@ -221,9 +229,14 @@ Implementation: Husky + lint-staged (pre-commit formatting)
 
 ### Layer 4: AI Agents (WHO - Atomic Task Executors)
 
-**Location**: `.claude/agents/`
+**Locations**:
+
+- `.claude/agents/` (Claude Code format)
+- `.opencode/agent/` (OpenCode format)
 
 **Purpose**: Automated implementers that enforce conventions and development practices. Each agent implements and validates specific rules from layers 2 and 3.
+
+**Note**: Agents exist in dual formats with identical capabilities. Both reference shared skills from `.claude/skills/`. See [AI Agents Convention - OpenCode Format](./development/agents/ex-de-ag__ai-agents.md#opencode-format) for format differences.
 
 **Key Document**: [Agents Index](../.claude/agents/README.md)
 
@@ -290,13 +303,14 @@ Maker-Checker-Fixer Workflow:
 
 In addition to the six governance layers, the repository uses **delivery infrastructure** to transport knowledge from Layers 2-3 to Layer 4 (Agents). These are NOT governance layers - they don't enforce rules, they deliver knowledge.
 
-### Three Delivery Mechanisms
+### Delivery Mechanisms
 
-| Mechanism             | Location          | Purpose                        | When Loaded                               |
-| --------------------- | ----------------- | ------------------------------ | ----------------------------------------- |
-| **CLAUDE.md**         | Root              | Context summaries, navigation  | Always at startup                         |
-| **Skills**            | `.claude/skills/` | Progressive knowledge packages | Auto-loaded when task matches description |
-| **Direct References** | In agent prompts  | Links to convention docs       | When agent explicitly references          |
+| Mechanism             | Location          | Purpose                            | Tool(s)     | When Loaded                |
+| --------------------- | ----------------- | ---------------------------------- | ----------- | -------------------------- |
+| **CLAUDE.md**         | Root              | Comprehensive project instructions | Claude Code | Always at startup          |
+| **AGENTS.md**         | Root              | Condensed project instructions     | OpenCode    | Always at startup          |
+| **Skills**            | `.claude/skills/` | Progressive knowledge packages     | Both        | On-demand (tool-specific)  |
+| **Direct References** | In agent prompts  | Links to convention docs           | Both        | When explicitly referenced |
 
 ### Skills as Infrastructure
 
@@ -319,6 +333,14 @@ In addition to the six governance layers, the repository uses **delivery infrast
 - **Standards Application**: applying-diataxis-framework, creating-accessible-diagrams, writing-gherkin-criteria
 - **Process Execution**: creating-project-plans, defining-workflows, practicing-trunk-based-development
 - **Technical Knowledge**: developing-agents, understanding-repository-architecture
+
+**Skills Architecture Differences**:
+
+- **Claude Code**: Auto-loads skills from frontmatter declaration (`skills: [skill-1, skill-2]`)
+- **OpenCode**: On-demand loading via `skill` tool with permission-based access (`permission.skill: {skill-name: allow}`)
+- **Shared Location**: Both tools read from `.claude/skills/` directory, ensuring a unified knowledge base
+
+See [AGENTS.md Skills Architecture](../../AGENTS.md#skills-knowledge-packages) for OpenCode-specific details.
 
 ### Why Infrastructure, Not a Layer?
 
@@ -598,8 +620,10 @@ Periodically verify:
 
 **Layer 4**:
 
-- [Agents Index](../.claude/agents/README.md)
-- Agent files in `.claude/agents/`
+- [Claude Code Agents Index](../.claude/agents/README.md)
+- [OpenCode Agents Index](../.opencode/agent/README.md)
+- Agent files in `.claude/agents/` (Claude Code format)
+- Agent files in `.opencode/agent/` (OpenCode format)
 
 **Layer 5**:
 
@@ -608,9 +632,10 @@ Periodically verify:
 
 **Delivery Infrastructure**:
 
-- [Skills Directory](../.claude/skills/README.md) - 17 knowledge packages
+- [Skills Directory](../.claude/skills/README.md) - 18 knowledge packages (shared by both tools)
 - [How to Create a Skill](../how-to/hoto__create-new-skill.md) - Step-by-step guide
-- CLAUDE.md - Root navigation document
+- [CLAUDE.md](../../CLAUDE.md) - Claude Code comprehensive instructions (~30,000 lines)
+- [AGENTS.md](../../AGENTS.md) - OpenCode condensed instructions (~1,000 lines)
 
 **Meta-Documentation**:
 
