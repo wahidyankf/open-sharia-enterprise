@@ -63,7 +63,9 @@ graph TD
     L2 -->|governs| L4
     L3 -->|governs| L4
     L4 -->|orchestrated by| L5
-    DI -->|delivers knowledge to| L4
+    L2 -->|encoded in| DI
+    L3 -->|encoded in| DI
+    DI -->|delivers to| L4
 
     style L0 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:3px
     style L1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
