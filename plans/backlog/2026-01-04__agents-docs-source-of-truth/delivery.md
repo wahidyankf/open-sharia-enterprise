@@ -836,6 +836,16 @@ cp -r .claude/skills.backup .claude/skills
 - [ ] Verify fixer logs: "Finding references generated file - skipping"
 - [ ] Verify fixer suggests: "Edit source: docs/explanation/rules/agents/content/test-agent.md"
 
+**Test6: wow-rules-quality-gate validates source (not generated)**
+
+- [ ] Review `docs/explanation/rules/workflows/wow/ex-ru-wf-wo__rules-quality-gate.md`
+- [ ] Verify "Scope Clarification" section exists explaining source-only validation
+- [ ] Verify workflow explicitly states it validates `docs/explanation/rules/agents/content/` (source)
+- [ ] Verify workflow explicitly states it skips `.claude/agents/`, `.claude/skills/`, `.opencode/agent/`, `.opencode/skills/` (generated)
+- [ ] Verify workflow mentions using `butler-cli agents validate` and `butler-cli skills validate` for output validation
+- [ ] Verify "Concurrency" note clarifies "agents" refers to source definitions
+- [ ] Simulate running workflow: Run wow-rules-checker with scope `docs` and verify it doesn't validate generated directories
+
 **Cleanup**:
 
 - [ ] Remove test agent: `rm docs/explanation/rules/agents/content/test-validator.md`
@@ -844,16 +854,19 @@ cp -r .claude/skills.backup .claude/skills
 
 **Success Criteria for Meta-Agent Validation**:
 
-- [ ] All 5 tests pass without errors
-- [ ] agent-maker creates in correct location (docs source)
+- [ ] All 6 tests pass without errors
+- [ ] agent-maker creates agents in correct location (docs source)
 - [ ] wow-rules-checker validates source, skips generated, detects generated file edits
 - [ ] wow-rules-fixer fixes source, skips generated file findings
+- [ ] wow-rules-quality-gate workflow explicitly documents source-only validation
+- [ ] wow-rules-quality-gate workflow clarifies distinction between source validation and output validation
 
 **Rollback for Meta-Agent Failures**:
 
 - [ ] If any test fails, revert meta-agent updates from backup
 - [ ] Restore from: `git checkout main -- docs/explanation/rules/agents/content/agent-maker.md docs/explanation/rules/agents/content/wow-rules-checker.md docs/explanation/rules/agents/content/wow-rules-fixer.md`
-  - [ ] Re-sync: `butler-cli agents sync`
+- [ ] Revert workflow updates: `git checkout main -- docs/explanation/rules/workflows/wow/ex-ru-wf-wo__rules-quality-gate.md`
+- [ ] Re-sync: `butler-cli agents sync`
 - [ ] Document failure, investigate root cause before retrying
 
 ### Success Criteria
@@ -948,34 +961,42 @@ git checkout main -- .husky/pre-commit
 
   BREAKING CHANGE: Agent and skill definitions now maintained in docs/explanation/
 
-  - Agents: docs/explanation/rules/agents/content/ (source, 45 files)
-  - Skills: docs/explanation/rules/agents/skills/ (source, 18 files)
-  - Generated: .claude/agents/ + .opencode/agent/ (DO NOT EDIT)
+   - Agents: docs/explanation/rules/agents/content/ (source, 45 files)
+   - Skills: docs/explanation/rules/agents/skills/ (source, 23 files)
+   - Generated: .claude/agents/ + .opencode/agent/ (DO NOT EDIT)
 
-  New workflow:
-  1. Edit: docs/explanation/rules/agents/content/{agent-name}.md
-  2. Sync: ./repo-cli agents sync
-  3. Commit: source + generated files together
+   New workflow:
+   1. Edit: docs/explanation/rules/agents/content/{agent-name}.md
+   2. Sync: butler-cli agents sync
+   3. Commit: source + generated files together
 
-  CLI Commands:
-  - ./repo-cli agents extract: Migration tool (one-time)
-  - ./repo-cli agents sync: Sync docs → tool formats
-  - ./repo-cli agents validate: Validate source definitions
-  - ./repo-cli skills validate: Validate skills
-  - ./repo-cli agents validate --format claude/opencode: Validate specific format
+   CLI Commands:
+   - butler-cli agents extract: Migration tool (one-time)
+   - butler-cli agents sync: Sync docs → tool formats
+   - butler-cli agents validate: Validate source definitions
+   - butler-cli skills validate: Validate skills
+   - butler-cli agents validate --format claude/opencode: Validate specific format
 
-  Changes:
-  - Tool-agnostic format with 'role' (vs 'color')
-  - Git metadata extraction (created/updated timestamps)
-  - Pre-commit hook prevents direct edits to generated dirs
-  - Documentation co-location (agents in docs/)
-  - Atomic sync with validation gates
+   Changes:
+   - Tool-agnostic format with 'role' (vs 'color')
+   - Git metadata extraction (created/updated timestamps)
+   - Pre-commit hook prevents direct edits to generated dirs
+   - Documentation co-location (agents in docs/)
+   - Atomic sync with validation gates
+   - Rules agents validate source (docs/), NOT generated directories
 
-  Migration validation:
-  - 45 agents migrated (100% success)
-  - 23 skills migrated (100% success)
-  - 0 validation errors (all formats)
-  - 0 functional regressions (10/10 critical agents tested)
+   Meta-agent updates:
+   - agent-maker: Creates in docs source, not .claude/agents/
+   - wow-rules-checker: Validates source, skips generated
+   - wow-rules-fixer: Fixes source, skips generated
+   - wow-rules-quality-gate: Explicit source-only validation scope
+
+   Migration validation:
+   - 45 agents migrated (100% success)
+   - 23 skills migrated (100% success)
+   - 0 validation errors (all formats)
+   - 0 functional regressions (10/10 critical agents tested)
+   - All meta-agents validated to work on source only
 
   See: docs/explanation/rules/agents/meta/ex-ag-me__architecture.md
   Plan: plans/backlog/2026-01-04__agents-docs-source-of-truth/
@@ -1190,7 +1211,7 @@ butler-cli agents validate --cross-format
 time butler-cli agents sync && time butler-cli skills sync
 
 # Phase 6
-git add docs/explanation/rules/agents/ docs/explanation/rules/agents/skills/ apps/butler-cli/ .claude/ .opencode/
+git add docs/explanation/rules/agents/ docs/explanation/rules/agents/skills/ docs/explanation/rules/workflows/wow/ apps/butler-cli/ .claude/ .opencode/
 git commit -m "feat(agents): migrate to docs source of truth"
 git push -u origin feat/agents-docs-source-of-truth
 ```
