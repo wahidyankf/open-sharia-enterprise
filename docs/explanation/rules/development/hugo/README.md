@@ -33,6 +33,22 @@ These standards define **HOW to develop Hugo themes and layouts**, covering them
 - [Reproducibility First Principle](../../principles/software-engineering/ex-ru-pr-se__reproducibility.md) - Why build reproducibility matters
 - [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
 
+## Principles Implemented/Respected
+
+This set of development practices implements/respects the following core principles:
+
+- **[Reproducibility First](../../principles/software-engineering/ex-ru-pr-se__reproducibility.md)**: Hugo development practices ensure consistent builds across environments through explicit configuration and build process standardization.
+
+- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Hugo template development enforces semantic HTML, proper ARIA attributes, and accessible markup to ensure generated content is accessible to all users.
+
+## Conventions Implemented/Respected
+
+This set of development practices respects the following conventions:
+
+- **[Hugo Content Conventions](../../conventions/hugo/README.md)**: Development aligns with content requirements, supporting theme-specific frontmatter and multilingual infrastructure.
+
+- **[Color Accessibility Convention](../../conventions/formatting/ex-ru-co-fo__color-accessibility.md)**: Hugo themes and layouts use verified accessible color palette for all UI elements and interactive components.
+
 ---
 
 **Last Updated**: 2026-01-01

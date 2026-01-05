@@ -14,17 +14,17 @@ updated: 2025-12-28
 
 # Core Principles
 
-Foundational principles that guide all conventions and development practices in the open-sharia-enterprise project. These principles represent the **why** behind our conventions and methodologies, and they serve the foundational [Vision](../vision/ex-vi__open-sharia-enterprise.md) of democratizing Shariah-compliant enterprise.
+Foundational principles that guide all conventions and development practices in the open-sharia-enterprise project. These principles represent the **why** behind our conventions and methodologies, and they serve the foundational [Vision](../../vision/ex-vi__open-sharia-enterprise.md) of democratizing Shariah-compliant enterprise.
 
 ## 🎯 Purpose
 
-Core principles establish the philosophical foundation for how we build software and write documentation. These principles are **Layer 1 in the six-layer architecture** - they serve the [Vision](../vision/ex-vi__open-sharia-enterprise.md) (Layer 0) and govern all conventions and development practices (Layers 2-3).
+Core principles establish the philosophical foundation for how we build software and write documentation. These principles are **Layer 1 in the six-layer architecture** - they serve the [Vision](../../vision/ex-vi__open-sharia-enterprise.md) (Layer 0) and govern all conventions and development practices (Layers 2-3).
 
 See [Repository Architecture](../ex-ru__repository-governance-architecture.md) for complete understanding of how principles fit into the governance hierarchy and how changes propagate through layers.
 
 **Principles serve the vision and are stable values.** When creating or modifying any convention or practice, you must verify:
 
-1. It serves the [Vision](../vision/ex-vi__open-sharia-enterprise.md) of democratizing Shariah-compliant enterprise
+1. It serves the [Vision](../../vision/ex-vi__open-sharia-enterprise.md) of democratizing Shariah-compliant enterprise
 2. It aligns with these principles
 
 If a proposed change conflicts with a principle, either revise the change or document why the principle itself needs reconsideration (rare). All principles must include a "Vision Supported" section showing HOW the principle serves the foundational vision.
@@ -238,7 +238,7 @@ When documenting a new convention or practice, ALWAYS reference which principles
 
 **Core Principle**: Accessibility First
 
-**Convention**: [Color Accessibility Convention](../conventions/formatting/ex-ru-co-fo__color-accessibility.md)
+**Convention**: [Color Accessibility Convention](../../conventions/formatting/ex-ru-co-fo__color-accessibility.md)
 
 - Verified accessible palette (Blue, Orange, Teal, Purple, Brown)
 - WCAG AA compliance required
@@ -373,8 +373,8 @@ Check that changes:
 ## 📚 Related Documentation
 
 - [Repository Architecture](../ex-ru__repository-governance-architecture.md) - Complete six-layer architecture explanation
-- [Vision](../vision/ex-vi__open-sharia-enterprise.md) - Layer 0: Foundational purpose that inspires all principles
-- [Conventions Index](../conventions/README.md) - Layer 2: Documentation conventions embodying these principles
+- [Vision](../../vision/ex-vi__open-sharia-enterprise.md) - Layer 0: Foundational purpose that inspires all principles
+- [Conventions Index](../../conventions/README.md) - Layer 2: Documentation conventions embodying these principles
 - [Development Index](../development/README.md) - Layer 3: Development practices embodying these principles
 - [Explanation Index](../README.md) - All conceptual documentation
 

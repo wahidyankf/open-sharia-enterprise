@@ -36,6 +36,16 @@ These conventions define **WHAT Hugo content rules apply** to our Hugo-based web
 - [Tutorial Conventions](../tutorial/README.md) - Tutorial structure and naming
 - [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
 
+## Principles Implemented/Respected
+
+This set of conventions implements/respects the following core principles:
+
+- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Hugo content conventions enforce accessible HTML structure, proper ARIA labels, and semantic markup to ensure web content is accessible to all users.
+
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Frontmatter requirements and weight-based ordering make content structure explicit rather than implicit, ensuring predictable site navigation and organization.
+
+- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Bilingual content strategy and structured frontmatter enable layering content complexity for different audience levels.
+
 ---
 
 **Last Updated**: 2026-01-01

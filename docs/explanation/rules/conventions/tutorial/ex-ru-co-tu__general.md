@@ -22,11 +22,11 @@ Standards for creating effective, engaging, and pedagogically sound tutorials in
 
 This convention implements the following core principles:
 
-- **[Progressive Disclosure](../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Tutorials build knowledge incrementally through guided experience. Simple concepts first, complexity added gradually. Each section complete and useful before moving to the next.
+- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Tutorials build knowledge incrementally through guided experience. Simple concepts first, complexity added gradually. Each section complete and useful before moving to the next.
 
-- **[No Time Estimates](../principles/content/ex-ru-pr-co__no-time-estimates.md)**: Tutorials focus on learning outcomes and skill development, not completion time. Everyone learns at different speeds - what matters is mastery, not how long it takes.
+- **[No Time Estimates](../../principles/content/ex-ru-pr-co__no-time-estimates.md)**: Tutorials focus on learning outcomes and skill development, not completion time. Everyone learns at different speeds - what matters is mastery, not how long it takes.
 
-- **[Accessibility First](../principles/content/ex-ru-pr-co__accessibility-first.md)**: Learning-oriented content with clear structure, encouraging tone, and step-by-step guidance makes knowledge accessible to beginners. Reduces barriers to entry for learners from all backgrounds.
+- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Learning-oriented content with clear structure, encouraging tone, and step-by-step guidance makes knowledge accessible to beginners. Reduces barriers to entry for learners from all backgrounds.
 
 ## Purpose
 

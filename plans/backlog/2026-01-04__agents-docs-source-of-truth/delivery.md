@@ -400,12 +400,12 @@ cat ../../docs/explanation/rules/agents/content/swe-hugo-developer.md
 #### Step 3.2: Extract Skills
 
 ```bash
-# Extract all 18 skills
+# Extract all 23 skills
 ./repo-cli skills extract --verbose
 
 # Review output
 ls -la docs/explanation/rules/agents/skills/
-# Should have 18 directories (folder/SKILL.md structure)
+# Should have 23 directories (folder/SKILL.md structure)
 
 # Spot-check 3 skills
 cat docs/explanation/rules/agents/skills/docs-applying-content-quality/SKILL.md
@@ -416,7 +416,7 @@ cat docs/explanation/rules/agents/skills/plan-creating-project-plans/SKILL.md
 **Checklist**:
 
 - [ ] Extraction completes without errors
-- [ ] 18 skill directories created in `docs/explanation/rules/agents/skills/` (each with SKILL.md)
+- [ ] 23 skill directories created in `docs/explanation/rules/agents/skills/` (each with SKILL.md)
 - [ ] Spot-check confirms frontmatter added (if missing)
 - [ ] Spot-check confirms content preserved
 - [ ] Folder/SKILL.md structure matches `.claude/skills/`
@@ -434,7 +434,7 @@ cat docs/explanation/rules/agents/skills/plan-creating-project-plans/SKILL.md
 **Checklist**:
 
 - [ ] Agent validation passes: 45 agents, 0 errors, 0 warnings
-- [ ] Skill validation passes: 18 skills, 0 errors, 0 warnings
+- [ ] Skill validation passes: 23 skills, 0 errors, 0 warnings
 - [ ] Any warnings reviewed and acceptable
 
 #### Step 3.4: Sync to Tool Formats
@@ -446,7 +446,7 @@ cat docs/explanation/rules/agents/skills/plan-creating-project-plans/SKILL.md
 # Review dry run output - should show:
 # - 45 agents will be written to .claude/agents/
 # - 45 agents will be written to .opencode/agent/
-# - 18 skills will be written to .claude/skills/
+# - 23 skills will be written to .claude/skills/
 
 # Execute sync
 ./repo-cli agents sync --verbose
@@ -457,7 +457,7 @@ cat docs/explanation/rules/agents/skills/plan-creating-project-plans/SKILL.md
 - [ ] Dry run completes without errors
 - [ ] Dry run output reviewed and correct
 - [ ] Sync completes without errors
-- [ ] Sync reports: "45 agents synced, 18 skills synced"
+- [ ] Sync reports: "45 agents synced, 23 skills synced"
 - [ ] Post-sync validation passes automatically
 
 **If Sync Fails** (error recovery procedure):
@@ -674,8 +674,8 @@ cp -r .claude/skills.backup .claude/skills
   - [ ] Document agent workflows (maker → checker → fixer)
 
 - [ ] Create `docs/explanation/rules/agents/skills/README.md` (canonical skills catalog)
-  - [ ] List all 18 skills with descriptions
-  - [ ] Organize by category (docs**, wow**, plan**, apps**, agent\_\_)
+  - [ ] List all 23 skills with descriptions
+  - [ ] Organize by category (docs**, readme**, plan**, apps**, agent\_\_, wow\_\_)
   - [ ] Link to skill files
   - [ ] Document skill auto-loading vs on-demand
 
@@ -964,7 +964,7 @@ git checkout main -- .husky/pre-commit
 
   Migration validation:
   - 45 agents migrated (100% success)
-  - 18 skills migrated (100% success)
+  - 23 skills migrated (100% success)
   - 0 validation errors (all formats)
   - 0 functional regressions (10/10 critical agents tested)
 
@@ -1140,7 +1140,7 @@ git reset --hard pre-agents-docs-migration
 | Metric                     | Target       | Measurement                                              |
 | -------------------------- | ------------ | -------------------------------------------------------- |
 | **Agents migrated**        | 45/45 (100%) | `ls docs/explanation/rules/agents/content/*.md \| wc -l` |
-| **Skills migrated**        | 18/18 (100%) | `ls -d docs/explanation/rules/agents/skills/*/ \| wc -l` |
+| **Skills migrated**        | 23/23 (100%) | `ls -d docs/explanation/rules/agents/skills/*/ \| wc -l` |
 | **Validation errors**      | 0            | All validation commands pass                             |
 | **Functional regressions** | 0            | 10/10 critical agents work correctly                     |
 | **Sync time**              | <30s         | `time ./repo-cli agents sync`                            |

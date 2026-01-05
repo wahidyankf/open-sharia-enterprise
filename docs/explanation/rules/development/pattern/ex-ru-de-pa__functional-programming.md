@@ -21,13 +21,13 @@ Guidelines for applying functional programming principles in TypeScript/JavaScri
 
 This practice respects the following core principles:
 
-- **[Immutability Over Mutability](../principles/software-engineering/ex-ru-pr-se__immutability.md)**: All data transformations create new values instead of modifying existing ones. Use `const`, spread operators, and immutable array methods to prevent state mutations.
+- **[Immutability Over Mutability](../../principles/software-engineering/ex-ru-pr-se__immutability.md)**: All data transformations create new values instead of modifying existing ones. Use `const`, spread operators, and immutable array methods to prevent state mutations.
 
-- **[Pure Functions Over Side Effects](../principles/software-engineering/ex-ru-pr-se__pure-functions.md)**: Business logic implemented as pure, deterministic functions. Side effects (I/O, logging, state changes) isolated at system boundaries using Functional Core, Imperative Shell pattern.
+- **[Pure Functions Over Side Effects](../../principles/software-engineering/ex-ru-pr-se__pure-functions.md)**: Business logic implemented as pure, deterministic functions. Side effects (I/O, logging, state changes) isolated at system boundaries using Functional Core, Imperative Shell pattern.
 
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: All function dependencies passed as explicit arguments. No hidden dependencies on global state or implicit context.
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: All function dependencies passed as explicit arguments. No hidden dependencies on global state or implicit context.
 
-- **[Simplicity Over Complexity](../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Functional programming simplifies reasoning by eliminating mutable state and side effects. Prefer composition of simple pure functions over complex class hierarchies.
+- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Functional programming simplifies reasoning by eliminating mutable state and side effects. Prefer composition of simple pure functions over complex class hierarchies.
 
 ## Conventions Implemented/Respected
 
@@ -702,8 +702,8 @@ describe("calculateZakat", () => {
 
 ## Related Documentation
 
-- [Immutability Over Mutability](../principles/software-engineering/ex-ru-pr-se__immutability.md) - WHY immutability matters
-- [Pure Functions Over Side Effects](../principles/software-engineering/ex-ru-pr-se__pure-functions.md) - WHY pure functions matter
+- [Immutability Over Mutability](../../principles/software-engineering/ex-ru-pr-se__immutability.md) - WHY immutability matters
+- [Pure Functions Over Side Effects](../../principles/software-engineering/ex-ru-pr-se__pure-functions.md) - WHY pure functions matter
 - [Implementation Workflow](../workflow/ex-ru-de-wo__implementation.md) - WHEN to apply functional patterns
 - [Code Quality Convention](../quality/ex-ru-de-qu__code.md) - Automated enforcement
 

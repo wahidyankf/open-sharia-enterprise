@@ -22,11 +22,11 @@ This document defines Hugo content conventions specific to **ayokoding-web** - a
 
 This convention implements the following core principles:
 
-- **[Progressive Disclosure](../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Weight-based navigation ordering allows complexity to be introduced gradually. Main sections (weight 1-10) for beginners, advanced topics later (weight 20+). Overview/ikhtisar pages provide entry points appropriate for each skill level.
+- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Weight-based navigation ordering allows complexity to be introduced gradually. Main sections (weight 1-10) for beginners, advanced topics later (weight 20+). Overview/ikhtisar pages provide entry points appropriate for each skill level.
 
-- **[Accessibility First](../principles/content/ex-ru-pr-co__accessibility-first.md)**: Bilingual content (Indonesian/English) serves diverse audiences. Consistent structure aids screen readers. Color-blind friendly palettes in visual content.
+- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Bilingual content (Indonesian/English) serves diverse audiences. Consistent structure aids screen readers. Color-blind friendly palettes in visual content.
 
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Weight values explicitly control navigation order - no magic sorting algorithms. Frontmatter fields clearly state language, type, and navigation position.
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Weight values explicitly control navigation order - no magic sorting algorithms. Frontmatter fields clearly state language, type, and navigation position.
 
 ## Purpose
 

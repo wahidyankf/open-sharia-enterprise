@@ -25,11 +25,11 @@ This document defines **common Hugo conventions** that apply to ALL Hugo sites i
 
 This convention implements the following core principles:
 
-- **[Accessibility First](../principles/content/ex-ru-pr-co__accessibility-first.md)**: Requires alt text for images, color-blind friendly palettes in diagrams, proper heading hierarchy, and WCAG-compliant content across all Hugo sites.
+- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Requires alt text for images, color-blind friendly palettes in diagrams, proper heading hierarchy, and WCAG-compliant content across all Hugo sites.
 
-- **[No Time Estimates](../principles/content/ex-ru-pr-co__no-time-estimates.md)**: Inherited from docs/ - forbids time-based framing in Hugo content ("takes 30 minutes", "complete in 2 weeks").
+- **[No Time Estimates](../../principles/content/ex-ru-pr-co__no-time-estimates.md)**: Inherited from docs/ - forbids time-based framing in Hugo content ("takes 30 minutes", "complete in 2 weeks").
 
-- **[Simplicity Over Complexity](../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Shared conventions document eliminates duplication between site-specific documents. Common standards in one place, site-specific patterns separated cleanly.
+- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Shared conventions document eliminates duplication between site-specific documents. Common standards in one place, site-specific patterns separated cleanly.
 
 ## Purpose
 

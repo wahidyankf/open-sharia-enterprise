@@ -37,6 +37,16 @@ These conventions define **WHAT content quality standards apply** to documentati
 - [Formatting Conventions](../formatting/README.md) - Markdown syntax and visual elements
 - [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
 
+## Principles Implemented/Respected
+
+This set of conventions implements/respects the following core principles:
+
+- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Content quality standards include active voice, proper heading hierarchy, and WCAG AA compliance to ensure documentation is accessible to all users.
+
+- **[Documentation First](../../principles/content/ex-ru-pr-co__documentation-first.md)**: Conventions establish mandatory documentation standards, treating documentation as an integral part of development rather than an optional afterthought.
+
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Convention Writing Convention defines explicit structure for documentation, making rules and standards transparent rather than implicit or magical.
+
 ---
 
 **Last Updated**: 2026-01-01

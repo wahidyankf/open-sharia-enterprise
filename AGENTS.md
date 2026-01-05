@@ -55,13 +55,14 @@ Instructions for AI agents working with this repository via OpenCode.
 
 ## Skills (Knowledge Packages)
 
-**18 Skills** provide progressive knowledge delivery from \`.claude/skills/\`:
+**23 Skills** provide progressive knowledge delivery from \`.claude/skills/\`:
 
 - **docs\_\_** (6 skills): Content quality, accessible diagrams, by-example tutorials, Diátaxis framework, factual accuracy, link validation
-- **wow\_\_** (7 skills): Maker-checker-fixer workflow, criticality-confidence assessment, workflow definition, validation reports, trunk-based development, repository architecture
+- **wow\_\_** (9 skills): Maker-checker-fixer workflow, criticality-confidence assessment, workflow definition, validation reports, trunk-based development, repository architecture, fixer workflow, checker workflow, multi-file template
 - **plan\_\_** (2 skills): Project planning, Gherkin criteria
 - **apps\_\_** (2 skills): ayokoding-web content (Hextra theme), ose-platform-web content (PaperMod theme)
-- **agent\_\_** (1 skill): AI agent development
+- **agent\_\_** (3 skills): AI agent development, agent documentation, model selection
+- **readme\_\_** (1 skill): README writing quality
 
 **OpenCode Skills Architecture** (different from Claude Code):
 

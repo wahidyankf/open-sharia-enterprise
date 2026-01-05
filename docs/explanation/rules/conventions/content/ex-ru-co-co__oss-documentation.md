@@ -20,9 +20,9 @@ Standards for creating and maintaining repository-level documentation files that
 
 This convention implements the following core principles:
 
-- **[Accessibility First](../principles/content/ex-ru-pr-co__accessibility-first.md)**: README quality standards require clear, scannable content accessible to diverse audiences (non-native English speakers, screen reader users, developers of all skill levels).
+- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: README quality standards require clear, scannable content accessible to diverse audiences (non-native English speakers, screen reader users, developers of all skill levels).
 
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Architecture Decision Records document the "why" behind decisions explicitly. No hidden assumptions or implicit knowledge - reasoning is stated clearly for future maintainers.
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Architecture Decision Records document the "why" behind decisions explicitly. No hidden assumptions or implicit knowledge - reasoning is stated clearly for future maintainers.
 
 ## Purpose
 
@@ -175,9 +175,9 @@ console.log(result);
 
 ## Documentation
 
-- [Full Documentation](./docs/README.md)
-- [API Reference](./docs/reference/re__api.md)
-- [Tutorials](./docs/tutorials/README.md)
+- [Full Documentation](../../README.md)
+- [API Reference](../../reference/re__api.md)
+- [Tutorials](../../tutorials/README.md)
 
 ## Contributing
 
@@ -326,7 +326,7 @@ Thank you for considering contributing to Open Sharia Enterprise! We appreciate 
 
 ## Making Changes
 
-1. Create a branch (or work on main for small changes - see [Trunk Based Development](./docs/explanation/rules/development/workflow/ex-ru-de-wo__trunk-based-development.md))
+1. Create a branch (or work on main for small changes - see [Trunk Based Development](../../development/workflow/ex-ru-de-wo__trunk-based-development.md))
 2. Make your changes
 3. Add tests for new functionality
 4. Ensure all tests pass: `npm test`
@@ -345,7 +345,7 @@ Thank you for considering contributing to Open Sharia Enterprise! We appreciate 
 
 ## Code Conventions
 
-- **Commit Messages:** Follow [Conventional Commits](./docs/explanation/rules/development/workflow/ex-ru-de-wo__commit-messages.md)
+- **Commit Messages:** Follow [Conventional Commits](../../development/workflow/ex-ru-de-wo__commit-messages.md)
 - **Code Style:** Enforced by Prettier (runs on commit)
 - **TypeScript:** Use strict mode, no `any` types without justification
 - **Tests:** Required for all new features and bug fixes

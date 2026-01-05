@@ -21,9 +21,9 @@ This document defines how to write mathematical equations and formulas in the op
 
 This convention implements the following core principles:
 
-- **[Simplicity Over Complexity](../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: LaTeX notation as the single standard for all equations. No mixing different math syntaxes or rolling custom solutions.
+- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: LaTeX notation as the single standard for all equations. No mixing different math syntaxes or rolling custom solutions.
 
-- **[Accessibility First](../principles/content/ex-ru-pr-co__accessibility-first.md)**: LaTeX notation renders properly in modern browsers and can be parsed by screen readers with math support. Text-based source allows assistive technology to interpret mathematical content.
+- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: LaTeX notation renders properly in modern browsers and can be parsed by screen readers with math support. Text-based source allows assistive technology to interpret mathematical content.
 
 ## Purpose
 

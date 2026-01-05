@@ -33,6 +33,22 @@ These standards define **HOW to develop AI agents**, covering agent file structu
 - [Agents Index](../../../../.claude/agents/README.md) - All available agents
 - [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
 
+## Principles Implemented/Respected
+
+This set of development practices implements/respects the following core principles:
+
+- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: AI agents automate repetitive tasks like content validation, file management, and quality checks, ensuring consistency and reducing manual effort.
+
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Agent development conventions require explicit tool permissions, clear descriptions, and defined scopes, making agent behavior transparent and predictable.
+
+## Conventions Implemented/Respected
+
+This set of development practices respects the following conventions:
+
+- **[Content Quality Principles](../../conventions/content/ex-ru-co-co__quality.md)**: Agent frontmatter and documentation follow active voice, proper heading hierarchy, and accessibility standards.
+
+- **[File Naming Convention](../../conventions/meta/ex-ru-co-me__file-naming.md)**: Agent files use kebab-case naming with explicit prefixes following repository naming standards.
+
 ---
 
 **Last Updated**: 2026-01-01

@@ -29,9 +29,9 @@ This document defines the standards for organizing project planning documents in
 
 This convention implements the following core principles:
 
-- **[Simplicity Over Complexity](../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Flat structure with three clear states (backlog, in-progress, done). No complex nested hierarchies or status tracking systems.
+- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Flat structure with three clear states (backlog, in-progress, done). No complex nested hierarchies or status tracking systems.
 
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Plan folder names encode the date (`YYYY-MM-DD__[identifier]`) making chronological order explicit. File location indicates status - no hidden metadata or databases.
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Plan folder names encode the date (`YYYY-MM-DD__[identifier]`) making chronological order explicit. File location indicates status - no hidden metadata or databases.
 
 ## Purpose
 

@@ -20,9 +20,9 @@ This document defines the standard syntax and practices for linking between docu
 
 This convention implements the following core principles:
 
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Uses explicit relative paths (`./path/to/file.md`) instead of implicit wiki-style links (`[[filename]]`). File extensions are always included, making it clear what type of file is being referenced. No magic linking behavior - every path is stated clearly.
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Uses explicit relative paths (`./path/to/file.md`) instead of implicit wiki-style links (`[[filename]]`). File extensions are always included, making it clear what type of file is being referenced. No magic linking behavior - every path is stated clearly.
 
-- **[Accessibility First](../principles/content/ex-ru-pr-co__accessibility-first.md)**: Descriptive link text (not filenames) improves screen reader experience. Users hear meaningful context like "File Naming Convention" instead of cryptic identifiers like "ex-co\_\_file-naming-convention".
+- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Descriptive link text (not filenames) improves screen reader experience. Users hear meaningful context like "File Naming Convention" instead of cryptic identifiers like "ex-co\_\_file-naming-convention".
 
 ## Purpose
 
@@ -156,7 +156,7 @@ Use standard markdown link syntax with relative paths:
 <!-- Links with context -->
 
 See the [file naming convention](../meta/ex-ru-co-me__file-naming.md) for details.
-For more information, refer to our [automation principle](../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md).
+For more information, refer to our [automation principle](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md).
 ```
 
 ### ❌ Incorrect Examples

@@ -33,6 +33,22 @@ These patterns define **HOW to structure development workflows and code**, cover
 - [Immutability Over Mutability Principle](../../principles/software-engineering/ex-ru-pr-se__immutability.md) - Why immutability matters
 - [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
 
+## Principles Implemented/Respected
+
+This set of development practices implements/respects the following core principles:
+
+- **[Immutability Over Mutability](../../principles/software-engineering/ex-ru-pr-se__immutability.md)**: Functional programming practices favor immutable data structures and pure functions, reducing side effects and improving code predictability.
+
+- **[Pure Functions Over Side Effects](../../principles/software-engineering/ex-ru-pr-se__pure-functions.md)**: Functional programming guidelines emphasize pure functions for deterministic, testable, and composable code.
+
+## Conventions Implemented/Respected
+
+This set of development practices respects the following conventions:
+
+- **[Content Quality Principles](../../conventions/content/ex-ru-co-co__quality.md)**: Pattern documentation follows active voice, clear structure, and proper formatting standards.
+
+- **[Criticality Levels Convention](../quality/ex-ru-de-qu__criticality-levels.md)**: Maker-Checker-Fixer pattern integrates with criticality assessment to prioritize and validate fixes systematically.
+
 ---
 
 **Last Updated**: 2026-01-01

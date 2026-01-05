@@ -55,7 +55,7 @@
 ### US-6: Migration from Current Architecture
 
 **As a** repository maintainer
-**I want** to migrate 45 existing agents and 18 skills to the new architecture
+**I want** to migrate 45 existing agents and 23 skills to the new architecture
 **So that** we preserve all existing functionality while moving to tool-agnostic format
 
 **Acceptance Criteria**: See [AC-6](#ac-6-migrate-existing-agents-and-skills)
@@ -221,7 +221,7 @@ Feature: Automated Synchronization
 
   Scenario: Sync with validation failure
     Given I have an invalid agent definition with missing "description" field
-    When I run "python scripts/sync-docs-to-agents.py"
+    When I run "./repo-cli agents sync"
     Then sync validation fails before writing files
     And error message indicates "Missing required field: description"
     And no files are written to ".claude/agents/" or ".opencode/agent/"
@@ -251,18 +251,18 @@ Feature: Format Validation
 
   Scenario: Validate source definitions
     Given I have agent definitions in "docs/explanation/rules/agents/content/"
-    When I run "python scripts/validate-agent-definitions.py"
+    When I run "./repo-cli agents validate"
     Then validation checks all required fields present
     And validation checks name matches filename
     And validation checks role is valid (writer, checker, updater, implementor, specialist)
     And validation checks tools are valid (Read, Write, Edit, MultiEdit, Glob, Grep, Bash, LS, WebFetch, WebSearch, TodoRead, TodoWrite, NotebookRead, NotebookEdit)
     And validation checks skills reference existing skill files
-    And validation checks mode is valid (all, subagent)
+    And validation checks mode is valid (all, subagent, primary)
     And validation reports pass/fail for each agent
 
   Scenario: Validate generated Claude Code format
     Given sync has generated files in ".claude/agents/"
-    When I run "python scripts/validate-claude-agents.py"
+    When I run "./repo-cli agents validate --format claude"
     Then validation checks frontmatter fields:
       | field       | requirement                  |
       | name        | matches filename             |
@@ -275,7 +275,7 @@ Feature: Format Validation
 
   Scenario: Validate generated OpenCode format
     Given sync has generated files in ".opencode/agent/"
-    When I run "python scripts/validate-opencode-agents.py"
+    When I run "./repo-cli agents validate --format opencode"
     Then validation checks frontmatter fields:
       | field       | requirement                     |
       | description | not empty                       |
@@ -288,7 +288,7 @@ Feature: Format Validation
 
   Scenario: Cross-format consistency validation
     Given I have synced agent "docs-maker"
-    When I run "python scripts/validate-cross-format-consistency.py"
+    When I run "./repo-cli agents validate --cross-format"
     Then validation confirms both formats have identical:
       | aspect              |
       | agent instructions body |
@@ -378,11 +378,11 @@ Feature: Migration from Current Architecture
 
   Background:
     Given I have 45 agents in ".claude/agents/"
-    And I have 18 skills in ".claude/skills/"
+    And I have 23 skills in ".claude/skills/"
 
   Scenario: Extract agents to docs format
     Given current agents use Claude Code format
-    When I run "python scripts/extract-agents-to-docs.py"
+    When I run "./repo-cli agents extract"
     Then 45 files are created in "docs/explanation/rules/agents/content/"
     And each file has tool-agnostic frontmatter:
       | field       | mapping                           |
@@ -397,7 +397,7 @@ Feature: Migration from Current Architecture
     And extraction script reports statistics:
       | metric           | value |
       | agents_extracted | 45    |
-      | skills_extracted | 18    |
+      | skills_extracted | 23    |
       | errors           | 0     |
 
   Scenario: Preserve git metadata
@@ -429,6 +429,7 @@ Feature: Migration from Current Architecture
     When I run comprehensive agent tests in OpenCode
     Then all 45 agents function identically to pre-migration behavior
     And 0 validation errors in either format
+    And all 23 skills load correctly in both CLIs
 ```
 
 ---
@@ -591,7 +592,7 @@ Feature: Meta-Agent Updates
 
 ```gherkin
 Scenario: Sync completes within acceptable time
-  Given I have 45 agents and 18 skills to sync
+  Given I have 45 agents and 23 skills to sync
   When I run full sync operation
   Then sync completes within 30 seconds
   And validation completes within 60 seconds
@@ -691,7 +692,7 @@ The following are explicitly **not** included in this plan:
 
 ## Constraints
 
-1. **Backward compatibility**: Migration must preserve exact functional behavior of all 45 agents
+1. **Backward compatibility**: Migration must preserve exact functional behavior of all 45 agents and 23 skills
 2. **Atomic migration**: Cannot be done incrementally (source of truth must switch completely)
 3. **Zero downtime**: Both CLI tools must remain functional throughout migration
 4. **Git history**: Must preserve ability to trace agent evolution through git history

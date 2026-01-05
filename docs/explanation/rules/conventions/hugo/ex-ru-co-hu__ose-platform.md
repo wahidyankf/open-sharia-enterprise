@@ -21,9 +21,9 @@ This document defines Hugo content conventions specific to **ose-platform-web** 
 
 This convention implements the following core principles:
 
-- **[Simplicity Over Complexity](../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Flat content structure (updates/ and about.md) - no deep hierarchies or complex organization. English-only, single theme, minimal configuration. Updates sorted by date automatically - no manual weight management.
+- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Flat content structure (updates/ and about.md) - no deep hierarchies or complex organization. English-only, single theme, minimal configuration. Updates sorted by date automatically - no manual weight management.
 
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Update filenames encode the date (YYYY-MM-DD prefix) making chronological order explicit and sortable.
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Update filenames encode the date (YYYY-MM-DD prefix) making chronological order explicit and sortable.
 
 ## Purpose
 
