@@ -4,13 +4,22 @@
 
 This plan introduces a **Policy Layer 3.5** between Conventions/Development (Layer 2-3) and AI Agents (Layer 4) to enable machine-readable, version-controlled governance rules. This addresses the critical pain point of **3x rule duplication** across maker-checker-fixer agent families (3,503 lines for one domain alone) while preserving the strong existing six-layer architecture.
 
-**Status**: In Progress
+**Status**: In Backlog (Quality Gate Passed)
 **Created**: 2025-12-25
-**Last Updated**: 2025-12-28
+**Last Updated**: 2026-01-05
 **Project Type**: Architectural Enhancement
 **Estimated Complexity**: Large (1500+ lines total across 4 files)
 
 ## Recent Progress
+
+**2026-01-05**:
+
+- Updated emoji usage convention to allow emojis in CLAUDE.md and agent files
+  - Modified 3 files: emoji.md, CLAUDE.md, AGENTS.md
+  - Rationale: Emojis enhance scannability for human-readable specifications
+  - Validated via wow**rules**quality-gate (OCD mode) - 0 findings
+- Committed and pushed emoji convention update (d04656f)
+- Repository state: Clean, all rules compliant
 
 **2025-12-28**:
 
@@ -26,10 +35,10 @@ This plan introduces a **Policy Layer 3.5** between Conventions/Development (Lay
 
 **2025-12-27**:
 
-- Updated agent counts: 45 agents (up from 34+) across 8 families
+- Updated agent counts: 46 agents (up from 34+) across 7 families
 - Updated baseline measurements:
-  - repo-rules family: 2,815 lines (repo-rules-checker: 1,279, maker: 1,020, fixer: 516)
-  - ayokoding-web family: 3,503 lines (checker: 1,798, maker: 1,090, fixer: 615)
+  - repo-rules family: 2,047 lines (Claude Code: 852, OpenCode: 1,195)
+  - ayokoding-web family: 3,720 lines (Claude Code: 1,445, OpenCode: 2,275)
   - docs family: 1,867 lines (checker: 1,289, fixer: 578)
 - Documented UUID chain tracking for parallel execution coordination
 - Clarified bilingual non-mirroring policy for ayokoding-web (Phase 3 impact)
@@ -38,8 +47,6 @@ This plan introduces a **Policy Layer 3.5** between Conventions/Development (Lay
 **2025-12-26**:
 
 - Plan moved to `in-progress/` directory after initial quality review
-- Workflow family (8th family) added to Phase 4 migration scope
-- Enhanced scope includes all maker-checker-fixer families plus workflow orchestration
 - Repository governance architecture documentation completed (Layer 0-5 with Vision)
 
 **Next Steps**:
@@ -48,19 +55,58 @@ This plan introduces a **Policy Layer 3.5** between Conventions/Development (Lay
 - Address any findings from quality gate validation
 - Begin Phase 0 implementation upon plan approval
 
+---
+
+## Quality Gate Status
+
+**Last Quality Gate**: 2026-01-05
+**Status**: ✅ PASSED (all MEDIUM issues resolved)
+**Findings**: 10 total (0 HIGH, 0 MEDIUM, 9 MINOR)
+**Issues Resolved**:
+
+- ✅ Claude Code agent naming (6 references fixed)
+- ✅ repo-rules baseline measurements (8 references fixed)
+- ✅ Phase 1 targets updated (6 references fixed)
+  **Remaining MINOR Issues** (9):
+- Skills count mismatch
+- Agent count discrepancies
+- Line count minor variations
+- Go version update needed
+- See audit reports for details
+
+**Audit Reports**:
+
+- Initial: `generated-reports/plan__2026-01-05--12-27__audit.md`
+- Fix Report: `generated-reports/plan__2026-01-05--12-27__fix.md`
+- Re-validation: `generated-reports/plan__2026-01-05--12-30__audit.md`
+
 ## Problem Statement
 
-The current governance architecture relies on prose-based rules embedded in 45 AI agents across 8 families (repo-rules, docs, ayokoding-web, ose-platform-web-content, readme, plan, docs-tutorial, workflow). This creates:
+The current governance architecture relies on prose-based rules embedded in 46 AI agents across 7 families (repo-rules, docs, ayokoding-web, ose-platform-web-content, readme, plan, docs-tutorial). Agents exist on both platforms:
+
+- **Claude Code**: `.claude/agents/*.md` (46 agents, 9,299 total lines)
+- **OpenCode**: `.opencode/agent/*.md` (46 agents, 10,695 total lines)
+- **Identical agent names** across both platforms for consistency
+- **Shared Skills infrastructure**: 18 Skills in `.claude/skills/` accessible by both platforms
+
+This creates:
 
 - **3x duplication**: Same rule embedded in maker, checker, and fixer agents
 - **Inconsistency risk**: Each agent interprets prose rules differently
 - **Maintenance burden**: Convention changes require updating 3-7 agent files
 - **No coverage tracking**: Can't determine which rules are enforced vs. theoretical
-- **Agent bloat**: Checkers range from 1,279-1,798 lines (approaching complexity limits)
+- **Agent bloat**: Checkers range from 373-641 lines (OpenCode larger due to Bash tool usage patterns)
 
 ## Proposed Solution
 
 **Big-bang migration directly to main branch** using **embedded YAML policies** in existing convention markdown files, consumed via a **Go PolicyEngine** in new `apps/governance-cli/` app built with Cobra framework. All work follows trunk-based development with small, frequent commits to main.
+
+**Platform Compatibility**: Policies will work identically on both Claude Code and OpenCode platforms:
+
+- Both platforms invoke `governance-cli` via Bash tool
+- Both use identical tooling (Read, Write, Edit, Glob, Grep, Bash)
+- Skills infrastructure remains separate from policy system (knowledge delivery, not governance)
+- OpenCode's `permission.skill` controls Skills access only, not policy consumption
 
 ### Key Benefits
 

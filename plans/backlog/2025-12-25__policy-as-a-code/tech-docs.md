@@ -9,7 +9,7 @@ Layer 0: Vision (WHY) → docs/explanation/rules/vision/
 Layer 1: Principles (WHY values) → docs/explanation/rules/principles/
 Layer 2: Conventions (WHAT docs rules) → docs/explanation/rules/conventions/
 Layer 3: Development (HOW software) → docs/explanation/rules/development/
-Layer 4: AI Agents (WHO enforces) → .claude/agents/
+Layer 4: AI Agents (WHO enforces) → .claude/agents/ AND .opencode/agent/
 Layer 5: Workflows (WHEN orchestrate) → docs/explanation/rules/workflows/
 ```
 
@@ -17,7 +17,11 @@ Layer 5: Workflows (WHEN orchestrate) → docs/explanation/rules/workflows/
 
 - 41 documented standards (6 principles, 22 conventions, 13 development practices)
 - Strong traceability: Every layer links to layer above
-- 34+ agents consuming rules via embedded prose
+- **Dual-platform agents**: 46 agents on Claude Code (.claude/agents/) AND 46 agents on OpenCode (.opencode/agent/)
+- **Shared Skills infrastructure**: 18 Skills in `.claude/skills/` accessible by both platforms
+  - OpenCode: On-demand loading via `skill` tool, controlled by `permission.skill` in agent frontmatter
+  - Claude Code: Auto-loading from frontmatter `skills: []` array
+  - Skills: Knowledge delivery packages (documentation quality, patterns, workflows) - NOT governance
 - Maker-Checker-Fixer pattern across 7 families
 
 ### Proposed Architecture: Insert Policy Layer 3.5
@@ -43,6 +47,10 @@ Layer 5: Workflows (WHEN)
 - **Derived format**: Policies are machine-readable versions of prose rules
 - **Synchronization**: repo-rules-maker updates both prose and policies atomically
 - **Consumption**: Agents load policies via governance-cli (Cobra-based CLI) instead of parsing prose
+- **Platform compatibility**: Both Claude Code and OpenCode invoke governance-cli identically via Bash tool
+- **Skills separation**: Skills infrastructure (.claude/skills/) provides knowledge packages, NOT policy governance
+  - OpenCode's `permission.skill` controls which Skills agents can load
+  - Policies loaded via Bash tool (not `skill` tool), unaffected by permission.skill
 - **Traceability**: Policies link back to principles (Layer 1) and conventions (Layer 2)
 
 ## Policy Storage Design
@@ -271,7 +279,7 @@ Based on analysis of existing agents, policies must support seven distinct rule 
 **Examples**: Frontmatter structure, agent references, state validation, termination criteria
 **Validation**: Schema validation, reference checking, dependency analysis
 
-Workflows orchestrate agents and have structural requirements similar to agents themselves. The workflow family (workflow-maker, workflow-checker, workflow-fixer) validates workflow definitions in `docs/explanation/rules/workflows/`.
+Workflows orchestrate agents and have structural requirements similar to agents themselves. The workflow agents (wow-workflow-maker, wow-workflow-checker, wow-workflow-fixer) are part of the repo-rules family and validate workflow definitions in `docs/explanation/rules/workflows/`.
 
 **Example 1: Frontmatter Structure**
 
@@ -848,6 +856,13 @@ require (
 )
 ```
 
+**Platform Compatibility Notes:**
+
+- **Binary distribution**: Single Go binary works identically on both Claude Code and OpenCode environments
+- **CLI interface**: Bash tool invocation ensures platform-agnostic usage
+- **No Skills integration needed**: Policies consumed via Bash tool, not via OpenCode's `skill` mechanism
+- **Permission control**: OpenCode's `permission.skill` controls Skills access only, NOT policy consumption
+
 ### Testing Standards
 
 **Table-Driven Tests:**
@@ -912,12 +927,12 @@ This section provides detailed technical guidance for integrating agents with th
 
 #### Integration Approach: CLI vs Library
 
-Agents can consume PolicyEngine in two ways:
+Agents on BOTH platforms (Claude Code and OpenCode) can consume PolicyEngine in two ways:
 
 **Option 1: CLI Invocation (Recommended for Phase 1)**
 
 ```bash
-# Via Bash tool in agent prompt
+# Via Bash tool in agent prompt (Claude Code AND OpenCode)
 governance-cli policy validate docs/example.md --format=json
 ```
 
@@ -926,6 +941,8 @@ governance-cli policy validate docs/example.md --format=json
 - Simpler integration (no Go import complexity)
 - Clear separation of concerns
 - Easy to debug and monitor
+- **Platform-agnostic**: Works identically on Claude Code and OpenCode
+- **No permission issues**: Not affected by OpenCode's `permission.skill` system
 
 **Cons:**
 
@@ -952,12 +969,27 @@ results, _ := engine.ValidateFile("docs/example.md", content)
 
 - Requires agents to invoke Go binaries or wrap in CLI
 - More complex integration
+- **Platform complexity**: May require different integration approaches for Claude Code vs OpenCode
 
 **Decision for Phase 1:** Use CLI invocation via Bash tool for simplicity. Optimize to library import in Phase 5 if performance metrics warrant it.
 
+**Critical Note on Skills vs Policies:**
+
+- **Skills** (.claude/skills/): Knowledge packages loaded via `skill` tool (OpenCode) or frontmatter (Claude Code)
+  - Provide guidance on patterns, conventions, workflows
+  - Controlled by `permission.skill` in OpenCode agent frontmatter
+  - NOT used for governance validation
+
+- **Policies** (embedded in convention markdown): Governance rules loaded via Bash tool
+  - Enforce validation rules (structural, formatting, content quality)
+  - NOT affected by `permission.skill` in OpenCode
+  - Consumed identically by both platforms via `governance-cli` CLI
+
+- **Separation of Concerns**: Skills = knowledge delivery, Policies = rule enforcement
+
 #### repo-rules-checker Integration
 
-**Initialization:**
+**Initialization (Both Claude Code and OpenCode):**
 
 ```bash
 # At agent startup, verify governance-cli is available
@@ -968,11 +1000,11 @@ POLICY_COUNT=$(jq length /tmp/policies.json)
 echo "Loaded $POLICY_COUNT policies"
 ```
 
-**Validation Loop:**
+**Validation Loop (Both Platforms):**
 
 ```bash
 # For each file in scope
-for file in $(glob "docs/**/*.md" ".claude/agents/*.md"); do
+for file in $(glob "docs/**/*.md" ".claude/agents/*.md" ".opencode/agent/*.md"); do
   # Skip metadata directory
   if [[ "$file" == docs/metadata/* ]]; then continue; fi
 
@@ -987,6 +1019,13 @@ done
 COVERAGE=$(governance-cli policy coverage --format=json)
 echo "$COVERAGE" | jq -r '"## Policy Coverage Report\n**Policies Evaluated**: \(.evaluated_policies)/\(.total_policies) (\(.coverage_percentage)%)\n**Rules Checked**: \(.evaluated_rules)/\(.total_rules)"'
 ```
+
+**Note on Platform Scopes:**
+
+- **Claude Code agents**: Validate `.claude/agents/*.md` files only
+- **OpenCode agents**: Validate `.opencode/agent/*.md` files only
+- Both platforms validate `docs/**/*.md` files identically
+- Audit reports include platform-specific context when validating agent files
 
 **Output Format (Enhanced Audit Report):**
 
@@ -1363,21 +1402,31 @@ governance-cli policy coverage --reports=generated-reports/*__audit.md
 - `docs/explanation/rules/conventions/meta/ex-ru-co-me__file-naming.md` (MODIFY)
   - Add ## Policy Definition section with YAML
 
-- `.claude/agents/wow__rules-checker.md` (MODIFY: 953→400 lines)
-  - Add PolicyEngine integration
-  - Remove embedded rule definitions
+- **Claude Code agents** (.claude/agents/):
+  - `wow-rules-checker.md` (MODIFY: ~200 lines from current 373 - add PolicyEngine integration)
+  - `wow-rules-maker.md` (MODIFY: ~80 lines from current 53 - add policy sync logic)
+  - `wow-rules-fixer.md` (MODIFY: ~130 lines from current 258 - add policy-driven fix workflow)
+    - Add policy-driven fix logic
+    - Query policies for autofix eligibility
 
-- `.claude/agents/wow__rules-maker.md` (MODIFY: 851→350 lines)
-  - Add policy sync logic
-  - Update workflow documentation
-
-- `.claude/agents/wow__rules-fixer.md` (MODIFY: 510→250 lines)
-  - Add policy-driven fix logic
-  - Query policies for autofix eligibility
+- **OpenCode agents** (.opencode/agent/):
+  - `wow-rules-checker.md` (MODIFY: similar reduction)
+    - Add PolicyEngine integration via Bash tool
+    - Remove embedded rule definitions
+  - `wow-rules-maker.md` (MODIFY: similar reduction)
+    - Add policy sync logic
+    - Update workflow documentation
+  - `wow-rules-fixer.md` (MODIFY: similar reduction)
+    - Add policy-driven fix logic
+    - Query policies for autofix eligibility
 
 - `CLAUDE.md` (MODIFY)
   - Add policy workflow summary
   - Link to ex-de\_\_policy-as-code.md
+
+- `AGENTS.md` (MODIFY)
+  - Update to reflect policy-driven architecture
+  - Note platform compatibility (Claude Code + OpenCode)
 
 ## Testing Strategy
 

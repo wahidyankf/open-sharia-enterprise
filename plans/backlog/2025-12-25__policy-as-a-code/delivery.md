@@ -124,14 +124,15 @@ Design policy schema and establish governance model
 
 ### Goal
 
-Prove architecture with highest-value, lowest-risk family
+Prove architecture with highest-value, lowest-risk family on BOTH platforms
 
 ### Why repo-rules First?
 
 1. **Clearest rules**: Structural validation (frontmatter, file naming) is most objective
-2. **High duplication**: 2,815 lines across 3 agents = 57% potential reduction
+2. **High duplication**: 852 lines across 6 agents (Claude Code) + 1,195 lines in OpenCode = 2,047 lines total
 3. **Meta-validation**: repo-rules-checker can validate policy compliance itself
-4. **Foundational**: Success here proves architecture for all other families
+4. **Dual-platform proof**: Success proves architecture works on both Claude Code and OpenCode
+5. **Foundational**: Success here proves architecture for all other families
 
 ### New Architecture for repo-rules Agents
 
@@ -204,25 +205,39 @@ Consistent validation, centralized rules, single source of truth
 
 ### Agent Rewrite - Architectural Adaptation
 
-This section details how the three repo-rules agents must be adapted to consume policies from the new PolicyEngine instead of embedding rules in their prompts.
+This section details how the three repo-rules agents must be adapted on BOTH platforms to consume policies from the new PolicyEngine instead of embedding rules in their prompts.
 
-**repo-rules-checker (1,279 → ~550 lines, 57% reduction):**
+**Platform-Specific Updates:**
+
+**Claude Code (.claude/agents/wow-rules-checker.md):**
+
+- Current: 373 lines (Claude Code) + 448 lines (OpenCode) = 821 lines total
+- Add: PolicyEngine integration via Bash tool
+- Remove: Embedded rule descriptions
+
+**OpenCode (.opencode/agent/wow-rules-checker.md):**
+
+- Current: 88 lines (OpenCode) vs 53 lines (Claude Code) = 141 total → Target: ~80 lines
+- Add: PolicyEngine integration via Bash tool
+- Remove: Embedded rule descriptions
+
+**Implementation (Identical on both platforms):**
 
 _Architectural Changes:_
 
 - **OLD**: Embeds 10-15 validation rules directly in agent prompt as prose descriptions
 - **NEW**: Invokes `governance-cli policy validate` to check files against policies embedded in convention markdown
 
-_Implementation Tasks:_
+_Implementation Tasks (Claude Code + OpenCode):_
 
 - [ ] Remove embedded rule descriptions (200+ lines of duplicated content)
 - [ ] Add governance-cli integration:
-  - Import PolicyEngine from `apps/governance-cli/internal/policy/`
-  - Initialize engine with convention directory path
-  - Load all policies at agent startup
+  - Invoke via Bash tool: `governance-cli policy validate <file>`
+  - Both platforms use identical invocation
+  - Parse JSON output for validation results
 - [ ] Update validation workflow:
-  - Replace manual rule checking with `engine.ValidateFile(filePath, content)`
-  - Process ValidationResult[] from PolicyEngine
+  - Replace manual rule checking with CLI-based validation
+  - Process ValidationResult[] from PolicyEngine JSON output
   - Map policy violations to audit report format
 - [ ] Enhance audit report format with policy metadata:
   - Include Rule ID (e.g., "FN001") and Policy ID (e.g., "file-naming-v1")
@@ -241,14 +256,7 @@ _Key Behavior Change:_
 
 - Agent no longer interprets prose rules → delegates to PolicyEngine for consistent validation
 
-**repo-rules-maker (1,020 → ~440 lines, 57% reduction):**
-
-_Architectural Changes:_
-
-- **OLD**: Updates convention prose and manually syncs changes to 3-7 agent files
-- **NEW**: Updates both convention prose AND embedded policy YAML atomically, agents auto-adapt
-
-_Implementation Tasks:_
+_Implementation Tasks (Claude Code + OpenCode):_
 
 - [ ] Remove embedded rule summaries (150+ lines)
 - [ ] Add atomic policy update workflow:
@@ -274,32 +282,25 @@ _Implementation Tasks:_
   - Provide policy YAML authoring guidelines
   - Document versioning strategy
 
-_Key Behavior Change:_
+_Key Behavior Change (Both Platforms):_
 
 - Agent maintains prose-policy synchronization → single source of truth enforced
 
-**repo-rules-fixer (516 → ~210 lines, 59% reduction):**
-
-_Architectural Changes:_
-
-- **OLD**: Embeds confidence assessment criteria in agent prompt
-- **NEW**: Queries policy metadata for autofix eligibility and confidence levels
-
-_Implementation Tasks:_
+_Implementation Tasks (Claude Code + OpenCode):_
 
 - [ ] Remove embedded confidence criteria (100+ lines)
 - [ ] Add policy-driven fix workflow:
   1. Read audit report from repo-rules-checker
-  2. For each finding, query PolicyEngine: `engine.GetPolicy(policyID)`
+  2. For each finding, query PolicyEngine via CLI: `governance-cli policy get <policyID>`
   3. Check if `rule.Autofix == true` before proceeding
-  4. Re-validate using `engine.ValidateFile()` to confirm issue still exists
+  4. Re-validate using `governance-cli policy validate <file>` to confirm issue still exists
   5. Assess confidence: use `rule.Confidence` from policy (HIGH/MEDIUM/LOW)
   6. Apply fix ONLY if confidence == HIGH (objective structural fixes)
   7. Use `rule.FixTemplate` if provided, otherwise infer fix
 - [ ] Add PolicyEngine integration:
-  - Initialize engine at startup
+  - Both platforms invoke CLI identically via Bash tool
   - Load policies relevant to files being fixed
-  - Cache policy data for performance
+  - Cache policy data for performance (optional optimization)
 - [ ] Update fix report format:
   - Include policy metadata (Rule ID, Policy ID, version)
   - Show confidence rationale from policy definition
@@ -312,14 +313,14 @@ _Implementation Tasks:_
   - Document re-validation requirement
   - Add examples of policy-driven fix application
 
-_Key Behavior Change:_
+_Key Behavior Change (Both Platforms):_
 
 - Agent queries policy metadata for fix decisions → consistent confidence assessment across all fixers
 
 **Deliverables:**
 
 - 3 agents rewritten and tested
-- 57% line reduction achieved (2,815 → ~1,210 lines)
+- Line reduction achieved through PolicyEngine integration (baseline already optimized)
 - All agents pass integration tests
 
 ### Validation & Refinement
@@ -511,52 +512,23 @@ Complete migration of all eight agent families
 - Agents: docs-tutorial-maker, docs-tutorial-checker, docs-tutorial-fixer
 - Reduction: ~50%
 
-**workflow family (3 agents):**
+### Note: Workflow Agents
 
-- Policies: 5-8 (frontmatter structure, agent references, state validation, termination criteria)
-- Agents: workflow-maker, workflow-checker, workflow-fixer
-- Reduction: ~50%
-
-### Why Include Workflows?
-
-Workflows are **Layer 5** of the repository architecture and orchestrate agents (Layer 4). They have the same maker-checker-fixer pattern and similar validation complexity:
-
-1. **Structural validation**: YAML frontmatter schema (name, goal, termination, inputs, outputs)
-2. **Reference validation**: Agent names must exist in `.claude/agents/`
-3. **State validation**: Correct syntax for `{input.x}` and `{stepN.outputs.y}` references
-4. **Semantic validation**: Termination criteria clarity, execution mode consistency
-5. **Dependency validation**: Detect circular dependencies between steps
-6. **Traceability**: Workflows must link back to principles
-
-**Policy Schema Already Supports Workflows**: The `category` enum includes `workflow` as one of seven rule types (tech-docs.md:162).
-
-### Workflow-Specific Policies
-
-**Policies to Extract:**
-
-- `workflow__frontmatter-structure` - Required fields (name, goal, termination, inputs, outputs)
-- `workflow__agent-references` - Agent names must exist in `.claude/agents/`
-- `workflow__state-references` - Valid state reference syntax and scope
-- `workflow__termination-criteria` - Clear, measurable termination conditions
-- `workflow__execution-modes` - Consistent Sequential/Parallel/Conditional usage
-- `workflow__dependency-cycles` - No circular step dependencies
-- `workflow__principle-traceability` - Links to foundational principles
-- (Optional) `workflow__human-checkpoints` - When user approval is required
+Workflow agents (workflow-maker, workflow-checker, workflow-fixer) are part of the **repo-rules family** (wow-workflow-maker.md, wow-workflow-checker.md, wow-workflow-fixer.md), not a separate family. They are migrated as part of Phase 1 (repo-rules family).
 
 ### Tasks
 
 - [ ] Extract readme family policies (5-7)
 - [ ] Extract plan family policies (8-10)
 - [ ] Extract docs-tutorial family policies (10-12)
-- [ ] Extract workflow family policies (5-8)
-- [ ] Update all 13 agents (readme: 3, plan: 4, tutorial: 3, workflow: 3)
-- [ ] Integration testing across all four families
+- [ ] Update all 10 agents (readme: 3, plan: 4, tutorial: 3)
+- [ ] Integration testing across all three families
 - [ ] Performance benchmarking
-- [ ] Validate workflow orchestration patterns still function
+- [ ] Validate workflow orchestration patterns still function (workflow agents in repo-rules family)
 
 ### Success Criteria
 
-- ✅ All 8 agent families migrated to policy-as-code
+- ✅ All 7 agent families migrated to policy-as-code
 - ✅ Overall agent line count reduced by 50%+
 - ✅ Policy library has 50-60 well-structured policies
 - ✅ All agents pass integration tests
@@ -890,7 +862,7 @@ Phase 5 (consolidation)
 | Metric              | Baseline | Phase 1 | Phase 2 | Phase 3 | Phase 4 | Target |
 | ------------------- | -------- | ------- | ------- | ------- | ------- | ------ |
 | Policies extracted  | 0        | 10-15   | 20-25   | 40-45   | 55-60   | 55-60  |
-| Families migrated   | 0/8      | 1/8     | 2/8     | 4/8     | 8/8     | 8/8    |
+| Families migrated   | 0/7      | 1/7     | 2/7     | 4/7     | 7/7     | 7/7    |
 | Agent lines reduced | 0%       | 57%     | 51%     | 58%     | 50%     | 50-58% |
 
 **Accuracy:**
@@ -941,7 +913,8 @@ Phase 5 (consolidation)
 
 - [ ] 10-15 policies extracted
 - [ ] repo-rules family migrated
-- [ ] 57% line reduction achieved (2,815 → ~1,210 lines)
+- [ ] PolicyEngine integration completed and tested
+- [ ] Line counts optimized for policy consumption (not necessarily reduced, since already optimized)
 - [ ] Zero detection regression verified
 - [ ] Performance overhead <5%
 - [ ] User acceptance testing passed
@@ -965,9 +938,9 @@ Phase 5 (consolidation)
 
 ### Phase 4
 
-- [ ] All remaining families migrated (8/8 families complete)
+- [ ] All remaining families migrated (7/7 families complete)
 - [ ] 55-60 policies total extracted
-- [ ] All 13 agents (readme: 3, plan: 4, tutorial: 3, workflow: 3) passing tests
+- [ ] All 10 agents (readme: 3, plan: 4, tutorial: 3) passing tests
 - [ ] Performance benchmarks met
 
 ### Phase 5
@@ -1044,9 +1017,9 @@ Phase 5 (consolidation)
 
 ### Phase 1
 
-- `.claude/agents/wow__rules-checker.md` (MODIFY: 953→400 lines)
-- `.claude/agents/wow__rules-maker.md` (MODIFY: 851→350 lines)
-- `.claude/agents/wow__rules-fixer.md` (MODIFY: 510→250 lines)
+- `.claude/agents/wow-rules-checker.md` (MODIFY: Already optimized - 373 lines, target: ~200 lines for policy integration)
+- `.claude/agents/wow-rules-maker.md` (MODIFY: Already optimized - 53 lines, target: ~80 lines for policy sync logic)
+- `.claude/agents/wow-rules-fixer.md` (MODIFY: Already optimized - 258 lines, target: ~130 lines for policy-driven fixes)
 - `CLAUDE.md` (MODIFY)
 - 10+ convention files (MODIFY: add policy YAML)
 
@@ -1086,16 +1059,11 @@ Phase 5 (consolidation)
 - `.claude/agents/docs__tutorial-fixer.md` (MODIFY)
 - `.claude/agents/docs__tutorial-maker.md` (MODIFY)
 
-**workflow family:**
-
-- `.claude/agents/wow__workflow-checker.md` (MODIFY)
-- `.claude/agents/wow__workflow-fixer.md` (MODIFY)
-- `.claude/agents/wow__workflow-maker.md` (MODIFY)
-- `docs/explanation/rules/workflows/*.md` (SOURCE: workflow definitions that will have embedded policies)
+**Note**: Workflow agents (wow-workflow-checker, wow-workflow-fixer, wow-workflow-maker) are in Phase 1 (repo-rules family), not Phase 4.
 
 **Convention files:**
 
-- 25+ convention files (MODIFY: add policy YAML for readme, plan, tutorial, workflow domains)
+- 25+ convention files (MODIFY: add policy YAML for readme, plan, tutorial domains)
 
 ### Phase 5
 

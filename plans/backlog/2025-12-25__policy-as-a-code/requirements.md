@@ -7,9 +7,13 @@
 The user plans to scale the repository's governance architecture with these specific objectives:
 
 1. **Scale agent ecosystem significantly**
-   - Current: 45 agents across 8 families (repo-rules, docs, ayokoding-web, ose-platform-web-content, readme, plan, docs-tutorial, workflow)
+   - Current: 46 agents across 7 families (repo-rules, docs, ayokoding-web, ose-platform-web-content, readme, plan, docs-tutorial)
+   - **Dual-platform deployment**: Agents exist in both `.claude/agents/` (Claude Code) and `.opencode/agent/` (OpenCode)
+   - **Shared Skills**: 18 Skills in `.claude/skills/` deliver knowledge to both platforms
+   - **OpenCode details**: 10,695 total lines across 46 agent files
+   - **Claude Code details**: 9,299 total lines across 46 agent files
    - Future: Expect significant growth as new domains added
-   - Need: System that scales without proportional complexity increase
+   - Need: System that scales without proportional complexity increase on both platforms
 
 2. **Multiple agents enforcing same rules consistently**
    - Current: 3x duplication across maker-checker-fixer families
@@ -37,10 +41,10 @@ The user plans to scale the repository's governance architecture with these spec
   - ayokoding-web-general-maker: 1,090 lines
   - ayokoding-web-general-fixer: 615 lines
 
-- **repo-rules family**: 2,815 total lines
-  - repo-rules-checker: 1,279 lines
-  - repo-rules-maker: 1,020 lines
-  - repo-rules-fixer: 516 lines
+- **repo-rules family**: 2,047 total lines (Claude Code: 852, OpenCode: 1,195)
+  - repo-rules-checker: 821 lines (373 Claude Code + 448 OpenCode)
+  - repo-rules-maker: 141 lines (53 Claude Code + 88 OpenCode)
+  - repo-rules-fixer: 581 lines (258 Claude Code + 323 OpenCode)
 
 **Specific Examples:**
 
@@ -92,11 +96,17 @@ The user plans to scale the repository's governance architecture with these spec
 - Standard agents: <1,200 lines (acceptable)
 - Complex agents: <1,800 lines (maximum)
 
-**Current State:**
+**Current State** (Claude Code):
 
-- ayokoding-web-general-checker: 1,798 lines (approaching complex limit)
-- docs-checker: 1,289 lines (standard, but growing)
-- repo-rules-checker: 1,279 lines (standard)
+- ayokoding-web-general-checker: 73 lines (well within simple target)
+- docs-checker: 564 lines (well within simple target)
+- repo-rules-checker: 373 lines (well within simple target)
+
+**Current State** (OpenCode):
+
+- ayokoding-web-general-checker: 142 lines (well within simple target)
+- docs-checker: 641 lines (well within simple target)
+- repo-rules-checker: 448 lines (well within simple target)
 
 **Trajectory:**
 
@@ -108,9 +118,9 @@ The user plans to scale the repository's governance architecture with these spec
 
 **Target Reduction Through Policy Centralization:**
 
-- ayokoding-web family: 3,503 → ~1,470 lines (58% reduction)
-- repo-rules family: 2,815 → ~1,210 lines (57% reduction)
-- docs family: 1,867 → ~990 lines (47% reduction)
+- ayokoding-web family: 3,720 → ~1,560 lines (58% reduction)
+- repo-rules family: 2,047 → ~860 lines (58% reduction)
+- docs family: 3,074 → ~1,490 lines (52% reduction)
 - **Overall target**: 47-58% line reduction per family
 
 ## Industry Research
@@ -339,8 +349,8 @@ The user plans to scale the repository's governance architecture with these spec
 **Duplication Reduction:**
 
 - Total agent lines: Baseline → -50% (target)
-- repo-rules family: 2,815 → ~1,210 lines (57%)
-- ayokoding-web family: 3,503 → ~1,470 lines (58%)
+- repo-rules family: 2,047 → ~860 lines (58%)
+- ayokoding-web family: 3,720 → ~1,560 lines (58%)
 
 **Accuracy:**
 
