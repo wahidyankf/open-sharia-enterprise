@@ -366,6 +366,69 @@ title: "Software Engineering"
    - Content inside folder uses next level deeper (base + position)
    - Weights reset for different parents
 
+## Deployment Workflow
+
+Deploy ayokoding-web to production using Vercel integration.
+
+### Production Branch
+
+**Branch**: `prod-ayokoding-web`
+**Purpose**: Deployment-only branch that Vercel monitors
+**Build System**: Vercel (Hugo SSG with Hextra theme)
+
+### Deployment Process
+
+**Step 1: Validate Current State**
+
+```bash
+# Ensure on main branch
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [ "$CURRENT_BRANCH" != "main" ]; then
+  echo "❌ Must be on main branch"
+  exit 1
+fi
+
+# Check for uncommitted changes
+if [ -n "$(git status --porcelain)" ]; then
+  echo "❌ Uncommitted changes detected"
+  exit 1
+fi
+```
+
+**Step 2: Force Push to Production**
+
+```bash
+# Deploy to production
+git push origin main:prod-ayokoding-web --force
+```
+
+**Step 3: Vercel Auto-Build**
+
+Vercel automatically:
+
+- Detects push to prod-ayokoding-web branch
+- Pulls latest content
+- Builds Hugo site with Hextra theme
+- Deploys to production URL
+
+### Why Force Push
+
+**Safe for deployment branches**:
+
+- prod-ayokoding-web is deployment-only (no direct commits)
+- Always want exact copy of main branch
+- Trunk-based development: main is source of truth
+
+### Deployment Safety
+
+**Pre-deployment checks**:
+
+- ✅ On main branch
+- ✅ No uncommitted changes
+- ✅ Latest from remote
+
+**No local build**: Vercel handles all build operations
+
 ## References
 
 **Primary Convention**: [Hugo Content Convention - ayokoding-web](../../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
