@@ -71,23 +71,15 @@ This workflow implements the **Maker-Checker-Fixer pattern** across three valida
 
 **Current Mode**: Manual Orchestration (see [Workflow Execution Modes Convention](../meta/ex-ru-wf-me__execution-modes.md))
 
-This workflow is currently executed through **manual orchestration** where the main Claude instance follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
+This workflow is currently executed through **manual orchestration** where the AI assistant (Claude Code or OpenCode) follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
 
 **How to Execute**:
-
-Instead of (future):
-
-```bash
-workflow run docs__quality-gate --scope=docs/tutorials/ --mode=normal
-```
-
-Currently use:
 
 ```
 User: "Run documentation quality gate workflow for docs/tutorials/ in manual mode"
 ```
 
-Claude will:
+The AI will:
 
 1. Execute docs\_\_checker, docs\_\_tutorial-checker, and docs\_\_link-general-checker logic directly in parallel (validate, write audits)
 2. Execute docs\_\_fixer and docs\_\_tutorial-fixer logic directly in sequence (read audits, apply fixes, write fix reports)
@@ -95,9 +87,7 @@ Claude will:
 4. Show git status with modified files
 5. Wait for user commit approval
 
-**Why Manual Mode?**: Task tool runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures audit reports, documentation fixes, and link cache updates are actually written to the filesystem.
-
-**Future**: When workflow runner is implemented, use `workflow run` command for fully automated execution.
+**Why Manual Mode?**: Task tool (Claude Code) or agent spawning (OpenCode) runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures audit reports, documentation fixes, and link cache updates are actually written to the filesystem.
 
 ## Workflow Overview
 
@@ -326,73 +316,86 @@ Report final status and summary.
 
 ## Example Usage
 
-### Standard Check-Fix (Normal Strictness)
+### Standard Manual Invocation (Normal Strictness)
 
-```bash
-# Run full documentation check-fix with default settings
-# Fixes CRITICAL/HIGH only, reports MEDIUM/LOW
-workflow run docs__quality-gate
-
-# Equivalent explicit form
-workflow run docs__quality-gate --mode=normal
 ```
+User: "Run documentation quality gate workflow in normal mode"
+```
+
+The AI will execute the workflow directly:
+
+- Validate all docs/ content in parallel (factual, pedagogical, links)
+- Fix CRITICAL/HIGH findings (docs**fixer, docs**tutorial-fixer logic)
+- Iterate until zero CRITICAL/HIGH findings achieved
+- Report MEDIUM/LOW findings without fixing them
 
 ### Quick Critical-Only Check (Lax Mode)
 
-```bash
-# Fixes CRITICAL only, reports HIGH/MEDIUM/LOW
-workflow run docs__quality-gate --mode=lax
-
-# Success criteria: Zero CRITICAL findings
-# HIGH/MEDIUM/LOW findings reported but don't block
+```
+User: "Run documentation quality gate workflow in lax mode"
 ```
 
-### Pre-Release Validation (Strict)
+The AI will execute with minimal criteria:
 
-```bash
-# Fixes CRITICAL/HIGH/MEDIUM, reports LOW
-workflow run docs__quality-gate --mode=strict
+- Fix CRITICAL findings only
+- Report HIGH/MEDIUM/LOW findings without fixing them
+- Success when zero CRITICAL findings remain
 
-# Success criteria: Zero CRITICAL/HIGH/MEDIUM findings
-# LOW findings reported but don't block
+### Pre-Release Validation (Strict Mode)
+
+```
+User: "Run documentation quality gate workflow in strict mode"
 ```
 
-### Comprehensive Audit (OCD)
+The AI will execute with stricter criteria:
 
-```bash
-# Fixes all levels, zero tolerance
-workflow run docs__quality-gate --mode=ocd
+- Fix CRITICAL/HIGH/MEDIUM findings
+- Report LOW findings without fixing them
+- Iterate until zero CRITICAL/HIGH/MEDIUM findings achieved
 
-# Success criteria: Zero findings at all levels
-# Equivalent to pre-mode parameter behavior
+### Comprehensive Audit (OCD Mode)
+
 ```
+User: "Run documentation quality gate workflow in ocd mode"
+```
+
+The AI will execute with zero-tolerance criteria:
+
+- Fix ALL findings (CRITICAL, HIGH, MEDIUM, LOW)
+- Iterate until zero findings at all levels
+- Equivalent to pre-mode parameter behavior
 
 ### Validate Specific Scope
 
-```bash
-# Validate only tutorials
-workflow run docs__quality-gate --scope=docs/tutorials/
-
-# Validate specific file
-workflow run docs__quality-gate --scope=docs/explanation/rules/conventions/meta/ex-ru-co-me__file-naming.md
 ```
+User: "Run documentation quality gate workflow for docs/tutorials/"
+```
+
+The AI will execute with scoped validation:
+
+- Validate only tutorial files
+- Fix issues in that scope only
+
+```
+User: "Run documentation quality gate workflow for docs/explanation/rules/conventions/meta/ex-ru-co-me__file-naming.md"
+```
+
+The AI will execute with single-file scope:
+
+- Validate specific file only
+- Fix issues in that file
 
 ### With Iteration Bounds
 
-```bash
-# Require at least 2 iterations, cap at 10 maximum
-workflow run docs__quality-gate \
-  --mode=normal \
-  --min-iterations=2 \
-  --max-iterations=10
+```
+User: "Run documentation quality gate workflow in normal mode with min-iterations=2 and max-iterations=10"
 ```
 
-### Fast Parallel Execution
+The AI will execute with iteration controls:
 
-```bash
-# Allow all 3 checkers to run simultaneously
-workflow run docs__quality-gate --max-concurrency=3
-```
+- Require at least 2 check-fix cycles
+- Cap at maximum 10 iterations
+- Report final status after completion
 
 ## Iteration Example
 

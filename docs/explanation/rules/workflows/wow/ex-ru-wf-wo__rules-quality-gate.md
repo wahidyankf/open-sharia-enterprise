@@ -55,23 +55,15 @@ outputs:
 
 **Current Mode**: Manual Orchestration (see [Workflow Execution Modes Convention](../meta/ex-ru-wf-me__execution-modes.md))
 
-This workflow is currently executed through **manual orchestration** where the main Claude instance follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
+This workflow is currently executed through **manual orchestration** where the AI assistant (Claude Code or OpenCode) follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
 
 **How to Execute**:
-
-Instead of (future):
-
-```bash
-workflow run wow__rules__quality-gate --mode=normal
-```
-
-Currently use:
 
 ```
 User: "Run repository rules quality gate workflow in manual mode"
 ```
 
-Claude will:
+The AI will:
 
 1. Execute wow\_\_rules-checker logic directly (read, validate, write audit)
 2. Execute wow\_\_rules-fixer logic directly (read audit, apply fixes, write fix report)
@@ -79,9 +71,7 @@ Claude will:
 4. Show git status with modified files
 5. Wait for user commit approval
 
-**Why Manual Mode?**: Task tool runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures audit reports and fixes are actually written to the filesystem.
-
-**Future**: When workflow runner is implemented, use `workflow run` command for fully automated execution.
+**Why Manual Mode?**: Task tool (Claude Code) or agent spawning (OpenCode) runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures audit reports and fixes are actually written to the filesystem.
 
 ## Steps
 
@@ -233,55 +223,54 @@ Report final status and summary.
 
 ## Example Usage
 
-### Standard Check-Fix (Normal Strictness)
+### Standard Manual Invocation (Normal Strictness)
 
-```bash
-# Run full repository rules check-fix with default settings
-# Fixes CRITICAL/HIGH only, reports MEDIUM/LOW
-workflow run repository-rules-quality-gate
-
-# Equivalent explicit form
-workflow run repository-rules-quality-gate --mode=normal
+```
+User: "Run repository rules quality gate workflow in normal mode"
 ```
 
-### Pre-Release Validation (Strict)
+The AI will execute the workflow directly:
 
-```bash
-# Fixes CRITICAL/HIGH/MEDIUM, reports LOW
-workflow run repository-rules-quality-gate --mode=strict
+- Validate repository consistency (checker logic)
+- Apply fixes for CRITICAL/HIGH findings (fixer logic)
+- Iterate until zero CRITICAL/HIGH findings achieved
+- Report MEDIUM/LOW findings without fixing them
 
-# Success criteria: Zero CRITICAL/HIGH/MEDIUM findings
-# LOW findings reported but don't block
+### Pre-Release Validation (Strict Mode)
+
+```
+User: "Run repository rules quality gate workflow in strict mode"
 ```
 
-### Comprehensive Audit (Ultra)
+The AI will execute with stricter criteria:
 
-```bash
-# Fixes all levels, zero tolerance
-workflow run repository-rules-quality-gate --mode=ocd
+- Fix CRITICAL/HIGH/MEDIUM findings
+- Report LOW findings without fixing them
+- Iterate until zero CRITICAL/HIGH/MEDIUM findings achieved
 
-# Success criteria: Zero findings at all levels
-# Equivalent to pre-mode parameter behavior
+### Comprehensive Audit (OCD Mode)
+
 ```
+User: "Run repository rules quality gate workflow in ocd mode"
+```
+
+The AI will execute with zero-tolerance criteria:
+
+- Fix ALL findings (CRITICAL, HIGH, MEDIUM, LOW)
+- Iterate until zero findings at all levels
+- Equivalent to pre-mode parameter behavior
 
 ### With Iteration Bounds
 
-```bash
-# Require at least 2 iterations, cap at 10 maximum
-workflow run repository-rules-quality-gate \
-  --mode=normal \
-  --min-iterations=2 \
-  --max-iterations=10
+```
+User: "Run repository rules quality gate workflow in normal mode with min-iterations=2 and max-iterations=10"
 ```
 
-### Strict Mode with Safety Limits
+The AI will execute with iteration controls:
 
-```bash
-# Pre-release check with iteration bounds
-workflow run repository-rules-quality-gate \
-  --mode=strict \
-  --max-iterations=10
-```
+- Require at least 2 check-fix cycles
+- Cap at maximum 10 iterations to prevent infinite loops
+- Report final status (pass/partial) after completion
 
 ## Iteration Example
 

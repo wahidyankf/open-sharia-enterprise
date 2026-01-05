@@ -611,58 +611,43 @@ The `mode` parameter controls which criticality levels must reach zero for workf
 
 **Lax Mode** (minimal validation):
 
-```bash
-# Fixes CRITICAL only, reports HIGH/MEDIUM/LOW
-workflow run content-validation --mode=lax
-
-# Success criteria: Zero CRITICAL findings
-# HIGH/MEDIUM/LOW findings reported but don't block
 ```
+User: "Run [workflow-name] in lax mode"
+```
+
+Fixes CRITICAL only, reports HIGH/MEDIUM/LOW. Success when zero CRITICAL findings remain.
 
 **Normal Mode** (default - everyday validation):
 
-```bash
-# Fixes CRITICAL/HIGH, reports MEDIUM/LOW
-workflow run content-validation --mode=normal
-
-# Success criteria: Zero CRITICAL/HIGH findings
-# MEDIUM/LOW findings reported but don't block
 ```
+User: "Run [workflow-name] in normal mode"
+```
+
+Fixes CRITICAL/HIGH, reports MEDIUM/LOW. Success when zero CRITICAL/HIGH findings remain.
 
 **Strict Mode** (pre-release validation):
 
-```bash
-# Fixes CRITICAL/HIGH/MEDIUM, reports LOW
-workflow run content-validation --mode=strict
-
-# Success criteria: Zero CRITICAL/HIGH/MEDIUM findings
-# LOW findings reported but don't block
+```
+User: "Run [workflow-name] in strict mode"
 ```
 
-**Ultra Mode** (comprehensive audit):
+Fixes CRITICAL/HIGH/MEDIUM, reports LOW. Success when zero CRITICAL/HIGH/MEDIUM findings remain.
 
-```bash
-# Fixes all levels, zero tolerance
-workflow run content-validation --mode=ocd
+**OCD Mode** (comprehensive audit):
 
-# Success criteria: Zero findings at all levels
-# Equivalent to pre-mode parameter behavior
 ```
+User: "Run [workflow-name] in ocd mode"
+```
+
+Fixes all levels, zero tolerance. Success when zero findings at all levels.
 
 **Combined with iteration bounds**:
 
-```bash
-# Strict mode with iteration limits
-workflow run content-validation \
-  --mode=strict \
-  --min-iterations=2 \
-  --max-iterations=10
+```
+User: "Run [workflow-name] in strict mode with min-iterations=2 and max-iterations=10"
 ```
 
-**Migration from pre-mode workflows**:
-
-- Old behavior (implicit ocd): Add `--mode=ocd`
-- New default (normal): Omit mode parameter or use `--mode=normal`
+Applies mode-based fixing with iteration limits.
 
 ### Example Implementation
 
@@ -697,6 +682,12 @@ inputs:
   - name: scope
     type: string
     required: true
+  - name: mode
+    type: enum
+    values: [lax, normal, strict, ocd]
+    description: "Quality threshold"
+    required: false
+    default: normal
 outputs:
   - name: validation-status
     type: enum
@@ -705,33 +696,49 @@ outputs:
 
 # Content Validation Workflow
 
+**Purpose**: Validate and fix content quality iteratively until zero findings achieved.
+
+**When to use**: After creating or updating content.
+
+## Execution Mode
+
+**Current Mode**: Manual Orchestration
+```
+
+User: "Run content validation workflow for [scope] in [mode] mode"
+
+```
+
+The AI (Claude Code or OpenCode) will execute workflow logic directly using Read/Write/Edit tools.
+
 ## Steps
 
 ### 1. Validate Content (Sequential)
 
-**Agent**: `{input.content-type}-checker`
+**Agent logic**: `{input.content-type}-checker`
 
-- **Args**: `scope: {input.scope}`
-- **Output**: `{audit-report}`
+- Validate content in scope
+- Generate audit report in generated-reports/
 
 ### 2. Apply Fixes (Sequential)
 
-**Agent**: `{input.content-type}-fixer`
+**Agent logic**: `{input.content-type}-fixer`
 
-- **Args**: `report: {step1.outputs.audit-report}`
-- **Depends on**: Step 1
+- Read audit report from step 1
+- Apply fixes based on mode level
+- Generate fix report
 
-### 3. Verify (Sequential)
+### 3. Iteration Control (Sequential)
 
-**Agent**: `{input.content-type}-checker`
-
-- **Args**: `scope: {input.scope}, expect: zero-issues`
-- **Depends on**: Step 2
+- Re-validate content
+- If zero threshold-level findings: Success
+- If findings remain and under max-iterations: Loop to step 2
 
 ## Termination Criteria
 
-- ✅ Success: Step 3 reports zero issues
-- ❌ Failure: Verification failed
+- ✅ Success: Zero threshold-level findings (based on mode)
+- ⚠️ Partial: Findings remain after max-iterations
+- ❌ Failure: Technical errors
 ```
 
 ## Documentation Requirements

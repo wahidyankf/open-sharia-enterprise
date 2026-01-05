@@ -257,7 +257,7 @@ See [Agents Index](./.claude/agents/README.md) for descriptions and workflows.
 
 ### Workflow Invocation
 
-Workflows orchestrate multiple agents in sequence, parallel, or conditionally. All workflows support `max-concurrency` parameter (optional, default: 2) for controlling parallel execution. YAML frontmatter values containing special characters must be quoted. See [Workflow Pattern Convention](./docs/explanation/rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md) and [Workflows Index](./docs/explanation/rules/workflows/README.md).
+Workflows orchestrate multiple agents through **manual orchestration** - the AI assistant (Claude Code or OpenCode) executes workflow logic directly using Read/Write/Edit tools, ensuring file changes persist. Users invoke workflows with natural language: `"Run [workflow-name] workflow for [scope] in [mode] mode"`. All workflows support standard parameters: `mode` (lax/normal/strict/ocd), `max-concurrency` (default: 2), `min-iterations`, `max-iterations`. See [Workflow Pattern Convention](./docs/explanation/rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md), [Execution Modes Convention](./docs/explanation/rules/workflows/meta/ex-ru-wf-me__execution-modes.md), and [Workflows Index](./docs/explanation/rules/workflows/README.md).
 
 ### Resources
 

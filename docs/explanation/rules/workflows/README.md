@@ -40,10 +40,24 @@ Layer 5: Workflows (WHEN)          → Multi-step processes ← YOU ARE HERE
 
 ### Using Workflows
 
-Workflows are executed by orchestrating agents in sequence, parallel, or conditionally as defined in workflow definitions. All workflows support a standard **max-concurrency** input parameter (optional, default: 2) to control concurrent execution limits.
+Workflows are executed through **manual orchestration** - the AI assistant (Claude Code or OpenCode) follows workflow steps directly using Read/Write/Edit tools in the main execution context. This ensures file changes persist to the actual filesystem.
 
-Currently, workflows require manual orchestration.
-Future enhancement: Automated workflow executor agent.
+**How to execute workflows**:
+
+```
+User: "Run [workflow-name] workflow for [scope] in [mode] mode"
+```
+
+The AI will execute the workflow logic directly, orchestrating checker-fixer cycles until termination criteria are met.
+
+All workflows support standard input parameters:
+
+- **mode**: Quality threshold (lax/normal/strict/ocd) - default: normal
+- **max-concurrency**: Parallel execution limit - default: 2
+- **min-iterations**: Minimum check-fix cycles - optional
+- **max-iterations**: Maximum check-fix cycles - optional
+
+**Future**: Automated workflow executor agent (not yet implemented).
 
 ## Available Workflows
 
@@ -248,9 +262,9 @@ Planned workflow features:
 
 - **What is a workflow?** - A composed multi-step process orchestrating agents
 - **When should I create a workflow?** - When 2 or more agents are used repeatedly in sequence
-- **How do I run a workflow?** - Currently manual (run agents in order), future: workflow executor
+- **How do I run a workflow?** - Use manual orchestration (see "Using Workflows" above)
 - **Can workflows call other workflows?** - Yes, workflows are composable
 - **Do workflows replace agents?** - No, workflows orchestrate agents
 - **Do workflows replace plans?** - No, plans are strategic, workflows are tactical
 
-See [Workflow Pattern Convention](./meta/ex-ru-wf-me__workflow-pattern.md) for comprehensive answers.
+See [Workflow Pattern Convention](./meta/ex-ru-wf-me__workflow-pattern.md) and [Execution Modes Convention](./meta/ex-ru-wf-me__execution-modes.md) for comprehensive answers.

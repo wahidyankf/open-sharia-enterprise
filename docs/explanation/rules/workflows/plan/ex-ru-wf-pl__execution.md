@@ -47,23 +47,15 @@ outputs:
 
 **Current Mode**: Manual Orchestration (see [Workflow Execution Modes Convention](../meta/ex-ru-wf-me__execution-modes.md))
 
-This workflow is currently executed through **manual orchestration** where the main Claude instance follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
+This workflow is currently executed through **manual orchestration** where the AI assistant (Claude Code or OpenCode) follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
 
 **How to Execute**:
-
-Instead of (future):
-
-```bash
-workflow run plan-execution --plan-path=plans/in-progress/2025-01-15__new-feature/plan.md
-```
-
-Currently use:
 
 ```
 User: "Execute plan plans/in-progress/2025-01-15__new-feature/plan.md in manual mode"
 ```
 
-Claude will:
+The AI will:
 
 1. Execute plan\_\_executor logic directly (read plan, implement requirements, update checklist)
 2. Execute plan\_\_execution-checker logic directly (validate implementation, write audit)
@@ -72,9 +64,7 @@ Claude will:
 5. Show git status with modified files
 6. Wait for user commit approval
 
-**Why Manual Mode?**: Task tool runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures implementation changes, audit reports, and plan archival are actually written to the filesystem.
-
-**Future**: When workflow runner is implemented, use `workflow run` command for fully automated execution.
+**Why Manual Mode?**: Task tool (Claude Code) or agent spawning (OpenCode) runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures implementation changes, audit reports, and plan archival are actually written to the filesystem.
 
 ## Steps
 
@@ -229,31 +219,51 @@ Report final status and archive plan if successful.
 
 ### Execute Plan with Default Settings
 
-```bash
-# Run full plan execution with default settings (max 10 iterations)
-workflow run plan-execution --plan-path=plans/in-progress/2025-01-15__new-feature/plan.md
 ```
+User: "Execute plan plans/in-progress/2025-01-15__new-feature/plan.md in manual mode"
+```
+
+The AI will execute the workflow directly (default max 10 iterations):
+
+- Implement plan requirements (plan\_\_executor logic)
+- Validate implementation (plan\_\_execution-checker logic)
+- Iterate until zero findings and all deliverables complete
+- Move plan folder to plans/done/ on success
 
 ### Execute with Extended Iterations
 
-```bash
-# Allow up to 15 iterations for complex plans
-workflow run plan-execution --plan-path=plans/in-progress/2025-01-15__complex-migration/plan.md --max-iterations=15
 ```
+User: "Execute plan plans/in-progress/2025-01-15__complex-migration/plan.md with max-iterations=15"
+```
+
+The AI will execute with extended iteration limit:
+
+- Allow up to 15 execute-validate cycles for complex plans
+- Suitable for large migrations or multi-phase implementations
 
 ### Execute Plan from Backlog
 
-```bash
-# Execute plan from backlog (won't move to done until complete)
-workflow run plan-execution --plan-path=plans/backlog/2025-02-01__future-feature/plan.md
 ```
+User: "Execute plan plans/backlog/2025-02-01__future-feature/plan.md in manual mode"
+```
+
+The AI will execute from backlog:
+
+- Implement plan regardless of folder location
+- Won't move to done until zero findings achieved
+- Plan archived to plans/done/ only on complete success
 
 ### Quick Validation Only
 
-```bash
-# Execute once, don't retry (set max-iterations=1)
-workflow run plan-execution --plan-path=plans/in-progress/2025-01-15__new-feature/plan.md --max-iterations=1
 ```
+User: "Execute plan plans/in-progress/2025-01-15__new-feature/plan.md with max-iterations=1"
+```
+
+The AI will execute once without retries:
+
+- Single execute-validate cycle
+- Reports findings without further iteration
+- Useful for quick validation pass
 
 ## Iteration Example
 

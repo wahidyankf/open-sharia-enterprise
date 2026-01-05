@@ -62,23 +62,15 @@ outputs:
 
 **Current Mode**: Manual Orchestration (see [Workflow Execution Modes Convention](../meta/ex-ru-wf-me__execution-modes.md))
 
-This workflow is currently executed through **manual orchestration** where the main Claude instance follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
+This workflow is currently executed through **manual orchestration** where the AI assistant (Claude Code or OpenCode) follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
 
 **How to Execute**:
-
-Instead of (future):
-
-```bash
-workflow run ayokoding-web-general-quality-gate --scope=ayokoding-web/content/en/
-```
-
-Currently use:
 
 ```
 User: "Run ayokoding-web general quality gate workflow for ayokoding-web/content/en/ in manual mode"
 ```
 
-Claude will:
+The AI will:
 
 1. Execute all four checkers logic directly in parallel (general, facts, structure, links - validate, write audits)
 2. Execute all three fixers logic directly in sequence (general, facts, structure - read audits, apply fixes, write fix reports)
@@ -88,9 +80,7 @@ Claude will:
 6. Show git status with modified files
 7. Wait for user commit approval
 
-**Why Manual Mode?**: Task tool runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures audit reports, content fixes, title updates, and navigation regeneration are actually written to the filesystem.
-
-**Future**: When workflow runner is implemented, use `workflow run` command for fully automated execution.
+**Why Manual Mode?**: Task tool (Claude Code) or agent spawning (OpenCode) runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures audit reports, content fixes, title updates, and navigation regeneration are actually written to the filesystem.
 
 ## Steps
 
@@ -311,45 +301,52 @@ Report final status and summary.
 
 ### Full Content Check-Fix
 
-```bash
-# Run complete ayokoding-web content validation and fixing
-workflow run ayokoding-web-general-quality-gate
 ```
+User: "Run ayokoding-web general quality gate workflow in manual mode"
+```
+
+The AI will execute the workflow directly:
+
+- Validate all ayokoding-web content in parallel (general, facts, structure, links)
+- Fix all findings (general-fixer, facts-fixer, structure-fixer logic)
+- Regenerate titles and navigation
+- Iterate until zero findings achieved
 
 ### Validate Specific Language
 
-```bash
-# Validate only English content
-workflow run ayokoding-web-general-quality-gate --scope=ayokoding-web/content/en/
 ```
+User: "Run ayokoding-web general quality gate workflow for ayokoding-web/content/en/"
+```
+
+The AI will execute with language-scoped validation:
+
+- Validate only English content
+- Fix issues in English files only
+- Regenerate titles and navigation for English content
 
 ### Validate Specific Section
 
-```bash
-# Validate only programming section
-workflow run ayokoding-web-general-quality-gate --scope=ayokoding-web/content/en/programming/
 ```
+User: "Run ayokoding-web general quality gate workflow for ayokoding-web/content/en/programming/"
+```
+
+The AI will execute with section-scoped validation:
+
+- Validate only programming section
+- Fix issues in that section
+- Regenerate titles and navigation for affected files
 
 ### With Iteration Bounds
 
-```bash
-# Require at least 2 iterations, cap at 10 maximum
-workflow run ayokoding-web-general-quality-gate --scope=all --min-iterations=2 --max-iterations=10
+```
+User: "Run ayokoding-web general quality gate workflow with min-iterations=2 and max-iterations=10"
 ```
 
-### Prevent Infinite Loops
+The AI will execute with iteration controls:
 
-```bash
-# Set maximum iterations when unsure about fix convergence
-workflow run ayokoding-web-general-quality-gate --scope=all --max-iterations=10
-```
-
-### Require Minimum Iterations
-
-```bash
-# Ensure at least 3 check-fix cycles before accepting zero findings
-workflow run ayokoding-web-general-quality-gate --scope=all --min-iterations=3
-```
+- Require at least 2 check-fix cycles
+- Cap at maximum 10 iterations
+- Report final status after completion
 
 ## Iteration Example
 

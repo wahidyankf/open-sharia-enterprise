@@ -43,23 +43,15 @@ outputs:
 
 **Current Mode**: Manual Orchestration (see [Workflow Execution Modes Convention](../meta/ex-ru-wf-me__execution-modes.md))
 
-This workflow is currently executed through **manual orchestration** where the main Claude instance follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
+This workflow is currently executed through **manual orchestration** where the AI assistant (Claude Code or OpenCode) follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
 
 **How to Execute**:
-
-Instead of (future):
-
-```bash
-workflow run plan-quality-gate --scope=plans/backlog/my-plan/
-```
-
-Currently use:
 
 ```
 User: "Run plan quality gate workflow for plans/backlog/my-plan/ in manual mode"
 ```
 
-Claude will:
+The AI will:
 
 1. Execute plan\_\_checker logic directly (read, validate, write audit)
 2. Execute plan\_\_fixer logic directly (read audit, apply fixes, write fix report)
@@ -67,9 +59,7 @@ Claude will:
 4. Show git status with modified files
 5. Wait for user commit approval
 
-**Why Manual Mode?**: Task tool runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures audit reports and fixes are actually written to the filesystem.
-
-**Future**: When workflow runner is implemented, use `workflow run` command for fully automated execution.
+**Why Manual Mode?**: Task tool (Claude Code) or agent spawning (OpenCode) runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures audit reports and fixes are actually written to the filesystem.
 
 **When to use**:
 
@@ -191,45 +181,51 @@ Report final status and summary.
 
 ### Validate All Plans
 
-```bash
-# Run full plan validation with default settings
-workflow run plan-quality-gate
 ```
+User: "Run plan quality gate workflow for all plans in manual mode"
+```
+
+The AI will execute the workflow directly:
+
+- Validate all plan files (plan\_\_checker logic)
+- Apply all fixes (plan\_\_fixer logic)
+- Iterate until zero findings achieved
 
 ### Validate Specific Plan Folder
 
-```bash
-# Validate only in-progress plans
-workflow run plan-quality-gate --scope=plans/in-progress/
 ```
+User: "Run plan quality gate workflow for plans/in-progress/ in manual mode"
+```
+
+The AI will execute with scoped validation:
+
+- Validate only in-progress plans
+- Fix issues in those plans only
+- Iterate until zero findings in scope
 
 ### Validate Single Plan
 
-```bash
-# Validate specific plan file
-workflow run plan-quality-gate --scope=plans/in-progress/2025-01-15__new-feature/plan.md
 ```
+User: "Run plan quality gate workflow for plans/in-progress/2025-01-15__new-feature/plan.md in manual mode"
+```
+
+The AI will execute with single-file scope:
+
+- Validate specific plan file only
+- Fix issues in that file
+- Iterate until plan is clean
 
 ### With Iteration Bounds
 
-```bash
-# Require at least 2 iterations, cap at 10 maximum
-workflow run plan-quality-gate --scope=all --min-iterations=2 --max-iterations=10
+```
+User: "Run plan quality gate workflow for all plans with min-iterations=2 and max-iterations=10"
 ```
 
-### Prevent Infinite Loops
+The AI will execute with iteration controls:
 
-```bash
-# Set maximum iterations when unsure about fix convergence
-workflow run plan-quality-gate --scope=all --max-iterations=10
-```
-
-### Require Minimum Iterations
-
-```bash
-# Ensure at least 3 check-fix cycles before accepting zero findings
-workflow run plan-quality-gate --scope=all --min-iterations=3
-```
+- Require at least 2 check-fix cycles
+- Cap at maximum 10 iterations
+- Report final status after completion
 
 ## Iteration Example
 
