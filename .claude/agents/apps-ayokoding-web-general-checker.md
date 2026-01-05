@@ -48,3 +48,26 @@ Skill: `wow-generating-validation-reports`
 
 - [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
 - Skills: `apps-ayokoding-web-developing-content`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+
+**Related Agents**:
+
+- `apps-ayokoding-web-general-maker` - Creates content this checker validates
+- `apps-ayokoding-web-general-fixer` - Fixes issues found by this checker
+
+**Related Conventions**:
+
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md)
+
+**Skills**:
+
+- `wow-executing-checker-workflow` - Checker workflow pattern
+- `apps-ayokoding-web-developing-content` - ayokoding-web content standards
+- `wow-assessing-criticality-confidence` - Criticality assessment

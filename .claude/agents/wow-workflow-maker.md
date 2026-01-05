@@ -29,3 +29,25 @@ Create workflow documentation following workflow pattern convention.
 ## Workflow
 
 `docs-applying-diataxis-framework` Skill provides documentation organization.
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [Workflow Pattern Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
+
+**Related Agents**:
+
+- `wow-workflow-checker` - Validates workflows created by this maker
+- `wow-workflow-fixer` - Fixes workflow violations
+
+**Related Conventions**:
+
+- [Workflow Pattern Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
+- [Execution Modes Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me__execution-modes.md)
+
+**Skills**:
+
+- `wow-defining-workflows` - Workflow structure and patterns
+- `docs-applying-content-quality` - Content quality standards

@@ -32,3 +32,26 @@ Skill: `wow-generating-validation-reports`
 
 - [ose-platform-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ose-platform.md)
 - Skills: `apps-ose-platform-web-developing-content`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [ose-platform-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
+
+**Related Agents**:
+
+- `apps-ose-platform-web-content-maker` - Creates content this checker validates
+- `apps-ose-platform-web-content-fixer` - Fixes issues found by this checker
+
+**Related Conventions**:
+
+- [ose-platform-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
+- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md)
+
+**Skills**:
+
+- `wow-executing-checker-workflow` - Checker workflow pattern
+- `apps-ose-platform-web-developing-content` - ose-platform-web standards
+- `wow-assessing-criticality-confidence` - Criticality assessment

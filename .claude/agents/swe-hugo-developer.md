@@ -30,3 +30,27 @@ Develop Hugo sites (ayokoding-web with Hextra, ose-platform-web with PaperMod).
 ## Responsibilities
 
 Theme customization, template development, build optimization, deployment configuration.
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [ose-platform-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
+
+**Related Agents**:
+
+- `apps-ayokoding-web-general-maker` - Creates ayokoding-web content
+- `apps-ose-platform-web-content-maker` - Creates ose-platform-web content
+
+**Related Conventions**:
+
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [ose-platform-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
+- [Code Quality Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu__code.md)
+
+**Skills**:
+
+- `apps-ayokoding-web-developing-content` - ayokoding-web development
+- `apps-ose-platform-web-developing-content` - ose-platform-web development

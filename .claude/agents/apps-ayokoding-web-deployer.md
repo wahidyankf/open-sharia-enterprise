@@ -33,3 +33,24 @@ Deploy ayokoding-web to production.
 
 - [Trunk Based Development](../../docs/explanation/rules/development/workflow/ex-ru-de-wo-trunk-based-development.md)
 - [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+
+**Related Agents**:
+
+- `apps-ayokoding-web-general-checker` - Validates content before deployment
+
+**Related Conventions**:
+
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [Trunk Based Development](../../docs/explanation/rules/development/workflow/ex-ru-de-wo__trunk-based-development.md)
+
+**Skills**:
+
+- `apps-ayokoding-web-developing-content` - Site requirements
+- `wow-practicing-trunk-based-development` - Git workflow

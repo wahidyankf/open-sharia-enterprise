@@ -30,3 +30,23 @@ Calculate and update prev/next links based on weight ordering.
 ## Reference
 
 - [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+
+**Related Agents**:
+
+- `apps-ayokoding-web-structure-maker` - Creates folder structure
+- `apps-ayokoding-web-general-maker` - Creates content
+
+**Related Conventions**:
+
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+
+**Skills**:
+
+- `apps-ayokoding-web-developing-content` - Navigation requirements

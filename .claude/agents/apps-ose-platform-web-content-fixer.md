@@ -36,3 +36,26 @@ Validate content-checker findings before applying fixes.
 ## Reference
 
 Skills: `apps-ose-platform-web-developing-content`, `wow-assessing-criticality-confidence`, `wow-applying-maker-checker-fixer`, `wow-generating-validation-reports`
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [ose-platform-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
+
+**Related Agents**:
+
+- `apps-ose-platform-web-content-checker` - Generates audit reports this fixer processes
+- `apps-ose-platform-web-content-maker` - Creates content
+
+**Related Conventions**:
+
+- [ose-platform-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
+- [Fixer Confidence Levels](../../docs/explanation/rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md)
+
+**Skills**:
+
+- `wow-applying-fixer-workflow` - Fixer workflow pattern
+- `apps-ose-platform-web-developing-content` - ose-platform-web standards
+- `wow-assessing-criticality-confidence` - Confidence assessment

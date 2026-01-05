@@ -35,3 +35,25 @@ Create by-concept tutorials and general content for ayokoding-web.
 5. Ensure bilingual completeness
 
 **Skills provide**: Bilingual strategy, weight calculation, navigation depth, absolute linking, content quality standards
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+
+**Related Agents**:
+
+- `apps-ayokoding-web-general-checker` - Validates content created by this maker
+- `apps-ayokoding-web-general-fixer` - Fixes validation issues
+
+**Related Conventions**:
+
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [Programming Language Content](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__programming-language-content.md)
+
+**Skills**:
+
+- `apps-ayokoding-web-developing-content` - ayokoding-web content standards
+- `docs-applying-content-quality` - Content quality principles

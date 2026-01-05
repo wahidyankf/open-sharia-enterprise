@@ -30,3 +30,24 @@ Create titles following conventions for tutorial types and levels.
 ## Reference
 
 - [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__naming.md)
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__naming.md)
+
+**Related Agents**:
+
+- `apps-ayokoding-web-general-maker` - Creates content
+- `apps-ayokoding-web-by-example-maker` - Creates By Example content
+
+**Related Conventions**:
+
+- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__naming.md)
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+
+**Skills**:
+
+- `apps-ayokoding-web-developing-content` - Title generation patterns

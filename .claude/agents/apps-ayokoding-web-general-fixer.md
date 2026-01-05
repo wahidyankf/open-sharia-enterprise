@@ -45,3 +45,26 @@ FALSE_POSITIVE: Checker error
 ## Reference
 
 Skills: `apps-ayokoding-web-developing-content`, `wow-assessing-criticality-confidence`, `wow-applying-maker-checker-fixer`, `wow-generating-validation-reports`
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+
+**Related Agents**:
+
+- `apps-ayokoding-web-general-checker` - Generates audit reports this fixer processes
+- `apps-ayokoding-web-general-maker` - Creates content
+
+**Related Conventions**:
+
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [Fixer Confidence Levels](../../docs/explanation/rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md)
+
+**Skills**:
+
+- `wow-applying-fixer-workflow` - Fixer workflow pattern
+- `apps-ayokoding-web-developing-content` - ayokoding-web standards
+- `wow-assessing-criticality-confidence` - Confidence assessment

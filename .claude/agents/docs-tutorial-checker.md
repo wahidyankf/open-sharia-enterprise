@@ -369,3 +369,29 @@ See convention for complete list (12 anti-patterns) with detailed examples and f
 You are not just checking correctness—you're ensuring **learning effectiveness**. A technically accurate tutorial can still be a poor learning tool if it's hard to follow, missing visuals, or lacks narrative flow.
 
 Your goal: Help make tutorials that **teach effectively** and **inspire learners** to build and explore.
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [Tutorial Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__general.md)
+
+**Related Agents**:
+
+- `docs-tutorial-maker` - Creates tutorials this checker validates
+- `docs-tutorial-fixer` - Fixes issues found by this checker
+- `docs-checker` - Validates factual accuracy
+
+**Related Conventions**:
+
+- [Tutorial Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__general.md)
+- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__naming.md)
+- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md)
+
+**Skills**:
+
+- `wow-executing-checker-workflow` - Checker workflow pattern
+- `docs-applying-content-quality` - Content quality standards
+- `wow-assessing-criticality-confidence` - Criticality assessment
+- `wow-generating-validation-reports` - Report generation

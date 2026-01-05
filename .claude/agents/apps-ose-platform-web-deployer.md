@@ -27,3 +27,24 @@ Deploy ose-platform-web to production.
 
 - [Trunk Based Development](../../docs/explanation/rules/development/workflow/ex-ru-de-wo-trunk-based-development.md)
 - [ose-platform-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ose-platform.md)
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [ose-platform-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
+
+**Related Agents**:
+
+- `apps-ose-platform-web-content-checker` - Validates content before deployment
+
+**Related Conventions**:
+
+- [ose-platform-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
+- [Trunk Based Development](../../docs/explanation/rules/development/workflow/ex-ru-de-wo__trunk-based-development.md)
+
+**Skills**:
+
+- `apps-ose-platform-web-developing-content` - Site requirements
+- `wow-practicing-trunk-based-development` - Git workflow
