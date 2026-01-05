@@ -11,6 +11,7 @@ tools:
 model: sonnet
 color: purple
 skills:
+  - wow-applying-fixer-workflow
   - docs-applying-diataxis-framework
   - wow-assessing-criticality-confidence
   - wow-applying-maker-checker-fixer
@@ -77,56 +78,14 @@ Use this agent when:
 
 ## How This Agent Works
 
-### 1. Report Discovery
+**See `wow-applying-fixer-workflow` Skill for complete workflow details** including:
 
-The `wow-applying-maker-checker-fixer` Skill provides report discovery logic:
+1. **Report Discovery**: Auto-detect latest audit report with manual override support
+2. **Validation Strategy**: Re-validate each finding to assess HIGH/MEDIUM/FALSE_POSITIVE confidence
+3. **Fix Application**: Apply HIGH confidence fixes automatically, skip others
+4. **Fix Report Generation**: Create fix report preserving UUID chain from source audit
 
-- Auto-detect latest audit report in `generated-reports/`
-- Allow manual override if user specifies a report
-- Verify report exists and is readable before proceeding
-
-**Report filename pattern**: `docs-tutorial-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
-
-### 2. Validation Strategy
-
-**For EACH finding in the audit report:**
-
-```
-Read finding → Re-execute validation check → Assess confidence level
-
-HIGH_CONFIDENCE:
-  - Re-validation confirms objective, verifiable issue exists
-  - Apply fix automatically
-
-MEDIUM_CONFIDENCE:
-  - Re-validation unclear or subjective judgment required
-  - Skip fix, flag as "needs manual review"
-
-FALSE_POSITIVE:
-  - Re-validation disproves issue
-  - Skip fix, report to user
-  - Suggest checker improvement
-```
-
-### 3. Fix Application
-
-- Apply ALL HIGH_CONFIDENCE fixes automatically
-- NO confirmation prompts (user already reviewed checker report)
-- Skip MEDIUM_CONFIDENCE and FALSE_POSITIVE findings
-- Report summary of all actions taken
-
-### 4. Fix Report Generation
-
-Generate comprehensive fix report using `wow-generating-validation-reports` Skill:
-
-**File naming pattern**: Replace `-audit` suffix with `-fix` (preserve UUID chain and timestamp)
-
-**Examples:**
-
-- Input: `docs-tutorial-a1b2c3-2025-12-14--20-45-audit.md`
-- Output: `docs-tutorial-a1b2c3-2025-12-14--20-45-fix.md`
-
-See Skill for complete fix report template structure.
+**Domain-Specific Implementation**: This agent re-validates tutorial quality findings focusing on pedagogical structure, narrative flow, visual completeness, and hands-on elements per tutorial conventions.
 
 ## Confidence Level Assessment
 

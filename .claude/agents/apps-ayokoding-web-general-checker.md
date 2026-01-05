@@ -4,7 +4,13 @@ description: Validates general ayokoding-web content quality including structure
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
 color: green
-skills: [apps-ayokoding-web-developing-content, wow-assessing-criticality-confidence, wow-generating-validation-reports]
+skills:
+  [
+    apps-ayokoding-web-developing-content,
+    wow-assessing-criticality-confidence,
+    wow-generating-validation-reports,
+    wow-executing-checker-workflow,
+  ]
 created: 2025-12-20
 updated: 2026-01-03
 ---

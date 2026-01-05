@@ -5,6 +5,7 @@ tools: Read, Glob, Grep, Write, Bash, WebFetch, WebSearch
 model: sonnet
 color: green
 skills:
+  - wow-executing-checker-workflow
   [
     wow-applying-maker-checker-fixer,
     wow-assessing-criticality-confidence,
@@ -243,6 +244,16 @@ filename="docs-${uuid}-${timestamp}-audit.md"
 
 **WRONG**: `docs-abc123-2025-12-15--00-00-audit.md` (placeholder - never use!)
 **CORRECT**: `docs-a1b2c3-2025-12-15--10-23-audit.md` (actual values from bash)
+
+## Workflow Overview
+
+**See `wow-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+
+1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
+2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
+3. **Final Step: Finalize Report**: Update status, add summary
+
+**Domain-Specific Validation** (factual accuracy): The detailed workflow below implements factual accuracy validation using web verification.
 
 ## Validation Workflow
 

@@ -13,6 +13,7 @@ tools:
 model: sonnet
 color: purple
 skills:
+  - wow-applying-fixer-workflow
   - apps-ayokoding-web-developing-content
   - docs-validating-factual-accuracy
   - wow-assessing-criticality-confidence

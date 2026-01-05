@@ -3,13 +3,12 @@ name: apps-ayokoding-web-general-fixer
 description: Applies validated fixes from general-checker audit reports. Re-validates before applying changes.
 tools: [Read, Edit, Write, Glob, Grep, Bash]
 model: sonnet
-color: purple
 skills:
-  [
-    apps-ayokoding-web-developing-content,
-    wow-assessing-criticality-confidence,
-    wow-applying-maker-checker-fixer,
-    wow-generating-validation-reports,
+  - wow-applying-fixer-workflow
+  - apps-ayokoding-web-developing-content
+  - wow-assessing-criticality-confidence
+  - wow-applying-maker-checker-fixer
+  - wow-generating-validation-reports
   ]
 created: 2025-12-20
 updated: 2026-01-03

@@ -5,6 +5,7 @@ tools: [Read, Edit, Write, Glob, Grep, Bash]
 model: sonnet
 color: purple
 skills:
+  - wow-applying-fixer-workflow
   [
     apps-ose-platform-web-developing-content,
     wow-assessing-criticality-confidence,
