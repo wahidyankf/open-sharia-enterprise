@@ -28,9 +28,9 @@ This document explains the commit message convention used in the open-sharia-ent
 
 This practice respects the following core principles:
 
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Commit format (`type(scope): description`) explicitly states the nature of change. No guessing from cryptic messages like "fix stuff" or "updates". Commit type, scope, and description are all explicit.
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Commit format (`type(scope): description`) explicitly states the nature of change. No guessing from cryptic messages like "fix stuff" or "updates". Commit type, scope, and description are all explicit.
 
-- **[Automation Over Manual](../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Commitlint automatically validates message format via git hooks. Commits rejected if format is invalid. No manual review of commit messages needed - automation enforces the standard.
+- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Commitlint automatically validates message format via git hooks. Commits rejected if format is invalid. No manual review of commit messages needed - automation enforces the standard.
 
 ## Conventions Implemented/Respected
 

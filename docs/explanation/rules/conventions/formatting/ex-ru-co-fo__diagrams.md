@@ -23,9 +23,9 @@ This document defines when and how to use different diagram formats in the open-
 
 This convention implements the following core principles:
 
-- **[Accessibility First](../principles/content/ex-ru-pr-co__accessibility-first.md)**: Requires color-blind friendly palettes, vertical orientation for mobile users, and text-based source that screen readers can parse. Mermaid diagrams provide semantic structure accessible to assistive technology.
+- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Requires color-blind friendly palettes, vertical orientation for mobile users, and text-based source that screen readers can parse. Mermaid diagrams provide semantic structure accessible to assistive technology.
 
-- **[Simplicity Over Complexity](../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Mermaid as the primary format for all markdown files provides a single, universal approach instead of juggling multiple diagram tools. Simple, text-based syntax that's easy to learn and version control.
+- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Mermaid as the primary format for all markdown files provides a single, universal approach instead of juggling multiple diagram tools. Simple, text-based syntax that's easy to learn and version control.
 
 ## Purpose
 

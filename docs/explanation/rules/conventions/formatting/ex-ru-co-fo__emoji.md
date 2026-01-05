@@ -23,9 +23,9 @@ This document defines conventions for emoji usage in markdown documentation acro
 
 This convention implements the following core principles:
 
-- **[Accessibility First](../principles/content/ex-ru-pr-co__accessibility-first.md)**: Uses color-blind friendly emoji colors (blue, orange, teal, purple, brown). Emojis supplement text headings, never replace them. Semantic meaning is always conveyed through text first, emoji second.
+- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Uses color-blind friendly emoji colors (blue, orange, teal, purple, brown). Emojis supplement text headings, never replace them. Semantic meaning is always conveyed through text first, emoji second.
 
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Defines a standardized emoji vocabulary where each emoji has explicit, documented meaning. Same emoji = same meaning across all docs. No guessing or implicit conventions.
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Defines a standardized emoji vocabulary where each emoji has explicit, documented meaning. Same emoji = same meaning across all docs. No guessing or implicit conventions.
 
 ## Scope
 
@@ -635,8 +635,8 @@ npm run dev
 
 ## 📚 Documentation
 
-- [Conventions](./docs/explanation/rules/conventions/)
-- [Development](./docs/explanation/rules/development/)
+- [Conventions](../)
+- [Development](../../development/)
 
 ## ⚠️ Important
 

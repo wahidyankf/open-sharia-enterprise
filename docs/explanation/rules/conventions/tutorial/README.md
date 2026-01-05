@@ -37,6 +37,16 @@ These conventions define **HOW to create and structure tutorials**, covering tut
 - [No Time Estimates Principle](../../principles/content/ex-ru-pr-co__no-time-estimates.md) - Why we use coverage percentages
 - [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
 
+## Principles Implemented/Respected
+
+This set of conventions implements/respects the following core principles:
+
+- **[No Time Estimates](../../principles/content/ex-ru-pr-co__no-time-estimates.md)**: Tutorial conventions use coverage percentages and depth levels rather than time estimates, focusing on learning outcomes rather than duration.
+
+- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Tutorial naming conventions and depth levels (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook) enable progressive learning based on user's current knowledge level.
+
+- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: By-example tutorial approach provides code-first learning with simple, annotated examples rather than complex theoretical explanations.
+
 ---
 
 **Last Updated**: 2026-01-01

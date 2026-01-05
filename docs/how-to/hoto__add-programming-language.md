@@ -208,7 +208,7 @@ Before starting, ensure you have:
    **Note**: Programming language folders are at level 5 (`/en/learn/swe/prog-lang/[language]/`). The folder's `_index.md` uses level 5 weight (10002 to position among other languages), while content INSIDE the folder (like `overview.md`, `tutorials/`, etc.) uses level 6 weights starting at 100000.
 
 2. **Create `overview.md` (learning path guide)**:
-   - See [Golang overview.md](../../apps/ayokoding-web/content/en/learn/swe/prog-lang/golang/tutorials/overview.md) as template
+   - See [Golang overview.md](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/tutorials/overview.md) as template
    - Include: Full Set description, learning path table, tutorial structure, topics covered
 
 **Deliverable:** Navigation files with proper frontmatter and structure

@@ -23,10 +23,10 @@ All programming language content on ayokoding-web follows a standardized structu
 
 This convention implements the following core principles:
 
-- **[Progressive Disclosure](../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Coverage levels (0-5%, 5-30%, 0-60%, 60-85%, 85-95%) implement gradual complexity layering, allowing learners to build knowledge incrementally without overwhelming them with advanced concepts too early.
-- **[Accessibility First](../principles/content/ex-ru-pr-co__accessibility-first.md)**: Standardized structure aids diverse learners with predictable navigation, color-blind friendly palettes in all diagrams, and WCAG-compliant content formatting.
-- **[Simplicity Over Complexity](../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Flat directory structure with consistent file naming across all languages, avoiding nested hierarchies that add cognitive overhead.
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Clear coverage percentages define scope boundaries, explicit quality metrics provide objective benchmarks, and documented standards eliminate guesswork.
+- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Coverage levels (0-5%, 5-30%, 0-60%, 60-85%, 85-95%) implement gradual complexity layering, allowing learners to build knowledge incrementally without overwhelming them with advanced concepts too early.
+- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Standardized structure aids diverse learners with predictable navigation, color-blind friendly palettes in all diagrams, and WCAG-compliant content formatting.
+- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Flat directory structure with consistent file naming across all languages, avoiding nested hierarchies that add cognitive overhead.
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Clear coverage percentages define scope boundaries, explicit quality metrics provide objective benchmarks, and documented standards eliminate guesswork.
 
 ## Purpose
 

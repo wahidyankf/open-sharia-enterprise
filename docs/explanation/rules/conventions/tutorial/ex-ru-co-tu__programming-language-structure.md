@@ -23,9 +23,9 @@ This convention standardizes how programming language tutorials are organized wi
 
 This convention implements the following core principles:
 
-- **[Progressive Disclosure](../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Dual-path structure allows learners to choose their entry point based on experience level. By-concept path for gradual learning, by-example path for rapid exploration.
-- **[Accessibility First](../principles/content/ex-ru-pr-co__accessibility-first.md)**: Multiple learning paths serve diverse learning styles - narrative-driven for methodical learners, code-first for experienced developers.
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Clear directory structure makes learning path choices obvious. Foundational tutorials at root signal prerequisite status.
+- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Dual-path structure allows learners to choose their entry point based on experience level. By-concept path for gradual learning, by-example path for rapid exploration.
+- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Multiple learning paths serve diverse learning styles - narrative-driven for methodical learners, code-first for experienced developers.
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Clear directory structure makes learning path choices obvious. Foundational tutorials at root signal prerequisite status.
 
 ## Purpose
 

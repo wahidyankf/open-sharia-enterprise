@@ -34,33 +34,9 @@ permission:
 **Before**: Maker creates content
 **After**: User reviews → Fixer applies validated fixes
 
-### Progressive Report Writing (MANDATORY)
+**See `wow-generating-validation-reports` Skill** for UUID chain generation, progressive report writing methodology, and report file patterns.
 
-1. **Initialize**: `generated-reports/{agent}__{uuid}__{YYYY-MM-DD--HH-MM}__audit.md`
-2. **Write findings IMMEDIATELY** (not buffered)
-3. **Update continuously** throughout execution
-4. **Finalize** with statistics
-
-### UUID Chain Generation
-
-```bash
-# Root UUID (6-char hex)
-uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
-
-# Child UUID (if spawned by another agent)
-# Format: {parent}.{new-uuid}
-```
-
-**Purpose**: Prevents parallel execution collisions
-
-### Criticality Levels
-
-- 🔴 **CRITICAL**: Breaks functionality, must fix before publication
-- 🟠 **HIGH**: Significant quality degradation
-- 🟡 **MEDIUM**: Minor issues, can defer
-- 🟢 **LOW**: Suggestions, nice-to-have
-
-**Execution Order**: CRITICAL → HIGH → MEDIUM → LOW
+**See `wow-assessing-criticality-confidence` Skill** for criticality level definitions, confidence assessment, and priority matrix.
 
 ## Knowledge Dependencies (Skills)
 

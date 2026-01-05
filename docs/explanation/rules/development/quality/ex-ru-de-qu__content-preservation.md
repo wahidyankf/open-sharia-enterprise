@@ -21,9 +21,9 @@ This convention defines the principles and processes for preserving knowledge wh
 
 This practice respects the following core principles:
 
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Content offload process explicitly moves content to convention documents with clear links. No hidden assumptions about where knowledge lives - every condensation creates documented references to comprehensive sources.
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Content offload process explicitly moves content to convention documents with clear links. No hidden assumptions about where knowledge lives - every condensation creates documented references to comprehensive sources.
 
-- **[Simplicity Over Complexity](../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Single source of truth for each topic in convention docs. Brief summaries in CLAUDE.md link to comprehensive references. Eliminates duplication and maintains simple, flat information architecture.
+- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Single source of truth for each topic in convention docs. Brief summaries in CLAUDE.md link to comprehensive references. Eliminates duplication and maintains simple, flat information architecture.
 
 ## Conventions Implemented/Respected
 
@@ -87,7 +87,7 @@ After (CLAUDE.md - 3 lines):
 
 ## File Naming Convention
 
-Files follow the pattern `[prefix]__[content-identifier].md` where prefix encodes the directory path. See [File Naming Convention](./docs/explanation/rules/conventions/meta/ex-ru-co-me__file-naming.md) for complete details.
+Files follow the pattern `[prefix]__[content-identifier].md` where prefix encodes the directory path. See [File Naming Convention](../../conventions/meta/ex-ru-co-me__file-naming.md) for complete details.
 
 Result: Content preserved in ex-co\_\_file-naming-convention.md (comprehensive)
 ```

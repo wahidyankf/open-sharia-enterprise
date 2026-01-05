@@ -20,9 +20,9 @@ This convention establishes standard markdown indentation for all files in the r
 
 This convention implements the following core principles:
 
-- **[Simplicity Over Complexity](../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Uses standard markdown space indentation (2 spaces per level) instead of complex tab/space mixing schemes. One simple rule for all markdown files - no exceptions, no edge cases.
+- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Uses standard markdown space indentation (2 spaces per level) instead of complex tab/space mixing schemes. One simple rule for all markdown files - no exceptions, no edge cases.
 
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Spaces are visible and consistent across all editors. No hidden tab characters that render differently depending on editor configuration. What you see is what you get.
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Spaces are visible and consistent across all editors. No hidden tab characters that render differently depending on editor configuration. What you see is what you get.
 
 ## Purpose
 

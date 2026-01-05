@@ -10,8 +10,8 @@
   },
   "alwaysThinkingEnabled": true,
   "companyAnnouncements": [
-    "📖 Review CLAUDE.md for repository conventions and guidelines",
-    "🔒 Never commit .env files - use .env.example instead",
-    "✅ All commits must follow Conventional Commits format"
+    "Review CLAUDE.md for repository conventions and guidelines",
+    "Never commit .env files - use .env.example instead",
+    "All commits must follow Conventional Commits format"
   ]
 }

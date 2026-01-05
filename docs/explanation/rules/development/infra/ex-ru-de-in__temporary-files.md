@@ -20,9 +20,9 @@ Guidelines for AI agents when creating temporary uncommitted files and folders i
 
 This practice respects the following core principles:
 
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Designated directories (`generated-reports/`, `local-temp/`) with explicit purposes. Report naming pattern clearly encodes agent family, timestamp, and type. No hidden temporary files scattered throughout the repository.
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Designated directories (`generated-reports/`, `local-temp/`) with explicit purposes. Report naming pattern clearly encodes agent family, timestamp, and type. No hidden temporary files scattered throughout the repository.
 
-- **[Simplicity Over Complexity](../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Two directories for all temporary files - one for reports, one for scratch work. Simple, flat structure with clear naming conventions. No complex hierarchies or categorization schemes.
+- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Two directories for all temporary files - one for reports, one for scratch work. Simple, flat structure with clear naming conventions. No complex hierarchies or categorization schemes.
 
 ## Conventions Implemented/Respected
 

@@ -90,7 +90,7 @@ graph TD
 
 **Purpose**: Foundational purpose establishing WHY the project exists and WHAT change we seek.
 
-**Key Document**: [Vision - Open Sharia Enterprise](./vision/ex-vi__open-sharia-enterprise.md)
+**Key Document**: [Vision - Open Sharia Enterprise](../vision/ex-vi__open-sharia-enterprise.md)
 
 **Core Vision**:
 
@@ -331,8 +331,8 @@ In addition to the six governance layers, the repository uses **delivery infrast
 - **Content Creation**: applying-content-quality, creating-by-example-tutorials, developing-ayokoding-content, developing-ose-content, writing-readme-files
 - **Quality Assurance**: applying-maker-checker-fixer, assessing-criticality-confidence, validating-factual-accuracy, validating-links, generating-validation-reports
 - **Standards Application**: applying-diataxis-framework, creating-accessible-diagrams, writing-gherkin-criteria
-- **Process Execution**: creating-project-plans, defining-workflows, practicing-trunk-based-development
-- **Technical Knowledge**: developing-agents, understanding-repository-architecture
+- **Process Execution**: creating-project-plans, defining-workflows, practicing-trunk-based-development, executing-checker-workflow, applying-fixer-workflow, multi-file-template
+- **Technical Knowledge**: developing-agents, understanding-repository-architecture, documenting-references, selecting-models
 
 **Skills Architecture Differences**:
 
@@ -597,11 +597,23 @@ Periodically verify:
 4. Every workflow orchestrates appropriate agents
 5. All "Vision Supported" sections accurately describe alignment
 
+## Principles Implemented/Respected
+
+**REQUIRED SECTION**: All explanation documents providing architectural guidance must include this section.
+
+This architecture document implements/respects the following principles:
+
+- **[Explicit Over Implicit](./principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: The six-layer architecture explicitly defines the governance hierarchy, making relationships between vision, principles, conventions, practices, agents, and workflows transparent and traceable.
+
+- **[Simplicity Over Complexity](./principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: The linear hierarchy (0→1→2→3→4→5) provides a simple mental model. Each layer has a clear purpose, avoiding complex cross-dependencies or matrix structures.
+
+- **[Progressive Disclosure](./principles/content/ex-ru-pr-co__progressive-disclosure.md)**: The architecture layers complexity - beginners understand vision and principles, intermediate users work with conventions/practices, advanced users create agents and workflows.
+
 ## 📚 Related Documentation
 
 **Layer 0**:
 
-- [Vision - Open Sharia Enterprise](./vision/ex-vi__open-sharia-enterprise.md)
+- [Vision - Open Sharia Enterprise](../vision/ex-vi__open-sharia-enterprise.md)
 
 **Layer 1**:
 
@@ -643,18 +655,6 @@ Periodically verify:
 - [Convention Writing Convention](./conventions/content/ex-ru-co-co__convention-writing.md) - How to write conventions
 - [AI Agents Convention](./development/agents/ex-ru-de-ag__ai-agents.md) - How to create agents
 
-## Principles Implemented/Respected
-
-**REQUIRED SECTION**: All explanation documents providing architectural guidance must include this section.
-
-This architecture document implements/respects the following principles:
-
-- **[Explicit Over Implicit](./principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: The six-layer architecture explicitly defines the governance hierarchy, making relationships between vision, principles, conventions, practices, agents, and workflows transparent and traceable.
-
-- **[Simplicity Over Complexity](./principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: The linear hierarchy (0→1→2→3→4→5) provides a simple mental model. Each layer has a clear purpose, avoiding complex cross-dependencies or matrix structures.
-
-- **[Progressive Disclosure](./principles/content/ex-ru-pr-co__progressive-disclosure.md)**: The architecture layers complexity - beginners understand vision and principles, intermediate users work with conventions/practices, advanced users create agents and workflows.
-
 ---
 
-**Last Updated**: 2026-01-02
+**Last Updated**: 2026-01-05

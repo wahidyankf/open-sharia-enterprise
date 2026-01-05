@@ -21,9 +21,9 @@ This document defines the **universal methodology** for validating factual corre
 
 This convention respects the following core principles:
 
-- **[Automation Over Manual](../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Web-based verification (WebSearch + WebFetch) automates fact-checking against authoritative sources. Machines verify command syntax, version numbers, and API accuracy - humans focus on content creation and strategic decisions.
+- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Web-based verification (WebSearch + WebFetch) automates fact-checking against authoritative sources. Machines verify command syntax, version numbers, and API accuracy - humans focus on content creation and strategic decisions.
 
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Clear confidence classification (✅ Verified, ⚠️ Unverified, ❌ Error, 📅 Outdated) with explicit verification sources. No hidden assumptions about factual accuracy - every claim is either verified with source citation or marked as unverified.
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Clear confidence classification (✅ Verified, ⚠️ Unverified, ❌ Error, 📅 Outdated) with explicit verification sources. No hidden assumptions about factual accuracy - every claim is either verified with source citation or marked as unverified.
 
 ## Purpose
 

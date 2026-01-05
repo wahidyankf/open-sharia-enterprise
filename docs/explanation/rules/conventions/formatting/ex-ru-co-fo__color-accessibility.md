@@ -23,9 +23,9 @@ This document defines standards ensuring all colors used in the open-sharia-ente
 
 This convention implements the following core principles:
 
-- **[Accessibility First](../principles/content/ex-ru-pr-co__accessibility-first.md)**: Color accessibility is a fundamental accessibility requirement. This entire convention exists to ensure users with color blindness (8% of males, 0.5% of females, ~300 million people worldwide) can perceive all visual information. By requiring color-blind friendly palettes, sufficient contrast ratios (WCAG AA), and never relying on color alone, we make our documentation and visualizations universally accessible.
+- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Color accessibility is a fundamental accessibility requirement. This entire convention exists to ensure users with color blindness (8% of males, 0.5% of females, ~300 million people worldwide) can perceive all visual information. By requiring color-blind friendly palettes, sufficient contrast ratios (WCAG AA), and never relying on color alone, we make our documentation and visualizations universally accessible.
 
-- **[Simplicity Over Complexity](../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Rather than maintaining multiple color palettes for different contexts or allowing arbitrary color choices, we provide a single verified accessible palette (8 colors) that works for all use cases. One palette, tested once, used everywhere. No per-context adjustments needed between light and dark modes.
+- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Rather than maintaining multiple color palettes for different contexts or allowing arbitrary color choices, we provide a single verified accessible palette (8 colors) that works for all use cases. One palette, tested once, used everywhere. No per-context adjustments needed between light and dark modes.
 
 ## Scope
 

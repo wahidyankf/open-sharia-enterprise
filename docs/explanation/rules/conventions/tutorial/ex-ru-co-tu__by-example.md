@@ -844,11 +844,11 @@ When creating by-example tutorials for multiple languages:
 
 This convention implements and respects:
 
-- **[Automation Over Manual](../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Automated validation via ayokoding-web-by-example-checker agent
-- **[Progressive Disclosure](../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
-- **[No Time Estimates](../principles/content/ex-ru-pr-co__no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
-- **[Accessibility First](../principles/content/ex-ru-pr-co__accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Self-contained examples with explicit imports and clear context
+- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Automated validation via ayokoding-web-by-example-checker agent
+- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
+- **[No Time Estimates](../../principles/content/ex-ru-pr-co__no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
+- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Self-contained examples with explicit imports and clear context
 
 ## Scope
 
@@ -1082,8 +1082,8 @@ Overall: Both blocks meet 1.0-2.25 target
 
 This convention implements and respects:
 
-- **[Automation Over Manual](../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Automated validation via ayokoding-web-by-example-checker agent
-- **[Progressive Disclosure](../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
-- **[No Time Estimates](../principles/content/ex-ru-pr-co__no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
-- **[Accessibility First](../principles/content/ex-ru-pr-co__accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Self-contained examples with explicit imports and clear context
+- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Automated validation via ayokoding-web-by-example-checker agent
+- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
+- **[No Time Estimates](../../principles/content/ex-ru-pr-co__no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
+- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Self-contained examples with explicit imports and clear context

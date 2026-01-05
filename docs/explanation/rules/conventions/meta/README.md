@@ -33,6 +33,16 @@ These conventions define **HOW documentation should be organized** at the struct
 - [Content Conventions](../content/README.md) - Content quality standards
 - [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
 
+## Principles Implemented/Respected
+
+This set of conventions implements/respects the following core principles:
+
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: File Naming Convention encodes directory structure in filename prefixes, making file locations explicit without requiring inspection of file contents.
+
+- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Diátaxis Framework organizes documentation into four distinct categories (Tutorials, How-To, Reference, Explanation), allowing users to access appropriate content based on their current needs.
+
+- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Meta conventions use simple, systematic organization frameworks rather than complex taxonomies or hierarchies.
+
 ---
 
 **Last Updated**: 2026-01-01

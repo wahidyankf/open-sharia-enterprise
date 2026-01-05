@@ -22,9 +22,9 @@ This document defines the standard validation methods and patterns used by repos
 
 This practice respects the following core principles:
 
-- **[Automation Over Manual](../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Standard validation patterns enable accurate automated consistency checking. AWK commands reliably extract frontmatter, bash scripts verify conventions automatically. Machines handle repetitive validation instead of humans.
+- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Standard validation patterns enable accurate automated consistency checking. AWK commands reliably extract frontmatter, bash scripts verify conventions automatically. Machines handle repetitive validation instead of humans.
 
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Frontmatter extraction pattern (`awk 'BEGIN{p=0}...'`) is explicitly documented as the canonical method. Validation logic is transparent and reproducible. No magic regex or undocumented checking methods.
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Frontmatter extraction pattern (`awk 'BEGIN{p=0}...'`) is explicitly documented as the canonical method. Validation logic is transparent and reproducible. No magic regex or undocumented checking methods.
 
 ## Conventions Implemented/Respected
 

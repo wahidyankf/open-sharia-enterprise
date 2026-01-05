@@ -20,9 +20,9 @@ This meta-convention defines how to write convention documents in the `docs/expl
 
 This convention implements the following core principles:
 
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Required sections, clear scope boundaries, and explicit content structure for all conventions. No guessing about what belongs in conventions/ vs development/ - decision criteria are documented.
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Required sections, clear scope boundaries, and explicit content structure for all conventions. No guessing about what belongs in conventions/ vs development/ - decision criteria are documented.
 
-- **[Simplicity Over Complexity](../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Standardized convention structure reduces cognitive load. Same sections in same order across all conventions - readers know what to expect.
+- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Standardized convention structure reduces cognitive load. Same sections in same order across all conventions - readers know what to expect.
 
 ## Purpose
 
@@ -122,8 +122,8 @@ Brief overview explaining what this convention covers and why it exists.
 
 This convention implements/respects the following core principles:
 
-- **[Principle Name](../principles/[category]/ex-ru-pr-[category]__[name].md)**: Brief explanation of HOW this convention implements or respects this principle. What specific aspect of the principle does this convention embody?
-- **[Another Principle](../principles/[category]/ex-ru-pr-[category]__[name].md)**: Another explanation.
+- **[Principle Name](../../principles/[category]/ex-ru-pr-[category]__[name].md)**: Brief explanation of HOW this convention implements or respects this principle. What specific aspect of the principle does this convention embody?
+- **[Another Principle](../../principles/[category]/ex-ru-pr-[category]__[name].md)**: Another explanation.
 ```
 
 **Purpose:** Explicit traceability from documentation standards back to foundational values. Makes governance hierarchy visible and verifiable.

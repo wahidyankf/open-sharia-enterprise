@@ -20,9 +20,9 @@ The open-sharia-enterprise project uses the [Diátaxis framework](https://diatax
 
 This convention implements the following core principles:
 
-- **[Progressive Disclosure](../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Diátaxis separates learning-oriented content (tutorials) from problem-solving (how-to) and reference material. Beginners start with tutorials, experienced users jump to how-to guides or reference. Complexity is layered, not overwhelming.
+- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Diátaxis separates learning-oriented content (tutorials) from problem-solving (how-to) and reference material. Beginners start with tutorials, experienced users jump to how-to guides or reference. Complexity is layered, not overwhelming.
 
-- **[Simplicity Over Complexity](../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Four clear categories (Tutorials, How-To, Reference, Explanation) instead of complex, nested documentation hierarchies. Each category serves a single, well-defined purpose.
+- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Four clear categories (Tutorials, How-To, Reference, Explanation) instead of complex, nested documentation hierarchies. Each category serves a single, well-defined purpose.
 
 ## Purpose
 

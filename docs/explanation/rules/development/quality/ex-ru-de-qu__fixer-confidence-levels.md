@@ -21,9 +21,9 @@ This document defines the universal confidence level system used by all fixer ag
 
 This practice respects the following core principles:
 
-- **[Explicit Over Implicit](../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) with explicit, documented criteria. Fix decisions are stated clearly in audit reports - no hidden judgment calls or magic automation.
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) with explicit, documented criteria. Fix decisions are stated clearly in audit reports - no hidden judgment calls or magic automation.
 
-- **[Automation Over Manual](../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Objective, verifiable issues (HIGH confidence) fixed automatically. Machines handle mechanical corrections. Humans focus on subjective improvements and ambiguous cases flagged as MEDIUM confidence.
+- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Objective, verifiable issues (HIGH confidence) fixed automatically. Machines handle mechanical corrections. Humans focus on subjective improvements and ambiguous cases flagged as MEDIUM confidence.
 
 ## Conventions Implemented/Respected
 

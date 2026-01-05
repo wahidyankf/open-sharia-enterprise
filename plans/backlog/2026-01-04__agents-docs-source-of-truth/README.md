@@ -2,15 +2,16 @@
 
 **Status**: Backlog
 **Created**: 2026-01-04
+**Updated**: 2026-01-05 (skills count corrected to 23)
 **Priority**: High
-**Complexity**: High (architectural change affecting 45 agents + 18 skills)
+**Complexity**: High (architectural change affecting 45 agents + 23 skills)
 
 ## Problem Statement
 
 Currently, AI agent and skill definitions exist in tool-specific formats:
 
 - **Agents**: `.claude/agents/` (Claude Code format) is source of truth, `.opencode/agent/` is generated
-- **Skills**: `.claude/skills/` contains skill definitions shared by both tools
+- **Skills**: `.claude/skills/` contains 23 skill definitions shared by both tools
 - **Coupling**: Agent definitions coupled to Claude Code format, requiring conversion for OpenCode
 
 **Key Pain Points**:
@@ -106,7 +107,7 @@ Source: docs/explanation/rules/agents/skills/ (tool-agnostic markdown)
 
 ### Migration Effort
 
-**Risk**: Extracting 45 agents + 18 skills is substantial one-time effort
+**Risk**: Extracting 45 agents + 23 skills is substantial one-time effort
 
 **Mitigation**:
 
@@ -140,7 +141,7 @@ Source: docs/explanation/rules/agents/skills/ (tool-agnostic markdown)
 
 - [ ] All 45 agents work identically in Claude Code after migration
 - [ ] All 45 agents work identically in OpenCode after migration
-- [ ] All 18 skills load correctly from `.claude/skills/` after sync
+- [ ] All 23 skills load correctly from `.claude/skills/` after sync
 - [ ] 0 validation errors in both formats
 - [ ] 0 functionality regressions vs current agent behavior
 
@@ -155,9 +156,9 @@ Source: docs/explanation/rules/agents/skills/ (tool-agnostic markdown)
 ### Documentation Quality
 
 - [ ] `docs/explanation/rules/agents/README.md` is comprehensive agent catalog
-- [ ] `docs/explanation/rules/agents/skills/README.md` is comprehensive skills catalog
+- [ ] `docs/explanation/rules/agents/skills/README.md` is comprehensive skills catalog (23 skills)
 - [ ] Architecture documentation updated (repository governance, AI agents convention)
-- [ ] CLAUDE.md and AGENTS.md reflect new source locations
+- [ ] CLAUDE.md and AGENTS.md reflect new source locations and correct skills count
 
 ### Operational Safety
 

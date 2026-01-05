@@ -36,6 +36,22 @@ These standards define **HOW to execute development workflows**, covering the th
 - [Reproducibility First Principle](../../principles/software-engineering/ex-ru-pr-se__reproducibility.md) - Why environments matter
 - [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
 
+## Principles Implemented/Respected
+
+This set of development practices implements/respects the following core principles:
+
+- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Trunk Based Development and Implementation Workflow start simple, avoiding over-engineering with complex branching or premature optimization.
+
+- **[Reproducibility First](../../principles/software-engineering/ex-ru-pr-se__reproducibility.md)**: Reproducible environments convention ensures consistent development and build environments across machines and team members.
+
+## Conventions Implemented/Respected
+
+This set of development practices respects the following conventions:
+
+- **[Commit Message Convention](../../conventions/formatting/ex-ru-co-fo__mathematical-notation.md)**: Conventional Commits format provides explicit commit metadata for automated changelog generation and version control.
+
+- **[Nested Code Fences Convention](../../conventions/formatting/ex-ru-co-fo__nested-code-fences.md)**: Workflow documentation uses proper code fence nesting when documenting markdown structure and patterns.
+
 ---
 
 **Last Updated**: 2026-01-01

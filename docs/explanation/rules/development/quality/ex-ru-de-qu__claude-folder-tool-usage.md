@@ -223,7 +223,7 @@ sed -i '/## Available Agents/a\**New Agent**: new-agent - Description' /home/wkf
 - **Automation Over Manual**: Autonomous agent operation enabled
 - **Simplicity Over Complexity**: Single straightforward rule for all .claude/ operations
 
-## Conventions Implemented
+## Conventions Implemented/Respected
 
 - **Convention Writing Convention**: Follows standard structure (Purpose, Standards, Examples, Validation)
 - **Content Quality Principles**: Clear language, examples, validation criteria

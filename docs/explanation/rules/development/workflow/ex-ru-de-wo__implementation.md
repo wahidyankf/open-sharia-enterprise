@@ -33,9 +33,9 @@ The implementation workflow follows three sequential stages:
 
 This workflow respects three core principles:
 
-- **[Simplicity Over Complexity](../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)** - Start with the simplest solution that works
-- **[YAGNI (You Aren't Gonna Need It)](../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md#yagni-principles)** - Don't optimize prematurely
-- **[Progressive Disclosure](../principles/content/ex-ru-pr-co__progressive-disclosure.md)** - Layer refinement gradually
+- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)** - Start with the simplest solution that works
+- **[YAGNI (You Aren't Gonna Need It)](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md#yagni-principles)** - Don't optimize prematurely
+- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)** - Layer refinement gradually
 
 ## Conventions Implemented/Respected
 
@@ -467,7 +467,7 @@ function processVideoFrame(frame: Frame): ProcessedFrame {
 
 ## 🔗 Related Documentation
 
-- [Simplicity Over Complexity](../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md) - Start simple principle
+- [Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md) - Start simple principle
 - [Code Quality Convention](../quality/ex-ru-de-qu__code.md) - Automated quality checks
 - [Trunk Based Development](./ex-ru-de-wo__trunk-based-development.md) - Git workflow
 - [Acceptance Criteria Convention](../infra/ex-ru-de-in__acceptance-criteria.md) - Defining "works" in Stage 1

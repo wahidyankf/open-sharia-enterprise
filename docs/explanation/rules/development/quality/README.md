@@ -37,6 +37,22 @@ These standards define **HOW to maintain and validate quality**, covering automa
 - [Maker-Checker-Fixer Pattern](../pattern/ex-ru-de-pa__maker-checker-fixer.md) - Quality workflow pattern
 - [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
 
+## Principles Implemented/Respected
+
+This set of development practices implements/respects the following core principles:
+
+- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Code quality automation uses git hooks (Husky, Prettier, lint-staged) to enforce standards automatically before commits.
+
+- **[Documentation First](../../principles/content/ex-ru-pr-co__documentation-first.md)**: Content preservation conventions ensure knowledge is preserved during file condensation and restructuring, treating documentation as essential.
+
+## Conventions Implemented/Respected
+
+This set of development practices respects the following conventions:
+
+- **[Content Quality Principles](../../conventions/content/ex-ru-co-co__quality.md)**: Quality validation standards align with documentation quality requirements for active voice, accessibility, and proper structure.
+
+- **[Timestamp Format](../../conventions/formatting/ex-ru-co-fo__timestamp.md)**: Quality reports and validation artifacts use standard UTC+7 timestamps for consistency and traceability.
+
 ---
 
 **Last Updated**: 2026-01-01

@@ -41,6 +41,16 @@ These conventions define **HOW to format markdown content** including indentatio
 - [Content Conventions](../content/README.md) - Content quality and writing standards
 - [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
 
+## Principles Implemented/Respected
+
+This set of conventions implements/respects the following core principles:
+
+- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Color Accessibility Convention provides verified color-blind friendly palette, and Diagrams Convention mandates accessible color combinations for all visual elements.
+
+- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Indentation and Linking Conventions define explicit formatting standards, making file structure and navigation transparent through consistent rules.
+
+- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Formatting conventions use simple, consistent patterns (2-space indentation, relative paths, standard timestamps) rather than complex custom solutions.
+
 ---
 
 **Last Updated**: 2026-01-01
