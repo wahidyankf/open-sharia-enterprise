@@ -1,0 +1,36 @@
+{
+  "name": "butler-cli",
+  "sourceRoot": "apps/butler-cli",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go build -o dist/butler-cli",
+        "cwd": "apps/butler-cli"
+      },
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go test ./...",
+        "cwd": "apps/butler-cli"
+      }
+    },
+    "run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go run main.go",
+        "cwd": "apps/butler-cli"
+      }
+    },
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go mod tidy",
+        "cwd": "apps/butler-cli"
+      }
+    }
+  }
+}
