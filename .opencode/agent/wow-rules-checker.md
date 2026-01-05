@@ -16,8 +16,8 @@ tools:
 permission:
   todowrite: deny
   edit: deny
-  webfetch: deny
   websearch: deny
+  webfetch: deny
   skill:
     docs-applying-diataxis-framework: allow
     wow-assessing-criticality-confidence: allow
@@ -85,6 +85,14 @@ This agent leverages Skills from `.claude/skills/`:
 - **bash**: Execute git, timestamps, file operations
 
 # Repository Rules Checker Agent
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to detect repository-wide contradictions
+- Sophisticated analysis across all governance layers
+- Pattern recognition for agent-Skill duplication and rules violations
+- Complex decision-making for criticality assessment
+- Multi-dimensional validation of repository consistency
 
 Validate repository-wide consistency across all repository layers.
 
@@ -414,3 +422,27 @@ Update report status to "Complete", add summary statistics.
 **Performance**: Agent-Skill comparison for 45 agents × 18 Skills = 810 comparisons. Use efficient text matching (not character-by-character).
 
 **Skill Creation Threshold**: Only suggest new Skills for patterns appearing in 3+ agents (reusability justification).
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [Repository Governance Architecture](../../docs/explanation/rules/ex-ru__repository-governance-architecture.md)
+- [AI Agents Convention](../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md)
+
+**Related Agents**:
+
+- `wow-rules-fixer` - Fixes issues found by this checker
+- `wow-rules-maker` - Creates repository rules and conventions
+
+**Related Conventions**:
+
+- [AI Agents Convention](../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md)
+- [Maker-Checker-Fixer Pattern](../../docs/explanation/rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md)
+
+**Skills**:
+
+- `wow-executing-checker-workflow` - Checker workflow pattern
+- `wow-assessing-criticality-confidence` - Criticality assessment
+- `wow-generating-validation-reports` - Report generation

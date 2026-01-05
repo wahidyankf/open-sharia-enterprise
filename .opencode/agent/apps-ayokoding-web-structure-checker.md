@@ -12,11 +12,12 @@ tools:
   write: true
   bash: true
 permission:
-  todowrite: deny
-  edit: deny
   webfetch: deny
+  edit: deny
   websearch: deny
+  todowrite: deny
   skill:
+    wow-executing-checker-workflow: allow
     apps-ayokoding-web-developing-content: allow
     wow-assessing-criticality-confidence: allow
     wow-generating-validation-reports: allow
@@ -66,9 +67,10 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 This agent leverages Skills from `.claude/skills/`:
 
-1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
-2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+1. **`wow-executing-checker-workflow`** - Progressive knowledge delivery
+2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
+3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
+4. **`wow-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -83,6 +85,14 @@ This agent leverages Skills from `.claude/skills/`:
 - **bash**: Execute git, timestamps, file operations
 
 # Structure Checker for ayokoding-web
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to validate structure organization and folder hierarchy
+- Sophisticated analysis of level-based weights and navigation depth
+- Pattern recognition for bilingual completeness across content tree
+- Complex decision-making for structural integrity assessment
+- Multi-dimensional validation of ayokoding-web conventions
 
 You validate ayokoding-web content structure and organization.
 
@@ -106,6 +116,16 @@ The `apps-ayokoding-web-developing-content` Skill provides complete structure st
 
 ## Validation Process
 
+## Workflow Overview
+
+**See `wow-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+
+1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
+2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
+3. **Final Step: Finalize Report**: Update status, add summary
+
+**Domain-Specific Validation** (ayokoding-web structure): The detailed workflow below implements folder organization, level-based weights, navigation depth, and bilingual completeness validation.
+
 ### Step 0: Initialize Report
 
 Use `wow-generating-validation-reports` Skill.
@@ -123,7 +143,7 @@ Update status, add summary.
 ## Reference Documentation
 
 - [CLAUDE.md](../../CLAUDE.md)
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md)
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
 
 **Skills:**
 

@@ -12,10 +12,10 @@ tools:
   write: true
   bash: true
 permission:
-  todowrite: deny
-  edit: deny
   webfetch: deny
+  todowrite: deny
   websearch: deny
+  edit: deny
   skill:
     wow-applying-maker-checker-fixer: allow
     wow-assessing-criticality-confidence: allow
@@ -75,6 +75,14 @@ This agent leverages Skills from `.claude/skills/`:
 - **bash**: Execute git, timestamps, file operations
 
 # Repository Rules Fixer Agent
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to re-validate repository rules findings
+- Sophisticated analysis across multiple governance layers
+- Pattern recognition for contradictions and inconsistencies
+- Complex decision-making for fix priority and confidence
+- Deep understanding of repository architecture
 
 Apply validated fixes from wow\_\_rules-checker audit reports.
 
@@ -290,3 +298,26 @@ See wow\_\_generating-validation-reports Skill for report structure.
 4. Recommend re-running wow\_\_rules-checker to verify
 
 **Focus on safety**: Better to skip uncertain fixes than break working agents.
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [Repository Governance Architecture](../../docs/explanation/rules/ex-ru__repository-governance-architecture.md)
+
+**Related Agents**:
+
+- `wow-rules-checker` - Generates audit reports this fixer processes
+- `wow-rules-maker` - Creates repository rules
+
+**Related Conventions**:
+
+- [AI Agents Convention](../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md)
+- [Fixer Confidence Levels](../../docs/explanation/rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md)
+
+**Skills**:
+
+- `wow-applying-fixer-workflow` - Fixer workflow pattern
+- `wow-assessing-criticality-confidence` - Confidence assessment
+- `wow-applying-maker-checker-fixer` - Three-stage workflow

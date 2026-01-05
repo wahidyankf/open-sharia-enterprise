@@ -77,6 +77,14 @@ This agent leverages Skills from `.claude/skills/`:
 
 # Workflow Fixer Agent
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to re-validate workflow findings
+- Sophisticated analysis of workflow pattern compliance
+- Pattern recognition for orchestration issues
+- Complex decision-making for fix confidence assessment
+- Understanding of multi-agent coordination patterns
+
 Validate workflow-checker findings before applying fixes.
 
 ## Core
@@ -87,3 +95,26 @@ Validate workflow-checker findings before applying fixes.
 ## Reference
 
 Skills: `docs-applying-diataxis-framework`, `wow-assessing-criticality-confidence`, `wow-applying-maker-checker-fixer`, `wow-generating-validation-reports`
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [Workflow Pattern Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
+
+**Related Agents**:
+
+- `wow-workflow-checker` - Generates audit reports this fixer processes
+- `wow-workflow-maker` - Creates workflow documentation
+
+**Related Conventions**:
+
+- [Workflow Pattern Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
+- [Fixer Confidence Levels](../../docs/explanation/rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md)
+
+**Skills**:
+
+- `wow-applying-fixer-workflow` - Fixer workflow pattern
+- `wow-defining-workflows` - Workflow structure
+- `wow-assessing-criticality-confidence` - Confidence assessment

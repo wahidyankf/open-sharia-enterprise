@@ -11,10 +11,11 @@ tools:
   write: true
   bash: true
 permission:
-  todowrite: deny
   webfetch: deny
+  todowrite: deny
   websearch: deny
   skill:
+    wow-applying-fixer-workflow: allow
     readme-writing-readme-files: allow
     wow-assessing-criticality-confidence: allow
     wow-applying-maker-checker-fixer: allow
@@ -57,10 +58,11 @@ permission:
 
 This agent leverages Skills from `.claude/skills/`:
 
-1. **`readme-writing-readme-files`** - Progressive knowledge delivery
-2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
-4. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+1. **`wow-applying-fixer-workflow`** - Progressive knowledge delivery
+2. **`readme-writing-readme-files`** - Progressive knowledge delivery
+3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
+4. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
+5. **`wow-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -117,56 +119,14 @@ See Skill for implementation details and reporting templates.
 
 ## How This Agent Works
 
-### 1. Report Discovery
+**See `wow-applying-fixer-workflow` Skill for complete workflow details** including:
 
-The `wow-applying-maker-checker-fixer` Skill provides report discovery logic:
+1. **Report Discovery**: Auto-detect latest audit report with manual override support
+2. **Validation Strategy**: Re-validate each finding to assess HIGH/MEDIUM/FALSE_POSITIVE confidence
+3. **Fix Application**: Apply HIGH confidence fixes automatically, skip others
+4. **Fix Report Generation**: Create fix report preserving UUID chain from source audit
 
-- Auto-detect latest audit report in `generated-reports/`
-- Allow manual override if user specifies a report
-- Verify report exists and is readable before proceeding
-
-**Report filename pattern**: `readme-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
-
-### 2. Validation Strategy
-
-**For EACH finding in the audit report:**
-
-```
-Read finding → Re-execute validation check → Assess confidence level
-
-HIGH_CONFIDENCE:
-  - Re-validation confirms objective, verifiable issue exists
-  - Apply fix automatically
-
-MEDIUM_CONFIDENCE:
-  - Re-validation unclear or subjective judgment required
-  - Skip fix, flag as "needs manual review"
-
-FALSE_POSITIVE:
-  - Re-validation disproves issue
-  - Skip fix, report to user
-  - Suggest checker improvement
-```
-
-### 3. Fix Application
-
-- Apply ALL HIGH_CONFIDENCE fixes automatically
-- NO confirmation prompts (user already reviewed checker report)
-- Skip MEDIUM_CONFIDENCE and FALSE_POSITIVE findings
-- Report summary of all actions taken
-
-### 4. Fix Report Generation
-
-Generate comprehensive fix report using `wow-generating-validation-reports` Skill:
-
-**File naming pattern**: Replace `-audit` suffix with `-fix` (preserve UUID chain and timestamp)
-
-**Examples:**
-
-- Input: `readme-a1b2c3-2025-12-15--14-30-audit.md`
-- Output: `readme-a1b2c3-2025-12-15--14-30-fix.md`
-
-See Skill for complete fix report template structure.
+**Domain-Specific Implementation**: This agent re-validates README quality findings focusing on engagement, accessibility, and scannability standards per `readme-writing-readme-files` Skill.
 
 ## Confidence Level Assessment
 
@@ -331,7 +291,7 @@ grep -E "(is|are|was|were|be|been) (controlled|managed|handled|processed|utilize
 
 ## Validation Re-implementation Guide
 
-**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu-repository-validation.md) and [README Quality Convention](../../docs/explanation/rules/conventions/content/ex-ru-co-co-readme-quality.md).
+**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu-repository-validation.md) and [README Quality Convention](../../docs/explanation/rules/conventions/content/ex-ru-co-co__readme-quality.md).
 
 **Key points:**
 
@@ -391,7 +351,7 @@ Always provide:
 
 - [Fixer Confidence Levels Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) - Universal confidence assessment system
 - [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/rules/development/pattern/ex-ru-de-pa-maker-checker-fixer.md) - Three-stage quality workflow
-- [README Quality Convention](../../docs/explanation/rules/conventions/content/ex-ru-co-co-readme-quality.md) - Complete README standards (primary reference)
+- [README Quality Convention](../../docs/explanation/rules/conventions/content/ex-ru-co-co__readme-quality.md) - Complete README standards (primary reference)
 - [Repository Validation Methodology Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu-repository-validation.md) - Standard validation patterns
 - [Temporary Files Convention](../../docs/explanation/rules/development/infra/ex-ru-de-in-temporary-files.md) - Where to store fix reports
 

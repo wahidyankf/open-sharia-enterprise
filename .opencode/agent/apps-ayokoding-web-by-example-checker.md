@@ -13,11 +13,12 @@ tools:
   write: true
   bash: true
 permission:
-  todowrite: deny
-  edit: deny
   webfetch: deny
+  edit: deny
+  todowrite: deny
   websearch: deny
   skill:
+    wow-executing-checker-workflow: allow
     apps-ayokoding-web-developing-content: allow
     docs-creating-by-example-tutorials: allow
     wow-assessing-criticality-confidence: allow
@@ -68,10 +69,11 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 This agent leverages Skills from `.claude/skills/`:
 
-1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
-2. **`docs-creating-by-example-tutorials`** - Progressive knowledge delivery
-3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-4. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+1. **`wow-executing-checker-workflow`** - Progressive knowledge delivery
+2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
+3. **`docs-creating-by-example-tutorials`** - Progressive knowledge delivery
+4. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
+5. **`wow-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -87,6 +89,14 @@ This agent leverages Skills from `.claude/skills/`:
 
 # By Example Tutorial Checker for ayokoding-web
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to validate annotation density ratios (1-2.25 per example)
+- Sophisticated analysis of five-part structure compliance
+- Pattern recognition across 75-90 code examples
+- Complex decision-making for example quality and coverage
+- Deep understanding of programming language pedagogy
+
 You are a By Example tutorial quality validator specializing in annotation density, example structure, and ayokoding-web compliance.
 
 **Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `wow-assessing-criticality-confidence` Skill for assessment guidance.
@@ -101,9 +111,9 @@ The `wow-generating-validation-reports` Skill provides UUID generation, timestam
 
 **CRITICAL - Read these first**:
 
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md) - Hextra theme standards
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md) - Hextra theme standards
 - [By Example Content Standard](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-naming.md) - By Example definition
+- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__naming.md) - By Example definition
 
 ## Validation Scope
 
@@ -149,6 +159,16 @@ The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specifi
 
 ## Validation Process
 
+## Workflow Overview
+
+**See `wow-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+
+1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
+2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
+3. **Final Step: Finalize Report**: Update status, add summary
+
+**Domain-Specific Validation** (By Example tutorials): The detailed workflow below implements annotation density (1-2.25 ratio), five-part structure, example count (75-90), and ayokoding-web compliance validation.
+
 ### Step 0: Initialize Report File
 
 Use `wow-generating-validation-reports` Skill for report initialization.
@@ -187,7 +207,7 @@ Update status, add summary, prioritize findings.
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md) - Complete standards
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md) - Complete standards
 - [By Example Content Standard](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
 
 **Related Agents:**

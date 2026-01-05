@@ -6,12 +6,10 @@ model: sonnet
 color: green
 skills:
   - wow-executing-checker-workflow
-  [
-    wow-applying-maker-checker-fixer,
-    wow-assessing-criticality-confidence,
-    docs-applying-content-quality,
-    docs-validating-factual-accuracy,
-  ]
+  - wow-applying-maker-checker-fixer
+  - wow-assessing-criticality-confidence
+  - docs-applying-content-quality
+  - docs-validating-factual-accuracy
 created: 2025-12-01
 updated: 2026-01-03
 ---

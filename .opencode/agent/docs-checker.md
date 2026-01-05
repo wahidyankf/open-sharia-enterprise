@@ -20,6 +20,7 @@ permission:
   todowrite: deny
   edit: deny
   skill:
+    wow-executing-checker-workflow: allow
     wow-applying-maker-checker-fixer: allow
     wow-assessing-criticality-confidence: allow
     docs-applying-content-quality: allow
@@ -70,10 +71,11 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 This agent leverages Skills from `.claude/skills/`:
 
-1. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
-2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`docs-applying-content-quality`** - Progressive knowledge delivery
-4. **`docs-validating-factual-accuracy`** - Progressive knowledge delivery
+1. **`wow-executing-checker-workflow`** - Progressive knowledge delivery
+2. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
+3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
+4. **`docs-applying-content-quality`** - Progressive knowledge delivery
+5. **`docs-validating-factual-accuracy`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -215,11 +217,11 @@ $$
 - Correct: `  - Text` (2 spaces BEFORE dash) for nested
 - Wrong: `-  Text` (spaces AFTER dash) - flag this pattern
 
-See [Indentation Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-indentation.md).
+See [Indentation Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__indentation.md).
 
 ### 6. Rule Reference Formatting Validation
 
-**Two-tier formatting** per [Linking Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-linking.md):
+**Two-tier formatting** per [Linking Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__linking.md):
 
 - **First mention**: MUST use markdown link `[Rule Name](./path/to/rule.md)`
 - **Subsequent mentions**: MUST use inline code `` `rule-name` ``
@@ -234,7 +236,7 @@ See [Indentation Convention](../../docs/explanation/rules/conventions/formatting
 
 ### 7. Code Block Indentation Validation
 
-Per [Indentation Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-indentation.md):
+Per [Indentation Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__indentation.md):
 
 - JavaScript/TypeScript: 2 spaces
 - Python: 4 spaces
@@ -317,6 +319,16 @@ filename="docs-${uuid}-${timestamp}-audit.md"
 
 **WRONG**: `docs-abc123-2025-12-15--00-00-audit.md` (placeholder - never use!)
 **CORRECT**: `docs-a1b2c3-2025-12-15--10-23-audit.md` (actual values from bash)
+
+## Workflow Overview
+
+**See `wow-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+
+1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
+2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
+3. **Final Step: Finalize Report**: Update status, add summary
+
+**Domain-Specific Validation** (factual accuracy): The detailed workflow below implements factual accuracy validation using web verification.
 
 ## Validation Workflow
 
@@ -447,7 +459,7 @@ filename="docs-${uuid}-${timestamp}-audit.md"
 **Recommendation**: [how to resolve]
 **Criticality**: HIGH/MEDIUM
 
-## 📅 Outdated Information
+## Outdated Information
 
 **Location**: `file.md:line`
 **Content**: "[potentially stale]"
@@ -609,11 +621,11 @@ Some sites block automation:
 **Documentation Conventions:**
 
 - `docs/explanation/rules/conventions/content/ex-ru-co-co-factual-validation.md` - Factual validation methodology
-- `docs/explanation/rules/conventions/content/ex-ru-co-co-quality.md` - Content quality standards
+- `docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md` - Content quality standards
 - `docs/explanation/rules/conventions/formatting/ex-ru-co-fo-mathematical-notation.md` - LaTeX notation rules
 - `docs/explanation/rules/conventions/formatting/ex-ru-co-fo-nested-code-fences.md` - Code fence nesting
-- `docs/explanation/rules/conventions/formatting/ex-ru-co-fo-indentation.md` - Indentation standards
-- `docs/explanation/rules/conventions/formatting/ex-ru-co-fo-linking.md` - Rule reference formatting
+- `docs/explanation/rules/conventions/formatting/ex-ru-co-fo__indentation.md` - Indentation standards
+- `docs/explanation/rules/conventions/formatting/ex-ru-co-fo__linking.md` - Rule reference formatting
 - `docs/explanation/rules/development/infra/ex-ru-de-in-temporary-files.md` - Report file generation
 - `docs/explanation/rules/development/quality/ex-ru-de-qu-criticality-levels.md` - Criticality system
 

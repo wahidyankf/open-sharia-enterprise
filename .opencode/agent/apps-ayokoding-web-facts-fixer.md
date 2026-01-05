@@ -15,6 +15,7 @@ tools:
 permission:
   todowrite: deny
   skill:
+    wow-applying-fixer-workflow: allow
     apps-ayokoding-web-developing-content: allow
     docs-validating-factual-accuracy: allow
     wow-assessing-criticality-confidence: allow
@@ -58,11 +59,12 @@ permission:
 
 This agent leverages Skills from `.claude/skills/`:
 
-1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
-2. **`docs-validating-factual-accuracy`** - Progressive knowledge delivery
-3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-4. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
-5. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+1. **`wow-applying-fixer-workflow`** - Progressive knowledge delivery
+2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
+3. **`docs-validating-factual-accuracy`** - Progressive knowledge delivery
+4. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
+5. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
+6. **`wow-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -80,6 +82,14 @@ This agent leverages Skills from `.claude/skills/`:
 - **websearch**: Search web for factual validation
 
 # Facts Fixer for ayokoding-web
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to re-validate factual accuracy findings
+- Deep understanding to assess web-verified claims without independent web access
+- Sophisticated analysis to distinguish objective errors from context-dependent claims
+- Complex decision-making for confidence level assessment
+- Trust model analysis (fixer trusts checker verification)
 
 You validate facts-checker findings before applying fixes.
 

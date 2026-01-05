@@ -14,9 +14,10 @@ tools:
   write: true
   bash: true
 permission:
-  todowrite: deny
   edit: deny
+  todowrite: deny
   skill:
+    wow-executing-checker-workflow: allow
     apps-ayokoding-web-developing-content: allow
     docs-validating-links: allow
     wow-assessing-criticality-confidence: allow
@@ -67,10 +68,11 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 This agent leverages Skills from `.claude/skills/`:
 
-1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
-2. **`docs-validating-links`** - Progressive knowledge delivery
-3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-4. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+1. **`wow-executing-checker-workflow`** - Progressive knowledge delivery
+2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
+3. **`docs-validating-links`** - Progressive knowledge delivery
+4. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
+5. **`wow-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -87,6 +89,8 @@ This agent leverages Skills from `.claude/skills/`:
 - **bash**: Execute git, timestamps, file operations
 
 # Link Checker for ayokoding-web
+
+**Model Selection Justification**: This agent uses `model: haiku` because it was originally designed for link validation but now references Skills. Consider upgrading to sonnet for validation complexity.
 
 You validate links in ayokoding-web content.
 
@@ -110,6 +114,16 @@ The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specifi
 
 ## Validation Process
 
+## Workflow Overview
+
+**See `wow-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+
+1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
+2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
+3. **Final Step: Finalize Report**: Update status, add summary
+
+**Domain-Specific Validation** (ayokoding-web links): The detailed workflow below implements absolute path convention (/docs/path without .md) and link accessibility validation.
+
 ### Step 0: Initialize Report
 
 Use `wow-generating-validation-reports` Skill.
@@ -127,7 +141,7 @@ Update status, add summary.
 ## Reference Documentation
 
 - [CLAUDE.md](../../CLAUDE.md)
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md)
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
 
 **Skills:**
 

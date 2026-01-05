@@ -11,9 +11,9 @@ tools:
   grep: true
   bash: true
 permission:
+  websearch: deny
   todowrite: deny
   webfetch: deny
-  websearch: deny
   skill:
     apps-ayokoding-web-developing-content: allow
     docs-creating-accessible-diagrams: allow
@@ -49,11 +49,19 @@ This agent leverages Skills from `.claude/skills/`:
 
 # General Content Maker for ayokoding-web
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create quality general content (by-concept tutorials)
+- Sophisticated content generation for bilingual navigation
+- Deep understanding of educational content structure
+- Complex decision-making for level-based weight assignment
+- Multi-dimensional content organization skills
+
 Create by-concept tutorials and general content for ayokoding-web.
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md)
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
 - Skills: `apps-ayokoding-web-developing-content` (bilingual, weights, navigation), `docs-creating-accessible-diagrams`, `docs-applying-content-quality`
 
 ## Workflow
@@ -65,3 +73,25 @@ Create by-concept tutorials and general content for ayokoding-web.
 5. Ensure bilingual completeness
 
 **Skills provide**: Bilingual strategy, weight calculation, navigation depth, absolute linking, content quality standards
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+
+**Related Agents**:
+
+- `apps-ayokoding-web-general-checker` - Validates content created by this maker
+- `apps-ayokoding-web-general-fixer` - Fixes validation issues
+
+**Related Conventions**:
+
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [Programming Language Content](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__programming-language-content.md)
+
+**Skills**:
+
+- `apps-ayokoding-web-developing-content` - ayokoding-web content standards
+- `docs-applying-content-quality` - Content quality principles

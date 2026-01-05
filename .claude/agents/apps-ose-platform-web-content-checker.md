@@ -6,7 +6,9 @@ model: sonnet
 color: green
 skills:
   - wow-executing-checker-workflow
-  [apps-ose-platform-web-developing-content, wow-assessing-criticality-confidence, wow-generating-validation-reports]
+  - apps-ose-platform-web-developing-content
+  - wow-assessing-criticality-confidence
+  - wow-generating-validation-reports
 created: 2025-12-20
 updated: 2026-01-03
 ---

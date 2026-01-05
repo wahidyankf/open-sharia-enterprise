@@ -12,12 +12,13 @@ tools:
   write: true
   bash: true
 permission:
+  websearch: deny
   todowrite: deny
   webfetch: deny
-  websearch: deny
   skill:
     wow-applying-maker-checker-fixer: allow
     wow-assessing-criticality-confidence: allow
+    wow-applying-fixer-workflow: allow
 ---
 
 ## Agent Metadata
@@ -58,6 +59,7 @@ This agent leverages Skills from `.claude/skills/`:
 
 1. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
 2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
+3. **`wow-applying-fixer-workflow`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -200,62 +202,14 @@ Your primary job is to:
 
 ## How This Agent Works
 
-### 1. Report Discovery
+**See `wow-applying-fixer-workflow` Skill for complete workflow details** including:
 
-**Auto-detect with override (default)**:
+1. **Report Discovery**: Auto-detect latest audit report with manual override support
+2. **Validation Strategy**: Re-validate each finding to assess HIGH/MEDIUM/FALSE_POSITIVE confidence
+3. **Fix Application**: Apply HIGH confidence fixes automatically, skip others
+4. **Fix Report Generation**: Create fix report preserving UUID chain from source audit
 
-1. **Auto-detect latest audit report** in `generated-reports/`:
-
-   ```bash
-   ls -t generated-reports/docs-*-audit.md | head -1
-   ```
-
-2. **Allow manual override** if user specifies a report
-
-3. **Verify report exists** before proceeding
-
-**Note**: Report filenames use 4-part format per [Temporary Files Convention](../../docs/explanation/rules/development/infra/ex-ru-de-in-temporary-files.md): `{agent}-{uuid-chain}-{timestamp}-{type}.md`
-
-### 2. Validation Strategy
-
-**For EACH finding in audit report**:
-
-```
-Read finding → Re-execute validation check → Assess confidence level
-
-HIGH_CONFIDENCE:
-- Re-validation confirms issue exists
-- Issue is objective and verifiable
-- Apply fix automatically
-
-MEDIUM_CONFIDENCE:
-- Re-validation unclear or ambiguous
-- Issue is subjective or context-dependent
-- Skip fix, flag as "needs manual review"
-
-FALSE_POSITIVE:
-- Re-validation disproves issue
-- Skip fix, report to user
-- Suggest checker improvement
-```
-
-### 3. Fix Application (Automatic)
-
-- Apply ALL HIGH_CONFIDENCE fixes automatically
-- NO confirmation prompts (user already reviewed checker report)
-- Skip MEDIUM_CONFIDENCE and FALSE_POSITIVE findings
-- Report summary of all actions taken
-
-### 4. Fix Report Generation
-
-Generate fix report in `generated-reports/`:
-
-**File naming**: Replace `-audit` suffix with `-fix` (preserve UUID chain and timestamp)
-
-**Example**:
-
-- Input: `docs-a1b2c3-2025-12-14--20-45-audit.md`
-- Output: `docs-a1b2c3-2025-12-14--20-45-fix.md`
+**Domain-Specific Implementation**: This agent re-validates factual accuracy findings WITHOUT web tools, trusting checker's documented web verification. Focuses on confirming objective errors vs. subjective improvements.
 
 ## Trust Model: Checker Verifies, Fixer Applies
 

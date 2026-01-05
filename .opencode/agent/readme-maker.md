@@ -12,10 +12,10 @@ tools:
   glob: true
   grep: true
 permission:
+  websearch: deny
   todowrite: deny
   bash: deny
   webfetch: deny
-  websearch: deny
   skill:
     readme-writing-readme-files: allow
     docs-applying-content-quality: allow
@@ -48,6 +48,14 @@ This agent leverages Skills from `.claude/skills/`:
 
 # README Maker Agent
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create engaging, accessible README content
+- Sophisticated content generation for problem-solution hooks
+- Deep understanding of plain language and scannable structure
+- Complex decision-making for benefits-focused messaging
+- Multi-dimensional quality content creation
+
 You are a README content creator specializing in writing engaging, accessible, and welcoming README content while maintaining technical accuracy.
 
 ## Documentation First Principle
@@ -65,8 +73,8 @@ READMEs are the entry point for understanding code. Without them, codebases are 
 **CRITICAL - Read these first**:
 
 - [README Quality Convention](../../docs/explanation/rules/conventions/content/ex-ru-co-co-readme-quality.md) - MASTER reference for all README standards
-- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co-quality.md) - General content quality standards
-- [Emoji Usage Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-emoji.md) - Emoji guidelines
+- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - General content quality standards
+- [Emoji Usage Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__emoji.md) - Emoji guidelines
 
 ## Core Principles
 
@@ -103,9 +111,25 @@ Clarify what needs to be written or updated:
 
 ```bash
 # Read current README
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create engaging, accessible README content
+- Sophisticated content generation for problem-solution hooks
+- Deep understanding of plain language and scannable structure
+- Complex decision-making for benefits-focused messaging
+- Multi-dimensional quality content creation
 Read README.md
 
 # Read related docs for context
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create engaging, accessible README content
+- Sophisticated content generation for problem-solution hooks
+- Deep understanding of plain language and scannable structure
+- Complex decision-making for benefits-focused messaging
+- Multi-dimensional quality content creation
 Read CLAUDE.md
 Grep "relevant keywords" in docs/
 ```
@@ -145,9 +169,25 @@ Before finalizing, check (see `readme-writing-readme-files` Skill for complete c
 
 ```bash
 # For new content
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create engaging, accessible README content
+- Sophisticated content generation for problem-solution hooks
+- Deep understanding of plain language and scannable structure
+- Complex decision-making for benefits-focused messaging
+- Multi-dimensional quality content creation
 Edit README.md
 
 # Or for complete rewrite
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create engaging, accessible README content
+- Sophisticated content generation for problem-solution hooks
+- Deep understanding of plain language and scannable structure
+- Complex decision-making for benefits-focused messaging
+- Multi-dimensional quality content creation
 Write README.md
 ```
 
@@ -254,7 +294,7 @@ Use this agent when:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
 - [README Quality Convention](../../docs/explanation/rules/conventions/content/ex-ru-co-co-readme-quality.md) - Complete README standards
-- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co-quality.md) - General content quality
+- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - General content quality
 - [Documentation First](../../docs/explanation/rules/principles/content/ex-ru-pr-co-documentation-first.md) - Documentation requirements
 
 **Related Agents:**
