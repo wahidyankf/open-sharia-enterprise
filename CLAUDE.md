@@ -219,7 +219,7 @@ All agents must have `name`, `description`, `tools`, `model`, and `color` frontm
 
 **Token Budget**: When invoking agents and workflows, don't think about token budget constraints. We have "unlimited" token budget through reliable compaction. Focus on execution quality over token efficiency. See [AI Agents Convention - Token Budget Philosophy](./docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md#token-budget-philosophy).
 
-**Traceability Requirements**: Convention documents MUST include "Principles Implemented/Respected" section. Development documents MUST include both "Principles Implemented/Respected" and "Conventions Implemented/Respected" sections. See [Convention Writing Convention](./docs/explanation/rules/conventions/content/ex-ru-co-co__convention-writing.md) and [AI Agents Convention](./docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md).
+**Traceability Requirements**: Convention documents MUST include "Principles Implemented/Respected" section. Development documents MUST include "Principles Respected" and "Conventions Implemented/Respected" sections. See [Convention Writing Convention](./docs/explanation/rules/conventions/content/ex-ru-co-co__convention-writing.md) and [AI Agents Convention](./docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md).
 
 ### Skills Infrastructure
 
