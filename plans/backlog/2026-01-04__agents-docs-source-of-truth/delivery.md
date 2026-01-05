@@ -53,9 +53,9 @@ This migration will be executed in **six phases** with validation gates between 
 - [ ] Verify git available: `git --version`
 - [ ] Create target directories:
   ```bash
-  mkdir -p docs/explanation/agents/content
-  mkdir -p docs/explanation/agents/meta
-  mkdir -p docs/explanation/skills
+  mkdir -p docs/explanation/rules/agents/content
+  mkdir -p docs/explanation/rules/agents/meta
+  mkdir -p docs/explanation/rules/agents/skills
   ```
 
 #### Baseline Validation
@@ -139,7 +139,7 @@ rm -rf .claude/agents.backup .opencode/agent.backup .claude/skills.backup
 - [ ] Parse Claude Code agent format (frontmatter + body)
 - [ ] Map `color` → `role` (blue→writer, green→checker, etc.)
 - [ ] Infer `mode` from agent name (SUBAGENT_NAMES set)
-- [ ] Write tool-agnostic format to `docs/explanation/agents/content/`
+- [ ] Write tool-agnostic format to `docs/explanation/rules/agents/content/`
 - [ ] Add flags: `--name <agent>`, `--dry-run`, `--verbose`
 - [ ] Test on 3 sample agents (docs-maker, docs-checker, plan-executor)
 - [ ] Verify output matches expected format
@@ -148,11 +148,11 @@ rm -rf .claude/agents.backup .opencode/agent.backup .claude/skills.backup
 
 - [ ] Implement `extractCmd` Cobra command
 - [ ] Read from `.claude/skills/{skill-name}/SKILL.md`
-- [ ] Flatten to `docs/explanation/skills/{skill-name}.md`
+- [ ] Copy to `docs/explanation/rules/agents/skills/{skill-name}/SKILL.md` (preserve folder structure)
 - [ ] Add frontmatter if missing (name, description)
 - [ ] Add flags: `--name <skill>`, `--dry-run`, `--verbose`
 - [ ] Test on 3 sample skills
-- [ ] Verify flattened format correct
+- [ ] Verify folder/SKILL.md structure preserved
 
 #### Step 1.4: Implement Agent Sync (`cmd/agents/sync.go`)
 
@@ -182,8 +182,8 @@ rm -rf .claude/agents.backup .opencode/agent.backup .claude/skills.backup
   - [ ] Name matches filename
   - [ ] Valid role (writer, checker, updater, implementor, specialist)
   - [ ] Valid model (sonnet, haiku, opus, inherit)
-  - [ ] Valid tools (Read, Write, Edit, Glob, Grep, Bash, WebFetch, WebSearch)
-  - [ ] Skills exist in `docs/explanation/skills/`
+  - [ ] Valid tools (common subset: Read, Write, Edit, Glob, Grep, Bash, WebFetch; extended: MultiEdit, LS, WebSearch, TodoRead, TodoWrite, NotebookRead, NotebookEdit)
+  - [ ] Skills exist in `docs/explanation/rules/agents/skills/`
   - [ ] Valid mode (all, subagent, primary)
   - [ ] Body not empty
 - [ ] Add flags: `--name <agent>`, `--strict`
@@ -331,21 +331,21 @@ go build -o repo-cli
 ./repo-cli agents extract --verbose
 
 # Review output
-ls -la ../../docs/explanation/agents/content/
+ls -la ../../docs/explanation/rules/agents/content/
 # Should have 45 .md files
 
 # Spot-check 5 agents for correct format
-cat ../../docs/explanation/agents/content/docs-maker.md
-cat ../../docs/explanation/agents/content/docs-checker.md
-cat ../../docs/explanation/agents/content/plan-executor.md
-cat ../../docs/explanation/agents/content/wow-rules-checker.md
-cat ../../docs/explanation/agents/content/swe-hugo-developer.md
+cat ../../docs/explanation/rules/agents/content/docs-maker.md
+cat ../../docs/explanation/rules/agents/content/docs-checker.md
+cat ../../docs/explanation/rules/agents/content/plan-executor.md
+cat ../../docs/explanation/rules/agents/content/wow-rules-checker.md
+cat ../../docs/explanation/rules/agents/content/swe-hugo-developer.md
 ```
 
 **Checklist**:
 
 - [ ] Extraction completes without errors
-- [ ] 45 agent files created in `docs/explanation/agents/content/`
+- [ ] 45 agent files created in `docs/explanation/rules/agents/content/`
 - [ ] Spot-check confirms correct frontmatter format
 - [ ] Spot-check confirms body content preserved
 - [ ] Git metadata (created/updated) looks reasonable
@@ -357,21 +357,22 @@ cat ../../docs/explanation/agents/content/swe-hugo-developer.md
 ./repo-cli skills extract --verbose
 
 # Review output
-ls -la docs/explanation/skills/
-# Should have 18 .md files
+ls -la docs/explanation/rules/agents/skills/
+# Should have 18 directories (folder/SKILL.md structure)
 
 # Spot-check 3 skills
-cat docs/explanation/skills/docs__applying-content-quality.md
-cat docs/explanation/skills/wow__applying-maker-checker-fixer.md
-cat docs/explanation/skills/plan__creating-project-plans.md
+cat docs/explanation/rules/agents/skills/docs-applying-content-quality/SKILL.md
+cat docs/explanation/rules/agents/skills/wow-applying-maker-checker-fixer/SKILL.md
+cat docs/explanation/rules/agents/skills/plan-creating-project-plans/SKILL.md
 ```
 
 **Checklist**:
 
 - [ ] Extraction completes without errors
-- [ ] 18 skill files created in `docs/explanation/skills/`
+- [ ] 18 skill directories created in `docs/explanation/rules/agents/skills/` (each with SKILL.md)
 - [ ] Spot-check confirms frontmatter added (if missing)
 - [ ] Spot-check confirms content preserved
+- [ ] Folder/SKILL.md structure matches `.claude/skills/`
 
 #### Step 3.3: Validate Source Definitions
 
@@ -449,8 +450,8 @@ cp -r .opencode/agent.backup .opencode/agent
 cp -r .claude/skills.backup .claude/skills
 
 # Remove extracted docs (start fresh next attempt)
-rm -rf docs/explanation/agents/content/*.md
-rm -rf docs/explanation/skills/*.md
+rm -rf docs/explanation/rules/agents/content/*.md
+rm -rf docs/explanation/rules/agents/skills/*.md
 
 # Review error messages, fix CLI, retry
 ```
@@ -472,7 +473,7 @@ rm -rf docs/explanation/skills/*.md
   ```
 - [ ] Compare file counts:
   ```bash
-  echo "Source: $(ls docs/explanation/agents/content/*.md | wc -l) agents"
+  echo "Source: $(ls docs/explanation/rules/agents/content/*.md | wc -l) agents"
   echo "Claude Code: $(ls .claude/agents/*.md | grep -v README | wc -l) agents"
   echo "OpenCode: $(ls .opencode/agent/*.md | grep -v README | wc -l) agents"
   echo "Skills: $(ls .claude/skills/ | wc -l) skills"
@@ -584,19 +585,19 @@ cp -r .claude/skills.backup .claude/skills
 
 #### Documentation Updates
 
-- [ ] Create `docs/explanation/agents/README.md` (canonical agent catalog)
+- [ ] Create `docs/explanation/rules/agents/README.md` (canonical agent catalog)
   - [ ] List all 45 agents with descriptions
   - [ ] Organize by agent family (7 families)
   - [ ] Link to source files in `content/`
   - [ ] Document agent workflows (maker → checker → fixer)
 
-- [ ] Create `docs/explanation/skills/README.md` (canonical skills catalog)
+- [ ] Create `docs/explanation/rules/agents/skills/README.md` (canonical skills catalog)
   - [ ] List all 18 skills with descriptions
   - [ ] Organize by category (docs**, wow**, plan**, apps**, agent\_\_)
   - [ ] Link to skill files
   - [ ] Document skill auto-loading vs on-demand
 
-- [ ] Create `docs/explanation/agents/meta/ex-ag-me__architecture.md`
+- [ ] Create `docs/explanation/rules/agents/meta/ex-ag-me__architecture.md`
   - [ ] Document tool-agnostic format specification
   - [ ] Explain role → color mapping
   - [ ] Document sync workflow
@@ -604,7 +605,7 @@ cp -r .claude/skills.backup .claude/skills
   - [ ] Link to sync CLI commands
 
 - [ ] Update `CLAUDE.md`:
-  - [ ] Replace agent location: `.claude/agents/` → `docs/explanation/agents/content/`
+  - [ ] Replace agent location: `.claude/agents/` → `docs/explanation/rules/agents/content/`
   - [ ] Add sync workflow instructions
   - [ ] Link to architecture doc
   - [ ] Keep brief (link to detailed docs)
@@ -620,7 +621,7 @@ cp -r .claude/skills.backup .claude/skills
   - [ ] Keep dual-format section (OpenCode format)
 
 - [ ] Update `docs/explanation/ex-ru__repository-governance-architecture.md`:
-  - [ ] Layer 4 references `docs/explanation/agents/` as source
+  - [ ] Layer 4 references `docs/explanation/rules/agents/` as source
   - [ ] Mention generated formats in `.claude/agents/` and `.opencode/agent/`
   - [ ] Update Mermaid diagram if needed
 
@@ -628,7 +629,7 @@ cp -r .claude/skills.backup .claude/skills
 
 - [ ] Update `.claude/agents/README.md`:
   - [ ] Add banner at top: "⚠️ DO NOT EDIT - GENERATED FILES"
-  - [ ] Link to source: `docs/explanation/agents/content/`
+  - [ ] Link to source: `docs/explanation/rules/agents/content/`
   - [ ] Document sync workflow
   - [ ] Keep existing catalog content
 
@@ -675,24 +676,24 @@ cp -r .claude/skills.backup .claude/skills
 
 #### Meta-Agent Updates
 
-- [ ] Update `docs/explanation/agents/content/agent-maker.md` (source):
-  - [ ] Create agents in `docs/explanation/agents/content/` (not `.claude/agents/`)
+- [ ] Update `docs/explanation/rules/agents/content/agent-maker.md` (source):
+  - [ ] Create agents in `docs/explanation/rules/agents/content/` (not `.claude/agents/`)
   - [ ] Use tool-agnostic format (role instead of color)
   - [ ] Use capitalized tool names (Read, Write, Edit)
   - [ ] Instruct to run sync command after creation: `./repo-cli agents sync`
   - [ ] Warn NOT to create in `.claude/agents/` directly
 
-- [ ] Update `docs/explanation/agents/content/wow-rules-checker.md` (source):
-  - [ ] Validate `docs/explanation/agents/content/` (source, not generated)
-  - [ ] Validate `docs/explanation/skills/` (source, not generated)
+- [ ] Update `docs/explanation/rules/agents/content/wow-rules-checker.md` (source):
+  - [ ] Validate `docs/explanation/rules/agents/content/` (source, not generated)
+  - [ ] Validate `docs/explanation/rules/agents/skills/` (source, not generated)
   - [ ] Do NOT validate `.claude/agents/` (generated)
   - [ ] Do NOT validate `.opencode/agent/` (generated)
   - [ ] Check tool-agnostic format (role, capitalized tools, etc.)
   - [ ] Detect edits to generated directories as errors
 
-- [ ] Update `docs/explanation/agents/content/wow-rules-fixer.md` (source):
-  - [ ] Fix findings in `docs/explanation/agents/content/` (source)
-  - [ ] Fix findings in `docs/explanation/skills/` (source)
+- [ ] Update `docs/explanation/rules/agents/content/wow-rules-fixer.md` (source):
+  - [ ] Fix findings in `docs/explanation/rules/agents/content/` (source)
+  - [ ] Fix findings in `docs/explanation/rules/agents/skills/` (source)
   - [ ] Do NOT modify `.claude/agents/` (generated)
   - [ ] Do NOT modify `.opencode/agent/` (generated)
   - [ ] Do NOT modify `.claude/skills/` (generated)
@@ -783,8 +784,8 @@ git checkout main -- .husky/pre-commit
 - [ ] Stage all files:
 
   ```bash
-  git add docs/explanation/agents/
-  git add docs/explanation/skills/
+  git add docs/explanation/rules/agents/
+  git add docs/explanation/rules/agents/skills/
   git add apps/repo-cli/
   git add .claude/agents/
   git add .opencode/agent/
@@ -802,12 +803,12 @@ git checkout main -- .husky/pre-commit
 
   BREAKING CHANGE: Agent and skill definitions now maintained in docs/explanation/
 
-  - Agents: docs/explanation/agents/content/ (source, 45 files)
-  - Skills: docs/explanation/skills/ (source, 18 files)
+  - Agents: docs/explanation/rules/agents/content/ (source, 45 files)
+  - Skills: docs/explanation/rules/agents/skills/ (source, 18 files)
   - Generated: .claude/agents/ + .opencode/agent/ (DO NOT EDIT)
 
   New workflow:
-  1. Edit: docs/explanation/agents/content/{agent-name}.md
+  1. Edit: docs/explanation/rules/agents/content/{agent-name}.md
   2. Sync: ./repo-cli agents sync
   3. Commit: source + generated files together
 
@@ -831,7 +832,7 @@ git checkout main -- .husky/pre-commit
   - 0 validation errors (all formats)
   - 0 functional regressions (10/10 critical agents tested)
 
-  See: docs/explanation/agents/meta/ex-ag-me__architecture.md
+  See: docs/explanation/rules/agents/meta/ex-ag-me__architecture.md
   Plan: plans/backlog/2026-01-04__agents-docs-source-of-truth/
   "
   ```
@@ -905,7 +906,7 @@ git reset --hard pre-agents-docs-migration
 - [ ] Create tutorial video: "How to Edit Agents in New Architecture"
 - [ ] Add sync CLI to CI/CD (automated sync check on PR)
 - [ ] Implement incremental sync (optimization - see `tech-docs.md`)
-- [ ] Create `agent-template.md` in `docs/explanation/agents/content/`
+- [ ] Create `agent-template.md` in `docs/explanation/rules/agents/content/`
 - [ ] Archive old plan: Move to `plans/done/2026-01-04__agents-docs-source-of-truth/`
 
 ### Monitoring
@@ -1000,15 +1001,15 @@ git reset --hard pre-agents-docs-migration
 
 ### Quantitative Metrics
 
-| Metric                     | Target       | Measurement                                |
-| -------------------------- | ------------ | ------------------------------------------ | ------ |
-| **Agents migrated**        | 45/45 (100%) | `ls docs/explanation/agents/content/\*.md  | wc -l` |
-| **Skills migrated**        | 18/18 (100%) | `ls docs/explanation/skills/\*.md          | wc -l` |
-| **Validation errors**      | 0            | All validation commands pass               |
-| **Functional regressions** | 0            | 10/10 critical agents work correctly       |
-| **Sync time**              | <30s         | `time ./repo-cli agents sync`              |
-| **Validation time**        | <60s         | Combined Claude Code + OpenCode validation |
-| **Code coverage (CLI)**    | >80%         | `go test -cover ./...`                     |
+| Metric                     | Target       | Measurement                                     |
+| -------------------------- | ------------ | ----------------------------------------------- | ------ |
+| **Agents migrated**        | 45/45 (100%) | `ls docs/explanation/rules/agents/content/\*.md | wc -l` |
+| **Skills migrated**        | 18/18 (100%) | `ls -d docs/explanation/rules/agents/skills/\*/ | wc -l` |
+| **Validation errors**      | 0            | All validation commands pass                    |
+| **Functional regressions** | 0            | 10/10 critical agents work correctly            |
+| **Sync time**              | <30s         | `time ./repo-cli agents sync`                   |
+| **Validation time**        | <60s         | Combined Claude Code + OpenCode validation      |
+| **Code coverage (CLI)**    | >80%         | `go test -cover ./...`                          |
 
 ### Qualitative Metrics
 
@@ -1027,7 +1028,7 @@ git reset --hard pre-agents-docs-migration
 # Phase 0
 git checkout -b feat/agents-docs-source-of-truth
 git tag pre-agents-docs-migration
-mkdir -p docs/explanation/agents/content docs/explanation/skills
+mkdir -p docs/explanation/rules/agents/content docs/explanation/rules/agents/skills
 
 # Phase 3
 ./repo-cli agents extract --verbose
@@ -1041,26 +1042,26 @@ mkdir -p docs/explanation/agents/content docs/explanation/skills
 time ./repo-cli agents sync
 
 # Phase 6
-git add docs/explanation/agents/ docs/explanation/skills/ apps/repo-cli/ .claude/ .opencode/
+git add docs/explanation/rules/agents/ docs/explanation/rules/agents/skills/ apps/repo-cli/ .claude/ .opencode/
 git commit -m "feat(agents): migrate to docs source of truth"
 git push -u origin feat/agents-docs-source-of-truth
 ```
 
 ### Appendix B: File Locations Quick Reference
 
-| Purpose                     | Location                                                 |
-| --------------------------- | -------------------------------------------------------- |
-| **Source - Agents**         | `docs/explanation/agents/content/*.md`                   |
-| **Source - Skills**         | `docs/explanation/skills/*.md`                           |
-| **Generated - Claude Code** | `.claude/agents/*.md`                                    |
-| **Generated - OpenCode**    | `.opencode/agent/*.md`                                   |
-| **Generated - Skills**      | `.claude/skills/{skill-name}/SKILL.md`                   |
-| **Catalogs**                | `docs/explanation/agents/README.md`                      |
-|                             | `docs/explanation/skills/README.md`                      |
-| **Architecture Doc**        | `docs/explanation/agents/meta/ex-ag-me__architecture.md` |
-| **CLI Application**         | `apps/repo-cli/` (Go + Cobra framework)                  |
-|                             | `./repo-cli agents extract/sync/validate`                |
-|                             | `./repo-cli skills extract/validate`                     |
+| Purpose                     | Location                                                       |
+| --------------------------- | -------------------------------------------------------------- |
+| **Source - Agents**         | `docs/explanation/rules/agents/content/*.md`                   |
+| **Source - Skills**         | `docs/explanation/rules/agents/skills/{skill-name}/SKILL.md`   |
+| **Generated - Claude Code** | `.claude/agents/*.md`                                          |
+| **Generated - OpenCode**    | `.opencode/agent/*.md`                                         |
+| **Generated - Skills**      | `.claude/skills/{skill-name}/SKILL.md`                         |
+| **Catalogs**                | `docs/explanation/rules/agents/README.md`                      |
+|                             | `docs/explanation/rules/agents/skills/README.md`               |
+| **Architecture Doc**        | `docs/explanation/rules/agents/meta/ex-ag-me__architecture.md` |
+| **CLI Application**         | `apps/repo-cli/` (Go + Cobra framework)                        |
+|                             | `./repo-cli agents extract/sync/validate`                      |
+|                             | `./repo-cli skills extract/validate`                           |
 
 ### Appendix C: Rollback Decision Matrix
 
