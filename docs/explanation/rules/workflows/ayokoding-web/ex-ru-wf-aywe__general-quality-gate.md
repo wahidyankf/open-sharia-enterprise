@@ -58,6 +58,40 @@ outputs:
 - Periodically to ensure content quality and accuracy
 - After bulk content changes or restructuring
 
+## Execution Mode
+
+**Current Mode**: Manual Orchestration (see [Workflow Execution Modes Convention](../meta/ex-ru-wf-me__execution-modes.md))
+
+This workflow is currently executed through **manual orchestration** where the main Claude instance follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
+
+**How to Execute**:
+
+Instead of (future):
+
+```bash
+workflow run ayokoding-web-general-quality-gate --scope=ayokoding-web/content/en/
+```
+
+Currently use:
+
+```
+User: "Run ayokoding-web general quality gate workflow for ayokoding-web/content/en/ in manual mode"
+```
+
+Claude will:
+
+1. Execute all four checkers logic directly in parallel (general, facts, structure, links - validate, write audits)
+2. Execute all three fixers logic directly in sequence (general, facts, structure - read audits, apply fixes, write fix reports)
+3. Iterate until zero findings achieved across all validators
+4. Execute title-maker logic directly (regenerate titles from filenames)
+5. Execute navigation-maker logic directly (regenerate 2-layer navigation)
+6. Show git status with modified files
+7. Wait for user commit approval
+
+**Why Manual Mode?**: Task tool runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures audit reports, content fixes, title updates, and navigation regeneration are actually written to the filesystem.
+
+**Future**: When workflow runner is implemented, use `workflow run` command for fully automated execution.
+
 ## Steps
 
 ### 1. Parallel Validation (Parallel)

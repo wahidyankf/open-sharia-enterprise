@@ -67,6 +67,38 @@ outputs:
 
 This workflow implements the **Maker-Checker-Fixer pattern** across three validation dimensions to ensure comprehensive documentation quality before publication.
 
+## Execution Mode
+
+**Current Mode**: Manual Orchestration (see [Workflow Execution Modes Convention](../meta/ex-ru-wf-me__execution-modes.md))
+
+This workflow is currently executed through **manual orchestration** where the main Claude instance follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
+
+**How to Execute**:
+
+Instead of (future):
+
+```bash
+workflow run docs__quality-gate --scope=docs/tutorials/ --mode=normal
+```
+
+Currently use:
+
+```
+User: "Run documentation quality gate workflow for docs/tutorials/ in manual mode"
+```
+
+Claude will:
+
+1. Execute docs\_\_checker, docs\_\_tutorial-checker, and docs\_\_link-general-checker logic directly in parallel (validate, write audits)
+2. Execute docs\_\_fixer and docs\_\_tutorial-fixer logic directly in sequence (read audits, apply fixes, write fix reports)
+3. Iterate until zero findings achieved across all three validators
+4. Show git status with modified files
+5. Wait for user commit approval
+
+**Why Manual Mode?**: Task tool runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures audit reports, documentation fixes, and link cache updates are actually written to the filesystem.
+
+**Future**: When workflow runner is implemented, use `workflow run` command for fully automated execution.
+
 ## Workflow Overview
 
 ```mermaid
