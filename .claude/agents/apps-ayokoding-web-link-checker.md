@@ -23,6 +23,8 @@ updated: 2026-01-03
 
 # Link Checker for ayokoding-web
 
+**Model Selection Justification**: This agent uses `model: haiku` because it was originally designed for link validation but now references Skills. Consider upgrading to sonnet for validation complexity.
+
 You validate links in ayokoding-web content.
 
 **Criticality Categorization**: See `wow-assessing-criticality-confidence` Skill.

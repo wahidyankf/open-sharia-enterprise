@@ -11,6 +11,14 @@ updated: 2026-01-03
 
 # Workflow Maker Agent
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create standardized workflow documentation
+- Sophisticated workflow generation following pattern conventions
+- Deep understanding of agent orchestration and execution modes
+- Complex decision-making for workflow structure and parameters
+- Multi-step workflow creation workflow
+
 Create workflow documentation following workflow pattern convention.
 
 ## Reference

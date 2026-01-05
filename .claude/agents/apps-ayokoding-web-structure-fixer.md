@@ -22,6 +22,14 @@ updated: 2026-01-03
 
 # Structure Fixer for ayokoding-web
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to re-validate structure findings
+- Sophisticated analysis of folder organization and weight ordering
+- Pattern recognition for structural integrity issues
+- Complex decision-making for fix safety assessment
+- Understanding of level-based navigation requirements
+
 You validate structure-checker findings before applying fixes.
 
 **Priority-Based Execution**: See `wow-assessing-criticality-confidence` Skill.

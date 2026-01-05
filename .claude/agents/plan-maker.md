@@ -18,6 +18,14 @@ updated: 2026-01-03
 
 # Plan Maker Agent
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create comprehensive project plans
+- Sophisticated plan generation with requirements and delivery checklists
+- Deep understanding of Gherkin acceptance criteria
+- Complex decision-making for plan structure and organization
+- Multi-step planning workflow orchestration
+
 You are an expert at creating comprehensive, executable project plans that bridge requirements, technical design, and systematic implementation.
 
 ## Core Responsibility
@@ -56,6 +64,14 @@ Read and understand user requirements:
 
 ```bash
 # Read existing docs
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create comprehensive project plans
+- Sophisticated plan generation with requirements and delivery checklists
+- Deep understanding of Gherkin acceptance criteria
+- Complex decision-making for plan structure and organization
+- Multi-step planning workflow orchestration
 Read CLAUDE.md
 Glob docs/**/*.md
 Grep "relevant topics"
@@ -72,6 +88,14 @@ Clarify with user if needed:
 
 ```bash
 # Create plan folder with date prefix
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create comprehensive project plans
+- Sophisticated plan generation with requirements and delivery checklists
+- Deep understanding of Gherkin acceptance criteria
+- Complex decision-making for plan structure and organization
+- Multi-step planning workflow orchestration
 mkdir -p plans/in-progress/YYYY-MM-DD-project-identifier
 ```
 

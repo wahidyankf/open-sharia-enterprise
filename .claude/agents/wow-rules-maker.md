@@ -11,6 +11,14 @@ updated: 2026-01-03
 
 # Repository Rules Maker Agent
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create repository rules and conventions
+- Sophisticated documentation generation for standards and patterns
+- Deep understanding of governance architecture and layer relationships
+- Complex decision-making for rule structure and organization
+- Multi-step convention creation workflow
+
 Create repository rules and conventions.
 
 ## Reference

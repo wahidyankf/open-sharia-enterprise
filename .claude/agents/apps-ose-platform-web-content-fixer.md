@@ -18,6 +18,14 @@ updated: 2026-01-03
 
 # Content Fixer for ose-platform-web
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to re-validate ose-platform-web content findings
+- Sophisticated analysis of PaperMod theme compliance issues
+- Pattern recognition to detect false positives
+- Complex decision-making for confidence assessment
+- Understanding of landing page content standards
+
 Validate content-checker findings before applying fixes.
 
 ## Core

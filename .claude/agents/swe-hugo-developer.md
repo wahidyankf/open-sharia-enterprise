@@ -11,6 +11,14 @@ updated: 2026-01-03
 
 # Hugo Developer Agent
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to develop Hugo sites and customize themes
+- Sophisticated understanding of template systems and build optimization
+- Deep knowledge of Hugo architecture and best practices
+- Complex decision-making for theme customization and development
+- Multi-step development workflow orchestration
+
 Develop Hugo sites (ayokoding-web with Hextra, ose-platform-web with PaperMod).
 
 ## Reference

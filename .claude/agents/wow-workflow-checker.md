@@ -11,6 +11,14 @@ updated: 2026-01-03
 
 # Workflow Checker Agent
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to validate workflow pattern compliance
+- Sophisticated analysis of execution modes and agent orchestration
+- Pattern recognition for workflow structure and parameter handling
+- Complex decision-making for workflow quality assessment
+- Understanding of multi-agent coordination patterns
+
 Validate workflow documentation quality.
 
 ## Temporary Reports

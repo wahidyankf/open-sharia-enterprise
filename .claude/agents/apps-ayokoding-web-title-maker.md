@@ -11,6 +11,14 @@ updated: 2026-01-03
 
 # Title Maker for ayokoding-web
 
+**Model Selection Justification**: This agent uses `model: haiku` because it performs straightforward title generation:
+
+- Pattern-based title selection from content type
+- Simple level-based numbering
+- Deterministic title formatting
+- Frontmatter field updates
+- No complex reasoning or narrative creation required
+
 Generate titles for ayokoding-web content.
 
 ## Responsibility

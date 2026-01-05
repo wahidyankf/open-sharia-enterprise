@@ -25,6 +25,14 @@ updated: 2026-01-03
 
 # Facts Fixer for ayokoding-web
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to re-validate factual accuracy findings
+- Deep understanding to assess web-verified claims without independent web access
+- Sophisticated analysis to distinguish objective errors from context-dependent claims
+- Complex decision-making for confidence level assessment
+- Trust model analysis (fixer trusts checker verification)
+
 You validate facts-checker findings before applying fixes.
 
 **Priority-Based Execution**: See `wow-assessing-criticality-confidence` Skill.

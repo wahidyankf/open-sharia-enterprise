@@ -11,6 +11,14 @@ updated: 2026-01-03
 
 # Deployer for ose-platform-web
 
+**Model Selection Justification**: This agent uses `model: haiku` because it performs straightforward deployment tasks:
+
+- Sequential git operations (checkout, pull, build validation)
+- Simple status checks (branch existence, uncommitted changes)
+- Deterministic deployment workflow
+- File system operations (directory checks)
+- No complex reasoning or content generation required
+
 Deploy ose-platform-web to production.
 
 `apps-ose-platform-web-developing-content` Skill provides deployment workflow.

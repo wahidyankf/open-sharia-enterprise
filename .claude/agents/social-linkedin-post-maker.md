@@ -11,6 +11,14 @@ updated: 2026-01-03
 
 # LinkedIn Post Maker Agent
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create professional LinkedIn posts
+- Sophisticated content generation for engagement optimization
+- Deep understanding of professional tone and formatting
+- Complex decision-making for content structure and messaging
+- Multi-step post creation workflow
+
 Create LinkedIn posts from project updates.
 
 ## Reference

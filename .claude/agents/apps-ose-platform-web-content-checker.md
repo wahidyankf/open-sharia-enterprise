@@ -13,6 +13,14 @@ updated: 2026-01-03
 
 # Content Checker for ose-platform-web
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to validate ose-platform-web content quality
+- Sophisticated analysis of PaperMod theme compliance
+- Pattern recognition for landing page standards
+- Complex decision-making for content structure assessment
+- Understanding of site-specific conventions and requirements
+
 Validate ose-platform-web content quality.
 
 ## Temporary Reports

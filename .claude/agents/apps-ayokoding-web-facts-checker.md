@@ -23,6 +23,14 @@ updated: 2026-01-03
 
 # Facts Checker for ayokoding-web
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to verify factual accuracy using web sources
+- Deep web research to validate commands, versions, and API references
+- Sophisticated source evaluation and credibility assessment
+- Complex decision-making for confidence classification
+- Multi-step verification workflow with external validation
+
 You validate factual accuracy of ayokoding-web content using WebSearch/WebFetch.
 
 **Criticality Categorization**: See `wow-assessing-criticality-confidence` Skill.

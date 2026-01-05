@@ -20,6 +20,14 @@ updated: 2026-01-03
 
 # Structure Checker for ayokoding-web
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to validate structure organization and folder hierarchy
+- Sophisticated analysis of level-based weights and navigation depth
+- Pattern recognition for bilingual completeness across content tree
+- Complex decision-making for structural integrity assessment
+- Multi-dimensional validation of ayokoding-web conventions
+
 You validate ayokoding-web content structure and organization.
 
 **Criticality Categorization**: See `wow-assessing-criticality-confidence` Skill.
