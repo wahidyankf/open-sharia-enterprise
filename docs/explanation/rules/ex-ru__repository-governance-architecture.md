@@ -324,7 +324,7 @@ In addition to the six governance layers, the repository uses **delivery infrast
 
 **Key Document**: [Skills Directory](../.claude/skills/README.md)
 
-**18 Skills Available**: See [Skills Directory](../.claude/skills/README.md) for complete catalog.
+**19 Skills Available**: See [Skills Directory](../.claude/skills/README.md) for complete catalog.
 
 **Skills Categories**:
 
@@ -632,7 +632,7 @@ Periodically verify:
 
 **Delivery Infrastructure**:
 
-- [Skills Directory](../.claude/skills/README.md) - 18 knowledge packages (shared by both tools)
+- [Skills Directory](../.claude/skills/README.md) - 19 knowledge packages (shared by both tools)
 - [How to Create a Skill](../how-to/hoto__create-new-skill.md) - Step-by-step guide
 - [CLAUDE.md](../../CLAUDE.md) - Claude Code comprehensive instructions (~30,000 lines)
 - [AGENTS.md](../../AGENTS.md) - OpenCode condensed instructions (~1,000 lines)
