@@ -22,6 +22,8 @@ Workflows are **composed multi-step processes** that orchestrate AI agents to ac
 ## Repository Hierarchy
 
 ```
+Layer 0: Vision (WHY we exist - foundational purpose)
+    ↓ inspires
 Layer 1: Principles (WHY - foundational values)
     ↓ governs
 Layer 2: Conventions (WHAT - documentation rules)

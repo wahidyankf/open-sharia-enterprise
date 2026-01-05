@@ -373,7 +373,7 @@ filename="docs-${uuid}-${timestamp}-audit.md"
 **Recommendation**: [how to resolve]
 **Criticality**: HIGH/MEDIUM
 
-## 📅 Outdated Information
+## Outdated Information
 
 **Location**: `file.md:line`
 **Content**: "[potentially stale]"

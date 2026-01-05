@@ -36,8 +36,8 @@ This creates consistency across the agent-skill ecosystem and improves discovera
 - **readme\_\_** - README quality standards
 - **plan\_\_** - Project planning standards
 - **agent\_\_** - AI agent development
-- **apps**ayokoding-web**** - Hugo Hextra content
-- **apps**ose-platform-web**** - Hugo PaperMod content
+- **apps**ayokoding-web\*\*\*\* - Hugo Hextra content
+- **apps**ose-platform-web\*\*\*\* - Hugo PaperMod content
 - **wow\_\_** - Cross-cutting workflows (Ways of Working)
 
 ## Skill Structure
@@ -77,7 +77,7 @@ Markdown instructions, examples, best practices...
 
 **CRITICAL**: The `name` field must exactly match the directory name.
 
-## Available Skills (18)
+## Available Skills (19)
 
 This repository provides 18 Claude Code Skills organized by domain. Each Skill is a model-invoked knowledge package that auto-loads when agents need specific domain expertise.
 

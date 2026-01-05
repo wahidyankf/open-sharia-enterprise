@@ -213,7 +213,7 @@ Use `wow-generating-validation-reports` Skill for:
    - Do colors work in both light and dark mode?
    - Is shape differentiation used (not color alone)?
 
-3. **Check color accessibility** (validate against [Color Accessibility Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-color-accessibility.md))
+3. **Check color accessibility** (validate against [Color Accessibility Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__color-accessibility.md))
    - Uses accessible palette: blue (#0173B2), orange (#DE8F05), teal (#029E73), purple (#CC78BC), brown (#CA9161)
    - Avoids inaccessible colors: red, green, yellow
    - Includes black borders (#000000) for definition

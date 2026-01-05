@@ -89,7 +89,7 @@ Before considering documentation complete:
 
 ### File Naming Convention
 
-You MUST follow the [File Naming Convention](../docs/explanation/rules/conventions/meta/ex-ru-co-me-file-naming.md):
+You MUST follow the [File Naming Convention](../docs/explanation/rules/conventions/meta/ex-ru-co-me__file-naming.md):
 
 - **Pattern**: `[prefix]-[content-identifier].[extension]`
 - **Examples**: `tu-getting-started.md`, `ex-ru-co-file-naming-convention.md`, `hoto-deploy-app.md`, `re-api-reference.md`
@@ -104,7 +104,7 @@ You MUST follow the [File Naming Convention](../docs/explanation/rules/conventio
 - **Always include** the `.md` extension
 - **Use relative paths** from the current file's location
 - Use descriptive link text instead of filename identifiers
-- Example: `[File Naming Convention](./conventions/meta/ex-ru-co-me-file-naming.md)`
+- Example: `[File Naming Convention](./conventions/meta/ex-ru-co-me__file-naming.md)`
 - This syntax works across GitHub web, Obsidian, and other markdown viewers
 - **Do NOT use** Obsidian-only wiki links like `[[filename]]`
 
@@ -178,7 +178,7 @@ See [Linking Convention](../docs/explanation/rules/conventions/formatting/ex-ru-
 - **Color accessibility**: ONLY use verified palette from Skill
 - **Avoid**: Red, green, yellow (color blindness issues)
 
-See [Diagram and Schema Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-diagrams.md) for complete standards.
+See [Diagram and Schema Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__diagrams.md) for complete standards.
 
 ### Mathematical Notation
 
@@ -450,11 +450,11 @@ You have access to the project's documentation and source code. When creating ne
 **Documentation Conventions (Required Reading):**
 
 - [Conventions Index](../docs/explanation/rules/conventions/README.md) - Index of all conventions
-- [Convention Writing Convention](../docs/explanation/rules/conventions/content/ex-ru-co-co-convention-writing.md) - How to write convention documents (meta-convention)
-- [Color Accessibility Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-color-accessibility.md) - MASTER REFERENCE for all color usage (diagrams, visual aids, accessible palette, WCAG standards)
-- [File Naming Convention](../docs/explanation/rules/conventions/meta/ex-ru-co-me-file-naming.md) - How to name files with hierarchical prefixes (note: README.md is exempt)
+- [Convention Writing Convention](../docs/explanation/rules/conventions/content/ex-ru-co-co__convention-writing.md) - How to write convention documents (meta-convention)
+- [Color Accessibility Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__color-accessibility.md) - MASTER REFERENCE for all color usage (diagrams, visual aids, accessible palette, WCAG standards)
+- [File Naming Convention](../docs/explanation/rules/conventions/meta/ex-ru-co-me__file-naming.md) - How to name files with hierarchical prefixes (note: README.md is exempt)
 - [Linking Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-linking.md) - How to link between files with GitHub-compatible markdown
-- [Diagram and Schema Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-diagrams.md) - When to use Mermaid diagrams vs ASCII art (references Color Accessibility Convention)
+- [Diagram and Schema Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__diagrams.md) - When to use Mermaid diagrams vs ASCII art (references Color Accessibility Convention)
 - [Diátaxis Framework](../docs/explanation/rules/conventions/meta/ex-ru-co-me-diataxis-framework.md) - How to organize documentation into four categories
 
 **Documentation Structure:**

@@ -307,7 +307,7 @@ This repository supports **dual-format** AI agents compatible with both Claude C
 
 - **Claude Code format**: `.claude/agents/` (45 agents) - Primary source of truth
 - **OpenCode format**: `.opencode/agent/` (45 agents) - Generated from Claude Code format
-- **Shared Skills**: `.claude/skills/` (18 skills) - Used by both tool formats
+- **Shared Skills**: `.claude/skills/` (19 skills) - Used by both tool formats
 
 **OpenCode-specific files**:
 
