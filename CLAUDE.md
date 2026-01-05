@@ -163,7 +163,7 @@ Use Mermaid diagrams with color-blind friendly palette and proper accessibility.
 
 ### Emoji Usage Convention
 
-Semantic emojis allowed in `docs/`, README files, `plans/`, and `.claude/agents/README.md`. **FORBIDDEN** in CLAUDE.md, agent prompt files, config files, and source code. See [Emoji Usage Convention](./docs/explanation/rules/conventions/formatting/ex-ru-co-fo__emoji.md) for complete details.
+Semantic emojis allowed in `docs/`, README files, `plans/`, CLAUDE.md, `.claude/agents/*.md`, and `.opencode/agent/*.md`. **FORBIDDEN** in config files (_.json, _.yaml, \*.toml) and source code. See [Emoji Usage Convention](./docs/explanation/rules/conventions/formatting/ex-ru-co-fo__emoji.md) for complete details.
 
 ### Diátaxis Framework
 

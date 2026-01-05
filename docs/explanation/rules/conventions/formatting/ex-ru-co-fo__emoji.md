@@ -357,7 +357,7 @@ category: explanation
 
 ### Rule 7: Scope - Where to Use Emojis
 
-**Emojis are for human-readable documentation, not AI prompts or machine configuration.**
+**Emojis enhance scannability and engagement in human-readable files.**
 
 **✅ USE emojis in these files:**
 
@@ -374,16 +374,18 @@ category: explanation
    - Project plans, requirements, technical docs
    - Human-readable working documents
 
+4. **Agent configuration files** - CLAUDE.md, .claude/agents/_.md, .opencode/agent/_.md
+   - CLAUDE.md - Human-readable navigation document (~30,000 lines) for developers
+   - .claude/agents/\*.md - Agent definitions read by developers to understand agent behavior
+   - .opencode/agent/\*.md - OpenCode agent definitions (same purpose as Claude Code agents)
+   - Emojis enhance scannability for:
+     - Criticality level definitions (🔴 CRITICAL, 🟠 HIGH, 🟡 MEDIUM, 🟢 LOW)
+     - Section headers (🎯 Purpose, 💡 Key Concepts, 📖 Reference)
+     - Status indicators in examples (✅ Correct, ❌ Incorrect, ⚠️ Warning)
+
 **❌ DO NOT use emojis in these files:**
 
-1. **CLAUDE.md** - Root configuration file with instructions for Claude Code AI
-
-2. **Agent prompt files** - `.claude/agents/*.md` (except README.md)
-   - `docs__maker.md`, `plan__executor.md`, `wow__rules-checker.md`, etc.
-   - These are AI prompts/instructions, not human documentation
-   - Exception: `.claude/agents/README.md` gets emojis (it's an index for humans)
-
-3. **Configuration files**
+1. **Configuration files**
    - `*.json`, `*.yaml`, `*.toml`
    - `package.json`, `tsconfig.json`, etc.
    - `.gitignore`, `.gitattributes`
@@ -391,28 +393,31 @@ category: explanation
 
 **Rationale:**
 
-**Human vs AI distinction:**
+**Enhanced scannability:**
 
-- Human-readable docs (explanations, guides, plans) → emojis enhance engagement
-- AI prompt files (CLAUDE.md, agent definitions) → no decoration, focused instructions
-- README files are always for humans → always get emojis
+- CLAUDE.md is a human-readable navigation document (~30,000 lines) that benefits from emoji-enhanced scannability
+- Agent files are human-readable specifications - developers read them to understand behavior, patterns, workflows
+- Emojis provide semantic visual markers that help developers quickly locate sections (criticality, purpose, references)
 
-**Why README files get emojis but CLAUDE.md doesn't:**
+**Consistency with referenced content:**
 
-- README.md = overview/navigation for humans (contributors, users)
-- CLAUDE.md = instruction file for AI (Claude Code reads and executes)
+- Agent files reference Skills and conventions that use emojis (e.g., criticality definitions with 🔴🟠🟡🟢)
+- Agent definitions should be visually consistent with their referenced content
+- When agents display emoji-based definitions in their own documentation, it maintains semantic consistency
 
-**Why `.claude/agents/README.md` gets emojis but other agent files don't:**
+**Why agent files now get emojis:**
 
-- `README.md` = index for humans to understand available agents
-- `doc-writer.md`, etc. = AI prompts that agents execute
+- Agent files are specifications for both humans (developers) AND AI (execution)
+- Developers read agent files to understand behavior, patterns, and workflows
+- Emojis enhance scannability without changing agent execution logic
+- Similar to how docs/\*_/_.md use emojis for human scannability
 
 ✅ **Clear rule:**
 
 ```
 Emojis for humans: docs/, plans/, README.md files
-No emojis for AI: CLAUDE.md, agent prompt files
-No emojis for machines: config files
+Emojis for agents: CLAUDE.md, .claude/agents/*.md, .opencode/agent/*.md
+No emojis for machines: config files (*.json, *.yaml, *.toml)
 ```
 
 ## 📖 Document Type Specific Guidelines

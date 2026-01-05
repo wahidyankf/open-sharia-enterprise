@@ -108,7 +108,7 @@ All work follows **10 foundational principles** from \`docs/explanation/rules/pr
 - **File Naming**: \`[prefix]\_\_[content-identifier].md\` (prefix encodes directory path)
 - **Linking**: GitHub-compatible markdown with \`.md\` extension, relative paths
 - **Indentation**: 2 spaces for YAML/nested bullets, language-specific for code
-- **Emoji Usage**: Allowed in docs/README/plans, forbidden in agents/config/code
+- **Emoji Usage**: Allowed in docs/README/plans/CLAUDE.md/.claude/agents/.opencode/agent/, forbidden in config/code
 - **Content Quality**: Active voice, single H1, proper heading nesting, alt text for images, WCAG AA color contrast
 
 **See**: [Conventions Index](./docs/explanation/rules/conventions/README.md) (24 documentation standards)
