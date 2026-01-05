@@ -141,11 +141,11 @@ $$
 - Correct: `  - Text` (2 spaces BEFORE dash) for nested
 - Wrong: `-  Text` (spaces AFTER dash) - flag this pattern
 
-See [Indentation Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-indentation.md).
+See [Indentation Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__indentation.md).
 
 ### 6. Rule Reference Formatting Validation
 
-**Two-tier formatting** per [Linking Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-linking.md):
+**Two-tier formatting** per [Linking Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__linking.md):
 
 - **First mention**: MUST use markdown link `[Rule Name](./path/to/rule.md)`
 - **Subsequent mentions**: MUST use inline code `` `rule-name` ``
@@ -160,7 +160,7 @@ See [Indentation Convention](../../docs/explanation/rules/conventions/formatting
 
 ### 7. Code Block Indentation Validation
 
-Per [Indentation Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-indentation.md):
+Per [Indentation Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__indentation.md):
 
 - JavaScript/TypeScript: 2 spaces
 - Python: 4 spaces
@@ -535,11 +535,11 @@ Some sites block automation:
 **Documentation Conventions:**
 
 - `docs/explanation/rules/conventions/content/ex-ru-co-co-factual-validation.md` - Factual validation methodology
-- `docs/explanation/rules/conventions/content/ex-ru-co-co-quality.md` - Content quality standards
+- `docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md` - Content quality standards
 - `docs/explanation/rules/conventions/formatting/ex-ru-co-fo-mathematical-notation.md` - LaTeX notation rules
 - `docs/explanation/rules/conventions/formatting/ex-ru-co-fo-nested-code-fences.md` - Code fence nesting
-- `docs/explanation/rules/conventions/formatting/ex-ru-co-fo-indentation.md` - Indentation standards
-- `docs/explanation/rules/conventions/formatting/ex-ru-co-fo-linking.md` - Rule reference formatting
+- `docs/explanation/rules/conventions/formatting/ex-ru-co-fo__indentation.md` - Indentation standards
+- `docs/explanation/rules/conventions/formatting/ex-ru-co-fo__linking.md` - Rule reference formatting
 - `docs/explanation/rules/development/infra/ex-ru-de-in-temporary-files.md` - Report file generation
 - `docs/explanation/rules/development/quality/ex-ru-de-qu-criticality-levels.md` - Criticality system
 

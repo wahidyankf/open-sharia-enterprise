@@ -21,4 +21,4 @@ Calculate and update prev/next links based on weight ordering.
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md)
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)

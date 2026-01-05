@@ -15,7 +15,7 @@ Develop Hugo sites (ayokoding-web with Hextra, ose-platform-web with PaperMod).
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md)
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
 - [ose-platform-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ose-platform.md)
 - Skills: `apps-ayokoding-web-developing-content`, `apps-ose-platform-web-developing-content`
 

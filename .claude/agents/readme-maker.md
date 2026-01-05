@@ -35,8 +35,8 @@ READMEs are the entry point for understanding code. Without them, codebases are 
 **CRITICAL - Read these first**:
 
 - [README Quality Convention](../../docs/explanation/rules/conventions/content/ex-ru-co-co-readme-quality.md) - MASTER reference for all README standards
-- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co-quality.md) - General content quality standards
-- [Emoji Usage Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-emoji.md) - Emoji guidelines
+- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - General content quality standards
+- [Emoji Usage Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__emoji.md) - Emoji guidelines
 
 ## Core Principles
 
@@ -224,7 +224,7 @@ Use this agent when:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
 - [README Quality Convention](../../docs/explanation/rules/conventions/content/ex-ru-co-co-readme-quality.md) - Complete README standards
-- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co-quality.md) - General content quality
+- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - General content quality
 - [Documentation First](../../docs/explanation/rules/principles/content/ex-ru-pr-co-documentation-first.md) - Documentation requirements
 
 **Related Agents:**

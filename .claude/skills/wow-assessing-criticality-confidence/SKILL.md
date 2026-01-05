@@ -1,5 +1,6 @@
 ---
 name: wow-assessing-criticality-confidence
+updated: 2026-01-05
 description: Universal classification system for checker and fixer agents using orthogonal criticality (CRITICAL/HIGH/MEDIUM/LOW importance) and confidence (HIGH/MEDIUM/FALSE_POSITIVE certainty) dimensions. Covers priority matrix (P0-P4), execution order, dual-label pattern for verification status, standardized report format, and domain-specific examples. Essential for implementing checker/fixer agents and processing audit reports
 allowed-tools: [Read, Glob, Grep, Write, Bash]
 tags:
@@ -583,6 +584,178 @@ apply_fix(finding)
 **Wrong**: Fix findings in discovery order
 
 **Right**: Fix P0 first, then P1, then P2, then P3-P4
+
+## Creating Domain-Specific Confidence Examples
+
+Fixer agents should include domain-specific examples of HIGH/MEDIUM/FALSE_POSITIVE confidence assessments to guide re-validation decisions.
+
+### Purpose of Domain Examples
+
+**Why include domain-specific examples?**
+
+- Provide concrete guidance for re-validation decisions
+- Clarify what constitutes HIGH vs MEDIUM confidence in specific domain
+- Help fixer agents make consistent confidence assessments
+- Reduce ambiguity in edge cases
+- Document domain conventions and patterns
+
+**Where to include**: In fixer agent files (not in this Skill - keep examples domain-specific)
+
+### Example Structure Template
+
+```markdown
+### Domain-Specific Confidence Examples
+
+**HIGH Confidence** (Apply automatically):
+
+- [Objective error type 1] verified by [verification method]
+- [Objective error type 2] verified by [verification method]
+- [Pattern-based error] verified by [pattern check]
+- [File-based error] verified by [file check]
+
+**MEDIUM Confidence** (Manual review):
+
+- [Subjective issue 1] that may be [context-dependent reason]
+- [Ambiguous issue] where [ambiguity explanation]
+- [Quality judgment] requiring [human judgment reason]
+- [Context-dependent issue] that could be [valid reason]
+
+**FALSE_POSITIVE** (Report to checker):
+
+- Checker flagged [correct thing] as incorrect ([reason for false positive])
+- Checker reported [missing thing] that actually exists ([reason])
+- Checker [misunderstood] [context explanation]
+```
+
+### Domain Examples by Agent Family
+
+**docs-fixer** (Factual accuracy domain):
+
+```markdown
+**HIGH Confidence**:
+
+- Broken command syntax verified by checker's cited sources
+- Incorrect version number verified by checker's registry findings
+- Wrong API method verified by checker's documentation review
+- Broken internal link verified by file existence check
+
+**MEDIUM Confidence**:
+
+- Contradiction that may be context-dependent
+- Outdated information where "outdated" is subjective
+- Content duplication where duplication may be intentional
+
+**FALSE_POSITIVE**:
+
+- Checker flagged correct LaTeX as incorrect
+- Checker flagged valid command as broken
+```
+
+**readme-fixer** (README quality domain):
+
+```markdown
+**HIGH Confidence**:
+
+- Paragraph exceeding 5 lines (count is objective)
+- Specific jargon patterns without context
+- Acronym without expansion
+- Passive voice patterns (pattern match)
+
+**MEDIUM Confidence**:
+
+- Overall tone assessment (subjective)
+- Engagement quality (context-dependent)
+- Sentence length appropriateness (judgment call)
+
+**FALSE_POSITIVE**:
+
+- Checker flagged technical term as jargon (domain-appropriate)
+- Checker flagged intentional passive voice (style choice)
+```
+
+**docs-tutorial-fixer** (Tutorial quality domain):
+
+```markdown
+**HIGH Confidence**:
+
+- Missing hands-on element verified by structure check
+- Wrong tutorial type verified by content analysis
+- Missing visual aid in complex section (objective criteria met)
+
+**MEDIUM Confidence**:
+
+- Narrative flow issues (subjective assessment)
+- Pedagogical effectiveness (requires teaching expertise)
+- Example clarity (reader-dependent)
+
+**FALSE_POSITIVE**:
+
+- Checker flagged advanced tutorial as beginner (correct level)
+- Checker reported missing visual where text is sufficient
+```
+
+### Guidelines for Creating Examples
+
+**Be Specific**:
+
+- Use concrete error types from your domain
+- Reference actual verification methods
+- Include pattern examples
+- Show real scenarios
+
+**Cover Common Cases**:
+
+- Include the 3-5 most common HIGH confidence scenarios
+- Include 2-3 common MEDIUM confidence scenarios
+- Include 2-3 common FALSE_POSITIVE scenarios
+- Don't try to be exhaustive (guidelines, not rules)
+
+**Keep It Actionable**:
+
+- Focus on verification methods: "verified by [method]"
+- Explain ambiguity: "where [reason for uncertainty]"
+- Show reasoning: "that may be [valid reason]"
+
+**Domain-Appropriate**:
+
+- docs-fixer: Command syntax, versions, APIs, links
+- readme-fixer: Jargon, paragraphs, tone, engagement
+- tutorial-fixer: Hands-on elements, flow, visuals
+- link-fixer: Path format, target existence, redirects
+- structure-fixer: Folder patterns, weights, organization
+
+### Placement in Agent Files
+
+Add "Domain-Specific Confidence Examples" section:
+
+- After confidence level definitions
+- Before re-validation guidelines
+- In fixer agent files (not checker files)
+
+### Benefits
+
+✅ Reduces ambiguity in confidence assessment
+✅ Provides concrete guidance for edge cases
+✅ Improves consistency across similar fixers
+✅ Documents domain conventions
+✅ Helps new fixer implementations
+
+### Anti-Patterns
+
+❌ **Too Generic**: Examples that could apply to any domain
+❌ **Too Exhaustive**: Trying to cover every possible scenario
+❌ **No Verification Method**: Not explaining how to verify
+❌ **Missing Context**: Not explaining why something is MEDIUM
+❌ **In Skill**: Domain examples belong in agents, not Skills
+
+### Key Takeaways
+
+- Include domain-specific examples in fixer agents
+- Cover HIGH/MEDIUM/FALSE_POSITIVE confidence cases
+- Use concrete scenarios from your domain
+- Explain verification methods
+- Keep examples actionable and specific
+- Place in fixer agents, not in this Skill
 
 ## References
 

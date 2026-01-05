@@ -31,9 +31,9 @@ Create By Example tutorial content in `apps/ayokoding-web/content/` following ay
 
 **CRITICAL - Read these first**:
 
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md) - Hextra theme, bilingual, weights, navigation
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md) - Hextra theme, bilingual, weights, navigation
 - [By Example Content Standard](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-naming.md) - By Example type definition
+- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__naming.md) - By Example type definition
 
 ## When to Use This Agent
 
@@ -156,9 +156,9 @@ The `docs-applying-content-quality` Skill provides general content quality stand
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md) - Complete ayokoding-web standards
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md) - Complete ayokoding-web standards
 - [By Example Content Standard](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-naming.md) - By Example definition
+- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__naming.md) - By Example definition
 
 **Related Agents:**
 

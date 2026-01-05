@@ -26,5 +26,5 @@ Create folder structure and \_index.md files for ayokoding-web.
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md)
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
 - Skill: `apps-ayokoding-web-developing-content`

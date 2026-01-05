@@ -24,4 +24,4 @@ Deploy ayokoding-web to production.
 ## Reference
 
 - [Trunk Based Development](../../docs/explanation/rules/development/workflow/ex-ru-de-wo-trunk-based-development.md)
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md)
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
