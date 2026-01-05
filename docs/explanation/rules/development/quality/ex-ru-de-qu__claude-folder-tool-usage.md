@@ -217,7 +217,7 @@ sed -i '/## Available Agents/a\**New Agent**: new-agent - Description' /home/wkf
 - [Skills Directory](/.claude/skills/README.md) - Skills infrastructure
 - [Agents Index](/.claude/agents/README.md) - All agents and responsibilities
 
-## Principles Implemented
+## Principles Respected
 
 - **Explicit Over Implicit**: Clear tool selection rules documented
 - **Automation Over Manual**: Autonomous agent operation enabled
