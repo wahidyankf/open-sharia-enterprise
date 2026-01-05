@@ -78,23 +78,15 @@ This workflow implements the **Maker-Checker-Fixer pattern** to ensure by-exampl
 
 **Current Mode**: Manual Orchestration (see [Workflow Execution Modes Convention](../meta/ex-ru-wf-me__execution-modes.md))
 
-This workflow is currently executed through **manual orchestration** where the main Claude instance follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
+This workflow is currently executed through **manual orchestration** where the AI assistant (Claude Code or OpenCode) follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
 
 **How to Execute**:
-
-Instead of (future):
-
-```bash
-workflow run ayokoding-web-by-example-quality-gate --tutorial-path=golang/tutorials/by-example/ --mode=normal
-```
-
-Currently use:
 
 ```
 User: "Run ayokoding-web by-example quality gate workflow for golang/tutorials/by-example/ in manual mode"
 ```
 
-Claude will:
+The AI will:
 
 1. Execute apps\_\_ayokoding-web\_\_by-example-checker logic directly (validate tutorial, write audit)
 2. User reviews audit report and decides on fixes (manual decision point)
@@ -103,9 +95,7 @@ Claude will:
 5. Show git status with modified files
 6. Wait for user commit approval
 
-**Why Manual Mode?**: Task tool runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures audit reports and tutorial fixes are actually written to the filesystem. This workflow also includes manual decision points (user review step) unlike fully automated workflows.
-
-**Future**: When workflow runner is implemented, use `workflow run` command for fully automated execution (with user approval prompts for decision points).
+**Why Manual Mode?**: Task tool (Claude Code) or agent spawning (OpenCode) runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures audit reports and tutorial fixes are actually written to the filesystem. This workflow also includes manual decision points (user review step) unlike fully automated workflows.
 
 ## Workflow Overview
 
@@ -600,10 +590,8 @@ apps-ayokoding-web-by-example-checker re-validates
 
 **Invocation**:
 
-```bash
-# Default mode (normal) - fixes CRITICAL/HIGH only
-workflow run ayokoding-web-by-example-quality-gate \
-  --tutorial-path=golang/tutorials/by-example/
+```
+User: "Run ayokoding-web by-example quality gate workflow for golang/tutorials/by-example/ in normal mode"
 ```
 
 **Checker results**:
@@ -631,11 +619,8 @@ workflow run ayokoding-web-by-example-quality-gate \
 
 **Invocation**:
 
-```bash
-# Strict mode - fixes CRITICAL/HIGH/MEDIUM
-workflow run ayokoding-web-by-example-quality-gate \
-  --tutorial-path=elixir/tutorials/by-example/ \
-  --mode=strict
+```
+User: "Run ayokoding-web by-example quality gate workflow for elixir/tutorials/by-example/ in strict mode"
 ```
 
 **Checker results**:
@@ -662,12 +647,8 @@ workflow run ayokoding-web-by-example-quality-gate \
 
 **Invocation**:
 
-```bash
-# Very strict mode - fixes all levels
-workflow run ayokoding-web-by-example-quality-gate \
-  --tutorial-path=java/tutorials/by-example/ \
-  --mode=ocd \
-  --max-iterations=10
+```
+User: "Run ayokoding-web by-example quality gate workflow for java/tutorials/by-example/ in ocd mode with max-iterations=10"
 ```
 
 **Checker results**:
@@ -690,48 +671,30 @@ workflow run ayokoding-web-by-example-quality-gate \
 
 ## Workflow Invocation
 
-### Manual Invocation (Step-by-Step)
+### Manual Orchestration (Current)
 
-**User controls each phase**:
+**User triggers workflow execution**:
 
-```bash
-# Phase 1: Create content (manual or AI-assisted)
-# User writes examples
-
-# Phase 2: Validate
-subagent_type: apps-ayokoding-web-by-example-checker
-prompt: "Validate golang by-example tutorial"
-
-# Phase 3: Review
-# User reads generated-reports/ayokoding-web-by-example__*.md
-
-# Phase 4: Fix
-subagent_type: apps-ayokoding-web-by-example-fixer
-prompt: "Apply fixes from [audit report path]"
-
-# Phase 5: Re-validate
-subagent_type: apps-ayokoding-web-by-example-checker
-prompt: "Re-validate golang by-example"
-
-# Repeat Phases 4-5 until clean (or set max-iterations to limit)
+```
+User: "Run ayokoding-web by-example quality gate workflow for golang/tutorials/by-example/ in manual mode"
 ```
 
-### Automated Invocation (Future Enhancement)
+**AI orchestrates all phases**:
 
-**Single command triggers full workflow**:
+1. **Create content** (if needed): User writes examples or uses maker agent
+2. **Validate**: Execute apps**ayokoding-web**by-example-checker logic directly
+3. **Review**: User reads audit report from generated-reports/
+4. **Fix**: Execute apps**ayokoding-web**by-example-fixer logic directly
+5. **Re-validate**: Execute checker logic again
+6. **Iterate**: Repeat validation-fixing until clean or max-iterations
 
-```bash
-# Not yet implemented - future workflow automation
-workflow: ayokoding-web-by-example-quality-gate
-prompt: "Run complete quality gate for golang by-example"
+**With parameters**:
 
-# Would orchestrate:
-# 1. checker → audit
-# 2. user review → decision
-# 3. fixer → apply
-# 4. checker → re-validate
-# 5. repeat until clean
 ```
+User: "Run ayokoding-web by-example quality gate workflow for golang/tutorials/by-example/ in strict mode with max-iterations=10"
+```
+
+The AI applies mode-based fixing and iteration limits during execution.
 
 ## Safety Features
 

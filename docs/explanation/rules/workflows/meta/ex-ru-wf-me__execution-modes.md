@@ -51,11 +51,11 @@ Iteration 3: checker (3 findings) → fixer (3 applied) → 0 findings remain
 
 ### Mode 2: Manual Orchestration (Current State)
 
-**Description**: User or main Claude instance follows workflow steps directly using tools in main context.
+**Description**: User or AI assistant (Claude Code or OpenCode) follows workflow steps directly using tools in main context.
 
 **Characteristics**:
 
-- Main Claude instance executes workflow logic directly
+- AI assistant executes workflow logic directly
 - Direct tool usage (Read, Write, Edit, Bash) in main context
 - Manual iteration control (user decides when to continue)
 - Step-by-step execution with visibility at each stage
@@ -66,7 +66,7 @@ Iteration 3: checker (3 findings) → fixer (3 applied) → 0 findings remain
 ```
 User: "Run plan quality gate workflow for plans/backlog/my-plan/ in manual mode"
 
-Claude: [Executes workflow steps directly]
+AI: [Executes workflow steps directly]
 1. Reads plan files (Read tool)
 2. Validates content (checker logic)
 3. Writes audit report (Write tool to generated-reports/)
@@ -210,7 +210,7 @@ Every workflow should include an "Execution Mode" section:
 
 **Current Mode**: Manual Orchestration
 
-This workflow is currently executed through manual orchestration where the main Claude instance follows workflow steps directly using Read/Write/Edit tools.
+This workflow is currently executed through manual orchestration where the AI assistant (Claude Code or OpenCode) follows workflow steps directly using Read/Write/Edit tools.
 
 **How to Execute**:
 
@@ -227,7 +227,7 @@ Currently do:
 User: "Run my-workflow for [scope] in manual mode"
 ```
 
-Claude will execute the workflow steps directly with full file persistence.
+The AI will execute the workflow steps directly with full file persistence.
 
 **Future**: When workflow runner implemented, use `workflow run` command.
 
@@ -250,7 +250,7 @@ When workflow runner is developed:
 
 ## Tool Usage Rules
 
-### For Main Claude Instance (Manual Mode)
+### For AI Assistant in Manual Mode (Claude Code / OpenCode)
 
 **File Operations** (when executing workflow logic directly):
 - ✅ Use Write tool for creating new files (audit reports, fix reports)
