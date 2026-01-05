@@ -30,3 +30,26 @@ Skill: `wow-generating-validation-reports`
 
 - [Workflow Pattern Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me-workflow-pattern.md)
 - Skills: `docs-applying-diataxis-framework`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [Workflow Pattern Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
+
+**Related Agents**:
+
+- `wow-workflow-fixer` - Fixes issues found by this checker
+- `wow-workflow-maker` - Creates workflow documentation
+
+**Related Conventions**:
+
+- [Workflow Pattern Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
+- [Execution Modes Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me__execution-modes.md)
+
+**Skills**:
+
+- `wow-executing-checker-workflow` - Checker workflow pattern
+- `wow-defining-workflows` - Workflow structure and patterns
+- `wow-assessing-criticality-confidence` - Criticality assessment

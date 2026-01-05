@@ -233,3 +233,26 @@ See wow\_\_generating-validation-reports Skill for report structure.
 4. Recommend re-running wow\_\_rules-checker to verify
 
 **Focus on safety**: Better to skip uncertain fixes than break working agents.
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [Repository Governance Architecture](../../docs/explanation/rules/ex-ru__repository-governance-architecture.md)
+
+**Related Agents**:
+
+- `wow-rules-checker` - Generates audit reports this fixer processes
+- `wow-rules-maker` - Creates repository rules
+
+**Related Conventions**:
+
+- [AI Agents Convention](../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md)
+- [Fixer Confidence Levels](../../docs/explanation/rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md)
+
+**Skills**:
+
+- `wow-applying-fixer-workflow` - Fixer workflow pattern
+- `wow-assessing-criticality-confidence` - Confidence assessment
+- `wow-applying-maker-checker-fixer` - Three-stage workflow

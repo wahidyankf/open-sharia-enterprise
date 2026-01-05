@@ -36,3 +36,24 @@ Create folder structure and \_index.md files for ayokoding-web.
 
 - [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
 - Skill: `apps-ayokoding-web-developing-content`
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+
+**Related Agents**:
+
+- `apps-ayokoding-web-structure-checker` - Validates structure created by this maker
+- `apps-ayokoding-web-structure-fixer` - Fixes structural issues
+
+**Related Conventions**:
+
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [Tutorial Folder Arrangement](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__programming-language-structure.md)
+
+**Skills**:
+
+- `apps-ayokoding-web-developing-content` - ayokoding-web structure standards

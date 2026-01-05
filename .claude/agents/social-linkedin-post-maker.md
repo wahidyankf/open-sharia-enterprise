@@ -28,3 +28,22 @@ Skill: `docs-applying-content-quality` (active voice, clear language, benefits-f
 ## Workflow
 
 Transform technical updates into engaging LinkedIn posts with professional tone.
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+
+**Related Agents**:
+
+- `docs-maker` - Creates documentation that may inspire posts
+- `readme-maker` - Creates README content
+
+**Related Conventions**:
+
+- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md)
+
+**Skills**:
+
+- `docs-applying-content-quality` - Content quality standards
