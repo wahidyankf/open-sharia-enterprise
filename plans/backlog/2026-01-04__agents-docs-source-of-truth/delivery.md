@@ -44,12 +44,22 @@ This migration will be executed in **six phases** with validation gates between 
   cp -r .opencode/agent .opencode/agent.backup
   cp -r .claude/skills .claude/skills.backup
   ```
+- [ ] Verify backups are complete and match source:
+  ```bash
+  diff -r .claude/agents .claude/agents.backup || echo "Backup verified"
+  diff -r .opencode/agent .opencode/agent.backup || echo "Backup verified"
+  diff -r .claude/skills .claude/skills.backup || echo "Backup verified"
+  # Should report no differences for each
+  ```
+- [ ] Document backup sizes for reference:
+  ```bash
+  du -sh .claude/agents.backup .opencode/agent.backup .claude/skills.backup
+  ```
 - [ ] Document backup locations in migration notes
 
 #### Environment Preparation
 
-- [ ] Verify Python 3.8+ installed: `python --version`
-- [ ] Install dependencies: `pip install -r requirements-sync.txt`
+- [ ] Verify Go 1.21+ installed: `go version`
 - [ ] Verify git available: `git --version`
 - [ ] Create target directories:
   ```bash
@@ -57,6 +67,39 @@ This migration will be executed in **six phases** with validation gates between 
   mkdir -p docs/explanation/rules/agents/meta
   mkdir -p docs/explanation/rules/agents/skills
   ```
+
+#### Technical Accuracy Validation
+
+- [ ] Verify Go dependencies exist and are compatible:
+  ```bash
+  # Test fetching packages (don't install yet, just verify they exist)
+  go list -m github.com/spf13/cobra@latest
+  go list -m github.com/go-git/go-git/v5@latest
+  go list -m gopkg.in/yaml.v3@latest
+  go list -m github.com/stretchr/testify@latest
+  # Should return version info for each
+  ```
+- [ ] Verify Go 1.21 compatibility:
+  - [ ] Check Cobra supports Go 1.21+
+  - [ ] Check go-git v5 supports Go 1.21+
+- [ ] Test command syntax examples (spot-check):
+
+  ```bash
+  # Verify git commands work
+  git status
+  git diff --stat
+  git log --oneline -5
+
+  # Verify directory commands work
+  ls -la .claude/agents/ | head -5
+  find .claude/agents/ -name "*.md" | head -3
+  ```
+
+- [ ] Verify file paths reference existing repository structure:
+  - [ ] `.claude/agents/` exists: `test -d .claude/agents && echo "✓"`
+  - [ ] `.opencode/agent/` exists: `test -d .opencode/agent && echo "✓"`
+  - [ ] `.claude/skills/` exists: `test -d .claude/skills && echo "✓"`
+- [ ] Document any path/command discrepancies found
 
 #### Baseline Validation
 
@@ -68,11 +111,15 @@ This migration will be executed in **six phases** with validation gates between 
 
 #### Design Decisions Finalization
 
-- [ ] **Decision 1**: Confirm role values (writer, checker, updater, implementor, specialist)
-- [ ] **Decision 2**: Confirm skills format (keep frontmatter or simplify)
-- [ ] **Decision 3**: Confirm README location (docs as canonical)
-- [ ] **Decision 4**: Confirm validation approach (separate commands or unified CLI)
-- [ ] Document decisions in `tech-docs.md` updates
+**Status**: ✅ **COMPLETED** (2026-01-05)
+
+- [x] **Decision 1**: ✅ APPROVED - Role values: `writer, checker, updater, implementor, specialist`
+- [x] **Decision 2**: ✅ APPROVED - Skills format: Keep frontmatter + use kebab-case (hyphens, not underscores)
+- [x] **Decision 3**: ✅ APPROVED - README location: `docs/` as canonical source (`.claude/` and `.opencode/` auto-generated)
+- [x] **Decision 4**: ✅ APPROVED - Validation approach: Separate CLI commands (granular control)
+- [x] Document decisions in `tech-docs.md` updates
+
+**Documentation**: See `tech-docs.md` "Design Decisions (Finalized)" section for detailed rationale
 
 ### Success Criteria
 
@@ -413,6 +460,41 @@ cat docs/explanation/rules/agents/skills/plan-creating-project-plans/SKILL.md
 - [ ] Sync reports: "45 agents synced, 18 skills synced"
 - [ ] Post-sync validation passes automatically
 
+**If Sync Fails** (error recovery procedure):
+
+1. **Review error message**:
+   - Which validation failed? (source, Claude Code, OpenCode?)
+   - Which specific agent/skill caused the failure?
+   - What type of error? (missing field, invalid value, file I/O?)
+
+2. **Check sync CLI logs**:
+
+   ```bash
+   # If verbose output not shown, check logs
+   ./repo-cli agents sync --verbose 2>&1 | tee sync-error.log
+   ```
+
+3. **Recovery options**:
+   - **Option A**: Fix source definition in `docs/explanation/rules/agents/content/` and retry sync
+   - **Option B**: Skip problematic agent temporarily (document as known issue, investigate later)
+   - **Option C**: Abort migration and rollback to Phase 2 (fix CLI generation logic)
+
+4. **Decision criteria**:
+   - **1-3 agents fail**: Fix source definitions (Option A), retry sync
+   - **4-10 agents fail**: Investigate pattern, may indicate systematic issue
+   - **>10 agents fail**: Abort migration (Option C), CLI has systematic bugs
+
+5. **Re-run sync after fix**:
+
+   ```bash
+   ./repo-cli agents sync --verbose
+   ```
+
+6. **Document issues**:
+   - Create issue for each problematic agent
+   - Note error message, fix applied, validation status
+   - Track in migration notes
+
 #### Step 3.5: Validate Generated Formats
 
 ```bash
@@ -706,10 +788,64 @@ cp -r .claude/skills.backup .claude/skills
   ./repo-cli agents sync
   ```
 
-- [ ] Verify meta-agents work correctly:
-  - [ ] Test `agent-maker`: Create test agent in docs source
-  - [ ] Test `wow-rules-checker`: Validate docs source (not generated)
-  - [ ] Test `wow-rules-fixer`: Fix issue in docs source (not generated)
+- [ ] **Comprehensive Meta-Agent Validation** (CRITICAL):
+
+  **Test 1: agent-maker creates agents in correct location**
+  - [ ] Invoke agent-maker to create test agent "test-validator"
+  - [ ] Verify agent created at `docs/explanation/rules/agents/content/test-validator.md` (NOT `.claude/agents/`)
+  - [ ] Verify frontmatter uses `role: checker` (NOT `color: green`)
+  - [ ] Verify frontmatter uses capitalized tools (`Read`, `Grep`, `Glob` - NOT lowercase)
+  - [ ] Verify agent-maker instructs user to run sync: `./repo-cli agents sync`
+  - [ ] Verify agent-maker warns NOT to edit `.claude/agents/` directly
+  - [ ] Run sync and verify test agent appears in both `.claude/agents/` and `.opencode/agent/`
+
+  **Test 2: wow-rules-checker validates source (not generated)**
+  - [ ] Create intentional error in `docs/explanation/rules/agents/content/docs-maker.md` (e.g., change `role: writer` to `role: invalid-role`)
+  - [ ] Invoke wow-rules-checker for agent validation
+  - [ ] Verify checker reports error for `docs/explanation/rules/agents/content/docs-maker.md`
+  - [ ] Verify checker does NOT validate `.claude/agents/` (skipped as generated)
+  - [ ] Verify checker does NOT validate `.opencode/agent/` (skipped as generated)
+  - [ ] Revert intentional error
+
+  **Test 3: wow-rules-checker detects edits to generated directories**
+  - [ ] Modify `.claude/agents/docs-maker.md` directly (add comment line)
+  - [ ] Stage the change: `git add .claude/agents/docs-maker.md`
+  - [ ] Invoke wow-rules-checker
+  - [ ] Verify checker reports error: "Generated file modified: .claude/agents/docs-maker.md"
+  - [ ] Verify error message suggests editing source instead: `docs/explanation/rules/agents/content/docs-maker.md`
+  - [ ] Revert change: `git checkout .claude/agents/docs-maker.md`
+
+  **Test 4: wow-rules-fixer fixes source (not generated)**
+  - [ ] Create wow-rules-checker audit report with finding for docs source
+  - [ ] Invoke wow-rules-fixer with audit report
+  - [ ] Verify fixer modifies `docs/explanation/rules/agents/content/` (source)
+  - [ ] Verify fixer does NOT modify `.claude/agents/` (generated)
+  - [ ] Verify fixer does NOT modify `.opencode/agent/` (generated)
+  - [ ] Verify fixer instructs user to run sync after fix
+
+  **Test 5: wow-rules-fixer skips findings for generated files**
+  - [ ] Create mock finding referencing `.claude/agents/test-agent.md` (generated file)
+  - [ ] Invoke wow-rules-fixer
+  - [ ] Verify fixer skips this finding with warning
+  - [ ] Verify fixer logs: "Finding references generated file - skipping"
+  - [ ] Verify fixer suggests: "Edit source: docs/explanation/rules/agents/content/test-agent.md"
+
+  **Cleanup**:
+  - [ ] Remove test agent: `rm docs/explanation/rules/agents/content/test-validator.md`
+  - [ ] Run sync to remove from generated directories
+  - [ ] Remove mock audit reports and findings
+
+  **Success Criteria for Meta-Agent Validation**:
+  - [ ] All 5 tests pass without errors
+  - [ ] agent-maker creates in correct location (docs source)
+  - [ ] wow-rules-checker validates source, skips generated, detects generated file edits
+  - [ ] wow-rules-fixer fixes source, skips generated file findings
+
+  **Rollback for Meta-Agent Failures**:
+  - [ ] If any test fails, revert meta-agent updates from backup
+  - [ ] Restore from: `git checkout main -- docs/explanation/rules/agents/content/agent-maker.md docs/explanation/rules/agents/content/wow-rules-checker.md docs/explanation/rules/agents/content/wow-rules-fixer.md`
+  - [ ] Re-sync: `./repo-cli agents sync`
+  - [ ] Document failure, investigate root cause before retrying
 
 ### Success Criteria
 
@@ -1001,15 +1137,15 @@ git reset --hard pre-agents-docs-migration
 
 ### Quantitative Metrics
 
-| Metric                     | Target       | Measurement                                     |
-| -------------------------- | ------------ | ----------------------------------------------- | ------ |
-| **Agents migrated**        | 45/45 (100%) | `ls docs/explanation/rules/agents/content/\*.md | wc -l` |
-| **Skills migrated**        | 18/18 (100%) | `ls -d docs/explanation/rules/agents/skills/\*/ | wc -l` |
-| **Validation errors**      | 0            | All validation commands pass                    |
-| **Functional regressions** | 0            | 10/10 critical agents work correctly            |
-| **Sync time**              | <30s         | `time ./repo-cli agents sync`                   |
-| **Validation time**        | <60s         | Combined Claude Code + OpenCode validation      |
-| **Code coverage (CLI)**    | >80%         | `go test -cover ./...`                          |
+| Metric                     | Target       | Measurement                                              |
+| -------------------------- | ------------ | -------------------------------------------------------- |
+| **Agents migrated**        | 45/45 (100%) | `ls docs/explanation/rules/agents/content/*.md \| wc -l` |
+| **Skills migrated**        | 18/18 (100%) | `ls -d docs/explanation/rules/agents/skills/*/ \| wc -l` |
+| **Validation errors**      | 0            | All validation commands pass                             |
+| **Functional regressions** | 0            | 10/10 critical agents work correctly                     |
+| **Sync time**              | <30s         | `time ./repo-cli agents sync`                            |
+| **Validation time**        | <60s         | Combined Claude Code + OpenCode validation               |
+| **Code coverage (CLI)**    | >80%         | `go test -cover ./...`                                   |
 
 ### Qualitative Metrics
 

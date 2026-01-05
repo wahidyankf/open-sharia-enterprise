@@ -57,6 +57,36 @@ graph TB
 
 ---
 
+## Implementation Language
+
+**Final Implementation**: Go (using Cobra framework in `apps/repo-cli/`)
+
+**Python Code References**: Throughout this document, Python code examples and function signatures are provided as **pseudocode for conceptual clarity**. The actual implementation will be in Go.
+
+**Why Go?**:
+
+- Type safety and compile-time error detection
+- Better performance for file operations and git metadata extraction
+- Nx monorepo integration (already has Go projects)
+- Single binary distribution (no runtime dependencies)
+
+**Migration Path**:
+
+1. **Phase 1**: Develop Go CLI application (`apps/repo-cli`) with Cobra commands
+2. **Phase 2+**: All sync, extraction, and validation operations use Go CLI
+3. **No Python scripts will be created**
+
+**Command Mapping** (Pseudocode → Actual):
+
+- Pseudocode: `python scripts/sync-docs-to-agents.py`
+- Actual: `./repo-cli agents sync`
+- Pseudocode: `python scripts/validate-agent-definitions.py`
+- Actual: `./repo-cli agents validate`
+
+**Note**: Gherkin acceptance criteria and code examples showing Python syntax should be interpreted as conceptual specifications. Implementation details will follow Go idioms and patterns.
+
+---
+
 ## Directory Structure
 
 ### Proposed Structure
@@ -333,9 +363,20 @@ description: Brief description of skill purpose
 
 **Note**: Claude Code uses model names as-is. OpenCode requires specific model identifiers.
 
+**Provider Configuration**: Model mappings shown are for default z.ai provider. If using alternative OpenCode LLM providers, update mappings in sync CLI configuration (`apps/repo-cli/internal/agent/generator.go` - `MODEL_MAP` constant). The sync CLI allows provider-specific model mapping configuration.
+
 ### MCP (Model Context Protocol) Servers for OpenCode
 
 **Purpose**: Ensure OpenCode has feature parity with Claude Code by providing equivalent MCP capabilities.
+
+**IMPORTANT - Migration Scope Clarification**:
+
+- ⚠️ **NOT included in this migration plan**: MCP server configuration and setup
+- **Documented for reference only**: This section provides context about OpenCode's MCP capabilities
+- **No action required**: Migration only affects agent definition format and sync process
+- **User responsibility**: OpenCode users configure MCP servers independently according to their needs
+
+See [Out of Scope](#out-of-scope) section for complete exclusions.
 
 **Default MCP Configuration** (from `~/.config/opencode/opencode.json`):
 
@@ -1419,39 +1460,125 @@ See [Agent Architecture](./docs/explanation/rules/agents/meta/ex-ag-me__architec
 
 ---
 
-## Open Design Questions
+## Design Decisions (Finalized)
 
-### Question 1: Role Values
+**Decision Date**: 2026-01-05
+**Decision Makers**: Repository maintainer
+**Status**: ✅ All design questions resolved
 
-**Current proposal**: `writer, checker, updater, implementor, specialist`
+### Decision 1: Role Values ✅
 
-**Alternative**: Use more specific roles (e.g., `content-creator`, `validator`, `fixer`, `executor`, `specialist`)
+**APPROVED**: `writer, checker, updater, implementor, specialist`
 
-**Decision needed**: Confirm role names before implementation
+**Rationale**:
 
-### Question 2: Skills Format Simplification
+- Concise and semantically clear
+- Maps naturally to existing agent patterns (e.g., `docs-maker` → `writer`)
+- Provides clear categorization for all 45 existing agents
 
-**Current**: Keep `SKILL.md` structure from `.claude/skills/`
+**Mapping**:
 
-**Alternative**: Simplify to pure markdown without frontmatter (name inferred from filename)
+- `writer` (blue) - Creates or updates content (e.g., docs-maker, plan-maker, readme-maker)
+- `checker` (green) - Validates content, generates audit reports (e.g., docs-checker, plan-checker)
+- `updater` (yellow) - Modifies existing content based on audit reports (e.g., docs-fixer, plan-fixer)
+- `implementor` (purple) - Executes complex multi-step tasks (e.g., plan-executor, swe-hugo-developer)
+- `specialist` (orange) - Performs specialized tasks (e.g., docs-file-manager, deployers)
 
-**Decision needed**: Should skills have frontmatter, or just markdown body?
+**Rejected Alternative**: More verbose names (`content-creator`, `validator`, `fixer`) - unnecessary verbosity
 
-### Question 3: README Catalog Location
+### Decision 2: Skills Format ✅
 
-**Current proposal**: `docs/explanation/rules/agents/README.md` becomes canonical
+**APPROVED**: Keep frontmatter + use kebab-case naming
 
-**Alternative**: Keep `.claude/agents/README.md` as canonical, copy to docs
+**Format**:
 
-**Decision needed**: Which README is source of truth?
+```markdown
+---
+name: docs-applying-content-quality
+description: Universal markdown content quality standards...
+---
 
-### Question 4: New Validation Script vs Extension
+# Skill Content
+```
 
-**Current proposal**: Create new `validate-claude-agents.py`
+**Naming Convention**: **kebab-case (lowercase with hyphens)**
 
-**Alternative**: Extend existing `validate-opencode-agents.py` to handle both formats
+- ✅ Valid: `docs-applying-content-quality`, `plan-creating-project-plans`
+- ❌ Invalid: `docs__applying-content-quality` (underscores), `DocsQuality` (camelCase)
 
-**Decision needed**: Separate scripts or unified validator?
+**Rationale**:
+
+- **Compatibility**: Both Claude Code and OpenCode require kebab-case for skill names
+- **Web Research Verification** (2026-01-05):
+  - Claude Code examples: `react-expert`, `slack-gif-creator`, `pdf`
+  - OpenCode examples: `pdf-processing`, `data-analysis`, `code-review`
+  - Both tools require `name` field to match directory name
+- **Consistency**: Maintains format consistency with agent definitions (frontmatter + body)
+- **Validation**: Explicit name field enables validation (name matches folder)
+
+**Rejected Alternative**: Double-underscore separator (`category__skill-name`) - incompatible with both tools
+
+### Decision 3: README Catalog Location ✅
+
+**APPROVED**: `docs/explanation/rules/agents/README.md` as canonical source
+
+**Architecture**:
+
+- **Source**: `docs/explanation/rules/agents/README.md` (canonical, manually edited)
+- **Generated**: `.claude/agents/README.md` (auto-generated with "DO NOT EDIT" banner)
+- **Generated**: `.opencode/agent/README.md` (auto-generated with "DO NOT EDIT" banner)
+
+**Sync Workflow**:
+
+```bash
+# Sync generates README files from docs source
+./repo-cli agents sync
+# Creates/updates .claude/agents/README.md
+# Creates/updates .opencode/agent/README.md
+```
+
+**Rationale**:
+
+- Co-located with agent source definitions in `docs/`
+- Documentation-first approach (aligns with migration philosophy)
+- Single source of truth for agent catalog
+- Generated copies ensure tool directories stay current
+
+**Rejected Alternative**: Keep `.claude/agents/README.md` as canonical - not aligned with docs-as-source migration goal
+
+### Decision 4: Validation Approach ✅
+
+**APPROVED**: Separate CLI commands (granular control)
+
+**CLI Commands**:
+
+```bash
+# Validate source definitions (docs/)
+./repo-cli agents validate
+
+# Validate specific format
+./repo-cli agents validate --format claude
+./repo-cli agents validate --format opencode
+
+# Validate cross-format consistency
+./repo-cli agents validate --cross-format
+
+# Validate skills
+./repo-cli skills validate
+```
+
+**Rationale**:
+
+- **Granular control**: Validate specific formats when needed (faster CI/CD)
+- **Flexibility**: Development workflows often need single-format validation
+- **Clear intent**: Explicit what's being validated
+- **Performance**: Avoid validating all formats when only one needed
+
+**Rejected Alternative**: Unified validator (validates all formats by default) - less flexible for CI/CD pipelines and development workflows
+
+---
+
+**Design Decisions Complete**: All questions resolved. Implementation can proceed.
 
 ---
 

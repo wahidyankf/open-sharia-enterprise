@@ -166,13 +166,20 @@ Feature: Skill Definition Creation
     And a file is created at ".claude/skills/example-new-skill/SKILL.md"
     And the skill file contains identical content from source
 
-  Scenario: Skill uses double-underscore naming in name field
-    Given I create directory "docs/explanation/rules/agents/skills/invalid-skill-name/"
-    And I create file "docs/explanation/rules/agents/skills/invalid-skill-name/SKILL.md"
-    And the frontmatter contains "name: invalid-skill-name"
-    When I run "python scripts/validate-skill-definitions.py"
-    Then validation fails with error "Skill name must use double-underscore separator"
-    And validation suggests "Use format: category__skill-name"
+  Scenario: Skill uses kebab-case naming in name field
+    Given I create directory "docs/explanation/rules/agents/skills/valid-skill-name/"
+    And I create file "docs/explanation/rules/agents/skills/valid-skill-name/SKILL.md"
+    And the frontmatter contains "name: valid-skill-name"
+    When I run "./repo-cli skills validate"
+    Then validation passes with 0 errors
+
+  Scenario: Skill name with invalid characters fails validation
+    Given I create directory "docs/explanation/rules/agents/skills/Invalid_Skill/"
+    And I create file "docs/explanation/rules/agents/skills/Invalid_Skill/SKILL.md"
+    And the frontmatter contains "name: Invalid_Skill"
+    When I run "./repo-cli skills validate"
+    Then validation fails with error "Skill name must use kebab-case (lowercase with hyphens)"
+    And validation suggests "Use format: category-skill-name (e.g., docs-applying-content-quality)"
 ```
 
 ---
