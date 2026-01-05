@@ -43,17 +43,19 @@ This migration will be executed in **six phases** with validation gates between 
   cp -r .claude/agents .claude/agents.backup
   cp -r .opencode/agent .opencode/agent.backup
   cp -r .claude/skills .claude/skills.backup
+  cp -r .opencode/skills .opencode/skills.backup
   ```
 - [ ] Verify backups are complete and match source:
   ```bash
   diff -r .claude/agents .claude/agents.backup || echo "Backup verified"
   diff -r .opencode/agent .opencode/agent.backup || echo "Backup verified"
   diff -r .claude/skills .claude/skills.backup || echo "Backup verified"
+  diff -r .opencode/skills .opencode/skills.backup || echo "Backup verified"
   # Should report no differences for each
   ```
 - [ ] Document backup sizes for reference:
   ```bash
-  du -sh .claude/agents.backup .opencode/agent.backup .claude/skills.backup
+  du -sh .claude/agents.backup .opencode/agent.backup .claude/skills.backup .opencode/skills.backup
   ```
 - [ ] Document backup locations in migration notes
 
@@ -99,6 +101,7 @@ This migration will be executed in **six phases** with validation gates between 
   - [ ] `.claude/agents/` exists: `test -d .claude/agents && echo "✓"`
   - [ ] `.opencode/agent/` exists: `test -d .opencode/agent && echo "✓"`
   - [ ] `.claude/skills/` exists: `test -d .claude/skills && echo "✓"`
+  - [ ] `.opencode/skills/` exists (will be created): `test -d .opencode/skills || echo "Will create during sync"`
 - [ ] Document any path/command discrepancies found
 
 #### Baseline Validation
@@ -146,11 +149,11 @@ rm -rf .claude/agents.backup .opencode/agent.backup .claude/skills.backup
 
 ## Phase 1: CLI Application Development
 
-**Goal**: Create Go CLI application (`repo-cli`) with Cobra for agent/skill management
+**Goal**: Create Go CLI application (`butler-cli`) with Cobra for agent/skill management
 
 ### Deliverables
 
-1. `apps/repo-cli/` - Go application structure
+1. `apps/butler-cli/` - Go application structure
 2. `cmd/agents/` - Agent commands (extract, sync, validate)
 3. `cmd/skills/` - Skill commands (extract, sync, validate)
 4. `internal/agent/` - Agent parsing, generation, validation
@@ -161,11 +164,10 @@ rm -rf .claude/agents.backup .opencode/agent.backup .claude/skills.backup
 
 #### Step 1.1: Initialize Go Application
 
-- [ ] Create `apps/repo-cli/` directory
-- [ ] Initialize Go module: `go mod init github.com/wahidyankf/open-sharia-enterprise/apps/repo-cli`
+- [ ] Verify `apps/butler-cli/` directory exists (skeleton already created)
+- [ ] Verify Go module initialized: `github.com/wahidyankf/open-sharia-enterprise/apps/butler-cli`
 - [ ] Add dependencies:
   ```bash
-  go get github.com/spf13/cobra@latest
   go get github.com/go-git/go-git/v5
   go get gopkg.in/yaml.v3
   go get github.com/stretchr/testify
@@ -177,8 +179,8 @@ rm -rf .claude/agents.backup .opencode/agent.backup .claude/skills.backup
   - [ ] `internal/agent/` - Agent business logic
   - [ ] `internal/skill/` - Skill business logic
   - [ ] `internal/git/` - Git operations
-- [ ] Create `main.go` entry point
-- [ ] Test build: `go build -o repo-cli`
+- [ ] Verify `main.go` entry point exists (skeleton already created)
+- [ ] Test build: `go build -o butler-cli`
 
 #### Step 1.2: Implement Agent Extraction (`cmd/agents/extract.go`)
 
@@ -261,8 +263,8 @@ rm -rf .claude/agents.backup .opencode/agent.backup .claude/skills.backup
 
 ### Success Criteria
 
-- [ ] `repo-cli` application builds successfully
-- [ ] All commands have Cobra help documentation (`repo-cli agents --help`)
+- [ ] `butler-cli` application builds successfully
+- [ ] All commands have Cobra help documentation (`butler-cli agents --help`)
 - [ ] Each command tested on sample data
 - [ ] Code passes Go linting (`golangci-lint run`)
 - [ ] Code follows Go best practices and repository standards
@@ -273,11 +275,8 @@ rm -rf .claude/agents.backup .opencode/agent.backup .claude/skills.backup
 If CLI development fails:
 
 ```bash
-# Remove incomplete CLI application
-rm -rf apps/repo-cli/
-
 # Revert any committed CLI drafts
-git checkout main -- apps/repo-cli/
+git checkout main -- apps/butler-cli/
 ```
 
 ---
@@ -371,11 +370,11 @@ rm -rf tests/fixtures/
 
 ```bash
 # Build CLI first
-cd apps/repo-cli
-go build -o repo-cli
+cd apps/butler-cli
+go build -o butler-cli
 
 # Extract all 45 agents
-./repo-cli agents extract --verbose
+./butler-cli agents extract --verbose
 
 # Review output
 ls -la ../../docs/explanation/rules/agents/content/
@@ -401,7 +400,7 @@ cat ../../docs/explanation/rules/agents/content/swe-hugo-developer.md
 
 ```bash
 # Extract all 23 skills
-./repo-cli skills extract --verbose
+./butler-cli skills extract --verbose
 
 # Review output
 ls -la docs/explanation/rules/agents/skills/
@@ -425,10 +424,10 @@ cat docs/explanation/rules/agents/skills/plan-creating-project-plans/SKILL.md
 
 ```bash
 # Validate extracted agents
-./repo-cli agents validate
+butler-cli agents validate
 
 # Validate extracted skills
-./repo-cli skills validate
+butler-cli skills validate
 ```
 
 **Checklist**:
@@ -441,15 +440,17 @@ cat docs/explanation/rules/agents/skills/plan-creating-project-plans/SKILL.md
 
 ```bash
 # Dry run first (preview changes)
-./repo-cli agents sync --dry-run
+butler-cli agents sync --dry-run
 
 # Review dry run output - should show:
 # - 45 agents will be written to .claude/agents/
 # - 45 agents will be written to .opencode/agent/
 # - 23 skills will be written to .claude/skills/
+# - 23 skills will be written to .opencode/skills/
 
 # Execute sync
-./repo-cli agents sync --verbose
+butler-cli agents sync --verbose
+butler-cli skills sync --verbose
 ```
 
 **Checklist**:
@@ -457,7 +458,7 @@ cat docs/explanation/rules/agents/skills/plan-creating-project-plans/SKILL.md
 - [ ] Dry run completes without errors
 - [ ] Dry run output reviewed and correct
 - [ ] Sync completes without errors
-- [ ] Sync reports: "45 agents synced, 23 skills synced"
+- [ ] Sync reports: "45 agents synced, 23 skills synced (both Claude Code and OpenCode formats)"
 - [ ] Post-sync validation passes automatically
 
 **If Sync Fails** (error recovery procedure):
@@ -471,7 +472,7 @@ cat docs/explanation/rules/agents/skills/plan-creating-project-plans/SKILL.md
 
    ```bash
    # If verbose output not shown, check logs
-   ./repo-cli agents sync --verbose 2>&1 | tee sync-error.log
+   butler-cli agents sync --verbose 2>&1 | tee sync-error.log
    ```
 
 3. **Recovery options**:
@@ -487,7 +488,7 @@ cat docs/explanation/rules/agents/skills/plan-creating-project-plans/SKILL.md
 5. **Re-run sync after fix**:
 
    ```bash
-   ./repo-cli agents sync --verbose
+   butler-cli agents sync --verbose
    ```
 
 6. **Document issues**:
@@ -499,16 +500,18 @@ cat docs/explanation/rules/agents/skills/plan-creating-project-plans/SKILL.md
 
 ```bash
 # Validate Claude Code format
-./repo-cli agents validate --format claude
+butler-cli agents validate --format claude
+butler-cli skills validate --format claude
 
 # Validate OpenCode format
-./repo-cli agents validate --format opencode
+butler-cli agents validate --format opencode
+butler-cli skills validate --format opencode
 ```
 
 **Checklist**:
 
-- [ ] Claude Code validation: 45 agents, 0 errors
-- [ ] OpenCode validation: 45 agents, 0 errors
+- [ ] Claude Code validation: 45 agents, 23 skills, 0 errors
+- [ ] OpenCode validation: 45 agents, 23 skills, 0 errors
 - [ ] Compare to baseline (should match or improve)
 
 ### Success Criteria
@@ -526,10 +529,11 @@ If migration execution fails:
 
 ```bash
 # Restore from backup
-rm -rf .claude/agents .opencode/agent .claude/skills
+rm -rf .claude/agents .opencode/agent .claude/skills .opencode/skills
 cp -r .claude/agents.backup .claude/agents
 cp -r .opencode/agent.backup .opencode/agent
 cp -r .claude/skills.backup .claude/skills
+cp -r .opencode/skills.backup .opencode/skills
 
 # Remove extracted docs (start fresh next attempt)
 rm -rf docs/explanation/rules/agents/content/*.md
@@ -550,7 +554,7 @@ rm -rf docs/explanation/rules/agents/skills/*.md
 
 - [ ] Run cross-format consistency check:
   ```bash
-  ./repo-cli agents validate --cross-format
+  butler-cli agents validate --cross-format
   # Should confirm identical body content, tool permissions, skills
   ```
 - [ ] Compare file counts:
@@ -558,8 +562,9 @@ rm -rf docs/explanation/rules/agents/skills/*.md
   echo "Source: $(ls docs/explanation/rules/agents/content/*.md | wc -l) agents"
   echo "Claude Code: $(ls .claude/agents/*.md | grep -v README | wc -l) agents"
   echo "OpenCode: $(ls .opencode/agent/*.md | grep -v README | wc -l) agents"
-  echo "Skills: $(ls .claude/skills/ | wc -l) skills"
-  # All should be 45, 45, 45, 18
+  echo "Claude Skills: $(ls .claude/skills/ | wc -l) skills"
+  echo "OpenCode Skills: $(ls .opencode/skills/ | wc -l) skills"
+  # All should be 45, 45, 45, 23, 23
   ```
 
 #### Functional Testing - Claude Code Format
@@ -618,20 +623,20 @@ rm -rf docs/explanation/rules/agents/skills/*.md
 
 - [ ] Measure sync time:
   ```bash
-  time ./repo-cli agents sync
+  time butler-cli agents sync
   # Should complete in <30 seconds
   ```
 - [ ] Measure validation time:
   ```bash
-  time ./repo-cli agents validate --format claude
-  time ./repo-cli agents validate --format opencode
+  time butler-cli agents validate --format claude
+  time butler-cli agents validate --format opencode
   # Combined should be <60 seconds
   ```
 
 ### Success Criteria
 
 - [ ] Cross-format consistency validated
-- [ ] File counts correct (45 agents, 18 skills in all locations)
+- [ ] File counts correct (45 agents, 23 skills in all locations)
 - [ ] 10/10 critical agents work in Claude Code
 - [ ] 10/10 critical agents work in OpenCode
 - [ ] Edge cases handled correctly
@@ -762,7 +767,7 @@ cp -r .claude/skills.backup .claude/skills
   - [ ] Create agents in `docs/explanation/rules/agents/content/` (not `.claude/agents/`)
   - [ ] Use tool-agnostic format (role instead of color)
   - [ ] Use capitalized tool names (Read, Write, Edit)
-  - [ ] Instruct to run sync command after creation: `./repo-cli agents sync`
+  - [ ] Instruct user to run sync command after creation: `butler-cli agents sync`
   - [ ] Warn NOT to create in `.claude/agents/` directly
 
 - [ ] Update `docs/explanation/rules/agents/content/wow-rules-checker.md` (source):
@@ -785,7 +790,7 @@ cp -r .claude/skills.backup .claude/skills
 - [ ] Sync meta-agent updates:
 
   ```bash
-  ./repo-cli agents sync
+  butler-cli agents sync
   ```
 
 - [ ] **Comprehensive Meta-Agent Validation** (CRITICAL):
@@ -795,7 +800,7 @@ cp -r .claude/skills.backup .claude/skills
   - [ ] Verify agent created at `docs/explanation/rules/agents/content/test-validator.md` (NOT `.claude/agents/`)
   - [ ] Verify frontmatter uses `role: checker` (NOT `color: green`)
   - [ ] Verify frontmatter uses capitalized tools (`Read`, `Grep`, `Glob` - NOT lowercase)
-  - [ ] Verify agent-maker instructs user to run sync: `./repo-cli agents sync`
+  - [ ] Verify agent-maker instructs user to run sync: `butler-cli agents sync`
   - [ ] Verify agent-maker warns NOT to edit `.claude/agents/` directly
   - [ ] Run sync and verify test agent appears in both `.claude/agents/` and `.opencode/agent/`
 
@@ -821,31 +826,35 @@ cp -r .claude/skills.backup .claude/skills
   - [ ] Verify fixer modifies `docs/explanation/rules/agents/content/` (source)
   - [ ] Verify fixer does NOT modify `.claude/agents/` (generated)
   - [ ] Verify fixer does NOT modify `.opencode/agent/` (generated)
-  - [ ] Verify fixer instructs user to run sync after fix
+  - [ ] Verify fixer instructs user to run: `butler-cli agents sync` after fix
 
-  **Test 5: wow-rules-fixer skips findings for generated files**
-  - [ ] Create mock finding referencing `.claude/agents/test-agent.md` (generated file)
-  - [ ] Invoke wow-rules-fixer
-  - [ ] Verify fixer skips this finding with warning
-  - [ ] Verify fixer logs: "Finding references generated file - skipping"
-  - [ ] Verify fixer suggests: "Edit source: docs/explanation/rules/agents/content/test-agent.md"
+**Test5: wow-rules-fixer skips findings for generated files**
 
-  **Cleanup**:
-  - [ ] Remove test agent: `rm docs/explanation/rules/agents/content/test-validator.md`
-  - [ ] Run sync to remove from generated directories
-  - [ ] Remove mock audit reports and findings
+- [ ] Create mock finding referencing `.claude/agents/test-agent.md` (generated file)
+- [ ] Invoke wow-rules-fixer
+- [ ] Verify fixer skips this finding with warning
+- [ ] Verify fixer logs: "Finding references generated file - skipping"
+- [ ] Verify fixer suggests: "Edit source: docs/explanation/rules/agents/content/test-agent.md"
 
-  **Success Criteria for Meta-Agent Validation**:
-  - [ ] All 5 tests pass without errors
-  - [ ] agent-maker creates in correct location (docs source)
-  - [ ] wow-rules-checker validates source, skips generated, detects generated file edits
-  - [ ] wow-rules-fixer fixes source, skips generated file findings
+**Cleanup**:
 
-  **Rollback for Meta-Agent Failures**:
-  - [ ] If any test fails, revert meta-agent updates from backup
-  - [ ] Restore from: `git checkout main -- docs/explanation/rules/agents/content/agent-maker.md docs/explanation/rules/agents/content/wow-rules-checker.md docs/explanation/rules/agents/content/wow-rules-fixer.md`
-  - [ ] Re-sync: `./repo-cli agents sync`
-  - [ ] Document failure, investigate root cause before retrying
+- [ ] Remove test agent: `rm docs/explanation/rules/agents/content/test-validator.md`
+- [ ] Run sync to remove from generated directories
+- [ ] Remove mock audit reports and findings
+
+**Success Criteria for Meta-Agent Validation**:
+
+- [ ] All 5 tests pass without errors
+- [ ] agent-maker creates in correct location (docs source)
+- [ ] wow-rules-checker validates source, skips generated, detects generated file edits
+- [ ] wow-rules-fixer fixes source, skips generated file findings
+
+**Rollback for Meta-Agent Failures**:
+
+- [ ] If any test fails, revert meta-agent updates from backup
+- [ ] Restore from: `git checkout main -- docs/explanation/rules/agents/content/agent-maker.md docs/explanation/rules/agents/content/wow-rules-checker.md docs/explanation/rules/agents/content/wow-rules-fixer.md`
+  - [ ] Re-sync: `butler-cli agents sync`
+- [ ] Document failure, investigate root cause before retrying
 
 ### Success Criteria
 
@@ -881,10 +890,10 @@ git checkout main -- .husky/pre-commit
 
 - [ ] Run all validation commands:
   ```bash
-  ./repo-cli agents validate
-  ./repo-cli skills validate
-  ./repo-cli agents validate --format claude
-  ./repo-cli agents validate --format opencode
+  butler-cli agents validate
+  butler-cli skills validate
+  butler-cli agents validate --format claude
+  butler-cli agents validate --format opencode
   ```
 - [ ] Confirm all pass with 0 errors
 - [ ] Review warnings (if any) and document acceptable
@@ -899,9 +908,9 @@ git checkout main -- .husky/pre-commit
 
 - [ ] Run linter on Go code:
   ```bash
-  cd apps/repo-cli
+  cd apps/butler-cli
   golangci-lint run ./...
-  # Or use: nx lint repo-cli
+  # Or use: nx lint butler-cli
   ```
 - [ ] Fix linting issues (or document exceptions)
 - [ ] Run Prettier on updated markdown:
@@ -922,7 +931,7 @@ git checkout main -- .husky/pre-commit
   ```bash
   git add docs/explanation/rules/agents/
   git add docs/explanation/rules/agents/skills/
-  git add apps/repo-cli/
+  git add apps/butler-cli/
   git add .claude/agents/
   git add .opencode/agent/
   git add .claude/skills/
@@ -980,6 +989,7 @@ git checkout main -- .husky/pre-commit
   rm -rf .claude/agents.backup
   rm -rf .opencode/agent.backup
   rm -rf .claude/skills.backup
+  rm -rf .opencode/skills.backup
   ```
 - [ ] Remove migration tag (optional):
   ```bash
@@ -1040,10 +1050,9 @@ git reset --hard pre-agents-docs-migration
 ### Follow-Up Tasks (Next Sprint)
 
 - [ ] Create tutorial video: "How to Edit Agents in New Architecture"
-- [ ] Add sync CLI to CI/CD (automated sync check on PR)
-- [ ] Implement incremental sync (optimization - see `tech-docs.md`)
-- [ ] Create `agent-template.md` in `docs/explanation/rules/agents/content/`
-- [ ] Archive old plan: Move to `plans/done/2026-01-04__agents-docs-source-of-truth/`
+  - [ ] Add sync CLI to CI/CD (automated sync check on PR)
+  - [ ] Create `agent-template.md` in `docs/explanation/rules/agents/content/`
+  - [ ] Archive old plan: Move to `plans/done/2026-01-04__agents-docs-source-of-truth/`
 
 ### Monitoring
 
@@ -1053,7 +1062,7 @@ git reset --hard pre-agents-docs-migration
   - [ ] Any contributor confusion?
 - [ ] Week 2-4: Weekly consistency audit:
   ```bash
-  ./repo-cli agents validate --cross-format
+  butler-cli agents validate --cross-format
   ```
 - [ ] Month 1: Review adoption
   - [ ] Are contributors editing docs source correctly?
@@ -1137,15 +1146,15 @@ git reset --hard pre-agents-docs-migration
 
 ### Quantitative Metrics
 
-| Metric                     | Target       | Measurement                                              |
-| -------------------------- | ------------ | -------------------------------------------------------- |
-| **Agents migrated**        | 45/45 (100%) | `ls docs/explanation/rules/agents/content/*.md \| wc -l` |
-| **Skills migrated**        | 23/23 (100%) | `ls -d docs/explanation/rules/agents/skills/*/ \| wc -l` |
-| **Validation errors**      | 0            | All validation commands pass                             |
-| **Functional regressions** | 0            | 10/10 critical agents work correctly                     |
-| **Sync time**              | <30s         | `time ./repo-cli agents sync`                            |
-| **Validation time**        | <60s         | Combined Claude Code + OpenCode validation               |
-| **Code coverage (CLI)**    | >80%         | `go test -cover ./...`                                   |
+| Metric                     | Target       | Measurement                                                      |
+| -------------------------- | ------------ | ---------------------------------------------------------------- |
+| **Agents migrated**        | 45/45 (100%) | `ls docs/explanation/rules/agents/content/*.md \| wc -l`         |
+| **Skills migrated**        | 23/23 (100%) | `ls -d docs/explanation/rules/agents/skills/*/ \| wc -l`         |
+| **Validation errors**      | 0            | All validation commands pass (agents + skills, both formats)     |
+| **Functional regressions** | 0            | 10/10 critical agents work correctly                             |
+| **Sync time**              | <30s         | `time ./butler-cli agents sync && time ./butler-cli skills sync` |
+| **Validation time**        | <60s         | Combined Claude Code + OpenCode validation (agents + skills)     |
+| **Code coverage (CLI)**    | >80%         | `go test -cover ./...`                                           |
 
 ### Qualitative Metrics
 
@@ -1167,37 +1176,41 @@ git tag pre-agents-docs-migration
 mkdir -p docs/explanation/rules/agents/content docs/explanation/rules/agents/skills
 
 # Phase 3
-./repo-cli agents extract --verbose
-./repo-cli skills extract --verbose
-./repo-cli agents validate
-./repo-cli agents sync --dry-run
-./repo-cli agents sync --verbose
+butler-cli agents extract --verbose
+butler-cli skills extract --verbose
+butler-cli agents validate
+butler-cli skills validate
+butler-cli agents sync --dry-run
+butler-cli skills sync --dry-run
+butler-cli agents sync --verbose
+butler-cli skills sync --verbose
 
 # Phase 4
-./repo-cli agents validate --cross-format
-time ./repo-cli agents sync
+butler-cli agents validate --cross-format
+time butler-cli agents sync && time butler-cli skills sync
 
 # Phase 6
-git add docs/explanation/rules/agents/ docs/explanation/rules/agents/skills/ apps/repo-cli/ .claude/ .opencode/
+git add docs/explanation/rules/agents/ docs/explanation/rules/agents/skills/ apps/butler-cli/ .claude/ .opencode/
 git commit -m "feat(agents): migrate to docs source of truth"
 git push -u origin feat/agents-docs-source-of-truth
 ```
 
 ### Appendix B: File Locations Quick Reference
 
-| Purpose                     | Location                                                       |
-| --------------------------- | -------------------------------------------------------------- |
-| **Source - Agents**         | `docs/explanation/rules/agents/content/*.md`                   |
-| **Source - Skills**         | `docs/explanation/rules/agents/skills/{skill-name}/SKILL.md`   |
-| **Generated - Claude Code** | `.claude/agents/*.md`                                          |
-| **Generated - OpenCode**    | `.opencode/agent/*.md`                                         |
-| **Generated - Skills**      | `.claude/skills/{skill-name}/SKILL.md`                         |
-| **Catalogs**                | `docs/explanation/rules/agents/README.md`                      |
-|                             | `docs/explanation/rules/agents/skills/README.md`               |
-| **Architecture Doc**        | `docs/explanation/rules/agents/meta/ex-ag-me__architecture.md` |
-| **CLI Application**         | `apps/repo-cli/` (Go + Cobra framework)                        |
-|                             | `./repo-cli agents extract/sync/validate`                      |
-|                             | `./repo-cli skills extract/validate`                           |
+| Purpose                         | Location                                                       |
+| ------------------------------- | -------------------------------------------------------------- |
+| **Source - Agents**             | `docs/explanation/rules/agents/content/*.md`                   |
+| **Source - Skills**             | `docs/explanation/rules/agents/skills/{skill-name}/SKILL.md`   |
+| **Generated - Claude Code**     | `.claude/agents/*.md`                                          |
+| **Generated - OpenCode**        | `.opencode/agent/*.md`                                         |
+| **Generated - Claude Skills**   | `.claude/skills/{skill-name}/SKILL.md`                         |
+| **Generated - OpenCode Skills** | `.opencode/skills/{skill-name}/SKILL.md`                       |
+| **Catalogs**                    | `docs/explanation/rules/agents/README.md`                      |
+|                                 | `docs/explanation/rules/agents/skills/README.md`               |
+| **Architecture Doc**            | `docs/explanation/rules/agents/meta/ex-ag-me__architecture.md` |
+| **CLI Application**             | `apps/butler-cli/` (Go + Cobra framework)                      |
+|                                 | `./butler-cli agents extract/sync/validate`                    |
+|                                 | `./butler-cli skills extract/sync/validate`                    |
 
 ### Appendix C: Rollback Decision Matrix
 

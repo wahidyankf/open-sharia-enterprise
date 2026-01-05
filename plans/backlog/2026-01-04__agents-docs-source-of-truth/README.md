@@ -40,13 +40,14 @@ Shared: .claude/skills/ (used by both tools)
 
 ```
 Source: docs/explanation/rules/agents/ (tool-agnostic markdown)
-   ↓ (sync via sync-docs-to-agents.py)
+   ↓ (sync via butler-cli agents sync)
    ├→ .claude/agents/ (Claude Code format)
    └→ .opencode/agent/ (OpenCode format)
 
 Source: docs/explanation/rules/agents/skills/ (tool-agnostic markdown)
-   ↓ (sync via sync-docs-to-agents.py)
-   └→ .claude/skills/ (used by both tools)
+   ↓ (sync via butler-cli skills sync)
+   ├→ .claude/skills/ (Claude Code format - shared)
+   └→ .opencode/skills/ (OpenCode format - shared)
 ```
 
 ## Goals
@@ -111,7 +112,7 @@ Source: docs/explanation/rules/agents/skills/ (tool-agnostic markdown)
 
 **Mitigation**:
 
-- Automated extraction via `repo-cli` Go application (`apps/repo-cli`)
+- Automated extraction via `butler-cli` Go application (`apps/butler-cli`)
 - Phased migration with validation at each step
 - Full test suite before committing changes
 
@@ -268,5 +269,6 @@ This plan is organized into four documents:
 - [AI Agents Convention](../../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md)
 - [Repository Governance Architecture](../../../docs/explanation/rules/ex-ru__repository-governance-architecture.md)
 - [Plans Organization Convention](../../../docs/explanation/rules/conventions/project/ex-ru-co-pr__plans-organization.md)
+- Butler CLI application: `apps/butler-cli/` (Go + Cobra)
 - Current conversion script: `scripts/convert-agents-to-opencode.py`
 - Current validation script: `scripts/validate-opencode-agents.py`

@@ -21,13 +21,16 @@ graph TB
         Extract["Extract Metadata<br/>(frontmatter + body)"]:::teal
         MapCC["Generate Claude Code<br/>(role→color, tools→array)"]:::teal
         MapOC["Generate OpenCode<br/>(tools→bool obj, permissions)"]:::teal
+        MapSkillsCC["Sync Skills to Claude Code<br/>(folder/SKILL.md structure)"]:::teal
+        MapSkillsOC["Sync Skills to OpenCode<br/>(folder/SKILL.md structure)"]:::teal
         GitMeta["Extract Git Metadata<br/>(created, updated timestamps)"]:::teal
     end
 
     subgraph "Generated (Tool-Specific)"
         CCAgents[".claude/agents/<br/>45 Claude Code agents"]:::orange
         OCAgents[".opencode/agent/<br/>45 OpenCode agents"]:::orange
-        Skills[".claude/skills/<br/>23 skills (shared)"]:::orange
+        CCSkills[".claude/skills/<br/>23 Claude Code skills"]:::orange
+        OCskills[".opencode/skills/<br/>23 OpenCode skills"]:::orange
     end
 
     subgraph "Validation"
@@ -43,11 +46,17 @@ graph TB
     GitMeta --> MapOC
     MapCC --> CCAgents
     MapOC --> OCAgents
-    Extract --> Skills
+    Extract --> MapSkillsCC
+    Extract --> MapSkillsOC
+    MapSkillsCC --> CCSkills
+    MapSkillsOC --> OCskills
 
     CCAgents --> ValCC
     OCAgents --> ValOC
+    CCSkills --> ValCC
+    OCskills --> ValOC
     AgentDocs --> ValSrc
+    SkillDocs --> ValSrc
 
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -59,7 +68,7 @@ graph TB
 
 ## Implementation Language
 
-**Final Implementation**: Go (using Cobra framework in `apps/repo-cli/`)
+**Final Implementation**: Go (using Cobra framework in `apps/butler-cli/`)
 
 **Python Code References**: Throughout this document, Python code examples and function signatures are provided as **pseudocode for conceptual clarity**. The actual implementation will be in Go.
 
@@ -72,16 +81,16 @@ graph TB
 
 **Migration Path**:
 
-1. **Phase 1**: Develop Go CLI application (`apps/repo-cli`) with Cobra commands
+1. **Phase 1**: Develop Go CLI application (`apps/butler-cli`) with Cobra commands
 2. **Phase 2+**: All sync, extraction, and validation operations use Go CLI
 3. **No Python scripts will be created**
 
 **Command Mapping** (Pseudocode → Actual):
 
 - Pseudocode: `python scripts/sync-docs-to-agents.py`
-- Actual: `./repo-cli agents sync`
+- Actual: `butler-cli agents sync`
 - Pseudocode: `python scripts/validate-agent-definitions.py`
-- Actual: `./repo-cli agents validate`
+- Actual: `butler-cli agents validate`
 
 **Note**: Gherkin acceptance criteria and code examples showing Python syntax should be interpreted as conceptual specifications. Implementation details will follow Go idioms and patterns.
 
@@ -116,41 +125,49 @@ docs/explanation/rules/
     ├── docs-maker.md                      # Generated (Claude Code format)
     └── ... (44 more)
 
+.claude/
+└── skills/
+    ├── docs__applying-content-quality/    # Generated (Claude Code format)
+    │   └── SKILL.md
+    └── ... (22 more)
+
 .opencode/
 └── agent/
     ├── README.md                          # Generated banner + catalog
     ├── docs-maker.md                      # Generated (OpenCode format)
     └── ... (44 more)
 
-.claude/
+.opencode/
 └── skills/
-    ├── docs__applying-content-quality/    # Generated (directory structure)
+    ├── docs-applying-content-quality/     # Generated (OpenCode format)
     │   └── SKILL.md
-    └── ... (17 more)
+    └── ... (22 more)
 
-apps/repo-cli/                              # Go CLI application using Cobra
-├── cmd/
-│   ├── root.go                            # Cobra root command
-│   ├── agents/
-│   │   ├── extract.go                     # Extract agents to docs
-│   │   ├── sync.go                        # Sync docs to tool formats
-│   │   └── validate.go                    # Validate agent definitions
-│   └── skills/
-│       ├── extract.go                     # Extract skills to docs
-│       └── validate.go                    # Validate skill definitions
-├── internal/
-│   ├── agent/
-│   │   ├── parser.go                      # Parse agent formats
-│   │   ├── generator.go                   # Generate tool-specific formats
-│   │   └── validator.go                   # Validation logic
-│   ├── skill/
-│   │   ├── parser.go                      # Parse skill formats
-│   │   └── validator.go                   # Validation logic
-│   └── git/
-│       └── metadata.go                    # Git metadata extraction
-├── go.mod
-├── go.sum
-└── main.go                                 # CLI entry point
+apps/butler-cli/                              # Go CLI application using Cobra
+ ├── cmd/
+ │   ├── root.go                            # Cobra root command
+ │   ├── agents/
+ │   │   ├── extract.go                     # Extract agents to docs
+ │   │   ├── sync.go                        # Sync docs to tool formats
+ │   │   └── validate.go                    # Validate agent definitions
+ │   └── skills/
+ │       ├── extract.go                     # Extract skills to docs
+ │       ├── sync.go                        # Sync skills to tool formats
+ │       └── validate.go                    # Validate skill definitions
+ ├── internal/
+ │   ├── agent/
+ │   │   ├── parser.go                      # Parse agent formats
+ │   │   ├── generator.go                   # Generate tool-specific formats
+ │   │   └── validator.go                   # Validation logic
+ │   ├── skill/
+ │   │   ├── parser.go                      # Parse skill formats
+ │   │   ├── generator.go                   # Generate skill formats
+ │   │   └── validator.go                   # Validation logic
+ │   └── git/
+ │       └── metadata.go                    # Git metadata extraction
+ ├── go.mod
+ ├── go.sum
+ └── main.go                                 # CLI entry point
 ```
 
 ### Rationale
@@ -164,15 +181,15 @@ apps/repo-cli/                              # Go CLI application using Cobra
 **Skills use folder/SKILL.md structure**:
 
 - Both Claude Code and OpenCode support identical folder/SKILL.md format
-- No conversion needed - source structure matches generated structure
-- Direct copy/sync from docs to `.claude/skills/`
+- No conversion needed for Claude Code - direct copy from docs
+- OpenCode uses same format - direct sync from docs
 - Consistent structure throughout (source → generated)
 
 **Generated directories keep existing paths**:
 
 - `.claude/agents/` and `.opencode/agent/` locations unchanged
-- Tools continue to work without configuration changes
-- `.claude/skills/` retains directory structure (tools expect this)
+- `.claude/skills/` retains directory structure (Claude Code expects this)
+- `.opencode/skills/` will be new (OpenCode will read from here)
 
 ---
 
@@ -363,7 +380,7 @@ description: Brief description of skill purpose
 
 **Note**: Claude Code uses model names as-is. OpenCode requires specific model identifiers.
 
-**Provider Configuration**: Model mappings shown are for default z.ai provider. If using alternative OpenCode LLM providers, update mappings in sync CLI configuration (`apps/repo-cli/internal/agent/generator.go` - `MODEL_MAP` constant). The sync CLI allows provider-specific model mapping configuration.
+**Provider Configuration**: Model mappings shown are for default z.ai provider. If using alternative OpenCode LLM providers, update mappings in sync CLI configuration (`apps/butler-cli/internal/agent/generator.go` - `MODEL_MAP` constant). The sync CLI allows provider-specific model mapping configuration.
 
 ### MCP (Model Context Protocol) Servers for OpenCode
 
@@ -437,7 +454,7 @@ See [Out of Scope](#out-of-scope) section for complete exclusions.
 
 ## CLI Application Architecture
 
-### Application: `repo-cli` (Go + Cobra)
+### Application: `butler-cli` (Go + Cobra)
 
 **Purpose**: Repository management CLI tool with agent/skill sync capabilities
 
@@ -445,31 +462,33 @@ See [Out of Scope](#out-of-scope) section for complete exclusions.
 
 ```bash
 # Build CLI
-cd apps/repo-cli
-go build -o repo-cli
+cd apps/butler-cli
+go build -o butler-cli
 
 # Sync all agents and skills
-./repo-cli agents sync
+butler-cli agents sync
+butler-cli skills sync
 
 # Sync specific agent only
-./repo-cli agents sync --name docs-maker
+butler-cli agents sync --name docs-maker
 
 # Extract agents from Claude Code format to docs
-./repo-cli agents extract
+butler-cli agents extract
+
+# Extract skills from Claude Code format to docs
+butler-cli skills extract
 
 # Validate agent definitions
-./repo-cli agents validate
+butler-cli agents validate
 
-# Skills commands
-./repo-cli skills sync
-./repo-cli skills extract
-./repo-cli skills validate
+# Validate skill definitions
+butler-cli skills validate
 
 # Dry run (no file writes)
-./repo-cli agents sync --dry-run
+butler-cli agents sync --dry-run
 
 # Verbose output
-./repo-cli agents sync --verbose
+butler-cli agents sync --verbose
 ```
 
 ### Core Components (Go)
@@ -693,9 +712,11 @@ def sync_all_agents():
 | Script                          | Purpose                             | Checks                                                 |
 | ------------------------------- | ----------------------------------- | ------------------------------------------------------ |
 | `validate-agent-definitions.py` | Validate source agent definitions   | Required fields, valid values, name=filename           |
-| `validate-skill-definitions.py` | Validate source skill definitions   | Required fields, double-underscore naming              |
+| `validate-skill-definitions.py` | Validate source skill definitions   | Required fields, kebab-case naming                     |
 | `validate-claude-agents.py`     | Validate Claude Code format         | Frontmatter schema, color values, tools array          |
 | `validate-opencode-agents.py`   | Validate OpenCode format (existing) | Frontmatter schema, lowercase tools, permission format |
+| `validate-claude-skills.py`     | Validate Claude Code skills format  | Frontmatter schema, SKILL.md structure                 |
+| `validate-opencode-skills.py`   | Validate OpenCode skills format     | Frontmatter schema, SKILL.md structure                 |
 
 ### Source Definition Validation
 
@@ -948,7 +969,7 @@ description: [TODO: Add description]
 echo "Checking for edits to generated agent/skill directories..."
 
 MODIFIED_GENERATED=$(git diff --cached --name-only --diff-filter=AM | \
-  grep -E '^(\.claude/agents/|\.opencode/agent/|\.claude/skills/)' || true)
+  grep -E '^(\.claude/agents/|\.opencode/agent/|\.claude/skills/|\.opencode/skills/)' || true)
 
 if [ -n "$MODIFIED_GENERATED" ]; then
   echo ""
@@ -963,7 +984,7 @@ if [ -n "$MODIFIED_GENERATED" ]; then
   echo ""
   echo "To make changes:"
   echo "  1. Edit source files in docs/explanation/"
-  echo "  2. Run: python scripts/sync-docs-to-agents.py"
+  echo "  2. Run: butler-cli agents sync && butler-cli skills sync"
   echo "  3. Commit both source and generated files together"
   echo ""
   echo "To bypass this check (NOT recommended):"
@@ -988,12 +1009,12 @@ echo "✓ No edits to generated directories detected"
 
 **Source of truth**: `docs/explanation/rules/agents/content/`
 
-Files in this directory are automatically generated by `scripts/sync-docs-to-agents.py`.
+Files in this directory are automatically generated by `butler-cli agents sync`.
 
 **To modify agents**:
 
 1. Edit source files in `docs/explanation/rules/agents/content/`
-2. Run sync script: `python scripts/sync-docs-to-agents.py`
+2. Run sync command: `butler-cli agents sync && butler-cli skills sync`
 3. Commit both source and generated files together
 
 **Direct edits to this directory will be overwritten on next sync.**
@@ -1012,12 +1033,12 @@ Files in this directory are automatically generated by `scripts/sync-docs-to-age
 
 **Source of truth**: `docs/explanation/rules/agents/content/`
 
-Files in this directory are automatically generated by `scripts/sync-docs-to-agents.py`.
+Files in this directory are automatically generated by `butler-cli agents sync`.
 
 **To modify agents**:
 
 1. Edit source files in `docs/explanation/rules/agents/content/`
-2. Run sync script: `python scripts/sync-docs-to-agents.py`
+2. Run sync command: `butler-cli agents sync && butler-cli skills sync`
 3. Commit both source and generated files together
 
 **Direct edits to this directory will be overwritten on next sync.**
@@ -1076,7 +1097,7 @@ Files in this directory are automatically generated by `scripts/sync-docs-to-age
 
 ### Sync Performance
 
-**Target**: Sync 45 agents + 18 skills in <30 seconds
+**Target**: Sync 45 agents + 23 skills in <30 seconds
 
 **Optimization strategies**:
 
@@ -1236,13 +1257,13 @@ python scripts/sync-docs-to-agents.py --diff
 ### Go Dependencies
 
 ```go
-// apps/repo-cli/go.mod
-module github.com/wahidyankf/open-sharia-enterprise/apps/repo-cli
+// apps/butler-cli/go.mod
+module github.com/wahidyankf/open-sharia-enterprise/apps/butler-cli
 
-go 1.21
+go 1.24.2
 
 require (
-    github.com/spf13/cobra v1.8.0
+    github.com/spf13/cobra v1.10.2
     github.com/go-git/go-git/v5 v5.11.0
     gopkg.in/yaml.v3 v3.0.1
     github.com/stretchr/testify v1.8.4  // For testing
@@ -1252,7 +1273,7 @@ require (
 **Installation**:
 
 ```bash
-cd apps/repo-cli
+cd apps/butler-cli
 go mod download
 ```
 
@@ -1260,24 +1281,24 @@ go mod download
 
 ```bash
 # Development build
-cd apps/repo-cli
-go build -o repo-cli
+cd apps/butler-cli
+go build -o butler-cli
 
 # Production build (optimized, smaller binary)
-go build -ldflags="-s -w" -o repo-cli
+go build -ldflags="-s -w" -o butler-cli
 
 # Install globally (adds to $GOPATH/bin)
 go install
 
 # Cross-compile for different platforms
-GOOS=linux GOARCH=amd64 go build -o repo-cli-linux-amd64
-GOOS=darwin GOARCH=arm64 go build -o repo-cli-darwin-arm64
-GOOS=windows GOARCH=amd64 go build -o repo-cli-windows-amd64.exe
+GOOS=linux GOARCH=amd64 go build -o butler-cli-linux-amd64
+GOOS=darwin GOARCH=arm64 go build -o butler-cli-darwin-arm64
+GOOS=windows GOARCH=amd64 go build -o butler-cli-windows-amd64.exe
 ```
 
 ### System Requirements
 
-- Go 1.21+
+- Go 1.24+
 - Git (for metadata extraction via go-git)
 - Bash (for pre-commit hook)
 - Claude Code CLI (for testing Claude Code format)
@@ -1286,29 +1307,29 @@ GOOS=windows GOARCH=amd64 go build -o repo-cli-windows-amd64.exe
 ### Nx Integration
 
 ```json
-// apps/repo-cli/project.json
+// apps/butler-cli/project.json
 {
-  "name": "repo-cli",
+  "name": "butler-cli",
   "targets": {
     "build": {
       "executor": "@nx/run-commands",
       "options": {
-        "command": "go build -o ../../dist/apps/repo-cli/repo-cli",
-        "cwd": "apps/repo-cli"
+        "command": "go build -o ../../dist/apps/butler-cli/butler-cli",
+        "cwd": "apps/butler-cli"
       }
     },
     "test": {
       "executor": "@nx/run-commands",
       "options": {
         "command": "go test ./...",
-        "cwd": "apps/repo-cli"
+        "cwd": "apps/butler-cli"
       }
     },
     "lint": {
       "executor": "@nx/run-commands",
       "options": {
         "command": "golangci-lint run",
-        "cwd": "apps/repo-cli"
+        "cwd": "apps/butler-cli"
       }
     }
   }
@@ -1795,6 +1816,6 @@ Several agents currently interact with `.claude/agents/`, `.opencode/agent/`, an
 | **Rollback**           | Git revert + backup strategy                     | Safety net for failed migration               |
 | **Skills structure**   | Flatten to single file per skill                 | Simplicity, easier to browse                  |
 | **README location**    | Generated with banner in tool dirs               | Clear guidance, prevent confusion             |
-| **Performance target** | Sync <30s, validation <60s                       | Acceptable for 45 agents + 18 skills          |
+| **Performance target** | Sync <30s, validation <60s                       | Acceptable for 45 agents + 23 skills          |
 | **Tool name format**   | Capitalized in source (Read, Write)              | Tool-agnostic convention                      |
 | **Meta-agents**        | Update to work with docs source, skip generated  | Maintain automation while respecting new arch |

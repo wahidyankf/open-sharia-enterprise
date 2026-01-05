@@ -16,7 +16,7 @@
 
 **As a** documentation maintainer
 **I want** to define skills in `docs/explanation/rules/agents/skills/` with tool-agnostic format
-**So that** skill knowledge packages work with all supported CLI tools
+**So that** skill knowledge packages work with both Claude Code and OpenCode CLI tools
 
 **Acceptance Criteria**: See [AC-2](#ac-2-create-new-skill-definition)
 
@@ -158,28 +158,30 @@ Feature: Skill Definition Creation
     And I create file "docs/explanation/rules/agents/skills/example-new-skill/SKILL.md"
     And the file contains skill frontmatter with:
       | field       | value                             |
-      | name        | example__new-skill                |
+      | name        | example-new-skill                 |
       | description | Provides guidance on example task |
     And the file contains skill content in markdown body
-    When I run "python scripts/sync-docs-to-agents.py"
+    When I run "butler-cli skills sync"
     Then a directory is created at ".claude/skills/example-new-skill/"
     And a file is created at ".claude/skills/example-new-skill/SKILL.md"
-    And the skill file contains identical content from source
+    And a directory is created at ".opencode/skills/example-new-skill/"
+    And a file is created at ".opencode/skills/example-new-skill/SKILL.md"
+    And both skill files contain identical content from source
 
-  Scenario: Skill uses kebab-case naming in name field
-    Given I create directory "docs/explanation/rules/agents/skills/valid-skill-name/"
-    And I create file "docs/explanation/rules/agents/skills/valid-skill-name/SKILL.md"
-    And the frontmatter contains "name: valid-skill-name"
-    When I run "./repo-cli skills validate"
-    Then validation passes with 0 errors
+   Scenario: Skill uses kebab-case naming in name field
+     Given I create directory "docs/explanation/rules/agents/skills/valid-skill-name/"
+     And I create file "docs/explanation/rules/agents/skills/valid-skill-name/SKILL.md"
+     And frontmatter contains "name: valid-skill-name"
+     When I run "butler-cli skills validate"
+     Then validation passes with 0 errors
 
-  Scenario: Skill name with invalid characters fails validation
-    Given I create directory "docs/explanation/rules/agents/skills/Invalid_Skill/"
-    And I create file "docs/explanation/rules/agents/skills/Invalid_Skill/SKILL.md"
-    And the frontmatter contains "name: Invalid_Skill"
-    When I run "./repo-cli skills validate"
-    Then validation fails with error "Skill name must use kebab-case (lowercase with hyphens)"
-    And validation suggests "Use format: category-skill-name (e.g., docs-applying-content-quality)"
+   Scenario: Skill name with invalid characters fails validation
+     Given I create directory "docs/explanation/rules/agents/skills/Invalid_Skill/"
+     And I create file "docs/explanation/rules/agents/skills/Invalid_Skill/SKILL.md"
+     And frontmatter contains "name: Invalid_Skill"
+     When I run "butler-cli skills validate"
+     Then validation fails with error "Skill name must use kebab-case (lowercase with hyphens)"
+     And validation suggests "Use format: category-skill-name (e.g., docs-applying-content-quality)"
 ```
 
 ---
@@ -196,36 +198,37 @@ Feature: Automated Synchronization
     Given I have valid agent definitions in "docs/explanation/rules/agents/content/"
     And I have valid skill definitions in "docs/explanation/rules/agents/skills/"
 
-  Scenario: Full sync operation
-    Given I modify "docs/explanation/rules/agents/content/docs-maker.md"
-    And I update the description field
-    When I run "python scripts/sync-docs-to-agents.py"
-    Then the script processes all agent definitions
-    And the script processes all skill definitions
-    And the script reports sync statistics:
-      | metric                 | value |
-      | agents_synced          | 45    |
-      | skills_synced          | 18    |
-      | claude_agents_written  | 45    |
-      | opencode_agents_written| 45    |
-      | skill_directories_created | 18 |
-    And validation runs automatically after sync
-    And validation passes with 0 errors
+    Scenario: Full sync operation
+      Given I modify "docs/explanation/rules/agents/content/docs-maker.md"
+      And I update the description field
+      When I run "butler-cli agents sync && butler-cli skills sync"
+      Then the command processes all agent definitions
+      And the command processes all skill definitions
+      And the command reports sync statistics:
+        | metric                     | value |
+        | agents_synced              | 45    |
+        | skills_synced              | 23    |
+        | claude_agents_written      | 45    |
+        | opencode_agents_written     | 45    |
+        | claude_skills_written       | 23    |
+        | opencode_skills_written     | 23    |
+      And validation runs automatically after sync
+      And validation passes with 0 errors
 
-  Scenario: Incremental sync (single agent)
-    Given I modify only "docs/explanation/rules/agents/content/docs-checker.md"
-    When I run "python scripts/sync-docs-to-agents.py --agent docs-checker"
-    Then only "docs-checker" is synced to both formats
-    And other agents are not touched
-    And modification timestamps are preserved for unchanged agents
+   Scenario: Incremental sync (single agent)
+     Given I modify only "docs/explanation/rules/agents/content/docs-checker.md"
+     When I run "butler-cli agents sync --agent docs-checker"
+     Then only "docs-checker" is synced to both formats
+     And other agents are not touched
+     And modification timestamps are preserved for unchanged agents
 
-  Scenario: Sync with validation failure
-    Given I have an invalid agent definition with missing "description" field
-    When I run "./repo-cli agents sync"
-    Then sync validation fails before writing files
-    And error message indicates "Missing required field: description"
-    And no files are written to ".claude/agents/" or ".opencode/agent/"
-    And exit code is 1
+    Scenario: Sync with validation failure
+      Given I have an invalid agent definition with missing "description" field
+      When I run "butler-cli agents sync"
+      Then sync validation fails before writing files
+      And error message indicates "Missing required field: description"
+      And no files are written to ".claude/agents/", ".opencode/agent/", ".claude/skills/", or ".opencode/skills/"
+      And exit code is 1
 
   Scenario: Role to color mapping
     Given I have agent definition with "role: writer"
@@ -249,53 +252,55 @@ Feature: Format Validation
   I want to validate all definition formats
   So that errors are caught early
 
-  Scenario: Validate source definitions
-    Given I have agent definitions in "docs/explanation/rules/agents/content/"
-    When I run "./repo-cli agents validate"
-    Then validation checks all required fields present
-    And validation checks name matches filename
-    And validation checks role is valid (writer, checker, updater, implementor, specialist)
-    And validation checks tools are valid (Read, Write, Edit, MultiEdit, Glob, Grep, Bash, LS, WebFetch, WebSearch, TodoRead, TodoWrite, NotebookRead, NotebookEdit)
-    And validation checks skills reference existing skill files
-    And validation checks mode is valid (all, subagent, primary)
-    And validation reports pass/fail for each agent
+   Scenario: Validate source definitions
+     Given I have agent definitions in "docs/explanation/rules/agents/content/"
+     When I run "butler-cli agents validate"
+     Then validation checks all required fields present
+     And validation checks name matches filename
+     And validation checks role is valid (writer, checker, updater, implementor, specialist)
+     And validation checks tools are valid (Read, Write, Edit, MultiEdit, Glob, Grep, Bash, LS, WebFetch, WebSearch, TodoRead, TodoWrite, NotebookRead, NotebookEdit)
+     And validation checks skills reference existing skill files
+     And validation checks mode is valid (all, subagent, primary)
+     And validation reports pass/fail for each agent
 
-  Scenario: Validate generated Claude Code format
-    Given sync has generated files in ".claude/agents/"
-    When I run "./repo-cli agents validate --format claude"
-    Then validation checks frontmatter fields:
-      | field       | requirement                  |
-      | name        | matches filename             |
-      | description | not empty                    |
-      | tools       | array format                 |
-      | model       | valid (inherit, sonnet, etc.)|
-      | color       | valid (blue, green, etc.)    |
-      | skills      | array format                 |
-    And validation reports 0 errors for all 45 agents
+   Scenario: Validate generated Claude Code format
+     Given sync has generated files in ".claude/agents/"
+     When I run "butler-cli agents validate --format claude"
+     Then validation checks frontmatter fields:
+       | field       | requirement                  |
+       | name        | matches filename             |
+       | description | not empty                    |
+       | tools       | array format                 |
+       | model       | valid (inherit, sonnet, etc.)|
+       | color       | valid (blue, green, etc.)    |
+       | skills      | array format                 |
+     And validation reports 0 errors for all 45 agents
 
-  Scenario: Validate generated OpenCode format
-    Given sync has generated files in ".opencode/agent/"
-    When I run "./repo-cli agents validate --format opencode"
-    Then validation checks frontmatter fields:
-      | field       | requirement                     |
-      | description | not empty                       |
-      | mode        | valid (all, subagent, primary)  |
-      | tools       | boolean object with lowercase keys |
-      | permission  | valid deny/allow/ask actions    |
-    And validation checks "permission.skill" is dictionary
-    And validation checks tool names are lowercase
-    And validation reports 0 errors for all 45 agents
+    Scenario: Validate generated OpenCode format
+      Given sync has generated files in ".opencode/agent/"
+      When I run "butler-cli agents validate --format opencode"
+      Then validation checks frontmatter fields:
+        | field       | requirement                     |
+        | description | not empty                       |
+        | mode        | valid (all, subagent, primary)  |
+        | tools       | boolean object with lowercase keys |
+        | permission  | valid deny/allow/ask actions    |
+      And validation checks "permission.skill" is dictionary
+      And validation checks tool names are lowercase
+      And validation reports 0 errors for all 45 agents
+      And validation checks ".opencode/skills/" has 23 skill directories with SKILL.md files
+      And validation reports 0 errors for all 23 skills
 
-  Scenario: Cross-format consistency validation
-    Given I have synced agent "docs-maker"
-    When I run "./repo-cli agents validate --cross-format"
-    Then validation confirms both formats have identical:
-      | aspect              |
-      | agent instructions body |
-      | tool access permissions |
-      | skill references        |
-      | model selection         |
-    And validation reports 0 inconsistencies
+   Scenario: Cross-format consistency validation
+     Given I have synced agent "docs-maker"
+     When I run "butler-cli agents validate --cross-format"
+     Then validation confirms both formats have identical:
+       | aspect              |
+       | agent instructions body |
+       | tool access permissions |
+       | skill references        |
+       | model selection         |
+     And validation reports 0 inconsistencies
 ```
 
 ---
@@ -319,51 +324,58 @@ Feature: Safe Editing Workflow
       Modified generated files:
         - .claude/agents/docs-maker.md
 
-      Source of truth: docs/explanation/rules/agents/content/
+       Source of truth locations:
+       - Agents: docs/explanation/rules/agents/content/
+       - Skills: docs/explanation/rules/agents/skills/
 
-      To make changes:
-      1. Edit docs/explanation/rules/agents/content/docs-maker.md
-      2. Run: python scripts/sync-docs-to-agents.py
-      3. Commit both source and generated files
+       To make changes:
+       1. Edit source files in docs/explanation/rules/agents/
+       2. Run: butler-cli agents sync && butler-cli skills sync
+       3. Commit both source and generated files
 
-      To bypass this check (NOT recommended):
-        git commit --no-verify
-      """
+       To bypass this check (NOT recommended):
+         git commit --no-verify
+       """
     And commit is blocked (exit code 1)
 
   Scenario: README banner in generated directories
-    Given sync has completed successfully
-    When I view ".claude/agents/README.md"
-    Then the file contains banner at top:
-      """
-      # ⚠️ DO NOT EDIT - GENERATED FILES
+     Given sync has completed successfully
+     When I view ".claude/agents/README.md"
+     Then the file contains banner at top:
+       """
+       # ⚠️ DO NOT EDIT - GENERATED FILES
 
-      **Source of truth**: `docs/explanation/rules/agents/content/`
+        **Source of truth**: `docs/explanation/rules/agents/content/`
 
-      Files in this directory are automatically generated by `scripts/sync-docs-to-agents.py`.
+        Files in this directory are automatically generated by `butler-cli agents sync`.
 
-      To modify agents:
-      1. Edit source files in `docs/explanation/rules/agents/content/`
-      2. Run sync script: `python scripts/sync-docs-to-agents.py`
-      3. Commit both source and generated files together
+        To modify agents:
+        1. Edit source files in `docs/explanation/rules/agents/content/`
+        2. Run sync command: `butler-cli agents sync && butler-cli skills sync`
+        3. Commit both source and generated files together
 
-      Direct edits to this directory will be overwritten on next sync.
-      """
+        Direct edits to this directory will be overwritten on next sync.
+        """
 
   Scenario: Documentation update
-    Given sync architecture is implemented
-    When I view "CLAUDE.md"
-    Then it contains section about agent source location:
-      """
-      ## AI Agents
+     Given sync architecture is implemented
+     When I view "CLAUDE.md"
+     Then it contains section about agent source location:
+       """
+        ## AI Agents
 
-      Agent definitions are maintained in `docs/explanation/rules/agents/content/`
-      and synced to tool-specific formats:
-      - `.claude/agents/` - Claude Code format (generated)
-      - `.opencode/agent/` - OpenCode format (generated)
+        Agent definitions are maintained in `docs/explanation/rules/agents/content/`
+        and synced to tool-specific formats:
+        - `.claude/agents/` - Claude Code format (generated)
+        - `.opencode/agent/` - OpenCode format (generated)
 
-      To modify agents, edit source files and run sync script.
-      """
+        Skill definitions are maintained in `docs/explanation/rules/agents/skills/`
+        and synced to tool-specific formats:
+        - `.claude/skills/` - Claude Code format (generated)
+        - `.opencode/skills/` - OpenCode format (generated)
+
+        To modify agents, edit source files and run: `butler-cli agents sync && butler-cli skills sync`
+        """
 ```
 
 ---
@@ -380,25 +392,25 @@ Feature: Migration from Current Architecture
     Given I have 45 agents in ".claude/agents/"
     And I have 23 skills in ".claude/skills/"
 
-  Scenario: Extract agents to docs format
-    Given current agents use Claude Code format
-    When I run "./repo-cli agents extract"
-    Then 45 files are created in "docs/explanation/rules/agents/content/"
-    And each file has tool-agnostic frontmatter:
-      | field       | mapping                           |
-      | name        | from original name field          |
-      | description | from original description field   |
-      | role        | from color (blue→writer, etc.)    |
-      | model       | from original model field         |
-      | tools       | from original tools array         |
-      | skills      | from original skills array        |
-      | mode        | all (or subagent for specific agents) |
-    And each file has original agent body content
-    And extraction script reports statistics:
-      | metric           | value |
-      | agents_extracted | 45    |
-      | skills_extracted | 23    |
-      | errors           | 0     |
+   Scenario: Extract agents to docs format
+     Given current agents use Claude Code format
+     When I run "butler-cli agents extract"
+     Then 45 files are created in "docs/explanation/rules/agents/content/"
+     And each file has tool-agnostic frontmatter:
+       | field       | mapping                           |
+       | name        | from original name field          |
+       | description | from original description field   |
+       | role        | from color (blue→writer, etc.)    |
+       | model       | from original model field         |
+       | tools       | from original tools array         |
+       | skills      | from original skills array        |
+       | mode        | all (or subagent for specific agents) |
+     And each file has original agent body content
+     And extraction command reports statistics:
+       | metric           | value |
+       | agents_extracted | 45    |
+       | skills_extracted | 23    |
+       | errors           | 0     |
 
   Scenario: Preserve git metadata
     Given agent "docs-maker.md" has git history
@@ -422,14 +434,15 @@ Feature: Migration from Current Architecture
     And directory structure is preserved (folder/SKILL.md format)
     And skill content is identical
 
-  Scenario: Verify functional equivalence after migration
-    Given extraction and sync are complete
-    When I run comprehensive agent tests in Claude Code
-    Then all 45 agents function identically to pre-migration behavior
-    When I run comprehensive agent tests in OpenCode
-    Then all 45 agents function identically to pre-migration behavior
-    And 0 validation errors in either format
-    And all 23 skills load correctly in both CLIs
+   Scenario: Verify functional equivalence after migration
+     Given extraction and sync are complete
+     When I run comprehensive agent tests in Claude Code
+     Then all 45 agents function identically to pre-migration behavior
+     When I run comprehensive agent tests in OpenCode
+     Then all 45 agents function identically to pre-migration behavior
+     And 0 validation errors in either format
+     And all 23 skills load correctly from ".claude/skills/" in Claude Code
+     And all 23 skills load correctly from ".opencode/skills/" in OpenCode
 ```
 
 ---
@@ -489,18 +502,18 @@ Feature: Meta-Agent Updates
     Given I invoke "agent-maker" agent
     And I request creation of new agent "test-validator"
     When agent-maker executes
-    Then agent-maker creates "docs/explanation/rules/agents/content/test-validator.md"
-    And file uses tool-agnostic format:
-      | field       | value                        |
-      | name        | test-validator               |
-      | description | Validates test files         |
-      | role        | checker                      |
-      | model       | sonnet                       |
-      | tools       | [Read, Grep, Glob]           |
-      | mode        | all                          |
-    And agent-maker does NOT create ".claude/agents/test-validator.md"
-    And agent-maker instructs user to run sync script
-    And agent-maker provides command: "python scripts/sync-docs-to-agents.py"
+     Then agent-maker creates "docs/explanation/rules/agents/content/test-validator.md"
+     And file uses tool-agnostic format:
+       | field       | value                        |
+       | name        | test-validator               |
+       | description | Validates test files         |
+       | role        | checker                      |
+       | model       | sonnet                       |
+       | tools       | [Read, Grep, Glob]           |
+       | mode        | all                          |
+     And agent-maker does NOT create ".claude/agents/test-validator.md"
+     And agent-maker instructs user to run sync command
+     And agent-maker provides command: "butler-cli agents sync"
 
   Scenario: agent-maker uses tool-agnostic format (role not color)
     Given I invoke "agent-maker" to create "docs-updater"
@@ -511,47 +524,51 @@ Feature: Meta-Agent Updates
     And frontmatter contains tool-agnostic model values (sonnet, haiku, opus)
     And frontmatter contains capitalized tool names (Read, Write, Edit)
 
-  Scenario: wow-rules-checker validates docs source (not generated)
-    Given I invoke "wow-rules-checker" for agent validation
-    When wow-rules-checker executes
-    Then it validates files in "docs/explanation/rules/agents/content/"
-    And it validates files in "docs/explanation/rules/agents/skills/"
-    And it does NOT validate ".claude/agents/" (generated)
-    And it does NOT validate ".opencode/agent/" (generated)
-    And validation checks tool-agnostic format requirements:
-      | check                    | description                       |
-      | name matches filename    | agent-name.md has name: agent-name |
-      | role is valid            | writer, checker, updater, etc.    |
-      | tools are capitalized    | Read, Write (not read, write)     |
-      | skills exist in docs     | docs/explanation/rules/agents/skills/          |
+   Scenario: wow-rules-checker validates docs source (not generated)
+     Given I invoke "wow-rules-checker" for agent validation
+     When wow-rules-checker executes
+     Then it validates files in "docs/explanation/rules/agents/content/"
+     And it validates files in "docs/explanation/rules/agents/skills/"
+     And it does NOT validate ".claude/agents/" (generated)
+     And it does NOT validate ".opencode/agent/" (generated)
+     And it does NOT validate ".claude/skills/" (generated)
+     And it does NOT validate ".opencode/skills/" (generated)
+     And validation checks tool-agnostic format requirements:
+       | check                    | description                       |
+       | name matches filename    | agent-name.md has name: agent-name |
+       | role is valid            | writer, checker, updater, etc.    |
+       | tools are capitalized    | Read, Write (not read, write)     |
+       | skills exist in docs     | docs/explanation/rules/agents/skills/ |
 
-  Scenario: wow-rules-checker detects edits to generated directories
-    Given ".claude/agents/docs-maker.md" was modified
-    When wow-rules-checker executes
-    Then validation fails with error "Generated file modified"
-    And error message indicates:
-      """
-      ❌ Generated file should not be edited directly:
-        - .claude/agents/docs-maker.md
+   Scenario: wow-rules-checker detects edits to generated directories
+     Given ".claude/agents/docs-maker.md" was modified
+     When wow-rules-checker executes
+     Then validation fails with error "Generated file modified"
+     And error message indicates:
+       """
+       ❌ Generated file should not be edited directly:
+         - .claude/agents/docs-maker.md
 
-      Source of truth: docs/explanation/rules/agents/content/docs-maker.md
+       Source of truth: docs/explanation/rules/agents/content/docs-maker.md
 
-      To fix:
-      1. Revert changes to .claude/agents/docs-maker.md
-      2. Edit docs/explanation/rules/agents/content/docs-maker.md
-      3. Run: python scripts/sync-docs-to-agents.py
-      """
+        To fix:
+        1. Revert changes to .claude/agents/docs-maker.md
+        2. Edit docs/explanation/rules/agents/content/docs-maker.md
+        3. Run: butler-cli agents sync && butler-cli skills sync
+        """
 
-  Scenario: wow-rules-fixer does NOT modify generated directories
-    Given wow-rules-checker generated audit report
-    And report contains finding: "Fix description in docs-maker"
-    And finding references "docs/explanation/rules/agents/content/docs-maker.md"
-    When I invoke "wow-rules-fixer" with audit report
-    Then wow-rules-fixer reads finding
-    And wow-rules-fixer modifies "docs/explanation/rules/agents/content/docs-maker.md"
-    And wow-rules-fixer does NOT modify ".claude/agents/docs-maker.md"
-    And wow-rules-fixer does NOT modify ".opencode/agent/docs-maker.md"
-    And wow-rules-fixer instructs user to run sync after fix
+   Scenario: wow-rules-fixer does NOT modify generated directories
+     Given wow-rules-checker generated audit report
+     And report contains finding: "Fix description in docs-maker"
+     And finding references "docs/explanation/rules/agents/content/docs-maker.md"
+     When I invoke "wow-rules-fixer" with audit report
+     Then wow-rules-fixer reads finding
+     And wow-rules-fixer modifies "docs/explanation/rules/agents/content/docs-maker.md"
+     And wow-rules-fixer does NOT modify ".claude/agents/docs-maker.md"
+     And wow-rules-fixer does NOT modify ".opencode/agent/docs-maker.md"
+     And wow-rules-fixer does NOT modify ".claude/skills/" (if skill referenced)
+     And wow-rules-fixer does NOT modify ".opencode/skills/" (if skill referenced)
+     And wow-rules-fixer instructs user to run sync after fix
 
   Scenario: wow-rules-fixer skips findings referencing generated files
     Given wow-rules-checker audit report contains finding
@@ -561,27 +578,30 @@ Feature: Meta-Agent Updates
     And fixer logs warning: "Finding references generated file - skipping"
     And fixer suggests: "Edit source: docs/explanation/rules/agents/content/test-agent.md"
 
-  Scenario: Update agent-maker instructions for sync workflow
-    Given I read "docs/explanation/rules/agents/content/agent-maker.md"
-    When I review agent instructions
-    Then instructions include:
-      """
-      ## Agent Creation Workflow
+   Scenario: Update agent-maker instructions for sync workflow
+     Given I read "docs/explanation/rules/agents/content/agent-maker.md"
+     When I review agent instructions
+     Then instructions include:
+       """
+       ## Agent Creation Workflow
 
-      1. Create agent definition in `docs/explanation/rules/agents/content/{agent-name}.md`
-      2. Use tool-agnostic format:
-         - `role` (not `color`)
-         - Capitalized tool names (Read, Write)
-         - Model: sonnet, haiku, opus, inherit
-      3. Instruct user to sync:
-         ```bash
-         python scripts/sync-docs-to-agents.py
-         ```
-      4. Verify both formats generated:
-         - .claude/agents/{agent-name}.md
-         - .opencode/agent/{agent-name}.md
-      """
-    And instructions warn NOT to create in ".claude/agents/" directly
+       1. Create agent definition in `docs/explanation/rules/agents/content/{agent-name}.md`
+       2. Use tool-agnostic format:
+          - `role` (not `color`)
+          - Capitalized tool names (Read, Write)
+          - Model: sonnet, haiku, opus, inherit
+        3. Instruct user to sync:
+           ```bash
+           butler-cli agents sync && butler-cli skills sync
+           ```
+        4. Verify both formats generated:
+           - .claude/agents/{agent-name}.md
+           - .opencode/agent/{agent-name}.md
+        5. Skills sync to both locations:
+           - .claude/skills/{skill-name}/SKILL.md
+           - .opencode/skills/{skill-name}/SKILL.md
+        """
+      And instructions warn NOT to create in ".claude/agents/" or ".claude/skills/" directly
 ````
 
 ---
@@ -673,6 +693,7 @@ The following are explicitly **not** included in this plan:
 
 ### Internal Dependencies
 
+- Butler CLI: `apps/butler-cli/` (Go + Cobra framework for agent/sync/validate)
 - Existing scripts:
   - `scripts/convert-agents-to-opencode.py` (reference for format mapping)
   - `scripts/validate-opencode-agents.py` (validation patterns)
@@ -683,7 +704,7 @@ The following are explicitly **not** included in this plan:
 
 ### External Dependencies
 
-- Python 3.8+ with `pyyaml` library
+- Go 1.24+ with Cobra, go-git, yaml.v3
 - Git (for metadata extraction)
 - Claude Code CLI (for testing Claude Code format)
 - OpenCode CLI (for testing OpenCode format)
