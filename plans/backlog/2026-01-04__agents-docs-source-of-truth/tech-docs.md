@@ -1801,6 +1801,27 @@ Several agents currently interact with `.claude/agents/`, `.opencode/agent/`, an
 - Update any rule/convention templates to reference new source locations
 - Update examples to show editing docs source, not generated files
 
+### Wow-Rules-Quality-Gate Workflow Updates
+
+**Current behavior**: Validates "agents" without specifying source vs. generated locations
+
+**New behavior**: Explicitly validates source (`docs/explanation/rules/`) only, skips generated directories
+
+**Implementation changes**:
+
+- Update `docs/explanation/rules/workflows/wow/ex-ru-wf-wo__rules-quality-gate.md`:
+  - Add "Scope Clarification" section explaining source-only validation
+  - Document that it validates `docs/explanation/rules/agents/` (source)
+  - Document that it skips `.claude/agents/`, `.claude/skills/`, `.opencode/agent/`, `.opencode/skills/` (generated)
+  - Add note about using `butler-cli agents validate` and `butler-cli skills validate` for output validation
+  - Update "Concurrency" note to clarify "agents" refers to source definitions, not generated directories
+
+**Rationale**:
+
+- Clear separation of concerns: Source validation (rules-quality-gate) vs. Output validation (sync commands)
+- Prevents confusion about which directories rules agents work on
+- Aligns with migration architecture where generated directories are read-only artifacts
+
 ---
 
 ## Summary of Design Decisions
