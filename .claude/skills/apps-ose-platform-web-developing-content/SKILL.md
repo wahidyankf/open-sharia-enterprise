@@ -478,7 +478,68 @@ cover:
 
 This Skill packages essential ose-platform-web development knowledge for creating simple, effective landing page content. For comprehensive details, consult the primary convention document.
 
-## Deployment WorkflowDeploy ose-platform-web to production using Vercel integration.### Production Branch**Branch**: `prod-ose-platform-web`**Purpose**: Deployment-only branch that Vercel monitors**Build System**: Vercel (Hugo SSG with PaperMod theme)### Deployment Process**Step 1: Validate Current State**`bash# Ensure on main branchCURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)if [ "$CURRENT_BRANCH" != "main" ]; then  echo "❌ Must be on main branch"  exit 1fi# Check for uncommitted changesif [ -n "$(git status --porcelain)" ]; then  echo "❌ Uncommitted changes detected"  exit 1fi`**Step 2: Force Push to Production**`bash# Deploy to productiongit push origin main:prod-ose-platform-web --force`**Step 3: Vercel Auto-Build**Vercel automatically:- Detects push to prod-ose-platform-web branch- Pulls latest content- Builds Hugo site with PaperMod theme- Deploys to production URL### Why Force Push**Safe for deployment branches**:- prod-ose-platform-web is deployment-only (no direct commits)- Always want exact copy of main branch- Trunk-based development: main is source of truth### Deployment Safety**Pre-deployment checks**:- ✅ On main branch- ✅ No uncommitted changes- ✅ Latest from remote**No local build**: Vercel handles all build operations
+## Deployment Workflow
+
+Deploy ose-platform-web to production using Vercel integration.
+
+### Production Branch
+
+**Branch**: `prod-ose-platform-web`  
+**Purpose**: Deployment-only branch that Vercel monitors  
+**Build System**: Vercel (Hugo SSG with PaperMod theme)
+
+### Deployment Process
+
+**Step 1: Validate Current State**
+
+```bash
+# Ensure on main branch
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [ "$CURRENT_BRANCH" != "main" ]; then
+  echo "❌ Must be on main branch"
+  exit 1
+fi
+
+# Check for uncommitted changes
+if [ -n "$(git status --porcelain)" ]; then
+  echo "❌ Uncommitted changes detected"
+  exit 1
+fi
+```
+
+**Step 2: Force Push to Production**
+
+```bash
+# Deploy to production
+git push origin main:prod-ose-platform-web --force
+```
+
+**Step 3: Vercel Auto-Build**
+
+Vercel automatically:
+
+- Detects push to prod-ose-platform-web branch
+- Pulls latest content
+- Builds Hugo site with PaperMod theme
+- Deploys to production URL
+
+### Why Force Push
+
+**Safe for deployment branches**:
+
+- prod-ose-platform-web is deployment-only (no direct commits)
+- Always want exact copy of main branch
+- Trunk-based development: main is source of truth
+
+### Deployment Safety
+
+**Pre-deployment checks**:
+
+- ✅ On main branch
+- ✅ No uncommitted changes
+- ✅ Latest from remote
+
+**No local build**: Vercel handles all build operations
 
 ## References
 
