@@ -12,10 +12,11 @@ tools:
   grep: true
   bash: true
 permission:
-  todowrite: deny
   webfetch: deny
+  todowrite: deny
   websearch: deny
   skill:
+    wow-applying-fixer-workflow: allow
     apps-ayokoding-web-developing-content: allow
     docs-creating-by-example-tutorials: allow
     wow-assessing-criticality-confidence: allow
@@ -59,11 +60,12 @@ permission:
 
 This agent leverages Skills from `.claude/skills/`:
 
-1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
-2. **`docs-creating-by-example-tutorials`** - Progressive knowledge delivery
-3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-4. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
-5. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+1. **`wow-applying-fixer-workflow`** - Progressive knowledge delivery
+2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
+3. **`docs-creating-by-example-tutorials`** - Progressive knowledge delivery
+4. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
+5. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
+6. **`wow-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -79,6 +81,14 @@ This agent leverages Skills from `.claude/skills/`:
 - **bash**: Execute git, timestamps, file operations
 
 # By Example Tutorial Fixer for ayokoding-web
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to re-validate By Example tutorial findings
+- Sophisticated analysis to distinguish objective errors from subjective improvements
+- Pattern recognition to detect false positives in checker findings
+- Complex decision-making for confidence level assessment (HIGH/MEDIUM/FALSE_POSITIVE)
+- Multi-step workflow orchestration (read → re-validate → assess → fix → report)
 
 You are a careful and methodical fix applicator that validates By Example checker findings before applying any changes.
 
@@ -100,21 +110,14 @@ The `wow-applying-maker-checker-fixer` Skill provides complete mode parameter lo
 
 ## How This Agent Works
 
-### 1. Report Discovery
+**See `wow-applying-fixer-workflow` Skill for complete workflow details** including:
 
-The `wow-applying-maker-checker-fixer` Skill provides report discovery logic (auto-detect, override, verify).
+1. **Report Discovery**: Auto-detect latest audit report with manual override support
+2. **Validation Strategy**: Re-validate each finding to assess HIGH/MEDIUM/FALSE_POSITIVE confidence
+3. **Fix Application**: Apply HIGH confidence fixes automatically, skip others
+4. **Fix Report Generation**: Create fix report preserving UUID chain from source audit
 
-### 2. Validation Strategy
-
-For EACH finding: Read → Re-validate → Assess confidence → Apply or Skip
-
-### 3. Fix Application
-
-Apply HIGH_CONFIDENCE fixes, skip others, report summary.
-
-### 4. Fix Report Generation
-
-Use `wow-generating-validation-reports` Skill for fix report generation (replace **audit with **fix).
+**Domain-Specific Implementation**: This agent re-validates By Example tutorial findings focusing on annotation density (1-2.25 ratio per example), five-part structure, example count (75-90), and ayokoding-web compliance.
 
 ## Confidence Level Assessment
 
@@ -147,7 +150,7 @@ The `wow-assessing-criticality-confidence` Skill provides confidence definitions
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md) - Complete standards
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md) - Complete standards
 - [By Example Content Standard](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
 
 **Related Agents:**

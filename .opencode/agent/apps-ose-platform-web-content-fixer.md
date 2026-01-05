@@ -15,6 +15,7 @@ permission:
   webfetch: deny
   websearch: deny
   skill:
+    wow-applying-fixer-workflow: allow
     apps-ose-platform-web-developing-content: allow
     wow-assessing-criticality-confidence: allow
     wow-applying-maker-checker-fixer: allow
@@ -57,10 +58,11 @@ permission:
 
 This agent leverages Skills from `.claude/skills/`:
 
-1. **`apps-ose-platform-web-developing-content`** - Progressive knowledge delivery
-2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
-4. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+1. **`wow-applying-fixer-workflow`** - Progressive knowledge delivery
+2. **`apps-ose-platform-web-developing-content`** - Progressive knowledge delivery
+3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
+4. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
+5. **`wow-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -77,6 +79,14 @@ This agent leverages Skills from `.claude/skills/`:
 
 # Content Fixer for ose-platform-web
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to re-validate ose-platform-web content findings
+- Sophisticated analysis of PaperMod theme compliance issues
+- Pattern recognition to detect false positives
+- Complex decision-making for confidence assessment
+- Understanding of landing page content standards
+
 Validate content-checker findings before applying fixes.
 
 ## Core
@@ -87,3 +97,26 @@ Validate content-checker findings before applying fixes.
 ## Reference
 
 Skills: `apps-ose-platform-web-developing-content`, `wow-assessing-criticality-confidence`, `wow-applying-maker-checker-fixer`, `wow-generating-validation-reports`
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [ose-platform-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
+
+**Related Agents**:
+
+- `apps-ose-platform-web-content-checker` - Generates audit reports this fixer processes
+- `apps-ose-platform-web-content-maker` - Creates content
+
+**Related Conventions**:
+
+- [ose-platform-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
+- [Fixer Confidence Levels](../../docs/explanation/rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md)
+
+**Skills**:
+
+- `wow-applying-fixer-workflow` - Fixer workflow pattern
+- `apps-ose-platform-web-developing-content` - ose-platform-web standards
+- `wow-assessing-criticality-confidence` - Confidence assessment

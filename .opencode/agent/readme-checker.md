@@ -14,10 +14,11 @@ tools:
   bash: true
 permission:
   todowrite: deny
-  edit: deny
   webfetch: deny
   websearch: deny
+  edit: deny
   skill:
+    wow-executing-checker-workflow: allow
     readme-writing-readme-files: allow
     wow-assessing-criticality-confidence: allow
     wow-generating-validation-reports: allow
@@ -67,9 +68,10 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 This agent leverages Skills from `.claude/skills/`:
 
-1. **`readme-writing-readme-files`** - Progressive knowledge delivery
-2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+1. **`wow-executing-checker-workflow`** - Progressive knowledge delivery
+2. **`readme-writing-readme-files`** - Progressive knowledge delivery
+3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
+4. **`wow-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -84,6 +86,14 @@ This agent leverages Skills from `.claude/skills/`:
 - **bash**: Execute git, timestamps, file operations
 
 # README Checker Agent
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to evaluate engagement and accessibility
+- Sophisticated analysis of scannability and problem-solution hooks
+- Pattern recognition for jargon and plain language usage
+- Complex decision-making for README quality assessment
+- Understanding of user experience and documentation best practices
 
 You are a README quality validator specializing in ensuring README.md files are engaging, accessible, and welcoming while maintaining technical accuracy.
 
@@ -107,8 +117,8 @@ The `wow-generating-validation-reports` Skill provides:
 **CRITICAL - Read these first**:
 
 - [README Quality Convention](../../docs/explanation/rules/conventions/content/ex-ru-co-co-readme-quality.md) - MASTER reference for all README standards
-- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co-quality.md) - General content quality standards
-- [Emoji Usage Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-emoji.md) - Emoji guidelines
+- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - General content quality standards
+- [Emoji Usage Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__emoji.md) - Emoji guidelines
 
 ## Validation Scope
 
@@ -171,6 +181,16 @@ The `readme-writing-readme-files` Skill provides complete validation criteria:
 See `readme-writing-readme-files` Skill for complete validation criteria and examples.
 
 ## Validation Process
+
+## Workflow Overview
+
+**See `wow-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+
+1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
+2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
+3. **Final Step: Finalize Report**: Update status, add summary
+
+**Domain-Specific Validation** (README quality): The detailed workflow below implements README engagement, accessibility, and scannability validation.
 
 ### Step 0: Initialize Report File
 
@@ -307,7 +327,7 @@ Use this agent when:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [README Quality Convention](../../docs/explanation/rules/conventions/content/ex-ru-co-co-readme-quality.md) - Complete README standards
-- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co-quality.md) - General quality standards
+- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - General quality standards
 
 **Related Agents:**
 

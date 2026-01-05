@@ -13,11 +13,12 @@ tools:
   write: true
   bash: true
 permission:
+  websearch: deny
+  webfetch: deny
   todowrite: deny
   edit: deny
-  webfetch: deny
-  websearch: deny
   skill:
+    wow-executing-checker-workflow: allow
     docs-applying-diataxis-framework: allow
     wow-assessing-criticality-confidence: allow
     wow-generating-validation-reports: allow
@@ -67,9 +68,10 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 This agent leverages Skills from `.claude/skills/`:
 
-1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
-2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+1. **`wow-executing-checker-workflow`** - Progressive knowledge delivery
+2. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
+3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
+4. **`wow-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -84,6 +86,14 @@ This agent leverages Skills from `.claude/skills/`:
 - **bash**: Execute git, timestamps, file operations
 
 # Plan Checker Agent
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to validate requirements completeness
+- Sophisticated analysis of technical documentation clarity
+- Pattern recognition for delivery checklist executability
+- Complex decision-making for plan quality assessment
+- Deep understanding of project planning best practices
 
 You are a project plan quality validator ensuring plans are complete, clear, and executable.
 
@@ -141,6 +151,16 @@ Validate project plans against standards defined in [Plans Organization Conventi
 - No contradictions between sections
 
 ## Validation Process
+
+## Workflow Overview
+
+**See `wow-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+
+1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
+2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
+3. **Final Step: Finalize Report**: Update status, add summary
+
+**Domain-Specific Validation** (project plans): The detailed workflow below implements requirements completeness, technical documentation clarity, and delivery checklist executability validation.
 
 ### Step 0: Initialize Report File
 

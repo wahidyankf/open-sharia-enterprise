@@ -11,10 +11,10 @@ tools:
   grep: true
   bash: true
 permission:
-  write: deny
-  todowrite: deny
   webfetch: deny
+  todowrite: deny
   websearch: deny
+  write: deny
   skill:
     docs-applying-diataxis-framework: allow
 ---
@@ -327,7 +327,7 @@ To verify relative path:
 
 ### Link Syntax Requirements
 
-All links must follow [Linking Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-linking.md):
+All links must follow [Linking Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__linking.md):
 
 - Use relative paths (`./ or ../`)
 - Include `.md` extension
@@ -643,8 +643,8 @@ Proceed anyway? (Please confirm)
 
 - `docs/explanation/rules/conventions/README.md` - Index of all conventions
 - `docs/explanation/rules/conventions/meta/ex-ru-co-me-file-naming.md` - How to name files with hierarchical prefixes (required reading)
-- `docs/explanation/rules/conventions/formatting/ex-ru-co-fo-linking.md` - How to link between files with GitHub-compatible markdown (required reading)
-- `docs/explanation/rules/conventions/formatting/ex-ru-co-fo-emoji.md` - When and where to use emojis
+- `docs/explanation/rules/conventions/formatting/ex-ru-co-fo__linking.md` - How to link between files with GitHub-compatible markdown (required reading)
+- `docs/explanation/rules/conventions/formatting/ex-ru-co-fo__emoji.md` - When and where to use emojis
 
 **Related Agents:**
 

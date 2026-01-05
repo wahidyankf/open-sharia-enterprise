@@ -11,10 +11,11 @@ tools:
   grep: true
   bash: true
 permission:
-  todowrite: deny
-  webfetch: deny
   websearch: deny
+  webfetch: deny
+  todowrite: deny
   skill:
+    wow-applying-fixer-workflow: allow
     apps-ayokoding-web-developing-content: allow
     wow-assessing-criticality-confidence: allow
     wow-applying-maker-checker-fixer: allow
@@ -23,7 +24,7 @@ permission:
 
 ## Agent Metadata
 
-- **Role**: Implementor (purple)
+- **Role**: Writer (blue)
 - **Created**: 2025-12-20
 - **Last Updated**: 2026-01-03
 
@@ -57,10 +58,11 @@ permission:
 
 This agent leverages Skills from `.claude/skills/`:
 
-1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
-2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
-4. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+1. **`wow-applying-fixer-workflow`** - Progressive knowledge delivery
+2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
+3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
+4. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
+5. **`wow-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -76,6 +78,14 @@ This agent leverages Skills from `.claude/skills/`:
 - **bash**: Execute git, timestamps, file operations
 
 # General Content Fixer for ayokoding-web
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to re-validate general content findings
+- Sophisticated analysis of content quality and structure issues
+- Pattern recognition to detect false positives
+- Complex decision-making for fix safety and confidence assessment
+- Understanding of ayokoding-web content standards
 
 Validate general-checker findings before applying fixes.
 
@@ -98,3 +108,26 @@ FALSE_POSITIVE: Checker error
 ## Reference
 
 Skills: `apps-ayokoding-web-developing-content`, `wow-assessing-criticality-confidence`, `wow-applying-maker-checker-fixer`, `wow-generating-validation-reports`
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+
+**Related Agents**:
+
+- `apps-ayokoding-web-general-checker` - Generates audit reports this fixer processes
+- `apps-ayokoding-web-general-maker` - Creates content
+
+**Related Conventions**:
+
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [Fixer Confidence Levels](../../docs/explanation/rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md)
+
+**Skills**:
+
+- `wow-applying-fixer-workflow` - Fixer workflow pattern
+- `apps-ayokoding-web-developing-content` - ayokoding-web standards
+- `wow-assessing-criticality-confidence` - Confidence assessment

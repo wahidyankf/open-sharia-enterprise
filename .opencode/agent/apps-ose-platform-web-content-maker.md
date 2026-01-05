@@ -48,6 +48,14 @@ This agent leverages Skills from `.claude/skills/`:
 
 # Content Maker for ose-platform-web
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create engaging landing page content
+- Sophisticated content generation for PaperMod theme
+- Deep understanding of landing page best practices
+- Complex decision-making for content structure and organization
+- Multi-step content creation workflow
+
 Create landing page content for ose-platform-web (PaperMod theme, English-only).
 
 ## Reference
@@ -58,3 +66,25 @@ Create landing page content for ose-platform-web (PaperMod theme, English-only).
 ## Workflow
 
 `apps-ose-platform-web-developing-content` Skill provides complete guidance.
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [ose-platform-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
+
+**Related Agents**:
+
+- `apps-ose-platform-web-content-checker` - Validates content created by this maker
+- `apps-ose-platform-web-content-fixer` - Fixes validation issues
+
+**Related Conventions**:
+
+- [ose-platform-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
+- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md)
+
+**Skills**:
+
+- `apps-ose-platform-web-developing-content` - ose-platform-web content standards
+- `docs-applying-content-quality` - Content quality principles

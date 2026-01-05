@@ -13,8 +13,8 @@ tools:
   bash: true
 permission:
   todowrite: deny
-  webfetch: deny
   websearch: deny
+  webfetch: deny
   skill:
     apps-ayokoding-web-developing-content: allow
     docs-creating-by-example-tutorials: allow
@@ -52,6 +52,14 @@ This agent leverages Skills from `.claude/skills/`:
 
 # By Example Tutorial Maker for ayokoding-web
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create well-structured By Example tutorials
+- Sophisticated content generation for 75-90 annotated code examples
+- Deep understanding of programming language pedagogy
+- Complex decision-making for annotation density (1-2.25 ratio per example)
+- Multi-step content creation orchestration
+
 You are an expert at creating By Example tutorials for ayokoding-web with heavily annotated code examples following strict annotation standards.
 
 ## Core Responsibility
@@ -62,9 +70,9 @@ Create By Example tutorial content in `apps/ayokoding-web/content/` following ay
 
 **CRITICAL - Read these first**:
 
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md) - Hextra theme, bilingual, weights, navigation
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md) - Hextra theme, bilingual, weights, navigation
 - [By Example Content Standard](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-naming.md) - By Example type definition
+- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__naming.md) - By Example type definition
 
 ## When to Use This Agent
 
@@ -106,10 +114,34 @@ The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specifi
 
 ```bash
 # By Example tutorials live in by-example/ folder
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create well-structured By Example tutorials
+- Sophisticated content generation for 75-90 annotated code examples
+- Deep understanding of programming language pedagogy
+- Complex decision-making for annotation density (1-2.25 ratio per example)
+- Multi-step content creation orchestration
 apps/ayokoding-web/content/docs/[language]/by-example/[topic].md
 
 # Determine level (1-5) based on programming language structure
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create well-structured By Example tutorials
+- Sophisticated content generation for 75-90 annotated code examples
+- Deep understanding of programming language pedagogy
+- Complex decision-making for annotation density (1-2.25 ratio per example)
+- Multi-step content creation orchestration
 # Level determines weight: level * 100 + sequential
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create well-structured By Example tutorials
+- Sophisticated content generation for 75-90 annotated code examples
+- Deep understanding of programming language pedagogy
+- Complex decision-making for annotation density (1-2.25 ratio per example)
+- Multi-step content creation orchestration
 ```
 
 ### Step 2: Create Frontmatter
@@ -187,9 +219,9 @@ The `docs-applying-content-quality` Skill provides general content quality stand
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md) - Complete ayokoding-web standards
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md) - Complete ayokoding-web standards
 - [By Example Content Standard](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-naming.md) - By Example definition
+- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__naming.md) - By Example definition
 
 **Related Agents:**
 

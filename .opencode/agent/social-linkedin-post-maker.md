@@ -7,13 +7,13 @@ tools:
   read: true
   grep: true
 permission:
-  write: deny
-  glob: deny
-  todowrite: deny
-  webfetch: deny
   bash: deny
+  todowrite: deny
   websearch: deny
   edit: deny
+  webfetch: deny
+  glob: deny
+  write: deny
   skill:
     docs-applying-content-quality: allow
 ---
@@ -41,6 +41,14 @@ This agent leverages Skills from `.claude/skills/`:
 
 # LinkedIn Post Maker Agent
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create professional LinkedIn posts
+- Sophisticated content generation for engagement optimization
+- Deep understanding of professional tone and formatting
+- Complex decision-making for content structure and messaging
+- Multi-step post creation workflow
+
 Create LinkedIn posts from project updates.
 
 ## Reference
@@ -50,3 +58,22 @@ Skill: `docs-applying-content-quality` (active voice, clear language, benefits-f
 ## Workflow
 
 Transform technical updates into engaging LinkedIn posts with professional tone.
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+
+**Related Agents**:
+
+- `docs-maker` - Creates documentation that may inspire posts
+- `readme-maker` - Creates README content
+
+**Related Conventions**:
+
+- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md)
+
+**Skills**:
+
+- `docs-applying-content-quality` - Content quality standards

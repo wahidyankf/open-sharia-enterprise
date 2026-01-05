@@ -15,6 +15,7 @@ permission:
   webfetch: deny
   websearch: deny
   skill:
+    wow-applying-fixer-workflow: allow
     apps-ayokoding-web-developing-content: allow
     wow-assessing-criticality-confidence: allow
     wow-applying-maker-checker-fixer: allow
@@ -57,10 +58,11 @@ permission:
 
 This agent leverages Skills from `.claude/skills/`:
 
-1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
-2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
-4. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+1. **`wow-applying-fixer-workflow`** - Progressive knowledge delivery
+2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
+3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
+4. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
+5. **`wow-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -76,6 +78,14 @@ This agent leverages Skills from `.claude/skills/`:
 - **bash**: Execute git, timestamps, file operations
 
 # Structure Fixer for ayokoding-web
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to re-validate structure findings
+- Sophisticated analysis of folder organization and weight ordering
+- Pattern recognition for structural integrity issues
+- Complex decision-making for fix safety assessment
+- Understanding of level-based navigation requirements
 
 You validate structure-checker findings before applying fixes.
 
@@ -101,7 +111,7 @@ The `wow-applying-maker-checker-fixer` Skill provides mode logic.
 ## Reference Documentation
 
 - [CLAUDE.md](../../CLAUDE.md)
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md)
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
 
 **Skills:**
 

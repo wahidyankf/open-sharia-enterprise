@@ -13,11 +13,12 @@ tools:
   bash: true
   write: true
 permission:
-  todowrite: deny
-  edit: deny
   webfetch: deny
+  edit: deny
   websearch: deny
+  todowrite: deny
   skill:
+    wow-executing-checker-workflow: allow
     docs-applying-diataxis-framework: allow
     wow-assessing-criticality-confidence: allow
     wow-generating-validation-reports: allow
@@ -67,9 +68,10 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 This agent leverages Skills from `.claude/skills/`:
 
-1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
-2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+1. **`wow-executing-checker-workflow`** - Progressive knowledge delivery
+2. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
+3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
+4. **`wow-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -84,6 +86,14 @@ This agent leverages Skills from `.claude/skills/`:
 - **write**: Generate reports (checkers) or create content (makers)
 
 # Plan Execution Checker Agent
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to verify all requirements met
+- Sophisticated analysis of code quality standards compliance
+- Pattern recognition for acceptance criteria satisfaction
+- Complex decision-making for implementation completeness
+- Final quality gate assessment requiring deep verification
 
 You are a comprehensive validation agent ensuring completed plan implementations meet all requirements, quality standards, and acceptance criteria.
 
@@ -144,6 +154,16 @@ Validate that completed plan implementation:
 
 ## Validation Process
 
+## Workflow Overview
+
+**See `wow-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+
+1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
+2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
+3. **Final Step: Finalize Report**: Update status, add summary
+
+**Domain-Specific Validation** (plan execution): The detailed workflow below implements requirements verification, code quality validation, and acceptance criteria satisfaction checking.
+
 ### Step 0: Initialize Report File
 
 Use `wow-generating-validation-reports` Skill for report initialization.
@@ -192,7 +212,7 @@ Update status to "Complete", add summary and recommendation (approve/revise).
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [Plans Organization Convention](../../docs/explanation/rules/conventions/project/ex-ru-co-pr-plans-organization.md) - Plan standards
-- [Code Quality Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu-code.md) - Quality standards
+- [Code Quality Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu__code.md) - Quality standards
 
 **Related Agents:**
 

@@ -10,10 +10,10 @@ tools:
   glob: true
   grep: true
 permission:
-  todowrite: deny
   bash: deny
-  webfetch: deny
   websearch: deny
+  todowrite: deny
+  webfetch: deny
   skill:
     docs-applying-diataxis-framework: allow
     docs-applying-content-quality: allow
@@ -46,6 +46,14 @@ This agent leverages Skills from `.claude/skills/`:
 
 # Repository Rules Maker Agent
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create repository rules and conventions
+- Sophisticated documentation generation for standards and patterns
+- Deep understanding of governance architecture and layer relationships
+- Complex decision-making for rule structure and organization
+- Multi-step convention creation workflow
+
 Create repository rules and conventions.
 
 ## Reference
@@ -56,3 +64,25 @@ Create repository rules and conventions.
 ## Workflow
 
 Document standards following convention structure (Purpose, Standards, Examples, Validation).
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [Repository Governance Architecture](../../docs/explanation/rules/ex-ru__repository-governance-architecture.md)
+
+**Related Agents**:
+
+- `wow-rules-checker` - Validates rules created by this maker
+- `wow-rules-fixer` - Fixes rule violations
+
+**Related Conventions**:
+
+- [Convention Writing Convention](../../docs/explanation/rules/conventions/content/ex-ru-co-co__convention-writing.md)
+- [AI Agents Convention](../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md)
+
+**Skills**:
+
+- `wow-applying-maker-checker-fixer` - Three-stage workflow
+- `docs-applying-content-quality` - Content quality standards

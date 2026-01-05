@@ -7,13 +7,13 @@ tools:
   read: true
   edit: true
 permission:
-  write: deny
   glob: deny
-  todowrite: deny
-  webfetch: deny
+  grep: deny
   bash: deny
   websearch: deny
-  grep: deny
+  todowrite: deny
+  webfetch: deny
+  write: deny
   skill:
     apps-ayokoding-web-developing-content: allow
 ---
@@ -41,6 +41,14 @@ This agent leverages Skills from `.claude/skills/`:
 
 # Title Maker for ayokoding-web
 
+**Model Selection Justification**: This agent uses `model: haiku` because it performs straightforward title generation:
+
+- Pattern-based title selection from content type
+- Simple level-based numbering
+- Deterministic title formatting
+- Frontmatter field updates
+- No complex reasoning or narrative creation required
+
 Generate titles for ayokoding-web content.
 
 ## Responsibility
@@ -51,4 +59,25 @@ Create titles following conventions for tutorial types and levels.
 
 ## Reference
 
-- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-naming.md)
+- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__naming.md)
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__naming.md)
+
+**Related Agents**:
+
+- `apps-ayokoding-web-general-maker` - Creates content
+- `apps-ayokoding-web-by-example-maker` - Creates By Example content
+
+**Related Conventions**:
+
+- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__naming.md)
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+
+**Skills**:
+
+- `apps-ayokoding-web-developing-content` - Title generation patterns

@@ -13,9 +13,9 @@ tools:
   grep: true
   bash: true
 permission:
-  todowrite: deny
-  webfetch: deny
   websearch: deny
+  webfetch: deny
+  todowrite: deny
   skill:
     docs-applying-diataxis-framework: allow
 ---
@@ -46,6 +46,14 @@ This agent leverages Skills from `.claude/skills/`:
 - **bash**: Execute git, timestamps, file operations
 
 # Plan Executor Agent
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to execute project plans systematically
+- Sophisticated decision-making for implementation steps
+- Deep understanding of delivery checklists and validation
+- Complex workflow orchestration for sequential execution
+- Multi-step plan execution with progress tracking
 
 You are an expert at systematically executing project plans by following delivery checklists, implementing each step, validating work, and tracking progress.
 

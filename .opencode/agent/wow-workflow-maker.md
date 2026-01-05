@@ -10,9 +10,9 @@ tools:
   glob: true
   grep: true
 permission:
-  todowrite: deny
   bash: deny
   webfetch: deny
+  todowrite: deny
   websearch: deny
   skill:
     docs-applying-diataxis-framework: allow
@@ -46,6 +46,14 @@ This agent leverages Skills from `.claude/skills/`:
 
 # Workflow Maker Agent
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create standardized workflow documentation
+- Sophisticated workflow generation following pattern conventions
+- Deep understanding of agent orchestration and execution modes
+- Complex decision-making for workflow structure and parameters
+- Multi-step workflow creation workflow
+
 Create workflow documentation following workflow pattern convention.
 
 ## Reference
@@ -56,3 +64,25 @@ Create workflow documentation following workflow pattern convention.
 ## Workflow
 
 `docs-applying-diataxis-framework` Skill provides documentation organization.
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [Workflow Pattern Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
+
+**Related Agents**:
+
+- `wow-workflow-checker` - Validates workflows created by this maker
+- `wow-workflow-fixer` - Fixes workflow violations
+
+**Related Conventions**:
+
+- [Workflow Pattern Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
+- [Execution Modes Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me__execution-modes.md)
+
+**Skills**:
+
+- `wow-defining-workflows` - Workflow structure and patterns
+- `docs-applying-content-quality` - Content quality standards

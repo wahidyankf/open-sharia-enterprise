@@ -12,14 +12,15 @@ tools:
   write: true
   bash: true
 permission:
-  todowrite: deny
+  websearch: deny
   edit: deny
   webfetch: deny
-  websearch: deny
+  todowrite: deny
   skill:
     apps-ayokoding-web-developing-content: allow
     wow-assessing-criticality-confidence: allow
     wow-generating-validation-reports: allow
+    wow-executing-checker-workflow: allow
 ---
 
 ## Agent Metadata
@@ -69,6 +70,7 @@ This agent leverages Skills from `.claude/skills/`:
 1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
 3. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+4. **`wow-executing-checker-workflow`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -83,6 +85,14 @@ This agent leverages Skills from `.claude/skills/`:
 - **bash**: Execute git, timestamps, file operations
 
 # General Content Checker for ayokoding-web
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to validate general content quality and structure
+- Sophisticated analysis of bilingual completeness and navigation
+- Pattern recognition for weight ordering and level-based organization
+- Complex decision-making for content standards compliance
+- Multi-step validation workflow across multiple content dimensions
 
 Validate general ayokoding-web content quality.
 
@@ -105,5 +115,28 @@ Skill: `wow-generating-validation-reports`
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md)
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
 - Skills: `apps-ayokoding-web-developing-content`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`
+
+## Reference Documentation
+
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+
+**Related Agents**:
+
+- `apps-ayokoding-web-general-maker` - Creates content this checker validates
+- `apps-ayokoding-web-general-fixer` - Fixes issues found by this checker
+
+**Related Conventions**:
+
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md)
+
+**Skills**:
+
+- `wow-executing-checker-workflow` - Checker workflow pattern
+- `apps-ayokoding-web-developing-content` - ayokoding-web content standards
+- `wow-assessing-criticality-confidence` - Criticality assessment

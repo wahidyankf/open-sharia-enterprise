@@ -9,7 +9,6 @@ skills:
   - wow-assessing-criticality-confidence
   - wow-applying-maker-checker-fixer
   - wow-generating-validation-reports
-  ]
 created: 2025-12-20
 updated: 2026-01-03
 ---

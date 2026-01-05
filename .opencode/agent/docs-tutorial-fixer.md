@@ -12,10 +12,11 @@ tools:
   write: true
   bash: true
 permission:
-  todowrite: deny
   webfetch: deny
+  todowrite: deny
   websearch: deny
   skill:
+    wow-applying-fixer-workflow: allow
     docs-applying-diataxis-framework: allow
     wow-assessing-criticality-confidence: allow
     wow-applying-maker-checker-fixer: allow
@@ -58,10 +59,11 @@ permission:
 
 This agent leverages Skills from `.claude/skills/`:
 
-1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
-2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
-4. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+1. **`wow-applying-fixer-workflow`** - Progressive knowledge delivery
+2. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
+3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
+4. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
+5. **`wow-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -134,56 +136,14 @@ Use this agent when:
 
 ## How This Agent Works
 
-### 1. Report Discovery
+**See `wow-applying-fixer-workflow` Skill for complete workflow details** including:
 
-The `wow-applying-maker-checker-fixer` Skill provides report discovery logic:
+1. **Report Discovery**: Auto-detect latest audit report with manual override support
+2. **Validation Strategy**: Re-validate each finding to assess HIGH/MEDIUM/FALSE_POSITIVE confidence
+3. **Fix Application**: Apply HIGH confidence fixes automatically, skip others
+4. **Fix Report Generation**: Create fix report preserving UUID chain from source audit
 
-- Auto-detect latest audit report in `generated-reports/`
-- Allow manual override if user specifies a report
-- Verify report exists and is readable before proceeding
-
-**Report filename pattern**: `docs-tutorial-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
-
-### 2. Validation Strategy
-
-**For EACH finding in the audit report:**
-
-```
-Read finding → Re-execute validation check → Assess confidence level
-
-HIGH_CONFIDENCE:
-  - Re-validation confirms objective, verifiable issue exists
-  - Apply fix automatically
-
-MEDIUM_CONFIDENCE:
-  - Re-validation unclear or subjective judgment required
-  - Skip fix, flag as "needs manual review"
-
-FALSE_POSITIVE:
-  - Re-validation disproves issue
-  - Skip fix, report to user
-  - Suggest checker improvement
-```
-
-### 3. Fix Application
-
-- Apply ALL HIGH_CONFIDENCE fixes automatically
-- NO confirmation prompts (user already reviewed checker report)
-- Skip MEDIUM_CONFIDENCE and FALSE_POSITIVE findings
-- Report summary of all actions taken
-
-### 4. Fix Report Generation
-
-Generate comprehensive fix report using `wow-generating-validation-reports` Skill:
-
-**File naming pattern**: Replace `-audit` suffix with `-fix` (preserve UUID chain and timestamp)
-
-**Examples:**
-
-- Input: `docs-tutorial-a1b2c3-2025-12-14--20-45-audit.md`
-- Output: `docs-tutorial-a1b2c3-2025-12-14--20-45-fix.md`
-
-See Skill for complete fix report template structure.
+**Domain-Specific Implementation**: This agent re-validates tutorial quality findings focusing on pedagogical structure, narrative flow, visual completeness, and hands-on elements per tutorial conventions.
 
 ## Confidence Level Assessment
 
@@ -410,7 +370,7 @@ awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' tutorial.md | \
 
 ## Validation Re-implementation Guide
 
-**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu-repository-validation.md) and [Tutorial Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-general.md).
+**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu-repository-validation.md) and [Tutorial Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__general.md).
 
 **Key points:**
 
@@ -458,7 +418,7 @@ Always provide:
 
 **Agent Conventions:**
 
-- [AI Agents Convention](../../docs/explanation/rules/development/agents/ex-ru-de-ag-ai-agents.md) - AI agents convention (all agents must follow)
+- [AI Agents Convention](../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md) - AI agents convention (all agents must follow)
 
 **Related Agents:**
 
@@ -468,13 +428,13 @@ Always provide:
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
+- [Fixer Confidence Levels Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
 - [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/rules/development/pattern/ex-ru-de-pa-maker-checker-fixer.md) - Three-stage quality workflow
-- [Tutorial Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-general.md) - Complete tutorial standards and validation criteria (primary reference)
-- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-naming.md) - Tutorial types and naming patterns
+- [Tutorial Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__general.md) - Complete tutorial standards and validation criteria (primary reference)
+- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__naming.md) - Tutorial types and naming patterns
 - [Repository Validation Methodology Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu-repository-validation.md) - Standard validation patterns
 - [Temporary Files Convention](../../docs/explanation/rules/development/infra/ex-ru-de-in-temporary-files.md) - Where to store fix reports
-- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co-quality.md) - Content standards (no time estimates rule)
+- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - Content standards (no time estimates rule)
 
 ---
 
