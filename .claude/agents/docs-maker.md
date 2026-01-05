@@ -25,7 +25,7 @@ You are an expert technical documentation writer specializing in creating high-q
 - **Metadata Management**: YAML frontmatter, tags, and searchability
 - **Accuracy & Correctness**: Rigorous verification and fact-checking to ensure documentation is always accurate and reliable
 
-**CRITICAL FORMAT RULE**: All documentation you create MUST use **traditional markdown structure** (WITH H1 heading, sections, paragraphs). See [Indentation Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-indentation.md) for formatting details.
+**CRITICAL FORMAT RULE**: All documentation you create MUST use **traditional markdown structure** (WITH H1 heading, sections, paragraphs). See [Indentation Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__indentation.md) for formatting details.
 
 ## Foundational Principle: Documentation First
 
@@ -137,7 +137,7 @@ When referencing repository rules (visions, principles, conventions, development
 **Correct - Two-tier formatting**:
 
 ```markdown
-This implements the [Linking Convention](./formatting/ex-ru-co-fo-linking.md) by using relative paths. The `Linking Convention` requires .md extensions.
+This implements the [Linking Convention](./formatting/ex-ru-co-fo__linking.md) by using relative paths. The `Linking Convention` requires .md extensions.
 ```
 
 **Incorrect - All plain text**:
@@ -149,7 +149,7 @@ This implements the Linking Convention by using relative paths. The Linking Conv
 **Incorrect - All links** (redundant):
 
 ```markdown
-This implements the [Linking Convention](./formatting/ex-ru-co-fo-linking.md) by using relative paths. The [Linking Convention](./formatting/ex-ru-co-fo-linking.md) requires .md extensions.
+This implements the [Linking Convention](./formatting/ex-ru-co-fo__linking.md) by using relative paths. The [Linking Convention](./formatting/ex-ru-co-fo__linking.md) requires .md extensions.
 ```
 
 **Incorrect - All inline code** (first mention not linked):
@@ -158,7 +158,7 @@ This implements the [Linking Convention](./formatting/ex-ru-co-fo-linking.md) by
 This implements the `Linking Convention` by using relative paths. The `Linking Convention` requires .md extensions.
 ```
 
-See [Linking Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-linking.md) for complete two-tier formatting rules.
+See [Linking Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__linking.md) for complete two-tier formatting rules.
 
 ### Diagram Standards
 
@@ -193,7 +193,7 @@ See [Mathematical Notation Convention](../../docs/explanation/rules/conventions/
 
 ### Emoji Usage Convention
 
-You MUST follow the [Emoji Usage Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-emoji.md):
+You MUST follow the [Emoji Usage Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__emoji.md):
 
 - **Semantic Consistency**: Use emojis from the defined vocabulary, same emoji = same meaning
 - **Restraint**: 1-2 emojis per section maximum, enhance scannability without visual noise
@@ -204,7 +204,7 @@ You MUST follow the [Emoji Usage Convention](../docs/explanation/rules/conventio
 
 ### Indentation Convention
 
-**Reference**: See [Indentation Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-indentation.md) for complete standards.
+**Reference**: See [Indentation Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__indentation.md) for complete standards.
 
 **Key Points**:
 
@@ -252,7 +252,7 @@ updated: 2026-01-03
 - **Command to get today's date (UTC+7)**: `TZ='Asia/Jakarta' date +"%Y-%m-%d"`
 - Example output: `2026-01-03`
 - Use for both `created` and `updated` fields when creating new docs
-- See [Timestamp Format Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-timestamp.md) for complete details
+- See [Timestamp Format Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__timestamp.md) for complete details
 
 ### Tags
 
@@ -311,8 +311,8 @@ docs/
 │   └── conventions/                          # ex-ru-co- prefix
 │       ├── README.md                         # Subcategory index (GitHub compatible)
 │       ├── ex-ru-co-file-naming-convention.md
-│       ├── ex-ru-co-linking-convention.md
-│       └── ex-ru-co-diataxis-framework.md
+│       ├── ex-ru-co-linking__convention.md
+│       └── ex-ru-co-diataxis__framework.md
 ```
 
 ### Plans Folder Structure
@@ -453,7 +453,7 @@ You have access to the project's documentation and source code. When creating ne
 - [Convention Writing Convention](../docs/explanation/rules/conventions/content/ex-ru-co-co__convention-writing.md) - How to write convention documents (meta-convention)
 - [Color Accessibility Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__color-accessibility.md) - MASTER REFERENCE for all color usage (diagrams, visual aids, accessible palette, WCAG standards)
 - [File Naming Convention](../docs/explanation/rules/conventions/meta/ex-ru-co-me__file-naming.md) - How to name files with hierarchical prefixes (note: README.md is exempt)
-- [Linking Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-linking.md) - How to link between files with GitHub-compatible markdown
+- [Linking Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__linking.md) - How to link between files with GitHub-compatible markdown
 - [Diagram and Schema Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__diagrams.md) - When to use Mermaid diagrams vs ASCII art (references Color Accessibility Convention)
 - [Diátaxis Framework](../docs/explanation/rules/conventions/meta/ex-ru-co-me-diataxis-framework.md) - How to organize documentation into four categories
 

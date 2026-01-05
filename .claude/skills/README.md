@@ -77,7 +77,7 @@ Markdown instructions, examples, best practices...
 
 **CRITICAL**: The `name` field must exactly match the directory name.
 
-## Available Skills (19)
+## Available Skills (23)
 
 This repository provides 18 Claude Code Skills organized by domain. Each Skill is a model-invoked knowledge package that auto-loads when agents need specific domain expertise.
 
@@ -107,6 +107,10 @@ This repository provides 18 Claude Code Skills organized by domain. Each Skill i
 
 ### agent\_\_ Domain (1 Skill)
 
+**agent**agent**documenting-references** - Standardized reference documentation section structure for agents - project guidance, conventions, related agents, and Skills. Use when implementing or updating agent documentation.
+
+**agent**agent**selecting-models** - Guidance for selecting appropriate AI model (sonnet vs haiku) based on task complexity, reasoning requirements, and performance needs. Use when implementing agents or justifying model selection.
+
 **agent**agent**developing-agents** - AI agent development standards including frontmatter structure, naming conventions, tool access patterns, model selection, and Bash-only file operations for .claude/ folders.
 
 ### apps**ayokoding-web** Domain (1 Skill)
@@ -133,7 +137,9 @@ This repository provides 18 Claude Code Skills organized by domain. Each Skill i
 
 **wow**wow**understanding-repository-architecture** - Six-layer governance hierarchy (Vision → Principles → Conventions → Development → Agents → Workflows). Use when understanding repository structure, tracing rules to foundational values, explaining architectural decisions, or navigating layer relationships.
 
----
+**wow**wow**applying-fixer-workflow** - Complete fixer agent workflow including report discovery, validation strategy (HIGH/MEDIUM/FALSE_POSITIVE confidence), fix application, and fix report generation. Use when implementing or updating fixer agents.
+
+## **wow**wow**executing-checker-workflow** - Step-by-step validation workflow for checker agents - initialize report, discover content, validate progressively, finalize with summary. Use when implementing or updating checker agents.
 
 **Skills Creation**: See [How to Create a Skill](../../docs/how-to/hoto__create-new-skill.md) for step-by-step guide to creating new Skills.
 

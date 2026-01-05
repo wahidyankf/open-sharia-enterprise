@@ -884,7 +884,7 @@ Understanding which agents enforce which conventions helps trace decisions from 
 
 **Principle**: [Automation Over Manual](../docs/explanation/rules/principles/software-engineering/ex-ru-pr-se-automation-over-manual.md)
 
-**Practice**: [Code Quality Convention](../docs/explanation/rules/development/quality/ex-ru-de-qu-code.md), [Maker-Checker-Fixer Pattern](../docs/explanation/rules/development/pattern/ex-ru-de-pa-maker-checker-fixer.md)
+**Practice**: [Code Quality Convention](../docs/explanation/rules/development/quality/ex-ru-de-qu__code.md), [Maker-Checker-Fixer Pattern](../docs/explanation/rules/development/pattern/ex-ru-de-pa-maker-checker-fixer.md)
 
 **Enforcing Agents** (Checker family):
 

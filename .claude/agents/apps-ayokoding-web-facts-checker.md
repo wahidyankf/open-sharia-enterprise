@@ -63,7 +63,7 @@ Update status to "Complete", add summary.
 ## Reference Documentation
 
 - [CLAUDE.md](../../CLAUDE.md)
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu-ayokoding.md)
+- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
 - [Factual Validation Convention](../../docs/explanation/rules/conventions/content/ex-ru-co-co-factual-validation.md)
 
 **Skills:**

@@ -414,7 +414,7 @@ Always provide:
 - [Fixer Confidence Levels Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
 - [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/rules/development/pattern/ex-ru-de-pa-maker-checker-fixer.md) - Three-stage quality workflow
 - [Tutorial Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__general.md) - Complete tutorial standards and validation criteria (primary reference)
-- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-naming.md) - Tutorial types and naming patterns
+- [Tutorial Naming Convention](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__naming.md) - Tutorial types and naming patterns
 - [Repository Validation Methodology Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu-repository-validation.md) - Standard validation patterns
 - [Temporary Files Convention](../../docs/explanation/rules/development/infra/ex-ru-de-in-temporary-files.md) - Where to store fix reports
 - [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - Content standards (no time estimates rule)
