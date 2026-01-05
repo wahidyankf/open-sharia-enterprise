@@ -10,6 +10,7 @@ tools:
 model: sonnet
 color: green
 skills:
+  - wow-executing-checker-workflow
   - apps-ayokoding-web-developing-content
   - wow-assessing-criticality-confidence
   - wow-generating-validation-reports
@@ -40,6 +41,16 @@ The `apps-ayokoding-web-developing-content` Skill provides complete structure st
 - Frontmatter compliance (title, weight, prev/next)
 
 ## Validation Process
+
+## Workflow Overview
+
+**See `wow-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+
+1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
+2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
+3. **Final Step: Finalize Report**: Update status, add summary
+
+**Domain-Specific Validation** (ayokoding-web structure): The detailed workflow below implements folder organization, level-based weights, navigation depth, and bilingual completeness validation.
 
 ### Step 0: Initialize Report
 

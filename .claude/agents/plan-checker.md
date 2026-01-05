@@ -10,6 +10,7 @@ tools:
 model: sonnet
 color: green
 skills:
+  - wow-executing-checker-workflow
   - docs-applying-diataxis-framework
   - wow-assessing-criticality-confidence
   - wow-generating-validation-reports
@@ -75,6 +76,16 @@ Validate project plans against standards defined in [Plans Organization Conventi
 - No contradictions between sections
 
 ## Validation Process
+
+## Workflow Overview
+
+**See `wow-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+
+1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
+2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
+3. **Final Step: Finalize Report**: Update status, add summary
+
+**Domain-Specific Validation** (project plans): The detailed workflow below implements requirements completeness, technical documentation clarity, and delivery checklist executability validation.
 
 ### Step 0: Initialize Report File
 

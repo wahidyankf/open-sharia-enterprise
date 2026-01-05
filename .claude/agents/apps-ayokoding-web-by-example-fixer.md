@@ -11,6 +11,7 @@ tools:
 model: sonnet
 color: purple
 skills:
+  - wow-applying-fixer-workflow
   - apps-ayokoding-web-developing-content
   - docs-creating-by-example-tutorials
   - wow-assessing-criticality-confidence
@@ -42,21 +43,14 @@ The `wow-applying-maker-checker-fixer` Skill provides complete mode parameter lo
 
 ## How This Agent Works
 
-### 1. Report Discovery
+**See `wow-applying-fixer-workflow` Skill for complete workflow details** including:
 
-The `wow-applying-maker-checker-fixer` Skill provides report discovery logic (auto-detect, override, verify).
+1. **Report Discovery**: Auto-detect latest audit report with manual override support
+2. **Validation Strategy**: Re-validate each finding to assess HIGH/MEDIUM/FALSE_POSITIVE confidence
+3. **Fix Application**: Apply HIGH confidence fixes automatically, skip others
+4. **Fix Report Generation**: Create fix report preserving UUID chain from source audit
 
-### 2. Validation Strategy
-
-For EACH finding: Read → Re-validate → Assess confidence → Apply or Skip
-
-### 3. Fix Application
-
-Apply HIGH_CONFIDENCE fixes, skip others, report summary.
-
-### 4. Fix Report Generation
-
-Use `wow-generating-validation-reports` Skill for fix report generation (replace **audit with **fix).
+**Domain-Specific Implementation**: This agent re-validates By Example tutorial findings focusing on annotation density (1-2.25 ratio per example), five-part structure, example count (75-90), and ayokoding-web compliance.
 
 ## Confidence Level Assessment
 

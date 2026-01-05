@@ -12,6 +12,7 @@ tools:
 model: sonnet
 color: green
 skills:
+  - wow-executing-checker-workflow
   - apps-ayokoding-web-developing-content
   - docs-validating-factual-accuracy
   - wow-assessing-criticality-confidence
@@ -45,6 +46,16 @@ The `docs-validating-factual-accuracy` Skill provides complete validation method
 The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web context.
 
 ## Validation Process
+
+## Workflow Overview
+
+**See `wow-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+
+1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
+2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
+3. **Final Step: Finalize Report**: Update status, add summary
+
+**Domain-Specific Validation** (ayokoding-web factual accuracy): The detailed workflow below implements command syntax, version, code example, and external reference validation using WebSearch/WebFetch.
 
 ### Step 0: Initialize Report
 

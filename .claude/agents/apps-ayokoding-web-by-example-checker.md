@@ -10,6 +10,7 @@ tools:
 model: sonnet
 color: green
 skills:
+  - wow-executing-checker-workflow
   - apps-ayokoding-web-developing-content
   - docs-creating-by-example-tutorials
   - wow-assessing-criticality-confidence
@@ -81,6 +82,16 @@ The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specifi
 - prev/next navigation
 
 ## Validation Process
+
+## Workflow Overview
+
+**See `wow-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+
+1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
+2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
+3. **Final Step: Finalize Report**: Update status, add summary
+
+**Domain-Specific Validation** (By Example tutorials): The detailed workflow below implements annotation density (1-2.25 ratio), five-part structure, example count (75-90), and ayokoding-web compliance validation.
 
 ### Step 0: Initialize Report File
 

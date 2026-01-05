@@ -12,6 +12,7 @@ tools:
 model: sonnet
 color: green
 skills:
+  - wow-executing-checker-workflow
   - docs-applying-diataxis-framework
   - wow-assessing-criticality-confidence
   - wow-generating-validation-reports
@@ -135,6 +136,16 @@ $
 **Rule**: Single `$` ONLY for inline math (same line as text). Display-level equations and `\begin{aligned}` blocks MUST use `$$`. Multi-line equations must use `\begin{aligned}...\end{aligned}` (NOT `\begin{align}`) for KaTeX compatibility.
 
 ## Validation Process
+
+## Workflow Overview
+
+**See `wow-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+
+1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
+2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
+3. **Final Step: Finalize Report**: Update status, add summary
+
+**Domain-Specific Validation** (tutorial quality): The detailed workflow below implements pedagogical structure, narrative flow, visual completeness, and hands-on element validation.
 
 ### Step 0: Initialize Report File
 
