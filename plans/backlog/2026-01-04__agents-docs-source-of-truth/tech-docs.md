@@ -13,8 +13,8 @@
 
 graph TB
     subgraph "Source (Tool-Agnostic)"
-        AgentDocs["docs/explanation/agents/content/<br/>45 agent definitions<br/>(markdown + frontmatter)"]:::blue
-        SkillDocs["docs/explanation/skills/<br/>18 skill definitions<br/>(markdown + frontmatter)"]:::blue
+        AgentDocs["docs/explanation/rules/agents/content/<br/>45 agent definitions<br/>(markdown + frontmatter)"]:::blue
+        SkillDocs["docs/explanation/rules/agents/skills/<br/>18 skill definitions<br/>(markdown + frontmatter)"]:::blue
     end
 
     subgraph "Sync Script"
@@ -62,21 +62,23 @@ graph TB
 ### Proposed Structure
 
 ```
-docs/explanation/
-├── agents/
-│   ├── README.md                          # Agent catalog (canonical)
-│   ├── content/
-│   │   ├── docs-maker.md                 # 45 agent definitions
-│   │   ├── docs-checker.md
-│   │   ├── docs-fixer.md
-│   │   ├── ... (42 more)
-│   └── meta/
-│       └── ex-ag-me__architecture.md      # Agent architecture doc
-└── skills/
-    ├── README.md                          # Skills catalog (canonical)
-    ├── docs__applying-content-quality.md  # 18 skill definitions
-    ├── docs__creating-accessible-diagrams.md
-    └── ... (16 more)
+docs/explanation/rules/
+└── agents/                                # Layer 4: AI Agents
+    ├── README.md                          # Agent catalog (canonical)
+    ├── content/
+    │   ├── docs-maker.md                  # 45 agent definitions
+    │   ├── docs-checker.md
+    │   ├── docs-fixer.md
+    │   └── ... (42 more)
+    ├── skills/                            # Skills (delivery infrastructure)
+    │   ├── README.md                      # Skills catalog (canonical)
+    │   ├── docs-applying-content-quality/ # 18 skill definitions (folder/SKILL.md)
+    │   │   └── SKILL.md
+    │   ├── docs-creating-accessible-diagrams/
+    │   │   └── SKILL.md
+    │   └── ... (16 more)
+    └── meta/
+        └── ex-ag-me__architecture.md      # Agent architecture doc
 
 .claude/
 └── agents/
@@ -129,11 +131,12 @@ apps/repo-cli/                              # Go CLI application using Cobra
 - Allows future expansion (e.g., `templates/`, `examples/`)
 - Clean separation: `content/` = definitions, `meta/` = docs about definitions
 
-**Skills as flat files**:
+**Skills use folder/SKILL.md structure**:
 
-- Skills are small, self-contained
-- No need for subdirectory nesting (unlike `.claude/skills/skill-name/SKILL.md`)
-- Simpler to browse and edit
+- Both Claude Code and OpenCode support identical folder/SKILL.md format
+- No conversion needed - source structure matches generated structure
+- Direct copy/sync from docs to `.claude/skills/`
+- Consistent structure throughout (source → generated)
 
 **Generated directories keep existing paths**:
 
@@ -196,19 +199,42 @@ mode: all
 | `temperature` | float   | No       | 0.0 - 1.0                                         | LLM temperature (for deterministic tasks) |
 | `maxSteps`    | integer | No       | Positive integer                                  | Max execution steps (complex agents)      |
 
-### Valid Tool Names (Capitalized)
+### Valid Tool Names and Mappings
 
-- `Read` - Read files
-- `Write` - Write files
-- `Edit` - Edit files
-- `Glob` - Find files by pattern
-- `Grep` - Search file contents
-- `Bash` - Execute shell commands
-- `WebFetch` - Fetch web content
-- `WebSearch` - Search web
-- `TodoWrite` - Task tracking
+**Tool-Agnostic → Claude Code → OpenCode Mapping Table**:
 
-**Note**: Capitalized in source to be tool-agnostic. Sync script normalizes to tool-specific format (lowercase for OpenCode, capitalized for Claude Code).
+| Tool-Agnostic (Source) | Claude Code Format | OpenCode Format | Description                    |
+| ---------------------- | ------------------ | --------------- | ------------------------------ |
+| `Read`                 | `Read`             | `read`          | Read files from filesystem     |
+| `Write`                | `Write`            | `write`         | Create new files               |
+| `Edit`                 | `Edit`             | `edit`          | Perform string replacements    |
+| `MultiEdit`            | `MultiEdit`        | `edit`          | Multiple edits across files    |
+| `Glob`                 | `Glob`             | `glob`          | Find files by pattern          |
+| `Grep`                 | `Grep`             | `grep`          | Search file contents (ripgrep) |
+| `Bash`                 | `Bash`             | `bash`          | Execute shell commands         |
+| `LS`                   | `LS`               | `list`          | List files and directories     |
+| `WebFetch`             | `WebFetch`         | `webfetch`      | Fetch web content              |
+| `WebSearch`            | `WebSearch`        | N/A             | Search web (Claude Code only)  |
+| `TodoRead`             | `TodoRead`         | N/A             | Read task lists                |
+| `TodoWrite`            | `TodoWrite`        | N/A             | Manage task lists              |
+| `NotebookRead`         | `NotebookRead`     | N/A             | Read Jupyter notebooks         |
+| `NotebookEdit`         | `NotebookEdit`     | N/A             | Edit Jupyter notebooks         |
+| N/A                    | N/A                | `patch`         | Apply patches (OpenCode only)  |
+
+**Format Notes**:
+
+- **Source format**: Capitalized (tool-agnostic, semantic)
+- **Claude Code**: Capitalized (as-is from source)
+- **OpenCode**: Lowercase (converted during sync)
+- **OpenCode structure**: Boolean object `{read: true, write: true, bash: false}`
+
+**Common Agent Tool Subset** (supported by both systems):
+
+- Core file ops: `Read`, `Write`, `Edit`, `Glob`, `Grep`
+- Shell: `Bash`
+- Web: `WebFetch`
+
+**Recommendation**: Use common subset in agent definitions unless tool-specific features required.
 
 ### Role Definitions and Mappings
 
@@ -224,9 +250,16 @@ mode: all
 
 ### Skill Definition Format
 
-**File naming**: `{category}__{skill-name}.md` (double-underscore separator)
+**Directory naming**: `{category}-{skill-name}/` (folder structure)
+**File naming**: `SKILL.md` (inside skill folder)
 
 **Structure**:
+
+```
+docs/explanation/rules/agents/skills/{category}-{skill-name}/SKILL.md
+```
+
+**SKILL.md content**:
 
 ```markdown
 ---
@@ -251,7 +284,7 @@ description: Brief description of skill purpose
 [Practical examples...]
 ```
 
-**Note**: Skills use same format as current `.claude/skills/*/SKILL.md`, but flattened to single file per skill.
+**Note**: Skills use identical folder/SKILL.md format as `.claude/skills/*/SKILL.md` - both Claude Code and OpenCode support this format natively, requiring no conversion.
 
 ---
 
@@ -299,6 +332,65 @@ description: Brief description of skill purpose
 | `opus`       | `zai/glm-4.7`     |
 
 **Note**: Claude Code uses model names as-is. OpenCode requires specific model identifiers.
+
+### MCP (Model Context Protocol) Servers for OpenCode
+
+**Purpose**: Ensure OpenCode has feature parity with Claude Code by providing equivalent MCP capabilities.
+
+**Default MCP Configuration** (from `~/.config/opencode/opencode.json`):
+
+```json
+{
+  "mcp": {
+    "zai-mcp-server": {
+      "type": "local",
+      "command": ["npx", "-y", "@z_ai/mcp-server"],
+      "environment": {
+        "Z_AI_MODE": "ZAI",
+        "Z_AI_API_KEY": "${Z_AI_API_KEY}"
+      }
+    },
+    "web-search-prime": {
+      "type": "remote",
+      "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
+      "headers": {
+        "Authorization": "Bearer ${Z_AI_API_KEY}"
+      }
+    },
+    "web-reader": {
+      "type": "remote",
+      "url": "https://api.z.ai/api/mcp/web_reader/mcp",
+      "headers": {
+        "Authorization": "Bearer ${Z_AI_API_KEY}"
+      }
+    },
+    "zread": {
+      "type": "remote",
+      "url": "https://api.z.ai/api/mcp/zread/mcp",
+      "headers": {
+        "Authorization": "Bearer ${Z_AI_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+**MCP Server Capabilities**:
+
+| MCP Server       | Type   | Capabilities                                      | Claude Code Equivalent  |
+| ---------------- | ------ | ------------------------------------------------- | ----------------------- |
+| zai-mcp-server   | Local  | Image analysis (UI to code, OCR, error diagnosis) | Built-in vision tools   |
+| web-search-prime | Remote | Web search with source citations                  | WebSearch tool          |
+| web-reader       | Remote | Fetch and convert web content to markdown         | WebFetch tool           |
+| zread            | Remote | GitHub repository reading (docs, issues, commits) | N/A (OpenCode-specific) |
+
+**Integration Strategy**:
+
+- **Global configuration**: MCP servers configured in `~/.config/opencode/opencode.json` are available to all OpenCode agents
+- **No per-agent configuration needed**: Unlike tool permissions, MCP access is inherited from global config
+- **Feature parity**: With these MCP servers, OpenCode agents have equivalent capabilities to Claude Code agents (web search, web reading, vision analysis)
+
+**Security Note**: API keys should be stored in environment variables, not hardcoded in config files.
 
 ---
 
@@ -487,7 +579,7 @@ func ExtractMetadata(filepath string) (*GitMetadata, error) {
 ```python
 def sync_all_agents():
     # 1. Pre-sync validation
-    errors = validate_source_definitions('docs/explanation/agents/content/')
+    errors = validate_source_definitions('docs/explanation/rules/agents/content/')
     if errors:
         print_errors(errors)
         sys.exit(1)
@@ -605,7 +697,11 @@ def validate_agent_definition(filepath: Path) -> List[str]:
         errors.append(f"Invalid model: {frontmatter['model']}")
 
     # Tools are valid
-    valid_tools = ['Read', 'Write', 'Edit', 'Glob', 'Grep', 'Bash', 'WebFetch', 'WebSearch', 'TodoWrite']
+    valid_tools = [
+        'Read', 'Write', 'Edit', 'MultiEdit', 'Glob', 'Grep', 'Bash', 'LS',
+        'WebFetch', 'WebSearch', 'TodoRead', 'TodoWrite',
+        'NotebookRead', 'NotebookEdit'
+    ]
     tools = frontmatter.get('tools', [])
     for tool in tools:
         if tool not in valid_tools:
@@ -614,7 +710,7 @@ def validate_agent_definition(filepath: Path) -> List[str]:
     # Skills exist
     skills = frontmatter.get('skills', [])
     for skill in skills:
-        skill_path = Path(f'docs/explanation/skills/{skill}.md')
+        skill_path = Path(f'docs/explanation/rules/agents/skills/{skill}/SKILL.md')
         if not skill_path.exists():
             errors.append(f"Referenced skill not found: {skill}")
 
@@ -666,7 +762,7 @@ def validate_agent_definition(filepath: Path) -> List[str]:
 
 ### Script: `extract-agents-to-docs.py`
 
-**Purpose**: One-time migration from `.claude/agents/` to `docs/explanation/agents/content/`
+**Purpose**: One-time migration from `.claude/agents/` to `docs/explanation/rules/agents/content/`
 
 **Algorithm**:
 
@@ -678,7 +774,7 @@ def extract_agents():
     Reverse transformation of sync script.
     """
     source_dir = Path('.claude/agents')
-    target_dir = Path('docs/explanation/agents/content')
+    target_dir = Path('docs/explanation/rules/agents/content')
     target_dir.mkdir(parents=True, exist_ok=True)
 
     for agent_file in source_dir.glob('*.md'):
@@ -743,20 +839,20 @@ def determine_mode(agent_name: str) -> str:
 
 ### Script: `extract-skills-to-docs.py`
 
-**Purpose**: Flatten `.claude/skills/` directory structure to `docs/explanation/skills/`
+**Purpose**: Copy `.claude/skills/` directory structure to `docs/explanation/rules/agents/skills/`
 
 **Algorithm**:
 
 ```python
 def extract_skills():
     """
-    Flatten skill directory structure.
+    Copy skill directory structure (folder/SKILL.md format preserved).
 
     From: .claude/skills/{skill-name}/SKILL.md
-    To:   docs/explanation/skills/{skill-name}.md
+    To:   docs/explanation/rules/agents/skills/{skill-name}/SKILL.md
     """
     source_dir = Path('.claude/skills')
-    target_dir = Path('docs/explanation/skills')
+    target_dir = Path('docs/explanation/rules/agents/skills')
     target_dir.mkdir(parents=True, exist_ok=True)
 
     for skill_dir in source_dir.iterdir():
@@ -767,6 +863,10 @@ def extract_skills():
         if not skill_file.exists():
             print(f"Warning: Missing SKILL.md in {skill_dir}")
             continue
+
+        # Create target directory
+        target_skill_dir = target_dir / skill_dir.name
+        target_skill_dir.mkdir(parents=True, exist_ok=True)
 
         # Read skill content
         with open(skill_file, 'r') as f:
@@ -783,8 +883,8 @@ description: [TODO: Add description]
 """
             content = frontmatter + content
 
-        # Write flattened file
-        target_file = target_dir / f'{skill_dir.name}.md'
+        # Write to target (maintaining folder/SKILL.md structure)
+        target_file = target_skill_dir / 'SKILL.md'
         with open(target_file, 'w') as f:
             f.write(content)
 ```
@@ -817,8 +917,8 @@ if [ -n "$MODIFIED_GENERATED" ]; then
   echo "$MODIFIED_GENERATED" | sed 's/^/  - /'
   echo ""
   echo "Source of truth locations:"
-  echo "  - Agents: docs/explanation/agents/content/"
-  echo "  - Skills: docs/explanation/skills/"
+  echo "  - Agents: docs/explanation/rules/agents/content/"
+  echo "  - Skills: docs/explanation/rules/agents/skills/"
   echo ""
   echo "To make changes:"
   echo "  1. Edit source files in docs/explanation/"
@@ -845,13 +945,13 @@ echo "✓ No edits to generated directories detected"
 ```markdown
 # ⚠️ DO NOT EDIT - GENERATED FILES
 
-**Source of truth**: `docs/explanation/agents/content/`
+**Source of truth**: `docs/explanation/rules/agents/content/`
 
 Files in this directory are automatically generated by `scripts/sync-docs-to-agents.py`.
 
 **To modify agents**:
 
-1. Edit source files in `docs/explanation/agents/content/`
+1. Edit source files in `docs/explanation/rules/agents/content/`
 2. Run sync script: `python scripts/sync-docs-to-agents.py`
 3. Commit both source and generated files together
 
@@ -869,13 +969,13 @@ Files in this directory are automatically generated by `scripts/sync-docs-to-age
 ```markdown
 # ⚠️ DO NOT EDIT - GENERATED FILES
 
-**Source of truth**: `docs/explanation/agents/content/`
+**Source of truth**: `docs/explanation/rules/agents/content/`
 
 Files in this directory are automatically generated by `scripts/sync-docs-to-agents.py`.
 
 **To modify agents**:
 
-1. Edit source files in `docs/explanation/agents/content/`
+1. Edit source files in `docs/explanation/rules/agents/content/`
 2. Run sync script: `python scripts/sync-docs-to-agents.py`
 3. Commit both source and generated files together
 
@@ -1062,7 +1162,7 @@ class AgentWatcher(FileSystemEventHandler):
             sync_single_agent(event.src_path)
 
 observer = Observer()
-observer.schedule(AgentWatcher(), 'docs/explanation/agents/content/', recursive=False)
+observer.schedule(AgentWatcher(), 'docs/explanation/rules/agents/content/', recursive=False)
 observer.start()
 ```
 
@@ -1217,11 +1317,11 @@ def test_generate_opencode_format():
 
 def test_full_sync_workflow(tmp_path):
     # Setup: Create source definition
-    source = tmp_path / 'docs/explanation/agents/content/test.md'
+    source = tmp_path / 'docs/explanation/rules/agents/content/test.md'
     write_test_agent(source)
 
     # Execute: Run sync
-    sync_all_agents(source_dir=tmp_path / 'docs/explanation/agents/content',
+    sync_all_agents(source_dir=tmp_path / 'docs/explanation/rules/agents/content',
                     target_claude=tmp_path / '.claude/agents',
                     target_opencode=tmp_path / '.opencode/agent')
 
@@ -1283,9 +1383,9 @@ def test_validate_agent_definition():
 | `docs/explanation/rules/ex-ru__repository-governance-architecture.md` | Update Layer 4 to reference docs source                      |
 | `.claude/agents/README.md`                                            | Add generated banner, link to source                         |
 | `.opencode/agent/README.md`                                           | Add generated banner, link to source                         |
-| `docs/explanation/agents/README.md`                                   | New file: canonical agent catalog                            |
-| `docs/explanation/skills/README.md`                                   | New file: canonical skills catalog                           |
-| `docs/explanation/agents/meta/ex-ag-me__architecture.md`              | New file: agent architecture documentation                   |
+| `docs/explanation/rules/agents/README.md`                             | New file: canonical agent catalog                            |
+| `docs/explanation/rules/agents/skills/README.md`                      | New file: canonical skills catalog                           |
+| `docs/explanation/rules/agents/meta/ex-ag-me__architecture.md`        | New file: agent architecture documentation                   |
 
 ### Example CLAUDE.md Update
 
@@ -1302,7 +1402,7 @@ Agent definitions in `.claude/agents/` (45 agents)...
 ```markdown
 ## AI Agents
 
-**Source of truth**: `docs/explanation/agents/content/` (45 tool-agnostic definitions)
+**Source of truth**: `docs/explanation/rules/agents/content/` (45 tool-agnostic definitions)
 **Generated formats**:
 
 - `.claude/agents/` - Claude Code format (DO NOT EDIT)
@@ -1310,11 +1410,11 @@ Agent definitions in `.claude/agents/` (45 agents)...
 
 **To modify agents**:
 
-1. Edit `docs/explanation/agents/content/{agent-name}.md`
+1. Edit `docs/explanation/rules/agents/content/{agent-name}.md`
 2. Run: `python scripts/sync-docs-to-agents.py`
 3. Commit source + generated files
 
-See [Agent Architecture](./docs/explanation/agents/meta/ex-ag-me__architecture.md) for details.
+See [Agent Architecture](./docs/explanation/rules/agents/meta/ex-ag-me__architecture.md) for details.
 ```
 
 ---
@@ -1339,7 +1439,7 @@ See [Agent Architecture](./docs/explanation/agents/meta/ex-ag-me__architecture.m
 
 ### Question 3: README Catalog Location
 
-**Current proposal**: `docs/explanation/agents/README.md` becomes canonical
+**Current proposal**: `docs/explanation/rules/agents/README.md` becomes canonical
 
 **Alternative**: Keep `.claude/agents/README.md` as canonical, copy to docs
 
@@ -1361,18 +1461,18 @@ Several agents currently interact with `.claude/agents/`, `.opencode/agent/`, an
 
 ### Affected Agents
 
-| Agent               | Current Behavior                                | Required Changes                                    |
-| ------------------- | ----------------------------------------------- | --------------------------------------------------- |
-| `agent-maker`       | Creates in `.claude/agents/`                    | Create in `docs/explanation/agents/content/`        |
-| `wow-rules-checker` | Validates `.claude/agents/`, `.opencode/agent/` | Validate `docs/explanation/agents/`, skip generated |
-| `wow-rules-fixer`   | Fixes in `.claude/agents/` (uses Bash tools)    | Fix in `docs/explanation/agents/`, skip generated   |
-| `wow-rules-maker`   | May reference agent locations in docs           | Update location references                          |
+| Agent               | Current Behavior                                | Required Changes                                          |
+| ------------------- | ----------------------------------------------- | --------------------------------------------------------- |
+| `agent-maker`       | Creates in `.claude/agents/`                    | Create in `docs/explanation/rules/agents/content/`        |
+| `wow-rules-checker` | Validates `.claude/agents/`, `.opencode/agent/` | Validate `docs/explanation/rules/agents/`, skip generated |
+| `wow-rules-fixer`   | Fixes in `.claude/agents/` (uses Bash tools)    | Fix in `docs/explanation/rules/agents/`, skip generated   |
+| `wow-rules-maker`   | May reference agent locations in docs           | Update location references                                |
 
 ### Agent-Maker Updates
 
 **Current behavior**: Creates agents in `.claude/agents/` using Claude Code format
 
-**New behavior**: Creates agents in `docs/explanation/agents/content/` using tool-agnostic format
+**New behavior**: Creates agents in `docs/explanation/rules/agents/content/` using tool-agnostic format
 
 **Implementation changes**:
 
@@ -1381,7 +1481,7 @@ Several agents currently interact with `.claude/agents/`, `.opencode/agent/`, an
 
 ## Agent Creation Workflow
 
-1. **Create source definition** in `docs/explanation/agents/content/{agent-name}.md`
+1. **Create source definition** in `docs/explanation/rules/agents/content/{agent-name}.md`
    - Use tool-agnostic format (see template below)
    - DO NOT create in `.claude/agents/` (generated directory)
 
@@ -1421,13 +1521,13 @@ Several agents currently interact with `.claude/agents/`, `.opencode/agent/`, an
 
 **Current behavior**: Validates `.claude/agents/` and `.opencode/agent/`
 
-**New behavior**: Validates `docs/explanation/agents/content/` (source), detects edits to generated directories as errors
+**New behavior**: Validates `docs/explanation/rules/agents/content/` (source), detects edits to generated directories as errors
 
 **Implementation changes**:
 
 1. **Validation targets**:
-   - ✅ Validate: `docs/explanation/agents/content/*.md`
-   - ✅ Validate: `docs/explanation/skills/*.md`
+   - ✅ Validate: `docs/explanation/rules/agents/content/*.md`
+   - ✅ Validate: `docs/explanation/rules/agents/skills/*.md`
    - ❌ Skip: `.claude/agents/*.md` (generated)
    - ❌ Skip: `.opencode/agent/*.md` (generated)
    - ❌ Skip: `.claude/skills/*/SKILL.md` (generated)
@@ -1471,7 +1571,7 @@ Several agents currently interact with `.claude/agents/`, `.opencode/agent/`, an
            ❌ Generated file should not be edited directly:
              {modified}
 
-           Source of truth: docs/explanation/agents/content/
+           Source of truth: docs/explanation/rules/agents/content/
 
            To fix:
            1. Revert changes to generated files
@@ -1484,7 +1584,7 @@ Several agents currently interact with `.claude/agents/`, `.opencode/agent/`, an
 
 **Current behavior**: Uses Bash tools to modify `.claude/agents/` files
 
-**New behavior**: Modifies `docs/explanation/agents/content/` (source), skips findings referencing generated files
+**New behavior**: Modifies `docs/explanation/rules/agents/content/` (source), skips findings referencing generated files
 
 **Implementation changes**:
 
@@ -1499,17 +1599,17 @@ Several agents currently interact with `.claude/agents/`, `.opencode/agent/`, an
       - If path starts with `.claude/agents/` → SKIP (generated)
       - If path starts with `.opencode/agent/` → SKIP (generated)
       - If path starts with `.claude/skills/` → SKIP (generated)
-      - If path starts with `docs/explanation/agents/` → FIX (source)
-      - If path starts with `docs/explanation/skills/` → FIX (source)
+      - If path starts with `docs/explanation/rules/agents/` → FIX (source)
+      - If path starts with `docs/explanation/rules/agents/skills/` → FIX (source)
 
    2. **Apply fix to source**:
       - Use Edit tool (not Bash, since docs/ can use Edit)
-      - Modify `docs/explanation/agents/content/{agent-name}.md`
+      - Modify `docs/explanation/rules/agents/content/{agent-name}.md`
 
    3. **Instruct sync**:
    ```
 
-   ✅ Fixed: docs/explanation/agents/content/docs-maker.md
+   ✅ Fixed: docs/explanation/rules/agents/content/docs-maker.md
 
    Run sync to propagate changes:
    python scripts/sync-docs-to-agents.py
@@ -1538,7 +1638,7 @@ Several agents currently interact with `.claude/agents/`, `.opencode/agent/`, an
    # In fixer loop
    if should_skip_finding(finding.filepath):
        log_warning(f"Skipping finding for generated file: {finding.filepath}")
-       log_info(f"Edit source instead: docs/explanation/agents/content/...")
+       log_info(f"Edit source instead: docs/explanation/rules/agents/content/...")
        continue
    ```
 
@@ -1546,7 +1646,7 @@ Several agents currently interact with `.claude/agents/`, `.opencode/agent/`, an
 
 **Current behavior**: May reference `.claude/agents/` in created rules/conventions
 
-**New behavior**: Reference `docs/explanation/agents/content/` as source location
+**New behavior**: Reference `docs/explanation/rules/agents/content/` as source location
 
 **Implementation changes**:
 
@@ -1559,7 +1659,7 @@ Several agents currently interact with `.claude/agents/`, `.opencode/agent/`, an
 
 | Decision Area          | Selected Approach                                | Rationale                                     |
 | ---------------------- | ------------------------------------------------ | --------------------------------------------- |
-| **Source location**    | `docs/explanation/agents/content/`               | Documentation co-location, tool-agnostic      |
+| **Source location**    | `docs/explanation/rules/agents/content/`         | Documentation co-location, tool-agnostic      |
 | **Metadata fields**    | `role` (semantic), generate `color` from mapping | Semantic meaning over presentation            |
 | **Git metadata**       | Extract from git history (created/updated)       | Accurate timestamps, automatic                |
 | **Sync strategy**      | Atomic (temp dir + validation + replace)         | Safety, all-or-nothing guarantee              |
