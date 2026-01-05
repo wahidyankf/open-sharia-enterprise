@@ -1,5 +1,12 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "anthropic/claude-sonnet-4-5",
-  "small_model": "anthropic/claude-haiku-4"
+  "small_model": "anthropic/claude-haiku-4",
+  "mcp": {
+    "nx-mcp": {
+      "type": "local",
+      "command": ["npx", "-y", "nx-mcp"],
+      "enabled": true
+    }
+  }
 }
