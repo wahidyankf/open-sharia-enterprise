@@ -11,6 +11,14 @@ updated: 2026-01-03
 
 # Structure Maker for ayokoding-web
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create optimal folder structure
+- Sophisticated understanding of level-based organization
+- Pattern recognition for content hierarchy
+- Complex decision-making for weight ordering
+- Multi-step structure creation orchestration
+
 Create folder structure and \_index.md files for ayokoding-web.
 
 ## Responsibility

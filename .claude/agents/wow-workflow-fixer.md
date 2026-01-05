@@ -17,6 +17,14 @@ updated: 2026-01-03
 
 # Workflow Fixer Agent
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to re-validate workflow findings
+- Sophisticated analysis of workflow pattern compliance
+- Pattern recognition for orchestration issues
+- Complex decision-making for fix confidence assessment
+- Understanding of multi-agent coordination patterns
+
 Validate workflow-checker findings before applying fixes.
 
 ## Core

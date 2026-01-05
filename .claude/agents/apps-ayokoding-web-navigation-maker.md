@@ -11,6 +11,14 @@ updated: 2026-01-03
 
 # Navigation Maker for ayokoding-web
 
+**Model Selection Justification**: This agent uses `model: haiku` because it performs straightforward navigation tasks:
+
+- Pattern matching to find prev/next content files
+- Simple frontmatter updates (prev/next fields)
+- Deterministic navigation link generation
+- File path manipulation
+- No complex reasoning or content generation required
+
 Update prev/next navigation in frontmatter.
 
 ## Responsibility

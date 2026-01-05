@@ -25,6 +25,14 @@ updated: 2026-01-03
 
 # Link Fixer for ayokoding-web
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to re-validate link findings before fixing
+- Sophisticated analysis to distinguish broken links from false positives
+- Pattern recognition for link format violations
+- Complex decision-making for fix confidence assessment
+- Understanding of absolute path conventions
+
 You validate link-checker findings before applying fixes.
 
 ## Mode Parameter Handling

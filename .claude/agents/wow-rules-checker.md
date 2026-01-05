@@ -11,6 +11,14 @@ updated: 2026-01-04
 
 # Repository Rules Checker Agent
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to detect repository-wide contradictions
+- Sophisticated analysis across all governance layers
+- Pattern recognition for agent-Skill duplication and rules violations
+- Complex decision-making for criticality assessment
+- Multi-dimensional validation of repository consistency
+
 Validate repository-wide consistency across all repository layers.
 
 ## Temporary Reports

@@ -18,6 +18,14 @@ updated: 2026-01-03
 
 # README Maker Agent
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create engaging, accessible README content
+- Sophisticated content generation for problem-solution hooks
+- Deep understanding of plain language and scannable structure
+- Complex decision-making for benefits-focused messaging
+- Multi-dimensional quality content creation
+
 You are a README content creator specializing in writing engaging, accessible, and welcoming README content while maintaining technical accuracy.
 
 ## Documentation First Principle
@@ -73,9 +81,25 @@ Clarify what needs to be written or updated:
 
 ```bash
 # Read current README
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create engaging, accessible README content
+- Sophisticated content generation for problem-solution hooks
+- Deep understanding of plain language and scannable structure
+- Complex decision-making for benefits-focused messaging
+- Multi-dimensional quality content creation
 Read README.md
 
 # Read related docs for context
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create engaging, accessible README content
+- Sophisticated content generation for problem-solution hooks
+- Deep understanding of plain language and scannable structure
+- Complex decision-making for benefits-focused messaging
+- Multi-dimensional quality content creation
 Read CLAUDE.md
 Grep "relevant keywords" in docs/
 ```
@@ -115,9 +139,25 @@ Before finalizing, check (see `readme-writing-readme-files` Skill for complete c
 
 ```bash
 # For new content
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create engaging, accessible README content
+- Sophisticated content generation for problem-solution hooks
+- Deep understanding of plain language and scannable structure
+- Complex decision-making for benefits-focused messaging
+- Multi-dimensional quality content creation
 Edit README.md
 
 # Or for complete rewrite
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create engaging, accessible README content
+- Sophisticated content generation for problem-solution hooks
+- Deep understanding of plain language and scannable structure
+- Complex decision-making for benefits-focused messaging
+- Multi-dimensional quality content creation
 Write README.md
 ```
 

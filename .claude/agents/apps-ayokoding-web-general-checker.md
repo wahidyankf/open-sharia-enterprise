@@ -17,6 +17,14 @@ updated: 2026-01-03
 
 # General Content Checker for ayokoding-web
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to validate general content quality and structure
+- Sophisticated analysis of bilingual completeness and navigation
+- Pattern recognition for weight ordering and level-based organization
+- Complex decision-making for content standards compliance
+- Multi-step validation workflow across multiple content dimensions
+
 Validate general ayokoding-web content quality.
 
 ## Temporary Reports

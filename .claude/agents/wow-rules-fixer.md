@@ -11,6 +11,14 @@ updated: 2026-01-04
 
 # Repository Rules Fixer Agent
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to re-validate repository rules findings
+- Sophisticated analysis across multiple governance layers
+- Pattern recognition for contradictions and inconsistencies
+- Complex decision-making for fix priority and confidence
+- Deep understanding of repository architecture
+
 Apply validated fixes from wow\_\_rules-checker audit reports.
 
 ## Core Responsibilities

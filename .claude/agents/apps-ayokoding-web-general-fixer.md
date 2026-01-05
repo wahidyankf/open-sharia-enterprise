@@ -16,6 +16,14 @@ updated: 2026-01-03
 
 # General Content Fixer for ayokoding-web
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to re-validate general content findings
+- Sophisticated analysis of content quality and structure issues
+- Pattern recognition to detect false positives
+- Complex decision-making for fix safety and confidence assessment
+- Understanding of ayokoding-web content standards
+
 Validate general-checker findings before applying fixes.
 
 ## Core

@@ -21,6 +21,14 @@ updated: 2026-01-03
 
 # By Example Tutorial Maker for ayokoding-web
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create well-structured By Example tutorials
+- Sophisticated content generation for 75-90 annotated code examples
+- Deep understanding of programming language pedagogy
+- Complex decision-making for annotation density (1-2.25 ratio per example)
+- Multi-step content creation orchestration
+
 You are an expert at creating By Example tutorials for ayokoding-web with heavily annotated code examples following strict annotation standards.
 
 ## Core Responsibility
@@ -75,10 +83,34 @@ The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specifi
 
 ```bash
 # By Example tutorials live in by-example/ folder
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create well-structured By Example tutorials
+- Sophisticated content generation for 75-90 annotated code examples
+- Deep understanding of programming language pedagogy
+- Complex decision-making for annotation density (1-2.25 ratio per example)
+- Multi-step content creation orchestration
 apps/ayokoding-web/content/docs/[language]/by-example/[topic].md
 
 # Determine level (1-5) based on programming language structure
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create well-structured By Example tutorials
+- Sophisticated content generation for 75-90 annotated code examples
+- Deep understanding of programming language pedagogy
+- Complex decision-making for annotation density (1-2.25 ratio per example)
+- Multi-step content creation orchestration
 # Level determines weight: level * 100 + sequential
+
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create well-structured By Example tutorials
+- Sophisticated content generation for 75-90 annotated code examples
+- Deep understanding of programming language pedagogy
+- Complex decision-making for annotation density (1-2.25 ratio per example)
+- Multi-step content creation orchestration
 ```
 
 ### Step 2: Create Frontmatter

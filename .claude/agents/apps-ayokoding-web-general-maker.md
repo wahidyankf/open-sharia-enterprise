@@ -11,6 +11,14 @@ updated: 2026-01-03
 
 # General Content Maker for ayokoding-web
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create quality general content (by-concept tutorials)
+- Sophisticated content generation for bilingual navigation
+- Deep understanding of educational content structure
+- Complex decision-making for level-based weight assignment
+- Multi-dimensional content organization skills
+
 Create by-concept tutorials and general content for ayokoding-web.
 
 ## Reference

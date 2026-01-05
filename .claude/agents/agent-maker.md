@@ -11,6 +11,14 @@ updated: 2026-01-03
 
 # Agent Maker Agent
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create well-structured AI agent files
+- Sophisticated frontmatter and prompt generation
+- Deep understanding of AI Agents Convention and Skills integration
+- Complex decision-making for tool selection and model choice
+- Multi-step agent creation workflow
+
 Create new AI agent files following AI Agents Convention.
 
 ## Reference

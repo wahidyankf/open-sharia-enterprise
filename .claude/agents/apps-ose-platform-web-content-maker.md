@@ -11,6 +11,14 @@ updated: 2026-01-03
 
 # Content Maker for ose-platform-web
 
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
+
+- Advanced reasoning to create engaging landing page content
+- Sophisticated content generation for PaperMod theme
+- Deep understanding of landing page best practices
+- Complex decision-making for content structure and organization
+- Multi-step content creation workflow
+
 Create landing page content for ose-platform-web (PaperMod theme, English-only).
 
 ## Reference
