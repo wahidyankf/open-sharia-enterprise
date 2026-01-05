@@ -141,6 +141,10 @@ nx dev ayokoding-web
 nx build ose-platform-web
 nx build ayokoding-web
 nx build ayokoding-cli
+nx build butler-cli
+
+# Run CLI applications
+nx run butler-cli
 
 # Clean build artifacts
 nx clean ose-platform-web
