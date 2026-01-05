@@ -51,6 +51,38 @@ outputs:
 - Periodically to ensure repository health
 - After adding or modifying agents
 
+## Execution Mode
+
+**Current Mode**: Manual Orchestration (see [Workflow Execution Modes Convention](../meta/ex-ru-wf-me__execution-modes.md))
+
+This workflow is currently executed through **manual orchestration** where the main Claude instance follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
+
+**How to Execute**:
+
+Instead of (future):
+
+```bash
+workflow run wow__rules__quality-gate --mode=normal
+```
+
+Currently use:
+
+```
+User: "Run repository rules quality gate workflow in manual mode"
+```
+
+Claude will:
+
+1. Execute wow\_\_rules-checker logic directly (read, validate, write audit)
+2. Execute wow\_\_rules-fixer logic directly (read audit, apply fixes, write fix report)
+3. Iterate until zero findings achieved
+4. Show git status with modified files
+5. Wait for user commit approval
+
+**Why Manual Mode?**: Task tool runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures audit reports and fixes are actually written to the filesystem.
+
+**Future**: When workflow runner is implemented, use `workflow run` command for fully automated execution.
+
 ## Steps
 
 ### 1. Initial Validation (Sequential)

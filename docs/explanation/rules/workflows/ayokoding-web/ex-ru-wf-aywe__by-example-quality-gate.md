@@ -74,6 +74,39 @@ outputs:
 
 This workflow implements the **Maker-Checker-Fixer pattern** to ensure by-example tutorials meet quality standards before publication.
 
+## Execution Mode
+
+**Current Mode**: Manual Orchestration (see [Workflow Execution Modes Convention](../meta/ex-ru-wf-me__execution-modes.md))
+
+This workflow is currently executed through **manual orchestration** where the main Claude instance follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
+
+**How to Execute**:
+
+Instead of (future):
+
+```bash
+workflow run ayokoding-web-by-example-quality-gate --tutorial-path=golang/tutorials/by-example/ --mode=normal
+```
+
+Currently use:
+
+```
+User: "Run ayokoding-web by-example quality gate workflow for golang/tutorials/by-example/ in manual mode"
+```
+
+Claude will:
+
+1. Execute apps\_\_ayokoding-web\_\_by-example-checker logic directly (validate tutorial, write audit)
+2. User reviews audit report and decides on fixes (manual decision point)
+3. Execute apps\_\_ayokoding-web\_\_by-example-fixer logic directly (read audit, apply fixes, write fix report)
+4. Iterate until EXCELLENT status achieved (zero findings, 75-90 examples, 95% coverage)
+5. Show git status with modified files
+6. Wait for user commit approval
+
+**Why Manual Mode?**: Task tool runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures audit reports and tutorial fixes are actually written to the filesystem. This workflow also includes manual decision points (user review step) unlike fully automated workflows.
+
+**Future**: When workflow runner is implemented, use `workflow run` command for fully automated execution (with user approval prompts for decision points).
+
 ## Workflow Overview
 
 ```mermaid

@@ -43,6 +43,39 @@ outputs:
 - When you need automated archival of completed plans to done/ folder
 - For systematic plan completion with zero-findings quality standard
 
+## Execution Mode
+
+**Current Mode**: Manual Orchestration (see [Workflow Execution Modes Convention](../meta/ex-ru-wf-me__execution-modes.md))
+
+This workflow is currently executed through **manual orchestration** where the main Claude instance follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
+
+**How to Execute**:
+
+Instead of (future):
+
+```bash
+workflow run plan-execution --plan-path=plans/in-progress/2025-01-15__new-feature/plan.md
+```
+
+Currently use:
+
+```
+User: "Execute plan plans/in-progress/2025-01-15__new-feature/plan.md in manual mode"
+```
+
+Claude will:
+
+1. Execute plan\_\_executor logic directly (read plan, implement requirements, update checklist)
+2. Execute plan\_\_execution-checker logic directly (validate implementation, write audit)
+3. Iterate execution and validation until zero findings achieved
+4. Move plan folder to plans/done/ using git mv
+5. Show git status with modified files
+6. Wait for user commit approval
+
+**Why Manual Mode?**: Task tool runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures implementation changes, audit reports, and plan archival are actually written to the filesystem.
+
+**Future**: When workflow runner is implemented, use `workflow run` command for fully automated execution.
+
 ## Steps
 
 ### 1. Initial Execution (Sequential)
