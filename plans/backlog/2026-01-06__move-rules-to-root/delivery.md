@@ -100,18 +100,18 @@ git add -A
 - [ ] All 5 directories exist in /rules/:
 
   ```bash
-  test -d /rules/vision/              # ✅ PASS if true
-  test -d /rules/principles/           # ✅ PASS if true
-  test -d /rules/conventions/         # ✅ PASS if true
-  test -d /rules/development/         # ✅ PASS if true
-  test -d /rules/workflows/          # ✅ PASS if true
+  test -d rules/vision/              # ✅ PASS if true
+  test -d rules/principles/           # ✅ PASS if true
+  test -d rules/conventions/         # ✅ PASS if true
+  test -d rules/development/         # ✅ PASS if true
+  test -d rules/workflows/          # ✅ PASS if true
   ```
 
 - [ ] All 2 files exist in /rules/:
 
   ```bash
-  test -f /rules/ex-ru__repository-governance-architecture.md  # ✅ PASS if true
-  test -f /rules/README.md          # ✅ PASS if true
+  test -f rules/ex-ru__repository-governance-architecture.md  # ✅ PASS if true
+  test -f rules/README.md          # ✅ PASS if true
   ```
 
 - [ ] docs/explanation/rules/ directory removed (except agents/):
@@ -271,8 +271,8 @@ git add rules/ex-ru__repository-governance-architecture.md
 #### Step 3.1: Update Agent Files (45 files)
 
 ```bash
-# Update all agent definition files
-find .claude/agents -name "*.md" -type f -exec sed -i 's|docs/explanation/rules/|rules/|g' {} \;
+# Update all agent definition files (portable syntax - works on Linux and macOS)
+find .claude/agents -name "*.md" -type f -exec sed -i.bak 's|docs/explanation/rules/|rules/|g' {} \;
 
 # Verify update
 git status | grep "modified:" | grep ".claude/agents/"
@@ -283,8 +283,8 @@ git status | grep "modified:" | grep ".claude/agents/"
 #### Step 3.2: Update Skill Files (23 files)
 
 ```bash
-# Update all skill definition files
-find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|docs/explanation/rules/|rules/|g' {} \;
+# Update all skill definition files (portable syntax - works on Linux and macOS)
+find .claude/skills -name "SKILL.md" -type f -exec sed -i.bak 's|docs/explanation/rules/|rules/|g' {} \;
 
 # Verify update
 git status | grep "modified:" | grep ".claude/skills/"
@@ -295,8 +295,8 @@ git status | grep "modified:" | grep ".claude/skills/"
 #### Step 3.3: Update Workflow Files (~10 files)
 
 ```bash
-# Update all workflow files
-find rules/workflows -name "*.md" -type f -exec sed -i 's|docs/explanation/rules/|rules/|g' {} \;
+# Update all workflow files (portable syntax - works on Linux and macOS)
+find rules/workflows -name "*.md" -type f -exec sed -i.bak 's|docs/explanation/rules/|rules/|g' {} \;
 
 # Verify update
 git status | grep "modified:" | grep "rules/workflows/"
@@ -307,8 +307,8 @@ git status | grep "modified:" | grep "rules/workflows/"
 #### Step 3.4: Update Rules Internal Files (~67 files)
 
 ```bash
-# Update all files in rules directories
-find rules -name "*.md" -type f -exec sed -i 's|docs/explanation/rules/|rules/|g' {} \;
+# Update all files in rules directories (portable syntax - works on Linux and macOS)
+find rules -name "*.md" -type f -exec sed -i.bak 's|docs/explanation/rules/|rules/|g' {} \;
 
 # Verify update
 git status | grep "modified:" | grep "rules/"
@@ -319,17 +319,24 @@ git status | grep "modified:" | grep "rules/"
 #### Step 3.5: Update Project Documentation (2 files)
 
 ```bash
-# Update CLAUDE.md
-sed -i 's|docs/explanation/rules/|rules/|g' CLAUDE.md
+# Update CLAUDE.md (portable syntax - works on Linux and macOS)
+sed -i.bak 's|docs/explanation/rules/|rules/|g' CLAUDE.md
 
-# Update AGENTS.md
-sed -i 's|docs/explanation/rules/|rules/|g' AGENTS.md
+# Update AGENTS.md (portable syntax - works on Linux and macOS)
+sed -i.bak 's|docs/explanation/rules/|rules/|g' AGENTS.md
 
 # Verify updates
 git status | grep "modified:" | grep -E "(CLAUDE.md|AGENTS.md)"
 ```
 
 **Files updated**: CLAUDE.md and AGENTS.md
+
+#### Step 3.6: Clean Up Backup Files
+
+```bash
+# Remove .bak files after verification (optional - keep for safety if desired)
+find . -name "*.md.bak" -delete
+```
 
 #### Step 3.6: Manual Update of Meta-Agents (3 files)
 
