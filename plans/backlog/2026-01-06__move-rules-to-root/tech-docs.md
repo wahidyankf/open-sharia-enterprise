@@ -560,12 +560,12 @@ sed -i 's|docs/explanation/rules/|rules/|g' AGENTS.md
 
 ### Sed Pattern Explanations
 
-| Pattern | What It Matches                   | Example Replacement |
-| ------- | --------------------------------- | ------------------- | --- | --------------------- | ---------------------------------------------- |
-| `s      | docs/explanation/rules/           | rules/              | g`  | Absolute paths        | `[rules/conventions/content/...]`              |
-| `s      | \.\./docs/explanation/rules/      | \.\./rules/         | g`  | Relative paths (1 up) | `../../rules/conventions/`                     |
-| `s      | \.\./\.\./docs/explanation/rules/ | \.\./\.\./rules/    | g`  | Relative paths (2 up) | `../../../rules/conventions/`                  |
-| `s      | docs/explanation/                 | docs/               | g`  | Combined paths        | `docs/tutorials/` vs `docs/explanation/rules/` |
+| Pattern                                                     | What It Matches       | Example Replacement                            | Example Result |
+| ----------------------------------------------------------- | --------------------- | ---------------------------------------------- | -------------- |
+| `s\|docs/explanation/rules/\|rules/\|g`                     | Absolute paths        | `[rules/conventions/content/...]`              |
+| `s\|\.\./docs/explanation/rules/\|\.\./rules/\|g`           | Relative paths (1 up) | `../../rules/conventions/`                     |
+| `s\|\.\./\.\./docs/explanation/rules/\|\.\./\.\./rules/\|g` | Relative paths (2 up) | `../../../rules/conventions/`                  |
+| `s\|docs/explanation/\|docs/\|g`                            | Combined paths        | `docs/tutorials/` vs `docs/explanation/rules/` |
 
 **Note**: The `|` delimiter is used instead of `/` because file paths contain `/` characters.
 
