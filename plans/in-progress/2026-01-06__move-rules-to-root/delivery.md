@@ -331,7 +331,7 @@ git status | grep "modified:" | grep -E "(CLAUDE.md|AGENTS.md)"
 find . -name "*.md.bak" -delete
 ```
 
-#### Step 3.6: Manual Update of Meta-Agents (3 files)
+#### Step 3.7: Manual Update of Meta-Agents (3 files)
 
 **CRITICAL**: Do NOT use sed for these files - update manually
 

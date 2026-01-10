@@ -72,7 +72,7 @@ docs/explanation/
 | docs/explanation/rules/ex-ru\_\_\*.md | /rules/             | Architecture  | 1 file              |
 | docs/explanation/rules/README.md      | /rules/             | Index         | 1 file              |
 
-**Total moved**: ~67 files across 5 directories + 2 files
+**Total moved**: 67 files across 5 directories + 2 files
 
 ### NOT Moving
 
@@ -96,7 +96,7 @@ docs/explanation/
 | **Governance**        | 1 file    | rules/ex-ru\_\_repository-governance-architecture.md | Architecture document                               |
 | **Rules internal**    | ~67 files | rules/\*_/_.md                                       | All moved files with internal links                 |
 
-**Total requiring updates**: ~151 files
+**Total requiring updates**: 151 files
 
 ### By File Category
 

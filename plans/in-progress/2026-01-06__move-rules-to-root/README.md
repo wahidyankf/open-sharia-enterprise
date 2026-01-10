@@ -254,6 +254,6 @@ This plan is organized into four documents:
 
 ## References
 
-- [Repository Governance Architecture](../../docs/explanation/rules/ex-ru__repository-governance-architecture.md) (will be at `/rules/ex-ru__repository-governance-architecture.md` after move)
+- Repository Governance Architecture (will be at `/rules/ex-ru__repository-governance-architecture.md` after move)
 - [Plans Organization](../../docs/explanation/rules/conventions/project/ex-ru-co-pr__plans-organization.md)
 - [Agent and Skill Definitions as Documentation Source of Truth](../2026-01-04__agents-docs-source-of-truth/) - Separate plan handling `docs/explanation/rules/agents/`
