@@ -54,7 +54,7 @@ Feature: Rules Directory Migration
 
   Background:
     Given I am in the repository root directory
-    And I am on a feature branch for this migration
+    And I am on the main branch for this migration
 
   Scenario: Move all rules directories to root
     Given I execute git mv commands for all rules directories

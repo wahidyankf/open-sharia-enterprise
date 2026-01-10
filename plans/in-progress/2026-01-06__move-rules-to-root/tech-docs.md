@@ -714,19 +714,17 @@ mkdir -p .backup/
 cp CLAUDE.md AGENTS.md .backup/
 ```
 
-### Branch Strategy
+### Working on Main Branch
+
+This migration executes directly on the `main` branch following Trunk Based Development principles.
 
 ```bash
-# Create feature branch
-git checkout -b feat/move-rules-to-root
+# Verify you're on main branch
+git branch --show-current
+# Output: main
 
-# Execute all changes on branch
-# [Phase 1-5]
-
-# Merge to main when validated
-git checkout main
-git merge feat/move-rules-to-root
-git branch -d feat/move-rules-to-root
+# All changes will be staged and committed directly to main
+# [Phase 1-5 execute on main]
 ```
 
 ### Staged Changes Review

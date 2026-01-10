@@ -14,7 +14,7 @@ This migration will be executed in **5 phases** with validation gates between ea
 
 | Phase | Name                           | Deliverables                              | Duration Estimate |
 | ----- | ------------------------------ | ----------------------------------------- | ----------------- |
-| 0     | Pre-Migration Setup            | Branch, tag, backup                       | Setup             |
+| 0     | Pre-Migration Setup            | Tag, backup                               | Setup             |
 | 1     | Move Rules to Root             | Directories moved to /rules/, old removed | ~5s               |
 | 2     | Update Governance Architecture | Governance doc updated                    | ~30s              |
 | 3     | Update All References          | 151 files updated via sed + manual        | ~90s              |
@@ -31,13 +31,7 @@ This migration will be executed in **5 phases** with validation gates between ea
 
 ### Checklist
 
-#### Branch and Tag Creation
-
-- [ ] Create feature branch:
-
-  ```bash
-  git checkout -b feat/move-rules-to-root
-  ```
+#### Tag Creation for Reference
 
 - [ ] Tag current state for reference:
 
@@ -45,9 +39,8 @@ This migration will be executed in **5 phases** with validation gates between ea
   git tag pre-rules-move-$(date +%Y%m%d-%H%M)
   ```
 
-- [ ] Verify branch and tag created:
+- [ ] Verify tag created:
   ```bash
-  git branch | grep "feat/move-rules-to-root"  # ✅ Branch exists
   git tag | grep "pre-rules-move"           # ✅ Tag exists
   ```
 
@@ -656,11 +649,6 @@ git log -1 --oneline
 
 # Step 5.7: Delete pre-move tag (optional)
 # git tag -d pre-rules-move-YYYYMMDD-HHMM
-
-# Step 5.8: Merge to main (optional)
-# git checkout main
-# git merge feat/move-rules-to-root
-# git branch -d feat/move-rules-to-root
 ```
 
 ---

@@ -1,8 +1,8 @@
 # Move Rules Documentation to Root Directory
 
-**Status**: Backlog
+**Status**: In Progress
 **Created**: 2026-01-06
-**Updated**: 2026-01-06
+**Updated**: 2026-01-10
 **Priority**: High
 **Complexity**: Medium (directory move + reference updates across ~150 files)
 
