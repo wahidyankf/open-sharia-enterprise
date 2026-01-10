@@ -451,12 +451,12 @@ cover:
 
 ## Reference Documentation
 
-**Primary Convention**: [Hugo Content Convention - ose-platform-web](../../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
+**Primary Convention**: [Hugo Content Convention - ose-platform-web](../../../rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
 
 **Related Conventions**:
 
-- [Hugo Content Shared](../../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__shared.md) - Shared Hugo patterns
-- [Content Quality Principles](../../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - Universal quality standards
+- [Hugo Content Shared](../../../rules/conventions/hugo/ex-ru-co-hu__shared.md) - Shared Hugo patterns
+- [Content Quality Principles](../../../rules/conventions/content/ex-ru-co-co__quality.md) - Universal quality standards
 
 **Related Skills**:
 
@@ -543,12 +543,12 @@ Vercel automatically:
 
 ## References
 
-**Primary Convention**: [Hugo Content Convention - ose-platform-web](../../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
+**Primary Convention**: [Hugo Content Convention - ose-platform-web](../../../rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
 
 **Related Conventions**:
 
-- [Hugo Content Shared](../../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__shared.md) - Shared Hugo patterns
-- [Content Quality Principles](../../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - Universal quality standards
+- [Hugo Content Shared](../../../rules/conventions/hugo/ex-ru-co-hu__shared.md) - Shared Hugo patterns
+- [Content Quality Principles](../../../rules/conventions/content/ex-ru-co-co__quality.md) - Universal quality standards
 
 **Related Skills**:
 

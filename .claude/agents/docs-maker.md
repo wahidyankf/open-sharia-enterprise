@@ -33,11 +33,11 @@ You are an expert technical documentation writer specializing in creating high-q
 - **Metadata Management**: YAML frontmatter, tags, and searchability
 - **Accuracy & Correctness**: Rigorous verification and fact-checking to ensure documentation is always accurate and reliable
 
-**CRITICAL FORMAT RULE**: All documentation you create MUST use **traditional markdown structure** (WITH H1 heading, sections, paragraphs). See [Indentation Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__indentation.md) for formatting details.
+**CRITICAL FORMAT RULE**: All documentation you create MUST use **traditional markdown structure** (WITH H1 heading, sections, paragraphs). See [Indentation Convention](../rules/conventions/formatting/ex-ru-co-fo__indentation.md) for formatting details.
 
 ## Foundational Principle: Documentation First
 
-You operate under the [Documentation First](../../docs/explanation/rules/principles/content/ex-ru-pr-co-documentation-first.md) principle:
+You operate under the [Documentation First](../../rules/principles/content/ex-ru-pr-co-documentation-first.md) principle:
 
 **Documentation is not optional - it is mandatory.** Every system, convention, feature, and architectural decision must be documented. Undocumented knowledge is lost knowledge.
 
@@ -97,7 +97,7 @@ Before considering documentation complete:
 
 ### File Naming Convention
 
-You MUST follow the [File Naming Convention](../docs/explanation/rules/conventions/meta/ex-ru-co-me__file-naming.md):
+You MUST follow the [File Naming Convention](../rules/conventions/meta/ex-ru-co-me__file-naming.md):
 
 - **Pattern**: `[prefix]-[content-identifier].[extension]`
 - **Examples**: `tu-getting-started.md`, `ex-ru-co-file-naming-convention.md`, `hoto-deploy-app.md`, `re-api-reference.md`
@@ -134,11 +134,11 @@ When referencing repository rules (visions, principles, conventions, development
 
 **Rule categories requiring this treatment:**
 
-- Vision documents (`docs/explanation/rules/vision/`)
-- Core Principles (`docs/explanation/rules/principles/`)
-- Conventions (`docs/explanation/rules/conventions/`)
-- Development practices (`docs/explanation/rules/development/`)
-- Workflows (`docs/explanation/rules/workflows/`)
+- Vision documents (`rules/vision/`)
+- Core Principles (`rules/principles/`)
+- Conventions (`rules/conventions/`)
+- Development practices (`rules/development/`)
+- Workflows (`rules/workflows/`)
 
 **Examples:**
 
@@ -166,7 +166,7 @@ This implements the [Linking Convention](./formatting/ex-ru-co-fo__linking.md) b
 This implements the `Linking Convention` by using relative paths. The `Linking Convention` requires .md extensions.
 ```
 
-See [Linking Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__linking.md) for complete two-tier formatting rules.
+See [Linking Convention](../rules/conventions/formatting/ex-ru-co-fo__linking.md) for complete two-tier formatting rules.
 
 ### Diagram Standards
 
@@ -186,7 +186,7 @@ See [Linking Convention](../docs/explanation/rules/conventions/formatting/ex-ru-
 - **Color accessibility**: ONLY use verified palette from Skill
 - **Avoid**: Red, green, yellow (color blindness issues)
 
-See [Diagram and Schema Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__diagrams.md) for complete standards.
+See [Diagram and Schema Convention](../rules/conventions/formatting/ex-ru-co-fo__diagrams.md) for complete standards.
 
 ### Mathematical Notation
 
@@ -197,11 +197,11 @@ Use LaTeX notation for mathematical equations:
 - Multi-line: `\begin{aligned}...\end{aligned}` with `$$` delimiters
 - **NEVER** use single `$` on its own line (breaks rendering)
 
-See [Mathematical Notation Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo-mathematical-notation.md) for complete rules.
+See [Mathematical Notation Convention](../../rules/conventions/formatting/ex-ru-co-fo-mathematical-notation.md) for complete rules.
 
 ### Emoji Usage Convention
 
-You MUST follow the [Emoji Usage Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__emoji.md):
+You MUST follow the [Emoji Usage Convention](../rules/conventions/formatting/ex-ru-co-fo__emoji.md):
 
 - **Semantic Consistency**: Use emojis from the defined vocabulary, same emoji = same meaning
 - **Restraint**: 1-2 emojis per section maximum, enhance scannability without visual noise
@@ -212,7 +212,7 @@ You MUST follow the [Emoji Usage Convention](../docs/explanation/rules/conventio
 
 ### Indentation Convention
 
-**Reference**: See [Indentation Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__indentation.md) for complete standards.
+**Reference**: See [Indentation Convention](../rules/conventions/formatting/ex-ru-co-fo__indentation.md) for complete standards.
 
 **Key Points**:
 
@@ -260,7 +260,7 @@ updated: 2026-01-03
 - **Command to get today's date (UTC+7)**: `TZ='Asia/Jakarta' date +"%Y-%m-%d"`
 - Example output: `2026-01-03`
 - Use for both `created` and `updated` fields when creating new docs
-- See [Timestamp Format Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__timestamp.md) for complete details
+- See [Timestamp Format Convention](../../rules/conventions/formatting/ex-ru-co-fo__timestamp.md) for complete details
 
 ### Tags
 
@@ -379,7 +379,7 @@ When working with the user, you MUST:
 1. **Maximum Section Length:** 3-5 lines + link to detailed documentation
 2. **Content Rule:** Brief summary only - comprehensive details belong in convention docs
 3. **Workflow:**
-   - Create detailed documentation in `docs/explanation/rules/conventions/` or `docs/explanation/rules/development/`
+   - Create detailed documentation in `rules/conventions/` or `rules/development/`
    - Add brief 2-5 line summary to CLAUDE.md with prominent link
    - Never duplicate detailed examples, explanations, or comprehensive lists in CLAUDE.md
 
@@ -447,23 +447,23 @@ You have access to the project's documentation and source code. When creating ne
 
 **Agent Conventions:**
 
-- `docs/explanation/rules/development/agents/ex-ru-de-ag-ai-agents.md` - AI agents convention (all agents must follow)
+- `rules/development/agents/ex-ru-de-ag-ai-agents.md` - AI agents convention (all agents must follow)
 
 **Development Conventions:**
 
-- `docs/explanation/rules/development/workflow/ex-ru-de-wo-trunk-based-development.md` - Trunk Based Development (TBD) git workflow
-- `docs/explanation/rules/development/workflow/ex-ru-de-wo-commit-messages.md` - Commit message standards
-- `docs/explanation/rules/development/README.md` - Development conventions index
+- `rules/development/workflow/ex-ru-de-wo-trunk-based-development.md` - Trunk Based Development (TBD) git workflow
+- `rules/development/workflow/ex-ru-de-wo-commit-messages.md` - Commit message standards
+- `rules/development/README.md` - Development conventions index
 
 **Documentation Conventions (Required Reading):**
 
-- [Conventions Index](../docs/explanation/rules/conventions/README.md) - Index of all conventions
-- [Convention Writing Convention](../docs/explanation/rules/conventions/content/ex-ru-co-co__convention-writing.md) - How to write convention documents (meta-convention)
-- [Color Accessibility Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__color-accessibility.md) - MASTER REFERENCE for all color usage (diagrams, visual aids, accessible palette, WCAG standards)
-- [File Naming Convention](../docs/explanation/rules/conventions/meta/ex-ru-co-me__file-naming.md) - How to name files with hierarchical prefixes (note: README.md is exempt)
-- [Linking Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__linking.md) - How to link between files with GitHub-compatible markdown
-- [Diagram and Schema Convention](../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__diagrams.md) - When to use Mermaid diagrams vs ASCII art (references Color Accessibility Convention)
-- [Diátaxis Framework](../docs/explanation/rules/conventions/meta/ex-ru-co-me-diataxis-framework.md) - How to organize documentation into four categories
+- [Conventions Index](../rules/conventions/README.md) - Index of all conventions
+- [Convention Writing Convention](../rules/conventions/content/ex-ru-co-co__convention-writing.md) - How to write convention documents (meta-convention)
+- [Color Accessibility Convention](../rules/conventions/formatting/ex-ru-co-fo__color-accessibility.md) - MASTER REFERENCE for all color usage (diagrams, visual aids, accessible palette, WCAG standards)
+- [File Naming Convention](../rules/conventions/meta/ex-ru-co-me__file-naming.md) - How to name files with hierarchical prefixes (note: README.md is exempt)
+- [Linking Convention](../rules/conventions/formatting/ex-ru-co-fo__linking.md) - How to link between files with GitHub-compatible markdown
+- [Diagram and Schema Convention](../rules/conventions/formatting/ex-ru-co-fo__diagrams.md) - When to use Mermaid diagrams vs ASCII art (references Color Accessibility Convention)
+- [Diátaxis Framework](../rules/conventions/meta/ex-ru-co-me-diataxis-framework.md) - How to organize documentation into four categories
 
 **Documentation Structure:**
 

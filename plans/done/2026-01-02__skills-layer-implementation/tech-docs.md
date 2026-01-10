@@ -861,27 +861,27 @@ This section provides comprehensive listing of ALL components affected by Skills
 
 ### Conventions Affected
 
-| Convention Document                                                                          | Impact Description                                    | Phase   |
-| -------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ------- |
-| `docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md`                         | Skills content must follow (no changes to convention) | N/A     |
-| `docs/explanation/rules/conventions/formatting/ex-ru-co-fo__linking.md`                      | Skills must follow linking conventions (no changes)   | N/A     |
-| `docs/explanation/rules/conventions/formatting/ex-ru-co-fo__diagrams.md`                     | Referenced by color-accessibility-diagrams Skill      | Phase 1 |
-| `docs/explanation/rules/conventions/formatting/ex-ru-co-fo__color-accessibility.md`          | Referenced by color-accessibility-diagrams Skill      | Phase 1 |
-| `docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md`                          | Referenced by hugo-ayokoding-development Skill        | Phase 2 |
-| `docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md`                       | Referenced by hugo-ose-development Skill (optional)   | Phase 2 |
-| `docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__programming-language-structure.md` | Referenced by by-example-tutorial-creation Skill      | Phase 2 |
-| `docs/explanation/rules/conventions/content/ex-ru-co-co__factual-validation.md`              | Referenced by factual-validation-methodology Skill    | Phase 2 |
+| Convention Document                                                         | Impact Description                                    | Phase   |
+| --------------------------------------------------------------------------- | ----------------------------------------------------- | ------- |
+| `rules/conventions/content/ex-ru-co-co__quality.md`                         | Skills content must follow (no changes to convention) | N/A     |
+| `rules/conventions/formatting/ex-ru-co-fo__linking.md`                      | Skills must follow linking conventions (no changes)   | N/A     |
+| `rules/conventions/formatting/ex-ru-co-fo__diagrams.md`                     | Referenced by color-accessibility-diagrams Skill      | Phase 1 |
+| `rules/conventions/formatting/ex-ru-co-fo__color-accessibility.md`          | Referenced by color-accessibility-diagrams Skill      | Phase 1 |
+| `rules/conventions/hugo/ex-ru-co-hu__ayokoding.md`                          | Referenced by hugo-ayokoding-development Skill        | Phase 2 |
+| `rules/conventions/hugo/ex-ru-co-hu__ose-platform.md`                       | Referenced by hugo-ose-development Skill (optional)   | Phase 2 |
+| `rules/conventions/tutorial/ex-ru-co-tu__programming-language-structure.md` | Referenced by by-example-tutorial-creation Skill      | Phase 2 |
+| `rules/conventions/content/ex-ru-co-co__factual-validation.md`              | Referenced by factual-validation-methodology Skill    | Phase 2 |
 
 ### Development Documents Affected
 
-| Development Document                                                                  | Impact Description                                | Phase            |
-| ------------------------------------------------------------------------------------- | ------------------------------------------------- | ---------------- |
-| `docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md`                 | Add `skills:` frontmatter field documentation     | Phase 1, Phase 2 |
-| `docs/explanation/rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md`      | Referenced by maker-checker-fixer-pattern Skill   | Phase 1          |
-| `docs/explanation/rules/development/workflow/ex-ru-de-wo__trunk-based-development.md` | Referenced by trunk-based-development Skill       | Phase 2          |
-| `docs/explanation/rules/development/quality/ex-ru-de-qu__criticality-levels.md`       | Referenced by criticality-confidence-system Skill | Phase 2          |
-| `docs/explanation/rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md`  | Referenced by criticality-confidence-system Skill | Phase 2          |
-| `docs/explanation/rules/development/infra/ex-ru-de-in__temporary-files.md`            | Skills not temporary (no changes needed)          | N/A              |
+| Development Document                                                 | Impact Description                                | Phase            |
+| -------------------------------------------------------------------- | ------------------------------------------------- | ---------------- |
+| `rules/development/agents/ex-ru-de-ag__ai-agents.md`                 | Add `skills:` frontmatter field documentation     | Phase 1, Phase 2 |
+| `rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md`      | Referenced by maker-checker-fixer-pattern Skill   | Phase 1          |
+| `rules/development/workflow/ex-ru-de-wo__trunk-based-development.md` | Referenced by trunk-based-development Skill       | Phase 2          |
+| `rules/development/quality/ex-ru-de-qu__criticality-levels.md`       | Referenced by criticality-confidence-system Skill | Phase 2          |
+| `rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md`  | Referenced by criticality-confidence-system Skill | Phase 2          |
+| `rules/development/infra/ex-ru-de-in__temporary-files.md`            | Skills not temporary (no changes needed)          | N/A              |
 
 ### Skills Created (New)
 
@@ -949,12 +949,12 @@ This section lists all documentation that must be updated as part of Skills impl
 
 ### Files to Update
 
-| File                                                                  | Update Description                                                                                                      | Phase            |
-| --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------- |
-| `docs/explanation/ex-ru__repository-governance-architecture.md`       | Add "Delivery Infrastructure" section with Skills alongside CLAUDE.md, add complete architecture diagram showing Skills | Phase 2          |
-| `docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md` | Add optional `skills:` frontmatter field documentation, explain when to use Skills references                           | Phase 1, Phase 2 |
-| `CLAUDE.md`                                                           | Add Skills Infrastructure section, add Skills references to verbose sections                                            | Phase 2          |
-| `.claude/agents/README.md`                                            | Add mention of Skills as complementary to agents                                                                        | Phase 2          |
+| File                                                            | Update Description                                                                                                      | Phase            |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| `docs/explanation/ex-ru__repository-governance-architecture.md` | Add "Delivery Infrastructure" section with Skills alongside CLAUDE.md, add complete architecture diagram showing Skills | Phase 2          |
+| `rules/development/agents/ex-ru-de-ag__ai-agents.md`            | Add optional `skills:` frontmatter field documentation, explain when to use Skills references                           | Phase 1, Phase 2 |
+| `CLAUDE.md`                                                     | Add Skills Infrastructure section, add Skills references to verbose sections                                            | Phase 2          |
+| `.claude/agents/README.md`                                      | Add mention of Skills as complementary to agents                                                                        | Phase 2          |
 
 ### Proposed Changes to Repository Architecture Document
 

@@ -92,9 +92,9 @@ The `wow-generating-validation-reports` Skill provides:
 
 **CRITICAL - Read these first**:
 
-- [README Quality Convention](../../docs/explanation/rules/conventions/content/ex-ru-co-co-readme-quality.md) - MASTER reference for all README standards
-- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - General content quality standards
-- [Emoji Usage Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__emoji.md) - Emoji guidelines
+- [README Quality Convention](../../rules/conventions/content/ex-ru-co-co-readme-quality.md) - MASTER reference for all README standards
+- [Content Quality Principles](../../rules/conventions/content/ex-ru-co-co__quality.md) - General content quality standards
+- [Emoji Usage Convention](../../rules/conventions/formatting/ex-ru-co-fo__emoji.md) - Emoji guidelines
 
 ## Validation Scope
 
@@ -302,8 +302,8 @@ Use this agent when:
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [README Quality Convention](../../docs/explanation/rules/conventions/content/ex-ru-co-co-readme-quality.md) - Complete README standards
-- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - General quality standards
+- [README Quality Convention](../../rules/conventions/content/ex-ru-co-co-readme-quality.md) - Complete README standards
+- [Content Quality Principles](../../rules/conventions/content/ex-ru-co-co__quality.md) - General quality standards
 
 **Related Agents:**
 

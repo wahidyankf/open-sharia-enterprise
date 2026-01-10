@@ -28,7 +28,7 @@ Skill: `wow-generating-validation-reports`
 
 ## Reference
 
-- [Workflow Pattern Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me-workflow-pattern.md)
+- [Workflow Pattern Convention](../../rules/workflows/meta/ex-ru-wf-me-workflow-pattern.md)
 - Skills: `docs-applying-diataxis-framework`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`
 
 ## Reference Documentation
@@ -36,7 +36,7 @@ Skill: `wow-generating-validation-reports`
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Workflow Pattern Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
+- [Workflow Pattern Convention](../../rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
 
 **Related Agents**:
 
@@ -45,8 +45,8 @@ Skill: `wow-generating-validation-reports`
 
 **Related Conventions**:
 
-- [Workflow Pattern Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
-- [Execution Modes Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me__execution-modes.md)
+- [Workflow Pattern Convention](../../rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
+- [Execution Modes Convention](../../rules/workflows/meta/ex-ru-wf-me__execution-modes.md)
 
 **Skills**:
 

@@ -87,7 +87,7 @@ Use this agent when:
 
 ## File Naming Convention Review
 
-Before any operation, understand the [File Naming Convention](../../docs/explanation/rules/conventions/meta/ex-ru-co-me-file-naming.md):
+Before any operation, understand the [File Naming Convention](../../rules/conventions/meta/ex-ru-co-me-file-naming.md):
 
 ### Pattern
 
@@ -106,7 +106,7 @@ The prefix encodes the directory path using abbreviations:
 
 - `docs/tutorials/` → `tu-`
 - `docs/how-to/` → `hoto-`
-- `docs/explanation/rules/conventions/` → `ex-ru-co-`
+- `rules/conventions/` → `ex-ru-co-`
 - `docs/explanation/information-security/` → `ex-inse-`
 - `docs/tutorials/ai-engineering/` → `tu-aien-`
 - `docs/tutorials/business-and-finance/` → `tu-bufi-`
@@ -327,7 +327,7 @@ To verify relative path:
 
 ### Link Syntax Requirements
 
-All links must follow [Linking Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__linking.md):
+All links must follow [Linking Convention](../../rules/conventions/formatting/ex-ru-co-fo__linking.md):
 
 - Use relative paths (`./ or ../`)
 - Include `.md` extension
@@ -575,7 +575,7 @@ After completing file management operation:
 
 ### Operations Performed
 
-- Renamed 8 files in docs/explanation/rules/conventions/
+- Renamed 8 files in rules/conventions/
 - Updated all file prefixes: ex-co**[old] → ex-co**[new]
 - Deleted 2 deprecated files
 - Moved 1 file to new location
@@ -588,7 +588,7 @@ After completing file management operation:
 ### Indices Updated
 
 - Updated docs/explanation/README.md
-- Updated docs/explanation/rules/conventions/README.md
+- Updated rules/conventions/README.md
 - Removed entries for deleted files
 
 ### Git Operations
@@ -637,14 +637,14 @@ Proceed anyway? (Please confirm)
 
 **Agent Conventions:**
 
-- `docs/explanation/rules/development/agents/ex-ru-de-ag-ai-agents.md` - AI agents convention (all agents must follow)
+- `rules/development/agents/ex-ru-de-ag-ai-agents.md` - AI agents convention (all agents must follow)
 
 **Documentation Conventions:**
 
-- `docs/explanation/rules/conventions/README.md` - Index of all conventions
-- `docs/explanation/rules/conventions/meta/ex-ru-co-me-file-naming.md` - How to name files with hierarchical prefixes (required reading)
-- `docs/explanation/rules/conventions/formatting/ex-ru-co-fo__linking.md` - How to link between files with GitHub-compatible markdown (required reading)
-- `docs/explanation/rules/conventions/formatting/ex-ru-co-fo__emoji.md` - When and where to use emojis
+- `rules/conventions/README.md` - Index of all conventions
+- `rules/conventions/meta/ex-ru-co-me-file-naming.md` - How to name files with hierarchical prefixes (required reading)
+- `rules/conventions/formatting/ex-ru-co-fo__linking.md` - How to link between files with GitHub-compatible markdown (required reading)
+- `rules/conventions/formatting/ex-ru-co-fo__emoji.md` - When and where to use emojis
 
 **Related Agents:**
 

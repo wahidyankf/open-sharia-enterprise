@@ -117,44 +117,44 @@ Add "References" section to 7 Skills that are missing it.
 ### Implementation Steps
 
 - [x] **1.1 Add References to creating-by-example-tutorials**
-  - [x] Add section linking to `docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__by-example.md`
+  - [x] Add section linking to `rules/conventions/tutorial/ex-ru-co-tu__by-example.md`
   - **Implementation Notes**: Renamed existing "Reference Documentation" section to "References" and updated skill name references within.
   - **Date**: 2026-01-02
   - **Status**: Completed
 
 - [x] **1.2 Add References to assessing-criticality-confidence**
-  - [x] Add section linking to `docs/explanation/rules/development/quality/ex-ru-de-qu__criticality-levels.md`
-  - [x] Add section linking to `docs/explanation/rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md`
+  - [x] Add section linking to `rules/development/quality/ex-ru-de-qu__criticality-levels.md`
+  - [x] Add section linking to `rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md`
   - **Implementation Notes**: Renamed existing "Reference Documentation" section to "References" and updated skill name references within.
   - **Date**: 2026-01-02
   - **Status**: Completed
 
 - [x] **1.3 Add References to developing-ayokoding-content**
-  - [x] Add section linking to `docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md`
+  - [x] Add section linking to `rules/conventions/hugo/ex-ru-co-hu__ayokoding.md`
   - **Implementation Notes**: Renamed existing "Reference Documentation" section to "References" and updated skill name references within.
   - **Date**: 2026-01-02
   - **Status**: Completed
 
 - [x] **1.4 Add References to validating-factual-accuracy**
-  - [x] Add section linking to `docs/explanation/rules/conventions/content/ex-ru-co-co__factual-validation.md`
+  - [x] Add section linking to `rules/conventions/content/ex-ru-co-co__factual-validation.md`
   - **Implementation Notes**: Added new "References" section with links to primary convention and related conventions/skills.
   - **Date**: 2026-01-02
   - **Status**: Completed
 
 - [x] **1.5 Add References to writing-gherkin-criteria**
-  - [x] Add section linking to `docs/explanation/rules/development/infra/ex-ru-de-in__acceptance-criteria.md`
+  - [x] Add section linking to `rules/development/infra/ex-ru-de-in__acceptance-criteria.md`
   - **Implementation Notes**: Added new "References" section with links to primary convention and related conventions/skills.
   - **Date**: 2026-01-02
   - **Status**: Completed
 
 - [x] **1.6 Add References to developing-ose-content**
-  - [x] Add section linking to `docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md`
+  - [x] Add section linking to `rules/conventions/hugo/ex-ru-co-hu__ose-platform.md`
   - **Implementation Notes**: Added new "References" section with links to primary convention and related conventions/skills.
   - **Date**: 2026-01-02
   - **Status**: Completed
 
 - [x] **1.7 Add References to practicing-trunk-based-development**
-  - [x] Add section linking to `docs/explanation/rules/development/workflow/ex-ru-de-wo__trunk-based-development.md`
+  - [x] Add section linking to `rules/development/workflow/ex-ru-de-wo__trunk-based-development.md`
   - **Implementation Notes**: Renamed existing "Reference Documentation" section to "References" and updated skill name references within.
   - **Date**: 2026-01-02
   - **Status**: Completed
@@ -181,7 +181,7 @@ Create 7 new Skills to cover all agent domains. Use gerund naming pattern. Inclu
   - [x] Create `.claude/skills/applying-content-quality/` directory
   - [x] Create `SKILL.md` with frontmatter and content
   - [x] Add `allowed-tools: Read, Write, Edit, Glob, Grep`
-  - [x] Reference `docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md`
+  - [x] Reference `rules/conventions/content/ex-ru-co-co__quality.md`
   - **Date**: 2026-01-02
   - **Status**: Completed
 
@@ -189,7 +189,7 @@ Create 7 new Skills to cover all agent domains. Use gerund naming pattern. Inclu
   - [x] Create `.claude/skills/applying-diataxis-framework/` directory
   - [x] Create `SKILL.md` with frontmatter and content
   - [x] Add `allowed-tools: Read, Write, Edit, Glob, Grep`
-  - [x] Reference `docs/explanation/rules/conventions/meta/ex-ru-co-me__diataxis-framework.md`
+  - [x] Reference `rules/conventions/meta/ex-ru-co-me__diataxis-framework.md`
   - **Date**: 2026-01-02
   - **Status**: Completed
 
@@ -197,7 +197,7 @@ Create 7 new Skills to cover all agent domains. Use gerund naming pattern. Inclu
   - [x] Create `.claude/skills/creating-project-plans/` directory
   - [x] Create `SKILL.md` with frontmatter and content
   - [x] Add `allowed-tools: Read, Write, Edit, Glob, Grep`
-  - [x] Reference `docs/explanation/rules/conventions/project/ex-ru-co-pr__plans-organization.md`
+  - [x] Reference `rules/conventions/project/ex-ru-co-pr__plans-organization.md`
   - **Date**: 2026-01-02
   - **Status**: Completed
 
@@ -205,7 +205,7 @@ Create 7 new Skills to cover all agent domains. Use gerund naming pattern. Inclu
   - [x] Create `.claude/skills/writing-readme-files/` directory
   - [x] Create `SKILL.md` with frontmatter and content
   - [x] Add `allowed-tools: Read, Write, Edit, Glob, Grep`
-  - [x] Reference `docs/explanation/rules/conventions/content/ex-ru-co-co__readme-quality.md`
+  - [x] Reference `rules/conventions/content/ex-ru-co-co__readme-quality.md`
   - **Date**: 2026-01-02
   - **Status**: Completed
 
@@ -213,7 +213,7 @@ Create 7 new Skills to cover all agent domains. Use gerund naming pattern. Inclu
   - [x] Create `.claude/skills/defining-workflows/` directory
   - [x] Create `SKILL.md` with frontmatter and content
   - [x] Add `allowed-tools: Read, Write, Edit, Glob, Grep`
-  - [x] Reference `docs/explanation/rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md`
+  - [x] Reference `rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md`
   - **Date**: 2026-01-02
   - **Status**: Completed
 
@@ -221,7 +221,7 @@ Create 7 new Skills to cover all agent domains. Use gerund naming pattern. Inclu
   - [x] Create `.claude/skills/developing-agents/` directory
   - [x] Create `SKILL.md` with frontmatter and content
   - [x] Add `allowed-tools: Read, Glob, Grep, Bash`
-  - [x] Reference `docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md`
+  - [x] Reference `rules/development/agents/ex-ru-de-ag__ai-agents.md`
   - **Date**: 2026-01-02
   - **Status**: Completed
 
@@ -229,7 +229,7 @@ Create 7 new Skills to cover all agent domains. Use gerund naming pattern. Inclu
   - [x] Create `.claude/skills/validating-links/` directory
   - [x] Create `SKILL.md` with frontmatter and content
   - [x] Add `allowed-tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit, Bash`
-  - [x] Reference `docs/explanation/rules/conventions/formatting/ex-ru-co-fo__linking.md`
+  - [x] Reference `rules/conventions/formatting/ex-ru-co-fo__linking.md`
   - **Date**: 2026-01-02
   - **Status**: Completed
   - **Implementation Notes**: Created all 7 new Skills using Bash heredoc commands. All Skills have proper frontmatter (name, description, allowed-tools), References sections, and content. Skills README updated with complete list of 17 Skills organized by category.

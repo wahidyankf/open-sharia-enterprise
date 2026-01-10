@@ -6,7 +6,7 @@
 
 **Git Workflow**: Trunk Based Development (direct commits to `main`)
 
-All implementation happens on the `main` branch using Trunk Based Development workflow with direct commits. No PRs or feature branches. See [Trunk Based Development Convention](../../docs/explanation/rules/development/workflow/ex-ru-de-wo__trunk-based-development.md) for complete details.
+All implementation happens on the `main` branch using Trunk Based Development workflow with direct commits. No PRs or feature branches. See [Trunk Based Development Convention](../../rules/development/workflow/ex-ru-de-wo__trunk-based-development.md) for complete details.
 
 **Summary**: This plan delivers 37 new how-to guides and ~5,740 lines of cookbook content across 5 programming languages (Java, Golang, Python, Kotlin, Rust) through 5 sequential phases prioritized by gap size. Each phase commits directly to `main` upon completion.
 

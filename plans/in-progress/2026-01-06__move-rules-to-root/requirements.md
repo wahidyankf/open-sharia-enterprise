@@ -5,7 +5,7 @@
 ### US-1: Rules Directory Migration
 
 **As a** repository maintainer
-**I want** to move `docs/explanation/rules/` to `/rules/` (excluding agents/)
+**I want** to move `rules/` to `/rules/` (excluding agents/)
 **So that** system rules are separated from Obsidian-formatted documentation
 
 **Acceptance Criteria**: See [AC-1](#ac-1-move-rules-directory-to-root)
@@ -15,7 +15,7 @@
 ### US-2: Update All References
 
 **As a** repository maintainer
-**I want** to update all references from `docs/explanation/rules/` to `/rules/`
+**I want** to update all references from `rules/` to `/rules/`
 **So that** links work correctly after move
 
 **Acceptance Criteria**: See [AC-2](#ac-2-update-all-path-references)
@@ -59,20 +59,20 @@ Feature: Rules Directory Migration
   Scenario: Move all rules directories to root
     Given I execute git mv commands for all rules directories
     When I run the move commands:
-      And "git mv docs/explanation/rules/vision rules/" succeeds
-      And "git mv docs/explanation/rules/principles rules/" succeeds
-      And "git mv docs/explanation/rules/conventions rules/" succeeds
-      And "git mv docs/explanation/rules/development rules/" succeeds
-      And "git mv docs/explanation/rules/workflows rules/" succeeds
-      And "git mv docs/explanation/rules/ex-ru__*.md rules/" succeeds
-      And "git mv docs/explanation/rules/README.md rules/" succeeds
+      And "git mv rules/vision rules/" succeeds
+      And "git mv rules/principles rules/" succeeds
+      And "git mv rules/conventions rules/" succeeds
+      And "git mv rules/development rules/" succeeds
+      And "git mv rules/workflows rules/" succeeds
+      And "git mv rules/ex-ru__*.md rules/" succeeds
+      And "git mv rules/README.md rules/" succeeds
     Then all directories exist in /rules/:
       And /rules/vision/ exists
       And /rules/principles/ exists
       And /rules/conventions/ exists
       And /rules/development/ exists
       And /rules/workflows/ exists
-    And docs/explanation/rules/ directory is removed
+    And rules/ directory is removed
     And git status shows renames with history preserved
     And zero untracked files remain
 
@@ -85,9 +85,9 @@ Feature: Rules Directory Migration
 
   Scenario: Ensure agents subdirectory not moved
     Given the move operation completes
-    When I check docs/explanation/rules/ directory
-    Then docs/explanation/rules/agents/ exists and is unchanged
-    And docs/explanation/rules/ directory contains only agents/ subdirectory
+    When I check rules/ directory
+    Then rules/agents/ exists and is unchanged
+    And rules/ directory contains only agents/ subdirectory
     And agents/ subdirectory contents are intact
 ```
 
@@ -108,18 +108,18 @@ Feature: Update Path References
   Scenario: Update absolute path references
     Given I have files with absolute path references
     When I run sed replacement for absolute paths:
-      And "s|docs/explanation/rules/|rules/|g" replaces all absolute references
-    Then zero occurrences of "docs/explanation/rules/" remain in repository
+      And "s|rules/|rules/|g" replaces all absolute references
+    Then zero occurrences of "rules/" remain in repository
     And all replaced occurrences use "rules/" path
 
   Scenario: Update relative path references
     Given I have files with relative path references
     When I run sed replacement for relative paths:
-      And "s|\.\./docs/explanation/rules/|\.\./rules/|g" replaces 1-up references
-      And "s|\.\./\.\./docs/explanation/rules/|\.\./\.\./rules/|g" replaces 2-up references
-      And "s|\.\./\.\./\.\./docs/explanation/rules/|\.\./\.\./\.\./rules/|g" replaces 3-up references
+      And "s|\.\./rules/|\.\./rules/|g" replaces 1-up references
+      And "s|\.\./\.\./rules/|\.\./\.\./rules/|g" replaces 2-up references
+      And "s|\.\./\.\./\.\./rules/|\.\./\.\./\.\./rules/|g" replaces 3-up references
     Then all relative path references point to /rules/
-    And no relative paths reference docs/explanation/rules/
+    And no relative paths reference rules/
 
   Scenario: Update combined path references
     Given I have files with combined path references
@@ -131,14 +131,14 @@ Feature: Update Path References
   Scenario: Update agent definition files
     Given I have 45 agent definition files in .claude/agents/
     When I update path references in these files
-    Then all agent files reference /rules/ instead of docs/explanation/rules/
+    Then all agent files reference /rules/ instead of rules/
     And examples in agent instructions use /rules/ paths
     And related documentation links work correctly
 
   Scenario: Update skill definition files
     Given I have 23 skill definition files in .claude/skills/
     When I update path references in these files
-    Then all skill files reference /rules/ instead of docs/explanation/rules/
+    Then all skill files reference /rules/ instead of rules/
     And skill content examples use /rules/ paths
     And reference links to governance docs work correctly
 
@@ -153,7 +153,7 @@ Feature: Update Path References
   Scenario: Update workflow files
     Given I have workflow documentation in rules/workflows/
     When I update path references in workflow files
-    Then all workflows reference /rules/ instead of docs/explanation/rules/
+    Then all workflows reference /rules/ instead of rules/
     And workflow orchestration examples use /rules/ paths
     And cross-references to rules work correctly
 
@@ -219,7 +219,7 @@ Feature: Update Governance Architecture
   Scenario: Update text descriptions
     Given governance document contains text descriptions of layers
     When I update all text references
-    Then zero occurrences of "docs/explanation/rules/" in governance doc
+    Then zero occurrences of "rules/" in governance doc
     And all layer descriptions use /rules/ paths
     And examples in governance doc use /rules/ paths
 
@@ -229,7 +229,7 @@ Feature: Update Governance Architecture
     Then document has valid markdown frontmatter
     And document parses correctly as markdown
     And all internal links work
-    And no broken references to docs/explanation/rules/ remain
+    And no broken references to rules/ remain
 ```
 
 ---
@@ -257,14 +257,14 @@ Feature: Integrity Validation
       And /rules/workflows/ exists and is directory
     And /rules/ex-ru__repository-governance-architecture.md exists and is file
     And /rules/README.md exists and is file
-    And docs/explanation/rules/ directory does not exist
+    And rules/ directory does not exist
     And git status shows moves as renames (history preserved)
     And zero untracked files remain
 
   Scenario: Validate Phase 2 (governance update)
     Given Phase 2 governance updates have executed
     When I validate governance document
-    Then /rules/ex-ru__repository-governance-architecture.md contains zero "docs/explanation/rules/" references
+    Then /rules/ex-ru__repository-governance-architecture.md contains zero "rules/" references
     And /rules/ex-ru__repository-governance-architecture.md references /rules/ for all layers
     And mermaid diagram shows /rules/ paths for all layers
     And governance document has valid markdown syntax
@@ -273,8 +273,8 @@ Feature: Integrity Validation
   Scenario: Validate Phase 3 (reference updates)
     Given Phase 3 reference updates have executed
     When I validate all references
-    Then zero occurrences of "docs/explanation/rules/" in entire repository
-    And find . -name "*.md" -exec grep -l "docs/explanation/rules/" returns zero results
+    Then zero occurrences of "rules/" in entire repository
+    And find . -name "*.md" -exec grep -l "rules/" returns zero results
     And all references to /rules/ are valid paths
     And wow-rules-checker reports zero broken link findings
     And CLAUDE.md links to /rules/ work correctly
@@ -365,7 +365,7 @@ The following are **explicitly included**:
 
 The following are explicitly **not** included in this plan:
 
-1. **docs/explanation/rules/agents/**: Not moved - handled by separate plan `2026-01-04__agents-docs-source-of-truth/`
+1. **rules/agents/**: Not moved - handled by separate plan `2026-01-04__agents-docs-source-of-truth/`
 2. **Skill/agent source definitions**: Creation of `/rules/agents/content/` and `/rules/agents/skills/` - handled by separate plan
 3. **Rollback procedures**: YOLO approach - no rollback plan
 4. **Future agent documentation**: How future agents know to create in /rules/ - out of scope

@@ -730,7 +730,7 @@ done
 ## Project Overview
 
 Open Sharia Enterprise - democratizing Shariah-compliant enterprise through
-open-source solutions. See [Vision](docs/explanation/rules/vision/ex-vi__open-sharia-enterprise.md).
+open-source solutions. See [Vision](rules/vision/ex-vi__open-sharia-enterprise.md).
 
 ## Quick Reference
 
@@ -830,11 +830,7 @@ development practices, agent definitions, and workflow patterns.
     "edit": "allow"
   },
 
-  "instructions": [
-    "AGENTS.md",
-    "docs/explanation/rules/conventions/README.md",
-    "docs/explanation/rules/development/README.md"
-  ],
+  "instructions": ["AGENTS.md", "rules/conventions/README.md", "rules/development/README.md"],
 
   "tui": {
     "scroll_speed": 3,

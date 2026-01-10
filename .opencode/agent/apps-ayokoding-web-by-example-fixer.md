@@ -150,8 +150,8 @@ The `wow-assessing-criticality-confidence` Skill provides confidence definitions
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md) - Complete standards
-- [By Example Content Standard](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md) - Complete standards
+- [By Example Content Standard](../../rules/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
 
 **Related Agents:**
 
@@ -160,8 +160,8 @@ The `wow-assessing-criticality-confidence` Skill provides confidence definitions
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../docs/explanation/rules/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) - Confidence assessment
-- [Maker-Checker-Fixer Pattern Convention](../../docs/explanation/rules/development/pattern/ex-ru-de-pa-maker-checker-fixer.md) - Workflow
+- [Fixer Confidence Levels Convention](../../rules/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) - Confidence assessment
+- [Maker-Checker-Fixer Pattern Convention](../../rules/development/pattern/ex-ru-de-pa-maker-checker-fixer.md) - Workflow
 
 **Skills:**
 

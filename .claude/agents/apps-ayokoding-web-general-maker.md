@@ -23,7 +23,7 @@ Create by-concept tutorials and general content for ayokoding-web.
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
 - Skills: `apps-ayokoding-web-developing-content` (bilingual, weights, navigation), `docs-creating-accessible-diagrams`, `docs-applying-content-quality`
 
 ## Workflow
@@ -41,7 +41,7 @@ Create by-concept tutorials and general content for ayokoding-web.
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
 
 **Related Agents**:
 
@@ -50,8 +50,8 @@ Create by-concept tutorials and general content for ayokoding-web.
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
-- [Programming Language Content](../../docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__programming-language-content.md)
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [Programming Language Content](../../rules/conventions/tutorial/ex-ru-co-tu__programming-language-content.md)
 
 **Skills**:
 

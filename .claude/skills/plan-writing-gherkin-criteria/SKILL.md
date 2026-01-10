@@ -549,8 +549,8 @@ Scenario: Preview shows latest changes
 
 **Related Conventions**:
 
-- [Plans Organization](../../../docs/explanation/rules/conventions/project/ex-ru-co-pr__plans-organization.md) - Acceptance criteria in plans
-- [Content Quality Principles](../../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md) - Clear specification writing
+- [Plans Organization](../../../rules/conventions/project/ex-ru-co-pr__plans-organization.md) - Acceptance criteria in plans
+- [Content Quality Principles](../../../rules/conventions/content/ex-ru-co-co__quality.md) - Clear specification writing
 
 **Related Skills**:
 
@@ -574,12 +574,12 @@ This Skill packages essential Gherkin acceptance criteria knowledge for writing 
 
 ## References
 
-**Primary Convention**: [Acceptance Criteria Convention](../../../docs/explanation/rules/development/infra/ex-ru-de-in__acceptance-criteria.md)
+**Primary Convention**: [Acceptance Criteria Convention](../../../rules/development/infra/ex-ru-de-in__acceptance-criteria.md)
 
 **Related Conventions**:
 
-- [Plans Organization](../../../docs/explanation/rules/conventions/project/ex-ru-co-pr__plans-organization.md) - Using Gherkin in plans
-- [Maker-Checker-Fixer Pattern](../../../docs/explanation/rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md) - Validation workflow
+- [Plans Organization](../../../rules/conventions/project/ex-ru-co-pr__plans-organization.md) - Using Gherkin in plans
+- [Maker-Checker-Fixer Pattern](../../../rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md) - Validation workflow
 
 **Related Skills**:
 
