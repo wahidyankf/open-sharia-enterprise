@@ -4,6 +4,12 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-01-06: Move Rules to Root](./2026-01-06__move-rules-to-root/) - Move docs/explanation/rules/ to /rules/ (separate from Obsidian docs) with git mv to preserve history. Updated all 151 files with path references, validated repository consistency, and committed atomically (Completed: 2026-01-10)
+- [2025-12-03: Golang Full Set Tutorial Series](./2025-12-03__golang-full-set-tutorials/) - Transform Golang tutorial directory into a complete "Full Set" tutorial series covering Initial Setup through Advanced levels (Completed: 2026-01-10)
+- [2025-12-04: Java Full Set Tutorial Series](./2025-12-04__java-full-set-tutorials/) - Transform Java tutorial directory into a complete "Full Set" tutorial series covering Initial Setup through Advanced levels (Completed: 2026-01-10)
+- [2025-12-17: Cookbook Standardization](./2025-12-17__cookbook-standardization/) - Standardize Golang, Python, and Java cookbooks to ensure consistent quality and coverage with 35 core recipes + 5-10 language-specific recipes (Completed: 2026-01-10)
+- [2025-12-19: Add Rust Programming Language](./2025-12-19__add-rust-programming-language/) - Create comprehensive Rust programming language content with 5 tutorial levels, 30-35 cookbook recipes, 18 how-to guides, and complete reference documentation (Completed: 2026-01-10)
+- [2025-12-18: Elevate Programming Languages to Highest Standard](./2025-12-18__elevate-programming-languages-to-highest-standard/) - Enhance all 4 programming languages (Python, Java, Kotlin, Golang) to production-ready quality with complete tutorials, cookbooks, and reference documentation (Completed: 2026-01-10)
 - [2025-11-24: Nx Monorepo Initialization](./2025-11-24__init-monorepo/) - Initialize and configure Nx-based monorepo with apps/ and libs/ structure (Completed: 2025-11-29)
 - [2025-12-07: Hugo Content Convention and Agents](./2025-12-07__hugo-content-convention/) - Comprehensive Hugo content standards, Content Quality Principles, and 4 specialized AI agents for ayokoding-web and ose-platform-web (Completed: 2025-12-07)
 - [2025-12-18: Add Kotlin Programming Language](./2025-12-18__add-kotlin-programming-language/) - Create comprehensive Kotlin programming language content for ayokoding-web with 5 tutorial levels, 35 cookbook recipes, 15 how-to guides, best practices, anti-patterns, and complete reference section (Completed: 2025-12-18)
