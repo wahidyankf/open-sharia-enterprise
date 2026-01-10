@@ -668,15 +668,15 @@ git log -1 --oneline
 
 ### Validation Checklist
 
-- [ ] Commit message matches detailed template above
-- [ ] Git log shows commit:
+- [x] Commit message matches detailed template above
+- [x] Git log shows commit:
 
   ```bash
   git log -1 --oneline
-  # ✅ PASS if shows "refactor: move rules/ to /rules/"
+  # ✅ PASS if shows "refactor: move docs/explanation/rules/ to /rules/"
   ```
 
-- [ ] Commit includes all expected changes:
+- [x] Commit includes all expected changes:
   ```bash
   git show --stat HEAD
   # ✅ PASS if shows ~150 files modified
@@ -732,10 +732,10 @@ After Phase 5 completion:
 - [x] `docs/explanation/rules/` directory removed (except agents/ subdirectory)
 - [x] Zero occurrences of `docs/explanation/rules/` in entire repository
 - [x] All references to `rules/` work correctly
-- [ ] wow-rules-checker reports zero broken links
+- [x] wow-rules-checker reports zero broken links
 - [x] CLAUDE.md and AGENTS.md reference `rules/` correctly
 - [x] Git history preserved (all moves via git mv)
-- [ ] Single atomic commit with detailed message
+- [x] Single atomic commit with detailed message
 - [x] All ~151 files updated successfully
 
 ---

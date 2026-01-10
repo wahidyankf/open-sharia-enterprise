@@ -1,6 +1,7 @@
 # Java Full Set Tutorial Series
 
-**Status**: In Progress
+**Status**: Done
+**Completed**: 2026-01-10
 
 ## Overview
 

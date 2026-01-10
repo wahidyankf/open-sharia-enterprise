@@ -1,6 +1,7 @@
 # Add Rust Programming Language
 
-**Status**: Backlog
+**Status**: Done
+**Completed**: 2026-01-10
 
 **Created**: 2025-12-19
 
