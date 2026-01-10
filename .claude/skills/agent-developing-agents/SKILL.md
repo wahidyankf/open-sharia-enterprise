@@ -18,7 +18,7 @@ Comprehensive guidance for creating AI agents following repository conventions.
 
 ## References
 
-[AI Agents Convention](../../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md)
+[AI Agents Convention](../../../rules/development/agents/ex-ru-de-ag__ai-agents.md)
 
 ## Tool Usage Documentation
 
@@ -216,6 +216,6 @@ Add "When to Use This Agent" section:
 
 ## Updated References
 
-[AI Agents Convention - Complete specification](../../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md)
+[AI Agents Convention - Complete specification](../../../rules/development/agents/ex-ru-de-ag__ai-agents.md)
 [Agent Documenting References Skill](../agent-documenting-references/SKILL.md)
 [Agent Selecting Models Skill](../agent-selecting-models/SKILL.md)

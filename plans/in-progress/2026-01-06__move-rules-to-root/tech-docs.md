@@ -62,23 +62,23 @@ docs/explanation/
 
 ### Directory Moves (git mv)
 
-| Source Path                           | Target Path         | Layer         | File Count (approx) |
-| ------------------------------------- | ------------------- | ------------- | ------------------- |
-| docs/explanation/rules/vision/        | /rules/vision/      | Layer 0: WHY  | ~5 files            |
-| docs/explanation/rules/principles/    | /rules/principles/  | Layer 1: WHY  | ~10 files           |
-| docs/explanation/rules/conventions/   | /rules/conventions/ | Layer 2: WHAT | ~25 files           |
-| docs/explanation/rules/development/   | /rules/development/ | Layer 3: HOW  | ~15 files           |
-| docs/explanation/rules/workflows/     | /rules/workflows/   | Layer 5: WHEN | ~10 files           |
-| docs/explanation/rules/ex-ru\_\_\*.md | /rules/             | Architecture  | 1 file              |
-| docs/explanation/rules/README.md      | /rules/             | Index         | 1 file              |
+| Source Path          | Target Path         | Layer         | File Count (approx) |
+| -------------------- | ------------------- | ------------- | ------------------- |
+| rules/vision/        | /rules/vision/      | Layer 0: WHY  | ~5 files            |
+| rules/principles/    | /rules/principles/  | Layer 1: WHY  | ~10 files           |
+| rules/conventions/   | /rules/conventions/ | Layer 2: WHAT | ~25 files           |
+| rules/development/   | /rules/development/ | Layer 3: HOW  | ~15 files           |
+| rules/workflows/     | /rules/workflows/   | Layer 5: WHEN | ~10 files           |
+| rules/ex-ru\_\_\*.md | /rules/             | Architecture  | 1 file              |
+| rules/README.md      | /rules/             | Index         | 1 file              |
 
 **Total moved**: 67 files across 5 directories + 2 files
 
 ### NOT Moving
 
-| Path                           | Reason                                                              |
-| ------------------------------ | ------------------------------------------------------------------- |
-| docs/explanation/rules/agents/ | Handled by separate plan `2026-01-04__agents-docs-source-of-truth/` |
+| Path          | Reason                                                              |
+| ------------- | ------------------------------------------------------------------- |
+| rules/agents/ | Handled by separate plan `2026-01-04__agents-docs-source-of-truth/` |
 
 ---
 
@@ -120,16 +120,16 @@ docs/explanation/
 **Command**:
 
 ```bash
-find .claude/agents -name "*.md" -type f -exec sed -i 's|docs/explanation/rules/|rules/|g' {} \;
+find .claude/agents -name "*.md" -type f -exec sed -i 's|rules/|rules/|g' {} \;
 ```
 
 **Updates**: All 45 agent files including wow-rules-\*
 
 **Pattern Examples**:
 
-- `See: [convention writing](docs/explanation/rules/conventions/content/ex-ru-co-co__convention-writing.md)`
-- `[Reference docs](../../docs/explanation/rules/conventions/)`
-- `Rules location: docs/explanation/rules/`
+- `See: [convention writing](rules/conventions/content/ex-ru-co-co__convention-writing.md)`
+- `[Reference docs](../../rules/conventions/)`
+- `Rules location: rules/`
 
 **After**:
 
@@ -144,15 +144,15 @@ find .claude/agents -name "*.md" -type f -exec sed -i 's|docs/explanation/rules/
 **Command**:
 
 ```bash
-find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|docs/explanation/rules/|rules/|g' {} \;
+find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|rules/|rules/|g' {} \;
 ```
 
 **Updates**: All 23 skill files
 
 **Pattern Examples**:
 
-- `See: [AI agents convention](../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md)`
-- `Related: docs/explanation/rules/principles/`
+- `See: [AI agents convention](../../rules/development/agents/ex-ru-de-ag__ai-agents.md)`
+- `Related: rules/principles/`
 
 **After**:
 
@@ -178,9 +178,9 @@ find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|docs/explanation/ru
 
 **Scope**: All governance documentation
 
-- `docs/explanation/rules/vision/` - Layer 0: WHY we exist
-- `docs/explanation/rules/principles/` - Layer 1: WHY values
-- `docs/explanation/rules/conventions/` - Layer 2: WHAT documentation rules
+- `rules/vision/` - Layer 0: WHY we exist
+- `rules/principles/` - Layer 1: WHY values
+- `rules/conventions/` - Layer 2: WHAT documentation rules
 ```
 
 **After**:
@@ -204,7 +204,7 @@ find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|docs/explanation/ru
 ```markdown
 ## Reference
 
-- [Convention Writing Convention](../../docs/explanation/rules/conventions/content/ex-ru-co-co-convention-writing.md)
+- [Convention Writing Convention](../../rules/conventions/content/ex-ru-co-co-convention-writing.md)
 ```
 
 **After**:
@@ -242,7 +242,7 @@ find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|docs/explanation/ru
 **Command**:
 
 ```bash
-find rules/workflows -name "*.md" -type f -exec sed -i 's|docs/explanation/rules/|rules/|g' {} \;
+find rules/workflows -name "*.md" -type f -exec sed -i 's|rules/|rules/|g' {} \;
 ```
 
 **Updates**: All workflow files in rules/workflows/
@@ -252,7 +252,7 @@ find rules/workflows -name "*.md" -type f -exec sed -i 's|docs/explanation/rules
 ```markdown
 ## IMPORTANT - Scope Clarification
 
-This workflow validates **source definitions only** in `docs/explanation/rules/`. It does NOT validate generated directories:
+This workflow validates **source definitions only** in `rules/`. It does NOT validate generated directories:
 ```
 
 **After**:
@@ -270,8 +270,8 @@ This workflow validates **source definitions only** in `/rules/`. It does NOT va
 **Command**:
 
 ```bash
-sed -i 's|docs/explanation/rules/|rules/|g' CLAUDE.md
-sed -i 's|docs/explanation/rules/|rules/|g' AGENTS.md
+sed -i 's|rules/|rules/|g' CLAUDE.md
+sed -i 's|rules/|rules/|g' AGENTS.md
 ```
 
 **Updates**: CLAUDE.md and AGENTS.md
@@ -283,7 +283,7 @@ sed -i 's|docs/explanation/rules/|rules/|g' AGENTS.md
 ```markdown
 ## Conventions
 
-**Location**: `docs/explanation/rules/conventions/`
+**Location**: `rules/conventions/`
 
 Layer 2: WHAT - Documentation Rules
 
@@ -313,23 +313,23 @@ All conventions governing documentation, content, formatting, and structure.
 **Sections Requiring Updates**:
 
 1. **Layer 0 (Vision)**:
-   - Update "Location" from `docs/explanation/rules/vision/` to `/rules/vision/`
+   - Update "Location" from `rules/vision/` to `/rules/vision/`
    - Update example file paths
 
 2. **Layer 1 (Principles)**:
-   - Update "Location" from `docs/explanation/rules/principles/` to `/rules/principles/`
+   - Update "Location" from `rules/principles/` to `/rules/principles/`
    - Update example file paths
 
 3. **Layer 2 (Conventions)**:
-   - Update "Location" from `docs/explanation/rules/conventions/` to `/rules/conventions/`
+   - Update "Location" from `rules/conventions/` to `/rules/conventions/`
    - Update example file paths
 
 4. **Layer 3 (Development)**:
-   - Update "Location" from `docs/explanation/rules/development/` to `/rules/development/`
+   - Update "Location" from `rules/development/` to `/rules/development/`
    - Update example file paths
 
 5. **Layer 5 (Workflows)**:
-   - Update "Location" from `docs/explanation/rules/workflows/` to `/rules/workflows/`
+   - Update "Location" from `rules/workflows/` to `/rules/workflows/`
    - Update example file paths
 
 6. **Mermaid Diagram**:
@@ -343,7 +343,7 @@ All conventions governing documentation, content, formatting, and structure.
 **Before**:
 
 ```mermaid
-L2[Layer 2: Conventions<br/>WHAT - Documentation Rules<br/>docs/explanation/rules/conventions/]
+L2[Layer 2: Conventions<br/>WHAT - Documentation Rules<br/>rules/conventions/]
 ```
 
 **After**:
@@ -359,7 +359,7 @@ L2[Layer 2: Conventions<br/>WHAT - Documentation Rules<br/>rules/conventions/]
 **Command**:
 
 ```bash
-find rules -name "*.md" -type f -exec sed -i 's|docs/explanation/rules/|rules/|g' {} \;
+find rules -name "*.md" -type f -exec sed -i 's|rules/|rules/|g' {} \;
 ```
 
 **Updates**: All ~67 files in rules/ directories
@@ -370,7 +370,7 @@ find rules -name "*.md" -type f -exec sed -i 's|docs/explanation/rules/|rules/|g
 ## Related Conventions
 
 - [AI Agents Convention](../development/agents/ex-ru-de-ag__ai-agents.md)
-- [Directory structure](../../docs/explanation/rules/conventions/)
+- [Directory structure](../../rules/conventions/)
 ```
 
 **After**:
@@ -403,7 +403,7 @@ test -f /rules/ex-ru__repository-governance-architecture.md  # ✅ PASS if true
 test -f /rules/README.md          # ✅ PASS if true
 
 # Check 3: Old directory removed (except agents/)
-! test -d docs/explanation/rules/   # ✅ PASS if true (directory doesn't exist)
+! test -d rules/   # ✅ PASS if true (directory doesn't exist)
 
 # Check 4: Git shows moves as renames
 git status | grep "renamed:"         # ✅ PASS if shows renames
@@ -423,7 +423,7 @@ git status | grep "Untracked files:" | grep -v "agents/"  # ✅ PASS if no untra
 
 ```bash
 # Check 1: No old path references
-grep "docs/explanation/rules/" rules/ex-ru__repository-governance-architecture.md
+grep "rules/" rules/ex-ru__repository-governance-architecture.md
 # ✅ PASS if returns zero matches
 
 # Check 2: All Layer references use /rules/
@@ -456,7 +456,7 @@ grep "Location: /rules/workflows/" rules/ex-ru__repository-governance-architectu
 
 ```bash
 # Check 1: No old path references anywhere
-find . -name "*.md" -type f -exec grep -l "docs/explanation/rules/" {} \;
+find . -name "*.md" -type f -exec grep -l "rules/" {} \;
 # ✅ PASS if returns zero results
 
 # Check 2: All references to /rules/ exist
@@ -517,8 +517,8 @@ git diff --cached --name-only | grep "ex-ru__repository-governance-architecture.
 git status | grep "new file:.*rules/"
 # ✅ PASS if shows new files in rules/
 
-# Check 5: No docs/explanation/rules/ tracked
-git status | grep "docs/explanation/rules/"
+# Check 5: No rules/ tracked
+git status | grep "rules/"
 # ✅ PASS if returns zero results (except agents/)
 ```
 
@@ -534,20 +534,20 @@ git status | grep "docs/explanation/rules/"
 # Phase 3 - Update references
 
 # 1. Agent files (45 files)
-find .claude/agents -name "*.md" -type f -exec sed -i 's|docs/explanation/rules/|rules/|g' {} \;
+find .claude/agents -name "*.md" -type f -exec sed -i 's|rules/|rules/|g' {} \;
 
 # 2. Skill files (23 files)
-find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|docs/explanation/rules/|rules/|g' {} \;
+find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|rules/|rules/|g' {} \;
 
 # 3. Workflow files (~10 files)
-find rules/workflows -name "*.md" -type f -exec sed -i 's|docs/explanation/rules/|rules/|g' {} \;
+find rules/workflows -name "*.md" -type f -exec sed -i 's|rules/|rules/|g' {} \;
 
 # 4. Rules internal files (~67 files)
-find rules -name "*.md" -type f -exec sed -i 's|docs/explanation/rules/|rules/|g' {} \;
+find rules -name "*.md" -type f -exec sed -i 's|rules/|rules/|g' {} \;
 
 # 5. Project docs (2 files)
-sed -i 's|docs/explanation/rules/|rules/|g' CLAUDE.md
-sed -i 's|docs/explanation/rules/|rules/|g' AGENTS.md
+sed -i 's|rules/|rules/|g' CLAUDE.md
+sed -i 's|rules/|rules/|g' AGENTS.md
 
 # 6. Meta-agents (MANUAL UPDATE - not sed)
 # Files: wow-rules-checker.md, wow-rules-maker.md, wow-rules-fixer.md
@@ -560,12 +560,12 @@ sed -i 's|docs/explanation/rules/|rules/|g' AGENTS.md
 
 ### Sed Pattern Explanations
 
-| Pattern                                                     | What It Matches       | Example Replacement                            | Example Result |
-| ----------------------------------------------------------- | --------------------- | ---------------------------------------------- | -------------- |
-| `s\|docs/explanation/rules/\|rules/\|g`                     | Absolute paths        | `[rules/conventions/content/...]`              |
-| `s\|\.\./docs/explanation/rules/\|\.\./rules/\|g`           | Relative paths (1 up) | `../../rules/conventions/`                     |
-| `s\|\.\./\.\./docs/explanation/rules/\|\.\./\.\./rules/\|g` | Relative paths (2 up) | `../../../rules/conventions/`                  |
-| `s\|docs/explanation/\|docs/\|g`                            | Combined paths        | `docs/tutorials/` vs `docs/explanation/rules/` |
+| Pattern                                    | What It Matches       | Example Replacement               | Example Result |
+| ------------------------------------------ | --------------------- | --------------------------------- | -------------- |
+| `s\|rules/\|rules/\|g`                     | Absolute paths        | `[rules/conventions/content/...]` |
+| `s\|\.\./rules/\|\.\./rules/\|g`           | Relative paths (1 up) | `../../rules/conventions/`        |
+| `s\|\.\./\.\./rules/\|\.\./\.\./rules/\|g` | Relative paths (2 up) | `../../../rules/conventions/`     |
+| `s\|docs/explanation/\|docs/\|g`           | Combined paths        | `docs/tutorials/` vs `rules/`     |
 
 **Note**: The `|` delimiter is used instead of `/` because file paths contain `/` characters.
 
@@ -613,7 +613,7 @@ git blame rules/vision/ex-vi__open-sharia-enterprise.md | head -10
 **Pattern**:
 
 ```markdown
-[Link text](../../../docs/explanation/rules/conventions/)
+[Link text](../../../rules/conventions/)
 ```
 
 **After automated sed**:
@@ -632,8 +632,8 @@ git blame rules/vision/ex-vi__open-sharia-enterprise.md | head -10
 
 ````markdown
 ```bash
-# Example: docs/explanation/rules/conventions/
-ls docs/explanation/rules/conventions/
+# Example: rules/conventions/
+ls rules/conventions/
 ```
 ````
 
@@ -744,7 +744,7 @@ git diff --cached --stat
 ```bash
 # After all validations pass:
 git add -A
-git commit -m "refactor: move docs/explanation/rules/ to /rules/ (detailed message)"
+git commit -m "refactor: move rules/ to /rules/ (detailed message)"
 
 # No rollback plan (YOLO approach)
 ```

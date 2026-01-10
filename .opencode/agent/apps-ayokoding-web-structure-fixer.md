@@ -111,7 +111,7 @@ The `wow-applying-maker-checker-fixer` Skill provides mode logic.
 ## Reference Documentation
 
 - [CLAUDE.md](../../CLAUDE.md)
-- [ayokoding-web Hugo Convention](../../docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
 
 **Skills:**
 

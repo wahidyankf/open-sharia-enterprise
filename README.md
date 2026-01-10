@@ -258,7 +258,7 @@ This project uses automated tools to maintain code quality:
     - Auto-stages changes
 - **Commit-msg**: Validates commit message format
 
-For complete details on tools, hook workflow, and troubleshooting, see [Code Quality Convention](./docs/explanation/rules/development/quality/ex-ru-de-qu__code.md) and [Commit Message Convention](./docs/explanation/rules/development/workflow/ex-ru-de-wo__commit-messages.md). For ayokoding-web automation details, see [Pre-commit Automation](./apps/ayokoding-cli/README.md#pre-commit-automation).
+For complete details on tools, hook workflow, and troubleshooting, see [Code Quality Convention](./rules/development/quality/ex-ru-de-qu__code.md) and [Commit Message Convention](./rules/development/workflow/ex-ru-de-wo__commit-messages.md). For ayokoding-web automation details, see [Pre-commit Automation](./apps/ayokoding-cli/README.md#pre-commit-automation).
 
 ## 📚 Documentation
 
@@ -273,7 +273,7 @@ Documentation is organized using the [Diátaxis framework](https://diataxis.fr/)
 
 **Viewing Tip**: The `docs/` folder works as an [Obsidian](https://obsidian.md/) vault for enhanced navigation and graph view.
 
-For complete documentation framework details, see [Diátaxis Framework](./docs/explanation/rules/conventions/meta/ex-ru-co-me__diataxis-framework.md) and [`docs/README.md`](./docs/README.md).
+For complete documentation framework details, see [Diátaxis Framework](./rules/conventions/meta/ex-ru-co-me__diataxis-framework.md) and [`docs/README.md`](./docs/README.md).
 
 ## 📜 License
 

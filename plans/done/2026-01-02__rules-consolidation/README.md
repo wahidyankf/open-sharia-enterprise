@@ -112,7 +112,7 @@ Merge overlapping tutorial convention documents:
 
 ## Implementation Constraint: Bash Tools for .claude/
 
-**CRITICAL**: All file operations in `.claude/` folders MUST use Bash tools (heredoc, sed, awk), NOT Write/Edit tools. This enables autonomous agent operation without user approval prompts. See [AI Agents Convention](../../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md#writing-to-claude-folders).
+**CRITICAL**: All file operations in `.claude/` folders MUST use Bash tools (heredoc, sed, awk), NOT Write/Edit tools. This enables autonomous agent operation without user approval prompts. See [AI Agents Convention](../../../rules/development/agents/ex-ru-de-ag__ai-agents.md#writing-to-claude-folders).
 
 ## Correct Delivery Model
 
@@ -181,7 +181,7 @@ This plan uses **multi-file structure**:
 - [Repository Governance Architecture](../../../docs/explanation/ex-ru__repository-governance-architecture.md)
 - [Skills Directory](../../../.claude/skills/README.md)
 - [Agents Index](../../../.claude/agents/README.md)
-- [AI Agents Convention](../../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md)
+- [AI Agents Convention](../../../rules/development/agents/ex-ru-de-ag__ai-agents.md)
 
 ## Git Workflow
 

@@ -761,13 +761,13 @@ Add "Domain-Specific Confidence Examples" section:
 
 **Primary Conventions**:
 
-- [Criticality Levels Convention](../../../docs/explanation/rules/development/quality/ex-ru-de-qu__criticality-levels.md) - Complete criticality system
-- [Fixer Confidence Levels Convention](../../../docs/explanation/rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md) - Complete confidence system
+- [Criticality Levels Convention](../../../rules/development/quality/ex-ru-de-qu__criticality-levels.md) - Complete criticality system
+- [Fixer Confidence Levels Convention](../../../rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md) - Complete confidence system
 
 **Related Conventions**:
 
-- [Repository Validation Methodology](../../../docs/explanation/rules/development/quality/ex-ru-de-qu__repository-validation.md) - Standard validation patterns
-- [Maker-Checker-Fixer Pattern](../../../docs/explanation/rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md) - Three-stage workflow
+- [Repository Validation Methodology](../../../rules/development/quality/ex-ru-de-qu__repository-validation.md) - Standard validation patterns
+- [Maker-Checker-Fixer Pattern](../../../rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md) - Three-stage workflow
 
 **Related Skills**:
 

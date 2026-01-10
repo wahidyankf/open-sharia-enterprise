@@ -40,7 +40,7 @@ The `wow-generating-validation-reports` Skill provides UUID generation, timestam
 
 ## Core Responsibility
 
-Validate project plans against standards defined in [Plans Organization Convention](../../docs/explanation/rules/conventions/project/ex-ru-co-pr-plans-organization.md).
+Validate project plans against standards defined in [Plans Organization Convention](../../rules/conventions/project/ex-ru-co-pr-plans-organization.md).
 
 ## Validation Scope
 
@@ -142,8 +142,8 @@ Update status to "Complete", add summary statistics and prioritized recommendati
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../docs/explanation/rules/conventions/project/ex-ru-co-pr-plans-organization.md) - Plan standards
-- [Trunk Based Development Convention](../../docs/explanation/rules/development/workflow/ex-ru-de-wo-trunk-based-development.md) - Git workflow standards
+- [Plans Organization Convention](../../rules/conventions/project/ex-ru-co-pr-plans-organization.md) - Plan standards
+- [Trunk Based Development Convention](../../rules/development/workflow/ex-ru-de-wo-trunk-based-development.md) - Git workflow standards
 
 **Related Agents:**
 

@@ -42,7 +42,7 @@ Transform technical updates into engaging LinkedIn posts with professional tone.
 
 **Related Conventions**:
 
-- [Content Quality Principles](../../docs/explanation/rules/conventions/content/ex-ru-co-co__quality.md)
+- [Content Quality Principles](../../rules/conventions/content/ex-ru-co-co__quality.md)
 
 **Skills**:
 

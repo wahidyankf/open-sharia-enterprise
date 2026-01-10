@@ -39,12 +39,12 @@ Shared: .claude/skills/ (used by both tools)
 ### Proposed Architecture
 
 ```
-Source: docs/explanation/rules/agents/ (tool-agnostic markdown)
+Source: rules/agents/ (tool-agnostic markdown)
    ↓ (sync via butler-cli agents sync)
    ├→ .claude/agents/ (Claude Code format)
    └→ .opencode/agent/ (OpenCode format)
 
-Source: docs/explanation/rules/agents/skills/ (tool-agnostic markdown)
+Source: rules/agents/skills/ (tool-agnostic markdown)
    ↓ (sync via butler-cli skills sync)
    ├→ .claude/skills/ (Claude Code format - shared)
    └→ .opencode/skills/ (OpenCode format - shared)
@@ -75,8 +75,8 @@ Source: docs/explanation/rules/agents/skills/ (tool-agnostic markdown)
 
 ### Documentation Quality
 
-- **Co-location**: Agents live in `docs/explanation/rules/agents/` alongside conventions they enforce
-- **Canonical catalog**: `docs/explanation/rules/agents/README.md` becomes authoritative agent index
+- **Co-location**: Agents live in `rules/agents/` alongside conventions they enforce
+- **Canonical catalog**: `rules/agents/README.md` becomes authoritative agent index
 - **Traceability**: Direct link from Layer 4 governance to implementation
 
 ### Maintainability
@@ -92,7 +92,7 @@ Source: docs/explanation/rules/agents/skills/ (tool-agnostic markdown)
 **Trade-off**: Introduces abstraction layer between definitions and implementations
 
 - **Current**: 2 locations (`.claude/agents/`, `.opencode/agent/`)
-- **Proposed**: 3 locations (`docs/explanation/rules/agents/`, `.claude/agents/`, `.opencode/agent/`)
+- **Proposed**: 3 locations (`rules/agents/`, `.claude/agents/`, `.opencode/agent/`)
 
 **Mitigation**: Sync script is authoritative - never edit tool-specific directories directly
 
@@ -148,16 +148,16 @@ Source: docs/explanation/rules/agents/skills/ (tool-agnostic markdown)
 
 ### Agent Updates
 
-- [ ] `agent-maker` creates agents in `docs/explanation/rules/agents/content/` (not `.claude/agents/`)
+- [ ] `agent-maker` creates agents in `rules/agents/content/` (not `.claude/agents/`)
 - [ ] `agent-maker` uses tool-agnostic format (role instead of color)
-- [ ] `wow-rules-checker` validates source (`docs/explanation/rules/agents/`, `docs/explanation/rules/agents/skills/`)
+- [ ] `wow-rules-checker` validates source (`rules/agents/`, `rules/agents/skills/`)
 - [ ] `wow-rules-fixer` does NOT modify generated directories (`.claude/agents/`, `.opencode/agent/`, `.claude/skills/`)
 - [ ] Any other agents that reference agent/skill locations updated
 
 ### Documentation Quality
 
-- [ ] `docs/explanation/rules/agents/README.md` is comprehensive agent catalog
-- [ ] `docs/explanation/rules/agents/skills/README.md` is comprehensive skills catalog (23 skills)
+- [ ] `rules/agents/README.md` is comprehensive agent catalog
+- [ ] `rules/agents/skills/README.md` is comprehensive skills catalog (23 skills)
 - [ ] Architecture documentation updated (repository governance, AI agents convention)
 - [ ] CLAUDE.md and AGENTS.md reflect new source locations and correct skills count
 
@@ -266,9 +266,9 @@ This plan is organized into four documents:
 
 ## References
 
-- [AI Agents Convention](../../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md)
-- [Repository Governance Architecture](../../../docs/explanation/rules/ex-ru__repository-governance-architecture.md)
-- [Plans Organization Convention](../../../docs/explanation/rules/conventions/project/ex-ru-co-pr__plans-organization.md)
+- [AI Agents Convention](../../../rules/development/agents/ex-ru-de-ag__ai-agents.md)
+- [Repository Governance Architecture](../../../rules/ex-ru__repository-governance-architecture.md)
+- [Plans Organization Convention](../../../rules/conventions/project/ex-ru-co-pr__plans-organization.md)
 - Butler CLI application: `apps/butler-cli/` (Go + Cobra)
 - Current conversion script: `scripts/convert-agents-to-opencode.py`
 - Current validation script: `scripts/validate-opencode-agents.py`

@@ -4,7 +4,7 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [2026-01-06: Move Rules to Root](./2026-01-06__move-rules-to-root/) - Move docs/explanation/rules/ to /rules/ directory (HIGH priority)
+- [2026-01-06: Move Rules to Root](./2026-01-06__move-rules-to-root/) - Move rules/ to /rules/ directory (HIGH priority)
 - [2025-12-25: Policy as Code](./2025-12-25__policy-as-a-code/) - Policy as code implementation (status to be verified)
 
 ## Instructions

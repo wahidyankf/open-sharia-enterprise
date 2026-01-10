@@ -276,7 +276,7 @@ See [CLAUDE.md Plans Organization](../../CLAUDE.md#plans-organization) for full 
 1. **Create formal doc in docs/explanation/**
 
    ```
-   docs/explanation/rules/conventions/formatting/ex-ru-co-fo__new-convention.md
+   rules/conventions/formatting/ex-ru-co-fo__new-convention.md
    ```
 
    - Write comprehensive explanation

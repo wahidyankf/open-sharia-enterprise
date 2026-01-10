@@ -8,7 +8,7 @@
 
 ## Problem Statement
 
-Currently, system rules and conventions exist under `docs/explanation/rules/` and must follow Obsidian markdown formatting rules (file naming with `__` separator, linking syntax, emoji restrictions, etc.).
+Currently, system rules and conventions exist under `rules/` and must follow Obsidian markdown formatting rules (file naming with `__` separator, linking syntax, emoji restrictions, etc.).
 
 **Key Issues**:
 
@@ -19,10 +19,10 @@ Currently, system rules and conventions exist under `docs/explanation/rules/` an
 
 ## Proposed Solution
 
-**Move `docs/explanation/rules/` (excluding `agents/`) to repository root as `/rules/`**
+**Move `rules/` (excluding `agents/`) to repository root as `/rules/`**
 
 ```
-docs/explanation/rules/           /rules/
+rules/           /rules/
 ├── vision/              →        vision/         (Layer 0: WHY we exist)
 ├── principles/         →        principles/       (Layer 1: WHY - values)
 ├── conventions/       →        conventions/     (Layer 2: WHAT - documentation rules)
@@ -32,7 +32,7 @@ docs/explanation/rules/           /rules/
 └── README.md           →        README.md
 ```
 
-**NOT moving**: `docs/explanation/rules/agents/` - left untouched (handled by separate plan `2026-01-04__agents-docs-source-of-truth/`)
+**NOT moving**: `rules/agents/` - left untouched (handled by separate plan `2026-01-04__agents-docs-source-of-truth/`)
 
 ## Goals
 
@@ -94,7 +94,7 @@ docs/explanation/rules/           /rules/
 
 ### Directory Structure Change
 
-**Risk**: Team used to `docs/explanation/rules/` path will need to learn new location
+**Risk**: Team used to `rules/` path will need to learn new location
 
 **Mitigation**:
 
@@ -108,13 +108,13 @@ docs/explanation/rules/           /rules/
 
 - [ ] All 5 directories moved to `/rules/` (vision, principles, conventions, development, workflows)
 - [ ] 2 files moved to `/rules/` (ex-ru\_\_\*.md, README.md)
-- [ ] `docs/explanation/rules/` directory removed (no leftover files)
+- [ ] `rules/` directory removed (no leftover files)
 - [ ] Git shows moves as renames (history preserved)
 - [ ] Zero untracked files remaining
 
 ### Reference Update Success
 
-- [ ] Zero occurrences of `docs/explanation/rules/` in entire repository
+- [ ] Zero occurrences of `rules/` in entire repository
 - [ ] All references to `/rules/` work correctly
 - [ ] wow-rules-checker reports zero broken links
 - [ ] Key documents (CLAUDE.md, AGENTS.md, governance) link correctly
@@ -153,7 +153,7 @@ This plan is organized into four documents:
 ### Internal Dependencies
 
 - **Separate from**: `plans/backlog/2026-01-04__agents-docs-source-of-truth/`
-- `docs/explanation/rules/agents/` NOT moved (that plan handles it)
+- `rules/agents/` NOT moved (that plan handles it)
 - All other rules directories moved by this plan
 
 ## Constraints
@@ -176,7 +176,7 @@ This plan is organized into four documents:
 
 ### Alternative 1: Keep Current Structure (Status Quo)
 
-**Approach**: Keep `docs/explanation/rules/` with Obsidian constraints
+**Approach**: Keep `rules/` with Obsidian constraints
 
 **Pros**:
 
@@ -209,7 +209,7 @@ This plan is organized into four documents:
 
 ### Alternative 3: Keep in docs/ but Remove Obsidian Rules
 
-**Approach**: Keep `docs/explanation/rules/` but exempt from Obsidian rules
+**Approach**: Keep `rules/` but exempt from Obsidian rules
 
 **Pros**:
 
@@ -255,5 +255,5 @@ This plan is organized into four documents:
 ## References
 
 - Repository Governance Architecture (will be at `/rules/ex-ru__repository-governance-architecture.md` after move)
-- [Plans Organization](../../docs/explanation/rules/conventions/project/ex-ru-co-pr__plans-organization.md)
-- [Agent and Skill Definitions as Documentation Source of Truth](../2026-01-04__agents-docs-source-of-truth/) - Separate plan handling `docs/explanation/rules/agents/`
+- [Plans Organization](../../rules/conventions/project/ex-ru-co-pr__plans-organization.md)
+- [Agent and Skill Definitions as Documentation Source of Truth](../2026-01-04__agents-docs-source-of-truth/) - Separate plan handling `rules/agents/`

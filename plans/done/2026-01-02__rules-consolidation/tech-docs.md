@@ -55,15 +55,15 @@ Based on official Anthropic documentation:
 
 The following 7 Skills need "References" sections added (using new gerund names):
 
-| Skill (New Name)                     | Authoritative Source                                                                                                                                                  |
-| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `creating-by-example-tutorials`      | `docs/explanation/rules/conventions/tutorial/ex-ru-co-tu__by-example.md`                                                                                              |
-| `assessing-criticality-confidence`   | `docs/explanation/rules/development/quality/ex-ru-de-qu__criticality-levels.md`, `docs/explanation/rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md` |
-| `developing-ayokoding-content`       | `docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ayokoding.md`                                                                                                   |
-| `validating-factual-accuracy`        | `docs/explanation/rules/conventions/content/ex-ru-co-co__factual-validation.md`                                                                                       |
-| `writing-gherkin-criteria`           | `docs/explanation/rules/development/infra/ex-ru-de-in__acceptance-criteria.md`                                                                                        |
-| `developing-ose-content`             | `docs/explanation/rules/conventions/hugo/ex-ru-co-hu__ose-platform.md`                                                                                                |
-| `practicing-trunk-based-development` | `docs/explanation/rules/development/workflow/ex-ru-de-wo__trunk-based-development.md`                                                                                 |
+| Skill (New Name)                     | Authoritative Source                                                                                                                |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `creating-by-example-tutorials`      | `rules/conventions/tutorial/ex-ru-co-tu__by-example.md`                                                                             |
+| `assessing-criticality-confidence`   | `rules/development/quality/ex-ru-de-qu__criticality-levels.md`, `rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md` |
+| `developing-ayokoding-content`       | `rules/conventions/hugo/ex-ru-co-hu__ayokoding.md`                                                                                  |
+| `validating-factual-accuracy`        | `rules/conventions/content/ex-ru-co-co__factual-validation.md`                                                                      |
+| `writing-gherkin-criteria`           | `rules/development/infra/ex-ru-de-in__acceptance-criteria.md`                                                                       |
+| `developing-ose-content`             | `rules/conventions/hugo/ex-ru-co-hu__ose-platform.md`                                                                               |
+| `practicing-trunk-based-development` | `rules/development/workflow/ex-ru-de-wo__trunk-based-development.md`                                                                |
 
 Skills with References (3, will be renamed): `creating-accessible-diagrams`, `applying-maker-checker-fixer`, `understanding-repository-architecture`
 
@@ -494,6 +494,6 @@ This plan uses only existing repository tools and patterns. No new npm packages,
 ## Related Documentation
 
 - [Repository Governance Architecture](../../../docs/explanation/ex-ru__repository-governance-architecture.md)
-- [Convention Writing Convention](../../../docs/explanation/rules/conventions/content/ex-ru-co-co__convention-writing.md)
-- [AI Agents Convention](../../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md)
+- [Convention Writing Convention](../../../rules/conventions/content/ex-ru-co-co__convention-writing.md)
+- [AI Agents Convention](../../../rules/development/agents/ex-ru-de-ag__ai-agents.md)
 - [Skills Directory](../../../.claude/skills/README.md)

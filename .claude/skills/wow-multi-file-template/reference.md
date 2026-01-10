@@ -84,8 +84,8 @@ Start
 
 Detailed mapping to specific sections of convention documents:
 
-- [Convention Name - Section X](../../docs/explanation/rules/conventions/path/to/convention.md#section-x) - Specific aspect encoded
-- [Development Practice - Section Y](../../docs/explanation/rules/development/path/to/practice.md#section-y) - Implementation details
+- [Convention Name - Section X](../../rules/conventions/path/to/convention.md#section-x) - Specific aspect encoded
+- [Development Practice - Section Y](../../rules/development/path/to/practice.md#section-y) - Implementation details
 
 ---
 

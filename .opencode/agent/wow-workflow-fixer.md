@@ -101,7 +101,7 @@ Skills: `docs-applying-diataxis-framework`, `wow-assessing-criticality-confidenc
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Workflow Pattern Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
+- [Workflow Pattern Convention](../../rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
 
 **Related Agents**:
 
@@ -110,8 +110,8 @@ Skills: `docs-applying-diataxis-framework`, `wow-assessing-criticality-confidenc
 
 **Related Conventions**:
 
-- [Workflow Pattern Convention](../../docs/explanation/rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
-- [Fixer Confidence Levels](../../docs/explanation/rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md)
+- [Workflow Pattern Convention](../../rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
+- [Fixer Confidence Levels](../../rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md)
 
 **Skills**:
 

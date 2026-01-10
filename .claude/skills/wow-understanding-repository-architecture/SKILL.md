@@ -41,22 +41,22 @@ Layer 5: Workflows    WHEN - Orchestrate (multi-step processes)
 
 ## Quick Layer Reference
 
-| Layer | Location                            | Purpose                       | Changes?        | Answers?                  |
-| ----- | ----------------------------------- | ----------------------------- | --------------- | ------------------------- |
-| **0** | docs/explanation/rules/vision/      | WHY we exist                  | Extremely rare  | Why does project exist?   |
-| **1** | docs/explanation/rules/principles/  | WHY we value approaches       | Rarely          | Why value this approach?  |
-| **2** | docs/explanation/rules/conventions/ | WHAT documentation rules      | Occasionally    | What documentation rules? |
-| **3** | docs/explanation/rules/development/ | HOW we develop software       | More frequently | How develop software?     |
-| **4** | .claude/agents/                     | WHO enforces rules            | Often           | Who enforces rules?       |
-| **5** | docs/explanation/rules/workflows/   | WHEN run agents in what order | As needed       | When run which agents?    |
+| Layer | Location           | Purpose                       | Changes?        | Answers?                  |
+| ----- | ------------------ | ----------------------------- | --------------- | ------------------------- |
+| **0** | rules/vision/      | WHY we exist                  | Extremely rare  | Why does project exist?   |
+| **1** | rules/principles/  | WHY we value approaches       | Rarely          | Why value this approach?  |
+| **2** | rules/conventions/ | WHAT documentation rules      | Occasionally    | What documentation rules? |
+| **3** | rules/development/ | HOW we develop software       | More frequently | How develop software?     |
+| **4** | .claude/agents/    | WHO enforces rules            | Often           | Who enforces rules?       |
+| **5** | rules/workflows/   | WHEN run agents in what order | As needed       | When run which agents?    |
 
 ## Layer 0: Vision (WHY WE EXIST)
 
 **Purpose**: Foundational purpose - WHY the project exists and WHAT change we seek.
 
-**Location**: `docs/explanation/rules/vision/`
+**Location**: `rules/vision/`
 
-**Key Document**: [Vision - Open Sharia Enterprise](../../../docs/explanation/rules/vision/ex-vi__open-sharia-enterprise.md)
+**Key Document**: [Vision - Open Sharia Enterprise](../../../rules/vision/ex-vi__open-sharia-enterprise.md)
 
 **Core Vision**:
 
@@ -74,9 +74,9 @@ Layer 5: Workflows    WHEN - Orchestrate (multi-step processes)
 
 **Purpose**: Foundational values that govern all conventions and development practices.
 
-**Location**: `docs/explanation/rules/principles/`
+**Location**: `rules/principles/`
 
-**Key Document**: [Core Principles Index](../../../docs/explanation/rules/principles/README.md)
+**Key Document**: [Core Principles Index](../../../rules/principles/README.md)
 
 **Ten Principles** (abbreviated):
 
@@ -112,9 +112,9 @@ Development: Hugo Development Convention (semantic HTML)
 
 **Purpose**: Documentation standards implementing core principles. Defines WHAT rules for writing, organizing, formatting documentation.
 
-**Location**: `docs/explanation/rules/conventions/`
+**Location**: `rules/conventions/`
 
-**Key Document**: [Conventions Index](../../../docs/explanation/rules/conventions/README.md)
+**Key Document**: [Conventions Index](../../../rules/conventions/README.md)
 
 **Scope**:
 
@@ -141,9 +141,9 @@ Development: Hugo Development Convention (semantic HTML)
 
 **Purpose**: Software practices implementing core principles. Defines HOW we develop, test, deploy software.
 
-**Location**: `docs/explanation/rules/development/`
+**Location**: `rules/development/`
 
-**Key Document**: [Development Index](../../../docs/explanation/rules/development/README.md)
+**Key Document**: [Development Index](../../../rules/development/README.md)
 
 **Scope**:
 
@@ -202,9 +202,9 @@ Agent: docs__fixer (applies corrections)
 
 **Purpose**: Orchestrated multi-step processes composing AI agents.
 
-**Location**: `docs/explanation/rules/workflows/`
+**Location**: `rules/workflows/`
 
-**Key Document**: [Workflows Index](../../../docs/explanation/rules/workflows/README.md)
+**Key Document**: [Workflows Index](../../../rules/workflows/README.md)
 
 **Workflow Families**:
 
@@ -348,11 +348,11 @@ L3: Development ──┬── CLAUDE.md (navigation) ──> L4: Agents
 ## References
 
 - **[Repository Architecture](../../../docs/explanation/ex-ru__repository-governance-architecture.md)** - Complete architectural documentation with all traceability examples
-- **[Core Principles Index](../../../docs/explanation/rules/principles/README.md)** - All 10 foundational principles
-- **[Conventions Index](../../../docs/explanation/rules/conventions/README.md)** - All 24 documentation conventions
-- **[Development Index](../../../docs/explanation/rules/development/README.md)** - All 15 development practices
+- **[Core Principles Index](../../../rules/principles/README.md)** - All 10 foundational principles
+- **[Conventions Index](../../../rules/conventions/README.md)** - All 24 documentation conventions
+- **[Development Index](../../../rules/development/README.md)** - All 15 development practices
 - **[Agents Index](../../../.claude/agents/README.md)** - All AI agents and responsibilities
-- **[Workflows Index](../../../docs/explanation/rules/workflows/README.md)** - All orchestrated processes
+- **[Workflows Index](../../../rules/workflows/README.md)** - All orchestrated processes
 
 ## Related Skills
 

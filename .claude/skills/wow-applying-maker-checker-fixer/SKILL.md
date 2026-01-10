@@ -249,17 +249,17 @@ Each family has:
 
 The pattern integrates with:
 
-- **[Criticality Levels Convention](../../../docs/explanation/rules/development/quality/ex-ru-de-qu__criticality-levels.md)** - Checkers categorize by criticality, fixers use for priority
-- **[Fixer Confidence Levels Convention](../../../docs/explanation/rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md)** - Fixers assess confidence, combine with criticality
-- **[Temporary Files Convention](../../../docs/explanation/rules/development/infra/ex-ru-de-in__temporary-files.md)** - Checker/fixer reports stored in `generated-reports/`
-- **[Repository Validation Methodology](../../../docs/explanation/rules/development/quality/ex-ru-de-qu__repository-validation.md)** - Standard validation patterns
-- **[AI Agents Convention](../../../docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md)** - Agent structure, tool permissions, color coding
+- **[Criticality Levels Convention](../../../rules/development/quality/ex-ru-de-qu__criticality-levels.md)** - Checkers categorize by criticality, fixers use for priority
+- **[Fixer Confidence Levels Convention](../../../rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md)** - Fixers assess confidence, combine with criticality
+- **[Temporary Files Convention](../../../rules/development/infra/ex-ru-de-in__temporary-files.md)** - Checker/fixer reports stored in `generated-reports/`
+- **[Repository Validation Methodology](../../../rules/development/quality/ex-ru-de-qu__repository-validation.md)** - Standard validation patterns
+- **[AI Agents Convention](../../../rules/development/agents/ex-ru-de-ag__ai-agents.md)** - Agent structure, tool permissions, color coding
 
 ## References
 
-- **[Maker-Checker-Fixer Pattern Convention](../../../docs/explanation/rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md)** - Complete pattern documentation
-- **[Criticality Levels Convention](../../../docs/explanation/rules/development/quality/ex-ru-de-qu__criticality-levels.md)** - Severity classification
-- **[Fixer Confidence Levels Convention](../../../docs/explanation/rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md)** - Confidence assessment
+- **[Maker-Checker-Fixer Pattern Convention](../../../rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md)** - Complete pattern documentation
+- **[Criticality Levels Convention](../../../rules/development/quality/ex-ru-de-qu__criticality-levels.md)** - Severity classification
+- **[Fixer Confidence Levels Convention](../../../rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md)** - Confidence assessment
 
 ## Related Skills
 

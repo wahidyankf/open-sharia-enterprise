@@ -18,4 +18,4 @@ Comprehensive guidance for validating markdown links across repository.
 
 ## References
 
-[Linking Convention](../../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__linking.md)
+[Linking Convention](../../../rules/conventions/formatting/ex-ru-co-fo__linking.md)

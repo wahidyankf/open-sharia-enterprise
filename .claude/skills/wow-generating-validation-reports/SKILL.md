@@ -224,9 +224,9 @@ skills: [wow__generating-validation-reports]
 
 Complete specifications in:
 
-- [Temporary Files Convention](../../docs/explanation/rules/development/infra/ex-ru-de-in__temporary-files.md)
-- [Timestamp Format Convention](../../docs/explanation/rules/conventions/formatting/ex-ru-co-fo__timestamp.md)
-- [File Naming Convention](../../docs/explanation/rules/conventions/meta/ex-ru-co-me__file-naming.md)
+- [Temporary Files Convention](../../rules/development/infra/ex-ru-de-in__temporary-files.md)
+- [Timestamp Format Convention](../../rules/conventions/formatting/ex-ru-co-fo__timestamp.md)
+- [File Naming Convention](../../rules/conventions/meta/ex-ru-co-me__file-naming.md)
 
 ## Usage Example
 

@@ -5,7 +5,7 @@
 ### US-1: Agent Definition Management
 
 **As an** AI agent developer
-**I want** to define agents in a tool-agnostic format in `docs/explanation/rules/agents/`
+**I want** to define agents in a tool-agnostic format in `rules/agents/`
 **So that** I can maintain agent definitions independently of CLI tool formats
 
 **Acceptance Criteria**: See [AC-1](#ac-1-create-new-agent-definition)
@@ -15,7 +15,7 @@
 ### US-2: Skill Definition Management
 
 **As a** documentation maintainer
-**I want** to define skills in `docs/explanation/rules/agents/skills/` with tool-agnostic format
+**I want** to define skills in `rules/agents/skills/` with tool-agnostic format
 **So that** skill knowledge packages work with both Claude Code and OpenCode CLI tools
 
 **Acceptance Criteria**: See [AC-2](#ac-2-create-new-skill-definition)
@@ -97,7 +97,7 @@ Feature: Agent Definition Creation
     And the sync script is available at "scripts/sync-docs-to-agents.py"
 
   Scenario: Create new agent definition
-    Given I create a new file "docs/explanation/rules/agents/content/my-new-agent.md"
+    Given I create a new file "rules/agents/content/my-new-agent.md"
     And the file contains valid frontmatter with:
       | field       | value                          |
       | name        | my-new-agent                   |
@@ -120,7 +120,7 @@ Feature: Agent Definition Creation
     And both generated files contain identical agent instructions in body
 
   Scenario: Validate agent definition format
-    Given I have a file "docs/explanation/rules/agents/content/test-agent.md"
+    Given I have a file "rules/agents/content/test-agent.md"
     When I run "python scripts/validate-agent-definitions.py"
     Then validation passes with 0 errors
     And validation confirms all required fields present:
@@ -133,7 +133,7 @@ Feature: Agent Definition Creation
       | mode        |
 
   Scenario: Agent name matches filename
-    Given I create "docs/explanation/rules/agents/content/example-agent.md"
+    Given I create "rules/agents/content/example-agent.md"
     And the frontmatter contains "name: different-name"
     When I run "python scripts/validate-agent-definitions.py"
     Then validation fails with error "Agent name must match filename (without .md)"
@@ -154,8 +154,8 @@ Feature: Skill Definition Creation
     And the sync script is available
 
   Scenario: Create new skill definition
-    Given I create directory "docs/explanation/rules/agents/skills/example-new-skill/"
-    And I create file "docs/explanation/rules/agents/skills/example-new-skill/SKILL.md"
+    Given I create directory "rules/agents/skills/example-new-skill/"
+    And I create file "rules/agents/skills/example-new-skill/SKILL.md"
     And the file contains skill frontmatter with:
       | field       | value                             |
       | name        | example-new-skill                 |
@@ -169,15 +169,15 @@ Feature: Skill Definition Creation
     And both skill files contain identical content from source
 
    Scenario: Skill uses kebab-case naming in name field
-     Given I create directory "docs/explanation/rules/agents/skills/valid-skill-name/"
-     And I create file "docs/explanation/rules/agents/skills/valid-skill-name/SKILL.md"
+     Given I create directory "rules/agents/skills/valid-skill-name/"
+     And I create file "rules/agents/skills/valid-skill-name/SKILL.md"
      And frontmatter contains "name: valid-skill-name"
      When I run "butler-cli skills validate"
      Then validation passes with 0 errors
 
    Scenario: Skill name with invalid characters fails validation
-     Given I create directory "docs/explanation/rules/agents/skills/Invalid_Skill/"
-     And I create file "docs/explanation/rules/agents/skills/Invalid_Skill/SKILL.md"
+     Given I create directory "rules/agents/skills/Invalid_Skill/"
+     And I create file "rules/agents/skills/Invalid_Skill/SKILL.md"
      And frontmatter contains "name: Invalid_Skill"
      When I run "butler-cli skills validate"
      Then validation fails with error "Skill name must use kebab-case (lowercase with hyphens)"
@@ -195,11 +195,11 @@ Feature: Automated Synchronization
   So that changes propagate correctly
 
   Background:
-    Given I have valid agent definitions in "docs/explanation/rules/agents/content/"
-    And I have valid skill definitions in "docs/explanation/rules/agents/skills/"
+    Given I have valid agent definitions in "rules/agents/content/"
+    And I have valid skill definitions in "rules/agents/skills/"
 
     Scenario: Full sync operation
-      Given I modify "docs/explanation/rules/agents/content/docs-maker.md"
+      Given I modify "rules/agents/content/docs-maker.md"
       And I update the description field
       When I run "butler-cli agents sync && butler-cli skills sync"
       Then the command processes all agent definitions
@@ -216,7 +216,7 @@ Feature: Automated Synchronization
       And validation passes with 0 errors
 
    Scenario: Incremental sync (single agent)
-     Given I modify only "docs/explanation/rules/agents/content/docs-checker.md"
+     Given I modify only "rules/agents/content/docs-checker.md"
      When I run "butler-cli agents sync --agent docs-checker"
      Then only "docs-checker" is synced to both formats
      And other agents are not touched
@@ -253,7 +253,7 @@ Feature: Format Validation
   So that errors are caught early
 
    Scenario: Validate source definitions
-     Given I have agent definitions in "docs/explanation/rules/agents/content/"
+     Given I have agent definitions in "rules/agents/content/"
      When I run "butler-cli agents validate"
      Then validation checks all required fields present
      And validation checks name matches filename
@@ -325,11 +325,11 @@ Feature: Safe Editing Workflow
         - .claude/agents/docs-maker.md
 
        Source of truth locations:
-       - Agents: docs/explanation/rules/agents/content/
-       - Skills: docs/explanation/rules/agents/skills/
+       - Agents: rules/agents/content/
+       - Skills: rules/agents/skills/
 
        To make changes:
-       1. Edit source files in docs/explanation/rules/agents/
+       1. Edit source files in rules/agents/
        2. Run: butler-cli agents sync && butler-cli skills sync
        3. Commit both source and generated files
 
@@ -345,12 +345,12 @@ Feature: Safe Editing Workflow
        """
        # ⚠️ DO NOT EDIT - GENERATED FILES
 
-        **Source of truth**: `docs/explanation/rules/agents/content/`
+        **Source of truth**: `rules/agents/content/`
 
         Files in this directory are automatically generated by `butler-cli agents sync`.
 
         To modify agents:
-        1. Edit source files in `docs/explanation/rules/agents/content/`
+        1. Edit source files in `rules/agents/content/`
         2. Run sync command: `butler-cli agents sync && butler-cli skills sync`
         3. Commit both source and generated files together
 
@@ -364,12 +364,12 @@ Feature: Safe Editing Workflow
        """
         ## AI Agents
 
-        Agent definitions are maintained in `docs/explanation/rules/agents/content/`
+        Agent definitions are maintained in `rules/agents/content/`
         and synced to tool-specific formats:
         - `.claude/agents/` - Claude Code format (generated)
         - `.opencode/agent/` - OpenCode format (generated)
 
-        Skill definitions are maintained in `docs/explanation/rules/agents/skills/`
+        Skill definitions are maintained in `rules/agents/skills/`
         and synced to tool-specific formats:
         - `.claude/skills/` - Claude Code format (generated)
         - `.opencode/skills/` - OpenCode format (generated)
@@ -395,7 +395,7 @@ Feature: Migration from Current Architecture
    Scenario: Extract agents to docs format
      Given current agents use Claude Code format
      When I run "butler-cli agents extract"
-     Then 45 files are created in "docs/explanation/rules/agents/content/"
+     Then 45 files are created in "rules/agents/content/"
      And each file has tool-agnostic frontmatter:
        | field       | mapping                           |
        | name        | from original name field          |
@@ -429,8 +429,8 @@ Feature: Migration from Current Architecture
   Scenario: Preserve skill directory structure
     Given skill exists at ".claude/skills/docs-applying-content-quality/SKILL.md"
     When I run extraction script
-    Then skill directory is created at "docs/explanation/rules/agents/skills/docs-applying-content-quality/"
-    And skill file is created at "docs/explanation/rules/agents/skills/docs-applying-content-quality/SKILL.md"
+    Then skill directory is created at "rules/agents/skills/docs-applying-content-quality/"
+    And skill file is created at "rules/agents/skills/docs-applying-content-quality/SKILL.md"
     And directory structure is preserved (folder/SKILL.md format)
     And skill content is identical
 
@@ -459,7 +459,7 @@ Feature: Future Tool Format Support
     Given a new CLI tool "AgentX" requires format ".agentx/agents/"
     And AgentX uses JSON frontmatter instead of YAML
     When I extend "scripts/sync-docs-to-agents.py" with AgentX generator
-    Then sync script processes "docs/explanation/rules/agents/content/*.md"
+    Then sync script processes "rules/agents/content/*.md"
     And generates AgentX format at ".agentx/agents/"
     And AgentX files have JSON frontmatter:
       ```json
@@ -492,8 +492,8 @@ Feature: Meta-Agent Updates
   So that agent creation/validation/fixing works with docs source
 
   Background:
-    Given agent definitions are in "docs/explanation/rules/agents/content/"
-    And skill definitions are in "docs/explanation/rules/agents/skills/"
+    Given agent definitions are in "rules/agents/content/"
+    And skill definitions are in "rules/agents/skills/"
     And ".claude/agents/" is generated (DO NOT EDIT)
     And ".opencode/agent/" is generated (DO NOT EDIT)
     And ".claude/skills/" is generated (DO NOT EDIT)
@@ -502,7 +502,7 @@ Feature: Meta-Agent Updates
     Given I invoke "agent-maker" agent
     And I request creation of new agent "test-validator"
     When agent-maker executes
-     Then agent-maker creates "docs/explanation/rules/agents/content/test-validator.md"
+     Then agent-maker creates "rules/agents/content/test-validator.md"
      And file uses tool-agnostic format:
        | field       | value                        |
        | name        | test-validator               |
@@ -527,8 +527,8 @@ Feature: Meta-Agent Updates
    Scenario: wow-rules-checker validates docs source (not generated)
      Given I invoke "wow-rules-checker" for agent validation
      When wow-rules-checker executes
-     Then it validates files in "docs/explanation/rules/agents/content/"
-     And it validates files in "docs/explanation/rules/agents/skills/"
+     Then it validates files in "rules/agents/content/"
+     And it validates files in "rules/agents/skills/"
      And it does NOT validate ".claude/agents/" (generated)
      And it does NOT validate ".opencode/agent/" (generated)
      And it does NOT validate ".claude/skills/" (generated)
@@ -538,7 +538,7 @@ Feature: Meta-Agent Updates
        | name matches filename    | agent-name.md has name: agent-name |
        | role is valid            | writer, checker, updater, etc.    |
        | tools are capitalized    | Read, Write (not read, write)     |
-       | skills exist in docs     | docs/explanation/rules/agents/skills/ |
+       | skills exist in docs     | rules/agents/skills/ |
 
    Scenario: wow-rules-checker detects edits to generated directories
      Given ".claude/agents/docs-maker.md" was modified
@@ -549,21 +549,21 @@ Feature: Meta-Agent Updates
        ❌ Generated file should not be edited directly:
          - .claude/agents/docs-maker.md
 
-       Source of truth: docs/explanation/rules/agents/content/docs-maker.md
+       Source of truth: rules/agents/content/docs-maker.md
 
         To fix:
         1. Revert changes to .claude/agents/docs-maker.md
-        2. Edit docs/explanation/rules/agents/content/docs-maker.md
+        2. Edit rules/agents/content/docs-maker.md
         3. Run: butler-cli agents sync && butler-cli skills sync
         """
 
    Scenario: wow-rules-fixer does NOT modify generated directories
      Given wow-rules-checker generated audit report
      And report contains finding: "Fix description in docs-maker"
-     And finding references "docs/explanation/rules/agents/content/docs-maker.md"
+     And finding references "rules/agents/content/docs-maker.md"
      When I invoke "wow-rules-fixer" with audit report
      Then wow-rules-fixer reads finding
-     And wow-rules-fixer modifies "docs/explanation/rules/agents/content/docs-maker.md"
+     And wow-rules-fixer modifies "rules/agents/content/docs-maker.md"
      And wow-rules-fixer does NOT modify ".claude/agents/docs-maker.md"
      And wow-rules-fixer does NOT modify ".opencode/agent/docs-maker.md"
      And wow-rules-fixer does NOT modify ".claude/skills/" (if skill referenced)
@@ -576,16 +576,16 @@ Feature: Meta-Agent Updates
     When I invoke "wow-rules-fixer"
     Then wow-rules-fixer skips this finding
     And fixer logs warning: "Finding references generated file - skipping"
-    And fixer suggests: "Edit source: docs/explanation/rules/agents/content/test-agent.md"
+    And fixer suggests: "Edit source: rules/agents/content/test-agent.md"
 
    Scenario: Update agent-maker instructions for sync workflow
-     Given I read "docs/explanation/rules/agents/content/agent-maker.md"
+     Given I read "rules/agents/content/agent-maker.md"
      When I review agent instructions
      Then instructions include:
        """
        ## Agent Creation Workflow
 
-       1. Create agent definition in `docs/explanation/rules/agents/content/{agent-name}.md`
+       1. Create agent definition in `rules/agents/content/{agent-name}.md`
        2. Use tool-agnostic format:
           - `role` (not `color`)
           - Capitalized tool names (Read, Write)
@@ -656,7 +656,7 @@ Scenario: Clear error messages for validation failures
     - Line number in source file (if applicable)
   Example output:
     """
-    ERROR: docs/explanation/rules/agents/content/test-agent.md
+    ERROR: rules/agents/content/test-agent.md
     Field: role
     Invalid value: "invalid-role"
     Expected one of: writer, checker, updater, implementor, specialist
@@ -680,7 +680,7 @@ The following are explicitly **not** included in this plan:
 
 1. **Agent execution runtime changes**: Agents continue to execute via Claude Code and OpenCode CLIs unchanged
 2. **Skill loading mechanism**: Skills continue to load from `.claude/skills/` (generated location)
-3. **Workflow definitions**: Workflows remain in `docs/explanation/rules/workflows/` (separate concern)
+3. **Workflow definitions**: Workflows remain in `rules/workflows/` (separate concern)
 4. **AGENTS.md / CLAUDE.md content**: Delivery mechanism documents updated to reference new source locations, but core content unchanged
 5. **Agent capabilities**: No changes to what agents can do, only where definitions are stored
 6. **Tool CLI behavior**: No modifications to Claude Code or OpenCode CLI tools themselves
@@ -698,7 +698,7 @@ The following are explicitly **not** included in this plan:
   - `scripts/convert-agents-to-opencode.py` (reference for format mapping)
   - `scripts/validate-opencode-agents.py` (validation patterns)
 - Documentation:
-  - `docs/explanation/rules/development/agents/ex-ru-de-ag__ai-agents.md` (agent conventions)
+  - `rules/development/agents/ex-ru-de-ag__ai-agents.md` (agent conventions)
   - `docs/explanation/ex-ru__repository-governance-architecture.md` (governance model)
 - Git hooks: `.husky/pre-commit` (integration point)
 
