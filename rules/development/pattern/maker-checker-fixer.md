@@ -24,9 +24,9 @@ This document defines the **maker-checker-fixer pattern**, a three-stage content
 
 This practice respects the following core principles:
 
-- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Checker agents automatically validate content against conventions. Fixer agents apply validated fixes without manual intervention. Human effort focuses on content creation and subjective improvements, not mechanical validation.
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Checker agents automatically validate content against conventions. Fixer agents apply validated fixes without manual intervention. Human effort focuses on content creation and subjective improvements, not mechanical validation.
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Three clear stages (make, check, fix) instead of complex, multi-phase workflows. Each agent has single, well-defined responsibility. Separation of concerns keeps the workflow simple and predictable.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Three clear stages (make, check, fix) instead of complex, multi-phase workflows. Each agent has single, well-defined responsibility. Separation of concerns keeps the workflow simple and predictable.
 
 ## Conventions Implemented/Respected
 
@@ -34,15 +34,15 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Criticality Levels Convention](../quality/ex-ru-de-qu__criticality-levels.md)**: Checker agents categorize findings by criticality (CRITICAL/HIGH/MEDIUM/LOW) to indicate importance/urgency. Fixer agents combine criticality with confidence to determine fix priority (P0-P4).
+- **[Criticality Levels Convention](../quality/criticality-levels.md)**: Checker agents categorize findings by criticality (CRITICAL/HIGH/MEDIUM/LOW) to indicate importance/urgency. Fixer agents combine criticality with confidence to determine fix priority (P0-P4).
 
-- **[Fixer Confidence Levels Convention](../quality/ex-ru-de-qu__fixer-confidence-levels.md)**: Fixer agents assess confidence (HIGH/MEDIUM/FALSE_POSITIVE) for each finding. Only HIGH confidence fixes applied automatically. Criticality and confidence work orthogonally to determine priority.
+- **[Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md)**: Fixer agents assess confidence (HIGH/MEDIUM/FALSE_POSITIVE) for each finding. Only HIGH confidence fixes applied automatically. Criticality and confidence work orthogonally to determine priority.
 
-- **[Temporary Files Convention](../infra/ex-ru-de-in__temporary-files.md)**: All checker agents MUST write validation/audit reports to `generated-reports/` directory using pattern `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md`. Fixer agents write fix reports to same directory with `__fix.md` suffix. Progressive writing requirement ensures audit history survives context compaction.
+- **[Temporary Files Convention](../infra/temporary-files.md)**: All checker agents MUST write validation/audit reports to `generated-reports/` directory using pattern `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md`. Fixer agents write fix reports to same directory with `__fix.md` suffix. Progressive writing requirement ensures audit history survives context compaction.
 
-- **[Timestamp Format Convention](../conventions/formatting/ex-ru-co-fo__timestamp.md)**: Report filenames use UTC+7 timestamps in format `YYYY-MM-DD--HH-MM` (hyphen-separated for filesystem compatibility).
+- **[Timestamp Format Convention](../conventions/formatting/timestamp.md)**: Report filenames use UTC+7 timestamps in format `YYYY-MM-DD--HH-MM` (hyphen-separated for filesystem compatibility).
 
-- **[Content Quality Principles](../conventions/content/ex-ru-co-co__quality.md)**: Checker agents validate content against quality standards (active voice, heading hierarchy, alt text, WCAG compliance). Fixer agents apply quality improvements when findings have HIGH confidence.
+- **[Content Quality Principles](../conventions/content/quality.md)**: Checker agents validate content against quality standards (active voice, heading hierarchy, alt text, WCAG compliance). Fixer agents apply quality improvements when findings have HIGH confidence.
 
 ## 📋 Overview
 
@@ -180,7 +180,7 @@ Maker Agent (ayokoding-web-general-maker):
 - ✅ Provide actionable recommendations
 - ✅ Do NOT modify files being checked
 
-**Criticality Categorization** (see [Criticality Levels Convention](../quality/ex-ru-de-qu__criticality-levels.md)):
+**Criticality Categorization** (see [Criticality Levels Convention](../quality/criticality-levels.md)):
 
 Checkers categorize findings by **importance/urgency**:
 
@@ -250,7 +250,7 @@ Checker Agent (ayokoding-web-general-checker):
 - ✅ Report FALSE_POSITIVE findings for checker improvement
 - ✅ Generate comprehensive fix reports
 
-**Priority-Based Execution** (see [Fixer Confidence Levels Convention - Integration](../quality/ex-ru-de-qu__fixer-confidence-levels.md#integration-with-criticality-levels)):
+**Priority-Based Execution** (see [Fixer Confidence Levels Convention - Integration](../quality/fixer-confidence-levels.md#integration-with-criticality-levels)):
 
 Fixers combine **criticality** (importance) with **confidence** (certainty) to determine priority:
 
@@ -371,7 +371,7 @@ The maker-checker-fixer pattern aligns with the agent color categorization syste
 
 **Note**: Purple (🟪 Implementors) agents execute plans and use all tools, falling outside the maker-checker-fixer pattern.
 
-See [AI Agents Convention - Agent Color Categorization](../agents/ex-ru-de-ag__ai-agents.md#agent-color-categorization) for complete details.
+See [AI Agents Convention - Agent Color Categorization](../agents/ai-agents.md#agent-color-categorization) for complete details.
 
 ## 📊 The Five Agent Families
 
@@ -668,17 +668,17 @@ Pattern scales across **multiple domains** without reinventing the workflow:
 
 The maker-checker-fixer pattern integrates with repository conventions:
 
-| Convention                                                                               | How Pattern Uses It                                             |
-| ---------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| [AI Agents Convention](../agents/ex-ru-de-ag__ai-agents.md)                              | Defines agent structure, tool permissions, color coding         |
-| [Criticality Levels Convention](../quality/ex-ru-de-qu__criticality-levels.md)           | Checkers categorize by criticality, fixers use for priority     |
-| [Fixer Confidence Levels Convention](../quality/ex-ru-de-qu__fixer-confidence-levels.md) | Fixers assess confidence, combine with criticality for priority |
-| [Repository Validation Methodology](../quality/ex-ru-de-qu__repository-validation.md)    | Standard validation patterns used by checker/fixer              |
-| [Content Quality Principles](../conventions/content/ex-ru-co-co__quality.md)             | What checkers validate (quality standards)                      |
-| [Hugo Content Convention](../conventions/hugo/ex-ru-co-hu__shared.md)                    | What ayokoding/ose-platform makers/checkers enforce             |
-| [Tutorial Convention](../conventions/tutorial/ex-ru-co-tu__general.md)                   | What docs\_\_tutorial-maker/checker enforce                     |
-| [README Quality Convention](../conventions/content/ex-ru-co-co__readme-quality.md)       | What readme\_\_maker/checker enforce                            |
-| [Temporary Files Convention](../infra/ex-ru-de-in__temporary-files.md)                   | Where checker/fixer reports are stored                          |
+| Convention                                                                  | How Pattern Uses It                                             |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| [AI Agents Convention](../agents/ai-agents.md)                              | Defines agent structure, tool permissions, color coding         |
+| [Criticality Levels Convention](../quality/criticality-levels.md)           | Checkers categorize by criticality, fixers use for priority     |
+| [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) | Fixers assess confidence, combine with criticality for priority |
+| [Repository Validation Methodology](../quality/repository-validation.md)    | Standard validation patterns used by checker/fixer              |
+| [Content Quality Principles](../conventions/content/quality.md)             | What checkers validate (quality standards)                      |
+| [Hugo Content Convention](../conventions/hugo/shared.md)                    | What ayokoding/ose-platform makers/checkers enforce             |
+| [Tutorial Convention](../conventions/tutorial/general.md)                   | What docs\_\_tutorial-maker/checker enforce                     |
+| [README Quality Convention](../conventions/content/readme-quality.md)       | What readme\_\_maker/checker enforce                            |
+| [Temporary Files Convention](../infra/temporary-files.md)                   | Where checker/fixer reports are stored                          |
 
 **Key Point**: The pattern is a **workflow framework**. The conventions define **what** to validate/enforce.
 
@@ -686,22 +686,22 @@ The maker-checker-fixer pattern integrates with repository conventions:
 
 **Pattern Implementation**:
 
-- [AI Agents Convention](../agents/ex-ru-de-ag__ai-agents.md) - Agent structure and tool permissions
-- [Repository Validation Methodology](../quality/ex-ru-de-qu__repository-validation.md) - Validation patterns and techniques
-- [Temporary Files Convention](../infra/ex-ru-de-in__temporary-files.md) - Report storage and naming
+- [AI Agents Convention](../agents/ai-agents.md) - Agent structure and tool permissions
+- [Repository Validation Methodology](../quality/repository-validation.md) - Validation patterns and techniques
+- [Temporary Files Convention](../infra/temporary-files.md) - Report storage and naming
 
 **Workflow Orchestration**:
 
-- [Workflow Pattern Convention](../../workflows/meta/ex-ru-wf-me__workflow-pattern.md) - How workflows orchestrate agents
+- [Workflow Pattern Convention](../../workflows/meta/workflow-pattern.md) - How workflows orchestrate agents
 
 **Domain-Specific Standards**:
 
-- [Content Quality Principles](../conventions/content/ex-ru-co-co__quality.md) - Universal content standards
-- [Hugo Content Convention - Shared](../conventions/hugo/ex-ru-co-hu__shared.md) - Hugo content standards
-- [Hugo Content Convention - ayokoding](../conventions/hugo/ex-ru-co-hu__ayokoding.md) - ayokoding-web specifics
-- [Hugo Content Convention - OSE Platform](../conventions/hugo/ex-ru-co-hu__ose-platform.md) - ose-platform-web specifics
-- [Tutorial Convention](../conventions/tutorial/ex-ru-co-tu__general.md) - Tutorial quality standards
-- [README Quality Convention](../conventions/content/ex-ru-co-co__readme-quality.md) - README standards
+- [Content Quality Principles](../conventions/content/quality.md) - Universal content standards
+- [Hugo Content Convention - Shared](../conventions/hugo/shared.md) - Hugo content standards
+- [Hugo Content Convention - ayokoding](../conventions/hugo/ayokoding.md) - ayokoding-web specifics
+- [Hugo Content Convention - OSE Platform](../conventions/hugo/ose-platform.md) - ose-platform-web specifics
+- [Tutorial Convention](../conventions/tutorial/general.md) - Tutorial quality standards
+- [README Quality Convention](../conventions/content/readme-quality.md) - README standards
 
 **Agent Examples**:
 

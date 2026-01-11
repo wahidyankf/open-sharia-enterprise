@@ -19,7 +19,7 @@ The foundational purpose and change we seek through Open Sharia Enterprise - dem
 
 This directory contains the vision documents that establish **WHY** the Open Sharia Enterprise project exists and **WHAT CHANGE** we seek to create in the world. Vision is the top layer (Layer 0) of our six-layer architecture - it governs and gives purpose to all principles, conventions, development practices, agents, and workflows.
 
-See [Repository Architecture](../ex-ru__repository-governance-architecture.md) for complete understanding of how vision fits into the governance hierarchy and how it inspires all other layers.
+See [Repository Architecture](..repository-governance-architecture.md) for complete understanding of how vision fits into the governance hierarchy and how it inspires all other layers.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -164,7 +164,7 @@ Automation serves the mission:
 
 ### Architecture
 
-- [Repository Architecture](../ex-ru__repository-governance-architecture.md) - Complete six-layer architecture (Layer 0: Vision)
+- [Repository Architecture](..repository-governance-architecture.md) - Complete six-layer architecture (Layer 0: Vision)
 
 ### Lower Layers (Governed by Vision)
 

@@ -337,7 +337,7 @@ code examples. Learning thoroughly now saves time debugging later.
 
 ### Tutorial Naming Convention
 
-**Location**: `rules/conventions/tutorial/ex-ru-co-tu__naming.md`
+**Location**: `rules/conventions/tutorial/naming.md`
 
 **Outcome-focused language**:
 
@@ -355,7 +355,7 @@ try examples, and solve simple problems on their own.
 
 ### Content Quality Principles
 
-**Location**: `rules/conventions/content/ex-ru-co-co__quality.md`
+**Location**: `rules/conventions/content/quality.md`
 
 **Explicit "No Time Estimates" section**:
 
@@ -426,15 +426,15 @@ Focus on WHAT needs to be done or learned, not HOW LONG it takes.
 
 ## 🔗 Related Principles
 
-- [Progressive Disclosure](./ex-ru-pr-co__progressive-disclosure.md) - Learn at your own pace through progressive levels
-- [Accessibility First](./ex-ru-pr-co__accessibility-first.md) - Inclusive of different learning speeds
-- [Simplicity Over Complexity](../general/ex-ru-pr-ge__simplicity-over-complexity.md) - Simple outcomes, not complex schedules
+- [Progressive Disclosure](./progressive-disclosure.md) - Learn at your own pace through progressive levels
+- [Accessibility First](./accessibility-first.md) - Inclusive of different learning speeds
+- [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Simple outcomes, not complex schedules
 
 ## 📚 Related Conventions
 
-- [Tutorial Naming Convention](../../conventions/tutorial/ex-ru-co-tu__naming.md) - Coverage percentages, not time estimates
-- [Tutorial Convention](../../conventions/tutorial/ex-ru-co-tu__general.md) - Outcome-focused tutorial structure
-- [Content Quality Principles](../../conventions/content/ex-ru-co-co__quality.md) - Explicit no-time-estimates rule
+- [Tutorial Naming Convention](../../conventions/tutorial/naming.md) - Coverage percentages, not time estimates
+- [Tutorial Convention](../../conventions/tutorial/general.md) - Outcome-focused tutorial structure
+- [Content Quality Principles](../../conventions/content/quality.md) - Explicit no-time-estimates rule
 
 ## 📖 References
 

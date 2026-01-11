@@ -375,7 +375,7 @@ Internals and customization.
 
 ### Tutorial Naming Convention
 
-**Location**: `rules/conventions/tutorial/ex-ru-co-tu__naming.md`
+**Location**: `rules/conventions/tutorial/naming.md`
 
 **Six progressive levels**:
 
@@ -465,16 +465,16 @@ ex-inse__security-basics.md    (7 letters - ex-inse)
 
 ## 🔗 Related Principles
 
-- [Simplicity Over Complexity](../general/ex-ru-pr-ge__simplicity-over-complexity.md) - Start simple, add complexity only when needed
-- [No Time Estimates](./ex-ru-pr-co__no-time-estimates.md) - Focus on learning outcomes, not duration
-- [Accessibility First](./ex-ru-pr-co__accessibility-first.md) - Progressive disclosure improves accessibility
+- [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Start simple, add complexity only when needed
+- [No Time Estimates](./no-time-estimates.md) - Focus on learning outcomes, not duration
+- [Accessibility First](./accessibility-first.md) - Progressive disclosure improves accessibility
 
 ## 📚 Related Conventions
 
-- [Tutorial Naming Convention](../../conventions/tutorial/ex-ru-co-tu__naming.md) - Six progressive tutorial levels
-- [Diátaxis Framework](../../conventions/meta/ex-ru-co-me__diataxis-framework.md) - Four documentation types
-- [File Naming Convention](../../conventions/meta/ex-ru-co-me__file-naming.md) - Progressive prefix complexity
-- [Tutorial Convention](../../conventions/tutorial/ex-ru-co-tu__general.md) - Progressive tutorial structure
+- [Tutorial Naming Convention](../../conventions/tutorial/naming.md) - Six progressive tutorial levels
+- [Diátaxis Framework](../../conventions/meta/diataxis-framework.md) - Four documentation types
+- [File Naming Convention](../../conventions/meta/file-naming.md) - Progressive prefix complexity
+- [Tutorial Convention](../../conventions/tutorial/general.md) - Progressive tutorial structure
 
 ## 📖 References
 

@@ -131,8 +131,8 @@ git pull origin main
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
-- [Trunk Based Development](../../rules/development/workflow/ex-ru-de-wo__trunk-based-development.md)
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
+- [Trunk Based Development](../../rules/development/workflow/trunk-based-development.md)
 
 **Related Agents**:
 
@@ -141,8 +141,8 @@ git pull origin main
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
-- [Trunk Based Development](../../rules/development/workflow/ex-ru-de-wo__trunk-based-development.md)
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
+- [Trunk Based Development](../../rules/development/workflow/trunk-based-development.md)
 
 **Skills**:
 

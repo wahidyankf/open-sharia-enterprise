@@ -23,9 +23,9 @@ This convention standardizes how programming language tutorials are organized wi
 
 This convention implements the following core principles:
 
-- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Dual-path structure allows learners to choose their entry point based on experience level. By-concept path for gradual learning, by-example path for rapid exploration.
-- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Multiple learning paths serve diverse learning styles - narrative-driven for methodical learners, code-first for experienced developers.
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Clear directory structure makes learning path choices obvious. Foundational tutorials at root signal prerequisite status.
+- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Dual-path structure allows learners to choose their entry point based on experience level. By-concept path for gradual learning, by-example path for rapid exploration.
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: Multiple learning paths serve diverse learning styles - narrative-driven for methodical learners, code-first for experienced developers.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Clear directory structure makes learning path choices obvious. Foundational tutorials at root signal prerequisite status.
 
 ## Purpose
 
@@ -126,7 +126,7 @@ by-concept/
 
 **Content Requirements:**
 
-See [Programming Language Content Standard](./ex-ru-co-tu__programming-language-content.md) for complete pedagogical requirements including:
+See [Programming Language Content Standard](./programming-language-content.md) for complete pedagogical requirements including:
 
 - Front hooks ("Want to..." opening paragraphs)
 - Learning path visualizations (Mermaid diagrams)
@@ -170,7 +170,7 @@ by-example/
 
 **Content Requirements:**
 
-See [By Example Tutorial Convention](./ex-ru-co-tu__by-example.md) for complete by-example standards including:
+See [By Example Tutorial Convention](./by-example.md) for complete by-example standards including:
 
 - Five-part example structure
 - Self-containment rules
@@ -306,7 +306,7 @@ tutorials/
 2. **Content INSIDE folder** is one level deeper → uses level N+1 base weight
 3. **Weights RESET per parent**: by-concept/ and by-example/ both start at 10000000 for overview.md (different parents, independent sequences)
 
-See [Hugo Content Convention - ayokoding](../hugo/ex-ru-co-hu__ayokoding.md) for complete level-based weight system details.
+See [Hugo Content Convention - ayokoding](../hugo/ayokoding.md) for complete level-based weight system details.
 
 ## Optional By-Example Path
 
@@ -395,7 +395,7 @@ tags: ["language-name", "tutorial-type", "skill-level"]
 - Absolute paths work from ANY page context
 - Language prefix ensures correct bilingual routing
 
-See [Hugo Content Convention - ayokoding](../hugo/ex-ru-co-hu__ayokoding.md#internal-link-requirements) for complete details.
+See [Hugo Content Convention - ayokoding](../hugo/ayokoding.md#internal-link-requirements) for complete details.
 
 ### Overview Files
 
@@ -704,7 +704,7 @@ Add by-example link BEFORE initial-setup/quick-start:
 
 **Step 5: Write content**
 
-Follow [By Example Tutorial Convention](./ex-ru-co-tu__by-example.md) to create 75-90 annotated examples.
+Follow [By Example Tutorial Convention](./by-example.md) to create 75-90 annotated examples.
 
 **Step 6: Validate**
 
@@ -712,12 +712,12 @@ Run `ayokoding-web-by-example-checker` to verify structure and content quality.
 
 ## Related Conventions
 
-- **[Programming Language Content Standard](./ex-ru-co-tu__programming-language-content.md)** - Universal content architecture for programming languages (5 tutorial levels, coverage philosophy, quality metrics, pedagogical patterns)
-- **[By Example Tutorial Convention](./ex-ru-co-tu__by-example.md)** - Complete standards for creating code-first by-example tutorials (five-part structure, self-containment, educational comments, coverage progression)
-- **[Hugo Content Convention - ayokoding](../hugo/ex-ru-co-hu__ayokoding.md)** - Hextra theme specifics (level-based weights, absolute paths, navigation depth, frontmatter requirements)
-- **[Tutorial Naming Convention](./ex-ru-co-tu__naming.md)** - Tutorial type definitions (Initial Setup, Quick Start, Beginner, Intermediate, Advanced coverage percentages)
-- **[Content Quality Principles](../content/ex-ru-co-co__quality.md)** - Universal markdown quality standards (active voice, heading hierarchy, accessibility)
-- **[Diátaxis Framework](../meta/ex-ru-co-me__diataxis-framework.md)** - Documentation categorization (tutorials vs how-to vs reference vs explanation)
+- **[Programming Language Content Standard](./programming-language-content.md)** - Universal content architecture for programming languages (5 tutorial levels, coverage philosophy, quality metrics, pedagogical patterns)
+- **[By Example Tutorial Convention](./by-example.md)** - Complete standards for creating code-first by-example tutorials (five-part structure, self-containment, educational comments, coverage progression)
+- **[Hugo Content Convention - ayokoding](../hugo/ayokoding.md)** - Hextra theme specifics (level-based weights, absolute paths, navigation depth, frontmatter requirements)
+- **[Tutorial Naming Convention](./naming.md)** - Tutorial type definitions (Initial Setup, Quick Start, Beginner, Intermediate, Advanced coverage percentages)
+- **[Content Quality Principles](../content/quality.md)** - Universal markdown quality standards (active voice, heading hierarchy, accessibility)
+- **[Diátaxis Framework](../meta/diataxis-framework.md)** - Documentation categorization (tutorials vs how-to vs reference vs explanation)
 
 ## Version History
 

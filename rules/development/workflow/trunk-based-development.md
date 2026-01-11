@@ -18,7 +18,7 @@ updated: 2025-12-05
 <!--
   MAINTENANCE NOTE: Master reference for TBD workflow
   This is duplicated (intentionally) in multiple files for different audiences:
-  1. rules/development/workflow/ex-ru-de-wo__trunk-based-development.md (this file - comprehensive reference)
+  1. rules/development/workflow/trunk-based-development.md (this file - comprehensive reference)
   2. CLAUDE.md (summary for AI agents)
   3. .claude/agents/plan__maker.md (context for plan creation)
   4. .claude/agents/plan__executor.md (context for plan execution)
@@ -31,9 +31,9 @@ This document defines the **Trunk Based Development (TBD)** workflow used in the
 
 This practice respects the following core principles:
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Single branch (`main`) instead of complex GitFlow with multiple long-lived branches (develop, release, hotfix). Small, frequent commits instead of large, delayed integrations. Flat workflow reduces merge conflicts and coordination overhead.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Single branch (`main`) instead of complex GitFlow with multiple long-lived branches (develop, release, hotfix). Small, frequent commits instead of large, delayed integrations. Flat workflow reduces merge conflicts and coordination overhead.
 
-- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Every commit to `main` triggers automated CI testing. Integration issues caught immediately by machines, not discovered weeks later through manual testing. Continuous automated validation replaces manual integration phases.
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Every commit to `main` triggers automated CI testing. Integration issues caught immediately by machines, not discovered weeks later through manual testing. Continuous automated validation replaces manual integration phases.
 
 ## Conventions Implemented/Respected
 
@@ -41,9 +41,9 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Commit Message Convention](./ex-ru-de-wo__commit-messages.md)**: TBD workflow requires small, frequent commits with clear conventional commit messages to maintain navigable history.
+- **[Commit Message Convention](./commit-messages.md)**: TBD workflow requires small, frequent commits with clear conventional commit messages to maintain navigable history.
 
-- **[Code Quality Convention](../quality/ex-ru-de-qu__code.md)**: Pre-push hooks run affected tests before pushing to main, enforcing quality gates in the TBD workflow.
+- **[Code Quality Convention](../quality/code.md)**: Pre-push hooks run affected tests before pushing to main, enforcing quality gates in the TBD workflow.
 
 ## What is Trunk Based Development?
 
@@ -249,7 +249,7 @@ if (betaUsers.includes(currentUser.email)) {
 - [ ] Linting passes (`npm run lint`)
 - [ ] Build succeeds (`npm run build`)
 - [ ] Feature flags hide incomplete work
-- [ ] Commit message follows [Conventional Commits](./ex-ru-de-wo__commit-messages.md)
+- [ ] Commit message follows [Conventional Commits](./commit-messages.md)
 
 ### Small, Incremental Changes
 
@@ -376,18 +376,18 @@ The `apps/ayokoding-web/` project uses a production deployment branch:
 
 ## What NOT to Do
 
-| ❌ Anti-Pattern                      | ✅ TBD Approach                                                                                          |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| Long-lived feature branches          | Commit to `main` with feature flags                                                                      |
-| Branches per developer               | All developers commit to `main`                                                                          |
-| Delaying integration for weeks       | Integrate multiple times per day                                                                         |
-| Large, infrequent commits            | Small, frequent commits (see [Commit Granularity](./ex-ru-de-wo__commit-messages.md#commit-granularity)) |
-| Keeping branches "just in case"      | Delete branches immediately after merge                                                                  |
-| Using branches to hide WIP           | Use feature flags to hide WIP                                                                            |
-| Merging without CI passing           | CI must be green before merge                                                                            |
-| Creating branches for every task     | Only branch when truly necessary (rare)                                                                  |
-| Waiting for "perfect" code to commit | Commit working code, iterate in subsequent commits                                                       |
-| Feature branches lasting weeks       | Branches (if used) last < 2 days                                                                         |
+| ❌ Anti-Pattern                      | ✅ TBD Approach                                                                             |
+| ------------------------------------ | ------------------------------------------------------------------------------------------- |
+| Long-lived feature branches          | Commit to `main` with feature flags                                                         |
+| Branches per developer               | All developers commit to `main`                                                             |
+| Delaying integration for weeks       | Integrate multiple times per day                                                            |
+| Large, infrequent commits            | Small, frequent commits (see [Commit Granularity](./commit-messages.md#commit-granularity)) |
+| Keeping branches "just in case"      | Delete branches immediately after merge                                                     |
+| Using branches to hide WIP           | Use feature flags to hide WIP                                                               |
+| Merging without CI passing           | CI must be green before merge                                                               |
+| Creating branches for every task     | Only branch when truly necessary (rare)                                                     |
+| Waiting for "perfect" code to commit | Commit working code, iterate in subsequent commits                                          |
+| Feature branches lasting weeks       | Branches (if used) last < 2 days                                                            |
 
 ## TBD and Project Planning
 
@@ -526,13 +526,13 @@ TBD works best when combined with:
 - **Continuous Integration**: [See CI/CD section in this doc]
 - **Feature Flags/Toggles**: [See Feature Flags section in this doc]
 - **Automated Testing**: High test coverage enables confident commits
-- **Small Commits**: [Conventional Commits](./ex-ru-de-wo__commit-messages.md)
+- **Small Commits**: [Conventional Commits](./commit-messages.md)
 - **Pair/Mob Programming**: Real-time collaboration and review
 
 ## References and Further Reading
 
 - **[TrunkBasedDevelopment.com](https://trunkbaseddevelopment.com/)** - Official TBD resource with detailed guides
-- **Conventional Commits**: [Commit Message Convention](./ex-ru-de-wo__commit-messages.md)
+- **Conventional Commits**: [Commit Message Convention](./commit-messages.md)
 - **Development Practices**: [Development Index](../README.md)
 
 ---

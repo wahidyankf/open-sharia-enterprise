@@ -12,7 +12,7 @@ This implementation consists of 2 phases delivered through direct commits to `ma
 
 **Trunk Based Development**: All work happens on `main` branch with small, frequent commits. Each phase consists of multiple atomic commits. Validation checkpoints between phases ensure quality before proceeding.
 
-See [Trunk Based Development Convention](../../rules/development/workflow/ex-ru-de-wo__trunk-based-development.md) for complete details.
+See [Trunk Based Development Convention](../../rules/development/workflow/trunk-based-development.md) for complete details.
 
 ### Delivery Summary
 

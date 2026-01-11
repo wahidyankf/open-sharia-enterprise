@@ -205,7 +205,7 @@ The `docs-validating-links` Skill provides complete validation criteria:
 - Wikipedia links use correct article names (check for redirects)
 - Official documentation links point to current versions (not outdated)
 - GitHub links point to existing repositories/files
-- Internal links follow the [Linking Convention](../../rules/conventions/formatting/ex-ru-co-fo__linking.md)
+- Internal links follow the [Linking Convention](../../rules/conventions/formatting/linking.md)
 
 ## Cache Management
 
@@ -291,7 +291,7 @@ The `docs-validating-links` Skill provides:
 1. **Save updated cache** to `docs/metadata/external-links-status.yaml`
 2. **Update `lastFullScan`** timestamp to current time (UTC+7 format)
    - Command: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"`
-   - See [Timestamp Format Convention](../../rules/conventions/formatting/ex-ru-co-fo__timestamp.md)
+   - See [Timestamp Format Convention](../../rules/conventions/formatting/timestamp.md)
 3. **Include usedIn data** (file paths only) for all links
 4. **Sort links by URL** for consistent git diffs
 5. **Use 2-space YAML indentation**
@@ -428,8 +428,8 @@ Before starting work, familiarize yourself with:
 
 - [CLAUDE.md](../../CLAUDE.md) - Project guidance and documentation standards
 - [AI Agents Convention](../../rules/development/agents/ex-ru-de-ag-ai-agents.md) - Agent design standards
-- [Linking Convention](../../rules/conventions/formatting/ex-ru-co-fo__linking.md) - How links should be formatted
-- [Timestamp Format Convention](../../rules/conventions/formatting/ex-ru-co-fo__timestamp.md) - UTC+7 timestamp format
+- [Linking Convention](../../rules/conventions/formatting/linking.md) - How links should be formatted
+- [Timestamp Format Convention](../../rules/conventions/formatting/timestamp.md) - UTC+7 timestamp format
 
 ---
 

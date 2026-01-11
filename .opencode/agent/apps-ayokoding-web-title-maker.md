@@ -59,14 +59,14 @@ Create titles following conventions for tutorial types and levels.
 
 ## Reference
 
-- [Tutorial Naming Convention](../../rules/conventions/tutorial/ex-ru-co-tu__naming.md)
+- [Tutorial Naming Convention](../../rules/conventions/tutorial/naming.md)
 
 ## Reference Documentation
 
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Tutorial Naming Convention](../../rules/conventions/tutorial/ex-ru-co-tu__naming.md)
+- [Tutorial Naming Convention](../../rules/conventions/tutorial/naming.md)
 
 **Related Agents**:
 
@@ -75,8 +75,8 @@ Create titles following conventions for tutorial types and levels.
 
 **Related Conventions**:
 
-- [Tutorial Naming Convention](../../rules/conventions/tutorial/ex-ru-co-tu__naming.md)
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [Tutorial Naming Convention](../../rules/conventions/tutorial/naming.md)
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
 
 **Skills**:
 

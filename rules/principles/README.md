@@ -20,7 +20,7 @@ Foundational principles that guide all conventions and development practices in 
 
 Core principles establish the philosophical foundation for how we build software and write documentation. These principles are **Layer 1 in the six-layer architecture** - they serve the [Vision](../../vision/ex-vi__open-sharia-enterprise.md) (Layer 0) and govern all conventions and development practices (Layers 2-3).
 
-See [Repository Architecture](../ex-ru__repository-governance-architecture.md) for complete understanding of how principles fit into the governance hierarchy and how changes propagate through layers.
+See [Repository Architecture](..repository-governance-architecture.md) for complete understanding of how principles fit into the governance hierarchy and how changes propagate through layers.
 
 **Principles serve the vision and are stable values.** When creating or modifying any convention or practice, you must verify:
 
@@ -94,7 +94,7 @@ graph TD
 
 Universal principles that apply to all problem-solving contexts - beyond software, content, or any specific domain.
 
-#### 1. [Simplicity Over Complexity](./general/ex-ru-pr-ge__simplicity-over-complexity.md)
+#### 1. [Simplicity Over Complexity](./general/simplicity-over-complexity.md)
 
 Favor minimum viable abstraction and avoid over-engineering. Start simple and add complexity only when proven necessary.
 
@@ -110,7 +110,7 @@ Favor minimum viable abstraction and avoid over-engineering. Start simple and ad
 
 Principles specific to documentation, education, and communication - how we write, teach, and share knowledge.
 
-#### 2. [Accessibility First](./content/ex-ru-pr-co__accessibility-first.md)
+#### 2. [Accessibility First](./content/accessibility-first.md)
 
 Design for universal access from the start - WCAG compliance, color-blind friendly palettes, alt text, screen reader support. Accessibility benefits everyone.
 
@@ -122,7 +122,7 @@ Design for universal access from the start - WCAG compliance, color-blind friend
 - Semantic HTML
 - WCAG AA contrast standards
 
-#### 3. [Documentation First](./content/ex-ru-pr-co__documentation-first.md)
+#### 3. [Documentation First](./content/documentation-first.md)
 
 Documentation is not optional - it is mandatory. Every system, convention, feature, and architectural decision must be documented. Undocumented knowledge is lost knowledge.
 
@@ -135,7 +135,7 @@ Documentation is not optional - it is mandatory. Every system, convention, featu
 - No "self-documenting code" excuse
 - Documentation written BEFORE or WITH code
 
-#### 4. [No Time Estimates](./content/ex-ru-pr-co__no-time-estimates.md)
+#### 4. [No Time Estimates](./content/no-time-estimates.md)
 
 People work and learn at vastly different speeds. Focus on outcomes and deliverables, not arbitrary time constraints.
 
@@ -147,7 +147,7 @@ People work and learn at vastly different speeds. Focus on outcomes and delivera
 - Outcomes-focused language
 - Plan deliverables (not timelines)
 
-#### 5. [Progressive Disclosure](./content/ex-ru-pr-co__progressive-disclosure.md)
+#### 5. [Progressive Disclosure](./content/progressive-disclosure.md)
 
 Start simple and layer complexity gradually. Beginners see simple patterns, experts access advanced features when needed.
 
@@ -163,7 +163,7 @@ Start simple and layer complexity gradually. Beginners see simple patterns, expe
 
 Principles specific to software development practices - configuration, automation, and code organization.
 
-#### 6. [Automation Over Manual](./software-engineering/ex-ru-pr-se__automation-over-manual.md)
+#### 6. [Automation Over Manual](./software-engineering/automation-over-manual.md)
 
 Automate repetitive tasks to ensure consistency and reduce human error. Humans should focus on creative work, machines on repetitive tasks.
 
@@ -175,7 +175,7 @@ Automate repetitive tasks to ensure consistency and reduce human error. Humans s
 - Commitlint (message validation)
 - Link verification cache
 
-#### 7. [Explicit Over Implicit](./software-engineering/ex-ru-pr-se__explicit-over-implicit.md)
+#### 7. [Explicit Over Implicit](./software-engineering/explicit-over-implicit.md)
 
 Choose explicit composition and configuration over magic, convenience, and hidden behavior. Code should be transparent and understandable.
 
@@ -186,7 +186,7 @@ Choose explicit composition and configuration over magic, convenience, and hidde
 - Explicit frontmatter fields (not defaults)
 - Explicit color hex codes (not CSS color names)
 
-#### 8. [Immutability Over Mutability](./software-engineering/ex-ru-pr-se__immutability.md)
+#### 8. [Immutability Over Mutability](./software-engineering/immutability.md)
 
 Prefer immutable data structures over mutable state. Modifications create new values instead of changing existing ones.
 
@@ -198,7 +198,7 @@ Prefer immutable data structures over mutable state. Modifications create new va
 - Immer library for complex nested updates
 - Object.freeze for runtime immutability
 
-#### 9. [Pure Functions Over Side Effects](./software-engineering/ex-ru-pr-se__pure-functions.md)
+#### 9. [Pure Functions Over Side Effects](./software-engineering/pure-functions.md)
 
 Prefer pure functions (deterministic, no side effects) over functions with side effects. Same inputs always produce same outputs.
 
@@ -210,7 +210,7 @@ Prefer pure functions (deterministic, no side effects) over functions with side 
 - Easy testing without mocks
 - Composable function pipelines
 
-#### 10. [Reproducibility First](./software-engineering/ex-ru-pr-se__reproducibility.md)
+#### 10. [Reproducibility First](./software-engineering/reproducibility.md)
 
 Development environments and builds should be reproducible from the start. Eliminate "works on my machine" problems.
 
@@ -238,13 +238,13 @@ When documenting a new convention or practice, ALWAYS reference which principles
 
 **Core Principle**: Accessibility First
 
-**Convention**: [Color Accessibility Convention](../../conventions/formatting/ex-ru-co-fo__color-accessibility.md)
+**Convention**: [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md)
 
 - Verified accessible palette (Blue, Orange, Teal, Purple, Brown)
 - WCAG AA compliance required
 - Color-blind testing mandatory
 
-**Development**: [AI Agents Convention](../development/agents/ex-ru-de-ag__ai-agents.md)
+**Development**: [AI Agents Convention](../development/agents/ai-agents.md)
 
 - Agent color categorization uses accessible palette
 - Colored square emojis (🟦 🟩 🟨 🟪)
@@ -260,7 +260,7 @@ When documenting a new convention or practice, ALWAYS reference which principles
 
 **Principle**: Explicit Over Implicit (software engineering)
 
-**Practice**: [AI Agents Convention](../development/agents/ex-ru-de-ag__ai-agents.md)
+**Practice**: [AI Agents Convention](../development/agents/ai-agents.md)
 
 - Explicit `tools` field listing allowed tools
 - No default tool access
@@ -284,7 +284,7 @@ tools: Read, Glob, Grep
 
 **Principle**: Automation Over Manual (software engineering)
 
-**Practice**: [Code Quality Convention](../development/quality/ex-ru-de-qu__code.md)
+**Practice**: [Code Quality Convention](../development/quality/code.md)
 
 - Automated formatting via Prettier
 - Automated validation via git hooks
@@ -372,7 +372,7 @@ Check that changes:
 
 ## 📚 Related Documentation
 
-- [Repository Architecture](../ex-ru__repository-governance-architecture.md) - Complete six-layer architecture explanation
+- [Repository Architecture](..repository-governance-architecture.md) - Complete six-layer architecture explanation
 - [Vision](../../vision/ex-vi__open-sharia-enterprise.md) - Layer 0: Foundational purpose that inspires all principles
 - [Conventions Index](../../conventions/README.md) - Layer 2: Documentation conventions embodying these principles
 - [Development Index](../development/README.md) - Layer 3: Development practices embodying these principles

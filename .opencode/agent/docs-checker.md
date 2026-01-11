@@ -193,11 +193,11 @@ $$
 - Correct: `  - Text` (2 spaces BEFORE dash) for nested
 - Wrong: `-  Text` (spaces AFTER dash) - flag this pattern
 
-See [Indentation Convention](../../rules/conventions/formatting/ex-ru-co-fo__indentation.md).
+See [Indentation Convention](../../rules/conventions/formatting/indentation.md).
 
 ### 6. Rule Reference Formatting Validation
 
-**Two-tier formatting** per [Linking Convention](../../rules/conventions/formatting/ex-ru-co-fo__linking.md):
+**Two-tier formatting** per [Linking Convention](../../rules/conventions/formatting/linking.md):
 
 - **First mention**: MUST use markdown link `[Rule Name](./path/to/rule.md)`
 - **Subsequent mentions**: MUST use inline code `` `rule-name` ``
@@ -212,7 +212,7 @@ See [Indentation Convention](../../rules/conventions/formatting/ex-ru-co-fo__ind
 
 ### 7. Code Block Indentation Validation
 
-Per [Indentation Convention](../../rules/conventions/formatting/ex-ru-co-fo__indentation.md):
+Per [Indentation Convention](../../rules/conventions/formatting/indentation.md):
 
 - JavaScript/TypeScript: 2 spaces
 - Python: 4 spaces
@@ -597,11 +597,11 @@ Some sites block automation:
 **Documentation Conventions:**
 
 - `rules/conventions/content/ex-ru-co-co-factual-validation.md` - Factual validation methodology
-- `rules/conventions/content/ex-ru-co-co__quality.md` - Content quality standards
+- `rules/conventions/content/quality.md` - Content quality standards
 - `rules/conventions/formatting/ex-ru-co-fo-mathematical-notation.md` - LaTeX notation rules
 - `rules/conventions/formatting/ex-ru-co-fo-nested-code-fences.md` - Code fence nesting
-- `rules/conventions/formatting/ex-ru-co-fo__indentation.md` - Indentation standards
-- `rules/conventions/formatting/ex-ru-co-fo__linking.md` - Rule reference formatting
+- `rules/conventions/formatting/indentation.md` - Indentation standards
+- `rules/conventions/formatting/linking.md` - Rule reference formatting
 - `rules/development/infra/ex-ru-de-in-temporary-files.md` - Report file generation
 - `rules/development/quality/ex-ru-de-qu-criticality-levels.md` - Criticality system
 

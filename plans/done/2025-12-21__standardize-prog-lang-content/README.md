@@ -7,7 +7,7 @@
 
 ## Overview
 
-Bring all 5 programming languages in ayokoding-web (Golang, Java, Kotlin, Python, Rust) to the highest standard defined in the [Programming Language Content Standard](/Users/alami/wkf-repos/wahidyankf/open-sharia-enterprise/rules/conventions/tutorial/ex-ru-co-tu__programming-language-content.md).
+Bring all 5 programming languages in ayokoding-web (Golang, Java, Kotlin, Python, Rust) to the highest standard defined in the [Programming Language Content Standard](/Users/alami/wkf-repos/wahidyankf/open-sharia-enterprise/rules/conventions/tutorial/programming-language-content.md).
 
 **Current State**: Significant quality gaps exist across languages.
 
@@ -63,7 +63,7 @@ Detailed documentation in separate files:
 
 ## Context
 
-This plan implements the [Programming Language Content Standard](../../rules/conventions/tutorial/ex-ru-co-tu__programming-language-content.md) which establishes:
+This plan implements the [Programming Language Content Standard](../../rules/conventions/tutorial/programming-language-content.md) which establishes:
 
 - Universal directory structure for all programming languages
 - Coverage philosophy (0-95% proficiency scale)
@@ -109,11 +109,11 @@ The standard was derived from benchmark analysis of Golang, Python, and Java imp
 
 **Must Follow**:
 
-- [Programming Language Content Standard](../../rules/conventions/tutorial/ex-ru-co-tu__programming-language-content.md)
-- [Color Accessibility Convention](../../rules/conventions/formatting/ex-ru-co-fo__color-accessibility.md)
-- [Hugo Content Convention - ayokoding](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
-- [Content Quality Principles](../../rules/conventions/content/ex-ru-co-co__quality.md)
-- [Factual Validation Convention](../../rules/conventions/content/ex-ru-co-co__factual-validation.md)
+- [Programming Language Content Standard](../../rules/conventions/tutorial/programming-language-content.md)
+- [Color Accessibility Convention](../../rules/conventions/formatting/color-accessibility.md)
+- [Hugo Content Convention - ayokoding](../../rules/conventions/hugo/ayokoding.md)
+- [Content Quality Principles](../../rules/conventions/content/quality.md)
+- [Factual Validation Convention](../../rules/conventions/content/factual-validation.md)
 
 **Resource Constraints**:
 
@@ -141,7 +141,7 @@ The standard was derived from benchmark analysis of Golang, Python, and Java imp
 
 **Type**: Trunk Based Development (Direct to Main)
 
-All development happens on `main` branch with direct commits. See [Trunk Based Development Convention](../../rules/development/workflow/ex-ru-de-wo__trunk-based-development.md) for complete details.
+All development happens on `main` branch with direct commits. See [Trunk Based Development Convention](../../rules/development/workflow/trunk-based-development.md) for complete details.
 
 **Delivery Strategy**:
 

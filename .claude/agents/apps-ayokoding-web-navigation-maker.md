@@ -29,14 +29,14 @@ Calculate and update prev/next links based on weight ordering.
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
 
 ## Reference Documentation
 
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
 
 **Related Agents**:
 
@@ -45,7 +45,7 @@ Calculate and update prev/next links based on weight ordering.
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
 
 **Skills**:
 

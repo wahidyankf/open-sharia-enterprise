@@ -2,7 +2,7 @@
 
 This directory contains specialized AI agents for repository maintenance and documentation tasks. Each agent has specific responsibilities and tools to ensure consistency, quality, and adherence to project conventions.
 
-**Hierarchy Position**: AI agents are the **implementation layer** (Layer 4 in the six-layer hierarchy) that enforces conventions (Layer 2) and development practices (Layer 3). Each agent implements and validates specific rules, which ultimately trace back through [Core Principles](../rules/principles/README.md) (Layer 1) to the [Vision](../rules/vision/ex-ru-vi__open-sharia-enterprise.md) (Layer 0) of democratizing Shariah-compliant enterprise.
+**Hierarchy Position**: AI agents are the **implementation layer** (Layer 4 in the six-layer hierarchy) that enforces conventions (Layer 2) and development practices (Layer 3). Each agent implements and validates specific rules, which ultimately trace back through [Core Principles](../rules/principles/README.md) (Layer 1) to the [Vision](../rules/vision/open-sharia-enterprise.md) (Layer 0) of democratizing Shariah-compliant enterprise.
 
 **Traceability**: Every agent should document which conventions/practices it enforces. When creating new agents, reference the specific rules being implemented. This creates a clear chain: Vision → Principle → Convention/Practice → Agent.
 
@@ -851,7 +851,7 @@ Understanding which agents enforce which conventions helps trace decisions from 
 
 ### Example 1: Color Accessibility
 
-**Vision**: [Democratize Shariah-compliant enterprise](../rules/vision/ex-ru-vi__open-sharia-enterprise.md) - accessible to everyone
+**Vision**: [Democratize Shariah-compliant enterprise](../rules/vision/open-sharia-enterprise.md) - accessible to everyone
 
 **Principle**: [Accessibility First](../rules/principles/content/ex-ru-pr-co-accessibility-first.md)
 
@@ -866,7 +866,7 @@ Understanding which agents enforce which conventions helps trace decisions from 
 
 ### Example 2: Explicit Configuration
 
-**Vision**: [Transparent, verifiable Islamic finance](../rules/vision/ex-ru-vi__open-sharia-enterprise.md)
+**Vision**: [Transparent, verifiable Islamic finance](../rules/vision/open-sharia-enterprise.md)
 
 **Principle**: [Explicit Over Implicit](../rules/principles/software-engineering/ex-ru-pr-se-explicit-over-implicit.md)
 
@@ -880,11 +880,11 @@ Understanding which agents enforce which conventions helps trace decisions from 
 
 ### Example 3: Automation
 
-**Vision**: [Scale Islamic enterprise knowledge globally](../rules/vision/ex-ru-vi__open-sharia-enterprise.md)
+**Vision**: [Scale Islamic enterprise knowledge globally](../rules/vision/open-sharia-enterprise.md)
 
 **Principle**: [Automation Over Manual](../rules/principles/software-engineering/ex-ru-pr-se-automation-over-manual.md)
 
-**Practice**: [Code Quality Convention](../rules/development/quality/ex-ru-de-qu__code.md), [Maker-Checker-Fixer Pattern](../rules/development/pattern/ex-ru-de-pa-maker-checker-fixer.md)
+**Practice**: [Code Quality Convention](../rules/development/quality/code.md), [Maker-Checker-Fixer Pattern](../rules/development/pattern/ex-ru-de-pa-maker-checker-fixer.md)
 
 **Enforcing Agents** (Checker family):
 

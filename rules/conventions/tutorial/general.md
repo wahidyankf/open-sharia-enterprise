@@ -22,17 +22,17 @@ Standards for creating effective, engaging, and pedagogically sound tutorials in
 
 This convention implements the following core principles:
 
-- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Tutorials build knowledge incrementally through guided experience. Simple concepts first, complexity added gradually. Each section complete and useful before moving to the next.
+- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Tutorials build knowledge incrementally through guided experience. Simple concepts first, complexity added gradually. Each section complete and useful before moving to the next.
 
-- **[No Time Estimates](../../principles/content/ex-ru-pr-co__no-time-estimates.md)**: Tutorials focus on learning outcomes and skill development, not completion time. Everyone learns at different speeds - what matters is mastery, not how long it takes.
+- **[No Time Estimates](../../principles/content/no-time-estimates.md)**: Tutorials focus on learning outcomes and skill development, not completion time. Everyone learns at different speeds - what matters is mastery, not how long it takes.
 
-- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Learning-oriented content with clear structure, encouraging tone, and step-by-step guidance makes knowledge accessible to beginners. Reduces barriers to entry for learners from all backgrounds.
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: Learning-oriented content with clear structure, encouraging tone, and step-by-step guidance makes knowledge accessible to beginners. Reduces barriers to entry for learners from all backgrounds.
 
 ## Purpose
 
 This convention establishes comprehensive standards for tutorial content across all tutorial types (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example). It ensures tutorials are learning-oriented, progressively structured, and free of time estimates, providing effective educational experiences.
 
-**Note**: The By Example tutorial type has specialized standards defined in [By-Example Tutorial Convention](./ex-ru-co-tu__by-example.md) that extend the general requirements in this document for code-first learning.
+**Note**: The By Example tutorial type has specialized standards defined in [By-Example Tutorial Convention](./by-example.md) that extend the general requirements in this document for code-first learning.
 
 ## Scope
 
@@ -47,8 +47,8 @@ This convention establishes comprehensive standards for tutorial content across 
 
 ### What This Convention Does NOT Cover
 
-- **Tutorial naming** - Covered in [Tutorial Naming Convention](./ex-ru-co-tu__naming.md)
-- **Hugo site tutorials** - Hextra theme specifics covered in [ayokoding-web convention](../hugo/ex-ru-co-hu__ayokoding.md)
+- **Tutorial naming** - Covered in [Tutorial Naming Convention](./naming.md)
+- **Hugo site tutorials** - Hextra theme specifics covered in [ayokoding-web convention](../hugo/ayokoding.md)
 - **Non-tutorial content** - How-To guides, Reference, Explanation covered separately
 - **Tutorial validation** - Covered by docs\_\_tutorial-checker agent
 
@@ -62,7 +62,7 @@ Tutorials are **learning-oriented** documentation that guide learners through ac
 
 ## 🎯 Diátaxis Principles for Tutorials
 
-Tutorials follow the **Diátaxis framework** principles for learning-oriented documentation. See [Diátaxis Framework Convention](../meta/ex-ru-co-me__diataxis-framework.md) for complete framework details.
+Tutorials follow the **Diátaxis framework** principles for learning-oriented documentation. See [Diátaxis Framework Convention](../meta/diataxis-framework.md) for complete framework details.
 
 ### What Makes Documentation a Tutorial
 
@@ -119,7 +119,7 @@ updated: 2026-01-01
 # [Subject] Quick Start
 ```
 
-**Requirements**: - Title clearly indicates it's a tutorial/quick start - Description states learning outcome (not just topic) - Tags include subject and domain - Follows [File Naming Convention](../meta/ex-ru-co-me__file-naming.md): `tu-*` prefix
+**Requirements**: - Title clearly indicates it's a tutorial/quick start - Description states learning outcome (not just topic) - Tags include subject and domain - Follows [File Naming Convention](../meta/file-naming.md): `tu-*` prefix
 
 #### 2. Introduction (The Hook)
 
@@ -669,7 +669,7 @@ Imagine you're the CFO of CloudTech, a growing SaaS company. Your CEO wants to i
 
 **When to Use Diagrams**: - Showing processes or workflows - Illustrating relationships between concepts - Visualizing decision trees - Depicting system architecture or structure
 
-**Requirements**: - Every major concept has a diagram - Diagrams follow [Diagram and Schema Convention](../formatting/ex-ru-co-fo__diagrams.md) - Use Mermaid for all diagrams (Obsidian vault support) - Prefer vertical orientation for mobile-friendliness - Clear labels and styling - Legend or caption explaining the diagram
+**Requirements**: - Every major concept has a diagram - Diagrams follow [Diagram and Schema Convention](../formatting/diagrams.md) - Use Mermaid for all diagrams (Obsidian vault support) - Prefer vertical orientation for mobile-friendliness - Clear labels and styling - Legend or caption explaining the diagram
 
 **Example**:
 
@@ -715,7 +715,7 @@ If NPV is positive, the project creates value. If negative, it destroys value.
 
 **Requirements**:
 	- All formulas use LaTeX notation
-	- Follow [Mathematical Notation Convention](../formatting/ex-ru-co-fo__mathematical-notation.md)
+	- Follow [Mathematical Notation Convention](../formatting/mathematical-notation.md)
 	- **CRITICAL**: Use `$$` for display math (not single `$`)
 	- **CRITICAL**: All `\begin{align}` blocks MUST use `$$` delimiters
 	- **Obsidian note**: Both `$$...$$` and `$$ ... $$` (with spaces) work, but prefer no spaces for consistency with GitHub
@@ -863,7 +863,7 @@ $1,000 $1,259
 
 **When to Include Screenshots**: - Tool/software tutorials - UI/UX walkthroughs - Configuration steps - Expected results visualization
 
-**Requirements**: - High resolution (readable) - Annotated with arrows/callouts - Crop to relevant area - Follow [Temporary Files Convention](../development/infra/ex-ru-de-in__temporary-files.md) for storage - Alt text for accessibility
+**Requirements**: - High resolution (readable) - Annotated with arrows/callouts - Crop to relevant area - Follow [Temporary Files Convention](../development/infra/temporary-files.md) for storage - Alt text for accessibility
 
 ## 🎮 Hands-On Elements Requirements
 
@@ -1105,7 +1105,7 @@ Technical quality ensures tutorials are accurate, accessible, and maintainable.
 
 ### Mathematical Notation
 
-**Requirements**: - Follow [Mathematical Notation Convention](../formatting/ex-ru-co-fo__mathematical-notation.md) - Use LaTeX for all formulas - **CRITICAL**: Display-level equations MUST use `$$` delimiters - **CRITICAL**: Single `$` ONLY for inline math (on same line as text) - **CRITICAL**: All `\begin{align}` blocks MUST use `$$` delimiters - Define all variables after formulas - Use proper mathematical typography
+**Requirements**: - Follow [Mathematical Notation Convention](../formatting/mathematical-notation.md) - Use LaTeX for all formulas - **CRITICAL**: Display-level equations MUST use `$$` delimiters - **CRITICAL**: Single `$` ONLY for inline math (on same line as text) - **CRITICAL**: All `\begin{align}` blocks MUST use `$$` delimiters - Define all variables after formulas - Use proper mathematical typography
 
 **Correct Display Math**:
 
@@ -1153,7 +1153,7 @@ $
 
 ### File Organization
 
-**Naming**: - Follow [File Naming Convention](../meta/ex-ru-co-me__file-naming.md) - Tutorials use `tu-*` prefix - Business and Finance tutorials use `tu-bufi__*` pattern - Descriptive, kebab-case names
+**Naming**: - Follow [File Naming Convention](../meta/\*` pattern - Descriptive, kebab-case names
 
 **Location**: - All tutorials in `docs/tutorials/` - Organized by domain or subject - Business and Finance in `docs/tutorials/business-and-finance/`
 
@@ -1167,12 +1167,12 @@ docs/tutorials/ai-engineering/tu-aien__chat-with-pdf.md
 
 ### Cross-References
 
-**Requirements**: - Follow [Linking Convention](../formatting/ex-ru-co-fo__linking.md) - Use relative paths with `.md` extension - Link to related tutorials, how-to guides, references - Link to prerequisite material - Link to next steps
+**Requirements**: - Follow [Linking Convention](../formatting/linking.md) - Use relative paths with `.md` extension - Link to related tutorials, how-to guides, references - Link to prerequisite material - Link to next steps
 
 **Format**:
 
 ```markdown
-For more details on the Diátaxis framework, see [Diátaxis Framework Convention](../meta/ex-ru-co-me__diataxis-framework.md).
+For more details on the Diátaxis framework, see [Diátaxis Framework Convention](../meta/diataxis-framework.md).
 
 If you're new to finance, start with [Accounting](../business-and-finance/tu-bufi__accounting.md).
 ```
@@ -1707,12 +1707,12 @@ Test your understanding with these realistic scenarios.
 
 This tutorial convention builds upon and references:
 
-- [Diátaxis Framework Convention](../meta/ex-ru-co-me__diataxis-framework.md) - Four documentation categories framework
-- [Mathematical Notation Convention](../formatting/ex-ru-co-fo__mathematical-notation.md) - LaTeX usage standards
-- [Diagram and Schema Convention](../formatting/ex-ru-co-fo__diagrams.md) - Mermaid diagram standards
-- [File Naming Convention](../meta/ex-ru-co-me__file-naming.md) - Tutorial file naming (`tu-*` prefix)
-- [Linking Convention](../formatting/ex-ru-co-fo__linking.md) - Cross-reference standards
-- [Emoji Usage Convention](../formatting/ex-ru-co-fo__emoji.md) - Semantic emoji usage
+- [Diátaxis Framework Convention](../meta/diataxis-framework.md) - Four documentation categories framework
+- [Mathematical Notation Convention](../formatting/mathematical-notation.md) - LaTeX usage standards
+- [Diagram and Schema Convention](../formatting/diagrams.md) - Mermaid diagram standards
+- [File Naming Convention](../meta/file-naming.md) - Tutorial file naming (`tu-*` prefix)
+- [Linking Convention](../formatting/linking.md) - Cross-reference standards
+- [Emoji Usage Convention](../formatting/emoji.md) - Semantic emoji usage
 
 ## 🌐 External Resources
 

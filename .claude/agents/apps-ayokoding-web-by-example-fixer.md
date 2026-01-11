@@ -91,7 +91,7 @@ The `wow-assessing-criticality-confidence` Skill provides confidence definitions
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md) - Complete standards
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md) - Complete standards
 - [By Example Content Standard](../../rules/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
 
 **Related Agents:**

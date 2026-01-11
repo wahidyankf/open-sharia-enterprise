@@ -187,12 +187,12 @@ Big-bang implementation with logical phases completed sequentially on main branc
 
 **Conventions:**
 
-- [Plans Organization Convention](../../../rules/conventions/project/ex-ru-co-pr__plans-organization.md) - Plan structure standards
+- [Plans Organization Convention](../../../rules/conventions/project/plans-organization.md) - Plan structure standards
 
 **Development Practices:**
 
-- [Maker-Checker-Fixer Pattern](../../../rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md) - Seven agent families
-- [AI Agents Convention](../../../rules/development/agents/ex-ru-de-ag__ai-agents.md) - Agent standards
+- [Maker-Checker-Fixer Pattern](../../../rules/development/pattern/maker-checker-fixer.md) - Seven agent families
+- [AI Agents Convention](../../../rules/development/agents/ai-agents.md) - Agent standards
 
 ## Next Steps
 

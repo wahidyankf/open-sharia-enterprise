@@ -304,7 +304,7 @@ See wow\_\_generating-validation-reports Skill for report structure.
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Repository Governance Architecture](../../rules/ex-ru__repository-governance-architecture.md)
+- [Repository Governance Architecture](../../rulesrepository-governance-architecture.md)
 
 **Related Agents**:
 
@@ -313,8 +313,8 @@ See wow\_\_generating-validation-reports Skill for report structure.
 
 **Related Conventions**:
 
-- [AI Agents Convention](../../rules/development/agents/ex-ru-de-ag__ai-agents.md)
-- [Fixer Confidence Levels](../../rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md)
+- [AI Agents Convention](../../rules/development/agents/ai-agents.md)
+- [Fixer Confidence Levels](../../rules/development/quality/fixer-confidence-levels.md)
 
 **Skills**:
 

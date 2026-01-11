@@ -421,16 +421,16 @@ npx lint-staged
 
 ## 🔗 Related Principles
 
-- [Simplicity Over Complexity](../general/ex-ru-pr-ge__simplicity-over-complexity.md) - Explicit configuration is often simpler than magic
-- [Accessibility First](../content/ex-ru-pr-co__accessibility-first.md) - Explicit configuration improves understanding for all users
-- [Automation Over Manual](./ex-ru-pr-se__automation-over-manual.md) - Automate explicit checks, not implicit assumptions
+- [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Explicit configuration is often simpler than magic
+- [Accessibility First](../content/accessibility-first.md) - Explicit configuration improves understanding for all users
+- [Automation Over Manual](./automation-over-manual.md) - Automate explicit checks, not implicit assumptions
 
 ## 📚 Related Conventions
 
-- [AI Agents Convention](../../development/agents/ex-ru-de-ag__ai-agents.md) - Explicit tool permissions
-- [File Naming Convention](../../conventions/meta/ex-ru-co-me__file-naming.md) - Explicit prefixes
-- [Color Accessibility Convention](../../conventions/formatting/ex-ru-co-fo__color-accessibility.md) - Explicit hex codes
-- [Code Quality Convention](../../development/quality/ex-ru-de-qu__code.md) - Explicit git hooks
+- [AI Agents Convention](../../development/agents/ai-agents.md) - Explicit tool permissions
+- [File Naming Convention](../../conventions/meta/file-naming.md) - Explicit prefixes
+- [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - Explicit hex codes
+- [Code Quality Convention](../../development/quality/code.md) - Explicit git hooks
 
 ## 📖 References
 

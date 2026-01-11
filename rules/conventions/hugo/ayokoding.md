@@ -22,11 +22,11 @@ This document defines Hugo content conventions specific to **ayokoding-web** - a
 
 This convention implements the following core principles:
 
-- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Weight-based navigation ordering allows complexity to be introduced gradually. Main sections (weight 1-10) for beginners, advanced topics later (weight 20+). Overview/ikhtisar pages provide entry points appropriate for each skill level.
+- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Weight-based navigation ordering allows complexity to be introduced gradually. Main sections (weight 1-10) for beginners, advanced topics later (weight 20+). Overview/ikhtisar pages provide entry points appropriate for each skill level.
 
-- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Bilingual content (Indonesian/English) serves diverse audiences. Consistent structure aids screen readers. Color-blind friendly palettes in visual content.
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: Bilingual content (Indonesian/English) serves diverse audiences. Consistent structure aids screen readers. Color-blind friendly palettes in visual content.
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Weight values explicitly control navigation order - no magic sorting algorithms. Frontmatter fields clearly state language, type, and navigation position.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Weight values explicitly control navigation order - no magic sorting algorithms. Frontmatter fields clearly state language, type, and navigation position.
 
 ## Purpose
 
@@ -46,15 +46,15 @@ This convention defines content creation standards specific to the ayokoding-web
 
 ### What This Convention Does NOT Cover
 
-- **Shared Hugo conventions** - Covered in [Hugo Content Shared Convention](./ex-ru-co-hu__shared.md)
-- **Programming language content structure** - Covered in [Programming Language Content Standard](../tutorial/ex-ru-co-tu__programming-language-content.md)
-- **Tutorial naming** - Covered in [Tutorial Naming Convention](../tutorial/ex-ru-co-tu__naming.md)
-- **Hugo theme development** - Covered in [Hugo Development Convention](../development/hugo/ex-ru-de-hu__development.md)
+- **Shared Hugo conventions** - Covered in [Hugo Content Shared Convention](./shared.md)
+- **Programming language content structure** - Covered in [Programming Language Content Standard](../tutorial/programming-language-content.md)
+- **Tutorial naming** - Covered in [Tutorial Naming Convention](../tutorial/naming.md)
+- **Hugo theme development** - Covered in [Hugo Development Convention](../development/hugo/development.md)
 - **Deployment** - Covered by ayokoding-web-deployer agent
 
 ## Prerequisites
 
-**IMPORTANT**: This document assumes familiarity with [Shared Hugo Content Conventions](./ex-ru-co-hu__shared.md).
+**IMPORTANT**: This document assumes familiarity with [Shared Hugo Content Conventions](./shared.md).
 
 Read the shared conventions first, as they cover:
 
@@ -153,7 +153,7 @@ System.out.println(result);      // => Output: 10-transformed
 - Complex operations get detailed breakdowns
 - Avoid repetitive patterns across similar code
 
-## **Detailed guidance**: See [By-Example Tutorial Convention](../tutorial/ex-ru-co-tu__by-example.md#educational-comment-standards) for comprehensive annotation patterns and examples.
+## **Detailed guidance**: See [By-Example Tutorial Convention](../tutorial/by-example.md#educational-comment-standards) for comprehensive annotation patterns and examples.
 
 ## Hextra Theme
 
@@ -203,7 +203,7 @@ params:
 - `{{< steps >}}` - Numbered step sequence
 - `{{< tabs >}}` - Tabbed content
 
-**CRITICAL: Hextra shortcodes require `{{% %}}` delimiters** (see [Shortcode Delimiter Rules](./ex-ru-co-hu__shared.md#2-shortcodes) in shared conventions).
+**CRITICAL: Hextra shortcodes require `{{% %}}` delimiters** (see [Shortcode Delimiter Rules](./shared.md#2-shortcodes) in shared conventions).
 
 **Example Usage**:
 
@@ -1230,7 +1230,7 @@ weight: 1000000  # Level 7 base
 weight: 999999   # WRONG! Would appear before overview
 ```
 
-**Note**: This complements the [Programming Language Content Standard](../tutorial/ex-ru-co-tu__programming-language-content.md) which mandates cookbook at position 3 in how-to directories (overview at position 1, cookbook at position 3 = weight 1000001).
+**Note**: This complements the [Programming Language Content Standard](../tutorial/programming-language-content.md) which mandates cookbook at position 3 in how-to directories (overview at position 1, cookbook at position 3 = weight 1000001).
 
 #### Title Format for Overview/Ikhtisar Files
 
@@ -1407,7 +1407,7 @@ content/en/learn/swe/prog-lang/golang/
 
 **Note**: This pattern is OPTIONAL. Each topic decides independently based on content volume and diversity.
 
-**Programming Language Content**: For programming languages specifically (e.g., Golang, Python, Java, Kotlin, TypeScript, Rust), this Diátaxis structure is MANDATORY and follows the [Programming Language Content Standard](../tutorial/ex-ru-co-tu__programming-language-content.md). See that convention for complete requirements including:
+**Programming Language Content**: For programming languages specifically (e.g., Golang, Python, Java, Kotlin, TypeScript, Rust), this Diátaxis structure is MANDATORY and follows the [Programming Language Content Standard](../tutorial/programming-language-content.md). See that convention for complete requirements including:
 
 - Universal directory structure (5 tutorial levels, cookbook, how-to guides, best practices, anti-patterns)
 - Coverage philosophy (0-5%, 5-30%, 0-60%, 60-85%, 85-95%, cookbook)
@@ -2097,7 +2097,7 @@ static/
 
 **Required Reading**:
 
-- [Shared Hugo Content Conventions](./ex-ru-co-hu__shared.md) - Read this first!
+- [Shared Hugo Content Conventions](./shared.md) - Read this first!
 
 **Theme Documentation**:
 

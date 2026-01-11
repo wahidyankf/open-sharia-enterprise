@@ -145,7 +145,7 @@ Update status to "Complete", add summary and recommendation (approve/revise).
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [Plans Organization Convention](../../rules/conventions/project/ex-ru-co-pr-plans-organization.md) - Plan standards
-- [Code Quality Convention](../../rules/development/quality/ex-ru-de-qu__code.md) - Quality standards
+- [Code Quality Convention](../../rules/development/quality/code.md) - Quality standards
 
 **Related Agents:**
 

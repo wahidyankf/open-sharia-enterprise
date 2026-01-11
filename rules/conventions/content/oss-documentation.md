@@ -20,9 +20,9 @@ Standards for creating and maintaining repository-level documentation files that
 
 This convention implements the following core principles:
 
-- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: README quality standards require clear, scannable content accessible to diverse audiences (non-native English speakers, screen reader users, developers of all skill levels).
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: README quality standards require clear, scannable content accessible to diverse audiences (non-native English speakers, screen reader users, developers of all skill levels).
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Architecture Decision Records document the "why" behind decisions explicitly. No hidden assumptions or implicit knowledge - reasoning is stated clearly for future maintainers.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Architecture Decision Records document the "why" behind decisions explicitly. No hidden assumptions or implicit knowledge - reasoning is stated clearly for future maintainers.
 
 ## Purpose
 
@@ -223,8 +223,8 @@ All CONTRIBUTING.md files must include:
 
 4. **Code Conventions**
    - Coding style (link to style guide if detailed)
-   - Commit message format (link to [Commit Message Convention](../development/workflow/ex-ru-de-wo__commit-messages.md))
-   - Branch naming (link to [Trunk Based Development](../development/workflow/ex-ru-de-wo__trunk-based-development.md))
+   - Commit message format (link to [Commit Message Convention](../development/workflow/commit-messages.md))
+   - Branch naming (link to [Trunk Based Development](../development/workflow/trunk-based-development.md))
    - Testing requirements
 
 5. **Contribution Process**
@@ -326,7 +326,7 @@ Thank you for considering contributing to Open Sharia Enterprise! We appreciate 
 
 ## Making Changes
 
-1. Create a branch (or work on main for small changes - see [Trunk Based Development](../../development/workflow/ex-ru-de-wo__trunk-based-development.md))
+1. Create a branch (or work on main for small changes - see [Trunk Based Development](../../development/workflow/trunk-based-development.md))
 2. Make your changes
 3. Add tests for new functionality
 4. Ensure all tests pass: `npm test`
@@ -345,7 +345,7 @@ Thank you for considering contributing to Open Sharia Enterprise! We appreciate 
 
 ## Code Conventions
 
-- **Commit Messages:** Follow [Conventional Commits](../../development/workflow/ex-ru-de-wo__commit-messages.md)
+- **Commit Messages:** Follow [Conventional Commits](../../development/workflow/commit-messages.md)
 - **Code Style:** Enforced by Prettier (runs on commit)
 - **TypeScript:** Use strict mode, no `any` types without justification
 - **Tests:** Required for all new features and bug fixes
@@ -889,11 +889,11 @@ When setting up a new repository:
 
 ## 🔗 Related Documentation
 
-- [Diátaxis Framework](../meta/ex-ru-co-me__diataxis-framework.md) - Organization of internal documentation
-- [File Naming Convention](../meta/ex-ru-co-me__file-naming.md) - Naming files within `docs/`
-- [Linking Convention](../formatting/ex-ru-co-fo__linking.md) - How to link between documentation
-- [Commit Message Convention](../development/workflow/ex-ru-de-wo__commit-messages.md) - Git commit standards
-- [Trunk Based Development](../development/workflow/ex-ru-de-wo__trunk-based-development.md) - Git workflow
+- [Diátaxis Framework](../meta/diataxis-framework.md) - Organization of internal documentation
+- [File Naming Convention](../meta/file-naming.md) - Naming files within `docs/`
+- [Linking Convention](../formatting/linking.md) - How to link between documentation
+- [Commit Message Convention](../development/workflow/commit-messages.md) - Git commit standards
+- [Trunk Based Development](../development/workflow/trunk-based-development.md) - Git workflow
 
 ## 📖 Further Reading
 

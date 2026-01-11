@@ -327,7 +327,7 @@ To verify relative path:
 
 ### Link Syntax Requirements
 
-All links must follow [Linking Convention](../../rules/conventions/formatting/ex-ru-co-fo__linking.md):
+All links must follow [Linking Convention](../../rules/conventions/formatting/linking.md):
 
 - Use relative paths (`./ or ../`)
 - Include `.md` extension
@@ -643,8 +643,8 @@ Proceed anyway? (Please confirm)
 
 - `rules/conventions/README.md` - Index of all conventions
 - `rules/conventions/meta/ex-ru-co-me-file-naming.md` - How to name files with hierarchical prefixes (required reading)
-- `rules/conventions/formatting/ex-ru-co-fo__linking.md` - How to link between files with GitHub-compatible markdown (required reading)
-- `rules/conventions/formatting/ex-ru-co-fo__emoji.md` - When and where to use emojis
+- `rules/conventions/formatting/linking.md` - How to link between files with GitHub-compatible markdown (required reading)
+- `rules/conventions/formatting/emoji.md` - When and where to use emojis
 
 **Related Agents:**
 

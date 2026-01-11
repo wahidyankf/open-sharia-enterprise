@@ -30,7 +30,7 @@ The `rules/` directory groups all governance documentation together:
 - **Layer 3: Development** - HOW we develop software
 - **Layer 5: Workflows** - WHEN we run multi-step orchestrated processes
 
-See [Repository Governance Architecture](./ex-ru__repository-governance-architecture.md) for complete explanation of the six-layer architecture, layer characteristics, traceability examples, and usage guidance.
+See [Repository Governance Architecture](.repository-governance-architecture.md) for complete explanation of the six-layer architecture, layer characteristics, traceability examples, and usage guidance.
 
 ## 📊 Six-Layer Architecture
 
@@ -103,7 +103,7 @@ graph TD
 
 ### Architecture Documentation
 
-- **[Repository Governance Architecture](./ex-ru__repository-governance-architecture.md)** - Comprehensive guide to the six-layer architecture
+- **[Repository Governance Architecture](.repository-governance-architecture.md)** - Comprehensive guide to the six-layer architecture
   - Complete layer characteristics and relationships
   - Traceability examples showing Vision → Principles → Conventions/Development → Agents → Workflows
   - Usage guidance for creating, changing, and troubleshooting governance content

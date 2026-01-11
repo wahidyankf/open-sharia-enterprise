@@ -1441,7 +1441,7 @@ def test_validate_agent_definition():
 | ---------------------------------------------------- | ------------------------------------------------------------ |
 | `CLAUDE.md`                                          | Update agent source location, sync workflow                  |
 | `AGENTS.md`                                          | Update agent source location, sync workflow                  |
-| `rules/development/agents/ex-ru-de-ag__ai-agents.md` | Add "Source of Truth" section, document tool-agnostic format |
+| `rules/development/agents/ai-agents.md`              | Add "Source of Truth" section, document tool-agnostic format |
 | `rules/ex-ru__repository-governance-architecture.md` | Update Layer 4 to reference docs source                      |
 | `.claude/agents/README.md`                           | Add generated banner, link to source                         |
 | `.opencode/agent/README.md`                          | Add generated banner, link to source                         |
@@ -1809,7 +1809,7 @@ Several agents currently interact with `.claude/agents/`, `.opencode/agent/`, an
 
 **Implementation changes**:
 
-- Update `rules/workflows/wow/ex-ru-wf-wo__rules-quality-gate.md`:
+- Update `rules/workflows/wow/rules-quality-gate.md`:
   - Add "Scope Clarification" section explaining source-only validation
   - Document that it validates `rules/agents/` (source)
   - Document that it skips `.claude/agents/`, `.claude/skills/`, `.opencode/agent/`, `.opencode/skills/` (generated)

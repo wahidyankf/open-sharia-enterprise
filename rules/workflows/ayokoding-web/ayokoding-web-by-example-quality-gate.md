@@ -76,7 +76,7 @@ This workflow implements the **Maker-Checker-Fixer pattern** to ensure by-exampl
 
 ## Execution Mode
 
-**Current Mode**: Manual Orchestration (see [Workflow Execution Modes Convention](../meta/ex-ru-wf-me__execution-modes.md))
+**Current Mode**: Manual Orchestration (see [Workflow Execution Modes Convention](../meta/execution-modes.md))
 
 This workflow is currently executed through **manual orchestration** where the AI assistant (Claude Code or OpenCode) follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
 
@@ -134,7 +134,7 @@ graph TB
 
 **Option A: Manual creation** (human author)
 
-- Write examples following [By-Example Tutorial Convention](../../conventions/tutorial/ex-ru-co-tu__by-example.md)
+- Write examples following [By-Example Tutorial Convention](../../conventions/tutorial/by-example.md)
 - Focus on educational value and code quality
 - Don't worry about perfect compliance (checker will catch issues)
 
@@ -185,7 +185,7 @@ prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/progr
 - Specific line numbers for issues
 - Actionable recommendations
 
-**UUID Chain Tracking**: Checker generates 6-char UUID and writes to `generated-reports/.execution-chain-{scope}` (where scope is derived from tutorial path, e.g., "golang"). See [Temporary Files Convention](../../development/infra/ex-ru-de-in__temporary-files.md#uuid-chain-generation) for details.
+**UUID Chain Tracking**: Checker generates 6-char UUID and writes to `generated-reports/.execution-chain-{scope}` (where scope is derived from tutorial path, e.g., "golang"). See [Temporary Files Convention](../../development/infra/temporary-files.md#uuid-chain-generation) for details.
 
 **Depends on**: Step 1 completion
 
@@ -737,7 +737,7 @@ Track across executions:
 
 This workflow is part of the **Tutorial Quality Family**:
 
-- **[Maker-Checker-Fixer Pattern](../../development/pattern/ex-ru-de-pa__maker-checker-fixer.md)**: General pattern
+- **[Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md)**: General pattern
 - **docs-tutorial workflow**: General tutorial validation
 - **ayokoding-web-by-example-quality-gate** (this workflow): Specialized for by-example tutorials
 - **ayokoding-web workflow**: Hugo content validation
@@ -764,9 +764,9 @@ This workflow is part of the **Tutorial Quality Family**:
 
 ## Related Documentation
 
-- **[By-Example Tutorial Convention](../../conventions/tutorial/ex-ru-co-tu__by-example.md)**: Quality standards
-- **[Maker-Checker-Fixer Pattern](../../development/pattern/ex-ru-de-pa__maker-checker-fixer.md)**: Workflow pattern
-- **[Fixer Confidence Levels](../../development/quality/ex-ru-de-qu__fixer-confidence-levels.md)**: Confidence assessment
+- **[By-Example Tutorial Convention](../../conventions/tutorial/by-example.md)**: Quality standards
+- **[Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md)**: Workflow pattern
+- **[Fixer Confidence Levels](../../development/quality/fixer-confidence-levels.md)**: Confidence assessment
 - **[`apps-ayokoding-web-by-example-checker` agent](../../.claude/agents/apps-ayokoding-web-by-example-checker.md)**: Validation agent
 - **[`apps-ayokoding-web-by-example-fixer` agent](../../.claude/agents/apps-ayokoding-web-by-example-fixer.md)**: Fixing agent
 - **[`apps-ayokoding-web-by-example-maker` agent](../../.claude/agents/apps-ayokoding-web-by-example-maker.md)**: Content creation agent

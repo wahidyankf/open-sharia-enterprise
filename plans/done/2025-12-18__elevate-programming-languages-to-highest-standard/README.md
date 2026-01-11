@@ -11,7 +11,7 @@
 
 ## Overview
 
-This plan outlines the comprehensive enhancement of all 4 programming language content on ayokoding-web (Python, Java, Kotlin, Golang) to meet the highest standards defined in the [Programming Language Content Standard](../../../rules/conventions/tutorial/ex-ru-co-tu__programming-language-content.md). The project brings all languages to production-ready quality with complete tutorials, cookbooks, reference documentation, and validation.
+This plan outlines the comprehensive enhancement of all 4 programming language content on ayokoding-web (Python, Java, Kotlin, Golang) to meet the highest standards defined in the [Programming Language Content Standard](../../../rules/conventions/tutorial/programming-language-content.md). The project brings all languages to production-ready quality with complete tutorials, cookbooks, reference documentation, and validation.
 
 ### Goals
 

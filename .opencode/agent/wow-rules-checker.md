@@ -120,7 +120,7 @@ Skill: `wow-generating-validation-reports` (progressive streaming)
 - `rules/conventions/` - Layer 2: WHAT documentation rules
 - `rules/development/` - Layer 3: HOW software practices
 - `rules/workflows/` - Layer 5: WHEN multi-step processes
-- `rules/ex-ru__repository-governance-architecture.md` - Architecture guide
+- `rulesrepository-governance-architecture.md` - Architecture guide
 - `rules/README.md` - Rules index
 - `docs/explanation/README.md` - Explanation index
 
@@ -373,7 +373,7 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
    - `rules/conventions/**/*.md`
    - `rules/development/**/*.md`
    - `rules/workflows/**/*.md`
-   - `rules/ex-ru__repository-governance-architecture.md`
+   - `rulesrepository-governance-architecture.md`
    - `rules/README.md`
    - `docs/explanation/README.md`
 
@@ -428,8 +428,8 @@ Update report status to "Complete", add summary statistics.
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Repository Governance Architecture](../../rules/ex-ru__repository-governance-architecture.md)
-- [AI Agents Convention](../../rules/development/agents/ex-ru-de-ag__ai-agents.md)
+- [Repository Governance Architecture](../../rulesrepository-governance-architecture.md)
+- [AI Agents Convention](../../rules/development/agents/ai-agents.md)
 
 **Related Agents**:
 
@@ -438,8 +438,8 @@ Update report status to "Complete", add summary statistics.
 
 **Related Conventions**:
 
-- [AI Agents Convention](../../rules/development/agents/ex-ru-de-ag__ai-agents.md)
-- [Maker-Checker-Fixer Pattern](../../rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md)
+- [AI Agents Convention](../../rules/development/agents/ai-agents.md)
+- [Maker-Checker-Fixer Pattern](../../rules/development/pattern/maker-checker-fixer.md)
 
 **Skills**:
 

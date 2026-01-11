@@ -698,7 +698,7 @@ The following are explicitly **not** included in this plan:
   - `scripts/convert-agents-to-opencode.py` (reference for format mapping)
   - `scripts/validate-opencode-agents.py` (validation patterns)
 - Documentation:
-  - `rules/development/agents/ex-ru-de-ag__ai-agents.md` (agent conventions)
+  - `rules/development/agents/ai-agents.md` (agent conventions)
   - `docs/explanation/ex-ru__repository-governance-architecture.md` (governance model)
 - Git hooks: `.husky/pre-commit` (integration point)
 

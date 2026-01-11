@@ -127,13 +127,13 @@ find .claude/agents -name "*.md" -type f -exec sed -i 's|rules/|rules/|g' {} \;
 
 **Pattern Examples**:
 
-- `See: [convention writing](rules/conventions/content/ex-ru-co-co__convention-writing.md)`
+- `See: [convention writing](rules/conventions/content/convention-writing.md)`
 - `[Reference docs](../../rules/conventions/)`
 - `Rules location: rules/`
 
 **After**:
 
-- `See: [convention writing](rules/conventions/content/ex-ru-co-co__convention-writing.md)`
+- `See: [convention writing](rules/conventions/content/convention-writing.md)`
 - `[Reference docs](../../rules/conventions/)`
 - `Rules location: rules/`
 
@@ -151,12 +151,12 @@ find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|rules/|rules/|g' {}
 
 **Pattern Examples**:
 
-- `See: [AI agents convention](../../rules/development/agents/ex-ru-de-ag__ai-agents.md)`
+- `See: [AI agents convention](../../rules/development/agents/ai-agents.md)`
 - `Related: rules/principles/`
 
 **After**:
 
-- `See: [AI agents convention](../../rules/development/agents/ex-ru-de-ag__ai-agents.md)`
+- `See: [AI agents convention](../../rules/development/agents/ai-agents.md)`
 - `Related: rules/principles/`
 
 ---
@@ -369,7 +369,7 @@ find rules -name "*.md" -type f -exec sed -i 's|rules/|rules/|g' {} \;
 ```markdown
 ## Related Conventions
 
-- [AI Agents Convention](../development/agents/ex-ru-de-ag__ai-agents.md)
+- [AI Agents Convention](../development/agents/ai-agents.md)
 - [Directory structure](../../rules/conventions/)
 ```
 
@@ -378,7 +378,7 @@ find rules -name "*.md" -type f -exec sed -i 's|rules/|rules/|g' {} \;
 ```markdown
 ## Related Conventions
 
-- [AI Agents Convention](../development/agents/ex-ru-de-ag__ai-agents.md)
+- [AI Agents Convention](../development/agents/ai-agents.md)
 - [Directory structure](../../conventions/)
 ```
 

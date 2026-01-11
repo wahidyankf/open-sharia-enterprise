@@ -23,14 +23,14 @@ These principles define **WHY we value fundamental approaches** that transcend s
 
 ## Principles
 
-- [Simplicity Over Complexity](./ex-ru-pr-ge__simplicity-over-complexity.md) - Favor minimum viable abstraction and avoid over-engineering. Start simple and add complexity only when proven necessary
+- [Simplicity Over Complexity](./simplicity-over-complexity.md) - Favor minimum viable abstraction and avoid over-engineering. Start simple and add complexity only when proven necessary
 
 ## Related Documentation
 
 - [Core Principles Index](../README.md) - All foundational principles
 - [Software Engineering Principles](../software-engineering/README.md) - Domain-specific SE principles
 - [Content Principles](../content/README.md) - Domain-specific content principles
-- [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
+- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
 
 ---
 

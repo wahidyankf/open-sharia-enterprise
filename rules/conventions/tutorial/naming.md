@@ -20,11 +20,11 @@ This document defines the standard tutorial types and naming conventions used ac
 
 This convention implements the following core principles:
 
-- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Six tutorial levels (Initial Setup through Cookbook) provide graduated learning paths. Beginners start simple (0-5% coverage), advanced users access deep content (85-95%). Each level is complete and useful on its own.
+- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Six tutorial levels (Initial Setup through Cookbook) provide graduated learning paths. Beginners start simple (0-5% coverage), advanced users access deep content (85-95%). Each level is complete and useful on its own.
 
-- **[No Time Estimates](../../principles/content/ex-ru-pr-co__no-time-estimates.md)**: Tutorial levels defined by knowledge coverage percentages (0-5%, 5-30%, etc.) instead of completion time. Focus is on WHAT you'll learn and HOW DEEP, not how long it takes.
+- **[No Time Estimates](../../principles/content/no-time-estimates.md)**: Tutorial levels defined by knowledge coverage percentages (0-5%, 5-30%, etc.) instead of completion time. Focus is on WHAT you'll learn and HOW DEEP, not how long it takes.
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Tutorial names explicitly state their level and scope ("Initial Setup", "Beginner Tutorial", "Advanced Guide"). No guessing about difficulty or depth - it's clear from the title.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Tutorial names explicitly state their level and scope ("Initial Setup", "Beginner Tutorial", "Advanced Guide"). No guessing about difficulty or depth - it's clear from the title.
 
 ## Scope
 
@@ -39,8 +39,8 @@ This convention implements the following core principles:
 
 ### What This Convention Does NOT Cover
 
-- **Tutorial content structure** - Covered in [Tutorials Convention](./ex-ru-co-tu__general.md)
-- **General file naming** - Non-tutorial files covered in [File Naming Convention](../meta/ex-ru-co-me__file-naming.md)
+- **Tutorial content structure** - Covered in [Tutorials Convention](./general.md)
+- **General file naming** - Non-tutorial files covered in [File Naming Convention](../meta/file-naming.md)
 - **Hugo navigation** - Weight and ordering in Hugo sites
 - **Tutorial validation** - Covered by docs\_\_tutorial-checker agent
 
@@ -503,10 +503,10 @@ graph TB
 
 ## 🔗 Related Documentation
 
-- [Tutorial Convention](./ex-ru-co-tu__general.md) - Standards for tutorial structure and content
-- [Diátaxis Framework](../meta/ex-ru-co-me__diataxis-framework.md) - Understanding the tutorial category in documentation
+- [Tutorial Convention](./general.md) - Standards for tutorial structure and content
+- [Diátaxis Framework](../meta/diataxis-framework.md) - Understanding the tutorial category in documentation
 - [Tutorials Index](../../tutorials/README.md) - All available tutorials organized by type
-- [File Naming Convention](../meta/ex-ru-co-me__file-naming.md) - How to name tutorial files
+- [File Naming Convention](../meta/file-naming.md) - How to name tutorial files
 
 ---
 

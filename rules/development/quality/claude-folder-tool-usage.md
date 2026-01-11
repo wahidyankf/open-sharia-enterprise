@@ -212,8 +212,8 @@ sed -i '/## Available Agents/a\**New Agent**: new-agent - Description' /home/wkf
 
 ## Related Documentation
 
-- [AI Agents Convention](./ex-ru-de-ag__ai-agents.md) - Agent structure and standards
-- [Maker-Checker-Fixer Pattern](../pattern/ex-ru-de-pa__maker-checker-fixer.md) - Quality workflow
+- [AI Agents Convention](./ai-agents.md) - Agent structure and standards
+- [Maker-Checker-Fixer Pattern](../pattern/maker-checker-fixer.md) - Quality workflow
 - [Skills Directory](/.claude/skills/README.md) - Skills infrastructure
 - [Agents Index](/.claude/agents/README.md) - All agents and responsibilities
 

@@ -22,9 +22,9 @@ This document defines the standard validation methods and patterns used by repos
 
 This practice respects the following core principles:
 
-- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Standard validation patterns enable accurate automated consistency checking. AWK commands reliably extract frontmatter, bash scripts verify conventions automatically. Machines handle repetitive validation instead of humans.
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Standard validation patterns enable accurate automated consistency checking. AWK commands reliably extract frontmatter, bash scripts verify conventions automatically. Machines handle repetitive validation instead of humans.
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Frontmatter extraction pattern (`awk 'BEGIN{p=0}...'`) is explicitly documented as the canonical method. Validation logic is transparent and reproducible. No magic regex or undocumented checking methods.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Frontmatter extraction pattern (`awk 'BEGIN{p=0}...'`) is explicitly documented as the canonical method. Validation logic is transparent and reproducible. No magic regex or undocumented checking methods.
 
 ## Conventions Implemented/Respected
 
@@ -32,13 +32,13 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[File Naming Convention](../conventions/meta/ex-ru-co-me__file-naming.md)**: Validation methods verify files follow the [prefix]\_\_[content-identifier].md pattern using bash pattern matching and path analysis.
+- **[File Naming Convention](../conventions/meta/file-naming.md)**: Validation methods verify files follow the [prefix]\_\_[content-identifier].md pattern using bash pattern matching and path analysis.
 
-- **[Linking Convention](../conventions/formatting/ex-ru-co-fo__linking.md)**: Link validation checks verify relative paths with .md extension exist and target files are accessible.
+- **[Linking Convention](../conventions/formatting/linking.md)**: Link validation checks verify relative paths with .md extension exist and target files are accessible.
 
-- **[Timestamp Format Convention](../conventions/formatting/ex-ru-co-fo__timestamp.md)**: Validation patterns verify UTC+7 timestamps in YAML frontmatter match ISO 8601 format with timezone offset.
+- **[Timestamp Format Convention](../conventions/formatting/timestamp.md)**: Validation patterns verify UTC+7 timestamps in YAML frontmatter match ISO 8601 format with timezone offset.
 
-- **[Indentation Convention](../conventions/formatting/ex-ru-co-fo__indentation.md)**: Frontmatter extraction assumes 2-space YAML indentation when parsing nested structures.
+- **[Indentation Convention](../conventions/formatting/indentation.md)**: Frontmatter extraction assumes 2-space YAML indentation when parsing nested structures.
 
 ## 📋 Overview
 
@@ -272,13 +272,13 @@ fi
 **Example:**
 
 ```bash
-# Validate link from rules/conventions/formatting/ex-ru-co-fo__linking.md
-file="rules/conventions/formatting/ex-ru-co-fo__linking.md"
-link="[Indentation](./ex-ru-co-fo__indentation.md)"
+# Validate link from rules/conventions/formatting/linking.md
+file="rules/conventions/formatting/linking.md"
+link="[Indentation](./indentation.md)"
 
 # Extract target
 link_target=$(echo "$link" | sed 's/.*(\(.*\))/\1/')
-# Result: ./ex-ru-co-fo__indentation.md
+# Result: ./indentation.md
 
 # Resolve path
 resolved_path=$(dirname "$file")/"$link_target"
@@ -314,7 +314,7 @@ fi
 
 **Key details:**
 
-- Compute expected prefix from directory path (see [File Naming Convention](../conventions/meta/ex-ru-co-me__file-naming.md))
+- Compute expected prefix from directory path (see [File Naming Convention](../conventions/meta/file-naming.md))
 - Extract actual prefix using `cut -d_ -f1-2` (two underscores in `prefix__`)
 - Handle special cases: `README.md`, `docs/metadata/`
 - Account for subdirectories (hyphenated names → concatenated prefixes)
@@ -498,10 +498,10 @@ grep -F "^$field:" frontmatter.txt
 
 ## 📚 Related Conventions
 
-- [AI Agents Convention](../agents/ex-ru-de-ag__ai-agents.md) - Agents that use these validation methods
-- [File Naming Convention](../conventions/meta/ex-ru-co-me__file-naming.md) - What we validate (naming patterns)
-- [Linking Convention](../conventions/formatting/ex-ru-co-fo__linking.md) - What we validate (link formats)
-- [Temporary Files Convention](../infra/ex-ru-de-in__temporary-files.md) - Where validation reports are stored
+- [AI Agents Convention](../agents/ai-agents.md) - Agents that use these validation methods
+- [File Naming Convention](../conventions/meta/file-naming.md) - What we validate (naming patterns)
+- [Linking Convention](../conventions/formatting/linking.md) - What we validate (link formats)
+- [Temporary Files Convention](../infra/temporary-files.md) - Where validation reports are stored
 
 ## 🔄 Maintenance Notes
 

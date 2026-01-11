@@ -28,9 +28,9 @@ The naming convention serves three critical purposes:
 
 This convention implements the following core principles:
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: File names explicitly encode their location in the directory structure (`[prefix]__[name]`), making the organizational hierarchy visible without requiring users to navigate folders. No hidden conventions or magic - the full path is transparent in the filename itself.
+- \*\*[Explicit Over Implicit](../../principles/software-engineering/[name]`), making the organizational hierarchy visible without requiring users to navigate folders. No hidden conventions or magic - the full path is transparent in the filename itself.
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Uses straightforward abbreviation rules (2 or 4 characters) and a single separator pattern (`__`). Avoids complex encoding schemes or multiple separator types. The pattern is easy to learn, remember, and apply consistently.
+- \*\*[Simplicity Over Complexity](../../principles/general/`). Avoids complex encoding schemes or multiple separator types. The pattern is easy to learn, remember, and apply consistently.
 
 ## Purpose
 
@@ -60,7 +60,7 @@ All documentation files (except index files) follow this pattern:
 [hierarchical-prefix]__[content-identifier].[extension]
 ```
 
-**Example**: `ex-ru-co-me__file-naming.md`
+**Example**: `file-naming.md`
 
 Breaking this down:
 
@@ -116,43 +116,43 @@ This apparent inconsistency is intentional and follows standard documentation co
 
 ### Conventions Subdirectories (`rules/conventions/`)
 
-| Subdirectory  | Code | Prefix          | Example File                         |
-| ------------- | ---- | --------------- | ------------------------------------ |
-| `formatting/` | `fo` | `ex-ru-co-fo__` | `ex-ru-co-fo__indentation.md`        |
-| `content/`    | `co` | `ex-ru-co-co__` | `ex-ru-co-co__quality.md`            |
-| `meta/`       | `me` | `ex-ru-co-me__` | `ex-ru-co-me__file-naming.md`        |
-| `tutorial/`   | `tu` | `ex-ru-co-tu__` | `ex-ru-co-tu__naming.md`             |
-| `hugo/`       | `hu` | `ex-ru-co-hu__` | `ex-ru-co-hu__shared.md`             |
-| `project/`    | `pr` | `ex-ru-co-pr__` | `ex-ru-co-pr__plans-organization.md` |
+| Subdirectory  | Code | Prefix                  | Example File |
+| ------------- | ---- | ----------------------- | ------------ |
+| `formatting/` | `fo` | `indentation.md`        |
+| `content/`    | `co` | `quality.md`            |
+| `meta/`       | `me` | `file-naming.md`        |
+| `tutorial/`   | `tu` | `naming.md`             |
+| `hugo/`       | `hu` | `shared.md`             |
+| `project/`    | `pr` | `plans-organization.md` |
 
 ### Development Subdirectories (`rules/development/`)
 
-| Subdirectory | Code | Prefix          | Example File                             |
-| ------------ | ---- | --------------- | ---------------------------------------- |
-| `workflow/`  | `wo` | `ex-ru-de-wo__` | `ex-ru-de-wo__commit-messages.md`        |
-| `agents/`    | `ag` | `ex-ru-de-ag__` | `ex-ru-de-ag__ai-agents.md`              |
-| `quality/`   | `qu` | `ex-ru-de-qu__` | `ex-ru-de-qu__code.md`                   |
-| `pattern/`   | `pa` | `ex-ru-de-pa__` | `ex-ru-de-pa__functional-programming.md` |
-| `hugo/`      | `hu` | `ex-ru-de-hu__` | `ex-ru-de-hu__development.md`            |
-| `infra/`     | `in` | `ex-ru-de-in__` | `ex-ru-de-in__temporary-files.md`        |
+| Subdirectory | Code | Prefix                      | Example File |
+| ------------ | ---- | --------------------------- | ------------ |
+| `workflow/`  | `wo` | `commit-messages.md`        |
+| `agents/`    | `ag` | `ai-agents.md`              |
+| `quality/`   | `qu` | `code.md`                   |
+| `pattern/`   | `pa` | `functional-programming.md` |
+| `hugo/`      | `hu` | `development.md`            |
+| `infra/`     | `in` | `temporary-files.md`        |
 
 ### Workflows Subdirectories (`rules/workflows/`)
 
-| Subdirectory     | Code   | Prefix            | Example File                             |
-| ---------------- | ------ | ----------------- | ---------------------------------------- |
-| `ayokoding-web/` | `aywe` | `ex-ru-wf-aywe__` | `ex-ru-wf-aywe__general-quality-gate.md` |
-| `docs/`          | `do`   | `ex-ru-wf-do__`   | `ex-ru-wf-do__quality-gate.md`           |
-| `meta/`          | `me`   | `ex-ru-wf-me__`   | `ex-ru-wf-me__workflow-pattern.md`       |
-| `plan/`          | `pl`   | `ex-ru-wf-pl__`   | `ex-ru-wf-pl__execution.md`              |
-| `wow/`           | `wo`   | `ex-ru-wf-wo__`   | `ex-ru-wf-wo__rules-quality-gate.md`     |
+| Subdirectory     | Code   | Prefix                    | Example File |
+| ---------------- | ------ | ------------------------- | ------------ |
+| `ayokoding-web/` | `aywe` | `general-quality-gate.md` |
+| `docs/`          | `do`   | `quality-gate.md`         |
+| `meta/`          | `me`   | `workflow-pattern.md`     |
+| `plan/`          | `pl`   | `execution.md`            |
+| `wow/`           | `wo`   | `rules-quality-gate.md`   |
 
 ### Principles Subdirectories (`rules/principles/`)
 
-| Subdirectory            | Code | Prefix          | Example File                                 |
-| ----------------------- | ---- | --------------- | -------------------------------------------- |
-| `general/`              | `ge` | `ex-ru-pr-ge__` | `ex-ru-pr-ge__simplicity-over-complexity.md` |
-| `content/`              | `co` | `ex-ru-pr-co__` | `ex-ru-pr-co__accessibility-first.md`        |
-| `software-engineering/` | `se` | `ex-ru-pr-se__` | `ex-ru-pr-se__explicit-over-implicit.md`     |
+| Subdirectory            | Code | Prefix                          | Example File |
+| ----------------------- | ---- | ------------------------------- | ------------ |
+| `general/`              | `ge` | `simplicity-over-complexity.md` |
+| `content/`              | `co` | `accessibility-first.md`        |
+| `software-engineering/` | `se` | `explicit-over-implicit.md`     |
 
 ### Abbreviation Strategy
 
@@ -173,10 +173,10 @@ Use a systematic encoding rule based on directory characteristics:
 **Real Examples:**
 
 ```
-ex-ru-co-fo__indentation.md          (explanation/rules/conventions/formatting)
-ex-ru-de-ag__ai-agents.md            (explanation/rules/development/agents)
-ex-ru-wf-aywe__general-quality-gate.md  (explanation/rules/workflows/ayokoding-web)
-ex-ru-pr-se__explicit-over-implicit.md  (explanation/rules/principles/software-engineering)
+indentation.md          (explanation/rules/conventions/formatting)
+ai-agents.md            (explanation/rules/development/agents)
+general-quality-gate.md  (explanation/rules/workflows/ayokoding-web)
+explicit-over-implicit.md  (explanation/rules/principles/software-engineering)
 ```
 
 ## The `__` Separator
@@ -315,8 +315,8 @@ docs/metadata/search-index.json              # Generated search index
 Images follow the same prefix pattern as their related documentation:
 
 ```
-rules/conventions/formatting/ex-ru-co-fo__diagrams.md
-rules/conventions/formatting/ex-ru-co-fo__diagrams-example.png
+rules/conventions/formatting/diagrams.md
+rules/conventions/formatting/diagrams-example.png
 ```
 
 ## 🔄 Maintenance and Scalability
@@ -333,8 +333,8 @@ When creating a new subdirectory:
 
 - Directory pattern: `rules/conventions/[new-category]/`
 - Subdirectory code: First 2 letters (e.g., `ne` for `new-category`)
-- Prefix pattern: `ex-ru-co-ne__` (ex = explanation, co = conventions, ne = new-category)
-- Files pattern: `ex-ru-co-ne__[content-name].md`
+- Prefix pattern: `` (ex = explanation, co = conventions, ne = new-category)
+- Files pattern: `[content-name].md`
 
 ### Renaming Directories
 
@@ -356,8 +356,8 @@ When renaming a directory in `docs/`, you **must rename all files within that di
 ```
 rules/conventions/meta/
 ├── README.md
-├── ex-ru-co-me__file-naming.md
-└── ex-ru-co-me__diataxis-framework.md
+├── file-naming.md
+└── diataxis-framework.md
 ```
 
 **After**:
@@ -365,17 +365,17 @@ rules/conventions/meta/
 ```
 rules/conventions/standards/
 ├── README.md
-├── ex-ru-co-st__file-naming.md
-└── ex-ru-co-st__diataxis-framework.md
+├── file-naming.md
+└── diataxis-framework.md
 ```
 
 **Changes required**:
 
 - Directory: `meta/` → `standards/`
 - Subdirectory code: `me` → `st` (first 2 letters)
-- Prefix: `ex-ru-co-me__` → `ex-ru-co-st__`
-- All files: `ex-ru-co-me__*.md` → `ex-ru-co-st__*.md`
-- Links: Update all references from `./meta/ex-ru-co-me__*.md` to `./standards/ex-ru-co-st__*.md`
+- Prefix: ``
+- All files: `*.md`
+- Links: Update all references from `./meta/*.md` to `./standards/*.md`
 - Index: Update `rules/conventions/README.md` to reflect new directory name
 
 ### Reorganizing Directories
@@ -391,11 +391,11 @@ When moving files between directories:
 This system scales to any nesting depth:
 
 ```
-ex-ru-pr-se__explicit-over-implicit.md
+explicit-over-implicit.md
 └─ explanation → principles → software-engineering
    (ex+pr+se)
 
-ex-ru-wf-aywe__general-quality-gate.md
+general-quality-gate.md
 └─ explanation → workflows → ayokoding-web
    (ex+wf+aywe)
 ```
@@ -413,29 +413,29 @@ ex-ru-wf-aywe__general-quality-gate.md
 
 ### Explanation Subdirectories (Complete Reference)
 
-| Directory Path                                    | Prefix            | Example                                      |
-| ------------------------------------------------- | ----------------- | -------------------------------------------- |
-| explanation/rules/conventions/formatting          | `ex-ru-co-fo__`   | `ex-ru-co-fo__indentation.md`                |
-| explanation/rules/conventions/content             | `ex-ru-co-co__`   | `ex-ru-co-co__quality.md`                    |
-| explanation/rules/conventions/meta                | `ex-ru-co-me__`   | `ex-ru-co-me__file-naming.md`                |
-| explanation/rules/conventions/tutorial            | `ex-ru-co-tu__`   | `ex-ru-co-tu__naming.md`                     |
-| explanation/rules/conventions/hugo                | `ex-ru-co-hu__`   | `ex-ru-co-hu__shared.md`                     |
-| explanation/rules/conventions/project             | `ex-ru-co-pr__`   | `ex-ru-co-pr__plans-organization.md`         |
-| explanation/rules/development/workflow            | `ex-ru-de-wo__`   | `ex-ru-de-wo__commit-messages.md`            |
-| explanation/rules/development/agents              | `ex-ru-de-ag__`   | `ex-ru-de-ag__ai-agents.md`                  |
-| explanation/rules/development/quality             | `ex-ru-de-qu__`   | `ex-ru-de-qu__code.md`                       |
-| explanation/rules/development/pattern             | `ex-ru-de-pa__`   | `ex-ru-de-pa__functional-programming.md`     |
-| explanation/rules/development/hugo                | `ex-ru-de-hu__`   | `ex-ru-de-hu__development.md`                |
-| explanation/rules/development/infra               | `ex-ru-de-in__`   | `ex-ru-de-in__temporary-files.md`            |
-| explanation/rules/workflows/ayokoding-web         | `ex-ru-wf-aywe__` | `ex-ru-wf-aywe__general-quality-gate.md`     |
-| explanation/rules/workflows/docs                  | `ex-ru-wf-do__`   | `ex-ru-wf-do__quality-gate.md`               |
-| explanation/rules/workflows/meta                  | `ex-ru-wf-me__`   | `ex-ru-wf-me__workflow-pattern.md`           |
-| explanation/rules/workflows/plan                  | `ex-ru-wf-pl__`   | `ex-ru-wf-pl__execution.md`                  |
-| explanation/rules/workflows/wow                   | `ex-ru-wf-wo__`   | `ex-ru-wf-wo__rules-quality-gate.md`         |
-| explanation/rules/principles/general              | `ex-ru-pr-ge__`   | `ex-ru-pr-ge__simplicity-over-complexity.md` |
-| explanation/rules/principles/content              | `ex-ru-pr-co__`   | `ex-ru-pr-co__accessibility-first.md`        |
-| explanation/rules/principles/software-engineering | `ex-ru-pr-se__`   | `ex-ru-pr-se__explicit-over-implicit.md`     |
-| explanation/vision                                | `ex-vi__`         | `ex-vi__open-sharia-enterprise.md`           |
+| Directory Path                                    | Prefix                          | Example                            |
+| ------------------------------------------------- | ------------------------------- | ---------------------------------- |
+| explanation/rules/conventions/formatting          | `indentation.md`                |
+| explanation/rules/conventions/content             | `quality.md`                    |
+| explanation/rules/conventions/meta                | `file-naming.md`                |
+| explanation/rules/conventions/tutorial            | `naming.md`                     |
+| explanation/rules/conventions/hugo                | `shared.md`                     |
+| explanation/rules/conventions/project             | `plans-organization.md`         |
+| explanation/rules/development/workflow            | `commit-messages.md`            |
+| explanation/rules/development/agents              | `ai-agents.md`                  |
+| explanation/rules/development/quality             | `code.md`                       |
+| explanation/rules/development/pattern             | `functional-programming.md`     |
+| explanation/rules/development/hugo                | `development.md`                |
+| explanation/rules/development/infra               | `temporary-files.md`            |
+| explanation/rules/workflows/ayokoding-web         | `general-quality-gate.md`       |
+| explanation/rules/workflows/docs                  | `quality-gate.md`               |
+| explanation/rules/workflows/meta                  | `workflow-pattern.md`           |
+| explanation/rules/workflows/plan                  | `execution.md`                  |
+| explanation/rules/workflows/wow                   | `rules-quality-gate.md`         |
+| explanation/rules/principles/general              | `simplicity-over-complexity.md` |
+| explanation/rules/principles/content              | `accessibility-first.md`        |
+| explanation/rules/principles/software-engineering | `explicit-over-implicit.md`     |
+| explanation/vision                                | `ex-vi__`                       | `ex-vi__open-sharia-enterprise.md` |
 
 ## 🔄 Migration History
 
@@ -447,19 +447,19 @@ The repository underwent a comprehensive 3-phase reorganization to introduce sub
 
 - Created 6 subdirectories in `rules/conventions/`
 - Migrated 24 convention files to new subdirectory structure
-- Updated all prefixes from `ex-co__` to `ex-ru-co-[subdirectory]__`
+- Updated all prefixes from `ex-co__` to ``
 
 **Phase 2: Development Reorganization**
 
 - Created 6 subdirectories in `rules/development/`
 - Migrated 15 development files to new subdirectory structure
-- Updated all prefixes from `ex-de__` to `ex-ru-de-[subdirectory]__`
+- Updated all prefixes from `ex-de__` to ``
 
 **Phase 3: Workflows Reorganization**
 
 - Created 5 subdirectories in `rules/workflows/`
 - Migrated 7 workflow files to new subdirectory structure
-- Updated all prefixes from `ex-wf__` to `ex-ru-wf-[subdirectory]__`
+- Updated all prefixes from `ex-wf__` to ``
 
 **Total Impact**: 46 files reorganized, 111+ links updated, zero broken links
 
@@ -472,8 +472,8 @@ The repository underwent a comprehensive 3-phase reorganization to introduce sub
 
 ## 🔗 Related Documentation
 
-- [Linking Convention](../formatting/ex-ru-co-fo__linking.md) - How to link between documentation files
-- [Diátaxis Framework](./ex-ru-co-me__diataxis-framework.md) - Understanding the documentation organization framework
+- [Linking Convention](../formatting/linking.md) - How to link between documentation files
+- [Diátaxis Framework](./diataxis-framework.md) - Understanding the documentation organization framework
 - [Conventions Index](../README.md) - Index of all documentation conventions
 
 ---

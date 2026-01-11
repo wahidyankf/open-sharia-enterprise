@@ -34,7 +34,7 @@ Create folder structure and \_index.md files for ayokoding-web.
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
 - Skill: `apps-ayokoding-web-developing-content`
 
 ## Reference Documentation
@@ -42,7 +42,7 @@ Create folder structure and \_index.md files for ayokoding-web.
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
 
 **Related Agents**:
 
@@ -51,8 +51,8 @@ Create folder structure and \_index.md files for ayokoding-web.
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
-- [Tutorial Folder Arrangement](../../rules/conventions/tutorial/ex-ru-co-tu__programming-language-structure.md)
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
+- [Tutorial Folder Arrangement](../../rules/conventions/tutorial/programming-language-structure.md)
 
 **Skills**:
 

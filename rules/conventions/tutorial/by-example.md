@@ -17,19 +17,19 @@ weight: 2300
 
 ## Purpose
 
-This convention **extends the [Tutorials Convention](./ex-ru-co-tu__general.md) for the By Example tutorial type**, defining specialized standards for code-first learning through 75-90 heavily annotated, self-contained, runnable examples achieving 95% coverage.
+This convention **extends the [Tutorials Convention](./general.md) for the By Example tutorial type**, defining specialized standards for code-first learning through 75-90 heavily annotated, self-contained, runnable examples achieving 95% coverage.
 
-**Base requirements**: By-example tutorials inherit general tutorial standards (learning-oriented approach, visual completeness, hands-on elements from [Tutorials Convention](./ex-ru-co-tu__general.md)) and add code-specific specializations defined below.
+**Base requirements**: By-example tutorials inherit general tutorial standards (learning-oriented approach, visual completeness, hands-on elements from [Tutorials Convention](./general.md)) and add code-specific specializations defined below.
 
 **Target audience**: Experienced developers (seasonal programmers, software engineers) switching languages or frameworks who prefer learning through working code rather than narrative explanations.
 
 ## Structure Integration with General Tutorial Standards
 
-By-example tutorials adapt the general [Tutorial Convention](./ex-ru-co-tu__general.md) structure for code-first learning:
+By-example tutorials adapt the general [Tutorial Convention](./general.md) structure for code-first learning:
 
 ### Adaptation of General Structure
 
-**Traditional Tutorial Structure** (from [Tutorials Convention](./ex-ru-co-tu__general.md)):
+**Traditional Tutorial Structure** (from [Tutorials Convention](./general.md)):
 
 - Introduction → Prerequisites → Objectives → Content Sections → Challenges → Summary → Next Steps
 
@@ -428,7 +428,7 @@ go processRequest(req)  // => Goroutine spawned (runs concurrently with minimal 
 - Keep code annotations focused on state tracking (`// =>` notation)
 - Reserve extensive explanations for "Brief Explanation" and "Why It Matters" sections
 
-**Note**: This annotation density standard (1-2.25 per example) is the general [ayokoding-web code annotation standard](../hugo/ex-ru-co-hu__ayokoding.md#code-annotation-standards) applied to all content. By-example tutorials follow the same standard as other tutorial types, with additional requirements for self-containment and five-part format.
+**Note**: This annotation density standard (1-2.25 per example) is the general [ayokoding-web code annotation standard](../hugo/ayokoding.md#code-annotation-standards) applied to all content. By-example tutorials follow the same standard as other tutorial types, with additional requirements for self-containment and five-part format.
 
 ### Output Annotation Pattern
 
@@ -844,11 +844,11 @@ When creating by-example tutorials for multiple languages:
 
 This convention implements and respects:
 
-- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Automated validation via ayokoding-web-by-example-checker agent
-- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
-- **[No Time Estimates](../../principles/content/ex-ru-pr-co__no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
-- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Self-contained examples with explicit imports and clear context
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated validation via ayokoding-web-by-example-checker agent
+- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
+- **[No Time Estimates](../../principles/content/no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Self-contained examples with explicit imports and clear context
 
 ## Scope
 
@@ -863,19 +863,19 @@ This convention implements and respects:
 
 ### What This Convention Does NOT Cover
 
-- **General tutorial standards** - Covered in [Tutorials Convention](./ex-ru-co-tu__general.md)
-- **Tutorial naming** - Covered in [Tutorial Naming Convention](./ex-ru-co-tu__naming.md)
-- **Hugo implementation** - Hextra specifics in [ayokoding-web convention](../hugo/ex-ru-co-hu__ayokoding.md)
+- **General tutorial standards** - Covered in [Tutorials Convention](./general.md)
+- **Tutorial naming** - Covered in [Tutorial Naming Convention](./naming.md)
+- **Hugo implementation** - Hextra specifics in [ayokoding-web convention](../hugo/ayokoding.md)
 - **Code quality** - Source code standards in development conventions
 - **Tutorial validation** - Covered by apps**ayokoding-web**by-example-checker agent
 
 ## Related Documentation
 
-- [Tutorial Naming Convention](./ex-ru-co-tu__naming.md): Tutorial type definitions and naming standards
-- [Content Quality Principles](../content/ex-ru-co-co__quality.md): General content quality standards
-- [Diagrams Convention](../formatting/ex-ru-co-fo__diagrams.md): Mermaid diagram standards
-- [Color Accessibility Convention](../formatting/ex-ru-co-fo__color-accessibility.md): Color-blind friendly palette
-- [Diátaxis Framework](../meta/ex-ru-co-me__diataxis-framework.md): Tutorial categorization framework
+- [Tutorial Naming Convention](./naming.md): Tutorial type definitions and naming standards
+- [Content Quality Principles](../content/quality.md): General content quality standards
+- [Diagrams Convention](../formatting/diagrams.md): Mermaid diagram standards
+- [Color Accessibility Convention](../formatting/color-accessibility.md): Color-blind friendly palette
+- [Diátaxis Framework](../meta/diataxis-framework.md): Tutorial categorization framework
 
 ## Multiple Code Blocks Pattern
 
@@ -1082,8 +1082,8 @@ Overall: Both blocks meet 1.0-2.25 target
 
 This convention implements and respects:
 
-- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Automated validation via ayokoding-web-by-example-checker agent
-- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
-- **[No Time Estimates](../../principles/content/ex-ru-pr-co__no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
-- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Self-contained examples with explicit imports and clear context
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated validation via ayokoding-web-by-example-checker agent
+- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
+- **[No Time Estimates](../../principles/content/no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Self-contained examples with explicit imports and clear context

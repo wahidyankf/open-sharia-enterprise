@@ -239,7 +239,7 @@ function calculateMurabahahProfitRate(cost: number, markup_percentage: number, c
 
 ❌ **Anti-pattern**: "We just follow this convention, everyone knows it"
 
-**Example**: Instead of just enforcing file naming via checker agents, we have [File Naming Convention](../../conventions/meta/ex-ru-co-me__file-naming.md) explaining:
+**Example**: Instead of just enforcing file naming via checker agents, we have [File Naming Convention](../../conventions/meta/file-naming.md) explaining:
 
 - The pattern: `[prefix]__[content-identifier].[extension]`
 - The why: Hierarchical organization, searchability, automation
@@ -502,7 +502,7 @@ Organize documentation into four categories:
 - **Reference**: Information-oriented (technical specifications, API details)
 - **Explanation**: Understanding-oriented (concepts, architecture, decisions)
 
-See [Diátaxis Framework](../../conventions/meta/ex-ru-co-me__diataxis-framework.md) for complete details.
+See [Diátaxis Framework](../../conventions/meta/diataxis-framework.md) for complete details.
 
 **Why this works**: Different audiences need different documentation types. Organizing by purpose makes information findable.
 
@@ -577,10 +577,10 @@ Every piece of documentation should include examples:
 
 Every convention is fully documented:
 
-- [File Naming Convention](../../conventions/meta/ex-ru-co-me__file-naming.md) - Explains pattern, rationale, examples
-- [Linking Convention](../../conventions/formatting/ex-ru-co-fo__linking.md) - GitHub-compatible links, two-tier formatting
-- [Diátaxis Framework](../../conventions/meta/ex-ru-co-me__diataxis-framework.md) - How to organize documentation
-- [Color Accessibility Convention](../../conventions/formatting/ex-ru-co-fo__color-accessibility.md) - Accessible color palette, WCAG compliance
+- [File Naming Convention](../../conventions/meta/file-naming.md) - Explains pattern, rationale, examples
+- [Linking Convention](../../conventions/formatting/linking.md) - GitHub-compatible links, two-tier formatting
+- [Diátaxis Framework](../../conventions/meta/diataxis-framework.md) - How to organize documentation
+- [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - Accessible color palette, WCAG compliance
 
 **Why this works**: Contributors understand conventions deeply. Checker agents can validate against documented standards.
 
@@ -603,8 +603,8 @@ Every convention is fully documented:
 **Examples**:
 
 - [Monorepo Structure](../../reference/re__monorepo-structure.md) - Explains Nx architecture, why apps/ and libs/, import patterns
-- [Repository Architecture](../ex-ru__repository-governance-architecture.md) - Six-layer hierarchy, governance, traceability
-- [Trunk Based Development](../development/workflow/ex-ru-de-wo__trunk-based-development.md) - Git workflow, why main branch, deployment branches
+- [Repository Architecture](..repository-governance-architecture.md) - Six-layer hierarchy, governance, traceability
+- [Trunk Based Development](../development/workflow/trunk-based-development.md) - Git workflow, why main branch, deployment branches
 
 **Why this works**: Maintainers understand WHY these architectures were chosen. Decisions are traceable and reversible with full context.
 
@@ -658,17 +658,17 @@ function validateMurabahahContract(contract: MurabahahContract): ValidationResul
 
 ## 🔗 Related Principles
 
-- [Explicit Over Implicit](../software-engineering/ex-ru-pr-se__explicit-over-implicit.md) - Documentation makes implicit knowledge explicit
-- [Accessibility First](./ex-ru-pr-co__accessibility-first.md) - Documentation makes knowledge accessible to all
-- [Progressive Disclosure](./ex-ru-pr-co__progressive-disclosure.md) - Multiple documentation levels for different skill levels
-- [Simplicity Over Complexity](../general/ex-ru-pr-ge__simplicity-over-complexity.md) - Clear, simple documentation over complex jargon
+- [Explicit Over Implicit](../software-engineering/explicit-over-implicit.md) - Documentation makes implicit knowledge explicit
+- [Accessibility First](./accessibility-first.md) - Documentation makes knowledge accessible to all
+- [Progressive Disclosure](./progressive-disclosure.md) - Multiple documentation levels for different skill levels
+- [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Clear, simple documentation over complex jargon
 
 ## 📚 Related Conventions
 
-- [Diátaxis Framework](../../conventions/meta/ex-ru-co-me__diataxis-framework.md) - How to organize documentation into four categories
-- [Content Quality Principles](../../conventions/content/ex-ru-co-co__quality.md) - Quality standards for all markdown content
-- [README Quality Convention](../../conventions/content/ex-ru-co-co__readme-quality.md) - Standards for README files
-- [Convention Writing Convention](../../conventions/content/ex-ru-co-co__convention-writing.md) - How to write convention documents
+- [Diátaxis Framework](../../conventions/meta/diataxis-framework.md) - How to organize documentation into four categories
+- [Content Quality Principles](../../conventions/content/quality.md) - Quality standards for all markdown content
+- [README Quality Convention](../../conventions/content/readme-quality.md) - Standards for README files
+- [Convention Writing Convention](../../conventions/content/convention-writing.md) - How to write convention documents
 
 ## 📖 References
 

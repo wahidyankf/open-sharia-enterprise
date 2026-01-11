@@ -546,15 +546,15 @@ console.log("With payment:", withPayment); // Full history
 
 ## 🔗 Related Principles
 
-- [Pure Functions Over Side Effects](./ex-ru-pr-se__pure-functions.md) - Pure functions naturally use immutable data
-- [Explicit Over Implicit](./ex-ru-pr-se__explicit-over-implicit.md) - Immutability makes state changes explicit
-- [Simplicity Over Complexity](../general/ex-ru-pr-ge__simplicity-over-complexity.md) - Immutability simplifies reasoning
+- [Pure Functions Over Side Effects](./pure-functions.md) - Pure functions naturally use immutable data
+- [Explicit Over Implicit](./explicit-over-implicit.md) - Immutability makes state changes explicit
+- [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Immutability simplifies reasoning
 
 ## 📚 Related Conventions
 
-- [Functional Programming Practices](../../development/pattern/ex-ru-de-pa__functional-programming.md) - Implementation patterns for immutability
-- [Code Quality Convention](../../development/quality/ex-ru-de-qu__code.md) - Automated enforcement
-- [Implementation Workflow](../../development/workflow/ex-ru-de-wo__implementation.md) - When to introduce immutability
+- [Functional Programming Practices](../../development/pattern/functional-programming.md) - Implementation patterns for immutability
+- [Code Quality Convention](../../development/quality/code.md) - Automated enforcement
+- [Implementation Workflow](../../development/workflow/implementation.md) - When to introduce immutability
 
 ## 📖 References
 

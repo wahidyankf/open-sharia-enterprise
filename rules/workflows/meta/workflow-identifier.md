@@ -653,7 +653,7 @@ Applies mode-based fixing with iteration limits.
 
 ### Example Implementation
 
-See [Repository Rules Quality Gate Workflow](../wow/ex-ru-wf-wo__rules-quality-gate.md) for canonical implementation.
+See [Repository Rules Quality Gate Workflow](../wow/rules-quality-gate.md) for canonical implementation.
 
 ### Key Differences from Basic Validation Workflow
 
@@ -795,8 +795,8 @@ This convention respects:
 
 ## Related Documentation
 
-- [AI Agents Convention](../../development/agents/ex-ru-de-ag__ai-agents.md) - How agents work
-- [Maker-Checker-Fixer Pattern](../../development/pattern/ex-ru-de-pa__maker-checker-fixer.md) - Core workflow pattern
-- [Plans Organization](../../conventions/project/ex-ru-co-pr__plans-organization.md) - How plans relate to workflows
-- [Implementation Workflow](../../development/workflow/ex-ru-de-wo__implementation.md) - Development process workflow
+- [AI Agents Convention](../../development/agents/ai-agents.md) - How agents work
+- [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Core workflow pattern
+- [Plans Organization](../../conventions/project/plans-organization.md) - How plans relate to workflows
+- [Implementation Workflow](../../development/workflow/implementation.md) - Development process workflow
 - [Workflows Index](../README.md) - All available workflows

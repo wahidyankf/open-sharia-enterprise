@@ -55,15 +55,15 @@ Based on official Anthropic documentation:
 
 The following 7 Skills need "References" sections added (using new gerund names):
 
-| Skill (New Name)                     | Authoritative Source                                                                                                                |
-| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `creating-by-example-tutorials`      | `rules/conventions/tutorial/ex-ru-co-tu__by-example.md`                                                                             |
-| `assessing-criticality-confidence`   | `rules/development/quality/ex-ru-de-qu__criticality-levels.md`, `rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md` |
-| `developing-ayokoding-content`       | `rules/conventions/hugo/ex-ru-co-hu__ayokoding.md`                                                                                  |
-| `validating-factual-accuracy`        | `rules/conventions/content/ex-ru-co-co__factual-validation.md`                                                                      |
-| `writing-gherkin-criteria`           | `rules/development/infra/ex-ru-de-in__acceptance-criteria.md`                                                                       |
-| `developing-ose-content`             | `rules/conventions/hugo/ex-ru-co-hu__ose-platform.md`                                                                               |
-| `practicing-trunk-based-development` | `rules/development/workflow/ex-ru-de-wo__trunk-based-development.md`                                                                |
+| Skill (New Name)                     | Authoritative Source                                                                                      |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| `creating-by-example-tutorials`      | `rules/conventions/tutorial/by-example.md`                                                                |
+| `assessing-criticality-confidence`   | `rules/development/quality/criticality-levels.md`, `rules/development/quality/fixer-confidence-levels.md` |
+| `developing-ayokoding-content`       | `rules/conventions/hugo/ayokoding.md`                                                                     |
+| `validating-factual-accuracy`        | `rules/conventions/content/factual-validation.md`                                                         |
+| `writing-gherkin-criteria`           | `rules/development/infra/acceptance-criteria.md`                                                          |
+| `developing-ose-content`             | `rules/conventions/hugo/ose-platform.md`                                                                  |
+| `practicing-trunk-based-development` | `rules/development/workflow/trunk-based-development.md`                                                   |
 
 Skills with References (3, will be renamed): `creating-accessible-diagrams`, `applying-maker-checker-fixer`, `understanding-repository-architecture`
 
@@ -134,15 +134,15 @@ The following 39 agents have `skills: []` and need appropriate skills assigned:
 
 7 new Skills needed to cover all agent domains (using gerund form):
 
-| New Skill                     | Convention Source                    | Target Agents               |
-| ----------------------------- | ------------------------------------ | --------------------------- |
-| `applying-content-quality`    | `ex-ru-co-co__quality.md`            | All content-creating agents |
-| `applying-diataxis-framework` | `ex-ru-co-me__diataxis-framework.md` | `docs__*` agents            |
-| `creating-project-plans`      | `ex-ru-co-pr__plans-organization.md` | `plan__*` agents            |
-| `writing-readme-files`        | `ex-ru-co-co__readme-quality.md`     | `readme__*` agents          |
-| `defining-workflows`          | `ex-ru-wf-me__workflow-pattern.md`   | `wow__workflow__*` agents   |
-| `developing-agents`           | `ex-ru-de-ag__ai-agents.md`          | `agent__maker`              |
-| `validating-links`            | `ex-ru-co-fo__linking.md`            | Link-checker agents         |
+| New Skill                     | Convention Source       | Target Agents               |
+| ----------------------------- | ----------------------- | --------------------------- |
+| `applying-content-quality`    | `quality.md`            | All content-creating agents |
+| `applying-diataxis-framework` | `diataxis-framework.md` | `docs__*` agents            |
+| `creating-project-plans`      | `plans-organization.md` | `plan__*` agents            |
+| `writing-readme-files`        | `readme-quality.md`     | `readme__*` agents          |
+| `defining-workflows`          | `workflow-pattern.md`   | `wow__workflow__*` agents   |
+| `developing-agents`           | `ai-agents.md`          | `agent__maker`              |
+| `validating-links`            | `linking.md`            | Link-checker agents         |
 
 ### Factual Inaccuracies Found
 
@@ -155,7 +155,7 @@ The following 39 agents have `skills: []` and need appropriate skills assigned:
 | `ex-ru__repository-governance-architecture.md` (line ~358) | ASCII: `CLAUDE.md ──delivers to──> Agents`      | Update to show Orchestrator                   |
 | `CLAUDE.md` (line 249)                                     | "delivery to agents through auto-loading"       | Clarify Skills only load via `skills:` field  |
 | `.claude/skills/README.md` (lines 21-26)                   | ASCII shows all mechanisms → Agents             | Add Orchestrator to flow                      |
-| `ex-ru-de-ag__ai-agents.md` (lines 1518-1519)              | "Inheritance Pattern" shows CLAUDE.md inherited | Remove/fix inheritance claim                  |
+| `ai-agents.md` (lines 1518-1519)                           | "Inheritance Pattern" shows CLAUDE.md inherited | Remove/fix inheritance claim                  |
 
 ### Missing Agent Found
 
@@ -307,67 +307,67 @@ Recommended skills for each agent based on domain (using new gerund-form names):
 
 ### Layer 1: Principles (10 files) - NO CHANGES
 
-| File                                         | Change    |
-| -------------------------------------------- | --------- |
-| `ex-ru-pr-co__accessibility-first.md`        | No change |
-| `ex-ru-pr-co__documentation-first.md`        | No change |
-| `ex-ru-pr-co__no-time-estimates.md`          | No change |
-| `ex-ru-pr-co__progressive-disclosure.md`     | No change |
-| `ex-ru-pr-ge__simplicity-over-complexity.md` | No change |
-| `ex-ru-pr-se__automation-over-manual.md`     | No change |
-| `ex-ru-pr-se__explicit-over-implicit.md`     | No change |
-| `ex-ru-pr-se__immutability.md`               | No change |
-| `ex-ru-pr-se__pure-functions.md`             | No change |
-| `ex-ru-pr-se__reproducibility.md`            | No change |
+| File                            | Change    |
+| ------------------------------- | --------- |
+| `accessibility-first.md`        | No change |
+| `documentation-first.md`        | No change |
+| `no-time-estimates.md`          | No change |
+| `progressive-disclosure.md`     | No change |
+| `simplicity-over-complexity.md` | No change |
+| `automation-over-manual.md`     | No change |
+| `explicit-over-implicit.md`     | No change |
+| `immutability.md`               | No change |
+| `pure-functions.md`             | No change |
+| `reproducibility.md`            | No change |
 
 ### Layer 2: Conventions (24 files) - NO CHANGES
 
-| File                                             | Change    |
-| ------------------------------------------------ | --------- |
-| `ex-ru-co-co__convention-writing.md`             | No change |
-| `ex-ru-co-co__factual-validation.md`             | No change |
-| `ex-ru-co-co__oss-documentation.md`              | No change |
-| `ex-ru-co-co__quality.md`                        | No change |
-| `ex-ru-co-co__readme-quality.md`                 | No change |
-| `ex-ru-co-fo__color-accessibility.md`            | No change |
-| `ex-ru-co-fo__diagrams.md`                       | No change |
-| `ex-ru-co-fo__emoji.md`                          | No change |
-| `ex-ru-co-fo__indentation.md`                    | No change |
-| `ex-ru-co-fo__linking.md`                        | No change |
-| `ex-ru-co-fo__mathematical-notation.md`          | No change |
-| `ex-ru-co-fo__nested-code-fences.md`             | No change |
-| `ex-ru-co-fo__timestamp.md`                      | No change |
-| `ex-ru-co-hu__ayokoding.md`                      | No change |
-| `ex-ru-co-hu__ose-platform.md`                   | No change |
-| `ex-ru-co-hu__shared.md`                         | No change |
-| `ex-ru-co-me__diataxis-framework.md`             | No change |
-| `ex-ru-co-me__file-naming.md`                    | No change |
-| `ex-ru-co-pr__plans-organization.md`             | No change |
-| `ex-ru-co-tu__by-example.md`                     | No change |
-| `ex-ru-co-tu__general.md`                        | No change |
-| `ex-ru-co-tu__naming.md`                         | No change |
-| `ex-ru-co-tu__programming-language-content.md`   | No change |
-| `ex-ru-co-tu__programming-language-structure.md` | No change |
+| File                                | Change    |
+| ----------------------------------- | --------- |
+| `convention-writing.md`             | No change |
+| `factual-validation.md`             | No change |
+| `oss-documentation.md`              | No change |
+| `quality.md`                        | No change |
+| `readme-quality.md`                 | No change |
+| `color-accessibility.md`            | No change |
+| `diagrams.md`                       | No change |
+| `emoji.md`                          | No change |
+| `indentation.md`                    | No change |
+| `linking.md`                        | No change |
+| `mathematical-notation.md`          | No change |
+| `nested-code-fences.md`             | No change |
+| `timestamp.md`                      | No change |
+| `ayokoding.md`                      | No change |
+| `ose-platform.md`                   | No change |
+| `shared.md`                         | No change |
+| `diataxis-framework.md`             | No change |
+| `file-naming.md`                    | No change |
+| `plans-organization.md`             | No change |
+| `by-example.md`                     | No change |
+| `general.md`                        | No change |
+| `naming.md`                         | No change |
+| `programming-language-content.md`   | No change |
+| `programming-language-structure.md` | No change |
 
 ### Layer 3: Development (15 files) - 1 CHANGE
 
-| File                                        | Change                                                  |
-| ------------------------------------------- | ------------------------------------------------------- |
-| `ex-ru-de-ag__ai-agents.md`                 | ⚠️ **Phase 4**: Fix "Inheritance Pattern" factual error |
-| `ex-ru-de-hu__development.md`               | No change                                               |
-| `ex-ru-de-in__acceptance-criteria.md`       | No change                                               |
-| `ex-ru-de-in__temporary-files.md`           | No change                                               |
-| `ex-ru-de-pa__functional-programming.md`    | No change                                               |
-| `ex-ru-de-pa__maker-checker-fixer.md`       | No change                                               |
-| `ex-ru-de-qu__code.md`                      | No change                                               |
-| `ex-ru-de-qu__content-preservation.md`      | No change                                               |
-| `ex-ru-de-qu__criticality-levels.md`        | No change                                               |
-| `ex-ru-de-qu__fixer-confidence-levels.md`   | No change                                               |
-| `ex-ru-de-qu__repository-validation.md`     | No change                                               |
-| `ex-ru-de-wo__commit-messages.md`           | No change                                               |
-| `ex-ru-de-wo__implementation.md`            | No change                                               |
-| `ex-ru-de-wo__reproducible-environments.md` | No change                                               |
-| `ex-ru-de-wo__trunk-based-development.md`   | No change                                               |
+| File                           | Change                                                  |
+| ------------------------------ | ------------------------------------------------------- |
+| `ai-agents.md`                 | ⚠️ **Phase 4**: Fix "Inheritance Pattern" factual error |
+| `development.md`               | No change                                               |
+| `acceptance-criteria.md`       | No change                                               |
+| `temporary-files.md`           | No change                                               |
+| `functional-programming.md`    | No change                                               |
+| `maker-checker-fixer.md`       | No change                                               |
+| `code.md`                      | No change                                               |
+| `content-preservation.md`      | No change                                               |
+| `criticality-levels.md`        | No change                                               |
+| `fixer-confidence-levels.md`   | No change                                               |
+| `repository-validation.md`     | No change                                               |
+| `commit-messages.md`           | No change                                               |
+| `implementation.md`            | No change                                               |
+| `reproducible-environments.md` | No change                                               |
+| `trunk-based-development.md`   | No change                                               |
 
 ### Layer 4: Skills (10 existing → 17 total) - ALL RENAMED + 7 NEW + allowed-tools
 
@@ -450,11 +450,11 @@ Recommended skills for each agent based on domain (using new gerund-form names):
 | ------------------------------------------- | --------- |
 | `ex-ru-wf-aywe__by-example-quality-gate.md` | No change |
 | `ex-ru-wf-aywe__general-quality-gate.md`    | No change |
-| `ex-ru-wf-do__quality-gate.md`              | No change |
-| `ex-ru-wf-me__workflow-pattern.md`          | No change |
-| `ex-ru-wf-pl__execution.md`                 | No change |
-| `ex-ru-wf-pl__quality-gate.md`              | No change |
-| `ex-ru-wf-wo__rules-quality-gate.md`        | No change |
+| `quality-gate.md`                           | No change |
+| `workflow-pattern.md`                       | No change |
+| `execution.md`                              | No change |
+| `quality-gate.md`                           | No change |
+| `rules-quality-gate.md`                     | No change |
 
 ### CLAUDE.md Changes
 
@@ -494,6 +494,6 @@ This plan uses only existing repository tools and patterns. No new npm packages,
 ## Related Documentation
 
 - [Repository Governance Architecture](../../../docs/explanation/ex-ru__repository-governance-architecture.md)
-- [Convention Writing Convention](../../../rules/conventions/content/ex-ru-co-co__convention-writing.md)
-- [AI Agents Convention](../../../rules/development/agents/ex-ru-de-ag__ai-agents.md)
+- [Convention Writing Convention](../../../rules/conventions/content/convention-writing.md)
+- [AI Agents Convention](../../../rules/development/agents/ai-agents.md)
 - [Skills Directory](../../../.claude/skills/README.md)

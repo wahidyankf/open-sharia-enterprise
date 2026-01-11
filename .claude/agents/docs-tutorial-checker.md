@@ -51,8 +51,8 @@ The `wow-generating-validation-reports` Skill provides:
 
 This agent validates tutorials against standards defined in:
 
-- [Tutorial Convention](../../rules/conventions/tutorial/ex-ru-co-tu__general.md) - Complete tutorial standards and validation criteria
-- [Tutorial Naming Convention](../../rules/conventions/tutorial/ex-ru-co-tu__naming.md) - Standardized tutorial types and depth levels
+- [Tutorial Convention](../../rules/conventions/tutorial/general.md) - Complete tutorial standards and validation criteria
+- [Tutorial Naming Convention](../../rules/conventions/tutorial/naming.md) - Standardized tutorial types and depth levels
 
 The Tutorial Convention defines what to validate:
 
@@ -93,7 +93,7 @@ Validate tutorial documents to ensure they are **learning-oriented, well-narrate
 
 ## Validation Criteria
 
-This agent validates using criteria from [Tutorial Convention - Validation Criteria](../../rules/conventions/tutorial/ex-ru-co-tu__general.md#-validation-criteria).
+This agent validates using criteria from [Tutorial Convention - Validation Criteria](../../rules/conventions/tutorial/general.md#-validation-criteria).
 
 **Validation Categories:**
 
@@ -108,7 +108,7 @@ See convention for complete checklist and pass/fail criteria.
 
 ### Quick Reference - Key Checks
 
-All validation criteria are defined in [Tutorial Convention - Validation Criteria](../../rules/conventions/tutorial/ex-ru-co-tu__general.md#-validation-criteria).
+All validation criteria are defined in [Tutorial Convention - Validation Criteria](../../rules/conventions/tutorial/general.md#-validation-criteria).
 
 **Six Validation Categories:**
 
@@ -232,7 +232,7 @@ Use `wow-generating-validation-reports` Skill for:
    - Do colors work in both light and dark mode?
    - Is shape differentiation used (not color alone)?
 
-3. **Check color accessibility** (validate against [Color Accessibility Convention](../../rules/conventions/formatting/ex-ru-co-fo__color-accessibility.md))
+3. **Check color accessibility** (validate against [Color Accessibility Convention](../../rules/conventions/formatting/color-accessibility.md))
    - Uses accessible palette: blue (#0173B2), orange (#DE8F05), teal (#029E73), purple (#CC78BC), brown (#CA9161)
    - Avoids inaccessible colors: red, green, yellow
    - Includes black borders (#000000) for definition
@@ -240,7 +240,7 @@ Use `wow-generating-validation-reports` Skill for:
    - Has comment documenting color scheme
    - Uses shape differentiation (not color alone)
 
-4. **Check diagram splitting** (validate against [Diagrams Convention - Diagram Size and Splitting](../../rules/conventions/formatting/ex-ru-co-fo__diagrams.md#diagram-size-and-splitting))
+4. **Check diagram splitting** (validate against [Diagrams Convention - Diagram Size and Splitting](../../rules/conventions/formatting/diagrams.md#diagram-size-and-splitting))
    - No subgraphs (renders too small on mobile)
    - Limited branching (≤4-5 branches from single node)
    - One concept per diagram
@@ -325,7 +325,7 @@ See `wow-generating-validation-reports` Skill for complete report template struc
 
 ## Anti-Patterns to Check For
 
-Validate against common mistakes defined in [Tutorial Convention - Anti-Patterns](../../rules/conventions/tutorial/ex-ru-co-tu__general.md#-anti-patterns).
+Validate against common mistakes defined in [Tutorial Convention - Anti-Patterns](../../rules/conventions/tutorial/general.md#-anti-patterns).
 
 **Key anti-patterns include:**
 
@@ -375,7 +375,7 @@ Your goal: Help make tutorials that **teach effectively** and **inspire learners
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Tutorial Convention](../../rules/conventions/tutorial/ex-ru-co-tu__general.md)
+- [Tutorial Convention](../../rules/conventions/tutorial/general.md)
 
 **Related Agents**:
 
@@ -385,9 +385,9 @@ Your goal: Help make tutorials that **teach effectively** and **inspire learners
 
 **Related Conventions**:
 
-- [Tutorial Convention](../../rules/conventions/tutorial/ex-ru-co-tu__general.md)
-- [Tutorial Naming Convention](../../rules/conventions/tutorial/ex-ru-co-tu__naming.md)
-- [Content Quality Principles](../../rules/conventions/content/ex-ru-co-co__quality.md)
+- [Tutorial Convention](../../rules/conventions/tutorial/general.md)
+- [Tutorial Naming Convention](../../rules/conventions/tutorial/naming.md)
+- [Content Quality Principles](../../rules/conventions/content/quality.md)
 
 **Skills**:
 

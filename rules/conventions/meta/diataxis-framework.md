@@ -20,9 +20,9 @@ The open-sharia-enterprise project uses the [Diátaxis framework](https://diatax
 
 This convention implements the following core principles:
 
-- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Diátaxis separates learning-oriented content (tutorials) from problem-solving (how-to) and reference material. Beginners start with tutorials, experienced users jump to how-to guides or reference. Complexity is layered, not overwhelming.
+- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Diátaxis separates learning-oriented content (tutorials) from problem-solving (how-to) and reference material. Beginners start with tutorials, experienced users jump to how-to guides or reference. Complexity is layered, not overwhelming.
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Four clear categories (Tutorials, How-To, Reference, Explanation) instead of complex, nested documentation hierarchies. Each category serves a single, well-defined purpose.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Four clear categories (Tutorials, How-To, Reference, Explanation) instead of complex, nested documentation hierarchies. Each category serves a single, well-defined purpose.
 
 ## Purpose
 
@@ -40,10 +40,10 @@ This convention establishes the Diátaxis framework as the organizational struct
 
 ### What This Convention Does NOT Cover
 
-- **How to write content within categories** - Covered in category-specific conventions (e.g., [Tutorial Naming Convention](../tutorial/ex-ru-co-tu__naming.md), [README Quality Convention](../content/ex-ru-co-co__readme-quality.md))
-- **File naming within categories** - Covered in [File Naming Convention](./ex-ru-co-me__file-naming.md)
+- **How to write content within categories** - Covered in category-specific conventions (e.g., [Tutorial Naming Convention](../tutorial/naming.md), [README Quality Convention](../content/readme-quality.md))
+- **File naming within categories** - Covered in [File Naming Convention](./file-naming.md)
 - **Hugo site structure** - Covered in Hugo content conventions
-- **Content quality standards** - Covered in [Content Quality Principles](../content/ex-ru-co-co__quality.md)
+- **Content quality standards** - Covered in [Content Quality Principles](../content/quality.md)
 
 ## 📋 What is Diátaxis?
 
@@ -227,7 +227,7 @@ The directory names follow semantic conventions:
 - `reference/` is a **mass noun** (like "reference library") representing reference material as a whole
 - `explanation/` is a **mass noun** representing explanatory content as a collective
 
-This is intentional and follows standard documentation naming conventions. See the [File Naming Convention](./ex-ru-co-me__file-naming.md) for more details.
+This is intentional and follows standard documentation naming conventions. See the [File Naming Convention](./file-naming.md) for more details.
 
 ### File Naming Integration
 
@@ -242,7 +242,7 @@ For nested directories, add 2-letter abbreviations:
 
 - `ex-co__` = explanation/conventions
 
-See [File Naming Convention](./ex-ru-co-me__file-naming.md) for details.
+See [File Naming Convention](./file-naming.md) for details.
 
 ### Frontmatter Standard
 
@@ -370,7 +370,7 @@ Start here
 
 ### Explanation Example: This Document
 
-**Location**: `rules/conventions/meta/ex-ru-co-me__diataxis-framework.md`
+**Location**: `rules/conventions/meta/diataxis-framework.md`
 
 **Structure**:
 
@@ -384,9 +384,9 @@ Start here
 ## 🔗 Related Documentation
 
 - [Conventions Index](./README.md) - Overview of all documentation conventions
-- [File Naming Convention](./ex-ru-co-me__file-naming.md) - How to name files with category prefixes
-- [Linking Convention](../formatting/ex-ru-co-fo__linking.md) - How to link between documents
-- [OSS Documentation Convention](../content/ex-ru-co-co__oss-documentation.md) - Repository-level documentation (README, CONTRIBUTING, ADRs) - complements Diátaxis internal docs structure
+- [File Naming Convention](./file-naming.md) - How to name files with category prefixes
+- [Linking Convention](../formatting/linking.md) - How to link between documents
+- [OSS Documentation Convention](../content/oss-documentation.md) - Repository-level documentation (README, CONTRIBUTING, ADRs) - complements Diátaxis internal docs structure
 
 ## 🌐 External Resources
 

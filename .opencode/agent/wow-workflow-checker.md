@@ -85,7 +85,7 @@ Skill: `wow-generating-validation-reports`
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Workflow Pattern Convention](../../rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
+- [Workflow Pattern Convention](../../rules/workflows/meta/workflow-pattern.md)
 
 **Related Agents**:
 
@@ -94,8 +94,8 @@ Skill: `wow-generating-validation-reports`
 
 **Related Conventions**:
 
-- [Workflow Pattern Convention](../../rules/workflows/meta/ex-ru-wf-me__workflow-pattern.md)
-- [Execution Modes Convention](../../rules/workflows/meta/ex-ru-wf-me__execution-modes.md)
+- [Workflow Pattern Convention](../../rules/workflows/meta/workflow-pattern.md)
+- [Execution Modes Convention](../../rules/workflows/meta/execution-modes.md)
 
 **Skills**:
 

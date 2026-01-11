@@ -319,10 +319,10 @@ Execute fixer logic directly → fixes persist
 
 ## Related Documentation
 
-- [Workflow Pattern Convention](./ex-ru-wf-me__workflow-pattern.md) - Overall workflow structure
-- [Plan Quality Gate Workflow](../plan/ex-ru-wf-pl__quality-gate.md) - Example workflow using manual mode
-- [AI Agents Convention](../../development/agents/ex-ru-de-ag__ai-agents.md) - Agent invocation patterns
-- [Maker-Checker-Fixer Pattern](../../development/pattern/ex-ru-de-pa__maker-checker-fixer.md) - Validation workflow pattern
+- [Workflow Pattern Convention](./workflow-pattern.md) - Overall workflow structure
+- [Plan Quality Gate Workflow](../plan/quality-gate.md) - Example workflow using manual mode
+- [AI Agents Convention](../../development/agents/ai-agents.md) - Agent invocation patterns
+- [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Validation workflow pattern
 
 ## Future Enhancements
 

@@ -24,15 +24,15 @@ These workflows define **WHEN and HOW to validate and execute plans**, orchestra
 
 ## Workflows
 
-- [Plan Execution](./ex-ru-wf-pl__execution.md) - Execute plan tasks systematically with validation and completion tracking using plan**executor and plan**execution-checker
-- [Plan Quality Gate](./ex-ru-wf-pl__quality-gate.md) - Validate plan completeness and accuracy, apply fixes iteratively until ZERO findings using plan**checker and plan**fixer
+- [Plan Execution](./execution.md) - Execute plan tasks systematically with validation and completion tracking using plan**executor and plan**execution-checker
+- [Plan Quality Gate](./quality-gate.md) - Validate plan completeness and accuracy, apply fixes iteratively until ZERO findings using plan**checker and plan**fixer
 
 ## Related Documentation
 
 - [Workflows Index](../README.md) - All orchestrated workflows
-- [Plans Organization Convention](../../conventions/project/ex-ru-co-pr__plans-organization.md) - Plan structure standards
-- [Maker-Checker-Fixer Pattern](../../development/pattern/ex-ru-de-pa__maker-checker-fixer.md) - Core workflow pattern
-- [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
+- [Plans Organization Convention](../../conventions/project/plans-organization.md) - Plan structure standards
+- [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Core workflow pattern
+- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
 
 ---
 

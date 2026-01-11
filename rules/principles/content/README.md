@@ -23,16 +23,16 @@ These principles define **WHY we value specific approaches to content creation**
 
 ## Principles
 
-- [Accessibility First](./ex-ru-pr-co__accessibility-first.md) - Design for universal access from the start (WCAG compliance, color-blind friendly palettes, alt text, screen reader support)
-- [Documentation First](./ex-ru-pr-co__documentation-first.md) - Documentation is mandatory, not optional. Every system, convention, feature, and decision must be documented
-- [No Time Estimates](./ex-ru-pr-co__no-time-estimates.md) - People work and learn at vastly different speeds. Focus on outcomes and deliverables, not arbitrary time constraints
-- [Progressive Disclosure](./ex-ru-pr-co__progressive-disclosure.md) - Start simple and layer complexity gradually. Beginners see simple patterns, experts access advanced features when needed
+- [Accessibility First](./accessibility-first.md) - Design for universal access from the start (WCAG compliance, color-blind friendly palettes, alt text, screen reader support)
+- [Documentation First](./documentation-first.md) - Documentation is mandatory, not optional. Every system, convention, feature, and decision must be documented
+- [No Time Estimates](./no-time-estimates.md) - People work and learn at vastly different speeds. Focus on outcomes and deliverables, not arbitrary time constraints
+- [Progressive Disclosure](./progressive-disclosure.md) - Start simple and layer complexity gradually. Beginners see simple patterns, experts access advanced features when needed
 
 ## Related Documentation
 
 - [Core Principles Index](../README.md) - All foundational principles
 - [Conventions Index](../../conventions/README.md) - Documentation conventions implementing these principles
-- [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
+- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
 
 ---
 

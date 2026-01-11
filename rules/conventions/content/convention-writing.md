@@ -20,9 +20,9 @@ This meta-convention defines how to write convention documents in the `rules/con
 
 This convention implements the following core principles:
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Required sections, clear scope boundaries, and explicit content structure for all conventions. No guessing about what belongs in conventions/ vs development/ - decision criteria are documented.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Required sections, clear scope boundaries, and explicit content structure for all conventions. No guessing about what belongs in conventions/ vs development/ - decision criteria are documented.
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Standardized convention structure reduces cognitive load. Same sections in same order across all conventions - readers know what to expect.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Standardized convention structure reduces cognitive load. Same sections in same order across all conventions - readers know what to expect.
 
 ## Purpose
 
@@ -64,14 +64,14 @@ Does this define HOW TO WRITE OR FORMAT DOCUMENTATION?
 
 ### Examples of Scope Boundaries
 
-| Topic                                             | Location                                                                                                             | Reasoning                            |
-| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| How to write Hugo content (frontmatter, markdown) | `conventions/hugo/ex-ru-co-hu__shared.md`, `ex-co__hugo-content-ayokoding.md`, `ex-co__hugo-content-ose-platform.md` | About **writing** content            |
-| How to develop Hugo themes (layouts, templates)   | `development/hugo/ex-ru-de-hu__development.md`                                                                       | About **building** infrastructure    |
-| How to format tutorials                           | `conventions/tutorial/ex-ru-co-tu__general.md`                                                                       | About **writing** tutorials          |
-| How to write acceptance criteria                  | `development/infra/ex-ru-de-in__acceptance-criteria.md`                                                              | About **software quality** process   |
-| How to name files                                 | `conventions/meta/ex-ru-co-me__file-naming.md`                                                                       | About **documentation** organization |
-| How to write commit messages                      | `development/workflow/ex-ru-de-wo__commit-messages.md`                                                               | About **git workflow**               |
+| Topic                                             | Location                                        | Reasoning                            |
+| ------------------------------------------------- | ----------------------------------------------- | ------------------------------------ |
+| How to write Hugo content (frontmatter, markdown) | `conventions/hugo/hugo-content-ose-platform.md` | About **writing** content            |
+| How to develop Hugo themes (layouts, templates)   | `development/hugo/development.md`               | About **building** infrastructure    |
+| How to format tutorials                           | `conventions/tutorial/general.md`               | About **writing** tutorials          |
+| How to write acceptance criteria                  | `development/infra/acceptance-criteria.md`      | About **software quality** process   |
+| How to name files                                 | `conventions/meta/file-naming.md`               | About **documentation** organization |
+| How to write commit messages                      | `development/workflow/commit-messages.md`       | About **git workflow**               |
 
 ## Convention Document Structure
 
@@ -122,8 +122,8 @@ Brief overview explaining what this convention covers and why it exists.
 
 This convention implements/respects the following core principles:
 
-- **[Principle Name](../../principles/[category]/ex-ru-pr-[category]__[name].md)**: Brief explanation of HOW this convention implements or respects this principle. What specific aspect of the principle does this convention embody?
-- **[Another Principle](../../principles/[category]/ex-ru-pr-[category]__[name].md)**: Another explanation.
+- **[Principle Name](../../principles/[category]/[name].md)**: Brief explanation of HOW this convention implements or respects this principle. What specific aspect of the principle does this convention embody?
+- **[Another Principle](../../principles/[category]/[name].md)**: Another explanation.
 ```
 
 **Purpose:** Explicit traceability from documentation standards back to foundational values. Makes governance hierarchy visible and verifiable.
@@ -133,7 +133,7 @@ This convention implements/respects the following core principles:
 - List ALL principles this convention implements or respects
 - Include working link to each principle document
 - Explain HOW the convention embodies each principle (not just listing names)
-- Use relative paths: `../principles/[category]/ex-ru-pr-[category]__[name].md`
+- Use relative paths: `../principles/[category]/[name].md`
 
 **Note:** This section is MANDATORY for all convention documents. It enables traceability validation and ensures conventions trace back to foundational values.
 
@@ -285,9 +285,9 @@ Before publishing a convention document, verify:
 
 ### Convention Compliance
 
-- [ ] Follows [File Naming Convention](../meta/ex-ru-co-me__file-naming.md) - `ex-co__*.md` pattern
-- [ ] Follows [Linking Convention](../formatting/ex-ru-co-fo__linking.md) - Relative paths with `.md`
-- [ ] Follows [Content Quality Principles](./ex-ru-co-co__quality.md) - Active voice, single H1, etc.
+- [ ] Follows [File Naming Convention](../meta/\*.md` pattern
+- [ ] Follows [Linking Convention](../formatting/linking.md) - Relative paths with `.md`
+- [ ] Follows [Content Quality Principles](./quality.md) - Active voice, single H1, etc.
 - [ ] Uses TAB indentation for bullet items (Obsidian compatibility)
 - [ ] YAML frontmatter uses 2 spaces for indentation
 
@@ -300,7 +300,7 @@ Before publishing a convention document, verify:
 
 ### Accessibility
 
-- [ ] Diagrams use color-blind friendly palette ([Color Accessibility Convention](../formatting/ex-ru-co-fo__color-accessibility.md))
+- [ ] Diagrams use color-blind friendly palette ([Color Accessibility Convention](../formatting/color-accessibility.md))
 - [ ] Images have alt text
 - [ ] Acronyms defined on first use
 - [ ] Clear hierarchy (proper heading nesting)
@@ -380,7 +380,7 @@ Convention documents vary in length based on complexity:
 
 ## Naming Convention
 
-Convention files follow the [File Naming Convention](../meta/ex-ru-co-me__file-naming.md):
+Convention files follow the [File Naming Convention](../meta/file-naming.md):
 
 **Pattern:** `ex-co__[content-identifier].md`
 
@@ -432,9 +432,9 @@ If a convention becomes obsolete:
 
 Looking for inspiration? These conventions exemplify different structural approaches:
 
-- **[Color Accessibility Convention](../formatting/ex-ru-co-fo__color-accessibility.md)** - Comprehensive reference convention with detailed palette specifications, contrast ratios, and tool-specific guidance
-- **[Tutorial Naming Convention](../tutorial/ex-ru-co-tu__naming.md)** - Decision-tree convention with structured types, coverage percentages, and clear selection criteria
-- **[Indentation Convention](../formatting/ex-ru-co-fo__indentation.md)** - Simple, focused convention addressing a single technical standard with clear examples
+- **[Color Accessibility Convention](../formatting/color-accessibility.md)** - Comprehensive reference convention with detailed palette specifications, contrast ratios, and tool-specific guidance
+- **[Tutorial Naming Convention](../tutorial/naming.md)** - Decision-tree convention with structured types, coverage percentages, and clear selection criteria
+- **[Indentation Convention](../formatting/indentation.md)** - Simple, focused convention addressing a single technical standard with clear examples
 
 ## Examples
 
@@ -569,17 +569,17 @@ When creating a convention:
 
 **Related Meta-Documentation:**
 
-- [Content Quality Principles](./ex-ru-co-co__quality.md) - Universal quality standards for all markdown content
-- [Diátaxis Framework](../meta/ex-ru-co-me__diataxis-framework.md) - Four-category documentation organization framework
+- [Content Quality Principles](./quality.md) - Universal quality standards for all markdown content
+- [Diátaxis Framework](../meta/diataxis-framework.md) - Four-category documentation organization framework
 
 **File Conventions:**
 
-- [File Naming Convention](../meta/ex-ru-co-me__file-naming.md) - How to name files with hierarchical prefixes
-- [Linking Convention](../formatting/ex-ru-co-fo__linking.md) - How to link between documentation files
+- [File Naming Convention](../meta/file-naming.md) - How to name files with hierarchical prefixes
+- [Linking Convention](../formatting/linking.md) - How to link between documentation files
 
 **Development Practices:**
 
-- [AI Agents Convention](../development/agents/ex-ru-de-ag__ai-agents.md) - How to create AI agents (parallel meta-doc for development/)
+- [AI Agents Convention](../development/agents/ai-agents.md) - How to create AI agents (parallel meta-doc for development/)
 
 **Repository Guidance:**
 

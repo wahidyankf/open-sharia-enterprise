@@ -620,16 +620,16 @@ async function saveMudharabahDistribution(profit: number, investorRatio: number)
 
 ## 🔗 Related Principles
 
-- [Immutability Over Mutability](./ex-ru-pr-se__immutability.md) - Pure functions naturally use immutable data
-- [Explicit Over Implicit](./ex-ru-pr-se__explicit-over-implicit.md) - Dependencies explicit in function signatures
-- [Simplicity Over Complexity](../general/ex-ru-pr-ge__simplicity-over-complexity.md) - Pure functions are simpler to understand
-- [Automation Over Manual](./ex-ru-pr-se__automation-over-manual.md) - Pure functions are easier to test automatically
+- [Immutability Over Mutability](./immutability.md) - Pure functions naturally use immutable data
+- [Explicit Over Implicit](./explicit-over-implicit.md) - Dependencies explicit in function signatures
+- [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Pure functions are simpler to understand
+- [Automation Over Manual](./automation-over-manual.md) - Pure functions are easier to test automatically
 
 ## 📚 Related Conventions
 
-- [Functional Programming Practices](../../development/pattern/ex-ru-de-pa__functional-programming.md) - Implementation patterns for pure functions
-- [Code Quality Convention](../../development/quality/ex-ru-de-qu__code.md) - Automated testing
-- [Implementation Workflow](../../development/workflow/ex-ru-de-wo__implementation.md) - When to introduce pure functions
+- [Functional Programming Practices](../../development/pattern/functional-programming.md) - Implementation patterns for pure functions
+- [Code Quality Convention](../../development/quality/code.md) - Automated testing
+- [Implementation Workflow](../../development/workflow/implementation.md) - When to introduce pure functions
 
 ## 📖 References
 

@@ -33,9 +33,9 @@ The implementation workflow follows three sequential stages:
 
 This workflow respects three core principles:
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)** - Start with the simplest solution that works
-- **[YAGNI (You Aren't Gonna Need It)](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md#yagni-principles)** - Don't optimize prematurely
-- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)** - Layer refinement gradually
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)** - Start with the simplest solution that works
+- **[YAGNI (You Aren't Gonna Need It)](../../principles/general/simplicity-over-complexity.md#yagni-principles)** - Don't optimize prematurely
+- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)** - Layer refinement gradually
 
 ## Conventions Implemented/Respected
 
@@ -43,9 +43,9 @@ This workflow respects three core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Code Quality Convention](../quality/ex-ru-de-qu__code.md)**: The "make it right" stage applies code quality standards (Prettier formatting, linting) before the "make it fast" stage to ensure clean code before optimization.
+- **[Code Quality Convention](../quality/code.md)**: The "make it right" stage applies code quality standards (Prettier formatting, linting) before the "make it fast" stage to ensure clean code before optimization.
 
-- **[Content Quality Principles](../conventions/content/ex-ru-co-co__quality.md)**: Implementation workflow follows the same progressive layering philosophy - start simple (work), add structure and clarity (right), then refine performance (fast).
+- **[Content Quality Principles](../conventions/content/quality.md)**: Implementation workflow follows the same progressive layering philosophy - start simple (work), add structure and clarity (right), then refine performance (fast).
 
 ### Benefits of This Workflow
 
@@ -467,10 +467,10 @@ function processVideoFrame(frame: Frame): ProcessedFrame {
 
 ## 🔗 Related Documentation
 
-- [Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md) - Start simple principle
-- [Code Quality Convention](../quality/ex-ru-de-qu__code.md) - Automated quality checks
-- [Trunk Based Development](./ex-ru-de-wo__trunk-based-development.md) - Git workflow
-- [Acceptance Criteria Convention](../infra/ex-ru-de-in__acceptance-criteria.md) - Defining "works" in Stage 1
+- [Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md) - Start simple principle
+- [Code Quality Convention](../quality/code.md) - Automated quality checks
+- [Trunk Based Development](./trunk-based-development.md) - Git workflow
+- [Acceptance Criteria Convention](../infra/acceptance-criteria.md) - Defining "works" in Stage 1
 
 ---
 

@@ -24,30 +24,30 @@ These standards define **HOW to develop AI agents**, covering agent file structu
 
 ## Documents
 
-- [AI Agents Convention](./ex-ru-de-ag__ai-agents.md) - Complete standards for creating and managing AI agents including naming, file structure, frontmatter requirements, tool access patterns, and model selection
+- [AI Agents Convention](./ai-agents.md) - Complete standards for creating and managing AI agents including naming, file structure, frontmatter requirements, tool access patterns, and model selection
 
 ## Related Documentation
 
 - [Development Index](../README.md) - All development practices
-- [Automation Over Manual Principle](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md) - Why we build agents
+- [Automation Over Manual Principle](../../principles/software-engineering/automation-over-manual.md) - Why we build agents
 - [Agents Index](../../../../.claude/agents/README.md) - All available agents
-- [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
+- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected
 
 This set of development practices implements/respects the following core principles:
 
-- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: AI agents automate repetitive tasks like content validation, file management, and quality checks, ensuring consistency and reducing manual effort.
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: AI agents automate repetitive tasks like content validation, file management, and quality checks, ensuring consistency and reducing manual effort.
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Agent development conventions require explicit tool permissions, clear descriptions, and defined scopes, making agent behavior transparent and predictable.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Agent development conventions require explicit tool permissions, clear descriptions, and defined scopes, making agent behavior transparent and predictable.
 
 ## Conventions Implemented/Respected
 
 This set of development practices respects the following conventions:
 
-- **[Content Quality Principles](../../conventions/content/ex-ru-co-co__quality.md)**: Agent frontmatter and documentation follow active voice, proper heading hierarchy, and accessibility standards.
+- **[Content Quality Principles](../../conventions/content/quality.md)**: Agent frontmatter and documentation follow active voice, proper heading hierarchy, and accessibility standards.
 
-- **[File Naming Convention](../../conventions/meta/ex-ru-co-me__file-naming.md)**: Agent files use kebab-case naming with explicit prefixes following repository naming standards.
+- **[File Naming Convention](../../conventions/meta/file-naming.md)**: Agent files use kebab-case naming with explicit prefixes following repository naming standards.
 
 ---
 

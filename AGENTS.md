@@ -51,7 +51,7 @@ Instructions for AI agents working with this repository via OpenCode.
 - **Progressive Reporting**: Write findings immediately during execution
 - **UUID Chains**: Prevent parallel execution collisions
 
-**See**: [Maker-Checker-Fixer Pattern](./rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md)
+**See**: [Maker-Checker-Fixer Pattern](./rules/development/pattern/maker-checker-fixer.md)
 
 ## Skills (Knowledge Packages)
 
@@ -139,7 +139,7 @@ All work follows **10 foundational principles** from \`rules/principles/\`:
 
 **Skills**: Delivery infrastructure supporting agents (not a governance layer)
 
-**See**: [Repository Architecture](./docs/explanation/ex-ru__repository-governance-architecture.md)
+**See**: [Repository Architecture](./docs/explanationrepository-governance-architecture.md)
 
 ## Common Development Commands
 
@@ -180,7 +180,7 @@ nx graph
 - **Commit format**: Conventional Commits \`<type>(<scope>): <description>\`
 - **Pre-commit hooks**: Format (Prettier), validate (Commitlint), test (affected projects)
 
-**See**: [Trunk Based Development](./rules/development/workflow/ex-ru-de-wo__trunk-based-development.md)
+**See**: [Trunk Based Development](./rules/development/workflow/trunk-based-development.md)
 
 ## Plans Organization
 
@@ -193,7 +193,7 @@ Project planning in \`plans/\` folder:
 
 **Folder naming**: \`YYYY-MM-DD\_\_[project-identifier]/\`
 
-**See**: [Plans Organization](./rules/conventions/project/ex-ru-co-pr__plans-organization.md)
+**See**: [Plans Organization](./rules/conventions/project/plans-organization.md)
 
 ## Temporary Files
 
@@ -204,7 +204,7 @@ AI agents use designated temporary directories:
 
 **Checker agents**: MUST write progressive reports to \`generated-reports/\` with pattern \`{agent-family}**{uuid-chain}**{YYYY-MM-DD--HH-MM}\_\_audit.md\`
 
-**See**: [Temporary Files Convention](./rules/development/infra/ex-ru-de-in__temporary-files.md)
+**See**: [Temporary Files Convention](./rules/development/infra/temporary-files.md)
 
 ## Important Notes
 
