@@ -4,7 +4,7 @@ This guide explains how to create a new Skill in `.claude/skills/` for Claude Co
 
 ## Prerequisites
 
-- Familiarity with [AI Agents Convention](../explanation/rules/development/agents/ai-agents.md) (Skills field requirements)
+- Familiarity with [AI Agents Convention](../explanation/governance/development/agents/ai-agents.md) (Skills field requirements)
 - Understanding of [Repository Architecture](../explanationrepository-governance-architecture.md) (Skills as Layer 2 delivery infrastructure)
 - Review existing Skills in `.claude/skills/` for reference
 
@@ -105,7 +105,7 @@ Follow the template structure:
 
 ### Step 4: Validate Content Quality
 
-Ensure your Skill follows [Content Quality Principles](../explanation/rules/conventions/content/quality.md):
+Ensure your Skill follows [Content Quality Principles](../explanation/governance/conventions/content/quality.md):
 
 - [ ] Active voice throughout
 - [ ] Clear, specific description for auto-loading
@@ -252,7 +252,7 @@ skills: [domain__your-skill-name] # Add your Skill here
 
 1. **Test auto-loading**: Verify Skill loads when expected, doesn't load when irrelevant
 2. **Validate links**: All references must point to existing convention/development docs
-3. **Check quality**: Apply [Content Quality Principles](../explanation/rules/conventions/content/quality.md)
+3. **Check quality**: Apply [Content Quality Principles](../explanation/governance/conventions/content/quality.md)
 4. **Run wow\_\_rules-checker**: Validates Skills structure, frontmatter, references
 5. **Update Skills index**: Ensure `.claude/skills/README.md` includes your Skill
 
@@ -409,15 +409,15 @@ wow__understanding-repository-architecture/
 
 ## References
 
-- [AI Agents Convention](../explanation/rules/development/agents/ai-agents.md) - Skills field requirements
+- [AI Agents Convention](../explanation/governance/development/agents/ai-agents.md) - Skills field requirements
 - [Repository Architecture](../explanationrepository-governance-architecture.md) - Skills as Layer 2 infrastructure
-- [Content Quality Principles](../explanation/rules/conventions/content/quality.md) - Quality standards
+- [Content Quality Principles](../explanation/governance/conventions/content/quality.md) - Quality standards
 - [Skills Directory README](../../.claude/skills/README.md) - Skills overview and index
 
 ## Related How-To Guides
 
 - [How to Create a New Agent](./hoto__add-new-agent.md) - Creating agents that reference Skills
-- [How to Update Repository Rules](./hoto__update-repository-rules.md) - Using wow\_\_rules-maker for Skills updates
+- [How to Update Repository Governance](./hoto__update-repository-rules.md) - Using wow\_\_rules-maker for Skills updates
 
 ---
 

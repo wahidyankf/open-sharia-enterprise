@@ -1130,19 +1130,19 @@ interface RustQualityMetrics {
 
 ### Conventions
 
-- [Programming Language Content Standard](../../../rules/conventions/tutorial/programming-language-content.md) - Master reference
-- [Hugo Content Convention - ayokoding](../../../rules/conventions/hugo/ayokoding.md) - Hextra theme specifics
-- [Hugo Content Convention - Shared](../../../rules/conventions/hugo/shared.md) - Base Hugo rules
-- [Content Quality Principles](../../../rules/conventions/content/quality.md) - Quality standards
-- [Tutorial Naming Convention](../../../rules/conventions/tutorial/naming.md) - Tutorial level definitions
-- [Color Accessibility Convention](../../../rules/conventions/formatting/color-accessibility.md) - Approved color palette
-- [Diagrams Convention](../../../rules/conventions/formatting/diagrams.md) - Mermaid standards
+- [Programming Language Content Standard](../../../governance/conventions/tutorial/programming-language-content.md) - Master reference
+- [Hugo Content Convention - ayokoding](../../../governance/conventions/hugo/ayokoding.md) - Hextra theme specifics
+- [Hugo Content Convention - Shared](../../../governance/conventions/hugo/shared.md) - Base Hugo rules
+- [Content Quality Principles](../../../governance/conventions/content/quality.md) - Quality standards
+- [Tutorial Naming Convention](../../../governance/conventions/tutorial/naming.md) - Tutorial level definitions
+- [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md) - Approved color palette
+- [Diagrams Convention](../../../governance/conventions/formatting/diagrams.md) - Mermaid standards
 
 ### Development Practices
 
-- [Trunk Based Development](../../../rules/development/workflow/trunk-based-development.md) - Git workflow
-- [Commit Messages](../../../rules/development/workflow/commit-messages.md) - Commit format
-- [Code Quality](../../../rules/development/quality/code.md) - Automated checks
+- [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md) - Git workflow
+- [Commit Messages](../../../governance/development/workflow/commit-messages.md) - Commit format
+- [Code Quality](../../../governance/development/quality/code.md) - Automated checks
 
 ### AI Agents
 

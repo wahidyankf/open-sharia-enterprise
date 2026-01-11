@@ -91,7 +91,7 @@ Skill: `wow-generating-validation-reports`
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - Skills: `apps-ayokoding-web-developing-content`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`
 
 ## Reference Documentation
@@ -99,7 +99,7 @@ Skill: `wow-generating-validation-reports`
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 
 **Related Agents**:
 
@@ -108,8 +108,8 @@ Skill: `wow-generating-validation-reports`
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
-- [Content Quality Principles](../../rules/conventions/content/quality.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
+- [Content Quality Principles](../../governance/conventions/content/quality.md)
 
 **Skills**:
 

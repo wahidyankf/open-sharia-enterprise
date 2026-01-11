@@ -67,7 +67,7 @@ This practice respects the following core principles:
 
 ## Token Budget Philosophy
 
-**CRITICAL GUIDELINE**: When invoking agents (`.claude/agents/`) and workflows (`rules/workflows/`), **do NOT think about token budget constraints**.
+**CRITICAL GUIDELINE**: When invoking agents (`.claude/agents/`) and workflows (`governance/workflows/`), **do NOT think about token budget constraints**.
 
 ### Why Unlimited Budget Mindset
 
@@ -341,8 +341,8 @@ skills:
 
 **Conventions:**
 
-- `rules/conventions/content/quality.md` - Content Quality Principles
-- `rules/conventions/formatting/linking.md` - Linking Convention
+- `governance/conventions/content/quality.md` - Content Quality Principles
+- `governance/conventions/formatting/linking.md` - Linking Convention
 ```
 
 This pattern provides both auto-loaded knowledge (Skills) and explicit references for specific requirements.
@@ -1151,13 +1151,13 @@ Use GitHub-compatible markdown with relative paths:
 ```markdown
 ✅ Good:
 
-- `rules/development/agents/ai-agents.md` - AI agents convention
+- `governance/development/agents/ai-agents.md` - AI agents convention
 
 ❌ Bad:
 
 - [[ex-de__ai-agents]] - Obsidian wiki link (not GitHub compatible)
-- `/rules/development/agents/ai-agents.md` - Absolute path
-- `rules/development/agents/ai-agents` - Missing .md extension
+- `/governance/development/agents/ai-agents.md` - Absolute path
+- `governance/development/agents/ai-agents` - Missing .md extension
 ```
 
 See [Linking Convention](../conventions/formatting/linking.md) for details.
@@ -1285,8 +1285,8 @@ Quick categorization for existing agents:
 1. **Move details to conventions OR development docs (PRIMARY STRATEGY)** - **CRITICAL:** MOVE content to appropriate docs, NOT DELETE.
 
    **Destinations**:
-   - `rules/conventions/` (content/format standards)
-   - `rules/development/` (process/workflow standards)
+   - `governance/conventions/` (content/format standards)
+   - `governance/development/` (process/workflow standards)
 
    Create or expand documents with comprehensive details, then replace with brief summary + link. Zero content loss required.
 
@@ -1378,7 +1378,7 @@ Is this content reusable across 3+ agents?
 │   │       Examples: applying-content-quality, creating-accessible-diagrams
 │   │
 │   └─ Is it technical specification or standard?
-│       └─ YES → Create/update Convention in rules/conventions/
+│       └─ YES → Create/update Convention in governance/conventions/
 │           Examples: Color Accessibility Convention, Mathematical Notation Convention
 │
 └─ NO → Keep in Agent File
@@ -1453,7 +1453,7 @@ Based on the pilot validation, use these proven patterns when simplifying agents
 ```markdown
 ## Report Generation
 
-**MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../../rules/development/infra/temporary-files.md).
+**MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../../governance/development/infra/temporary-files.md).
 
 **Report pattern**: `generated-reports/{agent}__{uuid-chain}__{timestamp}__{type}.md`
 
@@ -1545,7 +1545,7 @@ When creating new agents:
 Before committing agent changes:
 
 - [ ] No content duplicates Skills (check `.claude/skills/` catalog)
-- [ ] No content duplicates Conventions (check `rules/conventions/`)
+- [ ] No content duplicates Conventions (check `governance/conventions/`)
 - [ ] All Skills referenced exist in `.claude/skills/`
 - [ ] All Convention links point to valid files
 - [ ] Task-specific instructions retained (agent is self-contained for its job)
@@ -1874,7 +1874,7 @@ Your primary job is to [clear, specific purpose statement].
 
 **Agent Conventions:**
 
-- `rules/development/agents/ai-agents.md` - AI agents convention (all agents must follow)
+- `governance/development/agents/ai-agents.md` - AI agents convention (all agents must follow)
 
 **[Domain-Specific Conventions]:**
 

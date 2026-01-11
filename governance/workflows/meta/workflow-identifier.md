@@ -653,7 +653,7 @@ Applies mode-based fixing with iteration limits.
 
 ### Example Implementation
 
-See [Repository Rules Quality Gate Workflow](../wow/rules-quality-gate.md) for canonical implementation.
+See [Repository Governance Quality Gate Workflow](../wow/rules-quality-gate.md) for canonical implementation.
 
 ### Key Differences from Basic Validation Workflow
 
@@ -768,7 +768,7 @@ Potential workflow features (not yet implemented):
 
 ## Token Budget Philosophy
 
-**CRITICAL GUIDELINE**: When orchestrating workflows (`rules/workflows/`), **do NOT think about token budget constraints**.
+**CRITICAL GUIDELINE**: When orchestrating workflows (`governance/workflows/`), **do NOT think about token budget constraints**.
 
 Workflows naturally consume more tokens than single agent invocations because they:
 

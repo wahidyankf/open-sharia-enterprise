@@ -1,5 +1,5 @@
 ---
-name: wow-rules-checker
+name: wow-governance-checker
 description: Validates repository-wide consistency including file naming, linking, emoji usage, convention compliance, agent-Skill duplication detection, and rules governance (contradictions, inaccuracies, inconsistencies). Outputs to generated-reports/ with progressive streaming.
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
@@ -9,7 +9,7 @@ created: 2025-12-01
 updated: 2026-01-04
 ---
 
-# Repository Rules Checker Agent
+# Repository Governance Checker Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
@@ -40,13 +40,13 @@ Skill: `wow-generating-validation-reports` (progressive streaming)
 
 **Scope**: All governance documentation
 
-- `rules/vision/` - Layer 0: WHY we exist
-- `rules/principles/` - Layer 1: WHY values
-- `rules/conventions/` - Layer 2: WHAT documentation rules
-- `rules/development/` - Layer 3: HOW software practices
-- `rules/workflows/` - Layer 5: WHEN multi-step processes
+- `governance/vision/` - Layer 0: WHY we exist
+- `governance/principles/` - Layer 1: WHY values
+- `governance/conventions/` - Layer 2: WHAT documentation rules
+- `governance/development/` - Layer 3: HOW software practices
+- `governance/workflows/` - Layer 5: WHEN multi-step processes
 - `rulesrepository-governance-architecture.md` - Architecture guide
-- `rules/README.md` - Rules index
+- `governance/README.md` - Rules index
 - `docs/explanation/README.md` - Explanation index
 
 **Validation Categories**:
@@ -229,16 +229,16 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 
 ## Reference
 
-**Conventions**: All conventions in `rules/conventions/`
+**Conventions**: All conventions in `governance/conventions/`
 
-**Development Practices**: All practices in `rules/development/`
+**Development Practices**: All practices in `governance/development/`
 
 **Skills**: `docs-applying-diataxis-framework`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`
 
 **Related Documentation**:
 
-- [AI Agents Convention](../../rules/development/agents/ex-ru-de-ag-ai-agents.md) - Agent-Skill separation patterns
-- [Temporary Files Convention](../../rules/development/infra/ex-ru-de-in-temporary-files.md) - Report generation standards
+- [AI Agents Convention](../../governance/development/agents/ex-ru-de-ag-ai-agents.md) - Agent-Skill separation patterns
+- [Temporary Files Convention](../../governance/development/infra/ex-ru-de-in-temporary-files.md) - Report generation standards
 - [Skills Directory](../.claude/skills/README.md) - Complete Skills catalog
 
 ## Validation Process
@@ -293,13 +293,13 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 **Validate contradictions, inaccuracies, and inconsistencies** across all governance layers:
 
 1. **Read all governance files**:
-   - `rules/vision/**/*.md`
-   - `rules/principles/**/*.md`
-   - `rules/conventions/**/*.md`
-   - `rules/development/**/*.md`
-   - `rules/workflows/**/*.md`
+   - `governance/vision/**/*.md`
+   - `governance/principles/**/*.md`
+   - `governance/conventions/**/*.md`
+   - `governance/development/**/*.md`
+   - `governance/workflows/**/*.md`
    - `rulesrepository-governance-architecture.md`
-   - `rules/README.md`
+   - `governance/README.md`
    - `docs/explanation/README.md`
 
 2. **Contradiction Detection**:
@@ -354,17 +354,17 @@ Update report status to "Complete", add summary statistics.
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [Repository Governance Architecture](../../rulesrepository-governance-architecture.md)
-- [AI Agents Convention](../../rules/development/agents/ai-agents.md)
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
 
 **Related Agents**:
 
-- `wow-rules-fixer` - Fixes issues found by this checker
-- `wow-rules-maker` - Creates repository rules and conventions
+- `wow-governance-fixer` - Fixes issues found by this checker
+- `wow-governance-maker` - Creates repository rules and conventions
 
 **Related Conventions**:
 
-- [AI Agents Convention](../../rules/development/agents/ai-agents.md)
-- [Maker-Checker-Fixer Pattern](../../rules/development/pattern/maker-checker-fixer.md)
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
+- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md)
 
 **Skills**:
 

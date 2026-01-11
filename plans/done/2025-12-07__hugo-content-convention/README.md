@@ -8,8 +8,8 @@ Establish standardized Hugo content conventions, create universal Content Qualit
 
 **Deliverables**:
 
-- 1 Hugo Content Convention (rules/conventions/ex-co\_\_hugo-content.md)
-- 1 Content Quality Principles Convention (rules/conventions/ex-co\_\_content-quality.md)
+- 1 Hugo Content Convention (governance/conventions/ex-co\_\_hugo-content.md)
+- 1 Content Quality Principles Convention (governance/conventions/ex-co\_\_content-quality.md)
 - 4 AI Agents (ayokoding-web-general-maker, ayokoding-web-general-checker, ose-platform-web-content-maker, ose-platform-web-content-checker)
 
 **Git Workflow**: Commit to `main`
@@ -290,7 +290,7 @@ Scenario: Writer creates accessible content
 
 #### Documentation Updates
 
-**REQ-017**: Update conventions index (rules/conventions/README.md)
+**REQ-017**: Update conventions index (governance/conventions/README.md)
 
 - **Priority**: High
 - **User Stories**: Story 1, Story 4
@@ -691,7 +691,7 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
    - Review existing conventions that apply
 
 2. **Convention Creation**
-   - Create rules/conventions/ex-co\_\_hugo-content.md
+   - Create governance/conventions/ex-co\_\_hugo-content.md
    - Structure: Inherited Conventions, Adapted Conventions, Hugo-Specific Conventions, Site-Specific Differences
    - Include Mermaid diagrams for visual clarity
    - Add examples for each pattern
@@ -706,7 +706,7 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
    - Follow AI Agents Convention structure
 
 4. **Index Updates**
-   - Update rules/conventions/README.md
+   - Update governance/conventions/README.md
    - Update .claude/agents/README.md
    - Update CLAUDE.md with Hugo content section
 
@@ -734,7 +734,7 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
   - **Implementation Notes**: Created ex-co\_\_hugo-content.md with complete frontmatter (title, description, category, tags, dates). Organized into 5 main sections: Overview, Inherited Conventions (7), Adapted Conventions (5), Hugo-Specific Conventions (6), Theme-Specific Differences (2), Site-Specific Differences (2). Added comprehensive Mermaid diagram showing convention hierarchy with accessible color palette.
   - **Date**: 2025-12-07
   - **Status**: Completed
-  - **Files Changed**: rules/conventions/ex-co\_\_hugo-content.md (new)
+  - **Files Changed**: governance/conventions/ex-co\_\_hugo-content.md (new)
 
 - [x] Step 2: Document Inherited Conventions section (7 total)
   - **Implementation Notes**: Documented all 7 inherited conventions with links: Mathematical Notation (LaTeX in learning content), Color Accessibility (Mermaid diagrams), Diagrams (Mermaid preferred), Emoji Usage (semantic use), Timestamp Format (ISO 8601 UTC+7), Tutorial Convention (ayokoding-web learning), Tutorial Naming (ayokoding-web types). Each includes application to Hugo with specific examples. Emphasized Tutorial conventions apply to ayokoding-web only.
@@ -781,10 +781,10 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
   - **Files Changed**: .claude/agents/ose-platform-web-content-checker.md (new)
 
 - [x] Step 10: Update conventions index
-  - **Implementation Notes**: Updated rules/conventions/README.md with both new conventions in alphabetical order: (1) Content Quality Principles - added after Color Accessibility, described as "Universal markdown content quality standards applicable to ALL repository markdown contexts (docs/, Hugo sites, plans/, root files). Covers writing style, heading hierarchy, accessibility, formatting"; (2) Hugo Content Convention - added after Emoji Usage, described as "Comprehensive Hugo content standards for ayokoding-web (Hextra theme) and ose-platform-web (PaperMod theme). Covers 7 inherited, 5 adapted, 6 Hugo-specific conventions, and theme/site-specific differences". Updated "Last Updated" to 2025-12-07.
+  - **Implementation Notes**: Updated governance/conventions/README.md with both new conventions in alphabetical order: (1) Content Quality Principles - added after Color Accessibility, described as "Universal markdown content quality standards applicable to ALL repository markdown contexts (docs/, Hugo sites, plans/, root files). Covers writing style, heading hierarchy, accessibility, formatting"; (2) Hugo Content Convention - added after Emoji Usage, described as "Comprehensive Hugo content standards for ayokoding-web (Hextra theme) and ose-platform-web (PaperMod theme). Covers 7 inherited, 5 adapted, 6 Hugo-specific conventions, and theme/site-specific differences". Updated "Last Updated" to 2025-12-07.
   - **Date**: 2025-12-07
   - **Status**: Completed
-  - **Files Changed**: rules/conventions/README.md (modified)
+  - **Files Changed**: governance/conventions/README.md (modified)
 
 - [x] Step 11: Update agents index
   - **Implementation Notes**: Updated .claude/agents/README.md with 4 new Hugo content agents inserted after deployer agents, before docs-checker. Added: (1) ayokoding-web-general-maker (🟦 green) with description, specialization (Hextra, bilingual, 5 archetypes, Tutorial Convention), tools, when to use, works with ayokoding-web-general-checker; (2) ayokoding-web-general-checker (🟨 yellow) with validation specialization, tools, when to use; (3) ose-platform-web-content-maker (🟦 green) with PaperMod v7.0+, English-only, enterprise tone; (4) ose-platform-web-content-checker (🟨 yellow) with PaperMod validation, cover image checking. All include references to Hugo Content Convention and Content Quality Principles.
@@ -802,7 +802,7 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
   - **Implementation Notes**: Created ex-co\_\_content-quality.md with complete frontmatter (title, description, category, tags, dates). Organized into 6 main sections: Scope (applies to ALL markdown), Writing Style & Tone, Heading Hierarchy, Accessibility Standards, Formatting Conventions, Quality Checklist. Added comprehensive Mermaid diagram showing quality principles hierarchy with accessible color palette. Emphasized universal applicability to docs/, Hugo sites, plans/, and root files.
   - **Date**: 2025-12-07
   - **Status**: Completed
-  - **Files Changed**: rules/conventions/ex-co\_\_content-quality.md (new)
+  - **Files Changed**: governance/conventions/ex-co\_\_content-quality.md (new)
 
 - [x] Step 14: Document Writing Style and Tone section
   - **Implementation Notes**: Documented 4 key principles: (1) Active Voice - prefer active over passive with examples showing good/bad/acceptable usage; (2) Professional Tone - approachable yet professional with examples of too-casual vs too-formal; (3) Clarity & Conciseness - one idea per sentence, short paragraphs, remove filler words, concrete examples; (4) Audience Awareness - writing for beginners vs intermediate/advanced with examples. Included extensive good/bad examples throughout.
@@ -825,10 +825,10 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
   - **Status**: Completed
 
 - [x] Step 18: Update conventions index with Content Quality Principles
-  - **Implementation Notes**: Combined with Step 10. Updated rules/conventions/README.md with Content Quality Principles convention in alphabetical order (after Color Accessibility, before Diagram). Description emphasizes universal application: "Universal markdown content quality standards applicable to ALL repository markdown contexts (docs/, Hugo sites, plans/, root files). Covers writing style and tone (active voice, professional, concise), heading hierarchy (single H1, proper nesting), accessibility (alt text, semantic HTML, color contrast, screen readers), and formatting (code blocks, text formatting, lists, blockquotes, tables, line length, paragraphs)".
+  - **Implementation Notes**: Combined with Step 10. Updated governance/conventions/README.md with Content Quality Principles convention in alphabetical order (after Color Accessibility, before Diagram). Description emphasizes universal application: "Universal markdown content quality standards applicable to ALL repository markdown contexts (docs/, Hugo sites, plans/, root files). Covers writing style and tone (active voice, professional, concise), heading hierarchy (single H1, proper nesting), accessibility (alt text, semantic HTML, color contrast, screen readers), and formatting (code blocks, text formatting, lists, blockquotes, tables, line length, paragraphs)".
   - **Date**: 2025-12-07
   - **Status**: Completed (combined with Step 10)
-  - **Files Changed**: rules/conventions/README.md (modified)
+  - **Files Changed**: governance/conventions/README.md (modified)
 
 - [x] Step 19: Update CLAUDE.md with Content Quality Principles
   - **Implementation Notes**: Combined with Step 12. Added "Content Quality Principles" section to CLAUDE.md emphasizing universal application to ALL markdown content. Section includes scope (docs/, Hugo, plans/, root files), 4 key principles (Writing Style & Tone, Heading Hierarchy, Accessibility, Formatting), and quality checklist. Added to Key Resources list with description "Universal markdown content quality standards for ALL repository markdown (docs/, Hugo sites, plans/, root files)". Maintains consistency with other convention descriptions.
@@ -861,13 +861,13 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
 
 ### Acceptance Criteria
 
-- [x] Hugo content convention document exists at rules/conventions/ex-co\_\_hugo-content.md
+- [x] Hugo content convention document exists at governance/conventions/ex-co\_\_hugo-content.md
 - [x] Hugo convention documents 7 inherited conventions (not 5)
 - [x] Hugo convention clearly separates inherited, adapted, Hugo-specific, theme-specific, and site-specific sections
 - [x] Hugo convention includes validated theme research (Hextra, PaperMod)
 - [x] Hugo convention includes Mermaid diagrams for content structure
 - [x] Hugo convention includes examples for all patterns
-- [x] Content Quality Principles convention document exists at rules/conventions/ex-co\_\_content-quality.md
+- [x] Content Quality Principles convention document exists at governance/conventions/ex-co\_\_content-quality.md
 - [x] Content Quality Principles convention applies to ALL markdown content (docs/, Hugo, plans/, root files)
 - [x] Content Quality Principles convention covers writing style, heading hierarchy, accessibility, and formatting
 - [x] All 4 agents exist in .claude/agents/ directory
@@ -936,7 +936,7 @@ All theme information validated from official sources:
   - 2 convention documents (ex-co**hugo-content.md, ex-co**content-quality.md)
   - 4 AI agent files (ayokoding-web-general-maker.md, ayokoding-web-general-checker.md, ose-platform-web-content-maker.md, ose-platform-web-content-checker.md)
 - **Files Updated**:
-  - rules/conventions/README.md (added 2 conventions)
+  - governance/conventions/README.md (added 2 conventions)
   - .claude/agents/README.md (added 4 agents)
   - CLAUDE.md (added Hugo Content and Content Quality sections, updated resources and agents lists)
 - **Self-Validation Status**: All deliverables created, all indices updated, all conventions followed

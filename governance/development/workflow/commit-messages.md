@@ -17,7 +17,7 @@ updated: 2025-11-29
 <!--
   MAINTENANCE NOTE: Master reference for commit message format
   This is duplicated (intentionally) in multiple files for different audiences:
-  1. rules/development/workflow/commit-messages.md (this file - comprehensive reference)
+  1. governance/development/workflow/commit-messages.md (this file - comprehensive reference)
   2. CLAUDE.md (quick reference for AI agents)
   When updating, synchronize both locations.
 -->

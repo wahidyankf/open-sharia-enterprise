@@ -47,7 +47,7 @@ This convention establishes designated directories for temporary files created b
 - `generated-reports/` - For validation, audit, and check reports
 - `local-temp/` - For miscellaneous temporary files and scratch work
 
-**Exception**: Unless specified otherwise by other existing rules/conventions in the repository.
+**Exception**: Unless specified otherwise by other existing governance/conventions in the repository.
 
 ## 📋 Mandatory Report Generation for Checker Agents
 
@@ -733,7 +733,7 @@ Files in these directories will not be committed to the repository.
 
 ## 🔄 Exception Handling
 
-The rule includes "unless specified otherwise by other rules/conventions":
+The rule includes "unless specified otherwise by other governance/conventions":
 
 - If a specific convention already defines where certain files should go, **follow that convention instead**
 - This rule serves as the **default/fallback** for temporary files

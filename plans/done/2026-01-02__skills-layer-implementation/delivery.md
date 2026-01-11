@@ -12,7 +12,7 @@ This implementation consists of 2 phases delivered through direct commits to `ma
 
 **Trunk Based Development**: All work happens on `main` branch with small, frequent commits. Each phase consists of multiple atomic commits. Validation checkpoints between phases ensure quality before proceeding.
 
-See [Trunk Based Development Convention](../../rules/development/workflow/trunk-based-development.md) for complete details.
+See [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) for complete details.
 
 ### Delivery Summary
 
@@ -73,7 +73,7 @@ See [Trunk Based Development Convention](../../rules/development/workflow/trunk-
   - **Date**: 2026-01-02
   - **Status**: Completed
   - **Files Changed**:
-    - rules/development/agents/ex-ru-de-ag\_\_ai-agents.md (modified)
+    - governance/development/agents/ex-ru-de-ag\_\_ai-agents.md (modified)
   - **Sections Added**:
     - Agent Skills References (complete section with subsections)
     - Skills Field Format

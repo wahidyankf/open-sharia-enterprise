@@ -211,8 +211,8 @@ Update status to "Complete", add summary and recommendation (approve/revise).
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../rules/conventions/project/ex-ru-co-pr-plans-organization.md) - Plan standards
-- [Code Quality Convention](../../rules/development/quality/code.md) - Quality standards
+- [Plans Organization Convention](../../governance/conventions/project/ex-ru-co-pr-plans-organization.md) - Plan standards
+- [Code Quality Convention](../../governance/development/quality/code.md) - Quality standards
 
 **Related Agents:**
 

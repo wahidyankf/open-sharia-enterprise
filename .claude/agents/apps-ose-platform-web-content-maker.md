@@ -23,7 +23,7 @@ Create landing page content for ose-platform-web (PaperMod theme, English-only).
 
 ## Reference
 
-- [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu-ose-platform.md)
+- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ex-ru-co-hu-ose-platform.md)
 - Skills: `apps-ose-platform-web-developing-content` (PaperMod patterns, date structure), `docs-creating-accessible-diagrams`, `docs-applying-content-quality`
 
 ## Workflow
@@ -35,7 +35,7 @@ Create landing page content for ose-platform-web (PaperMod theme, English-only).
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ose-platform.md)
+- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 
 **Related Agents**:
 
@@ -44,8 +44,8 @@ Create landing page content for ose-platform-web (PaperMod theme, English-only).
 
 **Related Conventions**:
 
-- [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ose-platform.md)
-- [Content Quality Principles](../../rules/conventions/content/quality.md)
+- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [Content Quality Principles](../../governance/conventions/content/quality.md)
 
 **Skills**:
 

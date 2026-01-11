@@ -250,9 +250,9 @@ Generate fix report in `generated-reports/` using same UUID chain as audit:
 
 **Related Documentation**:
 
-- [Fixer Confidence Levels Convention](../../../rules/development/quality/fixer-confidence-levels.md)
-- [Maker-Checker-Fixer Pattern](../../../rules/development/pattern/maker-checker-fixer.md)
-- [Temporary Files Convention](../../../rules/development/infra/temporary-files.md)
+- [Fixer Confidence Levels Convention](../../../governance/development/quality/fixer-confidence-levels.md)
+- [Maker-Checker-Fixer Pattern](../../../governance/development/pattern/maker-checker-fixer.md)
+- [Temporary Files Convention](../../../governance/development/infra/temporary-files.md)
 
 ## Tool Requirements
 

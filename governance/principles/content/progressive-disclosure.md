@@ -375,7 +375,7 @@ Internals and customization.
 
 ### Tutorial Naming Convention
 
-**Location**: `rules/conventions/tutorial/naming.md`
+**Location**: `governance/conventions/tutorial/naming.md`
 
 **Six progressive levels**:
 

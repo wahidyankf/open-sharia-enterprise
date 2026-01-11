@@ -99,8 +99,8 @@ Use standard markdown link syntax with relative paths:
 
 <!-- Link to nested files -->
 
-[File Naming Convention](./explanation/rules/conventions/meta/file-naming.md)
-[Conventions Index](./explanation/rules/conventions/README.md)
+[File Naming Convention](./explanation/governance/conventions/meta/file-naming.md)
+[Conventions Index](./explanation/governance/conventions/README.md)
 ```
 
 ### Linking from Category Index (`docs/tutorials/README.md`)
@@ -121,7 +121,7 @@ Use standard markdown link syntax with relative paths:
 [API Reference](../reference/README.md)
 ```
 
-### Linking from Nested Files (`rules/conventions/README.md`)
+### Linking from Nested Files (`governance/conventions/README.md`)
 
 ```markdown
 <!-- Link to sibling files in same directory -->
@@ -173,19 +173,19 @@ For more information, refer to our [automation principle](../../principles/softw
 
 <!-- Absolute paths -->
 
-[Conventions](/rules/conventions/README.md)
+[Conventions](/governance/conventions/README.md)
 
 <!-- Using filename as link text -->
 
 [ex-co\_\_file-naming-convention.md](../meta/file-naming.md)
 
 <!-- Wrong number of ../ for nesting depth -->
-<!-- From rules/conventions/formatting/linking.md (2 levels deep) -->
+<!-- From governance/conventions/formatting/linking.md (2 levels deep) -->
 
 [Documentation Home](./README.md) <!-- Should be ../../README.md -->
 [Tutorials](../tutorials/README.md) <!-- Only 1 ../ instead of 2 -->
 
-<!-- From rules/conventions/README.md (2 levels deep) -->
+<!-- From governance/conventions/README.md (2 levels deep) -->
 
 [Documentation Home](../../../README.md) <!-- Too many ../ (3 instead of 2) -->
 ```
@@ -214,13 +214,13 @@ Understanding relative paths is crucial when linking from files at different nes
 
 ### Nesting Depth Reference
 
-| File Location                                | Depth from `docs/` | To reach `docs/` root |
-| -------------------------------------------- | ------------------ | --------------------- |
-| `docs/README.md`                             | 0 (at root)        | `.` (current dir)     |
-| `docs/tutorials/README.md`                   | 1 level deep       | `../`                 |
-| `rules/conventions/README.md`                | 2 levels deep      | `../../`              |
-| `rules/conventions/formatting/linking.md`    | 3 levels deep      | `../../../`           |
-| `rules/principles/software-engineering/*.md` | 3 levels deep      | `../../../`           |
+| File Location                                     | Depth from `docs/` | To reach `docs/` root |
+| ------------------------------------------------- | ------------------ | --------------------- |
+| `docs/README.md`                                  | 0 (at root)        | `.` (current dir)     |
+| `docs/tutorials/README.md`                        | 1 level deep       | `../`                 |
+| `governance/conventions/README.md`                | 2 levels deep      | `../../`              |
+| `governance/conventions/formatting/linking.md`    | 3 levels deep      | `../../../`           |
+| `governance/principles/software-engineering/*.md` | 3 levels deep      | `../../../`           |
 
 ### Common Linking Patterns
 
@@ -242,7 +242,7 @@ Understanding relative paths is crucial when linking from files at different nes
 [How-To](../how-to/README.md)
 ```
 
-#### From 2-Level Deep Files (`rules/conventions/formatting/linking.md`)
+#### From 2-Level Deep Files (`governance/conventions/formatting/linking.md`)
 
 ```markdown
 <!-- To docs/ root (up 2 levels) -->
@@ -259,7 +259,7 @@ Understanding relative paths is crucial when linking from files at different nes
 [File Naming Convention](../meta/file-naming.md)
 ```
 
-#### From 3-Level Deep Files (`rules/principles/software-engineering/explicit-over-implicit.md`)
+#### From 3-Level Deep Files (`governance/principles/software-engineering/explicit-over-implicit.md`)
 
 ```markdown
 <!-- To docs/ root (up 3 levels) -->
@@ -287,16 +287,16 @@ To verify your relative path is correct:
 3. **Count each `/dirname/` as going down one level**
 4. **Verify you end at the target file**
 
-Example from `rules/conventions/meta/file-naming.md` to `docs/tutorials/README.md`:
+Example from `governance/conventions/meta/file-naming.md` to `docs/tutorials/README.md`:
 
 ```
-Start:  rules/conventions/meta/file-naming.md
-  ../   rules/conventions/       (up 1)
+Start:  governance/conventions/meta/file-naming.md
+  ../   governance/conventions/       (up 1)
   ../   docs/explanation/                   (up 2)
   ../   docs/                               (up 3 - wait, only need 2!)
 
 Actually:
-Start:  rules/conventions/meta/file-naming.md
+Start:  governance/conventions/meta/file-naming.md
   ../   docs/explanation/                   (up 1)
   ../   docs/                               (up 2)
   tutorials/  docs/tutorials/               (down 1)
@@ -382,11 +382,11 @@ The **first mention** of a rule in any document section MUST use a markdown link
 
 **Rule categories requiring this treatment:**
 
-- Vision documents (`rules/vision/`)
-- Core Principles (`rules/principles/`)
-- Conventions (`rules/conventions/`)
-- Development practices (`rules/development/`)
-- Workflows (`rules/workflows/`)
+- Vision documents (`governance/vision/`)
+- Core Principles (`governance/principles/`)
+- Conventions (`governance/conventions/`)
+- Development practices (`governance/development/`)
+- Workflows (`governance/workflows/`)
 
 ### Subsequent Mentions: MUST Use Inline Code
 
@@ -481,7 +481,7 @@ validate_links
 
 <!-- File path - literal path -->
 
-The rule is defined in `rules/conventions/formatting/linking.md`
+The rule is defined in `governance/conventions/formatting/linking.md`
 
 <!-- Meta-discussion - discussing the name itself -->
 

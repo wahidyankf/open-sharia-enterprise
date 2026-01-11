@@ -12,16 +12,16 @@ This migration will be executed in **5 phases** with validation gates between ea
 
 ## Phase Summary
 
-| Phase | Name                           | Deliverables                              | Duration Estimate |
-| ----- | ------------------------------ | ----------------------------------------- | ----------------- |
-| 0     | Pre-Migration Setup            | Tag, backup                               | Setup             |
-| 1     | Move Rules to Root             | Directories moved to /rules/, old removed | ~5s               |
-| 2     | Update Governance Architecture | Governance doc updated                    | ~30s              |
-| 3     | Update All References          | 151 files updated via sed + manual        | ~90s              |
-| 4     | Final Validation               | All validations pass                      | ~1m               |
-| 5     | Single Atomic Commit           | All changes committed together            | ~10s              |
+| Phase | Name                           | Deliverables                                   | Duration Estimate |
+| ----- | ------------------------------ | ---------------------------------------------- | ----------------- |
+| 0     | Pre-Migration Setup            | Tag, backup                                    | Setup             |
+| 1     | Move Rules to Root             | Directories moved to /governance/, old removed | ~5s               |
+| 2     | Update Governance Architecture | Governance doc updated                         | ~30s              |
+| 3     | Update All References          | 151 files updated via sed + manual             | ~90s              |
+| 4     | Final Validation               | All validations pass                           | ~1m               |
+| 5     | Single Atomic Commit           | All changes committed together                 | ~10s              |
 
-**Total estimated time**: ~3-4 minutes (excluding wow-rules-checker validation)
+**Total estimated time**: ~3-4 minutes (excluding wow-governance-checker validation)
 
 ---
 
@@ -82,21 +82,21 @@ This migration will be executed in **5 phases** with validation gates between ea
 
 ## Phase 1: Move Rules to Root
 
-**Goal**: Move all rules directories to /rules/ (excluding agents/) using git mv
+**Goal**: Move all rules directories to /governance/ (excluding agents/) using git mv
 
 ### Execution Steps
 
 ```bash
 # Step 1.1: Move directories with git mv (preserves history)
-git mv rules/vision rules/
-git mv rules/principles rules/
-git mv rules/conventions rules/
-git mv rules/development rules/
-git mv rules/workflows rules/
+git mv governance/vision governance/
+git mv governance/principles governance/
+git mv governance/conventions governance/
+git mv governance/development governance/
+git mv governance/workflows governance/
 
 # Step 1.2: Move individual files with git mv
-git mv rules/ex-ru__*.md rules/
-git mv rules/README.md rules/
+git mv governance/ex-ru__*.md governance/
+git mv governance/README.md governance/
 
 # Step 1.3: Verify moves
 git status | grep "renamed:"  # ✅ Should show all moves
@@ -110,27 +110,27 @@ git add -A
 
 ### Validation Checklist
 
-- [x] All 5 directories exist in /rules/:
+- [x] All 5 directories exist in /governance/:
 
   ```bash
-  test -d rules/vision/              # ✅ PASS if true
-  test -d rules/principles/           # ✅ PASS if true
-  test -d rules/conventions/         # ✅ PASS if true
-  test -d rules/development/         # ✅ PASS if true
-  test -d rules/workflows/          # ✅ PASS if true
+  test -d governance/vision/              # ✅ PASS if true
+  test -d governance/principles/           # ✅ PASS if true
+  test -d governance/conventions/         # ✅ PASS if true
+  test -d governance/development/         # ✅ PASS if true
+  test -d governance/workflows/          # ✅ PASS if true
   ```
 
-- [x] All 2 files exist in /rules/:
+- [x] All 2 files exist in /governance/:
 
   ```bash
-  test -f rules/ex-ru__repository-governance-architecture.md  # ✅ PASS if true
-  test -f rules/README.md          # ✅ PASS if true
+  test -f governance/ex-ru__repository-governance-architecture.md  # ✅ PASS if true
+  test -f governance/README.md          # ✅ PASS if true
   ```
 
-- [x] rules/ directory removed (except agents/):
+- [x] governance/ directory removed (except agents/):
 
   ```bash
-  ! test -d rules/   # ✅ PASS if true (directory doesn't exist)
+  ! test -d governance/   # ✅ PASS if true (directory doesn't exist)
   ```
 
 - [x] Git shows moves as renames:
@@ -142,7 +142,7 @@ git add -A
 - [x] Git history preserved:
 
   ```bash
-  git log --follow --oneline -- rules/vision/ex-vi__open-sharia-enterprise.md | head -1
+  git log --follow --oneline -- governance/vision/ex-vi__open-sharia-enterprise.md | head -1
   # ✅ PASS if shows pre-move commit
   ```
 
@@ -165,45 +165,45 @@ git add -A
 
 ## Phase 2: Update Governance Architecture
 
-**Goal**: Update /rules/ex-ru\_\_repository-governance-architecture.md with /rules/ paths
+**Goal**: Update /governance/ex-ru\_\_repository-governance-architecture.md with /governance/ paths
 
 ### Execution Steps (Manual Update Required)
 
 #### Update Layer Paths
 
 - [x] Update Layer 0 path in text:
-  - Change `Location: rules/vision/` → `Location: /rules/vision/`
+  - Change `Location: governance/vision/` → `Location: /governance/vision/`
   - Update example file paths for vision documents
 
 - [x] Update Layer 1 path in text:
-  - Change `Location: rules/principles` → `Location: /rules/principles/`
+  - Change `Location: governance/principles` → `Location: /governance/principles/`
   - Update example file paths for principles documents
 
 - [x] Update Layer 2 path in text:
-  - Change `Location: rules/conventions/` → `Location: /rules/conventions/`
+  - Change `Location: governance/conventions/` → `Location: /governance/conventions/`
   - Update example file path examples for conventions documents
 
 - [x] Update Layer 3 path in text:
-  - Change `Location: rules/final/ development/` → `Location: /rules/development/`
+  - Change `Location: governance/final/ development/` → `Location: /governance/development/`
   - Update example file paths for development documents
 
 - [x] Update Layer 5 path in text:
-  - Change `Location: rules/final: workflows` → `Location: /rules/workflows/`
+  - Change `Location: governance/final: workflows` → `Location: /governance/workflows/`
   - Update example file path examples for workflow documents
 
 - [x] Update all directory path examples:
-  - Change `../../rules/vision/` → `../../rules/vision/`
-  - Change `../../rules/principles/` → `../../rules/principles/`
-  - Change `../../rules/conventions/` → `../../rules/conventions/`
-  - Change `../../rules/development/` → `../../rules/development/`
-  - Change `../../rules/workflows/` → `../../rules/workflows/`
+  - Change `../../governance/vision/` → `../../governance/vision/`
+  - Change `../../governance/principles/` → `../../governance/principles/`
+  - Change `../../governance/conventions/` → `../../governance/conventions/`
+  - Change `../../governance/development/` → `../../governance/development/`
+  - Change `../../governance/workflows/` → `../../governance/workflows/`
 
 - [x] Update Layer 3 path in text:
-  - Change `Location: rules/development/` → `Location: /rules/development/`
+  - Change `Location: governance/development/` → `Location: /governance/development/`
   - Update example file paths for development documents
 
 - [x] Update Layer 5 path in text:
-  - Change `Location: rules/workflows/` → `Location: /rules/workflows/`
+  - Change `Location: governance/workflows/` → `Location: /governance/workflows/`
   - Update example file paths for workflow documents
 
 #### Update Mermaid Diagram
@@ -211,25 +211,25 @@ git add -A
 - [x] Update Layer 0 node:
 
   ```mermaid
-  L0[Layer 0: Vision<br/>WHY WE EXIST<br/>/rules/vision/]
+  L0[Layer 0: Vision<br/>WHY WE EXIST<br/>/governance/vision/]
   ```
 
 - [x] Update Layer 1 node:
 
   ```mermaid
-  L1[Layer 1: Principies<br/>WHY - Values<br/>/rules/principles/]
+  L1[Layer 1: Principies<br/>WHY - Values<br/>/governance/principles/]
   ```
 
 - [x] Update Layer 2 node:
 
   ```mermaid
-  L2[Layer 2: Conventions<br/>WHAT - Documentation Rules<br/>/rules/conventions/]
+  L2[Layer 2: Conventions<br/>WHAT - Documentation Rules<br/>/governance/conventions/]
   ```
 
 - [x] Update Layer 3 node:
 
   ````mermaid
-  L3[Layer 3: Development<br/>HOW - Software Practices<br/>/rules/development/]
+  L3[Layer 3: Development<br/>HOW - Software Practices<br/>/governance/development/]
   |  ```
 
   ````
@@ -237,55 +237,55 @@ git add -A
 - [x] Update Layer 5 node:
 
   ```mermaid
-  L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes<br/>/rules/workflows/]
+  L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes<br/>/governance/workflows/]
   ```
 
 #### Update Text References
 
-- [x] Remove all `rules/` references
-- [x] Update all internal links to use `/rules/` paths
+- [x] Remove all `governance/` references
+- [x] Update all internal links to use `/governance/` paths
 - [x] Update all directory path examples
 
 #### Stage Changes
 
 ```bash
-git add rules/ex-ru__repository-governance-architecture.md
+git add governance/ex-ru__repository-governance-architecture.md
 ```
 
 - [x] Update Layer 1 node:
 
   ```mermaid
-  L1[Layer 1: Principies<br/>WHY - Values<br/>/rules/principles/]
+  L1[Layer 1: Principies<br/>WHY - Values<br/>/governance/principles/]
   ```
 
 - [x] Update Layer 2 node:
 
   ```mermaid
-  L2[Layer 2: Conventions<br/>WHAT - Documentation Rules<br/>/rules/conventions/]
+  L2[Layer 2: Conventions<br/>WHAT - Documentation Rules<br/>/governance/conventions/]
   ```
 
 - [x] Update Layer 3 node:
 
   | `mermaid
-L3[Layer 3: Development<br/>HOW - Software Practices<br/>/rules/development/]
+L3[Layer 3: Development<br/>HOW - Software Practices<br/>/governance/development/]
 |  `
 
 - [x] Update Layer 5 node:
 
   ```mermaid
-  L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes<br/>/rules/workflows/]
+  L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes<br/>/governance/workflows/]
   ```
 
 #### Update Text References
 
-- [x] Remove all `rules/` references
-- [x] Update all internal links to use `/rules/` paths
+- [x] Remove all `governance/` references
+- [x] Update all internal links to use `/governance/` paths
 - [x] Update all directory path examples
 
 #### Stage Changes
 
 ```bash
-git add rules/ex-ru__repository-governance-architecture.md
+git add governance/ex-ru__repository-governance-architecture.md
 ```
 
 ### Validation Checklist
@@ -293,34 +293,34 @@ git add rules/ex-ru__repository-governance-architecture.md
 - [x] Zero old path references:
 
   ```bash
-  grep "rules/" rules/ex-ru__repository-governance-architecture.md
+  grep "governance/" governance/ex-ru__repository-governance-architecture.md
   # ✅ PASS if returns zero matches
   ```
 
 - [x] All Layer paths updated:
 
   ```bash
-  grep "Location: /rules/" rules/ex-ru__repository-governance-architecture.md
+  grep "Location: /governance/" governance/ex-ru__repository-governance-architecture.md
   # ✅ PASS if shows multiple results (all layers)
   ```
 
 - [x] Mermaid diagram updated:
 
   ```bash
-  grep "Location:.*rules/" rules/ex-ru__repository-governance-architecture.md
+  grep "Location:.*governance/" governance/ex-ru__repository-governance-architecture.md
   # ✅ PASS if matches
   ```
 
 - [x] File parses correctly:
 
   ```bash
-  head -1 rules/ex-ru__repository-governance-architecture.md | grep "^---"
+  head -1 governance/ex-ru__repository-governance-architecture.md | grep "^---"
   # ✅ PASS if shows frontmatter start
   ```
 
 - [x] Valid markdown:
   ```bash
-  grep -E "^## " rules/ex-ru__repository-governance-architecture.md | head -10
+  grep -E "^## " governance/ex-ru__repository-governance-architecture.md | head -10
   # ✅ PASS if shows valid markdown headings
   ```
 
@@ -334,7 +334,7 @@ git add rules/ex-ru__repository-governance-architecture.md
 
 ## Phase 3: Update All References
 
-**Goal**: Update all path references from `rules/` to `/rules/` in ~151 files
+**Goal**: Update all path references from `governance/` to `/governance/` in ~151 files
 
 ### Execution Steps
 
@@ -342,7 +342,7 @@ git add rules/ex-ru__repository-governance-architecture.md
 
 ```bash
 # Update all agent definition files (portable syntax - works on Linux and macOS)
-find .claude/agents -name "*.md" -type f -exec sed -i.bak 's|rules/|rules/|g' {} \;
+find .claude/agents -name "*.md" -type f -exec sed -i.bak 's|governance/|governance/|g' {} \;
 
 # Verify update
 git status | grep "modified:" | grep ".claude/agents/"
@@ -354,7 +354,7 @@ git status | grep "modified:" | grep ".claude/agents/"
 
 ```bash
 # Update all skill definition files (portable syntax - works on Linux and macOS)
-find .claude/skills -name "SKILL.md" -type f -exec sed -i.bak 's|rules/|rules/|g' {} \;
+find .claude/skills -name "SKILL.md" -type f -exec sed -i.bak 's|governance/|governance/|g' {} \;
 
 # Verify update
 git status | grep "modified:" | grep ".claude/skills/"
@@ -366,22 +366,22 @@ git status | grep "modified:" | grep ".claude/skills/"
 
 ```bash
 # Update all workflow files (portable syntax - works on Linux and macOS)
-find rules/workflows -name "*.md" -type f -exec sed -i.bak 's|rules/|rules/|g' {} \;
+find governance/workflows -name "*.md" -type f -exec sed -i.bak 's|governance/|governance/|g' {} \;
 
 # Verify update
-git status | grep "modified:" | grep "rules/workflows/"
+git status | grep "modified:" | grep "governance/workflows/"
 ```
 
-**Files updated**: All workflow files in rules/workflows/ ✅
+**Files updated**: All workflow files in governance/workflows/ ✅
 
 #### Step 3.4: Update Rules Internal Files (~67 files)
 
 ```bash
 # Update all files in rules directories (portable syntax - works on Linux and macOS)
-find rules -name "*.md" -type f -exec sed -i.bak 's|rules/|rules/|g' {} \;
+find rules -name "*.md" -type f -exec sed -i.bak 's|governance/|governance/|g' {} \;
 
 # Verify update
-git status | grep "modified:" | grep "rules/"
+git status | grep "modified:" | grep "governance/"
 ```
 
 **Files updated**: All moved files with internal links ✅
@@ -390,10 +390,10 @@ git status | grep "modified:" | grep "rules/"
 
 ```bash
 # Update CLAUDE.md (portable syntax - works on Linux and macOS)
-sed -i.bak 's|rules/|rules/|g' CLAUDE.md
+sed -i.bak 's|governance/|governance/|g' CLAUDE.md
 
 # Update AGENTS.md (portable syntax - works on Linux and macOS)
-sed -i.bak 's|rules/|rules/|g' AGENTS.md
+sed -i.bak 's|governance/|governance/|g' AGENTS.md
 
 # Verify updates
 git status | grep "modified:" | grep -E "(CLAUDE.md|AGENTS.md)"
@@ -417,37 +417,37 @@ find . -name "*.md.bak" -delete
 - [x] Zero old path references anywhere:
 
   ```bash
-  find . -name "*.md" -type f -exec grep -l "docs/explanation/rules/" {} \;
+  find . -name "*.md" -type f -exec grep -l "docs/explanation/governance/" {} \;
   # ✅ PASS if returns zero results
   ```
 
-- [x] All references to /rules/ exist:
+- [x] All references to /governance/ exist:
 
   ```bash
-  find . -name "*.md" -type f -exec grep -l "rules/" {} \;
+  find . -name "*.md" -type f -exec grep -l "governance/" {} \;
   # ✅ PASS if returns multiple results
   ```
 
 - [x] Specific file validation:
 
   ```bash
-  grep "rules/" CLAUDE.md | head -5      # ✅ PASS if shows results
-  grep "rules/" AGENTS.md | head -5      # ✅ PASS if shows results
-  grep "rules/" .claude/agents/wow-rules-checker.md | head -5  # ✅ PASS if shows results
+  grep "governance/" CLAUDE.md | head -5      # ✅ PASS if shows results
+  grep "governance/" AGENTS.md | head -5      # ✅ PASS if shows results
+  grep "governance/" .claude/agents/wow-governance-checker.md | head -5  # ✅ PASS if shows results
   ```
 
 - [x] Relative path validation:
   ```bash
-  grep -r "\.\./rules/" .claude/agents/ | head -3  # ✅ PASS if shows results
-  grep -r "\.\./\.\./rules/" .claude/skills/ | head -3  # ✅ PASS if shows results
+  grep -r "\.\./governance/" .claude/agents/ | head -3  # ✅ PASS if shows results
+  grep -r "\.\./\.\./governance/" .claude/skills/ | head -3  # ✅ PASS if shows results
   ```
 
-#### wow-rules-checker Integration
+#### wow-governance-checker Integration
 
-- [x] Run wow-rules-checker:
+- [x] Run wow-governance-checker:
 
   ```bash
-  wow-rules-checker scope:all
+  wow-governance-checker scope:all
   ```
 
 - [x] Check for broken link findings:
@@ -460,13 +460,13 @@ find . -name "*.md.bak" -delete
 - [x] Verify key links work:
   ```bash
   # Test a few links manually
-  head -50 rules/ex-ru__repository-governance-architecture.md | grep -E "\[.*\]\(.*rules/"
-  # ✅ PASS if shows links to /rules/
+  head -50 governance/ex-ru__repository-governance-architecture.md | grep -E "\[.*\]\(.*governance/"
+  # ✅ PASS if shows links to /governance/
   ```
 
 ### Success Criteria
 
-**ALL automated checks pass AND wow-rules-checker reports zero broken links** ✅
+**ALL automated checks pass AND wow-governance-checker reports zero broken links** ✅
 
 **On failure**: Identify which files still have old references, fix manually, re-run validation.
 
@@ -511,20 +511,20 @@ git diff --cached --name-only | grep "ex-ru__repository-governance-architecture.
 #### Step 4.4: Verify All Rules Directories Tracked
 
 ```bash
-# Check for new files in rules/
-git status | grep "new file:.*rules/"
+# Check for new files in governance/
+git status | grep "new file:.*governance/"
 # ✅ PASS if shows new files
 
 # Check old directory removed
-git status | grep "rules/"
+git status | grep "governance/"
 # ✅ PASS if returns zero results (except agents/)
 ```
 
 #### Step 4.5: Final Link Validation
 
 ```bash
-# Re-run wow-rules-checker for final check
-wow-rules-checker scope:all
+# Re-run wow-governance-checker for final check
+wow-governance-checker scope:all
 
 # Verify zero broken links in output
 # ✅ PASS if zero "broken link" findings
@@ -556,20 +556,20 @@ wow-rules-checker scope:all
 - [x] All rules directories tracked:
 
   ```bash
-  git status | grep "new file:.*rules/"
+  git status | grep "new file:.*governance/"
   # ✅ PASS if shows results
   ```
 
-- [x] No rules/ tracked (except agents/):
+- [x] No governance/ tracked (except agents/):
 
   ```bash
-  git status | grep "docs/explanation/rules/"
+  git status | grep "docs/explanation/governance/"
   # ✅ PASS if returns nothing
   ```
 
-- [x] wow-rules-checker reports zero broken links:
+- [x] wow-governance-checker reports zero broken links:
   ```bash
-  wow-rules-checker scope:all | grep -i "broken"
+  wow-governance-checker scope:all | grep -i "broken"
   # ✅ PASS if returns zero
   ```
 
@@ -598,31 +598,31 @@ git diff --cached --stat
 # (User reviews commit message below)
 
 # Step 5.4: Commit changes
-git commit -m "refactor: move rules/ to /rules/ (separate from Obsidian docs)
+git commit -m "refactor: move governance/ to /governance/ (separate from Obsidian docs)
 
 ## Changes
 
 ### Directory Moves (git mv - preserves history)
-- rules/vision/ → /rules/vision/ (Layer 0: WHY we exist)
-- rules/principles/ → /rules/principles/ (Layer 1: WHY - values)
-- rules/conventions/ → /rules/conventions/ (Layer 2: WHAT - documentation rules)
-- rules/development/ → /rules/development/ (Layer 3: HOW - software practices)
-- rules/workflows/ → /rules/workflows/ (Layer 5: WHEN - multi-step processes)
-- rules/ex-ru__repository-governance-architecture.md → /rules/ex-ru__repository-governance-architecture.md
-- rules/README.md → /rules/README.md
-- Removed rules/ directory (agents/ subdirectory remains via separate plan)
+- governance/vision/ → /governance/vision/ (Layer 0: WHY we exist)
+- governance/principles/ → /governance/principles/ (Layer 1: WHY - values)
+- governance/conventions/ → /governance/conventions/ (Layer 2: WHAT - documentation rules)
+- governance/development/ → /governance/development/ (Layer 3: HOW - software practices)
+- governance/workflows/ → /governance/workflows/ (Layer 5: WHEN - multi-step processes)
+- governance/ex-ru__repository-governance-architecture.md → /governance/ex-ru__repository-governance-architecture.md
+- governance/README.md → /governance/README.md
+- Removed governance/ directory (agents/ subdirectory remains via separate plan)
 
 ### Documentation Updates
-- Updated /rules/ex-ru__repository-governance-architecture.md with Layer 0-5 paths
-- Updated mermaid diagram to show /rules/ locations for all layers
-- Updated all text references to /rules/ paths
+- Updated /governance/ex-ru__repository-governance-architecture.md with Layer 0-5 paths
+- Updated mermaid diagram to show /governance/ locations for all layers
+- Updated all text references to /governance/ paths
 - Updated 45 agent definition files (.claude/agents/*.md)
 - Updated 23 skill definition files (.claude/skills/*/SKILL.md)
-- Updated 3 meta-agent files (wow-rules-checker, wow-rules-maker, wow-rules-fixer) - manual updates
-- Updated all workflow files (rules/workflows/*.md)
-- Updated all internal links in rules/ (~67 files)
-- Updated CLAUDE.md with /rules/ directory structure
-- Updated AGENTS.md with /rules/ directory structure
+- Updated 3 meta-agent files (wow-governance-checker, wow-governance-maker, wow-governance-fixer) - manual updates
+- Updated all workflow files (governance/workflows/*.md)
+- Updated all internal links in governance/ (~67 files)
+- Updated CLAUDE.md with /governance/ directory structure
+- Updated AGENTS.md with /governance/ directory structure
 
 ## Rationale
 
@@ -631,11 +631,11 @@ Separate system rules (normal markdown, no Obsidian constraints) from human-writ
 Rules are agent-generated or manually edited without Obsidian formatting requirements, making the separation necessary for:
 
 - Clear boundary: System rules vs. documentation
-- Purpose alignment: /rules/ for governance, docs/ for learning
+- Purpose alignment: /governance/ for governance, docs/ for learning
 - Format appropriateness: Normal markdown for rules, Obsidian format for docs
 - Simplified agent creation: Agents can create rules without Obsidian knowledge
 
-All docs/ follows Obsidian rules including file naming with __ separator. /rules/ uses normal markdown without Obsidian constraints.
+All docs/ follows Obsidian rules including file naming with __ separator. /governance/ uses normal markdown without Obsidian constraints.
 
 ## References
 - Moved ~67 files across 5 directories + 2 files
@@ -646,16 +646,16 @@ All docs/ follows Obsidian rules including file naming with __ separator. /rules
 
 ## Validation Results
 
-Phase 1 (move): ✅ All files in /rules/, old directory removed, history preserved
+Phase 1 (move): ✅ All files in /governance/, old directory removed, history preserved
 Phase 2 (governance): ✅ Zero old-path references, all layers updated
-Phase 3 (references): ✅ Zero old-path references, wow-rules-checker reports zero broken links
+Phase 3 (references): ✅ Zero old-path references, wow-governance-checker reports zero broken links
 Phase 4 (final): ✅ ~150 files modified, no unexpected changes
 Phase 5 (commit): ✅ Atomic commit complete
 
 ## Notes
 
 - YOLO approach: No rollback plan - if issues occur, revert commit
-- Manual meta-agent updates: wow-rules-* agents updated manually (not via sed)
+- Manual meta-agent updates: wow-governance-* agents updated manually (not via sed)
 - Progressive validation: Each phase validated before proceeding
 - Git history preserved: All moves via git mv
 - Single commit: All changes in one atomic operation
@@ -673,7 +673,7 @@ git log -1 --oneline
 
   ```bash
   git log -1 --oneline
-  # ✅ PASS if shows "refactor: move docs/explanation/rules/ to /rules/"
+  # ✅ PASS if shows "refactor: move docs/explanation/governance/ to /governance/"
   ```
 
 - [x] Commit includes all expected changes:
@@ -709,7 +709,7 @@ git log -1 --oneline
 git revert HEAD
 
 # Verify reversion
-git log -1 --oneline  # Should show "Revert refactor: move rules/ to /rules/"
+git log -1 --oneline  # Should show "Revert refactor: move governance/ to /governance/"
 
 # Manually fix issues if needed
 # Edit files to address problems
@@ -727,13 +727,13 @@ git commit -m "fix: issues found after rules move rollback"
 
 After Phase 5 completion:
 
-- [x] All rules directories exist at `/rules/` (vision, principles, conventions, development, workflows)
-- [x] All rules files exist at `/rules/` (ex-ru\_\_\*.md, README.md)
-- [x] `docs/explanation/rules/` directory removed (except agents/ subdirectory)
-- [x] Zero occurrences of `docs/explanation/rules/` in entire repository
-- [x] All references to `rules/` work correctly
-- [x] wow-rules-checker reports zero broken links
-- [x] CLAUDE.md and AGENTS.md reference `rules/` correctly
+- [x] All rules directories exist at `/governance/` (vision, principles, conventions, development, workflows)
+- [x] All rules files exist at `/governance/` (ex-ru\_\_\*.md, README.md)
+- [x] `docs/explanation/governance/` directory removed (except agents/ subdirectory)
+- [x] Zero occurrences of `docs/explanation/governance/` in entire repository
+- [x] All references to `governance/` work correctly
+- [x] wow-governance-checker reports zero broken links
+- [x] CLAUDE.md and AGENTS.md reference `governance/` correctly
 - [x] Git history preserved (all moves via git mv)
 - [x] Single atomic commit with detailed message
 - [x] All ~151 files updated successfully
@@ -743,8 +743,8 @@ After Phase 5 completion:
 ## Notes
 
 - **Progressive validation**: Each phase must pass before proceeding to next
-- **Manual meta-agent updates**: wow-rules-\* agents updated manually, not via sed
+- **Manual meta-agent updates**: wow-governance-\* agents updated manually, not via sed
 - **Git history preservation**: Always use `git mv`, never `cp + rm`
 - **YOLO approach**: No rollback plan - if issues, revert single commit
-- **wow-rules-checker**: Critical validation tool for detecting broken links
-- **Total estimated time**: ~3-4 minutes (excluding wow-rules-checker runtime)
+- **wow-governance-checker**: Critical validation tool for detecting broken links
+- **Total estimated time**: ~3-4 minutes (excluding wow-governance-checker runtime)

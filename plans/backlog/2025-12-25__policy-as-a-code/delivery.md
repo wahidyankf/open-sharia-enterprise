@@ -38,7 +38,7 @@ Design policy schema and establish governance model
    - Naming: Semantic IDs (e.g., `file-naming-v1`, `frontmatter-v1`)
 
 2. **Schema Structure Documentation**
-   - File: `rules/development/infra/policy-as-code.md`
+   - File: `governance/development/infra/policy-as-code.md`
    - Content: Complete policy schema specification
    - Sections:
      - Policy format and structure
@@ -94,7 +94,7 @@ Design policy schema and establish governance model
   - YAML parsing patterns (internal/markdown/frontmatter.go)
   - Testing approach (table-driven tests)
   - Nx integration patterns (project.json reference)
-- [ ] Create `rules/development/infra/policy-as-code.md`
+- [ ] Create `governance/development/infra/policy-as-code.md`
 - [ ] Create `apps/governance-cli/internal/policy/policy-schema.json` (JSON Schema for policy validation)
   - Define schema for policy YAML structure
   - Include required fields validation
@@ -209,13 +209,13 @@ This section details how the three repo-rules agents must be adapted on BOTH pla
 
 **Platform-Specific Updates:**
 
-**Claude Code (.claude/agents/wow-rules-checker.md):**
+**Claude Code (.claude/agents/wow-governance-checker.md):**
 
 - Current: 373 lines (Claude Code) + 448 lines (OpenCode) = 821 lines total
 - Add: PolicyEngine integration via Bash tool
 - Remove: Embedded rule descriptions
 
-**OpenCode (.opencode/agent/wow-rules-checker.md):**
+**OpenCode (.opencode/agent/wow-governance-checker.md):**
 
 - Current: 88 lines (OpenCode) vs 53 lines (Claude Code) = 141 total → Target: ~80 lines
 - Add: PolicyEngine integration via Bash tool
@@ -556,7 +556,7 @@ Finalize architecture and enable future scaling
   - Coverage map (which agents consume which policies)
   - Usage examples
   - Best practices
-- **Important**: Actual policies remain embedded in `rules/conventions/*.md` and `rules/development/*.md`, NOT in a separate policies/ directory
+- **Important**: Actual policies remain embedded in `governance/conventions/*.md` and `governance/development/*.md`, NOT in a separate policies/ directory
 
 **2. policy-coverage-analyzer Agent**
 
@@ -1004,22 +1004,22 @@ Phase 5 (consolidation)
 ### Phase 0
 
 - `apps/governance-cli/` (NEW - entire app with Nx + Cobra)
-- `rules/development/infra/policy-as-code.md` (NEW)
+- `governance/development/infra/policy-as-code.md` (NEW)
 - `apps/governance-cli/internal/policy/types.go` (NEW)
 - `apps/governance-cli/internal/policy/engine.go` (NEW)
 - `apps/governance-cli/internal/policy/engine_test.go` (NEW)
 - `apps/governance-cli/cmd/root.go` (NEW)
 - `apps/governance-cli/cmd/policy.go` (NEW)
 - `.claude/agents/policy-validator.md` (NEW)
-- `rules/conventions/meta/file-naming.md` (MODIFY)
-- `rules/conventions/content/convention-writing.md` (MODIFY)
-- `rules/conventions/content/quality.md` (MODIFY)
+- `governance/conventions/meta/file-naming.md` (MODIFY)
+- `governance/conventions/content/convention-writing.md` (MODIFY)
+- `governance/conventions/content/quality.md` (MODIFY)
 
 ### Phase 1
 
-- `.claude/agents/wow-rules-checker.md` (MODIFY: Already optimized - 373 lines, target: ~200 lines for policy integration)
-- `.claude/agents/wow-rules-maker.md` (MODIFY: Already optimized - 53 lines, target: ~80 lines for policy sync logic)
-- `.claude/agents/wow-rules-fixer.md` (MODIFY: Already optimized - 258 lines, target: ~130 lines for policy-driven fixes)
+- `.claude/agents/wow-governance-checker.md` (MODIFY: Already optimized - 373 lines, target: ~200 lines for policy integration)
+- `.claude/agents/wow-governance-maker.md` (MODIFY: Already optimized - 53 lines, target: ~80 lines for policy sync logic)
+- `.claude/agents/wow-governance-fixer.md` (MODIFY: Already optimized - 258 lines, target: ~130 lines for policy-driven fixes)
 - `CLAUDE.md` (MODIFY)
 - 10+ convention files (MODIFY: add policy YAML)
 

@@ -75,7 +75,7 @@ See [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) 
 
 **Examples Across Domains**:
 
-**Repository Rules**:
+**Repository Governance**:
 
 - Missing required `subcategory` field in convention document frontmatter
 - Agent `name` field doesn't match filename (breaks agent discovery)
@@ -139,7 +139,7 @@ See [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) 
 
 **Examples Across Domains**:
 
-**Repository Rules**:
+**Repository Governance**:
 
 - Missing "Principles Respected" section in convention doc
 - YAML comments in agent frontmatter (convention violation)
@@ -205,7 +205,7 @@ See [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) 
 
 **Examples Across Domains**:
 
-**Repository Rules**:
+**Repository Governance**:
 
 - Missing optional description fields
 - Suboptimal section ordering (still readable)
@@ -268,7 +268,7 @@ See [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) 
 
 **Examples Across Domains**:
 
-**Repository Rules**:
+**Repository Governance**:
 
 - Suggest adding optional cross-references
 - Alternative organization suggestions
@@ -587,7 +587,7 @@ https://docs.npmjs.com/cli/v9/commands/npm-install
 ```markdown
 ### 1. [BROKEN] - Reference Link Returns 404
 
-**File**: `rules/conventions/formatting/linking.md:89`
+**File**: `governance/conventions/formatting/linking.md:89`
 **Status**: [BROKEN] - HTTP 404 Not Found
 **Criticality**: CRITICAL - Breaks documentation reference chain
 **Category**: Broken External Link
@@ -614,7 +614,7 @@ Update link to current documentation URL or find alternative resource
 
 ## Domain-Specific Examples
 
-### Repository Rules (wow\_\_rules-checker)
+### Repository Governance (wow\_\_rules-checker)
 
 **CRITICAL**:
 
@@ -1068,7 +1068,7 @@ def determine_priority(criticality, confidence):
 **Fixer agents should group fixes by priority in their reports**:
 
 ````markdown
-# Repository Rules Fix Report
+# Repository Governance Fix Report
 
 **Source Audit**: repo-rules**a1b2c3**2025-12-27--10-30\_\_audit.md
 **Fix Date**: 2025-12-27T11:15:00+07:00
@@ -1092,7 +1092,7 @@ def determine_priority(criticality, confidence):
 
 ### 1. Missing Required Subcategory Field
 
-**File**: `rules/development/agents/ai-agents.md`
+**File**: `governance/development/agents/ai-agents.md`
 **Original Issue**: CRITICAL - Missing `subcategory: development` field
 **Validation**: Confirmed field missing in frontmatter (HIGH confidence)
 **Fix Applied**: Added `subcategory: development` at line 5
@@ -1131,14 +1131,14 @@ subcategory: development
 
 ### 1. Ambiguous Link Target
 
-**File**: `rules/conventions/formatting/linking.md:89`
+**File**: `governance/conventions/formatting/linking.md:89`
 **Original Issue**: CRITICAL - Broken link to convention doc
 **Validation**: MEDIUM confidence - Multiple possible target files found
 **Reason for Flag**: Cannot determine correct link target automatically
 **Action Required**: Manually select correct target from:
 
-- `rules/conventions/meta/file-naming.md`
-- `rules/development/infra/file-organization.md`
+- `governance/conventions/meta/file-naming.md`
+- `governance/development/infra/file-organization.md`
 
 ---
 
@@ -1152,7 +1152,7 @@ subcategory: development
 
 **Total**: 15 findings
 
-1. **File**: `rules/conventions/formatting/diagrams.md`
+1. **File**: `governance/conventions/formatting/diagrams.md`
    **Suggestion**: Consider adding example of complex multi-layer diagram
    **Priority**: P4 (LOW + MEDIUM)
 

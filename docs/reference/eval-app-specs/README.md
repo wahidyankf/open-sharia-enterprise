@@ -283,6 +283,6 @@ When creating additional mini app specifications:
 
 ## Related Documentation
 
-- [Core Principles](../../explanation/rules/principles/README.md) - Foundational values guiding all development
-- [Development Practices](../../explanation/rules/development/README.md) - Software practices and standards
+- [Core Principles](../../explanation/governance/principles/README.md) - Foundational values guiding all development
+- [Development Practices](../../explanation/governance/development/README.md) - Software practices and standards
 - [Monorepo Structure](../re__monorepo-structure.md) - Understanding the repository organization

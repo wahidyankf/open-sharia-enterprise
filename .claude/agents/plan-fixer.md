@@ -101,7 +101,7 @@ The `wow-assessing-criticality-confidence` Skill provides complete confidence le
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../rules/conventions/project/ex-ru-co-pr-plans-organization.md) - Plan standards
+- [Plans Organization Convention](../../governance/conventions/project/ex-ru-co-pr-plans-organization.md) - Plan standards
 
 **Related Agents:**
 
@@ -112,8 +112,8 @@ The `wow-assessing-criticality-confidence` Skill provides complete confidence le
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../rules/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) - Confidence assessment
-- [Maker-Checker-Fixer Pattern Convention](../../rules/development/pattern/ex-ru-de-pa-maker-checker-fixer.md) - Three-stage workflow
+- [Fixer Confidence Levels Convention](../../governance/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) - Confidence assessment
+- [Maker-Checker-Fixer Pattern Convention](../../governance/development/pattern/ex-ru-de-pa-maker-checker-fixer.md) - Three-stage workflow
 
 **Skills:**
 

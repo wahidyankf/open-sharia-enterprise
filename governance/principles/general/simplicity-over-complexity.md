@@ -218,7 +218,7 @@ Content here...
 ✅ **Simple (Correct)**:
 
 ```
-rules/conventions/
+governance/conventions/
   ex-co__file-naming-convention.md
   ex-co__linking-convention.md
 ```
@@ -456,7 +456,7 @@ Four simple categories:
 
 ### Convention Documents
 
-**Location**: `rules/conventions/`
+**Location**: `governance/conventions/`
 
 Simple markdown documents:
 

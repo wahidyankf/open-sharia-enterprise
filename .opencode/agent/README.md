@@ -96,13 +96,13 @@ All 45 specialized agents in OpenCode format. Each agent corresponds to an agent
 
 - **apps-ose-platform-web-deployer** - Deploys to production branch (prod-ose-platform-web)
 
-### Repository Rules Family (6 agents)
+### Repository Governance Family (6 agents)
 
 **Rules Management** (Maker-Checker-Fixer):
 
-- **wow-rules-maker** - Creates repository rules and conventions
-- **wow-rules-checker** - Validates repository-wide consistency (agent-Skill duplication detection)
-- **wow-rules-fixer** - Applies validated fixes including agent-Skill duplication removal
+- **wow-governance-maker** - Creates repository rules and conventions
+- **wow-governance-checker** - Validates repository-wide consistency (agent-Skill duplication detection)
+- **wow-governance-fixer** - Applies validated fixes including agent-Skill duplication removal
 
 **Workflow Management** (Maker-Checker-Fixer):
 
@@ -217,10 +217,10 @@ All agents leverage Skills from `.claude/skills/` for:
 ## Reference Documentation
 
 - **Project Instructions**: [AGENTS.md](../../AGENTS.md) (condensed) or [CLAUDE.md](../../CLAUDE.md) (comprehensive)
-- **AI Agents Convention**: [rules/development/agents/ex-ru-de-ag\_\_ai-agents.md](../../rules/development/agents/ai-agents.md)
-- **Maker-Checker-Fixer Pattern**: [rules/development/pattern/ex-ru-de-pa\_\_maker-checker-fixer.md](../../rules/development/pattern/maker-checker-fixer.md)
+- **AI Agents Convention**: [governance/development/agents/ex-ru-de-ag\_\_ai-agents.md](../../governance/development/agents/ai-agents.md)
+- **Maker-Checker-Fixer Pattern**: [governance/development/pattern/ex-ru-de-pa\_\_maker-checker-fixer.md](../../governance/development/pattern/maker-checker-fixer.md)
 - **Skills Catalog**: [.claude/skills/README.md](../../.claude/skills/README.md)
-- **Workflows**: [rules/workflows/README.md](../../rules/workflows/README.md)
+- **Workflows**: [governance/workflows/README.md](../../governance/workflows/README.md)
 
 ## Maintenance
 

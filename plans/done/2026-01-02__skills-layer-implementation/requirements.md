@@ -246,7 +246,7 @@ Use Mermaid diagrams (default TD layout, vertical orientation for mobile). **CRI
 ```markdown
 ## Diagram Convention
 
-Use Mermaid diagrams with WCAG-compliant accessible colors. See [Diagram Convention](./rules/conventions/formatting/diagrams.md) for complete standards. Skill: `color-accessibility-diagrams` auto-loads when creating diagrams.
+Use Mermaid diagrams with WCAG-compliant accessible colors. See [Diagram Convention](./governance/conventions/formatting/diagrams.md) for complete standards. Skill: `color-accessibility-diagrams` auto-loads when creating diagrams.
 ```
 
 **Rationale**: Provides summary for navigation while detailed knowledge accessible via Skill on-demand
@@ -318,7 +318,7 @@ skills: []
    - Link to Skills directory README
    - Brief explanation of auto-loading
 
-2. **AI Agents Convention** (`rules/development/agents/ai-agents.md`)
+2. **AI Agents Convention** (`governance/development/agents/ai-agents.md`)
    - Add required `skills:` frontmatter documentation (can be empty `[]`)
    - Explain Skills references pattern
    - Provide examples

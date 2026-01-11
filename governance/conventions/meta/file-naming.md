@@ -114,7 +114,7 @@ This apparent inconsistency is intentional and follows standard documentation co
 
 **Current Subdirectory Structure:**
 
-### Conventions Subdirectories (`rules/conventions/`)
+### Conventions Subdirectories (`governance/conventions/`)
 
 | Subdirectory  | Code | Prefix                  | Example File |
 | ------------- | ---- | ----------------------- | ------------ |
@@ -125,7 +125,7 @@ This apparent inconsistency is intentional and follows standard documentation co
 | `hugo/`       | `hu` | `shared.md`             |
 | `project/`    | `pr` | `plans-organization.md` |
 
-### Development Subdirectories (`rules/development/`)
+### Development Subdirectories (`governance/development/`)
 
 | Subdirectory | Code | Prefix                      | Example File |
 | ------------ | ---- | --------------------------- | ------------ |
@@ -136,7 +136,7 @@ This apparent inconsistency is intentional and follows standard documentation co
 | `hugo/`      | `hu` | `development.md`            |
 | `infra/`     | `in` | `temporary-files.md`        |
 
-### Workflows Subdirectories (`rules/workflows/`)
+### Workflows Subdirectories (`governance/workflows/`)
 
 | Subdirectory     | Code   | Prefix                    | Example File |
 | ---------------- | ------ | ------------------------- | ------------ |
@@ -146,7 +146,7 @@ This apparent inconsistency is intentional and follows standard documentation co
 | `plan/`          | `pl`   | `execution.md`            |
 | `wow/`           | `wo`   | `rules-quality-gate.md`   |
 
-### Principles Subdirectories (`rules/principles/`)
+### Principles Subdirectories (`governance/principles/`)
 
 | Subdirectory            | Code | Prefix                          | Example File |
 | ----------------------- | ---- | ------------------------------- | ------------ |
@@ -173,10 +173,10 @@ Use a systematic encoding rule based on directory characteristics:
 **Real Examples:**
 
 ```
-indentation.md          (explanation/rules/conventions/formatting)
-ai-agents.md            (explanation/rules/development/agents)
-general-quality-gate.md  (explanation/rules/workflows/ayokoding-web)
-explicit-over-implicit.md  (explanation/rules/principles/software-engineering)
+indentation.md          (explanation/governance/conventions/formatting)
+ai-agents.md            (explanation/governance/development/agents)
+general-quality-gate.md  (explanation/governance/workflows/ayokoding-web)
+explicit-over-implicit.md  (explanation/governance/principles/software-engineering)
 ```
 
 ## The `__` Separator
@@ -269,10 +269,10 @@ docs/tutorials/README.md                          # Main category index
 docs/how-to/README.md                            # Main category index
 docs/reference/README.md                         # Main category index
 docs/explanation/README.md                       # Main category index
-rules/conventions/README.md           # Subcategory index (conventions)
-rules/development/README.md           # Subcategory index (development)
-rules/principles/README.md            # Subcategory index (principles)
-rules/workflows/README.md             # Subcategory index (workflows)
+governance/conventions/README.md           # Subcategory index (conventions)
+governance/development/README.md           # Subcategory index (development)
+governance/principles/README.md            # Subcategory index (principles)
+governance/workflows/README.md             # Subcategory index (workflows)
 ```
 
 **Key Points:**
@@ -315,8 +315,8 @@ docs/metadata/search-index.json              # Generated search index
 Images follow the same prefix pattern as their related documentation:
 
 ```
-rules/conventions/formatting/diagrams.md
-rules/conventions/formatting/diagrams-example.png
+governance/conventions/formatting/diagrams.md
+governance/conventions/formatting/diagrams-example.png
 ```
 
 ## 🔄 Maintenance and Scalability
@@ -329,9 +329,9 @@ When creating a new subdirectory:
 2. Add this abbreviation to the prefix of all files in that directory
 3. Update any related index files
 
-**Example**: Creating a hypothetical `rules/conventions/[new-category]/`:
+**Example**: Creating a hypothetical `governance/conventions/[new-category]/`:
 
-- Directory pattern: `rules/conventions/[new-category]/`
+- Directory pattern: `governance/conventions/[new-category]/`
 - Subdirectory code: First 2 letters (e.g., `ne` for `new-category`)
 - Prefix pattern: `` (ex = explanation, co = conventions, ne = new-category)
 - Files pattern: `[content-name].md`
@@ -349,12 +349,12 @@ When renaming a directory in `docs/`, you **must rename all files within that di
 3. Update any markdown links that reference those files
 4. Update related index files (`README.md`)
 
-**Example**: Renaming `rules/conventions/meta/` to `rules/conventions/standards/`:
+**Example**: Renaming `governance/conventions/meta/` to `governance/conventions/standards/`:
 
 **Before**:
 
 ```
-rules/conventions/meta/
+governance/conventions/meta/
 ├── README.md
 ├── file-naming.md
 └── diataxis-framework.md
@@ -363,7 +363,7 @@ rules/conventions/meta/
 **After**:
 
 ```
-rules/conventions/standards/
+governance/conventions/standards/
 ├── README.md
 ├── file-naming.md
 └── diataxis-framework.md
@@ -376,7 +376,7 @@ rules/conventions/standards/
 - Prefix: ``
 - All files: `*.md`
 - Links: Update all references from `./meta/*.md` to `./standards/*.md`
-- Index: Update `rules/conventions/README.md` to reflect new directory name
+- Index: Update `governance/conventions/README.md` to reflect new directory name
 
 ### Reorganizing Directories
 
@@ -413,29 +413,29 @@ general-quality-gate.md
 
 ### Explanation Subdirectories (Complete Reference)
 
-| Directory Path                                    | Prefix                          | Example                            |
-| ------------------------------------------------- | ------------------------------- | ---------------------------------- |
-| explanation/rules/conventions/formatting          | `indentation.md`                |
-| explanation/rules/conventions/content             | `quality.md`                    |
-| explanation/rules/conventions/meta                | `file-naming.md`                |
-| explanation/rules/conventions/tutorial            | `naming.md`                     |
-| explanation/rules/conventions/hugo                | `shared.md`                     |
-| explanation/rules/conventions/project             | `plans-organization.md`         |
-| explanation/rules/development/workflow            | `commit-messages.md`            |
-| explanation/rules/development/agents              | `ai-agents.md`                  |
-| explanation/rules/development/quality             | `code.md`                       |
-| explanation/rules/development/pattern             | `functional-programming.md`     |
-| explanation/rules/development/hugo                | `development.md`                |
-| explanation/rules/development/infra               | `temporary-files.md`            |
-| explanation/rules/workflows/ayokoding-web         | `general-quality-gate.md`       |
-| explanation/rules/workflows/docs                  | `quality-gate.md`               |
-| explanation/rules/workflows/meta                  | `workflow-pattern.md`           |
-| explanation/rules/workflows/plan                  | `execution.md`                  |
-| explanation/rules/workflows/wow                   | `rules-quality-gate.md`         |
-| explanation/rules/principles/general              | `simplicity-over-complexity.md` |
-| explanation/rules/principles/content              | `accessibility-first.md`        |
-| explanation/rules/principles/software-engineering | `explicit-over-implicit.md`     |
-| explanation/vision                                | `ex-vi__`                       | `ex-vi__open-sharia-enterprise.md` |
+| Directory Path                                         | Prefix                          | Example                            |
+| ------------------------------------------------------ | ------------------------------- | ---------------------------------- |
+| explanation/governance/conventions/formatting          | `indentation.md`                |
+| explanation/governance/conventions/content             | `quality.md`                    |
+| explanation/governance/conventions/meta                | `file-naming.md`                |
+| explanation/governance/conventions/tutorial            | `naming.md`                     |
+| explanation/governance/conventions/hugo                | `shared.md`                     |
+| explanation/governance/conventions/project             | `plans-organization.md`         |
+| explanation/governance/development/workflow            | `commit-messages.md`            |
+| explanation/governance/development/agents              | `ai-agents.md`                  |
+| explanation/governance/development/quality             | `code.md`                       |
+| explanation/governance/development/pattern             | `functional-programming.md`     |
+| explanation/governance/development/hugo                | `development.md`                |
+| explanation/governance/development/infra               | `temporary-files.md`            |
+| explanation/governance/workflows/ayokoding-web         | `general-quality-gate.md`       |
+| explanation/governance/workflows/docs                  | `quality-gate.md`               |
+| explanation/governance/workflows/meta                  | `workflow-pattern.md`           |
+| explanation/governance/workflows/plan                  | `execution.md`                  |
+| explanation/governance/workflows/wow                   | `rules-quality-gate.md`         |
+| explanation/governance/principles/general              | `simplicity-over-complexity.md` |
+| explanation/governance/principles/content              | `accessibility-first.md`        |
+| explanation/governance/principles/software-engineering | `explicit-over-implicit.md`     |
+| explanation/vision                                     | `ex-vi__`                       | `ex-vi__open-sharia-enterprise.md` |
 
 ## 🔄 Migration History
 
@@ -445,19 +445,19 @@ The repository underwent a comprehensive 3-phase reorganization to introduce sub
 
 **Phase 1: Conventions Reorganization**
 
-- Created 6 subdirectories in `rules/conventions/`
+- Created 6 subdirectories in `governance/conventions/`
 - Migrated 24 convention files to new subdirectory structure
 - Updated all prefixes from `ex-co__` to ``
 
 **Phase 2: Development Reorganization**
 
-- Created 6 subdirectories in `rules/development/`
+- Created 6 subdirectories in `governance/development/`
 - Migrated 15 development files to new subdirectory structure
 - Updated all prefixes from `ex-de__` to ``
 
 **Phase 3: Workflows Reorganization**
 
-- Created 5 subdirectories in `rules/workflows/`
+- Created 5 subdirectories in `governance/workflows/`
 - Migrated 7 workflow files to new subdirectory structure
 - Updated all prefixes from `ex-wf__` to ``
 

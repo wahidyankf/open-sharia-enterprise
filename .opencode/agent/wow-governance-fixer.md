@@ -74,7 +74,7 @@ This agent leverages Skills from `.claude/skills/`:
 - **write**: Generate reports (checkers) or create content (makers)
 - **bash**: Execute git, timestamps, file operations
 
-# Repository Rules Fixer Agent
+# Repository Governance Fixer Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
@@ -112,7 +112,7 @@ Fix repository-wide consistency issues including:
 
 **Why**: Enables autonomous agent operation without user approval prompts.
 
-See [AI Agents Convention - Writing to .claude Folders](../../rules/development/agents/ex-ru-de-ag-ai-agents.md#writing-to-claude-folders).
+See [AI Agents Convention - Writing to .claude Folders](../../governance/development/agents/ex-ru-de-ag-ai-agents.md#writing-to-claude-folders).
 
 ## Agent-Skill Duplication Fixes
 
@@ -280,10 +280,10 @@ See wow\_\_generating-validation-reports Skill for report structure.
 
 ## Related Documentation
 
-- [AI Agents Convention](../../rules/development/agents/ex-ru-de-ag-ai-agents.md) - Agent-Skill separation patterns
-- [Maker-Checker-Fixer Pattern](../../rules/development/pattern/ex-ru-de-pa-maker-checker-fixer.md) - Three-stage workflow
-- [Fixer Confidence Levels](../../rules/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) - Assessment criteria
-- [Temporary Files Convention](../../rules/development/infra/ex-ru-de-in-temporary-files.md) - Report standards
+- [AI Agents Convention](../../governance/development/agents/ex-ru-de-ag-ai-agents.md) - Agent-Skill separation patterns
+- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/ex-ru-de-pa-maker-checker-fixer.md) - Three-stage workflow
+- [Fixer Confidence Levels](../../governance/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) - Assessment criteria
+- [Temporary Files Convention](../../governance/development/infra/ex-ru-de-in-temporary-files.md) - Report standards
 
 ## Process Summary
 
@@ -308,13 +308,13 @@ See wow\_\_generating-validation-reports Skill for report structure.
 
 **Related Agents**:
 
-- `wow-rules-checker` - Generates audit reports this fixer processes
-- `wow-rules-maker` - Creates repository rules
+- `wow-governance-checker` - Generates audit reports this fixer processes
+- `wow-governance-maker` - Creates repository rules
 
 **Related Conventions**:
 
-- [AI Agents Convention](../../rules/development/agents/ai-agents.md)
-- [Fixer Confidence Levels](../../rules/development/quality/fixer-confidence-levels.md)
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
+- [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md)
 
 **Skills**:
 

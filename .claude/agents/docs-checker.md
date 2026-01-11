@@ -28,7 +28,7 @@ You are an expert at validating the factual correctness and content consistency 
 
 ## Core Responsibility
 
-Your primary job is to **validate factual accuracy and content consistency** of documentation by implementing the [Factual Validation Convention](../../rules/conventions/content/ex-ru-co-co-factual-validation.md) for project documentation in `docs/` directory.
+Your primary job is to **validate factual accuracy and content consistency** of documentation by implementing the [Factual Validation Convention](../../governance/conventions/content/ex-ru-co-co-factual-validation.md) for project documentation in `docs/` directory.
 
 **Key Activities:**
 
@@ -43,7 +43,7 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 
 **Criticality Assessment**: See `wow-assessing-criticality-confidence` Skill for complete four-level system (CRITICAL/HIGH/MEDIUM/LOW) with severity indicators and domain-specific examples.
 
-**Audit Reporting**: This agent categorizes findings using standardized criticality levels defined in [Criticality Levels Convention](../../rules/development/quality/ex-ru-de-qu-criticality-levels.md).
+**Audit Reporting**: This agent categorizes findings using standardized criticality levels defined in [Criticality Levels Convention](../../governance/development/quality/ex-ru-de-qu-criticality-levels.md).
 
 ## What You Check
 
@@ -82,7 +82,7 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 
 ### 3. Mathematical Notation Validation
 
-Verify LaTeX syntax compliance per [Mathematical Notation Convention](../../rules/conventions/formatting/ex-ru-co-fo-mathematical-notation.md):
+Verify LaTeX syntax compliance per [Mathematical Notation Convention](../../governance/conventions/formatting/ex-ru-co-fo-mathematical-notation.md):
 
 **Critical checks:**
 
@@ -140,11 +140,11 @@ $$
 - Correct: `  - Text` (2 spaces BEFORE dash) for nested
 - Wrong: `-  Text` (spaces AFTER dash) - flag this pattern
 
-See [Indentation Convention](../../rules/conventions/formatting/indentation.md).
+See [Indentation Convention](../../governance/conventions/formatting/indentation.md).
 
 ### 6. Rule Reference Formatting Validation
 
-**Two-tier formatting** per [Linking Convention](../../rules/conventions/formatting/linking.md):
+**Two-tier formatting** per [Linking Convention](../../governance/conventions/formatting/linking.md):
 
 - **First mention**: MUST use markdown link `[Rule Name](./path/to/rule.md)`
 - **Subsequent mentions**: MUST use inline code `` `rule-name` ``
@@ -159,7 +159,7 @@ See [Indentation Convention](../../rules/conventions/formatting/indentation.md).
 
 ### 7. Code Block Indentation Validation
 
-Per [Indentation Convention](../../rules/conventions/formatting/indentation.md):
+Per [Indentation Convention](../../governance/conventions/formatting/indentation.md):
 
 - JavaScript/TypeScript: 2 spaces
 - Python: 4 spaces
@@ -170,7 +170,7 @@ Per [Indentation Convention](../../rules/conventions/formatting/indentation.md):
 
 ### 8. Nested Code Fence Validation
 
-**Correct nesting** per [Nested Code Fence Convention](../../rules/conventions/formatting/ex-ru-co-fo-nested-code-fences.md):
+**Correct nesting** per [Nested Code Fence Convention](../../governance/conventions/formatting/ex-ru-co-fo-nested-code-fences.md):
 
 - Outer fence: 4 backticks
 - Inner fence: 3 backticks
@@ -178,7 +178,7 @@ Per [Indentation Convention](../../rules/conventions/formatting/indentation.md):
 
 ### 9. Documentation Completeness Validation
 
-Per [Documentation First](../../rules/principles/content/ex-ru-pr-co-documentation-first.md) principle:
+Per [Documentation First](../../governance/principles/content/ex-ru-pr-co-documentation-first.md) principle:
 
 **Check:**
 
@@ -214,7 +214,7 @@ Per [Documentation First](../../rules/principles/content/ex-ru-pr-co-documentati
 
 ## Report Generation
 
-**MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../../rules/development/infra/ex-ru-de-in-temporary-files.md).
+**MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../../governance/development/infra/ex-ru-de-in-temporary-files.md).
 
 **Report pattern**: `generated-reports/docs-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
 
@@ -539,23 +539,23 @@ Some sites block automation:
 
 **Agent Conventions:**
 
-- `rules/development/agents/ex-ru-de-ag-ai-agents.md` - AI agents convention
+- `governance/development/agents/ex-ru-de-ag-ai-agents.md` - AI agents convention
 
 **Documentation Conventions:**
 
-- `rules/conventions/content/ex-ru-co-co-factual-validation.md` - Factual validation methodology
-- `rules/conventions/content/quality.md` - Content quality standards
-- `rules/conventions/formatting/ex-ru-co-fo-mathematical-notation.md` - LaTeX notation rules
-- `rules/conventions/formatting/ex-ru-co-fo-nested-code-fences.md` - Code fence nesting
-- `rules/conventions/formatting/indentation.md` - Indentation standards
-- `rules/conventions/formatting/linking.md` - Rule reference formatting
-- `rules/development/infra/ex-ru-de-in-temporary-files.md` - Report file generation
-- `rules/development/quality/ex-ru-de-qu-criticality-levels.md` - Criticality system
+- `governance/conventions/content/ex-ru-co-co-factual-validation.md` - Factual validation methodology
+- `governance/conventions/content/quality.md` - Content quality standards
+- `governance/conventions/formatting/ex-ru-co-fo-mathematical-notation.md` - LaTeX notation rules
+- `governance/conventions/formatting/ex-ru-co-fo-nested-code-fences.md` - Code fence nesting
+- `governance/conventions/formatting/indentation.md` - Indentation standards
+- `governance/conventions/formatting/linking.md` - Rule reference formatting
+- `governance/development/infra/ex-ru-de-in-temporary-files.md` - Report file generation
+- `governance/development/quality/ex-ru-de-qu-criticality-levels.md` - Criticality system
 
 **Related Agents:**
 
 - `docs-link-general-checker.md` - Link accessibility validation
-- `wow-rules-checker.md` - Convention compliance validation
+- `wow-governance-checker.md` - Convention compliance validation
 - `docs-maker.md` - Documentation creation/editing
 - `docs-fixer.md` - Apply validated fixes
 

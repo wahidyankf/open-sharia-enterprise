@@ -370,7 +370,7 @@ awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' tutorial.md | \
 
 ## Validation Re-implementation Guide
 
-**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../rules/development/quality/ex-ru-de-qu-repository-validation.md) and [Tutorial Convention](../../rules/conventions/tutorial/general.md).
+**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../governance/development/quality/ex-ru-de-qu-repository-validation.md) and [Tutorial Convention](../../governance/conventions/tutorial/general.md).
 
 **Key points:**
 
@@ -418,23 +418,23 @@ Always provide:
 
 **Agent Conventions:**
 
-- [AI Agents Convention](../../rules/development/agents/ai-agents.md) - AI agents convention (all agents must follow)
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md) - AI agents convention (all agents must follow)
 
 **Related Agents:**
 
 - [docs\_\_tutorial-checker.md](./docs-tutorial-checker.md) - Generates audit reports that this agent processes
 - [docs\_\_tutorial-maker.md](./docs-tutorial-maker.md) - Creates tutorials (different purpose)
-- [wow\_\_rules-fixer.md](./wow-rules-fixer.md) - Similar fixer pattern for repository rules
+- [wow\_\_rules-fixer.md](./wow-governance-fixer.md) - Similar fixer pattern for repository rules
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../rules/development/quality/fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
-- [Maker-Checker-Fixer Pattern Convention](../../rules/development/pattern/ex-ru-de-pa-maker-checker-fixer.md) - Three-stage quality workflow
-- [Tutorial Convention](../../rules/conventions/tutorial/general.md) - Complete tutorial standards and validation criteria (primary reference)
-- [Tutorial Naming Convention](../../rules/conventions/tutorial/naming.md) - Tutorial types and naming patterns
-- [Repository Validation Methodology Convention](../../rules/development/quality/ex-ru-de-qu-repository-validation.md) - Standard validation patterns
-- [Temporary Files Convention](../../rules/development/infra/ex-ru-de-in-temporary-files.md) - Where to store fix reports
-- [Content Quality Principles](../../rules/conventions/content/quality.md) - Content standards (no time estimates rule)
+- [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
+- [Maker-Checker-Fixer Pattern Convention](../../governance/development/pattern/ex-ru-de-pa-maker-checker-fixer.md) - Three-stage quality workflow
+- [Tutorial Convention](../../governance/conventions/tutorial/general.md) - Complete tutorial standards and validation criteria (primary reference)
+- [Tutorial Naming Convention](../../governance/conventions/tutorial/naming.md) - Tutorial types and naming patterns
+- [Repository Validation Methodology Convention](../../governance/development/quality/ex-ru-de-qu-repository-validation.md) - Standard validation patterns
+- [Temporary Files Convention](../../governance/development/infra/ex-ru-de-in-temporary-files.md) - Where to store fix reports
+- [Content Quality Principles](../../governance/conventions/content/quality.md) - Content standards (no time estimates rule)
 
 ---
 

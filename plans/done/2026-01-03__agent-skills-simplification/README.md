@@ -77,7 +77,7 @@ graph TD
 
 **Trunk Based Development**: All work happens on `main` branch with small, frequent commits. No feature branches unless absolutely necessary.
 
-See [Trunk Based Development Convention](../../rules/development/workflow/trunk-based-development.md) for complete details.
+See [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) for complete details.
 
 ## Final Results
 
@@ -147,13 +147,13 @@ This plan delivered agent simplification through direct commits to main branch:
 
 **Core Principles Implemented:**
 
-- [Simplicity Over Complexity](../../rules/principles/general/simplicity-over-complexity.md) - Remove duplication, favor single source of truth
-- [Documentation First](../../rules/principles/content/documentation-first.md) - Skills encode knowledge systematically
-- [Explicit Over Implicit](../../rules/principles/software-engineering/explicit-over-implicit.md) - Clear Skill references instead of embedded knowledge
+- [Simplicity Over Complexity](../../governance/principles/general/simplicity-over-complexity.md) - Remove duplication, favor single source of truth
+- [Documentation First](../../governance/principles/content/documentation-first.md) - Skills encode knowledge systematically
+- [Explicit Over Implicit](../../governance/principles/software-engineering/explicit-over-implicit.md) - Clear Skill references instead of embedded knowledge
 
 **Key Conventions:**
 
-- [AI Agents Convention](../../rules/development/agents/ai-agents.md) - Agent structure, size limits, Skills integration
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md) - Agent structure, size limits, Skills integration
 - [Repository Architecture](../../docs/explanation/ex-ru__repository-governance-architecture.md) - Six-layer hierarchy with Skills as infrastructure
 
 **Skills Infrastructure:**

@@ -14,7 +14,7 @@ updated: 2025-12-24
 
 # Convention Writing Convention
 
-This meta-convention defines how to write convention documents in the `rules/conventions/` directory. It ensures consistency, clarity, and completeness across all convention documentation.
+This meta-convention defines how to write convention documents in the `governance/conventions/` directory. It ensures consistency, clarity, and completeness across all convention documentation.
 
 ## Principles Implemented/Respected
 
@@ -43,7 +43,7 @@ Convention documents define **how to write and format documentation** in this re
 
 ### What Does NOT Belong in conventions/
 
-**❌ Software development practices** (use `rules/development/` instead):
+**❌ Software development practices** (use `governance/development/` instead):
 
 - Development workflows (git, commits, testing, BDD)
 - Build processes and tooling
@@ -293,7 +293,7 @@ Before publishing a convention document, verify:
 
 ### Integration
 
-- [ ] Referenced in `rules/conventions/README.md`
+- [ ] Referenced in `governance/conventions/README.md`
 - [ ] Mentioned in CLAUDE.md if it affects agent behavior
 - [ ] Used by at least one agent OR enforced in a hook/process
 - [ ] Cross-referenced by related conventions
@@ -330,7 +330,7 @@ Before publishing a convention document, verify:
 
 ### Decision Process:
 
-1. **Search existing conventions** - Check `rules/conventions/README.md` for related topics
+1. **Search existing conventions** - Check `governance/conventions/README.md` for related topics
 2. **Assess overlap** - Read related conventions to understand current coverage
 3. **Define unique scope** - Articulate what the new convention would cover that existing ones don't
 4. **Estimate length** - Will this be >500 words? Multiple sections?

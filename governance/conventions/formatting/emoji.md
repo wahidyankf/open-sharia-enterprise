@@ -659,7 +659,7 @@ When adding emojis to existing documentation:
 
 **Phase 1: Core Documentation** (Immediate)
 
-- Update convention documents in `rules/conventions/`
+- Update convention documents in `governance/conventions/`
 - Update README.md files (root and `.claude/agents/README.md`)
 - **Skip** CLAUDE.md and agent prompt files (AI instructions)
 

@@ -53,8 +53,8 @@ What to avoid and why.
 
 Links to authoritative convention/development documents this Skill encodes:
 
-- [Convention Name](../../rules/conventions/path/to/convention.md) - Primary reference
-- [Development Practice](../../rules/development/path/to/practice.md) - Secondary reference
+- [Convention Name](../../governance/conventions/path/to/convention.md) - Primary reference
+- [Development Practice](../../governance/development/path/to/practice.md) - Secondary reference
 
 ## Related Skills
 

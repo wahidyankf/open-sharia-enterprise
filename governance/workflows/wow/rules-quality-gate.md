@@ -40,17 +40,17 @@ outputs:
     required: false
 ---
 
-# Repository Rules Quality Gate Workflow
+# Repository Governance Quality Gate Workflow
 
 **Purpose**: Automatically validate repository consistency across principles, conventions, development practices, agent and skill source definitions, CLAUDE.md, and subdirectory README files, then apply fixes iteratively until all issues are resolved.
 
 **IMPORTANT - Scope Clarification**:
 
-This workflow validates **source definitions only** in `rules/`. It does NOT validate generated directories:
+This workflow validates **source definitions only** in `governance/`. It does NOT validate generated directories:
 
-- ✅ **Validates**: `rules/agents/content/` (45 agent definitions)
-- ✅ **Validates**: `rules/agents/skills/` (23 skill definitions)
-- ✅ **Validates**: `rules/` (principles, conventions, development practices)
+- ✅ **Validates**: `governance/agents/content/` (45 agent definitions)
+- ✅ **Validates**: `governance/agents/skills/` (23 skill definitions)
+- ✅ **Validates**: `governance/` (principles, conventions, development practices)
 - ❌ **Skips**: `.claude/agents/` (generated - validate via `butler-cli agents validate`)
 - ❌ **Skips**: `.claude/skills/` (generated - validate via `butler-cli skills validate`)
 - ❌ **Skips**: `.opencode/agent/` (generated - validate via `butler-cli agents validate`)
@@ -349,9 +349,9 @@ Track across executions:
 - **Observable**: Generates audit reports for every iteration
 - **Bounded**: Max-iterations prevents runaway execution
 
-**Concurrency**: Currently validates and fixes sequentially. The `max-concurrency` parameter is reserved for future enhancements where multiple validation dimensions (principles, conventions, development, agents source in rules/agents/, CLAUDE.md) could run concurrently.
+**Concurrency**: Currently validates and fixes sequentially. The `max-concurrency` parameter is reserved for future enhancements where multiple validation dimensions (principles, conventions, development, agents source in governance/agents/, CLAUDE.md) could run concurrently.
 
-**Note**: "agents" in this context refers to agent SOURCE definitions in `rules/agents/`, NOT generated directories (`.claude/agents/` and `.opencode/agent/`).
+**Note**: "agents" in this context refers to agent SOURCE definitions in `governance/agents/`, NOT generated directories (`.claude/agents/` and `.opencode/agent/`).
 
 This workflow ensures repository consistency through iterative validation and fixing, making it ideal for maintenance and quality assurance.
 

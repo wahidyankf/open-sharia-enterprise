@@ -64,7 +64,7 @@ ayokoding-cli nav regen --verbose
 - **Generates absolute paths with language prefix** for all navigation links (e.g., `/en/learn/swe/prog-lang/python`)
 - Writes updated navigation back to files
 
-**CRITICAL - Absolute Path Requirement**: All generated navigation links use **absolute paths with language prefix**. This is required for Hugo sites because relative paths break when content is rendered in different page contexts (sidebar, hamburger menu, content pages). See [Hugo Content Convention - ayokoding-web](../../rules/conventions/hugo/ayokoding.md#internal-link-requirements) for complete details.
+**CRITICAL - Absolute Path Requirement**: All generated navigation links use **absolute paths with language prefix**. This is required for Hugo sites because relative paths break when content is rendered in different page contexts (sidebar, hamburger menu, content pages). See [Hugo Content Convention - ayokoding-web](../../governance/conventions/hugo/ayokoding.md#internal-link-requirements) for complete details.
 
 **Flags:**
 
@@ -327,7 +327,7 @@ go test ./... -v
 - `internal/markdown`: 97.5% coverage
 - `internal/navigation`: 88.2% coverage
 
-**Note**: Unit tests automatically run via pre-push git hook for affected projects (see [Code Quality Convention](../../rules/development/quality/code.md)).
+**Note**: Unit tests automatically run via pre-push git hook for affected projects (see [Code Quality Convention](../../governance/development/quality/code.md)).
 
 ### Run without building
 
@@ -368,5 +368,5 @@ Navigation regeneration performance comparison:
 ## References
 
 - [ayokoding-web-navigation-maker Agent](../../.claude/agents/ayokoding-web-navigation-maker.md)
-- [Hugo Content Convention - ayokoding-web](../../rules/conventions/hugo/ayokoding.md)
-- [AI Agents Convention](../../rules/development/agents/ai-agents.md)
+- [Hugo Content Convention - ayokoding-web](../../governance/conventions/hugo/ayokoding.md)
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md)

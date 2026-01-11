@@ -1,6 +1,6 @@
 ---
 name: wow-workflow-maker
-description: Creates workflow documentation in rules/workflows/ following workflow pattern convention.
+description: Creates workflow documentation in governance/workflows/ following workflow pattern convention.
 tools: [Read, Write, Edit, Glob, Grep]
 model: sonnet
 color: blue
@@ -23,7 +23,7 @@ Create workflow documentation following workflow pattern convention.
 
 ## Reference
 
-- [Workflow Pattern Convention](../../rules/workflows/meta/ex-ru-wf-me-workflow-pattern.md)
+- [Workflow Pattern Convention](../../governance/workflows/meta/ex-ru-wf-me-workflow-pattern.md)
 - Skills: `docs-applying-diataxis-framework`, `docs-applying-content-quality`
 
 ## Workflow
@@ -35,7 +35,7 @@ Create workflow documentation following workflow pattern convention.
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [Workflow Pattern Convention](../../rules/workflows/meta/workflow-pattern.md)
+- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-pattern.md)
 
 **Related Agents**:
 
@@ -44,8 +44,8 @@ Create workflow documentation following workflow pattern convention.
 
 **Related Conventions**:
 
-- [Workflow Pattern Convention](../../rules/workflows/meta/workflow-pattern.md)
-- [Execution Modes Convention](../../rules/workflows/meta/execution-modes.md)
+- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-pattern.md)
+- [Execution Modes Convention](../../governance/workflows/meta/execution-modes.md)
 
 **Skills**:
 

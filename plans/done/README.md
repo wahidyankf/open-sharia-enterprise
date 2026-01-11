@@ -4,7 +4,7 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
-- [2026-01-06: Move Rules to Root](./2026-01-06__move-rules-to-root/) - Move docs/explanation/rules/ to /rules/ (separate from Obsidian docs) with git mv to preserve history. Updated all 151 files with path references, validated repository consistency, and committed atomically (Completed: 2026-01-10)
+- [2026-01-06: Move Rules to Root](./2026-01-06__move-rules-to-root/) - Move docs/explanation/governance/ to /governance/ (separate from Obsidian docs) with git mv to preserve history. Updated all 151 files with path references, validated repository consistency, and committed atomically (Completed: 2026-01-10)
 - [2025-12-03: Golang Full Set Tutorial Series](./2025-12-03__golang-full-set-tutorials/) - Transform Golang tutorial directory into a complete "Full Set" tutorial series covering Initial Setup through Advanced levels (Completed: 2026-01-10)
 - [2025-12-04: Java Full Set Tutorial Series](./2025-12-04__java-full-set-tutorials/) - Transform Java tutorial directory into a complete "Full Set" tutorial series covering Initial Setup through Advanced levels (Completed: 2026-01-10)
 - [2025-12-17: Cookbook Standardization](./2025-12-17__cookbook-standardization/) - Standardize Golang, Python, and Java cookbooks to ensure consistent quality and coverage with 35 core recipes + 5-10 language-specific recipes (Completed: 2026-01-10)

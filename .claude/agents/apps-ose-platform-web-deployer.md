@@ -103,8 +103,8 @@ echo "Vercel will automatically build from prod-ose-platform-web branch"
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ose-platform.md)
-- [Trunk Based Development](../../rules/development/workflow/trunk-based-development.md)
+- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
 
 **Related Agents**:
 
@@ -112,8 +112,8 @@ echo "Vercel will automatically build from prod-ose-platform-web branch"
 
 **Related Conventions**:
 
-- [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ose-platform.md)
-- [Trunk Based Development](../../rules/development/workflow/trunk-based-development.md)
+- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
 
 **Skills**:
 

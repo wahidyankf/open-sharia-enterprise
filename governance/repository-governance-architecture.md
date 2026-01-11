@@ -86,11 +86,11 @@ graph TD
 
 ### Layer 0: Vision (WHY WE EXIST)
 
-**Location**: `/rules/vision/`
+**Location**: `/governance/vision/`
 
 **Purpose**: Foundational purpose establishing WHY the project exists and WHAT change we seek.
 
-**Key Document**: [Vision - Open Sharia Enterprise](../vision/ex-vi__open-sharia-enterprise.md) (will be at `/rules/vision/` after move)
+**Key Document**: [Vision - Open Sharia Enterprise](../vision/ex-vi__open-sharia-enterprise.md) (will be at `/governance/vision/` after move)
 
 **Core Vision**:
 
@@ -112,11 +112,11 @@ graph TD
 
 ### Layer 1: Principles (WHY - Foundational Values)
 
-**Location**: `/rules/principles/`
+**Location**: `/governance/principles/`
 
 **Purpose**: Foundational values that serve the vision and govern all conventions and development practices.
 
-**Key Document**: [Core Principles Index](./principles/README.md) (will be at `/rules/principles/` after move)
+**Key Document**: [Core Principles Index](./principles/README.md) (will be at `/governance/principles/` after move)
 
 **Ten Principles**:
 
@@ -148,11 +148,11 @@ Development: Hugo Development Convention (semantic HTML, ARIA labels)
 
 ### Layer 2: Conventions (WHAT - Documentation Rules)
 
-**Location**: `/rules/conventions/`
+**Location**: `/governance/conventions/`
 
 **Purpose**: Documentation standards that implement core principles. Defines WHAT rules we follow for writing, organizing, and formatting documentation.
 
-**Key Document**: [Conventions Index](./conventions/README.md) (will be at `/rules/conventions/` after move)
+**Key Document**: [Conventions Index](./conventions/README.md) (will be at `/governance/conventions/` after move)
 
 **Scope**: Documentation rules for:
 
@@ -188,11 +188,11 @@ Agent: docs__file-manager (enforces naming when renaming files)
 
 ### Layer 3: Development (HOW - Software Practices)
 
-**Location**: `/rules/development/`
+**Location**: `/governance/development/`
 
 **Purpose**: Software practices that implement core principles. Defines HOW we develop, test, and deploy software.
 
-**Key Document**: [Development Index](./development/README.md) (will be at `/rules/development/` after move)
+**Key Document**: [Development Index](./development/README.md) (will be at `/governance/development/` after move)
 
 **Scope**: Software practices for:
 
@@ -268,11 +268,11 @@ Workflow: Maker-Checker-Fixer (Layer 5)
 
 ### Layer 5: Workflows (WHEN - Multi-Step Processes)
 
-**Location**: `/rules/workflows/`
+**Location**: `/governance/workflows/`
 
 **Purpose**: Orchestrated multi-step processes that compose AI agents to achieve specific goals with clear termination criteria.
 
-**Key Document**: [Workflows Index](./workflows/README.md) (will be at `/rules/workflows/` after move)
+**Key Document**: [Workflows Index](./workflows/README.md) (will be at `/governance/workflows/` after move)
 
 **Workflow Families**:
 
@@ -426,7 +426,7 @@ Delivery (serves knowledge):
 **Layer 2 - Convention**: [File Naming Convention](./conventions/meta/file-naming.md)
 
 - Implements: Explicit Over Implicit principle
-- Rule: Prefix encodes directory path explicitly (`ex-co__` = explanation/rules/conventions/)
+- Rule: Prefix encodes directory path explicitly (`ex-co__` = explanation/governance/conventions/)
 
 **Layer 3 - Development**: [AI Agents Convention](./development/agents/ai-agents.md)
 
@@ -511,9 +511,9 @@ Delivery (serves knowledge):
 
 **Example**: Adding a new principle
 
-1. Create principle document in `/rules/principles/`
+1. Create principle document in `/governance/principles/`
 2. Add "Vision Supported" section showing how it serves the vision
-3. Update `/rules/principles/README.md` index
+3. Update `/governance/principles/README.md` index
 4. Use wow\_\_rules-maker to propagate to CLAUDE.md
 5. Create conventions/practices that implement the principle
 6. Create/update agents to enforce the principle
@@ -618,17 +618,17 @@ This architecture document implements/respects the following principles:
 **Layer 1**:
 
 - [Core Principles Index](./principles/README.md)
-- Individual principles in `/rules/principles/`
+- Individual principles in `/governance/principles/`
 
 **Layer 2**:
 
 - [Conventions Index](./conventions/README.md)
-- 24 convention documents in `/rules/conventions/`
+- 24 convention documents in `/governance/conventions/`
 
 **Layer 3**:
 
 - [Development Index](./development/README.md)
-- 15 practice documents in `/rules/development/`
+- 15 practice documents in `/governance/development/`
 
 **Layer 4**:
 

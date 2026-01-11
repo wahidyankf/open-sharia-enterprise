@@ -141,7 +141,7 @@ Update status, add summary.
 ## Reference Documentation
 
 - [CLAUDE.md](../../CLAUDE.md)
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 
 **Skills:**
 

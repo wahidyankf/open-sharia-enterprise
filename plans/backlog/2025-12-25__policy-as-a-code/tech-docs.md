@@ -5,12 +5,12 @@
 ### Current Six-Layer Architecture
 
 ```
-Layer 0: Vision (WHY) → rules/vision/
-Layer 1: Principles (WHY values) → rules/principles/
-Layer 2: Conventions (WHAT docs rules) → rules/conventions/
-Layer 3: Development (HOW software) → rules/development/
+Layer 0: Vision (WHY) → governance/vision/
+Layer 1: Principles (WHY values) → governance/principles/
+Layer 2: Conventions (WHAT docs rules) → governance/conventions/
+Layer 3: Development (HOW software) → governance/development/
 Layer 4: AI Agents (WHO enforces) → .claude/agents/ AND .opencode/agent/
-Layer 5: Workflows (WHEN orchestrate) → rules/workflows/
+Layer 5: Workflows (WHEN orchestrate) → governance/workflows/
 ```
 
 **Key Characteristics:**
@@ -75,7 +75,7 @@ Layer 5: Workflows (WHEN)
 
 ### Storage Format Example
 
-**File**: `rules/conventions/meta/file-naming.md`
+**File**: `governance/conventions/meta/file-naming.md`
 
 ````markdown
 ---
@@ -108,11 +108,11 @@ policy:
   traceability:
     principles:
       - id: explicit-over-implicit
-        path: rules/principles/software-engineering/explicit-over-implicit.md
+        path: governance/principles/software-engineering/explicit-over-implicit.md
         reason: "Explicit prefixes make file locations transparent without opening files"
     conventions:
       - id: ex-co__file-naming-convention
-        path: rules/conventions/meta/file-naming.md
+        path: governance/conventions/meta/file-naming.md
         section: "Prefix Pattern Rules"
 
   scope:
@@ -139,10 +139,10 @@ policy:
 
       examples:
         valid:
-          - "rules/conventions/formatting/indentation.md"
+          - "governance/conventions/formatting/indentation.md"
           - "docs/tutorials/tu__getting-started.md"
         invalid:
-          - "rules/conventions/wrong-prefix__example.md"
+          - "governance/conventions/wrong-prefix__example.md"
           - "docs/tutorials/tutorial__example.md"
 
       autofix: false
@@ -279,7 +279,7 @@ Based on analysis of existing agents, policies must support seven distinct rule 
 **Examples**: Frontmatter structure, agent references, state validation, termination criteria
 **Validation**: Schema validation, reference checking, dependency analysis
 
-Workflows orchestrate agents and have structural requirements similar to agents themselves. The workflow agents (wow-workflow-maker, wow-workflow-checker, wow-workflow-fixer) are part of the repo-rules family and validate workflow definitions in `rules/workflows/`.
+Workflows orchestrate agents and have structural requirements similar to agents themselves. The workflow agents (wow-workflow-maker, wow-workflow-checker, wow-workflow-fixer) are part of the repo-rules family and validate workflow definitions in `governance/workflows/`.
 
 **Example 1: Frontmatter Structure**
 
@@ -452,15 +452,15 @@ Every policy MUST link back to principles (Layer 1) and conventions (Layer 2):
 traceability:
   principles:
     - id: accessibility-first
-      path: rules/principles/content/accessibility-first.md
+      path: governance/principles/content/accessibility-first.md
       reason: "Active voice benefits non-native speakers and screen readers"
     - id: simplicity-over-complexity
-      path: rules/principles/general/simplicity-over-complexity.md
+      path: governance/principles/general/simplicity-over-complexity.md
       reason: "Clear language reduces cognitive load"
 
   conventions:
     - id: ex-co__content-quality
-      path: rules/conventions/content/quality.md
+      path: governance/conventions/content/quality.md
       section: "Writing Style and Tone > Active Voice"
       line_range: "77-106" # Optional: specific line references
 ```
@@ -1030,7 +1030,7 @@ echo "$COVERAGE" | jq -r '"## Policy Coverage Report\n**Policies Evaluated**: \(
 **Output Format (Enhanced Audit Report):**
 
 ```markdown
-# Repository Rules Validation Report
+# Repository Governance Validation Report
 
 **Generated**: 2025-12-24T10:30:00+07:00
 **Scope**: docs/**, .claude/agents/**
@@ -1044,7 +1044,7 @@ echo "$COVERAGE" | jq -r '"## Policy Coverage Report\n**Policies Evaluated**: \(
 **Location**: docs/example.md:1
 **Severity**: Critical
 **Issue**: Prefix 'wrong' does not match directory path
-**Policy Source**: rules/conventions/ex-co\_\_file-naming-convention.md#policy-fn001
+**Policy Source**: governance/conventions/ex-co\_\_file-naming-convention.md#policy-fn001
 **Auto-fixable**: No
 **Confidence**: MEDIUM (requires human judgment for correct prefix)
 
@@ -1076,10 +1076,10 @@ echo "$COVERAGE" | jq -r '"## Policy Coverage Report\n**Policies Evaluated**: \(
 # Example: "Add new rule for emoji usage in agent files"
 
 # 2. repo-rules-maker updates convention prose
-# (Uses Edit tool to update rules/conventions/formatting/emoji.md)
+# (Uses Edit tool to update governance/conventions/formatting/emoji.md)
 
 # 3. repo-rules-maker generates policy YAML
-cat >> rules/conventions/formatting/emoji.md << 'EOF'
+cat >> governance/conventions/formatting/emoji.md << 'EOF'
 
 ## Policy Definition
 
@@ -1097,11 +1097,11 @@ policy:
   traceability:
     principles:
       - id: accessibility-first
-        path: rules/principles/content/accessibility-first.md
+        path: governance/principles/content/accessibility-first.md
         reason: "Semantic emojis improve scannability for readers"
     conventions:
       - id: ex-co__emoji-usage
-        path: rules/conventions/formatting/emoji.md
+        path: governance/conventions/formatting/emoji.md
         section: "Usage Rules"
 
   scope:
@@ -1132,7 +1132,7 @@ EOF
 
 # 4. Validate policy syntax
 
-governance-cli policy validate-schema rules/conventions/ex-co\_\_emoji-usage.md
+governance-cli policy validate-schema governance/conventions/ex-co\_\_emoji-usage.md
 
 # 5. Update CLAUDE.md summary (if needed)
 
@@ -1144,7 +1144,7 @@ governance-cli policy validate-schema rules/conventions/ex-co\_\_emoji-usage.md
 
 # 7. Commit changes atomically
 
-git add rules/conventions/ex-co\_\_emoji-usage.md CLAUDE.md
+git add governance/conventions/ex-co\_\_emoji-usage.md CLAUDE.md
 git commit -m "feat(conventions): add emoji usage policy
 
 - Add prose explanation of emoji usage rules
@@ -1214,8 +1214,8 @@ cat >> "generated-reports/repo-rules__2025-12-24--10-35__fix.md" << EOF
 **Confidence**: HIGH (objective structural rule)
 **File**: $FILE
 **Change**: Renamed file from wrong__example.md to ex-co__example.md
-**Policy Source**: rules/conventions/meta/file-naming.md#policy-fn001
-**Rationale**: Policy specifies files in rules/conventions/ must use ex-co__ prefix
+**Policy Source**: governance/conventions/meta/file-naming.md#policy-fn001
+**Rationale**: Policy specifies files in governance/conventions/ must use ex-co__ prefix
 EOF
 ````
 
@@ -1232,8 +1232,8 @@ EOF
 %%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '16px'}}}%%
 graph TB
     %% Storage Layer
-    ConvDocs["Convention Docs<br/>(rules/conventions/)<br/>Markdown + Embedded YAML Policies"]
-    DevDocs["Development Docs<br/>(rules/development/)<br/>Markdown + Embedded YAML Policies"]
+    ConvDocs["Convention Docs<br/>(governance/conventions/)<br/>Markdown + Embedded YAML Policies"]
+    DevDocs["Development Docs<br/>(governance/development/)<br/>Markdown + Embedded YAML Policies"]
 
     %% Policy Engine
     PolicyEngine["PolicyEngine Library<br/>(apps/governance-cli/internal/policy/)<br/>Go + Cobra"]
@@ -1366,7 +1366,7 @@ governance-cli policy coverage --reports=generated-reports/*__audit.md
   - Nx project configuration
   - Go module setup with Cobra
 
-- `rules/development/infra/policy-as-code.md` (NEW)
+- `governance/development/infra/policy-as-code.md` (NEW)
   - Policy schema documentation
   - Authoring guidelines
   - Agent consumption patterns
@@ -1399,24 +1399,24 @@ governance-cli policy coverage --reports=generated-reports/*__audit.md
 
 **Phase 1 (Pilot - repo-rules Family):**
 
-- `rules/conventions/meta/file-naming.md` (MODIFY)
+- `governance/conventions/meta/file-naming.md` (MODIFY)
   - Add ## Policy Definition section with YAML
 
 - **Claude Code agents** (.claude/agents/):
-  - `wow-rules-checker.md` (MODIFY: ~200 lines from current 373 - add PolicyEngine integration)
-  - `wow-rules-maker.md` (MODIFY: ~80 lines from current 53 - add policy sync logic)
-  - `wow-rules-fixer.md` (MODIFY: ~130 lines from current 258 - add policy-driven fix workflow)
+  - `wow-governance-checker.md` (MODIFY: ~200 lines from current 373 - add PolicyEngine integration)
+  - `wow-governance-maker.md` (MODIFY: ~80 lines from current 53 - add policy sync logic)
+  - `wow-governance-fixer.md` (MODIFY: ~130 lines from current 258 - add policy-driven fix workflow)
     - Add policy-driven fix logic
     - Query policies for autofix eligibility
 
 - **OpenCode agents** (.opencode/agent/):
-  - `wow-rules-checker.md` (MODIFY: similar reduction)
+  - `wow-governance-checker.md` (MODIFY: similar reduction)
     - Add PolicyEngine integration via Bash tool
     - Remove embedded rule definitions
-  - `wow-rules-maker.md` (MODIFY: similar reduction)
+  - `wow-governance-maker.md` (MODIFY: similar reduction)
     - Add policy sync logic
     - Update workflow documentation
-  - `wow-rules-fixer.md` (MODIFY: similar reduction)
+  - `wow-governance-fixer.md` (MODIFY: similar reduction)
     - Add policy-driven fix logic
     - Query policies for autofix eligibility
 
@@ -1485,7 +1485,7 @@ func TestValidateFile_PrefixMismatch(t *testing.T) {
 	engine.LoadPolicies("../../docs/explanation/conventions")
 
 	content := []byte("# Example File\nContent here")
-	results, err := engine.ValidateFile("rules/conventions/wrong__example.md", content)
+	results, err := engine.ValidateFile("governance/conventions/wrong__example.md", content)
 
 	require.NoError(t, err)
 	require.NotEmpty(t, results)

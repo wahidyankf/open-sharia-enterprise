@@ -32,7 +32,7 @@ Skill: `wow-generating-validation-reports`
 
 ## Reference
 
-- [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu-ose-platform.md)
+- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ex-ru-co-hu-ose-platform.md)
 - Skills: `apps-ose-platform-web-developing-content`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`
 
 ## Reference Documentation
@@ -40,7 +40,7 @@ Skill: `wow-generating-validation-reports`
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ose-platform.md)
+- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 
 **Related Agents**:
 
@@ -49,8 +49,8 @@ Skill: `wow-generating-validation-reports`
 
 **Related Conventions**:
 
-- [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ose-platform.md)
-- [Content Quality Principles](../../rules/conventions/content/quality.md)
+- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [Content Quality Principles](../../governance/conventions/content/quality.md)
 
 **Skills**:
 

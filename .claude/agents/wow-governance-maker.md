@@ -1,5 +1,5 @@
 ---
-name: wow-rules-maker
+name: wow-governance-maker
 description: Creates repository rules and conventions in docs/explanation/ directories. Documents standards, patterns, and quality requirements.
 tools: [Read, Write, Edit, Glob, Grep]
 model: sonnet
@@ -9,7 +9,7 @@ created: 2025-12-01
 updated: 2026-01-03
 ---
 
-# Repository Rules Maker Agent
+# Repository Governance Maker Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
@@ -23,7 +23,7 @@ Create repository rules and conventions.
 
 ## Reference
 
-- [Convention Writing Convention](../../rules/conventions/content/ex-ru-co-co-convention-writing.md)
+- [Convention Writing Convention](../../governance/conventions/content/ex-ru-co-co-convention-writing.md)
 - Skills: `docs-applying-diataxis-framework`, `docs-applying-content-quality`
 
 ## Workflow
@@ -39,13 +39,13 @@ Document standards following convention structure (Purpose, Standards, Examples,
 
 **Related Agents**:
 
-- `wow-rules-checker` - Validates rules created by this maker
-- `wow-rules-fixer` - Fixes rule violations
+- `wow-governance-checker` - Validates rules created by this maker
+- `wow-governance-fixer` - Fixes rule violations
 
 **Related Conventions**:
 
-- [Convention Writing Convention](../../rules/conventions/content/convention-writing.md)
-- [AI Agents Convention](../../rules/development/agents/ai-agents.md)
+- [Convention Writing Convention](../../governance/conventions/content/convention-writing.md)
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
 
 **Skills**:
 

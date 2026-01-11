@@ -291,7 +291,7 @@ grep -E "(is|are|was|were|be|been) (controlled|managed|handled|processed|utilize
 
 ## Validation Re-implementation Guide
 
-**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../rules/development/quality/ex-ru-de-qu-repository-validation.md) and [README Quality Convention](../../rules/conventions/content/readme-quality.md).
+**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../governance/development/quality/ex-ru-de-qu-repository-validation.md) and [README Quality Convention](../../governance/conventions/content/readme-quality.md).
 
 **Key points:**
 
@@ -339,21 +339,21 @@ Always provide:
 
 **Agent Conventions:**
 
-- [AI Agents Convention](../../rules/development/agents/ex-ru-de-ag-ai-agents.md) - AI agents convention
+- [AI Agents Convention](../../governance/development/agents/ex-ru-de-ag-ai-agents.md) - AI agents convention
 
 **Related Agents:**
 
 - [readme\_\_checker.md](./readme-checker.md) - Generates audit reports that this agent processes
 - [readme\_\_maker.md](./readme-maker.md) - Creates README content
-- [wow\_\_rules-fixer.md](./wow-rules-fixer.md) - Similar fixer pattern for repository rules
+- [wow\_\_rules-fixer.md](./wow-governance-fixer.md) - Similar fixer pattern for repository rules
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../rules/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) - Universal confidence assessment system
-- [Maker-Checker-Fixer Pattern Convention](../../rules/development/pattern/ex-ru-de-pa-maker-checker-fixer.md) - Three-stage quality workflow
-- [README Quality Convention](../../rules/conventions/content/readme-quality.md) - Complete README standards (primary reference)
-- [Repository Validation Methodology Convention](../../rules/development/quality/ex-ru-de-qu-repository-validation.md) - Standard validation patterns
-- [Temporary Files Convention](../../rules/development/infra/ex-ru-de-in-temporary-files.md) - Where to store fix reports
+- [Fixer Confidence Levels Convention](../../governance/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) - Universal confidence assessment system
+- [Maker-Checker-Fixer Pattern Convention](../../governance/development/pattern/ex-ru-de-pa-maker-checker-fixer.md) - Three-stage quality workflow
+- [README Quality Convention](../../governance/conventions/content/readme-quality.md) - Complete README standards (primary reference)
+- [Repository Validation Methodology Convention](../../governance/development/quality/ex-ru-de-qu-repository-validation.md) - Standard validation patterns
+- [Temporary Files Convention](../../governance/development/infra/ex-ru-de-in-temporary-files.md) - Where to store fix reports
 
 **Skills:**
 

@@ -685,7 +685,7 @@ for finding in low_priority:
 Fix reports should now group fixes by priority to show criticality context:
 
 ```markdown
-# Repository Rules Fix Report
+# Repository Governance Fix Report
 
 **Source Audit**: repo-rules**a1b2c3**2025-12-27--10-30\_\_audit.md
 **Fix Date**: 2025-12-27T11:15:00+07:00
@@ -708,7 +708,7 @@ Fix reports should now group fixes by priority to show criticality context:
 
 ### 1. Missing Required Subcategory Field
 
-**File**: `rules/development/agents/ai-agents.md`
+**File**: `governance/development/agents/ai-agents.md`
 **Criticality**: CRITICAL - Breaks organization and validation
 **Confidence**: HIGH - Confirmed field missing in frontmatter
 **Fix Applied**: Added `subcategory: development` at line 5
@@ -727,7 +727,7 @@ Fix reports should now group fixes by priority to show criticality context:
 
 ### 1. Ambiguous Link Target
 
-**File**: `rules/conventions/formatting/linking.md:89`
+**File**: `governance/conventions/formatting/linking.md:89`
 **Criticality**: CRITICAL - Broken link to convention doc
 **Confidence**: MEDIUM - Multiple possible target files found
 **Reason for Flag**: Cannot determine correct link target automatically

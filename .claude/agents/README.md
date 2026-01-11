@@ -2,11 +2,11 @@
 
 This directory contains specialized AI agents for repository maintenance and documentation tasks. Each agent has specific responsibilities and tools to ensure consistency, quality, and adherence to project conventions.
 
-**Hierarchy Position**: AI agents are the **implementation layer** (Layer 4 in the six-layer hierarchy) that enforces conventions (Layer 2) and development practices (Layer 3). Each agent implements and validates specific rules, which ultimately trace back through [Core Principles](../rules/principles/README.md) (Layer 1) to the [Vision](../rules/vision/open-sharia-enterprise.md) (Layer 0) of democratizing Shariah-compliant enterprise.
+**Hierarchy Position**: AI agents are the **implementation layer** (Layer 4 in the six-layer hierarchy) that enforces conventions (Layer 2) and development practices (Layer 3). Each agent implements and validates specific rules, which ultimately trace back through [Core Principles](../governance/principles/README.md) (Layer 1) to the [Vision](../governance/vision/open-sharia-enterprise.md) (Layer 0) of democratizing Shariah-compliant enterprise.
 
 **Traceability**: Every agent should document which conventions/practices it enforces. When creating new agents, reference the specific rules being implemented. This creates a clear chain: Vision → Principle → Convention/Practice → Agent.
 
-**Token Budget**: When invoking agents and workflows, don't think about token budget constraints. We have "unlimited" token budget through reliable compaction mechanism. Focus on execution quality, not token efficiency. See [AI Agents Convention - Token Budget Philosophy](../rules/development/agents/ex-ru-de-ag-ai-agents.md#token-budget-philosophy) for complete details.
+**Token Budget**: When invoking agents and workflows, don't think about token budget constraints. We have "unlimited" token budget through reliable compaction mechanism. Focus on execution quality, not token efficiency. See [AI Agents Convention - Token Budget Philosophy](../governance/development/agents/ex-ru-de-ag-ai-agents.md#token-budget-philosophy) for complete details.
 
 ## Available Agents
 
@@ -211,7 +211,7 @@ Applies validated fixes from ayokoding-web-facts-checker audit reports. Re-valid
 - **IMPORTANT:** Cache requirement applies universally to ALL invocations - whether spawned by other agents, processes, or direct user invocation
 - **Works with:** `ayokoding-web-general-maker` for content creation, `ayokoding-web-general-checker` for content quality
 - **References:** Hugo Content Convention, Linking Convention (adapted for Hugo)
-- **See Also:** [AI Agents Convention - Hybrid Agents Exception](../rules/development/agents/ex-ru-de-ag-ai-agents.md#hybrid-agents-exception) for complete rationale
+- **See Also:** [AI Agents Convention - Hybrid Agents Exception](../governance/development/agents/ex-ru-de-ag-ai-agents.md#hybrid-agents-exception) for complete rationale
 
 ### 🟡 `apps-ayokoding-web-link-fixer.md`
 
@@ -539,7 +539,7 @@ Expert tutorial writer specializing in learning-oriented content with narrative 
   - After file renames or directory restructuring
   - Automatic cache maintenance (prunes orphaned links, updates locations, updates lastFullScan)
 - **IMPORTANT:** Cache requirement applies universally to ALL invocations - whether spawned by other agents, processes, or direct user invocation
-- **See Also:** [AI Agents Convention - Hybrid Agents Exception](../rules/development/agents/ex-ru-de-ag-ai-agents.md#hybrid-agents-exception) for complete rationale
+- **See Also:** [AI Agents Convention - Hybrid Agents Exception](../governance/development/agents/ex-ru-de-ag-ai-agents.md#hybrid-agents-exception) for complete rationale
 
 ### 🟩 `docs-tutorial-checker.md`
 
@@ -654,7 +654,7 @@ Creates and updates README.md content while maintaining engagement, accessibilit
 
 ### 🟦 `wow-workflow-maker.md`
 
-Expert at creating and updating workflow definition files in rules/workflows/ following Workflow Pattern Convention.
+Expert at creating and updating workflow definition files in governance/workflows/ following Workflow Pattern Convention.
 
 - **Primary Use:** Defining multi-agent orchestration processes with clear termination criteria
 - **Specialization:** Workflow structure design, agent orchestration, execution modes (Sequential/Parallel/Conditional), state management, error handling, principle alignment, agent reference validation
@@ -673,7 +673,7 @@ Expert at creating and updating workflow definition files in rules/workflows/ fo
 
 ### 🟩 `wow-workflow-checker.md`
 
-Expert at validating workflow definition files in rules/workflows/ against Workflow Pattern Convention and quality standards.
+Expert at validating workflow definition files in governance/workflows/ against Workflow Pattern Convention and quality standards.
 
 - **Primary Use:** Validating workflow files for structure, semantics, and completeness
 - **Specialization:** YAML frontmatter schema validation, agent reference verification, state reference checking, termination criteria validation, principle traceability, execution mode consistency, dependency cycle detection
@@ -711,7 +711,7 @@ Applies validated fixes from wow\_\_workflow-checker audit reports. Re-validates
 - **Note:** Many workflow "issues" are design decisions - this agent applies only objective structural errors (verifiable violations) and flags subjective improvements for human judgment
 - **Works with:** `wow-workflow-checker` for audit report generation, `wow-workflow-maker` for workflow creation
 
-### 🟩 `wow-rules-checker.md`
+### 🟩 `wow-governance-checker.md`
 
 Expert at validating repository-wide consistency, CLAUDE.md maintenance (size limits, duplication), and rules governance across all governance layers. Detects contradictions, inaccuracies, inconsistencies, traceability violations, and layer coherence issues. Generates detailed audit reports in generated-reports/.
 
@@ -726,9 +726,9 @@ Expert at validating repository-wide consistency, CLAUDE.md maintenance (size li
   - Detecting contradictions or outdated references
   - Identifying duplicate content that could be consolidated
   - Historical tracking of repository consistency over time
-- **Important:** READ-ONLY agent - does not apply fixes. Use `wow-rules-fixer` to apply validated fixes after reviewing audit report.
+- **Important:** READ-ONLY agent - does not apply fixes. Use `wow-governance-fixer` to apply validated fixes after reviewing audit report.
 
-### 🟪 `wow-rules-fixer.md`
+### 🟪 `wow-governance-fixer.md`
 
 Applies validated fixes from wow\_\_rules-checker audit reports including CLAUDE.md issues and rules governance problems (contradictions, inaccuracies, inconsistencies, traceability violations, layer coherence). Re-validates findings before applying changes. Uses bash tools for .claude/ files, Edit tool for docs/explanation/ files.
 
@@ -741,9 +741,9 @@ Applies validated fixes from wow\_\_rules-checker audit reports including CLAUDE
   - Generating fix audit trail for transparency
 - **Workflow:** wow**rules-checker (detect) → User review → wow**rules-fixer (apply validated fixes)
 - **Safety:** Re-executes all checks before applying fixes (applies only HIGH confidence fixes automatically)
-- **Output:** Generates `wow-rules-audit-{timestamp}-fix.md` report in `generated-reports/`
+- **Output:** Generates `wow-governance-audit-{timestamp}-fix.md` report in `generated-reports/`
 
-### 🟨 `wow-rules-maker.md`
+### 🟨 `wow-governance-maker.md`
 
 Expert at making rule and convention changes effective across CLAUDE.md, convention docs, agents, and indices. Responsible for maintaining CLAUDE.md size limits. Uses bash commands for file creation and editing.
 
@@ -851,11 +851,11 @@ Understanding which agents enforce which conventions helps trace decisions from 
 
 ### Example 1: Color Accessibility
 
-**Vision**: [Democratize Shariah-compliant enterprise](../rules/vision/open-sharia-enterprise.md) - accessible to everyone
+**Vision**: [Democratize Shariah-compliant enterprise](../governance/vision/open-sharia-enterprise.md) - accessible to everyone
 
-**Principle**: [Accessibility First](../rules/principles/content/ex-ru-pr-co-accessibility-first.md)
+**Principle**: [Accessibility First](../governance/principles/content/ex-ru-pr-co-accessibility-first.md)
 
-**Convention**: [Color Accessibility Convention](../rules/conventions/formatting/ex-ru-co-fo-color-accessibility.md)
+**Convention**: [Color Accessibility Convention](../governance/conventions/formatting/ex-ru-co-fo-color-accessibility.md)
 
 **Enforcing Agents**:
 
@@ -866,11 +866,11 @@ Understanding which agents enforce which conventions helps trace decisions from 
 
 ### Example 2: Explicit Configuration
 
-**Vision**: [Transparent, verifiable Islamic finance](../rules/vision/open-sharia-enterprise.md)
+**Vision**: [Transparent, verifiable Islamic finance](../governance/vision/open-sharia-enterprise.md)
 
-**Principle**: [Explicit Over Implicit](../rules/principles/software-engineering/ex-ru-pr-se-explicit-over-implicit.md)
+**Principle**: [Explicit Over Implicit](../governance/principles/software-engineering/ex-ru-pr-se-explicit-over-implicit.md)
 
-**Practice**: [AI Agents Convention](../rules/development/agents/ex-ru-de-ag-ai-agents.md)
+**Practice**: [AI Agents Convention](../governance/development/agents/ex-ru-de-ag-ai-agents.md)
 
 **Enforcing Agents**:
 
@@ -880,11 +880,11 @@ Understanding which agents enforce which conventions helps trace decisions from 
 
 ### Example 3: Automation
 
-**Vision**: [Scale Islamic enterprise knowledge globally](../rules/vision/open-sharia-enterprise.md)
+**Vision**: [Scale Islamic enterprise knowledge globally](../governance/vision/open-sharia-enterprise.md)
 
-**Principle**: [Automation Over Manual](../rules/principles/software-engineering/ex-ru-pr-se-automation-over-manual.md)
+**Principle**: [Automation Over Manual](../governance/principles/software-engineering/ex-ru-pr-se-automation-over-manual.md)
 
-**Practice**: [Code Quality Convention](../rules/development/quality/code.md), [Maker-Checker-Fixer Pattern](../rules/development/pattern/ex-ru-de-pa-maker-checker-fixer.md)
+**Practice**: [Code Quality Convention](../governance/development/quality/code.md), [Maker-Checker-Fixer Pattern](../governance/development/pattern/ex-ru-de-pa-maker-checker-fixer.md)
 
 **Enforcing Agents** (Checker family):
 
@@ -919,7 +919,7 @@ The repository uses a three-stage workflow for content creation and quality assu
         └─> Generate audit report in generated-reports/
         └─> Checkers: docs-checker, docs-tutorial-checker, readme-checker,
                       ayokoding-web-general-checker, ose-platform-web-content-checker,
-                      wow-rules-checker
+                      wow-governance-checker
 
 3. User Review Stage
    └─> Review audit report findings
@@ -933,7 +933,7 @@ The repository uses a three-stage workflow for content creation and quality assu
         └─> Generate fix report in generated-reports/
         └─> Fixers: docs-fixer, docs-tutorial-fixer, readme-fixer,
                     ayokoding-web-general-fixer, ose-platform-web-content-fixer,
-                    wow-rules-fixer, plan-fixer
+                    wow-governance-fixer, plan-fixer
 
 5. Verification Stage (Re-run Checker)
    └─> Re-run checker to verify fixes resolved issues
@@ -948,7 +948,7 @@ The repository uses a three-stage workflow for content creation and quality assu
 - **Audit Trail:** Both audit and fix reports saved in `generated-reports/` for transparency
 - **Quality Improvement Loop:** False positive reports improve checker accuracy over time
 
-**See Also:** [Fixer Confidence Levels Convention](../rules/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) for universal confidence assessment criteria.
+**See Also:** [Fixer Confidence Levels Convention](../governance/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) for universal confidence assessment criteria.
 
 ### 📋 Project Planning and Implementation Workflow
 
@@ -993,11 +993,11 @@ The repository uses a three-stage workflow for content creation and quality assu
 
 ```
 1. Make Changes
-   └─> Use wow-rules-maker to make changes effective across files
+   └─> Use wow-governance-maker to make changes effective across files
         └─> Ensures consistency in CLAUDE.md, conventions, agents, indices
 
 2. Validate Changes
-   └─> Use wow-rules-checker to verify consistency
+   └─> Use wow-governance-checker to verify consistency
         └─> Detects inconsistencies, contradictions, duplications
         └─> Generates audit report in generated-reports/
 
@@ -1006,13 +1006,13 @@ The repository uses a three-stage workflow for content creation and quality assu
         └─> Identify which fixes should be applied
 
 4. Apply Validated Fixes
-   └─> Use wow-rules-fixer to apply fixes automatically
+   └─> Use wow-governance-fixer to apply fixes automatically
         └─> Re-validates findings, applies HIGH confidence fixes
         └─> Skips false positives, reports MEDIUM confidence items
         └─> Generates fix report for audit trail
 
 5. Verify Fixes (if fixes were applied)
-   └─> Use wow-rules-checker to re-validate
+   └─> Use wow-governance-checker to re-validate
         └─> Ensure fixes resolved issues without introducing new ones
 
 6. Write/Update Documentation
@@ -1073,14 +1073,14 @@ The repository uses a three-stage workflow for content creation and quality assu
 - **After plan\_\_executor completes:** Use `plan-execution-checker` for independent final validation
 - **Full planning workflow:** plan**maker → plan**checker → (fix if needed) → plan**executor → plan**execution-checker
 - **Quality assurance workflow:** Maker-checker at both stages (planning and implementation)
-- **After adding new conventions:** Use `wow-rules-maker` → `wow-rules-checker` → `wow-rules-fixer` (if issues found)
-- **CLAUDE.md maintenance:** Keep under 30k characters (target), never exceed 40k (hard limit). Brief summaries only, link to detailed docs. Use `wow-rules-maker` to check size when adding rules
-- **Agent file size limits:** Three tiers - Simple (<800 lines), Standard (<1,200 lines), Complex (<1,800 lines). Link to convention docs instead of duplicating content. See [AI Agents Convention](../rules/development/agents/ex-ru-de-ag-ai-agents.md) for complete size guidelines
-- **Before major releases:** Run `wow-rules-checker` for full audit and `docs-link-general-checker` to verify all links
+- **After adding new conventions:** Use `wow-governance-maker` → `wow-governance-checker` → `wow-governance-fixer` (if issues found)
+- **CLAUDE.md maintenance:** Keep under 30k characters (target), never exceed 40k (hard limit). Brief summaries only, link to detailed docs. Use `wow-governance-maker` to check size when adding rules
+- **Agent file size limits:** Three tiers - Simple (<800 lines), Standard (<1,200 lines), Complex (<1,800 lines). Link to convention docs instead of duplicating content. See [AI Agents Convention](../governance/development/agents/ex-ru-de-ag-ai-agents.md) for complete size guidelines
+- **Before major releases:** Run `wow-governance-checker` for full audit and `docs-link-general-checker` to verify all links
 - **When creating tutorials:** Use `docs-tutorial-maker` for learning-oriented content with narrative flow and diagrams
 - **When creating other documentation:** Use `docs-maker` for how-to guides, reference, or explanations
 - **After creating tutorials:** Use `docs-tutorial-checker` to validate pedagogical quality and completeness
-- **When modifying CLAUDE.md:** Use `wow-rules-maker` to cascade changes
+- **When modifying CLAUDE.md:** Use `wow-governance-maker` to cascade changes
 - **During plan implementation:** Let `plan-executor` update delivery.md - it maintains detailed notes
 - **When managing files in docs/:** Use `docs-file-manager` to handle prefixes, links, and indices automatically (rename, move, or delete)
 - **After using docs\_\_file-manager:** Always run `docs-link-general-checker` to verify all links are valid
@@ -1097,9 +1097,9 @@ The repository uses a three-stage workflow for content creation and quality assu
 
 ## 📚 Resources
 
-- [AI Agents Convention](../rules/development/agents/ex-ru-de-ag-ai-agents.md) - Complete agent specification and standards
+- [AI Agents Convention](../governance/development/agents/ex-ru-de-ag-ai-agents.md) - Complete agent specification and standards
 - [CLAUDE.md](../CLAUDE.md) - Project guidance for all agents
-- [Documentation Conventions](../rules/conventions/README.md) - File naming, linking, and Diátaxis framework
+- [Documentation Conventions](../governance/conventions/README.md) - File naming, linking, and Diátaxis framework
 - [Plans Organization](../plans/README.md) - Planning document structure and conventions
 
 ## 🔄 Agent Lifecycle
@@ -1109,16 +1109,16 @@ Agents follow a structured lifecycle from creation to deprecation:
 ### Creation
 
 1. Use `agent-maker` to scaffold new agent with proper structure
-2. Validate with `wow-rules-checker` to ensure convention compliance
-3. Update CLAUDE.md if agent affects project guidance (use `wow-rules-maker`)
+2. Validate with `wow-governance-checker` to ensure convention compliance
+3. Update CLAUDE.md if agent affects project guidance (use `wow-governance-maker`)
 4. Test agent behavior matches specification
 
 ### Updates
 
 1. Edit agent file with required changes
 2. Update `updated` field in frontmatter (YYYY-MM-DD format)
-3. Validate changes with `wow-rules-checker`
-4. Apply fixes if needed using `wow-rules-fixer`
+3. Validate changes with `wow-governance-checker`
+4. Apply fixes if needed using `wow-governance-fixer`
 5. Update CLAUDE.md and convention docs if agent behavior changed
 
 ### Maintenance
@@ -1141,13 +1141,13 @@ Agents follow a structured lifecycle from creation to deprecation:
 When creating new agents:
 
 1. Use `agent-maker` to automate creation with proper structure, size verification, and README updates
-2. Follow the [AI Agents Convention](../rules/development/agents/ex-ru-de-ag-ai-agents.md) for all standards
+2. Follow the [AI Agents Convention](../governance/development/agents/ex-ru-de-ag-ai-agents.md) for all standards
 3. Verify agent size within tier limits (Simple: <800, Standard: <1,200, Complex: <1,800 lines)
-4. Use `wow-rules-maker` to propagate references to CLAUDE.md and other files
-5. Use `wow-rules-checker` to validate the new agent follows all conventions
-6. Use `wow-rules-fixer` to apply any validated fixes from the audit report
+4. Use `wow-governance-maker` to propagate references to CLAUDE.md and other files
+5. Use `wow-governance-checker` to validate the new agent follows all conventions
+6. Use `wow-governance-fixer` to apply any validated fixes from the audit report
 7. Update CLAUDE.md if the agent should be mentioned in project guidance
 
 ---
 
-**Note:** This README follows the naming exception for README.md files documented in the [File Naming Convention](../rules/conventions/meta/ex-ru-co-me-file-naming.md).
+**Note:** This README follows the naming exception for README.md files documented in the [File Naming Convention](../governance/conventions/meta/ex-ru-co-me-file-naming.md).
