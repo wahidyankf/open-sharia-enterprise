@@ -231,7 +231,7 @@ description: "Workflow name: detailed description"
 
 - `quality-gate.md` - Plan quality gate workflow
 - `quality-gate.md` - Docs quality gate workflow
-- `rules-quality-gate.md` - Repo rules quality gate workflow
+- `repository-rules-validation.md` - Repo rules quality gate workflow
 
 ## Quality Checklist
 
