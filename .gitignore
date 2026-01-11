@@ -73,8 +73,7 @@ local-temp/
 # Generated reports
 generated-reports/
 
-# Generated social media assets
-generated-socials/
+
 
 # Cache
 .eslintcache
