@@ -595,7 +595,7 @@ Scenario: Rollout metrics tracked
 ```gherkin
 Scenario: Quality gate passes
   Given all 45 agents simplified
-  When wow__rules__quality-gate workflow runs in OCD mode
+  When repository__rules-validation workflow runs in OCD mode
   Then zero CRITICAL findings exist
   And zero HIGH findings exist
   And the quality gate passes

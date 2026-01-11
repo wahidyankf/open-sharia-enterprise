@@ -1,5 +1,5 @@
 ---
-name: wow__rules__quality-gate
+name: repository__rules-validation
 goal: Validate repository consistency across all layers, apply fixes iteratively until zero findings achieved
 termination: Zero findings remain after validation (runs indefinitely until achieved unless max-iterations provided)
 inputs:
@@ -40,7 +40,7 @@ outputs:
     required: false
 ---
 
-# Repository Governance Quality Gate Workflow
+# Repository Rules Validation Workflow
 
 **Purpose**: Automatically validate repository consistency across principles, conventions, development practices, agent and skill source definitions, CLAUDE.md, and subdirectory README files, then apply fixes iteratively until all issues are resolved.
 
@@ -79,8 +79,8 @@ User: "Run repository rules quality gate workflow in manual mode"
 
 The AI will:
 
-1. Execute wow\_\_rules-checker logic directly (read, validate, write audit)
-2. Execute wow\_\_rules-fixer logic directly (read audit, apply fixes, write fix report)
+1. Execute repo-governance-checker logic directly (read, validate, write audit)
+2. Execute repo-governance-fixer logic directly (read audit, apply fixes, write fix report)
 3. Iterate until zero findings achieved
 4. Show git status with modified files
 5. Wait for user commit approval

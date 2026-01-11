@@ -1,5 +1,5 @@
 ---
-name: wow-governance-fixer
+name: repo-governance-fixer
 description: Applies validated fixes from repository rules audit reports including agent-Skill duplication removal, Skills coverage gap remediation, and rules governance fixes (contradictions, inaccuracies, inconsistencies). Uses bash tools for .claude folder modifications.
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
@@ -243,8 +243,8 @@ See wow\_\_generating-validation-reports Skill for report structure.
 
 **Related Agents**:
 
-- `wow-governance-checker` - Generates audit reports this fixer processes
-- `wow-governance-maker` - Creates repository rules
+- `repo-governance-checker` - Generates audit reports this fixer processes
+- `repo-governance-maker` - Creates repository rules
 
 **Related Conventions**:
 

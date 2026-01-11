@@ -440,7 +440,7 @@ Delivery (serves knowledge):
 - **wow\_\_rules-checker**: Audits agents for missing tool declarations
 - **docs\_\_file-manager**: Enforces naming convention when renaming files
 
-**Layer 5 - Workflow**: [Repo-Rules-Check-Fix](./workflows/wow/rules-quality-gate.md)
+**Layer 5 - Workflow**: [Repo-Rules-Check-Fix](./workflows/repository/repository-rules-validation.md)
 
 - Orchestrates: wow**rules-checker → wow**rules-fixer
 - Ensures: All agents maintain explicit tool permissions

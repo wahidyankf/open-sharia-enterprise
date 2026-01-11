@@ -345,7 +345,7 @@ Always provide:
 
 - [readme\_\_checker.md](./readme-checker.md) - Generates audit reports that this agent processes
 - [readme\_\_maker.md](./readme-maker.md) - Creates README content
-- [wow\_\_rules-fixer.md](./wow-governance-fixer.md) - Similar fixer pattern for repository rules
+- [wow\_\_rules-fixer.md](./repo-governance-fixer.md) - Similar fixer pattern for repository rules
 
 **Related Conventions:**
 

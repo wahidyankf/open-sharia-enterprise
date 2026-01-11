@@ -308,8 +308,8 @@ See wow\_\_generating-validation-reports Skill for report structure.
 
 **Related Agents**:
 
-- `wow-governance-checker` - Generates audit reports this fixer processes
-- `wow-governance-maker` - Creates repository rules
+- `repo-governance-checker` - Generates audit reports this fixer processes
+- `repo-governance-maker` - Creates repository rules
 
 **Related Conventions**:
 

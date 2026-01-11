@@ -86,15 +86,15 @@ docs/explanation/
 
 ### By Directory Type
 
-| Directory Type        | Count     | Path Pattern                                              | Examples                                                           |
-| --------------------- | --------- | --------------------------------------------------------- | ------------------------------------------------------------------ |
-| **Agent definitions** | 45 files  | .claude/agents/\*.md                                      | docs-maker, plan-checker, wow-governance-\*                        |
-| **Skill definitions** | 23 files  | .claude/skills/\*/SKILL.md                                | docs-applying-content-quality, wow-\*                              |
-| **Meta-agents**       | 3 files   | .claude/agents/wow-governance-\*.md                       | wow-governance-checker, wow-governance-maker, wow-governance-fixer |
-| **Workflows**         | ~10 files | governance/workflows/\*.md                                | ex-ru-wf-wo\_\_rules-quality-gate.md                               |
-| **Project docs**      | 2 files   | CLAUDE.md, AGENTS.md                                      | Repository-level documentation                                     |
-| **Governance**        | 1 file    | governance/ex-ru\_\_repository-governance-architecture.md | Architecture document                                              |
-| **Rules internal**    | ~67 files | governance/\*_/_.md                                       | All moved files with internal links                                |
+| Directory Type        | Count     | Path Pattern                                              | Examples                                                              |
+| --------------------- | --------- | --------------------------------------------------------- | --------------------------------------------------------------------- |
+| **Agent definitions** | 45 files  | .claude/agents/\*.md                                      | docs-maker, plan-checker, wow-governance-\*                           |
+| **Skill definitions** | 23 files  | .claude/skills/\*/SKILL.md                                | docs-applying-content-quality, wow-\*                                 |
+| **Meta-agents**       | 3 files   | .claude/agents/wow-governance-\*.md                       | repo-governance-checker, repo-governance-maker, repo-governance-fixer |
+| **Workflows**         | ~10 files | governance/workflows/\*.md                                | ex-ru-wf-wo\_\_repository-rules-validation.md                         |
+| **Project docs**      | 2 files   | CLAUDE.md, AGENTS.md                                      | Repository-level documentation                                        |
+| **Governance**        | 1 file    | governance/ex-ru\_\_repository-governance-architecture.md | Architecture document                                                 |
+| **Rules internal**    | ~67 files | governance/\*_/_.md                                       | All moved files with internal links                                   |
 
 **Total requiring updates**: 151 files
 
@@ -163,11 +163,11 @@ find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|governance/|governa
 
 ### Pattern 3: Meta-Agent Files (Manual Update)
 
-**Files**: wow-governance-checker.md, wow-governance-maker.md, wow-governance-fixer.md
+**Files**: repo-governance-checker.md, repo-governance-maker.md, repo-governance-fixer.md
 
 **Updates**: Manual edit required (not automated sed)
 
-**Example - wow-governance-checker.md**:
+**Example - repo-governance-checker.md**:
 
 **Before**:
 
@@ -197,7 +197,7 @@ find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|governance/|governa
 - `/governance/conventions/` - Layer 2: WHAT documentation rules
 ```
 
-**Example - wow-governance-maker.md**:
+**Example - repo-governance-maker.md**:
 
 **Before**:
 
@@ -215,7 +215,7 @@ find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|governance/|governa
 - [Convention Writing Convention](../../governance/conventions/content/ex-ru-co-co-convention-writing.md)
 ```
 
-**Example - wow-governance-fixer.md**:
+**Example - repo-governance-fixer.md**:
 
 **Before**:
 
@@ -466,18 +466,18 @@ find . -name "*.md" -type f -exec grep -l "governance/" {} \;
 # Check 3: Specific file validation
 grep "governance/" CLAUDE.md | head -5      # ✅ PASS if shows results
 grep "governance/" AGENTS.md | head -5      # ✅ PASS if shows results
-grep "governance/" .claude/agents/wow-governance-checker.md | head -5  # ✅ PASS
+grep "governance/" .claude/agents/repo-governance-checker.md | head -5  # ✅ PASS
 
 # Check 4: Relative path validation
 grep -r "\.\./governance/" .claude/agents/ | head -3  # ✅ PASS if shows results
 grep -r "\.\./\.\./governance/" .claude/skills/ | head -3  # ✅ PASS if shows results
 ```
 
-**wow-governance-checker Integration**:
+**repo-governance-checker Integration**:
 
 ```bash
-# If wow-governance-checker is available:
-wow-governance-checker scope:all
+# If repo-governance-checker is available:
+repo-governance-checker scope:all
 
 # Check for broken link findings in output
 # ✅ PASS if zero "broken link" or "broken reference" findings
@@ -491,7 +491,7 @@ head -50 governance/ex-ru__repository-governance-architecture.md | grep -E "\[.*
 # ✅ PASS if shows links to /governance/
 ```
 
-**Success criterion**: All automated checks pass AND wow-governance-checker reports zero broken links
+**Success criterion**: All automated checks pass AND repo-governance-checker reports zero broken links
 
 ---
 
@@ -550,7 +550,7 @@ sed -i 's|governance/|governance/|g' CLAUDE.md
 sed -i 's|governance/|governance/|g' AGENTS.md
 
 # 6. Meta-agents (MANUAL UPDATE - not sed)
-# Files: wow-governance-checker.md, wow-governance-maker.md, wow-governance-fixer.md
+# Files: repo-governance-checker.md, repo-governance-maker.md, repo-governance-fixer.md
 # Edit manually to update paths in validation scopes, references, and examples
 
 # 7. Governance doc (MANUAL UPDATE - not sed)
@@ -697,7 +697,7 @@ See: [conventions](../../governance/conventions/)
 | Final validation             | 5 checks       | ~15 seconds      |
 | **Total**                    | **~151 files** | **~2-3 minutes** |
 
-**Validation with wow-governance-checker**: Additional ~1-2 minutes
+**Validation with repo-governance-checker**: Additional ~1-2 minutes
 
 ---
 
@@ -755,6 +755,6 @@ git commit -m "refactor: move governance/ to /governance/ (detailed message)"
 
 - **Progressive validation**: Each phase must pass before proceeding
 - **Manual updates**: Meta-agents and governance doc require manual editing (not sed)
-- **Link validation**: wow-governance-checker is critical for catching broken links
+- **Link validation**: repo-governance-checker is critical for catching broken links
 - **Git history**: Always use `git mv` never `cp + rm`
 - **YOLO**: Single commit approach - no rollback plan

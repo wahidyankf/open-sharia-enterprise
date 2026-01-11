@@ -73,7 +73,7 @@ SUBAGENT_NAMES = {
     'docs-checker',
     'docs-tutorial-checker',
     'readme-checker',
-    'wow-rules-checker',
+    'repo-governance-checker',
     'wow-workflow-checker',
     'apps-ayokoding-web-general-checker',
     'apps-ayokoding-web-by-example-checker',
@@ -327,7 +327,7 @@ def generate_opencode_agent(metadata: AgentMetadata) -> str:
         frontmatter['temperature'] = 0.1
 
     # Add maxSteps for complex agents
-    if is_checker_agent(metadata.name) or metadata.name in ['plan-executor', 'wow-rules-checker']:
+    if is_checker_agent(metadata.name) or metadata.name in ['plan-executor', 'repo-governance-checker']:
         frontmatter['maxSteps'] = 50
 
     # Add tools (boolean object)

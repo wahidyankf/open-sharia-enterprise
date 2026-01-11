@@ -556,7 +556,7 @@ Result: SUCCESS (3 iterations)
 
 This workflow can be composed with:
 
-- **Repository Governance Quality Gate** (`wow__rules__quality-gate`) - Validate after docs changes affect repository consistency
+- **Repository Rules Validation** (`repository__rules-validation`) - Validate after docs changes affect repository consistency
 - Deployment workflows - Validate before deploying documentation sites
 - Content creation workflows - Validate after bulk documentation creation
 - Migration workflows - Ensure quality during documentation restructuring

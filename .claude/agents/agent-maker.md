@@ -44,8 +44,8 @@ Create new AI agent files following AI Agents Convention.
 
 **Related Agents**:
 
-- `wow-governance-checker` - Validates repository consistency
-- `wow-governance-maker` - Creates repository rules
+- `repo-governance-checker` - Validates repository consistency
+- `repo-governance-maker` - Creates repository rules
 
 **Related Conventions**:
 

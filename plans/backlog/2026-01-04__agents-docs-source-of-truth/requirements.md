@@ -75,7 +75,7 @@
 ### US-8: Update Meta-Agents
 
 **As a** repository maintainer
-**I want** meta-agents (agent-maker, wow-governance-checker, wow-governance-fixer) to respect new source locations
+**I want** meta-agents (agent-maker, repo-governance-checker, repo-governance-fixer) to respect new source locations
 **So that** agents create/validate/fix definitions in docs source, not generated directories
 
 **Acceptance Criteria**: See [AC-8](#ac-8-update-meta-agents-for-new-architecture)
@@ -524,9 +524,9 @@ Feature: Meta-Agent Updates
     And frontmatter contains tool-agnostic model values (sonnet, haiku, opus)
     And frontmatter contains capitalized tool names (Read, Write, Edit)
 
-   Scenario: wow-governance-checker validates docs source (not generated)
-     Given I invoke "wow-governance-checker" for agent validation
-     When wow-governance-checker executes
+   Scenario: repo-governance-checker validates docs source (not generated)
+     Given I invoke "repo-governance-checker" for agent validation
+     When repo-governance-checker executes
      Then it validates files in "governance/agents/content/"
      And it validates files in "governance/agents/skills/"
      And it does NOT validate ".claude/agents/" (generated)
@@ -540,9 +540,9 @@ Feature: Meta-Agent Updates
        | tools are capitalized    | Read, Write (not read, write)     |
        | skills exist in docs     | governance/agents/skills/ |
 
-   Scenario: wow-governance-checker detects edits to generated directories
+   Scenario: repo-governance-checker detects edits to generated directories
      Given ".claude/agents/docs-maker.md" was modified
-     When wow-governance-checker executes
+     When repo-governance-checker executes
      Then validation fails with error "Generated file modified"
      And error message indicates:
        """
@@ -557,24 +557,24 @@ Feature: Meta-Agent Updates
         3. Run: butler-cli agents sync && butler-cli skills sync
         """
 
-   Scenario: wow-governance-fixer does NOT modify generated directories
-     Given wow-governance-checker generated audit report
+   Scenario: repo-governance-fixer does NOT modify generated directories
+     Given repo-governance-checker generated audit report
      And report contains finding: "Fix description in docs-maker"
      And finding references "governance/agents/content/docs-maker.md"
-     When I invoke "wow-governance-fixer" with audit report
-     Then wow-governance-fixer reads finding
-     And wow-governance-fixer modifies "governance/agents/content/docs-maker.md"
-     And wow-governance-fixer does NOT modify ".claude/agents/docs-maker.md"
-     And wow-governance-fixer does NOT modify ".opencode/agent/docs-maker.md"
-     And wow-governance-fixer does NOT modify ".claude/skills/" (if skill referenced)
-     And wow-governance-fixer does NOT modify ".opencode/skills/" (if skill referenced)
-     And wow-governance-fixer instructs user to run sync after fix
+     When I invoke "repo-governance-fixer" with audit report
+     Then repo-governance-fixer reads finding
+     And repo-governance-fixer modifies "governance/agents/content/docs-maker.md"
+     And repo-governance-fixer does NOT modify ".claude/agents/docs-maker.md"
+     And repo-governance-fixer does NOT modify ".opencode/agent/docs-maker.md"
+     And repo-governance-fixer does NOT modify ".claude/skills/" (if skill referenced)
+     And repo-governance-fixer does NOT modify ".opencode/skills/" (if skill referenced)
+     And repo-governance-fixer instructs user to run sync after fix
 
-  Scenario: wow-governance-fixer skips findings referencing generated files
-    Given wow-governance-checker audit report contains finding
+  Scenario: repo-governance-fixer skips findings referencing generated files
+    Given repo-governance-checker audit report contains finding
     And finding references ".claude/agents/test-agent.md" (generated file)
-    When I invoke "wow-governance-fixer"
-    Then wow-governance-fixer skips this finding
+    When I invoke "repo-governance-fixer"
+    Then repo-governance-fixer skips this finding
     And fixer logs warning: "Finding references generated file - skipping"
     And fixer suggests: "Edit source: governance/agents/content/test-agent.md"
 
@@ -670,7 +670,7 @@ Scenario: Clear error messages for validation failures
 
 The following are **explicitly included** beyond the core migration:
 
-1. **Meta-agent updates**: `agent-maker`, `wow-governance-checker`, `wow-governance-fixer` updated to work with new source locations
+1. **Meta-agent updates**: `agent-maker`, `repo-governance-checker`, `repo-governance-fixer` updated to work with new source locations
 2. **Validation of meta-agent behavior**: Test that meta-agents create/validate/fix definitions in docs source, not generated directories
 3. **Pre-commit hook**: Install hook to prevent direct edits to generated directories
 

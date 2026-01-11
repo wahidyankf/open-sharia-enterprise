@@ -1403,20 +1403,20 @@ governance-cli policy coverage --reports=generated-reports/*__audit.md
   - Add ## Policy Definition section with YAML
 
 - **Claude Code agents** (.claude/agents/):
-  - `wow-governance-checker.md` (MODIFY: ~200 lines from current 373 - add PolicyEngine integration)
-  - `wow-governance-maker.md` (MODIFY: ~80 lines from current 53 - add policy sync logic)
-  - `wow-governance-fixer.md` (MODIFY: ~130 lines from current 258 - add policy-driven fix workflow)
+  - `repo-governance-checker.md` (MODIFY: ~200 lines from current 373 - add PolicyEngine integration)
+  - `repo-governance-maker.md` (MODIFY: ~80 lines from current 53 - add policy sync logic)
+  - `repo-governance-fixer.md` (MODIFY: ~130 lines from current 258 - add policy-driven fix workflow)
     - Add policy-driven fix logic
     - Query policies for autofix eligibility
 
 - **OpenCode agents** (.opencode/agent/):
-  - `wow-governance-checker.md` (MODIFY: similar reduction)
+  - `repo-governance-checker.md` (MODIFY: similar reduction)
     - Add PolicyEngine integration via Bash tool
     - Remove embedded rule definitions
-  - `wow-governance-maker.md` (MODIFY: similar reduction)
+  - `repo-governance-maker.md` (MODIFY: similar reduction)
     - Add policy sync logic
     - Update workflow documentation
-  - `wow-governance-fixer.md` (MODIFY: similar reduction)
+  - `repo-governance-fixer.md` (MODIFY: similar reduction)
     - Add policy-driven fix logic
     - Query policies for autofix eligibility
 

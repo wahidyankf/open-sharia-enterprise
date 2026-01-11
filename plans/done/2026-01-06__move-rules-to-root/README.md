@@ -80,7 +80,7 @@ governance/           /governance/
 
 - Automated sed commands for simple patterns
 - Manual review of complex relative links
-- Validation with wow-governance-checker after updates
+- Validation with repo-governance-checker after updates
 
 ### Link Breakage Risk
 
@@ -89,7 +89,7 @@ governance/           /governance/
 **Mitigation**:
 
 - Validate after each phase
-- Run wow-governance-checker to detect broken links
+- Run repo-governance-checker to detect broken links
 - Manual spot-check of key documents
 
 ### Directory Structure Change
@@ -116,7 +116,7 @@ governance/           /governance/
 
 - [ ] Zero occurrences of `governance/` in entire repository
 - [ ] All references to `/governance/` work correctly
-- [ ] wow-governance-checker reports zero broken links
+- [ ] repo-governance-checker reports zero broken links
 - [ ] Key documents (CLAUDE.md, AGENTS.md, governance) link correctly
 
 ### Documentation Success
@@ -126,13 +126,13 @@ governance/           /governance/
 - [ ] 45 agent files updated with new paths
 - [ ] 23 skill files updated with new paths
 - [ ] 3 meta-agents (wow-governance-\*) updated
-- [ ] 1 workflow (ex-ru-wf-wo\_\_rules-quality-gate.md) updated
+- [ ] 1 workflow (ex-ru-wf-wo\_\_repository-rules-validation.md) updated
 
 ### Validation Success
 
 - [ ] Phase 1 validation: All files in `/governance/` exist
 - [ ] Phase 2 validation: Zero old-path references in governance doc
-- [ ] Phase 3 validation: wow-governance-checker reports no broken links
+- [ ] Phase 3 validation: repo-governance-checker reports no broken links
 - [ ] Final validation: Git diff shows only expected changes
 
 ## Plan Structure
@@ -166,7 +166,7 @@ This plan is organized into four documents:
 
 ## Assumptions
 
-1. wow-governance-checker agent is available and can validate links
+1. repo-governance-checker agent is available and can validate links
 2. Git mv commands preserve history for moved files
 3. Team will adapt to new `/governance/` path
 4. ~150 files require path reference updates (agents, skills, docs)

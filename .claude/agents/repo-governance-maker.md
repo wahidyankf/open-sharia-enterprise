@@ -1,5 +1,5 @@
 ---
-name: wow-governance-maker
+name: repo-governance-maker
 description: Creates repository rules and conventions in docs/explanation/ directories. Documents standards, patterns, and quality requirements.
 tools: [Read, Write, Edit, Glob, Grep]
 model: sonnet
@@ -39,8 +39,8 @@ Document standards following convention structure (Purpose, Standards, Examples,
 
 **Related Agents**:
 
-- `wow-governance-checker` - Validates rules created by this maker
-- `wow-governance-fixer` - Fixes rule violations
+- `repo-governance-checker` - Validates rules created by this maker
+- `repo-governance-fixer` - Fixes rule violations
 
 **Related Conventions**:
 

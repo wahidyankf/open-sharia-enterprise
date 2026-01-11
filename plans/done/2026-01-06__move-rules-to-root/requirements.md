@@ -143,11 +143,11 @@ Feature: Update Path References
     And reference links to governance docs work correctly
 
   Scenario: Update meta-agent files
-    Given I have 3 meta-agent files (wow-governance-checker, wow-governance-maker, wow-governance-fixer)
+    Given I have 3 meta-agent files (repo-governance-checker, repo-governance-maker, repo-governance-fixer)
     When I update path references in these files manually
-    Then wow-governance-checker validation scope references /governance/
-    And wow-governance-maker creation location references /governance/
-    And wow-governance-fixer fix targets reference /governance/
+    Then repo-governance-checker validation scope references /governance/
+    And repo-governance-maker creation location references /governance/
+    And repo-governance-fixer fix targets reference /governance/
     And meta-agent instructions use /governance/ paths in examples
 
   Scenario: Update workflow files
@@ -276,7 +276,7 @@ Feature: Integrity Validation
     Then zero occurrences of "governance/" in entire repository
     And find . -name "*.md" -exec grep -l "governance/" returns zero results
     And all references to /governance/ are valid paths
-    And wow-governance-checker reports zero broken link findings
+    And repo-governance-checker reports zero broken link findings
     And CLAUDE.md links to /governance/ work correctly
     And AGENTS.md links to /governance/ work correctly
 
@@ -288,10 +288,10 @@ Feature: Integrity Validation
     And zero unexpected files are modified
     And commit message is ready with detailed breakdown
 
-  Scenario: Validate link integrity with wow-governance-checker
-    Given wow-governance-checker agent is available
+  Scenario: Validate link integrity with repo-governance-checker
+    Given repo-governance-checker agent is available
     And all reference updates have completed
-    When I run wow-governance-checker with scope: all
+    When I run repo-governance-checker with scope: all
     Then checker reports no broken link findings
     And all internal links resolve correctly
     And governance coherence findings are zero for path references
@@ -331,7 +331,7 @@ Scenario: All changes must be in single atomic commit
 Scenario: All links must work after migration
   Given all reference updates have completed
   When I validate link integrity
-  Then wow-governance-checker reports zero broken link findings
+  Then repo-governance-checker reports zero broken link findings
   And manual spot-check of key links succeeds
   And all internal links in governance/ resolve correctly
   And all cross-references from agents to rules work
@@ -357,7 +357,7 @@ The following are **explicitly included**:
 1. **Directory moves**: All rules directories except agents/
 2. **Reference updates**: All markdown files in repository (~150 files)
 3. **Governance updates**: Architecture document, mermaid diagram, text descriptions
-4. **Meta-agent updates**: wow-governance-checker, wow-governance-maker, wow-governance-fixer (manual updates)
+4. **Meta-agent updates**: repo-governance-checker, repo-governance-maker, repo-governance-fixer (manual updates)
 5. **Validation**: After each phase, using both automated and manual checks
 6. **Single atomic commit**: All changes committed together with detailed message
 
@@ -387,7 +387,7 @@ The following are explicitly **not** included in this plan:
 - Git (for move operations and history preservation)
 - sed (for automated path replacements)
 - grep (for validation checks)
-- wow-governance-checker agent (for link validation)
+- repo-governance-checker agent (for link validation)
 
 ---
 
@@ -395,7 +395,7 @@ The following are explicitly **not** included in this plan:
 
 1. **Git history preservation**: Must use `git mv` not copy+delete
 2. **Validation after each phase**: Cannot proceed if phase fails validation
-3. **Zero broken links**: wow-governance-checker must report zero broken links
+3. **Zero broken links**: repo-governance-checker must report zero broken links
 4. **Single commit**: All changes in one atomic commit (YOLO - no rollback plan)
 5. **Manual meta-agent updates**: wow-governance-\* agents updated manually, not via sed
 
@@ -403,7 +403,7 @@ The following are explicitly **not** included in this plan:
 
 ## Assumptions
 
-1. wow-governance-checker agent is available and can validate links
+1. repo-governance-checker agent is available and can validate links
 2. Git mv commands preserve history for moved files
 3. Team will adapt to new `/governance/` path
 4. Approximately 150 files require path reference updates (45 agents + 23 skills + docs)
