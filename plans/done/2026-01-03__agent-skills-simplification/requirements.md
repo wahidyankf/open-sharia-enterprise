@@ -155,7 +155,7 @@ Scenario: wow__rules-checker detects agent-Skill duplication
   And suggests removing from agent, referencing Skill instead
 
 Scenario: Quality gate prevents duplication
-  Given the wow__rules__quality-gate workflow runs
+  Given the repository__rules-validation workflow runs
   When agent-Skill duplication is detected
   Then the quality gate fails
   And the duplication is reported as CRITICAL

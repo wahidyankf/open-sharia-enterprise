@@ -150,8 +150,8 @@ Source: governance/agents/skills/ (tool-agnostic markdown)
 
 - [ ] `agent-maker` creates agents in `governance/agents/content/` (not `.claude/agents/`)
 - [ ] `agent-maker` uses tool-agnostic format (role instead of color)
-- [ ] `wow-governance-checker` validates source (`governance/agents/`, `governance/agents/skills/`)
-- [ ] `wow-governance-fixer` does NOT modify generated directories (`.claude/agents/`, `.opencode/agent/`, `.claude/skills/`)
+- [ ] `repo-governance-checker` validates source (`governance/agents/`, `governance/agents/skills/`)
+- [ ] `repo-governance-fixer` does NOT modify generated directories (`.claude/agents/`, `.opencode/agent/`, `.claude/skills/`)
 - [ ] Any other agents that reference agent/skill locations updated
 
 ### Documentation Quality

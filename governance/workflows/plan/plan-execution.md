@@ -333,7 +333,7 @@ This workflow can be composed with:
 ```
 1. plan__quality-gate → Validate plan completeness and accuracy
 2. plan-execution → Execute validated plan
-3. wow__rules__quality-gate → Ensure repository consistency
+3. repository__rules-validation → Ensure repository consistency
 ```
 
 ## Success Metrics

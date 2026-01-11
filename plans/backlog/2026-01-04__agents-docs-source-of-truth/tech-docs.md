@@ -1609,12 +1609,12 @@ Several agents currently interact with `.claude/agents/`, `.opencode/agent/`, an
 
 ### Affected Agents
 
-| Agent                    | Current Behavior                                | Required Changes                              |
-| ------------------------ | ----------------------------------------------- | --------------------------------------------- |
-| `agent-maker`            | Creates in `.claude/agents/`                    | Create in `governance/agents/content/`        |
-| `wow-governance-checker` | Validates `.claude/agents/`, `.opencode/agent/` | Validate `governance/agents/`, skip generated |
-| `wow-governance-fixer`   | Fixes in `.claude/agents/` (uses Bash tools)    | Fix in `governance/agents/`, skip generated   |
-| `wow-governance-maker`   | May reference agent locations in docs           | Update location references                    |
+| Agent                     | Current Behavior                                | Required Changes                              |
+| ------------------------- | ----------------------------------------------- | --------------------------------------------- |
+| `agent-maker`             | Creates in `.claude/agents/`                    | Create in `governance/agents/content/`        |
+| `repo-governance-checker` | Validates `.claude/agents/`, `.opencode/agent/` | Validate `governance/agents/`, skip generated |
+| `repo-governance-fixer`   | Fixes in `.claude/agents/` (uses Bash tools)    | Fix in `governance/agents/`, skip generated   |
+| `repo-governance-maker`   | May reference agent locations in docs           | Update location references                    |
 
 ### Agent-Maker Updates
 
@@ -1809,7 +1809,7 @@ Several agents currently interact with `.claude/agents/`, `.opencode/agent/`, an
 
 **Implementation changes**:
 
-- Update `governance/workflows/wow/rules-quality-gate.md`:
+- Update `governance/workflows/repository/repository-rules-validation.md`:
   - Add "Scope Clarification" section explaining source-only validation
   - Document that it validates `governance/agents/` (source)
   - Document that it skips `.claude/agents/`, `.claude/skills/`, `.opencode/agent/`, `.opencode/skills/` (generated)
@@ -1818,7 +1818,7 @@ Several agents currently interact with `.claude/agents/`, `.opencode/agent/`, an
 
 **Rationale**:
 
-- Clear separation of concerns: Source validation (rules-quality-gate) vs. Output validation (sync commands)
+- Clear separation of concerns: Source validation (repository-rules-validation) vs. Output validation (sync commands)
 - Prevents confusion about which directories rules agents work on
 - Aligns with migration architecture where generated directories are read-only artifacts
 

@@ -608,7 +608,7 @@ Some sites block automation:
 **Related Agents:**
 
 - `docs-link-general-checker.md` - Link accessibility validation
-- `wow-governance-checker.md` - Convention compliance validation
+- `repo-governance-checker.md` - Convention compliance validation
 - `docs-maker.md` - Documentation creation/editing
 - `docs-fixer.md` - Apply validated fixes
 

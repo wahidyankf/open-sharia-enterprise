@@ -209,13 +209,13 @@ This section details how the three repo-rules agents must be adapted on BOTH pla
 
 **Platform-Specific Updates:**
 
-**Claude Code (.claude/agents/wow-governance-checker.md):**
+**Claude Code (.claude/agents/repo-governance-checker.md):**
 
 - Current: 373 lines (Claude Code) + 448 lines (OpenCode) = 821 lines total
 - Add: PolicyEngine integration via Bash tool
 - Remove: Embedded rule descriptions
 
-**OpenCode (.opencode/agent/wow-governance-checker.md):**
+**OpenCode (.opencode/agent/repo-governance-checker.md):**
 
 - Current: 88 lines (OpenCode) vs 53 lines (Claude Code) = 141 total → Target: ~80 lines
 - Add: PolicyEngine integration via Bash tool
@@ -1017,9 +1017,9 @@ Phase 5 (consolidation)
 
 ### Phase 1
 
-- `.claude/agents/wow-governance-checker.md` (MODIFY: Already optimized - 373 lines, target: ~200 lines for policy integration)
-- `.claude/agents/wow-governance-maker.md` (MODIFY: Already optimized - 53 lines, target: ~80 lines for policy sync logic)
-- `.claude/agents/wow-governance-fixer.md` (MODIFY: Already optimized - 258 lines, target: ~130 lines for policy-driven fixes)
+- `.claude/agents/repo-governance-checker.md` (MODIFY: Already optimized - 373 lines, target: ~200 lines for policy integration)
+- `.claude/agents/repo-governance-maker.md` (MODIFY: Already optimized - 53 lines, target: ~80 lines for policy sync logic)
+- `.claude/agents/repo-governance-fixer.md` (MODIFY: Already optimized - 258 lines, target: ~130 lines for policy-driven fixes)
 - `CLAUDE.md` (MODIFY)
 - 10+ convention files (MODIFY: add policy YAML)
 

@@ -138,13 +138,13 @@ This apparent inconsistency is intentional and follows standard documentation co
 
 ### Workflows Subdirectories (`governance/workflows/`)
 
-| Subdirectory     | Code   | Prefix                    | Example File |
-| ---------------- | ------ | ------------------------- | ------------ |
-| `ayokoding-web/` | `aywe` | `general-quality-gate.md` |
-| `docs/`          | `do`   | `quality-gate.md`         |
-| `meta/`          | `me`   | `workflow-pattern.md`     |
-| `plan/`          | `pl`   | `execution.md`            |
-| `wow/`           | `wo`   | `rules-quality-gate.md`   |
+| Subdirectory     | Code   | Prefix                           | Example File |
+| ---------------- | ------ | -------------------------------- | ------------ |
+| `ayokoding-web/` | `aywe` | `general-quality-gate.md`        |
+| `docs/`          | `do`   | `quality-gate.md`                |
+| `meta/`          | `me`   | `workflow-pattern.md`            |
+| `plan/`          | `pl`   | `execution.md`                   |
+| `wow/`           | `wo`   | `repository-rules-validation.md` |
 
 ### Principles Subdirectories (`governance/principles/`)
 
@@ -413,29 +413,29 @@ general-quality-gate.md
 
 ### Explanation Subdirectories (Complete Reference)
 
-| Directory Path                                         | Prefix                          | Example                            |
-| ------------------------------------------------------ | ------------------------------- | ---------------------------------- |
-| explanation/governance/conventions/formatting          | `indentation.md`                |
-| explanation/governance/conventions/content             | `quality.md`                    |
-| explanation/governance/conventions/meta                | `file-naming.md`                |
-| explanation/governance/conventions/tutorial            | `naming.md`                     |
-| explanation/governance/conventions/hugo                | `shared.md`                     |
-| explanation/governance/conventions/project             | `plans-organization.md`         |
-| explanation/governance/development/workflow            | `commit-messages.md`            |
-| explanation/governance/development/agents              | `ai-agents.md`                  |
-| explanation/governance/development/quality             | `code.md`                       |
-| explanation/governance/development/pattern             | `functional-programming.md`     |
-| explanation/governance/development/hugo                | `development.md`                |
-| explanation/governance/development/infra               | `temporary-files.md`            |
-| explanation/governance/workflows/ayokoding-web         | `general-quality-gate.md`       |
-| explanation/governance/workflows/docs                  | `quality-gate.md`               |
-| explanation/governance/workflows/meta                  | `workflow-pattern.md`           |
-| explanation/governance/workflows/plan                  | `execution.md`                  |
-| explanation/governance/workflows/wow                   | `rules-quality-gate.md`         |
-| explanation/governance/principles/general              | `simplicity-over-complexity.md` |
-| explanation/governance/principles/content              | `accessibility-first.md`        |
-| explanation/governance/principles/software-engineering | `explicit-over-implicit.md`     |
-| explanation/vision                                     | `ex-vi__`                       | `ex-vi__open-sharia-enterprise.md` |
+| Directory Path                                         | Prefix                           | Example                            |
+| ------------------------------------------------------ | -------------------------------- | ---------------------------------- |
+| explanation/governance/conventions/formatting          | `indentation.md`                 |
+| explanation/governance/conventions/content             | `quality.md`                     |
+| explanation/governance/conventions/meta                | `file-naming.md`                 |
+| explanation/governance/conventions/tutorial            | `naming.md`                      |
+| explanation/governance/conventions/hugo                | `shared.md`                      |
+| explanation/governance/conventions/project             | `plans-organization.md`          |
+| explanation/governance/development/workflow            | `commit-messages.md`             |
+| explanation/governance/development/agents              | `ai-agents.md`                   |
+| explanation/governance/development/quality             | `code.md`                        |
+| explanation/governance/development/pattern             | `functional-programming.md`      |
+| explanation/governance/development/hugo                | `development.md`                 |
+| explanation/governance/development/infra               | `temporary-files.md`             |
+| explanation/governance/workflows/ayokoding-web         | `general-quality-gate.md`        |
+| explanation/governance/workflows/docs                  | `quality-gate.md`                |
+| explanation/governance/workflows/meta                  | `workflow-pattern.md`            |
+| explanation/governance/workflows/plan                  | `execution.md`                   |
+| explanation/governance/workflows/wow                   | `repository-rules-validation.md` |
+| explanation/governance/principles/general              | `simplicity-over-complexity.md`  |
+| explanation/governance/principles/content              | `accessibility-first.md`         |
+| explanation/governance/principles/software-engineering | `explicit-over-implicit.md`      |
+| explanation/vision                                     | `ex-vi__`                        | `ex-vi__open-sharia-enterprise.md` |
 
 ## 🔄 Migration History
 

@@ -653,7 +653,7 @@ Applies mode-based fixing with iteration limits.
 
 ### Example Implementation
 
-See [Repository Governance Quality Gate Workflow](../wow/rules-quality-gate.md) for canonical implementation.
+See [Repository Rules Validation Workflow](../repository/repository-rules-validation.md) for canonical implementation.
 
 ### Key Differences from Basic Validation Workflow
 

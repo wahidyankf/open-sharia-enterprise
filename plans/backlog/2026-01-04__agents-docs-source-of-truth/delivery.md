@@ -384,7 +384,7 @@ ls -la ../../governance/agents/content/
 cat ../../governance/agents/content/docs-maker.md
 cat ../../governance/agents/content/docs-checker.md
 cat ../../governance/agents/content/plan-executor.md
-cat ../../governance/agents/content/wow-governance-checker.md
+cat ../../governance/agents/content/repo-governance-checker.md
 cat ../../governance/agents/content/swe-hugo-developer.md
 ```
 
@@ -576,7 +576,7 @@ rm -rf governance/agents/skills/*.md
 - [ ] `docs-fixer` - Fix issues from checker audit
 - [ ] `plan-maker` - Create test plan
 - [ ] `plan-executor` - Execute simple plan step
-- [ ] `wow-governance-checker` - Run repository validation
+- [ ] `repo-governance-checker` - Run repository validation
 - [ ] `readme-maker` - Update test README
 - [ ] `apps-ayokoding-web-general-maker` - Create test Hugo content
 - [ ] `swe-hugo-developer` - Hugo development task
@@ -598,7 +598,7 @@ rm -rf governance/agents/skills/*.md
 - [ ] `docs-fixer`
 - [ ] `plan-maker`
 - [ ] `plan-executor`
-- [ ] `wow-governance-checker`
+- [ ] `repo-governance-checker`
 - [ ] `readme-maker`
 - [ ] `apps-ayokoding-web-general-maker`
 - [ ] `swe-hugo-developer`
@@ -770,7 +770,7 @@ cp -r .claude/skills.backup .claude/skills
   - [ ] Instruct user to run sync command after creation: `butler-cli agents sync`
   - [ ] Warn NOT to create in `.claude/agents/` directly
 
-- [ ] Update `governance/agents/content/wow-governance-checker.md` (source):
+- [ ] Update `governance/agents/content/repo-governance-checker.md` (source):
   - [ ] Validate `governance/agents/content/` (source, not generated)
   - [ ] Validate `governance/agents/skills/` (source, not generated)
   - [ ] Do NOT validate `.claude/agents/` (generated)
@@ -778,7 +778,7 @@ cp -r .claude/skills.backup .claude/skills
   - [ ] Check tool-agnostic format (role, capitalized tools, etc.)
   - [ ] Detect edits to generated directories as errors
 
-- [ ] Update `governance/agents/content/wow-governance-fixer.md` (source):
+- [ ] Update `governance/agents/content/repo-governance-fixer.md` (source):
   - [ ] Fix findings in `governance/agents/content/` (source)
   - [ ] Fix findings in `governance/agents/skills/` (source)
   - [ ] Do NOT modify `.claude/agents/` (generated)
@@ -804,47 +804,47 @@ cp -r .claude/skills.backup .claude/skills
   - [ ] Verify agent-maker warns NOT to edit `.claude/agents/` directly
   - [ ] Run sync and verify test agent appears in both `.claude/agents/` and `.opencode/agent/`
 
-  **Test 2: wow-governance-checker validates source (not generated)**
+  **Test 2: repo-governance-checker validates source (not generated)**
   - [ ] Create intentional error in `governance/agents/content/docs-maker.md` (e.g., change `role: writer` to `role: invalid-role`)
-  - [ ] Invoke wow-governance-checker for agent validation
+  - [ ] Invoke repo-governance-checker for agent validation
   - [ ] Verify checker reports error for `governance/agents/content/docs-maker.md`
   - [ ] Verify checker does NOT validate `.claude/agents/` (skipped as generated)
   - [ ] Verify checker does NOT validate `.opencode/agent/` (skipped as generated)
   - [ ] Revert intentional error
 
-  **Test 3: wow-governance-checker detects edits to generated directories**
+  **Test 3: repo-governance-checker detects edits to generated directories**
   - [ ] Modify `.claude/agents/docs-maker.md` directly (add comment line)
   - [ ] Stage the change: `git add .claude/agents/docs-maker.md`
-  - [ ] Invoke wow-governance-checker
+  - [ ] Invoke repo-governance-checker
   - [ ] Verify checker reports error: "Generated file modified: .claude/agents/docs-maker.md"
   - [ ] Verify error message suggests editing source instead: `governance/agents/content/docs-maker.md`
   - [ ] Revert change: `git checkout .claude/agents/docs-maker.md`
 
-  **Test 4: wow-governance-fixer fixes source (not generated)**
-  - [ ] Create wow-governance-checker audit report with finding for docs source
-  - [ ] Invoke wow-governance-fixer with audit report
+  **Test 4: repo-governance-fixer fixes source (not generated)**
+  - [ ] Create repo-governance-checker audit report with finding for docs source
+  - [ ] Invoke repo-governance-fixer with audit report
   - [ ] Verify fixer modifies `governance/agents/content/` (source)
   - [ ] Verify fixer does NOT modify `.claude/agents/` (generated)
   - [ ] Verify fixer does NOT modify `.opencode/agent/` (generated)
   - [ ] Verify fixer instructs user to run: `butler-cli agents sync` after fix
 
-**Test5: wow-governance-fixer skips findings for generated files**
+**Test5: repo-governance-fixer skips findings for generated files**
 
 - [ ] Create mock finding referencing `.claude/agents/test-agent.md` (generated file)
-- [ ] Invoke wow-governance-fixer
+- [ ] Invoke repo-governance-fixer
 - [ ] Verify fixer skips this finding with warning
 - [ ] Verify fixer logs: "Finding references generated file - skipping"
 - [ ] Verify fixer suggests: "Edit source: governance/agents/content/test-agent.md"
 
 **Test6: wow-governance-quality-gate validates source (not generated)**
 
-- [ ] Review `governance/workflows/wow/rules-quality-gate.md`
+- [ ] Review `governance/workflows/repository/repository-rules-validation.md`
 - [ ] Verify "Scope Clarification" section exists explaining source-only validation
 - [ ] Verify workflow explicitly states it validates `governance/agents/content/` (source)
 - [ ] Verify workflow explicitly states it skips `.claude/agents/`, `.claude/skills/`, `.opencode/agent/`, `.opencode/skills/` (generated)
 - [ ] Verify workflow mentions using `butler-cli agents validate` and `butler-cli skills validate` for output validation
 - [ ] Verify "Concurrency" note clarifies "agents" refers to source definitions
-- [ ] Simulate running workflow: Run wow-governance-checker with scope `docs` and verify it doesn't validate generated directories
+- [ ] Simulate running workflow: Run repo-governance-checker with scope `docs` and verify it doesn't validate generated directories
 
 **Cleanup**:
 
@@ -856,16 +856,16 @@ cp -r .claude/skills.backup .claude/skills
 
 - [ ] All 6 tests pass without errors
 - [ ] agent-maker creates agents in correct location (docs source)
-- [ ] wow-governance-checker validates source, skips generated, detects generated file edits
-- [ ] wow-governance-fixer fixes source, skips generated file findings
+- [ ] repo-governance-checker validates source, skips generated, detects generated file edits
+- [ ] repo-governance-fixer fixes source, skips generated file findings
 - [ ] wow-governance-quality-gate workflow explicitly documents source-only validation
 - [ ] wow-governance-quality-gate workflow clarifies distinction between source validation and output validation
 
 **Rollback for Meta-Agent Failures**:
 
 - [ ] If any test fails, revert meta-agent updates from backup
-- [ ] Restore from: `git checkout main -- governance/agents/content/agent-maker.md governance/agents/content/wow-governance-checker.md governance/agents/content/wow-governance-fixer.md`
-- [ ] Revert workflow updates: `git checkout main -- governance/workflows/wow/rules-quality-gate.md`
+- [ ] Restore from: `git checkout main -- governance/agents/content/agent-maker.md governance/agents/content/repo-governance-checker.md governance/agents/content/repo-governance-fixer.md`
+- [ ] Revert workflow updates: `git checkout main -- governance/workflows/repository/repository-rules-validation.md`
 - [ ] Re-sync: `butler-cli agents sync`
 - [ ] Document failure, investigate root cause before retrying
 
@@ -987,8 +987,8 @@ git checkout main -- .husky/pre-commit
 
    Meta-agent updates:
    - agent-maker: Creates in docs source, not .claude/agents/
-   - wow-governance-checker: Validates source, skips generated
-   - wow-governance-fixer: Fixes source, skips generated
+   - repo-governance-checker: Validates source, skips generated
+   - repo-governance-fixer: Fixes source, skips generated
    - wow-governance-quality-gate: Explicit source-only validation scope
 
    Migration validation:
@@ -1211,7 +1211,7 @@ butler-cli agents validate --cross-format
 time butler-cli agents sync && time butler-cli skills sync
 
 # Phase 6
-git add governance/agents/ governance/agents/skills/ governance/workflows/wow/ apps/butler-cli/ .claude/ .opencode/
+git add governance/agents/ governance/agents/skills/ governance/workflows/repository/ apps/butler-cli/ .claude/ .opencode/
 git commit -m "feat(agents): migrate to docs source of truth"
 git push -u origin feat/agents-docs-source-of-truth
 ```

@@ -100,9 +100,9 @@ All 45 specialized agents in OpenCode format. Each agent corresponds to an agent
 
 **Rules Management** (Maker-Checker-Fixer):
 
-- **wow-governance-maker** - Creates repository rules and conventions
-- **wow-governance-checker** - Validates repository-wide consistency (agent-Skill duplication detection)
-- **wow-governance-fixer** - Applies validated fixes including agent-Skill duplication removal
+- **repo-governance-maker** - Creates repository rules and conventions
+- **repo-governance-checker** - Validates repository-wide consistency (agent-Skill duplication detection)
+- **repo-governance-fixer** - Applies validated fixes including agent-Skill duplication removal
 
 **Workflow Management** (Maker-Checker-Fixer):
 

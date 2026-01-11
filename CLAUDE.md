@@ -291,8 +291,8 @@ When adding new conventions, rules, or standards:
 
 - When updating convention docs, review CLAUDE.md summary for accuracy (keep it brief)
 - When CLAUDE.md exceeds 35k characters, trigger review and condensation
-- Use `wow__rules-checker` periodically to detect duplication between CLAUDE.md and convention docs, plus validate rules governance (contradictions, inaccuracies, inconsistencies, traceability violations, layer coherence)
-- Use `wow__rules-fixer` to apply validated fixes from audit reports for CLAUDE.md issues and rules governance problems (after user review)
+- Use `repo-governance-checker` periodically to detect duplication between CLAUDE.md and convention docs, plus validate rules governance (contradictions, inaccuracies, inconsistencies, traceability violations, layer coherence)
+- Use `repo-governance-fixer` to apply validated fixes from audit reports for CLAUDE.md issues and rules governance problems (after user review)
 - `wow__rules-maker` should check CLAUDE.md size when adding rules (warn if approaching limits)
 
 **Example**: Bad - Detailed examples duplicating convention docs. Good - Brief summary with link to detailed documentation.

@@ -650,4 +650,4 @@ Proceed anyway? (Please confirm)
 
 - `docs-maker.md` - Creates new documentation (use for new index files)
 - `docs-link-general-checker.md` - Validates links (use after file operations to verify)
-- `wow-governance-checker.md` - Validates consistency (use for large reorganizations)
+- `repo-governance-checker.md` - Validates consistency (use for large reorganizations)

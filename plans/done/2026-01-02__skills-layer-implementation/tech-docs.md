@@ -917,10 +917,10 @@ This section provides comprehensive listing of ALL components affected by Skills
 
 ### Workflows Affected
 
-| Workflow                | Impact Description                                      | Phase   |
-| ----------------------- | ------------------------------------------------------- | ------- |
-| `rules-quality-gate.md` | Scope expansion to include `.claude/skills/` validation | Phase 2 |
-| `workflow-pattern.md`   | No changes (Skills don't affect workflow pattern)       | N/A     |
+| Workflow                         | Impact Description                                      | Phase   |
+| -------------------------------- | ------------------------------------------------------- | ------- |
+| `repository-rules-validation.md` | Scope expansion to include `.claude/skills/` validation | Phase 2 |
+| `workflow-pattern.md`            | No changes (Skills don't affect workflow pattern)       | N/A     |
 
 ### Infrastructure Files Affected
 

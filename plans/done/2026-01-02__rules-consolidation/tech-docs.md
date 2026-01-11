@@ -454,7 +454,7 @@ Recommended skills for each agent based on domain (using new gerund-form names):
 | `workflow-pattern.md`                       | No change |
 | `execution.md`                              | No change |
 | `quality-gate.md`                           | No change |
-| `rules-quality-gate.md`                     | No change |
+| `repository-rules-validation.md`            | No change |
 
 ### CLAUDE.md Changes
 

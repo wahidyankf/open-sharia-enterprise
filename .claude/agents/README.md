@@ -711,7 +711,7 @@ Applies validated fixes from wow\_\_workflow-checker audit reports. Re-validates
 - **Note:** Many workflow "issues" are design decisions - this agent applies only objective structural errors (verifiable violations) and flags subjective improvements for human judgment
 - **Works with:** `wow-workflow-checker` for audit report generation, `wow-workflow-maker` for workflow creation
 
-### 🟩 `wow-governance-checker.md`
+### 🟩 `repo-governance-checker.md`
 
 Expert at validating repository-wide consistency, CLAUDE.md maintenance (size limits, duplication), and rules governance across all governance layers. Detects contradictions, inaccuracies, inconsistencies, traceability violations, and layer coherence issues. Generates detailed audit reports in generated-reports/.
 
@@ -726,9 +726,9 @@ Expert at validating repository-wide consistency, CLAUDE.md maintenance (size li
   - Detecting contradictions or outdated references
   - Identifying duplicate content that could be consolidated
   - Historical tracking of repository consistency over time
-- **Important:** READ-ONLY agent - does not apply fixes. Use `wow-governance-fixer` to apply validated fixes after reviewing audit report.
+- **Important:** READ-ONLY agent - does not apply fixes. Use `repo-governance-fixer` to apply validated fixes after reviewing audit report.
 
-### 🟪 `wow-governance-fixer.md`
+### 🟪 `repo-governance-fixer.md`
 
 Applies validated fixes from wow\_\_rules-checker audit reports including CLAUDE.md issues and rules governance problems (contradictions, inaccuracies, inconsistencies, traceability violations, layer coherence). Re-validates findings before applying changes. Uses bash tools for .claude/ files, Edit tool for docs/explanation/ files.
 
@@ -743,7 +743,7 @@ Applies validated fixes from wow\_\_rules-checker audit reports including CLAUDE
 - **Safety:** Re-executes all checks before applying fixes (applies only HIGH confidence fixes automatically)
 - **Output:** Generates `wow-governance-audit-{timestamp}-fix.md` report in `generated-reports/`
 
-### 🟨 `wow-governance-maker.md`
+### 🟨 `repo-governance-maker.md`
 
 Expert at making rule and convention changes effective across CLAUDE.md, convention docs, agents, and indices. Responsible for maintaining CLAUDE.md size limits. Uses bash commands for file creation and editing.
 
@@ -919,7 +919,7 @@ The repository uses a three-stage workflow for content creation and quality assu
         └─> Generate audit report in generated-reports/
         └─> Checkers: docs-checker, docs-tutorial-checker, readme-checker,
                       ayokoding-web-general-checker, ose-platform-web-content-checker,
-                      wow-governance-checker
+                      repo-governance-checker
 
 3. User Review Stage
    └─> Review audit report findings
@@ -933,7 +933,7 @@ The repository uses a three-stage workflow for content creation and quality assu
         └─> Generate fix report in generated-reports/
         └─> Fixers: docs-fixer, docs-tutorial-fixer, readme-fixer,
                     ayokoding-web-general-fixer, ose-platform-web-content-fixer,
-                    wow-governance-fixer, plan-fixer
+                    repo-governance-fixer, plan-fixer
 
 5. Verification Stage (Re-run Checker)
    └─> Re-run checker to verify fixes resolved issues
@@ -993,11 +993,11 @@ The repository uses a three-stage workflow for content creation and quality assu
 
 ```
 1. Make Changes
-   └─> Use wow-governance-maker to make changes effective across files
+   └─> Use repo-governance-maker to make changes effective across files
         └─> Ensures consistency in CLAUDE.md, conventions, agents, indices
 
 2. Validate Changes
-   └─> Use wow-governance-checker to verify consistency
+   └─> Use repo-governance-checker to verify consistency
         └─> Detects inconsistencies, contradictions, duplications
         └─> Generates audit report in generated-reports/
 
@@ -1006,13 +1006,13 @@ The repository uses a three-stage workflow for content creation and quality assu
         └─> Identify which fixes should be applied
 
 4. Apply Validated Fixes
-   └─> Use wow-governance-fixer to apply fixes automatically
+   └─> Use repo-governance-fixer to apply fixes automatically
         └─> Re-validates findings, applies HIGH confidence fixes
         └─> Skips false positives, reports MEDIUM confidence items
         └─> Generates fix report for audit trail
 
 5. Verify Fixes (if fixes were applied)
-   └─> Use wow-governance-checker to re-validate
+   └─> Use repo-governance-checker to re-validate
         └─> Ensure fixes resolved issues without introducing new ones
 
 6. Write/Update Documentation
@@ -1073,14 +1073,14 @@ The repository uses a three-stage workflow for content creation and quality assu
 - **After plan\_\_executor completes:** Use `plan-execution-checker` for independent final validation
 - **Full planning workflow:** plan**maker → plan**checker → (fix if needed) → plan**executor → plan**execution-checker
 - **Quality assurance workflow:** Maker-checker at both stages (planning and implementation)
-- **After adding new conventions:** Use `wow-governance-maker` → `wow-governance-checker` → `wow-governance-fixer` (if issues found)
-- **CLAUDE.md maintenance:** Keep under 30k characters (target), never exceed 40k (hard limit). Brief summaries only, link to detailed docs. Use `wow-governance-maker` to check size when adding rules
+- **After adding new conventions:** Use `repo-governance-maker` → `repo-governance-checker` → `repo-governance-fixer` (if issues found)
+- **CLAUDE.md maintenance:** Keep under 30k characters (target), never exceed 40k (hard limit). Brief summaries only, link to detailed docs. Use `repo-governance-maker` to check size when adding rules
 - **Agent file size limits:** Three tiers - Simple (<800 lines), Standard (<1,200 lines), Complex (<1,800 lines). Link to convention docs instead of duplicating content. See [AI Agents Convention](../governance/development/agents/ex-ru-de-ag-ai-agents.md) for complete size guidelines
-- **Before major releases:** Run `wow-governance-checker` for full audit and `docs-link-general-checker` to verify all links
+- **Before major releases:** Run `repo-governance-checker` for full audit and `docs-link-general-checker` to verify all links
 - **When creating tutorials:** Use `docs-tutorial-maker` for learning-oriented content with narrative flow and diagrams
 - **When creating other documentation:** Use `docs-maker` for how-to guides, reference, or explanations
 - **After creating tutorials:** Use `docs-tutorial-checker` to validate pedagogical quality and completeness
-- **When modifying CLAUDE.md:** Use `wow-governance-maker` to cascade changes
+- **When modifying CLAUDE.md:** Use `repo-governance-maker` to cascade changes
 - **During plan implementation:** Let `plan-executor` update delivery.md - it maintains detailed notes
 - **When managing files in docs/:** Use `docs-file-manager` to handle prefixes, links, and indices automatically (rename, move, or delete)
 - **After using docs\_\_file-manager:** Always run `docs-link-general-checker` to verify all links are valid
@@ -1109,16 +1109,16 @@ Agents follow a structured lifecycle from creation to deprecation:
 ### Creation
 
 1. Use `agent-maker` to scaffold new agent with proper structure
-2. Validate with `wow-governance-checker` to ensure convention compliance
-3. Update CLAUDE.md if agent affects project guidance (use `wow-governance-maker`)
+2. Validate with `repo-governance-checker` to ensure convention compliance
+3. Update CLAUDE.md if agent affects project guidance (use `repo-governance-maker`)
 4. Test agent behavior matches specification
 
 ### Updates
 
 1. Edit agent file with required changes
 2. Update `updated` field in frontmatter (YYYY-MM-DD format)
-3. Validate changes with `wow-governance-checker`
-4. Apply fixes if needed using `wow-governance-fixer`
+3. Validate changes with `repo-governance-checker`
+4. Apply fixes if needed using `repo-governance-fixer`
 5. Update CLAUDE.md and convention docs if agent behavior changed
 
 ### Maintenance
@@ -1143,9 +1143,9 @@ When creating new agents:
 1. Use `agent-maker` to automate creation with proper structure, size verification, and README updates
 2. Follow the [AI Agents Convention](../governance/development/agents/ex-ru-de-ag-ai-agents.md) for all standards
 3. Verify agent size within tier limits (Simple: <800, Standard: <1,200, Complex: <1,800 lines)
-4. Use `wow-governance-maker` to propagate references to CLAUDE.md and other files
-5. Use `wow-governance-checker` to validate the new agent follows all conventions
-6. Use `wow-governance-fixer` to apply any validated fixes from the audit report
+4. Use `repo-governance-maker` to propagate references to CLAUDE.md and other files
+5. Use `repo-governance-checker` to validate the new agent follows all conventions
+6. Use `repo-governance-fixer` to apply any validated fixes from the audit report
 7. Update CLAUDE.md if the agent should be mentioned in project guidance
 
 ---

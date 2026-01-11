@@ -21,7 +21,7 @@ This migration will be executed in **5 phases** with validation gates between ea
 | 4     | Final Validation               | All validations pass                           | ~1m               |
 | 5     | Single Atomic Commit           | All changes committed together                 | ~10s              |
 
-**Total estimated time**: ~3-4 minutes (excluding wow-governance-checker validation)
+**Total estimated time**: ~3-4 minutes (excluding repo-governance-checker validation)
 
 ---
 
@@ -433,7 +433,7 @@ find . -name "*.md.bak" -delete
   ```bash
   grep "governance/" CLAUDE.md | head -5      # ✅ PASS if shows results
   grep "governance/" AGENTS.md | head -5      # ✅ PASS if shows results
-  grep "governance/" .claude/agents/wow-governance-checker.md | head -5  # ✅ PASS if shows results
+  grep "governance/" .claude/agents/repo-governance-checker.md | head -5  # ✅ PASS if shows results
   ```
 
 - [x] Relative path validation:
@@ -442,12 +442,12 @@ find . -name "*.md.bak" -delete
   grep -r "\.\./\.\./governance/" .claude/skills/ | head -3  # ✅ PASS if shows results
   ```
 
-#### wow-governance-checker Integration
+#### repo-governance-checker Integration
 
-- [x] Run wow-governance-checker:
+- [x] Run repo-governance-checker:
 
   ```bash
-  wow-governance-checker scope:all
+  repo-governance-checker scope:all
   ```
 
 - [x] Check for broken link findings:
@@ -466,7 +466,7 @@ find . -name "*.md.bak" -delete
 
 ### Success Criteria
 
-**ALL automated checks pass AND wow-governance-checker reports zero broken links** ✅
+**ALL automated checks pass AND repo-governance-checker reports zero broken links** ✅
 
 **On failure**: Identify which files still have old references, fix manually, re-run validation.
 
@@ -523,8 +523,8 @@ git status | grep "governance/"
 #### Step 4.5: Final Link Validation
 
 ```bash
-# Re-run wow-governance-checker for final check
-wow-governance-checker scope:all
+# Re-run repo-governance-checker for final check
+repo-governance-checker scope:all
 
 # Verify zero broken links in output
 # ✅ PASS if zero "broken link" findings
@@ -567,9 +567,9 @@ wow-governance-checker scope:all
   # ✅ PASS if returns nothing
   ```
 
-- [x] wow-governance-checker reports zero broken links:
+- [x] repo-governance-checker reports zero broken links:
   ```bash
-  wow-governance-checker scope:all | grep -i "broken"
+  repo-governance-checker scope:all | grep -i "broken"
   # ✅ PASS if returns zero
   ```
 
@@ -618,7 +618,7 @@ git commit -m "refactor: move governance/ to /governance/ (separate from Obsidia
 - Updated all text references to /governance/ paths
 - Updated 45 agent definition files (.claude/agents/*.md)
 - Updated 23 skill definition files (.claude/skills/*/SKILL.md)
-- Updated 3 meta-agent files (wow-governance-checker, wow-governance-maker, wow-governance-fixer) - manual updates
+- Updated 3 meta-agent files (repo-governance-checker, repo-governance-maker, repo-governance-fixer) - manual updates
 - Updated all workflow files (governance/workflows/*.md)
 - Updated all internal links in governance/ (~67 files)
 - Updated CLAUDE.md with /governance/ directory structure
@@ -648,7 +648,7 @@ All docs/ follows Obsidian rules including file naming with __ separator. /gover
 
 Phase 1 (move): ✅ All files in /governance/, old directory removed, history preserved
 Phase 2 (governance): ✅ Zero old-path references, all layers updated
-Phase 3 (references): ✅ Zero old-path references, wow-governance-checker reports zero broken links
+Phase 3 (references): ✅ Zero old-path references, repo-governance-checker reports zero broken links
 Phase 4 (final): ✅ ~150 files modified, no unexpected changes
 Phase 5 (commit): ✅ Atomic commit complete
 
@@ -732,7 +732,7 @@ After Phase 5 completion:
 - [x] `docs/explanation/governance/` directory removed (except agents/ subdirectory)
 - [x] Zero occurrences of `docs/explanation/governance/` in entire repository
 - [x] All references to `governance/` work correctly
-- [x] wow-governance-checker reports zero broken links
+- [x] repo-governance-checker reports zero broken links
 - [x] CLAUDE.md and AGENTS.md reference `governance/` correctly
 - [x] Git history preserved (all moves via git mv)
 - [x] Single atomic commit with detailed message
@@ -746,5 +746,5 @@ After Phase 5 completion:
 - **Manual meta-agent updates**: wow-governance-\* agents updated manually, not via sed
 - **Git history preservation**: Always use `git mv`, never `cp + rm`
 - **YOLO approach**: No rollback plan - if issues, revert single commit
-- **wow-governance-checker**: Critical validation tool for detecting broken links
-- **Total estimated time**: ~3-4 minutes (excluding wow-governance-checker runtime)
+- **repo-governance-checker**: Critical validation tool for detecting broken links
+- **Total estimated time**: ~3-4 minutes (excluding repo-governance-checker runtime)
