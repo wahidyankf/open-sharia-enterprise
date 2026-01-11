@@ -86,15 +86,13 @@ docs/explanation/
 
 ### By Directory Type
 
-| Directory Type        | Count     | Path Pattern                                              | Examples                                                              |
-| --------------------- | --------- | --------------------------------------------------------- | --------------------------------------------------------------------- |
-| **Agent definitions** | 45 files  | .claude/agents/\*.md                                      | docs-maker, plan-checker, wow-governance-\*                           |
-| **Skill definitions** | 23 files  | .claude/skills/\*/SKILL.md                                | docs-applying-content-quality, wow-\*                                 |
-| **Meta-agents**       | 3 files   | .claude/agents/wow-governance-\*.md                       | repo-governance-checker, repo-governance-maker, repo-governance-fixer |
-| **Workflows**         | ~10 files | governance/workflows/\*.md                                | ex-ru-wf-wo\_\_repository-rules-validation.md                         |
-| **Project docs**      | 2 files   | CLAUDE.md, AGENTS.md                                      | Repository-level documentation                                        |
-| **Governance**        | 1 file    | governance/ex-ru\_\_repository-governance-architecture.md | Architecture document                                                 |
-| **Rules internal**    | ~67 files | governance/\*_/_.md                                       | All moved files with internal links                                   |
+| Directory Type        | Count     | Path Pattern                                              | Examples                                      |
+| --------------------- | --------- | --------------------------------------------------------- | --------------------------------------------- |
+| **Skill definitions** | 23 files  | .claude/skills/\*/SKILL.md                                | docs-applying-content-quality, wow-\*         |
+| **Workflows**         | ~10 files | governance/workflows/\*.md                                | ex-ru-wf-wo\_\_repository-rules-validation.md |
+| **Project docs**      | 2 files   | CLAUDE.md, AGENTS.md                                      | Repository-level documentation                |
+| **Governance**        | 1 file    | governance/ex-ru\_\_repository-governance-architecture.md | Architecture document                         |
+| **Rules internal**    | ~67 files | governance/\*_/_.md                                       | All moved files with internal links           |
 
 **Total requiring updates**: 151 files
 
@@ -102,7 +100,6 @@ docs/explanation/
 
 | Category         | Specific Files                                            | Count |
 | ---------------- | --------------------------------------------------------- | ----- |
-| **Agent files**  | All .claude/agents/_.md (including wow-governance-_)      | 45    |
 | **Skill files**  | All .claude/skills/\*/SKILL.md                            | 23    |
 | **Project docs** | CLAUDE.md, AGENTS.md                                      | 2     |
 | **Governance**   | governance/ex-ru\_\_repository-governance-architecture.md | 1     |
@@ -122,8 +119,6 @@ docs/explanation/
 ```bash
 find .claude/agents -name "*.md" -type f -exec sed -i 's|governance/|governance/|g' {} \;
 ```
-
-**Updates**: All 45 agent files including wow-governance-\*
 
 **Pattern Examples**:
 

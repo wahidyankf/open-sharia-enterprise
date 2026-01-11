@@ -655,7 +655,6 @@ Phase 5 (commit): ✅ Atomic commit complete
 ## Notes
 
 - YOLO approach: No rollback plan - if issues occur, revert commit
-- Manual meta-agent updates: wow-governance-* agents updated manually (not via sed)
 - Progressive validation: Each phase validated before proceeding
 - Git history preserved: All moves via git mv
 - Single commit: All changes in one atomic operation
@@ -743,7 +742,6 @@ After Phase 5 completion:
 ## Notes
 
 - **Progressive validation**: Each phase must pass before proceeding to next
-- **Manual meta-agent updates**: wow-governance-\* agents updated manually, not via sed
 - **Git history preservation**: Always use `git mv`, never `cp + rm`
 - **YOLO approach**: No rollback plan - if issues, revert single commit
 - **repo-governance-checker**: Critical validation tool for detecting broken links

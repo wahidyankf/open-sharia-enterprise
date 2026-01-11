@@ -836,8 +836,6 @@ cp -r .claude/skills.backup .claude/skills
 - [ ] Verify fixer logs: "Finding references generated file - skipping"
 - [ ] Verify fixer suggests: "Edit source: governance/agents/content/test-agent.md"
 
-**Test6: wow-governance-quality-gate validates source (not generated)**
-
 - [ ] Review `governance/workflows/repository/repository-rules-validation.md`
 - [ ] Verify "Scope Clarification" section exists explaining source-only validation
 - [ ] Verify workflow explicitly states it validates `governance/agents/content/` (source)
@@ -858,8 +856,6 @@ cp -r .claude/skills.backup .claude/skills
 - [ ] agent-maker creates agents in correct location (docs source)
 - [ ] repo-governance-checker validates source, skips generated, detects generated file edits
 - [ ] repo-governance-fixer fixes source, skips generated file findings
-- [ ] wow-governance-quality-gate workflow explicitly documents source-only validation
-- [ ] wow-governance-quality-gate workflow clarifies distinction between source validation and output validation
 
 **Rollback for Meta-Agent Failures**:
 
@@ -989,7 +985,6 @@ git checkout main -- .husky/pre-commit
    - agent-maker: Creates in docs source, not .claude/agents/
    - repo-governance-checker: Validates source, skips generated
    - repo-governance-fixer: Fixes source, skips generated
-   - wow-governance-quality-gate: Explicit source-only validation scope
 
    Migration validation:
    - 45 agents migrated (100% success)

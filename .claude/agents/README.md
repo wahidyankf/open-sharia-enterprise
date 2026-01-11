@@ -741,7 +741,6 @@ Applies validated fixes from wow\_\_rules-checker audit reports including CLAUDE
   - Generating fix audit trail for transparency
 - **Workflow:** wow**rules-checker (detect) → User review → wow**rules-fixer (apply validated fixes)
 - **Safety:** Re-executes all checks before applying fixes (applies only HIGH confidence fixes automatically)
-- **Output:** Generates `wow-governance-audit-{timestamp}-fix.md` report in `generated-reports/`
 
 ### 🟨 `repo-governance-maker.md`
 

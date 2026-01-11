@@ -125,7 +125,6 @@ governance/           /governance/
 - [ ] Mermaid diagram in governance doc shows `/governance/` locations
 - [ ] 45 agent files updated with new paths
 - [ ] 23 skill files updated with new paths
-- [ ] 3 meta-agents (wow-governance-\*) updated
 - [ ] 1 workflow (ex-ru-wf-wo\_\_repository-rules-validation.md) updated
 
 ### Validation Success
@@ -162,7 +161,6 @@ This plan is organized into four documents:
 2. **Zero broken links**: All references must work after move
 3. **Single commit**: All changes in one atomic commit (YOLO approach - no rollback plan)
 4. **Validate after each phase**: Don't proceed if phase fails validation
-5. **Manual meta-agent updates**: wow-governance-\* agents updated manually (not via sed)
 
 ## Assumptions
 
