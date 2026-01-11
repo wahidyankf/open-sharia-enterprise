@@ -21,6 +21,11 @@ minify:
 params:
   env: production
   title: OSE Platform
+  extend_head: |
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true });
+    </script>
   description: "Open-source, research-driven platform for Sharia-compliant enterprise solutions. Starting with Indonesian regulations (OJK, DSN-MUI, PBI, PDP), expanding to ERP, fintech, and global markets. Built-in compliance, radical transparency."
   keywords:
     [
