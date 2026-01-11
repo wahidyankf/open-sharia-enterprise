@@ -105,8 +105,8 @@ Skills: `docs-applying-diataxis-framework`, `wow-assessing-criticality-confidenc
 
 **Related Agents**:
 
-- `wow-workflow-checker` - Generates audit reports this fixer processes
-- `wow-workflow-maker` - Creates workflow documentation
+- `repo-workflow-checker` - Generates audit reports this fixer processes
+- `repo-workflow-maker` - Creates workflow documentation
 
 **Related Conventions**:
 

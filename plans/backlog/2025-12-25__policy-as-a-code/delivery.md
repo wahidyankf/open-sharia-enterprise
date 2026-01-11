@@ -514,7 +514,7 @@ Complete migration of all eight agent families
 
 ### Note: Workflow Agents
 
-Workflow agents (workflow-maker, workflow-checker, workflow-fixer) are part of the **repo-rules family** (wow-workflow-maker.md, wow-workflow-checker.md, wow-workflow-fixer.md), not a separate family. They are migrated as part of Phase 1 (repo-rules family).
+Workflow agents (workflow-maker, workflow-checker, workflow-fixer) are part of the **repo-rules family** (repo-workflow-maker.md, repo-workflow-checker.md, repo-workflow-fixer.md), not a separate family. They are migrated as part of Phase 1 (repo-rules family).
 
 ### Tasks
 
@@ -1059,7 +1059,7 @@ Phase 5 (consolidation)
 - `.claude/agents/docs__tutorial-fixer.md` (MODIFY)
 - `.claude/agents/docs__tutorial-maker.md` (MODIFY)
 
-**Note**: Workflow agents (wow-workflow-checker, wow-workflow-fixer, wow-workflow-maker) are in Phase 1 (repo-rules family), not Phase 4.
+**Note**: Workflow agents (repo-workflow-checker, repo-workflow-fixer, repo-workflow-maker) are in Phase 1 (repo-rules family), not Phase 4.
 
 **Convention files:**
 

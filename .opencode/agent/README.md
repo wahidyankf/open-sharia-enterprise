@@ -106,9 +106,9 @@ All 45 specialized agents in OpenCode format. Each agent corresponds to an agent
 
 **Workflow Management** (Maker-Checker-Fixer):
 
-- **wow-workflow-maker** - Creates workflow documentation
-- **wow-workflow-checker** - Validates workflow pattern compliance
-- **wow-workflow-fixer** - Applies validated workflow fixes
+- **repo-workflow-maker** - Creates workflow documentation
+- **repo-workflow-checker** - Validates workflow pattern compliance
+- **repo-workflow-fixer** - Applies validated workflow fixes
 
 ### Meta/Specialized Family (3 agents)
 

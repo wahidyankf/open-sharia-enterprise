@@ -74,7 +74,7 @@ SUBAGENT_NAMES = {
     'docs-tutorial-checker',
     'readme-checker',
     'repo-governance-checker',
-    'wow-workflow-checker',
+    'repo-workflow-checker',
     'apps-ayokoding-web-general-checker',
     'apps-ayokoding-web-by-example-checker',
     'apps-ayokoding-web-facts-checker',

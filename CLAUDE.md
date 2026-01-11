@@ -249,7 +249,7 @@ Seven agent families follow three-stage workflow for content quality: Maker (cre
 
 **Operations**: docs-file-manager, apps**ayokoding-web**deployer, apps**ose-platform-web**deployer
 
-**Workflows**: wow**workflow-maker, wow**workflow-checker, wow-workflow-fixer
+**Workflows**: wow**workflow-maker, wow**workflow-checker, repo-workflow-fixer
 
 **Meta**: agent**maker, wow**rules-maker
 

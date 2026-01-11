@@ -455,7 +455,7 @@ name: docs-applying-content-quality
 | --------------------------------------- | ------------------------------------- |
 | `docs__checker.md`                      | `docs-checker.md`                     |
 | `apps__ayokoding-web__general-maker.md` | `apps-ayokoding-web-general-maker.md` |
-| `wow__workflow-checker.md`              | `wow-workflow-checker.md`             |
+| `wow__workflow-checker.md`              | `repo-workflow-checker.md`            |
 | `plan__executor.md`                     | `plan-executor.md`                    |
 | `agent__maker.md`                       | `agent-maker.md`                      |
 
