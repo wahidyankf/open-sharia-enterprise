@@ -1,5 +1,5 @@
 ---
-title: "Phase 0 Week 8: Agent System Improvement"
+title: "Phase 0 Week 8: Agent System and Content Improvement"
 date: 2026-01-11T20:09:53+07:00
 draft: false
 tags: ["milestone", "infrastructure", "phase-0", "progress", "agents", "quality"]
