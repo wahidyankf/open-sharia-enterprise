@@ -397,7 +397,6 @@ The following are explicitly **not** included in this plan:
 2. **Validation after each phase**: Cannot proceed if phase fails validation
 3. **Zero broken links**: repo-governance-checker must report zero broken links
 4. **Single commit**: All changes in one atomic commit (YOLO - no rollback plan)
-5. **Manual meta-agent updates**: wow-governance-\* agents updated manually, not via sed
 
 ---
 

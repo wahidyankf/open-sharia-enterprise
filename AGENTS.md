@@ -22,8 +22,7 @@ Instructions for AI agents working with this repository via OpenCode.
 3. **Project Planning** (5 agents): `plan-maker`, `plan-checker`, `plan-executor`, `plan-execution-checker`, `plan-fixer`
 4. **Hugo Content - ayokoding-web** (17 agents): Bilingual content creators, validators, deployers
 5. **Hugo Content - ose-platform-web** (4 agents): Landing page content creators, validators, deployers
-6. **Repository Governance** (6 agents): `wow-governance-checker`, `wow-governance-fixer`, `wow-governance-maker`, `wow-workflow-checker`, `wow-workflow-fixer`, `wow-workflow-maker`
-7. **Meta/Specialized** (2 agents): `agent-maker`, `swe-hugo-developer`, `social-linkedin-post-maker`
+6. **Meta/Specialized** (2 agents): `agent-maker`, `swe-hugo-developer`, `social-linkedin-post-maker`
 
 **Full agent catalog**: See [`.opencode/agent/README.md`](./.opencode/agent/README.md)
 

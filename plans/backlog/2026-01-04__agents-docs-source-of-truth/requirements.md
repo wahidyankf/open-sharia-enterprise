@@ -684,8 +684,7 @@ The following are explicitly **not** included in this plan:
 4. **AGENTS.md / CLAUDE.md content**: Delivery mechanism documents updated to reference new source locations, but core content unchanged
 5. **Agent capabilities**: No changes to what agents can do, only where definitions are stored
 6. **Tool CLI behavior**: No modifications to Claude Code or OpenCode CLI tools themselves
-7. **Other agents**: Only meta-agents (`agent-maker`, `wow-governance-*`) updated, not all 45 agents
-8. **Skill creation agent**: No new `skill-maker` agent created (can be future enhancement)
+7. **Skill creation agent**: No new `skill-maker` agent created (can be future enhancement)
 
 ---
 
