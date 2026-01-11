@@ -24,28 +24,28 @@ These conventions define **WHAT content quality standards apply** to documentati
 
 ## Conventions
 
-- [Content Quality Principles](./ex-ru-co-co__quality.md) - Universal markdown content quality standards (writing style, heading hierarchy, accessibility, formatting)
-- [Convention Writing](./ex-ru-co-co__convention-writing.md) - **Meta-convention** defining how to write and organize convention documents
-- [Factual Validation](./ex-ru-co-co__factual-validation.md) - Universal methodology for validating factual correctness using web verification
-- [OSS Documentation](./ex-ru-co-co__oss-documentation.md) - Standards for repository documentation files (README, CONTRIBUTING, ADRs, security)
-- [README Quality](./ex-ru-co-co__readme-quality.md) - Quality standards for README.md files (engagement, accessibility, scannability)
+- [Content Quality Principles](./quality.md) - Universal markdown content quality standards (writing style, heading hierarchy, accessibility, formatting)
+- [Convention Writing](./convention-writing.md) - **Meta-convention** defining how to write and organize convention documents
+- [Factual Validation](./factual-validation.md) - Universal methodology for validating factual correctness using web verification
+- [OSS Documentation](./oss-documentation.md) - Standards for repository documentation files (README, CONTRIBUTING, ADRs, security)
+- [README Quality](./readme-quality.md) - Quality standards for README.md files (engagement, accessibility, scannability)
 
 ## Related Documentation
 
 - [Conventions Index](../README.md) - All documentation conventions
 - [Content Principles](../../principles/content/README.md) - Foundational values these conventions implement
 - [Formatting Conventions](../formatting/README.md) - Markdown syntax and visual elements
-- [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
+- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected
 
 This set of conventions implements/respects the following core principles:
 
-- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Content quality standards include active voice, proper heading hierarchy, and WCAG AA compliance to ensure documentation is accessible to all users.
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: Content quality standards include active voice, proper heading hierarchy, and WCAG AA compliance to ensure documentation is accessible to all users.
 
-- **[Documentation First](../../principles/content/ex-ru-pr-co__documentation-first.md)**: Conventions establish mandatory documentation standards, treating documentation as an integral part of development rather than an optional afterthought.
+- **[Documentation First](../../principles/content/documentation-first.md)**: Conventions establish mandatory documentation standards, treating documentation as an integral part of development rather than an optional afterthought.
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Convention Writing Convention defines explicit structure for documentation, making rules and standards transparent rather than implicit or magical.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Convention Writing Convention defines explicit structure for documentation, making rules and standards transparent rather than implicit or magical.
 
 ---
 

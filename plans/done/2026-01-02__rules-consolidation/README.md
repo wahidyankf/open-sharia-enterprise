@@ -24,7 +24,7 @@ A comprehensive audit was conducted before plan creation. Key findings:
 | Missing Agents                    | ❌ 1 missing                    | `apps__ayokoding-web__link-fixer` needed for MCF pattern   |
 | New Skills Needed                 | ❌ 7 needed                     | 7 new Skills to cover all agent domains                    |
 | Factual Accuracy                  | ❌ 6 errors                     | 6 documents have incorrect delivery model                  |
-| Tutorial Docs Consolidation       | ⚠️ 2 files overlap              | `ex-ru-co-tu__programming-language-*` can be merged        |
+| Tutorial Docs Consolidation       | ⚠️ 2 files overlap              | `programming-language-*` can be merged                     |
 | CLAUDE.md Size                    | ✅ Under Limit                  | 28,473 characters (target: 30k)                            |
 
 ## Skills Naming Best Practices
@@ -108,11 +108,11 @@ Create `apps__ayokoding-web__link-fixer` to complete the Maker-Checker-Fixer pat
 
 Merge overlapping tutorial convention documents:
 
-- `ex-ru-co-tu__programming-language-content.md` + `ex-ru-co-tu__programming-language-structure.md` → single consolidated doc
+- `programming-language-content.md` + `programming-language-structure.md` → single consolidated doc
 
 ## Implementation Constraint: Bash Tools for .claude/
 
-**CRITICAL**: All file operations in `.claude/` folders MUST use Bash tools (heredoc, sed, awk), NOT Write/Edit tools. This enables autonomous agent operation without user approval prompts. See [AI Agents Convention](../../../rules/development/agents/ex-ru-de-ag__ai-agents.md#writing-to-claude-folders).
+**CRITICAL**: All file operations in `.claude/` folders MUST use Bash tools (heredoc, sed, awk), NOT Write/Edit tools. This enables autonomous agent operation without user approval prompts. See [AI Agents Convention](../../../rules/development/agents/ai-agents.md#writing-to-claude-folders).
 
 ## Correct Delivery Model
 
@@ -181,7 +181,7 @@ This plan uses **multi-file structure**:
 - [Repository Governance Architecture](../../../docs/explanation/ex-ru__repository-governance-architecture.md)
 - [Skills Directory](../../../.claude/skills/README.md)
 - [Agents Index](../../../.claude/agents/README.md)
-- [AI Agents Convention](../../../rules/development/agents/ex-ru-de-ag__ai-agents.md)
+- [AI Agents Convention](../../../rules/development/agents/ai-agents.md)
 
 ## Git Workflow
 
@@ -196,7 +196,7 @@ This plan uses **multi-file structure**:
 | `ex-ru__repository-governance-architecture.md` | ASCII shows `CLAUDE.md ──delivers to──> Agents` |
 | `CLAUDE.md`                                    | "delivery to agents through auto-loading"       |
 | `.claude/skills/README.md`                     | ASCII shows all mechanisms → Agents             |
-| `ex-ru-de-ag__ai-agents.md`                    | "Inheritance Pattern" shows CLAUDE.md inherited |
+| `ai-agents.md`                                 | "Inheritance Pattern" shows CLAUDE.md inherited |
 
 ## Next Steps
 

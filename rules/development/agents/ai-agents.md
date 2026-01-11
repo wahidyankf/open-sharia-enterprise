@@ -59,11 +59,11 @@ This convention applies to:
 
 This practice respects the following core principles:
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Agent tool permissions are explicitly whitelisted in frontmatter (not implicitly granted). Each agent declares exactly which tools it can access. Agent responsibilities are explicitly documented, not inferred. Frontmatter fields (name, description, tools, model, color) make agent capabilities transparent and discoverable through simple grep operations.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Agent tool permissions are explicitly whitelisted in frontmatter (not implicitly granted). Each agent declares exactly which tools it can access. Agent responsibilities are explicitly documented, not inferred. Frontmatter fields (name, description, tools, model, color) make agent capabilities transparent and discoverable through simple grep operations.
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Agents follow single-responsibility principle - one clear, focused purpose per agent. Flat directory structure (no subdirectories). Simple naming convention (kebab-case). Standard document structure across all agents. Rather than creating "Swiss Army knife" agents with dozens of capabilities, we create focused agents that do one thing well.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Agents follow single-responsibility principle - one clear, focused purpose per agent. Flat directory structure (no subdirectories). Simple naming convention (kebab-case). Standard document structure across all agents. Rather than creating "Swiss Army knife" agents with dozens of capabilities, we create focused agents that do one thing well.
 
-- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: AI agents themselves embody this principle - they automate repetitive tasks (documentation writing, validation, consistency checking, deployment) that would otherwise require manual effort. The `agent__maker` automates agent creation. `wow__rules-checker` automates validation. Agents transform manual processes into repeatable, consistent automated workflows.
+- \*\*[Automation Over Manual](../../principles/software-engineering/rules-checker` automates validation. Agents transform manual processes into repeatable, consistent automated workflows.
 
 ## Token Budget Philosophy
 
@@ -102,15 +102,15 @@ When working with agents:
 
 This practice implements/respects the following conventions:
 
-- **[File Naming Convention](../conventions/meta/ex-ru-co-me__file-naming.md)**: Agents follow kebab-case naming pattern (`agent-name.md`). Agent names must match frontmatter `name` field.
+- **[File Naming Convention](../conventions/meta/file-naming.md)**: Agents follow kebab-case naming pattern (`agent-name.md`). Agent names must match frontmatter `name` field.
 
-- **[Linking Convention](../conventions/formatting/ex-ru-co-fo__linking.md)**: All references to conventions and other documents use relative paths with `.md` extension. Ensures GitHub-compatible markdown across all agent files.
+- **[Linking Convention](../conventions/formatting/linking.md)**: All references to conventions and other documents use relative paths with `.md` extension. Ensures GitHub-compatible markdown across all agent files.
 
-- **[Emoji Usage Convention](../conventions/formatting/ex-ru-co-fo__emoji.md)**: Agent prompt files MUST NOT contain emojis (forbidden location per convention). Only `.claude/agents/README.md` uses colored square emojis for categorization.
+- **[Emoji Usage Convention](../conventions/formatting/emoji.md)**: Agent prompt files MUST NOT contain emojis (forbidden location per convention). Only `.claude/agents/README.md` uses colored square emojis for categorization.
 
-- **[Color Accessibility Convention](../conventions/formatting/ex-ru-co-fo__color-accessibility.md)**: Agent color categorization (blue/green/yellow/purple) uses verified accessible palette for visual identification while maintaining text-based accessibility.
+- **[Color Accessibility Convention](../conventions/formatting/color-accessibility.md)**: Agent color categorization (blue/green/yellow/purple) uses verified accessible palette for visual identification while maintaining text-based accessibility.
 
-- **[Timestamp Format Convention](../conventions/formatting/ex-ru-co-fo__timestamp.md)**: Report-generating agents use UTC+7 timestamps in 4-part filename pattern `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`.
+- \*\*[Timestamp Format Convention](../conventions/formatting/audit.md`.
 
 ## Agent File Structure
 
@@ -194,7 +194,7 @@ In addition to the six required fields, agents may include optional metadata fie
 
 - Use both `created` and `updated` fields together for complete tracking
 - Update the `updated` field whenever making substantial changes to the agent
-- Use consistent date format (YYYY-MM-DD) matching the project's [Timestamp Format Convention](../conventions/formatting/ex-ru-co-fo__timestamp.md) (date-only format)
+- Use consistent date format (YYYY-MM-DD) matching the project's [Timestamp Format Convention](../conventions/formatting/timestamp.md) (date-only format)
 - Place these fields after the six required fields in frontmatter
 - These fields align with documentation frontmatter best practices from Hugo, Jekyll, and Front Matter CMS
 
@@ -341,8 +341,8 @@ skills:
 
 **Conventions:**
 
-- `rules/conventions/content/ex-ru-co-co__quality.md` - Content Quality Principles
-- `rules/conventions/formatting/ex-ru-co-fo__linking.md` - Linking Convention
+- `rules/conventions/content/quality.md` - Content Quality Principles
+- `rules/conventions/formatting/linking.md` - Linking Convention
 ```
 
 This pattern provides both auto-loaded knowledge (Skills) and explicit references for specific requirements.
@@ -553,7 +553,7 @@ ALL checker agents MUST write their validation/audit reports to `generated-repor
 3. **Update continuously** - Progress indicator and running totals updated throughout execution
 4. **Finalize on completion** - Update status to "Complete" with final summary statistics
 
-See [Temporary Files Convention - Progressive Writing Requirement](../infra/ex-ru-de-in__temporary-files.md#progressive-writing-requirement-for-checker-agents) for complete details, patterns, and examples.
+See [Temporary Files Convention - Progressive Writing Requirement](../infra/temporary-files.md#progressive-writing-requirement-for-checker-agents) for complete details, patterns, and examples.
 
 **Example frontmatter**:
 
@@ -569,7 +569,7 @@ color: green
 
 **Verification**: When creating or updating report-generating agents, verify both Write and Bash are present in the tools list.
 
-See [Temporary Files Convention](../infra/ex-ru-de-in__temporary-files.md) for complete details on report naming patterns, mandatory checker requirements, and timestamp generation.
+See [Temporary Files Convention](../infra/temporary-files.md) for complete details on report naming patterns, mandatory checker requirements, and timestamp generation.
 
 ### Writing to .claude Folders
 
@@ -686,7 +686,7 @@ Agents are categorized by their **primary role** which aligns with naming suffix
 - **\*Yellow with Write**: wow\_\_rules-maker needs Write tool to create new convention files (not just edit existing). Documented exception.
 - **\*Purple Bash-only**: Deployers (ayokoding-web-deployer, ose-platform-web-deployer) only need Bash for git/deployment orchestration. Purple without Write/Edit is valid for Bash-only orchestrators.
 
-**Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../conventions/formatting/ex-ru-co-fo__color-accessibility.md) - the master reference for all color usage in this repository. These colors meet WCAG AA standards for both light and dark modes and work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color. All color-related work must reference the Color Accessibility Convention as the authoritative source.
+**Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../conventions/formatting/color-accessibility.md) - the master reference for all color usage in this repository. These colors meet WCAG AA standards for both light and dark modes and work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color. All color-related work must reference the Color Accessibility Convention as the authoritative source.
 
 ### Why This Categorization System
 
@@ -787,7 +787,7 @@ Start: What is the agent's primary capability?
 - **Agent doesn't fit any category**: Consider if it should be split or if a new category is needed
 - **Unsure**: Default to the most restrictive category based on tools, or omit the color field
 
-**Accessibility Note**: All assigned colors (blue, green, yellow, purple) are verified color-blind friendly and meet WCAG accessibility standards per the [Color Accessibility Convention](../conventions/formatting/ex-ru-co-fo__color-accessibility.md). Agents should still be identified primarily by name and role suffix, not color alone, to ensure accessibility for all users. See the Color Accessibility Convention for complete details on palette verification, testing methodology, and WCAG compliance.
+**Accessibility Note**: All assigned colors (blue, green, yellow, purple) are verified color-blind friendly and meet WCAG accessibility standards per the [Color Accessibility Convention](../conventions/formatting/color-accessibility.md). Agents should still be identified primarily by name and role suffix, not color alone, to ensure accessibility for all users. See the Color Accessibility Convention for complete details on palette verification, testing methodology, and WCAG compliance.
 
 ### Color Accessibility for Agent Identification
 
@@ -831,7 +831,7 @@ All agent colors are from the verified accessible palette:
 - Text label "Updater"
 - Role suffix "-updater"
 
-**Source**: Verified through ColorBrewer2, Paul Tol's schemes, and WCAG testing. See [Color Accessibility Convention](../conventions/formatting/ex-ru-co-fo__color-accessibility.md) - the master reference for all color usage - for complete palette details, scientific verification sources, testing methodology, and WCAG compliance standards.
+**Source**: Verified through ColorBrewer2, Paul Tol's schemes, and WCAG testing. See [Color Accessibility Convention](../conventions/formatting/color-accessibility.md) - the master reference for all color usage - for complete palette details, scientific verification sources, testing methodology, and WCAG compliance standards.
 
 #### Why These Colors Were Chosen
 
@@ -882,7 +882,7 @@ Expert documentation writer specializing in Obsidian-optimized markdown and Diá
 
 **Consistency with Emoji Convention:**
 
-Colored square emojis follow the [Emoji Usage Convention](../conventions/formatting/ex-ru-co-fo__emoji.md):
+Colored square emojis follow the [Emoji Usage Convention](../conventions/formatting/emoji.md):
 
 - Use at the start of headings for visual categorization
 - Maintain semantic consistency (same color = same role across all docs)
@@ -1082,7 +1082,7 @@ Claude: [Executes agent logic directly]
 - Generate fix reports
 - Allow git commit of changes
 
-**See**: [Workflow Execution Modes Convention](../../workflows/meta/ex-ru-wf-me__execution-modes.md) for complete workflow execution patterns.
+**See**: [Workflow Execution Modes Convention](../../workflows/meta/execution-modes.md) for complete workflow execution patterns.
 
 ### Current Limitation: Task Tool Isolation
 
@@ -1151,16 +1151,16 @@ Use GitHub-compatible markdown with relative paths:
 ```markdown
 ✅ Good:
 
-- `rules/development/agents/ex-ru-de-ag__ai-agents.md` - AI agents convention
+- `rules/development/agents/ai-agents.md` - AI agents convention
 
 ❌ Bad:
 
 - [[ex-de__ai-agents]] - Obsidian wiki link (not GitHub compatible)
-- `/rules/development/agents/ex-ru-de-ag__ai-agents.md` - Absolute path
-- `rules/development/agents/ex-ru-de-ag__ai-agents` - Missing .md extension
+- `/rules/development/agents/ai-agents.md` - Absolute path
+- `rules/development/agents/ai-agents` - Missing .md extension
 ```
 
-See [Linking Convention](../conventions/formatting/ex-ru-co-fo__linking.md) for details.
+See [Linking Convention](../conventions/formatting/linking.md) for details.
 
 ## Agent File Size Standards
 
@@ -1453,7 +1453,7 @@ Based on the pilot validation, use these proven patterns when simplifying agents
 ```markdown
 ## Report Generation
 
-**MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../../rules/development/infra/ex-ru-de-in__temporary-files.md).
+**MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../../rules/development/infra/temporary-files.md).
 
 **Report pattern**: `generated-reports/{agent}__{uuid-chain}__{timestamp}__{type}.md`
 
@@ -1874,7 +1874,7 @@ Your primary job is to [clear, specific purpose statement].
 
 **Agent Conventions:**
 
-- `rules/development/agents/ex-ru-de-ag__ai-agents.md` - AI agents convention (all agents must follow)
+- `rules/development/agents/ai-agents.md` - AI agents convention (all agents must follow)
 
 **[Domain-Specific Conventions]:**
 
@@ -1991,7 +1991,7 @@ The `.claude/agents/README.md` file:
 - Lists all available agents with descriptions
 - Explains agent workflow and best practices
 - Provides guidance on when to use each agent
-- Follows the naming exception for README.md files (documented in [File Naming Convention](../conventions/meta/ex-ru-co-me__file-naming.md))
+- Follows the naming exception for README.md files (documented in [File Naming Convention](../conventions/meta/file-naming.md))
 
 ### Agent Versioning
 
@@ -2355,10 +2355,10 @@ See [Skills README](.claude/skills/README.md) for complete catalog.
 
 - [Development Index](./README.md) - Overview of development conventions
 - [Conventions Index](../conventions/README.md) - Documentation conventions
-- [Color Accessibility Convention](../conventions/formatting/ex-ru-co-fo__color-accessibility.md) - Master reference for all color usage (agent categorization, diagrams, accessibility standards)
-- [File Naming Convention](../conventions/meta/ex-ru-co-me__file-naming.md) - How to name files
-- [Linking Convention](../conventions/formatting/ex-ru-co-fo__linking.md) - How to link between files
-- [Diátaxis Framework](../conventions/meta/ex-ru-co-me__diataxis-framework.md) - Documentation organization
+- [Color Accessibility Convention](../conventions/formatting/color-accessibility.md) - Master reference for all color usage (agent categorization, diagrams, accessibility standards)
+- [File Naming Convention](../conventions/meta/file-naming.md) - How to name files
+- [Linking Convention](../conventions/formatting/linking.md) - How to link between files
+- [Diátaxis Framework](../conventions/meta/diataxis-framework.md) - Documentation organization
 
 ---
 

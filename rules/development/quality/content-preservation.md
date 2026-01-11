@@ -21,9 +21,9 @@ This convention defines the principles and processes for preserving knowledge wh
 
 This practice respects the following core principles:
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Content offload process explicitly moves content to convention documents with clear links. No hidden assumptions about where knowledge lives - every condensation creates documented references to comprehensive sources.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Content offload process explicitly moves content to convention documents with clear links. No hidden assumptions about where knowledge lives - every condensation creates documented references to comprehensive sources.
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Single source of truth for each topic in convention docs. Brief summaries in CLAUDE.md link to comprehensive references. Eliminates duplication and maintains simple, flat information architecture.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Single source of truth for each topic in convention docs. Brief summaries in CLAUDE.md link to comprehensive references. Eliminates duplication and maintains simple, flat information architecture.
 
 ## Conventions Implemented/Respected
 
@@ -31,11 +31,11 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Convention Writing Convention](../conventions/content/ex-ru-co-co__convention-writing.md)**: Content offload targets (convention and development docs) follow the structure and quality standards defined in this convention.
+- **[Convention Writing Convention](../conventions/content/convention-writing.md)**: Content offload targets (convention and development docs) follow the structure and quality standards defined in this convention.
 
-- **[Linking Convention](../conventions/formatting/ex-ru-co-fo__linking.md)**: All offload summaries include relative links with .md extension to comprehensive convention documents, ensuring GitHub-compatible navigation.
+- **[Linking Convention](../conventions/formatting/linking.md)**: All offload summaries include relative links with .md extension to comprehensive convention documents, ensuring GitHub-compatible navigation.
 
-- **[File Naming Convention](../conventions/meta/ex-ru-co-me__file-naming.md)**: New convention and development documents created during offload follow the ex-co** and ex-de** prefix patterns.
+- **[File Naming Convention](../conventions/meta/file-naming.md)**: New convention and development documents created during offload follow the ex-co** and ex-de** prefix patterns.
 
 ## 🎯 Purpose
 
@@ -87,7 +87,7 @@ After (CLAUDE.md - 3 lines):
 
 ## File Naming Convention
 
-Files follow the pattern `[prefix]__[content-identifier].md` where prefix encodes the directory path. See [File Naming Convention](../../conventions/meta/ex-ru-co-me__file-naming.md) for complete details.
+Files follow the pattern `[prefix]__[content-identifier].md` where prefix encodes the directory path. See [File Naming Convention](../../conventions/meta/file-naming.md) for complete details.
 
 Result: Content preserved in ex-co\_\_file-naming-convention.md (comprehensive)
 ```
@@ -192,7 +192,7 @@ Is this content unique and valuable?
 
 - **Before:** Gherkin acceptance criteria details in `plan__maker.md` (500 lines)
 - **After:**
-  - New file: `rules/development/infra/ex-ru-de-in__acceptance-criteria.md` (comprehensive)
+  - New file: `rules/development/infra/acceptance-criteria.md` (comprehensive)
   - `plan__maker.md`: "Use Gherkin format. See [Acceptance Criteria Convention](link)" (3 lines)
   - Savings: 497 lines
 
@@ -213,7 +213,7 @@ Is this content unique and valuable?
 
 - **Before:** TBD workflow details duplicated in `plan__maker.md` and `plan__executor.md`
 - **After:**
-  - Updated: `rules/development/workflow/ex-ru-de-wo__trunk-based-development.md` (comprehensive)
+  - Updated: `rules/development/workflow/trunk-based-development.md` (comprehensive)
   - `plan__maker.md`: "Follow TBD workflow. See [TBD Convention](link)" (2 lines)
   - `plan__executor.md`: "Default to main branch per TBD. See [TBD Convention](link)" (2 lines)
   - Savings: Duplication eliminated
@@ -236,7 +236,7 @@ Is this content unique and valuable?
 
 - **Before:** Diagram standards duplicated in `docs__maker.md`, `plan__maker.md`
 - **After:**
-  - New file: `rules/conventions/formatting/ex-ru-co-fo__diagrams.md` (comprehensive)
+  - New file: `rules/conventions/formatting/diagrams.md` (comprehensive)
   - All agents: "Use Mermaid diagrams. See [Diagram Convention](link)" (2 lines each)
   - Savings: Eliminated duplication
 - **Why Conventions Folder:** Diagrams are a content format standard, not development process
@@ -245,7 +245,7 @@ Is this content unique and valuable?
 
 - **Before:** Testing strategy duplicated across multiple agents
 - **After:**
-  - New file: `rules/development/quality/ex-ru-de-qu__testing-strategy.md` (comprehensive)
+  - New file: `rules/development/quality/testing-strategy.md` (comprehensive)
   - All agents: "See [Testing Strategy](link) for comprehensive testing guidelines" (2 lines each)
   - Savings: Eliminated duplication
 - **Why Development Folder:** Testing is a development process, not content format
@@ -286,7 +286,7 @@ Is this content unique and valuable?
 
 - **Before:** Commit granularity examples in `plan__executor.md`
 - **After:**
-  - Updated: `rules/development/workflow/ex-ru-de-wo__commit-messages.md` (comprehensive)
+  - Updated: `rules/development/workflow/commit-messages.md` (comprehensive)
   - `plan__executor.md`: "Split commits logically. See [Commit Messages Convention](link)" (2 lines)
   - Savings: 100+ lines
 
@@ -368,7 +368,7 @@ Before completing a content offload, verify:
 - [ ] Convention doc is comprehensive
 - [ ] Frontmatter complete and accurate
 - [ ] Updated date reflects changes
-- [ ] Structure follows convention patterns (see [Convention Writing Convention](../conventions/content/ex-ru-co-co__convention-writing.md))
+- [ ] Structure follows convention patterns (see [Convention Writing Convention](../conventions/content/convention-writing.md))
 - [ ] Examples include ✅ good and ❌ bad
 
 ### Original File Updates
@@ -546,10 +546,10 @@ Problem: Convention polluted with implementation details
 
 ## References
 
-- [Convention Writing Convention](../conventions/content/ex-ru-co-co__convention-writing.md) - How to write convention documents (target for offloaded content)
-- [AI Agents Convention](../agents/ex-ru-de-ag__ai-agents.md) - Agent standards (agents apply content preservation principles)
-- [Trunk Based Development Convention](../workflow/ex-ru-de-wo__trunk-based-development.md) - Git workflow example of development convention
-- [File Naming Convention](../conventions/meta/ex-ru-co-me__file-naming.md) - Example of content convention
+- [Convention Writing Convention](../conventions/content/convention-writing.md) - How to write convention documents (target for offloaded content)
+- [AI Agents Convention](../agents/ai-agents.md) - Agent standards (agents apply content preservation principles)
+- [Trunk Based Development Convention](../workflow/trunk-based-development.md) - Git workflow example of development convention
+- [File Naming Convention](../conventions/meta/file-naming.md) - Example of content convention
 
 ## Agent Usage
 
@@ -585,5 +585,5 @@ When creating new convention or development documents during offload, `docs__mak
 ## Related Conventions
 
 - [CLAUDE.md Maintenance](../../CLAUDE.md#claudemd-maintenance) - Size limits and condensation triggers
-- [AI Agents Convention](../agents/ex-ru-de-ag__ai-agents.md) - Agent file size tiers and condensation
-- [Convention Writing Convention](../conventions/content/ex-ru-co-co__convention-writing.md) - How to structure convention documents
+- [AI Agents Convention](../agents/ai-agents.md) - Agent file size tiers and condensation
+- [Convention Writing Convention](../conventions/content/convention-writing.md) - How to structure convention documents

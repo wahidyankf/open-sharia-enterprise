@@ -217,8 +217,8 @@ All agents leverage Skills from `.claude/skills/` for:
 ## Reference Documentation
 
 - **Project Instructions**: [AGENTS.md](../../AGENTS.md) (condensed) or [CLAUDE.md](../../CLAUDE.md) (comprehensive)
-- **AI Agents Convention**: [rules/development/agents/ex-ru-de-ag\_\_ai-agents.md](../../rules/development/agents/ex-ru-de-ag__ai-agents.md)
-- **Maker-Checker-Fixer Pattern**: [rules/development/pattern/ex-ru-de-pa\_\_maker-checker-fixer.md](../../rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md)
+- **AI Agents Convention**: [rules/development/agents/ex-ru-de-ag\_\_ai-agents.md](../../rules/development/agents/ai-agents.md)
+- **Maker-Checker-Fixer Pattern**: [rules/development/pattern/ex-ru-de-pa\_\_maker-checker-fixer.md](../../rules/development/pattern/maker-checker-fixer.md)
 - **Skills Catalog**: [.claude/skills/README.md](../../.claude/skills/README.md)
 - **Workflows**: [rules/workflows/README.md](../../rules/workflows/README.md)
 

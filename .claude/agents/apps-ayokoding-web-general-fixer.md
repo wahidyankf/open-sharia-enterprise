@@ -50,7 +50,7 @@ Skills: `apps-ayokoding-web-developing-content`, `wow-assessing-criticality-conf
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
 
 **Related Agents**:
 
@@ -59,8 +59,8 @@ Skills: `apps-ayokoding-web-developing-content`, `wow-assessing-criticality-conf
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
-- [Fixer Confidence Levels](../../rules/development/quality/ex-ru-de-qu__fixer-confidence-levels.md)
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
+- [Fixer Confidence Levels](../../rules/development/quality/fixer-confidence-levels.md)
 
 **Skills**:
 

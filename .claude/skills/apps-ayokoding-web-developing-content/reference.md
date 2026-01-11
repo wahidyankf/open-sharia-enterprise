@@ -366,7 +366,7 @@ date: 2025-12-22                  # Date only
 
 ### Standard Tutorial Sequence
 
-Using [Tutorial Naming Convention](../../../rules/conventions/tutorial/ex-ru-co-tu__naming.md):
+Using [Tutorial Naming Convention](../../../rules/conventions/tutorial/naming.md):
 
 ```
 nodejs/

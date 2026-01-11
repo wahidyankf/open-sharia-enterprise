@@ -104,7 +104,7 @@ Accessibility improvements help **everyone**, not just users with disabilities:
 #FFFF00  /* Yellow - invisible to tritanopia */
 ```
 
-**See**: [Color Accessibility Convention](../../conventions/formatting/ex-ru-co-fo__color-accessibility.md) - The master reference for all color usage
+**See**: [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - The master reference for all color usage
 
 ### Image Alt Text
 
@@ -416,15 +416,15 @@ tags:
 
 ## 🔗 Related Principles
 
-- [Explicit Over Implicit](../software-engineering/ex-ru-pr-se__explicit-over-implicit.md) - Explicit alt text and descriptions
-- [Simplicity Over Complexity](../general/ex-ru-pr-ge__simplicity-over-complexity.md) - Simple accessible design
-- [Progressive Disclosure](./ex-ru-pr-co__progressive-disclosure.md) - Accessible to all skill levels
+- [Explicit Over Implicit](../software-engineering/explicit-over-implicit.md) - Explicit alt text and descriptions
+- [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Simple accessible design
+- [Progressive Disclosure](./progressive-disclosure.md) - Accessible to all skill levels
 
 ## 📚 Related Conventions
 
-- [Color Accessibility Convention](../../conventions/formatting/ex-ru-co-fo__color-accessibility.md) - **Master reference for all color usage** (palette, WCAG, testing)
-- [Content Quality Principles](../../conventions/content/ex-ru-co-co__quality.md) - Accessibility standards in content
-- [Diagrams Convention](../../conventions/formatting/ex-ru-co-fo__diagrams.md) - Accessible diagram standards
+- [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - **Master reference for all color usage** (palette, WCAG, testing)
+- [Content Quality Principles](../../conventions/content/quality.md) - Accessibility standards in content
+- [Diagrams Convention](../../conventions/formatting/diagrams.md) - Accessible diagram standards
 
 ## 📖 References
 

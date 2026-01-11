@@ -33,7 +33,7 @@ This convention establishes a universal **four-level criticality system** (CRITI
 - **Criticality** (CRITICAL/HIGH/MEDIUM/LOW) → **Importance/Urgency** - "How critical is this issue?"
 - **Confidence** (HIGH/MEDIUM/FALSE_POSITIVE) → **Certainty/Fixability** - "How certain are we it needs fixing?"
 
-See [Fixer Confidence Levels Convention](../quality/ex-ru-de-qu__fixer-confidence-levels.md) for complete confidence system details.
+See [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) for complete confidence system details.
 
 **Example showing both dimensions**:
 
@@ -587,7 +587,7 @@ https://docs.npmjs.com/cli/v9/commands/npm-install
 ```markdown
 ### 1. [BROKEN] - Reference Link Returns 404
 
-**File**: `rules/conventions/formatting/ex-ru-co-fo__linking.md:89`
+**File**: `rules/conventions/formatting/linking.md:89`
 **Status**: [BROKEN] - HTTP 404 Not Found
 **Criticality**: CRITICAL - Breaks documentation reference chain
 **Category**: Broken External Link
@@ -1092,7 +1092,7 @@ def determine_priority(criticality, confidence):
 
 ### 1. Missing Required Subcategory Field
 
-**File**: `rules/development/agents/ex-ru-de-ag__ai-agents.md`
+**File**: `rules/development/agents/ai-agents.md`
 **Original Issue**: CRITICAL - Missing `subcategory: development` field
 **Validation**: Confirmed field missing in frontmatter (HIGH confidence)
 **Fix Applied**: Added `subcategory: development` at line 5
@@ -1131,14 +1131,14 @@ subcategory: development
 
 ### 1. Ambiguous Link Target
 
-**File**: `rules/conventions/formatting/ex-ru-co-fo__linking.md:89`
+**File**: `rules/conventions/formatting/linking.md:89`
 **Original Issue**: CRITICAL - Broken link to convention doc
 **Validation**: MEDIUM confidence - Multiple possible target files found
 **Reason for Flag**: Cannot determine correct link target automatically
 **Action Required**: Manually select correct target from:
 
-- `rules/conventions/meta/ex-ru-co-me__file-naming.md`
-- `rules/development/infra/ex-ru-de-in__file-organization.md`
+- `rules/conventions/meta/file-naming.md`
+- `rules/development/infra/file-organization.md`
 
 ---
 
@@ -1152,7 +1152,7 @@ subcategory: development
 
 **Total**: 15 findings
 
-1. **File**: `rules/conventions/formatting/ex-ru-co-fo__diagrams.md`
+1. **File**: `rules/conventions/formatting/diagrams.md`
    **Suggestion**: Consider adding example of complex multi-layer diagram
    **Priority**: P4 (LOW + MEDIUM)
 
@@ -1273,7 +1273,7 @@ Ensures findings are accessible to all users regardless of visual ability or con
 
 This convention builds upon and references:
 
-### [Fixer Confidence Levels Convention](../quality/ex-ru-de-qu__fixer-confidence-levels.md)
+### [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md)
 
 **Relationship**: Criticality works orthogonally with confidence levels.
 
@@ -1281,7 +1281,7 @@ This convention builds upon and references:
 - Confidence (HIGH/MEDIUM/FALSE_POSITIVE) measures certainty/fixability
 - Combined in decision matrix to determine priority (P0-P4)
 
-### [Maker-Checker-Fixer Pattern Convention](../pattern/ex-ru-de-pa__maker-checker-fixer.md)
+### [Maker-Checker-Fixer Pattern Convention](../pattern/maker-checker-fixer.md)
 
 **Relationship**: Criticality enhances Stage 2 (Checker) and Stage 3 (Fixer).
 
@@ -1289,7 +1289,7 @@ This convention builds upon and references:
 - Stage 3: Fixers use criticality + confidence to determine priority
 - Priority-based execution aligns with pattern's quality gates
 
-### [Repository Validation Methodology Convention](../quality/ex-ru-de-qu__repository-validation.md)
+### [Repository Validation Methodology Convention](../quality/repository-validation.md)
 
 **Relationship**: Validation checks produce findings that need criticality assessment.
 
@@ -1297,7 +1297,7 @@ This convention builds upon and references:
 - Criticality system categorizes detected issues
 - Standardized report format presents categorized findings
 
-### [Temporary Files Convention](../infra/ex-ru-de-in__temporary-files.md)
+### [Temporary Files Convention](../infra/temporary-files.md)
 
 **Relationship**: Checker reports using criticality system are temporary files.
 
@@ -1305,7 +1305,7 @@ This convention builds upon and references:
 - Filename pattern: `{agent-family}__{uuid-chain}__{timestamp}__audit.md`
 - Progressive writing requirement ensures reports survive context compaction
 
-### [Content Quality Principles Convention](../conventions/content/ex-ru-co-co__quality.md)
+### [Content Quality Principles Convention](../conventions/content/quality.md)
 
 **Relationship**: Content quality violations are categorized by criticality.
 
@@ -1314,7 +1314,7 @@ This convention builds upon and references:
 - Heading hierarchy errors: HIGH
 - Style inconsistencies: MEDIUM
 
-### [Color Accessibility Convention](../conventions/formatting/ex-ru-co-fo__color-accessibility.md)
+### [Color Accessibility Convention](../conventions/formatting/color-accessibility.md)
 
 **Relationship**: Criticality emoji indicators use standard emoji colors WITH text labels.
 
@@ -1327,9 +1327,9 @@ This convention builds upon and references:
 
 **Key Distinction**: Emoji indicators NEVER rely on color alone - text labels provide primary identification. This differs from Mermaid diagrams, which must use the verified accessible palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161) to ensure color-blind users can distinguish elements visually.
 
-See [Color Accessibility Convention](../conventions/formatting/ex-ru-co-fo__color-accessibility.md) for complete details on when standard emoji colors are acceptable (always with text) versus when accessible palette is required (Mermaid diagrams).
+See [Color Accessibility Convention](../conventions/formatting/color-accessibility.md) for complete details on when standard emoji colors are acceptable (always with text) versus when accessible palette is required (Mermaid diagrams).
 
-### [AI Agents Convention](../agents/ex-ru-de-ag__ai-agents.md)
+### [AI Agents Convention](../agents/ai-agents.md)
 
 **Relationship**: All checker and fixer agents must follow this convention.
 
@@ -1346,8 +1346,8 @@ Existing agents using different terminology should migrate to this convention.
 ### Phase 1: Documentation (Week 1)
 
 1. Create this convention document ✅
-2. Update [Fixer Confidence Levels Convention](../quality/ex-ru-de-qu__fixer-confidence-levels.md) with criticality integration
-3. Update [Maker-Checker-Fixer Pattern Convention](../pattern/ex-ru-de-pa__maker-checker-fixer.md) with criticality flow
+2. Update [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) with criticality integration
+3. Update [Maker-Checker-Fixer Pattern Convention](../pattern/maker-checker-fixer.md) with criticality flow
 4. Update CLAUDE.md with brief summary and link
 
 ### Phase 2: Pilot Agent (Week 2)

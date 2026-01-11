@@ -20,9 +20,9 @@ This convention establishes standard markdown indentation for all files in the r
 
 This convention implements the following core principles:
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Uses standard markdown space indentation (2 spaces per level) instead of complex tab/space mixing schemes. One simple rule for all markdown files - no exceptions, no edge cases.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Uses standard markdown space indentation (2 spaces per level) instead of complex tab/space mixing schemes. One simple rule for all markdown files - no exceptions, no edge cases.
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Spaces are visible and consistent across all editors. No hidden tab characters that render differently depending on editor configuration. What you see is what you get.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Spaces are visible and consistent across all editors. No hidden tab characters that render differently depending on editor configuration. What you see is what you get.
 
 ## Purpose
 
@@ -246,14 +246,14 @@ Before committing files in `docs/`:
 
 **Universal Application**:
 
-- [Content Quality Principles](../content/ex-ru-co-co__quality.md) - Quality standards for all markdown
+- [Content Quality Principles](../content/quality.md) - Quality standards for all markdown
 
 **Context-Specific**:
 
-- [Hugo Content Convention - Shared](../hugo/ex-ru-co-hu__shared.md) - Adapted for Hugo (frontmatter spaces, content standard markdown)
-- [Hugo Content Convention - ayokoding](../hugo/ex-ru-co-hu__ayokoding.md) - ayokoding-web indentation specifics
-- [Hugo Content Convention - OSE Platform](../hugo/ex-ru-co-hu__ose-platform.md) - ose-platform-web indentation specifics
-- [File Naming Convention](../meta/ex-ru-co-me__file-naming.md) - File naming standards
+- [Hugo Content Convention - Shared](../hugo/shared.md) - Adapted for Hugo (frontmatter spaces, content standard markdown)
+- [Hugo Content Convention - ayokoding](../hugo/ayokoding.md) - ayokoding-web indentation specifics
+- [Hugo Content Convention - OSE Platform](../hugo/ose-platform.md) - ose-platform-web indentation specifics
+- [File Naming Convention](../meta/file-naming.md) - File naming standards
 
 ## 🌐 External Resources
 

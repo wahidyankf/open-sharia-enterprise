@@ -73,7 +73,7 @@ Create new AI agent files following AI Agents Convention.
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [AI Agents Convention](../../rules/development/agents/ex-ru-de-ag__ai-agents.md)
+- [AI Agents Convention](../../rules/development/agents/ai-agents.md)
 
 **Related Agents**:
 
@@ -82,8 +82,8 @@ Create new AI agent files following AI Agents Convention.
 
 **Related Conventions**:
 
-- [AI Agents Convention](../../rules/development/agents/ex-ru-de-ag__ai-agents.md)
-- [Maker-Checker-Fixer Pattern](../../rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md)
+- [AI Agents Convention](../../rules/development/agents/ai-agents.md)
+- [Maker-Checker-Fixer Pattern](../../rules/development/pattern/maker-checker-fixer.md)
 
 **Skills**:
 

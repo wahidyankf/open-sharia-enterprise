@@ -43,9 +43,9 @@ The `wow-generating-validation-reports` Skill provides UUID generation, timestam
 
 **CRITICAL - Read these first**:
 
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md) - Hextra theme standards
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md) - Hextra theme standards
 - [By Example Content Standard](../../rules/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../rules/conventions/tutorial/ex-ru-co-tu__naming.md) - By Example definition
+- [Tutorial Naming Convention](../../rules/conventions/tutorial/naming.md) - By Example definition
 
 ## Validation Scope
 
@@ -139,7 +139,7 @@ Update status, add summary, prioritize findings.
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md) - Complete standards
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md) - Complete standards
 - [By Example Content Standard](../../rules/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
 
 **Related Agents:**

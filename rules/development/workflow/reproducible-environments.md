@@ -22,21 +22,21 @@ Practices for creating consistent, reproducible development and build environmen
 
 This practice respects the following core principles:
 
-- **[Reproducibility First](../../principles/software-engineering/ex-ru-pr-se__reproducibility.md)**: All environment configuration is explicit, version-controlled, and reproducible. Eliminates "works on my machine" problems through deterministic setup.
+- **[Reproducibility First](../../principles/software-engineering/reproducibility.md)**: All environment configuration is explicit, version-controlled, and reproducible. Eliminates "works on my machine" problems through deterministic setup.
 
-- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Environment setup automated through version managers (Volta), lockfiles, scripts, and containers. Manual setup steps eliminated or documented.
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Environment setup automated through version managers (Volta), lockfiles, scripts, and containers. Manual setup steps eliminated or documented.
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Runtime versions pinned explicitly (package.json volta field). Dependencies locked with exact versions (package-lock.json). No implicit system dependencies.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Runtime versions pinned explicitly (package.json volta field). Dependencies locked with exact versions (package-lock.json). No implicit system dependencies.
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Use simple, proven tools (Volta, npm lockfiles, Docker) instead of complex custom solutions. Minimum configuration for maximum reproducibility.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Use simple, proven tools (Volta, npm lockfiles, Docker) instead of complex custom solutions. Minimum configuration for maximum reproducibility.
 
 ## Conventions Implemented/Respected
 
 This practice implements/respects the following conventions:
 
-- **[Code Quality Convention](../quality/ex-ru-de-qu__code.md)**: Reproducible environments enable consistent automated quality checks. Same Node.js/npm versions mean same Prettier, ESLint, and test results across machines.
+- **[Code Quality Convention](../quality/code.md)**: Reproducible environments enable consistent automated quality checks. Same Node.js/npm versions mean same Prettier, ESLint, and test results across machines.
 
-- **[Trunk Based Development](./ex-ru-de-wo__trunk-based-development.md)**: Reproducible CI/CD environments ensure consistent validation of commits to main branch. No environment-specific failures.
+- **[Trunk Based Development](./trunk-based-development.md)**: Reproducible CI/CD environments ensure consistent validation of commits to main branch. No environment-specific failures.
 
 ## Overview
 
@@ -774,10 +774,10 @@ verify();
 
 ## Related Documentation
 
-- [Reproducibility First](../../principles/software-engineering/ex-ru-pr-se__reproducibility.md) - WHY reproducibility matters
-- [Code Quality Convention](../quality/ex-ru-de-qu__code.md) - Automated quality in reproducible environments
-- [Trunk Based Development](./ex-ru-de-wo__trunk-based-development.md) - Reproducible CI/CD for main branch
-- [Hugo Development](../hugo/ex-ru-de-hu__development.md) - Reproducible builds for Hugo sites
+- [Reproducibility First](../../principles/software-engineering/reproducibility.md) - WHY reproducibility matters
+- [Code Quality Convention](../quality/code.md) - Automated quality in reproducible environments
+- [Trunk Based Development](./trunk-based-development.md) - Reproducible CI/CD for main branch
+- [Hugo Development](../hugo/development.md) - Reproducible builds for Hugo sites
 
 ## References
 

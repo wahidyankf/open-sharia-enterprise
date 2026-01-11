@@ -18,9 +18,9 @@ updated: 2025-12-15
 
 This convention implements the following core principles:
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Uses ISO 8601 format with explicit timezone (`2025-12-15T22:08:00+07:00`). No ambiguous dates like "12/11/2025" (is that December 11 or November 12?). Timezone is always stated, never assumed.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Uses ISO 8601 format with explicit timezone (`2025-12-15T22:08:00+07:00`). No ambiguous dates like "12/11/2025" (is that December 11 or November 12?). Timezone is always stated, never assumed.
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: One universal format for all contexts (cache files, metadata, logs, frontmatter). No juggling multiple date formats or converting between systems.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: One universal format for all contexts (cache files, metadata, logs, frontmatter). No juggling multiple date formats or converting between systems.
 
 ## Purpose
 
@@ -259,7 +259,7 @@ If you have a UTC timestamp and need to convert to WIB:
 
 ## 📚 Related Conventions
 
-- [File Naming Convention](../meta/ex-ru-co-me__file-naming.md) - Date format in filenames
+- [File Naming Convention](../meta/file-naming.md) - Date format in filenames
 
 ## See Also
 

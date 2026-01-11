@@ -24,33 +24,33 @@ These standards define **HOW to execute development workflows**, covering the th
 
 ## Documents
 
-- [Commit Message Convention](./ex-ru-de-wo__commit-messages.md) - Understanding Conventional Commits, commit granularity, and why we use them
-- [Implementation Workflow Convention](./ex-ru-de-wo__implementation.md) - Three-stage development workflow: make it work, make it right, make it fast
-- [Reproducible Environments Convention](./ex-ru-de-wo__reproducible-environments.md) - Practices for creating consistent, reproducible development and build environments
-- [Trunk Based Development Convention](./ex-ru-de-wo__trunk-based-development.md) - Git workflow using Trunk Based Development for continuous integration
+- [Commit Message Convention](./commit-messages.md) - Understanding Conventional Commits, commit granularity, and why we use them
+- [Implementation Workflow Convention](./implementation.md) - Three-stage development workflow: make it work, make it right, make it fast
+- [Reproducible Environments Convention](./reproducible-environments.md) - Practices for creating consistent, reproducible development and build environments
+- [Trunk Based Development Convention](./trunk-based-development.md) - Git workflow using Trunk Based Development for continuous integration
 
 ## Related Documentation
 
 - [Development Index](../README.md) - All development practices
-- [Simplicity Over Complexity Principle](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md) - Why we start simple
-- [Reproducibility First Principle](../../principles/software-engineering/ex-ru-pr-se__reproducibility.md) - Why environments matter
-- [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
+- [Simplicity Over Complexity Principle](../../principles/general/simplicity-over-complexity.md) - Why we start simple
+- [Reproducibility First Principle](../../principles/software-engineering/reproducibility.md) - Why environments matter
+- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected
 
 This set of development practices implements/respects the following core principles:
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Trunk Based Development and Implementation Workflow start simple, avoiding over-engineering with complex branching or premature optimization.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Trunk Based Development and Implementation Workflow start simple, avoiding over-engineering with complex branching or premature optimization.
 
-- **[Reproducibility First](../../principles/software-engineering/ex-ru-pr-se__reproducibility.md)**: Reproducible environments convention ensures consistent development and build environments across machines and team members.
+- **[Reproducibility First](../../principles/software-engineering/reproducibility.md)**: Reproducible environments convention ensures consistent development and build environments across machines and team members.
 
 ## Conventions Implemented/Respected
 
 This set of development practices respects the following conventions:
 
-- **[Commit Message Convention](../../conventions/formatting/ex-ru-co-fo__mathematical-notation.md)**: Conventional Commits format provides explicit commit metadata for automated changelog generation and version control.
+- **[Commit Message Convention](../../conventions/formatting/mathematical-notation.md)**: Conventional Commits format provides explicit commit metadata for automated changelog generation and version control.
 
-- **[Nested Code Fences Convention](../../conventions/formatting/ex-ru-co-fo__nested-code-fences.md)**: Workflow documentation uses proper code fence nesting when documenting markdown structure and patterns.
+- **[Nested Code Fences Convention](../../conventions/formatting/nested-code-fences.md)**: Workflow documentation uses proper code fence nesting when documenting markdown structure and patterns.
 
 ---
 

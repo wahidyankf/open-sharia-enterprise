@@ -458,16 +458,16 @@ The project enforces code quality through automated git hooks:
 
 ## 🔗 Related Principles
 
-- [Explicit Over Implicit](./ex-ru-pr-se__explicit-over-implicit.md) - Automation makes behavior explicit
-- [Simplicity Over Complexity](../general/ex-ru-pr-ge__simplicity-over-complexity.md) - Automate simple, repetitive tasks
-- [Accessibility First](../content/ex-ru-pr-co__accessibility-first.md) - Automated accessibility checks
+- [Explicit Over Implicit](./explicit-over-implicit.md) - Automation makes behavior explicit
+- [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Automate simple, repetitive tasks
+- [Accessibility First](../content/accessibility-first.md) - Automated accessibility checks
 
 ## 📚 Related Conventions
 
-- [Code Quality Convention](../../development/quality/ex-ru-de-qu__code.md) - Git hooks and Prettier
-- [AI Agents Convention](../../development/agents/ex-ru-de-ag__ai-agents.md) - Validation agents
-- [Commit Message Convention](../../development/workflow/ex-ru-de-wo__commit-messages.md) - Automated validation
-- [Repository Validation](../../development/quality/ex-ru-de-qu__repository-validation.md) - Standard validation patterns
+- [Code Quality Convention](../../development/quality/code.md) - Git hooks and Prettier
+- [AI Agents Convention](../../development/agents/ai-agents.md) - Validation agents
+- [Commit Message Convention](../../development/workflow/commit-messages.md) - Automated validation
+- [Repository Validation](../../development/quality/repository-validation.md) - Standard validation patterns
 
 ## 📖 References
 

@@ -29,9 +29,9 @@ This document defines quality standards for README.md files to ensure they are e
 
 This convention implements the following core principles:
 
-- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: README quality standards prioritize accessible writing - plain language (no jargon), acronym context (not just expansion), short paragraphs (≤5 lines for scannability), conversational tone (welcoming to all backgrounds). These practices ensure READMEs are accessible to non-native English speakers, those with cognitive disabilities, and contributors with varying technical backgrounds.
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: README quality standards prioritize accessible writing - plain language (no jargon), acronym context (not just expansion), short paragraphs (≤5 lines for scannability), conversational tone (welcoming to all backgrounds). These practices ensure READMEs are accessible to non-native English speakers, those with cognitive disabilities, and contributors with varying technical backgrounds.
 
-- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: READMEs serve as navigation documents, not comprehensive manuals. Each section provides a 3-5 line summary with links to detailed documentation. Users get quick orientation without cognitive overload, then dive deeper into specific topics as needed. Essential information is present, but comprehensive explanations are linked, not embedded.
+- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: READMEs serve as navigation documents, not comprehensive manuals. Each section provides a 3-5 line summary with links to detailed documentation. Users get quick orientation without cognitive overload, then dive deeper into specific topics as needed. Essential information is present, but comprehensive explanations are linked, not embedded.
 
 ### 1. Hook Readers Immediately
 
@@ -57,10 +57,10 @@ This convention establishes quality standards for README.md files to make them e
 
 ### What This Convention Does NOT Cover
 
-- **Technical accuracy** - Factual validation covered in [Factual Validation Convention](./ex-ru-co-co__factual-validation.md)
+- **Technical accuracy** - Factual validation covered in [Factual Validation Convention](./factual-validation.md)
 - **Code examples in README** - Code quality covered in development conventions
 - **Hugo site READMEs** - Hugo-specific patterns in Hugo content conventions
-- **OSS compliance** - License, contribution guidelines covered in [OSS Documentation Convention](./ex-ru-co-co__oss-documentation.md)
+- **OSS compliance** - License, contribution guidelines covered in [OSS Documentation Convention](./oss-documentation.md)
 
 ## Motivation
 
@@ -577,9 +577,9 @@ This project uses Nx to manage applications and libraries:
 
 ## Related Documentation
 
-- [Content Quality Principles](./ex-ru-co-co__quality.md) - General content quality standards
-- [Emoji Usage Convention](../formatting/ex-ru-co-fo__emoji.md) - Emoji usage guidelines
-- [Linking Convention](../formatting/ex-ru-co-fo__linking.md) - How to format links
+- [Content Quality Principles](./quality.md) - General content quality standards
+- [Emoji Usage Convention](../formatting/emoji.md) - Emoji usage guidelines
+- [Linking Convention](../formatting/linking.md) - How to format links
 
 ## External Resources
 

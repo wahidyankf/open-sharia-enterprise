@@ -20,9 +20,9 @@ This convention defines how to write testable acceptance criteria using **Gherki
 
 This practice respects the following core principles:
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Gherkin syntax (Given-When-Then) explicitly states preconditions, actions, and expected outcomes. No ambiguous requirements like "should work well" - everything is concrete and verifiable.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Gherkin syntax (Given-When-Then) explicitly states preconditions, actions, and expected outcomes. No ambiguous requirements like "should work well" - everything is concrete and verifiable.
 
-- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Gherkin scenarios translate directly to automated tests (BDD frameworks). Requirements become executable specifications. Machines verify correctness automatically instead of manual testing.
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Gherkin scenarios translate directly to automated tests (BDD frameworks). Requirements become executable specifications. Machines verify correctness automatically instead of manual testing.
 
 ## Conventions Implemented/Respected
 
@@ -30,11 +30,11 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Plans Organization Convention](../conventions/project/ex-ru-co-pr__plans-organization.md)**: Acceptance criteria are written in requirements.md files within plan folders following the Gherkin format defined by this convention.
+- **[Plans Organization Convention](../conventions/project/plans-organization.md)**: Acceptance criteria are written in requirements.md files within plan folders following the Gherkin format defined by this convention.
 
-- **[Content Quality Principles](../conventions/content/ex-ru-co-co__quality.md)**: Gherkin scenarios use active voice, clear structure, and concrete examples - aligning with content quality standards for clarity and testability.
+- **[Content Quality Principles](../conventions/content/quality.md)**: Gherkin scenarios use active voice, clear structure, and concrete examples - aligning with content quality standards for clarity and testability.
 
-- **[Diagrams Convention](../conventions/formatting/ex-ru-co-fo__diagrams.md)**: When visualizing acceptance criteria workflows, use Mermaid diagrams with accessible colors as demonstrated in this document's Gherkin workflow diagram.
+- **[Diagrams Convention](../conventions/formatting/diagrams.md)**: When visualizing acceptance criteria workflows, use Mermaid diagrams with accessible colors as demonstrated in this document's Gherkin workflow diagram.
 
 ## Purpose
 
@@ -341,7 +341,7 @@ Then something happens
 
 - **Requirements files** (`plans/*/requirements.md`): Define acceptance criteria for each user story
 - **Delivery checklists**: Validate implementation against Gherkin scenarios
-- See [Plans Organization Convention](../conventions/project/ex-ru-co-pr__plans-organization.md)
+- See [Plans Organization Convention](../conventions/project/plans-organization.md)
 
 ### ✅ Feature Specifications
 
@@ -476,9 +476,9 @@ graph TD
 
 ## Related Conventions
 
-- [Plans Organization Convention](../conventions/project/ex-ru-co-pr__plans-organization.md) - Where to use acceptance criteria in plans
-- [Tutorial Convention](../conventions/tutorial/ex-ru-co-tu__general.md) - Acceptance criteria for tutorial quality
-- [Content Quality Principles](../conventions/content/ex-ru-co-co__quality.md) - Writing clear, testable content
+- [Plans Organization Convention](../conventions/project/plans-organization.md) - Where to use acceptance criteria in plans
+- [Tutorial Convention](../conventions/tutorial/general.md) - Acceptance criteria for tutorial quality
+- [Content Quality Principles](../conventions/content/quality.md) - Writing clear, testable content
 
 ## Summary
 

@@ -23,25 +23,25 @@ These conventions define **HOW documentation should be organized** at the struct
 
 ## Conventions
 
-- [Diátaxis Framework](./ex-ru-co-me__diataxis-framework.md) - Four-category documentation organization framework (Tutorials, How-To, Reference, Explanation)
-- [File Naming Convention](./ex-ru-co-me__file-naming.md) - Systematic approach to naming files with hierarchical prefixes encoding directory structure
+- [Diátaxis Framework](./diataxis-framework.md) - Four-category documentation organization framework (Tutorials, How-To, Reference, Explanation)
+- [File Naming Convention](./file-naming.md) - Systematic approach to naming files with hierarchical prefixes encoding directory structure
 
 ## Related Documentation
 
 - [Conventions Index](../README.md) - All documentation conventions
-- [Explicit Over Implicit Principle](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md) - Why explicit naming matters
+- [Explicit Over Implicit Principle](../../principles/software-engineering/explicit-over-implicit.md) - Why explicit naming matters
 - [Content Conventions](../content/README.md) - Content quality standards
-- [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
+- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected
 
 This set of conventions implements/respects the following core principles:
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: File Naming Convention encodes directory structure in filename prefixes, making file locations explicit without requiring inspection of file contents.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: File Naming Convention encodes directory structure in filename prefixes, making file locations explicit without requiring inspection of file contents.
 
-- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Diátaxis Framework organizes documentation into four distinct categories (Tutorials, How-To, Reference, Explanation), allowing users to access appropriate content based on their current needs.
+- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Diátaxis Framework organizes documentation into four distinct categories (Tutorials, How-To, Reference, Explanation), allowing users to access appropriate content based on their current needs.
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Meta conventions use simple, systematic organization frameworks rather than complex taxonomies or hierarchies.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Meta conventions use simple, systematic organization frameworks rather than complex taxonomies or hierarchies.
 
 ---
 

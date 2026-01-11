@@ -474,16 +474,16 @@ ex-co__color-accessibility.md
 
 ## 🔗 Related Principles
 
-- [Explicit Over Implicit](../software-engineering/ex-ru-pr-se__explicit-over-implicit.md) - Simple explicit configuration
-- [Progressive Disclosure](../content/ex-ru-pr-co__progressive-disclosure.md) - Start simple, layer complexity
-- [Automation Over Manual](../software-engineering/ex-ru-pr-se__automation-over-manual.md) - Automate simple repetitive tasks
+- [Explicit Over Implicit](../software-engineering/explicit-over-implicit.md) - Simple explicit configuration
+- [Progressive Disclosure](../content/progressive-disclosure.md) - Start simple, layer complexity
+- [Automation Over Manual](../software-engineering/automation-over-manual.md) - Automate simple repetitive tasks
 
 ## 📚 Related Conventions
 
-- [Implementation Workflow](../../development/workflow/ex-ru-de-wo__implementation.md) - Start simple (make it work), then refine (make it right), then optimize (make it fast)
+- [Implementation Workflow](../../development/workflow/implementation.md) - Start simple (make it work), then refine (make it right), then optimize (make it fast)
 - [Monorepo Structure](../../../reference/re__monorepo-structure.md) - Flat library organization
-- [AI Agents Convention](../../development/agents/ex-ru-de-ag__ai-agents.md) - Single-purpose agents
-- [Diátaxis Framework](../../conventions/meta/ex-ru-co-me__diataxis-framework.md) - Four simple categories
+- [AI Agents Convention](../../development/agents/ai-agents.md) - Single-purpose agents
+- [Diátaxis Framework](../../conventions/meta/diataxis-framework.md) - Four simple categories
 
 ## 📖 References
 

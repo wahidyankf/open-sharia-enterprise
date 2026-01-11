@@ -266,9 +266,9 @@ This plan is organized into four documents:
 
 ## References
 
-- [AI Agents Convention](../../../rules/development/agents/ex-ru-de-ag__ai-agents.md)
+- [AI Agents Convention](../../../rules/development/agents/ai-agents.md)
 - [Repository Governance Architecture](../../../rules/ex-ru__repository-governance-architecture.md)
-- [Plans Organization Convention](../../../rules/conventions/project/ex-ru-co-pr__plans-organization.md)
+- [Plans Organization Convention](../../../rules/conventions/project/plans-organization.md)
 - Butler CLI application: `apps/butler-cli/` (Go + Cobra)
 - Current conversion script: `scripts/convert-agents-to-opencode.py`
 - Current validation script: `scripts/validate-opencode-agents.py`

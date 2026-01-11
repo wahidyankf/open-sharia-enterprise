@@ -701,7 +701,7 @@ cp -r .claude/skills.backup .claude/skills
   - [ ] Same updates as CLAUDE.md
   - [ ] Add sync workflow for OpenCode users
 
-- [ ] Update `rules/development/agents/ex-ru-de-ag__ai-agents.md`:
+- [ ] Update `rules/development/agents/ai-agents.md`:
   - [ ] Add "Source of Truth" section
   - [ ] Document tool-agnostic format
   - [ ] Document sync process
@@ -838,7 +838,7 @@ cp -r .claude/skills.backup .claude/skills
 
 **Test6: wow-rules-quality-gate validates source (not generated)**
 
-- [ ] Review `rules/workflows/wow/ex-ru-wf-wo__rules-quality-gate.md`
+- [ ] Review `rules/workflows/wow/rules-quality-gate.md`
 - [ ] Verify "Scope Clarification" section exists explaining source-only validation
 - [ ] Verify workflow explicitly states it validates `rules/agents/content/` (source)
 - [ ] Verify workflow explicitly states it skips `.claude/agents/`, `.claude/skills/`, `.opencode/agent/`, `.opencode/skills/` (generated)
@@ -865,7 +865,7 @@ cp -r .claude/skills.backup .claude/skills
 
 - [ ] If any test fails, revert meta-agent updates from backup
 - [ ] Restore from: `git checkout main -- rules/agents/content/agent-maker.md rules/agents/content/wow-rules-checker.md rules/agents/content/wow-rules-fixer.md`
-- [ ] Revert workflow updates: `git checkout main -- rules/workflows/wow/ex-ru-wf-wo__rules-quality-gate.md`
+- [ ] Revert workflow updates: `git checkout main -- rules/workflows/wow/rules-quality-gate.md`
 - [ ] Re-sync: `butler-cli agents sync`
 - [ ] Document failure, investigate root cause before retrying
 

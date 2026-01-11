@@ -236,7 +236,7 @@ Implementation: Husky + lint-staged (pre-commit formatting)
 
 **Purpose**: Automated implementers that enforce conventions and development practices. Each agent implements and validates specific rules from layers 2 and 3.
 
-**Note**: Agents exist in dual formats with identical capabilities. Both reference shared skills from `.claude/skills/`. See [AI Agents Convention - OpenCode Format](./development/agents/ex-ru-de-ag__ai-agents.md#opencode-format) for format differences.
+**Note**: Agents exist in dual formats with identical capabilities. Both reference shared skills from `.claude/skills/`. See [AI Agents Convention - OpenCode Format](./development/agents/ai-agents.md#opencode-format) for format differences.
 
 **Key Document**: [Agents Index](../.claude/agents/README.md)
 
@@ -386,18 +386,18 @@ Delivery (serves knowledge):
 
 **Layer 0 - Vision**: Democratize Islamic enterprise → accessible to everyone
 
-**Layer 1 - Principle**: [Accessibility First](./principles/content/ex-ru-pr-co__accessibility-first.md)
+**Layer 1 - Principle**: [Accessibility First](./principles/content/accessibility-first.md)
 
 - Vision supported: Accessible tools enable global participation in Islamic finance
 - Key value: Design for universal access from the start
 
-**Layer 2 - Convention**: [Color Accessibility Convention](./conventions/formatting/ex-ru-co-fo__color-accessibility.md)
+**Layer 2 - Convention**: [Color Accessibility Convention](./conventions/formatting/color-accessibility.md)
 
 - Implements: Accessibility First principle
 - Rule: Use only verified color-blind friendly palette (Blue, Orange, Teal, Purple, Brown)
 - WCAG AA compliance required
 
-**Layer 3 - Development**: [AI Agents Convention](./development/agents/ex-ru-de-ag__ai-agents.md)
+**Layer 3 - Development**: [AI Agents Convention](./development/agents/ai-agents.md)
 
 - Respects: Color Accessibility Convention
 - Practice: Agent color categorization uses accessible palette
@@ -409,7 +409,7 @@ Delivery (serves knowledge):
 - **docs\_\_fixer**: Applies color corrections to non-compliant diagrams
 - **agent\_\_maker**: Validates new agents use accessible colors in frontmatter
 
-**Layer 5 - Workflow**: [Maker-Checker-Fixer](./workflows/meta/ex-ru-wf-me__workflow-pattern.md)
+**Layer 5 - Workflow**: [Maker-Checker-Fixer](./workflows/meta/workflow-pattern.md)
 
 - Orchestrates: docs**maker → docs**checker → docs\_\_fixer
 - Ensures: All diagrams use accessible colors through automated validation and fixing
@@ -418,17 +418,17 @@ Delivery (serves knowledge):
 
 **Layer 0 - Vision**: Transparent, verifiable Islamic enterprise
 
-**Layer 1 - Principle**: [Explicit Over Implicit](./principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)
+**Layer 1 - Principle**: [Explicit Over Implicit](./principles/software-engineering/explicit-over-implicit.md)
 
 - Vision supported: Transparency enables verification of Shariah compliance
 - Key value: Code should be transparent and understandable
 
-**Layer 2 - Convention**: [File Naming Convention](./conventions/meta/ex-ru-co-me__file-naming.md)
+**Layer 2 - Convention**: [File Naming Convention](./conventions/meta/file-naming.md)
 
 - Implements: Explicit Over Implicit principle
 - Rule: Prefix encodes directory path explicitly (`ex-co__` = explanation/rules/conventions/)
 
-**Layer 3 - Development**: [AI Agents Convention](./development/agents/ex-ru-de-ag__ai-agents.md)
+**Layer 3 - Development**: [AI Agents Convention](./development/agents/ai-agents.md)
 
 - Respects: File Naming Convention
 - Practice: Agent files use kebab-case, explicit tool permissions in frontmatter
@@ -440,7 +440,7 @@ Delivery (serves knowledge):
 - **wow\_\_rules-checker**: Audits agents for missing tool declarations
 - **docs\_\_file-manager**: Enforces naming convention when renaming files
 
-**Layer 5 - Workflow**: [Repo-Rules-Check-Fix](./workflows/wow/ex-ru-wf-wo__rules-quality-gate.md)
+**Layer 5 - Workflow**: [Repo-Rules-Check-Fix](./workflows/wow/rules-quality-gate.md)
 
 - Orchestrates: wow**rules-checker → wow**rules-fixer
 - Ensures: All agents maintain explicit tool permissions
@@ -449,17 +449,17 @@ Delivery (serves knowledge):
 
 **Layer 0 - Vision**: Reliable, trustworthy Islamic enterprise systems
 
-**Layer 1 - Principle**: [Automation Over Manual](./principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)
+**Layer 1 - Principle**: [Automation Over Manual](./principles/software-engineering/automation-over-manual.md)
 
 - Vision supported: Automation ensures consistent Shariah compliance validation
 - Key value: Machines handle repetitive tasks, humans focus on creative work
 
-**Layer 2 - Convention**: [Content Quality Principles](./conventions/content/ex-ru-co-co__quality.md)
+**Layer 2 - Convention**: [Content Quality Principles](./conventions/content/quality.md)
 
 - Implements: Automation Over Manual principle
 - Rule: Automated validation of active voice, heading hierarchy, alt text
 
-**Layer 3 - Development**: [Code Quality Convention](./development/quality/ex-ru-de-qu__code.md)
+**Layer 3 - Development**: [Code Quality Convention](./development/quality/code.md)
 
 - Respects: Content Quality Principles
 - Practice: Git hooks automate formatting and validation
@@ -472,7 +472,7 @@ Delivery (serves knowledge):
 - **ayokoding-web-by-example-checker**: Automated by-example tutorial validation
 - **plan\_\_checker**: Automated plan completeness validation
 
-**Layer 5 - Workflow**: [Ayokoding-Check-Fix](./workflows/ayokoding-web/ex-ru-wf-aywe__general-quality-gate.md)
+**Layer 5 - Workflow**: [Ayokoding-Check-Fix](./workflows/ayokoding-web/general-quality-gate.md)
 
 - Orchestrates: ayokoding-web-general-checker → ayokoding-web-general-fixer
 - Ensures: All Hugo content meets quality standards through automated iteration
@@ -603,11 +603,11 @@ Periodically verify:
 
 This architecture document implements/respects the following principles:
 
-- **[Explicit Over Implicit](./principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: The six-layer architecture explicitly defines the governance hierarchy, making relationships between vision, principles, conventions, practices, agents, and workflows transparent and traceable.
+- **[Explicit Over Implicit](./principles/software-engineering/explicit-over-implicit.md)**: The six-layer architecture explicitly defines the governance hierarchy, making relationships between vision, principles, conventions, practices, agents, and workflows transparent and traceable.
 
-- **[Simplicity Over Complexity](./principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: The linear hierarchy (0→1→2→3→4→5) provides a simple mental model. Each layer has a clear purpose, avoiding complex cross-dependencies or matrix structures.
+- **[Simplicity Over Complexity](./principles/general/simplicity-over-complexity.md)**: The linear hierarchy (0→1→2→3→4→5) provides a simple mental model. Each layer has a clear purpose, avoiding complex cross-dependencies or matrix structures.
 
-- **[Progressive Disclosure](./principles/content/ex-ru-pr-co__progressive-disclosure.md)**: The architecture layers complexity - beginners understand vision and principles, intermediate users work with conventions/practices, advanced users create agents and workflows.
+- **[Progressive Disclosure](./principles/content/progressive-disclosure.md)**: The architecture layers complexity - beginners understand vision and principles, intermediate users work with conventions/practices, advanced users create agents and workflows.
 
 ## 📚 Related Documentation
 
@@ -640,7 +640,7 @@ This architecture document implements/respects the following principles:
 **Layer 5**:
 
 - [Workflows Index](./workflows/README.md)
-- [Workflow Pattern Convention](./workflows/meta/ex-ru-wf-me__workflow-pattern.md)
+- [Workflow Pattern Convention](./workflows/meta/workflow-pattern.md)
 
 **Delivery Infrastructure**:
 
@@ -651,9 +651,9 @@ This architecture document implements/respects the following principles:
 
 **Meta-Documentation**:
 
-- [Diátaxis Framework](./conventions/meta/ex-ru-co-me__diataxis-framework.md) - Four documentation types
-- [Convention Writing Convention](./conventions/content/ex-ru-co-co__convention-writing.md) - How to write conventions
-- [AI Agents Convention](./development/agents/ex-ru-de-ag__ai-agents.md) - How to create agents
+- [Diátaxis Framework](./conventions/meta/diataxis-framework.md) - Four documentation types
+- [Convention Writing Convention](./conventions/content/convention-writing.md) - How to write conventions
+- [AI Agents Convention](./development/agents/ai-agents.md) - How to create agents
 
 ---
 

@@ -1130,19 +1130,19 @@ interface RustQualityMetrics {
 
 ### Conventions
 
-- [Programming Language Content Standard](../../../rules/conventions/tutorial/ex-ru-co-tu__programming-language-content.md) - Master reference
-- [Hugo Content Convention - ayokoding](../../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md) - Hextra theme specifics
-- [Hugo Content Convention - Shared](../../../rules/conventions/hugo/ex-ru-co-hu__shared.md) - Base Hugo rules
-- [Content Quality Principles](../../../rules/conventions/content/ex-ru-co-co__quality.md) - Quality standards
-- [Tutorial Naming Convention](../../../rules/conventions/tutorial/ex-ru-co-tu__naming.md) - Tutorial level definitions
-- [Color Accessibility Convention](../../../rules/conventions/formatting/ex-ru-co-fo__color-accessibility.md) - Approved color palette
-- [Diagrams Convention](../../../rules/conventions/formatting/ex-ru-co-fo__diagrams.md) - Mermaid standards
+- [Programming Language Content Standard](../../../rules/conventions/tutorial/programming-language-content.md) - Master reference
+- [Hugo Content Convention - ayokoding](../../../rules/conventions/hugo/ayokoding.md) - Hextra theme specifics
+- [Hugo Content Convention - Shared](../../../rules/conventions/hugo/shared.md) - Base Hugo rules
+- [Content Quality Principles](../../../rules/conventions/content/quality.md) - Quality standards
+- [Tutorial Naming Convention](../../../rules/conventions/tutorial/naming.md) - Tutorial level definitions
+- [Color Accessibility Convention](../../../rules/conventions/formatting/color-accessibility.md) - Approved color palette
+- [Diagrams Convention](../../../rules/conventions/formatting/diagrams.md) - Mermaid standards
 
 ### Development Practices
 
-- [Trunk Based Development](../../../rules/development/workflow/ex-ru-de-wo__trunk-based-development.md) - Git workflow
-- [Commit Messages](../../../rules/development/workflow/ex-ru-de-wo__commit-messages.md) - Commit format
-- [Code Quality](../../../rules/development/quality/ex-ru-de-qu__code.md) - Automated checks
+- [Trunk Based Development](../../../rules/development/workflow/trunk-based-development.md) - Git workflow
+- [Commit Messages](../../../rules/development/workflow/commit-messages.md) - Commit format
+- [Code Quality](../../../rules/development/quality/code.md) - Automated checks
 
 ### AI Agents
 

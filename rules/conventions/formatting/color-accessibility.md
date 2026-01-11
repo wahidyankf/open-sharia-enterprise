@@ -23,9 +23,9 @@ This document defines standards ensuring all colors used in the open-sharia-ente
 
 This convention implements the following core principles:
 
-- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Color accessibility is a fundamental accessibility requirement. This entire convention exists to ensure users with color blindness (8% of males, 0.5% of females, ~300 million people worldwide) can perceive all visual information. By requiring color-blind friendly palettes, sufficient contrast ratios (WCAG AA), and never relying on color alone, we make our documentation and visualizations universally accessible.
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: Color accessibility is a fundamental accessibility requirement. This entire convention exists to ensure users with color blindness (8% of males, 0.5% of females, ~300 million people worldwide) can perceive all visual information. By requiring color-blind friendly palettes, sufficient contrast ratios (WCAG AA), and never relying on color alone, we make our documentation and visualizations universally accessible.
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Rather than maintaining multiple color palettes for different contexts or allowing arbitrary color choices, we provide a single verified accessible palette (8 colors) that works for all use cases. One palette, tested once, used everywhere. No per-context adjustments needed between light and dark modes.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Rather than maintaining multiple color palettes for different contexts or allowing arbitrary color choices, we provide a single verified accessible palette (8 colors) that works for all use cases. One palette, tested once, used everywhere. No per-context adjustments needed between light and dark modes.
 
 ## Scope
 
@@ -910,9 +910,9 @@ The verified accessible color palette is based on scientific consensus:
 
 ## Related Conventions
 
-- [Diagram and Schema Convention](./ex-ru-co-fo__diagrams.md) - Standards for Mermaid diagrams with color accessibility requirements
-- [Emoji Usage Convention](./ex-ru-co-fo__emoji.md) - Emoji usage including colored square emoji accessibility guidance
-- [AI Agents Convention](../development/agents/ex-ru-de-ag__ai-agents.md) - Agent color categorization (blue, green, yellow, purple)
+- [Diagram and Schema Convention](./diagrams.md) - Standards for Mermaid diagrams with color accessibility requirements
+- [Emoji Usage Convention](./emoji.md) - Emoji usage including colored square emoji accessibility guidance
+- [AI Agents Convention](../development/agents/ai-agents.md) - Agent color categorization (blue, green, yellow, purple)
 - [Conventions Index](./README.md) - Overview of all repository conventions
 
 ## Conclusion

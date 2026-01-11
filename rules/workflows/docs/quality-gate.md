@@ -69,7 +69,7 @@ This workflow implements the **Maker-Checker-Fixer pattern** across three valida
 
 ## Execution Mode
 
-**Current Mode**: Manual Orchestration (see [Workflow Execution Modes Convention](../meta/ex-ru-wf-me__execution-modes.md))
+**Current Mode**: Manual Orchestration (see [Workflow Execution Modes Convention](../meta/execution-modes.md))
 
 This workflow is currently executed through **manual orchestration** where the AI assistant (Claude Code or OpenCode) follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
 
@@ -377,7 +377,7 @@ The AI will execute with scoped validation:
 - Fix issues in that scope only
 
 ```
-User: "Run documentation quality gate workflow for rules/conventions/meta/ex-ru-co-me__file-naming.md"
+User: "Run documentation quality gate workflow for rules/conventions/meta/file-naming.md"
 ```
 
 The AI will execute with single-file scope:

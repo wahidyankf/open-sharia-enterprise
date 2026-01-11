@@ -27,8 +27,8 @@ Open Sharia Enterprise is an enterprise platform built with Node.js and organize
 
 1. Read this contributing guide completely
 2. Review our [documentation](./docs/README.md)
-3. Understand our [commit message conventions](./rules/development/workflow/ex-ru-de-wo__commit-messages.md)
-4. Familiarize yourself with [Trunk Based Development](./rules/development/workflow/ex-ru-de-wo__trunk-based-development.md)
+3. Understand our [commit message conventions](./rules/development/workflow/commit-messages.md)
+4. Familiarize yourself with [Trunk Based Development](./rules/development/workflow/trunk-based-development.md)
 
 ## Development Setup
 
@@ -140,7 +140,7 @@ This project uses **Trunk Based Development** (TBD):
 - Experimental work that may be discarded
 - External contributions via fork + PR
 
-For complete details, see [Trunk Based Development Convention](./rules/development/workflow/ex-ru-de-wo__trunk-based-development.md).
+For complete details, see [Trunk Based Development Convention](./rules/development/workflow/trunk-based-development.md).
 
 ### Development Workflow
 
@@ -204,7 +204,7 @@ refactor(utils): simplify date formatting logic
 - Type and description are required
 - Scope is optional but recommended
 
-This format is **enforced by commitlint** on every commit. For complete details, see [Commit Message Convention](./rules/development/workflow/ex-ru-de-wo__commit-messages.md).
+This format is **enforced by commitlint** on every commit. For complete details, see [Commit Message Convention](./rules/development/workflow/commit-messages.md).
 
 ### Commit Granularity
 
@@ -239,7 +239,7 @@ git commit -m "feat: add agent, update docs, fix dates"  # Too many changes in o
 
 - **Apps**: `[domain]-[type]` (e.g., `api-gateway`, `admin-dashboard`)
 - **Libs**: `ts-[name]` (e.g., `ts-utils`, `ts-components`)
-- **Documentation**: Follow [File Naming Convention](./rules/conventions/meta/ex-ru-co-me__file-naming.md)
+- **Documentation**: Follow [File Naming Convention](./rules/conventions/meta/file-naming.md)
 
 ## Testing
 

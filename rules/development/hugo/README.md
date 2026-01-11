@@ -24,22 +24,22 @@ These standards define **HOW to develop Hugo themes and layouts**, covering them
 
 ## Documents
 
-- [Hugo Development Convention](./ex-ru-de-hu__development.md) - Complete standards for Hugo site development including theme development, asset pipeline, i18n/l10n, performance optimization, and SEO best practices
+- [Hugo Development Convention](./development.md) - Complete standards for Hugo site development including theme development, asset pipeline, i18n/l10n, performance optimization, and SEO best practices
 
 ## Related Documentation
 
 - [Development Index](../README.md) - All development practices
 - [Hugo Content Conventions](../../conventions/hugo/README.md) - Hugo content writing standards
-- [Reproducibility First Principle](../../principles/software-engineering/ex-ru-pr-se__reproducibility.md) - Why build reproducibility matters
-- [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
+- [Reproducibility First Principle](../../principles/software-engineering/reproducibility.md) - Why build reproducibility matters
+- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected
 
 This set of development practices implements/respects the following core principles:
 
-- **[Reproducibility First](../../principles/software-engineering/ex-ru-pr-se__reproducibility.md)**: Hugo development practices ensure consistent builds across environments through explicit configuration and build process standardization.
+- **[Reproducibility First](../../principles/software-engineering/reproducibility.md)**: Hugo development practices ensure consistent builds across environments through explicit configuration and build process standardization.
 
-- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Hugo template development enforces semantic HTML, proper ARIA attributes, and accessible markup to ensure generated content is accessible to all users.
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: Hugo template development enforces semantic HTML, proper ARIA attributes, and accessible markup to ensure generated content is accessible to all users.
 
 ## Conventions Implemented/Respected
 
@@ -47,7 +47,7 @@ This set of development practices respects the following conventions:
 
 - **[Hugo Content Conventions](../../conventions/hugo/README.md)**: Development aligns with content requirements, supporting theme-specific frontmatter and multilingual infrastructure.
 
-- **[Color Accessibility Convention](../../conventions/formatting/ex-ru-co-fo__color-accessibility.md)**: Hugo themes and layouts use verified accessible color palette for all UI elements and interactive components.
+- **[Color Accessibility Convention](../../conventions/formatting/color-accessibility.md)**: Hugo themes and layouts use verified accessible color palette for all UI elements and interactive components.
 
 ---
 

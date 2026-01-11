@@ -21,9 +21,9 @@ This document defines the universal confidence level system used by all fixer ag
 
 This practice respects the following core principles:
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) with explicit, documented criteria. Fix decisions are stated clearly in audit reports - no hidden judgment calls or magic automation.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) with explicit, documented criteria. Fix decisions are stated clearly in audit reports - no hidden judgment calls or magic automation.
 
-- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Objective, verifiable issues (HIGH confidence) fixed automatically. Machines handle mechanical corrections. Humans focus on subjective improvements and ambiguous cases flagged as MEDIUM confidence.
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Objective, verifiable issues (HIGH confidence) fixed automatically. Machines handle mechanical corrections. Humans focus on subjective improvements and ambiguous cases flagged as MEDIUM confidence.
 
 ## Conventions Implemented/Respected
 
@@ -31,13 +31,13 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Criticality Levels Convention](../quality/ex-ru-de-qu__criticality-levels.md)**: Confidence levels work orthogonally with criticality levels to determine fix priority. Criticality measures importance/urgency, confidence measures certainty/fixability.
+- **[Criticality Levels Convention](../quality/criticality-levels.md)**: Confidence levels work orthogonally with criticality levels to determine fix priority. Criticality measures importance/urgency, confidence measures certainty/fixability.
 
-- **[Repository Validation Methodology Convention](../quality/ex-ru-de-qu__repository-validation.md)**: Fixer agents use the same standard validation patterns (frontmatter extraction, field checks, link validation) for re-validation that checker agents use for initial detection.
+- **[Repository Validation Methodology Convention](../quality/repository-validation.md)**: Fixer agents use the same standard validation patterns (frontmatter extraction, field checks, link validation) for re-validation that checker agents use for initial detection.
 
-- **[Temporary Files Convention](../infra/ex-ru-de-in__temporary-files.md)**: Fix reports are written to generated-reports/ directory using pattern {agent-family}**{timestamp}**fix.md, following the same storage and naming conventions as audit reports.
+- **[Temporary Files Convention](../infra/temporary-files.md)**: Fix reports are written to generated-reports/ directory using pattern {agent-family}**{timestamp}**fix.md, following the same storage and naming conventions as audit reports.
 
-- **[Timestamp Format Convention](../conventions/formatting/ex-ru-co-fo__timestamp.md)**: Fix report filenames use UTC+7 timestamps in format YYYY-MM-DD--HH-MM (hyphen-separated for filesystem compatibility).
+- **[Timestamp Format Convention](../conventions/formatting/timestamp.md)**: Fix report filenames use UTC+7 timestamps in format YYYY-MM-DD--HH-MM (hyphen-separated for filesystem compatibility).
 
 ## 📋 Overview
 
@@ -360,7 +360,7 @@ Checker Report → Read Finding → Re-execute Validation → Assess Confidence 
 - Verify patterns match (date format, naming convention)
 - Analyze context (content type, directory, file purpose)
 
-**See:** [Repository Validation Methodology Convention](../quality/ex-ru-de-qu__repository-validation.md) for standard re-validation patterns.
+**See:** [Repository Validation Methodology Convention](../quality/repository-validation.md) for standard re-validation patterns.
 
 ## 📏 Confidence Assessment Process
 
@@ -586,7 +586,7 @@ All fixer agents MUST:
 - Is re-validation clear and unambiguous?
 - Is the issue objective and verifiable?
 
-**Criticality** measures **IMPORTANCE** (see [Criticality Levels Convention](../quality/ex-ru-de-qu__criticality-levels.md)):
+**Criticality** measures **IMPORTANCE** (see [Criticality Levels Convention](../quality/criticality-levels.md)):
 
 - How urgent is fixing this issue?
 - What breaks if we don't fix it?
@@ -708,7 +708,7 @@ Fix reports should now group fixes by priority to show criticality context:
 
 ### 1. Missing Required Subcategory Field
 
-**File**: `rules/development/agents/ex-ru-de-ag__ai-agents.md`
+**File**: `rules/development/agents/ai-agents.md`
 **Criticality**: CRITICAL - Breaks organization and validation
 **Confidence**: HIGH - Confirmed field missing in frontmatter
 **Fix Applied**: Added `subcategory: development` at line 5
@@ -727,7 +727,7 @@ Fix reports should now group fixes by priority to show criticality context:
 
 ### 1. Ambiguous Link Target
 
-**File**: `rules/conventions/formatting/ex-ru-co-fo__linking.md:89`
+**File**: `rules/conventions/formatting/linking.md:89`
 **Criticality**: CRITICAL - Broken link to convention doc
 **Confidence**: MEDIUM - Multiple possible target files found
 **Reason for Flag**: Cannot determine correct link target automatically
@@ -893,21 +893,21 @@ wow__rules-fixer re-validates:
 ### Related Conventions
 
 **Validation Methodology:**
-- [Repository Validation Methodology Convention](../quality/ex-ru-de-qu__repository-validation.md) - Standard validation patterns (frontmatter extraction, field checks, link validation)
+- [Repository Validation Methodology Convention](../quality/repository-validation.md) - Standard validation patterns (frontmatter extraction, field checks, link validation)
 
 **AI Agents:**
-- [AI Agents Convention](../agents/ex-ru-de-ag__ai-agents.md) - Standards for all AI agents including fixers
+- [AI Agents Convention](../agents/ai-agents.md) - Standards for all AI agents including fixers
 
 **Content Standards:**
-- [Tutorial Convention](../conventions/tutorial/ex-ru-co-tu__general.md) - Tutorial-specific validation criteria (used by docs__tutorial-fixer)
-- [Content Quality Principles](../conventions/content/ex-ru-co-co__quality.md) - Universal content quality standards
-- [README Quality Convention](../conventions/content/ex-ru-co-co__readme-quality.md) - README-specific standards (used by readme__fixer)
-- [Hugo Content Convention - Shared](../conventions/hugo/ex-ru-co-hu__shared.md) - Shared Hugo content standards
-- [Hugo Content Convention - ayokoding](../conventions/hugo/ex-ru-co-hu__ayokoding.md) - ayokoding-web specific standards
-- [Hugo Content Convention - OSE Platform](../conventions/hugo/ex-ru-co-hu__ose-platform.md) - ose-platform-web specific standards
+- [Tutorial Convention](../conventions/tutorial/tutorial-fixer)
+- [Content Quality Principles](../conventions/content/quality.md) - Universal content quality standards
+- [README Quality Convention](../conventions/content/fixer)
+- [Hugo Content Convention - Shared](../conventions/hugo/shared.md) - Shared Hugo content standards
+- [Hugo Content Convention - ayokoding](../conventions/hugo/ayokoding.md) - ayokoding-web specific standards
+- [Hugo Content Convention - OSE Platform](../conventions/hugo/ose-platform.md) - ose-platform-web specific standards
 
 **Infrastructure:**
-- [Temporary Files Convention](../infra/ex-ru-de-in__temporary-files.md) - Where to store fix reports (`generated-reports/`)
+- [Temporary Files Convention](../infra/temporary-files.md) - Where to store fix reports (`generated-reports/`)
 
 ## 🔄 Maintenance
 

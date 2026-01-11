@@ -111,7 +111,7 @@ Skill: `wow-generating-validation-reports`
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
+- [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ose-platform.md)
 
 **Related Agents**:
 
@@ -120,8 +120,8 @@ Skill: `wow-generating-validation-reports`
 
 **Related Conventions**:
 
-- [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
-- [Content Quality Principles](../../rules/conventions/content/ex-ru-co-co__quality.md)
+- [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ose-platform.md)
+- [Content Quality Principles](../../rules/conventions/content/quality.md)
 
 **Skills**:
 

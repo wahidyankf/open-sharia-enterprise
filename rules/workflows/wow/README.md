@@ -24,13 +24,13 @@ These workflows define **WHEN and HOW to validate repository rules**, orchestrat
 
 ## Workflows
 
-- [Repository Rules Quality Gate](./ex-ru-wf-wo__rules-quality-gate.md) - Validate repository consistency across all layers (principles, conventions, development, agents, CLAUDE.md) and apply fixes iteratively until ZERO findings. Supports four strictness modes (lax, normal, strict, ocd)
+- [Repository Rules Quality Gate](./rules-quality-gate.md) - Validate repository consistency across all layers (principles, conventions, development, agents, CLAUDE.md) and apply fixes iteratively until ZERO findings. Supports four strictness modes (lax, normal, strict, ocd)
 
 ## Related Documentation
 
 - [Workflows Index](../README.md) - All orchestrated workflows
-- [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model these workflows enforce
-- [Maker-Checker-Fixer Pattern](../../development/pattern/ex-ru-de-pa__maker-checker-fixer.md) - Core workflow pattern
+- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model these workflows enforce
+- [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Core workflow pattern
 - [Core Principles](../../principles/README.md) - Layer 1 governance
 
 ---

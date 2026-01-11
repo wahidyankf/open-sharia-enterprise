@@ -21,9 +21,9 @@ This convention establishes universal content quality standards for **ALL markdo
 
 This convention implements the following core principles:
 
-- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Requires alt text for images, proper heading hierarchy, WCAG AA color contrast, semantic HTML structure, and screen reader support. Accessibility is not optional - it's a baseline requirement for all content.
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: Requires alt text for images, proper heading hierarchy, WCAG AA color contrast, semantic HTML structure, and screen reader support. Accessibility is not optional - it's a baseline requirement for all content.
 
-- **[No Time Estimates](../../principles/content/ex-ru-pr-co__no-time-estimates.md)**: Explicitly forbids time-based framing ("takes 30 minutes", "2-3 weeks to complete"). Focus on outcomes and deliverables, not arbitrary time constraints that create pressure.
+- **[No Time Estimates](../../principles/content/no-time-estimates.md)**: Explicitly forbids time-based framing ("takes 30 minutes", "2-3 weeks to complete"). Focus on outcomes and deliverables, not arbitrary time constraints that create pressure.
 
 ## Purpose
 
@@ -424,7 +424,7 @@ More content continues here...
 
 **Ensure sufficient color contrast** in diagrams and custom styling.
 
-**Reference**: [Color Accessibility Convention](../formatting/ex-ru-co-fo__color-accessibility.md)
+**Reference**: [Color Accessibility Convention](../formatting/color-accessibility.md)
 
 **Requirements**:
 
@@ -885,20 +885,20 @@ Before committing markdown content, verify:
 
 **Universal Conventions (apply to all markdown)**:
 
-- [Mathematical Notation Convention](../formatting/ex-ru-co-fo__mathematical-notation.md) - LaTeX in markdown
-- [Color Accessibility Convention](../formatting/ex-ru-co-fo__color-accessibility.md) - Accessible color palette for diagrams
-- [Diagrams and Schema Convention](../formatting/ex-ru-co-fo__diagrams.md) - Mermaid diagram standards (includes comment syntax requirements)
-- [Emoji Usage Convention](../formatting/ex-ru-co-fo__emoji.md) - Semantic emoji use
+- [Mathematical Notation Convention](../formatting/mathematical-notation.md) - LaTeX in markdown
+- [Color Accessibility Convention](../formatting/color-accessibility.md) - Accessible color palette for diagrams
+- [Diagrams and Schema Convention](../formatting/diagrams.md) - Mermaid diagram standards (includes comment syntax requirements)
+- [Emoji Usage Convention](../formatting/emoji.md) - Semantic emoji use
 
 **Context-Specific Conventions**:
 
-- [Hugo Content Convention - Shared](../hugo/ex-ru-co-hu__shared.md) - Shared Hugo content standards
-- [Hugo Content Convention - ayokoding](../hugo/ex-ru-co-hu__ayokoding.md) - ayokoding-web specific standards
-- [Hugo Content Convention - OSE Platform](../hugo/ex-ru-co-hu__ose-platform.md) - ose-platform-web specific standards
-- [File Naming Convention](../meta/ex-ru-co-me__file-naming.md) - File naming standards
-- [Linking Convention](../formatting/ex-ru-co-fo__linking.md) - Internal and external linking
-- [Tutorial Convention](../tutorial/ex-ru-co-tu__general.md) - Tutorial structure and pedagogy
-- [Diátaxis Framework](../meta/ex-ru-co-me__diataxis-framework.md) - Documentation organization
+- [Hugo Content Convention - Shared](../hugo/shared.md) - Shared Hugo content standards
+- [Hugo Content Convention - ayokoding](../hugo/ayokoding.md) - ayokoding-web specific standards
+- [Hugo Content Convention - OSE Platform](../hugo/ose-platform.md) - ose-platform-web specific standards
+- [File Naming Convention](../meta/file-naming.md) - File naming standards
+- [Linking Convention](../formatting/linking.md) - Internal and external linking
+- [Tutorial Convention](../tutorial/general.md) - Tutorial structure and pedagogy
+- [Diátaxis Framework](../meta/diataxis-framework.md) - Documentation organization
 
 ## References
 

@@ -23,17 +23,17 @@ These principles define **WHY we value specific approaches to software developme
 
 ## Principles
 
-- [Automation Over Manual](./ex-ru-pr-se__automation-over-manual.md) - Automate repetitive tasks to ensure consistency and reduce human error
-- [Explicit Over Implicit](./ex-ru-pr-se__explicit-over-implicit.md) - Choose explicit composition and configuration over magic, convenience, and hidden behavior
-- [Immutability Over Mutability](./ex-ru-pr-se__immutability.md) - Prefer immutable data structures over mutable state
-- [Pure Functions Over Side Effects](./ex-ru-pr-se__pure-functions.md) - Prefer pure functions (deterministic, no side effects) over functions with side effects
-- [Reproducibility First](./ex-ru-pr-se__reproducibility.md) - Development environments and builds should be reproducible from the start
+- [Automation Over Manual](./automation-over-manual.md) - Automate repetitive tasks to ensure consistency and reduce human error
+- [Explicit Over Implicit](./explicit-over-implicit.md) - Choose explicit composition and configuration over magic, convenience, and hidden behavior
+- [Immutability Over Mutability](./immutability.md) - Prefer immutable data structures over mutable state
+- [Pure Functions Over Side Effects](./pure-functions.md) - Prefer pure functions (deterministic, no side effects) over functions with side effects
+- [Reproducibility First](./reproducibility.md) - Development environments and builds should be reproducible from the start
 
 ## Related Documentation
 
 - [Core Principles Index](../README.md) - All foundational principles
 - [Development Practices Index](../../development/README.md) - Development practices implementing these principles
-- [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
+- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
 
 ---
 

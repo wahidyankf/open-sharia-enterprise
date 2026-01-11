@@ -21,9 +21,9 @@ This document defines how to write mathematical equations and formulas in the op
 
 This convention implements the following core principles:
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: LaTeX notation as the single standard for all equations. No mixing different math syntaxes or rolling custom solutions.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: LaTeX notation as the single standard for all equations. No mixing different math syntaxes or rolling custom solutions.
 
-- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: LaTeX notation renders properly in modern browsers and can be parsed by screen readers with math support. Text-based source allows assistive technology to interpret mathematical content.
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: LaTeX notation renders properly in modern browsers and can be parsed by screen readers with math support. Text-based source allows assistive technology to interpret mathematical content.
 
 ## Purpose
 
@@ -978,9 +978,9 @@ LaTeX math has good accessibility:
 
 ## 🔗 Related Conventions
 
-- [Diagram and Schema Convention](./ex-ru-co-fo__diagrams.md) - When to use Mermaid diagrams vs ASCII art (plain text for diagrams, LaTeX for math)
-- [Emoji Usage Convention](./ex-ru-co-fo__emoji.md) - Semantic emoji usage in documentation
-- [File Naming Convention](../meta/ex-ru-co-me__file-naming.md) - How to name documentation files
+- [Diagram and Schema Convention](./diagrams.md) - When to use Mermaid diagrams vs ASCII art (plain text for diagrams, LaTeX for math)
+- [Emoji Usage Convention](./emoji.md) - Semantic emoji usage in documentation
+- [File Naming Convention](../meta/file-naming.md) - How to name documentation files
 - [Conventions Index](./README.md) - Overview of all conventions
 
 ## 🌐 External Resources

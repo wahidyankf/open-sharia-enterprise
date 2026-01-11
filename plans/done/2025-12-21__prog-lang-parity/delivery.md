@@ -238,7 +238,7 @@ Feature: Comprehensive analysis of all programming language content
   - Link to specific example files
   - Add any new metrics discovered during analysis
   - Update quality benchmarks if higher standards found
-  - Expected output: Updated `rules/conventions/tutorial/ex-ru-co-tu__programming-language-content.md`
+  - Expected output: Updated `rules/conventions/tutorial/programming-language-content.md`
   - **Implementation Notes**: Added comprehensive "Highest Standards Reference" section to Programming Language Content Standard before "Related Conventions". Documents Elixir as highest standard (8/11 categories), alternative excellence (Golang cheat sheet/diagrams, Java glossary/resources), complete reference table link, usage guidance (when creating/improving/validating content), quality gaps even in highest standards (front hooks 0%, cross-references low, color violations), and analysis report link. Updated frontmatter date to 2025-12-21.
   - **Date**: 2025-12-21
   - **Status**: Completed

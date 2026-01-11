@@ -17,7 +17,7 @@ updated: 2025-11-29
 <!--
   MAINTENANCE NOTE: Master reference for commit message format
   This is duplicated (intentionally) in multiple files for different audiences:
-  1. rules/development/workflow/ex-ru-de-wo__commit-messages.md (this file - comprehensive reference)
+  1. rules/development/workflow/commit-messages.md (this file - comprehensive reference)
   2. CLAUDE.md (quick reference for AI agents)
   When updating, synchronize both locations.
 -->
@@ -28,9 +28,9 @@ This document explains the commit message convention used in the open-sharia-ent
 
 This practice respects the following core principles:
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Commit format (`type(scope): description`) explicitly states the nature of change. No guessing from cryptic messages like "fix stuff" or "updates". Commit type, scope, and description are all explicit.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Commit format (`type(scope): description`) explicitly states the nature of change. No guessing from cryptic messages like "fix stuff" or "updates". Commit type, scope, and description are all explicit.
 
-- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Commitlint automatically validates message format via git hooks. Commits rejected if format is invalid. No manual review of commit messages needed - automation enforces the standard.
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Commitlint automatically validates message format via git hooks. Commits rejected if format is invalid. No manual review of commit messages needed - automation enforces the standard.
 
 ## Conventions Implemented/Respected
 
@@ -38,9 +38,9 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Code Quality Convention](../quality/ex-ru-de-qu__code.md)**: Commit message validation is enforced through git hooks (Husky + Commitlint) as part of the automated code quality workflow.
+- **[Code Quality Convention](../quality/code.md)**: Commit message validation is enforced through git hooks (Husky + Commitlint) as part of the automated code quality workflow.
 
-- **[Content Quality Principles](../conventions/content/ex-ru-co-co__quality.md)**: Commit messages use active voice (imperative mood) and clear, concise descriptions - aligning with content quality standards for communication.
+- **[Content Quality Principles](../conventions/content/quality.md)**: Commit messages use active voice (imperative mood) and clear, concise descriptions - aligning with content quality standards for communication.
 
 ## What are Conventional Commits?
 
@@ -820,8 +820,8 @@ Closes #123
 
 ## Related Documentation
 
-- [AI Agents Convention](../agents/ex-ru-de-ag__ai-agents.md) - Standards for AI agents
-- [Code Quality Convention](../quality/ex-ru-de-qu__code.md) - Automated tools and git hooks for code formatting and commit validation
+- [AI Agents Convention](../agents/ai-agents.md) - Standards for AI agents
+- [Code Quality Convention](../quality/code.md) - Automated tools and git hooks for code formatting and commit validation
 - [Development Index](../README.md) - Overview of development conventions
 - [Conventions Index](../conventions/README.md) - Documentation conventions
 

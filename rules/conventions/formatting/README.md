@@ -25,31 +25,31 @@ These conventions define **HOW to format markdown content** including indentatio
 
 ## Conventions
 
-- [Color Accessibility](./ex-ru-co-fo__color-accessibility.md) - MASTER REFERENCE for all color decisions. Verified accessible color palette supporting all color blindness types
-- [Diagrams and Schemas](./ex-ru-co-fo__diagrams.md) - Standards for Mermaid diagrams (primary) and ASCII art (optional) with color-blind friendly colors
-- [Emoji Usage](./ex-ru-co-fo__emoji.md) - Semantic emoji usage to enhance document scannability and engagement
-- [Indentation](./ex-ru-co-fo__indentation.md) - Standard markdown indentation using 2 spaces per indentation level
-- [Linking Convention](./ex-ru-co-fo__linking.md) - Standards for linking between documentation files using GitHub-compatible markdown
-- [Mathematical Notation](./ex-ru-co-fo__mathematical-notation.md) - Standards for LaTeX notation for mathematical equations and formulas
-- [Nested Code Fences](./ex-ru-co-fo__nested-code-fences.md) - Standards for properly nesting code fences when documenting markdown structure
-- [Timestamp Format](./ex-ru-co-fo__timestamp.md) - Standard timestamp format using UTC+7 (Indonesian WIB Time)
+- [Color Accessibility](./color-accessibility.md) - MASTER REFERENCE for all color decisions. Verified accessible color palette supporting all color blindness types
+- [Diagrams and Schemas](./diagrams.md) - Standards for Mermaid diagrams (primary) and ASCII art (optional) with color-blind friendly colors
+- [Emoji Usage](./emoji.md) - Semantic emoji usage to enhance document scannability and engagement
+- [Indentation](./indentation.md) - Standard markdown indentation using 2 spaces per indentation level
+- [Linking Convention](./linking.md) - Standards for linking between documentation files using GitHub-compatible markdown
+- [Mathematical Notation](./mathematical-notation.md) - Standards for LaTeX notation for mathematical equations and formulas
+- [Nested Code Fences](./nested-code-fences.md) - Standards for properly nesting code fences when documenting markdown structure
+- [Timestamp Format](./timestamp.md) - Standard timestamp format using UTC+7 (Indonesian WIB Time)
 
 ## Related Documentation
 
 - [Conventions Index](../README.md) - All documentation conventions
-- [Accessibility First Principle](../../principles/content/ex-ru-pr-co__accessibility-first.md) - Why accessibility matters
+- [Accessibility First Principle](../../principles/content/accessibility-first.md) - Why accessibility matters
 - [Content Conventions](../content/README.md) - Content quality and writing standards
-- [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
+- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected
 
 This set of conventions implements/respects the following core principles:
 
-- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Color Accessibility Convention provides verified color-blind friendly palette, and Diagrams Convention mandates accessible color combinations for all visual elements.
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: Color Accessibility Convention provides verified color-blind friendly palette, and Diagrams Convention mandates accessible color combinations for all visual elements.
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Indentation and Linking Conventions define explicit formatting standards, making file structure and navigation transparent through consistent rules.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Indentation and Linking Conventions define explicit formatting standards, making file structure and navigation transparent through consistent rules.
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Formatting conventions use simple, consistent patterns (2-space indentation, relative paths, standard timestamps) rather than complex custom solutions.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Formatting conventions use simple, consistent patterns (2-space indentation, relative paths, standard timestamps) rather than complex custom solutions.
 
 ---
 

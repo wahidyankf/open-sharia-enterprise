@@ -24,28 +24,28 @@ These conventions define **HOW to create and structure tutorials**, covering tut
 
 ## Conventions
 
-- [By Example Tutorial](./ex-ru-co-tu__by-example.md) - Standards for code-first by-example tutorials with 75-90 heavily annotated examples achieving 95% coverage
-- [General Tutorial Convention](./ex-ru-co-tu__general.md) - Standards for creating learning-oriented tutorials with narrative flow and progressive scaffolding
-- [Programming Language Content Standard](./ex-ru-co-tu__programming-language-content.md) - Universal content architecture for programming language education on ayokoding-web
-- [Programming Language Tutorial Structure](./ex-ru-co-tu__programming-language-structure.md) - Dual-path tutorial organization (by-concept and by-example) for programming languages
-- [Tutorial Naming](./ex-ru-co-tu__naming.md) - Standardized tutorial types and depth levels (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook)
+- [By Example Tutorial](./by-example.md) - Standards for code-first by-example tutorials with 75-90 heavily annotated examples achieving 95% coverage
+- [General Tutorial Convention](./general.md) - Standards for creating learning-oriented tutorials with narrative flow and progressive scaffolding
+- [Programming Language Content Standard](./programming-language-content.md) - Universal content architecture for programming language education on ayokoding-web
+- [Programming Language Tutorial Structure](./programming-language-structure.md) - Dual-path tutorial organization (by-concept and by-example) for programming languages
+- [Tutorial Naming](./naming.md) - Standardized tutorial types and depth levels (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook)
 
 ## Related Documentation
 
 - [Conventions Index](../README.md) - All documentation conventions
-- [Progressive Disclosure Principle](../../principles/content/ex-ru-pr-co__progressive-disclosure.md) - Why layered complexity matters
-- [No Time Estimates Principle](../../principles/content/ex-ru-pr-co__no-time-estimates.md) - Why we use coverage percentages
-- [Repository Architecture](../../ex-ru__repository-governance-architecture.md) - Six-layer governance model
+- [Progressive Disclosure Principle](../../principles/content/progressive-disclosure.md) - Why layered complexity matters
+- [No Time Estimates Principle](../../principles/content/no-time-estimates.md) - Why we use coverage percentages
+- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected
 
 This set of conventions implements/respects the following core principles:
 
-- **[No Time Estimates](../../principles/content/ex-ru-pr-co__no-time-estimates.md)**: Tutorial conventions use coverage percentages and depth levels rather than time estimates, focusing on learning outcomes rather than duration.
+- **[No Time Estimates](../../principles/content/no-time-estimates.md)**: Tutorial conventions use coverage percentages and depth levels rather than time estimates, focusing on learning outcomes rather than duration.
 
-- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Tutorial naming conventions and depth levels (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook) enable progressive learning based on user's current knowledge level.
+- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Tutorial naming conventions and depth levels (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook) enable progressive learning based on user's current knowledge level.
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: By-example tutorial approach provides code-first learning with simple, annotated examples rather than complex theoretical explanations.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: By-example tutorial approach provides code-first learning with simple, annotated examples rather than complex theoretical explanations.
 
 ---
 

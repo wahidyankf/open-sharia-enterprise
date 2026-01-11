@@ -21,9 +21,9 @@ This document defines the **universal methodology** for validating factual corre
 
 This convention respects the following core principles:
 
-- **[Automation Over Manual](../../principles/software-engineering/ex-ru-pr-se__automation-over-manual.md)**: Web-based verification (WebSearch + WebFetch) automates fact-checking against authoritative sources. Machines verify command syntax, version numbers, and API accuracy - humans focus on content creation and strategic decisions.
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Web-based verification (WebSearch + WebFetch) automates fact-checking against authoritative sources. Machines verify command syntax, version numbers, and API accuracy - humans focus on content creation and strategic decisions.
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Clear confidence classification (✅ Verified, ⚠️ Unverified, ❌ Error, 📅 Outdated) with explicit verification sources. No hidden assumptions about factual accuracy - every claim is either verified with source citation or marked as unverified.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Clear confidence classification (✅ Verified, ⚠️ Unverified, ❌ Error, 📅 Outdated) with explicit verification sources. No hidden assumptions about factual accuracy - every claim is either verified with source citation or marked as unverified.
 
 ## Purpose
 
@@ -816,17 +816,17 @@ Recommendation: Clarify which context applies or use HTTPS everywhere
 
 **Quality Standards:**
 
-- [Content Quality Principles](./ex-ru-co-co__quality.md) - Universal markdown quality standards
-- [Mathematical Notation Convention](../formatting/ex-ru-co-fo__mathematical-notation.md) - LaTeX notation standards
-- [Color Accessibility Convention](../formatting/ex-ru-co-fo__color-accessibility.md) - Accessible color palette
-- [Hugo Content Convention - Shared](../hugo/ex-ru-co-hu__shared.md) - Hugo content standards
-- [Hugo Content Convention - ayokoding](../hugo/ex-ru-co-hu__ayokoding.md) - ayokoding-web specifics
+- [Content Quality Principles](./quality.md) - Universal markdown quality standards
+- [Mathematical Notation Convention](../formatting/mathematical-notation.md) - LaTeX notation standards
+- [Color Accessibility Convention](../formatting/color-accessibility.md) - Accessible color palette
+- [Hugo Content Convention - Shared](../hugo/shared.md) - Hugo content standards
+- [Hugo Content Convention - ayokoding](../hugo/ayokoding.md) - ayokoding-web specifics
 
 **Development Practices:**
 
-- [Maker-Checker-Fixer Pattern](../development/pattern/ex-ru-de-pa__maker-checker-fixer.md) - Three-stage quality workflow
-- [Fixer Confidence Levels](../development/quality/ex-ru-de-qu__fixer-confidence-levels.md) - Fix confidence assessment
-- [Repository Validation Methodology](../development/quality/ex-ru-de-qu__repository-validation.md) - Standard validation patterns
+- [Maker-Checker-Fixer Pattern](../development/pattern/maker-checker-fixer.md) - Three-stage quality workflow
+- [Fixer Confidence Levels](../development/quality/fixer-confidence-levels.md) - Fix confidence assessment
+- [Repository Validation Methodology](../development/quality/repository-validation.md) - Standard validation patterns
 
 ---
 

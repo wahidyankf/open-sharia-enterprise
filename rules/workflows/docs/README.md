@@ -24,14 +24,14 @@ These workflows define **WHEN and HOW to validate documentation**, orchestrating
 
 ## Workflows
 
-- [Documentation Quality Gate](./ex-ru-wf-do__quality-gate.md) - Validate all docs/ content quality (factual accuracy, pedagogical structure, link validity), apply fixes iteratively until ZERO findings
+- [Documentation Quality Gate](./quality-gate.md) - Validate all docs/ content quality (factual accuracy, pedagogical structure, link validity), apply fixes iteratively until ZERO findings
 
 ## Related Documentation
 
 - [Workflows Index](../README.md) - All orchestrated workflows
-- [Content Quality Principles](../../conventions/content/ex-ru-co-co__quality.md) - Quality standards these workflows enforce
-- [Tutorial Convention](../../conventions/tutorial/ex-ru-co-tu__general.md) - Tutorial standards
-- [Maker-Checker-Fixer Pattern](../../development/pattern/ex-ru-de-pa__maker-checker-fixer.md) - Core workflow pattern
+- [Content Quality Principles](../../conventions/content/quality.md) - Quality standards these workflows enforce
+- [Tutorial Convention](../../conventions/tutorial/general.md) - Tutorial standards
+- [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Core workflow pattern
 
 ---
 

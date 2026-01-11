@@ -23,10 +23,10 @@ All programming language content on ayokoding-web follows a standardized structu
 
 This convention implements the following core principles:
 
-- **[Progressive Disclosure](../../principles/content/ex-ru-pr-co__progressive-disclosure.md)**: Coverage levels (0-5%, 5-30%, 0-60%, 60-85%, 85-95%) implement gradual complexity layering, allowing learners to build knowledge incrementally without overwhelming them with advanced concepts too early.
-- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Standardized structure aids diverse learners with predictable navigation, color-blind friendly palettes in all diagrams, and WCAG-compliant content formatting.
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Flat directory structure with consistent file naming across all languages, avoiding nested hierarchies that add cognitive overhead.
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Clear coverage percentages define scope boundaries, explicit quality metrics provide objective benchmarks, and documented standards eliminate guesswork.
+- **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Coverage levels (0-5%, 5-30%, 0-60%, 60-85%, 85-95%) implement gradual complexity layering, allowing learners to build knowledge incrementally without overwhelming them with advanced concepts too early.
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: Standardized structure aids diverse learners with predictable navigation, color-blind friendly palettes in all diagrams, and WCAG-compliant content formatting.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Flat directory structure with consistent file naming across all languages, avoiding nested hierarchies that add cognitive overhead.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Clear coverage percentages define scope boundaries, explicit quality metrics provide objective benchmarks, and documented standards eliminate guesswork.
 
 ## Purpose
 
@@ -136,7 +136,7 @@ The level-based weight system uses a two-part rule:
 
 The rule connects them: folder at directory depth N uses weight range N, content inside uses weight range N+1.
 
-For complete details on the level-based weight system, see [Hugo Content Convention - ayokoding](../hugo/ex-ru-co-hu__ayokoding.md).
+For complete details on the level-based weight system, see [Hugo Content Convention - ayokoding](../hugo/ayokoding.md).
 
 **Notes:**
 
@@ -788,14 +788,14 @@ Even Elixir, the highest standard, has gaps:
 
 ## Related Conventions
 
-- [Hugo Content Convention - Shared](../hugo/ex-ru-co-hu__shared.md) - Base Hugo content rules
-- [Hugo Content Convention - ayokoding](../hugo/ex-ru-co-hu__ayokoding.md) - Hextra theme specifics
-- [Tutorial Naming Convention](./ex-ru-co-tu__naming.md) - Tutorial level definitions
-- [Content Quality Principles](../content/ex-ru-co-co__quality.md) - Quality standards
-- [Diátaxis Framework](../meta/ex-ru-co-me__diataxis-framework.md) - Documentation categorization
-- [Color Accessibility Convention](../formatting/ex-ru-co-fo__color-accessibility.md) - Approved color palette
-- [Diagrams Convention](../formatting/ex-ru-co-fo__diagrams.md) - Mermaid diagram standards
-- [Factual Validation Convention](../content/ex-ru-co-co__factual-validation.md) - Fact-checking methodology
+- [Hugo Content Convention - Shared](../hugo/shared.md) - Base Hugo content rules
+- [Hugo Content Convention - ayokoding](../hugo/ayokoding.md) - Hextra theme specifics
+- [Tutorial Naming Convention](./naming.md) - Tutorial level definitions
+- [Content Quality Principles](../content/quality.md) - Quality standards
+- [Diátaxis Framework](../meta/diataxis-framework.md) - Documentation categorization
+- [Color Accessibility Convention](../formatting/color-accessibility.md) - Approved color palette
+- [Diagrams Convention](../formatting/diagrams.md) - Mermaid diagram standards
+- [Factual Validation Convention](../content/factual-validation.md) - Fact-checking methodology
 
 ## Related How-To Guides
 

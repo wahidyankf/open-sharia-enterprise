@@ -23,9 +23,9 @@ This document defines when and how to use different diagram formats in the open-
 
 This convention implements the following core principles:
 
-- **[Accessibility First](../../principles/content/ex-ru-pr-co__accessibility-first.md)**: Requires color-blind friendly palettes, vertical orientation for mobile users, and text-based source that screen readers can parse. Mermaid diagrams provide semantic structure accessible to assistive technology.
+- **[Accessibility First](../../principles/content/accessibility-first.md)**: Requires color-blind friendly palettes, vertical orientation for mobile users, and text-based source that screen readers can parse. Mermaid diagrams provide semantic structure accessible to assistive technology.
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Mermaid as the primary format for all markdown files provides a single, universal approach instead of juggling multiple diagram tools. Simple, text-based syntax that's easy to learn and version control.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Mermaid as the primary format for all markdown files provides a single, universal approach instead of juggling multiple diagram tools. Simple, text-based syntax that's easy to learn and version control.
 
 ## Purpose
 
@@ -44,7 +44,7 @@ This convention establishes Mermaid diagrams as the primary visualization format
 
 ### What This Convention Does NOT Cover
 
-- **Hugo theme diagram rendering** - Covered in [Hugo Development Convention](../development/hugo/ex-ru-de-hu__development.md)
+- **Hugo theme diagram rendering** - Covered in [Hugo Development Convention](../development/hugo/development.md)
 - **Diagram content strategy** - What diagrams to create (covered in specific domain conventions)
 - **Vector graphics or images** - This convention is only for text-based diagrams (Mermaid and ASCII)
 - **Interactive diagram features** - Platform-specific interactivity (zoom, pan) is implementation detail
@@ -429,13 +429,13 @@ The `%%{init:...}%%` syntax is VALID when used for Mermaid initialization direct
 
 **Key Distinction**: `%%{...}%%` is ONLY valid when containing `init:` directive for Mermaid configuration. Never use it for general comments, color palette notes, or documentation.
 
-**When to Use Init Directives**: Rarely needed. Most diagrams use default theming. Use only when you need to customize Mermaid's theme variables or configuration. See [Hugo Development Convention](../development/hugo/ex-ru-de-hu__development.md) for examples of valid init directive usage.
+**When to Use Init Directives**: Rarely needed. Most diagrams use default theming. Use only when you need to customize Mermaid's theme variables or configuration. See [Hugo Development Convention](../development/hugo/development.md) for examples of valid init directive usage.
 
 ### Color Accessibility for Color Blindness
 
 **CRITICAL REQUIREMENT**: All Mermaid diagrams MUST use color-blind friendly colors that work in both light and dark modes.
 
-**Master Reference**: See [Color Accessibility Convention](./ex-ru-co-fo__color-accessibility.md) for the complete authoritative guide to color usage, including verified accessible palette, WCAG standards, testing methodology, and implementation details. This section provides a summary for diagram-specific context.
+**Master Reference**: See [Color Accessibility Convention](./color-accessibility.md) for the complete authoritative guide to color usage, including verified accessible palette, WCAG standards, testing methodology, and implementation details. This section provides a summary for diagram-specific context.
 
 #### Why This Matters
 
@@ -1354,10 +1354,10 @@ Renders as: "HashMap<K, V> / O(1) lookup / Values: [1, 2, 3] / Dict: {a: 1}"
 
 ## 🔗 Related Documentation
 
-- [Color Accessibility Convention](./ex-ru-co-fo__color-accessibility.md) - Master reference for accessible color palette, WCAG standards, and testing tools (comprehensive guide for all color usage)
-- [File Naming Convention](../meta/ex-ru-co-me__file-naming.md) - How to name documentation files
-- [Linking Convention](./ex-ru-co-fo__linking.md) - How to link between files
-- [Diátaxis Framework](../meta/ex-ru-co-me__diataxis-framework.md) - Documentation organization principles
+- [Color Accessibility Convention](./color-accessibility.md) - Master reference for accessible color palette, WCAG standards, and testing tools (comprehensive guide for all color usage)
+- [File Naming Convention](../meta/file-naming.md) - How to name documentation files
+- [Linking Convention](./linking.md) - How to link between files
+- [Diátaxis Framework](../meta/diataxis-framework.md) - Documentation organization principles
 - [Conventions Index](./README.md) - Overview of all conventions
 
 ## 🌐 External Resources

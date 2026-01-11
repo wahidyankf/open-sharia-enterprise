@@ -23,7 +23,7 @@ Develop Hugo sites (ayokoding-web with Hextra, ose-platform-web with PaperMod).
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
 - [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu-ose-platform.md)
 - Skills: `apps-ayokoding-web-developing-content`, `apps-ose-platform-web-developing-content`
 
@@ -36,8 +36,8 @@ Theme customization, template development, build optimization, deployment config
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
-- [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
+- [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ose-platform.md)
 
 **Related Agents**:
 
@@ -46,9 +46,9 @@ Theme customization, template development, build optimization, deployment config
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ayokoding.md)
-- [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ex-ru-co-hu__ose-platform.md)
-- [Code Quality Convention](../../rules/development/quality/ex-ru-de-qu__code.md)
+- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
+- [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ose-platform.md)
+- [Code Quality Convention](../../rules/development/quality/code.md)
 
 **Skills**:
 

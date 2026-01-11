@@ -75,7 +75,7 @@ Layer 5: Workflows (WHEN)
 
 ### Storage Format Example
 
-**File**: `rules/conventions/meta/ex-ru-co-me__file-naming.md`
+**File**: `rules/conventions/meta/file-naming.md`
 
 ````markdown
 ---
@@ -108,11 +108,11 @@ policy:
   traceability:
     principles:
       - id: explicit-over-implicit
-        path: rules/principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md
+        path: rules/principles/software-engineering/explicit-over-implicit.md
         reason: "Explicit prefixes make file locations transparent without opening files"
     conventions:
       - id: ex-co__file-naming-convention
-        path: rules/conventions/meta/ex-ru-co-me__file-naming.md
+        path: rules/conventions/meta/file-naming.md
         section: "Prefix Pattern Rules"
 
   scope:
@@ -139,7 +139,7 @@ policy:
 
       examples:
         valid:
-          - "rules/conventions/formatting/ex-ru-co-fo__indentation.md"
+          - "rules/conventions/formatting/indentation.md"
           - "docs/tutorials/tu__getting-started.md"
         invalid:
           - "rules/conventions/wrong-prefix__example.md"
@@ -452,15 +452,15 @@ Every policy MUST link back to principles (Layer 1) and conventions (Layer 2):
 traceability:
   principles:
     - id: accessibility-first
-      path: rules/principles/content/ex-ru-pr-co__accessibility-first.md
+      path: rules/principles/content/accessibility-first.md
       reason: "Active voice benefits non-native speakers and screen readers"
     - id: simplicity-over-complexity
-      path: rules/principles/general/ex-ru-pr-ge__simplicity-over-complexity.md
+      path: rules/principles/general/simplicity-over-complexity.md
       reason: "Clear language reduces cognitive load"
 
   conventions:
     - id: ex-co__content-quality
-      path: rules/conventions/content/ex-ru-co-co__quality.md
+      path: rules/conventions/content/quality.md
       section: "Writing Style and Tone > Active Voice"
       line_range: "77-106" # Optional: specific line references
 ```
@@ -1076,10 +1076,10 @@ echo "$COVERAGE" | jq -r '"## Policy Coverage Report\n**Policies Evaluated**: \(
 # Example: "Add new rule for emoji usage in agent files"
 
 # 2. repo-rules-maker updates convention prose
-# (Uses Edit tool to update rules/conventions/formatting/ex-ru-co-fo__emoji.md)
+# (Uses Edit tool to update rules/conventions/formatting/emoji.md)
 
 # 3. repo-rules-maker generates policy YAML
-cat >> rules/conventions/formatting/ex-ru-co-fo__emoji.md << 'EOF'
+cat >> rules/conventions/formatting/emoji.md << 'EOF'
 
 ## Policy Definition
 
@@ -1097,11 +1097,11 @@ policy:
   traceability:
     principles:
       - id: accessibility-first
-        path: rules/principles/content/ex-ru-pr-co__accessibility-first.md
+        path: rules/principles/content/accessibility-first.md
         reason: "Semantic emojis improve scannability for readers"
     conventions:
       - id: ex-co__emoji-usage
-        path: rules/conventions/formatting/ex-ru-co-fo__emoji.md
+        path: rules/conventions/formatting/emoji.md
         section: "Usage Rules"
 
   scope:
@@ -1214,7 +1214,7 @@ cat >> "generated-reports/repo-rules__2025-12-24--10-35__fix.md" << EOF
 **Confidence**: HIGH (objective structural rule)
 **File**: $FILE
 **Change**: Renamed file from wrong__example.md to ex-co__example.md
-**Policy Source**: rules/conventions/meta/ex-ru-co-me__file-naming.md#policy-fn001
+**Policy Source**: rules/conventions/meta/file-naming.md#policy-fn001
 **Rationale**: Policy specifies files in rules/conventions/ must use ex-co__ prefix
 EOF
 ````
@@ -1366,7 +1366,7 @@ governance-cli policy coverage --reports=generated-reports/*__audit.md
   - Nx project configuration
   - Go module setup with Cobra
 
-- `rules/development/infra/ex-ru-de-in__policy-as-code.md` (NEW)
+- `rules/development/infra/policy-as-code.md` (NEW)
   - Policy schema documentation
   - Authoring guidelines
   - Agent consumption patterns
@@ -1399,7 +1399,7 @@ governance-cli policy coverage --reports=generated-reports/*__audit.md
 
 **Phase 1 (Pilot - repo-rules Family):**
 
-- `rules/conventions/meta/ex-ru-co-me__file-naming.md` (MODIFY)
+- `rules/conventions/meta/file-naming.md` (MODIFY)
   - Add ## Policy Definition section with YAML
 
 - **Claude Code agents** (.claude/agents/):

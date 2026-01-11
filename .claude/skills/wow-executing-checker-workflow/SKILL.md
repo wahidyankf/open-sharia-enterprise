@@ -224,9 +224,9 @@ Checkers typically need:
 
 **Related Documentation**:
 
-- [Temporary Files Convention](../../../rules/development/infra/ex-ru-de-in__temporary-files.md)
-- [Maker-Checker-Fixer Pattern](../../../rules/development/pattern/ex-ru-de-pa__maker-checker-fixer.md)
-- [Criticality Levels Convention](../../../rules/development/quality/ex-ru-de-qu__criticality-levels.md)
+- [Temporary Files Convention](../../../rules/development/infra/temporary-files.md)
+- [Maker-Checker-Fixer Pattern](../../../rules/development/pattern/maker-checker-fixer.md)
+- [Criticality Levels Convention](../../../rules/development/quality/criticality-levels.md)
 
 ## Progressive Writing Methodology
 

@@ -20,9 +20,9 @@ Guidelines for AI agents when creating temporary uncommitted files and folders i
 
 This practice respects the following core principles:
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Designated directories (`generated-reports/`, `local-temp/`) with explicit purposes. Report naming pattern clearly encodes agent family, timestamp, and type. No hidden temporary files scattered throughout the repository.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Designated directories (`generated-reports/`, `local-temp/`) with explicit purposes. Report naming pattern clearly encodes agent family, timestamp, and type. No hidden temporary files scattered throughout the repository.
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Two directories for all temporary files - one for reports, one for scratch work. Simple, flat structure with clear naming conventions. No complex hierarchies or categorization schemes.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Two directories for all temporary files - one for reports, one for scratch work. Simple, flat structure with clear naming conventions. No complex hierarchies or categorization schemes.
 
 ## Conventions Implemented/Respected
 
@@ -30,11 +30,11 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[AI Agents Convention](../agents/ex-ru-de-ag__ai-agents.md)**: All checker agents MUST have Write and Bash tools for report generation. Report-generating agents follow mandatory progressive writing requirement to survive context compaction.
+- **[AI Agents Convention](../agents/ai-agents.md)**: All checker agents MUST have Write and Bash tools for report generation. Report-generating agents follow mandatory progressive writing requirement to survive context compaction.
 
-- **[Timestamp Format Convention](../conventions/formatting/ex-ru-co-fo__timestamp.md)**: Report filenames use UTC+7 timestamps in format YYYY-MM-DD--HH-MM (hyphen-separated for filesystem compatibility).
+- **[Timestamp Format Convention](../conventions/formatting/timestamp.md)**: Report filenames use UTC+7 timestamps in format YYYY-MM-DD--HH-MM (hyphen-separated for filesystem compatibility).
 
-- **[File Naming Convention](../conventions/meta/ex-ru-co-me__file-naming.md)**: Report files follow 4-part pattern {agent-family}**{uuid-chain}**{timestamp}\_\_{type}.md with double-underscore separators. UUID chain enables parallel execution without file collisions.
+- **[File Naming Convention](../conventions/meta/file-naming.md)**: Report files follow 4-part pattern {agent-family}**{uuid-chain}**{timestamp}\_\_{type}.md with double-underscore separators. UUID chain enables parallel execution without file collisions.
 
 ## 📋 Overview
 
@@ -480,7 +480,7 @@ filename="repo-rules__${uuid}__${timestamp}__audit.md"
 # Example: repo-rules__a1b2c3__2025-12-14--16-43__audit.md (actual values!)
 ```
 
-**Why this is critical:** Placeholder timestamps like "00-00" defeat the entire purpose of timestamping. Reports must have accurate creation times for audit trails, chronological sorting, and debugging. See [Timestamp Format Convention](../conventions/formatting/ex-ru-co-fo__timestamp.md) for complete details.
+**Why this is critical:** Placeholder timestamps like "00-00" defeat the entire purpose of timestamping. Reports must have accurate creation times for audit trails, chronological sorting, and debugging. See [Timestamp Format Convention](../conventions/formatting/timestamp.md) for complete details.
 
 #### Repository Audit Reports
 
@@ -569,7 +569,7 @@ All fixer reports include these sections:
    - Complete list of files changed during fix application
    - Total count for summary
 
-**Confidence Levels**: All fixers use universal three-level system (HIGH/MEDIUM/FALSE_POSITIVE). See [Fixer Confidence Levels Convention](../quality/ex-ru-de-qu__fixer-confidence-levels.md) for complete criteria.
+**Confidence Levels**: All fixers use universal three-level system (HIGH/MEDIUM/FALSE_POSITIVE). See [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) for complete criteria.
 
 **Workflow**:
 
@@ -749,9 +749,9 @@ The rule includes "unless specified otherwise by other rules/conventions":
 
 ## 📚 Related Conventions
 
-- [File Naming Convention](../conventions/meta/ex-ru-co-me__file-naming.md) - For permanent documentation files
-- [AI Agents Convention](../agents/ex-ru-de-ag__ai-agents.md) - For agent design and tool access
-- [Diátaxis Framework](../conventions/meta/ex-ru-co-me__diataxis-framework.md) - For documentation organization
+- [File Naming Convention](../conventions/meta/file-naming.md) - For permanent documentation files
+- [AI Agents Convention](../agents/ai-agents.md) - For agent design and tool access
+- [Diátaxis Framework](../conventions/meta/diataxis-framework.md) - For documentation organization
 
 ## 🎯 Benefits
 

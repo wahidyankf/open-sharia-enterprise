@@ -21,9 +21,9 @@ This document defines Hugo content conventions specific to **ose-platform-web** 
 
 This convention implements the following core principles:
 
-- **[Simplicity Over Complexity](../../principles/general/ex-ru-pr-ge__simplicity-over-complexity.md)**: Flat content structure (updates/ and about.md) - no deep hierarchies or complex organization. English-only, single theme, minimal configuration. Updates sorted by date automatically - no manual weight management.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Flat content structure (updates/ and about.md) - no deep hierarchies or complex organization. English-only, single theme, minimal configuration. Updates sorted by date automatically - no manual weight management.
 
-- **[Explicit Over Implicit](../../principles/software-engineering/ex-ru-pr-se__explicit-over-implicit.md)**: Update filenames encode the date (YYYY-MM-DD prefix) making chronological order explicit and sortable.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Update filenames encode the date (YYYY-MM-DD prefix) making chronological order explicit and sortable.
 
 ## Purpose
 
@@ -41,14 +41,14 @@ This convention defines content creation standards specific to the ose-platform-
 
 ### What This Convention Does NOT Cover
 
-- **Shared Hugo conventions** - Covered in [Hugo Content Shared Convention](./ex-ru-co-hu__shared.md)
+- **Shared Hugo conventions** - Covered in [Hugo Content Shared Convention](./shared.md)
 - **Bilingual content** - This site is English-only, see ayokoding-web for bilingual patterns
-- **Hugo theme development** - Covered in [Hugo Development Convention](../development/hugo/ex-ru-de-hu__development.md)
+- **Hugo theme development** - Covered in [Hugo Development Convention](../development/hugo/development.md)
 - **Deployment** - Covered by ose-platform-web-deployer agent
 
 ## Prerequisites
 
-**IMPORTANT**: This document assumes familiarity with [Shared Hugo Content Conventions](./ex-ru-co-hu__shared.md).
+**IMPORTANT**: This document assumes familiarity with [Shared Hugo Content Conventions](./shared.md).
 
 Read the shared conventions first, as they cover:
 
@@ -456,7 +456,7 @@ static/
 
 **Required Reading**:
 
-- [Shared Hugo Content Conventions](./ex-ru-co-hu__shared.md) - Read this first!
+- [Shared Hugo Content Conventions](./shared.md) - Read this first!
 
 **Theme Documentation**:
 

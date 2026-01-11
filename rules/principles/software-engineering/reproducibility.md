@@ -576,15 +576,15 @@ npm install
 
 ## 🔗 Related Principles
 
-- [Automation Over Manual](./ex-ru-pr-se__automation-over-manual.md) - Automate environment setup
-- [Explicit Over Implicit](./ex-ru-pr-se__explicit-over-implicit.md) - Explicit version pinning
-- [Simplicity Over Complexity](../general/ex-ru-pr-ge__simplicity-over-complexity.md) - Simple, consistent environments
+- [Automation Over Manual](./automation-over-manual.md) - Automate environment setup
+- [Explicit Over Implicit](./explicit-over-implicit.md) - Explicit version pinning
+- [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Simple, consistent environments
 
 ## 📚 Related Conventions
 
-- [Reproducible Environments](../../development/workflow/ex-ru-de-wo__reproducible-environments.md) - Implementation practices
-- [Code Quality Convention](../../development/quality/ex-ru-de-qu__code.md) - Automated consistency
-- [Hugo Development](../../development/hugo/ex-ru-de-hu__development.md) - Reproducible builds
+- [Reproducible Environments](../../development/workflow/reproducible-environments.md) - Implementation practices
+- [Code Quality Convention](../../development/quality/code.md) - Automated consistency
+- [Hugo Development](../../development/hugo/development.md) - Reproducible builds
 
 ## 📖 References
 
