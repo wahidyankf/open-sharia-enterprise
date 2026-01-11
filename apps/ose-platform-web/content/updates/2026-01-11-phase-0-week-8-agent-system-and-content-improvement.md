@@ -85,7 +85,7 @@ The Agent Simplification Plan reduced complexity through architectural improveme
 
 Building on the agent system foundation, we implemented 23 Skills that provide knowledge delivery to agents. Skills are knowledge packages—reusable instructions that agents load when needed to understand how to perform specific tasks.
 
-The Skills implementation began with the Rules Consolidation Plan. This plan unified our `repository`-wide rules into 17 comprehensive Skills covering all agents. The audit found zero violations—45 agents, 17 Skills, complete consistency. This wasn't a rewrite—it was a systematic consolidation of existing rules into a coherent structure with complete traceability.
+The Skills implementation began with the Rules Consolidation Plan. This plan unified our `repository`-wide rules into 23 comprehensive Skills covering all agents. The audit found zero violations—45 agents, 23 Skills, complete consistency. This wasn't a rewrite—it was a systematic consolidation of existing rules into a coherent structure with complete traceability.
 
 The Skills architecture uses domain prefixes matching agent naming patterns. This means when a `docs-checker` agent needs to validate content quality, it loads to `docs-applying-content-quality` skill. When a `repo-governance-checker` agent needs to understand to three-step quality workflow, it loads to `wow-applying-maker-checker-fixer` skill.
 
@@ -135,7 +135,7 @@ One of most significant events this period was Anthropic's decision to block thi
 
 The economic reality behind this decision became clear quickly. Claude Max subscriptions at $200/month provided unlimited token access. The same usage through metered APIs would cost $1,000+ per month. Third-party tools like OpenCode had enabled developers to access unlimited Claude power at consumer pricing while removing Claude Code's artificial rate limits. Anthropic closed this pricing gap.
 
-Community reaction was immediate and negative. GitHub issues exploded across multiple `repositories`: OpenCode (#7410), Clawdbot (#559), Oh My OpenCode (#626), and even Anthropic's own claude-code `repository` (#8046). Developers who'd built workflows around Claude subscriptions suddenly found themselves locked out with zero migration path.
+Community reaction was immediate and negative. GitHub issues exploded across multiple `repositories`: [OpenCode (#7410)](https://github.com/anomalyco/opencode/issues/7410), [Clawdbot (#559)](https://github.com/clawdbot/clawdbot/issues/559), [Oh My OpenCode (#626)](https://github.com/code-yeongyu/oh-my-opencode/issues/626), and even [Anthropic's own claude-code `repository` (#8046)](https://github.com/anthropics/claude-code/issues/8046). Developers who'd built workflows around Claude subscriptions suddenly found themselves locked out with zero migration path.
 
 This event crystallized a fundamental question: What happens when vendor you rely on decides to restrict access? For an open-source enterprise platform committed to building foundations for decades, vendor lock-in isn't acceptable.
 
