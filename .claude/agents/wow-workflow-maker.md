@@ -1,5 +1,5 @@
 ---
-name: wow-workflow-maker
+name: repo-workflow-maker
 description: Creates workflow documentation in governance/workflows/ following workflow pattern convention.
 tools: [Read, Write, Edit, Glob, Grep]
 model: sonnet
@@ -39,8 +39,8 @@ Create workflow documentation following workflow pattern convention.
 
 **Related Agents**:
 
-- `wow-workflow-checker` - Validates workflows created by this maker
-- `wow-workflow-fixer` - Fixes workflow violations
+- `repo-workflow-checker` - Validates workflows created by this maker
+- `repo-workflow-fixer` - Fixes workflow violations
 
 **Related Conventions**:
 

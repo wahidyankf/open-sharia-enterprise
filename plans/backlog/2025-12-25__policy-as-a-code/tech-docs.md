@@ -279,7 +279,7 @@ Based on analysis of existing agents, policies must support seven distinct rule 
 **Examples**: Frontmatter structure, agent references, state validation, termination criteria
 **Validation**: Schema validation, reference checking, dependency analysis
 
-Workflows orchestrate agents and have structural requirements similar to agents themselves. The workflow agents (wow-workflow-maker, wow-workflow-checker, wow-workflow-fixer) are part of the repo-rules family and validate workflow definitions in `governance/workflows/`.
+Workflows orchestrate agents and have structural requirements similar to agents themselves. The workflow agents (repo-workflow-maker, repo-workflow-checker, repo-workflow-fixer) are part of the repo-rules family and validate workflow definitions in `governance/workflows/`.
 
 **Example 1: Frontmatter Structure**
 

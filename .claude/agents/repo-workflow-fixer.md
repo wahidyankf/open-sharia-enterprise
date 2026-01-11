@@ -1,5 +1,5 @@
 ---
-name: wow-workflow-fixer
+name: repo-workflow-fixer
 description: Applies validated fixes from workflow-checker audit reports. Re-validates before applying changes.
 tools: [Read, Edit, Write, Glob, Grep, Bash]
 model: sonnet
@@ -45,8 +45,8 @@ Skills: `docs-applying-diataxis-framework`, `wow-assessing-criticality-confidenc
 
 **Related Agents**:
 
-- `wow-workflow-checker` - Generates audit reports this fixer processes
-- `wow-workflow-maker` - Creates workflow documentation
+- `repo-workflow-checker` - Generates audit reports this fixer processes
+- `repo-workflow-maker` - Creates workflow documentation
 
 **Related Conventions**:
 

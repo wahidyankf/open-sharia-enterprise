@@ -1,5 +1,5 @@
 ---
-name: wow-workflow-checker
+name: repo-workflow-checker
 description: Validates workflow documentation quality and compliance with workflow pattern convention.
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
@@ -40,8 +40,8 @@ Skill: `wow-generating-validation-reports`
 
 **Related Agents**:
 
-- `wow-workflow-fixer` - Fixes issues found by this checker
-- `wow-workflow-maker` - Creates workflow documentation
+- `repo-workflow-fixer` - Fixes issues found by this checker
+- `repo-workflow-maker` - Creates workflow documentation
 
 **Related Conventions**:
 

@@ -89,8 +89,8 @@ Skill: `wow-generating-validation-reports`
 
 **Related Agents**:
 
-- `wow-workflow-fixer` - Fixes issues found by this checker
-- `wow-workflow-maker` - Creates workflow documentation
+- `repo-workflow-fixer` - Fixes issues found by this checker
+- `repo-workflow-maker` - Creates workflow documentation
 
 **Related Conventions**:
 

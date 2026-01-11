@@ -652,7 +652,7 @@ Creates and updates README.md content while maintaining engagement, accessibilit
 - **Works with:** `readme-checker` for quality validation
 - **References:** README Quality Convention
 
-### 🟦 `wow-workflow-maker.md`
+### 🟦 `repo-workflow-maker.md`
 
 Expert at creating and updating workflow definition files in governance/workflows/ following Workflow Pattern Convention.
 
@@ -671,7 +671,7 @@ Expert at creating and updating workflow definition files in governance/workflow
 - **Works with:** All agents (workflows orchestrate agents)
 - **References:** Workflow Pattern Convention, Maker-Checker-Fixer Pattern, AI Agents Convention
 
-### 🟩 `wow-workflow-checker.md`
+### 🟩 `repo-workflow-checker.md`
 
 Expert at validating workflow definition files in governance/workflows/ against Workflow Pattern Convention and quality standards.
 
@@ -689,10 +689,10 @@ Expert at validating workflow definition files in governance/workflows/ against 
   - Verifying workflows trace back to principles
   - Periodic workflow quality audits
 - **Output:** Generates `workflow-{timestamp}-audit.md` report in `generated-reports/`
-- **Works with:** `wow-workflow-maker` for workflow creation, `wow-workflow-fixer` for applying validated fixes
+- **Works with:** `repo-workflow-maker` for workflow creation, `repo-workflow-fixer` for applying validated fixes
 - **References:** Workflow Pattern Convention, Repository Validation Methodology, Temporary Files Convention
 
-### 🟨 `wow-workflow-fixer.md`
+### 🟨 `repo-workflow-fixer.md`
 
 Applies validated fixes from wow\_\_workflow-checker audit reports. Re-validates workflow definition findings before applying changes.
 
@@ -709,7 +709,7 @@ Applies validated fixes from wow\_\_workflow-checker audit reports. Re-validates
 - **Safety:** Re-validates findings before applying fixes (applies only HIGH confidence objective fixes automatically)
 - **Output:** Generates `workflow-{timestamp}-fix.md` report in `generated-reports/`
 - **Note:** Many workflow "issues" are design decisions - this agent applies only objective structural errors (verifiable violations) and flags subjective improvements for human judgment
-- **Works with:** `wow-workflow-checker` for audit report generation, `wow-workflow-maker` for workflow creation
+- **Works with:** `repo-workflow-checker` for audit report generation, `repo-workflow-maker` for workflow creation
 
 ### 🟩 `repo-governance-checker.md`
 

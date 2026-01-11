@@ -74,8 +74,8 @@ Create workflow documentation following workflow pattern convention.
 
 **Related Agents**:
 
-- `wow-workflow-checker` - Validates workflows created by this maker
-- `wow-workflow-fixer` - Fixes workflow violations
+- `repo-workflow-checker` - Validates workflows created by this maker
+- `repo-workflow-fixer` - Fixes workflow violations
 
 **Related Conventions**:
 
