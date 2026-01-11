@@ -103,7 +103,7 @@ With Skills Infrastructure:
 
 **Trunk Based Development**: All work happens on `main` branch with small, frequent commits. No feature branches unless absolutely necessary.
 
-See [Trunk Based Development Convention](../../rules/development/workflow/trunk-based-development.md) for complete details.
+See [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) for complete details.
 
 ## Delivery Type
 
@@ -142,15 +142,15 @@ This plan implements Skills infrastructure through 2 sequential phases with dire
 
 **Core Principles Implemented:**
 
-- [Progressive Disclosure](../../rules/principles/content/progressive-disclosure.md) - Layer complexity gradually
-- [Automation Over Manual](../../rules/principles/software-engineering/automation-over-manual.md) - Claude auto-loads Skills based on context
-- [Documentation First](../../rules/principles/content/documentation-first.md) - Skills encode knowledge systematically
-- [Explicit Over Implicit](../../rules/principles/software-engineering/explicit-over-implicit.md) - Clear Skills descriptions enable precise auto-loading
+- [Progressive Disclosure](../../governance/principles/content/progressive-disclosure.md) - Layer complexity gradually
+- [Automation Over Manual](../../governance/principles/software-engineering/automation-over-manual.md) - Claude auto-loads Skills based on context
+- [Documentation First](../../governance/principles/content/documentation-first.md) - Skills encode knowledge systematically
+- [Explicit Over Implicit](../../governance/principles/software-engineering/explicit-over-implicit.md) - Clear Skills descriptions enable precise auto-loading
 
 **Key Conventions:**
 
-- [Plans Organization Convention](../../rules/conventions/project/plans-organization.md) - Multi-file structure for complex plans
-- [AI Agents Convention](../../rules/development/agents/ai-agents.md) - Agent structure, frontmatter, Skills references
+- [Plans Organization Convention](../../governance/conventions/project/plans-organization.md) - Multi-file structure for complex plans
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md) - Agent structure, frontmatter, Skills references
 - [Repository Architecture](../../docs/explanation/ex-ru__repository-governance-architecture.md) - Six-layer hierarchy (unchanged)
 
 ---

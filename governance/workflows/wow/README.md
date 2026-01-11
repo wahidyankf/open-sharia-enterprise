@@ -1,4 +1,4 @@
-# Repository Rules Workflows
+# Repository Governance Workflows
 
 Orchestrated workflows for validating repository-wide consistency across principles, conventions, development practices, agents, and CLAUDE.md.
 
@@ -24,7 +24,7 @@ These workflows define **WHEN and HOW to validate repository rules**, orchestrat
 
 ## Workflows
 
-- [Repository Rules Quality Gate](./rules-quality-gate.md) - Validate repository consistency across all layers (principles, conventions, development, agents, CLAUDE.md) and apply fixes iteratively until ZERO findings. Supports four strictness modes (lax, normal, strict, ocd)
+- [Repository Governance Quality Gate](./rules-quality-gate.md) - Validate repository consistency across all layers (principles, conventions, development, agents, CLAUDE.md) and apply fixes iteratively until ZERO findings. Supports four strictness modes (lax, normal, strict, ocd)
 
 ## Related Documentation
 

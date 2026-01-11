@@ -112,7 +112,7 @@ Result: Knowledge lost, need to recreate later
 
 When offloading content, you must choose the appropriate destination folder. Both are valid offload targets with distinct purposes.
 
-### rules/conventions/ - Content and Format Standards
+### governance/conventions/ - Content and Format Standards
 
 **Focus:** How to write and format documentation
 
@@ -125,7 +125,7 @@ When offloading content, you must choose the appropriate destination folder. Bot
 - Documentation organization (Diátaxis)
 - Timestamp format
 
-### rules/development/ - Development Processes and Workflows
+### governance/development/ - Development Processes and Workflows
 
 **Focus:** How to work and process
 
@@ -155,10 +155,10 @@ Is this content unique and valuable?
 	├─ YES → Offload to convention OR development doc
 	│   │
 	│   ├─ Is this about HOW we write/format?
-	│   │   └─> rules/conventions/
+	│   │   └─> governance/conventions/
 	│   │
 	│   ├─ Is this about HOW we work/process?
-	│   │   └─> rules/development/
+	│   │   └─> governance/development/
 	│   │
 	│   ├─ Does convention/development doc exist?
 	│   │   ├─ YES → Option B: Merge into existing doc
@@ -182,17 +182,17 @@ Is this content unique and valuable?
 **Process:**
 
 1. Identify the convention topic (e.g., "acceptance criteria format")
-2. Use `docs__maker` to create new convention doc in `rules/conventions/` or `rules/development/`
+2. Use `docs__maker` to create new convention doc in `governance/conventions/` or `governance/development/`
 3. Move ALL relevant content to new convention (comprehensive detail)
 4. Replace original content with 2-5 line summary + link
-5. Update appropriate index (`rules/conventions/README.md` or `rules/development/README.md`)
+5. Update appropriate index (`governance/conventions/README.md` or `governance/development/README.md`)
 6. Verify all cross-references work
 
 **Example:**
 
 - **Before:** Gherkin acceptance criteria details in `plan__maker.md` (500 lines)
 - **After:**
-  - New file: `rules/development/infra/acceptance-criteria.md` (comprehensive)
+  - New file: `governance/development/infra/acceptance-criteria.md` (comprehensive)
   - `plan__maker.md`: "Use Gherkin format. See [Acceptance Criteria Convention](link)" (3 lines)
   - Savings: 497 lines
 
@@ -213,7 +213,7 @@ Is this content unique and valuable?
 
 - **Before:** TBD workflow details duplicated in `plan__maker.md` and `plan__executor.md`
 - **After:**
-  - Updated: `rules/development/workflow/trunk-based-development.md` (comprehensive)
+  - Updated: `governance/development/workflow/trunk-based-development.md` (comprehensive)
   - `plan__maker.md`: "Follow TBD workflow. See [TBD Convention](link)" (2 lines)
   - `plan__executor.md`: "Default to main branch per TBD. See [TBD Convention](link)" (2 lines)
   - Savings: Duplication eliminated
@@ -236,7 +236,7 @@ Is this content unique and valuable?
 
 - **Before:** Diagram standards duplicated in `docs__maker.md`, `plan__maker.md`
 - **After:**
-  - New file: `rules/conventions/formatting/diagrams.md` (comprehensive)
+  - New file: `governance/conventions/formatting/diagrams.md` (comprehensive)
   - All agents: "Use Mermaid diagrams. See [Diagram Convention](link)" (2 lines each)
   - Savings: Eliminated duplication
 - **Why Conventions Folder:** Diagrams are a content format standard, not development process
@@ -245,7 +245,7 @@ Is this content unique and valuable?
 
 - **Before:** Testing strategy duplicated across multiple agents
 - **After:**
-  - New file: `rules/development/quality/testing-strategy.md` (comprehensive)
+  - New file: `governance/development/quality/testing-strategy.md` (comprehensive)
   - All agents: "See [Testing Strategy](link) for comprehensive testing guidelines" (2 lines each)
   - Savings: Eliminated duplication
 - **Why Development Folder:** Testing is a development process, not content format
@@ -254,7 +254,7 @@ Is this content unique and valuable?
 
 **When to use:** Content relates to development processes, workflows, or team practices.
 
-**Destination:** `rules/development/`
+**Destination:** `governance/development/`
 
 **Examples of development content:**
 
@@ -275,18 +275,18 @@ Is this content unique and valuable?
 **Process:**
 
 1. Determine if it's a development practice (git, commits, CI/CD, testing, code review, etc.)
-2. Create new doc OR expand existing in `rules/development/`
+2. Create new doc OR expand existing in `governance/development/`
 3. Use ex-de\_\_ prefix for consistency
 4. Move content to development convention (comprehensive detail)
 5. Replace original with 2-5 line summary + link
-6. Update development index (`rules/development/README.md`)
+6. Update development index (`governance/development/README.md`)
 7. Verify all cross-references work
 
 **Example:**
 
 - **Before:** Commit granularity examples in `plan__executor.md`
 - **After:**
-  - Updated: `rules/development/workflow/commit-messages.md` (comprehensive)
+  - Updated: `governance/development/workflow/commit-messages.md` (comprehensive)
   - `plan__executor.md`: "Split commits logically. See [Commit Messages Convention](link)" (2 lines)
   - Savings: 100+ lines
 
@@ -325,8 +325,8 @@ Follow this systematic process when offloading content:
 
 ### Step 5: Update Index Files
 
-- Add new conventions to `rules/conventions/README.md`
-- Add new development docs to `rules/development/README.md`
+- Add new conventions to `governance/conventions/README.md`
+- Add new development docs to `governance/development/README.md`
 - Maintain alphabetical ordering
 
 ### Step 6: Verify All Cross-References
@@ -416,14 +416,14 @@ Before completing a content offload, verify:
 
 **Verify Correct Folder Choice:**
 
-**For rules/conventions/** (content/format):
+**For governance/conventions/** (content/format):
 
 - File naming, linking, emoji, diagrams, colors
 - Content quality, mathematical notation
 - Hugo content, tutorials, acceptance criteria
 - Documentation organization
 
-**For rules/development/** (process/workflow):
+**For governance/development/** (process/workflow):
 
 - AI agent standards
 - Commit messages, git workflow

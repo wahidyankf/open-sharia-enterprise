@@ -272,8 +272,8 @@ fi
 **Example:**
 
 ```bash
-# Validate link from rules/conventions/formatting/linking.md
-file="rules/conventions/formatting/linking.md"
+# Validate link from governance/conventions/formatting/linking.md
+file="governance/conventions/formatting/linking.md"
 link="[Indentation](./indentation.md)"
 
 # Extract target
@@ -282,7 +282,7 @@ link_target=$(echo "$link" | sed 's/.*(\(.*\))/\1/')
 
 # Resolve path
 resolved_path=$(dirname "$file")/"$link_target"
-# Result: rules/conventions/./ex-co__file-naming.md
+# Result: governance/conventions/./ex-co__file-naming.md
 
 # Check existence
 if [ -f "$resolved_path" ]; then
@@ -322,11 +322,11 @@ fi
 **Example prefix calculation:**
 
 ```bash
-# rules/conventions/ → ex-co
+# governance/conventions/ → ex-co
 # docs/tutorials/ → tu
 # docs/how-to/ → hoto
 # docs/reference/ → re
-# rules/development/ → ex-de
+# governance/development/ → ex-de
 ```
 
 ## 🎯 Best Practices

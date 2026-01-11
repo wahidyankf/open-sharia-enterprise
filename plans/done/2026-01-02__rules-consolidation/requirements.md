@@ -153,7 +153,7 @@ All Skills must have `allowed-tools` frontmatter to restrict tool access when ac
 
 **CRITICAL**: All file operations in `.claude/` folders MUST use Bash tools (heredoc, sed, awk), NOT Write/Edit tools.
 
-**Rationale**: This enables autonomous agent operation without user approval prompts. See [AI Agents Convention - Writing to .claude Folders](../../../rules/development/agents/ai-agents.md#writing-to-claude-folders).
+**Rationale**: This enables autonomous agent operation without user approval prompts. See [AI Agents Convention - Writing to .claude Folders](../../../governance/development/agents/ai-agents.md#writing-to-claude-folders).
 
 **Applies to**:
 
@@ -301,7 +301,7 @@ And CLAUDE.md agent list includes it
 
 ```gherkin
 Given tutorial convention documents have been consolidated
-When I check rules/conventions/tutorial/
+When I check governance/conventions/tutorial/
 Then programming-language-structure.md contains both content and structure guidance
 And programming-language-content.md no longer exists
 And all references to the old file point to the consolidated file

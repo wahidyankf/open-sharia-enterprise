@@ -377,7 +377,7 @@ The AI will execute with scoped validation:
 - Fix issues in that scope only
 
 ```
-User: "Run documentation quality gate workflow for rules/conventions/meta/file-naming.md"
+User: "Run documentation quality gate workflow for governance/conventions/meta/file-naming.md"
 ```
 
 The AI will execute with single-file scope:
@@ -556,7 +556,7 @@ Result: SUCCESS (3 iterations)
 
 This workflow can be composed with:
 
-- **Repository Rules Quality Gate** (`wow__rules__quality-gate`) - Validate after docs changes affect repository consistency
+- **Repository Governance Quality Gate** (`wow__rules__quality-gate`) - Validate after docs changes affect repository consistency
 - Deployment workflows - Validate before deploying documentation sites
 - Content creation workflows - Validate after bulk documentation creation
 - Migration workflows - Ensure quality during documentation restructuring

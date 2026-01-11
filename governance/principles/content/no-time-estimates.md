@@ -337,7 +337,7 @@ code examples. Learning thoroughly now saves time debugging later.
 
 ### Tutorial Naming Convention
 
-**Location**: `rules/conventions/tutorial/naming.md`
+**Location**: `governance/conventions/tutorial/naming.md`
 
 **Outcome-focused language**:
 
@@ -355,7 +355,7 @@ try examples, and solve simple problems on their own.
 
 ### Content Quality Principles
 
-**Location**: `rules/conventions/content/quality.md`
+**Location**: `governance/conventions/content/quality.md`
 
 **Explicit "No Time Estimates" section**:
 

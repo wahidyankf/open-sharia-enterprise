@@ -22,7 +22,7 @@ Instructions for AI agents working with this repository via OpenCode.
 3. **Project Planning** (5 agents): `plan-maker`, `plan-checker`, `plan-executor`, `plan-execution-checker`, `plan-fixer`
 4. **Hugo Content - ayokoding-web** (17 agents): Bilingual content creators, validators, deployers
 5. **Hugo Content - ose-platform-web** (4 agents): Landing page content creators, validators, deployers
-6. **Repository Rules** (6 agents): `wow-rules-checker`, `wow-rules-fixer`, `wow-rules-maker`, `wow-workflow-checker`, `wow-workflow-fixer`, `wow-workflow-maker`
+6. **Repository Governance** (6 agents): `wow-governance-checker`, `wow-governance-fixer`, `wow-governance-maker`, `wow-workflow-checker`, `wow-workflow-fixer`, `wow-workflow-maker`
 7. **Meta/Specialized** (2 agents): `agent-maker`, `swe-hugo-developer`, `social-linkedin-post-maker`
 
 **Full agent catalog**: See [`.opencode/agent/README.md`](./.opencode/agent/README.md)
@@ -51,7 +51,7 @@ Instructions for AI agents working with this repository via OpenCode.
 - **Progressive Reporting**: Write findings immediately during execution
 - **UUID Chains**: Prevent parallel execution collisions
 
-**See**: [Maker-Checker-Fixer Pattern](./rules/development/pattern/maker-checker-fixer.md)
+**See**: [Maker-Checker-Fixer Pattern](./governance/development/pattern/maker-checker-fixer.md)
 
 ## Skills (Knowledge Packages)
 
@@ -85,7 +85,7 @@ permission:
 
 ## Core Principles
 
-All work follows **10 foundational principles** from \`rules/principles/\`:
+All work follows **10 foundational principles** from \`governance/principles/\`:
 
 - **Documentation First**: Documentation is mandatory, not optional
 - **Accessibility First**: WCAG AA compliance, color-blind friendly palettes
@@ -93,7 +93,7 @@ All work follows **10 foundational principles** from \`rules/principles/\`:
 - **Explicit Over Implicit**: Explicit configuration over magic behavior
 - **Automation Over Manual**: Automate repetitive tasks
 
-**Full list**: [Core Principles Index](./rules/principles/README.md)
+**Full list**: [Core Principles Index](./governance/principles/README.md)
 
 ## Documentation Standards
 
@@ -112,11 +112,11 @@ All work follows **10 foundational principles** from \`rules/principles/\`:
 - **Emoji Usage**: Allowed in docs/README/plans/CLAUDE.md/.claude/agents/.opencode/agent/, forbidden in config/code
 - **Content Quality**: Active voice, single H1, proper heading nesting, alt text for images, WCAG AA color contrast
 
-**See**: [Conventions Index](./rules/conventions/README.md) (24 documentation standards)
+**See**: [Conventions Index](./governance/conventions/README.md) (24 documentation standards)
 
 ## Development Practices
 
-**15 software practices** from \`rules/development/\`:
+**15 software practices** from \`governance/development/\`:
 
 - **Functional Programming**: Prefer immutability, pure functions, functional core/imperative shell
 - **Code Quality**: Pre-commit hooks (Prettier, Commitlint, tests), conventional commits
@@ -124,7 +124,7 @@ All work follows **10 foundational principles** from \`rules/principles/\`:
 - **Implementation Workflow**: Make it work → Make it right → Make it fast
 - **Reproducible Environments**: Volta for Node.js/npm pinning, package-lock.json, .env.example
 
-**See**: [Development Index](./rules/development/README.md)
+**See**: [Development Index](./governance/development/README.md)
 
 ## Repository Architecture
 
@@ -180,7 +180,7 @@ nx graph
 - **Commit format**: Conventional Commits \`<type>(<scope>): <description>\`
 - **Pre-commit hooks**: Format (Prettier), validate (Commitlint), test (affected projects)
 
-**See**: [Trunk Based Development](./rules/development/workflow/trunk-based-development.md)
+**See**: [Trunk Based Development](./governance/development/workflow/trunk-based-development.md)
 
 ## Plans Organization
 
@@ -193,7 +193,7 @@ Project planning in \`plans/\` folder:
 
 **Folder naming**: \`YYYY-MM-DD\_\_[project-identifier]/\`
 
-**See**: [Plans Organization](./rules/conventions/project/plans-organization.md)
+**See**: [Plans Organization](./governance/conventions/project/plans-organization.md)
 
 ## Temporary Files
 
@@ -204,7 +204,7 @@ AI agents use designated temporary directories:
 
 **Checker agents**: MUST write progressive reports to \`generated-reports/\` with pattern \`{agent-family}**{uuid-chain}**{YYYY-MM-DD--HH-MM}\_\_audit.md\`
 
-**See**: [Temporary Files Convention](./rules/development/infra/temporary-files.md)
+**See**: [Temporary Files Convention](./governance/development/infra/temporary-files.md)
 
 ## Important Notes
 

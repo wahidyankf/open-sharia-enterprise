@@ -65,9 +65,9 @@ This migration will be executed in **six phases** with validation gates between 
 - [ ] Verify git available: `git --version`
 - [ ] Create target directories:
   ```bash
-  mkdir -p rules/agents/content
-  mkdir -p rules/agents/meta
-  mkdir -p rules/agents/skills
+  mkdir -p governance/agents/content
+  mkdir -p governance/agents/meta
+  mkdir -p governance/agents/skills
   ```
 
 #### Technical Accuracy Validation
@@ -188,7 +188,7 @@ rm -rf .claude/agents.backup .opencode/agent.backup .claude/skills.backup
 - [ ] Parse Claude Code agent format (frontmatter + body)
 - [ ] Map `color` → `role` (blue→writer, green→checker, etc.)
 - [ ] Infer `mode` from agent name (SUBAGENT_NAMES set)
-- [ ] Write tool-agnostic format to `rules/agents/content/`
+- [ ] Write tool-agnostic format to `governance/agents/content/`
 - [ ] Add flags: `--name <agent>`, `--dry-run`, `--verbose`
 - [ ] Test on 3 sample agents (docs-maker, docs-checker, plan-executor)
 - [ ] Verify output matches expected format
@@ -197,7 +197,7 @@ rm -rf .claude/agents.backup .opencode/agent.backup .claude/skills.backup
 
 - [ ] Implement `extractCmd` Cobra command
 - [ ] Read from `.claude/skills/{skill-name}/SKILL.md`
-- [ ] Copy to `rules/agents/skills/{skill-name}/SKILL.md` (preserve folder structure)
+- [ ] Copy to `governance/agents/skills/{skill-name}/SKILL.md` (preserve folder structure)
 - [ ] Add frontmatter if missing (name, description)
 - [ ] Add flags: `--name <skill>`, `--dry-run`, `--verbose`
 - [ ] Test on 3 sample skills
@@ -232,7 +232,7 @@ rm -rf .claude/agents.backup .opencode/agent.backup .claude/skills.backup
   - [ ] Valid role (writer, checker, updater, implementor, specialist)
   - [ ] Valid model (sonnet, haiku, opus, inherit)
   - [ ] Valid tools (common subset: Read, Write, Edit, Glob, Grep, Bash, WebFetch; extended: MultiEdit, LS, WebSearch, TodoRead, TodoWrite, NotebookRead, NotebookEdit)
-  - [ ] Skills exist in `rules/agents/skills/`
+  - [ ] Skills exist in `governance/agents/skills/`
   - [ ] Valid mode (all, subagent, primary)
   - [ ] Body not empty
 - [ ] Add flags: `--name <agent>`, `--strict`
@@ -377,21 +377,21 @@ go build -o butler-cli
 ./butler-cli agents extract --verbose
 
 # Review output
-ls -la ../../rules/agents/content/
+ls -la ../../governance/agents/content/
 # Should have 45 .md files
 
 # Spot-check 5 agents for correct format
-cat ../../rules/agents/content/docs-maker.md
-cat ../../rules/agents/content/docs-checker.md
-cat ../../rules/agents/content/plan-executor.md
-cat ../../rules/agents/content/wow-rules-checker.md
-cat ../../rules/agents/content/swe-hugo-developer.md
+cat ../../governance/agents/content/docs-maker.md
+cat ../../governance/agents/content/docs-checker.md
+cat ../../governance/agents/content/plan-executor.md
+cat ../../governance/agents/content/wow-governance-checker.md
+cat ../../governance/agents/content/swe-hugo-developer.md
 ```
 
 **Checklist**:
 
 - [ ] Extraction completes without errors
-- [ ] 45 agent files created in `rules/agents/content/`
+- [ ] 45 agent files created in `governance/agents/content/`
 - [ ] Spot-check confirms correct frontmatter format
 - [ ] Spot-check confirms body content preserved
 - [ ] Git metadata (created/updated) looks reasonable
@@ -403,19 +403,19 @@ cat ../../rules/agents/content/swe-hugo-developer.md
 ./butler-cli skills extract --verbose
 
 # Review output
-ls -la rules/agents/skills/
+ls -la governance/agents/skills/
 # Should have 23 directories (folder/SKILL.md structure)
 
 # Spot-check 3 skills
-cat rules/agents/skills/docs-applying-content-quality/SKILL.md
-cat rules/agents/skills/wow-applying-maker-checker-fixer/SKILL.md
-cat rules/agents/skills/plan-creating-project-plans/SKILL.md
+cat governance/agents/skills/docs-applying-content-quality/SKILL.md
+cat governance/agents/skills/wow-applying-maker-checker-fixer/SKILL.md
+cat governance/agents/skills/plan-creating-project-plans/SKILL.md
 ```
 
 **Checklist**:
 
 - [ ] Extraction completes without errors
-- [ ] 23 skill directories created in `rules/agents/skills/` (each with SKILL.md)
+- [ ] 23 skill directories created in `governance/agents/skills/` (each with SKILL.md)
 - [ ] Spot-check confirms frontmatter added (if missing)
 - [ ] Spot-check confirms content preserved
 - [ ] Folder/SKILL.md structure matches `.claude/skills/`
@@ -476,7 +476,7 @@ butler-cli skills sync --verbose
    ```
 
 3. **Recovery options**:
-   - **Option A**: Fix source definition in `rules/agents/content/` and retry sync
+   - **Option A**: Fix source definition in `governance/agents/content/` and retry sync
    - **Option B**: Skip problematic agent temporarily (document as known issue, investigate later)
    - **Option C**: Abort migration and rollback to Phase 2 (fix CLI generation logic)
 
@@ -536,8 +536,8 @@ cp -r .claude/skills.backup .claude/skills
 cp -r .opencode/skills.backup .opencode/skills
 
 # Remove extracted docs (start fresh next attempt)
-rm -rf rules/agents/content/*.md
-rm -rf rules/agents/skills/*.md
+rm -rf governance/agents/content/*.md
+rm -rf governance/agents/skills/*.md
 
 # Review error messages, fix CLI, retry
 ```
@@ -559,7 +559,7 @@ rm -rf rules/agents/skills/*.md
   ```
 - [ ] Compare file counts:
   ```bash
-  echo "Source: $(ls rules/agents/content/*.md | wc -l) agents"
+  echo "Source: $(ls governance/agents/content/*.md | wc -l) agents"
   echo "Claude Code: $(ls .claude/agents/*.md | grep -v README | wc -l) agents"
   echo "OpenCode: $(ls .opencode/agent/*.md | grep -v README | wc -l) agents"
   echo "Claude Skills: $(ls .claude/skills/ | wc -l) skills"
@@ -576,7 +576,7 @@ rm -rf rules/agents/skills/*.md
 - [ ] `docs-fixer` - Fix issues from checker audit
 - [ ] `plan-maker` - Create test plan
 - [ ] `plan-executor` - Execute simple plan step
-- [ ] `wow-rules-checker` - Run repository validation
+- [ ] `wow-governance-checker` - Run repository validation
 - [ ] `readme-maker` - Update test README
 - [ ] `apps-ayokoding-web-general-maker` - Create test Hugo content
 - [ ] `swe-hugo-developer` - Hugo development task
@@ -598,7 +598,7 @@ rm -rf rules/agents/skills/*.md
 - [ ] `docs-fixer`
 - [ ] `plan-maker`
 - [ ] `plan-executor`
-- [ ] `wow-rules-checker`
+- [ ] `wow-governance-checker`
 - [ ] `readme-maker`
 - [ ] `apps-ayokoding-web-general-maker`
 - [ ] `swe-hugo-developer`
@@ -672,19 +672,19 @@ cp -r .claude/skills.backup .claude/skills
 
 #### Documentation Updates
 
-- [ ] Create `rules/agents/README.md` (canonical agent catalog)
+- [ ] Create `governance/agents/README.md` (canonical agent catalog)
   - [ ] List all 45 agents with descriptions
   - [ ] Organize by agent family (7 families)
   - [ ] Link to source files in `content/`
   - [ ] Document agent workflows (maker → checker → fixer)
 
-- [ ] Create `rules/agents/skills/README.md` (canonical skills catalog)
+- [ ] Create `governance/agents/skills/README.md` (canonical skills catalog)
   - [ ] List all 23 skills with descriptions
   - [ ] Organize by category (docs**, readme**, plan**, apps**, agent\_\_, wow\_\_)
   - [ ] Link to skill files
   - [ ] Document skill auto-loading vs on-demand
 
-- [ ] Create `rules/agents/meta/ex-ag-me__architecture.md`
+- [ ] Create `governance/agents/meta/ex-ag-me__architecture.md`
   - [ ] Document tool-agnostic format specification
   - [ ] Explain role → color mapping
   - [ ] Document sync workflow
@@ -692,7 +692,7 @@ cp -r .claude/skills.backup .claude/skills
   - [ ] Link to sync CLI commands
 
 - [ ] Update `CLAUDE.md`:
-  - [ ] Replace agent location: `.claude/agents/` → `rules/agents/content/`
+  - [ ] Replace agent location: `.claude/agents/` → `governance/agents/content/`
   - [ ] Add sync workflow instructions
   - [ ] Link to architecture doc
   - [ ] Keep brief (link to detailed docs)
@@ -701,14 +701,14 @@ cp -r .claude/skills.backup .claude/skills
   - [ ] Same updates as CLAUDE.md
   - [ ] Add sync workflow for OpenCode users
 
-- [ ] Update `rules/development/agents/ai-agents.md`:
+- [ ] Update `governance/development/agents/ai-agents.md`:
   - [ ] Add "Source of Truth" section
   - [ ] Document tool-agnostic format
   - [ ] Document sync process
   - [ ] Keep dual-format section (OpenCode format)
 
 - [ ] Update `docs/explanation/ex-ru__repository-governance-architecture.md`:
-  - [ ] Layer 4 references `rules/agents/` as source
+  - [ ] Layer 4 references `governance/agents/` as source
   - [ ] Mention generated formats in `.claude/agents/` and `.opencode/agent/`
   - [ ] Update Mermaid diagram if needed
 
@@ -716,7 +716,7 @@ cp -r .claude/skills.backup .claude/skills
 
 - [ ] Update `.claude/agents/README.md`:
   - [ ] Add banner at top: "⚠️ DO NOT EDIT - GENERATED FILES"
-  - [ ] Link to source: `rules/agents/content/`
+  - [ ] Link to source: `governance/agents/content/`
   - [ ] Document sync workflow
   - [ ] Keep existing catalog content
 
@@ -763,24 +763,24 @@ cp -r .claude/skills.backup .claude/skills
 
 #### Meta-Agent Updates
 
-- [ ] Update `rules/agents/content/agent-maker.md` (source):
-  - [ ] Create agents in `rules/agents/content/` (not `.claude/agents/`)
+- [ ] Update `governance/agents/content/agent-maker.md` (source):
+  - [ ] Create agents in `governance/agents/content/` (not `.claude/agents/`)
   - [ ] Use tool-agnostic format (role instead of color)
   - [ ] Use capitalized tool names (Read, Write, Edit)
   - [ ] Instruct user to run sync command after creation: `butler-cli agents sync`
   - [ ] Warn NOT to create in `.claude/agents/` directly
 
-- [ ] Update `rules/agents/content/wow-rules-checker.md` (source):
-  - [ ] Validate `rules/agents/content/` (source, not generated)
-  - [ ] Validate `rules/agents/skills/` (source, not generated)
+- [ ] Update `governance/agents/content/wow-governance-checker.md` (source):
+  - [ ] Validate `governance/agents/content/` (source, not generated)
+  - [ ] Validate `governance/agents/skills/` (source, not generated)
   - [ ] Do NOT validate `.claude/agents/` (generated)
   - [ ] Do NOT validate `.opencode/agent/` (generated)
   - [ ] Check tool-agnostic format (role, capitalized tools, etc.)
   - [ ] Detect edits to generated directories as errors
 
-- [ ] Update `rules/agents/content/wow-rules-fixer.md` (source):
-  - [ ] Fix findings in `rules/agents/content/` (source)
-  - [ ] Fix findings in `rules/agents/skills/` (source)
+- [ ] Update `governance/agents/content/wow-governance-fixer.md` (source):
+  - [ ] Fix findings in `governance/agents/content/` (source)
+  - [ ] Fix findings in `governance/agents/skills/` (source)
   - [ ] Do NOT modify `.claude/agents/` (generated)
   - [ ] Do NOT modify `.opencode/agent/` (generated)
   - [ ] Do NOT modify `.claude/skills/` (generated)
@@ -797,58 +797,58 @@ cp -r .claude/skills.backup .claude/skills
 
   **Test 1: agent-maker creates agents in correct location**
   - [ ] Invoke agent-maker to create test agent "test-validator"
-  - [ ] Verify agent created at `rules/agents/content/test-validator.md` (NOT `.claude/agents/`)
+  - [ ] Verify agent created at `governance/agents/content/test-validator.md` (NOT `.claude/agents/`)
   - [ ] Verify frontmatter uses `role: checker` (NOT `color: green`)
   - [ ] Verify frontmatter uses capitalized tools (`Read`, `Grep`, `Glob` - NOT lowercase)
   - [ ] Verify agent-maker instructs user to run sync: `butler-cli agents sync`
   - [ ] Verify agent-maker warns NOT to edit `.claude/agents/` directly
   - [ ] Run sync and verify test agent appears in both `.claude/agents/` and `.opencode/agent/`
 
-  **Test 2: wow-rules-checker validates source (not generated)**
-  - [ ] Create intentional error in `rules/agents/content/docs-maker.md` (e.g., change `role: writer` to `role: invalid-role`)
-  - [ ] Invoke wow-rules-checker for agent validation
-  - [ ] Verify checker reports error for `rules/agents/content/docs-maker.md`
+  **Test 2: wow-governance-checker validates source (not generated)**
+  - [ ] Create intentional error in `governance/agents/content/docs-maker.md` (e.g., change `role: writer` to `role: invalid-role`)
+  - [ ] Invoke wow-governance-checker for agent validation
+  - [ ] Verify checker reports error for `governance/agents/content/docs-maker.md`
   - [ ] Verify checker does NOT validate `.claude/agents/` (skipped as generated)
   - [ ] Verify checker does NOT validate `.opencode/agent/` (skipped as generated)
   - [ ] Revert intentional error
 
-  **Test 3: wow-rules-checker detects edits to generated directories**
+  **Test 3: wow-governance-checker detects edits to generated directories**
   - [ ] Modify `.claude/agents/docs-maker.md` directly (add comment line)
   - [ ] Stage the change: `git add .claude/agents/docs-maker.md`
-  - [ ] Invoke wow-rules-checker
+  - [ ] Invoke wow-governance-checker
   - [ ] Verify checker reports error: "Generated file modified: .claude/agents/docs-maker.md"
-  - [ ] Verify error message suggests editing source instead: `rules/agents/content/docs-maker.md`
+  - [ ] Verify error message suggests editing source instead: `governance/agents/content/docs-maker.md`
   - [ ] Revert change: `git checkout .claude/agents/docs-maker.md`
 
-  **Test 4: wow-rules-fixer fixes source (not generated)**
-  - [ ] Create wow-rules-checker audit report with finding for docs source
-  - [ ] Invoke wow-rules-fixer with audit report
-  - [ ] Verify fixer modifies `rules/agents/content/` (source)
+  **Test 4: wow-governance-fixer fixes source (not generated)**
+  - [ ] Create wow-governance-checker audit report with finding for docs source
+  - [ ] Invoke wow-governance-fixer with audit report
+  - [ ] Verify fixer modifies `governance/agents/content/` (source)
   - [ ] Verify fixer does NOT modify `.claude/agents/` (generated)
   - [ ] Verify fixer does NOT modify `.opencode/agent/` (generated)
   - [ ] Verify fixer instructs user to run: `butler-cli agents sync` after fix
 
-**Test5: wow-rules-fixer skips findings for generated files**
+**Test5: wow-governance-fixer skips findings for generated files**
 
 - [ ] Create mock finding referencing `.claude/agents/test-agent.md` (generated file)
-- [ ] Invoke wow-rules-fixer
+- [ ] Invoke wow-governance-fixer
 - [ ] Verify fixer skips this finding with warning
 - [ ] Verify fixer logs: "Finding references generated file - skipping"
-- [ ] Verify fixer suggests: "Edit source: rules/agents/content/test-agent.md"
+- [ ] Verify fixer suggests: "Edit source: governance/agents/content/test-agent.md"
 
-**Test6: wow-rules-quality-gate validates source (not generated)**
+**Test6: wow-governance-quality-gate validates source (not generated)**
 
-- [ ] Review `rules/workflows/wow/rules-quality-gate.md`
+- [ ] Review `governance/workflows/wow/rules-quality-gate.md`
 - [ ] Verify "Scope Clarification" section exists explaining source-only validation
-- [ ] Verify workflow explicitly states it validates `rules/agents/content/` (source)
+- [ ] Verify workflow explicitly states it validates `governance/agents/content/` (source)
 - [ ] Verify workflow explicitly states it skips `.claude/agents/`, `.claude/skills/`, `.opencode/agent/`, `.opencode/skills/` (generated)
 - [ ] Verify workflow mentions using `butler-cli agents validate` and `butler-cli skills validate` for output validation
 - [ ] Verify "Concurrency" note clarifies "agents" refers to source definitions
-- [ ] Simulate running workflow: Run wow-rules-checker with scope `docs` and verify it doesn't validate generated directories
+- [ ] Simulate running workflow: Run wow-governance-checker with scope `docs` and verify it doesn't validate generated directories
 
 **Cleanup**:
 
-- [ ] Remove test agent: `rm rules/agents/content/test-validator.md`
+- [ ] Remove test agent: `rm governance/agents/content/test-validator.md`
 - [ ] Run sync to remove from generated directories
 - [ ] Remove mock audit reports and findings
 
@@ -856,16 +856,16 @@ cp -r .claude/skills.backup .claude/skills
 
 - [ ] All 6 tests pass without errors
 - [ ] agent-maker creates agents in correct location (docs source)
-- [ ] wow-rules-checker validates source, skips generated, detects generated file edits
-- [ ] wow-rules-fixer fixes source, skips generated file findings
-- [ ] wow-rules-quality-gate workflow explicitly documents source-only validation
-- [ ] wow-rules-quality-gate workflow clarifies distinction between source validation and output validation
+- [ ] wow-governance-checker validates source, skips generated, detects generated file edits
+- [ ] wow-governance-fixer fixes source, skips generated file findings
+- [ ] wow-governance-quality-gate workflow explicitly documents source-only validation
+- [ ] wow-governance-quality-gate workflow clarifies distinction between source validation and output validation
 
 **Rollback for Meta-Agent Failures**:
 
 - [ ] If any test fails, revert meta-agent updates from backup
-- [ ] Restore from: `git checkout main -- rules/agents/content/agent-maker.md rules/agents/content/wow-rules-checker.md rules/agents/content/wow-rules-fixer.md`
-- [ ] Revert workflow updates: `git checkout main -- rules/workflows/wow/rules-quality-gate.md`
+- [ ] Restore from: `git checkout main -- governance/agents/content/agent-maker.md governance/agents/content/wow-governance-checker.md governance/agents/content/wow-governance-fixer.md`
+- [ ] Revert workflow updates: `git checkout main -- governance/workflows/wow/rules-quality-gate.md`
 - [ ] Re-sync: `butler-cli agents sync`
 - [ ] Document failure, investigate root cause before retrying
 
@@ -942,16 +942,16 @@ git checkout main -- .husky/pre-commit
 - [ ] Stage all files:
 
   ```bash
-  git add rules/agents/
-  git add rules/agents/skills/
+  git add governance/agents/
+  git add governance/agents/skills/
   git add apps/butler-cli/
   git add .claude/agents/
   git add .opencode/agent/
   git add .claude/skills/
   git add .husky/pre-commit
   git add CLAUDE.md AGENTS.md
-  git add rules/development/agents/
-  git add rules/ex-ru__repository-governance-architecture.md
+  git add governance/development/agents/
+  git add governance/ex-ru__repository-governance-architecture.md
   ```
 
 - [ ] Create comprehensive commit message:
@@ -961,12 +961,12 @@ git checkout main -- .husky/pre-commit
 
   BREAKING CHANGE: Agent and skill definitions now maintained in docs/explanation/
 
-   - Agents: rules/agents/content/ (source, 45 files)
-   - Skills: rules/agents/skills/ (source, 23 files)
+   - Agents: governance/agents/content/ (source, 45 files)
+   - Skills: governance/agents/skills/ (source, 23 files)
    - Generated: .claude/agents/ + .opencode/agent/ (DO NOT EDIT)
 
    New workflow:
-   1. Edit: rules/agents/content/{agent-name}.md
+   1. Edit: governance/agents/content/{agent-name}.md
    2. Sync: butler-cli agents sync
    3. Commit: source + generated files together
 
@@ -987,9 +987,9 @@ git checkout main -- .husky/pre-commit
 
    Meta-agent updates:
    - agent-maker: Creates in docs source, not .claude/agents/
-   - wow-rules-checker: Validates source, skips generated
-   - wow-rules-fixer: Fixes source, skips generated
-   - wow-rules-quality-gate: Explicit source-only validation scope
+   - wow-governance-checker: Validates source, skips generated
+   - wow-governance-fixer: Fixes source, skips generated
+   - wow-governance-quality-gate: Explicit source-only validation scope
 
    Migration validation:
    - 45 agents migrated (100% success)
@@ -998,7 +998,7 @@ git checkout main -- .husky/pre-commit
    - 0 functional regressions (10/10 critical agents tested)
    - All meta-agents validated to work on source only
 
-  See: rules/agents/meta/ex-ag-me__architecture.md
+  See: governance/agents/meta/ex-ag-me__architecture.md
   Plan: plans/backlog/2026-01-04__agents-docs-source-of-truth/
   "
   ```
@@ -1072,7 +1072,7 @@ git reset --hard pre-agents-docs-migration
 
 - [ ] Create tutorial video: "How to Edit Agents in New Architecture"
   - [ ] Add sync CLI to CI/CD (automated sync check on PR)
-  - [ ] Create `agent-template.md` in `rules/agents/content/`
+  - [ ] Create `agent-template.md` in `governance/agents/content/`
   - [ ] Archive old plan: Move to `plans/done/2026-01-04__agents-docs-source-of-truth/`
 
 ### Monitoring
@@ -1169,8 +1169,8 @@ git reset --hard pre-agents-docs-migration
 
 | Metric                     | Target       | Measurement                                                      |
 | -------------------------- | ------------ | ---------------------------------------------------------------- |
-| **Agents migrated**        | 45/45 (100%) | `ls rules/agents/content/*.md \| wc -l`                          |
-| **Skills migrated**        | 23/23 (100%) | `ls -d rules/agents/skills/*/ \| wc -l`                          |
+| **Agents migrated**        | 45/45 (100%) | `ls governance/agents/content/*.md \| wc -l`                     |
+| **Skills migrated**        | 23/23 (100%) | `ls -d governance/agents/skills/*/ \| wc -l`                     |
 | **Validation errors**      | 0            | All validation commands pass (agents + skills, both formats)     |
 | **Functional regressions** | 0            | 10/10 critical agents work correctly                             |
 | **Sync time**              | <30s         | `time ./butler-cli agents sync && time ./butler-cli skills sync` |
@@ -1194,7 +1194,7 @@ git reset --hard pre-agents-docs-migration
 # Phase 0
 git checkout -b feat/agents-docs-source-of-truth
 git tag pre-agents-docs-migration
-mkdir -p rules/agents/content rules/agents/skills
+mkdir -p governance/agents/content governance/agents/skills
 
 # Phase 3
 butler-cli agents extract --verbose
@@ -1211,27 +1211,27 @@ butler-cli agents validate --cross-format
 time butler-cli agents sync && time butler-cli skills sync
 
 # Phase 6
-git add rules/agents/ rules/agents/skills/ rules/workflows/wow/ apps/butler-cli/ .claude/ .opencode/
+git add governance/agents/ governance/agents/skills/ governance/workflows/wow/ apps/butler-cli/ .claude/ .opencode/
 git commit -m "feat(agents): migrate to docs source of truth"
 git push -u origin feat/agents-docs-source-of-truth
 ```
 
 ### Appendix B: File Locations Quick Reference
 
-| Purpose                         | Location                                      |
-| ------------------------------- | --------------------------------------------- |
-| **Source - Agents**             | `rules/agents/content/*.md`                   |
-| **Source - Skills**             | `rules/agents/skills/{skill-name}/SKILL.md`   |
-| **Generated - Claude Code**     | `.claude/agents/*.md`                         |
-| **Generated - OpenCode**        | `.opencode/agent/*.md`                        |
-| **Generated - Claude Skills**   | `.claude/skills/{skill-name}/SKILL.md`        |
-| **Generated - OpenCode Skills** | `.opencode/skills/{skill-name}/SKILL.md`      |
-| **Catalogs**                    | `rules/agents/README.md`                      |
-|                                 | `rules/agents/skills/README.md`               |
-| **Architecture Doc**            | `rules/agents/meta/ex-ag-me__architecture.md` |
-| **CLI Application**             | `apps/butler-cli/` (Go + Cobra framework)     |
-|                                 | `./butler-cli agents extract/sync/validate`   |
-|                                 | `./butler-cli skills extract/sync/validate`   |
+| Purpose                         | Location                                           |
+| ------------------------------- | -------------------------------------------------- |
+| **Source - Agents**             | `governance/agents/content/*.md`                   |
+| **Source - Skills**             | `governance/agents/skills/{skill-name}/SKILL.md`   |
+| **Generated - Claude Code**     | `.claude/agents/*.md`                              |
+| **Generated - OpenCode**        | `.opencode/agent/*.md`                             |
+| **Generated - Claude Skills**   | `.claude/skills/{skill-name}/SKILL.md`             |
+| **Generated - OpenCode Skills** | `.opencode/skills/{skill-name}/SKILL.md`           |
+| **Catalogs**                    | `governance/agents/README.md`                      |
+|                                 | `governance/agents/skills/README.md`               |
+| **Architecture Doc**            | `governance/agents/meta/ex-ag-me__architecture.md` |
+| **CLI Application**             | `apps/butler-cli/` (Go + Cobra framework)          |
+|                                 | `./butler-cli agents extract/sync/validate`        |
+|                                 | `./butler-cli skills extract/sync/validate`        |
 
 ### Appendix C: Rollback Decision Matrix
 

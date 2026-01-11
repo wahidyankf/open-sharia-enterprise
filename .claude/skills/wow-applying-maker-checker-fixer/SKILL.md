@@ -249,17 +249,17 @@ Each family has:
 
 The pattern integrates with:
 
-- **[Criticality Levels Convention](../../../rules/development/quality/criticality-levels.md)** - Checkers categorize by criticality, fixers use for priority
-- **[Fixer Confidence Levels Convention](../../../rules/development/quality/fixer-confidence-levels.md)** - Fixers assess confidence, combine with criticality
-- **[Temporary Files Convention](../../../rules/development/infra/temporary-files.md)** - Checker/fixer reports stored in `generated-reports/`
-- **[Repository Validation Methodology](../../../rules/development/quality/repository-validation.md)** - Standard validation patterns
-- **[AI Agents Convention](../../../rules/development/agents/ai-agents.md)** - Agent structure, tool permissions, color coding
+- **[Criticality Levels Convention](../../../governance/development/quality/criticality-levels.md)** - Checkers categorize by criticality, fixers use for priority
+- **[Fixer Confidence Levels Convention](../../../governance/development/quality/fixer-confidence-levels.md)** - Fixers assess confidence, combine with criticality
+- **[Temporary Files Convention](../../../governance/development/infra/temporary-files.md)** - Checker/fixer reports stored in `generated-reports/`
+- **[Repository Validation Methodology](../../../governance/development/quality/repository-validation.md)** - Standard validation patterns
+- **[AI Agents Convention](../../../governance/development/agents/ai-agents.md)** - Agent structure, tool permissions, color coding
 
 ## References
 
-- **[Maker-Checker-Fixer Pattern Convention](../../../rules/development/pattern/maker-checker-fixer.md)** - Complete pattern documentation
-- **[Criticality Levels Convention](../../../rules/development/quality/criticality-levels.md)** - Severity classification
-- **[Fixer Confidence Levels Convention](../../../rules/development/quality/fixer-confidence-levels.md)** - Confidence assessment
+- **[Maker-Checker-Fixer Pattern Convention](../../../governance/development/pattern/maker-checker-fixer.md)** - Complete pattern documentation
+- **[Criticality Levels Convention](../../../governance/development/quality/criticality-levels.md)** - Severity classification
+- **[Fixer Confidence Levels Convention](../../../governance/development/quality/fixer-confidence-levels.md)** - Confidence assessment
 
 ## Related Skills
 

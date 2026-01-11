@@ -56,7 +56,7 @@ Create new AI agent files following AI Agents Convention.
 
 ## Reference
 
-- [AI Agents Convention](../../rules/development/agents/ex-ru-de-ag-ai-agents.md)
+- [AI Agents Convention](../../governance/development/agents/ex-ru-de-ag-ai-agents.md)
 - Skill: `docs-applying-diataxis-framework`
 
 ## Workflow
@@ -73,17 +73,17 @@ Create new AI agent files following AI Agents Convention.
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [AI Agents Convention](../../rules/development/agents/ai-agents.md)
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
 
 **Related Agents**:
 
-- `wow-rules-checker` - Validates repository consistency
-- `wow-rules-maker` - Creates repository rules
+- `wow-governance-checker` - Validates repository consistency
+- `wow-governance-maker` - Creates repository rules
 
 **Related Conventions**:
 
-- [AI Agents Convention](../../rules/development/agents/ai-agents.md)
-- [Maker-Checker-Fixer Pattern](../../rules/development/pattern/maker-checker-fixer.md)
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
+- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md)
 
 **Skills**:
 

@@ -8,7 +8,7 @@
 
 ## Problem Statement
 
-Currently, system rules and conventions exist under `rules/` and must follow Obsidian markdown formatting rules (file naming with `__` separator, linking syntax, emoji restrictions, etc.).
+Currently, system rules and conventions exist under `governance/` and must follow Obsidian markdown formatting rules (file naming with `__` separator, linking syntax, emoji restrictions, etc.).
 
 **Key Issues**:
 
@@ -19,10 +19,10 @@ Currently, system rules and conventions exist under `rules/` and must follow Obs
 
 ## Proposed Solution
 
-**Move `rules/` (excluding `agents/`) to repository root as `/rules/`**
+**Move `governance/` (excluding `agents/`) to repository root as `/governance/`**
 
 ```
-rules/           /rules/
+governance/           /governance/
 ├── vision/              →        vision/         (Layer 0: WHY we exist)
 ├── principles/         →        principles/       (Layer 1: WHY - values)
 ├── conventions/       →        conventions/     (Layer 2: WHAT - documentation rules)
@@ -32,14 +32,14 @@ rules/           /rules/
 └── README.md           →        README.md
 ```
 
-**NOT moving**: `rules/agents/` - left untouched (handled by separate plan `2026-01-04__agents-docs-source-of-truth/`)
+**NOT moving**: `governance/agents/` - left untouched (handled by separate plan `2026-01-04__agents-docs-source-of-truth/`)
 
 ## Goals
 
 ### Primary Goals
 
 1. **Separate system rules from documentation**: System rules use normal markdown (no Obsidian constraints)
-2. **Clear directory purpose**: `/rules/` for system rules, `docs/` for human-written docs
+2. **Clear directory purpose**: `/governance/` for system rules, `docs/` for human-written docs
 3. **Simplify agent creation**: Agents create rules without Obsidian formatting requirements
 4. **Preserve git history**: Use `git mv` for all directory moves
 
@@ -54,8 +54,8 @@ rules/           /rules/
 
 ### Separation of Concerns
 
-- **Clear boundary**: System rules (`/rules/`) vs. human-written docs (`docs/`)
-- **Purpose-aligned**: `/rules/` for governance, `docs/` for learning
+- **Clear boundary**: System rules (`/governance/`) vs. human-written docs (`docs/`)
+- **Purpose-aligned**: `/governance/` for governance, `docs/` for learning
 - **Format-appropriate**: Normal markdown for rules, Obsidian format for docs
 
 ### Maintainability
@@ -80,7 +80,7 @@ rules/           /rules/
 
 - Automated sed commands for simple patterns
 - Manual review of complex relative links
-- Validation with wow-rules-checker after updates
+- Validation with wow-governance-checker after updates
 
 ### Link Breakage Risk
 
@@ -89,12 +89,12 @@ rules/           /rules/
 **Mitigation**:
 
 - Validate after each phase
-- Run wow-rules-checker to detect broken links
+- Run wow-governance-checker to detect broken links
 - Manual spot-check of key documents
 
 ### Directory Structure Change
 
-**Risk**: Team used to `rules/` path will need to learn new location
+**Risk**: Team used to `governance/` path will need to learn new location
 
 **Mitigation**:
 
@@ -106,33 +106,33 @@ rules/           /rules/
 
 ### File Move Success
 
-- [ ] All 5 directories moved to `/rules/` (vision, principles, conventions, development, workflows)
-- [ ] 2 files moved to `/rules/` (ex-ru\_\_\*.md, README.md)
-- [ ] `rules/` directory removed (no leftover files)
+- [ ] All 5 directories moved to `/governance/` (vision, principles, conventions, development, workflows)
+- [ ] 2 files moved to `/governance/` (ex-ru\_\_\*.md, README.md)
+- [ ] `governance/` directory removed (no leftover files)
 - [ ] Git shows moves as renames (history preserved)
 - [ ] Zero untracked files remaining
 
 ### Reference Update Success
 
-- [ ] Zero occurrences of `rules/` in entire repository
-- [ ] All references to `/rules/` work correctly
-- [ ] wow-rules-checker reports zero broken links
+- [ ] Zero occurrences of `governance/` in entire repository
+- [ ] All references to `/governance/` work correctly
+- [ ] wow-governance-checker reports zero broken links
 - [ ] Key documents (CLAUDE.md, AGENTS.md, governance) link correctly
 
 ### Documentation Success
 
-- [ ] Governance architecture updated with `/rules/` paths for all layers
-- [ ] Mermaid diagram in governance doc shows `/rules/` locations
+- [ ] Governance architecture updated with `/governance/` paths for all layers
+- [ ] Mermaid diagram in governance doc shows `/governance/` locations
 - [ ] 45 agent files updated with new paths
 - [ ] 23 skill files updated with new paths
-- [ ] 3 meta-agents (wow-rules-\*) updated
+- [ ] 3 meta-agents (wow-governance-\*) updated
 - [ ] 1 workflow (ex-ru-wf-wo\_\_rules-quality-gate.md) updated
 
 ### Validation Success
 
-- [ ] Phase 1 validation: All files in `/rules/` exist
+- [ ] Phase 1 validation: All files in `/governance/` exist
 - [ ] Phase 2 validation: Zero old-path references in governance doc
-- [ ] Phase 3 validation: wow-rules-checker reports no broken links
+- [ ] Phase 3 validation: wow-governance-checker reports no broken links
 - [ ] Final validation: Git diff shows only expected changes
 
 ## Plan Structure
@@ -153,7 +153,7 @@ This plan is organized into four documents:
 ### Internal Dependencies
 
 - **Separate from**: `plans/backlog/2026-01-04__agents-docs-source-of-truth/`
-- `rules/agents/` NOT moved (that plan handles it)
+- `governance/agents/` NOT moved (that plan handles it)
 - All other rules directories moved by this plan
 
 ## Constraints
@@ -162,13 +162,13 @@ This plan is organized into four documents:
 2. **Zero broken links**: All references must work after move
 3. **Single commit**: All changes in one atomic commit (YOLO approach - no rollback plan)
 4. **Validate after each phase**: Don't proceed if phase fails validation
-5. **Manual meta-agent updates**: wow-rules-\* agents updated manually (not via sed)
+5. **Manual meta-agent updates**: wow-governance-\* agents updated manually (not via sed)
 
 ## Assumptions
 
-1. wow-rules-checker agent is available and can validate links
+1. wow-governance-checker agent is available and can validate links
 2. Git mv commands preserve history for moved files
-3. Team will adapt to new `/rules/` path
+3. Team will adapt to new `/governance/` path
 4. ~150 files require path reference updates (agents, skills, docs)
 5. All docs/ content follows Obsidian rules (tutorials/, how-to/, reference/, explanation/)
 
@@ -176,7 +176,7 @@ This plan is organized into four documents:
 
 ### Alternative 1: Keep Current Structure (Status Quo)
 
-**Approach**: Keep `rules/` with Obsidian constraints
+**Approach**: Keep `governance/` with Obsidian constraints
 
 **Pros**:
 
@@ -191,9 +191,9 @@ This plan is organized into four documents:
 
 **Decision**: Rejected - doesn't solve Obsidian constraint problem
 
-### Alternative 2: Move to Different Location (e.g., /system-rules/)
+### Alternative 2: Move to Different Location (e.g., /system-governance/)
 
-**Approach**: Move to `/system-rules/` instead of `/rules/`
+**Approach**: Move to `/system-governance/` instead of `/governance/`
 
 **Pros**:
 
@@ -203,13 +203,13 @@ This plan is organized into four documents:
 **Cons**:
 
 - Longer path to type
-- Less intuitive than `/rules/`
+- Less intuitive than `/governance/`
 
-**Decision**: Rejected - `/rules/` is concise and intuitive
+**Decision**: Rejected - `/governance/` is concise and intuitive
 
 ### Alternative 3: Keep in docs/ but Remove Obsidian Rules
 
-**Approach**: Keep `rules/` but exempt from Obsidian rules
+**Approach**: Keep `governance/` but exempt from Obsidian rules
 
 **Pros**:
 
@@ -218,15 +218,15 @@ This plan is organized into four documents:
 
 **Cons**:
 
-- Inconsistent rules application (docs/ follows Obsidian, but rules/ doesn't)
+- Inconsistent rules application (docs/ follows Obsidian, but governance/ doesn't)
 - Complex documentation (which rules apply where?)
 - Confusing for contributors
 
 **Decision**: Rejected - inconsistent rules application
 
-### Alternative 4: Selected - Move to /rules/
+### Alternative 4: Selected - Move to /governance/
 
-**Approach**: Move to `/rules/` at repository root
+**Approach**: Move to `/governance/` at repository root
 
 **Pros**:
 
@@ -254,6 +254,6 @@ This plan is organized into four documents:
 
 ## References
 
-- Repository Governance Architecture (will be at `/rules/ex-ru__repository-governance-architecture.md` after move)
-- [Plans Organization](../../rules/conventions/project/plans-organization.md)
-- [Agent and Skill Definitions as Documentation Source of Truth](../2026-01-04__agents-docs-source-of-truth/) - Separate plan handling `rules/agents/`
+- Repository Governance Architecture (will be at `/governance/ex-ru__repository-governance-architecture.md` after move)
+- [Plans Organization](../../governance/conventions/project/plans-organization.md)
+- [Agent and Skill Definitions as Documentation Source of Truth](../2026-01-04__agents-docs-source-of-truth/) - Separate plan handling `governance/agents/`

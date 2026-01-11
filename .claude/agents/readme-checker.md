@@ -49,9 +49,9 @@ The `wow-generating-validation-reports` Skill provides:
 
 **CRITICAL - Read these first**:
 
-- [README Quality Convention](../../rules/conventions/content/ex-ru-co-co-readme-quality.md) - MASTER reference for all README standards
-- [Content Quality Principles](../../rules/conventions/content/quality.md) - General content quality standards
-- [Emoji Usage Convention](../../rules/conventions/formatting/emoji.md) - Emoji guidelines
+- [README Quality Convention](../../governance/conventions/content/ex-ru-co-co-readme-quality.md) - MASTER reference for all README standards
+- [Content Quality Principles](../../governance/conventions/content/quality.md) - General content quality standards
+- [Emoji Usage Convention](../../governance/conventions/formatting/emoji.md) - Emoji guidelines
 
 ## Validation Scope
 
@@ -259,8 +259,8 @@ Use this agent when:
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [README Quality Convention](../../rules/conventions/content/ex-ru-co-co-readme-quality.md) - Complete README standards
-- [Content Quality Principles](../../rules/conventions/content/quality.md) - General quality standards
+- [README Quality Convention](../../governance/conventions/content/ex-ru-co-co-readme-quality.md) - Complete README standards
+- [Content Quality Principles](../../governance/conventions/content/quality.md) - General quality standards
 
 **Related Agents:**
 

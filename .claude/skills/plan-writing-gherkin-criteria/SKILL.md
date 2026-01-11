@@ -549,8 +549,8 @@ Scenario: Preview shows latest changes
 
 **Related Conventions**:
 
-- [Plans Organization](../../../rules/conventions/project/plans-organization.md) - Acceptance criteria in plans
-- [Content Quality Principles](../../../rules/conventions/content/quality.md) - Clear specification writing
+- [Plans Organization](../../../governance/conventions/project/plans-organization.md) - Acceptance criteria in plans
+- [Content Quality Principles](../../../governance/conventions/content/quality.md) - Clear specification writing
 
 **Related Skills**:
 
@@ -574,12 +574,12 @@ This Skill packages essential Gherkin acceptance criteria knowledge for writing 
 
 ## References
 
-**Primary Convention**: [Acceptance Criteria Convention](../../../rules/development/infra/acceptance-criteria.md)
+**Primary Convention**: [Acceptance Criteria Convention](../../../governance/development/infra/acceptance-criteria.md)
 
 **Related Conventions**:
 
-- [Plans Organization](../../../rules/conventions/project/plans-organization.md) - Using Gherkin in plans
-- [Maker-Checker-Fixer Pattern](../../../rules/development/pattern/maker-checker-fixer.md) - Validation workflow
+- [Plans Organization](../../../governance/conventions/project/plans-organization.md) - Using Gherkin in plans
+- [Maker-Checker-Fixer Pattern](../../../governance/development/pattern/maker-checker-fixer.md) - Validation workflow
 
 **Related Skills**:
 

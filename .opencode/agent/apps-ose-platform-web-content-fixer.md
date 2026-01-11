@@ -103,7 +103,7 @@ Skills: `apps-ose-platform-web-developing-content`, `wow-assessing-criticality-c
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ose-platform.md)
+- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 
 **Related Agents**:
 
@@ -112,8 +112,8 @@ Skills: `apps-ose-platform-web-developing-content`, `wow-assessing-criticality-c
 
 **Related Conventions**:
 
-- [ose-platform-web Hugo Convention](../../rules/conventions/hugo/ose-platform.md)
-- [Fixer Confidence Levels](../../rules/development/quality/fixer-confidence-levels.md)
+- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md)
 
 **Skills**:
 

@@ -61,7 +61,7 @@ Create by-concept tutorials and general content for ayokoding-web.
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - Skills: `apps-ayokoding-web-developing-content` (bilingual, weights, navigation), `docs-creating-accessible-diagrams`, `docs-applying-content-quality`
 
 ## Workflow
@@ -79,7 +79,7 @@ Create by-concept tutorials and general content for ayokoding-web.
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 
 **Related Agents**:
 
@@ -88,8 +88,8 @@ Create by-concept tutorials and general content for ayokoding-web.
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../rules/conventions/hugo/ayokoding.md)
-- [Programming Language Content](../../rules/conventions/tutorial/programming-language-content.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
+- [Programming Language Content](../../governance/conventions/tutorial/programming-language-content.md)
 
 **Skills**:
 

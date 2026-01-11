@@ -886,22 +886,22 @@ Skills don't grant agents additional tool access. Skill references are knowledge
 
 This plan implements the following core principles:
 
-- **[Simplicity Over Complexity](../../rules/principles/general/simplicity-over-complexity.md)**: Single source of truth (Skills) instead of duplication. Simpler agents focusing on tasks only.
+- **[Simplicity Over Complexity](../../governance/principles/general/simplicity-over-complexity.md)**: Single source of truth (Skills) instead of duplication. Simpler agents focusing on tasks only.
 
-- **[Documentation First](../../rules/principles/content/documentation-first.md)**: Skills encode conventions systematically. Agent-Skill separation guidelines documented.
+- **[Documentation First](../../governance/principles/content/documentation-first.md)**: Skills encode conventions systematically. Agent-Skill separation guidelines documented.
 
-- **[Explicit Over Implicit](../../rules/principles/software-engineering/explicit-over-implicit.md)**: Clear Skill references in frontmatter. Explicit separation between agent content and Skill content.
+- **[Explicit Over Implicit](../../governance/principles/software-engineering/explicit-over-implicit.md)**: Clear Skill references in frontmatter. Explicit separation between agent content and Skill content.
 
-- **[Automation Over Manual](../../rules/principles/software-engineering/automation-over-manual.md)**: Automated duplication detection. Automated validation (quality gates, regression testing).
+- **[Automation Over Manual](../../governance/principles/software-engineering/automation-over-manual.md)**: Automated duplication detection. Automated validation (quality gates, regression testing).
 
 ### Conventions Respected
 
 This plan respects the following conventions:
 
-- **[AI Agents Convention](../../rules/development/agents/ai-agents.md)**: Agent structure, size limits, Skills integration, frontmatter requirements
+- **[AI Agents Convention](../../governance/development/agents/ai-agents.md)**: Agent structure, size limits, Skills integration, frontmatter requirements
 
 - **[Repository Architecture](../../docs/explanation/ex-ru__repository-governance-architecture.md)**: Six-layer hierarchy with Skills as delivery infrastructure (not governance)
 
-- **[Temporary Files Convention](../../rules/development/infra/temporary-files.md)**: Progressive writing of audit reports to generated-reports/
+- **[Temporary Files Convention](../../governance/development/infra/temporary-files.md)**: Progressive writing of audit reports to generated-reports/
 
-- **[Color Accessibility Convention](../../rules/conventions/formatting/color-accessibility.md)**: All Mermaid diagrams use accessible palette
+- **[Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md)**: All Mermaid diagrams use accessible palette
