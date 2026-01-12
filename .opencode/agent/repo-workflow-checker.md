@@ -5,7 +5,11 @@ mode: subagent
 model: zai/glm-4.7
 temperature: 0.1
 maxSteps: 50
-tools:
+tools:permission:
+  skill:
+    wow-applying-maker-checker-fixer: allow
+    wow-defining-workflows: allow
+
   read: true
   glob: true
   grep: true
@@ -40,7 +44,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery

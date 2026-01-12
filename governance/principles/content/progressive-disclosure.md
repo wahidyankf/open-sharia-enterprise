@@ -414,7 +414,7 @@ docs/
 
 ### Agent Tool Permissions
 
-**Location**: `.claude/agents/` frontmatter
+**Location**: `.opencode/agent/` frontmatter
 
 **Progressive tool access**:
 

@@ -51,8 +51,8 @@ This workflow validates **source definitions only** in `governance/`. It does NO
 - ✅ **Validates**: `governance/agents/content/` (45 agent definitions)
 - ✅ **Validates**: `governance/agents/skills/` (23 skill definitions)
 - ✅ **Validates**: `governance/` (principles, conventions, development practices)
-- ❌ **Skips**: `.claude/agents/` (generated - validate via `butler-cli agents validate`)
-- ❌ **Skips**: `.claude/skills/` (generated - validate via `butler-cli skills validate`)
+- ❌ **Skips**: `.opencode/agent/` (generated - validate via `butler-cli agents validate`)
+- ❌ **Skips**: `.opencode/skill/` (generated - validate via `butler-cli skills validate`)
 - ❌ **Skips**: `.opencode/agent/` (generated - validate via `butler-cli agents validate`)
 - ❌ **Skips**: `.opencode/skills/` (generated - validate via `butler-cli skills validate`)
 
@@ -351,7 +351,7 @@ Track across executions:
 
 **Concurrency**: Currently validates and fixes sequentially. The `max-concurrency` parameter is reserved for future enhancements where multiple validation dimensions (principles, conventions, development, agents source in governance/agents/, CLAUDE.md) could run concurrently.
 
-**Note**: "agents" in this context refers to agent SOURCE definitions in `governance/agents/`, NOT generated directories (`.claude/agents/` and `.opencode/agent/`).
+**Note**: "agents" in this context refers to agent SOURCE definitions in `governance/agents/`, NOT generated directories (`.opencode/agent/` and `.opencode/agent/`).
 
 This workflow ensures repository consistency through iterative validation and fixing, making it ideal for maintenance and quality assurance.
 

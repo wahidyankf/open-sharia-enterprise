@@ -491,7 +491,7 @@ We renamed "link-convention" to "linking-convention" for clarity
 
 ### Validation
 
-The [docs\_\_checker agent](../../.claude/agents/docs\_\_checker.md) validates this two-tier formatting requirement:
+The [docs\_\_checker agent](../../.opencode/agent/docs\_\_checker.md) validates this two-tier formatting requirement:
 
 - **First mention without link** → CRITICAL issue (breaks navigation)
 - **Subsequent mention without inline code** → HIGH issue (convention violation)

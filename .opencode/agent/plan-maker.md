@@ -4,7 +4,12 @@ description: Creates comprehensive project plans with requirements, technical do
   agent.
 mode: all
 model: zai/glm-4.7
-tools:
+tools:permission:
+  skill:
+    plan-creating-project-plans: allow
+    plan-writing-gherkin-criteria: allow
+    wow-defining-workflows: allow
+
   read: true
   write: true
   edit: true
@@ -27,7 +32,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 

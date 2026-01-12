@@ -171,7 +171,7 @@ Automation serves the mission:
 - [Core Principles](../principles/README.md) - Layer 1: Values serving this vision
 - [Conventions](../conventions/README.md) - Layer 2: Standards supporting the vision
 - [Development](../development/README.md) - Layer 3: Practices aligned with the vision
-- [AI Agents](../../../.claude/agents/README.md) - Layer 4: Automation serving the mission
+- [AI Agents](../../../.opencode/agent/README.md) - Layer 4: Automation serving the mission
 - [Workflows](../workflows/README.md) - Layer 5: Processes supporting our goals
 
 ### Project Context

@@ -19,7 +19,7 @@ updated: 2025-12-05
   This convention is referenced by:
   1. plans/README.md (brief landing page with link to this convention)
   2. CLAUDE.md (summary with link to this convention)
-  3. .claude/agents/plan__maker.md (reference to this convention)
+  3. .opencode/agent/plan__maker.md (reference to this convention)
   When updating, ensure all references remain accurate.
 -->
 

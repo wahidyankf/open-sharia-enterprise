@@ -465,6 +465,6 @@ static/
 
 **Related AI Agents**:
 
-- [ose-platform-web-content-maker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ose-platform-web-content-maker.md) - Creates ose-platform-web content
-- [ose-platform-web-content-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ose-platform-web-content-checker.md) - Validates ose-platform-web content
-- [ose-platform-web-deployer](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ose-platform-web-deployer.md) - Deploys ose-platform-web to production
+- [ose-platform-web-content-maker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ose-platform-web-content-maker.md) - Creates ose-platform-web content
+- [ose-platform-web-content-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ose-platform-web-content-checker.md) - Validates ose-platform-web content
+- [ose-platform-web-deployer](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ose-platform-web-deployer.md) - Deploys ose-platform-web to production

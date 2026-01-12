@@ -37,14 +37,14 @@ graph TD
         L1[Layer 1: Principles<br/>WHY - Values]
         L2[Layer 2: Conventions<br/>WHAT - Documentation Rules]
         L3[Layer 3: Development<br/>HOW - Software Practices]
-        L4[Layer 4: AI Agents<br/>WHO - Atomic Executors<br/>.claude/agents/ + .opencode/agent/]
+        L4[Layer 4: AI Agents<br/>WHO - Atomic Executors<br/>.opencode/agent/ + .opencode/agent/]
         L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes]
     end
 
     subgraph Delivery["Delivery Infrastructure"]
         CM[CLAUDE.md<br/>Claude Code context]
         AM[AGENTS.md<br/>OpenCode context]
-        SK[Skills<br/>Shared knowledge<br/>.claude/skills/]
+        SK[Skills<br/>Shared knowledge<br/>.opencode/skill/]
         DR[Direct References<br/>Explicit links]
     end
 
@@ -199,7 +199,7 @@ Agent: docs__file-manager (enforces naming when renaming files)
 - Source code (JavaScript, TypeScript, future: Java, Kotlin, Python)
 - Hugo themes and layouts
 - Build systems and tooling
-- AI agents (`.claude/agents/`, `.opencode/agent/`)
+- AI agents (`.opencode/agent/`, `.opencode/agent/`)
 - Git workflows
 
 **Example Practices**:
@@ -231,14 +231,14 @@ Implementation: Husky + lint-staged (pre-commit formatting)
 
 **Locations**:
 
-- `.claude/agents/` (Claude Code format)
+- `.opencode/agent/` (Claude Code format)
 - `.opencode/agent/` (OpenCode format)
 
 **Purpose**: Automated implementers that enforce conventions and development practices. Each agent implements and validates specific rules from layers 2 and 3.
 
-**Note**: Agents exist in dual formats with identical capabilities. Both reference shared skills from `.claude/skills/`. See [AI Agents Convention - OpenCode Format](./development/agents/ai-agents.md#opencode-format) for format differences.
+**Note**: Agents exist in dual formats with identical capabilities. Both reference shared skills from `.opencode/skill/`. See [AI Agents Convention - OpenCode Format](./development/agents/ai-agents.md#opencode-format) for format differences.
 
-**Key Document**: [Agents Index](../.claude/agents/README.md)
+**Key Document**: [Agents Index](../.opencode/agent/README.md)
 
 **Agent Families**:
 
@@ -305,12 +305,12 @@ In addition to the six governance layers, the repository uses **delivery infrast
 
 ### Delivery Mechanisms
 
-| Mechanism             | Location          | Purpose                            | Tool(s)     | When Loaded                |
-| --------------------- | ----------------- | ---------------------------------- | ----------- | -------------------------- |
-| **CLAUDE.md**         | Root              | Comprehensive project instructions | Claude Code | Always at startup          |
-| **AGENTS.md**         | Root              | Condensed project instructions     | OpenCode    | Always at startup          |
-| **Skills**            | `.claude/skills/` | Progressive knowledge packages     | Both        | On-demand (tool-specific)  |
-| **Direct References** | In agent prompts  | Links to convention docs           | Both        | When explicitly referenced |
+| Mechanism             | Location           | Purpose                            | Tool(s)     | When Loaded                |
+| --------------------- | ------------------ | ---------------------------------- | ----------- | -------------------------- |
+| **CLAUDE.md**         | Root               | Comprehensive project instructions | Claude Code | Always at startup          |
+| **AGENTS.md**         | Root               | Condensed project instructions     | OpenCode    | Always at startup          |
+| **Skills**            | `.opencode/skill/` | Progressive knowledge packages     | Both        | On-demand (tool-specific)  |
+| **Direct References** | In agent prompts   | Links to convention docs           | Both        | When explicitly referenced |
 
 ### Skills as Infrastructure
 
@@ -322,9 +322,9 @@ In addition to the six governance layers, the repository uses **delivery infrast
 - **Support knowledge composition** - Multiple Skills work together seamlessly
 - **Follow open standard** - agentskills.io format for portability
 
-**Key Document**: [Skills Directory](../.claude/skills/README.md)
+**Key Document**: [Skills Directory](../.opencode/skill/README.md)
 
-**23 Skills Available**: See [Skills Directory](../.claude/skills/README.md) for complete catalog.
+**23 Skills Available**: See [Skills Directory](../.opencode/skill/README.md) for complete catalog.
 
 **Skills Categories**:
 
@@ -338,7 +338,7 @@ In addition to the six governance layers, the repository uses **delivery infrast
 
 - **Claude Code**: Auto-loads skills from frontmatter declaration (`skills: [skill-1, skill-2]`)
 - **OpenCode**: On-demand loading via `skill` tool with permission-based access (`permission.skill: {skill-name: allow}`)
-- **Shared Location**: Both tools read from `.claude/skills/` directory, ensuring a unified knowledge base
+- **Shared Location**: Both tools read from `.opencode/skill/` directory, ensuring a unified knowledge base
 
 See [AGENTS.md Skills Architecture](../../AGENTS.md#skills-knowledge-packages) for OpenCode-specific details.
 
@@ -632,9 +632,9 @@ This architecture document implements/respects the following principles:
 
 **Layer 4**:
 
-- [Claude Code Agents Index](../.claude/agents/README.md)
+- [Claude Code Agents Index](../.opencode/agent/README.md)
 - [OpenCode Agents Index](../.opencode/agent/README.md)
-- Agent files in `.claude/agents/` (Claude Code format)
+- Agent files in `.opencode/agent/` (Claude Code format)
 - Agent files in `.opencode/agent/` (OpenCode format)
 
 **Layer 5**:
@@ -644,7 +644,7 @@ This architecture document implements/respects the following principles:
 
 **Delivery Infrastructure**:
 
-- [Skills Directory](../.claude/skills/README.md) - 23 knowledge packages (shared by both tools)
+- [Skills Directory](../.opencode/skill/README.md) - 23 knowledge packages (shared by both tools)
 - [How to Create a Skill](../how-to/hoto__create-new-skill.md) - Step-by-step guide
 - [CLAUDE.md](../../CLAUDE.md) - Claude Code comprehensive instructions (~30,000 lines)
 - [AGENTS.md](../../AGENTS.md) - OpenCode condensed instructions (~1,000 lines)

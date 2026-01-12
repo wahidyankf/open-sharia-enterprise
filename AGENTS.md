@@ -213,9 +213,101 @@ AI agents use designated temporary directories:
 - **Agent catalog**: 45 agents in \`.opencode/agent/\` (OpenCode format) and \`.claude/agents/\` (Claude Code format)
 - **Shared skills**: Both OpenCode and Claude Code read from \`.claude/skills/\`
 
+## OpenCode-Specific Features
+
+### Session Management
+
+OpenCode supports session-based agent coordination with the following features:
+
+- **Session Persistence**: Agent state persists across invocations in a session
+- **Multi-Agent Workflows**: Multiple agents can work together in a single session
+- **Session State Management**: Agents can share context and coordinate via session state
+- **Session Isolation**: Different sessions maintain separate agent states
+
+This differs from Claude Code's sessionless invocation model where each agent call is independent.
+
+### Multi-Model Usage
+
+OpenCode agents can use different GLM models for optimal performance:
+
+- **`zai/glm-4.7`**: Advanced reasoning, deep analysis (used by most agents - 40/46, 87.0%)
+- **`zai/glm-4.5-air`**: Fast, lightweight tasks (used by 5 agents - 10.9%)
+- **`inherit`**: Use main conversation model (used by 1 agent - 2.2%)
+
+Model selection is based on task complexity and performance requirements:
+
+- **Complex reasoning**: Use `zai/glm-4.7` for deep analysis
+- **Fast operations**: Use `zai/glm-4.5-air` for quick tasks
+- **Default**: `inherit` to use optimal model for conversation
+
+All agents already configured with appropriate GLM models. No migration was required (agents already used GLM models).
+
+### Permission-Based Skill Loading
+
+OpenCode uses **explicit permission-based skill loading** instead of auto-load:
+
+- **Declaration**: Skills must be declared in agent frontmatter under `permission.skill` section
+- **Access Control**: Only skills listed with `allow` can be accessed by the agent
+- **Default Deny**: Skills not listed are inaccessible
+- **Explicit Control**: Unlike Claude Code's auto-load based on task description, OpenCode requires explicit permission
+
+**Example agent frontmatter**:
+
+```yaml
+---
+description: Validates documentation for quality and consistency
+model: zai/glm-4.7
+tools:
+  read: true
+  grep: true
+  glob: true
+  write: true
+  bash: false
+  edit: false
+permission:
+  skill:
+    docs-applying-content-quality: allow
+    docs-validating-factual-accuracy: allow
+    wow-applying-fixer-workflow: allow
+---
+```
+
+**Key Differences from Claude Code**:
+
+- Claude Code: Skills auto-load based on task description matching
+- OpenCode: Skills require explicit `permission.skill` declaration
+- Claude Code: All skills accessible (no explicit control)
+- OpenCode: Skills explicitly allowed or denied per agent
+
+## Agent Catalog
+
+All 45 specialized agents in `.opencode/agent/` (OpenCode format). Each agent corresponds to an agent in `.claude/agents/` (Claude Code format) with identical capabilities.
+
+**Full agent catalog**: See [`.opencode/agent/README.md`](./.opencode/agent/README.md) for descriptions, usage examples, and workflow information.
+
+## Common Development Commands
+
+- `npm install` - Install dependencies
+- `npm run build` - Build all projects
+- `npm run test` - Test all projects
+- `npm run lint` - Lint all projects
+- `nx build [project-name]` - Build specific project
+- `nx test [project-name]` - Test specific project
+- `nx dev [project-name]` - Start development server for specific project
+- `nx affected:build` - Build only affected projects
+- `nx affected:test` - Test only affected projects
+- `nx graph` - View dependency graph
+
+## Important Notes
+
+- **License**: MIT
+- **No staging/commits** unless explicitly instructed
+- **OpenCode Settings**: Configuration in `.opencode/opencode.json`
+- **Shared Skills**: All agents access skills from `.opencode/skill/<name>/SKILL.md`
+
 ---
 
-**For complete guidance, see [CLAUDE.md](./CLAUDE.md) (~30,000 lines with comprehensive details).**
+**For complete project documentation including project overview, principles, conventions, and development practices, see [governance/explanation/repository-governance-architecture.md](./governance/explanation/repository-governance-architecture.md).**
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->

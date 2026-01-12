@@ -2106,9 +2106,9 @@ static/
 
 **Related AI Agents**:
 
-- [ayokoding-web-general-maker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-general-maker.md) - Creates general ayokoding-web content
-- [ayokoding-web-by-example-maker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-by-example-maker.md) - Creates by-example tutorials
-- [ayokoding-web-general-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-general-checker.md) - Validates general ayokoding-web content
-- [ayokoding-web-by-example-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-by-example-checker.md) - Validates by-example tutorials
-- [ayokoding-web-link-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-link-checker.md) - Validates links in ayokoding-web
-- [ayokoding-web-deployer](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-deployer.md) - Deploys ayokoding-web to production
+- [ayokoding-web-general-maker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-general-maker.md) - Creates general ayokoding-web content
+- [ayokoding-web-by-example-maker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-by-example-maker.md) - Creates by-example tutorials
+- [ayokoding-web-general-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-general-checker.md) - Validates general ayokoding-web content
+- [ayokoding-web-by-example-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-by-example-checker.md) - Validates by-example tutorials
+- [ayokoding-web-link-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-link-checker.md) - Validates links in ayokoding-web
+- [ayokoding-web-deployer](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-deployer.md) - Deploys ayokoding-web to production

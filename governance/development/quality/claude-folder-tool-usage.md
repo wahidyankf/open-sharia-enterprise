@@ -119,7 +119,7 @@ rm /path/to/.claude/file.md
 **Bash approach (CORRECT):**
 
 ```bash
-cat > /home/wkf/wkf-repos/wahidyankf/open-sharia-enterprise/.claude/skills/docs__creating-accessible-diagrams.md << 'EOF'
+cat > /home/wkf/wkf-repos/wahidyankf/open-sharia-enterprise/.opencode/skill/docs__creating-accessible-diagrams.md << 'EOF'
 ---
 name: docs__creating-accessible-diagrams
 description: Creates accessible diagrams following diagram convention
@@ -145,10 +145,10 @@ EOF
 
 ```bash
 # Update version in frontmatter
-sed -i 's/version: 1\.0\.0/version: 1.0.1/' /path/to/.claude/agents/agent-name.md
+sed -i 's/version: 1\.0\.0/version: 1.0.1/' /path/to/.opencode/agent/agent-name.md
 
 # Add new tool to tools list
-sed -i '/tools:/a\  - NewTool' /path/to/.claude/agents/agent-name.md
+sed -i '/tools:/a\  - NewTool' /path/to/.opencode/agent/agent-name.md
 ```
 
 **Edit tool approach (INCORRECT):**
@@ -165,7 +165,7 @@ sed -i '/tools:/a\  - NewTool' /path/to/.claude/agents/agent-name.md
 
 ```bash
 # Create new agent file
-cat > /home/wkf/wkf-repos/wahidyankf/open-sharia-enterprise/.claude/agents/new-agent.md << 'EOF'
+cat > /home/wkf/wkf-repos/wahidyankf/open-sharia-enterprise/.opencode/agent/new-agent.md << 'EOF'
 ---
 name: new-agent
 description: New agent description
@@ -181,7 +181,7 @@ Agent content here...
 EOF
 
 # Update agents README
-sed -i '/## Available Agents/a\**New Agent**: new-agent - Description' /home/wkf/wkf-repos/wahidyankf/open-sharia-enterprise/.claude/agents/README.md
+sed -i '/## Available Agents/a\**New Agent**: new-agent - Description' /home/wkf/wkf-repos/wahidyankf/open-sharia-enterprise/.opencode/agent/README.md
 ```
 
 ## Validation
@@ -206,7 +206,7 @@ sed -i '/## Available Agents/a\**New Agent**: new-agent - Description' /home/wkf
 
 **Manual verification:**
 
-1. Agent files in `.claude/agents/` list Bash in `tools:` frontmatter
+1. Agent files in `.opencode/agent/` list Bash in `tools:` frontmatter
 2. Agent descriptions mention Bash tools for .claude/ operations
 3. Examples demonstrate heredoc/sed patterns, not Write/Edit
 
@@ -214,8 +214,8 @@ sed -i '/## Available Agents/a\**New Agent**: new-agent - Description' /home/wkf
 
 - [AI Agents Convention](./ai-agents.md) - Agent structure and standards
 - [Maker-Checker-Fixer Pattern](../pattern/maker-checker-fixer.md) - Quality workflow
-- [Skills Directory](/.claude/skills/README.md) - Skills infrastructure
-- [Agents Index](/.claude/agents/README.md) - All agents and responsibilities
+- [Skills Directory](/.opencode/skill/README.md) - Skills infrastructure
+- [Agents Index](/.opencode/agent/README.md) - All agents and responsibilities
 
 ## Principles Respected
 

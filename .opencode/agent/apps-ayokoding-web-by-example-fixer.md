@@ -4,7 +4,11 @@ description: Applies validated fixes from apps-ayokoding-web-by-example-checker 
   checker output.
 mode: all
 model: zai/glm-4.7
-tools:
+tools:permission:
+  skill:
+    apps-ayokoding-web-developing-content: allow
+    wow-applying-fixer-workflow: allow
+
   read: true
   edit: true
   write: true
@@ -58,7 +62,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`wow-applying-fixer-workflow`** - Progressive knowledge delivery
 2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery

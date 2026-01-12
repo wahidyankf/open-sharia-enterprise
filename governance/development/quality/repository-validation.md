@@ -96,7 +96,7 @@ Markdown files contain many `#` symbols, hyphens, and other characters that can 
 
 ```bash
 # ❌ WRONG: Searches entire file including markdown body
-grep "#" .claude/agents/agent-name.md
+grep "#" .opencode/agent/agent-name.md
 # This incorrectly flags markdown headings like "# Agent Title" as violations
 ```
 
@@ -104,7 +104,7 @@ grep "#" .claude/agents/agent-name.md
 
 ```bash
 # ✅ CORRECT: Extract frontmatter first, then search
-awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .claude/agents/agent-name.md | grep "#"
+awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .opencode/agent/agent-name.md | grep "#"
 
 # If grep returns results → VIOLATION (YAML comment in frontmatter)
 # If grep returns nothing → COMPLIANT (clean frontmatter)
@@ -194,7 +194,7 @@ awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' "$file" | \
 ```bash
 # Check if 'model' field exists
 field_name="model"
-awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .claude/agents/docs__maker.md | \
+awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .opencode/agent/docs__maker.md | \
   grep "^model:"
 ```
 
@@ -230,7 +230,7 @@ fi
 # Check if model field is 'sonnet'
 field_name="model"
 expected_value="sonnet"
-actual_value=$(awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .claude/agents/docs__maker.md | \
+actual_value=$(awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .opencode/agent/docs__maker.md | \
   grep "^model:" | cut -d: -f2- | tr -d ' ')
 
 if [ "$actual_value" = "$expected_value" ]; then
@@ -413,7 +413,7 @@ EXPECTED: What should be present instead
 **Example:**
 
 ```
-FILE: .claude/agents/docs__maker.md
+FILE: .opencode/agent/docs__maker.md
 LINE: 5
 ISSUE: [FRONTMATTER_COMMENT] YAML comment found in agent frontmatter
 CONTEXT: |
@@ -433,11 +433,11 @@ EXPECTED: Clean frontmatter without comments (no # symbols)
 
 ```bash
 # ❌ Produces false positive
-grep "#" .claude/agents/agent.md
+grep "#" .opencode/agent/agent.md
 # Flags: # Agent Title (markdown heading, NOT a violation)
 
 # ✅ Correct - no false positive
-awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .claude/agents/agent.md | grep "#"
+awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .opencode/agent/agent.md | grep "#"
 # Only flags actual YAML comments in frontmatter
 ```
 

@@ -705,15 +705,15 @@ The maker-checker-fixer pattern integrates with repository conventions:
 
 **Agent Examples**:
 
-- `.claude/agents/wow__rules-maker.md` - Example maker agent
-- `.claude/agents/wow__rules-checker.md` - Example checker agent
-- `.claude/agents/wow__rules-fixer.md` - Example fixer agent
-- `.claude/agents/ayokoding-web-general-maker.md` - General Hugo content maker
-- `.claude/agents/ayokoding-web-by-example-maker.md` - By-example tutorial maker
-- `.claude/agents/ayokoding-web-general-checker.md` - General Hugo content checker
-- `.claude/agents/ayokoding-web-by-example-checker.md` - By-example tutorial checker
-- `.claude/agents/ayokoding-web-general-fixer.md` - General Hugo content fixer
-- `.claude/agents/ayokoding-web-by-example-fixer.md` - By-example tutorial fixer
+- `.opencode/agent/wow__rules-maker.md` - Example maker agent
+- `.opencode/agent/wow__rules-checker.md` - Example checker agent
+- `.opencode/agent/wow__rules-fixer.md` - Example fixer agent
+- `.opencode/agent/ayokoding-web-general-maker.md` - General Hugo content maker
+- `.opencode/agent/ayokoding-web-by-example-maker.md` - By-example tutorial maker
+- `.opencode/agent/ayokoding-web-general-checker.md` - General Hugo content checker
+- `.opencode/agent/ayokoding-web-by-example-checker.md` - By-example tutorial checker
+- `.opencode/agent/ayokoding-web-general-fixer.md` - General Hugo content fixer
+- `.opencode/agent/ayokoding-web-by-example-fixer.md` - By-example tutorial fixer
 
 ---
 

@@ -2,7 +2,12 @@
 description: Expert documentation writer specializing in Obsidian-optimized markdown
   and Diátaxis framework. Use when creating, editing, or organizing project documentation.
 mode: all
-tools:
+tools:permission:
+  skill:
+    docs-applying-content-quality: allow
+    docs-applying-diataxis-framework: allow
+    docs-creating-by-example-tutorials: allow
+
   read: true
   write: true
   edit: true
@@ -27,7 +32,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`docs-applying-content-quality`** - Progressive knowledge delivery
 2. **`docs-creating-accessible-diagrams`** - Progressive knowledge delivery

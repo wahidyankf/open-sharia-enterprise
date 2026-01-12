@@ -3,7 +3,10 @@ description: Applies validated fixes from plan-checker audit reports. Re-validat
   plan findings before applying changes. Use after reviewing plan-checker output.
 mode: all
 model: zai/glm-4.7
-tools:
+tools:permission:
+  skill:
+    wow-applying-fixer-workflow: allow
+
   read: true
   edit: true
   write: true
@@ -55,7 +58,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery

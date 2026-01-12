@@ -5,7 +5,11 @@ description: Applies validated fixes from repository rules audit reports includi
   folder modifications.
 mode: all
 model: zai/glm-4.7
-tools:
+tools:permission:
+  skill:
+    wow-applying-fixer-workflow: allow
+    wow-assessing-criticality-confidence: allow
+
   read: true
   glob: true
   grep: true
@@ -56,7 +60,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
 2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
@@ -102,13 +106,13 @@ Fix repository-wide consistency issues including:
 
 ### Bash Tools for .claude Folder
 
-**MANDATORY**: ALL modifications to .claude/ folder files MUST use bash tools:
+**MANDATORY**: ALL modifications to `.claude/` folder files MUST use bash tools (removed during migration):
 
 - Use heredoc for file writing
 - Use sed for file editing
 - Use awk for text processing
-- NEVER use Write tool for .claude/ files
-- NEVER use Edit tool for .claude/ files
+- NEVER use Write tool for `.claude/` (removed during migration) files
+- NEVER use Edit tool for `.claude/` (removed during migration) files
 
 **Why**: Enables autonomous agent operation without user approval prompts.
 
