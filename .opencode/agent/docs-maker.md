@@ -1,25 +1,21 @@
 ---
-description: Expert documentation writer specializing in Obsidian-optimized markdown
-  and Diátaxis framework. Use when creating, editing, or organizing project documentation.
-mode: all
-tools:permission:
-  skill:
-    docs-applying-content-quality: allow
-    docs-applying-diataxis-framework: allow
-    docs-creating-by-example-tutorials: allow
-
+description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.
+model: inherit
+tools:
   read: true
   write: true
   edit: true
   glob: true
   grep: true
+  bash: false
+  todowrite: false
+  webfetch: false
+  websearch: false
 permission:
-  bash: deny
-  todowrite: deny
-  webfetch: deny
-  websearch: deny
   skill:
     docs-applying-content-quality: allow
+    docs-applying-diataxis-framework: allow
+    docs-creating-by-example-tutorials: allow
     docs-creating-accessible-diagrams: allow
     wow-applying-maker-checker-fixer: allow
 ---

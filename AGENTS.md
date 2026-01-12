@@ -2,8 +2,6 @@
 
 Instructions for AI agents working with this repository via OpenCode.
 
-**For complete project documentation, see [CLAUDE.md](./CLAUDE.md)**.
-
 ## Project Overview
 
 **open-sharia-enterprise** - Enterprise platform built with Node.js, using **Nx monorepo** structure.
@@ -13,20 +11,71 @@ Instructions for AI agents working with this repository via OpenCode.
 - **Monorepo**: Nx with `apps/` and `libs/` structure
 - **Git Workflow**: Trunk Based Development (all work on `main` branch)
 
+# AI Agents
+
 ## Agent Organization
 
-**45 specialized agents** organized into **7 families**:
+**46 specialized agents** organized into **7 families**:
 
 1. **Documentation** (8 agents): `docs-maker`, `docs-checker`, `docs-fixer`, `docs-tutorial-maker`, `docs-tutorial-checker`, `docs-tutorial-fixer`, `docs-link-general-checker`, `docs-file-manager`
 2. **README** (3 agents): `readme-maker`, `readme-checker`, `readme-fixer`
 3. **Project Planning** (5 agents): `plan-maker`, `plan-checker`, `plan-executor`, `plan-execution-checker`, `plan-fixer`
 4. **Hugo Content - ayokoding-web** (17 agents): Bilingual content creators, validators, deployers
 5. **Hugo Content - ose-platform-web** (4 agents): Landing page content creators, validators, deployers
-6. **Meta/Specialized** (2 agents): `agent-maker`, `swe-hugo-developer`, `social-linkedin-post-maker`
+6. **Meta/Specialized** (3 agents): `agent-maker`, `swe-hugo-developer`, `social-linkedin-post-maker`
+7. **Repository Governance** (7 agents): `repo-governance-maker`, `repo-governance-checker`, `repo-governance-fixer`, `repo-workflow-maker`, `repo-workflow-checker`, `repo-workflow-fixer`, `repo-governance-checker`
 
 **Full agent catalog**: See [`.opencode/agent/README.md`](./.opencode/agent/README.md)
 
-## Maker-Checker-Fixer Pattern
+## Agent Format
+
+OpenCode agents use YAML frontmatter to define agent configuration:
+
+```yaml
+---
+description: Brief description of what the agent does
+model: zai/glm-4.7 | zai/glm-4.5-air | inherit
+tools:
+  read: true | false
+  grep: true | false
+  glob: true | false
+  write: true | false
+  bash: true | false
+  edit: true | false
+permission:
+  skill:
+    skill-name: allow
+    another-skill: allow
+---
+```
+
+**Frontmatter Fields**:
+
+- `description`: Required. One-line description of agent purpose
+- `model`: Required. GLM model to use (`zai/glm-4.7`, `zai/glm-4.5-air`, or `inherit`)
+- `tools`: Required. Tool access permissions (each tool must be explicitly allowed)
+- `permission.skill`: Optional. Skills this agent is allowed to access
+
+## Agent Invocation
+
+OpenCode agents are invoked via the OpenCode CLI or API:
+
+**Command-line invocation**:
+
+```bash
+opencode agent [agent-name] [options]
+```
+
+**Example**:
+
+```bash
+opencode agent docs-maker --directory docs/tutorials/
+opencode agent plan-checker --plan plans/in-progress/my-plan/
+```
+
+**Agent selection**: Agents are selected by name (filename without `.md` extension) from `.opencode/agent/` directory.
+
+## Maker-Checker-Fixer Workflow
 
 **Three-stage quality workflow** used across all content families:
 
@@ -54,7 +103,7 @@ Instructions for AI agents working with this repository via OpenCode.
 
 ## Skills (Knowledge Packages)
 
-**23 Skills** provide progressive knowledge delivery from \`.claude/skills/\`:
+**23 Skills** provide progressive knowledge delivery from \`.opencode/skill/\`:
 
 - **docs\_\_** (6 skills): Content quality, accessible diagrams, by-example tutorials, Diátaxis framework, factual accuracy, link validation
 - **wow\_\_** (9 skills): Maker-checker-fixer workflow, criticality-confidence assessment, workflow definition, validation reports, trunk-based development, repository architecture, fixer workflow, checker workflow, multi-file template
@@ -80,7 +129,7 @@ permission:
 
 **Claude Code Difference**: Claude Code declares skills in frontmatter (`skills: [skill-1, skill-2]`) and auto-loads them. OpenCode uses permission-based on-demand loading.
 
-**Full skills catalog**: See [`.claude/skills/README.md`](./.claude/skills/README.md)
+**Full skills catalog**: See [`.opencode/skill/README.md`](./.opencode/skill/README.md)
 
 ## Core Principles
 
@@ -138,7 +187,7 @@ All work follows **10 foundational principles** from \`governance/principles/\`:
 
 **Skills**: Delivery infrastructure supporting agents (not a governance layer)
 
-**See**: [Repository Architecture](./docs/explanationrepository-governance-architecture.md)
+**See**: [Repository Architecture](./governance/explanation/repository-governance-architecture.md)
 
 ## Common Development Commands
 
@@ -210,8 +259,8 @@ AI agents use designated temporary directories:
 - **No staging/commits** unless explicitly instructed
 - **License**: MIT
 - **OpenCode settings**: Configuration in \`.opencode/opencode.json\`
-- **Agent catalog**: 45 agents in \`.opencode/agent/\` (OpenCode format) and \`.claude/agents/\` (Claude Code format)
-- **Shared skills**: Both OpenCode and Claude Code read from \`.claude/skills/\`
+- **Agent catalog**: 46 agents in \`.opencode/agent/\` (OpenCode format)
+- **Shared skills**: All agents access skills from \`.opencode/skill/\`
 
 ## OpenCode-Specific Features
 
@@ -281,7 +330,7 @@ permission:
 
 ## Agent Catalog
 
-All 45 specialized agents in `.opencode/agent/` (OpenCode format). Each agent corresponds to an agent in `.claude/agents/` (Claude Code format) with identical capabilities.
+All 46 specialized agents in `.opencode/agent/` (OpenCode format).
 
 **Full agent catalog**: See [`.opencode/agent/README.md`](./.opencode/agent/README.md) for descriptions, usage examples, and workflow information.
 
