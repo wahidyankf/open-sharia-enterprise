@@ -17,7 +17,7 @@
 
 **Steps**:
 
-1. List all 45 agents in `.opencode/agent/`
+1. List all 46 agents in `.opencode/agent/`
 2. For each agent, document:
    - Agent name
    - Agent family (docs, readme, plan, apps-ayokoding-web, apps-ose-platform-web, etc.)
@@ -34,7 +34,7 @@
 
 **Validation**:
 
-- [ ] All 45 agents documented
+- [ ] All 46 agents documented
 - [ ] Skill usage extracted for each agent
 
 ---
@@ -72,7 +72,7 @@
 
 **Steps**:
 
-1. Analyze CLAUDE.md content (30k lines)
+1. Analyze CLAUDE.md content (348 lines)
 2. Classify each section:
    - Agent-specific (migrate to AGENTS.md)
    - General project guidance (exists in governance/)
@@ -242,27 +242,205 @@
 ### Phase 2 Checklist
 
 - [ ] Task 2.1: Schema validation complete
-- [ ] Task 2.2: Model migration complete
+- [ ] Task 2.2: Config file update complete (.opencode/opencode.json updated to GLM models)
 - [ ] Task 2.3: Permission validation complete
 - [ ] Task 2.4: Functional testing complete
 - [ ] Phase 2: All validation passed
-- [ ] All 45 agents schema validated
+- [ ] All 46 agents schema validated
 - [ ] All tool permissions validated
 - [ ] All agents functionally tested
-- [ ] All model aliases migrated to GLM models
-- [ ] All agents use OpenCode model names only
+- [ ] .opencode/opencode.json updated to GLM models
 
-### Agent Migration (PHASE 2 MOVED TO INCLUDE MODEL ALIAS MIGRATION)
+## Phase 3: Skills Migration
 
-- [ ] Phase 2: All tasks complete
-- [ ] Phase 2: All validation passed
-- [ ] All 45 agents schema validated
-- [ ] All tool permissions validated
-- [ ] All agents functionally tested
-- [ ] All model aliases migrated to full names
-- [ ] All agents use OpenCode model names only
+### Tasks
 
-### Skills Migration
+#### Task 3.1: Create .opencode/skill/ Directory
+
+**Owner**: Plan Executor
+**Effort**: 0.25 days
+
+**Steps**:
+
+1. Create `.opencode/skill/` directory:
+
+   ```bash
+   mkdir -p .opencode/skill
+   ```
+
+2. Verify directory creation:
+   ```bash
+   ls -la .opencode/
+   ```
+
+**Deliverables**:
+
+- [ ] `.opencode/skill/` directory created
+
+**Validation**:
+
+- [ ] Directory exists and is empty
+- [ ] No errors during creation
+
+---
+
+#### Task 3.2: Move Skills to .opencode/skill/
+
+**Owner**: Plan Executor
+**Effort**: 1 day
+
+**Steps**:
+
+1. List all 23 skills in `.claude/skills/`:
+
+   ```bash
+   find .claude/skills/ -name "SKILL.md"
+   ```
+
+2. For each skill, create directory and copy:
+
+   ```bash
+   for skill_dir in .claude/skills/*/; do
+     skill_name=$(basename "$skill_dir")
+     mkdir -p ".opencode/skill/$skill_name"
+     cp "$skill_dir/SKILL.md" ".opencode/skill/$skill_name/"
+   done
+   ```
+
+3. Verify all 23 skills copied:
+   ```bash
+   find .opencode/skill/ -name "SKILL.md" | wc -l
+   ```
+
+**Deliverables**:
+
+- [ ] All 23 skills copied to `.opencode/skill/<name>/SKILL.md`
+
+**Validation**:
+
+- [ ] 23 skills present in `.opencode/skill/`
+- [ ] Each skill has correct directory structure
+- [ ] All SKILL.md files readable
+
+---
+
+#### Task 3.3: Update Skill Frontmatter
+
+**Owner**: Plan Executor
+**Effort**: 0.5 days
+
+**Steps**:
+
+1. For each skill in `.opencode/skill/`, update frontmatter:
+   - Remove `name` field (if present)
+   - Remove `model` field (if present)
+   - Remove `tags` field (if present)
+   - Keep `description` field
+
+2. Verify frontmatter is OpenCode-compliant:
+   ```bash
+   # Check for Claude Code-specific fields
+   grep -r "^name:" .opencode/skill/  # Should return empty
+   grep -r "^model:" .opencode/skill/  # Should return empty
+   grep -r "^tags:" .opencode/skill/   # Should return empty
+   ```
+
+**Deliverables**:
+
+- [ ] All skill frontmatters updated to OpenCode format
+
+**Validation**:
+
+- [ ] No Claude Code-specific fields in skills
+- [ ] All skills have `description` field
+- [ ] Frontmatter format valid YAML
+
+---
+
+#### Task 3.4: Update Agent Skill Permissions
+
+**Owner**: Plan Executor
+**Effort**: 1 day
+
+**Steps**:
+
+1. For each agent in `.opencode/agent/`, add `permission.skill` frontmatter
+
+2. Identify which skills each agent needs (from agent body content)
+
+3. Add `permission.skill` section:
+
+   ```yaml
+   ---
+   description: Agent description
+   model: zai/glm-4.7
+   tools:
+     read: true
+     grep: true
+   permission:
+     skill:
+       docs-applying-content-quality: allow
+       wow-applying-maker-checker-fixer: allow
+   ---
+   ```
+
+4. Update all 46 agents with required skills
+
+**Deliverables**:
+
+- [ ] All agents have `permission.skill` frontmatter
+
+**Validation**:
+
+- [ ] All agents have `permission` section
+- [ ] All required skills listed with `allow`
+- [ ] Permission format correct YAML
+
+---
+
+#### Task 3.5: Validate Skills Load Correctly
+
+**Owner**: Plan Executor
+**Effort**: 0.5 days
+
+**Steps**:
+
+1. Test skill loading by invoking sample agents:
+   - docs-checker (uses docs skills)
+   - plan-checker (uses plan skills)
+   - repo-governance-checker (uses governance skills)
+
+2. Verify skills load without errors
+
+3. Verify denied skills are inaccessible (test with agent that doesn't have permission)
+
+**Deliverables**:
+
+- [ ] Skills validation report (`generated-reports/skills-validation.md`)
+
+**Validation**:
+
+- [ ] All tested skills load correctly
+- [ ] No skill loading errors
+- [ ] Permission-based access control works
+
+---
+
+### Phase 3 Checklist
+
+- [ ] Task 3.1: .opencode/skill/ directory created
+- [ ] Task 3.2: All 23 skills copied to .opencode/skill/
+- [ ] Task 3.3: All skill frontmatters updated to OpenCode format
+- [ ] Task 3.4: All agents have permission.skill frontmatter
+- [ ] Task 3.5: Skills validation complete
+- [ ] Phase 3: All validation passed
+- [ ] All 46 agents have skill permissions
+- [ ] All 23 skills validate
+- [ ] .opencode/skill/<name>/SKILL.md structure correct
+
+---
+
+### Phase 3 Checklist
 
 - [ ] Phase 3: All tasks complete
 - [ ] Phase 3: All validation passed
@@ -303,7 +481,7 @@
 
 **Steps**:
 
-1. Verify all 45 agents work correctly in OpenCode
+1. Verify all 46 agents work correctly in OpenCode
 2. Delete `.claude/agents/` directory and all agent files
 3. Verify deletion with `ls .claude/agents/` (should fail)
 4. Document deletion in migration report
@@ -434,6 +612,113 @@
 
 ### Tasks
 
+#### Task 7.0: Create Pre-Migration Archive
+
+**Owner**: Plan Executor
+**Effort**: 0.5 days
+
+**Steps**:
+
+1. Create archive branch:
+
+   ```bash
+   git checkout -b archive/pre-migration-claude-code
+   ```
+
+2. Commit current state:
+
+   ```bash
+   git add .
+   git commit -m "Archive: Pre-migration state before Claude Code to OpenCode migration
+
+   This branch preserves the dual-format state for historical analysis
+   and rollback capability if needed."
+   ```
+
+3. Push to remote (optional):
+
+   ```bash
+   git push -u origin archive/pre-migration-claude-code
+   ```
+
+4. Return to main branch:
+   ```bash
+   git checkout main
+   ```
+
+**Deliverables**:
+
+- [ ] Pre-migration archive branch created
+- [ ] Archive commit created with full state
+- [ ] Archive pushed to remote (optional)
+
+**Validation**:
+
+- [ ] Archive branch exists
+- [ ] Archive commit contains pre-migration state
+- [ ] Back on main branch
+
+---
+
+#### Task 7.0.5: Create Migration Commit
+
+**Owner**: Plan Executor
+**Effort**: 0.25 days
+
+**Steps**:
+
+1. Review all migration changes:
+
+   ```bash
+   git status
+   git diff --staged
+   ```
+
+2. Stage all changes:
+
+   ```bash
+   git add .
+   ```
+
+3. Create migration commit with detailed message:
+
+   ```bash
+   git commit -m "feat: Complete migration from Claude Code to OpenCode
+
+   - Migrate .claude/agents/ (46 agents) → .opencode/agent/ (single source)
+   - Migrate .claude/skills/ (23 skills) → .opencode/skill/<name>/SKILL.md
+   - Update .opencode/opencode.json to use GLM models (zai/glm-4.7)
+   - Consolidate CLAUDE.md (348 lines) → AGENTS.md (expanded)
+   - Update all governance docs to reference OpenCode format only
+   - Delete Claude Code artifacts (.claude/, CLAUDE.md, conversion scripts)
+   - Pre-migration state archived in archive/pre-migration-claude-code
+
+   All 46 agents validated with OpenCode schema
+   All 23 skills load with permission-based model
+   All validation tests pass
+
+   Related: plans/backlog/2025-01-12__claude-code-full-migration/"
+   ```
+
+4. Verify commit created:
+   ```bash
+   git log -1 --oneline
+   ```
+
+**Deliverables**:
+
+- [ ] Migration commit created
+- [ ] Commit message follows conventional commits format
+- [ ] All changes included in commit
+
+**Validation**:
+
+- [ ] Commit created successfully
+- [ ] Commit message is comprehensive
+- [ ] Working tree is clean
+
+---
+
 #### Task 7.1: Comprehensive Test Suite
 
 **Owner**: Plan Executor
@@ -442,7 +727,7 @@
 **Steps**:
 
 1. Run full test suite from Phase 1.4
-2. Validate all 45 OpenCode agents
+2. Validate all 46 OpenCode agents
 3. Validate all 23 OpenCode skills
 4. Validate all governance agents work correctly
 5. Validate documentation is complete and correct
@@ -499,9 +784,12 @@
 
 **Steps**:
 
-1. Document rollback procedure from tech-docs.md
-2. Verify archive files are properly stored
-3. Document steps to restore from archive if needed
+1. Extract rollback procedure from tech-docs.md section
+2. Verify archive files are properly stored in `archive/pre-migration-claude-code` branch
+3. Test rollback steps (read-only, don't execute):
+   - Verify `git reset --hard HEAD~1` command is correct
+   - Verify `git checkout archive/pre-migration-claude-code -- .` is documented
+4. Document rollback procedure in generated-reports/
 
 **Deliverables**:
 
@@ -541,10 +829,13 @@
 ### Phase 7 Checklist
 
 - [ ] Task 7.1: Comprehensive test suite passed
+- [ ] Task 7.0: Pre-migration archive created
+- [ ] Task 7.0.5: Migration commit created
+- [ ] Task 7.1: Comprehensive test suite passed
 - [ ] Task 7.2: Manual validation passed
 - [ ] Task 7.3: Rollback procedure tested
 - [ ] Task 7.4: Success criteria validated
-- [ ] All 45 agents work correctly
+- [ ] All 46 agents work correctly
 - [ ] All 23 skills load correctly
 - [ ] All governance agents work correctly
 - [ ] Documentation is complete and correct
@@ -569,20 +860,22 @@
 
 - [ ] Phase 2: All tasks complete
 - [ ] Phase 2: All validation passed
-- [ ] All 45 agents schema validated
+- [ ] All 46 agents schema validated
 - [ ] All tool permissions validated
 - [ ] All agents functionally tested
-- [ ] All model aliases migrated to GLM models
-- [ ] All agents use OpenCode model names only
+- [ ] .opencode/opencode.json updated to GLM models
+- [ ] No agent model field changes needed (already correct)
 
 ### Skills Migration
 
 - [ ] Phase 3: All tasks complete
 - [ ] Phase 3: All validation passed
-- [ ] Skills moved to `.opencode/skill/<name>/SKILL.md` (OpenCode standard)
+- [ ] .opencode/skill/ directory created
+- [ ] All 23 skills moved to `.opencode/skill/<name>/SKILL.md`
+- [ ] All skill frontmatters updated to OpenCode format
 - [ ] All agents have `permission.skill` frontmatter
 - [ ] All 23 skills validated
-- [ ] Skills documentation updated (`.claude/skills/README.md`)
+- [ ] Skills load correctly with permission model
 
 ### Governance Updates
 
@@ -618,7 +911,7 @@
 - [ ] CLAUDE.md deleted
 - [ ] All conversion scripts deleted
 - [ ] Cleanup validated
-- [ ] Migration commit created
+- [ ] .claude/ directory deleted entirely
 
 ### Final Validation
 

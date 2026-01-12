@@ -9,10 +9,10 @@
 
 Currently, this repository maintains dual AI agent support:
 
-- **Claude Code format**: `.claude/agents/` (45 agents) + `.claude/skills/` (23 skills) - **Source of truth**
-- **OpenCode format**: `.opencode/agent/` (45 agents) - Generated from Claude Code
-- **Documentation**: `CLAUDE.md` (~30,000 lines) - Claude Code-specific guidance
-- **Instructions**: `AGENTS.md` (~1,000 lines) - OpenCode-specific guidance
+- **Claude Code format**: `.claude/agents/` (46 agents) + `.claude/skills/` (23 skills) - **Source of truth**
+- **OpenCode format**: `.opencode/agent/` (46 agents) - Generated from Claude Code
+- **Documentation**: `CLAUDE.md` (348 lines) - Claude Code-specific guidance
+- **Instructions**: `AGENTS.md` (232 lines) - OpenCode-specific guidance
 
 **Key Pain Points**:
 
@@ -23,7 +23,7 @@ Currently, this repository maintains dual AI agent support:
 5. **Future tool adoption**: Adding third AI CLI tool requires new conversion logic
 6. **Skills management**: `.claude/skills/` shared but loaded differently by each tool
 7. **Agent invocation differences**: Skills auto-load in Claude Code vs permission-based in OpenCode
-8. **Model alias issue (CRITICAL)**: All 45 agents use Claude Code model aliases (`sonnet`, `haiku`, `opus`) which are NOT valid in OpenCode. OpenCode requires GLM model names (`zai/glm-4.7`, `zai/glm-4.7-flash`, `zai/glm-4.7-plus`, or `inherit`)
+8. **Model alias issue (CRITICAL)**: All 46 agents use Claude Code model aliases (`sonnet`, `haiku`, `opus`) which are NOT valid in OpenCode. OpenCode requires GLM model names (`zai/glm-4.7`, `zai/glm-4.7-flash`, `zai/glm-4.7-plus`, or `inherit`)
 9. **Governance docs outdated**: Multiple governance documents reference Claude Code format and paths, requiring comprehensive updates to OpenCode format
 
 ## Proposed Solution
@@ -33,15 +33,15 @@ Currently, this repository maintains dual AI agent support:
 ### Current Architecture
 
 ```
-Source: .claude/agents/ (Claude Code format, 45 agents)
+Source: .claude/agents/ (Claude Code format, 46 agents)
    ↓ (convert-agents-to-opencode.py)
-Generated: .opencode/agent/ (OpenCode format, 45 agents)
+Generated: .opencode/agent/ (OpenCode format, 46 agents)
 
 Shared: .claude/skills/ (23 skills, auto-loaded by Claude Code)
        .claude/settings.json (Claude Code settings)
        .claude/settings.local.json (local Claude Code settings)
 
-Docs: CLAUDE.md (~30k lines, Claude Code guidance)
+  Docs: CLAUDE.md (348 lines, Claude Code guidance)
         AGENTS.md (~1k lines, OpenCode guidance)
         governance/development/agents/ai-agents.md (Claude Code convention)
 ```
@@ -49,7 +49,7 @@ Docs: CLAUDE.md (~30k lines, Claude Code guidance)
 ### Proposed Architecture
 
 ```
-Source: .opencode/agent/ (OpenCode format, 45 agents - single source)
+Source: .opencode/agent/ (OpenCode format, 46 agents - single source)
 
 Shared: .opencode/skill/<name>/SKILL.md (23 skills, OpenCode standard)
 
@@ -72,7 +72,7 @@ Config: .opencode/opencode.json (OpenCode settings, replaces Claude Code setting
 
 ### Model Migration Strategy (CRITICAL CHANGE)
 
-**Issue**: All 45 agents currently use Claude Code model aliases (`sonnet`, `haiku`, `opus`). User wants GLM models instead of Claude models.
+**Issue**: All 46 agents currently use Claude Code model aliases (`sonnet`, `haiku`, `opus`). User wants GLM models instead of Claude models.
 
 **Model Mapping**:
 
@@ -147,7 +147,7 @@ Config: .opencode/opencode.json (OpenCode settings, replaces Claude Code setting
 
 ### Documentation Consolidation Effort
 
-**Risk**: Merging 30k lines of CLAUDE.md into 1k lines of AGENTS.md is complex
+**Risk**: Merging 348 lines of CLAUDE.md into 232 lines of AGENTS.md is complex
 
 **Mitigation**:
 
@@ -193,7 +193,7 @@ Config: .opencode/opencode.json (OpenCode settings, replaces Claude Code setting
 
 ### Agent Functionality
 
-- [ ] All 45 agents work identically in OpenCode after migration
+- [ ] All 46 agents work identically in OpenCode after migration
 - [ ] All 23 skills load correctly with permission-based model
 - [ ] 0 validation errors in OpenCode agents
 - [ ] 0 functionality regressions vs current agent behavior
@@ -201,7 +201,7 @@ Config: .opencode/opencode.json (OpenCode settings, replaces Claude Code setting
 
 ### Repository Cleanup
 
-- [ ] `.claude/agents/` directory removed (45 agent files)
+- [ ] `.claude/agents/` directory removed (46 agent files)
 - [ ] `.claude/skills/` directory removed (23 skills)
 - [ ] `.claude/settings.json` removed
 - [ ] `.claude/settings.local.json` removed
@@ -211,7 +211,7 @@ Config: .opencode/opencode.json (OpenCode settings, replaces Claude Code setting
 
 ### Documentation Quality
 
-- [ ] AGENTS.md is comprehensive (5,000-10,000 lines, not 30k)
+- [ ] AGENTS.md is comprehensive (consolidates content from CLAUDE.md into existing 232 lines)
 - [ ] AGENTS.md contains all AI agent guidance from CLAUDE.md
 - [ ] All references to `.claude/agents/` updated to `.opencode/agent/`
 - [ ] All references to dual-format support removed

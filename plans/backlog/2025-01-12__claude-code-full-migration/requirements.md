@@ -66,15 +66,15 @@
 
 ### Scenario 1: Agent Format Migration
 
-**Given** the repository currently has 45 agents in `.claude/agents/` (Claude Code format)
-**And** 45 agents in `.opencode/agent/` (OpenCode format, generated)
+**Given** the repository currently has 46 agents in `.claude/agents/` (Claude Code format)
+**And** 46 agents in `.opencode/agent/` (OpenCode format, generated)
 **When** the migration is executed
 **Then** `.claude/agents/` directory is removed entirely
-**And** `.opencode/agent/` contains all 45 agents as the source of truth
+**And** `.opencode/agent/` contains all 46 agents as the source of truth
 **And** each OpenCode agent has complete frontmatter (description, model, tools, permissions)
 **And** each OpenCode agent has the same behavior as the previous Claude Code agent
 **And** no agent functionality is lost or broken
-**And** all 45 agents validate successfully with OpenCode schema
+**And** all 46 agents validate successfully with OpenCode schema
 
 **Given** an OpenCode agent requires explicit tool permissions
 **When** converting from Claude Code format
@@ -86,12 +86,12 @@
 
 ### Scenario 2: Documentation Consolidation
 
-**Given** CLAUDE.md currently contains ~30,000 lines of Claude Code-specific guidance
-**And** AGENTS.md currently contains ~1,000 lines of OpenCode-specific guidance
+**Given** CLAUDE.md currently contains 348 lines of Claude Code-specific guidance
+**And** AGENTS.md currently contains 232 lines of OpenCode-specific guidance
 **When** documentation consolidation is executed
 **Then** CLAUDE.md is deleted
 **And** AGENTS.md is expanded to contain all relevant agent guidance
-**And** AGENTS.md length is 5,000-10,000 lines (comprehensive but not verbose)
+**And** AGENTS.md length is consolidated from CLAUDE.md content into existing 232 lines
 **And** AGENTS.md covers: project overview, agent catalog, skills, maker-checker-fixer workflow, tool usage
 **And** general project guidance is moved to existing governance docs (not duplicated)
 **And** all references to CLAUDE.md in the repository are removed or updated
@@ -221,7 +221,7 @@ permission:
 
 **Validation**:
 
-- All 45 agents work identically before and after migration
+- All 46 agents work identically before and after migration
 - All maker-checker-fixer workflows function correctly
 - All 23 skills load and execute correctly
 - No user-facing behavior changes
@@ -322,7 +322,7 @@ The following are explicitly out of scope for this migration:
 2. **Skill content migration**: No changes to skill definitions themselves (frontmatter adjusted only)
 3. **OpenCode feature adoption**: Only migrating existing functionality, not adding new OpenCode-specific features
 4. **Performance optimization**: Migration focused on correctness, not performance
-5. **New agent creation**: Only migrating existing 45 agents
+5. **New agent creation**: Only migrating existing 46 agents
 6. **Workflow re-architecture**: Maker-checker-fixer patterns preserved, only format changes
 7. **Model configuration changes**: Claude Code model aliases replaced with GLM model names (sonnet→zai/glm-4.7, haiku→zai/glm-4.7-flash, opus→zai/glm-4.7-plus)
 8. **MCP server configuration**: MCP tools configuration unchanged
@@ -335,7 +335,7 @@ Complete all items to consider this migration successful:
 
 ### Functionality
 
-- [ ] All 45 agents work correctly in OpenCode
+- [ ] All 46 agents work correctly in OpenCode
 - [ ] All 23 skills load with permission model
 - [ ] All maker agents create OpenCode format agents
 - [ ] All checker agents validate OpenCode format
