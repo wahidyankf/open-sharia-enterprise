@@ -1,87 +1,42 @@
 # Full Migration from Claude Code to OpenCode
 
 **Status**: Done
-**Created**: 2025-01-12
+**Created**: 2026-01-12
 **Completed**: 2026-01-12
 **Priority**: High
 **Complexity**: High (architectural change eliminating Claude Code dependency)
 
-## Problem Statement
+## Summary
 
-Currently, this repository maintains dual AI agent support:
+Successfully completed full migration from Claude Code to OpenCode.
 
-- **Claude Code format**: `.claude/agents/` (46 agents) + `.claude/skills/` (23 skills) - **Source of truth**
-- **OpenCode format**: `.opencode/agent/` (46 agents) - Generated from Claude Code
-- **Documentation**: `CLAUDE.md` (348 lines) - Claude Code-specific guidance
-- **Instructions**: `AGENTS.md` (232 lines) - OpenCode-specific guidance
+**Deliverables**:
 
-**Key Pain Points**:
+- ✅ All 46 agents in `.opencode/agent/` (OpenCode format)
+- ✅ All 23 skills in `.opencode/skill/` (OpenCode format)
+- ✅ AGENTS.md updated with OpenCode-specific sections
+- ✅ `.claude/` directory deleted (no Claude Code artifacts remain)
+- ✅ CLAUDE.md deleted
+- ✅ 238/238 validation tests passed (100%)
+- ✅ Conversion scripts deleted
 
-1. **Dual maintenance burden**: Primary agent definitions tied to Claude Code format
-2. **Documentation duplication**: CLAUDE.md and AGENTS.md cover similar content
-3. **Conversion complexity**: Scripts required to sync formats
-4. **Vendor lock-in**: Core definitions coupled to Claude Code format
-5. **Future tool adoption**: Adding third AI CLI tool requires new conversion logic
-6. **Skills management**: `.claude/skills/` shared but loaded differently by each tool
-7. **Agent invocation differences**: Skills auto-load in Claude Code vs permission-based in OpenCode
-8. **Governance docs outdated**: Multiple governance documents reference Claude Code format and paths, requiring comprehensive updates to OpenCode format
+**Git Commits**:
 
-## Proposed Solution
+- `7b0359dd` - feat: complete migration from claude code to opencode
+- `70a4169d` - docs(migration): update delivery plan with all validation ticks
+- `483ea56d` - docs(migration): remove pre-migration archive branch references
+- `94012a6a` - fix(migration): resolve validation errors in AGENTS.md and test suite
+- `f6245eed` - chore(migration): remove test validation file
 
-**Fully migrate to OpenCode as single source of truth**, eliminating all Claude Code-specific directories and files.
+**Validation Results**:
 
-### Current Architecture
+- 238/238 automated tests passed (100%)
+- 18/18 manual tests passed
+- All success criteria met
 
-```
-Source: .claude/agents/ (Claude Code format, 46 agents)
-   ↓ (convert-agents-to-opencode.py)
-Generated: .opencode/agent/ (OpenCode format, 46 agents)
+## Migration Overview
 
-Shared: .claude/skills/ (23 skills, auto-loaded by Claude Code)
-       .claude/settings.json (Claude Code settings)
-       .claude/settings.local.json (local Claude Code settings)
-
-  Docs: CLAUDE.md (348 lines, Claude Code guidance)
-        AGENTS.md (~1k lines, OpenCode guidance)
-        governance/development/agents/ai-agents.md (Claude Code convention)
-```
-
-### Proposed Architecture
-
-```
-Source: .opencode/agent/ (OpenCode format, 46 agents - single source)
-
-Shared: .opencode/skill/<name>/SKILL.md (23 skills, OpenCode standard)
-
-Docs: AGENTS.md (expanded with CLAUDE.md content, OpenCode-only)
-       governance/development/agents/ai-agents.md (updated to OpenCode format)
-       All governance/ docs (updated to reference .opencode/agent/)
-
-Config: .opencode/opencode.json (OpenCode settings, replaces Claude Code settings)
-
- Eliminated: .claude/agents/ (45 files)
-               .claude/skills/ (23 skills)
-               .claude/settings.json
-               .claude/settings.local.json
-               CLAUDE.md
-               scripts/convert-agents-to-opencode.py
-               scripts/validate-opencode-agents.py
-               scripts/sync-claude-opencode.py
-               .claude/ (entire directory)
-```
-
-### Model Configuration Status
-
-**Current State**: All 46 agents already use GLM model names (verified via `grep -r "^model:" .opencode/agent/*.md`):
-
-- 38 agents use `zai/glm-4.7` (advanced reasoning, deep analysis)
-- 6 agents use `zai/glm-4.5-air` (fast, lightweight tasks)
-
-**No model migration required** - OpenCode agents are already configured with GLM models.
-
-```
-
-## Goals
+This plan documented the complete migration from Claude Code to OpenCode format, eliminating all Claude Code dependencies and consolidating to a single OpenCode-based workflow.
 
 ### Primary Goals
 
@@ -398,6 +353,7 @@ This plan is organized into four documents:
 - Current conversion scripts: `scripts/convert-agents-to-opencode.py`, `scripts/validate-opencode-agents.py`, `scripts/sync-claude-opencode.py`
 - Existing dual-format plan: `plans/backlog/2026-01-04__agents-docs-source-of-truth/` (alternative approach rejected)
 
+```
 
 ```
 
