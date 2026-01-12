@@ -43,7 +43,8 @@ function validateAgentSchemas() {
     return;
   }
 
-  const agentFiles = fs.readdirSync(AGENTS_DIR).filter((f) => f.endsWith(".md"));
+  const agentFiles = fs.readdirSync(AGENTS_DIR).filter((f) => f.endsWith(".md") && f !== "README.md");
+
   console.log("Found " + agentFiles.length + " agent files");
 
   for (const agentFile of agentFiles) {
@@ -91,7 +92,7 @@ function validateModelConfiguration() {
     return;
   }
 
-  const agentFiles = fs.readdirSync(AGENTS_DIR).filter((f) => f.endsWith(".md"));
+  const agentFiles = fs.readdirSync(AGENTS_DIR).filter((f) => f.endsWith(".md") && f !== "README.md");
 
   for (const agentFile of agentFiles) {
     const filePath = path.join(AGENTS_DIR, agentFile);
@@ -119,7 +120,7 @@ function validateToolPermissions() {
     return;
   }
 
-  const agentFiles = fs.readdirSync(AGENTS_DIR).filter((f) => f.endsWith(".md"));
+  const agentFiles = fs.readdirSync(AGENTS_DIR).filter((f) => f.endsWith(".md") && f !== "README.md");
 
   for (const agentFile of agentFiles) {
     const filePath = path.join(AGENTS_DIR, agentFile);
@@ -131,7 +132,19 @@ function validateToolPermissions() {
     const frontmatter = yaml.load(frontmatterMatch[1]);
     const tools = frontmatter.tools || {};
 
-    const VALID_TOOLS = ["read", "write", "edit", "bash", "grep", "glob", "webfetch", "websearch", "web-reader"];
+    const VALID_TOOLS = [
+      "read",
+      "write",
+      "edit",
+      "bash",
+      "grep",
+      "glob",
+      "webfetch",
+      "websearch",
+      "web-reader",
+      "todowrite",
+      "todoread",
+    ];
     for (const tool of Object.keys(tools)) {
       if (!VALID_TOOLS.includes(tool)) {
         logError("ToolPermissions", agentFile + ": Invalid tool: " + tool);
