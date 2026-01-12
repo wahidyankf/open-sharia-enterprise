@@ -3,7 +3,11 @@ description: Applies validated fixes from readme-checker audit reports. Re-valid
   README findings before applying changes. Use after reviewing readme-checker output.
 mode: all
 model: zai/glm-4.7
-tools:
+tools:permission:
+  skill:
+    readme-writing-readme-files: allow
+    wow-applying-fixer-workflow: allow
+
   read: true
   edit: true
   glob: true
@@ -56,7 +60,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`wow-applying-fixer-workflow`** - Progressive knowledge delivery
 2. **`readme-writing-readme-files`** - Progressive knowledge delivery

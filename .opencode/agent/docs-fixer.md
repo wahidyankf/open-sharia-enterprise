@@ -4,7 +4,11 @@ description: Applies validated fixes from docs-checker audit reports. Re-validat
   output.
 mode: all
 model: zai/glm-4.7
-tools:
+tools:permission:
+  skill:
+    docs-applying-content-quality: allow
+    wow-applying-fixer-workflow: allow
+
   read: true
   edit: true
   glob: true
@@ -55,7 +59,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
 2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery

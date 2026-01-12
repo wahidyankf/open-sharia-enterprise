@@ -3,7 +3,11 @@ description: Creates general ayokoding-web content (by-concept tutorials, guides
   references). Ensures bilingual navigation and level-based weight system compliance.
 mode: all
 model: zai/glm-4.7
-tools:
+tools:permission:
+  skill:
+    apps-ayokoding-web-developing-content: allow
+    docs-applying-content-quality: allow
+
   read: true
   write: true
   edit: true
@@ -28,7 +32,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 2. **`docs-creating-accessible-diagrams`** - Progressive knowledge delivery

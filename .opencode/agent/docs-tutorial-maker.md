@@ -3,7 +3,12 @@ description: Creates and updates tutorial documentation following Diátaxis fram
   and tutorial conventions
 mode: all
 model: zai/glm-4.7
-tools:
+tools:permission:
+  skill:
+    docs-applying-content-quality: allow
+    docs-applying-diataxis-framework: allow
+    docs-creating-by-example-tutorials: allow
+
   read: true
   write: true
   edit: true
@@ -27,7 +32,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 2. **`docs-applying-content-quality`** - Progressive knowledge delivery
@@ -540,9 +545,9 @@ When updating tutorials:
 
 **Related Agents**:
 
-- `.claude/agents/docs-tutorial-checker.md` - Validates tutorial quality
-- `.claude/agents/docs-tutorial-fixer.md` - Fixes tutorial issues
-- `.claude/agents/docs-maker.md` - Creates non-tutorial documentation
+- `.opencode/agent/docs-tutorial-checker.md` - Validates tutorial quality
+- `.opencode/agent/docs-tutorial-fixer.md` - Fixes tutorial issues
+- `.opencode/agent/docs-maker.md` - Creates non-tutorial documentation
 
 **Skills**:
 

@@ -3,7 +3,10 @@ description: Generates appropriate titles for ayokoding-web content based on typ
   (by-concept, by-example) and level.
 mode: all
 model: zai/glm-4.5-air
-tools:
+tools:permission:
+  skill:
+    apps-ayokoding-web-developing-content: allow
+
   read: true
   edit: true
 permission:
@@ -26,7 +29,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 

@@ -20,8 +20,8 @@ updated: 2025-12-05
   This is duplicated (intentionally) in multiple files for different audiences:
   1. governance/development/workflow/trunk-based-development.md (this file - comprehensive reference)
   2. CLAUDE.md (summary for AI agents)
-  3. .claude/agents/plan__maker.md (context for plan creation)
-  4. .claude/agents/plan__executor.md (context for plan execution)
+  3. .opencode/agent/plan__maker.md (context for plan creation)
+  4. .opencode/agent/plan__executor.md (context for plan execution)
   When updating, synchronize all four locations.
 -->
 

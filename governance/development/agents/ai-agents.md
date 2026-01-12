@@ -1,6 +1,6 @@
 ---
 title: "AI Agents Convention"
-description: Standards for creating and managing AI agents in the .claude/agents/ directory
+description: Standards for creating and managing AI agents in the .opencode/agent/ directory
 category: explanation
 subcategory: development
 tags:
@@ -15,13 +15,13 @@ updated: 2026-01-03
 
 # AI Agents Convention
 
-This document defines the standards for creating, structuring, and managing AI agents in the `.claude/agents/` directory. All agents must follow these conventions to ensure consistency, maintainability, and proper integration with the project.
+This document defines the standards for creating, structuring, and managing AI agents in the `.opencode/agent/` directory. All agents must follow these conventions to ensure consistency, maintainability, and proper integration with the project.
 
 ## Overview
 
 ### What are AI Agents?
 
-AI agents in this project are specialized Claude Code assistants defined in the `.claude/agents/` directory. Each agent has:
+AI agents in this project are specialized Claude Code assistants defined in the `.opencode/agent/` directory. Each agent has:
 
 - **Specific expertise** in a particular domain or task
 - **Defined tool permissions** limiting what operations it can perform
@@ -49,7 +49,7 @@ This convention ensures all agents are:
 
 This convention applies to:
 
-- All agent files in `.claude/agents/`
+- All agent files in `.opencode/agent/`
 - References to agents in `CLAUDE.md`
 - Agent validation rules in `wow__rules-checker`
 
@@ -67,7 +67,7 @@ This practice respects the following core principles:
 
 ## Token Budget Philosophy
 
-**CRITICAL GUIDELINE**: When invoking agents (`.claude/agents/`) and workflows (`governance/workflows/`), **do NOT think about token budget constraints**.
+**CRITICAL GUIDELINE**: When invoking agents (`.opencode/agent/`) and workflows (`governance/workflows/`), **do NOT think about token budget constraints**.
 
 ### Why Unlimited Budget Mindset
 
@@ -106,7 +106,7 @@ This practice implements/respects the following conventions:
 
 - **[Linking Convention](../conventions/formatting/linking.md)**: All references to conventions and other documents use relative paths with `.md` extension. Ensures GitHub-compatible markdown across all agent files.
 
-- **[Emoji Usage Convention](../conventions/formatting/emoji.md)**: Agent prompt files MUST NOT contain emojis (forbidden location per convention). Only `.claude/agents/README.md` uses colored square emojis for categorization.
+- **[Emoji Usage Convention](../conventions/formatting/emoji.md)**: Agent prompt files MUST NOT contain emojis (forbidden location per convention). Only `.opencode/agent/README.md` uses colored square emojis for categorization.
 
 - **[Color Accessibility Convention](../conventions/formatting/color-accessibility.md)**: Agent color categorization (blue/green/yellow/purple) uses verified accessible palette for visual identification while maintaining text-based accessibility.
 
@@ -166,7 +166,7 @@ skills: []
    - See "Agent Color Categorization" below for assignment guidelines
 
 6. **`skills`** (required)
-   - List of Skill names the agent references (from `.claude/skills/`)
+   - List of Skill names the agent references (from `.opencode/skill/`)
    - Can be empty array `[]` if agent doesn't use Skills
    - Skills auto-load when agent is invoked (if task matches Skill description)
    - Enables composability and explicit knowledge dependencies
@@ -217,7 +217,7 @@ updated: 2025-12-03
 
 **REQUIRED FIELD**: All agents MUST include a `skills:` frontmatter field for composability and consistency.
 
-**Purpose:** The `skills:` field declares which Skills (knowledge packages in `.claude/skills/`) the agent leverages. This enables:
+**Purpose:** The `skills:` field declares which Skills (knowledge packages in `.opencode/skill/`) the agent leverages. This enables:
 
 - **Composability**: Explicit declarations of knowledge dependencies
 - **Consistency**: All agents follow same structure (no special cases)
@@ -230,9 +230,9 @@ The `skills` field (already defined as field 6 in Required Frontmatter above) ha
 
 - **Format**: YAML array of strings
 - **Required**: Yes (can be empty `[]`)
-- **Values**: Skill names matching folder names in `.claude/skills/`
+- **Values**: Skill names matching folder names in `.opencode/skill/`
 - **Auto-loading**: Skills load when agent invoked AND task matches Skill description
-- **Validation**: Referenced Skills must exist in `.claude/skills/` directory
+- **Validation**: Referenced Skills must exist in `.opencode/skill/` directory
 - **Example**: `skills: [color-accessibility-diagrams, maker-checker-fixer-pattern]`
 
 #### When to Reference Skills vs. Inline Knowledge
@@ -308,7 +308,7 @@ When this agent is invoked, all three Skills auto-load if the task description m
 2. **Relevant Skills**: Skills should align with agent's domain
 3. **Order by importance**: List most critical Skills first
 4. **Keep updated**: Add/remove Skills as agent evolves
-5. **Validate references**: Ensure referenced Skills exist in `.claude/skills/`
+5. **Validate references**: Ensure referenced Skills exist in `.opencode/skill/`
 
 #### Skills vs. Direct Convention References
 
@@ -347,7 +347,7 @@ skills:
 
 This pattern provides both auto-loaded knowledge (Skills) and explicit references for specific requirements.
 
-See [Skills README](../../../.claude/skills/README.md) for complete details on Skills creation, structure, and usage patterns.
+See [Skills README](../../../.opencode/skill/README.md) for complete details on Skills creation, structure, and usage patterns.
 
 ### Document Structure
 
@@ -573,22 +573,22 @@ See [Temporary Files Convention](../infra/temporary-files.md) for complete detai
 
 ### Writing to .claude Folders
 
-**CRITICAL RULE**: When creating or modifying files in `.claude/` folders (especially `.claude/agents/`), agents MUST use Bash tools (heredoc, sed, awk, etc.) and NOT Write/Edit tools.
+**CRITICAL RULE**: When creating or modifying files in `.claude/` folders (especially `.opencode/agent/`), agents MUST use Bash tools (heredoc, sed, awk, etc.) and NOT Write/Edit tools.
 
 **Rationale**: Bash tools allow autonomous agent operation without requiring user approval for file operations. Write/Edit tools trigger user approval prompts, breaking autonomous workflows.
 
 **Applies to**:
 
-- Creating new agent files in `.claude/agents/`
-- Updating existing agent files in `.claude/agents/`
-- Modifying `.claude/agents/README.md`
+- Creating new agent files in `.opencode/agent/`
+- Updating existing agent files in `.opencode/agent/`
+- Modifying `.opencode/agent/README.md`
 - Any other `.claude` folder operations
 
 **Tool patterns**:
 
 ```bash
 # Create new agent file (heredoc pattern)
-cat > .claude/agents/new-agent.md <<'END_HEREDOC'
+cat > .opencode/agent/new-agent.md <<'END_HEREDOC'
 ---
 name: new-agent
 description: Agent description here
@@ -601,10 +601,10 @@ color: blue
 END_HEREDOC
 
 # Update existing agent file (sed/awk pattern)
-sed -i '/^model:/s/inherit/sonnet/' .claude/agents/agent-name.md
+sed -i '/^model:/s/inherit/sonnet/' .opencode/agent/agent-name.md
 
 # Update README.md (targeted insertion)
-awk 'pattern { insert_text } { print }' .claude/agents/README.md > temp && mv temp .claude/agents/README.md
+awk 'pattern { insert_text } { print }' .opencode/agent/README.md > temp && mv temp .opencode/agent/README.md
 ```
 
 **Agents affected**:
@@ -872,7 +872,7 @@ color: blue
 
 **Agent README Listings:**
 
-When listing agents in `.claude/agents/README.md`, use the colored square emoji:
+When listing agents in `.opencode/agent/README.md`, use the colored square emoji:
 
 ```markdown
 ### 🟦 `docs-writer.md`
@@ -962,7 +962,7 @@ description: Writes documentation, generates code, runs tests, and deploys appli
 
 Before creating a new agent, check if existing agents already cover the domain:
 
-1. **Review** `.claude/agents/` directory
+1. **Review** `.opencode/agent/` directory
 2. **Check** each agent's `description` field
 3. **Consider** if you can extend an existing agent
 4. **Create new** only if there's no overlap
@@ -1374,7 +1374,7 @@ Is this content reusable across 3+ agents?
 ├─ YES → Move to Skill or Convention Document
 │   │
 │   ├─ Is it actionable "how-to" guidance?
-│   │   └─ YES → Create/update Skill in .claude/skills/
+│   │   └─ YES → Create/update Skill in .opencode/skill/
 │   │       Examples: applying-content-quality, creating-accessible-diagrams
 │   │
 │   └─ Is it technical specification or standard?
@@ -1544,9 +1544,9 @@ When creating new agents:
 
 Before committing agent changes:
 
-- [ ] No content duplicates Skills (check `.claude/skills/` catalog)
+- [ ] No content duplicates Skills (check `.opencode/skill/` catalog)
 - [ ] No content duplicates Conventions (check `governance/conventions/`)
-- [ ] All Skills referenced exist in `.claude/skills/`
+- [ ] All Skills referenced exist in `.opencode/skill/`
 - [ ] All Convention links point to valid files
 - [ ] Task-specific instructions retained (agent is self-contained for its job)
 - [ ] Agent within tier limits (Simple <800, Standard <1,200, Complex <1,800)
@@ -1695,7 +1695,7 @@ Follow these guidelines when writing agent documentation:
    - ❌ "Validates files"
 
 6. **Follow indentation convention**
-   - Agent files are in `.claude/agents/` (outside `docs/`), so use standard markdown (spaces for indentation)
+   - Agent files are in `.opencode/agent/` (outside `docs/`), so use standard markdown (spaces for indentation)
    - When agents create/edit files in `docs/`, they must use TAB indentation for nested bullets
    - YAML frontmatter always uses spaces (2 spaces per level) regardless of file location
 
@@ -1980,13 +1980,13 @@ Runtime: Orchestrator ──spawns──> Agents (isolated contexts)
 
 ### Agent Directory Structure
 
-The `.claude/agents/` directory:
+The `.opencode/agent/` directory:
 
 - **Contains** a `README.md` file for agent index and workflow guidance
 - **Contains** agent definition files (`.md` files)
 - **Follows** flat structure (no subdirectories)
 
-The `.claude/agents/README.md` file:
+The `.opencode/agent/README.md` file:
 
 - Lists all available agents with descriptions
 - Explains agent workflow and best practices
@@ -2349,7 +2349,7 @@ When simplifying an agent:
 - `validating-links` - Link validation, caching
 - Plus 8 more in Content Creation, Standards Application, Process Execution categories
 
-See [Skills README](.claude/skills/README.md) for complete catalog.
+See [Skills README](.opencode/skill/README.md) for complete catalog.
 
 ## Related Documentation
 

@@ -5,7 +5,12 @@ description: Executes project plans systematically by following delivery checkli
 mode: all
 model: zai/glm-4.7
 maxSteps: 50
-tools:
+tools:permission:
+  skill:
+    plan-creating-project-plans: allow
+    wow-applying-maker-checker-fixer: allow
+    wow-generating-validation-reports: allow
+
   read: true
   write: true
   edit: true
@@ -28,7 +33,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 

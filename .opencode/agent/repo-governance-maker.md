@@ -3,7 +3,12 @@ description: Creates repository rules and conventions in docs/explanation/ direc
   Documents standards, patterns, and quality requirements.
 mode: all
 model: zai/glm-4.7
-tools:
+tools:permission:
+  skill:
+    agent-developing-agents: allow
+    agent-documenting-references: allow
+    wow-defining-workflows: allow
+
   read: true
   write: true
   edit: true
@@ -27,7 +32,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 2. **`docs-applying-content-quality`** - Progressive knowledge delivery

@@ -5,7 +5,10 @@ description: Creates and updates README.md content while maintaining engagement,
   updating README content.
 mode: all
 model: zai/glm-4.7
-tools:
+tools:permission:
+  skill:
+    readme-writing-readme-files: allow
+
   read: true
   write: true
   edit: true
@@ -29,7 +32,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`readme-writing-readme-files`** - Progressive knowledge delivery
 2. **`docs-applying-content-quality`** - Progressive knowledge delivery

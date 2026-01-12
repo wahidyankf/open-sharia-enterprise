@@ -11,7 +11,10 @@ mode: all
 model: zai/glm-4.5-air
 temperature: 0.1
 maxSteps: 50
-tools:
+tools:permission:
+  skill:
+    docs-validating-links: allow
+
   read: true
   glob: true
   grep: true
@@ -70,7 +73,7 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`docs-validating-links`** - Progressive knowledge delivery
 2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery

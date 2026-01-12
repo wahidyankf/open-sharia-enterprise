@@ -2,7 +2,10 @@
 description: Updates prev/next navigation links in ayokoding-web content frontmatter.
 mode: all
 model: zai/glm-4.5-air
-tools:
+tools:permission:
+  skill:
+    apps-ayokoding-web-developing-content: allow
+
   read: true
   edit: true
   glob: true
@@ -25,7 +28,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 

@@ -3,7 +3,10 @@ description: Creates folder structure and _index.md files for ayokoding-web foll
   level-based organization.
 mode: all
 model: zai/glm-4.7
-tools:
+tools:permission:
+  skill:
+    apps-ayokoding-web-developing-content: allow
+
   read: true
   write: true
   edit: true
@@ -26,7 +29,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 

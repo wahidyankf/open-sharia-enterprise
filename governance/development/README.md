@@ -121,7 +121,7 @@ Development practices in this directory fall into several categories:
 
 ### Agent Standards Documentation
 
-- [AI Agents Convention](./agents/ai-agents.md) - Standards for creating and managing AI agents in the `.claude/agents/` directory. Covers agent naming, file structure, frontmatter requirements, tool access patterns, model selection, and size limits
+- [AI Agents Convention](./agents/ai-agents.md) - Standards for creating and managing AI agents in the `.opencode/agent/` directory. Covers agent naming, file structure, frontmatter requirements, tool access patterns, model selection, and size limits
 
 ### Infrastructure Documentation
 

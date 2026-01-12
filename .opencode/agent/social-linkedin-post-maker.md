@@ -3,7 +3,9 @@ description: Creates LinkedIn posts from project updates and documentation. Opti
   for engagement and professional tone.
 mode: all
 model: zai/glm-4.7
-tools:
+tools:permission:
+  skill: {}
+
   read: true
   grep: true
 permission:
@@ -26,7 +28,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`docs-applying-content-quality`** - Progressive knowledge delivery
 

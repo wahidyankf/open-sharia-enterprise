@@ -1,6 +1,6 @@
 # AI Agents Development
 
-Standards and conventions for creating and managing AI agents in the `.claude/agents/` directory.
+Standards and conventions for creating and managing AI agents in the `.opencode/agent/` directory.
 
 ## Purpose
 
@@ -30,7 +30,7 @@ These standards define **HOW to develop AI agents**, covering agent file structu
 
 - [Development Index](../README.md) - All development practices
 - [Automation Over Manual Principle](../../principles/software-engineering/automation-over-manual.md) - Why we build agents
-- [Agents Index](../../../../.claude/agents/README.md) - All available agents
+- [Agents Index](../../../../.opencode/agent/README.md) - All available agents
 - [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected

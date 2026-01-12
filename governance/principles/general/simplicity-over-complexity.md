@@ -423,7 +423,7 @@ docs/          # Flat category directories
 
 ### Agent Responsibilities
 
-**Location**: `.claude/agents/`
+**Location**: `.opencode/agent/`
 
 Each agent has **one clear job**:
 

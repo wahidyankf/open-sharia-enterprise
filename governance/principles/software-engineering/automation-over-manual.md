@@ -404,7 +404,7 @@ The project enforces code quality through automated git hooks:
 
 ### AI Validation Agents
 
-**Location**: `.claude/agents/`
+**Location**: `.opencode/agent/`
 
 **Agents**:
 

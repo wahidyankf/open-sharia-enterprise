@@ -7,7 +7,12 @@ mode: subagent
 model: zai/glm-4.7
 temperature: 0.1
 maxSteps: 50
-tools:
+tools:permission:
+  skill:
+    wow-applying-maker-checker-fixer: allow
+    wow-assessing-criticality-confidence: allow
+    wow-understanding-repository-architecture: allow
+
   read: true
   glob: true
   grep: true
@@ -66,7 +71,7 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
@@ -195,7 +200,7 @@ Skill: `wow-generating-validation-reports` (progressive streaming)
 **Validation Method**:
 
 1. **Identify Patterns**: Extract common patterns from agent content (50+ lines)
-2. **Cross-Reference Skills**: Compare patterns against all Skills in `.claude/skills/`
+2. **Cross-Reference Skills**: Compare patterns against all Skills in `.opencode/skill/`
 3. **Detect Duplication Types**:
    - **Verbatim** (CRITICAL): Exact text matches (30-40% of duplicates)
    - **Paraphrased** (HIGH): Same knowledge, different wording (40-50% of duplicates)
@@ -314,7 +319,7 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 
 - [AI Agents Convention](../../governance/development/agents/ex-ru-de-ag-ai-agents.md) - Agent-Skill separation patterns
 - [Temporary Files Convention](../../governance/development/infra/ex-ru-de-in-temporary-files.md) - Report generation standards
-- [Skills Directory](../.claude/skills/README.md) - Complete Skills catalog
+- [Skills Directory](../.opencode/skill/README.md) - Complete Skills catalog
 
 ## Validation Process
 
@@ -328,11 +333,11 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 
 ### Step 2: Agent-Skill Duplication Detection
 
-**For each agent in `.claude/agents/`**:
+**For each agent in `.opencode/agent/`**:
 
 1. Read agent content
 2. Extract content blocks (paragraphs, code blocks, lists)
-3. For each Skill in `.claude/skills/`:
+3. For each Skill in `.opencode/skill/`:
    - Read Skill content
    - Compare agent blocks against Skill content
    - Detect duplication (verbatim, paraphrased, conceptual)

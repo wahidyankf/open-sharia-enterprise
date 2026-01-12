@@ -1,9 +1,15 @@
 ---
-description: Creates new AI agent files in .claude/agents/ following AI Agents Convention.
+description: Creates new AI agent files in .opencode/agent/ following AI Agents Convention.
   Ensures proper structure, skills integration, and documentation.
 mode: all
 model: zai/glm-4.7
-tools:
+tools:permission:
+  skill:
+    agent-developing-agents: allow
+    agent-documenting-references: allow
+    agent-selecting-models: allow
+    wow-defining-workflows: allow
+
   read: true
   write: true
   glob: true
@@ -26,7 +32,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 

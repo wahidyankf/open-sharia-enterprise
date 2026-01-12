@@ -3,7 +3,9 @@ description: Deploys ayokoding-web to production environment branch (prod-ayokod
   after validation. Vercel listens to production branch for automatic builds.
 mode: all
 model: zai/glm-4.5-air
-tools:
+tools:permission:
+  skill: {}
+
   bash: true
   grep: true
 permission:
@@ -27,7 +29,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 2. **`wow-practicing-trunk-based-development`** - Progressive knowledge delivery

@@ -881,14 +881,14 @@ wow__rules-fixer re-validates:
 
 ### Fixer Agents Using This Convention
 
-- [wow__rules-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/wow__rules-fixer.md) - Repository structural consistency fixer
-- [ayokoding-web-general-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-general-fixer.md) - ayokoding-web general Hugo content fixer
-- [ayokoding-web-by-example-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-by-example-fixer.md) - ayokoding-web by-example tutorial fixer
-- [ayokoding-web-facts-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-facts-fixer.md) - ayokoding-web factual accuracy fixer
-- [ayokoding-web-structure-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ayokoding-web-structure-fixer.md) - ayokoding-web structure fixer
-- [docs__tutorial-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/docs__tutorial-fixer.md) - Tutorial quality fixer
-- [ose-platform-web-content-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/ose-platform-web-content-fixer.md) - ose-platform-web Hugo content fixer
-- [readme__fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.claude/agents/readme__fixer.md) - README quality fixer
+- [wow__rules-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/wow__rules-fixer.md) - Repository structural consistency fixer
+- [ayokoding-web-general-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-general-fixer.md) - ayokoding-web general Hugo content fixer
+- [ayokoding-web-by-example-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-by-example-fixer.md) - ayokoding-web by-example tutorial fixer
+- [ayokoding-web-facts-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-facts-fixer.md) - ayokoding-web factual accuracy fixer
+- [ayokoding-web-structure-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-structure-fixer.md) - ayokoding-web structure fixer
+- [docs__tutorial-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/docs__tutorial-fixer.md) - Tutorial quality fixer
+- [ose-platform-web-content-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ose-platform-web-content-fixer.md) - ose-platform-web Hugo content fixer
+- [readme__fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/readme__fixer.md) - README quality fixer
 
 ### Related Conventions
 

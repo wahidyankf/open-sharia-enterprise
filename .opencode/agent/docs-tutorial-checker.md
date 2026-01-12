@@ -6,7 +6,12 @@ mode: subagent
 model: zai/glm-4.7
 temperature: 0.1
 maxSteps: 50
-tools:
+tools:permission:
+  skill:
+    docs-applying-content-quality: allow
+    docs-applying-diataxis-framework: allow
+    docs-creating-by-example-tutorials: allow
+
   read: true
   glob: true
   grep: true
@@ -66,7 +71,7 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`wow-executing-checker-workflow`** - Progressive knowledge delivery
 2. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery

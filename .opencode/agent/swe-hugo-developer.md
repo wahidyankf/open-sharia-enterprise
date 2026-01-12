@@ -3,7 +3,12 @@ description: Develops Hugo sites (ayokoding-web, ose-platform-web) including the
   customization, template development, and build optimization.
 mode: all
 model: zai/glm-4.7
-tools:
+tools:permission:
+  skill:
+    wow-applying-maker-checker-fixer: allow
+    wow-assessing-criticality-confidence: allow
+    wow-understanding-repository-architecture: allow
+
   read: true
   write: true
   edit: true
@@ -27,7 +32,7 @@ permission:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leverages Skills from `.opencode/skill/`:
 
 1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 2. **`apps-ose-platform-web-developing-content`** - Progressive knowledge delivery
