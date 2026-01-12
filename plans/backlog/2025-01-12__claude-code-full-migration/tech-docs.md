@@ -116,34 +116,69 @@ Instructions for validating documentation...
 | `tags`        | (removed)      | Not used in OpenCode                         |
 | (omitted)     | `permission`   | New: skill permissions, bash/edit control    |
 
-### Model Configuration Migration (CRITICAL)
+### Model Configuration Verification (UPDATED)
 
-**Issue**: `.opencode/opencode.json` config currently uses Claude models (`anthropic/claude-sonnet-4-5`, `anthropic/claude-haiku-4`). The main conversation model should be updated to use GLM models instead.
+**Status**: ✅ Verified - All 46 agents already use GLM model names
 
-#### Current Configuration
+**Audit Results**:
 
-**From `.opencode/opencode.json`**:
+- 38 agents use `zai/glm-4.7` (advanced reasoning, deep analysis)
+- 6 agents use `zai/glm-4.5-air` (fast, lightweight tasks)
+- 0 agents use Claude Code aliases (sonnet, haiku, opus)
+- 0 agents use anthropic/claude-\* model names
 
-```json
-{
-  "$schema": "https://opencode.ai/config.json",
-  "model": "anthropic/claude-sonnet-4-5",
-  "small_model": "anthropic/claude-haiku-4"
-}
-```
+**Model Name Reference**:
 
-❌ Uses Claude models (not GLM)
+| GLM Model Name    | Use Case                          | Agent Count |
+| ----------------- | --------------------------------- | ----------- |
+| `zai/glm-4.7`     | Advanced reasoning, deep analysis | 38          |
+| `zai/glm-4.5-air` | Fast, lightweight tasks           | 6           |
+| `inherit`         | Use main conversation model       | 0           |
+
+#### Verification Strategy
+
+**Phase 2: Model Configuration Verification**
+
+1. **Verify agent models**:
+
+   ```bash
+   grep -r "^model:" .opencode/agent/*.md | sort | uniq -c
+   ```
+
+2. **Verify no Claude aliases**:
+
+   ```bash
+   grep -r "^model: sonnet\|^model: haiku\|^model: opus" .opencode/agent/*.md
+   # Should return empty (no matches)
+   ```
+
+3. **Verify no anthropic/claude-\* models**:
+
+   ```bash
+   grep -r "^model: anthropic/claude" .opencode/agent/*.md
+   # Should return empty (no matches)
+   ```
+
+4. **Document model distribution**: Create report showing which agents use which models
+
+**Note**: No agent model field changes required - agents already use GLM models.
 
 #### Agent Model Configuration
 
-**Important**: OpenCode agents already use correct GLM model format (`zai/glm-4.7`, `zai/glm-4.7-flash`, etc.). No changes needed to agent frontmatter.
+**Current State**: All 46 agents already use GLM model format (verified via audit):
+
+```bash
+$ grep -r "^model:" .opencode/agent/*.md | sort | uniq -c
+    38 zai/glm-4.7
+     6 zai/glm-4.5-air
+```
 
 **Example from `.opencode/agent/docs-checker.md`**:
 
 ```yaml
 ---
 description: Validates documentation for quality and consistency
-model: zai/glm-4.7  ✅ Already correct GLM format
+model: zai/glm-4.7  ✅ Correct GLM format
 tools:
   read: true
   grep: true
@@ -154,18 +189,8 @@ tools:
 ---
 ```
 
-**Agent Model Audit**:
-
-```bash
-$ grep -r "model:" .opencode/agent/*.md | head -5
-docs-checker.md:model: zai/glm-4.7
-docs-fixer.md:model: zai/glm-4.7
-agent-maker.md:model: zai/glm-4.7
-apps-ayokoding-web-title-maker.md:model: zai/glm-4.7-flash
-apps-ose-platform-web-deployer.md:model: zai/glm-4.7-flash
-```
-
-✅ All 46 agents already use GLM model names (no Claude aliases found)
+✅ All 46 agents use GLM model names (no Claude Code aliases found)
+✅ No agent model changes required (already correct)
 
 #### Model Name Reference
 
@@ -176,58 +201,36 @@ apps-ose-platform-web-deployer.md:model: zai/glm-4.7-flash
 | `zai/glm-4.7-plus`  | Advanced reasoning, complex orchestration       |
 | `inherit`           | Use main conversation model                     |
 
-#### Migration Strategy
+#### Configuration Strategy
 
-**Phase 2: Config File Update**
+**Phase 2: Configuration Verification**
 
-1. **Update `.opencode/opencode.json`**:
+1. **Verify all agent models use GLM names**:
 
-   ```json
-   {
-     "$schema": "https://opencode.ai/config.json",
-     "model": "zai/glm-4.7",
-     "small_model": "zai/glm-4.7-flash"
-   }
+   ```bash
+   grep -r "^model:" .opencode/agent/*.md | sort | uniq -c
    ```
 
-   Or for `inherit` (use agent-specified models):
+   Expected: 38x `zai/glm-4.7`, 6x `zai/glm-4.5-air`
 
-   ```json
-   {
-     "$schema": "https://opencode.ai/config.json",
-     "model": "inherit"
-   }
+2. **Verify no Claude Code aliases**:
+
+   ```bash
+   grep -r "^model: sonnet\|^model: haiku\|^model: opus" .opencode/agent/*.md
    ```
 
-2. **No agent changes needed**: Agents already use correct GLM format
+   Expected: No matches
 
-3. **Validate**: Verify configuration works by invoking sample agents
+3. **Document findings**: Create report in `generated-reports/model-configuration.md`
 
-#### Target Configuration
-
-**After migration, `.opencode/opencode.json`**:
-
-```json
-{
-  "$schema": "https://opencode.ai/config.json",
-  "model": "zai/glm-4.7",
-  "small_model": "zai/glm-4.7-flash",
-  "mcp": {
-    "nx-mcp": {
-      "type": "local",
-      "command": ["npx", "-y", "nx-mcp"],
-      "enabled": true
-    }
-  }
-}
-```
+**No configuration changes required** - agents already use GLM models.
 
 **Validation Criteria**:
 
-- [ ] `.opencode/opencode.json` uses GLM model names (not `anthropic/claude-*`)
-- [ ] Config model is either `zai/glm-4.7`, `zai/glm-4.7-flash`, or `inherit`
-- [ ] No agents require model field changes (already correct)
-- [ ] Sample agents invoke successfully with new config
+- [ ] All 46 agents use GLM model names (zai/glm-4.7, zai/glm-4.5-air, or inherit)
+- [ ] 0 agents use Claude Code model aliases (sonnet, haiku, opus)
+- [ ] 0 agents use anthropic/claude-\* model names
+- [ ] Model configuration report created
 - [ ] All 46 agents validate with OpenCode schema
 
 ### Tool Permission Mapping
@@ -369,6 +372,199 @@ Content of the skill...
 - Remove `tags` field (not used in OpenCode skills)
 - Keep `description` field (same)
 - No frontmatter changes required for skill content
+
+---
+
+## Governance Agents Migration
+
+**Agents Requiring Updates**:
+
+1. **repo-governance-checker**:
+   - Validates `.claude/agents/` format → Validate `.opencode/agent/` format only
+   - Validates dual-format paths → Validate single-format paths only
+   - Remove Claude Code-specific validation checks
+
+2. **repo-governance-fixer**:
+   - Modifies both `.claude/agents/` and `.opencode/agent/` → Modify `.opencode/agent/` only
+   - Syncs formats → No sync needed (single format)
+   - Update path references in code
+
+3. **agent-maker**:
+   - Creates agents in `.claude/agents/` → Create agents in `.opencode/agent/`
+   - Uses Claude Code frontmatter → Use OpenCode frontmatter
+   - Updates Claude Code README → Update OpenCode README
+
+4. **All other agents with path references**:
+   - Update any references to `.claude/agents/` → `.opencode/agent/`
+   - Update any references to CLAUDE.md → AGENTS.md
+   - Update any Claude Code format examples → OpenCode format examples
+
+### Path Reference Changes
+
+**Before**:
+
+```yaml
+# In agent body
+Read .claude/agents/docs-checker.md
+Validate format against governance/development/agents/ai-agents.md
+```
+
+**After**:
+
+```yaml
+# In agent body
+Read .opencode/agent/docs-checker.md
+Validate format against governance/development/agents/ai-agents.md (updated to OpenCode format)
+```
+
+### Dual-Format Support Removal
+
+**Before** (in repo-governance-checker):
+
+```python
+# Validate Claude Code format
+validate_claude_agent(agent_path)
+
+# Validate OpenCode format
+validate_opencode_agent(agent_path)
+
+# Check for dual-format consistency
+check_sync_state()
+```
+
+**After** (in repo-governance-checker):
+
+```python
+# Validate OpenCode format only
+validate_opencode_agent(agent_path)
+
+# Ensure no Claude Code artifacts remain
+check_no_claude_code_artifacts()
+
+# Validate OpenCode schema compliance
+validate_opencode_schema()
+```
+
+### Example: repo-governance-checker Updates
+
+**Tasks**:
+
+1. Remove all `.claude/agents/` validation logic
+2. Remove dual-format consistency checks
+3. Add OpenCode schema validation
+4. Add Claude Code artifact detection (fail if found)
+5. Update agent README update logic
+
+**Validation Criteria**:
+
+- repo-governance-checker validates `.opencode/agent/` format only
+- repo-governance-fixer modifies `.opencode/agent/` files only
+- agent-maker creates agents in `.opencode/agent/`
+- All path references updated to `.opencode/agent/`
+- All examples show OpenCode format
+
+---
+
+## Documentation Consolidation
+
+### Content Mapping Strategy
+
+**CLAUDE.md → AGENTS.md Content Mapping**:
+
+| CLAUDE.md Section   | Destination         | Action                                     |
+| ------------------- | ------------------- | ------------------------------------------ |
+| Project Overview    | governance docs     | Move to existing governance overview       |
+| Agent Format        | AGENTS.md (expand)  | Update to OpenCode format examples         |
+| Agent Invocation    | AGENTS.md (expand)  | Update to OpenCode invocation patterns     |
+| Agent Tools         | AGENTS.md (expand)  | Update to OpenCode permission model        |
+| Maker-Checker-Fixer | AGENTS.md (expand)  | Keep (already dual-format compatible)      |
+| Skills              | AGENTS.md (expand)  | Update to OpenCode permission.skill model  |
+| Model Configuration | AGENTS.md (expand)  | Update to GLM models (no migration)        |
+| Session Management  | AGENTS.md (add new) | Add OpenCode-specific session management   |
+| Multi-Model Usage   | AGENTS.md (add new) | Add OpenCode-specific multi-model patterns |
+
+### Final AGENTS.md Structure
+
+```markdown
+# AI Agents Documentation
+
+## Project Overview
+
+[OpenCode-only project overview]
+
+## Agent Catalog
+
+[All 46 agents, organized by family]
+
+## Agent Format
+
+[OpenCode frontmatter structure, examples]
+
+## Agent Invocation
+
+[OpenCode invocation patterns, session management]
+
+## Agent Tools & Permissions
+
+[OpenCode tool access control model]
+
+## Skills
+
+[23 skills, permission-based loading model]
+
+## Maker-Checker-Fixer Workflow
+
+[OpenCode-specific workflow patterns]
+
+## Multi-Model Usage
+
+[OpenCode multi-model patterns]
+
+## Agent Creation Workflow
+
+[How to create new OpenCode agents]
+
+## Agent Validation & Fixing
+
+[How to validate and fix OpenCode agents]
+```
+
+### Duplicate Content Handling
+
+**Remove from CLAUDE.md** (move to governance docs):
+
+- Project principles → `governance/principles/`
+- Development practices → `governance/development/`
+- Repository architecture → `governance/explanation/`
+
+**Merge into AGENTS.md**:
+
+- Agent format (update to OpenCode)
+- Agent invocation (update to OpenCode)
+- Skills (update to permission.skill model)
+
+**Add to AGENTS.md** (missing content):
+
+- Session management in OpenCode
+- Multi-model usage in OpenCode
+
+### Consolidation Steps
+
+1. **Read CLAUDE.md**: Extract all content by section
+2. **Classify sections**: Agent-specific vs general guidance vs duplicate
+3. **Move general content**: Add to appropriate governance docs
+4. **Update agent-specific content**: Convert to OpenCode format
+5. **Add missing content**: Write OpenCode-specific sections
+6. **Validate AGENTS.md**: Verify all agent guidance present
+7. **Delete CLAUDE.md**: Remove original file
+
+**Validation Criteria**:
+
+- AGENTS.md contains all agent guidance from CLAUDE.md
+- AGENTS.md uses OpenCode format examples only
+- All CLAUDE.md references removed from repository
+- General project guidance exists in governance docs
+- No duplicate content between AGENTS.md and governance docs
 
 ---
 

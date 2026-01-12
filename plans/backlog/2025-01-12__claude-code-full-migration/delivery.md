@@ -32,6 +32,31 @@
 
 - [ ] Agent inventory report (`generated-reports/agent-inventory.md`)
 
+**Inventory Format**:
+
+```markdown
+## Agent Inventory
+
+| Agent Name              | Family     | Tools Required          | Skills Used                        | Model       | Permission Requirements |
+| ----------------------- | ---------- | ----------------------- | ---------------------------------- | ----------- | ----------------------- |
+| docs-checker            | docs       | read, grep, glob        | docs-applying-content-quality      | zai/glm-4.7 | read-only               |
+| docs-fixer              | docs       | read, write, edit       | docs-applying-content-quality      | zai/glm-4.7 | full-access             |
+| plan-executor           | plan       | read, write, edit, bash | plan-executing-\*, wow-executing-  | zai/glm-4.7 | full-access             |
+| repo-governance-checker | governance | read, grep, glob, write | wow-applying-\*, repo-             | zai/glm-4.7 | read-only               |
+| agent-maker             | meta       | read, write, edit, bash | agent-developing-\*, wow-defining- | zai/glm-4.7 | full-access             |
+
+...
+```
+
+**Inventory Fields**:
+
+- **Agent Name**: Filename (e.g., `docs-checker.md`)
+- **Family**: Agent family (docs, readme, plan, apps-ayokoding-web, etc.)
+- **Tools Required**: OpenCode tool names (read, grep, glob, write, edit, bash)
+- **Skills Used**: Skill patterns used (e.g., `docs-applying-*`, `wow-executing-*`)
+- **Model**: GLM model name (zai/glm-4.7, zai/glm-4.5-air, inherit)
+- **Permission Requirements**: read-only or full-access (bash/edit permissions)
+
 **Validation**:
 
 - [ ] All 46 agents documented
@@ -57,6 +82,44 @@
 **Deliverables**:
 
 - [ ] Skills inventory report (`generated-reports/skills-inventory.md`)
+
+**Inventory Format**:
+
+```markdown
+## Skills Inventory
+
+| Skill Name                       | Description Summary                          | Current Location                                         | Target Location                                           |
+| -------------------------------- | -------------------------------------------- | -------------------------------------------------------- | --------------------------------------------------------- |
+| docs-applying-content-quality    | Universal markdown content quality standards | .claude/skills/docs-applying-content-quality/SKILL.md    | .opencode/skill/docs-applying-content-quality/SKILL.md    |
+| wow-applying-maker-checker-fixer | Three-stage content quality workflow pattern | .claude/skills/wow-applying-maker-checker-fixer/SKILL.md | .opencode/skill/wow-applying-maker-checker-fixer/SKILL.md |
+| plan-creating-project-plans      | Comprehensive project planning standards     | .claude/skills/plan-creating-project-plans/SKILL.md      | .opencode/skill/plan-creating-project-plans/SKILL.md      |
+
+...
+
+## Skills → Agents Mapping
+
+| Skill Name                       | Used By Agents                                         |
+| -------------------------------- | ------------------------------------------------------ |
+| docs-applying-content-quality    | docs-checker, docs-fixer, docs-maker, docs-tutorial-\* |
+| wow-applying-maker-checker-fixer | All checker/fixer/maker agents (45 agents)             |
+| plan-writing-gherkin-criteria    | plan-maker, plan-checker, plan-executor                |
+| repo-governance-checker          | repo-governance-checker, repo-governance-fixer         |
+
+...
+```
+
+**Inventory Fields**:
+
+- **Skill Name**: Skill directory name (also `skill()` tool argument)
+- **Description Summary**: Brief description (from skill frontmatter)
+- **Current Location**: `.claude/skills/<name>/SKILL.md`
+- **Target Location**: `.opencode/skill/<name>/SKILL.md`
+
+**Skills → Agents Mapping**:
+
+- Show which agents use each skill
+- Identify agents with `permission.skill` frontmatter
+- Verify all skills are used by at least one agent
 
 **Validation**:
 
@@ -85,6 +148,60 @@
 
 - [ ] Content analysis report (`generated-reports/content-analysis.md`)
 
+**Content Classification Criteria**:
+
+### CLAUDE.md Sections (lines 1-348):
+
+| Section             | Line Range | Classification           | Destination                                                            |
+| ------------------- | ---------- | ------------------------ | ---------------------------------------------------------------------- |
+| Project Overview    | 1-50       | General project guidance | Move to `governance/explanation/repository-governance-architecture.md` |
+| Agent Format        | 51-100     | Agent-specific           | Update to OpenCode, merge into AGENTS.md                               |
+| Agent Invocation    | 101-150    | Agent-specific           | Update to OpenCode, merge into AGENTS.md                               |
+| Agent Tools         | 151-200    | Agent-specific           | Update to OpenCode, merge into AGENTS.md                               |
+| Skills              | 201-250    | Agent-specific           | Update to OpenCode, merge into AGENTS.md                               |
+| Maker-Checker-Fixer | 251-300    | Agent-specific           | Keep, already dual-format compatible                                   |
+| Model Config        | 301-348    | Agent-specific           | Update to GLM models, merge into AGENTS.md                             |
+
+**Classification Criteria**:
+
+- **Agent-specific**: Content describing agents, agent format, agent invocation, skills, tools, permissions
+  - **Destination**: AGENTS.md (update to OpenCode format)
+
+- **General project guidance**: Content describing project principles, conventions, development practices, architecture
+  - **Destination**: Existing governance docs (`governance/`)
+
+- **Duplicate**: Content that already exists in AGENTS.md
+  - **Destination**: Delete (don't duplicate)
+
+- **OpenCode-specific**: OpenCode-specific patterns not covered in CLAUDE.md
+  - **Destination**: AGENTS.md (add new section)
+
+### Missing OpenCode Content to Add:
+
+1. **Session Management**:
+   - OpenCode session persistence
+   - Session-based agent coordination
+   - Multi-agent workflows in single session
+
+2. **Multi-Model Usage**:
+   - Agent-specific model selection
+   - Model alias resolution
+   - Model inheritance patterns
+
+3. **Permission-Based Skill Loading**:
+   - `permission.skill` frontmatter usage
+   - Skill access control
+   - Skill discovery in OpenCode
+
+**Analysis Steps**:
+
+1. **Read CLAUDE.md**: Extract all sections with line numbers
+2. **Classify each section**: Apply classification criteria
+3. **Check AGENTS.md**: Identify duplicate content
+4. **Identify gaps**: What OpenCode-specific content is missing?
+5. **Create mapping document**: Section → destination table
+6. **Generate migration plan**: Move/merge/add actions
+
 **Validation**:
 
 - [ ] All sections classified
@@ -99,19 +216,32 @@
 
 **Steps**:
 
-1. Create test suite for agent validation
-2. Create test suite for documentation validation
-3. Create test suite for cleanup validation
-4. Test current OpenCode agents (baseline)
+1. **Create NEW validation test suite** at `tests/migration-validation.ts`:
+   - Agent schema validation (OpenCode frontmatter format)
+   - Model configuration validation (all agents use GLM models)
+   - Tool permissions validation (security check)
+   - Skills location validation (`.opencode/skill/<name>/SKILL.md`)
+   - Skills frontmatter validation (OpenCode format)
+   - Documentation completeness validation (AGENTS.md sections)
+   - Cleanup validation (no Claude Code artifacts remain)
+
+2. **Test current OpenCode agents** (baseline):
+   - Run validation test suite on current state
+   - Document baseline test results
+   - Identify any pre-existing issues
+
+**Note**: Existing validation scripts (`scripts/validate-opencode-agents.py`, etc.) will be DELETED in Task 6.4. This new test suite is created for migration validation only.
 
 **Deliverables**:
 
 - [ ] Validation test suite (`tests/migration-validation.ts`)
+- [ ] Baseline test results (`generated-reports/baseline-validation.md`)
 
 **Validation**:
 
 - [ ] Test suite runs successfully
 - [ ] Baseline tests pass for current agents
+- [ ] Test suite validates all migration requirements
 
 ---
 
@@ -138,10 +268,11 @@
 
 **Steps**:
 
-1. Validate all 45 OpenCode agents against OpenCode schema
+1. Validate all 46 OpenCode agents against OpenCode schema
 2. Check for missing required fields (description, model, tools)
 3. Check for invalid field values
 4. Document any schema validation errors
+5. Verify all agents use GLM model names (zai/glm-4.7, zai/glm-4.5-air, or inherit)
 
 **Deliverables**:
 
@@ -151,41 +282,38 @@
 
 - [ ] All agents have valid OpenCode frontmatter
 - [ ] No schema validation errors
+- [ ] All agents use GLM model names (no Claude Code aliases)
 
 ---
 
-#### Task 2.2: Model Alias Migration
+#### Task 2.2: Model Configuration Verification
 
 **Owner**: Plan Executor
-**Effort**: 0.5 days
+**Effort**: 0.25 days
 
 **Steps**:
 
-1. Audit current model aliases: `grep "model:" .opencode/agent/*.md | sort | uniq -c`
-2. Replace sonnet → zai/glm-4.7:
+1. Audit current model configuration:
    ```bash
-   sed -i 's/model: sonnet/model: zai\/glm-4.7/g' .opencode/agent/*.md
+   grep -r "^model:" .opencode/agent/*.md | sort | uniq -c
    ```
-3. Replace haiku → zai/glm-4.7-flash:
-   ```bash
-   sed -i 's/model: haiku/model: zai\/glm-4.7-flash/g' .opencode/agent/*.md
-   ```
-4. Replace opus → zai/glm-4.7-plus:
-   ```bash
-   sed -i 's/model: opus/model: zai\/glm-4.7-plus/g' .opencode/agent/*.md
-   ```
-5. Verify no agents use Claude Code model aliases
-6. Verify no agents use anthropic/claude-\* model names
+2. Document model distribution:
+   - Count agents using each model variant
+   - Identify any non-GLM models
+   - Verify no Claude Code model aliases (sonnet, haiku, opus)
+3. Verify model configuration matches `.opencode/opencode.json` settings
 
 **Deliverables**:
 
-- [ ] Model migration report (`generated-reports/model-migration.md`)
+- [ ] Model configuration report (`generated-reports/model-configuration.md`)
 
 **Validation**:
 
+- [ ] All 46 agents use GLM model names (zai/glm-4.7, zai/glm-4.5-air, or inherit)
 - [ ] 0 agents use Claude Code model aliases (sonnet, haiku, opus)
-- [ ] All agents use GLM model names (zai/glm-4.7, zai/glm-4.7-flash, zai/glm-4.7-plus, or inherit)
-- [ ] No references to anthropic/claude-\* models in any agent
+- [ ] 0 agents use anthropic/claude-\* model names
+
+**Note**: Model migration is NOT required - OpenCode agents already use GLM models.
 
 ---
 
@@ -242,14 +370,14 @@
 ### Phase 2 Checklist
 
 - [ ] Task 2.1: Schema validation complete
-- [ ] Task 2.2: Config file update complete (.opencode/opencode.json updated to GLM models)
+- [ ] Task 2.2: Model configuration verification complete
 - [ ] Task 2.3: Permission validation complete
 - [ ] Task 2.4: Functional testing complete
 - [ ] Phase 2: All validation passed
 - [ ] All 46 agents schema validated
+- [ ] All agents verified to use GLM models
 - [ ] All tool permissions validated
 - [ ] All agents functionally tested
-- [ ] .opencode/opencode.json updated to GLM models
 
 ## Phase 3: Skills Migration
 
@@ -435,18 +563,8 @@
 - [ ] Task 3.5: Skills validation complete
 - [ ] Phase 3: All validation passed
 - [ ] All 46 agents have skill permissions
-- [ ] All 23 skills validate
-- [ ] .opencode/skill/<name>/SKILL.md structure correct
-
----
-
-### Phase 3 Checklist
-
-- [ ] Phase 3: All tasks complete
-- [ ] Phase 3: All validation passed
-- [ ] All agents have skill permissions
 - [ ] All 23 skills validated
-- [ ] Skills documentation updated
+- [ ] .opencode/skill/<name>/SKILL.md structure correct
 
 ### Governance Updates
 
@@ -622,7 +740,7 @@
 1. Create archive branch:
 
    ```bash
-   git checkout -b archive/pre-migration-claude-code
+   git checkout -b archive-pre-migration-claude-code
    ```
 
 2. Commit current state:
@@ -638,7 +756,7 @@
 3. Push to remote (optional):
 
    ```bash
-   git push -u origin archive/pre-migration-claude-code
+   git push -u origin archive-pre-migration-claude-code
    ```
 
 4. Return to main branch:
@@ -687,17 +805,15 @@
 
    - Migrate .claude/agents/ (46 agents) → .opencode/agent/ (single source)
    - Migrate .claude/skills/ (23 skills) → .opencode/skill/<name>/SKILL.md
-   - Update .opencode/opencode.json to use GLM models (zai/glm-4.7)
+   - Verify all agents use GLM models (already configured, no migration needed)
    - Consolidate CLAUDE.md (348 lines) → AGENTS.md (expanded)
    - Update all governance docs to reference OpenCode format only
    - Delete Claude Code artifacts (.claude/, CLAUDE.md, conversion scripts)
-   - Pre-migration state archived in archive/pre-migration-claude-code
+   - Pre-migration state archived in archive-pre-migration-claude-code
 
    All 46 agents validated with OpenCode schema
    All 23 skills load with permission-based model
-   All validation tests pass
-
-   Related: plans/backlog/2025-01-12__claude-code-full-migration/"
+   All validation tests pass"
    ```
 
 4. Verify commit created:
@@ -785,11 +901,31 @@
 **Steps**:
 
 1. Extract rollback procedure from tech-docs.md section
-2. Verify archive files are properly stored in `archive/pre-migration-claude-code` branch
-3. Test rollback steps (read-only, don't execute):
-   - Verify `git reset --hard HEAD~1` command is correct
-   - Verify `git checkout archive/pre-migration-claude-code -- .` is documented
-4. Document rollback procedure in generated-reports/
+2. Verify archive files are properly stored in `archive-pre-migration-claude-code` branch
+3. Test rollback procedure (read-only validation, don't execute):
+
+   **3.1. Verify rollback commands are syntactically correct**:
+   - Run `git reset --hard --dry-run HEAD~1` to verify syntax (dry-run mode)
+   - Verify archive branch exists: `git branch -a | grep archive-pre-migration-claude-code`
+   - Verify checkout syntax: `git checkout archive-pre-migration-claude-code -- .`
+
+   **3.2. Verify rollback procedure is complete**:
+   - [ ] Archive branch exists and contains pre-migration state
+     - **Validation**: `git show archive-pre-migration-claude-code:.claude/agents/` shows agent files
+   - [ ] Rollback commands are documented with correct syntax
+     - **Validation**: All git commands use correct flags and arguments
+   - [ ] Rollback steps cover all migration actions (agents, skills, docs, cleanup)
+     - **Validation**: Rollback steps list restores each deleted file/directory
+
+   **3.3. Verify rollback procedure is actionable**:
+   - [ ] Step-by-step instructions are clear
+     - **Validation**: Each step has clear numbered instruction
+   - [ ] All required commands are provided
+     - **Validation**: Every action has complete command with all arguments
+   - [ ] Validation steps after rollback are documented
+     - **Validation**: Post-rollback validation steps verify restored state
+
+4. Document rollback procedure in `generated-reports/rollback-procedure.md`
 
 **Deliverables**:
 
@@ -861,10 +997,9 @@
 - [ ] Phase 2: All tasks complete
 - [ ] Phase 2: All validation passed
 - [ ] All 46 agents schema validated
+- [ ] All agents verified to use GLM models (no Claude Code aliases)
 - [ ] All tool permissions validated
 - [ ] All agents functionally tested
-- [ ] .opencode/opencode.json updated to GLM models
-- [ ] No agent model field changes needed (already correct)
 
 ### Skills Migration
 

@@ -23,8 +23,7 @@ Currently, this repository maintains dual AI agent support:
 5. **Future tool adoption**: Adding third AI CLI tool requires new conversion logic
 6. **Skills management**: `.claude/skills/` shared but loaded differently by each tool
 7. **Agent invocation differences**: Skills auto-load in Claude Code vs permission-based in OpenCode
-8. **Model alias issue (CRITICAL)**: All 46 agents use Claude Code model aliases (`sonnet`, `haiku`, `opus`) which are NOT valid in OpenCode. OpenCode requires GLM model names (`zai/glm-4.7`, `zai/glm-4.7-flash`, `zai/glm-4.7-plus`, or `inherit`)
-9. **Governance docs outdated**: Multiple governance documents reference Claude Code format and paths, requiring comprehensive updates to OpenCode format
+8. **Governance docs outdated**: Multiple governance documents reference Claude Code format and paths, requiring comprehensive updates to OpenCode format
 
 ## Proposed Solution
 
@@ -70,20 +69,14 @@ Config: .opencode/opencode.json (OpenCode settings, replaces Claude Code setting
                .claude/ (entire directory)
 ```
 
-### Model Migration Strategy (CRITICAL CHANGE)
+### Model Configuration Status
 
-**Issue**: All 46 agents currently use Claude Code model aliases (`sonnet`, `haiku`, `opus`). User wants GLM models instead of Claude models.
+**Current State**: All 46 agents already use GLM model names (verified via `grep -r "^model:" .opencode/agent/*.md`):
 
-**Model Mapping**:
+- 38 agents use `zai/glm-4.7` (advanced reasoning, deep analysis)
+- 6 agents use `zai/glm-4.5-air` (fast, lightweight tasks)
 
-| Claude Code Alias | OpenCode GLM Model  | Use Case                                  |
-| ----------------- | ------------------- | ----------------------------------------- |
-| `sonnet`          | `zai/glm-4.7`       | Advanced reasoning, deep analysis         |
-| `haiku`           | `zai/glm-4.7-flash` | Fast, simple tasks, title generation      |
-| `opus`            | `zai/glm-4.7-plus`  | Advanced reasoning, complex orchestration |
-| `inherit`         | `inherit`           | Use main conversation model               |
-
-**Rationale**: GLM models provide equivalent capabilities to Claude models while supporting the user's preference for non-Anthropic providers.
+**No model migration required** - OpenCode agents are already configured with GLM models.
 
 ```
 
@@ -95,8 +88,7 @@ Config: .opencode/opencode.json (OpenCode settings, replaces Claude Code setting
 2. **Eliminate Claude Code artifacts**: Remove `.claude/agents/`, CLAUDE.md, conversion scripts
 3. **Simplify maintenance**: No format conversion or synchronization
 4. **OpenCode-only workflow**: All AI tooling uses OpenCode exclusively
-5. **Model alias migration**: Replace `sonnet`/`opus`/`haiku` with GLM model names (e.g., `zai/glm-4.7`)
-6. **Governance integration**: Update all governance/docs to reference OpenCode format only
+5. **Governance integration**: Update all governance/docs to reference OpenCode format only
 
 ### Secondary Goals
 
@@ -194,50 +186,107 @@ Config: .opencode/opencode.json (OpenCode settings, replaces Claude Code setting
 ### Agent Functionality
 
 - [ ] All 46 agents work identically in OpenCode after migration
+  - **Validation**: Run `npx opencode agent:invoke docs-checker` and verify response correctness
+  - **Validation**: Compare agent responses before/after migration (test sample agents from each family)
 - [ ] All 23 skills load correctly with permission-based model
+  - **Validation**: Invoke agents with known skills and verify skills load without errors
+  - **Validation**: Test denied skills are inaccessible (invoke agent without skill permission)
 - [ ] 0 validation errors in OpenCode agents
+  - **Validation**: Run schema validator on all 46 agents: `node scripts/validate-opencode-schema.js` (or equivalent)
+  - **Validation**: Verify exit code is 0 and no validation errors reported
 - [ ] 0 functionality regressions vs current agent behavior
+  - **Validation**: Run existing test suite and compare results to pre-migration baseline
+  - **Validation**: Test critical workflows (maker-checker-fixer cycle, plan-execute-validate cycle)
 - [ ] All agent invocations use OpenCode format successfully
+  - **Validation**: Sample invocation commands work: `npx opencode agent:invoke <agent-name> <args>`
+  - **Validation**: All 46 agents are discoverable: `npx opencode agent:list`
+- [ ] All agents use GLM model names (zai/glm-4.7, zai/glm-4.5-air, or inherit)
+  - **Validation**: Run audit: `grep -r "^model:" .opencode/agent/*.md | sort | uniq -c`
+  - **Validation**: Verify no Claude Code aliases (sonnet, haiku, opus) found
 
 ### Repository Cleanup
 
 - [ ] `.claude/agents/` directory removed (46 agent files)
+  - **Validation**: `ls .claude/agents/` should fail (directory doesn't exist)
+  - **Validation**: `find . -path ./.claude/agents/` should return empty
 - [ ] `.claude/skills/` directory removed (23 skills)
+  - **Validation**: `ls .claude/skills/` should fail (directory doesn't exist)
 - [ ] `.claude/settings.json` removed
+  - **Validation**: `ls .claude/settings.json` should fail (file doesn't exist)
 - [ ] `.claude/settings.local.json` removed
+  - **Validation**: `ls .claude/settings.local.json` should fail (file doesn't exist)
 - [ ] CLAUDE.md removed
+  - **Validation**: `ls CLAUDE.md` should fail (file doesn't exist)
 - [ ] All conversion scripts removed (`scripts/convert-*.py`, `scripts/validate-*.py`, `scripts/sync-*.py`)
+  - **Validation**: `ls scripts/convert*.py scripts/validate*.py scripts/sync*.py` should return empty
 - [ ] `.claude/` directory removed entirely (no Claude Code artifacts remain)
+  - **Validation**: `ls .claude/` should fail (directory doesn't exist)
+  - **Validation**: `rg "\.claude/"` should only find historical migration notes
 
 ### Documentation Quality
 
 - [ ] AGENTS.md is comprehensive (consolidates content from CLAUDE.md into existing 232 lines)
+  - **Validation**: Count CLAUDE.md sections (all 7 sections present in AGENTS.md)
+  - **Validation**: AGENTS.md contains agent format, invocation, tools, skills, workflows
 - [ ] AGENTS.md contains all AI agent guidance from CLAUDE.md
+  - **Validation**: Search for CLAUDE.md topics in AGENTS.md (agent format, invocation, tools, etc.)
+  - **Validation**: Compare CLAUDE.md table of contents with AGENTS.md sections
 - [ ] All references to `.claude/agents/` updated to `.opencode/agent/`
+  - **Validation**: `rg "\.claude/agents/"` should return only historical migration notes
+  - **Validation**: `rg "\.opencode/agent/"` should find multiple references in docs
 - [ ] All references to dual-format support removed
+  - **Validation**: `rg -i "both formats|dual format|claude code and opencode"` should return empty
+  - **Validation**: Check that no "Claude Code vs OpenCode" comparison sections remain
 - [ ] Contribution workflow documented (how to add/edit OpenCode agents)
+  - **Validation**: AGENTS.md has "Agent Creation Workflow" section
+  - **Validation**: Examples show `.opencode/agent/<agent-name>.md` path format
 
 ### Skills Management
 
 - [ ] All 23 skills load correctly in OpenCode
+  - **Validation**: `find .opencode/skill/ -name "SKILL.md" | wc -l` returns 23
+  - **Validation**: Invoke agents with known skills and verify skills load without errors
 - [ ] Skills use `permission.skill` model in OpenCode agent frontmatter
+  - **Validation**: All 46 agents have `permission.skill:` frontmatter section
+  - **Validation**: `grep -r "permission.skill:" .opencode/agent/*.md | wc -l` returns 46
 - [ ] Skills exist at `.opencode/skill/<name>/SKILL.md` only
+  - **Validation**: No skills remain in `.claude/skills/`
+  - **Validation**: Skill directories follow format: `.opencode/skill/<skill-name>/SKILL.md`
 - [ ] `.claude/skills/` deleted (no Claude Code artifacts remain)
+  - **Validation**: `ls .claude/skills/` fails (directory doesn't exist)
 - [ ] Documentation updated to reflect permission-based loading
+  - **Validation**: AGENTS.md documents `permission.skill` usage
+  - **Validation**: Examples show skill permission format in agent frontmatter
 
 ### Agent Creation/Updates
 
 - [ ] `agent-maker` creates agents in `.opencode/agent/` (not `.claude/agents/`)
+  - **Validation**: Test agent-maker invocation: creates agent at `.opencode/agent/test-agent.md`
+  - **Validation**: Verify created agent has OpenCode frontmatter format
 - [ ] `repo-governance-checker` validates `.opencode/agent/` format
+  - **Validation**: Run repo-governance-checker and verify it validates OpenCode agents
+  - **Validation**: Check that checker doesn't reference `.claude/agents/`
 - [ ] `repo-governance-fixer` modifies `.opencode/agent/` directly
+  - **Validation**: Test repo-governance-fixer and verify it modifies OpenCode agents
+  - **Validation**: Check that fixer doesn't sync to Claude Code format
 - [ ] All other agents updated to use OpenCode paths
+  - **Validation**: Search for `.claude/agents/` references in all agents (should be empty)
+  - **Validation**: Search for `.opencode/agent/` references (should find matches)
 
 ### Workflow Consistency
 
 - [ ] All workflows use OpenCode agent format
+  - **Validation**: Read all workflow definitions in `governance/workflows/`
+  - **Validation**: Verify workflow agent references use OpenCode paths
 - [ ] All documentation examples show OpenCode format
+  - **Validation**: Search for `examples` or `code blocks` in AGENTS.md
+  - **Validation**: Verify all examples show OpenCode frontmatter format
 - [ ] All instructions reference OpenCode only
+  - **Validation**: `rg -i "claude code"` should return only historical migration notes
+  - **Validation**: `rg "\.opencode/"` should find multiple references
 - [ ] No Claude Code-specific terminology remains
+  - **Validation**: `rg "sonnet|haiku|opus"` should only find GLM model names (not aliases)
+  - **Validation**: `rg "anthropic/claude-"` should return empty (no model references)
 
 ## Plan Structure
 
@@ -347,6 +396,7 @@ This plan is organized into four documents:
 - [Plans Organization Convention](../../../governance/conventions/project/plans-organization.md)
 - Current conversion scripts: `scripts/convert-agents-to-opencode.py`, `scripts/validate-opencode-agents.py`, `scripts/sync-claude-opencode.py`
 - Existing dual-format plan: `plans/backlog/2026-01-04__agents-docs-source-of-truth/` (alternative approach rejected)
+
 
 ```
 
