@@ -7,25 +7,22 @@ mode: subagent
 model: zai/glm-4.7
 temperature: 0.1
 maxSteps: 50
-tools:permission:
-  skill:
-    repo-applying-maker-checker-fixer: allow
-    repo-assessing-criticality-confidence: allow
-    repo-understanding-repository-architecture: allow
-
+tools:
   read: true
   glob: true
   grep: true
   write: true
   bash: true
+  edit: false
+  websearch: false
+  webfetch: false
+  todowrite: false
 permission:
-  todowrite: deny
-  edit: deny
-  websearch: deny
-  webfetch: deny
   skill:
-    docs-applying-diataxis-framework: allow
+    repo-applying-maker-checker-fixer: allow
     repo-assessing-criticality-confidence: allow
+    repo-understanding-repository-architecture: allow
+    docs-applying-diataxis-framework: allow
     repo-generating-validation-reports: allow
 ---
 
