@@ -37,12 +37,11 @@ graph TD
         L1[Layer 1: Principles<br/>WHY - Values]
         L2[Layer 2: Conventions<br/>WHAT - Documentation Rules]
         L3[Layer 3: Development<br/>HOW - Software Practices]
-        L4[Layer 4: AI Agents<br/>WHO - Atomic Executors<br/>.opencode/agent/ + .opencode/agent/]
+        L4[Layer 4: AI Agents<br/>WHO - Atomic Executors<br/>.opencode/agent/]
         L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes]
     end
 
     subgraph Delivery["Delivery Infrastructure"]
-        CM[CLAUDE.md<br/>.claude context]
         AM[AGENTS.md<br/>OpenCode context]
         SK[Skills<br/>Shared knowledge<br/>.opencode/skill/]
         DR[Direct References<br/>Explicit links]
@@ -56,17 +55,12 @@ graph TD
     L3 -->|governs| L4
     L4 -->|orchestrated by| L5
 
-    L2 -->|summarized in| CM
     L2 -->|summarized in| AM
     L2 -->|encoded in| SK
-    L3 -->|summarized in| CM
     L3 -->|summarized in| AM
     L3 -->|encoded in| SK
-    CM -->|loaded at startup| OCC[.claude]
     AM -->|loaded at startup| OOC[OpenCode]
-    OCC -->|spawns| L4
     OOC -->|spawns| L4
-    SK -->|auto-loads| OCC
     SK -->|on-demand via skill tool| OOC
     DR -->|explicitly delivers to| L4
 
@@ -76,9 +70,7 @@ graph TD
     style L3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style L4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style L5 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style OCC fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style OOC fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style CM fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style AM fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style SK fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:3px
     style DR fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -229,14 +221,13 @@ Implementation: Husky + lint-staged (pre-commit formatting)
 
 ### Layer 4: AI Agents (WHO - Atomic Task Executors)
 
-**Locations**:
+**Location**:
 
-- `.opencode/agent/` (.claude format)
 - `.opencode/agent/` (OpenCode format)
 
 **Purpose**: Automated implementers that enforce conventions and development practices. Each agent implements and validates specific rules from layers 2 and 3.
 
-**Note**: Agents exist in dual formats with identical capabilities. Both reference shared skills from `.opencode/skill/`. See [AI Agents Convention - OpenCode Format](./development/agents/ai-agents.md#opencode-format) for format differences.
+**Note**: Agents use OpenCode format with YAML frontmatter, tool permissions, and skill access control. Agents reference shared skills from `.opencode/skill/`. See [AI Agents Convention - OpenCode Format](./development/agents/ai-agents.md#opencode-format) for format details.
 
 **Key Document**: [Agents Index](../.opencode/agent/README.md)
 
@@ -307,16 +298,14 @@ In addition to the six governance layers, the repository uses **delivery infrast
 
 | Mechanism             | Location           | Purpose                            | Tool(s)  | When Loaded                |
 | --------------------- | ------------------ | ---------------------------------- | -------- | -------------------------- |
-| **CLAUDE.md**         | Root               | Comprehensive project instructions | .claude  | Always at startup          |
-| **AGENTS.md**         | Root               | Condensed project instructions     | OpenCode | Always at startup          |
-| **Skills**            | `.opencode/skill/` | Progressive knowledge packages     | Both     | On-demand (tool-specific)  |
-| **Direct References** | In agent prompts   | Links to convention docs           | Both     | When explicitly referenced |
+| **AGENTS.md**         | Root               | Comprehensive project instructions | OpenCode | Always at startup          |
+| **Skills**            | `.opencode/skill/` | Progressive knowledge packages     | OpenCode | On-demand (tool-specific)  |
+| **Direct References** | In agent prompts   | Links to convention docs           | OpenCode | When explicitly referenced |
 
 ### Skills as Infrastructure
 
 **Skills** are model-invoked markdown knowledge packages that:
 
-- **Auto-load based on description matching** - Claude decides when to load them
 - **Enable progressive disclosure** - Name/description at startup, full content on-demand
 - **Encode convention/development knowledge** - Packaged for efficient agent consumption
 - **Support knowledge composition** - Multiple Skills work together seamlessly
@@ -333,12 +322,6 @@ In addition to the six governance layers, the repository uses **delivery infrast
 - **Standards Application**: applying-diataxis-framework, creating-accessible-diagrams, writing-gherkin-criteria
 - **Process Execution**: creating-project-plans, defining-workflows, practicing-trunk-based-development, executing-checker-workflow, applying-fixer-workflow, multi-file-template
 - **Technical Knowledge**: developing-agents, understanding-repository-architecture, documenting-references, selecting-models
-
-**Skills Architecture Differences**:
-
-- **.claude**: Auto-loads skills from frontmatter declaration (`skills: [skill-1, skill-2]`)
-- **OpenCode**: On-demand loading via `skill` tool with permission-based access (`permission.skill: {skill-name: allow}`)
-- **Shared Location**: Both tools read from `.opencode/skill/` directory, ensuring a unified knowledge base
 
 See [AGENTS.md Skills Architecture](../../AGENTS.md#skills-knowledge-packages) for OpenCode-specific details.
 
@@ -365,7 +348,7 @@ See [AGENTS.md Skills Architecture](../../AGENTS.md#skills-knowledge-packages) f
 
 - Transports or delivers something
 - No governance relationship with consumers
-- Multiple alternatives can coexist (CLAUDE.md, Skills, Direct References)
+- Multiple alternatives can coexist (AGENTS.md, Skills, Direct References)
 
 ### Delivery vs Governance
 
@@ -375,8 +358,8 @@ Governance (enforces rules):
   Development ──governs──> Agents (agents MUST follow)
 
 Delivery (serves knowledge):
-  CLAUDE.md ──loaded at startup──> Orchestrator ──spawns──> Agents (isolated contexts)
-  Skills ──delivers via skills: field──> Agents
+  AGENTS.md ──loaded at startup──> Orchestrator ──spawns──> Agents (isolated contexts)
+  Skills ──delivers via skill tool──> Agents
   Direct References ──explicit links──> Agents
 ```
 
@@ -506,7 +489,7 @@ Delivery (serves knowledge):
 1. **Start at the appropriate layer** - Don't modify Vision unless mission changes
 2. **Check dependencies** - What layers depend on this change?
 3. **Update traceability** - Ensure all references are updated
-4. **Propagate changes** - Use wow\_\_rules-maker to update CLAUDE.md, indices, agents
+4. **Propagate changes** - Use wow\_\_rules-maker to propagate to AGENTS.md, indices, agents
 5. **Validate** - Use wow\_\_rules-checker to verify consistency
 
 **Example**: Adding a new principle
@@ -514,7 +497,7 @@ Delivery (serves knowledge):
 1. Create principle document in `/governance/principles/`
 2. Add "Vision Supported" section showing how it serves the vision
 3. Update `/governance/principles/README.md` index
-4. Use wow\_\_rules-maker to propagate to CLAUDE.md
+4. Use wow\_\_rules-maker to propagate to AGENTS.md
 5. Create conventions/practices that implement the principle
 6. Create/update agents to enforce the principle
 
@@ -585,7 +568,7 @@ Use **wow\_\_rules-maker** to propagate changes systematically.
 2. All practices reference both principles and conventions
 3. All agents reference conventions/practices
 4. No circular dependencies between layers
-5. CLAUDE.md consistent with convention/practice documents
+5. AGENTS.md consistent with convention/practice documents
 
 ### Traceability Audits
 
@@ -632,9 +615,7 @@ This architecture document implements/respects the following principles:
 
 **Layer 4**:
 
-- [.claude Agents Index](../.opencode/agent/README.md)
 - [OpenCode Agents Index](../.opencode/agent/README.md)
-- Agent files in `.opencode/agent/` (.claude format)
 - Agent files in `.opencode/agent/` (OpenCode format)
 
 **Layer 5**:
@@ -644,10 +625,9 @@ This architecture document implements/respects the following principles:
 
 **Delivery Infrastructure**:
 
-- [Skills Directory](../.opencode/skill/README.md) - 23 knowledge packages (shared by both tools)
+- [Skills Directory](../.opencode/skill/README.md) - 23 knowledge packages
 - [How to Create a Skill](../how-to/hoto__create-new-skill.md) - Step-by-step guide
-- [CLAUDE.md](../../CLAUDE.md) - .claude comprehensive instructions (~30,000 lines)
-- [AGENTS.md](../../AGENTS.md) - OpenCode condensed instructions (~1,000 lines)
+- [AGENTS.md](../../AGENTS.md) - OpenCode comprehensive instructions (~1,000 lines)
 
 **Meta-Documentation**:
 
