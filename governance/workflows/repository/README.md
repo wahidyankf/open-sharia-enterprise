@@ -1,10 +1,10 @@
 # Repository Workflows
 
-Orchestrated workflows for validating repository-level operations across principles, conventions, development practices, agents, and CLAUDE.md.
+Orchestrated workflows for validating repository-level operations across principles, conventions, development practices, and agents.
 
 ## Purpose
 
-These workflows define **WHEN and HOW to validate repository rules**, orchestrating wow**rules-checker and wow**rules-fixer agents to ensure consistency across all governance layers (principles, conventions, development practices, agents, CLAUDE.md).
+These workflows define **WHEN and HOW to validate repository rules**, orchestrating repo-governance-checker and repo-governance-fixer agents to ensure consistency across all governance layers (principles, conventions, development practices, agents).
 
 ## Scope
 
@@ -12,7 +12,6 @@ These workflows define **WHEN and HOW to validate repository rules**, orchestrat
 
 - Repository-wide consistency validation
 - Cross-layer governance checking
-- CLAUDE.md synchronization validation
 - Agent standards enforcement
 - Iterative check-fix-verify cycles
 
@@ -24,7 +23,7 @@ These workflows define **WHEN and HOW to validate repository rules**, orchestrat
 
 ## Workflows
 
-- [Repository Rules Validation](./repository-rules-validation.md) - Validate repository consistency across all layers (principles, conventions, development, agents, CLAUDE.md) and apply fixes iteratively until ZERO findings. Supports four strictness modes (lax, normal, strict, ocd)
+- [Repository Rules Validation](./repository-rules-validation.md) - Validate repository consistency across all layers (principles, conventions, development, agents) and apply fixes iteratively until ZERO findings. Supports four strictness modes (lax, normal, strict, ocd)
 
 ## Related Documentation
 

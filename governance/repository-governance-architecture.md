@@ -42,7 +42,7 @@ graph TD
     end
 
     subgraph Delivery["Delivery Infrastructure"]
-        CM[CLAUDE.md<br/>Claude Code context]
+        CM[CLAUDE.md<br/>.claude context]
         AM[AGENTS.md<br/>OpenCode context]
         SK[Skills<br/>Shared knowledge<br/>.opencode/skill/]
         DR[Direct References<br/>Explicit links]
@@ -62,7 +62,7 @@ graph TD
     L3 -->|summarized in| CM
     L3 -->|summarized in| AM
     L3 -->|encoded in| SK
-    CM -->|loaded at startup| OCC[Claude Code]
+    CM -->|loaded at startup| OCC[.claude]
     AM -->|loaded at startup| OOC[OpenCode]
     OCC -->|spawns| L4
     OOC -->|spawns| L4
@@ -231,7 +231,7 @@ Implementation: Husky + lint-staged (pre-commit formatting)
 
 **Locations**:
 
-- `.opencode/agent/` (Claude Code format)
+- `.opencode/agent/` (.claude format)
 - `.opencode/agent/` (OpenCode format)
 
 **Purpose**: Automated implementers that enforce conventions and development practices. Each agent implements and validates specific rules from layers 2 and 3.
@@ -305,12 +305,12 @@ In addition to the six governance layers, the repository uses **delivery infrast
 
 ### Delivery Mechanisms
 
-| Mechanism             | Location           | Purpose                            | Tool(s)     | When Loaded                |
-| --------------------- | ------------------ | ---------------------------------- | ----------- | -------------------------- |
-| **CLAUDE.md**         | Root               | Comprehensive project instructions | Claude Code | Always at startup          |
-| **AGENTS.md**         | Root               | Condensed project instructions     | OpenCode    | Always at startup          |
-| **Skills**            | `.opencode/skill/` | Progressive knowledge packages     | Both        | On-demand (tool-specific)  |
-| **Direct References** | In agent prompts   | Links to convention docs           | Both        | When explicitly referenced |
+| Mechanism             | Location           | Purpose                            | Tool(s)  | When Loaded                |
+| --------------------- | ------------------ | ---------------------------------- | -------- | -------------------------- |
+| **CLAUDE.md**         | Root               | Comprehensive project instructions | .claude  | Always at startup          |
+| **AGENTS.md**         | Root               | Condensed project instructions     | OpenCode | Always at startup          |
+| **Skills**            | `.opencode/skill/` | Progressive knowledge packages     | Both     | On-demand (tool-specific)  |
+| **Direct References** | In agent prompts   | Links to convention docs           | Both     | When explicitly referenced |
 
 ### Skills as Infrastructure
 
@@ -336,7 +336,7 @@ In addition to the six governance layers, the repository uses **delivery infrast
 
 **Skills Architecture Differences**:
 
-- **Claude Code**: Auto-loads skills from frontmatter declaration (`skills: [skill-1, skill-2]`)
+- **.claude**: Auto-loads skills from frontmatter declaration (`skills: [skill-1, skill-2]`)
 - **OpenCode**: On-demand loading via `skill` tool with permission-based access (`permission.skill: {skill-name: allow}`)
 - **Shared Location**: Both tools read from `.opencode/skill/` directory, ensuring a unified knowledge base
 
@@ -632,9 +632,9 @@ This architecture document implements/respects the following principles:
 
 **Layer 4**:
 
-- [Claude Code Agents Index](../.opencode/agent/README.md)
+- [.claude Agents Index](../.opencode/agent/README.md)
 - [OpenCode Agents Index](../.opencode/agent/README.md)
-- Agent files in `.opencode/agent/` (Claude Code format)
+- Agent files in `.opencode/agent/` (.claude format)
 - Agent files in `.opencode/agent/` (OpenCode format)
 
 **Layer 5**:
@@ -646,7 +646,7 @@ This architecture document implements/respects the following principles:
 
 - [Skills Directory](../.opencode/skill/README.md) - 23 knowledge packages (shared by both tools)
 - [How to Create a Skill](../how-to/hoto__create-new-skill.md) - Step-by-step guide
-- [CLAUDE.md](../../CLAUDE.md) - Claude Code comprehensive instructions (~30,000 lines)
+- [CLAUDE.md](../../CLAUDE.md) - .claude comprehensive instructions (~30,000 lines)
 - [AGENTS.md](../../AGENTS.md) - OpenCode condensed instructions (~1,000 lines)
 
 **Meta-Documentation**:

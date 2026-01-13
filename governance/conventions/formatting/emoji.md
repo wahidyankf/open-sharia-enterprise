@@ -377,7 +377,7 @@ category: explanation
 4. **Agent configuration files** - CLAUDE.md, .opencode/agent/_.md, .opencode/agent/_.md
    - CLAUDE.md - Human-readable navigation document (~30,000 lines) for developers
    - .opencode/agent/\*.md - Agent definitions read by developers to understand agent behavior
-   - .opencode/agent/\*.md - OpenCode agent definitions (same purpose as Claude Code agents)
+   - .opencode/agent/\*.md - OpenCode agent definitions (same purpose as OpenCodeagents)
    - Emojis enhance scannability for:
      - Criticality level definitions (🔴 CRITICAL, 🟠 HIGH, 🟡 MEDIUM, 🟢 LOW)
      - Section headers (🎯 Purpose, 💡 Key Concepts, 📖 Reference)

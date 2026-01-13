@@ -21,12 +21,12 @@ This document defines the standards for creating, structuring, and managing AI a
 
 ### What are AI Agents?
 
-AI agents in this project are specialized Claude Code assistants defined in the `.opencode/agent/` directory. Each agent has:
+AI agents in this project are specialized OpenCodeassistants defined in the `.opencode/agent/` directory. Each agent has:
 
 - **Specific expertise** in a particular domain or task
 - **Defined tool permissions** limiting what operations it can perform
 - **Clear responsibilities** to avoid overlap with other agents
-- **Integration with project conventions** through references to CLAUDE.md and convention documents
+- **Integration with project conventions** through references to AGENTS.md and convention documents
 - **Unlimited token budget** - Focus on execution quality, not token usage (reliable compaction mechanism handles context management)
 
 ### Why We Need Agent Conventions
@@ -50,7 +50,7 @@ This convention ensures all agents are:
 This convention applies to:
 
 - All agent files in `.opencode/agent/`
-- References to agents in `CLAUDE.md`
+- References to agents in `AGENTS.md`
 - Agent validation rules in `wow__rules-checker`
 
 ## Principles Respected
@@ -71,7 +71,7 @@ This practice respects the following core principles:
 
 ### Why Unlimited Budget Mindset
 
-- **Reliable compaction mechanism**: Claude Code handles context management through proven compaction
+- **Reliable compaction mechanism**: OpenCodehandles context management through proven compaction
 - **Quality is king**: Execution thoroughness matters more than token efficiency
 - **No artificial constraints**: Agents should complete their work properly, not cut corners to save tokens
 - **Workflow orchestration**: Multi-step workflows naturally require more tokens - this is expected and acceptable
@@ -131,7 +131,7 @@ skills: []
 
 **Field Order**: Fields MUST appear in this exact order (name, description, tools, model, color, skills) for consistency and grep-ability across all agents.
 
-**NO Comments in Frontmatter**: Agent frontmatter MUST NOT contain inline comments (# symbols in YAML). Research shows Claude Code has frontmatter parsing issues (GitHub issue #6377), and best practice for configuration files is to keep YAML clean without inline comments. Put explanations in the document body below the frontmatter code block, not as inline comments.
+**NO Comments in Frontmatter**: Agent frontmatter MUST NOT contain inline comments (# symbols in YAML). Research shows OpenCodehas frontmatter parsing issues (GitHub issue #6377), and best practice for configuration files is to keep YAML clean without inline comments. Put explanations in the document body below the frontmatter code block, not as inline comments.
 
 **Field Definitions:**
 
@@ -368,7 +368,7 @@ After frontmatter, agents should follow this structure:
 
 ## Reference Documentation
 
-[Links to CLAUDE.md, conventions, and related documentation]
+[Links to AGENTS.md, conventions, and related documentation]
 ```
 
 **Required Sections:**
@@ -542,7 +542,7 @@ ALL checker agents MUST write their validation/audit reports to `generated-repor
 
 **Why this is mandatory:**
 
-- **Context compaction survival**: During long audits, Claude Code may compact/summarize conversation context. If agent only writes at the END, file contents may be lost during compaction.
+- **Context compaction survival**: During long audits, OpenCodemay compact/summarize conversation context. If agent only writes at the END, file contents may be lost during compaction.
 - **Real-time persistence**: File continuously updated THROUGHOUT execution ensures findings persist regardless of context compaction.
 - **Behavioral, not optional**: This is a hard requirement for all checker agents.
 
@@ -560,7 +560,7 @@ See [Temporary Files Convention - Progressive Writing Requirement](../infra/temp
 ```yaml
 ---
 name: wow__rules-checker
-description: Validates consistency between agents, CLAUDE.md, conventions, and documentation.
+description: Validates consistency between agents, AGENTS.md, conventions, and documentation.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
@@ -907,7 +907,7 @@ color: blue
 ```yaml
 ---
 name: wow__rules-checker
-description: Validates consistency between agents, CLAUDE.md, conventions, and documentation. Use when checking for inconsistencies, contradictions, duplicate content, or verifying repository rule compliance.
+description: Validates consistency between agents, AGENTS.md, conventions, and documentation. Use when checking for inconsistencies, contradictions, duplicate content, or verifying repository rule compliance.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
@@ -919,7 +919,7 @@ color: green
 ```yaml
 ---
 name: wow__rules-maker
-description: Propagates rule and convention changes across CLAUDE.md, convention docs, agents, and indices. Use when adding/modifying rules, conventions, or standards that affect multiple files.
+description: Propagates rule and convention changes across AGENTS.md, convention docs, agents, and indices. Use when adding/modifying rules, conventions, or standards that affect multiple files.
 tools: Read, Edit, Glob, Grep
 model: sonnet
 color: yellow
@@ -1139,7 +1139,7 @@ Task(Explore, "find authentication code")
 
 Organize references into clear categories:
 
-1. **Project Guidance** - Always reference `CLAUDE.md`
+1. **Project Guidance** - Always reference `AGENTS.md`
 2. **Agent Conventions** - Always reference this document (`ex-de__ai-agents.md`)
 3. **Domain-Specific Conventions** - Reference relevant conventions
 4. **Related Agents** - Cross-reference complementary agents
@@ -1168,7 +1168,7 @@ See [Linking Convention](../conventions/formatting/linking.md) for details.
 
 Agent files are organized into **three complexity tiers** with corresponding size guidelines. These limits balance agent capability with performance, maintainability, and clarity.
 
-**Rationale**: Research shows LLMs follow ~150-200 instructions reliably, with quality degrading as count increases. While agents are only loaded when spawned (unlike CLAUDE.md which is universally included), keeping them focused improves effectiveness.
+**Rationale**: Research shows LLMs follow ~150-200 instructions reliably, with quality degrading as count increases. While agents are only loaded when spawned (unlike AGENTS.md which is universally included), keeping them focused improves effectiveness.
 
 #### Tier 1: Simple Agents (Deployers, Specialized Operations)
 
@@ -1800,7 +1800,7 @@ Before submitting a new agent, verify:
 
 #### Convention Compliance
 
-- [ ] References `CLAUDE.md`
+- [ ] References `AGENTS.md`
 - [ ] References AI agents convention (`ex-de__ai-agents.md`)
 - [ ] References relevant domain conventions
 - [ ] Links use correct GitHub-compatible format
@@ -1870,7 +1870,7 @@ Your primary job is to [clear, specific purpose statement].
 
 **Project Guidance:**
 
-- `CLAUDE.md` - Primary guidance for all agents working on this project
+- `AGENTS.md` - Primary guidance for all agents working on this project
 
 **Agent Conventions:**
 
@@ -1885,11 +1885,11 @@ Your primary job is to [clear, specific purpose statement].
 - Other complementary agents (if applicable)
 ```
 
-## Relationship to CLAUDE.md
+## Relationship to AGENTS.md
 
 ### Division of Responsibilities
 
-**CLAUDE.md provides:**
+**AGENTS.md provides:**
 
 - ✅ Project-wide guidance for ALL agents
 - ✅ Project overview and context
@@ -1912,9 +1912,9 @@ Your primary job is to [clear, specific purpose statement].
 - ✅ Tool and model selection criteria
 - ✅ Convention referencing requirements
 
-### CLAUDE.md Maintenance Standards
+### AGENTS.md Maintenance Standards
 
-**CRITICAL:** CLAUDE.md is a navigation document, not a knowledge dump. All agents must help maintain its conciseness.
+**CRITICAL:** AGENTS.md is a navigation document, not a knowledge dump. All agents must help maintain its conciseness.
 
 **Size Limits:**
 
@@ -1925,25 +1925,25 @@ Your primary job is to [clear, specific purpose statement].
 **Agent Responsibilities:**
 
 1. **wow\_\_rules-maker:**
-   - MUST check CLAUDE.md size when adding rules
+   - MUST check AGENTS.md size when adding rules
    - Warn user if file exceeds 35,000 characters
    - Suggest condensation strategies (move details to convention docs)
-   - Add only 2-5 line summaries to CLAUDE.md, link to detailed docs
+   - Add only 2-5 line summaries to AGENTS.md, link to detailed docs
 
 2. **docs\_\_maker and related content agents:**
-   - MUST NOT add verbose content to CLAUDE.md
-   - When adding conventions, create detailed doc first, then brief CLAUDE.md summary
-   - Maximum CLAUDE.md section length: 3-5 lines + link
+   - MUST NOT add verbose content to AGENTS.md
+   - When adding conventions, create detailed doc first, then brief AGENTS.md summary
+   - Maximum AGENTS.md section length: 3-5 lines + link
 
 3. **All agents:**
    - When in doubt, link to detailed docs rather than duplicate content
-   - Each CLAUDE.md section should answer "what, where, why" but link to "how"
-   - Comprehensive details belong in convention docs, not CLAUDE.md
+   - Each AGENTS.md section should answer "what, where, why" but link to "how"
+   - Comprehensive details belong in convention docs, not AGENTS.md
 
 ### Agent Isolation and Delivery Pattern
 
 ```
-Startup: CLAUDE.md ──loaded──> Orchestrator (main conversation)
+Startup: AGENTS.md ──loaded──> Orchestrator (main conversation)
 Runtime: Orchestrator ──spawns──> Agents (isolated contexts)
          Skills ──delivers via skills: field──> Agents
          Conventions ──explicit references──> Agents
@@ -1951,10 +1951,10 @@ Runtime: Orchestrator ──spawns──> Agents (isolated contexts)
 
 **Critical Understanding:**
 
-1. **Agents have isolated contexts** - They do NOT inherit CLAUDE.md
+1. **Agents have isolated contexts** - They do NOT inherit AGENTS.md
 2. **Skills deliver explicitly** - Only Skills listed in agent's `skills:` field are available
 3. **References are explicit** - Agents link to specific conventions they need
-4. **Orchestrator has CLAUDE.md** - Main conversation loads CLAUDE.md, not agents
+4. **Orchestrator has AGENTS.md** - Main conversation loads AGENTS.md, not agents
 
 **Rules:**
 
@@ -1965,7 +1965,7 @@ Runtime: Orchestrator ──spawns──> Agents (isolated contexts)
 
 ### What Belongs Where
 
-| Content Type      | CLAUDE.md | Individual Agent | This Convention |
+| Content Type      | AGENTS.md | Individual Agent | This Convention |
 | ----------------- | --------- | ---------------- | --------------- |
 | Project overview  | ✅        | ❌               | ❌              |
 | Environment setup | ✅        | ❌               | ❌              |
@@ -2017,8 +2017,8 @@ If an agent is no longer needed:
 | **Vague Description**            | `description: Helper agent for various tasks`                       | `description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.` |
 | **Tool Permission Creep**        | `tools: Read, Write, Edit, Glob, Grep, Bash` (for validation agent) | `tools: Read, Glob, Grep` (read-only for validation)                                                                                                                            |
 | **Unnecessary Model Override**   | Using specific model without clear need                             | Use `model: inherit` unless advanced reasoning truly required; then `model: sonnet`                                                                                             |
-| **Duplicating CLAUDE.md**        | Repeating entire environment setup section                          | Reference: `CLAUDE.md` - Primary guidance including environment setup                                                                                                           |
-| **Missing Reference Section**    | No references to conventions or CLAUDE.md                           | Include Reference Documentation section with links to CLAUDE.md and ex-de\_\_ai-agents.md                                                                                       |
+| **Duplicating AGENTS.md**        | Repeating entire environment setup section                          | Reference: `AGENTS.md` - Primary guidance including environment setup                                                                                                           |
+| **Missing Reference Section**    | No references to conventions or AGENTS.md                           | Include Reference Documentation section with links to AGENTS.md and ex-de\_\_ai-agents.md                                                                                       |
 | **Overlapping Responsibilities** | `doc-writer-and-validator` (multiple responsibilities)              | Separate `doc-writer` and `doc-validator` agents                                                                                                                                |
 
 ## Validation and Compliance
@@ -2036,7 +2036,7 @@ The `wow__rules-checker` agent validates all agents against this convention.
 5. ✅ Agent `model` field is present and valid
 6. ✅ Document structure follows standard pattern
 7. ✅ Reference documentation section exists
-8. ✅ References to CLAUDE.md and this convention present
+8. ✅ References to AGENTS.md and this convention present
 9. ✅ Links use GitHub-compatible format
 
 ### Manual Verification
