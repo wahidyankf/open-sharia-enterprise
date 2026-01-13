@@ -177,7 +177,7 @@ Automation serves the mission:
 ### Project Context
 
 - [Explanation Index](../README.md) - All conceptual documentation
-- [CLAUDE.md](../../../CLAUDE.md) - Project guidance for all agents
+- [AGENTS.md](../../../AGENTS.md) - Project guidance for all agents
 
 ---
 

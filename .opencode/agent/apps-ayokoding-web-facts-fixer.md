@@ -119,7 +119,7 @@ The `wow-assessing-criticality-confidence` Skill provides definitions.
 
 ## Reference Documentation
 
-- [CLAUDE.md](../../CLAUDE.md)
+- [AGENTS.md](../../CLAUDE.md)
 - [Fixer Confidence Levels Convention](../../governance/development/quality/ex-ru-de-qu-fixer-confidence-levels.md)
 
 **Skills:**

@@ -83,7 +83,7 @@ Maker:
 - ✅ REQUIRED: Major refactoring or updates
 - ✅ REQUIRED: Before publishing to production
 - ✅ REQUIRED: Complex content (tutorials, Hugo)
-- ✅ REQUIRED: Critical files (CLAUDE.md, conventions)
+- ✅ REQUIRED: Critical files (AGENTS.md, conventions)
 - ⚠️ OPTIONAL: Small updates to high-quality content
 
 **Criticality Categorization**:

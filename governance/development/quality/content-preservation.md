@@ -23,7 +23,7 @@ This practice respects the following core principles:
 
 - **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Content offload process explicitly moves content to convention documents with clear links. No hidden assumptions about where knowledge lives - every condensation creates documented references to comprehensive sources.
 
-- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Single source of truth for each topic in convention docs. Brief summaries in CLAUDE.md link to comprehensive references. Eliminates duplication and maintains simple, flat information architecture.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Single source of truth for each topic in convention docs. Brief summaries in AGENTS.md link to comprehensive references. Eliminates duplication and maintains simple, flat information architecture.
 
 ## Conventions Implemented/Respected
 
@@ -39,13 +39,13 @@ This practice implements/respects the following conventions:
 
 ## 🎯 Purpose
 
-When files become too large (CLAUDE.md approaching 40k character limit, agent files exceeding size tiers, duplicated documentation), content must be condensed. This convention ensures condensation preserves knowledge by **moving content to convention documents, NOT deleting it**.
+When files become too large (AGENTS.md approaching 40k character limit, agent files exceeding size tiers, duplicated documentation), content must be condensed. This convention ensures condensation preserves knowledge by **moving content to convention documents, NOT deleting it**.
 
 ## 📋 Scope
 
 This convention applies to:
 
-- **CLAUDE.md condensation** - Reducing main guidance file size
+- **AGENTS.md condensation** - Reducing main guidance file size
 - **Agent file condensation** - Keeping agent prompts within size tiers
 - **Documentation deduplication** - Eliminating cross-file duplication
 - **Convention extraction** - Moving shared patterns to convention docs
@@ -75,7 +75,7 @@ This convention applies to:
 **✅ Content Offload (CORRECT):**
 
 ```markdown
-Before (CLAUDE.md - 500 lines on file naming):
+Before (AGENTS.md - 500 lines on file naming):
 
 ## File Naming Convention
 
@@ -83,7 +83,7 @@ Files must follow the pattern `[prefix]__[content-identifier].[extension]` where
 
 [... 500 lines of detailed examples, rules, edge cases ...]
 
-After (CLAUDE.md - 3 lines):
+After (AGENTS.md - 3 lines):
 
 ## File Naming Convention
 
@@ -95,13 +95,13 @@ Result: Content preserved in ex-co\_\_file-naming-convention.md (comprehensive)
 **❌ Content Deletion (WRONG):**
 
 ```markdown
-Before (CLAUDE.md - 500 lines):
+Before (AGENTS.md - 500 lines):
 
 ## File Naming Convention
 
 [... 500 lines of detailed guidance ...]
 
-After (CLAUDE.md - 0 lines):
+After (AGENTS.md - 0 lines):
 
 [Section completely removed]
 
@@ -499,14 +499,14 @@ When creating documentation files:
 ### ❌ Anti-Pattern 1: Deleting Content Without Offload
 
 ```markdown
-Before: CLAUDE.md has 500 lines on file naming
+Before: AGENTS.md has 500 lines on file naming
 Action: Delete section to reduce size
 After: File naming knowledge lost
 
 Problem: Need to recreate later, knowledge erosion
 ```
 
-**✅ Correct Approach:** Offload to ex-co\_\_file-naming-convention.md, link from CLAUDE.md
+**✅ Correct Approach:** Offload to ex-co\_\_file-naming-convention.md, link from AGENTS.md
 
 ### ❌ Anti-Pattern 2: Incomplete Offload
 
@@ -584,6 +584,6 @@ When creating new convention or development documents during offload, `docs__mak
 
 ## Related Conventions
 
-- [CLAUDE.md Maintenance](../../CLAUDE.md#claudemd-maintenance) - Size limits and condensation triggers
+- [AGENTS.md Maintenance](../../AGENTS.md#claudemd-maintenance) - Size limits and condensation triggers
 - [AI Agents Convention](../agents/ai-agents.md) - Agent file size tiers and condensation
 - [Convention Writing Convention](../conventions/content/convention-writing.md) - How to structure convention documents

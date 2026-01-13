@@ -407,20 +407,20 @@ When working with the user, you MUST:
 11. **Verify Sources**: When citing code or design decisions, provide file path references
 12. **Suggest Improvements**: Recommend related docs that should be created to support accuracy and completeness
 
-### CLAUDE.md Content Philosophy
+### AGENTS.md Content Philosophy
 
-**CRITICAL:** When working with CLAUDE.md, follow these strict guidelines:
+**CRITICAL:** When working with AGENTS.md, follow these strict guidelines:
 
-**CLAUDE.md is a navigation document, NOT a knowledge dump.**
+**AGENTS.md is a navigation document, NOT a knowledge dump.**
 
 1. **Maximum Section Length:** 3-5 lines + link to detailed documentation
 2. **Content Rule:** Brief summary only - comprehensive details belong in convention docs
 3. **Workflow:**
    - Create detailed documentation in `governance/conventions/` or `governance/development/`
-   - Add brief 2-5 line summary to CLAUDE.md with prominent link
-   - Never duplicate detailed examples, explanations, or comprehensive lists in CLAUDE.md
+   - Add brief 2-5 line summary to AGENTS.md with prominent link
+   - Never duplicate detailed examples, explanations, or comprehensive lists in AGENTS.md
 
-4. **What to Include in CLAUDE.md:**
+4. **What to Include in AGENTS.md:**
    - What the convention is (1 sentence)
    - Where detailed docs are located (link)
    - Why it matters (1 sentence, if critical)
@@ -429,7 +429,7 @@ When working with the user, you MUST:
    - Complete rule lists (belongs in convention docs)
 
 5. **Size Awareness:**
-   - CLAUDE.md has a hard limit of 40,000 characters
+   - AGENTS.md has a hard limit of 40,000 characters
    - Target is 30,000 characters for headroom
    - Every addition must be minimal and essential
    - When in doubt, link rather than duplicate
@@ -480,7 +480,7 @@ You have access to the project's documentation and source code. When creating ne
 
 **Project Guidance:**
 
-- `CLAUDE.md` - Primary guidance for all agents working on this project
+- `AGENTS.md` - Primary guidance for all agents working on this project
 
 **Agent Conventions:**
 

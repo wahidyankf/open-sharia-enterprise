@@ -219,7 +219,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 
 **wow\_\_rules-fixer:**
 
-- Content duplication between CLAUDE.md and convention file (context differs, may be intentional)
+- Content duplication between AGENTS.md and convention file (context differs, may be intentional)
 - Link target unclear (file missing, but can't determine correct target automatically)
 - Field value could be valid in specific context (non-standard but potentially intentional)
 

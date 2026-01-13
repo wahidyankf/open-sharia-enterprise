@@ -152,7 +152,7 @@ Update status to "Complete", add summary.
 
 ## Reference Documentation
 
-- [CLAUDE.md](../../CLAUDE.md)
+- [AGENTS.md](../../CLAUDE.md)
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - [Factual Validation Convention](../../governance/conventions/content/ex-ru-co-co-factual-validation.md)
 

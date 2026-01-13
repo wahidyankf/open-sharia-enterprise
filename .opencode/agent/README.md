@@ -1,10 +1,8 @@
 # OpenCode Agents Index
 
-All 45 specialized agents in OpenCode format. Each agent corresponds to an agent in `.claude/agents/`.
+All 46 specialized agents in OpenCode format.
 
-**Shared Skills**: All agents access Skills from `.claude/skills/` for progressive knowledge delivery.
-
-**Dual Format**: Both `.claude/agents/` (Claude Code) and `.opencode/agent/` (OpenCode) maintained simultaneously.
+**Shared Skills**: All agents access Skills from `.opencode/skill/` for progressive knowledge delivery.
 
 ## Agent Families
 
@@ -206,7 +204,7 @@ opencode agent list
 
 ## Skills Integration
 
-All agents leverage Skills from `.claude/skills/` for:
+All agents leverage Skills from `.opencode/skills/` for:
 
 - **Workflow patterns**: Maker-checker-fixer, criticality-confidence assessment
 - **Content standards**: Quality principles, accessibility, factual validation
@@ -216,19 +214,13 @@ All agents leverage Skills from `.claude/skills/` for:
 
 ## Reference Documentation
 
-- **Project Instructions**: [AGENTS.md](../../AGENTS.md) (condensed) or [CLAUDE.md](../../CLAUDE.md) (comprehensive)
+- **Project Instructions**: [AGENTS.md](../../AGENTS.md) (condensed) or [AGENTS.md](../../CLAUDE.md) (comprehensive)
 - **AI Agents Convention**: [governance/development/agents/ex-ru-de-ag\_\_ai-agents.md](../../governance/development/agents/ai-agents.md)
 - **Maker-Checker-Fixer Pattern**: [governance/development/pattern/ex-ru-de-pa\_\_maker-checker-fixer.md](../../governance/development/pattern/maker-checker-fixer.md)
-- **Skills Catalog**: [.claude/skills/README.md](../../.claude/skills/README.md)
+- **Skills Catalog**: [.opencode/skills/README.md](../../.opencode/skills/README.md)
 - **Workflows**: [governance/workflows/README.md](../../governance/workflows/README.md)
 
 ## Maintenance
-
-**Dual-Format Sync**:
-
-- Source of truth: `.claude/agents/` (Claude Code format)
-- Sync to OpenCode: `python scripts/sync-claude-opencode.py`
-- agent-maker generates both formats simultaneously
 
 **Validation**:
 

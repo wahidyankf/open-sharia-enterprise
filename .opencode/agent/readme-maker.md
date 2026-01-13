@@ -133,7 +133,7 @@ Read README.md
 - Deep understanding of plain language and scannable structure
 - Complex decision-making for benefits-focused messaging
 - Multi-dimensional quality content creation
-Read CLAUDE.md
+Read AGENTS.md
 Grep "relevant keywords" in docs/
 ```
 
@@ -295,7 +295,7 @@ Use this agent when:
 
 **Project Guidance:**
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance for all agents
 - [README Quality Convention](../../governance/conventions/content/ex-ru-co-co-readme-quality.md) - Complete README standards
 - [Content Quality Principles](../../governance/conventions/content/quality.md) - General content quality
 - [Documentation First](../../governance/principles/content/ex-ru-pr-co-documentation-first.md) - Documentation requirements

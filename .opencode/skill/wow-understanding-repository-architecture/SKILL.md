@@ -44,7 +44,7 @@ Layer 5: Workflows    WHEN - Orchestrate (multi-step processes)
 | **1** | governance/principles/  | WHY we value approaches       | Rarely          | Why value this approach?  |
 | **2** | governance/conventions/ | WHAT documentation rules      | Occasionally    | What documentation rules? |
 | **3** | governance/development/ | HOW we develop software       | More frequently | How develop software?     |
-| **4** | .claude/agents/         | WHO enforces rules            | Often           | Who enforces rules?       |
+| **4** | .opencode/agent/        | WHO enforces rules            | Often           | Who enforces rules?       |
 | **5** | governance/workflows/   | WHEN run agents in what order | As needed       | When run which agents?    |
 
 ## Layer 0: Vision (WHY WE EXIST)
@@ -147,7 +147,7 @@ Development: Hugo Development Convention (semantic HTML)
 - Source code (JS, TS, future: Java, Kotlin, Python)
 - Hugo themes and layouts
 - Build systems and tooling
-- AI agents (.claude/agents/)
+- AI agents (.opencode/agent/)
 - Git workflows
 
 **Example Practices**:
@@ -168,9 +168,9 @@ Development: Hugo Development Convention (semantic HTML)
 
 **Purpose**: Automated implementers enforcing conventions and development practices.
 
-**Location**: `.claude/agents/`
+**Location**: `.opencode/agent/`
 
-**Key Document**: [Agents Index](../../../.claude/agents/README.md)
+**Key Document**: [Agents Index](../../../.opencode/agent/README.md)
 
 **Agent Families**:
 
@@ -265,15 +265,15 @@ Maker-Checker-Fixer Workflow:
 
 **IMPORTANT**: Skills are **delivery infrastructure**, NOT a governance layer.
 
-Skills sit alongside CLAUDE.md and direct references as delivery mechanisms:
+Skills sit alongside AGENTS.md and direct references as delivery mechanisms:
 
 ```
 Knowledge Flow:
-L2: Conventions ──┬── CLAUDE.md (navigation) ──> L4: Agents
+L2: Conventions ──┬── AGENTS.md (navigation) ──> L4: Agents
                   ├── Skills (progressive) ────> L4: Agents
                   └── Direct refs (specific) ──> L4: Agents
 
-L3: Development ──┬── CLAUDE.md (navigation) ──> L4: Agents
+L3: Development ──┬── AGENTS.md (navigation) ──> L4: Agents
                   ├── Skills (progressive) ────> L4: Agents
                   └── Direct refs (specific) ──> L4: Agents
 ```
@@ -322,7 +322,7 @@ L3: Development ──┬── CLAUDE.md (navigation) ──> L4: Agents
 
 ❌ **Wrong**: Skills are not a layer between Development and Agents.
 
-✅ **Correct**: Skills are delivery infrastructure (like CLAUDE.md), not governance layer.
+✅ **Correct**: Skills are delivery infrastructure (like AGENTS.md), not governance layer.
 
 ### Misconception 2: "Agents can ignore conventions if skilled"
 
@@ -348,7 +348,7 @@ L3: Development ──┬── CLAUDE.md (navigation) ──> L4: Agents
 - **[Core Principles Index](../../../governance/principles/README.md)** - All 10 foundational principles
 - **[Conventions Index](../../../governance/conventions/README.md)** - All 24 documentation conventions
 - **[Development Index](../../../governance/development/README.md)** - All 15 development practices
-- **[Agents Index](../../../.claude/agents/README.md)** - All AI agents and responsibilities
+- **[Agents Index](../../../.opencode/agent/README.md)** - All AI agents and responsibilities
 - **[Workflows Index](../../../governance/workflows/README.md)** - All orchestrated processes
 
 ## Related Skills

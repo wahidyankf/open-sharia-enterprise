@@ -72,7 +72,7 @@ Create workflow documentation following workflow pattern convention.
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [Workflow Pattern Convention](../../governance/workflows/meta/workflow-pattern.md)
 
 **Related Agents**:

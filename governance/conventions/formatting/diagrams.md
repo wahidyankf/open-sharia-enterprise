@@ -95,10 +95,10 @@ Use Mermaid diagrams for **all markdown files** in the repository:
 
 ```
 open-sharia-enterprise/
-├── README.md              ← Use Mermaid
-├── CLAUDE.md             ← Use Mermaid
-├── CONTRIBUTING.md       ← Use Mermaid
-├── docs/                 ← Use Mermaid
+ ├── README.md              ← Use Mermaid
+ ├── AGENTS.md             ← Use Mermaid
+ ├── CONTRIBUTING.md       ← Use Mermaid
+ ├── docs/                 ← Use Mermaid
 │   ├── tutorials/
 │   ├── how-to/
 │   ├── reference/
@@ -604,7 +604,7 @@ With widespread Mermaid support across GitHub, Obsidian, VS Code, and other plat
 3. **Mobile Support**: GitHub mobile and Obsidian mobile render Mermaid correctly
 4. **Better Maintainability**: Mermaid is easier to update than manually positioned ASCII art
 
-**Previous approach**: We required ASCII art for files outside `docs/` (README.md, CLAUDE.md, plans/) to ensure universal compatibility.
+**Previous approach**: We required ASCII art for files outside `docs/` (README.md, AGENTS.md, plans/) to ensure universal compatibility.
 
 **Current approach**: Use Mermaid everywhere. ASCII art is a fallback option, not a requirement.
 
@@ -616,9 +616,10 @@ Perfect for showing file and folder hierarchies:
 
 ```
 open-sharia-enterprise/
-├── .claude/                   # OpenCodeconfiguration
-│   └── agents/               # Specialized AI agents
-├── docs/                      # Documentation (Diátaxis framework)
+ ├── .opencode/                   # OpenCode configuration
+ │   ├── agent/               # Specialized AI agents
+ │   └── skill/               # Progressive knowledge packages
+ ├── docs/                      # Documentation (Diátaxis framework)
 │   ├── tutorials/            # Learning-oriented guides
 │   ├── how-to/               # Problem-oriented guides
 │   ├── reference/            # Technical reference
@@ -747,7 +748,7 @@ Use this quick reference to choose the right format:
 | ----------------- | -------------- | ----------------- | ----------------------------------------------- |
 | `docs/**/*.md`    | **Mermaid**    | ASCII (optional)  | Native Obsidian rendering, rich visuals         |
 | `README.md`       | **Mermaid**    | ASCII (optional)  | GitHub renders Mermaid natively                 |
-| `CLAUDE.md`       | **Mermaid**    | ASCII (optional)  | Modern text editors support Mermaid             |
+| `AGENTS.md`       | **Mermaid**    | ASCII (optional)  | Modern text editors support Mermaid             |
 | `plans/**/*.md`   | **Mermaid**    | ASCII (optional)  | GitHub and editors render Mermaid               |
 | `.github/**/*.md` | **Mermaid**    | ASCII (optional)  | GitHub Actions and web UI support Mermaid       |
 | `CONTRIBUTING.md` | **Mermaid**    | ASCII (optional)  | Contributors use GitHub web or modern editors   |
@@ -810,7 +811,7 @@ graph TD
 ## Project Structure
 
 open-sharia-enterprise/
-├── .claude/ # OpenCodeconfiguration
+├── .opencode/ # OpenCode configuration
 ├── docs/ # Documentation
 │ ├── tutorials/ # Step-by-step guides
 │ ├── how-to/ # Problem solutions
@@ -841,9 +842,9 @@ stateDiagram-v2
 ```
 ````
 
-### Example 4: Component Architecture in CLAUDE.md
+### Example 4: Component Architecture in AGENTS.md
 
-**File**: `CLAUDE.md`
+**File**: `AGENTS.md`
 
 **Recommended: Use Mermaid**:
 

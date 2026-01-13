@@ -446,7 +446,7 @@ Your goal: Help make tutorials that **teach effectively** and **inspire learners
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [Tutorial Convention](../../governance/conventions/tutorial/general.md)
 
 **Related Agents**:

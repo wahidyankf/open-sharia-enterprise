@@ -369,7 +369,7 @@ links:
 
 ### 5. Document What's Automated
 
-**In CLAUDE.md**:
+**In AGENTS.md**:
 
 ```markdown
 ## Code Quality & Git Hooks

@@ -1,5 +1,5 @@
 ---
-description: AI agent development standards including frontmatter structure, naming conventions, tool access patterns, model selection, and Bash-only file operations for .claude/ folders
+description: AI agent development standards including frontmatter structure, naming conventions, tool access patterns, model selection, and Bash-only file operations for .opencode/ folders
 ---
 
 # Developing AI Agents
@@ -10,7 +10,7 @@ Comprehensive guidance for creating AI agents following repository conventions.
 
 - Frontmatter: name, description, tools, model, color, skills
 - Name must match filename exactly
-- Use Bash tools for .claude/ folder operations
+- Use Bash tools for .opencode/ folder operations
 - Non-empty skills field required
 
 ## References
@@ -75,7 +75,7 @@ Add "Tools Usage" section (optional but recommended) listing each tool with its 
 
 - **Read**: Read audit reports and files to fix
 - **Edit**: Apply fixes to docs/ files
-- **Bash**: Apply fixes to .claude/ files (sed, heredoc)
+- **Bash**: Apply fixes to .opencode/ files (sed, heredoc)
 - **Write**: Generate fix reports to generated-reports/
 ```
 

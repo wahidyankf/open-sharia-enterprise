@@ -76,7 +76,7 @@ Theme customization, template development, build optimization, deployment config
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 

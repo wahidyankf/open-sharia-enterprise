@@ -418,7 +418,7 @@ Always provide:
 
 **Project Guidance:**
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents working on this project
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance for all agents working on this project
 
 **Agent Conventions:**
 

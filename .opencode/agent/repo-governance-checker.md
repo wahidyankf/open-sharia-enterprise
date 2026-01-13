@@ -114,7 +114,7 @@ Skill: `wow-generating-validation-reports` (progressive streaming)
 - Linking standards
 - Emoji usage
 - Convention compliance
-- CLAUDE.md size limits (30k target, 40k hard limit)
+- AGENTS.md size limits (30k target, 40k hard limit)
 
 ### Rules Governance Validation
 
@@ -278,7 +278,7 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 - Update all [N] agents to reference Skill
 ```
 
-### CLAUDE.md Size Monitoring
+### AGENTS.md Size Monitoring
 
 **Size Limits**:
 
@@ -296,7 +296,7 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 **Report Format**:
 
 ```markdown
-### Finding: CLAUDE.md Size
+### Finding: AGENTS.md Size
 
 **Current Size**: [N] characters
 **Target Limit**: 30,000 characters ([percentage]%)
@@ -304,7 +304,7 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 **Status**: [Within Target / Warning / CRITICAL]
 
 **Recommendation**:
-[If over target] Review CLAUDE.md for duplication with convention docs. Consider moving detailed examples to convention files and keeping only brief summaries with links.
+[If over target] Review AGENTS.md for duplication with convention docs. Consider moving detailed examples to convention files and keeping only brief summaries with links.
 ```
 
 ## Reference
@@ -360,9 +360,9 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
    - Suggest new Skill or extension
    - Write findings progressively
 
-### Step 4: CLAUDE.md Size Check
+### Step 4: AGENTS.md Size Check
 
-1. Read CLAUDE.md
+1. Read AGENTS.md
 2. Count characters
 3. Calculate percentage of limits
 4. Assess status (Within Target / Warning / CRITICAL)
@@ -432,7 +432,7 @@ Update report status to "Complete", add summary statistics.
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [Repository Governance Architecture](../../rulesrepository-governance-architecture.md)
 - [AI Agents Convention](../../governance/development/agents/ai-agents.md)
 

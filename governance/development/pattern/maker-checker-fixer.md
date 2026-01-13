@@ -106,7 +106,7 @@ This pattern is used across **seven agent families**:
 
 | Agent                          | Creates/Updates                                    | Also Manages                                      | Tools Used            |
 | ------------------------------ | -------------------------------------------------- | ------------------------------------------------- | --------------------- |
-| wow\_\_rules-maker             | Convention docs, CLAUDE.md sections, agent prompts | Cross-references, indices, related documentation  | Bash (not Edit/Write) |
+| wow\_\_rules-maker             | Convention docs, AGENTS.md sections, agent prompts | Cross-references, indices, related documentation  | Bash (not Edit/Write) |
 | ayokoding-web-general-maker    | General Hugo learning content, blog posts          | Navigation files, overview pages, indices         | Write, Edit           |
 | ayokoding-web-by-example-maker | By-example tutorials with annotated code           | 75-90 examples, diagrams, educational annotations | Write, Edit           |
 | docs\_\_tutorial-maker         | Tutorial content with narrative flow               | Learning objectives, diagrams, code examples      | Write, Edit           |
@@ -165,7 +165,7 @@ Maker Agent (ayokoding-web-general-maker):
 
 | Agent                            | Validates                                       | Generates Report                                                |
 | -------------------------------- | ----------------------------------------------- | --------------------------------------------------------------- |
-| wow\_\_rules-checker             | CLAUDE.md, agents, conventions, documentation   | `repo-rules__{timestamp}__audit.md`                             |
+| wow\_\_rules-checker             | AGENTS.md, agents, conventions, documentation   | `repo-rules__{timestamp}__audit.md`                             |
 | ayokoding-web-general-checker    | General Hugo content (frontmatter, links)       | `ayokoding-web__{timestamp}__audit.md`                          |
 | ayokoding-web-by-example-checker | By-example tutorials (coverage, annotations)    | `ayokoding-web-by-example__{uuid-chain}__{timestamp}__audit.md` |
 | docs\_\_tutorial-checker         | Tutorial pedagogy, narrative flow, visual aids  | `docs-tutorial__{timestamp}__audit.md`                          |
@@ -377,7 +377,7 @@ See [AI Agents Convention - Agent Color Categorization](../agents/ai-agents.md#a
 
 ### 1. repo-rules-\* (Repository Consistency)
 
-**Domain**: Repository-wide consistency across agents, conventions, CLAUDE.md, and documentation
+**Domain**: Repository-wide consistency across agents, conventions, AGENTS.md, and documentation
 
 **Agents**:
 
@@ -390,7 +390,7 @@ See [AI Agents Convention - Agent Color Categorization](../agents/ai-agents.md#a
 **Example**:
 
 ```
-1. wow__rules-maker: Add new emoji usage rule to convention doc + update CLAUDE.md + update agents
+1. wow__rules-maker: Add new emoji usage rule to convention doc + update AGENTS.md + update agents
 2. wow__rules-checker: Validate all files comply with new rule
 3. wow__rules-fixer: Fix non-compliant files found in audit
 ```
@@ -570,7 +570,7 @@ User: "Fix issues from the latest audit report" → Use FIXER (validation-driven
 - ✅ Major refactoring or updates
 - ✅ Before publishing to production
 - ✅ Complex content (tutorials, Hugo content)
-- ✅ Critical files (CLAUDE.md, convention docs)
+- ✅ Critical files (AGENTS.md, convention docs)
 
 **Best Practice**: When in doubt, run the checker. Validation is fast and prevents issues.
 

@@ -552,7 +552,7 @@ package-lock.json
 ### 3. Documented Setup
 
 ```markdown
-## Environment Setup (from CLAUDE.md)
+## Environment Setup (from AGENTS.md)
 
 The project uses **Volta** for Node.js and npm version management:
 

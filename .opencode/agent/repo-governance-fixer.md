@@ -1,7 +1,7 @@
 ---
 description: Applies validated fixes from repository rules audit reports including
   agent-Skill duplication removal, Skills coverage gap remediation, and rules governance
-  fixes (contradictions, inaccuracies, inconsistencies). Uses bash tools for .claude
+  fixes (contradictions, inaccuracies, inconsistencies). Uses bash tools for .opencode
   folder modifications.
 mode: all
 model: zai/glm-4.7
@@ -104,19 +104,19 @@ Fix repository-wide consistency issues including:
 
 ## Critical Requirements
 
-### Bash Tools for .claude Folder
+### Bash Tools for .opencode Folder
 
-**MANDATORY**: ALL modifications to `.claude/` folder files MUST use bash tools (removed during migration):
+**MANDATORY**: ALL modifications to `.opencode/` folder files MUST use bash tools (removed during migration):
 
 - Use heredoc for file writing
 - Use sed for file editing
 - Use awk for text processing
-- NEVER use Write tool for `.claude/` (removed during migration) files
-- NEVER use Edit tool for `.claude/` (removed during migration) files
+- NEVER use Write tool for `.opencode/` (removed during migration) files
+- NEVER use Edit tool for `.opencode/` (removed during migration) files
 
 **Why**: Enables autonomous agent operation without user approval prompts.
 
-See [AI Agents Convention - Writing to .claude Folders](../../governance/development/agents/ex-ru-de-ag-ai-agents.md#writing-to-claude-folders).
+See [AI Agents Convention - Writing to .opencode Folders](../../governance/development/agents/ex-ru-de-ag-ai-agents.md#writing-to-claude-folders).
 
 ## Agent-Skill Duplication Fixes
 
@@ -178,7 +178,7 @@ See [AI Agents Convention - Writing to .claude Folders](../../governance/develop
 1. Re-validate contradiction still exists
 2. Identify authoritative source (higher layer governs lower layer)
 3. Update non-authoritative document to align
-4. Use Edit tool for docs/ files (not in .claude/)
+4. Use Edit tool for docs/ files (not in .opencode/)
 5. Assess confidence:
    - HIGH: Clear contradiction, obvious authoritative source
    - MEDIUM: Subtle difference, unclear which is authoritative
@@ -228,7 +228,7 @@ See [AI Agents Convention - Writing to .claude Folders](../../governance/develop
 ### Important Guidelines for Rules Fixes
 
 1. **Edit Tool Usage**: Use Edit tool for `docs/explanation/` files (NOT Bash tools)
-2. **Bash Tool Usage**: Use Bash tools ONLY for `.claude/` files
+2. **Bash Tool Usage**: Use Bash tools ONLY for `.opencode/` files
 3. **Preserve Meaning**: Don't change intended meaning when fixing inconsistencies
 4. **Document Changes**: Explain fixes clearly in fix report
 5. **Traceability**: When adding traceability sections, analyze content carefully
@@ -277,7 +277,7 @@ See wow\_\_generating-validation-reports Skill for report structure.
 ## Important Guidelines
 
 1. **Always re-validate**: Don't trust stale audit reports
-2. **Use bash tools for .claude**: Mandatory for agent/Skill/workflow files
+2. **Use bash tools for .opencode**: Mandatory for agent/Skill/workflow files
 3. **Assess confidence**: Skip uncertain fixes (preserve correctness)
 4. **Write progressively**: Don't buffer fix results
 5. **Test after fixes**: Recommend validation after applying fixes
@@ -296,7 +296,7 @@ See wow\_\_generating-validation-reports Skill for report structure.
    - Re-validate issue exists
    - Assess confidence
    - Apply fix (HIGH confidence only) or skip
-   - Use bash tools for .claude files
+   - Use bash tools for .opencode files
    - Write results progressively
 3. Generate fix report
 4. Recommend re-running wow\_\_rules-checker to verify
@@ -307,7 +307,7 @@ See wow\_\_generating-validation-reports Skill for report structure.
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [Repository Governance Architecture](../../rulesrepository-governance-architecture.md)
 
 **Related Agents**:

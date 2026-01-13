@@ -65,7 +65,7 @@ Transform technical updates into engaging LinkedIn posts with professional tone.
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 
 **Related Agents**:
 

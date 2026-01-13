@@ -222,7 +222,7 @@ The `docs-applying-content-quality` Skill provides general content quality stand
 
 **Project Guidance:**
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Complete ayokoding-web standards
 - [By Example Content Standard](../../governance/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
 - [Tutorial Naming Convention](../../governance/conventions/tutorial/naming.md) - By Example definition

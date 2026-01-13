@@ -1348,7 +1348,7 @@ Existing agents using different terminology should migrate to this convention.
 1. Create this convention document ✅
 2. Update [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) with criticality integration
 3. Update [Maker-Checker-Fixer Pattern Convention](../pattern/maker-checker-fixer.md) with criticality flow
-4. Update CLAUDE.md with brief summary and link
+4. Update AGENTS.md with brief summary and link
 
 ### Phase 2: Pilot Agent (Week 2)
 

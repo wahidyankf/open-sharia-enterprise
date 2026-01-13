@@ -137,7 +137,7 @@ echo "Vercel will automatically build from prod-ose-platform-web branch"
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 - [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
 
