@@ -592,7 +592,7 @@ Some sites block automation:
 
 **Project Guidance:**
 
-- `CLAUDE.md` - Primary guidance for all agents
+- `AGENTS.md` - Primary guidance for all agents
 
 **Agent Conventions:**
 

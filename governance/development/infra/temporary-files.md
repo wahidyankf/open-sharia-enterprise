@@ -306,7 +306,7 @@ fi
 
 Progressive writing ensures reports survive context compaction:
 
-- During long audits, conversation context may be compacted/summarized by Claude Code
+- During long audits, conversation context may be compacted/summarized by the AI assistant
 - If agent only writes report at the END, file contents may be lost during compaction
 - If file is continuously updated THROUGHOUT execution, findings persist regardless of context compaction
 - This is a **behavioral requirement**, not optional
@@ -489,7 +489,7 @@ filename="repo-rules__${uuid}__${timestamp}__audit.md"
 
 **Content**: Comprehensive consistency audit covering:
 
-- CLAUDE.md vs convention documents
+- AGENTS.md vs convention documents
 - Agent definitions vs conventions
 - Cross-references and links
 - Duplication and contradictions
@@ -684,7 +684,7 @@ Any agent writing to `generated-reports/` MUST have:
 ```yaml
 ---
 name: wow__rules-checker
-description: Validates consistency between agents, CLAUDE.md, conventions, and documentation.
+description: Validates consistency between agents, AGENTS.md, conventions, and documentation.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green

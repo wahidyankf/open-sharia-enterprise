@@ -32,7 +32,7 @@ This convention implements the following core principles:
 ### What This Convention Covers
 
 - **Where emojis are allowed** - docs/, READMEs, plans/, .opencode/agent/README.md
-- **Where emojis are forbidden** - CLAUDE.md, agent prompts, config files, source code
+- **Where emojis are forbidden** - AGENTS.md, agent prompts, config files, source code
 - **Semantic emoji usage** - Using emojis for meaning, not decoration
 - **Emoji consistency** - Standard emojis for common concepts
 - **Accessibility considerations** - How emojis affect screen readers
@@ -374,10 +374,9 @@ category: explanation
    - Project plans, requirements, technical docs
    - Human-readable working documents
 
-4. **Agent configuration files** - CLAUDE.md, .opencode/agent/_.md, .opencode/agent/_.md
-   - CLAUDE.md - Human-readable navigation document (~30,000 lines) for developers
+4. **Agent configuration files** - AGENTS.md, .opencode/agent/\*.md
+   - AGENTS.md - Human-readable navigation document (~1,000 lines) for developers
    - .opencode/agent/\*.md - Agent definitions read by developers to understand agent behavior
-   - .opencode/agent/\*.md - OpenCode agent definitions (same purpose as OpenCodeagents)
    - Emojis enhance scannability for:
      - Criticality level definitions (🔴 CRITICAL, 🟠 HIGH, 🟡 MEDIUM, 🟢 LOW)
      - Section headers (🎯 Purpose, 💡 Key Concepts, 📖 Reference)
@@ -395,7 +394,7 @@ category: explanation
 
 **Enhanced scannability:**
 
-- CLAUDE.md is a human-readable navigation document (~30,000 lines) that benefits from emoji-enhanced scannability
+- AGENTS.md is a human-readable navigation document (~1,000 lines) that benefits from emoji-enhanced scannability
 - Agent files are human-readable specifications - developers read them to understand behavior, patterns, workflows
 - Emojis provide semantic visual markers that help developers quickly locate sections (criticality, purpose, references)
 
@@ -416,7 +415,7 @@ category: explanation
 
 ```
 Emojis for humans: docs/, plans/, README.md files
-Emojis for agents: CLAUDE.md, .opencode/agent/*.md, .opencode/agent/*.md
+Emojis for agents: AGENTS.md, .opencode/agent/*.md
 No emojis for machines: config files (*.json, *.yaml, *.toml)
 ```
 
@@ -603,7 +602,7 @@ Implement secure user authentication...
 - Third-party OAuth provider rate limits
 ```
 
-### CLAUDE.md and README.md (Root Files)
+### AGENTS.md and README.md (Root Files)
 
 **Goal:** Repository overview and AI guidance
 
@@ -661,7 +660,7 @@ When adding emojis to existing documentation:
 
 - Update convention documents in `governance/conventions/`
 - Update README.md files (root and `.opencode/agent/README.md`)
-- **Skip** CLAUDE.md and agent prompt files (AI instructions)
+- **Skip** AGENTS.md and agent prompt files (AI instructions)
 
 **Phase 2: Explanation Docs** (Next)
 
@@ -690,7 +689,7 @@ When reviewing emoji usage, verify:
 - [ ] Emojis only in headings (except status indicators)
 - [ ] No emojis in code blocks, commands, or file paths
 - [ ] No emojis in frontmatter or metadata
-- [ ] No emojis in CLAUDE.md (AI instructions)
+- [ ] No emojis in AGENTS.md (AI instructions)
 - [ ] No emojis in agent prompt files `.opencode/agent/*.md` (except README.md)
 - [ ] Emojis ARE used in README.md files (human-oriented indices)
 - [ ] Emojis ARE used in docs/ and plans/ (human documentation)

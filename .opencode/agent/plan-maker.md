@@ -105,7 +105,7 @@ Read and understand user requirements:
 - Deep understanding of Gherkin acceptance criteria
 - Complex decision-making for plan structure and organization
 - Multi-step planning workflow orchestration
-Read CLAUDE.md
+Read AGENTS.md
 Glob docs/**/*.md
 Grep "relevant topics"
 ```
@@ -199,7 +199,7 @@ See [Trunk Based Development Convention](../../governance/development/workflow/e
 
 **Project Guidance:**
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [Plans Organization Convention](../../governance/conventions/project/ex-ru-co-pr-plans-organization.md) - Plan structure and organization
 - [Trunk Based Development Convention](../../governance/development/workflow/ex-ru-de-wo-trunk-based-development.md) - Git workflow
 

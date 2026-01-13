@@ -339,7 +339,7 @@ Always provide:
 
 **Project Guidance:**
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance for all agents
 
 **Agent Conventions:**
 

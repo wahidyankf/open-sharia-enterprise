@@ -74,7 +74,7 @@ Document standards following convention structure (Purpose, Standards, Examples,
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [Repository Governance Architecture](../../rulesrepository-governance-architecture.md)
 
 **Related Agents**:

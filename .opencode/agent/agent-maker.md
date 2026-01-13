@@ -72,13 +72,13 @@ Create new AI agent files following AI Agents Convention.
 3. Document core responsibility
 4. Define workflow
 5. Reference conventions and Skills
-6. Use Bash tools for .claude folder writes
+6. Use Bash tools for .opencode folder writes
 
 ## Reference Documentation
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [AI Agents Convention](../../governance/development/agents/ai-agents.md)
 
 **Related Agents**:

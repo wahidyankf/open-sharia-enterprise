@@ -88,7 +88,7 @@ Skill: `wow-generating-validation-reports`
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [Workflow Pattern Convention](../../governance/workflows/meta/workflow-pattern.md)
 
 **Related Agents**:

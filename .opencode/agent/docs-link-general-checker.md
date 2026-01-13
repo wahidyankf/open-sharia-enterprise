@@ -415,7 +415,7 @@ When you find broken internal links:
 - Anchor links within the same page (`#section`) - unless specifically requested
 - Links in code blocks (unless they're documentation URLs)
 - Links in non-documentation files (source code, config files)
-- Links outside the `docs/` directory (e.g., root README.md, CLAUDE.md)
+- Links outside the `docs/` directory (e.g., root README.md, AGENTS.md)
 
 ### Tool Limitations
 
@@ -429,7 +429,7 @@ When you find broken internal links:
 
 Before starting work, familiarize yourself with:
 
-- [CLAUDE.md](../../CLAUDE.md) - Project guidance and documentation standards
+- [AGENTS.md](../../CLAUDE.md) - Project guidance and documentation standards
 - [AI Agents Convention](../../governance/development/agents/ex-ru-de-ag-ai-agents.md) - Agent design standards
 - [Linking Convention](../../governance/conventions/formatting/linking.md) - How links should be formatted
 - [Timestamp Format Convention](../../governance/conventions/formatting/timestamp.md) - UTC+7 timestamp format

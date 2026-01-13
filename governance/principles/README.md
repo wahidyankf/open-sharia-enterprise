@@ -349,7 +349,7 @@ After creating a new convention or practice document:
 
 1. **Use docs\_\_maker** to create the convention/practice document with principles section
 2. **Use wow\_\_rules-maker** to make the change effective across repository:
-   - Update CLAUDE.md with brief summary
+   - Update AGENTS.md with brief summary
    - Update relevant README files (conventions/development index)
    - Update agents that should enforce the new rule
    - Add validation checks to appropriate checker agents

@@ -408,9 +408,9 @@ How to verify you've achieved the outcomes.
 
 **No**: Time estimates, suggested schedules, "Day 1/Day 2" sections.
 
-### CLAUDE.md Guidance
+### AGENTS.md Guidance
 
-**Location**: `CLAUDE.md`
+**Location**: `AGENTS.md`
 
 **Explicit guidance**:
 

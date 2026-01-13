@@ -40,7 +40,7 @@ Layer 5: Workflows (WHEN)          → Multi-step processes ← YOU ARE HERE
 
 ### Using Workflows
 
-Workflows are executed through **manual orchestration** - the AI assistant (Claude Code or OpenCode) follows workflow steps directly using Read/Write/Edit tools in the main execution context. This ensures file changes persist to the actual filesystem.
+Workflows are executed through **manual orchestration** - the AI assistant follows workflow steps directly using Read/Write/Edit tools in the main execution context. This ensures file changes persist to the actual filesystem.
 
 **How to execute workflows**:
 
@@ -95,7 +95,7 @@ Workflows for Hugo website content:
 
 Workflows for repository rules:
 
-- **repo-rules**: Validate consistency across principles, conventions, development, agents, CLAUDE.md
+- **repo-rules**: Validate consistency across principles, conventions, development, agents, AGENTS.md
 
 ## Execution Modes
 

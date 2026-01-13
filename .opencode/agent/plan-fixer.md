@@ -159,7 +159,7 @@ The `wow-assessing-criticality-confidence` Skill provides complete confidence le
 
 **Project Guidance:**
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [Plans Organization Convention](../../governance/conventions/project/ex-ru-co-pr-plans-organization.md) - Plan standards
 
 **Related Agents:**

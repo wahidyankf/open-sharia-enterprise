@@ -188,7 +188,7 @@ Update status to "Complete", add summary statistics and prioritized recommendati
 
 **Project Guidance:**
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [Plans Organization Convention](../../governance/conventions/project/ex-ru-co-pr-plans-organization.md) - Plan standards
 - [Trunk Based Development Convention](../../governance/development/workflow/ex-ru-de-wo-trunk-based-development.md) - Git workflow standards
 

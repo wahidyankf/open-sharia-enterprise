@@ -21,7 +21,7 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance for Claude Code
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance for OpenCode
 - [Agent-specific convention](path/to/convention.md) - Domain-specific standards
 
 **Related Agents**:
@@ -51,7 +51,7 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 
 **Always Include**:
 
-- CLAUDE.md (primary guidance for all agents)
+- AGENTS.md.\*primary guidance for all agents)
 
 **Conditionally Include**:
 
@@ -64,7 +64,7 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 ```markdown
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [Specific Convention](path/to/convention.md) - Domain standards
 ```
 
@@ -203,7 +203,7 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [Content Quality Principles](../../governance/conventions/content/quality.md)
 - [Diátaxis Framework](../../governance/conventions/meta/diataxis-framework.md)
 
@@ -235,7 +235,7 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [README Quality Convention](../../governance/conventions/content/readme-quality.md)
 
 **Related Agents**:
@@ -264,7 +264,7 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 
 **Project Guidance**:
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [Plans Organization Convention](../../governance/conventions/project/plans-organization.md)
 
 **Related Agents**:

@@ -112,7 +112,7 @@ opencode agent plan-checker --plan plans/in-progress/my-plan/
 - **agent\_\_** (3 skills): AI agent development, agent documentation, model selection
 - **readme\_\_** (1 skill): README writing quality
 
-**OpenCode Skills Architecture** (different from Claude Code):
+**OpenCode Skills Architecture**:
 
 - **Access Method**: Skills accessed via `skill` tool (not auto-loaded from frontmatter)
 - **Permission Control**: Use `permission.skill` in agent frontmatter to control access
@@ -126,8 +126,6 @@ permission:
     wow-applying-maker-checker-fixer: allow
     docs-validating-factual-accuracy: allow
 ```
-
-**Claude Code Difference**: Claude Code declares skills in frontmatter (`skills: [skill-1, skill-2]`) and auto-loads them. OpenCode uses permission-based on-demand loading.
 
 **Full skills catalog**: See [`.opencode/skill/README.md`](./.opencode/skill/README.md)
 
@@ -157,7 +155,7 @@ All work follows **10 foundational principles** from \`governance/principles/\`:
 - **File Naming**: \`[prefix]\_\_[content-identifier].md\` (prefix encodes directory path)
 - **Linking**: GitHub-compatible markdown with \`.md\` extension, relative paths
 - **Indentation**: 2 spaces for YAML/nested bullets, language-specific for code
-- **Emoji Usage**: Allowed in docs/README/plans/CLAUDE.md/.claude/agents/.opencode/agent/, forbidden in config/code
+- **Emoji Usage**: Allowed in docs/README/plans/AGENTS.md/.opencode/agent/, forbidden in config/code
 - **Content Quality**: Active voice, single H1, proper heading nesting, alt text for images, WCAG AA color contrast
 
 **See**: [Conventions Index](./governance/conventions/README.md) (24 documentation standards)
@@ -273,8 +271,6 @@ OpenCode supports session-based agent coordination with the following features:
 - **Session State Management**: Agents can share context and coordinate via session state
 - **Session Isolation**: Different sessions maintain separate agent states
 
-This differs from Claude Code's sessionless invocation model where each agent call is independent.
-
 ### Multi-Model Usage
 
 OpenCode agents can use different GLM models for optimal performance:
@@ -298,7 +294,6 @@ OpenCode uses **explicit permission-based skill loading** instead of auto-load:
 - **Declaration**: Skills must be declared in agent frontmatter under `permission.skill` section
 - **Access Control**: Only skills listed with `allow` can be accessed by the agent
 - **Default Deny**: Skills not listed are inaccessible
-- **Explicit Control**: Unlike Claude Code's auto-load based on task description, OpenCode requires explicit permission
 
 **Example agent frontmatter**:
 
@@ -320,13 +315,6 @@ permission:
     wow-applying-fixer-workflow: allow
 ---
 ```
-
-**Key Differences from Claude Code**:
-
-- Claude Code: Skills auto-load based on task description matching
-- OpenCode: Skills require explicit `permission.skill` declaration
-- Claude Code: All skills accessible (no explicit control)
-- OpenCode: Skills explicitly allowed or denied per agent
 
 ## Agent Catalog
 

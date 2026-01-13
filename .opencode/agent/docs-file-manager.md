@@ -636,7 +636,7 @@ Proceed anyway? (Please confirm)
 
 **Project Guidance:**
 
-- `CLAUDE.md` - Primary guidance for all agents working on this project
+- `AGENTS.md` - Primary guidance for all agents working on this project
 
 **Agent Conventions:**
 

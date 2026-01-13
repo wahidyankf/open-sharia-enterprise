@@ -304,7 +304,7 @@ Use this agent when:
 
 **Project Guidance:**
 
-- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [README Quality Convention](../../governance/conventions/content/ex-ru-co-co-readme-quality.md) - Complete README standards
 - [Content Quality Principles](../../governance/conventions/content/quality.md) - General quality standards
 

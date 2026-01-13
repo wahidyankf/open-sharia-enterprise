@@ -132,7 +132,7 @@ Support `mode` parameter for quality-gate workflows:
 - Skip MEDIUM_CONFIDENCE findings (flag for manual review)
 - Skip FALSE_POSITIVE findings (report to improve checker)
 - Use appropriate tools based on file location:
-  - `.claude/` folders: Use Bash tools (sed, awk, heredoc)
+  - `.opencode/` folders: Use Bash tools (sed, awk, heredoc)
   - `docs/` folders: Use Edit tool
   - Other locations: Use appropriate tools per file type
 
@@ -257,7 +257,7 @@ Fixers typically need:
 
 - **Read**: Read audit reports and files to fix
 - **Edit**: Apply fixes to docs/ files
-- **Bash**: Apply fixes to .claude/ files (sed, awk, heredoc)
+- **Bash**: Apply fixes to .opencode/ files (sed, awk, heredoc)
 - **Write**: Generate fix reports
 - **Glob/Grep**: Optional - for pattern matching and validation
 
@@ -306,7 +306,7 @@ Action: Skip due to mode filter, document in report
 1. **Always Re-validate**: Never apply fixes blindly from audit
 2. **Conservative Confidence**: When uncertain → MEDIUM (manual review)
 3. **Progressive Writing**: Write fix results immediately, don't buffer
-4. **Tool Selection**: Bash for .claude/, Edit for docs/, appropriate for others
+4. **Tool Selection**: Bash for .opencode/, Edit for docs/, appropriate for others
 5. **Preserve Context**: Maintain UUID chain from audit to fix report
 6. **Document Reasoning**: Explain why fixes were skipped
 7. **Mode Awareness**: Respect mode parameter thresholds

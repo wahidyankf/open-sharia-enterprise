@@ -571,9 +571,9 @@ color: green
 
 See [Temporary Files Convention](../infra/temporary-files.md) for complete details on report naming patterns, mandatory checker requirements, and timestamp generation.
 
-### Writing to .claude Folders
+### Writing to .opencode/ Folders
 
-**CRITICAL RULE**: When creating or modifying files in `.claude/` folders (especially `.opencode/agent/`), agents MUST use Bash tools (heredoc, sed, awk, etc.) and NOT Write/Edit tools.
+**CRITICAL RULE**: When creating or modifying files in `.opencode/` folders (especially `.opencode/agent/`), agents MUST use Bash tools (heredoc, sed, awk, etc.) and NOT Write/Edit tools.
 
 **Rationale**: Bash tools allow autonomous agent operation without requiring user approval for file operations. Write/Edit tools trigger user approval prompts, breaking autonomous workflows.
 
@@ -582,7 +582,7 @@ See [Temporary Files Convention](../infra/temporary-files.md) for complete detai
 - Creating new agent files in `.opencode/agent/`
 - Updating existing agent files in `.opencode/agent/`
 - Modifying `.opencode/agent/README.md`
-- Any other `.claude` folder operations
+- Any other `.opencode/` folder operations
 
 **Tool patterns**:
 
@@ -612,7 +612,7 @@ awk 'pattern { insert_text } { print }' .opencode/agent/README.md > temp && mv t
 - `agent__maker` - Creates new agents, already complies
 - `wow__rules-maker` - Updates agents, already complies
 
-**Verification**: Check that agents writing to `.claude/` use only Bash tool (not Write/Edit).
+**Verification**: Check that agents writing to `.opencode/` use only Bash tool (not Write/Edit).
 
 ## Model Selection Guidelines
 

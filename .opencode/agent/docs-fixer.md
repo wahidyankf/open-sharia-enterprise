@@ -451,7 +451,7 @@ Your primary job is to:
 
 **Project Guidance**:
 
-- `CLAUDE.md` - Primary guidance for all agents
+- `AGENTS.md` - Primary guidance for all agents
 
 **Agent Conventions**:
 

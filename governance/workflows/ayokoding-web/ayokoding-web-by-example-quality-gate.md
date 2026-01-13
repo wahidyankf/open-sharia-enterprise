@@ -95,7 +95,7 @@ The AI will:
 5. Show git status with modified files
 6. Wait for user commit approval
 
-**Why Manual Mode?**: Task tool (Claude Code) or agent spawning (OpenCode) runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures audit reports and tutorial fixes are actually written to the filesystem. This workflow also includes manual decision points (user review step) unlike fully automated workflows.
+**Why Manual Mode?**: Task tool runs agents in isolated contexts where file changes don't persist. Manual orchestration ensures audit reports and tutorial fixes are actually written to the filesystem. This workflow also includes manual decision points (user review step) unlike fully automated workflows.
 
 ## Workflow Overview
 
