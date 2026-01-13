@@ -46,7 +46,7 @@ The repository follows a **six-layer governance architecture** (Vision → Princ
 
 **See [Rules](./governance/README.md)** for governance overview with architecture diagram, layer descriptions, and decision trees.
 
-**See [Repository Governance Architecture](./rulesrepository-governance-architecture.md)** for comprehensive explanation with traceability examples, usage guidance, and verification methods.
+**See [Repository Governance Architecture](../governance/repository-governance-architecture.md)** for comprehensive explanation with traceability examples, usage guidance, and verification methods.
 
 ---
 
@@ -55,7 +55,7 @@ The repository follows a **six-layer governance architecture** (Vision → Princ
 ### Repository Governance
 
 - **[Rules](./governance/README.md)** - All governance layers (Vision, Principles, Conventions, Development, Workflows)
-- **[Repository Governance Architecture](./rulesrepository-governance-architecture.md)** - Comprehensive architecture deep-dive
+- **[Repository Governance Architecture](../governance/repository-governance-architecture.md)** - Comprehensive architecture deep-dive
 
 ### Project Architecture
 

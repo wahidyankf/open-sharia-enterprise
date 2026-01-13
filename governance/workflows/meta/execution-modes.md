@@ -311,7 +311,7 @@ Execute fixer logic directly → fixes persist
 - ✅ **Documentation First**: Document current reality, not just ideal state
 - ✅ **No Time Estimates**: Focus on what to do, not how long it takes
 
-## Conventions Implemented
+## Conventions Implemented/Respected
 
 - ✅ **Workflow Pattern Convention**: Defines execution modes for workflows
 - ✅ **AI Agents Convention**: Explains agent invocation patterns

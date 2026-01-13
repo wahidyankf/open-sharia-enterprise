@@ -15,7 +15,7 @@ Instructions for AI agents working with this repository via OpenCode.
 
 ## Agent Organization
 
-**46 specialized agents** organized into **7 families**:
+**45 specialized agents** organized into **7 families**:
 
 1. **Documentation** (8 agents): `docs-maker`, `docs-checker`, `docs-fixer`, `docs-tutorial-maker`, `docs-tutorial-checker`, `docs-tutorial-fixer`, `docs-link-general-checker`, `docs-file-manager`
 2. **README** (3 agents): `readme-maker`, `readme-checker`, `readme-fixer`
@@ -318,7 +318,7 @@ permission:
 
 ## Agent Catalog
 
-All 46 specialized agents in `.opencode/agent/` (OpenCode format).
+All 45 specialized agents in `.opencode/agent/` (OpenCode format).
 
 **Full agent catalog**: See [`.opencode/agent/README.md`](./.opencode/agent/README.md) for descriptions, usage examples, and workflow information.
 
