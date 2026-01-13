@@ -6,7 +6,7 @@ model: zai/glm-4.7
 tools:permission:
   skill:
     apps-ayokoding-web-developing-content: allow
-    wow-applying-fixer-workflow: allow
+    repo-applying-fixer-workflow: allow
 
   read: true
   edit: true
@@ -19,11 +19,11 @@ permission:
   webfetch: deny
   todowrite: deny
   skill:
-    wow-applying-fixer-workflow: allow
+    repo-applying-fixer-workflow: allow
     apps-ayokoding-web-developing-content: allow
-    wow-assessing-criticality-confidence: allow
-    wow-applying-maker-checker-fixer: allow
-    wow-generating-validation-reports: allow
+    repo-assessing-criticality-confidence: allow
+    repo-applying-maker-checker-fixer: allow
+    repo-generating-validation-reports: allow
 ---
 
 ## Agent Metadata
@@ -62,11 +62,11 @@ permission:
 
 This agent leverages Skills from `.opencode/skill/`:
 
-1. **`wow-applying-fixer-workflow`** - Progressive knowledge delivery
+1. **`repo-applying-fixer-workflow`** - Progressive knowledge delivery
 2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
-3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-4. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
-5. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+4. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
+5. **`repo-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -99,11 +99,11 @@ Validate general-checker findings before applying fixes.
 
 ## Mode & Discovery
 
-`wow-applying-maker-checker-fixer` Skill: mode logic, report discovery
+`repo-applying-maker-checker-fixer` Skill: mode logic, report discovery
 
 ## Confidence
 
-`wow-assessing-criticality-confidence` Skill: definitions, examples
+`repo-assessing-criticality-confidence` Skill: definitions, examples
 
 HIGH: Incorrect weight, missing frontmatter, broken link
 MEDIUM: Content quality, structure choices
@@ -111,7 +111,7 @@ FALSE_POSITIVE: Checker error
 
 ## Reference
 
-Skills: `apps-ayokoding-web-developing-content`, `wow-assessing-criticality-confidence`, `wow-applying-maker-checker-fixer`, `wow-generating-validation-reports`
+Skills: `apps-ayokoding-web-developing-content`, `repo-assessing-criticality-confidence`, `repo-applying-maker-checker-fixer`, `repo-generating-validation-reports`
 
 ## Reference Documentation
 
@@ -132,6 +132,6 @@ Skills: `apps-ayokoding-web-developing-content`, `wow-assessing-criticality-conf
 
 **Skills**:
 
-- `wow-applying-fixer-workflow` - Fixer workflow pattern
+- `repo-applying-fixer-workflow` - Fixer workflow pattern
 - `apps-ayokoding-web-developing-content` - ayokoding-web standards
-- `wow-assessing-criticality-confidence` - Confidence assessment
+- `repo-assessing-criticality-confidence` - Confidence assessment

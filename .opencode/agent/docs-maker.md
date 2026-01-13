@@ -17,7 +17,7 @@ permission:
     docs-applying-diataxis-framework: allow
     docs-creating-by-example-tutorials: allow
     docs-creating-accessible-diagrams: allow
-    wow-applying-maker-checker-fixer: allow
+    repo-applying-maker-checker-fixer: allow
 ---
 
 ## Agent Metadata
@@ -32,7 +32,7 @@ This agent leverages Skills from `.opencode/skill/`:
 
 1. **`docs-applying-content-quality`** - Progressive knowledge delivery
 2. **`docs-creating-accessible-diagrams`** - Progressive knowledge delivery
-3. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
+3. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 

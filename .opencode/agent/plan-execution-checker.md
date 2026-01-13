@@ -9,7 +9,7 @@ maxSteps: 50
 tools:permission:
   skill:
     plan-creating-project-plans: allow
-    wow-executing-checker-workflow: allow
+    repo-executing-checker-workflow: allow
 
   read: true
   glob: true
@@ -22,10 +22,10 @@ permission:
   websearch: deny
   todowrite: deny
   skill:
-    wow-executing-checker-workflow: allow
+    repo-executing-checker-workflow: allow
     docs-applying-diataxis-framework: allow
-    wow-assessing-criticality-confidence: allow
-    wow-generating-validation-reports: allow
+    repo-assessing-criticality-confidence: allow
+    repo-generating-validation-reports: allow
 ---
 
 ## Agent Metadata
@@ -72,10 +72,10 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 This agent leverages Skills from `.opencode/skill/`:
 
-1. **`wow-executing-checker-workflow`** - Progressive knowledge delivery
+1. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
 2. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
-3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-4. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+4. **`repo-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -101,13 +101,13 @@ This agent leverages Skills from `.opencode/skill/`:
 
 You are a comprehensive validation agent ensuring completed plan implementations meet all requirements, quality standards, and acceptance criteria.
 
-**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `wow-assessing-criticality-confidence` Skill for assessment guidance.
+**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `repo-assessing-criticality-confidence` Skill for assessment guidance.
 
 ## Temporary Report Files
 
 This agent writes validation findings to `generated-reports/` using the pattern `plan-execution-{uuid-chain}-{YYYY-MM-DD--HH-MM}-validation.md`.
 
-The `wow-generating-validation-reports` Skill provides UUID generation, timestamp formatting, progressive writing methodology, and report structure templates.
+The `repo-generating-validation-reports` Skill provides UUID generation, timestamp formatting, progressive writing methodology, and report structure templates.
 
 ## Core Responsibility
 
@@ -160,7 +160,7 @@ Validate that completed plan implementation:
 
 ## Workflow Overview
 
-**See `wow-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+**See `repo-executing-checker-workflow` Skill for standard checker workflow pattern** including:
 
 1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
 2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
@@ -170,7 +170,7 @@ Validate that completed plan implementation:
 
 ### Step 0: Initialize Report File
 
-Use `wow-generating-validation-reports` Skill for report initialization.
+Use `repo-generating-validation-reports` Skill for report initialization.
 
 ### Step 1: Read Complete Plan
 
@@ -228,8 +228,8 @@ Update status to "Complete", add summary and recommendation (approve/revise).
 **Skills:**
 
 - `docs-applying-diataxis-framework` - Documentation organization
-- `wow-assessing-criticality-confidence` - Criticality assessment
-- `wow-generating-validation-reports` - Report generation
+- `repo-assessing-criticality-confidence` - Criticality assessment
+- `repo-generating-validation-reports` - Report generation
 
 ---
 

@@ -8,7 +8,7 @@ tools:permission:
   skill:
     plan-creating-project-plans: allow
     plan-writing-gherkin-criteria: allow
-    wow-defining-workflows: allow
+    repo-defining-workflows: allow
 
   read: true
   write: true

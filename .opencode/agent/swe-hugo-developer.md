@@ -5,9 +5,9 @@ mode: all
 model: zai/glm-4.7
 tools:permission:
   skill:
-    wow-applying-maker-checker-fixer: allow
-    wow-assessing-criticality-confidence: allow
-    wow-understanding-repository-architecture: allow
+    repo-applying-maker-checker-fixer: allow
+    repo-assessing-criticality-confidence: allow
+    repo-understanding-repository-architecture: allow
 
   read: true
   write: true

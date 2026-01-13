@@ -8,8 +8,8 @@ maxSteps: 50
 tools:permission:
   skill:
     plan-creating-project-plans: allow
-    wow-applying-maker-checker-fixer: allow
-    wow-generating-validation-reports: allow
+    repo-applying-maker-checker-fixer: allow
+    repo-generating-validation-reports: allow
 
   read: true
   write: true

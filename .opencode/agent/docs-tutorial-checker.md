@@ -23,10 +23,10 @@ permission:
   todowrite: deny
   edit: deny
   skill:
-    wow-executing-checker-workflow: allow
+    repo-executing-checker-workflow: allow
     docs-applying-diataxis-framework: allow
-    wow-assessing-criticality-confidence: allow
-    wow-generating-validation-reports: allow
+    repo-assessing-criticality-confidence: allow
+    repo-generating-validation-reports: allow
 ---
 
 ## Agent Metadata
@@ -73,10 +73,10 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 This agent leverages Skills from `.opencode/skill/`:
 
-1. **`wow-executing-checker-workflow`** - Progressive knowledge delivery
+1. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
 2. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
-3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-4. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+4. **`repo-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -104,13 +104,13 @@ This agent leverages Skills from `.opencode/skill/`:
 
 You are an expert tutorial quality validator specializing in pedagogical assessment, narrative flow analysis, and instructional design evaluation.
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../governance/development/quality/ex-ru-de-qu-criticality-levels.md) and `wow-assessing-criticality-confidence` Skill for assessment guidance.
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../governance/development/quality/ex-ru-de-qu-criticality-levels.md) and `repo-assessing-criticality-confidence` Skill for assessment guidance.
 
 ## Temporary Report Files
 
 This agent writes validation findings to `generated-reports/` using the pattern `docs-tutorial-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`.
 
-The `wow-generating-validation-reports` Skill provides:
+The `repo-generating-validation-reports` Skill provides:
 
 - UUID chain generation logic and parallel execution support
 - UTC+7 timestamp generation with Bash
@@ -219,7 +219,7 @@ $
 
 ## Workflow Overview
 
-**See `wow-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+**See `repo-executing-checker-workflow` Skill for standard checker workflow pattern** including:
 
 1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
 2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
@@ -231,7 +231,7 @@ $
 
 **CRITICAL FIRST STEP - Before any validation begins:**
 
-Use `wow-generating-validation-reports` Skill for:
+Use `repo-generating-validation-reports` Skill for:
 
 1. UUID generation and chain determination
 2. UTC+7 timestamp generation
@@ -384,7 +384,7 @@ Create a comprehensive report with:
 
 ## Output Format
 
-See `wow-generating-validation-reports` Skill for complete report template structure.
+See `repo-generating-validation-reports` Skill for complete report template structure.
 
 **Report includes:**
 
@@ -463,7 +463,7 @@ Your goal: Help make tutorials that **teach effectively** and **inspire learners
 
 **Skills**:
 
-- `wow-executing-checker-workflow` - Checker workflow pattern
+- `repo-executing-checker-workflow` - Checker workflow pattern
 - `docs-applying-content-quality` - Content quality standards
-- `wow-assessing-criticality-confidence` - Criticality assessment
-- `wow-generating-validation-reports` - Report generation
+- `repo-assessing-criticality-confidence` - Criticality assessment
+- `repo-generating-validation-reports` - Report generation

@@ -5,7 +5,7 @@ mode: all
 model: zai/glm-4.7
 tools:permission:
   skill:
-    wow-applying-fixer-workflow: allow
+    repo-applying-fixer-workflow: allow
 
   read: true
   edit: true
@@ -19,9 +19,9 @@ permission:
   websearch: deny
   skill:
     docs-applying-diataxis-framework: allow
-    wow-assessing-criticality-confidence: allow
-    wow-applying-maker-checker-fixer: allow
-    wow-generating-validation-reports: allow
+    repo-assessing-criticality-confidence: allow
+    repo-applying-maker-checker-fixer: allow
+    repo-generating-validation-reports: allow
 ---
 
 ## Agent Metadata
@@ -61,9 +61,9 @@ permission:
 This agent leverages Skills from `.opencode/skill/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
-2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
-4. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+3. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
+4. **`repo-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -92,12 +92,12 @@ Validate workflow-checker findings before applying fixes.
 
 ## Core
 
-`wow-applying-maker-checker-fixer`: mode logic, report discovery
-`wow-assessing-criticality-confidence`: confidence assessment
+`repo-applying-maker-checker-fixer`: mode logic, report discovery
+`repo-assessing-criticality-confidence`: confidence assessment
 
 ## Reference
 
-Skills: `docs-applying-diataxis-framework`, `wow-assessing-criticality-confidence`, `wow-applying-maker-checker-fixer`, `wow-generating-validation-reports`
+Skills: `docs-applying-diataxis-framework`, `repo-assessing-criticality-confidence`, `repo-applying-maker-checker-fixer`, `repo-generating-validation-reports`
 
 ## Reference Documentation
 
@@ -118,6 +118,6 @@ Skills: `docs-applying-diataxis-framework`, `wow-assessing-criticality-confidenc
 
 **Skills**:
 
-- `wow-applying-fixer-workflow` - Fixer workflow pattern
-- `wow-defining-workflows` - Workflow structure
-- `wow-assessing-criticality-confidence` - Confidence assessment
+- `repo-applying-fixer-workflow` - Fixer workflow pattern
+- `repo-defining-workflows` - Workflow structure
+- `repo-assessing-criticality-confidence` - Confidence assessment

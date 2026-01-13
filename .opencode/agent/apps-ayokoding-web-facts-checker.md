@@ -21,11 +21,11 @@ permission:
   edit: deny
   todowrite: deny
   skill:
-    wow-executing-checker-workflow: allow
+    repo-executing-checker-workflow: allow
     apps-ayokoding-web-developing-content: allow
     docs-validating-factual-accuracy: allow
-    wow-assessing-criticality-confidence: allow
-    wow-generating-validation-reports: allow
+    repo-assessing-criticality-confidence: allow
+    repo-generating-validation-reports: allow
 ---
 
 ## Agent Metadata
@@ -72,11 +72,11 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 This agent leverages Skills from `.opencode/skill/`:
 
-1. **`wow-executing-checker-workflow`** - Progressive knowledge delivery
+1. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
 2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 3. **`docs-validating-factual-accuracy`** - Progressive knowledge delivery
-4. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-5. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+4. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+5. **`repo-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -104,13 +104,13 @@ This agent leverages Skills from `.opencode/skill/`:
 
 You validate factual accuracy of ayokoding-web content using WebSearch/WebFetch.
 
-**Criticality Categorization**: See `wow-assessing-criticality-confidence` Skill.
+**Criticality Categorization**: See `repo-assessing-criticality-confidence` Skill.
 
 ## Temporary Report Files
 
 Pattern: `ayokoding-facts-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
 
-The `wow-generating-validation-reports` Skill provides generation logic.
+The `repo-generating-validation-reports` Skill provides generation logic.
 
 ## Validation Scope
 
@@ -128,7 +128,7 @@ The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web context
 
 ## Workflow Overview
 
-**See `wow-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+**See `repo-executing-checker-workflow` Skill for standard checker workflow pattern** including:
 
 1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
 2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
@@ -138,7 +138,7 @@ The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web context
 
 ### Step 0: Initialize Report
 
-Use `wow-generating-validation-reports` Skill.
+Use `repo-generating-validation-reports` Skill.
 
 ### Step 1-N: Validate Content
 
@@ -158,4 +158,4 @@ Update status to "Complete", add summary.
 
 **Skills:**
 
-- `apps-ayokoding-web-developing-content`, `docs-validating-factual-accuracy`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`
+- `apps-ayokoding-web-developing-content`, `docs-validating-factual-accuracy`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`

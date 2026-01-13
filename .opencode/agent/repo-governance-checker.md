@@ -9,9 +9,9 @@ temperature: 0.1
 maxSteps: 50
 tools:permission:
   skill:
-    wow-applying-maker-checker-fixer: allow
-    wow-assessing-criticality-confidence: allow
-    wow-understanding-repository-architecture: allow
+    repo-applying-maker-checker-fixer: allow
+    repo-assessing-criticality-confidence: allow
+    repo-understanding-repository-architecture: allow
 
   read: true
   glob: true
@@ -25,8 +25,8 @@ permission:
   webfetch: deny
   skill:
     docs-applying-diataxis-framework: allow
-    wow-assessing-criticality-confidence: allow
-    wow-generating-validation-reports: allow
+    repo-assessing-criticality-confidence: allow
+    repo-generating-validation-reports: allow
 ---
 
 ## Agent Metadata
@@ -74,8 +74,8 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 This agent leverages Skills from `.opencode/skill/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
-2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+3. **`repo-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -104,7 +104,7 @@ Validate repository-wide consistency across all repository layers.
 ## Temporary Reports
 
 Pattern: `repo-rules-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
-Skill: `wow-generating-validation-reports` (progressive streaming)
+Skill: `repo-generating-validation-reports` (progressive streaming)
 
 ## Validation Scope
 
@@ -213,12 +213,12 @@ Skill: `wow-generating-validation-reports` (progressive streaming)
 
 **Common Duplication Patterns to Check**:
 
-- UUID generation logic (should reference `wow-generating-validation-reports`)
-- Criticality level definitions (should reference `wow-assessing-criticality-confidence`)
-- Mode parameter handling (should reference `wow-applying-maker-checker-fixer`)
+- UUID generation logic (should reference `repo-generating-validation-reports`)
+- Criticality level definitions (should reference `repo-assessing-criticality-confidence`)
+- Mode parameter handling (should reference `repo-applying-maker-checker-fixer`)
 - Hugo weight systems (should reference `apps-ayokoding-web-developing-content`)
 - Color palettes (should reference `docs-creating-accessible-diagrams`)
-- Report templates (should reference `wow-generating-validation-reports`)
+- Report templates (should reference `repo-generating-validation-reports`)
 - Annotation density (should reference `docs-creating-by-example-tutorials`)
 
 **Report Format for Duplication Findings**:
@@ -313,7 +313,7 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 
 **Development Practices**: All practices in `governance/development/`
 
-**Skills**: `docs-applying-diataxis-framework`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`
+**Skills**: `docs-applying-diataxis-framework`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 
 **Related Documentation**:
 
@@ -325,7 +325,7 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 
 ### Step 0: Initialize Report
 
-See `wow-generating-validation-reports` Skill for UUID chain, timestamp, progressive writing.
+See `repo-generating-validation-reports` Skill for UUID chain, timestamp, progressive writing.
 
 ### Step 1: Core Repository Validation
 
@@ -448,6 +448,6 @@ Update report status to "Complete", add summary statistics.
 
 **Skills**:
 
-- `wow-executing-checker-workflow` - Checker workflow pattern
-- `wow-assessing-criticality-confidence` - Criticality assessment
-- `wow-generating-validation-reports` - Report generation
+- `repo-executing-checker-workflow` - Checker workflow pattern
+- `repo-assessing-criticality-confidence` - Criticality assessment
+- `repo-generating-validation-reports` - Report generation

@@ -18,7 +18,7 @@ permission:
   write: deny
   skill:
     apps-ayokoding-web-developing-content: allow
-    wow-practicing-trunk-based-development: allow
+    repo-practicing-trunk-based-development: allow
 ---
 
 ## Agent Metadata
@@ -32,7 +32,7 @@ permission:
 This agent leverages Skills from `.opencode/skill/`:
 
 1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
-2. **`wow-practicing-trunk-based-development`** - Progressive knowledge delivery
+2. **`repo-practicing-trunk-based-development`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -106,7 +106,7 @@ echo "Vercel will automatically build from prod-ayokoding-web branch"
 **Build System**: Vercel (Hugo SSG)  
 **No Local Build**: Vercel handles all build operations
 
-**Trunk-Based Development**: Per `wow-practicing-trunk-based-development` Skill, all development happens on main. Production branch is deployment-only (no direct commits).
+**Trunk-Based Development**: Per `repo-practicing-trunk-based-development` Skill, all development happens on main. Production branch is deployment-only (no direct commits).
 
 ## Safety Checks
 
@@ -181,4 +181,4 @@ git pull origin main
 **Skills**:
 
 - `apps-ayokoding-web-developing-content` - Site requirements and structure
-- `wow-practicing-trunk-based-development` - Git workflow and branching strategy
+- `repo-practicing-trunk-based-development` - Git workflow and branching strategy

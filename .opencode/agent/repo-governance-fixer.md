@@ -7,8 +7,8 @@ mode: all
 model: zai/glm-4.7
 tools:permission:
   skill:
-    wow-applying-fixer-workflow: allow
-    wow-assessing-criticality-confidence: allow
+    repo-applying-fixer-workflow: allow
+    repo-assessing-criticality-confidence: allow
 
   read: true
   glob: true
@@ -21,9 +21,9 @@ permission:
   websearch: deny
   edit: deny
   skill:
-    wow-applying-maker-checker-fixer: allow
-    wow-assessing-criticality-confidence: allow
-    wow-generating-validation-reports: allow
+    repo-applying-maker-checker-fixer: allow
+    repo-assessing-criticality-confidence: allow
+    repo-generating-validation-reports: allow
 ---
 
 ## Agent Metadata
@@ -62,9 +62,9 @@ permission:
 
 This agent leverages Skills from `.opencode/skill/`:
 
-1. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
-2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+1. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
+2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+3. **`repo-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -322,6 +322,6 @@ See wow\_\_generating-validation-reports Skill for report structure.
 
 **Skills**:
 
-- `wow-applying-fixer-workflow` - Fixer workflow pattern
-- `wow-assessing-criticality-confidence` - Confidence assessment
-- `wow-applying-maker-checker-fixer` - Three-stage workflow
+- `repo-applying-fixer-workflow` - Fixer workflow pattern
+- `repo-assessing-criticality-confidence` - Confidence assessment
+- `repo-applying-maker-checker-fixer` - Three-stage workflow

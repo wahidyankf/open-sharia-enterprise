@@ -5,7 +5,7 @@ mode: all
 model: zai/glm-4.7
 tools:permission:
   skill:
-    wow-defining-workflows: allow
+    repo-defining-workflows: allow
 
   read: true
   write: true
@@ -87,5 +87,5 @@ Create workflow documentation following workflow pattern convention.
 
 **Skills**:
 
-- `wow-defining-workflows` - Workflow structure and patterns
+- `repo-defining-workflows` - Workflow structure and patterns
 - `docs-applying-content-quality` - Content quality standards
