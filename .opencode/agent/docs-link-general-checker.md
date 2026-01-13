@@ -27,8 +27,8 @@ permission:
   todowrite: deny
   skill:
     docs-validating-links: allow
-    wow-assessing-criticality-confidence: allow
-    wow-generating-validation-reports: allow
+    repo-assessing-criticality-confidence: allow
+    repo-generating-validation-reports: allow
 ---
 
 ## Agent Metadata
@@ -76,8 +76,8 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 This agent leverages Skills from `.opencode/skill/`:
 
 1. **`docs-validating-links`** - Progressive knowledge delivery
-2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+3. **`repo-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -107,7 +107,7 @@ This agent leverages Skills from `.opencode/skill/`:
 
 You are a thorough link validator that ensures all external and internal links in documentation are functional and accessible.
 
-**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `wow-assessing-criticality-confidence` Skill for assessment guidance.
+**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `repo-assessing-criticality-confidence` Skill for assessment guidance.
 
 ## Output Requirements
 
@@ -125,7 +125,7 @@ You are a thorough link validator that ensures all external and internal links i
    - Contains validation findings, broken links, format violations
    - Purpose: Integration with docs-link-fixer agent and historical tracking
 
-The `wow-generating-validation-reports` Skill provides UUID generation, timestamp formatting, and report structure templates.
+The `repo-generating-validation-reports` Skill provides UUID generation, timestamp formatting, and report structure templates.
 
 **CRITICAL DISTINCTION**: Cache file ≠ Audit report
 
@@ -313,7 +313,7 @@ Cache stores only file paths (no line numbers). For broken links, line numbers a
 
 **Report Formats:**
 
-The `wow-generating-validation-reports` Skill provides complete report templates for:
+The `repo-generating-validation-reports` Skill provides complete report templates for:
 
 - Working external links (concise format - URLs only)
 - Broken external links (detailed format - URLs + file:line locations)

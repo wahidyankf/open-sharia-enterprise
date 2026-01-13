@@ -24,9 +24,9 @@ permission:
   todowrite: deny
   edit: deny
   skill:
-    wow-executing-checker-workflow: allow
-    wow-applying-maker-checker-fixer: allow
-    wow-assessing-criticality-confidence: allow
+    repo-executing-checker-workflow: allow
+    repo-applying-maker-checker-fixer: allow
+    repo-assessing-criticality-confidence: allow
     docs-applying-content-quality: allow
     docs-validating-factual-accuracy: allow
 ---
@@ -43,17 +43,17 @@ permission:
 **Before**: Maker creates content
 **After**: User reviews → Fixer applies validated fixes
 
-**See `wow-generating-validation-reports` Skill** for UUID chain generation, progressive report writing methodology, and report file patterns.
+**See `repo-generating-validation-reports` Skill** for UUID chain generation, progressive report writing methodology, and report file patterns.
 
-**See `wow-assessing-criticality-confidence` Skill** for criticality level definitions, confidence assessment, and priority matrix.
+**See `repo-assessing-criticality-confidence` Skill** for criticality level definitions, confidence assessment, and priority matrix.
 
 ## Knowledge Dependencies (Skills)
 
 This agent leverages Skills from `.opencode/skill/`:
 
-1. **`wow-executing-checker-workflow`** - Progressive knowledge delivery
-2. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
-3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
+1. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
+2. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
+3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
 4. **`docs-applying-content-quality`** - Progressive knowledge delivery
 5. **`docs-validating-factual-accuracy`** - Progressive knowledge delivery
 
@@ -98,7 +98,7 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 
 ## Criticality and Confidence
 
-**Criticality Assessment**: See `wow-assessing-criticality-confidence` Skill for complete four-level system (CRITICAL/HIGH/MEDIUM/LOW) with severity indicators and domain-specific examples.
+**Criticality Assessment**: See `repo-assessing-criticality-confidence` Skill for complete four-level system (CRITICAL/HIGH/MEDIUM/LOW) with severity indicators and domain-specific examples.
 
 **Audit Reporting**: This agent categorizes findings using standardized criticality levels defined in [Criticality Levels Convention](../../governance/development/quality/ex-ru-de-qu-criticality-levels.md).
 
@@ -302,7 +302,7 @@ filename="docs-${uuid}-${timestamp}-audit.md"
 
 ## Workflow Overview
 
-**See `wow-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+**See `repo-executing-checker-workflow` Skill for standard checker workflow pattern** including:
 
 1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
 2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)

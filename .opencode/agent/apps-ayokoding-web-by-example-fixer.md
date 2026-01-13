@@ -7,7 +7,7 @@ model: zai/glm-4.7
 tools:permission:
   skill:
     apps-ayokoding-web-developing-content: allow
-    wow-applying-fixer-workflow: allow
+    repo-applying-fixer-workflow: allow
 
   read: true
   edit: true
@@ -20,12 +20,12 @@ permission:
   todowrite: deny
   websearch: deny
   skill:
-    wow-applying-fixer-workflow: allow
+    repo-applying-fixer-workflow: allow
     apps-ayokoding-web-developing-content: allow
     docs-creating-by-example-tutorials: allow
-    wow-assessing-criticality-confidence: allow
-    wow-applying-maker-checker-fixer: allow
-    wow-generating-validation-reports: allow
+    repo-assessing-criticality-confidence: allow
+    repo-applying-maker-checker-fixer: allow
+    repo-generating-validation-reports: allow
 ---
 
 ## Agent Metadata
@@ -64,12 +64,12 @@ permission:
 
 This agent leverages Skills from `.opencode/skill/`:
 
-1. **`wow-applying-fixer-workflow`** - Progressive knowledge delivery
+1. **`repo-applying-fixer-workflow`** - Progressive knowledge delivery
 2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 3. **`docs-creating-by-example-tutorials`** - Progressive knowledge delivery
-4. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-5. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
-6. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+4. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+5. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
+6. **`repo-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -96,7 +96,7 @@ This agent leverages Skills from `.opencode/skill/`:
 
 You are a careful and methodical fix applicator that validates By Example checker findings before applying any changes.
 
-**Priority-Based Execution**: This agent combines criticality with confidence to determine fix priority (P0-P4). See `wow-assessing-criticality-confidence` Skill for complete integration details.
+**Priority-Based Execution**: This agent combines criticality with confidence to determine fix priority (P0-P4). See `repo-assessing-criticality-confidence` Skill for complete integration details.
 
 ## Core Responsibility
 
@@ -110,11 +110,11 @@ You are a careful and methodical fix applicator that validates By Example checke
 
 ## Mode Parameter Handling
 
-The `wow-applying-maker-checker-fixer` Skill provides complete mode parameter logic (lax/normal/strict/ocd levels, filtering, reporting).
+The `repo-applying-maker-checker-fixer` Skill provides complete mode parameter logic (lax/normal/strict/ocd levels, filtering, reporting).
 
 ## How This Agent Works
 
-**See `wow-applying-fixer-workflow` Skill for complete workflow details** including:
+**See `repo-applying-fixer-workflow` Skill for complete workflow details** including:
 
 1. **Report Discovery**: Auto-detect latest audit report with manual override support
 2. **Validation Strategy**: Re-validate each finding to assess HIGH/MEDIUM/FALSE_POSITIVE confidence
@@ -125,7 +125,7 @@ The `wow-applying-maker-checker-fixer` Skill provides complete mode parameter lo
 
 ## Confidence Level Assessment
 
-The `wow-assessing-criticality-confidence` Skill provides confidence definitions and examples.
+The `repo-assessing-criticality-confidence` Skill provides confidence definitions and examples.
 
 **Domain-Specific Examples for By Example Content**:
 
@@ -171,9 +171,9 @@ The `wow-assessing-criticality-confidence` Skill provides confidence definitions
 
 - `apps-ayokoding-web-developing-content` - ayokoding-web compliance
 - `docs-creating-by-example-tutorials` - By Example standards
-- `wow-assessing-criticality-confidence` - Confidence assessment
-- `wow-applying-maker-checker-fixer` - Mode handling
-- `wow-generating-validation-reports` - Report generation
+- `repo-assessing-criticality-confidence` - Confidence assessment
+- `repo-applying-maker-checker-fixer` - Mode handling
+- `repo-generating-validation-reports` - Report generation
 
 ---
 

@@ -5,7 +5,7 @@ mode: all
 model: zai/glm-4.7
 tools:permission:
   skill:
-    wow-applying-fixer-workflow: allow
+    repo-applying-fixer-workflow: allow
 
   read: true
   edit: true
@@ -19,9 +19,9 @@ permission:
   websearch: deny
   skill:
     docs-applying-diataxis-framework: allow
-    wow-assessing-criticality-confidence: allow
-    wow-applying-maker-checker-fixer: allow
-    wow-generating-validation-reports: allow
+    repo-assessing-criticality-confidence: allow
+    repo-applying-maker-checker-fixer: allow
+    repo-generating-validation-reports: allow
 ---
 
 ## Agent Metadata
@@ -61,9 +61,9 @@ permission:
 This agent leverages Skills from `.opencode/skill/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
-2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
-4. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+3. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
+4. **`repo-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -90,7 +90,7 @@ This agent leverages Skills from `.opencode/skill/`:
 
 You are a careful and methodical fix applicator that validates plan\_\_checker findings before applying any changes to prevent false positives and ensure plan quality.
 
-**Priority-Based Execution**: This agent combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix priority (P0-P4). See `wow-assessing-criticality-confidence` Skill for complete integration details.
+**Priority-Based Execution**: This agent combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix priority (P0-P4). See `repo-assessing-criticality-confidence` Skill for complete integration details.
 
 ## Core Responsibility
 
@@ -107,13 +107,13 @@ Your primary job is to:
 
 ## Mode Parameter Handling
 
-The `wow-applying-maker-checker-fixer` Skill provides complete mode parameter logic including mode levels, filtering, reporting, and workflow integration.
+The `repo-applying-maker-checker-fixer` Skill provides complete mode parameter logic including mode levels, filtering, reporting, and workflow integration.
 
 ## How This Agent Works
 
 ### 1. Report Discovery
 
-The `wow-applying-maker-checker-fixer` Skill provides report discovery logic (auto-detect latest, allow override, verify exists).
+The `repo-applying-maker-checker-fixer` Skill provides report discovery logic (auto-detect latest, allow override, verify exists).
 
 ### 2. Validation Strategy
 
@@ -125,11 +125,11 @@ Apply HIGH_CONFIDENCE fixes automatically, skip others, report summary.
 
 ### 4. Fix Report Generation
 
-Use `wow-generating-validation-reports` Skill for comprehensive fix report generation.
+Use `repo-generating-validation-reports` Skill for comprehensive fix report generation.
 
 ## Confidence Level Assessment
 
-The `wow-assessing-criticality-confidence` Skill provides complete confidence level definitions, domain-specific examples, and assessment criteria.
+The `repo-assessing-criticality-confidence` Skill provides complete confidence level definitions, domain-specific examples, and assessment criteria.
 
 **Domain-Specific Examples for Plan Content**:
 
@@ -177,9 +177,9 @@ The `wow-assessing-criticality-confidence` Skill provides complete confidence le
 **Skills:**
 
 - `docs-applying-diataxis-framework` - Documentation organization
-- `wow-assessing-criticality-confidence` - Confidence assessment
-- `wow-applying-maker-checker-fixer` - Mode handling and workflow
-- `wow-generating-validation-reports` - Report generation
+- `repo-assessing-criticality-confidence` - Confidence assessment
+- `repo-applying-maker-checker-fixer` - Mode handling and workflow
+- `repo-generating-validation-reports` - Report generation
 
 ---
 

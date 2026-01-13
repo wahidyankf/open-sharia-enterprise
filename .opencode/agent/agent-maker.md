@@ -8,7 +8,7 @@ tools:permission:
     agent-developing-agents: allow
     agent-documenting-references: allow
     agent-selecting-models: allow
-    wow-defining-workflows: allow
+    repo-defining-workflows: allow
 
   read: true
   write: true

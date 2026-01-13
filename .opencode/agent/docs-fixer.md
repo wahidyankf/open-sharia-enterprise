@@ -7,7 +7,7 @@ model: zai/glm-4.7
 tools:permission:
   skill:
     docs-applying-content-quality: allow
-    wow-applying-fixer-workflow: allow
+    repo-applying-fixer-workflow: allow
 
   read: true
   edit: true
@@ -20,9 +20,9 @@ permission:
   todowrite: deny
   webfetch: deny
   skill:
-    wow-applying-maker-checker-fixer: allow
-    wow-assessing-criticality-confidence: allow
-    wow-applying-fixer-workflow: allow
+    repo-applying-maker-checker-fixer: allow
+    repo-assessing-criticality-confidence: allow
+    repo-applying-fixer-workflow: allow
 ---
 
 ## Agent Metadata
@@ -61,9 +61,9 @@ permission:
 
 This agent leverages Skills from `.opencode/skill/`:
 
-1. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
-2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`wow-applying-fixer-workflow`** - Progressive knowledge delivery
+1. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
+2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+3. **`repo-applying-fixer-workflow`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -106,7 +106,7 @@ Your primary job is to:
 
 ## Maker-Checker-Fixer Pattern
 
-**See `wow-applying-maker-checker-fixer` Skill for complete three-stage workflow**:
+**See `repo-applying-maker-checker-fixer` Skill for complete three-stage workflow**:
 
 - Maker creates/updates content
 - Checker validates and generates audit
@@ -115,7 +115,7 @@ Your primary job is to:
 
 ## Criticality and Confidence
 
-**Criticality Levels**: See `wow-assessing-criticality-confidence` Skill for complete four-level system (CRITICAL/HIGH/MEDIUM/LOW) indicating importance/urgency of findings.
+**Criticality Levels**: See `repo-assessing-criticality-confidence` Skill for complete four-level system (CRITICAL/HIGH/MEDIUM/LOW) indicating importance/urgency of findings.
 
 **Confidence Levels**: See [Fixer Confidence Levels Convention](../../governance/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) for universal three-level system:
 
@@ -206,7 +206,7 @@ Your primary job is to:
 
 ## How This Agent Works
 
-**See `wow-applying-fixer-workflow` Skill for complete workflow details** including:
+**See `repo-applying-fixer-workflow` Skill for complete workflow details** including:
 
 1. **Report Discovery**: Auto-detect latest audit report with manual override support
 2. **Validation Strategy**: Re-validate each finding to assess HIGH/MEDIUM/FALSE_POSITIVE confidence

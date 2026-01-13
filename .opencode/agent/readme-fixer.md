@@ -6,7 +6,7 @@ model: zai/glm-4.7
 tools:permission:
   skill:
     readme-writing-readme-files: allow
-    wow-applying-fixer-workflow: allow
+    repo-applying-fixer-workflow: allow
 
   read: true
   edit: true
@@ -19,11 +19,11 @@ permission:
   todowrite: deny
   websearch: deny
   skill:
-    wow-applying-fixer-workflow: allow
+    repo-applying-fixer-workflow: allow
     readme-writing-readme-files: allow
-    wow-assessing-criticality-confidence: allow
-    wow-applying-maker-checker-fixer: allow
-    wow-generating-validation-reports: allow
+    repo-assessing-criticality-confidence: allow
+    repo-applying-maker-checker-fixer: allow
+    repo-generating-validation-reports: allow
 ---
 
 ## Agent Metadata
@@ -62,11 +62,11 @@ permission:
 
 This agent leverages Skills from `.opencode/skill/`:
 
-1. **`wow-applying-fixer-workflow`** - Progressive knowledge delivery
+1. **`repo-applying-fixer-workflow`** - Progressive knowledge delivery
 2. **`readme-writing-readme-files`** - Progressive knowledge delivery
-3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-4. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
-5. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+4. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
+5. **`repo-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -93,7 +93,7 @@ This agent leverages Skills from `.opencode/skill/`:
 
 You are a careful and methodical fix applicator that validates readme\_\_checker findings before applying any changes to prevent false positives and ensure README quality.
 
-**Priority-Based Execution**: This agent combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix priority (P0-P4). See `wow-assessing-criticality-confidence` Skill for complete integration details.
+**Priority-Based Execution**: This agent combines criticality (importance/urgency) with confidence (certainty/fixability) to determine fix priority (P0-P4). See `repo-assessing-criticality-confidence` Skill for complete integration details.
 
 ## Core Responsibility
 
@@ -112,7 +112,7 @@ Your primary job is to:
 
 ## Mode Parameter Handling
 
-The `wow-applying-maker-checker-fixer` Skill provides complete mode parameter logic:
+The `repo-applying-maker-checker-fixer` Skill provides complete mode parameter logic:
 
 - **Mode levels**: lax (CRITICAL only), normal (CRITICAL+HIGH), strict (CRITICAL+HIGH+MEDIUM), ocd (all)
 - **Filtering logic**: Filter findings before re-validation based on mode threshold
@@ -123,7 +123,7 @@ See Skill for implementation details and reporting templates.
 
 ## How This Agent Works
 
-**See `wow-applying-fixer-workflow` Skill for complete workflow details** including:
+**See `repo-applying-fixer-workflow` Skill for complete workflow details** including:
 
 1. **Report Discovery**: Auto-detect latest audit report with manual override support
 2. **Validation Strategy**: Re-validate each finding to assess HIGH/MEDIUM/FALSE_POSITIVE confidence
@@ -134,7 +134,7 @@ See Skill for implementation details and reporting templates.
 
 ## Confidence Level Assessment
 
-This agent uses the universal three-level confidence system. The `wow-assessing-criticality-confidence` Skill provides:
+This agent uses the universal three-level confidence system. The `repo-assessing-criticality-confidence` Skill provides:
 
 - Complete confidence level definitions (HIGH/MEDIUM/FALSE_POSITIVE)
 - Domain-specific examples for README content
@@ -362,9 +362,9 @@ Always provide:
 **Skills:**
 
 - `readme-writing-readme-files` - README-specific standards
-- `wow-assessing-criticality-confidence` - Confidence assessment
-- `wow-applying-maker-checker-fixer` - Mode handling and workflow
-- `wow-generating-validation-reports` - Report generation
+- `repo-assessing-criticality-confidence` - Confidence assessment
+- `repo-applying-maker-checker-fixer` - Mode handling and workflow
+- `repo-generating-validation-reports` - Report generation
 
 ---
 

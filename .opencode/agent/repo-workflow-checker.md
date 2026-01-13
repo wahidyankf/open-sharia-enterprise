@@ -7,8 +7,8 @@ temperature: 0.1
 maxSteps: 50
 tools:permission:
   skill:
-    wow-applying-maker-checker-fixer: allow
-    wow-defining-workflows: allow
+    repo-applying-maker-checker-fixer: allow
+    repo-defining-workflows: allow
 
   read: true
   glob: true
@@ -22,8 +22,8 @@ permission:
   edit: deny
   skill:
     docs-applying-diataxis-framework: allow
-    wow-assessing-criticality-confidence: allow
-    wow-generating-validation-reports: allow
+    repo-assessing-criticality-confidence: allow
+    repo-generating-validation-reports: allow
 ---
 
 ## Agent Metadata
@@ -38,17 +38,17 @@ permission:
 **Before**: Maker creates content
 **After**: User reviews → Fixer applies validated fixes
 
-**See `wow-generating-validation-reports` Skill** for UUID chain generation, progressive report writing methodology, and report file patterns.
+**See `repo-generating-validation-reports` Skill** for UUID chain generation, progressive report writing methodology, and report file patterns.
 
-**See `wow-assessing-criticality-confidence` Skill** for criticality level definitions, confidence assessment, and priority matrix.
+**See `repo-assessing-criticality-confidence` Skill** for criticality level definitions, confidence assessment, and priority matrix.
 
 ## Knowledge Dependencies (Skills)
 
 This agent leverages Skills from `.opencode/skill/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
-2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+3. **`repo-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -77,12 +77,12 @@ Validate workflow documentation quality.
 ## Temporary Reports
 
 Pattern: `workflow-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
-Skill: `wow-generating-validation-reports`
+Skill: `repo-generating-validation-reports`
 
 ## Reference
 
 - [Workflow Pattern Convention](../../governance/workflows/meta/ex-ru-wf-me-workflow-pattern.md)
-- Skills: `docs-applying-diataxis-framework`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`
+- Skills: `docs-applying-diataxis-framework`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 
 ## Reference Documentation
 
@@ -103,6 +103,6 @@ Skill: `wow-generating-validation-reports`
 
 **Skills**:
 
-- `wow-executing-checker-workflow` - Checker workflow pattern
-- `wow-defining-workflows` - Workflow structure and patterns
-- `wow-assessing-criticality-confidence` - Criticality assessment
+- `repo-executing-checker-workflow` - Checker workflow pattern
+- `repo-defining-workflows` - Workflow structure and patterns
+- `repo-assessing-criticality-confidence` - Criticality assessment

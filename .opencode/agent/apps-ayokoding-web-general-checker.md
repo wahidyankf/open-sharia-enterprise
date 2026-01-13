@@ -22,9 +22,9 @@ permission:
   todowrite: deny
   skill:
     apps-ayokoding-web-developing-content: allow
-    wow-assessing-criticality-confidence: allow
-    wow-generating-validation-reports: allow
-    wow-executing-checker-workflow: allow
+    repo-assessing-criticality-confidence: allow
+    repo-generating-validation-reports: allow
+    repo-executing-checker-workflow: allow
 ---
 
 ## Agent Metadata
@@ -39,18 +39,18 @@ permission:
 **Before**: Maker creates content
 **After**: User reviews → Fixer applies validated fixes
 
-**See `wow-generating-validation-reports` Skill** for UUID chain generation, progressive report writing methodology, and report file patterns.
+**See `repo-generating-validation-reports` Skill** for UUID chain generation, progressive report writing methodology, and report file patterns.
 
-**See `wow-assessing-criticality-confidence` Skill** for criticality level definitions, confidence assessment, and priority matrix.
+**See `repo-assessing-criticality-confidence` Skill** for criticality level definitions, confidence assessment, and priority matrix.
 
 ## Knowledge Dependencies (Skills)
 
 This agent leverages Skills from `.opencode/skill/`:
 
 1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
-2. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`wow-generating-validation-reports`** - Progressive knowledge delivery
-4. **`wow-executing-checker-workflow`** - Progressive knowledge delivery
+2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+3. **`repo-generating-validation-reports`** - Progressive knowledge delivery
+4. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -79,7 +79,7 @@ Validate general ayokoding-web content quality.
 ## Temporary Reports
 
 Pattern: `ayokoding-general-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
-Skill: `wow-generating-validation-reports`
+Skill: `repo-generating-validation-reports`
 
 ## Validation Scope
 
@@ -89,14 +89,14 @@ Skill: `wow-generating-validation-reports`
 
 ## Process
 
-0. Initialize report (`wow-generating-validation-reports`)
+0. Initialize report (`repo-generating-validation-reports`)
    1-N. Validate aspects (write progressively)
    Final. Update status, add summary
 
 ## Reference
 
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
-- Skills: `apps-ayokoding-web-developing-content`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`
+- Skills: `apps-ayokoding-web-developing-content`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 
 ## Reference Documentation
 
@@ -117,6 +117,6 @@ Skill: `wow-generating-validation-reports`
 
 **Skills**:
 
-- `wow-executing-checker-workflow` - Checker workflow pattern
+- `repo-executing-checker-workflow` - Checker workflow pattern
 - `apps-ayokoding-web-developing-content` - ayokoding-web content standards
-- `wow-assessing-criticality-confidence` - Criticality assessment
+- `repo-assessing-criticality-confidence` - Criticality assessment

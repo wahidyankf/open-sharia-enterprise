@@ -123,7 +123,7 @@ opencode agent plan-checker --plan plans/in-progress/my-plan/
 ```yaml
 permission:
   skill:
-    wow-applying-maker-checker-fixer: allow
+    repo-applying-maker-checker-fixer: allow
     docs-validating-factual-accuracy: allow
 ```
 
@@ -312,7 +312,7 @@ permission:
   skill:
     docs-applying-content-quality: allow
     docs-validating-factual-accuracy: allow
-    wow-applying-fixer-workflow: allow
+    repo-applying-fixer-workflow: allow
 ---
 ```
 

@@ -7,7 +7,7 @@ tools:permission:
   skill:
     agent-developing-agents: allow
     agent-documenting-references: allow
-    wow-defining-workflows: allow
+    repo-defining-workflows: allow
 
   read: true
   write: true
@@ -89,5 +89,5 @@ Document standards following convention structure (Purpose, Standards, Examples,
 
 **Skills**:
 
-- `wow-applying-maker-checker-fixer` - Three-stage workflow
+- `repo-applying-maker-checker-fixer` - Three-stage workflow
 - `docs-applying-content-quality` - Content quality standards

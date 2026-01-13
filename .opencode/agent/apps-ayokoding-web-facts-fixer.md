@@ -5,7 +5,7 @@ mode: all
 model: zai/glm-4.7
 tools:permission:
   skill:
-    wow-applying-fixer-workflow: allow
+    repo-applying-fixer-workflow: allow
 
   read: true
   edit: true
@@ -18,12 +18,12 @@ tools:permission:
 permission:
   todowrite: deny
   skill:
-    wow-applying-fixer-workflow: allow
+    repo-applying-fixer-workflow: allow
     apps-ayokoding-web-developing-content: allow
     docs-validating-factual-accuracy: allow
-    wow-assessing-criticality-confidence: allow
-    wow-applying-maker-checker-fixer: allow
-    wow-generating-validation-reports: allow
+    repo-assessing-criticality-confidence: allow
+    repo-applying-maker-checker-fixer: allow
+    repo-generating-validation-reports: allow
 ---
 
 ## Agent Metadata
@@ -62,12 +62,12 @@ permission:
 
 This agent leverages Skills from `.opencode/skill/`:
 
-1. **`wow-applying-fixer-workflow`** - Progressive knowledge delivery
+1. **`repo-applying-fixer-workflow`** - Progressive knowledge delivery
 2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 3. **`docs-validating-factual-accuracy`** - Progressive knowledge delivery
-4. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-5. **`wow-applying-maker-checker-fixer`** - Progressive knowledge delivery
-6. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+4. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+5. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
+6. **`repo-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -96,22 +96,22 @@ This agent leverages Skills from `.opencode/skill/`:
 
 You validate facts-checker findings before applying fixes.
 
-**Priority-Based Execution**: See `wow-assessing-criticality-confidence` Skill.
+**Priority-Based Execution**: See `repo-assessing-criticality-confidence` Skill.
 
 ## Mode Parameter Handling
 
-The `wow-applying-maker-checker-fixer` Skill provides mode logic.
+The `repo-applying-maker-checker-fixer` Skill provides mode logic.
 
 ## How This Works
 
-1. Report Discovery: `wow-applying-maker-checker-fixer` Skill
+1. Report Discovery: `repo-applying-maker-checker-fixer` Skill
 2. Validation Strategy: Read → Re-validate → Assess → Apply/Skip
 3. Fix Application: HIGH confidence only
-4. Fix Report: `wow-generating-validation-reports` Skill
+4. Fix Report: `repo-generating-validation-reports` Skill
 
 ## Confidence Assessment
 
-The `wow-assessing-criticality-confidence` Skill provides definitions.
+The `repo-assessing-criticality-confidence` Skill provides definitions.
 
 **HIGH Confidence**: Verifiable factual errors (outdated version, incorrect syntax)
 **MEDIUM Confidence**: Ambiguous or context-dependent
@@ -124,4 +124,4 @@ The `wow-assessing-criticality-confidence` Skill provides definitions.
 
 **Skills:**
 
-- `apps-ayokoding-web-developing-content`, `docs-validating-factual-accuracy`, `wow-assessing-criticality-confidence`, `wow-applying-maker-checker-fixer`, `wow-generating-validation-reports`
+- `apps-ayokoding-web-developing-content`, `docs-validating-factual-accuracy`, `repo-assessing-criticality-confidence`, `repo-applying-maker-checker-fixer`, `repo-generating-validation-reports`

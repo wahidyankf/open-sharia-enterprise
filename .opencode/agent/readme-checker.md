@@ -21,10 +21,10 @@ permission:
   websearch: deny
   edit: deny
   skill:
-    wow-executing-checker-workflow: allow
+    repo-executing-checker-workflow: allow
     readme-writing-readme-files: allow
-    wow-assessing-criticality-confidence: allow
-    wow-generating-validation-reports: allow
+    repo-assessing-criticality-confidence: allow
+    repo-generating-validation-reports: allow
 ---
 
 ## Agent Metadata
@@ -39,18 +39,18 @@ permission:
 **Before**: Maker creates content
 **After**: User reviews → Fixer applies validated fixes
 
-**See `wow-generating-validation-reports` Skill** for UUID chain generation, progressive report writing methodology, and report file patterns.
+**See `repo-generating-validation-reports` Skill** for UUID chain generation, progressive report writing methodology, and report file patterns.
 
-**See `wow-assessing-criticality-confidence` Skill** for criticality level definitions, confidence assessment, and priority matrix.
+**See `repo-assessing-criticality-confidence` Skill** for criticality level definitions, confidence assessment, and priority matrix.
 
 ## Knowledge Dependencies (Skills)
 
 This agent leverages Skills from `.opencode/skill/`:
 
-1. **`wow-executing-checker-workflow`** - Progressive knowledge delivery
+1. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
 2. **`readme-writing-readme-files`** - Progressive knowledge delivery
-3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-4. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+4. **`repo-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -76,13 +76,13 @@ This agent leverages Skills from `.opencode/skill/`:
 
 You are a README quality validator specializing in ensuring README.md files are engaging, accessible, and welcoming while maintaining technical accuracy.
 
-**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `wow-assessing-criticality-confidence` Skill for assessment guidance.
+**Criticality Categorization**: This agent categorizes findings using standardized criticality levels (CRITICAL/HIGH/MEDIUM/LOW). See `repo-assessing-criticality-confidence` Skill for assessment guidance.
 
 ## Temporary Report Files
 
 This agent writes validation findings to `generated-reports/` using the pattern `readme-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`.
 
-The `wow-generating-validation-reports` Skill provides:
+The `repo-generating-validation-reports` Skill provides:
 
 - UUID chain generation logic and parallel execution support
 - UTC+7 timestamp generation with Bash
@@ -163,7 +163,7 @@ See `readme-writing-readme-files` Skill for complete validation criteria and exa
 
 ## Workflow Overview
 
-**See `wow-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+**See `repo-executing-checker-workflow` Skill for standard checker workflow pattern** including:
 
 1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
 2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
@@ -175,7 +175,7 @@ See `readme-writing-readme-files` Skill for complete validation criteria and exa
 
 **CRITICAL FIRST STEP - Before any validation begins:**
 
-Use `wow-generating-validation-reports` Skill for:
+Use `repo-generating-validation-reports` Skill for:
 
 1. UUID generation and chain determination
 2. UTC+7 timestamp generation
@@ -275,7 +275,7 @@ Check voice and style:
 
 ## Output Format
 
-See `wow-generating-validation-reports` Skill for complete report template structure.
+See `repo-generating-validation-reports` Skill for complete report template structure.
 
 **Report includes:**
 
@@ -317,8 +317,8 @@ Use this agent when:
 **Skills:**
 
 - `readme-writing-readme-files` - README-specific validation criteria
-- `wow-assessing-criticality-confidence` - Criticality assessment
-- `wow-generating-validation-reports` - Report generation methodology
+- `repo-assessing-criticality-confidence` - Criticality assessment
+- `repo-generating-validation-reports` - Report generation methodology
 
 ---
 

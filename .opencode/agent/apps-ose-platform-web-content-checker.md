@@ -21,10 +21,10 @@ permission:
   todowrite: deny
   websearch: deny
   skill:
-    wow-executing-checker-workflow: allow
+    repo-executing-checker-workflow: allow
     apps-ose-platform-web-developing-content: allow
-    wow-assessing-criticality-confidence: allow
-    wow-generating-validation-reports: allow
+    repo-assessing-criticality-confidence: allow
+    repo-generating-validation-reports: allow
 ---
 
 ## Agent Metadata
@@ -71,10 +71,10 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 This agent leverages Skills from `.opencode/skill/`:
 
-1. **`wow-executing-checker-workflow`** - Progressive knowledge delivery
+1. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
 2. **`apps-ose-platform-web-developing-content`** - Progressive knowledge delivery
-3. **`wow-assessing-criticality-confidence`** - Progressive knowledge delivery
-4. **`wow-generating-validation-reports`** - Progressive knowledge delivery
+3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+4. **`repo-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -103,12 +103,12 @@ Validate ose-platform-web content quality.
 ## Temporary Reports
 
 Pattern: `ose-platform-content-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
-Skill: `wow-generating-validation-reports`
+Skill: `repo-generating-validation-reports`
 
 ## Reference
 
 - [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ex-ru-co-hu-ose-platform.md)
-- Skills: `apps-ose-platform-web-developing-content`, `wow-assessing-criticality-confidence`, `wow-generating-validation-reports`
+- Skills: `apps-ose-platform-web-developing-content`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 
 ## Reference Documentation
 
@@ -129,6 +129,6 @@ Skill: `wow-generating-validation-reports`
 
 **Skills**:
 
-- `wow-executing-checker-workflow` - Checker workflow pattern
+- `repo-executing-checker-workflow` - Checker workflow pattern
 - `apps-ose-platform-web-developing-content` - ose-platform-web standards
-- `wow-assessing-criticality-confidence` - Criticality assessment
+- `repo-assessing-criticality-confidence` - Criticality assessment
