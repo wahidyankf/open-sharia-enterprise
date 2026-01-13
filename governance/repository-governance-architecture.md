@@ -82,7 +82,7 @@ graph TD
 
 **Purpose**: Foundational purpose establishing WHY the project exists and WHAT change we seek.
 
-**Key Document**: [Vision - Open Sharia Enterprise](../vision/ex-vi__open-sharia-enterprise.md) (will be at `/governance/vision/` after move)
+**Key Document**: [Vision - Open Sharia Enterprise](../vision/open-sharia-enterprise.md) (will be at `/governance/vision/` after move)
 
 **Core Vision**:
 
@@ -596,7 +596,7 @@ This architecture document implements/respects the following principles:
 
 **Layer 0**:
 
-- [Vision - Open Sharia Enterprise](../vision/ex-vi__open-sharia-enterprise.md)
+- [Vision - Open Sharia Enterprise](../vision/open-sharia-enterprise.md)
 
 **Layer 1**:
 
