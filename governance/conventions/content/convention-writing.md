@@ -294,7 +294,7 @@ Before publishing a convention document, verify:
 ### Integration
 
 - [ ] Referenced in `governance/conventions/README.md`
-- [ ] Mentioned in CLAUDE.md if it affects agent behavior
+- [ ] Mentioned in AGENTS.md if it affects agent behavior
 - [ ] Used by at least one agent OR enforced in a hook/process
 - [ ] Cross-referenced by related conventions
 
@@ -416,7 +416,7 @@ Where:
 ### Version Control
 
 - Update `updated` field in frontmatter when making changes
-- Significant changes should update CLAUDE.md if they affect agent behavior
+- Significant changes should update AGENTS.md if they affect agent behavior
 - Use `wow__rules-maker` to propagate changes across related files
 
 ### Deprecation
@@ -426,7 +426,7 @@ If a convention becomes obsolete:
 1. Add deprecation notice at top of document
 2. Provide migration path to replacement convention
 3. Keep file for 6 months before considering deletion
-4. Update all references in other docs and CLAUDE.md
+4. Update all references in other docs and AGENTS.md
 
 ## Example Conventions
 
@@ -583,7 +583,7 @@ When creating a convention:
 
 **Repository Guidance:**
 
-- [CLAUDE.md](../../../CLAUDE.md) - Project-wide guidance for AI agents
+- [AGENTS.md](../../../AGENTS.md) - Project-wide guidance for AI agents
 - [Conventions Index](./README.md) - Index of all convention documents
 
 **Agents:**

@@ -51,7 +51,7 @@ Iteration 3: checker (3 findings) → fixer (3 applied) → 0 findings remain
 
 ### Mode 2: Manual Orchestration (Current State)
 
-**Description**: User or AI assistant (Claude Code or OpenCode) follows workflow steps directly using tools in main context.
+**Description**: User or AI assistant (OpenCodeor OpenCode) follows workflow steps directly using tools in main context.
 
 **Characteristics**:
 
@@ -210,7 +210,7 @@ Every workflow should include an "Execution Mode" section:
 
 **Current Mode**: Manual Orchestration
 
-This workflow is currently executed through manual orchestration where the AI assistant (Claude Code or OpenCode) follows workflow steps directly using Read/Write/Edit tools.
+This workflow is currently executed through manual orchestration where the AI assistant (OpenCodeor OpenCode) follows workflow steps directly using Read/Write/Edit tools.
 
 **How to Execute**:
 
@@ -250,7 +250,7 @@ When workflow runner is developed:
 
 ## Tool Usage Rules
 
-### For AI Assistant in Manual Mode (Claude Code / OpenCode)
+### For AI Assistant in Manual Mode (OpenCode/ OpenCode)
 
 **File Operations** (when executing workflow logic directly):
 - ✅ Use Write tool for creating new files (audit reports, fix reports)

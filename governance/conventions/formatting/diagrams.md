@@ -616,7 +616,7 @@ Perfect for showing file and folder hierarchies:
 
 ```
 open-sharia-enterprise/
-├── .claude/                   # Claude Code configuration
+├── .claude/                   # OpenCodeconfiguration
 │   └── agents/               # Specialized AI agents
 ├── docs/                      # Documentation (Diátaxis framework)
 │   ├── tutorials/            # Learning-oriented guides
@@ -810,7 +810,7 @@ graph TD
 ## Project Structure
 
 open-sharia-enterprise/
-├── .claude/ # Claude Code configuration
+├── .claude/ # OpenCodeconfiguration
 ├── docs/ # Documentation
 │ ├── tutorials/ # Step-by-step guides
 │ ├── how-to/ # Problem solutions
@@ -852,7 +852,7 @@ stateDiagram-v2
 
 ```mermaid
 graph TD
-    A[Claude Code - Main Agent] --> B[docs__maker.md]
+    A[OpenCode- Main Agent] --> B[docs__maker.md]
     A --> C[wow__rules-checker.md]
     A --> D[wow__rules-maker.md]
     A --> E[plan__maker.md]
@@ -869,7 +869,7 @@ graph TD
 ```markdown
 ## Agent Architecture
 
-Claude Code (Main Agent)
+OpenCode(Main Agent)
 ├── docs**maker.md (Documentation)
 ├── wow**rules-checker.md (Validation)
 ├── wow**rules-maker.md (Propagation)

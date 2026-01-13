@@ -711,7 +711,7 @@ User: "Run content validation workflow for [scope] in [mode] mode"
 
 ```
 
-The AI (Claude Code or OpenCode) will execute workflow logic directly using Read/Write/Edit tools.
+The AI (OpenCodeor OpenCode) will execute workflow logic directly using Read/Write/Edit tools.
 
 ## Steps
 

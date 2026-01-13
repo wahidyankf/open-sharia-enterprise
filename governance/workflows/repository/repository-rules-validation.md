@@ -42,21 +42,17 @@ outputs:
 
 # Repository Rules Validation Workflow
 
-**Purpose**: Automatically validate repository consistency across principles, conventions, development practices, agent and skill source definitions, CLAUDE.md, and subdirectory README files, then apply fixes iteratively until all issues are resolved.
+**Purpose**: Automatically validate repository consistency across principles, conventions, development practices, agent and skill source definitions, and subdirectory README files, then apply fixes iteratively until all issues are resolved.
 
 **IMPORTANT - Scope Clarification**:
 
 This workflow validates **source definitions only** in `governance/`. It does NOT validate generated directories:
 
-- ✅ **Validates**: `governance/agents/content/` (45 agent definitions)
-- ✅ **Validates**: `governance/agents/skills/` (23 skill definitions)
 - ✅ **Validates**: `governance/` (principles, conventions, development practices)
-- ❌ **Skips**: `.opencode/agent/` (generated - validate via `butler-cli agents validate`)
-- ❌ **Skips**: `.opencode/skill/` (generated - validate via `butler-cli skills validate`)
-- ❌ **Skips**: `.opencode/agent/` (generated - validate via `butler-cli agents validate`)
-- ❌ **Skips**: `.opencode/skills/` (generated - validate via `butler-cli skills validate`)
+- ❌ **Skips**: `.opencode/agent/` (generated - validate via CLI validation)
+- ❌ **Skips**: `.opencode/skill/` (generated - validate via CLI validation)
 
-**Generated Output Validation**: Use `butler-cli agents validate` and `butler-cli skills validate` for validating generated content. This workflow ensures SOURCE is correct, then sync commands validate output generation.
+**Generated Output Validation**: Use CLI validation commands for validating generated content. This workflow ensures SOURCE is correct, then sync commands validate output generation.
 
 **When to use**:
 
@@ -69,7 +65,7 @@ This workflow validates **source definitions only** in `governance/`. It does NO
 
 **Current Mode**: Manual Orchestration (see [Workflow Execution Modes Convention](../meta/execution-modes.md))
 
-This workflow is currently executed through **manual orchestration** where the AI assistant (Claude Code or OpenCode) follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
+This workflow is currently executed through **manual orchestration** where the AI assistant follows workflow steps directly using Read/Write/Edit tools. File changes persist to the actual filesystem.
 
 **How to Execute**:
 
@@ -349,9 +345,9 @@ Track across executions:
 - **Observable**: Generates audit reports for every iteration
 - **Bounded**: Max-iterations prevents runaway execution
 
-**Concurrency**: Currently validates and fixes sequentially. The `max-concurrency` parameter is reserved for future enhancements where multiple validation dimensions (principles, conventions, development, agents source in governance/agents/, CLAUDE.md) could run concurrently.
+**Concurrency**: Currently validates and fixes sequentially. The `max-concurrency` parameter is reserved for future enhancements where multiple validation dimensions (principles, conventions, development, agents source in governance/agents/) could run concurrently.
 
-**Note**: "agents" in this context refers to agent SOURCE definitions in `governance/agents/`, NOT generated directories (`.opencode/agent/` and `.opencode/agent/`).
+**Note**: "agents" in this context refers to agent SOURCE definitions in `governance/` and `.opencode/agent/`, NOT generated directories.
 
 This workflow ensures repository consistency through iterative validation and fixing, making it ideal for maintenance and quality assurance.
 
