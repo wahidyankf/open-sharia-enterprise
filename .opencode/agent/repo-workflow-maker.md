@@ -4,8 +4,6 @@ description: Creates workflow documentation in governance/workflows/ following
 mode: all
 model: zai/glm-4.7
 tools:
-    repo-defining-workflows: allow
-
   read: true
   write: true
   edit: true

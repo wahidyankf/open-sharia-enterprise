@@ -5,10 +5,6 @@ description: Creates comprehensive project plans with requirements, technical do
 mode: all
 model: zai/glm-4.7
 tools:
-    plan-creating-project-plans: allow
-    plan-writing-gherkin-criteria: allow
-    repo-defining-workflows: allow
-
   read: true
   write: true
   edit: true

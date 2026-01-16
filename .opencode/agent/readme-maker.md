@@ -6,8 +6,6 @@ description: Creates and updates README.md content while maintaining engagement,
 mode: all
 model: zai/glm-4.7
 tools:
-    readme-writing-readme-files: allow
-
   read: true
   write: true
   edit: true

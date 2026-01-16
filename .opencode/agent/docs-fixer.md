@@ -5,8 +5,6 @@ description: Applies validated fixes from docs-checker audit reports. Re-validat
 mode: all
 model: zai/glm-4.7
 tools:
-    repo-applying-fixer-workflow: allow
-
   read: true
   edit: true
   glob: true

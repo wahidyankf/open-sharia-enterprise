@@ -4,10 +4,6 @@ description: Develops Hugo sites (ayokoding-web, ose-platform-web) including the
 mode: all
 model: zai/glm-4.7
 tools:
-    repo-applying-maker-checker-fixer: allow
-    repo-assessing-criticality-confidence: allow
-    repo-understanding-repository-architecture: allow
-
   read: true
   write: true
   edit: true

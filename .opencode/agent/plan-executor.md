@@ -6,10 +6,6 @@ mode: all
 model: zai/glm-4.7
 maxSteps: 50
 tools:
-    plan-creating-project-plans: allow
-    repo-applying-maker-checker-fixer: allow
-    repo-generating-validation-reports: allow
-
   read: true
   write: true
   edit: true

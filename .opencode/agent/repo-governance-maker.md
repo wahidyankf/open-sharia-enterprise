@@ -4,10 +4,6 @@ description: Creates repository rules and conventions in docs/explanation/ direc
 mode: all
 model: zai/glm-4.7
 tools:
-    agent-developing-agents: allow
-    agent-documenting-references: allow
-    repo-defining-workflows: allow
-
   read: true
   write: true
   edit: true

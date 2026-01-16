@@ -5,8 +5,6 @@ description: Creates By Example tutorial content for ayokoding-web with 75-90 he
 mode: all
 model: zai/glm-4.7
 tools:
-    docs-creating-by-example-tutorials: allow
-
   read: true
   write: true
   edit: true

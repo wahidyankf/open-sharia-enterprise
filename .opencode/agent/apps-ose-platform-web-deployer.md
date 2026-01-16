@@ -4,8 +4,6 @@ description: Deploys ose-platform-web to production environment branch (prod-ose
 mode: all
 model: zai/glm-4.5-air
 tools:
-    apps-ose-platform-web-developing-content: allow
-
   bash: true
   grep: true
 permission:
