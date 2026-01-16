@@ -3,8 +3,7 @@ description: Applies validated fixes from readme-checker audit reports. Re-valid
   README findings before applying changes. Use after reviewing readme-checker output.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
+tools:
     readme-writing-readme-files: allow
     repo-applying-fixer-workflow: allow
 

@@ -5,8 +5,7 @@ description: Executes project plans systematically by following delivery checkli
 mode: all
 model: zai/glm-4.7
 maxSteps: 50
-tools:permission:
-  skill:
+tools:
     plan-creating-project-plans: allow
     repo-applying-maker-checker-fixer: allow
     repo-generating-validation-reports: allow

@@ -3,8 +3,7 @@ description: Creates workflow documentation in governance/workflows/ following
   workflow pattern convention.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
+tools:
     repo-defining-workflows: allow
 
   read: true

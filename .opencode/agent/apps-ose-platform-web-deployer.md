@@ -3,8 +3,7 @@ description: Deploys ose-platform-web to production environment branch (prod-ose
   after validation. Vercel listens to production branch for automatic builds.
 mode: all
 model: zai/glm-4.5-air
-tools:permission:
-  skill:
+tools:
     apps-ose-platform-web-developing-content: allow
 
   bash: true

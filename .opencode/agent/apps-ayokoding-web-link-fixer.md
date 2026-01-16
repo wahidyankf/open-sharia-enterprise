@@ -3,8 +3,7 @@ description: Applies validated fixes from link-checker audit reports. Re-validat
   link findings before applying changes.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
+tools:
     repo-applying-fixer-workflow: allow
 
   read: true

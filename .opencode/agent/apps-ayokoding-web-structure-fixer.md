@@ -3,9 +3,7 @@ description: Applies validated fixes from structure-checker audit reports. Re-va
   structure findings before applying changes.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
-    apps-ayokoding-web-developing-content: allow
+tools:
     repo-applying-fixer-workflow: allow
 
   read: true

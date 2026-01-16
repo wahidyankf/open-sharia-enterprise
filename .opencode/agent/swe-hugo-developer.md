@@ -3,8 +3,7 @@ description: Develops Hugo sites (ayokoding-web, ose-platform-web) including the
   customization, template development, and build optimization.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
+tools:
     repo-applying-maker-checker-fixer: allow
     repo-assessing-criticality-confidence: allow
     repo-understanding-repository-architecture: allow

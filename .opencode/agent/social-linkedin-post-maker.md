@@ -3,9 +3,7 @@ description: Creates LinkedIn posts from project updates and documentation. Opti
   for engagement and professional tone.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill: {}
-
+tools:
   read: true
   grep: true
 permission:

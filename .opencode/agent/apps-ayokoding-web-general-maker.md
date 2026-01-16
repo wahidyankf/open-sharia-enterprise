@@ -3,11 +3,7 @@ description: Creates general ayokoding-web content (by-concept tutorials, guides
   references). Ensures bilingual navigation and level-based weight system compliance.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
-    apps-ayokoding-web-developing-content: allow
-    docs-applying-content-quality: allow
-
+tools:
   read: true
   write: true
   edit: true

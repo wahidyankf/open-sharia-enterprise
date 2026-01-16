@@ -6,11 +6,7 @@ mode: subagent
 model: zai/glm-4.7
 temperature: 0.1
 maxSteps: 50
-tools:permission:
-  skill:
-    apps-ayokoding-web-developing-content: allow
-    docs-applying-content-quality: allow
-
+tools:
   read: true
   glob: true
   grep: true

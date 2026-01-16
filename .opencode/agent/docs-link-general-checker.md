@@ -11,8 +11,7 @@ mode: all
 model: zai/glm-4.5-air
 temperature: 0.1
 maxSteps: 50
-tools:permission:
-  skill:
+tools:
     docs-validating-links: allow
 
   read: true

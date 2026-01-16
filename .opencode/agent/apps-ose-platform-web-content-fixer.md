@@ -3,8 +3,7 @@ description: Applies validated fixes from content-checker audit reports. Re-vali
   before applying changes.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
+tools:
     apps-ose-platform-web-developing-content: allow
     repo-applying-fixer-workflow: allow
 

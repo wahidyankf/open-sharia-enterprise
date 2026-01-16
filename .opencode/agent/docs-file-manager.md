@@ -4,10 +4,7 @@ description: Expert at managing files and directories in docs/ directory. Use fo
   prefixes, fixing links, and preserving git history.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
-    docs-applying-content-quality: allow
-
+tools:
   read: true
   edit: true
   glob: true

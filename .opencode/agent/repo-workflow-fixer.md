@@ -3,8 +3,7 @@ description: Applies validated fixes from workflow-checker audit reports. Re-val
   before applying changes.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
+tools:
     repo-applying-fixer-workflow: allow
 
   read: true
