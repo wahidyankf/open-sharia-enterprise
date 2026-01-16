@@ -3,10 +3,7 @@ description: Creates folder structure and _index.md files for ayokoding-web foll
   level-based organization.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
-    apps-ayokoding-web-developing-content: allow
-
+tools:
   read: true
   write: true
   edit: true

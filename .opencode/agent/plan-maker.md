@@ -4,8 +4,7 @@ description: Creates comprehensive project plans with requirements, technical do
   agent.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
+tools:
     plan-creating-project-plans: allow
     plan-writing-gherkin-criteria: allow
     repo-defining-workflows: allow

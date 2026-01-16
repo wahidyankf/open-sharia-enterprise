@@ -3,8 +3,7 @@ description: Creates repository rules and conventions in docs/explanation/ direc
   Documents standards, patterns, and quality requirements.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
+tools:
     agent-developing-agents: allow
     agent-documenting-references: allow
     repo-defining-workflows: allow

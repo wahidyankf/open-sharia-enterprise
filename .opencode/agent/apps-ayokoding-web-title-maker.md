@@ -3,10 +3,7 @@ description: Generates appropriate titles for ayokoding-web content based on typ
   (by-concept, by-example) and level.
 mode: all
 model: zai/glm-4.5-air
-tools:permission:
-  skill:
-    apps-ayokoding-web-developing-content: allow
-
+tools:
   read: true
   edit: true
 permission:

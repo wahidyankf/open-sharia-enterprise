@@ -3,8 +3,7 @@ description: Creates new AI agent files in .opencode/agent/ following AI Agents 
   Ensures proper structure, skills integration, and documentation.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
+tools:
     agent-developing-agents: allow
     agent-documenting-references: allow
     agent-selecting-models: allow

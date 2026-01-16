@@ -4,9 +4,7 @@ description: Applies validated fixes from docs-tutorial-checker audit reports. R
   output.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
-    docs-applying-content-quality: allow
+tools:
     repo-applying-fixer-workflow: allow
 
   read: true

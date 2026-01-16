@@ -8,9 +8,7 @@ mode: subagent
 model: zai/glm-4.7
 temperature: 0.1
 maxSteps: 50
-tools:permission:
-  skill:
-    docs-applying-content-quality: allow
+tools:
     docs-validating-factual-accuracy: allow
 
   read: true

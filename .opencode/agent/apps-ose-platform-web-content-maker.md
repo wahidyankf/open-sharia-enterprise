@@ -3,8 +3,7 @@ description: Creates content for ose-platform-web landing page using PaperMod th
   English-only with date-based organization.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
+tools:
     apps-ose-platform-web-developing-content: allow
 
   read: true

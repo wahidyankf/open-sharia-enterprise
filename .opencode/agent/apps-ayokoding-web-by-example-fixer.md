@@ -4,9 +4,7 @@ description: Applies validated fixes from apps-ayokoding-web-by-example-checker 
   checker output.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
-    apps-ayokoding-web-developing-content: allow
+tools:
     repo-applying-fixer-workflow: allow
 
   read: true

@@ -3,8 +3,7 @@ description: Applies validated fixes from plan-checker audit reports. Re-validat
   plan findings before applying changes. Use after reviewing plan-checker output.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
+tools:
     repo-applying-fixer-workflow: allow
 
   read: true

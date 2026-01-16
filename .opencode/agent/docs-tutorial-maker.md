@@ -3,9 +3,7 @@ description: Creates and updates tutorial documentation following Diátaxis fram
   and tutorial conventions
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
-    docs-applying-content-quality: allow
+tools:
     docs-applying-diataxis-framework: allow
     docs-creating-by-example-tutorials: allow
 

@@ -6,8 +6,7 @@ mode: subagent
 model: zai/glm-4.7
 temperature: 0.1
 maxSteps: 50
-tools:permission:
-  skill:
+tools:
     readme-writing-readme-files: allow
 
   read: true

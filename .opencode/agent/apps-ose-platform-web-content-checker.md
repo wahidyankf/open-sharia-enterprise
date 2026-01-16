@@ -5,10 +5,8 @@ mode: subagent
 model: zai/glm-4.7
 temperature: 0.1
 maxSteps: 50
-tools:permission:
-  skill:
+tools:
     apps-ose-platform-web-developing-content: allow
-    docs-applying-content-quality: allow
 
   read: true
   glob: true

@@ -4,9 +4,7 @@ description: Creates By Example tutorial content for ayokoding-web with 75-90 he
   and level-based weight system compliance.
 mode: all
 model: zai/glm-4.7
-tools:permission:
-  skill:
-    apps-ayokoding-web-developing-content: allow
+tools:
     docs-creating-by-example-tutorials: allow
 
   read: true
