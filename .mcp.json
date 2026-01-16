@@ -1,5 +1,5 @@
 {
-  "mcp": {
+  "mcpServers": {
     "nx-mcp": {
       "type": "stdio",
       "command": "npx",
