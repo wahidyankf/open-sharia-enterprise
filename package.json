@@ -16,7 +16,12 @@
     "affected:lint": "nx affected -t lint",
     "graph": "nx graph",
     "nx": "nx",
-    "prepare": "husky"
+    "prepare": "husky",
+    "sync:claude-to-opencode": "bash scripts/sync-claude-to-opencode.sh",
+    "sync:agents": "bash scripts/sync-claude-to-opencode.sh --agents-only",
+    "sync:skills": "bash scripts/sync-claude-to-opencode.sh --skills-only",
+    "sync:dry-run": "bash scripts/sync-claude-to-opencode.sh --dry-run",
+    "validate:sync": "bash scripts/validate-sync.sh"
   },
   "keywords": [],
   "author": "",
