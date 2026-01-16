@@ -192,7 +192,7 @@ See [Workflow Pattern Convention](./meta/workflow-pattern.md) for complete requi
 All workflows should be validated for:
 
 - ✅ **Frontmatter completeness** - All required fields present
-- ✅ **Agent existence** - All referenced agents exist in `.opencode/agent/`
+- ✅ **Agent existence** - All referenced agents exist in `.claude/agents/` (primary) or `.opencode/agent/` (secondary)
 - ✅ **Type correctness** - Inputs/outputs use valid types
 - ✅ **Dependency acyclicity** - No circular step dependencies
 - ✅ **Reference resolution** - All `{stepN.outputs}` references resolve
@@ -244,7 +244,7 @@ All workflows must respect core principles:
 - [Core Principles](../../principles/README.md) - Layer 1: Foundational values
 - [Conventions](../conventions/README.md) - Layer 2: Documentation rules
 - [Development](../development/README.md) - Layer 3: Software practices
-- [AI Agents](../../.opencode/agent/README.md) - Layer 4: Task executors
+- [AI Agents](../../.claude/agents/README.md) - Layer 4: Task executors
 
 ## Future Enhancements
 

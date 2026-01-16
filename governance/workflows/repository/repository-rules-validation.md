@@ -49,8 +49,8 @@ outputs:
 This workflow validates **source definitions only** in `governance/`. It does NOT validate generated directories:
 
 - ✅ **Validates**: `governance/` (principles, conventions, development practices)
-- ❌ **Skips**: `.opencode/agent/` (generated - validate via CLI validation)
-- ❌ **Skips**: `.opencode/skill/` (generated - validate via CLI validation)
+- ❌ **Skips**: `.opencode/agent/` (auto-generated from `.claude/agents/` - validate via sync script)
+- ❌ **Skips**: `.opencode/skill/` (auto-synced from `.claude/skills/` - validate via sync script)
 
 **Generated Output Validation**: Use CLI validation commands for validating generated content. This workflow ensures SOURCE is correct, then sync commands validate output generation.
 
@@ -347,7 +347,7 @@ Track across executions:
 
 **Concurrency**: Currently validates and fixes sequentially. The `max-concurrency` parameter is reserved for future enhancements where multiple validation dimensions (principles, conventions, development, agents source in governance/agents/) could run concurrently.
 
-**Note**: "agents" in this context refers to agent SOURCE definitions in `governance/` and `.opencode/agent/`, NOT generated directories.
+**Note**: "agents" in this context refers to agent SOURCE definitions in `.claude/agents/` (primary) - note: `.opencode/agent/` is auto-generated.
 
 This workflow ensures repository consistency through iterative validation and fixing, making it ideal for maintenance and quality assurance.
 
