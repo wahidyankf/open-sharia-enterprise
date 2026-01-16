@@ -767,6 +767,6 @@ This workflow is part of the **Tutorial Quality Family**:
 - **[By-Example Tutorial Convention](../../conventions/tutorial/by-example.md)**: Quality standards
 - **[Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md)**: Workflow pattern
 - **[Fixer Confidence Levels](../../development/quality/fixer-confidence-levels.md)**: Confidence assessment
-- **[`apps-ayokoding-web-by-example-checker` agent](../../.opencode/agent/apps-ayokoding-web-by-example-checker.md)**: Validation agent
-- **[`apps-ayokoding-web-by-example-fixer` agent](../../.opencode/agent/apps-ayokoding-web-by-example-fixer.md)**: Fixing agent
-- **[`apps-ayokoding-web-by-example-maker` agent](../../.opencode/agent/apps-ayokoding-web-by-example-maker.md)**: Content creation agent
+- **[`apps-ayokoding-web-by-example-checker` agent](../../.claude/agents/apps-ayokoding-web-by-example-checker.md)**: Validation agent
+- **[`apps-ayokoding-web-by-example-fixer` agent](../../.claude/agents/apps-ayokoding-web-by-example-fixer.md)**: Fixing agent
+- **[`apps-ayokoding-web-by-example-maker` agent](../../.claude/agents/apps-ayokoding-web-by-example-maker.md)**: Content creation agent
