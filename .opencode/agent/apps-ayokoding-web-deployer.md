@@ -1,22 +1,9 @@
 ---
-description: Deploys ayokoding-web to production environment branch (prod-ayokoding-web)
-  after validation. Vercel listens to production branch for automatic builds.
-mode: all
+description: Deploys ayokoding-web to production environment branch (prod-ayokoding-web) after validation. Vercel listens to production branch for automatic builds.
 model: zai/glm-4.5-air
 tools:
-  bash: true
   grep: true
-permission:
-  glob: deny
-  edit: deny
-  todowrite: deny
-  webfetch: deny
-  read: deny
-  websearch: deny
-  write: deny
-  skill:
-    apps-ayokoding-web-developing-content: allow
-    repo-practicing-trunk-based-development: allow
+  bash: true
 ---
 
 ## Agent Metadata

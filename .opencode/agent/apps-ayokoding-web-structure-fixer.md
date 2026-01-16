@@ -1,25 +1,13 @@
 ---
-description: Applies validated fixes from structure-checker audit reports. Re-validates
-  structure findings before applying changes.
-mode: all
+description: Applies validated fixes from structure-checker audit reports. Re-validates structure findings before applying changes.
 model: zai/glm-4.7
 tools:
-  read: true
-  edit: true
   write: true
-  glob: true
-  grep: true
   bash: true
-permission:
-  todowrite: deny
-  webfetch: deny
-  websearch: deny
-  skill:
-    repo-applying-fixer-workflow: allow
-    apps-ayokoding-web-developing-content: allow
-    repo-assessing-criticality-confidence: allow
-    repo-applying-maker-checker-fixer: allow
-    repo-generating-validation-reports: allow
+  grep: true
+  edit: true
+  read: true
+  glob: true
 ---
 
 ## Agent Metadata

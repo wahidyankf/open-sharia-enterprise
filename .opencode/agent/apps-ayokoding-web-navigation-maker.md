@@ -1,20 +1,11 @@
 ---
 description: Updates prev/next navigation links in ayokoding-web content frontmatter.
-mode: all
 model: zai/glm-4.5-air
 tools:
-  read: true
-  edit: true
   glob: true
+  edit: true
+  read: true
   grep: true
-permission:
-  webfetch: deny
-  websearch: deny
-  write: deny
-  todowrite: deny
-  bash: deny
-  skill:
-    apps-ayokoding-web-developing-content: allow
 ---
 
 ## Agent Metadata

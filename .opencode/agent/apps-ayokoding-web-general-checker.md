@@ -1,26 +1,12 @@
 ---
-description: Validates general ayokoding-web content quality including structure,
-  bilingual completeness, weights, navigation, and content quality.
-mode: subagent
+description: Validates general ayokoding-web content quality including structure, bilingual completeness, weights, navigation, and content quality.
 model: zai/glm-4.7
-temperature: 0.1
-maxSteps: 50
 tools:
-  read: true
-  glob: true
   grep: true
-  write: true
   bash: true
-permission:
-  websearch: deny
-  edit: deny
-  webfetch: deny
-  todowrite: deny
-  skill:
-    apps-ayokoding-web-developing-content: allow
-    repo-assessing-criticality-confidence: allow
-    repo-generating-validation-reports: allow
-    repo-executing-checker-workflow: allow
+  glob: true
+  read: true
+  write: true
 ---
 
 ## Agent Metadata

@@ -1,22 +1,12 @@
 ---
-description: Creates repository rules and conventions in docs/explanation/ directories.
-  Documents standards, patterns, and quality requirements.
-mode: all
+description: Creates repository rules and conventions in docs/explanation/ directories. Documents standards, patterns, and quality requirements.
 model: zai/glm-4.7
 tools:
-  read: true
-  write: true
   edit: true
-  glob: true
   grep: true
-permission:
-  bash: deny
-  websearch: deny
-  todowrite: deny
-  webfetch: deny
-  skill:
-    docs-applying-diataxis-framework: allow
-    docs-applying-content-quality: allow
+  write: true
+  read: true
+  glob: true
 ---
 
 ## Agent Metadata

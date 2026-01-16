@@ -1,26 +1,12 @@
 ---
-description: Validates ose-platform-web content quality including PaperMod theme compliance
-  and landing page standards.
-mode: subagent
+description: Validates ose-platform-web content quality including PaperMod theme compliance and landing page standards.
 model: zai/glm-4.7
-temperature: 0.1
-maxSteps: 50
 tools:
-  read: true
-  glob: true
   grep: true
-  write: true
   bash: true
-permission:
-  edit: deny
-  webfetch: deny
-  todowrite: deny
-  websearch: deny
-  skill:
-    repo-executing-checker-workflow: allow
-    apps-ose-platform-web-developing-content: allow
-    repo-assessing-criticality-confidence: allow
-    repo-generating-validation-reports: allow
+  glob: true
+  read: true
+  write: true
 ---
 
 ## Agent Metadata

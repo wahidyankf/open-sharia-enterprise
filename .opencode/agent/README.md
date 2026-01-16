@@ -1,6 +1,16 @@
 # OpenCode Agents Index
 
-All 46 specialized agents in OpenCode format.
+> ⚠️ **AUTO-GENERATED**: This directory (`.opencode/agent/`) is automatically synced from `.claude/agents/` (source of truth).
+>
+> **DO NOT EDIT DIRECTLY**. To make changes:
+>
+> 1. Edit agents in `.claude/agents/` directory
+> 2. Run: `npm run sync:claude-to-opencode`
+> 3. Changes will be regenerated here automatically
+>
+> **See [.claude/agents/README.md](../../.claude/agents/README.md) for primary agent documentation**.
+
+---
 
 **Shared Skills**: All agents access Skills from `.opencode/skill/` for progressive knowledge delivery.
 

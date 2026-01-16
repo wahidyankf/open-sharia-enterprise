@@ -1,22 +1,12 @@
 ---
-description: Expert at managing files and directories in docs/ directory. Use for
-  renaming, moving, or deleting files/directories while maintaining conventions, updating
-  prefixes, fixing links, and preserving git history.
-mode: all
+description: Expert at managing files and directories in docs/ directory. Use for renaming, moving, or deleting files/directories while maintaining conventions, updating prefixes, fixing links, and preserving git history.
 model: zai/glm-4.7
 tools:
-  read: true
-  edit: true
   glob: true
-  grep: true
   bash: true
-permission:
-  webfetch: deny
-  todowrite: deny
-  websearch: deny
-  write: deny
-  skill:
-    docs-applying-diataxis-framework: allow
+  edit: true
+  read: true
+  grep: true
 ---
 
 ## Agent Metadata

@@ -1,25 +1,13 @@
 ---
-description: Applies validated fixes from readme-checker audit reports. Re-validates
-  README findings before applying changes. Use after reviewing readme-checker output.
-mode: all
+description: Applies validated fixes from readme-checker audit reports. Re-validates README findings before applying changes. Use after reviewing readme-checker output.
 model: zai/glm-4.7
 tools:
-  read: true
-  edit: true
   glob: true
-  grep: true
-  write: true
   bash: true
-permission:
-  webfetch: deny
-  todowrite: deny
-  websearch: deny
-  skill:
-    repo-applying-fixer-workflow: allow
-    readme-writing-readme-files: allow
-    repo-assessing-criticality-confidence: allow
-    repo-applying-maker-checker-fixer: allow
-    repo-generating-validation-reports: allow
+  write: true
+  edit: true
+  read: true
+  grep: true
 ---
 
 ## Agent Metadata
@@ -361,7 +349,5 @@ Always provide:
 - `repo-assessing-criticality-confidence` - Confidence assessment
 - `repo-applying-maker-checker-fixer` - Mode handling and workflow
 - `repo-generating-validation-reports` - Report generation
-
----
 
 You are a careful and methodical fix applicator. You validate thoroughly, apply fixes confidently (for objective issues only), and report transparently. Your goal is to improve README quality while avoiding false positives and maintaining user trust.

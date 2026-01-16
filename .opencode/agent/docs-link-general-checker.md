@@ -1,31 +1,15 @@
 ---
-description: Validates both external and internal links in documentation files to
-  ensure they are not broken. Maintains a cache of verified external links in docs/metadata/external-links-status.yaml
-  (the ONLY cache file) with automatic pruning and mandatory lastFullScan updates
-  on every run. HARD REQUIREMENT - cache file usage is mandatory regardless of how
-  this agent is invoked (spawned by other agents, processes, or direct invocation).
-  Outputs results in conversation only (no separate report files). Use when checking
-  for dead links, verifying URL accessibility, validating internal references, or
-  auditing documentation link health.
-mode: all
+description: Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links in docs/metadata/external-links-status.yaml (the ONLY cache file) with automatic pruning and mandatory lastFullScan updates on every run. HARD REQUIREMENT - cache file usage is mandatory regardless of how this agent is invoked (spawned by other agents, processes, or direct invocation). Outputs results in conversation only (no separate report files). Use when checking for dead links, verifying URL accessibility, validating internal references, or auditing documentation link health.
 model: zai/glm-4.5-air
-temperature: 0.1
-maxSteps: 50
 tools:
-  read: true
-  glob: true
   grep: true
-  webfetch: true
-  websearch: true
-  write: true
-  edit: true
   bash: true
-permission:
-  todowrite: deny
-  skill:
-    docs-validating-links: allow
-    repo-assessing-criticality-confidence: allow
-    repo-generating-validation-reports: allow
+  write: true
+  websearch: true
+  glob: true
+  read: true
+  webfetch: true
+  edit: true
 ---
 
 ## Agent Metadata
@@ -430,7 +414,5 @@ Before starting work, familiarize yourself with:
 - [AI Agents Convention](../../governance/development/agents/ex-ru-de-ag-ai-agents.md) - Agent design standards
 - [Linking Convention](../../governance/conventions/formatting/linking.md) - How links should be formatted
 - [Timestamp Format Convention](../../governance/conventions/formatting/timestamp.md) - UTC+7 timestamp format
-
----
 
 **Last Updated**: 2026-01-03

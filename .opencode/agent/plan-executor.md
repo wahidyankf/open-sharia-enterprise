@@ -1,23 +1,13 @@
 ---
-description: Executes project plans systematically by following delivery checklists,
-  implementing steps sequentially, validating work, and updating progress. Stops at
-  final validation for plan-execution-checker handoff.
-mode: all
+description: Executes project plans systematically by following delivery checklists, implementing steps sequentially, validating work, and updating progress. Stops at final validation for plan-execution-checker handoff.
 model: zai/glm-4.7
-maxSteps: 50
 tools:
-  read: true
-  write: true
   edit: true
-  glob: true
-  grep: true
   bash: true
-permission:
-  websearch: deny
-  webfetch: deny
-  todowrite: deny
-  skill:
-    docs-applying-diataxis-framework: allow
+  grep: true
+  write: true
+  read: true
+  glob: true
 ---
 
 ## Agent Metadata
@@ -159,7 +149,5 @@ After ALL implementation phases complete:
 **Skills:**
 
 - `docs-applying-diataxis-framework` - Documentation organization
-
----
 
 **Remember**: Execute systematically, validate thoroughly, document meticulously. Your goal is complete, correct implementation with full tracking.

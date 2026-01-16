@@ -2,22 +2,11 @@
 description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.
 model: inherit
 tools:
-  read: true
-  write: true
   edit: true
-  glob: true
   grep: true
-  bash: false
-  todowrite: false
-  webfetch: false
-  websearch: false
-permission:
-  skill:
-    docs-applying-content-quality: allow
-    docs-applying-diataxis-framework: allow
-    docs-creating-by-example-tutorials: allow
-    docs-creating-accessible-diagrams: allow
-    repo-applying-maker-checker-fixer: allow
+  write: true
+  read: true
+  glob: true
 ---
 
 ## Agent Metadata
@@ -278,7 +267,6 @@ When writing code examples in documentation, you MUST use **language-specific id
 ### Frontmatter Template
 
 ```yaml
----
 title: Document Title
 description: Brief description for search and context
 category: tutorial # tutorial | how-to | reference | explanation
@@ -287,7 +275,6 @@ tags:
   - secondary-topic # IMPORTANT: 2 spaces before dash, NOT tab
 created: YYYY-MM-DD
 updated: 2026-01-03
----
 ```
 
 **CRITICAL**: Frontmatter MUST use 2 spaces for indentation (NOT tabs). This is the ONLY exception to TAB indentation within `docs/` directory. All nested frontmatter fields (tags, lists, objects) must use spaces.

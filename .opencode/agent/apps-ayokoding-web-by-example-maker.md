@@ -1,25 +1,13 @@
 ---
-description: Creates By Example tutorial content for ayokoding-web with 75-90 heavily
-  annotated code examples following five-part structure. Ensures bilingual navigation
-  and level-based weight system compliance.
-mode: all
+description: Creates By Example tutorial content for ayokoding-web with 75-90 heavily annotated code examples following five-part structure. Ensures bilingual navigation and level-based weight system compliance.
 model: zai/glm-4.7
 tools:
-  read: true
-  write: true
   edit: true
-  glob: true
-  grep: true
   bash: true
-permission:
-  todowrite: deny
-  websearch: deny
-  webfetch: deny
-  skill:
-    apps-ayokoding-web-developing-content: allow
-    docs-creating-by-example-tutorials: allow
-    docs-creating-accessible-diagrams: allow
-    docs-applying-content-quality: allow
+  grep: true
+  write: true
+  read: true
+  glob: true
 ---
 
 ## Agent Metadata
@@ -147,12 +135,10 @@ apps/ayokoding-web/content/docs/[language]/by-example/[topic].md
 ### Step 2: Create Frontmatter
 
 ```yaml
----
 title: "Tutorial Title (By Example)"
 weight: [level * 100 + sequential]
 prev: /docs/[language]/by-example/[previous-topic]
 next: /docs/[language]/by-example/[next-topic]
----
 ```
 
 ### Step 3: Write Introduction
@@ -235,7 +221,5 @@ The `docs-applying-content-quality` Skill provides general content quality stand
 - `docs-creating-by-example-tutorials` - By Example annotation standards
 - `docs-creating-accessible-diagrams` - Diagram creation with accessibility
 - `docs-applying-content-quality` - General content quality
-
----
 
 **Remember**: By Example tutorials are for experienced developers learning through code. Annotation quality is paramount - every line should have 1-2.25 lines of insightful comments explaining WHY, not WHAT.

@@ -1,22 +1,13 @@
 ---
-description: Creates comprehensive project plans with requirements, technical documentation,
-  and delivery checklists. Structures plans for systematic execution by plan-executor
-  agent.
-mode: all
+description: Creates comprehensive project plans with requirements, technical documentation, and delivery checklists. Structures plans for systematic execution by plan-executor agent.
 model: zai/glm-4.7
 tools:
-  read: true
-  write: true
   edit: true
-  glob: true
-  grep: true
   bash: true
-permission:
-  todowrite: deny
-  websearch: deny
-  webfetch: deny
-  skill:
-    docs-applying-diataxis-framework: allow
+  grep: true
+  write: true
+  read: true
+  glob: true
 ---
 
 ## Agent Metadata
@@ -208,7 +199,5 @@ See [Trunk Based Development Convention](../../governance/development/workflow/e
 **Skills:**
 
 - `docs-applying-diataxis-framework` - Documentation organization principles
-
----
 
 **Remember**: Good plans are executable blueprints, not vague intentions. Make them specific, structured, and actionable.

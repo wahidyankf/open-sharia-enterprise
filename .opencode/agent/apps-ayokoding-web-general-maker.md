@@ -1,23 +1,13 @@
 ---
-description: Creates general ayokoding-web content (by-concept tutorials, guides,
-  references). Ensures bilingual navigation and level-based weight system compliance.
-mode: all
+description: Creates general ayokoding-web content (by-concept tutorials, guides, references). Ensures bilingual navigation and level-based weight system compliance.
 model: zai/glm-4.7
 tools:
-  read: true
-  write: true
   edit: true
-  glob: true
-  grep: true
   bash: true
-permission:
-  websearch: deny
-  todowrite: deny
-  webfetch: deny
-  skill:
-    apps-ayokoding-web-developing-content: allow
-    docs-creating-accessible-diagrams: allow
-    docs-applying-content-quality: allow
+  grep: true
+  write: true
+  read: true
+  glob: true
 ---
 
 ## Agent Metadata

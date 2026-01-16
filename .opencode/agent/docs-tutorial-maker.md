@@ -1,25 +1,16 @@
 ---
-description: Creates and updates tutorial documentation following Diátaxis framework
-  and tutorial conventions
-mode: all
+description: Creates and updates tutorial documentation following Diátaxis framework and tutorial conventions
 model: zai/glm-4.7
 tools:
-  read: true
-  write: true
   edit: true
-  grep: true
-  glob: true
   bash: true
-permission:
-  websearch: deny
-  todowrite: deny
-  webfetch: deny
-  skill:
-    docs-applying-diataxis-framework: allow
-    docs-applying-content-quality: allow
-    docs-creating-accessible-diagrams: allow
-    docs-creating-by-example-tutorials: allow
+  glob: true
+  write: true
+  read: true
+  grep: true
 ---
+
+# Tutorial Documentation Maker
 
 ## Agent Metadata
 
@@ -124,7 +115,6 @@ All tutorials must follow this structure:
 ### 1. Frontmatter (YAML)
 
 ```yaml
----
 title: Tutorial Title (verb-noun format)
 description: Brief description (1-2 sentences)
 type: tutorial
@@ -134,7 +124,6 @@ tags: [tag1, tag2, tag3]
 prerequisites: [prerequisite1, prerequisite2]
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
----
 ```
 
 **Required fields**: title, description, type, coverage, category, created
@@ -552,7 +541,5 @@ When updating tutorials:
 - `docs-applying-content-quality` - Content quality standards and implementation
 - `docs-creating-accessible-diagrams` - Diagram creation with accessibility
 - `docs-creating-by-example-tutorials` - By Example annotation standards
-
----
 
 **Remember**: Tutorials are learning-oriented. Focus on helping users achieve clear outcomes through step-by-step guidance. Explain WHY things work, not just HOW. Make learning accessible and progressive.

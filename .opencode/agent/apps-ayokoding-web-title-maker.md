@@ -1,21 +1,9 @@
 ---
-description: Generates appropriate titles for ayokoding-web content based on type
-  (by-concept, by-example) and level.
-mode: all
+description: Generates appropriate titles for ayokoding-web content based on type (by-concept, by-example) and level.
 model: zai/glm-4.5-air
 tools:
-  read: true
   edit: true
-permission:
-  glob: deny
-  grep: deny
-  bash: deny
-  websearch: deny
-  todowrite: deny
-  webfetch: deny
-  write: deny
-  skill:
-    apps-ayokoding-web-developing-content: allow
+  read: true
 ---
 
 ## Agent Metadata

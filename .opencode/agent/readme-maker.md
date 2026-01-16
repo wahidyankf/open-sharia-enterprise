@@ -1,24 +1,12 @@
 ---
-description: Creates and updates README.md content while maintaining engagement, accessibility,
-  and quality standards. Rewrites jargony sections, adds context to acronyms, breaks
-  up dense paragraphs, and ensures navigation-focused structure. Use when adding or
-  updating README content.
-mode: all
+description: Creates and updates README.md content while maintaining engagement, accessibility, and quality standards. Rewrites jargony sections, adds context to acronyms, breaks up dense paragraphs, and ensures navigation-focused structure. Use when adding or updating README content.
 model: zai/glm-4.7
 tools:
-  read: true
-  write: true
   edit: true
-  glob: true
   grep: true
-permission:
-  websearch: deny
-  todowrite: deny
-  bash: deny
-  webfetch: deny
-  skill:
-    readme-writing-readme-files: allow
-    docs-applying-content-quality: allow
+  write: true
+  read: true
+  glob: true
 ---
 
 ## Agent Metadata
@@ -307,7 +295,5 @@ Use this agent when:
 
 - `readme-writing-readme-files` - README-specific writing guidance
 - `docs-applying-content-quality` - General content quality standards
-
----
 
 **Remember**: READMEs are the front door to your code. Make them welcoming, scannable, and genuinely helpful. Transform jargon into plain language, features into benefits, and walls of text into digestible chunks.

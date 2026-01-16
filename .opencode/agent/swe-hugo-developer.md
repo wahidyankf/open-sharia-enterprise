@@ -1,22 +1,13 @@
 ---
-description: Develops Hugo sites (ayokoding-web, ose-platform-web) including theme
-  customization, template development, and build optimization.
-mode: all
+description: Develops Hugo sites (ayokoding-web, ose-platform-web) including theme customization, template development, and build optimization.
 model: zai/glm-4.7
 tools:
-  read: true
-  write: true
   edit: true
-  glob: true
-  grep: true
   bash: true
-permission:
-  websearch: deny
-  webfetch: deny
-  todowrite: deny
-  skill:
-    apps-ayokoding-web-developing-content: allow
-    apps-ose-platform-web-developing-content: allow
+  grep: true
+  write: true
+  read: true
+  glob: true
 ---
 
 ## Agent Metadata

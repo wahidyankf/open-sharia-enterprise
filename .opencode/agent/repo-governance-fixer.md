@@ -1,25 +1,12 @@
 ---
-description: Applies validated fixes from repository rules audit reports including
-  agent-Skill duplication removal, Skills coverage gap remediation, and rules governance
-  fixes (contradictions, inaccuracies, inconsistencies). Uses bash tools for .opencode
-  folder modifications.
-mode: all
+description: Applies validated fixes from repository rules audit reports including agent-Skill duplication removal, Skills coverage gap remediation, and rules governance fixes (contradictions, inaccuracies, inconsistencies). Uses bash tools for .opencode folder modifications.
 model: zai/glm-4.7
 tools:
-  read: true
-  glob: true
   grep: true
-  write: true
   bash: true
-permission:
-  webfetch: deny
-  todowrite: deny
-  websearch: deny
-  edit: deny
-  skill:
-    repo-applying-maker-checker-fixer: allow
-    repo-assessing-criticality-confidence: allow
-    repo-generating-validation-reports: allow
+  glob: true
+  read: true
+  write: true
 ---
 
 ## Agent Metadata

@@ -1,26 +1,15 @@
 ---
-description: Applies validated fixes from facts-checker audit reports. Re-validates
-  factual findings before applying changes.
-mode: all
+description: Applies validated fixes from facts-checker audit reports. Re-validates factual findings before applying changes.
 model: zai/glm-4.7
 tools:
-  read: true
-  edit: true
   write: true
-  glob: true
-  grep: true
-  bash: true
-  webfetch: true
   websearch: true
-permission:
-  todowrite: deny
-  skill:
-    repo-applying-fixer-workflow: allow
-    apps-ayokoding-web-developing-content: allow
-    docs-validating-factual-accuracy: allow
-    repo-assessing-criticality-confidence: allow
-    repo-applying-maker-checker-fixer: allow
-    repo-generating-validation-reports: allow
+  bash: true
+  grep: true
+  edit: true
+  read: true
+  glob: true
+  webfetch: true
 ---
 
 ## Agent Metadata
