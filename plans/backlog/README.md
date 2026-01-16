@@ -4,7 +4,7 @@ Planned projects for future implementation.
 
 ## Planned Projects
 
-**No active plans in backlog**. All planned projects are either completed or no longer relevant.
+- **[2026-01-16\_\_dolphin-be-init](./2026-01-16__dolphin-be-init/)** - Initialize Java Spring Boot application using Maven in `apps/dolphin-be/` for Learning Management System (LMS) backend
 
 ## Instructions
 
