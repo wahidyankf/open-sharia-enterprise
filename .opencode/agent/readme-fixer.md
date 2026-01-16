@@ -4,9 +4,6 @@ description: Applies validated fixes from readme-checker audit reports. Re-valid
 mode: all
 model: zai/glm-4.7
 tools:
-    readme-writing-readme-files: allow
-    repo-applying-fixer-workflow: allow
-
   read: true
   edit: true
   glob: true

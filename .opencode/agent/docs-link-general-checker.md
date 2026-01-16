@@ -12,8 +12,6 @@ model: zai/glm-4.5-air
 temperature: 0.1
 maxSteps: 50
 tools:
-    docs-validating-links: allow
-
   read: true
   glob: true
   grep: true

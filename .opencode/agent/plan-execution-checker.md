@@ -7,9 +7,6 @@ model: zai/glm-4.7
 temperature: 0.1
 maxSteps: 50
 tools:
-    plan-creating-project-plans: allow
-    repo-executing-checker-workflow: allow
-
   read: true
   glob: true
   grep: true

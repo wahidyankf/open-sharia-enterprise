@@ -6,8 +6,6 @@ model: zai/glm-4.7
 temperature: 0.1
 maxSteps: 50
 tools:
-    apps-ose-platform-web-developing-content: allow
-
   read: true
   glob: true
   grep: true

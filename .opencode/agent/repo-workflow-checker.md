@@ -6,9 +6,6 @@ model: zai/glm-4.7
 temperature: 0.1
 maxSteps: 50
 tools:
-    repo-applying-maker-checker-fixer: allow
-    repo-defining-workflows: allow
-
   read: true
   glob: true
   grep: true

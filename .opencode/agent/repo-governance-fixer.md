@@ -6,9 +6,6 @@ description: Applies validated fixes from repository rules audit reports includi
 mode: all
 model: zai/glm-4.7
 tools:
-    repo-applying-fixer-workflow: allow
-    repo-assessing-criticality-confidence: allow
-
   read: true
   glob: true
   grep: true

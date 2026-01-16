@@ -4,8 +4,6 @@ description: Creates content for ose-platform-web landing page using PaperMod th
 mode: all
 model: zai/glm-4.7
 tools:
-    apps-ose-platform-web-developing-content: allow
-
   read: true
   write: true
   edit: true

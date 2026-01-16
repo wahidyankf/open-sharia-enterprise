@@ -4,8 +4,6 @@ description: Applies validated fixes from facts-checker audit reports. Re-valida
 mode: all
 model: zai/glm-4.7
 tools:
-    repo-applying-fixer-workflow: allow
-
   read: true
   edit: true
   write: true

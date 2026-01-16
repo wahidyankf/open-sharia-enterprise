@@ -4,9 +4,6 @@ description: Applies validated fixes from content-checker audit reports. Re-vali
 mode: all
 model: zai/glm-4.7
 tools:
-    apps-ose-platform-web-developing-content: allow
-    repo-applying-fixer-workflow: allow
-
   read: true
   edit: true
   write: true

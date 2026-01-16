@@ -7,9 +7,6 @@ model: zai/glm-4.7
 temperature: 0.1
 maxSteps: 50
 tools:
-    docs-applying-diataxis-framework: allow
-    docs-creating-by-example-tutorials: allow
-
   read: true
   glob: true
   grep: true

@@ -4,11 +4,6 @@ description: Creates new AI agent files in .opencode/agent/ following AI Agents 
 mode: all
 model: zai/glm-4.7
 tools:
-    agent-developing-agents: allow
-    agent-documenting-references: allow
-    agent-selecting-models: allow
-    repo-defining-workflows: allow
-
   read: true
   write: true
   glob: true
