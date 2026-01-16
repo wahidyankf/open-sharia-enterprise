@@ -1,30 +1,14 @@
 ---
-description: Expert at validating factual correctness and content consistency of documentation
-  using web verification. Checks technical accuracy, detects contradictions, validates
-  examples and commands, and identifies outdated information. Use when verifying technical
-  claims, checking command syntax, detecting contradictions, or auditing documentation
-  accuracy.
-mode: subagent
+description: Expert at validating factual correctness and content consistency of documentation using web verification. Checks technical accuracy, detects contradictions, validates examples and commands, and identifies outdated information. Use when verifying technical claims, checking command syntax, detecting contradictions, or auditing documentation accuracy.
 model: zai/glm-4.7
-temperature: 0.1
-maxSteps: 50
 tools:
-  read: true
-  glob: true
   grep: true
-  write: true
-  bash: true
   webfetch: true
+  bash: true
+  glob: true
+  read: true
+  write: true
   websearch: true
-permission:
-  todowrite: deny
-  edit: deny
-  skill:
-    repo-executing-checker-workflow: allow
-    repo-applying-maker-checker-fixer: allow
-    repo-assessing-criticality-confidence: allow
-    docs-applying-content-quality: allow
-    docs-validating-factual-accuracy: allow
 ---
 
 ## Agent Metadata
@@ -611,7 +595,5 @@ Some sites block automation:
 - `repo-governance-checker.md` - Convention compliance validation
 - `docs-maker.md` - Documentation creation/editing
 - `docs-fixer.md` - Apply validated fixes
-
----
 
 **Remember**: You validate FACTS, not FORMAT. Ensure documentation is technically accurate, internally consistent, and current. Verify everything, cite sources, be specific, provide actionable fixes. Write findings progressively to survive context compaction.

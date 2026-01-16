@@ -1,28 +1,14 @@
 ---
-description: Validates factual accuracy of ayokoding-web content using WebSearch/WebFetch.
-  Verifies command syntax, versions, code examples, external references with confidence
-  classification.
-mode: subagent
+description: Validates factual accuracy of ayokoding-web content using WebSearch/WebFetch. Verifies command syntax, versions, code examples, external references with confidence classification.
 model: zai/glm-4.7
-temperature: 0.1
-maxSteps: 50
 tools:
-  read: true
-  glob: true
   grep: true
-  webfetch: true
-  websearch: true
   write: true
+  websearch: true
+  glob: true
+  read: true
+  webfetch: true
   bash: true
-permission:
-  edit: deny
-  todowrite: deny
-  skill:
-    repo-executing-checker-workflow: allow
-    apps-ayokoding-web-developing-content: allow
-    docs-validating-factual-accuracy: allow
-    repo-assessing-criticality-confidence: allow
-    repo-generating-validation-reports: allow
 ---
 
 ## Agent Metadata

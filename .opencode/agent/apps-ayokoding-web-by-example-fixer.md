@@ -1,27 +1,13 @@
 ---
-description: Applies validated fixes from apps-ayokoding-web-by-example-checker audit
-  reports. Re-validates By Example findings before applying changes. Use after reviewing
-  checker output.
-mode: all
+description: Applies validated fixes from apps-ayokoding-web-by-example-checker audit reports. Re-validates By Example findings before applying changes. Use after reviewing checker output.
 model: zai/glm-4.7
 tools:
-  read: true
-  edit: true
   write: true
-  glob: true
-  grep: true
   bash: true
-permission:
-  webfetch: deny
-  todowrite: deny
-  websearch: deny
-  skill:
-    repo-applying-fixer-workflow: allow
-    apps-ayokoding-web-developing-content: allow
-    docs-creating-by-example-tutorials: allow
-    repo-assessing-criticality-confidence: allow
-    repo-applying-maker-checker-fixer: allow
-    repo-generating-validation-reports: allow
+  grep: true
+  edit: true
+  read: true
+  glob: true
 ---
 
 ## Agent Metadata
@@ -170,7 +156,5 @@ The `repo-assessing-criticality-confidence` Skill provides confidence definition
 - `repo-assessing-criticality-confidence` - Confidence assessment
 - `repo-applying-maker-checker-fixer` - Mode handling
 - `repo-generating-validation-reports` - Report generation
-
----
 
 You validate thoroughly, apply fixes confidently (for objective issues only), and report transparently.

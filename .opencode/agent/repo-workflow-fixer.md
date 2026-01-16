@@ -1,24 +1,13 @@
 ---
-description: Applies validated fixes from workflow-checker audit reports. Re-validates
-  before applying changes.
-mode: all
+description: Applies validated fixes from workflow-checker audit reports. Re-validates before applying changes.
 model: zai/glm-4.7
 tools:
-  read: true
-  edit: true
   write: true
-  glob: true
-  grep: true
   bash: true
-permission:
-  todowrite: deny
-  webfetch: deny
-  websearch: deny
-  skill:
-    docs-applying-diataxis-framework: allow
-    repo-assessing-criticality-confidence: allow
-    repo-applying-maker-checker-fixer: allow
-    repo-generating-validation-reports: allow
+  grep: true
+  edit: true
+  read: true
+  glob: true
 ---
 
 ## Agent Metadata

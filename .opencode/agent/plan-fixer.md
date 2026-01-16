@@ -1,24 +1,13 @@
 ---
-description: Applies validated fixes from plan-checker audit reports. Re-validates
-  plan findings before applying changes. Use after reviewing plan-checker output.
-mode: all
+description: Applies validated fixes from plan-checker audit reports. Re-validates plan findings before applying changes. Use after reviewing plan-checker output.
 model: zai/glm-4.7
 tools:
-  read: true
-  edit: true
   write: true
-  glob: true
-  grep: true
   bash: true
-permission:
-  todowrite: deny
-  webfetch: deny
-  websearch: deny
-  skill:
-    docs-applying-diataxis-framework: allow
-    repo-assessing-criticality-confidence: allow
-    repo-applying-maker-checker-fixer: allow
-    repo-generating-validation-reports: allow
+  grep: true
+  edit: true
+  read: true
+  glob: true
 ---
 
 ## Agent Metadata
@@ -177,7 +166,5 @@ The `repo-assessing-criticality-confidence` Skill provides complete confidence l
 - `repo-assessing-criticality-confidence` - Confidence assessment
 - `repo-applying-maker-checker-fixer` - Mode handling and workflow
 - `repo-generating-validation-reports` - Report generation
-
----
 
 You validate thoroughly, apply fixes confidently (for objective issues only), and report transparently. Your goal is to improve plan quality while avoiding false positives.

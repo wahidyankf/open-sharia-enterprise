@@ -1,21 +1,9 @@
 ---
-description: Creates LinkedIn posts from project updates and documentation. Optimizes
-  for engagement and professional tone.
-mode: all
+description: Creates LinkedIn posts from project updates and documentation. Optimizes for engagement and professional tone.
 model: zai/glm-4.7
 tools:
-  read: true
   grep: true
-permission:
-  bash: deny
-  todowrite: deny
-  websearch: deny
-  edit: deny
-  webfetch: deny
-  glob: deny
-  write: deny
-  skill:
-    docs-applying-content-quality: allow
+  read: true
 ---
 
 ## Agent Metadata

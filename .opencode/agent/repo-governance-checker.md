@@ -1,29 +1,12 @@
 ---
-description: Validates repository-wide consistency including file naming, linking,
-  emoji usage, convention compliance, agent-Skill duplication detection, and rules
-  governance (contradictions, inaccuracies, inconsistencies). Outputs to generated-reports/
-  with progressive streaming.
-mode: subagent
+description: Validates repository-wide consistency including file naming, linking, emoji usage, convention compliance, agent-Skill duplication detection, and rules governance (contradictions, inaccuracies, inconsistencies). Outputs to generated-reports/ with progressive streaming.
 model: zai/glm-4.7
-temperature: 0.1
-maxSteps: 50
 tools:
-  read: true
-  glob: true
   grep: true
-  write: true
   bash: true
-  edit: false
-  websearch: false
-  webfetch: false
-  todowrite: false
-permission:
-  skill:
-    repo-applying-maker-checker-fixer: allow
-    repo-assessing-criticality-confidence: allow
-    repo-understanding-repository-architecture: allow
-    docs-applying-diataxis-framework: allow
-    repo-generating-validation-reports: allow
+  glob: true
+  read: true
+  write: true
 ---
 
 ## Agent Metadata
@@ -280,7 +263,7 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 **Size Limits**:
 
 - **Target**: 30,000 characters (provides 25% headroom)
-- **Warning**: 35,000 characters (time to review and condense)
+- **Warning**: 35,000 characters (should be reviewed and condensed)
 - **Hard Limit**: 40,000 characters (DO NOT EXCEED - performance threshold)
 
 **Validation**:

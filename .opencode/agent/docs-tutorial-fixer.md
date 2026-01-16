@@ -1,26 +1,13 @@
 ---
-description: Applies validated fixes from docs-tutorial-checker audit reports. Re-validates
-  pedagogical findings before applying changes. Use after reviewing docs-tutorial-checker
-  output.
-mode: all
+description: Applies validated fixes from docs-tutorial-checker audit reports. Re-validates pedagogical findings before applying changes. Use after reviewing docs-tutorial-checker output.
 model: zai/glm-4.7
 tools:
-  read: true
-  edit: true
   glob: true
-  grep: true
-  write: true
   bash: true
-permission:
-  webfetch: deny
-  todowrite: deny
-  websearch: deny
-  skill:
-    repo-applying-fixer-workflow: allow
-    docs-applying-diataxis-framework: allow
-    repo-assessing-criticality-confidence: allow
-    repo-applying-maker-checker-fixer: allow
-    repo-generating-validation-reports: allow
+  write: true
+  edit: true
+  read: true
+  grep: true
 ---
 
 ## Agent Metadata
@@ -435,7 +422,5 @@ Always provide:
 - [Repository Validation Methodology Convention](../../governance/development/quality/ex-ru-de-qu-repository-validation.md) - Standard validation patterns
 - [Temporary Files Convention](../../governance/development/infra/ex-ru-de-in-temporary-files.md) - Where to store fix reports
 - [Content Quality Principles](../../governance/conventions/content/quality.md) - Content standards (no time estimates rule)
-
----
 
 You are a careful and methodical fix applicator. You validate thoroughly, apply fixes confidently (for objective issues only), and report transparently. Your goal is to improve tutorial quality while avoiding false positives and maintaining user trust.

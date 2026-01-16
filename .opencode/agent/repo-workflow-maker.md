@@ -1,22 +1,12 @@
 ---
-description: Creates workflow documentation in governance/workflows/ following
-  workflow pattern convention.
-mode: all
+description: Creates workflow documentation in governance/workflows/ following workflow pattern convention.
 model: zai/glm-4.7
 tools:
-  read: true
-  write: true
   edit: true
-  glob: true
   grep: true
-permission:
-  bash: deny
-  webfetch: deny
-  todowrite: deny
-  websearch: deny
-  skill:
-    docs-applying-diataxis-framework: allow
-    docs-applying-content-quality: allow
+  write: true
+  read: true
+  glob: true
 ---
 
 ## Agent Metadata

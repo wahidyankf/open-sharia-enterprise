@@ -1,28 +1,12 @@
 ---
-description: Validates By Example tutorial quality including annotation density (1-2.25
-  ratio per example), five-part structure, example count (75-90), and ayokoding-web
-  compliance. Use when reviewing By Example content.
-mode: subagent
+description: Validates By Example tutorial quality including annotation density (1-2.25 ratio per example), five-part structure, example count (75-90), and ayokoding-web compliance. Use when reviewing By Example content.
 model: zai/glm-4.7
-temperature: 0.1
-maxSteps: 50
 tools:
-  read: true
-  glob: true
   grep: true
-  write: true
   bash: true
-permission:
-  webfetch: deny
-  edit: deny
-  todowrite: deny
-  websearch: deny
-  skill:
-    repo-executing-checker-workflow: allow
-    apps-ayokoding-web-developing-content: allow
-    docs-creating-by-example-tutorials: allow
-    repo-assessing-criticality-confidence: allow
-    repo-generating-validation-reports: allow
+  glob: true
+  read: true
+  write: true
 ---
 
 ## Agent Metadata
@@ -221,7 +205,5 @@ Update status, add summary, prioritize findings.
 - `docs-creating-by-example-tutorials` - By Example standards
 - `repo-assessing-criticality-confidence` - Criticality assessment
 - `repo-generating-validation-reports` - Report generation
-
----
 
 **Remember**: Annotation density is measured PER EXAMPLE, not tutorial-wide. Each example must meet the 1-2.25 ratio independently.

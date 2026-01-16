@@ -1,26 +1,12 @@
 ---
-description: Validates ayokoding-web content structure including folder organization,
-  level-based weights, navigation depth, and bilingual completeness.
-mode: subagent
+description: Validates ayokoding-web content structure including folder organization, level-based weights, navigation depth, and bilingual completeness.
 model: zai/glm-4.7
-temperature: 0.1
-maxSteps: 50
 tools:
-  read: true
-  glob: true
   grep: true
-  write: true
   bash: true
-permission:
-  webfetch: deny
-  edit: deny
-  websearch: deny
-  todowrite: deny
-  skill:
-    repo-executing-checker-workflow: allow
-    apps-ayokoding-web-developing-content: allow
-    repo-assessing-criticality-confidence: allow
-    repo-generating-validation-reports: allow
+  glob: true
+  read: true
+  write: true
 ---
 
 ## Agent Metadata

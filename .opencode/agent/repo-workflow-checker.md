@@ -1,25 +1,12 @@
 ---
-description: Validates workflow documentation quality and compliance with workflow
-  pattern convention.
-mode: subagent
+description: Validates workflow documentation quality and compliance with workflow pattern convention.
 model: zai/glm-4.7
-temperature: 0.1
-maxSteps: 50
 tools:
-  read: true
-  glob: true
   grep: true
-  write: true
   bash: true
-permission:
-  todowrite: deny
-  webfetch: deny
-  websearch: deny
-  edit: deny
-  skill:
-    docs-applying-diataxis-framework: allow
-    repo-assessing-criticality-confidence: allow
-    repo-generating-validation-reports: allow
+  glob: true
+  read: true
+  write: true
 ---
 
 ## Agent Metadata

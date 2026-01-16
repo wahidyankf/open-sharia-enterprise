@@ -1,21 +1,13 @@
 ---
-description: Creates folder structure and _index.md files for ayokoding-web following
-  level-based organization.
-mode: all
+description: Creates folder structure and _index.md files for ayokoding-web following level-based organization.
 model: zai/glm-4.7
 tools:
-  read: true
-  write: true
   edit: true
-  glob: true
-  grep: true
   bash: true
-permission:
-  todowrite: deny
-  websearch: deny
-  webfetch: deny
-  skill:
-    apps-ayokoding-web-developing-content: allow
+  grep: true
+  write: true
+  read: true
+  glob: true
 ---
 
 ## Agent Metadata

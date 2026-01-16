@@ -1,27 +1,14 @@
 ---
-description: Validates tutorial quality focusing on pedagogical structure, narrative
-  flow, visual completeness, hands-on elements, and tutorial type compliance. Complements
-  docs-checker (accuracy) and docs-link-general-checker (links).
-mode: subagent
+description: Validates tutorial quality focusing on pedagogical structure, narrative flow, visual completeness, hands-on elements, and tutorial type compliance. Complements docs-checker (accuracy) and docs-link-general-checker (links).
 model: zai/glm-4.7
-temperature: 0.1
-maxSteps: 50
 tools:
-  read: true
-  glob: true
   grep: true
-  webfetch: true
-  websearch: true
   write: true
+  websearch: true
+  glob: true
+  read: true
+  webfetch: true
   bash: true
-permission:
-  todowrite: deny
-  edit: deny
-  skill:
-    repo-executing-checker-workflow: allow
-    docs-applying-diataxis-framework: allow
-    repo-assessing-criticality-confidence: allow
-    repo-generating-validation-reports: allow
 ---
 
 ## Agent Metadata

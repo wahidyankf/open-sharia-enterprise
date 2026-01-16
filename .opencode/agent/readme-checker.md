@@ -1,27 +1,12 @@
 ---
-description: Validates README.md for engagement, accessibility, and quality standards.
-  Checks for jargon, scannability, proper structure, and consistency with documentation.
-  Use when reviewing README changes or auditing README quality.
-mode: subagent
+description: Validates README.md for engagement, accessibility, and quality standards. Checks for jargon, scannability, proper structure, and consistency with documentation. Use when reviewing README changes or auditing README quality.
 model: zai/glm-4.7
-temperature: 0.1
-maxSteps: 50
 tools:
-  read: true
-  glob: true
   grep: true
-  write: true
   bash: true
-permission:
-  todowrite: deny
-  webfetch: deny
-  websearch: deny
-  edit: deny
-  skill:
-    repo-executing-checker-workflow: allow
-    readme-writing-readme-files: allow
-    repo-assessing-criticality-confidence: allow
-    repo-generating-validation-reports: allow
+  glob: true
+  read: true
+  write: true
 ---
 
 ## Agent Metadata
@@ -316,7 +301,5 @@ Use this agent when:
 - `readme-writing-readme-files` - README-specific validation criteria
 - `repo-assessing-criticality-confidence` - Criticality assessment
 - `repo-generating-validation-reports` - Report generation methodology
-
----
 
 **Remember**: README validation is about making content welcoming and accessible. Be constructive, specific, and actionable in your feedback. Help make READMEs that truly welcome contributors.

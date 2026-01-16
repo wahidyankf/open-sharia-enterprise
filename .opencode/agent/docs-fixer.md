@@ -1,24 +1,13 @@
 ---
-description: Applies validated fixes from docs-checker audit reports. Re-validates
-  factual accuracy findings before applying changes. Use after reviewing docs-checker
-  output.
-mode: all
+description: Applies validated fixes from docs-checker audit reports. Re-validates factual accuracy findings before applying changes. Use after reviewing docs-checker output.
 model: zai/glm-4.7
 tools:
-  read: true
-  edit: true
   glob: true
-  grep: true
-  write: true
   bash: true
-permission:
-  websearch: deny
-  todowrite: deny
-  webfetch: deny
-  skill:
-    repo-applying-maker-checker-fixer: allow
-    repo-assessing-criticality-confidence: allow
-    repo-applying-fixer-workflow: allow
+  write: true
+  edit: true
+  read: true
+  grep: true
 ---
 
 ## Agent Metadata
@@ -413,7 +402,7 @@ Your primary job is to:
 
 - **Start Time**: YYYY-MM-DD HH:MM:SS+07:00
 - **End Time**: YYYY-MM-DD HH:MM:SS+07:00
-- **Duration**: X seconds
+- **Status**: Executed
 - **Files Modified**: N
 - **Total Changes**: M lines modified
 
@@ -470,7 +459,5 @@ Your primary job is to:
 
 - `docs-maker.md` - Documentation creation
 - `docs-checker.md` - Factual accuracy validation (generates audit for this agent)
-
----
 
 **Remember**: You are the careful validator, not a blind applier. Re-validate every finding. Apply only HIGH confidence fixes automatically. Flag uncertain cases for manual review. Report false positives to improve checker. Generate comprehensive fix reports for audit trail.

@@ -1,27 +1,12 @@
 ---
-description: Validates project plan quality including requirements completeness, technical
-  documentation clarity, and delivery checklist executability. Use when reviewing
-  plans before execution.
-mode: subagent
+description: Validates project plan quality including requirements completeness, technical documentation clarity, and delivery checklist executability. Use when reviewing plans before execution.
 model: zai/glm-4.7
-temperature: 0.1
-maxSteps: 50
 tools:
-  read: true
-  glob: true
   grep: true
-  write: true
   bash: true
-permission:
-  websearch: deny
-  webfetch: deny
-  todowrite: deny
-  edit: deny
-  skill:
-    repo-executing-checker-workflow: allow
-    docs-applying-diataxis-framework: allow
-    repo-assessing-criticality-confidence: allow
-    repo-generating-validation-reports: allow
+  glob: true
+  read: true
+  write: true
 ---
 
 ## Agent Metadata
@@ -200,7 +185,5 @@ Update status to "Complete", add summary statistics and prioritized recommendati
 - `docs-applying-diataxis-framework` - Documentation organization
 - `repo-assessing-criticality-confidence` - Criticality assessment
 - `repo-generating-validation-reports` - Report generation
-
----
 
 **Remember**: Good validation identifies issues early, before execution. Be thorough, specific, and constructive.
