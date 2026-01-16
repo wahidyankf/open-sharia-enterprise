@@ -4,9 +4,6 @@ description: Creates and updates tutorial documentation following Diátaxis fram
 mode: all
 model: zai/glm-4.7
 tools:
-    docs-applying-diataxis-framework: allow
-    docs-creating-by-example-tutorials: allow
-
   read: true
   write: true
   edit: true
@@ -27,6 +24,8 @@ permission:
 ## Agent Metadata
 
 - **Role**: Writer (blue)
+- **Created**: 2025-12-20
+- **Last Updated**: 2026-01-16
 
 ## Knowledge Dependencies (Skills)
 
