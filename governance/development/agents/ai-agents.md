@@ -2363,3 +2363,151 @@ See [Skills README](.opencode/skill/README.md) for complete catalog.
 ---
 
 **Last Updated**: 2026-01-03
+
+---
+
+## Dual Mode Operation
+
+**Added**: 2026-01-16
+
+This repository maintains **dual compatibility** with both Claude Code (`.claude/`) and OpenCode (`.opencode/`) systems.
+
+### Directory Structure
+
+```
+.
+├── .claude/                 # Claude Code configuration (PRIMARY - Source of Truth)
+│   ├── agents/             # 46 agents in Claude Code format
+│   ├── skills/             # 23 skills
+│   └── settings.local.json # MCP servers configuration
+└── .opencode/              # OpenCode configuration (SECONDARY - Auto-generated)
+    ├── agent/              # 46 agents in OpenCode format (synced from .claude/)
+    ├── skill/              # 23 skills (direct copy from .claude/)
+    └── opencode.json       # OpenCode configuration
+```
+
+### Source of Truth Hierarchy
+
+**`.claude/` is the canonical source**. All updates happen here first, then sync to `.opencode/`.
+
+**Making Changes**:
+
+1. Edit agents in `.claude/agents/` directory (PRIMARY)
+2. Edit skills in `.claude/skills/` directory (PRIMARY)
+3. Run sync: `npm run sync:claude-to-opencode`
+4. Changes automatically regenerate `.opencode/` (SECONDARY)
+
+**Rationale**: Single source of truth prevents conflicts, ensures consistency, simplifies maintenance.
+
+### Format Differences
+
+Both systems use markdown agents with YAML frontmatter, but with different conventions:
+
+#### Tools Format
+
+**Claude Code** (`.claude/agents/`):
+
+```yaml
+tools: [Read, Write, Edit, Glob, Grep, Bash]
+```
+
+Array format with capitalized tool names.
+
+**OpenCode** (`.opencode/agent/`):
+
+```yaml
+tools:
+  read: true
+  write: true
+  edit: true
+  glob: true
+  grep: true
+  bash: true
+```
+
+Boolean flags format (nested YAML).
+
+#### Model References
+
+**Claude Code**:
+
+```yaml
+model: sonnet # or opus, haiku, or omit for inherit
+```
+
+**OpenCode**:
+
+```yaml
+model: zai/glm-4.7     # sonnet equivalent
+model: zai/glm-4.5-air # haiku equivalent
+model: inherit         # inherits from parent
+```
+
+#### Skills Format
+
+**Identical for both systems** - Skills use the same SKILL.md format:
+
+```yaml
+---
+description: Brief description
+---
+# Skill Name
+Content...
+```
+
+Skills are **directly copied** from `.claude/skills/` to `.opencode/skill/` (no conversion needed).
+
+### Sync Automation
+
+**Script**: `scripts/sync-agent-configs.sh` (or `.js`)
+
+**Commands**:
+
+- `npm run sync:claude-to-opencode` - Full sync (agents + skills)
+- `npm run sync:agents` - Agents only
+- `npm run sync:skills` - Skills only (direct copy)
+- `npm run validate:sync` - Verify semantic equivalence
+
+**Conversion Logic**:
+
+- **Agents**: Claude Code format → OpenCode format (tool arrays → boolean flags, model mapping)
+- **Skills**: Direct copy (no conversion, format identical)
+- **Validation**: Confirms both directories are semantically equivalent
+
+### Documentation References
+
+- **[CLAUDE.md](../../../CLAUDE.md)** (PRIMARY) - Claude Code configuration
+- **[AGENTS.md](../../../AGENTS.md)** (SECONDARY) - OpenCode configuration with auto-generated warning
+- **[.claude/agents/README.md](../../../.claude/agents/README.md)** (PRIMARY) - Agent catalog
+- **[.opencode/agent/README.md](../../../.opencode/agent/README.md)** (SECONDARY) - OpenCode agent catalog with warning
+- **[.claude/skills/README.md](../../../.claude/skills/README.md)** (PRIMARY) - Skills catalog
+- **[.opencode/skill/README.md](../../../.opencode/skill/README.md)** (SECONDARY) - OpenCode skills catalog with warning
+
+### Migration History
+
+- **2026-01-12**: Initial OpenCode migration (45 agents)
+- **2026-01-16**: Dual-mode setup established, `.claude/` created as source of truth (46 agents)
+
+### Best Practices
+
+1. **Always edit `.claude/` first** - Never edit `.opencode/` directly (changes will be overwritten)
+2. **Run sync after changes** - Ensure `.opencode/` stays synchronized
+3. **Test both systems** - Verify agents work in both Claude Code and OpenCode after major changes
+4. **Document sync status** - Keep README files updated in both directories
+5. **Security policy** - Only use skills from trusted sources (both systems)
+
+### Troubleshooting
+
+**Problem**: `.opencode/` agents out of sync with `.claude/`
+**Solution**: Run `npm run sync:claude-to-opencode` to regenerate
+
+**Problem**: Conversion errors during sync
+**Solution**: Check agent frontmatter format in `.claude/agents/`, fix YAML syntax, re-sync
+
+**Problem**: Skills missing in one directory
+**Solution**: Verify skills exist in `.claude/skills/`, run `npm run sync:skills`
+
+---
+
+**Last Updated**: 2026-01-16
+**See Also**: [Repository Governance Architecture](../../repository-governance-architecture.md)

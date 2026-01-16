@@ -48,7 +48,7 @@ open-sharia-enterprise/
 │   ├── backlog/             # Future plans
 │   └── done/                # Completed plans
 ├── .claude/                 # Claude Code configuration
-│   ├── agents/              # 45 specialized AI agents
+│   ├── agents/              # 46 specialized AI agents
 │   └── skills/              # 23 skill packages
 ├── .husky/                  # Git hooks
 ├── nx.json                  # Nx workspace config
@@ -228,7 +228,7 @@ Volta for Node.js/npm pinning, package-lock.json, .env.example
 
 **See**: [governance/development/workflow/reproducible-environments.md](./governance/development/workflow/reproducible-environments.md)
 
-## AI Agents (45 Specialized Agents)
+## AI Agents (46 Specialized Agents)
 
 **Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, apps\_\_ayokoding-web\_\_general-maker, apps\_\_ayokoding-web\_\_by-example-maker, apps\_\_ose-platform-web\_\_content-maker
 
@@ -268,6 +268,29 @@ sed -i 's/old-value/new-value/' .claude/agents/existing-agent.md
 
 **See**: [.claude/agents/README.md](./.claude/agents/README.md), [governance/development/pattern/maker-checker-fixer.md](./governance/development/pattern/maker-checker-fixer.md)
 
+## Dual-Mode Configuration (Claude Code + OpenCode)
+
+This repository maintains **dual compatibility** with both Claude Code and OpenCode systems:
+
+- **`.claude/`**: Source of truth (PRIMARY) - All updates happen here first
+- **`.opencode/`**: Auto-generated (SECONDARY) - Synced from `.claude/`
+
+**Making Changes:**
+
+1. Edit agents/skills in `.claude/` directory first
+2. Run sync script: `npm run sync:claude-to-opencode`
+3. Both systems stay synchronized automatically
+
+**Format Differences:**
+
+- **Tools**: Claude Code uses arrays `[Read, Write]`, OpenCode uses boolean flags `{ read: true, write: true }`
+- **Models**: Claude Code uses `sonnet`/`haiku` (or omits), OpenCode uses `zai/glm-4.7` or `inherit`
+- **Skills**: Same format for both (SKILL.md with frontmatter) - direct copy
+
+**Security Policy**: Only use skills from trusted sources. All skills in this repository are maintained by the project team.
+
+**See**: [.claude/agents/README.md](./.claude/agents/README.md), [AGENTS.md](./AGENTS.md) for OpenCode documentation
+
 ## Repository Architecture
 
 Six-layer governance hierarchy:
@@ -276,7 +299,7 @@ Six-layer governance hierarchy:
 - **Layer 1: Principles** - WHY we value approaches (10 core principles)
 - **Layer 2: Conventions** - WHAT documentation rules (24 standards)
 - **Layer 3: Development** - HOW we develop (15 practices)
-- **Layer 4: AI Agents** - WHO enforces rules (45 specialized agents)
+- **Layer 4: AI Agents** - WHO enforces rules (46 specialized agents)
 - **Layer 5: Workflows** - WHEN we run processes (orchestrated sequences)
 
 **Skills**: Delivery infrastructure supporting agents (23 skills)
