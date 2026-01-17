@@ -451,13 +451,13 @@ name: docs-applying-content-quality
 
 **Current agent names are INVALID (same rules as skills):**
 
-| Current Name (INVALID)                  | Required Name (VALID)                 |
-| --------------------------------------- | ------------------------------------- |
-| `docs__checker.md`                      | `docs-checker.md`                     |
-| `apps__ayokoding-web__general-maker.md` | `apps-ayokoding-web-general-maker.md` |
-| `wow__workflow-checker.md`              | `repo-workflow-checker.md`            |
-| `plan__executor.md`                     | `plan-executor.md`                    |
-| `agent__maker.md`                       | `agent-maker.md`                      |
+| Current Name (INVALID)                  | Required Name (VALID)                      |
+| --------------------------------------- | ------------------------------------------ |
+| `docs__checker.md`                      | `docs-checker.md`                          |
+| `apps__ayokoding-web__general-maker.md` | `apps-apps-ayokoding-web-general-maker.md` |
+| `wow__workflow-checker.md`              | `repo-workflow-checker.md`                 |
+| `plan__executor.md`                     | `plan-executor.md`                         |
+| `agent__maker.md`                       | `agent-maker.md`                           |
 
 **Impact Assessment:**
 
@@ -750,7 +750,7 @@ Six-layer governance hierarchy:
 5. **Agents** (Layer 4) - AI task executors (40+ agents)
 6. **Workflows** (Layer 5) - Multi-step processes
 
-See [Repository Architecture](docs/explanation/ex-ru__repository-governance-architecture.md).
+See [Repository Architecture](governance/repository-governance-architecture.md).
 
 ## Key Conventions
 

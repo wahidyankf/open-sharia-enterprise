@@ -75,7 +75,7 @@ Seven tutorial types with progressive coverage depth:
 
 ## Mathematical Notation
 
-Use LaTeX notation for mathematical expressions. See [Mathematical Notation Convention](../../governance/conventions/formatting/ex-ru-co-fo-mathematical-notation.md) for syntax rules and examples.
+Use LaTeX notation for mathematical expressions. See [Mathematical Notation Convention](../../../governance/conventions/formatting/mathematical-notation.md) for syntax rules and examples.
 
 ## Diagram Creation
 
@@ -228,9 +228,9 @@ Check that everything works as expected:
 
 Now that you've completed this tutorial, you can:
 
-- **Next tutorial**: [Tutorial Title](link) - Brief description
-- **Related how-to**: [Guide Title](link) - When to use this
-- **Deep dive**: [Explanation Title](link) - Understand the concepts
+- **Next tutorial**: [Tutorial Title](../../governance/conventions/formatting/linking.md) - Brief description
+- **Related how-to**: [Guide Title](../../governance/conventions/formatting/linking.md) - When to use this
+- **Deep dive**: [Explanation Title](../../governance/conventions/formatting/linking.md) - Understand the concepts
 ```
 
 ### 7. Troubleshooting Section (Optional)
@@ -307,7 +307,7 @@ return db.users.create({ username, hash });
 - Discuss design decisions, alternatives, and implications
 - Reference related examples or documentation
 
-See [Tutorial Naming Convention - By Example Requirements](../../governance/conventions/tutorial/naming.md#by-example-requirements) for complete annotation standards.
+See [Tutorial Naming Convention - By Example Requirements](../../../governance/conventions/tutorial/naming.md#by-example-requirements) for complete annotation standards.
 
 ## File Naming
 
@@ -319,7 +319,7 @@ Tutorial files follow the pattern: `tu-[content-identifier].md`
 - `tu-quick-start-express-server.md`
 - `tu-by-example-react-hooks.md`
 
-See [File Naming Convention](../../governance/conventions/meta/ex-ru-co-me-file-naming.md) for complete details.
+See [File Naming Convention](../../../governance/conventions/meta/file-naming.md) for complete details.
 
 ## Linking Standards
 
@@ -332,7 +332,7 @@ All links must follow GitHub-compatible markdown format:
 
 **Rule references**: Use two-tier formatting:
 
-- **First mention**: Markdown link `[Convention Name](./path/to/file.md)`
+- **First mention**: Markdown link `Convention Name`
 - **Subsequent mentions**: Inline code `` `Convention Name` ``
 
 See [Linking Convention](../../governance/conventions/formatting/linking.md) for complete details.
@@ -509,19 +509,19 @@ When updating tutorials:
 **Tutorial Standards**:
 
 - [Tutorial Naming Convention](../../governance/conventions/tutorial/naming.md) - Types, coverage levels, naming patterns
-- [By Example Content Standard](../../governance/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
+- [By Example Content Standard](../../governance/conventions/tutorial/programming-language-content.md) - Annotation requirements
 
 **Content Standards**:
 
 - [Content Quality Principles](../../governance/conventions/content/quality.md) - Quality checklist
-- [Diátaxis Framework](../../governance/conventions/meta/ex-ru-co-me-diataxis-framework.md) - Documentation organization
+- [Diátaxis Framework](../../../governance/conventions/meta/diataxis-framework.md) - Documentation organization
 
 **Formatting Standards**:
 
 - [Diagrams Convention](../../governance/conventions/formatting/diagrams.md) - Mermaid and accessibility
-- [Mathematical Notation Convention](../../governance/conventions/formatting/ex-ru-co-fo-mathematical-notation.md) - LaTeX syntax
+- [Mathematical Notation Convention](../../../governance/conventions/formatting/mathematical-notation.md) - LaTeX syntax
 - [Linking Convention](../../governance/conventions/formatting/linking.md) - Link format rules
-- [File Naming Convention](../../governance/conventions/meta/ex-ru-co-me-file-naming.md) - Naming patterns
+- [File Naming Convention](../../../governance/conventions/meta/file-naming.md) - Naming patterns
 
 **Related Agents**:
 

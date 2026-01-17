@@ -54,7 +54,7 @@ This convention establishes the organizational structure for project planning do
 - **Task tracking** - Covered by plan\_\_executor agent
 - **Deployment scheduling** - Covered in deployment conventions
 
-## 📋 Overview
+## Overview
 
 The `plans/` folder serves as the workspace for project planning activities:
 
@@ -65,7 +65,7 @@ The `plans/` folder serves as the workspace for project planning activities:
 
 **Key Distinction**: Plans are temporary working documents that eventually move to `done/` and may be archived, while `docs/` contains permanent documentation that evolves over time.
 
-## 🗂️ Folder Structure
+## ️ Folder Structure
 
 The `plans/` folder is organized into four main components:
 
@@ -99,7 +99,7 @@ plans/
 - Serves as historical record of project evolution
 - Each subfolder has a `README.md` listing all completed plans
 
-## 💡 Ideas File
+## Ideas File
 
 **Location**: `plans/ideas.md` (root level of plans/ folder)
 
@@ -139,7 +139,7 @@ When an idea is ready for formal planning:
 3. Remove or check off the idea from `ideas.md`
 4. The idea now has a structured plan with requirements, technical docs, and delivery timeline
 
-## 📁 Plan Folder Naming
+## Plan Folder Naming
 
 **CRITICAL**: Every plan folder MUST follow this naming pattern:
 
@@ -174,7 +174,7 @@ YYYY-MM-DD__[project-identifier]/
 - `2025-11-24__Init Monorepo/` (capital letters, spaces)
 - `2025-11-24__init_monorepo/` (underscores in identifier)
 
-## 📄 Plan Contents
+## Plan Contents
 
 Plans can use either **single-file** or **multi-file** structure depending on size and complexity.
 
@@ -227,7 +227,7 @@ Plans can use either **single-file** or **multi-file** structure depending on si
 - **tech-docs.md**: Architecture diagrams, API design, data models, technical decisions
 - **delivery.md**: Milestones, deliverables, success metrics, validation checklist
 
-**Acceptance Criteria**: All user stories in requirements.md must include testable acceptance criteria using Gherkin format. See [Acceptance Criteria Convention](../development/infra/acceptance-criteria.md) for complete details.
+**Acceptance Criteria**: All user stories in requirements.md must include testable acceptance criteria using Gherkin format. See [Acceptance Criteria Convention](../../development/infra/acceptance-criteria.md) for complete details.
 
 ### Important Note on File Naming
 
@@ -235,7 +235,7 @@ Plans can use either **single-file** or **multi-file** structure depending on si
 
 The folder structure provides sufficient context, so prefixes are unnecessary and would add noise. This differs from files in `docs/` which use prefixes for organization.
 
-## 🔄 Key Differences from Documentation
+## Key Differences from Documentation
 
 Plans differ from `docs/` in several important ways:
 
@@ -249,7 +249,7 @@ Plans differ from `docs/` in several important ways:
 | **Longevity**    | Temporary (archived in done/)         | Permanent (evolves over time)        |
 | **Organization** | By project and status                 | By Diátaxis category                 |
 
-## 🚀 Working with Plans
+## Working with Plans
 
 ### Creating Plans
 
@@ -285,7 +285,7 @@ Each subfolder (`backlog/`, `in-progress/`, `done/`) has a `README.md` that:
 - Links to each plan folder
 - Updated whenever plans are added, moved, or removed
 
-## 🎨 Diagrams in Plans
+## Diagrams in Plans
 
 Files in `plans/` folder should use **Mermaid diagrams** as the primary format (same as all markdown files in the repository).
 
@@ -305,24 +305,24 @@ Files in `plans/` folder should use **Mermaid diagrams** as the primary format (
 
 For complete diagram standards, see [Diagram and Schema Convention](../formatting/diagrams.md).
 
-## 📚 Related Documentation
+## Related Documentation
 
 **Decision Guides**:
 
-- [How to Organize Your Work](../../how-to/hoto__organize-work.md) - Decision guide for choosing between plans/ and docs/
+- [How to Organize Your Work](../../../docs/how-to/hoto__organize-work.md) - Decision guide for choosing between plans/ and docs/
 
 **Related Conventions**:
 
-- [Acceptance Criteria Convention](../development/infra/acceptance-criteria.md) - Writing testable acceptance criteria using Gherkin format
+- [Acceptance Criteria Convention](../../development/infra/acceptance-criteria.md) - Writing testable acceptance criteria using Gherkin format
 - [Diátaxis Framework](../meta/diataxis-framework.md) - Organization of `docs/` directory
 - [File Naming Convention](../meta/file-naming.md) - Naming files within `docs/` (not applicable to plans/)
 - [Diagram and Schema Convention](../formatting/diagrams.md) - Standards for Mermaid diagrams
 
 **Development Guides**:
 
-- [AI Agents Convention](../development/agents/ai-agents.md) - Standards for AI agents (including plan**maker and plan**executor)
+- [AI Agents Convention](../../development/agents/ai-agents.md) - Standards for AI agents (including plan**maker and plan**executor)
 
-## 💡 Best Practices
+## Best Practices
 
 ### Keep Plans Focused
 
@@ -357,7 +357,7 @@ For complete diagram standards, see [Diagram and Schema Convention](../formattin
 - Review past plans to learn from successes and challenges
 - Use completed plans as templates for similar future work
 
-## 🔍 Examples
+## Examples
 
 ### Example: Small Plan (Single-File)
 

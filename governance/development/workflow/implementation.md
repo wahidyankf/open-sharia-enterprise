@@ -17,7 +17,7 @@ updated: 2025-12-15
 
 **Make it work, make it right, make it fast** - a three-stage development workflow that prioritizes functionality first, quality second, and optimization last (only when proven necessary).
 
-## 🎯 What
+## What
 
 The implementation workflow follows three sequential stages:
 
@@ -27,7 +27,7 @@ The implementation workflow follows three sequential stages:
 
 **Key principle**: Each stage is complete before moving to the next. Don't skip stages or combine them.
 
-## 💡 Why
+## Why
 
 ## Principles Respected
 
@@ -45,7 +45,7 @@ This practice implements/respects the following conventions:
 
 - **[Code Quality Convention](../quality/code.md)**: The "make it right" stage applies code quality standards (Prettier formatting, linting) before the "make it fast" stage to ensure clean code before optimization.
 
-- **[Content Quality Principles](../conventions/content/quality.md)**: Implementation workflow follows the same progressive layering philosophy - start simple (work), add structure and clarity (right), then refine performance (fast).
+- **[Content Quality Principles](../../conventions/content/quality.md)**: Implementation workflow follows the same progressive layering philosophy - start simple (work), add structure and clarity (right), then refine performance (fast).
 
 ### Benefits of This Workflow
 
@@ -68,7 +68,7 @@ This practice implements/respects the following conventions:
 > "Premature optimization is the root of all evil (or at least most of it) in programming."
 > — Donald Knuth, "The Art of Computer Programming"
 
-## 📋 How It Applies
+## How It Applies
 
 ### Stage 1: Make It Work
 
@@ -84,15 +84,15 @@ This practice implements/respects the following conventions:
 
 **What NOT to do**:
 
-- ❌ Don't create abstractions or design patterns yet
-- ❌ Don't optimize for performance
-- ❌ Don't worry about code duplication
-- ❌ Don't refactor while implementing
+- FAIL: Don't create abstractions or design patterns yet
+- FAIL: Don't optimize for performance
+- FAIL: Don't worry about code duplication
+- FAIL: Don't refactor while implementing
 
 **Example**:
 
 ```typescript
-// ✅ MAKE IT WORK - Simple, straightforward implementation
+// PASS: MAKE IT WORK - Simple, straightforward implementation
 function calculateOrderTotal(items: any[]) {
   let total = 0;
   for (let i = 0; i < items.length; i++) {
@@ -101,7 +101,7 @@ function calculateOrderTotal(items: any[]) {
   return total;
 }
 
-// ❌ DON'T DO THIS YET - Premature abstraction
+// FAIL: DON'T DO THIS YET - Premature abstraction
 class OrderCalculator {
   private strategy: PricingStrategy;
   constructor(strategy: PricingStrategy) {
@@ -131,14 +131,14 @@ class OrderCalculator {
 
 **What NOT to do**:
 
-- ❌ Don't optimize for performance yet
-- ❌ Don't add features not in requirements
-- ❌ Don't change functionality (keep tests green)
+- FAIL: Don't optimize for performance yet
+- FAIL: Don't add features not in requirements
+- FAIL: Don't change functionality (keep tests green)
 
 **Example**:
 
 ```typescript
-// ✅ MAKE IT RIGHT - Clean, readable, maintainable
+// PASS: MAKE IT RIGHT - Clean, readable, maintainable
 interface OrderItem {
   price: number;
   quantity: number;
@@ -174,10 +174,10 @@ function calculateItemTotal(item: OrderItem): number {
 
 **What NOT to do**:
 
-- ❌ Don't optimize without profiling data
-- ❌ Don't optimize everything - only bottlenecks
-- ❌ Don't sacrifice readability unless necessary
-- ❌ Don't guess which parts are slow
+- FAIL: Don't optimize without profiling data
+- FAIL: Don't optimize everything - only bottlenecks
+- FAIL: Don't sacrifice readability unless necessary
+- FAIL: Don't guess which parts are slow
 
 **Example**:
 
@@ -208,14 +208,14 @@ function calculateOrderTotalOptimized(items: OrderItem[]): number {
 
 **When you're done**: Performance meets requirements, code still clean, optimizations justified by data.
 
-## 🚫 Anti-Patterns
+## Anti-Patterns
 
 ### Premature Optimization
 
-❌ **Problem**: Optimizing before making it work or right.
+FAIL: **Problem**: Optimizing before making it work or right.
 
 ```typescript
-// ❌ Stage 1: DON'T DO THIS - Premature optimization
+// FAIL: Stage 1: DON'T DO THIS - Premature optimization
 function calculateOrderTotal(items: OrderItem[]): number {
   // Trying to optimize in Stage 1 (Make It Work)
   const cache = new WeakMap();
@@ -233,10 +233,10 @@ function calculateOrderTotal(items: OrderItem[]): number {
 
 ### Skipping "Make It Right"
 
-❌ **Problem**: Optimizing messy code.
+FAIL: **Problem**: Optimizing messy code.
 
 ```typescript
-// ❌ Skipped Stage 2 - Went from "working" to "optimized" with ugly code
+// FAIL: Skipped Stage 2 - Went from "working" to "optimized" with ugly code
 function calcOrdTot(itms) {
   let t = 0,
     i = 0,
@@ -250,10 +250,10 @@ function calcOrdTot(itms) {
 
 ### Optimizing Everything
 
-❌ **Problem**: Optimizing code that doesn't need it.
+FAIL: **Problem**: Optimizing code that doesn't need it.
 
 ```typescript
-// ❌ Optimizing a function that runs once per page load
+// FAIL: Optimizing a function that runs once per page load
 function getAppTitle(): string {
   // Unnecessary memoization for function called once
   if (this.cachedTitle) return this.cachedTitle;
@@ -266,24 +266,24 @@ function getAppTitle(): string {
 
 ### Optimization Without Measurement
 
-❌ **Problem**: Guessing which parts are slow.
+FAIL: **Problem**: Guessing which parts are slow.
 
 ```typescript
-// ❌ "I think this is slow" - NO PROFILING DATA
+// FAIL: "I think this is slow" - NO PROFILING DATA
 // Developer spends 2 days optimizing this function
 // Profiler shows it takes 0.1% of total execution time
 ```
 
 **Why it's bad**: Optimizing the wrong thing. Real bottleneck remains unoptimized.
 
-## ✅ Best Practices
+## PASS: Best Practices
 
 ### 1. Always Start Simple
 
 **First implementation should be the simplest**:
 
 ```typescript
-// ✅ Stage 1: Simple and obvious
+// PASS: Stage 1: Simple and obvious
 function isValidEmail(email: string): boolean {
   return email.includes("@") && email.includes(".");
 }
@@ -302,7 +302,7 @@ function isValidEmail(email: string): boolean {
 **Ensure tests pass before "Make It Right"**:
 
 ```typescript
-// ✅ Tests lock in behavior before refactoring
+// PASS: Tests lock in behavior before refactoring
 describe("calculateOrderTotal", () => {
   it("calculates total for multiple items", () => {
     const items = [
@@ -321,7 +321,7 @@ describe("calculateOrderTotal", () => {
 **Always measure, never guess**:
 
 ```bash
-# ✅ Profile first
+# PASS: Profile first
 npm run profile
 
 # Output shows:
@@ -356,7 +356,7 @@ function calculateOrderTotalOptimized(items: OrderItem[]): number {
 **Optimize the bottleneck, keep rest of code clean**:
 
 ```typescript
-// ✅ Most code remains clean and readable
+// PASS: Most code remains clean and readable
 function processOrder(order: Order) {
   validateOrder(order); // Clean code
   applyDiscounts(order); // Clean code
@@ -370,7 +370,7 @@ function processOrder(order: Order) {
 **Verify optimization actually helped**:
 
 ```typescript
-// ✅ Before optimization
+// PASS: Before optimization
 console.time("calculateOrderTotal");
 const total = calculateOrderTotal(items);
 console.timeEnd("calculateOrderTotal");
@@ -383,9 +383,9 @@ console.timeEnd("calculateOrderTotal");
 // calculateOrderTotal: 45ms ← Verified 95% improvement
 ```
 
-## 📊 When to Apply
+## When to Apply
 
-### ✅ Use This Workflow For
+### PASS: Use This Workflow For
 
 **New feature development**:
 
@@ -411,7 +411,7 @@ console.timeEnd("calculateOrderTotal");
 3. Make it fast: Only if measurements show need
 ```
 
-### ❌ Exceptions to the Workflow
+### FAIL: Exceptions to the Workflow
 
 **Security fixes**: Priority is "make it secure" (right), not "make it work"
 
@@ -446,7 +446,7 @@ function processVideoFrame(frame: Frame): ProcessedFrame {
 }
 ```
 
-## 📖 References
+## References
 
 **Software Engineering Principles**:
 
@@ -465,7 +465,7 @@ function processVideoFrame(frame: Frame): ProcessedFrame {
 - [JavaScript Performance](https://developer.mozilla.org/en-US/docs/Web/Performance) - MDN Web Docs
 - [Web Performance Optimization](https://web.dev/fast/) - Google Web Fundamentals
 
-## 🔗 Related Documentation
+## Related Documentation
 
 - [Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md) - Start simple principle
 - [Code Quality Convention](../quality/code.md) - Automated quality checks

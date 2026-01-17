@@ -23,7 +23,7 @@ This convention respects the following core principles:
 
 - **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Web-based verification (WebSearch + WebFetch) automates fact-checking against authoritative sources. Machines verify command syntax, version numbers, and API accuracy - humans focus on content creation and strategic decisions.
 
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Clear confidence classification (✅ Verified, ⚠️ Unverified, ❌ Error, 📅 Outdated) with explicit verification sources. No hidden assumptions about factual accuracy - every claim is either verified with source citation or marked as unverified.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Clear confidence classification (PASS: Verified, Unverified, FAIL: Error, Outdated) with explicit verification sources. No hidden assumptions about factual accuracy - every claim is either verified with source citation or marked as unverified.
 
 ## Purpose
 
@@ -46,7 +46,7 @@ This convention establishes a systematic methodology for verifying factual corre
 - **Hugo site deployment** - Covered in deployment conventions
 - **Automated fact checking** - This is a manual methodology, not automated tooling
 
-## 📋 Overview
+## Overview
 
 ### What is Factual Validation?
 
@@ -65,19 +65,19 @@ Factual validation is the systematic process of verifying technical claims, comm
 
 **Without factual validation:**
 
-- ❌ Readers follow incorrect commands that don't work
-- ❌ Tutorials reference deprecated APIs causing confusion
-- ❌ Documentation contradicts itself creating trust issues
-- ❌ Outdated version numbers mislead about compatibility
-- ❌ Broken links frustrate users seeking additional information
+- FAIL: Readers follow incorrect commands that don't work
+- FAIL: Tutorials reference deprecated APIs causing confusion
+- FAIL: Documentation contradicts itself creating trust issues
+- FAIL: Outdated version numbers mislead about compatibility
+- FAIL: Broken links frustrate users seeking additional information
 
 **With factual validation:**
 
-- ✅ All technical claims verified against authoritative sources
-- ✅ Commands and code examples guaranteed to work
-- ✅ Version information current and accurate
-- ✅ Contradictions detected and resolved
-- ✅ External references validated for accessibility
+- PASS: All technical claims verified against authoritative sources
+- PASS: Commands and code examples guaranteed to work
+- PASS: Version information current and accurate
+- PASS: Contradictions detected and resolved
+- PASS: External references validated for accessibility
 
 ### Scope
 
@@ -92,7 +92,7 @@ This convention applies to **all content types** across the repository:
 | **Convention Documents**    | Referenced standards, tool capabilities, specification URLs         |
 | **Agent Definitions**       | Tool permissions, model capabilities, reference documentation links |
 
-## 🎯 Core Validation Methodology
+## Core Validation Methodology
 
 ### 1. Command Syntax Verification
 
@@ -124,7 +124,7 @@ Verification:
 1. WebSearch: "gobuster dir mode documentation"
 2. WebFetch: https://github.com/OJ/gobuster (official repo)
 3. Check: -u flag exists, -w for wordlist, -x for extensions
-4. Result: ✅ Verified or ❌ Flag -x is actually --extensions
+4. Result: PASS: Verified or FAIL: Flag -x is actually --extensions
 ```
 
 ### 2. Feature Existence Verification
@@ -154,7 +154,7 @@ Verification:
 1. WebFetch: https://github.com/OJ/gobuster/README.md
 2. Extract: Actual mode list from official docs
 3. Compare: Claimed vs. actual modes
-4. Result: ✅ All 7 modes verified or ❌ Only 6 modes exist (missing fuzz)
+4. Result: PASS: All 7 modes verified or FAIL: Only 6 modes exist (missing fuzz)
 ```
 
 ### 3. Version Number Verification
@@ -186,7 +186,7 @@ Verification:
 1. WebSearch: "Prisma latest version 2025"
 2. WebFetch: https://www.npmjs.com/package/prisma
 3. Check: Latest version is 6.1.0 (released 2025-11-20)
-4. Result: ⚠️ Outdated - 6.0.2 is not latest (6.1.0 is)
+4. Result: Outdated - 6.0.2 is not latest (6.1.0 is)
 ```
 
 ### 4. Code Example Validation
@@ -226,7 +226,7 @@ Verification:
 1. WebFetch: https://www.prisma.io/docs/reference/api-reference
 2. Check: Prisma Client doesn't export `createUser` directly
 3. Actual API: `prisma.user.create({ data: { name: 'John' } })`
-4. Result: ❌ Incorrect API usage
+4. Result: FAIL: Incorrect API usage
 ````
 
 ### 5. External Reference Verification
@@ -255,7 +255,7 @@ Verification:
 1. WebFetch: Original URL returns 404
 2. WebSearch: "NIST [topic] guidelines"
 3. Find: New URL for same guideline
-4. Result: ⚠️ URL outdated, suggest replacement
+4. Result: URL outdated, suggest replacement
 ```
 
 ### 6. Mathematical Notation Validation
@@ -282,12 +282,12 @@ Verification:
 **Common error pattern:**
 
 ```markdown
-❌ BROKEN - Single $ on its own line:
+FAIL: BROKEN - Single $ on its own line:
 $
 WACC = \frac{E}{V} \times r_e
 $
 
-✅ CORRECT - Use $$:
+PASS: CORRECT - Use $$:
 
 $$
 WACC = \frac{E}{V} \times r_e
@@ -353,12 +353,12 @@ $$
 **Common error:**
 
 ```markdown
-❌ WRONG - Spaces after dash:
+FAIL: WRONG - Spaces after dash:
 
 - First level (spaces after dash - WRONG!)
 - Nested level (spaces after dash - WRONG!)
 
-✅ CORRECT - Spaces before dash:
+PASS: CORRECT - Spaces before dash:
 
 - First level
   - Nested level (2 spaces before dash)
@@ -380,7 +380,7 @@ $$
 
 **Rationale:** Code blocks must use language-specific idiomatic indentation to ensure examples can be copied and pasted correctly into actual code files.
 
-## 🔍 Web Verification Workflow
+## Web Verification Workflow
 
 ### WebSearch Usage Patterns
 
@@ -458,7 +458,7 @@ Some sites block automated tools (Wikipedia, GitHub, etc.):
 - Unofficial wikis or third-party docs
 - Forums or discussion threads
 
-## 📊 Validation Priorities
+## Validation Priorities
 
 ### High Priority - Always Verify
 
@@ -494,7 +494,7 @@ Some sites block automated tools (Wikipedia, GitHub, etc.):
 
 **Impact:** Informational only
 
-## 📋 Report Structure Standards
+## Report Structure Standards
 
 ### Validation Report Sections
 
@@ -513,7 +513,7 @@ All factual validation reports should include:
 List claims successfully verified:
 
 ```markdown
-✅ Verified: Gobuster supports 7 modes (dir, dns, vhost, s3, gcs, tftp, fuzz)
+PASS: Verified: Gobuster supports 7 modes (dir, dns, vhost, s3, gcs, tftp, fuzz)
 Source: https://github.com/OJ/gobuster (verified 2025-12-16)
 ```
 
@@ -522,7 +522,7 @@ Source: https://github.com/OJ/gobuster (verified 2025-12-16)
 Document incorrect claims:
 
 ```markdown
-❌ Factual Error at docs/guide.md:45
+FAIL: Factual Error at docs/guide.md:45
 Current: "Use flag -x to specify extensions"
 Issue: Flag -x does not exist in gobuster dir mode
 Correction: Use --extensions
@@ -535,7 +535,7 @@ Severity: High (example won't work as documented)
 List conflicting statements:
 
 ```markdown
-⚠️ Contradiction Found
+Contradiction Found
 File 1: docs/tutorial.md:23 - "Use HTTP for local development"
 File 2: docs/security.md:67 - "Always use HTTPS"
 Conflict: Inconsistent security guidance
@@ -547,15 +547,15 @@ Recommendation: Align on single approach (recommend HTTPS everywhere)
 Flag stale content:
 
 ```markdown
-📅 Potentially Outdated at docs/setup.md:34
+Potentially Outdated at docs/setup.md:34
 Content: "Install Node.js 18 (latest LTS)"
 Concern: Node.js 24 is now LTS (as of 2025-10-29)
 Suggestion: Update to recommend Node.js 24 LTS
 ```
 
-## 🏷️ Confidence Level Classification
+## ️ Confidence Level Classification
 
-### ✅ Verified
+### PASS: Verified
 
 **Criteria:**
 
@@ -566,12 +566,12 @@ Suggestion: Update to recommend Node.js 24 LTS
 **Example:**
 
 ```
-✅ Verified: Next.js 15.0.0 supports React 19
+PASS: Verified: Next.js 15.0.0 supports React 19
 Source: https://nextjs.org/blog/next-15
 Verified: 2025-12-16
 ```
 
-### ⚠️ Unverified
+### Unverified
 
 **Criteria:**
 
@@ -582,12 +582,12 @@ Verified: 2025-12-16
 **Example:**
 
 ```
-⚠️ Unverified: Performance claim requires benchmarking
+Unverified: Performance claim requires benchmarking
 Reason: No public benchmark data available
 Action Required: Manual performance testing
 ```
 
-### ❌ Error
+### FAIL: Error
 
 **Criteria:**
 
@@ -598,13 +598,13 @@ Action Required: Manual performance testing
 **Example:**
 
 ```
-❌ Error: Command syntax incorrect
+FAIL: Error: Command syntax incorrect
 Current: "npm install -g gobuster"
 Issue: Gobuster is not an npm package
 Correction: Install via apt-get or build from source
 ```
 
-### 📅 Outdated
+### Outdated
 
 **Criteria:**
 
@@ -615,13 +615,13 @@ Correction: Install via apt-get or build from source
 **Example:**
 
 ```
-📅 Outdated: Version reference is stale
+ Outdated: Version reference is stale
 Current: "Node.js 18 (latest LTS)"
 Issue: Node.js 24 is now LTS (since 2025-10-29)
 Correction: Update to Node.js 24
 ```
 
-## 🎨 Common Verification Scenarios
+## Common Verification Scenarios
 
 ### Scenario 1: Technical Tool Documentation
 
@@ -710,7 +710,7 @@ Correction: Update to Node.js 24
 5. Test if configuration examples are syntactically correct
 ```
 
-## 🤝 Handling Uncertainty
+## Handling Uncertainty
 
 ### When Unable to Verify
 
@@ -725,7 +725,7 @@ Correction: Update to Node.js 24
    - "Test this by running: [command]"
 
 3. **Flag as uncertain in report**
-   - "⚠️ Unverified: [claim] - requires [action]"
+   - "Unverified: [claim] - requires [action]"
 
 4. **Never present unverified info as verified**
    - Mark clearly as "unverified" or "assumed correct"
@@ -749,7 +749,7 @@ Context B (Shared network): Security risk
 Recommendation: Clarify which context applies or use HTTPS everywhere
 ```
 
-## 🔗 Integration Guidance for Different Content Types
+## Integration Guidance for Different Content Types
 
 ### Documentation (`docs/`)
 
@@ -806,7 +806,7 @@ Recommendation: Clarify which context applies or use HTTPS everywhere
 
 **Agent:** `readme__checker`, `readme__fixer`
 
-## 📚 Related Documentation
+## Related Documentation
 
 **Implementation Agents:**
 
@@ -824,9 +824,9 @@ Recommendation: Clarify which context applies or use HTTPS everywhere
 
 **Development Practices:**
 
-- [Maker-Checker-Fixer Pattern](../development/pattern/maker-checker-fixer.md) - Three-stage quality workflow
-- [Fixer Confidence Levels](../development/quality/fixer-confidence-levels.md) - Fix confidence assessment
-- [Repository Validation Methodology](../development/quality/repository-validation.md) - Standard validation patterns
+- [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Three-stage quality workflow
+- [Fixer Confidence Levels](../../development/quality/fixer-confidence-levels.md) - Fix confidence assessment
+- [Repository Validation Methodology](../../development/quality/repository-validation.md) - Standard validation patterns
 
 ---
 

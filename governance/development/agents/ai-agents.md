@@ -40,10 +40,10 @@ Without standards, agents can become:
 
 This convention ensures all agents are:
 
-- ✅ Well-structured and documented
-- ✅ Single-purpose and focused
-- ✅ Secure through explicit tool permissions
-- ✅ Consistent with project standards
+- PASS: Well-structured and documented
+- PASS: Single-purpose and focused
+- PASS: Secure through explicit tool permissions
+- PASS: Consistent with project standards
 
 ### Scope
 
@@ -98,12 +98,12 @@ This practice respects the following core principles:
 
 When working with agents:
 
-- ✅ **Do**: Let agents complete comprehensive validations, generate detailed reports, iterate until quality gates pass
-- ✅ **Do**: Use multi-step workflows (check-fix iterations) without worrying about token usage
-- ✅ **Do**: Focus on correct, thorough execution
-- ❌ **Don't**: Skip steps to save tokens
-- ❌ **Don't**: Reduce validation scope due to token concerns
-- ❌ **Don't**: Avoid iteration loops because of token budget fears
+- PASS: **Do**: Let agents complete comprehensive validations, generate detailed reports, iterate until quality gates pass
+- PASS: **Do**: Use multi-step workflows (check-fix iterations) without worrying about token usage
+- PASS: **Do**: Focus on correct, thorough execution
+- FAIL: **Don't**: Skip steps to save tokens
+- FAIL: **Don't**: Reduce validation scope due to token concerns
+- FAIL: **Don't**: Avoid iteration loops because of token budget fears
 
 ### Compaction Handles Scale
 
@@ -120,15 +120,15 @@ When working with agents:
 
 This practice implements/respects the following conventions:
 
-- **[File Naming Convention](../conventions/meta/file-naming.md)**: Agents follow kebab-case naming pattern (`agent-name.md`). Agent names must match frontmatter `name` field.
+- **[File Naming Convention](../../conventions/meta/file-naming.md)**: Agents follow kebab-case naming pattern (`agent-name.md`). Agent names must match frontmatter `name` field.
 
-- **[Linking Convention](../conventions/formatting/linking.md)**: All references to conventions and other documents use relative paths with `.md` extension. Ensures GitHub-compatible markdown across all agent files.
+- **[Linking Convention](../../conventions/formatting/linking.md)**: All references to conventions and other documents use relative paths with `.md` extension. Ensures GitHub-compatible markdown across all agent files.
 
-- **[Emoji Usage Convention](../conventions/formatting/emoji.md)**: Agent prompt files MUST NOT contain emojis (forbidden location per convention). `.claude/agents/README.md` (primary) and `.opencode/agent/README.md` (secondary) use colored square emojis for categorization.
+- **[Emoji Usage Convention](../../conventions/formatting/emoji.md)**: Agent prompt files MUST NOT contain emojis (forbidden location per convention). `.claude/agents/README.md` (primary) and `.opencode/agent/README.md` (secondary) use colored square emojis for categorization.
 
-- **[Color Accessibility Convention](../conventions/formatting/color-accessibility.md)**: Agent color categorization (blue/green/yellow/purple) uses verified accessible palette for visual identification while maintaining text-based accessibility.
+- **[Color Accessibility Convention](../../conventions/formatting/color-accessibility.md)**: Agent color categorization (blue/green/yellow/purple) uses verified accessible palette for visual identification while maintaining text-based accessibility.
 
-- \*\*[Timestamp Format Convention](../conventions/formatting/audit.md`.
+- \*\*[Timestamp Format Convention](../../conventions/formatting/audit.md`.
 
 ## Agent File Structure
 
@@ -214,7 +214,7 @@ In addition to the six required fields, agents may include optional metadata fie
 
 - Use both `created` and `updated` fields together for complete tracking
 - Update the `updated` field whenever making substantial changes to the agent
-- Use consistent date format (YYYY-MM-DD) matching the project's [Timestamp Format Convention](../conventions/formatting/timestamp.md) (date-only format)
+- Use consistent date format (YYYY-MM-DD) matching the project's [Timestamp Format Convention](../../conventions/formatting/timestamp.md) (date-only format)
 - Place these fields after the six required fields in frontmatter
 - These fields align with documentation frontmatter best practices from Hugo, Jekyll, and Front Matter CMS
 
@@ -259,18 +259,18 @@ The `skills` field (already defined as field 6 in Required Frontmatter above) ha
 
 **Use Skills references when:**
 
-- ✅ Knowledge is specialized and deep (e.g., accessible color palettes, Gherkin syntax)
-- ✅ Knowledge is shared across multiple agents (e.g., Maker-Checker-Fixer pattern)
-- ✅ Knowledge requires progressive disclosure (overview at startup, details on-demand)
-- ✅ Knowledge is frequently updated (Skills centralize updates)
-- ✅ Knowledge has multiple aspects (Skill can have reference.md, examples.md)
+- PASS: Knowledge is specialized and deep (e.g., accessible color palettes, Gherkin syntax)
+- PASS: Knowledge is shared across multiple agents (e.g., Maker-Checker-Fixer pattern)
+- PASS: Knowledge requires progressive disclosure (overview at startup, details on-demand)
+- PASS: Knowledge is frequently updated (Skills centralize updates)
+- PASS: Knowledge has multiple aspects (Skill can have reference.md, examples.md)
 
 **Use inline knowledge when:**
 
-- ✅ Knowledge is agent-specific and not shared
-- ✅ Knowledge is simple and fits in a few paragraphs
-- ✅ Knowledge is critical for agent's core operation (always needed)
-- ✅ Knowledge is stable and rarely changes
+- PASS: Knowledge is agent-specific and not shared
+- PASS: Knowledge is simple and fits in a few paragraphs
+- PASS: Knowledge is critical for agent's core operation (always needed)
+- PASS: Knowledge is stable and rarely changes
 
 #### Skills Field Examples
 
@@ -367,7 +367,7 @@ skills:
 
 This pattern provides both auto-loaded knowledge (Skills) and explicit references for specific requirements.
 
-See [Skills README](../../../.opencode/skill/README.md) for complete details on Skills creation, structure, and usage patterns.
+See [Skills README](./README.md) for complete details on Skills creation, structure, and usage patterns.
 
 ### Document Structure
 
@@ -419,26 +419,26 @@ Where:
 - `agent-name`: descriptive kebab-case identifier
 
 ```
-✅ Good - General agents (no scope prefix):
+PASS: Good - General agents (no scope prefix):
 - docs__maker.md
 - repo-governance-checker.md
 - plan__executor.md
 - readme__maker.md
 
-✅ Good - App-scoped agents:
+PASS: Good - App-scoped agents:
 - apps__ayokoding-web__general-maker.md
 - apps__ayokoding-web__by-example-checker.md
 - apps__ose-platform-web__content-maker.md
 - apps__ose-platform-web__deployer.md
 
-✅ Good - Lib-scoped agents (future):
+PASS: Good - Lib-scoped agents (future):
 - libs__ts-auth__validator.md
 - libs__ts-payment__checker.md
 
-✅ Good - Apps-labs scoped agents (future):
+PASS: Good - Apps-labs scoped agents (future):
 - apps-labs__prototype-x__tester.md
 
-❌ Bad:
+FAIL: Bad:
 - DocWriter.md (PascalCase)
 - doc_writer.md (snake_case)
 - documentation-writer-agent.md (redundant suffix)
@@ -515,7 +515,7 @@ Tool permissions follow the **principle of least privilege**: agents should only
 | **Read-Only**     | Read, Glob, Grep                    | Analysis without reports                      | (none currently)     | Pure read operations without file output                           |
 | **Checker**       | Read, Glob, Grep, Write, Bash       | Validation with audit report generation       | wow\_\_rules-checker | Needs Write for reports in generated-reports/, Bash for timestamps |
 | **Documentation** | Read, Write, Edit, Glob, Grep       | Creating/editing docs, managing doc structure | doc-writer           | Needs file creation/editing but no shell access                    |
-| **Development**   | Read, Write, Edit, Glob, Grep, Bash | Code generation, tests, builds, deployment    | test-runner          | Requires command execution (⚠️ powerful, only when necessary)      |
+| **Development**   | Read, Write, Edit, Glob, Grep, Bash | Code generation, tests, builds, deployment    | test-runner          | Requires command execution (powerful, only when necessary)         |
 
 ### Report-Generating Agents: Mandatory Tool Requirements
 
@@ -645,7 +645,7 @@ Start: Choosing Agent Model
     │
     ├─ Does this agent require specific model capabilities?
     │   │
-    │   ├─ No → Use `model: inherit` ✅
+    │   ├─ No → Use `model: inherit`
     │   │        (Most agents should use inherit)
     │   │
     │   └─ Yes → What specific capability?
@@ -658,11 +658,11 @@ Start: Choosing Agent Model
     │              │
     │              ├─ Multi-step planning and strategy → `model: sonnet`
     │              │
-    │              └─ Unsure → Use `model: inherit` ✅
+    │              └─ Unsure → Use `model: inherit`
     │                         (Can always change later)
 ```
 
-**⚠️ Important**: Document your reasoning if using a specific model. Add a comment in the agent explaining why.
+**Important**: Document your reasoning if using a specific model. Add a comment in the agent explaining why.
 
 ## Agent Color Categorization
 
@@ -706,7 +706,7 @@ Agents are categorized by their **primary role** which aligns with naming suffix
 - **\*Yellow with Write**: wow\_\_rules-maker needs Write tool to create new convention files (not just edit existing). Documented exception.
 - **\*Purple Bash-only**: Deployers (ayokoding-web-deployer, ose-platform-web-deployer) only need Bash for git/deployment orchestration. Purple without Write/Edit is valid for Bash-only orchestrators.
 
-**Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../conventions/formatting/color-accessibility.md) - the master reference for all color usage in this repository. These colors meet WCAG AA standards for both light and dark modes and work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color. All color-related work must reference the Color Accessibility Convention as the authoritative source.
+**Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - the master reference for all color usage in this repository. These colors meet WCAG AA standards for both light and dark modes and work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color. All color-related work must reference the Color Accessibility Convention as the authoritative source.
 
 ### Why This Categorization System
 
@@ -807,7 +807,7 @@ Start: What is the agent's primary capability?
 - **Agent doesn't fit any category**: Consider if it should be split or if a new category is needed
 - **Unsure**: Default to the most restrictive category based on tools, or omit the color field
 
-**Accessibility Note**: All assigned colors (blue, green, yellow, purple) are verified color-blind friendly and meet WCAG accessibility standards per the [Color Accessibility Convention](../conventions/formatting/color-accessibility.md). Agents should still be identified primarily by name and role suffix, not color alone, to ensure accessibility for all users. See the Color Accessibility Convention for complete details on palette verification, testing methodology, and WCAG compliance.
+**Accessibility Note**: All assigned colors (blue, green, yellow, purple) are verified color-blind friendly and meet WCAG accessibility standards per the [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md). Agents should still be identified primarily by name and role suffix, not color alone, to ensure accessibility for all users. See the Color Accessibility Convention for complete details on palette verification, testing methodology, and WCAG compliance.
 
 ### Color Accessibility for Agent Identification
 
@@ -840,10 +840,10 @@ All agent colors are from the verified accessible palette:
 
 | Color  | Emoji | Hex Code | WCAG AA (Light) | WCAG AA (Dark) | Safe For               |
 | ------ | ----- | -------- | --------------- | -------------- | ---------------------- |
-| Blue   | 🟦    | #0173B2  | ✅ 4.88:1       | ✅ 4.30:1      | All types (excellent)  |
-| Green  | 🟩    | #029E73  | ✅ 4.67:1       | ✅ 4.50:1      | All types (good)       |
-| Yellow | 🟨    | #F1C40F  | ⚠️ 3.51:1       | ⚠️ 2.99:1      | All types (moderate)\* |
-| Purple | 🟪    | #CC78BC  | ✅ 3.65:1       | ✅ 5.74:1      | All types (moderate)   |
+| Blue   | 🟦    | #0173B2  | PASS: 4.88:1    | PASS: 4.30:1   | All types (excellent)  |
+| Green  | 🟩    | #029E73  | PASS: 4.67:1    | PASS: 4.50:1   | All types (good)       |
+| Yellow | 🟨    | #F1C40F  | 3.51:1          | 2.99:1         | All types (moderate)\* |
+| Purple | 🟪    | #CC78BC  | PASS: 3.65:1    | PASS: 5.74:1   | All types (moderate)   |
 
 \*Yellow emoji (#F1C40F) has slightly lower contrast but remains distinguishable because it's combined with:
 
@@ -851,7 +851,7 @@ All agent colors are from the verified accessible palette:
 - Text label "Updater"
 - Role suffix "-updater"
 
-**Source**: Verified through ColorBrewer2, Paul Tol's schemes, and WCAG testing. See [Color Accessibility Convention](../conventions/formatting/color-accessibility.md) - the master reference for all color usage - for complete palette details, scientific verification sources, testing methodology, and WCAG compliance standards.
+**Source**: Verified through ColorBrewer2, Paul Tol's schemes, and WCAG testing. See [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - the master reference for all color usage - for complete palette details, scientific verification sources, testing methodology, and WCAG compliance standards.
 
 #### Why These Colors Were Chosen
 
@@ -902,7 +902,7 @@ Expert documentation writer specializing in Obsidian-optimized markdown and Diá
 
 **Consistency with Emoji Convention:**
 
-Colored square emojis follow the [Emoji Usage Convention](../conventions/formatting/emoji.md):
+Colored square emojis follow the [Emoji Usage Convention](../../conventions/formatting/emoji.md):
 
 - Use at the start of headings for visual categorization
 - Maintain semantic consistency (same color = same role across all docs)
@@ -964,14 +964,14 @@ color: purple
 
 Each agent should have **one clear, focused purpose**.
 
-**✅ Good - Single Responsibility:**
+**PASS: Good - Single Responsibility:**
 
 ```yaml
 name: doc-writer
 description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.
 ```
 
-**❌ Bad - Multiple Responsibilities:**
+**FAIL: Bad - Multiple Responsibilities:**
 
 ```yaml
 name: doc-and-code-helper
@@ -989,26 +989,26 @@ Before creating a new agent, check if existing agents already cover the domain:
 
 **Decision Matrix: New Agent vs Extend Existing**
 
-| Scenario                     | Create New Agent | Extend Existing Agent |
-| ---------------------------- | ---------------- | --------------------- |
-| Completely different domain  | ✅ Yes           | ❌ No                 |
-| Different tool requirements  | ✅ Yes           | ❌ No                 |
-| Different model needs        | ✅ Yes           | ❌ No                 |
-| Slight variation in workflow | ❌ No            | ✅ Yes                |
-| Similar expertise area       | ❌ No            | ✅ Yes                |
-| Experimental/temporary       | ⚠️ Maybe         | ✅ Prefer extending   |
+| Scenario                     | Create New Agent | Extend Existing Agent  |
+| ---------------------------- | ---------------- | ---------------------- |
+| Completely different domain  | PASS: Yes        | FAIL: No               |
+| Different tool requirements  | PASS: Yes        | FAIL: No               |
+| Different model needs        | PASS: Yes        | FAIL: No               |
+| Slight variation in workflow | FAIL: No         | PASS: Yes              |
+| Similar expertise area       | FAIL: No         | PASS: Yes              |
+| Experimental/temporary       | Maybe            | PASS: Prefer extending |
 
 ### Agent Specialization vs Generalization
 
 **Prefer specialization over generalization.**
 
-**✅ Good - Specialized Agents:**
+**PASS: Good - Specialized Agents:**
 
 - `doc-writer` - Documentation only
 - `repo-governance-checker` - Consistency validation only
 - `test-runner` - Test execution only
 
-**❌ Bad - Over-Generalized:**
+**FAIL: Bad - Over-Generalized:**
 
 - `helper` - Too vague, unclear purpose
 - `assistant` - No specific expertise
@@ -1044,7 +1044,7 @@ Agents can be invoked in two ways, each with different implications for file per
 Task(agent-name, "analyze codebase structure")
 ```
 
-**Limitation**: ❌ File changes don't persist - Write/Edit operations stay in isolated context
+**Limitation**: FAIL: File changes don't persist - Write/Edit operations stay in isolated context
 
 ### Pattern 2: Direct Execution (Main Context)
 
@@ -1077,19 +1077,19 @@ Claude: [Executes agent logic directly]
 4. User can see changes in git status
 ```
 
-**Requirement**: ✅ File changes persist - all Write/Edit operations affect real files
+**Requirement**: PASS: File changes persist - all Write/Edit operations affect real files
 
 ### Decision Matrix: Which Pattern to Use?
 
 | Agent Type                                | Needs File Persistence? | Use Pattern      | Invocation                 |
 | ----------------------------------------- | ----------------------- | ---------------- | -------------------------- |
-| **Exploration** (Explore agent)           | ❌ No                   | Task tool        | `Task(Explore, "find X")`  |
-| **Research** (analysis only)              | ❌ No                   | Task tool        | `Task(agent, "analyze Y")` |
-| **Checker** (writes audit reports)        | ✅ Yes                  | Direct execution | Execute checker logic      |
-| **Fixer** (applies fixes, writes reports) | ✅ Yes                  | Direct execution | Execute fixer logic        |
-| **Maker** (creates/updates content)       | ✅ Yes                  | Direct execution | Execute maker logic        |
-| **Deployer** (modifies configs)           | ✅ Yes                  | Direct execution | Execute deployer logic     |
-| **Workflow** (iterative check-fix)        | ✅ Yes                  | Direct execution | Manual orchestration       |
+| **Exploration** (Explore agent)           | FAIL: No                | Task tool        | `Task(Explore, "find X")`  |
+| **Research** (analysis only)              | FAIL: No                | Task tool        | `Task(agent, "analyze Y")` |
+| **Checker** (writes audit reports)        | PASS: Yes               | Direct execution | Execute checker logic      |
+| **Fixer** (applies fixes, writes reports) | PASS: Yes               | Direct execution | Execute fixer logic        |
+| **Maker** (creates/updates content)       | PASS: Yes               | Direct execution | Execute maker logic        |
+| **Deployer** (modifies configs)           | PASS: Yes               | Direct execution | Execute deployer logic     |
+| **Workflow** (iterative check-fix)        | PASS: Yes               | Direct execution | Manual orchestration       |
 
 ### Workflows Require Direct Execution
 
@@ -1110,10 +1110,10 @@ Claude: [Executes agent logic directly]
 
 **Impact**:
 
-- ❌ Audit reports written by checker agents don't appear in generated-reports/
-- ❌ Fixes applied by fixer agents don't modify actual files
-- ❌ Changes aren't visible in `git status`
-- ❌ Workflows requiring file persistence cannot use Task tool
+- FAIL: Audit reports written by checker agents don't appear in generated-reports/
+- FAIL: Fixes applied by fixer agents don't modify actual files
+- FAIL: Changes aren't visible in `git status`
+- FAIL: Workflows requiring file persistence cannot use Task tool
 
 **Workaround**: Use direct execution pattern for agents requiring file persistence.
 
@@ -1121,7 +1121,7 @@ Claude: [Executes agent logic directly]
 
 ### Examples
 
-**❌ Wrong - Using Task Tool for Fixer**:
+**FAIL: Wrong - Using Task Tool for Fixer**:
 
 ```
 Task(plan-fixer, "apply fixes from audit report")
@@ -1130,7 +1130,7 @@ Task(plan-fixer, "apply fixes from audit report")
 → git status shows nothing
 ```
 
-**✅ Right - Direct Execution for Fixer**:
+**PASS: Right - Direct Execution for Fixer**:
 
 ```
 User: "Apply plan fixes in manual mode"
@@ -1140,7 +1140,7 @@ User: "Apply plan fixes in manual mode"
 → git status shows modified files
 ```
 
-**✅ Right - Using Task Tool for Research**:
+**PASS: Right - Using Task Tool for Research**:
 
 ```
 Task(Explore, "find authentication code")
@@ -1169,18 +1169,18 @@ Organize references into clear categories:
 Use GitHub-compatible markdown with relative paths:
 
 ```markdown
-✅ Good:
+PASS: Good:
 
 - `governance/development/agents/ai-agents.md` - AI agents convention
 
-❌ Bad:
+FAIL: Bad:
 
 - [[ex-de__ai-agents]] - Obsidian wiki link (not GitHub compatible)
 - `/governance/development/agents/ai-agents.md` - Absolute path
 - `governance/development/agents/ai-agents` - Missing .md extension
 ```
 
-See [Linking Convention](../conventions/formatting/linking.md) for details.
+See [Linking Convention](../../conventions/formatting/linking.md) for details.
 
 ## Agent File Size Standards
 
@@ -1423,8 +1423,8 @@ Based on the pilot validation, use these proven patterns when simplifying agents
 
 **Active Voice Required**: Use active voice for clarity and directness.
 
-✅ Good: "The agent validates the content"
-❌ Bad: "The content is validated by the agent"
+PASS: Good: "The agent validates the content"
+FAIL: Bad: "The content is validated by the agent"
 
 **Heading Hierarchy**: Each file MUST have exactly one H1 heading.
 
@@ -1473,7 +1473,7 @@ Based on the pilot validation, use these proven patterns when simplifying agents
 ```markdown
 ## Report Generation
 
-**MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../../governance/development/infra/temporary-files.md).
+**MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../infra/temporary-files.md).
 
 **Report pattern**: `generated-reports/{agent}__{uuid-chain}__{timestamp}__{type}.md`
 
@@ -1675,10 +1675,10 @@ Agent contains:
 
 Every agent must include:
 
-1. ✅ **Clear purpose statement** - What does this agent do?
-2. ✅ **Core expertise/responsibility** - What is it an expert in?
-3. ✅ **Usage guidelines** - When should you use this agent?
-4. ✅ **Reference documentation** - Links to conventions and related docs
+1. PASS: **Clear purpose statement** - What does this agent do?
+2. PASS: **Core expertise/responsibility** - What is it an expert in?
+3. PASS: **Usage guidelines** - When should you use this agent?
+4. PASS: **Reference documentation** - Links to conventions and related docs
 
 ### Recommended Elements
 
@@ -1695,24 +1695,24 @@ Depending on complexity, consider adding:
 Follow these guidelines when writing agent documentation:
 
 1. **Use imperative, direct language**
-   - ✅ "Use this agent when creating documentation"
-   - ❌ "This agent could potentially be used for documentation tasks"
+   - PASS: "Use this agent when creating documentation"
+   - FAIL: "This agent could potentially be used for documentation tasks"
 
 2. **Be action-oriented**
-   - ✅ "Validates consistency between files"
-   - ❌ "Performs validation activities"
+   - PASS: "Validates consistency between files"
+   - FAIL: "Performs validation activities"
 
 3. **Provide concrete examples**
    - Include code snippets, file examples, command outputs
-   - Show both good (✅) and bad (❌) examples
+   - Show both good () and bad () examples
 
 4. **Use checklists where applicable**
    - Break complex tasks into verifiable steps
    - Use `- [ ]` format for actionable items
 
 5. **Be specific, not vague**
-   - ✅ "Checks file naming against ex-co\_\_file-naming-convention.md"
-   - ❌ "Validates files"
+   - PASS: "Checks file naming against ex-co\_\_file-naming-convention.md"
+   - FAIL: "Validates files"
 
 6. **Follow indentation convention**
    - Agent files are in `.claude/agents/` (primary) or `.opencode/agent/` (secondary) (outside `docs/`), so use standard markdown (spaces for indentation)
@@ -1740,13 +1740,13 @@ Use appropriate tools to verify all claims:
 
 | Information Type    | Primary Tool | Secondary Tool   | Required?      |
 | ------------------- | ------------ | ---------------- | -------------- |
-| Code implementation | Read         | Grep, Glob       | ✅ Required    |
-| Project conventions | Read         | Grep             | ✅ Required    |
-| File structure      | Glob         | Bash             | ✅ Required    |
-| External libraries  | WebSearch    | WebFetch         | ✅ Required    |
-| Official docs       | WebFetch     | WebSearch        | ✅ Required    |
-| Best practices      | WebSearch    | WebFetch         | ⚠️ Recommended |
-| Historical context  | WebSearch    | Read (changelog) | ⚠️ Recommended |
+| Code implementation | Read         | Grep, Glob       | PASS: Required |
+| Project conventions | Read         | Grep             | PASS: Required |
+| File structure      | Glob         | Bash             | PASS: Required |
+| External libraries  | WebSearch    | WebFetch         | PASS: Required |
+| Official docs       | WebFetch     | WebSearch        | PASS: Required |
+| Best practices      | WebSearch    | WebFetch         | Recommended    |
+| Historical context  | WebSearch    | Read (changelog) | Recommended    |
 
 ### When Verification is Not Possible
 
@@ -1779,17 +1779,17 @@ Before providing information, verify:
 
 Create a new agent when:
 
-1. ✅ **New domain or expertise** not covered by existing agents
-2. ✅ **Different tool requirements** than existing agents
-3. ✅ **Distinct user need** that would benefit from specialization
-4. ✅ **Clear, single responsibility** that doesn't overlap
+1. PASS: **New domain or expertise** not covered by existing agents
+2. PASS: **Different tool requirements** than existing agents
+3. PASS: **Distinct user need** that would benefit from specialization
+4. PASS: **Clear, single responsibility** that doesn't overlap
 
 Don't create a new agent when:
 
-1. ❌ **Existing agent can be extended** with minor modifications
-2. ❌ **Responsibilities overlap** significantly with existing agents
-3. ❌ **Purpose is too vague** or general
-4. ❌ **Temporary or experimental** need (extend existing instead)
+1. FAIL: **Existing agent can be extended** with minor modifications
+2. FAIL: **Responsibilities overlap** significantly with existing agents
+3. FAIL: **Purpose is too vague** or general
+4. FAIL: **Temporary or experimental** need (extend existing instead)
 
 ### Agent Creation Checklist
 
@@ -1911,26 +1911,26 @@ Your primary job is to [clear, specific purpose statement].
 
 **AGENTS.md provides:**
 
-- ✅ Project-wide guidance for ALL agents
-- ✅ Project overview and context
-- ✅ Environment setup (Volta, Node.js, npm)
-- ✅ Git hooks and commit conventions
-- ✅ High-level documentation organization
-- ✅ Reference to this AI agents convention
+- PASS: Project-wide guidance for ALL agents
+- PASS: Project overview and context
+- PASS: Environment setup (Volta, Node.js, npm)
+- PASS: Git hooks and commit conventions
+- PASS: High-level documentation organization
+- PASS: Reference to this AI agents convention
 
 **Individual agents provide:**
 
-- ✅ Specialized domain expertise
-- ✅ Specific task instructions
-- ✅ Detailed guidelines for their area
-- ✅ Examples and checklists for their domain
+- PASS: Specialized domain expertise
+- PASS: Specific task instructions
+- PASS: Detailed guidelines for their area
+- PASS: Examples and checklists for their domain
 
 **This convention (ex-de\_\_ai-agents.md) provides:**
 
-- ✅ Standards for how agents are structured
-- ✅ Agent creation guidelines
-- ✅ Tool and model selection criteria
-- ✅ Convention referencing requirements
+- PASS: Standards for how agents are structured
+- PASS: Agent creation guidelines
+- PASS: Tool and model selection criteria
+- PASS: Convention referencing requirements
 
 ### AGENTS.md Maintenance Standards
 
@@ -1987,14 +1987,14 @@ Runtime: Orchestrator ──spawns──> Agents (isolated contexts)
 
 | Content Type      | AGENTS.md | Individual Agent | This Convention |
 | ----------------- | --------- | ---------------- | --------------- |
-| Project overview  | ✅        | ❌               | ❌              |
-| Environment setup | ✅        | ❌               | ❌              |
-| Git/commit rules  | ✅        | ❌               | ❌              |
-| Documentation org | ✅        | ❌               | ❌              |
-| Agent structure   | ❌        | ❌               | ✅              |
-| Agent creation    | ❌        | ❌               | ✅              |
-| Domain expertise  | ❌        | ✅               | ❌              |
-| Specific tasks    | ❌        | ✅               | ❌              |
+| Project overview  | PASS:     | FAIL:            | FAIL:           |
+| Environment setup | PASS:     | FAIL:            | FAIL:           |
+| Git/commit rules  | PASS:     | FAIL:            | FAIL:           |
+| Documentation org | PASS:     | FAIL:            | FAIL:           |
+| Agent structure   | FAIL:     | FAIL:            | PASS:           |
+| Agent creation    | FAIL:     | FAIL:            | PASS:           |
+| Domain expertise  | FAIL:     | PASS:            | FAIL:           |
+| Specific tasks    | FAIL:     | PASS:            | FAIL:           |
 
 ## Special Cases
 
@@ -2011,7 +2011,7 @@ The `.claude/agents/README.md` (primary) and `.opencode/agent/README.md` (second
 - Lists all available agents with descriptions
 - Explains agent workflow and best practices
 - Provides guidance on when to use each agent
-- Follows the naming exception for README.md files (documented in [File Naming Convention](../conventions/meta/file-naming.md))
+- Follows the naming exception for README.md files (documented in [File Naming Convention](../../conventions/meta/file-naming.md))
 
 ### Agent Versioning
 
@@ -2032,7 +2032,7 @@ If an agent is no longer needed:
 
 ## Anti-Patterns
 
-| Anti-Pattern                     | ❌ Bad                                                              | ✅ Good                                                                                                                                                                         |
+| Anti-Pattern                     | FAIL: Bad                                                           | PASS: Good                                                                                                                                                                      |
 | -------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Vague Description**            | `description: Helper agent for various tasks`                       | `description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.` |
 | **Tool Permission Creep**        | `tools: Read, Write, Edit, Glob, Grep, Bash` (for validation agent) | `tools: Read, Glob, Grep` (read-only for validation)                                                                                                                            |
@@ -2049,15 +2049,15 @@ The `repo-governance-checker` agent validates all agents against this convention
 
 **Checks performed:**
 
-1. ✅ Frontmatter has all required fields
-2. ✅ Agent `name` matches filename
-3. ✅ Agent `description` provides clear usage guidance
-4. ✅ Agent `tools` field lists tools explicitly
-5. ✅ Agent `model` field is present and valid
-6. ✅ Document structure follows standard pattern
-7. ✅ Reference documentation section exists
-8. ✅ References to AGENTS.md and this convention present
-9. ✅ Links use GitHub-compatible format
+1. PASS: Frontmatter has all required fields
+2. PASS: Agent `name` matches filename
+3. PASS: Agent `description` provides clear usage guidance
+4. PASS: Agent `tools` field lists tools explicitly
+5. PASS: Agent `model` field is present and valid
+6. PASS: Document structure follows standard pattern
+7. PASS: Reference documentation section exists
+8. PASS: References to AGENTS.md and this convention present
+9. PASS: Links use GitHub-compatible format
 
 ### Manual Verification
 
@@ -2270,7 +2270,7 @@ A: YES (8+ agents create diagrams)
 Q: Reusable domain expertise?
 A: YES (color accessibility is universal)
 
-Decision: Extract to `docs__creating-accessible-diagrams` Skill ✅
+Decision: Extract to `docs__creating-accessible-diagrams` Skill
 ```
 
 **Scenario 2**: Adding custom validation logic for plan structure
@@ -2284,7 +2284,7 @@ A: NO (only plan__checker validates plan structure)
 Q: Agent-specific workflow?
 A: YES (unique to plan validation)
 
-Decision: Keep in plan__checker agent ✅
+Decision: Keep in plan__checker agent
 ```
 
 **Scenario 3**: Adding mode parameter handling to fixer agents
@@ -2298,7 +2298,7 @@ A: YES (all 15 fixer agents use mode parameter)
 Q: Reusable domain expertise?
 A: YES (mode handling is standardized)
 
-Decision: Extract to `applying-maker-checker-fixer` Skill ✅
+Decision: Extract to `applying-maker-checker-fixer` Skill
 ```
 
 ### Benefits of Agent-Skill Separation
@@ -2369,16 +2369,16 @@ When simplifying an agent:
 - `validating-links` - Link validation, caching
 - Plus 8 more in Content Creation, Standards Application, Process Execution categories
 
-See [Skills README](.opencode/skill/README.md) for complete catalog.
+See [Skills README](./README.md) for complete catalog.
 
 ## Related Documentation
 
 - [Development Index](./README.md) - Overview of development conventions
-- [Conventions Index](../conventions/README.md) - Documentation conventions
-- [Color Accessibility Convention](../conventions/formatting/color-accessibility.md) - Master reference for all color usage (agent categorization, diagrams, accessibility standards)
-- [File Naming Convention](../conventions/meta/file-naming.md) - How to name files
-- [Linking Convention](../conventions/formatting/linking.md) - How to link between files
-- [Diátaxis Framework](../conventions/meta/diataxis-framework.md) - Documentation organization
+- [Conventions Index](./README.md) - Documentation conventions
+- [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - Master reference for all color usage (agent categorization, diagrams, accessibility standards)
+- [File Naming Convention](../../conventions/meta/file-naming.md) - How to name files
+- [Linking Convention](../../conventions/formatting/linking.md) - How to link between files
+- [Diátaxis Framework](../../conventions/meta/diataxis-framework.md) - Documentation organization
 
 ---
 
@@ -2498,10 +2498,10 @@ Skills are **directly copied** from `.claude/skills/` to `.opencode/skill/` (no 
 
 - **[CLAUDE.md](../../../CLAUDE.md)** (PRIMARY) - Claude Code configuration
 - **[AGENTS.md](../../../AGENTS.md)** (SECONDARY) - OpenCode configuration with auto-generated warning
-- **[.claude/agents/README.md](../../../.claude/agents/README.md)** (PRIMARY) - Agent catalog
-- **[.opencode/agent/README.md](../../../.opencode/agent/README.md)** (SECONDARY) - OpenCode agent catalog with warning
-- **[.claude/skills/README.md](../../../.claude/skills/README.md)** (PRIMARY) - Skills catalog
-- **[.opencode/skill/README.md](../../../.opencode/skill/README.md)** (SECONDARY) - OpenCode skills catalog with warning
+- **[.claude/agents/README.md](./README.md)** (PRIMARY) - Agent catalog
+- **[.opencode/agent/README.md](./README.md)** (SECONDARY) - OpenCode agent catalog with warning
+- **[.claude/skills/README.md](./README.md)** (PRIMARY) - Skills catalog
+- **[.opencode/skill/README.md](./README.md)** (SECONDARY) - OpenCode skills catalog with warning
 
 ### Migration History
 

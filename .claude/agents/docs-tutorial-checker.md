@@ -79,7 +79,7 @@ This agent leverages Skills from `.opencode/skill/`:
 
 You are an expert tutorial quality validator specializing in pedagogical assessment, narrative flow analysis, and instructional design evaluation.
 
-**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../governance/development/quality/ex-ru-de-qu-criticality-levels.md) and `repo-assessing-criticality-confidence` Skill for assessment guidance.
+**Criticality System**: This agent categorizes findings using CRITICAL/HIGH/MEDIUM/LOW levels. See [Criticality Levels Convention](../../governance/development/quality/criticality-levels.md) and `repo-assessing-criticality-confidence` Skill for assessment guidance.
 
 ## Temporary Report Files
 
@@ -140,7 +140,7 @@ Validate tutorial documents to ensure they are **learning-oriented, well-narrate
 
 ## Validation Criteria
 
-This agent validates using criteria from [Tutorial Convention - Validation Criteria](../../governance/conventions/tutorial/general.md#-validation-criteria).
+This agent validates using criteria from [Tutorial Convention - Validation Criteria](../../../governance/conventions/tutorial/general.md#-validation-criteria).
 
 **Validation Categories:**
 
@@ -155,7 +155,7 @@ See convention for complete checklist and pass/fail criteria.
 
 ### Quick Reference - Key Checks
 
-All validation criteria are defined in [Tutorial Convention - Validation Criteria](../../governance/conventions/tutorial/general.md#-validation-criteria).
+All validation criteria are defined in [Tutorial Convention - Validation Criteria](../../../governance/conventions/tutorial/general.md#-validation-criteria).
 
 **Six Validation Categories:**
 
@@ -287,7 +287,7 @@ Use `repo-generating-validation-reports` Skill for:
    - Has comment documenting color scheme
    - Uses shape differentiation (not color alone)
 
-4. **Check diagram splitting** (validate against [Diagrams Convention - Diagram Size and Splitting](../../governance/conventions/formatting/diagrams.md#diagram-size-and-splitting))
+4. **Check diagram splitting** (validate against [Diagrams Convention - Diagram Size and Splitting](../../../governance/conventions/formatting/diagrams.md#diagram-size-and-splitting))
    - No subgraphs (renders too small on mobile)
    - Limited branching (≤4-5 branches from single node)
    - One concept per diagram
@@ -372,7 +372,7 @@ See `repo-generating-validation-reports` Skill for complete report template stru
 
 ## Anti-Patterns to Check For
 
-Validate against common mistakes defined in [Tutorial Convention - Anti-Patterns](../../governance/conventions/tutorial/general.md#-anti-patterns).
+Validate against common mistakes defined in [Tutorial Convention - Anti-Patterns](../../../governance/conventions/tutorial/general.md#-anti-patterns).
 
 **Key anti-patterns include:**
 

@@ -44,20 +44,20 @@ This convention establishes Mermaid diagrams as the primary visualization format
 
 ### What This Convention Does NOT Cover
 
-- **Hugo theme diagram rendering** - Covered in [Hugo Development Convention](../development/hugo/development.md)
+- **Hugo theme diagram rendering** - Covered in [Hugo Development Convention](../../development/hugo/development.md)
 - **Diagram content strategy** - What diagrams to create (covered in specific domain conventions)
 - **Vector graphics or images** - This convention is only for text-based diagrams (Mermaid and ASCII)
 - **Interactive diagram features** - Platform-specific interactivity (zoom, pan) is implementation detail
 - **Diagram export formats** - Exporting Mermaid to PNG, SVG, PDF (tool-specific, not repository standard)
 
-## 🎯 The Core Principle
+## The Core Principle
 
 **Mermaid diagrams are the primary and preferred format for all markdown files** in this repository, both inside and outside the `docs/` directory.
 
 - **All markdown files**: Use Mermaid diagrams as the primary format
 - **ASCII art**: Optional fallback for edge cases where Mermaid isn't supported (rarely needed)
 
-## 💡 Why Mermaid First?
+## Why Mermaid First?
 
 Mermaid diagram support has become ubiquitous across modern development tools:
 
@@ -87,7 +87,7 @@ ASCII art is now **optional** and only recommended for rare edge cases:
 
 **In practice**: Most users will view markdown files through GitHub, Obsidian, or modern text editors, all of which support Mermaid.
 
-## 🎨 Mermaid Diagrams: Primary Format for All Markdown Files
+## Mermaid Diagrams: Primary Format for All Markdown Files
 
 ### When to Use
 
@@ -386,7 +386,7 @@ graph TD
 
 **CRITICAL**: Mermaid comments MUST use `%%` syntax, NOT `%%{ }%%` syntax.
 
-**Correct Syntax** (✅):
+**Correct Syntax** ():
 
 ```mermaid
 %% This is a comment
@@ -395,7 +395,7 @@ graph TD
     A[Start] --> B[End]
 ```
 
-**Incorrect Syntax** (❌):
+**Incorrect Syntax** ():
 
 ```mermaid
 %% WRONG EXAMPLE - DO NOT USE
@@ -429,7 +429,7 @@ The `%%{init:...}%%` syntax is VALID when used for Mermaid initialization direct
 
 **Key Distinction**: `%%{...}%%` is ONLY valid when containing `init:` directive for Mermaid configuration. Never use it for general comments, color palette notes, or documentation.
 
-**When to Use Init Directives**: Rarely needed. Most diagrams use default theming. Use only when you need to customize Mermaid's theme variables or configuration. See [Hugo Development Convention](../development/hugo/development.md) for examples of valid init directive usage.
+**When to Use Init Directives**: Rarely needed. Most diagrams use default theming. Use only when you need to customize Mermaid's theme variables or configuration. See [Hugo Development Convention](../../development/hugo/development.md) for examples of valid init directive usage.
 
 ### Color Accessibility for Color Blindness
 
@@ -464,11 +464,11 @@ Use ONLY these proven accessible colors for Mermaid diagram elements:
 
 **DO NOT USE:**
 
-- ❌ Red (`#FF0000`, `#E74C3C`, `#DC143C`) - Invisible to protanopia/deuteranopia
-- ❌ Green (`#00FF00`, `#27AE60`, `#2ECC71`) - Invisible to protanopia/deuteranopia
-- ❌ Yellow (`#FFFF00`, `#F1C40F`) - Invisible to tritanopia
-- ❌ Light red/pink (`#FF69B4`, `#FFC0CB`) - Problematic for tritanopia
-- ❌ Bright magenta (`#FF00FF`) - Problematic for all types
+- FAIL: Red (`#FF0000`, `#E74C3C`, `#DC143C`) - Invisible to protanopia/deuteranopia
+- FAIL: Green (`#00FF00`, `#27AE60`, `#2ECC71`) - Invisible to protanopia/deuteranopia
+- FAIL: Yellow (`#FFFF00`, `#F1C40F`) - Invisible to tritanopia
+- FAIL: Light red/pink (`#FF69B4`, `#FFC0CB`) - Problematic for tritanopia
+- FAIL: Bright magenta (`#FF00FF`) - Problematic for all types
 
 #### Dark and Light Mode Compliance
 
@@ -524,8 +524,8 @@ graph TD
 		A["Success"]:::green
 		B["Error"]:::red
 
-		classDef green fill:#029E73,stroke:#000000  ❌ Invisible to protanopia/deuteranopia
-		classDef red fill:#DE8F05,stroke:#000000    ❌ Invisible to protanopia/deuteranopia
+		classDef green fill:#029E73,stroke:#000000  FAIL: Invisible to protanopia/deuteranopia
+		classDef red fill:#DE8F05,stroke:#000000    FAIL: Invisible to protanopia/deuteranopia
 ```
 ````
 
@@ -583,7 +583,7 @@ When creating Mermaid diagrams:
 - [Coblis Color Blindness Simulator](https://www.color-blindness.com/coblis-color-blindness-simulator/) - Test diagrams for accessibility
 - [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/) - Verify WCAG compliance
 
-## 📝 ASCII Art: Optional Fallback
+## ASCII Art: Optional Fallback
 
 ### When to Use
 
@@ -740,7 +740,7 @@ Connectors:
 - Online generators (limited utility)
 - Terminal tools like `figlet` for text banners
 
-## 🔍 Decision Matrix
+## Decision Matrix
 
 Use this quick reference to choose the right format:
 
@@ -754,7 +754,7 @@ Use this quick reference to choose the right format:
 | `CONTRIBUTING.md` | **Mermaid**    | ASCII (optional)  | Contributors use GitHub web or modern editors   |
 | Directory trees   | **ASCII**      | Mermaid (complex) | ASCII is clearer for simple file/folder listing |
 
-## 🧪 Examples in Context
+## Examples in Context
 
 ### Example 1: API Flow in Documentation
 
@@ -881,7 +881,7 @@ OpenCode(Main Agent)
 
 **Prefer consistency within a single file**. Choose Mermaid as your primary format and use it throughout the file unless you have a specific reason to use ASCII art.
 
-❌ **Avoid mixing unnecessarily**:
+FAIL: **Avoid mixing unnecessarily**:
 
 ````markdown
 ## System Flow
@@ -903,7 +903,7 @@ A
 A --> B (plain text - no format!)
 ````
 
-✅ **Good - consistent Mermaid**:
+PASS: **Good - consistent Mermaid**:
 
 ````markdown
 ## System Flow
@@ -922,7 +922,7 @@ stateDiagram-v2
 ```
 ````
 
-✅ **Acceptable - intentional format choice**:
+PASS: **Acceptable - intentional format choice**:
 
 ````markdown
 ## Architecture Diagram
@@ -1039,7 +1039,7 @@ This section documents critical Mermaid syntax rules discovered through debuggin
 
 **CRITICAL**: Parentheses, square brackets, and curly braces inside node definitions AND edge labels cause syntax errors.
 
-**Problem Examples (❌ BROKEN):**
+**Problem Examples (FAIL: BROKEN):**
 
 ```mermaid
 graph TD
@@ -1050,7 +1050,7 @@ graph TD
     E -->|iter()| F[Iterator]       %% ERROR: Parentheses in edge label cause syntax error
 ```
 
-**Solution (✅ WORKING):**
+**Solution (PASS: WORKING):**
 
 Escape special characters using HTML entity codes:
 
@@ -1097,7 +1097,7 @@ graph TD
 
 **CRITICAL**: Literal quote characters inside Mermaid node text cause parsing errors.
 
-**Problem Example (❌ BROKEN)**:
+**Problem Example (FAIL: BROKEN)**:
 
 ```mermaid
 graph TD
@@ -1107,7 +1107,7 @@ graph TD
 
 **Why it fails**: The outer `[...]` syntax uses quotes for node label definition. When literal `"` characters appear inside, the Mermaid parser interprets them as structural syntax, not literal text.
 
-**Solution (✅ WORKING)**:
+**Solution (PASS: WORKING)**:
 
 Remove the inner quotes or use descriptive text:
 
@@ -1126,7 +1126,7 @@ graph TD
 
 **CRITICAL**: Combining HTML entity codes with escaped quotes in the same node text causes parsing failures.
 
-**Problem Example (❌ BROKEN):**
+**Problem Example (FAIL: BROKEN):**
 
 ```mermaid
 graph TD
@@ -1135,7 +1135,7 @@ graph TD
 
 **Why it fails**: The combination of `#123;#125;` (entity codes for curly braces) with `\"` (escaped quotes) creates nested escaping that the Mermaid parser cannot handle.
 
-**Solution (✅ WORKING):**
+**Solution (PASS: WORKING):**
 
 Simplify the text - remove quotes or use plain text instead of trying to escape multiple special characters:
 
@@ -1158,7 +1158,7 @@ graph TD
 
 **CRITICAL**: The `style` command only works in `graph`/`flowchart` diagrams, NOT in `sequenceDiagram`.
 
-**Problem Example (❌ BROKEN):**
+**Problem Example (FAIL: BROKEN):**
 
 ```mermaid
 sequenceDiagram
@@ -1172,7 +1172,7 @@ sequenceDiagram
     style System fill:#DE8F05         %% ERROR: style not supported in sequence diagrams
 ```
 
-**Solution (✅ WORKING):**
+**Solution (PASS: WORKING):**
 
 For sequence diagrams, use `box` syntax for grouping and coloring instead:
 
@@ -1212,7 +1212,7 @@ flowchart LR
 
 **CRITICAL**: Using `participant X as "Display Name"` syntax with quotes in sequence diagrams causes rendering failures in Hugo/Hextra environments.
 
-**Problem Example (❌ BROKEN)**:
+**Problem Example (FAIL: BROKEN)**:
 
 ```mermaid
 sequenceDiagram
@@ -1227,7 +1227,7 @@ sequenceDiagram
 
 **Why it fails**: The Hextra theme's Mermaid renderer struggles with complex display names containing spaces, parentheses, or special characters when combined with the `as` keyword and quotes. This syntax pattern causes parsing errors in Hugo/Hextra contexts.
 
-**Solution (✅ WORKING)**:
+**Solution (PASS: WORKING)**:
 
 Use simple participant identifiers without the `as` keyword:
 
@@ -1281,7 +1281,7 @@ sequenceDiagram
 
 **Problem**: If the label text itself contains colons (like Clojure keywords `:count` or `:users`, or other code snippets with colons), Mermaid's parser fails because the colon is a reserved separator character.
 
-**Problem Example (❌ BROKEN)**:
+**Problem Example (FAIL: BROKEN)**:
 
 ```mermaid
 stateDiagram-v2
@@ -1291,7 +1291,7 @@ stateDiagram-v2
 
 **Why it fails**: The parser sees `:count` and `:users` as additional syntax elements, not part of the label text. The first colon in the label text (`:` in `:count`) is interpreted as a new separator, breaking the parsing.
 
-**Solution (✅ WORKING)**:
+**Solution (PASS: WORKING)**:
 
 Remove colons from edge label text. Use plain text descriptions instead of literal code syntax when colons are present:
 
@@ -1353,7 +1353,7 @@ graph TD
 
 Renders as: "HashMap<K, V> / O(1) lookup / Values: [1, 2, 3] / Dict: {a: 1}"
 
-## 🔗 Related Documentation
+## Related Documentation
 
 - [Color Accessibility Convention](./color-accessibility.md) - Master reference for accessible color palette, WCAG standards, and testing tools (comprehensive guide for all color usage)
 - [File Naming Convention](../meta/file-naming.md) - How to name documentation files
@@ -1361,7 +1361,7 @@ Renders as: "HashMap<K, V> / O(1) lookup / Values: [1, 2, 3] / Dict: {a: 1}"
 - [Diátaxis Framework](../meta/diataxis-framework.md) - Documentation organization principles
 - [Conventions Index](./README.md) - Overview of all conventions
 
-## 🌐 External Resources
+## External Resources
 
 - [Mermaid Official Documentation](https://mermaid.js.org/)
 - [Mermaid Live Editor](https://mermaid.live/)
@@ -1376,7 +1376,7 @@ Renders as: "HashMap<K, V> / O(1) lookup / Values: [1, 2, 3] / Dict: {a: 1}"
 
 **CRITICAL**: Using `participant X as "Display Name"` syntax with quotes in sequence diagrams causes rendering failures in Hugo/Hextra environments.
 
-**Problem Example (❌ BROKEN)**:
+**Problem Example (FAIL: BROKEN)**:
 
 ```mermaid
 sequenceDiagram
@@ -1391,7 +1391,7 @@ sequenceDiagram
 
 **Why it fails**: The Hextra theme's Mermaid renderer struggles with complex display names containing spaces, parentheses, or special characters when combined with the `as` keyword and quotes. This syntax pattern causes parsing errors in Hugo/Hextra contexts.
 
-**Solution (✅ WORKING)**:
+**Solution (PASS: WORKING)**:
 
 Use simple participant identifiers without the `as` keyword:
 
@@ -1487,28 +1487,28 @@ Large diagrams with multiple concepts, many branches, or subgraphs render too sm
 
 **1. One Concept Per Diagram**
 
-❌ **Bad** (multiple concepts):
+FAIL: **Bad** (multiple concepts):
 
 - "Sealed classes + Pattern matching + Exhaustiveness checking"
 
-✅ **Good** (focused):
+PASS: **Good** (focused):
 
 - Diagram 1: "Sealed Class Hierarchy"
 - Diagram 2: "Pattern Matching with Switch"
 
 **2. Limit Branching (3-4 nodes per level)**
 
-❌ **Bad** (excessive branching):
+FAIL: **Bad** (excessive branching):
 
 - One node branching to 7+ child nodes (renders wide and small)
 
-✅ **Good** (controlled):
+PASS: **Good** (controlled):
 
 - Split into 2-3 diagrams, each with 3-4 branches maximum
 
 **3. Avoid Subgraphs (use separate diagrams)**
 
-❌ **Bad** (subgraphs):
+FAIL: **Bad** (subgraphs):
 
 ```mermaid
 graph TD
@@ -1521,7 +1521,7 @@ graph TD
     end
 ```
 
-✅ **Good** (separate diagrams with headers):
+PASS: **Good** (separate diagrams with headers):
 
 **Eager Evaluation:**
 

@@ -32,7 +32,7 @@ This convention establishes the standard linking format for all markdown files i
 
 ### What This Convention Covers
 
-- **Markdown link syntax** - `[Display Text](./path/to/file.md)` format
+- **Markdown link syntax** - `Display Text` format
 - **Relative vs. absolute paths** - When to use each
 - **Extension requirements** - `.md` extension for docs/, no extension for Hugo sites
 - **Cross-directory linking** - How to link between different documentation areas
@@ -45,7 +45,7 @@ This convention establishes the standard linking format for all markdown files i
 - **Hugo site URLs** - Hugo-specific linking covered in Hugo content conventions
 - **Anchor links** - Deep linking to specific sections (implementation detail)
 
-## 🎯 Why GitHub-Compatible Links?
+## Why GitHub-Compatible Links?
 
 We use GitHub-compatible markdown link syntax instead of Obsidian wiki links to ensure:
 
@@ -54,21 +54,21 @@ We use GitHub-compatible markdown link syntax instead of Obsidian wiki links to 
 3. **Version Control** - Easier to track changes and validate links in CI/CD
 4. **No Ambiguity** - Full paths prevent confusion when files have similar names
 
-## 📝 Link Syntax Standard
+## Link Syntax Standard
 
 ### Required Format
 
 Use standard markdown link syntax with relative paths:
 
 ```markdown
-[Display Text](./path/to/file.md)
+`Display Text`
 ```
 
 ### Key Rules
 
 1. **Always include the `.md` extension**
-   - ✅ `[Initial Setup](./tutorials/tu__initial-setup.md)`
-   - ❌ `[Initial Setup](./tutorials/tu__initial-setup)`
+   - PASS: `[Initial Setup](./tutorials/tu__initial-setup.md)`
+   - FAIL: `[Initial Setup](./tutorials/tu__initial-setup)`
 
 2. **Use relative paths from the current file's location**
    - Same directory: `./file.md`
@@ -78,29 +78,29 @@ Use standard markdown link syntax with relative paths:
    - **Important**: The number of `../` depends on your file's nesting depth (see [Nested Directory Linking](#nested-directory-linking))
 
 3. **Use descriptive link text instead of filename identifiers**
-   - ✅ `[File Naming Convention](./conventions/meta/file-naming.md)`
-   - ❌ `[ex-co__file-naming-convention](./conventions/meta/file-naming.md)`
+   - PASS: `[File Naming Convention](../meta/file-naming.md)`
+   - FAIL: `[ex-co__file-naming-convention](../meta/file-naming.md)`
 
 4. **Avoid Obsidian-only wiki link syntax**
-   - ❌ `[[filename]]`
-   - ❌ `[[filename|Display Text]]`
+   - FAIL: `[[filename]]`
+   - FAIL: `[[filename|Display Text]]`
 
-## 🧪 Examples by Location
+## Examples by Location
 
 ### Linking from Root README (`docs/README.md`)
 
 ```markdown
 <!-- Link to category index files -->
 
-[Tutorials](./tutorials/README.md)
-[How-To Guides](./how-to/README.md)
-[Reference](./reference/README.md)
-[Explanation](./explanation/README.md)
+[Tutorials](./README.md)
+[How-To Guides](./README.md)
+[Reference](./README.md)
+[Explanation](./README.md)
 
 <!-- Link to nested files -->
 
-[File Naming Convention](./explanation/governance/conventions/meta/file-naming.md)
-[Conventions Index](./explanation/governance/conventions/README.md)
+[File Naming Convention](../meta/file-naming.md)
+[Conventions Index](./README.md)
 ```
 
 ### Linking from Category Index (`docs/tutorials/README.md`)
@@ -113,12 +113,12 @@ Use standard markdown link syntax with relative paths:
 
 <!-- Link to parent directory -->
 
-[Documentation Home](../README.md)
+[Documentation Home](./README.md)
 
 <!-- Link to other categories -->
 
-[How-To Guides](../how-to/README.md)
-[API Reference](../reference/README.md)
+[How-To Guides](./README.md)
+[API Reference](./README.md)
 ```
 
 ### Linking from Nested Files (`governance/conventions/README.md`)
@@ -131,27 +131,27 @@ Use standard markdown link syntax with relative paths:
 
 <!-- Link to parent directory -->
 
-[Explanation Index](../README.md)
+[Explanation Index](./README.md)
 
 <!-- Link to root -->
 
-[Documentation Home](../../README.md)
+[Documentation Home](./README.md)
 
 <!-- Link to other categories -->
 
-[Tutorials](../../tutorials/README.md)
+[Tutorials](./README.md)
 ```
 
 ## Correct vs. Incorrect Examples
 
-### ✅ Correct Examples
+### PASS: Correct Examples
 
 ```markdown
 <!-- Descriptive text with relative path and .md extension -->
 
 [Understanding the Diátaxis Framework](../meta/diataxis-framework.md)
-[Monorepo Structure](../../reference/re__monorepo-structure.md)
-[AI Agents Convention](../development/agents/ai-agents.md)
+[Monorepo Structure](../../../docs/reference/re__monorepo-structure.md)
+[AI Agents Convention](../../development/agents/ai-agents.md)
 
 <!-- Links with context -->
 
@@ -159,7 +159,7 @@ See the [file naming convention](../meta/file-naming.md) for details.
 For more information, refer to our [automation principle](../../principles/software-engineering/automation-over-manual.md).
 ```
 
-### ❌ Incorrect Examples
+### FAIL: Incorrect Examples
 
 ```markdown
 <!-- Obsidian wiki links (not compatible with GitHub web) -->
@@ -173,7 +173,7 @@ For more information, refer to our [automation principle](../../principles/softw
 
 <!-- Absolute paths -->
 
-[Conventions](/governance/conventions/README.md)
+[Conventions](../README.md)
 
 <!-- Using filename as link text -->
 
@@ -183,14 +183,14 @@ For more information, refer to our [automation principle](../../principles/softw
 <!-- From governance/conventions/formatting/linking.md (2 levels deep) -->
 
 [Documentation Home](./README.md) <!-- Should be ../../README.md -->
-[Tutorials](../tutorials/README.md) <!-- Only 1 ../ instead of 2 -->
+[Tutorials](./README.md) <!-- Only 1 ../ instead of 2 -->
 
 <!-- From governance/conventions/README.md (2 levels deep) -->
 
-[Documentation Home](../../../README.md) <!-- Too many ../ (3 instead of 2) -->
+[Documentation Home](./README.md) <!-- Too many ../ (3 instead of 2) -->
 ```
 
-## 🌐 External Links
+## External Links
 
 For links to external resources:
 
@@ -202,7 +202,7 @@ For links to external resources:
 [GitHub](https://github.com/wahidyankf/open-sharia-enterprise)
 ```
 
-## 📁 Nested Directory Linking
+## Nested Directory Linking
 
 Understanding relative paths is crucial when linking from files at different nesting depths. The number of `../` you need depends on how deep your current file is nested.
 
@@ -229,17 +229,17 @@ Understanding relative paths is crucial when linking from files at different nes
 ```markdown
 <!-- To sibling directories (same level) -->
 
-[Conventions](./conventions/README.md)
-[Development](./development/README.md)
+[Conventions](./README.md)
+[Development](./README.md)
 
 <!-- To parent (docs/ root) -->
 
-[Documentation Home](../README.md)
+[Documentation Home](./README.md)
 
 <!-- To other categories (up 1, down 1) -->
 
-[Tutorials](../tutorials/README.md)
-[How-To](../how-to/README.md)
+[Tutorials](./README.md)
+[How-To](./README.md)
 ```
 
 #### From 2-Level Deep Files (`governance/conventions/formatting/linking.md`)
@@ -247,12 +247,12 @@ Understanding relative paths is crucial when linking from files at different nes
 ```markdown
 <!-- To docs/ root (up 2 levels) -->
 
-[Documentation Home](../../README.md)
+[Documentation Home](./README.md)
 
 <!-- To other categories (up 2, down 1) -->
 
-[Tutorials](../../tutorials/README.md)
-[How-To](../../how-to/README.md)
+[Tutorials](./README.md)
+[How-To](./README.md)
 
 <!-- To sibling files (same directory) -->
 
@@ -264,18 +264,18 @@ Understanding relative paths is crucial when linking from files at different nes
 ```markdown
 <!-- To docs/ root (up 3 levels) -->
 
-[Documentation Home](../../../README.md)
+[Documentation Home](./README.md)
 
 <!-- To other categories (up 3, down 1 or 2) -->
 
-[Tutorials](../../../tutorials/README.md)
-[Conventions](../../conventions/README.md)
+[Tutorials](./README.md)
+[Conventions](./README.md)
 
 <!-- To parent categories (up 1, 2, or 3) -->
 
-[Software Engineering Principles](../README.md) <!-- Parent directory -->
-[All Principles](../../README.md) <!-- Grandparent directory -->
-[Explanation Index](../../../README.md) <!-- Great-grandparent -->
+[Software Engineering Principles](./README.md) <!-- Parent directory -->
+[All Principles](./README.md) <!-- Grandparent directory -->
+[Explanation Index](./README.md) <!-- Great-grandparent -->
 ```
 
 ### Verification Tip
@@ -338,11 +338,11 @@ For embedding images:
 ![Architecture](./images/architecture-diagram.png)
 ```
 
-## ✅ Verification Checklist
+## PASS: Verification Checklist
 
 Before committing documentation with links:
 
-- [ ] All links use `[Text](./path/to/file.md)` syntax
+- [ ] All links use `Text` syntax
 - [ ] All internal links include `.md` extension
 - [ ] All paths are relative (not absolute)
 - [ ] Link text is descriptive (not filename-based)
@@ -350,7 +350,7 @@ Before committing documentation with links:
 - [ ] Manually verified links point to existing files
 - [ ] Paths tested from the current file's location
 
-## 🔍 Link Validation
+## Link Validation
 
 When creating documentation, verify links by:
 
@@ -359,7 +359,7 @@ When creating documentation, verify links by:
 3. **Path Correctness**: Count `../` levels to ensure correct relative path
 4. **Extension Check**: Confirm `.md` is present in all internal links
 
-## 🔗 Related Documentation
+## Related Documentation
 
 - [File Naming Convention](../meta/file-naming.md) - How to name documentation files
 - [Conventions Index](./README.md) - Overview of all documentation conventions
@@ -368,7 +368,7 @@ When creating documentation, verify links by:
 
 **Last Updated**: 2025-11-27
 
-## 🔗 When to Link Rule References
+## When to Link Rule References
 
 When referencing repository rules (visions, principles, conventions, development practices, workflows), use a **two-tier formatting approach**:
 
@@ -398,7 +398,7 @@ The **first mention** of a rule in any document section MUST use a markdown link
 
 ### Examples
 
-#### ✅ Correct - Two-Tier Formatting
+#### PASS: Correct - Two-Tier Formatting
 
 ```markdown
 ## Implementation Details
@@ -408,11 +408,11 @@ This feature implements the [Linking Convention](./linking.md) by using relative
 
 **Analysis:**
 
-- First mention: `[Linking Convention](./linking.md)` ✅ (markdown link)
-- Second mention: `` `Linking Convention` `` ✅ (inline code)
-- Third mention: `` `Linking Convention` `` ✅ (inline code)
+- First mention: `[Linking Convention](./linking.md)` PASS: (markdown link)
+- Second mention: `` `Linking Convention` `` PASS: (inline code)
+- Third mention: `` `Linking Convention` `` PASS: (inline code)
 
-#### ✅ Correct - Multiple Rules
+#### PASS: Correct - Multiple Rules
 
 ```markdown
 ## Standards Compliance
@@ -422,10 +422,10 @@ All documentation follows the [File Naming Convention](../meta/file-naming.md) a
 
 **Analysis:**
 
-- File Naming Convention: First mention (link) ✅, subsequent mentions (inline code) ✅
-- Linking Convention: First mention (link) ✅, subsequent mentions (inline code) ✅
+- File Naming Convention: First mention (link) , subsequent mentions (inline code)
+- Linking Convention: First mention (link) , subsequent mentions (inline code)
 
-#### ❌ Incorrect - All Plain Text
+#### FAIL: Incorrect - All Plain Text
 
 ```markdown
 ## Standards Compliance
@@ -435,7 +435,7 @@ All documentation follows the Linking Convention. The Linking Convention require
 
 **Issue:** No links or inline code formatting - readers cannot navigate to convention document.
 
-#### ❌ Incorrect - All Links
+#### FAIL: Incorrect - All Links
 
 ```markdown
 ## Standards Compliance
@@ -445,7 +445,7 @@ All documentation follows the [Linking Convention](./linking.md). The [Linking C
 
 **Issue:** Redundant links create visual clutter and maintenance burden.
 
-#### ❌ Incorrect - All Inline Code
+#### FAIL: Incorrect - All Inline Code
 
 ```markdown
 ## Standards Compliance

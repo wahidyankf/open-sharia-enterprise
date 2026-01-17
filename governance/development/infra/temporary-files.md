@@ -32,15 +32,15 @@ This practice implements/respects the following conventions:
 
 - **[AI Agents Convention](../agents/ai-agents.md)**: All checker agents MUST have Write and Bash tools for report generation. Report-generating agents follow mandatory progressive writing requirement to survive context compaction.
 
-- **[Timestamp Format Convention](../conventions/formatting/timestamp.md)**: Report filenames use UTC+7 timestamps in format YYYY-MM-DD--HH-MM (hyphen-separated for filesystem compatibility).
+- **[Timestamp Format Convention](../../conventions/formatting/timestamp.md)**: Report filenames use UTC+7 timestamps in format YYYY-MM-DD--HH-MM (hyphen-separated for filesystem compatibility).
 
-- **[File Naming Convention](../conventions/meta/file-naming.md)**: Report files follow 4-part pattern {agent-family}**{uuid-chain}**{timestamp}\_\_{type}.md with double-underscore separators. UUID chain enables parallel execution without file collisions.
+- **[File Naming Convention](../../conventions/meta/file-naming.md)**: Report files follow 4-part pattern {agent-family}**{uuid-chain}**{timestamp}\_\_{type}.md with double-underscore separators. UUID chain enables parallel execution without file collisions.
 
-## 📋 Overview
+## Overview
 
 This convention establishes designated directories for temporary files created by AI agents during validation, auditing, checking, and other automated tasks. It prevents repository clutter and provides clear organization for ephemeral outputs.
 
-## 🎯 The Rule
+## The Rule
 
 **AI agents creating temporary uncommitted file(s) or folder(s) MUST use one of these directories:**
 
@@ -49,7 +49,7 @@ This convention establishes designated directories for temporary files created b
 
 **Exception**: Unless specified otherwise by other existing governance/conventions in the repository.
 
-## 📋 Mandatory Report Generation for Checker Agents
+## Mandatory Report Generation for Checker Agents
 
 **CRITICAL REQUIREMENT**: All \*-checker agents MUST write their validation/audit reports to the `generated-reports/` directory. This is a hard requirement for consistency and traceability across all checker agent families.
 
@@ -224,10 +224,10 @@ REPORT_FILE="generated-reports/${AGENT_FAMILY}__${UUID_CHAIN}__${TIMESTAMP}__aud
 
 **CRITICAL**: Only write to `.execution-chain-{scope}` when **about to spawn child agents**.
 
-- ✅ Workflows write before spawning checkers
-- ✅ Orchestrating agents write before spawning sub-agents
-- ❌ Checker agents do NOT write (they don't spawn children)
-- ❌ Fixer agents do NOT write (they don't spawn children)
+- PASS: Workflows write before spawning checkers
+- PASS: Orchestrating agents write before spawning sub-agents
+- FAIL: Checker agents do NOT write (they don't spawn children)
+- FAIL: Fixer agents do NOT write (they don't spawn children)
 
 This prevents race conditions when multiple children run in parallel.
 
@@ -238,8 +238,8 @@ Scope-based tracking enables correct parent tracking for concurrent workflows:
 ```
 T0: golang-workflow writes .execution-chain-golang = "aaa111"
 T1: elixir-workflow writes .execution-chain-elixir = "bbb222"
-T2: golang-checker reads .execution-chain-golang → "aaa111" ✅
-T3: elixir-checker reads .execution-chain-elixir → "bbb222" ✅
+T2: golang-checker reads .execution-chain-golang → "aaa111"
+T3: elixir-checker reads .execution-chain-elixir → "bbb222"
 ```
 
 Each workflow scope is isolated, preventing cross-contamination.
@@ -283,7 +283,7 @@ fi
 
 **NO conversation-only output**: Reports must be persisted for review, comparison, and fixer integration
 
-## 📂 Directory Purposes
+## Directory Purposes
 
 ### `generated-reports/`
 
@@ -313,7 +313,7 @@ Progressive writing ensures reports survive context compaction:
 
 **What Progressive Writing Means:**
 
-**❌ Bad Pattern (Buffering - DO NOT DO THIS)**:
+**FAIL: Bad Pattern (Buffering - DO NOT DO THIS)**:
 
 ```markdown
 findings = [] # Collect in memory
@@ -326,7 +326,7 @@ findings.append(result) # Buffer in memory
 write_report(findings) # Write once after all validation complete
 ```
 
-**✅ Good Pattern (Progressive - MUST DO THIS)**:
+**PASS: Good Pattern (Progressive - MUST DO THIS)**:
 
 ```markdown
 file.write("# Audit Report\n\n") # Create file immediately
@@ -463,14 +463,14 @@ generated-reports/plan-execution__d4e5f6__2025-12-15--14-00__validation.md
 
 **CRITICAL - UUID and Timestamp Generation:**
 
-**❌ WRONG - Using placeholder values:**
+**FAIL: WRONG - Using placeholder values:**
 
 ```bash
 # DO NOT use placeholder values
 filename="repo-rules__abc123__2025-12-14--00-00__audit.md"  # WRONG!
 ```
 
-**✅ CORRECT - Execute bash commands for actual UUID and current time:**
+**PASS: CORRECT - Execute bash commands for actual UUID and current time:**
 
 ```bash
 # MUST generate real UUID and timestamp
@@ -480,7 +480,7 @@ filename="repo-rules__${uuid}__${timestamp}__audit.md"
 # Example: repo-rules__a1b2c3__2025-12-14--16-43__audit.md (actual values!)
 ```
 
-**Why this is critical:** Placeholder timestamps like "00-00" defeat the entire purpose of timestamping. Reports must have accurate creation times for audit trails, chronological sorting, and debugging. See [Timestamp Format Convention](../conventions/formatting/timestamp.md) for complete details.
+**Why this is critical:** Placeholder timestamps like "00-00" defeat the entire purpose of timestamping. Reports must have accurate creation times for audit trails, chronological sorting, and debugging. See [Timestamp Format Convention](../../conventions/formatting/timestamp.md) for complete details.
 
 #### Repository Audit Reports
 
@@ -638,7 +638,7 @@ local-temp/temp-analysis.json
 local-temp/scratch-notes.txt
 ```
 
-## ✅ When This Applies
+## PASS: When This Applies
 
 Use these directories when:
 
@@ -649,7 +649,7 @@ Use these directories when:
 - Any file that is **not meant to be committed** to version control
 - Files intended for immediate review/use only
 
-## ❌ When NOT to Use These Directories
+## FAIL: When NOT to Use These Directories
 
 Do NOT use these directories for:
 
@@ -660,7 +660,7 @@ Do NOT use these directories for:
 - **Configuration files** - Place in repository root or appropriate subdirectories
 - **Files explicitly required by other conventions** - Follow the specific convention's guidelines
 
-## 🔧 Implementation for AI Agents
+## Implementation for AI Agents
 
 ### For Report-Generating Agents
 
@@ -711,7 +711,7 @@ Agents creating miscellaneous temporary files should:
 3. Clean up files after use (when appropriate)
 4. Document the purpose of temporary files if they're long-lived
 
-## 🗂️ Directory Status
+## ️ Directory Status
 
 Both directories are **gitignored** (not tracked by version control):
 
@@ -731,7 +731,7 @@ Files in these directories will not be committed to the repository.
 
 **Note**: The `.execution-chain-{scope}` files are hidden files within `generated-reports/` used for parent-child execution tracking. They are automatically gitignored via the `generated-reports/` pattern.
 
-## 🔄 Exception Handling
+## Exception Handling
 
 The rule includes "unless specified otherwise by other governance/conventions":
 
@@ -747,13 +747,13 @@ The rule includes "unless specified otherwise by other governance/conventions":
 - Task-specific requirements may specify different locations
 - User instructions may explicitly request different locations
 
-## 📚 Related Conventions
+## Related Conventions
 
-- [File Naming Convention](../conventions/meta/file-naming.md) - For permanent documentation files
+- [File Naming Convention](../../conventions/meta/file-naming.md) - For permanent documentation files
 - [AI Agents Convention](../agents/ai-agents.md) - For agent design and tool access
-- [Diátaxis Framework](../conventions/meta/diataxis-framework.md) - For documentation organization
+- [Diátaxis Framework](../../conventions/meta/diataxis-framework.md) - For documentation organization
 
-## 🎯 Benefits
+## Benefits
 
 This convention provides:
 
@@ -763,7 +763,7 @@ This convention provides:
 4. **Traceability** - Generated reports include dates for tracking
 5. **Consistent Behavior** - All agents follow the same pattern
 
-## ⚠️ Important Notes
+## Important Notes
 
 - Always use one of these directories for temporary files (never the repository root)
 - Choose `generated-reports/` for structured reports, `local-temp/` for everything else

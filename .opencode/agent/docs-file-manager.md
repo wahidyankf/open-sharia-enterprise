@@ -77,7 +77,7 @@ Use this agent when:
 
 ## File Naming Convention Review
 
-Before any operation, understand the [File Naming Convention](../../governance/conventions/meta/ex-ru-co-me-file-naming.md):
+Before any operation, understand the [File Naming Convention](../../../governance/conventions/meta/file-naming.md):
 
 ### Pattern
 
@@ -317,7 +317,7 @@ To verify relative path:
 
 ### Link Syntax Requirements
 
-All links must follow [Linking Convention](../../governance/conventions/formatting/linking.md):
+All links must follow [Linking Convention](../../../governance/conventions/formatting/linking.md):
 
 - Use relative paths (`./ or ../`)
 - Include `.md` extension
@@ -627,12 +627,12 @@ Proceed anyway? (Please confirm)
 
 **Agent Conventions:**
 
-- `governance/development/agents/ex-ru-de-ag-ai-agents.md` - AI agents convention (all agents must follow)
+- `governance/development/agents/ai-agents.md` - AI agents convention (all agents must follow)
 
 **Documentation Conventions:**
 
 - `governance/conventions/README.md` - Index of all conventions
-- `governance/conventions/meta/ex-ru-co-me-file-naming.md` - How to name files with hierarchical prefixes (required reading)
+- `governance/conventions/meta/file-naming.md` - How to name files with hierarchical prefixes (required reading)
 - `governance/conventions/formatting/linking.md` - How to link between files with GitHub-compatible markdown (required reading)
 - `governance/conventions/formatting/emoji.md` - When and where to use emojis
 

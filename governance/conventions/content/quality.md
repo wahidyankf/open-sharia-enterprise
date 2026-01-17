@@ -84,13 +84,13 @@ graph TD
 
 **Prefer active voice** over passive voice for clarity and directness.
 
-✅ **Good (Active Voice)**:
+PASS: **Good (Active Voice)**:
 
 ```markdown
 The agent validates the content against the convention.
 ```
 
-❌ **Avoid (Passive Voice)**:
+FAIL: **Avoid (Passive Voice)**:
 
 ```markdown
 The content is validated against the convention by the agent.
@@ -119,21 +119,21 @@ Maintain a **professional yet approachable** tone throughout all content.
 - Use technical terms correctly and consistently
 - Assume readers are intelligent but may lack context
 
-✅ **Good (Professional Tone)**:
+PASS: **Good (Professional Tone)**:
 
 ```markdown
 To configure the authentication system, update the `auth.config.js` file
-with your OAuth2 credentials. Refer to the [Authentication Guide](./auth-guide.md)
+with your OAuth2 credentials. Refer to the `Authentication Guide`
 for detailed instructions.
 ```
 
-❌ **Avoid (Too Casual)**:
+FAIL: **Avoid (Too Casual)**:
 
 ```markdown
 Just throw your OAuth2 stuff into `auth.config.js` and you're good to go!
 ```
 
-❌ **Avoid (Too Formal/Stuffy)**:
+FAIL: **Avoid (Too Formal/Stuffy)**:
 
 ```markdown
 It is incumbent upon the developer to ensure proper configuration of the
@@ -153,7 +153,7 @@ configuration file.
 - **Use concrete examples** - Show, don't just tell
 - **Define acronyms** - First use should be spelled out
 
-✅ **Good (Clear and Concise)**:
+PASS: **Good (Clear and Concise)**:
 
 ````markdown
 The API returns a JSON response with status code 200 on success.
@@ -168,7 +168,7 @@ The API returns a JSON response with status code 200 on success.
 
 ````
 
-❌ **Avoid (Wordy and Vague)**:
+FAIL: **Avoid (Wordy and Vague)**:
 
 ```markdown
 Basically, what happens is that when the API call actually completes
@@ -223,7 +223,7 @@ Refresh tokens supported with sliding expiration.
 
 **Every markdown file MUST have exactly ONE H1 heading** - the document title.
 
-✅ **Correct (Single H1)**:
+PASS: **Correct (Single H1)**:
 
 ```markdown
 # User Authentication Guide
@@ -237,7 +237,7 @@ This guide covers authentication implementation.
 Follow these steps to set up authentication...
 ```
 
-❌ **Incorrect (Multiple H1s)**:
+FAIL: **Incorrect (Multiple H1s)**:
 
 ```markdown
 # User Authentication Guide
@@ -257,7 +257,7 @@ Follow these steps...
 
 **Headings MUST follow semantic hierarchy** - don't skip levels.
 
-✅ **Correct Nesting**:
+PASS: **Correct Nesting**:
 
 ```markdown
 # Document Title (H1)
@@ -273,7 +273,7 @@ Follow these steps...
 ### Another Subsection (H3)
 ```
 
-❌ **Incorrect (Skipped Levels)**:
+FAIL: **Incorrect (Skipped Levels)**:
 
 ```markdown
 # Document Title (H1)
@@ -289,7 +289,7 @@ Follow these steps...
 
 **Headings MUST be descriptive and specific** - avoid vague titles.
 
-✅ **Good (Descriptive)**:
+PASS: **Good (Descriptive)**:
 
 ```markdown
 ## Installing Dependencies with npm
@@ -299,7 +299,7 @@ Follow these steps...
 ## Troubleshooting Database Connection Errors
 ```
 
-❌ **Avoid (Vague)**:
+FAIL: **Avoid (Vague)**:
 
 ```markdown
 ## Installation
@@ -315,7 +315,7 @@ Follow these steps...
 
 **Use headings for structure, NOT for styling** - headings convey document hierarchy.
 
-❌ **Incorrect (Using Heading for Emphasis)**:
+FAIL: **Incorrect (Using Heading for Emphasis)**:
 
 ```markdown
 This is important content.
@@ -325,7 +325,7 @@ This is important content.
 More content continues here...
 ```
 
-✅ **Correct (Use Blockquote or Callout)**:
+PASS: **Correct (Use Blockquote or Callout)**:
 
 ```markdown
 This is important content.
@@ -341,7 +341,7 @@ More content continues here...
 
 **ALL images MUST have descriptive alt text** for screen readers and accessibility.
 
-✅ **Good Alt Text**:
+PASS: **Good Alt Text**:
 
 ```markdown
 ![Architecture diagram showing client-server communication flow with database](./images/architecture.png)
@@ -349,7 +349,7 @@ More content continues here...
 ![Screenshot of the authentication form with username and password fields](./screenshots/login-form.png)
 ```
 
-❌ **Bad Alt Text**:
+FAIL: **Bad Alt Text**:
 
 ```markdown
 ![image](./images/architecture.png) <!-- Too vague -->
@@ -371,7 +371,7 @@ More content continues here...
 
 **Use semantic HTML elements** appropriately in markdown.
 
-✅ **Good (Semantic)**:
+PASS: **Good (Semantic)**:
 
 ```markdown
 ## Section Title <!-- Semantic heading -->
@@ -385,7 +385,7 @@ More content continues here...
 2. Next step
 ```
 
-❌ **Avoid (Non-Semantic)**:
+FAIL: **Avoid (Non-Semantic)**:
 
 ```markdown
 **Section Title** <!-- Using bold instead of heading -->
@@ -454,13 +454,13 @@ More content continues here...
 4. **List structure** - Use proper list syntax (not manual bullets)
 5. **Heading hierarchy** - Proper H1-H6 nesting for document outline
 
-✅ **Good (Descriptive Link Text)**:
+PASS: **Good (Descriptive Link Text)**:
 
 ```markdown
-See the [Authentication Guide](./auth-guide.md) for setup instructions.
+See the `Authentication Guide` for setup instructions.
 ```
 
-❌ **Avoid (Generic Link Text)**:
+FAIL: **Avoid (Generic Link Text)**:
 
 ```markdown
 For setup instructions, click [here](./auth-guide.md).
@@ -521,14 +521,14 @@ Use **bold** (`**text**`) for:
 - **UI element names** (buttons, menus)
 - **Status labels** (Required, Optional)
 
-✅ **Good Use of Bold**:
+PASS: **Good Use of Bold**:
 
 ```markdown
 The **authentication token** expires after 1 hour. Click the **Login** button
 to sign in.
 ```
 
-❌ **Overuse of Bold**:
+FAIL: **Overuse of Bold**:
 
 ```markdown
 The **authentication token** **expires** after **1 hour**. **Click** the
@@ -544,7 +544,7 @@ Use _italic_ (`*text*`) for:
 - _Variable names_ in prose (when not using code syntax)
 - _Titles of books or publications_
 
-✅ **Good Use of Italic**:
+PASS: **Good Use of Italic**:
 
 ```markdown
 The _environment_ variable must be set _before_ running the application.
@@ -561,7 +561,7 @@ Use inline code (`` `code` ``) for:
 - `configuration keys`
 - `HTTP status codes` (e.g., `200`, `404`)
 
-✅ **Good Use of Inline Code**:
+PASS: **Good Use of Inline Code**:
 
 ```markdown
 Set the `API_KEY` environment variable in your `.env` file. Run the
@@ -575,7 +575,7 @@ Use ~~strikethrough~~ (`~~text~~`) for:
 - Deprecated features (with replacement noted)
 - Corrections in changelog or updates
 
-✅ **Good Use of Strikethrough**:
+PASS: **Good Use of Strikethrough**:
 
 ```markdown
 ~~Use `legacy-auth`~~ **Deprecated** - Use `oauth2-auth` instead.
@@ -672,20 +672,20 @@ Use blockquotes with emoji or labels for callouts:
 ```markdown
 > **Note**: Configuration changes require server restart.
 
-> ⚠️ **Warning**: Deleting this file will remove all user data permanently.
+> **Warning**: Deleting this file will remove all user data permanently.
 
-> ✅ **Success**: Your authentication is now properly configured.
+> PASS: **Success**: Your authentication is now properly configured.
 
-> 💡 **Tip**: Use environment variables for sensitive configuration.
+> **Tip**: Use environment variables for sensitive configuration.
 ```
 
 **Callout Types**:
 
-- **Note** / 📝: General information
-- **Warning** / ⚠️: Caution required
-- **Success** / ✅: Confirmation or best practice
-- **Tip** / 💡: Helpful suggestion
-- **Important** / ❗: Critical information
+- **Note** / : General information
+- **Warning** / ️: Caution required
+- **Success** / : Confirmation or best practice
+- **Tip** / : Helpful suggestion
+- **Important** / : Critical information
 
 ### Table Formatting
 
@@ -737,7 +737,7 @@ Use blockquotes with emoji or labels for callouts:
 
 **Why**: Studies show ~80 characters per line optimizes reading speed and comprehension.
 
-✅ **Good (Readable Line Length)**:
+PASS: **Good (Readable Line Length)**:
 
 ```markdown
 Authentication tokens expire after 1 hour of inactivity. To extend the
@@ -745,7 +745,7 @@ session, the client must send a refresh token before expiration. Failed
 refresh attempts result in automatic logout.
 ```
 
-❌ **Avoid (Too Long)**:
+FAIL: **Avoid (Too Long)**:
 
 ```markdown
 Authentication tokens expire after 1 hour of inactivity and to extend the session the client must send a refresh token before expiration otherwise failed refresh attempts will result in automatic logout and the user will need to log in again.
@@ -776,7 +776,7 @@ Authentication tokens expire after 1 hour of inactivity and to extend the sessio
 
 **Forbidden Time Estimates**:
 
-❌ **Avoid (time-based claims)**:
+FAIL: **Avoid (time-based claims)**:
 
 ```markdown
 This tutorial takes 2-3 hours to complete.
@@ -786,7 +786,7 @@ You'll learn this in 30 minutes.
 Time needed: 20 min
 ```
 
-✅ **Good (focus on outcomes, not duration)**:
+PASS: **Good (focus on outcomes, not duration)**:
 
 ```markdown
 By the end of this tutorial, you'll be able to...
@@ -799,9 +799,9 @@ Coverage: 60-85% of domain knowledge (intermediate depth)
 
 Coverage percentages are allowed because they indicate **depth/scope**, not **time**:
 
-- ✅ "Coverage: 0-5%" (indicates initial setup scope)
-- ✅ "Coverage: 60-85%" (indicates intermediate depth)
-- ✅ "Coverage: 85-95%" (indicates advanced depth)
+- PASS: "Coverage: 0-5%" (indicates initial setup scope)
+- PASS: "Coverage: 60-85%" (indicates intermediate depth)
+- PASS: "Coverage: 85-95%" (indicates advanced depth)
 
 **Where This Applies**:
 
@@ -816,7 +816,7 @@ Coverage percentages are allowed because they indicate **depth/scope**, not **ti
 - Development task tracking - can estimate effort
 - Meeting agendas - can allocate time slots
 
-✅ **Good (Well-Structured Paragraphs)**:
+PASS: **Good (Well-Structured Paragraphs)**:
 
 ```markdown
 Authentication tokens provide secure access to protected resources. Each
@@ -831,7 +831,7 @@ again to continue. This security measure prevents unauthorized access
 attempts.
 ```
 
-❌ **Avoid (Wall of Text)**:
+FAIL: **Avoid (Wall of Text)**:
 
 ```markdown
 Authentication tokens provide secure access to protected resources and

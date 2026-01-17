@@ -17,7 +17,7 @@ updated: 2025-12-24
 
 **Start simple and layer complexity gradually**. Beginners see simple patterns first, experts access advanced features when needed. Complexity is **available** but not **required** for basic use.
 
-## 🌟 Vision Supported
+## Vision Supported
 
 This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of making Islamic enterprise accessible to developers at all skill levels - from beginners to experts.
 
@@ -31,7 +31,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 
 **Vision alignment**: Democratization requires meeting people at their current skill level. Progressive disclosure ensures Islamic enterprise is accessible whether you're learning your first "Hello World" or architecting enterprise systems.
 
-## 🎯 What
+## What
 
 **Progressive Disclosure** means:
 
@@ -49,7 +49,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 - Cognitive overload
 - Hard to get started
 
-## 💡 Why
+## Why
 
 ### Benefits of Progressive Disclosure
 
@@ -75,7 +75,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 - **Provide Clear Next Steps**: Show path to deeper knowledge
 - **Advanced Features Discoverable**: Experts can find what they need
 
-## 📋 How It Applies
+## How It Applies
 
 ### Tutorial Levels
 
@@ -107,15 +107,15 @@ graph TD
 
 **Why this works**:
 
-- ✅ **Initial Setup (0-5%)**: Get running in 5 minutes
-- ✅ **Quick Start (5-30%)**: Learn enough to explore independently
-- ✅ **Beginner (0-60%)**: Comprehensive foundation
-- ✅ **Intermediate (60-85%)**: Production-ready skills
-- ✅ **Advanced (85-95%)**: Expert-level mastery
+- PASS: **Initial Setup (0-5%)**: Get running in 5 minutes
+- PASS: **Quick Start (5-30%)**: Learn enough to explore independently
+- PASS: **Beginner (0-60%)**: Comprehensive foundation
+- PASS: **Intermediate (60-85%)**: Production-ready skills
+- PASS: **Advanced (85-95%)**: Expert-level mastery
 
 **Alternative** (what we avoid):
 
-❌ **Single "Complete Guide"**: 1,000 pages covering everything at once. Overwhelming.
+FAIL: **Single "Complete Guide"**: 1,000 pages covering everything at once. Overwhelming.
 
 ### Diátaxis Framework
 
@@ -130,16 +130,16 @@ Tutorials → How-To → Reference → Explanation
 
 **Why this works**:
 
-- ✅ **Tutorials**: Guided learning for beginners
-- ✅ **How-To**: Problem-solving for practitioners
-- ✅ **Reference**: Quick lookup for experts
-- ✅ **Explanation**: Deep understanding for architects
+- PASS: **Tutorials**: Guided learning for beginners
+- PASS: **How-To**: Problem-solving for practitioners
+- PASS: **Reference**: Quick lookup for experts
+- PASS: **Explanation**: Deep understanding for architects
 
 **Not** a single type of documentation:
 
-❌ Everything in one giant README
-❌ Reference manual for beginners
-❌ Tutorial for expert lookup
+FAIL: Everything in one giant README
+FAIL: Reference manual for beginners
+FAIL: Tutorial for expert lookup
 
 ### File Naming Convention
 
@@ -165,14 +165,14 @@ Hyphenated prefix (`ex-co` for explanation/conventions). More context.
 
 **Why this works**:
 
-- ✅ Basic pattern is simple
-- ✅ Advanced pattern adds context
-- ✅ Prefix encodes location
-- ✅ Understandable at each level
+- PASS: Basic pattern is simple
+- PASS: Advanced pattern adds context
+- PASS: Prefix encodes location
+- PASS: Understandable at each level
 
 **Alternative** (what we avoid):
 
-❌ **Complex classification system**: `L2-CAT3-TYPE1-SUBTYPE4-file.md`
+FAIL: **Complex classification system**: `L2-CAT3-TYPE1-SUBTYPE4-file.md`
 
 Too complex. No progressive learning.
 
@@ -208,10 +208,10 @@ Complete API/configuration details.
 
 **Why this works**:
 
-- ✅ Beginners read Overview + Quick Start
-- ✅ Practitioners read Basic Usage
-- ✅ Experts jump to Advanced Usage
-- ✅ All levels served
+- PASS: Beginners read Overview + Quick Start
+- PASS: Practitioners read Basic Usage
+- PASS: Experts jump to Advanced Usage
+- PASS: All levels served
 
 ### Convention Documents
 
@@ -245,16 +245,16 @@ What to avoid (for advanced users).
 
 **Why this works**:
 
-- ✅ "What" and "Why" for beginners
-- ✅ "How It Applies" for practitioners
-- ✅ "Advanced Patterns" for experts
-- ✅ Each level optional
+- PASS: "What" and "Why" for beginners
+- PASS: "How It Applies" for practitioners
+- PASS: "Advanced Patterns" for experts
+- PASS: Each level optional
 
-## 🚫 Anti-Patterns
+## Anti-Patterns
 
 ### Front-Loading Complexity
 
-❌ **Problem**: Teaching advanced concepts before basics.
+FAIL: **Problem**: Teaching advanced concepts before basics.
 
 ```markdown
 # React Tutorial
@@ -268,7 +268,7 @@ Before we learn basic components, let's understand HoCs...
 
 ### No Clear Starting Point
 
-❌ **Problem**: Documentation without "start here" guidance.
+FAIL: **Problem**: Documentation without "start here" guidance.
 
 ```
 docs/
@@ -283,7 +283,7 @@ docs/
 
 ### All-or-Nothing Documentation
 
-❌ **Problem**: Either 10-page reference manual or nothing.
+FAIL: **Problem**: Either 10-page reference manual or nothing.
 
 **No middle ground**: No quick start, no intermediate guides.
 
@@ -291,7 +291,7 @@ docs/
 
 ### Requiring Expert Knowledge for Basics
 
-❌ **Problem**: Basic tasks require understanding internals.
+FAIL: **Problem**: Basic tasks require understanding internals.
 
 ```markdown
 ## Creating a Component
@@ -301,14 +301,14 @@ First, understand the reconciliation algorithm and virtual DOM diffing...
 
 **Why it's bad**: Unnecessary complexity for basic tasks.
 
-## ✅ Best Practices
+## PASS: Best Practices
 
 ### 1. Start with Minimal Viable Example
 
 **Hello World first**:
 
 ```typescript
-// ✅ Simplest possible example
+// PASS: Simplest possible example
 console.log("Hello, World!");
 ```
 
@@ -362,16 +362,16 @@ Internals and customization.
 
 **Each level is self-contained**:
 
-- ✅ Beginner tutorial teaches 0-60% completely
-- ✅ Beginner can build real projects with 60% knowledge
-- ✅ Intermediate builds on beginner (not replacement)
+- PASS: Beginner tutorial teaches 0-60% completely
+- PASS: Beginner can build real projects with 60% knowledge
+- PASS: Intermediate builds on beginner (not replacement)
 
 **Not**:
 
-- ❌ Beginner tutorial leaves gaps
-- ❌ Must read intermediate to be productive
+- FAIL: Beginner tutorial leaves gaps
+- FAIL: Must read intermediate to be productive
 
-## 📊 Examples from This Repository
+## Examples from This Repository
 
 ### Tutorial Naming Convention
 
@@ -388,10 +388,10 @@ Internals and customization.
 
 **Progressive disclosure features**:
 
-- ✅ Clear percentage ranges (depth, not time)
-- ✅ Each level complete and useful
-- ✅ Linear progression
-- ✅ Cookbook as parallel practical track
+- PASS: Clear percentage ranges (depth, not time)
+- PASS: Each level complete and useful
+- PASS: Linear progression
+- PASS: Cookbook as parallel practical track
 
 ### Documentation Structure
 
@@ -407,10 +407,10 @@ docs/
 
 **Progressive disclosure features**:
 
-- ✅ Clear starting point (tutorials)
-- ✅ Progression path visible
-- ✅ Each category serves different need
-- ✅ Beginners and experts both served
+- PASS: Clear starting point (tutorials)
+- PASS: Progression path visible
+- PASS: Each category serves different need
+- PASS: Beginners and experts both served
 
 ### Agent Tool Permissions
 
@@ -434,10 +434,10 @@ tools: Read, Write, Edit, Glob, Grep, Bash
 
 **Progressive disclosure features**:
 
-- ✅ Start with minimal tools
-- ✅ Add tools as needed
-- ✅ Explicit at each level
-- ✅ Security through progressive access
+- PASS: Start with minimal tools
+- PASS: Add tools as needed
+- PASS: Explicit at each level
+- PASS: Security through progressive access
 
 ### File Naming Prefixes
 
@@ -458,25 +458,25 @@ ex-inse__security-basics.md    (7 letters - ex-inse)
 
 **Progressive disclosure features**:
 
-- ✅ Simple pattern for common case
-- ✅ More context for deeper files
-- ✅ Pattern scales with depth
-- ✅ Learnable incrementally
+- PASS: Simple pattern for common case
+- PASS: More context for deeper files
+- PASS: Pattern scales with depth
+- PASS: Learnable incrementally
 
-## 🔗 Related Principles
+## Related Principles
 
 - [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Start simple, add complexity only when needed
 - [No Time Estimates](./no-time-estimates.md) - Focus on learning outcomes, not duration
 - [Accessibility First](./accessibility-first.md) - Progressive disclosure improves accessibility
 
-## 📚 Related Conventions
+## Related Conventions
 
 - [Tutorial Naming Convention](../../conventions/tutorial/naming.md) - Six progressive tutorial levels
 - [Diátaxis Framework](../../conventions/meta/diataxis-framework.md) - Four documentation types
 - [File Naming Convention](../../conventions/meta/file-naming.md) - Progressive prefix complexity
 - [Tutorial Convention](../../conventions/tutorial/general.md) - Progressive tutorial structure
 
-## 📖 References
+## References
 
 **UX Design**:
 

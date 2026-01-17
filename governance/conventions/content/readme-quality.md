@@ -37,7 +37,7 @@ This convention implements the following core principles:
 
 **Problem-Solution Narrative**: Start motivation sections with a clear problem statement followed by your solution.
 
-**❌ Bad** (jumps straight to solution):
+**FAIL: Bad** (jumps straight to solution):
 
 ```markdown
 ## Purpose
@@ -67,7 +67,7 @@ This convention establishes quality standards for README.md files to make them e
 This project aims to make Sharia-compliant enterprise solutions accessible to organizations worldwide. By creating an open-source platform...
 ```
 
-**✅ Good** (problem → solution):
+**PASS: Good** (problem → solution):
 
 ```markdown
 ## Motivation
@@ -83,13 +83,13 @@ This project aims to make Sharia-compliant enterprise solutions accessible to or
 
 **Short Paragraphs**: Maximum 4-5 lines per paragraph. Break longer content into multiple paragraphs or bullet points.
 
-**❌ Bad** (6+ line dense paragraph):
+**FAIL: Bad** (6+ line dense paragraph):
 
 ```markdown
 This project aims to make Sharia-compliant enterprise solutions accessible to organizations worldwide. By creating an open-source platform that puts Sharia-compliance at its core, we enable enterprises to build trust-worthy business systems (fintech, ERP, and beyond) that serve communities with specific religious and ethical requirements. We're starting with ERP to establish a solid enterprise foundation that can support diverse business operations, with plans to expand into fintech and other domains.
 ```
 
-**✅ Good** (scannable structure):
+**PASS: Good** (scannable structure):
 
 ```markdown
 We're building an open-source platform with Sharia-compliance at its core. Starting with ERP foundations, we'll expand to fintech and beyond.
@@ -103,13 +103,13 @@ Our goal: Make trustworthy business systems accessible to any organization—reg
 
 **Plain Language First**: Write like you're explaining to a smart friend, not a technical committee.
 
-**❌ Bad** (jargony, corporate):
+**FAIL: Bad** (jargony, corporate):
 
 ```markdown
 We prioritize open-source and vendor-neutral technologies to avoid lock-in while maintaining project quality and long-term sustainability. We value avoiding vendor lock-in over strict OSS-only requirements.
 ```
 
-**✅ Good** (plain language):
+**PASS: Good** (plain language):
 
 ```markdown
 We choose technologies that keep you free. Your data stays yours, in open formats you can take anywhere. No vendor traps, no proprietary formats, no forced dependencies.
@@ -129,14 +129,14 @@ We choose technologies that keep you free. Your data stays yours, in open format
 
 **First Mention**: Always explain acronyms on first use, and provide context for what they mean.
 
-**❌ Bad** (no context):
+**FAIL: Bad** (no context):
 
 ```markdown
 - International Islamic finance standards (AAOIFI, IFSB)
 - OJK (Otoritas Jasa Keuangan) Sharia banking regulations
 ```
 
-**✅ Good** (context provided):
+**PASS: Good** (context provided):
 
 ```markdown
 - International Islamic finance standards - Accounting (AAOIFI) and prudential (IFSB) standards
@@ -145,7 +145,7 @@ We choose technologies that keep you free. Your data stays yours, in open format
 
 **English-First Naming**: For non-English terms, lead with English translation, then provide original name.
 
-**✅ Good**:
+**PASS: Good**:
 
 - **Indonesian Banking Authority (OJK)** - not "OJK (Otoritas Jasa Keuangan)"
 - **National Sharia Board (DSN-MUI)** - not "DSN-MUI (Dewan Syariah Nasional...)"
@@ -154,7 +154,7 @@ We choose technologies that keep you free. Your data stays yours, in open format
 
 **User Benefits Over Features**: Frame technical capabilities as user benefits.
 
-**❌ Bad** (feature list):
+**FAIL: Bad** (feature list):
 
 ```markdown
 - Data is stored in transparent, portable formats (no proprietary formats)
@@ -162,23 +162,23 @@ We choose technologies that keep you free. Your data stays yours, in open format
 - Easy data export and migration to alternatives
 ```
 
-**✅ Good** (benefits):
+**PASS: Good** (benefits):
 
 ```markdown
-- 📁 **Your data is portable** - Plain text and open formats you can read anywhere
-- ☁️ **No forced dependencies** - Pick your own hosting, database, or infrastructure
-- 📤 **Easy migration** - Export and move to alternatives anytime
+- **Your data is portable** - Plain text and open formats you can read anywhere
+- ️ **No forced dependencies** - Pick your own hosting, database, or infrastructure
+- **Easy migration** - Export and move to alternatives anytime
 ```
 
 **Active Voice**: Use "you" and "we" to create connection.
 
-**❌ Bad** (passive, distant):
+**FAIL: Bad** (passive, distant):
 
 ```markdown
 This ensures complete portability—migration to any markdown editor or documentation system can be done anytime without vendor lock-in.
 ```
 
-**✅ Good** (active, personal):
+**PASS: Good** (active, personal):
 
 ```markdown
 You can open them in any text editor—no lock-in, complete freedom.
@@ -188,7 +188,7 @@ You can open them in any text editor—no lock-in, complete freedom.
 
 **Link to Details**: README should summarize and link, not duplicate comprehensive documentation.
 
-**❌ Bad** (too detailed):
+**FAIL: Bad** (too detailed):
 
 ````markdown
 ### Monorepo Architecture
@@ -213,7 +213,7 @@ nx build [app-name]  # Build for production
 
 ````
 
-**✅ Good** (summary + links):
+**PASS: Good** (summary + links):
 ```markdown
 ### Monorepo Architecture
 
@@ -232,8 +232,8 @@ nx graph                # Visualize dependencies
 
 **Learn More**:
 
-- [Monorepo Structure Reference](../../reference/re__monorepo-structure.md)
-- [How to Add New App](../../how-to/hoto__add-new-app.md)
+- [Monorepo Structure Reference](../../../docs/reference/re__monorepo-structure.md)
+- [How to Add New App](../../../docs/how-to/hoto__add-new-app.md)
 
 ````
 
@@ -243,26 +243,26 @@ nx graph                # Visualize dependencies
 
 **Friendly, Not Corporate**: Write like a welcoming teammate, not a marketing brochure.
 
-**❌ Bad** (corporate, distant):
+**FAIL: Bad** (corporate, distant):
 ```markdown
 This project is licensed under the MIT License. Users are granted broad rights while maintaining proper attribution requirements as specified in the license agreement.
 ````
 
-**✅ Good** (friendly, clear):
+**PASS: Good** (friendly, clear):
 
 ```markdown
 This project is open-source and licensed under the MIT License. This means you are free to use this project for:
 
-- 🎯 **Commercial projects** - Build commercial products and services
-- 🏢 **Enterprise solutions** - Deploy in enterprise environments
+- **Commercial projects** - Build commercial products and services
+- **Enterprise solutions** - Deploy in enterprise environments
 
-✅ **No restrictions.** You can use this code for anything you want, with complete freedom and flexibility.
+PASS: **No restrictions.** You can use this code for anything you want, with complete freedom and flexibility.
 ```
 
 **Encourage, Don't Command**: Invite participation rather than demand it.
 
-**❌ Bad**: "You must follow these steps exactly"
-**✅ Good**: "Here's how to get started:"
+**FAIL: Bad**: "You must follow these steps exactly"
+**PASS: Good**: "Here's how to get started:"
 
 ## Quality Checklist
 
@@ -314,9 +314,9 @@ Use this checklist when writing or reviewing README content:
 **Format**:
 
 ```markdown
-# 🌙 Project Name
+# Project Name
 
-✨ One-line description that's clear and inviting.
+One-line description that's clear and inviting.
 ```
 
 **Guidelines**:
@@ -337,7 +337,7 @@ Use this checklist when writing or reviewing README content:
 **Structure**:
 
 ```markdown
-## 🎯 Motivation
+## Motivation
 
 **The Challenge**: [Problem statement in 1-2 sentences]
 
@@ -349,7 +349,7 @@ Use this checklist when writing or reviewing README content:
 - Principle 2
 - Principle 3
 
-🚀 Our mission is to [clear, inspiring goal].
+Our mission is to [clear, inspiring goal].
 ```
 
 ### Roadmap Section
@@ -363,8 +363,8 @@ Use this checklist when writing or reviewing README content:
 
 **Acronyms**: Always provide context
 
-- ❌ "AAOIFI, IFSB standards"
-- ✅ "Accounting (AAOIFI) and prudential (IFSB) standards"
+- FAIL: "AAOIFI, IFSB standards"
+- PASS: "Accounting (AAOIFI) and prudential (IFSB) standards"
 
 ### Tech Stack Section
 
@@ -393,9 +393,9 @@ Use this checklist when writing or reviewing README content:
 
 **Good Uses**:
 
-- Section headers (🎯, 🛠️, 🚀, 📚)
-- Bullet point categories (📁, ☁️, 📤)
-- Emphasis on key points (✅, ⚠️, 🎉)
+- Section headers (, ️, , )
+- Bullet point categories (, ️, )
+- Emphasis on key points (, ️, )
 
 **Avoid**:
 
@@ -410,7 +410,7 @@ Use this checklist when writing or reviewing README content:
 
 ### 1. Corporate Speak
 
-**❌ Avoid**:
+**FAIL: Avoid**:
 
 - "leverage synergies"
 - "best-in-class solutions"
@@ -418,7 +418,7 @@ Use this checklist when writing or reviewing README content:
 - "paradigm shift"
 - "value proposition"
 
-**✅ Use Instead**:
+**PASS: Use Instead**:
 
 - "use" (not "leverage" or "utilize")
 - "good/great" (not "best-in-class")
@@ -427,13 +427,13 @@ Use this checklist when writing or reviewing README content:
 
 ### 2. Assumed Knowledge
 
-**❌ Bad**:
+**FAIL: Bad**:
 
 ```markdown
 This project uses TBD with CQRS and DDD patterns for maximum scalability.
 ```
 
-**✅ Good**:
+**PASS: Good**:
 
 ```markdown
 This project follows Trunk Based Development—all development happens on the main branch with small, frequent commits.
@@ -443,7 +443,7 @@ This project follows Trunk Based Development—all development happens on the ma
 
 ### 3. Feature Dumping
 
-**❌ Bad**:
+**FAIL: Bad**:
 
 ```markdown
 Features:
@@ -457,14 +457,14 @@ Features:
   [... 20 more features ...]
 ```
 
-**✅ Good**:
+**PASS: Good**:
 
 ```markdown
 **What You Get**:
 
-- 🔄 **Real-time collaboration** - Changes sync instantly across your team
-- 🏢 **Multi-organization support** - One installation serves many clients
-- 🔐 **Granular permissions** - Control who can access what
+- **Real-time collaboration** - Changes sync instantly across your team
+- **Multi-organization support** - One installation serves many clients
+- **Granular permissions** - Control who can access what
 
 See [Feature Overview](../../features.md) for complete list.
 ```
@@ -473,15 +473,15 @@ See [Feature Overview](../../features.md) for complete list.
 
 ### 4. Wall of Text
 
-**❌ Bad**: Single paragraph with 10+ lines of continuous text
+**FAIL: Bad**: Single paragraph with 10+ lines of continuous text
 
-**✅ Good**: Multiple short paragraphs, each making one point
+**PASS: Good**: Multiple short paragraphs, each making one point
 
 **Rule**: If a paragraph exceeds 5 lines, break it up or use bullets.
 
 ### 5. Missing Context
 
-**❌ Bad**:
+**FAIL: Bad**:
 
 ```markdown
 - OJK compliance
@@ -489,7 +489,7 @@ See [Feature Overview](../../features.md) for complete list.
 - AAOIFI standards
 ```
 
-**✅ Good**:
+**PASS: Good**:
 
 ```markdown
 - Indonesian Banking Authority (OJK) - Sharia banking regulations
@@ -522,9 +522,9 @@ See [Feature Overview](../../features.md) for complete list.
 ```markdown
 **What this means:**
 
-- 📁 **Your data is portable** - Plain text and open formats you can read anywhere
-- ☁️ **No forced dependencies** - Pick your own hosting, database, or infrastructure
-- 📤 **Easy migration** - Export and move to alternatives anytime
+- **Your data is portable** - Plain text and open formats you can read anywhere
+- ️ **No forced dependencies** - Pick your own hosting, database, or infrastructure
+- **Easy migration** - Export and move to alternatives anytime
 ```
 
 **Why it works**:
@@ -547,8 +547,8 @@ This project uses Nx to manage applications and libraries:
 
 **Learn More**:
 
-- [Monorepo Structure Reference](../../reference/re__monorepo-structure.md)
-- [How to Add New App](../../how-to/hoto__add-new-app.md)
+- [Monorepo Structure Reference](../../../docs/reference/re__monorepo-structure.md)
+- [How to Add New App](../../../docs/how-to/hoto__add-new-app.md)
 ```
 
 **Why it works**:

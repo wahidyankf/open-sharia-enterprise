@@ -31,10 +31,10 @@ These conventions define **WHAT Hugo content rules apply** to our Hugo-based web
 
 ## Related Documentation
 
-- [Conventions Index](../README.md) - All documentation conventions
+- [Conventions Index](./README.md) - All documentation conventions
 - [Hugo Development Convention](../../development/hugo/development.md) - Hugo theme/layout development standards
-- [Tutorial Conventions](../tutorial/README.md) - Tutorial structure and naming
-- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
+- [Tutorial Conventions](./README.md) - Tutorial structure and naming
+- [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected
 

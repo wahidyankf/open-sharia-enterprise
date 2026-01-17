@@ -49,7 +49,7 @@ This convention defines content creation standards specific to the ayokoding-web
 - **Shared Hugo conventions** - Covered in [Hugo Content Shared Convention](./shared.md)
 - **Programming language content structure** - Covered in [Programming Language Content Standard](../tutorial/programming-language-content.md)
 - **Tutorial naming** - Covered in [Tutorial Naming Convention](../tutorial/naming.md)
-- **Hugo theme development** - Covered in [Hugo Development Convention](../development/hugo/development.md)
+- **Hugo theme development** - Covered in [Hugo Development Convention](../../development/hugo/development.md)
 - **Deployment** - Covered by ayokoding-web-deployer agent
 
 ## Prerequisites
@@ -117,11 +117,11 @@ apps/ayokoding-web/content/
 
 This standard applies to ALL code examples across:
 
-- ✅ All tutorial types (by-example, beginner, intermediate, advanced, quick start, cookbook, initial setup)
-- ✅ All learning content (learn/, belajar/)
-- ✅ All programming languages (Java, TypeScript, Python, Go, etc.)
-- ✅ Both languages (English en/ and Indonesian id/)
-- ✅ No exceptions - even simple examples should meet this standard
+- PASS: All tutorial types (by-example, beginner, intermediate, advanced, quick start, cookbook, initial setup)
+- PASS: All learning content (learn/, belajar/)
+- PASS: All programming languages (Java, TypeScript, Python, Go, etc.)
+- PASS: Both languages (English en/ and Indonesian id/)
+- PASS: No exceptions - even simple examples should meet this standard
 
 ### Measurement Method
 
@@ -253,7 +253,7 @@ Edit the configuration file...
 
 **Applies to**: ALL ayokoding-web content (learning, rants/celoteh, video content)
 
-✅ **Good (no H1 in content)**:
+PASS: **Good (no H1 in content)**:
 
 ```markdown
 ---
@@ -275,7 +275,7 @@ This tutorial covers the fundamentals of Elixir programming...
 Before starting, ensure you have...
 ```
 
-❌ **Bad (any H1 in content)**:
+FAIL: **Bad (any H1 in content)**:
 
 ```markdown
 ---
@@ -330,10 +330,10 @@ content/
 
 ayokoding-web is a bilingual website (English and Indonesian), but **content does NOT have to be mirrored between languages**. This means:
 
-- ✅ **Content can exist in English only** (under `/en/`)
-- ✅ **Content can exist in Indonesian only** (under `/id/`)
-- ✅ **Content can exist in both languages** if explicitly created in both
-- ❌ **AI agents should NOT automatically create matching/mirror content** in the other language unless explicitly instructed to do so
+- PASS: **Content can exist in English only** (under `/en/`)
+- PASS: **Content can exist in Indonesian only** (under `/id/`)
+- PASS: **Content can exist in both languages** if explicitly created in both
+- FAIL: **AI agents should NOT automatically create matching/mirror content** in the other language unless explicitly instructed to do so
 
 **Mirroring Policy**:
 
@@ -375,12 +375,12 @@ Agent: Does NOT automatically create /id/belajar/typescript/generics.md
 
 **When to Use Author Field**:
 
-✅ **ALLOWED in these directories**:
+PASS: **ALLOWED in these directories**:
 
 - `apps/ayokoding-web/content/en/rants/` - English rants may have different authors
 - `apps/ayokoding-web/content/id/celoteh/` - Indonesian rants may have different authors
 
-❌ **FORBIDDEN in these directories**:
+FAIL: **FORBIDDEN in these directories**:
 
 - `apps/ayokoding-web/content/en/learn/` - Uses site-level author
 - `apps/ayokoding-web/content/id/belajar/` - Uses site-level author
@@ -432,7 +432,7 @@ author: "Guest Contributor Name" # Optional - allowed in rants/celoteh only
 - Tags field for topic categorization
 - Navigation weight for ordering
 
-❌ **Bad (causes raw text leak on page)**:
+FAIL: **Bad (causes raw text leak on page)**:
 
 ```yaml
 ---
@@ -443,7 +443,7 @@ categories: ["learn"] # WRONG! Displays as raw text on page
 ---
 ```
 
-✅ **Good (no categories field)**:
+PASS: **Good (no categories field)**:
 
 ```yaml
 ---
@@ -460,7 +460,7 @@ tags: ["typescript", "tutorial"]
 
 **IMPORTANT**: Prettier automatically reformats tags during pre-commit hooks. Both formats below are acceptable:
 
-✅ **Good (true single-line JSON array)**:
+PASS: **Good (true single-line JSON array)**:
 
 ```yaml
 ---
@@ -470,7 +470,7 @@ tags: ["javascript", "async", "promises", "tutorial"]
 ---
 ```
 
-✅ **Good (Prettier's multi-line JSON array)** - Prettier auto-formats to this:
+PASS: **Good (Prettier's multi-line JSON array)** - Prettier auto-formats to this:
 
 ```yaml
 ---
@@ -480,7 +480,7 @@ tags: ["javascript", "async", "promises", "tutorial"]
 ---
 ```
 
-❌ **Bad (dash-based YAML array format)**:
+FAIL: **Bad (dash-based YAML array format)**:
 
 ```yaml
 ---
@@ -680,10 +680,10 @@ weight: 1003 # Level 4 weight - represents the level 4 folder
 
 **Why Reset Per Parent?**
 
-- ✅ **Hugo compares siblings only**: Weights only matter within the same parent
-- ✅ **Independent folders**: No coordination needed across different parents
-- ✅ **Simple numbering**: Each folder starts fresh at its level's base
-- ✅ **Easy maintenance**: Moving folders doesn't affect unrelated content
+- PASS: **Hugo compares siblings only**: Weights only matter within the same parent
+- PASS: **Independent folders**: No coordination needed across different parents
+- PASS: **Simple numbering**: Each folder starts fresh at its level's base
+- PASS: **Easy maintenance**: Moving folders doesn't affect unrelated content
 
 ---
 
@@ -743,7 +743,7 @@ weight: 1003 # Level 4 weight - represents the level 4 folder
 
 These examples show actual errors content creators make when learning the level-based weight system. Each mistake illustrates a misunderstanding of how Hugo's navigation hierarchy works with our weight conventions.
 
-❌ **Mistake 1: Content using same level as folder instead of one level deeper**
+FAIL: **Mistake 1: Content using same level as folder instead of one level deeper**
 
 **Common Error:** Using the folder's own weight range for content files inside it
 
@@ -762,7 +762,7 @@ weight: 10 # WRONG! Should use level 3, not level 2
 # which breaks navigation hierarchy
 ```
 
-✅ **Correct: Content is one level deeper than folder**
+PASS: **Correct: Content is one level deeper than folder**
 
 ```yaml
 # File: /en/learn/overview.md (inside level 2 folder)
@@ -776,7 +776,7 @@ weight: 100 # Correct! Level 3 base (one level deeper than folder)
 
 ---
 
-❌ **Mistake 2: Not resetting weights for different parents**
+FAIL: **Mistake 2: Not resetting weights for different parents**
 
 **Common Error:** Continuing sequential weights across folders with different parents
 
@@ -798,7 +798,7 @@ weight: 100 # Correct! Level 3 base (one level deeper than folder)
 # ai/ and swe/ are different parents, so their children reset independently
 ```
 
-✅ **Correct: Reset to base for each parent**
+PASS: **Correct: Reset to base for each parent**
 
 ```yaml
 /en/learn/swe/_index.md → weight: 102 (level 3, parent: learn/)
@@ -813,7 +813,7 @@ weight: 100 # Correct! Level 3 base (one level deeper than folder)
 
 ---
 
-❌ **Mistake 3: Using wrong level for \_index.md**
+FAIL: **Mistake 3: Using wrong level for \_index.md**
 
 **Common Error:** Using the content base weight for `_index.md` instead of folder's sequential weight
 
@@ -831,7 +831,7 @@ weight: 100 # WRONG! This is level 3 BASE for content, not folder weight
 # Using 100 makes it appear BEFORE overview.md (100) in the parent folder
 ```
 
-✅ **Correct: \_index.md represents the folder at its level**
+PASS: **Correct: \_index.md represents the folder at its level**
 
 ```yaml
 # File: /en/learn/swe/_index.md (swe/ is level 3 folder, 3rd child of learn/)
@@ -845,7 +845,7 @@ weight: 102 # Correct! Level 3 weight represents level 3 folder (3rd sibling)
 
 ---
 
-❌ **Mistake 4: Missing weight field**
+FAIL: **Mistake 4: Missing weight field**
 
 **Common Error:** Omitting the `weight` field entirely
 
@@ -863,7 +863,7 @@ title: Initial Setup
 # This breaks the intended tutorial progression order
 ```
 
-✅ **Correct: Always include weight**
+PASS: **Correct: Always include weight**
 
 ```yaml
 ---
@@ -878,16 +878,16 @@ weight: 1000001 # Level 7 base + 1 (content inside level 6 folder)
 
 #### Benefits of This System
 
-- ✅ **Powers of 10**: Natural progression (10, 100, 1000) is intuitive and memorable
-- ✅ **Scalable capacity**: More items at deeper levels (90, 900, 9000) where complexity grows
-- ✅ **Per-folder independence**: Each parent's children reset to base - no global coordination needed
-- ✅ **Hugo-native**: Leverages Hugo's sibling-only weight comparison for simpler numbering
-- ✅ **Level visibility**: Number magnitude immediately shows level (102 vs 10002)
-- ✅ **No conflicts**: Different parents use same ranges without collision
-- ✅ **Easy calculation**: Base for level + sequence position
-- ✅ **Room to grow**: Massive capacity at deep levels (90,000 items at level 5)
-- ✅ **Maintainable**: Moving folders only requires updating the folder's level, not global renumbering
-- ✅ **Compact numbers**: Lower weights at shallow levels (12 vs 102 in old system)
+- PASS: **Powers of 10**: Natural progression (10, 100, 1000) is intuitive and memorable
+- PASS: **Scalable capacity**: More items at deeper levels (90, 900, 9000) where complexity grows
+- PASS: **Per-folder independence**: Each parent's children reset to base - no global coordination needed
+- PASS: **Hugo-native**: Leverages Hugo's sibling-only weight comparison for simpler numbering
+- PASS: **Level visibility**: Number magnitude immediately shows level (102 vs 10002)
+- PASS: **No conflicts**: Different parents use same ranges without collision
+- PASS: **Easy calculation**: Base for level + sequence position
+- PASS: **Room to grow**: Massive capacity at deep levels (90,000 items at level 5)
+- PASS: **Maintainable**: Moving folders only requires updating the folder's level, not global renumbering
+- PASS: **Compact numbers**: Lower weights at shallow levels (12 vs 102 in old system)
 
 ---
 
@@ -930,9 +930,9 @@ Even on 32-bit systems (max: 2.1 billion), we could theoretically have:
 
 **Platform Verification:**
 
-- ✅ **GitHub Actions CI**: All runners are 64-bit (x64 or ARM64)
-- ✅ **Modern development machines**: Typically 64-bit
-- ✅ **Hugo production builds**: Almost always 64-bit
+- PASS: **GitHub Actions CI**: All runners are 64-bit (x64 or ARM64)
+- PASS: **Modern development machines**: Typically 64-bit
+- PASS: **Hugo production builds**: Almost always 64-bit
 
 **References:**
 
@@ -992,7 +992,7 @@ Terminal directories display available content within structural limitations:
 
 This is a **structural limitation, not a compliance violation**.
 
-✅ **Good (2 layers deep with overview links first)**:
+PASS: **Good (2 layers deep with overview links first)**:
 
 ```markdown
 <!-- File: content/en/learn/swe/prog-lang/_index.md -->
@@ -1007,7 +1007,7 @@ This is a **structural limitation, not a compliance violation**.
 - [Elixir](/learn/swe/prog-lang/elixir)
 ```
 
-❌ **Bad (only 1 layer - missing children)**:
+FAIL: **Bad (only 1 layer - missing children)**:
 
 ```markdown
 <!-- WRONG! Shows parent only, doesn't show immediate children -->
@@ -1016,7 +1016,7 @@ This is a **structural limitation, not a compliance violation**.
 - [AI Engineering](/learn/ai)
 ```
 
-❌ **Bad (incomplete coverage - missing some children)**:
+FAIL: **Bad (incomplete coverage - missing some children)**:
 
 ```markdown
 <!-- WRONG! Folder has golang/, java/, python/, kotlin/, rust/ but only shows 2 -->
@@ -1035,7 +1035,7 @@ This is a **structural limitation, not a compliance violation**.
 
 **Key Principle**: Folder names use lowercase-with-hyphens for URL compatibility; titles use proper capitalization and spacing for readability.
 
-✅ **Good (descriptive, readable titles)**:
+PASS: **Good (descriptive, readable titles)**:
 
 ```yaml
 # File: content/en/learn/swe/prog-lang/_index.md
@@ -1056,7 +1056,7 @@ title: Business and Finance # Descriptive with context
 ---
 ```
 
-❌ **Bad (forced folder name matching)**:
+FAIL: **Bad (forced folder name matching)**:
 
 ```yaml
 # File: content/en/learn/swe/prog-lang/_index.md
@@ -1210,7 +1210,7 @@ title: Business # WRONG! Too generic (missing context)
 
 **Example (Level 7 how-to folder)**:
 
-✅ **Good (cookbook after overview)**:
+PASS: **Good (cookbook after overview)**:
 
 ```yaml
 # /en/learn/swe/prog-lang/golang/how-to/overview.md
@@ -1220,7 +1220,7 @@ weight: 1000000  # Level 7 base
 weight: 1000001  # Level 7 base + 1 (appears after overview)
 ```
 
-❌ **Bad (cookbook before overview)**:
+FAIL: **Bad (cookbook before overview)**:
 
 ```yaml
 # /en/learn/swe/prog-lang/golang/how-to/overview.md
@@ -1241,7 +1241,7 @@ weight: 999999   # WRONG! Would appear before overview
 
 **Rationale**: Context is provided by directory structure. Simple titles make navigation cleaner and more consistent.
 
-✅ **Good (simple, generic titles)**:
+PASS: **Good (simple, generic titles)**:
 
 ```yaml
 # File: content/en/learn/swe/prog-lang/overview.md
@@ -1260,7 +1260,7 @@ weight: 10000 # Level 5 base - content inside level 4 folder
 ---
 ```
 
-❌ **Bad (descriptive titles)**:
+FAIL: **Bad (descriptive titles)**:
 
 ```yaml
 # File: content/en/learn/swe/prog-lang/overview.md
@@ -1367,13 +1367,13 @@ Topics in ayokoding-web MAY optionally organize content using Diátaxis framewor
 
 **When to Use**:
 
-✅ **Use when**:
+PASS: **Use when**:
 
 - Topic has diverse content types (tutorials + recipes + reference + concepts)
 - Content is growing and needs better organization
 - Users have different goals (learning vs. looking up vs. solving problems)
 
-❌ **Keep flat when**:
+FAIL: **Keep flat when**:
 
 - Topic has few pages (< 10 files)
 - All content is similar type (e.g., all tutorials)
@@ -1412,7 +1412,7 @@ content/en/learn/swe/prog-lang/golang/
 - Universal directory structure (5 tutorial levels, cookbook, how-to guides, best practices, anti-patterns)
 - Coverage philosophy (0-5%, 5-30%, 0-60%, 60-85%, 85-95%, cookbook)
 - Quality metrics and pedagogical patterns
-- Step-by-step implementation guide: [How to Add a Programming Language](../../how-to/hoto__add-programming-language.md)
+- Step-by-step implementation guide: [How to Add a Programming Language](../../../docs/how-to/hoto__add-programming-language.md)
 
 ### Blogging Content Structure (Rants/Celoteh)
 
@@ -1619,14 +1619,14 @@ After 5 years of using Vim, I finally made the switch to Neovim...
 
 For blogging content (`/en/rants/`, `/id/celoteh/`):
 
-- ✅ Weight field ordering: Same level-based system
-- ✅ Author field: ALLOWED (guest contributors possible)
-- ✅ Year/month directory structure: REQUIRED
-- ✅ Index files: REQUIRED (year and month levels)
-- ✅ 3-layer navigation: Same as learning content (year → months → articles)
-- ❌ Overview/Ikhtisar files: NOT REQUIRED (major difference)
-- ❌ Content separation rule: NOT ENFORCED (index can have intro)
-- ❌ Diátaxis organization: NOT APPLICABLE (chronological only)
+- PASS: Weight field ordering: Same level-based system
+- PASS: Author field: ALLOWED (guest contributors possible)
+- PASS: Year/month directory structure: REQUIRED
+- PASS: Index files: REQUIRED (year and month levels)
+- PASS: 3-layer navigation: Same as learning content (year → months → articles)
+- FAIL: Overview/Ikhtisar files: NOT REQUIRED (major difference)
+- FAIL: Content separation rule: NOT ENFORCED (index can have intro)
+- FAIL: Diátaxis organization: NOT APPLICABLE (chronological only)
 
 **Creating Blogging Content**:
 
@@ -1665,8 +1665,8 @@ Hugo resolves links based on the **current page context**. Relative paths break 
 
 **Why this breaks**:
 
-- When viewed from `/en/learn` → Link resolves to `/en/swe/prog-lang/python` ❌ (missing `/learn/`)
-- When viewed from `/en/learn/swe/prog-lang` → Link resolves to `/en/learn/swe/prog-lang/swe/prog-lang/python` ❌ (doubled path)
+- When viewed from `/en/learn` → Link resolves to `/en/swe/prog-lang/python` FAIL: (missing `/learn/`)
+- When viewed from `/en/learn/swe/prog-lang` → Link resolves to `/en/learn/swe/prog-lang/swe/prog-lang/python` FAIL: (doubled path)
 - Hamburger navigation works because Hugo's menu system uses absolute paths internally
 
 **The Solution - Absolute Paths**:
@@ -1689,12 +1689,12 @@ Hugo resolves links based on the **current page context**. Relative paths break 
 
 **Applies to ALL internal links**:
 
-1. ✅ **Navigation listings in `_index.md` files** (3-layer navigation)
-2. ✅ **Overview/ikhtisar cross-references** (section intro links)
-3. ✅ **Blogging content cross-references** (EN ↔ ID article links)
-4. ✅ **Tutorial/guide internal links** (next step, related content)
-5. ✅ **Manual content links** (any content-to-content reference)
-6. ✅ **Generated navigation** (ayokoding-cli output)
+1. PASS: **Navigation listings in `_index.md` files** (3-layer navigation)
+2. PASS: **Overview/ikhtisar cross-references** (section intro links)
+3. PASS: **Blogging content cross-references** (EN ↔ ID article links)
+4. PASS: **Tutorial/guide internal links** (next step, related content)
+5. PASS: **Manual content links** (any content-to-content reference)
+6. PASS: **Generated navigation** (ayokoding-cli output)
 
 ### Path Format Rules
 
@@ -1765,7 +1765,7 @@ Prior to 2025-12-21, the CLI tool generated relative paths (`swe/prog-lang/pytho
 
 ### Common Mistakes
 
-❌ **Mistake 1: Relative paths**
+FAIL: **Mistake 1: Relative paths**
 
 ```markdown
 <!-- WRONG! Relative path -->
@@ -1775,7 +1775,7 @@ Prior to 2025-12-21, the CLI tool generated relative paths (`swe/prog-lang/pytho
 - [Parent](../parent)
 ```
 
-✅ **Correct: Absolute paths**
+PASS: **Correct: Absolute paths**
 
 ```markdown
 <!-- RIGHT! Absolute path with language prefix -->
@@ -1785,7 +1785,7 @@ Prior to 2025-12-21, the CLI tool generated relative paths (`swe/prog-lang/pytho
 - [Parent](/en/learn/swe)
 ```
 
-❌ **Mistake 2: Missing language prefix**
+FAIL: **Mistake 2: Missing language prefix**
 
 ```markdown
 <!-- WRONG! Missing language prefix -->
@@ -1793,7 +1793,7 @@ Prior to 2025-12-21, the CLI tool generated relative paths (`swe/prog-lang/pytho
 - [Python](/learn/swe/prog-lang/python)
 ```
 
-✅ **Correct: Include language prefix**
+PASS: **Correct: Include language prefix**
 
 ```markdown
 <!-- RIGHT! Language prefix included -->
@@ -1801,7 +1801,7 @@ Prior to 2025-12-21, the CLI tool generated relative paths (`swe/prog-lang/pytho
 - [Python](/en/learn/swe/prog-lang/python)
 ```
 
-❌ **Mistake 3: Including .md extension**
+FAIL: **Mistake 3: Including .md extension**
 
 ```markdown
 <!-- WRONG! .md extension -->
@@ -1809,7 +1809,7 @@ Prior to 2025-12-21, the CLI tool generated relative paths (`swe/prog-lang/pytho
 - [Python](/en/learn/swe/prog-lang/python.md)
 ```
 
-✅ **Correct: No .md extension**
+PASS: **Correct: No .md extension**
 
 ```markdown
 <!-- RIGHT! No .md extension -->
@@ -2106,9 +2106,9 @@ static/
 
 **Related AI Agents**:
 
-- [ayokoding-web-general-maker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-general-maker.md) - Creates general ayokoding-web content
-- [ayokoding-web-by-example-maker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-by-example-maker.md) - Creates by-example tutorials
-- [ayokoding-web-general-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-general-checker.md) - Validates general ayokoding-web content
-- [ayokoding-web-by-example-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-by-example-checker.md) - Validates by-example tutorials
-- [ayokoding-web-link-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-link-checker.md) - Validates links in ayokoding-web
-- [ayokoding-web-deployer](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-deployer.md) - Deploys ayokoding-web to production
+- [ayokoding-web-general-maker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/apps-ayokoding-web-general-maker.md) - Creates general ayokoding-web content
+- [ayokoding-web-by-example-maker](../../../.opencode/agent/apps-ayokoding-web-by-example-maker.md) - Creates by-example tutorials
+- [ayokoding-web-general-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/apps-ayokoding-web-general-checker.md) - Validates general ayokoding-web content
+- [ayokoding-web-by-example-checker](../../../.opencode/agent/apps-ayokoding-web-by-example-checker.md) - Validates by-example tutorials
+- [ayokoding-web-link-checker](../../../.opencode/agent/apps-ayokoding-web-link-checker.md) - Validates links in ayokoding-web
+- [ayokoding-web-deployer](../../../.opencode/agent/apps-ayokoding-web-deployer.md) - Deploys ayokoding-web to production

@@ -31,17 +31,17 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Convention Writing Convention](../conventions/content/convention-writing.md)**: Content offload targets (convention and development docs) follow the structure and quality standards defined in this convention.
+- **[Convention Writing Convention](../../conventions/content/convention-writing.md)**: Content offload targets (convention and development docs) follow the structure and quality standards defined in this convention.
 
-- **[Linking Convention](../conventions/formatting/linking.md)**: All offload summaries include relative links with .md extension to comprehensive convention documents, ensuring GitHub-compatible navigation.
+- **[Linking Convention](../../conventions/formatting/linking.md)**: All offload summaries include relative links with .md extension to comprehensive convention documents, ensuring GitHub-compatible navigation.
 
-- **[File Naming Convention](../conventions/meta/file-naming.md)**: New convention and development documents created during offload follow the ex-co** and ex-de** prefix patterns.
+- **[File Naming Convention](../../conventions/meta/file-naming.md)**: New convention and development documents created during offload follow the ex-co** and ex-de** prefix patterns.
 
-## 🎯 Purpose
+## Purpose
 
 When files become too large (AGENTS.md approaching 40k character limit, agent files exceeding size tiers, duplicated documentation), content must be condensed. This convention ensures condensation preserves knowledge by **moving content to convention documents, NOT deleting it**.
 
-## 📋 Scope
+## Scope
 
 This convention applies to:
 
@@ -72,7 +72,7 @@ This convention applies to:
 
 ### Content Offload vs Content Deletion
 
-**✅ Content Offload (CORRECT):**
+**PASS: Content Offload (CORRECT):**
 
 ```markdown
 Before (AGENTS.md - 500 lines on file naming):
@@ -92,7 +92,7 @@ Files follow the pattern `[prefix]__[content-identifier].md` where prefix encode
 Result: Content preserved in ex-co\_\_file-naming-convention.md (comprehensive)
 ```
 
-**❌ Content Deletion (WRONG):**
+**FAIL: Content Deletion (WRONG):**
 
 ```markdown
 Before (AGENTS.md - 500 lines):
@@ -193,7 +193,7 @@ Is this content unique and valuable?
 - **Before:** Gherkin acceptance criteria details in `plan__maker.md` (500 lines)
 - **After:**
   - New file: `governance/development/infra/acceptance-criteria.md` (comprehensive)
-  - `plan__maker.md`: "Use Gherkin format. See [Acceptance Criteria Convention](link)" (3 lines)
+  - `plan__maker.md`: "Use Gherkin format. See [Acceptance Criteria Convention](../../conventions/formatting/linking.md)" (3 lines)
   - Savings: 497 lines
 
 ### Option B: Merge into Existing Convention
@@ -214,8 +214,8 @@ Is this content unique and valuable?
 - **Before:** TBD workflow details duplicated in `plan__maker.md` and `plan__executor.md`
 - **After:**
   - Updated: `governance/development/workflow/trunk-based-development.md` (comprehensive)
-  - `plan__maker.md`: "Follow TBD workflow. See [TBD Convention](link)" (2 lines)
-  - `plan__executor.md`: "Default to main branch per TBD. See [TBD Convention](link)" (2 lines)
+  - `plan__maker.md`: "Follow TBD workflow. See [TBD Convention](../../conventions/formatting/linking.md)" (2 lines)
+  - `plan__executor.md`: "Default to main branch per TBD. See [TBD Convention](../../conventions/formatting/linking.md)" (2 lines)
   - Savings: Duplication eliminated
 
 ### Option C: Extract Common Pattern to Shared Convention
@@ -237,7 +237,7 @@ Is this content unique and valuable?
 - **Before:** Diagram standards duplicated in `docs__maker.md`, `plan__maker.md`
 - **After:**
   - New file: `governance/conventions/formatting/diagrams.md` (comprehensive)
-  - All agents: "Use Mermaid diagrams. See [Diagram Convention](link)" (2 lines each)
+  - All agents: "Use Mermaid diagrams. See [Diagram Convention](../../conventions/formatting/linking.md)" (2 lines each)
   - Savings: Eliminated duplication
 - **Why Conventions Folder:** Diagrams are a content format standard, not development process
 
@@ -246,7 +246,7 @@ Is this content unique and valuable?
 - **Before:** Testing strategy duplicated across multiple agents
 - **After:**
   - New file: `governance/development/quality/testing-strategy.md` (comprehensive)
-  - All agents: "See [Testing Strategy](link) for comprehensive testing guidelines" (2 lines each)
+  - All agents: "See [Testing Strategy](../../conventions/formatting/linking.md) for comprehensive testing guidelines" (2 lines each)
   - Savings: Eliminated duplication
 - **Why Development Folder:** Testing is a development process, not content format
 
@@ -287,7 +287,7 @@ Is this content unique and valuable?
 - **Before:** Commit granularity examples in `plan__executor.md`
 - **After:**
   - Updated: `governance/development/workflow/commit-messages.md` (comprehensive)
-  - `plan__executor.md`: "Split commits logically. See [Commit Messages Convention](link)" (2 lines)
+  - `plan__executor.md`: "Split commits logically. See [Commit Messages Convention](../../conventions/formatting/linking.md)" (2 lines)
   - Savings: 100+ lines
 
 ## Offload Process Workflow
@@ -368,8 +368,8 @@ Before completing a content offload, verify:
 - [ ] Convention doc is comprehensive
 - [ ] Frontmatter complete and accurate
 - [ ] Updated date reflects changes
-- [ ] Structure follows convention patterns (see [Convention Writing Convention](../conventions/content/convention-writing.md))
-- [ ] Examples include ✅ good and ❌ bad
+- [ ] Structure follows convention patterns (see [Convention Writing Convention](../../conventions/content/convention-writing.md))
+- [ ] Examples include PASS: good and FAIL: bad
 
 ### Original File Updates
 
@@ -452,7 +452,7 @@ Before completing a content offload, verify:
 ```markdown
 ## File Naming Convention
 
-You MUST follow the [File Naming Convention](link).
+You MUST follow the [File Naming Convention](../../conventions/formatting/linking.md).
 
 When creating documentation files:
 
@@ -496,7 +496,7 @@ When creating documentation files:
 
 ## Common Anti-Patterns
 
-### ❌ Anti-Pattern 1: Deleting Content Without Offload
+### FAIL: Anti-Pattern 1: Deleting Content Without Offload
 
 ```markdown
 Before: AGENTS.md has 500 lines on file naming
@@ -506,9 +506,9 @@ After: File naming knowledge lost
 Problem: Need to recreate later, knowledge erosion
 ```
 
-**✅ Correct Approach:** Offload to ex-co\_\_file-naming-convention.md, link from AGENTS.md
+**PASS: Correct Approach:** Offload to ex-co\_\_file-naming-convention.md, link from AGENTS.md
 
-### ❌ Anti-Pattern 2: Incomplete Offload
+### FAIL: Anti-Pattern 2: Incomplete Offload
 
 ```markdown
 Before: Agent has 300 lines on testing
@@ -518,9 +518,9 @@ After: Partial knowledge preserved
 Problem: Lost unique details, incomplete documentation
 ```
 
-**✅ Correct Approach:** Move ALL 300 lines to convention, comprehensive documentation
+**PASS: Correct Approach:** Move ALL 300 lines to convention, comprehensive documentation
 
-### ❌ Anti-Pattern 3: Wrong Folder Choice
+### FAIL: Anti-Pattern 3: Wrong Folder Choice
 
 ```markdown
 Before: Testing strategy duplicated across agents
@@ -530,9 +530,9 @@ After: Wrong location (testing is process, not content format)
 Problem: Violates convention/development separation
 ```
 
-**✅ Correct Approach:** Create ex-de\_\_testing-strategy.md in development/
+**PASS: Correct Approach:** Create ex-de\_\_testing-strategy.md in development/
 
-### ❌ Anti-Pattern 4: Offloading Agent-Specific Logic
+### FAIL: Anti-Pattern 4: Offloading Agent-Specific Logic
 
 ```markdown
 Before: Agent has workflow for applying file naming convention
@@ -542,14 +542,14 @@ After: Convention doc contains agent-specific logic
 Problem: Convention polluted with implementation details
 ```
 
-**✅ Correct Approach:** Keep agent-specific workflow in agent, reference convention for rules
+**PASS: Correct Approach:** Keep agent-specific workflow in agent, reference convention for rules
 
 ## References
 
-- [Convention Writing Convention](../conventions/content/convention-writing.md) - How to write convention documents (target for offloaded content)
+- [Convention Writing Convention](../../conventions/content/convention-writing.md) - How to write convention documents (target for offloaded content)
 - [AI Agents Convention](../agents/ai-agents.md) - Agent standards (agents apply content preservation principles)
 - [Trunk Based Development Convention](../workflow/trunk-based-development.md) - Git workflow example of development convention
-- [File Naming Convention](../conventions/meta/file-naming.md) - Example of content convention
+- [File Naming Convention](../../conventions/meta/file-naming.md) - Example of content convention
 
 ## Agent Usage
 
@@ -584,6 +584,6 @@ When creating new convention or development documents during offload, `docs__mak
 
 ## Related Conventions
 
-- [AGENTS.md Maintenance](../../AGENTS.md#claudemd-maintenance) - Size limits and condensation triggers
+- [AGENTS.md Maintenance](../../../AGENTS.md#claudemd-maintenance) - Size limits and condensation triggers
 - [AI Agents Convention](../agents/ai-agents.md) - Agent file size tiers and condensation
-- [Convention Writing Convention](../conventions/content/convention-writing.md) - How to structure convention documents
+- [Convention Writing Convention](../../conventions/content/convention-writing.md) - How to structure convention documents

@@ -12,7 +12,7 @@ created: 2025-11-30
 updated: 2025-12-15
 ---
 
-# ⏰ Timestamp Format Convention
+# Timestamp Format Convention
 
 ## Principles Implemented/Respected
 
@@ -43,7 +43,7 @@ This convention establishes UTC+7 timezone with ISO 8601 format as the standard 
 - **Date parsing** - How applications parse timestamps
 - **Historical timezone migration** - Converting old timestamps (one-time operation)
 
-## 📋 Overview
+## Overview
 
 All timestamps in this repository use **UTC+7 (WIB - Western Indonesian Time)** by default with ISO 8601 format.
 
@@ -56,7 +56,7 @@ All timestamps in this repository use **UTC+7 (WIB - Western Indonesian Time)** 
 - `2025-11-30T22:45:00+07:00` (10:45 PM on November 30, 2025)
 - `2025-01-15T09:30:00+07:00` (9:30 AM on January 15, 2025)
 
-## 🎯 Why UTC+7?
+## Why UTC+7?
 
 **Reasons for standardizing on Indonesian time:**
 
@@ -184,7 +184,7 @@ TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M"
 
 ### Anti-Patterns - NEVER Do This
 
-**❌ WRONG - Using placeholder timestamps:**
+**FAIL: WRONG - Using placeholder timestamps:**
 
 ```bash
 # DO NOT hardcode placeholder values
@@ -194,7 +194,7 @@ timestamp="2025-12-14--00-00"  # WRONG!
 
 **Problem:** Using "00-00" or any placeholder defeats the purpose of timestamping. Files will have incorrect creation times and cannot be sorted chronologically.
 
-**✅ CORRECT - Execute bash command for real time:**
+**PASS: CORRECT - Execute bash command for real time:**
 
 ```bash
 # Execute the command to get actual current time
@@ -257,7 +257,7 @@ If you have a UTC timestamp and need to convert to WIB:
 - `2025-11-30 22:45:00+07:00` (space instead of T separator)
 - `30-11-2025T22:45:00+07:00` (wrong date format)
 
-## 📚 Related Conventions
+## Related Conventions
 
 - [File Naming Convention](../meta/file-naming.md) - Date format in filenames
 

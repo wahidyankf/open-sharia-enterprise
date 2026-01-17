@@ -139,7 +139,7 @@ All work follows **10 foundational principles** from \`rules/principles/\`:
 
 **Skills**: Delivery infrastructure supporting agents (not a governance layer)
 
-**See**: [Repository Architecture](./docs/explanation/ex-ru__repository-governance-architecture.md)
+**See**: [Repository Architecture](./governance/repository-governance-architecture.md)
 
 ## Common Development Commands
 
@@ -180,7 +180,7 @@ nx graph
 - **Commit format**: Conventional Commits \`<type>(<scope>): <description>\`
 - **Pre-commit hooks**: Format (Prettier), validate (Commitlint), test (affected projects)
 
-**See**: [Trunk Based Development](./rules/development/workflow/ex-ru-de-wo__trunk-based-development.md)
+**See**: [Trunk Based Development](./rules/development/workflow/trunk-based-development.md)
 
 ## Plans Organization
 
@@ -193,7 +193,7 @@ Project planning in \`plans/\` folder:
 
 **Folder naming**: \`YYYY-MM-DD\_\_[project-identifier]/\`
 
-**See**: [Plans Organization](./rules/conventions/project/ex-ru-co-pr__plans-organization.md)
+**See**: [Plans Organization](./rules/conventions/project/plans-organization.md)
 
 ## Temporary Files
 

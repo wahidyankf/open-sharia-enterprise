@@ -135,9 +135,9 @@ After ALL implementation phases complete:
 
 **Project Guidance:**
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../governance/conventions/project/ex-ru-co-pr-plans-organization.md) - Plan structure
-- [Trunk Based Development Convention](../../governance/development/workflow/ex-ru-de-wo-trunk-based-development.md) - Git workflow
+- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
+- [Plans Organization Convention](../../../governance/conventions/project/plans-organization.md) - Plan structure
+- [Trunk Based Development Convention](../../../governance/development/workflow/trunk-based-development.md) - Git workflow
 
 **Related Agents:**
 

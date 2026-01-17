@@ -203,17 +203,17 @@ Report final status and archive plan if successful.
 
 **Status determination**:
 
-- ✅ **Success** (`pass`): Zero findings after validation, all requirements met, plan moved to `plans/done/`
-- ⚠️ **Partial** (`partial`): Findings remain after max-iterations, plan stays in current location
-- ❌ **Failure** (`fail`): Technical errors during execution or checking, plan stays in current location
+- PASS: **Success** (`pass`): Zero findings after validation, all requirements met, plan moved to `plans/done/`
+- **Partial** (`partial`): Findings remain after max-iterations, plan stays in current location
+- FAIL: **Failure** (`fail`): Technical errors during execution or checking, plan stays in current location
 
 **Depends on**: Reaching this step from step 3, 5, or 6
 
 ## Termination Criteria
 
-- ✅ **Success** (`pass`): Zero findings of ANY confidence level (HIGH, MEDIUM, MINOR) in final validation, all deliverables complete, plan archived to `plans/done/`
-- ⚠️ **Partial** (`partial`): Findings remain after max-iterations cycles, plan requires manual intervention
-- ❌ **Failure** (`fail`): Executor or checker encountered technical errors preventing completion
+- PASS: **Success** (`pass`): Zero findings of ANY confidence level (HIGH, MEDIUM, MINOR) in final validation, all deliverables complete, plan archived to `plans/done/`
+- **Partial** (`partial`): Findings remain after max-iterations cycles, plan requires manual intervention
+- FAIL: **Failure** (`fail`): Executor or checker encountered technical errors preventing completion
 
 ## Example Usage
 
@@ -368,9 +368,9 @@ This workflow ensures complete plan execution with validated quality, making it 
 
 ## Principles Respected
 
-- ✅ **Explicit Over Implicit**: All steps, conditions, and termination criteria clearly defined
-- ✅ **Automation Over Manual**: Fully automated execution, validation, and archival
-- ✅ **Simplicity Over Complexity**: Clear linear flow with loop control and bounded iterations
-- ✅ **Accessibility First**: Generates human-readable validation reports for transparency
-- ✅ **Progressive Disclosure**: Configurable iterations and plan paths for different use cases
-- ✅ **No Time Estimates**: Focus on quality outcomes and completion criteria, not duration
+- PASS: **Explicit Over Implicit**: All steps, conditions, and termination criteria clearly defined
+- PASS: **Automation Over Manual**: Fully automated execution, validation, and archival
+- PASS: **Simplicity Over Complexity**: Clear linear flow with loop control and bounded iterations
+- PASS: **Accessibility First**: Generates human-readable validation reports for transparency
+- PASS: **Progressive Disclosure**: Configurable iterations and plan paths for different use cases
+- PASS: **No Time Estimates**: Focus on quality outcomes and completion criteria, not duration

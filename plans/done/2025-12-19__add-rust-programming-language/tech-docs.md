@@ -1146,8 +1146,8 @@ interface RustQualityMetrics {
 
 ### AI Agents
 
-- [ayokoding-web-general-maker](../../../.claude/agents/ayokoding-web-general-maker.md) - Content creation agent
-- [ayokoding-web-general-checker](../../../.claude/agents/ayokoding-web-general-checker.md) - Validation agent
+- [ayokoding-web-general-maker](../../../.claude/agents/apps-ayokoding-web-general-maker.md) - Content creation agent
+- [ayokoding-web-general-checker](../../../.claude/agents/apps-ayokoding-web-general-checker.md) - Validation agent
 - [ayokoding-web-facts-checker](../../../.claude/agents/ayokoding-web-facts-checker.md) - Fact verification agent
 - [ayokoding-web-link-checker](../../../.claude/agents/ayokoding-web-link-checker.md) - Link validation agent
 

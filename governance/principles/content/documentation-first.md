@@ -17,7 +17,7 @@ updated: 2025-12-28
 
 **Documentation is not an option, it is a must.** Every system, every convention, every feature, every architectural decision must be documented. Undocumented knowledge is lost knowledge - it exists in one person's head until they leave, forget, or become unavailable.
 
-## 🌟 Vision Supported
+## Vision Supported
 
 This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of democratizing Shariah-compliant enterprise by making knowledge accessible to everyone.
 
@@ -33,7 +33,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 
 **Vision alignment**: You cannot "democratize" knowledge if that knowledge is undocumented. Documentation is the mechanism by which expertise becomes a commons. Without it, open-source code is just readable binaries - available but not accessible.
 
-## 🎯 What
+## What
 
 **Documentation First** means:
 
@@ -55,7 +55,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 - **Tutorials**: Learning-oriented instruction for newcomers
 - **References**: Technical specifications, configuration options, comprehensive details
 
-## 💡 Why
+## Why
 
 ### Enables Knowledge Transfer
 
@@ -139,10 +139,10 @@ Undocumented knowledge often includes:
 
 **Institutional memory** - the collective knowledge of an organization or project - is stored in:
 
-- ❌ **People's heads**: Lost when people leave
-- ❌ **Chat logs**: Buried, unsearchable, forgotten
-- ❌ **Email threads**: Scattered, inaccessible, lost to time
-- ✅ **Documentation**: Permanent, searchable, accessible, versioned
+- FAIL: **People's heads**: Lost when people leave
+- FAIL: **Chat logs**: Buried, unsearchable, forgotten
+- FAIL: **Email threads**: Scattered, inaccessible, lost to time
+- PASS: **Documentation**: Permanent, searchable, accessible, versioned
 
 Well-documented projects survive personnel changes. Knowledge persists regardless of who is present.
 
@@ -154,7 +154,7 @@ From the [Vision](../../vision/open-sharia-enterprise.md):
 
 Undocumented code is **locked knowledge**. It exists but is not accessible. Documentation transforms code from "viewable" to "understandable" - from availability to true democratization.
 
-## 📋 How It Applies
+## How It Applies
 
 ### Code Documentation
 
@@ -162,28 +162,28 @@ Undocumented code is **locked knowledge**. It exists but is not accessible. Docu
 
 **Requirements**:
 
-✅ **Every library** has a README explaining:
+PASS: **Every library** has a README explaining:
 
 - What it does (purpose and scope)
 - Why it exists (problem it solves)
 - How to use it (quick start and examples)
 - Key concepts (important abstractions and patterns)
 
-✅ **Every application** has a README explaining:
+PASS: **Every application** has a README explaining:
 
 - What it is (application purpose)
 - Who it's for (target users)
 - How to run it (setup, configuration, deployment)
 - How to contribute (development setup)
 
-✅ **Complex functions** have inline comments explaining:
+PASS: **Complex functions** have inline comments explaining:
 
 - Non-obvious algorithm choices
 - Performance considerations
 - Edge cases and why they're handled that way
 - Security implications
 
-✅ **Public APIs** have documentation for:
+PASS: **Public APIs** have documentation for:
 
 - Function signatures (parameters, return types)
 - Parameter meanings and constraints
@@ -191,7 +191,7 @@ Undocumented code is **locked knowledge**. It exists but is not accessible. Docu
 - Example usage
 - Error conditions
 
-❌ **Anti-pattern**: "The code is self-documenting"
+FAIL: **Anti-pattern**: "The code is self-documenting"
 
 ````typescript
 // NO DOCUMENTATION - UNMAINTAINABLE
@@ -229,7 +229,7 @@ function calculateMurabahahProfitRate(cost: number, markup_percentage: number, c
 
 **Requirements**:
 
-✅ **Every convention** has a document explaining:
+PASS: **Every convention** has a document explaining:
 
 - What the convention is (the rule)
 - Why it exists (the rationale)
@@ -237,7 +237,7 @@ function calculateMurabahahProfitRate(cost: number, markup_percentage: number, c
 - When exceptions are allowed (if any)
 - Principles it implements (traceability)
 
-❌ **Anti-pattern**: "We just follow this convention, everyone knows it"
+FAIL: **Anti-pattern**: "We just follow this convention, everyone knows it"
 
 **Example**: Instead of just enforcing file naming via checker agents, we have [File Naming Convention](../../conventions/meta/file-naming.md) explaining:
 
@@ -254,13 +254,13 @@ function calculateMurabahahProfitRate(cost: number, markup_percentage: number, c
 
 **Requirements**:
 
-✅ **Every feature** has documentation including:
+PASS: **Every feature** has documentation including:
 
 - **How-to guide**: Step-by-step instructions for using the feature
 - **Reference documentation**: Complete technical details (API, configuration, options)
 - **Explanation**: Why the feature exists, what problem it solves, design decisions
 
-❌ **Anti-pattern**: "The feature is live, users will figure it out"
+FAIL: **Anti-pattern**: "The feature is live, users will figure it out"
 
 **Example**: When adding a new Islamic finance calculation (e.g., Murabahah profit calculation), document:
 
@@ -276,7 +276,7 @@ function calculateMurabahahProfitRate(cost: number, markup_percentage: number, c
 
 **Requirements**:
 
-✅ **Every architectural decision** is documented with:
+PASS: **Every architectural decision** is documented with:
 
 - **Context**: What problem are we solving?
 - **Decision**: What approach did we choose?
@@ -284,7 +284,7 @@ function calculateMurabahahProfitRate(cost: number, markup_percentage: number, c
 - **Consequences**: What trade-offs does this create?
 - **Alternatives considered**: What did we NOT choose and why?
 
-❌ **Anti-pattern**: "We chose Express because I like it"
+FAIL: **Anti-pattern**: "We chose Express because I like it"
 
 **Example**: Decision to use Nx monorepo:
 
@@ -323,7 +323,7 @@ function calculateMurabahahProfitRate(cost: number, markup_percentage: number, c
 
 **Requirements**:
 
-✅ **Every workflow** is documented with:
+PASS: **Every workflow** is documented with:
 
 - **Purpose**: What the workflow achieves
 - **Steps**: Exact sequence of actions
@@ -332,7 +332,7 @@ function calculateMurabahahProfitRate(cost: number, markup_percentage: number, c
 - **Outputs**: What is produced
 - **Error handling**: What to do when things fail
 
-❌ **Anti-pattern**: "Just run these commands in order (which order? what do they do?)"
+FAIL: **Anti-pattern**: "Just run these commands in order (which order? what do they do?)"
 
 **Example**: See [Maker-Checker-Fixer Workflow](../../workflows/ex-wf__meta__maker-checker-fixer.md):
 
@@ -343,11 +343,11 @@ function calculateMurabahahProfitRate(cost: number, markup_percentage: number, c
 
 **Why this works**: Anyone can execute the workflow correctly without tribal knowledge or guessing.
 
-## 🚫 Anti-Patterns
+## Anti-Patterns
 
 ### "Self-Documenting Code" Excuse
 
-❌ **Problem**: Claiming code doesn't need documentation because it's "readable".
+FAIL: **Problem**: Claiming code doesn't need documentation because it's "readable".
 
 ```typescript
 // CLAIMED TO BE "SELF-DOCUMENTING"
@@ -364,7 +364,7 @@ const result = items
 - What does this result represent?
 - When should this calculation be used?
 
-✅ **Solution**: Add documentation explaining context and rationale.
+PASS: **Solution**: Add documentation explaining context and rationale.
 
 ```typescript
 /**
@@ -386,7 +386,7 @@ function calculateTotalMurabahahProfit(items: Contract[]): number {
 
 ### "We'll Document It Later"
 
-❌ **Problem**: Writing code without documentation, planning to add it "later".
+FAIL: **Problem**: Writing code without documentation, planning to add it "later".
 
 **Why it's bad**:
 
@@ -395,7 +395,7 @@ function calculateTotalMurabahahProfit(items: Contract[]): number {
 - Technical debt accumulates (undocumented code breeds more undocumented code)
 - Quality suffers (documentation is treated as optional, not essential)
 
-✅ **Solution**: Documentation First - write docs BEFORE or WITH code, not after.
+PASS: **Solution**: Documentation First - write docs BEFORE or WITH code, not after.
 
 **Workflow**:
 
@@ -407,7 +407,7 @@ function calculateTotalMurabahahProfit(items: Contract[]): number {
 
 ### Verbal Tradition Instead of Written Documentation
 
-❌ **Problem**: Knowledge passed verbally but never written down.
+FAIL: **Problem**: Knowledge passed verbally but never written down.
 
 **Symptoms**:
 
@@ -421,15 +421,15 @@ function calculateTotalMurabahahProfit(items: Contract[]): number {
 - Meeting discussions are not searchable or permanent
 - "Everyone knows" excludes newcomers and future contributors
 
-✅ **Solution**: Document all important knowledge in permanent, searchable formats (markdown docs, code comments, convention documents).
+PASS: **Solution**: Document all important knowledge in permanent, searchable formats (markdown docs, code comments, convention documents).
 
 ### README-less Repositories
 
-❌ **Problem**: Repositories without README files.
+FAIL: **Problem**: Repositories without README files.
 
 **Why it's bad**: No entry point for understanding what the code does, why it exists, or how to use it.
 
-✅ **Solution**: Every repository, library, and application MUST have a README explaining:
+PASS: **Solution**: Every repository, library, and application MUST have a README explaining:
 
 - What it is
 - Why it exists
@@ -438,11 +438,11 @@ function calculateTotalMurabahahProfit(items: Contract[]): number {
 
 ### Outdated Documentation
 
-❌ **Problem**: Documentation that doesn't match current reality.
+FAIL: **Problem**: Documentation that doesn't match current reality.
 
 **Why it's bad**: Worse than no documentation - misleads users and maintainers.
 
-✅ **Solution**:
+PASS: **Solution**:
 
 - Update documentation when changing code (documentation is part of the change)
 - Use automated validation (checker agents verify docs match reality)
@@ -451,7 +451,7 @@ function calculateTotalMurabahahProfit(items: Contract[]): number {
 
 ### Documentation Without Context
 
-❌ **Problem**: Technical details without explanation of WHY.
+FAIL: **Problem**: Technical details without explanation of WHY.
 
 ```markdown
 ## Configuration
@@ -461,7 +461,7 @@ Set `PROFIT_RATE=15` in environment variables.
 
 **Why it's bad**: Doesn't explain WHY 15, whether it can change, or what it represents.
 
-✅ **Solution**: Always provide context.
+PASS: **Solution**: Always provide context.
 
 ```markdown
 ## Configuration
@@ -479,7 +479,7 @@ This rate must be:
 Example: `PROFIT_RATE=15`
 ```
 
-## ✅ Best Practices
+## PASS: Best Practices
 
 ### 1. Write Documentation BEFORE or WITH Code
 
@@ -511,13 +511,13 @@ See [Diátaxis Framework](../../conventions/meta/diataxis-framework.md) for comp
 **Code shows WHAT**. Comments and documentation explain **WHY**.
 
 ```typescript
-// ❌ BAD COMMENT - Repeats what code already shows
+// FAIL: BAD COMMENT - Repeats what code already shows
 // Loop through items and add them
 for (const item of items) {
   total += item.value;
 }
 
-// ✅ GOOD COMMENT - Explains WHY
+// PASS: GOOD COMMENT - Explains WHY
 // Murabahah contracts require total cost calculation before applying
 // markup. This ensures profit is calculated on actual asset cost, not
 // estimated values (Shariah compliance requirement).
@@ -561,15 +561,15 @@ Every piece of documentation should include examples:
 
 **Use checker agents** to validate:
 
-- ✅ README files exist in all libraries and apps
-- ✅ Links in documentation are valid
-- ✅ Code examples in docs actually work
-- ✅ API documentation matches actual code signatures
-- ✅ Convention documents exist for all enforced rules
+- PASS: README files exist in all libraries and apps
+- PASS: Links in documentation are valid
+- PASS: Code examples in docs actually work
+- PASS: API documentation matches actual code signatures
+- PASS: Convention documents exist for all enforced rules
 
 **Why this works**: Automation catches documentation drift. Agents ensure docs stay accurate as code evolves.
 
-## 📊 Examples from This Repository
+## Examples from This Repository
 
 ### Comprehensive Convention Documentation
 
@@ -602,9 +602,9 @@ Every convention is fully documented:
 
 **Examples**:
 
-- [Monorepo Structure](../../reference/re__monorepo-structure.md) - Explains Nx architecture, why apps/ and libs/, import patterns
-- [Repository Architecture](../repository-governance-architecture.md) - Six-layer hierarchy, governance, traceability
-- [Trunk Based Development](../development/workflow/trunk-based-development.md) - Git workflow, why main branch, deployment branches
+- [Monorepo Structure](../../../docs/reference/re__monorepo-structure.md) - Explains Nx architecture, why apps/ and libs/, import patterns
+- [Repository Architecture](../../repository-governance-architecture.md) - Six-layer hierarchy, governance, traceability
+- [Trunk Based Development](../../development/workflow/trunk-based-development.md) - Git workflow, why main branch, deployment branches
 
 **Why this works**: Maintainers understand WHY these architectures were chosen. Decisions are traceable and reversible with full context.
 
@@ -656,21 +656,21 @@ function validateMurabahahContract(contract: MurabahahContract): ValidationResul
 
 **Why this works**: Developers can use APIs confidently without reading implementation. IDE autocomplete shows documentation.
 
-## 🔗 Related Principles
+## Related Principles
 
 - [Explicit Over Implicit](../software-engineering/explicit-over-implicit.md) - Documentation makes implicit knowledge explicit
 - [Accessibility First](./accessibility-first.md) - Documentation makes knowledge accessible to all
 - [Progressive Disclosure](./progressive-disclosure.md) - Multiple documentation levels for different skill levels
 - [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Clear, simple documentation over complex jargon
 
-## 📚 Related Conventions
+## Related Conventions
 
 - [Diátaxis Framework](../../conventions/meta/diataxis-framework.md) - How to organize documentation into four categories
 - [Content Quality Principles](../../conventions/content/quality.md) - Quality standards for all markdown content
 - [README Quality Convention](../../conventions/content/readme-quality.md) - Standards for README files
 - [Convention Writing Convention](../../conventions/content/convention-writing.md) - How to write convention documents
 
-## 📖 References
+## References
 
 **Documentation Philosophy**:
 

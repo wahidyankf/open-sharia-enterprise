@@ -398,7 +398,7 @@ And repository MCP servers connect successfully
 
 These documents define our project's governance and should inform AGENTS.md content:
 
-- [Repository Architecture: Six-Layer Hierarchy](../../docs/explanation/ex-ru__repository-governance-architecture.md) - Complete governance architecture
+- [Repository Architecture: Six-Layer Hierarchy](../../governance/repository-governance-architecture.md) - Complete governance architecture
 - [Vision: Open Sharia Enterprise](../../governance/vision/ex-vi__open-sharia-enterprise.md) - WHY we exist
 - [Core Principles Index](../../governance/principles/README.md) - 10 foundational values
 - [Conventions Index](../../governance/conventions/README.md) - 24 documentation standards

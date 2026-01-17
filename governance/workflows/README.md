@@ -34,7 +34,7 @@ Layer 5: Workflows (WHEN)          → Multi-step processes ← YOU ARE HERE
 
 ### Understanding Workflows
 
-1. Read [Workflow Pattern Convention](./meta/workflow-pattern.md) for structure and rules
+1. Read [Workflow Pattern Convention](./meta/workflow-identifier.md) for structure and rules
 2. Create workflows as needed following the convention patterns
 3. Review workflow families below
 
@@ -61,16 +61,16 @@ All workflows support standard input parameters:
 
 ## Available Workflows
 
-| Workflow                                                                            | Purpose                                                                                                                                                                               | Agents Used                                                                                                                                                                                                                                                                                                                              | Complexity |
-| ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| [Repository Rules Validation](./repository/repository-rules-validation.md)          | Validate repository consistency and apply fixes iteratively until ZERO findings                                                                                                       | wow**rules-checker, wow**rules-fixer                                                                                                                                                                                                                                                                                                     | Medium     |
-| [Plan Quality Gate](./plan/quality-gate.md)                                         | Validate plan completeness and accuracy, apply fixes iteratively until ZERO findings                                                                                                  | plan**checker, plan**fixer                                                                                                                                                                                                                                                                                                               | Medium     |
-| [Plan Execution](./plan/execution.md)                                               | Execute plan tasks systematically with validation and completion tracking                                                                                                             | plan**executor, plan**execution-checker                                                                                                                                                                                                                                                                                                  | Medium     |
-| [Documentation Quality Gate](../../quality-gate.md)                                 | Validate all docs/ content quality (factual accuracy, pedagogical structure, link validity), apply fixes iteratively until ZERO findings                                              | docs**checker, docs**tutorial-checker, docs**link-general-checker, docs**fixer, docs\*\*tutorial-fixer                                                                                                                                                                                                                                   | High       |
-| [AyoKoding Web General Quality Gate](./ayokoding-web/general-quality-gate.md)       | Validate all ayokoding-web content quality (Hugo conventions, factual accuracy, structure, links), apply fixes iteratively until ZERO findings, then regenerate titles and navigation | apps**ayokoding-web**general-checker, apps**ayokoding-web**facts-checker, apps**ayokoding-web**structure-checker, apps**ayokoding-web**link-checker, apps**ayokoding-web**general-fixer, apps**ayokoding-web**facts-fixer, apps**ayokoding-web**structure-fixer, apps**ayokoding-web**title-maker, apps**ayokoding-web**navigation-maker | High       |
-| [AyoKoding Web By-Example Quality Gate](./ayokoding-web/by-example-quality-gate.md) | Validate by-example tutorial quality (95% coverage through 75-90 examples) and apply fixes iteratively until EXCELLENT status achieved                                                | apps**ayokoding-web**by-example-checker, apps**ayokoding-web**by-example-fixer                                                                                                                                                                                                                                                           | Medium     |
+| Workflow                                                                                          | Purpose                                                                                                                                                                               | Agents Used                                                                                                                                                                                                                                                                                                                              | Complexity |
+| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| [Repository Rules Validation](./repository/repository-rules-validation.md)                        | Validate repository consistency and apply fixes iteratively until ZERO findings                                                                                                       | wow**rules-checker, wow**rules-fixer                                                                                                                                                                                                                                                                                                     | Medium     |
+| [Plan Quality Gate](./docs/quality-gate.md)                                                       | Validate plan completeness and accuracy, apply fixes iteratively until ZERO findings                                                                                                  | plan**checker, plan**fixer                                                                                                                                                                                                                                                                                                               | Medium     |
+| [Plan Execution](./plan/plan-execution.md)                                                        | Execute plan tasks systematically with validation and completion tracking                                                                                                             | plan**executor, plan**execution-checker                                                                                                                                                                                                                                                                                                  | Medium     |
+| [Documentation Quality Gate](./docs/quality-gate.md)                                              | Validate all docs/ content quality (factual accuracy, pedagogical structure, link validity), apply fixes iteratively until ZERO findings                                              | docs**checker, docs**tutorial-checker, docs**link-general-checker, docs**fixer, docs\*\*tutorial-fixer                                                                                                                                                                                                                                   | High       |
+| [AyoKoding Web General Quality Gate](./ayokoding-web/ayokoding-web-general-quality-gate.md)       | Validate all ayokoding-web content quality (Hugo conventions, factual accuracy, structure, links), apply fixes iteratively until ZERO findings, then regenerate titles and navigation | apps**ayokoding-web**general-checker, apps**ayokoding-web**facts-checker, apps**ayokoding-web**structure-checker, apps**ayokoding-web**link-checker, apps**ayokoding-web**general-fixer, apps**ayokoding-web**facts-fixer, apps**ayokoding-web**structure-fixer, apps**ayokoding-web**title-maker, apps**ayokoding-web**navigation-maker | High       |
+| [AyoKoding Web By-Example Quality Gate](./ayokoding-web/ayokoding-web-by-example-quality-gate.md) | Validate by-example tutorial quality (95% coverage through 75-90 examples) and apply fixes iteratively until EXCELLENT status achieved                                                | apps**ayokoding-web**by-example-checker, apps**ayokoding-web**by-example-fixer                                                                                                                                                                                                                                                           | Medium     |
 
-All _-quality-gate workflows follow the [_-check-fix Workflow Pattern](./meta/ex-ru-wf-me\_\_workflow-pattern.md#-check-fix-workflow-pattern) which fixes ALL findings (CRITICAL, HIGH, MEDIUM, LOW criticality levels) and iterates until ZERO findings remain.
+All _-quality-gate workflows follow the [_-check-fix Workflow Pattern](./meta/workflow-identifier.md#-check-fix-workflow-pattern) which fixes ALL findings (CRITICAL, HIGH, MEDIUM, LOW criticality levels) and iterates until ZERO findings remain.
 
 ## Workflow Families
 
@@ -185,7 +185,7 @@ To create a new workflow:
 6. **Test manually**: Run workflow steps to verify correctness
 7. **Add to index**: Update this README with workflow description
 
-See [Workflow Pattern Convention](./meta/workflow-pattern.md) for complete requirements.
+See [Workflow Pattern Convention](./meta/workflow-identifier.md) for complete requirements.
 
 ## Validation
 
@@ -226,7 +226,7 @@ All workflows must respect core principles:
 
 ### Core Documentation
 
-- [Workflow Pattern Convention](./meta/workflow-pattern.md) - How workflows are structured
+- [Workflow Pattern Convention](./meta/workflow-identifier.md) - How workflows are structured
 - [Maker-Checker-Fixer Pattern](../development/pattern/maker-checker-fixer.md) - Core workflow pattern
 - [AI Agents Convention](../development/agents/ai-agents.md) - How agents work
 
@@ -240,11 +240,11 @@ All workflows must respect core principles:
 ### Layer Documentation
 
 - [Repository Governance Architecture](../repository-governance-architecture.md) - Complete six-layer architecture explanation
-- [Vision](../../vision/open-sharia-enterprise.md) - Layer 0: Foundational purpose
-- [Core Principles](../../principles/README.md) - Layer 1: Foundational values
-- [Conventions](../conventions/README.md) - Layer 2: Documentation rules
-- [Development](../development/README.md) - Layer 3: Software practices
-- [AI Agents](../../.claude/agents/README.md) - Layer 4: Task executors
+- [Vision](../vision/open-sharia-enterprise.md) - Layer 0: Foundational purpose
+- [Core Principles](./README.md) - Layer 1: Foundational values
+- [Conventions](./README.md) - Layer 2: Documentation rules
+- [Development](./README.md) - Layer 3: Software practices
+- [AI Agents](./README.md) - Layer 4: Task executors
 
 ## Future Enhancements
 
@@ -267,4 +267,4 @@ Planned workflow features:
 - **Do workflows replace agents?** - No, workflows orchestrate agents
 - **Do workflows replace plans?** - No, plans are strategic, workflows are tactical
 
-See [Workflow Pattern Convention](./meta/workflow-pattern.md) and [Execution Modes Convention](./meta/execution-modes.md) for comprehensive answers.
+See [Workflow Pattern Convention](./meta/workflow-identifier.md) and [Execution Modes Convention](./meta/execution-modes.md) for comprehensive answers.

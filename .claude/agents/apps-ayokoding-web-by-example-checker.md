@@ -91,7 +91,7 @@ The `repo-generating-validation-reports` Skill provides UUID generation, timesta
 **CRITICAL - Read these first**:
 
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Hextra theme standards
-- [By Example Content Standard](../../governance/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
+- [By Example Content Standard](../../governance/conventions/tutorial/programming-language-content.md) - Annotation requirements
 - [Tutorial Naming Convention](../../governance/conventions/tutorial/naming.md) - By Example definition
 
 ## Validation Scope
@@ -187,7 +187,7 @@ Update status, add summary, prioritize findings.
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Complete standards
-- [By Example Content Standard](../../governance/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
+- [By Example Content Standard](../../governance/conventions/tutorial/programming-language-content.md) - Annotation requirements
 
 **Related Agents:**
 

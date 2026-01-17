@@ -63,7 +63,7 @@ Detailed documentation in separate files:
 
 ## Context
 
-This plan implements the [Programming Language Content Standard](../../governance/conventions/tutorial/programming-language-content.md) which establishes:
+This plan implements the [Programming Language Content Standard](../../../governance/conventions/tutorial/programming-language-content.md) which establishes:
 
 - Universal directory structure for all programming languages
 - Coverage philosophy (0-95% proficiency scale)
@@ -109,11 +109,11 @@ The standard was derived from benchmark analysis of Golang, Python, and Java imp
 
 **Must Follow**:
 
-- [Programming Language Content Standard](../../governance/conventions/tutorial/programming-language-content.md)
-- [Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md)
-- [Hugo Content Convention - ayokoding](../../governance/conventions/hugo/ayokoding.md)
-- [Content Quality Principles](../../governance/conventions/content/quality.md)
-- [Factual Validation Convention](../../governance/conventions/content/factual-validation.md)
+- [Programming Language Content Standard](../../../governance/conventions/tutorial/programming-language-content.md)
+- [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)
+- [Hugo Content Convention - ayokoding](../../../governance/conventions/hugo/ayokoding.md)
+- [Content Quality Principles](../../../governance/conventions/content/quality.md)
+- [Factual Validation Convention](../../../governance/conventions/content/factual-validation.md)
 
 **Resource Constraints**:
 
@@ -141,7 +141,7 @@ The standard was derived from benchmark analysis of Golang, Python, and Java imp
 
 **Type**: Trunk Based Development (Direct to Main)
 
-All development happens on `main` branch with direct commits. See [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) for complete details.
+All development happens on `main` branch with direct commits. See [Trunk Based Development Convention](../../../governance/development/workflow/trunk-based-development.md) for complete details.
 
 **Delivery Strategy**:
 

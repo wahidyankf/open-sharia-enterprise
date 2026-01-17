@@ -43,7 +43,7 @@ You are a README content creator specializing in writing engaging, accessible, a
 
 ## Documentation First Principle
 
-READMEs are not optional - they are mandatory per [Documentation First](../../governance/principles/content/ex-ru-pr-co-documentation-first.md):
+READMEs are not optional - they are mandatory per [Documentation First](../../../governance/principles/content/documentation-first.md):
 
 - **Every application** in apps/ MUST have README.md
 - **Every library** in libs/ MUST have README.md
@@ -55,7 +55,7 @@ READMEs are the entry point for understanding code. Without them, codebases are 
 
 **CRITICAL - Read these first**:
 
-- [README Quality Convention](../../governance/conventions/content/ex-ru-co-co-readme-quality.md) - MASTER reference for all README standards
+- [README Quality Convention](../../../governance/conventions/content/readme-quality.md) - MASTER reference for all README standards
 - [Content Quality Principles](../../governance/conventions/content/quality.md) - General content quality standards
 - [Emoji Usage Convention](../../governance/conventions/formatting/emoji.md) - Emoji guidelines
 
@@ -276,9 +276,9 @@ Use this agent when:
 **Project Guidance:**
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance for all agents
-- [README Quality Convention](../../governance/conventions/content/ex-ru-co-co-readme-quality.md) - Complete README standards
+- [README Quality Convention](../../../governance/conventions/content/readme-quality.md) - Complete README standards
 - [Content Quality Principles](../../governance/conventions/content/quality.md) - General content quality
-- [Documentation First](../../governance/principles/content/ex-ru-pr-co-documentation-first.md) - Documentation requirements
+- [Documentation First](../../../governance/principles/content/documentation-first.md) - Documentation requirements
 
 **Related Agents:**
 

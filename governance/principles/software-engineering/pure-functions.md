@@ -17,7 +17,7 @@ updated: 2025-12-28
 
 **Prefer pure functions** over functions with side effects. Favor deterministic functions that always return the same output for the same input and don't modify external state. Pure functions are easier to test, reason about, and compose.
 
-## 🌟 Vision Supported
+## Vision Supported
 
 This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of making Shariah-compliant business logic transparent, auditable, and trustworthy.
 
@@ -31,7 +31,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 
 **Vision alignment**: Democratizing Islamic enterprise requires trust and transparency. Pure functions make business logic verifiable by anyone - essential when financial transactions must comply with Shariah law. No black boxes in halal finance.
 
-## 🎯 What
+## What
 
 **Pure functions** are functions that:
 
@@ -45,7 +45,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 2. **Side effects**: Modify external state or depend on it
 3. **Not referentially transparent**: Replacing call with value would change behavior
 
-## 💡 Why
+## Why
 
 ### Benefits of Pure Functions
 
@@ -69,31 +69,31 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 
 **Use pure functions for**:
 
-- ✅ Business logic and calculations
-- ✅ Data transformations
-- ✅ Validation rules
-- ✅ Formatting and parsing
-- ✅ Mathematical operations
-- ✅ Filters, maps, reduces
+- PASS: Business logic and calculations
+- PASS: Data transformations
+- PASS: Validation rules
+- PASS: Formatting and parsing
+- PASS: Mathematical operations
+- PASS: Filters, maps, reduces
 
 **Side effects necessary for**:
 
-- ⚠️ I/O operations (database, files, network)
-- ⚠️ Logging and monitoring
-- ⚠️ Random number generation
-- ⚠️ Current time/date
-- ⚠️ User interaction
-- ⚠️ System state changes
+- I/O operations (database, files, network)
+- Logging and monitoring
+- Random number generation
+- Current time/date
+- User interaction
+- System state changes
 
 **Best practice**: Use Functional Core, Imperative Shell pattern - pure functions for logic, side effects at boundaries.
 
-## 📋 How It Applies
+## How It Applies
 
 ### Pure Business Logic
 
 **Context**: Calculating Zakat (Islamic wealth tax - 2.5% on qualifying wealth).
 
-✅ **Pure (Preferred)**:
+PASS: **Pure (Preferred)**:
 
 ```typescript
 // Pure function - deterministic, no side effects
@@ -112,7 +112,7 @@ expect(calculateZakat(10000, 5000)).toBe(250); // Same result every time
 
 **Why this works**: No external dependencies. Same inputs always produce same output. Trivial to test and verify.
 
-❌ **Impure (Avoid)**:
+FAIL: **Impure (Avoid)**:
 
 ```typescript
 // Impure - depends on external state
@@ -141,7 +141,7 @@ function calculateZakat(wealth: number): number {
 
 **Context**: Applying profit-sharing ratio to investment returns (Musharakah).
 
-✅ **Pure (Preferred)**:
+PASS: **Pure (Preferred)**:
 
 ```typescript
 interface Investment {
@@ -177,7 +177,7 @@ const distribution = distributeProfits(investment, partners);
 
 **Why this works**: Pure calculation. No side effects. Easy to verify Shariah compliance (60/40 split).
 
-❌ **Impure (Avoid)**:
+FAIL: **Impure (Avoid)**:
 
 ```typescript
 const partnerBalances = { Ahmad: 0, Fatima: 0 };
@@ -200,7 +200,7 @@ function distributeProfits(investment, partners) {
 
 **Context**: Saving Murabaha contract to database.
 
-✅ **Pure core + Impure shell (Preferred architecture)**:
+PASS: **Pure core + Impure shell (Preferred architecture)**:
 
 ```typescript
 // FUNCTIONAL CORE: Pure business logic
@@ -258,7 +258,7 @@ async function saveMurabahaContract(cost: number, markupRate: number): Promise<v
 
 **Context**: Formatting currency for display.
 
-✅ **Pure (Preferred)**:
+PASS: **Pure (Preferred)**:
 
 ```typescript
 // Pure function - all dependencies explicit
@@ -276,7 +276,7 @@ formatCurrency(1000, "USD", "en-US"); // "$1,000.00"
 
 **Why this works**: All dependencies passed as arguments. Same inputs = same output.
 
-❌ **Impure (Avoid)**:
+FAIL: **Impure (Avoid)**:
 
 ```typescript
 // Impure - depends on global configuration
@@ -300,14 +300,14 @@ function formatCurrency(amount: number): string {
 
 **Why this fails**: Hidden dependency on global config. Different results if config changes. Hard to test.
 
-## 🚫 Anti-Patterns
+## Anti-Patterns
 
 ### Functions with Side Effects
 
-❌ **Problem**: Function modifies external state.
+FAIL: **Problem**: Function modifies external state.
 
 ```typescript
-// ❌ Impure - modifies database
+// FAIL: Impure - modifies database
 function addTransaction(transaction) {
   database.transactions.insert(transaction); // SIDE EFFECT
   return transaction.id;
@@ -318,10 +318,10 @@ function addTransaction(transaction) {
 // Concurrency issues
 ```
 
-✅ **Solution**: Separate pure logic from I/O.
+PASS: **Solution**: Separate pure logic from I/O.
 
 ```typescript
-// ✅ Pure - prepares data
+// PASS: Pure - prepares data
 function prepareTransaction(from: string, to: string, amount: number): Transaction {
   return {
     id: generateId(),
@@ -332,7 +332,7 @@ function prepareTransaction(from: string, to: string, amount: number): Transacti
   };
 }
 
-// ✅ Impure shell - handles I/O
+// PASS: Impure shell - handles I/O
 async function saveTransaction(transaction: Transaction): Promise<void> {
   await database.transactions.insert(transaction);
 }
@@ -342,10 +342,10 @@ async function saveTransaction(transaction: Transaction): Promise<void> {
 
 ### Hidden Randomness
 
-❌ **Problem**: Function uses random values internally.
+FAIL: **Problem**: Function uses random values internally.
 
 ```typescript
-// ❌ Non-deterministic
+// FAIL: Non-deterministic
 function generateContractId(): string {
   return `CONTRACT-${Math.random()}`; // RANDOM
 }
@@ -355,10 +355,10 @@ generateContractId(); // "CONTRACT-0.123"
 generateContractId(); // "CONTRACT-0.456"
 ```
 
-✅ **Solution**: Pass randomness as input.
+PASS: **Solution**: Pass randomness as input.
 
 ```typescript
-// ✅ Deterministic - randomness passed in
+// PASS: Deterministic - randomness passed in
 function generateContractId(random: number): string {
   return `CONTRACT-${random}`;
 }
@@ -370,10 +370,10 @@ generateContractId(0.5); // Deterministic for testing
 
 ### Reading Current Time
 
-❌ **Problem**: Function reads current time internally.
+FAIL: **Problem**: Function reads current time internally.
 
 ```typescript
-// ❌ Non-deterministic
+// FAIL: Non-deterministic
 function isContractExpired(expiryDate: Date): boolean {
   const now = new Date(); // READS CURRENT TIME
   return now > expiryDate;
@@ -382,10 +382,10 @@ function isContractExpired(expiryDate: Date): boolean {
 // Different result at different times
 ```
 
-✅ **Solution**: Pass current time as input.
+PASS: **Solution**: Pass current time as input.
 
 ```typescript
-// ✅ Deterministic
+// PASS: Deterministic
 function isContractExpired(expiryDate: Date, now: Date): boolean {
   return now > expiryDate;
 }
@@ -397,10 +397,10 @@ isContractExpired(expiryDate, new Date("2025-12-28")); // Fixed time for testing
 
 ### Global State Dependencies
 
-❌ **Problem**: Function depends on global variable.
+FAIL: **Problem**: Function depends on global variable.
 
 ```typescript
-// ❌ Depends on global
+// FAIL: Depends on global
 let exchangeRate = 3.75; // SAR to USD
 
 function convertToUSD(sar: number): number {
@@ -411,10 +411,10 @@ function convertToUSD(sar: number): number {
 // Hard to test with different rates
 ```
 
-✅ **Solution**: Pass dependencies explicitly.
+PASS: **Solution**: Pass dependencies explicitly.
 
 ```typescript
-// ✅ Explicit dependency
+// PASS: Explicit dependency
 function convertToUSD(sar: number, exchangeRate: number): number {
   return sar / exchangeRate;
 }
@@ -424,14 +424,14 @@ convertToUSD(1000, 3.75); // 266.67
 convertToUSD(1000, 4.0); // 250 (different rate)
 ```
 
-## ✅ Best Practices
+## PASS: Best Practices
 
 ### 1. Make Dependencies Explicit
 
 **Pass everything as arguments**:
 
 ```typescript
-// ✅ All dependencies explicit
+// PASS: All dependencies explicit
 function calculateMurabahaTotal(cost: number, markupRate: number, taxRate: number): number {
   const markup = cost * markupRate;
   const subtotal = cost + markup;
@@ -445,12 +445,12 @@ function calculateMurabahaTotal(cost: number, markupRate: number, taxRate: numbe
 **Create new data instead of mutating**:
 
 ```typescript
-// ✅ Returns new array
+// PASS: Returns new array
 function addItem(items: readonly Item[], newItem: Item): readonly Item[] {
   return [...items, newItem];
 }
 
-// ❌ Mutates input
+// FAIL: Mutates input
 function addItem(items: Item[], newItem: Item): Item[] {
   items.push(newItem); // MUTATION
   return items;
@@ -462,7 +462,7 @@ function addItem(items: Item[], newItem: Item): Item[] {
 **All business rules should be pure**:
 
 ```typescript
-// ✅ Pure business logic
+// PASS: Pure business logic
 function isEligibleForZakat(wealth: number, nisab: number): boolean {
   return wealth >= nisab;
 }
@@ -526,7 +526,7 @@ describe("calculateZakat", () => {
 **Compose pure functions**:
 
 ```typescript
-// ✅ Pure higher-order functions
+// PASS: Pure higher-order functions
 const pipe =
   (...fns) =>
   (x) =>
@@ -542,11 +542,11 @@ const processData = pipe(
 const result = processData(input);
 ```
 
-## 📊 Islamic Finance Example
+## Islamic Finance Example
 
 **Scenario**: Calculating profit distribution in Mudharabah (profit-sharing partnership).
 
-❌ **Impure approach** (avoid):
+FAIL: **Impure approach** (avoid):
 
 ```typescript
 let totalProfits = 0;
@@ -566,7 +566,7 @@ distributeMudharabahProfits(10000, 0.7);
 // Hard to test, non-deterministic, concurrent-unsafe
 ```
 
-✅ **Pure approach** (preferred):
+PASS: **Pure approach** (preferred):
 
 ```typescript
 interface MudharabahDistribution {
@@ -618,20 +618,20 @@ async function saveMudharabahDistribution(profit: number, investorRatio: number)
 - **Auditable**: Each calculation step is deterministic and traceable
 - **Trustworthy**: Investors and managers can independently verify their share calculations
 
-## 🔗 Related Principles
+## Related Principles
 
 - [Immutability Over Mutability](./immutability.md) - Pure functions naturally use immutable data
 - [Explicit Over Implicit](./explicit-over-implicit.md) - Dependencies explicit in function signatures
 - [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Pure functions are simpler to understand
 - [Automation Over Manual](./automation-over-manual.md) - Pure functions are easier to test automatically
 
-## 📚 Related Conventions
+## Related Conventions
 
 - [Functional Programming Practices](../../development/pattern/functional-programming.md) - Implementation patterns for pure functions
 - [Code Quality Convention](../../development/quality/code.md) - Automated testing
 - [Implementation Workflow](../../development/workflow/implementation.md) - When to introduce pure functions
 
-## 📖 References
+## References
 
 **Functional Programming**:
 

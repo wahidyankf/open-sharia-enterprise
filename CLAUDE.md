@@ -145,7 +145,7 @@ Husky + lint-staged enforce quality:
 
 **Examples**:
 
-- `ex-ru-co-me__file-naming.md` (explanation/governance/conventions/meta)
+- `file-naming.md` (explanation/governance/conventions/meta)
 - `tu__getting-started.md` (tutorials)
 - `hoto__deploy-docker.md` (how-to)
 
@@ -176,7 +176,7 @@ Exception: `README.md` for index files, `docs/metadata/` files
 
 ### Linking
 
-GitHub-compatible markdown: `[Text](./path/to/file.md)` with `.md` extension
+GitHub-compatible markdown: `Text` with `.md` extension
 Hugo sites use absolute paths without `.md`
 
 **See**: [governance/conventions/formatting/linking.md](./governance/conventions/formatting/linking.md)

@@ -18,7 +18,7 @@ updated: 2026-01-17
 
 This document explains the complete six-layer architecture that governs the open-sharia-enterprise repository. Each layer builds on the foundation of the layer above, creating a traceable hierarchy from foundational purpose to automated workflows.
 
-## 🎯 Purpose
+## Purpose
 
 The six-layer architecture provides:
 
@@ -27,7 +27,7 @@ The six-layer architecture provides:
 3. **Separation of concerns** - Vision, values, standards, practices, implementation, and orchestration are distinct
 4. **Systematic consistency** - Changes propagate through layers in a predictable way
 
-## 📊 The Six Layers
+## The Six Layers
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
@@ -95,7 +95,7 @@ graph TD
 
 **Purpose**: Foundational purpose establishing WHY the project exists and WHAT change we seek.
 
-**Key Document**: [Vision - Open Sharia Enterprise](../vision/open-sharia-enterprise.md) (will be at `/governance/vision/` after move)
+**Key Document**: [Vision - Open Sharia Enterprise](./vision/open-sharia-enterprise.md) (will be at `/governance/vision/` after move)
 
 **Core Vision**:
 
@@ -252,8 +252,8 @@ See [AI Agents Convention](./development/agents/ai-agents.md) for dual-mode form
 
 **Key Documents**:
 
-- [Claude Agents Index](../.claude/agents/README.md) (primary source)
-- [OpenCode Agents Index](../.opencode/agent/README.md) (auto-generated)
+- [Claude Agents Index](./README.md) (primary source)
+- [OpenCode Agents Index](./README.md) (auto-generated)
 
 **Agent Families**:
 
@@ -314,7 +314,7 @@ Maker-Checker-Fixer Workflow:
 5. Terminate when: all HIGH/MEDIUM findings resolved
 ```
 
-## 🔧 Delivery Infrastructure
+## Delivery Infrastructure
 
 In addition to the six governance layers, the repository uses **delivery infrastructure** to transport knowledge from Layers 2-3 to Layer 4 (Agents). These are NOT governance layers - they don't enforce rules, they deliver knowledge.
 
@@ -338,8 +338,8 @@ In addition to the six governance layers, the repository uses **delivery infrast
 
 **Key Documents**:
 
-- [Claude Skills Directory](../.claude/skills/README.md) (primary source)
-- [OpenCode Skills Directory](../.opencode/skill/README.md) (auto-generated)
+- [Claude Skills Directory](./README.md) (primary source)
+- [OpenCode Skills Directory](./README.md) (auto-generated)
 
 **23 Skills Available**: See Skills directories for complete catalog.
 
@@ -351,7 +351,7 @@ In addition to the six governance layers, the repository uses **delivery infrast
 - **Process Execution**: creating-project-plans, defining-workflows, practicing-trunk-based-development, executing-checker-workflow, applying-fixer-workflow, multi-file-template
 - **Technical Knowledge**: developing-agents, understanding-repository-architecture, documenting-references, selecting-models
 
-See [CLAUDE.md](../../CLAUDE.md) for Claude Code details and [AGENTS.md](../../AGENTS.md) for OpenCode details.
+See [CLAUDE.md](../CLAUDE.md) for Claude Code details and [AGENTS.md](../AGENTS.md) for OpenCode details.
 
 ### Why Infrastructure, Not a Layer?
 
@@ -392,7 +392,7 @@ Delivery (serves knowledge, dual-mode):
   Direct References ──explicit links──> Agents
 ```
 
-## 🔗 Complete Traceability Examples
+## Complete Traceability Examples
 
 ### Example 1: Color Accessibility
 
@@ -421,7 +421,7 @@ Delivery (serves knowledge, dual-mode):
 - **docs\_\_fixer**: Applies color corrections to non-compliant diagrams
 - **agent\_\_maker**: Validates new agents use accessible colors in frontmatter
 
-**Layer 5 - Workflow**: [Maker-Checker-Fixer](./workflows/meta/workflow-pattern.md)
+**Layer 5 - Workflow**: [Maker-Checker-Fixer](./workflows/meta/workflow-identifier.md)
 
 - Orchestrates: docs**maker → docs**checker → docs\_\_fixer
 - Ensures: All diagrams use accessible colors through automated validation and fixing
@@ -489,7 +489,7 @@ Delivery (serves knowledge, dual-mode):
 - Orchestrates: ayokoding-web-general-checker → ayokoding-web-general-fixer
 - Ensures: All Hugo content meets quality standards through automated iteration
 
-## 🏗️ Using the Architecture
+## ️ Using the Architecture
 
 ### When Creating New Content
 
@@ -555,7 +555,7 @@ Answer: Explicit prefixes make file locations transparent without
 opening files, supporting our vision of verifiable systems.
 ```
 
-## 🎯 Key Principles
+## Key Principles
 
 ### Immutability Decreases Down the Layers
 
@@ -587,7 +587,7 @@ When changing a layer, all lower layers may need updates:
 
 Use **wow\_\_rules-maker** to propagate changes systematically.
 
-## 🔍 Verification and Validation
+## Verification and Validation
 
 ### Layer Alignment Checks
 
@@ -621,11 +621,11 @@ This architecture document implements/respects the following principles:
 
 - **[Progressive Disclosure](./principles/content/progressive-disclosure.md)**: The architecture layers complexity - beginners understand vision and principles, intermediate users work with conventions/practices, advanced users create agents and workflows.
 
-## 📚 Related Documentation
+## Related Documentation
 
 **Layer 0**:
 
-- [Vision - Open Sharia Enterprise](../vision/open-sharia-enterprise.md)
+- [Vision - Open Sharia Enterprise](./vision/open-sharia-enterprise.md)
 
 **Layer 1**:
 
@@ -644,23 +644,23 @@ This architecture document implements/respects the following principles:
 
 **Layer 4** (Dual-Mode):
 
-- [Claude Agents Index](../.claude/agents/README.md) (primary source)
-- [OpenCode Agents Index](../.opencode/agent/README.md) (auto-generated)
+- [Claude Agents Index](./README.md) (primary source)
+- [OpenCode Agents Index](./README.md) (auto-generated)
 - Agent files in `.claude/agents/` (Claude Code format, primary)
 - Agent files in `.opencode/agent/` (OpenCode format, synced)
 
 **Layer 5**:
 
 - [Workflows Index](./workflows/README.md)
-- [Workflow Pattern Convention](./workflows/meta/workflow-pattern.md)
+- [Workflow Pattern Convention](./workflows/meta/workflow-identifier.md)
 
 **Delivery Infrastructure** (Dual-Mode):
 
-- [Claude Skills Directory](../.claude/skills/README.md) - 23 knowledge packages (primary)
-- [OpenCode Skills Directory](../.opencode/skill/README.md) - 23 knowledge packages (synced)
-- [How to Create a Skill](../how-to/hoto__create-new-skill.md) - Step-by-step guide
-- [CLAUDE.md](../../CLAUDE.md) - Claude Code comprehensive instructions
-- [AGENTS.md](../../AGENTS.md) - OpenCode comprehensive instructions
+- [Claude Skills Directory](./README.md) - 23 knowledge packages (primary)
+- [OpenCode Skills Directory](./README.md) - 23 knowledge packages (synced)
+- [How to Create a Skill](../docs/how-to/hoto__create-new-skill.md) - Step-by-step guide
+- [CLAUDE.md](../CLAUDE.md) - Claude Code comprehensive instructions
+- [AGENTS.md](../AGENTS.md) - OpenCode comprehensive instructions
 
 **Meta-Documentation**:
 

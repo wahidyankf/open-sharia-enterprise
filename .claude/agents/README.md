@@ -113,7 +113,7 @@ Agents leverage 23 skills from `.claude/skills/` for progressive knowledge deliv
 - **repo-applying-maker-checker-fixer** - Quality workflow pattern
 - **repo-assessing-criticality-confidence** - Criticality assessment
 
-**See**: [.claude/skills/README.md](../skills/README.md) for complete skills catalog
+**See**: [.claude/skills/README.md](./README.md) for complete skills catalog
 
 ## Governance Standards
 
@@ -124,7 +124,7 @@ All agents follow governance principles:
 - **Simplicity Over Complexity** - Single-purpose agents, minimal abstraction
 - **Accessibility First** - WCAG AA compliance in all outputs
 
-**See**: [governance/principles/README.md](../../governance/principles/README.md)
+**See**: [governance/principles/README.md](./README.md)
 
 ---
 

@@ -55,14 +55,14 @@ This approach makes code more predictable, testable, and maintainable - especial
 **Prefer const over let, never use var**:
 
 ```typescript
-// ✅ Prefer const
+// PASS: Prefer const
 const user = { name: "Ahmad", balance: 1000 };
 
-// ⚠️ Use let only when reassignment necessary
+// Use let only when reassignment necessary
 let counter = 0;
 counter += 1;
 
-// ❌ Never use var
+// FAIL: Never use var
 var oldStyle = "bad"; // Don't do this
 ```
 
@@ -71,11 +71,11 @@ var oldStyle = "bad"; // Don't do this
 **Use spread operator for shallow updates**:
 
 ```typescript
-// ✅ Spread operator - creates new object
+// PASS: Spread operator - creates new object
 const user = { name: "Ahmad", email: "old@example.com", balance: 1000 };
 const updatedUser = { ...user, email: "new@example.com" };
 
-// ✅ Nested updates with multiple spreads
+// PASS: Nested updates with multiple spreads
 const account = {
   id: "ACC001",
   holder: { name: "Ahmad", email: "ahmad@example.com" },
@@ -90,7 +90,7 @@ const updatedAccount = {
   },
 };
 
-// ❌ Mutation - avoid
+// FAIL: Mutation - avoid
 user.email = "new@example.com"; // Mutates original
 ```
 
@@ -101,14 +101,14 @@ user.email = "new@example.com"; // Mutates original
 ```typescript
 const numbers = [1, 2, 3, 4, 5];
 
-// ✅ Immutable operations - return new arrays
+// PASS: Immutable operations - return new arrays
 const doubled = numbers.map((n) => n * 2);
 const evens = numbers.filter((n) => n % 2 === 0);
 const sum = numbers.reduce((acc, n) => acc + n, 0);
 const first3 = numbers.slice(0, 3);
 const withSix = [...numbers, 6];
 
-// ❌ Mutable operations - avoid
+// FAIL: Mutable operations - avoid
 numbers.push(6); // Mutates
 numbers.pop(); // Mutates
 numbers.splice(0, 1); // Mutates
@@ -147,7 +147,7 @@ const state: State = {
   ],
 };
 
-// ✅ Immer - write like mutation, get immutability
+// PASS: Immer - write like mutation, get immutability
 const newState = produce(state, (draft) => {
   draft.users[0].profile.settings.theme = "light";
 });
@@ -170,10 +170,10 @@ const config: Readonly<Config> = Object.freeze({
   timeout: 5000,
 });
 
-// ❌ Mutation fails in strict mode
+// FAIL: Mutation fails in strict mode
 config.timeout = 10000; // Error in strict mode
 
-// ✅ Create new object instead
+// PASS: Create new object instead
 const updatedConfig = { ...config, timeout: 10000 };
 ```
 
@@ -184,7 +184,7 @@ const updatedConfig = { ...config, timeout: 10000 };
 **All inputs as arguments, no side effects**:
 
 ```typescript
-// ✅ Pure - deterministic, no side effects
+// PASS: Pure - deterministic, no side effects
 function calculateZakat(wealth: number, nisab: number): number {
   if (wealth < nisab) {
     return 0;
@@ -192,7 +192,7 @@ function calculateZakat(wealth: number, nisab: number): number {
   return wealth * 0.025;
 }
 
-// ❌ Impure - depends on global, has side effect
+// FAIL: Impure - depends on global, has side effect
 let totalZakat = 0;
 function calculateZakat(wealth: number): number {
   const zakat = wealth * 0.025;
@@ -212,7 +212,7 @@ interface Transaction {
   readonly timestamp: number;
 }
 
-// ✅ Pure transformation
+// PASS: Pure transformation
 function addTimestamp(transaction: Omit<Transaction, "timestamp">): Transaction {
   return {
     ...transaction,
@@ -220,12 +220,12 @@ function addTimestamp(transaction: Omit<Transaction, "timestamp">): Transaction 
   };
 }
 
-// ✅ Pure filtering
+// PASS: Pure filtering
 function filterLargeTransactions(transactions: readonly Transaction[], threshold: number): readonly Transaction[] {
   return transactions.filter((tx) => tx.amount > threshold);
 }
 
-// ✅ Pure mapping
+// PASS: Pure mapping
 function convertToUSD(transactions: readonly Transaction[], exchangeRate: number): readonly Transaction[] {
   return transactions.map((tx) => ({
     ...tx,
@@ -342,7 +342,7 @@ apply25Percent(100); // 75
 
 ### Don't Mutate Function Arguments
 
-❌ **Bad**:
+FAIL: **Bad**:
 
 ```typescript
 function addTransaction(transactions: Transaction[], newTx: Transaction) {
@@ -351,7 +351,7 @@ function addTransaction(transactions: Transaction[], newTx: Transaction) {
 }
 ```
 
-✅ **Good**:
+PASS: **Good**:
 
 ```typescript
 function addTransaction(transactions: readonly Transaction[], newTx: Transaction): readonly Transaction[] {
@@ -361,7 +361,7 @@ function addTransaction(transactions: readonly Transaction[], newTx: Transaction
 
 ### Avoid Class-Based OOP with Mutable State
 
-❌ **Bad**:
+FAIL: **Bad**:
 
 ```typescript
 class ShoppingCart {
@@ -377,7 +377,7 @@ class ShoppingCart {
 }
 ```
 
-✅ **Good**:
+PASS: **Good**:
 
 ```typescript
 interface ShoppingCart {
@@ -395,7 +395,7 @@ function removeItem(cart: ShoppingCart, id: string): ShoppingCart {
 
 ### Keep Functions Pure, Move Side Effects to Edges
 
-❌ **Bad**:
+FAIL: **Bad**:
 
 ```typescript
 function saveUser(user: User): void {
@@ -407,7 +407,7 @@ function saveUser(user: User): void {
 }
 ```
 
-✅ **Good**:
+PASS: **Good**:
 
 ```typescript
 // Pure validation
@@ -486,11 +486,11 @@ function convertSARtoUSD(sar: SAR, rate: number): USD {
   return toUSD(sar / rate);
 }
 
-// ✅ Type-safe
+// PASS: Type-safe
 const sar = toSAR(1000);
 const usd = convertSARtoUSD(sar, 3.75);
 
-// ❌ Compile error - can't pass USD where SAR expected
+// FAIL: Compile error - can't pass USD where SAR expected
 // convertSARtoUSD(usd, 3.75);
 ```
 
@@ -634,7 +634,7 @@ async function processMudharabahDistribution(investmentId: string, partners: rea
 - Validation
 
 ```typescript
-// ✅ Class as data container (acceptable)
+// PASS: Class as data container (acceptable)
 class CreateUserDTO {
   readonly name: string;
   readonly email: string;
@@ -647,7 +647,7 @@ class CreateUserDTO {
   }
 }
 
-// ✅ Functions for business logic (preferred)
+// PASS: Functions for business logic (preferred)
 function validateUser(dto: CreateUserDTO): ValidationResult {
   // Pure validation
 }

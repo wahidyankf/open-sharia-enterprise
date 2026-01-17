@@ -16,7 +16,7 @@ updated: 2026-01-04
 
 Development conventions and standards for the open-sharia-enterprise project. These documents define how to create and manage development practices, tools, and workflows.
 
-**Governance**: All development practices in this directory serve the [Vision](../../vision/open-sharia-enterprise.md) (Layer 0), implement the [Core Principles](../../principles/README.md) (Layer 1), and implement/enforce [Documentation Conventions](../conventions/README.md) (Layer 2) as part of the six-layer architecture. Each practice MUST include TWO mandatory sections: "Principles Respected" and "Conventions Implemented/Respected". See [Repository Governance Architecture](../repository-governance-architecture.md) for complete governance model and [AI Agents Convention](./agents/ai-agents.md) for structure requirements.
+**Governance**: All development practices in this directory serve the [Vision](../vision/open-sharia-enterprise.md) (Layer 0), implement the [Core Principles](./README.md) (Layer 1), and implement/enforce [Documentation Conventions](./README.md) (Layer 2) as part of the six-layer architecture. Each practice MUST include TWO mandatory sections: "Principles Respected" and "Conventions Implemented/Respected". See [Repository Governance Architecture](../repository-governance-architecture.md) for complete governance model and [AI Agents Convention](./agents/ai-agents.md) for structure requirements.
 
 ## 🎯 Scope
 
@@ -33,7 +33,7 @@ Development conventions and standards for the open-sharia-enterprise project. Th
 - Code quality, testing, and deployment practices
 - Acceptance criteria and testable requirements
 
-**❌ Does NOT Belong Here (use [Conventions](../conventions/README.md) instead):**
+**❌ Does NOT Belong Here (use [Conventions](./README.md) instead):**
 
 - How to write and format documentation
 - Markdown writing standards and style guides
@@ -134,9 +134,9 @@ Development practices in this directory fall into several categories:
 ## 🔗 Related Documentation
 
 - [Repository Governance Architecture](../repository-governance-architecture.md) - Complete six-layer architecture (Layer 3: Development)
-- [Core Principles](../../principles/README.md) - Layer 1: Foundational values that govern development practices
-- [Conventions](../conventions/README.md) - Layer 2: Documentation conventions (parallel governance with development)
-- [Workflows](../workflows/README.md) - Layer 5: Multi-step processes orchestrating agents
+- [Core Principles](./README.md) - Layer 1: Foundational values that govern development practices
+- [Conventions](./README.md) - Layer 2: Documentation conventions (parallel governance with development)
+- [Workflows](./README.md) - Layer 5: Multi-step processes orchestrating agents
 
 ---
 

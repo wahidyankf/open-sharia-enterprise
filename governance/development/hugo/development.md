@@ -31,17 +31,17 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Hugo Content Convention - Shared](../conventions/hugo/shared.md)**: Theme development supports content conventions (frontmatter processing, multilingual support, navigation rendering) defined for Hugo sites.
+- **[Hugo Content Convention - Shared](../../conventions/hugo/shared.md)**: Theme development supports content conventions (frontmatter processing, multilingual support, navigation rendering) defined for Hugo sites.
 
-- **[Hugo Content Convention - ayokoding](../conventions/hugo/ayokoding.md)**: ayokoding-web theme customizations implement Hextra-specific conventions (language switching, overview/ikhtisar links, level-based weights).
+- **[Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md)**: ayokoding-web theme customizations implement Hextra-specific conventions (language switching, overview/ikhtisar links, level-based weights).
 
-- **[Hugo Content Convention - OSE Platform](../conventions/hugo/ose-platform.md)**: ose-platform-web theme customizations implement PaperMod-specific conventions (cover images, summary handling, English-only structure).
+- **[Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md)**: ose-platform-web theme customizations implement PaperMod-specific conventions (cover images, summary handling, English-only structure).
 
-- **[Color Accessibility Convention](../conventions/formatting/color-accessibility.md)**: Theme CSS and components use verified accessible color palette (#0173B2, #DE8F05, #029E73, #CC78BC) meeting WCAG AA standards.
+- **[Color Accessibility Convention](../../conventions/formatting/color-accessibility.md)**: Theme CSS and components use verified accessible color palette (#0173B2, #DE8F05, #029E73, #CC78BC) meeting WCAG AA standards.
 
-- **[Diagrams Convention](../conventions/formatting/diagrams.md)**: Documentation diagrams in this convention use Mermaid with accessible colors and proper comment syntax.
+- **[Diagrams Convention](../../conventions/formatting/diagrams.md)**: Documentation diagrams in this convention use Mermaid with accessible colors and proper comment syntax.
 
-## 📋 Purpose
+## Purpose
 
 This convention defines standards for:
 
@@ -55,7 +55,7 @@ This convention defines standards for:
 - **Accessibility** - Ensuring WCAG compliance in theme code
 - **Build & Deployment** - Managing build scripts and deployment configuration
 
-## 🎯 Scope
+## Scope
 
 **This Convention Applies To:**
 
@@ -80,18 +80,18 @@ This convention defines standards for:
 - Content frontmatter - Content metadata (handled by content agents)
 - Writing style - Content quality (handled by content checkers)
 
-## 🔗 Related Conventions
+## Related Conventions
 
 This convention builds upon and references:
 
-- [Hugo Content Convention - Shared](../conventions/hugo/shared.md) - Shared content standards (complementary)
-- [Hugo Content Convention - ayokoding](../conventions/hugo/ayokoding.md) - ayokoding-web content standards
-- [Hugo Content Convention - OSE Platform](../conventions/hugo/ose-platform.md) - ose-platform-web content standards
-- [Color Accessibility Convention](../conventions/formatting/color-accessibility.md) - Accessible color palette for themes
-- [Diagram Convention](../conventions/formatting/diagrams.md) - Mermaid diagrams in documentation (includes Mermaid comment syntax)
-- [Content Quality Principles](../conventions/content/quality.md) - Universal markdown standards
+- [Hugo Content Convention - Shared](../../conventions/hugo/shared.md) - Shared content standards (complementary)
+- [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-web content standards
+- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - ose-platform-web content standards
+- [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - Accessible color palette for themes
+- [Diagram Convention](../../conventions/formatting/diagrams.md) - Mermaid diagrams in documentation (includes Mermaid comment syntax)
+- [Content Quality Principles](../../conventions/content/quality.md) - Universal markdown standards
 
-## 🏗️ Theme Development
+## ️ Theme Development
 
 ### Theme Hierarchy
 
@@ -219,7 +219,7 @@ cover:
   hidden: false # Hide image on post but show in lists
 ```
 
-## 📐 Layout Organization
+## Layout Organization
 
 ### Directory Structure
 
@@ -308,7 +308,7 @@ Hugo uses a specific lookup order for templates. Understanding this prevents con
 - `.` - Current context (page, data, custom)
 - `dict` - Pass multiple values: `{{ partial "name.html" (dict "page" . "param" $value) }}`
 
-## 🎨 Asset Pipeline
+## Asset Pipeline
 
 ### Hugo Pipes Overview
 
@@ -449,7 +449,7 @@ assets/
 - **`assets/`** - Files processed by Hugo Pipes (CSS, JS, images needing processing)
 - **`static/`** - Files served as-is (fonts, favicons, robots.txt, third-party libraries)
 
-## ⚙️ Configuration Management
+## ️ Configuration Management
 
 ### hugo.yaml Structure
 
@@ -579,7 +579,7 @@ module:
       target: "layouts"
 ```
 
-## 🌍 Internationalization (i18n)
+## Internationalization (i18n)
 
 ### Translation Files
 
@@ -663,17 +663,17 @@ content/
 <html lang="{{ .Site.Language.Lang }}"></html>
 ```
 
-## 🚀 Performance Optimization
+## Performance Optimization
 
 ### Image Optimization
 
 **Always Process Images:**
 
 ```html
-<!-- ❌ Bad: Using original large image -->
+<!-- FAIL: Bad: Using original large image -->
 <img src="/images/hero.jpg" alt="Hero" />
 
-<!-- ✅ Good: Resized and optimized -->
+<!-- PASS: Good: Resized and optimized -->
 {{ $image := resources.Get "images/hero.jpg" }} {{ $resized := $image.Resize "800x webp q85" }}
 <img src="{{ $resized.RelPermalink }}" alt="Hero" />
 ```
@@ -739,7 +739,7 @@ build:
   useResourceCacheWhen: "fallback"
 ```
 
-## 🔍 SEO Best Practices
+## SEO Best Practices
 
 ### Meta Tags
 
@@ -844,14 +844,14 @@ Disallow: /
 Sitemap: {{ .Site.BaseURL }}sitemap.xml
 ```
 
-## ♿ Accessibility (WCAG Compliance)
+## Accessibility (WCAG Compliance)
 
 ### Semantic HTML
 
 **Use Proper HTML5 Elements:**
 
 ```html
-<!-- ✅ Good: Semantic structure -->
+<!-- PASS: Good: Semantic structure -->
 <article>
   <header>
     <h1>Article Title</h1>
@@ -867,7 +867,7 @@ Sitemap: {{ .Site.BaseURL }}sitemap.xml
   </footer>
 </article>
 
-<!-- ❌ Bad: Divs everywhere -->
+<!-- FAIL: Bad: Divs everywhere -->
 <div class="article">
   <div class="header">
     <div class="title">Article Title</div>
@@ -910,7 +910,7 @@ Sitemap: {{ .Site.BaseURL }}sitemap.xml
 
 **Use Accessible Color Palette:**
 
-Refer to [Color Accessibility Convention](../conventions/formatting/color-accessibility.md) for the verified accessible palette:
+Refer to [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) for the verified accessible palette:
 
 - Blue: `#0173B2`
 - Orange: `#DE8F05`
@@ -929,10 +929,10 @@ Refer to [Color Accessibility Convention](../conventions/formatting/color-access
 **Always Provide Descriptive Alt Text:**
 
 ```html
-<!-- ✅ Good: Descriptive alt text -->
+<!-- PASS: Good: Descriptive alt text -->
 <img src="chart.jpg" alt="Bar chart showing 40% increase in user engagement from 2024 to 2025" />
 
-<!-- ❌ Bad: Generic alt text -->
+<!-- FAIL: Bad: Generic alt text -->
 <img src="chart.jpg" alt="Chart" />
 
 <!-- Decorative images -->
@@ -944,7 +944,7 @@ Refer to [Color Accessibility Convention](../conventions/formatting/color-access
 **Ensure Keyboard Accessibility:**
 
 ```html
-<!-- ✅ Good: Proper focus management -->
+<!-- PASS: Good: Proper focus management -->
 <button type="button" aria-label="Open menu" aria-expanded="false">Menu</button>
 
 <!-- Visible focus indicator in CSS -->
@@ -956,7 +956,7 @@ Refer to [Color Accessibility Convention](../conventions/formatting/color-access
 </style>
 ```
 
-## 🛠️ Shortcode Development
+## ️ Shortcode Development
 
 ### When to Create Shortcodes
 
@@ -1052,7 +1052,7 @@ This is a warning message with **markdown** support.
 {{ end }}
 ```
 
-## 🏗️ Build and Deployment
+## ️ Build and Deployment
 
 ### Build Scripts
 
@@ -1164,7 +1164,7 @@ chmod +x build.sh
 - `ayokoding-web-deployer` - Automates ayokoding-web deployment
 - `ose-platform-web-deployer` - Automates ose-platform-web deployment
 
-## 🧪 Testing and Validation
+## Testing and Validation
 
 ### Local Testing
 
@@ -1217,7 +1217,7 @@ hugo --gc --minify --printPathWarnings
 - [ ] Color contrast meets WCAG AA
 - [ ] Semantic HTML used
 
-## 📚 Hugo Commands Reference
+## Hugo Commands Reference
 
 ### Common Commands
 
@@ -1264,7 +1264,7 @@ hugo mod get -u github.com/user/repo  # Update specific module
 hugo mod tidy                          # Remove unused modules
 ```
 
-## ✅ Best Practices
+## PASS: Best Practices
 
 Following these best practices ensures maintainable, performant, and accessible Hugo sites.
 
@@ -1324,7 +1324,7 @@ fingerprint }} {{ end }} <link rel="stylesheet" href="{{ $css.RelPermalink }}" /
 
 ```bash
 # Add to .gitignore (remove resources/_gen if it's there)
-# /resources/_gen/images  # ❌ Don't ignore this
+# /resources/_gen/images  # FAIL: Don't ignore this
 
 # Commit the cache
 git add resources/_gen
@@ -1362,10 +1362,10 @@ git commit -m "chore: add Hugo resources cache"
 **Always use archetypes:**
 
 ```bash
-# ✅ Correct: Uses archetype
+# PASS: Correct: Uses archetype
 hugo new blog/my-post.md
 
-# ❌ Avoid: Manual file creation
+# FAIL: Avoid: Manual file creation
 touch content/blog/my-post.md
 ```
 
@@ -1378,10 +1378,10 @@ touch content/blog/my-post.md
 **Always resize and optimize:**
 
 ```html
-<!-- ❌ Bad: Using original -->
+<!-- FAIL: Bad: Using original -->
 <img src="/images/photo.jpg" alt="Photo" />
 
-<!-- ✅ Good: Resized and optimized -->
+<!-- PASS: Good: Resized and optimized -->
 {{ $image := resources.Get "images/photo.jpg" }} {{ $resized := $image.Resize "800x webp q85" }}
 <img src="{{ $resized.RelPermalink }}" alt="Photo" loading="lazy" />
 ```
@@ -1464,18 +1464,18 @@ graph TD
 
 **Why:** The `%%{ }%%` syntax is invalid in Mermaid and causes rendering errors. Always use plain `%%` comments.
 
-**Reference:** See [Diagram Convention - Mermaid Comment Syntax](../conventions/formatting/diagrams.md#mermaid-comment-syntax) for complete details.
+**Reference:** See [Diagram Convention - Mermaid Comment Syntax](../../conventions/formatting/diagrams.md#mermaid-comment-syntax) for complete details.
 
-## ⚠️ Antipatterns to Avoid
+## Antipatterns to Avoid
 
 These common mistakes can cause maintenance headaches, performance issues, or broken builds.
 
-### 1. ❌ Editing Theme Files Directly
+### 1. FAIL: Editing Theme Files Directly
 
 **Antipattern:**
 
 ```bash
-# ❌ Bad: Editing theme files directly
+# FAIL: Bad: Editing theme files directly
 vim themes/hextra/layouts/_default/baseof.html
 ```
 
@@ -1488,7 +1488,7 @@ vim themes/hextra/layouts/_default/baseof.html
 **Solution:**
 
 ```bash
-# ✅ Good: Override in your layouts directory
+# PASS: Good: Override in your layouts directory
 cp themes/hextra/layouts/_default/baseof.html layouts/_default/baseof.html
 # Now edit layouts/_default/baseof.html
 ```
@@ -1497,12 +1497,12 @@ cp themes/hextra/layouts/_default/baseof.html layouts/_default/baseof.html
 
 **Source:** [Hugo - Customizing a Theme](https://bwaycer.github.io/hugo_tutorial.hugo/themes/customizing/)
 
-### 2. ❌ Not Cleaning Destination Directory
+### 2. FAIL: Not Cleaning Destination Directory
 
 **Antipattern:**
 
 ```bash
-# ❌ Bad: Building without cleaning
+# FAIL: Bad: Building without cleaning
 hugo
 ```
 
@@ -1511,7 +1511,7 @@ hugo
 **Solution:**
 
 ```bash
-# ✅ Good: Always clean before building
+# PASS: Good: Always clean before building
 hugo --gc --minify
 
 # Or in build script
@@ -1523,15 +1523,15 @@ hugo --gc --minify
 
 **Source:** [4 Hugo Beginner Mistakes](https://www.brewinstallbuzzwords.com/posts/hugo-beginner-mistakes/)
 
-### 3. ❌ Using Static for Processed Assets
+### 3. FAIL: Using Static for Processed Assets
 
 **Antipattern:**
 
 ```
 static/
-├── css/main.css      # ❌ Should be in assets/
-├── js/app.js         # ❌ Should be in assets/
-└── images/large.jpg  # ❌ Should be in assets/ for processing
+├── css/main.css      # FAIL: Should be in assets/
+├── js/app.js         # FAIL: Should be in assets/
+└── images/large.jpg  # FAIL: Should be in assets/ for processing
 ```
 
 **Problem:** Files in `static/` bypass Hugo Pipes processing - no minification, fingerprinting, or image optimization.
@@ -1540,26 +1540,26 @@ static/
 
 ```
 assets/
-├── css/main.css      # ✅ Processed with PostCSS/minify
-├── js/app.js         # ✅ Bundled and minified
-└── images/large.jpg  # ✅ Resized and optimized
+├── css/main.css      # PASS: Processed with PostCSS/minify
+├── js/app.js         # PASS: Bundled and minified
+└── images/large.jpg  # PASS: Resized and optimized
 
 static/
-├── fonts/            # ✅ Served as-is (correct)
-├── favicon.ico       # ✅ Served as-is (correct)
-└── robots.txt        # ✅ Served as-is (correct)
+├── fonts/            # PASS: Served as-is (correct)
+├── favicon.ico       # PASS: Served as-is (correct)
+└── robots.txt        # PASS: Served as-is (correct)
 ```
 
 **Why:** `assets/` files are processed; `static/` files are served as-is.
 
 **Source:** [Hugo Pipes Introduction](https://gohugo.io/hugo-pipes/introduction/)
 
-### 4. ❌ Not Using .RelPermalink for Assets
+### 4. FAIL: Not Using .RelPermalink for Assets
 
 **Antipattern:**
 
 ```html
-<!-- ❌ Bad: Hardcoded path -->
+<!-- FAIL: Bad: Hardcoded path -->
 <link rel="stylesheet" href="/css/main.css" />
 ```
 
@@ -1572,7 +1572,7 @@ static/
 **Solution:**
 
 ```html
-<!-- ✅ Good: Use RelPermalink -->
+<!-- PASS: Good: Use RelPermalink -->
 {{ $css := resources.Get "css/main.css" | resources.PostCSS | minify | fingerprint }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" />
 ```
@@ -1581,7 +1581,7 @@ static/
 
 **Source:** [Hugo Pipes](https://gohugo.io/hugo-pipes/)
 
-### 5. ❌ Ignoring Build Warnings
+### 5. FAIL: Ignoring Build Warnings
 
 **Antipattern:**
 
@@ -1598,7 +1598,7 @@ hugo
 **Solution:**
 
 ```bash
-# ✅ Good: Check and fix all warnings
+# PASS: Good: Check and fix all warnings
 hugo --printPathWarnings
 hugo --printUnusedTemplates
 
@@ -1608,7 +1608,7 @@ hugo --logLevel warn
 
 **Why:** Warnings today become errors tomorrow. Fix them immediately.
 
-### 6. ❌ Not Specifying Language in Code Blocks
+### 6. FAIL: Not Specifying Language in Code Blocks
 
 **Antipattern:**
 
@@ -1622,7 +1622,7 @@ hugo --logLevel warn
 **Solution:**
 
 ```html
-<!-- ✅ Good: Specify language -->
+<!-- PASS: Good: Specify language -->
 <pre><code class="language-{{ .Get 0 }}">{{ .Inner }}</code></pre>
 
 <!-- Or use Hugo's built-in highlight -->
@@ -1631,12 +1631,12 @@ hugo --logLevel warn
 
 **Why:** Syntax highlighting improves readability; language specification helps accessibility.
 
-### 7. ❌ Hardcoding URLs
+### 7. FAIL: Hardcoding URLs
 
 **Antipattern:**
 
 ```html
-<!-- ❌ Bad: Hardcoded URL -->
+<!-- FAIL: Bad: Hardcoded URL -->
 <a href="https://mysite.com/blog/post-1/">Read more</a>
 ```
 
@@ -1645,7 +1645,7 @@ hugo --logLevel warn
 **Solution:**
 
 ```html
-<!-- ✅ Good: Use .Permalink or relref -->
+<!-- PASS: Good: Use .Permalink or relref -->
 {{ $page := .Site.GetPage "/blog/post-1" }}
 <a href="{{ $page.Permalink }}">Read more</a>
 
@@ -1655,12 +1655,12 @@ hugo --logLevel warn
 
 **Why:** Hugo generates correct URLs for all environments.
 
-### 8. ❌ Not Using Lazy Loading for Images
+### 8. FAIL: Not Using Lazy Loading for Images
 
 **Antipattern:**
 
 ```html
-<!-- ❌ Bad: All images load immediately -->
+<!-- FAIL: Bad: All images load immediately -->
 <img src="{{ $image.RelPermalink }}" alt="Photo" />
 ```
 
@@ -1669,7 +1669,7 @@ hugo --logLevel warn
 **Solution:**
 
 ```html
-<!-- ✅ Good: Lazy load images -->
+<!-- PASS: Good: Lazy load images -->
 <img src="{{ $image.RelPermalink }}" alt="Photo" loading="lazy" />
 ```
 
@@ -1679,7 +1679,7 @@ hugo --logLevel warn
 
 **Source:** [How to Add Image Processing to Your Hugo Website](https://alexlakatos.com/web/2020/07/17/hugo-image-processing/)
 
-### 9. ❌ Creating Single-Use Shortcodes
+### 9. FAIL: Creating Single-Use Shortcodes
 
 **Antipattern:**
 
@@ -1696,7 +1696,7 @@ hugo --logLevel warn
 **Solution:**
 
 ```markdown
-<!-- ✅ Good: Use HTML directly in markdown for one-offs -->
+<!-- PASS: Good: Use HTML directly in markdown for one-offs -->
 <div class="special-header">
   <!-- One-off layout directly in content -->
 </div>
@@ -1706,12 +1706,12 @@ hugo --logLevel warn
 
 **Source:** [Head to Head: Shortcodes vs Partials in Hugo](https://jpdroege.com/blog/hugo-shortcodes-partials/)
 
-### 10. ❌ Skipping Environment-Specific Builds
+### 10. FAIL: Skipping Environment-Specific Builds
 
 **Antipattern:**
 
 ```bash
-# ❌ Bad: Same build for dev and prod
+# FAIL: Bad: Same build for dev and prod
 hugo
 ```
 
@@ -1720,7 +1720,7 @@ hugo
 **Solution:**
 
 ```bash
-# ✅ Good: Different builds for different environments
+# PASS: Good: Different builds for different environments
 
 # Development
 hugo server -D  # Include drafts
@@ -1731,13 +1731,13 @@ hugo --gc --minify --environment production
 
 **Why:** Optimize for each environment's needs.
 
-## 🧪 Testing and Quality Assurance
+## Testing and Quality Assurance
 
 Before deploying Hugo site changes to production, complete this comprehensive testing checklist to ensure quality, performance, and accessibility standards are met.
 
 ### Build Testing
 
-**✅ Pre-deployment Build Checks:**
+**PASS: Pre-deployment Build Checks:**
 
 ```bash
 # 1. Clean build test
@@ -1766,7 +1766,7 @@ hugo --printPathWarnings --printUnusedTemplates
 
 ### Local Development Testing
 
-**✅ Development Server Checks:**
+**PASS: Development Server Checks:**
 
 ```bash
 # Start development server with drafts
@@ -1791,7 +1791,7 @@ hugo server -D --bind 0.0.0.0 --port 1313
 
 ### Performance Testing
 
-**✅ Performance Benchmarks:**
+**PASS: Performance Benchmarks:**
 
 **1. Lighthouse Audit:**
 
@@ -1845,7 +1845,7 @@ time hugo --gc --minify
 
 ### Accessibility Testing
 
-**✅ WCAG AA Compliance:**
+**PASS: WCAG AA Compliance:**
 
 **1. Automated Testing:**
 
@@ -1895,7 +1895,7 @@ axe http://localhost:1313 --exit
 
 ### SEO Testing
 
-**✅ Search Engine Optimization:**
+**PASS: Search Engine Optimization:**
 
 **1. Meta Tags Validation:**
 
@@ -1931,7 +1931,7 @@ grep -r "rel=\"canonical\"" public/
 
 ### Browser Compatibility Testing
 
-**✅ Cross-Browser Checks:**
+**PASS: Cross-Browser Checks:**
 
 **Test in:**
 
@@ -1952,7 +1952,7 @@ grep -r "rel=\"canonical\"" public/
 
 ### Content Validation
 
-**✅ Content Quality Checks:**
+**PASS: Content Quality Checks:**
 
 **1. Link Checking:**
 
@@ -1982,7 +1982,7 @@ htmltest public/
 
 ### Security Testing
 
-**✅ Security Checks:**
+**PASS: Security Checks:**
 
 **1. Content Security:**
 
@@ -2010,7 +2010,7 @@ curl -I https://yourdomain.com
 
 ### Deployment Readiness
 
-**✅ Pre-Deployment Final Checks:**
+**PASS: Pre-Deployment Final Checks:**
 
 **1. Environment Configuration:**
 
@@ -2055,7 +2055,7 @@ python3 -m http.server 8000
 
 ### Post-Deployment Verification
 
-**✅ After Deployment:**
+**PASS: After Deployment:**
 
 **1. Smoke Testing:**
 
@@ -2100,26 +2100,26 @@ python3 -m http.server 8000
 
 set -e  # Exit on error
 
-echo "🧪 Testing Hugo Site..."
+echo " Testing Hugo Site..."
 
 echo "1. Clean build..."
 rm -rf public/ resources/_gen/
 hugo --gc --minify --environment production
 
 echo "2. Check for warnings..."
-hugo --printPathWarnings --printUnusedTemplates | grep -i warn && exit 1 || echo "✅ No warnings"
+hugo --printPathWarnings --printUnusedTemplates | grep -i warn && exit 1 || echo "PASS: No warnings"
 
 echo "3. Verify output..."
-[ -d public/ ] && echo "✅ public/ directory exists" || exit 1
+[ -d public/ ] && echo "PASS: public/ directory exists" || exit 1
 
 echo "4. Count generated pages..."
 PAGE_COUNT=$(find public -name "*.html" | wc -l)
-echo "✅ Generated $PAGE_COUNT pages"
+echo "PASS: Generated $PAGE_COUNT pages"
 
 echo "5. Check for broken links (sample)..."
 # Add link checker here if available
 
-echo "✅ All tests passed! Ready for deployment."
+echo "PASS: All tests passed! Ready for deployment."
 ```
 
 **Usage:**
@@ -2129,7 +2129,7 @@ chmod +x test-hugo-site.sh
 ./test-hugo-site.sh
 ```
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -2165,7 +2165,7 @@ Wrong:   {{% shortcode %}}  <!-- Only for shortcodes that return markdown -->
 - Check file paths in `vercel.json`
 - Review build logs for specific errors
 
-## 📖 References
+## References
 
 ### Official Documentation
 
@@ -2188,11 +2188,11 @@ Wrong:   {{% shortcode %}}  <!-- Only for shortcodes that return markdown -->
 
 ### Related Conventions
 
-- [Hugo Content Convention - Shared](../conventions/hugo/shared.md) - Shared content standards
-- [Hugo Content Convention - ayokoding](../conventions/hugo/ayokoding.md) - ayokoding-web content standards
-- [Hugo Content Convention - OSE Platform](../conventions/hugo/ose-platform.md) - ose-platform-web content standards
-- [Color Accessibility Convention](../conventions/formatting/color-accessibility.md) - Accessible colors
-- [Content Quality Principles](../conventions/content/quality.md) - Universal standards
+- [Hugo Content Convention - Shared](../../conventions/hugo/shared.md) - Shared content standards
+- [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-web content standards
+- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - ose-platform-web content standards
+- [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - Accessible colors
+- [Content Quality Principles](../../conventions/content/quality.md) - Universal standards
 
 ---
 

@@ -48,7 +48,7 @@ This convention establishes shared standards that apply to **all Hugo sites** in
 ### What This Convention Does NOT Cover
 
 - **Site-specific conventions** - See [ayokoding-web convention](./ayokoding.md) and [ose-platform-web convention](./ose-platform.md)
-- **Hugo theme development** - Covered in [Hugo Development Convention](../development/hugo/development.md)
+- **Hugo theme development** - Covered in [Hugo Development Convention](../../development/hugo/development.md)
 - **Content strategy** - What content to create (covered in domain conventions)
 - **Deployment** - Covered by site-specific deployer agents
 
@@ -192,7 +192,7 @@ Hugo's Mermaid renderer has strict syntax requirements:
 1. **Comments**: Use `%% Comment %%` (NO curly braces)
 2. **Text with special characters**: Quote text containing forward slashes, brackets, or special symbols
 
-✅ **Good (correct Mermaid syntax)**:
+PASS: **Good (correct Mermaid syntax)**:
 
 ````markdown
 ```mermaid
@@ -203,7 +203,7 @@ flowchart LR
 ```
 ````
 
-❌ **Bad (syntax errors)**:
+FAIL: **Bad (syntax errors)**:
 
 ````markdown
 ```mermaid
@@ -229,21 +229,21 @@ flowchart LR
 
 **Allowed Usage**:
 
-- Section markers (✅ Success, ❌ Error, ⚠️ Warning)
-- Status indicators (🚀 Launch, 🔧 Maintenance, 📊 Analytics)
-- Category icons (📚 Tutorial, 🎯 Goal, 💡 Tip)
+- Section markers (PASS: Success, FAIL: Error, Warning)
+- Status indicators (Launch, Maintenance, Analytics)
+- Category icons ( Tutorial, Goal, Tip)
 
 **Example (ose-platform-web update)**:
 
 ```markdown
-## Release Update 🚀
+## Release Update
 
-✅ **Completed Features**
+PASS: **Completed Features**
 
 - User authentication system
 - Dashboard analytics
 
-⚠️ **Known Issues**
+**Known Issues**
 
 - Search optimization in progress
 ```
@@ -369,7 +369,7 @@ content/id/belajar/nodejs/
 
 **Forbidden in Hugo Content**:
 
-❌ **Avoid**:
+FAIL: **Avoid**:
 
 ```markdown
 This tutorial takes 2-3 hours to complete.
@@ -377,7 +377,7 @@ Duration: 45 minutes
 Learn this in 30 minutes.
 ```
 
-✅ **Good**:
+PASS: **Good**:
 
 ```markdown
 By the end of this tutorial, you'll be able to...
@@ -388,8 +388,8 @@ Coverage: 60-85% of domain knowledge (intermediate depth)
 
 Coverage percentages indicate **depth/scope**, not **time**, so they're allowed:
 
-- ✅ "Coverage: 0-5%" (initial setup scope)
-- ✅ "Coverage: 60-85%" (intermediate depth)
+- PASS: "Coverage: 0-5%" (initial setup scope)
+- PASS: "Coverage: 60-85%" (intermediate depth)
 
 ---
 
@@ -430,7 +430,7 @@ Content starts here with standard markdown indentation.
 - Nested bullets follow standard markdown
 ```
 
-❌ **Incorrect (tabs in frontmatter)**:
+FAIL: **Incorrect (tabs in frontmatter)**:
 
 ```yaml
 ---
@@ -465,8 +465,8 @@ tags:
 
 Hugo renders the same navigation content in different page contexts (sidebar, mobile menu, homepage). Relative links resolve differently depending on where they're rendered:
 
-- From `/en/learn/` page: `./ai/` → `/en/learn/ai/` ✅
-- From `/en/` homepage: `./ai/` → `/en/ai/` ❌ (broken)
+- From `/en/learn/` page: `./ai/` → `/en/learn/ai/`
+- From `/en/` homepage: `./ai/` → `/en/ai/` FAIL: (broken)
 
 Absolute paths work correctly from **any page context**.
 
@@ -492,7 +492,7 @@ Visit [Hugo Documentation](https://gohugo.io/documentation/)
 ![Architecture Diagram](/images/architecture.png)
 ```
 
-❌ **Incorrect (relative paths or .md extension)**:
+FAIL: **Incorrect (relative paths or .md extension)**:
 
 ```markdown
 <!-- WRONG! Relative paths break in different rendering contexts -->
@@ -518,9 +518,9 @@ The approach depends on your Hugo configuration:
 - Links should specify the target language explicitly
 
 ```markdown
-✅ Correct: [Tutorial](/en/learn/nodejs)
-✅ Correct: [Tutorial](/id/belajar/nodejs)
-❌ Wrong: [Tutorial](/learn/nodejs) <!-- Missing language prefix -->
+PASS: Correct: [Tutorial](/en/learn/nodejs)
+PASS: Correct: [Tutorial](/id/belajar/nodejs)
+FAIL: Wrong: [Tutorial](/learn/nodejs) <!-- Missing language prefix -->
 ```
 
 **For sites with `defaultContentLanguageInSubdir: false`**:
@@ -678,7 +678,7 @@ These conventions are unique to Hugo static site generation and apply to both si
 
 **Applies to**: ALL Hugo content files in both ayokoding-web and ose-platform-web.
 
-✅ **Good (no duplicate H1)**:
+PASS: **Good (no duplicate H1)**:
 
 ```markdown
 ---
@@ -700,7 +700,7 @@ This tutorial covers the fundamentals of Elixir programming...
 Before starting, ensure you have...
 ```
 
-❌ **Bad (duplicate H1)**:
+FAIL: **Bad (duplicate H1)**:
 
 ```markdown
 ---
@@ -784,7 +784,7 @@ Hugo uses two delimiter types based on content processing needs:
 
 **When to Use Each**:
 
-✅ **Use `{{% %}}` for Markdown content**:
+PASS: **Use `{{% %}}` for Markdown content**:
 
 ```markdown
 {{% steps %}}
@@ -800,7 +800,7 @@ Edit the configuration file...
 {{% /steps %}}
 ```
 
-✅ **Use `{{< >}}` for HTML content**:
+PASS: **Use `{{< >}}` for HTML content**:
 
 ```markdown
 {{< figure src="/images/dashboard.png" caption="OSE Platform Dashboard" >}}
@@ -808,7 +808,7 @@ Edit the configuration file...
 {{< ref "/learn/getting-started" >}}
 ```
 
-❌ **Bad (wrong delimiter for Markdown content)**:
+FAIL: **Bad (wrong delimiter for Markdown content)**:
 
 ```markdown
 {{< steps >}} <!-- WRONG! Displays as plain text instead of rendering -->

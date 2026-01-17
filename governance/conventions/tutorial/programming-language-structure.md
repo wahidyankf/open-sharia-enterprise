@@ -314,14 +314,14 @@ See [Hugo Content Convention - ayokoding](../hugo/ayokoding.md) for complete lev
 
 **When to Create By-Example:**
 
-✅ **Create when:**
+PASS: **Create when:**
 
 - Demand exists from experienced developers wanting rapid pickup
 - Language has sufficient community interest
 - Resources available for creating 75-90 annotated examples
 - By-concept path is complete (don't create by-example before by-concept)
 
-❌ **Skip when:**
+FAIL: **Skip when:**
 
 - Language is new to platform (focus on by-concept first)
 - Limited resources (prioritize by-concept completion)
@@ -505,28 +505,28 @@ weight: 100002
 
 **ayokoding-web-general-checker** validates:
 
-- ✅ By-concept directory structure exists
-- ✅ All mandatory files present (\_index.md, overview.md, beginner/intermediate/advanced.md)
-- ✅ Weight values follow level-based system
-- ✅ Internal links use absolute paths
-- ✅ Frontmatter completeness
-- ✅ No H1 headings in content
+- PASS: By-concept directory structure exists
+- PASS: All mandatory files present (\_index.md, overview.md, beginner/intermediate/advanced.md)
+- PASS: Weight values follow level-based system
+- PASS: Internal links use absolute paths
+- PASS: Frontmatter completeness
+- PASS: No H1 headings in content
 
 **ayokoding-web-by-example-checker** validates:
 
-- ✅ By-example directory structure (when exists)
-- ✅ 75-90 examples across three files
-- ✅ Five-part example structure
-- ✅ Self-containment rules
-- ✅ Educational comment standards
-- ✅ Coverage progression
+- PASS: By-example directory structure (when exists)
+- PASS: 75-90 examples across three files
+- PASS: Five-part example structure
+- PASS: Self-containment rules
+- PASS: Educational comment standards
+- PASS: Coverage progression
 
 **ayokoding-web-structure-checker** validates:
 
-- ✅ Navigation ordering (by-concept/by-example first, then setup/quick-start)
-- ✅ 2-layer navigation depth with complete coverage
-- ✅ Index files exist and are properly structured
-- ✅ Weight value consistency
+- PASS: Navigation ordering (by-concept/by-example first, then setup/quick-start)
+- PASS: 2-layer navigation depth with complete coverage
+- PASS: Index files exist and are properly structured
+- PASS: Weight value consistency
 
 ### Manual Verification Checklist
 
@@ -548,7 +548,7 @@ Before publishing new language tutorials:
 
 ## Common Mistakes
 
-❌ **Mistake 1: Nesting foundational tutorials in by-concept/**
+FAIL: **Mistake 1: Nesting foundational tutorials in by-concept/**
 
 ```
 # WRONG!
@@ -557,7 +557,7 @@ by-concept/
 └── quick-start.md     # Should be at tutorials/ root
 ```
 
-✅ **Correct: Foundational at root**
+PASS: **Correct: Foundational at root**
 
 ```
 # RIGHT!
@@ -569,7 +569,7 @@ tutorials/
 
 ---
 
-❌ **Mistake 2: Wrong navigation order**
+FAIL: **Mistake 2: Wrong navigation order**
 
 ```markdown
 # WRONG! Setup/quick-start before learning paths
@@ -580,7 +580,7 @@ tutorials/
 - [By Example](/en/.../by-example)
 ```
 
-✅ **Correct: Learning paths first**
+PASS: **Correct: Learning paths first**
 
 ```markdown
 # RIGHT! Learning path choice comes first
@@ -593,7 +593,7 @@ tutorials/
 
 ---
 
-❌ **Mistake 3: Using relative paths**
+FAIL: **Mistake 3: Using relative paths**
 
 ```markdown
 # WRONG! Relative paths break from different page contexts
@@ -602,7 +602,7 @@ tutorials/
 - [Examples](./by-example/beginner)
 ```
 
-✅ **Correct: Absolute paths**
+PASS: **Correct: Absolute paths**
 
 ```markdown
 # RIGHT! Absolute paths work from any context
@@ -613,7 +613,7 @@ tutorials/
 
 ---
 
-❌ **Mistake 4: Creating by-example before by-concept**
+FAIL: **Mistake 4: Creating by-example before by-concept**
 
 ```
 # WRONG! By-example created first
@@ -622,7 +622,7 @@ java/tutorials/
 └── initial-setup.md     # Missing by-concept/
 ```
 
-✅ **Correct: By-concept foundation first**
+PASS: **Correct: By-concept foundation first**
 
 ```
 # RIGHT! By-concept foundation, then optional by-example
@@ -635,7 +635,7 @@ java/tutorials/
 
 ---
 
-❌ **Mistake 5: Missing overview.md files**
+FAIL: **Mistake 5: Missing overview.md files**
 
 ```
 # WRONG! No overview explaining learning approach
@@ -646,7 +646,7 @@ by-concept/
 └── advanced.md
 ```
 
-✅ **Correct: Overview explains path**
+PASS: **Correct: Overview explains path**
 
 ```
 # RIGHT! Overview sets expectations

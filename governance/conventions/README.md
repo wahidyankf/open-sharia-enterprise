@@ -14,7 +14,7 @@ updated: 2025-12-28
 
 Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, and linked. Contains 24 conventions covering all aspects of documentation writing and formatting.
 
-**Governance**: All conventions in this directory serve the [Vision](../vision/open-sharia-enterprise.md) (Layer 0) and implement the [Core Principles](../principles/README.md) (Layer 1) as part of the six-layer architecture. Each convention MUST include a "Principles Implemented/Respected" section that explicitly traces back to foundational principles. See [Repository Governance Architecture](../repository-governance-architecture.md) for complete governance model and [Convention Writing Convention](./content/convention-writing.md) for structure requirements.
+**Governance**: All conventions in this directory serve the [Vision](../vision/open-sharia-enterprise.md) (Layer 0) and implement the [Core Principles](./README.md) (Layer 1) as part of the six-layer architecture. Each convention MUST include a "Principles Implemented/Respected" section that explicitly traces back to foundational principles. See [Repository Governance Architecture](../repository-governance-architecture.md) for complete governance model and [Convention Writing Convention](./content/convention-writing.md) for structure requirements.
 
 ## 🎯 Scope
 
@@ -31,7 +31,7 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 - Hugo **content** writing (frontmatter, markdown, archetypes)
 - Repository documentation standards (README, CONTRIBUTING)
 
-**❌ Does NOT Belong Here (use [Development](../development/README.md) instead):**
+**❌ Does NOT Belong Here (use [Development](./README.md) instead):**
 
 - Software development methodologies (BDD, testing, agile)
 - Build processes and tooling workflows
@@ -106,7 +106,7 @@ Content quality standards, validation methodology, and writing guidelines.
 Tutorial creation, structure, naming, and content standards.
 
 - [By Example Tutorial](./tutorial/by-example.md) - Standards for code-first by-example tutorials with 75-90 heavily annotated, self-contained, runnable examples achieving 95% coverage. Defines four-part example structure (brief explanation, Mermaid diagram when appropriate, heavily annotated code with `// =>` notation, key takeaway), self-containment rules across beginner/intermediate/advanced levels, educational comment standards, and coverage progression (0-40%, 40-75%, 75-95%). Validated by ayokoding-web-by-example-checker agent
-- [Programming Language Content Standard](./tutorial/programming-language-content.md) - Universal content architecture for programming language education on ayokoding-web. Defines mandatory structure (5 tutorial levels, cookbook at position 3 in how-to/ for optimal engagement, how-to guides), coverage philosophy (0-5%, 5-30%, 0-60%, 60-85%, 85-95%), quality metrics, and completeness criteria. Benchmarked from Golang, Python, Java implementations. **See also**: [How to Add a Programming Language](../../how-to/hoto__add-programming-language.md)
+- [Programming Language Content Standard](./tutorial/programming-language-content.md) - Universal content architecture for programming language education on ayokoding-web. Defines mandatory structure (5 tutorial levels, cookbook at position 3 in how-to/ for optimal engagement, how-to guides), coverage philosophy (0-5%, 5-30%, 0-60%, 60-85%, 85-95%), quality metrics, and completeness criteria. Benchmarked from Golang, Python, Java implementations. **See also**: [How to Add a Programming Language](../../docs/how-to/hoto__add-programming-language.md)
 - [Programming Language Tutorial Structure](./tutorial/programming-language-structure.md) - Dual-path tutorial organization for programming languages with by-concept (narrative-driven, comprehensive, 0-95% coverage through beginner/intermediate/advanced) and by-example (code-first, 75-90 annotated examples, 95% coverage for experienced developers). Defines directory structure, navigation pattern (learning paths first), foundational tutorials at root (Initial Setup, Quick Start), weight values, and optional by-example path. **Status**: Java/Elixir/Golang dual-path, Kotlin/Python/Rust single-path
 - [Tutorial Convention](./tutorial/general.md) - Standards for creating learning-oriented tutorials with narrative flow, progressive scaffolding, and hands-on elements
 - [Tutorial Naming](./tutorial/naming.md) - Standardized tutorial types and depth levels (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook) with "Full Set" concept for sequential learning
@@ -135,8 +135,8 @@ Project-level documentation and planning organization.
 ## 📚 Related Documentation
 
 - [Repository Governance Architecture](../repository-governance-architecture.md) - Complete six-layer architecture (Layer 2: Conventions)
-- [Core Principles](../principles/README.md) - Layer 1: Foundational values that govern conventions
-- [Development](../development/README.md) - Layer 3: Software practices (parallel governance with conventions)
+- [Core Principles](./README.md) - Layer 1: Foundational values that govern conventions
+- [Development](./README.md) - Layer 3: Software practices (parallel governance with conventions)
 
 ---
 

@@ -16,7 +16,7 @@ updated: 2026-01-01
 
 A systematic approach to naming files in the open-sharia-enterprise documentation that ensures clarity, organization, and discoverability while maintaining a logical hierarchy.
 
-## 📋 Overview
+## Overview
 
 The naming convention serves three critical purposes:
 
@@ -28,15 +28,15 @@ The naming convention serves three critical purposes:
 
 This convention implements the following core principles:
 
-- \*\*[Explicit Over Implicit](../../principles/software-engineering/[name]`), making the organizational hierarchy visible without requiring users to navigate folders. No hidden conventions or magic - the full path is transparent in the filename itself.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)** - making the organizational hierarchy visible without requiring users to navigate folders. No hidden conventions or magic - the full path is transparent in the filename itself.
 
-- \*\*[Simplicity Over Complexity](../../principles/general/`). Avoids complex encoding schemes or multiple separator types. The pattern is easy to learn, remember, and apply consistently.
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)** - Avoids complex encoding schemes or multiple separator types. The pattern is easy to learn, remember, and apply consistently.
 
 ## Purpose
 
 This convention establishes a systematic file naming pattern that encodes directory hierarchy in filenames, ensuring global uniqueness and discoverability across the documentation. It prevents naming conflicts, makes file locations transparent, and enables efficient file management without relying on directory structure alone.
 
-## 🎯 Scope
+## Scope
 
 This naming convention applies to **all files in the `docs/` directory** (the Obsidian vault):
 
@@ -52,7 +52,7 @@ This naming convention applies to **all files in the `docs/` directory** (the Ob
 - Diagrams (`.excalidraw`, `.mmd`, `.drawio`)
 - Any other documentation assets
 
-## 📝 The Universal Pattern
+## The Universal Pattern
 
 All documentation files (except index files) follow this pattern:
 
@@ -75,7 +75,7 @@ By encoding the folder hierarchy in the filename, we make all files globally uni
 
 **Exception**: Index files use `README.md` for GitHub compatibility (see Special Cases below).
 
-## 🔧 How to Build a Prefix
+## How to Build a Prefix
 
 The prefix encodes the folder path using abbreviations separated by single hyphens. Each level of nesting adds another abbreviation segment.
 
@@ -192,21 +192,21 @@ The double underscore creates a critical visual boundary:
 - Distinguishes from single hyphens used in content names
 - Makes parsing trivial: split on `__` to separate structure from content
 
-## ✅ General Naming Rules
+## PASS: General Naming Rules
 
 ### Kebab-Case Format
 
 All filenames use lowercase with hyphens as separators (no spaces, mixed case, or underscores):
 
 ```markdown
-✅ Good:
+PASS: Good:
 
 - tu\_\_getting-started-with-authentication.md
 - hoto\_\_configure-rate-limiting.md
 - re\_\_transaction-endpoints.md
 - ex-ru-co-me\_\_file-naming.md
 
-❌ Bad:
+FAIL: Bad:
 
 - Getting_Started.md (mixed case, underscores)
 - configure Rate Limiting.md (spaces, mixed case)
@@ -256,7 +256,7 @@ updated: 2026-01-01
 ---
 ```
 
-## 🔍 Special Cases
+## Special Cases
 
 ### Index Files (README.md)
 
@@ -319,7 +319,7 @@ governance/conventions/formatting/diagrams.md
 governance/conventions/formatting/diagrams-example.png
 ```
 
-## 🔄 Maintenance and Scalability
+## Maintenance and Scalability
 
 ### Adding New Directories
 
@@ -400,7 +400,7 @@ general-quality-gate.md
    (ex+wf+aywe)
 ```
 
-## 📖 Quick Reference
+## Quick Reference
 
 ### Root Categories
 
@@ -437,7 +437,7 @@ general-quality-gate.md
 | explanation/governance/principles/software-engineering | `explicit-over-implicit.md`      |
 | explanation/vision                                     | `ex-vi__`                        | `open-sharia-enterprise.md` |
 
-## 🔄 Migration History
+## Migration History
 
 ### 3-Phase Reorganization (2026-01-01)
 
@@ -470,11 +470,11 @@ The repository underwent a comprehensive 3-phase reorganization to introduce sub
 - Maintained global uniqueness through subdirectory encoding
 - All traceability sections preserved
 
-## 🔗 Related Documentation
+## Related Documentation
 
 - [Linking Convention](../formatting/linking.md) - How to link between documentation files
 - [Diátaxis Framework](./diataxis-framework.md) - Understanding the documentation organization framework
-- [Conventions Index](../README.md) - Index of all documentation conventions
+- [Conventions Index](./README.md) - Index of all documentation conventions
 
 ---
 

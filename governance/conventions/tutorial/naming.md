@@ -44,7 +44,7 @@ This convention implements the following core principles:
 - **Hugo navigation** - Weight and ordering in Hugo sites
 - **Tutorial validation** - Covered by docs\_\_tutorial-checker agent
 
-## 🎯 Purpose
+## Purpose
 
 **Why standardize tutorial naming?**
 
@@ -54,7 +54,7 @@ This convention implements the following core principles:
 - **Progression** - Clear learning path from beginner to advanced topics
 - **Expectations** - Learners know what to expect before starting
 
-## 📊 Tutorial Types Overview
+## Tutorial Types Overview
 
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -103,9 +103,9 @@ graph TB
 
 ---
 
-## 📚 Tutorial Type Definitions
+## Tutorial Type Definitions
 
-### 🚀 Initial Setup
+### Initial Setup
 
 **Coverage**: 0-5% of domain knowledge
 **Goal**: Get up and running quickly
@@ -137,7 +137,7 @@ Minimal tutorial to get you running your first program or using a tool. In progr
 
 ---
 
-### ⚡ Quick Start
+### Quick Start
 
 **Coverage**: 5-30% of domain knowledge
 **Goal**: Learn enough to explore independently
@@ -170,7 +170,7 @@ Teaches the core concepts and syntax needed to start exploring the domain indepe
 
 ---
 
-### 🟢 Beginner
+### Beginner
 
 **Coverage**: 0-60% of domain knowledge
 **Goal**: Comprehensive foundation from zero to working knowledge
@@ -205,7 +205,7 @@ Teaches everything from absolute basics to solid working knowledge. Covers the m
 
 ---
 
-### 🟡 Intermediate
+### Intermediate
 
 **Coverage**: 60-85% of domain knowledge
 **Goal**: Professional-level expertise for production systems
@@ -243,7 +243,7 @@ Builds on beginner knowledge to cover professional techniques, optimization, and
 
 ---
 
-### 🔴 Advanced
+### Advanced
 
 **Coverage**: 85-95% of domain knowledge
 **Goal**: Expert-level mastery of advanced techniques
@@ -280,7 +280,7 @@ Covers advanced techniques, edge cases, and sophisticated patterns used by exper
 
 ---
 
-### 🧪 Cookbook
+### Cookbook
 
 **Coverage**: Practical recipes (not depth-based)
 **Goal**: Solve day-to-day and real-world problems
@@ -316,7 +316,7 @@ Collection of practical recipes and patterns for solving common real-world probl
 
 ---
 
-### 📖 By Example
+### By Example
 
 **Coverage**: 95% of domain knowledge through annotated examples
 **Goal**: Quick pickup for experienced developers learning new languages
@@ -377,7 +377,7 @@ Example-driven learning path for experienced developers (seasonal programmers/so
 
 ---
 
-## 🎓 Choosing the Right Tutorial Type
+## Choosing the Right Tutorial Type
 
 ### Decision Tree
 
@@ -443,7 +443,7 @@ graph TB
 
 ---
 
-## 📝 Naming Examples
+## Naming Examples
 
 ### Programming Languages
 
@@ -478,9 +478,9 @@ graph TB
 
 ---
 
-## ✅ Best Practices
+## PASS: Best Practices
 
-### DO ✓
+### DO
 
 - **Use consistent naming** - Follow the standard tutorial type names
 - **Match content to type** - Ensure coverage aligns with tutorial type definition
@@ -490,7 +490,7 @@ graph TB
 - **Provide practical examples** - Real-world scenarios, not toy problems
 - **Test with target audience** - Validate content matches the intended level
 
-### DON'T ✗
+### DON'T
 
 - **Mix tutorial types** - Don't combine "Beginner + Intermediate" in one tutorial
 - **Skip prerequisite tutorials** - Each level builds on previous ones
@@ -501,11 +501,11 @@ graph TB
 
 ---
 
-## 🔗 Related Documentation
+## Related Documentation
 
 - [Tutorial Convention](./general.md) - Standards for tutorial structure and content
 - [Diátaxis Framework](../meta/diataxis-framework.md) - Understanding the tutorial category in documentation
-- [Tutorials Index](../../tutorials/README.md) - All available tutorials organized by type
+- [Tutorials Index](./README.md) - All available tutorials organized by type
 - [File Naming Convention](../meta/file-naming.md) - How to name tutorial files
 
 ---

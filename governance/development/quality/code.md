@@ -32,9 +32,9 @@ This practice implements/respects the following conventions:
 
 - **[Commit Message Convention](../workflow/commit-messages.md)**: Git hooks enforce Conventional Commits format through Commitlint, validating commit message structure before commits are created.
 
-- **[Indentation Convention](../conventions/formatting/indentation.md)**: Prettier enforces consistent indentation (2 spaces for YAML frontmatter) across all formatted file types.
+- **[Indentation Convention](../../conventions/formatting/indentation.md)**: Prettier enforces consistent indentation (2 spaces for YAML frontmatter) across all formatted file types.
 
-- **[File Naming Convention](../conventions/meta/file-naming.md)**: Pre-commit hook formats all files matching the repository's file naming patterns without altering the naming structure.
+- **[File Naming Convention](../../conventions/meta/file-naming.md)**: Pre-commit hook formats all files matching the repository's file naming patterns without altering the naming structure.
 
 ## Overview
 
@@ -140,10 +140,10 @@ npx prettier --write [file-path]
 
 ```bash
 $ git commit -m "feat: add new feature"
-✔ Preparing lint-staged...
-✔ Running tasks for staged files...
-✔ Applying modifications from tasks...
-✔ Cleaning up temporary files...
+ Preparing lint-staged...
+ Running tasks for staged files...
+ Applying modifications from tasks...
+ Cleaning up temporary files...
 [main abc1234] feat: add new feature
 ```
 
@@ -174,9 +174,9 @@ $ git commit -m "feat: add new feature"
 ```bash
 $ git commit -m "added new feature"
 ⧗   input: added new feature
-✖   subject may not be empty [subject-empty]
-✖   type may not be empty [type-empty]
-✖   found 2 problems, 0 warnings
+   subject may not be empty [subject-empty]
+   type may not be empty [type-empty]
+   found 2 problems, 0 warnings
 ```
 
 ### Pre-push Hook
@@ -209,9 +209,9 @@ $ git commit -m "added new feature"
 $ git push origin main
 > nx affected -t test:quick
 
-✔ Running target test:quick for affected projects...
-  ✔ ayokoding-cli
-✔ All tests passed
+ Running target test:quick for affected projects...
+   ayokoding-cli
+ All tests passed
 
 Enumerating objects: 5, done.
 [main abc1234] Successfully pushed
@@ -232,7 +232,7 @@ You can bypass git hooks using `--no-verify`:
 git commit --no-verify -m "message"
 ```
 
-**⚠️ WARNING**: Only use this in exceptional circumstances:
+**WARNING**: Only use this in exceptional circumstances:
 
 - Emergency hotfixes where formatting can be fixed later
 - When hooks are malfunctioning (report the issue)
@@ -320,17 +320,17 @@ git add src/index.ts
 git commit -m "feat(api): add new endpoint"
 
 # Hooks execute:
-# ✔ Prettier formats src/index.ts
-# ✔ Commitlint validates message
-# ✔ Commit succeeds
+#  Prettier formats src/index.ts
+#  Commitlint validates message
+#  Commit succeeds
 
 # 4. Push to remote (pre-push hook runs)
 git push origin main
 
 # Pre-push hook executes:
-# ✔ Nx detects affected projects
-# ✔ Runs test:quick for affected projects
-# ✔ Push succeeds
+#  Nx detects affected projects
+#  Runs test:quick for affected projects
+#  Push succeeds
 ```
 
 ### When Hooks Modify Files

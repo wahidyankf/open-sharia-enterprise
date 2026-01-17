@@ -17,7 +17,7 @@ updated: 2025-12-24
 
 Design for **universal access from the start**. Accessibility is not an afterthought or optional feature - it's a foundational requirement that benefits everyone.
 
-## 🌟 Vision Supported
+## Vision Supported
 
 This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of making Shariah-compliant enterprise accessible to everyone - literally and practically.
 
@@ -31,7 +31,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 
 **Vision alignment**: Accessibility is integral to "democratizing" Islamic enterprise. If the technology is accessible but the documentation and tools are not, we haven't truly democratized anything. Universal design ensures universal benefit.
 
-## 🎯 What
+## What
 
 **Accessibility First** means:
 
@@ -50,7 +50,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 - Accessibility requirements drive design, not constrain it
 - Universal benefit - accessible design works better for everyone
 
-## 💡 Why
+## Why
 
 ### Universal Benefit
 
@@ -76,7 +76,7 @@ Accessibility improvements help **everyone**, not just users with disabilities:
 - Professional software development includes accessibility
 - Open source projects set standards for inclusive design
 
-## 📋 How It Applies
+## How It Applies
 
 ### Color Accessibility
 
@@ -84,7 +84,7 @@ Accessibility improvements help **everyone**, not just users with disabilities:
 
 **Requirement**: Use only color-blind friendly palette.
 
-✅ **Accessible Palette** (Correct):
+PASS: **Accessible Palette** (Correct):
 
 ```css
 /* Verified safe for all color blindness types */
@@ -95,7 +95,7 @@ Accessibility improvements help **everyone**, not just users with disabilities:
 #CA9161  /* Brown */
 ```
 
-❌ **Inaccessible Colors** (Avoid):
+FAIL: **Inaccessible Colors** (Avoid):
 
 ```css
 /* Invisible or problematic for color-blind users */
@@ -112,7 +112,7 @@ Accessibility improvements help **everyone**, not just users with disabilities:
 
 **Requirement**: Descriptive alt text for every image.
 
-✅ **Good Alt Text**:
+PASS: **Good Alt Text**:
 
 ```markdown
 ![Architecture diagram showing client-server communication flow with database](./images/architecture.png)
@@ -120,7 +120,7 @@ Accessibility improvements help **everyone**, not just users with disabilities:
 
 **Why this works**: Describes what the image shows and its purpose. Screen reader users understand the content.
 
-❌ **Bad Alt Text**:
+FAIL: **Bad Alt Text**:
 
 ```markdown
 ![image](./images/architecture.png)
@@ -134,7 +134,7 @@ Accessibility improvements help **everyone**, not just users with disabilities:
 
 **Requirement**: Single H1, proper H2-H6 nesting, no skipped levels.
 
-✅ **Correct Hierarchy**:
+PASS: **Correct Hierarchy**:
 
 ```markdown
 # Document Title (H1)
@@ -150,7 +150,7 @@ Accessibility improvements help **everyone**, not just users with disabilities:
 
 **Why this works**: Screen readers build document outline from headings. Proper nesting creates logical structure.
 
-❌ **Incorrect Hierarchy**:
+FAIL: **Incorrect Hierarchy**:
 
 ```markdown
 # Document Title (H1)
@@ -174,14 +174,14 @@ Accessibility improvements help **everyone**, not just users with disabilities:
 - Large text (18pt+ or 14pt+ bold): **3:1** minimum
 - UI components: **3:1** minimum
 
-✅ **Sufficient Contrast**:
+PASS: **Sufficient Contrast**:
 
 ```
 Blue (#0173B2) on White (#FFFFFF): 8.59:1 (AAA)
 Orange (#DE8F05) on White: 6.48:1 (AAA)
 ```
 
-❌ **Insufficient Contrast**:
+FAIL: **Insufficient Contrast**:
 
 ```
 Light gray on white: 2:1 (fails WCAG AA)
@@ -194,7 +194,7 @@ Yellow on white: 1.5:1 (fails WCAG AA)
 
 **Requirement**: Use semantic elements, not styling hacks.
 
-✅ **Semantic Structure**:
+PASS: **Semantic Structure**:
 
 ```markdown
 ## Section Heading
@@ -207,7 +207,7 @@ Yellow on white: 1.5:1 (fails WCAG AA)
 
 **Why this works**: Proper markdown syntax creates semantic HTML. Screen readers understand structure.
 
-❌ **Non-Semantic**:
+FAIL: **Non-Semantic**:
 
 ```markdown
 **Section Heading**
@@ -220,11 +220,11 @@ Yellow on white: 1.5:1 (fails WCAG AA)
 
 **Why this fails**: Manual formatting doesn't create semantic HTML. Screen readers see only styled text.
 
-## 🚫 Anti-Patterns
+## Anti-Patterns
 
 ### Using Color Alone
 
-❌ **Problem**: Information conveyed only through color.
+FAIL: **Problem**: Information conveyed only through color.
 
 ```mermaid
 graph TD
@@ -237,7 +237,7 @@ graph TD
 
 **Why it's bad**: Red-blind and green-blind users cannot distinguish these. Information is lost.
 
-✅ **Solution**: Combine color with text labels and shapes.
+PASS: **Solution**: Combine color with text labels and shapes.
 
 ```mermaid
 graph TD
@@ -250,7 +250,7 @@ graph TD
 
 ### Missing Alt Text
 
-❌ **Problem**: Images without descriptive alt text.
+FAIL: **Problem**: Images without descriptive alt text.
 
 ```markdown
 ![](screenshot.png)
@@ -260,13 +260,13 @@ graph TD
 
 ### Red-Green Combinations
 
-❌ **Problem**: Using red and green together.
+FAIL: **Problem**: Using red and green together.
 
 **Why it's bad**: ~99% of color-blind users cannot distinguish red from green. Both appear as brownish-yellow.
 
 ### Low Contrast Text
 
-❌ **Problem**: Light gray text on white background.
+FAIL: **Problem**: Light gray text on white background.
 
 ```css
 color: #cccccc;
@@ -276,7 +276,7 @@ background: #ffffff;
 
 **Why it's bad**: Hard to read for everyone, impossible for vision-impaired users.
 
-## ✅ Best Practices
+## PASS: Best Practices
 
 ### 1. Always Use Accessible Color Palette
 
@@ -339,12 +339,12 @@ background: #ffffff;
 
 **Never rely on a single visual cue**:
 
-- ✅ Color + shape + text label
-- ✅ Color + icon + position
-- ❌ Color alone
-- ❌ Shape alone without labels
+- PASS: Color + shape + text label
+- PASS: Color + icon + position
+- FAIL: Color alone
+- FAIL: Shape alone without labels
 
-## 📊 Examples from This Repository
+## Examples from This Repository
 
 ### Mermaid Diagrams
 
@@ -368,11 +368,11 @@ graph TD
 
 **Accessibility features**:
 
-- ✅ Color-blind friendly palette
-- ✅ Black borders for shape definition
-- ✅ White text for contrast
-- ✅ Text labels describe each element
-- ✅ Shape differentiation (rectangle vs diamond)
+- PASS: Color-blind friendly palette
+- PASS: Black borders for shape definition
+- PASS: White text for contrast
+- PASS: Text labels describe each element
+- PASS: Shape differentiation (rectangle vs diamond)
 
 ### AI Agent Categorization
 
@@ -386,11 +386,11 @@ Expert documentation writer specializing in Obsidian-optimized markdown.
 
 **Accessibility features**:
 
-- ✅ Colored square emoji (supplementary)
-- ✅ Agent name (primary identifier)
-- ✅ Description text (semantic meaning)
-- ✅ Accessible blue color (#0173B2)
-- ✅ Multiple visual cues, not color alone
+- PASS: Colored square emoji (supplementary)
+- PASS: Agent name (primary identifier)
+- PASS: Description text (semantic meaning)
+- PASS: Accessible blue color (#0173B2)
+- PASS: Multiple visual cues, not color alone
 
 ### Document Frontmatter
 
@@ -409,24 +409,24 @@ tags:
 
 **Accessibility features**:
 
-- ✅ Descriptive title
-- ✅ Clear description for search engines
-- ✅ Semantic categorization
-- ✅ Machine-readable structure
+- PASS: Descriptive title
+- PASS: Clear description for search engines
+- PASS: Semantic categorization
+- PASS: Machine-readable structure
 
-## 🔗 Related Principles
+## Related Principles
 
 - [Explicit Over Implicit](../software-engineering/explicit-over-implicit.md) - Explicit alt text and descriptions
 - [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Simple accessible design
 - [Progressive Disclosure](./progressive-disclosure.md) - Accessible to all skill levels
 
-## 📚 Related Conventions
+## Related Conventions
 
 - [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - **Master reference for all color usage** (palette, WCAG, testing)
 - [Content Quality Principles](../../conventions/content/quality.md) - Accessibility standards in content
 - [Diagrams Convention](../../conventions/formatting/diagrams.md) - Accessible diagram standards
 
-## 📖 References
+## References
 
 **WCAG Standards**:
 

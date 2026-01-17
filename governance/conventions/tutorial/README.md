@@ -32,10 +32,10 @@ These conventions define **HOW to create and structure tutorials**, covering tut
 
 ## Related Documentation
 
-- [Conventions Index](../README.md) - All documentation conventions
+- [Conventions Index](./README.md) - All documentation conventions
 - [Progressive Disclosure Principle](../../principles/content/progressive-disclosure.md) - Why layered complexity matters
 - [No Time Estimates Principle](../../principles/content/no-time-estimates.md) - Why we use coverage percentages
-- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
+- [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected
 

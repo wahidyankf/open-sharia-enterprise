@@ -221,9 +221,9 @@ Checkers typically need:
 
 **Related Documentation**:
 
-- [Temporary Files Convention](../../../governance/development/infra/temporary-files.md)
-- [Maker-Checker-Fixer Pattern](../../../governance/development/pattern/maker-checker-fixer.md)
-- [Criticality Levels Convention](../../../governance/development/quality/criticality-levels.md)
+- [Temporary Files Convention](../../../../governance/development/infra/temporary-files.md)
+- [Maker-Checker-Fixer Pattern](../../../../governance/development/pattern/maker-checker-fixer.md)
+- [Criticality Levels Convention](../../../../governance/development/quality/criticality-levels.md)
 
 ## Progressive Writing Methodology
 

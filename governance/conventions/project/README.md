@@ -27,10 +27,10 @@ These conventions define **HOW project planning and management documents should 
 
 ## Related Documentation
 
-- [Conventions Index](../README.md) - All documentation conventions
+- [Conventions Index](./README.md) - All documentation conventions
 - [File Naming Convention](../meta/file-naming.md) - General file naming patterns
-- [Workflows Index](../../workflows/README.md) - Orchestrated processes
-- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
+- [Workflows Index](./README.md) - Orchestrated processes
+- [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected
 

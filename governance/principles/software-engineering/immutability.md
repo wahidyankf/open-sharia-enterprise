@@ -17,7 +17,7 @@ updated: 2025-12-28
 
 **Prefer immutable data structures** over mutable state. Favor creating new values instead of modifying existing ones. Immutability makes code safer, more predictable, and easier to reason about.
 
-## 🌟 Vision Supported
+## Vision Supported
 
 This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of democratizing Shariah-compliant enterprise by making concurrent Islamic business systems safer and more accessible.
 
@@ -31,7 +31,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 
 **Vision alignment**: Open-source thrives when code is predictable and safe to modify. Immutability democratizes parallel programming - essential for scalable Islamic enterprise systems serving global communities.
 
-## 🎯 What
+## What
 
 **Immutability** means:
 
@@ -49,7 +49,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 - State changes are implicit (same variable, different value)
 - Data flow is bidirectional and harder to trace
 
-## 💡 Why
+## Why
 
 ### Benefits of Immutability
 
@@ -73,30 +73,30 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 
 **Use immutability when**:
 
-- ✅ Building concurrent or parallel systems
-- ✅ Implementing business logic with multiple calculations
-- ✅ Creating audit trails or event logs
-- ✅ Handling user input or external data
-- ✅ Working with complex state management
+- PASS: Building concurrent or parallel systems
+- PASS: Implementing business logic with multiple calculations
+- PASS: Creating audit trails or event logs
+- PASS: Handling user input or external data
+- PASS: Working with complex state management
 
 **Mutability acceptable when**:
 
-- ⚠️ Performance profiling shows immutability is bottleneck (rare)
-- ⚠️ Building performance-critical inner loops (games, video processing)
-- ⚠️ Interfacing with mutable libraries (use at boundaries only)
-- ⚠️ Managing large datasets where copying is prohibitive
+- Performance profiling shows immutability is bottleneck (rare)
+- Building performance-critical inner loops (games, video processing)
+- Interfacing with mutable libraries (use at boundaries only)
+- Managing large datasets where copying is prohibitive
 
-## 📋 How It Applies
+## How It Applies
 
 ### Immutable Variables (const)
 
 **Context**: Variable declarations in TypeScript/JavaScript.
 
-✅ **Immutable (Preferred)**:
+PASS: **Immutable (Preferred)**:
 
 ```typescript
 const user = { name: "Ahmad", balance: 1000 };
-// user = { ... }  // ❌ Error: Cannot reassign const
+// user = { ... }  // FAIL: Error: Cannot reassign const
 
 // Create new object instead of modifying
 const updatedUser = { ...user, balance: 1200 };
@@ -106,7 +106,7 @@ const updatedUser = { ...user, balance: 1200 };
 
 **Why this works**: `const` prevents reassignment. Spread operator creates new object. Original data preserved.
 
-❌ **Mutable (Avoid)**:
+FAIL: **Mutable (Avoid)**:
 
 ```typescript
 let user = { name: "Ahmad", balance: 1000 };
@@ -120,7 +120,7 @@ user.balance = 1200; // Mutates original object
 
 **Context**: Working with arrays.
 
-✅ **Immutable (Preferred)**:
+PASS: **Immutable (Preferred)**:
 
 ```typescript
 const transactions = [
@@ -143,7 +143,7 @@ console.log(transactions); // Still [{id:1, amount:100}, {id:2, amount:200}]
 
 **Why this works**: Each operation creates new array. Original preserved. Clear data lineage.
 
-❌ **Mutable (Avoid)**:
+FAIL: **Mutable (Avoid)**:
 
 ```typescript
 const transactions = [
@@ -164,7 +164,7 @@ transactions[0].amount = 250; // Mutates object in array
 
 **Context**: Updating nested objects.
 
-✅ **Immutable (Preferred)**:
+PASS: **Immutable (Preferred)**:
 
 ```typescript
 interface Account {
@@ -195,7 +195,7 @@ console.log(updatedAccount.holder.email); // "ahmad.new@example.com"
 
 **Why this works**: Nested spread creates new objects at each level. Original preserved.
 
-❌ **Mutable (Avoid)**:
+FAIL: **Mutable (Avoid)**:
 
 ```typescript
 const account = {
@@ -214,7 +214,7 @@ account.holder.email = "ahmad.new@example.com"; // Mutates nested object
 
 **Context**: Deep nested structures are cumbersome with spread operators.
 
-✅ **Immutable with Immer (Preferred for complex structures)**:
+PASS: **Immutable with Immer (Preferred for complex structures)**:
 
 ```typescript
 import { produce } from "immer";
@@ -242,7 +242,7 @@ console.log(newState.users[0].profile.settings.theme); // "light"
 
 **Context**: Preventing accidental mutations at runtime.
 
-✅ **Deeply Frozen (Maximum Safety)**:
+PASS: **Deeply Frozen (Maximum Safety)**:
 
 ```typescript
 const transaction = Object.freeze({
@@ -259,14 +259,14 @@ transaction.items[0].price = 600; // Error
 
 **Why this works**: `Object.freeze()` makes objects truly immutable at runtime. TypeScript enforces at compile time.
 
-## 🚫 Anti-Patterns
+## Anti-Patterns
 
 ### Mutating Function Arguments
 
-❌ **Problem**: Function modifies input data.
+FAIL: **Problem**: Function modifies input data.
 
 ```typescript
-// ❌ Mutates input array
+// FAIL: Mutates input array
 function addTransaction(transactions, newTx) {
   transactions.push(newTx); // MUTATES INPUT
   return transactions;
@@ -279,7 +279,7 @@ addTransaction(myTransactions, { id: 2, amount: 200 });
 
 **Why it's bad**: Caller's data changed unexpectedly. Breaks assumptions. Hard to debug.
 
-✅ **Solution**:
+PASS: **Solution**:
 
 ```typescript
 function addTransaction(transactions, newTx) {
@@ -293,10 +293,10 @@ const updated = addTransaction(myTransactions, { id: 2, amount: 200 });
 
 ### Shared Mutable State
 
-❌ **Problem**: Multiple parts of code share and mutate same object.
+FAIL: **Problem**: Multiple parts of code share and mutate same object.
 
 ```typescript
-// ❌ Shared mutable state
+// FAIL: Shared mutable state
 const appState = { currentUser: null, balance: 0 };
 
 function login(user) {
@@ -312,7 +312,7 @@ function updateBalance(amount) {
 
 **Why it's bad**: Changes happen anywhere in codebase. Difficult to trace bugs. Race conditions in concurrent code.
 
-✅ **Solution**:
+PASS: **Solution**:
 
 ```typescript
 interface AppState {
@@ -333,10 +333,10 @@ function updateBalance(state: AppState, amount: number): AppState {
 
 ### Hidden Mutations in Methods
 
-❌ **Problem**: Class methods mutate internal state.
+FAIL: **Problem**: Class methods mutate internal state.
 
 ```typescript
-// ❌ Mutable class
+// FAIL: Mutable class
 class ShoppingCart {
   private items = [];
 
@@ -356,7 +356,7 @@ cart.addItem({ id: 1, name: "Book" });
 
 **Why it's bad**: State changes invisible to caller. Can't track history. Concurrent access unsafe.
 
-✅ **Solution** (Functional approach):
+PASS: **Solution** (Functional approach):
 
 ```typescript
 interface ShoppingCart {
@@ -376,16 +376,16 @@ cart = addItem(cart, { id: 1, name: "Book" });
 // Each operation creates new cart, history preserved
 ```
 
-## ✅ Best Practices
+## PASS: Best Practices
 
 ### 1. Use const by Default
 
 **Always start with const**:
 
 ```typescript
-✅ const user = { name: "Ahmad" };
-⚠️ let user = { name: "Ahmad" }; // Only if you MUST reassign
-❌ var user = { name: "Ahmad" }; // Never use var
+PASS: const user = { name: "Ahmad" };
+let user = { name: "Ahmad" }; // Only if you MUST reassign
+FAIL: var user = { name: "Ahmad" }; // Never use var
 ```
 
 ### 2. Use Immutable Array Methods
@@ -393,12 +393,12 @@ cart = addItem(cart, { id: 1, name: "Book" });
 **Prefer map/filter/reduce over loops**:
 
 ```typescript
-// ✅ Immutable transformations
+// PASS: Immutable transformations
 const doubled = numbers.map((n) => n * 2);
 const evens = numbers.filter((n) => n % 2 === 0);
 const sum = numbers.reduce((acc, n) => acc + n, 0);
 
-// ❌ Avoid mutation in loops
+// FAIL: Avoid mutation in loops
 const doubled = [];
 for (let i = 0; i < numbers.length; i++) {
   doubled.push(numbers[i] * 2); // Creates and mutates array
@@ -410,10 +410,10 @@ for (let i = 0; i < numbers.length; i++) {
 **Copy objects and arrays**:
 
 ```typescript
-// ✅ Objects
+// PASS: Objects
 const updated = { ...original, field: newValue };
 
-// ✅ Arrays
+// PASS: Arrays
 const newArray = [...oldArray, newItem];
 const merged = [...array1, ...array2];
 ```
@@ -425,7 +425,7 @@ const merged = [...array1, ...array2];
 ```typescript
 import { produce } from "immer";
 
-// ✅ Complex update with Immer
+// PASS: Complex update with Immer
 const newState = produce(state, (draft) => {
   draft.users[userId].profile.settings.theme = "dark";
   draft.users[userId].lastUpdated = Date.now();
@@ -453,12 +453,12 @@ type ReadonlyArray<T> = readonly T[];
 **Never mutate, always return**:
 
 ```typescript
-// ✅ Pure function returning new value
+// PASS: Pure function returning new value
 function calculateZakat(wealth: number): number {
   return wealth * 0.025;
 }
 
-// ✅ Returns new object
+// PASS: Returns new object
 function applyDiscount(order: Order, discount: number): Order {
   return {
     ...order,
@@ -467,11 +467,11 @@ function applyDiscount(order: Order, discount: number): Order {
 }
 ```
 
-## 📊 Islamic Finance Example
+## Islamic Finance Example
 
 **Scenario**: Calculating Murabaha (cost-plus financing) profit distribution.
 
-❌ **Mutable approach** (avoid):
+FAIL: **Mutable approach** (avoid):
 
 ```typescript
 let contract = {
@@ -495,7 +495,7 @@ addPayment(11000);
 // Original contract state lost, can't audit calculation
 ```
 
-✅ **Immutable approach** (preferred):
+PASS: **Immutable approach** (preferred):
 
 ```typescript
 interface MurabahaContract {
@@ -544,19 +544,19 @@ console.log("With payment:", withPayment); // Full history
 - **Reproducibility**: Same inputs always produce same outputs
 - **Trust**: Islamic scholars can audit the entire calculation chain
 
-## 🔗 Related Principles
+## Related Principles
 
 - [Pure Functions Over Side Effects](./pure-functions.md) - Pure functions naturally use immutable data
 - [Explicit Over Implicit](./explicit-over-implicit.md) - Immutability makes state changes explicit
 - [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Immutability simplifies reasoning
 
-## 📚 Related Conventions
+## Related Conventions
 
 - [Functional Programming Practices](../../development/pattern/functional-programming.md) - Implementation patterns for immutability
 - [Code Quality Convention](../../development/quality/code.md) - Automated enforcement
 - [Implementation Workflow](../../development/workflow/implementation.md) - When to introduce immutability
 
-## 📖 References
+## References
 
 **Functional Programming**:
 

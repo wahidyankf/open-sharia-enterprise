@@ -293,9 +293,9 @@ Report final status and summary.
 
 ## Termination Criteria
 
-- ✅ **Success** (`pass`): Zero findings of ANY confidence level (HIGH, MEDIUM, MINOR) across all validators after finalization
-- ⚠️ **Partial** (`partial`): Any findings remain after max-iterations OR final validation found issues
-- ❌ **Failure** (`fail`): Checkers, fixers, or finalization agents encountered technical errors
+- PASS: **Success** (`pass`): Zero findings of ANY confidence level (HIGH, MEDIUM, MINOR) across all validators after finalization
+- **Partial** (`partial`): Any findings remain after max-iterations OR final validation found issues
+- FAIL: **Failure** (`fail`): Checkers, fixers, or finalization agents encountered technical errors
 
 ## Example Usage
 
@@ -467,9 +467,9 @@ This workflow ensures comprehensive ayokoding-web content quality through multi-
 
 ## Principles Respected
 
-- ✅ **Explicit Over Implicit**: All steps, validators, fixers, and finalization are explicit
-- ✅ **Automation Over Manual**: Fully automated validation, fixing, and regeneration
-- ✅ **Simplicity Over Complexity**: Clear flow despite multiple validators
-- ✅ **Accessibility First**: Generates human-readable audit reports
-- ✅ **Progressive Disclosure**: Can run with different scopes and iteration limits
-- ✅ **No Time Estimates**: Focus on quality outcomes, not duration
+- PASS: **Explicit Over Implicit**: All steps, validators, fixers, and finalization are explicit
+- PASS: **Automation Over Manual**: Fully automated validation, fixing, and regeneration
+- PASS: **Simplicity Over Complexity**: Clear flow despite multiple validators
+- PASS: **Accessibility First**: Generates human-readable audit reports
+- PASS: **Progressive Disclosure**: Can run with different scopes and iteration limits
+- PASS: **No Time Estimates**: Focus on quality outcomes, not duration

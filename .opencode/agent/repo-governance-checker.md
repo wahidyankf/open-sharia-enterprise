@@ -105,7 +105,7 @@ Skill: `repo-generating-validation-reports` (progressive streaming)
 - `governance/conventions/` - Layer 2: WHAT documentation rules
 - `governance/development/` - Layer 3: HOW software practices
 - `governance/workflows/` - Layer 5: WHEN multi-step processes
-- `rulesrepository-governance-architecture.md` - Architecture guide
+- `governance/repository-governance-architecture.md` - Architecture guide
 - `governance/README.md` - Rules index
 - `docs/explanation/README.md` - Explanation index
 
@@ -297,8 +297,8 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 
 **Related Documentation**:
 
-- [AI Agents Convention](../../governance/development/agents/ex-ru-de-ag-ai-agents.md) - Agent-Skill separation patterns
-- [Temporary Files Convention](../../governance/development/infra/ex-ru-de-in-temporary-files.md) - Report generation standards
+- [AI Agents Convention](../../../governance/development/agents/ai-agents.md) - Agent-Skill separation patterns
+- [Temporary Files Convention](../../../governance/development/infra/temporary-files.md) - Report generation standards
 - [Skills Directory](../.opencode/skill/README.md) - Complete Skills catalog
 
 ## Validation Process
@@ -358,7 +358,7 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
    - `governance/conventions/**/*.md`
    - `governance/development/**/*.md`
    - `governance/workflows/**/*.md`
-   - `rulesrepository-governance-architecture.md`
+   - `governance/repository-governance-architecture.md`
    - `governance/README.md`
    - `docs/explanation/README.md`
 
@@ -412,9 +412,9 @@ Update report status to "Complete", add summary statistics.
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [Repository Governance Architecture](../../rulesrepository-governance-architecture.md)
-- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
+- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
+- [Repository Governance Architecture](../../../governance/repository-governance-architecture.md)
+- [AI Agents Convention](../../../governance/development/agents/ai-agents.md)
 
 **Related Agents**:
 
@@ -423,8 +423,8 @@ Update report status to "Complete", add summary statistics.
 
 **Related Conventions**:
 
-- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
-- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md)
+- [AI Agents Convention](../../../governance/development/agents/ai-agents.md)
+- [Maker-Checker-Fixer Pattern](../../../governance/development/pattern/maker-checker-fixer.md)
 
 **Skills**:
 

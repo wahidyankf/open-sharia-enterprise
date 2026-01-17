@@ -33,12 +33,12 @@ This convention establishes a universal **four-level criticality system** (CRITI
 - **Criticality** (CRITICAL/HIGH/MEDIUM/LOW) → **Importance/Urgency** - "How critical is this issue?"
 - **Confidence** (HIGH/MEDIUM/FALSE_POSITIVE) → **Certainty/Fixability** - "How certain are we it needs fixing?"
 
-See [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) for complete confidence system details.
+See [Fixer Confidence Levels Convention](./fixer-confidence-levels.md) for complete confidence system details.
 
 **Example showing both dimensions**:
 
 ```markdown
-## 🔴 CRITICAL Issues (Must Fix)
+## CRITICAL Issues (Must Fix)
 
 ### 1. Missing Required Field Breaks Hugo Build
 
@@ -54,7 +54,7 @@ See [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) 
 
 ## Four Universal Criticality Levels
 
-### 🔴 CRITICAL
+### CRITICAL
 
 **Definition**: Issues that break functionality, block users, or violate mandatory requirements.
 
@@ -118,7 +118,7 @@ See [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) 
 - 404 errors on external links to critical resources
 - Redirect chains >3 hops
 
-### 🟠 HIGH
+### HIGH
 
 **Definition**: Issues causing significant quality degradation or violating documented conventions.
 
@@ -184,7 +184,7 @@ See [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) 
 - Missing HTTPS upgrade
 - Slow-loading external resources
 
-### 🟡 MEDIUM
+### MEDIUM
 
 **Definition**: Minor quality issues, style inconsistencies, or cosmetic problems.
 
@@ -247,7 +247,7 @@ See [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) 
 - Unverified optional references
 - Missing title attributes on links
 
-### 🟢 LOW
+### LOW
 
 **Definition**: Suggestions, optional improvements, enhancements.
 
@@ -316,12 +316,12 @@ See [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) 
 
 This matrix shows how criticality and confidence combine to determine **priority** and **fix strategy**.
 
-| Criticality     | HIGH Confidence                                               | MEDIUM Confidence                                   | FALSE_POSITIVE                                             |
-| --------------- | ------------------------------------------------------------- | --------------------------------------------------- | ---------------------------------------------------------- |
-| 🔴 **CRITICAL** | **P0** - Auto-fix immediately<br>Block deployment until fixed | **P1** - URGENT manual review<br>High priority flag | Report with CRITICAL context<br>Improve checker urgently   |
-| 🟠 **HIGH**     | **P1** - Auto-fix after P0<br>Fix before publication          | **P2** - Standard manual review<br>Normal priority  | Report with HIGH context<br>Improve checker soon           |
-| 🟡 **MEDIUM**   | **P2** - Auto-fix after P1<br>Requires user approval          | **P3** - Optional review<br>Low priority            | Report with MEDIUM context<br>Note for checker improvement |
-| 🟢 **LOW**      | **P3** - Include in batch fixes<br>User decides if/when       | **P4** - Suggestions only<br>No urgency             | Report with LOW context<br>Informational only              |
+| Criticality  | HIGH Confidence                                               | MEDIUM Confidence                                   | FALSE_POSITIVE                                             |
+| ------------ | ------------------------------------------------------------- | --------------------------------------------------- | ---------------------------------------------------------- |
+| **CRITICAL** | **P0** - Auto-fix immediately<br>Block deployment until fixed | **P1** - URGENT manual review<br>High priority flag | Report with CRITICAL context<br>Improve checker urgently   |
+| **HIGH**     | **P1** - Auto-fix after P0<br>Fix before publication          | **P2** - Standard manual review<br>Normal priority  | Report with HIGH context<br>Improve checker soon           |
+| **MEDIUM**   | **P2** - Auto-fix after P1<br>Requires user approval          | **P3** - Optional review<br>Low priority            | Report with MEDIUM context<br>Note for checker improvement |
+| **LOW**      | **P3** - Include in batch fixes<br>User decides if/when       | **P4** - Suggestions only<br>No urgency             | Report with LOW context<br>Informational only              |
 
 ### Priority Levels Explained
 
@@ -361,24 +361,24 @@ This matrix shows how criticality and confidence combine to determine **priority
 Fixer Execution Summary:
 
 P0 (CRITICAL + HIGH): 5 findings
-  ✓ Fixed 5/5 automatically
+   Fixed 5/5 automatically
 
 P1 (HIGH + HIGH): 12 findings
-  ✓ Fixed 12/12 automatically
+   Fixed 12/12 automatically
 
 P1 (CRITICAL + MEDIUM): 2 findings
-  ⚠ Flagged for urgent manual review:
+  Flagged for urgent manual review:
     - File X: Ambiguous fix target
     - File Y: Context-dependent correction
 
 P2 (MEDIUM + HIGH): 8 findings
-  ✓ Fixed 8/8 (user approved batch mode)
+   Fixed 8/8 (user approved batch mode)
 
 P2 (HIGH + MEDIUM): 3 findings
-  ⚠ Flagged for standard review
+  Flagged for standard review
 
 P3-P4: 15 findings
-  📝 Included in summary (no action)
+  Included in summary (no action)
 
 Total: 45 findings processed
   - 25 fixed automatically
@@ -408,10 +408,10 @@ All checker agents must generate reports following this template.
 
 ## Executive Summary
 
-- 🔴 **CRITICAL Issues**: X (must fix before publication)
-- 🟠 **HIGH Issues**: Y (should fix before publication)
-- 🟡 **MEDIUM Issues**: Z (improve when time permits)
-- 🟢 **LOW Issues**: W (optional enhancements)
+- **CRITICAL Issues**: X (must fix before publication)
+- **HIGH Issues**: Y (should fix before publication)
+- **MEDIUM Issues**: Z (improve when time permits)
+- **LOW Issues**: W (optional enhancements)
 
 **Total Issues**: X + Y + Z + W = TOTAL
 
@@ -431,7 +431,7 @@ All checker agents must generate reports following this template.
 Each criticality level has its own section with consistent formatting:
 
 ````markdown
-## 🔴 CRITICAL Issues (Must Fix)
+## CRITICAL Issues (Must Fix)
 
 **Count**: X issues found
 
@@ -485,9 +485,9 @@ draft: false
 
 **Repeat section template for each criticality level**:
 
-- `## 🟠 HIGH Issues (Should Fix)`
-- `## 🟡 MEDIUM Issues (Improve When Possible)`
-- `## 🟢 LOW Issues (Optional Enhancements)`
+- `## HIGH Issues (Should Fix)`
+- `## MEDIUM Issues (Improve When Possible)`
+- `## LOW Issues (Optional Enhancements)`
 
 ### Report Footer
 
@@ -921,7 +921,7 @@ cat > "$REPORT_FILE" <<'EOF'
 
 ---
 
-## 🔴 CRITICAL Issues (Must Fix)
+## CRITICAL Issues (Must Fix)
 
 **Count**: 0 issues (updating progressively)
 
@@ -1212,7 +1212,7 @@ def parse_findings(audit_report):
 
 ## Principles Respected
 
-This convention implements the following principles from [Core Principles Index](../../principles/README.md):
+This convention implements the following principles from [Core Principles Index](./README.md):
 
 ### Explicit Over Implicit
 
@@ -1257,7 +1257,7 @@ Simple system is easier to understand, apply consistently, and maintain long-ter
 
 **How**:
 
-- Emoji indicators (🔴🟠🟡🟢) ALWAYS paired with text labels (CRITICAL/HIGH/MEDIUM/LOW)
+- Emoji indicators (🟠🟡🟢) ALWAYS paired with text labels (CRITICAL/HIGH/MEDIUM/LOW)
 - Color is supplementary - text labels provide primary identification
 - Clear priority labels (P0-P4) supplement colors
 - Text-based severity names work in all contexts (voice, text-only)
@@ -1273,7 +1273,7 @@ Ensures findings are accessible to all users regardless of visual ability or con
 
 This convention builds upon and references:
 
-### [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md)
+### [Fixer Confidence Levels Convention](./fixer-confidence-levels.md)
 
 **Relationship**: Criticality works orthogonally with confidence levels.
 
@@ -1289,7 +1289,7 @@ This convention builds upon and references:
 - Stage 3: Fixers use criticality + confidence to determine priority
 - Priority-based execution aligns with pattern's quality gates
 
-### [Repository Validation Methodology Convention](../quality/repository-validation.md)
+### [Repository Validation Methodology Convention](./repository-validation.md)
 
 **Relationship**: Validation checks produce findings that need criticality assessment.
 
@@ -1305,7 +1305,7 @@ This convention builds upon and references:
 - Filename pattern: `{agent-family}__{uuid-chain}__{timestamp}__audit.md`
 - Progressive writing requirement ensures reports survive context compaction
 
-### [Content Quality Principles Convention](../conventions/content/quality.md)
+### [Content Quality Principles Convention](../../conventions/content/quality.md)
 
 **Relationship**: Content quality violations are categorized by criticality.
 
@@ -1314,20 +1314,20 @@ This convention builds upon and references:
 - Heading hierarchy errors: HIGH
 - Style inconsistencies: MEDIUM
 
-### [Color Accessibility Convention](../conventions/formatting/color-accessibility.md)
+### [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md)
 
 **Relationship**: Criticality emoji indicators use standard emoji colors WITH text labels.
 
 **Why emoji indicators can use red/green/yellow (unlike Mermaid diagrams)**:
 
-- 🔴 CRITICAL - Red emoji ALWAYS paired with "CRITICAL" text label
-- 🟠 HIGH - Orange emoji ALWAYS paired with "HIGH" text label
-- 🟡 MEDIUM - Yellow emoji ALWAYS paired with "MEDIUM" text label
-- 🟢 LOW - Green emoji ALWAYS paired with "LOW" text label
+- CRITICAL - Red emoji ALWAYS paired with "CRITICAL" text label
+- HIGH - Orange emoji ALWAYS paired with "HIGH" text label
+- MEDIUM - Yellow emoji ALWAYS paired with "MEDIUM" text label
+- LOW - Green emoji ALWAYS paired with "LOW" text label
 
 **Key Distinction**: Emoji indicators NEVER rely on color alone - text labels provide primary identification. This differs from Mermaid diagrams, which must use the verified accessible palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161) to ensure color-blind users can distinguish elements visually.
 
-See [Color Accessibility Convention](../conventions/formatting/color-accessibility.md) for complete details on when standard emoji colors are acceptable (always with text) versus when accessible palette is required (Mermaid diagrams).
+See [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) for complete details on when standard emoji colors are acceptable (always with text) versus when accessible palette is required (Mermaid diagrams).
 
 ### [AI Agents Convention](../agents/ai-agents.md)
 
@@ -1345,8 +1345,8 @@ Existing agents using different terminology should migrate to this convention.
 
 ### Phase 1: Documentation (Week 1)
 
-1. Create this convention document ✅
-2. Update [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) with criticality integration
+1. Create this convention document
+2. Update [Fixer Confidence Levels Convention](./fixer-confidence-levels.md) with criticality integration
 3. Update [Maker-Checker-Fixer Pattern Convention](../pattern/maker-checker-fixer.md) with criticality flow
 4. Update AGENTS.md with brief summary and link
 

@@ -31,10 +31,10 @@ These standards define **HOW to execute development workflows**, covering the th
 
 ## Related Documentation
 
-- [Development Index](../README.md) - All development practices
+- [Development Index](./README.md) - All development practices
 - [Simplicity Over Complexity Principle](../../principles/general/simplicity-over-complexity.md) - Why we start simple
 - [Reproducibility First Principle](../../principles/software-engineering/reproducibility.md) - Why environments matter
-- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
+- [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected
 

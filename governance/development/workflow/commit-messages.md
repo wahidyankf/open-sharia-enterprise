@@ -40,7 +40,7 @@ This practice implements/respects the following conventions:
 
 - **[Code Quality Convention](../quality/code.md)**: Commit message validation is enforced through git hooks (Husky + Commitlint) as part of the automated code quality workflow.
 
-- **[Content Quality Principles](../conventions/content/quality.md)**: Commit messages use active voice (imperative mood) and clear, concise descriptions - aligning with content quality standards for communication.
+- **[Content Quality Principles](../../conventions/content/quality.md)**: Commit messages use active voice (imperative mood) and clear, concise descriptions - aligning with content quality standards for communication.
 
 ## What are Conventional Commits?
 
@@ -281,44 +281,44 @@ Fixes #123
 **Missing type:**
 
 ```
-❌ Added new feature
-✅ feat: add new feature
+FAIL: Added new feature
+PASS: feat: add new feature
 ```
 
 **Wrong tense:**
 
 ```
-❌ feat: added login
-✅ feat: add login
+FAIL: feat: added login
+PASS: feat: add login
 ```
 
 **Wrong case:**
 
 ```
-❌ FEAT(AUTH): ADD LOGIN
-✅ feat(auth): add login
+FAIL: FEAT(AUTH): ADD LOGIN
+PASS: feat(auth): add login
 ```
 
 **Period at end:**
 
 ```
-❌ feat: add login.
-✅ feat: add login
+FAIL: feat: add login.
+PASS: feat: add login
 ```
 
 **Too long header:**
 
 ```
-❌ feat: add a really complex and detailed authentication system with multiple providers
-✅ feat(auth): add multi-provider authentication
+FAIL: feat: add a really complex and detailed authentication system with multiple providers
+PASS: feat(auth): add multi-provider authentication
 ```
 
 **Not imperative mood:**
 
 ```
-❌ feat: adds login capability
-❌ feat: adding login
-✅ feat: add login
+FAIL: feat: adds login capability
+FAIL: feat: adding login
+PASS: feat: add login
 ```
 
 ## Why We Use This Convention
@@ -368,7 +368,7 @@ module.exports = {
 
 **Note for Node.js 24+**: Node v24 introduced changes to module loading. Ensure:
 
-- Project has `package.json` (this project uses npm workspaces ✓)
+- Project has `package.json` (this project uses npm workspaces )
 - Or rename config to `commitlint.config.mjs` if using ES6 modules
 
 **Validates:**
@@ -395,10 +395,10 @@ module.exports = {
 
 ```bash
 ⧗   input: Added new feature
-✖   subject may not be empty [subject-empty]
-✖   type may not be empty [type-empty]
+   subject may not be empty [subject-empty]
+   type may not be empty [type-empty]
 
-✖   found 2 problems, 0 warnings
+   found 2 problems, 0 warnings
 ⓘ   Get help: https://github.com/conventional-changelog/commitlint/#what-is-commitlint
 ```
 
@@ -422,13 +422,13 @@ module.exports = {
 **Problem**: Missing commit type
 
 ```bash
-❌ update documentation
+FAIL: update documentation
 ```
 
 **Fix**: Add a valid type
 
 ```bash
-✅ docs: update documentation
+PASS: docs: update documentation
 ```
 
 ### Error: "subject may not be empty"
@@ -436,13 +436,13 @@ module.exports = {
 **Problem**: Missing description after colon
 
 ```bash
-❌ feat:
+FAIL: feat:
 ```
 
 **Fix**: Add description
 
 ```bash
-✅ feat: add login functionality
+PASS: feat: add login functionality
 ```
 
 ### Error: "header must not be longer than 50 characters"
@@ -450,13 +450,13 @@ module.exports = {
 **Problem**: Header line too long
 
 ```bash
-❌ feat(auth): add a comprehensive authentication system with multiple providers
+FAIL: feat(auth): add a comprehensive authentication system with multiple providers
 ```
 
 **Fix**: Shorten description, add details to body
 
 ```bash
-✅ feat(auth): add multi-provider authentication
+PASS: feat(auth): add multi-provider authentication
 
 Supports OAuth 2.0, SAML, and API key authentication.
 ```
@@ -466,14 +466,14 @@ Supports OAuth 2.0, SAML, and API key authentication.
 **Problem**: Type in wrong case
 
 ```bash
-❌ Feat: add login
-❌ FEAT: add login
+FAIL: Feat: add login
+FAIL: FEAT: add login
 ```
 
 **Fix**: Use lowercase
 
 ```bash
-✅ feat: add login
+PASS: feat: add login
 ```
 
 ### Error: "body's lines must not be longer than 100 characters"
@@ -483,7 +483,7 @@ Supports OAuth 2.0, SAML, and API key authentication.
 **Fix**: Break into multiple lines
 
 ```bash
-✅ feat: add new feature
+PASS: feat: add new feature
 
 This is a longer explanation that has been broken into
 multiple lines to ensure each line stays under 100
@@ -592,57 +592,57 @@ Split your work into multiple commits when:
 **Different commit types** - Changes that fall under different conventional commit types should be separate commits:
 
 ```
-✅ Good:
+PASS: Good:
 1. feat(agents): add docs-link-general-checker agent
 2. docs(agents): update agent index with new agent
 
-❌ Bad:
+FAIL: Bad:
 1. feat(agents): add docs-link-general-checker agent and update agent index
 ```
 
 **Creating vs updating** - Creating new files and updating references to them should be separate commits:
 
 ```
-✅ Good:
+PASS: Good:
 1. feat(auth): add user authentication module
 2. refactor(api): integrate authentication module
 
-❌ Bad:
+FAIL: Bad:
 1. feat(auth): add user authentication module and integrate it
 ```
 
 **Renaming vs updating references** - Renaming files and updating all references should be separate commits:
 
 ```
-✅ Good:
+PASS: Good:
 1. refactor(agents): rename agents for consistency
 2. docs(agents): update all references to renamed agents
 
-❌ Bad:
+FAIL: Bad:
 1. refactor(agents): rename agents and update all references
 ```
 
 **Different domains** - Changes to different parts of the codebase should be separate commits:
 
 ```
-✅ Good:
+PASS: Good:
 1. feat(api): add user endpoint
 2. docs: document user API
 3. test(api): add user endpoint tests
 
-❌ Bad:
+FAIL: Bad:
 1. feat(api): add user endpoint with docs and tests
 ```
 
 **Independent changes** - Changes that could be reviewed or reverted separately should be separate commits:
 
 ```
-✅ Good:
+PASS: Good:
 1. fix(validation): handle empty strings correctly
 2. perf(db): optimize user query
 3. docs: update API reference
 
-❌ Bad:
+FAIL: Bad:
 1. fix: various improvements to validation, database, and docs
 ```
 
@@ -653,11 +653,11 @@ Combine related changes into a single commit when:
 **Single logical change** - Multiple files that together form one atomic feature or fix:
 
 ```
-✅ Good:
+PASS: Good:
 1. feat(auth): add two-factor authentication
    (includes: auth.js, auth.test.js, auth.md, routes.js)
 
-❌ Bad:
+FAIL: Bad:
 1. feat(auth): add auth.js
 2. feat(auth): add auth.test.js
 3. feat(auth): add auth.md
@@ -667,11 +667,11 @@ Combine related changes into a single commit when:
 **Tightly coupled changes** - Changes that don't make sense separately or would break the build if separated:
 
 ```
-✅ Good:
+PASS: Good:
 1. refactor(api): rename getUserData to fetchUserProfile
    (includes renaming function definition and all call sites)
 
-❌ Bad:
+FAIL: Bad:
 1. refactor(api): rename function definition
 2. refactor(api): update call sites
    (This would break the build between commits)
@@ -706,14 +706,14 @@ Each commit should be **atomic** - meaning:
 **Example of atomic commits:**
 
 ```
-✅ Good (atomic):
+PASS: Good (atomic):
 1. feat(db): add user index on email field
    - Includes migration file
    - Includes rollback script
    - Updates schema documentation
    - All related to ONE database change
 
-❌ Bad (not atomic):
+FAIL: Bad (not atomic):
 1. feat(db): add user index
    - Only adds migration, missing rollback
    - Builds fail until next commit
@@ -724,34 +724,34 @@ Each commit should be **atomic** - meaning:
 **Example 1: Adding a new feature**
 
 ```
-✅ Good:
+PASS: Good:
 1. feat(analytics): add event tracking system
 2. docs(analytics): document event tracking API
 3. test(analytics): add event tracking tests
 
-❌ Bad:
+FAIL: Bad:
 1. feat(analytics): add event tracking with docs and tests
 ```
 
 **Example 2: Refactoring and fixing**
 
 ```
-✅ Good:
+PASS: Good:
 1. refactor(parser): extract validation logic
 2. fix(parser): handle edge case in validation
 
-❌ Bad:
+FAIL: Bad:
 1. refactor(parser): extract validation and fix edge case
 ```
 
 **Example 3: Configuration changes**
 
 ```
-✅ Good:
+PASS: Good:
 1. chore(deps): update eslint to v8.0.0
 2. style: fix linting errors from eslint update
 
-❌ Bad:
+FAIL: Bad:
 1. chore: update eslint and fix all linting errors
 ```
 
@@ -822,8 +822,8 @@ Closes #123
 
 - [AI Agents Convention](../agents/ai-agents.md) - Standards for AI agents
 - [Code Quality Convention](../quality/code.md) - Automated tools and git hooks for code formatting and commit validation
-- [Development Index](../README.md) - Overview of development conventions
-- [Conventions Index](../conventions/README.md) - Documentation conventions
+- [Development Index](./README.md) - Overview of development conventions
+- [Conventions Index](./README.md) - Documentation conventions
 
 ## External Resources
 

@@ -444,7 +444,7 @@ graph TD
 
 **Documentation**:
 
-- **Before**: [Repository Architecture](../../docs/explanation/ex-ru__repository-governance-architecture.md) references 17 Skills
+- **Before**: [Repository Architecture](../../governance/repository-governance-architecture.md) references 17 Skills
 - **After**: Updated to reflect 21-24 Skills with new categories
 - **Changes**: Update Skills count, add new Skills to categories list
 
@@ -570,7 +570,7 @@ Initialize report at execution start, write findings incrementally
 
 #### Documentation Updates
 
-**File**: `docs/explanation/ex-ru__repository-governance-architecture.md`
+**File**: `governance/repository-governance-architecture.md`
 
 **Before** (line 313):
 
@@ -900,7 +900,7 @@ This plan respects the following conventions:
 
 - **[AI Agents Convention](../../governance/development/agents/ai-agents.md)**: Agent structure, size limits, Skills integration, frontmatter requirements
 
-- **[Repository Architecture](../../docs/explanation/ex-ru__repository-governance-architecture.md)**: Six-layer hierarchy with Skills as delivery infrastructure (not governance)
+- **[Repository Architecture](../../governance/repository-governance-architecture.md)**: Six-layer hierarchy with Skills as delivery infrastructure (not governance)
 
 - **[Temporary Files Convention](../../governance/development/infra/temporary-files.md)**: Progressive writing of audit reports to generated-reports/
 

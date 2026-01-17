@@ -166,10 +166,10 @@ git commit -m "chore: update Node.js to 24.12.0"
 **Prefer npm ci over npm install**:
 
 ```bash
-# ✅ Development: Install from lockfile
+# PASS: Development: Install from lockfile
 npm ci
 
-# ❌ Avoid in automated environments
+# FAIL: Avoid in automated environments
 npm install  # May update lockfile
 ```
 
@@ -214,7 +214,7 @@ git commit -m "chore: update dependencies"
 **Never gitignore lockfiles**:
 
 ```bash
-# ❌ DO NOT add to .gitignore
+# FAIL: DO NOT add to .gitignore
 # package-lock.json
 ```
 
@@ -519,51 +519,51 @@ npm run type-check         # TypeScript type checking
 #!/bin/bash
 set -e
 
-echo "🚀 Setting up Open Sharia Enterprise development environment..."
+echo "Setting up Open Sharia Enterprise development environment..."
 
 # Check Volta installed
 if ! command -v volta &> /dev/null; then
-    echo "⚠️  Volta not found. Installing..."
+    echo " Volta not found. Installing..."
     curl https://get.volta.sh | bash
     export VOLTA_HOME="$HOME/.volta"
     export PATH="$VOLTA_HOME/bin:$PATH"
 fi
 
-echo "✓ Volta installed"
+echo " Volta installed"
 
 # Install dependencies
-echo "📦 Installing dependencies..."
+echo " Installing dependencies..."
 npm ci
 
-echo "✓ Dependencies installed"
+echo " Dependencies installed"
 
 # Setup environment
 if [ ! -f .env ]; then
-    echo "⚙️  Creating .env file..."
+    echo "️  Creating .env file..."
     cp .env.example .env
-    echo "✓ .env created (please update with your values)"
+    echo " .env created (please update with your values)"
 else
-    echo "✓ .env already exists"
+    echo " .env already exists"
 fi
 
 # Start Docker services
-echo "🐳 Starting Docker services..."
+echo " Starting Docker services..."
 docker-compose up -d
 
-echo "✓ Services started"
+echo " Services started"
 
 # Wait for database
-echo "⏳ Waiting for database..."
+echo " Waiting for database..."
 sleep 5
 
 # Run migrations
-echo "🗃️  Running database migrations..."
+echo "️  Running database migrations..."
 npm run db:migrate
 
-echo "✓ Migrations complete"
+echo " Migrations complete"
 
 echo ""
-echo "✅ Setup complete!"
+echo "PASS: Setup complete!"
 echo ""
 echo "To start development server:"
 echo "  npm run dev"
@@ -594,15 +594,15 @@ function getVersion(command: string): string {
 }
 
 function verify() {
-  console.log("🔍 Verifying environment...\n");
+  console.log("Verifying environment...\n");
 
   // Check Node.js version
   const nodeVersion = getVersion("node --version");
   const expectedNode = `v${pkg.volta.node}`;
   if (nodeVersion === expectedNode) {
-    console.log(`✅ Node.js: ${nodeVersion}`);
+    console.log(`PASS: Node.js: ${nodeVersion}`);
   } else {
-    console.error(`❌ Node.js: Expected ${expectedNode}, got ${nodeVersion}`);
+    console.error(`FAIL: Node.js: Expected ${expectedNode}, got ${nodeVersion}`);
     process.exit(1);
   }
 
@@ -610,22 +610,22 @@ function verify() {
   const npmVersion = getVersion("npm --version");
   const expectedNpm = pkg.volta.npm;
   if (npmVersion === expectedNpm) {
-    console.log(`✅ npm: ${npmVersion}`);
+    console.log(`PASS: npm: ${npmVersion}`);
   } else {
-    console.error(`❌ npm: Expected ${expectedNpm}, got ${npmVersion}`);
+    console.error(`FAIL: npm: Expected ${expectedNpm}, got ${npmVersion}`);
     process.exit(1);
   }
 
   // Check lockfile exists
   const fs = require("fs");
   if (fs.existsSync("package-lock.json")) {
-    console.log("✅ package-lock.json exists");
+    console.log("PASS: package-lock.json exists");
   } else {
-    console.error("❌ package-lock.json missing");
+    console.error("FAIL: package-lock.json missing");
     process.exit(1);
   }
 
-  console.log("\n✅ Environment verification passed!");
+  console.log("\nPASS: Environment verification passed!");
 }
 
 verify();

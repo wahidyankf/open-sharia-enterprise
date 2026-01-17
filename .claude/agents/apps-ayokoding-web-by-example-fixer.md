@@ -131,7 +131,7 @@ The `repo-assessing-criticality-confidence` Skill provides confidence definition
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Complete standards
-- [By Example Content Standard](../../governance/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
+- [By Example Content Standard](../../governance/conventions/tutorial/programming-language-content.md) - Annotation requirements
 
 **Related Agents:**
 
@@ -140,8 +140,8 @@ The `repo-assessing-criticality-confidence` Skill provides confidence definition
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../governance/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) - Confidence assessment
-- [Maker-Checker-Fixer Pattern Convention](../../governance/development/pattern/ex-ru-de-pa-maker-checker-fixer.md) - Workflow
+- [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
+- [Maker-Checker-Fixer Pattern Convention](../../../governance/development/pattern/maker-checker-fixer.md) - Workflow
 
 **Skills:**
 

@@ -16,7 +16,7 @@ updated: 2025-12-24
 
 Choose **explicit composition and configuration** over magic, convenience, and hidden behavior. Code and configuration should be transparent and understandable without requiring deep knowledge of defaults or conventions.
 
-## 🌟 Vision Supported
+## Vision Supported
 
 This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of creating transparent, verifiable Shariah-compliant enterprise that anyone can audit and trust.
 
@@ -30,7 +30,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 
 **Vision alignment**: Democratizing Islamic enterprise requires trust. Explicit, transparent implementations enable independent verification - essential when financial transactions must be Shariah-compliant. No black boxes in halal finance.
 
-## 🎯 What
+## What
 
 **Explicit configuration** means:
 
@@ -48,7 +48,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 - Dependencies are assumed or auto-discovered
 - Behavior requires insider knowledge
 
-## 💡 Why
+## Why
 
 ### Benefits of Explicit Configuration
 
@@ -66,13 +66,13 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 4. **Accidental Breaking**: Changing defaults breaks everything
 5. **Security Risks**: Unintended permissions or access
 
-## 📋 How It Applies
+## How It Applies
 
 ### AI Agent Tool Permissions
 
 **Context**: Agent files specify which tools they can use.
 
-✅ **Explicit (Correct)**:
+PASS: **Explicit (Correct)**:
 
 ```yaml
 ---
@@ -83,7 +83,7 @@ tools: Read, Glob, Grep
 
 **Why this works**: Clear whitelist of exactly three tools. Anyone reading this knows the agent can read files, glob patterns, and grep content. No surprises.
 
-❌ **Implicit (Avoid)**:
+FAIL: **Implicit (Avoid)**:
 
 ```yaml
 ---
@@ -98,7 +98,7 @@ tools: all
 
 **Context**: Files use prefixes to encode location.
 
-✅ **Explicit (Correct)**:
+PASS: **Explicit (Correct)**:
 
 ```
 ex-pr__explicit-over-implicit.md
@@ -106,7 +106,7 @@ ex-pr__explicit-over-implicit.md
 
 **Why this works**: The prefix `ex-pr` explicitly states "explanation/principles". Anyone can decode this by reading the convention.
 
-❌ **Implicit (Avoid)**:
+FAIL: **Implicit (Avoid)**:
 
 ```
 eoi.md  # "clever" abbreviation
@@ -118,7 +118,7 @@ eoi.md  # "clever" abbreviation
 
 **Context**: Mermaid diagrams use colors.
 
-✅ **Explicit (Correct)**:
+PASS: **Explicit (Correct)**:
 
 ```css
 fill: #0173b2;
@@ -126,7 +126,7 @@ fill: #0173b2;
 
 **Why this works**: Exact hex code. Renders identically everywhere. No ambiguity about which blue.
 
-❌ **Implicit (Avoid)**:
+FAIL: **Implicit (Avoid)**:
 
 ```css
 fill: blue;
@@ -138,7 +138,7 @@ fill: blue;
 
 **Context**: Document metadata in YAML frontmatter.
 
-✅ **Explicit (Correct)**:
+PASS: **Explicit (Correct)**:
 
 ```yaml
 ---
@@ -156,7 +156,7 @@ updated: 2025-12-15
 
 **Why this works**: All fields present. No guessing about category, tags, or dates. Self-contained.
 
-❌ **Implicit (Avoid)**:
+FAIL: **Implicit (Avoid)**:
 
 ```yaml
 ---
@@ -170,7 +170,7 @@ title: "Explicit Over Implicit"
 
 **Context**: Code imports and dependencies.
 
-✅ **Explicit (Correct)**:
+PASS: **Explicit (Correct)**:
 
 ```typescript
 import { validateEmail } from "@open-sharia-enterprise/ts-validation";
@@ -179,7 +179,7 @@ import { createUser } from "./user-service";
 
 **Why this works**: Clear dependency on validation library and local service. Path mappings defined in `tsconfig.base.json`. Traceable.
 
-❌ **Implicit (Avoid)**:
+FAIL: **Implicit (Avoid)**:
 
 ```typescript
 // Assumes global validateEmail function exists
@@ -192,7 +192,7 @@ import { createUser } from "./user-service";
 
 **Context**: Application configuration.
 
-✅ **Explicit (Correct)**:
+PASS: **Explicit (Correct)**:
 
 ```json
 {
@@ -206,7 +206,7 @@ import { createUser } from "./user-service";
 
 **Why this works**: All settings visible. No hidden defaults. Behavior is predictable.
 
-❌ **Implicit (Avoid)**:
+FAIL: **Implicit (Avoid)**:
 
 ```json
 {
@@ -218,11 +218,11 @@ import { createUser } from "./user-service";
 
 **Why this fails**: What's the timeout? How many retries? Relies on code defaults. Behavior unclear from config.
 
-## 🚫 Anti-Patterns
+## Anti-Patterns
 
 ### Magic Conventions
 
-❌ **Problem**: Files named `index.ts` auto-import in certain contexts.
+FAIL: **Problem**: Files named `index.ts` auto-import in certain contexts.
 
 ```
 src/
@@ -234,7 +234,7 @@ src/
 
 ### Hidden Defaults
 
-❌ **Problem**: Agent assumes it has Write access if not specified.
+FAIL: **Problem**: Agent assumes it has Write access if not specified.
 
 ```yaml
 ---
@@ -247,7 +247,7 @@ name: example-agent
 
 ### Global State
 
-❌ **Problem**: Functions rely on global variables.
+FAIL: **Problem**: Functions rely on global variables.
 
 ```typescript
 // Somewhere else: global.config = { ... }
@@ -262,7 +262,7 @@ function processData(data) {
 
 ### Convention-Based Routing
 
-❌ **Problem**: File location determines route.
+FAIL: **Problem**: File location determines route.
 
 ```
 pages/
@@ -271,7 +271,7 @@ pages/
 
 **Why it's bad** (for our context): Route not visible in code. Requires knowing framework conventions. (Note: This is fine in Next.js/Nuxt where it's the standard pattern, but avoid inventing new conventions like this.)
 
-## ✅ Best Practices
+## PASS: Best Practices
 
 ### 1. Write It Out
 
@@ -355,7 +355,7 @@ function validateAgent(agent: AgentConfig) {
 }
 ```
 
-## 📊 Examples from This Repository
+## Examples from This Repository
 
 ### Git Hook Configuration
 
@@ -419,20 +419,20 @@ npx lint-staged
 - No convention-based discovery
 - Behavior traceable
 
-## 🔗 Related Principles
+## Related Principles
 
 - [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Explicit configuration is often simpler than magic
 - [Accessibility First](../content/accessibility-first.md) - Explicit configuration improves understanding for all users
 - [Automation Over Manual](./automation-over-manual.md) - Automate explicit checks, not implicit assumptions
 
-## 📚 Related Conventions
+## Related Conventions
 
 - [AI Agents Convention](../../development/agents/ai-agents.md) - Explicit tool permissions
 - [File Naming Convention](../../conventions/meta/file-naming.md) - Explicit prefixes
 - [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - Explicit hex codes
 - [Code Quality Convention](../../development/quality/code.md) - Explicit git hooks
 
-## 📖 References
+## References
 
 **Software Engineering Principles**:
 

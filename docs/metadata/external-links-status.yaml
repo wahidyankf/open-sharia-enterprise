@@ -113,7 +113,7 @@ links:
     finalUrl: https://detexify.kirelabs.org/classify.html
     redirectChain: null
     usedIn:
-      - governance/conventions/formatting/ma__mathematical-notation.md
+      - governance/conventions/formatting/mathematical-notation.md
     note: Canvas drawing interface may require modern browser (Chrome/Firefox)
   - url: https://developers.google.com/style
     lastChecked: 2025-12-05 10:30:00+07:00
@@ -171,7 +171,7 @@ links:
     finalUrl: https://en.wikibooks.org/wiki/LaTeX/Mathematics
     redirectChain: null
     usedIn:
-      - governance/conventions/formatting/ma__mathematical-notation.md
+      - governance/conventions/formatting/mathematical-notation.md
     note: Site returns 403 Forbidden. May require specific headers or authentication.
   - url: https://gdpr.eu/
     lastChecked: 2025-12-05 10:30:00+07:00
@@ -334,7 +334,7 @@ links:
     finalUrl: https://help.obsidian.md/Editing+and+formatting/Advanced+formatting+syntax#Math
     redirectChain: null
     usedIn:
-      - governance/conventions/formatting/ma__mathematical-notation.md
+      - governance/conventions/formatting/mathematical-notation.md
   - url: https://jfly.uni-koeln.de/color/
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
@@ -472,7 +472,7 @@ links:
     finalUrl: https://www.mathjax.org/
     redirectChain: null
     usedIn:
-      - governance/conventions/formatting/ma__mathematical-notation.md
+      - governance/conventions/formatting/mathematical-notation.md
   - url: https://www.moderntreasury.com/learn
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200
@@ -578,7 +578,7 @@ links:
     finalUrl: https://github.blog/2022-05-19-math-support-in-markdown/
     redirectChain: null
     usedIn:
-      - governance/conventions/formatting/ma__mathematical-notation.md
+      - governance/conventions/formatting/mathematical-notation.md
   - url: https://nx.dev/blog/new-nx-experience-for-typescript-monorepos
     lastChecked: 2025-12-05 10:30:00+07:00
     statusCode: 200

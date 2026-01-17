@@ -30,11 +30,11 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Plans Organization Convention](../conventions/project/plans-organization.md)**: Acceptance criteria are written in requirements.md files within plan folders following the Gherkin format defined by this convention.
+- **[Plans Organization Convention](../../conventions/project/plans-organization.md)**: Acceptance criteria are written in requirements.md files within plan folders following the Gherkin format defined by this convention.
 
-- **[Content Quality Principles](../conventions/content/quality.md)**: Gherkin scenarios use active voice, clear structure, and concrete examples - aligning with content quality standards for clarity and testability.
+- **[Content Quality Principles](../../conventions/content/quality.md)**: Gherkin scenarios use active voice, clear structure, and concrete examples - aligning with content quality standards for clarity and testability.
 
-- **[Diagrams Convention](../conventions/formatting/diagrams.md)**: When visualizing acceptance criteria workflows, use Mermaid diagrams with accessible colors as demonstrated in this document's Gherkin workflow diagram.
+- **[Diagrams Convention](../../conventions/formatting/diagrams.md)**: When visualizing acceptance criteria workflows, use Mermaid diagrams with accessible colors as demonstrated in this document's Gherkin workflow diagram.
 
 ## Purpose
 
@@ -105,7 +105,7 @@ Scenario: [Concise description of behavior]
 
 ### 1. Be Specific with Concrete Values
 
-✅ **Good**:
+PASS: **Good**:
 
 ```gherkin
 Given a cart with 3 items totaling $150.00
@@ -113,7 +113,7 @@ When the user applies discount code "SAVE20"
 Then the total should be reduced to $120.00
 ```
 
-❌ **Bad**:
+FAIL: **Bad**:
 
 ```gherkin
 Given a cart with items
@@ -123,7 +123,7 @@ Then the total should be less
 
 ### 2. One Scenario Per Behavior
 
-✅ **Good**:
+PASS: **Good**:
 
 ```gherkin
 Scenario: User login succeeds with valid credentials
@@ -131,7 +131,7 @@ Scenario: User login fails with invalid password
 Scenario: User login fails with non-existent email
 ```
 
-❌ **Bad**:
+FAIL: **Bad**:
 
 ```gherkin
 Scenario: User login (covers success, wrong password, wrong email, etc.)
@@ -139,19 +139,19 @@ Scenario: User login (covers success, wrong password, wrong email, etc.)
 
 ### 3. Use Present Tense
 
-✅ **Good**: `When the user clicks the button`
-❌ **Bad**: `When the user clicked the button` or `When the user will click`
+PASS: **Good**: `When the user clicks the button`
+FAIL: **Bad**: `When the user clicked the button` or `When the user will click`
 
 ### 4. Focus on Behavior, Not Implementation
 
-✅ **Good**:
+PASS: **Good**:
 
 ```gherkin
 When the user submits the registration form
 Then an account should be created
 ```
 
-❌ **Bad**:
+FAIL: **Bad**:
 
 ```gherkin
 When the user clicks submit button triggering handleSubmit() function
@@ -160,14 +160,14 @@ Then a POST request to /api/users endpoint should create a database record
 
 ### 5. Make It Testable
 
-✅ **Good**:
+PASS: **Good**:
 
 ```gherkin
 Then the success message "Account created!" should be displayed
 And the user should receive a confirmation email within 5 minutes
 ```
 
-❌ **Bad**:
+FAIL: **Bad**:
 
 ```gherkin
 Then the user should feel confident their account was created
@@ -297,7 +297,7 @@ Scenario: Tutorial content passes quality validation
 
 ## Anti-Patterns
 
-### ❌ Vague or Ambiguous Language
+### FAIL: Vague or Ambiguous Language
 
 ```gherkin
 Then the system should work correctly
@@ -307,7 +307,7 @@ Then users should be happy
 
 **Better**: Define specific, measurable criteria
 
-### ❌ Testing Implementation Details
+### FAIL: Testing Implementation Details
 
 ```gherkin
 Then the Redux store should be updated
@@ -317,7 +317,7 @@ Then the cache should be invalidated
 
 **Better**: Focus on observable behavior from user perspective
 
-### ❌ Multiple Behaviors in One Scenario
+### FAIL: Multiple Behaviors in One Scenario
 
 ```gherkin
 Scenario: Complete user workflow
@@ -326,7 +326,7 @@ Scenario: Complete user workflow
 
 **Better**: Split into separate scenarios (one behavior each)
 
-### ❌ Missing Context
+### FAIL: Missing Context
 
 ```gherkin
 When the button is clicked
@@ -337,25 +337,25 @@ Then something happens
 
 ## When to Use Acceptance Criteria
 
-### ✅ Project Plans
+### PASS: Project Plans
 
 - **Requirements files** (`plans/*/requirements.md`): Define acceptance criteria for each user story
 - **Delivery checklists**: Validate implementation against Gherkin scenarios
-- See [Plans Organization Convention](../conventions/project/plans-organization.md)
+- See [Plans Organization Convention](../../conventions/project/plans-organization.md)
 
-### ✅ Feature Specifications
+### PASS: Feature Specifications
 
 - **Feature docs**: Describe expected behavior for new features
 - **RFC documents**: Define acceptance criteria for proposed changes
 - **ADRs**: Specify outcomes of architectural decisions
 
-### ✅ API Documentation
+### PASS: API Documentation
 
 - **Endpoint specifications**: Describe request/response scenarios
 - **Error handling**: Define error conditions and responses
 - **Integration scenarios**: Describe cross-service behavior
 
-### ✅ Test Documentation
+### PASS: Test Documentation
 
 - **Test plans**: Structure test cases as Gherkin scenarios
 - **QA checklists**: Verify manual testing scenarios
@@ -464,7 +464,7 @@ graph TD
 	E --> F{Implement Feature}
 	F -->|Code written| G[Write Step Definitions]
 	G --> H[Run Automated Tests]
-	H -->|Pass| I[Feature Complete ✓]
+	H -->|Pass| I[Feature Complete ]
 	H -->|Fail| J[Fix Implementation]
 	J --> H
 
@@ -476,19 +476,19 @@ graph TD
 
 ## Related Conventions
 
-- [Plans Organization Convention](../conventions/project/plans-organization.md) - Where to use acceptance criteria in plans
-- [Tutorial Convention](../conventions/tutorial/general.md) - Acceptance criteria for tutorial quality
-- [Content Quality Principles](../conventions/content/quality.md) - Writing clear, testable content
+- [Plans Organization Convention](../../conventions/project/plans-organization.md) - Where to use acceptance criteria in plans
+- [Tutorial Convention](../../conventions/tutorial/general.md) - Acceptance criteria for tutorial quality
+- [Content Quality Principles](../../conventions/content/quality.md) - Writing clear, testable content
 
 ## Summary
 
 **Use Gherkin format for acceptance criteria to**:
 
-- ✅ Ensure requirements are clear and unambiguous
-- ✅ Enable direct translation to automated tests
-- ✅ Create living documentation that stays up-to-date
-- ✅ Facilitate communication between business and technical teams
-- ✅ Force concrete, testable conditions
+- PASS: Ensure requirements are clear and unambiguous
+- PASS: Enable direct translation to automated tests
+- PASS: Create living documentation that stays up-to-date
+- PASS: Facilitate communication between business and technical teams
+- PASS: Force concrete, testable conditions
 
 **Follow best practices**:
 

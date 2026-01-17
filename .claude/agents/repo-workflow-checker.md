@@ -59,7 +59,7 @@ Skill: `repo-generating-validation-reports`
 
 ## Reference
 
-- [Workflow Pattern Convention](../../governance/workflows/meta/ex-ru-wf-me-workflow-pattern.md)
+- [Workflow Pattern Convention](../../../governance/workflows/meta/workflow-identifier.md)
 - Skills: `docs-applying-diataxis-framework`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 
 ## Reference Documentation
@@ -67,7 +67,7 @@ Skill: `repo-generating-validation-reports`
 **Project Guidance**:
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-pattern.md)
+- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
 
 **Related Agents**:
 
@@ -76,7 +76,7 @@ Skill: `repo-generating-validation-reports`
 
 **Related Conventions**:
 
-- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-pattern.md)
+- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
 - [Execution Modes Convention](../../governance/workflows/meta/execution-modes.md)
 
 **Skills**:

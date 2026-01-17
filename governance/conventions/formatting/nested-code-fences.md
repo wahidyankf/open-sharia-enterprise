@@ -21,7 +21,7 @@ This convention defines how to properly nest code fences when documenting markdo
 
 This convention implements the following core principles:
 
-- **[Explicit Over Implicit](../../principles/general/explicit-over-implicit.md)**: Explicitly documents nesting depth rules and fence pairing requirements. Makes the implicit markdown parsing behavior explicit through clear examples.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Explicitly documents nesting depth rules and fence pairing requirements. Makes the implicit markdown parsing behavior explicit through clear examples.
 
 - **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Uses a simple depth rule (outer = 4 backticks, inner = 3 backticks) that's easy to remember and apply consistently.
 

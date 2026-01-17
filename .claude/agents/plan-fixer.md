@@ -140,7 +140,7 @@ The `repo-assessing-criticality-confidence` Skill provides complete confidence l
 **Project Guidance:**
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../governance/conventions/project/ex-ru-co-pr-plans-organization.md) - Plan standards
+- [Plans Organization Convention](../../../governance/conventions/project/plans-organization.md) - Plan standards
 
 **Related Agents:**
 
@@ -151,8 +151,8 @@ The `repo-assessing-criticality-confidence` Skill provides complete confidence l
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../governance/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) - Confidence assessment
-- [Maker-Checker-Fixer Pattern Convention](../../governance/development/pattern/ex-ru-de-pa-maker-checker-fixer.md) - Three-stage workflow
+- [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
+- [Maker-Checker-Fixer Pattern Convention](../../../governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
 
 **Skills:**
 
