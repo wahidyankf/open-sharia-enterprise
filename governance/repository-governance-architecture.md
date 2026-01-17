@@ -52,11 +52,11 @@ graph TD
     end
 
     L0 -->|inspires| L1
-    L1 -->|governs| L2
-    L1 -->|governs| L3
-    L2 -->|governs| L3
-    L2 -->|governs| L4
-    L3 -->|governs| L4
+    L1 ==>|governs| L2
+    L1 ==>|governs| L3
+    L2 ==>|governs| L3
+    L2 ==>|governs| L4
+    L3 ==>|governs| L4
     L4 -->|orchestrated by| L5
 
     L2 -->|summarized in| CM
@@ -85,6 +85,8 @@ graph TD
     style AM fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style SK fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:3px
     style DR fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+
+    linkStyle 1,2,3,4,5 stroke:#DE8F05,stroke-width:2px
 ```
 
 ### Layer 0: Vision (WHY WE EXIST)
