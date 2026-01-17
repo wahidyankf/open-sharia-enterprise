@@ -40,7 +40,7 @@ This Skill auto-loads when implementing agents or documenting model selection ra
 
 ## Decision Framework
 
-### Use Sonnet When Task Requires:
+### Use Sonnet When Task Requires
 
 ✅ **Advanced Reasoning**
 
@@ -82,7 +82,7 @@ This Skill auto-loads when implementing agents or documenting model selection ra
 - API correctness validation
 - Detecting outdated information
 
-### Use Haiku When Task Is:
+### Use Haiku When Task Is
 
 ✅ **Pattern Matching**
 

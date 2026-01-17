@@ -154,16 +154,19 @@ console.log("Hello, World!");
    ```
 
 2. `### Example 1:` - Markdown heading being documented
+
 3. ```(3 backticks) - Opens inner fence for code block
 
    ```
 
 4. `console.log(...)` - Code content
+
 5. ```(3 backticks) - Closes inner fence
 
    ```
 
 6. `**Key Takeaway**:` - More markdown content being documented
+
 7. ```(4 backticks) - Closes outer fence
 
    ```
@@ -202,6 +205,7 @@ const person = { name, age };
 2. First ``` pair - First code block (3 backticks open/close)
 3. `**Explanation**:` - Markdown content
 4. Second ``` pair - Second code block (3 backticks open/close)
+
 5. ```(4 backticks) - Closes outer fence
 
    ```

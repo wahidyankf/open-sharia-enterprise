@@ -124,7 +124,7 @@ Before moving forward, verify:
 - [ ] Database created with `mix ecto.create`
 - [ ] Migration created and run successfully
 
-## 🎉 You're Done!
+## 🎉 You're Done
 
 You've successfully set up Ecto and created your first migration. You're ready to work with database operations.
 

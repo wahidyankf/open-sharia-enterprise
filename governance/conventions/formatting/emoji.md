@@ -32,7 +32,7 @@ This convention implements the following core principles:
 ### What This Convention Covers
 
 - **Where emojis are allowed** - docs/, READMEs, plans/, AGENTS.md, .claude/agents/, .opencode/agent/
-- **Where emojis are forbidden** - config files (_.json, _.yaml, \*.toml), source code
+- **Where emojis are forbidden** - config files (_.json,_.yaml, \*.toml), source code
 - **Semantic emoji usage** - Using emojis for meaning, not decoration
 - **Emoji consistency** - Standard emojis for common concepts
 - **Accessibility considerations** - How emojis affect screen readers

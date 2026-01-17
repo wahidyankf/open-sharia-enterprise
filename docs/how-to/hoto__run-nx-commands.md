@@ -318,41 +318,41 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-	build:
-		runs-on: ubuntu-latest
-		steps:
-			- uses: actions/checkout@v3
-				with:
-					fetch-depth: 0  # Fetch all history for affected detection
+ build:
+  runs-on: ubuntu-latest
+  steps:
+   - uses: actions/checkout@v3
+    with:
+     fetch-depth: 0  # Fetch all history for affected detection
 
-			- name: Setup Node.js
-				uses: actions/setup-node@v3
-				with:
-					node-version: '24.11.1'
+   - name: Setup Node.js
+    uses: actions/setup-node@v3
+    with:
+     node-version: '24.11.1'
 
-			- name: Install dependencies
-				run: npm ci
+   - name: Install dependencies
+    run: npm ci
 
-			- name: Build affected
-				run: nx affected:build --base=origin/main --head=HEAD
+   - name: Build affected
+    run: nx affected:build --base=origin/main --head=HEAD
 
-			- name: Test affected
-				run: nx affected:test --base=origin/main --head=HEAD
+   - name: Test affected
+    run: nx affected:test --base=origin/main --head=HEAD
 
-			- name: Lint affected
-				run: nx affected:lint --base=origin/main --head=HEAD
+   - name: Lint affected
+    run: nx affected:lint --base=origin/main --head=HEAD
 ```
 
 ### Optimize CI with Caching
 
 ```yaml
 - name: Cache Nx
-	uses: actions/cache@v3
-	with:
-		path: .nx/cache
-		key: nx-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-		restore-keys: |
-			nx-${{ runner.os }}-
+ uses: actions/cache@v3
+ with:
+  path: .nx/cache
+  key: nx-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+  restore-keys: |
+   nx-${{ runner.os }}-
 ```
 
 ## Performance Tips

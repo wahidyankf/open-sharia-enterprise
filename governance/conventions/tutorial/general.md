@@ -683,17 +683,17 @@ This flowchart shows how companies evaluate investment opportunities:
 
 ```mermaid
 flowchart TD
-	A[Investment Opportunity] --> B[Estimate Cash Flows]
-	B --> C[Determine Discount Rate WACC]
-	C --> D[Calculate NPV]
-	D --> E{NPV > 0?}
+ A[Investment Opportunity] --> B[Estimate Cash Flows]
+ B --> C[Determine Discount Rate WACC]
+ C --> D[Calculate NPV]
+ D --> E{NPV > 0?}
 
-	E -->|Yes| F[ Accept Project<br/>Creates Value]
-	E -->|No| G[ Reject Project<br/>Destroys Value]
+ E -->|Yes| F[ Accept Project<br/>Creates Value]
+ E -->|No| G[ Reject Project<br/>Destroys Value]
 
-	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
-	style F fill:#029E73,stroke:#000000,color:#FFFFFF
-	style G fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style F fill:#029E73,stroke:#000000,color:#FFFFFF
+ style G fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 ````
 
@@ -714,13 +714,13 @@ If NPV is positive, the project creates value. If negative, it destroys value.
 ### Mathematical Formulas (LaTeX)
 
 **Requirements**:
-	- All formulas use LaTeX notation
-	- Follow [Mathematical Notation Convention](../formatting/mathematical-notation.md)
-	- **CRITICAL**: Use `$$` for display math (not single `$`)
-	- **CRITICAL**: All `\begin{align}` blocks MUST use `$$` delimiters
-	- **Obsidian note**: Both `$$...$$` and `$$ ... $$` (with spaces) work, but prefer no spaces for consistency with GitHub
-	- Define all variables after displaying formula
-	- Show worked examples with step-by-step calculations
+ - All formulas use LaTeX notation
+ - Follow [Mathematical Notation Convention](../formatting/mathematical-notation.md)
+ - **CRITICAL**: Use `$$` for display math (not single `$`)
+ - **CRITICAL**: All `\begin{align}` blocks MUST use `$$` delimiters
+ - **Obsidian note**: Both `$$...$$` and `$$ ... $$` (with spaces) work, but prefer no spaces for consistency with GitHub
+ - Define all variables after displaying formula
+ - Show worked examples with step-by-step calculations
 
 **Display Math Format**:
 ```markdown
@@ -803,11 +803,11 @@ Since NPV is positive, accept the project!
 ````
 
 **Code Quality Standards**:
-	- Follows language conventions (PEP 8 for Python, etc.)
-	- Type hints when applicable
-	- Docstrings for functions
-	- Error handling for production code
-	- Clear variable names
+ - Follows language conventions (PEP 8 for Python, etc.)
+ - Type hints when applicable
+ - Docstrings for functions
+ - Error handling for production code
+ - Clear variable names
 
 ### Visual Aids for Abstract Concepts
 
@@ -1648,9 +1648,6 @@ Test your understanding with these realistic scenarios.
 - [Key takeaway 3]
 
 **Key formulas:**
-
-- [Formula 1 name]: $[formula]$
-- [Formula 2 name]: $[formula]$
 
 **Skills you've gained:**
 

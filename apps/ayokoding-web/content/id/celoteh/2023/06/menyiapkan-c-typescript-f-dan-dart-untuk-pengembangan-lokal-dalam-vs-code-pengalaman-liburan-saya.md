@@ -34,7 +34,7 @@ Gw menggunakan [ekstensi C/C++](https://marketplace.visualstudio.com/items?itemN
 
 Gw membuat sebuah repositori di GitHub di mana gw mendokumentasikan proses persiapan dan berbagi template Makefile, `launch.json`, dan `tasks.json`. Kamu dapat menemukan persiapan yang gw gunakan [di sini](https://github.com/organiclever/ayokoding/tree/main/contents/c-cookbook/c-cookbook-primary).
 
-### F#
+### F
 
 Selanjutnya, gw ingin menjelajahi bahasa pemrograman fungsional yang bertipe statis, dan F# menarik perhatian gw. Awalnya, gw mempertimbangkan menggunakan OCaml, tetapi konfigurasi proyeknya terbukti sulit.
 
@@ -74,7 +74,7 @@ Dalam pernyataannya, Joe Armstrong menekankan pentingnya Makefile dalam menyiapk
 
 Selain itu, memiliki dasar yang kuat dalam Command Line Linux dan teknologi terkait dapat sangat membantu dalam belajar menggunakan Makefile. Dengan bantuan alat seperti ChatGPT, seseorang dapat dengan mudah memperoleh pengetahuan dan meningkatkan keterampilan mereka dalam bidang ini. Penting untuk dicatat bahwa meskipun Makefile mungkin tampak menakutkan pada awalnya, dengan latihan dan ketekunan, mereka dapat menjadi kebiasaan bagi setiap pengembang yang ingin mempermudah proses persiapan proyek C mereka.
 
-### F#
+### F
 
 Sayangnya, menyiapkan OCaml bisa merepotkan dan kurang efisien dibandingkan F#. Di sisi lain, F# menawarkan proses persiapan yang lebih intuitif dan ramah pengguna, menjadikannya pilihan yang ideal untuk pemula yang tertarik untuk menjelajahi dunia pemrograman fungsional bertipe statis. Selain itu, F# memiliki komunitas yang mendukung dengan banyak sumber daya dan dokumentasi tersedia secara online, yang dapat membantu dalam proses pembelajaran dan membantu memecahkan masalah yang mungkin muncul. Secara keseluruhan, meskipun OCaml dan F# memiliki kelebihan dan kekurangan unik mereka, bagi mereka yang mencari masuk yang halus dan mudah ke dalam dunia pemrograman fungsional, F# merupakan pilihan yang lebih baik.
 

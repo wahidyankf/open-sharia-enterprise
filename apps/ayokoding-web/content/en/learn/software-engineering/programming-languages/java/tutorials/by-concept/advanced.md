@@ -808,11 +808,11 @@ Create a cache that:
 
 ## Resources for Continued Learning
 
-- **Java Language Spec**: https://docs.oracle.com/javase/specs/
-- **JVM Spec**: https://docs.oracle.com/javase/specs/
-- **OpenJDK Project**: https://openjdk.org/
-- **Java Enhancement Proposals (JEPs)**: https://openjdk.org/jeps/
-- **Brian Goetz (Java Language Architect)**: https://www.linkedin.com/in/briangoetz/
+- **Java Language Spec**: <https://docs.oracle.com/javase/specs/>
+- **JVM Spec**: <https://docs.oracle.com/javase/specs/>
+- **OpenJDK Project**: <https://openjdk.org/>
+- **Java Enhancement Proposals (JEPs)**: <https://openjdk.org/jeps/>
+- **Brian Goetz (Java Language Architect)**: <https://www.linkedin.com/in/briangoetz/>
 
 ---
 

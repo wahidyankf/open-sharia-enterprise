@@ -16,7 +16,7 @@ Think of it as "learning in public" at scale: our practical work on Open Sharia 
 
 ## 🌐 Website
 
-- **Production**: https://ayokoding.com
+- **Production**: <https://ayokoding.com>
 - **Repository**: Part of the [open-sharia-enterprise](https://github.com/wahidyankf/open-sharia-enterprise) monorepo
 
 ## Features

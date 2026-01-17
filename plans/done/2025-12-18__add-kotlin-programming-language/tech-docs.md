@@ -66,24 +66,24 @@ Use Blue (#0173B2) for foundational concepts, Orange (#DE8F05) for Kotlin-specif
 
 **Language Features (5 guides)**:
 
-4. **Use Data Classes Effectively** - When to use, copy function, destructuring, equals/hashCode
-5. **Use Sealed Classes for Type-Safe State** - Sealed class hierarchies, when exhaustiveness
-6. **Work with Scope Functions** - let, apply, run, with, also - when to use each
-7. **Implement Delegates and Lazy Initialization** - Lazy, observable, custom delegates
-8. **Use Inline Functions and Reified Types** - Performance, type parameters, when/where
+1. **Use Data Classes Effectively** - When to use, copy function, destructuring, equals/hashCode
+2. **Use Sealed Classes for Type-Safe State** - Sealed class hierarchies, when exhaustiveness
+3. **Work with Scope Functions** - let, apply, run, with, also - when to use each
+4. **Implement Delegates and Lazy Initialization** - Lazy, observable, custom delegates
+5. **Use Inline Functions and Reified Types** - Performance, type parameters, when/where
 
 **Concurrency (2 guides)**:
 
-9. **Handle Coroutines and Async Operations** - launch vs async, structured concurrency, dispatchers
-10. **Manage Coroutine Cancellation and Exceptions** - Cancellation, exception handling, supervisorScope
+1. **Handle Coroutines and Async Operations** - launch vs async, structured concurrency, dispatchers
+2. **Manage Coroutine Cancellation and Exceptions** - Cancellation, exception handling, supervisorScope
 
 **Practical Development (5 guides)**:
 
-11. **Migrate Java Code to Kotlin** - Automatic conversion, manual improvements, common patterns
-12. **Handle Collections Idiomatically** - Map, filter, reduce, sequence operations
-13. **Write Effective Unit Tests** - JUnit 5, MockK, coroutine testing
-14. **Organize Packages and Modules** - Package structure, visibility modifiers, multi-module projects
-15. **Build REST APIs with Ktor** - Ktor basics, routing, serialization, testing
+1. **Migrate Java Code to Kotlin** - Automatic conversion, manual improvements, common patterns
+2. **Handle Collections Idiomatically** - Map, filter, reduce, sequence operations
+3. **Write Effective Unit Tests** - JUnit 5, MockK, coroutine testing
+4. **Organize Packages and Modules** - Package structure, visibility modifiers, multi-module projects
+5. **Build REST APIs with Ktor** - Ktor basics, routing, serialization, testing
 
 ## Cookbook Categories and Recipes (30+ Recipes)
 

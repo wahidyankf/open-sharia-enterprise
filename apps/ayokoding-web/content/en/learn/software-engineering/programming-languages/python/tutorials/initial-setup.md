@@ -283,7 +283,7 @@ Before moving forward, verify:
 - [ ] Interactive shell (`python` or `python3`) starts and responds to commands
 - [ ] `python -m pip --version` shows pip is installed
 
-## 🎉 You're Done!
+## 🎉 You're Done
 
 You've successfully installed Python and run your first program. You're ready for the next step.
 
@@ -328,6 +328,7 @@ Now that Python is working, choose your learning path:
 3. On Windows: Re-run installer and check "Add Python to PATH"
 4. On macOS/Linux: Try `python3` instead of `python`
 5. Verify PATH contains Python:
+
    ```bash
    echo $PATH  # macOS/Linux
    echo %PATH%  # Windows

@@ -17,7 +17,7 @@ We take security seriously, especially as an enterprise platform with financial 
 
 ### How to Report
 
-Please report security vulnerabilities via email to: **wahidyankf@gmail.com**
+Please report security vulnerabilities via email to: **<wahidyankf@gmail.com>**
 
 ### What to Include
 

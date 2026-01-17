@@ -110,7 +110,7 @@ Before moving forward, verify:
 - [ ] You can create and save a workflow
 - [ ] You can execute nodes and see results
 
-## 🎉 You're Done!
+## 🎉 You're Done
 
 You've successfully installed n8n and created your first workflow. You're ready for more advanced automations.
 

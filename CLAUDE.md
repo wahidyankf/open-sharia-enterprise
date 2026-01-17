@@ -77,7 +77,29 @@ nx affected:test
 
 # Dependency graph
 nx graph
+
+# Markdown linting and formatting
+npm run lint:md          # Lint all markdown files
+npm run lint:md:fix      # Auto-fix markdown violations
+npm run format:md        # Format markdown with Prettier
+npm run format:md:check  # Check markdown formatting
 ```
+
+## Markdown Quality
+
+All markdown files are automatically linted and formatted:
+
+- **Prettier** (v3.6.2): Formatting (runs on pre-commit)
+- **markdownlint-cli2** (v0.20.0): Linting (runs on pre-push)
+- **Claude Code Hook**: Auto-formats and lints after Edit/Write operations (requires `jq`)
+
+**Quick Fix**: If pre-push hook blocks your push due to markdown violations:
+
+```bash
+npm run lint:md:fix
+```
+
+**See**: [governance/development/quality/markdown.md](./governance/development/quality/markdown.md)
 
 ## Monorepo Architecture
 
@@ -310,7 +332,7 @@ Six-layer governance hierarchy:
 
 ### ose-platform-web
 
-- **URL**: https://oseplatform.com
+- **URL**: <https://oseplatform.com>
 - **Theme**: PaperMod
 - **Hugo**: 0.152.2 Extended
 - **Deployment**: Vercel
@@ -325,7 +347,7 @@ nx build ose-platform-web  # Production build
 
 ### ayokoding-web
 
-- **URL**: https://ayokoding.com
+- **URL**: <https://ayokoding.com>
 - **Theme**: Hextra (documentation)
 - **Hugo**: 0.152.2 Extended
 - **Languages**: Indonesian (primary), English

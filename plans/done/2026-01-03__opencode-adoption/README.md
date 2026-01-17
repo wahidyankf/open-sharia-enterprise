@@ -90,7 +90,7 @@ This plan establishes **dual-tool compatibility** between Claude Code and OpenCo
 
 **Setup Steps**:
 
-1. Create Z.AI account: https://bigmodel.cn/
+1. Create Z.AI account: <https://bigmodel.cn/>
 2. Get API key from console
 3. Run `/connect` in OpenCode, select Z.AI
 4. Run `/models` to select GLM-4.7
@@ -189,7 +189,7 @@ This plan establishes **dual-tool compatibility** between Claude Code and OpenCo
 
 **Z.AI API Key Setup** (required for all 4 Z.AI MCP servers):
 
-1. Get API key from: https://bigmodel.cn/
+1. Get API key from: <https://bigmodel.cn/>
 2. Configure in local/global config (NEVER commit to repository)
 
 **Repository Config** (safe to commit, no API keys):

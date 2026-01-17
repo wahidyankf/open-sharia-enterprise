@@ -29,4 +29,4 @@ We may revise these terms and conditions without prior notice by updating this p
 
 ## **Contact Us**
 
-If you have any questions or comments about these terms and conditions, please contact us at wahidyankf@organiclever.com.
+If you have any questions or comments about these terms and conditions, please contact us at <wahidyankf@organiclever.com>.

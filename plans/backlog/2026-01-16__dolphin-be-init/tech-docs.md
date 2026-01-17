@@ -77,7 +77,7 @@ The Spring Boot parent POM manages all dependency versions, ensuring compatibili
 
 **Jakarta EE 10 Migration**
 
-- Spring Boot 4.0.x uses Jakarta EE 10 (jakarta._ namespace instead of javax._)
+- Spring Boot 4.0.x uses Jakarta EE 10 (jakarta._namespace instead of javax._)
 - All imports must use `jakarta.persistence.*`, `jakarta.validation.*`, `jakarta.servlet.*`, etc.
 - This is a breaking change from Spring Boot 2.x and Spring Boot 3.0-3.2 (which used Jakarta EE 9)
 - No migration needed if starting fresh with Spring Boot 4.0

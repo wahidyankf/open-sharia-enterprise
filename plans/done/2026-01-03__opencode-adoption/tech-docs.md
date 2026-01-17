@@ -76,7 +76,7 @@
 
 **Z.AI Provider Setup**:
 
-1. Create account at https://bigmodel.cn/
+1. Create account at <https://bigmodel.cn/>
 2. Generate API key from console
 3. Run `/connect` in OpenCode, select **Z.AI**
 4. Run `/models` to select GLM-4.7
@@ -99,7 +99,7 @@
 
 **Z.AI API Key Setup** (for enhanced capabilities):
 
-1. Get API key from: https://bigmodel.cn/
+1. Get API key from: <https://bigmodel.cn/>
 2. Configure in local/global config (NEVER commit to repository)
 
 #### Local Configuration: Z.AI MCP Servers (Enhanced Capabilities)

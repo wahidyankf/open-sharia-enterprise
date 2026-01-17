@@ -239,7 +239,7 @@ You MUST follow the [Emoji Usage Convention](../../governance/conventions/format
 - **Scope**: All markdown files in the repository
 - **Markdown bullets**: Use SPACE indentation for nested bullets (2 spaces per level)
 - Format: `- Text` (dash, space, text)
-- Nested: `  - Text` (2 spaces before dash)
+- Nested: `- Text` (2 spaces before dash)
 - **YAML frontmatter**: MUST use 2 spaces per level (standard YAML)
 - **Code blocks**: Use language-appropriate indentation (2 spaces for JSON/TS/YAML, 4 for Python, tabs for Go)
 - **Not project-wide**: Files outside `docs/` use standard markdown (spaces OK)

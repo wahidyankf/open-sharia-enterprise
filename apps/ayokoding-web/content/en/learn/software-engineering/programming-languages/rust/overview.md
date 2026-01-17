@@ -62,14 +62,14 @@ All 5 tutorials in the Rust Full Set are now available:
 
 ## Learning Recommendations
 
-### Start Here:
+### Start Here
 
 - **Complete beginner**: [Initial Setup](/en/learn/software-engineering/programming-languages/rust/tutorials/initial-setup) then [Beginner](/en/learn/software-engineering/programming-languages/rust/tutorials/beginner)
 - **Programmer new to Rust**: [Quick Start](/en/learn/software-engineering/programming-languages/rust/tutorials/quick-start) then [Beginner](/en/learn/software-engineering/programming-languages/rust/tutorials/beginner)
 - **Professional developer**: [Intermediate](/en/learn/software-engineering/programming-languages/rust/tutorials/intermediate)
 - **Expert seeking mastery**: [Advanced](/en/learn/software-engineering/programming-languages/rust/tutorials/advanced)
 
-### Use Anytime:
+### Use Anytime
 
 [Cookbook](/en/learn/software-engineering/programming-languages/rust/how-to/cookbook) for recipes and day-to-day solutions
 

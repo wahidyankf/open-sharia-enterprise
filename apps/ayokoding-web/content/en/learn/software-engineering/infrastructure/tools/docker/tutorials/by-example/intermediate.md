@@ -4677,19 +4677,23 @@ curl http://localhost/
 This chapter covered 27 intermediate examples achieving 40-75% Docker coverage:
 
 **Advanced Networking** (41-42):
+
 - Custom bridge networks with DNS resolution
 - Network troubleshooting tools and techniques
 
 **Compose Patterns** (43-45):
+
 - Init containers for setup tasks
 - Shared volumes for data exchange
 - External networks for cross-project communication
 
 **Security** (46-47):
+
 - Running as non-root users
 - Environment variable management and secrets
 
 **Development Workflow** (48-52):
+
 - Compose profiles for conditional services
 - Resource monitoring and alerts
 - System cleanup and maintenance
@@ -4697,10 +4701,12 @@ This chapter covered 27 intermediate examples achieving 40-75% Docker coverage:
 - Compose watch for live reloading
 
 **Deployment Strategies** (53-54):
+
 - Blue-green deployment for zero downtime
 - Canary deployment for gradual rollouts
 
 **Key production patterns mastered**:
+
 - Network isolation and service discovery
 - Security hardening through least privilege
 - Development-production parity

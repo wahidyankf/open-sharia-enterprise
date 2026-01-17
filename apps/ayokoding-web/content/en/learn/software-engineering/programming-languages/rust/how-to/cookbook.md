@@ -2091,7 +2091,7 @@ fn main() {
 
 ## Macros
 
-### Recipe 40: DRY with macro_rules!
+### Recipe 40: DRY with macro_rules
 
 **Problem**: Repetitive code patterns.
 

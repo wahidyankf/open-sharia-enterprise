@@ -43,9 +43,9 @@ I'm, insha Allah, committing to transparency in how I build this:
 
 📅 Weekly updates here on LinkedIn - sharing learnings, decisions, and small milestones as they happen
 
-📝 Monthly comprehensive reports - detailed progress updates every 2nd Sunday on https://www.oseplatform.com/
+📝 Monthly comprehensive reports - detailed progress updates every 2nd Sunday on <https://www.oseplatform.com/>
 
-📚 Learning in public - technical insights and research shared on https://www.ayokoding.com/ and https://github.com/wahidyankf/open-sharia-enterprise/tree/main/docs
+📚 Learning in public - technical insights and research shared on <https://www.ayokoding.com/> and <https://github.com/wahidyankf/open-sharia-enterprise/tree/main/docs>
 
 🔓 Complete transparency - every line of code that doesn't affect the security of this project will be visible on GitHub as much as possible
 
@@ -53,6 +53,6 @@ Open source creates trust. Building in public enables collaboration. This approa
 
 There's no timeline. We'll get there when we get there. Thinking thoughtfully and strategically always pays off. Could you rush now, pay later? Build right, benefit forever.
 
-Read the full December update: https://oseplatform.com/updates/2025-12-14-phase-0-progress-report/
+Read the full December update: <https://oseplatform.com/updates/2025-12-14-phase-0-progress-report/>
 
 hashtag#OpenSource hashtag#ShariaCompliance hashtag#EnterpriseArchitecture hashtag#BuildInPublic hashtag#IslamicFinance hashtag#SoftwareEngineering hashtag#AIAssisted

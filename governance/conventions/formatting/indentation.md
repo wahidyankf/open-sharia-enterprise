@@ -164,10 +164,10 @@ def authenticate(user):
 
 ```go
 func Authenticate(user User) Token {
-	if user.IsValid {
-		return generateToken(user) // Tab indentation (Go standard)
-	}
-	return nil
+ if user.IsValid {
+  return generateToken(user) // Tab indentation (Go standard)
+ }
+ return nil
 }
 ```
 ````

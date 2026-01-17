@@ -1714,7 +1714,7 @@ pool_size: 200 # Increase from 100
 max_overflow: 50
 ```
 
-2. **Fix connection leaks** (long-term):
+1. **Fix connection leaks** (long-term):
 
 ```go
 // ❌ Wrong - Connection not returned to pool
@@ -1729,7 +1729,7 @@ if err != nil {
 defer rows.Close()  // Returns connection to pool
 ```
 
-3. **Add connection timeout**:
+1. **Add connection timeout**:
 
 ```yaml
 db_config:
@@ -1776,7 +1776,7 @@ WHERE user_id = 'uuid' AND transaction_date > '2025-11-01';
 -- Should show: Index Scan using idx_transactions_user_date
 ```
 
-2. **Optimize cache strategy**:
+1. **Optimize cache strategy**:
 
 ```python
 cache_key = f"insights:{user_id}:{start_date}:{end_date}:{category}"
@@ -1785,7 +1785,7 @@ hour = datetime.now().replace(minute=0, second=0)
 cache_key = f"insights:{user_id}:{period}:{hour}"
 ```
 
-3. **Pre-compute insights**:
+1. **Pre-compute insights**:
 
 ```python
 def precompute_daily_insights():
@@ -1839,7 +1839,7 @@ func validateFileSize(file io.Reader) error {
 }
 ```
 
-2. **Process images in chunks**:
+1. **Process images in chunks**:
 
 ```python
 image = Image.open(receipt_path)
@@ -1853,7 +1853,7 @@ with Image.open(receipt_path) as image:
         results = ocr_engine.process(image)
 ```
 
-3. **Increase resource limits**:
+1. **Increase resource limits**:
 
 ```yaml
 resources:

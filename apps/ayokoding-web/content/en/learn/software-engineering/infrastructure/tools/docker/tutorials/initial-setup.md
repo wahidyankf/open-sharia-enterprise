@@ -84,7 +84,7 @@ Before moving forward, verify:
 - [ ] `docker run hello-world` executes successfully
 - [ ] nginx container runs and serves content
 
-## 🎉 You're Done!
+## 🎉 You're Done
 
 You've successfully installed Docker and run your first container.
 

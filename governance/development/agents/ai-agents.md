@@ -197,13 +197,13 @@ skills: []
 
 In addition to the six required fields, agents may include optional metadata fields for tracking:
 
-7. **`created`** (optional)
+1. **`created`** (optional)
    - Date when the agent was first created
    - Format: `YYYY-MM-DD` (ISO 8601 date only)
    - Example: `created: 2025-11-23`
    - Helps track agent age and history
 
-8. **`updated`** (optional)
+2. **`updated`** (optional)
    - Date when the agent was last modified
    - Format: `YYYY-MM-DD` (ISO 8601 date only)
    - Example: `updated: 2025-12-03`

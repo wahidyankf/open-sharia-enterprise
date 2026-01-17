@@ -158,6 +158,7 @@ Before starting, ensure you have:
    ```
 
 8. Create main index and overview:
+
    ```bash
    cd ..  # Back to [language-name]/ directory
    touch _index.md
@@ -755,7 +756,7 @@ Before starting, ensure you have:
 
 3. **Verify deployment**:
    - Check Vercel deployment status
-   - Visit https://ayokoding.com/en/learn/swe/prog-lang/[language]/
+   - Visit <https://ayokoding.com/en/learn/swe/prog-lang/[language]/>
    - Navigate through tutorials
    - Test a few code examples
 

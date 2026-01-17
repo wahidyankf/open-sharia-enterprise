@@ -38,9 +38,9 @@ Following last week's Phase 0 progress update, I continued building foundationâ€
 
 ðŸ”— Links:
 
-- Monthly Reports: https://www.oseplatform.com/
-- Learning Content: https://www.ayokoding.com/
-- Documentation: https://github.com/wahidyankf/open-sharia-enterprise/tree/main/docs
-- Apps: https://github.com/wahidyankf/open-sharia-enterprise/tree/main/apps
+- Monthly Reports: <https://www.oseplatform.com/>
+- Learning Content: <https://www.ayokoding.com/>
+- Documentation: <https://github.com/wahidyankf/open-sharia-enterprise/tree/main/docs>
+- Apps: <https://github.com/wahidyankf/open-sharia-enterprise/tree/main/apps>
 
-#OpenSource #ShariaCompliance #BuildInPublic #SoftwareEngineering #IslamicFinance
+# OpenSource #ShariaCompliance #BuildInPublic #SoftwareEngineering #IslamicFinance

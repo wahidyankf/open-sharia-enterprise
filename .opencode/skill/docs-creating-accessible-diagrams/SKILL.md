@@ -227,17 +227,17 @@ fill: #de8f05; /* CORRECT */
 
 ### Color Blindness Simulators
 
-- **Coblis Simulator**: https://www.color-blindness.com/coblis-color-blindness-simulator/
+- **Coblis Simulator**: <https://www.color-blindness.com/coblis-color-blindness-simulator/>
   - Upload diagram, view with protanopia/deuteranopia/tritanopia
   - Free, web-based
 
-- **Figma Color Blind Plugin**: https://www.figma.com/community/plugin/733159460536249875/Color%20Blind
+- **Figma Color Blind Plugin**: <https://www.figma.com/community/plugin/733159460536249875/Color%20Blind>
   - Requires Figma account
   - All color blindness types
 
 ### Contrast Checkers
 
-- **WebAIM Contrast Checker**: https://webaim.org/resources/contrastchecker/
+- **WebAIM Contrast Checker**: <https://webaim.org/resources/contrastchecker/>
   - Enter foreground/background colors
   - Get WCAG compliance status
   - Free, web-based

@@ -35,7 +35,7 @@ This practice implements/respects the following conventions:
 
 - **[Linking Convention](../../conventions/formatting/linking.md)**: All offload summaries include relative links with .md extension to comprehensive convention documents, ensuring GitHub-compatible navigation.
 
-- **[File Naming Convention](../../conventions/meta/file-naming.md)**: New convention and development documents created during offload follow the ex-co** and ex-de** prefix patterns.
+- **[File Naming Convention](../../conventions/meta/file-naming.md)**: New convention and development documents created during offload follow the ex-co**and ex-de** prefix patterns.
 
 ## Purpose
 
@@ -151,26 +151,26 @@ When condensing content, ask these questions:
 
 ```
 Is this content unique and valuable?
-	│
-	├─ YES → Offload to convention OR development doc
-	│   │
-	│   ├─ Is this about HOW we write/format?
-	│   │   └─> governance/conventions/
-	│   │
-	│   ├─ Is this about HOW we work/process?
-	│   │   └─> governance/development/
-	│   │
-	│   ├─ Does convention/development doc exist?
-	│   │   ├─ YES → Option B: Merge into existing doc
-	│   │   └─ NO → Option A: Create new doc
-	│   │
-	│   └─ Is this pattern shared across multiple files?
-	│       ├─ YES → Option C: Extract common pattern to shared doc
-	│       └─ NO → Option D: Add to appropriate folder (conventions/ or development/)
-	│
-	├─ NO (duplicated from conventions/development) → Link instead of duplicate
-	│
-	└─ UNSURE (agent-specific implementation) → Keep in agent file
+ │
+ ├─ YES → Offload to convention OR development doc
+ │   │
+ │   ├─ Is this about HOW we write/format?
+ │   │   └─> governance/conventions/
+ │   │
+ │   ├─ Is this about HOW we work/process?
+ │   │   └─> governance/development/
+ │   │
+ │   ├─ Does convention/development doc exist?
+ │   │   ├─ YES → Option B: Merge into existing doc
+ │   │   └─ NO → Option A: Create new doc
+ │   │
+ │   └─ Is this pattern shared across multiple files?
+ │       ├─ YES → Option C: Extract common pattern to shared doc
+ │       └─ NO → Option D: Add to appropriate folder (conventions/ or development/)
+ │
+ ├─ NO (duplicated from conventions/development) → Link instead of duplicate
+ │
+ └─ UNSURE (agent-specific implementation) → Keep in agent file
 ```
 
 ## Four Offload Options
@@ -577,7 +577,7 @@ When validating condensation, `repo-governance-checker` must verify:
 
 When creating new convention or development documents during offload, `docs__maker` must:
 
-- Use correct prefix (ex-co** or ex-de**)
+- Use correct prefix (ex-co**or ex-de**)
 - Include comprehensive content from source
 - Add frontmatter with appropriate subcategory
 - Update index files

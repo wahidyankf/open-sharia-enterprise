@@ -4,6 +4,7 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-01-17: Markdown Linting Implementation](./2026-01-17__markdown-linting/) - Implemented comprehensive markdown linting with markdownlint-cli2 and Prettier integration. Achieved zero violations (down from 17,903 across 1,039 files), integrated pre-push hooks, created Claude Code PostToolUse hooks, and established markdown quality standards (Completed: 2026-01-17)
 - [2025-01-12: Full Migration from Claude Code to OpenCode](./2025-01-12__claude-code-full-migration/) - Complete migration from Claude Code to OpenCode format. Migrated all 46 agents and 23 skills to OpenCode format, achieved 238/238 validation tests (100%), removed all Claude Code artifacts, and consolidated documentation into AGENTS.md (Completed: 2026-01-12)
 - [2025-12-03: Golang Full Set Tutorial Series](./2025-12-03__golang-full-set-tutorials/) - Transform Golang tutorial directory into a complete "Full Set" tutorial series covering Initial Setup through Advanced levels (Completed: 2026-01-10)
 - [2025-12-04: Java Full Set Tutorial Series](./2025-12-04__java-full-set-tutorials/) - Transform Java tutorial directory into a complete "Full Set" tutorial series covering Initial Setup through Advanced levels (Completed: 2026-01-10)

@@ -697,6 +697,7 @@ end
    Use OpenAPI/Swagger for interactive documentation
 
 6. **Implement HATEOAS links:**
+
    ```json
    {
      "data": {...},

@@ -67,7 +67,7 @@ Before moving forward, verify:
 - [ ] Database created
 - [ ] Server runs and loads in browser
 
-## 🎉 You're Done!
+## 🎉 You're Done
 
 You've successfully installed Phoenix and created your first web application.
 

@@ -1445,4 +1445,3 @@ end
 **Key Takeaway**: Phoenix negotiates format based on Accept header or file extension. Define view functions for each format (show.json, show.html). Use get_format/1 to check requested format. Return 406 for unsupported formats.
 
 **Why It Matters**: Content negotiation enables your application to serve multiple formats from the same endpoints. This pattern is essential for building APIs that support web and mobile clients.
-

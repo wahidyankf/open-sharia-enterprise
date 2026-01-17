@@ -306,28 +306,28 @@ Before publishing a convention document, verify:
 
 ## When to Create New vs Update Existing
 
-### Create a NEW convention when:
+### Create a NEW convention when
 
 - PASS: Topic addresses a distinct concern not covered by existing conventions
 - PASS: Scope is clearly defined and non-overlapping
 - PASS: Convention will be referenced by multiple documents or agents
 - PASS: Topic requires >500 words of unique content
 
-### Update EXISTING convention when:
+### Update EXISTING convention when
 
 - PASS: Topic extends or clarifies existing convention's scope
 - PASS: New content fits naturally into existing structure
 - PASS: Overlap with existing convention is >60%
 - PASS: Addition is <500 words and doesn't warrant separate doc
 
-### Consider MERGING when:
+### Consider MERGING when
 
 - PASS: Two conventions overlap significantly (>60% shared scope)
 - PASS: Conventions are always referenced together
 - PASS: Separation causes confusion about which to follow
 - PASS: Combined length would still be <3000 lines
 
-### Decision Process:
+### Decision Process
 
 1. **Search existing conventions** - Check `governance/conventions/README.md` for related topics
 2. **Assess overlap** - Read related conventions to understand current coverage

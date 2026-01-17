@@ -26,13 +26,13 @@ This guide shows effective documentation practices in Go.
 //
 // Basic usage:
 //
-//	service := user.NewService(db)
-//	user, err := service.Register("alice@example.com", "password123")
-//	if err != nil {
-//	    log.Fatal(err)
-//	}
+// service := user.NewService(db)
+// user, err := service.Register("alice@example.com", "password123")
+// if err != nil {
+//     log.Fatal(err)
+// }
 //
-//	authenticated, err := service.Authenticate("alice@example.com", "password123")
+// authenticated, err := service.Authenticate("alice@example.com", "password123")
 //
 // Thread Safety:
 //
@@ -58,10 +58,10 @@ package user
 //
 // Example:
 //
-//	user, err := Register("alice@example.com", "securepass123")
-//	if err != nil {
-//	    log.Fatal(err)
-//	}
+// user, err := Register("alice@example.com", "securepass123")
+// if err != nil {
+//     log.Fatal(err)
+// }
 func Register(email, password string) (*User, error) {
     // Implementation...
 }
@@ -192,17 +192,17 @@ func legacyFunction() {}
 //
 // Example usage:
 //
-//	payment := &Payment{
-//	    Amount:  100.00,
-//	    CardNum: "4532-1234-5678-9010",
-//	}
+// payment := &Payment{
+//     Amount:  100.00,
+//     CardNum: "4532-1234-5678-9010",
+// }
 //
-//	result, err := ProcessPayment(payment)
-//	if err != nil {
-//	    log.Fatal(err)
-//	}
+// result, err := ProcessPayment(payment)
+// if err != nil {
+//     log.Fatal(err)
+// }
 //
-//	fmt.Printf("Transaction ID: %s\n", result.TransactionID)
+// fmt.Printf("Transaction ID: %s\n", result.TransactionID)
 func ProcessPayment(payment *Payment) (*PaymentResult, error) {
     // Implementation...
 }
@@ -275,31 +275,31 @@ func isEmailTaken(email string) bool {
 //
 // Example config.yaml:
 //
-//	database:
-//	  url: postgresql://localhost/mydb
-//	  max_connections: 20
-//	server:
-//	  port: 8080
-//	  timeout: 30s
+// database:
+//   url: postgresql://localhost/mydb
+//   max_connections: 20
+// server:
+//   port: 8080
+//   timeout: 30s
 //
 // # Usage
 //
 // Load configuration at application startup:
 //
-//	cfg, err := config.Load()
-//	if err != nil {
-//	    log.Fatal(err)
-//	}
+// cfg, err := config.Load()
+// if err != nil {
+//     log.Fatal(err)
+// }
 //
-//	server := NewServer(cfg)
-//	server.Start()
+// server := NewServer(cfg)
+// server.Start()
 //
 // Watch for configuration changes:
 //
-//	config.Watch(func(cfg *Config) {
-//	    log.Println("Configuration reloaded")
-//	    server.UpdateConfig(cfg)
-//	})
+// config.Watch(func(cfg *Config) {
+//     log.Println("Configuration reloaded")
+//     server.UpdateConfig(cfg)
+// })
 package config
 ```
 

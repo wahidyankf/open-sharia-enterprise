@@ -95,7 +95,7 @@ Before moving forward, verify:
 - [ ] Application starts without errors
 - [ ] Endpoints respond correctly
 
-## 🎉 You're Done!
+## 🎉 You're Done
 
 You've successfully created your first Spring Boot web application.
 

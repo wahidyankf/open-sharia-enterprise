@@ -97,7 +97,7 @@ Before moving forward, verify:
 - [ ] Deployment created and pod running
 - [ ] Service accessible via browser
 
-## 🎉 You're Done!
+## 🎉 You're Done
 
 You've successfully set up Kubernetes and deployed your first application.
 

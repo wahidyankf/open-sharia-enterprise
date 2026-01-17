@@ -250,8 +250,8 @@ done < <(find . -name "*.txt")  # => Read from command output
                                 # => <(command) provides file descriptor
 
 # Multiple input sources
-paste <(seq 1 5) <(seq 10 14)   # => 1	10
-                                # => 2	11
+paste <(seq 1 5) <(seq 10 14)   # => 1 10
+                                # => 2 11
                                 # => Combines two command outputs side-by-side
 
 # Output redirection with process substitution

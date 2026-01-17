@@ -346,8 +346,8 @@ $$
 **What to Verify:**
 
 - Correct pattern: `- Text` (dash, space, text) for same-level
-- Nested: `  - Text` (2 spaces BEFORE dash)
-- Deeper: `    - Text` (4 spaces BEFORE dash)
+- Nested: `- Text` (2 spaces BEFORE dash)
+- Deeper: `- Text` (4 spaces BEFORE dash)
 - NOT: `-  Text` (spaces AFTER dash - wrong)
 
 **Common error:**

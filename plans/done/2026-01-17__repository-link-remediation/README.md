@@ -84,20 +84,20 @@ During OCD mode repository rules validation (UUID chain: ca6b39), comprehensive 
 
 **P1: High Priority (568 links)**
 
-3. Fix path calculation errors (520 links)
+1. Fix path calculation errors (520 links)
    - Analyze each broken link's depth
    - Calculate correct relative path
    - Apply fixes with validation
 
-4. Fix vision/ directory paths (15 links)
+2. Fix vision/ directory paths (15 links)
    - Pattern: Update to `governance/vision/`
-5. Fix workflows/ directory paths (33 links)
+3. Fix workflows/ directory paths (33 links)
    - Pattern: Update to `governance/workflows/`
 
 **P2: Medium Priority (29 links)**
 
-6. Fix conventions README paths (15 links)
-7. Fix miscellaneous path issues (14 links)
+1. Fix conventions README paths (15 links)
+2. Fix miscellaneous path issues (14 links)
 
 ### Phase 3: Validation & Prevention
 

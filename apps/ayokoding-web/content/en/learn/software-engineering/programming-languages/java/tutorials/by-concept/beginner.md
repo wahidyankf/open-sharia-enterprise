@@ -1523,7 +1523,7 @@ This project consolidates everything you've learned in this Beginner tutorial. S
 
 Congratulations! You've mastered Java fundamentals (0-60% coverage).
 
-### Next Steps:
+### Next Steps
 
 **For Production Development** → Continue with [Intermediate Java](intermediate):
 

@@ -93,92 +93,92 @@ A worker pool manages a fixed number of goroutines processing tasks from a queue
 package main
 
 import (
-	"fmt"
-	"sync"
-	"time"
+ "fmt"
+ "sync"
+ "time"
 )
 
 type Job struct {
-	ID    int
-	Value int
+ ID    int
+ Value int
 }
 
 type Result struct {
-	Job    Job
-	Result int
+ Job    Job
+ Result int
 }
 
 // WorkerPool manages a pool of workers
 type WorkerPool struct {
-	jobs    chan Job
-	results chan Result
-	wg      sync.WaitGroup
+ jobs    chan Job
+ results chan Result
+ wg      sync.WaitGroup
 }
 
 // NewWorkerPool creates a worker pool with numWorkers goroutines
 func NewWorkerPool(numWorkers int) *WorkerPool {
-	return &WorkerPool{
-		jobs:    make(chan Job, 100),      // Buffered to avoid goroutine blocking
-		results: make(chan Result, 100),
-	}
+ return &WorkerPool{
+  jobs:    make(chan Job, 100),      // Buffered to avoid goroutine blocking
+  results: make(chan Result, 100),
+ }
 }
 
 // Start launches worker goroutines
 func (wp *WorkerPool) Start(numWorkers int) {
-	for i := 0; i < numWorkers; i++ {
-		wp.wg.Add(1)
-		go wp.worker()
-	}
+ for i := 0; i < numWorkers; i++ {
+  wp.wg.Add(1)
+  go wp.worker()
+ }
 }
 
 // worker processes jobs from the queue
 func (wp *WorkerPool) worker() {
-	defer wp.wg.Done()
-	for job := range wp.jobs {
-		// Simulate CPU-bound work
-		result := job.Value * 2
-		wp.results <- Result{Job: job, Result: result}
-	}
+ defer wp.wg.Done()
+ for job := range wp.jobs {
+  // Simulate CPU-bound work
+  result := job.Value * 2
+  wp.results <- Result{Job: job, Result: result}
+ }
 }
 
 // Submit adds a job to the queue
 func (wp *WorkerPool) Submit(job Job) {
-	wp.jobs <- job
+ wp.jobs <- job
 }
 
 // Close stops accepting new jobs and waits for workers to finish
 func (wp *WorkerPool) Close() {
-	close(wp.jobs)
-	wp.wg.Wait()
-	close(wp.results)
+ close(wp.jobs)
+ wp.wg.Wait()
+ close(wp.results)
 }
 
 // GetResults returns a channel to read results
 func (wp *WorkerPool) GetResults() <-chan Result {
-	return wp.results
+ return wp.results
 }
 
 func main() {
-	pool := NewWorkerPool(100)
-	pool.Start(5) // 5 worker goroutines
+ pool := NewWorkerPool(100)
+ pool.Start(5) // 5 worker goroutines
 
-	// Submit 100 jobs
-	go func() {
-		for i := 0; i < 100; i++ {
-			pool.Submit(Job{ID: i, Value: i})
-		}
-		pool.Close()
-	}()
+ // Submit 100 jobs
+ go func() {
+  for i := 0; i < 100; i++ {
+   pool.Submit(Job{ID: i, Value: i})
+  }
+  pool.Close()
+ }()
 
-	// Collect results
-	resultCount := 0
-	for result := range pool.GetResults() {
-		resultCount++
-		if resultCount <= 3 {
-			fmt.Printf("Job %d: %d -> %d\n", result.Job.ID, result.Job.Value, result.Result)
-		}
-	}
-	fmt.Printf("Processed %d jobs\n", resultCount)
+ // Collect results
+ resultCount := 0
+ for result := range pool.GetResults() {
+  resultCount++
+  if resultCount <= 3 {
+   fmt.Printf("Job %d: %d -> %d\n", result.Job.ID, result.Job.Value, result.Result)
+  }
+ }
+ fmt.Printf("Processed %d jobs\n", resultCount)
 }
 ```
 
@@ -253,47 +253,47 @@ import "fmt"
 
 // Pipeline stages
 func generate(nums ...int) <-chan int {
-	out := make(chan int)
-	go func() {
-		for _, n := range nums {
-			out <- n
-		}
-		close(out)
-	}()
-	return out
+ out := make(chan int)
+ go func() {
+  for _, n := range nums {
+   out <- n
+  }
+  close(out)
+ }()
+ return out
 }
 
 func square(in <-chan int) <-chan int {
-	out := make(chan int)
-	go func() {
-		for n := range in {
-			out <- n * n
-		}
-		close(out)
-	}()
-	return out
+ out := make(chan int)
+ go func() {
+  for n := range in {
+   out <- n * n
+  }
+  close(out)
+ }()
+ return out
 }
 
 func sum(in <-chan int) <-chan int {
-	out := make(chan int)
-	go func() {
-		total := 0
-		for n := range in {
-			total += n
-		}
-		out <- total
-		close(out)
-	}()
-	return out
+ out := make(chan int)
+ go func() {
+  total := 0
+  for n := range in {
+   total += n
+  }
+  out <- total
+  close(out)
+ }()
+ return out
 }
 
 func main() {
-	// Create pipeline: generate -> square -> sum
-	numbers := generate(1, 2, 3, 4, 5)
-	squared := square(numbers)
-	result := sum(squared)
+ // Create pipeline: generate -> square -> sum
+ numbers := generate(1, 2, 3, 4, 5)
+ squared := square(numbers)
+ result := sum(squared)
 
-	fmt.Println(<-result) // Output: 55 (1 + 4 + 9 + 16 + 25)
+ fmt.Println(<-result) // Output: 55 (1 + 4 + 9 + 16 + 25)
 }
 ```
 
@@ -311,44 +311,44 @@ The `context` package provides a way to cancel operations across goroutines and 
 package main
 
 import (
-	"context"
-	"fmt"
-	"time"
+ "context"
+ "fmt"
+ "time"
 )
 
 // SlowOperation simulates a long-running operation
 func SlowOperation(ctx context.Context, name string, duration time.Duration) error {
-	select {
-	case <-time.After(duration):
-		fmt.Printf("%s completed\n", name)
-		return nil
-	case <-ctx.Done():
-		fmt.Printf("%s cancelled: %v\n", name, ctx.Err())
-		return ctx.Err()
-	}
+ select {
+ case <-time.After(duration):
+  fmt.Printf("%s completed\n", name)
+  return nil
+ case <-ctx.Done():
+  fmt.Printf("%s cancelled: %v\n", name, ctx.Err())
+  return ctx.Err()
+ }
 }
 
 func main() {
-	// Example 1: Timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-	defer cancel()
+ // Example 1: Timeout
+ ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+ defer cancel()
 
-	fmt.Println("Example 1: Timeout")
-	if err := SlowOperation(ctx, "Operation", 3*time.Second); err != nil {
-		fmt.Println("Failed:", err)
-	}
+ fmt.Println("Example 1: Timeout")
+ if err := SlowOperation(ctx, "Operation", 3*time.Second); err != nil {
+  fmt.Println("Failed:", err)
+ }
 
-	// Example 2: Explicit cancellation
-	fmt.Println("\nExample 2: Cancellation")
-	ctx2, cancel2 := context.WithCancel(context.Background())
-	go func() {
-		time.Sleep(1 * time.Second)
-		cancel2() // Cancel after 1 second
-	}()
+ // Example 2: Explicit cancellation
+ fmt.Println("\nExample 2: Cancellation")
+ ctx2, cancel2 := context.WithCancel(context.Background())
+ go func() {
+  time.Sleep(1 * time.Second)
+  cancel2() // Cancel after 1 second
+ }()
 
-	if err := SlowOperation(ctx2, "Another Operation", 5*time.Second); err != nil {
-		fmt.Println("Failed:", err)
-	}
+ if err := SlowOperation(ctx2, "Another Operation", 5*time.Second); err != nil {
+  fmt.Println("Failed:", err)
+ }
 }
 ```
 
@@ -383,58 +383,58 @@ Go 1.13+ provides error wrapping to preserve error context:
 package main
 
 import (
-	"errors"
-	"fmt"
-	"os"
+ "errors"
+ "fmt"
+ "os"
 )
 
 // Custom error type
 type ValidationError struct {
-	Field string
-	Value interface{}
+ Field string
+ Value interface{}
 }
 
 func (e *ValidationError) Error() string {
-	return fmt.Sprintf("validation error on field %s: invalid value %v", e.Field, e.Value)
+ return fmt.Sprintf("validation error on field %s: invalid value %v", e.Field, e.Value)
 }
 
 // Function that returns wrapped errors
 func readConfig(filename string) (string, error) {
-	// File operations can return os.PathError
-	data, err := os.ReadFile(filename)
-	if err != nil {
-		// Wrap with context
-		return "", fmt.Errorf("failed to read config file %s: %w", filename, err)
-	}
+ // File operations can return os.PathError
+ data, err := os.ReadFile(filename)
+ if err != nil {
+  // Wrap with context
+  return "", fmt.Errorf("failed to read config file %s: %w", filename, err)
+ }
 
-	// Validation can return custom errors
-	if len(data) == 0 {
-		return "", &ValidationError{Field: "content", Value: "empty file"}
-	}
+ // Validation can return custom errors
+ if len(data) == 0 {
+  return "", &ValidationError{Field: "content", Value: "empty file"}
+ }
 
-	return string(data), nil
+ return string(data), nil
 }
 
 func main() {
-	// Attempting to read non-existent file
-	_, err := readConfig("nonexistent.conf")
-	if err != nil {
-		fmt.Println("Error:", err)
+ // Attempting to read non-existent file
+ _, err := readConfig("nonexistent.conf")
+ if err != nil {
+  fmt.Println("Error:", err)
 
-		// Check for specific error type
-		var validErr *ValidationError
-		if errors.As(err, &validErr) {
-			fmt.Printf("Validation failed on %s\n", validErr.Field)
-		}
+  // Check for specific error type
+  var validErr *ValidationError
+  if errors.As(err, &validErr) {
+   fmt.Printf("Validation failed on %s\n", validErr.Field)
+  }
 
-		// Check for specific error value (sentinel error)
-		if errors.Is(err, os.ErrNotExist) {
-			fmt.Println("File not found")
-		}
+  // Check for specific error value (sentinel error)
+  if errors.Is(err, os.ErrNotExist) {
+   fmt.Println("File not found")
+  }
 
-		// Unwrap to see the original error
-		fmt.Println("Original error:", errors.Unwrap(err))
-	}
+  // Unwrap to see the original error
+  fmt.Println("Original error:", errors.Unwrap(err))
+ }
 }
 ```
 
@@ -453,74 +453,74 @@ Production systems need to handle transient failures:
 package main
 
 import (
-	"fmt"
-	"math"
-	"math/rand"
-	"time"
+ "fmt"
+ "math"
+ "math/rand"
+ "time"
 )
 
 // RetryConfig specifies retry behavior
 type RetryConfig struct {
-	MaxAttempts int
-	InitialDelay time.Duration
-	MaxDelay    time.Duration
-	Multiplier  float64
+ MaxAttempts int
+ InitialDelay time.Duration
+ MaxDelay    time.Duration
+ Multiplier  float64
 }
 
 // Exponential backoff with jitter
 func RetryWithBackoff(config RetryConfig, fn func() error) error {
-	var lastErr error
-	delay := config.InitialDelay
+ var lastErr error
+ delay := config.InitialDelay
 
-	for attempt := 1; attempt <= config.MaxAttempts; attempt++ {
-		lastErr = fn()
-		if lastErr == nil {
-			return nil // Success
-		}
+ for attempt := 1; attempt <= config.MaxAttempts; attempt++ {
+  lastErr = fn()
+  if lastErr == nil {
+   return nil // Success
+  }
 
-		if attempt == config.MaxAttempts {
-			break // No more retries
-		}
+  if attempt == config.MaxAttempts {
+   break // No more retries
+  }
 
-		// Calculate backoff with jitter
-		jitter := time.Duration(rand.Int63n(int64(delay)))
-		actualDelay := delay + jitter
+  // Calculate backoff with jitter
+  jitter := time.Duration(rand.Int63n(int64(delay)))
+  actualDelay := delay + jitter
 
-		fmt.Printf("Attempt %d failed, retrying after %v\n", attempt, actualDelay)
-		time.Sleep(actualDelay)
+  fmt.Printf("Attempt %d failed, retrying after %v\n", attempt, actualDelay)
+  time.Sleep(actualDelay)
 
-		// Exponential backoff
-		delay = time.Duration(math.Min(
-			float64(delay)*config.Multiplier,
-			float64(config.MaxDelay),
-		))
-	}
+  // Exponential backoff
+  delay = time.Duration(math.Min(
+   float64(delay)*config.Multiplier,
+   float64(config.MaxDelay),
+  ))
+ }
 
-	return fmt.Errorf("failed after %d attempts: %w", config.MaxAttempts, lastErr)
+ return fmt.Errorf("failed after %d attempts: %w", config.MaxAttempts, lastErr)
 }
 
 // Example unreliable function
 func UnreliableOperation() error {
-	if rand.Float64() < 0.7 { // 70% failure rate
-		return fmt.Errorf("temporary failure")
-	}
-	return nil
+ if rand.Float64() < 0.7 { // 70% failure rate
+  return fmt.Errorf("temporary failure")
+ }
+ return nil
 }
 
 func main() {
-	config := RetryConfig{
-		MaxAttempts:  3,
-		InitialDelay: 100 * time.Millisecond,
-		MaxDelay:     2 * time.Second,
-		Multiplier:   2.0,
-	}
+ config := RetryConfig{
+  MaxAttempts:  3,
+  InitialDelay: 100 * time.Millisecond,
+  MaxDelay:     2 * time.Second,
+  Multiplier:   2.0,
+ }
 
-	err := RetryWithBackoff(config, UnreliableOperation)
-	if err != nil {
-		fmt.Println("Final error:", err)
-	} else {
-		fmt.Println("Success!")
-	}
+ err := RetryWithBackoff(config, UnreliableOperation)
+ if err != nil {
+  fmt.Println("Final error:", err)
+ } else {
+  fmt.Println("Success!")
+ }
 }
 ```
 
@@ -538,73 +538,73 @@ Integration tests verify components work together:
 package main
 
 import (
-	"fmt"
-	"testing"
+ "fmt"
+ "testing"
 )
 
 // Database interface (abstraction for testing)
 type Database interface {
-	Get(key string) (string, error)
-	Set(key string, value string) error
+ Get(key string) (string, error)
+ Set(key string, value string) error
 }
 
 // MockDatabase for testing
 type MockDatabase struct {
-	data map[string]string
+ data map[string]string
 }
 
 func NewMockDatabase() *MockDatabase {
-	return &MockDatabase{data: make(map[string]string)}
+ return &MockDatabase{data: make(map[string]string)}
 }
 
 func (m *MockDatabase) Get(key string) (string, error) {
-	if val, ok := m.data[key]; ok {
-		return val, nil
-	}
-	return "", fmt.Errorf("key not found")
+ if val, ok := m.data[key]; ok {
+  return val, nil
+ }
+ return "", fmt.Errorf("key not found")
 }
 
 func (m *MockDatabase) Set(key string, value string) error {
-	m.data[key] = value
-	return nil
+ m.data[key] = value
+ return nil
 }
 
 // Service uses Database
 type UserService struct {
-	db Database
+ db Database
 }
 
 func NewUserService(db Database) *UserService {
-	return &UserService{db: db}
+ return &UserService{db: db}
 }
 
 func (s *UserService) GetUser(id string) (string, error) {
-	return s.db.Get(id)
+ return s.db.Get(id)
 }
 
 func (s *UserService) SaveUser(id string, name string) error {
-	return s.db.Set(id, name)
+ return s.db.Set(id, name)
 }
 
 // Integration test
 func TestUserService(t *testing.T) {
-	db := NewMockDatabase()
-	service := NewUserService(db)
+ db := NewMockDatabase()
+ service := NewUserService(db)
 
-	// Test save
-	if err := service.SaveUser("1", "Alice"); err != nil {
-		t.Fatalf("SaveUser failed: %v", err)
-	}
+ // Test save
+ if err := service.SaveUser("1", "Alice"); err != nil {
+  t.Fatalf("SaveUser failed: %v", err)
+ }
 
-	// Test retrieve
-	user, err := service.GetUser("1")
-	if err != nil {
-		t.Fatalf("GetUser failed: %v", err)
-	}
+ // Test retrieve
+ user, err := service.GetUser("1")
+ if err != nil {
+  t.Fatalf("GetUser failed: %v", err)
+ }
 
-	if user != "Alice" {
-		t.Errorf("Expected 'Alice', got '%s'", user)
-	}
+ if user != "Alice" {
+  t.Errorf("Expected 'Alice', got '%s'", user)
+ }
 }
 ```
 
@@ -616,37 +616,37 @@ Benchmarks measure performance:
 package main
 
 import (
-	"testing"
+ "testing"
 )
 
 func SlowStringConcat(n int) string {
-	result := ""
-	for i := 0; i < n; i++ {
-		result += "x" // Inefficient: creates new string each iteration
-	}
-	return result
+ result := ""
+ for i := 0; i < n; i++ {
+  result += "x" // Inefficient: creates new string each iteration
+ }
+ return result
 }
 
 func FastStringConcat(n int) string {
-	b := make([]byte, n)
-	for i := 0; i < n; i++ {
-		b[i] = 'x'
-	}
-	return string(b)
+ b := make([]byte, n)
+ for i := 0; i < n; i++ {
+  b[i] = 'x'
+ }
+ return string(b)
 }
 
 // Benchmark slow version
 func BenchmarkSlowConcat(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		SlowStringConcat(1000)
-	}
+ for i := 0; i < b.N; i++ {
+  SlowStringConcat(1000)
+ }
 }
 
 // Benchmark fast version
 func BenchmarkFastConcat(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		FastStringConcat(1000)
-	}
+ for i := 0; i < b.N; i++ {
+  FastStringConcat(1000)
+ }
 }
 
 // Run with: go test -bench=. -benchmem
@@ -667,20 +667,20 @@ Professional applications use architecture patterns to maintain scalability and 
 package domain
 
 type User struct {
-	ID   string
-	Name string
-	Email string
+ ID   string
+ Name string
+ Email string
 }
 
 type UserRepository interface {
-	Save(user User) error
-	GetByID(id string) (User, error)
+ Save(user User) error
+ GetByID(id string) (User, error)
 }
 
 // Port: defines the service interface
 type UserService interface {
-	RegisterUser(name, email string) (User, error)
-	GetUser(id string) (User, error)
+ RegisterUser(name, email string) (User, error)
+ GetUser(id string) (User, error)
 }
 
 // application/service.go - Use case implementation
@@ -689,23 +689,23 @@ package application
 import "domain"
 
 type UserServiceImpl struct {
-	repo domain.UserRepository
+ repo domain.UserRepository
 }
 
 func NewUserService(repo domain.UserRepository) domain.UserService {
-	return &UserServiceImpl{repo: repo}
+ return &UserServiceImpl{repo: repo}
 }
 
 func (s *UserServiceImpl) RegisterUser(name, email string) (domain.User, error) {
-	user := domain.User{ID: "123", Name: name, Email: email}
-	if err := s.repo.Save(user); err != nil {
-		return domain.User{}, err
-	}
-	return user, nil
+ user := domain.User{ID: "123", Name: name, Email: email}
+ if err := s.repo.Save(user); err != nil {
+  return domain.User{}, err
+ }
+ return user, nil
 }
 
 func (s *UserServiceImpl) GetUser(id string) (domain.User, error) {
-	return s.repo.GetByID(id)
+ return s.repo.GetByID(id)
 }
 
 // infrastructure/postgres.go - Adapter implementation
@@ -714,17 +714,17 @@ package infrastructure
 import "domain"
 
 type PostgresRepository struct {
-	// connection pool, etc
+ // connection pool, etc
 }
 
 func (r *PostgresRepository) Save(user domain.User) error {
-	// SQL implementation
-	return nil
+ // SQL implementation
+ return nil
 }
 
 func (r *PostgresRepository) GetByID(id string) (domain.User, error) {
-	// SQL implementation
-	return domain.User{}, nil
+ // SQL implementation
+ return domain.User{}, nil
 }
 ```
 
@@ -741,18 +741,18 @@ Inject dependencies rather than hardcoding:
 ```go
 // Good: Dependencies injected
 func NewUserHandler(service UserService, logger Logger) *UserHandler {
-	return &UserHandler{
-		service: service,
-		logger:  logger,
-	}
+ return &UserHandler{
+  service: service,
+  logger:  logger,
+ }
 }
 
 // Bad: Hardcoded dependencies
 func NewUserHandlerBad() *UserHandler {
-	return &UserHandler{
-		service: globalUserService, // Global dependency!
-		logger:  globalLogger,
-	}
+ return &UserHandler{
+  service: globalUserService, // Global dependency!
+  logger:  globalLogger,
+ }
 }
 ```
 
@@ -770,30 +770,30 @@ Go includes built-in profiling:
 package main
 
 import (
-	"fmt"
-	"runtime/pprof"
-	"os"
+ "fmt"
+ "runtime/pprof"
+ "os"
 )
 
 func expensiveOperation() {
-	sum := 0
-	for i := 0; i < 1000000000; i++ {
-		sum += i
-	}
-	fmt.Println(sum)
+ sum := 0
+ for i := 0; i < 1000000000; i++ {
+  sum += i
+ }
+ fmt.Println(sum)
 }
 
 func main() {
-	// Start CPU profiling
-	f, _ := os.Create("cpu.prof")
-	pprof.StartCPUProfile(f)
-	defer pprof.StopCPUProfile()
+ // Start CPU profiling
+ f, _ := os.Create("cpu.prof")
+ pprof.StartCPUProfile(f)
+ defer pprof.StopCPUProfile()
 
-	expensiveOperation()
+ expensiveOperation()
 
-	// Run with: go run main.go
-	// Then: go tool pprof cpu.prof
-	// Then: (pprof) top (shows top functions by CPU usage)
+ // Run with: go run main.go
+ // Then: go tool pprof cpu.prof
+ // Then: (pprof) top (shows top functions by CPU usage)
 }
 ```
 
@@ -804,36 +804,36 @@ Reduce allocations in hot paths:
 ```go
 // Bad: Allocates on each iteration
 func BadProcessing(items []int) {
-	for _, item := range items {
-		result := make([]byte, 1024) // Allocates!
-		_ = result
-	}
+ for _, item := range items {
+  result := make([]byte, 1024) // Allocates!
+  _ = result
+ }
 }
 
 // Good: Reuse buffer
 func GoodProcessing(items []int) {
-	buffer := make([]byte, 1024) // Allocate once
-	for _, item := range items {
-		_ = buffer
-		// Reuse buffer
-	}
+ buffer := make([]byte, 1024) // Allocate once
+ for _, item := range items {
+  _ = buffer
+  // Reuse buffer
+ }
 }
 
 // Even better: Use sync.Pool for temporary objects
 var bufferPool = sync.Pool{
-	New: func() interface{} {
-		return make([]byte, 1024)
-	},
+ New: func() interface{} {
+  return make([]byte, 1024)
+ },
 }
 
 func OptimizedProcessing(items []int) {
-	buffer := bufferPool.Get().([]byte)
-	defer bufferPool.Put(buffer)
+ buffer := bufferPool.Get().([]byte)
+ defer bufferPool.Put(buffer)
 
-	for _, item := range items {
-		_ = buffer
-		// Use buffer
-	}
+ for _, item := range items {
+  _ = buffer
+  // Use buffer
+ }
 }
 ```
 
@@ -847,37 +847,37 @@ Production applications must be secure:
 
 ```go
 import (
-	"regexp"
-	"strings"
+ "regexp"
+ "strings"
 )
 
 func ValidateEmail(email string) error {
-	if len(email) == 0 {
-		return fmt.Errorf("email cannot be empty")
-	}
-	if len(email) > 254 {
-		return fmt.Errorf("email too long")
-	}
-	// Basic email regex
-	if matched, _ := regexp.MatchString(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`, email); !matched {
-		return fmt.Errorf("invalid email format")
-	}
-	return nil
+ if len(email) == 0 {
+  return fmt.Errorf("email cannot be empty")
+ }
+ if len(email) > 254 {
+  return fmt.Errorf("email too long")
+ }
+ // Basic email regex
+ if matched, _ := regexp.MatchString(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`, email); !matched {
+  return fmt.Errorf("invalid email format")
+ }
+ return nil
 }
 
 // Prevent SQL injection with parameterized queries
 func GetUser(db *sql.DB, id string) (User, error) {
-	// Good: Parameterized query
-	row := db.QueryRow("SELECT id, name FROM users WHERE id = ?", id)
+ // Good: Parameterized query
+ row := db.QueryRow("SELECT id, name FROM users WHERE id = ?", id)
 
-	// Bad: String concatenation (DO NOT USE)
-	// row := db.QueryRow("SELECT id, name FROM users WHERE id = " + id)
+ // Bad: String concatenation (DO NOT USE)
+ // row := db.QueryRow("SELECT id, name FROM users WHERE id = " + id)
 
-	var u User
-	if err := row.Scan(&u.ID, &u.Name); err != nil {
-		return User{}, err
-	}
-	return u, nil
+ var u User
+ if err := row.Scan(&u.ID, &u.Name); err != nil {
+  return User{}, err
+ }
+ return u, nil
 }
 ```
 
@@ -909,41 +909,41 @@ Production systems need health checks and monitoring:
 package main
 
 import (
-	"context"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
+ "context"
+ "net/http"
+ "os"
+ "os/signal"
+ "syscall"
+ "time"
 )
 
 func main() {
-	server := &http.Server{
-		Addr:    ":8080",
-		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusOK)
-		}),
-	}
+ server := &http.Server{
+  Addr:    ":8080",
+  Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+   w.WriteHeader(http.StatusOK)
+  }),
+ }
 
-	// Start server in goroutine
-	go func() {
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			panic(err)
-		}
-	}()
+ // Start server in goroutine
+ go func() {
+  if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+   panic(err)
+  }
+ }()
 
-	// Wait for interrupt signal
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
-	<-sigChan
+ // Wait for interrupt signal
+ sigChan := make(chan os.Signal, 1)
+ signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+ <-sigChan
 
-	// Graceful shutdown with timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
+ // Graceful shutdown with timeout
+ ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+ defer cancel()
 
-	if err := server.Shutdown(ctx); err != nil {
-		panic(err)
-	}
+ if err := server.Shutdown(ctx); err != nil {
+  panic(err)
+ }
 }
 ```
 
@@ -951,20 +951,20 @@ func main() {
 
 ```go
 func healthHandler(w http.ResponseWriter, r *http.Request) {
-	// Check critical services
-	if !isDatabaseHealthy() {
-		w.WriteHeader(http.StatusServiceUnavailable)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("OK"))
+ // Check critical services
+ if !isDatabaseHealthy() {
+  w.WriteHeader(http.StatusServiceUnavailable)
+  return
+ }
+ w.WriteHeader(http.StatusOK)
+ w.Write([]byte("OK"))
 }
 
 func main() {
-	http.HandleFunc("/health", healthHandler)
-	http.ListenAndServe(":8080", nil)
+ http.HandleFunc("/health", healthHandler)
+ http.ListenAndServe(":8080", nil)
 
-	// Now: curl http://localhost:8080/health
+ // Now: curl http://localhost:8080/health
 }
 ```
 
@@ -980,105 +980,105 @@ Building HTTP APIs is a common production use case:
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"sync"
+ "encoding/json"
+ "fmt"
+ "net/http"
+ "sync"
 )
 
 // User represents a user resource
 type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-	Email string `json:"email"`
+ ID   string `json:"id"`
+ Name string `json:"name"`
+ Email string `json:"email"`
 }
 
 // UserStore manages user data (in-memory for this example)
 type UserStore struct {
-	mu    sync.RWMutex
-	users map[string]User
+ mu    sync.RWMutex
+ users map[string]User
 }
 
 func NewUserStore() *UserStore {
-	return &UserStore{
-		users: make(map[string]User),
-	}
+ return &UserStore{
+  users: make(map[string]User),
+ }
 }
 
 func (s *UserStore) Create(user User) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.users[user.ID] = user
-	return nil
+ s.mu.Lock()
+ defer s.mu.Unlock()
+ s.users[user.ID] = user
+ return nil
 }
 
 func (s *UserStore) Get(id string) (User, error) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-	user, ok := s.users[id]
-	if !ok {
-		return User{}, fmt.Errorf("user not found")
-	}
-	return user, nil
+ s.mu.RLock()
+ defer s.mu.RUnlock()
+ user, ok := s.users[id]
+ if !ok {
+  return User{}, fmt.Errorf("user not found")
+ }
+ return user, nil
 }
 
 // HTTP Handlers
 type UserHandler struct {
-	store *UserStore
+ store *UserStore
 }
 
 func NewUserHandler(store *UserStore) *UserHandler {
-	return &UserHandler{store: store}
+ return &UserHandler{store: store}
 }
 
 // POST /users
 func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
-	var user User
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
-		return
-	}
+ var user User
+ if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+  http.Error(w, "Invalid request", http.StatusBadRequest)
+  return
+ }
 
-	if err := h.store.Create(user); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+ if err := h.store.Create(user); err != nil {
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+  return
+ }
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(user)
+ w.Header().Set("Content-Type", "application/json")
+ w.WriteHeader(http.StatusCreated)
+ json.NewEncoder(w).Encode(user)
 }
 
 // GET /users/{id}
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Path[len("/users/"):]
-	user, err := h.store.Get(id)
-	if err != nil {
-		http.Error(w, "User not found", http.StatusNotFound)
-		return
-	}
+ id := r.URL.Path[len("/users/"):]
+ user, err := h.store.Get(id)
+ if err != nil {
+  http.Error(w, "User not found", http.StatusNotFound)
+  return
+ }
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+ w.Header().Set("Content-Type", "application/json")
+ json.NewEncoder(w).Encode(user)
 }
 
 func main() {
-	store := NewUserStore()
-	handler := NewUserHandler(store)
+ store := NewUserStore()
+ handler := NewUserHandler(store)
 
-	http.HandleFunc("/users", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodPost {
-			handler.CreateUser(w, r)
-		}
-	})
+ http.HandleFunc("/users", func(w http.ResponseWriter, r *http.Request) {
+  if r.Method == http.MethodPost {
+   handler.CreateUser(w, r)
+  }
+ })
 
-	http.HandleFunc("/users/", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet {
-			handler.GetUser(w, r)
-		}
-	})
+ http.HandleFunc("/users/", func(w http.ResponseWriter, r *http.Request) {
+  if r.Method == http.MethodGet {
+   handler.GetUser(w, r)
+  }
+ })
 
-	http.ListenAndServe(":8080", nil)
+ http.ListenAndServe(":8080", nil)
 }
 ```
 
@@ -1089,35 +1089,35 @@ Middleware adds cross-cutting concerns (logging, authentication, etc.):
 ```go
 // Middleware function that wraps a handler
 func LoggingMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Printf("Request: %s %s\n", r.Method, r.URL.Path)
-		next.ServeHTTP(w, r)
-	})
+ return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+  fmt.Printf("Request: %s %s\n", r.Method, r.URL.Path)
+  next.ServeHTTP(w, r)
+ })
 }
 
 // Authentication middleware
 func AuthMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token := r.Header.Get("Authorization")
-		if token == "" {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
-			return
-		}
-		// Validate token here
-		next.ServeHTTP(w, r)
-	})
+ return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+  token := r.Header.Get("Authorization")
+  if token == "" {
+   http.Error(w, "Unauthorized", http.StatusUnauthorized)
+   return
+  }
+  // Validate token here
+  next.ServeHTTP(w, r)
+ })
 }
 
 // Usage
 func main() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
+ mux := http.NewServeMux()
+ mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+  w.WriteHeader(http.StatusOK)
+ })
 
-	// Apply middleware
-	handler := LoggingMiddleware(AuthMiddleware(mux))
-	http.ListenAndServe(":8080", handler)
+ // Apply middleware
+ handler := LoggingMiddleware(AuthMiddleware(mux))
+ http.ListenAndServe(":8080", handler)
 }
 ```
 
@@ -1172,9 +1172,9 @@ project/
 go 1.25
 
 use (
-	./service-a
-	./service-b
-	./shared
+ ./service-a
+ ./service-b
+ ./shared
 )
 ```
 
@@ -1200,16 +1200,16 @@ The race detector identifies concurrent access to shared memory that isn't prope
 var counter int
 
 func incrementUnsafe() {
-	for i := 0; i < 1000; i++ {
-		counter++ // DATA RACE! Unsynchronized access
-	}
+ for i := 0; i < 1000; i++ {
+  counter++ // DATA RACE! Unsynchronized access
+ }
 }
 
 func main() {
-	go incrementUnsafe()
-	go incrementUnsafe()
-	time.Sleep(time.Second)
-	fmt.Println(counter) // May not be 2000
+ go incrementUnsafe()
+ go incrementUnsafe()
+ time.Sleep(time.Second)
+ fmt.Println(counter) // May not be 2000
 }
 ```
 
@@ -1217,16 +1217,16 @@ func main() {
 
 ```go
 var (
-	counter int
-	mu      sync.Mutex
+ counter int
+ mu      sync.Mutex
 )
 
 func incrementSafe() {
-	for i := 0; i < 1000; i++ {
-		mu.Lock()
-		counter++
-		mu.Unlock()
-	}
+ for i := 0; i < 1000; i++ {
+  mu.Lock()
+  counter++
+  mu.Unlock()
+ }
 }
 ```
 
@@ -1243,39 +1243,39 @@ Write small, focused interfaces:
 ```go
 // Good: Small, focused interfaces
 type Reader interface {
-	Read(p []byte) (n int, err error)
+ Read(p []byte) (n int, err error)
 }
 
 type Writer interface {
-	Write(p []byte) (n int, err error)
+ Write(p []byte) (n int, err error)
 }
 
 type Closer interface {
-	Close() error
+ Close() error
 }
 
 // Compose interfaces for larger contracts
 type ReadWriter interface {
-	Reader
-	Writer
+ Reader
+ Writer
 }
 
 type ReadWriteCloser interface {
-	Reader
-	Writer
-	Closer
+ Reader
+ Writer
+ Closer
 }
 
 // Bad: Large interface with many methods
 type FileInterface interface {
-	Read(p []byte) (n int, err error)
-	Write(p []byte) (n int, err error)
-	Close() error
-	Seek(offset int64, whence int) (int64, error)
-	Stat() (os.FileInfo, error)
-	Name() string
-	Truncate(size int64) error
-	// ... 20 more methods
+ Read(p []byte) (n int, err error)
+ Write(p []byte) (n int, err error)
+ Close() error
+ Seek(offset int64, whence int) (int64, error)
+ Stat() (os.FileInfo, error)
+ Name() string
+ Truncate(size int64) error
+ // ... 20 more methods
 }
 ```
 
@@ -1293,30 +1293,30 @@ Sometimes you need to accept any type:
 ```go
 // store accepts any type
 func store(data interface{}) error {
-	// Type assertion to get specific type
-	if str, ok := data.(string); ok {
-		fmt.Println("String:", str)
-		return nil
-	}
+ // Type assertion to get specific type
+ if str, ok := data.(string); ok {
+  fmt.Println("String:", str)
+  return nil
+ }
 
-	if num, ok := data.(int); ok {
-		fmt.Println("Number:", num)
-		return nil
-	}
+ if num, ok := data.(int); ok {
+  fmt.Println("Number:", num)
+  return nil
+ }
 
-	// Type switch for multiple types
-	switch v := data.(type) {
-	case string:
-		fmt.Println("String:", v)
-	case int:
-		fmt.Println("Integer:", v)
-	case []string:
-		fmt.Println("Slice of strings:", v)
-	default:
-		return fmt.Errorf("unsupported type: %T", data)
-	}
+ // Type switch for multiple types
+ switch v := data.(type) {
+ case string:
+  fmt.Println("String:", v)
+ case int:
+  fmt.Println("Integer:", v)
+ case []string:
+  fmt.Println("Slice of strings:", v)
+ default:
+  return fmt.Errorf("unsupported type: %T", data)
+ }
 
-	return nil
+ return nil
 }
 ```
 
@@ -1331,39 +1331,39 @@ Generics allow writing type-safe generic code:
 ```go
 // Sort any comparable type
 func Sort[T interface{ ~int | ~string }](s []T) {
-	for i := 0; i < len(s)-1; i++ {
-		for j := 0; j < len(s)-1-i; j++ {
-			if s[j] > s[j+1] {
-				s[j], s[j+1] = s[j+1], s[j]
-			}
-		}
-	}
+ for i := 0; i < len(s)-1; i++ {
+  for j := 0; j < len(s)-1-i; j++ {
+   if s[j] > s[j+1] {
+    s[j], s[j+1] = s[j+1], s[j]
+   }
+  }
+ }
 }
 
 // Generic Map function - works with any function that transforms one type to another
 func Map[T any, U any](items []T, fn func(T) U) []U {
-	result := make([]U, len(items))
-	for i, item := range items {
-		result[i] = fn(item)
-	}
-	return result
+ result := make([]U, len(items))
+ for i, item := range items {
+  result[i] = fn(item)
+ }
+ return result
 }
 
 func main() {
-	numbers := []int{3, 1, 4, 1, 5}
-	Sort(numbers)
-	fmt.Println(numbers) // [1 1 3 4 5]
+ numbers := []int{3, 1, 4, 1, 5}
+ Sort(numbers)
+ fmt.Println(numbers) // [1 1 3 4 5]
 
-	strings := []string{"dog", "cat", "bird"}
-	Sort(strings)
-	fmt.Println(strings) // [bird cat dog]
+ strings := []string{"dog", "cat", "bird"}
+ Sort(strings)
+ fmt.Println(strings) // [bird cat dog]
 
-	// Map with type conversion
-	nums := []int{1, 2, 3, 4}
-	doubled := Map(nums, func(n int) int {
-		return n * 2
-	})
-	fmt.Println(doubled) // [2 4 6 8]
+ // Map with type conversion
+ nums := []int{1, 2, 3, 4}
+ doubled := Map(nums, func(n int) int {
+  return n * 2
+ })
+ fmt.Println(doubled) // [2 4 6 8]
 }
 ```
 
@@ -1372,37 +1372,37 @@ func main() {
 ```go
 // Generic Stack
 type Stack[T any] struct {
-	items []T
+ items []T
 }
 
 func (s *Stack[T]) Push(item T) {
-	s.items = append(s.items, item)
+ s.items = append(s.items, item)
 }
 
 func (s *Stack[T]) Pop() (T, error) {
-	var zero T
-	if len(s.items) == 0 {
-		return zero, fmt.Errorf("empty stack")
-	}
-	item := s.items[len(s.items)-1]
-	s.items = s.items[:len(s.items)-1]
-	return item, nil
+ var zero T
+ if len(s.items) == 0 {
+  return zero, fmt.Errorf("empty stack")
+ }
+ item := s.items[len(s.items)-1]
+ s.items = s.items[:len(s.items)-1]
+ return item, nil
 }
 
 func main() {
-	// Stack of strings
-	stringStack := &Stack[string]{}
-	stringStack.Push("hello")
-	stringStack.Push("world")
-	item, _ := stringStack.Pop()
-	fmt.Println(item) // world
+ // Stack of strings
+ stringStack := &Stack[string]{}
+ stringStack.Push("hello")
+ stringStack.Push("world")
+ item, _ := stringStack.Pop()
+ fmt.Println(item) // world
 
-	// Stack of integers (same code, different type)
-	intStack := &Stack[int]{}
-	intStack.Push(42)
-	intStack.Push(100)
-	item2, _ := intStack.Pop()
-	fmt.Println(item2) // 100
+ // Stack of integers (same code, different type)
+ intStack := &Stack[int]{}
+ intStack.Push(42)
+ intStack.Push(100)
+ item2, _ := intStack.Pop()
+ fmt.Println(item2) // 100
 }
 ```
 
@@ -1414,30 +1414,30 @@ func main() {
 
 ```go
 func TestDivide(t *testing.T) {
-	tests := []struct {
-		name    string
-		a       float64
-		b       float64
-		want    float64
-		wantErr bool
-	}{
-		{name: "normal division", a: 10, b: 2, want: 5, wantErr: false},
-		{name: "decimal result", a: 7, b: 2, want: 3.5, wantErr: false},
-		{name: "divide by zero", a: 10, b: 0, want: 0, wantErr: true},
-	}
+ tests := []struct {
+  name    string
+  a       float64
+  b       float64
+  want    float64
+  wantErr bool
+ }{
+  {name: "normal division", a: 10, b: 2, want: 5, wantErr: false},
+  {name: "decimal result", a: 7, b: 2, want: 3.5, wantErr: false},
+  {name: "divide by zero", a: 10, b: 0, want: 0, wantErr: true},
+ }
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := Divide(tt.a, tt.b)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Divide() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !tt.wantErr && got != tt.want {
-				t.Errorf("Divide() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+ for _, tt := range tests {
+  t.Run(tt.name, func(t *testing.T) {
+   got, err := Divide(tt.a, tt.b)
+   if (err != nil) != tt.wantErr {
+    t.Errorf("Divide() error = %v, wantErr %v", err, tt.wantErr)
+    return
+   }
+   if !tt.wantErr && got != tt.want {
+    t.Errorf("Divide() = %v, want %v", got, tt.want)
+   }
+  })
+ }
 }
 ```
 
@@ -1452,35 +1452,35 @@ func TestDivide(t *testing.T) {
 ```go
 // Helper function to set up test database
 func setupTestDB(t *testing.T) *sql.DB {
-	db, err := sql.Open("sqlite", ":memory:")
-	if err != nil {
-		t.Fatalf("Failed to open test DB: %v", err)
-	}
+ db, err := sql.Open("sqlite", ":memory:")
+ if err != nil {
+  t.Fatalf("Failed to open test DB: %v", err)
+ }
 
-	// Create schema
-	_, err = db.Exec(`CREATE TABLE users (
-		id INTEGER PRIMARY KEY,
-		name TEXT,
-		email TEXT
-	)`)
-	if err != nil {
-		t.Fatalf("Failed to create schema: %v", err)
-	}
+ // Create schema
+ _, err = db.Exec(`CREATE TABLE users (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  email TEXT
+ )`)
+ if err != nil {
+  t.Fatalf("Failed to create schema: %v", err)
+ }
 
-	return db
+ return db
 }
 
 // Use in tests
 func TestUserRepository(t *testing.T) {
-	db := setupTestDB(t)
-	defer db.Close()
+ db := setupTestDB(t)
+ defer db.Close()
 
-	repo := NewUserRepository(db)
-	user := User{Name: "Alice", Email: "alice@example.com"}
+ repo := NewUserRepository(db)
+ user := User{Name: "Alice", Email: "alice@example.com"}
 
-	if err := repo.Save(user); err != nil {
-		t.Fatalf("Save failed: %v", err)
-	}
+ if err := repo.Save(user); err != nil {
+  t.Fatalf("Save failed: %v", err)
+ }
 }
 ```
 
@@ -1490,17 +1490,17 @@ Fuzz testing generates random inputs to find edge cases:
 
 ```go
 func FuzzParseInt(f *testing.F) {
-	// Seed with some inputs
-	f.Add("123")
-	f.Add("0")
-	f.Add("-456")
+ // Seed with some inputs
+ f.Add("123")
+ f.Add("0")
+ f.Add("-456")
 
-	f.Fuzz(func(t *testing.T, input string) {
-		// This runs ParseInt with random string inputs
-		if _, err := strconv.Atoi(input); err == nil {
-			// Reached here without panic = test passed
-		}
-	})
+ f.Fuzz(func(t *testing.T, input string) {
+  // This runs ParseInt with random string inputs
+  if _, err := strconv.Atoi(input); err == nil {
+   // Reached here without panic = test passed
+  }
+ })
 }
 
 // Run with: go test -fuzz=FuzzParseInt
@@ -1516,28 +1516,28 @@ The `context` package is essential for production Go:
 
 ```go
 func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
+ ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+ defer cancel()
 
-	if err := handleRequest(ctx); err != nil {
-		log.Fatal(err)
-	}
+ if err := handleRequest(ctx); err != nil {
+  log.Fatal(err)
+ }
 }
 
 func handleRequest(ctx context.Context) error {
-	return callDownstream(ctx)
+ return callDownstream(ctx)
 }
 
 func callDownstream(ctx context.Context) error {
-	// Database operation with context
-	rows, err := db.QueryContext(ctx, "SELECT * FROM users")
-	if err != nil {
-		return fmt.Errorf("query failed: %w", err)
-	}
-	defer rows.Close()
+ // Database operation with context
+ rows, err := db.QueryContext(ctx, "SELECT * FROM users")
+ if err != nil {
+  return fmt.Errorf("query failed: %w", err)
+ }
+ defer rows.Close()
 
-	// All operations respect the timeout from the top
-	return nil
+ // All operations respect the timeout from the top
+ return nil
 }
 ```
 
@@ -1555,11 +1555,11 @@ log.Printf("User registered: %s, %s, %d", name, email, age)
 
 // Good: Structured logging (using a library like logrus or zap)
 logger.WithFields(map[string]interface{}{
-	"user_id": "123",
-	"name":    "Alice",
-	"email":   "alice@example.com",
-	"age":     30,
-	"action":  "user_registration",
+ "user_id": "123",
+ "name":    "Alice",
+ "email":   "alice@example.com",
+ "age":     30,
+ "action":  "user_registration",
 }).Info("User registered successfully")
 
 // Logged as JSON:

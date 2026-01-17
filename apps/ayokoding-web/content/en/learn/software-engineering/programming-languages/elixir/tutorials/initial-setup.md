@@ -125,7 +125,7 @@ curl -fsSO https://elixir-lang.org/install.sh
 sh install.sh elixir@1.19.4 otp@28.1
 ```
 
-3. Verify installation (see Verification section)
+1. Verify installation (see Verification section)
 
 **Note:** This script installs both Elixir and Erlang/OTP. You can specify different versions if needed.
 
@@ -138,7 +138,7 @@ sh install.sh elixir@1.19.4 otp@28.1
 .\install.bat elixir@1.19.4 otp@28.1
 ```
 
-3. Verify installation (see Verification section)
+1. Verify installation (see Verification section)
 
 **Note:** Download `install.bat` from [elixir-lang.org/install.html](https://elixir-lang.org/install.html) first.
 

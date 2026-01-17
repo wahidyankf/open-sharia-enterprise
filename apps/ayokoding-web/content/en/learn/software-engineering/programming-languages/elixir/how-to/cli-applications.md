@@ -729,6 +729,7 @@ mix release
    ```
 
 5. **Handle signals gracefully:**
+
    ```elixir
    System.at_exit(fn _ ->
      IO.puts "Cleaning up..."

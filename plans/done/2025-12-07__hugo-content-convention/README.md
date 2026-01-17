@@ -610,6 +610,7 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
   - About pages
 - **Archetypes**: learn.md, celoteh.md, konten-video.md, \_index.md, default.md
 - **Frontmatter Pattern** (learn.md):
+
   ```yaml
   title: "Title"
   date: YYYY-MM-DDTHH:MM:SS+07:00
@@ -620,7 +621,9 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
   categories: ["learn"]
   author: "Author Name"
   ```
+
 - **Frontmatter Pattern** (celoteh.md):
+
   ```yaml
   title: "Title"
   date: YYYY-MM-DDTHH:MM:SS+07:00
@@ -630,6 +633,7 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
   categories: ["celoteh"]
   author: "Author Name"
   ```
+
 - **Asset Organization**: static/images/ with subdirectories
 - **Taxonomy**: tags, categories
 - **SEO Fields**: description, images, keywords (optional)
@@ -643,6 +647,7 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
   - About page
 - **Archetypes**: default.md only (uses TOML format)
 - **Frontmatter Pattern** (updates):
+
   ```yaml
   title: "Title"
   date: YYYY-MM-DDTHH:MM:SS+07:00
@@ -651,12 +656,15 @@ Applies to ALL markdown content (docs/, Hugo sites, plans/, repository files):
   categories: ["updates"]
   summary: "Brief description"
   ```
+
 - **Frontmatter Pattern** (about):
+
   ```yaml
   title: "Title"
   url: "/about/"
   summary: "Description"
   ```
+
 - **Asset Organization**: static/images/, static/casts/ (for asciinema)
 - **Taxonomy**: categories, tags, series
 - **SEO Fields**: summary, keywords (optional)

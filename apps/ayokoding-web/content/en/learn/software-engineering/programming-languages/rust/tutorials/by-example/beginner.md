@@ -69,7 +69,7 @@ Rust allows redeclaring variables with the same name, which creates a new bindin
 
 **Shadowing vs Mutation**: Mutation (`let mut x = 5; x = 6;`) modifies the same variable and must keep the same type. Shadowing (`let x = 5; let x = 6;`) creates a new variable and can change types.
 
-**Shadowing use cases**: Type transformations (parse string to number), transformation pipelines (value → processed → final), keeping variable names meaningful without suffixes (_str, _num).
+**Shadowing use cases**: Type transformations (parse string to number), transformation pipelines (value → processed → final), keeping variable names meaningful without suffixes (\_str,\_num).
 
 ```mermaid
 %% Variable shadowing creates new bindings

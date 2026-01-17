@@ -57,15 +57,15 @@ Throughout this tutorial, we'll follow **"Tech Haven"**, a small computer repair
 
 ```mermaid
 flowchart TD
-	A[Business Transaction] --> B[Analyze Transaction]
-	B --> C[Record in Journal]
-	C --> D[Post to Ledger]
-	D --> E[Prepare Trial Balance]
-	E --> F[Create Financial Statements]
-	F --> G[Analyze Financial Health]
+ A[Business Transaction] --> B[Analyze Transaction]
+ B --> C[Record in Journal]
+ C --> D[Post to Ledger]
+ D --> E[Prepare Trial Balance]
+ E --> F[Create Financial Statements]
+ F --> G[Analyze Financial Health]
 
-	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
-	style G fill:#029E73,stroke:#000000,color:#FFFFFF
+ style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style G fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
 The diagram above shows the complete accounting cycle we'll master in this tutorial.
@@ -140,20 +140,20 @@ Check: $15,000 = $5,000 + $10,000 ✓
 
 ```mermaid
 flowchart TD
-	subgraph "The Accounting Equation"
-		A[Assets<br/>$15,000]
-		L[Liabilities<br/>$5,000]
-		E[Equity<br/>$10,000]
-	end
+ subgraph "The Accounting Equation"
+  A[Assets<br/>$15,000]
+  L[Liabilities<br/>$5,000]
+  E[Equity<br/>$10,000]
+ end
 
-	A -.Equal to.-> Sum[Liabilities + Equity<br/>$15,000]
-	L --> Sum
-	E --> Sum
+ A -.Equal to.-> Sum[Liabilities + Equity<br/>$15,000]
+ L --> Sum
+ E --> Sum
 
-	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
-	style L fill:#DE8F05,stroke:#000000,color:#FFFFFF
-	style E fill:#029E73,stroke:#000000,color:#FFFFFF
-	style Sum fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style L fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style E fill:#029E73,stroke:#000000,color:#FFFFFF
+ style Sum fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 ### ✓ Checkpoint
@@ -199,41 +199,41 @@ Different types of accounts increase and decrease differently:
 
 ```mermaid
 flowchart TD
-	subgraph "Asset Accounts"
-		A1[Debit = Increase]
-		A2[Credit = Decrease]
-		A1 --> A2
-	end
+ subgraph "Asset Accounts"
+  A1[Debit = Increase]
+  A2[Credit = Decrease]
+  A1 --> A2
+ end
 
-	subgraph "Liability Accounts"
-		L1[Credit = Increase]
-		L2[Debit = Decrease]
-		L1 --> L2
-	end
+ subgraph "Liability Accounts"
+  L1[Credit = Increase]
+  L2[Debit = Decrease]
+  L1 --> L2
+ end
 
-	subgraph "Equity Accounts"
-		E1[Credit = Increase]
-		E2[Debit = Decrease]
-		E1 --> E2
-	end
+ subgraph "Equity Accounts"
+  E1[Credit = Increase]
+  E2[Debit = Decrease]
+  E1 --> E2
+ end
 
-	subgraph "Revenue Accounts"
-		R1[Credit = Increase]
-		R2[Debit = Decrease]
-		R1 --> R2
-	end
+ subgraph "Revenue Accounts"
+  R1[Credit = Increase]
+  R2[Debit = Decrease]
+  R1 --> R2
+ end
 
-	subgraph "Expense Accounts"
-		X1[Debit = Increase]
-		X2[Credit = Decrease]
-		X1 --> X2
-	end
+ subgraph "Expense Accounts"
+  X1[Debit = Increase]
+  X2[Credit = Decrease]
+  X1 --> X2
+ end
 
-	style A1 fill:#0173B2,stroke:#000000,color:#FFFFFF
-	style L1 fill:#DE8F05,stroke:#000000,color:#FFFFFF
-	style E1 fill:#029E73,stroke:#000000,color:#FFFFFF
-	style R1 fill:#CC78BC,stroke:#000000,color:#FFFFFF
-	style X1 fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style A1 fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style L1 fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style E1 fill:#029E73,stroke:#000000,color:#FFFFFF
+ style R1 fill:#CC78BC,stroke:#000000,color:#FFFFFF
+ style X1 fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 **Memory aid:**
@@ -390,38 +390,38 @@ EXPENSES (5000-5999)
 
 ```mermaid
 flowchart TD
-	subgraph "1000: Assets"
-		A1[1000 Cash]
-		A2[1100 Accounts Receivable]
-		A3[1500 Equipment]
-	end
+ subgraph "1000: Assets"
+  A1[1000 Cash]
+  A2[1100 Accounts Receivable]
+  A3[1500 Equipment]
+ end
 
-	subgraph "2000: Liabilities"
-		L1[2000 Accounts Payable]
-		L2[2100 Bank Loan]
-	end
+ subgraph "2000: Liabilities"
+  L1[2000 Accounts Payable]
+  L2[2100 Bank Loan]
+ end
 
-	subgraph "3000: Equity"
-		E1[3000 Owner's Capital]
-		E2[3900 Retained Earnings]
-	end
+ subgraph "3000: Equity"
+  E1[3000 Owner's Capital]
+  E2[3900 Retained Earnings]
+ end
 
-	subgraph "4000: Revenue"
-		R1[4000 Service Revenue]
-		R2[4100 Parts Sales]
-	end
+ subgraph "4000: Revenue"
+  R1[4000 Service Revenue]
+  R2[4100 Parts Sales]
+ end
 
-	subgraph "5000: Expenses"
-		X1[5000 Rent]
-		X2[5200 Wages]
-		X3[5400 Depreciation]
-	end
+ subgraph "5000: Expenses"
+  X1[5000 Rent]
+  X2[5200 Wages]
+  X3[5400 Depreciation]
+ end
 
-	style A1 fill:#0173B2,stroke:#000000,color:#FFFFFF
-	style L1 fill:#DE8F05,stroke:#000000,color:#FFFFFF
-	style E1 fill:#029E73,stroke:#000000,color:#FFFFFF
-	style R1 fill:#CC78BC,stroke:#000000,color:#FFFFFF
-	style X1 fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style A1 fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style L1 fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style E1 fill:#029E73,stroke:#000000,color:#FFFFFF
+ style R1 fill:#CC78BC,stroke:#000000,color:#FFFFFF
+ style X1 fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 ### Why Numbering Matters
@@ -647,16 +647,16 @@ Account                 Debit      Credit
 
 ```mermaid
 sequenceDiagram
-	participant Transaction
-	participant Journal
-	participant Ledger
-	participant Financial Statements
+ participant Transaction
+ participant Journal
+ participant Ledger
+ participant Financial Statements
 
-	Transaction->>Journal: 1. Record entry
-	Journal->>Ledger: 2. Post to accounts
-	Ledger->>Financial Statements: 3. Prepare reports
+ Transaction->>Journal: 1. Record entry
+ Journal->>Ledger: 2. Post to accounts
+ Ledger->>Financial Statements: 3. Prepare reports
 
-	Note over Transaction,Financial Statements: The Accounting Cycle
+ Note over Transaction,Financial Statements: The Accounting Cycle
 ```
 
 ### ✓ Checkpoint
@@ -776,22 +776,22 @@ Final Balance: $450 (Credit)
 
 ```mermaid
 flowchart TD
-	J[Journal Entries<br/>Chronological] --> L{Post to Ledger}
+ J[Journal Entries<br/>Chronological] --> L{Post to Ledger}
 
-	L --> A[Asset Accounts]
-	L --> Li[Liability Accounts]
-	L --> E[Equity Accounts]
-	L --> R[Revenue Accounts]
-	L --> X[Expense Accounts]
+ L --> A[Asset Accounts]
+ L --> Li[Liability Accounts]
+ L --> E[Equity Accounts]
+ L --> R[Revenue Accounts]
+ L --> X[Expense Accounts]
 
-	A --> TB[Trial Balance]
-	Li --> TB
-	E --> TB
-	R --> TB
-	X --> TB
+ A --> TB[Trial Balance]
+ Li --> TB
+ E --> TB
+ R --> TB
+ X --> TB
 
-	style J fill:#0173B2,stroke:#000000,color:#FFFFFF
-	style TB fill:#029E73,stroke:#000000,color:#FFFFFF
+ style J fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style TB fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
 ### ✓ Checkpoint
@@ -900,20 +900,20 @@ Now we transform accounting records into meaningful financial reports.
 
 ```mermaid
 flowchart TD
-	TB[Trial Balance] --> IS[Income Statement]
-	TB --> BS[Balance Sheet]
-	TB --> CF[Cash Flow Statement]
+ TB[Trial Balance] --> IS[Income Statement]
+ TB --> BS[Balance Sheet]
+ TB --> CF[Cash Flow Statement]
 
-	IS -.Net Income.-> BS
+ IS -.Net Income.-> BS
 
-	IS --> D1[Shows:<br/>Profitability]
-	BS --> D2[Shows:<br/>Financial Position]
-	CF --> D3[Shows:<br/>Cash Movement]
+ IS --> D1[Shows:<br/>Profitability]
+ BS --> D2[Shows:<br/>Financial Position]
+ CF --> D3[Shows:<br/>Cash Movement]
 
-	style TB fill:#0173B2,stroke:#000000,color:#FFFFFF
-	style IS fill:#DE8F05,stroke:#000000,color:#FFFFFF
-	style BS fill:#029E73,stroke:#000000,color:#FFFFFF
-	style CF fill:#CC78BC,stroke:#000000,color:#FFFFFF
+ style TB fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style IS fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style BS fill:#029E73,stroke:#000000,color:#FFFFFF
+ style CF fill:#CC78BC,stroke:#000000,color:#FFFFFF
 ```
 
 ### Statement 1: Income Statement
@@ -1181,17 +1181,17 @@ Jan 25: Cash 300 / Accounts Receivable 300
 
 ```mermaid
 flowchart TD
-	A[Accrual Basis] --> Q[Quality<br/>Financial<br/>Information]
-	M[Matching] --> Q
-	R[Revenue Recognition] --> Q
-	G[Going Concern] --> Q
-	C[Consistency] --> Q
-	Ma[Materiality] --> Q
+ A[Accrual Basis] --> Q[Quality<br/>Financial<br/>Information]
+ M[Matching] --> Q
+ R[Revenue Recognition] --> Q
+ G[Going Concern] --> Q
+ C[Consistency] --> Q
+ Ma[Materiality] --> Q
 
-	Q --> D[Better<br/>Decisions]
+ Q --> D[Better<br/>Decisions]
 
-	style Q fill:#029E73,stroke:#000000,color:#FFFFFF
-	style D fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style Q fill:#029E73,stroke:#000000,color:#FFFFFF
+ style D fill:#0173B2,stroke:#000000,color:#FFFFFF
 ```
 
 ### ✓ Checkpoint

@@ -538,7 +538,7 @@ This plan delivers comprehensive Rust programming language content to ayokoding-
 - [x] **Section 1: Unsafe Rust** (~300 lines)
   - [x] Why unsafe exists
   - [x] When to use unsafe
-  - [x] Raw pointers (*const T, *mut T)
+  - [x] Raw pointers (*const T,*mut T)
   - [x] Unsafe functions
   - [x] Unsafe trait implementations
   - [x] FFI basics (calling C functions)
@@ -1658,6 +1658,7 @@ fn main() {
 - [x] **Context**: No external dependencies, std library only
 - [x] **Usage**: Initial introductions, quick demonstrations
 - [x] **Example structure**:
+
   ```rust
   // Brief comment explaining the concept
   fn example_function() {
@@ -1789,6 +1790,7 @@ fn calculate_area(width: u32, height: u32) -> u32 {
 - [x] Use from Beginner tutorial Section 10 onward
 - [x] Show full error propagation pattern
 - [x] Example:
+
   ```rust
   fn read_file(path: &str) -> Result<String, std::io::Error> {
       let contents = std::fs::read_to_string(path)?;
@@ -1842,6 +1844,7 @@ fn calculate_area(width: u32, height: u32) -> u32 {
 - [x] Show both owned and borrowed versions when helpful
 - [x] Use descriptive variable names that hint at ownership (e.g., `owned_string`, `borrowed_slice`)
 - [x] Example:
+
   ```rust
   fn takes_ownership(s: String) { /* s is moved here */ }
   fn borrows(s: &String) { /* s is borrowed, not moved */ }
@@ -1871,6 +1874,7 @@ fn calculate_area(width: u32, height: u32) -> u32 {
 - [x] Use current stable versions (as of 2025-12-19)
 - [x] Document minimum required Rust version (MSRV) if applicable
 - [x] Example:
+
   ```toml
   [dependencies]
   serde = { version = "1.0", features = ["derive"] }
@@ -1902,6 +1906,7 @@ fn calculate_area(width: u32, height: u32) -> u32 {
 - [x] Use ASCII art for data structure visualization when helpful
 - [x] Add ownership flow comments for complex examples
 - [x] Example with visual aid:
+
   ```rust
   // Ownership flow: main -> process_data -> consume
   //                  ↓
@@ -1915,6 +1920,7 @@ fn calculate_area(width: u32, height: u32) -> u32 {
 - [x] Include `main()` function for standalone examples
 - [x] Show expected output in comments or prose
 - [x] Example:
+
   ```rust
   fn main() {
       let result = calculate(5);

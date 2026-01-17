@@ -52,7 +52,7 @@ async fn main() -> Result<(), reqwest::Error> {
 
 You want to run several async operations at the same time.
 
-### Solution 1: Use join!
+### Solution 1: Use join
 
 ```rust
 use tokio;
@@ -304,7 +304,7 @@ async fn main() {
 
 You want to wait for the first of several operations to complete.
 
-### Solution: Use tokio::select!
+### Solution: Use tokio::select
 
 ```rust
 use tokio::time::{sleep, Duration};

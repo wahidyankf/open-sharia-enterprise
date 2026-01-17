@@ -13,11 +13,11 @@ Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.
 
 Sebagai orang yang ngakunya adalah pembuat konten, gw selalu nyari cara buat bikin proses pembuatan konten gw jadi lebih efisien. Gw juga mau bikin berbagi materi yang diperlukan dengan tim teknis di tempat kerja gw jadi gampang, membangun _personal branding_ gw sendiri, dan manfaatin kemajuan AI buat nulis dengan lebih efisien. Gw punya channel YouTube bernama AyoKoding, dan gw butuh hampir 10 jam buat bikin satu konten, yang akhir-akhir ini gw nggak punya banyak waktu (karena sekarang alhamdulillah udah punya 2 orang anak yang unyu-unyu).
 
-## Gitbook bikin gw bisa mulai.
+## Gitbook bikin gw bisa mulai
 
 Setelah beberapa riset, gw menulis konten gw di [Gitbook.com](http://gitbook.com/). Ini gratis, mendukung custom domain, dan langsung bikin gw bisa mulai nulis. Yang penting mulai dulu, dan ngeliat beneran suka nulis atau enggak. Ternyata di Gitbook ini SEO-nya lumayan bagus, dan rendering di server serta URL yang bagus juga oke banget. Tapi, platform ini bisa lebih oke lagi buat pengalaman nulisnya (kerasa lambat), dan gw nggak bisa copy artikel balik ke prompt chatGPT tanpa kehilangan format markdown-nya. Template dan tampilan websitenya juga biasa saja, dan nggak memungkinkan gw untuk menyisipkan script/CSS/HTML kustom. Gw pengen otomatisasi konten gw, seperti otomatis menerjemahkan bagian Inggris ke Bahasa. Dan Gitbook ini sebenernya nawarin itu, tapi gw ngerasa pengalaman nulisnya gak terlalu enak.
 
-## Gw pengen migrasi editing ke Notion.
+## Gw pengen migrasi editing ke Notion
 
 Gw udah berlangganan Notion, dan pengalaman editingnya bagus banget, dan AI Notion kelihatan keren. Gw mulai ngerencanain migrasi dengan membuat daftar dari apa yang gw butuhin: gw pengen bisa edit/nulis di Notion, punya URL yang bagus, mendukung SSR, memiliki waktu respons yang relatif baik di seluruh dunia (make CDN/edge), dan punya budget mentok-mentok 30-50 dolar per bulan (mayan mahal emang, tapi ini itung-itung biaya lab).
 

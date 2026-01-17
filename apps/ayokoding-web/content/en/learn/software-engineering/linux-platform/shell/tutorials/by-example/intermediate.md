@@ -1786,9 +1786,9 @@ EOF                              # => Quoted delimiter prevents expansion
 
 # Indent suppression
 cat <<- EOF
-	This text is indented with tabs.
-	The - removes leading tabs.
-	Spaces are NOT removed.
+ This text is indented with tabs.
+ The - removes leading tabs.
+ Spaces are NOT removed.
 EOF                              # => - removes leading tabs only
 
 # Write to file

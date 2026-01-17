@@ -62,14 +62,14 @@ All 6 tutorials in the Java Full Set are now available:
 
 ## Learning Recommendations
 
-### Start Here:
+### Start Here
 
 - **Complete beginner**: [Initial Setup](/en/learn/software-engineering/programming-languages/java/tutorials/initial-setup) then [Beginner](/en/learn/software-engineering/programming-languages/java/tutorials/beginner)
 - **Programmer new to Java**: [Quick Start](/en/learn/software-engineering/programming-languages/java/tutorials/quick-start) then [Beginner](/en/learn/software-engineering/programming-languages/java/tutorials/beginner)
 - **Professional developer**: [Intermediate](/en/learn/software-engineering/programming-languages/java/tutorials/intermediate)
 - **Expert seeking mastery**: [Advanced](/en/learn/software-engineering/programming-languages/java/tutorials/advanced)
 
-### Use Anytime:
+### Use Anytime
 
 [Cookbook](/en/learn/software-engineering/programming-languages/java/how-to/cookbook) for recipes and day-to-day solutions
 

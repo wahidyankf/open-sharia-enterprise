@@ -536,21 +536,21 @@ Before committing content with colors:
 
 #### Coblis Color Blindness Simulator
 
-- **URL**: https://www.color-blindness.com/coblis-color-blindness-simulator/
+- **URL**: <https://www.color-blindness.com/coblis-color-blindness-simulator/>
 - **Usage**: Upload image or diagram and view simulated appearance for each color blindness type
 - **Coverage**: Protanopia, Deuteranopia, Tritanopia, Monochromacy
 - **Free**: Yes, web-based, no login required
 
 #### WebAIM Contrast Checker
 
-- **URL**: https://webaim.org/resources/contrastchecker/
+- **URL**: <https://webaim.org/resources/contrastchecker/>
 - **Usage**: Enter foreground and background colors, get contrast ratio and WCAG compliance status
 - **Coverage**: WCAG AA and AAA standards, both directions
 - **Free**: Yes, web-based, no login required
 
 #### Figma Color Blind Plugin
 
-- **URL**: https://www.figma.com/community/plugin/733159460536249875/Color%20Blind
+- **URL**: <https://www.figma.com/community/plugin/733159460536249875/Color%20Blind>
 - **Usage**: Install plugin in Figma, view designs with color blindness simulation
 - **Coverage**: All color blindness types
 - **Free**: Yes, requires Figma account
@@ -844,25 +844,25 @@ The verified accessible color palette is based on scientific consensus:
 
 ### Color Science References
 
-1. **ColorBrewer 2.0** - https://colorbrewer2.org/
+1. **ColorBrewer 2.0** - <https://colorbrewer2.org/>
    - Industry standard for scientifically-tested color schemes
    - Used by cartographers, data scientists, designers
    - Colors tested for color blindness accessibility
    - Includes contrast information
 
-2. **Paul Tol's Color Schemes** - https://personal.sron.nl/~pault/colourschemes.pdf
+2. **Paul Tol's Color Schemes** - <https://personal.sron.nl/~pault/colourschemes.pdf>
    - Scientific color schemes for visualization
    - Designed specifically for color blindness accessibility
    - Used in astronomy, geology, and scientific publishing
    - Includes tritanopia-safe schemes
 
-3. **Viridis Color Map** - https://viridis.sron.nl/
+3. **Viridis Color Map** - <https://viridis.sron.nl/>
    - Perceptually uniform color palette
    - Designed for color blindness accessibility
    - Used in scientific data visualization
    - Tested and verified for all color vision deficiencies
 
-4. **Color Universal Design** - https://jfly.uni-koeln.de/color/
+4. **Color Universal Design** - <https://jfly.uni-koeln.de/color/>
    - Japanese research on color accessibility
    - Tested palettes for color blindness
    - Simulation tools and guidelines
@@ -876,13 +876,13 @@ The verified accessible color palette is based on scientific consensus:
 
 ### Accessibility Standards
 
-1. **WCAG 2.2** - https://www.w3.org/WAI/WCAG22/quickref/
+1. **WCAG 2.2** - <https://www.w3.org/WAI/WCAG22/quickref/>
    - Web Content Accessibility Guidelines Level 2.2
    - Current international standard for web accessibility
    - Specifies color contrast requirements
    - Required for accessible websites and applications
 
-2. **WebAIM Contrast Checker** - https://webaim.org/resources/contrastchecker/
+2. **WebAIM Contrast Checker** - <https://webaim.org/resources/contrastchecker/>
    - Free tool for verifying WCAG compliance
    - Based on WCAG 2.2 standards
    - Validates contrast ratios automatically

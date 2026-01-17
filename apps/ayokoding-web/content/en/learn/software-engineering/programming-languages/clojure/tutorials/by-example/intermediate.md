@@ -865,7 +865,7 @@ Attach metadata to values for documentation and tools.
 
 **Key Takeaway**: Metadata provides out-of-band information without affecting value equality.
 
-**Why It Matters**: Metadata enables attaching auxiliary information (documentation, type hints, deprecation notices) without polluting data values—metadata doesn't affect equality checks or hash codes. Type hints eliminate reflection overhead providing 10-100x speedups on critical paths while remaining invisible to pure functions. Dynamic vars (` ^:dynamic`) enable thread-local bindings for context propagation (user identity, request IDs) without passing parameters through every function—Nubank's request tracing uses dynamic vars for distributed tracing context.
+**Why It Matters**: Metadata enables attaching auxiliary information (documentation, type hints, deprecation notices) without polluting data values—metadata doesn't affect equality checks or hash codes. Type hints eliminate reflection overhead providing 10-100x speedups on critical paths while remaining invisible to pure functions. Dynamic vars (`^:dynamic`) enable thread-local bindings for context propagation (user identity, request IDs) without passing parameters through every function—Nubank's request tracing uses dynamic vars for distributed tracing context.
 
 ## Example 47: Destructuring Advanced
 

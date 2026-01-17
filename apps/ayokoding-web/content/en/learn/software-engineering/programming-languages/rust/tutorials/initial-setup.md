@@ -103,9 +103,11 @@ graph TD
    - Installation completes shortly
 
 4. **Configure PATH**:
+
    ```bash
    source $HOME/.cargo/env
    ```
+
    This adds `~/.cargo/bin` to your PATH.
 
 **Alternative: Homebrew Installation**:
@@ -136,9 +138,11 @@ rustup-init
    - Installation completes shortly
 
 4. **Configure PATH**:
+
    ```bash
    source "$HOME/.cargo/env"
    ```
+
    Add this line to `~/.bashrc` or `~/.zshrc` for persistence.
 
 **Common Linux Issues**:
@@ -451,9 +455,11 @@ This enables clippy checks and auto-formatting on save.
 1. Restart terminal (PATH updated on new shell sessions)
 2. Manually source cargo env: `source $HOME/.cargo/env` (macOS/Linux)
 3. Check PATH includes `~/.cargo/bin`:
+
    ```bash
    echo $PATH  # Should include /Users/yourname/.cargo/bin
    ```
+
 4. Reinstall rustup if problem persists
 
 ### Linker errors on Windows

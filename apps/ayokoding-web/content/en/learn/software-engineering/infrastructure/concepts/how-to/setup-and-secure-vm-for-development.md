@@ -121,7 +121,7 @@ ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server_ip
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
 ```
 
-2. **Edit SSH configuration**:
+1. **Edit SSH configuration**:
 
 ```bash
 sudo nano /etc/ssh/sshd_config
@@ -147,13 +147,13 @@ MaxAuthTries 3
 Port 2222
 ```
 
-3. **Test configuration before applying**:
+1. **Test configuration before applying**:
 
 ```bash
 sudo sshd -t
 ```
 
-4. **Restart SSH service**:
+1. **Restart SSH service**:
 
 ```bash
 sudo systemctl restart sshd
@@ -566,7 +566,7 @@ sudo mount -o discard,defaults /dev/disk/by-id/scsi-0DO_Volume_volume-name /mnt/
 df -h | grep volume-name
 ```
 
-3. **Configure Automatic Mounting on Boot**:
+1. **Configure Automatic Mounting on Boot**:
 
 ```bash
 # Get the volume UUID
@@ -588,7 +588,7 @@ Test the fstab configuration:
 sudo mount -a
 ```
 
-4. **Set Permissions**:
+1. **Set Permissions**:
 
 ```bash
 # Change ownership to your user

@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+.next/
+.nx/
+
+# Hugo public directories
+apps/*/public/
+
+# Experimental apps (not in Nx)
+apps-labs/
+
+# Lock files
+package-lock.json
+
+# Generated reports
+generated-reports/
+
+# IDE
+.vscode/
+.idea/

@@ -432,6 +432,7 @@ mix deps.get
    ```
 
 6. **Document unusual constraints:**
+
    ```elixir
    # Pinned due to bug in 2.x - see issue #123
    {:library, "~> 1.9.0"}
