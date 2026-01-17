@@ -75,7 +75,7 @@ Seven tutorial types with progressive coverage depth:
 
 ## Mathematical Notation
 
-Use LaTeX notation for mathematical expressions. See [Mathematical Notation Convention](../../../governance/conventions/formatting/mathematical-notation.md) for syntax rules and examples.
+Use LaTeX notation for mathematical expressions. See [Mathematical Notation Convention](../../governance/conventions/formatting/mathematical-notation.md) for syntax rules and examples.
 
 ## Diagram Creation
 
@@ -307,7 +307,7 @@ return db.users.create({ username, hash });
 - Discuss design decisions, alternatives, and implications
 - Reference related examples or documentation
 
-See [Tutorial Naming Convention - By Example Requirements](../../../governance/conventions/tutorial/naming.md#by-example-requirements) for complete annotation standards.
+See [Tutorial Naming Convention - By Example Requirements](../../governance/conventions/tutorial/naming.md#by-example-requirements) for complete annotation standards.
 
 ## File Naming
 
@@ -319,7 +319,7 @@ Tutorial files follow the pattern: `tu-[content-identifier].md`
 - `tu-quick-start-express-server.md`
 - `tu-by-example-react-hooks.md`
 
-See [File Naming Convention](../../../governance/conventions/meta/file-naming.md) for complete details.
+See [File Naming Convention](../../governance/conventions/meta/file-naming.md) for complete details.
 
 ## Linking Standards
 
@@ -514,14 +514,14 @@ When updating tutorials:
 **Content Standards**:
 
 - [Content Quality Principles](../../governance/conventions/content/quality.md) - Quality checklist
-- [Diátaxis Framework](../../../governance/conventions/meta/diataxis-framework.md) - Documentation organization
+- [Diátaxis Framework](../../governance/conventions/meta/diataxis-framework.md) - Documentation organization
 
 **Formatting Standards**:
 
 - [Diagrams Convention](../../governance/conventions/formatting/diagrams.md) - Mermaid and accessibility
-- [Mathematical Notation Convention](../../../governance/conventions/formatting/mathematical-notation.md) - LaTeX syntax
+- [Mathematical Notation Convention](../../governance/conventions/formatting/mathematical-notation.md) - LaTeX syntax
 - [Linking Convention](../../governance/conventions/formatting/linking.md) - Link format rules
-- [File Naming Convention](../../../governance/conventions/meta/file-naming.md) - Naming patterns
+- [File Naming Convention](../../governance/conventions/meta/file-naming.md) - Naming patterns
 
 **Related Agents**:
 

@@ -63,7 +63,7 @@ The `repo-generating-validation-reports` Skill provides UUID generation, timesta
 
 ## Core Responsibility
 
-Validate project plans against standards defined in [Plans Organization Convention](../../../governance/conventions/project/plans-organization.md).
+Validate project plans against standards defined in [Plans Organization Convention](../../governance/conventions/project/plans-organization.md).
 
 ## Validation Scope
 
@@ -165,8 +165,8 @@ Update status to "Complete", add summary statistics and prioritized recommendati
 **Project Guidance:**
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../../governance/conventions/project/plans-organization.md) - Plan standards
-- [Trunk Based Development Convention](../../../governance/development/workflow/trunk-based-development.md) - Git workflow standards
+- [Plans Organization Convention](../../governance/conventions/project/plans-organization.md) - Plan standards
+- [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) - Git workflow standards
 
 **Related Agents:**
 

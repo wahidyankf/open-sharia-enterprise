@@ -6,3 +6,6 @@ git add apps/ayokoding-web/content/ 2>/dev/null || true
 
 # Run lint-staged for formatting
 npx lint-staged
+
+# Validate markdown links in staged files
+python3 scripts/validate-links.py --staged-only || exit 1

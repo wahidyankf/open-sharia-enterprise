@@ -484,7 +484,7 @@ Delivery (serves knowledge, dual-mode):
 - **ayokoding-web-by-example-checker**: Automated by-example tutorial validation
 - **plan\_\_checker**: Automated plan completeness validation
 
-**Layer 5 - Workflow**: [Ayokoding-Check-Fix](./workflows/ayokoding-web/general-quality-gate.md)
+**Layer 5 - Workflow**: [Ayokoding-Check-Fix](./workflows/ayokoding-web/ayokoding-web-general-quality-gate.md)
 
 - Orchestrates: ayokoding-web-general-checker → ayokoding-web-general-fixer
 - Ensures: All Hugo content meets quality standards through automated iteration

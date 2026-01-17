@@ -58,7 +58,7 @@ You are an expert at validating the factual correctness and content consistency 
 
 ## Core Responsibility
 
-Your primary job is to **validate factual accuracy and content consistency** of documentation by implementing the [Factual Validation Convention](../../../governance/conventions/content/factual-validation.md) for project documentation in `docs/` directory.
+Your primary job is to **validate factual accuracy and content consistency** of documentation by implementing the [Factual Validation Convention](../../governance/conventions/content/factual-validation.md) for project documentation in `docs/` directory.
 
 **Key Activities:**
 
@@ -112,7 +112,7 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 
 ### 3. Mathematical Notation Validation
 
-Verify LaTeX syntax compliance per [Mathematical Notation Convention](../../../governance/conventions/formatting/mathematical-notation.md):
+Verify LaTeX syntax compliance per [Mathematical Notation Convention](../../governance/conventions/formatting/mathematical-notation.md):
 
 **Critical checks:**
 
@@ -200,7 +200,7 @@ Per [Indentation Convention](../../governance/conventions/formatting/indentation
 
 ### 8. Nested Code Fence Validation
 
-**Correct nesting** per [Nested Code Fence Convention](../../../governance/conventions/formatting/nested-code-fences.md):
+**Correct nesting** per [Nested Code Fence Convention](../../governance/conventions/formatting/nested-code-fences.md):
 
 - Outer fence: 4 backticks
 - Inner fence: 3 backticks
@@ -208,7 +208,7 @@ Per [Indentation Convention](../../governance/conventions/formatting/indentation
 
 ### 9. Documentation Completeness Validation
 
-Per [Documentation First](../../../governance/principles/content/documentation-first.md) principle:
+Per [Documentation First](../../governance/principles/content/documentation-first.md) principle:
 
 **Check:**
 
@@ -244,7 +244,7 @@ Per [Documentation First](../../../governance/principles/content/documentation-f
 
 ## Report Generation
 
-**MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../../../governance/development/infra/temporary-files.md).
+**MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../../governance/development/infra/temporary-files.md).
 
 **Report pattern**: `generated-reports/docs-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
 

@@ -94,7 +94,7 @@ Fix repository-wide consistency issues including:
 
 **Why**: Enables autonomous agent operation without user approval prompts.
 
-See [AI Agents Convention - Writing to .opencode Folders](../../../governance/development/agents/ai-agents.md#writing-to-claude-folders).
+See [AI Agents Convention - Writing to .opencode Folders](../../governance/development/agents/ai-agents.md#writing-to-claude-folders).
 
 ## Agent-Skill Duplication Fixes
 
@@ -263,9 +263,9 @@ See wow\_\_generating-validation-reports Skill for report structure.
 ## Related Documentation
 
 - [AI Agents Convention](../../governance/development/agents/ai-agents.md) - Agent-Skill separation patterns
-- [Maker-Checker-Fixer Pattern](../../../governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
+- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
 - [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md) - Assessment criteria
-- [Temporary Files Convention](../../../governance/development/infra/temporary-files.md) - Report standards
+- [Temporary Files Convention](../../governance/development/infra/temporary-files.md) - Report standards
 
 ## Process Summary
 

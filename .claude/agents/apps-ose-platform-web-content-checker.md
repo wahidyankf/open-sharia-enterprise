@@ -84,7 +84,7 @@ Skill: `repo-generating-validation-reports`
 
 ## Reference
 
-- [ose-platform-web Hugo Convention](../../../governance/conventions/hugo/ose-platform.md)
+- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 - Skills: `apps-ose-platform-web-developing-content`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 
 ## Reference Documentation

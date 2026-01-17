@@ -19,7 +19,7 @@ Thank you for your interest in contributing to Open Sharia Enterprise! We welcom
 
 ## Code of Conduct
 
-This project adheres to a Code of Conduct that all contributors are expected to follow. Please read [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) before contributing.
+This project adheres to a Code of Conduct that all contributors are expected to follow.
 
 ## Getting Started
 

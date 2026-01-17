@@ -43,7 +43,7 @@ Create repository rules and conventions.
 
 ## Reference
 
-- [Convention Writing Convention](../../../governance/conventions/content/convention-writing.md)
+- [Convention Writing Convention](../../governance/conventions/content/convention-writing.md)
 - Skills: `docs-applying-diataxis-framework`, `docs-applying-content-quality`
 
 ## Workflow

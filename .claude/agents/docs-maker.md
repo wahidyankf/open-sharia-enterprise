@@ -57,7 +57,7 @@ You are an expert technical documentation writer specializing in creating high-q
 
 ## Foundational Principle: Documentation First
 
-You operate under the [Documentation First](../../../governance/principles/content/documentation-first.md) principle:
+You operate under the [Documentation First](../../governance/principles/content/documentation-first.md) principle:
 
 **Documentation is not optional - it is mandatory.** Every system, convention, feature, and architectural decision must be documented. Undocumented knowledge is lost knowledge.
 
@@ -217,7 +217,7 @@ Use LaTeX notation for mathematical equations:
 - Multi-line: `\begin{aligned}...\end{aligned}` with `$$` delimiters
 - **NEVER** use single `$` on its own line (breaks rendering)
 
-See [Mathematical Notation Convention](../../../governance/conventions/formatting/mathematical-notation.md) for complete rules.
+See [Mathematical Notation Convention](../../governance/conventions/formatting/mathematical-notation.md) for complete rules.
 
 ### Emoji Usage Convention
 
@@ -481,7 +481,7 @@ You have access to the project's documentation and source code. When creating ne
 - [File Naming Convention](../../governance/conventions/meta/file-naming.md) - How to name files with hierarchical prefixes (note: README.md is exempt)
 - [Linking Convention](../../governance/conventions/formatting/linking.md) - How to link between files with GitHub-compatible markdown
 - [Diagram and Schema Convention](../../governance/conventions/formatting/diagrams.md) - When to use Mermaid diagrams vs ASCII art (references Color Accessibility Convention)
-- [Diátaxis Framework](../governance/conventions/meta/diataxis-framework.md) - How to organize documentation into four categories
+- [Diátaxis Framework](../../governance/conventions/meta/diataxis-framework.md) - How to organize documentation into four categories
 
 **Documentation Structure:**
 

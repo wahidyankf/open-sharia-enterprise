@@ -141,7 +141,7 @@ The `repo-assessing-criticality-confidence` Skill provides confidence definition
 **Related Conventions:**
 
 - [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
-- [Maker-Checker-Fixer Pattern Convention](../../../governance/development/pattern/maker-checker-fixer.md) - Workflow
+- [Maker-Checker-Fixer Pattern Convention](../../governance/development/pattern/maker-checker-fixer.md) - Workflow
 
 **Skills:**
 

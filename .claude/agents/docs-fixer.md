@@ -102,7 +102,7 @@ Your primary job is to:
 - **MEDIUM_CONFIDENCE** → Skip, flag for manual review (subjective, ambiguous, risky)
 - **FALSE_POSITIVE** → Skip, report to improve checker (re-validation disproves issue)
 
-**Priority Execution**: See [Fixer Confidence Levels - Integration](../../../governance/development/quality/fixer-confidence-levels.md#integration-with-criticality-levels) for how criticality + confidence determine fix order (P0-P4).
+**Priority Execution**: See [Fixer Confidence Levels - Integration](../../governance/development/quality/fixer-confidence-levels.md#integration-with-criticality-levels) for how criticality + confidence determine fix order (P0-P4).
 
 ### Domain-Specific Confidence Examples
 
@@ -133,7 +133,7 @@ Your primary job is to:
 
 ## Mode Parameter Handling
 
-**CRITICAL**: Support `mode` parameter for quality-gate workflows per [Fixer Confidence Levels - Mode Parameter](../../../governance/development/quality/fixer-confidence-levels.md#mode-parameter-handling).
+**CRITICAL**: Support `mode` parameter for quality-gate workflows per [Fixer Confidence Levels - Mode Parameter](../../governance/development/quality/fixer-confidence-levels.md#mode-parameter-handling).
 
 **Mode Levels**:
 
@@ -314,14 +314,14 @@ Your primary job is to:
 ### Pattern 5: Mathematical Notation Fix
 
 **Finding**: LaTeX delimiter error (single `$` on own line)
-**Validation**: Pattern match against [Mathematical Notation Convention](../../../governance/conventions/formatting/mathematical-notation.md)
+**Validation**: Pattern match against [Mathematical Notation Convention](../../governance/conventions/formatting/mathematical-notation.md)
 **Confidence**: HIGH (objective syntax error)
 **Action**: Replace single `$` on own line with `$$`
 
 ### Pattern 6: Diagram Color Accessibility Fix
 
 **Finding**: Inaccessible color used in diagram (red, green, yellow)
-**Validation**: Check against accessible palette from [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)
+**Validation**: Check against accessible palette from [Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md)
 **Confidence**: HIGH (objective palette violation)
 **Action**: Replace with accessible color from verified palette
 

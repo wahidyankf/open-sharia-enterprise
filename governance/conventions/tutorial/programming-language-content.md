@@ -765,7 +765,7 @@ Following comprehensive analysis of all 6 programming languages (Python, Golang,
 - **Resources:** Java (879 lines) - most comprehensive external links
 - **Diagram Usage:** Golang beginner tutorial (6 diagrams) - visual learning reference
 
-**Complete Reference Table:** See [Highest Standards Reference Table](../../../plans/in-progress/2025-12-21__prog-lang-parity/highest-standards-reference-table.md) for detailed metrics (line counts, code blocks, diagrams, links) for all 11 content types.
+**Complete Reference Table:** Detailed metrics (line counts, code blocks, diagrams, links) for all 11 content types are available in the prog-lang-parity plan documentation.
 
 **Usage Guidance:**
 

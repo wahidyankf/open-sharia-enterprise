@@ -899,9 +899,9 @@ FAIL: All agent files - Frontmatter comment detection
 - [AI Agents Convention](../agents/ai-agents.md) - Standards for all AI agents including fixers
 
 **Content Standards:**
-- [Tutorial Convention](../../conventions/tutorial/tutorial-fixer)
+- [Tutorial Convention](../../conventions/tutorial/general.md)
 - [Content Quality Principles](../../conventions/content/quality.md) - Universal content quality standards
-- [README Quality Convention](../../conventions/content/fixer)
+- [README Quality Convention](../../conventions/content/readme-quality.md)
 - [Hugo Content Convention - Shared](../../conventions/hugo/shared.md) - Shared Hugo content standards
 - [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-web specific standards
 - [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - ose-platform-web specific standards
