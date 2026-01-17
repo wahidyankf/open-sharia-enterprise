@@ -143,8 +143,9 @@
 
 - Excludes `target/` directory
 - Excludes `.mvn/` directory
-- Excludes IDE files
-- Excludes `application-prod.yml`
+- Excludes `mvnw` and `mvnw.cmd` files
+- Excludes IDE files (`.idea/`, `*.iml`)
+- Excludes `.env` files
 
 ## Success Criteria
 

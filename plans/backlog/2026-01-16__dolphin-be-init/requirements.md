@@ -17,7 +17,7 @@ Scenario: Spring Boot project is initialized with correct structure
  Then the project should have standard Maven directory structure (src/main/java, src/main/resources, src/test/java)
  And the project should have pom.xml with Spring Boot parent dependency
  And the project should have Spring Boot main application class with @SpringBootApplication annotation
- And pom.xml should specify Java 25 as target version
+ And pom.xml should specify Java 25 as target version (with Java 17 minimum baseline)
  And the project should have application.yml in src/main/resources
  And the project should have project.json for Nx integration
 ```
@@ -117,6 +117,7 @@ Scenario: .gitignore excludes build artifacts
  And .gitignore should include mvnw and mvnw.cmd files
  And .gitignore should include *.iml files (IDE files)
  And .gitignore should include .idea/ directory (IDE files)
+ And .gitignore should include .env files
 ```
 
 ### Story 7: Add Basic Logging Configuration

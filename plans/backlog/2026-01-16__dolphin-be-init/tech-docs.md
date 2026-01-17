@@ -63,6 +63,7 @@ apps/dolphin-be/
         <java.version>25</java.version>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
+        <!-- Note: Spring Boot 4.0 supports Java 17-25, with 17 as minimum baseline -->
     </properties>
 
     <dependencies>
@@ -86,7 +87,7 @@ apps/dolphin-be/
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
-            <version>7.4</version>
+            <version>9.0</version>
         </dependency>
 
         <!-- Test Dependencies -->
@@ -130,7 +131,7 @@ The Spring Boot parent POM manages all dependency versions, ensuring compatibili
 - REST API support with embedded Tomcat 11.x
 - Jackson for JSON serialization
 - Spring MVC for web layer
-- Built on Spring Framework 7.0.x
+- Built on Spring Framework 7.0 GA
 
 **spring-boot-starter-validation**
 
@@ -150,11 +151,11 @@ The Spring Boot parent POM manages all dependency versions, ensuring compatibili
 
 **spring-boot-starter-test**
 
-- JUnit 6.0 (Jupiter) testing framework (required by Spring Boot 4.0)
-- Mockito 5.x for mocking
+- JUnit 6.0 testing framework (required by Spring Boot 4.0, minimum Java 17)
+- Mockito 5.21 for mocking (latest)
 - Spring Boot Test 4.0.x for integration tests
-- AssertJ 3.26+ for fluent assertions
-- Support for virtual threads (Java 21+)
+- AssertJ 3.27+ for fluent assertions
+- Support for virtual threads (Java 21+ feature)
 
 ### Spring Boot 4.0 and Java 25 Considerations
 
@@ -176,9 +177,9 @@ The Spring Boot parent POM manages all dependency versions, ensuring compatibili
 
 **Spring Boot 4.0 Changes**
 
-- Built on Spring Framework 7.0.x
+- Built on Spring Framework 7.0 GA
 - Tomcat 11.x (upgraded from 10.x in 3.x)
-- Hibernate 7.x (upgraded from 6.x in 3.x)
+- Hibernate 7.1 (upgraded from 6.x in 3.x)
 - Enhanced observability with Micrometer 2.0+
 - Improved virtual thread support
 - Better AOT compilation support
@@ -406,7 +407,7 @@ Files with sensitive data should be in `.gitignore`:
 <dependency>
     <groupId>net.logstash.logback</groupId>
     <artifactId>logstash-logback-encoder</artifactId>
-    <version>7.4</version>
+    <version>9.0</version>
 </dependency>
 ```
 

@@ -13,7 +13,7 @@ Initialize a Java Spring Boot application using Maven in the `apps/` folder name
 **Technology Stack**:
 
 - Java 25 (LTS)
-- Spring Boot 4.0.x
+- Spring Boot 4.0.x (Jakarta EE 10 - uses jakarta._namespace, not javax._)
 - Maven (build tool)
 
 ## Problem Statement
@@ -31,7 +31,7 @@ This plan establishes the foundational backend infrastructure to enable these ca
 
 **Development Environment**:
 
-- Java 25 (or finalized Java version)
+- Java 25 (recommended LTS) or Java 17+ (minimum required by Spring Boot 4.0)
 - Maven 3.8+
 - Node.js 24.11.1 (for Nx monorepo)
 - npm 11.6.3
