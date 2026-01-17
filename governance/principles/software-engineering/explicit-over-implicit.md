@@ -18,7 +18,7 @@ Choose **explicit composition and configuration** over magic, convenience, and h
 
 ## 🌟 Vision Supported
 
-This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of creating transparent, verifiable Shariah-compliant enterprise that anyone can audit and trust.
+This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of creating transparent, verifiable Shariah-compliant enterprise that anyone can audit and trust.
 
 **How this principle serves the vision:**
 

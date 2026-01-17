@@ -19,7 +19,7 @@ Design for **universal access from the start**. Accessibility is not an aftertho
 
 ## 🌟 Vision Supported
 
-This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of making Shariah-compliant enterprise accessible to everyone - literally and practically.
+This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of making Shariah-compliant enterprise accessible to everyone - literally and practically.
 
 **How this principle serves the vision:**
 

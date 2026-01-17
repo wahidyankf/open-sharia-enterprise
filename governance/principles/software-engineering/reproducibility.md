@@ -19,7 +19,7 @@ updated: 2025-12-28
 
 ## 🌟 Vision Supported
 
-This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of democratizing Islamic enterprise by enabling global contributors to work consistently regardless of location or local system configuration.
+This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of democratizing Islamic enterprise by enabling global contributors to work consistently regardless of location or local system configuration.
 
 **How this principle serves the vision:**
 

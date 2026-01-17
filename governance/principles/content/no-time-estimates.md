@@ -19,7 +19,7 @@ People work and learn at **vastly different speeds**. Focus on **outcomes and de
 
 ## 🌟 Vision Supported
 
-This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of making Islamic enterprise accessible to developers, businesses, and individuals working at their own pace worldwide.
+This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of making Islamic enterprise accessible to developers, businesses, and individuals working at their own pace worldwide.
 
 **How this principle serves the vision:**
 

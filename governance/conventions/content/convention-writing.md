@@ -417,7 +417,7 @@ Where:
 
 - Update `updated` field in frontmatter when making changes
 - Significant changes should update AGENTS.md if they affect agent behavior
-- Use `wow__rules-maker` to propagate changes across related files
+- Use `repo-governance-maker` to propagate changes across related files
 
 ### Deprecation
 
@@ -589,8 +589,8 @@ When creating a convention:
 **Agents:**
 
 - `docs__maker` - Creates convention documents following this structure
-- `wow__rules-maker` - Propagates convention changes
-- `wow__rules-checker` - Validates convention compliance
+- `repo-governance-maker` - Propagates convention changes
+- `repo-governance-checker` - Validates convention compliance
 
 ---
 

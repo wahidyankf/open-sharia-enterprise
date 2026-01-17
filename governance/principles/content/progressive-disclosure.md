@@ -19,7 +19,7 @@ updated: 2025-12-24
 
 ## 🌟 Vision Supported
 
-This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of making Islamic enterprise accessible to developers at all skill levels - from beginners to experts.
+This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of making Islamic enterprise accessible to developers at all skill levels - from beginners to experts.
 
 **How this principle serves the vision:**
 

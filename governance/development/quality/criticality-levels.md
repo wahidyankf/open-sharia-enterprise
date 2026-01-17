@@ -16,7 +16,7 @@ This convention establishes a universal **four-level criticality system** (CRITI
 
 **Problem**: Seven different severity classification systems existed across checker agents, causing confusion and inconsistency:
 
-- `wow__rules-checker`: Critical/Important/Minor
+- `repo-governance-checker`: Critical/Important/Minor
 - `ayokoding-web-general-checker`: Must Fix/Warnings/Suggestions
 - `readme__checker`: High/Medium/Low Priority
 - `docs__checker`: [Verified]/[Error]/[Outdated] (verification-based, NOT severity)
@@ -1352,9 +1352,9 @@ Existing agents using different terminology should migrate to this convention.
 
 ### Phase 2: Pilot Agent (Week 2)
 
-1. Update `wow__rules-checker` to use CRITICAL/HIGH/MEDIUM/LOW sections
+1. Update `repo-governance-checker` to use CRITICAL/HIGH/MEDIUM/LOW sections
 2. Test report generation with standardized format
-3. Validate that `wow__rules-fixer` correctly interprets new format
+3. Validate that `repo-governance-fixer` correctly interprets new format
 4. Identify any issues before broader rollout
 
 ### Phase 3: Checker Agent Families (Week 2-3)

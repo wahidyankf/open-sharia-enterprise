@@ -19,7 +19,7 @@ Favor **minimum viable abstraction** and avoid over-engineering. Start simple an
 
 ## 🌟 Vision Supported
 
-This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of democratizing Shariah-compliant enterprise by lowering barriers to entry for developers worldwide.
+This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of democratizing Shariah-compliant enterprise by lowering barriers to entry for developers worldwide.
 
 **How this principle serves the vision:**
 
