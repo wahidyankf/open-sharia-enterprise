@@ -742,6 +742,7 @@ coverage/
    ```
 
 5. **Test App Build**
+
    ```bash
    nx build demo-ts-fe
    ```
@@ -749,7 +750,7 @@ coverage/
 **Validation**:
 
 - Next.js app initializes successfully
-- Dev server runs on http://localhost:3000
+- Dev server runs on <http://localhost:3000>
 - Build succeeds and creates `.next/` directory
 - App structure follows Next.js 14+ conventions (app directory)
 
@@ -800,6 +801,7 @@ coverage/
      ```
 
    - Rebuild and run app:
+
      ```bash
      nx build demo-ts-fe
      nx dev demo-ts-fe
@@ -846,6 +848,7 @@ coverage/
    ```
 
 4. **Test Run-Many**
+
    ```bash
    nx run-many -t build  # Build all projects
    nx run-many -t test   # Test all projects

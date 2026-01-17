@@ -159,7 +159,7 @@ Before moving forward, verify:
 - [ ] You can create tables and insert data
 - [ ] You can query data with SELECT
 
-## 🎉 You're Done!
+## 🎉 You're Done
 
 You've successfully installed PostgreSQL and executed your first queries. You're ready to learn more advanced database operations.
 

@@ -40,26 +40,26 @@ Let's start with the big picture. A PDF chat system has two main phases: **Inges
 
 ```mermaid
 graph TD
-	subgraph "Phase 1: Document Ingestion (One-time)"
-		A[📄 PDF Upload] --> B[Text Extraction]
-		B --> C[Document Chunking]
-		C --> D[Generate Embeddings]
-		D --> E[Store in Vector DB]
-	end
+ subgraph "Phase 1: Document Ingestion (One-time)"
+  A[📄 PDF Upload] --> B[Text Extraction]
+  B --> C[Document Chunking]
+  C --> D[Generate Embeddings]
+  D --> E[Store in Vector DB]
+ end
 
-	subgraph "Phase 2: Query Processing (Per Question)"
-		F[❓ User Question] --> G[Generate Query Embedding]
-		G --> H[Semantic Search]
-		E --> H
-		H --> I[Retrieve Relevant Chunks]
-		I --> J[Build Context]
-		J --> K[LLM Generation]
-		K --> L[📝 Answer]
-	end
+ subgraph "Phase 2: Query Processing (Per Question)"
+  F[❓ User Question] --> G[Generate Query Embedding]
+  G --> H[Semantic Search]
+  E --> H
+  H --> I[Retrieve Relevant Chunks]
+  I --> J[Build Context]
+  J --> K[LLM Generation]
+  K --> L[📝 Answer]
+ end
 
-	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
-	style F fill:#DE8F05,stroke:#000000,color:#FFFFFF
-	style L fill:#029E73,stroke:#000000,color:#FFFFFF
+ style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style F fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style L fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
 **Key Insight**: The document is processed **once** during ingestion, but queries happen **many times**. This asymmetry is crucial for performance—we do expensive processing upfront so queries can be fast.
@@ -111,16 +111,16 @@ User uploads "Company_Report_2024.pdf"
 
 ```mermaid
 graph TD
-	A[PDF File] --> B{Is it<br/>searchable?}
-	B -->|Yes| C[Direct Text<br/>Extraction]
-	B -->|No| D[OCR Required]
-	D --> E[Image Processing]
-	E --> F[Tesseract/<br/>Cloud OCR]
-	F --> G[Text Output]
-	C --> G
+ A[PDF File] --> B{Is it<br/>searchable?}
+ B -->|Yes| C[Direct Text<br/>Extraction]
+ B -->|No| D[OCR Required]
+ D --> E[Image Processing]
+ E --> F[Tesseract/<br/>Cloud OCR]
+ F --> G[Text Output]
+ C --> G
 
-	style C fill:#029E73,stroke:#000000,color:#FFFFFF
-	style D fill:#DE8F05
+ style C fill:#029E73,stroke:#000000,color:#FFFFFF
+ style D fill:#DE8F05
 ```
 
 **Example Output**:
@@ -242,12 +242,12 @@ Similar words cluster together in vector space!
 
 ```mermaid
 graph TD
-	A[Text Chunk] --> B[Embedding Model<br/>OpenAI/Cohere/etc]
-	B --> C[Vector<br/>1536 dimensions]
-	C --> D[Stored with Chunk ID]
+ A[Text Chunk] --> B[Embedding Model<br/>OpenAI/Cohere/etc]
+ B --> C[Vector<br/>1536 dimensions]
+ C --> D[Stored with Chunk ID]
 
-	style B fill:#0173B2,stroke:#000000,color:#FFFFFF
-	style C fill:#029E73
+ style B fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style C fill:#029E73
 ```
 
 **Real Example**:
@@ -296,16 +296,16 @@ Find top 5 chunks most similar to:
 
 ```mermaid
 graph TD
-	A[New Embedding] --> B{Indexing Algorithm<br/>HNSW/IVF}
-	B --> C[Add to Index Structure]
-	C --> D[(Vector Store)]
+ A[New Embedding] --> B{Indexing Algorithm<br/>HNSW/IVF}
+ B --> C[Add to Index Structure]
+ C --> D[(Vector Store)]
 
-	E[Query Vector] --> F[Approximate<br/>Nearest Neighbor<br/>Search]
-	D --> F
-	F --> G[Top K Similar<br/>Vectors]
+ E[Query Vector] --> F[Approximate<br/>Nearest Neighbor<br/>Search]
+ D --> F
+ F --> G[Top K Similar<br/>Vectors]
 
-	style D fill:#DE8F05
-	style G fill:#029E73
+ style D fill:#DE8F05
+ style G fill:#029E73
 ```
 
 **Storage Format**:
@@ -336,19 +336,19 @@ chunk_003   | [0.23, 0.89, ..., 0.45]   | {page: 2, doc: "Q4_Report"}
 
 ```mermaid
 sequenceDiagram
-	participant User
-	participant API
-	participant Embedder
-	participant VectorDB
+ participant User
+ participant API
+ participant Embedder
+ participant VectorDB
 
-	User->>API: "What was Q4 revenue?"
-	API->>API: Validate & sanitize
-	API->>Embedder: Generate embedding
-	Embedder-->>API: [0.2, 0.8, ..., 0.5]
-	API->>VectorDB: Find top 5 similar chunks
-	VectorDB-->>API: [chunk_023, chunk_024, ...]
-	API->>API: Retrieve full text
-	API-->>User: (Continue to next step...)
+ User->>API: "What was Q4 revenue?"
+ API->>API: Validate & sanitize
+ API->>Embedder: Generate embedding
+ Embedder-->>API: [0.2, 0.8, ..., 0.5]
+ API->>VectorDB: Find top 5 similar chunks
+ VectorDB-->>API: [chunk_023, chunk_024, ...]
+ API->>API: Retrieve full text
+ API-->>User: (Continue to next step...)
 ```
 
 **Example**:
@@ -391,12 +391,12 @@ Chunk C: [-0.5, 0.2, 0.8] → Similarity: 0.23   Not similar
 
 ```mermaid
 graph TD
-	A[Query Embedding] --> B[Calculate Similarity<br/>to All Chunks]
-	B --> C[Rank by Similarity]
-	C --> D[Return Top K<br/>default K=5]
-	D --> E[Chunk 1: 0.94<br/>Chunk 2: 0.91<br/>Chunk 3: 0.87<br/>Chunk 4: 0.82<br/>Chunk 5: 0.79]
+ A[Query Embedding] --> B[Calculate Similarity<br/>to All Chunks]
+ B --> C[Rank by Similarity]
+ C --> D[Return Top K<br/>default K=5]
+ D --> E[Chunk 1: 0.94<br/>Chunk 2: 0.91<br/>Chunk 3: 0.87<br/>Chunk 4: 0.82<br/>Chunk 5: 0.79]
 
-	style E fill:#029E73,stroke:#000000,color:#FFFFFF
+ style E fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
 **Result Example**:
@@ -448,17 +448,17 @@ User Question:
 
 ```mermaid
 graph TD
-	A[Retrieved Chunks] --> B{Optimization}
-	B --> C[Rerank by Relevance]
-	B --> D[Remove Duplicates]
-	B --> E[Add Metadata]
-	B --> F[Truncate if Needed]
-	C --> G[Final Context]
-	D --> G
-	E --> G
-	F --> G
+ A[Retrieved Chunks] --> B{Optimization}
+ B --> C[Rerank by Relevance]
+ B --> D[Remove Duplicates]
+ B --> E[Add Metadata]
+ B --> F[Truncate if Needed]
+ C --> G[Final Context]
+ D --> G
+ E --> G
+ F --> G
 
-	style G fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style G fill:#0173B2,stroke:#000000,color:#FFFFFF
 ```
 
 **Token Budget Example**:
@@ -514,13 +514,13 @@ What was Q4 revenue?
 
 ```mermaid
 graph TD
-	A[Prompt] --> B[LLM<br/>GPT-4/Claude/etc]
-	B --> C{Quality Check}
-	C -->|✓ Grounded| D[Final Answer]
-	C -->|✗ Hallucination| E[Retry or Error]
+ A[Prompt] --> B[LLM<br/>GPT-4/Claude/etc]
+ B --> C{Quality Check}
+ C -->|✓ Grounded| D[Final Answer]
+ C -->|✗ Hallucination| E[Retry or Error]
 
-	style D fill:#029E73,stroke:#000000,color:#FFFFFF
-	style E fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style D fill:#029E73,stroke:#000000,color:#FFFFFF
+ style E fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 **Generated Answer**:

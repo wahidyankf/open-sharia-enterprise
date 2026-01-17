@@ -1938,6 +1938,7 @@ resource "local_file" "precedence_demo" {
    ```
 
 6. **`-var` CLI option (highest)**
+
    ```bash
    # $ terraform apply -var="app_name=cli-app"  # => Precedence: 6 (highest)
    ```
@@ -2791,6 +2792,7 @@ resource "local_file" "file4" {
    ```
 
 3. **Work around temporary issues**:
+
    ```bash
    # $ terraform apply -target=module.database
    # Wait for database ready, then:

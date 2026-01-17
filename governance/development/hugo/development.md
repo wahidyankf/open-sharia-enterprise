@@ -102,14 +102,14 @@ Hugo uses a cascading override system. Understanding the lookup order is critica
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 graph TD
-	A[Hugo Template Lookup] --> B[Project layouts/]
-	B --> C[Theme layouts/]
-	C --> D[Hugo defaults]
+ A[Hugo Template Lookup] --> B[Project layouts/]
+ B --> C[Theme layouts/]
+ C --> D[Hugo defaults]
 
-	style A fill:#0173B2,stroke:#000,color:#fff
-	style B fill:#DE8F05,stroke:#000,color:#000
-	style C fill:#029E73,stroke:#000,color:#fff
-	style D fill:#CC78BC,stroke:#000,color:#fff
+ style A fill:#0173B2,stroke:#000,color:#fff
+ style B fill:#DE8F05,stroke:#000,color:#000
+ style C fill:#029E73,stroke:#000,color:#fff
+ style D fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 **Priority Order** (highest to lowest):
@@ -319,18 +319,18 @@ Hugo Pipes processes assets at build time. Use for CSS, JavaScript, images.
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 graph LR
-	A[Source Assets] --> B[Hugo Pipes]
-	B --> C[Processing]
-	C --> D[Output]
+ A[Source Assets] --> B[Hugo Pipes]
+ B --> C[Processing]
+ C --> D[Output]
 
-	C --> E[Minify]
-	C --> F[Fingerprint]
-	C --> G[PostCSS]
-	C --> H[Bundle]
+ C --> E[Minify]
+ C --> F[Fingerprint]
+ C --> G[PostCSS]
+ C --> H[Bundle]
 
-	style A fill:#0173B2,stroke:#000,color:#fff
-	style B fill:#DE8F05,stroke:#000,color:#000
-	style D fill:#029E73,stroke:#000,color:#fff
+ style A fill:#0173B2,stroke:#000,color:#fff
+ style B fill:#DE8F05,stroke:#000,color:#000
+ style D fill:#029E73,stroke:#000,color:#fff
 ```
 
 ### CSS Processing

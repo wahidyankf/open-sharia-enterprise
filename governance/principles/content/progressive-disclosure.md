@@ -87,22 +87,22 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 graph TD
-	A["Initial Setup<br/>0-5%"]:::blue
-	B["Quick Start<br/>5-30%"]:::orange
-	C["Beginner<br/>0-60%"]:::teal
-	D["Intermediate<br/>60-85%"]:::purple
-	E["Advanced<br/>85-95%"]:::brown
+ A["Initial Setup<br/>0-5%"]:::blue
+ B["Quick Start<br/>5-30%"]:::orange
+ C["Beginner<br/>0-60%"]:::teal
+ D["Intermediate<br/>60-85%"]:::purple
+ E["Advanced<br/>85-95%"]:::brown
 
-	A --> B
-	B --> C
-	C --> D
-	D --> E
+ A --> B
+ B --> C
+ C --> D
+ D --> E
 
-	style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style B fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style C fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style D fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style E fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style B fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style C fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style D fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style E fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 **Why this works**:

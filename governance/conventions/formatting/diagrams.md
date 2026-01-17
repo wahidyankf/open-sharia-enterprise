@@ -130,11 +130,11 @@ Mermaid diagrams are defined in code blocks with the `mermaid` language identifi
 
 ```mermaid
 graph TD
-		A[Start] --> B{Decision}
-		B -->|Yes| C[Action 1]
-		B -->|No| D[Action 2]
-		C --> E[End]
-		D --> E
+  A[Start] --> B{Decision}
+  B -->|Yes| C[Action 1]
+  B -->|No| D[Action 2]
+  C --> E[End]
+  D --> E
 ```
 ````
 
@@ -147,10 +147,10 @@ Perfect for processes, workflows, and decision trees:
 ````markdown
 ```mermaid
 flowchart LR
-		A[User Request] --> B{Authenticated?}
-		B -->|Yes| C[Process Request]
-		B -->|No| D[Return 401]
-		C --> E[Return Response]
+  A[User Request] --> B{Authenticated?}
+  B -->|Yes| C[Process Request]
+  B -->|No| D[Return 401]
+  C --> E[Return Response]
 ```
 ````
 
@@ -169,14 +169,14 @@ Shows interactions between components over time:
 ````markdown
 ```mermaid
 sequenceDiagram
-		participant Client
-		participant API
-		participant Database
+  participant Client
+  participant API
+  participant Database
 
-		Client->>API: POST /transactions
-		API->>Database: Save transaction
-		Database-->>API: Confirmation
-		API-->>Client: 201 Created
+  Client->>API: POST /transactions
+  API->>Database: Save transaction
+  Database-->>API: Confirmation
+  API-->>Client: 201 Created
 ```
 ````
 
@@ -199,22 +199,22 @@ Represents object-oriented structures and relationships:
 ````markdown
 ```mermaid
 classDiagram
-		class Transaction {
-				+String id
-				+BigDecimal amount
-				+Date timestamp
-				+validate()
-				+execute()
-		}
+  class Transaction {
+    +String id
+    +BigDecimal amount
+    +Date timestamp
+    +validate()
+    +execute()
+  }
 
-		class Account {
-				+String id
-				+BigDecimal balance
-				+debit()
-				+credit()
-		}
+  class Account {
+    +String id
+    +BigDecimal balance
+    +debit()
+    +credit()
+  }
 
-		Transaction --> Account : involves
+  Transaction --> Account : involves
 ```
 ````
 
@@ -245,21 +245,21 @@ Shows database schema relationships:
 ````markdown
 ```mermaid
 erDiagram
-		CUSTOMER ||--o{ ACCOUNT : owns
-		ACCOUNT ||--o{ TRANSACTION : contains
-		TRANSACTION }o--|| TRANSACTION_TYPE : has
+  CUSTOMER ||--o{ ACCOUNT : owns
+  ACCOUNT ||--o{ TRANSACTION : contains
+  TRANSACTION }o--|| TRANSACTION_TYPE : has
 
-		CUSTOMER {
-				string id PK
-				string name
-				string email
-		}
+  CUSTOMER {
+    string id PK
+    string name
+    string email
+  }
 
-		ACCOUNT {
-				string id PK
-				string customer_id FK
-				decimal balance
-		}
+  ACCOUNT {
+    string id PK
+    string customer_id FK
+    decimal balance
+  }
 ```
 ````
 
@@ -289,12 +289,12 @@ Illustrates state transitions in systems:
 ````markdown
 ```mermaid
 stateDiagram-v2
-		[*] --> Pending
-		Pending --> Processing : start
-		Processing --> Completed : success
-		Processing --> Failed : error
-		Failed --> Pending : retry
-		Completed --> [*]
+  [*] --> Pending
+  Pending --> Processing : start
+  Processing --> Completed : success
+  Processing --> Failed : error
+  Failed --> Pending : retry
+  Completed --> [*]
 ```
 ````
 
@@ -315,13 +315,13 @@ Shows branch and merge history:
 ````markdown
 ```mermaid
 gitGraph
-		commit
-		branch develop
-		checkout develop
-		commit
-		checkout main
-		merge develop
-		commit
+  commit
+  branch develop
+  checkout develop
+  commit
+  checkout main
+  merge develop
+  commit
 ```
 ````
 
@@ -366,8 +366,8 @@ gitGraph
 
 ```mermaid
 graph TD
-	A[Start] --> B[Process]
-	B --> C[End]
+ A[Start] --> B[Process]
+ B --> C[End]
 ```
 
 ### Mermaid Best Practices
@@ -501,16 +501,16 @@ All colors must provide sufficient contrast in BOTH rendering modes:
 
 ```mermaid
 graph TD
-		A["User Request<br/>(Blue)"]:::blue
-		B["Processing<br/>(Orange)"]:::orange
-		C["Response<br/>(Teal)"]:::teal
+  A["User Request<br/>(Blue)"]:::blue
+  B["Processing<br/>(Orange)"]:::orange
+  C["Response<br/>(Teal)"]:::teal
 
-		A --> B
-		B --> C
+  A --> B
+  B --> C
 
-		classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-		classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-		classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 ````
 
@@ -521,11 +521,11 @@ graph TD
 
 ```mermaid
 graph TD
-		A["Success"]:::green
-		B["Error"]:::red
+  A["Success"]:::green
+  B["Error"]:::red
 
-		classDef green fill:#029E73,stroke:#000000  FAIL: Invisible to protanopia/deuteranopia
-		classDef red fill:#DE8F05,stroke:#000000    FAIL: Invisible to protanopia/deuteranopia
+  classDef green fill:#029E73,stroke:#000000  FAIL: Invisible to protanopia/deuteranopia
+  classDef red fill:#DE8F05,stroke:#000000    FAIL: Invisible to protanopia/deuteranopia
 ```
 ````
 
@@ -767,20 +767,20 @@ Use this quick reference to choose the right format:
 
 ```mermaid
 sequenceDiagram
-		participant Client
-		participant Gateway
-		participant Auth
-		participant Business
-		participant Database
+  participant Client
+  participant Gateway
+  participant Auth
+  participant Business
+  participant Database
 
-		Client->>Gateway: HTTP Request
-		Gateway->>Auth: Validate Token
-		Auth-->>Gateway: Token Valid
-		Gateway->>Business: Process Request
-		Business->>Database: Query Data
-		Database-->>Business: Result
-		Business-->>Gateway: Response
-		Gateway-->>Client: HTTP Response
+  Client->>Gateway: HTTP Request
+  Gateway->>Auth: Validate Token
+  Auth-->>Gateway: Token Valid
+  Gateway->>Business: Process Request
+  Business->>Database: Query Data
+  Database-->>Business: Result
+  Business-->>Gateway: Response
+  Gateway-->>Client: HTTP Response
 ```
 ````
 
@@ -831,14 +831,14 @@ open-sharia-enterprise/
 
 ```mermaid
 stateDiagram-v2
-		[*] --> Draft
-		Draft --> Submitted : submit()
-		Submitted --> UnderReview : auto
-		UnderReview --> Approved : approve()
-		UnderReview --> Rejected : reject()
-		Approved --> Completed : process()
-		Rejected --> [*]
-		Completed --> [*]
+  [*] --> Draft
+  Draft --> Submitted : submit()
+  Submitted --> UnderReview : auto
+  UnderReview --> Approved : approve()
+  UnderReview --> Rejected : reject()
+  Approved --> Completed : process()
+  Rejected --> [*]
+  Completed --> [*]
 ```
 ````
 

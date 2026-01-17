@@ -95,7 +95,7 @@ Before moving forward, verify:
 - [ ] Playbook executes without errors
 - [ ] File created at `/tmp/ansible-test.txt`
 
-## 🎉 You're Done!
+## 🎉 You're Done
 
 You've successfully installed Ansible and run your first playbook. You're ready for more advanced automation.
 

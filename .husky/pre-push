@@ -1,1 +1,2 @@
 npx nx affected -t test:quick
+npm run lint:md || exit 1

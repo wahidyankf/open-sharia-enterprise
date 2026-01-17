@@ -3438,7 +3438,7 @@ def my_function():
 
 def another_function():
     x = 1  # 4 spaces
-	y = 2  # Tab (looks like spaces but isn't)
+ y = 2  # Tab (looks like spaces but isn't)
     # IndentationError: unindent does not match
 
 def another_function():

@@ -929,7 +929,7 @@ cat > "$REPORT_FILE" <<'EOF'
 EOF
 ```
 
-2. **Append findings as discovered**:
+1. **Append findings as discovered**:
 
 ```bash
 # Append each finding immediately when found
@@ -951,7 +951,7 @@ cat >> "$REPORT_FILE" <<EOF
 EOF
 ```
 
-3. **Update summary at completion**:
+1. **Update summary at completion**:
 
 ```bash
 # Update executive summary with final counts

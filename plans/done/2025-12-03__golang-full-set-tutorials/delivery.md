@@ -69,7 +69,7 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
   - **Date**: 2025-12-03
   - **Status**: Completed
 - [x] Validate all web sources and technical claims referenced in plan:
-  - [x] Go 1.23.4 availability (https://go.dev/dl/)
+  - [x] Go 1.23.4 availability (<https://go.dev/dl/>)
   - [x] Generics support (Go 1.18+)
   - [x] Workspace mode (Go 1.18+)
   - [x] Delve debugger (github.com/go-delve/delve)
@@ -613,7 +613,7 @@ This provides a comprehensive learning path from 0% to 95% coverage with correct
   - [x] Run `docs-tutorial-checker` - verify visual elements (optional diagram for setup flow)
   - [x] Run `docs-tutorial-checker` - verify hands-on elements (verification checklist)
   - [x] Run `docs-link-general-checker` - ensure all links to Quick Start and Beginner work
-  - [x] Run `docs-link-general-checker` - ensure external link to https://go.dev/dl/ is accessible
+  - [x] Run `docs-link-general-checker` - ensure external link to <https://go.dev/dl/> is accessible
   - [x] Test installation instructions on Windows 10/11 - verify Go installs correctly
   - [x] Test installation instructions on macOS (Intel and ARM) - verify Go installs correctly
   - [x] Test installation instructions on Linux (Ubuntu/Debian) - verify Go installs correctly

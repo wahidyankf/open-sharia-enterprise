@@ -29,4 +29,4 @@ Kami dapat merevisi syarat dan ketentuan ini tanpa pemberitahuan sebelumnya deng
 
 ## **Hubungi Kami**
 
-Jika Anda memiliki pertanyaan atau komentar tentang syarat dan ketentuan ini, silakan hubungi kami di wahidyankf@organiclever.com.
+Jika Anda memiliki pertanyaan atau komentar tentang syarat dan ketentuan ini, silakan hubungi kami di <wahidyankf@organiclever.com>.

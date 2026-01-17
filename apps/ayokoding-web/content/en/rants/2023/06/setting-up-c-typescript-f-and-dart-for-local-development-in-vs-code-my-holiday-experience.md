@@ -38,7 +38,7 @@ I used the [C/C++ extension](https://marketplace.visualstudio.com/items?itemName
 
 I created a repository on GitHub where I documented the setup process and shared the Makefile template, `launch.json`, and `tasks.json` files. You can find the setup I used [here](https://github.com/organiclever/ayokoding/tree/main/contents/c-cookbook/c-cookbook-primary).
 
-### F#
+### F
 
 Next, I wanted to explore a statically typed functional programming language, and F# caught my attention. Initially, I considered using OCaml, but the project setup proved challenging.
 
@@ -78,7 +78,7 @@ In his statement, Joe Armstrong (one of the co-designers of the Erlang programmi
 
 Furthermore, having a solid foundation in the Linux Command Line and related technologies can significantly assist in learning to use Makefiles. With the help of tools like ChatGPT, one can easily acquire knowledge and enhance their skills in this area. It is important to note that while Makefiles may seem daunting at first, with practice and persistence, they can become second nature to any developer looking to streamline their C project setup process.
 
-### F#
+### F
 
 Unfortunately, setting up OCaml can be cumbersome and less streamlined than F#. On the other hand, F# offers a much more intuitive and user-friendly setup process, making it an ideal choice for beginners interested in exploring the world of statically typed functional programming. Additionally, F# has a supportive community with plenty of resources and documentation available online, which can aid in the learning process and help troubleshoot any issues that may arise. Overall, while both OCaml and F# have their unique advantages and disadvantages, for those looking for a smooth and easy entry into the world of functional programming, F# is the better choice.
 

@@ -44,18 +44,18 @@ Week 8: Full implementation ready - GLM-4.7 as primary, 4 Z.AI MCP servers, Perp
 
 Next 4 weeks: Complete migration to OpenCode-only, establish first service skeletons (LMS, Middleware, IAM), solidify CI/CD.
 
-Full details: https://www.oseplatform.com/updates/2026-01-11-phase-0-week-8-agent-system-and-content-improvement/
+Full details: <https://www.oseplatform.com/updates/2026-01-11-phase-0-week-8-agent-system-and-content-improvement/>
 
 ---
 
 🔗 **LINKS**
 
-- Week 8 Update: https://www.oseplatform.com/updates/2026-01-11-phase-0-week-8-agent-system-and-content-improvement/
-- All Updates: https://www.oseplatform.com/updates/
-- Learning Content: https://www.ayokoding.com/
-- Documentation: https://github.com/wahidyankf/open-sharia-enterprise/tree/main/docs
-- Apps: https://github.com/wahidyankf/open-sharia-enterprise/tree/main/apps
+- Week 8 Update: <https://www.oseplatform.com/updates/2026-01-11-phase-0-week-8-agent-system-and-content-improvement/>
+- All Updates: <https://www.oseplatform.com/updates/>
+- Learning Content: <https://www.ayokoding.com/>
+- Documentation: <https://github.com/wahidyankf/open-sharia-enterprise/tree/main/docs>
+- Apps: <https://github.com/wahidyankf/open-sharia-enterprise/tree/main/apps>
 
 ---
 
-#EnterpriseArchitecture #AI #Governance #DocumentationFirst #OpenSource #SoftwareEngineering #TechLeadership #IslamicFinance #ShariahCompliant
+# EnterpriseArchitecture #AI #Governance #DocumentationFirst #OpenSource #SoftwareEngineering #TechLeadership #IslamicFinance #ShariahCompliant

@@ -62,14 +62,14 @@ All 6 tutorials in the Kotlin Full Set are now available:
 
 ## Learning Recommendations
 
-### Start Here:
+### Start Here
 
 - **Complete beginner**: [Initial Setup](/en/learn/software-engineering/programming-languages/kotlin/tutorials/initial-setup) then [Beginner](/en/learn/software-engineering/programming-languages/kotlin/tutorials/beginner)
 - **Programmer new to Kotlin**: [Quick Start](/en/learn/software-engineering/programming-languages/kotlin/tutorials/quick-start) then [Beginner](/en/learn/software-engineering/programming-languages/kotlin/tutorials/beginner)
 - **Professional developer**: [Intermediate](/en/learn/software-engineering/programming-languages/kotlin/tutorials/intermediate)
 - **Expert seeking mastery**: [Advanced](/en/learn/software-engineering/programming-languages/kotlin/tutorials/advanced)
 
-### Use Anytime:
+### Use Anytime
 
 [Cookbook](/en/learn/software-engineering/programming-languages/kotlin/how-to/cookbook) for recipes and day-to-day solutions
 

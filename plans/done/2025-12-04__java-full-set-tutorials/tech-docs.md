@@ -751,13 +751,17 @@ This matrix documents which Java features and concepts are introduced in each tu
 
 - **Virtual Threads (Advanced Patterns)**: Cover structured concurrency (StructuredTaskScope, StructuredExecutor)
 - **Foreign Function & Memory API (JEP 442)**: PREVIEW API in Java 21 - Add warning:
+
   ```
   ⚠️ Warning: This API is in PREVIEW and may change in future Java versions. Not recommended for production use yet.
   ```
+
 - **Vector API (JEP 448)**: INCUBATOR API in Java 21 - Add warning:
+
   ```
   ⚠️ Warning: This API is in INCUBATOR (experimental) and subject to change. For research only, not production.
   ```
+
 - **Rationale for Warnings**: These APIs are not stable enough for casual use; set proper expectations
 
 **Dependencies**: Intermediate tutorial should exist (references prerequisites)

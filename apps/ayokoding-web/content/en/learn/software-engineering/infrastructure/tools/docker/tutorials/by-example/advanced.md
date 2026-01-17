@@ -2226,14 +2226,14 @@ services:
     environment:
       COLLECTOR_ZIPKIN_HOST_PORT: :9411
     ports:
-      - "5775:5775/udp"   # Compact thrift (deprecated)
-      - "6831:6831/udp"   # Jaeger thrift (binary)
-      - "6832:6832/udp"   # Jaeger thrift (compact)
-      - "5778:5778"       # Serve configs
-      - "16686:16686"     # Jaeger UI
-      - "14250:14250"     # Jaeger gRPC
-      - "14268:14268"     # Jaeger HTTP
-      - "9411:9411"       # Zipkin compatible endpoint
+      - "5775:5775/udp" # Compact thrift (deprecated)
+      - "6831:6831/udp" # Jaeger thrift (binary)
+      - "6832:6832/udp" # Jaeger thrift (compact)
+      - "5778:5778" # Serve configs
+      - "16686:16686" # Jaeger UI
+      - "14250:14250" # Jaeger gRPC
+      - "14268:14268" # Jaeger HTTP
+      - "9411:9411" # Zipkin compatible endpoint
 
   # Application with tracing
   web:
@@ -2265,19 +2265,19 @@ services:
 
 ```javascript
 // File: web/tracing.js (Node.js/OpenTelemetry)
-const { NodeTracerProvider } = require('@opentelemetry/sdk-trace-node');
-const { JaegerExporter } = require('@opentelemetry/exporter-jaeger');
-const { Resource } = require('@opentelemetry/resources');
-const { SemanticResourceAttributes } = require('@opentelemetry/semantic-conventions');
-const { registerInstrumentations } = require('@opentelemetry/instrumentation');
-const { HttpInstrumentation } = require('@opentelemetry/instrumentation-http');
-const { ExpressInstrumentation } = require('@opentelemetry/instrumentation-express');
+const { NodeTracerProvider } = require("@opentelemetry/sdk-trace-node");
+const { JaegerExporter } = require("@opentelemetry/exporter-jaeger");
+const { Resource } = require("@opentelemetry/resources");
+const { SemanticResourceAttributes } = require("@opentelemetry/semantic-conventions");
+const { registerInstrumentations } = require("@opentelemetry/instrumentation");
+const { HttpInstrumentation } = require("@opentelemetry/instrumentation-http");
+const { ExpressInstrumentation } = require("@opentelemetry/instrumentation-express");
 
 // Create tracer provider
 const provider = new NodeTracerProvider({
   resource: new Resource({
-    [SemanticResourceAttributes.SERVICE_NAME]: 'web-service',
-    [SemanticResourceAttributes.SERVICE_VERSION]: '1.0.0',
+    [SemanticResourceAttributes.SERVICE_NAME]: "web-service",
+    [SemanticResourceAttributes.SERVICE_VERSION]: "1.0.0",
   }),
 });
 
@@ -2291,22 +2291,19 @@ provider.register();
 
 // Auto-instrument HTTP and Express
 registerInstrumentations({
-  instrumentations: [
-    new HttpInstrumentation(),
-    new ExpressInstrumentation(),
-  ],
+  instrumentations: [new HttpInstrumentation(), new ExpressInstrumentation()],
 });
 
 // Manual span creation
-const tracer = provider.getTracer('web-service');
+const tracer = provider.getTracer("web-service");
 
-app.get('/api/users/:id', async (req, res) => {
-  const span = tracer.startSpan('get-user');
-  span.setAttribute('user.id', req.params.id);
+app.get("/api/users/:id", async (req, res) => {
+  const span = tracer.startSpan("get-user");
+  span.setAttribute("user.id", req.params.id);
 
   try {
     // Call auth service (auto-traced)
-    const authResult = await fetch('http://auth/verify', {
+    const authResult = await fetch("http://auth/verify", {
       headers: {
         authorization: req.headers.authorization,
       },
@@ -2525,12 +2522,7 @@ Restrict container syscalls using seccomp (Secure Computing Mode) profiles for d
 // File: seccomp-profile.json (custom seccomp profile)
 {
   "defaultAction": "SCMP_ACT_ERRNO",
-  "architectures": [
-    "SCMP_ARCH_X86_64",
-    "SCMP_ARCH_X86",
-    "SCMP_ARCH_ARM",
-    "SCMP_ARCH_AARCH64"
-  ],
+  "architectures": ["SCMP_ARCH_X86_64", "SCMP_ARCH_X86", "SCMP_ARCH_ARM", "SCMP_ARCH_AARCH64"],
   "syscalls": [
     {
       "names": [
@@ -2699,10 +2691,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '2.0'
+          cpus: "2.0"
           memory: 1G
         reservations:
-          cpus: '1.0'
+          cpus: "1.0"
           memory: 512M
     # => Guaranteed 1 CPU + 512M, can burst to 2 CPU + 1G
 
@@ -2712,11 +2704,11 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1.5'
+          cpus: "1.5"
           memory: 2G
           pids: 200
         reservations:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 1G
     # => pids: 200 limits process/thread count
 
@@ -2726,10 +2718,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '4.0'
+          cpus: "4.0"
           memory: 4G
         reservations:
-          cpus: '0.25'
+          cpus: "0.25"
           memory: 256M
     # => Minimal reservation, can use excess capacity
 ```
@@ -3550,7 +3542,7 @@ name: Vulnerability Scan and Remediation
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Daily scan
+    - cron: "0 0 * * *" # Daily scan
   push:
     branches: [main]
 
@@ -3566,10 +3558,10 @@ jobs:
       - name: Run Trivy scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'my-app:scan'
-          format: 'json'
-          output: 'trivy-results.json'
-          severity: 'CRITICAL,HIGH'
+          image-ref: "my-app:scan"
+          format: "json"
+          output: "trivy-results.json"
+          severity: "CRITICAL,HIGH"
 
       - name: Check for vulnerabilities
         id: check
@@ -3783,9 +3775,9 @@ services:
       - /sys:/host/sys:ro
       - /:/rootfs:ro
     command:
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
 
   # Prometheus (metrics storage)
   prometheus:
@@ -3798,10 +3790,10 @@ services:
       - ./alerts.yml:/etc/prometheus/alerts.yml
       - prometheus-data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--storage.tsdb.retention.time=30d'
-      - '--web.enable-lifecycle'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=30d"
+      - "--web.enable-lifecycle"
 
   # Alertmanager (notifications)
   alertmanager:
@@ -3812,7 +3804,7 @@ services:
     volumes:
       - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
     command:
-      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
 
   # Grafana (visualization)
   grafana:
@@ -3881,29 +3873,29 @@ groups:
 
 global:
   resolve_timeout: 5m
-  slack_api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
+  slack_api_url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
 
 route:
-  group_by: ['alertname', 'cluster', 'service']
+  group_by: ["alertname", "cluster", "service"]
   group_wait: 10s
   group_interval: 10s
   repeat_interval: 12h
-  receiver: 'slack'
+  receiver: "slack"
   routes:
     - match:
         severity: critical
-      receiver: 'pagerduty'
+      receiver: "pagerduty"
 
 receivers:
-  - name: 'slack'
+  - name: "slack"
     slack_configs:
-      - channel: '#alerts'
-        title: 'Container Alert'
-        text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+      - channel: "#alerts"
+        title: "Container Alert"
+        text: "{{ range .Alerts }}{{ .Annotations.description }}{{ end }}"
 
-  - name: 'pagerduty'
+  - name: "pagerduty"
     pagerduty_configs:
-      - service_key: 'YOUR_PAGERDUTY_KEY'
+      - service_key: "YOUR_PAGERDUTY_KEY"
 ```
 
 ```bash
@@ -4007,10 +3999,10 @@ services:
         window: 120s
       resources:
         limits:
-          cpus: '1'
+          cpus: "1"
           memory: 1G
         reservations:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 512M
       placement:
         constraints:
@@ -4074,10 +4066,10 @@ services:
           # => Pin to specific node for data locality
       resources:
         limits:
-          cpus: '2'
+          cpus: "2"
           memory: 4G
         reservations:
-          cpus: '1'
+          cpus: "1"
           memory: 2G
 
     environment:
@@ -4118,7 +4110,7 @@ services:
         order: start-first
       resources:
         limits:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 256M
 
     ports:
@@ -4265,6 +4257,7 @@ docker stack rm myapp
 This chapter covered 25 advanced examples achieving 75-95% Docker coverage:
 
 **Docker Swarm Orchestration** (55-58, 66-68):
+
 - Service creation and scaling with placement constraints
 - Stack deployments with declarative infrastructure
 - Secrets management and rotation for zero-downtime
@@ -4272,39 +4265,46 @@ This chapter covered 25 advanced examples achieving 75-95% Docker coverage:
 - Service constraints and preferences for resource optimization
 
 **Security Hardening** (59-62, 75-76):
+
 - Read-only root filesystems and capability dropping
 - User namespaces for privilege isolation
 - AppArmor and seccomp security profiles
 - Distroless images for minimal attack surface
 
 **Vulnerability Management** (63, 82):
+
 - Trivy integration for container scanning
 - Automated vulnerability remediation workflows
 - Policy-based security enforcement
 
 **Registry Operations** (64, 78, 80-81):
+
 - Private registry deployment with authentication
 - Registry garbage collection for storage management
 - High availability registry with load balancing
 - Notary infrastructure for image signing
 
 **CI/CD Integration** (65):
+
 - GitHub Actions with Docker support
 - Multi-platform builds with matrix strategy
 - Registry caching for build optimization
 
 **BuildKit Advanced Features** (79):
+
 - Cache mounts for package managers
 - Secret handling for credentials
 - SSH forwarding for private dependencies
 - Layer caching optimization strategies
 
 **Monitoring & Observability** (74, 77, 83):
+
 - Distributed tracing with Jaeger
 - Resource quotas and limits enforcement
 - Comprehensive monitoring with cAdvisor, Prometheus, Grafana
 
 **Production Deployment** (84):
+
 - Production-grade Docker Compose best practices
 - High availability patterns and disaster recovery
 

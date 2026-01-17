@@ -150,7 +150,7 @@
 
 **Content Classification Criteria**:
 
-### CLAUDE.md Sections (lines 1-348):
+### CLAUDE.md Sections (lines 1-348)
 
 | Section             | Line Range | Classification           | Destination                                                            |
 | ------------------- | ---------- | ------------------------ | ---------------------------------------------------------------------- |
@@ -176,7 +176,7 @@
 - **OpenCode-specific**: OpenCode-specific patterns not covered in CLAUDE.md
   - **Destination**: AGENTS.md (add new section)
 
-### Missing OpenCode Content to Add:
+### Missing OpenCode Content to Add
 
 1. **Session Management**:
    - OpenCode session persistence
@@ -302,6 +302,7 @@
    ```
 
 2. Verify directory creation:
+
    ```bash
    ls -la .opencode/
    ```
@@ -341,6 +342,7 @@
    ```
 
 3. Verify all 23 skills copied:
+
    ```bash
    find .opencode/skill/ -name "SKILL.md" | wc -l
    ```
@@ -371,6 +373,7 @@
    - Keep `description` field
 
 2. Verify frontmatter is OpenCode-compliant:
+
    ```bash
    # Check for Claude Code-specific fields
    grep -r "^name:" .opencode/skill/  # Should return empty
@@ -574,6 +577,7 @@
    ```
 
 4. Verify commit created:
+
    ```bash
    git log -1 --oneline
    ```

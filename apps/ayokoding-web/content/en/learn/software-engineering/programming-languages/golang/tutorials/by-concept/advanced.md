@@ -169,33 +169,33 @@ Go uses growable stacks. Unlike OS threads with fixed stacks (1-2MB), goroutines
 
 ```go
 import (
-	"fmt"
-	"runtime"
+ "fmt"
+ "runtime"
 )
 
 func printStackSize() {
-	var m runtime.MemStats
-	runtime.ReadMemStats(&m)
-	fmt.Printf("Goroutine stack size: ~2KB minimum\n")
-	fmt.Printf("Total goroutine count: %d\n", runtime.NumGoroutine())
+ var m runtime.MemStats
+ runtime.ReadMemStats(&m)
+ fmt.Printf("Goroutine stack size: ~2KB minimum\n")
+ fmt.Printf("Total goroutine count: %d\n", runtime.NumGoroutine())
 }
 
 func deepRecursion(depth int) {
-	if depth > 0 {
-		deepRecursion(depth - 1) // Stack grows as needed
-	}
+ if depth > 0 {
+  deepRecursion(depth - 1) // Stack grows as needed
+ }
 }
 
 func main() {
-	// Create many goroutines
-	for i := 0; i < 10000; i++ {
-		go func() {
-			select {} // Block forever - cheap!
-		}()
-	}
+ // Create many goroutines
+ for i := 0; i < 10000; i++ {
+  go func() {
+   select {} // Block forever - cheap!
+  }()
+ }
 
-	printStackSize()
-	// Output might show 10000+ goroutines with minimal memory
+ printStackSize()
+ // Output might show 10000+ goroutines with minimal memory
 }
 ```
 
@@ -211,33 +211,33 @@ Go uses concurrent tri-color mark-sweep GC:
 
 ```go
 import (
-	"fmt"
-	"runtime"
+ "fmt"
+ "runtime"
 )
 
 func demonstrateGC() {
-	// Get GC statistics
-	var m runtime.MemStats
-	runtime.ReadMemStats(&m)
-	fmt.Printf("Before GC: Heap alloc = %v MB\n", m.Alloc/1024/1024)
+ // Get GC statistics
+ var m runtime.MemStats
+ runtime.ReadMemStats(&m)
+ fmt.Printf("Before GC: Heap alloc = %v MB\n", m.Alloc/1024/1024)
 
-	// Allocate lots of objects
-	var objects []interface{}
-	for i := 0; i < 1000000; i++ {
-		objects = append(objects, make([]byte, 1024))
-	}
+ // Allocate lots of objects
+ var objects []interface{}
+ for i := 0; i < 1000000; i++ {
+  objects = append(objects, make([]byte, 1024))
+ }
 
-	runtime.ReadMemStats(&m)
-	fmt.Printf("After allocating: Heap alloc = %v MB\n", m.Alloc/1024/1024)
+ runtime.ReadMemStats(&m)
+ fmt.Printf("After allocating: Heap alloc = %v MB\n", m.Alloc/1024/1024)
 
-	// Clear references to let GC clean up
-	objects = nil
+ // Clear references to let GC clean up
+ objects = nil
 
-	// Force GC
-	runtime.GC()
+ // Force GC
+ runtime.GC()
 
-	runtime.ReadMemStats(&m)
-	fmt.Printf("After GC: Heap alloc = %v MB\n", m.Alloc/1024/1024)
+ runtime.ReadMemStats(&m)
+ fmt.Printf("After GC: Heap alloc = %v MB\n", m.Alloc/1024/1024)
 }
 ```
 
@@ -267,15 +267,15 @@ import "fmt"
 
 // Escapes to heap: returned pointer
 func escapeToHeap() *int {
-	x := 42
-	return &x // x must be allocated on heap
+ x := 42
+ return &x // x must be allocated on heap
 }
 
 // Doesn't escape: pointer never leaves function
 func noEscape() {
-	x := 42
-	p := &x // p is local, doesn't escape
-	fmt.Println(p)
+ x := 42
+ p := &x // p is local, doesn't escape
+ fmt.Println(p)
 }
 
 // Check escapes: go build -gcflags="-m" main.go
@@ -291,34 +291,34 @@ For frequently allocated temporary objects:
 
 ```go
 import (
-	"bytes"
-	"sync"
+ "bytes"
+ "sync"
 )
 
 // Connection pool - reuse buffer allocations
 var bufferPool = sync.Pool{
-	New: func() interface{} {
-		return new(bytes.Buffer)
-	},
+ New: func() interface{} {
+  return new(bytes.Buffer)
+ },
 }
 
 func processData(data []byte) string {
-	// Get buffer from pool (or allocate new one)
-	buf := bufferPool.Get().(*bytes.Buffer)
-	defer func() {
-		buf.Reset() // Clear before returning to pool
-		bufferPool.Put(buf)
-	}()
+ // Get buffer from pool (or allocate new one)
+ buf := bufferPool.Get().(*bytes.Buffer)
+ defer func() {
+  buf.Reset() // Clear before returning to pool
+  bufferPool.Put(buf)
+ }()
 
-	buf.Write(data)
-	return buf.String()
+ buf.Write(data)
+ return buf.String()
 }
 
 // Usage: Can handle millions of requests reusing the same buffers
 func main() {
-	for i := 0; i < 1000000; i++ {
-		_ = processData([]byte("test"))
-	}
+ for i := 0; i < 1000000; i++ {
+  _ = processData([]byte("test"))
+ }
 }
 ```
 
@@ -338,26 +338,26 @@ Identify hot paths:
 
 ```go
 import (
-	"os"
-	"runtime/pprof"
+ "os"
+ "runtime/pprof"
 )
 
 func expensiveComputation() {
-	// Some CPU-intensive work
-	sum := 0
-	for i := 0; i < 1000000000; i++ {
-		sum += i
-	}
+ // Some CPU-intensive work
+ sum := 0
+ for i := 0; i < 1000000000; i++ {
+  sum += i
+ }
 }
 
 func main() {
-	// Enable CPU profiling
-	f, _ := os.Create("cpu.prof")
-	pprof.StartCPUProfile(f)
-	defer pprof.StopCPUProfile()
+ // Enable CPU profiling
+ f, _ := os.Create("cpu.prof")
+ pprof.StartCPUProfile(f)
+ defer pprof.StopCPUProfile()
 
-	// Run your code
-	expensiveComputation()
+ // Run your code
+ expensiveComputation()
 }
 
 // Analyze:
@@ -373,24 +373,24 @@ Find memory leaks and heavy allocators:
 
 ```go
 import (
-	"os"
-	"runtime"
-	"runtime/pprof"
+ "os"
+ "runtime"
+ "runtime/pprof"
 )
 
 func leakyFunction() {
-	globalList = append(globalList, make([]byte, 1024*1024)) // 1MB leak
+ globalList = append(globalList, make([]byte, 1024*1024)) // 1MB leak
 }
 
 var globalList [][]byte
 
 func main() {
-	// Memory profile
-	f, _ := os.Create("mem.prof")
-	defer f.Close()
+ // Memory profile
+ f, _ := os.Create("mem.prof")
+ defer f.Close()
 
-	runtime.GC() // Start clean
-	pprof.WriteHeapProfile(f)
+ runtime.GC() // Start clean
+ pprof.WriteHeapProfile(f)
 }
 
 // Analyze:
@@ -406,32 +406,32 @@ func main() {
 import "testing"
 
 func slowStringConcat(n int) string {
-	result := ""
-	for i := 0; i < n; i++ {
-		result += "x" // Creates new string each iteration
-	}
-	return result
+ result := ""
+ for i := 0; i < n; i++ {
+  result += "x" // Creates new string each iteration
+ }
+ return result
 }
 
 func fastStringConcat(n int) string {
-	b := make([]byte, n)
-	for i := 0; i < n; i++ {
-		b[i] = 'x'
-	}
-	return string(b)
+ b := make([]byte, n)
+ for i := 0; i < n; i++ {
+  b[i] = 'x'
+ }
+ return string(b)
 }
 
 // Benchmark
 func BenchmarkSlowConcat(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		slowStringConcat(1000)
-	}
+ for i := 0; i < b.N; i++ {
+  slowStringConcat(1000)
+ }
 }
 
 func BenchmarkFastConcat(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		fastStringConcat(1000)
-	}
+ for i := 0; i < b.N; i++ {
+  fastStringConcat(1000)
+ }
 }
 
 // Run: go test -bench=. -benchmem -cpuprofile=cpu.prof
@@ -447,43 +447,43 @@ Using atomic operations for lock-free data structures:
 
 ```go
 import (
-	"fmt"
-	"sync"
-	"sync/atomic"
-	"time"
+ "fmt"
+ "sync"
+ "sync/atomic"
+ "time"
 )
 
 // Lock-free counter using atomic
 type LockFreeCounter struct {
-	value atomic.Int64
+ value atomic.Int64
 }
 
 func (c *LockFreeCounter) Increment() {
-	c.value.Add(1)
+ c.value.Add(1)
 }
 
 func (c *LockFreeCounter) Get() int64 {
-	return c.value.Load()
+ return c.value.Load()
 }
 
 // Compare traditional mutex vs atomic
 func benchmarkCounter() {
-	// Mutex-based (slower)
-	var mutexCounter int64
-	var mu sync.Mutex
-	for i := 0; i < 10000000; i++ {
-		mu.Lock()
-		mutexCounter++
-		mu.Unlock()
-	}
+ // Mutex-based (slower)
+ var mutexCounter int64
+ var mu sync.Mutex
+ for i := 0; i < 10000000; i++ {
+  mu.Lock()
+  mutexCounter++
+  mu.Unlock()
+ }
 
-	// Atomic-based (faster)
-	var atomicCounter atomic.Int64
-	for i := 0; i < 10000000; i++ {
-		atomicCounter.Add(1)
-	}
+ // Atomic-based (faster)
+ var atomicCounter atomic.Int64
+ for i := 0; i < 10000000; i++ {
+  atomicCounter.Add(1)
+ }
 
-	fmt.Println("Atomic is faster for simple operations")
+ fmt.Println("Atomic is faster for simple operations")
 }
 ```
 
@@ -493,45 +493,45 @@ For more complex lock-free logic:
 
 ```go
 import (
-	"sync/atomic"
+ "sync/atomic"
 )
 
 type Node struct {
-	value int
-	next  *Node
+ value int
+ next  *Node
 }
 
 type LockFreeStack struct {
-	head atomic.Pointer[Node]
+ head atomic.Pointer[Node]
 }
 
 func (s *LockFreeStack) Push(value int) {
-	newNode := &Node{value: value}
-	for {
-		oldHead := s.head.Load()
-		newNode.next = oldHead
+ newNode := &Node{value: value}
+ for {
+  oldHead := s.head.Load()
+  newNode.next = oldHead
 
-		// CAS: Only succeeds if head hasn't changed
-		if s.head.CompareAndSwap(oldHead, newNode) {
-			return // Success
-		}
-		// Retry if CAS failed (another goroutine modified head)
-	}
+  // CAS: Only succeeds if head hasn't changed
+  if s.head.CompareAndSwap(oldHead, newNode) {
+   return // Success
+  }
+  // Retry if CAS failed (another goroutine modified head)
+ }
 }
 
 func (s *LockFreeStack) Pop() (int, bool) {
-	for {
-		head := s.head.Load()
-		if head == nil {
-			return 0, false
-		}
+ for {
+  head := s.head.Load()
+  if head == nil {
+   return 0, false
+  }
 
-		next := head.next
-		if s.head.CompareAndSwap(head, next) {
-			return head.value, true // Success
-		}
-		// Retry if CAS failed
-	}
+  next := head.next
+  if s.head.CompareAndSwap(head, next) {
+   return head.value, true // Success
+  }
+  // Retry if CAS failed
+ }
 }
 ```
 
@@ -543,54 +543,54 @@ func (s *LockFreeStack) Pop() (int, bool) {
 
 ```go
 import (
-	"fmt"
-	"reflect"
+ "fmt"
+ "reflect"
 )
 
 func Stringify(v interface{}) string {
-	rv := reflect.ValueOf(v)
-	switch rv.Kind() {
-	case reflect.String:
-		return rv.String()
-	case reflect.Int, reflect.Int64:
-		return fmt.Sprintf("%d", rv.Int())
-	case reflect.Struct:
-		// Iterate over struct fields
-		rt := rv.Type()
-		var result string
-		for i := 0; i < rt.NumField(); i++ {
-			field := rt.Field(i)
-			value := rv.Field(i)
-			result += fmt.Sprintf("%s: %v ", field.Name, value.Interface())
-		}
-		return result
-	default:
-		return fmt.Sprintf("%v", v)
-	}
+ rv := reflect.ValueOf(v)
+ switch rv.Kind() {
+ case reflect.String:
+  return rv.String()
+ case reflect.Int, reflect.Int64:
+  return fmt.Sprintf("%d", rv.Int())
+ case reflect.Struct:
+  // Iterate over struct fields
+  rt := rv.Type()
+  var result string
+  for i := 0; i < rt.NumField(); i++ {
+   field := rt.Field(i)
+   value := rv.Field(i)
+   result += fmt.Sprintf("%s: %v ", field.Name, value.Interface())
+  }
+  return result
+ default:
+  return fmt.Sprintf("%v", v)
+ }
 }
 
 // Reflection for JSON-like serialization
 type User struct {
-	Name string
-	Age  int
+ Name string
+ Age  int
 }
 
 func toMap(v interface{}) map[string]interface{} {
-	result := make(map[string]interface{})
-	rv := reflect.ValueOf(v)
+ result := make(map[string]interface{})
+ rv := reflect.ValueOf(v)
 
-	if rv.Kind() != reflect.Struct {
-		return result
-	}
+ if rv.Kind() != reflect.Struct {
+  return result
+ }
 
-	rt := rv.Type()
-	for i := 0; i < rt.NumField(); i++ {
-		field := rt.Field(i)
-		value := rv.Field(i)
-		result[field.Name] = value.Interface()
-	}
+ rt := rv.Type()
+ for i := 0; i < rt.NumField(); i++ {
+  field := rt.Field(i)
+  value := rv.Field(i)
+  result[field.Name] = value.Interface()
+ }
 
-	return result
+ return result
 }
 ```
 
@@ -612,19 +612,19 @@ For interfacing with C or low-level operations:
 
 ```go
 import (
-	"fmt"
-	"unsafe"
+ "fmt"
+ "unsafe"
 )
 
 func unsafePointerConversion() {
-	// Convert between types without copying
-	var x int64 = 0x1122334455667788
+ // Convert between types without copying
+ var x int64 = 0x1122334455667788
 
-	// Get raw bytes
-	ptr := unsafe.Pointer(&x)
-	bytes := (*[8]byte)(ptr)
+ // Get raw bytes
+ ptr := unsafe.Pointer(&x)
+ bytes := (*[8]byte)(ptr)
 
-	fmt.Println("Bytes:", bytes) // Shows memory layout
+ fmt.Println("Bytes:", bytes) // Shows memory layout
 }
 
 // Calling C code
@@ -649,34 +649,34 @@ import "fmt"
 
 // Constraint: must be numeric
 type Numeric interface {
-	~int | ~int64 | ~float64
+ ~int | ~int64 | ~float64
 }
 
 func Sum[T Numeric](values []T) T {
-	var sum T
-	for _, v := range values {
-		sum += v
-	}
-	return sum
+ var sum T
+ for _, v := range values {
+  sum += v
+ }
+ return sum
 }
 
 // Multiple constraints
 type Ordered interface {
-	~int | ~int64 | ~float64 | ~string
+ ~int | ~int64 | ~float64 | ~string
 }
 
 func Max[T Ordered](a, b T) T {
-	if a > b {
-		return a
-	}
-	return b
+ if a > b {
+  return a
+ }
+ return b
 }
 
 func main() {
-	fmt.Println(Sum([]int{1, 2, 3}))           // 6
-	fmt.Println(Sum([]float64{1.1, 2.2, 3.3})) // 6.6
-	fmt.Println(Max(5, 3))                      // 5
-	fmt.Println(Max("apple", "zebra"))          // zebra
+ fmt.Println(Sum([]int{1, 2, 3}))           // 6
+ fmt.Println(Sum([]float64{1.1, 2.2, 3.3})) // 6.6
+ fmt.Println(Max(5, 3))                      // 5
+ fmt.Println(Max("apple", "zebra"))          // zebra
 }
 ```
 
@@ -685,36 +685,36 @@ func main() {
 ```go
 // Generic filter
 func Filter[T any](items []T, predicate func(T) bool) []T {
-	var result []T
-	for _, item := range items {
-		if predicate(item) {
-			result = append(result, item)
-		}
-	}
-	return result
+ var result []T
+ for _, item := range items {
+  if predicate(item) {
+   result = append(result, item)
+  }
+ }
+ return result
 }
 
 // Generic reduce
 func Reduce[T any, U any](items []T, init U, reducer func(U, T) U) U {
-	result := init
-	for _, item := range items {
-		result = reducer(result, item)
-	}
-	return result
+ result := init
+ for _, item := range items {
+  result = reducer(result, item)
+ }
+ return result
 }
 
 func example() {
-	nums := []int{1, 2, 3, 4, 5}
+ nums := []int{1, 2, 3, 4, 5}
 
-	// Filter even numbers
-	evens := Filter(nums, func(n int) bool {
-		return n%2 == 0
-	})
+ // Filter even numbers
+ evens := Filter(nums, func(n int) bool {
+  return n%2 == 0
+ })
 
-	// Sum all (reduce)
-	sum := Reduce(nums, 0, func(acc, n int) int {
-		return acc + n
-	})
+ // Sum all (reduce)
+ sum := Reduce(nums, 0, func(acc, n int) int {
+  return acc + n
+ })
 }
 ```
 
@@ -728,65 +728,65 @@ Fail fast when a service is down:
 
 ```go
 import (
-	"errors"
-	"sync"
-	"time"
+ "errors"
+ "sync"
+ "time"
 )
 
 type CircuitBreakerState int
 
 const (
-	Closed CircuitBreakerState = iota
-	Open
-	HalfOpen
+ Closed CircuitBreakerState = iota
+ Open
+ HalfOpen
 )
 
 type CircuitBreaker struct {
-	mu          sync.RWMutex
-	state       CircuitBreakerState
-	failCount   int
-	successCount int
-	lastFailTime time.Time
-	threshold   int
-	timeout     time.Duration
+ mu          sync.RWMutex
+ state       CircuitBreakerState
+ failCount   int
+ successCount int
+ lastFailTime time.Time
+ threshold   int
+ timeout     time.Duration
 }
 
 func (cb *CircuitBreaker) Call(fn func() error) error {
-	cb.mu.Lock()
-	defer cb.mu.Unlock()
+ cb.mu.Lock()
+ defer cb.mu.Unlock()
 
-	// Open circuit: reject requests
-	if cb.state == Open {
-		if time.Since(cb.lastFailTime) > cb.timeout {
-			cb.state = HalfOpen
-			cb.successCount = 0
-		} else {
-			return errors.New("circuit is open")
-		}
-	}
+ // Open circuit: reject requests
+ if cb.state == Open {
+  if time.Since(cb.lastFailTime) > cb.timeout {
+   cb.state = HalfOpen
+   cb.successCount = 0
+  } else {
+   return errors.New("circuit is open")
+  }
+ }
 
-	err := fn()
+ err := fn()
 
-	if err != nil {
-		cb.failCount++
-		cb.lastFailTime = time.Now()
-		if cb.failCount >= cb.threshold {
-			cb.state = Open
-		}
-		return err
-	}
+ if err != nil {
+  cb.failCount++
+  cb.lastFailTime = time.Now()
+  if cb.failCount >= cb.threshold {
+   cb.state = Open
+  }
+  return err
+ }
 
-	if cb.state == HalfOpen {
-		cb.successCount++
-		if cb.successCount >= 3 {
-			cb.state = Closed
-			cb.failCount = 0
-		}
-	} else {
-		cb.failCount = 0
-	}
+ if cb.state == HalfOpen {
+  cb.successCount++
+  if cb.successCount >= 3 {
+   cb.state = Closed
+   cb.failCount = 0
+  }
+ } else {
+  cb.failCount = 0
+ }
 
-	return nil
+ return nil
 }
 ```
 
@@ -796,36 +796,36 @@ Control request rate:
 
 ```go
 import (
-	"sync"
-	"time"
+ "sync"
+ "time"
 )
 
 type RateLimiter struct {
-	tokens  float64
-	maxRate float64
-	mu      sync.Mutex
-	lastRefill time.Time
+ tokens  float64
+ maxRate float64
+ mu      sync.Mutex
+ lastRefill time.Time
 }
 
 func (rl *RateLimiter) Allow() bool {
-	rl.mu.Lock()
-	defer rl.mu.Unlock()
+ rl.mu.Lock()
+ defer rl.mu.Unlock()
 
-	now := time.Now()
-	elapsed := now.Sub(rl.lastRefill).Seconds()
+ now := time.Now()
+ elapsed := now.Sub(rl.lastRefill).Seconds()
 
-	// Refill tokens
-	rl.tokens += elapsed * rl.maxRate
-	if rl.tokens > rl.maxRate {
-		rl.tokens = rl.maxRate
-	}
-	rl.lastRefill = now
+ // Refill tokens
+ rl.tokens += elapsed * rl.maxRate
+ if rl.tokens > rl.maxRate {
+  rl.tokens = rl.maxRate
+ }
+ rl.lastRefill = now
 
-	if rl.tokens >= 1 {
-		rl.tokens--
-		return true
-	}
-	return false
+ if rl.tokens >= 1 {
+  rl.tokens--
+  return true
+ }
+ return false
 }
 ```
 
@@ -842,9 +842,9 @@ func (rl *RateLimiter) Allow() bool {
 type Status int
 
 const (
-	Unknown Status = iota
-	Active
-	Inactive
+ Unknown Status = iota
+ Active
+ Inactive
 )
 
 // Run: go generate ./...
@@ -859,28 +859,28 @@ Create a linter to enforce project-specific rules:
 package main
 
 import (
-	"fmt"
-	"go/ast"
-	"go/parser"
-	"go/token"
+ "fmt"
+ "go/ast"
+ "go/parser"
+ "go/token"
 )
 
 // Custom linter that finds println usage
 func lint(filename string) {
-	fset := token.NewFileSet()
-	file, _ := parser.ParseFile(fset, filename, nil, 0)
+ fset := token.NewFileSet()
+ file, _ := parser.ParseFile(fset, filename, nil, 0)
 
-	ast.Inspect(file, func(n ast.Node) bool {
-		if call, ok := n.(*ast.CallExpr); ok {
-			if ident, ok := call.Fun.(*ast.Ident); ok {
-				if ident.Name == "println" {
-					fmt.Printf("%s: Don't use println in production code\n",
-						fset.Position(call.Pos()))
-				}
-			}
-		}
-		return true
-	})
+ ast.Inspect(file, func(n ast.Node) bool {
+  if call, ok := n.(*ast.CallExpr); ok {
+   if ident, ok := call.Fun.(*ast.Ident); ok {
+    if ident.Name == "println" {
+     fmt.Printf("%s: Don't use println in production code\n",
+      fset.Position(call.Pos()))
+    }
+   }
+  }
+  return true
+ })
 }
 ```
 
@@ -894,57 +894,57 @@ Beyond basic synchronization, sophisticated patterns for complex systems:
 
 ```go
 import (
-	"fmt"
-	"sync"
+ "fmt"
+ "sync"
 )
 
 type Job struct {
-	ID   int
-	Data string
+ ID   int
+ Data string
 }
 
 type Pipeline struct {
-	jobs    chan Job
-	results chan Result
-	wg      sync.WaitGroup
+ jobs    chan Job
+ results chan Result
+ wg      sync.WaitGroup
 }
 
 type Result struct {
-	JobID  int
-	Result string
-	Error  error
+ JobID  int
+ Result string
+ Error  error
 }
 
 func (p *Pipeline) Produce(count int) {
-	go func() {
-		for i := 0; i < count; i++ {
-			p.jobs <- Job{ID: i, Data: fmt.Sprintf("data-%d", i)}
-		}
-	}()
+ go func() {
+  for i := 0; i < count; i++ {
+   p.jobs <- Job{ID: i, Data: fmt.Sprintf("data-%d", i)}
+  }
+ }()
 }
 
 func (p *Pipeline) Consume(workerCount int) {
-	for i := 0; i < workerCount; i++ {
-		p.wg.Add(1)
-		go p.worker()
-	}
+ for i := 0; i < workerCount; i++ {
+  p.wg.Add(1)
+  go p.worker()
+ }
 
-	go func() {
-		p.wg.Wait()
-		close(p.results)
-	}()
+ go func() {
+  p.wg.Wait()
+  close(p.results)
+ }()
 }
 
 func (p *Pipeline) worker() {
-	defer p.wg.Done()
-	for job := range p.jobs {
-		// Process job
-		result := Result{
-			JobID:  job.ID,
-			Result: fmt.Sprintf("processed-%s", job.Data),
-		}
-		p.results <- result
-	}
+ defer p.wg.Done()
+ for job := range p.jobs {
+  // Process job
+  result := Result{
+   JobID:  job.ID,
+   Result: fmt.Sprintf("processed-%s", job.Data),
+  }
+  p.results <- result
+ }
 }
 ```
 
@@ -954,22 +954,22 @@ Non-blocking communication:
 
 ```go
 func nonBlockingReceive(ch <-chan int) {
-	select {
-	case val := <-ch:
-		fmt.Println("Received:", val)
-	default:
-		fmt.Println("No value available")
-	}
+ select {
+ case val := <-ch:
+  fmt.Println("Received:", val)
+ default:
+  fmt.Println("No value available")
+ }
 }
 
 // Timeout with select
 func withTimeout(ch <-chan int, timeout time.Duration) {
-	select {
-	case val := <-ch:
-		fmt.Println("Received:", val)
-	case <-time.After(timeout):
-		fmt.Println("Timeout!")
-	}
+ select {
+ case val := <-ch:
+  fmt.Println("Received:", val)
+ case <-time.After(timeout):
+  fmt.Println("Timeout!")
+ }
 }
 ```
 
@@ -999,19 +999,19 @@ Understanding data races:
 
 ```go
 import (
-	"fmt"
-	"sync"
+ "fmt"
+ "sync"
 )
 
 type RaceExample struct {
-	mu    sync.Mutex
-	counter int
+ mu    sync.Mutex
+ counter int
 }
 
 func (r *RaceExample) SafeIncrement() {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	r.counter++
+ r.mu.Lock()
+ defer r.mu.Unlock()
+ r.counter++
 }
 
 // Compile with: go build -race main.go
@@ -1023,29 +1023,29 @@ func (r *RaceExample) SafeIncrement() {
 
 ```go
 import (
-	"runtime"
-	"runtime/debug"
+ "runtime"
+ "runtime/debug"
 )
 
 func findLeaks() {
-	// Get current goroutines
-	initial := runtime.NumGoroutine()
+ // Get current goroutines
+ initial := runtime.NumGoroutine()
 
-	// Start operation that might leak
-	for i := 0; i < 1000; i++ {
-		go func() {
-			select {} // Leak!
-		}()
-	}
+ // Start operation that might leak
+ for i := 0; i < 1000; i++ {
+  go func() {
+   select {} // Leak!
+  }()
+ }
 
-	// Check final count
-	final := runtime.NumGoroutine()
-	if final > initial {
-		fmt.Printf("Leaked %d goroutines\n", final-initial)
-	}
+ // Check final count
+ final := runtime.NumGoroutine()
+ if final > initial {
+  fmt.Printf("Leaked %d goroutines\n", final-initial)
+ }
 
-	// Print goroutine stack traces
-	debug.PrintStack()
+ // Print goroutine stack traces
+ debug.PrintStack()
 }
 ```
 
@@ -1067,7 +1067,7 @@ import "fmt"
 
 // Only compiled on Windows or macOS
 func GetPlatformSpecificPath() string {
-	return "/Users/home"
+ return "/Users/home"
 }
 
 // In another file:
@@ -1078,7 +1078,7 @@ package main
 
 // Only compiled on Linux
 func GetPlatformSpecificPath() string {
-	return "/home/user"
+ return "/home/user"
 }
 ```
 
@@ -1093,11 +1093,11 @@ Compile with: `GOOS=linux GOARCH=amd64 go build`
 package main
 
 import (
-	"golang.org/x/sys/windows" // Windows-specific
+ "golang.org/x/sys/windows" // Windows-specific
 )
 
 func WindowsSpecificFunc() {
-	// Windows code
+ // Windows code
 }
 ```
 
@@ -1109,38 +1109,38 @@ func WindowsSpecificFunc() {
 
 ```go
 import (
-	"errors"
-	"fmt"
+ "errors"
+ "fmt"
 )
 
 func deepFunction() error {
-	return fmt.Errorf("original error")
+ return fmt.Errorf("original error")
 }
 
 func midFunction() error {
-	err := deepFunction()
-	return fmt.Errorf("mid: %w", err)
+ err := deepFunction()
+ return fmt.Errorf("mid: %w", err)
 }
 
 func topFunction() error {
-	err := midFunction()
-	return fmt.Errorf("top: %w", err)
+ err := midFunction()
+ return fmt.Errorf("top: %w", err)
 }
 
 func example() {
-	err := topFunction()
+ err := topFunction()
 
-	// Unwrap chain
-	for err != nil {
-		fmt.Println(err)
-		err = errors.Unwrap(err)
-	}
+ // Unwrap chain
+ for err != nil {
+  fmt.Println(err)
+  err = errors.Unwrap(err)
+ }
 
-	// Check for specific error
-	var originalErr error
-	if errors.As(topFunction(), &originalErr) {
-		fmt.Println("Found:", originalErr)
-	}
+ // Check for specific error
+ var originalErr error
+ if errors.As(topFunction(), &originalErr) {
+  fmt.Println("Found:", originalErr)
+ }
 }
 ```
 
@@ -1151,23 +1151,23 @@ import "fmt"
 
 // Safe wrapper that recovers from panics
 func SafeExecute(fn func()) (err error) {
-	defer func() {
-		if r := recover(); r != nil {
-			err = fmt.Errorf("panic recovered: %v", r)
-		}
-	}()
+ defer func() {
+  if r := recover(); r != nil {
+   err = fmt.Errorf("panic recovered: %v", r)
+  }
+ }()
 
-	fn()
-	return nil
+ fn()
+ return nil
 }
 
 func main() {
-	// Won't crash the program
-	if err := SafeExecute(func() {
-		panic("This is caught!")
-	}); err != nil {
-		fmt.Println(err)
-	}
+ // Won't crash the program
+ if err := SafeExecute(func() {
+  panic("This is caught!")
+ }); err != nil {
+  fmt.Println(err)
+ }
 }
 ```
 
@@ -1179,48 +1179,48 @@ func main() {
 
 ```go
 import (
-	"sort"
-	"testing"
+ "sort"
+ "testing"
 )
 
 func TestSortIsIdempotent(t *testing.T) {
-	// Property: sorting twice gives same result as sorting once
-	data := []int{3, 1, 4, 1, 5, 9, 2, 6}
-	sorted1 := append([]int{}, data...)
-	sort.Ints(sorted1)
+ // Property: sorting twice gives same result as sorting once
+ data := []int{3, 1, 4, 1, 5, 9, 2, 6}
+ sorted1 := append([]int{}, data...)
+ sort.Ints(sorted1)
 
-	sorted2 := append(sorted1, data...)
-	sort.Ints(sorted2)
-	sort.Ints(sorted2)
+ sorted2 := append(sorted1, data...)
+ sort.Ints(sorted2)
+ sort.Ints(sorted2)
 
-	for i, v := range sorted1 {
-		if v != sorted2[i] {
-			t.Fatalf("Sort not idempotent")
-		}
-	}
+ for i, v := range sorted1 {
+  if v != sorted2[i] {
+   t.Fatalf("Sort not idempotent")
+  }
+ }
 }
 
 func TestSortIsStable(t *testing.T) {
-	// Property: relative order of equal elements preserved
-	type Person struct {
-		Name string
-		Age  int
-	}
+ // Property: relative order of equal elements preserved
+ type Person struct {
+  Name string
+  Age  int
+ }
 
-	people := []Person{
-		{"Alice", 30},
-		{"Bob", 25},
-		{"Charlie", 25},
-	}
+ people := []Person{
+  {"Alice", 30},
+  {"Bob", 25},
+  {"Charlie", 25},
+ }
 
-	sort.SliceStable(people, func(i, j int) bool {
-		return people[i].Age < people[j].Age
-	})
+ sort.SliceStable(people, func(i, j int) bool {
+  return people[i].Age < people[j].Age
+ })
 
-	// Charlie should still come after Bob (both age 25)
-	if people[1].Name != "Bob" || people[2].Name != "Charlie" {
-		t.Fatal("Sort not stable")
-	}
+ // Charlie should still come after Bob (both age 25)
+ if people[1].Name != "Bob" || people[2].Name != "Charlie" {
+  t.Fatal("Sort not stable")
+ }
 }
 ```
 
@@ -1245,31 +1245,31 @@ import "strings"
 
 // Bad: Creates many strings
 func BadStringJoin(parts []string) string {
-	result := ""
-	for _, part := range parts {
-		result += part + ","
-	}
-	return result
+ result := ""
+ for _, part := range parts {
+  result += part + ","
+ }
+ return result
 }
 
 // Good: Preallocates
 func GoodStringJoin(parts []string) string {
-	return strings.Join(parts, ",")
+ return strings.Join(parts, ",")
 }
 
 // Even better: Manual allocation when builder not available
 func ManualStringJoin(parts []string) string {
-	total := 0
-	for _, p := range parts {
-		total += len(p) + 1
-	}
+ total := 0
+ for _, p := range parts {
+  total += len(p) + 1
+ }
 
-	b := make([]byte, 0, total)
-	for _, p := range parts {
-		b = append(b, []byte(p)...)
-		b = append(b, ',')
-	}
-	return string(b)
+ b := make([]byte, 0, total)
+ for _, p := range parts {
+  b = append(b, []byte(p)...)
+  b = append(b, ',')
+ }
+ return string(b)
 }
 ```
 

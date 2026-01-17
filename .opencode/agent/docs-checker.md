@@ -174,7 +174,7 @@ $$
 **Bullet indentation (docs/ files):**
 
 - Correct: `- Text` (dash, space, text) for same-level
-- Correct: `  - Text` (2 spaces BEFORE dash) for nested
+- Correct: `- Text` (2 spaces BEFORE dash) for nested
 - Wrong: `-  Text` (spaces AFTER dash) - flag this pattern
 
 See [Indentation Convention](../../../governance/conventions/formatting/indentation.md).

@@ -40,6 +40,7 @@ This migration will be executed in **5 phases** with validation gates between ea
   ```
 
 - [x] Verify tag created:
+
   ```bash
   git tag | grep "pre-rules-move"           # ✅ Tag exists
   ```
@@ -60,6 +61,7 @@ This migration will be executed in **5 phases** with validation gates between ea
   ```
 
 - [x] Verify tag created:
+
   ```bash
   git tag | grep "pre-rules-move"           # ✅ Tag exists
   ```
@@ -74,6 +76,7 @@ This migration will be executed in **5 phases** with validation gates between ea
   ```
 
 - [x] Verify backup:
+
   ```bash
   ls -la .backup/  # ✅ CLAUDE.md and AGENTS.md present
   ```
@@ -268,7 +271,7 @@ git add governance/ex-ru__repository-governance-architecture.md
 
   | `mermaid
 L3[Layer 3: Development<br/>HOW - Software Practices<br/>/governance/development/]
-|  `
+|`
 
 - [x] Update Layer 5 node:
 
@@ -319,6 +322,7 @@ git add governance/ex-ru__repository-governance-architecture.md
   ```
 
 - [x] Valid markdown:
+
   ```bash
   grep -E "^## " governance/ex-ru__repository-governance-architecture.md | head -10
   # ✅ PASS if shows valid markdown headings
@@ -437,6 +441,7 @@ find . -name "*.md.bak" -delete
   ```
 
 - [x] Relative path validation:
+
   ```bash
   grep -r "\.\./governance/" .claude/agents/ | head -3  # ✅ PASS if shows results
   grep -r "\.\./\.\./governance/" .claude/skills/ | head -3  # ✅ PASS if shows results
@@ -458,6 +463,7 @@ find . -name "*.md.bak" -delete
 #### Manual Spot-Check
 
 - [x] Verify key links work:
+
   ```bash
   # Test a few links manually
   head -50 governance/ex-ru__repository-governance-architecture.md | grep -E "\[.*\]\(.*governance/"
@@ -568,6 +574,7 @@ repo-governance-checker scope:all
   ```
 
 - [x] repo-governance-checker reports zero broken links:
+
   ```bash
   repo-governance-checker scope:all | grep -i "broken"
   # ✅ PASS if returns zero
@@ -676,6 +683,7 @@ git log -1 --oneline
   ```
 
 - [x] Commit includes all expected changes:
+
   ```bash
   git show --stat HEAD
   # ✅ PASS if shows ~150 files modified

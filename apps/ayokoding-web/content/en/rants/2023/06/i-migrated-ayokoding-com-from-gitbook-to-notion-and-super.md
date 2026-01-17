@@ -15,11 +15,11 @@ June 1, 2023
 
 As a self-proclaimed content creator, I have always sought ways to make my content creation process more efficient. I also wanted to make it easier to share needed material with my engineering team at work, establish my branding, and take advantage of the advent of AI to write efficiently. I had a YouTube channel called AyoKoding, and it took almost 10 hours to produce one piece of content, which I didn't have much time for lately (i.e., I have 2 cute little kids at home).
 
-## Gitbook made me up and running.
+## Gitbook made me up and running
 
 After some research, I wrote my content ([ayokoding.com](http://ayokoding.com/)) at [Gitbook.com](http://gitbook.com/). It was free, supported a custom domain, and got me up and running. The SEO was primarily working, and the server-side rendering and beautiful URL were impressive. However, the platform could have been more fluid in the writing experience, and I can't copy the article back to the chatGPT prompt without losing its markdown formatting. The template/layout was also so-so, and it didn't allow me to inject a custom script/CSS/HTML. I wanted to do some automation to my content, such as automatically translating the English section to Bahasa.
 
-## I want to migrate the editing to Notion.
+## I want to migrate the editing to Notion
 
 I already subscribed to Notion, and the editing experience was superb, and Notion AI seemed neat. I started to plan the migration by listing my objectives. I wanted to edit in Notion, have a beautiful URL, support SSR, have a relatively good response time worldwide, and have a maximum budget of 30-50 dollars per month. The budget might seem significant for a static content website, but I could count that as an engineering experiment cost, so all is well.
 

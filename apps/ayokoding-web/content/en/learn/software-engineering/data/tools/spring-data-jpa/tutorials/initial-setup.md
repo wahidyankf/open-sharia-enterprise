@@ -136,7 +136,7 @@ Before moving forward, verify:
 - [ ] Entity and repository created
 - [ ] CRUD operations work
 
-## 🎉 You're Done!
+## 🎉 You're Done
 
 You've successfully set up Spring Data JPA and created your first repository. You're ready to work with database operations.
 

@@ -1309,7 +1309,7 @@ IO.inspect(email_exists)              # => Output: false
 
 **Key Takeaway**: Repo.exists?/1 generates efficient EXISTS SQL queries that short-circuit as soon as one match is found, making it faster than counting for existence checks.
 
-**Why It Matters**: Authorization checks, duplicate detection, and conditional UI rendering often need to know if ANY matching record exists, not the count. Using COUNT(*) > 0 or Repo.all |> length > 0 wastes resources scanning entire result sets. Production systems use Repo.exists? for permission checks, unique validation previews, and any boolean condition that doesn't need the actual count.
+**Why It Matters**: Authorization checks, duplicate detection, and conditional UI rendering often need to know if ANY matching record exists, not the count. Using COUNT(\*) > 0 or Repo.all |> length > 0 wastes resources scanning entire result sets. Production systems use Repo.exists? for permission checks, unique validation previews, and any boolean condition that doesn't need the actual count.
 
 ---
 
@@ -1551,7 +1551,7 @@ changeset = Ecto.Changeset.change(user, name: "Ruby Updated")
 
 ---
 
-### Example 84: Schema Reflection with __schema__
+### Example 84: Schema Reflection with **schema**
 
 Ecto schemas expose metadata via **schema**/1, useful for metaprogramming and building generic functions.
 
@@ -1597,7 +1597,7 @@ IO.inspect(info.fields)               # => Output: [:id, :name, :email, :age, :i
 IO.inspect(info.associations)         # => Output: [:posts]
 ```
 
-**Key Takeaway**: Use __schema__/1 to introspect schema metadata at runtime, enabling generic functions that work across different schemas without hardcoding field names.
+**Key Takeaway**: Use **schema**/1 to introspect schema metadata at runtime, enabling generic functions that work across different schemas without hardcoding field names.
 
 **Why It Matters**: Generic admin interfaces, API serializers, and audit systems need to work across all schemas without hardcoding field lists. Schema reflection enables building reusable components that adapt to any model—forms that render all fields, CSV exports that include every column, or diff views that show all changes. Production admin tooling leverages introspection for maintainability.
 

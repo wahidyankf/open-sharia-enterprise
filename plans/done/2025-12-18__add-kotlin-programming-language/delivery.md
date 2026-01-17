@@ -902,7 +902,7 @@ And Quantitative metrics meet Programming Language Content Standard targets
   - **Implementation Notes**: Vercel deployment completed successfully. Kotlin content live on ayokoding.com.
   - **Date**: 2025-12-18
   - **Status**: Completed
-- [x] Visit https://ayokoding.com/en/learn/swe/prog-lang/kotlin/
+- [x] Visit <https://ayokoding.com/en/learn/swe/prog-lang/kotlin/>
   - **Implementation Notes**: Visited live site. Kotlin content accessible and renders correctly.
   - **Date**: 2025-12-18
   - **Status**: Completed

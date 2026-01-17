@@ -260,7 +260,7 @@ Scenario: Complete Rust reference section
 **MUST include 6-10 major sections**:
 
 - **Unsafe Rust**:
-  - Raw pointers (*const T, *mut T)
+  - Raw pointers (*const T,*mut T)
   - Unsafe functions and blocks
   - Foreign Function Interface (FFI)
   - Unsafe trait implementations

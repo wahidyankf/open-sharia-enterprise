@@ -65,7 +65,7 @@ graph TD
 - Minimum: Go 1.18+ (generics support)
 - All code examples must be runnable on Go 1.23.4
 - Version-specific features noted explicitly
-- Note: Always install the latest patch version from https://go.dev/dl/ for security and bug fixes
+- Note: Always install the latest patch version from <https://go.dev/dl/> for security and bug fixes
 
 **Tools**:
 

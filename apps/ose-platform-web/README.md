@@ -10,7 +10,7 @@ Official website for the **Open Sharia Enterprise** platform - an open-source Sh
 
 ## 🌐 Website
 
-- **Production**: https://oseplatform.com (under construction)
+- **Production**: <https://oseplatform.com> (under construction)
 - **Main Project**: [Open Sharia Enterprise on GitHub](https://github.com/wahidyankf/open-sharia-enterprise) - The full platform repository
 - **This Site**: Part of the OSE monorepo under `apps/ose-platform-web/`
 

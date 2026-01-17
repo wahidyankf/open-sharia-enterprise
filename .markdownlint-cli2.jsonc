@@ -1,0 +1,58 @@
+{
+  // Files and directories to ignore
+  "ignores": [
+    "node_modules/**",
+    "**/node_modules/**",
+    "dist/**",
+    "build/**",
+    ".next/**",
+    ".nx/**",
+    "apps/*/public/**",
+    "apps-labs/**",
+    "generated-reports/**",
+    ".vscode/**",
+    ".idea/**"
+  ],
+
+  // Repository-specific markdown linting rules
+  "config": {
+    // Structural Rules (HIGH priority)
+    "MD022": true, // Headings should be surrounded by blank lines
+
+    // Formatting Rules (MEDIUM priority)
+    "MD004": {
+      // Unordered list style
+      "style": "dash" // Use - for unordered lists (consistent with repo)
+    },
+    "MD007": {
+      // List indentation
+      "indent": 2 // 2 spaces per level (per repository conventions)
+    },
+    "MD009": true, // Trailing spaces
+    "MD010": true, // Hard tabs
+    "MD012": true, // Multiple consecutive blank lines
+    "MD047": true, // Files should end with a single newline character
+
+    // Link Rules (MEDIUM priority)
+    "MD034": true, // Bare URL used
+    "MD042": true, // No empty links
+
+    // Code Rules (LOW priority)
+    "MD031": true, // Fenced code blocks should be surrounded by blank lines
+
+    // Rules to Disable (based on repository needs)
+    "MD013": false, // Line length - disabled for long links and existing content
+    "MD033": false, // Inline HTML - allowed for Hugo frontmatter and special cases
+    "MD041": false, // First line in a file should be a top-level heading - conflicts with frontmatter
+    "MD024": false, // Duplicate headings - common pattern in long documentation with repeated sections
+    "MD025": false, // Multiple H1s - some files intentionally have multiple top-level headings
+    "MD036": false, // Emphasis as heading - intentional styling pattern in some documents
+    "MD040": false, // Code language - many code blocks are intentionally plain text or command output
+    "MD056": false, // Table column count - intentional table formatting in documentation
+    "MD060": false, // Table column style - intentional table styling patterns
+    "MD059": false, // Descriptive link text - some links like "here" are contextually clear
+    "MD003": false, // Heading style - allow mixed atx and atx_closed styles
+    "MD051": false, // Link fragments - can have false positives with auto-generated anchors
+    "MD001": false // Heading increment - can have false positives with code blocks containing bash comments
+  }
+}

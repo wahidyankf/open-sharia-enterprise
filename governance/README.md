@@ -37,26 +37,26 @@ See [Repository Governance Architecture](./repository-governance-architecture.md
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-	L0[Layer 0: Vision<br/>WHY WE EXIST]
-	L1[Layer 1: Principles<br/>WHY - Values]
-	L2[Layer 2: Conventions<br/>WHAT - Documentation Rules]
-	L3[Layer 3: Development<br/>HOW - Software Practices]
-	L4[Layer 4: AI Agents<br/>WHO - Atomic Executors]
-	L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes]
+ L0[Layer 0: Vision<br/>WHY WE EXIST]
+ L1[Layer 1: Principles<br/>WHY - Values]
+ L2[Layer 2: Conventions<br/>WHAT - Documentation Rules]
+ L3[Layer 3: Development<br/>HOW - Software Practices]
+ L4[Layer 4: AI Agents<br/>WHO - Atomic Executors]
+ L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes]
 
-	L0 -->|inspires| L1
-	L1 -->|governs| L2
-	L1 -->|governs| L3
-	L2 -->|governs| L4
-	L3 -->|governs| L4
-	L4 -->|orchestrated by| L5
+ L0 -->|inspires| L1
+ L1 -->|governs| L2
+ L1 -->|governs| L3
+ L2 -->|governs| L4
+ L3 -->|governs| L4
+ L4 -->|orchestrated by| L5
 
-	style L0 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:3px
-	style L1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style L2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style L3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style L4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style L5 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style L0 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:3px
+ style L1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style L2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style L3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style L4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style L5 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ## 📋 Contents

@@ -501,7 +501,7 @@ sort < unsorted.txt > sorted.txt # => Reads from unsorted.txt, writes sorted out
                                 # => unsorted.txt remains unchanged
 ```
 
-**Key Takeaway**: Use `>` to redirect output to files (overwrites), `>>` to append, `2>` for error messages, and `< ` for input - remember that `> /dev/null` discards output, useful for silent execution.
+**Key Takeaway**: Use `>` to redirect output to files (overwrites), `>>` to append, `2>` for error messages, and `<` for input - remember that `> /dev/null` discards output, useful for silent execution.
 
 **Why It Matters**: This shell scripting concept is fundamental for production automation and system administration. Understanding this pattern enables you to write more robust and maintainable scripts for deployment, monitoring, and infrastructure management tasks.
 
@@ -1935,9 +1935,9 @@ EOF
 # Here document with indentation (use <<-)
 if true; then
     cat <<- EOF
-	This line is indented with tab
-	Tabs are removed from beginning
-	EOF
+ This line is indented with tab
+ Tabs are removed from beginning
+ EOF
 fi
 # => Output: Lines without leading tabs
 # => Note: Only tabs are removed, not spaces!

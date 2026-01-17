@@ -66,7 +66,7 @@ Skill: `repo-generating-validation-reports`
 
 ## Process
 
-0. Initialize report (`repo-generating-validation-reports`)
+1. Initialize report (`repo-generating-validation-reports`)
    1-N. Validate aspects (write progressively)
    Final. Update status, add summary
 

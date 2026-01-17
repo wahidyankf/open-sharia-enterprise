@@ -168,6 +168,7 @@ For complete details, see [Trunk Based Development Convention](./governance/deve
    ```
 
 5. **Format code** (automatic on commit):
+
    ```bash
    npx prettier --write .
    ```
@@ -377,7 +378,7 @@ See [SECURITY.md](./SECURITY.md) for reporting security issues privately.
 
 ### Maintainer Contact
 
-For urgent matters, contact: wahidyankf@gmail.com
+For urgent matters, contact: <wahidyankf@gmail.com>
 
 ---
 

@@ -114,7 +114,7 @@ Before moving forward, verify:
 - [ ] `terraform apply` creates resources
 - [ ] `terraform destroy` removes resources
 
-## 🎉 You're Done!
+## 🎉 You're Done
 
 You've successfully installed Terraform and provisioned your first infrastructure.
 

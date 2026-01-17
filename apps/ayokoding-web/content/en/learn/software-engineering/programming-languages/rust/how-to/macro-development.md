@@ -15,7 +15,7 @@ tags: ["rust", "how-to", "macros", "procedural-macros", "derive-macros", "metapr
 
 You have repetitive code patterns that can't be solved with functions.
 
-### Solution: Use macro_rules!
+### Solution: Use macro_rules
 
 **Simple example**:
 
@@ -83,7 +83,7 @@ fn main() {
 **Explanation**:
 
 - `$($element:expr),*`: Match zero or more comma-separated expressions
-- `$(...)* `: Repeat code for each match
+- `$(...)*`: Repeat code for each match
 
 ---
 

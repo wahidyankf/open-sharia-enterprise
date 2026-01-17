@@ -4,7 +4,7 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [2026-01-17\_\_markdown-linting](./2026-01-17__markdown-linting/) - Implement markdown linting with pre-push hook enforcement
+(No active plans)
 
 ## Instructions
 

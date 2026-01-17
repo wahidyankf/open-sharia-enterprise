@@ -51,7 +51,7 @@ AI: [Executes workflow steps directly]
 - Changes visible in `git status`
 - User can commit changes when satisfied
 
-### Use Manual Mode When:
+### Use Manual Mode When
 
 - PASS: Workflow requires persistent file changes (Write, Edit operations)
 - PASS: You want step-by-step visibility and control
@@ -66,7 +66,7 @@ AI: [Executes workflow steps directly]
 - README quality workflow
 - Repository rules validation and fixing
 
-### Use Task Tool (Isolated) When:
+### Use Task Tool (Isolated) When
 
 - PASS: Agent only reads and analyzes (no file modifications needed)
 - PASS: Exploratory research and recommendations

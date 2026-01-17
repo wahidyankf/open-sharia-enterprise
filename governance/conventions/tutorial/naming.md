@@ -59,34 +59,34 @@ This convention implements the following core principles:
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TB
-	A["<b>Initial Setup</b><br/>0-5%"]
-	B["<b>Quick Start</b><br/>5-30%"]
-	C["<b>Beginner</b><br/>0-60%"]
-	D["<b>Intermediate</b><br/>60-85%"]
-	E["<b>Advanced</b><br/>85-95%"]
-	F["<b>Cookbook</b><br/>Practical"]
-	G["<b>By Example</b><br/>95%"]
+ A["<b>Initial Setup</b><br/>0-5%"]
+ B["<b>Quick Start</b><br/>5-30%"]
+ C["<b>Beginner</b><br/>0-60%"]
+ D["<b>Intermediate</b><br/>60-85%"]
+ E["<b>Advanced</b><br/>85-95%"]
+ F["<b>Cookbook</b><br/>Practical"]
+ G["<b>By Example</b><br/>95%"]
 
-	A --> B
-	B --> C
-	C --> D
-	D --> E
+ A --> B
+ B --> C
+ C --> D
+ D --> E
 
-	C -.-> F
-	D -.-> F
-	E -.-> F
+ C -.-> F
+ D -.-> F
+ E -.-> F
 
-	B -.-> G
-	C -.-> G
-	D -.-> G
+ B -.-> G
+ C -.-> G
+ D -.-> G
 
-	style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style B fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style C fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style D fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style E fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style F fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style G fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style B fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style C fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style D fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style E fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style F fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style G fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 **Legend**:
@@ -384,47 +384,47 @@ Example-driven learning path for experienced developers (seasonal programmers/so
 ```mermaid
 %% Color palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
 graph TB
-	START[Need to learn a topic?]
-	Q1{Never used before?}
-	Q2{Quick 5-min verification?}
-	Q3{Experienced developer?}
-	Q4{Learn enough to explore?}
-	Q5{Need comprehensive foundation?}
-	Q6{Building production systems?}
-	Q7{Need expert mastery?}
-	Q8{Solving specific problem?}
+ START[Need to learn a topic?]
+ Q1{Never used before?}
+ Q2{Quick 5-min verification?}
+ Q3{Experienced developer?}
+ Q4{Learn enough to explore?}
+ Q5{Need comprehensive foundation?}
+ Q6{Building production systems?}
+ Q7{Need expert mastery?}
+ Q8{Solving specific problem?}
 
-	START --> Q1
-	Q1 -->|Yes| Q2
-	Q1 -->|No| Q8
+ START --> Q1
+ Q1 -->|Yes| Q2
+ Q1 -->|No| Q8
 
-	Q2 -->|Yes| IS[Initial Setup]
-	Q2 -->|No| Q3
+ Q2 -->|Yes| IS[Initial Setup]
+ Q2 -->|No| Q3
 
-	Q3 -->|Yes| BE[By Example]
-	Q3 -->|No| Q4
+ Q3 -->|Yes| BE[By Example]
+ Q3 -->|No| Q4
 
-	Q4 -->|Yes| QS[Quick Start]
-	Q4 -->|No| Q5
+ Q4 -->|Yes| QS[Quick Start]
+ Q4 -->|No| Q5
 
-	Q5 -->|Yes| BEG[Beginner]
-	Q5 -->|No| Q6
+ Q5 -->|Yes| BEG[Beginner]
+ Q5 -->|No| Q6
 
-	Q6 -->|Yes| INT[Intermediate]
-	Q6 -->|No| Q7
+ Q6 -->|Yes| INT[Intermediate]
+ Q6 -->|No| Q7
 
-	Q7 -->|Yes| ADV[Advanced]
-	Q7 -->|No| CB[Cookbook]
+ Q7 -->|Yes| ADV[Advanced]
+ Q7 -->|No| CB[Cookbook]
 
-	Q8 -->|Yes| CB
+ Q8 -->|Yes| CB
 
-	style IS fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style QS fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style BEG fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style INT fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style ADV fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style CB fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
-	style BE fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style IS fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style QS fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style BEG fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style INT fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style ADV fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style CB fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style BE fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Quick Reference Table

@@ -232,6 +232,7 @@
   - **Date**: 2025-11-29
   - **Status**: Completed
 - [x] Create `apps/demo-ts-fe/project.json`:
+
   ```json
   {
     "name": "demo-ts-fe",
@@ -264,6 +265,7 @@
     }
   }
   ```
+
 - [x] tsconfig.json extends workspace tsconfig (covered in first step)
 - [x] README.md created (covered in first step)
 - [x] Test build: `nx build demo-ts-fe`
@@ -681,7 +683,7 @@
   - **Date**: 2025-11-29
   - **Result**: Pass
 - [x] Documentation follows file naming convention
-  - **Validation Notes**: All files use correct prefixes (ht** for how-to, re** for reference), descriptive names follow convention
+  - **Validation Notes**: All files use correct prefixes (ht**for how-to, re** for reference), descriptive names follow convention
   - **Date**: 2025-11-29
   - **Result**: Pass
 - [x] TAB indentation used in docs/ files (Logseq compatibility)

@@ -342,7 +342,7 @@ struct Point {
 
 Declarative macros match patterns and generate code.
 
-### macro_rules!
+### macro_rules
 
 ```rust
 macro_rules! say_hello {

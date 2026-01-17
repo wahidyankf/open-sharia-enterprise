@@ -571,7 +571,7 @@ graph LR
 
 1. **Unsafe Rust** (300 lines)
    - When and why unsafe
-   - Raw pointers (*const T, *mut T)
+   - Raw pointers (*const T,*mut T)
    - Unsafe functions and traits
    - FFI basics
    - Safety invariants

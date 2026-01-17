@@ -4950,6 +4950,7 @@ public class StructuredLoggingAdvanced {
    ```
 
 3. **Method returning null**:
+
    ```java
    // Check method documentation
    String result = someMethod();

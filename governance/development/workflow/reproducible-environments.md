@@ -422,14 +422,14 @@ CMD ["npm", "run", "dev"]
    ```
 ````
 
-2. **Clone Repository**:
+1. **Clone Repository**:
 
    ```bash
    git clone https://github.com/wahidyankf/open-sharia-enterprise.git
    cd open-sharia-enterprise
    ```
 
-3. **Install Dependencies**:
+2. **Install Dependencies**:
 
    ```bash
    npm ci
@@ -437,28 +437,28 @@ CMD ["npm", "run", "dev"]
 
    Volta automatically uses Node.js 24.11.1 and npm 11.6.3 (pinned in package.json).
 
-4. **Configure Environment**:
+3. **Configure Environment**:
 
    ```bash
    cp .env.example .env
    # Edit .env with your values
    ```
 
-5. **Start Services**:
+4. **Start Services**:
 
    ```bash
    docker-compose up -d
    ```
 
-6. **Run Development Server**:
+5. **Run Development Server**:
 
    ```bash
    npm run dev
    ```
 
-7. **Verify Setup**:
-   - Application: http://localhost:3000
-   - API health: http://localhost:3000/health
+6. **Verify Setup**:
+   - Application: <http://localhost:3000>
+   - API health: <http://localhost:3000/health>
 
 ### Troubleshooting
 

@@ -453,6 +453,7 @@ Application.get_env(:logger, :backends)
    ```
 
 6. **Don't log sensitive data:**
+
    ```elixir
    Logger.info("Login attempt", user: sanitize(user))
    ```

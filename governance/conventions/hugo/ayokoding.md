@@ -153,7 +153,7 @@ System.out.println(result);      // => Output: 10-transformed
 - Complex operations get detailed breakdowns
 - Avoid repetitive patterns across similar code
 
-## **Detailed guidance**: See [By-Example Tutorial Convention](../tutorial/by-example.md#educational-comment-standards) for comprehensive annotation patterns and examples.
+## **Detailed guidance**: See [By-Example Tutorial Convention](../tutorial/by-example.md#educational-comment-standards) for comprehensive annotation patterns and examples
 
 ## Hextra Theme
 

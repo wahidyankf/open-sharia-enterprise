@@ -301,11 +301,13 @@ Try creating another Java program from scratch:
 
 1. **Create** a file named `Calculator.java`
 2. **Write** a class with a main method that performs a simple calculation:
+
    ```java
    int x = 10;
    int y = 20;
    System.out.println("Sum: " + (x + y));
    ```
+
 3. **Compile** and run it
 4. **Verify** the output shows the correct sum (30)
 

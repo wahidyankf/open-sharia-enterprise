@@ -101,7 +101,7 @@ See [CLAUDE.md Plans Organization](../../CLAUDE.md#plans-organization) for full 
 
 ## When to Use Each Folder
 
-### Use plans/ when you're:
+### Use plans/ when you're
 
 ✅ **Capturing quick ideas** - 1-3 liner todos for potential projects → `plans/ideas.md`
 ✅ **Planning a feature** - Structured project with requirements and timeline → `plans/backlog/`
@@ -116,7 +116,7 @@ See [CLAUDE.md Plans Organization](../../CLAUDE.md#plans-organization) for full 
 - "Quick idea: Add OAuth2 authentication" → `plans/ideas.md`
 - "I want to plan the monorepo migration" → `plans/backlog/2025-11-24__init-monorepo/`
 
-### Use docs/ when you're:
+### Use docs/ when you're
 
 ✅ **Writing a tutorial** - Teaching someone how to use something
 ✅ **Creating a how-to guide** - Solving a specific problem

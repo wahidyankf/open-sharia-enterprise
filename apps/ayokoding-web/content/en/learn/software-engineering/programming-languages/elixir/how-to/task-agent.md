@@ -703,6 +703,7 @@ end
    ```
 
 5. **Use get_and_update for atomic operations:**
+
    ```elixir
    Agent.get_and_update(MyAgent, fn state ->
      {state.value, %{state | value: new_value}}

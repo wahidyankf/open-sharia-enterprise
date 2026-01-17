@@ -210,8 +210,8 @@ model: sonnet
 
 **Extended Set (10 Skills - Add if capacity allows):**
 
-9. **hugo-ose-development** - PaperMod theme conventions (English-only)
-10. **criticality-confidence-system** - Checker criticality + Fixer confidence levels
+1. **hugo-ose-development** - PaperMod theme conventions (English-only)
+2. **criticality-confidence-system** - Checker criticality + Fixer confidence levels
 
 **Implementation Priority:**
 

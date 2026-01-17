@@ -275,8 +275,8 @@ To use the library in an app:
 import { functionName } from "@open-sharia-enterprise/ts-[name]";
 
 export default function Component() {
-	const result = functionName("example");
-	return <div>{result}</div>;
+ const result = functionName("example");
+ return <div>{result}</div>;
 }
 ```
 
@@ -339,6 +339,7 @@ TypeScript libraries can only directly import other TypeScript libraries. To use
 **Solution**:
 
 1. Ensure `tsconfig.base.json` has the path mapping:
+
    ```json
    {
      "paths": {
@@ -346,6 +347,7 @@ TypeScript libraries can only directly import other TypeScript libraries. To use
      }
    }
    ```
+
 2. Restart your IDE/TypeScript server
 
 ### Issue: Tests fail with "Cannot find module"

@@ -69,15 +69,15 @@ Throughout this tutorial, we'll follow **"CloudTech Solutions"**, a growing clou
 
 ```mermaid
 flowchart TD
-	A[Business Decision] --> B[Analyze Cash Flows]
-	B --> C[Apply Time Value of Money]
-	C --> D[Calculate NPV/IRR]
-	D --> E[Determine Cost of Capital]
-	E --> F[Make Investment Decision]
-	F --> G[Create Value]
+ A[Business Decision] --> B[Analyze Cash Flows]
+ B --> C[Apply Time Value of Money]
+ C --> D[Calculate NPV/IRR]
+ D --> E[Determine Cost of Capital]
+ E --> F[Make Investment Decision]
+ F --> G[Create Value]
 
-	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
-	style G fill:#029E73,stroke:#000000,color:#FFFFFF
+ style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style G fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
 The diagram above shows the corporate finance decision-making framework we'll master.
@@ -182,18 +182,18 @@ $$
 
 ```mermaid
 flowchart TD
-	subgraph "Future Value (Growing Money)"
-		PV1[$1,000 Today] --> FV1[$1,469 in 5 years<br/>@ 8% interest]
-	end
+ subgraph "Future Value (Growing Money)"
+  PV1[$1,000 Today] --> FV1[$1,469 in 5 years<br/>@ 8% interest]
+ end
 
-	subgraph "Present Value (Discounting Money)"
-		FV2[$10,000 in 5 years] --> PV2[$7,473 Today<br/>@ 6% discount rate]
-	end
+ subgraph "Present Value (Discounting Money)"
+  FV2[$10,000 in 5 years] --> PV2[$7,473 Today<br/>@ 6% discount rate]
+ end
 
-	style PV1 fill:#0173B2,stroke:#000000,color:#FFFFFF
-	style FV1 fill:#029E73,stroke:#000000,color:#FFFFFF
-	style FV2 fill:#DE8F05,stroke:#000000,color:#FFFFFF
-	style PV2 fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style PV1 fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style FV1 fill:#029E73,stroke:#000000,color:#FFFFFF
+ style FV2 fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style PV2 fill:#0173B2,stroke:#000000,color:#FFFFFF
 ```
 
 ### Discount Rate: The Key Number
@@ -212,17 +212,17 @@ Different investments require different discount rates based on risk:
 
 ```mermaid
 flowchart TD
-	A[Investment Risk Categories] --> B[Low Risk<br/>Discount Rate: 4-6%]
-	A --> C[Medium Risk<br/>Discount Rate: 8-12%]
-	A --> D[High Risk<br/>Discount Rate: 15-25%]
+ A[Investment Risk Categories] --> B[Low Risk<br/>Discount Rate: 4-6%]
+ A --> C[Medium Risk<br/>Discount Rate: 8-12%]
+ A --> D[High Risk<br/>Discount Rate: 15-25%]
 
-	B --> B1[Examples:<br/>• Government bonds<br/>• Stable utilities<br/>• Blue-chip stocks]
-	C --> C1[Examples:<br/>• Established companies<br/>• Real estate<br/>• Corporate bonds]
-	D --> D1[Examples:<br/>• Startups<br/>• Emerging markets<br/>• Speculative ventures]
+ B --> B1[Examples:<br/>• Government bonds<br/>• Stable utilities<br/>• Blue-chip stocks]
+ C --> C1[Examples:<br/>• Established companies<br/>• Real estate<br/>• Corporate bonds]
+ D --> D1[Examples:<br/>• Startups<br/>• Emerging markets<br/>• Speculative ventures]
 
-	style B fill:#029E73,stroke:#000000,color:#FFFFFF
-	style C fill:#DE8F05,stroke:#000000,color:#FFFFFF
-	style D fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style B fill:#029E73,stroke:#000000,color:#FFFFFF
+ style C fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style D fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 **Rule:** Higher risk = Higher required return = Higher discount rate
@@ -384,20 +384,20 @@ TOTAL LIABILITIES + EQUITY        $35,000,000
 
 ```mermaid
 flowchart TD
-	IS[Income Statement<br/>Shows: Profitability] --> NI[Net Income]
+ IS[Income Statement<br/>Shows: Profitability] --> NI[Net Income]
 
-	BS[Balance Sheet<br/>Shows: Financial Position] --> Assets[Assets: $35M]
-	BS --> Debt[Debt: $11M]
-	BS --> Equity[Equity: $20M]
+ BS[Balance Sheet<br/>Shows: Financial Position] --> Assets[Assets: $35M]
+ BS --> Debt[Debt: $11M]
+ BS --> Equity[Equity: $20M]
 
-	CF[Cash Flow Statement<br/>Shows: Cash Movement] --> Cash[Cash: $5M]
+ CF[Cash Flow Statement<br/>Shows: Cash Movement] --> Cash[Cash: $5M]
 
-	NI -.Flows to.-> Equity
-	Cash -.Matches.-> Assets
+ NI -.Flows to.-> Equity
+ Cash -.Matches.-> Assets
 
-	style IS fill:#DE8F05,stroke:#000000,color:#FFFFFF
-	style BS fill:#029E73,stroke:#000000,color:#FFFFFF
-	style CF fill:#CC78BC,stroke:#000000,color:#FFFFFF
+ style IS fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style BS fill:#029E73,stroke:#000000,color:#FFFFFF
+ style CF fill:#CC78BC,stroke:#000000,color:#FFFFFF
 ```
 
 ### ✓ Checkpoint
@@ -535,20 +535,20 @@ The **cash conversion cycle** shows how long cash is tied up in operations:
 
 ```mermaid
 flowchart TD
-	A[Cash] --> B[Purchase Inventory]
-	B --> C[Inventory<br/>24 days]
-	C --> D[Sell to Customers]
-	D --> E[Accounts Receivable<br/>58 days]
-	E --> F[Collect Cash]
-	F --> A
+ A[Cash] --> B[Purchase Inventory]
+ B --> C[Inventory<br/>24 days]
+ C --> D[Sell to Customers]
+ D --> E[Accounts Receivable<br/>58 days]
+ E --> F[Collect Cash]
+ F --> A
 
-	G[Accounts Payable<br/>48 days delay payment] -.Reduces cycle.-> C
+ G[Accounts Payable<br/>48 days delay payment] -.Reduces cycle.-> C
 
-	H[Cash Conversion Cycle<br/>= 24 + 58 - 48 = 34 days]
+ H[Cash Conversion Cycle<br/>= 24 + 58 - 48 = 34 days]
 
-	style A fill:#029E73,stroke:#000000,color:#FFFFFF
-	style H fill:#0173B2,stroke:#000000,color:#FFFFFF
-	style G fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style A fill:#029E73,stroke:#000000,color:#FFFFFF
+ style H fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style G fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 **CloudTech's cash is tied up for 34 days** from paying suppliers to collecting from customers.
@@ -559,30 +559,30 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-	subgraph "Profitability"
-		ROA[ROA: 16.07%<br/>Good]
-		ROE[ROE: 28.13%<br/>Excellent]
-	end
+ subgraph "Profitability"
+  ROA[ROA: 16.07%<br/>Good]
+  ROE[ROE: 28.13%<br/>Excellent]
+ end
 
-	subgraph "Liquidity"
-		CR[Current Ratio: 3.0<br/>Very Healthy]
-		QR[Quick Ratio: 2.6<br/>Strong]
-	end
+ subgraph "Liquidity"
+  CR[Current Ratio: 3.0<br/>Very Healthy]
+  QR[Quick Ratio: 2.6<br/>Strong]
+ end
 
-	subgraph "Leverage"
-		DE[Debt/Equity: 0.55<br/>Moderate]
-		DA[Debt/Assets: 31.4%<br/>Conservative]
-	end
+ subgraph "Leverage"
+  DE[Debt/Equity: 0.55<br/>Moderate]
+  DA[Debt/Assets: 31.4%<br/>Conservative]
+ end
 
-	subgraph "Efficiency"
-		AT[Asset Turnover: 1.43<br/>Good]
-		IT[Inventory Turnover: 15<br/>Efficient]
-	end
+ subgraph "Efficiency"
+  AT[Asset Turnover: 1.43<br/>Good]
+  IT[Inventory Turnover: 15<br/>Efficient]
+ end
 
-	style ROA fill:#029E73,stroke:#000000,color:#FFFFFF
-	style ROE fill:#029E73,stroke:#000000,color:#FFFFFF
-	style CR fill:#0173B2,stroke:#000000,color:#FFFFFF
-	style DE fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style ROA fill:#029E73,stroke:#000000,color:#FFFFFF
+ style ROE fill:#029E73,stroke:#000000,color:#FFFFFF
+ style CR fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style DE fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 ### ✓ Checkpoint
@@ -738,22 +738,22 @@ Payback period **ignores**:
 
 ```mermaid
 flowchart TD
-	A[Investment Opportunity] --> B[Estimate Cash Flows]
-	B --> C[Determine Discount Rate]
-	C --> D[Calculate NPV]
-	D --> E{NPV > 0?}
+ A[Investment Opportunity] --> B[Estimate Cash Flows]
+ B --> C[Determine Discount Rate]
+ C --> D[Calculate NPV]
+ D --> E{NPV > 0?}
 
-	E -->|Yes| F[✓ Accept Project<br/>Creates Value]
-	E -->|No| G[✗ Reject Project<br/>Destroys Value]
+ E -->|Yes| F[✓ Accept Project<br/>Creates Value]
+ E -->|No| G[✗ Reject Project<br/>Destroys Value]
 
-	C --> H[Calculate IRR]
-	H --> I{IRR > Required Return?}
-	I -->|Yes| F
-	I -->|No| G
+ C --> H[Calculate IRR]
+ H --> I{IRR > Required Return?}
+ I -->|Yes| F
+ I -->|No| G
 
-	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
-	style F fill:#029E73,stroke:#000000,color:#FFFFFF
-	style G fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style F fill:#029E73,stroke:#000000,color:#FFFFFF
+ style G fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 ### Practice Exercise
@@ -981,17 +981,17 @@ The project earns more than the cost of capital, creating value.
 
 ```mermaid
 flowchart TD
-	WACC[WACC: 8.56%<br/>Weighted Average] --> Debt[Debt Component<br/>35.5% × 3.41% = 1.21%]
-	WACC --> Equity[Equity Component<br/>64.5% × 11.4% = 7.35%]
+ WACC[WACC: 8.56%<br/>Weighted Average] --> Debt[Debt Component<br/>35.5% × 3.41% = 1.21%]
+ WACC --> Equity[Equity Component<br/>64.5% × 11.4% = 7.35%]
 
-	Debt --> RD[Cost of Debt<br/>4.55% pre-tax<br/>3.41% after-tax]
-	Equity --> RE[Cost of Equity<br/>11.4% via CAPM]
+ Debt --> RD[Cost of Debt<br/>4.55% pre-tax<br/>3.41% after-tax]
+ Equity --> RE[Cost of Equity<br/>11.4% via CAPM]
 
-	RE --> CAPM[rf + β × Risk Premium<br/>3% + 1.2 × 7% = 11.4%]
+ RE --> CAPM[rf + β × Risk Premium<br/>3% + 1.2 × 7% = 11.4%]
 
-	style WACC fill:#029E73,stroke:#000000,color:#FFFFFF
-	style Debt fill:#DE8F05,stroke:#000000,color:#FFFFFF
-	style Equity fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style WACC fill:#029E73,stroke:#000000,color:#FFFFFF
+ style Debt fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style Equity fill:#0173B2,stroke:#000000,color:#FFFFFF
 ```
 
 ### ✓ Checkpoint
@@ -1161,21 +1161,21 @@ While debt has tax benefits and lower cost than equity, **too much debt is dange
 
 ```mermaid
 flowchart TD
-	A[Financing Decision] --> B{Debt or Equity?}
+ A[Financing Decision] --> B{Debt or Equity?}
 
-	B -->|More Debt| C[Advantages:<br/>• Tax shield<br/>• No dilution]
-	B -->|More Debt| D[Disadvantages:<br/>• Fixed payments<br/>• Bankruptcy risk]
+ B -->|More Debt| C[Advantages:<br/>• Tax shield<br/>• No dilution]
+ B -->|More Debt| D[Disadvantages:<br/>• Fixed payments<br/>• Bankruptcy risk]
 
-	B -->|More Equity| E[Advantages:<br/>• Flexible<br/>• No bankruptcy risk]
-	B -->|More Equity| F[Disadvantages:<br/>• Expensive<br/>• Dilution]
+ B -->|More Equity| E[Advantages:<br/>• Flexible<br/>• No bankruptcy risk]
+ B -->|More Equity| F[Disadvantages:<br/>• Expensive<br/>• Dilution]
 
-	C --> G[Find Optimal<br/>Balance]
-	D --> G
-	E --> G
-	F --> G
+ C --> G[Find Optimal<br/>Balance]
+ D --> G
+ E --> G
+ F --> G
 
-	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
-	style G fill:#029E73,stroke:#000000,color:#FFFFFF
+ style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style G fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
 ### ✓ Checkpoint
@@ -1204,18 +1204,18 @@ We'll focus on **DCF** - the fundamental approach.
 
 ```mermaid
 flowchart TD
-	A[Valuation Methods] --> B[DCF Analysis<br/>Intrinsic Value]
-	A --> C[Comparable Companies<br/>Market Value]
-	A --> D[Precedent Transactions<br/>M&A Prices]
+ A[Valuation Methods] --> B[DCF Analysis<br/>Intrinsic Value]
+ A --> C[Comparable Companies<br/>Market Value]
+ A --> D[Precedent Transactions<br/>M&A Prices]
 
-	B --> B1[✓ Cash flow based<br/>✓ Fundamental analysis<br/>✗ Assumption sensitive]
-	C --> C1[✓ Quick market check<br/>✓ Easy to understand<br/>✗ Needs comparable firms]
-	D --> D1[✓ Real transaction data<br/>✓ Control premiums<br/>✗ Limited data availability]
+ B --> B1[✓ Cash flow based<br/>✓ Fundamental analysis<br/>✗ Assumption sensitive]
+ C --> C1[✓ Quick market check<br/>✓ Easy to understand<br/>✗ Needs comparable firms]
+ D --> D1[✓ Real transaction data<br/>✓ Control premiums<br/>✗ Limited data availability]
 
-	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
-	style B fill:#029E73,stroke:#000000,color:#FFFFFF
-	style C fill:#DE8F05,stroke:#000000,color:#FFFFFF
-	style D fill:#CC78BC,stroke:#000000,color:#FFFFFF
+ style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style B fill:#029E73,stroke:#000000,color:#FFFFFF
+ style C fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style D fill:#CC78BC,stroke:#000000,color:#FFFFFF
 ```
 
 ### Discounted Cash Flow (DCF) Valuation
@@ -1240,19 +1240,19 @@ FCF is cash available to all investors (debt and equity).
 
 ```mermaid
 flowchart TD
-	A[Start DCF Valuation] --> B[Step 1:<br/>Project Free Cash Flows<br/>5-10 years]
-	B --> C[Step 2:<br/>Calculate Terminal Value<br/>Gordon Growth Model]
-	C --> D[Step 3:<br/>Determine Discount Rate<br/>Use WACC]
-	D --> E[Step 4:<br/>Discount All Cash Flows<br/>to Present Value]
-	E --> F[Step 5:<br/>Sum = Enterprise Value]
-	F --> G[Step 6:<br/>Subtract Net Debt]
-	G --> H[Equity Value<br/>What shareholders own]
+ A[Start DCF Valuation] --> B[Step 1:<br/>Project Free Cash Flows<br/>5-10 years]
+ B --> C[Step 2:<br/>Calculate Terminal Value<br/>Gordon Growth Model]
+ C --> D[Step 3:<br/>Determine Discount Rate<br/>Use WACC]
+ D --> E[Step 4:<br/>Discount All Cash Flows<br/>to Present Value]
+ E --> F[Step 5:<br/>Sum = Enterprise Value]
+ F --> G[Step 6:<br/>Subtract Net Debt]
+ G --> H[Equity Value<br/>What shareholders own]
 
-	I[Sensitivity Analysis<br/>Test assumptions] -.Validate.-> H
+ I[Sensitivity Analysis<br/>Test assumptions] -.Validate.-> H
 
-	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
-	style H fill:#029E73,stroke:#000000,color:#FFFFFF
-	style I fill:#DE8F05,stroke:#000000,color:#FFFFFF
+ style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style H fill:#029E73,stroke:#000000,color:#FFFFFF
+ style I fill:#DE8F05,stroke:#000000,color:#FFFFFF
 ```
 
 ### CloudTech DCF Valuation
@@ -1351,14 +1351,14 @@ $$
 
 ```mermaid
 flowchart TD
-	A[Project Free Cash Flows<br/>5 years] --> B[Calculate Terminal Value<br/>Value after Year 5]
-	B --> C[Discount All Cash Flows<br/>to Present Value]
-	C --> D[Sum = Enterprise Value<br/>$137.7M]
-	D --> E[Subtract Net Debt<br/>-$6M]
-	E --> F[Equity Value<br/>$131.7M]
+ A[Project Free Cash Flows<br/>5 years] --> B[Calculate Terminal Value<br/>Value after Year 5]
+ B --> C[Discount All Cash Flows<br/>to Present Value]
+ C --> D[Sum = Enterprise Value<br/>$137.7M]
+ D --> E[Subtract Net Debt<br/>-$6M]
+ E --> F[Equity Value<br/>$131.7M]
 
-	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
-	style F fill:#029E73,stroke:#000000,color:#FFFFFF
+ style A fill:#0173B2,stroke:#000000,color:#FFFFFF
+ style F fill:#029E73,stroke:#000000,color:#FFFFFF
 ```
 
 ### Sensitivity Analysis

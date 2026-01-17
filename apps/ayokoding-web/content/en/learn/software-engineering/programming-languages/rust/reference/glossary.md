@@ -728,7 +728,7 @@ fn find_user(id: u32) -> Option<User> {
 
 ---
 
-### panic!
+### panic
 
 **Definition**: Macro causing program to abort with error message.
 

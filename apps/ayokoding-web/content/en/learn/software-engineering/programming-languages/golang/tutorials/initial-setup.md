@@ -112,7 +112,7 @@ Or, manual installation:
 tar -C /usr/local -xzf go*.tar.gz
 ```
 
-4. Add Go to your PATH by adding this line to `~/.bashrc` or `~/.zshrc`:
+1. Add Go to your PATH by adding this line to `~/.bashrc` or `~/.zshrc`:
 
 ```bash
 export PATH=$PATH:/usr/local/go/bin
@@ -171,7 +171,7 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println("Hello, World!")
+ fmt.Println("Hello, World!")
 }
 ```
 
@@ -246,7 +246,7 @@ Before moving forward, verify:
 - [ ] `go build hello.go` creates an executable
 - [ ] The executable runs and prints "Hello, World!"
 
-## 🎉 You're Done!
+## 🎉 You're Done
 
 You've successfully installed Go and run your first program. You're ready for the next step.
 
@@ -279,9 +279,11 @@ Now that Go is working, you have two paths:
 1. Verify installation completed successfully
 2. Restart your terminal/command prompt
 3. On macOS: Go installs to `/usr/local/go`. If error persists, add to your shell profile:
+
    ```bash
    export PATH=$PATH:/usr/local/go/bin
    ```
+
 4. On Linux with manual installation: Verify the tarball was extracted to `/usr/local`
 
 **Problem**: Multiple Go versions installed

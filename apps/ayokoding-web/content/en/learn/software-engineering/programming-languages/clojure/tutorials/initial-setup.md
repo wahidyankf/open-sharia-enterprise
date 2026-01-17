@@ -221,7 +221,7 @@ Before moving forward, verify:
 - [ ] REPL starts with `clojure` command
 - [ ] `lein run` executes your hello-clojure project
 
-## 🎉 You're Done!
+## 🎉 You're Done
 
 You've successfully installed Clojure and run your first program. You're ready for the next step.
 

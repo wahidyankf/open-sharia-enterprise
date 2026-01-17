@@ -58,21 +58,21 @@ package main
 import "fmt"
 
 func main() {
-	// Explicit declaration
-	var name string = "Alice"
-	var age int = 30
+ // Explicit declaration
+ var name string = "Alice"
+ var age int = 30
 
-	// Type inference (compiler figures out the type)
-	var city = "Jakarta"
+ // Type inference (compiler figures out the type)
+ var city = "Jakarta"
 
-	// Short declaration (inside functions only)
-	country := "Indonesia"
+ // Short declaration (inside functions only)
+ country := "Indonesia"
 
-	// Constants
-	const maxRetries = 3
+ // Constants
+ const maxRetries = 3
 
-	fmt.Println(name, age, city, country, maxRetries)
-	// Output: Alice 30 Jakarta Indonesia 3
+ fmt.Println(name, age, city, country, maxRetries)
+ // Output: Alice 30 Jakarta Indonesia 3
 }
 ```
 
@@ -96,11 +96,11 @@ package main
 import "fmt"
 
 func main() {
-	var x int = 42
-	var y float64 = float64(x) // Explicit conversion required
+ var x int = 42
+ var y float64 = float64(x) // Explicit conversion required
 
-	fmt.Printf("x: %d (type: int)\n", x)
-	fmt.Printf("y: %.2f (type: float64)\n", y)
+ fmt.Printf("x: %d (type: int)\n", x)
+ fmt.Printf("y: %.2f (type: float64)\n", y)
 }
 ```
 
@@ -120,52 +120,52 @@ package main
 import "fmt"
 
 func main() {
-	// If/else
-	age := 18
-	if age >= 18 {
-		fmt.Println("Adult")
-	} else {
-		fmt.Println("Minor")
-	}
+ // If/else
+ age := 18
+ if age >= 18 {
+  fmt.Println("Adult")
+ } else {
+  fmt.Println("Minor")
+ }
 
-	// Switch
-	day := "Monday"
-	switch day {
-	case "Monday":
-		fmt.Println("Start of week")
-	case "Friday":
-		fmt.Println("TGIF!")
-	default:
-		fmt.Println("Regular day")
-	}
+ // Switch
+ day := "Monday"
+ switch day {
+ case "Monday":
+  fmt.Println("Start of week")
+ case "Friday":
+  fmt.Println("TGIF!")
+ default:
+  fmt.Println("Regular day")
+ }
 
-	// For loop (traditional)
-	for i := 0; i < 3; i++ {
-		fmt.Println(i) // Prints: 0, 1, 2
-	}
+ // For loop (traditional)
+ for i := 0; i < 3; i++ {
+  fmt.Println(i) // Prints: 0, 1, 2
+ }
 
-	// For loop (range over slice)
-	numbers := []int{10, 20, 30}
-	for index, value := range numbers {
-		fmt.Printf("Index %d: %d\n", index, value)
-	}
+ // For loop (range over slice)
+ numbers := []int{10, 20, 30}
+ for index, value := range numbers {
+  fmt.Printf("Index %d: %d\n", index, value)
+ }
 
-	// While-style loop (condition only)
-	count := 0
-	for count < 3 {
-		fmt.Println("Count:", count)
-		count++
-	}
+ // While-style loop (condition only)
+ count := 0
+ for count < 3 {
+  fmt.Println("Count:", count)
+  count++
+ }
 
-	// Infinite loop with break
-	n := 0
-	for {
-		if n >= 3 {
-			break
-		}
-		fmt.Println("Loop:", n)
-		n++
-	}
+ // Infinite loop with break
+ n := 0
+ for {
+  if n >= 3 {
+   break
+  }
+  fmt.Println("Loop:", n)
+  n++
+ }
 }
 ```
 
@@ -193,26 +193,26 @@ import "fmt"
 
 // Simple function
 func greet(name string) string {
-	return "Hello, " + name
+ return "Hello, " + name
 }
 
 // Multiple return values (Go's error handling style)
 func divide(a, b float64) (float64, error) {
-	if b == 0 {
-		return 0, fmt.Errorf("cannot divide by zero")
-	}
-	return a / b, nil
+ if b == 0 {
+  return 0, fmt.Errorf("cannot divide by zero")
+ }
+ return a / b, nil
 }
 
 func main() {
-	fmt.Println(greet("Alice"))
+ fmt.Println(greet("Alice"))
 
-	result, err := divide(10, 2)
-	if err != nil {
-		fmt.Println("Error:", err)
-	} else {
-		fmt.Println("Result:", result)
-	}
+ result, err := divide(10, 2)
+ if err != nil {
+  fmt.Println("Error:", err)
+ } else {
+  fmt.Println("Result:", result)
+ }
 }
 ```
 
@@ -232,15 +232,15 @@ package main
 import "fmt"
 
 func calculate(x, y int) (sum int, product int) {
-	sum = x + y
-	product = x * y
-	return // Naked return uses named values
+ sum = x + y
+ product = x * y
+ return // Naked return uses named values
 }
 
 func main() {
-	s, p := calculate(3, 4)
-	fmt.Println("Sum:", s, "Product:", p)
-	// Output: Sum: 7 Product: 12
+ s, p := calculate(3, 4)
+ fmt.Println("Sum:", s, "Product:", p)
+ // Output: Sum: 7 Product: 12
 }
 ```
 
@@ -254,16 +254,16 @@ package main
 import "fmt"
 
 func sum(numbers ...int) int {
-	total := 0
-	for _, num := range numbers {
-		total += num
-	}
-	return total
+ total := 0
+ for _, num := range numbers {
+  total += num
+ }
+ return total
 }
 
 func main() {
-	fmt.Println(sum(1, 2, 3))       // 6
-	fmt.Println(sum(10, 20, 30, 40)) // 100
+ fmt.Println(sum(1, 2, 3))       // 6
+ fmt.Println(sum(10, 20, 30, 40)) // 100
 }
 ```
 
@@ -284,35 +284,35 @@ import "fmt"
 
 // Define a struct
 type Person struct {
-	Name string
-	Age  int
-	City string
+ Name string
+ Age  int
+ City string
 }
 
 func main() {
-	// Create and initialize
-	alice := Person{
-		Name: "Alice",
-		Age:  30,
-		City: "Jakarta",
-	}
+ // Create and initialize
+ alice := Person{
+  Name: "Alice",
+  Age:  30,
+  City: "Jakarta",
+ }
 
-	// Access fields
-	fmt.Println(alice.Name)  // Alice
-	fmt.Println(alice.Age)   // 30
+ // Access fields
+ fmt.Println(alice.Name)  // Alice
+ fmt.Println(alice.Age)   // 30
 
-	// Modify fields
-	alice.Age = 31
-	fmt.Println(alice)
-	// Output: {Alice 31 Jakarta}
+ // Modify fields
+ alice.Age = 31
+ fmt.Println(alice)
+ // Output: {Alice 31 Jakarta}
 
-	// Zero value struct (all fields get zero values)
-	var bob Person
-	fmt.Println(bob) // { 0 } (empty string, 0, empty string)
+ // Zero value struct (all fields get zero values)
+ var bob Person
+ fmt.Println(bob) // { 0 } (empty string, 0, empty string)
 
-	// Partial initialization
-	carol := Person{Name: "Carol"} // Age and City use zero values
-	fmt.Println(carol) // {Carol 0 }
+ // Partial initialization
+ carol := Person{Name: "Carol"} // Age and City use zero values
+ fmt.Println(carol) // {Carol 0 }
 }
 ```
 
@@ -326,26 +326,26 @@ package main
 import "fmt"
 
 type Person struct {
-	Name string
-	Age  int
+ Name string
+ Age  int
 }
 
 // Method with receiver
 func (p Person) Greet() string {
-	return fmt.Sprintf("Hi, I'm %s and I'm %d years old", p.Name, p.Age)
+ return fmt.Sprintf("Hi, I'm %s and I'm %d years old", p.Name, p.Age)
 }
 
 // Method with pointer receiver (can modify fields)
 func (p *Person) HaveBirthday() {
-	p.Age++
+ p.Age++
 }
 
 func main() {
-	alice := Person{Name: "Alice", Age: 30}
-	fmt.Println(alice.Greet())
+ alice := Person{Name: "Alice", Age: 30}
+ fmt.Println(alice.Greet())
 
-	alice.HaveBirthday()
-	fmt.Println("After birthday:", alice.Age) // 31
+ alice.HaveBirthday()
+ fmt.Println("After birthday:", alice.Age) // 31
 }
 ```
 
@@ -363,33 +363,33 @@ Go uses explicit error handling. Functions return errors as values:
 package main
 
 import (
-	"fmt"
-	"strconv"
+ "fmt"
+ "strconv"
 )
 
 func main() {
-	// Standard library functions return (value, error)
-	num, err := strconv.Atoi("42")
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
+ // Standard library functions return (value, error)
+ num, err := strconv.Atoi("42")
+ if err != nil {
+  fmt.Println("Error:", err)
+  return
+ }
 
-	fmt.Println("Number:", num) // Number: 42
+ fmt.Println("Number:", num) // Number: 42
 
-	// Custom errors
-	result, err := processData("invalid")
-	if err != nil {
-		fmt.Println("Failed:", err)
-	}
+ // Custom errors
+ result, err := processData("invalid")
+ if err != nil {
+  fmt.Println("Failed:", err)
+ }
 }
 
 // Function that returns an error
 func processData(input string) (int, error) {
-	if input == "invalid" {
-		return 0, fmt.Errorf("invalid input: %s", input)
-	}
-	return 42, nil
+ if input == "invalid" {
+  return 0, fmt.Errorf("invalid input: %s", input)
+ }
+ return 42, nil
 }
 ```
 
@@ -403,29 +403,29 @@ Add context to errors with `fmt.Errorf` and `%w`:
 package main
 
 import (
-	"errors"
-	"fmt"
+ "errors"
+ "fmt"
 )
 
 func readFile(filename string) error {
-	if filename == "" {
-		return errors.New("filename cannot be empty")
-	}
-	// Simulate error from lower level
-	return fmt.Errorf("failed to read %s: %w", filename, errors.New("file not found"))
+ if filename == "" {
+  return errors.New("filename cannot be empty")
+ }
+ // Simulate error from lower level
+ return fmt.Errorf("failed to read %s: %w", filename, errors.New("file not found"))
 }
 
 func main() {
-	err := readFile("")
-	if err != nil {
-		fmt.Println("Error:", err)
-	}
+ err := readFile("")
+ if err != nil {
+  fmt.Println("Error:", err)
+ }
 
-	err = readFile("data.txt")
-	if err != nil {
-		fmt.Println("Error:", err)
-		// Error: failed to read data.txt: file not found
-	}
+ err = readFile("data.txt")
+ if err != nil {
+  fmt.Println("Error:", err)
+  // Error: failed to read data.txt: file not found
+ }
 }
 ```
 
@@ -443,26 +443,26 @@ Goroutines are lightweight concurrency. Think of them as "cheap threads":
 package main
 
 import (
-	"fmt"
-	"time"
+ "fmt"
+ "time"
 )
 
 func work(name string) {
-	for i := 0; i < 3; i++ {
-		fmt.Println(name, "working", i)
-		time.Sleep(100 * time.Millisecond)
-	}
-	fmt.Println(name, "done")
+ for i := 0; i < 3; i++ {
+  fmt.Println(name, "working", i)
+  time.Sleep(100 * time.Millisecond)
+ }
+ fmt.Println(name, "done")
 }
 
 func main() {
-	// Launch two goroutines (concurrent execution)
-	go work("Worker 1")
-	go work("Worker 2")
+ // Launch two goroutines (concurrent execution)
+ go work("Worker 1")
+ go work("Worker 2")
 
-	// Wait for goroutines to finish
-	time.Sleep(1 * time.Second)
-	fmt.Println("Main finished")
+ // Wait for goroutines to finish
+ time.Sleep(1 * time.Second)
+ fmt.Println("Main finished")
 }
 ```
 
@@ -478,19 +478,19 @@ package main
 import "fmt"
 
 func sendMessage(ch chan string, message string) {
-	ch <- message // Send message to channel
+ ch <- message // Send message to channel
 }
 
 func main() {
-	// Create a channel
-	messages := make(chan string)
+ // Create a channel
+ messages := make(chan string)
 
-	// Send message in goroutine
-	go sendMessage(messages, "Hello from goroutine!")
+ // Send message in goroutine
+ go sendMessage(messages, "Hello from goroutine!")
 
-	// Receive message from channel (blocks until message available)
-	msg := <-messages
-	fmt.Println("Received:", msg)
+ // Receive message from channel (blocks until message available)
+ msg := <-messages
+ fmt.Println("Received:", msg)
 }
 ```
 
@@ -504,14 +504,14 @@ package main
 import "fmt"
 
 func main() {
-	// Buffered channel (capacity 2)
-	ch := make(chan int, 2)
+ // Buffered channel (capacity 2)
+ ch := make(chan int, 2)
 
-	ch <- 1 // Won't block (buffer has space)
-	ch <- 2 // Won't block (buffer has space)
+ ch <- 1 // Won't block (buffer has space)
+ ch <- 2 // Won't block (buffer has space)
 
-	fmt.Println(<-ch) // 1
-	fmt.Println(<-ch) // 2
+ fmt.Println(<-ch) // 1
+ fmt.Println(<-ch) // 2
 }
 ```
 
@@ -531,27 +531,27 @@ package main
 import "fmt"
 
 func main() {
-	// Slice (dynamic array)
-	fruits := []string{"apple", "banana", "cherry"}
-	fruits = append(fruits, "date") // Add element
+ // Slice (dynamic array)
+ fruits := []string{"apple", "banana", "cherry"}
+ fruits = append(fruits, "date") // Add element
 
-	for _, fruit := range fruits {
-		fmt.Println(fruit)
-	}
+ for _, fruit := range fruits {
+  fmt.Println(fruit)
+ }
 
-	// Map (key-value store)
-	scores := map[string]int{
-		"Alice": 90,
-		"Bob":   85,
-		"Carol": 92,
-	}
+ // Map (key-value store)
+ scores := map[string]int{
+  "Alice": 90,
+  "Bob":   85,
+  "Carol": 92,
+ }
 
-	fmt.Println(scores["Alice"]) // 90
+ fmt.Println(scores["Alice"]) // 90
 
-	// Iterate over map
-	for name, score := range scores {
-		fmt.Printf("%s: %d\n", name, score)
-	}
+ // Iterate over map
+ for name, score := range scores {
+  fmt.Printf("%s: %d\n", name, score)
+ }
 }
 ```
 
@@ -567,23 +567,23 @@ package main
 import "fmt"
 
 func main() {
-	// Create slice with make
-	numbers := make([]int, 3) // length 3, initialized to zeros
-	fmt.Println(numbers)      // [0 0 0]
+ // Create slice with make
+ numbers := make([]int, 3) // length 3, initialized to zeros
+ fmt.Println(numbers)      // [0 0 0]
 
-	// Slicing (create sub-slice)
-	data := []int{10, 20, 30, 40, 50}
-	subset := data[1:4] // indices 1 to 3 (4 is exclusive)
-	fmt.Println(subset) // [20 30 40]
+ // Slicing (create sub-slice)
+ data := []int{10, 20, 30, 40, 50}
+ subset := data[1:4] // indices 1 to 3 (4 is exclusive)
+ fmt.Println(subset) // [20 30 40]
 
-	// Check length and capacity
-	fmt.Println("Length:", len(data))
-	fmt.Println("Capacity:", cap(data))
+ // Check length and capacity
+ fmt.Println("Length:", len(data))
+ fmt.Println("Capacity:", cap(data))
 
-	// Remove element (create new slice without it)
-	index := 2
-	result := append(data[:index], data[index+1:]...)
-	fmt.Println(result) // [10 20 40 50] (30 removed)
+ // Remove element (create new slice without it)
+ index := 2
+ result := append(data[:index], data[index+1:]...)
+ fmt.Println(result) // [10 20 40 50] (30 removed)
 }
 ```
 
@@ -597,22 +597,22 @@ package main
 import "fmt"
 
 func main() {
-	// Create empty map with make
-	ages := make(map[string]int)
+ // Create empty map with make
+ ages := make(map[string]int)
 
-	// Add entries
-	ages["Alice"] = 30
-	ages["Bob"] = 25
+ // Add entries
+ ages["Alice"] = 30
+ ages["Bob"] = 25
 
-	// Check if key exists
-	age, exists := ages["Alice"]
-	if exists {
-		fmt.Println("Alice's age:", age)
-	}
+ // Check if key exists
+ age, exists := ages["Alice"]
+ if exists {
+  fmt.Println("Alice's age:", age)
+ }
 
-	// Delete entry
-	delete(ages, "Bob")
-	fmt.Println(ages) // map[Alice:30]
+ // Delete entry
+ delete(ages, "Bob")
+ fmt.Println(ages) // map[Alice:30]
 }
 ```
 
@@ -630,20 +630,20 @@ Go code is organized in packages. Import standard library packages as needed:
 package main
 
 import (
-	"fmt"     // Formatting and printing
-	"strconv" // String conversion
-	"time"    // Time functions
+ "fmt"     // Formatting and printing
+ "strconv" // String conversion
+ "time"    // Time functions
 )
 
 func main() {
-	// Use functions from imported packages
-	fmt.Println("Hello")
+ // Use functions from imported packages
+ fmt.Println("Hello")
 
-	now := time.Now()
-	fmt.Println("Current time:", now)
+ now := time.Now()
+ fmt.Println("Current time:", now)
 
-	num, _ := strconv.Atoi("42")
-	fmt.Println("Parsed:", num)
+ num, _ := strconv.Atoi("42")
+ fmt.Println("Parsed:", num)
 }
 ```
 
@@ -670,32 +670,32 @@ Check and handle errors at every step:
 package main
 
 import (
-	"fmt"
-	"strconv"
+ "fmt"
+ "strconv"
 )
 
 func processData() error {
-	// Step 1: Parse string to number
-	num, err := strconv.Atoi("42")
-	if err != nil {
-		return fmt.Errorf("failed to parse: %w", err)
-	}
+ // Step 1: Parse string to number
+ num, err := strconv.Atoi("42")
+ if err != nil {
+  return fmt.Errorf("failed to parse: %w", err)
+ }
 
-	// Step 2: Validate number
-	if num < 0 {
-		return fmt.Errorf("number must be positive: %d", num)
-	}
+ // Step 2: Validate number
+ if num < 0 {
+  return fmt.Errorf("number must be positive: %d", num)
+ }
 
-	// Step 3: Process
-	result := num * 2
-	fmt.Println("Result:", result)
-	return nil
+ // Step 3: Process
+ result := num * 2
+ fmt.Println("Result:", result)
+ return nil
 }
 
 func main() {
-	if err := processData(); err != nil {
-		fmt.Println("Error:", err)
-	}
+ if err := processData(); err != nil {
+  fmt.Println("Error:", err)
+ }
 }
 ```
 
@@ -709,23 +709,23 @@ package main
 import "fmt"
 
 func processFile(filename string) error {
-	fmt.Println("Opening file:", filename)
-	// Defer ensures this runs when function exits
-	defer fmt.Println("Closing file:", filename)
+ fmt.Println("Opening file:", filename)
+ // Defer ensures this runs when function exits
+ defer fmt.Println("Closing file:", filename)
 
-	// Do work with file...
-	fmt.Println("Processing file...")
+ // Do work with file...
+ fmt.Println("Processing file...")
 
-	// Even if error occurs, defer still runs
-	return nil
+ // Even if error occurs, defer still runs
+ return nil
 }
 
 func main() {
-	processFile("data.txt")
-	// Output:
-	// Opening file: data.txt
-	// Processing file...
-	// Closing file: data.txt
+ processFile("data.txt")
+ // Output:
+ // Opening file: data.txt
+ // Processing file...
+ // Closing file: data.txt
 }
 ```
 
@@ -740,37 +740,37 @@ import "fmt"
 
 // Interface defines contract
 type Speaker interface {
-	Speak() string
+ Speak() string
 }
 
 // Different types implement the same interface
 type Dog struct {
-	Name string
+ Name string
 }
 
 func (d Dog) Speak() string {
-	return "Woof!"
+ return "Woof!"
 }
 
 type Cat struct {
-	Name string
+ Name string
 }
 
 func (c Cat) Speak() string {
-	return "Meow!"
+ return "Meow!"
 }
 
 // Function works with any Speaker
 func makeItSpeak(s Speaker) {
-	fmt.Println(s.Speak())
+ fmt.Println(s.Speak())
 }
 
 func main() {
-	dog := Dog{Name: "Buddy"}
-	cat := Cat{Name: "Whiskers"}
+ dog := Dog{Name: "Buddy"}
+ cat := Cat{Name: "Whiskers"}
 
-	makeItSpeak(dog) // Woof!
-	makeItSpeak(cat) // Meow!
+ makeItSpeak(dog) // Woof!
+ makeItSpeak(cat) // Meow!
 }
 ```
 
@@ -782,33 +782,33 @@ Use `select` to wait on multiple channel operations:
 package main
 
 import (
-	"fmt"
-	"time"
+ "fmt"
+ "time"
 )
 
 func main() {
-	ch1 := make(chan string)
-	ch2 := make(chan string)
+ ch1 := make(chan string)
+ ch2 := make(chan string)
 
-	go func() {
-		time.Sleep(100 * time.Millisecond)
-		ch1 <- "from channel 1"
-	}()
+ go func() {
+  time.Sleep(100 * time.Millisecond)
+  ch1 <- "from channel 1"
+ }()
 
-	go func() {
-		time.Sleep(200 * time.Millisecond)
-		ch2 <- "from channel 2"
-	}()
+ go func() {
+  time.Sleep(200 * time.Millisecond)
+  ch2 <- "from channel 2"
+ }()
 
-	// Select waits for first available channel
-	select {
-	case msg1 := <-ch1:
-		fmt.Println("Received:", msg1)
-	case msg2 := <-ch2:
-		fmt.Println("Received:", msg2)
-	case <-time.After(300 * time.Millisecond):
-		fmt.Println("Timeout")
-	}
+ // Select waits for first available channel
+ select {
+ case msg1 := <-ch1:
+  fmt.Println("Received:", msg1)
+ case msg2 := <-ch2:
+  fmt.Println("Received:", msg2)
+ case <-time.After(300 * time.Millisecond):
+  fmt.Println("Timeout")
+ }
 }
 ```
 
@@ -823,21 +823,21 @@ Go requires you to use all declared variables:
 ```go
 // ❌ Error: x declared and not used
 func main() {
-	x := 42
+ x := 42
 }
 
 // ✅ Fix: Use the variable or remove it
 func main() {
-	x := 42
-	fmt.Println(x)
+ x := 42
+ fmt.Println(x)
 }
 
 // ✅ Or use blank identifier for intentionally ignored values
 func main() {
-	_, err := someFunction() // Ignore first return value
-	if err != nil {
-		// handle error
-	}
+ _, err := someFunction() // Ignore first return value
+ if err != nil {
+  // handle error
+ }
 }
 ```
 
@@ -867,9 +867,9 @@ fmt.Println(data[5])
 // ✅ Fix: Check length first
 data := []int{10, 20, 30}
 if len(data) > 5 {
-	fmt.Println(data[5])
+ fmt.Println(data[5])
 } else {
-	fmt.Println("Index out of range")
+ fmt.Println("Index out of range")
 }
 ```
 
@@ -880,19 +880,19 @@ Happens when goroutines wait forever on channels:
 ```go
 // ❌ Deadlock: nobody sends to channel
 func main() {
-	ch := make(chan int)
-	x := <-ch // Blocks forever waiting for value
-	fmt.Println(x)
+ ch := make(chan int)
+ x := <-ch // Blocks forever waiting for value
+ fmt.Println(x)
 }
 
 // ✅ Fix: Send value in goroutine
 func main() {
-	ch := make(chan int)
-	go func() {
-		ch <- 42
-	}()
-	x := <-ch
-	fmt.Println(x)
+ ch := make(chan int)
+ go func() {
+  ch <- 42
+ }()
+ x := <-ch
+ fmt.Println(x)
 }
 ```
 

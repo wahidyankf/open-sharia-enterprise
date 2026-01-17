@@ -535,7 +535,7 @@ Apply Gobuster in practical penetration testing workflows.
 
 ### Scenario 1: Web Application Assessment
 
-**Target**: Corporate web application at https://webapp.example.com
+**Target**: Corporate web application at <https://webapp.example.com>
 
 **Objectives**:
 
@@ -621,7 +621,7 @@ done
 
 **Key Findings to Document**:
 
-- Production: www.example.com, api.example.com
+- Production: <www.example.com>, api.example.com
 - Development: dev.example.com, test.example.com
 - Legacy: old.example.com, legacy.example.com
 - Internal: vpn.example.com, admin.example.com
@@ -685,7 +685,7 @@ gobuster dir -u http://example.com \
   --exclude-length 4523
 ```
 
-2. **Filter by content pattern**:
+1. **Filter by content pattern**:
 
 ```bash
 gobuster dir -u http://example.com \
@@ -742,20 +742,20 @@ Only use `-k` flag on systems you control or in testing environments. Skipping c
 curl -I http://example.com
 ```
 
-2. **Test with known existing path**:
+1. **Test with known existing path**:
 
 ```bash
 gobuster dir -u http://example.com -w <(echo "index")
 ```
 
-3. **Try different wordlist**:
+1. **Try different wordlist**:
 
 ```bash
 gobuster dir -u http://example.com \
   -w /usr/share/seclists/Discovery/Web-Content/raft-small-words.txt
 ```
 
-4. **Check status code filtering**:
+1. **Check status code filtering**:
 
 ```bash
 gobuster dir -u http://example.com \
@@ -763,7 +763,7 @@ gobuster dir -u http://example.com \
   -s 200,204,301,302,307,401,403,405,500
 ```
 
-5. **Increase verbosity**:
+1. **Increase verbosity**:
 
 ```bash
 gobuster dir -u http://example.com \

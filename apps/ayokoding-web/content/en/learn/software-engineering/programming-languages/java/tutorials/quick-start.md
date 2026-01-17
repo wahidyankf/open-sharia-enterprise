@@ -635,9 +635,9 @@ Ready to test your knowledge? Try these challenges using the concepts you've lea
 - Read first name from user
 - Read last name from user
 - Print three formats:
-  1.  "First Last" (normal format)
-  2.  "Last, First" (formal format)
-  3.  "F. Last" (abbreviated format)
+  1. "First Last" (normal format)
+  2. "Last, First" (formal format)
+  3. "F. Last" (abbreviated format)
 
 **Hint**: You'll need String methods like `charAt()` and string concatenation.
 
@@ -688,7 +688,7 @@ Ready to test your knowledge? Try these challenges using the concepts you've lea
 
 ## Next Steps: What to Learn Next
 
-### Congratulations! You've covered the basics.
+### Congratulations! You've covered the basics
 
 Now you have two paths:
 

@@ -1566,7 +1566,7 @@ Rust groups errors into two categories:
 1. **Recoverable** (Result<T, E>): File not found, invalid input
 2. **Unrecoverable** (panic!): Bugs, programmer errors
 
-### Unrecoverable Errors with panic!
+### Unrecoverable Errors with panic
 
 ```rust
 fn main() {
@@ -1577,7 +1577,7 @@ fn main() {
 **panic! backtrace**:
 
 ```bash
-$ RUST_BACKTRACE=1 cargo run
+RUST_BACKTRACE=1 cargo run
 ```
 
 Shows call stack when panic occurs.
@@ -2213,7 +2213,7 @@ impl Rectangle {
 }
 ```
 
-### Checking Results with assert_eq! and assert_ne!
+### Checking Results with assert_eq! and assert_ne
 
 ```rust
 pub fn add_two(a: i32) -> i32 {

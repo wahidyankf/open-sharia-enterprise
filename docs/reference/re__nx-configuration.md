@@ -336,12 +336,12 @@ Available Nx tasks for this project.
 
 ```json
 {
-	"[target-name]": {
-		"executor": "nx:run-commands",
-		"options": { ... },
-		"outputs": [ ... ],
-		"dependsOn": [ ... ]
-	}
+ "[target-name]": {
+  "executor": "nx:run-commands",
+  "options": { ... },
+  "outputs": [ ... ],
+  "dependsOn": [ ... ]
+ }
 }
 ```
 

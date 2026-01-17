@@ -96,7 +96,7 @@ Before moving forward, verify:
 - [ ] You can create tables and insert data
 - [ ] You can query data with SELECT
 
-## 🎉 You're Done!
+## 🎉 You're Done
 
 You've successfully learned basic SQL operations. You're ready for more advanced queries.
 

@@ -92,13 +92,13 @@ But has not completed onboarding
 
 ```gherkin
 Scenario: [Concise description of behavior]
-	Given [initial context]
-	And [additional context]
-	When [action occurs]
-	And [additional action]
-	Then [expected outcome]
-	And [additional outcome]
-	But [constraint or exception]
+ Given [initial context]
+ And [additional context]
+ When [action occurs]
+ And [additional action]
+ Then [expected outcome]
+ And [additional outcome]
+ But [constraint or exception]
 ```
 
 ## Best Practices
@@ -177,15 +177,15 @@ Then the user should feel confident their account was created
 
 ```gherkin
 Scenario Outline: Password validation
-	Given a user enters password "<password>"
-	Then validation should return "<result>"
-	And show message "<message>"
+ Given a user enters password "<password>"
+ Then validation should return "<result>"
+ And show message "<message>"
 
-	Examples:
-		| password   | result | message                          |
-		| abc        | fail   | Password must be at least 8 chars |
-		| abcd1234   | fail   | Password must include uppercase   |
-		| Abcd1234   | pass   | Password meets requirements       |
+ Examples:
+  | password   | result | message                          |
+  | abc        | fail   | Password must be at least 8 chars |
+  | abcd1234   | fail   | Password must include uppercase   |
+  | Abcd1234   | pass   | Password meets requirements       |
 ```
 
 ## Common Patterns
@@ -196,72 +196,72 @@ Scenario Outline: Password validation
 
 ```gherkin
 Scenario: Create new project
-	Given the user is logged in
-	When the user creates a project with name "My Project"
-	And sets visibility to "Private"
-	Then the project should appear in the projects list
-	And the user should be set as owner
+ Given the user is logged in
+ When the user creates a project with name "My Project"
+ And sets visibility to "Private"
+ Then the project should appear in the projects list
+ And the user should be set as owner
 ```
 
 **Read**:
 
 ```gherkin
 Scenario: View project details
-	Given a project "My Project" exists
-	When the user navigates to the project page
-	Then the project name should be displayed
-	And the project metadata should be visible
+ Given a project "My Project" exists
+ When the user navigates to the project page
+ Then the project name should be displayed
+ And the project metadata should be visible
 ```
 
 **Update**:
 
 ```gherkin
 Scenario: Update project settings
-	Given a project "My Project" exists with visibility "Private"
-	When the user changes visibility to "Public"
-	And saves the changes
-	Then the project visibility should be "Public"
-	And other users should be able to find the project
+ Given a project "My Project" exists with visibility "Private"
+ When the user changes visibility to "Public"
+ And saves the changes
+ Then the project visibility should be "Public"
+ And other users should be able to find the project
 ```
 
 **Delete**:
 
 ```gherkin
 Scenario: Delete project
-	Given a project "My Project" exists
-	When the user deletes the project
-	And confirms the deletion
-	Then the project should be removed from the database
-	And the user should be redirected to the projects list
+ Given a project "My Project" exists
+ When the user deletes the project
+ And confirms the deletion
+ Then the project should be removed from the database
+ And the user should be redirected to the projects list
 ```
 
 ### Authentication & Authorization
 
 ```gherkin
 Scenario: Admin user accesses admin panel
-	Given a user with role "Admin"
-	And the user is logged in
-	When the user navigates to "/admin"
-	Then the admin panel should be accessible
+ Given a user with role "Admin"
+ And the user is logged in
+ When the user navigates to "/admin"
+ Then the admin panel should be accessible
 
 Scenario: Regular user cannot access admin panel
-	Given a user with role "Member"
-	And the user is logged in
-	When the user attempts to navigate to "/admin"
-	Then access should be denied with 403 Forbidden
-	And the user should see "Insufficient permissions" message
+ Given a user with role "Member"
+ And the user is logged in
+ When the user attempts to navigate to "/admin"
+ Then access should be denied with 403 Forbidden
+ And the user should see "Insufficient permissions" message
 ```
 
 ### Error Handling
 
 ```gherkin
 Scenario: Handle network timeout gracefully
-	Given the API server is unresponsive
-	When the user submits a form
-	And waits more than 30 seconds
-	Then a timeout error should be displayed
-	And the form data should be preserved
-	And the user should be prompted to retry
+ Given the API server is unresponsive
+ When the user submits a form
+ And waits more than 30 seconds
+ Then a timeout error should be displayed
+ And the form data should be preserved
+ And the user should be prompted to retry
 ```
 
 ## Real-World Examples
@@ -270,29 +270,29 @@ Scenario: Handle network timeout gracefully
 
 ```gherkin
 Scenario: User successfully creates account with valid information
-	Given the registration page is loaded
-	When the user enters email "newuser@example.com"
-	And enters password "SecurePass123!"
-	And enters password confirmation "SecurePass123!"
-	And accepts terms of service
-	And clicks "Create Account"
-	Then account should be created in database
-	And confirmation email should be sent to "newuser@example.com"
-	And user should be redirected to dashboard
-	And session should be authenticated
+ Given the registration page is loaded
+ When the user enters email "newuser@example.com"
+ And enters password "SecurePass123!"
+ And enters password confirmation "SecurePass123!"
+ And accepts terms of service
+ And clicks "Create Account"
+ Then account should be created in database
+ And confirmation email should be sent to "newuser@example.com"
+ And user should be redirected to dashboard
+ And session should be authenticated
 ```
 
 ### Example 2: Content Validation (from 2025-12-03\_\_golang-full-set-tutorials)
 
 ```gherkin
 Scenario: Tutorial content passes quality validation
-	Given a tutorial file "01-hello-world.md"
-	When the validator checks the tutorial
-	Then frontmatter should include required fields (title, description, level, topics)
-	And code examples should be syntax-highlighted
-	And all internal links should be valid
-	And no broken external links should exist
-	And Mermaid diagrams should use accessible color palette
+ Given a tutorial file "01-hello-world.md"
+ When the validator checks the tutorial
+ Then frontmatter should include required fields (title, description, level, topics)
+ And code examples should be syntax-highlighted
+ And all internal links should be valid
+ And no broken external links should exist
+ And Mermaid diagrams should use accessible color palette
 ```
 
 ## Anti-Patterns
@@ -321,7 +321,7 @@ Then the cache should be invalidated
 
 ```gherkin
 Scenario: Complete user workflow
-	[50 lines covering registration, login, profile update, logout]
+ [50 lines covering registration, login, profile update, logout]
 ```
 
 **Better**: Split into separate scenarios (one behavior each)
@@ -434,20 +434,20 @@ def step_impl(context):
 // features/login.feature (Gherkin)
 // login_test.go
 func (s *Suite) aUserWithEmail(email string) error {
-	s.user = createUser(email)
-	return nil
+ s.user = createUser(email)
+ return nil
 }
 
 func (s *Suite) theUserLogsInWithCorrectPassword() error {
-	s.response = login(s.user.Email, s.user.Password)
-	return nil
+ s.response = login(s.user.Email, s.user.Password)
+ return nil
 }
 
 func (s *Suite) theUserShouldBeAuthenticated() error {
-	if !s.response.Authenticated {
-		return fmt.Errorf("expected user to be authenticated")
-	}
-	return nil
+ if !s.response.Authenticated {
+  return fmt.Errorf("expected user to be authenticated")
+ }
+ return nil
 }
 ```
 
@@ -457,21 +457,21 @@ func (s *Suite) theUserShouldBeAuthenticated() error {
 
 ```mermaid
 graph TD
-	A[Write Gherkin Scenario] -->|Define behavior| B[Scenario: Login Success]
-	B --> C[Given: Initial state]
-	C --> D[When: User action]
-	D --> E[Then: Expected outcome]
-	E --> F{Implement Feature}
-	F -->|Code written| G[Write Step Definitions]
-	G --> H[Run Automated Tests]
-	H -->|Pass| I[Feature Complete ]
-	H -->|Fail| J[Fix Implementation]
-	J --> H
+ A[Write Gherkin Scenario] -->|Define behavior| B[Scenario: Login Success]
+ B --> C[Given: Initial state]
+ C --> D[When: User action]
+ D --> E[Then: Expected outcome]
+ E --> F{Implement Feature}
+ F -->|Code written| G[Write Step Definitions]
+ G --> H[Run Automated Tests]
+ H -->|Pass| I[Feature Complete ]
+ H -->|Fail| J[Fix Implementation]
+ J --> H
 
-	style A fill:#0173B2,stroke:#000,color:#fff
-	style B fill:#DE8F05,stroke:#000,color:#000
-	style I fill:#029E73,stroke:#000,color:#fff
-	style J fill:#CC78BC,stroke:#000,color:#fff
+ style A fill:#0173B2,stroke:#000,color:#fff
+ style B fill:#DE8F05,stroke:#000,color:#000
+ style I fill:#029E73,stroke:#000,color:#fff
+ style J fill:#CC78BC,stroke:#000,color:#fff
 ```
 
 ## Related Conventions
