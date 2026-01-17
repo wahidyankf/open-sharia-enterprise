@@ -99,7 +99,7 @@ Fix repository-wide consistency issues including:
 
 **Why**: Enables autonomous agent operation without user approval prompts.
 
-See [AI Agents Convention - Writing to .opencode Folders](../../governance/development/agents/ex-ru-de-ag-ai-agents.md#writing-to-claude-folders).
+See [AI Agents Convention - Writing to .opencode Folders](../../../governance/development/agents/ai-agents.md#writing-to-claude-folders).
 
 ## Agent-Skill Duplication Fixes
 
@@ -267,10 +267,10 @@ See wow\_\_generating-validation-reports Skill for report structure.
 
 ## Related Documentation
 
-- [AI Agents Convention](../../governance/development/agents/ex-ru-de-ag-ai-agents.md) - Agent-Skill separation patterns
-- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/ex-ru-de-pa-maker-checker-fixer.md) - Three-stage workflow
-- [Fixer Confidence Levels](../../governance/development/quality/ex-ru-de-qu-fixer-confidence-levels.md) - Assessment criteria
-- [Temporary Files Convention](../../governance/development/infra/ex-ru-de-in-temporary-files.md) - Report standards
+- [AI Agents Convention](../../../governance/development/agents/ai-agents.md) - Agent-Skill separation patterns
+- [Maker-Checker-Fixer Pattern](../../../governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
+- [Fixer Confidence Levels](../../../governance/development/quality/fixer-confidence-levels.md) - Assessment criteria
+- [Temporary Files Convention](../../../governance/development/infra/temporary-files.md) - Report standards
 
 ## Process Summary
 
@@ -290,8 +290,8 @@ See wow\_\_generating-validation-reports Skill for report structure.
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [Repository Governance Architecture](../../rulesrepository-governance-architecture.md)
+- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
+- [Repository Governance Architecture](../../../governance/repository-governance-architecture.md)
 
 **Related Agents**:
 
@@ -300,8 +300,8 @@ See wow\_\_generating-validation-reports Skill for report structure.
 
 **Related Conventions**:
 
-- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
-- [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md)
+- [AI Agents Convention](../../../governance/development/agents/ai-agents.md)
+- [Fixer Confidence Levels](../../../governance/development/quality/fixer-confidence-levels.md)
 
 **Skills**:
 

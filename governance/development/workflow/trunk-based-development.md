@@ -62,16 +62,16 @@ This practice implements/respects the following conventions:
 
 TBD addresses common problems with long-lived feature branches:
 
-| Problem with Feature Branches        | TBD Solution                                   |
-| ------------------------------------ | ---------------------------------------------- |
-| ❌ Merge conflicts after weeks       | ✅ Daily integration prevents large conflicts  |
-| ❌ Stale branches diverge from trunk | ✅ Always working on current codebase          |
-| ❌ Integration testing delayed       | ✅ Continuous integration catches issues early |
-| ❌ Code review bottlenecks           | ✅ Small, frequent reviews are faster          |
-| ❌ "Integration hell" before release | ✅ Code is always in releasable state          |
-| ❌ Hard to coordinate teams          | ✅ Everyone sees changes immediately           |
-| ❌ Feature branches hide WIP         | ✅ Feature flags make incompleteness explicit  |
-| ❌ Delayed feedback from CI          | ✅ Immediate CI feedback on every commit       |
+| Problem with Feature Branches           | TBD Solution                                      |
+| --------------------------------------- | ------------------------------------------------- |
+| FAIL: Merge conflicts after weeks       | PASS: Daily integration prevents large conflicts  |
+| FAIL: Stale branches diverge from trunk | PASS: Always working on current codebase          |
+| FAIL: Integration testing delayed       | PASS: Continuous integration catches issues early |
+| FAIL: Code review bottlenecks           | PASS: Small, frequent reviews are faster          |
+| FAIL: "Integration hell" before release | PASS: Code is always in releasable state          |
+| FAIL: Hard to coordinate teams          | PASS: Everyone sees changes immediately           |
+| FAIL: Feature branches hide WIP         | PASS: Feature flags make incompleteness explicit  |
+| FAIL: Delayed feedback from CI          | PASS: Immediate CI feedback on every commit       |
 
 **Reference**: [TrunkBasedDevelopment.com](https://trunkbaseddevelopment.com/)
 
@@ -88,7 +88,7 @@ TBD addresses common problems with long-lived feature branches:
 
 **Default workflow**: Commit directly to `main` when:
 
-✅ **You should commit directly to `main` when**:
+PASS: **You should commit directly to `main` when**:
 
 - Change is small and well-tested
 - You're confident tests will pass
@@ -122,7 +122,7 @@ git push origin main
 
 **Only use branches when**:
 
-⚠️ **Exceptional cases where branches are appropriate**:
+**Exceptional cases where branches are appropriate**:
 
 - **Code review required**: Your team requires PR reviews (use branch for < 2 days)
 - **Experimental work**: Testing a risky approach that may be discarded
@@ -159,9 +159,9 @@ git push origin --delete feature/user-login
 
 **Branch lifespan rules**:
 
-- ✅ **< 1 day**: Ideal - merge same day you created it
-- ⚠️ **1-2 days**: Acceptable maximum
-- ❌ **> 2 days**: Too long - branch is stale, rebase or abandon
+- PASS: **< 1 day**: Ideal - merge same day you created it
+- **1-2 days**: Acceptable maximum
+- FAIL: **> 2 days**: Too long - branch is stale, rebase or abandon
 
 ### Feature Flags for Incomplete Work
 
@@ -226,7 +226,7 @@ if (betaUsers.includes(currentUser.email)) {
 4. **Enable in production**: Flip flag when feature is complete
 5. **Remove flag**: After feature is stable, remove flag and old code path
 
-**⚠️ Important**: Feature flags are temporary. Once a feature is stable, remove the flag and delete the old code path. Don't accumulate flags indefinitely.
+**Important**: Feature flags are temporary. Once a feature is stable, remove the flag and delete the old code path. Don't accumulate flags indefinitely.
 
 ### Continuous Integration
 
@@ -239,9 +239,9 @@ if (betaUsers.includes(currentUser.email)) {
 
 **CI failure is a high priority**:
 
-- ❌ **Never commit code that breaks CI**
-- ⚠️ **If CI fails**, fix immediately (highest priority)
-- 🔴 **Broken `main` blocks everyone** - fix or revert
+- FAIL: **Never commit code that breaks CI**
+- **If CI fails**, fix immediately (highest priority)
+- **Broken `main` blocks everyone** - fix or revert
 
 **Pre-push checklist**:
 
@@ -255,14 +255,14 @@ if (betaUsers.includes(currentUser.email)) {
 
 **TBD requires breaking work into small chunks**:
 
-✅ **Good incremental changes**:
+PASS: **Good incremental changes**:
 
 - Add a utility function (commit 1)
 - Add tests for the function (commit 2)
 - Use function in one component (commit 3)
 - Extend function for new use case (commit 4)
 
-❌ **Bad large changes**:
+FAIL: **Bad large changes**:
 
 - Rewrite entire authentication system in one commit
 - Implement 5 features together in one PR
@@ -307,10 +307,10 @@ While TBD emphasizes working on `main`, there are legitimate cases for short-liv
 
 If your team/organization mandates peer review via Pull Requests:
 
-- ✅ **Create branch** for PR workflow
-- ✅ **Get review within 24 hours** (not days)
-- ✅ **Merge immediately** after approval
-- ✅ **Delete branch** right after merge
+- PASS: **Create branch** for PR workflow
+- PASS: **Get review within 24 hours** (not days)
+- PASS: **Merge immediately** after approval
+- PASS: **Delete branch** right after merge
 
 **Minimize branch lifespan**: The goal is still rapid integration.
 
@@ -318,26 +318,26 @@ If your team/organization mandates peer review via Pull Requests:
 
 When exploring a new approach with high uncertainty:
 
-- ✅ **Create branch** for experimentation
-- ✅ **Set time limit** (e.g., "1 day to spike this approach")
-- ✅ **Decision point**: Keep and merge, or discard entirely
-- ✅ **Don't let spikes become features**: Decide quickly
+- PASS: **Create branch** for experimentation
+- PASS: **Set time limit** (e.g., "1 day to spike this approach")
+- PASS: **Decision point**: Keep and merge, or discard entirely
+- PASS: **Don't let spikes become features**: Decide quickly
 
 ### External Contributors
 
 When accepting contributions from outside the team:
 
-- ✅ **Fork + PR workflow** is standard
-- ✅ **Review and merge quickly** to reduce staleness
-- ✅ **Guide contributor** to make small, focused PRs
+- PASS: **Fork + PR workflow** is standard
+- PASS: **Review and merge quickly** to reduce staleness
+- PASS: **Guide contributor** to make small, focused PRs
 
 ### Regulatory/Compliance
 
 If industry regulations require documented review:
 
-- ✅ **Use branches + PRs** for audit trail
-- ✅ **Still minimize branch lifespan** (review quickly)
-- ✅ **Automate compliance checks** in CI
+- PASS: **Use branches + PRs** for audit trail
+- PASS: **Still minimize branch lifespan** (review quickly)
+- PASS: **Automate compliance checks** in CI
 
 ### Environment/Deployment Branches
 
@@ -345,9 +345,9 @@ If industry regulations require documented review:
 
 Environment branches serve deployment purposes, not feature isolation:
 
-- ✅ **Production branches**: Trigger deployment to production environment
-- ✅ **Staging branches**: Trigger deployment to staging environment
-- ✅ **Environment-specific configuration**: Different settings per environment
+- PASS: **Production branches**: Trigger deployment to production environment
+- PASS: **Staging branches**: Trigger deployment to staging environment
+- PASS: **Environment-specific configuration**: Different settings per environment
 
 **Key distinction**: Environment branches reflect deployment state, not development work.
 
@@ -376,7 +376,7 @@ The `apps/ayokoding-web/` project uses a production deployment branch:
 
 ## What NOT to Do
 
-| ❌ Anti-Pattern                      | ✅ TBD Approach                                                                             |
+| FAIL: Anti-Pattern                   | PASS: TBD Approach                                                                          |
 | ------------------------------------ | ------------------------------------------------------------------------------------------- |
 | Long-lived feature branches          | Commit to `main` with feature flags                                                         |
 | Branches per developer               | All developers commit to `main`                                                             |
@@ -395,9 +395,9 @@ The `apps/ayokoding-web/` project uses a production deployment branch:
 
 When creating project plans in `plans/` folder:
 
-- ✅ **Default assumption**: Implementation happens on `main`
-- ✅ **Don't specify branch**: Unless there's an explicit reason
-- ⚠️ **If branch needed**: Document why in plan (e.g., "requires isolated testing")
+- PASS: **Default assumption**: Implementation happens on `main`
+- PASS: **Don't specify branch**: Unless there's an explicit reason
+- **If branch needed**: Document why in plan (e.g., "requires isolated testing")
 
 **Example plan delivery.md**:
 
@@ -447,29 +447,29 @@ Only specify a branch in a plan if:
 
 Even with a small team, TBD provides benefits:
 
-- ✅ **Simplified workflow**: No mental overhead of managing multiple branches
-- ✅ **No merge conflicts**: Less time diverged = fewer conflicts
-- ✅ **Faster feedback**: CI runs on every commit
-- ✅ **Clear history**: Linear commit history is easy to understand
-- ✅ **No stale code**: Everything is current
+- PASS: **Simplified workflow**: No mental overhead of managing multiple branches
+- PASS: **No merge conflicts**: Less time diverged = fewer conflicts
+- PASS: **Faster feedback**: CI runs on every commit
+- PASS: **Clear history**: Linear commit history is easy to understand
+- PASS: **No stale code**: Everything is current
 
 ### For Scaling the Team
 
 As the team grows, TBD prevents common scaling problems:
 
-- ✅ **Coordination**: Everyone works on same codebase, sees changes immediately
-- ✅ **Onboarding**: Simpler workflow for new contributors
-- ✅ **Accountability**: Commits are visible, encouraging quality
-- ✅ **Release readiness**: `main` is always releasable
+- PASS: **Coordination**: Everyone works on same codebase, sees changes immediately
+- PASS: **Onboarding**: Simpler workflow for new contributors
+- PASS: **Accountability**: Commits are visible, encouraging quality
+- PASS: **Release readiness**: `main` is always releasable
 
 ### For Continuous Deployment
 
 TBD enables automated deployment:
 
-- ✅ **Deployment from `main`**: Every commit can deploy to staging
-- ✅ **Feature flags**: Control production rollouts without branches
-- ✅ **Rapid fixes**: Hotfixes commit to `main` and deploy immediately
-- ✅ **Rollback**: Revert commit or toggle flag off
+- PASS: **Deployment from `main`**: Every commit can deploy to staging
+- PASS: **Feature flags**: Control production rollouts without branches
+- PASS: **Rapid fixes**: Hotfixes commit to `main` and deploy immediately
+- PASS: **Rollback**: Revert commit or toggle flag off
 
 ## Migration from Feature Branches
 
@@ -497,27 +497,27 @@ If you're used to feature-branch workflows (GitFlow, GitHub Flow), here's how to
 
 **"What if I break `main`?"**
 
-- ✅ Tests and CI catch most issues before push
-- ✅ Rapid revert if something slips through
-- ✅ Feature flags hide incomplete features
+- PASS: Tests and CI catch most issues before push
+- PASS: Rapid revert if something slips through
+- PASS: Feature flags hide incomplete features
 
 **"What if I need to work on multiple things?"**
 
-- ✅ Finish one thing before starting another
-- ✅ Use feature flags to work incrementally
-- ✅ Commit small pieces, don't wait for "done"
+- PASS: Finish one thing before starting another
+- PASS: Use feature flags to work incrementally
+- PASS: Commit small pieces, don't wait for "done"
 
 **"What about code review?"**
 
-- ✅ Review can happen post-commit (async)
-- ✅ Or use very short-lived PR branches (< 1 day)
-- ✅ Pair/mob programming provides real-time review
+- PASS: Review can happen post-commit (async)
+- PASS: Or use very short-lived PR branches (< 1 day)
+- PASS: Pair/mob programming provides real-time review
 
 **"What if I'm not confident in my code?"**
 
-- ✅ Write tests first (TDD)
-- ✅ Use feature flags to isolate risk
-- ✅ Commit small changes, easier to verify
+- PASS: Write tests first (TDD)
+- PASS: Use feature flags to isolate risk
+- PASS: Commit small changes, easier to verify
 
 ## Related Practices
 
@@ -533,7 +533,7 @@ TBD works best when combined with:
 
 - **[TrunkBasedDevelopment.com](https://trunkbaseddevelopment.com/)** - Official TBD resource with detailed guides
 - **Conventional Commits**: [Commit Message Convention](./commit-messages.md)
-- **Development Practices**: [Development Index](../README.md)
+- **Development Practices**: [Development Index](./README.md)
 
 ---
 

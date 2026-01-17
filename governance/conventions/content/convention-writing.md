@@ -32,7 +32,7 @@ Convention documents define **how to write and format documentation** in this re
 
 ### What Belongs in conventions/
 
-**✅ Documentation writing and formatting standards:**
+**PASS: Documentation writing and formatting standards:**
 
 - Markdown syntax and formatting (linking, file naming, indentation)
 - Content organization frameworks (Diátaxis, tutorials, plans)
@@ -43,7 +43,7 @@ Convention documents define **how to write and format documentation** in this re
 
 ### What Does NOT Belong in conventions/
 
-**❌ Software development practices** (use `governance/development/` instead):
+**FAIL: Software development practices** (use `governance/development/` instead):
 
 - Development workflows (git, commits, testing, BDD)
 - Build processes and tooling
@@ -191,11 +191,11 @@ Content with examples
 ```markdown
 ## Examples
 
-### Good Examples ✅
+### Good Examples
 
 Concrete examples showing correct usage
 
-### Bad Examples ❌
+### Bad Examples
 
 Concrete examples showing what to avoid (with explanations)
 ```
@@ -207,9 +207,9 @@ Concrete examples showing what to avoid (with explanations)
 Use tables to contrast approaches:
 
 ```markdown
-| Scenario  | ✅ Correct | ❌ Incorrect | Why         |
-| --------- | ---------- | ------------ | ----------- |
-| Example 1 | Good way   | Bad way      | Explanation |
+| Scenario  | PASS: Correct | FAIL: Incorrect | Why         |
+| --------- | ------------- | --------------- | ----------- |
+| Example 1 | Good way      | Bad way         | Explanation |
 ```
 
 #### 9. Edge Cases / Special Considerations (H2)
@@ -273,7 +273,7 @@ Before publishing a convention document, verify:
 
 - [ ] Uses clear, imperative language ("Use X", not "You could use X")
 - [ ] Defines all technical terms or links to definitions
-- [ ] Examples show both correct ✅ and incorrect ❌ usage
+- [ ] Examples show both correct PASS: and incorrect FAIL: usage
 - [ ] Rationale provided for non-obvious rules
 
 ### Usability
@@ -285,8 +285,7 @@ Before publishing a convention document, verify:
 
 ### Convention Compliance
 
-- [ ] Follows [File Naming Convention](../meta/\*.md` pattern
-- [ ] Follows [Linking Convention](../formatting/linking.md) - Relative paths with `.md`
+- [ ] Follows [File Naming Convention](../formatting/linking.md) - Relative paths with `.md`
 - [ ] Follows [Content Quality Principles](./quality.md) - Active voice, single H1, etc.
 - [ ] Uses TAB indentation for bullet items (Obsidian compatibility)
 - [ ] YAML frontmatter uses 2 spaces for indentation
@@ -309,24 +308,24 @@ Before publishing a convention document, verify:
 
 ### Create a NEW convention when:
 
-- ✅ Topic addresses a distinct concern not covered by existing conventions
-- ✅ Scope is clearly defined and non-overlapping
-- ✅ Convention will be referenced by multiple documents or agents
-- ✅ Topic requires >500 words of unique content
+- PASS: Topic addresses a distinct concern not covered by existing conventions
+- PASS: Scope is clearly defined and non-overlapping
+- PASS: Convention will be referenced by multiple documents or agents
+- PASS: Topic requires >500 words of unique content
 
 ### Update EXISTING convention when:
 
-- ✅ Topic extends or clarifies existing convention's scope
-- ✅ New content fits naturally into existing structure
-- ✅ Overlap with existing convention is >60%
-- ✅ Addition is <500 words and doesn't warrant separate doc
+- PASS: Topic extends or clarifies existing convention's scope
+- PASS: New content fits naturally into existing structure
+- PASS: Overlap with existing convention is >60%
+- PASS: Addition is <500 words and doesn't warrant separate doc
 
 ### Consider MERGING when:
 
-- ✅ Two conventions overlap significantly (>60% shared scope)
-- ✅ Conventions are always referenced together
-- ✅ Separation causes confusion about which to follow
-- ✅ Combined length would still be <3000 lines
+- PASS: Two conventions overlap significantly (>60% shared scope)
+- PASS: Conventions are always referenced together
+- PASS: Separation causes confusion about which to follow
+- PASS: Combined length would still be <3000 lines
 
 ### Decision Process:
 
@@ -438,7 +437,7 @@ Looking for inspiration? These conventions exemplify different structural approa
 
 ## Examples
 
-### Good Convention Document Structure ✅
+### Good Convention Document Structure
 
 ```markdown
 ---
@@ -484,11 +483,11 @@ More guidance with concrete examples.
 
 ## Examples
 
-### Good Examples ✅
+### Good Examples
 
 Showing correct usage.
 
-### Bad Examples ❌
+### Bad Examples
 
 Showing what to avoid and why.
 
@@ -503,7 +502,7 @@ Showing what to avoid and why.
 - `example-agent` - Uses this convention for validation
 ```
 
-### Bad Convention Document Structure ❌
+### Bad Convention Document Structure
 
 ```markdown
 # Some Topic
@@ -520,19 +519,19 @@ The end.
 
 **Problems:**
 
-- ❌ No frontmatter
-- ❌ No clear purpose or scope
-- ❌ No examples
-- ❌ No references
-- ❌ Vague, unconvincing content
-- ❌ No rationale for rules
+- FAIL: No frontmatter
+- FAIL: No clear purpose or scope
+- FAIL: No examples
+- FAIL: No references
+- FAIL: Vague, unconvincing content
+- FAIL: No rationale for rules
 
 ## Common Mistakes to Avoid
 
-| Mistake                 | ❌ Problem                                          | ✅ Solution                                         |
+| Mistake                 | FAIL: Problem                                       | PASS: Solution                                      |
 | ----------------------- | --------------------------------------------------- | --------------------------------------------------- |
 | **Scope creep**         | Convention tries to cover too many unrelated topics | Define clear scope; split if needed                 |
-| **No examples**         | Only abstract rules, no concrete demonstrations     | Add good ✅ and bad ❌ examples                     |
+| **No examples**         | Only abstract rules, no concrete demonstrations     | Add good PASS: and bad FAIL: examples               |
 | **Missing rationale**   | Rules without explanation of "why"                  | Explain reasoning, especially for non-obvious rules |
 | **Orphaned convention** | Not referenced anywhere, not used by agents         | Ensure integration with agents or processes         |
 | **Overlapping scope**   | Duplicates content from other conventions           | Consolidate or clearly delineate boundaries         |
@@ -579,7 +578,7 @@ When creating a convention:
 
 **Development Practices:**
 
-- [AI Agents Convention](../development/agents/ai-agents.md) - How to create AI agents (parallel meta-doc for development/)
+- [AI Agents Convention](../../development/agents/ai-agents.md) - How to create AI agents (parallel meta-doc for development/)
 
 **Repository Guidance:**
 

@@ -128,8 +128,8 @@ Update status, add summary.
 
 ## Reference Documentation
 
-- [AGENTS.md](../../CLAUDE.md)
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
+- [AGENTS.md](../../../CLAUDE.md)
+- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
 
 **Skills:**
 

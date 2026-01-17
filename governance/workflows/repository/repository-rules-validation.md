@@ -48,9 +48,9 @@ outputs:
 
 This workflow validates **source definitions only** in `governance/`. It does NOT validate generated directories:
 
-- ✅ **Validates**: `governance/` (principles, conventions, development practices)
-- ❌ **Skips**: `.opencode/agent/` (auto-generated from `.claude/agents/` - validate via sync script)
-- ❌ **Skips**: `.opencode/skill/` (auto-synced from `.claude/skills/` - validate via sync script)
+- PASS: **Validates**: `governance/` (principles, conventions, development practices)
+- FAIL: **Skips**: `.opencode/agent/` (auto-generated from `.claude/agents/` - validate via sync script)
+- FAIL: **Skips**: `.opencode/skill/` (auto-synced from `.claude/skills/` - validate via sync script)
 
 **Generated Output Validation**: Use CLI validation commands for validating generated content. This workflow ensures SOURCE is correct, then sync commands validate output generation.
 
@@ -353,9 +353,9 @@ This workflow ensures repository consistency through iterative validation and fi
 
 ## Principles Respected
 
-- ✅ **Explicit Over Implicit**: All steps, conditions, and termination criteria are explicit
-- ✅ **Automation Over Manual**: Fully automated validation and fixing without human intervention
-- ✅ **Simplicity Over Complexity**: Clear linear flow with loop control
-- ✅ **Accessibility First**: Generates human-readable audit reports
-- ✅ **Progressive Disclosure**: Can run with different iteration limits
-- ✅ **No Time Estimates**: Focus on quality outcomes, not duration
+- PASS: **Explicit Over Implicit**: All steps, conditions, and termination criteria are explicit
+- PASS: **Automation Over Manual**: Fully automated validation and fixing without human intervention
+- PASS: **Simplicity Over Complexity**: Clear linear flow with loop control
+- PASS: **Accessibility First**: Generates human-readable audit reports
+- PASS: **Progressive Disclosure**: Can run with different iteration limits
+- PASS: **No Time Estimates**: Focus on quality outcomes, not duration

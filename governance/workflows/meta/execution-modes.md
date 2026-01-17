@@ -53,11 +53,11 @@ AI: [Executes workflow steps directly]
 
 ### Use Manual Mode When:
 
-- ✅ Workflow requires persistent file changes (Write, Edit operations)
-- ✅ You want step-by-step visibility and control
-- ✅ You want to review changes before continuing
-- ✅ Workflow involves validation and fixing cycles
-- ✅ You need real audit/fix reports in generated-reports/
+- PASS: Workflow requires persistent file changes (Write, Edit operations)
+- PASS: You want step-by-step visibility and control
+- PASS: You want to review changes before continuing
+- PASS: Workflow involves validation and fixing cycles
+- PASS: You need real audit/fix reports in generated-reports/
 
 **Examples**:
 
@@ -68,10 +68,10 @@ AI: [Executes workflow steps directly]
 
 ### Use Task Tool (Isolated) When:
 
-- ✅ Agent only reads and analyzes (no file modifications needed)
-- ✅ Exploratory research and recommendations
-- ✅ Information gathering without side effects
-- ✅ Analysis that doesn't require persisting results
+- PASS: Agent only reads and analyzes (no file modifications needed)
+- PASS: Exploratory research and recommendations
+- PASS: Information gathering without side effects
+- PASS: Analysis that doesn't require persisting results
 
 **Examples**:
 
@@ -141,9 +141,9 @@ If findings > 0 AND (no max-iterations OR iterations < max-iterations):
 
 ```markdown
 1. Report final status:
-   - ✅ Success (zero findings)
-   - ⚠️ Partial (findings remain after max-iterations)
-   - ❌ Failure (errors during execution)
+   - PASS: Success (zero findings)
+   - Partial (findings remain after max-iterations)
+   - FAIL: Failure (errors during execution)
 2. Show git status (modified files)
 3. Wait for user commit approval
 ```
@@ -203,19 +203,19 @@ In the future, a workflow runner could be developed to automate workflow executi
 
 **File Operations** (when executing workflow logic directly):
 
-- ✅ Use Write tool for creating new files (audit reports, fix reports)
-- ✅ Use Edit tool for modifying existing files (applying fixes)
-- ✅ Use Bash tool for UUID generation, timestamps
-- ✅ All operations persist to actual filesystem
+- PASS: Use Write tool for creating new files (audit reports, fix reports)
+- PASS: Use Edit tool for modifying existing files (applying fixes)
+- PASS: Use Bash tool for UUID generation, timestamps
+- PASS: All operations persist to actual filesystem
 
 **Agent Invocation** (during workflow execution):
 
-- ✅ Execute agent logic directly in main context
-- ✅ Follow agent's validation/fixing rules manually
+- PASS: Execute agent logic directly in main context
+- PASS: Follow agent's validation/fixing rules manually
 
 ## Common Pitfalls
 
-### ❌ Pitfall 1: Using Task tool for workflows requiring persistence
+### FAIL: Pitfall 1: Using Task tool for workflows requiring persistence
 
 **Wrong**:
 ```
@@ -233,13 +233,13 @@ Execute fixer logic directly → fixes persist
 
 ```
 
-### ❌ Pitfall 2: Expecting automated iteration in manual mode
+### FAIL: Pitfall 2: Expecting automated iteration in manual mode
 
 **Wrong**: Assume workflow will iterate automatically until zero findings
 
 **Right**: Manually control iteration, review between cycles
 
-### ❌ Pitfall 3: Not checking git status after manual workflow
+### FAIL: Pitfall 3: Not checking git status after manual workflow
 
 **Wrong**: Assume changes didn't happen because no visual feedback
 
@@ -247,21 +247,21 @@ Execute fixer logic directly → fixes persist
 
 ## Principles Respected
 
-- ✅ **Explicit Over Implicit**: Clear description of execution mode behavior
-- ✅ **Simplicity Over Complexity**: Manual mode is simple and transparent
-- ✅ **Documentation First**: Document current reality, not ideal future state
-- ✅ **No Time Estimates**: Focus on what to do, not how long it takes
+- PASS: **Explicit Over Implicit**: Clear description of execution mode behavior
+- PASS: **Simplicity Over Complexity**: Manual mode is simple and transparent
+- PASS: **Documentation First**: Document current reality, not ideal future state
+- PASS: **No Time Estimates**: Focus on what to do, not how long it takes
 
 ## Conventions Implemented/Respected
 
-- ✅ **Workflow Pattern Convention**: Defines execution mode for workflows
-- ✅ **AI Agents Convention**: Explains agent invocation patterns
-- ✅ **Temporary Files Convention**: Audit/fix reports in generated-reports/
+- PASS: **Workflow Pattern Convention**: Defines execution mode for workflows
+- PASS: **AI Agents Convention**: Explains agent invocation patterns
+- PASS: **Temporary Files Convention**: Audit/fix reports in generated-reports/
 
 ## Related Documentation
 
-- [Workflow Pattern Convention](./workflow-pattern.md) - Overall workflow structure
-- [Plan Quality Gate Workflow](../plan/quality-gate.md) - Example workflow using manual mode
+- [Workflow Pattern Convention](./workflow-identifier.md) - Overall workflow structure
+- [Plan Quality Gate Workflow](../docs/quality-gate.md) - Example workflow using manual mode
 - [AI Agents Convention](../../development/agents/ai-agents.md) - Agent invocation patterns
 - [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Validation workflow pattern
 

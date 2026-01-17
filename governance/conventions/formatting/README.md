@@ -36,10 +36,10 @@ These conventions define **HOW to format markdown content** including indentatio
 
 ## Related Documentation
 
-- [Conventions Index](../README.md) - All documentation conventions
+- [Conventions Index](./README.md) - All documentation conventions
 - [Accessibility First Principle](../../principles/content/accessibility-first.md) - Why accessibility matters
-- [Content Conventions](../content/README.md) - Content quality and writing standards
-- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
+- [Content Conventions](./README.md) - Content quality and writing standards
+- [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected
 

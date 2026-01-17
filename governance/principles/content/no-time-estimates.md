@@ -17,7 +17,7 @@ updated: 2025-12-24
 
 People work and learn at **vastly different speeds**. Focus on **outcomes and deliverables**, not arbitrary time constraints. Time estimates create pressure, anxiety, and artificial deadlines that harm learning and productivity.
 
-## 🌟 Vision Supported
+## Vision Supported
 
 This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of making Islamic enterprise accessible to developers, businesses, and individuals working at their own pace worldwide.
 
@@ -31,7 +31,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 
 **Vision alignment**: Democratization means meeting people where they are - in skill, time, and pace. Time estimates create artificial barriers that contradict the vision of universal accessibility.
 
-## 🎯 What
+## What
 
 **No Time Estimates** means:
 
@@ -49,7 +49,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 - Focus on duration over outcomes
 - Creates artificial pressure
 
-## 💡 Why
+## Why
 
 ### Benefits of Outcome Focus
 
@@ -79,13 +79,13 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 
 **All are valid**. Time estimates serve no one well.
 
-## 📋 How It Applies
+## How It Applies
 
 ### Tutorial Content
 
 **Context**: Educational documentation and learning materials.
 
-✅ **Outcome-Focused (Correct)**:
+PASS: **Outcome-Focused (Correct)**:
 
 ```markdown
 # React Quick Start
@@ -102,12 +102,12 @@ Coverage: 5-30% of React fundamentals
 
 **Why this works**: Describes WHAT you'll learn. No pressure. Clear outcomes.
 
-❌ **Time-Based (Avoid)**:
+FAIL: **Time-Based (Avoid)**:
 
 ```markdown
 # React Quick Start
 
-⏱️ Estimated time: 2-3 hours
+️ Estimated time: 2-3 hours
 
 This tutorial will teach you React basics in under 3 hours.
 ```
@@ -118,7 +118,7 @@ This tutorial will teach you React basics in under 3 hours.
 
 **Context**: Problem-solving documentation.
 
-✅ **Outcome-Focused (Correct)**:
+PASS: **Outcome-Focused (Correct)**:
 
 ```markdown
 # How to Deploy to Production
@@ -135,12 +135,12 @@ You'll have a working production deployment by the end.
 
 **Why this works**: Describes outcome (working deployment). No time pressure.
 
-❌ **Time-Based (Avoid)**:
+FAIL: **Time-Based (Avoid)**:
 
 ```markdown
 # How to Deploy to Production
 
-⏱️ Takes approximately 30-45 minutes
+️ Takes approximately 30-45 minutes
 
 Quick 30-minute deployment guide.
 ```
@@ -151,7 +151,7 @@ Quick 30-minute deployment guide.
 
 **Context**: Indicating tutorial depth.
 
-✅ **Coverage Percentages (Correct)**:
+PASS: **Coverage Percentages (Correct)**:
 
 ```markdown
 # Beginner Tutorial
@@ -169,7 +169,7 @@ Teaches fundamentals needed for 90% of real-world use cases.
 
 **Context**: Project management documents in `plans/`.
 
-✅ **Time Estimates Allowed (In Planning Context)**:
+PASS: **Time Estimates Allowed (In Planning Context)**:
 
 ```markdown
 # Project Plan
@@ -187,17 +187,17 @@ Tasks:
 
 **Not applicable to**: Educational content, tutorials, documentation, how-to guides.
 
-## 🚫 Anti-Patterns
+## Anti-Patterns
 
 ### Tutorial Time Estimates
 
-❌ **Problem**: Adding time estimates to educational content.
+FAIL: **Problem**: Adding time estimates to educational content.
 
 ```markdown
 # Python for Beginners
 
-⏱️ Total time: 10 hours
-📅 Suggested pace: 2 hours/day for 5 days
+️ Total time: 10 hours
+Suggested pace: 2 hours/day for 5 days
 
 - Day 1 (2 hours): Variables and data types
 - Day 2 (2 hours): Control flow
@@ -213,7 +213,7 @@ Tasks:
 
 ### "Quick" or "In X Minutes" Titles
 
-❌ **Problem**: Using time in titles.
+FAIL: **Problem**: Using time in titles.
 
 ```markdown
 - "React in 30 Minutes"
@@ -230,13 +230,13 @@ Tasks:
 
 ### Speed as a Selling Point
 
-❌ **Problem**: Emphasizing speed over mastery.
+FAIL: **Problem**: Emphasizing speed over mastery.
 
 ```markdown
 Learn React FAST! Complete this bootcamp in just 2 weeks!
 
-🚀 Rapid learning path
-⚡ Fast-track to employment
+Rapid learning path
+Fast-track to employment
 ```
 
 **Why it's bad**:
@@ -248,7 +248,7 @@ Learn React FAST! Complete this bootcamp in just 2 weeks!
 
 ### Comparing Learning Speeds
 
-❌ **Problem**: Suggesting "normal" learning speeds.
+FAIL: **Problem**: Suggesting "normal" learning speeds.
 
 ```markdown
 Most people complete this tutorial in 3-4 hours.
@@ -261,21 +261,21 @@ Most people complete this tutorial in 3-4 hours.
 - No basis for "most people" claim
 - Unhelpful and harmful
 
-## ✅ Best Practices
+## PASS: Best Practices
 
 ### 1. Describe Outcomes, Not Duration
 
 **Focus on what learners will achieve**:
 
 ```markdown
-✅ By the end of this tutorial, you'll be able to:
+PASS: By the end of this tutorial, you'll be able to:
 
 - Build REST APIs with Express
 - Implement authentication
 - Connect to databases
 - Deploy to production
 
-❌ This tutorial takes 4-6 hours
+FAIL: This tutorial takes 4-6 hours
 ```
 
 ### 2. Use Coverage Percentages for Depth
@@ -283,12 +283,12 @@ Most people complete this tutorial in 3-4 hours.
 **Indicate scope, not time**:
 
 ```markdown
-✅ Coverage: 60-85% of domain knowledge (intermediate depth)
+PASS: Coverage: 60-85% of domain knowledge (intermediate depth)
 
 This tutorial covers professional-level techniques for production
 systems. Builds on beginner foundation.
 
-❌ This is a 3-week intermediate course
+FAIL: This is a 3-week intermediate course
 ```
 
 ### 3. Provide Completion Criteria
@@ -296,13 +296,13 @@ systems. Builds on beginner foundation.
 **Describe how learners know they're done**:
 
 ```markdown
-✅ You've completed this tutorial when you can:
+PASS: You've completed this tutorial when you can:
 
 - [ ] Create components independently
 - [ ] Debug React applications
 - [ ] Build a working app from scratch
 
-❌ You should finish this in 2-3 days
+FAIL: You should finish this in 2-3 days
 ```
 
 ### 4. Use Section Headings, Not Time Blocks
@@ -310,13 +310,13 @@ systems. Builds on beginner foundation.
 **Organize by topic, not duration**:
 
 ```markdown
-✅ ## Core Concepts
+PASS: ## Core Concepts
 
 - Variables and types
 - Control flow
 - Functions
 
-❌ ## Day 1 (2 hours)
+FAIL: ## Day 1 (2 hours)
 
 - Variables and types
 - Control flow
@@ -327,13 +327,13 @@ systems. Builds on beginner foundation.
 **Value understanding, not completion time**:
 
 ```markdown
-✅ Take your time to understand each concept. Experiment with the
+PASS: Take your time to understand each concept. Experiment with the
 code examples. Learning thoroughly now saves time debugging later.
 
-❌ Try to complete each section in 30 minutes to stay on track.
+FAIL: Try to complete each section in 30 minutes to stay on track.
 ```
 
-## 📊 Examples from This Repository
+## Examples from This Repository
 
 ### Tutorial Naming Convention
 
@@ -365,14 +365,14 @@ try examples, and solve simple problems on their own.
 Do NOT include time estimates in educational or tutorial content.
 
 Forbidden:
-❌ "This tutorial takes 2-3 hours to complete"
-❌ "Estimated time: 45 minutes"
-❌ "You'll learn this in 30 minutes"
+FAIL: "This tutorial takes 2-3 hours to complete"
+FAIL: "Estimated time: 45 minutes"
+FAIL: "You'll learn this in 30 minutes"
 
 Correct:
-✅ "By the end of this tutorial, you'll be able to..."
-✅ "This tutorial covers the fundamentals of..."
-✅ "Coverage: 60-85% of domain knowledge (intermediate depth)"
+PASS: "By the end of this tutorial, you'll be able to..."
+PASS: "This tutorial covers the fundamentals of..."
+PASS: "Coverage: 60-85% of domain knowledge (intermediate depth)"
 ```
 
 ### Tutorial Structure
@@ -424,19 +424,19 @@ take 2-3 weeks" or "complete this in 30 minutes."
 Focus on WHAT needs to be done or learned, not HOW LONG it takes.
 ```
 
-## 🔗 Related Principles
+## Related Principles
 
 - [Progressive Disclosure](./progressive-disclosure.md) - Learn at your own pace through progressive levels
 - [Accessibility First](./accessibility-first.md) - Inclusive of different learning speeds
 - [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Simple outcomes, not complex schedules
 
-## 📚 Related Conventions
+## Related Conventions
 
 - [Tutorial Naming Convention](../../conventions/tutorial/naming.md) - Coverage percentages, not time estimates
 - [Tutorial Convention](../../conventions/tutorial/general.md) - Outcome-focused tutorial structure
 - [Content Quality Principles](../../conventions/content/quality.md) - Explicit no-time-estimates rule
 
-## 📖 References
+## References
 
 **Learning Science**:
 

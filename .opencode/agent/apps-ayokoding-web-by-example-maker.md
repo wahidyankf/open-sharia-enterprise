@@ -58,9 +58,9 @@ Create By Example tutorial content in `apps/ayokoding-web/content/` following ay
 
 **CRITICAL - Read these first**:
 
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Hextra theme, bilingual, weights, navigation
-- [By Example Content Standard](../../governance/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../governance/conventions/tutorial/naming.md) - By Example type definition
+- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md) - Hextra theme, bilingual, weights, navigation
+- [By Example Content Standard](../../../governance/conventions/tutorial/programming-language-content.md) - Annotation requirements
+- [Tutorial Naming Convention](../../../governance/conventions/tutorial/naming.md) - By Example type definition
 
 ## When to Use This Agent
 
@@ -204,10 +204,10 @@ The `docs-applying-content-quality` Skill provides general content quality stand
 
 **Project Guidance:**
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Complete ayokoding-web standards
-- [By Example Content Standard](../../governance/conventions/tutorial/ex-ru-co-tu-programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../governance/conventions/tutorial/naming.md) - By Example definition
+- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md) - Complete ayokoding-web standards
+- [By Example Content Standard](../../../governance/conventions/tutorial/programming-language-content.md) - Annotation requirements
+- [Tutorial Naming Convention](../../../governance/conventions/tutorial/naming.md) - By Example definition
 
 **Related Agents:**
 

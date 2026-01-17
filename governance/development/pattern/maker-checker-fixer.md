@@ -40,11 +40,11 @@ This practice implements/respects the following conventions:
 
 - **[Temporary Files Convention](../infra/temporary-files.md)**: All checker agents MUST write validation/audit reports to `generated-reports/` directory using pattern `{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md`. Fixer agents write fix reports to same directory with `__fix.md` suffix. Progressive writing requirement ensures audit history survives context compaction.
 
-- **[Timestamp Format Convention](../conventions/formatting/timestamp.md)**: Report filenames use UTC+7 timestamps in format `YYYY-MM-DD--HH-MM` (hyphen-separated for filesystem compatibility).
+- **[Timestamp Format Convention](../../conventions/formatting/timestamp.md)**: Report filenames use UTC+7 timestamps in format `YYYY-MM-DD--HH-MM` (hyphen-separated for filesystem compatibility).
 
-- **[Content Quality Principles](../conventions/content/quality.md)**: Checker agents validate content against quality standards (active voice, heading hierarchy, alt text, WCAG compliance). Fixer agents apply quality improvements when findings have HIGH confidence.
+- **[Content Quality Principles](../../conventions/content/quality.md)**: Checker agents validate content against quality standards (active voice, heading hierarchy, alt text, WCAG compliance). Fixer agents apply quality improvements when findings have HIGH confidence.
 
-## 📋 Overview
+## Overview
 
 ### What is the Maker-Checker-Fixer Pattern?
 
@@ -60,18 +60,18 @@ Each role is implemented as a separate agent with specific responsibilities and 
 
 **Without this pattern:**
 
-- ❌ Quality issues discovered after content creation
-- ❌ Manual validation is time-consuming and error-prone
-- ❌ No systematic remediation process
-- ❌ Inconsistent content quality across the repository
+- FAIL: Quality issues discovered after content creation
+- FAIL: Manual validation is time-consuming and error-prone
+- FAIL: No systematic remediation process
+- FAIL: Inconsistent content quality across the repository
 
 **With this pattern:**
 
-- ✅ Systematic validation of all content
-- ✅ Automated detection of convention violations
-- ✅ Safe, validated fix application
-- ✅ Iterative quality improvement
-- ✅ Audit trail for all changes
+- PASS: Systematic validation of all content
+- PASS: Automated detection of convention violations
+- PASS: Safe, validated fix application
+- PASS: Iterative quality improvement
+- PASS: Audit trail for all changes
 
 ### Scope
 
@@ -85,7 +85,7 @@ This pattern is used across **seven agent families**:
 6. **docs-\*** - Documentation factual accuracy
 7. **plan-\*** - Plan completeness and structure
 
-## 🎯 The Three Stages
+## The Three Stages
 
 ### Stage 1: Maker (Comprehensive Content Management)
 
@@ -117,11 +117,11 @@ This pattern is used across **seven agent families**:
 
 **Key Responsibilities**:
 
-- ✅ Create new content from scratch
-- ✅ Update existing content when requested
-- ✅ Adjust ALL dependencies (indices, cross-refs, navigation)
-- ✅ Follow all conventions during creation
-- ✅ Provide complete, production-ready content
+- PASS: Create new content from scratch
+- PASS: Update existing content when requested
+- PASS: Adjust ALL dependencies (indices, cross-refs, navigation)
+- PASS: Follow all conventions during creation
+- PASS: Provide complete, production-ready content
 
 **When to Use**: User wants to **create or update content** (not validate or fix)
 
@@ -174,20 +174,20 @@ Maker Agent (ayokoding-web-general-maker):
 
 **Key Responsibilities**:
 
-- ✅ Validate content against conventions
-- ✅ Generate audit reports with specific line numbers
-- ✅ Categorize issues by criticality (CRITICAL/HIGH/MEDIUM/LOW)
-- ✅ Provide actionable recommendations
-- ✅ Do NOT modify files being checked
+- PASS: Validate content against conventions
+- PASS: Generate audit reports with specific line numbers
+- PASS: Categorize issues by criticality (CRITICAL/HIGH/MEDIUM/LOW)
+- PASS: Provide actionable recommendations
+- PASS: Do NOT modify files being checked
 
 **Criticality Categorization** (see [Criticality Levels Convention](../quality/criticality-levels.md)):
 
 Checkers categorize findings by **importance/urgency**:
 
-- 🔴 **CRITICAL** - Breaks functionality, blocks users (must fix before publication)
-- 🟠 **HIGH** - Significant quality degradation, convention violations (should fix)
-- 🟡 **MEDIUM** - Minor quality issues, style inconsistencies (fix when convenient)
-- 🟢 **LOW** - Suggestions, optional improvements (consider for future)
+- **CRITICAL** - Breaks functionality, blocks users (must fix before publication)
+- **HIGH** - Significant quality degradation, convention violations (should fix)
+- **MEDIUM** - Minor quality issues, style inconsistencies (fix when convenient)
+- **LOW** - Suggestions, optional improvements (consider for future)
 
 **Report Format**: Findings grouped by criticality in standardized sections with emoji indicators for accessibility.
 
@@ -243,12 +243,12 @@ Checker Agent (ayokoding-web-general-checker):
 
 **Key Responsibilities**:
 
-- ✅ Read audit reports from checker agents
-- ✅ Re-validate each finding before applying fix
-- ✅ Apply HIGH confidence fixes automatically (priority-based)
-- ✅ Skip MEDIUM confidence (needs manual review)
-- ✅ Report FALSE_POSITIVE findings for checker improvement
-- ✅ Generate comprehensive fix reports
+- PASS: Read audit reports from checker agents
+- PASS: Re-validate each finding before applying fix
+- PASS: Apply HIGH confidence fixes automatically (priority-based)
+- PASS: Skip MEDIUM confidence (needs manual review)
+- PASS: Report FALSE_POSITIVE findings for checker improvement
+- PASS: Generate comprehensive fix reports
 
 **Priority-Based Execution** (see [Fixer Confidence Levels Convention - Integration](../quality/fixer-confidence-levels.md#integration-with-criticality-levels)):
 
@@ -283,7 +283,7 @@ Fixer Agent (ayokoding-web-general-fixer):
 6. Reports summary: 18 fixed, 4 manual review needed, 3 false positives detected
 ```
 
-## 🔄 Common Workflows
+## Common Workflows
 
 ### Basic Workflow: Create → Validate → Fix
 
@@ -359,7 +359,7 @@ Agent: ayokoding-web-general-fixer (applies validated fixes from audit)
 
 **When to use**: Minor updates to well-maintained content
 
-## 🎨 Agent Categorization by Color
+## Agent Categorization by Color
 
 The maker-checker-fixer pattern aligns with the agent color categorization system:
 
@@ -373,7 +373,7 @@ The maker-checker-fixer pattern aligns with the agent color categorization syste
 
 See [AI Agents Convention - Agent Color Categorization](../agents/ai-agents.md#agent-color-categorization) for complete details.
 
-## 📊 The Five Agent Families
+## The Five Agent Families
 
 ### 1. repo-rules-\* (Repository Consistency)
 
@@ -530,24 +530,24 @@ See [AI Agents Convention - Agent Color Categorization](../agents/ai-agents.md#a
 
 **Note**: plan\_\_fixer distinguishes structural/format issues (missing sections, broken links - apply automatically) from strategic decisions (technology choices, scope, architecture - manual review)
 
-## 🔍 When to Use Each Stage
+## When to Use Each Stage
 
 ### When to Use Maker vs Fixer
 
 **Use Maker when:**
 
-- ✅ User explicitly requests content creation or updates
-- ✅ Creating NEW content from scratch
-- ✅ Making significant changes to EXISTING content
-- ✅ Need comprehensive dependency management (indices, cross-refs)
-- ✅ **User-driven workflow** (user says "create" or "update")
+- PASS: User explicitly requests content creation or updates
+- PASS: Creating NEW content from scratch
+- PASS: Making significant changes to EXISTING content
+- PASS: Need comprehensive dependency management (indices, cross-refs)
+- PASS: **User-driven workflow** (user says "create" or "update")
 
 **Use Fixer when:**
 
-- ✅ Checker has generated an audit report
-- ✅ Issues are convention violations (not content gaps)
-- ✅ Fixes are mechanical (field values, formatting, etc.)
-- ✅ **Validation-driven workflow** (checker found issues)
+- PASS: Checker has generated an audit report
+- PASS: Issues are convention violations (not content gaps)
+- PASS: Fixes are mechanical (field values, formatting, etc.)
+- PASS: **Validation-driven workflow** (checker found issues)
 
 **Example Distinction**:
 
@@ -560,17 +560,17 @@ User: "Fix issues from the latest audit report" → Use FIXER (validation-driven
 
 **Checker is OPTIONAL when:**
 
-- ⚠️ Small, trivial updates (fixing typo, adding sentence)
-- ⚠️ Content created by experienced maker (high confidence in quality)
-- ⚠️ Time-sensitive changes (can validate later)
+- Small, trivial updates (fixing typo, adding sentence)
+- Content created by experienced maker (high confidence in quality)
+- Time-sensitive changes (can validate later)
 
 **Checker is REQUIRED when:**
 
-- ✅ New content created from scratch
-- ✅ Major refactoring or updates
-- ✅ Before publishing to production
-- ✅ Complex content (tutorials, Hugo content)
-- ✅ Critical files (AGENTS.md, convention docs)
+- PASS: New content created from scratch
+- PASS: Major refactoring or updates
+- PASS: Before publishing to production
+- PASS: Complex content (tutorials, Hugo content)
+- PASS: Critical files (AGENTS.md, convention docs)
 
 **Best Practice**: When in doubt, run the checker. Validation is fast and prevents issues.
 
@@ -578,17 +578,17 @@ User: "Fix issues from the latest audit report" → Use FIXER (validation-driven
 
 **Skip Fixer when:**
 
-- ❌ Issues require human judgment (narrative quality, engagement)
-- ❌ Fixes are context-dependent (different solutions for different cases)
-- ❌ Checker reports are unclear or ambiguous
-- ❌ User prefers manual control over changes
+- FAIL: Issues require human judgment (narrative quality, engagement)
+- FAIL: Fixes are context-dependent (different solutions for different cases)
+- FAIL: Checker reports are unclear or ambiguous
+- FAIL: User prefers manual control over changes
 
 **Use Fixer when:**
 
-- ✅ Issues are mechanical (missing fields, wrong values)
-- ✅ Fixes are unambiguous (clear right answer)
-- ✅ Many repetitive fixes needed (efficiency gain)
-- ✅ Audit report has HIGH confidence findings
+- PASS: Issues are mechanical (missing fields, wrong values)
+- PASS: Fixes are unambiguous (clear right answer)
+- PASS: Many repetitive fixes needed (efficiency gain)
+- PASS: Audit report has HIGH confidence findings
 
 **Example**:
 
@@ -606,7 +606,7 @@ User: "Fix issues from the latest audit report" → Use FIXER (validation-driven
 - Jargon detected → Manual (context-dependent rewording)
 ```
 
-## 💡 Benefits of the Pattern
+## Benefits of the Pattern
 
 ### 1. Separation of Concerns
 
@@ -664,7 +664,7 @@ Pattern scales across **multiple domains** without reinventing the workflow:
 
 **Result**: Standardized quality control across entire repository.
 
-## 🔗 Integration with Conventions
+## Integration with Conventions
 
 The maker-checker-fixer pattern integrates with repository conventions:
 
@@ -674,15 +674,15 @@ The maker-checker-fixer pattern integrates with repository conventions:
 | [Criticality Levels Convention](../quality/criticality-levels.md)           | Checkers categorize by criticality, fixers use for priority     |
 | [Fixer Confidence Levels Convention](../quality/fixer-confidence-levels.md) | Fixers assess confidence, combine with criticality for priority |
 | [Repository Validation Methodology](../quality/repository-validation.md)    | Standard validation patterns used by checker/fixer              |
-| [Content Quality Principles](../conventions/content/quality.md)             | What checkers validate (quality standards)                      |
-| [Hugo Content Convention](../conventions/hugo/shared.md)                    | What ayokoding/ose-platform makers/checkers enforce             |
-| [Tutorial Convention](../conventions/tutorial/general.md)                   | What docs\_\_tutorial-maker/checker enforce                     |
-| [README Quality Convention](../conventions/content/readme-quality.md)       | What readme\_\_maker/checker enforce                            |
+| [Content Quality Principles](../../conventions/content/quality.md)          | What checkers validate (quality standards)                      |
+| [Hugo Content Convention](../../conventions/hugo/shared.md)                 | What ayokoding/ose-platform makers/checkers enforce             |
+| [Tutorial Convention](../../conventions/tutorial/general.md)                | What docs\_\_tutorial-maker/checker enforce                     |
+| [README Quality Convention](../../conventions/content/readme-quality.md)    | What readme\_\_maker/checker enforce                            |
 | [Temporary Files Convention](../infra/temporary-files.md)                   | Where checker/fixer reports are stored                          |
 
 **Key Point**: The pattern is a **workflow framework**. The conventions define **what** to validate/enforce.
 
-## 📚 Related Documentation
+## Related Documentation
 
 **Pattern Implementation**:
 
@@ -692,25 +692,25 @@ The maker-checker-fixer pattern integrates with repository conventions:
 
 **Workflow Orchestration**:
 
-- [Workflow Pattern Convention](../../workflows/meta/workflow-pattern.md) - How workflows orchestrate agents
+- [Workflow Pattern Convention](../../workflows/meta/workflow-identifier.md) - How workflows orchestrate agents
 
 **Domain-Specific Standards**:
 
-- [Content Quality Principles](../conventions/content/quality.md) - Universal content standards
-- [Hugo Content Convention - Shared](../conventions/hugo/shared.md) - Hugo content standards
-- [Hugo Content Convention - ayokoding](../conventions/hugo/ayokoding.md) - ayokoding-web specifics
-- [Hugo Content Convention - OSE Platform](../conventions/hugo/ose-platform.md) - ose-platform-web specifics
-- [Tutorial Convention](../conventions/tutorial/general.md) - Tutorial quality standards
-- [README Quality Convention](../conventions/content/readme-quality.md) - README standards
+- [Content Quality Principles](../../conventions/content/quality.md) - Universal content standards
+- [Hugo Content Convention - Shared](../../conventions/hugo/shared.md) - Hugo content standards
+- [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-web specifics
+- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - ose-platform-web specifics
+- [Tutorial Convention](../../conventions/tutorial/general.md) - Tutorial quality standards
+- [README Quality Convention](../../conventions/content/readme-quality.md) - README standards
 
 **Agent Examples**:
 
 - `.opencode/agent/repo-governance-maker.md` - Example maker agent
 - `.opencode/agent/repo-governance-checker.md` - Example checker agent
 - `.opencode/agent/repo-governance-fixer.md` - Example fixer agent
-- `.opencode/agent/ayokoding-web-general-maker.md` - General Hugo content maker
+- `.opencode/agent/apps-ayokoding-web-general-maker.md` - General Hugo content maker
 - `.opencode/agent/ayokoding-web-by-example-maker.md` - By-example tutorial maker
-- `.opencode/agent/ayokoding-web-general-checker.md` - General Hugo content checker
+- `.opencode/agent/apps-ayokoding-web-general-checker.md` - General Hugo content checker
 - `.opencode/agent/ayokoding-web-by-example-checker.md` - By-example tutorial checker
 - `.opencode/agent/ayokoding-web-general-fixer.md` - General Hugo content fixer
 - `.opencode/agent/ayokoding-web-by-example-fixer.md` - By-example tutorial fixer

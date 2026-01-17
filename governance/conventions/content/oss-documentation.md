@@ -45,7 +45,7 @@ This convention defines documentation standards specific to open-source software
 - **API documentation** - Technical reference covered in reference/ category
 - **Deployment documentation** - Covered in how-to guides
 
-## 📋 Overview
+## Overview
 
 Repository documentation serves as the primary interface between the project and its users, contributors, and maintainers. Well-structured documentation:
 
@@ -55,7 +55,7 @@ Repository documentation serves as the primary interface between the project and
 4. **Documents Decisions** - Architecture Decision Records preserve the reasoning behind key decisions
 5. **Builds Trust** - Professional documentation signals project maturity and maintainability
 
-## 📖 README Standards
+## README Standards
 
 The README is the primary entry point to the project. It should provide enough information for users to evaluate the project and get started quickly.
 
@@ -175,13 +175,13 @@ console.log(result);
 
 ## Documentation
 
-- [Full Documentation](../../README.md)
+- [Full Documentation](./README.md)
 - [API Reference](../../reference/re__api.md)
-- [Tutorials](../../tutorials/README.md)
+- [Tutorials](./README.md)
 
 ## Contributing
 
-We welcome contributions! Please read our [Contributing Guide](./CONTRIBUTING.md) to get started.
+We welcome contributions! Please read our [Contributing Guide](../../../CONTRIBUTING.md) to get started.
 
 ## License
 
@@ -197,7 +197,7 @@ Standards based on:
 - [Standard README Specification](https://github.com/RichardLitt/standard-readme)
 - [2025 Beginner-Friendly README Guide](https://www.readmecodegen.com/blog/beginner-friendly-readme-guide-open-source-projects)
 
-## 📝 CONTRIBUTING.md Guidelines
+## CONTRIBUTING.md Guidelines
 
 The CONTRIBUTING.md file removes barriers to contribution by explicitly documenting the process, expectations, and standards.
 
@@ -223,8 +223,8 @@ All CONTRIBUTING.md files must include:
 
 4. **Code Conventions**
    - Coding style (link to style guide if detailed)
-   - Commit message format (link to [Commit Message Convention](../development/workflow/commit-messages.md))
-   - Branch naming (link to [Trunk Based Development](../development/workflow/trunk-based-development.md))
+   - Commit message format (link to [Commit Message Convention](../../development/workflow/commit-messages.md))
+   - Branch naming (link to [Trunk Based Development](../../development/workflow/trunk-based-development.md))
    - Testing requirements
 
 5. **Contribution Process**
@@ -354,7 +354,7 @@ Thank you for considering contributing to Open Sharia Enterprise! We appreciate 
 
 - **Questions:** Open a GitHub Discussion
 - **Bugs:** Open a GitHub Issue
-- **Security:** See [SECURITY.md](./SECURITY.md)
+- **Security:** See [SECURITY.md](../../../SECURITY.md)
 
 ## Code of Conduct
 
@@ -369,7 +369,7 @@ Standards based on:
 - [CONTRIBUTING.md Template](https://gist.github.com/PurpleBooth/b24679402957c63ec426)
 - [Open Source Contribution Guide](https://www.contribution-guide.org/)
 
-## 🏗️ Architecture Decision Records (ADRs)
+## ️ Architecture Decision Records (ADRs)
 
 ADRs document significant architectural decisions, preserving the context and reasoning for future maintainers.
 
@@ -573,7 +573,7 @@ Standards based on:
 - [Master ADRs: AWS Architecture Blog](https://aws.amazon.com/blogs/architecture/master-architecture-decision-records-adrs-best-practices-for-effective-decision-making/)
 - [Microsoft Azure ADR Guide](https://learn.microsoft.com/en-us/azure/well-architected/architect-role/architecture-decision-record)
 
-## 🔒 Security Documentation
+## Security Documentation
 
 ### SECURITY.md
 
@@ -656,7 +656,7 @@ Subscribe to GitHub releases to be notified of security updates.
 - [GitHub Security Advisories](https://docs.github.com/en/code-security/security-advisories)
 - [FINOS Security Standards](https://www.finos.org/) (financial services as one enterprise domain)
 
-## 🤝 Code of Conduct
+## Code of Conduct
 
 The CODE_OF_CONDUCT.md establishes behavioral standards for the community.
 
@@ -710,7 +710,7 @@ We pledge to make participation in our project a harassment-free experience for 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the project team at conduct@example.com. All complaints will be reviewed and investigated promptly and fairly.
 ```
 
-## 📦 Additional Documentation Files
+## Additional Documentation Files
 
 ### LICENSE
 
@@ -785,7 +785,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 2. Auto-generated from git history
 3. Link to GitHub contributors page
 
-## 🔄 Maintenance and Updates
+## Maintenance and Updates
 
 ### Keeping Documentation Current
 
@@ -829,7 +829,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Quarterly documentation review
 - Post-incident reviews (did docs help or hinder?)
 
-## 📊 Monorepo-Specific Considerations
+## Monorepo-Specific Considerations
 
 For projects using Nx or similar monorepo tools:
 
@@ -858,7 +858,7 @@ For projects using Nx or similar monorepo tools:
 - [Nx TypeScript Monorepos](https://nx.dev/blog/new-nx-experience-for-typescript-monorepos)
 - [Managing TypeScript Packages in Monorepos](https://nx.dev/blog/managing-ts-packages-in-monorepos)
 
-## 📚 Implementation Checklist
+## Implementation Checklist
 
 When setting up a new repository:
 
@@ -887,15 +887,15 @@ When setting up a new repository:
 - [ ] Documentation review schedule
 - [ ] Link checking automation
 
-## 🔗 Related Documentation
+## Related Documentation
 
 - [Diátaxis Framework](../meta/diataxis-framework.md) - Organization of internal documentation
 - [File Naming Convention](../meta/file-naming.md) - Naming files within `docs/`
 - [Linking Convention](../formatting/linking.md) - How to link between documentation
-- [Commit Message Convention](../development/workflow/commit-messages.md) - Git commit standards
-- [Trunk Based Development](../development/workflow/trunk-based-development.md) - Git workflow
+- [Commit Message Convention](../../development/workflow/commit-messages.md) - Git commit standards
+- [Trunk Based Development](../../development/workflow/trunk-based-development.md) - Git workflow
 
-## 📖 Further Reading
+## Further Reading
 
 **README Best Practices:**
 

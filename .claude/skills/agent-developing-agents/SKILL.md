@@ -214,5 +214,5 @@ Add "When to Use This Agent" section:
 ## Updated References
 
 [AI Agents Convention - Complete specification](../../../governance/development/agents/ai-agents.md)
-[Agent Documenting References Skill](../agent-documenting-references/SKILL.md)
-[Agent Selecting Models Skill](../agent-selecting-models/SKILL.md)
+[Agent Documenting References Skill](./SKILL.md)
+[Agent Selecting Models Skill](./SKILL.md)

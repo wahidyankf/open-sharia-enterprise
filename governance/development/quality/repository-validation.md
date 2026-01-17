@@ -32,15 +32,15 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[File Naming Convention](../conventions/meta/file-naming.md)**: Validation methods verify files follow the [prefix]\_\_[content-identifier].md pattern using bash pattern matching and path analysis.
+- **[File Naming Convention](../../conventions/meta/file-naming.md)**: Validation methods verify files follow the [prefix]\_\_[content-identifier].md pattern using bash pattern matching and path analysis.
 
-- **[Linking Convention](../conventions/formatting/linking.md)**: Link validation checks verify relative paths with .md extension exist and target files are accessible.
+- **[Linking Convention](../../conventions/formatting/linking.md)**: Link validation checks verify relative paths with .md extension exist and target files are accessible.
 
-- **[Timestamp Format Convention](../conventions/formatting/timestamp.md)**: Validation patterns verify UTC+7 timestamps in YAML frontmatter match ISO 8601 format with timezone offset.
+- **[Timestamp Format Convention](../../conventions/formatting/timestamp.md)**: Validation patterns verify UTC+7 timestamps in YAML frontmatter match ISO 8601 format with timezone offset.
 
-- **[Indentation Convention](../conventions/formatting/indentation.md)**: Frontmatter extraction assumes 2-space YAML indentation when parsing nested structures.
+- **[Indentation Convention](../../conventions/formatting/indentation.md)**: Frontmatter extraction assumes 2-space YAML indentation when parsing nested structures.
 
-## 📋 Overview
+## Overview
 
 ### Why Standardized Validation Methods?
 
@@ -53,10 +53,10 @@ Without consistent validation approaches, automated checks can:
 
 Standardized methods ensure:
 
-- ✅ **Accuracy** - Correct identification of actual issues
-- ✅ **Reliability** - Consistent behavior across all agents
-- ✅ **Efficiency** - Reusable patterns reduce duplication
-- ✅ **Maintainability** - Single source of truth for validation logic
+- PASS: **Accuracy** - Correct identification of actual issues
+- PASS: **Reliability** - Consistent behavior across all agents
+- PASS: **Efficiency** - Reusable patterns reduce duplication
+- PASS: **Maintainability** - Single source of truth for validation logic
 
 ### Scope
 
@@ -67,7 +67,7 @@ This convention applies to:
 - **Content agents** - Any agent that validates file structure or conventions
 - **Custom scripts** - Bash scripts performing repository consistency checks
 
-## 🔍 The Frontmatter Extraction Pattern (CRITICAL)
+## The Frontmatter Extraction Pattern (CRITICAL)
 
 ### The Standard AWK Command
 
@@ -95,7 +95,7 @@ Markdown files contain many `#` symbols, hyphens, and other characters that can 
 **Common Mistake:**
 
 ```bash
-# ❌ WRONG: Searches entire file including markdown body
+# FAIL: WRONG: Searches entire file including markdown body
 grep "#" .opencode/agent/agent-name.md
 # This incorrectly flags markdown headings like "# Agent Title" as violations
 ```
@@ -103,7 +103,7 @@ grep "#" .opencode/agent/agent-name.md
 **Correct Method:**
 
 ```bash
-# ✅ CORRECT: Extract frontmatter first, then search
+# PASS: CORRECT: Extract frontmatter first, then search
 awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .opencode/agent/agent-name.md | grep "#"
 
 # If grep returns results → VIOLATION (YAML comment in frontmatter)
@@ -112,7 +112,7 @@ awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .opencode/agent/agen
 
 ### What to Flag vs What NOT to Flag
 
-**❌ VIOLATION - Comment in frontmatter:**
+**FAIL: VIOLATION - Comment in frontmatter:**
 
 ```yaml
 ---
@@ -124,7 +124,7 @@ color: blue
 ---
 ```
 
-**✅ COMPLIANT - Clean frontmatter with markdown headings in body:**
+**PASS: COMPLIANT - Clean frontmatter with markdown headings in body:**
 
 ```yaml
 ---
@@ -148,7 +148,7 @@ color: blue
 4. If not found → mark as compliant
 5. Never flag content in markdown body (after second `---`)
 
-## 🧪 Standard Validation Checks
+## Standard Validation Checks
 
 ### 1. Frontmatter Comment Detection
 
@@ -274,7 +274,7 @@ fi
 ```bash
 # Validate link from governance/conventions/formatting/linking.md
 file="governance/conventions/formatting/linking.md"
-link="[Indentation](./indentation.md)"
+link="[Indentation](../../conventions/formatting/indentation.md)"
 
 # Extract target
 link_target=$(echo "$link" | sed 's/.*(\(.*\))/\1/')
@@ -314,7 +314,7 @@ fi
 
 **Key details:**
 
-- Compute expected prefix from directory path (see [File Naming Convention](../conventions/meta/file-naming.md))
+- Compute expected prefix from directory path (see [File Naming Convention](../../conventions/meta/file-naming.md))
 - Extract actual prefix using `cut -d_ -f1-2` (two underscores in `prefix__`)
 - Handle special cases: `README.md`, `docs/metadata/`
 - Account for subdirectories (hyphenated names → concatenated prefixes)
@@ -329,17 +329,17 @@ fi
 # governance/development/ → ex-de
 ```
 
-## 🎯 Best Practices
+## Best Practices
 
 ### Always Extract Frontmatter First
 
 **Rule:** When checking frontmatter content, ALWAYS extract it first before searching.
 
 ```bash
-# ✅ CORRECT
+# PASS: CORRECT
 awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' "$file" | grep "pattern"
 
-# ❌ WRONG
+# FAIL: WRONG
 grep "pattern" "$file"
 ```
 
@@ -365,7 +365,7 @@ awk '...' "$file" | grep "^${escaped_field}:"
 **Rule:** Always verify file exists before attempting to read/validate content.
 
 ```bash
-# ✅ CORRECT
+# PASS: CORRECT
 if [ ! -f "$file" ]; then
   echo "ERROR: File not found: $file"
   exit 1
@@ -421,7 +421,7 @@ CONTEXT: |
 EXPECTED: Clean frontmatter without comments (no # symbols)
 ```
 
-## ⚠️ Common Pitfalls
+## Common Pitfalls
 
 ### False Positives from Markdown Headings
 
@@ -432,11 +432,11 @@ EXPECTED: Clean frontmatter without comments (no # symbols)
 **Example:**
 
 ```bash
-# ❌ Produces false positive
+# FAIL: Produces false positive
 grep "#" .opencode/agent/agent.md
 # Flags: # Agent Title (markdown heading, NOT a violation)
 
-# ✅ Correct - no false positive
+# PASS: Correct - no false positive
 awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' .opencode/agent/agent.md | grep "#"
 # Only flags actual YAML comments in frontmatter
 ```
@@ -466,10 +466,10 @@ grep -i "^model:" frontmatter.txt
 **Example:**
 
 ```bash
-# ❌ WRONG - resolves from pwd
+# FAIL: WRONG - resolves from pwd
 resolved="$link_target"
 
-# ✅ CORRECT - resolves from file's directory
+# PASS: CORRECT - resolves from file's directory
 resolved="$(dirname "$file")/$link_target"
 ```
 
@@ -485,10 +485,10 @@ resolved="$(dirname "$file")/$link_target"
 # Field name: "some.field"
 field="some.field"
 
-# ❌ WRONG - '.' matches any character
+# FAIL: WRONG - '.' matches any character
 grep "^$field:" frontmatter.txt
 
-# ✅ CORRECT - escape the dot
+# PASS: CORRECT - escape the dot
 escaped=$(echo "$field" | sed 's/\./\\./g')
 grep "^$escaped:" frontmatter.txt
 
@@ -496,14 +496,14 @@ grep "^$escaped:" frontmatter.txt
 grep -F "^$field:" frontmatter.txt
 ```
 
-## 📚 Related Conventions
+## Related Conventions
 
 - [AI Agents Convention](../agents/ai-agents.md) - Agents that use these validation methods
-- [File Naming Convention](../conventions/meta/file-naming.md) - What we validate (naming patterns)
-- [Linking Convention](../conventions/formatting/linking.md) - What we validate (link formats)
+- [File Naming Convention](../../conventions/meta/file-naming.md) - What we validate (naming patterns)
+- [Linking Convention](../../conventions/formatting/linking.md) - What we validate (link formats)
 - [Temporary Files Convention](../infra/temporary-files.md) - Where validation reports are stored
 
-## 🔄 Maintenance Notes
+## Maintenance Notes
 
 When adding new validation checks:
 

@@ -90,8 +90,8 @@ Skills: `apps-ose-platform-web-developing-content`, `repo-assessing-criticality-
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
+- [ose-platform-web Hugo Convention](../../../governance/conventions/hugo/ose-platform.md)
 
 **Related Agents**:
 
@@ -100,8 +100,8 @@ Skills: `apps-ose-platform-web-developing-content`, `repo-assessing-criticality-
 
 **Related Conventions**:
 
-- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
-- [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md)
+- [ose-platform-web Hugo Convention](../../../governance/conventions/hugo/ose-platform.md)
+- [Fixer Confidence Levels](../../../governance/development/quality/fixer-confidence-levels.md)
 
 **Skills**:
 

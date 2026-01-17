@@ -31,15 +31,15 @@ This practice respects the following core principles:
 
 This practice implements/respects the following conventions:
 
-- **[Criticality Levels Convention](../quality/criticality-levels.md)**: Confidence levels work orthogonally with criticality levels to determine fix priority. Criticality measures importance/urgency, confidence measures certainty/fixability.
+- **[Criticality Levels Convention](./criticality-levels.md)**: Confidence levels work orthogonally with criticality levels to determine fix priority. Criticality measures importance/urgency, confidence measures certainty/fixability.
 
-- **[Repository Validation Methodology Convention](../quality/repository-validation.md)**: Fixer agents use the same standard validation patterns (frontmatter extraction, field checks, link validation) for re-validation that checker agents use for initial detection.
+- **[Repository Validation Methodology Convention](./repository-validation.md)**: Fixer agents use the same standard validation patterns (frontmatter extraction, field checks, link validation) for re-validation that checker agents use for initial detection.
 
 - **[Temporary Files Convention](../infra/temporary-files.md)**: Fix reports are written to generated-reports/ directory using pattern {agent-family}**{timestamp}**fix.md, following the same storage and naming conventions as audit reports.
 
-- **[Timestamp Format Convention](../conventions/formatting/timestamp.md)**: Fix report filenames use UTC+7 timestamps in format YYYY-MM-DD--HH-MM (hyphen-separated for filesystem compatibility).
+- **[Timestamp Format Convention](../../conventions/formatting/timestamp.md)**: Fix report filenames use UTC+7 timestamps in format YYYY-MM-DD--HH-MM (hyphen-separated for filesystem compatibility).
 
-## 📋 Overview
+## Overview
 
 ### What This Convention Defines
 
@@ -62,13 +62,13 @@ Without a standardized confidence assessment system, automated fixers can:
 
 With confidence levels:
 
-- ✅ **Safety** - Only high-confidence, objective fixes applied automatically
-- ✅ **Transparency** - Users know why fixes were applied or skipped
-- ✅ **Efficiency** - Obvious objective issues fixed without manual intervention
-- ✅ **Quality** - Subjective improvements flagged for human judgment
-- ✅ **Feedback loop** - False positives reported to improve checker accuracy
+- PASS: **Safety** - Only high-confidence, objective fixes applied automatically
+- PASS: **Transparency** - Users know why fixes were applied or skipped
+- PASS: **Efficiency** - Obvious objective issues fixed without manual intervention
+- PASS: **Quality** - Subjective improvements flagged for human judgment
+- PASS: **Feedback loop** - False positives reported to improve checker accuracy
 
-## 🎯 Purpose
+## Purpose
 
 Confidence levels serve multiple critical purposes:
 
@@ -104,7 +104,7 @@ Confidence levels serve multiple critical purposes:
 
 **Benefit:** Builds trust and provides clear path for manual review.
 
-## 📊 Scope
+## Scope
 
 ### Agents Using This System
 
@@ -132,7 +132,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 5. **Skips MEDIUM and FALSE_POSITIVE** with explanations
 6. **Generates fix reports** documenting all decisions
 
-## 🔍 The Three Confidence Levels
+## The Three Confidence Levels
 
 ### HIGH_CONFIDENCE → Apply Fix Automatically
 
@@ -333,7 +333,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 
 **Common Pattern:** FALSE_POSITIVE issues reveal **checker logic flaws** that need correction.
 
-## 🔄 Why Re-Validation is Mandatory
+## Why Re-Validation is Mandatory
 
 ### Never Trust Checker Findings Blindly
 
@@ -360,9 +360,9 @@ Checker Report → Read Finding → Re-execute Validation → Assess Confidence 
 - Verify patterns match (date format, naming convention)
 - Analyze context (content type, directory, file purpose)
 
-**See:** [Repository Validation Methodology Convention](../quality/repository-validation.md) for standard re-validation patterns.
+**See:** [Repository Validation Methodology Convention](./repository-validation.md) for standard re-validation patterns.
 
-## 📏 Confidence Assessment Process
+## Confidence Assessment Process
 
 ### How Fixers Determine Confidence Level
 
@@ -437,7 +437,7 @@ For each finding in the checker's audit report:
 - Reasoning for confidence assessment
 - Action taken (fixed / skipped / reported)
 
-## 🌍 Domain-Specific vs Universal Criteria
+## Domain-Specific vs Universal Criteria
 
 ### What's Universal
 
@@ -503,7 +503,7 @@ Each fixer agent has domain-specific validation checks:
 
 **Key Point:** While validation checks differ, the confidence level criteria remain universal.
 
-## 🔗 Integration with Fixer Agents
+## Integration with Fixer Agents
 
 ### How Each Fixer Uses This System
 
@@ -574,7 +574,7 @@ All fixer agents MUST:
 - Document all confidence assessments
 - Never skip re-validation
 
-## 🔀 Integration with Criticality Levels
+## Integration with Criticality Levels
 
 ### Confidence vs Criticality: Orthogonal Dimensions
 
@@ -586,7 +586,7 @@ All fixer agents MUST:
 - Is re-validation clear and unambiguous?
 - Is the issue objective and verifiable?
 
-**Criticality** measures **IMPORTANCE** (see [Criticality Levels Convention](../quality/criticality-levels.md)):
+**Criticality** measures **IMPORTANCE** (see [Criticality Levels Convention](./criticality-levels.md)):
 
 - How urgent is fixing this issue?
 - What breaks if we don't fix it?
@@ -595,7 +595,7 @@ All fixer agents MUST:
 **Example showing both dimensions**:
 
 ```markdown
-## 🔴 CRITICAL Issues (Must Fix)
+## CRITICAL Issues (Must Fix)
 
 ### 1. Missing Required Field Breaks Hugo Build
 
@@ -618,12 +618,12 @@ In this example:
 
 When processing audit reports, fixers use this matrix to determine **priority** and **action**:
 
-| Criticality     | HIGH Confidence                                               | MEDIUM Confidence                                   | FALSE_POSITIVE                                             |
-| --------------- | ------------------------------------------------------------- | --------------------------------------------------- | ---------------------------------------------------------- |
-| 🔴 **CRITICAL** | **P0** - Auto-fix immediately<br>Block deployment until fixed | **P1** - URGENT manual review<br>High priority flag | Report with CRITICAL context<br>Improve checker urgently   |
-| 🟠 **HIGH**     | **P1** - Auto-fix after P0<br>Fix before publication          | **P2** - Standard manual review<br>Normal priority  | Report with HIGH context<br>Improve checker soon           |
-| 🟡 **MEDIUM**   | **P2** - Auto-fix after P1<br>Requires user approval          | **P3** - Optional review<br>Low priority            | Report with MEDIUM context<br>Note for checker improvement |
-| 🟢 **LOW**      | **P3** - Include in batch fixes<br>User decides if/when       | **P4** - Suggestions only<br>No urgency             | Report with LOW context<br>Informational only              |
+| Criticality  | HIGH Confidence                                               | MEDIUM Confidence                                   | FALSE_POSITIVE                                             |
+| ------------ | ------------------------------------------------------------- | --------------------------------------------------- | ---------------------------------------------------------- |
+| **CRITICAL** | **P0** - Auto-fix immediately<br>Block deployment until fixed | **P1** - URGENT manual review<br>High priority flag | Report with CRITICAL context<br>Improve checker urgently   |
+| **HIGH**     | **P1** - Auto-fix after P0<br>Fix before publication          | **P2** - Standard manual review<br>Normal priority  | Report with HIGH context<br>Improve checker soon           |
+| **MEDIUM**   | **P2** - Auto-fix after P1<br>Requires user approval          | **P3** - Optional review<br>Low priority            | Report with MEDIUM context<br>Note for checker improvement |
+| **LOW**      | **P3** - Include in batch fixes<br>User decides if/when       | **P4** - Suggestions only<br>No urgency             | Report with LOW context<br>Informational only              |
 
 **Priority Levels**:
 
@@ -848,7 +848,7 @@ repo-governance-fixer re-validates:
 ````markdown
 ## False Positives Detected (15)
 
-❌ All agent files - Frontmatter comment detection
+FAIL: All agent files - Frontmatter comment detection
 
 - **Checker finding:** Agent frontmatter contains YAML comment (# symbol)
 - **Re-validation:** Extracted frontmatter, no # found (only in markdown body)
@@ -877,7 +877,7 @@ repo-governance-fixer re-validates:
 - Checker accuracy improves over time
 - Trust in automation increases
 
-## 📚 References
+##  References
 
 ### Fixer Agents Using This Convention
 
@@ -893,23 +893,23 @@ repo-governance-fixer re-validates:
 ### Related Conventions
 
 **Validation Methodology:**
-- [Repository Validation Methodology Convention](../quality/repository-validation.md) - Standard validation patterns (frontmatter extraction, field checks, link validation)
+- [Repository Validation Methodology Convention](./repository-validation.md) - Standard validation patterns (frontmatter extraction, field checks, link validation)
 
 **AI Agents:**
 - [AI Agents Convention](../agents/ai-agents.md) - Standards for all AI agents including fixers
 
 **Content Standards:**
-- [Tutorial Convention](../conventions/tutorial/tutorial-fixer)
-- [Content Quality Principles](../conventions/content/quality.md) - Universal content quality standards
-- [README Quality Convention](../conventions/content/fixer)
-- [Hugo Content Convention - Shared](../conventions/hugo/shared.md) - Shared Hugo content standards
-- [Hugo Content Convention - ayokoding](../conventions/hugo/ayokoding.md) - ayokoding-web specific standards
-- [Hugo Content Convention - OSE Platform](../conventions/hugo/ose-platform.md) - ose-platform-web specific standards
+- [Tutorial Convention](../../conventions/tutorial/tutorial-fixer)
+- [Content Quality Principles](../../conventions/content/quality.md) - Universal content quality standards
+- [README Quality Convention](../../conventions/content/fixer)
+- [Hugo Content Convention - Shared](../../conventions/hugo/shared.md) - Shared Hugo content standards
+- [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-web specific standards
+- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - ose-platform-web specific standards
 
 **Infrastructure:**
 - [Temporary Files Convention](../infra/temporary-files.md) - Where to store fix reports (`generated-reports/`)
 
-## 🔄 Maintenance
+##  Maintenance
 
 ### When to Update This Convention
 

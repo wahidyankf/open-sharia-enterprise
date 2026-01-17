@@ -217,9 +217,9 @@ prompt: "Validate apps/ayokoding-web/content/en/learn/software-engineering/progr
 
 **3. Assess overall status**:
 
-- ✅ **EXCELLENT**: Zero threshold-level findings, proceed to fixer for below-threshold issues (optional)
-- ⚠️ **NEEDS IMPROVEMENT**: Some threshold-level findings, proceed to fixer for mechanical fixes
-- ❌ **FAILING**: Major structural issues, return to maker for rework
+- PASS: **EXCELLENT**: Zero threshold-level findings, proceed to fixer for below-threshold issues (optional)
+- **NEEDS IMPROVEMENT**: Some threshold-level findings, proceed to fixer for mechanical fixes
+- FAIL: **FAILING**: Major structural issues, return to maker for rework
 
 **4. Review confidence levels**:
 
@@ -426,10 +426,10 @@ apps-ayokoding-web-by-example-checker validates golang by-example
 
 **Results**:
 
-- 60 examples (target: 75-90) ⚠️
-- Self-containment: 90% ✅
-- Annotations: 70% coverage ⚠️
-- Diagrams: 20% frequency ⚠️
+- 60 examples (target: 75-90) ️
+- Self-containment: 90%
+- Annotations: 70% coverage ️
+- Diagrams: 20% frequency ️
 - Status: **NEEDS IMPROVEMENT**
 
 **Step 3: User Review**
@@ -461,10 +461,10 @@ apps-ayokoding-web-by-example-checker re-validates
 
 **Results**:
 
-- Self-containment: 100% ✅
-- Annotations: 95% coverage ✅
-- Diagrams: 20% (deferred) ⚠️
-- Example count: 60 (deferred) ⚠️
+- Self-containment: 100%
+- Annotations: 95% coverage
+- Diagrams: 20% (deferred) ️
+- Example count: 60 (deferred) ️
 - Status: **EXCELLENT** (remaining issues are user decisions)
 
 **Outcome**: Publication ready with notes to add diagrams and examples incrementally
@@ -487,9 +487,9 @@ apps-ayokoding-web-by-example-checker validates elixir by-example
 
 **Results**:
 
-- 70 examples (target: 75-90) ⚠️
-- New examples missing imports ❌
-- New examples no annotations ❌
+- 70 examples (target: 75-90) ️
+- New examples missing imports
+- New examples no annotations
 - Status: **NEEDS IMPROVEMENT**
 
 **Step 3: User Review**
@@ -517,8 +517,8 @@ apps-ayokoding-web-by-example-checker re-validates
 
 **Results**:
 
-- 70 examples ⚠️ (still below target, deferred)
-- All other metrics ✅
+- 70 examples (still below target, deferred)
+- All other metrics
 - Status: **EXCELLENT**
 
 **Outcome**: Published with plan to add 5-10 examples in next iteration
@@ -535,9 +535,9 @@ apps-ayokoding-web-by-example-checker validates java by-example
 
 **Results**:
 
-- 45 examples (target: 75-90) ❌ MAJOR GAP
-- Coverage: 60% (target: 95%) ❌ MAJOR GAP
-- Self-containment: 40% ❌ MAJOR ISSUE
+- 45 examples (target: 75-90) FAIL: MAJOR GAP
+- Coverage: 60% (target: 95%) FAIL: MAJOR GAP
+- Self-containment: 40% FAIL: MAJOR ISSUE
 - Status: **FAILING**
 
 **Step 2: User Review**
@@ -562,9 +562,9 @@ apps-ayokoding-web-by-example-checker re-validates
 
 **Results**:
 
-- 80 examples ✅
-- Coverage: 90% ⚠️ (close to target)
-- Self-containment: 85% ⚠️
+- 80 examples
+- Coverage: 90% (close to target)
+- Self-containment: 85% ️
 - Status: **NEEDS IMPROVEMENT**
 
 **Step 5: User Review**
@@ -609,7 +609,7 @@ User: "Run ayokoding-web by-example quality gate workflow for golang/tutorials/b
 
 **Final audit**:
 
-- Zero CRITICAL/HIGH findings ✅
+- Zero CRITICAL/HIGH findings
 - 8 MEDIUM findings reported (acceptable)
 - 12 LOW findings reported (acceptable)
 
@@ -638,7 +638,7 @@ User: "Run ayokoding-web by-example quality gate workflow for elixir/tutorials/b
 
 **Final audit**:
 
-- Zero CRITICAL/HIGH/MEDIUM findings ✅
+- Zero CRITICAL/HIGH/MEDIUM findings
 - 15 LOW findings reported (acceptable)
 
 ### Example 6: Very Strict Mode (Comprehensive)
@@ -666,7 +666,7 @@ User: "Run ayokoding-web by-example quality gate workflow for java/tutorials/by-
 
 **Final audit**:
 
-- Zero findings at all levels ✅
+- Zero findings at all levels
 - Equivalent to pre-mode parameter behavior
 
 ## Workflow Invocation
@@ -755,18 +755,18 @@ This workflow is part of the **Tutorial Quality Family**:
 
 ## Principles Respected
 
-- ✅ **Explicit Over Implicit**: All steps, decisions, and criteria are explicit
-- ✅ **Automation Over Manual**: Automated validation and fixing where safe
-- ✅ **Quality Over Speed**: Iterative refinement until excellent
-- ✅ **Convention Over Configuration**: Standardized by-example validation criteria
-- ✅ **Simplicity Over Complexity**: Clear flow despite maker-checker-fixer complexity
-- ✅ **Progressive Disclosure**: Can adjust iteration limits and auto-fix levels
+- PASS: **Explicit Over Implicit**: All steps, decisions, and criteria are explicit
+- PASS: **Automation Over Manual**: Automated validation and fixing where safe
+- PASS: **Quality Over Speed**: Iterative refinement until excellent
+- PASS: **Convention Over Configuration**: Standardized by-example validation criteria
+- PASS: **Simplicity Over Complexity**: Clear flow despite maker-checker-fixer complexity
+- PASS: **Progressive Disclosure**: Can adjust iteration limits and auto-fix levels
 
 ## Related Documentation
 
 - **[By-Example Tutorial Convention](../../conventions/tutorial/by-example.md)**: Quality standards
 - **[Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md)**: Workflow pattern
 - **[Fixer Confidence Levels](../../development/quality/fixer-confidence-levels.md)**: Confidence assessment
-- **[`apps-ayokoding-web-by-example-checker` agent](../../.claude/agents/apps-ayokoding-web-by-example-checker.md)**: Validation agent
-- **[`apps-ayokoding-web-by-example-fixer` agent](../../.claude/agents/apps-ayokoding-web-by-example-fixer.md)**: Fixing agent
-- **[`apps-ayokoding-web-by-example-maker` agent](../../.claude/agents/apps-ayokoding-web-by-example-maker.md)**: Content creation agent
+- **[`apps-ayokoding-web-by-example-checker` agent](../../../.claude/agents/apps-ayokoding-web-by-example-checker.md)**: Validation agent
+- **[`apps-ayokoding-web-by-example-fixer` agent](../../../.claude/agents/apps-ayokoding-web-by-example-fixer.md)**: Fixing agent
+- **[`apps-ayokoding-web-by-example-maker` agent](../../../.claude/agents/apps-ayokoding-web-by-example-maker.md)**: Content creation agent

@@ -163,7 +163,7 @@ For complete details on the level-based weight system, see [Hugo Content Convent
 **Anti-Pattern (Don't Do This):**
 
 ```
-# ❌ BAD: Cookbook at the end
+# FAIL: BAD: Cookbook at the end
 how-to/
 ├── _index.md           (100003) ← Level 6 (represents folder)
 ├── overview.md         (1000000) ← Level 7 base
@@ -176,7 +176,7 @@ how-to/
 **Correct Pattern:**
 
 ```
-# ✅ GOOD: Cookbook at position 3 with correct level-based weights
+# PASS: GOOD: Cookbook at position 3 with correct level-based weights
 how-to/
 ├── _index.md           (100003) ← Level 6 (represents the how-to folder)
 ├── overview.md         (1000000) ← Level 7 base (first content inside folder)
@@ -199,7 +199,7 @@ Path calculation: `/en/` (1) → `/learn/` (2) → `/swe/` (3) → `/prog-lang/`
 **Understanding Weight Resets Across Sibling Folders:**
 
 ```
-# ✅ GOOD: Category folders at level 6, content inside at level 7 with resets
+# PASS: GOOD: Category folders at level 6, content inside at level 7 with resets
 tutorials/
 ├── _index.md           (100002) ← Level 6 (represents tutorials folder, 3rd sibling)
 ├── overview.md         (1000000) ← Level 7 base (content inside tutorials/)
@@ -536,19 +536,19 @@ Best practices and anti-patterns MUST include:
 
 A programming language is **production-ready** when it has:
 
-- ✅ All 5 tutorial levels (initial-setup, quick-start, beginner, intermediate, advanced)
-- ✅ Tutorial overview.md explaining the full set and learning paths
-- ✅ By-example track with 3 files (beginner, intermediate, advanced) containing 60+ annotated examples
-- ✅ By-example overview.md explaining example-driven learning approach
-- ✅ Cookbook with 30+ recipes (4,000+ lines)
-- ✅ 12+ how-to guides covering language-specific patterns
-- ✅ Best practices document (500+ lines)
-- ✅ Anti-patterns document (500+ lines)
-- ✅ All \_index.md files for navigation
-- ✅ All overview.md files for section introduction
-- ✅ Mermaid diagrams using color-blind friendly palette
-- ✅ Cross-references between all documents
-- ✅ Factual accuracy verified (by ayokoding-web-facts-checker)
+- PASS: All 5 tutorial levels (initial-setup, quick-start, beginner, intermediate, advanced)
+- PASS: Tutorial overview.md explaining the full set and learning paths
+- PASS: By-example track with 3 files (beginner, intermediate, advanced) containing 60+ annotated examples
+- PASS: By-example overview.md explaining example-driven learning approach
+- PASS: Cookbook with 30+ recipes (4,000+ lines)
+- PASS: 12+ how-to guides covering language-specific patterns
+- PASS: Best practices document (500+ lines)
+- PASS: Anti-patterns document (500+ lines)
+- PASS: All \_index.md files for navigation
+- PASS: All overview.md files for section introduction
+- PASS: Mermaid diagrams using color-blind friendly palette
+- PASS: Cross-references between all documents
+- PASS: Factual accuracy verified (by ayokoding-web-facts-checker)
 
 **Minimum Viable Language (MVL):**
 
@@ -598,15 +598,15 @@ Based on Golang, Python, and Java implementations:
 
 All content MUST meet:
 
-- ✅ **Color-blind friendly**: Only use approved palette (#0173B2, #DE8F05, #029E73, #CC78BC, #CA9161)
-- ✅ **Factually accurate**: All commands, syntax, versions verified
-- ✅ **Runnable code**: Examples work as-is (copy-paste ready)
-- ✅ **Progressive disclosure**: Simple → complex ordering
-- ✅ **Active voice**: Direct, engaging writing
-- ✅ **Single H1**: Only one top-level heading per file
-- ✅ **Proper heading nesting**: No skipped levels (H2 → H4)
-- ✅ **No time estimates**: Focus on outcomes, not duration
-- ✅ **Cross-platform**: Consider Windows, macOS, Linux where relevant
+- PASS: **Color-blind friendly**: Only use approved palette (#0173B2, #DE8F05, #029E73, #CC78BC, #CA9161)
+- PASS: **Factually accurate**: All commands, syntax, versions verified
+- PASS: **Runnable code**: Examples work as-is (copy-paste ready)
+- PASS: **Progressive disclosure**: Simple → complex ordering
+- PASS: **Active voice**: Direct, engaging writing
+- PASS: **Single H1**: Only one top-level heading per file
+- PASS: **Proper heading nesting**: No skipped levels (H2 → H4)
+- PASS: **No time estimates**: Focus on outcomes, not duration
+- PASS: **Cross-platform**: Consider Windows, macOS, Linux where relevant
 
 ## Language-Agnostic vs. Language-Specific
 
@@ -701,7 +701,7 @@ To add a new programming language:
 9. **Validate against metrics** (line counts, cross-references, code examples)
 10. **Run validation agents** (content-checker, facts-checker, link-checker)
 
-See [How to Add a Programming Language](../../how-to/hoto__add-programming-language.md) for detailed step-by-step instructions.
+See [How to Add a Programming Language](../../../docs/how-to/hoto__add-programming-language.md) for detailed step-by-step instructions.
 
 ## Examples from Benchmark Languages
 
@@ -799,7 +799,7 @@ Even Elixir, the highest standard, has gaps:
 
 ## Related How-To Guides
 
-- [How to Add a Programming Language](../../how-to/hoto__add-programming-language.md) - Step-by-step implementation guide
+- [How to Add a Programming Language](../../../docs/how-to/hoto__add-programming-language.md) - Step-by-step implementation guide
 
 ## Version History
 

@@ -45,7 +45,7 @@ This convention establishes the Diátaxis framework as the organizational struct
 - **Hugo site structure** - Covered in Hugo content conventions
 - **Content quality standards** - Covered in [Content Quality Principles](../content/quality.md)
 
-## 📋 What is Diátaxis?
+## What is Diátaxis?
 
 Diátaxis is a systematic approach to technical documentation authoring that divides documentation into four distinct categories based on user needs and context:
 
@@ -61,7 +61,7 @@ Problem-oriented    │ HOW-TO GUIDES      │ REFERENCE    │
 
 Each category serves a different purpose and addresses different user needs.
 
-## 📚 The Four Categories
+## The Four Categories
 
 ### Tutorials (Learning-Oriented)
 
@@ -171,7 +171,7 @@ Each category serves a different purpose and addresses different user needs.
 - Prefix: `ex__`
 - Examples: `ex__architecture.md`, `ex-co__file-naming-convention.md`
 
-## 🎯 Why We Use Diátaxis
+## Why We Use Diátaxis
 
 ### Benefits for Documentation Writers
 
@@ -194,7 +194,7 @@ Each category serves a different purpose and addresses different user needs.
 3. **Completeness** - Framework reveals gaps in coverage
 4. **Onboarding** - New contributors understand documentation structure
 
-## 🏗️ How Diátaxis is Implemented
+## ️ How Diátaxis is Implemented
 
 ### Directory Structure
 
@@ -260,7 +260,7 @@ updated: YYYY-MM-DD
 ---
 ```
 
-## 🔍 Choosing the Right Category
+## Choosing the Right Category
 
 When creating new documentation, ask:
 
@@ -287,7 +287,7 @@ Start here
 
 ## Common Mistakes to Avoid
 
-### ❌ Mixing Categories
+### FAIL: Mixing Categories
 
 **Don't**:
 
@@ -301,29 +301,29 @@ Start here
 - Keep each document focused on its category
 - Cross-reference related content
 
-### ❌ Wrong Category Choice
+### FAIL: Wrong Category Choice
 
 **Tutorial misuse**:
 
-- ❌ "Understanding Authentication Concepts" → Should be Explanation
-- ✅ "Building Your First Authenticated Endpoint" → Correct Tutorial
+- FAIL: "Understanding Authentication Concepts" → Should be Explanation
+- PASS: "Building Your First Authenticated Endpoint" → Correct Tutorial
 
 **How-To misuse**:
 
-- ❌ "Learning the API Basics" → Should be Tutorial
-- ✅ "How to Add Rate Limiting" → Correct How-To
+- FAIL: "Learning the API Basics" → Should be Tutorial
+- PASS: "How to Add Rate Limiting" → Correct How-To
 
 **Reference misuse**:
 
-- ❌ "Why We Chose PostgreSQL" → Should be Explanation
-- ✅ "PostgreSQL Configuration Options" → Correct Reference
+- FAIL: "Why We Chose PostgreSQL" → Should be Explanation
+- PASS: "PostgreSQL Configuration Options" → Correct Reference
 
 **Explanation misuse**:
 
-- ❌ "Steps to Deploy" → Should be How-To
-- ✅ "Understanding Our Deployment Architecture" → Correct Explanation
+- FAIL: "Steps to Deploy" → Should be How-To
+- PASS: "Understanding Our Deployment Architecture" → Correct Explanation
 
-## 🧪 Examples from Our Project
+## Examples from Our Project
 
 ### Tutorial Example: Initial Setup
 
@@ -381,14 +381,14 @@ Start here
 5. Decision guidance
 6. Common mistakes
 
-## 🔗 Related Documentation
+## Related Documentation
 
 - [Conventions Index](./README.md) - Overview of all documentation conventions
 - [File Naming Convention](./file-naming.md) - How to name files with category prefixes
 - [Linking Convention](../formatting/linking.md) - How to link between documents
 - [OSS Documentation Convention](../content/oss-documentation.md) - Repository-level documentation (README, CONTRIBUTING, ADRs) - complements Diátaxis internal docs structure
 
-## 🌐 External Resources
+## External Resources
 
 - [Official Diátaxis Documentation](https://diataxis.fr/)
 - [Diátaxis in Practice](https://diataxis.fr/application/)

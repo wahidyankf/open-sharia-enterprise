@@ -24,14 +24,14 @@ This documentation defines **HOW workflows should be designed and documented**, 
 
 ## Documents
 
-- [Workflow Pattern Convention](./workflow-pattern.md) - Complete workflow structure convention including frontmatter schema, step definition patterns, and composition rules
+- [Workflow Pattern Convention](./workflow-identifier.md) - Complete workflow structure convention including frontmatter schema, step definition patterns, and composition rules
 
 ## Related Documentation
 
-- [Workflows Index](../README.md) - All orchestrated workflows
+- [Workflows Index](./README.md) - All orchestrated workflows
 - [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Core quality workflow pattern
 - [AI Agents Convention](../../development/agents/ai-agents.md) - Agent standards workflows orchestrate
-- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model (Layer 5: Workflows)
+- [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model (Layer 5: Workflows)
 
 ---
 

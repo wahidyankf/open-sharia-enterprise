@@ -46,7 +46,7 @@ This convention establishes LaTeX notation as the standard for all mathematical 
 - **ASCII art** - Alternative plain-text representations of math
 - **Complex mathematical publishing** - This is for inline documentation math, not research papers
 
-## 📋 Overview
+## Overview
 
 Mathematical notation appears throughout enterprise documentation - from financial formulas like WACC and CAPM to statistical models and algorithmic complexity analysis. This convention ensures all mathematical expressions are:
 
@@ -55,13 +55,13 @@ Mathematical notation appears throughout enterprise documentation - from financi
 3. **Compatible** - Works in both Obsidian and GitHub
 4. **Maintainable** - Easy to edit and version control
 
-## 🎯 The Core Principle
+## The Core Principle
 
 **Use LaTeX notation for all mathematical equations and formulas in documentation.**
 
 GitHub has supported LaTeX math rendering in markdown since May 2022, and Obsidian has native support. This makes LaTeX the universal standard for mathematical notation in modern documentation.
 
-## 💡 Why LaTeX?
+## Why LaTeX?
 
 ### Universal Rendering
 
@@ -89,7 +89,7 @@ LaTeX is plain text, making it:
 - **Searchable** - Full-text search works on formulas
 - **Maintainable** - No binary image files to manage
 
-## 📝 LaTeX Syntax
+## LaTeX Syntax
 
 ### Inline Math
 
@@ -136,15 +136,15 @@ $$
 - Equations that should stand out visually
 - Formulas that need to be referenced or cited
 
-### ⚠️ Critical: Delimiter Placement Rules
+### Critical: Delimiter Placement Rules
 
 **Single `$` delimiters MUST be inline (on the same line as text):**
 
 ```markdown
-✅ Correct - Inline math:
+PASS: Correct - Inline math:
 The cost of equity $r_e$ is calculated using CAPM.
 
-❌ Incorrect - Single $ on its own line:
+FAIL: Incorrect - Single $ on its own line:
 $
 r_e = r_f + \beta \times (r_m - r_f)
 $
@@ -153,13 +153,13 @@ $
 **Display-level equations MUST use `$$` delimiters:**
 
 ```markdown
-✅ Correct - Display math:
+PASS: Correct - Display math:
 
 $$
 r_e = r_f + \beta \times (r_m - r_f)
 $$
 
-❌ Incorrect - Single $ for display:
+FAIL: Incorrect - Single $ for display:
 $
 r_e = r_f + \beta \times (r_m - r_f)
 $
@@ -168,7 +168,7 @@ $
 **All `\begin{aligned}` blocks MUST use `$$` delimiters:**
 
 ```markdown
-✅ Correct - aligned with $$:
+PASS: Correct - aligned with $$:
 
 $$
 \begin{aligned}
@@ -178,7 +178,7 @@ WACC &= \frac{E}{V} \times r_e + \frac{D}{V} \times r_d \times (1 - T_c) \\
 \end{aligned}
 $$
 
-❌ Incorrect - using align instead of aligned (KaTeX incompatible):
+FAIL: Incorrect - using align instead of aligned (KaTeX incompatible):
 
 $$
 \begin{align}
@@ -186,7 +186,7 @@ WACC &= \frac{E}{V} \times r_e + \frac{D}{V} \times r_d \times (1 - T_c)
 \end{align}
 $$
 
-❌ Incorrect - aligned with single $:
+FAIL: Incorrect - aligned with single $:
 $
 \begin{aligned}
 WACC &= \frac{E}{V} \times r_e + \frac{D}{V} \times r_d \times (1 - T_c)
@@ -206,7 +206,7 @@ $
 - **Display math** (standalone): `$$...$$` on separate lines
 - **Multi-line equations**: Always use `$$` with `\begin{aligned}` (NOT `\begin{align}`)
 
-## ✅ Where to Use LaTeX
+## PASS: Where to Use LaTeX
 
 ### Documentation Files in `docs/`
 
@@ -261,14 +261,14 @@ $$
 Where $w_i$ are portfolio weights and $R_i$ are asset returns.
 ```
 
-## ❌ Where NOT to Use LaTeX
+## FAIL: Where NOT to Use LaTeX
 
 ### Code Blocks
 
 Inside code blocks, use plain text or code-appropriate notation:
 
 ```python
-# ✅ Correct - Plain text in code
+# PASS: Correct - Plain text in code
 def calculate_wacc(equity, debt, cost_of_equity, cost_of_debt, tax_rate):
     """
     Calculate WACC = (E/V) * r_e + (D/V) * r_d * (1 - T_c)
@@ -280,7 +280,7 @@ def calculate_wacc(equity, debt, cost_of_equity, cost_of_debt, tax_rate):
 ```
 
 ```python
-# ❌ Incorrect - Don't use LaTeX in code
+# FAIL: Incorrect - Don't use LaTeX in code
 def calculate_wacc(equity, debt, cost_of_equity, cost_of_debt, tax_rate):
     """
     Calculate $WACC = \frac{E}{V} \times r_e + \frac{D}{V} \times r_d \times (1 - T_c)$
@@ -317,18 +317,18 @@ Formula: WACC = (E/V) * r_e + (D/V) * r_d * (1 - T_c)
 Never use LaTeX in JSON, YAML, or configuration files:
 
 ```yaml
-# ✅ Correct - Plain text
+# PASS: Correct - Plain text
 financial_formulas:
   wacc: "(E/V) * r_e + (D/V) * r_d * (1 - T_c)"
 ```
 
 ```yaml
-# ❌ Incorrect
+# FAIL: Incorrect
 financial_formulas:
   wacc: "$WACC = \\frac{E}{V} \\times r_e + \\frac{D}{V} \\times r_d \\times (1 - T_c)$"
 ```
 
-## 🎨 Common LaTeX Patterns
+## Common LaTeX Patterns
 
 ### Subscripts and Superscripts
 
@@ -460,7 +460,7 @@ Common operators:
 - Approximately: $\approx$
 - Infinity: $\infty$
 
-## 💰 Finance Formula Examples
+## Finance Formula Examples
 
 ### Weighted Average Cost of Capital (WACC)
 
@@ -666,7 +666,7 @@ Where:
 - $t$ = time
 - $e$ = Euler's number ($\approx 2.71828$)
 
-## 🧪 Testing LaTeX Rendering
+## Testing LaTeX Rendering
 
 ### In Obsidian
 
@@ -733,7 +733,7 @@ $$
 
 **Solution**: Use `\times` or `\cdot` for multiplication, add braces: `$r_{free}^{adjusted}$`
 
-## 📚 Best Practices
+## Best Practices
 
 ### Define Variables
 
@@ -796,16 +796,16 @@ For very complex layouts, consider tables alongside LaTeX:
 Don't over-complicate notation:
 
 ```markdown
-✅ Good:
+PASS: Good:
 $$r_e = r_f + \beta \times MRP$$
 
-❌ Too complex:
+FAIL: Too complex:
 $$r_{e,adjusted,t} = r_{f,t} + \beta_{asset,market,t} \times (r_{m,expected,t} - r_{f,t})$$
 ```
 
 **Why**: Simpler notation is easier to understand. Add subscripts only when necessary to distinguish different variables.
 
-## 🔄 Migration Strategy
+## Migration Strategy
 
 ### New Documentation
 
@@ -860,7 +860,7 @@ Where:
 4. Test rendering
 5. Commit with descriptive message: `docs: convert math notation to LaTeX`
 
-## 📖 LaTeX Reference
+## LaTeX Reference
 
 ### Essential Commands
 
@@ -920,7 +920,7 @@ $$
 | $\rho$    | `\rho`        | Correlation               |
 | $\lambda$ | `\lambda`     | Lambda, adjustment factor |
 
-## ✅ Validation Checklist
+## PASS: Validation Checklist
 
 When adding or reviewing mathematical notation:
 
@@ -939,7 +939,7 @@ When adding or reviewing mathematical notation:
 - [ ] Complex formulas have clear alignment and structure
 - [ ] All Greek letters, fractions, and summations use proper commands
 
-## 🌐 Important Notes
+## Important Notes
 
 ### Browser Compatibility
 
@@ -976,14 +976,14 @@ LaTeX math has good accessibility:
 - **2025-12-02** - Initial convention document created
 - LaTeX math support verified in GitHub (since May 2022) and Obsidian (native)
 
-## 🔗 Related Conventions
+## Related Conventions
 
 - [Diagram and Schema Convention](./diagrams.md) - When to use Mermaid diagrams vs ASCII art (plain text for diagrams, LaTeX for math)
 - [Emoji Usage Convention](./emoji.md) - Semantic emoji usage in documentation
 - [File Naming Convention](../meta/file-naming.md) - How to name documentation files
 - [Conventions Index](./README.md) - Overview of all conventions
 
-## 🌐 External Resources
+## External Resources
 
 - [LaTeX Mathematics Wikibook](https://en.wikibooks.org/wiki/LaTeX/Mathematics) - Comprehensive LaTeX math reference
 - [Detexify](https://detexify.kirelabs.org/classify.html) - Draw a symbol to find its LaTeX command

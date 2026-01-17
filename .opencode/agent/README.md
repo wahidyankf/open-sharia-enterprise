@@ -224,11 +224,11 @@ All agents leverage Skills from `.opencode/skills/` for:
 
 ## Reference Documentation
 
-- **Project Instructions**: [AGENTS.md](../../AGENTS.md) (condensed) or [AGENTS.md](../../CLAUDE.md) (comprehensive)
-- **AI Agents Convention**: [governance/development/agents/ex-ru-de-ag\_\_ai-agents.md](../../governance/development/agents/ai-agents.md)
-- **Maker-Checker-Fixer Pattern**: [governance/development/pattern/ex-ru-de-pa\_\_maker-checker-fixer.md](../../governance/development/pattern/maker-checker-fixer.md)
+- **Project Instructions**: [AGENTS.md](../../AGENTS.md) (condensed) or [AGENTS.md](../../../CLAUDE.md) (comprehensive)
+- **AI Agents Convention**: [governance/development/agents/ex-ru-de-ag\_\_ai-agents.md](../../../governance/development/agents/ai-agents.md)
+- **Maker-Checker-Fixer Pattern**: [governance/development/pattern/ex-ru-de-pa\_\_maker-checker-fixer.md](../../../governance/development/pattern/maker-checker-fixer.md)
 - **Skills Catalog**: [.opencode/skills/README.md](../../.opencode/skills/README.md)
-- **Workflows**: [governance/workflows/README.md](../../governance/workflows/README.md)
+- **Workflows**: [governance/workflows/README.md](../../../governance/workflows/README.md)
 
 ## Maintenance
 

@@ -51,7 +51,7 @@ Transform technical updates into engaging LinkedIn posts with professional tone.
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
 
 **Related Agents**:
 
@@ -60,7 +60,7 @@ Transform technical updates into engaging LinkedIn posts with professional tone.
 
 **Related Conventions**:
 
-- [Content Quality Principles](../../governance/conventions/content/quality.md)
+- [Content Quality Principles](../../../governance/conventions/content/quality.md)
 
 **Skills**:
 

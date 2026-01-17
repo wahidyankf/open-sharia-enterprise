@@ -31,9 +31,9 @@ These principles define **WHY we value specific approaches to software developme
 
 ## Related Documentation
 
-- [Core Principles Index](../README.md) - All foundational principles
-- [Development Practices Index](../../development/README.md) - Development practices implementing these principles
-- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
+- [Core Principles Index](./README.md) - All foundational principles
+- [Development Practices Index](./README.md) - Development practices implementing these principles
+- [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
 
 ---
 

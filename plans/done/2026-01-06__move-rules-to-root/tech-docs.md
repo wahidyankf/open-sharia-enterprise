@@ -123,13 +123,13 @@ find .claude/agents -name "*.md" -type f -exec sed -i 's|governance/|governance/
 **Pattern Examples**:
 
 - `See: [convention writing](governance/conventions/content/convention-writing.md)`
-- `[Reference docs](../../governance/conventions/)`
+- `[Reference docs](../../../governance/conventions/)`
 - `Rules location: governance/`
 
 **After**:
 
 - `See: [convention writing](governance/conventions/content/convention-writing.md)`
-- `[Reference docs](../../governance/conventions/)`
+- `[Reference docs](../../../governance/conventions/)`
 - `Rules location: governance/`
 
 ---
@@ -146,12 +146,12 @@ find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|governance/|governa
 
 **Pattern Examples**:
 
-- `See: [AI agents convention](../../governance/development/agents/ai-agents.md)`
+- `See: [AI agents convention](../../../governance/development/agents/ai-agents.md)`
 - `Related: governance/principles/`
 
 **After**:
 
-- `See: [AI agents convention](../../governance/development/agents/ai-agents.md)`
+- `See: [AI agents convention](../../../governance/development/agents/ai-agents.md)`
 - `Related: governance/principles/`
 
 ---
@@ -199,7 +199,7 @@ find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|governance/|governa
 ```markdown
 ## Reference
 
-- [Convention Writing Convention](../../governance/conventions/content/ex-ru-co-co-convention-writing.md)
+- [Convention Writing Convention](../../../governance/conventions/content/ex-ru-co-co-convention-writing.md)
 ```
 
 **After**:
@@ -207,7 +207,7 @@ find .claude/skills -name "SKILL.md" -type f -exec sed -i 's|governance/|governa
 ```markdown
 ## Reference
 
-- [Convention Writing Convention](../../governance/conventions/content/ex-ru-co-co-convention-writing.md)
+- [Convention Writing Convention](../../../governance/conventions/content/ex-ru-co-co-convention-writing.md)
 ```
 
 **Example - repo-governance-fixer.md**:
@@ -365,7 +365,7 @@ find rules -name "*.md" -type f -exec sed -i 's|governance/|governance/|g' {} \;
 ## Related Conventions
 
 - [AI Agents Convention](../development/agents/ai-agents.md)
-- [Directory structure](../../governance/conventions/)
+- [Directory structure](../../../governance/conventions/)
 ```
 
 **After**:
@@ -558,8 +558,8 @@ sed -i 's|governance/|governance/|g' AGENTS.md
 | Pattern                                              | What It Matches       | Example Replacement                    | Example Result |
 | ---------------------------------------------------- | --------------------- | -------------------------------------- | -------------- |
 | `s\|governance/\|governance/\|g`                     | Absolute paths        | `[governance/conventions/content/...]` |
-| `s\|\.\./governance/\|\.\./governance/\|g`           | Relative paths (1 up) | `../../governance/conventions/`        |
-| `s\|\.\./\.\./governance/\|\.\./\.\./governance/\|g` | Relative paths (2 up) | `../../../governance/conventions/`     |
+| `s\|\.\./governance/\|\.\./governance/\|g`           | Relative paths (1 up) | `../../../governance/conventions/`     |
+| `s\|\.\./\.\./governance/\|\.\./\.\./governance/\|g` | Relative paths (2 up) | `../../../../governance/conventions/`  |
 | `s\|docs/explanation/\|docs/\|g`                     | Combined paths        | `docs/tutorials/` vs `governance/`     |
 
 **Note**: The `|` delimiter is used instead of `/` because file paths contain `/` characters.
@@ -608,16 +608,16 @@ git blame governance/vision/ex-vi__open-sharia-enterprise.md | head -10
 **Pattern**:
 
 ```markdown
-[Link text](../../../governance/conventions/)
+[Link text](../../../../governance/conventions/)
 ```
 
 **After automated sed**:
 
 ```markdown
-[Link text](../../../governance/conventions/)
+[Link text](../../../../governance/conventions/)
 ```
 
-**Manual review needed**: Verify `../../../governance/conventions/` actually resolves to correct target
+**Manual review needed**: Verify `../../../../governance/conventions/` actually resolves to correct target
 
 ---
 
@@ -653,13 +653,13 @@ See also: [tutorials](../../docs/tutorials/)
 **Example**: Reference from doc to rule
 
 ```markdown
-See: [conventions](../explanation/governance/conventions/)
+See: [conventions](../../../governance/conventions/)
 ```
 
 **After move**: This becomes
 
 ```markdown
-See: [conventions](../explanation/governance/conventions/)
+See: [conventions](../../../governance/conventions/)
 ```
 
 **Problem**: Still references old location
@@ -667,7 +667,7 @@ See: [conventions](../explanation/governance/conventions/)
 **Fix**: Change to
 
 ```markdown
-See: [conventions](../../governance/conventions/)
+See: [conventions](../../../governance/conventions/)
 ```
 
 ---

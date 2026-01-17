@@ -89,15 +89,15 @@ Skill: `repo-generating-validation-reports`
 
 ## Reference
 
-- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ex-ru-co-hu-ose-platform.md)
+- [ose-platform-web Hugo Convention](../../../governance/conventions/hugo/ose-platform.md)
 - Skills: `apps-ose-platform-web-developing-content`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 
 ## Reference Documentation
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
+- [ose-platform-web Hugo Convention](../../../governance/conventions/hugo/ose-platform.md)
 
 **Related Agents**:
 
@@ -106,8 +106,8 @@ Skill: `repo-generating-validation-reports`
 
 **Related Conventions**:
 
-- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
-- [Content Quality Principles](../../governance/conventions/content/quality.md)
+- [ose-platform-web Hugo Convention](../../../governance/conventions/hugo/ose-platform.md)
+- [Content Quality Principles](../../../governance/conventions/content/quality.md)
 
 **Skills**:
 

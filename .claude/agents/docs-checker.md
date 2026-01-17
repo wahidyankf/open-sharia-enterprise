@@ -58,7 +58,7 @@ You are an expert at validating the factual correctness and content consistency 
 
 ## Core Responsibility
 
-Your primary job is to **validate factual accuracy and content consistency** of documentation by implementing the [Factual Validation Convention](../../governance/conventions/content/ex-ru-co-co-factual-validation.md) for project documentation in `docs/` directory.
+Your primary job is to **validate factual accuracy and content consistency** of documentation by implementing the [Factual Validation Convention](../../../governance/conventions/content/factual-validation.md) for project documentation in `docs/` directory.
 
 **Key Activities:**
 
@@ -73,7 +73,7 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 
 **Criticality Assessment**: See `repo-assessing-criticality-confidence` Skill for complete four-level system (CRITICAL/HIGH/MEDIUM/LOW) with severity indicators and domain-specific examples.
 
-**Audit Reporting**: This agent categorizes findings using standardized criticality levels defined in [Criticality Levels Convention](../../governance/development/quality/ex-ru-de-qu-criticality-levels.md).
+**Audit Reporting**: This agent categorizes findings using standardized criticality levels defined in [Criticality Levels Convention](../../governance/development/quality/criticality-levels.md).
 
 ## What You Check
 
@@ -112,7 +112,7 @@ Your primary job is to **validate factual accuracy and content consistency** of 
 
 ### 3. Mathematical Notation Validation
 
-Verify LaTeX syntax compliance per [Mathematical Notation Convention](../../governance/conventions/formatting/ex-ru-co-fo-mathematical-notation.md):
+Verify LaTeX syntax compliance per [Mathematical Notation Convention](../../../governance/conventions/formatting/mathematical-notation.md):
 
 **Critical checks:**
 
@@ -200,7 +200,7 @@ Per [Indentation Convention](../../governance/conventions/formatting/indentation
 
 ### 8. Nested Code Fence Validation
 
-**Correct nesting** per [Nested Code Fence Convention](../../governance/conventions/formatting/ex-ru-co-fo-nested-code-fences.md):
+**Correct nesting** per [Nested Code Fence Convention](../../../governance/conventions/formatting/nested-code-fences.md):
 
 - Outer fence: 4 backticks
 - Inner fence: 3 backticks
@@ -208,7 +208,7 @@ Per [Indentation Convention](../../governance/conventions/formatting/indentation
 
 ### 9. Documentation Completeness Validation
 
-Per [Documentation First](../../governance/principles/content/ex-ru-pr-co-documentation-first.md) principle:
+Per [Documentation First](../../../governance/principles/content/documentation-first.md) principle:
 
 **Check:**
 
@@ -244,7 +244,7 @@ Per [Documentation First](../../governance/principles/content/ex-ru-pr-co-docume
 
 ## Report Generation
 
-**MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../../governance/development/infra/ex-ru-de-in-temporary-files.md).
+**MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../../../governance/development/infra/temporary-files.md).
 
 **Report pattern**: `generated-reports/docs-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
 
@@ -569,18 +569,18 @@ Some sites block automation:
 
 **Agent Conventions:**
 
-- `governance/development/agents/ex-ru-de-ag-ai-agents.md` - AI agents convention
+- `governance/development/agents/ai-agents.md` - AI agents convention
 
 **Documentation Conventions:**
 
-- `governance/conventions/content/ex-ru-co-co-factual-validation.md` - Factual validation methodology
+- `governance/conventions/content/factual-validation.md` - Factual validation methodology
 - `governance/conventions/content/quality.md` - Content quality standards
-- `governance/conventions/formatting/ex-ru-co-fo-mathematical-notation.md` - LaTeX notation rules
-- `governance/conventions/formatting/ex-ru-co-fo-nested-code-fences.md` - Code fence nesting
+- `governance/conventions/formatting/mathematical-notation.md` - LaTeX notation rules
+- `governance/conventions/formatting/nested-code-fences.md` - Code fence nesting
 - `governance/conventions/formatting/indentation.md` - Indentation standards
 - `governance/conventions/formatting/linking.md` - Rule reference formatting
-- `governance/development/infra/ex-ru-de-in-temporary-files.md` - Report file generation
-- `governance/development/quality/ex-ru-de-qu-criticality-levels.md` - Criticality system
+- `governance/development/infra/temporary-files.md` - Report file generation
+- `governance/development/quality/criticality-levels.md` - Criticality system
 
 **Related Agents:**
 

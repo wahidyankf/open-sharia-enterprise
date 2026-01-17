@@ -48,23 +48,23 @@ Automated git hooks enforce quality through **Husky** and **lint-staged**:
 - **Commit-msg**: Commitlint validates Conventional Commits format `<type>(<scope>): <description>`
 - **Pre-push**: Runs `test:quick` for affected projects (Nx detects changes)
 
-Split work into multiple logical commits by type and domain. See [Commit Message Convention](./rules/development/workflow/ex-ru-de-wo__commit-messages.md) for rules and [Code Quality Convention](./rules/development/quality/ex-ru-de-qu__code.md) for complete details.
+Split work into multiple logical commits by type and domain. See [Commit Message Convention](./rules/development/workflow/commit-messages.md) for rules and [Code Quality Convention](./rules/development/quality/code.md) for complete details.
 
 ## Git Workflow
 
-This repository uses **Trunk Based Development (TBD)**. All development happens on `main` branch with small, frequent commits. **AI agents assume `main` branch by default** unless explicitly told otherwise. Environment branches (`prod-ayokoding-web`, `prod-ose-platform-web`) exist for deployment only - never commit directly to them. See [Trunk Based Development Convention](./rules/development/workflow/ex-ru-de-wo__trunk-based-development.md) for complete details.
+This repository uses **Trunk Based Development (TBD)**. All development happens on `main` branch with small, frequent commits. **AI agents assume `main` branch by default** unless explicitly told otherwise. Environment branches (`prod-ayokoding-web`, `prod-ose-platform-web`) exist for deployment only - never commit directly to them. See [Trunk Based Development Convention](./rules/development/workflow/trunk-based-development.md) for complete details.
 
 ## Implementation Workflow
 
-When developing features or fixing bugs, follow the **three-stage workflow**: make it work, make it right, make it fast. Start with the simplest solution that works, refactor for quality and maintainability, then optimize only if performance measurements prove it necessary. This implements Simplicity Over Complexity and YAGNI principles. See [Implementation Workflow Convention](./rules/development/workflow/ex-ru-de-wo__implementation.md) for complete workflow details.
+When developing features or fixing bugs, follow the **three-stage workflow**: make it work, make it right, make it fast. Start with the simplest solution that works, refactor for quality and maintainability, then optimize only if performance measurements prove it necessary. This implements Simplicity Over Complexity and YAGNI principles. See [Implementation Workflow Convention](./rules/development/workflow/implementation.md) for complete workflow details.
 
 ## Functional Programming Principles
 
-The codebase follows functional programming principles for safer, more predictable code. **Prefer immutability** (const, spread operators, immutable methods) and **pure functions** (deterministic, no side effects). Functional Core, Imperative Shell pattern isolates side effects at boundaries. See [Functional Programming Practices](./rules/development/pattern/ex-ru-de-pa__functional-programming.md) for complete implementation patterns.
+The codebase follows functional programming principles for safer, more predictable code. **Prefer immutability** (const, spread operators, immutable methods) and **pure functions** (deterministic, no side effects). Functional Core, Imperative Shell pattern isolates side effects at boundaries. See [Functional Programming Practices](./rules/development/pattern/functional-programming.md) for complete implementation patterns.
 
 ## Reproducible Environments
 
-Development environments are reproducible through **Volta** (Node.js/npm version pinning), **package-lock.json** (deterministic dependencies), and **.env.example** (environment configuration). All contributors get identical setups. See [Reproducible Environments](./rules/development/workflow/ex-ru-de-wo__reproducible-environments.md) for setup details.
+Development environments are reproducible through **Volta** (Node.js/npm version pinning), **package-lock.json** (deterministic dependencies), and **.env.example** (environment configuration). All contributors get identical setups. See [Reproducible Environments](./rules/development/workflow/reproducible-environments.md) for setup details.
 
 ## Common Development Commands
 
@@ -90,7 +90,7 @@ See [Monorepo Structure](./docs/reference/re__monorepo-structure.md), [Add New A
 
 ## Documentation Organization
 
-Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detailed explanation](./rules/conventions/meta/ex-ru-co-me__diataxis-framework.md):
+Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detailed explanation](./rules/conventions/meta/diataxis-framework.md):
 
 - **Tutorials** (`docs/tutorials/`) - Learning-oriented
 - **How-to Guides** (`docs/how-to/`) - Problem-solving
@@ -103,7 +103,7 @@ Documentation uses the [Diátaxis framework](https://diataxis.fr/) - see [detail
 
 ## Plans Organization
 
-Project planning documents in `plans/` folder: `ideas.md` (1-3 liner ideas), `backlog/` (future), `in-progress/` (active), `done/` (archived). Folder naming: `YYYY-MM-DD__[project-identifier]/`. See [Plans Organization Convention](./rules/conventions/project/ex-ru-co-pr__plans-organization.md) for details.
+Project planning documents in `plans/` folder: `ideas.md` (1-3 liner ideas), `backlog/` (future), `in-progress/` (active), `done/` (archived). Folder naming: `YYYY-MM-DD__[project-identifier]/`. See [Plans Organization Convention](./rules/conventions/project/plans-organization.md) for details.
 
 ## Repository Architecture: Six-Layer Hierarchy
 
@@ -133,7 +133,7 @@ See [Repository Architecture](./rules/ex-ru__repository-governance-architecture.
 
 All work in this repository follows foundational principles defined in `rules/principles/`. Key principles include:
 
-- **Documentation First**: Documentation is mandatory, not optional. Every system, convention, feature, and decision must be documented. Undocumented knowledge is lost knowledge. See [Documentation First](./rules/principles/content/ex-ru-pr-co__documentation-first.md) for complete requirements.
+- **Documentation First**: Documentation is mandatory, not optional. Every system, convention, feature, and decision must be documented. Undocumented knowledge is lost knowledge. See [Documentation First](./rules/principles/content/documentation-first.md) for complete requirements.
 - **Accessibility First**: Design for universal access from the start (WCAG compliance, color-blind friendly palettes)
 - **Simplicity Over Complexity**: Favor minimum viable abstraction, avoid over-engineering
 - **Explicit Over Implicit**: Choose explicit configuration over magic and hidden behavior
@@ -151,11 +151,11 @@ All markdown files use **space indentation for nested bullets** (2 spaces per in
 
 ### File Naming Convention
 
-Files follow the pattern `[prefix]__[content-identifier].[extension]` where prefix encodes the directory path. When renaming a directory in `docs/`, all files within must be renamed to update their prefixes (exception: `docs/metadata/` stores operational files without prefixes). See [File Naming Convention](./rules/conventions/meta/ex-ru-co-me__file-naming.md) for complete details.
+Files follow the pattern `[prefix]__[content-identifier].[extension]` where prefix encodes the directory path. When renaming a directory in `docs/`, all files within must be renamed to update their prefixes (exception: `docs/metadata/` stores operational files without prefixes). See [File Naming Convention](./rules/conventions/meta/file-naming.md) for complete details.
 
 ### Linking Convention
 
-Use GitHub-compatible markdown links with format `[Display Text](./path/to/file.md)`. Always include `.md` extension and use relative paths. **Rule references use two-tier formatting**: first mention = markdown link, subsequent mentions = inline code. **Hugo sites use absolute paths without .md**. See [Linking Convention](./rules/conventions/formatting/ex-ru-co-fo__linking.md) for complete details.
+Use GitHub-compatible markdown links with format `Display Text`. Always include `.md` extension and use relative paths. **Rule references use two-tier formatting**: first mention = markdown link, subsequent mentions = inline code. **Hugo sites use absolute paths without .md**. See [Linking Convention](./rules/conventions/formatting/linking.md) for complete details.
 
 ### Diagram Convention
 
@@ -167,7 +167,7 @@ Semantic emojis allowed in `docs/`, README files, `plans/`, CLAUDE.md, `.claude/
 
 ### Diátaxis Framework
 
-All documentation organized into four categories (Tutorials, How-To, Reference, Explanation). See [Diátaxis Framework](./rules/conventions/meta/ex-ru-co-me__diataxis-framework.md) for complete details.
+All documentation organized into four categories (Tutorials, How-To, Reference, Explanation). See [Diátaxis Framework](./rules/conventions/meta/diataxis-framework.md) for complete details.
 
 ### Timestamp Format Convention
 
@@ -187,7 +187,7 @@ Seven tutorial types with progressive coverage levels (Initial Setup, Quick Star
 
 ### Content Quality Principles
 
-All markdown content must follow quality standards: active voice, single H1, proper heading nesting, alt text for images, WCAG AA color contrast, semantic formatting. Applies to docs/, Hugo sites, plans/, root files. See [Content Quality Principles](./rules/conventions/content/ex-ru-co-co__quality.md) for complete checklist.
+All markdown content must follow quality standards: active voice, single H1, proper heading nesting, alt text for images, WCAG AA color contrast, semantic formatting. Applies to docs/, Hugo sites, plans/, root files. See [Content Quality Principles](./rules/conventions/content/quality.md) for complete checklist.
 
 ### Factual Validation Convention
 
@@ -199,7 +199,7 @@ Three specialized documents for Hugo sites: [Shared](./rules/conventions/hugo/ex
 
 ### README Quality Convention
 
-All README.md files must be engaging, accessible, and scannable. Problem-solution hooks, plain language, acronym context, paragraph limits, benefits-focused language. See [README Quality Convention](./rules/conventions/content/ex-ru-co-co__readme-quality.md) for complete standards.
+All README.md files must be engaging, accessible, and scannable. Problem-solution hooks, plain language, acronym context, paragraph limits, benefits-focused language. See [README Quality Convention](./rules/conventions/content/readme-quality.md) for complete standards.
 
 ### Convention References
 
@@ -299,7 +299,7 @@ When adding new conventions, rules, or standards:
 
 ## Planning Without Timelines
 
-When planning tasks or creating educational content, provide concrete steps without time estimates. Never suggest timelines. Focus on WHAT needs to be done or learned, not HOW LONG it takes. Break work into actionable steps and let users decide their own pace. See [Content Quality - No Time Estimates](./rules/conventions/content/ex-ru-co-co__quality.md#no-time-estimates).
+When planning tasks or creating educational content, provide concrete steps without time estimates. Never suggest timelines. Focus on WHAT needs to be done or learned, not HOW LONG it takes. Break work into actionable steps and let users decide their own pace. See [Content Quality - No Time Estimates](./rules/conventions/content/quality.md#no-time-estimates).
 
 ## OpenCode Agents
 

@@ -43,7 +43,7 @@ Create repository rules and conventions.
 
 ## Reference
 
-- [Convention Writing Convention](../../governance/conventions/content/ex-ru-co-co-convention-writing.md)
+- [Convention Writing Convention](../../../governance/conventions/content/convention-writing.md)
 - Skills: `docs-applying-diataxis-framework`, `docs-applying-content-quality`
 
 ## Workflow
@@ -55,7 +55,7 @@ Document standards following convention structure (Purpose, Standards, Examples,
 **Project Guidance**:
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [Repository Governance Architecture](../../rulesrepository-governance-architecture.md)
+- [Repository Governance Architecture](../../governance/repository-governance-architecture.md)
 
 **Related Agents**:
 

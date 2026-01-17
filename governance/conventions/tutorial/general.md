@@ -52,7 +52,7 @@ This convention establishes comprehensive standards for tutorial content across 
 - **Non-tutorial content** - How-To guides, Reference, Explanation covered separately
 - **Tutorial validation** - Covered by docs\_\_tutorial-checker agent
 
-## 📋 Overview
+## Overview
 
 Tutorials are **learning-oriented** documentation that guide learners through acquiring new skills and knowledge. Unlike how-to guides (goal-oriented) or reference material (information-oriented), tutorials focus on the **learning journey** itself.
 
@@ -60,7 +60,7 @@ Tutorials are **learning-oriented** documentation that guide learners through ac
 
 **Scope**: Applies to all tutorials in `docs/tutorials/` directory, including: - Business and Finance tutorials (`docs/tutorials/business-and-finance/`) - AI Engineering tutorials (`docs/tutorials/ai-engineering/`) - Software Engineering tutorials (`docs/tutorials/software-engineering/`) - Domain-specific tutorials organized by subject area
 
-## 🎯 Diátaxis Principles for Tutorials
+## Diátaxis Principles for Tutorials
 
 Tutorials follow the **Diátaxis framework** principles for learning-oriented documentation. See [Diátaxis Framework Convention](../meta/diataxis-framework.md) for complete framework details.
 
@@ -93,7 +93,7 @@ A tutorial is characterized by:
 
 **Critical Distinction**: A tutorial teaches **through experience**. If it just lists steps without teaching concepts, it's a how-to guide, not a tutorial.
 
-## 🏗️ Tutorial Structure Requirements
+## ️ Tutorial Structure Requirements
 
 All tutorials must follow a consistent structure that supports the learning journey.
 
@@ -160,9 +160,9 @@ updated: 2026-01-01
 
 Before starting this tutorial, you should:
 
-- ✓ [Prerequisite 1 with clear description]
-- ✓ [Prerequisite 2 with clear description]
-- ✓ [Prerequisite 3 with clear description]
+- [Prerequisite 1 with clear description]
+- [Prerequisite 2 with clear description]
+- [Prerequisite 3 with clear description]
 
 **Optional but helpful:**
 
@@ -172,7 +172,7 @@ Before starting this tutorial, you should:
 If you're new to [topic], start with [link to beginner tutorial].
 ```
 
-**Rules**: - Be specific about what "knowing" means - Distinguish required vs optional prerequisites - Provide paths for learners who lack prerequisites - Use checkboxes (✓) for self-assessment
+**Rules**: - Be specific about what "knowing" means - Distinguish required vs optional prerequisites - Provide paths for learners who lack prerequisites - Use checkboxes () for self-assessment
 
 #### 4. Learning Objectives
 
@@ -183,7 +183,7 @@ If you're new to [topic], start with [link to beginner tutorial].
 **Format**:
 
 ```markdown
-## 🎯 Learning Objectives
+## Learning Objectives
 
 By the end of this tutorial, you will be able to:
 
@@ -280,7 +280,7 @@ $$
 
 Your $1,000 grows to $1,469 in 5 years.
 
-### 💪 Practice Exercise
+### Practice Exercise
 
 **Your turn**: Calculate the future value of $5,000 invested at 6% for 3 years.
 
@@ -299,7 +299,7 @@ The investment grows to $5,955.
 
 </details>
 
-### ✓ Checkpoint
+### Checkpoint
 
 **What you've learned:**
 
@@ -349,7 +349,7 @@ Create a series overview tutorial (e.g., `tu__rag-series.md`):
 
 Complete guide to building Retrieval-Augmented Generation systems.
 
-## 📚 Tutorial Sequence
+## Tutorial Sequence
 
 **Part 1: RAG Basics** (Beginner)
 
@@ -374,9 +374,9 @@ Complete guide to building Retrieval-Augmented Generation systems.
 
 **Example Split**:
 
-❌ **Bad**: Single 3,000-line tutorial covering basic RAG, advanced techniques, and production deployment
+FAIL: **Bad**: Single 3,000-line tutorial covering basic RAG, advanced techniques, and production deployment
 
-✅ **Good**: Three focused tutorials:
+PASS: **Good**: Three focused tutorials:
 
 1. "Build Your First RAG System" (800 lines) - Core concepts, simple implementation
 2. "Advanced RAG Techniques" (700 lines) - Hybrid search, reranking, optimization
@@ -391,7 +391,7 @@ Complete guide to building Retrieval-Augmented Generation systems.
 **Format**:
 
 ```markdown
-## 🎯 Challenges
+## Challenges
 
 Test your understanding with these realistic scenarios.
 
@@ -429,7 +429,7 @@ Test your understanding with these realistic scenarios.
 **a) Key Takeaways**
 
 ```markdown
-## 🎓 Summary
+## Summary
 
 **What you've learned:**
 
@@ -451,7 +451,7 @@ Test your understanding with these realistic scenarios.
 **b) Next Steps**
 
 ```markdown
-## 🚀 Next Steps
+## Next Steps
 
 **Ready to go deeper?**
 
@@ -473,7 +473,7 @@ Test your understanding with these realistic scenarios.
 **c) Further Resources (Optional)**
 
 ```markdown
-## 📚 Further Resources
+## Further Resources
 
 **Books:**
 
@@ -510,7 +510,7 @@ Now that you understand [first concept], let's explore how [second concept] buil
 
 **Clear Segmentation**: - Use horizontal rules (`---`) between major sections - Use subsections (`###`) for sub-topics within sections - Visual hierarchy matches conceptual hierarchy
 
-## 📖 Narrative Requirements
+## Narrative Requirements
 
 Tutorials are **stories about learning**. Narrative quality directly impacts engagement and retention.
 
@@ -581,18 +581,18 @@ Time to bring everything together. You'll combine NPV, WACC, and time value conc
 **Good Examples**:
 
 ```markdown
-✅ "Let's start with a simple example to build your intuition."
-✅ "You might be wondering why we multiply by (1-T). Here's the reasoning..."
-✅ "Great! You've now mastered the basics. Let's add some complexity."
-✅ "This is where many people get confused. Take your time with this step."
+PASS: "Let's start with a simple example to build your intuition."
+PASS: "You might be wondering why we multiply by (1-T). Here's the reasoning..."
+PASS: "Great! You've now mastered the basics. Let's add some complexity."
+PASS: "This is where many people get confused. Take your time with this step."
 ```
 
 **Bad Examples** (Too Neutral):
 
 ```markdown
-❌ "NPV is calculated using the following formula."
-❌ "The components are equity and debt."
-❌ "This formula is used in finance."
+FAIL: "NPV is calculated using the following formula."
+FAIL: "The components are equity and debt."
+FAIL: "This formula is used in finance."
 ```
 
 **Characteristics of Teacher Voice**: - **Personal**: Use "you" and "we" (not "one" or passive voice) - **Encouraging**: Positive, supportive tone - **Anticipatory**: Address common confusions preemptively - **Conversational**: Natural language (not academic jargon) - **Empathetic**: Acknowledges difficulty, provides reassurance
@@ -661,7 +661,7 @@ Imagine you're the CFO of CloudTech, a growing SaaS company. Your CEO wants to i
 
 **Relatable Examples**: - Use familiar contexts (everyday decisions) - Then extend to professional contexts - Bridge known to unknown
 
-## 🎨 Visual Completeness Requirements
+## Visual Completeness Requirements
 
 **Principle**: Every major concept should have at least one visual representation.
 
@@ -688,8 +688,8 @@ flowchart TD
 	C --> D[Calculate NPV]
 	D --> E{NPV > 0?}
 
-	E -->|Yes| F[✓ Accept Project<br/>Creates Value]
-	E -->|No| G[✗ Reject Project<br/>Destroys Value]
+	E -->|Yes| F[ Accept Project<br/>Creates Value]
+	E -->|No| G[ Reject Project<br/>Destroys Value]
 
 	style A fill:#0173B2,stroke:#000000,color:#FFFFFF
 	style F fill:#029E73,stroke:#000000,color:#FFFFFF
@@ -751,7 +751,7 @@ FV &= PV \times (1 + r)^n \\
 $$
 ```
 
-**Common LaTeX Mistakes to Avoid**: - ❌ Single `$` on its own line (use `$$` for display math) - ❌ Single `$` with `\begin{align}` (MUST use `$$`) - ❌ Undefined variables (always define after formula) - ❌ Using forward slash for fractions (use `\frac{}{}`)
+**Common LaTeX Mistakes to Avoid**: - FAIL: Single `$` on its own line (use `$$` for display math) - FAIL: Single `$` with `\begin{align}` (MUST use `$$`) - FAIL: Undefined variables (always define after formula) - FAIL: Using forward slash for fractions (use `\frac{}{}`)
 
 ### Code Examples
 
@@ -849,23 +849,23 @@ $1,000 $1,259
 
 - Equity cost: 12%
 - Debt cost: 6%
-- Which rate to use for NPV? 🤔
+- Which rate to use for NPV?
 
 **After WACC:**
 
 - Blended rate: 8.56%
-- Use this for all project evaluations ✓
+- Use this for all project evaluations
 ```
 
-**4. Visual Emphasis** (emoji, formatting): - ✅ Success indicators - ❌ Error or reject indicators - ⚠️ Warning or caution - 💡 Insight or tip - 🎯 Goal or objective - 💰 Financial/money related
+**4. Visual Emphasis** (emoji, formatting): - PASS: Success indicators - FAIL: Error or reject indicators - Warning or caution - Insight or tip - Goal or objective - Financial/money related
 
 ### Screenshot Requirements (If Applicable)
 
 **When to Include Screenshots**: - Tool/software tutorials - UI/UX walkthroughs - Configuration steps - Expected results visualization
 
-**Requirements**: - High resolution (readable) - Annotated with arrows/callouts - Crop to relevant area - Follow [Temporary Files Convention](../development/infra/temporary-files.md) for storage - Alt text for accessibility
+**Requirements**: - High resolution (readable) - Annotated with arrows/callouts - Crop to relevant area - Follow [Temporary Files Convention](../../development/infra/temporary-files.md) for storage - Alt text for accessibility
 
-## 🎮 Hands-On Elements Requirements
+## Hands-On Elements Requirements
 
 **Principle**: Learning happens through doing. Every tutorial must include hands-on practice.
 
@@ -878,7 +878,7 @@ $1,000 $1,259
 **Structure**:
 
 ```markdown
-### 💪 Practice Exercise
+### Practice Exercise
 
 [Clear problem statement with context]
 
@@ -911,7 +911,7 @@ $1,000 $1,259
 **Example**:
 
 ```markdown
-### 💪 Practice Exercise
+### Practice Exercise
 
 You're evaluating whether to invest in new manufacturing equipment.
 
@@ -967,7 +967,7 @@ $$
 **Structure**:
 
 ```markdown
-## 🎯 Challenges
+## Challenges
 
 Test your understanding with these realistic scenarios.
 
@@ -1016,7 +1016,7 @@ Test your understanding with these realistic scenarios.
 **1. Self-Check Questions** (Checkpoints):
 
 ```markdown
-### ✓ Checkpoint
+### Checkpoint
 
 **Quick check - Can you:**
 
@@ -1092,14 +1092,14 @@ When Amazon decides whether to build a new warehouse, they use NPV analysis. Her
 **4. Common Mistakes (Learned from Practice)**:
 
 ```markdown
-⚠️ **Common Mistake**: Using the wrong discount rate
+**Common Mistake**: Using the wrong discount rate
 
 **What happens**: If you use cost of equity (12%) instead of WACC (8.5%), you'll reject profitable projects.
 
 **Real example**: [Concrete scenario showing the impact]
 ```
 
-## 📐 Technical Standards
+## Technical Standards
 
 Technical quality ensures tutorials are accurate, accessible, and maintainable.
 
@@ -1110,13 +1110,13 @@ Technical quality ensures tutorials are accurate, accessible, and maintainable.
 **Correct Display Math**:
 
 ```markdown
-✅ Correct:
+PASS: Correct:
 
 $$
 r_e = r_f + \beta \times (r_m - r_f)
 $$
 
-✅ Correct (multi-line):
+PASS: Correct (multi-line):
 
 $$
 \begin{align}
@@ -1130,12 +1130,12 @@ $$
 **Incorrect Display Math**:
 
 ```markdown
-❌ Incorrect (single $ for display):
+FAIL: Incorrect (single $ for display):
 $
 r_e = r_f + \beta \times (r_m - r_f)
 $
 
-❌ Incorrect (single $ with align):
+FAIL: Incorrect (single $ with align):
 $
 \begin{align}
 WACC &= \frac{E}{V} \times r_e
@@ -1153,21 +1153,7 @@ $
 
 ### File Organization
 
-**Naming**: - Follow [File Naming Convention](../meta/\*` pattern - Descriptive, kebab-case names
-
-**Location**: - All tutorials in `docs/tutorials/` - Organized by domain or subject - Business and Finance in `docs/tutorials/business-and-finance/`
-
-**Examples**:
-
-```
-docs/tutorials/business-and-finance/tu-bufi__accounting.md
-docs/tutorials/business-and-finance/tu-bufi__corporate-finance.md
-docs/tutorials/ai-engineering/tu-aien__chat-with-pdf.md
-```
-
-### Cross-References
-
-**Requirements**: - Follow [Linking Convention](../formatting/linking.md) - Use relative paths with `.md` extension - Link to related tutorials, how-to guides, references - Link to prerequisite material - Link to next steps
+**Naming**: - Follow [File Naming Convention](../formatting/linking.md) - Use relative paths with `.md` extension - Link to related tutorials, how-to guides, references - Link to prerequisite material - Link to next steps
 
 **Format**:
 
@@ -1186,14 +1172,14 @@ If you're new to finance, start with [Accounting](../business-and-finance/tu-buf
 **Examples**:
 
 ```markdown
-✅ Good: See [Capital Budgeting Process](./ex-co__capital-budgeting.md)
-❌ Bad: See capital budgeting process [here](./ex-co__capital-budgeting.md)
+PASS: Good: See [Capital Budgeting Process](./ex-co__capital-budgeting.md)
+FAIL: Bad: See capital budgeting process [here](./ex-co__capital-budgeting.md)
 
-✅ Good: ![NPV calculation flowchart showing decision logic](./images/npv-flowchart.png)
-❌ Bad: ![](./images/npv-flowchart.png)
+PASS: Good: ![NPV calculation flowchart showing decision logic](./images/npv-flowchart.png)
+FAIL: Bad: ![](./images/npv-flowchart.png)
 ```
 
-## ✅ Validation Criteria
+## PASS: Validation Criteria
 
 These criteria define what `docs__tutorial-checker` validates. Every tutorial must pass all checks.
 
@@ -1255,7 +1241,7 @@ These criteria define what `docs__tutorial-checker` validates. Every tutorial mu
 
 **Engagement**: - [ ] Introduction is compelling - [ ] Content maintains interest - [ ] Hands-on elements engage learner - [ ] Conclusion is satisfying
 
-## ❌ Anti-Patterns
+## FAIL: Anti-Patterns
 
 Common mistakes that violate tutorial principles. Avoid these!
 
@@ -1501,7 +1487,7 @@ One might consider using this approach. [impersonal]
 
 **Correct Approach**: Consistent teacher voice throughout (friendly, encouraging, personal).
 
-## 📚 Examples and Templates
+## Examples and Templates
 
 ### Exemplary Tutorial: Quick Start Structure
 
@@ -1542,15 +1528,15 @@ updated: 2026-01-01
 
 Before starting this tutorial, you should:
 
-- ✓ [Prerequisite 1]
-- ✓ [Prerequisite 2]
+- [Prerequisite 1]
+- [Prerequisite 2]
 
 **Optional but helpful:**
 
 - [Nice-to-have 1]
 - [Nice-to-have 2]
 
-## 🎯 Learning Objectives
+## Learning Objectives
 
 By the end of this tutorial, you will be able to:
 
@@ -1590,7 +1576,7 @@ Where:
 
 [Worked example with step-by-step walkthrough]
 
-### 💪 Practice Exercise
+### Practice Exercise
 
 [Exercise for learner to try]
 
@@ -1601,7 +1587,7 @@ Where:
 
 </details>
 
-### ✓ Checkpoint
+### Checkpoint
 
 **What you've learned:**
 
@@ -1616,7 +1602,7 @@ Where:
 
 ---
 
-## 🎯 Challenges
+## Challenges
 
 Test your understanding with these realistic scenarios.
 
@@ -1653,7 +1639,7 @@ Test your understanding with these realistic scenarios.
 
 </details>
 
-## 🎓 Summary
+## Summary
 
 **What you've learned:**
 
@@ -1671,7 +1657,7 @@ Test your understanding with these realistic scenarios.
 - [Skill 1]
 - [Skill 2]
 
-## 🚀 Next Steps
+## Next Steps
 
 **Ready to go deeper?**
 
@@ -1687,7 +1673,7 @@ Test your understanding with these realistic scenarios.
 - [Real-world application suggestion 1]
 - [Real-world application suggestion 2]
 
-## 📚 Further Resources
+## Further Resources
 
 **Books:**
 
@@ -1703,7 +1689,7 @@ Test your understanding with these realistic scenarios.
 
 ```
 
-## 🔗 Related Conventions
+##  Related Conventions
 
 This tutorial convention builds upon and references:
 
@@ -1714,7 +1700,7 @@ This tutorial convention builds upon and references:
 - [Linking Convention](../formatting/linking.md) - Cross-reference standards
 - [Emoji Usage Convention](../formatting/emoji.md) - Semantic emoji usage
 
-## 🌐 External Resources
+##  External Resources
 
 **Learning Theory**:
 - [Bloom's Taxonomy](https://cft.vanderbilt.edu/guides-sub-pages/blooms-taxonomy/) - Framework for learning objectives

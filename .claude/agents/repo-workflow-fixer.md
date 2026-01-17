@@ -84,7 +84,7 @@ Skills: `docs-applying-diataxis-framework`, `repo-assessing-criticality-confiden
 **Project Guidance**:
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-pattern.md)
+- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
 
 **Related Agents**:
 
@@ -93,7 +93,7 @@ Skills: `docs-applying-diataxis-framework`, `repo-assessing-criticality-confiden
 
 **Related Conventions**:
 
-- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-pattern.md)
+- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
 - [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md)
 
 **Skills**:

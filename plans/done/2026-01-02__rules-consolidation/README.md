@@ -178,7 +178,7 @@ This plan uses **multi-file structure**:
 
 ## Related Documentation
 
-- [Repository Governance Architecture](../../../docs/explanation/ex-ru__repository-governance-architecture.md)
+- [Repository Governance Architecture](../../../governance/repository-governance-architecture.md)
 - [Skills Directory](../../../.claude/skills/README.md)
 - [Agents Index](../../../.claude/agents/README.md)
 - [AI Agents Convention](../../../governance/development/agents/ai-agents.md)

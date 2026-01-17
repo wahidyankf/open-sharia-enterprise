@@ -62,23 +62,23 @@ By-example tutorials adapt the general [Tutorial Convention](./general.md) struc
 
 By-example tutorials MUST follow these general tutorial standards:
 
-- ✅ **Learning-oriented approach** (Diátaxis framework): Teach through experience, not just reference
-- ✅ **Progressive Disclosure**: Complexity increases gradually (beginner → intermediate → advanced)
-- ✅ **Visual completeness**: Diagrams when appropriate (30-50% of examples)
-- ✅ **Hands-on elements**: Every example is runnable code (inherently hands-on)
-- ✅ **No time estimates**: Use coverage percentages (0-40%, 40-75%, 75-95%), not time
-- ✅ **Accessibility**: Color-blind friendly diagrams, clear structure
-- ✅ **Real-world relevance**: "Why It Matters" sections connect to production use
+- PASS: **Learning-oriented approach** (Diátaxis framework): Teach through experience, not just reference
+- PASS: **Progressive Disclosure**: Complexity increases gradually (beginner → intermediate → advanced)
+- PASS: **Visual completeness**: Diagrams when appropriate (30-50% of examples)
+- PASS: **Hands-on elements**: Every example is runnable code (inherently hands-on)
+- PASS: **No time estimates**: Use coverage percentages (0-40%, 40-75%, 75-95%), not time
+- PASS: **Accessibility**: Color-blind friendly diagrams, clear structure
+- PASS: **Real-world relevance**: "Why It Matters" sections connect to production use
 
 ### Specialized Requirements for By-Example
 
 Beyond general tutorial standards, by-example adds:
 
-- ✅ **Annotation density**: 1-2.25 comment lines per code line (reduce if > 2.5)
-- ✅ **Self-containment**: Examples runnable within chapter scope
-- ✅ **Five-part structure**: Explanation → Diagram → Annotated Code → Takeaway → Why It Matters
-- ✅ **Coverage target**: 95% through 75-90 examples (higher than other tutorial types)
-- ✅ **Code-first approach**: Show code first, explain through annotations
+- PASS: **Annotation density**: 1-2.25 comment lines per code line (reduce if > 2.5)
+- PASS: **Self-containment**: Examples runnable within chapter scope
+- PASS: **Five-part structure**: Explanation → Diagram → Annotated Code → Takeaway → Why It Matters
+- PASS: **Coverage target**: 95% through 75-90 examples (higher than other tutorial types)
+- PASS: **Code-first approach**: Show code first, explain through annotations
 
 ## Core Characteristics
 
@@ -221,7 +221,7 @@ fmt.Println(result)              // => Output: 20-transformed
 - **Side effects**: Document mutations, I/O operations, state changes
 - **Expected outputs**: Show stdout/stderr content with `=> Output:` prefix
 - **Timing (compile vs runtime)**: Distinguish compile-time checks from runtime execution
-- **Best practices**: Use ✅ GOOD vs ❌ BAD indicators for pattern comparisons
+- **Best practices**: Use PASS: GOOD vs FAIL: BAD indicators for pattern comparisons
 - **Error cases**: Document when errors occur and how they're handled
 
 **Code organization**:
@@ -362,8 +362,8 @@ Use the `handleRequest` function from Example 12 (code not shown).
 
 This is a CRITICAL distinction that affects validation and content creation:
 
-- ✅ **CORRECT**: Each example (Example 1, Example 2, etc.) must individually achieve 1.0-2.25 comment lines per code line
-- ❌ **INCORRECT**: Averaging density across entire file (beginner.md, intermediate.md, advanced.md)
+- PASS: **CORRECT**: Each example (Example 1, Example 2, etc.) must individually achieve 1.0-2.25 comment lines per code line
+- FAIL: **INCORRECT**: Averaging density across entire file (beginner.md, intermediate.md, advanced.md)
 
 **Why per-example measurement matters**:
 
@@ -752,7 +752,7 @@ Before publishing by-example content, verify:
 - [ ] Annotations explain WHY (not just WHAT)
 - [ ] Pattern matching branches documented (which matched, why)
 - [ ] Execution flow decisions shown (if/case branches, timing)
-- [ ] Best practices indicated (✅ GOOD vs ❌ BAD where relevant)
+- [ ] Best practices indicated (PASS: GOOD vs FAIL: BAD where relevant)
 - [ ] `// =>` or `# =>` notation shows outputs and states
 - [ ] Variable states documented at each step
 - [ ] Code is formatted with standard tools
@@ -1042,7 +1042,7 @@ This maintains 1.0-2.25 density PER BLOCK while separating WHAT (code annotation
 - Showing alternative implementations (approach 1 vs approach 2)
 - Demonstrating evolution (before refactoring → after refactoring)
 - Illustrating different language features (for loop vs stream API)
-- Contrasting patterns (✅ GOOD vs ❌ BAD examples)
+- Contrasting patterns (PASS: GOOD vs FAIL: BAD examples)
 
 **Still use single code block when**:
 
@@ -1072,9 +1072,9 @@ When using multiple code blocks within an example:
 **Example measurement**:
 
 ```
-Code Block 1: 5 code lines, 6 annotation lines = 1.2 density ✅
+Code Block 1: 5 code lines, 6 annotation lines = 1.2 density
 Text Section: 3 sentences of explanation (NOT counted)
-Code Block 2: 4 code lines, 8 annotation lines = 2.0 density ✅
+Code Block 2: 4 code lines, 8 annotation lines = 2.0 density
 Overall: Both blocks meet 1.0-2.25 target
 ```
 

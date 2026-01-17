@@ -44,7 +44,7 @@ This convention establishes consistent indentation standards for all markdown fi
 - **Hugo template indentation** - Covered in Hugo development practices
 - **Diagram indentation** - Mermaid diagrams have their own syntax rules
 
-## 💡 Core Principle
+## Core Principle
 
 **All markdown files use STANDARD MARKDOWN bullet formatting** with space indentation.
 
@@ -56,7 +56,7 @@ This convention establishes consistent indentation standards for all markdown fi
 - **Editor consistency**: All text editors handle spaces consistently
 - **Project-wide consistency**: All markdown files follow the same indentation rules
 
-## 📝 Basic Rules
+## Basic Rules
 
 ### Markdown Bullet Indentation
 
@@ -68,18 +68,18 @@ This convention establishes consistent indentation standards for all markdown fi
 **Correct Pattern:**
 
 ```markdown
-✅ CORRECT - Standard markdown format:
+PASS: CORRECT - Standard markdown format:
 
 - Main point
   - Nested detail (2 spaces before dash)
   - Another detail (2 spaces before dash)
     - Deeper elaboration (4 spaces before dash)
 
-❌ INCORRECT - Tab after dash (NEVER use this):
+FAIL: INCORRECT - Tab after dash (NEVER use this):
 
 -<TAB>Main point (tab after dash - WRONG!) -<TAB>Nested detail (tab after dash - WRONG!)
 
-❌ INCORRECT - Tab before dash (NEVER use this):
+FAIL: INCORRECT - Tab before dash (NEVER use this):
 
 - Main point
   <TAB>- Nested detail (tab before dash - WRONG!)
@@ -94,12 +94,12 @@ This convention establishes consistent indentation standards for all markdown fi
 
 For nested bullets, add 2 spaces per indentation level BEFORE the dash. The pattern is always: `[SPACES]- Text` where SPACES determine nesting level (0 spaces = level 1, 2 spaces = level 2, 4 spaces = level 3, etc.).
 
-## 🚨 YAML Frontmatter Indentation
+## YAML Frontmatter Indentation
 
 All YAML frontmatter blocks MUST use **2 spaces per indentation level** (standard YAML requirement):
 
 ```yaml
-✅ CORRECT - Frontmatter uses 2 spaces:
+PASS: CORRECT - Frontmatter uses 2 spaces:
 ---
 title: "Document Title"
 description: Brief description
@@ -121,7 +121,7 @@ updated: 2025-12-12
 
 **After frontmatter**: All markdown content (including bullets) continues using standard markdown formatting (space indentation).
 
-## 🔧 Code Block Indentation
+## Code Block Indentation
 
 Code blocks within documentation MUST use **language-specific idiomatic indentation**:
 
@@ -174,7 +174,7 @@ func Authenticate(user User) Token {
 
 **Rationale**: Code blocks represent actual source code and must follow their language's conventions, not the markdown formatting rules. This ensures code examples are syntactically correct and can be copied directly into editors or files without modification.
 
-## 🧪 Complete Example
+## Complete Example
 
 Here's a complete example showing proper indentation in a `docs/` file:
 
@@ -224,7 +224,7 @@ const oauth = new OAuth2Provider({
 #authentication #oauth #implementation
 ````
 
-## 📋 Indentation Checklist
+## Indentation Checklist
 
 Before committing files in `docs/`:
 
@@ -242,7 +242,7 @@ Before committing files in `docs/`:
 - [ ] **No mixed indentation** - consistent throughout file
 - [ ] **No tabs in bullets** - use spaces only (standard markdown)
 
-## 🔗 Related Conventions
+## Related Conventions
 
 **Universal Application**:
 
@@ -255,7 +255,7 @@ Before committing files in `docs/`:
 - [Hugo Content Convention - OSE Platform](../hugo/ose-platform.md) - ose-platform-web indentation specifics
 - [File Naming Convention](../meta/file-naming.md) - File naming standards
 
-## 🌐 External Resources
+## External Resources
 
 - [Obsidian Documentation](https://help.obsidian.md/) - Knowledge base tool with frontmatter parsing
 - [YAML Specification](https://yaml.org/spec/) - YAML format specification

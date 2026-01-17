@@ -403,7 +403,7 @@ When you find broken internal links:
 Before starting work, familiarize yourself with:
 
 - [AGENTS.md](../../CLAUDE.md) - Project guidance and documentation standards
-- [AI Agents Convention](../../governance/development/agents/ex-ru-de-ag-ai-agents.md) - Agent design standards
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md) - Agent design standards
 - [Linking Convention](../../governance/conventions/formatting/linking.md) - How links should be formatted
 - [Timestamp Format Convention](../../governance/conventions/formatting/timestamp.md) - UTC+7 timestamp format
 

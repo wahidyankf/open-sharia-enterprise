@@ -32,10 +32,10 @@ These standards define **HOW to maintain and validate quality**, covering automa
 
 ## Related Documentation
 
-- [Development Index](../README.md) - All development practices
+- [Development Index](./README.md) - All development practices
 - [Automation Over Manual Principle](../../principles/software-engineering/automation-over-manual.md) - Why automated quality matters
 - [Maker-Checker-Fixer Pattern](../pattern/maker-checker-fixer.md) - Quality workflow pattern
-- [Repository Architecture](../..repository-governance-architecture.md) - Six-layer governance model
+- [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected
 

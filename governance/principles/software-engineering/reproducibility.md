@@ -17,7 +17,7 @@ updated: 2025-12-28
 
 **Development environments and builds should be reproducible from the start.** Anyone should be able to clone the repository and get a consistent, working environment without "works on my machine" problems. Reproducibility eliminates friction and enables global collaboration.
 
-## 🌟 Vision Supported
+## Vision Supported
 
 This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of democratizing Islamic enterprise by enabling global contributors to work consistently regardless of location or local system configuration.
 
@@ -31,7 +31,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 
 **Vision alignment**: Open-source Islamic enterprise thrives when contribution is frictionless. Reproducibility democratizes development - anyone, anywhere can participate without requiring deep DevOps expertise or specific system configurations.
 
-## 🎯 What
+## What
 
 **Reproducibility** means:
 
@@ -51,7 +51,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 - Undocumented setup steps
 - Non-deterministic builds
 
-## 💡 Why
+## Why
 
 ### Benefits of Reproducibility
 
@@ -75,25 +75,25 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 
 **Apply from day one for**:
 
-- ✅ Runtime versions (Node.js, npm, Python, Java)
-- ✅ Dependency versions (package-lock.json, yarn.lock)
-- ✅ Build tool versions (webpack, TypeScript)
-- ✅ Development tools (linters, formatters)
-- ✅ Environment configuration (env vars, config files)
+- PASS: Runtime versions (Node.js, npm, Python, Java)
+- PASS: Dependency versions (package-lock.json, yarn.lock)
+- PASS: Build tool versions (webpack, TypeScript)
+- PASS: Development tools (linters, formatters)
+- PASS: Environment configuration (env vars, config files)
 
 **Acceptable variance for**:
 
-- ⚠️ Operating system (macOS, Linux, Windows) - document any OS-specific quirks
-- ⚠️ Editor choice (VS Code, Vim, IntelliJ) - but provide recommended config
-- ⚠️ Local development preferences (ports, directories) - use .env.local
+- Operating system (macOS, Linux, Windows) - document any OS-specific quirks
+- Editor choice (VS Code, Vim, IntelliJ) - but provide recommended config
+- Local development preferences (ports, directories) - use .env.local
 
-## 📋 How It Applies
+## How It Applies
 
 ### Version Pinning with Volta
 
 **Context**: Ensuring consistent Node.js and npm versions.
 
-✅ **Reproducible (Our Approach)**:
+PASS: **Reproducible (Our Approach)**:
 
 ```json
 // package.json
@@ -113,10 +113,10 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 - CI/CD uses same versions
 - No manual version management needed
 
-❌ **Non-reproducible (Avoid)**:
+FAIL: **Non-reproducible (Avoid)**:
 
 ```bash
-# ❌ Just use whatever Node.js you have installed
+# FAIL: Just use whatever Node.js you have installed
 node --version  # Developer A: v20.x
 node --version  # Developer B: v22.x
 node --version  # CI: v23.x
@@ -130,7 +130,7 @@ node --version  # CI: v23.x
 
 **Context**: Ensuring identical dependency trees.
 
-✅ **Reproducible (Required)**:
+PASS: **Reproducible (Required)**:
 
 ```bash
 # Install from lockfile - exact versions
@@ -143,13 +143,13 @@ git commit -m "chore: update dependencies"
 
 **Why this works**: `package-lock.json` locks exact versions of all dependencies and sub-dependencies. `npm ci` installs exactly what's in lockfile.
 
-❌ **Non-reproducible (Avoid)**:
+FAIL: **Non-reproducible (Avoid)**:
 
 ```bash
-# ❌ Install from package.json - floating versions
+# FAIL: Install from package.json - floating versions
 npm install  # Gets latest within semver range
 
-# ❌ Lockfile gitignored
+# FAIL: Lockfile gitignored
 echo "package-lock.json" >> .gitignore
 ```
 
@@ -163,7 +163,7 @@ echo "package-lock.json" >> .gitignore
 
 **Context**: Specifying dependency versions in package.json.
 
-✅ **Reproducible (Recommended)**:
+PASS: **Reproducible (Recommended)**:
 
 ```json
 {
@@ -181,7 +181,7 @@ echo "package-lock.json" >> .gitignore
 
 **Why this works**: Exact versions mean lockfile is more stable. Upgrades are deliberate, not accidental.
 
-⚠️ **Acceptable with lockfile**:
+**Acceptable with lockfile**:
 
 ```json
 {
@@ -193,7 +193,7 @@ echo "package-lock.json" >> .gitignore
 
 **Why this is acceptable**: With `package-lock.json` committed, everyone gets same version. `^` allows patch updates when you run `npm update`.
 
-❌ **Non-reproducible (Avoid)**:
+FAIL: **Non-reproducible (Avoid)**:
 
 ```json
 {
@@ -210,7 +210,7 @@ echo "package-lock.json" >> .gitignore
 
 **Context**: Managing environment variables.
 
-✅ **Reproducible (Best Practice)**:
+PASS: **Reproducible (Best Practice)**:
 
 ```bash
 # .env.example (committed to git)
@@ -239,7 +239,7 @@ cp .env.example .env
 - Secrets stay in gitignored `.env`
 - Everyone knows what config is needed
 
-❌ **Non-reproducible (Avoid)**:
+FAIL: **Non-reproducible (Avoid)**:
 
 ```bash
 # No example file
@@ -253,7 +253,7 @@ cp .env.example .env
 
 **Context**: Applications with multiple services (database, cache, queue).
 
-✅ **Reproducible (Excellent for complex setups)**:
+PASS: **Reproducible (Excellent for complex setups)**:
 
 ```yaml
 # docker-compose.yml
@@ -300,7 +300,7 @@ docker-compose up
 
 **Context**: Onboarding new contributors.
 
-✅ **Reproducible (Required)**:
+PASS: **Reproducible (Required)**:
 
 ```markdown
 ## Environment Setup
@@ -317,7 +317,7 @@ Expected result: Application running at http://localhost:3000
 
 **Why this works**: Step-by-step instructions. Anyone can follow. Clear success criteria.
 
-❌ **Non-reproducible (Avoid)**:
+FAIL: **Non-reproducible (Avoid)**:
 
 ```markdown
 ## Setup
@@ -327,29 +327,29 @@ Install dependencies and run it.
 
 **Why this fails**: No specifics. Assumes too much knowledge. Leaves room for errors.
 
-## 🚫 Anti-Patterns
+## Anti-Patterns
 
 ### "Works on My Machine"
 
-❌ **Problem**: Code works locally but fails in CI/production.
+FAIL: **Problem**: Code works locally but fails in CI/production.
 
 ```bash
 # Developer's machine
 node --version  # v24.11.1 (local)
-npm test        # ✅ All pass
+npm test        # PASS: All pass
 
 # CI server
 node --version  # v20.x (different)
-npm test        # ❌ Failures
+npm test        # FAIL: Failures
 ```
 
 **Why it's bad**: Different environments = different behavior. Wastes time debugging environment instead of code.
 
-✅ **Solution**: Use Volta to pin versions across all environments.
+PASS: **Solution**: Use Volta to pin versions across all environments.
 
 ### Floating Dependencies
 
-❌ **Problem**: Different dependency versions on each install.
+FAIL: **Problem**: Different dependency versions on each install.
 
 ```json
 // package.json
@@ -367,11 +367,11 @@ npm test        # ❌ Failures
 
 **Why it's bad**: Non-deterministic. Builds differ. Hard to debug.
 
-✅ **Solution**: Commit `package-lock.json`. Use `npm ci` in CI.
+PASS: **Solution**: Commit `package-lock.json`. Use `npm ci` in CI.
 
 ### Undocumented System Dependencies
 
-❌ **Problem**: Code requires specific system packages but doesn't document them.
+FAIL: **Problem**: Code requires specific system packages but doesn't document them.
 
 ```typescript
 // Uses native crypto library
@@ -384,7 +384,7 @@ import crypto from "crypto";
 
 **Why it's bad**: Contributors waste time discovering hidden dependencies.
 
-✅ **Solution**: Document system dependencies in README.
+PASS: **Solution**: Document system dependencies in README.
 
 ```markdown
 ## System Requirements
@@ -395,7 +395,7 @@ import crypto from "crypto";
 
 ### Manual Environment Setup
 
-❌ **Problem**: Complex manual steps required.
+FAIL: **Problem**: Complex manual steps required.
 
 ```bash
 # Undocumented tribal knowledge
@@ -410,7 +410,7 @@ import crypto from "crypto";
 
 **Why it's bad**: High barrier to contribution. Knowledge silos.
 
-✅ **Solution**: Automate with scripts or containers.
+PASS: **Solution**: Automate with scripts or containers.
 
 ```bash
 # setup.sh
@@ -419,7 +419,7 @@ import crypto from "crypto";
 ./scripts/seed-database.sh
 ```
 
-## ✅ Best Practices
+## PASS: Best Practices
 
 ### 1. Pin Runtime Versions
 
@@ -522,7 +522,7 @@ nx build my-app
 # Same inputs = same output = cache hit
 ```
 
-## 📊 Example from This Repository
+## Example from This Repository
 
 **Evidence of Reproducibility First**:
 
@@ -574,19 +574,19 @@ npm install
 
 **Result**: Same git hooks for everyone after `npm install`.
 
-## 🔗 Related Principles
+## Related Principles
 
 - [Automation Over Manual](./automation-over-manual.md) - Automate environment setup
 - [Explicit Over Implicit](./explicit-over-implicit.md) - Explicit version pinning
 - [Simplicity Over Complexity](../general/simplicity-over-complexity.md) - Simple, consistent environments
 
-## 📚 Related Conventions
+## Related Conventions
 
 - [Reproducible Environments](../../development/workflow/reproducible-environments.md) - Implementation practices
 - [Code Quality Convention](../../development/quality/code.md) - Automated consistency
 - [Hugo Development](../../development/hugo/development.md) - Reproducible builds
 
-## 📖 References
+## References
 
 **Version Management**:
 

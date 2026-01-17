@@ -493,7 +493,7 @@ This plan uses only existing repository tools and patterns. No new npm packages,
 
 ## Related Documentation
 
-- [Repository Governance Architecture](../../../docs/explanation/ex-ru__repository-governance-architecture.md)
+- [Repository Governance Architecture](../../../governance/repository-governance-architecture.md)
 - [Convention Writing Convention](../../../governance/conventions/content/convention-writing.md)
 - [AI Agents Convention](../../../governance/development/agents/ai-agents.md)
 - [Skills Directory](../../../.claude/skills/README.md)

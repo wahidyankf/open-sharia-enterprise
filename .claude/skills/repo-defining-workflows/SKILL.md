@@ -248,7 +248,7 @@ Before publishing workflow:
 
 ## References
 
-**Primary Convention**: [Workflow Pattern Convention](../../../governance/workflows/meta/workflow-pattern.md)
+**Primary Convention**: [Workflow Pattern Convention](../../../governance/workflows/meta/workflow-identifier.md)
 
 **Related Conventions**:
 

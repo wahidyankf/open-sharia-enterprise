@@ -45,7 +45,7 @@ This convention implements the following core principles:
 - **Print colors** - CMYK or print-specific color spaces
 - **Dynamic theming** - Light/dark mode switching (implementation detail)
 
-## 🎯 Purpose
+## Purpose
 
 Color accessibility matters because:
 
@@ -71,8 +71,8 @@ All color usage in this repository must follow these principles:
 
 **Example:**
 
-- ❌ Bad: Red node means "error" (color only)
-- ✅ Good: Red circle labeled "Error" with error icon (color + shape + text + symbol)
+- FAIL: Bad: Red node means "error" (color only)
+- PASS: Good: Red circle labeled "Error" with error icon (color + shape + text + symbol)
 
 ### 2. Use Color as Supplementary Enhancement
 
@@ -117,14 +117,14 @@ Use these colors for all color-dependent visualizations:
 
 | Color  | Hex Code | RGB           | HSL            | Use Cases                          | Light Background (WCAG AA) | Dark Background (WCAG AA) |
 | ------ | -------- | ------------- | -------------- | ---------------------------------- | -------------------------- | ------------------------- |
-| Blue   | #0173B2  | 1, 115, 178   | 204°, 99%, 35% | Primary elements, writers (blue)   | ✅ 8.59:1 (AAA)            | ✅ 6.93:1 (AAA)           |
-| Orange | #DE8F05  | 222, 143, 5   | 35°, 96%, 44%  | Warnings, secondary (orange)       | ✅ 6.48:1 (AAA)            | ✅ 5.24:1 (AAA)           |
-| Teal   | #029E73  | 2, 158, 115   | 161°, 98%, 31% | Success, validation, tertiary      | ✅ 8.33:1 (AAA)            | ✅ 6.74:1 (AAA)           |
-| Purple | #CC78BC  | 204, 120, 188 | 314°, 50%, 64% | Implementors, special states       | ✅ 4.51:1 (AA)             | ✅ 3.65:1 (AA)            |
-| Brown  | #CA9161  | 202, 145, 97  | 23°, 48%, 59%  | Neutral elements, secondary        | ✅ 5.23:1 (AAA)            | ✅ 4.23:1 (AAA)           |
-| Black  | #000000  | 0, 0, 0       | 0°, 0%, 0%     | Text on light, borders, outlines   | ✅ 21.00:1 (AAA)           | N/A (use for light text)  |
-| White  | #FFFFFF  | 255, 255, 255 | 0°, 0%, 100%   | Text on dark, light backgrounds    | N/A (light bg)             | ✅ 21.00:1 (AAA)          |
-| Gray   | #808080  | 128, 128, 128 | 0°, 0%, 50%    | Secondary elements, disabled state | ✅ 7.00:1 (AAA)            | ✅ 4.00:1 (AA)            |
+| Blue   | #0173B2  | 1, 115, 178   | 204°, 99%, 35% | Primary elements, writers (blue)   | PASS: 8.59:1 (AAA)         | PASS: 6.93:1 (AAA)        |
+| Orange | #DE8F05  | 222, 143, 5   | 35°, 96%, 44%  | Warnings, secondary (orange)       | PASS: 6.48:1 (AAA)         | PASS: 5.24:1 (AAA)        |
+| Teal   | #029E73  | 2, 158, 115   | 161°, 98%, 31% | Success, validation, tertiary      | PASS: 8.33:1 (AAA)         | PASS: 6.74:1 (AAA)        |
+| Purple | #CC78BC  | 204, 120, 188 | 314°, 50%, 64% | Implementors, special states       | PASS: 4.51:1 (AA)          | PASS: 3.65:1 (AA)         |
+| Brown  | #CA9161  | 202, 145, 97  | 23°, 48%, 59%  | Neutral elements, secondary        | PASS: 5.23:1 (AAA)         | PASS: 4.23:1 (AAA)        |
+| Black  | #000000  | 0, 0, 0       | 0°, 0%, 0%     | Text on light, borders, outlines   | PASS: 21.00:1 (AAA)        | N/A (use for light text)  |
+| White  | #FFFFFF  | 255, 255, 255 | 0°, 0%, 100%   | Text on dark, light backgrounds    | N/A (light bg)             | PASS: 21.00:1 (AAA)       |
+| Gray   | #808080  | 128, 128, 128 | 0°, 0%, 50%    | Secondary elements, disabled state | PASS: 7.00:1 (AAA)         | PASS: 4.00:1 (AA)         |
 
 ### Usage Recommendations by Context
 
@@ -151,7 +151,7 @@ For quick copy-paste in code:
 #808080 - Gray
 ```
 
-## 🔴 Colors to Avoid
+## Colors to Avoid
 
 **CRITICAL**: Never use these colors in any context where color is meant to convey information:
 
@@ -218,9 +218,9 @@ This section distinguishes between two different color usage contexts with diffe
 
 **Examples**:
 
-- Criticality levels: 🔴 CRITICAL, 🟠 HIGH, 🟡 MEDIUM, 🟢 LOW
-- Status markers: ✅ Success, ❌ Error, ⚠️ Warning
-- Validation results: [Verified] ✅, [Error] ❌, [Broken] 🔴
+- Criticality levels: CRITICAL, HIGH, MEDIUM, LOW
+- Status markers: PASS: Success, FAIL: Error, Warning
+- Validation results: [Verified] , [Error] , [Broken]
 
 **Why standard emoji colors (red/green/yellow) are acceptable here**:
 
@@ -231,9 +231,9 @@ This section distinguishes between two different color usage contexts with diffe
 
 **Critical Rule**: Emoji indicators MUST ALWAYS include text labels. Never use colored emojis alone without text context.
 
-✅ **Acceptable**: `🔴 CRITICAL Issues (Must Fix)` - Color + text
-❌ **Not Acceptable**: `🔴 Issues` - Color without clear severity text
-❌ **Not Acceptable**: Section marked only with 🔴 - Color-only identification
+PASS: **Acceptable**: `CRITICAL Issues (Must Fix)` - Color + text
+FAIL: **Not Acceptable**: `Issues` - Color without clear severity text
+FAIL: **Not Acceptable**: Section marked only with - Color-only identification
 
 ### Context 2: Mermaid Diagrams in docs/
 
@@ -382,8 +382,8 @@ When CSS styling is implemented:
 3. **Test light mode and dark mode separately** to ensure sufficient contrast
 
 4. **Never use color names**: Always use hex codes for consistency
-   - ❌ `color: red`
-   - ✅ `color: #0173B2`
+   - FAIL: `color: red`
+   - PASS: `color: #0173B2`
 
 5. **Include border/outline properties** for visual definition
 
@@ -448,18 +448,18 @@ The verified accessible palette requires **no adjustments** between light and da
 ```
 Light Mode Background: #FFFFFF (white)
 Blue (#0173B2) with Black text (#000000) and Black border (#000000)
-Result: ✅ 8.59:1 contrast ratio (AAA)
+Result: PASS: 8.59:1 contrast ratio (AAA)
 
 Dark Mode Background: #1E1E2E (dark gray)
 Blue (#0173B2) with White text (#FFFFFF) and Black border (#000000)
-Result: ✅ 6.93:1 contrast ratio (AAA)
+Result: PASS: 6.93:1 contrast ratio (AAA)
 ```
 
 ## Implementation Best Practices
 
 ### 1. Use Hex Codes, Never CSS Color Names
 
-❌ **Wrong:**
+FAIL: **Wrong:**
 
 ```css
 fill: red;
@@ -467,7 +467,7 @@ background: green;
 border: blue;
 ```
 
-✅ **Correct:**
+PASS: **Correct:**
 
 ```css
 fill: #de8f05;
@@ -479,13 +479,13 @@ border: #0173b2;
 
 Borders provide shape definition that doesn't rely on fill color:
 
-✅ **Good:**
+PASS: **Good:**
 
 ```mermaid
 classDef box fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-❌ **Avoid:**
+FAIL: **Avoid:**
 
 ```mermaid
 classDef box fill:#0173B2,color:#0000FF
@@ -495,10 +495,10 @@ classDef box fill:#0173B2,color:#0000FF
 
 Never use color alone. Combine:
 
-- ✅ Color + shape (different node types)
-- ✅ Color + text (descriptive labels)
-- ✅ Color + position (spatial organization)
-- ✅ Color + icons (additional markers)
+- PASS: Color + shape (different node types)
+- PASS: Color + text (descriptive labels)
+- PASS: Color + position (spatial organization)
+- PASS: Color + icons (additional markers)
 
 ### 4. Document Your Color Choices (Recommended for Transparency)
 
@@ -524,11 +524,11 @@ graph TD
 
 Before committing content with colors:
 
-1. ✅ Create using accessible palette
-2. ✅ Test in color blindness simulator
-3. ✅ Verify contrast ratios
-4. ✅ Check light and dark modes
-5. ✅ Confirm shape differentiation is sufficient
+1. PASS: Create using accessible palette
+2. PASS: Test in color blindness simulator
+3. PASS: Verify contrast ratios
+4. PASS: Check light and dark modes
+5. PASS: Confirm shape differentiation is sufficient
 
 ## Testing and Verification
 
@@ -593,17 +593,17 @@ graph TD
    - Foreground color (text): Your chosen text color
    - Background color: Your chosen fill color
 4. Verify results:
-   - Text: ✅ 4.5:1 or higher (WCAG AA)
-   - Components: ✅ 3:1 or higher (WCAG AA)
+   - Text: PASS: 4.5:1 or higher (WCAG AA)
+   - Components: PASS: 3:1 or higher (WCAG AA)
 
 #### Step 4: Confirm Shape Differentiation
 
 Review your diagram and ensure:
 
-- ✅ Different node shapes used (rectangle, circle, diamond)
-- ✅ Different line styles (solid, dashed, dotted)
-- ✅ Clear text labels on all elements
-- ✅ Elements remain distinguishable in grayscale
+- PASS: Different node shapes used (rectangle, circle, diamond)
+- PASS: Different line styles (solid, dashed, dotted)
+- PASS: Clear text labels on all elements
+- PASS: Elements remain distinguishable in grayscale
 
 #### Step 5: Test Light and Dark Modes
 
@@ -638,10 +638,10 @@ Use this checklist before considering color usage complete:
 
 ### Mistake 1: Using Red-Green Combinations
 
-❌ **Problem**: Red-blind and green-blind users cannot distinguish these colors
+FAIL: **Problem**: Red-blind and green-blind users cannot distinguish these colors
 
 ```mermaid
-❌ WRONG
+FAIL: WRONG
 graph TD
     A[Success]:::green
     B[Error]:::red
@@ -650,10 +650,10 @@ graph TD
     classDef red fill:#DE8F05
 ```
 
-✅ **Solution**: Use colors from verified palette
+PASS: **Solution**: Use colors from verified palette
 
 ```mermaid
-✅ CORRECT
+PASS: CORRECT
 graph TD
     A[Success]:::teal
     B[Error]:::orange
@@ -664,10 +664,10 @@ graph TD
 
 ### Mistake 2: Relying on Color Alone
 
-❌ **Problem**: Color-blind users cannot distinguish elements
+FAIL: **Problem**: Color-blind users cannot distinguish elements
 
 ```mermaid
-❌ WRONG
+FAIL: WRONG
 graph TD
     A:::blue
     B:::orange
@@ -676,10 +676,10 @@ graph TD
     classDef orange fill:#DE8F05
 ```
 
-✅ **Solution**: Add text labels and shapes
+PASS: **Solution**: Add text labels and shapes
 
 ```mermaid
-✅ CORRECT
+PASS: CORRECT
 graph TD
     A["Primary Task<br/>(Blue Rectangle)"]:::blue
     B["Warning State<br/>(Orange Diamond)"]:::orange
@@ -690,20 +690,20 @@ graph TD
 
 ### Mistake 3: Using Yellow for Important Information
 
-❌ **Problem**: Yellow is invisible to tritanopia (blue-yellow blind)
+FAIL: **Problem**: Yellow is invisible to tritanopia (blue-yellow blind)
 
 ```mermaid
-❌ WRONG - Yellow not visible to tritanopia users
+FAIL: WRONG - Yellow not visible to tritanopia users
 graph TD
     A[Important!]:::yellow
 
     classDef yellow fill:#DE8F05,stroke:#000000
 ```
 
-✅ **Solution**: Use orange or teal instead
+PASS: **Solution**: Use orange or teal instead
 
 ```mermaid
-✅ CORRECT - Orange visible to all color blindness types
+PASS: CORRECT - Orange visible to all color blindness types
 graph TD
     A[Important!]:::orange
 
@@ -712,20 +712,20 @@ graph TD
 
 ### Mistake 4: No Contrast Verification
 
-❌ **Problem**: Insufficient contrast causes readability issues
+FAIL: **Problem**: Insufficient contrast causes readability issues
 
 ```mermaid
-❌ WRONG - Purple text on light purple might have low contrast
+FAIL: WRONG - Purple text on light purple might have low contrast
 graph TD
     A[Text]:::weakContrast
 
     classDef weakContrast fill:#DE8F05,color:#FF1493
 ```
 
-✅ **Solution**: Verify with contrast checker
+PASS: **Solution**: Verify with contrast checker
 
 ```mermaid
-✅ CORRECT - Use verified palette with sufficient contrast
+PASS: CORRECT - Use verified palette with sufficient contrast
 graph TD
     A["Text (White on Purple)"]:::goodContrast
 
@@ -734,19 +734,19 @@ graph TD
 
 ### Mistake 5: Using CSS Color Names
 
-❌ **Problem**: Inconsistent across platforms
+FAIL: **Problem**: Inconsistent across platforms
 
 ```css
-❌ WRONG
+FAIL: WRONG
 fill: red;
 background: green;
 border: blue;
 ```
 
-✅ **Solution**: Always use hex codes
+PASS: **Solution**: Always use hex codes
 
 ```css
-✅ CORRECT
+PASS: CORRECT
 fill: #DE8F05;
 background: #029E73;
 border: #0173B2;
@@ -754,18 +754,18 @@ border: #0173B2;
 
 ### Mistake 6: Not Testing in Dark Mode
 
-❌ **Problem**: Colors might not have sufficient contrast in dark mode
+FAIL: **Problem**: Colors might not have sufficient contrast in dark mode
 
 ```
-Light mode: White background + Blue fill ✅ Works
-Dark mode: Dark background + Blue fill ❌ May not work
+Light mode: White background + Blue fill PASS: Works
+Dark mode: Dark background + Blue fill FAIL: May not work
 ```
 
-✅ **Solution**: Test both modes
+PASS: **Solution**: Test both modes
 
 ```
-Light mode: White background + Blue fill ✅ 8.59:1 contrast
-Dark mode: Dark background + Blue fill ✅ 6.93:1 contrast
+Light mode: White background + Blue fill PASS: 8.59:1 contrast
+Dark mode: Dark background + Blue fill PASS: 6.93:1 contrast
 ```
 
 ## Real-World Examples
@@ -803,14 +803,14 @@ graph TD
 
 **Why this works:**
 
-- ✅ Uses only verified palette colors
-- ✅ Black borders provide shape definition
-- ✅ White text provides contrast on dark fills
-- ✅ Text labels describe each element
-- ✅ Diamond shape for decision point (not just color)
-- ✅ Different rectangles for different steps
-- ✅ Color scheme documented
-- ✅ Safe for all color blindness types
+- PASS: Uses only verified palette colors
+- PASS: Black borders provide shape definition
+- PASS: White text provides contrast on dark fills
+- PASS: Text labels describe each element
+- PASS: Diamond shape for decision point (not just color)
+- PASS: Different rectangles for different steps
+- PASS: Color scheme documented
+- PASS: Safe for all color blindness types
 
 ### Bad Example: Inaccessible Diagram
 
@@ -828,15 +828,15 @@ graph TD
 
 **Why this fails:**
 
-- ❌ Uses red (invisible to protanopia/deuteranopia)
-- ❌ Uses green (invisible to protanopia/deuteranopia)
-- ❌ Uses yellow (invisible to tritanopia)
-- ❌ Red-green combination (worst case)
-- ❌ No borders for shape definition
-- ❌ No text labels
-- ❌ Relies on color alone
-- ❌ Not tested for color blindness
-- ❌ May fail WCAG contrast requirements
+- FAIL: Uses red (invisible to protanopia/deuteranopia)
+- FAIL: Uses green (invisible to protanopia/deuteranopia)
+- FAIL: Uses yellow (invisible to tritanopia)
+- FAIL: Red-green combination (worst case)
+- FAIL: No borders for shape definition
+- FAIL: No text labels
+- FAIL: Relies on color alone
+- FAIL: Not tested for color blindness
+- FAIL: May fail WCAG contrast requirements
 
 ## Research Sources and Citations
 
@@ -912,19 +912,19 @@ The verified accessible color palette is based on scientific consensus:
 
 - [Diagram and Schema Convention](./diagrams.md) - Standards for Mermaid diagrams with color accessibility requirements
 - [Emoji Usage Convention](./emoji.md) - Emoji usage including colored square emoji accessibility guidance
-- [AI Agents Convention](../development/agents/ai-agents.md) - Agent color categorization (blue, green, yellow, purple)
+- [AI Agents Convention](../../development/agents/ai-agents.md) - Agent color categorization (blue, green, yellow, purple)
 - [Conventions Index](./README.md) - Overview of all repository conventions
 
 ## Conclusion
 
 Color accessibility benefits everyone. Clear, professional color usage:
 
-- ✅ Works for all users, regardless of color vision
-- ✅ Improves document readability and visual clarity
-- ✅ Meets international accessibility standards (WCAG)
-- ✅ Demonstrates professional and inclusive design
-- ✅ Future-proof design that works in any context
-- ✅ Sets precedent for accessibility-first thinking
+- PASS: Works for all users, regardless of color vision
+- PASS: Improves document readability and visual clarity
+- PASS: Meets international accessibility standards (WCAG)
+- PASS: Demonstrates professional and inclusive design
+- PASS: Future-proof design that works in any context
+- PASS: Sets precedent for accessibility-first thinking
 
 By following this convention, we create documentation and visualizations that are inclusive, professional, and universally accessible.
 

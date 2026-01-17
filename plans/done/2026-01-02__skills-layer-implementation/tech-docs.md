@@ -79,7 +79,7 @@ graph TD
 
 ### Complete Architecture with Skills Infrastructure
 
-This diagram shows the full six-layer governance architecture with Skills as delivery infrastructure. This is the diagram that will be added to `docs/explanation/ex-ru__repository-governance-architecture.md`:
+This diagram shows the full six-layer governance architecture with Skills as delivery infrastructure. This is the diagram that will be added to `governance/repository-governance-architecture.md`:
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
@@ -924,15 +924,15 @@ This section provides comprehensive listing of ALL components affected by Skills
 
 ### Infrastructure Files Affected
 
-| File                                                            | Impact Description                                           | Phase   |
-| --------------------------------------------------------------- | ------------------------------------------------------------ | ------- |
-| `CLAUDE.md`                                                     | Add Skills Infrastructure section, optimize with Skills refs | Phase 2 |
-| `.claude/skills/README.md` (NEW)                                | Skills directory documentation                               | Phase 1 |
-| `.claude/skills/TEMPLATE.md` (NEW)                              | Single-file Skill creation template                          | Phase 1 |
-| `.claude/skills/MULTI-FILE-TEMPLATE/` (NEW)                     | Multi-file Skill creation template directory                 | Phase 2 |
-| `.claude/agents/README.md`                                      | Add mention of Skills as complementary to agents             | Phase 2 |
-| `docs/explanation/ex-ru__repository-governance-architecture.md` | Add Delivery Infrastructure section with Skills              | Phase 2 |
-| `docs/how-to/hoto__create-new-skill.md` (NEW)                   | How-to guide for creating new Skills                         | Phase 2 |
+| File                                               | Impact Description                                           | Phase   |
+| -------------------------------------------------- | ------------------------------------------------------------ | ------- |
+| `CLAUDE.md`                                        | Add Skills Infrastructure section, optimize with Skills refs | Phase 2 |
+| `.claude/skills/README.md` (NEW)                   | Skills directory documentation                               | Phase 1 |
+| `.claude/skills/TEMPLATE.md` (NEW)                 | Single-file Skill creation template                          | Phase 1 |
+| `.claude/skills/MULTI-FILE-TEMPLATE/` (NEW)        | Multi-file Skill creation template directory                 | Phase 2 |
+| `.claude/agents/README.md`                         | Add mention of Skills as complementary to agents             | Phase 2 |
+| `governance/repository-governance-architecture.md` | Add Delivery Infrastructure section with Skills              | Phase 2 |
+| `docs/how-to/hoto__create-new-skill.md` (NEW)      | How-to guide for creating new Skills                         | Phase 2 |
 
 ## Documentation Updates Required
 
@@ -949,16 +949,16 @@ This section lists all documentation that must be updated as part of Skills impl
 
 ### Files to Update
 
-| File                                                            | Update Description                                                                                                      | Phase            |
-| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------- |
-| `docs/explanation/ex-ru__repository-governance-architecture.md` | Add "Delivery Infrastructure" section with Skills alongside CLAUDE.md, add complete architecture diagram showing Skills | Phase 2          |
-| `governance/development/agents/ai-agents.md`                    | Add optional `skills:` frontmatter field documentation, explain when to use Skills references                           | Phase 1, Phase 2 |
-| `CLAUDE.md`                                                     | Add Skills Infrastructure section, add Skills references to verbose sections                                            | Phase 2          |
-| `.claude/agents/README.md`                                      | Add mention of Skills as complementary to agents                                                                        | Phase 2          |
+| File                                               | Update Description                                                                                                      | Phase            |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| `governance/repository-governance-architecture.md` | Add "Delivery Infrastructure" section with Skills alongside CLAUDE.md, add complete architecture diagram showing Skills | Phase 2          |
+| `governance/development/agents/ai-agents.md`       | Add optional `skills:` frontmatter field documentation, explain when to use Skills references                           | Phase 1, Phase 2 |
+| `CLAUDE.md`                                        | Add Skills Infrastructure section, add Skills references to verbose sections                                            | Phase 2          |
+| `.claude/agents/README.md`                         | Add mention of Skills as complementary to agents                                                                        | Phase 2          |
 
 ### Proposed Changes to Repository Architecture Document
 
-**File**: `docs/explanation/ex-ru__repository-governance-architecture.md`
+**File**: `governance/repository-governance-architecture.md`
 
 **Add new section** after "📊 The Six Layers" section:
 

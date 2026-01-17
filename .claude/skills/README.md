@@ -129,7 +129,7 @@ All skills follow governance principles:
 - **Simplicity Over Complexity** - Single-purpose skills
 - **Accessibility First** - Accessible content standards
 
-**See**: [governance/principles/README.md](../../governance/principles/README.md)
+**See**: [governance/principles/README.md](./README.md)
 
 ---
 

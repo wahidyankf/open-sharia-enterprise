@@ -43,7 +43,7 @@ This convention defines content creation standards specific to the ose-platform-
 
 - **Shared Hugo conventions** - Covered in [Hugo Content Shared Convention](./shared.md)
 - **Bilingual content** - This site is English-only, see ayokoding-web for bilingual patterns
-- **Hugo theme development** - Covered in [Hugo Development Convention](../development/hugo/development.md)
+- **Hugo theme development** - Covered in [Hugo Development Convention](../../development/hugo/development.md)
 - **Deployment** - Covered by ose-platform-web-deployer agent
 
 ## Prerequisites

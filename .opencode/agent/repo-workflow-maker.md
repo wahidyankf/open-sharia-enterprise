@@ -48,7 +48,7 @@ Create workflow documentation following workflow pattern convention.
 
 ## Reference
 
-- [Workflow Pattern Convention](../../governance/workflows/meta/ex-ru-wf-me-workflow-pattern.md)
+- [Workflow Pattern Convention](../../../governance/workflows/meta/workflow-identifier.md)
 - Skills: `docs-applying-diataxis-framework`, `docs-applying-content-quality`
 
 ## Workflow
@@ -59,8 +59,8 @@ Create workflow documentation following workflow pattern convention.
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-pattern.md)
+- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
+- [Workflow Pattern Convention](../../../governance/workflows/meta/workflow-identifier.md)
 
 **Related Agents**:
 
@@ -69,8 +69,8 @@ Create workflow documentation following workflow pattern convention.
 
 **Related Conventions**:
 
-- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-pattern.md)
-- [Execution Modes Convention](../../governance/workflows/meta/execution-modes.md)
+- [Workflow Pattern Convention](../../../governance/workflows/meta/workflow-identifier.md)
+- [Execution Modes Convention](../../../governance/workflows/meta/execution-modes.md)
 
 **Skills**:
 

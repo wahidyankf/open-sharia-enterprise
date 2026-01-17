@@ -53,7 +53,7 @@ Layer 5: Workflows    WHEN - Orchestrate (multi-step processes)
 
 **Location**: `governance/vision/`
 
-**Key Document**: [Vision - Open Sharia Enterprise](../../../governance/vision/ex-vi__open-sharia-enterprise.md)
+**Key Document**: [Vision - Open Sharia Enterprise](../../../../governance/vision/open-sharia-enterprise.md)
 
 **Core Vision**:
 
@@ -73,7 +73,7 @@ Layer 5: Workflows    WHEN - Orchestrate (multi-step processes)
 
 **Location**: `governance/principles/`
 
-**Key Document**: [Core Principles Index](../../../governance/principles/README.md)
+**Key Document**: [Core Principles Index](../../../../governance/principles/README.md)
 
 **Ten Principles** (abbreviated):
 
@@ -111,7 +111,7 @@ Development: Hugo Development Convention (semantic HTML)
 
 **Location**: `governance/conventions/`
 
-**Key Document**: [Conventions Index](../../../governance/conventions/README.md)
+**Key Document**: [Conventions Index](../../../../governance/conventions/README.md)
 
 **Scope**:
 
@@ -140,7 +140,7 @@ Development: Hugo Development Convention (semantic HTML)
 
 **Location**: `governance/development/`
 
-**Key Document**: [Development Index](../../../governance/development/README.md)
+**Key Document**: [Development Index](../../../../governance/development/README.md)
 
 **Scope**:
 
@@ -201,7 +201,7 @@ Agent: docs__fixer (applies corrections)
 
 **Location**: `governance/workflows/`
 
-**Key Document**: [Workflows Index](../../../governance/workflows/README.md)
+**Key Document**: [Workflows Index](../../../../governance/workflows/README.md)
 
 **Workflow Families**:
 
@@ -345,11 +345,11 @@ L3: Development ──┬── AGENTS.md (navigation) ──> L4: Agents
 ## References
 
 - **[Repository Architecture](../../../docs/explanationrepository-governance-architecture.md)** - Complete architectural documentation with all traceability examples
-- **[Core Principles Index](../../../governance/principles/README.md)** - All 10 foundational principles
-- **[Conventions Index](../../../governance/conventions/README.md)** - All 24 documentation conventions
-- **[Development Index](../../../governance/development/README.md)** - All 15 development practices
+- **[Core Principles Index](../../../../governance/principles/README.md)** - All 10 foundational principles
+- **[Conventions Index](../../../../governance/conventions/README.md)** - All 24 documentation conventions
+- **[Development Index](../../../../governance/development/README.md)** - All 15 development practices
 - **[Agents Index](../../../.opencode/agent/README.md)** - All AI agents and responsibilities
-- **[Workflows Index](../../../governance/workflows/README.md)** - All orchestrated processes
+- **[Workflows Index](../../../../governance/workflows/README.md)** - All orchestrated processes
 
 ## Related Skills
 

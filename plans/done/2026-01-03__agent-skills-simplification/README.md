@@ -154,7 +154,7 @@ This plan delivered agent simplification through direct commits to main branch:
 **Key Conventions:**
 
 - [AI Agents Convention](../../governance/development/agents/ai-agents.md) - Agent structure, size limits, Skills integration
-- [Repository Architecture](../../docs/explanation/ex-ru__repository-governance-architecture.md) - Six-layer hierarchy with Skills as infrastructure
+- [Repository Architecture](../../governance/repository-governance-architecture.md) - Six-layer hierarchy with Skills as infrastructure
 
 **Skills Infrastructure:**
 

@@ -77,15 +77,15 @@ Skill: `repo-generating-validation-reports`
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
+- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
 - Skills: `apps-ayokoding-web-developing-content`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 
 ## Reference Documentation
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
+- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
 
 **Related Agents**:
 
@@ -94,8 +94,8 @@ Skill: `repo-generating-validation-reports`
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
-- [Content Quality Principles](../../governance/conventions/content/quality.md)
+- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
+- [Content Quality Principles](../../../governance/conventions/content/quality.md)
 
 **Skills**:
 

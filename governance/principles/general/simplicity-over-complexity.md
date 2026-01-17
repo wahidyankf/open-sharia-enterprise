@@ -17,7 +17,7 @@ updated: 2025-12-24
 
 Favor **minimum viable abstraction** and avoid over-engineering. Start simple and add complexity **only when proven necessary** through actual use and pain points.
 
-## 🌟 Vision Supported
+## Vision Supported
 
 This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of democratizing Shariah-compliant enterprise by lowering barriers to entry for developers worldwide.
 
@@ -31,7 +31,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 
 **Vision alignment**: When building Shariah-compliant enterprise solutions is simple and straightforward, more developers will choose it. Simplicity democratizes access - both to building and to understanding Islamic business technology.
 
-## 🎯 What
+## What
 
 **Simplicity** means:
 
@@ -49,7 +49,7 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 - Multi-purpose components doing too much
 - Requires study to understand
 
-## 💡 Why
+## Why
 
 ### Benefits of Simplicity
 
@@ -73,13 +73,13 @@ This principle serves the [Open Sharia Enterprise Vision](../../vision/open-shar
 - **YAGNI** (You Aren't Gonna Need It): Don't build features until they're actually needed
 - **Rule of Three**: Refactor to abstraction after third duplication, not first
 
-## 📋 How It Applies
+## How It Applies
 
 ### Flat Library Structure
 
 **Context**: Organizing libraries in `libs/` directory.
 
-✅ **Simple (Correct)**:
+PASS: **Simple (Correct)**:
 
 ```
 libs/
@@ -91,7 +91,7 @@ libs/
 
 **Why this works**: Flat structure. Easy to find libraries. No mental model of hierarchy needed.
 
-❌ **Complex (Avoid)**:
+FAIL: **Complex (Avoid)**:
 
 ```
 libs/
@@ -113,7 +113,7 @@ libs/
 
 **Context**: Agent responsibilities.
 
-✅ **Simple (Correct)**:
+PASS: **Simple (Correct)**:
 
 ```
 docs__maker.md - Creates documentation
@@ -122,7 +122,7 @@ docs__checker.md - Validates documentation
 
 **Why this works**: One agent, one job. Clear responsibility. Easy to invoke.
 
-❌ **Complex (Avoid)**:
+FAIL: **Complex (Avoid)**:
 
 ```
 docs-manager.md - Creates, validates, fixes, organizes, and links documentation
@@ -134,7 +134,7 @@ docs-manager.md - Creates, validates, fixes, organizes, and links documentation
 
 **Context**: Document metadata.
 
-✅ **Simple (Correct)**:
+PASS: **Simple (Correct)**:
 
 ```yaml
 ---
@@ -151,7 +151,7 @@ updated: 2025-12-15
 
 **Why this works**: Only essential fields. No unnecessary metadata. Self-explanatory.
 
-❌ **Complex (Avoid)**:
+FAIL: **Complex (Avoid)**:
 
 ```yaml
 ---
@@ -187,7 +187,7 @@ next_review: 2026-01-15
 
 **Context**: Documentation format.
 
-✅ **Simple (Correct)**:
+PASS: **Simple (Correct)**:
 
 ```markdown
 # Document Title
@@ -199,7 +199,7 @@ Content here...
 
 **Why this works**: Standard markdown. Works everywhere. Easy to write and read.
 
-❌ **Complex (Avoid)**:
+FAIL: **Complex (Avoid)**:
 
 ```
 {{< section title="Section" >}}
@@ -215,7 +215,7 @@ Content here...
 
 **Context**: Establishing standards.
 
-✅ **Simple (Correct)**:
+PASS: **Simple (Correct)**:
 
 ```
 governance/conventions/
@@ -225,7 +225,7 @@ governance/conventions/
 
 **Why this works**: Markdown documents. Searchable. Easy to update. Human-readable.
 
-❌ **Complex (Avoid)**:
+FAIL: **Complex (Avoid)**:
 
 ```
 .conventions/
@@ -240,11 +240,11 @@ governance/conventions/
 
 **Why this fails**: Over-engineered framework. Requires tooling. Harder to understand and modify. Building a system before validating need.
 
-## 🚫 Anti-Patterns
+## Anti-Patterns
 
 ### Premature Abstraction
 
-❌ **Problem**: Creating abstraction before third use.
+FAIL: **Problem**: Creating abstraction before third use.
 
 ```typescript
 // First use - just write the code directly
@@ -252,7 +252,7 @@ function createUser(name: string) {
   return { name, createdAt: new Date() };
 }
 
-// ❌ WRONG: Immediately abstracting
+// FAIL: WRONG: Immediately abstracting
 class EntityFactory<T> {
   create(data: Partial<T>): T {
     return {
@@ -267,7 +267,7 @@ class EntityFactory<T> {
 
 ### Configuration Explosion
 
-❌ **Problem**: Too many configuration options.
+FAIL: **Problem**: Too many configuration options.
 
 ```json
 {
@@ -291,7 +291,7 @@ class EntityFactory<T> {
 
 ### Deep Inheritance Hierarchies
 
-❌ **Problem**: Multi-level inheritance.
+FAIL: **Problem**: Multi-level inheritance.
 
 ```typescript
 class Entity {}
@@ -305,7 +305,7 @@ class AdminUser extends PremiumUser {}
 
 ### Over-Generic Code
 
-❌ **Problem**: Solving problems you don't have.
+FAIL: **Problem**: Solving problems you don't have.
 
 ```typescript
 class GenericRepository<T, K extends keyof T, V extends T[K]> {
@@ -317,7 +317,7 @@ class GenericRepository<T, K extends keyof T, V extends T[K]> {
 
 **Why it's bad**: Generic for genericity's sake. Harder to read. Probably simpler to write specific implementations.
 
-## ✅ Best Practices
+## PASS: Best Practices
 
 ### 1. Start Concrete, Abstract Later
 
@@ -348,13 +348,13 @@ function validateEmail(email: string): boolean {
 **Instead of inheritance**:
 
 ```typescript
-❌ class AdminUser extends PremiumUser { }
+FAIL: class AdminUser extends PremiumUser {}
 ```
 
 **Use composition**:
 
 ```typescript
-✅ interface User {
+PASS: interface User {
   name: string;
   roles: Role[];
   subscription: Subscription;
@@ -366,12 +366,12 @@ function validateEmail(email: string): boolean {
 **For file structure, data, and organization**:
 
 ```
-✅ Flat:
+PASS: Flat:
 libs/
   ts-validation/
   ts-auth/
 
-❌ Nested:
+FAIL: Nested:
 libs/
   shared/
     core/
@@ -383,22 +383,22 @@ libs/
 **Single-purpose functions/agents**:
 
 ```typescript
-✅ function validateEmail(email: string): boolean { }
-✅ function sendEmail(to: string, subject: string): void { }
+PASS: function validateEmail(email: string): boolean {}
+PASS: function sendEmail(to: string, subject: string): void {}
 
-❌ function handleEmail(email: string, action: string): any { }
+FAIL: function handleEmail(email: string, action: string): any {}
 ```
 
 ### 5. Wait for Pain Before Refactoring
 
 **Don't refactor speculatively**:
 
-- ❌ "We might need this to be configurable someday"
-- ❌ "What if we need to support multiple databases?"
-- ✅ "We're duplicating this in three places - time to abstract"
-- ✅ "This function has 200 lines - time to split it"
+- FAIL: "We might need this to be configurable someday"
+- FAIL: "What if we need to support multiple databases?"
+- PASS: "We're duplicating this in three places - time to abstract"
+- PASS: "This function has 200 lines - time to split it"
 
-## 📊 Examples from This Repository
+## Examples from This Repository
 
 ### Monorepo Structure
 
@@ -416,10 +416,10 @@ docs/          # Flat category directories
 
 **Simplicity features**:
 
-- ✅ Two-level maximum depth
-- ✅ Clear categorization
-- ✅ Easy to navigate
-- ✅ No premature organization
+- PASS: Two-level maximum depth
+- PASS: Clear categorization
+- PASS: Easy to navigate
+- PASS: No premature organization
 
 ### Agent Responsibilities
 
@@ -435,8 +435,8 @@ Each agent has **one clear job**:
 
 **Not**:
 
-- ❌ `docs-manager.md` - Does everything
-- ❌ `universal-agent.md` - Multi-purpose
+- FAIL: `docs-manager.md` - Does everything
+- FAIL: `universal-agent.md` - Multi-purpose
 
 ### Diátaxis Framework
 
@@ -451,8 +451,8 @@ Four simple categories:
 
 **Not**:
 
-- ❌ 15 categories with overlapping purposes
-- ❌ Complex taxonomy requiring study
+- FAIL: 15 categories with overlapping purposes
+- FAIL: Complex taxonomy requiring study
 
 ### Convention Documents
 
@@ -468,24 +468,24 @@ ex-co__color-accessibility.md
 
 **Not**:
 
-- ❌ JSON schemas with validators
-- ❌ Custom DSL for conventions
-- ❌ Code generation framework
+- FAIL: JSON schemas with validators
+- FAIL: Custom DSL for conventions
+- FAIL: Code generation framework
 
-## 🔗 Related Principles
+## Related Principles
 
 - [Explicit Over Implicit](../software-engineering/explicit-over-implicit.md) - Simple explicit configuration
 - [Progressive Disclosure](../content/progressive-disclosure.md) - Start simple, layer complexity
 - [Automation Over Manual](../software-engineering/automation-over-manual.md) - Automate simple repetitive tasks
 
-## 📚 Related Conventions
+## Related Conventions
 
 - [Implementation Workflow](../../development/workflow/implementation.md) - Start simple (make it work), then refine (make it right), then optimize (make it fast)
-- [Monorepo Structure](../../../reference/re__monorepo-structure.md) - Flat library organization
+- [Monorepo Structure](../../../docs/reference/re__monorepo-structure.md) - Flat library organization
 - [AI Agents Convention](../../development/agents/ai-agents.md) - Single-purpose agents
 - [Diátaxis Framework](../../conventions/meta/diataxis-framework.md) - Four simple categories
 
-## 📖 References
+## References
 
 **Software Design Principles**:
 

@@ -101,8 +101,8 @@ Skills: `apps-ayokoding-web-developing-content`, `repo-assessing-criticality-con
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
+- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
 
 **Related Agents**:
 
@@ -111,8 +111,8 @@ Skills: `apps-ayokoding-web-developing-content`, `repo-assessing-criticality-con
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
-- [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md)
+- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
+- [Fixer Confidence Levels](../../../governance/development/quality/fixer-confidence-levels.md)
 
 **Skills**:
 
