@@ -413,8 +413,8 @@ general-quality-gate.md
 
 ### Explanation Subdirectories (Complete Reference)
 
-| Directory Path                                         | Prefix                           | Example                            |
-| ------------------------------------------------------ | -------------------------------- | ---------------------------------- |
+| Directory Path                                         | Prefix                           | Example                     |
+| ------------------------------------------------------ | -------------------------------- | --------------------------- |
 | explanation/governance/conventions/formatting          | `indentation.md`                 |
 | explanation/governance/conventions/content             | `quality.md`                     |
 | explanation/governance/conventions/meta                | `file-naming.md`                 |
@@ -435,7 +435,7 @@ general-quality-gate.md
 | explanation/governance/principles/general              | `simplicity-over-complexity.md`  |
 | explanation/governance/principles/content              | `accessibility-first.md`         |
 | explanation/governance/principles/software-engineering | `explicit-over-implicit.md`      |
-| explanation/vision                                     | `ex-vi__`                        | `ex-vi__open-sharia-enterprise.md` |
+| explanation/vision                                     | `ex-vi__`                        | `open-sharia-enterprise.md` |
 
 ## 🔄 Migration History
 

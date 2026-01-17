@@ -113,7 +113,7 @@ This pattern is used across **seven agent families**:
 | ose-platform-web-content-maker | Platform update posts, about pages                 | Navigation, asset references                      | Write, Edit           |
 | readme\_\_maker                | README sections with engaging content              | Links to detailed docs, cross-references          | Write, Edit           |
 
-**Note**: `wow__rules-maker` is a special case that uses bash commands (cat, sed, awk) instead of Edit/Write tools for file operations.
+**Note**: `repo-governance-maker` is a special case that uses bash commands (cat, sed, awk) instead of Edit/Write tools for file operations.
 
 **Key Responsibilities**:
 
@@ -239,7 +239,7 @@ Checker Agent (ayokoding-web-general-checker):
 | ayokoding-web-by-example-fixer | By-example tutorial issues from by-example-checker | `ayokoding-web-by-example__{uuid-chain}__{timestamp}__fix.md` | Edit, Write, Bash     |
 | readme\_\_fixer                | README quality issues from readme\_\_checker       | `readme__{timestamp}__fix.md`                                 | Edit, Write, Bash     |
 
-**Note**: `wow__rules-fixer` is a special case that uses bash commands (sed, awk, cat) instead of Edit/Write tools for file modifications. It still needs bash for report generation and timestamps.
+**Note**: `repo-governance-fixer` is a special case that uses bash commands (sed, awk, cat) instead of Edit/Write tools for file modifications. It still needs bash for report generation and timestamps.
 
 **Key Responsibilities**:
 
@@ -390,9 +390,9 @@ See [AI Agents Convention - Agent Color Categorization](../agents/ai-agents.md#a
 **Example**:
 
 ```
-1. wow__rules-maker: Add new emoji usage rule to convention doc + update AGENTS.md + update agents
-2. wow__rules-checker: Validate all files comply with new rule
-3. wow__rules-fixer: Fix non-compliant files found in audit
+1. repo-governance-maker: Add new emoji usage rule to convention doc + update AGENTS.md + update agents
+2. repo-governance-checker: Validate all files comply with new rule
+3. repo-governance-fixer: Fix non-compliant files found in audit
 ```
 
 ### 2. ayokoding-web-\* (Hugo Content for ayokoding-web)
@@ -705,9 +705,9 @@ The maker-checker-fixer pattern integrates with repository conventions:
 
 **Agent Examples**:
 
-- `.opencode/agent/wow__rules-maker.md` - Example maker agent
-- `.opencode/agent/wow__rules-checker.md` - Example checker agent
-- `.opencode/agent/wow__rules-fixer.md` - Example fixer agent
+- `.opencode/agent/repo-governance-maker.md` - Example maker agent
+- `.opencode/agent/repo-governance-checker.md` - Example checker agent
+- `.opencode/agent/repo-governance-fixer.md` - Example fixer agent
 - `.opencode/agent/ayokoding-web-general-maker.md` - General Hugo content maker
 - `.opencode/agent/ayokoding-web-by-example-maker.md` - By-example tutorial maker
 - `.opencode/agent/ayokoding-web-general-checker.md` - General Hugo content checker

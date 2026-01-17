@@ -19,7 +19,7 @@ updated: 2025-12-28
 
 ## 🌟 Vision Supported
 
-This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of making Shariah-compliant business logic transparent, auditable, and trustworthy.
+This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of making Shariah-compliant business logic transparent, auditable, and trustworthy.
 
 **How this principle serves the vision:**
 

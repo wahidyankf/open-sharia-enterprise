@@ -19,7 +19,7 @@ Workflows are **composed processes** that:
 
 ## Repository Hierarchy
 
-Workflows are **Layer 5** in the six-layer architecture. See [Repository Governance Architecture](..repository-governance-architecture.md) for complete governance model.
+Workflows are **Layer 5** in the six-layer architecture. See [Repository Governance Architecture](../repository-governance-architecture.md) for complete governance model.
 
 ```
 Layer 0: Vision (WHY WE EXIST)     → Foundational purpose
@@ -239,8 +239,8 @@ All workflows must respect core principles:
 
 ### Layer Documentation
 
-- [Repository Governance Architecture](..repository-governance-architecture.md) - Complete six-layer architecture explanation
-- [Vision](../../vision/ex-vi__open-sharia-enterprise.md) - Layer 0: Foundational purpose
+- [Repository Governance Architecture](../repository-governance-architecture.md) - Complete six-layer architecture explanation
+- [Vision](../../vision/open-sharia-enterprise.md) - Layer 0: Foundational purpose
 - [Core Principles](../../principles/README.md) - Layer 1: Foundational values
 - [Conventions](../conventions/README.md) - Layer 2: Documentation rules
 - [Development](../development/README.md) - Layer 3: Software practices

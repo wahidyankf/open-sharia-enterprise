@@ -19,7 +19,7 @@ updated: 2025-12-28
 
 ## 🌟 Vision Supported
 
-This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of democratizing Shariah-compliant enterprise by making knowledge accessible to everyone.
+This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of democratizing Shariah-compliant enterprise by making knowledge accessible to everyone.
 
 **How this principle serves the vision:**
 
@@ -148,7 +148,7 @@ Well-documented projects survive personnel changes. Knowledge persists regardles
 
 ### Serves the Vision of Democratization
 
-From the [Vision](../../vision/ex-vi__open-sharia-enterprise.md):
+From the [Vision](../../vision/open-sharia-enterprise.md):
 
 > "Islamic enterprise principles are universal and accessible to all. Yet the technology to implement them is locked away, creating artificial scarcity where abundance should exist."
 
@@ -603,7 +603,7 @@ Every convention is fully documented:
 **Examples**:
 
 - [Monorepo Structure](../../reference/re__monorepo-structure.md) - Explains Nx architecture, why apps/ and libs/, import patterns
-- [Repository Architecture](..repository-governance-architecture.md) - Six-layer hierarchy, governance, traceability
+- [Repository Architecture](../repository-governance-architecture.md) - Six-layer hierarchy, governance, traceability
 - [Trunk Based Development](../development/workflow/trunk-based-development.md) - Git workflow, why main branch, deployment branches
 
 **Why this works**: Maintainers understand WHY these architectures were chosen. Decisions are traceable and reversible with full context.

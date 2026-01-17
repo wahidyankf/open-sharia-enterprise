@@ -19,7 +19,7 @@ updated: 2025-12-28
 
 ## 🌟 Vision Supported
 
-This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of democratizing Shariah-compliant enterprise by making concurrent Islamic business systems safer and more accessible.
+This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of democratizing Shariah-compliant enterprise by making concurrent Islamic business systems safer and more accessible.
 
 **How this principle serves the vision:**
 

@@ -51,7 +51,7 @@ This convention applies to:
 
 - All agent files in `.claude/agents/` (primary) and `.opencode/agent/` (secondary)
 - References to agents in `AGENTS.md`
-- Agent validation rules in `wow__rules-checker`
+- Agent validation rules in `repo-governance-checker`
 
 ### Dual-Mode Operation (Claude Code + OpenCode)
 
@@ -159,7 +159,7 @@ skills: []
    - MUST exactly match the filename (without `.md` extension)
    - Use kebab-case format
    - Should be descriptive and action-oriented
-   - Examples: `doc-writer`, `wow__rules-checker`, `api-validator`
+   - Examples: `doc-writer`, `repo-governance-checker`, `api-validator`
 
 2. **`description`** (required)
    - One-line summary of when to use this agent
@@ -421,7 +421,7 @@ Where:
 ```
 ✅ Good - General agents (no scope prefix):
 - docs__maker.md
-- wow__rules-checker.md
+- repo-governance-checker.md
 - plan__executor.md
 - readme__maker.md
 
@@ -534,7 +534,7 @@ Tool permissions follow the **principle of least privilege**: agents should only
 **Applies to these agent types**:
 
 - All `*-checker` agents (wow**rules-checker, docs**checker, plan**checker, plan**execution-checker, etc.)
-- `wow__rules-fixer` (generates fix reports)
+- `repo-governance-fixer` (generates fix reports)
 - Any agent creating validation, audit, or verification reports
 
 **MANDATORY REQUIREMENT FOR ALL \*-CHECKER AGENTS**:
@@ -579,7 +579,7 @@ See [Temporary Files Convention - Progressive Writing Requirement](../infra/temp
 
 ```yaml
 ---
-name: wow__rules-checker
+name: repo-governance-checker
 description: Validates consistency between agents, AGENTS.md, conventions, and documentation.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
@@ -630,7 +630,7 @@ awk 'pattern { insert_text } { print }' .claude/agents/README.md > temp && mv te
 **Agents affected**:
 
 - `agent__maker` - Creates new agents, already complies
-- `wow__rules-maker` - Updates agents, already complies
+- `repo-governance-maker` - Updates agents, already complies
 
 **Verification**: Check that agents writing to `.opencode/` use only Bash tool (not Write/Edit).
 
@@ -769,13 +769,13 @@ Start: What is the agent's primary capability?
     │       - Has `Write`, `Bash` (no Edit)
     │       - Write needed for audit reports in generated-reports/
     │       - Bash needed for UTC+7 timestamps
-    │       - Examples: wow__rules-checker, plan__checker, docs__checker
+    │       - Examples: repo-governance-checker, plan__checker, docs__checker
     │       - EXCEPTION: Link checkers use purple (see Hybrid Agents above)
     │
     ├─ Modifies/updates existing content only
     │   └─> color: yellow (Updater)
     │       - Has `Edit` but NOT `Write`
-    │       - Examples: wow__rules-maker, docs__file-manager
+    │       - Examples: repo-governance-maker, docs__file-manager
     │
     └─ Executes plans/orchestrates tasks
         └─> color: purple (Implementor)
@@ -926,7 +926,7 @@ color: blue
 
 ```yaml
 ---
-name: wow__rules-checker
+name: repo-governance-checker
 description: Validates consistency between agents, AGENTS.md, conventions, and documentation. Use when checking for inconsistencies, contradictions, duplicate content, or verifying repository rule compliance.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
@@ -938,7 +938,7 @@ color: green
 
 ```yaml
 ---
-name: wow__rules-maker
+name: repo-governance-maker
 description: Propagates rule and convention changes across AGENTS.md, convention docs, agents, and indices. Use when adding/modifying rules, conventions, or standards that affect multiple files.
 tools: Read, Edit, Glob, Grep
 model: sonnet
@@ -1005,7 +1005,7 @@ Before creating a new agent, check if existing agents already cover the domain:
 **✅ Good - Specialized Agents:**
 
 - `doc-writer` - Documentation only
-- `wow__rules-checker` - Consistency validation only
+- `repo-governance-checker` - Consistency validation only
 - `test-runner` - Test execution only
 
 **❌ Bad - Over-Generalized:**
@@ -2045,7 +2045,7 @@ If an agent is no longer needed:
 
 ### Repo-Rule-Checker Integration
 
-The `wow__rules-checker` agent validates all agents against this convention.
+The `repo-governance-checker` agent validates all agents against this convention.
 
 **Checks performed:**
 

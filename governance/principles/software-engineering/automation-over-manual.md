@@ -19,7 +19,7 @@ updated: 2025-12-24
 
 ## 🌟 Vision Supported
 
-This principle serves the [Open Sharia Enterprise Vision](../../vision/ex-vi__open-sharia-enterprise.md) of scaling Islamic enterprise knowledge and quality assurance across a global community.
+This principle serves the [Open Sharia Enterprise Vision](../../vision/open-sharia-enterprise.md) of scaling Islamic enterprise knowledge and quality assurance across a global community.
 
 **How this principle serves the vision:**
 
@@ -410,7 +410,7 @@ The project enforces code quality through automated git hooks:
 
 - `docs__checker.md` - Validate documentation
 - `docs__link-general-checker.md` - Verify links with cache
-- `wow__rules-checker.md` - Check repository consistency
+- `repo-governance-checker.md` - Check repository consistency
 - `plan__checker.md` - Validate project plans
 
 **Automation benefits**:

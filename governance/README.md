@@ -200,7 +200,7 @@ Is it about WHY the project exists?
 
 ### Changes Propagate Down
 
-When changing a layer, all lower layers may need updates. Use `wow__rules-maker` to propagate changes systematically.
+When changing a layer, all lower layers may need updates. Use `repo-governance-maker` to propagate changes systematically.
 
 ---
 

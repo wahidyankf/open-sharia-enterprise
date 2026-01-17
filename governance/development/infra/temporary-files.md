@@ -683,7 +683,7 @@ Any agent writing to `generated-reports/` MUST have:
 
 ```yaml
 ---
-name: wow__rules-checker
+name: repo-governance-checker
 description: Validates consistency between agents, AGENTS.md, conventions, and documentation.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet

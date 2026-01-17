@@ -829,14 +829,14 @@ User or maintainer reviews false positive reports and:
 **Initial State:**
 
 ```
-wow__rules-checker flags:
+repo-governance-checker flags:
   - VIOLATION: 15 agent files have YAML comments in frontmatter
 ```
 
 **Fixer Re-validation:**
 
 ```
-wow__rules-fixer re-validates:
+repo-governance-fixer re-validates:
   - Extracts frontmatter from each file
   - Searches isolated frontmatter for # symbols
   - Result: 0 actual violations found (all # symbols in markdown body)
@@ -866,7 +866,7 @@ wow__rules-fixer re-validates:
 
 **Checker Update:**
 
-- Maintainer updates wow__rules-checker with corrected AWK pattern
+- Maintainer updates repo-governance-checker with corrected AWK pattern
 - Re-runs checker: 0 violations found
 - False positives eliminated
 
@@ -881,7 +881,7 @@ wow__rules-fixer re-validates:
 
 ### Fixer Agents Using This Convention
 
-- [wow__rules-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/wow__rules-fixer.md) - Repository structural consistency fixer
+- [repo-governance-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/repo-governance-fixer.md) - Repository structural consistency fixer
 - [ayokoding-web-general-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-general-fixer.md) - ayokoding-web general Hugo content fixer
 - [ayokoding-web-by-example-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-by-example-fixer.md) - ayokoding-web by-example tutorial fixer
 - [ayokoding-web-facts-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-facts-fixer.md) - ayokoding-web factual accuracy fixer
