@@ -34,6 +34,89 @@ apps/dolphin-be/
 
 ## Maven Dependencies
 
+### Complete pom.xml Configuration
+
+**Location**: `apps/dolphin-be/pom.xml`
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.0.0</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.opencode</groupId>
+    <artifactId>dolphin-be</artifactId>
+    <version>1.0.0</version>
+    <name>dolphin-be</name>
+    <description>Learning Management System Backend</description>
+
+    <properties>
+        <java.version>25</java.version>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <!-- Core Spring Boot Dependencies -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Logging: Logstash encoder for JSON logging in production -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>7.4</version>
+        </dependency>
+
+        <!-- Test Dependencies -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>25</source>
+                    <target>25</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
 ### Spring Boot Parent
 
 **Version**: 4.0.x (latest stable as of December 2025)
@@ -44,7 +127,7 @@ The Spring Boot parent POM manages all dependency versions, ensuring compatibili
 
 **spring-boot-starter-web**
 
-- REST API support with embedded Tomcat 12.x
+- REST API support with embedded Tomcat 11.x
 - Jackson for JSON serialization
 - Spring MVC for web layer
 - Built on Spring Framework 7.0.x
@@ -67,7 +150,7 @@ The Spring Boot parent POM manages all dependency versions, ensuring compatibili
 
 **spring-boot-starter-test**
 
-- JUnit 5.11+ (Jupiter) testing framework
+- JUnit 6.0 (Jupiter) testing framework (required by Spring Boot 4.0)
 - Mockito 5.x for mocking
 - Spring Boot Test 4.0.x for integration tests
 - AssertJ 3.26+ for fluent assertions
@@ -94,7 +177,7 @@ The Spring Boot parent POM manages all dependency versions, ensuring compatibili
 **Spring Boot 4.0 Changes**
 
 - Built on Spring Framework 7.0.x
-- Tomcat 12.x (upgraded from 10.x in 3.x)
+- Tomcat 11.x (upgraded from 10.x in 3.x)
 - Hibernate 7.x (upgraded from 6.x in 3.x)
 - Enhanced observability with Micrometer 2.0+
 - Improved virtual thread support
@@ -279,6 +362,54 @@ Files with sensitive data should be in `.gitignore`:
 
 ## Logging Configuration
 
+### logback-spring.xml Configuration
+
+**Location**: `src/main/resources/logback-spring.xml`
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Development Profile: Text logging with colors -->
+    <springProfile name="dev">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } --- [%15.15t] %-40.40logger{39} : %m%n</pattern>
+            </encoder>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+        <logger name="com.opencode.dolphin" level="DEBUG"/>
+        <logger name="org.springframework.web" level="INFO"/>
+    </springProfile>
+
+    <!-- Production Profile: JSON logging -->
+    <springProfile name="prod">
+        <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <includeMdc>true</includeMdc>
+                <includeContext>true</includeContext>
+            </encoder>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="JSON"/>
+        </root>
+        <logger name="com.opencode.dolphin" level="INFO"/>
+        <logger name="org.springframework.web" level="WARN"/>
+    </springProfile>
+</configuration>
+```
+
+**Note**: For JSON logging in production, add logstash-logback-encoder dependency to pom.xml:
+
+```xml
+<dependency>
+    <groupId>net.logstash.logback</groupId>
+    <artifactId>logstash-logback-encoder</artifactId>
+    <version>7.4</version>
+</dependency>
+```
+
 ### Development Logging
 
 **Format**: Text with color codes
@@ -365,10 +496,12 @@ java -jar target/dolphin-be-1.0.0.jar --spring.profiles.active=prod
 ### Docker Deployment (Future)
 
 ```dockerfile
-FROM openjdk:17-slim
+FROM eclipse-temurin:25-jre-alpine
 COPY target/dolphin-be-1.0.0.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
 ```
+
+**Note**: Eclipse Temurin is the recommended production-ready OpenJDK distribution. The official `openjdk` Docker images are deprecated.
 
 ## Performance Considerations
 

@@ -148,15 +148,15 @@
 
 ## Success Criteria
 
-- [x] Application starts successfully in dev mode using `nx run dolphin-be:serve`
-- [x] Application builds successfully using `nx run dolphin-be:build`
-- [x] All tests pass using `nx run dolphin-be:test`
-- [x] Health check endpoint `/actuator/health` returns 200 OK with "UP" status
-- [x] README.md provides complete setup and development instructions
-- [x] project.json enables all necessary Nx commands
-- [x] Git repository ignores build artifacts and sensitive files
-- [x] Application startup time is less than 10 seconds
-- [x] All acceptance criteria from user stories are met
+- [ ] Application starts successfully in dev mode using `nx run dolphin-be:serve`
+- [ ] Application builds successfully using `nx run dolphin-be:build`
+- [ ] All tests pass using `nx run dolphin-be:test`
+- [ ] Health check endpoint `/actuator/health` returns 200 OK with "UP" status
+- [ ] README.md provides complete setup and development instructions
+- [ ] project.json enables all necessary Nx commands
+- [ ] Git repository ignores build artifacts and sensitive files
+- [ ] Application startup time is less than 10 seconds
+- [ ] All acceptance criteria from user stories are met
 
 ## Validation Checklist
 
