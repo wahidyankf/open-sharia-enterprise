@@ -9,8 +9,6 @@
 
 During OCD mode repository rules validation (UUID chain: ca6b39), comprehensive link validation discovered **675 broken markdown links** across 113 files in governance/, docs/, .claude/, and root directories.
 
-**Source**: `generated-reports/repo-rules__ca6b39__2026-01-17--02-26__audit.md`
-
 ## Problem Statement
 
 **Current State**:
@@ -30,7 +28,7 @@ During OCD mode repository rules validation (UUID chain: ca6b39), comprehensive 
 
 1. **File Renaming** (76 links): Files renamed from `ex-ru-*` prefix pattern, but links not updated
 2. **Path Calculation Errors** (520+ links): Incorrect relative path depths (wrong number of `../`)
-3. **Directory Restructuring** (48 links): vision/ and workflows/ paths not updated after reorganization
+3. **Directory Restructuring** (48 links): vision/ moved to governance/vision/, workflows/ moved to governance/workflows/, but links not updated to reflect new paths
 4. **Missing Files** (2 files): CODE_OF_CONDUCT.md and CHANGELOG.md referenced but don't exist
 
 ## Broken Links by Category
@@ -110,6 +108,37 @@ During OCD mode repository rules validation (UUID chain: ca6b39), comprehensive 
 3. Add link validation to CI/CD pipeline
 4. Document link conventions in governance/
 
+## Selected Approach
+
+**Decision**: Hybrid Approach (Approach 3) has been selected for this remediation effort.
+
+**Rationale**:
+
+- **Phase 1**: Automated tools for pattern-based fixes (P0, high-confidence P1) - maximizes efficiency
+- **Phase 2**: Manual review for complex cases - ensures accuracy for edge cases
+- **Phase 3**: Automated validation - confirms completeness and prevents regressions
+
+This approach balances speed (automated batch processing) with accuracy (manual oversight for uncertain cases), while creating reusable tooling for future link maintenance.
+
+## Git Workflow
+
+**Branch Strategy**: Work directly on `main` branch (Trunk Based Development)
+
+**Commit Strategy**: Single atomic commit containing all link fixes
+
+- No pull request required
+- No feature branch creation
+- Direct commit to main after validation passes
+
+**Rationale**: Link remediation is a systematic fix affecting many files. A single comprehensive commit provides:
+
+- Clear history: One commit = complete link remediation
+- Atomic change: All fixes applied together, easy to revert if needed
+- Trunk Based Development compliance: Small, frequent commits to main
+- No PR overhead: Technical debt cleanup doesn't require review process
+
+**Pre-commit validation**: Ensure OCD validation passes before committing (all link validation tests green)
+
 ## Implementation Checklist
 
 ### Phase 1: Automated Link Analysis
@@ -147,8 +176,21 @@ During OCD mode repository rules validation (UUID chain: ca6b39), comprehensive 
 
 - [ ] Run OCD validation to verify zero findings
 - [ ] Add link validation to pre-commit hooks
+  - File: `.husky/pre-commit`
+  - Add after line 8: `python scripts/validate-links.py --staged-only || exit 1`
+  - Behavior: Block commit if broken links detected in staged files
+  - Error output: Show broken link paths and line numbers
 - [ ] Add link validation to CI/CD pipeline
+  - File: `.github/workflows/validate-links.yml` (new workflow)
+  - Trigger: `pull_request` events (opened, synchronize, reopened)
+  - Steps: Checkout → Setup Python → Install mistune → Run validation script → Fail PR if broken links found
+  - Integration: Similar pattern to existing `format-pr.yml` workflow
 - [ ] Document link conventions in governance/
+- [ ] Clean up temporary files
+  - Delete `scripts/validate-links.py` (functionality now in pre-commit hooks and CI)
+  - Delete `scripts/fix-links.py` (one-time use, no longer needed)
+  - Remove `scripts/` directory if empty
+  - Justification: Keep repository clean, prevent confusion about script maintenance
 
 ## Implementation Strategy
 
@@ -224,8 +266,8 @@ During OCD mode repository rules validation (UUID chain: ca6b39), comprehensive 
 
 **Tools Required**:
 
-- Python 3.x
-- Markdown parsing library (e.g., `markdown-it-py`)
+- Python 3.9+ (minimum version for modern type hints, f-strings, and pathlib enhancements)
+- Markdown parsing library: `mistune >= 3.0.0` (fast pure-Python parser, ~3x faster than markdown-it-py, no external dependencies, sufficient for link extraction)
 - Git (for tracking changes)
 
 **Knowledge Required**:
@@ -244,11 +286,6 @@ After link remediation:
 4. Schedule periodic link validation audits
 
 ## References
-
-**Audit Reports**:
-
-- Initial validation: `generated-reports/repo-rules__ca6b39__2026-01-17--00-28__audit.md`
-- Final validation (iteration 9): `generated-reports/repo-rules__ca6b39__2026-01-17--02-26__audit.md`
 
 **Related Conventions**:
 
