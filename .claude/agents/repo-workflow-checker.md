@@ -59,7 +59,7 @@ Skill: `repo-generating-validation-reports`
 
 ## Reference
 
-- [Workflow Pattern Convention](../../../governance/workflows/meta/workflow-identifier.md)
+- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
 - Skills: `docs-applying-diataxis-framework`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 
 ## Reference Documentation

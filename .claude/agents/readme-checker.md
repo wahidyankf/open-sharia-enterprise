@@ -72,7 +72,7 @@ The `repo-generating-validation-reports` Skill provides:
 
 **CRITICAL - Read these first**:
 
-- [README Quality Convention](../../../governance/conventions/content/readme-quality.md) - MASTER reference for all README standards
+- [README Quality Convention](../../governance/conventions/content/readme-quality.md) - MASTER reference for all README standards
 - [Content Quality Principles](../../governance/conventions/content/quality.md) - General content quality standards
 - [Emoji Usage Convention](../../governance/conventions/formatting/emoji.md) - Emoji guidelines
 
@@ -282,7 +282,7 @@ Use this agent when:
 **Project Guidance:**
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [README Quality Convention](../../../governance/conventions/content/readme-quality.md) - Complete README standards
+- [README Quality Convention](../../governance/conventions/content/readme-quality.md) - Complete README standards
 - [Content Quality Principles](../../governance/conventions/content/quality.md) - General quality standards
 
 **Related Agents:**

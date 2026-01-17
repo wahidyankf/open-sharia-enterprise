@@ -43,7 +43,7 @@ Create workflow documentation following workflow pattern convention.
 
 ## Reference
 
-- [Workflow Pattern Convention](../../../governance/workflows/meta/workflow-identifier.md)
+- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
 - Skills: `docs-applying-diataxis-framework`, `docs-applying-content-quality`
 
 ## Workflow

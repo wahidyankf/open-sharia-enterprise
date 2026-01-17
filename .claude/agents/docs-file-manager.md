@@ -72,7 +72,7 @@ Use this agent when:
 
 ## File Naming Convention Review
 
-Before any operation, understand the [File Naming Convention](../../../governance/conventions/meta/file-naming.md):
+Before any operation, understand the [File Naming Convention](../../governance/conventions/meta/file-naming.md):
 
 ### Pattern
 

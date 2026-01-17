@@ -73,7 +73,6 @@ Security fixes are released as patch versions (e.g., 1.2.3 → 1.2.4).
 
 - Watch this repository for releases
 - Subscribe to GitHub release notifications
-- Check the [CHANGELOG.md](./CHANGELOG.md) for security-related updates
 
 ## Scope
 

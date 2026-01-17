@@ -176,7 +176,6 @@ console.log(result);
 ## Documentation
 
 - [Full Documentation](./README.md)
-- [API Reference](../../reference/re__api.md)
 - [Tutorials](./README.md)
 
 ## Contributing
@@ -358,7 +357,7 @@ Thank you for considering contributing to Open Sharia Enterprise! We appreciate 
 
 ## Code of Conduct
 
-This project follows our [Code of Conduct](./CODE_OF_CONDUCT.md). By participating, you agree to uphold this code.
+This project follows our Code of Conduct. By participating, you agree to uphold this code.
 ````
 
 ### References

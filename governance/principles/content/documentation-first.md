@@ -334,7 +334,7 @@ PASS: **Every workflow** is documented with:
 
 FAIL: **Anti-pattern**: "Just run these commands in order (which order? what do they do?)"
 
-**Example**: See [Maker-Checker-Fixer Workflow](../../workflows/ex-wf__meta__maker-checker-fixer.md):
+**Example**: See [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md):
 
 - Explains the three-stage pattern clearly
 - Lists exact agents involved in each stage
@@ -614,8 +614,8 @@ Every convention is fully documented:
 
 **Examples**:
 
-- [Maker-Checker-Fixer Workflow](../../workflows/ex-wf__meta__maker-checker-fixer.md) - Three-stage pattern, agents, execution
-- [Documentation Quality Gate Workflow](../../workflows/ex-wf__meta__docs-quality-gate.md) - Validation before commits
+- [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Three-stage pattern, agents, execution
+- [Documentation Quality Gate Workflow](../../workflows/docs/quality-gate.md) - Validation before commits
 
 **Why this works**: Anyone can execute workflows consistently without prior knowledge or asking questions.
 
