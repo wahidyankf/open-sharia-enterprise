@@ -72,8 +72,6 @@ During OCD mode repository rules validation (UUID chain: ca6b39), comprehensive 
    - Dry-run mode
    - Batch processing
 
-**Timeline**: 2-4 hours
-
 ### Phase 2: Systematic Fixes by Category
 
 **P0: Critical (78 links)**
@@ -86,20 +84,22 @@ During OCD mode repository rules validation (UUID chain: ca6b39), comprehensive 
    - Automated search-replace
    - Verify all targets exist
 
-**P1: High Priority (568 links)** 3. Fix path calculation errors (520 links)
+**P1: High Priority (568 links)**
 
-- Analyze each broken link's depth
-- Calculate correct relative path
-- Apply fixes with validation
+3. Fix path calculation errors (520 links)
+   - Analyze each broken link's depth
+   - Calculate correct relative path
+   - Apply fixes with validation
 
 4. Fix vision/ directory paths (15 links)
    - Pattern: Update to `governance/vision/`
 5. Fix workflows/ directory paths (33 links)
    - Pattern: Update to `governance/workflows/`
 
-**P2: Medium Priority (29 links)** 6. Fix conventions README paths (15 links) 7. Fix miscellaneous path issues (14 links)
+**P2: Medium Priority (29 links)**
 
-**Timeline**: 6-10 hours (with automated tools)
+6. Fix conventions README paths (15 links)
+7. Fix miscellaneous path issues (14 links)
 
 ### Phase 3: Validation & Prevention
 
@@ -110,7 +110,45 @@ During OCD mode repository rules validation (UUID chain: ca6b39), comprehensive 
 3. Add link validation to CI/CD pipeline
 4. Document link conventions in governance/
 
-**Timeline**: 2-3 hours
+## Implementation Checklist
+
+### Phase 1: Automated Link Analysis
+
+- [ ] Create scripts/validate-links.py
+- [ ] Implement link scanning functionality
+- [ ] Implement link validation functionality
+- [ ] Generate categorized report
+- [ ] Create scripts/fix-links.py
+- [ ] Implement pattern-based replacement
+- [ ] Add dry-run mode
+- [ ] Add batch processing
+
+### Phase 2: Systematic Fixes
+
+**P0: Critical (78 links)**
+
+- [ ] Create CODE_OF_CONDUCT.md (standard OSS template)
+- [ ] Create CHANGELOG.md (keepachangelog.com format)
+- [ ] Build old filename → new filename mapping for ex-ru-\* files
+- [ ] Fix ex-ru-\* prefix links (76 links)
+
+**P1: High Priority (568 links)**
+
+- [ ] Fix path calculation errors (520 links)
+- [ ] Fix vision/ directory paths (15 links)
+- [ ] Fix workflows/ directory paths (33 links)
+
+**P2: Medium Priority (29 links)**
+
+- [ ] Fix conventions README paths (15 links)
+- [ ] Fix miscellaneous path issues (14 links)
+
+### Phase 3: Validation & Prevention
+
+- [ ] Run OCD validation to verify zero findings
+- [ ] Add link validation to pre-commit hooks
+- [ ] Add link validation to CI/CD pipeline
+- [ ] Document link conventions in governance/
 
 ## Implementation Strategy
 
@@ -128,8 +166,6 @@ During OCD mode repository rules validation (UUID chain: ca6b39), comprehensive 
 - Requires tool development time upfront
 - Complex patterns may need manual review
 
-**Estimated Total Time**: 10-17 hours
-
 ### Approach 2: Manual + Semi-Automated
 
 **Advantages**:
@@ -144,15 +180,11 @@ During OCD mode repository rules validation (UUID chain: ca6b39), comprehensive 
 - Error-prone
 - Hard to track progress
 
-**Estimated Total Time**: 20-30 hours
-
 ### Approach 3: Hybrid (Recommended)
 
 **Phase 1**: Automated tools for pattern-based fixes (P0, high-confidence P1)
 **Phase 2**: Manual review for complex cases
 **Phase 3**: Automated validation
-
-**Estimated Total Time**: 12-20 hours
 
 ## Acceptance Criteria
 
