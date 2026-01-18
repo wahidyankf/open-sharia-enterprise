@@ -34,7 +34,7 @@
     "MD047": true, // Files should end with a single newline character
 
     // Link Rules (MEDIUM priority)
-    "MD034": true, // Bare URL used
+    "MD034": false, // Bare URL used - disabled to allow URLs without angle brackets
     "MD042": true, // No empty links
 
     // Code Rules (LOW priority)
