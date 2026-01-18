@@ -14,6 +14,72 @@ Open Sharia Enterprise is a monorepo-based platform built with Nx, containing mu
 - **Multi-Platform Deployment**: Vercel for static sites, Kubernetes cluster for Dolphin suite
 - **Build Optimization**: Nx affected builds ensure only changed code is rebuilt
 
+## C4 Model Architecture
+
+The system architecture is documented using the C4 model (Context, Container, Component, Code) to provide multiple levels of abstraction suitable for different audiences.
+
+### C4 Level 1: System Context
+
+Shows how the Open Sharia Enterprise platform fits into the world, including users and external systems.
+
+```mermaid
+graph TB
+    subgraph "External Users"
+        DEVS[Developers<br/>Building enterprise apps]
+        AUTHORS[Content Authors<br/>Writing educational content]
+        LEARNERS[Learners<br/>Studying programming/AI/security]
+        ENTERPRISES[Enterprise Users<br/>Using Sharia-compliant systems]
+        PROD_TEAM[Production Team<br/>Deployment approval & monitoring]
+    end
+
+    OSE_PLATFORM[Open Sharia Enterprise Platform<br/>Monorepo with 8 applications<br/>Nx workspace]
+
+    subgraph "External Systems"
+        GITHUB[GitHub<br/>Source control & CI/CD]
+        VERCEL[Vercel<br/>Static site hosting]
+        K8S[Kubernetes Cluster<br/>Container orchestration]
+        REGISTRY[Container Registry<br/>Docker images]
+        DNS[DNS/CDN<br/>Domain management]
+    end
+
+    DEVS -->|Clone, commit, push| GITHUB
+    AUTHORS -->|Write markdown content| GITHUB
+    LEARNERS -->|Read tutorials & guides| OSE_PLATFORM
+    ENTERPRISES -->|Use business applications| OSE_PLATFORM
+    PROD_TEAM -->|Approve deployments, monitor| K8S
+
+    GITHUB -->|Webhook triggers| OSE_PLATFORM
+    OSE_PLATFORM -->|Deploy static sites| VERCEL
+    OSE_PLATFORM -->|Push Docker images| REGISTRY
+    OSE_PLATFORM -->|Deploy applications| K8S
+    VERCEL -->|Serve websites| LEARNERS
+    K8S -->|Serve web apps| ENTERPRISES
+    DNS -->|Route traffic| VERCEL
+    DNS -->|Route traffic| K8S
+
+    style OSE_PLATFORM fill:#0077b6,stroke:#03045e,color:#ffffff,stroke-width:3px
+    style DEVS fill:#2a9d8f,stroke:#264653,color:#ffffff
+    style AUTHORS fill:#2a9d8f,stroke:#264653,color:#ffffff
+    style LEARNERS fill:#2a9d8f,stroke:#264653,color:#ffffff
+    style ENTERPRISES fill:#2a9d8f,stroke:#264653,color:#ffffff
+    style PROD_TEAM fill:#2a9d8f,stroke:#264653,color:#ffffff
+    style GITHUB fill:#6a4c93,stroke:#22223b,color:#ffffff
+    style VERCEL fill:#6a4c93,stroke:#22223b,color:#ffffff
+    style K8S fill:#6a4c93,stroke:#22223b,color:#ffffff
+    style REGISTRY fill:#6a4c93,stroke:#22223b,color:#ffffff
+    style DNS fill:#6a4c93,stroke:#22223b,color:#ffffff
+```
+
+**Key Relationships:**
+
+- **Developers & Authors**: Interact with GitHub (source of truth) to build applications and create content
+- **Learners**: Access educational content via Vercel-hosted Hugo sites (ayokoding-web, ose-platform-web)
+- **Enterprise Users**: Access business applications via Kubernetes-hosted Dolphin suite
+- **Production Team**: Approves staging deployments and monitors production environment
+- **GitHub**: Central hub for CI/CD automation and quality gates
+- **Vercel**: Automated deployment platform for static Hugo sites
+- **Kubernetes**: Container orchestration for Dolphin suite (multi-environment)
+
 ## Applications Inventory
 
 The platform consists of 8 applications across 5 technology stacks:
@@ -129,7 +195,9 @@ The platform consists of 8 applications across 5 technology stacks:
   - Cross-browser compatibility
 - **Configuration**: Environment-specific URLs and test data
 
-## Application Architecture
+### C4 Level 2: Container Diagram
+
+Shows the high-level technical building blocks (containers) of the system. In C4 terminology, a "container" is a deployable/executable unit (web app, database, file system, etc.), not a Docker container.
 
 ```mermaid
 graph TB
@@ -235,6 +303,1058 @@ sequenceDiagram
     Git->>Hugo: Continue commit
 
     Note over Dev,Hugo: Automated content processing during commit
+```
+
+### C4 Level 3: Component Diagrams
+
+Shows the internal components within each container. Components are groupings of related functionality behind a well-defined interface.
+
+#### dolphin-be Components (Spring Boot Backend)
+
+```mermaid
+graph TB
+    subgraph "dolphin-be Container"
+        subgraph "API Layer"
+            REST_CTRL[REST Controllers<br/>@RestController]
+            API_DOCS[API Documentation<br/>OpenAPI/Swagger]
+            REQ_VAL[Request Validation<br/>@Valid annotations]
+        end
+
+        subgraph "Security Layer"
+            AUTH_FILTER[Authentication Filter<br/>JWT validation]
+            AUTHZ[Authorization Service<br/>Role-based access]
+            SEC_CONFIG[Security Config<br/>Spring Security]
+        end
+
+        subgraph "Business Logic Layer"
+            SERVICES[Business Services<br/>@Service components]
+            DOMAIN_MODELS[Domain Models<br/>Business entities]
+            BIZ_RULES[Business Rules Engine<br/>Sharia compliance validation]
+        end
+
+        subgraph "Data Access Layer"
+            REPOSITORIES[Repositories<br/>@Repository JPA]
+            ENTITIES[JPA Entities<br/>@Entity classes]
+            QUERY_DSL[Query Services<br/>Custom queries]
+        end
+
+        subgraph "Integration Layer"
+            EVENT_PUB[Event Publisher<br/>Domain events]
+            EXT_CLIENTS[External API Clients<br/>RestTemplate/WebClient]
+            MSG_BROKER[Message Broker Client<br/>Optional async messaging]
+        end
+
+        subgraph "Infrastructure"
+            EXCEPTION[Exception Handler<br/>@ControllerAdvice]
+            LOGGING[Logging Service<br/>Structured logging]
+            CONFIG[Configuration<br/>@ConfigurationProperties]
+            HEALTH[Health Checks<br/>Actuator endpoints]
+        end
+
+        DATABASE[(Database<br/>PostgreSQL/MySQL)]
+        CACHE[(Cache<br/>Redis)]
+    end
+
+    REST_CTRL --> REQ_VAL
+    REQ_VAL --> AUTH_FILTER
+    AUTH_FILTER --> AUTHZ
+    REST_CTRL --> SERVICES
+    AUTHZ --> SERVICES
+    SERVICES --> BIZ_RULES
+    SERVICES --> DOMAIN_MODELS
+    SERVICES --> REPOSITORIES
+    SERVICES --> EVENT_PUB
+    SERVICES --> EXT_CLIENTS
+    REPOSITORIES --> ENTITIES
+    REPOSITORIES --> QUERY_DSL
+    REPOSITORIES --> DATABASE
+    SERVICES --> CACHE
+    REST_CTRL --> EXCEPTION
+    SERVICES --> LOGGING
+    CONFIG --> SERVICES
+    HEALTH --> DATABASE
+
+    style REST_CTRL fill:#0077b6,stroke:#03045e,color:#ffffff
+    style SERVICES fill:#2a9d8f,stroke:#264653,color:#ffffff
+    style REPOSITORIES fill:#e76f51,stroke:#9d0208,color:#ffffff
+    style AUTH_FILTER fill:#6a4c93,stroke:#22223b,color:#ffffff
+    style AUTHZ fill:#6a4c93,stroke:#22223b,color:#ffffff
+    style BIZ_RULES fill:#f4a261,stroke:#e76f51,color:#ffffff
+    style DATABASE fill:#9d0208,stroke:#6a040f,color:#ffffff
+    style CACHE fill:#457b9d,stroke:#1d3557,color:#ffffff
+```
+
+**Component Responsibilities:**
+
+- **REST Controllers**: HTTP endpoint handling, request/response mapping, OpenAPI documentation
+- **Authentication Filter**: JWT token validation, user identity extraction
+- **Authorization Service**: Role-based access control, permission checks
+- **Business Services**: Core business logic orchestration, transaction management
+- **Business Rules Engine**: Sharia compliance validation, domain-specific rules
+- **Repositories**: Data persistence abstraction, query execution
+- **Event Publisher**: Domain event publication for async processing
+- **Exception Handler**: Centralized error handling, error response formatting
+- **Health Checks**: Application health monitoring for Kubernetes probes
+
+#### dolphin-fe Components (Next.js Frontend)
+
+```mermaid
+graph TB
+    subgraph "dolphin-fe Container"
+        subgraph "Presentation Layer"
+            PAGES[Pages/Routes<br/>Next.js pages router]
+            LAYOUTS[Layouts<br/>Shared page layouts]
+            UI_COMP[UI Components<br/>Reusable React components]
+            FORMS[Form Components<br/>Input validation & handling]
+        end
+
+        subgraph "State Management"
+            GLOBAL_STATE[Global State<br/>Context API / Zustand]
+            FORM_STATE[Form State<br/>React Hook Form]
+            SERVER_STATE[Server State Cache<br/>React Query / SWR]
+        end
+
+        subgraph "Business Logic"
+            HOOKS[Custom Hooks<br/>Reusable logic]
+            VALIDATORS[Validators<br/>Client-side validation]
+            FORMATTERS[Formatters<br/>Data formatting utilities]
+            BIZ_LOGIC[Business Logic<br/>Client-side rules]
+        end
+
+        subgraph "API Integration"
+            API_CLIENT[API Client<br/>HTTP client wrapper]
+            API_ENDPOINTS[API Endpoints<br/>Type-safe endpoints]
+            AUTH_INTERCEPTOR[Auth Interceptor<br/>JWT token injection]
+            ERROR_HANDLER[Error Handler<br/>API error handling]
+        end
+
+        subgraph "Authentication"
+            AUTH_CONTEXT[Auth Context<br/>User session state]
+            LOGIN_FLOW[Login Flow<br/>Authentication logic]
+            PROTECTED_ROUTES[Protected Routes<br/>Route guards]
+            TOKEN_MANAGER[Token Manager<br/>JWT storage & refresh]
+        end
+
+        subgraph "Feature Modules"
+            FEAT_A[Feature Module A<br/>Domain-specific features]
+            FEAT_B[Feature Module B<br/>Business workflows]
+            SHARED[Shared Module<br/>Common components]
+        end
+
+        subgraph "Infrastructure"
+            I18N[Internationalization<br/>i18next]
+            THEME[Theme Provider<br/>Tailwind/MUI theme]
+            ERROR_BOUNDARY[Error Boundary<br/>Error catching]
+            ANALYTICS[Analytics<br/>User tracking]
+        end
+    end
+
+    DOLPHIN_BE_API[dolphin-be REST API]
+
+    PAGES --> LAYOUTS
+    PAGES --> UI_COMP
+    PAGES --> FORMS
+    LAYOUTS --> UI_COMP
+    FORMS --> FORM_STATE
+    FORMS --> VALIDATORS
+    UI_COMP --> HOOKS
+    HOOKS --> GLOBAL_STATE
+    HOOKS --> SERVER_STATE
+    HOOKS --> API_CLIENT
+    API_CLIENT --> API_ENDPOINTS
+    API_CLIENT --> AUTH_INTERCEPTOR
+    API_CLIENT --> ERROR_HANDLER
+    API_CLIENT --> DOLPHIN_BE_API
+    AUTH_CONTEXT --> TOKEN_MANAGER
+    LOGIN_FLOW --> AUTH_CONTEXT
+    LOGIN_FLOW --> API_CLIENT
+    PROTECTED_ROUTES --> AUTH_CONTEXT
+    PAGES --> PROTECTED_ROUTES
+    FEAT_A --> HOOKS
+    FEAT_A --> UI_COMP
+    FEAT_B --> HOOKS
+    FEAT_B --> UI_COMP
+    PAGES --> ERROR_BOUNDARY
+    THEME --> UI_COMP
+
+    style PAGES fill:#0077b6,stroke:#03045e,color:#ffffff
+    style UI_COMP fill:#2a9d8f,stroke:#264653,color:#ffffff
+    style API_CLIENT fill:#e76f51,stroke:#9d0208,color:#ffffff
+    style AUTH_CONTEXT fill:#6a4c93,stroke:#22223b,color:#ffffff
+    style SERVER_STATE fill:#457b9d,stroke:#1d3557,color:#ffffff
+    style DOLPHIN_BE_API fill:#9d0208,stroke:#6a040f,color:#ffffff
+```
+
+**Component Responsibilities:**
+
+- **Pages/Routes**: Next.js page components, routing, server-side rendering setup
+- **UI Components**: Reusable React components (buttons, cards, tables, etc.)
+- **Global State**: Application-wide state management (user preferences, UI state)
+- **Server State Cache**: API response caching, optimistic updates, cache invalidation
+- **API Client**: Type-safe HTTP client, request/response interceptors
+- **Auth Context**: User authentication state, session management
+- **Protected Routes**: Route-level authorization guards
+- **Custom Hooks**: Reusable React hooks for common patterns
+- **Error Boundary**: Component error catching and fallback UI
+
+#### ayokoding-cli Components (Go CLI Tool)
+
+```mermaid
+graph TB
+    subgraph "ayokoding-cli Container"
+        subgraph "CLI Interface"
+            CMD_ROOT[Root Command<br/>Cobra CLI root]
+            CMD_TITLES[Update Titles Command<br/>Title extraction & update]
+            CMD_NAV[Regenerate Nav Command<br/>Navigation generation]
+            CMD_FLAGS[Flags Parser<br/>Command-line arguments]
+        end
+
+        subgraph "Title Processing"
+            TITLE_EXTRACTOR[Title Extractor<br/>Parse filename to title]
+            FRONTMATTER_UPDATER[Frontmatter Updater<br/>Update YAML frontmatter]
+            TITLE_FORMATTER[Title Formatter<br/>Format title text]
+        end
+
+        subgraph "Navigation Processing"
+            NAV_SCANNER[Directory Scanner<br/>Traverse content tree]
+            NAV_BUILDER[Navigation Builder<br/>Build nav structure]
+            NAV_WRITER[Navigation Writer<br/>Write _index.md files]
+            WEIGHT_CALC[Weight Calculator<br/>Level-based ordering]
+        end
+
+        subgraph "File Operations"
+            FILE_READER[File Reader<br/>Read markdown files]
+            FILE_WRITER[File Writer<br/>Write markdown files]
+            YAML_PARSER[YAML Parser<br/>Parse/serialize frontmatter]
+            MD_PARSER[Markdown Parser<br/>Parse markdown structure]
+        end
+
+        subgraph "Configuration"
+            CONFIG_LOADER[Config Loader<br/>Load configuration]
+            PATH_RESOLVER[Path Resolver<br/>Resolve file paths]
+            LOGGER[Logger<br/>Structured logging]
+        end
+
+        CONTENT_DIR[ayokoding-web/content/<br/>Markdown files]
+    end
+
+    CMD_ROOT --> CMD_TITLES
+    CMD_ROOT --> CMD_NAV
+    CMD_ROOT --> CMD_FLAGS
+    CMD_TITLES --> TITLE_EXTRACTOR
+    CMD_TITLES --> FRONTMATTER_UPDATER
+    TITLE_EXTRACTOR --> TITLE_FORMATTER
+    FRONTMATTER_UPDATER --> YAML_PARSER
+    FRONTMATTER_UPDATER --> FILE_WRITER
+    CMD_NAV --> NAV_SCANNER
+    NAV_SCANNER --> NAV_BUILDER
+    NAV_BUILDER --> WEIGHT_CALC
+    NAV_BUILDER --> NAV_WRITER
+    NAV_WRITER --> FILE_WRITER
+    FILE_READER --> CONTENT_DIR
+    FILE_WRITER --> CONTENT_DIR
+    FILE_READER --> MD_PARSER
+    FILE_READER --> YAML_PARSER
+    CONFIG_LOADER --> PATH_RESOLVER
+    PATH_RESOLVER --> FILE_READER
+
+    style CMD_ROOT fill:#0077b6,stroke:#03045e,color:#ffffff
+    style TITLE_EXTRACTOR fill:#2a9d8f,stroke:#264653,color:#ffffff
+    style NAV_BUILDER fill:#2a9d8f,stroke:#264653,color:#ffffff
+    style FILE_READER fill:#e76f51,stroke:#9d0208,color:#ffffff
+    style FILE_WRITER fill:#e76f51,stroke:#9d0208,color:#ffffff
+    style YAML_PARSER fill:#457b9d,stroke:#1d3557,color:#ffffff
+    style CONTENT_DIR fill:#9d0208,stroke:#6a040f,color:#ffffff
+```
+
+**Component Responsibilities:**
+
+- **Root Command**: CLI entry point, command routing, help text
+- **Title Extractor**: Extract title from filename pattern (e.g., `01__intro.md` → "Intro")
+- **Frontmatter Updater**: Update YAML frontmatter in markdown files
+- **Navigation Scanner**: Recursively scan content directory structure
+- **Navigation Builder**: Build hierarchical navigation structure
+- **Weight Calculator**: Calculate level-based ordering (level 1 = 100, level 2 = 200, etc.)
+- **YAML Parser**: Parse and serialize YAML frontmatter
+
+#### butler-cli Components (Go CLI Tool)
+
+```mermaid
+graph TB
+    subgraph "butler-cli Container"
+        subgraph "CLI Interface"
+            BUTLER_ROOT[Root Command<br/>Repository automation]
+            BUTLER_FLAGS[Flags Parser<br/>Command-line arguments]
+        end
+
+        subgraph "Automation Modules"
+            AUTO_MODULE[Automation Module<br/>Extensible automation]
+        end
+
+        subgraph "Infrastructure"
+            BUTLER_CONFIG[Config Loader<br/>Configuration]
+            BUTLER_LOGGER[Logger<br/>Logging]
+        end
+    end
+
+    BUTLER_ROOT --> AUTO_MODULE
+    BUTLER_ROOT --> BUTLER_FLAGS
+    AUTO_MODULE --> BUTLER_CONFIG
+    AUTO_MODULE --> BUTLER_LOGGER
+
+    style BUTLER_ROOT fill:#0077b6,stroke:#03045e,color:#ffffff
+    style AUTO_MODULE fill:#2a9d8f,stroke:#264653,color:#ffffff
+```
+
+**Component Responsibilities:**
+
+- **Root Command**: CLI entry point for repository automation tasks
+- **Automation Module**: Extensible module system for automation workflows
+- **Config Loader**: Load butler-specific configuration
+
+#### ose-platform-web Components (Hugo Static Site)
+
+```mermaid
+graph TB
+    subgraph "ose-platform-web Container"
+        subgraph "Content"
+            MD_CONTENT[Markdown Content<br/>Platform documentation]
+            FRONTMATTER_OSE[Frontmatter<br/>Page metadata]
+            ASSETS[Static Assets<br/>Images, CSS, JS]
+        end
+
+        subgraph "Theme - PaperMod"
+            LAYOUTS_OSE[Layouts<br/>HTML templates]
+            PARTIALS_OSE[Partials<br/>Reusable components]
+            THEME_CONFIG[Theme Config<br/>config.yaml]
+        end
+
+        subgraph "Build Output"
+            HTML_OSE[HTML Files<br/>Generated pages]
+            STATIC_OSE[Static Files<br/>Processed assets]
+        end
+
+        HUGO_OSE[Hugo Build Engine<br/>v0.152.2 Extended]
+    end
+
+    MD_CONTENT --> HUGO_OSE
+    FRONTMATTER_OSE --> HUGO_OSE
+    LAYOUTS_OSE --> HUGO_OSE
+    PARTIALS_OSE --> HUGO_OSE
+    THEME_CONFIG --> HUGO_OSE
+    ASSETS --> HUGO_OSE
+    HUGO_OSE --> HTML_OSE
+    HUGO_OSE --> STATIC_OSE
+
+    style MD_CONTENT fill:#0077b6,stroke:#03045e,color:#ffffff
+    style LAYOUTS_OSE fill:#2a9d8f,stroke:#264653,color:#ffffff
+    style HUGO_OSE fill:#e76f51,stroke:#9d0208,color:#ffffff
+    style HTML_OSE fill:#457b9d,stroke:#1d3557,color:#ffffff
+```
+
+**Component Responsibilities:**
+
+- **Markdown Content**: Platform marketing and documentation content
+- **Layouts**: PaperMod theme templates for page structure
+- **Theme Config**: Site configuration, navigation menus, theme settings
+
+#### ayokoding-web Components (Hugo Static Site)
+
+```mermaid
+graph TB
+    subgraph "ayokoding-web Container"
+        subgraph "Content"
+            MD_CONTENT_AYO[Markdown Content<br/>Educational tutorials]
+            FRONTMATTER_AYO[Frontmatter<br/>Auto-updated titles]
+            NAV_FILES[Navigation Files<br/>Auto-generated _index.md]
+            I18N_CONTENT[i18n Content<br/>Indonesian + English]
+            ASSETS_AYO[Static Assets<br/>Images, diagrams]
+        end
+
+        subgraph "Theme - Hextra"
+            LAYOUTS_AYO[Layouts<br/>Documentation templates]
+            PARTIALS_AYO[Partials<br/>Navigation, sidebar]
+            THEME_CONFIG_AYO[Theme Config<br/>Bilingual config]
+        end
+
+        subgraph "Build Output"
+            HTML_AYO[HTML Files<br/>Generated pages]
+            STATIC_AYO[Static Files<br/>Processed assets]
+            SEARCH_INDEX[Search Index<br/>Client-side search]
+        end
+
+        HUGO_AYO[Hugo Build Engine<br/>v0.152.2 Extended]
+        AYOCLI_PROC[ayokoding-cli<br/>Pre-build processing]
+    end
+
+    AYOCLI_PROC --> FRONTMATTER_AYO
+    AYOCLI_PROC --> NAV_FILES
+    MD_CONTENT_AYO --> HUGO_AYO
+    FRONTMATTER_AYO --> HUGO_AYO
+    NAV_FILES --> HUGO_AYO
+    I18N_CONTENT --> HUGO_AYO
+    LAYOUTS_AYO --> HUGO_AYO
+    PARTIALS_AYO --> HUGO_AYO
+    THEME_CONFIG_AYO --> HUGO_AYO
+    ASSETS_AYO --> HUGO_AYO
+    HUGO_AYO --> HTML_AYO
+    HUGO_AYO --> STATIC_AYO
+    HUGO_AYO --> SEARCH_INDEX
+
+    style MD_CONTENT_AYO fill:#0077b6,stroke:#03045e,color:#ffffff
+    style AYOCLI_PROC fill:#6a4c93,stroke:#22223b,color:#ffffff
+    style NAV_FILES fill:#2a9d8f,stroke:#264653,color:#ffffff
+    style HUGO_AYO fill:#e76f51,stroke:#9d0208,color:#ffffff
+    style SEARCH_INDEX fill:#457b9d,stroke:#1d3557,color:#ffffff
+```
+
+**Component Responsibilities:**
+
+- **ayokoding-cli**: Pre-build processing (title updates, navigation generation)
+- **Markdown Content**: Programming, AI, and security educational content
+- **Navigation Files**: Auto-generated navigation structure with level-based weights
+- **i18n Content**: Bilingual support (Indonesian primary, English secondary)
+- **Search Index**: Client-side search for documentation
+
+#### E2E Test Components
+
+```mermaid
+graph TB
+    subgraph "dolphin-be-e2e Container"
+        subgraph "Test Suites"
+            API_TESTS[API Contract Tests<br/>REST endpoint validation]
+            INTEGRATION_TESTS[Integration Tests<br/>Multi-endpoint flows]
+            AUTH_TESTS[Auth Tests<br/>JWT authentication]
+        end
+
+        subgraph "Test Infrastructure"
+            PLAYWRIGHT_BE[Playwright API<br/>HTTP client]
+            TEST_DATA_BE[Test Data Builder<br/>Test fixtures]
+            ASSERTIONS_BE[Assertions<br/>Response validation]
+            ENV_CONFIG_BE[Environment Config<br/>local/dev/staging]
+        end
+    end
+
+    subgraph "dolphin-fe-e2e Container"
+        subgraph "Test Suites FE"
+            UI_TESTS[UI Component Tests<br/>Component validation]
+            JOURNEY_TESTS[User Journey Tests<br/>End-to-end workflows]
+            CROSS_BROWSER[Cross-Browser Tests<br/>Browser compatibility]
+        end
+
+        subgraph "Test Infrastructure FE"
+            PLAYWRIGHT_FE[Playwright Browser<br/>Browser automation]
+            PAGE_OBJECTS[Page Objects<br/>UI abstraction]
+            TEST_DATA_FE[Test Data Builder<br/>Test fixtures]
+            ENV_CONFIG_FE[Environment Config<br/>local/dev/staging]
+        end
+    end
+
+    API_TESTS --> PLAYWRIGHT_BE
+    INTEGRATION_TESTS --> PLAYWRIGHT_BE
+    AUTH_TESTS --> PLAYWRIGHT_BE
+    PLAYWRIGHT_BE --> TEST_DATA_BE
+    PLAYWRIGHT_BE --> ASSERTIONS_BE
+    ENV_CONFIG_BE --> PLAYWRIGHT_BE
+
+    UI_TESTS --> PLAYWRIGHT_FE
+    JOURNEY_TESTS --> PLAYWRIGHT_FE
+    CROSS_BROWSER --> PLAYWRIGHT_FE
+    PLAYWRIGHT_FE --> PAGE_OBJECTS
+    PLAYWRIGHT_FE --> TEST_DATA_FE
+    ENV_CONFIG_FE --> PLAYWRIGHT_FE
+
+    style API_TESTS fill:#0077b6,stroke:#03045e,color:#ffffff
+    style UI_TESTS fill:#0077b6,stroke:#03045e,color:#ffffff
+    style PLAYWRIGHT_BE fill:#e76f51,stroke:#9d0208,color:#ffffff
+    style PLAYWRIGHT_FE fill:#e76f51,stroke:#9d0208,color:#ffffff
+    style PAGE_OBJECTS fill:#2a9d8f,stroke:#264653,color:#ffffff
+```
+
+**Component Responsibilities:**
+
+- **API Contract Tests**: Validate REST API contracts, request/response schemas
+- **Integration Tests**: Multi-step workflows across multiple API endpoints
+- **UI Component Tests**: Individual component behavior validation
+- **User Journey Tests**: Complete user workflows (login → action → logout)
+- **Page Objects**: UI abstraction layer for maintainable tests
+- **Environment Config**: Switch between local, dev, and staging environments
+
+### C4 Level 4: Code Architecture
+
+Shows implementation details for critical components. Focus on database schemas, class structures, and key implementation patterns.
+
+#### dolphin-be Database Schema (Entity-Relationship Diagram)
+
+```mermaid
+erDiagram
+    USER ||--o{ USER_ROLE : has
+    USER {
+        uuid id PK
+        string email UK
+        string password_hash
+        string full_name
+        timestamp created_at
+        timestamp updated_at
+        boolean is_active
+        timestamp last_login
+    }
+
+    ROLE ||--o{ USER_ROLE : assigned_to
+    ROLE {
+        uuid id PK
+        string name UK
+        string description
+        timestamp created_at
+    }
+
+    USER_ROLE {
+        uuid user_id FK
+        uuid role_id FK
+        timestamp assigned_at
+    }
+
+    USER ||--o{ AUDIT_LOG : performs
+    AUDIT_LOG {
+        uuid id PK
+        uuid user_id FK
+        string action
+        string entity_type
+        uuid entity_id
+        json old_value
+        json new_value
+        timestamp created_at
+        string ip_address
+    }
+
+    ENTERPRISE ||--o{ TRANSACTION : has
+    ENTERPRISE {
+        uuid id PK
+        string name
+        string business_type
+        json sharia_compliance_config
+        timestamp created_at
+        timestamp updated_at
+        boolean is_active
+    }
+
+    TRANSACTION ||--o{ TRANSACTION_ITEM : contains
+    TRANSACTION {
+        uuid id PK
+        uuid enterprise_id FK
+        string transaction_type
+        decimal total_amount
+        string currency
+        timestamp transaction_date
+        string status
+        boolean sharia_compliant
+        json compliance_validation
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    TRANSACTION_ITEM {
+        uuid id PK
+        uuid transaction_id FK
+        string item_description
+        decimal amount
+        decimal quantity
+        string category
+        timestamp created_at
+    }
+
+    FEATURE_FLAG {
+        uuid id PK
+        string flag_key UK
+        string environment
+        boolean enabled
+        json config
+        timestamp created_at
+        timestamp updated_at
+    }
+```
+
+**Schema Design Principles:**
+
+- **UUID Primary Keys**: All entities use UUID for distributed system compatibility
+- **Audit Trail**: Comprehensive audit logging for compliance requirements
+- **Sharia Compliance**: Built-in compliance validation fields in transactions
+- **Feature Flags**: Database-backed feature flag configuration per environment
+- **Soft Deletes**: `is_active` flags instead of hard deletes for audit purposes
+- **Timestamps**: Created/updated timestamps on all mutable entities
+
+#### dolphin-be Class Structure (Spring Boot Layered Architecture)
+
+```mermaid
+classDiagram
+    class UserController {
+        +UserService userService
+        +createUser(UserCreateRequest) ResponseEntity~UserResponse~
+        +getUser(UUID) ResponseEntity~UserResponse~
+        +updateUser(UUID, UserUpdateRequest) ResponseEntity~UserResponse~
+        +deleteUser(UUID) ResponseEntity~Void~
+        +getCurrentUser() ResponseEntity~UserResponse~
+    }
+
+    class UserService {
+        +UserRepository userRepository
+        +PasswordEncoder passwordEncoder
+        +EventPublisher eventPublisher
+        +createUser(UserCreateRequest) User
+        +getUser(UUID) User
+        +updateUser(UUID, UserUpdateRequest) User
+        +deleteUser(UUID) void
+        -validateUserData(UserCreateRequest) void
+        -publishUserCreatedEvent(User) void
+    }
+
+    class UserRepository {
+        <<interface>>
+        +findById(UUID) Optional~User~
+        +findByEmail(String) Optional~User~
+        +save(User) User
+        +delete(User) void
+        +existsByEmail(String) boolean
+    }
+
+    class User {
+        -UUID id
+        -String email
+        -String passwordHash
+        -String fullName
+        -LocalDateTime createdAt
+        -LocalDateTime updatedAt
+        -boolean isActive
+        -Set~Role~ roles
+        +getId() UUID
+        +getEmail() String
+        +isActive() boolean
+        +addRole(Role) void
+        +removeRole(Role) void
+    }
+
+    class Role {
+        -UUID id
+        -String name
+        -String description
+        -LocalDateTime createdAt
+        +getId() UUID
+        +getName() String
+    }
+
+    class AuthenticationFilter {
+        +JwtTokenProvider jwtTokenProvider
+        +doFilterInternal(request, response, chain) void
+        -extractToken(request) String
+        -validateToken(token) boolean
+        -setAuthentication(token) void
+    }
+
+    class JwtTokenProvider {
+        -String secretKey
+        -long validityInMilliseconds
+        +createToken(Authentication) String
+        +validateToken(String) boolean
+        +getAuthentication(String) Authentication
+        +getUserIdFromToken(String) UUID
+        -getClaims(String) Claims
+    }
+
+    class ShariaComplianceValidator {
+        +validateTransaction(Transaction) ValidationResult
+        +checkInterestFree(Transaction) boolean
+        +checkPermissibleGoods(Transaction) boolean
+        +validateContractTerms(Transaction) boolean
+        -loadComplianceRules() List~Rule~
+    }
+
+    class GlobalExceptionHandler {
+        +handleEntityNotFound(EntityNotFoundException) ResponseEntity~ErrorResponse~
+        +handleValidationException(ValidationException) ResponseEntity~ErrorResponse~
+        +handleAccessDenied(AccessDeniedException) ResponseEntity~ErrorResponse~
+        +handleGenericException(Exception) ResponseEntity~ErrorResponse~
+        -buildErrorResponse(Exception) ErrorResponse
+    }
+
+    UserController --> UserService
+    UserService --> UserRepository
+    UserService --> User
+    UserRepository --> User
+    User --> Role
+    AuthenticationFilter --> JwtTokenProvider
+    UserService --> ShariaComplianceValidator
+    UserController ..> GlobalExceptionHandler : handles exceptions
+```
+
+**Class Design Patterns:**
+
+- **Layered Architecture**: Controllers → Services → Repositories separation
+- **Dependency Injection**: Spring annotations for loose coupling
+- **Repository Pattern**: Data access abstraction via Spring Data JPA
+- **Service Layer**: Business logic orchestration, transaction management
+- **DTO Pattern**: Request/Response objects separate from domain entities
+- **Exception Handling**: Centralized error handling via @ControllerAdvice
+- **Domain Events**: Event-driven architecture for async operations
+- **Validation**: Built-in validation via @Valid and custom validators
+
+#### dolphin-fe Component Hierarchy (React/Next.js)
+
+```mermaid
+classDiagram
+    class App {
+        +AuthProvider authProvider
+        +ThemeProvider themeProvider
+        +QueryClientProvider queryClient
+        +render() JSX.Element
+    }
+
+    class AuthProvider {
+        -AuthContext context
+        -User currentUser
+        -string token
+        +login(credentials) Promise~void~
+        +logout() void
+        +refreshToken() Promise~void~
+        +isAuthenticated() boolean
+    }
+
+    class DashboardPage {
+        -useAuth() AuthContext
+        -useQuery() QueryResult
+        +render() JSX.Element
+        +componentDidMount() void
+    }
+
+    class UserListPage {
+        -useUsers() QueryResult~User[]~
+        -useCreateUser() MutationResult
+        +handleCreateUser(data) void
+        +handleDeleteUser(id) void
+        +render() JSX.Element
+    }
+
+    class UserTable {
+        +users: User[]
+        +onEdit: (user) => void
+        +onDelete: (id) => void
+        +loading: boolean
+        +render() JSX.Element
+    }
+
+    class UserForm {
+        +initialValues: User
+        +onSubmit: (data) => void
+        +validationSchema: Schema
+        -useForm() FormMethods
+        +render() JSX.Element
+    }
+
+    class ApiClient {
+        -httpClient: AxiosInstance
+        -authInterceptor: Interceptor
+        +get(url) Promise~Response~
+        +post(url, data) Promise~Response~
+        +put(url, data) Promise~Response~
+        +delete(url) Promise~Response~
+        -handleError(error) void
+    }
+
+    class UserApi {
+        -apiClient: ApiClient
+        +getUsers() Promise~User[]~
+        +getUser(id) Promise~User~
+        +createUser(data) Promise~User~
+        +updateUser(id, data) Promise~User~
+        +deleteUser(id) Promise~void~
+    }
+
+    class useUsers {
+        <<custom hook>>
+        -userApi: UserApi
+        +data: User[]
+        +isLoading: boolean
+        +error: Error
+        +refetch() void
+    }
+
+    class useCreateUser {
+        <<custom hook>>
+        -userApi: UserApi
+        -queryClient: QueryClient
+        +mutate(data) void
+        +isLoading: boolean
+        +error: Error
+        -onSuccess() void
+    }
+
+    class ProtectedRoute {
+        +children: ReactNode
+        +requiredRole: string
+        -useAuth() AuthContext
+        +render() JSX.Element
+    }
+
+    App --> AuthProvider
+    App --> DashboardPage
+    App --> UserListPage
+    DashboardPage --> ProtectedRoute
+    UserListPage --> ProtectedRoute
+    UserListPage --> UserTable
+    UserListPage --> UserForm
+    UserListPage --> useUsers
+    UserListPage --> useCreateUser
+    useUsers --> UserApi
+    useCreateUser --> UserApi
+    UserApi --> ApiClient
+    ApiClient --> AuthProvider
+
+```
+
+**Component Design Patterns:**
+
+- **Context API**: Global state (auth, theme) via React Context
+- **Custom Hooks**: Reusable logic extraction (useAuth, useUsers, useApi)
+- **React Query**: Server state management, caching, optimistic updates
+- **Component Composition**: Small, focused components with clear responsibilities
+- **Higher-Order Components**: ProtectedRoute for authentication guards
+- **Form Management**: React Hook Form for form state and validation
+- **API Client Layer**: Axios-based HTTP client with interceptors
+- **TypeScript**: Type-safe props, API contracts, and state management
+
+#### ayokoding-cli Package Structure (Go)
+
+```mermaid
+classDiagram
+    class main {
+        +main() void
+    }
+
+    class RootCmd {
+        +Execute() error
+        -initConfig() void
+    }
+
+    class UpdateTitlesCmd {
+        +Run() error
+        -scanContentDir() []string
+        -updateFile(path) error
+    }
+
+    class RegenerateNavCmd {
+        +Run() error
+        -buildNavigationTree() NavTree
+        -writeIndexFiles(tree) error
+    }
+
+    class TitleExtractor {
+        +ExtractFromFilename(path) string
+        -parseFilename(name) string
+        -formatTitle(raw) string
+    }
+
+    class FrontmatterUpdater {
+        +UpdateTitle(path, title) error
+        -readFile(path) ([]byte, error)
+        -parseFrontmatter(content) map[string]interface{}
+        -serializeFrontmatter(data) []byte
+        -writeFile(path, content) error
+    }
+
+    class NavigationScanner {
+        +ScanDirectory(root) NavTree
+        -walkDir(path) error
+        -isMarkdownFile(path) bool
+        -extractMetadata(path) Metadata
+    }
+
+    class NavigationBuilder {
+        +BuildTree(files) NavTree
+        -calculateWeights(tree) NavTree
+        -sortByWeight(nodes) []NavNode
+    }
+
+    class WeightCalculator {
+        +CalculateWeight(level) int
+        +GetLevelFromPath(path) int
+    }
+
+    class NavWriter {
+        +WriteIndexFiles(tree) error
+        -generateIndexContent(node) string
+        -writeFile(path, content) error
+    }
+
+    class FileReader {
+        +ReadMarkdown(path) (string, error)
+        +ParseYAML(content) (map[string]interface{}, error)
+    }
+
+    class FileWriter {
+        +WriteMarkdown(path, content) error
+        +SerializeYAML(data) ([]byte, error)
+    }
+
+    class Config {
+        -string ContentDir
+        -string BaseURL
+        -bool Verbose
+        +Load() error
+        +Validate() error
+    }
+
+    class Logger {
+        +Info(msg) void
+        +Error(msg) void
+        +Debug(msg) void
+    }
+
+    main --> RootCmd
+    RootCmd --> UpdateTitlesCmd
+    RootCmd --> RegenerateNavCmd
+    RootCmd --> Config
+    UpdateTitlesCmd --> TitleExtractor
+    UpdateTitlesCmd --> FrontmatterUpdater
+    UpdateTitlesCmd --> FileReader
+    UpdateTitlesCmd --> FileWriter
+    RegenerateNavCmd --> NavigationScanner
+    RegenerateNavCmd --> NavigationBuilder
+    RegenerateNavCmd --> NavWriter
+    NavigationBuilder --> WeightCalculator
+    NavWriter --> FileWriter
+    FrontmatterUpdater --> FileReader
+    FrontmatterUpdater --> FileWriter
+    UpdateTitlesCmd --> Logger
+    RegenerateNavCmd --> Logger
+```
+
+**Go Package Design Patterns:**
+
+- **Command Pattern**: Cobra-based CLI with subcommands
+- **Single Responsibility**: Each struct handles one specific task
+- **Dependency Injection**: Explicit dependencies passed to constructors
+- **Error Handling**: Explicit error returns, no exceptions
+- **Interface Abstraction**: FileReader/FileWriter interfaces for testability
+- **Configuration Management**: Centralized config loading and validation
+- **Structured Logging**: Consistent logging throughout the application
+
+#### Key Sequence Diagrams
+
+**User Authentication Flow (dolphin-be + dolphin-fe):**
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant FE as dolphin-fe<br/>(Next.js)
+    participant AuthAPI as dolphin-be<br/>/api/auth/login
+    participant AuthFilter as Authentication<br/>Filter
+    participant AuthService as Authentication<br/>Service
+    participant UserRepo as User<br/>Repository
+    participant DB as Database
+    participant JWT as JWT Token<br/>Provider
+
+    User->>FE: Enter credentials
+    FE->>AuthAPI: POST /api/auth/login<br/>{email, password}
+    AuthAPI->>AuthService: authenticate(credentials)
+    AuthService->>UserRepo: findByEmail(email)
+    UserRepo->>DB: SELECT * FROM users WHERE email=?
+    DB-->>UserRepo: User record
+    UserRepo-->>AuthService: User entity
+    AuthService->>AuthService: validatePassword(password, hash)
+    alt Password valid
+        AuthService->>JWT: createToken(user)
+        JWT-->>AuthService: JWT token
+        AuthService-->>AuthAPI: AuthResponse{token, user}
+        AuthAPI-->>FE: 200 OK {token, user}
+        FE->>FE: Store token in localStorage
+        FE->>FE: Update AuthContext
+        FE-->>User: Redirect to dashboard
+    else Password invalid
+        AuthService-->>AuthAPI: AuthenticationException
+        AuthAPI-->>FE: 401 Unauthorized
+        FE-->>User: Show error message
+    end
+```
+
+**Transaction Creation with Sharia Compliance (dolphin-be):**
+
+```mermaid
+sequenceDiagram
+    participant Client as API Client
+    participant Controller as Transaction<br/>Controller
+    participant Service as Transaction<br/>Service
+    participant Validator as Sharia<br/>Compliance<br/>Validator
+    participant Repo as Transaction<br/>Repository
+    participant EventPub as Event<br/>Publisher
+    participant DB as Database
+
+    Client->>Controller: POST /api/transactions<br/>{transaction data}
+    Controller->>Controller: Validate request (@Valid)
+    Controller->>Service: createTransaction(request)
+    Service->>Validator: validateTransaction(data)
+    Validator->>Validator: checkInterestFree()
+    Validator->>Validator: checkPermissibleGoods()
+    Validator->>Validator: validateContractTerms()
+    alt Sharia Compliant
+        Validator-->>Service: ValidationResult{valid=true}
+        Service->>Service: buildTransaction(data)
+        Service->>Repo: save(transaction)
+        Repo->>DB: INSERT INTO transactions
+        DB-->>Repo: Transaction saved
+        Repo-->>Service: Transaction entity
+        Service->>EventPub: publishTransactionCreatedEvent(tx)
+        EventPub->>EventPub: Publish to message broker
+        Service-->>Controller: Transaction
+        Controller-->>Client: 201 Created {transaction}
+    else Not Compliant
+        Validator-->>Service: ValidationResult{valid=false, reasons}
+        Service-->>Controller: ShariaComplianceException
+        Controller-->>Client: 400 Bad Request {compliance errors}
+    end
+```
+
+**Content Processing Flow (ayokoding-cli + ayokoding-web):**
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant Git as Git Hook<br/>(pre-commit)
+    participant CLI as ayokoding-cli
+    participant TitleCmd as Update Titles<br/>Command
+    participant NavCmd as Regenerate Nav<br/>Command
+    participant FileSystem as Content<br/>Directory
+    participant Hugo as Hugo Build
+
+    Dev->>Git: git commit
+    Git->>Git: Check if ayokoding-web affected
+    alt ayokoding-web affected
+        Git->>CLI: nx build ayokoding-cli
+        CLI-->>Git: CLI binary built
+        Git->>TitleCmd: Execute update-titles
+        TitleCmd->>FileSystem: Scan content/ directory
+        FileSystem-->>TitleCmd: List of markdown files
+        loop For each file
+            TitleCmd->>TitleCmd: Extract title from filename
+            TitleCmd->>FileSystem: Read file + frontmatter
+            FileSystem-->>TitleCmd: File content
+            TitleCmd->>TitleCmd: Update title in frontmatter
+            TitleCmd->>FileSystem: Write updated file
+        end
+        TitleCmd-->>Git: Titles updated
+        Git->>NavCmd: Execute regenerate-nav
+        NavCmd->>FileSystem: Scan content/ tree
+        FileSystem-->>NavCmd: Directory structure
+        NavCmd->>NavCmd: Build navigation tree
+        NavCmd->>NavCmd: Calculate weights by level
+        loop For each directory
+            NavCmd->>NavCmd: Generate _index.md
+            NavCmd->>FileSystem: Write _index.md
+        end
+        NavCmd-->>Git: Navigation regenerated
+        Git->>Git: Stage updated content files
+        Git->>Hugo: Continue with commit
+    else not affected
+        Git->>Hugo: Continue with commit
+    end
 ```
 
 ## Deployment Architecture
