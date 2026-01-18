@@ -1,0 +1,9 @@
+logging:
+  level:
+    com.opencode.dolphin: INFO
+    org.springframework.web: WARN
+
+management:
+  endpoint:
+    health:
+      show-details: never

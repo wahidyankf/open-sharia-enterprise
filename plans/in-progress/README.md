@@ -4,7 +4,7 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- **[2026-01-16\_\_dolphin-be-init](./2026-01-16__dolphin-be-init/)** - Initialize Java Spring Boot application using Maven in `apps/dolphin-be/` for Learning Management System (LMS) backend
+No active plans currently.
 
 ## Instructions
 

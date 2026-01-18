@@ -4,8 +4,9 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-01-17: Dolphin Backend Initialization](./2026-01-17__dolphin-be-init/) - Initialize Java Spring Boot 4.0.1 application using Maven in `apps/dolphin-be/` for Learning Management System (LMS) backend. Created complete project structure with Java 25, Spring Boot Actuator, comprehensive tests (4/4 passing), dev/prod profiles with JSON logging, Nx integration, and complete documentation. Application startup: 1.069s (dev), 1.244s (prod) (Completed: 2026-01-17)
 - [2026-01-17: Markdown Linting Implementation](./2026-01-17__markdown-linting/) - Implemented comprehensive markdown linting with markdownlint-cli2 and Prettier integration. Achieved zero violations (down from 17,903 across 1,039 files), integrated pre-push hooks, created Claude Code PostToolUse hooks, and established markdown quality standards (Completed: 2026-01-17)
-- [2025-01-12: Full Migration from Claude Code to OpenCode](./2025-01-12__claude-code-full-migration/) - Complete migration from Claude Code to OpenCode format. Migrated all 46 agents and 23 skills to OpenCode format, achieved 238/238 validation tests (100%), removed all Claude Code artifacts, and consolidated documentation into AGENTS.md (Completed: 2026-01-12)
+- [2026-01-12: Full Migration from Claude Code to OpenCode](./2026-01-12__claude-code-full-migration/) - Complete migration from Claude Code to OpenCode format. Migrated all 46 agents and 23 skills to OpenCode format, achieved 238/238 validation tests (100%), removed all Claude Code artifacts, and consolidated documentation into AGENTS.md (Completed: 2026-01-12)
 - [2025-12-03: Golang Full Set Tutorial Series](./2025-12-03__golang-full-set-tutorials/) - Transform Golang tutorial directory into a complete "Full Set" tutorial series covering Initial Setup through Advanced levels (Completed: 2026-01-10)
 - [2025-12-04: Java Full Set Tutorial Series](./2025-12-04__java-full-set-tutorials/) - Transform Java tutorial directory into a complete "Full Set" tutorial series covering Initial Setup through Advanced levels (Completed: 2026-01-10)
 - [2025-12-17: Cookbook Standardization](./2025-12-17__cookbook-standardization/) - Standardize Golang, Python, and Java cookbooks to ensure consistent quality and coverage with 35 core recipes + 5-10 language-specific recipes (Completed: 2026-01-10)
@@ -31,7 +32,3 @@ When archiving a plan:
 2. Move the renamed folder from `in-progress/` to `done/`
 3. Update the plan's README.md status to "Done"
 4. Add the plan to this list
-
-## Completed Projects
-
-- [2025-01-12: Full Migration from Claude Code to OpenCode](./2025-01-12__claude-code-full-migration/) - Complete migration from Claude Code to OpenCode format. Migrated all 46 agents and 23 skills to OpenCode format, achieved 238/238 validation tests (100%), removed all Claude Code artifacts, and consolidated documentation into AGENTS.md (Completed: 2026-01-12)

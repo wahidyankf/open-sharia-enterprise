@@ -1,0 +1,4 @@
+logging:
+  level:
+    com.opencode.dolphin: DEBUG
+    org.springframework.web: INFO
