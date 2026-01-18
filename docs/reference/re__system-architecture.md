@@ -313,47 +313,45 @@ Shows the internal components within each container. Components are groupings of
 
 ```mermaid
 graph TB
-    subgraph "dolphin-be Container"
-        subgraph "API Layer"
-            REST_CTRL[REST Controllers<br/>@RestController]
-            API_DOCS[API Documentation<br/>OpenAPI/Swagger]
-            REQ_VAL[Request Validation<br/>@Valid annotations]
-        end
-
-        subgraph "Security Layer"
-            AUTH_FILTER[Authentication Filter<br/>JWT validation]
-            AUTHZ[Authorization Service<br/>Role-based access]
-            SEC_CONFIG[Security Config<br/>Spring Security]
-        end
-
-        subgraph "Business Logic Layer"
-            SERVICES[Business Services<br/>@Service components]
-            DOMAIN_MODELS[Domain Models<br/>Business entities]
-            BIZ_RULES[Business Rules Engine<br/>Sharia compliance validation]
-        end
-
-        subgraph "Data Access Layer"
-            REPOSITORIES[Repositories<br/>@Repository JPA]
-            ENTITIES[JPA Entities<br/>@Entity classes]
-            QUERY_DSL[Query Services<br/>Custom queries]
-        end
-
-        subgraph "Integration Layer"
-            EVENT_PUB[Event Publisher<br/>Domain events]
-            EXT_CLIENTS[External API Clients<br/>RestTemplate/WebClient]
-            MSG_BROKER[Message Broker Client<br/>Optional async messaging]
-        end
-
-        subgraph "Infrastructure"
-            EXCEPTION[Exception Handler<br/>@ControllerAdvice]
-            LOGGING[Logging Service<br/>Structured logging]
-            CONFIG[Configuration<br/>@ConfigurationProperties]
-            HEALTH[Health Checks<br/>Actuator endpoints]
-        end
-
-        DATABASE[(Database<br/>PostgreSQL/MySQL)]
-        CACHE[(Cache<br/>Redis)]
+    subgraph "API Layer"
+        REST_CTRL[REST Controllers<br/>@RestController]
+        API_DOCS[API Documentation<br/>OpenAPI/Swagger]
+        REQ_VAL[Request Validation<br/>@Valid annotations]
     end
+
+    subgraph "Security Layer"
+        AUTH_FILTER[Authentication Filter<br/>JWT validation]
+        AUTHZ[Authorization Service<br/>Role-based access]
+        SEC_CONFIG[Security Config<br/>Spring Security]
+    end
+
+    subgraph "Business Logic Layer"
+        SERVICES[Business Services<br/>@Service components]
+        DOMAIN_MODELS[Domain Models<br/>Business entities]
+        BIZ_RULES[Business Rules Engine<br/>Sharia compliance validation]
+    end
+
+    subgraph "Data Access Layer"
+        REPOSITORIES[Repositories<br/>@Repository JPA]
+        ENTITIES[JPA Entities<br/>@Entity classes]
+        QUERY_DSL[Query Services<br/>Custom queries]
+    end
+
+    subgraph "Integration Layer"
+        EVENT_PUB[Event Publisher<br/>Domain events]
+        EXT_CLIENTS[External API Clients<br/>RestTemplate/WebClient]
+        MSG_BROKER[Message Broker Client<br/>Optional async messaging]
+    end
+
+    subgraph "Infrastructure"
+        EXCEPTION[Exception Handler<br/>@ControllerAdvice]
+        LOGGING[Logging Service<br/>Structured logging]
+        CONFIG[Configuration<br/>@ConfigurationProperties]
+        HEALTH[Health Checks<br/>Actuator endpoints]
+    end
+
+    DATABASE[(Database<br/>PostgreSQL/MySQL)]
+    CACHE[(Cache<br/>Redis)]
 
     REST_CTRL --> REQ_VAL
     REQ_VAL --> AUTH_FILTER
@@ -400,53 +398,51 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph "dolphin-fe Container"
-        subgraph "Presentation Layer"
-            PAGES[Pages/Routes<br/>Next.js pages router]
-            LAYOUTS[Layouts<br/>Shared page layouts]
-            UI_COMP[UI Components<br/>Reusable React components]
-            FORMS[Form Components<br/>Input validation & handling]
-        end
+    subgraph "Presentation Layer"
+        PAGES[Pages/Routes<br/>Next.js pages router]
+        LAYOUTS[Layouts<br/>Shared page layouts]
+        UI_COMP[UI Components<br/>Reusable React components]
+        FORMS[Form Components<br/>Input validation & handling]
+    end
 
-        subgraph "State Management"
-            GLOBAL_STATE[Global State<br/>Context API / Zustand]
-            FORM_STATE[Form State<br/>React Hook Form]
-            SERVER_STATE[Server State Cache<br/>React Query / SWR]
-        end
+    subgraph "State Management"
+        GLOBAL_STATE[Global State<br/>Context API / Zustand]
+        FORM_STATE[Form State<br/>React Hook Form]
+        SERVER_STATE[Server State Cache<br/>React Query / SWR]
+    end
 
-        subgraph "Business Logic"
-            HOOKS[Custom Hooks<br/>Reusable logic]
-            VALIDATORS[Validators<br/>Client-side validation]
-            FORMATTERS[Formatters<br/>Data formatting utilities]
-            BIZ_LOGIC[Business Logic<br/>Client-side rules]
-        end
+    subgraph "Business Logic"
+        HOOKS[Custom Hooks<br/>Reusable logic]
+        VALIDATORS[Validators<br/>Client-side validation]
+        FORMATTERS[Formatters<br/>Data formatting utilities]
+        BIZ_LOGIC[Business Logic<br/>Client-side rules]
+    end
 
-        subgraph "API Integration"
-            API_CLIENT[API Client<br/>HTTP client wrapper]
-            API_ENDPOINTS[API Endpoints<br/>Type-safe endpoints]
-            AUTH_INTERCEPTOR[Auth Interceptor<br/>JWT token injection]
-            ERROR_HANDLER[Error Handler<br/>API error handling]
-        end
+    subgraph "API Integration"
+        API_CLIENT[API Client<br/>HTTP client wrapper]
+        API_ENDPOINTS[API Endpoints<br/>Type-safe endpoints]
+        AUTH_INTERCEPTOR[Auth Interceptor<br/>JWT token injection]
+        ERROR_HANDLER[Error Handler<br/>API error handling]
+    end
 
-        subgraph "Authentication"
-            AUTH_CONTEXT[Auth Context<br/>User session state]
-            LOGIN_FLOW[Login Flow<br/>Authentication logic]
-            PROTECTED_ROUTES[Protected Routes<br/>Route guards]
-            TOKEN_MANAGER[Token Manager<br/>JWT storage & refresh]
-        end
+    subgraph "Authentication"
+        AUTH_CONTEXT[Auth Context<br/>User session state]
+        LOGIN_FLOW[Login Flow<br/>Authentication logic]
+        PROTECTED_ROUTES[Protected Routes<br/>Route guards]
+        TOKEN_MANAGER[Token Manager<br/>JWT storage & refresh]
+    end
 
-        subgraph "Feature Modules"
-            FEAT_A[Feature Module A<br/>Domain-specific features]
-            FEAT_B[Feature Module B<br/>Business workflows]
-            SHARED[Shared Module<br/>Common components]
-        end
+    subgraph "Feature Modules"
+        FEAT_A[Feature Module A<br/>Domain-specific features]
+        FEAT_B[Feature Module B<br/>Business workflows]
+        SHARED[Shared Module<br/>Common components]
+    end
 
-        subgraph "Infrastructure"
-            I18N[Internationalization<br/>i18next]
-            THEME[Theme Provider<br/>Tailwind/MUI theme]
-            ERROR_BOUNDARY[Error Boundary<br/>Error catching]
-            ANALYTICS[Analytics<br/>User tracking]
-        end
+    subgraph "Infrastructure"
+        I18N[Internationalization<br/>i18next]
+        THEME[Theme Provider<br/>Tailwind/MUI theme]
+        ERROR_BOUNDARY[Error Boundary<br/>Error catching]
+        ANALYTICS[Analytics<br/>User tracking]
     end
 
     DOLPHIN_BE_API[dolphin-be REST API]
@@ -501,42 +497,40 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph "ayokoding-cli Container"
-        subgraph "CLI Interface"
-            CMD_ROOT[Root Command<br/>Cobra CLI root]
-            CMD_TITLES[Update Titles Command<br/>Title extraction & update]
-            CMD_NAV[Regenerate Nav Command<br/>Navigation generation]
-            CMD_FLAGS[Flags Parser<br/>Command-line arguments]
-        end
-
-        subgraph "Title Processing"
-            TITLE_EXTRACTOR[Title Extractor<br/>Parse filename to title]
-            FRONTMATTER_UPDATER[Frontmatter Updater<br/>Update YAML frontmatter]
-            TITLE_FORMATTER[Title Formatter<br/>Format title text]
-        end
-
-        subgraph "Navigation Processing"
-            NAV_SCANNER[Directory Scanner<br/>Traverse content tree]
-            NAV_BUILDER[Navigation Builder<br/>Build nav structure]
-            NAV_WRITER[Navigation Writer<br/>Write _index.md files]
-            WEIGHT_CALC[Weight Calculator<br/>Level-based ordering]
-        end
-
-        subgraph "File Operations"
-            FILE_READER[File Reader<br/>Read markdown files]
-            FILE_WRITER[File Writer<br/>Write markdown files]
-            YAML_PARSER[YAML Parser<br/>Parse/serialize frontmatter]
-            MD_PARSER[Markdown Parser<br/>Parse markdown structure]
-        end
-
-        subgraph "Configuration"
-            CONFIG_LOADER[Config Loader<br/>Load configuration]
-            PATH_RESOLVER[Path Resolver<br/>Resolve file paths]
-            LOGGER[Logger<br/>Structured logging]
-        end
-
-        CONTENT_DIR[ayokoding-web/content/<br/>Markdown files]
+    subgraph "CLI Interface"
+        CMD_ROOT[Root Command<br/>Cobra CLI root]
+        CMD_TITLES[Update Titles Command<br/>Title extraction & update]
+        CMD_NAV[Regenerate Nav Command<br/>Navigation generation]
+        CMD_FLAGS[Flags Parser<br/>Command-line arguments]
     end
+
+    subgraph "Title Processing"
+        TITLE_EXTRACTOR[Title Extractor<br/>Parse filename to title]
+        FRONTMATTER_UPDATER[Frontmatter Updater<br/>Update YAML frontmatter]
+        TITLE_FORMATTER[Title Formatter<br/>Format title text]
+    end
+
+    subgraph "Navigation Processing"
+        NAV_SCANNER[Directory Scanner<br/>Traverse content tree]
+        NAV_BUILDER[Navigation Builder<br/>Build nav structure]
+        NAV_WRITER[Navigation Writer<br/>Write _index.md files]
+        WEIGHT_CALC[Weight Calculator<br/>Level-based ordering]
+    end
+
+    subgraph "File Operations"
+        FILE_READER[File Reader<br/>Read markdown files]
+        FILE_WRITER[File Writer<br/>Write markdown files]
+        YAML_PARSER[YAML Parser<br/>Parse/serialize frontmatter]
+        MD_PARSER[Markdown Parser<br/>Parse markdown structure]
+    end
+
+    subgraph "Configuration"
+        CONFIG_LOADER[Config Loader<br/>Load configuration]
+        PATH_RESOLVER[Path Resolver<br/>Resolve file paths]
+        LOGGER[Logger<br/>Structured logging]
+    end
+
+    CONTENT_DIR[ayokoding-web/content/<br/>Markdown files]
 
     CMD_ROOT --> CMD_TITLES
     CMD_ROOT --> CMD_NAV
@@ -581,20 +575,18 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph "butler-cli Container"
-        subgraph "CLI Interface"
-            BUTLER_ROOT[Root Command<br/>Repository automation]
-            BUTLER_FLAGS[Flags Parser<br/>Command-line arguments]
-        end
+    subgraph "CLI Interface"
+        BUTLER_ROOT[Root Command<br/>Repository automation]
+        BUTLER_FLAGS[Flags Parser<br/>Command-line arguments]
+    end
 
-        subgraph "Automation Modules"
-            AUTO_MODULE[Automation Module<br/>Extensible automation]
-        end
+    subgraph "Automation Modules"
+        AUTO_MODULE[Automation Module<br/>Extensible automation]
+    end
 
-        subgraph "Infrastructure"
-            BUTLER_CONFIG[Config Loader<br/>Configuration]
-            BUTLER_LOGGER[Logger<br/>Logging]
-        end
+    subgraph "Infrastructure"
+        BUTLER_CONFIG[Config Loader<br/>Configuration]
+        BUTLER_LOGGER[Logger<br/>Logging]
     end
 
     BUTLER_ROOT --> AUTO_MODULE
@@ -616,26 +608,24 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph "ose-platform-web Container"
-        subgraph "Content"
-            MD_CONTENT[Markdown Content<br/>Platform documentation]
-            FRONTMATTER_OSE[Frontmatter<br/>Page metadata]
-            ASSETS[Static Assets<br/>Images, CSS, JS]
-        end
-
-        subgraph "Theme - PaperMod"
-            LAYOUTS_OSE[Layouts<br/>HTML templates]
-            PARTIALS_OSE[Partials<br/>Reusable components]
-            THEME_CONFIG[Theme Config<br/>config.yaml]
-        end
-
-        subgraph "Build Output"
-            HTML_OSE[HTML Files<br/>Generated pages]
-            STATIC_OSE[Static Files<br/>Processed assets]
-        end
-
-        HUGO_OSE[Hugo Build Engine<br/>v0.152.2 Extended]
+    subgraph "Content"
+        MD_CONTENT[Markdown Content<br/>Platform documentation]
+        FRONTMATTER_OSE[Frontmatter<br/>Page metadata]
+        ASSETS[Static Assets<br/>Images, CSS, JS]
     end
+
+    subgraph "Theme - PaperMod"
+        LAYOUTS_OSE[Layouts<br/>HTML templates]
+        PARTIALS_OSE[Partials<br/>Reusable components]
+        THEME_CONFIG[Theme Config<br/>config.yaml]
+    end
+
+    subgraph "Build Output"
+        HTML_OSE[HTML Files<br/>Generated pages]
+        STATIC_OSE[Static Files<br/>Processed assets]
+    end
+
+    HUGO_OSE[Hugo Build Engine<br/>v0.152.2 Extended]
 
     MD_CONTENT --> HUGO_OSE
     FRONTMATTER_OSE --> HUGO_OSE
@@ -662,30 +652,28 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph "ayokoding-web Container"
-        subgraph "Content"
-            MD_CONTENT_AYO[Markdown Content<br/>Educational tutorials]
-            FRONTMATTER_AYO[Frontmatter<br/>Auto-updated titles]
-            NAV_FILES[Navigation Files<br/>Auto-generated _index.md]
-            I18N_CONTENT[i18n Content<br/>Indonesian + English]
-            ASSETS_AYO[Static Assets<br/>Images, diagrams]
-        end
-
-        subgraph "Theme - Hextra"
-            LAYOUTS_AYO[Layouts<br/>Documentation templates]
-            PARTIALS_AYO[Partials<br/>Navigation, sidebar]
-            THEME_CONFIG_AYO[Theme Config<br/>Bilingual config]
-        end
-
-        subgraph "Build Output"
-            HTML_AYO[HTML Files<br/>Generated pages]
-            STATIC_AYO[Static Files<br/>Processed assets]
-            SEARCH_INDEX[Search Index<br/>Client-side search]
-        end
-
-        HUGO_AYO[Hugo Build Engine<br/>v0.152.2 Extended]
-        AYOCLI_PROC[ayokoding-cli<br/>Pre-build processing]
+    subgraph "Content"
+        MD_CONTENT_AYO[Markdown Content<br/>Educational tutorials]
+        FRONTMATTER_AYO[Frontmatter<br/>Auto-updated titles]
+        NAV_FILES[Navigation Files<br/>Auto-generated _index.md]
+        I18N_CONTENT[i18n Content<br/>Indonesian + English]
+        ASSETS_AYO[Static Assets<br/>Images, diagrams]
     end
+
+    subgraph "Theme - Hextra"
+        LAYOUTS_AYO[Layouts<br/>Documentation templates]
+        PARTIALS_AYO[Partials<br/>Navigation, sidebar]
+        THEME_CONFIG_AYO[Theme Config<br/>Bilingual config]
+    end
+
+    subgraph "Build Output"
+        HTML_AYO[HTML Files<br/>Generated pages]
+        STATIC_AYO[Static Files<br/>Processed assets]
+        SEARCH_INDEX[Search Index<br/>Client-side search]
+    end
+
+    HUGO_AYO[Hugo Build Engine<br/>v0.152.2 Extended]
+    AYOCLI_PROC[ayokoding-cli<br/>Pre-build processing]
 
     AYOCLI_PROC --> FRONTMATTER_AYO
     AYOCLI_PROC --> NAV_FILES
@@ -720,34 +708,30 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph "dolphin-be-e2e Container"
-        subgraph "Test Suites"
-            API_TESTS[API Contract Tests<br/>REST endpoint validation]
-            INTEGRATION_TESTS[Integration Tests<br/>Multi-endpoint flows]
-            AUTH_TESTS[Auth Tests<br/>JWT authentication]
-        end
-
-        subgraph "Test Infrastructure"
-            PLAYWRIGHT_BE[Playwright API<br/>HTTP client]
-            TEST_DATA_BE[Test Data Builder<br/>Test fixtures]
-            ASSERTIONS_BE[Assertions<br/>Response validation]
-            ENV_CONFIG_BE[Environment Config<br/>local/dev/staging]
-        end
+    subgraph "Backend E2E Test Suites"
+        API_TESTS[API Contract Tests<br/>REST endpoint validation]
+        INTEGRATION_TESTS[Integration Tests<br/>Multi-endpoint flows]
+        AUTH_TESTS[Auth Tests<br/>JWT authentication]
     end
 
-    subgraph "dolphin-fe-e2e Container"
-        subgraph "Test Suites FE"
-            UI_TESTS[UI Component Tests<br/>Component validation]
-            JOURNEY_TESTS[User Journey Tests<br/>End-to-end workflows]
-            CROSS_BROWSER[Cross-Browser Tests<br/>Browser compatibility]
-        end
+    subgraph "Backend Test Infrastructure"
+        PLAYWRIGHT_BE[Playwright API<br/>HTTP client]
+        TEST_DATA_BE[Test Data Builder<br/>Test fixtures]
+        ASSERTIONS_BE[Assertions<br/>Response validation]
+        ENV_CONFIG_BE[Environment Config<br/>local/dev/staging]
+    end
 
-        subgraph "Test Infrastructure FE"
-            PLAYWRIGHT_FE[Playwright Browser<br/>Browser automation]
-            PAGE_OBJECTS[Page Objects<br/>UI abstraction]
-            TEST_DATA_FE[Test Data Builder<br/>Test fixtures]
-            ENV_CONFIG_FE[Environment Config<br/>local/dev/staging]
-        end
+    subgraph "Frontend E2E Test Suites"
+        UI_TESTS[UI Component Tests<br/>Component validation]
+        JOURNEY_TESTS[User Journey Tests<br/>End-to-end workflows]
+        CROSS_BROWSER[Cross-Browser Tests<br/>Browser compatibility]
+    end
+
+    subgraph "Frontend Test Infrastructure"
+        PLAYWRIGHT_FE[Playwright Browser<br/>Browser automation]
+        PAGE_OBJECTS[Page Objects<br/>UI abstraction]
+        TEST_DATA_FE[Test Data Builder<br/>Test fixtures]
+        ENV_CONFIG_FE[Environment Config<br/>local/dev/staging]
     end
 
     API_TESTS --> PLAYWRIGHT_BE
