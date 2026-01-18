@@ -1,5 +1,7 @@
 # System Architecture
 
+> **Note:** This document is a work in progress (WIP/Draft). Content and diagrams are subject to change as the platform evolves.
+
 Comprehensive reference for the Open Sharia Enterprise platform architecture, including application inventory, interactions, deployment infrastructure, and CI/CD pipelines.
 
 ## System Overview
@@ -312,41 +314,41 @@ Shows the internal components within each container. Components are groupings of
 #### dolphin-be Components (Spring Boot Backend)
 
 ```mermaid
-graph TB
-    subgraph "API Layer"
-        REST_CTRL[REST Controllers<br/>@RestController]
+flowchart TB
+    subgraph api_layer[API Layer]
+        REST_CTRL[REST Controllers<br/>&#64;RestController]
         API_DOCS[API Documentation<br/>OpenAPI/Swagger]
-        REQ_VAL[Request Validation<br/>@Valid annotations]
+        REQ_VAL[Request Validation<br/>&#64;Valid annotations]
     end
 
-    subgraph "Security Layer"
+    subgraph security_layer[Security Layer]
         AUTH_FILTER[Authentication Filter<br/>JWT validation]
         AUTHZ[Authorization Service<br/>Role-based access]
         SEC_CONFIG[Security Config<br/>Spring Security]
     end
 
-    subgraph "Business Logic Layer"
-        SERVICES[Business Services<br/>@Service components]
+    subgraph business_layer[Business Logic Layer]
+        SERVICES[Business Services<br/>&#64;Service components]
         DOMAIN_MODELS[Domain Models<br/>Business entities]
         BIZ_RULES[Business Rules Engine<br/>Sharia compliance validation]
     end
 
-    subgraph "Data Access Layer"
-        REPOSITORIES[Repositories<br/>@Repository JPA]
-        ENTITIES[JPA Entities<br/>@Entity classes]
+    subgraph data_layer[Data Access Layer]
+        REPOSITORIES[Repositories<br/>&#64;Repository JPA]
+        ENTITIES[JPA Entities<br/>&#64;Entity classes]
         QUERY_DSL[Query Services<br/>Custom queries]
     end
 
-    subgraph "Integration Layer"
+    subgraph integration_layer[Integration Layer]
         EVENT_PUB[Event Publisher<br/>Domain events]
         EXT_CLIENTS[External API Clients<br/>RestTemplate/WebClient]
         MSG_BROKER[Message Broker Client<br/>Optional async messaging]
     end
 
-    subgraph "Infrastructure"
-        EXCEPTION[Exception Handler<br/>@ControllerAdvice]
+    subgraph infra_layer[Infrastructure]
+        EXCEPTION[Exception Handler<br/>&#64;ControllerAdvice]
         LOGGING[Logging Service<br/>Structured logging]
-        CONFIG[Configuration<br/>@ConfigurationProperties]
+        CONFIG[Configuration<br/>&#64;ConfigurationProperties]
         HEALTH[Health Checks<br/>Actuator endpoints]
     end
 
