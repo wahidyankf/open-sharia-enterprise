@@ -83,41 +83,41 @@ This C4 model documentation is organized into multiple interconnected guides:
 
 ### Core Levels
 
-1. **[Level 1: System Context](./level-1-system-context.md)** - Shows how the software system fits into the world
-2. **[Level 2: Container](./level-2-container.md)** - Shows the high-level technical building blocks
-3. **[Level 3: Component](./level-3-component.md)** - Shows internal structure using object-oriented approaches
-4. **[Level 3: Component (Functional Programming)](./level-3-component-fp.md)** - Shows internal structure using functional programming approaches
-5. **[Level 4: Code](./level-4-code.md)** - Provides implementation details for object-oriented code
-6. **[Level 4: Code (Functional Programming)](./level-4-code-fp.md)** - Provides implementation details for functional code
+1. **[Level 1: System Context](./ex-c4armo__level-1-system-context.md)** - Shows how the software system fits into the world
+2. **[Level 2: Container](./ex-c4armo__level-2-container.md)** - Shows the high-level technical building blocks
+3. **[Level 3: Component](./ex-c4armo__level-3-component.md)** - Shows internal structure using object-oriented approaches
+4. **[Level 3: Component (Functional Programming)](./ex-c4armo__level-3-component-fp.md)** - Shows internal structure using functional programming approaches
+5. **[Level 4: Code](./ex-c4armo__level-4-code.md)** - Provides implementation details for object-oriented code
+6. **[Level 4: Code (Functional Programming)](./ex-c4armo__level-4-code-fp.md)** - Provides implementation details for functional code
 
 ### Additional Perspectives
 
-1. **[Supplementary Diagrams](./supplementary-diagrams.md)** - System Landscape, Dynamic, and Deployment diagrams
-2. **[Notation and Conventions](./notation-and-conventions.md)** - Labeling, color coding, and notation standards
-3. **[Best Practices](./best-practices.md)** - When to use C4, comparisons, common mistakes, and limitations
+1. **[Supplementary Diagrams](./ex-c4armo__supplementary-diagrams.md)** - System Landscape, Dynamic, and Deployment diagrams
+2. **[Notation and Conventions](./ex-c4armo__notation-and-conventions.md)** - Labeling, color coding, and notation standards
+3. **[Best Practices](./ex-c4armo__best-practices.md)** - When to use C4, comparisons, common mistakes, and limitations
 
 ### Cross-Cutting Concerns
 
-1. **[Paradigm Considerations](./paradigm-considerations.md)** - How C4 applies to OOP vs FP and other paradigms
-2. **[Frequently Asked Questions](./faq.md)** - Common questions and answers about using C4
+1. **[Paradigm Considerations](./ex-c4armo__paradigm-considerations.md)** - How C4 applies to OOP vs FP and other paradigms
+2. **[Frequently Asked Questions](./ex-c4armo__faq.md)** - Common questions and answers about using C4
 
 ## Quick Start Guide
 
 **For newcomers to C4**:
 
-1. Start with [Level 1: System Context](./level-1-system-context.md) - understand the big picture
-2. Move to [Level 2: Container](./level-2-container.md) - understand technical building blocks
-3. Read [Best Practices](./best-practices.md) - learn when to create each diagram type
+1. Start with [Level 1: System Context](./ex-c4armo__level-1-system-context.md) - understand the big picture
+2. Move to [Level 2: Container](./ex-c4armo__level-2-container.md) - understand technical building blocks
+3. Read [Best Practices](./ex-c4armo__best-practices.md) - learn when to create each diagram type
 
 **For specific use cases**:
 
 - **Object-Oriented systems**: Follow Levels 1 → 2 → 3 → 4 (OOP versions)
 - **Functional Programming systems**: Follow Levels 1 → 2 → 3 FP → 4 FP
-- **Enterprise architecture**: Start with [Supplementary Diagrams](./supplementary-diagrams.md#system-landscape-diagram)
-- **Infrastructure planning**: See [Supplementary Diagrams](./supplementary-diagrams.md#deployment-diagram)
+- **Enterprise architecture**: Start with [Supplementary Diagrams](./ex-c4armo__supplementary-diagrams.md#system-landscape-diagram)
+- **Infrastructure planning**: See [Supplementary Diagrams](./ex-c4armo__supplementary-diagrams.md#deployment-diagram)
 
 ## Related Documentation
 
-- **Repository Context**: [C4 Model in This Repository](./best-practices.md#c4-model-in-this-repository)
-- **Further Learning**: [External Resources](./faq.md#further-learning)
+- **Repository Context**: [C4 Model in This Repository](./ex-c4armo__best-practices.md#c4-model-in-this-repository)
+- **Further Learning**: [External Resources](./ex-c4armo__faq.md#further-learning)
 - **Conventions**: [Diagram and Schema Convention](../../../governance/conventions/formatting/diagrams.md)
