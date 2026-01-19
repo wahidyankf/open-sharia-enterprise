@@ -93,15 +93,15 @@ The C4 model doesn't prescribe paradigms. Choose based on:
 
 **OOP Examples**:
 
-- Component Diagram: See "Example: Order Service Components" in [Level 3: Component Diagram](./ex-c4armo__level-3-component.md#example-order-service-components-java-spring-boot-microservice)
-- Code Diagram: See "Example 1" and "Example 2" in [Level 4: Code Diagram](./ex-c4armo__level-4-code.md)
+- Component Diagram: See "Example: Order Service Components" in [Level 3: Component Diagram](./ex-c4armo__03-level-3-component.md#example-order-service-components-java-spring-boot-microservice)
+- Code Diagram: See "Example 1" and "Example 2" in [Level 4: Code Diagram](./ex-c4armo__05-level-4-code.md)
 
 **FP Examples**:
 
-- Component Diagram: See "Functional Programming Approach" in [Level 3: Component (FP)](./ex-c4armo__level-3-component-fp.md)
-- Code Diagram: See "Functional Programming Approach" in [Level 4: Code (FP)](./ex-c4armo__level-4-code-fp.md)
+- Component Diagram: See "Functional Programming Approach" in [Level 3: Component (FP)](./ex-c4armo__04-level-3-component-fp.md)
+- Code Diagram: See "Functional Programming Approach" in [Level 4: Code (FP)](./ex-c4armo__06-level-4-code-fp.md)
 
 **Paradigm-Agnostic Examples**:
 
-- System Context: See examples in [Level 1: System Context](./ex-c4armo__level-1-system-context.md)
-- Container: See examples in [Level 2: Container](./ex-c4armo__level-2-container.md)
+- System Context: See examples in [Level 1: System Context](./ex-c4armo__01-level-1-system-context.md)
+- Container: See examples in [Level 2: Container](./ex-c4armo__02-level-2-container.md)
