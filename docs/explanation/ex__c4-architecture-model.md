@@ -358,7 +358,9 @@ This diagram reveals the microservices architecture inside the E-Commerce Platfo
 - Relationships between components
 - External dependencies (other containers, systems)
 
-**Important**: A "component" is a grouping of related functionality behind a well-defined interface:
+**Important**: A "component" is a grouping of related functionality behind a well-defined interface.
+
+**In Object-Oriented Programming** (Java, C#, Python OOP):
 
 - REST Controllers (API layer)
 - Services (business logic)
@@ -366,6 +368,15 @@ This diagram reveals the microservices architecture inside the E-Commerce Platfo
 - Authentication filters
 - Event publishers
 - Configuration managers
+
+**In Functional Programming** (Elixir, Haskell, OCaml):
+
+- Contexts (coarse-grained API boundaries)
+- Routers and Controllers (HTTP request handling)
+- Pure function modules (business logic)
+- GenServers (stateful processes)
+- Schemas and Changesets (data validation)
+- Supervision trees (fault tolerance)
 
 **Key Questions Answered**:
 
@@ -520,6 +531,154 @@ This diagram shows the internal architecture of the Order Service microservice. 
 5. **Caching**: Redis cache to reduce database load and improve response times
 6. **Domain-Driven Design**: Facade and domain service separation for complex orchestration
 
+#### Component Diagram - Functional Programming Approach (Elixir/Phoenix)
+
+The same Order Service implemented in a functional programming paradigm reveals different component boundaries and architectural patterns. While OOP organizes around classes and objects, FP organizes around modules, functions, and processes.
+
+**Architectural Shift from OOP**:
+
+- **Modules replace classes**: Groups of related pure functions, not stateful objects
+- **Contexts replace services**: Coarse-grained API boundaries for business domains
+- **GenServers for state**: When state is needed, isolate it in supervised processes (Actor model)
+- **Supervision trees**: Fault-tolerant process hierarchies replace exception handlers
+- **Pattern matching**: Route requests and handle results via pattern matching, not conditionals
+- **Pipeline operator**: Data transformations flow through function pipelines (`|>`)
+- **Immutable data**: All transformations create new values, no in-place mutation
+
+**Example: Order Service Components (Elixir/Phoenix Application)**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+flowchart TB
+    subgraph web_layer[Web Layer]
+        ROUTER[Router<br/>Phoenix.Router<br/>Pattern matching routes]:::blue
+        CONTROLLER[OrderController<br/>Phoenix.Controller<br/>HTTP request handling]:::blue
+        VIEW[OrderView<br/>Phoenix.View<br/>JSON serialization]:::blue
+    end
+
+    subgraph context_layer[Context Layer - Functional Core]
+        ORDERS_CONTEXT[Orders Context<br/>Pure business logic<br/>@spec annotated functions]:::teal
+        VALIDATION[Changesets<br/>Ecto.Changeset<br/>Pure validation functions]:::teal
+    end
+
+    subgraph data_layer[Data Layer - Imperative Shell]
+        SCHEMA[Order Schema<br/>Ecto.Schema<br/>Immutable struct definition]:::orange
+        REPO[Repo<br/>Ecto.Repo<br/>Database I/O boundary]:::orange
+        POSTGRES[(PostgreSQL<br/>Database)]:::orange
+    end
+
+    subgraph process_layer[Process Layer]
+        CACHE[OrderCache<br/>GenServer<br/>Isolated stateful process]:::purple
+        PUBSUB[PubSub<br/>Phoenix.PubSub<br/>Event broadcasting]:::purple
+        SUPERVISOR[Supervisor<br/>OTP Supervisor<br/>Fault tolerance]:::purple
+    end
+
+    subgraph integration_layer[Integration Layer]
+        INVENTORY_CLIENT[Inventory Client<br/>HTTP client functions<br/>Tesla/Finch]:::blue
+        PAYMENT_CLIENT[Payment Client<br/>HTTP client functions<br/>Tesla/Finch]:::blue
+    end
+
+    ROUTER -->|Routes match| CONTROLLER
+    CONTROLLER -->|Calls context functions| ORDERS_CONTEXT
+    CONTROLLER -->|Renders response| VIEW
+
+    ORDERS_CONTEXT -->|Validates with| VALIDATION
+    ORDERS_CONTEXT -->|Queries via| REPO
+    ORDERS_CONTEXT -->|Publishes events to| PUBSUB
+    ORDERS_CONTEXT -->|Calls HTTP functions| INVENTORY_CLIENT
+    ORDERS_CONTEXT -->|Calls HTTP functions| PAYMENT_CLIENT
+
+    VALIDATION -->|Validates| SCHEMA
+    REPO -->|Reads/Writes| SCHEMA
+    REPO -->|SQL queries| POSTGRES
+
+    ORDERS_CONTEXT -->|Gets/Sets cache| CACHE
+    SUPERVISOR -->|Supervises| CACHE
+    SUPERVISOR -->|Supervises| PUBSUB
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+**Diagram Explanation**:
+
+**Web Layer (Blue)** - HTTP request/response handling:
+
+- **Router**: Pattern matches incoming HTTP requests to controller actions (`/api/orders/:id`)
+- **Controller**: Thin adapter that calls context functions, returns HTTP responses
+- **View**: Pure functions that serialize Elixir data structures to JSON
+
+**Context Layer (Teal)** - Functional Core (Pure Business Logic):
+
+- **Orders Context**: Module with `@spec`-annotated pure functions (`create_order/1`, `validate_inventory/1`)
+- **Changesets**: Pure validation functions that return `{:ok, valid_data}` or `{:error, changeset}`
+- **No side effects**: All I/O delegated to data layer, returns result tuples
+
+**Data Layer (Orange)** - Imperative Shell (I/O Boundary):
+
+- **Order Schema**: Immutable struct definition with type specifications (not a class)
+- **Repo**: Ecto repository for database queries (side effects isolated here)
+- **PostgreSQL**: Data persistence layer
+
+**Process Layer (Purple)** - Concurrent State Management:
+
+- **OrderCache**: GenServer process with isolated mutable state (Actor model)
+- **PubSub**: Event broadcasting system for domain events (`order_created`, `order_cancelled`)
+- **Supervisor**: OTP supervisor monitors processes, restarts on failure (self-healing)
+
+**Integration Layer (Blue)** - External Services:
+
+- **HTTP Clients**: Pure functions that make HTTP requests (side effects at boundary)
+- **Tesla/Finch**: HTTP client libraries for service-to-service communication
+
+**Functional Programming Patterns Visible**:
+
+1. **Functional Core, Imperative Shell**: Business logic in Contexts (pure), I/O in Repo/Clients (impure)
+2. **Pattern Matching**: Router matches paths, contexts match result tuples (`{:ok, _}` / `{:error, _}`)
+3. **Immutable Data Structures**: All data transformations create new values, original unchanged
+4. **Process Isolation**: GenServer isolates stateful cache behind message-passing API
+5. **Supervision Trees**: Supervisor monitors child processes, provides fault tolerance
+6. **Pipeline Operator**: Data flows through function chains (`order |> validate() |> save()`)
+7. **Explicit Dependencies**: All inputs as function arguments, no hidden global state
+
+**OOP vs FP Component Organization**:
+
+| Aspect                   | OOP (Spring Boot)            | FP (Elixir/Phoenix)                        |
+| ------------------------ | ---------------------------- | ------------------------------------------ |
+| **Primary Abstraction**  | Classes (stateful objects)   | Modules (pure functions)                   |
+| **Business Logic**       | Service classes with methods | Context modules with `@spec` functions     |
+| **State Management**     | Instance variables           | GenServer processes (isolated)             |
+| **Data Validation**      | Bean Validation annotations  | Ecto.Changeset pure functions              |
+| **Database Access**      | JPA Repositories (ORM)       | Ecto.Repo (data mapper)                    |
+| **Error Handling**       | Try/catch exceptions         | Result tuples (`{:ok, _}` / `{:error, _}`) |
+| **Dependency Injection** | Spring @Autowired            | Explicit function parameters               |
+| **Concurrency**          | Thread pools, synchronized   | Processes, message passing                 |
+| **Fault Tolerance**      | Circuit breakers, retries    | OTP Supervision trees (self-healing)       |
+| **Event Publishing**     | @EventListener annotations   | PubSub broadcast functions                 |
+| **HTTP Clients**         | RestTemplate/WebClient       | Tesla/Finch pure functions                 |
+
+**When to Use Each Approach**:
+
+**Choose FP (Elixir/Phoenix) when**:
+
+- Concurrency and fault tolerance are critical (real-time systems, high-traffic APIs)
+- Business logic complexity benefits from pure functions and pattern matching
+- Team prefers immutability and explicit state management
+- Need self-healing systems (OTP supervision automatically restarts failed processes)
+
+**Choose OOP (Spring Boot) when**:
+
+- Team expertise is primarily in object-oriented languages (Java ecosystem)
+- Need tight integration with enterprise Java systems (existing services, libraries)
+- Domain model complexity benefits from encapsulation and inheritance
+- Spring ecosystem provides required integrations (Spring Security, Spring Cloud)
+
+**Key Insight**: Both approaches implement the same Component-level architecture (separation of concerns, layered design, external service integration). The paradigm affects HOW components are implemented (classes vs modules), not WHAT components exist.
+
 ### Level 4: Code Diagram
 
 **Purpose**: Provides implementation-level details that can be mapped directly to code.
@@ -528,17 +687,31 @@ This diagram shows the internal architecture of the Order Service microservice. 
 
 **Contains**:
 
-- Classes, interfaces, and their relationships
+**For Object-Oriented Code**:
+
+- Classes, interfaces, and their relationships (UML class diagrams)
+- Inheritance hierarchies and design patterns
+- Method signatures and access modifiers
+
+**For Functional Code**:
+
+- Function signatures with type specifications (`@spec`, type annotations)
+- Data structures (immutable structs, algebraic data types)
+- Pattern matching clauses and function pipelines
+- Pure vs impure function boundaries
+
+**Universal**:
+
 - Database schemas (entity-relationship diagrams)
-- Code-level design patterns
-- Implementation details
+- Implementation-level design patterns
+- Detailed component internals
 
-**Important**: C4 model doesn't prescribe specific notation for this level. Use existing standards:
+**Important**: C4 model doesn't prescribe specific notation for this level. Use existing standards appropriate to your paradigm:
 
-- **UML Class Diagrams**: For object-oriented code
-- **Entity-Relationship Diagrams**: For database schemas
-- **IDE-Generated Diagrams**: For code structure
-- **Sequence Diagrams**: For runtime behavior
+- **UML Class Diagrams**: For object-oriented code structure
+- **Function Signature Diagrams**: For functional code with type specifications
+- **Entity-Relationship Diagrams**: For database schemas (paradigm-agnostic)
+- **Sequence Diagrams**: For runtime behavior (paradigm-agnostic)
 
 **Key Questions Answered**:
 
@@ -856,6 +1029,358 @@ classDiagram
 5. **Optimistic Locking**: Version field in Order entity for concurrency control
 
 These code-level diagrams guide developers implementing the Order Service microservice. The ER diagram shows database-per-service isolation, while the class diagram reveals layered architecture with resilience patterns for distributed systems.
+
+#### Code Diagram - Functional Programming Approach
+
+In functional programming, code-level diagrams focus on function signatures, data transformations, and the boundaries between pure and impure code. Rather than classes and inheritance, FP code diagrams show modules with type specifications, data structures with immutable fields, and isolated processes for stateful operations.
+
+**Key Differences from OOP Code Diagrams**:
+
+- **Function signatures** replace method signatures (standalone functions, not methods on objects)
+- **Type specifications** (`@spec`) provide contracts without inheritance hierarchies
+- **Immutable structs** replace mutable class instances
+- **Pattern matching** on function clauses replaces polymorphism
+- **Result tuples** (`{:ok, value}` / `{:error, reason}`) replace exceptions
+- **GenServer callbacks** for stateful processes (isolated, supervised)
+
+**Example 3a: Orders Context Module (Pure Business Logic)**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+classDiagram
+    class OrdersContext {
+        <<Module>>
+        +create_order#40;attrs#41; {:ok, Order} | {:error, Changeset}
+        +get_order#40;id#41; {:ok, Order} | {:error, :not_found}
+        +update_order#40;order, attrs#41; {:ok, Order} | {:error, Changeset}
+        +cancel_order#40;order#41; {:ok, Order} | {:error, Changeset}
+        +list_orders#40;filters#41; #91;Order#93;
+        -validate_inventory#40;items#41; {:ok, boolean} | {:error, String}
+        -calculate_total#40;items#41; Decimal
+        -publish_event#40;event_name, payload#41; :ok
+    }
+
+    class Order {
+        <<Ecto.Schema - Immutable Struct>>
+        +id: UUID
+        +customer_id: UUID
+        +items: #91;OrderItem#93;
+        +total: Decimal
+        +status: :pending | :confirmed | :cancelled
+        +inserted_at: DateTime
+        +updated_at: DateTime
+        +changeset#40;order, attrs#41; Changeset
+        +create_changeset#40;attrs#41; Changeset
+    }
+
+    class OrderItem {
+        <<Embedded Schema>>
+        +product_id: UUID
+        +quantity: integer
+        +price: Decimal
+        +changeset#40;item, attrs#41; Changeset
+    }
+
+    class Changeset {
+        <<Ecto.Changeset>>
+        +valid?: boolean
+        +changes: map
+        +errors: #91;{field, {msg, opts}}#93;
+    }
+
+    OrdersContext --> Order : creates/queries
+    OrdersContext --> Changeset : validates via
+    Order --> OrderItem : embeds_many
+    Order --> Changeset : returns
+```
+
+**Elixir Code Example**:
+
+```elixir
+defmodule MyApp.Orders do
+  @moduledoc """
+  Context for Order domain - Pure business logic.
+  All functions are pure (no side effects) or clearly marked as impure.
+  """
+
+  alias MyApp.Orders.Order
+  alias MyApp.Repo
+
+  @doc """
+  Creates an order with inventory validation.
+  Returns {:ok, order} if successful, {:error, changeset} if validation fails.
+  """
+  @spec create_order(map()) :: {:ok, Order.t()} | {:error, Ecto.Changeset.t()}
+  def create_order(attrs) do
+    with {:ok, _} <- validate_inventory(attrs["items"]),
+         changeset <- Order.create_changeset(attrs),
+         {:ok, order} <- Repo.insert(changeset) do
+      publish_event(:order_created, order)
+      {:ok, order}
+    else
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  @doc """
+  Pure function: Validates inventory availability.
+  """
+  @spec validate_inventory(list(map())) :: {:ok, boolean()} | {:error, String.t()}
+  defp validate_inventory(items) do
+    # Pure validation logic - could be extracted and tested independently
+    if Enum.all?(items, &valid_quantity?/1) do
+      {:ok, true}
+    else
+      {:error, "Insufficient inventory"}
+    end
+  end
+
+  @doc """
+  Pure function: Calculates order total from items.
+  """
+  @spec calculate_total(list(OrderItem.t())) :: Decimal.t()
+  defp calculate_total(items) do
+    items
+    |> Enum.map(&Decimal.mult(&1.price, &1.quantity))
+    |> Enum.reduce(Decimal.new(0), &Decimal.add/2)
+  end
+end
+```
+
+**Pattern Matching for Error Handling**:
+
+The `with` statement chains operations, short-circuiting on errors. Each step returns `{:ok, value}` or `{:error, reason}`. This is "railway-oriented programming" - success path continues, error path exits early.
+
+**Example 3b: Ecto Schema (Immutable Data Structure)**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+classDiagram
+    class Order {
+        <<Ecto.Schema>>
+        +id: binary_id - primary_key
+        +customer_id: binary_id
+        +total: decimal
+        +status: Ecto.Enum
+        +timestamps: inserted_at, updated_at
+        +embeds_many :items, OrderItem
+        +belongs_to :customer, Customer
+    }
+
+    class OrderItem {
+        <<Embedded Schema>>
+        +product_id: binary_id
+        +quantity: integer
+        +price: decimal
+    }
+
+    class OrderChangesets {
+        <<Pure Functions>>
+        +create_changeset#40;attrs#41;
+        +update_changeset#40;order, attrs#41;
+        +cancel_changeset#40;order#41;
+        -validate_required#40;#41;
+        -validate_number#40;#41;
+        -cast_embed#40;#41;
+    }
+
+    Order --> OrderItem : embeds
+    OrderChangesets --> Order : validates
+```
+
+**Elixir Schema and Changeset Example**:
+
+```elixir
+defmodule MyApp.Orders.Order do
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  @type t :: %__MODULE__{
+    id: Ecto.UUID.t(),
+    customer_id: Ecto.UUID.t(),
+    total: Decimal.t(),
+    status: :pending | :confirmed | :cancelled,
+    items: [OrderItem.t()],
+    inserted_at: DateTime.t(),
+    updated_at: DateTime.t()
+  }
+
+  @primary_key {:id, :binary_id, autogenerate: true}
+  schema "orders" do
+    field :customer_id, :binary_id
+    field :total, :decimal
+    field :status, Ecto.Enum, values: [:pending, :confirmed, :cancelled]
+
+    embeds_many :items, OrderItem do
+      field :product_id, :binary_id
+      field :quantity, :integer
+      field :price, :decimal
+    end
+
+    timestamps()
+  end
+
+  @doc """
+  Pure validation function: Creates changeset for new order.
+  """
+  def create_changeset(attrs) do
+    %__MODULE__{}
+    |> cast(attrs, [:customer_id, :total, :status])
+    |> cast_embed(:items, with: &OrderItem.changeset/2)
+    |> validate_required([:customer_id, :status])
+    |> validate_number(:total, greater_than: 0)
+  end
+
+  @doc """
+  Pure validation function: Updates existing order.
+  """
+  def update_changeset(order, attrs) do
+    order
+    |> cast(attrs, [:status, :total])
+    |> validate_inclusion(:status, [:pending, :confirmed, :cancelled])
+  end
+end
+```
+
+**Key FP Patterns**:
+
+- **Immutable struct**: All fields `readonly` by default, changes create new struct
+- **Pipeline transformations**: `changeset |> cast(...) |> validate_required(...)`
+- **Pure validation**: Changesets are pure functions, no database queries inside
+- **Type specifications**: `@type t` defines struct shape for compiler checks
+
+**Example 3c: GenServer for Stateful Cache (When FP Needs State)**
+
+```mermaid
+%% Color Palette: Purple #CC78BC, Teal #029E73, Orange #DE8F05
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+classDiagram
+    class OrderCache {
+        <<GenServer - Stateful Process>>
+        +start_link#40;opts#41; {:ok, pid}
+        +get#40;order_id#41; {:ok, Order} | {:error, :not_found}
+        +put#40;order_id, order#41; :ok
+        +delete#40;order_id#41; :ok
+        +clear#40;#41; :ok
+    }
+
+    class OrderCacheState {
+        <<Internal State - Private>>
+        -cache: Map - order_id => order
+        -ttl_ms: integer
+        -max_size: integer
+    }
+
+    class GenServerCallbacks {
+        <<Callbacks - Handle State>>
+        +init#40;opts#41;
+        +handle_call#40;msg, from, state#41;
+        +handle_cast#40;msg, state#41;
+        +handle_info#40;msg, state#41;
+    }
+
+    OrderCache --> OrderCacheState : manages
+    OrderCache --> GenServerCallbacks : implements
+```
+
+**GenServer Implementation (Isolated State Management)**:
+
+```elixir
+defmodule MyApp.Orders.OrderCache do
+  @moduledoc """
+  GenServer for caching orders in memory.
+  State is isolated within this process - accessed only via message passing.
+  """
+  use GenServer
+
+  # Client API (Pure Functions - No State)
+
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
+  end
+
+  @spec get(Ecto.UUID.t()) :: {:ok, Order.t()} | {:error, :not_found}
+  def get(order_id) do
+    GenServer.call(__MODULE__, {:get, order_id})
+  end
+
+  @spec put(Ecto.UUID.t(), Order.t()) :: :ok
+  def put(order_id, order) do
+    GenServer.cast(__MODULE__, {:put, order_id, order})
+  end
+
+  # Server Callbacks (State Management - Private)
+
+  @impl true
+  def init(_opts) do
+    {:ok, %{cache: %{}, max_size: 1000}}
+  end
+
+  @impl true
+  def handle_call({:get, order_id}, _from, state) do
+    case Map.get(state.cache, order_id) do
+      nil -> {:reply, {:error, :not_found}, state}
+      order -> {:reply, {:ok, order}, state}
+    end
+  end
+
+  @impl true
+  def handle_cast({:put, order_id, order}, state) do
+    new_cache = Map.put(state.cache, order_id, order)
+    {:noreply, %{state | cache: new_cache}}
+  end
+end
+```
+
+**Actor Model Pattern**:
+
+- **Client API**: Pure functions that send messages to process
+- **Server Callbacks**: Handle messages, update state, return new state
+- **Isolation**: State never exposed directly, only via message passing
+- **Supervision**: If process crashes, supervisor restarts it with fresh state
+
+**OOP vs FP Code Organization**:
+
+| Aspect               | OOP (Java Classes)       | FP (Elixir Modules/Schemas)              |
+| -------------------- | ------------------------ | ---------------------------------------- |
+| **Primary Unit**     | Class with methods       | Module with functions                    |
+| **Type System**      | Interfaces, inheritance  | `@spec` + `@type`, no inheritance        |
+| **Data Structures**  | Mutable objects          | Immutable structs                        |
+| **Validation**       | Annotations + exceptions | Changeset functions + result tuples      |
+| **State Management** | Instance variables       | GenServer processes (isolated)           |
+| **Error Handling**   | Try/catch exceptions     | Pattern match `{:ok, _}` / `{:error, _}` |
+| **Polymorphism**     | Interfaces + inheritance | Pattern matching + protocols             |
+| **Dependencies**     | Constructor injection    | Explicit function parameters             |
+| **Composition**      | Inheritance + delegation | Function pipelines (`\|>`)               |
+
+**Diagram Color Legend**:
+
+- **Blue (#0173B2)**: Public API functions, client-facing interfaces
+- **Teal (#029E73)**: Pure business logic, validation functions
+- **Orange (#DE8F05)**: Data structures, schemas, types
+- **Purple (#CC78BC)**: Stateful processes (GenServers), isolated state
+
+**When to Create FP Code Diagrams**:
+
+**Create diagrams when**:
+
+- Complex function composition requires visualization (multi-step pipelines)
+- GenServer state management needs documentation (what state, what messages)
+- Pattern matching logic is non-obvious (multiple clauses, guard conditions)
+- Team is new to FP and needs guidance on pure/impure boundaries
+
+**Skip diagrams when**:
+
+- Function signatures and `@spec` annotations are self-documenting
+- Schema definitions are straightforward (simple field lists)
+- Code is better documentation than diagrams (for simple modules)
+
+**Key Insight**: FP code diagrams emphasize **data flow and transformations** rather than object hierarchies. The goal is showing how data moves through pure functions (functional core) and where side effects occur (imperative shell), not inheritance trees.
 
 ## Supplementary Diagrams
 
@@ -2544,6 +3069,114 @@ To see C4 model in practice, review:
 4. **Sequence Diagrams**: Runtime flows and interactions
 
 These diagrams demonstrate how C4 model scales from simple overview to detailed implementation documentation while maintaining clarity at each level.
+
+## Paradigm Considerations
+
+The C4 model is paradigm-agnostic by design. The hierarchical zoom levels (Context → Container → Component → Code) apply equally to object-oriented, functional, procedural, and other programming paradigms. The paradigm affects HOW you implement components and code, not WHAT the architectural structure looks like.
+
+### Object-Oriented Programming (OOP)
+
+In object-oriented systems, C4 components manifest as:
+
+- **Classes and objects**: Stateful entities with encapsulated behavior
+- **Inheritance hierarchies**: Abstract classes, interfaces, polymorphism
+- **Design patterns**: Dependency injection, factories, strategy, observer
+- **State management**: Instance variables, mutable object state
+- **Error handling**: Exceptions, try/catch blocks
+- **Modularity**: Packages, namespaces, modules containing related classes
+
+**Example Technologies**: Java/Spring Boot, C#/.NET, Python/Django, Ruby/Rails, TypeScript/NestJS
+
+### Functional Programming (FP)
+
+In functional systems, C4 components manifest as:
+
+- **Modules with pure functions**: Stateless functions that transform data
+- **Data structures**: Immutable structs, algebraic data types, pattern matching
+- **Function composition**: Pipelines, higher-order functions, monads
+- **State management**: Isolated processes (Actor model), persistent data structures
+- **Error handling**: Result types (`Either`, `Option`), railway-oriented programming
+- **Modularity**: Modules, contexts, namespaces containing related functions
+
+**Example Technologies**: Elixir/Phoenix, Haskell, OCaml, Clojure, Scala/FP, F#
+
+### C4 Model Across Paradigms - Order Service Example
+
+The following table shows how the same Order Service architecture maps to C4 levels in both paradigms:
+
+| C4 Level           | What It Describes                          | OOP Implementation (Spring Boot) | FP Implementation (Elixir/Phoenix) | Paradigm Impact |
+| ------------------ | ------------------------------------------ | -------------------------------- | ---------------------------------- | --------------- |
+| **System Context** | Order Service and external actors/systems  | Same - external boundaries       | Same - external boundaries         | **None**        |
+| **Container**      | Order Service API, Database, Message Queue | Same - deployment units          | Same - deployment units            | **None**        |
+| **Component**      | Internal modules/layers of Order Service   | Classes, Services, Repositories  | Contexts, Routers, GenServers      | **High**        |
+| **Code**           | Implementation details within components   | UML Class Diagrams, JPA Entities | Function Signatures, Ecto Schemas  | **High**        |
+
+**Key Insight**: The paradigm only affects **Component** and **Code** levels. System Context and Container diagrams look identical regardless of whether you use OOP, FP, or any other paradigm. The architectural boundaries (what talks to what) remain the same; only the internal organization changes.
+
+### Applying C4 Model to Your Paradigm
+
+When creating C4 diagrams for your system:
+
+**Levels 1-2 (Context, Container)** - Paradigm-independent:
+
+- Focus on **what exists** and **where it runs**
+- These levels are the same across all paradigms
+- Example: "Order Service API" is a container whether implemented in Java or Elixir
+
+**Level 3 (Component)** - Paradigm-aware:
+
+- **OOP**: Show services, repositories, controllers as components
+- **FP**: Show contexts, routers, GenServers as components
+- **Mixed**: Some teams use OOP for infrastructure, FP for business logic - show both
+
+**Level 4 (Code)** - Paradigm-specific:
+
+- **OOP**: Use UML class diagrams, show inheritance, show mutable state
+- **FP**: Use function signature diagrams, show data transformations, show pure/impure boundaries
+- **Either**: Use notation that matches your implementation language
+
+### When to Use OOP vs FP (Balanced Perspective)
+
+The C4 model doesn't prescribe paradigms. Choose based on:
+
+**Favor OOP when**:
+
+- Team expertise is primarily object-oriented
+- Domain complexity benefits from encapsulation (complex state machines, rich domain models)
+- Ecosystem integration requires OOP frameworks (enterprise Java, .NET)
+- Gradual state mutation is natural fit for domain (simulations, games)
+
+**Favor FP when**:
+
+- Concurrency and parallelism are critical (FP's immutability eliminates race conditions)
+- Business logic complexity benefits from pure functions (easier testing, reasoning)
+- Data transformations dominate (ETL pipelines, stream processing)
+- Fault tolerance is paramount (OTP supervision trees, self-healing systems)
+
+**Favor Hybrid when**:
+
+- Different subsystems have different needs (OOP for UI, FP for business logic)
+- Transitioning between paradigms (gradual adoption)
+- Language supports both well (Scala, TypeScript, Python, Kotlin)
+
+**Reality**: Most successful systems use **pragmatic combinations** rather than paradigm purity. The C4 model helps you document whatever you build, regardless of paradigm choices.
+
+### Cross-References to Examples in This Document
+
+**OOP Examples**:
+
+- Component Diagram: See "Example: Order Service Components (Java Spring Boot Microservice)" in Level 3 (docs/explanation/ex\_\_c4-architecture-model.md:401)
+- Code Diagram: See "Example 1: UML Class Diagram" and "Example 2: Entity-Relationship Diagram" in Level 4 (docs/explanation/ex\_\_c4-architecture-model.md:733)
+
+**FP Examples**:
+
+- Component Diagram: See "Component Diagram - Functional Programming Approach (Elixir/Phoenix)" in Level 3 (docs/explanation/ex\_\_c4-architecture-model.md:523)
+- Code Diagram: See "Code Diagram - Functional Programming Approach" in Level 4 (docs/explanation/ex\_\_c4-architecture-model.md:1008)
+
+**Paradigm-Agnostic Examples**:
+
+- System Context: See "Example: AyoKoding System Context" in Level 1 (docs/explanation/ex\_\_c4-architecture-model.md:209)
+- Container: See "Example: AyoKoding Container Diagram" in Level 2 (docs/explanation/ex\_\_c4-architecture-model.md:290)
 
 ## Frequently Asked Questions (FAQ)
 
