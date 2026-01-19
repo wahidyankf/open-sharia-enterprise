@@ -1052,23 +1052,23 @@ In functional programming, code-level diagrams focus on function signatures, dat
 classDiagram
     class OrdersContext {
         <<Module>>
-        +create_order#40;attrs#41; {:ok, Order} | {:error, Changeset}
-        +get_order#40;id#41; {:ok, Order} | {:error, :not_found}
-        +update_order#40;order, attrs#41; {:ok, Order} | {:error, Changeset}
-        +cancel_order#40;order#41; {:ok, Order} | {:error, Changeset}
-        +list_orders#40;filters#41; #91;Order#93;
-        -validate_inventory#40;items#41; {:ok, boolean} | {:error, String}
+        +create_order#40;attrs#41; Result~Order,Changeset~
+        +get_order#40;id#41; Result~Order,NotFound~
+        +update_order#40;order, attrs#41; Result~Order,Changeset~
+        +cancel_order#40;order#41; Result~Order,Changeset~
+        +list_orders#40;filters#41; List~Order~
+        -validate_inventory#40;items#41; Result~Boolean,String~
         -calculate_total#40;items#41; Decimal
-        -publish_event#40;event_name, payload#41; :ok
+        -publish_event#40;event_name, payload#41; Atom
     }
 
     class Order {
         <<Ecto.Schema - Immutable Struct>>
         +id: UUID
         +customer_id: UUID
-        +items: #91;OrderItem#93;
+        +items: List~OrderItem~
         +total: Decimal
-        +status: :pending | :confirmed | :cancelled
+        +status: Atom
         +inserted_at: DateTime
         +updated_at: DateTime
         +changeset#40;order, attrs#41; Changeset
@@ -1078,16 +1078,16 @@ classDiagram
     class OrderItem {
         <<Embedded Schema>>
         +product_id: UUID
-        +quantity: integer
+        +quantity: Integer
         +price: Decimal
         +changeset#40;item, attrs#41; Changeset
     }
 
     class Changeset {
         <<Ecto.Changeset>>
-        +valid?: boolean
-        +changes: map
-        +errors: #91;{field, {msg, opts}}#93;
+        +valid: Boolean
+        +changes: Map
+        +errors: List~Tuple~
     }
 
     OrdersContext --> Order : creates/queries
@@ -1095,6 +1095,8 @@ classDiagram
     Order --> OrderItem : embeds_many
     Order --> Changeset : returns
 ```
+
+**Notation Note**: The diagram uses generic type syntax (`Result~Order,Changeset~`, `List~Order~`) for Mermaid compatibility. In actual Elixir code, `Result~Order,Changeset~` represents the tuple types `{:ok, Order.t()} | {:error, Ecto.Changeset.t()}`, and `List~Order~` represents `[Order.t()]`.
 
 **Elixir Code Example**:
 
@@ -1262,26 +1264,26 @@ end
 classDiagram
     class OrderCache {
         <<GenServer - Stateful Process>>
-        +start_link#40;opts#41; {:ok, pid}
-        +get#40;order_id#41; {:ok, Order} | {:error, :not_found}
-        +put#40;order_id, order#41; :ok
-        +delete#40;order_id#41; :ok
-        +clear#40;#41; :ok
+        +start_link#40;opts#41; Result~Pid~
+        +get#40;order_id#41; Result~Order,NotFound~
+        +put#40;order_id, order#41; Atom
+        +delete#40;order_id#41; Atom
+        +clear#40;#41; Atom
     }
 
     class OrderCacheState {
         <<Internal State - Private>>
-        -cache: Map - order_id => order
-        -ttl_ms: integer
-        -max_size: integer
+        -cache: Map~OrderId,Order~
+        -ttl_ms: Integer
+        -max_size: Integer
     }
 
     class GenServerCallbacks {
         <<Callbacks - Handle State>>
-        +init#40;opts#41;
-        +handle_call#40;msg, from, state#41;
-        +handle_cast#40;msg, state#41;
-        +handle_info#40;msg, state#41;
+        +init#40;opts#41; Result~State~
+        +handle_call#40;msg, from, state#41; Reply~State~
+        +handle_cast#40;msg, state#41; NoReply~State~
+        +handle_info#40;msg, state#41; NoReply~State~
     }
 
     OrderCache --> OrderCacheState : manages
