@@ -310,8 +310,8 @@ graph TB
     style PAYMENT_SVC fill:#029E73,stroke:#000000,color:#ffffff
     style NOTIFICATION_SVC fill:#029E73,stroke:#000000,color:#ffffff
     style INVENTORY_SVC fill:#029E73,stroke:#000000,color:#ffffff
-    style MESSAGE_BUS fill:#DE8F05,stroke:#e76f51,color:#ffffff
-    style CACHE fill:#DE8F05,stroke:#e76f51,color:#ffffff
+    style MESSAGE_BUS fill:#DE8F05,stroke:#000000,color:#ffffff
+    style CACHE fill:#DE8F05,stroke:#000000,color:#ffffff
     style USER_DB fill:#DE8F05,stroke:#000000,color:#ffffff
     style PRODUCT_DB fill:#DE8F05,stroke:#000000,color:#ffffff
     style ORDER_DB fill:#DE8F05,stroke:#000000,color:#ffffff
@@ -486,9 +486,9 @@ flowchart TB
     style QUERY_SVC fill:#DE8F05,stroke:#000000,color:#ffffff
     style JWT_FILTER fill:#CC78BC,stroke:#000000,color:#ffffff
     style SECURITY_CTX fill:#CC78BC,stroke:#000000,color:#ffffff
-    style CIRCUIT_BREAKER fill:#DE8F05,stroke:#e76f51,color:#ffffff
-    style ORDER_DB fill:#DE8F05,stroke:#6a040f,color:#ffffff
-    style CACHE fill:#457b9d,stroke:#1d3557,color:#ffffff
+    style CIRCUIT_BREAKER fill:#DE8F05,stroke:#000000,color:#ffffff
+    style ORDER_DB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style CACHE fill:#CC78BC,stroke:#000000,color:#ffffff
 ```
 
 **Diagram Explanation**:
@@ -1397,10 +1397,10 @@ graph TB
     style PRODUCT_DB fill:#DE8F05,stroke:#000000,color:#ffffff
     style PAYMENT_DB fill:#DE8F05,stroke:#000000,color:#ffffff
     style INVENTORY_DB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style REDIS_CLUSTER fill:#DE8F05,stroke:#e76f51,color:#ffffff
-    style KAFKA_1 fill:#DE8F05,stroke:#e76f51,color:#ffffff
-    style KAFKA_2 fill:#DE8F05,stroke:#e76f51,color:#ffffff
-    style KAFKA_3 fill:#DE8F05,stroke:#e76f51,color:#ffffff
+    style REDIS_CLUSTER fill:#DE8F05,stroke:#000000,color:#ffffff
+    style KAFKA_1 fill:#DE8F05,stroke:#000000,color:#ffffff
+    style KAFKA_2 fill:#DE8F05,stroke:#000000,color:#ffffff
+    style KAFKA_3 fill:#DE8F05,stroke:#000000,color:#ffffff
     style LB fill:#0173B2,stroke:#000000,color:#ffffff
 ```
 
@@ -1590,7 +1590,7 @@ graph TB
     style STABLE2 fill:#0173B2,stroke:#000000,color:#ffffff
     style STABLE3 fill:#0173B2,stroke:#000000,color:#ffffff
     style STABLE4 fill:#0173B2,stroke:#000000,color:#ffffff
-    style CANARY1 fill:#DE8F05,stroke:#e76f51,color:#ffffff,stroke-width:3px
+    style CANARY1 fill:#DE8F05,stroke:#000000,color:#ffffff,stroke-width:3px
     style DB fill:#DE8F05,stroke:#000000,color:#ffffff
     style LB fill:#CC78BC,stroke:#000000,color:#ffffff
     style METRICS fill:#029E73,stroke:#000000,color:#ffffff
@@ -1643,7 +1643,7 @@ graph TB
 
     style APP fill:#0173B2,stroke:#000000,color:#ffffff
     style DB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style REDIS fill:#DE8F05,stroke:#e76f51,color:#ffffff
+    style REDIS fill:#DE8F05,stroke:#000000,color:#ffffff
     style MOCK_PAYMENT fill:#CC78BC,stroke:#000000,color:#ffffff
     style MOCK_EMAIL fill:#CC78BC,stroke:#000000,color:#ffffff
     style DEV fill:#029E73,stroke:#000000,color:#ffffff
@@ -2040,7 +2040,7 @@ C4 focuses on **static structure**. You'll need other diagram types for:
 
 **Scaling Considerations**:
 
-For very large systems (600+ elements):
+For very large systems with high complexity:
 
 - **Don't create monolithic diagrams**: Single diagrams with hundreds of elements become unreadable
 - **Split by bounded context**: Create separate C4 diagram sets for each business domain (e.g., Order Management, User Management, Payments)
@@ -2603,9 +2603,9 @@ The hierarchical levels are for **abstraction and zoom**, not organizational hie
 - **Container diagram**: 30+ containers → split by bounded context or business domain
 - **Component diagram**: 20+ components → this container is too complex, consider refactoring or splitting into multiple focused diagrams
 
-**600+ element rule** (from official C4 FAQ):
+**Cognitive Load Guideline**:
 
-If your diagram software is rendering 600+ elements (boxes, lines, labels), the diagram is unreadable. Split immediately.
+The C4 FAQ uses "600 components rather than 6" as a hypothetical example of complexity. While there's no hard numerical threshold, large diagrams create high cognitive load and become hard to interpret. The official guidance: split complex diagrams when they become cluttered, regardless of exact element count.
 
 **Readability test**:
 
