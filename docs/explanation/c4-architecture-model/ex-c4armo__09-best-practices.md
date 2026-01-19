@@ -335,7 +335,7 @@ Structurizr was created by Simon Brown (C4 model creator) specifically for C4 di
 | Tool            | Type        | Cost                       | C4 Support                 | Learning Curve | Version Control   | Team Collaboration           | Best For                                    |
 | --------------- | ----------- | -------------------------- | -------------------------- | -------------- | ----------------- | ---------------------------- | ------------------------------------------- |
 | **Structurizr** | Modeling    | Free (Lite) / Paid (Cloud) | Native (official)          | Medium-High    | Excellent (DSL)   | Good (Cloud)                 | Serious C4 practitioners, large teams       |
-| **Mermaid**     | Diagramming | Free                       | Good (C4 diagram type)     | Low-Medium     | Excellent (text)  | Good (GitHub/Markdown)       | Documentation-as-code, open source projects |
+| **Mermaid**     | Diagramming | Free                       | Good (experimental)        | Low-Medium     | Excellent (text)  | Good (GitHub/Markdown)       | Documentation-as-code, open source projects |
 | **PlantUML**    | Diagramming | Free                       | Good (C4-PlantUML library) | Medium         | Excellent (text)  | Good (any text editor)       | Java teams, enterprise developers           |
 | **draw.io**     | Diagramming | Free                       | Fair (C4 stencils)         | Low            | Fair (XML format) | Good (desktop/web)           | Quick ad-hoc diagrams, non-technical teams  |
 | **Lucidchart**  | Diagramming | Paid                       | Fair (templates)           | Low            | Fair              | Excellent (real-time collab) | Distributed teams, non-developers           |
@@ -350,7 +350,7 @@ Modern teams prefer text-based diagram tools that integrate with version control
 1. **Primary: Mermaid** (in Markdown files)
    - Native GitHub rendering
    - Simple syntax, low learning curve
-   - C4 diagram type supported
+   - C4 diagram type supported (experimental status as of 2026)
    - Integrates with documentation sites (Hugo, Jekyll, MkDocs)
 2. **Advanced: Structurizr DSL** (for complex systems)
    - Model-first approach
@@ -377,6 +377,7 @@ Open Sharia Enterprise uses **Mermaid diagrams** for C4 model documentation:
 - **Manual synchronization**: Each diagram independent, must update related diagrams manually
 - **No automatic layout**: Must arrange elements by hand
 - **Limited C4 features**: Mermaid C4 support simpler than Structurizr
+- **Experimental status**: Mermaid C4 syntax may change in future releases (experimental as of 2026)
 
 **When to Switch**:
 
