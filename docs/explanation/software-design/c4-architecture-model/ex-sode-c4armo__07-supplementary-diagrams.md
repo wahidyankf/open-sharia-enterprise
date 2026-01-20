@@ -441,14 +441,14 @@ graph TB
     style PAYMENT_POD fill:#029E73,stroke:#000000,color:#ffffff
     style INVENTORY_POD fill:#029E73,stroke:#000000,color:#ffffff
     style NOTIF_POD fill:#029E73,stroke:#000000,color:#ffffff
-    style ORDER_DB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style PRODUCT_DB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style PAYMENT_DB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style INVENTORY_DB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style REDIS_CLUSTER fill:#DE8F05,stroke:#000000,color:#ffffff
-    style KAFKA_1 fill:#DE8F05,stroke:#000000,color:#ffffff
-    style KAFKA_2 fill:#DE8F05,stroke:#000000,color:#ffffff
-    style KAFKA_3 fill:#DE8F05,stroke:#000000,color:#ffffff
+    style ORDER_DB fill:#DE8F05,stroke:#000000,color:#000000
+    style PRODUCT_DB fill:#DE8F05,stroke:#000000,color:#000000
+    style PAYMENT_DB fill:#DE8F05,stroke:#000000,color:#000000
+    style INVENTORY_DB fill:#DE8F05,stroke:#000000,color:#000000
+    style REDIS_CLUSTER fill:#DE8F05,stroke:#000000,color:#000000
+    style KAFKA_1 fill:#DE8F05,stroke:#000000,color:#000000
+    style KAFKA_2 fill:#DE8F05,stroke:#000000,color:#000000
+    style KAFKA_3 fill:#DE8F05,stroke:#000000,color:#000000
     style LB fill:#0173B2,stroke:#000000,color:#ffffff
 ```
 
@@ -565,8 +565,8 @@ graph TB
     style BLUE_APP2 fill:#0173B2,stroke:#000000,color:#ffffff
     style GREEN_APP1 fill:#029E73,stroke:#000000,color:#ffffff
     style GREEN_APP2 fill:#029E73,stroke:#000000,color:#ffffff
-    style BLUE_DB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style GREEN_DB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style BLUE_DB fill:#DE8F05,stroke:#000000,color:#000000
+    style GREEN_DB fill:#DE8F05,stroke:#000000,color:#000000
     style LB fill:#CC78BC,stroke:#000000,color:#ffffff
     style ROUTER fill:#CC78BC,stroke:#000000,color:#ffffff
 ```
@@ -638,8 +638,8 @@ graph TB
     style STABLE2 fill:#0173B2,stroke:#000000,color:#ffffff
     style STABLE3 fill:#0173B2,stroke:#000000,color:#ffffff
     style STABLE4 fill:#0173B2,stroke:#000000,color:#ffffff
-    style CANARY1 fill:#DE8F05,stroke:#000000,color:#ffffff,stroke-width:3px
-    style DB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style CANARY1 fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:3px
+    style DB fill:#DE8F05,stroke:#000000,color:#000000
     style LB fill:#CC78BC,stroke:#000000,color:#ffffff
     style METRICS fill:#029E73,stroke:#000000,color:#ffffff
 ```
@@ -690,8 +690,8 @@ graph TB
     APP -->|Test emails| MOCK_EMAIL
 
     style APP fill:#0173B2,stroke:#000000,color:#ffffff
-    style DB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style REDIS fill:#DE8F05,stroke:#000000,color:#ffffff
+    style DB fill:#DE8F05,stroke:#000000,color:#000000
+    style REDIS fill:#DE8F05,stroke:#000000,color:#000000
     style MOCK_PAYMENT fill:#CC78BC,stroke:#000000,color:#ffffff
     style MOCK_EMAIL fill:#CC78BC,stroke:#000000,color:#ffffff
     style DEV fill:#029E73,stroke:#000000,color:#ffffff
@@ -803,9 +803,9 @@ graph TB
     style LAMBDA_USER fill:#0173B2,stroke:#000000,color:#ffffff
     style LAMBDA_ORDER fill:#0173B2,stroke:#000000,color:#ffffff
     style LAMBDA_PAYMENT fill:#0173B2,stroke:#000000,color:#ffffff
-    style DYNAMO_USER fill:#DE8F05,stroke:#000000,color:#ffffff
-    style DYNAMO_ORDER fill:#DE8F05,stroke:#000000,color:#ffffff
-    style S3_RECEIPTS fill:#DE8F05,stroke:#000000,color:#ffffff
+    style DYNAMO_USER fill:#DE8F05,stroke:#000000,color:#000000
+    style DYNAMO_ORDER fill:#DE8F05,stroke:#000000,color:#000000
+    style S3_RECEIPTS fill:#DE8F05,stroke:#000000,color:#000000
     style SNS fill:#029E73,stroke:#000000,color:#ffffff
     style SQS fill:#029E73,stroke:#000000,color:#ffffff
     style STRIPE fill:#808080,stroke:#000000,color:#ffffff
@@ -887,7 +887,7 @@ graph TB
     style KV_LONDON fill:#029E73,stroke:#000000,color:#ffffff
     style KV_TOKYO fill:#029E73,stroke:#000000,color:#ffffff
     style ORIGIN_API fill:#CC78BC,stroke:#000000,color:#ffffff
-    style ORIGIN_DB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style ORIGIN_DB fill:#DE8F05,stroke:#000000,color:#000000
     style USERS_US fill:#808080,stroke:#000000,color:#ffffff
     style USERS_EU fill:#808080,stroke:#000000,color:#ffffff
     style USERS_ASIA fill:#808080,stroke:#000000,color:#ffffff
@@ -996,9 +996,9 @@ graph TB
     style APP_EU2 fill:#0173B2,stroke:#000000,color:#ffffff
     style APP_ASIA1 fill:#0173B2,stroke:#000000,color:#ffffff
     style APP_ASIA2 fill:#0173B2,stroke:#000000,color:#ffffff
-    style DB_US fill:#DE8F05,stroke:#000000,color:#ffffff
-    style DB_EU fill:#DE8F05,stroke:#000000,color:#ffffff
-    style DB_ASIA fill:#DE8F05,stroke:#000000,color:#ffffff
+    style DB_US fill:#DE8F05,stroke:#000000,color:#000000
+    style DB_EU fill:#DE8F05,stroke:#000000,color:#000000
+    style DB_ASIA fill:#DE8F05,stroke:#000000,color:#000000
     style CACHE_US fill:#029E73,stroke:#000000,color:#ffffff
     style CACHE_EU fill:#029E73,stroke:#000000,color:#ffffff
     style CACHE_ASIA fill:#029E73,stroke:#000000,color:#ffffff
@@ -1105,16 +1105,16 @@ graph TB
     style ON_PREM_LB fill:#CC78BC,stroke:#000000,color:#ffffff
     style ON_PREM_APP1 fill:#0173B2,stroke:#000000,color:#ffffff
     style ON_PREM_APP2 fill:#0173B2,stroke:#000000,color:#ffffff
-    style ON_PREM_DB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style ON_PREM_STORAGE fill:#DE8F05,stroke:#000000,color:#ffffff
+    style ON_PREM_DB fill:#DE8F05,stroke:#000000,color:#000000
+    style ON_PREM_STORAGE fill:#DE8F05,stroke:#000000,color:#000000
     style FIREWALL fill:#808080,stroke:#000000,color:#ffffff
     style VPN_GW fill:#808080,stroke:#000000,color:#ffffff
     style CLOUD_LB fill:#CC78BC,stroke:#000000,color:#ffffff
     style CLOUD_API1 fill:#029E73,stroke:#000000,color:#ffffff
     style CLOUD_API2 fill:#029E73,stroke:#000000,color:#ffffff
-    style CLOUD_DB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style CLOUD_DB fill:#DE8F05,stroke:#000000,color:#000000
     style CLOUD_CACHE fill:#029E73,stroke:#000000,color:#ffffff
-    style S3_REPORTS fill:#DE8F05,stroke:#000000,color:#ffffff
+    style S3_REPORTS fill:#DE8F05,stroke:#000000,color:#000000
     style USERS fill:#808080,stroke:#000000,color:#ffffff
     style ANALYSTS fill:#808080,stroke:#000000,color:#ffffff
 ```
@@ -1224,13 +1224,13 @@ graph TB
     style DEV_INGRESS fill:#CC78BC,stroke:#000000,color:#ffffff
     style PROD_APP1 fill:#0173B2,stroke:#000000,color:#ffffff
     style PROD_API1 fill:#0173B2,stroke:#000000,color:#ffffff
-    style PROD_DB1 fill:#DE8F05,stroke:#000000,color:#ffffff
+    style PROD_DB1 fill:#DE8F05,stroke:#000000,color:#000000
     style STAGING_APP fill:#029E73,stroke:#000000,color:#ffffff
     style STAGING_API fill:#029E73,stroke:#000000,color:#ffffff
-    style STAGING_DB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style STAGING_DB fill:#DE8F05,stroke:#000000,color:#000000
     style DEV_APP fill:#808080,stroke:#000000,color:#ffffff
     style DEV_API fill:#808080,stroke:#000000,color:#ffffff
-    style DEV_DB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style DEV_DB fill:#DE8F05,stroke:#000000,color:#000000
     style SHARED_LOGGING fill:#029E73,stroke:#000000,color:#ffffff
     style SHARED_VAULT fill:#029E73,stroke:#000000,color:#ffffff
     style SHARED_REGISTRY fill:#029E73,stroke:#000000,color:#ffffff

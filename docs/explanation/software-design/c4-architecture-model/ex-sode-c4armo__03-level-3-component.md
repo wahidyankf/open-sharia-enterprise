@@ -148,12 +148,12 @@ flowchart TB
     style ORDER_FACADE fill:#029E73,stroke:#000000,color:#ffffff
     style ORDER_DOMAIN fill:#029E73,stroke:#000000,color:#ffffff
     style PRICING fill:#029E73,stroke:#000000,color:#ffffff
-    style ORDER_REPO fill:#DE8F05,stroke:#000000,color:#ffffff
-    style QUERY_SVC fill:#DE8F05,stroke:#000000,color:#ffffff
+    style ORDER_REPO fill:#DE8F05,stroke:#000000,color:#000000
+    style QUERY_SVC fill:#DE8F05,stroke:#000000,color:#000000
     style JWT_FILTER fill:#CC78BC,stroke:#000000,color:#ffffff
     style SECURITY_CTX fill:#CC78BC,stroke:#000000,color:#ffffff
-    style CIRCUIT_BREAKER fill:#DE8F05,stroke:#000000,color:#ffffff
-    style ORDER_DB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style CIRCUIT_BREAKER fill:#DE8F05,stroke:#000000,color:#000000
+    style ORDER_DB fill:#DE8F05,stroke:#000000,color:#000000
     style CACHE fill:#CC78BC,stroke:#000000,color:#ffffff
 ```
 

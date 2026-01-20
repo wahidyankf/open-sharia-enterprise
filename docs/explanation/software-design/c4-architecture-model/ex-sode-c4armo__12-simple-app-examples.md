@@ -83,7 +83,7 @@ graph TB
     style User fill:#029E73,stroke:#000000,color:#ffffff
     style SPA fill:#0173B2,stroke:#000000,color:#ffffff
     style API fill:#0173B2,stroke:#000000,color:#ffffff
-    style DB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style DB fill:#DE8F05,stroke:#000000,color:#000000
     style EmailService fill:#CC78BC,stroke:#000000,color:#ffffff
 ```
 
@@ -206,8 +206,8 @@ graph TB
     style Browser fill:#029E73,stroke:#000000,color:#ffffff
     style Django fill:#0173B2,stroke:#000000,color:#ffffff
     style Celery fill:#0173B2,stroke:#000000,color:#ffffff
-    style Redis fill:#DE8F05,stroke:#000000,color:#ffffff
-    style DB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style Redis fill:#DE8F05,stroke:#000000,color:#000000
+    style DB fill:#DE8F05,stroke:#000000,color:#000000
     style Stripe fill:#CC78BC,stroke:#000000,color:#ffffff
     style S3 fill:#CC78BC,stroke:#000000,color:#ffffff
 ```
@@ -306,9 +306,9 @@ graph TB
     style ProductSvc fill:#0173B2,stroke:#000000,color:#ffffff
     style NotifSvc fill:#0173B2,stroke:#000000,color:#ffffff
     style UserDB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style OrderDB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style ProductDB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style Kafka fill:#DE8F05,stroke:#000000,color:#ffffff
+    style OrderDB fill:#DE8F05,stroke:#000000,color:#000000
+    style ProductDB fill:#DE8F05,stroke:#000000,color:#000000
+    style Kafka fill:#DE8F05,stroke:#000000,color:#000000
     style Stripe fill:#CC78BC,stroke:#000000,color:#ffffff
     style SendGrid fill:#CC78BC,stroke:#000000,color:#ffffff
 ```

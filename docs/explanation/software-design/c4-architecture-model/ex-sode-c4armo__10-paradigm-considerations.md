@@ -197,7 +197,7 @@ graph TB
     style UserLogic fill:#0173B2,stroke:#000000,color:#ffffff
     style AuthLogic fill:#0173B2,stroke:#000000,color:#ffffff
     style DataAccess fill:#0173B2,stroke:#000000,color:#ffffff
-    style UserStruct fill:#DE8F05,stroke:#000000,color:#ffffff
+    style UserStruct fill:#DE8F05,stroke:#000000,color:#000000
     style ConfigModule fill:#029E73,stroke:#000000,color:#ffffff
 ```
 
@@ -318,8 +318,8 @@ graph TB
     style DatabaseAdapter fill:#CC78BC,stroke:#000000,color:#ffffff
     style OrderDomain fill:#0173B2,stroke:#000000,color:#ffffff
     style PricingDomain fill:#0173B2,stroke:#000000,color:#ffffff
-    style OrderPort fill:#DE8F05,stroke:#000000,color:#ffffff
-    style PricingPort fill:#DE8F05,stroke:#000000,color:#ffffff
+    style OrderPort fill:#DE8F05,stroke:#000000,color:#000000
+    style PricingPort fill:#DE8F05,stroke:#000000,color:#000000
 ```
 
 **Annotation Guide**:
@@ -437,7 +437,7 @@ graph TB
 
     style NewOrderLogic fill:#029E73,stroke:#000000,color:#ffffff
     style LegacyOrderLogic fill:#808080,stroke:#000000,color:#ffffff
-    style FeatureFlag fill:#DE8F05,stroke:#000000,color:#ffffff
+    style FeatureFlag fill:#DE8F05,stroke:#000000,color:#000000
     style Controller fill:#0173B2,stroke:#000000,color:#ffffff
     style Repository fill:#0173B2,stroke:#000000,color:#ffffff
 ```

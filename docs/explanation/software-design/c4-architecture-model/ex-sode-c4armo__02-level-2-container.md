@@ -135,13 +135,13 @@ graph TB
     style PAYMENT_SVC fill:#029E73,stroke:#000000,color:#ffffff
     style NOTIFICATION_SVC fill:#029E73,stroke:#000000,color:#ffffff
     style INVENTORY_SVC fill:#029E73,stroke:#000000,color:#ffffff
-    style MESSAGE_BUS fill:#DE8F05,stroke:#000000,color:#ffffff
-    style CACHE fill:#DE8F05,stroke:#000000,color:#ffffff
-    style USER_DB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style PRODUCT_DB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style ORDER_DB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style PAYMENT_DB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style INVENTORY_DB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style MESSAGE_BUS fill:#DE8F05,stroke:#000000,color:#000000
+    style CACHE fill:#DE8F05,stroke:#000000,color:#000000
+    style USER_DB fill:#DE8F05,stroke:#000000,color:#000000
+    style PRODUCT_DB fill:#DE8F05,stroke:#000000,color:#000000
+    style ORDER_DB fill:#DE8F05,stroke:#000000,color:#000000
+    style PAYMENT_DB fill:#DE8F05,stroke:#000000,color:#000000
+    style INVENTORY_DB fill:#DE8F05,stroke:#000000,color:#000000
     style PAYMENT_EXT fill:#CC78BC,stroke:#000000,color:#ffffff
     style EMAIL_EXT fill:#CC78BC,stroke:#000000,color:#ffffff
 ```

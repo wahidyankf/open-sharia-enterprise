@@ -105,9 +105,9 @@ graph TB
 
     style User fill:#029E73,stroke:#000000,color:#ffffff
     style API fill:#0173B2,stroke:#000000,color:#ffffff
-    style EventStore fill:#DE8F05,stroke:#000000,color:#ffffff
+    style EventStore fill:#DE8F05,stroke:#000000,color:#000000
     style Projector fill:#0173B2,stroke:#000000,color:#ffffff
-    style ReadDB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style ReadDB fill:#DE8F05,stroke:#000000,color:#000000
     style QueryAPI fill:#0173B2,stroke:#000000,color:#ffffff
 ```
 
@@ -207,10 +207,10 @@ graph TB
 
     style User fill:#029E73,stroke:#000000,color:#ffffff
     style CommandAPI fill:#0173B2,stroke:#000000,color:#ffffff
-    style CommandDB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style MessageBus fill:#DE8F05,stroke:#000000,color:#ffffff
+    style CommandDB fill:#DE8F05,stroke:#000000,color:#000000
+    style MessageBus fill:#DE8F05,stroke:#000000,color:#000000
     style QueryAPI fill:#0173B2,stroke:#000000,color:#ffffff
-    style QueryDB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style QueryDB fill:#DE8F05,stroke:#000000,color:#000000
     style Sync fill:#0173B2,stroke:#000000,color:#ffffff
 ```
 
@@ -289,12 +289,12 @@ graph TB
     style User fill:#029E73,stroke:#000000,color:#ffffff
     style API fill:#CC78BC,stroke:#000000,color:#ffffff
     style OrderSvc fill:#0173B2,stroke:#000000,color:#ffffff
-    style OrderDB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style OrderDB fill:#DE8F05,stroke:#000000,color:#000000
     style PaymentSvc fill:#0173B2,stroke:#000000,color:#ffffff
-    style PaymentDB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style PaymentDB fill:#DE8F05,stroke:#000000,color:#000000
     style InventorySvc fill:#0173B2,stroke:#000000,color:#ffffff
-    style InventoryDB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style MessageBus fill:#DE8F05,stroke:#000000,color:#ffffff
+    style InventoryDB fill:#DE8F05,stroke:#000000,color:#000000
+    style MessageBus fill:#DE8F05,stroke:#000000,color:#000000
 ```
 
 **Choreography Explanation**:
@@ -346,10 +346,10 @@ graph TB
 
     style User fill:#029E73,stroke:#000000,color:#ffffff
     style API fill:#CC78BC,stroke:#000000,color:#ffffff
-    style SagaOrchestrator fill:#DE8F05,stroke:#000000,color:#ffffff
-    style SagaDB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style SagaOrchestrator fill:#DE8F05,stroke:#000000,color:#000000
+    style SagaDB fill:#DE8F05,stroke:#000000,color:#000000
     style OrderSvc fill:#0173B2,stroke:#000000,color:#ffffff
-    style OrderDB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style OrderDB fill:#DE8F05,stroke:#000000,color:#000000
     style PaymentSvc fill:#0173B2,stroke:#000000,color:#ffffff
     style InventorySvc fill:#0173B2,stroke:#000000,color:#ffffff
 ```
@@ -421,12 +421,12 @@ graph TB
 
     style IoTDevices fill:#029E73,stroke:#000000,color:#ffffff
     style Ingest fill:#0173B2,stroke:#000000,color:#ffffff
-    style Kafka fill:#DE8F05,stroke:#000000,color:#ffffff
+    style Kafka fill:#DE8F05,stroke:#000000,color:#000000
     style StreamProcessor fill:#0173B2,stroke:#000000,color:#ffffff
     style AlertService fill:#0173B2,stroke:#000000,color:#ffffff
-    style AlertDB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style AlertDB fill:#DE8F05,stroke:#000000,color:#000000
     style Dashboard fill:#0173B2,stroke:#000000,color:#ffffff
-    style DashboardDB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style DashboardDB fill:#DE8F05,stroke:#000000,color:#000000
 ```
 
 **Streaming Explanation**:
@@ -504,8 +504,8 @@ graph TB
     AnalyticsSvc -->|Records analytics| AnalyticsSvc
 
     style OrderSvc fill:#0173B2,stroke:#000000,color:#ffffff
-    style OrderDB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style Kafka fill:#DE8F05,stroke:#000000,color:#ffffff
+    style OrderDB fill:#DE8F05,stroke:#000000,color:#000000
+    style Kafka fill:#DE8F05,stroke:#000000,color:#000000
     style EmailSvc fill:#0173B2,stroke:#000000,color:#ffffff
     style AnalyticsSvc fill:#0173B2,stroke:#000000,color:#ffffff
 ```
@@ -534,8 +534,8 @@ graph TB
     AnalyticsSvc2 -->|Records analytics<br/>No additional query needed| AnalyticsSvc2
 
     style OrderSvc2 fill:#0173B2,stroke:#000000,color:#ffffff
-    style OrderDB2 fill:#DE8F05,stroke:#000000,color:#ffffff
-    style Kafka2 fill:#DE8F05,stroke:#000000,color:#ffffff
+    style OrderDB2 fill:#DE8F05,stroke:#000000,color:#000000
+    style Kafka2 fill:#DE8F05,stroke:#000000,color:#000000
     style EmailSvc2 fill:#0173B2,stroke:#000000,color:#ffffff
     style AnalyticsSvc2 fill:#0173B2,stroke:#000000,color:#ffffff
 ```
