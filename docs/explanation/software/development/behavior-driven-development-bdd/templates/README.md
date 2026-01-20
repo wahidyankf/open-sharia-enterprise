@@ -328,7 +328,8 @@ All templates follow these principles:
 - **Gherkin Syntax**: [Gherkin Syntax and Scenarios](../ex-so-de-bdd__02-gherkin-syntax-and-scenarios.md)
 - **Three Amigos**: [Three Amigos Practice](../ex-so-de-bdd__04-three-amigos-practice.md)
 - **Example Mapping**: [Example Mapping](../ex-so-de-bdd__05-example-mapping.md)
-- **Anti-patterns**: [Best Practices and Antipatterns](../ex-so-de-bdd__17-best-practices-and-antipatterns.md)
+- **Best Practices**: [Best Practices](../ex-so-de-bdd__17-best-practices.md)
+- **Anti-patterns**: [Antipatterns](../ex-so-de-bdd__18-antipatterns.md)
 - **FAQ**: [Frequently Asked Questions](../ex-so-de-bdd__16-faq.md)
 
 ## Contributing New Templates

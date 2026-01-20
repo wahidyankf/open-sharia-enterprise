@@ -611,4 +611,5 @@ Legacy code is manageable with the right techniques. Start small, add tests incr
 - **[02. Red-Green-Refactor Cycle](./ex-so-de-tedrdeve__02-red-green-refactor-cycle.md)** - Refactoring discipline
 - **[05. Test Doubles](./ex-so-de-tedrdeve__05-test-doubles.md)** - Fakes for breaking dependencies
 - **[14. Refactoring with Tests](./ex-so-de-tedrdeve__14-refactoring-with-tests.md)** - Safe refactoring patterns
-- **[15. Best Practices and Antipatterns](./ex-so-de-tedrdeve__18-best-practices-and-antipatterns.md)** - Avoiding testability pitfalls
+- **[18. Best Practices](./ex-so-de-tedrdeve__18-best-practices.md)** - TDD best practices
+- **[19. Antipatterns](./ex-so-de-tedrdeve__19-antipatterns.md)** - Avoiding testability pitfalls
