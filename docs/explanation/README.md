@@ -59,8 +59,8 @@ The repository follows a **six-layer governance architecture** (Vision → Princ
 
 ### Software Design
 
-- **[C4 Architecture Model](./software-design/c4-architecture-model/README.md)** - Visualizing software architecture through hierarchical abstraction levels
-- **[Domain-Driven Design (DDD)](./software-design/domain-driven-design-ddd/README.md)** - Strategic and tactical patterns for modeling complex business domains
+- **[C4 Architecture Model](./software/architecture/c4-architecture-model/README.md)** - Visualizing software architecture through hierarchical abstraction levels
+- **[Domain-Driven Design (DDD)](./software/architecture/domain-driven-design-ddd/README.md)** - Strategic and tactical patterns for modeling complex business domains
 
 ### Domain Concepts
 
