@@ -970,7 +970,7 @@ IO.inspect(avg_age)                   # => Output: #Decimal<30.0>
 
 **Key Takeaway**: Repo.aggregate/3 performs calculations in the database without loading records into memory, making it vastly more efficient than Repo.all + Enum operations for aggregates.
 
-**Why It Matters**: Loading records into memory to count them (Repo.all |> Enum.count) is catastrophically inefficient for large tables, consuming gigabytes of RAM for a single number. Database aggregations like COUNT(*) execute in milliseconds using index statistics without touching table data. Production dashboards, pagination controls, and analytics rely on Repo.aggregate for real-time metrics that would timeout if implemented naively with in-memory operations.
+**Why It Matters**: Loading records into memory to count them (Repo.all |> Enum.count) is catastrophically inefficient for large tables, consuming gigabytes of RAM for a single number. Database aggregations like COUNT(\*) execute in milliseconds using index statistics without touching table data. Production dashboards, pagination controls, and analytics rely on Repo.aggregate for real-time metrics that would timeout if implemented naively with in-memory operations.
 
 ---
 

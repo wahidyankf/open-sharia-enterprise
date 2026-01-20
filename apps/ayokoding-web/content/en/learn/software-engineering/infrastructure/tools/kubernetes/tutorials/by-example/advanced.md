@@ -48,7 +48,7 @@ graph TD
     style G fill:#CC78BC,color:#000
 ```
 
-```yaml
+````yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -441,7 +441,7 @@ spec:
 # => allowPrivilegeEscalation: false
 # => Drop ALL capabilities
 # => Read-only root filesystem
-```
+````
 
 **Key Takeaway**: Migrate from deprecated PodSecurityPolicy to Pod Security Standards by labeling namespaces with enforcement levels (privileged, baseline, restricted); Pod Security Admission provides simpler cluster-wide security enforcement.
 
@@ -1493,7 +1493,7 @@ dependencies:
 
 **Key Takeaway**: Use chart dependencies for composable applications; lock dependency versions with Chart.lock for reproducible deployments; use conditions to enable/disable optional dependencies per environment.
 
-**Why It Matters**: Helm dependencies enable all-in-one application packaging where a single chart installs the application plus required infrastructure (databases, caches, message queues), critical for development environments and demos. Companies like Bitnami package 200+ production-grade charts (WordPress, GitLab, Kafka) with automatic dependency management, reducing installation complexity from 20+ manual steps to single helm install command. This pattern also enables library charts (common, _helpers) that share reusable templates across organization charts, implementing DRY principles and ensuring consistent labeling, annotations, and security policies across 100+ microservices.
+**Why It Matters**: Helm dependencies enable all-in-one application packaging where a single chart installs the application plus required infrastructure (databases, caches, message queues), critical for development environments and demos. Companies like Bitnami package 200+ production-grade charts (WordPress, GitLab, Kafka) with automatic dependency management, reducing installation complexity from 20+ manual steps to single helm install command. This pattern also enables library charts (common, \_helpers) that share reusable templates across organization charts, implementing DRY principles and ensuring consistent labeling, annotations, and security policies across 100+ microservices.
 
 ---
 

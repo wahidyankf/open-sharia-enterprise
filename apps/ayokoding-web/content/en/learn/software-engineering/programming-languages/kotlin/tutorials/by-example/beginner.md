@@ -1215,7 +1215,7 @@ graph TD
 
 **Type-safe state modeling**: Sealed classes model restricted type hierarchies like API responses (Success/Error/Loading), UI states, or workflow steps. Better than enums (which can't hold associated data) and better than unrestricted inheritance (which allows unexpected subtypes).
 
-````kotlin
+`````kotlin
 sealed class Result {
     data class Success(val data: String) : Result()
     data class Error(val message: String, val code: Int) : Result()
@@ -1316,7 +1316,7 @@ fun main() {
     println(str2.orDefault())        // => Output: Hello
     println(str1.orDefault("Empty")) // => Output: Empty
 }
-````
+`````
 
 **Key Takeaway**: Use extension functions to add methods to existing classes without inheritance; they improve API ergonomics and enable domain-specific utilities on third-party types.
 
