@@ -135,7 +135,7 @@ See [BDD and TDD Integration](./behavior-driven-development-bdd/ex-so-de-bdd__13
 1. **Understand testing strategy** - Read [Test Types and Pyramid](./test-driven-development-tdd/ex-so-de-tedrdeve__03-test-types-and-pyramid.md)
 2. **Learn when to use each approach** - Review decision matrices in both intro docs
 3. **Integrate with architecture** - Read [TDD and DDD](./test-driven-development-tdd/ex-so-de-tedrdeve__12-tdd-and-ddd.md)
-4. **Avoid common pitfalls** - Read [TDD Best Practices and Antipatterns](./test-driven-development-tdd/ex-so-de-tedrdeve__18-best-practices-and-antipatterns.md) and [BDD Best Practices and Antipatterns](./behavior-driven-development-bdd/ex-so-de-bdd__17-best-practices-and-antipatterns.md)
+4. **Avoid common pitfalls** - Read [TDD Best Practices](./test-driven-development-tdd/ex-so-de-tedrdeve__18-best-practices.md), [TDD Antipatterns](./test-driven-development-tdd/ex-so-de-tedrdeve__19-antipatterns.md), [BDD Best Practices](./behavior-driven-development-bdd/ex-so-de-bdd__17-best-practices.md), and [BDD Antipatterns](./behavior-driven-development-bdd/ex-so-de-bdd__18-antipatterns.md)
 
 ### For QA Engineers and Business Analysts
 

@@ -775,7 +775,9 @@ Use Nx's affected commands, caching, and project graph to maintain fast BDD feed
   - [11. BDD Frameworks](./ex-so-de-bdd__11-bdd-frameworks.md) - Jest-Cucumber setup
   - [12. Automation Strategies](./ex-so-de-bdd__12-automation-strategies.md) - CI/CD patterns
   - [08. Feature Files and Organization](./ex-so-de-bdd__08-feature-files-and-organization.md) - Feature organization
+  - [17. Best Practices](./ex-so-de-bdd__17-best-practices.md) - BDD best practices
+  - [18. Antipatterns](./ex-so-de-bdd__18-antipatterns.md) - Common BDD mistakes to avoid
 - **Prerequisites**: Understanding of Nx monorepo concepts, BDD scenarios (Gherkin), Jest-Cucumber configuration
-- **Next Steps**: Read [Best Practices and Antipatterns](./ex-so-de-bdd__17-best-practices-and-antipatterns.md) to avoid common BDD mistakes
+- **Next Steps**: Read [Best Practices](./ex-so-de-bdd__17-best-practices.md) and [Antipatterns](./ex-so-de-bdd__18-antipatterns.md) to avoid common BDD mistakes
 - **Last Updated**: 2026-01-20
 - **Status**: Active
