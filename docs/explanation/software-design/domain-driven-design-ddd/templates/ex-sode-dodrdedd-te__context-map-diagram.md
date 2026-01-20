@@ -60,14 +60,14 @@ graph TB
     %% Shared Kernel (use sparingly)
     HC -.->|Shared Kernel| AC
 
-    style ZM fill:#4477AA,stroke:#333,stroke-width:2px,color:#FFFFFF
-    style HC fill:#66CCEE,stroke:#333,stroke-width:2px,color:#000000
-    style AC fill:#228833,stroke:#333,stroke-width:2px,color:#FFFFFF
-    style IAM fill:#CCBB44,stroke:#333,stroke-width:2px,color:#000000
-    style PP fill:#EE6677,stroke:#333,stroke-width:2px,color:#FFFFFF
-    style ERP fill:#AA3377,stroke:#333,stroke-width:2px,color:#FFFFFF
-    style ACL1 fill:#BBBBBB,stroke:#333,stroke-width:1px,color:#000000
-    style ACL2 fill:#BBBBBB,stroke:#333,stroke-width:1px,color:#000000
+    style ZM fill:#0173B2,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style HC fill:#029E73,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style AC fill:#029E73,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style IAM fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000000
+    style PP fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style ERP fill:#CA9161,stroke:#000000,stroke-width:2px,color:#000000
+    style ACL1 fill:#808080,stroke:#000000,stroke-width:1px,color:#000000
+    style ACL2 fill:#808080,stroke:#000000,stroke-width:1px,color:#000000
 
     classDef default fill:#E8E8E8,stroke:#333,stroke-width:1px,color:#000000
 ```
@@ -94,8 +94,8 @@ graph LR
 
     DS -->|depends on| US
 
-    style DS fill:#4477AA,stroke:#333,stroke-width:2px,color:#FFFFFF
-    style US fill:#228833,stroke:#333,stroke-width:2px,color:#FFFFFF
+    style DS fill:#0173B2,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style US fill:#029E73,stroke:#000000,stroke-width:2px,color:#FFFFFF
 ```
 
 **When to Use**:
@@ -117,8 +117,8 @@ graph LR
 
     DS -->|conforms to| US
 
-    style DS fill:#EE6677,stroke:#333,stroke-width:2px,color:#FFFFFF
-    style US fill:#228833,stroke:#333,stroke-width:2px,color:#FFFFFF
+    style DS fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style US fill:#029E73,stroke:#000000,stroke-width:2px,color:#FFFFFF
 ```
 
 **When to Use**:
@@ -142,9 +142,9 @@ graph LR
     DS -->|uses| ACL
     ACL -->|translates| US
 
-    style DS fill:#4477AA,stroke:#333,stroke-width:2px,color:#FFFFFF
-    style ACL fill:#BBBBBB,stroke:#333,stroke-width:2px,color:#000000
-    style US fill:#AA3377,stroke:#333,stroke-width:2px,color:#FFFFFF
+    style DS fill:#0173B2,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style ACL fill:#808080,stroke:#000000,stroke-width:2px,color:#000000
+    style US fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#FFFFFF
 ```
 
 **When to Use**:
@@ -199,10 +199,10 @@ graph TB
     OHS -->|provides API| DS2
     OHS -->|provides API| DS3
 
-    style OHS fill:#228833,stroke:#333,stroke-width:3px,color:#FFFFFF
-    style DS1 fill:#4477AA,stroke:#333,stroke-width:2px,color:#FFFFFF
-    style DS2 fill:#66CCEE,stroke:#333,stroke-width:2px,color:#000000
-    style DS3 fill:#CCBB44,stroke:#333,stroke-width:2px,color:#000000
+    style OHS fill:#029E73,stroke:#000000,stroke-width:3px,color:#FFFFFF
+    style DS1 fill:#0173B2,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style DS2 fill:#029E73,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style DS3 fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000000
 ```
 
 **When to Use**:
@@ -251,9 +251,9 @@ graph LR
     C1 -->|uses| PL
     C2 -->|uses| PL
 
-    style PL fill:#228833,stroke:#333,stroke-width:3px,color:#FFFFFF
-    style C1 fill:#4477AA,stroke:#333,stroke-width:2px,color:#FFFFFF
-    style C2 fill:#66CCEE,stroke:#333,stroke-width:2px,color:#000000
+    style PL fill:#029E73,stroke:#000000,stroke-width:3px,color:#FFFFFF
+    style C1 fill:#0173B2,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style C2 fill:#029E73,stroke:#000000,stroke-width:2px,color:#FFFFFF
 ```
 
 **When to Use**:
@@ -296,9 +296,9 @@ graph TB
     C1 -.->|shares| SK
     C2 -.->|shares| SK
 
-    style SK fill:#CCBB44,stroke:#333,stroke-width:3px,color:#000000
-    style C1 fill:#4477AA,stroke:#333,stroke-width:2px,color:#FFFFFF
-    style C2 fill:#66CCEE,stroke:#333,stroke-width:2px,color:#000000
+    style SK fill:#DE8F05,stroke:#000000,stroke-width:3px,color:#000000
+    style C1 fill:#0173B2,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style C2 fill:#029E73,stroke:#000000,stroke-width:2px,color:#FFFFFF
 ```
 
 **When to Use** (rarely):
@@ -339,8 +339,8 @@ graph LR
 
     C1 <-->|partnership| C2
 
-    style C1 fill:#4477AA,stroke:#333,stroke-width:2px,color:#FFFFFF
-    style C2 fill:#66CCEE,stroke:#333,stroke-width:2px,color:#000000
+    style C1 fill:#0173B2,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style C2 fill:#029E73,stroke:#000000,stroke-width:2px,color:#FFFFFF
 ```
 
 **When to Use**:
@@ -363,8 +363,8 @@ graph TB
     C1
     C2
 
-    style C1 fill:#4477AA,stroke:#333,stroke-width:2px,color:#FFFFFF
-    style C2 fill:#66CCEE,stroke:#333,stroke-width:2px,color:#000000
+    style C1 fill:#0173B2,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style C2 fill:#029E73,stroke:#000000,stroke-width:2px,color:#FFFFFF
 ```
 
 **When to Use**:
@@ -387,8 +387,8 @@ graph TB
 
     C1 -->|ACL recommended| BBM
 
-    style BBM fill:#AA3377,stroke:#333,stroke-width:3px,stroke-dasharray: 5 5,color:#FFFFFF
-    style C1 fill:#4477AA,stroke:#333,stroke-width:2px,color:#FFFFFF
+    style BBM fill:#CA9161,stroke:#000000,stroke-width:3px,stroke-dasharray: 5 5,color:#000000
+    style C1 fill:#0173B2,stroke:#000000,stroke-width:2px,color:#FFFFFF
 ```
 
 **When to Identify**:
@@ -406,23 +406,23 @@ Accessible color palette (color-blind friendly, WCAG AA compliant):
 
 ```typescript
 const ContextColors = {
-  // Primary contexts
-  Blue: "#4477AA", // Dark blue - Core contexts
-  Cyan: "#66CCEE", // Light blue - Supporting contexts
-  Green: "#228833", // Green - Service contexts
-  Yellow: "#CCBB44", // Yellow - Infrastructure contexts
-  Red: "#EE6677", // Red - External integrations
-  Purple: "#AA3377", // Purple - Legacy systems
+  // Primary contexts (white text)
+  Blue: "#0173B2", // Blue - Bounded Contexts, Aggregate Roots, Core Domain
+  Teal: "#029E73", // Teal - Entities, Supporting Subdomains
+  Purple: "#CC78BC", // Purple - External Systems, Context Relationships
 
-  // Utility
-  Gray: "#BBBBBB", // Gray - Translation layers (ACL)
+  // Secondary contexts (black text)
+  Orange: "#DE8F05", // Orange - Value Objects, Domain Events
+  Brown: "#CA9161", // Brown - Legacy Systems, Generic Subdomains
+  Gray: "#808080", // Gray - Supporting Services, Infrastructure, Translation layers (ACL)
 };
 ```
 
 **Text Color Guidelines**:
 
-- Dark backgrounds (Blue, Green, Red, Purple): White text (`color:#FFFFFF`)
-- Light backgrounds (Cyan, Yellow, Gray): Black text (`color:#000000`)
+- Dark backgrounds (Blue, Teal, Purple): White text (`color:#FFFFFF`)
+- Light backgrounds (Orange, Brown, Gray): Black text (`color:#000000`)
+- All diagrams must use black borders: `stroke:#000000,stroke-width:2px` (or `stroke:#000`)
 
 ## Template Usage
 
@@ -465,8 +465,8 @@ graph TB
     C1 -->|relationship type| C2
 
     %% Apply colors
-    style C1 fill:#4477AA,stroke:#333,stroke-width:2px,color:#FFFFFF
-    style C2 fill:#66CCEE,stroke:#333,stroke-width:2px,color:#000000
+    style C1 fill:#0173B2,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style C2 fill:#029E73,stroke:#000000,stroke-width:2px,color:#FFFFFF
 ```
 
 ### Step 4: Document Integration Points
@@ -540,21 +540,21 @@ graph TB
     ZM -->|Customer| ACL5[ACL]
     ACL5 -->|Supplier| GOV
 
-    style ZM fill:#4477AA,stroke:#333,stroke-width:3px,color:#FFFFFF
-    style HC fill:#4477AA,stroke:#333,stroke-width:3px,color:#FFFFFF
-    style IF fill:#4477AA,stroke:#333,stroke-width:3px,color:#FFFFFF
-    style AC fill:#66CCEE,stroke:#333,stroke-width:2px,color:#000000
-    style NF fill:#66CCEE,stroke:#333,stroke-width:2px,color:#000000
-    style RP fill:#66CCEE,stroke:#333,stroke-width:2px,color:#000000
-    style IAM fill:#228833,stroke:#333,stroke-width:2px,color:#FFFFFF
-    style PM fill:#228833,stroke:#333,stroke-width:2px,color:#FFFFFF
-    style BANK fill:#AA3377,stroke:#333,stroke-width:2px,color:#FFFFFF
-    style GOV fill:#AA3377,stroke:#333,stroke-width:2px,color:#FFFFFF
-    style ACL1 fill:#BBBBBB,stroke:#333,stroke-width:1px,color:#000000
-    style ACL2 fill:#BBBBBB,stroke:#333,stroke-width:1px,color:#000000
-    style ACL3 fill:#BBBBBB,stroke:#333,stroke-width:1px,color:#000000
-    style ACL4 fill:#BBBBBB,stroke:#333,stroke-width:1px,color:#000000
-    style ACL5 fill:#BBBBBB,stroke:#333,stroke-width:1px,color:#000000
+    style ZM fill:#0173B2,stroke:#000000,stroke-width:3px,color:#FFFFFF
+    style HC fill:#0173B2,stroke:#000000,stroke-width:3px,color:#FFFFFF
+    style IF fill:#0173B2,stroke:#000000,stroke-width:3px,color:#FFFFFF
+    style AC fill:#029E73,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style NF fill:#029E73,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style RP fill:#029E73,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style IAM fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000000
+    style PM fill:#DE8F05,stroke:#000000,stroke-width:2px,color:#000000
+    style BANK fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style GOV fill:#CC78BC,stroke:#000000,stroke-width:2px,color:#FFFFFF
+    style ACL1 fill:#808080,stroke:#000000,stroke-width:1px,color:#000000
+    style ACL2 fill:#808080,stroke:#000000,stroke-width:1px,color:#000000
+    style ACL3 fill:#808080,stroke:#000000,stroke-width:1px,color:#000000
+    style ACL4 fill:#808080,stroke:#000000,stroke-width:1px,color:#000000
+    style ACL5 fill:#808080,stroke:#000000,stroke-width:1px,color:#000000
 ```
 
 **Key Insights**:

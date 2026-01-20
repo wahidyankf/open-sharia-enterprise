@@ -739,3 +739,88 @@ links:
     usedIn:
       - governance/conventions/formatting/color-accessibility.md
       - governance/conventions/formatting/diagrams.md
+
+# Factual Validations
+# Tracks verification of factual claims in documentation
+# Re-validate every 6 months or when major version releases occur
+factual-validations:
+  - scope: "docs/explanation/software-design/test-driven-development-tdd/"
+    lastValidated: "2026-01-20T18:30:00+07:00"
+    nextValidationDue: "2026-07-20T18:30:00+07:00"
+    validator: "Claude (Sonnet 4.5)"
+    auditReport: "generated-reports/tdd-docs-validation__2026-01-20--18-30__audit.md"
+    summary:
+      totalClaims: 47
+      verified: 43
+      errors: 0
+      outdated: 0
+      unverified: 4
+      verificationRate: "91.5%"
+    keyFindings:
+      - category: "Historical Claims"
+        status: "verified"
+        confidence: "HIGH"
+        details: "All book publications, pattern origins, and framework history verified"
+      - category: "Framework/Library Claims"
+        status: "verified"
+        confidence: "HIGH"
+        details: "Jest, fast-check, TypeScript, Testcontainers, Nx commands all verified"
+      - category: "Code Syntax"
+        status: "verified"
+        confidence: "HIGH"
+        details: "All TypeScript and Jest examples syntactically correct"
+      - category: "Research Statistics"
+        status: "verified"
+        confidence: "HIGH"
+        details: "IBM 2003, Microsoft 2008, NC State studies verified with citations added"
+        citations:
+          - "Williams et al. (2003) - IEEE ISSRE 2003"
+          - "Nagappan et al. (2008) - Empirical Software Engineering Journal"
+      - category: "Islamic Finance Domain Knowledge"
+        status: "unverified"
+        confidence: "N/A"
+        details: "Domain-specific rules (Zakat, Murabaha) require scholarly sources, not technical verification"
+        note: "Scholarly references added to README for context"
+    verificationSources:
+      - type: "official-documentation"
+        urls:
+          - "https://jestjs.io/docs/"
+          - "https://fast-check.dev/"
+          - "https://www.typescriptlang.org/docs/"
+          - "https://nx.dev/docs/"
+          - "https://testcontainers.com/"
+      - type: "academic-publications"
+        urls:
+          - "https://collaboration.csc.ncsu.edu/laurie/Papers/williamsltestDrivenDevelopment.pdf"
+          - "https://www.microsoft.com/en-us/research/wp-content/uploads/2009/10/Realizing-Quality-Improvement-Through-Test-Driven-Development-Results-and-Experiences-of-Four-Industrial-Teams-nagappan_tdd.pdf"
+          - "https://www.researchgate.net/publication/4016736_Assessing_test-driven_development_at_IBM"
+      - type: "books"
+        references:
+          - "Kent Beck - Test Driven Development: By Example (2002)"
+          - "Mike Cohn - Succeeding with Agile (2009)"
+          - "Steve Freeman & Nat Pryce - Growing Object-Oriented Software, Guided by Tests (2009)"
+          - "Michael Feathers - Working Effectively with Legacy Code (2004)"
+          - "Gerard Meszaros - xUnit Test Patterns (2007)"
+      - type: "islamic-finance-scholarly"
+        references:
+          - "El-Gamal, M. A. (2006) - Islamic Finance: Law, Economics, and Practice. Cambridge University Press"
+          - "Nethercott, C., & Eisenberg, D. (2012) - Islamic Finance: Law and Practice. Oxford University Press"
+          - "Hassan, M. K. (Ed.) - Handbook of Islamic Banking. Edward Elgar Publishing"
+          - "Abbasi, T., & Linnenluecke, M. K. (2023) - An Overview of Islamic Accounting: The Murabaha Contract"
+    improvements:
+      - type: "research-citations"
+        status: "completed"
+        date: "2026-01-20"
+        description: "Added peer-reviewed research citations for IBM, Microsoft, NC State studies with DOI/links"
+      - type: "islamic-finance-references"
+        status: "completed"
+        date: "2026-01-20"
+        description: "Added scholarly references from Cambridge, Oxford, and academic journals for Islamic finance concepts"
+      - type: "nx-version-notes"
+        status: "completed"
+        date: "2026-01-20"
+        description: "Added Nx 19+ version compatibility notes and deprecated command warnings"
+      - type: "validation-metadata"
+        status: "completed"
+        date: "2026-01-20"
+        description: "Created this validation metadata tracking file"
