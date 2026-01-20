@@ -303,10 +303,10 @@ All Mermaid diagrams in templates use the [Color Palette](./color-palette.md) en
 
 ### Repository Standards
 
-- **[Diátaxis Framework](../../../../governance/conventions/meta/diataxis-framework.md)** - Documentation organization philosophy
-- **[Diagram Standards](../../../../governance/conventions/formatting/diagrams.md)** - Repository-wide diagram conventions
-- **[Content Quality](../../../../governance/conventions/content/quality.md)** - Markdown content quality standards
-- **[Accessibility First Principle](../../../../governance/principles/content/accessibility-first.md)** - WCAG AA compliance requirements
+- **[Diátaxis Framework](../../../../../governance/conventions/meta/diataxis-framework.md)** - Documentation organization philosophy
+- **[Diagram Standards](../../../../../governance/conventions/formatting/diagrams.md)** - Repository-wide diagram conventions
+- **[Content Quality](../../../../../governance/conventions/content/quality.md)** - Markdown content quality standards
+- **[Accessibility First Principle](../../../../../governance/principles/content/accessibility-first.md)** - WCAG AA compliance requirements
 
 ---
 
@@ -367,5 +367,5 @@ If you identify a missing DDD artifact template:
 ### OSE Platform Resources
 
 - [OSE Platform Documentation](https://oseplatform.com/docs) - Platform-specific DDD examples
-- [Repository Architecture](../../../../governance/repository-governance-architecture.md) - Six-layer governance hierarchy
+- [Repository Architecture](../../../../../governance/repository-governance-architecture.md) - Six-layer governance hierarchy
 - [AyoKoding DDD Tutorials](https://ayokoding.com/tutorials/domain-driven-design) - Indonesian/English DDD learning resources

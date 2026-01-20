@@ -570,4 +570,4 @@ graph TB
 - [Strategic Design](../ex-ddd__03-bounded-contexts.md) - Bounded contexts and context mapping concepts
 - [Bounded Context Canvas](./bounded-context-canvas.md) - Document individual context details
 - [Ubiquitous Language Glossary](./ubiquitous-language-glossary.md) - Track domain terminology per context
-- [Accessible Diagrams Convention](../../../../governance/conventions/formatting/diagrams.md) - Color palette standards
+- [Accessible Diagrams Convention](../../../../../governance/conventions/formatting/diagrams.md) - Color palette standards

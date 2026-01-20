@@ -238,7 +238,7 @@ style GoodNode fill:#0173B2,stroke:#000000,color:#ffffff
 
 ## Related Documentation
 
-- **[Repository Diagram Convention](../../../../governance/conventions/formatting/diagrams.md)** - Full accessibility requirements
+- **[Repository Diagram Convention](../../../../../governance/conventions/formatting/diagrams.md)** - Full accessibility requirements
 - **[C4 Model Overview](../README.md)** - Introduction to C4 architecture model
 - **[Best Practices](../ex-c4armo__09-best-practices.md)** - When to use C4, common mistakes
 - **[Template README](./README.md)** - How to use diagram templates

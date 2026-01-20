@@ -311,7 +311,7 @@ See [DDD and C4 Integration](./ex-ddd__17-ddd-and-c4-integration.md) for detaile
 
 ### Functional Programming Principles
 
-**[Functional Programming Principles](../../../governance/development/pattern/functional-programming.md)**
+**[Functional Programming Principles](../../../../governance/development/pattern/functional-programming.md)**
 
 - **Immutability** aligns with Value Objects and Entity snapshots
 - **Pure Functions** express domain logic without side effects
@@ -322,7 +322,7 @@ See [DDD and Functional Programming](./ex-ddd__14-ddd-and-functional-programming
 
 ### Repository Governance
 
-**[Repository Governance Architecture](../../../governance/repository-governance-architecture.md)**
+**[Repository Governance Architecture](../../../../governance/repository-governance-architecture.md)**
 
 - **Layer 0: Vision** - DDD supports democratizing Sharia-compliant enterprise systems
 - **Layer 1: Principles** - Simplicity, explicitness, automation align with DDD philosophy
@@ -331,7 +331,7 @@ See [DDD and Functional Programming](./ex-ddd__14-ddd-and-functional-programming
 
 ### Nx Monorepo Architecture
 
-**[Monorepo Structure](../../reference/re__monorepo-structure.md)**
+**[Monorepo Structure](../../../reference/re__monorepo-structure.md)**
 
 - **`apps/`** - Each app can be one or more bounded contexts
 - **`libs/`** - Shared kernel components, domain primitives, infrastructure
@@ -479,9 +479,9 @@ Ready to apply DDD to your project? Follow this checklist:
 ### Related Open Sharia Enterprise Documentation
 
 - [C4 Architecture Model](../c4-architecture-model/README.md) - Visual architecture documentation
-- [Functional Programming Principles](../../../governance/development/pattern/functional-programming.md) - FP alignment with DDD
-- [Repository Governance Architecture](../../../governance/repository-governance-architecture.md) - Six-layer hierarchy
-- [Monorepo Structure](../../reference/re__monorepo-structure.md) - Nx workspace organization
+- [Functional Programming Principles](../../../../governance/development/pattern/functional-programming.md) - FP alignment with DDD
+- [Repository Governance Architecture](../../../../governance/repository-governance-architecture.md) - Six-layer hierarchy
+- [Monorepo Structure](../../../reference/re__monorepo-structure.md) - Nx workspace organization
 
 ## Contributing
 
@@ -493,7 +493,7 @@ This documentation evolves as we apply DDD to the Open Sharia Enterprise platfor
 - **Templates**: New templates for DDD practices
 - **Cross-references**: Links to related governance and development docs
 
-See [Repository Governance Architecture](../../../governance/repository-governance-architecture.md) for contribution guidelines.
+See [Repository Governance Architecture](../../../../governance/repository-governance-architecture.md) for contribution guidelines.
 
 ## Document Metadata
 
@@ -504,5 +504,5 @@ See [Repository Governance Architecture](../../../governance/repository-governan
 - **Status**: Active
 - **Related Documentation**:
   - [C4 Architecture Model](../c4-architecture-model/README.md)
-  - [Functional Programming Principles](../../../governance/development/pattern/functional-programming.md)
-  - [Repository Governance Architecture](../../../governance/repository-governance-architecture.md)
+  - [Functional Programming Principles](../../../../governance/development/pattern/functional-programming.md)
+  - [Repository Governance Architecture](../../../../governance/repository-governance-architecture.md)

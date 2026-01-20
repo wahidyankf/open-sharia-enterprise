@@ -57,10 +57,10 @@ The repository follows a **six-layer governance architecture** (Vision → Princ
 - **[Rules](./README.md)** - All governance layers (Vision, Principles, Conventions, Development, Workflows)
 - **[Repository Governance Architecture](../../governance/repository-governance-architecture.md)** - Comprehensive architecture deep-dive
 
-### Project Architecture
+### Software Architecture
 
-- **[C4 Architecture Model](./c4-architecture-model/README.md)** - Visualizing software architecture through hierarchical abstraction levels
-- **[Domain-Driven Design (DDD)](./domain-driven-design-ddd/README.md)** - Strategic and tactical patterns for modeling complex business domains
+- **[C4 Architecture Model](./software-architecture/c4-architecture-model/README.md)** - Visualizing software architecture through hierarchical abstraction levels
+- **[Domain-Driven Design (DDD)](./software-architecture/domain-driven-design-ddd/README.md)** - Strategic and tactical patterns for modeling complex business domains
 
 ### Domain Concepts
 

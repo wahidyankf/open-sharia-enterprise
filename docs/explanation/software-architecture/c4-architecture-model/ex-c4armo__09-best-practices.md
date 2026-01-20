@@ -2330,7 +2330,7 @@ The Open Sharia Enterprise platform uses C4 model for architecture documentation
 
 **Tool**: Mermaid diagrams (text-based, version-controlled)
 
-**Color Palette**: WCAG-compliant, color-blind friendly palette from [governance/conventions/formatting/diagrams.md](../../../governance/conventions/formatting/diagrams.md)
+**Color Palette**: WCAG-compliant, color-blind friendly palette from [governance/conventions/formatting/diagrams.md](../../../../governance/conventions/formatting/diagrams.md)
 
 **Accessibility**: All diagrams include proper legends and contrast ratios meeting WCAG AA standards
 
