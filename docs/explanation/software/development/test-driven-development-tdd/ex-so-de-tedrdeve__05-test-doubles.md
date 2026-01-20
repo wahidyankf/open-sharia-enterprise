@@ -929,7 +929,7 @@ it("should calculate zakat faster on second call (cached)", async () => {
 - **[04. Unit Testing Fundamentals](./ex-so-de-tedrdeve__04-unit-testing-fundamentals.md)** - Test structure and isolation principles
 - **[06. Testing Patterns](./ex-so-de-tedrdeve__06-testing-patterns.md)** - AAA, Given-When-Then, table-driven tests
 - **[09. Integration Testing](./ex-so-de-tedrdeve__09-integration-testing.md)** - When to use real dependencies vs test doubles
-- **[15. Testing Anti-Patterns](./ex-so-de-tedrdeve__15-testing-anti-patterns.md)** - Common mistakes with test doubles
+- **[15. Best Practices and Antipatterns](./ex-so-de-tedrdeve__18-best-practices-and-antipatterns.md)** - Common mistakes with test doubles
 
 ## Summary
 

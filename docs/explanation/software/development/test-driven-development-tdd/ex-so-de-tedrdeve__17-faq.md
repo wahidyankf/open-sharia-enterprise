@@ -5,7 +5,7 @@
 - **Parent Topic**: [Test-Driven Development (TDD)](./README.md)
 - **Related Files**:
   - [Core Concepts](./ex-so-de-tedrdeve__01-introduction-and-philosophy.md)
-  - [Decision Trees and Best Practices](./ex-so-de-tedrdeve__16-decision-trees-and-best-practices.md)
+  - [Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md)
 
 - **Prerequisites**: Basic understanding of TDD
 - **Complexity**: Beginner to Advanced
@@ -1458,7 +1458,7 @@ describe("ModernZakatCalculator", () => {
 **Next Steps**:
 
 - Review [Templates](./templates/) for standardized test structures
-- Explore [Decision Trees and Best Practices](./ex-so-de-tedrdeve__16-decision-trees-and-best-practices.md)
+- Explore [Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md)
 
 **Related Resources**:
 

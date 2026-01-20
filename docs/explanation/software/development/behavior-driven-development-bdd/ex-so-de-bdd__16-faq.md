@@ -6,7 +6,7 @@
 - **Related Files**:
   - [Core Concepts](./ex-so-de-bdd__01-introduction-and-philosophy.md)
   - [Three Amigos Practice](./ex-so-de-bdd__04-three-amigos-practice.md)
-  - [Anti-patterns and Pitfalls](./ex-so-de-bdd__16-anti-patterns-and-pitfalls.md)
+  - [Best Practices and Antipatterns](./ex-so-de-bdd__17-best-practices-and-antipatterns.md)
 - **Prerequisites**: Basic understanding of BDD
 - **Complexity**: Beginner to Advanced
 
@@ -2436,7 +2436,7 @@ Team sees value of BDD, ready for second feature
 
 - Explore [Templates](./templates/) for ready-to-use scenario structures
 - Review [Three Amigos Practice](./ex-so-de-bdd__04-three-amigos-practice.md) for collaboration techniques
-- Study [Anti-patterns and Pitfalls](./ex-so-de-bdd__16-anti-patterns-and-pitfalls.md) to avoid common mistakes
+- Study [Best Practices and Antipatterns](./ex-so-de-bdd__17-best-practices-and-antipatterns.md) to avoid common mistakes
 
 **Related Resources**:
 
@@ -2457,7 +2457,7 @@ Team sees value of BDD, ready for second feature
   - [04. Three Amigos Practice](./ex-so-de-bdd__04-three-amigos-practice.md) - Collaborative sessions
   - [05. Example Mapping](./ex-so-de-bdd__05-example-mapping.md) - Visual discovery workshops
   - [13. BDD and TDD](./ex-so-de-bdd__13-bdd-and-tdd.md) - Complementary practices
-  - [16. Anti-patterns and Pitfalls](./ex-so-de-bdd__16-anti-patterns-and-pitfalls.md) - Common mistakes to avoid
+  - [16. Best Practices and Antipatterns](./ex-so-de-bdd__17-best-practices-and-antipatterns.md) - Common mistakes to avoid
   - [Templates Directory](./templates/) - Practical BDD templates
 - **Prerequisites**: Basic understanding of BDD concepts from earlier files
 - **Next Steps**: Review templates and start applying BDD to your project
