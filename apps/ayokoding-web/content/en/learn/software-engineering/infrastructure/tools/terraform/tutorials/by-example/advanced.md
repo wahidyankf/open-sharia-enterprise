@@ -1365,14 +1365,14 @@ module "app" {
 
 **Decision matrix**:
 
-| Criterion | Workspaces | Directory Structure |
-|-----------|------------|---------------------|
-| AWS Account Isolation | ❌ Shared account | ✅ Separate accounts |
-| State Separation | ⚠️ Same backend | ✅ Different backends |
-| Access Control | ❌ Same IAM role | ✅ Different IAM roles |
-| CI/CD Complexity | ✅ Single pipeline | ⚠️ Multiple pipelines |
-| Configuration Drift | ⚠️ Shared vars | ✅ Independent configs |
-| Blast Radius | ❌ High (shared) | ✅ Low (isolated) |
+| Criterion             | Workspaces         | Directory Structure    |
+| --------------------- | ------------------ | ---------------------- |
+| AWS Account Isolation | ❌ Shared account  | ✅ Separate accounts   |
+| State Separation      | ⚠️ Same backend    | ✅ Different backends  |
+| Access Control        | ❌ Same IAM role   | ✅ Different IAM roles |
+| CI/CD Complexity      | ✅ Single pipeline | ⚠️ Multiple pipelines  |
+| Configuration Drift   | ⚠️ Shared vars     | ✅ Independent configs |
+| Blast Radius          | ❌ High (shared)   | ✅ Low (isolated)      |
 
 **Key Takeaway**: Use workspaces for similar environments (dev/staging) in same AWS account with identical IAM roles. Use directory structure for production isolation where different AWS accounts, IAM roles, state backends, and compliance requirements exist. Directory structure provides stronger isolation but requires more files. Workspaces reduce duplication but share backend and IAM credentials.
 
@@ -2150,7 +2150,7 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
-      id-token: write  # Required for OIDC
+      id-token: write # Required for OIDC
       contents: read
     steps:
       - uses: actions/checkout@v3
@@ -2271,8 +2271,8 @@ resource "local_file" "managed" {
 name: Drift Detection
 on:
   schedule:
-    - cron: '0 */6 * * *'  # Every 6 hours
-  workflow_dispatch:       # Manual trigger
+    - cron: "0 */6 * * *" # Every 6 hours
+  workflow_dispatch: # Manual trigger
 
 jobs:
   detect-drift:
@@ -2372,17 +2372,17 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - 'terraform/**'
-      - '.github/workflows/terraform.yml'
+      - "terraform/**"
+      - ".github/workflows/terraform.yml"
   push:
     branches: [main]
     paths:
-      - 'terraform/**'
+      - "terraform/**"
 
 permissions:
-  id-token: write    # Required for OIDC
+  id-token: write # Required for OIDC
   contents: read
-  pull-requests: write  # Comment on PRs
+  pull-requests: write # Comment on PRs
 
 env:
   TF_VERSION: 1.6.0
@@ -4055,7 +4055,7 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.0'
+          ruby-version: "3.0"
           bundler-cache: true
 
       - uses: hashicorp/setup-terraform@v2

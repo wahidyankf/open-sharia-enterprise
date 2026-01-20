@@ -1961,7 +1961,7 @@ WHERE e.user_id IS NULL;
 
 **Key Takeaway**: Avoid functions in WHERE (prevents index usage). Select only needed columns. Use range conditions instead of functions. Create composite indexes for WHERE + ORDER BY. Use LIMIT for early termination. Replace NOT IN with LEFT JOIN for better performance.
 
-**Why It Matters**: These patterns are the difference between a query that times out and one that returns instantly. Each anti-pattern (function in WHERE, SELECT *, NOT IN with NULLs) appears innocent but causes full table scans. Knowing these transforms debugging slow queries from guesswork to methodical optimization.
+**Why It Matters**: These patterns are the difference between a query that times out and one that returns instantly. Each anti-pattern (function in WHERE, SELECT \*, NOT IN with NULLs) appears innocent but causes full table scans. Knowing these transforms debugging slow queries from guesswork to methodical optimization.
 
 ### Example 55: Transaction Performance
 

@@ -7,7 +7,7 @@ tags:
   - explanation
   - concepts
 created: 2025-11-22
-updated: 2026-01-04
+updated: 2026-01-20
 ---
 
 # Explanation
@@ -59,7 +59,8 @@ The repository follows a **six-layer governance architecture** (Vision → Princ
 
 ### Project Architecture
 
-_Documentation for overall system architecture and design decisions to be added as the project evolves._
+- **[C4 Architecture Model](./c4-architecture-model/README.md)** - Visualizing software architecture through hierarchical abstraction levels
+- **[Domain-Driven Design (DDD)](./domain-driven-design-ddd/README.md)** - Strategic and tactical patterns for modeling complex business domains
 
 ### Domain Concepts
 
@@ -71,4 +72,4 @@ _Documentation for key technologies, patterns, and frameworks to be added as the
 
 ---
 
-**Last Updated**: 2026-01-04
+**Last Updated**: 2026-01-20
