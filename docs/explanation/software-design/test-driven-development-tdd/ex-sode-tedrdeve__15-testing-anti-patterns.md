@@ -325,8 +325,8 @@ Common testing anti-patterns and fixes:
 
 **Islamic Finance Anti-Patterns:**
 
-7. **Hardcoded Values**: Extract Shariah constants to shared utilities
-8. **Missing Edge Cases**: Test boundaries, zero, negatives
+1. **Hardcoded Values**: Extract Shariah constants to shared utilities
+2. **Missing Edge Cases**: Test boundaries, zero, negatives
 
 **Best Practices:**
 
