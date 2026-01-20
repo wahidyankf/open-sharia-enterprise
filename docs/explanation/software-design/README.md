@@ -1,11 +1,11 @@
 ---
-title: Software Architecture
-description: Comprehensive documentation on software architecture patterns, models, and practices for designing scalable, maintainable systems
+title: Software Design
+description: Comprehensive documentation on software design patterns, architectural models, and practices for building scalable, maintainable systems
 category: explanation
-subcategory: architecture
+subcategory: design
 tags:
-  - architecture
   - software-design
+  - architecture
   - c4-model
   - domain-driven-design
   - patterns
@@ -14,22 +14,22 @@ created: 2026-01-20
 updated: 2026-01-20
 ---
 
-# Software Architecture
+# Software Design
 
-**Understanding-oriented documentation** on software architecture patterns, visualization models, and design practices for building complex enterprise systems.
+**Understanding-oriented documentation** on software design patterns, architectural models, and design practices for building complex enterprise systems.
 
-## What is Software Architecture?
+## What is Software Design?
 
-Software architecture represents the fundamental structures of a software system—the building blocks, their relationships, and the principles governing their design and evolution. Good architecture documentation helps teams:
+Software design encompasses the fundamental structures of a software system—the building blocks, their relationships, and the principles governing their design and evolution. Good design documentation helps teams:
 
 - **Communicate design decisions** across technical and non-technical stakeholders
 - **Manage complexity** through clear boundaries and abstractions
 - **Guide implementation** while maintaining design consistency
 - **Evolve systems** systematically as requirements change
 
-This section covers two complementary approaches to software architecture:
+This section covers two complementary approaches to software design:
 
-1. **C4 Architecture Model** - How to visualize and communicate architecture through hierarchical diagrams
+1. **C4 Architecture Model** - How to visualize and communicate design through hierarchical diagrams
 2. **Domain-Driven Design (DDD)** - How to design systems that reflect complex business domains
 
 ## Documentation Overview
@@ -104,13 +104,13 @@ C4 and DDD complement each other throughout the design process:
 
 See [DDD and C4 Integration](./domain-driven-design-ddd/ex-ddd__17-ddd-and-c4-integration.md) for comprehensive examples.
 
-## Architecture in This Repository
+## Design in This Repository
 
 The open-sharia-enterprise project applies both C4 and DDD principles:
 
 **C4 Model Usage:**
 
-- All architecture diagrams use C4 conventions
+- All design diagrams use C4 conventions
 - WCAG AA-compliant color palette for accessibility
 - Mermaid diagrams for version-controlled documentation
 - Multiple abstraction levels for different audiences
