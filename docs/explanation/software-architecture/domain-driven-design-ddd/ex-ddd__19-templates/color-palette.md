@@ -257,8 +257,8 @@ graph TD
 
 ## Related Documentation
 
-- [Diagram Standards](../../../../governance/conventions/formatting/diagrams.md) - Repository-wide diagram conventions
-- [Accessibility First Principle](../../../../governance/principles/content/accessibility-first.md) - WCAG AA compliance requirements
+- [Diagram Standards](../../../../../governance/conventions/formatting/diagrams.md) - Repository-wide diagram conventions
+- [Accessibility First Principle](../../../../../governance/principles/content/accessibility-first.md) - WCAG AA compliance requirements
 - [C4 Color Palette](../../c4-architecture-model/ex-c4armo__14-templates/color-palette.md) - C4 diagram colors (same palette)
 
 ## Tools for Verification

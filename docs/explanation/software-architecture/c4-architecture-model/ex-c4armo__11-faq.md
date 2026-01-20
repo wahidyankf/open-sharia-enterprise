@@ -330,18 +330,18 @@ That's it. Two diagrams. This covers 80% of what stakeholders need.
 
 - [System Architecture Reference](../../reference/re__system-architecture.md) - C4 diagrams for OSE platform
 - [Monorepo Structure Reference](../../reference/re__monorepo-structure.md) - Nx workspace architecture
-- [Repository Governance Architecture](../../../governance/repository-governance-architecture.md) - Six-layer governance
+- [Repository Governance Architecture](../../../../governance/repository-governance-architecture.md) - Six-layer governance
 
 **Documentation Standards**:
 
-- [Diátaxis Framework](../../../governance/conventions/meta/diataxis-framework.md) - Documentation organization
-- [Diagrams Convention](../../../governance/conventions/formatting/diagrams.md) - Mermaid diagram standards
+- [Diátaxis Framework](../../../../governance/conventions/meta/diataxis-framework.md) - Documentation organization
+- [Diagrams Convention](../../../../governance/conventions/formatting/diagrams.md) - Mermaid diagram standards
 - [Accessible Diagrams Skill](../../../.claude/skills/docs-creating-accessible-diagrams/SKILL.md) - WCAG-compliant color palette
 
 **Development Practices**:
 
-- [Simplicity Over Complexity Principle](../../../governance/principles/general/simplicity-over-complexity.md) - Why C4 model fits our values
-- [Explicit Over Implicit Principle](../../../governance/principles/software-engineering/explicit-over-implicit.md) - Clear architecture documentation
+- [Simplicity Over Complexity Principle](../../../../governance/principles/general/simplicity-over-complexity.md) - Why C4 model fits our values
+- [Explicit Over Implicit Principle](../../../../governance/principles/software-engineering/explicit-over-implicit.md) - Clear architecture documentation
 
 ## Sources
 

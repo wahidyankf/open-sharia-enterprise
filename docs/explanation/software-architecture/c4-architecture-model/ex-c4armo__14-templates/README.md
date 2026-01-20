@@ -138,7 +138,7 @@ Templates use the following placeholder conventions:
 - **[Level 3: Component](../ex-c4armo__03-level-3-component.md)** - Component diagram guide
 - **[Supplementary Diagrams](../ex-c4armo__07-supplementary-diagrams.md)** - Dynamic and Deployment diagrams
 - **[Best Practices](../ex-c4armo__09-best-practices.md)** - When to use C4, common mistakes, tooling
-- **[Repository Diagram Convention](../../../../governance/conventions/formatting/diagrams.md)** - Accessibility requirements
+- **[Repository Diagram Convention](../../../../../governance/conventions/formatting/diagrams.md)** - Accessibility requirements
 
 ## Feedback and Improvements
 

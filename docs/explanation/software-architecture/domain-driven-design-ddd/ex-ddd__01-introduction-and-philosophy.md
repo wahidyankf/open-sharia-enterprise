@@ -316,7 +316,7 @@ DDD concepts complement other architectural approaches in this repository:
   - Aggregates map to C4 Components
   - See [DDD and C4 Integration](./ex-ddd__17-ddd-and-c4-integration.md)
 
-- **[Functional Programming Principles](../../../governance/development/pattern/functional-programming.md)**: FP and DDD align on immutability and explicit data flow
+- **[Functional Programming Principles](../../../../governance/development/pattern/functional-programming.md)**: FP and DDD align on immutability and explicit data flow
   - See [DDD and Functional Programming](./ex-ddd__14-ddd-and-functional-programming.md)
 
 - **[Layered Architecture](./ex-ddd__15-layered-architecture.md)**: DDD's domain layer fits into broader architectural patterns

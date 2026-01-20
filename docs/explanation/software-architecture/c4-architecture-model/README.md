@@ -189,7 +189,7 @@ Choose your path based on available time and learning goals:
 
 1. **Notation Standards**:
    - Read **[Notation and Conventions](./ex-c4armo__08-notation-and-conventions.md)** - Labeling, colors, shapes
-   - Review **[Repository Diagram Convention](../../../governance/conventions/formatting/diagrams.md)** - Accessibility requirements
+   - Review **[Repository Diagram Convention](../../../../governance/conventions/formatting/diagrams.md)** - Accessibility requirements
 2. **Create Production Diagrams**:
    - **Context Diagram**: Include all external systems and users
    - **Container Diagram**: Show all deployable units with technology stacks
@@ -260,7 +260,7 @@ Choose documentation based on your system characteristics:
 - **Mermaid Users**:
   - See: [Best Practices: Standard Mermaid vs. Experimental C4 Syntax](./ex-c4armo__09-best-practices.md#standard-mermaid-vs-experimental-c4-syntax)
   - Use: `graph TB` syntax with WCAG color palette
-  - Check: [Repository Diagram Convention](../../../governance/conventions/formatting/diagrams.md)
+  - Check: [Repository Diagram Convention](../../../../governance/conventions/formatting/diagrams.md)
 - **Structurizr Users**:
   - See: [Best Practices: Tooling Philosophy](./ex-c4armo__09-best-practices.md#tooling-philosophy-modeling-vs-diagramming)
   - Benefit: Model-first approach, automatic layout
@@ -272,4 +272,4 @@ Choose documentation based on your system characteristics:
 
 - **Repository Context**: [C4 Model in This Repository](./ex-c4armo__09-best-practices.md#c4-model-in-this-repository)
 - **Further Learning**: [External Resources](./ex-c4armo__11-faq.md#further-learning)
-- **Conventions**: [Diagram and Schema Convention](../../../governance/conventions/formatting/diagrams.md)
+- **Conventions**: [Diagram and Schema Convention](../../../../governance/conventions/formatting/diagrams.md)
