@@ -62,7 +62,7 @@ The C4 FAQ uses "600 components rather than 6" as a hypothetical example of comp
 
 **Readability test**:
 
-- Can someone understand this diagram in 30 seconds?
+- Can someone quickly understand this diagram?
 - Can you print this diagram on A4/Letter paper and read it?
 - Can you present this diagram in a meeting without zooming?
 
@@ -194,7 +194,7 @@ Result: 3 Docker containers, 4 C4 containers.
 - "Order Service - Handles order creation, payment processing, and fulfillment coordination"
 - "Order Database - Stores order history, line items, and payment transactions"
 
-**Rule**: If you can't read the description in 2 seconds, it's too long.
+**Rule**: If you can't quickly scan the description, it's too long.
 
 **Q: Should I include external libraries in Component diagrams?**
 
@@ -272,12 +272,12 @@ Show internal structure:
 
 **A**: Create only what adds value; don't aim for perfection.
 
-**Minimum viable C4 documentation** (30 minutes):
+**Minimum viable C4 documentation**:
 
-1. **System Context diagram** (10 minutes): Whiteboard sketch showing system, users, external systems
-2. **Container diagram** (20 minutes): List all deployable units with technology choices
+1. **System Context diagram**: Whiteboard sketch showing system, users, external systems
+2. **Container diagram**: List all deployable units with technology choices
 
-That's it. Two diagrams, 30 minutes. This covers 80% of what stakeholders need.
+That's it. Two diagrams. This covers 80% of what stakeholders need.
 
 **Don't create**:
 
