@@ -21,7 +21,7 @@ Domain-Driven Design (DDD) is a software development approach that places the bu
 - Long-lived systems expected to evolve over years
 - High cost of defects or regulatory compliance requirements
 
-See [Introduction and Philosophy](./ex-ddd__01-introduction-and-philosophy.md) for a comprehensive overview.
+See [Introduction and Philosophy](./ex-sode-dodrdedd__01-introduction-and-philosophy.md) for a comprehensive overview.
 
 ## Documentation Structure
 
@@ -29,51 +29,51 @@ This documentation is organized into strategic design (understanding the busines
 
 ### Foundation
 
-- **[01. Introduction and Philosophy](./ex-ddd__01-introduction-and-philosophy.md)** - Overview, history, when to use DDD, decision matrix
-- **[02. Ubiquitous Language](./ex-ddd__02-ubiquitous-language.md)** - Creating shared vocabulary with domain experts
+- **[01. Introduction and Philosophy](./ex-sode-dodrdedd__01-introduction-and-philosophy.md)** - Overview, history, when to use DDD, decision matrix
+- **[02. Ubiquitous Language](./ex-sode-dodrdedd__02-ubiquitous-language.md)** - Creating shared vocabulary with domain experts
 - **[README (this file)]** - Navigation and learning paths
 
 ### Strategic Design
 
 Strategic patterns focus on understanding the business domain and defining boundaries:
 
-- **[03. Bounded Contexts](./ex-ddd__03-bounded-contexts.md)** - Defining clear boundaries around domain models
-- **[04. Context Mapping](./ex-ddd__04-context-mapping.md)** - 9 patterns for integrating bounded contexts
-- **[05. Subdomains](./ex-ddd__05-subdomains.md)** - Core, Supporting, and Generic subdomains
-- **[06. Strategic Design Process](./ex-ddd__06-strategic-design-process.md)** - Event Storming and Bounded Context Canvas workshops
+- **[03. Bounded Contexts](./ex-sode-dodrdedd__03-bounded-contexts.md)** - Defining clear boundaries around domain models
+- **[04. Context Mapping](./ex-sode-dodrdedd__04-context-mapping.md)** - 9 patterns for integrating bounded contexts
+- **[05. Subdomains](./ex-sode-dodrdedd__05-subdomains.md)** - Core, Supporting, and Generic subdomains
+- **[06. Strategic Design Process](./ex-sode-dodrdedd__06-strategic-design-process.md)** - Event Storming and Bounded Context Canvas workshops
 
 ### Tactical Design
 
 Tactical patterns are building blocks for implementing domain models:
 
-- **[07. Entities](./ex-ddd__07-entities.md)** - Objects with identity and lifecycle
-- **[08. Value Objects](./ex-ddd__08-value-objects.md)** - Immutable objects with structural equality
-- **[09. Aggregates](./ex-ddd__09-aggregates.md)** - Consistency boundaries and transactional units ⭐ **Most Important**
-- **[10. Repositories](./ex-ddd__10-repositories.md)** - Persistence abstraction for aggregates
-- **[11. Domain Services](./ex-ddd__11-domain-services.md)** - Stateless operations on domain objects
-- **[12. Domain Events](./ex-ddd__12-domain-events.md)** - Capturing business occurrences
-- **[13. Factories](./ex-ddd__13-factories.md)** - Complex object construction
+- **[07. Entities](./ex-sode-dodrdedd__07-entities.md)** - Objects with identity and lifecycle
+- **[08. Value Objects](./ex-sode-dodrdedd__08-value-objects.md)** - Immutable objects with structural equality
+- **[09. Aggregates](./ex-sode-dodrdedd__09-aggregates.md)** - Consistency boundaries and transactional units ⭐ **Most Important**
+- **[10. Repositories](./ex-sode-dodrdedd__10-repositories.md)** - Persistence abstraction for aggregates
+- **[11. Domain Services](./ex-sode-dodrdedd__11-domain-services.md)** - Stateless operations on domain objects
+- **[12. Domain Events](./ex-sode-dodrdedd__12-domain-events.md)** - Capturing business occurrences
+- **[13. Factories](./ex-sode-dodrdedd__13-factories.md)** - Complex object construction
 
 ### Advanced Topics
 
 Integration with programming paradigms and architectures:
 
-- **[14. DDD and Functional Programming](./ex-ddd__14-ddd-and-functional-programming.md)** - Adapting DDD to FP paradigm
-- **[15. Layered Architecture](./ex-ddd__15-layered-architecture.md)** - Domain layer in broader architecture
-- **[16. Decision Trees and Best Practices](./ex-ddd__16-decision-trees-and-best-practices.md)** - Practical guidance and common pitfalls
-- **[17. DDD and C4 Integration](./ex-ddd__17-ddd-and-c4-integration.md)** - Mapping DDD to C4 architecture diagrams
-- **[18. FAQ](./ex-ddd__18-faq.md)** - Common questions and misconceptions
+- **[14. DDD and Functional Programming](./ex-sode-dodrdedd__14-ddd-and-functional-programming.md)** - Adapting DDD to FP paradigm
+- **[15. Layered Architecture](./ex-sode-dodrdedd__15-layered-architecture.md)** - Domain layer in broader architecture
+- **[16. Decision Trees and Best Practices](./ex-sode-dodrdedd__16-decision-trees-and-best-practices.md)** - Practical guidance and common pitfalls
+- **[17. DDD and C4 Integration](./ex-sode-dodrdedd__17-ddd-and-c4-integration.md)** - Mapping DDD to C4 architecture diagrams
+- **[18. FAQ](./ex-sode-dodrdedd__18-faq.md)** - Common questions and misconceptions
 
 ### Templates
 
 Reusable templates for applying DDD patterns:
 
-- **[19. Templates Directory](./ex-ddd__19-templates/)** - Practical templates for DDD artifacts:
-  - **[Bounded Context Canvas](./ex-ddd__19-templates/bounded-context-canvas.md)** - Document context details
-  - **[Context Map Diagram](./ex-ddd__19-templates/context-map-diagram.md)** - Visualize context relationships
-  - **[Ubiquitous Language Glossary](./ex-ddd__19-templates/ubiquitous-language-glossary.md)** - Track domain terminology
-  - **[Aggregate Design Template](./ex-ddd__19-templates/aggregate-design-template.md)** - Structure aggregate documentation
-  - **[Domain Event Catalog](./ex-ddd__19-templates/domain-event-catalog.md)** - Document domain events
+- **[19. Templates Directory](./templates/)** - Practical templates for DDD artifacts:
+  - **[Bounded Context Canvas](./templates/ex-sode-dodrdedd-te__bounded-context-canvas.md)** - Document context details
+  - **[Context Map Diagram](./templates/ex-sode-dodrdedd-te__context-map-diagram.md)** - Visualize context relationships
+  - **[Ubiquitous Language Glossary](./templates/ex-sode-dodrdedd-te__ubiquitous-language-glossary.md)** - Track domain terminology
+  - **[Aggregate Design Template](./templates/ex-sode-dodrdedd-te__aggregate-design-template.md)** - Structure aggregate documentation
+  - **[Domain Event Catalog](./templates/ex-sode-dodrdedd-te__domain-event-catalog.md)** - Document domain events
 
 ## Learning Paths
 
@@ -85,8 +85,8 @@ Choose a learning path based on your goals and available time.
 
 **Path**:
 
-1. Read [Introduction and Philosophy - Decision Matrix](./ex-ddd__01-introduction-and-philosophy.md#decision-matrix) (3 minutes)
-2. Review [When to Use DDD](./ex-ddd__01-introduction-and-philosophy.md#when-to-use-domain-driven-design) (2 minutes)
+1. Read [Introduction and Philosophy - Decision Matrix](./ex-sode-dodrdedd__01-introduction-and-philosophy.md#decision-matrix) (3 minutes)
+2. Review [When to Use DDD](./ex-sode-dodrdedd__01-introduction-and-philosophy.md#when-to-use-domain-driven-design) (2 minutes)
 
 **Outcome**: Clear yes/no decision on adopting DDD with quantitative scoring.
 
@@ -97,16 +97,16 @@ Choose a learning path based on your goals and available time.
 **Path**:
 
 1. **Strategic Foundation** (10 minutes)
-   - [Ubiquitous Language](./ex-ddd__02-ubiquitous-language.md) - Create shared vocabulary (5 min)
-   - [Bounded Contexts](./ex-ddd__03-bounded-contexts.md#defining-bounded-contexts) - Define boundaries (5 min)
+   - [Ubiquitous Language](./ex-sode-dodrdedd__02-ubiquitous-language.md) - Create shared vocabulary (5 min)
+   - [Bounded Contexts](./ex-sode-dodrdedd__03-bounded-contexts.md#defining-bounded-contexts) - Define boundaries (5 min)
 
 2. **Tactical Basics** (15 minutes)
-   - [Aggregates](./ex-ddd__09-aggregates.md#what-is-an-aggregate) - Understand consistency boundaries (7 min)
-   - [Value Objects](./ex-ddd__08-value-objects.md#what-is-a-value-object) - Immutable domain primitives (5 min)
-   - [Entities](./ex-ddd__07-entities.md#what-is-an-entity) - Identity and lifecycle (3 min)
+   - [Aggregates](./ex-sode-dodrdedd__09-aggregates.md#what-is-an-aggregate) - Understand consistency boundaries (7 min)
+   - [Value Objects](./ex-sode-dodrdedd__08-value-objects.md#what-is-a-value-object) - Immutable domain primitives (5 min)
+   - [Entities](./ex-sode-dodrdedd__07-entities.md#what-is-an-entity) - Identity and lifecycle (3 min)
 
 3. **Apply** (5 minutes)
-   - Use [Bounded Context Canvas Template](./ex-ddd__19-templates/bounded-context-canvas.md)
+   - Use [Bounded Context Canvas Template](./templates/ex-sode-dodrdedd-te__bounded-context-canvas.md)
    - Design one bounded context for your domain
 
 **Outcome**: Documented bounded context with key aggregates and value objects identified.
@@ -117,24 +117,24 @@ Choose a learning path based on your goals and available time.
 
 **Strategic Design** (60 minutes):
 
-1. [Introduction and Philosophy](./ex-ddd__01-introduction-and-philosophy.md) (15 min)
-2. [Ubiquitous Language](./ex-ddd__02-ubiquitous-language.md) (10 min)
-3. [Bounded Contexts](./ex-ddd__03-bounded-contexts.md) (15 min)
-4. [Context Mapping](./ex-ddd__04-context-mapping.md) - 9 integration patterns (15 min)
-5. [Subdomains](./ex-ddd__05-subdomains.md) - Core, Supporting, Generic (5 min)
+1. [Introduction and Philosophy](./ex-sode-dodrdedd__01-introduction-and-philosophy.md) (15 min)
+2. [Ubiquitous Language](./ex-sode-dodrdedd__02-ubiquitous-language.md) (10 min)
+3. [Bounded Contexts](./ex-sode-dodrdedd__03-bounded-contexts.md) (15 min)
+4. [Context Mapping](./ex-sode-dodrdedd__04-context-mapping.md) - 9 integration patterns (15 min)
+5. [Subdomains](./ex-sode-dodrdedd__05-subdomains.md) - Core, Supporting, Generic (5 min)
 
 **Tactical Design** (45 minutes):
 
-1. [Aggregates](./ex-ddd__09-aggregates.md) - Most important tactical pattern (15 min)
-2. [Value Objects](./ex-ddd__08-value-objects.md) (10 min)
-3. [Entities](./ex-ddd__07-entities.md) (7 min)
-4. [Domain Events](./ex-ddd__12-domain-events.md) (8 min)
-5. [Repositories](./ex-ddd__10-repositories.md) (5 min)
+1. [Aggregates](./ex-sode-dodrdedd__09-aggregates.md) - Most important tactical pattern (15 min)
+2. [Value Objects](./ex-sode-dodrdedd__08-value-objects.md) (10 min)
+3. [Entities](./ex-sode-dodrdedd__07-entities.md) (7 min)
+4. [Domain Events](./ex-sode-dodrdedd__12-domain-events.md) (8 min)
+5. [Repositories](./ex-sode-dodrdedd__10-repositories.md) (5 min)
 
 **Decision Making** (15 minutes):
 
-1. [Decision Trees and Best Practices](./ex-ddd__16-decision-trees-and-best-practices.md) (10 min)
-2. [FAQ](./ex-ddd__18-faq.md) (5 min)
+1. [Decision Trees and Best Practices](./ex-sode-dodrdedd__16-decision-trees-and-best-practices.md) (10 min)
+2. [FAQ](./ex-sode-dodrdedd__18-faq.md) (5 min)
 
 **Outcome**: Full understanding of strategic landscape and tactical implementation patterns.
 
@@ -144,24 +144,24 @@ Choose a learning path based on your goals and available time.
 
 Traditional DDD path with class-based examples:
 
-1. [Introduction and Philosophy](./ex-ddd__01-introduction-and-philosophy.md)
-2. [Entities](./ex-ddd__07-entities.md) - Focus on OOP sections
-3. [Value Objects](./ex-ddd__08-value-objects.md) - Focus on OOP sections
-4. [Aggregates](./ex-ddd__09-aggregates.md) - Class-based aggregate roots
-5. [Domain Services](./ex-ddd__11-domain-services.md) - Stateless classes
-6. [Layered Architecture](./ex-ddd__15-layered-architecture.md) - Traditional 4-layer
+1. [Introduction and Philosophy](./ex-sode-dodrdedd__01-introduction-and-philosophy.md)
+2. [Entities](./ex-sode-dodrdedd__07-entities.md) - Focus on OOP sections
+3. [Value Objects](./ex-sode-dodrdedd__08-value-objects.md) - Focus on OOP sections
+4. [Aggregates](./ex-sode-dodrdedd__09-aggregates.md) - Class-based aggregate roots
+5. [Domain Services](./ex-sode-dodrdedd__11-domain-services.md) - Stateless classes
+6. [Layered Architecture](./ex-sode-dodrdedd__15-layered-architecture.md) - Traditional 4-layer
 
 **For FP Developers**:
 
 Adapted DDD for functional programming:
 
-1. [Introduction and Philosophy](./ex-ddd__01-introduction-and-philosophy.md)
-2. [DDD and Functional Programming](./ex-ddd__14-ddd-and-functional-programming.md) ⭐ **Start Here**
-3. [Value Objects](./ex-ddd__08-value-objects.md) - Focus on FP sections (immutable records)
-4. [Entities](./ex-ddd__07-entities.md) - Focus on FP sections (identity-based equality)
-5. [Aggregates](./ex-ddd__09-aggregates.md) - Pure functions for validation
-6. [Domain Events](./ex-ddd__12-domain-events.md) - Event-driven FP
-7. [Repositories](./ex-ddd__10-repositories.md) - Pure data access interfaces
+1. [Introduction and Philosophy](./ex-sode-dodrdedd__01-introduction-and-philosophy.md)
+2. [DDD and Functional Programming](./ex-sode-dodrdedd__14-ddd-and-functional-programming.md) ⭐ **Start Here**
+3. [Value Objects](./ex-sode-dodrdedd__08-value-objects.md) - Focus on FP sections (immutable records)
+4. [Entities](./ex-sode-dodrdedd__07-entities.md) - Focus on FP sections (identity-based equality)
+5. [Aggregates](./ex-sode-dodrdedd__09-aggregates.md) - Pure functions for validation
+6. [Domain Events](./ex-sode-dodrdedd__12-domain-events.md) - Event-driven FP
+7. [Repositories](./ex-sode-dodrdedd__10-repositories.md) - Pure data access interfaces
 
 **Key Differences**:
 
@@ -174,21 +174,21 @@ Adapted DDD for functional programming:
 
 DDD strategic patterns align naturally with microservices:
 
-1. [Bounded Contexts](./ex-ddd__03-bounded-contexts.md) - Each microservice is a bounded context
-2. [Context Mapping](./ex-ddd__04-context-mapping.md) - API integration patterns
-3. [Subdomains](./ex-ddd__05-subdomains.md) - Service decomposition strategy
-4. [Domain Events](./ex-ddd__12-domain-events.md) - Event-driven inter-service communication
-5. [DDD and C4 Integration](./ex-ddd__17-ddd-and-c4-integration.md) - C4 Container = Bounded Context
+1. [Bounded Contexts](./ex-sode-dodrdedd__03-bounded-contexts.md) - Each microservice is a bounded context
+2. [Context Mapping](./ex-sode-dodrdedd__04-context-mapping.md) - API integration patterns
+3. [Subdomains](./ex-sode-dodrdedd__05-subdomains.md) - Service decomposition strategy
+4. [Domain Events](./ex-sode-dodrdedd__12-domain-events.md) - Event-driven inter-service communication
+5. [DDD and C4 Integration](./ex-sode-dodrdedd__17-ddd-and-c4-integration.md) - C4 Container = Bounded Context
 
 **For Monolithic Architecture**:
 
 DDD provides modular organization within a single deployment:
 
-1. [Bounded Contexts](./ex-ddd__03-bounded-contexts.md) - Logical modules within monolith
-2. [Layered Architecture](./ex-ddd__15-layered-architecture.md) - Traditional 4-layer structure
-3. [Aggregates](./ex-ddd__09-aggregates.md) - Transactional consistency within database
-4. [Context Mapping](./ex-ddd__04-context-mapping.md) - Module integration via Shared Kernel
-5. [Subdomains](./ex-ddd__05-subdomains.md) - Investment prioritization for future extraction
+1. [Bounded Contexts](./ex-sode-dodrdedd__03-bounded-contexts.md) - Logical modules within monolith
+2. [Layered Architecture](./ex-sode-dodrdedd__15-layered-architecture.md) - Traditional 4-layer structure
+3. [Aggregates](./ex-sode-dodrdedd__09-aggregates.md) - Transactional consistency within database
+4. [Context Mapping](./ex-sode-dodrdedd__04-context-mapping.md) - Module integration via Shared Kernel
+5. [Subdomains](./ex-sode-dodrdedd__05-subdomains.md) - Investment prioritization for future extraction
 
 **Migration Path**: Start with monolith organized by bounded contexts, extract to microservices when needed.
 
@@ -198,41 +198,41 @@ DDD provides modular organization within a single deployment:
 
 Focus on strategic design and system-level patterns:
 
-1. [Introduction and Philosophy](./ex-ddd__01-introduction-and-philosophy.md) - Decision matrix for DDD adoption
-2. [Bounded Contexts](./ex-ddd__03-bounded-contexts.md) - System decomposition
-3. [Context Mapping](./ex-ddd__04-context-mapping.md) - 9 integration patterns
-4. [Subdomains](./ex-ddd__05-subdomains.md) - Core vs. Supporting vs. Generic
-5. [Strategic Design Process](./ex-ddd__06-strategic-design-process.md) - Event Storming facilitation
-6. [DDD and C4 Integration](./ex-ddd__17-ddd-and-c4-integration.md) - Architecture visualization
-7. [Layered Architecture](./ex-ddd__15-layered-architecture.md) - Hexagonal Architecture variant
+1. [Introduction and Philosophy](./ex-sode-dodrdedd__01-introduction-and-philosophy.md) - Decision matrix for DDD adoption
+2. [Bounded Contexts](./ex-sode-dodrdedd__03-bounded-contexts.md) - System decomposition
+3. [Context Mapping](./ex-sode-dodrdedd__04-context-mapping.md) - 9 integration patterns
+4. [Subdomains](./ex-sode-dodrdedd__05-subdomains.md) - Core vs. Supporting vs. Generic
+5. [Strategic Design Process](./ex-sode-dodrdedd__06-strategic-design-process.md) - Event Storming facilitation
+6. [DDD and C4 Integration](./ex-sode-dodrdedd__17-ddd-and-c4-integration.md) - Architecture visualization
+7. [Layered Architecture](./ex-sode-dodrdedd__15-layered-architecture.md) - Hexagonal Architecture variant
 
 **For Developers**:
 
 Focus on tactical patterns and implementation:
 
-1. [Introduction and Philosophy](./ex-ddd__01-introduction-and-philosophy.md) - Core concepts
-2. [Ubiquitous Language](./ex-ddd__02-ubiquitous-language.md) - Naming conventions
-3. [Aggregates](./ex-ddd__09-aggregates.md) ⭐ **Most Critical** - Transactional boundaries
-4. [Value Objects](./ex-ddd__08-value-objects.md) - Immutable domain primitives
-5. [Entities](./ex-ddd__07-entities.md) - Identity and lifecycle
-6. [Domain Events](./ex-ddd__12-domain-events.md) - Event publishing
-7. [Repositories](./ex-ddd__10-repositories.md) - Persistence abstraction
-8. [Domain Services](./ex-ddd__11-domain-services.md) - Stateless operations
-9. [Factories](./ex-ddd__13-factories.md) - Complex construction
-10. [Decision Trees and Best Practices](./ex-ddd__16-decision-trees-and-best-practices.md) - Practical guidance
-11. [DDD and Functional Programming](./ex-ddd__14-ddd-and-functional-programming.md) - If using FP
+1. [Introduction and Philosophy](./ex-sode-dodrdedd__01-introduction-and-philosophy.md) - Core concepts
+2. [Ubiquitous Language](./ex-sode-dodrdedd__02-ubiquitous-language.md) - Naming conventions
+3. [Aggregates](./ex-sode-dodrdedd__09-aggregates.md) ⭐ **Most Critical** - Transactional boundaries
+4. [Value Objects](./ex-sode-dodrdedd__08-value-objects.md) - Immutable domain primitives
+5. [Entities](./ex-sode-dodrdedd__07-entities.md) - Identity and lifecycle
+6. [Domain Events](./ex-sode-dodrdedd__12-domain-events.md) - Event publishing
+7. [Repositories](./ex-sode-dodrdedd__10-repositories.md) - Persistence abstraction
+8. [Domain Services](./ex-sode-dodrdedd__11-domain-services.md) - Stateless operations
+9. [Factories](./ex-sode-dodrdedd__13-factories.md) - Complex construction
+10. [Decision Trees and Best Practices](./ex-sode-dodrdedd__16-decision-trees-and-best-practices.md) - Practical guidance
+11. [DDD and Functional Programming](./ex-sode-dodrdedd__14-ddd-and-functional-programming.md) - If using FP
 
 **For Domain Experts**:
 
 Focus on collaboration and model validation:
 
-1. [Introduction and Philosophy - Core Philosophy](./ex-ddd__01-introduction-and-philosophy.md#core-philosophy) - What is domain modeling?
-2. [Ubiquitous Language](./ex-ddd__02-ubiquitous-language.md) - Creating shared vocabulary
-3. [Strategic Design Process](./ex-ddd__06-strategic-design-process.md) - Event Storming workshop participation
-4. [Bounded Contexts](./ex-ddd__03-bounded-contexts.md#identifying-bounded-contexts) - Recognizing domain boundaries
-5. [Subdomains](./ex-ddd__05-subdomains.md) - Core vs. Supporting business capabilities
-6. [Domain Events](./ex-ddd__12-domain-events.md) - Capturing business occurrences
-7. Use [Ubiquitous Language Glossary Template](./ex-ddd__19-templates/ubiquitous-language-glossary.md) to document terms
+1. [Introduction and Philosophy - Core Philosophy](./ex-sode-dodrdedd__01-introduction-and-philosophy.md#core-philosophy) - What is domain modeling?
+2. [Ubiquitous Language](./ex-sode-dodrdedd__02-ubiquitous-language.md) - Creating shared vocabulary
+3. [Strategic Design Process](./ex-sode-dodrdedd__06-strategic-design-process.md) - Event Storming workshop participation
+4. [Bounded Contexts](./ex-sode-dodrdedd__03-bounded-contexts.md#identifying-bounded-contexts) - Recognizing domain boundaries
+5. [Subdomains](./ex-sode-dodrdedd__05-subdomains.md) - Core vs. Supporting business capabilities
+6. [Domain Events](./ex-sode-dodrdedd__12-domain-events.md) - Capturing business occurrences
+7. Use [Ubiquitous Language Glossary Template](./templates/ex-sode-dodrdedd-te__ubiquitous-language-glossary.md) to document terms
 
 **Key Insight**: Domain experts don't need to understand code, but should validate that the model accurately represents business reality.
 
@@ -307,7 +307,7 @@ DDD concepts integrate with other architectural approaches in this repository:
 - **C4 Components** ↔ **DDD Aggregates** - Internal structure
 - **C4 Dynamic Diagrams** ↔ **DDD Domain Events** - Behavior over time
 
-See [DDD and C4 Integration](./ex-ddd__17-ddd-and-c4-integration.md) for detailed mapping.
+See [DDD and C4 Integration](./ex-sode-dodrdedd__17-ddd-and-c4-integration.md) for detailed mapping.
 
 ### Functional Programming Principles
 
@@ -318,7 +318,7 @@ See [DDD and C4 Integration](./ex-ddd__17-ddd-and-c4-integration.md) for detaile
 - **Railway-Oriented Programming** handles validation and errors
 - **Separated I/O** isolates domain logic from infrastructure
 
-See [DDD and Functional Programming](./ex-ddd__14-ddd-and-functional-programming.md) for FP-adapted patterns.
+See [DDD and Functional Programming](./ex-sode-dodrdedd__14-ddd-and-functional-programming.md) for FP-adapted patterns.
 
 ### Repository Governance
 
@@ -342,7 +342,7 @@ See [DDD and Functional Programming](./ex-ddd__14-ddd-and-functional-programming
 
 ### Bounded Context Canvas
 
-**[Bounded Context Canvas Template](./ex-ddd__19-templates/bounded-context-canvas.md)**
+**[Bounded Context Canvas Template](./templates/ex-sode-dodrdedd-te__bounded-context-canvas.md)**
 
 Comprehensive canvas for designing a bounded context:
 
@@ -355,31 +355,31 @@ Comprehensive canvas for designing a bounded context:
 
 ### Context Map Diagram
 
-**[Context Map Diagram Template](./ex-ddd__19-templates/context-map-diagram.md)**
+**[Context Map Diagram Template](./templates/ex-sode-dodrdedd-te__context-map-diagram.md)**
 
 Mermaid diagram template for visualizing bounded context relationships with all 9 integration patterns.
 
 ### Event Storming Output
 
-**[Event Storming Output Template](./ex-ddd__19-templates/event-storming-output.md)**
+**[Event Storming Output Template](./templates/ex-sode-dodrdedd-te__event-storming-output.md)**
 
 Structured format for documenting Event Storming workshop results across all 9 phases.
 
 ### Ubiquitous Language Glossary
 
-**[Ubiquitous Language Glossary Template](./ex-ddd__19-templates/ubiquitous-language-glossary.md)**
+**[Ubiquitous Language Glossary Template](./templates/ex-sode-dodrdedd-te__ubiquitous-language-glossary.md)**
 
 Track domain terms with definitions, examples, and related concepts.
 
 ### Aggregate Design Template
 
-**[Aggregate Design Template](./ex-ddd__19-templates/aggregate-design-template.md)**
+**[Aggregate Design Template](./templates/ex-sode-dodrdedd-te__aggregate-design-template.md)**
 
 Structured format for documenting aggregate design including invariants, commands, events, and contained entities/value objects.
 
 ### Color Palette
 
-**[WCAG AA-Compliant Color Palette](./ex-ddd__19-templates/color-palette.md)**
+**[WCAG AA-Compliant Color Palette](./templates/ex-sode-dodrdedd-te__color-palette.md)**
 
 Accessible colors for Mermaid diagrams:
 
@@ -394,7 +394,7 @@ All colors meet WCAG AA contrast standards (4.5:1 minimum).
 
 ### Starter Full Documentation
 
-**[Starter Full Documentation Template](./ex-ddd__19-templates/starter-full-documentation.md)**
+**[Starter Full Documentation Template](./templates/ex-sode-dodrdedd-te__starter-full-documentation.md)**
 
 Complete DDD documentation set starter for new bounded contexts.
 
@@ -406,7 +406,7 @@ Complete DDD documentation set starter for new bounded contexts.
 
 ### Can I use DDD with functional programming?
 
-**Yes.** While Eric Evans' original book used OOP (Java), DDD principles translate naturally to FP. Immutability, pure functions, and explicit data flow align well with DDD goals. See [DDD and Functional Programming](./ex-ddd__14-ddd-and-functional-programming.md).
+**Yes.** While Eric Evans' original book used OOP (Java), DDD principles translate naturally to FP. Immutability, pure functions, and explicit data flow align well with DDD goals. See [DDD and Functional Programming](./ex-sode-dodrdedd__14-ddd-and-functional-programming.md).
 
 ### Is DDD only for microservices?
 
@@ -428,7 +428,7 @@ Start with traditional DDD, add CQRS/Event Sourcing only when specific needs jus
 
 ### More Questions
 
-See [FAQ](./ex-ddd__18-faq.md) for comprehensive Q&A covering common misconceptions and advanced topics.
+See [FAQ](./ex-sode-dodrdedd__18-faq.md) for comprehensive Q&A covering common misconceptions and advanced topics.
 
 ## Getting Started Checklist
 
@@ -437,15 +437,15 @@ Ready to apply DDD to your project? Follow this checklist:
 **Strategic Design:**
 
 - [ ] Conduct Event Storming workshop with domain experts
-- [ ] Identify bounded contexts using [identification techniques](./ex-ddd__03-bounded-contexts.md#identifying-bounded-contexts)
-- [ ] Create Ubiquitous Language glossary using [template](./ex-ddd__19-templates/ubiquitous-language-glossary.md)
-- [ ] Map context relationships using [Context Mapping patterns](./ex-ddd__04-context-mapping.md)
-- [ ] Classify subdomains (Core, Supporting, Generic) using [Subdomains guide](./ex-ddd__05-subdomains.md)
-- [ ] Document each bounded context using [Bounded Context Canvas](./ex-ddd__19-templates/bounded-context-canvas.md)
+- [ ] Identify bounded contexts using [identification techniques](./ex-sode-dodrdedd__03-bounded-contexts.md#identifying-bounded-contexts)
+- [ ] Create Ubiquitous Language glossary using [template](./templates/ex-sode-dodrdedd-te__ubiquitous-language-glossary.md)
+- [ ] Map context relationships using [Context Mapping patterns](./ex-sode-dodrdedd__04-context-mapping.md)
+- [ ] Classify subdomains (Core, Supporting, Generic) using [Subdomains guide](./ex-sode-dodrdedd__05-subdomains.md)
+- [ ] Document each bounded context using [Bounded Context Canvas](./templates/ex-sode-dodrdedd-te__bounded-context-canvas.md)
 
 **Tactical Design (per Bounded Context):**
 
-- [ ] Identify aggregates using [decision trees](./ex-ddd__16-decision-trees-and-best-practices.md#aggregate-boundary-decision-tree)
+- [ ] Identify aggregates using [decision trees](./ex-sode-dodrdedd__16-decision-trees-and-best-practices.md#aggregate-boundary-decision-tree)
 - [ ] Design aggregate roots with invariant protection
 - [ ] Extract value objects for domain primitives (Money, Date, Rate, etc.)
 - [ ] Define domain events for business occurrences
@@ -458,7 +458,7 @@ Ready to apply DDD to your project? Follow this checklist:
 - [ ] Verify aggregate boundaries maintain consistency
 - [ ] Test business rules and invariants
 - [ ] Document architectural decisions
-- [ ] Create C4 diagrams mapping to bounded contexts (see [DDD and C4 Integration](./ex-ddd__17-ddd-and-c4-integration.md))
+- [ ] Create C4 diagrams mapping to bounded contexts (see [DDD and C4 Integration](./ex-sode-dodrdedd__17-ddd-and-c4-integration.md))
 
 ## Further Learning Resources
 
@@ -489,7 +489,7 @@ This documentation evolves as we apply DDD to the Open Sharia Enterprise platfor
 
 - **Examples**: Additional Islamic finance/Sharia-compliant examples
 - **Clarifications**: Improved explanations of complex concepts
-- **Diagrams**: Enhanced Mermaid diagrams (use [Color Palette](./ex-ddd__19-templates/color-palette.md))
+- **Diagrams**: Enhanced Mermaid diagrams (use [Color Palette](./templates/ex-sode-dodrdedd-te__color-palette.md))
 - **Templates**: New templates for DDD practices
 - **Cross-references**: Links to related governance and development docs
 

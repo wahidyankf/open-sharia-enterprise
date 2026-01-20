@@ -102,7 +102,7 @@ C4 and DDD complement each other throughout the design process:
 5. Create **Component diagrams** (C4) showing aggregates and their relationships
 6. Document **runtime behavior** with Dynamic diagrams (C4) and Domain Events (DDD)
 
-See [DDD and C4 Integration](./domain-driven-design-ddd/ex-ddd__17-ddd-and-c4-integration.md) for comprehensive examples.
+See [DDD and C4 Integration](./domain-driven-design-ddd/ex-sode-dodrdedd__17-ddd-and-c4-integration.md) for comprehensive examples.
 
 ## Design in This Repository
 
@@ -132,23 +132,23 @@ The open-sharia-enterprise project applies both C4 and DDD principles:
 
 ### For Architects and Technical Leads
 
-1. **Understand visualization approaches** - Read [C4 System Context](./c4-architecture-model/ex-c4armo__01-level-1-system-context.md)
-2. **Master strategic design** - Read [DDD Bounded Contexts](./domain-driven-design-ddd/ex-ddd__03-bounded-contexts.md) and [Context Mapping](./domain-driven-design-ddd/ex-ddd__04-context-mapping.md)
-3. **Learn integration** - Read [DDD and C4 Integration](./domain-driven-design-ddd/ex-ddd__17-ddd-and-c4-integration.md)
-4. **Apply to projects** - Use templates from [C4 Templates](./c4-architecture-model/ex-c4armo__14-templates/) and [DDD Templates](./domain-driven-design-ddd/ex-ddd__19-templates/)
+1. **Understand visualization approaches** - Read [C4 System Context](./c4-architecture-model/ex-sode-c4armo__01-level-1-system-context.md)
+2. **Master strategic design** - Read [DDD Bounded Contexts](./domain-driven-design-ddd/ex-sode-dodrdedd__03-bounded-contexts.md) and [Context Mapping](./domain-driven-design-ddd/ex-sode-dodrdedd__04-context-mapping.md)
+3. **Learn integration** - Read [DDD and C4 Integration](./domain-driven-design-ddd/ex-sode-dodrdedd__17-ddd-and-c4-integration.md)
+4. **Apply to projects** - Use templates from [C4 Templates](./c4-architecture-model/templates/) and [DDD Templates](./domain-driven-design-ddd/templates/)
 
 ### For Developers
 
 1. **Quick visualization start** - Follow [C4 5-Minute Quick Start](./c4-architecture-model/README.md#-5-minute-quick-start-why-c4-matters)
-2. **Understand tactical patterns** - Read [DDD Aggregates](./domain-driven-design-ddd/ex-ddd__09-aggregates.md) and [Value Objects](./domain-driven-design-ddd/ex-ddd__08-value-objects.md)
-3. **Functional programming focus** - Read [DDD and Functional Programming](./domain-driven-design-ddd/ex-ddd__14-ddd-and-functional-programming.md)
-4. **Decision frameworks** - Use [DDD Decision Trees](./domain-driven-design-ddd/ex-ddd__16-decision-trees-and-best-practices.md)
+2. **Understand tactical patterns** - Read [DDD Aggregates](./domain-driven-design-ddd/ex-sode-dodrdedd__09-aggregates.md) and [Value Objects](./domain-driven-design-ddd/ex-sode-dodrdedd__08-value-objects.md)
+3. **Functional programming focus** - Read [DDD and Functional Programming](./domain-driven-design-ddd/ex-sode-dodrdedd__14-ddd-and-functional-programming.md)
+4. **Decision frameworks** - Use [DDD Decision Trees](./domain-driven-design-ddd/ex-sode-dodrdedd__16-decision-trees-and-best-practices.md)
 
 ### For Domain Experts and Product Owners
 
-1. **Understand collaboration approaches** - Read [DDD Ubiquitous Language](./domain-driven-design-ddd/ex-ddd__02-ubiquitous-language.md)
-2. **Learn workshop techniques** - Read [Strategic Design Process](./domain-driven-design-ddd/ex-ddd__06-strategic-design-process.md)
-3. **Visualize system context** - Read [C4 System Context](./c4-architecture-model/ex-c4armo__01-level-1-system-context.md)
+1. **Understand collaboration approaches** - Read [DDD Ubiquitous Language](./domain-driven-design-ddd/ex-sode-dodrdedd__02-ubiquitous-language.md)
+2. **Learn workshop techniques** - Read [Strategic Design Process](./domain-driven-design-ddd/ex-sode-dodrdedd__06-strategic-design-process.md)
+3. **Visualize system context** - Read [C4 System Context](./c4-architecture-model/ex-sode-c4armo__01-level-1-system-context.md)
 
 ## Related Documentation
 
