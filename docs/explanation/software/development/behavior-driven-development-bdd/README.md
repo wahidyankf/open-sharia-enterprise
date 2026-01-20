@@ -136,8 +136,7 @@ BDD with other methodologies and architectures:
 
 Best practices and common issues:
 
-- **[16. Anti-patterns and Pitfalls](./ex-so-de-bdd__16-anti-patterns-and-pitfalls.md)** - Over-specification, brittle scenarios, tool focus over collaboration, common mistakes
-- **[17. FAQ](./ex-so-de-bdd__17-faq.md)** - Common questions, misconceptions, troubleshooting BDD adoption
+- **[16. FAQ](./ex-so-de-bdd__16-faq.md)** - Common questions, misconceptions, troubleshooting BDD adoption
 
 ### Templates
 
@@ -208,8 +207,6 @@ Choose a learning path based on your goals and available time.
 
 **Best Practices**:
 
-1. [Anti-patterns and Pitfalls](./ex-so-de-bdd__16-anti-patterns-and-pitfalls.md)
-
 **Outcome**: Full understanding of BDD collaboration, Gherkin syntax, and automation strategies.
 
 ### By Role: Product Owner, Developer, QA, Architect
@@ -253,7 +250,6 @@ Focus on testing strategy and automation:
 7. [BDD Frameworks](./ex-so-de-bdd__11-bdd-frameworks.md)
 8. [Automation Strategies](./ex-so-de-bdd__12-automation-strategies.md)
 9. [Living Documentation](./ex-so-de-bdd__10-living-documentation.md)
-10. [Anti-patterns and Pitfalls](./ex-so-de-bdd__16-anti-patterns-and-pitfalls.md)
 
 **For Software Architects**:
 
@@ -265,7 +261,6 @@ Focus on strategic BDD and integration:
 4. [Feature Files and Organization](./ex-so-de-bdd__08-feature-files-and-organization.md) - Architectural organization
 5. [BDD in Nx Monorepo](./ex-so-de-bdd__15-bdd-in-nx-monorepo.md) - Monorepo testing architecture
 6. [Living Documentation](./ex-so-de-bdd__10-living-documentation.md) - Documentation strategy
-7. [Anti-patterns and Pitfalls](./ex-so-de-bdd__16-anti-patterns-and-pitfalls.md) - Avoiding common mistakes
 
 ### By Team Structure: Co-located vs. Distributed
 
@@ -332,7 +327,7 @@ BDD integrates with other software design approaches in this repository:
 
 ### Domain-Driven Design (DDD)
 
-**[Domain-Driven Design Documentation](../architecture/domain-driven-design-ddd/README.md)**
+**[Domain-Driven Design Documentation](../../architecture/domain-driven-design-ddd/README.md)**
 
 - **Ubiquitous Language**: BDD scenarios use DDD terminology (Zakat, Nisab, Hawl, Murabaha)
 - **Features per Bounded Context**: Feature files align with bounded context boundaries
@@ -344,7 +339,7 @@ BDD integrates with other software design approaches in this repository:
 
 ### C4 Architecture Model
 
-**[C4 Architecture Model Documentation](../architecture/c4-architecture-model/README.md)**
+**[C4 Architecture Model Documentation](../../architecture/c4-architecture-model/README.md)**
 
 - **System Context Level**: BDD scenarios test external system integrations
 - **Container Level**: Feature files map to containers (services, applications)
@@ -353,7 +348,7 @@ BDD integrates with other software design approaches in this repository:
 
 ### Functional Programming
 
-**[Functional Programming Principles](../../../../governance/development/pattern/functional-programming.md)**
+**[Functional Programming Principles](../../../../../governance/development/pattern/functional-programming.md)**
 
 - **Pure Step Definitions**: Step implementations as pure functions
 - **Immutable Test Data**: Test data builders using immutable data structures
@@ -362,7 +357,7 @@ BDD integrates with other software design approaches in this repository:
 
 ### Implementation Workflow
 
-**[Implementation Workflow](../../../../governance/development/workflow/implementation.md)**
+**[Implementation Workflow](../../../../../governance/development/workflow/implementation.md)**
 
 BDD aligns with "Make it work → Make it right → Make it fast":
 
@@ -436,10 +431,10 @@ Scenario: Certify product with halal ingredients
 ### Related Repository Documentation
 
 - **[Test-Driven Development](../test-driven-development-tdd/README.md)** - Complementary TDD practices
-- **[Domain-Driven Design](../architecture/domain-driven-design-ddd/README.md)** - Ubiquitous language and domain modeling
-- **[C4 Architecture Model](../architecture/c4-architecture-model/README.md)** - Architectural context for BDD
-- **[Functional Programming Principles](../../../../governance/development/pattern/functional-programming.md)** - Pure functions in step definitions
-- **[Nx Monorepo Documentation](../../../../docs/reference/re__monorepo-structure.md)** - Running BDD tests in monorepo
+- **[Domain-Driven Design](../../architecture/domain-driven-design-ddd/README.md)** - Ubiquitous language and domain modeling
+- **[C4 Architecture Model](../../architecture/c4-architecture-model/README.md)** - Architectural context for BDD
+- **[Functional Programming Principles](../../../../../governance/development/pattern/functional-programming.md)** - Pure functions in step definitions
+- **[Nx Monorepo Documentation](../../../../../docs/reference/re__monorepo-structure.md)** - Running BDD tests in monorepo
 - **Gherkin Acceptance Criteria Skill** (`.claude/skills/plan-writing-gherkin-criteria/SKILL.md`) - Writing Gherkin for plans
 
 ## Getting Started
@@ -463,9 +458,9 @@ Ready to apply BDD to your project? Start here:
 - **Status**: Active
 - **Related Documentation**:
   - [Test-Driven Development](../test-driven-development-tdd/README.md)
-  - [Domain-Driven Design](../architecture/domain-driven-design-ddd/README.md)
-  - [C4 Architecture Model](../architecture/c4-architecture-model/README.md)
-  - [Functional Programming Principles](../../../../governance/development/pattern/functional-programming.md)
-  - [Implementation Workflow](../../../../governance/development/workflow/implementation.md)
+  - [Domain-Driven Design](../../architecture/domain-driven-design-ddd/README.md)
+  - [C4 Architecture Model](../../architecture/c4-architecture-model/README.md)
+  - [Functional Programming Principles](../../../../../governance/development/pattern/functional-programming.md)
+  - [Implementation Workflow](../../../../../governance/development/workflow/implementation.md)
 - **Islamic Finance Examples**: Zakat, Halal Certification, Murabaha, Riba Detection, Takaful, Waqf
 - **Learning Paths**: 7 paths covering quick start, practical application, deep dive, role-specific, team structure, and domain-specific guidance

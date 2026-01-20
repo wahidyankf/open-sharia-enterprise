@@ -6,7 +6,7 @@
 - **Related Files**:
   - [Testing Pyramid and Test Types](./ex-so-de-tedrdeve__03-test-types-and-pyramid.md)
 
-  - [TDD in Nx Monorepo](./ex-so-de-tedrdeve__17-tdd-in-nx-monorepo.md)
+  - [TDD in Nx Monorepo](./ex-so-de-tedrdeve__16-tdd-in-nx-monorepo.md)
 
 - **Prerequisites**: Understanding of test types, coverage concepts
 - **Complexity**: Intermediate to Advanced
@@ -1685,8 +1685,8 @@ describe("ZakatCalculator", () => {
 
 **Next Steps**:
 
-- Review [TDD in Nx Monorepo](./ex-so-de-tedrdeve__17-tdd-in-nx-monorepo.md) for monorepo-specific testing strategies
-- Explore [FAQ](./ex-so-de-tedrdeve__18-faq.md) for answers to common TDD questions
+- Review [TDD in Nx Monorepo](./ex-so-de-tedrdeve__16-tdd-in-nx-monorepo.md) for monorepo-specific testing strategies
+- Explore [FAQ](./ex-so-de-tedrdeve__17-faq.md) for answers to common TDD questions
 - Use [Templates](./templates/) for standardized test structures
 
 **Related Resources**:

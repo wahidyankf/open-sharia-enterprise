@@ -108,7 +108,15 @@ class LinkValidator:
         links = []
         try:
             content = file_path.read_text(encoding='utf-8')
+            in_code_block = False
             for line_num, line in enumerate(content.split('\n'), 1):
+                # Track code block boundaries
+                if line.strip().startswith('```'):
+                    in_code_block = not in_code_block
+                    continue
+                # Skip lines inside code blocks
+                if in_code_block:
+                    continue
                 # Match markdown links: [text](url)
                 matches = re.finditer(r'\[([^\]]+)\]\(([^)]+)\)', line)
                 for match in matches:

@@ -4,7 +4,7 @@
 
 - **Parent Topic**: [Test-Driven Development (TDD)](./README.md)
 - **Related Files**:
-  - [Decision Trees and Best Practices](./ex-so-de-tedrdeve__16-decision-trees-and-best-practices.md)
+  - [Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md)
 
 - **Prerequisites**: Understanding of Nx, monorepo architecture
 - **Complexity**: Intermediate
@@ -1276,9 +1276,9 @@ jobs:
 
 **Next Steps**:
 
-- Review [FAQ](./ex-so-de-tedrdeve__18-faq.md) for common TDD questions
+- Review [FAQ](./ex-so-de-tedrdeve__17-faq.md) for common TDD questions
 - Explore [Templates](./templates/) for standardized test structures
 
 **Related Resources**:
 
-- [Decision Trees and Best Practices](./ex-so-de-tedrdeve__16-decision-trees-and-best-practices.md)
+- [Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md)

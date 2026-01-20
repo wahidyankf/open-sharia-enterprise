@@ -717,7 +717,7 @@ Scenario: Test currency conversion utility
 - **[Gherkin Syntax](./ex-so-de-bdd__02-gherkin-syntax-and-scenarios.md)** - Given-When-Then format
 - **[Three Amigos Practice](./ex-so-de-bdd__04-three-amigos-practice.md)** - Collaborative discovery
 - **[Example Mapping](./ex-so-de-bdd__05-example-mapping.md)** - Workshop technique
-- **[Anti-patterns Deep Dive](./ex-so-de-bdd__16-anti-patterns-and-pitfalls.md)** - Comprehensive antipattern catalog
+- **[Best Practices and Antipatterns](./ex-so-de-bdd__17-best-practices-and-antipatterns.md)** - Comprehensive antipattern catalog
 - **[BDD and TDD](./ex-so-de-bdd__13-bdd-and-tdd.md)** - Complementary relationship
 - **[BDD and DDD](./ex-so-de-bdd__14-bdd-and-ddd.md)** - Ubiquitous language in scenarios
 

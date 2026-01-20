@@ -170,10 +170,9 @@ TDD in complex contexts:
 
 Best practices and anti-patterns:
 
-- **[15. Testing Anti-Patterns](./ex-so-de-tedrdeve__15-testing-anti-patterns.md)** - Common pitfalls and how to avoid them
-- **[16. Decision Trees and Best Practices](./ex-so-de-tedrdeve__16-decision-trees-and-best-practices.md)** - When to use each test type, coverage strategies, test observability
-- **[17. TDD in Nx Monorepo](./ex-so-de-tedrdeve__17-tdd-in-nx-monorepo.md)** - Testing in Nx workspace, affected tests, shared utilities
-- **[18. FAQ](./ex-so-de-tedrdeve__18-faq.md)** - Common questions about TDD practice
+- **[15. Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md)** - When to use each test type, coverage strategies, test observability
+- **[16. TDD in Nx Monorepo](./ex-so-de-tedrdeve__16-tdd-in-nx-monorepo.md)** - Testing in Nx workspace, affected tests, shared utilities
+- **[17. FAQ](./ex-so-de-tedrdeve__17-faq.md)** - Common questions about TDD practice
 
 ### Templates
 
@@ -250,8 +249,7 @@ Choose a learning path based on your goals and available time.
 
 **Best Practices** (10 minutes):
 
-1. [Decision Trees and Best Practices](./ex-so-de-tedrdeve__16-decision-trees-and-best-practices.md) (7 min)
-2. [Testing Anti-Patterns](./ex-so-de-tedrdeve__15-testing-anti-patterns.md) (3 min)
+1. [Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md) (7 min)
 
 **Outcome**: Full understanding of TDD workflow, testing patterns, and when to apply different test types.
 
@@ -295,7 +293,7 @@ Focus on API and business logic testing:
 3. [Test Doubles](./ex-so-de-tedrdeve__05-test-doubles.md) - Mocking external services
 4. [Integration Testing](./ex-so-de-tedrdeve__09-integration-testing.md) - Database and API integration
 5. [TDD and DDD](./ex-so-de-tedrdeve__12-tdd-and-ddd.md) - Domain model testing
-6. [TDD in Nx Monorepo](./ex-so-de-tedrdeve__17-tdd-in-nx-monorepo.md) - Backend service testing
+6. [TDD in Nx Monorepo](./ex-so-de-tedrdeve__16-tdd-in-nx-monorepo.md) - Backend service testing
 
 **For Frontend Developers**:
 
@@ -306,7 +304,7 @@ Focus on component and UI testing:
 3. [Test Doubles](./ex-so-de-tedrdeve__05-test-doubles.md) - Mocking API calls
 4. [Testing Patterns](./ex-so-de-tedrdeve__06-testing-patterns.md) - Snapshot testing for components
 5. [End-to-End Testing](./ex-so-de-tedrdeve__10-end-to-end-testing.md) - User flow testing with Playwright
-6. [Decision Trees and Best Practices](./ex-so-de-tedrdeve__16-decision-trees-and-best-practices.md) - When to use E2E vs integration tests
+6. [Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md) - When to use E2E vs integration tests
 
 **For QA Engineers**:
 
@@ -316,8 +314,7 @@ Focus on comprehensive testing strategies:
 2. [Integration Testing](./ex-so-de-tedrdeve__09-integration-testing.md) - Cross-component verification
 3. [End-to-End Testing](./ex-so-de-tedrdeve__10-end-to-end-testing.md) - Full system testing
 4. [Testing Patterns](./ex-so-de-tedrdeve__06-testing-patterns.md) - Table-driven and parameterized tests
-5. [Decision Trees and Best Practices](./ex-so-de-tedrdeve__16-decision-trees-and-best-practices.md) - Coverage strategies
-6. [Testing Anti-Patterns](./ex-so-de-tedrdeve__15-testing-anti-patterns.md) - Quality assurance
+5. [Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md) - Coverage strategies
 
 **For Software Architects**:
 
@@ -325,10 +322,10 @@ Focus on testing strategies and system design:
 
 1. [Introduction and Philosophy](./ex-so-de-tedrdeve__01-introduction-and-philosophy.md) - TDD benefits for design
 2. [Test Types and Pyramid](./ex-so-de-tedrdeve__03-test-types-and-pyramid.md) - Architectural testing strategy
-3. [Decision Trees and Best Practices](./ex-so-de-tedrdeve__16-decision-trees-and-best-practices.md) - Test observability, coverage planning
+3. [Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md) - Test observability, coverage planning
 4. [Integration Testing](./ex-so-de-tedrdeve__09-integration-testing.md) - Contract testing for bounded contexts
 5. [TDD and DDD](./ex-so-de-tedrdeve__12-tdd-and-ddd.md) - Aligning tests with domain boundaries
-6. [TDD in Nx Monorepo](./ex-so-de-tedrdeve__17-tdd-in-nx-monorepo.md) - Monorepo testing architecture
+6. [TDD in Nx Monorepo](./ex-so-de-tedrdeve__16-tdd-in-nx-monorepo.md) - Monorepo testing architecture
 
 ### By Codebase Maturity: Greenfield vs. Brownfield
 
@@ -341,7 +338,7 @@ Full TDD from day one:
 3. [Unit Testing Fundamentals](./ex-so-de-tedrdeve__04-unit-testing-fundamentals.md) - Build testable code from start
 4. [Test Data Builders](./ex-so-de-tedrdeve__07-test-data-builders.md) - Set up fixture infrastructure
 5. [TDD Workflow Checklist Template](./templates/ex-so-de-tedrdeve-te__tdd-workflow-checklist.md) - Establish team practices
-6. [TDD in Nx Monorepo](./ex-so-de-tedrdeve__17-tdd-in-nx-monorepo.md) - Configure testing from start
+6. [TDD in Nx Monorepo](./ex-so-de-tedrdeve__16-tdd-in-nx-monorepo.md) - Configure testing from start
 
 **For Brownfield Projects** (existing codebase without tests):
 
@@ -352,7 +349,7 @@ Incremental adoption of TDD:
 3. [Refactoring with Tests](./ex-so-de-tedrdeve__14-refactoring-with-tests.md) - Safe improvement of existing code
 4. [Integration Testing](./ex-so-de-tedrdeve__09-integration-testing.md) - High-level tests for legacy boundaries
 5. [Coverage Planning Canvas Template](./templates/ex-so-de-tedrdeve-te__coverage-planning-canvas.md) - Prioritize critical paths
-6. [Decision Trees and Best Practices](./ex-so-de-tedrdeve__16-decision-trees-and-best-practices.md) - Practical strategies for incremental adoption
+6. [Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md) - Practical strategies for incremental adoption
 
 **Migration Strategy**:
 
@@ -408,7 +405,7 @@ TDD integrates with other software design approaches in this repository:
 
 ### Domain-Driven Design (DDD)
 
-**[Domain-Driven Design Documentation](../architecture/domain-driven-design-ddd/README.md)**
+**[Domain-Driven Design Documentation](../../architecture/domain-driven-design-ddd/README.md)**
 
 - **Strategic Testing**: Tests verify bounded context boundaries and integration patterns
 - **Aggregate Testing**: TDD ensures aggregate invariants are enforced ([File 12](./ex-so-de-tedrdeve__12-tdd-and-ddd.md))
@@ -420,12 +417,12 @@ TDD integrates with other software design approaches in this repository:
 
 ### C4 Architecture Model
 
-**[C4 Architecture Model Documentation](../architecture/c4-architecture-model/README.md)**
+**[C4 Architecture Model Documentation](../../architecture/c4-architecture-model/README.md)**
 
 - **Component Testing**: Unit tests align with C4 Component diagrams
 - **Container Testing**: Integration tests verify container interactions
 - **System Testing**: E2E tests validate system context behavior
-- **Test Mapping**: [File 16](./ex-so-de-tedrdeve__16-decision-trees-and-best-practices.md) maps test types to C4 levels
+- **Test Mapping**: [File 16](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md) maps test types to C4 levels
 
 **Test Coverage by C4 Level**:
 
@@ -436,7 +433,7 @@ TDD integrates with other software design approaches in this repository:
 
 ### Functional Programming
 
-**[Functional Programming Principles](../../../../governance/development/pattern/functional-programming.md)**
+**[Functional Programming Principles](../../../../../governance/development/pattern/functional-programming.md)**
 
 - **Pure Function Testing**: Simple assertions without mocking ([File 11](./ex-so-de-tedrdeve__11-tdd-and-functional-programming.md))
 - **Property-Based Testing**: Verify invariants across input ranges with fast-check
@@ -448,7 +445,7 @@ TDD integrates with other software design approaches in this repository:
 
 ### Implementation Workflow
 
-**[Implementation Workflow](../../../../governance/development/workflow/implementation.md)**
+**[Implementation Workflow](../../../../../governance/development/workflow/implementation.md)**
 
 TDD aligns with the "Make it work → Make it right → Make it fast" philosophy:
 
@@ -477,12 +474,12 @@ TDD provides the feedback loops and safety net that enable this iterative workfl
 
 ### Related Repository Documentation
 
-- **[Domain-Driven Design](../architecture/domain-driven-design-ddd/README.md)** - Testing domain models
-- **[C4 Architecture Model](../architecture/c4-architecture-model/README.md)** - Architectural testing strategies
-- **[Functional Programming Principles](../../../../governance/development/pattern/functional-programming.md)** - FP testing approaches
-- **[Implementation Workflow](../../../../governance/development/workflow/implementation.md)** - TDD in development process
-- **[Code Quality Standards](../../../../governance/development/quality/code.md)** - Testing in quality assurance
-- **[Nx Monorepo Documentation](../../../../docs/reference/re__monorepo-structure.md)** - Testing in monorepo context
+- **[Domain-Driven Design](../../architecture/domain-driven-design-ddd/README.md)** - Testing domain models
+- **[C4 Architecture Model](../../architecture/c4-architecture-model/README.md)** - Architectural testing strategies
+- **[Functional Programming Principles](../../../../../governance/development/pattern/functional-programming.md)** - FP testing approaches
+- **[Implementation Workflow](../../../../../governance/development/workflow/implementation.md)** - TDD in development process
+- **[Code Quality Standards](../../../../../governance/development/quality/code.md)** - Testing in quality assurance
+- **[Nx Monorepo Documentation](../../../../../docs/reference/re__monorepo-structure.md)** - Testing in monorepo context
 
 ## Document Metadata
 
@@ -492,9 +489,9 @@ TDD provides the feedback loops and safety net that enable this iterative workfl
 - **Last Updated**: 2026-01-20
 - **Status**: Active
 - **Related Documentation**:
-  - [Domain-Driven Design](../architecture/domain-driven-design-ddd/README.md)
-  - [C4 Architecture Model](../architecture/c4-architecture-model/README.md)
-  - [Functional Programming Principles](../../../../governance/development/pattern/functional-programming.md)
-  - [Implementation Workflow](../../../../governance/development/workflow/implementation.md)
+  - [Domain-Driven Design](../../architecture/domain-driven-design-ddd/README.md)
+  - [C4 Architecture Model](../../architecture/c4-architecture-model/README.md)
+  - [Functional Programming Principles](../../../../../governance/development/pattern/functional-programming.md)
+  - [Implementation Workflow](../../../../../governance/development/workflow/implementation.md)
 - **Islamic Finance Examples**: Zakat, Halal Certification, Islamic Accounting, Murabaha, Sukuk, Takaful, Waqf
 - **Learning Paths**: 7 paths covering quick start, practical application, deep dive, paradigm-specific, role-specific, codebase maturity, and domain-specific guidance

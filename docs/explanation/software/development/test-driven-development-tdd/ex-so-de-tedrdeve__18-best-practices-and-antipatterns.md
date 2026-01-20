@@ -2308,11 +2308,11 @@ it("should [behavior] when [condition]", () => {
 - [Unit Testing in TDD](./ex-so-de-tedrdeve__04-unit-testing-fundamentals.md) - Unit test strategies
 - [Test Doubles and Mocking](./ex-so-de-tedrdeve__05-test-doubles.md) - Mocks, stubs, fakes
 - [TDD for Different Architectures](./ex-so-de-tedrdeve__11-tdd-and-functional-programming.md) - TDD across architectures
-- [TDD Metrics and Measurement](./ex-so-de-tedrdeve__17-tdd-in-nx-monorepo.md) - Coverage and quality metrics
+- [TDD Metrics and Measurement](./ex-so-de-tedrdeve__16-tdd-in-nx-monorepo.md) - Coverage and quality metrics
 
 **Related Testing Approaches**:
 
-- [BDD Best Practices and Antipatterns](../behavior-driven-development-bdd/ex-so-de-bdd__18-best-practices-and-antipatterns.md) - BDD testing patterns
+- [BDD Best Practices and Antipatterns](../behavior-driven-development-bdd/ex-so-de-bdd__17-best-practices-and-antipatterns.md) - BDD testing patterns
 
 **Process Integration**:
 

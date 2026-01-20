@@ -748,5 +748,5 @@ E2E tests provide maximum confidence but maximum cost. Use them strategically fo
 
 - **[03. Test Types and Testing Pyramid](./ex-so-de-tedrdeve__03-test-types-and-pyramid.md)** - E2E tests at pyramid top
 - **[09. Integration Testing](./ex-so-de-tedrdeve__09-integration-testing.md)** - Contrast with integration tests
-- **[15. Testing Anti-Patterns](./ex-so-de-tedrdeve__15-testing-anti-patterns.md)** - E2E anti-patterns
-- **[16. Decision Trees and Best Practices](./ex-so-de-tedrdeve__16-decision-trees-and-best-practices.md)** - When to write E2E vs other test types
+- **[15. Best Practices and Antipatterns](./ex-so-de-tedrdeve__18-best-practices-and-antipatterns.md)** - E2E anti-patterns
+- **[15. Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md)** - When to write E2E vs other test types

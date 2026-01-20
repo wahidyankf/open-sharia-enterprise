@@ -933,7 +933,7 @@ TDD integrates deeply with other practices in this repository:
 
 ### Implementation Workflow: Make It Work → Make It Right → Make It Fast
 
-**[Implementation Workflow](../../../../governance/development/workflow/implementation.md)**
+**[Implementation Workflow](../../../../../governance/development/workflow/implementation.md)**
 
 TDD directly supports this philosophy:
 
@@ -945,7 +945,7 @@ TDD provides the feedback loops and safety net that enable this iterative approa
 
 ### Functional Programming: Testability Through Purity
 
-**[Functional Programming Principles](../../../../governance/development/pattern/functional-programming.md)**
+**[Functional Programming Principles](../../../../../governance/development/pattern/functional-programming.md)**
 
 Pure functions are inherently testable:
 
@@ -957,7 +957,7 @@ TDD and FP are natural allies. See [TDD and Functional Programming](./ex-so-de-t
 
 ### Domain-Driven Design: Tests as Ubiquitous Language
 
-**[Domain-Driven Design](../architecture/domain-driven-design-ddd/README.md)**
+**[Domain-Driven Design](../../architecture/domain-driven-design-ddd/README.md)**
 
 Tests express domain concepts using ubiquitous language:
 
@@ -969,7 +969,7 @@ See [TDD and DDD](./ex-so-de-tedrdeve__12-tdd-and-ddd.md) for comprehensive inte
 
 ### Nx Monorepo: Affected Testing
 
-**[Nx Monorepo Structure](../../../../docs/reference/re__monorepo-structure.md)**
+**[Nx Monorepo Structure](../../../../../docs/reference/re__monorepo-structure.md)**
 
 TDD fits naturally with Nx:
 
@@ -977,7 +977,7 @@ TDD fits naturally with Nx:
 - Shared test utilities in `libs/`
 - Fast feedback loops during development
 
-See [TDD in Nx Monorepo](./ex-so-de-tedrdeve__17-tdd-in-nx-monorepo.md).
+See [TDD in Nx Monorepo](./ex-so-de-tedrdeve__16-tdd-in-nx-monorepo.md).
 
 ## Summary
 
