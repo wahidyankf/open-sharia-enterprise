@@ -18,7 +18,7 @@ This document shows how to adapt DDD tactical patterns (Entities, Value Objects,
 
 ```typescript
 // OOP: Mutable state requires careful protection
-class ZakatAssessment {
+class TaxAssessment {
   private status: AssessmentStatus; // Mutable
 
   finalize(): void {
@@ -31,12 +31,12 @@ class ZakatAssessment {
 }
 
 // FP: Immutable state prevents accidental mutation
-type ZakatAssessment = {
+type TaxAssessment = {
   readonly status: AssessmentStatus;
   // ... other fields
 };
 
-function finalize(assessment: ZakatAssessment): Result<ZakatAssessment, DomainError> {
+function finalize(assessment: TaxAssessment): Result<TaxAssessment, DomainError> {
   if (assessment.status !== AssessmentStatus.Draft) {
     return Err(new Error("Cannot finalize non-draft assessment"));
   }
@@ -57,10 +57,10 @@ function finalize(assessment: ZakatAssessment): Result<ZakatAssessment, DomainEr
 
 ```typescript
 // OOP: Testing requires mocking dependencies
-class ZakatCalculator {
-  constructor(private repository: ZakatRepository) {} // Dependency
+class TaxCalculator {
+  constructor(private repository: TaxRepository) {} // Dependency
 
-  calculate(assessmentId: string): ZakatAmount {
+  calculate(assessmentId: string): TaxAmount {
     const assessment = this.repository.findById(assessmentId); // Side effect
     return assessment.wealth.multiply(0.025);
   }
@@ -68,15 +68,15 @@ class ZakatCalculator {
 
 // Test requires mock
 const mockRepo = { findById: jest.fn() };
-const calculator = new ZakatCalculator(mockRepo);
+const calculator = new TaxCalculator(mockRepo);
 
 // FP: Pure function, no dependencies
-function calculateZakat(wealth: Money, rate: ZakatRate): ZakatAmount {
+function calculateTax(wealth: Money, rate: TaxRate): TaxAmount {
   return wealth.multiply(rate.percentage);
 }
 
 // Test is trivial
-expect(calculateZakat(Money.usd(10000), ZakatRate.standard())).toEqual(Money.usd(250));
+expect(calculateTax(Money.usd(10000), TaxRate.standard())).toEqual(Money.usd(250));
 ```
 
 ### 3. Railway-Oriented Programming Handles Validation Gracefully
@@ -92,7 +92,7 @@ type Ok<T> = { kind: "ok"; value: T };
 type Err<E> = { kind: "err"; error: E };
 
 // Pure functions return Result instead of throwing
-function createZakatAssessment(holderId: WealthHolderId, startDate: HijriDate): Result<ZakatAssessment, DomainError> {
+function createTaxAssessment(holderId: WealthHolderId, startDate: HijriDate): Result<TaxAssessment, DomainError> {
   if (!startDate.isValid()) {
     return Err(new Error("Invalid start date"));
   }
@@ -107,13 +107,13 @@ function createZakatAssessment(holderId: WealthHolderId, startDate: HijriDate): 
 }
 
 // Chain operations with map/flatMap
-const result = createZakatAssessment(holderId, startDate)
+const result = createTaxAssessment(holderId, startDate)
   .flatMap((assessment) => declareWealth(assessment, WealthType.Cash, Money.usd(10000)))
-  .flatMap((assessment) => finalize(assessment, nisabThreshold, zakatRate));
+  .flatMap((assessment) => finalize(assessment, incomeThreshold, taxRate));
 
 // Handle success or failure
 match(result, {
-  ok: (assessment) => console.log("Zakat calculated:", assessment.zakatAmount),
+  ok: (assessment) => console.log("Tax calculated:", assessment.taxAmount),
   err: (error) => console.error("Validation failed:", error.message),
 });
 ```
@@ -321,7 +321,7 @@ function createMoney(amount: number, currency: Currency): Result<Money, Validati
 **OOP Example**:
 
 ```typescript
-class ZakatAssessment {
+class TaxAssessment {
   private constructor(
     readonly id: AssessmentId,
     private declarations: WealthDeclaration[],
@@ -342,12 +342,12 @@ class ZakatAssessment {
 
 ```typescript
 // Aggregate as immutable data
-type ZakatAssessment = {
+type TaxAssessment = {
   readonly id: AssessmentId;
   readonly holderId: WealthHolderId;
   readonly declarations: ReadonlyArray<WealthDeclaration>;
   readonly status: AssessmentStatus;
-  readonly zakatAmount: Money | null;
+  readonly taxAmount: Money | null;
 };
 
 type WealthDeclaration = {
@@ -359,11 +359,11 @@ type WealthDeclaration = {
 
 // Command function returns Result<new aggregate, error>
 function declareWealth(
-  assessment: ZakatAssessment,
+  assessment: TaxAssessment,
   wealthType: WealthType,
   amount: Money,
   acquiredDate: HijriDate,
-): Result<ZakatAssessment, DomainError> {
+): Result<TaxAssessment, DomainError> {
   // Validate invariants
   if (assessment.status !== AssessmentStatus.Draft) {
     return Err(new Error("Cannot modify finalized assessment"));
@@ -389,16 +389,16 @@ function declareWealth(
 }
 
 // Query function (pure, no side effects)
-function calculateTotalWealth(assessment: ZakatAssessment): Money {
+function calculateTotalWealth(assessment: TaxAssessment): Money {
   return assessment.declarations.reduce((total, decl) => add(total, decl.amount).unwrap(), Money.zero());
 }
 
 // Command function with domain event
 function finalize(
-  assessment: ZakatAssessment,
-  nisabThreshold: NisabAmount,
-  zakatRate: ZakatRate,
-): Result<[ZakatAssessment, ZakatCalculated], DomainError> {
+  assessment: TaxAssessment,
+  incomeThreshold: ThresholdAmount,
+  taxRate: TaxRate,
+): Result<[TaxAssessment, TaxCalculated], DomainError> {
   if (assessment.status !== AssessmentStatus.Draft) {
     return Err(new Error("Already finalized"));
   }
@@ -408,20 +408,20 @@ function finalize(
   }
 
   const totalWealth = calculateTotalWealth(assessment);
-  const meetsNisab = totalWealth.amount >= nisabThreshold.amount.amount;
+  const meetsThreshold = totalWealth.amount >= incomeThreshold.amount.amount;
 
-  const zakatAmount = meetsNisab ? multiply(totalWealth, zakatRate.percentage) : Money.zero();
+  const taxAmount = meetsThreshold ? multiply(totalWealth, taxRate.percentage) : Money.zero();
 
-  const updatedAssessment: ZakatAssessment = {
+  const updatedAssessment: TaxAssessment = {
     ...assessment,
-    status: meetsNisab ? AssessmentStatus.Finalized : AssessmentStatus.ExemptBelowNisab,
-    zakatAmount,
+    status: meetsThreshold ? AssessmentStatus.Finalized : AssessmentStatus.ExemptBelowThreshold,
+    taxAmount,
   };
 
-  const event: ZakatCalculated = {
+  const event: TaxCalculated = {
     assessmentId: assessment.id,
     holderId: assessment.holderId,
-    zakatAmount,
+    taxAmount,
     calculatedAt: HijriDate.now(),
   };
 
@@ -436,10 +436,10 @@ function finalize(
 type Command<T, E> = (aggregate: T) => Result<T | [T, DomainEvent], E>;
 
 // Example: Chain multiple commands
-const result = createZakatAssessment(holderId, startDate)
+const result = createTaxAssessment(holderId, startDate)
   .flatMap((assessment) => declareWealth(assessment, WealthType.Cash, Money.usd(10000), date1))
   .flatMap((assessment) => declareWealth(assessment, WealthType.Gold, Money.usd(5000), date2))
-  .flatMap((assessment) => finalize(assessment, nisabThreshold, zakatRate));
+  .flatMap((assessment) => finalize(assessment, incomeThreshold, taxRate));
 
 match(result, {
   ok: ([finalAssessment, event]) => {
@@ -468,13 +468,13 @@ match(result, {
 **Event Definition**:
 
 ```typescript
-type DomainEvent = ZakatCalculated | WealthDeclared | AssessmentCreated | NisabThresholdMet;
+type DomainEvent = TaxCalculated | WealthDeclared | AssessmentCreated | IncomeThresholdMet;
 
-type ZakatCalculated = {
-  readonly kind: "ZakatCalculated";
+type TaxCalculated = {
+  readonly kind: "TaxCalculated";
   readonly assessmentId: AssessmentId;
   readonly holderId: WealthHolderId;
-  readonly zakatAmount: Money;
+  readonly taxAmount: Money;
   readonly calculatedAt: HijriDate;
 };
 
@@ -493,7 +493,7 @@ type WealthDeclared = {
 type EventHandler<E extends DomainEvent> = (event: E) => Promise<void>;
 
 // Pure projection function
-function applyEvent(assessment: ZakatAssessment, event: DomainEvent): ZakatAssessment {
+function applyEvent(assessment: TaxAssessment, event: DomainEvent): TaxAssessment {
   switch (event.kind) {
     case "WealthDeclared":
       return {
@@ -501,10 +501,10 @@ function applyEvent(assessment: ZakatAssessment, event: DomainEvent): ZakatAsses
         declarations: [...assessment.declarations, event.declaration],
       };
 
-    case "ZakatCalculated":
+    case "TaxCalculated":
       return {
         ...assessment,
-        zakatAmount: event.zakatAmount,
+        taxAmount: event.taxAmount,
         status: AssessmentStatus.Finalized,
       };
 
@@ -514,7 +514,7 @@ function applyEvent(assessment: ZakatAssessment, event: DomainEvent): ZakatAsses
 }
 
 // Event sourcing: rebuild aggregate from events
-function replayEvents(events: ReadonlyArray<DomainEvent>, initialState: ZakatAssessment): ZakatAssessment {
+function replayEvents(events: ReadonlyArray<DomainEvent>, initialState: TaxAssessment): TaxAssessment {
   return events.reduce(applyEvent, initialState);
 }
 ```
@@ -529,22 +529,22 @@ function replayEvents(events: ReadonlyArray<DomainEvent>, initialState: ZakatAss
 
 ```typescript
 // Interface returns Result for error handling
-interface ZakatAssessmentRepository {
-  findById(id: AssessmentId): Promise<Result<ZakatAssessment, NotFoundError>>;
-  save(assessment: ZakatAssessment): Promise<Result<void, PersistenceError>>;
-  findByHolder(holderId: WealthHolderId): Promise<Result<ZakatAssessment[], PersistenceError>>;
+interface TaxAssessmentRepository {
+  findById(id: AssessmentId): Promise<Result<TaxAssessment, NotFoundError>>;
+  save(assessment: TaxAssessment): Promise<Result<void, PersistenceError>>;
+  findByHolder(holderId: WealthHolderId): Promise<Result<TaxAssessment[], PersistenceError>>;
 }
 ```
 
 **Impure Implementation** (isolated at edges):
 
 ```typescript
-class PostgresZakatRepository implements ZakatAssessmentRepository {
+class PostgresTaxRepository implements TaxAssessmentRepository {
   constructor(private db: DatabaseConnection) {} // Impure dependency
 
-  async findById(id: AssessmentId): Promise<Result<ZakatAssessment, NotFoundError>> {
+  async findById(id: AssessmentId): Promise<Result<TaxAssessment, NotFoundError>> {
     try {
-      const row = await this.db.query("SELECT * FROM zakat_assessments WHERE id = $1", [id.value]);
+      const row = await this.db.query("SELECT * FROM tax_assessments WHERE id = $1", [id.value]);
 
       if (!row) {
         return Err(new NotFoundError(`Assessment ${id.value} not found`));
@@ -556,14 +556,14 @@ class PostgresZakatRepository implements ZakatAssessmentRepository {
     }
   }
 
-  private toDomain(row: any): ZakatAssessment {
+  private toDomain(row: any): TaxAssessment {
     // Impure: parsing database row
     return {
       id: AssessmentId.fromString(row.id),
       holderId: WealthHolderId.fromString(row.holder_id),
       declarations: JSON.parse(row.declarations),
       status: row.status as AssessmentStatus,
-      zakatAmount: row.zakat_amount ? Money.usd(row.zakat_amount) : null,
+      taxAmount: row.tax_amount ? Money.usd(row.tax_amount) : null,
     };
   }
 }
@@ -573,8 +573,8 @@ class PostgresZakatRepository implements ZakatAssessmentRepository {
 
 ```typescript
 // Test domain logic without repository
-describe("ZakatAssessment domain logic", () => {
-  it("should calculate zakat correctly", () => {
+describe("TaxAssessment domain logic", () => {
+  it("should calculate tax correctly", () => {
     const assessment = {
       id: AssessmentId.generate(),
       holderId: WealthHolderId.generate(),
@@ -587,15 +587,15 @@ describe("ZakatAssessment domain logic", () => {
         },
       ],
       status: AssessmentStatus.Draft,
-      zakatAmount: null,
+      taxAmount: null,
     };
 
-    const result = finalize(assessment, NisabAmount.fromMoney(Money.usd(5000)), ZakatRate.standard());
+    const result = finalize(assessment, ThresholdAmount.fromMoney(Money.usd(5000)), TaxRate.standard());
 
     expect(result.kind).toBe("ok");
     if (result.kind === "ok") {
       const [updated, event] = result.value;
-      expect(updated.zakatAmount?.amount).toBe(250); // 10000 * 0.025
+      expect(updated.taxAmount?.amount).toBe(250); // 10000 * 0.025
     }
   });
 });
@@ -610,7 +610,7 @@ describe("ZakatAssessment domain logic", () => {
 **OOP Example**:
 
 ```typescript
-class RibaDetectionService {
+class InterestDetectionService {
   detectInterest(transaction: FinancialTransaction): boolean {
     return transaction.interestRate > 0;
   }
@@ -621,17 +621,17 @@ class RibaDetectionService {
 
 ```typescript
 // Pure function - no class needed
-function detectRiba(transaction: FinancialTransaction): boolean {
+function detectInterest(transaction: FinancialTransaction): boolean {
   return transaction.interestRate > 0;
 }
 
 // More complex service with multiple operations
 const IslamicFinanceValidation = {
-  detectRiba: (transaction: FinancialTransaction): boolean => {
+  detectInterest: (transaction: FinancialTransaction): boolean => {
     return transaction.interestRate > 0;
   },
 
-  validateMurabaha: (contract: MurabahaContract): Result<void, ValidationError> => {
+  validateLoan: (contract: LoanContract): Result<void, ValidationError> => {
     if (contract.profitMargin > 0.5) {
       return Err({ field: "profitMargin", message: "Excessive profit margin" });
     }
@@ -699,7 +699,7 @@ function map<T, E, U>(result: Result<T, E>, f: (value: T) => U): Result<U, E> {
 }
 ```
 
-### Example: Zakat Assessment Validation Pipeline
+### Example: Tax Assessment Validation Pipeline
 
 ```typescript
 type ValidationError =
@@ -728,7 +728,7 @@ function validateAmount(amount: Money): Result<Money, ValidationError> {
 }
 
 function validateAssessmentStatus(status: AssessmentStatus): Result<AssessmentStatus, ValidationError> {
-  const validStatuses = [AssessmentStatus.Draft, AssessmentStatus.Finalized, AssessmentStatus.ExemptBelowNisab];
+  const validStatuses = [AssessmentStatus.Draft, AssessmentStatus.Finalized, AssessmentStatus.ExemptBelowThreshold];
   if (!validStatuses.includes(status)) {
     return Err({ kind: "InvalidStatus", message: `Invalid status: ${status}` });
   }
@@ -739,22 +739,22 @@ function validateAssessmentStatus(status: AssessmentStatus): Result<AssessmentSt
 function createValidatedAssessment(
   holderId: WealthHolderId,
   startDate: HijriDate,
-): Result<ZakatAssessment, ValidationError> {
+): Result<TaxAssessment, ValidationError> {
   return validateStartDate(startDate).map((validDate) => ({
     id: AssessmentId.generate(),
     holderId,
     declarations: [],
     status: AssessmentStatus.Draft,
-    zakatAmount: null,
+    taxAmount: null,
   }));
 }
 
 function addValidatedDeclaration(
-  assessment: ZakatAssessment,
+  assessment: TaxAssessment,
   wealthType: WealthType,
   amount: Money,
   acquiredDate: HijriDate,
-): Result<ZakatAssessment, ValidationError> {
+): Result<TaxAssessment, ValidationError> {
   return validateAmount(amount)
     .flatMap(() => validateStartDate(acquiredDate))
     .flatMap(() => declareWealth(assessment, wealthType, amount, acquiredDate));
@@ -800,7 +800,7 @@ match(assessment, {
 | **Error Handling** | Try/catch, checked exceptions             | Result/Either types, explicit               | Existing codebases with exceptions                 | New codebases, composable error handling                  |
 | **Performance**    | Mutation can be faster (in-place updates) | Structural sharing (efficient immutability) | Tight loops, performance-critical paths            | Most business logic (immutability benefits outweigh cost) |
 
-## Example: Zakat Assessment in FP Style
+## Example: Tax Assessment in FP Style
 
 Complete example using functional programming patterns:
 
@@ -809,13 +809,13 @@ Complete example using functional programming patterns:
 // Domain Types (Immutable)
 // ============================================================================
 
-type ZakatAssessment = {
+type TaxAssessment = {
   readonly id: AssessmentId;
   readonly holderId: WealthHolderId;
   readonly period: LunarYearPeriod;
   readonly declarations: ReadonlyArray<WealthDeclaration>;
   readonly status: AssessmentStatus;
-  readonly zakatAmount: Money | null;
+  readonly taxAmount: Money | null;
 };
 
 type WealthDeclaration = {
@@ -828,7 +828,7 @@ type WealthDeclaration = {
 enum AssessmentStatus {
   Draft = 'DRAFT',
   Finalized = 'FINALIZED',
-  ExemptBelowNisab = 'EXEMPT_BELOW_NISAB',
+  ExemptBelowThreshold = 'EXEMPT_BELOW_THRESHOLD',
 }
 
 enum WealthType {
@@ -845,7 +845,7 @@ enum WealthType {
 type DomainEvent =
   | { kind: 'AssessmentCreated'; assessmentId: AssessmentId; holderId: WealthHolderId }
   | { kind: 'WealthDeclared'; assessmentId: AssessmentId; declaration: WealthDeclaration }
-  | { kind: 'ZakatCalculated'; assessmentId: AssessmentId; zakatAmount: Money; calculatedAt: HijriDate };
+  | { kind: 'TaxCalculated'; assessmentId: AssessmentId; taxAmount: Money; calculatedAt: HijriDate };
 
 // ============================================================================
 // Factory Functions
@@ -854,18 +854,18 @@ type DomainEvent =
 function createAssessment(
   holderId: WealthHolderId,
   startDate: HijriDate,
-): Result<[ZakatAssessment, DomainEvent], ValidationError> {
+): Result<[TaxAssessment, DomainEvent], ValidationError> {
   if (!startDate.isValid()) {
     return Err({ field: 'startDate', message: 'Invalid start date' });
   }
 
-  const assessment: ZakatAssessment = {
+  const assessment: TaxAssessment = {
     id: AssessmentId.generate(),
     holderId,
     period: LunarYearPeriod.fromStartDate(startDate),
     declarations: [],
     status: AssessmentStatus.Draft,
-    zakatAmount: null,
+    taxAmount: null,
   };
 
   const event: DomainEvent = {
@@ -882,11 +882,11 @@ function createAssessment(
 // ============================================================================
 
 function declareWealth(
-  assessment: ZakatAssessment,
+  assessment: TaxAssessment,
   wealthType: WealthType,
   amount: Money,
   acquiredDate: HijriDate,
-): Result<[ZakatAssessment, DomainEvent], DomainError> {
+): Result<[TaxAssessment, DomainEvent], DomainError> {
   // Validate invariants
   if (assessment.status !== AssessmentStatus.Draft) {
     return Err(new Error('Cannot modify finalized assessment'));
@@ -909,7 +909,7 @@ function declareWealth(
   };
 
   // Return new assessment with added declaration
-  const updatedAssessment: ZakatAssessment = {
+  const updatedAssessment: TaxAssessment = {
     ...assessment,
     declarations: [...assessment.declarations, declaration],
   };
@@ -924,10 +924,10 @@ function declareWealth(
 }
 
 function finalize(
-  assessment: ZakatAssessment,
-  nisabThreshold: NisabAmount,
-  zakatRate: ZakatRate,
-): Result<[ZakatAssessment, DomainEvent], DomainError> {
+  assessment: TaxAssessment,
+  incomeThreshold: ThresholdAmount,
+  taxRate: TaxRate,
+): Result<[TaxAssessment, DomainEvent], DomainError> {
   // Validate invariants
   if (assessment.status !== AssessmentStatus.Draft) {
     return Err(new Error('Assessment already finalized'));
@@ -944,27 +944,27 @@ function finalize(
   // Calculate total wealth
   const totalWealth = calculateTotalWealth(assessment);
 
-  // Determine zakat amount
-  const meetsNisab = totalWealth.amount >= nisabThreshold.amount.amount;
-  const zakatAmount = meetsNisab
-    ? multiply(totalWealth, zakatRate.percentage)
+  // Determine tax amount
+  const meetsThreshold = totalWealth.amount >= incomeThreshold.amount.amount;
+  const taxAmount = meetsThreshold
+    ? multiply(totalWealth, taxRate.percentage)
     : Money.zero();
 
-  const newStatus = meetsNisab
+  const newStatus = meetsThreshold
     ? AssessmentStatus.Finalized
-    : AssessmentStatus.ExemptBelowNisab;
+    : AssessmentStatus.ExemptBelowThreshold;
 
   // Return updated assessment
-  const updatedAssessment: ZakatAssessment = {
+  const updatedAssessment: TaxAssessment = {
     ...assessment,
     status: newStatus,
-    zakatAmount,
+    taxAmount,
   };
 
   const event: DomainEvent = {
-    kind: 'ZakatCalculated',
+    kind: 'TaxCalculated',
     assessmentId: assessment.id,
-    zakatAmount,
+    taxAmount,
     calculatedAt: HijriDate.now(),
   };
 
@@ -975,20 +975,20 @@ function finalize(
 // Queries (Pure Functions)
 // ============================================================================
 
-function calculateTotalWealth(assessment: ZakatAssessment): Money {
+function calculateTotalWealth(assessment: TaxAssessment): Money {
   return assessment.declarations.reduce(
     (total, decl) => add(total, decl.amount).unwrapOr(total),
     Money.zero(),
   );
 }
 
-function meetsNisab(assessment: ZakatAssessment, threshold: NisabAmount): boolean {
+function meetsThreshold(assessment: TaxAssessment, threshold: ThresholdAmount): boolean {
   const total = calculateTotalWealth(assessment);
   return total.amount >= threshold.amount.amount;
 }
 
 function getDeclarationsByType(
-  assessment: ZakatAssessment,
+  assessment: TaxAssessment,
   wealthType: WealthType,
 ): WealthDeclaration[] {
   return assessment.declarations.filter(d => d.wealthType === wealthType);
@@ -1002,9 +1002,9 @@ async function handleCreateAndFinalizeAssessment(
   holderId: WealthHolderId,
   startDate: HijriDate,
   declarations: Array<{ type: WealthType; amount: Money; date: HijriDate }>,
-  repository: ZakatAssessmentRepository,
+  repository: TaxAssessmentRepository,
   eventBus: EventBus,
-): Promise<Result<ZakatAssessment, Error>> {
+): Promise<Result<TaxAssessment, Error>> {
   // Create assessment (pure)
   const createResult = createAssessment(holderId, startDate);
   if (createResult.kind === 'err') {
@@ -1025,7 +1025,7 @@ async function handleCreateAndFinalizeAssessment(
   }
 
   // Finalize (pure)
-  const finalizeResult = finalize(assessment, NisabAmount.goldStandard(), ZakatRate.standard());
+  const finalizeResult = finalize(assessment, ThresholdAmount.goldStandard(), TaxRate.standard());
   if (finalizeResult.kind === 'err') {
     return Err(finalizeResult.error);
   }
@@ -1050,7 +1050,7 @@ async function handleCreateAndFinalizeAssessment(
 Functional domain models are trivially testable:
 
 ```typescript
-describe("ZakatAssessment (FP)", () => {
+describe("TaxAssessment (FP)", () => {
   const holderId = WealthHolderId.generate();
   const startDate = HijriDate.fromString("1444-01-01");
 
@@ -1097,13 +1097,13 @@ describe("ZakatAssessment (FP)", () => {
     });
 
     it("should reject declaration on finalized assessment", () => {
-      const finalizedAssessment: ZakatAssessment = {
+      const finalizedAssessment: TaxAssessment = {
         id: AssessmentId.generate(),
         holderId,
         period: LunarYearPeriod.fromStartDate(startDate),
         declarations: [],
         status: AssessmentStatus.Finalized,
-        zakatAmount: Money.zero(),
+        taxAmount: Money.zero(),
       };
 
       const result = declareWealth(finalizedAssessment, WealthType.Cash, Money.usd(1000), startDate);
@@ -1114,7 +1114,7 @@ describe("ZakatAssessment (FP)", () => {
 
   describe("calculateTotalWealth", () => {
     it("should sum all declarations", () => {
-      const assessment: ZakatAssessment = {
+      const assessment: TaxAssessment = {
         id: AssessmentId.generate(),
         holderId,
         period: LunarYearPeriod.fromStartDate(startDate),
@@ -1133,7 +1133,7 @@ describe("ZakatAssessment (FP)", () => {
           },
         ],
         status: AssessmentStatus.Draft,
-        zakatAmount: null,
+        taxAmount: null,
       };
 
       const total = calculateTotalWealth(assessment);

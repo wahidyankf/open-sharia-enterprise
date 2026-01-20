@@ -17,18 +17,18 @@ The AAA pattern is the fundamental structure for unit tests. It divides each tes
 ### Basic Structure
 
 ```typescript
-describe("ZakatCalculator", () => {
-  it("should calculate 2.5% zakat on eligible wealth", () => {
+describe("TaxCalculator", () => {
+  it("should calculate 2.5% tax on eligible wealth", () => {
     // ARRANGE - Set up test conditions
-    const calculator = new ZakatCalculator();
+    const calculator = new TaxCalculator();
     const wealth = Money.fromGold(100, "grams");
-    const nisab = Money.fromGold(85, "grams");
+    const threshold = Money.fromGold(85, "grams");
 
     // ACT - Execute the behavior
-    const zakat = calculator.calculate(wealth, nisab);
+    const tax = calculator.calculate(wealth, threshold);
 
     // ASSERT - Verify the outcome
-    expect(zakat.equals(Money.fromGold(2.5, "grams"))).toBe(true);
+    expect(tax.equals(Money.fromGold(2.5, "grams"))).toBe(true);
   });
 });
 ```
@@ -43,11 +43,11 @@ describe("ZakatCalculator", () => {
 ### AAA in Asynchronous Tests
 
 ```typescript
-describe("MurabahaContractService", () => {
+describe("LoanContractService", () => {
   it("should create contract and persist to database", async () => {
     // ARRANGE
     const repository = new InMemoryContractRepository();
-    const service = new MurabahaContractService(repository);
+    const service = new LoanContractService(repository);
 
     const contractRequest = {
       customerId: "CUST-001",
@@ -74,7 +74,7 @@ describe("MurabahaContractService", () => {
 ```typescript
 // BAD: Multiple act-assert cycles in single test
 it("should handle contract lifecycle", async () => {
-  const service = new MurabahaContractService(repository);
+  const service = new LoanContractService(repository);
 
   // Act 1
   const contract = await service.createContract(request);
@@ -95,10 +95,10 @@ it("should handle contract lifecycle", async () => {
 });
 
 // GOOD: Separate tests for each behavior
-describe("MurabahaContractService lifecycle", () => {
+describe("LoanContractService lifecycle", () => {
   it("should create contract in pending status", async () => {
     // Arrange
-    const service = new MurabahaContractService(repository);
+    const service = new LoanContractService(repository);
 
     // Act
     const contract = await service.createContract(request);
@@ -109,7 +109,7 @@ describe("MurabahaContractService lifecycle", () => {
 
   it("should approve pending contract", async () => {
     // Arrange
-    const service = new MurabahaContractService(repository);
+    const service = new LoanContractService(repository);
     const contract = await service.createContract(request);
 
     // Act
@@ -122,7 +122,7 @@ describe("MurabahaContractService lifecycle", () => {
 
   it("should activate approved contract", async () => {
     // Arrange
-    const service = new MurabahaContractService(repository);
+    const service = new LoanContractService(repository);
     const contract = await service.createContract(request);
     await service.approveContract(contract.id);
 
@@ -147,15 +147,15 @@ Given-When-Then is the Behavior-Driven Development (BDD) variant of AAA. It emph
 ### Basic Structure
 
 ```typescript
-describe("Halal Certification", () => {
-  it("should approve certification when all ingredients are halal", () => {
+describe("Permitted Certification", () => {
+  it("should approve certification when all ingredients are permitted", () => {
     // GIVEN - Context and preconditions
-    const validator = new HalalIngredientValidator();
+    const validator = new PermittedIngredientValidator();
     const application = buildCertificationApplication({
       productName: "Chicken Nuggets",
       ingredients: [
-        { name: "chicken", source: "halal-certified-farm" },
-        { name: "breadcrumbs", source: "halal-supplier" },
+        { name: "chicken", source: "permitted-certified-farm" },
+        { name: "breadcrumbs", source: "permitted-supplier" },
         { name: "spices", source: "natural" },
       ],
     });
@@ -218,25 +218,25 @@ Table-driven tests verify the same behavior across multiple input/output combina
 ### Basic Table-Driven Test
 
 ```typescript
-describe("Zakat Calculator - Multiple Scenarios", () => {
+describe("Tax Calculator - Multiple Scenarios", () => {
   it.each([
-    // [wealth, nisab, expectedZakat]
-    [100, 85, 2.5], // Above nisab
-    [85, 85, 2.125], // Exactly at nisab
-    [84.99, 85, 0], // Below nisab
+    // [wealth, threshold, expectedTax]
+    [100, 85, 2.5], // Above threshold
+    [85, 85, 2.125], // Exactly at threshold
+    [84.99, 85, 0], // Below threshold
     [0, 85, 0], // Zero wealth
     [1000, 85, 25], // Large amount
-  ])("should calculate zakat correctly for wealth=%d, nisab=%d", (wealth, nisab, expected) => {
+  ])("should calculate tax correctly for wealth=%d, threshold=%d", (wealth, threshold, expected) => {
     // Arrange
-    const calculator = new ZakatCalculator();
+    const calculator = new TaxCalculator();
     const wealthAmount = Money.fromGold(wealth, "grams");
-    const nisabAmount = Money.fromGold(nisab, "grams");
+    const thresholdAmount = Money.fromGold(threshold, "grams");
 
     // Act
-    const zakat = calculator.calculate(wealthAmount, nisabAmount);
+    const tax = calculator.calculate(wealthAmount, thresholdAmount);
 
     // Assert
-    expect(zakat.equals(Money.fromGold(expected, "grams"))).toBe(true);
+    expect(tax.equals(Money.fromGold(expected, "grams"))).toBe(true);
   });
 });
 ```
@@ -244,7 +244,7 @@ describe("Zakat Calculator - Multiple Scenarios", () => {
 ### Table-Driven Tests with Complex Objects
 
 ```typescript
-describe("Murabaha Installment Calculator", () => {
+describe("Loan Installment Calculator", () => {
   const testCases = [
     {
       name: "12-month contract with small principal",
@@ -275,7 +275,7 @@ describe("Murabaha Installment Calculator", () => {
   testCases.forEach(({ name, principal, markup, months, expectedMonthlyPayment, expectedTotal }) => {
     it(`should calculate installments for ${name}`, () => {
       // Arrange
-      const calculator = new MurabahaInstallmentCalculator();
+      const calculator = new LoanInstallmentCalculator();
       const contract = {
         principal: Money.fromUSD(principal),
         markup: Money.fromUSD(markup),
@@ -320,17 +320,17 @@ Snapshot testing captures the output of a function and compares it to a saved "s
 - Non-deterministic outputs (random IDs, timestamps)
 - Critical calculations (snapshot hides business logic)
 
-### Example: Zakat Report Snapshot
+### Example: Tax Report Snapshot
 
 ```typescript
-describe("ZakatAnnualReport", () => {
+describe("TaxAnnualReport", () => {
   it("should generate annual report with correct structure", () => {
     // Arrange
-    const reportGenerator = new ZakatAnnualReportGenerator();
+    const reportGenerator = new TaxAnnualReportGenerator();
     const records = [
-      buildZakatRecord({ date: new Date("2024-03-15"), amount: Money.fromUSD(250) }),
-      buildZakatRecord({ date: new Date("2024-06-10"), amount: Money.fromUSD(300) }),
-      buildZakatRecord({ date: new Date("2024-09-20"), amount: Money.fromUSD(400) }),
+      buildTaxRecord({ date: new Date("2024-03-15"), amount: Money.fromUSD(250) }),
+      buildTaxRecord({ date: new Date("2024-06-10"), amount: Money.fromUSD(300) }),
+      buildTaxRecord({ date: new Date("2024-09-20"), amount: Money.fromUSD(400) }),
     ];
 
     // Act
@@ -339,7 +339,7 @@ describe("ZakatAnnualReport", () => {
     // Assert
     expect(report).toMatchSnapshot();
     // Snapshot includes:
-    // - Total zakat paid
+    // - Total tax paid
     // - Breakdown by quarter
     // - Payment dates
     // - Asset types
@@ -373,25 +373,25 @@ it("should generate sukuk dividend report", () => {
 ```
 src/
   domain/
-    ZakatCalculator.ts
+    TaxCalculator.ts
   __tests__/
-    ZakatCalculator.test.ts
+    TaxCalculator.test.ts
 ```
 
 ### 2. Nested Describe Blocks (Context Organization)
 
 ```typescript
-describe("WaqfManagementService", () => {
-  describe("createWaqf", () => {
-    it("should create waqf with valid beneficiaries", async () => {
+describe("DonationManagementService", () => {
+  describe("createDonation", () => {
+    it("should create donation with valid beneficiaries", async () => {
       // Test implementation
     });
 
-    it("should reject waqf with no beneficiaries", async () => {
+    it("should reject donation with no beneficiaries", async () => {
       // Test implementation
     });
 
-    it("should reject waqf with negative asset value", async () => {
+    it("should reject donation with negative asset value", async () => {
       // Test implementation
     });
   });
@@ -406,7 +406,7 @@ describe("WaqfManagementService", () => {
     });
   });
 
-  describe("transferWaqfOwnership", () => {
+  describe("transferDonationOwnership", () => {
     it("should transfer ownership to new custodian", async () => {
       // Test implementation
     });
@@ -462,13 +462,13 @@ Extract common test data creation into builder functions:
 
 ```typescript
 // Test builders
-function buildHalalCertificationApplication(overrides?: Partial<Application>): Application {
+function buildPermittedCertificationApplication(overrides?: Partial<Application>): Application {
   return {
     id: "APP-001",
-    productName: "Halal Chicken Sausage",
-    manufacturer: "Halal Foods Ltd",
+    productName: "Permitted Chicken Sausage",
+    manufacturer: "Permitted Foods Ltd",
     ingredients: [
-      { name: "chicken", source: "halal-farm" },
+      { name: "chicken", source: "permitted-farm" },
       { name: "spices", source: "natural" },
     ],
     submittedAt: new Date("2024-01-15"),
@@ -478,26 +478,26 @@ function buildHalalCertificationApplication(overrides?: Partial<Application>): A
 }
 
 function buildRejectedApplication(overrides?: Partial<Application>): Application {
-  return buildHalalCertificationApplication({
+  return buildPermittedCertificationApplication({
     status: "REJECTED",
     ingredients: [
-      { name: "pork", source: "conventional-farm" }, // Non-halal
+      { name: "pork", source: "conventional-farm" }, // Non-permitted
     ],
     ...overrides,
   });
 }
 
 // Usage in tests
-describe("HalalCertificationService", () => {
-  it("should approve application with halal ingredients", () => {
-    const application = buildHalalCertificationApplication();
+describe("PermittedCertificationService", () => {
+  it("should approve application with permitted ingredients", () => {
+    const application = buildPermittedCertificationApplication();
 
     const result = service.review(application);
 
     expect(result.approved).toBe(true);
   });
 
-  it("should reject application with non-halal ingredients", () => {
+  it("should reject application with non-permitted ingredients", () => {
     const application = buildRejectedApplication();
 
     const result = service.review(application);
@@ -513,45 +513,45 @@ See **[07. Test Data Builders](./ex-so-de-tedrdeve__07-test-data-builders.md)** 
 
 Property-based testing generates random test inputs to verify properties (invariants) that should always hold true. Complements example-based tests.
 
-### Example: Zakat Invariants
+### Example: Tax Invariants
 
 ```typescript
 import fc from "fast-check";
 
-describe("ZakatCalculator - Property-Based Tests", () => {
-  it("should always return non-negative zakat", () => {
+describe("TaxCalculator - Property-Based Tests", () => {
+  it("should always return non-negative tax", () => {
     fc.assert(
       fc.property(
         fc.double({ min: 0, max: 1000000 }), // Random wealth
-        fc.double({ min: 0, max: 100000 }), // Random nisab
-        (wealth, nisab) => {
-          const calculator = new ZakatCalculator();
+        fc.double({ min: 0, max: 100000 }), // Random threshold
+        (wealth, threshold) => {
+          const calculator = new TaxCalculator();
           const wealthAmount = Money.fromGold(wealth, "grams");
-          const nisabAmount = Money.fromGold(nisab, "grams");
+          const thresholdAmount = Money.fromGold(threshold, "grams");
 
-          const zakat = calculator.calculate(wealthAmount, nisabAmount);
+          const tax = calculator.calculate(wealthAmount, thresholdAmount);
 
-          // Property: Zakat is never negative
-          expect(zakat.amount).toBeGreaterThanOrEqual(0);
+          // Property: Tax is never negative
+          expect(tax.amount).toBeGreaterThanOrEqual(0);
         },
       ),
     );
   });
 
-  it("should calculate zakat at exactly 2.5% when wealth exceeds nisab", () => {
+  it("should calculate tax at exactly 2.5% when wealth exceeds threshold", () => {
     fc.assert(
       fc.property(
-        fc.double({ min: 100, max: 1000000 }), // Random wealth > nisab
+        fc.double({ min: 100, max: 1000000 }), // Random wealth > threshold
         (wealth) => {
-          const calculator = new ZakatCalculator();
-          const nisab = Money.fromGold(85, "grams");
+          const calculator = new TaxCalculator();
+          const threshold = Money.fromGold(85, "grams");
           const wealthAmount = Money.fromGold(wealth, "grams");
 
-          const zakat = calculator.calculate(wealthAmount, nisab);
+          const tax = calculator.calculate(wealthAmount, threshold);
 
-          // Property: Zakat is exactly 2.5% of wealth
+          // Property: Tax is exactly 2.5% of wealth
           const expected = wealth * 0.025;
-          expect(zakat.amount).toBeCloseTo(expected, 2);
+          expect(tax.amount).toBeCloseTo(expected, 2);
         },
       ),
     );
@@ -571,22 +571,22 @@ describe("ZakatCalculator - Property-Based Tests", () => {
 ### Pattern 1: "should [expected behavior] when [condition]"
 
 ```typescript
-it("should calculate zakat when wealth exceeds nisab", () => {});
-it("should return zero when wealth is below nisab", () => {});
+it("should calculate tax when wealth exceeds threshold", () => {});
+it("should return zero when wealth is below threshold", () => {});
 it("should reject contract when markup exceeds 10%", () => {});
 ```
 
 ### Pattern 2: "should [expected behavior] given [context]"
 
 ```typescript
-it("should approve certification given all halal ingredients", () => {});
+it("should approve certification given all permitted ingredients", () => {});
 it("should distribute income proportionally given multiple beneficiaries", () => {});
 ```
 
 ### Pattern 3: "[method name] - [scenario] - [expected result]"
 
 ```typescript
-it("calculateZakat - wealth below nisab - returns zero", () => {});
+it("calculateTax - wealth below threshold - returns zero", () => {});
 it("approveContract - invalid customer - throws error", () => {});
 ```
 
@@ -595,10 +595,10 @@ it("approveContract - invalid customer - throws error", () => {});
 ```typescript
 // Too vague
 it("works correctly", () => {});
-it("test zakat", () => {});
+it("test tax", () => {});
 
 // Implementation details
-it("calls getNisab and multiplies by 0.025", () => {});
+it("calls getThreshold and multiplies by 0.025", () => {});
 
 // Testing multiple behaviors
 it("creates contract, approves it, and activates it", () => {});
@@ -609,9 +609,9 @@ it("creates contract, approves it, and activates it", () => {});
 ### Pattern 1: Expect Thrown Error
 
 ```typescript
-describe("MurabahaContractService", () => {
+describe("LoanContractService", () => {
   it("should throw error when markup exceeds 10%", () => {
-    const service = new MurabahaContractService();
+    const service = new LoanContractService();
 
     const invalidContract = {
       principal: Money.fromUSD(10000),
@@ -631,7 +631,7 @@ it("should reject contract when customer has poor credit score", async () => {
   const creditChecker = {
     checkCredit: async () => ({ score: 400, approved: false }),
   };
-  const service = new MurabahaContractService(creditChecker);
+  const service = new LoanContractService(creditChecker);
 
   await expect(service.createContract(contractRequest)).rejects.toThrow("Customer credit score too low");
 });
@@ -642,7 +642,7 @@ it("should reject contract when customer has poor credit score", async () => {
 ```typescript
 it("should throw validation error with specific details", () => {
   try {
-    service.validateWaqf(invalidWaqf);
+    service.validateDonation(invalidDonation);
     fail("Expected validation error");
   } catch (error) {
     expect(error).toBeInstanceOf(ValidationError);
@@ -659,7 +659,7 @@ it("should throw validation error with specific details", () => {
 ```typescript
 it("should save contract to repository", async () => {
   const repository = new InMemoryContractRepository();
-  const service = new MurabahaContractService(repository);
+  const service = new LoanContractService(repository);
 
   const contract = await service.createContract(request);
 
@@ -673,7 +673,7 @@ it("should save contract to repository", async () => {
 ```typescript
 it("should save contract to repository", () => {
   const repository = new InMemoryContractRepository();
-  const service = new MurabahaContractService(repository);
+  const service = new LoanContractService(repository);
 
   return service
     .createContract(request)
@@ -689,7 +689,7 @@ it("should save contract to repository", () => {
 ```typescript
 // AVOID - Use async/await instead
 it("should save contract to repository", (done) => {
-  const service = new MurabahaContractService(repository);
+  const service = new LoanContractService(repository);
 
   service.createContract(request, (error, contract) => {
     expect(error).toBeNull();

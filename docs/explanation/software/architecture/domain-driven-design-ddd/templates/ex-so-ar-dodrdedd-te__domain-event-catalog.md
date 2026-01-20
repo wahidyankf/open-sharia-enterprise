@@ -1,6 +1,6 @@
 ---
 title: "Domain Event Catalog Template"
-description: "Template for documenting domain events including naming conventions, structure, metadata, triggers, consumers, and examples from Zakat and Halal domains"
+description: "Template for documenting domain events including naming conventions, structure, metadata, triggers, consumers, and examples from Tax and Permitted domains"
 tags: ["ddd", "template", "domain-events", "event-driven", "event-catalog"]
 ---
 
@@ -29,9 +29,9 @@ Domain Event Catalog documentation:
 
 **Examples**:
 
-- `Zakat.Assessment.Finalized`
-- `Halal.Certification.Suspended`
-- `Finance.MurabahaContract.Executed`
+- `Tax.Assessment.Finalized`
+- `Permitted.Certification.Suspended`
+- `Finance.LoanContract.Executed`
 - `Payment.Invoice.Paid`
 
 ### Naming Rules
@@ -40,13 +40,13 @@ Domain Event Catalog documentation:
    - Good: `AssessmentFinalized`, `CertificationIssued`, `ContractExecuted`
    - Bad: `FinalizeAssessment`, `IssueCertification`, `ExecuteContract`
 2. **Specific**: Describe what happened, not generic state changes
-   - Good: `ZakatAssessmentFinalized`, `HalalCertificationSuspended`
+   - Good: `TaxAssessmentFinalized`, `PermittedCertificationSuspended`
    - Bad: `AssessmentUpdated`, `CertificationChanged`
 3. **Domain Language**: Use Ubiquitous Language terms
-   - Good: `NisabThresholdExceeded`, `HawlPeriodCompleted`
+   - Good: `ThresholdThresholdExceeded`, `HawlPeriodCompleted`
    - Bad: `ThresholdExceeded`, `YearCompleted`
 4. **Context Prefix**: Include bounded context for clarity (optional in small systems)
-   - Good: `Zakat.AssessmentFinalized` or `ZakatAssessmentFinalized`
+   - Good: `Tax.AssessmentFinalized` or `TaxAssessmentFinalized`
    - Bad: `Finalized`, `Event1`
 
 ## Event Structure Template
@@ -57,9 +57,9 @@ Every domain event should follow a consistent structure:
 interface DomainEvent {
   // Metadata (standard across all events)
   eventId: string; // Unique event identifier (UUID)
-  eventType: string; // Event type name (e.g., "Zakat.Assessment.Finalized")
+  eventType: string; // Event type name (e.g., "Tax.Assessment.Finalized")
   aggregateId: string; // ID of aggregate that raised the event
-  aggregateType: string; // Type of aggregate (e.g., "ZakatAssessment")
+  aggregateType: string; // Type of aggregate (e.g., "TaxAssessment")
   occurredAt: string; // ISO 8601 timestamp when event occurred
   version: number; // Event schema version (for evolution)
 
@@ -93,29 +93,29 @@ For each event, document:
 9. **Schema Version**: Current version number
 10. **Version History**: Changes across versions
 
-## Example Events: Zakat Management Context
+## Example Events: Tax Management Context
 
-### Event: ZakatAssessmentCreated
+### Event: TaxAssessmentCreated
 
-**Description**: A new Zakat assessment has been created for a taxpayer.
+**Description**: A new Tax assessment has been created for a taxpayer.
 
-**Bounded Context**: Zakat Management
+**Bounded Context**: Tax Management
 
-**Aggregate**: ZakatAssessment
+**Aggregate**: TaxAssessment
 
 **Triggered By**:
 
-- `CreateZakatAssessment` command
-- User initiates annual Zakat assessment
+- `CreateTaxAssessment` command
+- User initiates annual Tax assessment
 
 **Payload**:
 
 ```typescript
 {
   eventId: "550e8400-e29b-41d4-a716-446655440000",
-  eventType: "Zakat.Assessment.Created",
+  eventType: "Tax.Assessment.Created",
   aggregateId: "assessment-123",
-  aggregateType: "ZakatAssessment",
+  aggregateType: "TaxAssessment",
   occurredAt: "2024-03-15T10:30:00Z",
   version: 1,
   metadata: {
@@ -160,25 +160,25 @@ For each event, document:
 
 ### Event: AssetAddedToAssessment
 
-**Description**: A zakatable asset has been added to an assessment.
+**Description**: A taxable asset has been added to an assessment.
 
-**Bounded Context**: Zakat Management
+**Bounded Context**: Tax Management
 
-**Aggregate**: ZakatAssessment
+**Aggregate**: TaxAssessment
 
 **Triggered By**:
 
 - `AddAssetToAssessment` command
-- User adds asset to their Zakat calculation
+- User adds asset to their Tax calculation
 
 **Payload**:
 
 ```typescript
 {
   eventId: "660e8400-e29b-41d4-a716-446655440001",
-  eventType: "Zakat.Asset.Added",
+  eventType: "Tax.Asset.Added",
   aggregateId: "assessment-123",
-  aggregateType: "ZakatAssessment",
+  aggregateType: "TaxAssessment",
   occurredAt: "2024-03-15T10:35:00Z",
   version: 1,
   metadata: {
@@ -227,13 +227,13 @@ For each event, document:
 
 ---
 
-### Event: ZakatAssessmentFinalized
+### Event: TaxAssessmentFinalized
 
-**Description**: A Zakat assessment has been completed and the Zakat liability has been determined.
+**Description**: A Tax assessment has been completed and the Tax liability has been determined.
 
-**Bounded Context**: Zakat Management
+**Bounded Context**: Tax Management
 
-**Aggregate**: ZakatAssessment
+**Aggregate**: TaxAssessment
 
 **Triggered By**:
 
@@ -245,9 +245,9 @@ For each event, document:
 ```typescript
 {
   eventId: "770e8400-e29b-41d4-a716-446655440002",
-  eventType: "Zakat.Assessment.Finalized",
+  eventType: "Tax.Assessment.Finalized",
   aggregateId: "assessment-123",
-  aggregateType: "ZakatAssessment",
+  aggregateType: "TaxAssessment",
   occurredAt: "2024-12-30T14:00:00Z",
   version: 2,
   metadata: {
@@ -262,11 +262,11 @@ For each event, document:
       start: "2024-01-01",
       end: "2024-12-29"
     },
-    totalZakatableWealth: {
+    totalTaxableWealth: {
       amount: 85000.00,
       currency: "USD"
     },
-    nisabThreshold: {
+    thresholdThreshold: {
       amount: 5100.00,
       currency: "USD",
       standard: "gold",
@@ -303,22 +303,22 @@ For each event, document:
 - `hawlPeriod` (object, required): Lunar year period
   - `start` (string, required): Start date
   - `end` (string, required): End date
-- `totalZakatableWealth` (object, required): Total wealth subject to Zakat
+- `totalTaxableWealth` (object, required): Total wealth subject to Tax
   - `amount` (number, required): Total value
   - `currency` (string, required): Currency code
-- `nisabThreshold` (object, required): Threshold used for calculation
+- `thresholdThreshold` (object, required): Threshold used for calculation
   - `amount` (number, required): Threshold value
   - `currency` (string, required): Currency code
   - `standard` (string, required): "gold" or "silver"
   - `goldPricePerGram` (number, optional): Gold price if gold standard used
   - `silverPricePerGram` (number, optional): Silver price if silver standard used
-- `liability` (object, required): Calculated Zakat obligation
-  - `isObligated` (boolean, required): Whether Zakat is due
-  - `amount` (object, required if obligated): Zakat amount due
+- `liability` (object, required): Calculated Tax obligation
+  - `isObligated` (boolean, required): Whether Tax is due
+  - `amount` (object, required if obligated): Tax amount due
     - `amount` (number, required): Numeric value
     - `currency` (string, required): Currency code
-  - `rate` (number, required): Zakat rate applied (typically 0.025 = 2.5%)
-  - `exemptionReason` (string, nullable): Reason if exempt (e.g., "Below nisab")
+  - `rate` (number, required): Tax rate applied (typically 0.025 = 2.5%)
+  - `exemptionReason` (string, nullable): Reason if exempt (e.g., "Below threshold")
 - `assetBreakdown` (object, required): Wealth by category (amounts in assessment currency)
   - `cash` (number, required)
   - `gold` (number, required)
@@ -333,11 +333,11 @@ For each event, document:
 
 **Consumers**:
 
-- **Payment Service**: Create payment obligation if Zakat due
-- **Accounting Service**: Record Zakat liability in general ledger
+- **Payment Service**: Create payment obligation if Tax due
+- **Accounting Service**: Record Tax liability in general ledger
 - **Notification Service**: Notify taxpayer of obligation
 - **Analytics Service**: Compliance reporting and statistics
-- **Tax Receipt Service**: Generate official Zakat assessment document
+- **Tax Receipt Service**: Generate official Tax assessment document
 
 **Schema Version**: 2
 
@@ -348,17 +348,17 @@ For each event, document:
 
 ---
 
-### Event: NisabThresholdExceeded
+### Event: ThresholdThresholdExceeded
 
-**Description**: Taxpayer's zakatable wealth has exceeded the nisab threshold, triggering Zakat obligation.
+**Description**: Taxpayer's taxable wealth has exceeded the threshold threshold, triggering Tax obligation.
 
-**Bounded Context**: Zakat Management
+**Bounded Context**: Tax Management
 
-**Aggregate**: ZakatAssessment
+**Aggregate**: TaxAssessment
 
 **Triggered By**:
 
-- `FinalizeAssessment` command (when calculation determines wealth exceeds nisab)
+- `FinalizeAssessment` command (when calculation determines wealth exceeds threshold)
 - Automatic threshold monitoring service
 
 **Payload**:
@@ -366,14 +366,14 @@ For each event, document:
 ```typescript
 {
   eventId: "880e8400-e29b-41d4-a716-446655440003",
-  eventType: "Zakat.Nisab.Exceeded",
+  eventType: "Tax.Threshold.Exceeded",
   aggregateId: "assessment-123",
-  aggregateType: "ZakatAssessment",
+  aggregateType: "TaxAssessment",
   occurredAt: "2024-12-30T14:00:00Z",
   version: 1,
   metadata: {
     correlationId: "corr-456",
-    causationId: "770e8400-e29b-41d4-a716-446655440002" // Caused by ZakatAssessmentFinalized
+    causationId: "770e8400-e29b-41d4-a716-446655440002" // Caused by TaxAssessmentFinalized
   },
   payload: {
     assessmentId: "assessment-123",
@@ -382,7 +382,7 @@ For each event, document:
       amount: 85000.00,
       currency: "USD"
     },
-    nisabThreshold: {
+    thresholdThreshold: {
       amount: 5100.00,
       currency: "USD"
     },
@@ -390,7 +390,7 @@ For each event, document:
       amount: 79900.00,
       currency: "USD"
     },
-    excessPercentage: 1566.67, // Wealth is 1566.67% of nisab
+    excessPercentage: 1566.67, // Wealth is 1566.67% of threshold
     occurredAt: "2024-12-30T14:00:00Z"
   }
 }
@@ -400,16 +400,16 @@ For each event, document:
 
 - `assessmentId` (string, required): Assessment identifier
 - `taxpayerId` (string, required): Taxpayer reference
-- `totalWealth` (object, required): Total zakatable wealth
-- `nisabThreshold` (object, required): Nisab threshold value
-- `excessAmount` (object, required): Amount over nisab
-- `excessPercentage` (number, required): Wealth as percentage of nisab
+- `totalWealth` (object, required): Total taxable wealth
+- `thresholdThreshold` (object, required): Threshold threshold value
+- `excessAmount` (object, required): Amount over threshold
+- `excessPercentage` (number, required): Wealth as percentage of threshold
 - `occurredAt` (string, required): When threshold was exceeded
 
 **Consumers**:
 
-- **Analytics Service**: Track nisab exceedance rates
-- **Notification Service**: Educational content about Zakat obligation
+- **Analytics Service**: Track threshold exceedance rates
+- **Notification Service**: Educational content about Tax obligation
 
 **Schema Version**: 1
 
@@ -419,15 +419,15 @@ For each event, document:
 
 ---
 
-## Example Events: Halal Certification Context
+## Example Events: Permitted Certification Context
 
-### Event: HalalCertificationIssued
+### Event: PermittedCertificationIssued
 
-**Description**: A Halal certification has been issued to a facility after successful audit.
+**Description**: A Permitted certification has been issued to a facility after successful audit.
 
-**Bounded Context**: Halal Certification
+**Bounded Context**: Permitted Certification
 
-**Aggregate**: HalalCertification
+**Aggregate**: PermittedCertification
 
 **Triggered By**:
 
@@ -439,9 +439,9 @@ For each event, document:
 ```typescript
 {
   eventId: "990e8400-e29b-41d4-a716-446655440004",
-  eventType: "Halal.Certification.Issued",
+  eventType: "Permitted.Certification.Issued",
   aggregateId: "cert-789",
-  aggregateType: "HalalCertification",
+  aggregateType: "PermittedCertification",
   occurredAt: "2024-04-01T09:00:00Z",
   version: 1,
   metadata: {
@@ -450,7 +450,7 @@ For each event, document:
   },
   payload: {
     certificationId: "cert-789",
-    certificateNumber: "HALAL-2024-001234",
+    certificateNumber: "PERMITTED-2024-001234",
     facilityId: "facility-555",
     facilityName: "Barakah Food Processing Plant",
     facilityAddress: {
@@ -477,7 +477,7 @@ For each event, document:
     expiryDate: "2026-03-31",
     auditId: "audit-333",
     auditScore: 95.5,
-    certifyingBody: "Islamic Halal Certification Agency",
+    certifyingBody: "Islamic Permitted Certification Agency",
     issuedBy: "auditor-111",
     issuedAt: "2024-04-01T09:00:00Z"
   }
@@ -508,7 +508,7 @@ For each event, document:
 **Consumers**:
 
 - **Facility Management Service**: Update facility certification status
-- **Public Registry Service**: Publish to public Halal certification database
+- **Public Registry Service**: Publish to public Permitted certification database
 - **Notification Service**: Notify facility of certification
 - **Certificate Generation Service**: Generate official certificate document
 - **Accounting Service**: Record certification fee
@@ -521,13 +521,13 @@ For each event, document:
 
 ---
 
-### Event: HalalCertificationSuspended
+### Event: PermittedCertificationSuspended
 
-**Description**: A Halal certification has been suspended due to compliance violations.
+**Description**: A Permitted certification has been suspended due to compliance violations.
 
-**Bounded Context**: Halal Certification
+**Bounded Context**: Permitted Certification
 
-**Aggregate**: HalalCertification
+**Aggregate**: PermittedCertification
 
 **Triggered By**:
 
@@ -539,9 +539,9 @@ For each event, document:
 ```typescript
 {
   eventId: "aa0e8400-e29b-41d4-a716-446655440005",
-  eventType: "Halal.Certification.Suspended",
+  eventType: "Permitted.Certification.Suspended",
   aggregateId: "cert-789",
-  aggregateType: "HalalCertification",
+  aggregateType: "PermittedCertification",
   occurredAt: "2024-08-15T11:30:00Z",
   version: 1,
   metadata: {
@@ -550,7 +550,7 @@ For each event, document:
   },
   payload: {
     certificationId: "cert-789",
-    certificateNumber: "HALAL-2024-001234",
+    certificateNumber: "PERMITTED-2024-001234",
     facilityId: "facility-555",
     facilityName: "Barakah Food Processing Plant",
     suspensionReason: "Non-compliant ingredients found during surveillance audit",
@@ -681,18 +681,18 @@ Use this structure for your events:
 
 ```typescript
 // v1 - Old event
-Zakat.Assessment.Completed;
+Tax.Assessment.Completed;
 
 // v2 - New event with different structure
-Zakat.Assessment.Finalized; // Different name, different payload
+Tax.Assessment.Finalized; // Different name, different payload
 ```
 
 1. **Deprecation**: Support old version for migration period
 
 ```typescript
 // Consumers receive both old and new events during transition
-// Old: Zakat.Assessment.Completed (deprecated, will be removed 2025-01-01)
-// New: Zakat.Assessment.Finalized (use this for new integrations)
+// Old: Tax.Assessment.Completed (deprecated, will be removed 2025-01-01)
+// New: Tax.Assessment.Finalized (use this for new integrations)
 ```
 
 ### Upcasting Pattern
@@ -702,7 +702,7 @@ Convert old event versions to current version when reading:
 ```typescript
 class EventUpcaster {
   upcast(event: DomainEvent): DomainEvent {
-    if (event.eventType === "Zakat.Assessment.Finalized" && event.version === 1) {
+    if (event.eventType === "Tax.Assessment.Finalized" && event.version === 1) {
       // Upcast v1 to v2
       return {
         ...event,

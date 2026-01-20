@@ -34,33 +34,33 @@ For each term, document:
 
 ## Example: Islamic Finance Domain
 
-### Zakat
+### Tax
 
-**Definition**: Annual obligatory charity calculated as 2.5% of zakatable wealth held for one lunar year (hawl), payable by Muslims who meet the nisab threshold.
+**Definition**: Annual obligatory charity calculated as 2.5% of taxable wealth held for one lunar year (hawl), payable by Muslims who meet the threshold threshold.
 
-**Synonyms**: Alms tax, Islamic wealth tax (avoid these - use "Zakat")
+**Synonyms**: Alms tax, Islamic wealth tax (avoid these - use "Tax")
 
-**Context**: Zakat Management Context
+**Context**: Tax Management Context
 
-**Type**: Concept (implemented across multiple objects: ZakatAssessment entity, ZakatLiability value object)
+**Type**: Concept (implemented across multiple objects: TaxAssessment entity, TaxLiability value object)
 
 **Examples**:
 
-- Business owner with $50,000 in inventory and $30,000 cash held for one year pays 2.5% of $80,000 = $2,000 in Zakat
-- Gold jewelry (85 grams) held for 13 months exceeds nisab, Zakat is due
-- Salary income received monthly does not meet hawl requirement, no Zakat due on salary alone
+- Business owner with $50,000 in inventory and $30,000 cash held for one year pays 2.5% of $80,000 = $2,000 in Tax
+- Gold jewelry (85 grams) held for 13 months exceeds threshold, Tax is due
+- Salary income received monthly does not meet hawl requirement, no Tax due on salary alone
 
 **Related Concepts**:
 
-- [Nisab](#nisab) - Minimum threshold for Zakat obligation
+- [Threshold](#threshold) - Minimum threshold for Tax obligation
 - [Hawl](#hawl) - One-year ownership period
-- [Zakatable Wealth](#zakatable-wealth) - Assets subject to Zakat
-- [Zakat Assessment](#zakat-assessment) - Process of calculating Zakat
+- [Taxable Wealth](#taxable-wealth) - Assets subject to Tax
+- [Tax Assessment](#tax-assessment) - Process of calculating Tax
 
 **Business Rules**:
 
 - Only obligatory on Muslims
-- Requires nisab threshold to be met
+- Requires threshold threshold to be met
 - Requires full hawl (lunar year) of ownership
 - Rate is 2.5% for most assets (different rates for agricultural produce, livestock)
 - Must be paid to eligible beneficiaries (8 categories in Quran 9:60)
@@ -69,48 +69,48 @@ For each term, document:
 
 - Use lunar calendar (Hijri) for hawl calculation
 - Consider madhab-specific variations in calculation rules
-- Nisab threshold linked to gold/silver prices, must be updated regularly
+- Threshold threshold linked to gold/silver prices, must be updated regularly
 
 ---
 
-### Nisab
+### Threshold
 
-**Definition**: Minimum threshold of wealth a Muslim must possess for one full lunar year before Zakat becomes obligatory. Traditionally equivalent to 85 grams of gold or 595 grams of silver.
+**Definition**: Minimum threshold of wealth a Muslim must possess for one full lunar year before Tax becomes obligatory. Traditionally equivalent to 85 grams of gold or 595 grams of silver.
 
-**Synonyms**: Zakat threshold, exemption limit
+**Synonyms**: Tax threshold, exemption limit
 
-**Context**: Zakat Management Context
+**Context**: Tax Management Context
 
 **Type**: Value Object (represents a monetary threshold)
 
 **Examples**:
 
-- If gold price is $60/gram, nisab = 85g × $60 = $5,100
-- Person with $4,500 total zakatable wealth is below nisab, no Zakat due
-- Person with $6,000 total zakatable wealth exceeds nisab, Zakat due on full $6,000
+- If gold price is $60/gram, threshold = 85g × $60 = $5,100
+- Person with $4,500 total taxable wealth is below threshold, no Tax due
+- Person with $6,000 total taxable wealth exceeds threshold, Tax due on full $6,000
 
 **Related Concepts**:
 
-- [Zakat](#zakat) - Obligation triggered when nisab is met
-- [Hawl](#hawl) - Wealth must exceed nisab for full hawl period
-- [Zakatable Wealth](#zakatable-wealth) - Total wealth compared against nisab
+- [Tax](#tax) - Obligation triggered when threshold is met
+- [Hawl](#hawl) - Wealth must exceed threshold for full hawl period
+- [Taxable Wealth](#taxable-wealth) - Total wealth compared against threshold
 
 **Business Rules**:
 
 - Calculated based on current gold or silver market price
 - Some scholars prefer gold standard (85g), others silver (595g)
-- Once nisab is exceeded, Zakat is due on entire amount (not just excess)
+- Once threshold is exceeded, Tax is due on entire amount (not just excess)
 - Must be maintained for full hawl
 
 **Technical Notes**:
 
 - Need external price feed for gold/silver
-- Store nisab value with date and price source
+- Store threshold value with date and price source
 - Consider madhab preference (gold vs silver standard)
 - Immutable value object with amount and currency
 
 ```typescript
-class Nisab {
+class Threshold {
   private constructor(
     private readonly threshold: Money,
     private readonly calculationDate: Date,
@@ -118,9 +118,9 @@ class Nisab {
     private readonly pricePerGram: Money,
   ) {}
 
-  static fromGoldPrice(pricePerGram: Money, date: Date): Result<Nisab, Error> {
+  static fromGoldPrice(pricePerGram: Money, date: Date): Result<Threshold, Error> {
     const threshold = pricePerGram.multiply(85); // 85 grams
-    return Result.success(new Nisab(threshold, date, "gold", pricePerGram));
+    return Result.success(new Threshold(threshold, date, "gold", pricePerGram));
   }
 }
 ```
@@ -129,38 +129,38 @@ class Nisab {
 
 ### Hawl
 
-**Definition**: One complete lunar year (354-355 days) during which zakatable wealth must continuously meet or exceed nisab for Zakat to become obligatory.
+**Definition**: One complete lunar year (354-355 days) during which taxable wealth must continuously meet or exceed threshold for Tax to become obligatory.
 
-**Synonyms**: Lunar year, Zakat year
+**Synonyms**: Lunar year, Tax year
 
-**Context**: Zakat Management Context
+**Context**: Tax Management Context
 
 **Type**: Value Object (represents a time period)
 
 **Examples**:
 
 - Started with $10,000 on Muharram 1, 1445 AH; hawl completes on Muharram 1, 1446 AH
-- Wealth dropped below nisab for 2 months during hawl; hawl resets, must wait another full year
+- Wealth dropped below threshold for 2 months during hawl; hawl resets, must wait another full year
 - Acquired new gold jewelry 6 months ago; its hawl has not yet completed
 
 **Related Concepts**:
 
-- [Zakat](#zakat) - Requires completed hawl
-- [Nisab](#nisab) - Must be maintained throughout hawl
-- [Zakat Assessment](#zakat-assessment) - Performed at end of hawl
+- [Tax](#tax) - Requires completed hawl
+- [Threshold](#threshold) - Must be maintained throughout hawl
+- [Tax Assessment](#tax-assessment) - Performed at end of hawl
 
 **Business Rules**:
 
 - Must be full lunar year (Hijri calendar)
-- Wealth must remain above nisab for entire hawl (if it drops below, hawl resets)
+- Wealth must remain above threshold for entire hawl (if it drops below, hawl resets)
 - Different asset types may have different hawl start dates
-- Agricultural produce has no hawl requirement (Zakat due at harvest)
+- Agricultural produce has no hawl requirement (Tax due at harvest)
 
 **Technical Notes**:
 
 - Use Hijri calendar library for accurate lunar date calculations
 - Track hawl start date per asset or asset category
-- Handle hawl reset when wealth drops below nisab
+- Handle hawl reset when wealth drops below threshold
 
 ```typescript
 class HawlPeriod {
@@ -183,36 +183,36 @@ class HawlPeriod {
 
 ---
 
-### Zakatable Wealth
+### Taxable Wealth
 
-**Definition**: Assets subject to Zakat calculation, including cash, gold, silver, business inventory, investments, and receivables. Excludes personal-use items, primary residence, and tools of trade.
+**Definition**: Assets subject to Tax calculation, including cash, gold, silver, business inventory, investments, and receivables. Excludes personal-use items, primary residence, and tools of trade.
 
-**Synonyms**: Zakat base, net worth (avoid - too broad)
+**Synonyms**: Tax base, net worth (avoid - too broad)
 
-**Context**: Zakat Management Context
+**Context**: Tax Management Context
 
 **Type**: Aggregate (composed of multiple asset types)
 
 **Examples**:
 
-- **Zakatable**: Savings account ($20,000), gold jewelry ($5,000), business inventory ($30,000)
-- **Not Zakatable**: Primary residence, personal car, work computer, clothing
-- **Partial**: Investment property (land value zakatable, building structure not)
+- **Taxable**: Savings account ($20,000), gold jewelry ($5,000), business inventory ($30,000)
+- **Not Taxable**: Primary residence, personal car, work computer, clothing
+- **Partial**: Investment property (land value taxable, building structure not)
 
 **Related Concepts**:
 
-- [Zakat](#zakat) - Calculated on zakatable wealth
-- [Nisab](#nisab) - Threshold zakatable wealth must exceed
-- [Zakat Assessment](#zakat-assessment) - Process of identifying and valuing zakatable wealth
+- [Tax](#tax) - Calculated on taxable wealth
+- [Threshold](#threshold) - Threshold taxable wealth must exceed
+- [Tax Assessment](#tax-assessment) - Process of identifying and valuing taxable wealth
 
 **Business Rules**:
 
-- Cash and cash equivalents always zakatable
-- Gold and silver zakatable (personal jewelry has madhab differences)
-- Business assets zakatable (inventory, receivables)
-- Investments zakatable (stocks, mutual funds)
-- Debts owed to you are zakatable
-- Debts you owe reduce zakatable wealth (madhab difference on whether to deduct)
+- Cash and cash equivalents always taxable
+- Gold and silver taxable (personal jewelry has madhab differences)
+- Business assets taxable (inventory, receivables)
+- Investments taxable (stocks, mutual funds)
+- Debts owed to you are taxable
+- Debts you owe reduce taxable wealth (madhab difference on whether to deduct)
 - Personal-use items exempt
 
 **Technical Notes**:
@@ -222,7 +222,7 @@ class HawlPeriod {
 - Support madhab-specific inclusion/exclusion rules
 
 ```typescript
-class ZakatableWealth {
+class TaxableWealth {
   private constructor(
     private readonly cash: Money,
     private readonly gold: Weight,
@@ -248,13 +248,13 @@ class ZakatableWealth {
 
 ---
 
-### Zakat Assessment
+### Tax Assessment
 
-**Definition**: Process of determining a Muslim's Zakat liability by identifying zakatable wealth, verifying hawl completion, comparing against nisab, and calculating the 2.5% obligation.
+**Definition**: Process of determining a Muslim's Tax liability by identifying taxable wealth, verifying hawl completion, comparing against threshold, and calculating the 2.5% obligation.
 
-**Synonyms**: Zakat calculation, Zakat evaluation
+**Synonyms**: Tax calculation, Tax evaluation
 
-**Context**: Zakat Management Context
+**Context**: Tax Management Context
 
 **Type**: Aggregate Root (entity with identity and lifecycle)
 
@@ -266,10 +266,10 @@ class ZakatableWealth {
 
 **Related Concepts**:
 
-- [Zakat](#zakat) - What the assessment calculates
+- [Tax](#tax) - What the assessment calculates
 - [Taxpayer](#taxpayer) - Who is being assessed
-- [Zakatable Wealth](#zakatable-wealth) - What is being assessed
-- [Zakat Liability](#zakat-liability) - Result of assessment
+- [Taxable Wealth](#taxable-wealth) - What is being assessed
+- [Tax Liability](#tax-liability) - Result of assessment
 
 **Business Rules**:
 
@@ -286,17 +286,17 @@ class ZakatableWealth {
 - Raises domain events on finalization
 
 ```typescript
-class ZakatAssessment {
+class TaxAssessment {
   private constructor(
     private readonly id: AssessmentId,
     private readonly taxpayer: TaxpayerId,
     private readonly hawlPeriod: HawlPeriod,
-    private readonly wealth: ZakatableWealth,
+    private readonly wealth: TaxableWealth,
     private status: AssessmentStatus,
-    private liability?: ZakatLiability,
+    private liability?: TaxLiability,
   ) {}
 
-  finalize(nisab: Nisab): Result<DomainEvent[], DomainError> {
+  finalize(threshold: Threshold): Result<DomainEvent[], DomainError> {
     // Business rules enforced
     if (!this.hawlPeriod.isComplete(HijriDate.today())) {
       return Result.failure(new BusinessRuleViolation("Hawl period not complete"));
@@ -307,20 +307,20 @@ class ZakatAssessment {
       /* gold/silver prices */
       ();
 
-    this.liability = totalWealth.isGreaterThanOrEqual(nisab.threshold)
-      ? ZakatLiability.obligated(totalWealth.multiply(0.025))
-      : ZakatLiability.exempt("Below nisab");
+    this.liability = totalWealth.isGreaterThanOrEqual(threshold.threshold)
+      ? TaxLiability.obligated(totalWealth.multiply(0.025))
+      : TaxLiability.exempt("Below threshold");
 
     this.status = AssessmentStatus.Finalized;
 
-    return Result.success([new ZakatAssessmentFinalizedEvent(this.id, this.taxpayer, this.liability)]);
+    return Result.success([new TaxAssessmentFinalizedEvent(this.id, this.taxpayer, this.liability)]);
   }
 }
 ```
 
 ---
 
-### Murabaha
+### Loan
 
 **Definition**: Islamic financing contract where a financial institution purchases an asset and resells it to the customer at cost plus an agreed profit markup, with payment deferred in installments.
 
@@ -338,7 +338,7 @@ class ZakatAssessment {
 
 **Related Concepts**:
 
-- [Riba](#riba) - Interest prohibition that Murabaha avoids
+- [Interest](#interest) - Interest prohibition that Loan avoids
 - [Asset Ownership](#asset-ownership) - Bank must own asset before selling
 - [Deferred Payment](#deferred-payment) - Payment schedule mechanism
 - [Profit Markup](#profit-markup) - Not interest, fixed at contract inception
@@ -347,7 +347,7 @@ class ZakatAssessment {
 
 - Financial institution must take ownership of asset before selling
 - Selling price (cost + markup) disclosed and fixed at contract start
-- Asset must exist and be Shariah-compliant
+- Asset must exist and be Compliance-compliant
 - No penalty for early payment (price reduction allowed)
 - Default penalties limited to actual costs, not profit
 - Ownership transfers to customer immediately upon contract
@@ -360,13 +360,13 @@ class ZakatAssessment {
 
 ---
 
-### Halal Certification
+### Permitted Certification
 
 **Definition**: Official verification that a product, facility, or process complies with Islamic dietary and ethical laws, issued after successful audit and inspection.
 
-**Synonyms**: Islamic certification, Shariah compliance certification (broader)
+**Synonyms**: Islamic certification, Compliance compliance certification (broader)
 
-**Context**: Halal Certification Context
+**Context**: Permitted Certification Context
 
 **Type**: Aggregate Root
 
@@ -378,8 +378,8 @@ class ZakatAssessment {
 
 **Related Concepts**:
 
-- [Halal](#halal) - What is being certified
-- [Haram](#haram) - What must be avoided
+- [Permitted](#permitted) - What is being certified
+- [Forbidden](#forbidden) - What must be avoided
 - [Audit](#audit) - Verification process
 - [Certificate](#certificate) - Physical/digital proof document
 
@@ -455,10 +455,10 @@ Focus on terms that:
 
 Event Storming workshops naturally surface domain language:
 
-- Domain events reveal actions ("ZakatAssessmentFinalized")
-- Commands reveal intentions ("FinalizeZakatAssessment")
-- Aggregates reveal core concepts ("ZakatAssessment", "MurabahaContract")
-- Policies reveal business rules ("When hawl completes, calculate Zakat liability")
+- Domain events reveal actions ("TaxAssessmentFinalized")
+- Commands reveal intentions ("FinalizeTaxAssessment")
+- Aggregates reveal core concepts ("TaxAssessment", "LoanContract")
+- Policies reveal business rules ("When hawl completes, calculate Tax liability")
 
 ### 3. Note Context-Specific Variations
 
@@ -466,12 +466,12 @@ Same term in different contexts may mean different things:
 
 **"Payment" in different contexts**:
 
-| Context             | Meaning                                                   |
-| ------------------- | --------------------------------------------------------- |
-| Zakat Management    | Disbursement of Zakat to beneficiary                      |
-| Islamic Finance     | Installment payment for Murabaha/Ijarah contract          |
-| Halal Certification | Certification fee payment                                 |
-| Accounting          | Generic financial transaction (credit to payable account) |
+| Context                 | Meaning                                                   |
+| ----------------------- | --------------------------------------------------------- |
+| Tax Management          | Disbursement of Tax to beneficiary                        |
+| Islamic Finance         | Installment payment for Loan/Ijarah contract              |
+| Permitted Certification | Certification fee payment                                 |
+| Accounting              | Generic financial transaction (credit to payable account) |
 
 This variation suggests these are distinct bounded contexts.
 
@@ -501,23 +501,23 @@ Ensure glossary terms appear in code:
 
 ```typescript
 // Use exact glossary terms
-class ZakatAssessment {} // ✓ Matches glossary
-class ZakatCalculation {} // ✗ Glossary uses "Assessment"
+class TaxAssessment {} // ✓ Matches glossary
+class TaxCalculation {} // ✗ Glossary uses "Assessment"
 
-class MurabahaContract {} // ✓ Matches glossary
-class SalesContract {} // ✗ Glossary uses "Murabaha"
+class LoanContract {} // ✓ Matches glossary
+class SalesContract {} // ✗ Glossary uses "Loan"
 ```
 
 ### Method Names
 
 ```typescript
 // Use domain language
-class ZakatAssessment {
+class TaxAssessment {
   finalize(): Result<void, Error> {} // ✓ Domain term
   complete(): Result<void, Error> {} // ✗ Generic term
 }
 
-class HalalCertification {
+class PermittedCertification {
   suspend(reason: string): void {} // ✓ Domain term
   deactivate(): void {} // ✗ Technical term
 }
@@ -527,19 +527,19 @@ class HalalCertification {
 
 ```typescript
 // Events use past tense of domain terms
-class ZakatAssessmentFinalized {} // ✓
+class TaxAssessmentFinalized {} // ✓
 class AssessmentCompleted {} // ✗
 
-class MurabahaContractExecuted {} // ✓
+class LoanContractExecuted {} // ✓
 class ContractCreated {} // ✗
 ```
 
 ### Test Names
 
 ```typescript
-describe("ZakatAssessment", () => {
-  it("should exempt taxpayer when wealth below nisab", () => {
-    // ✓ Uses glossary terms: exempt, nisab
+describe("TaxAssessment", () => {
+  it("should exempt taxpayer when wealth below threshold", () => {
+    // ✓ Uses glossary terms: exempt, threshold
   });
 
   it("should not calculate when amount too low", () => {
@@ -559,26 +559,26 @@ class AbstractFactory {}
 class ServiceProvider {}
 
 // Right - Domain terms
-class ZakatAssessment {}
-class MurabahaContractFactory {}
-class NisabService {}
+class TaxAssessment {}
+class LoanContractFactory {}
+class ThresholdService {}
 ```
 
 ### Don't Use Generic CRUD Terms
 
 ```typescript
 // Wrong - Generic
-interface ZakatRepository {
-  create(assessment: ZakatAssessment): Promise<void>;
-  update(id: string, data: Partial<ZakatAssessment>): Promise<void>;
+interface TaxRepository {
+  create(assessment: TaxAssessment): Promise<void>;
+  update(id: string, data: Partial<TaxAssessment>): Promise<void>;
   delete(id: string): Promise<void>;
 }
 
 // Right - Domain-specific
-interface ZakatRepository {
-  save(assessment: ZakatAssessment): Promise<void>;
-  findById(id: AssessmentId): Promise<Result<ZakatAssessment, Error>>;
-  findByTaxpayer(taxpayerId: TaxpayerId): Promise<ZakatAssessment[]>;
+interface TaxRepository {
+  save(assessment: TaxAssessment): Promise<void>;
+  findById(id: AssessmentId): Promise<Result<TaxAssessment, Error>>;
+  findByTaxpayer(taxpayerId: TaxpayerId): Promise<TaxAssessment[]>;
 }
 ```
 
@@ -586,11 +586,11 @@ interface ZakatRepository {
 
 Wrong:
 
-> **Zakat**: Islamic tax
+> **Tax**: Islamic tax
 
 Right:
 
-> **Zakat**: Annual obligatory charity calculated as 2.5% of zakatable wealth held for one lunar year (hawl), payable by Muslims who meet the nisab threshold. One of the Five Pillars of Islam.
+> **Tax**: Annual obligatory charity calculated as 2.5% of taxable wealth held for one lunar year (hawl), payable by Muslims who meet the threshold threshold. One of the Five Pillars of Islam.
 
 The detailed definition captures business rules and context missing from simple translation.
 

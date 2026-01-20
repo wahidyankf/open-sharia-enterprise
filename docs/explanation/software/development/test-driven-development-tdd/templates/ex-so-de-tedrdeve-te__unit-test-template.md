@@ -70,32 +70,32 @@ describe("[ComponentUnderTest]", () => {
 });
 ```
 
-## Islamic Finance Example: Zakat Calculator Unit Tests
+## Islamic Finance Example: Tax Calculator Unit Tests
 
 ### Component Under Test
 
 ```typescript
-// File: zakat-calculator.ts
+// File: tax-calculator.ts
 import { Money } from "./money";
 
-export class ZakatCalculator {
-  private readonly ZAKAT_RATE = 0.025; // 2.5%
+export class TaxCalculator {
+  private readonly TAX_RATE = 0.025; // 2.5%
 
-  calculateZakat(wealth: Money, nisab: Money): Money {
-    if (wealth.isLessThan(nisab)) {
+  calculateTax(wealth: Money, threshold: Money): Money {
+    if (wealth.isLessThan(threshold)) {
       return Money.zero(wealth.currency);
     }
 
-    return wealth.multiply(this.ZAKAT_RATE);
+    return wealth.multiply(this.TAX_RATE);
   }
 
-  isZakatDue(wealth: Money, nisab: Money): boolean {
-    return wealth.isGreaterThanOrEqual(nisab);
+  isTaxDue(wealth: Money, threshold: Money): boolean {
+    return wealth.isGreaterThanOrEqual(threshold);
   }
 
-  calculateNisab(goldPricePerGram: Money): Money {
-    const NISAB_GOLD_GRAMS = 85; // 85 grams of gold
-    return goldPricePerGram.multiply(NISAB_GOLD_GRAMS);
+  calculateThreshold(goldPricePerGram: Money): Money {
+    const THRESHOLD_GOLD_GRAMS = 85; // 85 grams of gold
+    return goldPricePerGram.multiply(THRESHOLD_GOLD_GRAMS);
   }
 }
 ```
@@ -103,186 +103,186 @@ export class ZakatCalculator {
 ### Complete Unit Test Suite
 
 ```typescript
-// File: zakat-calculator.spec.ts
-import { ZakatCalculator } from "./zakat-calculator";
+// File: tax-calculator.spec.ts
+import { TaxCalculator } from "./tax-calculator";
 import { Money } from "./money";
 
-describe("ZakatCalculator", () => {
-  let calculator: ZakatCalculator;
+describe("TaxCalculator", () => {
+  let calculator: TaxCalculator;
 
   // Setup - runs before each test
   beforeEach(() => {
-    calculator = new ZakatCalculator();
+    calculator = new TaxCalculator();
   });
 
-  describe("calculateZakat", () => {
-    describe("when wealth is above nisab", () => {
-      it("should calculate 2.5% of wealth as Zakat", () => {
+  describe("calculateTax", () => {
+    describe("when wealth is above threshold", () => {
+      it("should calculate 2.5% of wealth as Tax", () => {
         // Arrange
         const wealth = Money.fromAmount(10000, "USD");
-        const nisab = Money.fromAmount(2000, "USD");
+        const threshold = Money.fromAmount(2000, "USD");
 
         // Act
-        const zakat = calculator.calculateZakat(wealth, nisab);
+        const tax = calculator.calculateTax(wealth, threshold);
 
         // Assert
-        expect(zakat.amount).toBe(250); // 2.5% of 10000
-        expect(zakat.currency).toBe("USD");
+        expect(tax.amount).toBe(250); // 2.5% of 10000
+        expect(tax.currency).toBe("USD");
       });
 
       it("should handle large wealth amounts correctly", () => {
         // Arrange
         const wealth = Money.fromAmount(1000000, "USD");
-        const nisab = Money.fromAmount(2000, "USD");
+        const threshold = Money.fromAmount(2000, "USD");
 
         // Act
-        const zakat = calculator.calculateZakat(wealth, nisab);
+        const tax = calculator.calculateTax(wealth, threshold);
 
         // Assert
-        expect(zakat.amount).toBe(25000); // 2.5% of 1000000
+        expect(tax.amount).toBe(25000); // 2.5% of 1000000
       });
 
       it("should handle decimal wealth amounts correctly", () => {
         // Arrange
         const wealth = Money.fromAmount(10000.5, "USD");
-        const nisab = Money.fromAmount(2000, "USD");
+        const threshold = Money.fromAmount(2000, "USD");
 
         // Act
-        const zakat = calculator.calculateZakat(wealth, nisab);
+        const tax = calculator.calculateTax(wealth, threshold);
 
         // Assert
-        expect(zakat.amount).toBeCloseTo(250.01, 2); // 2.5% of 10000.50
+        expect(tax.amount).toBeCloseTo(250.01, 2); // 2.5% of 10000.50
       });
     });
 
-    describe("when wealth equals nisab", () => {
-      it("should calculate Zakat (threshold is inclusive)", () => {
+    describe("when wealth equals threshold", () => {
+      it("should calculate Tax (threshold is inclusive)", () => {
         // Arrange
         const wealth = Money.fromAmount(2000, "USD");
-        const nisab = Money.fromAmount(2000, "USD");
+        const threshold = Money.fromAmount(2000, "USD");
 
         // Act
-        const zakat = calculator.calculateZakat(wealth, nisab);
+        const tax = calculator.calculateTax(wealth, threshold);
 
         // Assert
-        expect(zakat.amount).toBe(50); // 2.5% of 2000
+        expect(tax.amount).toBe(50); // 2.5% of 2000
       });
     });
 
-    describe("when wealth is below nisab", () => {
-      it("should return zero Zakat", () => {
+    describe("when wealth is below threshold", () => {
+      it("should return zero Tax", () => {
         // Arrange
         const wealth = Money.fromAmount(1000, "USD");
-        const nisab = Money.fromAmount(2000, "USD");
+        const threshold = Money.fromAmount(2000, "USD");
 
         // Act
-        const zakat = calculator.calculateZakat(wealth, nisab);
+        const tax = calculator.calculateTax(wealth, threshold);
 
         // Assert
-        expect(zakat.amount).toBe(0);
-        expect(zakat.currency).toBe("USD");
+        expect(tax.amount).toBe(0);
+        expect(tax.currency).toBe("USD");
       });
 
-      it("should return zero for wealth just below nisab", () => {
+      it("should return zero for wealth just below threshold", () => {
         // Arrange
         const wealth = Money.fromAmount(1999.99, "USD");
-        const nisab = Money.fromAmount(2000, "USD");
+        const threshold = Money.fromAmount(2000, "USD");
 
         // Act
-        const zakat = calculator.calculateZakat(wealth, nisab);
+        const tax = calculator.calculateTax(wealth, threshold);
 
         // Assert
-        expect(zakat.amount).toBe(0);
+        expect(tax.amount).toBe(0);
       });
     });
 
     describe("when wealth is zero", () => {
-      it("should return zero Zakat", () => {
+      it("should return zero Tax", () => {
         // Arrange
         const wealth = Money.fromAmount(0, "USD");
-        const nisab = Money.fromAmount(2000, "USD");
+        const threshold = Money.fromAmount(2000, "USD");
 
         // Act
-        const zakat = calculator.calculateZakat(wealth, nisab);
+        const tax = calculator.calculateTax(wealth, threshold);
 
         // Assert
-        expect(zakat.amount).toBe(0);
+        expect(tax.amount).toBe(0);
       });
     });
 
     describe("with different currencies", () => {
-      it("should calculate Zakat in USD", () => {
+      it("should calculate Tax in USD", () => {
         // Arrange
         const wealth = Money.fromAmount(10000, "USD");
-        const nisab = Money.fromAmount(2000, "USD");
+        const threshold = Money.fromAmount(2000, "USD");
 
         // Act
-        const zakat = calculator.calculateZakat(wealth, nisab);
+        const tax = calculator.calculateTax(wealth, threshold);
 
         // Assert
-        expect(zakat.currency).toBe("USD");
+        expect(tax.currency).toBe("USD");
       });
 
-      it("should calculate Zakat in EUR", () => {
+      it("should calculate Tax in EUR", () => {
         // Arrange
         const wealth = Money.fromAmount(8000, "EUR");
-        const nisab = Money.fromAmount(1800, "EUR");
+        const threshold = Money.fromAmount(1800, "EUR");
 
         // Act
-        const zakat = calculator.calculateZakat(wealth, nisab);
+        const tax = calculator.calculateTax(wealth, threshold);
 
         // Assert
-        expect(zakat.amount).toBe(200); // 2.5% of 8000
-        expect(zakat.currency).toBe("EUR");
+        expect(tax.amount).toBe(200); // 2.5% of 8000
+        expect(tax.currency).toBe("EUR");
       });
 
-      it("should calculate Zakat in SAR (Saudi Riyal)", () => {
+      it("should calculate Tax in SAR (Saudi Riyal)", () => {
         // Arrange
         const wealth = Money.fromAmount(40000, "SAR");
-        const nisab = Money.fromAmount(7500, "SAR");
+        const threshold = Money.fromAmount(7500, "SAR");
 
         // Act
-        const zakat = calculator.calculateZakat(wealth, nisab);
+        const tax = calculator.calculateTax(wealth, threshold);
 
         // Assert
-        expect(zakat.amount).toBe(1000); // 2.5% of 40000
-        expect(zakat.currency).toBe("SAR");
+        expect(tax.amount).toBe(1000); // 2.5% of 40000
+        expect(tax.currency).toBe("SAR");
       });
     });
   });
 
-  describe("isZakatDue", () => {
-    it("should return true when wealth is above nisab", () => {
+  describe("isTaxDue", () => {
+    it("should return true when wealth is above threshold", () => {
       // Arrange
       const wealth = Money.fromAmount(10000, "USD");
-      const nisab = Money.fromAmount(2000, "USD");
+      const threshold = Money.fromAmount(2000, "USD");
 
       // Act
-      const isDue = calculator.isZakatDue(wealth, nisab);
+      const isDue = calculator.isTaxDue(wealth, threshold);
 
       // Assert
       expect(isDue).toBe(true);
     });
 
-    it("should return true when wealth equals nisab", () => {
+    it("should return true when wealth equals threshold", () => {
       // Arrange
       const wealth = Money.fromAmount(2000, "USD");
-      const nisab = Money.fromAmount(2000, "USD");
+      const threshold = Money.fromAmount(2000, "USD");
 
       // Act
-      const isDue = calculator.isZakatDue(wealth, nisab);
+      const isDue = calculator.isTaxDue(wealth, threshold);
 
       // Assert
       expect(isDue).toBe(true);
     });
 
-    it("should return false when wealth is below nisab", () => {
+    it("should return false when wealth is below threshold", () => {
       // Arrange
       const wealth = Money.fromAmount(1000, "USD");
-      const nisab = Money.fromAmount(2000, "USD");
+      const threshold = Money.fromAmount(2000, "USD");
 
       // Act
-      const isDue = calculator.isZakatDue(wealth, nisab);
+      const isDue = calculator.isTaxDue(wealth, threshold);
 
       // Assert
       expect(isDue).toBe(false);
@@ -291,27 +291,27 @@ describe("ZakatCalculator", () => {
     it("should return false when wealth is zero", () => {
       // Arrange
       const wealth = Money.fromAmount(0, "USD");
-      const nisab = Money.fromAmount(2000, "USD");
+      const threshold = Money.fromAmount(2000, "USD");
 
       // Act
-      const isDue = calculator.isZakatDue(wealth, nisab);
+      const isDue = calculator.isTaxDue(wealth, threshold);
 
       // Assert
       expect(isDue).toBe(false);
     });
   });
 
-  describe("calculateNisab", () => {
-    it("should calculate nisab based on gold price (85 grams)", () => {
+  describe("calculateThreshold", () => {
+    it("should calculate threshold based on gold price (85 grams)", () => {
       // Arrange
       const goldPricePerGram = Money.fromAmount(60, "USD"); // $60 per gram
 
       // Act
-      const nisab = calculator.calculateNisab(goldPricePerGram);
+      const threshold = calculator.calculateThreshold(goldPricePerGram);
 
       // Assert
-      expect(nisab.amount).toBe(5100); // 85 * 60
-      expect(nisab.currency).toBe("USD");
+      expect(threshold.amount).toBe(5100); // 85 * 60
+      expect(threshold.currency).toBe("USD");
     });
 
     it("should handle decimal gold prices", () => {
@@ -319,22 +319,22 @@ describe("ZakatCalculator", () => {
       const goldPricePerGram = Money.fromAmount(62.5, "USD");
 
       // Act
-      const nisab = calculator.calculateNisab(goldPricePerGram);
+      const threshold = calculator.calculateThreshold(goldPricePerGram);
 
       // Assert
-      expect(nisab.amount).toBe(5312.5); // 85 * 62.50
+      expect(threshold.amount).toBe(5312.5); // 85 * 62.50
     });
 
-    it("should calculate nisab in different currencies", () => {
+    it("should calculate threshold in different currencies", () => {
       // Arrange
       const goldPricePerGram = Money.fromAmount(55, "EUR");
 
       // Act
-      const nisab = calculator.calculateNisab(goldPricePerGram);
+      const threshold = calculator.calculateThreshold(goldPricePerGram);
 
       // Assert
-      expect(nisab.amount).toBe(4675); // 85 * 55
-      expect(nisab.currency).toBe("EUR");
+      expect(threshold.amount).toBe(4675); // 85 * 55
+      expect(threshold.currency).toBe("EUR");
     });
   });
 
@@ -343,16 +343,16 @@ describe("ZakatCalculator", () => {
     it("should not mutate input Money objects", () => {
       // Arrange
       const originalWealth = Money.fromAmount(10000, "USD");
-      const originalNisab = Money.fromAmount(2000, "USD");
+      const originalThreshold = Money.fromAmount(2000, "USD");
       const wealthSnapshot = originalWealth.amount;
-      const nisabSnapshot = originalNisab.amount;
+      const thresholdSnapshot = originalThreshold.amount;
 
       // Act
-      calculator.calculateZakat(originalWealth, originalNisab);
+      calculator.calculateTax(originalWealth, originalThreshold);
 
       // Assert - original objects unchanged
       expect(originalWealth.amount).toBe(wealthSnapshot);
-      expect(originalNisab.amount).toBe(nisabSnapshot);
+      expect(originalThreshold.amount).toBe(thresholdSnapshot);
     });
   });
 });
@@ -382,26 +382,26 @@ describe("Component", () => {
 
 ```typescript
 // ✅ GOOD - Clear, focused test
-it("should calculate Zakat as 2.5% of wealth", () => {
-  const zakat = calculator.calculateZakat(Money.fromAmount(10000, "USD"), Money.fromAmount(2000, "USD"));
+it("should calculate Tax as 2.5% of wealth", () => {
+  const tax = calculator.calculateTax(Money.fromAmount(10000, "USD"), Money.fromAmount(2000, "USD"));
 
-  expect(zakat.amount).toBe(250);
+  expect(tax.amount).toBe(250);
 });
 
 // ⚠️ OK - Multiple assertions on same concept
 it("should return Money with correct amount and currency", () => {
-  const zakat = calculator.calculateZakat(Money.fromAmount(10000, "USD"), Money.fromAmount(2000, "USD"));
+  const tax = calculator.calculateTax(Money.fromAmount(10000, "USD"), Money.fromAmount(2000, "USD"));
 
-  expect(zakat.amount).toBe(250);
-  expect(zakat.currency).toBe("USD"); // Related assertion
+  expect(tax.amount).toBe(250);
+  expect(tax.currency).toBe("USD"); // Related assertion
 });
 
 // ❌ BAD - Testing multiple behaviors
-it("should calculate Zakat and check if due", () => {
-  const zakat = calculator.calculateZakat(/* ... */); // Behavior 1
-  expect(zakat.amount).toBe(250);
+it("should calculate Tax and check if due", () => {
+  const tax = calculator.calculateTax(/* ... */); // Behavior 1
+  expect(tax.amount).toBe(250);
 
-  const isDue = calculator.isZakatDue(/* ... */); // Behavior 2 (separate test)
+  const isDue = calculator.isTaxDue(/* ... */); // Behavior 2 (separate test)
   expect(isDue).toBe(true);
 });
 ```
@@ -410,11 +410,11 @@ it("should calculate Zakat and check if due", () => {
 
 ```typescript
 // ✅ GOOD - Describes behavior and context
-it("should return zero Zakat when wealth is below nisab", () => {});
+it("should return zero Tax when wealth is below threshold", () => {});
 
-it("should calculate 2.5% of wealth as Zakat when above nisab", () => {});
+it("should calculate 2.5% of wealth as Tax when above threshold", () => {});
 
-it("should throw error when wealth currency differs from nisab currency", () => {});
+it("should throw error when wealth currency differs from threshold currency", () => {});
 
 // ❌ BAD - Vague or implementation-focused
 it("should work", () => {});
@@ -428,37 +428,37 @@ it("test1", () => {}); // No description
 
 ```typescript
 // Create test data builder for reusability
-class ZakatTestBuilder {
-  static wealthAboveNisab(): { wealth: Money; nisab: Money } {
+class TaxTestBuilder {
+  static wealthAboveThreshold(): { wealth: Money; threshold: Money } {
     return {
       wealth: Money.fromAmount(10000, "USD"),
-      nisab: Money.fromAmount(2000, "USD"),
+      threshold: Money.fromAmount(2000, "USD"),
     };
   }
 
-  static wealthBelowNisab(): { wealth: Money; nisab: Money } {
+  static wealthBelowThreshold(): { wealth: Money; threshold: Money } {
     return {
       wealth: Money.fromAmount(1000, "USD"),
-      nisab: Money.fromAmount(2000, "USD"),
+      threshold: Money.fromAmount(2000, "USD"),
     };
   }
 
-  static wealthAtNisab(): { wealth: Money; nisab: Money } {
+  static wealthAtThreshold(): { wealth: Money; threshold: Money } {
     return {
       wealth: Money.fromAmount(2000, "USD"),
-      nisab: Money.fromAmount(2000, "USD"),
+      threshold: Money.fromAmount(2000, "USD"),
     };
   }
 }
 
 // Use in tests
-describe("ZakatCalculator", () => {
-  it("should calculate Zakat when wealth above nisab", () => {
-    const { wealth, nisab } = ZakatTestBuilder.wealthAboveNisab();
+describe("TaxCalculator", () => {
+  it("should calculate Tax when wealth above threshold", () => {
+    const { wealth, threshold } = TaxTestBuilder.wealthAboveThreshold();
 
-    const zakat = calculator.calculateZakat(wealth, nisab);
+    const tax = calculator.calculateTax(wealth, threshold);
 
-    expect(zakat.amount).toBe(250);
+    expect(tax.amount).toBe(250);
   });
 });
 ```
@@ -638,7 +638,7 @@ describe("Money", () => {
     it("should multiply Money by decimal", () => {
       const money = Money.fromAmount(10000, "USD");
 
-      const result = money.multiply(0.025); // Zakat rate
+      const result = money.multiply(0.025); // Tax rate
 
       expect(result.amount).toBe(250);
     });

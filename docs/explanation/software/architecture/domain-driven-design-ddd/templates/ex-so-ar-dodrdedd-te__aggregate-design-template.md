@@ -33,34 +33,34 @@ For each aggregate, document:
 8. **Lifecycle**: Creation, state transitions, and removal
 9. **Size & Performance**: Practical considerations
 
-## Complete Example: Zakat Assessment Aggregate
+## Complete Example: Tax Assessment Aggregate
 
 ### 1. Aggregate Overview
 
-**Name**: ZakatAssessment
+**Name**: TaxAssessment
 
-**Purpose**: Manages the process of calculating a Muslim's annual Zakat obligation, including asset collection, hawl verification, nisab comparison, and liability determination.
+**Purpose**: Manages the process of calculating a Muslim's annual Tax obligation, including asset collection, hawl verification, threshold comparison, and liability determination.
 
-**Bounded Context**: Zakat Management Context
+**Bounded Context**: Tax Management Context
 
 **Responsibilities**:
 
-- Collect taxpayer's zakatable assets
+- Collect taxpayer's taxable assets
 - Track hawl period for each asset category
-- Calculate total zakatable wealth
-- Determine Zakat liability based on nisab
+- Calculate total taxable wealth
+- Determine Tax liability based on threshold
 - Maintain assessment status (Draft → Under Review → Finalized)
 
 **Not Responsible For**:
 
-- Nisab calculation (external service)
+- Threshold calculation (external service)
 - Payment processing (separate aggregate)
 - Beneficiary allocation (separate context)
 - Asset valuation (external service for market prices)
 
 ### 2. Aggregate Root
 
-**Entity**: `ZakatAssessment`
+**Entity**: `TaxAssessment`
 
 **Identity**: `AssessmentId` (UUID)
 
@@ -71,7 +71,7 @@ For each aggregate, document:
 - `hawlStart: Date` - Start of lunar year
 - `hawlEnd: Date` - End of lunar year
 - `status: AssessmentStatus` - Current state (Draft | UnderReview | Finalized)
-- `liability: ZakatLiability?` - Calculated liability (only present when finalized)
+- `liability: TaxLiability?` - Calculated liability (only present when finalized)
 - `createdAt: DateTime` - Creation timestamp
 - `finalizedAt: DateTime?` - Finalization timestamp
 
@@ -81,7 +81,7 @@ For each aggregate, document:
 
 ### 3. Internal Entities
 
-**Entity**: `ZakatableAsset`
+**Entity**: `TaxableAsset`
 
 **Identity**: `AssetId` (UUID)
 
@@ -95,7 +95,7 @@ For each aggregate, document:
 - `hawlStartDate: Date` - When asset acquired/hawl started
 - `isHawlComplete: boolean` - Whether full lunar year has passed
 
-**Purpose**: Represents individual asset or asset category contributing to zakatable wealth.
+**Purpose**: Represents individual asset or asset category contributing to taxable wealth.
 
 **Why an Entity?**: Assets have identity and lifecycle (added, valued, removed from assessment).
 
@@ -137,19 +137,19 @@ For each aggregate, document:
 
 ---
 
-**Value Object**: `ZakatLiability`
+**Value Object**: `TaxLiability`
 
 **Attributes**:
 
-- `amount: Money` - Zakat due (if obligated)
-- `isObligated: boolean` - Whether Zakat is due
-- `exemptionReason: string?` - Why exempt (e.g., "Below nisab", "Hawl not complete")
+- `amount: Money` - Tax due (if obligated)
+- `isObligated: boolean` - Whether Tax is due
+- `exemptionReason: string?` - Why exempt (e.g., "Below threshold", "Hawl not complete")
 
 **Behavior**:
 
-- `obligated(amount: Money): ZakatLiability` - Factory for obligated liability
-- `exempt(reason: string): ZakatLiability` - Factory for exemption
-- `equals(other: ZakatLiability): boolean`
+- `obligated(amount: Money): TaxLiability` - Factory for obligated liability
+- `exempt(reason: string): TaxLiability` - Factory for exemption
+- `equals(other: TaxLiability): boolean`
 
 ---
 
@@ -161,7 +161,7 @@ For each aggregate, document:
 
 **Behavior**:
 
-- `zakatRate(): Percentage` - Different categories may have different rates
+- `taxRate(): Percentage` - Different categories may have different rates
 - `requiresHawl(): boolean` - Agriculture doesn't require hawl
 - `equals(other: AssetCategory): boolean`
 
@@ -188,13 +188,13 @@ Invariants are rules that must always be true. The aggregate enforces these thro
 
 - Hawl end date must be exactly one lunar year after start date
 - Hawl start date cannot be in the future
-- Enforced: In factory method `ZakatAssessment.create()`
+- Enforced: In factory method `TaxAssessment.create()`
 
 **Invariant 2: Assets Must Have Values**
 
 - Each asset must have a current valuation
 - Asset value cannot be negative
-- Enforced: In `ZakatableAsset.create()` and `addAsset()` command
+- Enforced: In `TaxableAsset.create()` and `addAsset()` command
 
 **Invariant 3: Only Draft Assessments Can Be Modified**
 
@@ -219,9 +219,9 @@ Invariants are rules that must always be true. The aggregate enforces these thro
 
 **Invariant 7: Total Wealth Calculation Consistency**
 
-- Total zakatable wealth equals sum of all asset values
+- Total taxable wealth equals sum of all asset values
 - Gold/silver valued at current market prices
-- Enforced: In `calculateZakatableWealth()` method
+- Enforced: In `calculateTaxableWealth()` method
 
 ### 6. Commands
 
@@ -249,12 +249,12 @@ Commands are operations that modify the aggregate's state. Each returns `Result<
 
 **Events Raised**:
 
-- `ZakatAssessmentCreated`
+- `TaxAssessmentCreated`
 
 **Example**:
 
 ```typescript
-const result = ZakatAssessment.create(new TaxpayerId("taxpayer-123"), HijriDate.fromGregorian(new Date("2024-01-01")));
+const result = TaxAssessment.create(new TaxpayerId("taxpayer-123"), HijriDate.fromGregorian(new Date("2024-01-01")));
 
 if (result.isSuccess()) {
   const assessment = result.value;
@@ -392,7 +392,7 @@ if (result.isSuccess()) {
 
 **Parameters**:
 
-- `nisab: Nisab` - Current nisab threshold
+- `threshold: Threshold` - Current threshold threshold
 - `goldPrice: Money` - Current gold price per gram
 - `silverPrice: Money` - Current silver price per gram
 
@@ -410,14 +410,14 @@ if (result.isSuccess()) {
 
 **Events Raised**:
 
-- `ZakatAssessmentFinalized` (includes liability details)
+- `TaxAssessmentFinalized` (includes liability details)
 
 **Business Logic**:
 
-1. Calculate total zakatable wealth from all assets
-2. Compare against nisab threshold
-3. If below nisab: Create exempt liability
-4. If above nisab: Calculate 2.5% of total wealth
+1. Calculate total taxable wealth from all assets
+2. Compare against threshold threshold
+3. If below threshold: Create exempt liability
+4. If above threshold: Calculate 2.5% of total wealth
 5. Set liability and finalize status
 
 **Errors**:
@@ -429,7 +429,7 @@ if (result.isSuccess()) {
 
 ```typescript
 const result = assessment.finalize(
-  currentNisab,
+  currentThreshold,
   Money.usd(60), // Gold price per gram
   Money.usd(0.7), // Silver price per gram
 );
@@ -437,7 +437,7 @@ const result = assessment.finalize(
 if (result.isSuccess()) {
   const events = result.value;
   // Assessment finalized, liability determined
-  // Events: [ZakatAssessmentFinalized]
+  // Events: [TaxAssessmentFinalized]
 }
 ```
 
@@ -445,7 +445,7 @@ if (result.isSuccess()) {
 
 Domain events are facts about what happened to the aggregate. They are the aggregate's way of communicating with the outside world.
 
-**Event**: `ZakatAssessmentCreated`
+**Event**: `TaxAssessmentCreated`
 
 **Payload**:
 
@@ -500,7 +500,7 @@ Domain events are facts about what happened to the aggregate. They are the aggre
 
 ---
 
-**Event**: `ZakatAssessmentFinalized`
+**Event**: `TaxAssessmentFinalized`
 
 **Payload**:
 
@@ -508,16 +508,16 @@ Domain events are facts about what happened to the aggregate. They are the aggre
 - `taxpayerId: TaxpayerId`
 - `hawlPeriod: HawlPeriod`
 - `totalWealth: Money`
-- `nisabThreshold: Money`
-- `liability: ZakatLiability`
+- `thresholdThreshold: Money`
+- `liability: TaxLiability`
 - `finalizedAt: DateTime`
 
 **Raised By**: `finalize()` command
 
 **Consumers**:
 
-- Payment service (create payment obligation if Zakat due)
-- Accounting service (record Zakat liability)
+- Payment service (create payment obligation if Tax due)
+- Accounting service (record Tax liability)
 - Notification service (notify taxpayer of obligation)
 - Analytics service (compliance reporting)
 
@@ -554,7 +554,7 @@ Domain events are facts about what happened to the aggregate. They are the aggre
 
 ```typescript
 // Factory method creates new assessment
-const result = ZakatAssessment.create(taxpayerId, hawlStart);
+const result = TaxAssessment.create(taxpayerId, hawlStart);
 
 // Initial state: Draft, no assets, no liability
 ```

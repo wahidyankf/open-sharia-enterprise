@@ -51,8 +51,8 @@ Bounded Contexts solve these problems by:
 
 Each context has its own model optimized for its specific needs:
 
-- **Zakat Calculation Context**: `ZakatAssessment` with nisab thresholds and Islamic wealth rules
-- **Inventory Management Context**: `Product` with halal certifications and stock levels
+- **Tax Calculation Context**: `TaxAssessment` with threshold thresholds and Islamic wealth rules
+- **Inventory Management Context**: `Product` with permitted certifications and stock levels
 - **Order Processing Context**: `Order` with line items and fulfillment status
 
 Each model is clear and unambiguous within its boundary.
@@ -81,7 +81,7 @@ When the same word means different things, you've crossed a bounded context boun
 
 - **Accounting Context**: `Account` = ledger account (assets, liabilities, equity)
 - **Customer Management Context**: `Account` = customer profile with contact information
-- **Islamic Finance Context**: `IslamicFinancialAccount` = Sharia-compliant investment account
+- **Islamic Finance Context**: `IslamicFinancialAccount` = Compliance-compliant investment account
 
 Solution: Three bounded contexts, each with its own "Account" concept.
 
@@ -103,11 +103,11 @@ Each capability suggests a potential bounded context.
 
 When business rules change significantly, you've likely crossed boundaries.
 
-**Example: Sharia-Compliant Business**
+**Example: Compliance-Compliant Business**
 
-- **Halal Certification Context**: Rules for verifying product compliance (ingredients, processing, supply chain)
-- **Zakat Calculation Context**: Rules for calculating Islamic almsgiving (nisab thresholds, wealth types, lunar calendar)
-- **Riba Detection Context**: Rules for identifying prohibited interest-bearing transactions
+- **Permitted Certification Context**: Rules for verifying product compliance (ingredients, processing, supply chain)
+- **Tax Calculation Context**: Rules for calculating Islamic almsgiving (threshold thresholds, wealth types, lunar calendar)
+- **Interest Detection Context**: Rules for identifying prohibited interest-bearing transactions
 
 Different rule sets → different bounded contexts.
 
@@ -145,7 +145,7 @@ Once identified, document each bounded context clearly:
 
 Choose a name from the Ubiquitous Language that clearly communicates the context's purpose.
 
-**Good Names**: Zakat Calculation, Halal Certification, Order Fulfillment
+**Good Names**: Tax Calculation, Permitted Certification, Order Fulfillment
 **Poor Names**: Module A, Domain Service, Business Logic
 
 ### 2. Description
@@ -154,18 +154,18 @@ Briefly describe what the context does and its business purpose.
 
 **Example**:
 
-> **Zakat Calculation Context** - Calculates Islamic almsgiving (zakat) obligations for wealth holders based on nisab thresholds, wealth types, and Hijri calendar cycles. Ensures compliance with Islamic jurisprudence rules.
+> **Tax Calculation Context** - Calculates Islamic almsgiving (tax) obligations for wealth holders based on threshold thresholds, wealth types, and Hijri calendar cycles. Ensures compliance with Islamic jurisprudence rules.
 
 ### 3. Ubiquitous Language
 
 List key terms and their definitions within this context.
 
-**Example for Zakat Calculation**:
+**Example for Tax Calculation**:
 
-- **Nisab**: Minimum threshold of wealth required before zakat becomes obligatory
+- **Threshold**: Minimum threshold of wealth required before tax becomes obligatory
 - **Hawl**: Complete lunar year during which wealth is held
-- **Zakatable Assets**: Wealth subject to zakat (gold, silver, cash, business inventory)
-- **Zakat Rate**: Percentage of wealth due as zakat (typically 2.5%)
+- **Taxable Assets**: Wealth subject to tax (gold, silver, cash, business inventory)
+- **Tax Rate**: Percentage of wealth due as tax (typically 2.5%)
 
 ### 4. Core Concepts
 
@@ -173,16 +173,16 @@ Identify the main entities, value objects, and aggregates.
 
 **Example**:
 
-- Aggregates: `ZakatAssessment`
+- Aggregates: `TaxAssessment`
 - Entities: `WealthDeclaration`
-- Value Objects: `NisabAmount`, `ZakatRate`, `HijriDate`, `Money`
+- Value Objects: `ThresholdAmount`, `TaxRate`, `HijriDate`, `Money`
 
 ### 5. Responsibilities
 
 What business capabilities does this context provide?
 
-- Calculate zakat owed based on declared wealth
-- Determine nisab threshold for current year
+- Calculate tax owed based on declared wealth
+- Determine threshold threshold for current year
 - Track hawl (lunar year) completion
 - Validate wealth declarations for completeness
 
@@ -194,17 +194,17 @@ What is explicitly out of scope?
 - Wealth tracking (handled by Accounting Context)
 - Tax calculations (handled by Tax Compliance Context)
 
-## Bounded Contexts in Sharia-Compliant Systems
+## Bounded Contexts in Compliance-Compliant Systems
 
 Let's examine bounded contexts for an Islamic e-commerce platform:
 
 ```mermaid
 graph TD
-    ZC[Zakat Calculation<br/>Core Domain]
-    HC[Halal Certification<br/>Supporting Domain]
+    ZC[Tax Calculation<br/>Core Domain]
+    HC[Permitted Certification<br/>Supporting Domain]
     IM[Inventory Management<br/>Supporting Domain]
     OP[Order Processing<br/>Supporting Domain]
-    RD[Riba Detection<br/>Core Domain]
+    RD[Interest Detection<br/>Core Domain]
     IFA[Islamic Financial<br/>Accounting<br/>Supporting Domain]
     PAY[Payment Processing<br/>Generic Domain]
     SHIP[Shipping<br/>Generic Domain]
@@ -227,64 +227,64 @@ graph TD
     style SHIP fill:#808080,stroke:#000,color:#000000
 ```
 
-### Zakat Calculation (Core Domain)
+### Tax Calculation (Core Domain)
 
 **Purpose**: Calculate Islamic almsgiving obligations
 
 **Key Concepts**:
 
-- `ZakatAssessment`: Aggregate root representing a zakat calculation
-- `NisabAmount`: Value object for minimum threshold
+- `TaxAssessment`: Aggregate root representing a tax calculation
+- `ThresholdAmount`: Value object for minimum threshold
 - `WealthType`: Enumeration (cash, gold, silver, business inventory, agricultural produce)
 
 **Responsibilities**:
 
-- Determine nisab threshold based on current gold/silver prices
-- Calculate zakat owed (typically 2.5% of zakatable wealth)
+- Determine threshold threshold based on current gold/silver prices
+- Calculate tax owed (typically 2.5% of taxable wealth)
 - Track hawl completion (lunar year)
 - Validate wealth declarations
 
 **Integration Points**:
 
 - Consumes wealth data from Islamic Financial Accounting
-- Publishes `ZakatCalculated` events
+- Publishes `TaxCalculated` events
 
-### Halal Certification (Supporting Domain)
+### Permitted Certification (Supporting Domain)
 
 **Purpose**: Verify product compliance with Islamic law
 
 **Key Concepts**:
 
 - `Product`: Aggregate root with certification status
-- `HalalCertification`: Value object with issuing authority and expiry
+- `PermittedCertification`: Value object with issuing authority and expiry
 - `CertificationAuthority`: Entity representing certifying bodies
 
 **Responsibilities**:
 
-- Track halal certifications for products
+- Track permitted certifications for products
 - Validate certification authority credentials
 - Monitor certification expiry
 - Verify supply chain compliance
 
 **Integration Points**:
 
-- Provides halal status to Inventory Management
+- Provides permitted status to Inventory Management
 - Consumes product data from Inventory Management
 - Publishes `ProductCertified`, `CertificationExpired` events
 
-### Riba Detection (Core Domain)
+### Interest Detection (Core Domain)
 
 **Purpose**: Identify and prevent interest-bearing transactions
 
 **Key Concepts**:
 
 - `Transaction`: Aggregate root representing a financial transaction
-- `RibaIndicator`: Value object scoring riba risk
-- `ContractType`: Enumeration (murabaha, musharaka, cash sale)
+- `InterestIndicator`: Value object scoring interest risk
+- `ContractType`: Enumeration (loan, musharaka, cash sale)
 
 **Responsibilities**:
 
-- Analyze transactions for riba indicators
+- Analyze transactions for interest indicators
 - Validate Islamic contract structures
 - Flag suspicious patterns
 - Generate compliance reports
@@ -292,7 +292,7 @@ graph TD
 **Integration Points**:
 
 - Consumes transaction data from Islamic Financial Accounting
-- Publishes `RibaDetected`, `TransactionApproved` events
+- Publishes `InterestDetected`, `TransactionApproved` events
 
 ### Order Processing (Supporting Domain)
 
@@ -367,13 +367,13 @@ Bounded contexts are logical boundaries, not physical deployment units.
 ```
 apps/ose-platform/
   ├── src/
-  │   ├── zakat-calculation/    # Bounded context
-  │   ├── halal-certification/  # Bounded context
-  │   └── riba-detection/       # Bounded context
+  │   ├── tax-calculation/    # Bounded context
+  │   ├── permitted-certification/  # Bounded context
+  │   └── interest-detection/       # Bounded context
   └── database/
-      ├── zakat_schema/         # Private to zakat context
-      ├── halal_schema/         # Private to halal context
-      └── riba_schema/          # Private to riba context
+      ├── tax_schema/         # Private to tax context
+      ├── permitted_schema/         # Private to permitted context
+      └── interest_schema/          # Private to interest context
 ```
 
 **Microservices**:
@@ -385,9 +385,9 @@ apps/ose-platform/
 
 ```
 infrastructure/
-  ├── zakat-calculation-service/
-  ├── halal-certification-service/
-  └── riba-detection-service/
+  ├── tax-calculation-service/
+  ├── permitted-certification-service/
+  └── interest-detection-service/
 ```
 
 **Migration Path**: Start with modular monolith, extract to microservices when scaling or team autonomy demands it.
@@ -470,22 +470,22 @@ In our Nx workspace, bounded contexts can be organized as:
 **Libraries** (`libs/`):
 
 - Shared kernel components usable across contexts
-- Domain primitives (Money, HijriDate, HalalCertification)
+- Domain primitives (Money, HijriDate, PermittedCertification)
 - Infrastructure abstractions
 
 ```
-open-sharia-enterprise/
+open-compliance-enterprise/
 ├── apps/
 │   └── ose-platform/
 │       ├── src/
-│       │   ├── zakat-calculation/    # Bounded Context
-│       │   ├── halal-certification/  # Bounded Context
-│       │   └── riba-detection/       # Bounded Context
+│       │   ├── tax-calculation/    # Bounded Context
+│       │   ├── permitted-certification/  # Bounded Context
+│       │   └── interest-detection/       # Bounded Context
 └── libs/
     ├── ts-domain-primitives/         # Shared Kernel
     │   ├── money/
     │   ├── hijri-date/
-    │   └── halal-certification/
+    │   └── permitted-certification/
     └── ts-shared-infrastructure/     # Infrastructure
 ```
 

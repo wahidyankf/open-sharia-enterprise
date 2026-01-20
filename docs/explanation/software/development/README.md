@@ -157,9 +157,9 @@ The open-sharia-enterprise project applies both TDD and BDD:
 
 **BDD Application:**
 
-- Gherkin scenarios for Islamic finance features (Zakat, Murabaha, Riba rules)
+- Gherkin scenarios for business features (Tax, Loan, Compliance rules)
 - Ubiquitous Language from DDD used in feature files
-- Three Amigos sessions with Shariah scholars for compliance features
+- Three Amigos sessions with domain experts for compliance features
 - Living documentation synchronized with Nx monorepo structure
 
 **Complementary Practices:**

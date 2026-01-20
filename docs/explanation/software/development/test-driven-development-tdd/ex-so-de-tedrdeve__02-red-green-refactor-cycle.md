@@ -33,27 +33,27 @@ Understanding this cycle deeply is essential to practicing TDD effectively. Each
 A well-written test follows the **Arrange-Act-Assert (AAA)** pattern:
 
 ```typescript
-describe("Nisab Threshold Validation", () => {
-  it("should return true when wealth meets or exceeds nisab", () => {
+describe("Income Threshold Validation", () => {
+  it("should return true when wealth meets or exceeds threshold", () => {
     // ARRANGE: Set up test data
-    const wealth = Money.fromGold(100, "grams");
-    const nisab = Money.fromGold(85, "grams");
+    const wealth = Money.usd(100000);
+    const threshold = Money.usd(50000);
 
     // ACT: Execute the behavior
-    const meetsNisab = wealth.meetsNisab(nisab);
+    const meetsThreshold = wealth.meetsThreshold(threshold);
 
     // ASSERT: Verify the outcome
-    expect(meetsNisab).toBe(true);
+    expect(meetsThreshold).toBe(true);
   });
 });
 
-// RED PHASE: Test fails because Money.meetsNisab doesn't exist yet
-// Error: Property 'meetsNisab' does not exist on type 'Money'
+// RED PHASE: Test fails because Money.meetsThreshold doesn't exist yet
+// Error: Property 'meetsThreshold' does not exist on type 'Money'
 ```
 
 **Arrange** (Given): Set up the context
 
-- Create test data (wealth, nisab amounts)
+- Create test data (wealth, threshold amounts)
 - Initialize dependencies (mocks, stubs if needed)
 - Establish preconditions
 
@@ -74,20 +74,20 @@ Good test names describe behavior in plain language:
 
 ```typescript
 // GOOD: Describes behavior and context
-describe("Zakat Calculation", () => {
-  it("should return zero when wealth is below nisab threshold", () => {
+describe("Tax Calculation", () => {
+  it("should return zero when wealth is below income threshold", () => {
     /* ... */
   });
-  it("should calculate 2.5% of wealth when above nisab threshold", () => {
+  it("should calculate 2.5% of wealth when above income threshold", () => {
     /* ... */
   });
-  it("should throw error when wealth and nisab have different currencies", () => {
+  it("should throw error when wealth and threshold have different currencies", () => {
     /* ... */
   });
 });
 
 // BAD: Describes implementation or uses vague names
-describe("Zakat Calculation", () => {
+describe("Tax Calculation", () => {
   it("test1", () => {
     /* ... */
   });
@@ -104,26 +104,26 @@ describe("Zakat Calculation", () => {
 
 #### Red Phase: Complete Example
 
-Let's specify a Zakat calculation feature using TDD:
+Let's specify a Tax calculation feature using TDD:
 
 ```typescript
 // RED PHASE: Write failing test for first behavior
-describe("calculateZakat", () => {
-  it("should calculate 2.5% zakat when wealth exceeds nisab", () => {
+describe("calculateTax", () => {
+  it("should calculate 20% tax when wealth exceeds threshold", () => {
     // Arrange
-    const wealth = Money.fromGold(100, "grams");
-    const nisab = Money.fromGold(85, "grams");
-    const zakatRate = ZakatRate.standard(); // 2.5%
+    const wealth = Money.usd(100000);
+    const threshold = Money.usd(50000);
+    const taxRate = TaxRate.standard(); // 2.5%
 
     // Act
-    const zakatAmount = calculateZakat(wealth, nisab, zakatRate);
+    const taxAmount = calculateTax(wealth, threshold, taxRate);
 
     // Assert
-    expect(zakatAmount.equals(Money.fromGold(2.5, "grams"))).toBe(true);
+    expect(taxAmount.equals(Money.usd(20000))).toBe(true);
   });
 });
 
-// Test fails: ReferenceError: calculateZakat is not defined
+// Test fails: ReferenceError: calculateTax is not defined
 // This is correct - we've specified the behavior, now we implement it
 ```
 
@@ -132,19 +132,19 @@ describe("calculateZakat", () => {
 **Critical Step**: Run the test and verify it fails **because the functionality is missing**, not because of typos or incorrect test setup.
 
 ```typescript
-// GOOD: Fails because calculateZakat doesn't exist
-// Error: calculateZakat is not defined ✅
+// GOOD: Fails because calculateTax doesn't exist
+// Error: calculateTax is not defined ✅
 
 // BAD: Fails because of typo in test
-it("should calculate zakat", () => {
-  expect(calculateZakt(wealth, nisab, rate)).toBe(2.5); // Typo: calculateZakt
+it("should calculate tax", () => {
+  expect(calculateZakt(wealth, threshold, rate)).toBe(2.5); // Typo: calculateZakt
 });
 // Error: calculateZakt is not defined ❌ (wrong reason)
 
 // BAD: Fails because test data is wrong
-it("should calculate zakat", () => {
+it("should calculate tax", () => {
   const wealth = undefined; // Wrong test data
-  expect(calculateZakat(wealth, nisab, rate)).toBe(2.5);
+  expect(calculateTax(wealth, threshold, rate)).toBe(2.5);
 });
 // Error: Cannot read property of undefined ❌ (wrong reason)
 ```
@@ -176,8 +176,8 @@ When starting, use the absolutely simplest approach—even if it's obviously inc
 
 ```typescript
 // GREEN PHASE: Fake it with hardcoded value
-function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
-  return Money.fromGold(2.5, "grams"); // Hardcoded! But test passes ✅
+function calculateTax(wealth: Money, threshold: Money, rate: TaxRate): Money {
+  return Money.usd(20000); // Hardcoded! But test passes ✅
 }
 
 // Test passes ✅
@@ -193,8 +193,8 @@ When the solution is straightforward, implement it directly:
 
 ```typescript
 // GREEN PHASE: Obvious implementation
-function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
-  if (wealth.isLessThan(nisab)) {
+function calculateTax(wealth: Money, threshold: Money, rate: TaxRate): Money {
+  if (wealth.isLessThan(threshold)) {
     return Money.zero(wealth.currency);
   }
   return wealth.multiply(rate.percentage);
@@ -211,30 +211,30 @@ Add another test case with different inputs to force generalizing the implementa
 
 ```typescript
 // First test with hardcoded result
-it("should calculate 2.5% zakat for 100 grams of gold", () => {
-  const wealth = Money.fromGold(100, "grams");
-  const nisab = Money.fromGold(85, "grams");
-  const rate = ZakatRate.standard();
+it("should calculate 20% tax for 100 grams of gold", () => {
+  const wealth = Money.usd(100000);
+  const threshold = Money.usd(50000);
+  const rate = TaxRate.standard();
 
-  const zakat = calculateZakat(wealth, nisab, rate);
+  const tax = calculateTax(wealth, threshold, rate);
 
-  expect(zakat.equals(Money.fromGold(2.5, "grams"))).toBe(true);
+  expect(tax.equals(Money.usd(20000))).toBe(true);
 });
 
 // Second test forces generalization
-it("should calculate 2.5% zakat for 200 grams of gold", () => {
-  const wealth = Money.fromGold(200, "grams");
-  const nisab = Money.fromGold(85, "grams");
-  const rate = ZakatRate.standard();
+it("should calculate 20% tax for 200 grams of gold", () => {
+  const wealth = Money.usd(200000);
+  const threshold = Money.usd(50000);
+  const rate = TaxRate.standard();
 
-  const zakat = calculateZakat(wealth, nisab, rate);
+  const tax = calculateTax(wealth, threshold, rate);
 
-  expect(zakat.equals(Money.fromGold(5.0, "grams"))).toBe(true); // Different amount
+  expect(tax.equals(Money.usd(40000))).toBe(true); // Different amount
 });
 
 // Hardcoded value no longer works - must implement real calculation
-function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
-  if (wealth.isLessThan(nisab)) {
+function calculateTax(wealth: Money, threshold: Money, rate: TaxRate): Money {
+  if (wealth.isLessThan(threshold)) {
     return Money.zero(wealth.currency);
   }
   return wealth.multiply(rate.percentage); // Real implementation ✅
@@ -245,26 +245,26 @@ function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
 
 #### Green Phase: Complete Example
 
-Let's continue our Zakat calculation TDD session:
+Let's continue our Tax calculation TDD session:
 
 ```typescript
-// RED PHASE: Test for wealth below nisab
-it("should return zero when wealth is below nisab threshold", () => {
-  const wealth = Money.fromGold(50, "grams"); // Below 85g nisab
-  const nisab = Money.fromGold(85, "grams");
-  const rate = ZakatRate.standard();
+// RED PHASE: Test for wealth below threshold
+it("should return zero when wealth is below income threshold", () => {
+  const wealth = Money.usd(30000); // Below 85g threshold
+  const threshold = Money.usd(50000);
+  const rate = TaxRate.standard();
 
-  const zakat = calculateZakat(wealth, nisab, rate);
+  const tax = calculateTax(wealth, threshold, rate);
 
-  expect(zakat.equals(Money.zero("gold"))).toBe(true);
+  expect(tax.equals(Money.zero("USD"))).toBe(true);
 });
 
-// Test fails ❌: Expected 0 but got 1.25 (50 * 0.025)
+// Test fails ❌: Expected 0 but got 1.25 (50 * 0.20)
 
-// GREEN PHASE: Add nisab check
-function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
-  if (wealth.isLessThan(nisab)) {
-    return Money.zero(wealth.currency); // NEW: Handle below-nisab case
+// GREEN PHASE: Add threshold check
+function calculateTax(wealth: Money, threshold: Money, rate: TaxRate): Money {
+  if (wealth.isLessThan(threshold)) {
+    return Money.zero(wealth.currency); // NEW: Handle below-threshold case
   }
   return wealth.multiply(rate.percentage);
 }
@@ -274,22 +274,22 @@ function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
 
 ```typescript
 // RED PHASE: Test for currency mismatch
-it("should throw error when wealth and nisab have different currencies", () => {
+it("should throw error when wealth and threshold have different currencies", () => {
   const wealth = Money.usd(1000);
-  const nisab = Money.fromGold(85, "grams");
-  const rate = ZakatRate.standard();
+  const threshold = Money.usd(50000);
+  const rate = TaxRate.standard();
 
-  expect(() => calculateZakat(wealth, nisab, rate)).toThrow("Cannot compare different currencies");
+  expect(() => calculateTax(wealth, threshold, rate)).toThrow("Cannot compare different currencies");
 });
 
 // Test fails ❌: No error thrown
 
 // GREEN PHASE: Add currency validation
-function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
-  if (!wealth.hasSameCurrency(nisab)) {
+function calculateTax(wealth: Money, threshold: Money, rate: TaxRate): Money {
+  if (!wealth.hasSameCurrency(threshold)) {
     throw new CurrencyMismatchError("Cannot compare different currencies"); // NEW
   }
-  if (wealth.isLessThan(nisab)) {
+  if (wealth.isLessThan(threshold)) {
     return Money.zero(wealth.currency);
   }
   return wealth.multiply(rate.percentage);
@@ -304,11 +304,11 @@ function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
 
 ```typescript
 // GREEN PHASE: Just make the test pass
-function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
-  if (!wealth.hasSameCurrency(nisab)) {
+function calculateTax(wealth: Money, threshold: Money, rate: TaxRate): Money {
+  if (!wealth.hasSameCurrency(threshold)) {
     throw new CurrencyMismatchError("Cannot compare different currencies");
   }
-  if (wealth.isLessThan(nisab)) {
+  if (wealth.isLessThan(threshold)) {
     return Money.zero(wealth.currency);
   }
   return wealth.multiply(rate.percentage);
@@ -370,29 +370,29 @@ function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
 
 ```typescript
 // BEFORE REFACTORING: Magic number
-function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
-  if (!wealth.hasSameCurrency(nisab)) {
+function calculateTax(wealth: Money, threshold: Money, rate: TaxRate): Money {
+  if (!wealth.hasSameCurrency(threshold)) {
     throw new CurrencyMismatchError("Cannot compare different currencies");
   }
-  if (wealth.isLessThan(nisab)) {
+  if (wealth.isLessThan(threshold)) {
     return Money.zero(wealth.currency);
   }
-  return wealth.multiply(0.025); // What is 0.025? ❌
+  return wealth.multiply(0.2); // What is 0.20? ❌
 }
 
 // Tests pass ✅
 
 // AFTER REFACTORING: Named constant
-const STANDARD_ZAKAT_RATE = 0.025; // 2.5%
+const STANDARD_TAX_RATE = 0.2; // 20%
 
-function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
-  if (!wealth.hasSameCurrency(nisab)) {
+function calculateTax(wealth: Money, threshold: Money, rate: TaxRate): Money {
+  if (!wealth.hasSameCurrency(threshold)) {
     throw new CurrencyMismatchError("Cannot compare different currencies");
   }
-  if (wealth.isLessThan(nisab)) {
+  if (wealth.isLessThan(threshold)) {
     return Money.zero(wealth.currency);
   }
-  return wealth.multiply(STANDARD_ZAKAT_RATE); // Clear intent ✅
+  return wealth.multiply(STANDARD_TAX_RATE); // Clear intent ✅
 }
 
 // Tests still pass ✅
@@ -402,11 +402,11 @@ function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
 
 ```typescript
 // BEFORE REFACTORING: Complex function
-function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
-  if (!wealth.hasSameCurrency(nisab)) {
+function calculateTax(wealth: Money, threshold: Money, rate: TaxRate): Money {
+  if (!wealth.hasSameCurrency(threshold)) {
     throw new CurrencyMismatchError("Cannot compare different currencies");
   }
-  if (wealth.isLessThan(nisab)) {
+  if (wealth.isLessThan(threshold)) {
     return Money.zero(wealth.currency);
   }
   return wealth.multiply(rate.percentage);
@@ -415,34 +415,34 @@ function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
 // Tests pass ✅
 
 // AFTER REFACTORING: Extract validation
-function validateCurrency(wealth: Money, nisab: Money): void {
-  if (!wealth.hasSameCurrency(nisab)) {
+function validateCurrency(wealth: Money, threshold: Money): void {
+  if (!wealth.hasSameCurrency(threshold)) {
     throw new CurrencyMismatchError("Cannot compare different currencies");
   }
 }
 
-function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
-  validateCurrency(wealth, nisab);
+function calculateTax(wealth: Money, threshold: Money, rate: TaxRate): Money {
+  validateCurrency(wealth, threshold);
 
-  if (wealth.isLessThan(nisab)) {
+  if (wealth.isLessThan(threshold)) {
     return Money.zero(wealth.currency);
   }
   return wealth.multiply(rate.percentage);
 }
 
 // Tests still pass ✅
-// calculateZakat is now clearer - validation separated from calculation
+// calculateTax is now clearer - validation separated from calculation
 ```
 
 **Example 3: Extract Class for Complex Logic**
 
 ```typescript
 // BEFORE REFACTORING: All logic in one function
-function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
-  if (!wealth.hasSameCurrency(nisab)) {
+function calculateTax(wealth: Money, threshold: Money, rate: TaxRate): Money {
+  if (!wealth.hasSameCurrency(threshold)) {
     throw new CurrencyMismatchError("Cannot compare different currencies");
   }
-  if (wealth.isLessThan(nisab)) {
+  if (wealth.isLessThan(threshold)) {
     return Money.zero(wealth.currency);
   }
   return wealth.multiply(rate.percentage);
@@ -450,41 +450,41 @@ function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
 
 // Tests pass ✅
 
-// AFTER REFACTORING: Extract ZakatCalculator class
-class ZakatCalculator {
+// AFTER REFACTORING: Extract TaxCalculator class
+class TaxCalculator {
   constructor(
-    private nisab: Money,
-    private rate: ZakatRate,
+    private threshold: Money,
+    private rate: TaxRate,
   ) {}
 
   calculate(wealth: Money): Money {
     this.validateCurrency(wealth);
 
-    if (this.isBelowNisab(wealth)) {
+    if (this.isBelowThreshold(wealth)) {
       return Money.zero(wealth.currency);
     }
 
-    return this.applyZakatRate(wealth);
+    return this.applyTaxRate(wealth);
   }
 
   private validateCurrency(wealth: Money): void {
-    if (!wealth.hasSameCurrency(this.nisab)) {
+    if (!wealth.hasSameCurrency(this.threshold)) {
       throw new CurrencyMismatchError("Cannot compare different currencies");
     }
   }
 
-  private isBelowNisab(wealth: Money): boolean {
-    return wealth.isLessThan(this.nisab);
+  private isBelowThreshold(wealth: Money): boolean {
+    return wealth.isLessThan(this.threshold);
   }
 
-  private applyZakatRate(wealth: Money): Money {
+  private applyTaxRate(wealth: Money): Money {
     return wealth.multiply(this.rate.percentage);
   }
 }
 
 // Update function to use class
-function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
-  const calculator = new ZakatCalculator(nisab, rate);
+function calculateTax(wealth: Money, threshold: Money, rate: TaxRate): Money {
+  const calculator = new TaxCalculator(threshold, rate);
   return calculator.calculate(wealth);
 }
 
@@ -527,14 +527,14 @@ The cardinal rule of refactoring: **Run tests frequently during refactoring**.
 npm test
 
 // 2. Make small refactoring change (e.g., rename variable)
-const zakatableWealth = wealth; // Renamed from 'w'
+const taxableWealth = wealth; // Renamed from 'w'
 
 // 3. Run tests ✅
 npm test
 
 // 4. Make another small change (e.g., extract function)
-function isExempt(wealth: Money, nisab: Money): boolean {
-  return wealth.isLessThan(nisab);
+function isExempt(wealth: Money, threshold: Money): boolean {
+  return wealth.isLessThan(threshold);
 }
 
 // 5. Run tests ✅
@@ -545,40 +545,40 @@ npm test
 
 **Why small steps matter**: If tests suddenly fail, you know the exact change that broke them (the last refactoring). If you make 10 changes before testing, debugging is harder.
 
-## Complete Red-Green-Refactor Example: NisabThreshold Value Object
+## Complete Red-Green-Refactor Example: IncomeThreshold Value Object
 
-Let's apply the full cycle to build a `NisabThreshold` value object for Zakat calculations.
+Let's apply the full cycle to build a `IncomeThreshold` value object for Tax calculations.
 
-### Cycle 1: Create NisabThreshold
+### Cycle 1: Create IncomeThreshold
 
 **RED PHASE: Write failing test**
 
 ```typescript
-describe("NisabThreshold", () => {
-  it("should create nisab threshold for gold", () => {
+describe("IncomeThreshold", () => {
+  it("should create income threshold for standard income", () => {
     // Arrange & Act
-    const nisab = NisabThreshold.forGold(85, "grams");
+    const threshold = IncomeThreshold.forStandardIncome(85, "grams");
 
     // Assert
-    expect(nisab.amount).toBe(85);
-    expect(nisab.assetType).toBe("gold");
+    expect(threshold.amount).toBe(85);
+    expect(threshold.assetType).toBe("gold");
   });
 });
 
-// Test fails ❌: NisabThreshold is not defined
+// Test fails ❌: IncomeThreshold is not defined
 ```
 
 **GREEN PHASE: Simplest implementation**
 
 ```typescript
-class NisabThreshold {
+class IncomeThreshold {
   constructor(
     readonly amount: number,
     readonly assetType: string,
   ) {}
 
-  static forGold(amount: number, unit: string): NisabThreshold {
-    return new NisabThreshold(amount, "gold");
+  static forStandardIncome(amount: number, unit: string): IncomeThreshold {
+    return new IncomeThreshold(amount, "gold");
   }
 }
 
@@ -587,36 +587,36 @@ class NisabThreshold {
 
 **REFACTOR PHASE: No duplication or complexity yet - skip**
 
-### Cycle 2: Add Silver Nisab
+### Cycle 2: Add Silver Threshold
 
 **RED PHASE: Write failing test**
 
 ```typescript
-it("should create nisab threshold for silver", () => {
-  const nisab = NisabThreshold.forSilver(595, "grams");
+it("should create income threshold for capital gains", () => {
+  const threshold = IncomeThreshold.forCapitalGains(75000);
 
-  expect(nisab.amount).toBe(595);
-  expect(nisab.assetType).toBe("silver");
+  expect(threshold.amount).toBe(595);
+  expect(threshold.assetType).toBe("capital-gains");
 });
 
-// Test fails ❌: NisabThreshold.forSilver is not defined
+// Test fails ❌: IncomeThreshold.forCapitalGains is not defined
 ```
 
-**GREEN PHASE: Add forSilver method**
+**GREEN PHASE: Add forCapitalGains method**
 
 ```typescript
-class NisabThreshold {
+class IncomeThreshold {
   constructor(
     readonly amount: number,
     readonly assetType: string,
   ) {}
 
-  static forGold(amount: number, unit: string): NisabThreshold {
-    return new NisabThreshold(amount, "gold");
+  static forStandardIncome(amount: number, unit: string): IncomeThreshold {
+    return new IncomeThreshold(amount, "gold");
   }
 
-  static forSilver(amount: number, unit: string): NisabThreshold {
-    return new NisabThreshold(amount, "silver");
+  static forCapitalGains(amount: number, unit: string): IncomeThreshold {
+    return new IncomeThreshold(amount, "capital-gains");
   }
 }
 
@@ -626,63 +626,63 @@ class NisabThreshold {
 **REFACTOR PHASE: Extract duplication in factory methods**
 
 ```typescript
-class NisabThreshold {
+class IncomeThreshold {
   constructor(
     readonly amount: number,
     readonly assetType: string,
   ) {}
 
-  static forGold(amount: number, unit: string): NisabThreshold {
-    return NisabThreshold.create(amount, "gold", unit);
+  static forStandardIncome(amount: number, unit: string): IncomeThreshold {
+    return IncomeThreshold.create(amount, "gold", unit);
   }
 
-  static forSilver(amount: number, unit: string): NisabThreshold {
-    return NisabThreshold.create(amount, "silver", unit);
+  static forCapitalGains(amount: number, unit: string): IncomeThreshold {
+    return IncomeThreshold.create(amount, "capital-gains", unit);
   }
 
-  private static create(amount: number, assetType: string, unit: string): NisabThreshold {
-    return new NisabThreshold(amount, assetType);
+  private static create(amount: number, assetType: string, unit: string): IncomeThreshold {
+    return new IncomeThreshold(amount, assetType);
   }
 }
 
 // Tests still pass ✅
 ```
 
-### Cycle 3: Prevent Negative Nisab
+### Cycle 3: Prevent Negative Threshold
 
 **RED PHASE: Write failing test**
 
 ```typescript
-it("should throw error for negative nisab amount", () => {
-  expect(() => NisabThreshold.forGold(-85, "grams")).toThrow("Nisab amount cannot be negative");
+it("should throw error for negative threshold amount", () => {
+  expect(() => IncomeThreshold.forStandardIncome(-50000)).toThrow("Threshold amount cannot be negative");
 });
 
-// Test fails ❌: Expected error to be thrown, but got NisabThreshold object
+// Test fails ❌: Expected error to be thrown, but got IncomeThreshold object
 ```
 
 **GREEN PHASE: Add validation**
 
 ```typescript
-class NisabThreshold {
+class IncomeThreshold {
   constructor(
     readonly amount: number,
     readonly assetType: string,
   ) {
     if (amount < 0) {
-      throw new Error("Nisab amount cannot be negative");
+      throw new Error("Threshold amount cannot be negative");
     }
   }
 
-  static forGold(amount: number, unit: string): NisabThreshold {
-    return NisabThreshold.create(amount, "gold", unit);
+  static forStandardIncome(amount: number, unit: string): IncomeThreshold {
+    return IncomeThreshold.create(amount, "gold", unit);
   }
 
-  static forSilver(amount: number, unit: string): NisabThreshold {
-    return NisabThreshold.create(amount, "silver", unit);
+  static forCapitalGains(amount: number, unit: string): IncomeThreshold {
+    return IncomeThreshold.create(amount, "capital-gains", unit);
   }
 
-  private static create(amount: number, assetType: string, unit: string): NisabThreshold {
-    return new NisabThreshold(amount, assetType);
+  private static create(amount: number, assetType: string, unit: string): IncomeThreshold {
+    return new IncomeThreshold(amount, assetType);
   }
 }
 
@@ -692,79 +692,79 @@ class NisabThreshold {
 **REFACTOR PHASE: Extract custom error class**
 
 ```typescript
-class InvalidNisabError extends Error {
+class InvalidThresholdError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "InvalidNisabError";
+    this.name = "InvalidThresholdError";
   }
 }
 
-class NisabThreshold {
+class IncomeThreshold {
   constructor(
     readonly amount: number,
     readonly assetType: string,
   ) {
     if (amount < 0) {
-      throw new InvalidNisabError("Nisab amount cannot be negative");
+      throw new InvalidThresholdError("Threshold amount cannot be negative");
     }
   }
 
-  static forGold(amount: number, unit: string): NisabThreshold {
-    return NisabThreshold.create(amount, "gold", unit);
+  static forStandardIncome(amount: number, unit: string): IncomeThreshold {
+    return IncomeThreshold.create(amount, "gold", unit);
   }
 
-  static forSilver(amount: number, unit: string): NisabThreshold {
-    return NisabThreshold.create(amount, "silver", unit);
+  static forCapitalGains(amount: number, unit: string): IncomeThreshold {
+    return IncomeThreshold.create(amount, "capital-gains", unit);
   }
 
-  private static create(amount: number, assetType: string, unit: string): NisabThreshold {
-    return new NisabThreshold(amount, assetType);
+  private static create(amount: number, assetType: string, unit: string): IncomeThreshold {
+    return new IncomeThreshold(amount, assetType);
   }
 }
 
 // Tests still pass ✅
 ```
 
-### Cycle 4: Comparison Between Wealth and Nisab
+### Cycle 4: Comparison Between Wealth and Threshold
 
 **RED PHASE: Write failing test**
 
 ```typescript
-it("should compare if wealth meets nisab threshold", () => {
-  const nisab = NisabThreshold.forGold(85, "grams");
-  const wealth = Money.fromGold(100, "grams");
+it("should compare if wealth meets income threshold", () => {
+  const threshold = IncomeThreshold.forStandardIncome(85, "grams");
+  const wealth = Money.usd(100000);
 
-  const meetsThreshold = nisab.isMetBy(wealth);
+  const meetsThreshold = threshold.isMetBy(wealth);
 
   expect(meetsThreshold).toBe(true);
 });
 
-// Test fails ❌: nisab.isMetBy is not a function
+// Test fails ❌: threshold.isMetBy is not a function
 ```
 
 **GREEN PHASE: Add comparison method**
 
 ```typescript
-class NisabThreshold {
+class IncomeThreshold {
   constructor(
     readonly amount: number,
     readonly assetType: string,
   ) {
     if (amount < 0) {
-      throw new InvalidNisabError("Nisab amount cannot be negative");
+      throw new InvalidThresholdError("Threshold amount cannot be negative");
     }
   }
 
-  static forGold(amount: number, unit: string): NisabThreshold {
-    return NisabThreshold.create(amount, "gold", unit);
+  static forStandardIncome(amount: number, unit: string): IncomeThreshold {
+    return IncomeThreshold.create(amount, "gold", unit);
   }
 
-  static forSilver(amount: number, unit: string): NisabThreshold {
-    return NisabThreshold.create(amount, "silver", unit);
+  static forCapitalGains(amount: number, unit: string): IncomeThreshold {
+    return IncomeThreshold.create(amount, "capital-gains", unit);
   }
 
-  private static create(amount: number, assetType: string, unit: string): NisabThreshold {
-    return new NisabThreshold(amount, assetType);
+  private static create(amount: number, assetType: string, unit: string): IncomeThreshold {
+    return new IncomeThreshold(amount, assetType);
   }
 
   isMetBy(wealth: Money): boolean {
@@ -780,33 +780,33 @@ class NisabThreshold {
 ### Final Result After 4 Cycles
 
 ```typescript
-class InvalidNisabError extends Error {
+class InvalidThresholdError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "InvalidNisabError";
+    this.name = "InvalidThresholdError";
   }
 }
 
-class NisabThreshold {
+class IncomeThreshold {
   constructor(
     readonly amount: number,
     readonly assetType: string,
   ) {
     if (amount < 0) {
-      throw new InvalidNisabError("Nisab amount cannot be negative");
+      throw new InvalidThresholdError("Threshold amount cannot be negative");
     }
   }
 
-  static forGold(amount: number, unit: string): NisabThreshold {
-    return NisabThreshold.create(amount, "gold", unit);
+  static forStandardIncome(amount: number, unit: string): IncomeThreshold {
+    return IncomeThreshold.create(amount, "gold", unit);
   }
 
-  static forSilver(amount: number, unit: string): NisabThreshold {
-    return NisabThreshold.create(amount, "silver", unit);
+  static forCapitalGains(amount: number, unit: string): IncomeThreshold {
+    return IncomeThreshold.create(amount, "capital-gains", unit);
   }
 
-  private static create(amount: number, assetType: string, unit: string): NisabThreshold {
-    return new NisabThreshold(amount, assetType);
+  private static create(amount: number, assetType: string, unit: string): IncomeThreshold {
+    return new IncomeThreshold(amount, assetType);
   }
 
   isMetBy(wealth: Money): boolean {
@@ -815,27 +815,27 @@ class NisabThreshold {
 }
 
 // Test suite (12 assertions across 4 tests)
-describe("NisabThreshold", () => {
-  it("should create nisab threshold for gold", () => {
-    const nisab = NisabThreshold.forGold(85, "grams");
-    expect(nisab.amount).toBe(85);
-    expect(nisab.assetType).toBe("gold");
+describe("IncomeThreshold", () => {
+  it("should create income threshold for standard income", () => {
+    const threshold = IncomeThreshold.forStandardIncome(85, "grams");
+    expect(threshold.amount).toBe(85);
+    expect(threshold.assetType).toBe("gold");
   });
 
-  it("should create nisab threshold for silver", () => {
-    const nisab = NisabThreshold.forSilver(595, "grams");
-    expect(nisab.amount).toBe(595);
-    expect(nisab.assetType).toBe("silver");
+  it("should create income threshold for capital gains", () => {
+    const threshold = IncomeThreshold.forCapitalGains(75000);
+    expect(threshold.amount).toBe(595);
+    expect(threshold.assetType).toBe("capital-gains");
   });
 
-  it("should throw error for negative nisab amount", () => {
-    expect(() => NisabThreshold.forGold(-85, "grams")).toThrow("Nisab amount cannot be negative");
+  it("should throw error for negative threshold amount", () => {
+    expect(() => IncomeThreshold.forStandardIncome(-50000)).toThrow("Threshold amount cannot be negative");
   });
 
-  it("should compare if wealth meets nisab threshold", () => {
-    const nisab = NisabThreshold.forGold(85, "grams");
-    const wealth = Money.fromGold(100, "grams");
-    expect(nisab.isMetBy(wealth)).toBe(true);
+  it("should compare if wealth meets income threshold", () => {
+    const threshold = IncomeThreshold.forStandardIncome(85, "grams");
+    const wealth = Money.usd(100000);
+    expect(threshold.isMetBy(wealth)).toBe(true);
   });
 });
 
@@ -859,26 +859,26 @@ describe("NisabThreshold", () => {
 
 ```typescript
 // BAD: Write implementation first
-function calculateZakat(wealth: Money): Money {
-  return wealth.multiply(0.025);
+function calculateTax(wealth: Money): Money {
+  return wealth.multiply(0.2);
 }
 
 // Then write test
-it("should calculate zakat", () => {
-  const zakat = calculateZakat(Money.usd(100));
-  expect(zakat.amount).toBe(2.5);
+it("should calculate tax", () => {
+  const tax = calculateTax(Money.usd(100));
+  expect(tax.amount).toBe(2.5);
 }); // Passes, but did we verify it fails first? ❌
 
 // GOOD: Write test first, watch it fail
-it("should calculate zakat", () => {
-  const zakat = calculateZakat(Money.usd(100));
-  expect(zakat.amount).toBe(2.5);
+it("should calculate tax", () => {
+  const tax = calculateTax(Money.usd(100));
+  expect(tax.amount).toBe(2.5);
 });
-// FAIL: calculateZakat is not defined ✅ (correct)
+// FAIL: calculateTax is not defined ✅ (correct)
 
 // Then implement
-function calculateZakat(wealth: Money): Money {
-  return wealth.multiply(0.025);
+function calculateTax(wealth: Money): Money {
+  return wealth.multiply(0.2);
 }
 // PASS ✅
 ```
@@ -897,34 +897,34 @@ function calculateZakat(wealth: Money): Money {
 
 ```typescript
 // BAD: Implementing too much at once
-// Only one failing test: "should calculate zakat for gold"
-function calculateZakat(wealth: Money, nisab: Money): Money {
+// Only one failing test: "should calculate tax for gold"
+function calculateTax(wealth: Money, threshold: Money): Money {
   // Unnecessary currency conversion not tested yet
   const normalizedWealth = this.convertToBaseCurrency(wealth);
-  const normalizedNisab = this.convertToBaseCurrency(nisab);
+  const normalizedThreshold = this.convertToBaseCurrency(threshold);
 
   // Unnecessary caching not tested yet
-  const cacheKey = `${normalizedWealth.amount}-${normalizedNisab.amount}`;
+  const cacheKey = `${normalizedWealth.amount}-${normalizedThreshold.amount}`;
   if (this.cache.has(cacheKey)) {
     return this.cache.get(cacheKey);
   }
 
   // Unnecessary logging not tested yet
-  this.logger.info(`Calculating zakat for ${wealth.amount}`);
+  this.logger.info(`Calculating tax for ${wealth.amount}`);
 
   // The only logic actually tested
-  if (normalizedWealth.isLessThan(normalizedNisab)) {
+  if (normalizedWealth.isLessThan(normalizedThreshold)) {
     return Money.zero();
   }
-  return normalizedWealth.multiply(0.025);
+  return normalizedWealth.multiply(0.2);
 }
 
 // GOOD: Only implement what's tested
-function calculateZakat(wealth: Money, nisab: Money): Money {
-  if (wealth.isLessThan(nisab)) {
+function calculateTax(wealth: Money, threshold: Money): Money {
+  if (wealth.isLessThan(threshold)) {
     return Money.zero(wealth.currency);
   }
-  return wealth.multiply(0.025);
+  return wealth.multiply(0.2);
 }
 // Add caching, logging, conversion later when tests require them
 ```
@@ -942,7 +942,7 @@ function calculateZakat(wealth: Money, nisab: Money): Money {
 
 ```typescript
 // BAD: Refactoring while red
-it("should calculate zakat", () => {
+it("should calculate tax", () => {
   /* test code */
 });
 // FAIL ❌
@@ -951,21 +951,21 @@ it("should calculate zakat", () => {
 // Tests still failing, now hard to know if refactoring broke something ❌
 
 // GOOD: Refactor only when green
-it("should calculate zakat", () => {
+it("should calculate tax", () => {
   /* test code */
 });
 // FAIL ❌
 
 // First, get to green
-function calculateZakat(w: Money, n: Money): Money {
-  return w.multiply(0.025);
+function calculateTax(w: Money, n: Money): Money {
+  return w.multiply(0.2);
 }
 // PASS ✅
 
 // Now refactor
-function calculateZakat(wealth: Money, nisab: Money): Money {
+function calculateTax(wealth: Money, threshold: Money): Money {
   // Renamed parameters
-  return wealth.multiply(0.025);
+  return wealth.multiply(0.2);
 }
 // PASS ✅ (run tests after each small refactoring)
 ```
@@ -984,26 +984,26 @@ function calculateZakat(wealth: Money, nisab: Money): Money {
 
 ```typescript
 // BAD: Testing implementation details
-class ZakatCalculator {
-  private nisabAmount: Money;
+class TaxCalculator {
+  private thresholdAmount: Money;
 
   calculate(wealth: Money): Money {
-    return wealth.isGreaterThan(this.nisabAmount) ? wealth.multiply(0.025) : Money.zero();
+    return wealth.isGreaterThan(this.thresholdAmount) ? wealth.multiply(0.2) : Money.zero();
   }
 }
 
 // Bad test: Checks internal state
-it("should set nisabAmount", () => {
-  const calculator = new ZakatCalculator(Money.fromGold(85));
-  expect(calculator["nisabAmount"].amount).toBe(85); // Accessing private field ❌
+it("should set thresholdAmount", () => {
+  const calculator = new TaxCalculator(Money.fromGold(85));
+  expect(calculator["thresholdAmount"].amount).toBe(85); // Accessing private field ❌
 });
 
 // GOOD: Testing public behavior
-it("should calculate zakat when wealth exceeds nisab", () => {
-  const calculator = new ZakatCalculator(Money.fromGold(85));
-  const zakat = calculator.calculate(Money.fromGold(100));
+it("should calculate tax when wealth exceeds threshold", () => {
+  const calculator = new TaxCalculator(Money.fromGold(85));
+  const tax = calculator.calculate(Money.fromGold(100));
 
-  expect(zakat.equals(Money.fromGold(2.5))).toBe(true); // Testing outcome ✅
+  expect(tax.equals(Money.fromGold(2.5))).toBe(true); // Testing outcome ✅
 });
 ```
 
@@ -1023,50 +1023,50 @@ it("should calculate zakat when wealth exceeds nisab", () => {
 // Before
 function calc(w, n) {
   if (w < n) return 0;
-  return w * 0.025;
+  return w * 0.2;
 }
 
 // After (many changes at once)
-class ZakatCalculator {
-  constructor(private nisabThreshold: NisabThreshold) {}
+class TaxCalculator {
+  constructor(private thresholdThreshold: IncomeThreshold) {}
 
   calculate(wealth: Money): Money {
-    if (this.isBelowNisab(wealth)) {
+    if (this.isBelowThreshold(wealth)) {
       return Money.zero(wealth.currency);
     }
-    return this.applyZakatRate(wealth);
+    return this.applyTaxRate(wealth);
   }
 
-  private isBelowNisab(wealth: Money): boolean {
-    return this.nisabThreshold.isMetBy(wealth);
+  private isBelowThreshold(wealth: Money): boolean {
+    return this.thresholdThreshold.isMetBy(wealth);
   }
 
-  private applyZakatRate(wealth: Money): Money {
-    return wealth.multiply(ZakatRate.STANDARD);
+  private applyTaxRate(wealth: Money): Money {
+    return wealth.multiply(TaxRate.STANDARD);
   }
 }
 // Tests fail ❌ - which change broke it?
 
 // GOOD: Incremental refactorings with tests between each
 // Step 1: Rename variables
-function calc(wealth, nisab) {
-  if (wealth < nisab) return 0;
-  return wealth * 0.025;
+function calc(wealth, threshold) {
+  if (wealth < threshold) return 0;
+  return wealth * 0.2;
 }
 // Run tests ✅
 
 // Step 2: Extract constant
-const ZAKAT_RATE = 0.025;
-function calc(wealth, nisab) {
-  if (wealth < nisab) return 0;
-  return wealth * ZAKAT_RATE;
+const TAX_RATE = 0.2;
+function calc(wealth, threshold) {
+  if (wealth < threshold) return 0;
+  return wealth * TAX_RATE;
 }
 // Run tests ✅
 
 // Step 3: Rename function
-function calculateZakat(wealth, nisab) {
-  if (wealth < nisab) return 0;
-  return wealth * ZAKAT_RATE;
+function calculateTax(wealth, threshold) {
+  if (wealth < threshold) return 0;
+  return wealth * TAX_RATE;
 }
 // Run tests ✅
 

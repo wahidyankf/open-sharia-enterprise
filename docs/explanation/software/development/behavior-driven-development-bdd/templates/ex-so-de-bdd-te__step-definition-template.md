@@ -32,18 +32,18 @@ Then("[expected outcome pattern]", function () {
 });
 ```
 
-## Islamic Finance Example: Riba Prevention
+## Islamic Finance Example: Interest Prevention
 
 ```typescript
 import { Given, When, Then } from "@cucumber/cucumber";
-import { RibaValidator } from "../domain/riba-validator";
+import { InterestValidator } from "../domain/interest-validator";
 
 Given("loan contract with principal {int} USD", function (principal: number) {
   this.contract = { principal, currency: "USD", profitType: null };
 });
 
 When("bank attempts to add {float}% annual interest rate", function (rate: number) {
-  const validator = new RibaValidator();
+  const validator = new InterestValidator();
   this.result = validator.validate({ ...this.contract, interestRate: rate });
 });
 

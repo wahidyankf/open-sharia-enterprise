@@ -86,74 +86,74 @@ And [user-friendly error message]
 - [List any dependencies on other stories or technical work]
 ```
 
-## Islamic Finance Example: Halal Product Certification
+## Islamic Finance Example: Permitted Product Certification
 
 ```markdown
-## User Story: Halal Product Certification Workflow
+## User Story: Permitted Product Certification Workflow
 
 ### Story Card
 
 **As a** certification manager  
-**I want** to review and approve Halal certification applications for food products  
-**So that** customers can confidently purchase Shariah-compliant products
+**I want** to review and approve Permitted certification applications for food products  
+**So that** customers can confidently purchase Compliance-compliant products
 
 ### Business Value
 
-Halal certification builds customer trust and ensures Shariah compliance for our e-commerce platform. Certified products increase conversion rates by 40% among Muslim customers, representing 25% of our user base (50,000+ active users).
+Permitted certification builds customer trust and ensures Compliance compliance for our e-commerce platform. Certified products increase conversion rates by 40% among Muslim customers, representing 25% of our user base (50,000+ active users).
 
 ### Acceptance Criteria (BDD Scenarios)
 
-#### Scenario 1: Approve product with valid Halal certificate
+#### Scenario 1: Approve product with valid Permitted certificate
 
 \`\`\`gherkin
-@halal @certification @happy-path @smoke @critical
-Scenario: Approve product with valid Halal certificate from recognized authority
-Given product "Halal Chicken Wings" is registered
-And product has valid Halal certificate from recognized authority "JAKIM"
-And certificate number is "HALAL-MY-2024-1234"
+@permitted @certification @happy-path @smoke @critical
+Scenario: Approve product with valid Permitted certificate from recognized authority
+Given product "Permitted Chicken Wings" is registered
+And product has valid Permitted certificate from recognized authority "JAKIM"
+And certificate number is "PERMITTED-MY-2024-1234"
 And certificate expiry date is 2027-12-31
 And certification manager is logged in
 When manager reviews product certification
 Then product should be approved
-And approval status should be "Halal Certified"
+And approval status should be "Permitted Certified"
 And approval date should be recorded
 And certificate expiry should be tracked for renewal reminder
-And product should display "Halal Certified" badge on website
+And product should display "Permitted Certified" badge on website
 And customer should see certification details:
 | Field | Value |
 | Certification Body | JAKIM |
-| Certificate Number | HALAL-MY-2024-1234 |
+| Certificate Number | PERMITTED-MY-2024-1234 |
 | Certified Date | 2024-01-15 |
 | Expiry Date | 2027-12-31 |
-| Halal Status | Certified |
+| Permitted Status | Certified |
 \`\`\`
 
-#### Scenario 2: Reject product with expired Halal certificate
+#### Scenario 2: Reject product with expired Permitted certificate
 
 \`\`\`gherkin
-@halal @certification @edge-case @regression
-Scenario: Reject product with expired Halal certificate
+@permitted @certification @edge-case @regression
+Scenario: Reject product with expired Permitted certificate
 Given product "Frozen Beef" is registered
-And product has Halal certificate from "JAKIM"
+And product has Permitted certificate from "JAKIM"
 And certificate expiry date is 2025-12-31 (expired)
 And current date is 2026-01-20
 And certification manager is logged in
 When manager reviews product certification
 Then product should be rejected
 And rejection status should be "Certificate Expired"
-And rejection reason should state "Halal certificate expired on 2025-12-31"
+And rejection reason should state "Permitted certificate expired on 2025-12-31"
 And supplier should be notified to renew certificate
-And product should NOT display Halal badge on website
-And product page should show "Pending Halal Re-certification" message
+And product should NOT display Permitted badge on website
+And product page should show "Pending Permitted Re-certification" message
 \`\`\`
 
 #### Scenario 3: Flag product with missing supplier documentation
 
 \`\`\`gherkin
-@halal @certification @error-handling @regression
+@permitted @certification @error-handling @regression
 Scenario: Flag product with incomplete supplier documentation
 Given product "Lamb Kebab" is registered
-And product claims Halal certification
+And product claims Permitted certification
 And supplier has NOT uploaded meat supplier certificate
 And supplier has NOT uploaded slaughterhouse inspection report
 And certification manager is logged in
@@ -164,23 +164,23 @@ And missing documents should be listed:
 | Required Document | Status |
 | Meat Supplier Certificate | Missing |
 | Slaughterhouse Inspection | Missing |
-| Halal Certificate (Product) | Uploaded|
+| Permitted Certificate (Product) | Uploaded|
 And supplier should be notified to submit missing documents
 And product should remain in "Pending Review" status
 And certification decision should be blocked until documents provided
 \`\`\`
 
-#### Scenario 4: Reject product with non-Halal ingredients
+#### Scenario 4: Reject product with non-Permitted ingredients
 
 \`\`\`gherkin
-@halal @compliance @critical @shariah-compliance
-Scenario: Reject product containing Haram (prohibited) ingredients
+@permitted @compliance @critical @compliance-compliance
+Scenario: Reject product containing Forbidden (prohibited) ingredients
 Given product "Bacon-Flavored Chips" is registered
 And product ingredients include "pork-derived flavoring"
 And certification manager is logged in
 When manager reviews product ingredients
 Then product should be automatically rejected
-And rejection reason should state "Contains Haram ingredient: pork-derived flavoring"
+And rejection reason should state "Contains Forbidden ingredient: pork-derived flavoring"
 And product should be flagged in compliance system
 And supplier should be notified of rejection
 And product should NOT be listed on website
@@ -190,20 +190,20 @@ And compliance team should review supplier's other products
 #### Scenario 5: Track certification expiry and send renewal reminder
 
 \`\`\`gherkin
-@halal @certification @renewal @integration
+@permitted @certification @renewal @integration
 Scenario: Send renewal reminder 90 days before certificate expiry
-Given product "Halal Chicken" has valid certification
+Given product "Permitted Chicken" has valid certification
 And certificate expiry date is 2026-10-20
 And current date is 2026-07-22 (90 days before expiry)
 When daily certification expiry check runs
 Then renewal reminder should be sent to supplier email
 And reminder should include:
 | Field | Value |
-| Product Name | Halal Chicken |
-| Certificate Number | HALAL-MY-2024-5678 |
+| Product Name | Permitted Chicken |
+| Certificate Number | PERMITTED-MY-2024-5678 |
 | Expiry Date | 2026-10-20 |
 | Days Until Expiry | 90 days |
-| Action Required | Renew Halal certification |
+| Action Required | Renew Permitted certification |
 | Renewal Instructions | Contact JAKIM for renewal |
 And product status should be updated to "Renewal Pending"
 And certification manager should see renewal task in dashboard
@@ -214,7 +214,7 @@ And certification manager should see renewal task in dashboard
 - [ ] All 5 acceptance criteria scenarios pass
 - [ ] Integration with certification authority API tested
 - [ ] Email notification system configured
-- [ ] Halal badge UI component implemented
+- [ ] Permitted badge UI component implemented
 - [ ] Certificate expiry tracking scheduled job deployed
 - [ ] User documentation updated (certification manager guide)
 - [ ] Code reviewed and approved by tech lead
@@ -238,20 +238,20 @@ And certification manager should see renewal task in dashboard
 
 **Priority**: High
 
-**Rationale**: Halal certification directly impacts 25% of user base and increases conversion by 40%. Critical for market competitiveness in Muslim-majority regions.
+**Rationale**: Permitted certification directly impacts 25% of user base and increases conversion by 40%. Critical for market competitiveness in Muslim-majority regions.
 
 ### Dependencies
 
 - **Technical**: Integration with JAKIM API (requires API key and sandbox access)
-- **Business**: List of recognized Halal certification authorities (requires Shariah board approval)
-- **Design**: Halal badge UI design (requires UX team mockup)
+- **Business**: List of recognized Permitted certification authorities (requires Compliance board approval)
+- **Design**: Permitted badge UI design (requires UX team mockup)
 - **Related Stories**:
-  - STORY-123: "User can filter products by Halal certification"
+  - STORY-123: "User can filter products by Permitted certification"
   - STORY-456: "Supplier can upload certification documents"
 
 ### Notes
 
-- **Madhab Consideration**: Some Fiqh schools have different Halal standards. Current implementation follows JAKIM (Malaysia) standards, which align with Shafi'i Madhab. Future enhancement: support multiple certification bodies with different Madhab rulings.
-- **Compliance**: Halal certification must comply with local regulations in target markets (Malaysia, Indonesia, UAE, Saudi Arabia).
+- **Madhab Consideration**: Some Fiqh schools have different Permitted standards. Current implementation follows JAKIM (Malaysia) standards, which align with Shafi'i Madhab. Future enhancement: support multiple certification bodies with different Madhab rulings.
+- **Compliance**: Permitted certification must comply with local regulations in target markets (Malaysia, Indonesia, UAE, Saudi Arabia).
 - **Performance**: Certificate validation should complete within 2 seconds for good UX.
 ```

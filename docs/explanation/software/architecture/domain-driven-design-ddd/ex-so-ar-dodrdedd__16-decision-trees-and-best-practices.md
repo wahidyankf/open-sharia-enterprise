@@ -54,7 +54,7 @@ flowchart TD
 **Entity Examples**:
 
 - **Wealth Holder**: Unique ID, changes over time (name, address), identity matters
-- **Zakat Assessment**: Unique ID, lifecycle (draft → finalized), identity matters
+- **Tax Assessment**: Unique ID, lifecycle (draft → finalized), identity matters
 - **Order**: Unique order number, status changes, identity matters
 
 **Value Object Examples**:
@@ -66,7 +66,7 @@ flowchart TD
 ### Key Questions
 
 1. **Does it have a unique identity?**
-   - Entity: `ZakatAssessment` with `assessmentId`
+   - Entity: `TaxAssessment` with `assessmentId`
    - Value Object: `Money` (100 USD is 100 USD, doesn't need ID)
 
 2. **Does it change over time?**
@@ -118,7 +118,7 @@ flowchart TD
 **Include in Aggregate**:
 
 - **Order Lines in Order**: Must be immediately consistent (order total = sum of lines)
-- **Wealth Declarations in Zakat Assessment**: Only make sense in context of assessment
+- **Wealth Declarations in Tax Assessment**: Only make sense in context of assessment
 
 **Separate Aggregate**:
 
@@ -166,11 +166,11 @@ class Order {
 
 ```typescript
 // ANTI-PATTERN: Anemic domain model
-class ZakatAssessment {
+class TaxAssessment {
   id: string;
   declarations: WealthDeclaration[];
   status: string;
-  zakatAmount: number | null;
+  taxAmount: number | null;
 
   // Only getters/setters, no behavior
   getId(): string {
@@ -182,14 +182,14 @@ class ZakatAssessment {
 }
 
 // Business logic in service (WRONG)
-class ZakatService {
+class TaxService {
   calculate(assessmentId: string): number {
     const assessment = this.repo.findById(assessmentId);
     const total = assessment.declarations.reduce((sum, d) => sum + d.amount, 0);
-    const zakat = total > 5000 ? total * 0.025 : 0;
-    assessment.setZakatAmount(zakat);
+    const tax = total > 5000 ? total * 0.025 : 0;
+    assessment.setTaxAmount(tax);
     this.repo.save(assessment);
-    return zakat;
+    return tax;
   }
 }
 ```
@@ -197,32 +197,32 @@ class ZakatService {
 **Problems**:
 
 - Business rules scattered across services
-- Duplicate logic (multiple services calculate zakat differently)
+- Duplicate logic (multiple services calculate tax differently)
 - Difficult to test (services depend on infrastructure)
 
 **Solution**: Rich domain model with behavior.
 
 ```typescript
 // BETTER: Rich domain model
-class ZakatAssessment {
+class TaxAssessment {
   private constructor(
     readonly id: AssessmentId,
     private declarations: WealthDeclaration[],
     private status: AssessmentStatus,
-    private zakatAmount: Money | null,
+    private taxAmount: Money | null,
   ) {}
 
   // Business logic in domain
-  finalize(nisabThreshold: NisabAmount, zakatRate: ZakatRate): Result<ZakatAssessment, DomainError> {
+  finalize(thresholdThreshold: ThresholdAmount, taxRate: TaxRate): Result<TaxAssessment, DomainError> {
     if (this.declarations.length === 0) {
       return Err(new InvalidOperationError("No wealth declared"));
     }
 
     const totalWealth = this.calculateTotalWealth();
-    const meetsNisab = totalWealth.isGreaterThanOrEqual(nisabThreshold.toMoney());
-    const zakatAmount = meetsNisab ? totalWealth.multiply(zakatRate.percentage) : Money.zero();
+    const meetsThreshold = totalWealth.isGreaterThanOrEqual(thresholdThreshold.toMoney());
+    const taxAmount = meetsThreshold ? totalWealth.multiply(taxRate.percentage) : Money.zero();
 
-    return Ok(new ZakatAssessment(this.id, this.declarations, AssessmentStatus.Finalized, zakatAmount));
+    return Ok(new TaxAssessment(this.id, this.declarations, AssessmentStatus.Finalized, taxAmount));
   }
 
   private calculateTotalWealth(): Money {
@@ -288,7 +288,7 @@ class SupportTicket {
 
 ```typescript
 // ANTI-PATTERN: Exposing mutable collection
-class ZakatAssessment {
+class TaxAssessment {
   private declarations: WealthDeclaration[];
 
   getDeclarations(): WealthDeclaration[] {
@@ -305,7 +305,7 @@ assessment.getDeclarations().push(invalidDeclaration); // Bypassed validation!
 
 ```typescript
 // BETTER: Immutable view
-class ZakatAssessment {
+class TaxAssessment {
   private declarations: WealthDeclaration[];
 
   get declarations(): readonly WealthDeclaration[] {
@@ -313,18 +313,18 @@ class ZakatAssessment {
   }
 
   // Enforce invariants via methods
-  declareWealth(type: WealthType, amount: Money, date: HijriDate): Result<ZakatAssessment, DomainError> {
+  declareWealth(type: WealthType, amount: Money, date: HijriDate): Result<TaxAssessment, DomainError> {
     // Validation here
     if (amount.amount <= 0) {
       return Err(new InvalidAmountError("Amount must be positive"));
     }
     // Add declaration
     return Ok(
-      new ZakatAssessment(
+      new TaxAssessment(
         this.id,
         [...this.declarations, new WealthDeclaration(type, amount, date)],
         this.status,
-        this.zakatAmount,
+        this.taxAmount,
       ),
     );
   }
@@ -341,9 +341,9 @@ class ZakatAssessment {
 // ANTI-PATTERN: Domain depends on Prisma
 import { PrismaClient } from '@prisma/client';
 
-class ZakatAssessment {
+class TaxAssessment {
   async save(prisma: PrismaClient): Promise<void> {
-    await prisma.zakatAssessment.create({
+    await prisma.taxAssessment.create({
       data: { id: this.id, ... },
     });
   }
@@ -354,16 +354,16 @@ class ZakatAssessment {
 
 ```typescript
 // BETTER: Domain defines interface
-interface ZakatAssessmentRepository {
-  save(assessment: ZakatAssessment): Promise<Result<void, PersistenceError>>;
+interface TaxAssessmentRepository {
+  save(assessment: TaxAssessment): Promise<Result<void, PersistenceError>>;
 }
 
 // Infrastructure implements
-class PrismaZakatRepository implements ZakatAssessmentRepository {
+class PrismaTaxRepository implements TaxAssessmentRepository {
   constructor(private prisma: PrismaClient) {}
 
-  async save(assessment: ZakatAssessment): Promise<Result<void, PersistenceError>> {
-    await this.prisma.zakatAssessment.create({ ... });
+  async save(assessment: TaxAssessment): Promise<Result<void, PersistenceError>> {
+    await this.prisma.taxAssessment.create({ ... });
     return Ok(undefined);
   }
 }
@@ -377,12 +377,12 @@ class PrismaZakatRepository implements ZakatAssessmentRepository {
 
 ```typescript
 // ANTI-PATTERN: Primitive obsession
-class ZakatAssessment {
-  zakatAmount: number; // What currency?
+class TaxAssessment {
+  taxAmount: number; // What currency?
   startDate: string; // What format?
   holderId: string; // No validation
 
-  calculate(nisabThreshold: number, zakatRate: number): number {
+  calculate(thresholdThreshold: number, taxRate: number): number {
     // Magic numbers everywhere
   }
 }
@@ -392,12 +392,12 @@ class ZakatAssessment {
 
 ```typescript
 // BETTER: Value Objects
-class ZakatAssessment {
-  zakatAmount: Money; // Explicit currency
+class TaxAssessment {
+  taxAmount: Money; // Explicit currency
   startDate: HijriDate; // Explicit format
   holderId: WealthHolderId; // Validated ID
 
-  finalize(nisabThreshold: NisabAmount, zakatRate: ZakatRate): Result<ZakatAssessment, DomainError> {
+  finalize(thresholdThreshold: ThresholdAmount, taxRate: TaxRate): Result<TaxAssessment, DomainError> {
     // Type-safe, validated
   }
 }
@@ -471,37 +471,37 @@ const result = order.cancel(CancellationReason.OutOfStock);
 **Pattern**: Arrange-Act-Assert with pure domain objects.
 
 ```typescript
-describe("ZakatAssessment", () => {
+describe("TaxAssessment", () => {
   describe("finalize", () => {
-    it("should calculate zakat when above nisab", () => {
+    it("should calculate tax when above threshold", () => {
       // Arrange
       const assessment = createTestAssessment([{ type: WealthType.Cash, amount: Money.usd(10000) }]);
 
       // Act
       const result = assessment.finalize(
-        NisabAmount.fromMoney(Money.usd(5000)),
-        ZakatRate.standard(), // 2.5%
+        ThresholdAmount.fromMoney(Money.usd(5000)),
+        TaxRate.standard(), // 2.5%
       );
 
       // Assert
       expect(result.kind).toBe("ok");
       if (result.kind === "ok") {
-        expect(result.value.zakatAmount?.amount).toBe(250); // 10000 * 0.025
+        expect(result.value.taxAmount?.amount).toBe(250); // 10000 * 0.025
       }
     });
 
-    it("should exempt when below nisab", () => {
+    it("should exempt when below threshold", () => {
       // Arrange
       const assessment = createTestAssessment([{ type: WealthType.Cash, amount: Money.usd(3000) }]);
 
       // Act
-      const result = assessment.finalize(NisabAmount.fromMoney(Money.usd(5000)), ZakatRate.standard());
+      const result = assessment.finalize(ThresholdAmount.fromMoney(Money.usd(5000)), TaxRate.standard());
 
       // Assert
       expect(result.kind).toBe("ok");
       if (result.kind === "ok") {
-        expect(result.value.status).toBe(AssessmentStatus.ExemptBelowNisab);
-        expect(result.value.zakatAmount?.amount).toBe(0);
+        expect(result.value.status).toBe(AssessmentStatus.ExemptBelowThreshold);
+        expect(result.value.taxAmount?.amount).toBe(0);
       }
     });
 
@@ -510,7 +510,7 @@ describe("ZakatAssessment", () => {
       const assessment = createTestAssessment([]); // No declarations
 
       // Act
-      const result = assessment.finalize(NisabAmount.fromMoney(Money.usd(5000)), ZakatRate.standard());
+      const result = assessment.finalize(ThresholdAmount.fromMoney(Money.usd(5000)), TaxRate.standard());
 
       // Assert
       expect(result.kind).toBe("err");
@@ -529,10 +529,10 @@ describe("ZakatAssessment", () => {
 **Pattern**: Mock repositories and event buses.
 
 ```typescript
-describe("CalculateZakatUseCase", () => {
+describe("CalculateTaxUseCase", () => {
   it("should persist assessment and publish events", async () => {
     // Arrange
-    const mockRepo: ZakatAssessmentRepository = {
+    const mockRepo: TaxAssessmentRepository = {
       findById: jest.fn(),
       save: jest.fn().mockResolvedValue(Ok(undefined)),
     };
@@ -541,9 +541,9 @@ describe("CalculateZakatUseCase", () => {
       publish: jest.fn().mockResolvedValue(undefined),
     };
 
-    const useCase = new CalculateZakatUseCase(mockRepo, mockEventBus);
+    const useCase = new CalculateTaxUseCase(mockRepo, mockEventBus);
 
-    const dto = new CreateZakatAssessmentDTO("holder-123", "1444-01-01", [
+    const dto = new CreateTaxAssessmentDTO("holder-123", "1444-01-01", [
       { type: "Cash", amount: 10000, date: "1444-01-01" },
     ]);
 
@@ -565,13 +565,13 @@ describe("CalculateZakatUseCase", () => {
 **Pattern**: Use test database (in-memory or Docker container).
 
 ```typescript
-describe("PostgresZakatAssessmentRepository", () => {
+describe("PostgresTaxAssessmentRepository", () => {
   let db: TestDatabase;
-  let repo: PostgresZakatAssessmentRepository;
+  let repo: PostgresTaxAssessmentRepository;
 
   beforeAll(async () => {
     db = await TestDatabase.create();
-    repo = new PostgresZakatAssessmentRepository(db.connection, new ZakatAssessmentMapper());
+    repo = new PostgresTaxAssessmentRepository(db.connection, new TaxAssessmentMapper());
   });
 
   afterAll(async () => {
@@ -620,10 +620,10 @@ describe("PostgresZakatAssessmentRepository", () => {
 **Pattern**: Given-When-Then with domain events.
 
 ```typescript
-describe("Zakat Assessment Business Scenarios", () => {
-  it("Given wealthy holder with mixed assets, When calculating zakat, Then should correctly aggregate all wealth", () => {
+describe("Tax Assessment Business Scenarios", () => {
+  it("Given wealthy holder with mixed assets, When calculating tax, Then should correctly aggregate all wealth", () => {
     // Given
-    const assessment = ZakatAssessment.create(WealthHolderId.generate(), HijriDate.fromString("1444-01-01")).unwrap();
+    const assessment = TaxAssessment.create(WealthHolderId.generate(), HijriDate.fromString("1444-01-01")).unwrap();
 
     // When
     const withCash = assessment
@@ -638,10 +638,10 @@ describe("Zakat Assessment Business Scenarios", () => {
       .declareWealth(WealthType.Silver, Money.usd(2000), HijriDate.fromString("1444-03-01"))
       .unwrap();
 
-    const finalized = withSilver.finalize(NisabAmount.fromMoney(Money.usd(5000)), ZakatRate.standard()).unwrap();
+    const finalized = withSilver.finalize(ThresholdAmount.fromMoney(Money.usd(5000)), TaxRate.standard()).unwrap();
 
     // Then
-    expect(finalized.zakatAmount?.amount).toBe(250); // (5000 + 3000 + 2000) * 0.025
+    expect(finalized.taxAmount?.amount).toBe(250); // (5000 + 3000 + 2000) * 0.025
     expect(finalized.status).toBe(AssessmentStatus.Finalized);
   });
 });
@@ -699,13 +699,13 @@ const orders = await orderRepo.findByIds(['order1', 'order2', 'order3', ...]); /
 **Strategy**: Cache frequently-accessed, rarely-changed aggregates.
 
 ```typescript
-class CachedZakatAssessmentRepository implements ZakatAssessmentRepository {
+class CachedTaxAssessmentRepository implements TaxAssessmentRepository {
   constructor(
-    private innerRepo: ZakatAssessmentRepository,
+    private innerRepo: TaxAssessmentRepository,
     private cache: Cache,
   ) {}
 
-  async findById(id: AssessmentId): Promise<Result<ZakatAssessment, NotFoundError>> {
+  async findById(id: AssessmentId): Promise<Result<TaxAssessment, NotFoundError>> {
     const cacheKey = `assessment:${id.value}`;
     const cached = await this.cache.get(cacheKey);
 
@@ -722,7 +722,7 @@ class CachedZakatAssessmentRepository implements ZakatAssessmentRepository {
     return result;
   }
 
-  async save(assessment: ZakatAssessment): Promise<Result<void, PersistenceError>> {
+  async save(assessment: TaxAssessment): Promise<Result<void, PersistenceError>> {
     const result = await this.innerRepo.save(assessment);
 
     if (result.kind === "ok") {
@@ -742,7 +742,7 @@ class CachedZakatAssessmentRepository implements ZakatAssessmentRepository {
 **Solution**: Version number on aggregate root.
 
 ```typescript
-class ZakatAssessment {
+class TaxAssessment {
   constructor(
     readonly id: AssessmentId,
     readonly version: number, // Optimistic lock version
@@ -752,10 +752,10 @@ class ZakatAssessment {
 }
 
 // Repository saves with version check
-class PostgresZakatAssessmentRepository {
-  async save(assessment: ZakatAssessment): Promise<Result<void, PersistenceError>> {
+class PostgresTaxAssessmentRepository {
+  async save(assessment: TaxAssessment): Promise<Result<void, PersistenceError>> {
     const result = await this.db.query(
-      `UPDATE zakat_assessments
+      `UPDATE tax_assessments
        SET declarations = $1, status = $2, version = version + 1
        WHERE id = $3 AND version = $4`,
       [
@@ -786,15 +786,15 @@ class PostgresZakatAssessmentRepository {
 - Utilities
 - Database stored procedures
 
-**Example**: Zakat calculation scattered across codebase.
+**Example**: Tax calculation scattered across codebase.
 
 ```typescript
 // Business logic in controller
-class ZakatController {
+class TaxController {
   async calculate(req, res) {
     const total = req.body.declarations.reduce((sum, d) => sum + d.amount, 0);
-    const zakat = total > 5000 ? total * 0.025 : 0; // Business rule!
-    res.json({ zakat });
+    const tax = total > 5000 ? total * 0.025 : 0; // Business rule!
+    res.json({ tax });
   }
 }
 
@@ -803,8 +803,8 @@ class ReportingService {
   generateReport(assessmentId) {
     const assessment = this.repo.findById(assessmentId);
     const total = assessment.declarations.reduce((sum, d) => sum + d.amount, 0);
-    const zakat = total > 5000 ? total * 0.025 : 0; // Duplicated!
-    return { total, zakat };
+    const tax = total > 5000 ? total * 0.025 : 0; // Duplicated!
+    return { total, tax };
   }
 }
 ```
@@ -815,13 +815,13 @@ class ReportingService {
 
 ```typescript
 // Rich domain model
-class ZakatAssessment {
-  finalize(nisabThreshold: NisabAmount, zakatRate: ZakatRate): Result<ZakatAssessment, DomainError> {
+class TaxAssessment {
+  finalize(thresholdThreshold: ThresholdAmount, taxRate: TaxRate): Result<TaxAssessment, DomainError> {
     const totalWealth = this.calculateTotalWealth();
-    const meetsNisab = totalWealth.isGreaterThanOrEqual(nisabThreshold.toMoney());
-    const zakatAmount = meetsNisab ? totalWealth.multiply(zakatRate.percentage) : Money.zero();
+    const meetsThreshold = totalWealth.isGreaterThanOrEqual(thresholdThreshold.toMoney());
+    const taxAmount = meetsThreshold ? totalWealth.multiply(taxRate.percentage) : Money.zero();
 
-    return Ok(new ZakatAssessment(this.id, this.declarations, AssessmentStatus.Finalized, zakatAmount));
+    return Ok(new TaxAssessment(this.id, this.declarations, AssessmentStatus.Finalized, taxAmount));
   }
 
   private calculateTotalWealth(): Money {
@@ -834,15 +834,15 @@ class ZakatAssessment {
 
 ```typescript
 // Application service delegates to domain
-class CalculateZakatUseCase {
-  async execute(dto: CreateZakatAssessmentDTO): Promise<Result<ZakatAssessment, ApplicationError>> {
-    const assessment = ZakatAssessment.create(
+class CalculateTaxUseCase {
+  async execute(dto: CreateTaxAssessmentDTO): Promise<Result<TaxAssessment, ApplicationError>> {
+    const assessment = TaxAssessment.create(
       WealthHolderId.fromString(dto.holderId),
       HijriDate.fromString(dto.startDate),
     ).unwrap();
 
     // Domain logic
-    const finalized = assessment.finalize(NisabAmount.goldStandard(), ZakatRate.standard());
+    const finalized = assessment.finalize(ThresholdAmount.goldStandard(), TaxRate.standard());
 
     if (finalized.kind === "err") {
       return Err(new DomainValidationError(finalized.error));
@@ -860,14 +860,14 @@ class CalculateZakatUseCase {
 
 ```typescript
 // Before: Primitives
-class ZakatAssessment {
-  zakatAmount: number;
+class TaxAssessment {
+  taxAmount: number;
   currency: string;
 }
 
 // After: Value Object
-class ZakatAssessment {
-  zakatAmount: Money; // Value Object encapsulates amount + currency
+class TaxAssessment {
+  taxAmount: Money; // Value Object encapsulates amount + currency
 }
 
 class Money {
@@ -892,8 +892,8 @@ class Money {
 **Enforce business rules:**
 
 ```typescript
-class ZakatAssessment {
-  declareWealth(type: WealthType, amount: Money, date: HijriDate): Result<ZakatAssessment, DomainError> {
+class TaxAssessment {
+  declareWealth(type: WealthType, amount: Money, date: HijriDate): Result<TaxAssessment, DomainError> {
     // Invariant: Can only modify draft assessments
     if (this.status !== AssessmentStatus.Draft) {
       return Err(new InvalidOperationError("Cannot modify finalized assessment"));
@@ -910,11 +910,11 @@ class ZakatAssessment {
     }
 
     return Ok(
-      new ZakatAssessment(
+      new TaxAssessment(
         this.id,
         [...this.declarations, new WealthDeclaration(type, amount, date)],
         this.status,
-        this.zakatAmount,
+        this.taxAmount,
       ),
     );
   }

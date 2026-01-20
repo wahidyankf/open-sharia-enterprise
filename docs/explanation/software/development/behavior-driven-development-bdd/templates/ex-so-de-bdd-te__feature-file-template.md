@@ -51,74 +51,74 @@ Feature: [Feature Name]
     And [user-friendly error message shown]
 ```
 
-## Islamic Finance Example: Zakat Calculation Feature
+## Islamic Finance Example: Tax Calculation Feature
 
 ```gherkin
-@zakat @shariah-compliance @islamic-finance
-Feature: Zakat Calculation on Wealth
+@tax @compliance-compliance @islamic-finance
+Feature: Tax Calculation on Wealth
 
-  Zakat is an obligatory charity (2.5% of eligible wealth) that Muslims
-  must pay annually when their wealth meets the Nisab threshold and has
+  Tax is an obligatory charity (2.5% of eligible wealth) that Muslims
+  must pay annually when their wealth meets the Threshold threshold and has
   been owned for one lunar year (Hawl).
 
-  This feature calculates Zakat obligations for individuals based on
+  This feature calculates Tax obligations for individuals based on
   Islamic jurisprudence, supporting multiple asset types (gold, silver,
   cash, trade goods, stocks) and providing detailed breakdowns.
 
   Background:
-    Given the system is configured for Zakat calculation
-    And Nisab thresholds are:
-      | Asset Type | Nisab Threshold |
+    Given the system is configured for Tax calculation
+    And Threshold thresholds are:
+      | Asset Type | Threshold Threshold |
       | Gold       | 85 grams        |
       | Silver     | 595 grams       |
       | Cash       | Equivalent to 85g gold or 595g silver |
-    And Zakat rate is 2.5%
+    And Tax rate is 2.5%
     And Hawl requirement is one lunar year (354 days)
 
   @happy-path @smoke @critical
-  Scenario: Calculate Zakat on gold above Nisab threshold
+  Scenario: Calculate Tax on gold above Threshold threshold
     Given individual owns 100 grams of gold
     And gold has been owned for one lunar year
-    When Zakat calculation is performed
-    Then Zakat should be obligatory
-    And Zakat amount should be 2.5 grams of gold
+    When Tax calculation is performed
+    Then Tax should be obligatory
+    And Tax amount should be 2.5 grams of gold
     And calculation breakdown should show:
       | Item                  | Value          |
       | Total Wealth          | 100 grams      |
-      | Nisab Threshold       | 85 grams       |
-      | Wealth Above Nisab    | 15 grams       |
-      | Zakat Rate            | 2.5%           |
-      | Zakat Due             | 2.5 grams      |
+      | Threshold Threshold       | 85 grams       |
+      | Wealth Above Threshold    | 15 grams       |
+      | Tax Rate            | 2.5%           |
+      | Tax Due             | 2.5 grams      |
 
   @edge-case @critical
-  Scenario: Calculate Zakat when wealth exactly equals Nisab
+  Scenario: Calculate Tax when wealth exactly equals Threshold
     Given individual owns 85 grams of gold
     And gold has been owned for one lunar year
-    When Zakat calculation is performed
-    Then Zakat should be obligatory
-    And Zakat amount should be 2.125 grams of gold
-    And note should indicate "Wealth at Nisab threshold (inclusive)"
+    When Tax calculation is performed
+    Then Tax should be obligatory
+    And Tax amount should be 2.125 grams of gold
+    And note should indicate "Wealth at Threshold threshold (inclusive)"
 
   @edge-case @boundary
-  Scenario: No Zakat when wealth is below Nisab threshold
+  Scenario: No Tax when wealth is below Threshold threshold
     Given individual owns 84 grams of gold
     And gold has been owned for one lunar year
-    When Zakat calculation is performed
-    Then Zakat should not be due
-    And reason should state "Wealth below Nisab threshold"
-    And Zakat amount should be 0 grams
+    When Tax calculation is performed
+    Then Tax should not be due
+    And reason should state "Wealth below Threshold threshold"
+    And Tax amount should be 0 grams
 
   @edge-case @hawl-requirement
-  Scenario: No Zakat when Hawl (lunar year) is incomplete
+  Scenario: No Tax when Hawl (lunar year) is incomplete
     Given individual owns 1000 grams of gold
     And gold has been owned for 353 days
-    When Zakat calculation is performed
-    Then Zakat should not be due
+    When Tax calculation is performed
+    Then Tax should not be due
     And reason should state "Hawl (lunar year) requirement not met"
     And days remaining should be 1 day
 
   @complex-scenario @mixed-assets
-  Scenario: Calculate Zakat on diversified wealth portfolio
+  Scenario: Calculate Tax on diversified wealth portfolio
     Given individual owns the following assets:
       | Asset Type  | Amount      | Current Value (USD) |
       | Gold        | 100 grams   | 6,000               |
@@ -126,14 +126,14 @@ Feature: Zakat Calculation on Wealth
       | Cash (USD)  | -           | 4,000               |
       | Stocks      | 50 shares   | 2,500               |
       | Real Estate | 1 property  | 0 (personal use)    |
-    And all zakatable assets have been owned for one lunar year
-    And Nisab in USD is 2,000 (based on current gold price)
-    When Zakat calculation is performed
-    Then total zakatable wealth should be 12,850 USD
-    And Zakat should be obligatory
-    And Zakat amount should be 321.25 USD
+    And all taxable assets have been owned for one lunar year
+    And Threshold in USD is 2,000 (based on current gold price)
+    When Tax calculation is performed
+    Then total taxable wealth should be 12,850 USD
+    And Tax should be obligatory
+    And Tax amount should be 321.25 USD
     And breakdown should show:
-      | Asset Type | Zakatable Value (USD) | Zakat Due (USD) |
+      | Asset Type | Taxable Value (USD) | Tax Due (USD) |
       | Gold       | 6,000                 | 150.00          |
       | Silver     | 350                   | 8.75            |
       | Cash       | 4,000                 | 100.00          |
@@ -146,24 +146,24 @@ Feature: Zakat Calculation on Wealth
     Given system is configured for Hanafi Fiqh school
     And woman owns 100 grams of gold jewelry worn regularly
     And jewelry has been owned for one lunar year
-    When Zakat calculation is performed
-    Then Zakat should be obligatory on all jewelry
-    And Zakat amount should be 2.5 grams of gold
-    And note should state "Hanafi: Zakat applies to all gold jewelry"
+    When Tax calculation is performed
+    Then Tax should be obligatory on all jewelry
+    And Tax amount should be 2.5 grams of gold
+    And note should state "Hanafi: Tax applies to all gold jewelry"
 
   @madhab-variation @fiqh-schools
   Scenario: Apply Shafi'i Madhab ruling on gold jewelry
     Given system is configured for Shafi'i Fiqh school
     And woman owns 100 grams of gold jewelry worn regularly
     And jewelry has been owned for one lunar year
-    When Zakat calculation is performed
-    Then Zakat should not be due
+    When Tax calculation is performed
+    Then Tax should not be due
     And exemption reason should state "Shafi'i: Regularly worn jewelry is exempt"
 
   @error-handling
   Scenario: Handle negative wealth amount (invalid input)
     Given individual attempts to enter wealth of -100 grams of gold
-    When Zakat calculation is performed
+    When Tax calculation is performed
     Then calculation should fail
     And error message should state "Wealth amount cannot be negative"
     And user should be prompted to enter valid positive amount
@@ -172,13 +172,13 @@ Feature: Zakat Calculation on Wealth
   Scenario: Handle missing asset acquisition date
     Given individual owns 100 grams of gold
     And acquisition date is not provided
-    When Zakat calculation is performed
+    When Tax calculation is performed
     Then calculation should fail
     And error message should state "Acquisition date required to verify Hawl"
     And user should be prompted to enter acquisition date
 
   @regression @currency-conversion
-  Scenario: Calculate Zakat with currency conversion
+  Scenario: Calculate Tax with currency conversion
     Given individual owns:
       | Asset      | Amount | Currency |
       | Cash (SAR) | 50,000 | SAR      |
@@ -188,19 +188,19 @@ Feature: Zakat Calculation on Wealth
       | From | To  | Rate  |
       | SAR  | USD | 0.27  |
       | EUR  | USD | 1.10  |
-    When Zakat calculation is performed
+    When Tax calculation is performed
     Then total wealth in USD should be 21,800
-    And Zakat in USD should be 545.00
-    And user can view Zakat in original currencies:
-      | Currency | Zakat Amount |
+    And Tax in USD should be 545.00
+    And user can view Tax in original currencies:
+      | Currency | Tax Amount |
       | SAR      | 2,018.52     |
       | USD      | 545.00       |
       | EUR      | 495.45       |
 
   @integration @payment-workflow
-  Scenario: Generate Zakat payment after calculation
-    Given individual has calculated Zakat of 250 USD
-    When individual chooses to pay Zakat now
+  Scenario: Generate Tax payment after calculation
+    Given individual has calculated Tax of 250 USD
+    When individual chooses to pay Tax now
     Then payment screen should display with amount 250 USD
     And payment methods should include:
       | Payment Method | Available |
@@ -210,16 +210,16 @@ Feature: Zakat Calculation on Wealth
     And suggested recipients should include verified charities
 
   @audit @compliance-reporting
-  Scenario: Generate Zakat calculation audit trail
-    Given individual has performed Zakat calculation
+  Scenario: Generate Tax calculation audit trail
+    Given individual has performed Tax calculation
     When admin requests audit report
     Then report should include:
       | Field                 | Value                           |
       | Calculation Date      | 2026-01-20                      |
       | User ID               | user-12345                      |
       | Total Wealth          | 12,850 USD                      |
-      | Nisab Threshold       | 2,000 USD                       |
-      | Zakat Due             | 321.25 USD                      |
+      | Threshold Threshold       | 2,000 USD                       |
+      | Tax Due             | 321.25 USD                      |
       | Madhab Applied        | Shafi'i                         |
       | Assets Included       | Gold, Silver, Cash, Stocks      |
       | Assets Exempted       | Personal residence, car         |
@@ -230,9 +230,9 @@ Feature: Zakat Calculation on Wealth
 
 ### Feature-Level
 
-- `@[tag-category]`: Domain or capability (@zakat, @halal, @contracts)
+- `@[tag-category]`: Domain or capability (@tax, @permitted, @contracts)
 - `@[tag-subcategory]`: Specific aspect (@compliance, @calculation)
-- `[Feature Name]`: Clear, concise feature name (e.g., "Zakat Calculation on Wealth")
+- `[Feature Name]`: Clear, concise feature name (e.g., "Tax Calculation on Wealth")
 - `[Brief feature description]`: Business value and context (1-3 sentences)
 
 ### Background
@@ -270,9 +270,9 @@ Feature: Zakat Calculation on Wealth
 
 ### Domain Tags
 
-- `@zakat`: Zakat calculation features
-- `@halal`: Halal certification features
-- `@shariah-compliance`: Shariah compliance validation
+- `@tax`: Tax calculation features
+- `@permitted`: Permitted certification features
+- `@compliance-compliance`: Compliance compliance validation
 - `@islamic-finance`: Islamic finance contracts
 
 ## Background Usage Guidelines
@@ -294,7 +294,7 @@ Feature: Zakat Calculation on Wealth
 ```gherkin
 Background:
   Given user is logged in as certification manager
-  And Halal certification database is accessible
+  And Permitted certification database is accessible
   And current date is 2026-01-20
 ```
 
@@ -302,7 +302,7 @@ Background:
 
 ```gherkin
 Background:
-  Given product "Halal Chicken" with certificate "CERT-123"
+  Given product "Permitted Chicken" with certificate "CERT-123"
   And certificate expires on 2026-12-31
   # Too specific - only applies to one scenario
 ```
@@ -327,31 +327,31 @@ Background:
 [domain]-[capability].feature
 
 Examples:
-  ✅ zakat-calculation.feature
-  ✅ halal-product-certification.feature
-  ✅ murabaha-contract-validation.feature
+  ✅ tax-calculation.feature
+  ✅ permitted-product-certification.feature
+  ✅ loan-contract-validation.feature
 
 Avoid:
   ❌ test.feature (not descriptive)
-  ❌ zakat.feature (too broad)
-  ❌ ZakatCalculation.feature (use kebab-case not PascalCase)
+  ❌ tax.feature (too broad)
+  ❌ TaxCalculation.feature (use kebab-case not PascalCase)
 ```
 
 ## Feature File Organization
 
 ```
 features/
-├── zakat-calculation/
-│   ├── gold-zakat.feature
-│   ├── silver-zakat.feature
-│   └── mixed-assets-zakat.feature
+├── tax-calculation/
+│   ├── gold-tax.feature
+│   ├── silver-tax.feature
+│   └── mixed-assets-tax.feature
 │
-├── halal-certification/
+├── permitted-certification/
 │   ├── product-certification.feature
 │   └── supplier-verification.feature
 │
 └── islamic-contracts/
-    ├── murabaha-contracts.feature
+    ├── loan-contracts.feature
     ├── ijara-leasing.feature
     └── mudaraba-partnership.feature
 ```

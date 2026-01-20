@@ -87,7 +87,7 @@ This template guides facilitation of Example Mapping sessions, helping teams dec
 ## Islamic Finance Example: Sukuk Compliance Validation
 
 ```markdown
-## Example Mapping Session: Sukuk Shariah Compliance Validation
+## Example Mapping Session: Sukuk Compliance Compliance Validation
 
 ### Session Details
 
@@ -96,27 +96,27 @@ This template guides facilitation of Example Mapping sessions, helping teams dec
 - **Facilitator**: Tech Lead (Sarah)
 - **Participants**:
   - Product Owner: Ahmed (Islamic Finance Platform)
-  - Shariah Advisor: Sheikh Dr. Khalid Al-Najjar (Fiqh expert)
+  - Compliance Advisor: Sheikh Dr. Khalid Al-Najjar (Fiqh expert)
   - Developer: Fatima (Backend)
   - Tester: Omar (QA Engineer)
 
 ### Story Card (Yellow)
 
-**As a** Shariah compliance officer  
-**I want** to validate Sukuk (Islamic bond) structure for Shariah compliance  
+**As a** Compliance compliance officer  
+**I want** to validate Sukuk (Islamic bond) structure for Compliance compliance  
 **So that** investors can confidently invest in Islamic-compliant securities
 
 ### Rules (Blue Cards)
 
 **Rule 1**: Sukuk must be backed by tangible assets (not debt)
 
-**Rule 2**: Underlying assets must be 100% Shariah-compliant (no interest-bearing instruments, no Haram businesses)
+**Rule 2**: Underlying assets must be 100% Compliance-compliant (no interest-bearing instruments, no Forbidden businesses)
 
 **Rule 3**: Sukuk holders must have proportionate ownership of underlying assets
 
 **Rule 4**: Profit distribution must be based on asset performance, not guaranteed fixed returns
 
-**Rule 5**: Sukuk structure must be approved by Shariah board before issuance
+**Rule 5**: Sukuk structure must be approved by Compliance board before issuance
 
 **Rule 6**: Sukuk must comply with AAOIFI standards (FAS 33, SS 17)
 
@@ -128,11 +128,11 @@ This template guides facilitation of Example Mapping sessions, helping teams dec
 - **Example 2**: Sukuk backed by conventional bonds with interest → **Invalid** (debt-based, not asset-backed)
 - **Example 3**: Sukuk backed by equipment lease contracts → **Valid** (tangible assets with ownership)
 
-**Rule 2 Examples (100% Shariah-compliant assets)**:
+**Rule 2 Examples (100% Compliance-compliant assets)**:
 
 - **Example 4**: Portfolio: 90M real estate + 10M conventional loans → **Invalid** (10% non-compliant)
-- **Example 5**: Portfolio: 50M Halal business + 50M Islamic finance → **Valid** (100% compliant)
-- **Example 6**: Portfolio: Real estate + Brewery business → **Invalid** (alcohol Haram)
+- **Example 5**: Portfolio: 50M Permitted business + 50M Islamic finance → **Valid** (100% compliant)
+- **Example 6**: Portfolio: Real estate + Brewery business → **Invalid** (alcohol Forbidden)
 
 **Rule 3 Examples (Proportionate ownership)**:
 
@@ -142,12 +142,12 @@ This template guides facilitation of Example Mapping sessions, helping teams dec
 **Rule 4 Examples (Profit distribution)**:
 
 - **Example 9**: Profit varies based on rental income from real estate → **Valid** (asset performance)
-- **Example 10**: Fixed 5% annual return regardless of asset performance → **Invalid** (resembles Riba/interest)
+- **Example 10**: Fixed 5% annual return regardless of asset performance → **Invalid** (resembles Interest/interest)
 
-**Rule 5 Examples (Shariah board approval)**:
+**Rule 5 Examples (Compliance board approval)**:
 
-- **Example 11**: Sukuk structure reviewed and approved by certified Shariah board → **Valid**
-- **Example 12**: Sukuk issued without Shariah review → **Invalid** (no compliance validation)
+- **Example 11**: Sukuk structure reviewed and approved by certified Compliance board → **Valid**
+- **Example 12**: Sukuk issued without Compliance review → **Invalid** (no compliance validation)
 
 ### Questions (Red Cards)
 
@@ -159,9 +159,9 @@ This template guides facilitation of Example Mapping sessions, helping teams dec
 
 **Question 4**: Can Sukuk structure differ by Madhab (Fiqh school)? Do we need to support Hanafi, Shafi'i, Maliki, Hanbali variations?
 
-**Question 5**: What happens if one underlying asset becomes Haram mid-term (e.g., Halal restaurant starts serving alcohol)? Is partial asset replacement allowed?
+**Question 5**: What happens if one underlying asset becomes Forbidden mid-term (e.g., Permitted restaurant starts serving alcohol)? Is partial asset replacement allowed?
 
-**Question 6**: How frequently must Shariah board re-review Sukuk (annually, quarterly, upon material changes)?
+**Question 6**: How frequently must Compliance board re-review Sukuk (annually, quarterly, upon material changes)?
 
 ### Decision
 
@@ -170,18 +170,18 @@ This template guides facilitation of Example Mapping sessions, helping teams dec
 **Rationale**:
 
 - **6 red cards (questions)**: Too many unknowns for confident implementation
-- **Critical questions** require Shariah board research and AAOIFI standards review
+- **Critical questions** require Compliance board research and AAOIFI standards review
 - **11 green cards (examples)**: Good coverage of rules, but questions affect implementation approach
 - **Complexity**: Multi-Madhab support question (Q4) might split this story into smaller stories
 
 **Next Steps**:
 
-1. **Shariah Board Consultation** (Sheikh Dr. Khalid):
+1. **Compliance Board Consultation** (Sheikh Dr. Khalid):
    - Research Q1 (non-performing asset threshold)
    - Research Q4 (Madhab variations in Sukuk structure)
    - Research Q5 (mid-term asset replacement policy)
    - Research Q6 (re-review frequency)
-   - **Timeline**: 1 week (schedule Shariah board meeting)
+   - **Timeline**: 1 week (schedule Compliance board meeting)
 
 2. **Technical Research** (Fatima):
    - Review AAOIFI FAS 33 and SS 17 standards (Q3)
@@ -200,7 +200,7 @@ This template guides facilitation of Example Mapping sessions, helping teams dec
 
 ### Session Notes
 
-**Shariah Advisor Insights**:
+**Compliance Advisor Insights**:
 
 - Sheikh Dr. Khalid emphasized importance of AAOIFI compliance (Q3) - both FAS 33 and SS 17 apply
 - Mentioned Hanafi Madhab allows more flexibility in asset replacement (Q5) than other schools
@@ -228,7 +228,7 @@ This template guides facilitation of Example Mapping sessions, helping teams dec
 ┌─────────────────────────────────────────────┐
 │ YELLOW CARD: User Story │
 │ │
-│ As a Shariah compliance officer │
+│ As a Compliance compliance officer │
 │ I want to validate Sukuk structure │
 │ So that investors can invest confidently │
 └─────────────────────────────────────────────┘
@@ -266,32 +266,32 @@ This template guides facilitation of Example Mapping sessions, helping teams dec
 After research answers questions, convert examples to Gherkin scenarios:
 
 \`\`\`gherkin
-@sukuk @shariah-compliance @critical
-Scenario: Approve Sukuk backed by Shariah-compliant assets
+@sukuk @compliance-compliance @critical
+Scenario: Approve Sukuk backed by Compliance-compliant assets
   Given Sukuk issuance of 100,000,000 USD
   And Sukuk backed by asset portfolio:
-    | Asset Type       | Value (USD) | Shariah Compliant |
+    | Asset Type       | Value (USD) | Compliance Compliant |
     | Real Estate      | 50,000,000  | Yes               |
-    | Halal Business   | 30,000,000  | Yes               |
+    | Permitted Business   | 30,000,000  | Yes               |
     | Equipment Lease  | 20,000,000  | Yes               |
-  And all assets verified as 100% Shariah-compliant
+  And all assets verified as 100% Compliance-compliant
   And Sukuk holders have proportionate ownership (1000 certificates @ 100K each)
-  When Shariah board validates Sukuk structure
-  Then Sukuk should be approved as Shariah-compliant
+  When Compliance board validates Sukuk structure
+  Then Sukuk should be approved as Compliance-compliant
   And approval certificate should be issued referencing AAOIFI FAS 33 & SS 17
   And investors should receive disclosure of underlying assets
 
-@sukuk @shariah-compliance @critical
+@sukuk @compliance-compliance @critical
 Scenario: Reject Sukuk with non-compliant assets in portfolio
   Given Sukuk issuance of 100,000,000 USD
   And Sukuk backed by asset portfolio:
-    | Asset Type       | Value (USD) | Shariah Compliant |
+    | Asset Type       | Value (USD) | Compliance Compliant |
     | Real Estate      | 90,000,000  | Yes               |
     | Conventional Loan| 10,000,000  | No                |
-  When Shariah board validates Sukuk structure
+  When Compliance board validates Sukuk structure
   Then Sukuk should be rejected
   And rejection reason should state "Portfolio contains 10% non-compliant assets (conventional loan)"
-  And recommendation should state "All underlying assets must be 100% Shariah-compliant"
+  And recommendation should state "All underlying assets must be 100% Compliance-compliant"
 \`\`\`
 ```
 

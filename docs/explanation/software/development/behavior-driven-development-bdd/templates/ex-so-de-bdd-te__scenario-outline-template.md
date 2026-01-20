@@ -22,24 +22,24 @@ Scenario Outline: [Scenario pattern with parameters]
     | value3     | value4     | result2         |
 ```
 
-## Islamic Finance Example: Nisab Thresholds
+## Islamic Finance Example: Threshold Thresholds
 
 ```gherkin
-@zakat @nisab-thresholds
-Scenario Outline: Calculate Zakat for various wealth amounts
+@tax @threshold-thresholds
+Scenario Outline: Calculate Tax for various wealth amounts
   Given individual owns <wealth> grams of <asset_type>
-  When Zakat calculation is performed
-  Then Zakat should be <status>
-  And Zakat amount should be <zakat_amount> grams
+  When Tax calculation is performed
+  Then Tax should be <status>
+  And Tax amount should be <tax_amount> grams
 
-  Examples: Gold (Nisab 85 grams)
-    | wealth | asset_type | status      | zakat_amount |
+  Examples: Gold (Threshold 85 grams)
+    | wealth | asset_type | status      | tax_amount |
     | 100    | gold       | obligatory  | 2.5          |
     | 85     | gold       | obligatory  | 2.125        |
     | 84     | gold       | not due     | 0            |
 
-  Examples: Silver (Nisab 595 grams)
-    | wealth | asset_type | status      | zakat_amount |
+  Examples: Silver (Threshold 595 grams)
+    | wealth | asset_type | status      | tax_amount |
     | 700    | silver     | obligatory  | 17.5         |
     | 595    | silver     | obligatory  | 14.875       |
     | 594    | silver     | not due     | 0            |

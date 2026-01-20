@@ -24,11 +24,11 @@ Tests live next to the source code they test.
 
 ```
 src/
-  zakat/
-    zakat-calculator.ts
-    zakat-calculator.spec.ts          # Unit tests
-    zakat-calculator.integration.spec.ts  # Integration tests
-    zakat-calculator.property.spec.ts # Property tests
+  tax/
+    tax-calculator.ts
+    tax-calculator.spec.ts          # Unit tests
+    tax-calculator.integration.spec.ts  # Integration tests
+    tax-calculator.property.spec.ts # Property tests
     money.ts
     money.spec.ts
     money.property.spec.ts
@@ -52,17 +52,17 @@ All tests in dedicated test directory mirroring source structure.
 
 ```
 src/
-  zakat/
-    zakat-calculator.ts
+  tax/
+    tax-calculator.ts
     money.ts
-    zakat-repository.ts
+    tax-repository.ts
 
 __tests__/
-  zakat/
-    zakat-calculator.spec.ts
-    zakat-calculator.integration.spec.ts
+  tax/
+    tax-calculator.spec.ts
+    tax-calculator.integration.spec.ts
     money.spec.ts
-    zakat-repository.integration.spec.ts
+    tax-repository.integration.spec.ts
 ```
 
 **Advantages**:
@@ -83,20 +83,20 @@ Organize by test type rather than by source structure.
 
 ```
 src/
-  zakat/
-    zakat-calculator.ts
+  tax/
+    tax-calculator.ts
     money.ts
 
 tests/
   unit/
-    zakat/
-      zakat-calculator.spec.ts
+    tax/
+      tax-calculator.spec.ts
       money.spec.ts
   integration/
-    zakat/
-      zakat-repository.integration.spec.ts
+    tax/
+      tax-repository.integration.spec.ts
   property/
-    zakat/
+    tax/
       money.property.spec.ts
 ```
 
@@ -118,13 +118,13 @@ For Nx monorepo projects, use co-located tests with type suffixes:
 
 ```
 libs/
-  ts-zakat/
+  ts-tax/
     src/
       lib/
-        zakat-calculator.ts
-        zakat-calculator.spec.ts               # Unit tests
-        zakat-repository.ts
-        zakat-repository.integration.spec.ts   # Integration tests
+        tax-calculator.ts
+        tax-calculator.spec.ts               # Unit tests
+        tax-repository.ts
+        tax-repository.integration.spec.ts   # Integration tests
         money.ts
         money.spec.ts
         money.property.spec.ts                 # Property tests
@@ -168,20 +168,20 @@ Use suffixes to indicate test type:
 ### Pattern 1: By Component (Class/Function)
 
 ```typescript
-describe("ZakatCalculator", () => {
-  describe("calculateZakat", () => {
-    describe("when wealth is above nisab", () => {
+describe("TaxCalculator", () => {
+  describe("calculateTax", () => {
+    describe("when wealth is above threshold", () => {
       it("should calculate 2.5% of wealth", () => {});
     });
 
-    describe("when wealth is below nisab", () => {
+    describe("when wealth is below threshold", () => {
       it("should return zero", () => {});
     });
   });
 
-  describe("isZakatDue", () => {
-    it("should return true when wealth >= nisab", () => {});
-    it("should return false when wealth < nisab", () => {});
+  describe("isTaxDue", () => {
+    it("should return true when wealth >= threshold", () => {});
+    it("should return false when wealth < threshold", () => {});
   });
 });
 ```
@@ -191,14 +191,14 @@ describe("ZakatCalculator", () => {
 ### Pattern 2: By Feature
 
 ```typescript
-describe("Zakat Calculation", () => {
-  describe("standard zakat rate", () => {
+describe("Tax Calculation", () => {
+  describe("standard tax rate", () => {
     it("should apply 2.5% rate to eligible wealth", () => {});
-    it("should apply rate only to wealth above nisab", () => {});
+    it("should apply rate only to wealth above threshold", () => {});
   });
 
-  describe("nisab threshold", () => {
-    it("should calculate nisab based on gold price", () => {});
+  describe("threshold threshold", () => {
+    it("should calculate threshold based on gold price", () => {});
     it("should use 85 gram standard", () => {});
   });
 
@@ -214,15 +214,15 @@ describe("Zakat Calculation", () => {
 ### Pattern 3: Given-When-Then
 
 ```typescript
-describe("Zakat Calculation", () => {
-  describe("given wealth above nisab", () => {
-    describe("when calculating zakat", () => {
+describe("Tax Calculation", () => {
+  describe("given wealth above threshold", () => {
+    describe("when calculating tax", () => {
       it("then should return 2.5% of wealth", () => {});
     });
   });
 
-  describe("given wealth below nisab", () => {
-    describe("when calculating zakat", () => {
+  describe("given wealth below threshold", () => {
+    describe("when calculating tax", () => {
       it("then should return zero", () => {});
     });
   });
@@ -231,11 +231,11 @@ describe("Zakat Calculation", () => {
 
 **Structure**: Given (context) → When (action) → Then (outcome)
 
-## Islamic Finance Example: Halal Certification Module
+## Islamic Finance Example: Permitted Certification Module
 
 ```
 libs/
-  ts-halal-certification/
+  ts-permitted-certification/
     src/
       lib/
         # Domain Models
@@ -295,7 +295,7 @@ describe("CertificationService", () => {
   // Group by feature
   describe("Certification Creation", () => {
     it("should create certification with valid product", () => {
-      const product = ProductBuilder.aHalalProduct().build();
+      const product = ProductBuilder.aPermittedProduct().build();
 
       const certification = service.createCertification(product);
 
@@ -304,7 +304,7 @@ describe("CertificationService", () => {
     });
 
     it("should assign unique certification number", () => {
-      const product = ProductBuilder.aHalalProduct().build();
+      const product = ProductBuilder.aPermittedProduct().build();
 
       const cert1 = service.createCertification(product);
       const cert2 = service.createCertification(product);
@@ -313,7 +313,7 @@ describe("CertificationService", () => {
     });
 
     it("should set expiry date to 1 year from issue", () => {
-      const product = ProductBuilder.aHalalProduct().build();
+      const product = ProductBuilder.aPermittedProduct().build();
       const issueDate = new Date("2024-01-01");
 
       const certification = service.createCertification(product, issueDate);
@@ -323,11 +323,11 @@ describe("CertificationService", () => {
   });
 
   describe("Certification Validation", () => {
-    describe("when product contains haram ingredients", () => {
+    describe("when product contains forbidden ingredients", () => {
       it("should reject certification", () => {
         const product = ProductBuilder.aProduct().withIngredient("pork").build();
 
-        expect(() => service.createCertification(product)).toThrow("Haram ingredient detected");
+        expect(() => service.createCertification(product)).toThrow("Forbidden ingredient detected");
       });
     });
 
@@ -341,9 +341,9 @@ describe("CertificationService", () => {
       });
     });
 
-    describe("when all ingredients are halal", () => {
+    describe("when all ingredients are permitted", () => {
       it("should approve certification immediately", () => {
-        const product = ProductBuilder.aHalalProduct().build();
+        const product = ProductBuilder.aPermittedProduct().build();
 
         const certification = service.createCertification(product);
 
@@ -427,7 +427,7 @@ import { Certification, CertificationStatus } from "../certification";
 export class CertificationBuilder {
   private id: string = uuidv4();
   private productId: string = "product-default";
-  private certificationNumber: string = "HALAL-2024-0001";
+  private certificationNumber: string = "PERMITTED-2024-0001";
   private issueDate: Date = new Date("2024-01-01");
   private expiryDate: Date = new Date("2025-01-01");
   private status: CertificationStatus = CertificationStatus.ACTIVE;
@@ -481,9 +481,18 @@ export class CertificationBuilder {
 
 ```typescript
 // File: __test-helpers__/test-data.fixtures.ts
-export const HALAL_INGREDIENTS = ["wheat flour", "sugar", "salt", "olive oil", "chicken", "beef", "rice", "vegetables"];
+export const PERMITTED_INGREDIENTS = [
+  "wheat flour",
+  "sugar",
+  "salt",
+  "olive oil",
+  "chicken",
+  "beef",
+  "rice",
+  "vegetables",
+];
 
-export const HARAM_INGREDIENTS = ["pork", "alcohol", "lard", "bacon", "wine"];
+export const FORBIDDEN_INGREDIENTS = ["pork", "alcohol", "lard", "bacon", "wine"];
 
 export const DOUBTFUL_INGREDIENTS = [
   "gelatin", // Could be from pork or beef
@@ -495,13 +504,13 @@ export const DOUBTFUL_INGREDIENTS = [
 export const CERTIFICATION_BODIES = ["JAKIM", "MUI", "HFA", "IFANCA", "ISWA"];
 
 export const SAMPLE_PRODUCTS = {
-  halalChicken: {
+  permittedChicken: {
     id: "prod-001",
-    name: "Halal Chicken Breast",
+    name: "Permitted Chicken Breast",
     ingredients: ["chicken", "salt", "water"],
-    manufacturer: "Halal Foods Inc",
+    manufacturer: "Permitted Foods Inc",
   },
-  haramSausage: {
+  forbiddenSausage: {
     id: "prod-002",
     name: "Pork Sausage",
     ingredients: ["pork", "salt", "spices"],
@@ -596,19 +605,19 @@ export default {
 ## Nx Monorepo Test Organization
 
 ```
-open-sharia-enterprise/
+open-compliance-enterprise/
   libs/
-    ts-zakat/
+    ts-tax/
       src/lib/
         # Source and co-located tests
       jest.config.ts  # Lib-specific config
 
-    ts-halal-certification/
+    ts-permitted-certification/
       src/lib/
         # Source and co-located tests
       jest.config.ts
 
-    ts-murabaha/
+    ts-loan/
       src/lib/
         # Source and co-located tests
       jest.config.ts
@@ -631,16 +640,16 @@ export default {
 ### Library Jest Config
 
 ```typescript
-// libs/ts-zakat/jest.config.ts
+// libs/ts-tax/jest.config.ts
 export default {
-  displayName: "ts-zakat",
+  displayName: "ts-tax",
   preset: "../../jest.preset.js",
   testEnvironment: "node",
   transform: {
     "^.+\\.[tj]s$": ["ts-jest", { tsconfig: "<rootDir>/tsconfig.spec.json" }],
   },
   moduleFileExtensions: ["ts", "js", "html"],
-  coverageDirectory: "../../coverage/libs/ts-zakat",
+  coverageDirectory: "../../coverage/libs/ts-tax",
   coverageThreshold: {
     global: {
       branches: 80,
@@ -659,31 +668,31 @@ export default {
 ```
 ✅ GOOD - Co-located
 src/
-  zakat-calculator.ts
-  zakat-calculator.spec.ts
+  tax-calculator.ts
+  tax-calculator.spec.ts
 
 ❌ BAD - Deeply separated
 src/
-  zakat-calculator.ts
+  tax-calculator.ts
 tests/
   unit/
     domain/
-      zakat/
+      tax/
         calculator/
-          zakat-calculator.test.ts
+          tax-calculator.test.ts
 ```
 
 ### 2. Use Clear Naming Conventions
 
 ```
 ✅ GOOD - Clear suffixes
-zakat-calculator.spec.ts          # Unit tests
-zakat-repository.integration.spec.ts  # Integration tests
+tax-calculator.spec.ts          # Unit tests
+tax-repository.integration.spec.ts  # Integration tests
 money.property.spec.ts            # Property tests
 
 ❌ BAD - Ambiguous names
-zakat-calculator.test.ts
-zakat-repository.test.ts
+tax-calculator.test.ts
+tax-repository.test.ts
 ```
 
 ### 3. Organize Test Helpers
@@ -697,8 +706,8 @@ __test-helpers__/
   utils/
 
 ❌ BAD - Mixed with source
-zakat-calculator.ts
-zakat-builder.ts  # Test helper in source directory
+tax-calculator.ts
+tax-builder.ts  # Test helper in source directory
 test-utils.ts     # Mixed with production code
 ```
 
@@ -706,18 +715,18 @@ test-utils.ts     # Mixed with production code
 
 ```typescript
 ✅ GOOD - Logical grouping
-describe("ZakatCalculator", () => {
-  describe("calculateZakat", () => {
-    describe("when wealth is above nisab", () => {});
-    describe("when wealth is below nisab", () => {});
+describe("TaxCalculator", () => {
+  describe("calculateTax", () => {
+    describe("when wealth is above threshold", () => {});
+    describe("when wealth is below threshold", () => {});
   });
 });
 
 ❌ BAD - Flat structure
-describe("ZakatCalculator", () => {
-  it("should calculate zakat when wealth above nisab", () => {});
-  it("should return zero when wealth below nisab", () => {});
-  it("should calculate nisab from gold price", () => {});
+describe("TaxCalculator", () => {
+  it("should calculate tax when wealth above threshold", () => {});
+  it("should return zero when wealth below threshold", () => {});
+  it("should calculate threshold from gold price", () => {});
   it("should validate currency", () => {});
   // ... 50 more tests
 });

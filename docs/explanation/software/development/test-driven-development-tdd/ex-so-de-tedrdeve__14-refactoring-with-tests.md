@@ -15,7 +15,7 @@ This document covers safe refactoring under test coverage: common refactorings (
 ```typescript
 // RED: Write failing test
 it("should calculate monthly installment", () => {
-  const contract = buildMurabahaContract()
+  const contract = buildLoanContract()
     .withAssetPrice(Money.usd(60000))
     .withMarkup(Money.usd(6000))
     .withTermMonths(12)
@@ -27,7 +27,7 @@ it("should calculate monthly installment", () => {
 });
 
 // GREEN: Make it pass (simplest code)
-class MurabahaContract {
+class LoanContract {
   calculateMonthlyInstallment(): Money {
     // Quick and dirty ❌
     return Money.usd((60000 + 6000) / 12);
@@ -35,7 +35,7 @@ class MurabahaContract {
 }
 
 // REFACTOR: Improve design ✅
-class MurabahaContract {
+class LoanContract {
   calculateMonthlyInstallment(): Money {
     const totalAmount = this.assetPrice.add(this.markup);
     return totalAmount.divide(this.termMonths);
@@ -70,7 +70,7 @@ class MurabahaContract {
 
 ```typescript
 // BEFORE: Long method ❌
-class ZakatAssessmentService {
+class TaxAssessmentService {
   assess(userId: string): AssessmentResult {
     const user = this.userRepo.findById(userId);
     const goldAssets = user.assets.filter((a) => a.type === "GOLD");
@@ -92,22 +92,22 @@ class ZakatAssessmentService {
     }
 
     const totalWealth = goldTotal.add(silverTotal).add(cashTotal);
-    const nisab = Money.fromGold(85, "grams", this.goldPriceService.getCurrentPrice());
-    const zakat = totalWealth.isGreaterThanOrEqual(nisab) ? totalWealth.multiply(0.025) : Money.usd(0);
+    const threshold = Money.fromGold(85, "grams", this.goldPriceService.getCurrentPrice());
+    const tax = totalWealth.isGreaterThanOrEqual(threshold) ? totalWealth.multiply(0.025) : Money.usd(0);
 
-    return { totalWealth, zakat };
+    return { totalWealth, tax };
   }
 }
 
 // AFTER: Extracted methods ✅
-class ZakatAssessmentService {
+class TaxAssessmentService {
   assess(userId: string): AssessmentResult {
     const user = this.userRepo.findById(userId);
     const totalWealth = this.calculateTotalWealth(user);
-    const nisab = this.calculateNisab();
-    const zakat = this.calculateZakat(totalWealth, nisab);
+    const threshold = this.calculateThreshold();
+    const tax = this.calculateTax(totalWealth, threshold);
 
-    return { totalWealth, zakat };
+    return { totalWealth, tax };
   }
 
   private calculateTotalWealth(user: User): Money {
@@ -122,13 +122,13 @@ class ZakatAssessmentService {
     return assets.filter((a) => a.type === type).reduce((sum, asset) => sum.add(asset.value), Money.usd(0));
   }
 
-  private calculateNisab(): Money {
+  private calculateThreshold(): Money {
     const goldPrice = this.goldPriceService.getCurrentPrice();
     return Money.fromGold(85, "grams", goldPrice);
   }
 
-  private calculateZakat(wealth: Money, nisab: Money): Money {
-    return wealth.isGreaterThanOrEqual(nisab) ? wealth.multiply(0.025) : Money.usd(0);
+  private calculateTax(wealth: Money, threshold: Money): Money {
+    return wealth.isGreaterThanOrEqual(threshold) ? wealth.multiply(0.025) : Money.usd(0);
   }
 }
 
@@ -150,7 +150,7 @@ class ZakatAssessmentService {
 
 ```typescript
 // BEFORE: God class ❌
-class MurabahaContract {
+class LoanContract {
   calculateMonthlyInstallment(): Money {
     /* ... */
   }
@@ -176,7 +176,7 @@ class MurabahaContract {
 }
 
 // AFTER: Separated responsibilities ✅
-class MurabahaContract {
+class LoanContract {
   calculateMonthlyInstallment(): Money {
     /* ... */
   }
@@ -191,20 +191,20 @@ class MurabahaContract {
   }
 }
 
-class MurabahaNotificationService {
-  sendEmailToCustomer(contract: MurabahaContract): void {
+class LoanNotificationService {
+  sendEmailToCustomer(contract: LoanContract): void {
     /* ... */
   }
 }
 
-class MurabahaDocumentGenerator {
-  generatePDFContract(contract: MurabahaContract): Buffer {
+class LoanDocumentGenerator {
+  generatePDFContract(contract: LoanContract): Buffer {
     /* ... */
   }
 }
 
-class MurabahaAuditLogger {
-  logContractActivity(contract: MurabahaContract): void {
+class LoanAuditLogger {
+  logContractActivity(contract: LoanContract): void {
     /* ... */
   }
 }
@@ -220,7 +220,7 @@ class MurabahaAuditLogger {
 
 ```typescript
 // BEFORE: Type-checking conditionals ❌
-class ZakatCalculator {
+class TaxCalculator {
   calculate(asset: Asset): Money {
     if (asset.type === "GOLD") {
       return asset.value.multiply(0.025); // 2.5%
@@ -235,23 +235,23 @@ class ZakatCalculator {
 }
 
 // AFTER: Polymorphic strategy ✅
-interface ZakatCalculationStrategy {
+interface TaxCalculationStrategy {
   calculate(value: Money): Money;
 }
 
-class StandardZakatStrategy implements ZakatCalculationStrategy {
+class StandardTaxStrategy implements TaxCalculationStrategy {
   calculate(value: Money): Money {
     return value.multiply(0.025); // 2.5%
   }
 }
 
-class AgriculturalZakatStrategy implements ZakatCalculationStrategy {
+class AgriculturalTaxStrategy implements TaxCalculationStrategy {
   calculate(value: Money): Money {
     return value.multiply(0.05); // 5%
   }
 }
 
-class MineralZakatStrategy implements ZakatCalculationStrategy {
+class MineralTaxStrategy implements TaxCalculationStrategy {
   calculate(value: Money): Money {
     return value.multiply(0.2); // 20%
   }
@@ -260,24 +260,24 @@ class MineralZakatStrategy implements ZakatCalculationStrategy {
 class Asset {
   constructor(
     readonly value: Money,
-    private zakatStrategy: ZakatCalculationStrategy,
+    private taxStrategy: TaxCalculationStrategy,
   ) {}
 
-  calculateZakat(): Money {
-    return this.zakatStrategy.calculate(this.value);
+  calculateTax(): Money {
+    return this.taxStrategy.calculate(this.value);
   }
 }
 
 // Usage
-const goldAsset = new Asset(Money.usd(10000), new StandardZakatStrategy());
-const crops = new Asset(Money.usd(5000), new AgriculturalZakatStrategy());
+const goldAsset = new Asset(Money.usd(10000), new StandardTaxStrategy());
+const crops = new Asset(Money.usd(5000), new AgriculturalTaxStrategy());
 
 // Tests focus on each strategy independently ✅
-describe("StandardZakatStrategy", () => {
+describe("StandardTaxStrategy", () => {
   it("should calculate 2.5%", () => {
-    const strategy = new StandardZakatStrategy();
-    const zakat = strategy.calculate(Money.usd(1000));
-    expect(zakat).toEqualMoney(Money.usd(25));
+    const strategy = new StandardTaxStrategy();
+    const tax = strategy.calculate(Money.usd(1000));
+    expect(tax).toEqualMoney(Money.usd(25));
   });
 });
 ```
@@ -343,7 +343,7 @@ class MC {
 }
 
 // AFTER: Clear names ✅
-class MurabahaContract {
+class LoanContract {
   calculateMonthlyInstallment(assetPrice: Money, markup: Money, termMonths: number): Money {
     const totalAmount = assetPrice.add(markup);
     return totalAmount.divide(termMonths);
@@ -367,16 +367,16 @@ class MurabahaContract {
 
 ```typescript
 // INITIAL: Tests pass ✅
-describe("ZakatCalculator", () => {
+describe("TaxCalculator", () => {
   it("should calculate 2.5%", () => {
-    const calculator = new ZakatCalculator();
-    const zakat = calculator.calculate(Money.usd(1000));
-    expect(zakat).toEqualMoney(Money.usd(25));
+    const calculator = new TaxCalculator();
+    const tax = calculator.calculate(Money.usd(1000));
+    expect(tax).toEqualMoney(Money.usd(25));
   });
 });
 
 // REFACTOR: Extract method
-class ZakatCalculator {
+class TaxCalculator {
   calculate(wealth: Money): Money {
     return this.applyStandardRate(wealth); // Extracted ✅
   }
@@ -394,7 +394,7 @@ class ZakatCalculator {
 ```typescript
 // TEST: Coupled to implementation ❌
 it("should call applyStandardRate", () => {
-  const calculator = new ZakatCalculator();
+  const calculator = new TaxCalculator();
   const spy = jest.spyOn(calculator, "applyStandardRate");
 
   calculator.calculate(Money.usd(1000));
@@ -403,7 +403,7 @@ it("should call applyStandardRate", () => {
 });
 
 // REFACTOR: Rename method
-class ZakatCalculator {
+class TaxCalculator {
   calculate(wealth: Money): Money {
     return this.calculateAtStandardRate(wealth); // Renamed ✅
   }
@@ -419,11 +419,11 @@ class ZakatCalculator {
 
 ## Refactoring Islamic Finance Domain Models
 
-### Example: Simplifying Murabaha Installment Calculation
+### Example: Simplifying Loan Installment Calculation
 
 ```typescript
 // BEFORE: Complex, hard to understand ❌
-class MurabahaContract {
+class LoanContract {
   calculateInstallments(): Installment[] {
     const installments: Installment[] = [];
     const ap = this.assetPrice.amount;
@@ -446,7 +446,7 @@ class MurabahaContract {
 }
 
 // AFTER: Clear, expressive ✅
-class MurabahaContract {
+class LoanContract {
   calculateInstallments(): Installment[] {
     const totalAmount = this.calculateTotalAmount();
     const monthlyAmount = this.calculateMonthlyAmount(totalAmount);

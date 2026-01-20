@@ -7,9 +7,9 @@ A **Subdomain** is a distinct area of the business problem space. While Bounded 
 **Problem Space vs. Solution Space:**
 
 - **Subdomain (Problem Space)**: Business capabilities and problems
-  - Examples: Zakat calculation, Halal certification, Payment processing
+  - Examples: Tax calculation, Permitted certification, Payment processing
 - **Bounded Context (Solution Space)**: Software models and implementations
-  - Examples: Zakat Calculation Context, Halal Certification Context, Payment Gateway Integration
+  - Examples: Tax Calculation Context, Permitted Certification Context, Payment Gateway Integration
 
 **Key Insight**: Subdomains are discovered through domain analysis. Bounded Contexts are designed as solutions to subdomain problems. Ideally, one subdomain maps to one bounded context, but this is not always possible or desirable.
 
@@ -36,7 +36,7 @@ Building a custom payment processing system when Stripe exists:
 
 **2. Under-Investing in Core Domain**
 
-Rushing through zakat calculation logic (your competitive advantage) to build yet another admin panel:
+Rushing through tax calculation logic (your competitive advantage) to build yet another admin panel:
 
 - Competitors catch up quickly
 - Missed business opportunities
@@ -85,22 +85,22 @@ The **Core Domain** is the part of the system that provides competitive advantag
 - **Evolving**: Changes frequently as business innovates
 - **Proprietary**: Contains trade secrets or unique approaches
 
-### Example: Zakat Calculation for Open Sharia Enterprise
+### Example: Tax Calculation for Open Compliance Enterprise
 
 **Why Core?**
 
-Zakat calculation is the competitive differentiator for an Islamic fintech platform:
+Tax calculation is the competitive differentiator for an Islamic fintech platform:
 
 - **Complex Islamic Jurisprudence**: Requires collaboration with Islamic scholars
 - **Unique Approach**: Automated, precise calculations for modern wealth types
-- **Business Differentiation**: Competitors lack sophisticated zakat features
-- **High Value**: Attracts halal-conscious users, drives platform adoption
+- **Business Differentiation**: Competitors lack sophisticated tax features
+- **High Value**: Attracts permitted-conscious users, drives platform adoption
 
 **Implementation Strategy:**
 
 ```typescript
 // Core Domain: Sophisticated, well-designed aggregate
-class ZakatAssessment {
+class TaxAssessment {
   private readonly assessmentId: AssessmentId;
   private readonly wealthHolderId: WealthHolderId;
   private readonly assessmentPeriod: LunarYearPeriod;
@@ -108,29 +108,29 @@ class ZakatAssessment {
   private status: AssessmentStatus;
 
   // Rich domain logic reflecting Islamic finance complexity
-  finalize(nisabThreshold: NisabAmount, zakatRate: ZakatRate): void {
+  finalize(thresholdThreshold: ThresholdAmount, taxRate: TaxRate): void {
     this.validateHawlCompletion();
     this.validateWealthDeclarations();
 
-    const totalWealth = this.calculateTotalZakatableWealth();
+    const totalWealth = this.calculateTotalTaxableWealth();
 
-    if (totalWealth.isLessThan(nisabThreshold.toMoney())) {
-      this.status = AssessmentStatus.ExemptBelowNisab;
-      this.zakatAmount = Money.zero();
+    if (totalWealth.isLessThan(thresholdThreshold.toMoney())) {
+      this.status = AssessmentStatus.ExemptBelowThreshold;
+      this.taxAmount = Money.zero();
     } else {
-      this.zakatAmount = this.calculateZakatOwed(totalWealth, zakatRate);
+      this.taxAmount = this.calculateTaxOwed(totalWealth, taxRate);
       this.status = AssessmentStatus.Finalized;
     }
 
-    this.addDomainEvent(new ZakatCalculated(this.assessmentId, this.wealthHolderId, this.zakatAmount, HijriDate.now()));
+    this.addDomainEvent(new TaxCalculated(this.assessmentId, this.wealthHolderId, this.taxAmount, HijriDate.now()));
   }
 
-  private calculateZakatOwed(wealth: Money, rate: ZakatRate): Money {
+  private calculateTaxOwed(wealth: Money, rate: TaxRate): Money {
     // Sophisticated calculation considering:
     // - Wealth type (cash, gold, agricultural produce)
-    // - Nisab thresholds
+    // - Threshold thresholds
     // - Deductions (debts, necessary expenses)
-    // - Zakat rates (2.5% for most wealth, 5-10% for agriculture)
+    // - Tax rates (2.5% for most wealth, 5-10% for agriculture)
     return wealth.multiply(rate.percentage);
   }
 
@@ -154,7 +154,7 @@ class ZakatAssessment {
 Ask these questions:
 
 1. **Would this capability make us successful if we did it exceptionally well?**
-   - Zakat Calculation: YES (attracts halal-conscious users)
+   - Tax Calculation: YES (attracts permitted-conscious users)
    - Email sending: NO (commodity feature)
 
 2. **Is this capability difficult for competitors to replicate?**
@@ -162,11 +162,11 @@ Ask these questions:
    - User authentication: NO (standard problem)
 
 3. **Does this capability require unique domain expertise?**
-   - Riba detection: YES (requires Islamic finance knowledge)
+   - Interest detection: YES (requires Islamic finance knowledge)
    - File upload: NO (generic technical problem)
 
 4. **Would outsourcing this harm our competitive advantage?**
-   - Halal certification logic: YES (competitive secret)
+   - Permitted certification logic: YES (competitive secret)
    - Payment processing: NO (Stripe is fine)
 
 If you answer "YES" to 3-4 questions, it's likely a Core Domain.
@@ -189,9 +189,9 @@ If you answer "YES" to 3-4 questions, it's likely a Core Domain.
 
 **Why Supporting?**
 
-Accounting is necessary for zakat calculation but not the differentiator:
+Accounting is necessary for tax calculation but not the differentiator:
 
-- **Necessary**: Zakat requires accurate wealth tracking
+- **Necessary**: Tax requires accurate wealth tracking
 - **Non-Differentiating**: All financial platforms have accounting
 - **Custom Required**: Standard accounting doesn't handle Islamic finance specifics
 - **Stable**: Accounting principles change slowly
@@ -247,15 +247,15 @@ class IslamicFinancialAccount {
 - **Architecture**: Simplified DDD patterns, pragmatic choices
 - **Maintenance**: Reactive maintenance, limited feature expansion
 
-### Example: Halal Certification Tracking
+### Example: Permitted Certification Tracking
 
 **Why Supporting?**
 
-Tracking halal certifications supports product catalog but isn't the main value:
+Tracking permitted certifications supports product catalog but isn't the main value:
 
-- **Necessary**: Users need confidence in halal status
-- **Non-Differentiating**: All halal platforms track certifications
-- **Custom**: Standard e-commerce doesn't handle halal certification
+- **Necessary**: Users need confidence in permitted status
+- **Non-Differentiating**: All permitted platforms track certifications
+- **Custom**: Standard e-commerce doesn't handle permitted certification
 - **Supporting Core**: Enables trust in platform (supports sales)
 
 **Implementation:**
@@ -263,20 +263,20 @@ Tracking halal certifications supports product catalog but isn't the main value:
 ```typescript
 // Supporting Subdomain: Straightforward implementation
 class Product {
-  private halalCertification: HalalCertification | null = null;
+  private permittedCertification: PermittedCertification | null = null;
 
   certify(authority: CertificationAuthority, expiryDate: Date, certificationNumber: string): void {
     if (!authority.isRecognized()) {
       throw new Error("Certification authority not recognized");
     }
 
-    this.halalCertification = new HalalCertification(authority, expiryDate, certificationNumber);
+    this.permittedCertification = new PermittedCertification(authority, expiryDate, certificationNumber);
 
     this.addDomainEvent(new ProductCertified(this.productId, authority, expiryDate));
   }
 
-  isHalalCertified(): boolean {
-    return this.halalCertification !== null && !this.halalCertification.isExpired();
+  isPermittedCertified(): boolean {
+    return this.permittedCertification !== null && !this.permittedCertification.isExpired();
   }
 }
 ```
@@ -375,17 +375,17 @@ class SendGridEmailService implements EmailService {
 
 Use this matrix to classify subdomains:
 
-| Subdomain                    | Differentiating? | Business Value | Complexity | Existing Solutions | Classification | Strategy           |
-| ---------------------------- | ---------------- | -------------- | ---------- | ------------------ | -------------- | ------------------ |
-| Zakat Calculation            | ✅ Yes           | High           | High       | None               | **Core**       | Build, invest      |
-| Riba Detection               | ✅ Yes           | High           | High       | None               | **Core**       | Build, invest      |
-| Islamic Financial Accounting | ❌ No            | Medium         | Medium     | Some (general)     | **Supporting** | Build, adequate    |
-| Halal Certification Tracking | ❌ No            | Medium         | Low        | Some (e-commerce)  | **Supporting** | Build, pragmatic   |
-| Inventory Management         | ❌ No            | Medium         | Low        | Many               | **Supporting** | Build or buy       |
-| Payment Processing           | ❌ No            | Low            | Low        | Excellent (Stripe) | **Generic**    | Buy (SaaS)         |
-| Email Sending                | ❌ No            | Low            | Low        | Excellent          | **Generic**    | Buy (SendGrid)     |
-| User Authentication          | ❌ No            | Low            | Medium     | Excellent (Auth0)  | **Generic**    | Buy or use library |
-| Shipping                     | ❌ No            | Low            | Low        | Many               | **Generic**    | Buy (ShipStation)  |
+| Subdomain                        | Differentiating? | Business Value | Complexity | Existing Solutions | Classification | Strategy           |
+| -------------------------------- | ---------------- | -------------- | ---------- | ------------------ | -------------- | ------------------ |
+| Tax Calculation                  | ✅ Yes           | High           | High       | None               | **Core**       | Build, invest      |
+| Interest Detection               | ✅ Yes           | High           | High       | None               | **Core**       | Build, invest      |
+| Islamic Financial Accounting     | ❌ No            | Medium         | Medium     | Some (general)     | **Supporting** | Build, adequate    |
+| Permitted Certification Tracking | ❌ No            | Medium         | Low        | Some (e-commerce)  | **Supporting** | Build, pragmatic   |
+| Inventory Management             | ❌ No            | Medium         | Low        | Many               | **Supporting** | Build or buy       |
+| Payment Processing               | ❌ No            | Low            | Low        | Excellent (Stripe) | **Generic**    | Buy (SaaS)         |
+| Email Sending                    | ❌ No            | Low            | Low        | Excellent          | **Generic**    | Buy (SendGrid)     |
+| User Authentication              | ❌ No            | Low            | Medium     | Excellent (Auth0)  | **Generic**    | Buy or use library |
+| Shipping                         | ❌ No            | Low            | Low        | Many               | **Generic**    | Buy (ShipStation)  |
 
 ## Investment Prioritization
 
@@ -434,9 +434,9 @@ Does subdomain require custom domain logic?
 
 **Example Decisions:**
 
-- **Zakat Calculation**: Core → BUILD with DDD, tests, documentation
+- **Tax Calculation**: Core → BUILD with DDD, tests, documentation
 - **Islamic Financial Accounting**: Supporting → BUILD with pragmatic design
-- **Halal Certification Tracking**: Supporting → BUILD simple model or customize e-commerce platform
+- **Permitted Certification Tracking**: Supporting → BUILD simple model or customize e-commerce platform
 - **Payment Processing**: Generic → BUY Stripe integration
 - **Email**: Generic → BUY SendGrid
 - **User Auth**: Generic → BUY Auth0 or use Passport.js library
@@ -476,12 +476,12 @@ Does subdomain require custom domain logic?
 ```mermaid
 graph TD
     %% Core Domain
-    ZC[Zakat Calculation<br/>CORE DOMAIN]
-    RD[Riba Detection<br/>CORE DOMAIN]
+    ZC[Tax Calculation<br/>CORE DOMAIN]
+    RD[Interest Detection<br/>CORE DOMAIN]
 
     %% Supporting
     IFA[Islamic Financial<br/>Accounting<br/>SUPPORTING]
-    HC[Halal Certification<br/>SUPPORTING]
+    HC[Permitted Certification<br/>SUPPORTING]
     IM[Inventory Management<br/>SUPPORTING]
 
     %% Generic
@@ -511,14 +511,14 @@ graph TD
 
 **Visual Insights:**
 
-- **Core Domain (Blue, thick border)**: Zakat Calculation and Riba Detection are the focus
-- **Supporting (Teal)**: Islamic Financial Accounting, Halal Certification, Inventory Management
+- **Core Domain (Blue, thick border)**: Tax Calculation and Interest Detection are the focus
+- **Supporting (Teal)**: Islamic Financial Accounting, Permitted Certification, Inventory Management
 - **Generic (Gray)**: Payment, Email, Authentication are commodities
 
 **Strategic Decisions:**
 
-- **Invest heavily** in Zakat Calculation and Riba Detection
-- **Build pragmatically** for Islamic Financial Accounting and Halal Certification
+- **Invest heavily** in Tax Calculation and Interest Detection
+- **Build pragmatically** for Islamic Financial Accounting and Permitted Certification
 - **Buy SaaS** for Payment (Stripe), Email (SendGrid), Auth (Auth0)
 
 ## Subdomains vs. Bounded Contexts
@@ -543,7 +543,7 @@ Example: Islamic Financial Accounting subdomain split into:
 
 Example: Small startup combines:
 
-- Zakat Calculation subdomain
+- Tax Calculation subdomain
 - Islamic Financial Accounting subdomain
 - Single "Islamic Finance" Bounded Context (pragmatic monolith)
 

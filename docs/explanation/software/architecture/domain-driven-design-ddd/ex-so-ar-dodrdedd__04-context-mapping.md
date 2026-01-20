@@ -30,7 +30,7 @@ Without explicit context maps, integration between bounded contexts becomes ad-h
 Teams discover critical dependencies only when systems fail:
 
 - "I didn't know Billing depends on our Inventory data!"
-- "Why did our Halal Certification change break Order Processing?"
+- "Why did our Permitted Certification change break Order Processing?"
 
 **2. Mismatched Expectations**
 
@@ -64,7 +64,7 @@ Context Maps solve these problems by:
 
 ```mermaid
 graph TD
-    ZC[Zakat Calculation<br/>Core Domain]
+    ZC[Tax Calculation<br/>Core Domain]
     IFA[Islamic Financial<br/>Accounting<br/>Supporting]
     BI[Billing<br/>Generic]
 
@@ -78,8 +78,8 @@ graph TD
 
 This simple diagram reveals:
 
-- Zakat Calculation depends on Islamic Financial Accounting
-- Billing depends on Zakat Calculation
+- Tax Calculation depends on Islamic Financial Accounting
+- Billing depends on Tax Calculation
 - Changes to IFA may impact ZC, which may impact Billing
 
 **2. Naming Relationship Patterns**
@@ -121,7 +121,7 @@ DDD identifies nine canonical patterns for context relationships:
 - **Benefits**: Reduces duplication, ensures consistency
 - **Costs**: Coordination overhead, slower changes, coupled teams
 
-**Example: Zakat and Islamic Financial Accounting**
+**Example: Tax and Islamic Financial Accounting**
 
 Both contexts need precise representations of Islamic financial concepts:
 
@@ -153,12 +153,12 @@ export class HijriDate {
   }
 }
 
-// Both Zakat Calculation and Islamic Financial Accounting import these
+// Both Tax Calculation and Islamic Financial Accounting import these
 ```
 
 ```mermaid
 graph TD
-    ZC[Zakat Calculation]
+    ZC[Tax Calculation]
     IFA[Islamic Financial<br/>Accounting]
     SK[Shared Kernel<br/>Money, HijriDate]
 
@@ -187,9 +187,9 @@ graph TD
 - **Benefits**: Structured collaboration, clear responsibilities
 - **Costs**: Negotiation overhead, potential delays
 
-**Example: Islamic Financial Accounting → Zakat Calculation**
+**Example: Islamic Financial Accounting → Tax Calculation**
 
-Zakat Calculation (customer) needs wealth data from Islamic Financial Accounting (supplier).
+Tax Calculation (customer) needs wealth data from Islamic Financial Accounting (supplier).
 
 ```typescript
 // Upstream: Islamic Financial Accounting provides Wealth Snapshot API
@@ -206,20 +206,20 @@ export interface WealthSnapshot {
   businessInventory: InventoryValuation;
 }
 
-// Downstream: Zakat Calculation consumes this API
-class ZakatCalculationService {
+// Downstream: Tax Calculation consumes this API
+class TaxCalculationService {
   constructor(private wealthAPI: WealthSnapshotAPI) {}
 
-  createAssessment(holderId: WealthHolderId, assessmentDate: HijriDate): ZakatAssessment {
+  createAssessment(holderId: WealthHolderId, assessmentDate: HijriDate): TaxAssessment {
     const snapshot = this.wealthAPI.getWealthSnapshot(holderId, assessmentDate);
-    return ZakatAssessment.fromWealthSnapshot(snapshot);
+    return TaxAssessment.fromWealthSnapshot(snapshot);
   }
 }
 ```
 
 ```mermaid
 graph LR
-    IFA[Islamic Financial<br/>Accounting<br/>SUPPLIER] -->|"Wealth Snapshot API"| ZC[Zakat Calculation<br/>CUSTOMER]
+    IFA[Islamic Financial<br/>Accounting<br/>SUPPLIER] -->|"Wealth Snapshot API"| ZC[Tax Calculation<br/>CUSTOMER]
 
     style IFA fill:#029E73,stroke:#000,color:#FFFFFF
     style ZC fill:#0173B2,stroke:#000,color:#FFFFFF
@@ -300,9 +300,9 @@ graph LR
 - **Benefits**: Protects downstream model, isolates changes
 - **Costs**: Development and maintenance of translation layer
 
-**Example: Halal Certification → Legacy ERP**
+**Example: Permitted Certification → Legacy ERP**
 
-Halal Certification integrates with legacy ERP system but maintains its own clean model:
+Permitted Certification integrates with legacy ERP system but maintains its own clean model:
 
 ```typescript
 // Legacy ERP (upstream) - messy model
@@ -325,7 +325,7 @@ class LegacyERPAdapter {
     );
   }
 
-  toHalalCertificationStatus(record: LegacyProductRecord): CertificationStatus {
+  toPermittedCertificationStatus(record: LegacyProductRecord): CertificationStatus {
     if (record.CERT_FLG !== "Y" || !record.CERT_EXP) {
       return CertificationStatus.notCertified();
     }
@@ -346,7 +346,7 @@ class LegacyERPAdapter {
   }
 }
 
-// Halal Certification domain model (downstream) - clean
+// Permitted Certification domain model (downstream) - clean
 class Product {
   constructor(
     readonly productId: ProductId,
@@ -360,14 +360,14 @@ class Product {
 ```mermaid
 graph LR
     LEG[Legacy ERP<br/>Upstream] -->|"ACL"| ACL[Anti-Corruption Layer<br/>Translates Model]
-    ACL --> HC[Halal Certification<br/>Protected Domain Model]
+    ACL --> HC[Permitted Certification<br/>Protected Domain Model]
 
     style LEG fill:#CA9161,stroke:#000,color:#000000
     style ACL fill:#DE8F05,stroke:#000,color:#000000
     style HC fill:#0173B2,stroke:#000,color:#FFFFFF
 ```
 
-**Benefit**: Halal Certification maintains clean domain model (`ProductId`, `CertificationStatus`) despite messy legacy system.
+**Benefit**: Permitted Certification maintains clean domain model (`ProductId`, `CertificationStatus`) despite messy legacy system.
 
 ### 5. Partnership
 
@@ -384,31 +384,26 @@ graph LR
 - **Benefits**: Coordinated evolution, aligned goals
 - **Costs**: High coordination overhead, coupled timelines
 
-**Example: Zakat Calculation ↔ Halal Business Dashboard**
+**Example: Tax Calculation ↔ Permitted Business Dashboard**
 
-Both contexts support halal-conscious Muslims managing their wealth:
+Both contexts support permitted-conscious Muslims managing their wealth:
 
 ```typescript
-// Zakat Calculation provides assessment data
-class ZakatAssessmentAPI {
-  publishAssessmentCompleted(assessment: ZakatAssessment): void {
+// Tax Calculation provides assessment data
+class TaxAssessmentAPI {
+  publishAssessmentCompleted(assessment: TaxAssessment): void {
     this.eventBus.publish(
-      new ZakatAssessmentCompleted(
-        assessment.id,
-        assessment.wealthHolderId,
-        assessment.zakatOwed,
-        assessment.finalizedAt,
-      ),
+      new TaxAssessmentCompleted(assessment.id, assessment.wealthHolderId, assessment.taxOwed, assessment.finalizedAt),
     );
   }
 }
 
 // Dashboard consumes and displays insights
 class DashboardService {
-  handleZakatAssessmentCompleted(event: ZakatAssessmentCompleted): void {
+  handleTaxAssessmentCompleted(event: TaxAssessmentCompleted): void {
     this.updateDashboardMetrics(event.wealthHolderId, {
       lastAssessmentDate: event.finalizedAt,
-      zakatOwed: event.zakatOwed,
+      taxOwed: event.taxOwed,
       nextAssessmentDue: event.finalizedAt.addLunarYears(1),
     });
   }
@@ -417,7 +412,7 @@ class DashboardService {
 
 ```mermaid
 graph LR
-    ZC[Zakat Calculation] <-->|"Partnership<br/>Coordinated Evolution"| DB[Halal Business<br/>Dashboard]
+    ZC[Tax Calculation] <-->|"Partnership<br/>Coordinated Evolution"| DB[Permitted Business<br/>Dashboard]
 
     style ZC fill:#0173B2,stroke:#000,color:#FFFFFF
     style DB fill:#0173B2,stroke:#000,color:#FFFFFF
@@ -440,13 +435,13 @@ graph LR
 - **Benefits**: Complete independence, no coordination overhead
 - **Costs**: Potential duplication, no shared data
 
-**Example: Zakat Calculation and Employee HR**
+**Example: Tax Calculation and Employee HR**
 
 No overlap in business concerns:
 
 ```mermaid
 graph TD
-    ZC[Zakat Calculation<br/>Muslim Wealth Management]
+    ZC[Tax Calculation<br/>Muslim Wealth Management]
     HR[Employee HR<br/>Payroll and Benefits]
 
     ZC -.->|"No Integration"| HR
@@ -490,7 +485,7 @@ export class IslamicFinancialAccountingAPI {
 }
 
 // Multiple downstreams integrate
-class ZakatCalculationService {
+class TaxCalculationService {
   constructor(private ifaAPI: IslamicFinancialAccountingAPI) {}
 }
 
@@ -506,7 +501,7 @@ class AuditService {
 ```mermaid
 graph TD
     IFA[Islamic Financial<br/>Accounting<br/>Open Host Service]
-    ZC[Zakat Calculation]
+    ZC[Tax Calculation]
     TC[Tax Compliance]
     AU[Audit]
 
@@ -614,7 +609,7 @@ graph LR
 
 ```mermaid
 graph TD
-    HC[Halal Certification<br/>Clean Bounded Context]
+    HC[Permitted Certification<br/>Clean Bounded Context]
     ACL[Anti-Corruption Layer]
     ERP[Legacy ERP<br/>Big Ball of Mud]
 
@@ -667,10 +662,10 @@ Let's map an entire Islamic e-commerce system:
 ```mermaid
 graph TD
     %% Core Domain
-    ZC[Zakat Calculation<br/>Core Domain]
+    ZC[Tax Calculation<br/>Core Domain]
 
     %% Supporting Domains
-    HC[Halal Certification<br/>Supporting]
+    HC[Permitted Certification<br/>Supporting]
     IM[Inventory Management<br/>Supporting]
     OP[Order Processing<br/>Supporting]
     IFA[Islamic Financial<br/>Accounting<br/>Supporting]
@@ -684,10 +679,10 @@ graph TD
 
     %% Relationships
     IFA -->|"Customer/Supplier<br/>Wealth Snapshot API"| ZC
-    ZC -->|"Customer/Supplier<br/>Zakat Events"| IFA
+    ZC -->|"Customer/Supplier<br/>Tax Events"| IFA
 
     OP -->|"Customer/Supplier<br/>Stock Availability"| IM
-    IM -->|"Customer/Supplier<br/>Halal Status"| HC
+    IM -->|"Customer/Supplier<br/>Permitted Status"| HC
 
     OP -->|"Conformist<br/>Payment API"| PAY
     OP -->|"Conformist<br/>Shipping API"| SHIP
@@ -710,12 +705,12 @@ graph TD
 
 **Core Domain (Blue)**:
 
-- **Zakat Calculation**: Competitive differentiator for Islamic finance
+- **Tax Calculation**: Competitive differentiator for Islamic finance
 
 **Supporting Domains (Teal)**:
 
-- **Islamic Financial Accounting**: Provides data to Zakat Calculation
-- **Halal Certification**: Validates product compliance
+- **Islamic Financial Accounting**: Provides data to Tax Calculation
+- **Permitted Certification**: Validates product compliance
 - **Inventory Management**: Manages stock
 - **Order Processing**: Orchestrates purchases
 
@@ -772,7 +767,7 @@ Include key information:
 
 ```mermaid
 graph LR
-    IFA[Islamic Financial<br/>Accounting] -->|"Customer/Supplier<br/>REST API<br/>/api/v1/wealth-snapshots"| ZC[Zakat Calculation]
+    IFA[Islamic Financial<br/>Accounting] -->|"Customer/Supplier<br/>REST API<br/>/api/v1/wealth-snapshots"| ZC[Tax Calculation]
 
     style IFA fill:#029E73,stroke:#000,color:#FFFFFF
     style ZC fill:#0173B2,stroke:#000,color:#FFFFFF
@@ -786,7 +781,7 @@ Context Maps are living documents that evolve as systems grow:
 
 ```mermaid
 graph TD
-    MONO[Monolithic Application<br/>Logical Contexts:<br/>- Zakat Calculation<br/>- Halal Certification<br/>- Order Processing]
+    MONO[Monolithic Application<br/>Logical Contexts:<br/>- Tax Calculation<br/>- Permitted Certification<br/>- Order Processing]
 
     style MONO fill:#0173B2,stroke:#000,color:#FFFFFF
 ```
@@ -795,8 +790,8 @@ graph TD
 
 ```mermaid
 graph TD
-    ZC[Zakat Calculation<br/>Microservice]
-    MONO[Monolith<br/>- Halal Certification<br/>- Order Processing]
+    ZC[Tax Calculation<br/>Microservice]
+    MONO[Monolith<br/>- Permitted Certification<br/>- Order Processing]
 
     MONO -->|"Customer/Supplier<br/>Events"| ZC
 
@@ -808,8 +803,8 @@ graph TD
 
 ```mermaid
 graph TD
-    ZC[Zakat Calculation<br/>Microservice]
-    HC[Halal Certification<br/>Microservice]
+    ZC[Tax Calculation<br/>Microservice]
+    HC[Permitted Certification<br/>Microservice]
     OP[Order Processing<br/>Microservice]
 
     OP -->|"Customer/Supplier"| HC
@@ -830,8 +825,8 @@ graph TD
 ```typescript
 // ANTI-PATTERN: Shared Kernel contains entire domain model
 libs/shared-domain/
-  ├── zakat/
-  ├── halal/
+  ├── tax/
+  ├── permitted/
   ├── accounting/
   └── orders/
 // Everything coupled!

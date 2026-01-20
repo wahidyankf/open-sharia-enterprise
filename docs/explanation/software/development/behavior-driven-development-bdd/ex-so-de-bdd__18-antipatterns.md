@@ -65,17 +65,17 @@ Behavior-Driven Development fails when treated as merely another testing framewo
 
 ```gherkin
 # BEFORE writing any code, hold Three Amigos session:
-# 1. Product Owner: "Users need to calculate Zakat on cryptocurrency"
+# 1. Product Owner: "Users need to calculate Tax on cryptocurrency"
 # 2. Developer: "Which cryptocurrencies? How handle volatility?"
-# 3. Shariah Scholar: "Bitcoin/Ethereum treated as trade goods, 2.5% on value"
+# 3. Compliance Scholar: "Bitcoin/Ethereum treated as trade goods, 2.5% on value"
 # 4. QA: "What if hawl incomplete? What if user sells mid-year?"
 
 # THEN write scenarios BEFORE implementation:
-Scenario: Calculate Zakat on Bitcoin holdings
+Scenario: Calculate Tax on Bitcoin holdings
   Given I purchased 1 Bitcoin on 2025-01-01 for $45,000
   And current Bitcoin price is $50,000
   And lunar year (hawl) has completed
-  When Zakat calculation is performed
+  When Tax calculation is performed
   Then I should owe $1,250 (2.5% of current value)
 
 # THEN implement code to make scenario pass (RED → GREEN → REFACTOR)
@@ -137,8 +137,8 @@ Scenario: Calculate Zakat on Bitcoin holdings
 
 ```gherkin
 # BAD: Imperative, UI-coupled
-Scenario: Submit Zakat payment via web form
-  Given I am on page "/zakat/payment"
+Scenario: Submit Tax payment via web form
+  Given I am on page "/tax/payment"
   When I click button with ID "payment-method-dropdown"
   And I select option "Credit Card" from dropdown
   And I fill field "card_number" with "4111111111111111"
@@ -148,11 +148,11 @@ Scenario: Submit Zakat payment via web form
   Then I should see element with ID "payment-success-message"
 
 # GOOD: Declarative, UI-independent
-Scenario: Pay Zakat via credit card
-  Given I have calculated Zakat of $150
+Scenario: Pay Tax via credit card
+  Given I have calculated Tax of $150
   When I pay via credit card
   Then payment should be confirmed
-  And my Zakat balance should be $0
+  And my Tax balance should be $0
 
 # Step definition encapsulates UI details
 When('I pay via credit card', () => {
@@ -193,9 +193,9 @@ When('I pay via credit card', () => {
 
 ```gherkin
 # BAD: Multiple behaviors
-Scenario: Complete Zakat calculation and payment
+Scenario: Complete Tax calculation and payment
   Given I own 100 grams of gold
-  When I calculate Zakat
+  When I calculate Tax
   Then I should owe 2.5 grams
   When I select payment method "Bank Transfer"
   Then payment options should include my bank accounts
@@ -205,18 +205,18 @@ Scenario: Complete Zakat calculation and payment
   Then I should see payment in history
 
 # GOOD: Split into focused scenarios
-Scenario: Calculate Zakat on gold
+Scenario: Calculate Tax on gold
   Given I own 100 grams of gold
-  When I calculate Zakat
+  When I calculate Tax
   Then I should owe 2.5 grams of gold
 
 Scenario: Select bank transfer as payment method
-  Given I need to pay Zakat
+  Given I need to pay Tax
   When I choose bank transfer payment
   Then I should see my linked bank accounts
 
-Scenario: Record Zakat payment transaction
-  Given I completed Zakat payment of $150
+Scenario: Record Tax payment transaction
+  Given I completed Tax payment of $150
   When I view transaction history
   Then I should see payment record
 ```
@@ -243,33 +243,33 @@ Scenario: Record Zakat payment transaction
 
 - Scenarios reference database columns, API endpoints, classes
 - Terminology differs between scenarios and business conversations
-- Shariah scholars say "We don't call it that"
+- Compliance scholars say "We don't call it that"
 - Scenarios use technical abbreviations (DTO, VO, DAO)
 
 **How to Fix**:
 
 ```gherkin
 # BAD: Technical language
-Scenario: Persist zakat_calculation entity to database
-  Given ZakatCalculationDTO with amount=150.00
-  When ZakatService.calculate() is invoked
-  And result is persisted to zakat_calculations table
+Scenario: Persist tax_calculation entity to database
+  Given TaxCalculationDTO with amount=150.00
+  When TaxService.calculate() is invoked
+  And result is persisted to tax_calculations table
   Then database row should have status='COMPLETED'
 
-# GOOD: Ubiquitous language (Shariah terms)
-Scenario: Complete Zakat assessment for zakatable assets
-  Given Muslim owns nisab-threshold wealth for full hawl
-  When Zakat obligation is assessed
-  Then Zakat should be 2.5% of zakatable wealth
-  And assessment should be recorded for Shariah audit
+# GOOD: Ubiquitous language (Compliance terms)
+Scenario: Complete Tax assessment for taxable assets
+  Given Muslim owns threshold-threshold wealth for full hawl
+  When Tax obligation is assessed
+  Then Tax should be 2.5% of taxable wealth
+  And assessment should be recorded for Compliance audit
 ```
 
-**Ubiquitous Language Glossary** (from Shariah domain experts):
+**Ubiquitous Language Glossary** (from Compliance domain experts):
 
-- **Nisab**: Minimum wealth threshold for Zakat obligation
+- **Threshold**: Minimum wealth threshold for Tax obligation
 - **Hawl**: Lunar year (354 days) that wealth must be owned
-- **Zakatable assets**: Wealth types subject to Zakat (cash, gold, silver, trade goods)
-- **Assessment**: Calculation of Zakat obligation (NOT "calculation" - expert prefers "assessment")
+- **Taxable assets**: Wealth types subject to Tax (cash, gold, silver, trade goods)
+- **Assessment**: Calculation of Tax obligation (NOT "calculation" - expert prefers "assessment")
 
 **Principle**: Scenarios must be readable by domain experts, not just developers.
 
@@ -301,8 +301,8 @@ Scenario: Complete Zakat assessment for zakatable assets
 ```gherkin
 # BEFORE: Obsolete scenario (cryptocurrency feature removed)
 @skip @deprecated
-Scenario: Calculate Zakat on cryptocurrency
-  # Feature removed 2025-12-01 per Shariah Board decision
+Scenario: Calculate Tax on cryptocurrency
+  # Feature removed 2025-12-01 per Compliance Board decision
   # Cryptocurrency no longer supported in v2.0
   # TODO: Remove this scenario
   Given I own 1 Bitcoin
@@ -347,26 +347,26 @@ Scenario: Calculate Zakat on cryptocurrency
 
 ```gherkin
 # BAD: Using BDD for unit test
-Scenario: Test calculateZakatRate function
-  Given function calculateZakatRate
+Scenario: Test calculateTaxRate function
+  Given function calculateTaxRate
   When invoked with assetType='gold'
   Then should return 0.025
 ```
 
 ```javascript
 // GOOD: Use unit test framework directly
-describe("calculateZakatRate", () => {
+describe("calculateTaxRate", () => {
   it("returns 2.5% for gold", () => {
-    expect(calculateZakatRate("gold")).toBe(0.025);
+    expect(calculateTaxRate("gold")).toBe(0.025);
   });
 });
 ```
 
 ```gherkin
 # GOOD: Use BDD for business behavior
-Scenario: Calculate Zakat at standard rate for gold
+Scenario: Calculate Tax at standard rate for gold
   Given I own 100 grams of gold
-  When Zakat is calculated
+  When Tax is calculated
   Then I owe 2.5 grams (2.5% rate)
 ```
 
@@ -458,9 +458,9 @@ Scenario: Calculate Zakat at standard rate for gold
 - "The BA writes all our scenarios"
 - "When I click button with ID 'submit-btn'"
 - "This one scenario tests the entire workflow"
-- "Given ZakatCalculationDTO is persisted"
+- "Given TaxCalculationDTO is persisted"
 - "We have 50 scenarios marked @skip"
-- "Scenario: Test calculateZakat function"
+- "Scenario: Test calculateTax function"
 
 **Correction Actions**:
 

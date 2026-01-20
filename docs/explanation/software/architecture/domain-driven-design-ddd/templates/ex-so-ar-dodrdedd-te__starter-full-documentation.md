@@ -535,22 +535,22 @@ Feature: [Feature Name]
 
 ---
 
-## Example: Halal Product Verification System
+## Example: Permitted Product Verification System
 
 ### Overview
 
 **Feature Description**:
-Halal Product Verification System enables businesses to validate product ingredients against Islamic dietary laws (halal/haram classifications), issue halal certifications, and maintain audit trails for regulatory compliance. The system integrates with ingredient databases and provides real-time verification APIs for e-commerce platforms.
+Permitted Product Verification System enables businesses to validate product ingredients against Islamic dietary laws (permitted/forbidden classifications), issue permitted certifications, and maintain audit trails for regulatory compliance. The system integrates with ingredient databases and provides real-time verification APIs for e-commerce platforms.
 
 **Strategic Classification**:
 Core Domain
 
 **Rationale**:
-Halal verification is central to OSE Platform's mission of democratizing Sharia-compliant business systems. The complex rules around ingredient sourcing, cross-contamination prevention, and multi-school jurisprudence require deep Islamic knowledge and provide significant competitive differentiation. Generic ingredient databases lack Islamic jurisprudence expertise.
+Permitted verification is central to OSE Platform's mission of democratizing Compliance-compliant business systems. The complex rules around ingredient sourcing, cross-contamination prevention, and multi-school jurisprudence require deep Islamic knowledge and provide significant competitive differentiation. Generic ingredient databases lack Islamic jurisprudence expertise.
 
 **Business Value**:
 
-- Reduces halal certification costs for small businesses (currently $5,000-$20,000/year from certification bodies)
+- Reduces permitted certification costs for small businesses (currently $5,000-$20,000/year from certification bodies)
 - Enables real-time ingredient verification (seconds vs. weeks for traditional certification)
 - Provides audit trails for regulatory compliance (required in Malaysia, Indonesia, UAE)
 - Builds trust with Muslim consumers through transparent verification process
@@ -559,8 +559,8 @@ Halal verification is central to OSE Platform's mission of democratizing Sharia-
 
 - **Business Owner**: Fatimah Hassan (Product Manager)
 - **Domain Expert**: Sheikh Dr. Yasir Mahmood (Islamic Food Law Scholar)
-- **Development Team**: Halal Tech Team (4 developers, 1 QA)
-- **Key Users**: Food manufacturers, e-commerce platforms, halal certification auditors
+- **Development Team**: Permitted Tech Team (4 developers, 1 QA)
+- **Key Users**: Food manufacturers, e-commerce platforms, permitted certification auditors
 
 ---
 
@@ -568,11 +568,11 @@ Halal verification is central to OSE Platform's mission of democratizing Sharia-
 
 ### Identified Contexts
 
-**Primary Context: Halal Verification Context**
+**Primary Context: Permitted Verification Context**
 
-- **Responsibility**: Validate product ingredients against Islamic dietary laws, issue halal certifications, maintain ingredient knowledge base
-- **Ubiquitous Language**: Halal, Haram, Mushbooh (doubtful), Ingredient, Certification, Najs (impure), Cross-Contamination, Slaughter Method, Alcohol Derivation
-- **Team Ownership**: Halal Tech Team
+- **Responsibility**: Validate product ingredients against Islamic dietary laws, issue permitted certifications, maintain ingredient knowledge base
+- **Ubiquitous Language**: Permitted, Forbidden, Mushbooh (doubtful), Ingredient, Certification, Najs (impure), Cross-Contamination, Slaughter Method, Alcohol Derivation
+- **Team Ownership**: Permitted Tech Team
 
 **Supporting Context: Ingredient Database Context**
 
@@ -583,7 +583,7 @@ Halal verification is central to OSE Platform's mission of democratizing Sharia-
 **External Dependencies**:
 
 - **E-Number Database (European Food Safety Authority)**: REST API for ingredient E-number lookup. Public API, eventual consistency acceptable.
-- **Certification Body Registry**: Webhook integration to sync halal certifications from accredited third-party bodies (e.g., JAKIM Malaysia, HFA Australia)
+- **Certification Body Registry**: Webhook integration to sync permitted certifications from accredited third-party bodies (e.g., JAKIM Malaysia, HFA Australia)
 
 ---
 
@@ -593,7 +593,7 @@ Halal verification is central to OSE Platform's mission of democratizing Sharia-
 
 ```mermaid
 graph TD
-    HV[Halal Verification<br/>Core Domain]
+    HV[Permitted Verification<br/>Core Domain]
     ING[Ingredient Database<br/>Supporting]
     ENUM[E-Number Database<br/>External API]
     CERT[Certification Body<br/>External System]
@@ -613,17 +613,17 @@ graph TD
 
 **Relationship Patterns**:
 
-| Upstream Context              | Downstream Context  | Pattern           | Integration Method | Notes                                                   |
-| ----------------------------- | ------------------- | ----------------- | ------------------ | ------------------------------------------------------- |
-| Halal Verification            | Ingredient Database | Partnership       | Shared Library     | Shared ingredient taxonomy, bidirectional collaboration |
-| E-Number Database (External)  | Halal Verification  | Conformist        | REST API           | We conform to their API, no control over schema         |
-| Certification Body (External) | Halal Verification  | Customer/Supplier | Webhooks           | They push certification updates to us                   |
-| Halal Verification            | E-Commerce Platform | Customer/Supplier | REST API + Events  | We provide verification API, publish events             |
+| Upstream Context              | Downstream Context     | Pattern           | Integration Method | Notes                                                   |
+| ----------------------------- | ---------------------- | ----------------- | ------------------ | ------------------------------------------------------- |
+| Permitted Verification        | Ingredient Database    | Partnership       | Shared Library     | Shared ingredient taxonomy, bidirectional collaboration |
+| E-Number Database (External)  | Permitted Verification | Conformist        | REST API           | We conform to their API, no control over schema         |
+| Certification Body (External) | Permitted Verification | Customer/Supplier | Webhooks           | They push certification updates to us                   |
+| Permitted Verification        | E-Commerce Platform    | Customer/Supplier | REST API + Events  | We provide verification API, publish events             |
 
 **Integration Challenges**:
 
 - **E-Number Database Unavailability**: External API may be down during peak usage. Mitigation: Cache ingredient data (30-day TTL), fallback to manual ingredient entry, circuit breaker pattern.
-- **Certification Body Schema Variance**: Different certification bodies use incompatible data formats. Mitigation: Anticorruption layer translates inbound webhooks to canonical HalalCertification model.
+- **Certification Body Schema Variance**: Different certification bodies use incompatible data formats. Mitigation: Anticorruption layer translates inbound webhooks to canonical PermittedCertification model.
 
 ---
 
@@ -631,45 +631,45 @@ graph TD
 
 ### Core Terms (within this bounded context)
 
-| Term                | Definition                                                                                           | Example Usage                                                         | Aliases (if any) |
-| ------------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | ---------------- |
-| Halal               | Permissible according to Islamic law for consumption or use                                          | "This product is halal because all ingredients are plant-derived."    | Permissible      |
-| Haram               | Forbidden according to Islamic law (e.g., pork, alcohol, improperly slaughtered meat)                | "Gelatin from pork is haram."                                         | Forbidden        |
-| Mushbooh            | Doubtful or questionable ingredient requiring further investigation or scholarly ruling              | "Vanilla extract is mushbooh due to alcohol content."                 | Doubtful         |
-| Ingredient          | Raw material or additive used in product formulation                                                 | "Lecithin is an ingredient in chocolate."                             | Component        |
-| Certification       | Formal attestation that a product meets halal standards, issued by qualified authority               | "JAKIM issued a halal certification for this factory."                | Certificate      |
-| Najs                | Ritually impure substance that cannot contact halal products without contamination                   | "Pork is najs and cannot share production lines with halal products." | Impure           |
-| Cross-Contamination | Unintended contact between halal products and haram/najs substances during production                | "Shared fryers risk cross-contamination from pork products."          | Contamination    |
-| Slaughter Method    | Procedure for animal slaughter (must be zabiha/dhabiha for meat to be halal)                         | "Beef must use zabiha slaughter method with bismillah recitation."    | Zabiha           |
-| Alcohol Derivation  | Source of alcohol in ingredient (synthetic alcohol often permissible, wine-derived alcohol is haram) | "This alcohol is derived from petroleum, not wine, so it's halal."    | None             |
-| Derivation Source   | Origin of ingredient (plant, animal, synthetic) - critical for halal classification                  | "Lecithin can be soy-derived (halal) or pork-derived (haram)."        | Origin           |
+| Term                | Definition                                                                                               | Example Usage                                                             | Aliases (if any) |
+| ------------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------- |
+| Permitted           | Permissible according to Islamic law for consumption or use                                              | "This product is permitted because all ingredients are plant-derived."    | Permissible      |
+| Forbidden           | Forbidden according to Islamic law (e.g., pork, alcohol, improperly slaughtered meat)                    | "Gelatin from pork is forbidden."                                         | Forbidden        |
+| Mushbooh            | Doubtful or questionable ingredient requiring further investigation or scholarly ruling                  | "Vanilla extract is mushbooh due to alcohol content."                     | Doubtful         |
+| Ingredient          | Raw material or additive used in product formulation                                                     | "Lecithin is an ingredient in chocolate."                                 | Component        |
+| Certification       | Formal attestation that a product meets permitted standards, issued by qualified authority               | "JAKIM issued a permitted certification for this factory."                | Certificate      |
+| Najs                | Ritually impure substance that cannot contact permitted products without contamination                   | "Pork is najs and cannot share production lines with permitted products." | Impure           |
+| Cross-Contamination | Unintended contact between permitted products and forbidden/najs substances during production            | "Shared fryers risk cross-contamination from pork products."              | Contamination    |
+| Slaughter Method    | Procedure for animal slaughter (must be zabiha/dhabiha for meat to be permitted)                         | "Beef must use zabiha slaughter method with bismillah recitation."        | Zabiha           |
+| Alcohol Derivation  | Source of alcohol in ingredient (synthetic alcohol often permissible, wine-derived alcohol is forbidden) | "This alcohol is derived from petroleum, not wine, so it's permitted."    | None             |
+| Derivation Source   | Origin of ingredient (plant, animal, synthetic) - critical for permitted classification                  | "Lecithin can be soy-derived (permitted) or pork-derived (forbidden)."    | Origin           |
 
 ### Ambiguous Terms (different meanings in other contexts)
 
-- **Certification**: In this context means "halal compliance attestation", but in **Quality Management Context** means "ISO 9001 quality certification"
-- **Contamination**: In this context means "haram contact with halal product", but in **Food Safety Context** means "bacterial or chemical contamination"
+- **Certification**: In this context means "permitted compliance attestation", but in **Quality Management Context** means "ISO 9001 quality certification"
+- **Contamination**: In this context means "forbidden contact with permitted product", but in **Food Safety Context** means "bacterial or chemical contamination"
 - **Pure**: In this context means "free from najs (ritual impurity)", but in **Chemistry Context** means "100% substance concentration"
 
 ### Forbidden Terms (banned from domain model)
 
-- **"Clean/Unclean"**: Ambiguous and has different meaning in Western food safety vs. Islamic purity laws. Use "Halal/Haram/Najs" instead.
-- **"Kosher"**: While related to Islamic dietary laws, kosher (Jewish dietary law) has different rules (e.g., allows alcohol, different slaughter method). Do not conflate with halal.
+- **"Clean/Unclean"**: Ambiguous and has different meaning in Western food safety vs. Islamic purity laws. Use "Permitted/Forbidden/Najs" instead.
+- **"Kosher"**: While related to Islamic dietary laws, kosher (Jewish dietary law) has different rules (e.g., allows alcohol, different slaughter method). Do not conflate with permitted.
 
 ### Business Rules in Domain Language
 
-**Rule 1**: An ingredient is halal only if its derivation source is halal and no cross-contamination occurred during production.
+**Rule 1**: An ingredient is permitted only if its derivation source is permitted and no cross-contamination occurred during production.
 
-- **Example**: Lecithin derived from soybeans (plant-based) is halal. Lecithin derived from pork is haram. Soy lecithin produced in a factory with shared equipment used for pork products is mushbooh (requires verification of cleaning procedures).
+- **Example**: Lecithin derived from soybeans (plant-based) is permitted. Lecithin derived from pork is forbidden. Soy lecithin produced in a factory with shared equipment used for pork products is mushbooh (requires verification of cleaning procedures).
 - **Rationale**: Islamic law requires both inherent permissibility (source) and procedural purity (production process).
 
-**Rule 2**: Alcohol is haram if derived from fermentation of grapes/dates, but permissible if synthetically produced and used in non-intoxicating amounts (< 0.5% residual alcohol).
+**Rule 2**: Alcohol is forbidden if derived from fermentation of grapes/dates, but permissible if synthetically produced and used in non-intoxicating amounts (< 0.5% residual alcohol).
 
-- **Example**: Vanilla extract with wine-based alcohol is haram. Vanilla extract with synthetic ethanol at 0.3% residual is halal.
+- **Example**: Vanilla extract with wine-based alcohol is forbidden. Vanilla extract with synthetic ethanol at 0.3% residual is permitted.
 - **Rationale**: Islamic jurisprudence distinguishes between intoxicating khamr (wine) and industrial alcohol. Scholarly consensus allows trace synthetic alcohol in manufacturing.
 
-**Rule 3**: Certification is valid only if issued by accredited halal authority and renewed annually with factory audits.
+**Rule 3**: Certification is valid only if issued by accredited permitted authority and renewed annually with factory audits.
 
-- **Example**: JAKIM (Malaysia) certification is valid for 2 years. After expiration, product cannot be labeled halal until recertified.
+- **Example**: JAKIM (Malaysia) certification is valid for 2 years. After expiration, product cannot be labeled permitted until recertified.
 - **Rationale**: Prevents outdated certifications from misleading consumers. Factory processes change over time, requiring re-verification.
 
 ---
@@ -678,7 +678,7 @@ graph TD
 
 ### Aggregate 1: ProductVerification
 
-**Purpose**: Ensures a product's halal status is accurately determined based on ingredient verification, production process review, and certification issuance. Protects invariant: "A certified halal product must have all halal ingredients and no cross-contamination risk."
+**Purpose**: Ensures a product's permitted status is accurately determined based on ingredient verification, production process review, and certification issuance. Protects invariant: "A certified permitted product must have all permitted ingredients and no cross-contamination risk."
 
 **Structure**:
 
@@ -691,7 +691,7 @@ classDiagram
         +manufacturer: ManufacturerId
         +status: VerificationStatus
         +verifyIngredients() VerificationResult
-        +issueCertification() HalalCertificate
+        +issueCertification() PermittedCertificate
         +flagCrossContamination() void
     }
     style ProductVerification fill:#0173B2,stroke:#000,color:#FFFFFF
@@ -701,7 +701,7 @@ classDiagram
         +ingredientId: IngredientId
         +quantity: Quantity
         +derivationSource: DerivationSource
-        +halalStatus: HalalStatus
+        +permittedStatus: PermittedStatus
     }
     style IngredientDeclaration fill:#029E73,stroke:#000,color:#FFFFFF
 
@@ -714,13 +714,13 @@ classDiagram
     }
     style ProductionAudit fill:#029E73,stroke:#000,color:#FFFFFF
 
-    class HalalStatus {
+    class PermittedStatus {
         <<Value Object>>
-        +status: enum[Halal,Haram,Mushbooh]
+        +status: enum[Permitted,Forbidden,Mushbooh]
         +justification: string
         +scholarlySource: string
     }
-    style HalalStatus fill:#DE8F05,stroke:#000,color:#000000
+    style PermittedStatus fill:#DE8F05,stroke:#000,color:#000000
 
     class VerificationStatus {
         <<Value Object>>
@@ -729,20 +729,20 @@ classDiagram
     }
     style VerificationStatus fill:#DE8F05,stroke:#000,color:#000000
 
-    class HalalCertificate {
+    class PermittedCertificate {
         <<Value Object>>
         +certificateNumber: string
         +issuedDate: Date
         +expiryDate: Date
         +issuingAuthority: string
     }
-    style HalalCertificate fill:#DE8F05,stroke:#000,color:#000000
+    style PermittedCertificate fill:#DE8F05,stroke:#000,color:#000000
 
     ProductVerification "1" --> "*" IngredientDeclaration
     ProductVerification "1" --> "*" ProductionAudit
     ProductVerification --> VerificationStatus
-    ProductVerification --> HalalCertificate
-    IngredientDeclaration --> HalalStatus
+    ProductVerification --> PermittedCertificate
+    IngredientDeclaration --> PermittedStatus
 ```
 
 **Components**:
@@ -752,23 +752,23 @@ classDiagram
   - Key Attributes: `productName`, `manufacturer`, `status` (Pending/Verified/Rejected/Expired)
 
 - **Contained Entities**:
-  - `IngredientDeclaration`: Each ingredient used in the product with halal status determination
+  - `IngredientDeclaration`: Each ingredient used in the product with permitted status determination
   - `ProductionAudit`: Factory audit records assessing cross-contamination risk
 
 - **Value Objects**:
-  - `HalalStatus`: Immutable halal/haram/mushbooh classification with justification and scholarly source citation
+  - `PermittedStatus`: Immutable permitted/forbidden/mushbooh classification with justification and scholarly source citation
   - `VerificationStatus`: Current state of verification (Pending → Verified/Rejected)
-  - `HalalCertificate`: Issued certification with expiry date and certificate number
+  - `PermittedCertificate`: Issued certification with expiry date and certificate number
 
 **Invariants** (rules that must ALWAYS be true):
 
-1. **All ingredients must have determined HalalStatus before certification can be issued**
-   - **Validation**: `issueCertification()` command checks all `IngredientDeclaration` entities have non-null `halalStatus`
-   - **Example Violation**: Product with 10 ingredients where 9 are verified halal and 1 is pending investigation cannot be certified
+1. **All ingredients must have determined PermittedStatus before certification can be issued**
+   - **Validation**: `issueCertification()` command checks all `IngredientDeclaration` entities have non-null `permittedStatus`
+   - **Example Violation**: Product with 10 ingredients where 9 are verified permitted and 1 is pending investigation cannot be certified
 
-2. **A product with ANY haram ingredient cannot be certified halal**
-   - **Validation**: `verifyIngredients()` method scans all `IngredientDeclaration` entities; if any have `HalalStatus.status = Haram`, overall product status = Rejected
-   - **Example Violation**: Chocolate with halal cocoa, halal sugar, but haram pork-derived gelatin cannot be certified
+2. **A product with ANY forbidden ingredient cannot be certified permitted**
+   - **Validation**: `verifyIngredients()` method scans all `IngredientDeclaration` entities; if any have `PermittedStatus.status = Forbidden`, overall product status = Rejected
+   - **Example Violation**: Chocolate with permitted cocoa, permitted sugar, but forbidden pork-derived gelatin cannot be certified
 
 3. **Certification expiry date must be ≤ 2 years from issuance date**
    - **Validation**: `issueCertification()` enforces `expiryDate ≤ issuedDate + 2 years`
@@ -782,12 +782,12 @@ classDiagram
 
 1. **VerifyIngredients**
    - **Preconditions**: All `IngredientDeclaration` entities have `derivationSource` declared
-   - **Side Effects**: Updates `IngredientDeclaration.halalStatus` for each ingredient, changes aggregate `status` to Verified or Rejected
-   - **Events Published**: `IngredientsVerified` (if all halal), `HaramIngredientDetected` (if any haram)
+   - **Side Effects**: Updates `IngredientDeclaration.permittedStatus` for each ingredient, changes aggregate `status` to Verified or Rejected
+   - **Events Published**: `IngredientsVerified` (if all permitted), `ForbiddenIngredientDetected` (if any forbidden)
 
 2. **IssueCertification**
-   - **Preconditions**: `status = Verified`, all ingredients halal, recent production audit (≤6 months), no cross-contamination risks flagged
-   - **Side Effects**: Creates `HalalCertificate` value object, publishes `CertificationIssued` event
+   - **Preconditions**: `status = Verified`, all ingredients permitted, recent production audit (≤6 months), no cross-contamination risks flagged
+   - **Side Effects**: Creates `PermittedCertificate` value object, publishes `CertificationIssued` event
    - **Events Published**: `CertificationIssued`
 
 3. **FlagCrossContamination**
@@ -797,24 +797,24 @@ classDiagram
 
 4. **RenewCertification**
    - **Preconditions**: Existing certification near expiry (≤30 days), updated production audit conducted
-   - **Side Effects**: Extends `HalalCertificate.expiryDate` by 2 years
+   - **Side Effects**: Extends `PermittedCertificate.expiryDate` by 2 years
    - **Events Published**: `CertificationRenewed`
 
 **Domain Events Published**:
 
-1. **IngredientsVerified**: Fired when all ingredients successfully classified as halal
+1. **IngredientsVerified**: Fired when all ingredients successfully classified as permitted
    - **Payload**: `verificationId`, `productName`, `ingredientCount`, `verifiedDate`
-   - **Consumers**: E-Commerce Platform Context (display halal badge), Reporting Context (analytics)
+   - **Consumers**: E-Commerce Platform Context (display permitted badge), Reporting Context (analytics)
 
-2. **HaramIngredientDetected**: Fired when any haram ingredient found
-   - **Payload**: `verificationId`, `productName`, `haramIngredient: { name, derivationSource, halalStatus }`
+2. **ForbiddenIngredientDetected**: Fired when any forbidden ingredient found
+   - **Payload**: `verificationId`, `productName`, `forbiddenIngredient: { name, derivationSource, permittedStatus }`
    - **Consumers**: Notification Context (alert manufacturer), Reporting Context
 
-3. **CertificationIssued**: Fired when halal certificate issued
+3. **CertificationIssued**: Fired when permitted certificate issued
    - **Payload**: `verificationId`, `certificateNumber`, `issuedDate`, `expiryDate`, `manufacturer`
-   - **Consumers**: Certification Registry Context (public lookup), E-Commerce Platform (enable halal label)
+   - **Consumers**: Certification Registry Context (public lookup), E-Commerce Platform (enable permitted label)
 
-4. **CrossContaminationDetected**: Fired when production audit finds haram contact risk
+4. **CrossContaminationDetected**: Fired when production audit finds forbidden contact risk
    - **Payload**: `verificationId`, `productName`, `riskLevel`, `auditFindings[]`
    - **Consumers**: Notification Context (alert manufacturer), Quality Assurance Context
 
@@ -830,7 +830,7 @@ classDiagram
 
 ### Aggregate 2: IngredientKnowledge
 
-**Purpose**: Maintains authoritative halal classification for global ingredient catalog. Ensures consistency: "An ingredient's halal status is determined by derivation source and scholarly consensus."
+**Purpose**: Maintains authoritative permitted classification for global ingredient catalog. Ensures consistency: "An ingredient's permitted status is determined by derivation source and scholarly consensus."
 
 [Continue with similar structure for IngredientKnowledge aggregate...]
 
@@ -840,11 +840,11 @@ classDiagram
 
 **Domain Service 1: DerivationSourceAnalyzer**
 
-- **Purpose**: Determines if an ingredient's derivation source (plant, animal, synthetic) makes it halal, haram, or mushbooh
+- **Purpose**: Determines if an ingredient's derivation source (plant, animal, synthetic) makes it permitted, forbidden, or mushbooh
 - **Why not in an aggregate?**: Logic requires external scholarly database lookup and E-number API calls, not intrinsic to ProductVerification or IngredientKnowledge aggregate state
 - **Inputs**: `ingredientName: string`, `eNumber: string` (optional), `supplier: string`
-- **Outputs**: `HalalStatus` (Halal/Haram/Mushbooh with justification)
-- **Example**: Input "E471" → Calls E-Number API → Returns "Mono- and diglycerides of fatty acids" → Checks derivation (plant or animal) → If plant-derived, returns `HalalStatus(Halal, "Plant-based emulsifier", "JAKIM Technical Guidelines 2020")`
+- **Outputs**: `PermittedStatus` (Permitted/Forbidden/Mushbooh with justification)
+- **Example**: Input "E471" → Calls E-Number API → Returns "Mono- and diglycerides of fatty acids" → Checks derivation (plant or animal) → If plant-derived, returns `PermittedStatus(Permitted, "Plant-based emulsifier", "JAKIM Technical Guidelines 2020")`
 
 **Domain Service 2: CrossContaminationRiskEvaluator**
 
@@ -888,17 +888,17 @@ graph TD
 
 **Event Specifications**:
 
-| Event Name                 | Triggered By                   | Payload                                                 | Consumers                               | Purpose                                         |
-| -------------------------- | ------------------------------ | ------------------------------------------------------- | --------------------------------------- | ----------------------------------------------- |
-| IngredientsVerified        | VerifyIngredients command      | verificationId, ingredientCount, verifiedDate           | E-Commerce Platform, Reporting Context  | Notify that all ingredients are halal           |
-| HaramIngredientDetected    | VerifyIngredients command      | verificationId, haramIngredient details                 | Notification Context, Manufacturer App  | Alert manufacturer of haram ingredient          |
-| CertificationIssued        | IssueCertification command     | certificateNumber, issuedDate, expiryDate, manufacturer | Certification Registry, E-Commerce      | Publish new halal certification                 |
-| CertificationExpired       | Scheduled Policy (time-based)  | verificationId, certificateNumber, expiryDate           | Notification Context, E-Commerce        | Alert manufacturer to renew expired certificate |
-| CrossContaminationDetected | FlagCrossContamination command | verificationId, riskLevel, auditFindings                | Quality Assurance, Notification Context | Notify of production contamination risk         |
+| Event Name                  | Triggered By                   | Payload                                                 | Consumers                               | Purpose                                         |
+| --------------------------- | ------------------------------ | ------------------------------------------------------- | --------------------------------------- | ----------------------------------------------- |
+| IngredientsVerified         | VerifyIngredients command      | verificationId, ingredientCount, verifiedDate           | E-Commerce Platform, Reporting Context  | Notify that all ingredients are permitted       |
+| ForbiddenIngredientDetected | VerifyIngredients command      | verificationId, forbiddenIngredient details             | Notification Context, Manufacturer App  | Alert manufacturer of forbidden ingredient      |
+| CertificationIssued         | IssueCertification command     | certificateNumber, issuedDate, expiryDate, manufacturer | Certification Registry, E-Commerce      | Publish new permitted certification             |
+| CertificationExpired        | Scheduled Policy (time-based)  | verificationId, certificateNumber, expiryDate           | Notification Context, E-Commerce        | Alert manufacturer to renew expired certificate |
+| CrossContaminationDetected  | FlagCrossContamination command | verificationId, riskLevel, auditFindings                | Quality Assurance, Notification Context | Notify of production contamination risk         |
 
 **Event Processing**:
 
-- **Synchronous**: `IngredientsVerified` (E-Commerce Platform needs immediate halal badge update)
+- **Synchronous**: `IngredientsVerified` (E-Commerce Platform needs immediate permitted badge update)
 - **Asynchronous**: `CertificationExpired` (notification can tolerate eventual consistency, sent within 1 hour)
 - **Ordering Guarantees**: `IngredientsVerified` must be processed before `CertificationIssued` (enforced by command preconditions, not event ordering)
 

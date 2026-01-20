@@ -27,47 +27,47 @@ The domain model is not an afterthought or simple data structure - it's the hear
 
 ```typescript
 // NOT Domain-Driven: Anemic domain model
-interface ZakatAssessment {
+interface TaxAssessment {
   id: string;
-  nisabAmount: number;
-  zakatableWealth: number;
-  zakatAmount: number;
+  thresholdAmount: number;
+  taxableWealth: number;
+  taxAmount: number;
 }
 
 // Domain-Driven: Rich domain model
-class ZakatAssessment {
+class TaxAssessment {
   private constructor(
     readonly id: AssessmentId,
-    readonly nisabAmount: Money,
-    readonly zakatableWealth: Money,
+    readonly thresholdAmount: Money,
+    readonly taxableWealth: Money,
     readonly calculatedAt: HijriDate,
   ) {}
 
-  calculate(zakatRate: ZakatRate): ZakatAmount {
-    if (this.zakatableWealth.isLessThan(this.nisabAmount)) {
-      return ZakatAmount.zero();
+  calculate(taxRate: TaxRate): TaxAmount {
+    if (this.taxableWealth.isLessThan(this.thresholdAmount)) {
+      return TaxAmount.zero();
     }
-    return this.zakatableWealth.multiply(zakatRate.percentage);
+    return this.taxableWealth.multiply(taxRate.percentage);
   }
 
-  meetsNisabThreshold(): boolean {
-    return this.zakatableWealth.isGreaterThanOrEqual(this.nisabAmount);
+  meetsThresholdThreshold(): boolean {
+    return this.taxableWealth.isGreaterThanOrEqual(this.thresholdAmount);
   }
 }
 ```
 
 ### 2. Ubiquitous Language Bridges Technical and Business
 
-Domain experts and developers must speak the same language. Terms like "ZakatAssessment," "NisabThreshold," and "HalalCertification" should appear in conversations, documentation, and code identically. This shared vocabulary becomes the foundation for clear communication and reduces translation errors.
+Domain experts and developers must speak the same language. Terms like "TaxAssessment," "ThresholdThreshold," and "PermittedCertification" should appear in conversations, documentation, and code identically. This shared vocabulary becomes the foundation for clear communication and reduces translation errors.
 
 ### 3. Bounded Contexts Define Clear Boundaries
 
 Large systems cannot use a single unified model. Different parts of the business have different concerns and perspectives. Bounded Contexts explicitly acknowledge these differences, allowing each subsystem to optimize its model for its specific needs while maintaining clear integration points.
 
-For example, in a Sharia-compliant e-commerce system:
+For example, in a Compliance-compliant e-commerce system:
 
-- **Zakat Calculation Context**: Models wealth, nisab thresholds, and zakat rates with precise religious calculations
-- **Inventory Management Context**: Models products, halal certifications, and stock levels
+- **Tax Calculation Context**: Models wealth, threshold thresholds, and tax rates with precise religious calculations
+- **Inventory Management Context**: Models products, permitted certifications, and stock levels
 - **Order Processing Context**: Models shopping carts, orders, and fulfillment
 
 Each context has its own model of "Product" optimized for its needs, rather than forcing a single shared Product entity across all contexts.
@@ -192,21 +192,21 @@ Use this matrix to evaluate whether DDD is appropriate for your project:
 - **Total 51-70**: DDD is appropriate; apply both strategic and tactical patterns
 - **Total > 70**: DDD is essential; invest heavily in modeling and collaboration
 
-### Example: Open Sharia Enterprise Platform
+### Example: Open Compliance Enterprise Platform
 
-Let's apply the decision matrix to our Sharia-compliant business systems:
+Let's apply the decision matrix to our Compliance-compliant business systems:
 
-| Criterion                      | Weight | Score | Weighted Score | Rationale                                                                          |
-| ------------------------------ | ------ | ----- | -------------- | ---------------------------------------------------------------------------------- |
-| **Business Logic Complexity**  | 3x     | 5     | 15             | Complex Islamic jurisprudence rules for zakat, halal certification, riba detection |
-| **Domain Expert Availability** | 2x     | 4     | 8              | Access to Islamic scholars and halal business operators                            |
-| **Project Lifespan**           | 2x     | 5     | 10             | Long-term platform expected to evolve over decades                                 |
-| **Team Size**                  | 1x     | 3     | 3              | Small team currently, expected to grow                                             |
-| **Domain Ambiguity**           | 2x     | 4     | 8              | Digitizing traditional Islamic business practices requires learning                |
-| **Cost of Defects**            | 3x     | 5     | 15             | Incorrect zakat calculations or riba violations have religious consequences        |
-| **TOTAL**                      |        |       | **59**         | **Strong DDD candidate**                                                           |
+| Criterion                      | Weight | Score | Weighted Score | Rationale                                                                                |
+| ------------------------------ | ------ | ----- | -------------- | ---------------------------------------------------------------------------------------- |
+| **Business Logic Complexity**  | 3x     | 5     | 15             | Complex Islamic jurisprudence rules for tax, permitted certification, interest detection |
+| **Domain Expert Availability** | 2x     | 4     | 8              | Access to Islamic scholars and permitted business operators                              |
+| **Project Lifespan**           | 2x     | 5     | 10             | Long-term platform expected to evolve over decades                                       |
+| **Team Size**                  | 1x     | 3     | 3              | Small team currently, expected to grow                                                   |
+| **Domain Ambiguity**           | 2x     | 4     | 8              | Digitizing traditional Islamic business practices requires learning                      |
+| **Cost of Defects**            | 3x     | 5     | 15             | Incorrect tax calculations or interest violations have religious consequences            |
+| **TOTAL**                      |        |       | **59**         | **Strong DDD candidate**                                                                 |
 
-**Conclusion**: DDD is highly appropriate for Open Sharia Enterprise. The complex religious business rules, high cost of defects, and long-term strategic value justify the upfront investment in modeling and collaboration with Islamic scholars.
+**Conclusion**: DDD is highly appropriate for Open Compliance Enterprise. The complex religious business rules, high cost of defects, and long-term strategic value justify the upfront investment in modeling and collaboration with Islamic scholars.
 
 ## Lightweight vs. Full DDD
 
@@ -297,12 +297,12 @@ If DDD seems appropriate for your project, follow this learning path:
 
 ## DDD in This Repository
 
-Throughout this documentation, examples draw from the Open Sharia Enterprise domain:
+Throughout this documentation, examples draw from the Open Compliance Enterprise domain:
 
-- **Zakat Calculation**: Core subdomain requiring precise Islamic jurisprudence rules
-- **Halal Certification**: Supporting subdomain for product verification
-- **Islamic Financial Accounting**: Complex rules for riba-free transactions
-- **Murabaha Contracts**: Cost-plus financing with specific Islamic requirements
+- **Tax Calculation**: Core subdomain requiring precise Islamic jurisprudence rules
+- **Permitted Certification**: Supporting subdomain for product verification
+- **Islamic Financial Accounting**: Complex rules for interest-free transactions
+- **Loan Contracts**: Cost-plus financing with specific Islamic requirements
 - **Hijri Calendar**: Value objects for Islamic date calculations
 
 These examples demonstrate DDD concepts in a real-world context with genuine complexity, religious compliance requirements, and domain expert collaboration needs.
@@ -334,7 +334,7 @@ Domain-Driven Design is a comprehensive approach to software development that pr
 
 DDD provides both strategic patterns (Bounded Contexts, Context Mapping, Subdomains) and tactical patterns (Aggregates, Entities, Value Objects, Domain Events) to organize code around business concepts.
 
-For the Open Sharia Enterprise platform, with its complex Islamic jurisprudence rules and long-term strategic value, DDD is an appropriate and valuable approach.
+For the Open Compliance Enterprise platform, with its complex Islamic jurisprudence rules and long-term strategic value, DDD is an appropriate and valuable approach.
 
 ## Next Steps
 

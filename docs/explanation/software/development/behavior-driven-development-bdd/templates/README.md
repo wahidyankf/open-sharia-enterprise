@@ -9,7 +9,7 @@
 
 ## Overview
 
-This directory provides immediately usable templates for practicing Behavior-Driven Development (BDD). Templates cover scenarios, feature files, collaboration workshops, and step definitions. Each template includes Islamic Finance examples (Zakat, Halal certification, Murabaha contracts) that demonstrate BDD practices in a real-world domain.
+This directory provides immediately usable templates for practicing Behavior-Driven Development (BDD). Templates cover scenarios, feature files, collaboration workshops, and step definitions. Each template includes Islamic Finance examples (Tax, Permitted certification, Loan contracts) that demonstrate BDD practices in a real-world domain.
 
 These templates serve as starting points for teams adopting BDD or individuals learning the practice. Copy templates, replace placeholders with your domain-specific content, and adapt to your project's needs.
 
@@ -33,7 +33,7 @@ These templates serve as starting points for teams adopting BDD or individuals l
 - Background (shared setup across scenarios)
 - Multiple scenario examples (happy path, edge cases, errors)
 - Tags for organization (@smoke, @regression, @critical)
-- Islamic Finance example: Zakat calculation feature
+- Islamic Finance example: Tax calculation feature
 
 ### 2. Scenario Template
 
@@ -54,7 +54,7 @@ These templates serve as starting points for teams adopting BDD or individuals l
 - Then (expected outcome / assertion)
 - Data tables for complex inputs
 - Multiple examples for same pattern (Scenario Outline)
-- Islamic Finance example: Murabaha contract validation
+- Islamic Finance example: Loan contract validation
 
 ### 3. User Story with Acceptance Criteria
 
@@ -74,7 +74,7 @@ These templates serve as starting points for teams adopting BDD or individuals l
 - Acceptance criteria as BDD scenarios
 - Business value and context
 - Story estimation and priority
-- Islamic Finance example: Halal product certification workflow
+- Islamic Finance example: Permitted product certification workflow
 
 ### 4. Example Mapping Session Template
 
@@ -115,7 +115,7 @@ These templates serve as starting points for teams adopting BDD or individuals l
 - Then steps (assertions / verification)
 - Parameter extraction (numbers, strings, tables)
 - World object for sharing context
-- Islamic Finance example: Riba (interest) prevention validation
+- Islamic Finance example: Interest (interest) prevention validation
 
 ### 6. Scenario Outline Template
 
@@ -135,7 +135,7 @@ These templates serve as starting points for teams adopting BDD or individuals l
 - Examples table with multiple test cases
 - Parameter placeholders (<parameter>)
 - Multiple example blocks for different categories
-- Islamic Finance example: Nisab thresholds across asset types
+- Islamic Finance example: Threshold thresholds across asset types
 
 ### 7. Three Amigos Session Template
 
@@ -155,7 +155,7 @@ These templates serve as starting points for teams adopting BDD or individuals l
 - Participant roles and responsibilities
 - Discussion prompts and questions
 - Output documentation format
-- Islamic Finance example: Zakat on mixed asset portfolio
+- Islamic Finance example: Tax on mixed asset portfolio
 
 ## How to Use These Templates
 
@@ -185,18 +185,18 @@ cp templates/ex-so-de-bdd-te__feature-file-template.md \
 
 Templates use placeholders in square brackets:
 
-- `[Feature Name]` → Your feature name (e.g., "Zakat Calculation")
+- `[Feature Name]` → Your feature name (e.g., "Tax Calculation")
 - `[Business Value]` → Why feature matters (e.g., "Fulfill religious obligation")
 - `[Precondition]` → Starting context (e.g., "User owns 100g gold")
-- `[Action]` → What user does (e.g., "Calculate Zakat")
-- `[Expected Outcome]` → What should happen (e.g., "Zakat is 2.5g")
+- `[Action]` → What user does (e.g., "Calculate Tax")
+- `[Expected Outcome]` → What should happen (e.g., "Tax is 2.5g")
 
 ### Step 4: Customize for Your Domain
 
 Replace Islamic Finance examples with your domain:
 
-- **Islamic Finance**: Zakat, Murabaha, Riba, Halal → **Your Domain**: Your business concepts
-- **Shariah Advisor**: Domain expert → **Your Expert**: Your domain expert role
+- **Islamic Finance**: Tax, Loan, Interest, Permitted → **Your Domain**: Your business concepts
+- **Compliance Advisor**: Domain expert → **Your Expert**: Your domain expert role
 - **Asset types (gold, silver)**: Your data entities
 - **Compliance rules**: Your business rules
 
@@ -213,11 +213,11 @@ Replace Islamic Finance examples with your domain:
 
 Templates already include Islamic Finance examples:
 
-- **Zakat calculation**: Nisab thresholds, Hawl (lunar year), 2.5% rate
-- **Murabaha contracts**: Cost disclosure, profit margin, asset ownership
-- **Riba prevention**: Interest prohibition, fixed profit validation
-- **Halal certification**: Ingredient verification, supplier validation
-- **Sukuk compliance**: Asset-backed structure, Shariah board approval
+- **Tax calculation**: Threshold thresholds, Hawl (lunar year), 2.5% rate
+- **Loan contracts**: Cost disclosure, profit margin, asset ownership
+- **Interest prevention**: Interest prohibition, fixed profit validation
+- **Permitted certification**: Ingredient verification, supplier validation
+- **Sukuk compliance**: Asset-backed structure, Compliance board approval
 
 Use these directly or adapt to specific Fiqh school (Madhab) requirements.
 
@@ -229,10 +229,10 @@ Replace Islamic Finance concepts with your domain:
 
 ```gherkin
 # Template (Islamic Finance)
-Scenario: Calculate Zakat on gold above nisab
+Scenario: Calculate Tax on gold above threshold
   Given individual owns 100 grams of gold
-  When Zakat calculation is performed
-  Then Zakat should be 2.5 grams
+  When Tax calculation is performed
+  Then Tax should be 2.5 grams
 
 # Adapted (E-commerce)
 Scenario: Calculate tax on order above threshold
@@ -245,10 +245,10 @@ Scenario: Calculate tax on order above threshold
 
 ```gherkin
 # Template (Islamic Finance)
-Scenario: Verify Halal certification for product
+Scenario: Verify Permitted certification for product
   Given product "Chicken" is registered
   When certification is checked
-  Then product should show "Halal Certified" badge
+  Then product should show "Permitted Certified" badge
 
 # Adapted (Healthcare)
 Scenario: Verify medical license for practitioner
@@ -260,8 +260,8 @@ Scenario: Verify medical license for practitioner
 **Banking Example**:
 
 ```gherkin
-# Template (Islamic Finance - Murabaha)
-Scenario: Create Murabaha contract with profit disclosure
+# Template (Islamic Finance - Loan)
+Scenario: Create Loan contract with profit disclosure
   Given bank purchases asset at 100,000 USD
   And bank sets profit margin 15,000 USD
   When contract is created
@@ -356,6 +356,6 @@ To add new templates to this collection:
 
 **Usage**: Copy template → Replace placeholders → Customize for domain → Validate with team
 
-**Examples**: All templates include Islamic Finance examples (Zakat, Murabaha, Halal, Sukuk)
+**Examples**: All templates include Islamic Finance examples (Tax, Loan, Permitted, Sukuk)
 
 Use these templates to accelerate BDD adoption, maintain consistency across team, and focus on collaboration rather than format.

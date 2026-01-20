@@ -41,31 +41,31 @@ See [C4 Architecture Model Documentation](../c4-architecture-model/README.md) fo
 
 **Integration**: Use System Context to visualize external systems that integrate with your bounded contexts.
 
-**Example: Zakat Calculation System Context**
+**Example: Tax Calculation System Context**
 
 ```mermaid
 C4Context
-    title System Context: Zakat Calculation Platform
+    title System Context: Tax Calculation Platform
 
-    Person(wealthHolder, "Wealth Holder", "Muslim individual calculating zakat obligation")
-    Person(scholar, "Islamic Scholar", "Verifies zakat calculation rules")
+    Person(wealthHolder, "Wealth Holder", "Muslim individual calculating tax obligation")
+    Person(scholar, "Islamic Scholar", "Verifies tax calculation rules")
 
-    System(zakatPlatform, "Zakat Calculation Platform", "Calculates zakat obligations based on Islamic jurisprudence")
+    System(taxPlatform, "Tax Calculation Platform", "Calculates tax obligations based on Islamic jurisprudence")
 
-    System_Ext(paymentGateway, "Payment Gateway", "Processes zakat payments")
-    System_Ext(goldPriceAPI, "Gold Price API", "Provides nisab threshold based on gold price")
+    System_Ext(paymentGateway, "Payment Gateway", "Processes tax payments")
+    System_Ext(goldPriceAPI, "Gold Price API", "Provides threshold threshold based on gold price")
     System_Ext(hijriCalendar, "Hijri Calendar Service", "Provides Islamic calendar conversions")
 
-    Rel(wealthHolder, zakatPlatform, "Declares wealth, views assessments")
-    Rel(scholar, zakatPlatform, "Configures zakat rates, reviews calculations")
-    Rel(zakatPlatform, paymentGateway, "Processes payments", "HTTPS/JSON")
-    Rel(zakatPlatform, goldPriceAPI, "Fetches nisab threshold", "HTTPS/JSON")
-    Rel(zakatPlatform, hijriCalendar, "Converts dates", "HTTPS/JSON")
+    Rel(wealthHolder, taxPlatform, "Declares wealth, views assessments")
+    Rel(scholar, taxPlatform, "Configures tax rates, reviews calculations")
+    Rel(taxPlatform, paymentGateway, "Processes payments", "HTTPS/JSON")
+    Rel(taxPlatform, goldPriceAPI, "Fetches threshold threshold", "HTTPS/JSON")
+    Rel(taxPlatform, hijriCalendar, "Converts dates", "HTTPS/JSON")
 ```
 
 **DDD Context Map Equivalent**:
 
-- **Zakat Calculation** (Core Domain) integrates with:
+- **Tax Calculation** (Core Domain) integrates with:
   - **Payment Processing** (Generic, Conformist relationship)
   - **Commodity Pricing** (Generic, Customer/Supplier)
   - **Calendar Services** (Generic, Published Language)
@@ -78,39 +78,39 @@ C4Context
 
 **Integration**: Each bounded context typically maps to one or more containers (app + database).
 
-**Example: Zakat Calculation Containers (Bounded Contexts)**
+**Example: Tax Calculation Containers (Bounded Contexts)**
 
 ```mermaid
 C4Container
-    title Container: Zakat Calculation Platform
+    title Container: Tax Calculation Platform
 
     Person(wealthHolder, "Wealth Holder")
 
-    Container_Boundary(zakatContext, "Zakat Calculation Context (Bounded Context)") {
-        Container(zakatAPI, "Zakat Calculation API", "Node.js/Express", "Provides zakat calculation REST API")
-        ContainerDb(zakatDB, "Zakat Database", "PostgreSQL", "Stores zakat assessments, declarations")
+    Container_Boundary(taxContext, "Tax Calculation Context (Bounded Context)") {
+        Container(taxAPI, "Tax Calculation API", "Node.js/Express", "Provides tax calculation REST API")
+        ContainerDb(taxDB, "Tax Database", "PostgreSQL", "Stores tax assessments, declarations")
     }
 
-    Container_Boundary(halalContext, "Halal Certification Context (Bounded Context)") {
-        Container(halalAPI, "Halal Certification API", "Node.js/Express", "Manages halal product certifications")
-        ContainerDb(halalDB, "Halal Database", "PostgreSQL", "Stores product certifications")
+    Container_Boundary(permittedContext, "Permitted Certification Context (Bounded Context)") {
+        Container(permittedAPI, "Permitted Certification API", "Node.js/Express", "Manages permitted product certifications")
+        ContainerDb(permittedDB, "Permitted Database", "PostgreSQL", "Stores product certifications")
     }
 
     Container(eventBus, "Event Bus", "Kafka", "Publishes domain events between contexts")
 
     System_Ext(paymentGateway, "Payment Gateway")
 
-    Rel(wealthHolder, zakatAPI, "Declares wealth, calculates zakat", "HTTPS/JSON")
-    Rel(zakatAPI, zakatDB, "Reads/writes assessments", "SQL")
-    Rel(zakatAPI, eventBus, "Publishes ZakatCalculated event", "Kafka")
-    Rel(halalAPI, eventBus, "Subscribes to ProductCertified event", "Kafka")
-    Rel(zakatAPI, paymentGateway, "Processes zakat payments", "HTTPS/JSON")
+    Rel(wealthHolder, taxAPI, "Declares wealth, calculates tax", "HTTPS/JSON")
+    Rel(taxAPI, taxDB, "Reads/writes assessments", "SQL")
+    Rel(taxAPI, eventBus, "Publishes TaxCalculated event", "Kafka")
+    Rel(permittedAPI, eventBus, "Subscribes to ProductCertified event", "Kafka")
+    Rel(taxAPI, paymentGateway, "Processes tax payments", "HTTPS/JSON")
 ```
 
 **DDD Bounded Context Mapping**:
 
-- **Zakat Calculation Context**: `zakatAPI` + `zakatDB`
-- **Halal Certification Context**: `halalAPI` + `halalDB`
+- **Tax Calculation Context**: `taxAPI` + `taxDB`
+- **Permitted Certification Context**: `permittedAPI` + `permittedDB`
 - **Shared Kernel**: `eventBus` (domain events)
 
 **Key Insight**: Bounded contexts are deployment boundaries. Microservices architecture = one bounded context per service.
@@ -123,46 +123,46 @@ C4Container
 
 **Integration**: Components map to aggregates, value objects, domain services, and repositories.
 
-**Example: Zakat Calculation API Components**
+**Example: Tax Calculation API Components**
 
 ```mermaid
 C4Component
-    title Component: Zakat Calculation API (Bounded Context)
+    title Component: Tax Calculation API (Bounded Context)
 
-    Container_Boundary(zakatAPI, "Zakat Calculation API") {
-        Component(zakatController, "Zakat Calculation Controller", "REST Controller", "Handles HTTP requests for zakat")
-        Component(calculateUseCase, "Calculate Zakat Use Case", "Application Service", "Orchestrates zakat calculation")
+    Container_Boundary(taxAPI, "Tax Calculation API") {
+        Component(taxController, "Tax Calculation Controller", "REST Controller", "Handles HTTP requests for tax")
+        Component(calculateUseCase, "Calculate Tax Use Case", "Application Service", "Orchestrates tax calculation")
 
-        Component(assessmentAggregate, "Zakat Assessment Aggregate", "Domain Aggregate", "Enforces zakat calculation rules")
-        Component(nisabVO, "Nisab Amount", "Value Object", "Gold/silver nisab threshold")
+        Component(assessmentAggregate, "Tax Assessment Aggregate", "Domain Aggregate", "Enforces tax calculation rules")
+        Component(thresholdVO, "Threshold Amount", "Value Object", "Gold/silver threshold threshold")
         Component(moneyVO, "Money", "Value Object", "Amount with currency")
         Component(hijriDateVO, "Hijri Date", "Value Object", "Islamic calendar date")
 
-        Component(assessmentRepo, "Assessment Repository", "Repository", "Persists zakat assessments")
+        Component(assessmentRepo, "Assessment Repository", "Repository", "Persists tax assessments")
         Component(eventPublisher, "Event Publisher", "Infrastructure", "Publishes domain events")
     }
 
-    ContainerDb(zakatDB, "Zakat Database")
+    ContainerDb(taxDB, "Tax Database")
     Container(eventBus, "Event Bus")
 
-    Rel(zakatController, calculateUseCase, "Calls")
+    Rel(taxController, calculateUseCase, "Calls")
     Rel(calculateUseCase, assessmentAggregate, "Creates, modifies")
-    Rel(assessmentAggregate, nisabVO, "Uses")
+    Rel(assessmentAggregate, thresholdVO, "Uses")
     Rel(assessmentAggregate, moneyVO, "Uses")
     Rel(assessmentAggregate, hijriDateVO, "Uses")
     Rel(calculateUseCase, assessmentRepo, "Saves via")
     Rel(calculateUseCase, eventPublisher, "Publishes via")
-    Rel(assessmentRepo, zakatDB, "Reads/writes", "SQL")
+    Rel(assessmentRepo, taxDB, "Reads/writes", "SQL")
     Rel(eventPublisher, eventBus, "Publishes to", "Kafka")
 ```
 
 **DDD Aggregate Mapping**:
 
-- **Zakat Assessment Aggregate** (root): `assessmentAggregate`
-- **Value Objects**: `nisabVO`, `moneyVO`, `hijriDateVO`
+- **Tax Assessment Aggregate** (root): `assessmentAggregate`
+- **Value Objects**: `thresholdVO`, `moneyVO`, `hijriDateVO`
 - **Repository**: `assessmentRepo`
 - **Application Service**: `calculateUseCase`
-- **Presentation**: `zakatController`
+- **Presentation**: `taxController`
 
 **Key Insight**: Aggregates are the core components within a bounded context. They enforce business rules and invariants.
 
@@ -174,14 +174,14 @@ C4Component
 
 **Integration**: Use sequence diagrams to show how domain events flow between aggregates and bounded contexts.
 
-**Example: Zakat Calculation Flow with Domain Events**
+**Example: Tax Calculation Flow with Domain Events**
 
 ```mermaid
 sequenceDiagram
     participant WH as Wealth Holder
-    participant API as Zakat API
-    participant UC as Calculate Zakat<br/>Use Case
-    participant Agg as Zakat Assessment<br/>Aggregate
+    participant API as Tax API
+    participant UC as Calculate Tax<br/>Use Case
+    participant Agg as Tax Assessment<br/>Aggregate
     participant Repo as Assessment<br/>Repository
     participant Bus as Event Bus
     participant Pay as Payment<br/>Service
@@ -197,28 +197,28 @@ sequenceDiagram
         Agg-->>UC: [Updated Assessment, WealthDeclared event]
     end
 
-    UC->>Agg: finalize(nisabThreshold, zakatRate)
-    Agg-->>UC: [Finalized Assessment, ZakatCalculated event]
+    UC->>Agg: finalize(thresholdThreshold, taxRate)
+    Agg-->>UC: [Finalized Assessment, TaxCalculated event]
 
     UC->>Repo: save(assessment)
     Repo-->>UC: Ok
 
     UC->>Bus: publish(AssessmentCreated)
     UC->>Bus: publish(WealthDeclared)
-    UC->>Bus: publish(ZakatCalculated)
+    UC->>Bus: publish(TaxCalculated)
 
-    Bus->>Pay: ZakatCalculated event
+    Bus->>Pay: TaxCalculated event
     Pay->>Pay: Create payment invoice
 
     UC-->>API: Ok(assessment)
-    API-->>WH: 201 Created<br/>{assessmentId, zakatAmount}
+    API-->>WH: 201 Created<br/>{assessmentId, taxAmount}
 ```
 
 **Domain Events**:
 
 1. **AssessmentCreated**: Assessment initialized
 2. **WealthDeclared**: Wealth declaration added
-3. **ZakatCalculated**: Zakat amount finalized
+3. **TaxCalculated**: Tax amount finalized
 
 **Key Insight**: Domain events enable eventual consistency between aggregates and bounded contexts.
 
@@ -245,25 +245,25 @@ sequenceDiagram
 **Example**:
 
 ```markdown
-# Bounded Context: Zakat Calculation
+# Bounded Context: Tax Calculation
 
 **Strategic Classification**: Core Domain
 
-**Description**: Calculates zakat obligations based on Islamic jurisprudence rules.
+**Description**: Calculates tax obligations based on Islamic jurisprudence rules.
 
 **Ubiquitous Language**:
 
-- Zakat: Islamic almsgiving obligation
-- Nisab: Minimum wealth threshold for zakat obligation
+- Tax: Islamic almsgiving obligation
+- Threshold: Minimum wealth threshold for tax obligation
 - Hawl: Lunar year period for wealth assessment
 
 **Key Aggregates**:
 
-- ZakatAssessment (root)
+- TaxAssessment (root)
 
 **Value Objects**:
 
-- Money, HijriDate, NisabAmount, ZakatRate
+- Money, HijriDate, ThresholdAmount, TaxRate
 
 **Inbound Dependencies**:
 
@@ -271,8 +271,8 @@ sequenceDiagram
 
 **Outbound Dependencies**:
 
-- Payment Processing (via ZakatCalculated event)
-- Gold Price API (fetches nisab threshold)
+- Payment Processing (via TaxCalculated event)
+- Gold Price API (fetches threshold threshold)
 ```
 
 **C4 Container Diagram** (from earlier) visualizes this bounded context.
@@ -299,10 +299,10 @@ sequenceDiagram
 
 ```mermaid
 C4Container
-    title Container: Sharia-Compliant E-Commerce (with DDD Integration Patterns)
+    title Container: Compliance-Compliant E-Commerce (with DDD Integration Patterns)
 
-    Container_Boundary(zakatContext, "Zakat Calculation Context") {
-        Container(zakatAPI, "Zakat API", "Node.js")
+    Container_Boundary(taxContext, "Tax Calculation Context") {
+        Container(taxAPI, "Tax API", "Node.js")
     }
 
     Container_Boundary(inventoryContext, "Inventory Management Context") {
@@ -315,18 +315,18 @@ C4Container
 
     System_Ext(paymentGateway, "Payment Gateway (External)")
 
-    Rel(zakatAPI, inventoryAPI, "Shared Kernel: Money, HijriDate value objects", "Internal API")
+    Rel(taxAPI, inventoryAPI, "Shared Kernel: Money, HijriDate value objects", "Internal API")
     Rel(orderAPI, inventoryAPI, "Customer/Supplier: Orders consume inventory", "REST/JSON")
     Rel(orderAPI, paymentGateway, "Conformist: Adapts to payment API", "HTTPS/JSON")
-    Rel(zakatAPI, paymentGateway, "Anti-Corruption Layer: Shields domain from payment changes", "HTTPS/JSON")
+    Rel(taxAPI, paymentGateway, "Anti-Corruption Layer: Shields domain from payment changes", "HTTPS/JSON")
 ```
 
 **Key Integration Patterns**:
 
-- **Shared Kernel** (Zakat ↔ Inventory): Shared value objects (Money, HijriDate)
+- **Shared Kernel** (Tax ↔ Inventory): Shared value objects (Money, HijriDate)
 - **Customer/Supplier** (Order ↔ Inventory): Order consumes inventory data
 - **Conformist** (Order ↔ Payment): Order adapts to payment API
-- **Anti-Corruption Layer** (Zakat ↔ Payment): Zakat protects domain model from payment changes
+- **Anti-Corruption Layer** (Tax ↔ Payment): Tax protects domain model from payment changes
 
 ### Aggregate Boundaries in Component Diagrams
 
@@ -340,14 +340,14 @@ C4Container
 
 ```mermaid
 C4Component
-    title Component: Zakat Calculation API (Aggregate Boundaries)
+    title Component: Tax Calculation API (Aggregate Boundaries)
 
-    Container_Boundary(zakatAPI, "Zakat Calculation API") {
-        Component(zakatController, "Controller", "REST")
+    Container_Boundary(taxAPI, "Tax Calculation API") {
+        Component(taxController, "Controller", "REST")
         Component(calculateUseCase, "Use Case", "Application Service")
 
-        Boundary(assessmentAgg, "Zakat Assessment Aggregate (Consistency Boundary)") {
-            Component(assessmentRoot, "Zakat Assessment", "Aggregate Root")
+        Boundary(assessmentAgg, "Tax Assessment Aggregate (Consistency Boundary)") {
+            Component(assessmentRoot, "Tax Assessment", "Aggregate Root")
             Component(declarationEntity, "Wealth Declaration", "Entity")
             Component(moneyVO, "Money", "Value Object")
             Component(hijriDateVO, "Hijri Date", "Value Object")
@@ -356,7 +356,7 @@ C4Component
         Component(assessmentRepo, "Repository", "Infrastructure")
     }
 
-    Rel(zakatController, calculateUseCase, "Calls")
+    Rel(taxController, calculateUseCase, "Calls")
     Rel(calculateUseCase, assessmentRoot, "Modifies via")
     Rel(assessmentRoot, declarationEntity, "Contains")
     Rel(assessmentRoot, moneyVO, "Uses")
@@ -366,41 +366,41 @@ C4Component
 
 **Key Insight**: Aggregate boundary = transactional boundary. All components within the boundary are saved atomically.
 
-## Example: Full DDD-C4 Integration for Zakat Calculation
+## Example: Full DDD-C4 Integration for Tax Calculation
 
 ### System Context (External Integration)
 
 ```mermaid
 C4Context
-    title System Context: Zakat Calculation Platform
+    title System Context: Tax Calculation Platform
 
-    Person(wealthHolder, "Wealth Holder", "Calculates zakat")
-    System(zakatPlatform, "Zakat Calculation Platform", "Calculates zakat based on Islamic rules")
+    Person(wealthHolder, "Wealth Holder", "Calculates tax")
+    System(taxPlatform, "Tax Calculation Platform", "Calculates tax based on Islamic rules")
 
-    System_Ext(goldAPI, "Gold Price API", "Nisab threshold source")
-    System_Ext(paymentGW, "Payment Gateway", "Processes zakat payments")
+    System_Ext(goldAPI, "Gold Price API", "Threshold threshold source")
+    System_Ext(paymentGW, "Payment Gateway", "Processes tax payments")
 
-    Rel(wealthHolder, zakatPlatform, "Declares wealth")
-    Rel(zakatPlatform, goldAPI, "Fetches nisab (Customer/Supplier)", "HTTPS")
-    Rel(zakatPlatform, paymentGW, "Processes payment (Anti-Corruption Layer)", "HTTPS")
+    Rel(wealthHolder, taxPlatform, "Declares wealth")
+    Rel(taxPlatform, goldAPI, "Fetches threshold (Customer/Supplier)", "HTTPS")
+    Rel(taxPlatform, paymentGW, "Processes payment (Anti-Corruption Layer)", "HTTPS")
 ```
 
 **DDD Context Map**:
 
-- **Zakat Calculation** (Core) ↔ **Gold Pricing** (Generic, Customer/Supplier)
-- **Zakat Calculation** (Core) ↔ **Payment Processing** (Generic, Anti-Corruption Layer)
+- **Tax Calculation** (Core) ↔ **Gold Pricing** (Generic, Customer/Supplier)
+- **Tax Calculation** (Core) ↔ **Payment Processing** (Generic, Anti-Corruption Layer)
 
 ### Container (Bounded Contexts)
 
 ```mermaid
 C4Container
-    title Container: Zakat Calculation Platform (Bounded Contexts)
+    title Container: Tax Calculation Platform (Bounded Contexts)
 
     Person(wealthHolder, "Wealth Holder")
 
-    Container_Boundary(zakatContext, "Zakat Calculation Context (Core Domain)") {
-        Container(zakatAPI, "Zakat API", "Node.js/Express", "Zakat calculation REST API")
-        ContainerDb(zakatDB, "Zakat DB", "PostgreSQL", "Assessments, declarations")
+    Container_Boundary(taxContext, "Tax Calculation Context (Core Domain)") {
+        Container(taxAPI, "Tax API", "Node.js/Express", "Tax calculation REST API")
+        ContainerDb(taxDB, "Tax DB", "PostgreSQL", "Assessments, declarations")
     }
 
     Container(eventBus, "Event Bus", "Kafka", "Domain events")
@@ -408,38 +408,38 @@ C4Container
     System_Ext(goldAPI, "Gold Price API")
     System_Ext(paymentGW, "Payment Gateway")
 
-    Rel(wealthHolder, zakatAPI, "Declares wealth", "HTTPS/JSON")
-    Rel(zakatAPI, zakatDB, "Reads/writes", "SQL")
-    Rel(zakatAPI, eventBus, "Publishes ZakatCalculated", "Kafka")
-    Rel(zakatAPI, goldAPI, "Fetches nisab", "HTTPS/JSON")
-    Rel(zakatAPI, paymentGW, "Processes payment", "HTTPS/JSON")
+    Rel(wealthHolder, taxAPI, "Declares wealth", "HTTPS/JSON")
+    Rel(taxAPI, taxDB, "Reads/writes", "SQL")
+    Rel(taxAPI, eventBus, "Publishes TaxCalculated", "Kafka")
+    Rel(taxAPI, goldAPI, "Fetches threshold", "HTTPS/JSON")
+    Rel(taxAPI, paymentGW, "Processes payment", "HTTPS/JSON")
 ```
 
-**Bounded Context**: `zakatAPI` + `zakatDB` = Zakat Calculation Context
+**Bounded Context**: `taxAPI` + `taxDB` = Tax Calculation Context
 
 ### Component (Aggregates)
 
 ```mermaid
 C4Component
-    title Component: Zakat Calculation API (Aggregates and Layers)
+    title Component: Tax Calculation API (Aggregates and Layers)
 
-    Container_Boundary(zakatAPI, "Zakat Calculation API") {
+    Container_Boundary(taxAPI, "Tax Calculation API") {
         Boundary(presentation, "Presentation Layer") {
-            Component(zakatController, "Zakat Controller", "REST Controller")
+            Component(taxController, "Tax Controller", "REST Controller")
         }
 
         Boundary(application, "Application Layer") {
-            Component(calculateUseCase, "Calculate Zakat Use Case", "Application Service")
+            Component(calculateUseCase, "Calculate Tax Use Case", "Application Service")
         }
 
         Boundary(domain, "Domain Layer") {
-            Boundary(assessmentAgg, "Zakat Assessment Aggregate") {
-                Component(assessmentRoot, "Zakat Assessment", "Aggregate Root")
+            Boundary(assessmentAgg, "Tax Assessment Aggregate") {
+                Component(assessmentRoot, "Tax Assessment", "Aggregate Root")
                 Component(declarationEntity, "Wealth Declaration", "Entity")
             }
 
             Component(moneyVO, "Money", "Value Object")
-            Component(nisabVO, "Nisab Amount", "Value Object")
+            Component(thresholdVO, "Threshold Amount", "Value Object")
             Component(hijriDateVO, "Hijri Date", "Value Object")
 
             Component(assessmentRepoIface, "Assessment Repository Interface", "Port")
@@ -451,25 +451,25 @@ C4Component
         }
     }
 
-    ContainerDb(zakatDB, "Zakat DB")
+    ContainerDb(taxDB, "Tax DB")
     Container(eventBus, "Event Bus")
 
-    Rel(zakatController, calculateUseCase, "Calls")
+    Rel(taxController, calculateUseCase, "Calls")
     Rel(calculateUseCase, assessmentRoot, "Modifies")
     Rel(assessmentRoot, declarationEntity, "Contains")
     Rel(assessmentRoot, moneyVO, "Uses")
-    Rel(assessmentRoot, nisabVO, "Uses")
+    Rel(assessmentRoot, thresholdVO, "Uses")
     Rel(assessmentRoot, hijriDateVO, "Uses")
     Rel(calculateUseCase, assessmentRepoIface, "Saves via")
     Rel(assessmentRepoImpl, assessmentRepoIface, "Implements")
-    Rel(assessmentRepoImpl, zakatDB, "Reads/writes", "SQL")
+    Rel(assessmentRepoImpl, taxDB, "Reads/writes", "SQL")
     Rel(calculateUseCase, eventPublisher, "Publishes via")
     Rel(eventPublisher, eventBus, "Publishes to", "Kafka")
 ```
 
 **Layered Architecture**:
 
-- **Presentation**: `zakatController`
+- **Presentation**: `taxController`
 - **Application**: `calculateUseCase`
 - **Domain**: `assessmentRoot`, `declarationEntity`, value objects, repository interface
 - **Infrastructure**: `assessmentRepoImpl`, `eventPublisher`
@@ -481,13 +481,13 @@ C4Component
 ```mermaid
 sequenceDiagram
     participant WH as Wealth Holder
-    participant API as Zakat Controller
-    participant UC as Calculate Zakat<br/>Use Case
-    participant Agg as Zakat Assessment<br/>Aggregate
+    participant API as Tax Controller
+    participant UC as Calculate Tax<br/>Use Case
+    participant Agg as Tax Assessment<br/>Aggregate
     participant Repo as Assessment<br/>Repository
     participant Bus as Event Bus
 
-    Note over WH,Bus: Zakat Calculation Flow with Domain Events
+    Note over WH,Bus: Tax Calculation Flow with Domain Events
 
     WH->>API: POST /assessments<br/>{holderId, declarations}
     API->>UC: execute(CreateAssessmentDTO)
@@ -500,26 +500,26 @@ sequenceDiagram
     Agg-->>UC: [Updated Assessment, WealthDeclared]
     Note over Agg: Domain Event: WealthDeclared
 
-    UC->>Agg: finalize(nisabThreshold, zakatRate)
-    Agg-->>UC: [Finalized Assessment, ZakatCalculated]
-    Note over Agg: Domain Event: ZakatCalculated<br/>zakatAmount = $250
+    UC->>Agg: finalize(thresholdThreshold, taxRate)
+    Agg-->>UC: [Finalized Assessment, TaxCalculated]
+    Note over Agg: Domain Event: TaxCalculated<br/>taxAmount = $250
 
     UC->>Repo: save(assessment)
     Repo-->>UC: Ok
 
     UC->>Bus: publish(AssessmentCreated)
     UC->>Bus: publish(WealthDeclared)
-    UC->>Bus: publish(ZakatCalculated)
+    UC->>Bus: publish(TaxCalculated)
 
     UC-->>API: Ok(assessment)
-    API-->>WH: 201 Created<br/>{assessmentId: "abc", zakatAmount: $250}
+    API-->>WH: 201 Created<br/>{assessmentId: "abc", taxAmount: $250}
 ```
 
 **Domain Events Published**:
 
-1. **AssessmentCreated**: New zakat assessment initialized
+1. **AssessmentCreated**: New tax assessment initialized
 2. **WealthDeclared**: Wealth declaration added (cash $10,000)
-3. **ZakatCalculated**: Zakat finalized ($250 = $10,000 × 2.5%)
+3. **TaxCalculated**: Tax finalized ($250 = $10,000 × 2.5%)
 
 ## Cross-Referencing DDD and C4 Documentation
 
@@ -528,13 +528,13 @@ sequenceDiagram
 **Bounded Context Documentation** (in `docs/explanation/bounded-contexts/`):
 
 ```markdown
-# Zakat Calculation Bounded Context
+# Tax Calculation Bounded Context
 
-**Architecture Diagrams**: See [C4 Container Diagram - Zakat Calculation](../c4-architecture-model/README.md#container-diagrams)
+**Architecture Diagrams**: See [C4 Container Diagram - Tax Calculation](../c4-architecture-model/README.md#container-diagrams)
 
 **Aggregates**:
 
-- ZakatAssessment (see [C4 Component Diagram - Zakat API](../c4-architecture-model/README.md#component-diagrams))
+- TaxAssessment (see [C4 Component Diagram - Tax API](../c4-architecture-model/README.md#component-diagrams))
 
 **Integration**:
 
@@ -547,16 +547,16 @@ sequenceDiagram
 **C4 Container Diagram Documentation**:
 
 ```markdown
-# C4 Container Diagram: Zakat Calculation Platform
+# C4 Container Diagram: Tax Calculation Platform
 
 **Bounded Contexts**:
 
-- Zakat Calculation Context (Core Domain) - [DDD Documentation](./ex-so-ar-dodrdedd__03-bounded-contexts.md)
+- Tax Calculation Context (Core Domain) - [DDD Documentation](./ex-so-ar-dodrdedd__03-bounded-contexts.md)
 - Inventory Management Context (Supporting) - [DDD Documentation](./ex-so-ar-dodrdedd__03-bounded-contexts.md)
 
 **Integration Patterns**:
 
-- Zakat ↔ Payment Gateway: Anti-Corruption Layer - [Context Mapping](./ex-so-ar-dodrdedd__04-context-mapping.md#anti-corruption-layer)
+- Tax ↔ Payment Gateway: Anti-Corruption Layer - [Context Mapping](./ex-so-ar-dodrdedd__04-context-mapping.md#anti-corruption-layer)
 ```
 
 ### Linking Aggregate Documentation to C4 Component Diagrams
@@ -564,11 +564,11 @@ sequenceDiagram
 **Aggregate Documentation** (using template):
 
 ```markdown
-# Zakat Assessment Aggregate
+# Tax Assessment Aggregate
 
-**Architecture Diagram**: [C4 Component Diagram - Zakat API](../c4-architecture-model/README.md#component-diagrams)
+**Architecture Diagram**: [C4 Component Diagram - Tax API](../c4-architecture-model/README.md#component-diagrams)
 
-**Aggregate Root**: ZakatAssessment
+**Aggregate Root**: TaxAssessment
 
 **Entities**:
 
@@ -576,17 +576,17 @@ sequenceDiagram
 
 **Value Objects**:
 
-- Money, NisabAmount, ZakatRate, HijriDate
+- Money, ThresholdAmount, TaxRate, HijriDate
 
 **Invariants**:
 
 1. Assessment can only be finalized if hawl (lunar year) is complete
-2. Total wealth must meet or exceed nisab threshold
-3. Zakat amount = wealth × zakat rate (2.5% standard)
+2. Total wealth must meet or exceed threshold threshold
+3. Tax amount = wealth × tax rate (2.5% standard)
 
 **Domain Events**:
 
-- AssessmentCreated, WealthDeclared, ZakatCalculated (see [C4 Dynamic Diagram](../c4-architecture-model/README.md#dynamic-diagrams))
+- AssessmentCreated, WealthDeclared, TaxCalculated (see [C4 Dynamic Diagram](../c4-architecture-model/README.md#dynamic-diagrams))
 ```
 
 ## Tools and Notation
@@ -654,21 +654,21 @@ Structurizr is a dedicated C4 modeling tool with versioning and workspace manage
 workspace {
     model {
         user = person "Wealth Holder"
-        zakatSystem = softwareSystem "Zakat Platform" {
-            zakatAPI = container "Zakat API" "Node.js"
-            zakatDB = container "Zakat DB" "PostgreSQL"
+        taxSystem = softwareSystem "Tax Platform" {
+            taxAPI = container "Tax API" "Node.js"
+            taxDB = container "Tax DB" "PostgreSQL"
         }
 
-        user -> zakatAPI "Declares wealth"
-        zakatAPI -> zakatDB "Reads/writes"
+        user -> taxAPI "Declares wealth"
+        taxAPI -> taxDB "Reads/writes"
     }
 
     views {
-        systemContext zakatSystem {
+        systemContext taxSystem {
             include *
         }
 
-        container zakatSystem {
+        container taxSystem {
             include *
         }
     }
@@ -687,10 +687,10 @@ workspace {
 docs/explanation/
 ├── domain-driven-design-ddd/
 │   ├── bounded-contexts/
-│   │   ├── zakat-calculation.md       # References C4 diagrams
+│   │   ├── tax-calculation.md       # References C4 diagrams
 │   │   └── inventory-management.md
 │   └── aggregates/
-│       └── zakat-assessment.md         # References C4 component diagram
+│       └── tax-assessment.md         # References C4 component diagram
 ├── c4-architecture-model/
 │   ├── ex-c4__01-system-context-diagrams.md  # References bounded contexts
 │   ├── ex-c4__02-container-diagrams.md       # References bounded contexts
@@ -705,21 +705,21 @@ docs/explanation/
 
 **Example**:
 
-- **Good**: Zakat Calculation Context = `zakatAPI` + `zakatDB`
-- **Bad**: Zakat Calculation Context = `zakatAPI1` + `zakatAPI2` + `zakatDB1` + `zakatDB2` (over-engineered)
+- **Good**: Tax Calculation Context = `taxAPI` + `taxDB`
+- **Bad**: Tax Calculation Context = `taxAPI1` + `taxAPI2` + `taxDB1` + `taxDB2` (over-engineered)
 
 ### 3. Annotate C4 Relationships with DDD Integration Patterns
 
 **C4 Relationship**:
 
 ```
-Rel(zakatAPI, inventoryAPI, "Shares Money value object", "Internal API")
+Rel(taxAPI, inventoryAPI, "Shares Money value object", "Internal API")
 ```
 
 **Add DDD Pattern**:
 
 ```
-Rel(zakatAPI, inventoryAPI, "Shared Kernel: Money, HijriDate", "Internal API")
+Rel(taxAPI, inventoryAPI, "Shared Kernel: Money, HijriDate", "Internal API")
 ```
 
 ### 4. Use Dynamic Diagrams for Domain Event Flows
@@ -730,12 +730,12 @@ Rel(zakatAPI, inventoryAPI, "Shared Kernel: Money, HijriDate", "Internal API")
 
 ```mermaid
 sequenceDiagram
-    participant Agg as Zakat Assessment
+    participant Agg as Tax Assessment
     participant Bus as Event Bus
     participant Pay as Payment Service
 
-    Agg->>Bus: ZakatCalculated event
-    Bus->>Pay: ZakatCalculated event
+    Agg->>Bus: TaxCalculated event
+    Bus->>Pay: TaxCalculated event
     Pay->>Pay: Create payment invoice
 ```
 

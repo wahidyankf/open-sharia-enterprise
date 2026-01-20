@@ -6,13 +6,13 @@ A **Domain Event** is an immutable record of something significant that happened
 
 **Key Characteristics:**
 
-- **Past Tense Naming**: Event names describe what happened (e.g., `ZakatCalculated`, `ProductCertified`)
+- **Past Tense Naming**: Event names describe what happened (e.g., `TaxCalculated`, `ProductCertified`)
 - **Immutable**: Events cannot be changed after creation
 - **Timestamp**: Record when the event occurred
 - **Complete Information**: Contain all data needed to understand what happened
 - **Domain-Centric**: Express business occurrences, not technical events
 
-**Example**: `ZakatCalculated` is published when a zakat assessment is finalized, capturing the assessment ID, wealth holder ID, calculated amount, and timestamp.
+**Example**: `TaxCalculated` is published when a tax assessment is finalized, capturing the assessment ID, wealth holder ID, calculated amount, and timestamp.
 
 ## Why Domain Events Matter
 
@@ -23,24 +23,24 @@ Without domain events, aggregates become tightly coupled:
 ```typescript
 // WITHOUT Domain Events: Tight coupling
 
-class ZakatAssessment {
+class TaxAssessment {
   constructor(
     readonly id: AssessmentId,
     private billingService: BillingService, // Direct dependency!
     private notificationService: NotificationService, // Direct dependency!
   ) {}
 
-  finalize(nisab: NisabAmount, rate: ZakatRate): void {
-    // Calculate zakat
-    const zakatAmount = this.calculateZakat(nisab, rate);
-    this.zakatAmount = zakatAmount;
+  finalize(threshold: ThresholdAmount, rate: TaxRate): void {
+    // Calculate tax
+    const taxAmount = this.calculateTax(threshold, rate);
+    this.taxAmount = taxAmount;
     this.status = AssessmentStatus.Finalized;
 
     // Tightly coupled side effects
-    this.billingService.createInvoice(this.wealthHolderId, zakatAmount); // Synchronous coupling
-    this.notificationService.sendEmail(this.wealthHolderId, zakatAmount); // Synchronous coupling
+    this.billingService.createInvoice(this.wealthHolderId, taxAmount); // Synchronous coupling
+    this.notificationService.sendEmail(this.wealthHolderId, taxAmount); // Synchronous coupling
 
-    // What if billing fails? Do we rollback zakat calculation?
+    // What if billing fails? Do we rollback tax calculation?
     // What if notification fails? Does that break finalization?
   }
 }
@@ -62,17 +62,17 @@ Domain events decouple aggregates from side effects:
 ```typescript
 // WITH Domain Events: Loose coupling
 
-class ZakatAssessment {
+class TaxAssessment {
   private domainEvents: DomainEvent[] = [];
 
-  finalize(nisab: NisabAmount, rate: ZakatRate): void {
+  finalize(threshold: ThresholdAmount, rate: TaxRate): void {
     // Pure domain logic
-    const zakatAmount = this.calculateZakat(nisab, rate);
-    this.zakatAmount = zakatAmount;
+    const taxAmount = this.calculateTax(threshold, rate);
+    this.taxAmount = taxAmount;
     this.status = AssessmentStatus.Finalized;
 
     // Publish event (no coupling to handlers)
-    this.addDomainEvent(new ZakatCalculated(this.id, this.wealthHolderId, zakatAmount, HijriDate.now()));
+    this.addDomainEvent(new TaxCalculated(this.id, this.wealthHolderId, taxAmount, HijriDate.now()));
   }
 
   private addDomainEvent(event: DomainEvent): void {
@@ -85,19 +85,19 @@ class ZakatAssessment {
     return events;
   }
 
-  private calculateZakat(nisab: NisabAmount, rate: ZakatRate): Money {
+  private calculateTax(threshold: ThresholdAmount, rate: TaxRate): Money {
     // ... calculation logic
   }
 }
 
 // Event
-class ZakatCalculated {
+class TaxCalculated {
   readonly occurredAt: HijriDate;
 
   constructor(
     readonly assessmentId: AssessmentId,
     readonly wealthHolderId: WealthHolderId,
-    readonly zakatAmount: Money,
+    readonly taxAmount: Money,
     readonly calculatedAt: HijriDate,
   ) {
     this.occurredAt = HijriDate.now();
@@ -106,16 +106,16 @@ class ZakatCalculated {
 
 // Separate event handlers (decoupled)
 class BillingEventHandler {
-  async handleZakatCalculated(event: ZakatCalculated): Promise<void> {
+  async handleTaxCalculated(event: TaxCalculated): Promise<void> {
     // Create invoice asynchronously
-    await this.billingService.createInvoice(event.wealthHolderId, event.zakatAmount);
+    await this.billingService.createInvoice(event.wealthHolderId, event.taxAmount);
   }
 }
 
 class NotificationEventHandler {
-  async handleZakatCalculated(event: ZakatCalculated): Promise<void> {
+  async handleTaxCalculated(event: TaxCalculated): Promise<void> {
     // Send notification asynchronously
-    await this.notificationService.sendEmail(event.wealthHolderId, event.zakatAmount);
+    await this.notificationService.sendEmail(event.wealthHolderId, event.taxAmount);
   }
 }
 ```
@@ -141,7 +141,7 @@ class NotificationEventHandler {
 
 ```typescript
 // CORRECT: Past tense
-class ZakatCalculated {
+class TaxCalculated {
   // "Calculated" indicates completed action
 }
 
@@ -153,7 +153,7 @@ class ContractApproved {
   // "Approved" indicates completed action
 }
 
-class RibaDetected {
+class InterestDetected {
   // "Detected" indicates completed action
 }
 
@@ -166,13 +166,13 @@ class AssessmentFinalized {
 
 ```typescript
 // WRONG: Present tense
-class CalculateZakat {} // Sounds like a command
+class CalculateTax {} // Sounds like a command
 
 // WRONG: Imperative
 class ApproveContract {} // Sounds like a command
 
 // WRONG: Gerund
-class CalculatingZakat {} // Sounds like ongoing action
+class CalculatingTax {} // Sounds like ongoing action
 ```
 
 ### 2. Immutability
@@ -182,12 +182,12 @@ class CalculatingZakat {} // Sounds like ongoing action
 **Why?** Events are historical facts. Changing history is dangerous.
 
 ```typescript
-class ZakatCalculated {
+class TaxCalculated {
   // All fields readonly
   constructor(
     readonly assessmentId: AssessmentId,
     readonly wealthHolderId: WealthHolderId,
-    readonly zakatAmount: Money,
+    readonly taxAmount: Money,
     readonly calculatedAt: HijriDate,
   ) {
     Object.freeze(this); // Enforce immutability
@@ -195,10 +195,10 @@ class ZakatCalculated {
 }
 
 // Usage
-const event = new ZakatCalculated(assessmentId, wealthHolderId, Money.usd(250), HijriDate.now());
+const event = new TaxCalculated(assessmentId, wealthHolderId, Money.usd(250), HijriDate.now());
 
 // Cannot modify
-event.zakatAmount = Money.usd(300); // Compile error! Property is readonly
+event.taxAmount = Money.usd(300); // Compile error! Property is readonly
 ```
 
 ### 3. Complete Information
@@ -211,16 +211,16 @@ event.zakatAmount = Money.usd(300); // Compile error! Property is readonly
 
 ```typescript
 // ANTI-PATTERN: Incomplete event
-class ZakatCalculated {
+class TaxCalculated {
   constructor(readonly assessmentId: AssessmentId) {} // Only ID - not enough!
 }
 
 // Consumer must query for more info
 class BillingEventHandler {
-  async handleZakatCalculated(event: ZakatCalculated): Promise<void> {
+  async handleTaxCalculated(event: TaxCalculated): Promise<void> {
     // Must query repository to get amount - inefficient!
     const assessment = await this.assessmentRepo.findById(event.assessmentId);
-    const zakatAmount = assessment.zakatAmount;
+    const taxAmount = assessment.taxAmount;
     // ...
   }
 }
@@ -230,13 +230,13 @@ class BillingEventHandler {
 
 ```typescript
 // CORRECT: All needed information in event
-class ZakatCalculated {
+class TaxCalculated {
   constructor(
     readonly assessmentId: AssessmentId,
     readonly wealthHolderId: WealthHolderId,
-    readonly zakatAmount: Money, // Include amount
+    readonly taxAmount: Money, // Include amount
     readonly totalWealth: Money, // Include wealth
-    readonly nisabThreshold: NisabAmount, // Include nisab
+    readonly thresholdThreshold: ThresholdAmount, // Include threshold
     readonly calculatedAt: HijriDate, // Include timestamp
   ) {
     Object.freeze(this);
@@ -245,9 +245,9 @@ class ZakatCalculated {
 
 // Consumer has all needed data
 class BillingEventHandler {
-  async handleZakatCalculated(event: ZakatCalculated): Promise<void> {
+  async handleTaxCalculated(event: TaxCalculated): Promise<void> {
     // All data available - no query needed
-    await this.billingService.createInvoice(event.wealthHolderId, event.zakatAmount);
+    await this.billingService.createInvoice(event.wealthHolderId, event.taxAmount);
   }
 }
 ```
@@ -259,13 +259,13 @@ class BillingEventHandler {
 **Rule:** Events must record when they occurred.
 
 ```typescript
-class ZakatCalculated {
+class TaxCalculated {
   readonly occurredAt: HijriDate; // When event happened
 
   constructor(
     readonly assessmentId: AssessmentId,
     readonly wealthHolderId: WealthHolderId,
-    readonly zakatAmount: Money,
+    readonly taxAmount: Money,
   ) {
     this.occurredAt = HijriDate.now(); // Auto-timestamp
     Object.freeze(this);
@@ -301,10 +301,10 @@ class AssessmentUpdated {
 
 ```typescript
 // CORRECT: Specific events for specific occurrences
-class ZakatCalculated {
+class TaxCalculated {
   constructor(
     readonly assessmentId: AssessmentId,
-    readonly zakatAmount: Money,
+    readonly taxAmount: Money,
   ) {}
 }
 
@@ -366,17 +366,17 @@ Events stored in aggregate, published after persistence:
 
 ```typescript
 // Aggregate with event collection
-class ZakatAssessment {
+class TaxAssessment {
   private domainEvents: DomainEvent[] = [];
 
-  finalize(nisab: NisabAmount, rate: ZakatRate): void {
+  finalize(threshold: ThresholdAmount, rate: TaxRate): void {
     // Business logic
-    const zakatAmount = this.calculateZakat(nisab, rate);
-    this.zakatAmount = zakatAmount;
+    const taxAmount = this.calculateTax(threshold, rate);
+    this.taxAmount = taxAmount;
     this.status = AssessmentStatus.Finalized;
 
     // Add event
-    this.addDomainEvent(new ZakatCalculated(this.id, this.wealthHolderId, zakatAmount, HijriDate.now()));
+    this.addDomainEvent(new TaxCalculated(this.id, this.wealthHolderId, taxAmount, HijriDate.now()));
   }
 
   private addDomainEvent(event: DomainEvent): void {
@@ -392,16 +392,16 @@ class ZakatAssessment {
 }
 
 // Application service publishes events
-class ZakatApplicationService {
+class TaxApplicationService {
   constructor(
-    private assessmentRepo: ZakatAssessmentRepository,
+    private assessmentRepo: TaxAssessmentRepository,
     private eventBus: EventBus,
   ) {}
 
   async finalizeAssessment(assessmentId: AssessmentId): Promise<void> {
     const assessment = await this.assessmentRepo.findById(assessmentId);
 
-    assessment.finalize(NisabAmount.goldStandard(), ZakatRate.standard());
+    assessment.finalize(ThresholdAmount.goldStandard(), TaxRate.standard());
 
     // Save aggregate
     await this.assessmentRepo.save(assessment);
@@ -431,13 +431,13 @@ class ZakatApplicationService {
 Repository automatically publishes events on save:
 
 ```typescript
-class ZakatAssessmentRepository {
+class TaxAssessmentRepository {
   constructor(
     private db: Database,
     private eventBus: EventBus,
   ) {}
 
-  async save(assessment: ZakatAssessment): Promise<void> {
+  async save(assessment: TaxAssessment): Promise<void> {
     await this.db.transaction(async (tx) => {
       // Save aggregate
       await this.persistAggregate(tx, assessment);
@@ -450,7 +450,7 @@ class ZakatAssessmentRepository {
     });
   }
 
-  private async persistAggregate(tx: Transaction, assessment: ZakatAssessment): Promise<void> {
+  private async persistAggregate(tx: Transaction, assessment: TaxAssessment): Promise<void> {
     // Database persistence logic
   }
 }
@@ -472,12 +472,12 @@ Aggregates reconstructed from events, events are source of truth:
 
 ```typescript
 // Event-sourced aggregate
-class ZakatAssessment {
+class TaxAssessment {
   private uncommittedEvents: DomainEvent[] = [];
 
   // Reconstruct from events
-  static fromHistory(events: DomainEvent[]): ZakatAssessment {
-    const assessment = new ZakatAssessment();
+  static fromHistory(events: DomainEvent[]): TaxAssessment {
+    const assessment = new TaxAssessment();
 
     for (const event of events) {
       assessment.apply(event);
@@ -486,10 +486,10 @@ class ZakatAssessment {
     return assessment;
   }
 
-  finalize(nisab: NisabAmount, rate: ZakatRate): void {
-    const zakatAmount = this.calculateZakat(nisab, rate);
+  finalize(threshold: ThresholdAmount, rate: TaxRate): void {
+    const taxAmount = this.calculateTax(threshold, rate);
 
-    const event = new ZakatCalculated(this.id, this.wealthHolderId, zakatAmount, HijriDate.now());
+    const event = new TaxCalculated(this.id, this.wealthHolderId, taxAmount, HijriDate.now());
 
     // Apply event to update state
     this.apply(event);
@@ -499,8 +499,8 @@ class ZakatAssessment {
   }
 
   private apply(event: DomainEvent): void {
-    if (event instanceof ZakatCalculated) {
-      this.zakatAmount = event.zakatAmount;
+    if (event instanceof TaxCalculated) {
+      this.taxAmount = event.taxAmount;
       this.status = AssessmentStatus.Finalized;
     } else if (event instanceof WealthDeclared) {
       this.declarations.push(new WealthDeclaration(event.wealthType, event.amount));
@@ -518,8 +518,8 @@ class ZakatAssessment {
 }
 
 // Event-sourced repository
-class EventSourcedZakatAssessmentRepository {
-  async save(assessment: ZakatAssessment): Promise<void> {
+class EventSourcedTaxAssessmentRepository {
+  async save(assessment: TaxAssessment): Promise<void> {
     const events = assessment.getUncommittedEvents();
 
     // Persist events
@@ -533,12 +533,12 @@ class EventSourcedZakatAssessmentRepository {
     assessment.markEventsAsCommitted();
   }
 
-  async findById(id: AssessmentId): Promise<ZakatAssessment | null> {
+  async findById(id: AssessmentId): Promise<TaxAssessment | null> {
     const events = await this.eventStore.getEvents(id.toString());
 
     if (events.length === 0) return null;
 
-    return ZakatAssessment.fromHistory(events);
+    return TaxAssessment.fromHistory(events);
   }
 }
 ```
@@ -565,9 +565,9 @@ Handler executes synchronously in same process:
 class BillingEventHandler {
   constructor(private billingService: BillingService) {}
 
-  async handleZakatCalculated(event: ZakatCalculated): Promise<void> {
+  async handleTaxCalculated(event: TaxCalculated): Promise<void> {
     // Create invoice
-    await this.billingService.createInvoice(event.wealthHolderId, event.zakatAmount);
+    await this.billingService.createInvoice(event.wealthHolderId, event.taxAmount);
 
     console.log(`Invoice created for ${event.wealthHolderId}`);
   }
@@ -598,7 +598,7 @@ class InProcessEventBus {
 const eventBus = new InProcessEventBus();
 const billingHandler = new BillingEventHandler(billingService);
 
-eventBus.subscribe(ZakatCalculated, (event) => billingHandler.handleZakatCalculated(event));
+eventBus.subscribe(TaxCalculated, (event) => billingHandler.handleTaxCalculated(event));
 ```
 
 **Benefits:**
@@ -618,10 +618,10 @@ eventBus.subscribe(ZakatCalculated, (event) => billingHandler.handleZakatCalcula
 Handler executes asynchronously via message queue:
 
 ```typescript
-class ZakatCalculatedHandler {
-  async handle(event: ZakatCalculated): Promise<void> {
+class TaxCalculatedHandler {
+  async handle(event: TaxCalculated): Promise<void> {
     // Process event from queue
-    await this.billingService.createInvoice(event.wealthHolderId, event.zakatAmount);
+    await this.billingService.createInvoice(event.wealthHolderId, event.taxAmount);
   }
 }
 
@@ -646,9 +646,9 @@ class EventConsumer {
   ) {}
 
   async start(): Promise<void> {
-    this.messageQueue.subscribe("ZakatCalculated", async (message) => {
+    this.messageQueue.subscribe("TaxCalculated", async (message) => {
       const event = JSON.parse(message);
-      const handler = this.handlers.get("ZakatCalculated");
+      const handler = this.handlers.get("TaxCalculated");
 
       if (handler) {
         await handler(event);
@@ -691,14 +691,14 @@ class EventStoreSubscription {
 }
 
 // Event handler
-class ZakatBillingProjection {
+class TaxBillingProjection {
   async handle(event: DomainEvent): Promise<void> {
-    if (event instanceof ZakatCalculated) {
+    if (event instanceof TaxCalculated) {
       await this.createInvoice(event);
     }
   }
 
-  private async createInvoice(event: ZakatCalculated): Promise<void> {
+  private async createInvoice(event: TaxCalculated): Promise<void> {
     // Create billing invoice from event
   }
 }
@@ -712,16 +712,16 @@ class ZakatBillingProjection {
 
 ## Common Domain Events in Islamic Finance
 
-### Zakat Domain Events
+### Tax Domain Events
 
 ```typescript
-class ZakatCalculated {
+class TaxCalculated {
   constructor(
     readonly assessmentId: AssessmentId,
     readonly wealthHolderId: WealthHolderId,
-    readonly zakatAmount: Money,
+    readonly taxAmount: Money,
     readonly totalWealth: Money,
-    readonly nisabThreshold: NisabAmount,
+    readonly thresholdThreshold: ThresholdAmount,
     readonly calculatedAt: HijriDate,
   ) {
     Object.freeze(this);
@@ -751,18 +751,18 @@ class AssessmentCreated {
   }
 }
 
-class NisabThresholdMet {
+class ThresholdThresholdMet {
   constructor(
     readonly assessmentId: AssessmentId,
     readonly totalWealth: Money,
-    readonly nisabThreshold: NisabAmount,
+    readonly thresholdThreshold: ThresholdAmount,
   ) {
     Object.freeze(this);
   }
 }
 ```
 
-### Halal Certification Events
+### Permitted Certification Events
 
 ```typescript
 class ProductCertified {
@@ -814,7 +814,7 @@ class TransactionApplied {
   }
 }
 
-class RibaDetected {
+class InterestDetected {
   constructor(
     readonly transactionId: TransactionId,
     readonly accountId: AccountId,
@@ -828,7 +828,7 @@ class RibaDetected {
 class ContractApproved {
   constructor(
     readonly contractId: ContractId,
-    readonly contractType: "MURABAHA" | "MUSHARAKA" | "MUDARABA",
+    readonly contractType: "LOAN" | "PARTNERSHIP" | "PROFIT_SHARING",
     readonly parties: string[],
     readonly approvedAt: HijriDate,
   ) {
@@ -843,27 +843,27 @@ FP represents events as plain immutable data:
 
 ```typescript
 // FP-style: Plain immutable record
-type ZakatCalculated = {
-  readonly eventType: "ZakatCalculated";
+type TaxCalculated = {
+  readonly eventType: "TaxCalculated";
   readonly assessmentId: AssessmentId;
   readonly wealthHolderId: WealthHolderId;
-  readonly zakatAmount: Money;
+  readonly taxAmount: Money;
   readonly calculatedAt: HijriDate;
   readonly occurredAt: HijriDate;
 };
 
 // Factory function
-function zakatCalculated(
+function taxCalculated(
   assessmentId: AssessmentId,
   wealthHolderId: WealthHolderId,
-  zakatAmount: Money,
+  taxAmount: Money,
   calculatedAt: HijriDate,
-): ZakatCalculated {
+): TaxCalculated {
   return Object.freeze({
-    eventType: "ZakatCalculated",
+    eventType: "TaxCalculated",
     assessmentId,
     wealthHolderId,
-    zakatAmount,
+    taxAmount,
     calculatedAt,
     occurredAt: HijriDate.now(),
   });
@@ -872,26 +872,26 @@ function zakatCalculated(
 // Event handler as pure function
 type EventHandler<E> = (event: E) => IO<void>;
 
-const handleZakatCalculated: EventHandler<ZakatCalculated> = (event) => async () => {
+const handleTaxCalculated: EventHandler<TaxCalculated> = (event) => async () => {
   // Side effect wrapped in IO
-  await billingService.createInvoice(event.wealthHolderId, event.zakatAmount);
+  await billingService.createInvoice(event.wealthHolderId, event.taxAmount);
 };
 
 // Aggregate produces events
 function finalizeAssessment(
-  assessment: ZakatAssessment,
-  nisab: NisabAmount,
-  rate: ZakatRate,
-): [ZakatAssessment, ZakatCalculated[]] {
-  const zakatAmount = calculateZakat(assessment.totalWealth, nisab, rate);
+  assessment: TaxAssessment,
+  threshold: ThresholdAmount,
+  rate: TaxRate,
+): [TaxAssessment, TaxCalculated[]] {
+  const taxAmount = calculateTax(assessment.totalWealth, threshold, rate);
 
   const updatedAssessment = {
     ...assessment,
-    zakatAmount,
+    taxAmount,
     status: AssessmentStatus.Finalized,
   };
 
-  const event = zakatCalculated(assessment.id, assessment.wealthHolderId, zakatAmount, HijriDate.now());
+  const event = taxCalculated(assessment.id, assessment.wealthHolderId, taxAmount, HijriDate.now());
 
   return [updatedAssessment, [event]];
 }
@@ -911,37 +911,37 @@ See [DDD and Functional Programming](./ex-so-ar-dodrdedd__14-ddd-and-functional-
 ### Testing Event Creation
 
 ```typescript
-describe("ZakatAssessment Domain Events", () => {
-  it("should publish ZakatCalculated event when finalized", () => {
+describe("TaxAssessment Domain Events", () => {
+  it("should publish TaxCalculated event when finalized", () => {
     // Arrange
-    const assessment = ZakatAssessment.create(wealthHolderId);
+    const assessment = TaxAssessment.create(wealthHolderId);
     assessment.addDeclaration(WealthType.Cash, Money.usd(10000));
 
     // Act
-    assessment.finalize(NisabAmount.goldStandard(), ZakatRate.standard());
+    assessment.finalize(ThresholdAmount.goldStandard(), TaxRate.standard());
 
     // Assert
     const events = assessment.popDomainEvents();
     expect(events).toHaveLength(1);
-    expect(events[0]).toBeInstanceOf(ZakatCalculated);
-    expect((events[0] as ZakatCalculated).zakatAmount.amount).toBe(250);
+    expect(events[0]).toBeInstanceOf(TaxCalculated);
+    expect((events[0] as TaxCalculated).taxAmount.amount).toBe(250);
   });
 
   it("should include all necessary data in event", () => {
     // Arrange
-    const assessment = ZakatAssessment.create(wealthHolderId);
+    const assessment = TaxAssessment.create(wealthHolderId);
     assessment.addDeclaration(WealthType.Cash, Money.usd(10000));
 
     // Act
-    assessment.finalize(NisabAmount.goldStandard(), ZakatRate.standard());
+    assessment.finalize(ThresholdAmount.goldStandard(), TaxRate.standard());
 
     // Assert
     const events = assessment.popDomainEvents();
-    const event = events[0] as ZakatCalculated;
+    const event = events[0] as TaxCalculated;
 
     expect(event.assessmentId).toBeDefined();
     expect(event.wealthHolderId).toBeDefined();
-    expect(event.zakatAmount).toBeDefined();
+    expect(event.taxAmount).toBeDefined();
     expect(event.calculatedAt).toBeDefined();
   });
 });
@@ -962,12 +962,12 @@ describe("BillingEventHandler", () => {
     handler = new BillingEventHandler(mockBillingService);
   });
 
-  it("should create invoice when ZakatCalculated event received", async () => {
+  it("should create invoice when TaxCalculated event received", async () => {
     // Arrange
-    const event = new ZakatCalculated(assessmentId, wealthHolderId, Money.usd(250), HijriDate.now());
+    const event = new TaxCalculated(assessmentId, wealthHolderId, Money.usd(250), HijriDate.now());
 
     // Act
-    await handler.handleZakatCalculated(event);
+    await handler.handleTaxCalculated(event);
 
     // Assert
     expect(mockBillingService.createInvoice).toHaveBeenCalledWith(wealthHolderId, Money.usd(250));
@@ -983,7 +983,7 @@ describe("BillingEventHandler", () => {
 
 ```typescript
 // ANTI-PATTERN: Command naming
-class CalculateZakat {} // Sounds like a command
+class CalculateTax {} // Sounds like a command
 class FinalizeAssessment {} // Sounds like a command
 ```
 
@@ -991,7 +991,7 @@ class FinalizeAssessment {} // Sounds like a command
 
 ```typescript
 // CORRECT: Past tense
-class ZakatCalculated {}
+class TaxCalculated {}
 class AssessmentFinalized {}
 ```
 
@@ -1001,20 +1001,20 @@ class AssessmentFinalized {}
 
 ```typescript
 // ANTI-PATTERN: Mutable event
-class ZakatCalculated {
-  constructor(public zakatAmount: Money) {} // Mutable!
+class TaxCalculated {
+  constructor(public taxAmount: Money) {} // Mutable!
 }
 
-const event = new ZakatCalculated(Money.usd(250));
-event.zakatAmount = Money.usd(300); // Changed history!
+const event = new TaxCalculated(Money.usd(250));
+event.taxAmount = Money.usd(300); // Changed history!
 ```
 
 **Solution:** Make immutable.
 
 ```typescript
 // CORRECT: Immutable
-class ZakatCalculated {
-  constructor(readonly zakatAmount: Money) {
+class TaxCalculated {
+  constructor(readonly taxAmount: Money) {
     Object.freeze(this);
   }
 }
@@ -1026,7 +1026,7 @@ class ZakatCalculated {
 
 ```typescript
 // ANTI-PATTERN: Minimal data
-class ZakatCalculated {
+class TaxCalculated {
   constructor(readonly assessmentId: AssessmentId) {} // Only ID
 }
 ```
@@ -1035,11 +1035,11 @@ class ZakatCalculated {
 
 ```typescript
 // CORRECT: Complete data
-class ZakatCalculated {
+class TaxCalculated {
   constructor(
     readonly assessmentId: AssessmentId,
     readonly wealthHolderId: WealthHolderId,
-    readonly zakatAmount: Money,
+    readonly taxAmount: Money,
     readonly totalWealth: Money,
   ) {}
 }
@@ -1053,7 +1053,7 @@ class ZakatCalculated {
 // ANTI-PATTERN: Forgot to publish
 async finalizeAssessment(id: AssessmentId): Promise<void> {
   const assessment = await this.repo.findById(id);
-  assessment.finalize(nisab, rate);
+  assessment.finalize(threshold, rate);
   await this.repo.save(assessment);
   // Forgot: assessment.popDomainEvents() and publish!
 }
@@ -1065,7 +1065,7 @@ async finalizeAssessment(id: AssessmentId): Promise<void> {
 // CORRECT: Publish events
 async finalizeAssessment(id: AssessmentId): Promise<void> {
   const assessment = await this.repo.findById(id);
-  assessment.finalize(nisab, rate);
+  assessment.finalize(threshold, rate);
   await this.repo.save(assessment);
 
   const events = assessment.popDomainEvents();

@@ -1,6 +1,6 @@
 # Behavior-Driven Development (BDD) Documentation
 
-Comprehensive documentation on Behavior-Driven Development patterns, principles, and practices for building software through concrete examples and stakeholder collaboration. This documentation covers Gherkin syntax, Three Amigos practice, Example Mapping, and BDD integration with Test-Driven Development and Domain-Driven Design, with examples from Islamic finance and Sharia-compliant business domains.
+Comprehensive documentation on Behavior-Driven Development patterns, principles, and practices for building software through concrete examples and stakeholder collaboration. This documentation covers Gherkin syntax, Three Amigos practice, Example Mapping, and BDD integration with Test-Driven Development and Domain-Driven Design, with examples from finance and business domains.
 
 ## What is Behavior-Driven Development?
 
@@ -56,10 +56,10 @@ Use this matrix to determine if BDD is appropriate for your project. Score each 
 - **10-15 points**: BDD optional - evaluate based on team preference and learning goals
 - **6-9 points**: Consider lightweight collaboration instead of full BDD
 
-**Example: Zakat Calculation System with Shariah Scholars**
+**Example: Tax Calculation System with Compliance Scholars**
 
-- Stakeholder Involvement: **5** (Shariah scholars must validate religious rules)
-- Requirements Complexity: **5** (multiple asset types, nisab thresholds, Hawl calculations, exemptions)
+- Stakeholder Involvement: **5** (Compliance scholars must validate religious rules)
+- Requirements Complexity: **5** (multiple asset types, threshold thresholds, Hawl calculations, exemptions)
 - Team Distribution: **4** (developers + scholars potentially in different locations)
 - Domain Complexity: **5** (Islamic jurisprudence requires expert interpretation)
 - Communication Barriers: **4** (technical vs. religious terminology, translation between domains)
@@ -109,7 +109,7 @@ Core BDD concepts and philosophy:
 
 BDD's unique value through stakeholder involvement:
 
-- **[04. Three Amigos Practice](./ex-so-de-bdd__04-three-amigos-practice.md)** - Business/Dev/QA collaboration, session structure, facilitation, Islamic Finance with Shariah scholars
+- **[04. Three Amigos Practice](./ex-so-de-bdd__04-three-amigos-practice.md)** - Business/Dev/QA collaboration, session structure, facilitation, Islamic Finance with Compliance scholars
 - **[05. Example Mapping](./ex-so-de-bdd__05-example-mapping.md)** - Color-coded cards (blue/yellow/green/red), 25-minute sessions, visual discovery, facilitating workshops
 - **[06. Specification by Example](./ex-so-de-bdd__06-specification-by-example.md)** - Concrete examples over abstract requirements, living documentation, example-driven design
 - **[07. Discovery and Formulation](./ex-so-de-bdd__07-discovery-and-formulation.md)** - Outside-in development, discovering requirements through conversation, formulation vs. automation
@@ -143,10 +143,10 @@ Best practices and common issues:
 Reusable templates for applying BDD:
 
 - **[Templates Directory](./templates/)** - Practical templates for BDD artifacts:
-  - **[Feature File Template](./templates/ex-so-de-bdd-te__feature-file-template.md)** - Islamic Finance Zakat calculation example
+  - **[Feature File Template](./templates/ex-so-de-bdd-te__feature-file-template.md)** - Islamic Finance Tax calculation example
   - **[Scenario Template](./templates/ex-so-de-bdd-te__scenario-template.md)** - Given-When-Then structure with Islamic Finance domain
   - **[User Story with Acceptance Criteria](./templates/ex-so-de-bdd-te__user-story-with-acceptance-criteria.md)** - Story format + Gherkin scenarios
-  - **[Example Mapping Session](./templates/ex-so-de-bdd-te__example-mapping-session.md)** - Color-coded cards, Zakat rules/examples/questions
+  - **[Example Mapping Session](./templates/ex-so-de-bdd-te__example-mapping-session.md)** - Color-coded cards, Tax rules/examples/questions
   - **[Step Definition Template](./templates/ex-so-de-bdd-te__step-definition-template.md)** - TypeScript/JavaScript implementation patterns
   - **[Scenario Outline Template](./templates/ex-so-de-bdd-te__scenario-outline-template.md)** - Data-driven scenarios with Examples table
   - **[Three Amigos Session Template](./templates/ex-so-de-bdd-te__three-amigos-session-template.md)** - Agenda, participants, outputs
@@ -177,7 +177,7 @@ Choose a learning path based on your goals and available time.
    - [Given-When-Then Pattern](./ex-so-de-bdd__03-given-when-then-pattern.md) - Context/action/outcome pattern
 
 2. **Apply**
-   - Write one feature file for Zakat nisab threshold validation
+   - Write one feature file for Tax threshold threshold validation
    - Include 2-3 scenarios: happy path, below threshold, edge case
    - Follow Given-When-Then structure
 
@@ -291,23 +291,23 @@ Emphasize asynchronous collaboration and clear documentation:
 
 **For Islamic Finance Applications**:
 
-BDD with Shariah scholars and complex rules:
+BDD with Compliance scholars and complex rules:
 
 1. [Introduction and Philosophy](./ex-so-de-bdd__01-introduction-and-philosophy.md) - BDD for religious compliance
-2. [Three Amigos Practice](./ex-so-de-bdd__04-three-amigos-practice.md) - Collaborating with Shariah scholars
-3. [Example Mapping](./ex-so-de-bdd__05-example-mapping.md) - Discovering Zakat edge cases
-4. [Specification by Example](./ex-so-de-bdd__06-specification-by-example.md) - Concrete Zakat calculations
+2. [Three Amigos Practice](./ex-so-de-bdd__04-three-amigos-practice.md) - Collaborating with Compliance scholars
+3. [Example Mapping](./ex-so-de-bdd__05-example-mapping.md) - Discovering Tax edge cases
+4. [Specification by Example](./ex-so-de-bdd__06-specification-by-example.md) - Concrete Tax calculations
 5. [BDD and DDD](./ex-so-de-bdd__14-bdd-and-ddd.md) - Ubiquitous language for Islamic Finance
-6. [Given-When-Then Pattern](./ex-so-de-bdd__03-given-when-then-pattern.md) - Zakat scenario patterns
+6. [Given-When-Then Pattern](./ex-so-de-bdd__03-given-when-then-pattern.md) - Tax scenario patterns
 
 **Example Domains Covered**:
 
-- **Zakat Calculation**: Nisab thresholds (85g gold, 595g silver), 2.5% rate, Hawl (lunar year) requirement, asset exemptions
-- **Halal Certification**: Supply chain compliance, ingredient validation, certification authority verification
-- **Murabaha Contracts**: Cost-plus financing, disclosed markup, asset ownership verification
-- **Riba Detection**: Interest prohibition, profit-sharing validation, contract compliance
-- **Takaful**: Risk-sharing models, surplus distribution, Shariah compliance
-- **Waqf**: Endowment management, beneficiary allocation, perpetual trusts
+- **Tax Calculation**: Threshold thresholds (85g gold, 595g silver), 2.5% rate, Hawl (lunar year) requirement, asset exemptions
+- **Permitted Certification**: Supply chain compliance, ingredient validation, certification authority verification
+- **Loan Contracts**: Cost-plus financing, disclosed markup, asset ownership verification
+- **Interest Detection**: Interest prohibition, profit-sharing validation, contract compliance
+- **Takaful**: Risk-sharing models, surplus distribution, Compliance compliance
+- **Donation**: Endowment management, beneficiary allocation, perpetual trusts
 
 ## Relationship to Other Documentation
 
@@ -329,9 +329,9 @@ BDD integrates with other software design approaches in this repository:
 
 **[Domain-Driven Design Documentation](../../architecture/domain-driven-design-ddd/README.md)**
 
-- **Ubiquitous Language**: BDD scenarios use DDD terminology (Zakat, Nisab, Hawl, Murabaha)
+- **Ubiquitous Language**: BDD scenarios use DDD terminology (Tax, Threshold, Hawl, Loan)
 - **Features per Bounded Context**: Feature files align with bounded context boundaries
-- **Domain Events**: Scenarios capture domain events (ZakatCalculated, CertificationApproved)
+- **Domain Events**: Scenarios capture domain events (TaxCalculated, CertificationApproved)
 - **Aggregate Testing**: BDD scenarios verify aggregate invariants and business rules
 - **Strategic Alignment**: BDD Discovery sessions inform strategic DDD design
 
@@ -367,47 +367,47 @@ BDD aligns with "Make it work → Make it right → Make it fast":
 
 ## Domain Examples Throughout Documentation
 
-Examples focus on **Sharia-compliant business systems**:
+Examples focus on **Compliance-compliant business systems**:
 
-### Core Domain: Zakat Calculation
+### Core Domain: Tax Calculation
 
 Islamic almsgiving with precise jurisprudence rules:
 
 **Example Feature**:
 
 ```gherkin
-Feature: Zakat Nisab Threshold Validation
+Feature: Tax Threshold Threshold Validation
 
-  Scenario: Wealth meets gold nisab threshold
+  Scenario: Wealth meets gold threshold threshold
     Given a Muslim individual owns 100 grams of gold
-    And the nisab threshold for gold is 85 grams
+    And the threshold threshold for gold is 85 grams
     And one lunar year (Hawl) has passed since acquisition
-    When Zakat calculation is performed
-    Then Zakat should be obligatory
-    And Zakat amount should be 2.5 grams of gold
+    When Tax calculation is performed
+    Then Tax should be obligatory
+    And Tax amount should be 2.5 grams of gold
 
-  Scenario: Wealth below nisab threshold
+  Scenario: Wealth below threshold threshold
     Given a Muslim individual owns 50 grams of gold
-    And the nisab threshold for gold is 85 grams
-    When Zakat calculation is performed
-    Then Zakat should not be obligatory
-    And Zakat amount should be 0 grams
+    And the threshold threshold for gold is 85 grams
+    When Tax calculation is performed
+    Then Tax should not be obligatory
+    And Tax amount should be 0 grams
 ```
 
-### Supporting Domain: Halal Certification
+### Supporting Domain: Permitted Certification
 
 Product compliance verification:
 
 **Example Scenario**:
 
 ```gherkin
-Scenario: Certify product with halal ingredients
+Scenario: Certify product with permitted ingredients
   Given a product "Organic Dates" with ingredients:
     | Ingredient | Status |
-    | Dates      | Halal  |
-    | Water      | Halal  |
+    | Dates      | Permitted  |
+    | Water      | Permitted  |
   When certification authority verifies ingredients
-  Then product should receive halal certification
+  Then product should receive permitted certification
   And certification should be valid for 12 months
 ```
 
@@ -462,5 +462,5 @@ Ready to apply BDD to your project? Start here:
   - [C4 Architecture Model](../../architecture/c4-architecture-model/README.md)
   - [Functional Programming Principles](../../../../../governance/development/pattern/functional-programming.md)
   - [Implementation Workflow](../../../../../governance/development/workflow/implementation.md)
-- **Islamic Finance Examples**: Zakat, Halal Certification, Murabaha, Riba Detection, Takaful, Waqf
+- **Islamic Finance Examples**: Tax, Permitted Certification, Loan, Interest Detection, Takaful, Donation
 - **Learning Paths**: 7 paths covering quick start, practical application, deep dive, role-specific, team structure, and domain-specific guidance

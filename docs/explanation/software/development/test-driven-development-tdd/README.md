@@ -1,6 +1,6 @@
 # Test-Driven Development (TDD) Documentation
 
-Comprehensive documentation on Test-Driven Development patterns, principles, and practices for building robust, well-tested software systems. This documentation covers the Red-Green-Refactor cycle, testing strategies, and TDD application in various contexts including Sharia-compliant business systems, functional programming, and domain-driven design.
+Comprehensive documentation on Test-Driven Development patterns, principles, and practices for building robust, well-tested software systems. This documentation covers the Red-Green-Refactor cycle, testing strategies, and TDD application in various contexts including business systems, functional programming, and domain-driven design.
 
 ## What is Test-Driven Development?
 
@@ -54,14 +54,14 @@ Use this matrix to determine if TDD is appropriate for your project. Score each 
 - **10-15 points**: TDD optional - evaluate based on team preference and learning goals
 - **6-9 points**: Consider lightweight testing - TDD may be overhead
 
-**Example: Zakat Calculation System**
+**Example: Tax Calculation System**
 
-- Business Logic Complexity: **5** (multiple asset types, nisab thresholds, Hawl calculations)
-- Domain Criticality: **5** (religious obligation, regulatory reporting)
-- Code Longevity: **5** (long-lived system, evolving Shariah interpretations)
+- Business Logic Complexity: **5** (multiple income types, deduction rules, rate brackets)
+- Domain Criticality: **5** (regulatory compliance, financial reporting)
+- Code Longevity: **5** (long-lived system, evolving tax regulations)
 - Team TDD Experience: **3** (moderate training)
 - Refactoring Frequency: **4** (changing business rules)
-- Collaboration Complexity: **4** (developers + Shariah scholars)
+- Collaboration Complexity: **4** (developers + tax experts)
 
 **Total: 26 points** → TDD strongly recommended
 
@@ -69,9 +69,9 @@ Use this matrix to determine if TDD is appropriate for your project. Score each 
 
 TDD is ideal for:
 
-- **Complex business logic** requiring high correctness (e.g., Zakat calculations, interest-free financing)
+- **Complex business logic** requiring high correctness (e.g., tax calculations, financial transactions)
 - **Long-lived systems** with frequent changes and multiple maintainers
-- **Regulatory compliance** or safety-critical applications (e.g., Halal certification)
+- **Regulatory compliance** or safety-critical applications (e.g., financial reporting, healthcare systems)
 - **Domain-Driven Design** projects (testing aggregates, value objects, domain events)
 - **Codebases requiring confidence** in refactoring and continuous improvement
 - **Teams seeking faster feedback loops** and reduced debugging time
@@ -218,7 +218,7 @@ Choose a learning path based on your goals and available time.
    - [Testing Patterns - AAA](./ex-so-de-tedrdeve__06-testing-patterns.md#arrange-act-assert-pattern) - Arrange-Act-Assert pattern (5 min)
 
 3. **Apply** (5 minutes)
-   - Write one test for Zakat nisab threshold validation
+   - Write one test for tax threshold validation
    - Follow Red-Green-Refactor: failing test → make it pass → refactor
 
 **Outcome**: Working test following TDD cycle, hands-on experience with Red-Green-Refactor.
@@ -359,45 +359,30 @@ Incremental adoption of TDD:
 4. Gradually increase coverage in high-risk areas
 5. Use Strangler Fig pattern to replace legacy code with TDD-developed replacements
 
-### By Domain: Islamic Finance, Business Logic, APIs
+### By Domain: Financial Systems, Business Logic, APIs
 
-**For Islamic Finance Applications**:
+**For Financial Applications**:
 
-Testing Sharia-compliant business rules:
+Testing regulated business rules:
 
 1. [Introduction and Philosophy](./ex-so-de-tedrdeve__01-introduction-and-philosophy.md) - TDD for regulatory compliance
-2. [Red-Green-Refactor Cycle](./ex-so-de-tedrdeve__02-red-green-refactor-cycle.md) - Zakat calculation example
-3. [TDD and DDD](./ex-so-de-tedrdeve__12-tdd-and-ddd.md) - Islamic finance domain models (Murabaha, Sukuk)
-4. [Test Data Builders](./ex-so-de-tedrdeve__07-test-data-builders.md) - Builders for Islamic financial instruments
-5. [Testing Patterns](./ex-so-de-tedrdeve__06-testing-patterns.md) - Table-driven tests for multiple Zakat asset types
-6. [TDD and Functional Programming](./ex-so-de-tedrdeve__11-tdd-and-functional-programming.md) - Property-based testing for Riba detection
+2. [Red-Green-Refactor Cycle](./ex-so-de-tedrdeve__02-red-green-refactor-cycle.md) - Tax calculation example
+3. [TDD and DDD](./ex-so-de-tedrdeve__12-tdd-and-ddd.md) - Financial domain models (Loans, Securities)
+4. [Test Data Builders](./ex-so-de-tedrdeve__07-test-data-builders.md) - Builders for financial instruments
+5. [Testing Patterns](./ex-so-de-tedrdeve__06-testing-patterns.md) - Table-driven tests for multiple income types
+6. [TDD and Functional Programming](./ex-so-de-tedrdeve__11-tdd-and-functional-programming.md) - Property-based testing for compliance rules
 
 **Example Domains Covered**:
 
-- **Zakat Calculation**: Nisab thresholds, Hawl periods, asset types
-- **Halal Certification**: Supply chain tracking, certification authority verification
-- **Islamic Accounting**: Riba detection, profit-sharing ratios, contract validity
-- **Murabaha**: Cost-plus financing, profit calculations
-- **Sukuk**: Asset-backed securities, compliance verification
-- **Takaful**: Risk sharing, surplus distribution
-- **Waqf**: Endowment management, beneficiary allocation
+- **Tax Calculation**: Income thresholds, fiscal year periods, asset types
+- **Compliance Tracking**: Supply chain tracking, regulatory authority verification
+- **Financial Accounting**: Interest calculations, profit-sharing ratios, contract validity
+- **Loan Agreements**: Installment financing, interest calculations
+- **Securities**: Asset-backed instruments, compliance verification
+- **Insurance**: Risk sharing, surplus distribution
+- **Endowment Management**: Fund allocation, beneficiary distribution
 
-**Islamic Finance Scholarly References**:
-
-The Islamic finance examples throughout this documentation are based on established principles from Islamic jurisprudence and contemporary banking practice. For authoritative guidance on these concepts, consult:
-
-- **Zakat**: Traditional rate of 2.5% (1/40th) on wealth above nisab threshold (equivalent to 85-87.48 grams of gold). See [Islamic Relief Zakat Calculator](https://islamic-relief.org/zakat-calculator/) and [DailyNisab](https://dailynisab.org/) for current calculations.
-
-- **Murabaha Contracts**: Cost-plus financing with disclosed markup. Academic treatment in:
-  - Abbasi, T., & Linnenluecke, M. K. (2023). ["An Overview of Islamic Accounting: The Murabaha Contract"](https://www.mdpi.com/1911-8074/16/7/335). _Journal of Risk and Financial Management, 16_(7), 335.
-  - [Institute of Islamic Banking and Insurance - Murabaha](https://islamic-banking.com/murabaha/)
-
-- **Comprehensive References**:
-  - El-Gamal, M. A. (2006). _Islamic Finance: Law, Economics, and Practice_. Cambridge University Press.
-  - Nethercott, C., & Eisenberg, D. (2012). [_Islamic Finance: Law and Practice_](https://global.oup.com/academic/product/islamic-finance-9780198725237). Oxford University Press.
-  - Hassan, M. K. (Ed.). [_Handbook of Islamic Banking_](https://www.isfin.net/sites/isfin.com/files/handbook_of_islamic_banking.pdf). Edward Elgar Publishing.
-
-**Note**: The specific business rules in code examples (e.g., markup limits, validation thresholds) are simplified for pedagogical purposes and should not be taken as authoritative Islamic legal rulings. Consult qualified Islamic scholars and regulatory bodies for production implementations.
+**Note**: The specific business rules in code examples (e.g., tax rates, validation thresholds) are simplified for pedagogical purposes and should not be taken as authoritative financial or legal guidance. Consult qualified domain experts and regulatory bodies for production implementations.
 
 ## Relationship to Other Documentation
 
@@ -485,13 +470,13 @@ TDD provides the feedback loops and safety net that enable this iterative workfl
 
 - **Category**: Explanation
 - **Subcategory**: Software Design
-- **Tags**: Test-Driven Development, TDD, Red-Green-Refactor, Testing, Unit Tests, Integration Tests, Property-Based Testing, Software Quality, Islamic Finance
-- **Last Updated**: 2026-01-20
+- **Tags**: Test-Driven Development, TDD, Red-Green-Refactor, Testing, Unit Tests, Integration Tests, Property-Based Testing, Software Quality, Financial Systems
+- **Last Updated**: 2026-01-21
 - **Status**: Active
 - **Related Documentation**:
   - [Domain-Driven Design](../../architecture/domain-driven-design-ddd/README.md)
   - [C4 Architecture Model](../../architecture/c4-architecture-model/README.md)
   - [Functional Programming Principles](../../../../../governance/development/pattern/functional-programming.md)
   - [Implementation Workflow](../../../../../governance/development/workflow/implementation.md)
-- **Islamic Finance Examples**: Zakat, Halal Certification, Islamic Accounting, Murabaha, Sukuk, Takaful, Waqf
+- **Example Domains**: Tax Calculation, Compliance Tracking, Financial Accounting, Loan Agreements, Securities, Insurance, Endowment Management
 - **Learning Paths**: 7 paths covering quick start, practical application, deep dive, paradigm-specific, role-specific, codebase maturity, and domain-specific guidance

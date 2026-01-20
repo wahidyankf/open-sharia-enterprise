@@ -6,7 +6,7 @@ Automation transforms BDD scenarios from documentation into executable specifica
 
 The automation pyramid guides BDD implementation: many fast unit-level BDD tests (domain logic), fewer integration BDD tests (API/database), and minimal E2E BDD tests (full system). This balance maintains fast feedback loops while providing confidence that business requirements are met. Automation must consider test data management (fixtures vs. factories), environment configuration (dev, staging, production), parallel execution, and maintenance burden.
 
-For Islamic finance platforms, automation strategy directly impacts compliance verification speed. Shariah Advisory Board needs timely feedback when rules change—slow test suites delay validation. Critical scenarios (Riba detection, nisab threshold calculations) must run on every commit (smoke tests), while comprehensive scenarios (edge cases, complex workflows) can run nightly. Automation infrastructure must support domain expert review through living documentation, clear failure messages, and audit trails.
+For Islamic finance platforms, automation strategy directly impacts compliance verification speed. Compliance Advisory Board needs timely feedback when rules change—slow test suites delay validation. Critical scenarios (Interest detection, threshold threshold calculations) must run on every commit (smoke tests), while comprehensive scenarios (edge cases, complex workflows) can run nightly. Automation infrastructure must support domain expert review through living documentation, clear failure messages, and audit trails.
 
 This document covers CI/CD integration patterns, test data strategies, parallel execution, environment management, maintenance practices, and optimization techniques for keeping BDD suites fast and reliable as they grow.
 
@@ -151,11 +151,11 @@ e2e-tests:
 
 ```gherkin
 @smoke @critical
-Scenario: Critical Zakat calculation
+Scenario: Critical Tax calculation
   # Runs on every commit (fast)
 
 @regression
-Scenario: Comprehensive Zakat scenarios
+Scenario: Comprehensive Tax scenarios
   # Runs on PR/merge (moderate speed)
 
 @e2e @slow
@@ -226,9 +226,9 @@ bdd-tests:
 **1. Test Fixtures** (Static data loaded before tests):
 
 ```typescript
-// fixtures/zakat-test-data.json
+// fixtures/tax-test-data.json
 {
-  "nisabThresholds": {
+  "thresholdThresholds": {
     "gold": { "amount": 85, "unit": "grams" },
     "silver": { "amount": 595, "unit": "grams" }
   },
@@ -251,7 +251,7 @@ import { BeforeAll } from "@cucumber/cucumber";
 import { loadFixtures } from "./fixtures-loader";
 
 BeforeAll(async function () {
-  await loadFixtures("zakat-test-data.json");
+  await loadFixtures("tax-test-data.json");
 });
 ```
 
@@ -300,8 +300,8 @@ import { seedDatabase, clearDatabase } from "../utils/database";
 Before({ tags: "@database" }, async function () {
   await seedDatabase({
     users: 10,
-    zakatRecords: 50,
-    halalProducts: 100,
+    taxRecords: 50,
+    permittedProducts: 100,
   });
 });
 
@@ -406,11 +406,11 @@ API_URL=http://localhost:3000
 API_TIMEOUT=5000
 
 # Feature Flags
-ENABLE_NEW_ZAKAT_CALCULATION=true
-ENABLE_HALAL_BLOCKCHAIN_VERIFICATION=false
+ENABLE_NEW_TAX_CALCULATION=true
+ENABLE_PERMITTED_BLOCKCHAIN_VERIFICATION=false
 
 # External Services (Mocked)
-SHARIAH_ADVISOR_API_URL=http://localhost:4000/mock
+COMPLIANCE_ADVISOR_API_URL=http://localhost:4000/mock
 CERTIFICATION_AUTHORITY_API_URL=http://localhost:4001/mock
 ```
 
@@ -433,8 +433,8 @@ export const config = {
     timeout: parseInt(process.env.API_TIMEOUT!, 10),
   },
   featureFlags: {
-    newZakatCalculation: process.env.ENABLE_NEW_ZAKAT_CALCULATION === "true",
-    blockchainVerification: process.env.ENABLE_HALAL_BLOCKCHAIN_VERIFICATION === "true",
+    newTaxCalculation: process.env.ENABLE_NEW_TAX_CALCULATION === "true",
+    blockchainVerification: process.env.ENABLE_PERMITTED_BLOCKCHAIN_VERIFICATION === "true",
   },
 };
 ```
@@ -444,38 +444,38 @@ export const config = {
 **Mock External Services**:
 
 ```typescript
-// mocks/shariah-advisor-api.mock.ts
+// mocks/compliance-advisor-api.mock.ts
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 
 const handlers = [
-  rest.post("http://localhost:4000/mock/verify-zakat", (req, res, ctx) => {
+  rest.post("http://localhost:4000/mock/verify-tax", (req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json({
         approved: true,
-        comments: "Zakat calculation complies with Hanafi school",
+        comments: "Tax calculation complies with Hanafi school",
         advisor: "Sheikh Ahmed",
       }),
     );
   }),
 ];
 
-export const mockShariahAdvisorApi = setupServer(...handlers);
+export const mockComplianceAdvisorApi = setupServer(...handlers);
 ```
 
 **Start Mocks in Hooks**:
 
 ```typescript
 import { BeforeAll, AfterAll } from "@cucumber/cucumber";
-import { mockShariahAdvisorApi } from "../mocks/shariah-advisor-api.mock";
+import { mockComplianceAdvisorApi } from "../mocks/compliance-advisor-api.mock";
 
 BeforeAll(async function () {
-  mockShariahAdvisorApi.listen();
+  mockComplianceAdvisorApi.listen();
 });
 
 AfterAll(async function () {
-  mockShariahAdvisorApi.close();
+  mockComplianceAdvisorApi.close();
 });
 ```
 
@@ -498,11 +498,11 @@ AfterAll(async function () {
 **Unit-Level BDD** (Fast, isolated):
 
 ```gherkin
-Feature: Zakat Calculator Domain Logic
+Feature: Tax Calculator Domain Logic
 
   @unit @fast
-  Scenario: Calculate Zakat on gold
-    Given ZakatCalculator with 85g nisab
+  Scenario: Calculate Tax on gold
+    Given TaxCalculator with 85g threshold
     And GoldWealth of 100 grams
     When calculate method is called
     Then result should be obligatory
@@ -512,12 +512,12 @@ Feature: Zakat Calculator Domain Logic
 **Integration-Level BDD** (API, Database):
 
 ```gherkin
-Feature: Zakat Calculation API
+Feature: Tax Calculation API
 
   @integration @database
   Scenario: Calculate via API
     Given database contains user "alice@example.com"
-    When POST /api/zakat/calculate with gold 100g
+    When POST /api/tax/calculate with gold 100g
     Then response status 200
     And calculation saved to database
 ```
@@ -525,14 +525,14 @@ Feature: Zakat Calculation API
 **E2E-Level BDD** (Full system, UI):
 
 ```gherkin
-Feature: Zakat Self-Assessment Journey
+Feature: Tax Self-Assessment Journey
 
   @e2e @slow @ui
   Scenario: Complete assessment
-    Given user at zakat calculator page
+    Given user at tax calculator page
     When user enters 100 grams gold
     And clicks "Calculate"
-    Then sees "Zakat Obligatory"
+    Then sees "Tax Obligatory"
     And sees "2.5 grams" amount
 ```
 
@@ -634,12 +634,12 @@ given(/individual owns (\d+) grams of (gold|silver)/, (amount, metal) => {
 **Page Object**:
 
 ```typescript
-// pages/zakat-calculator.page.ts
-export class ZakatCalculatorPage {
+// pages/tax-calculator.page.ts
+export class TaxCalculatorPage {
   constructor(private page: Page) {}
 
   async navigate() {
-    await this.page.goto("/zakat/calculator");
+    await this.page.goto("/tax/calculator");
   }
 
   async enterGoldAmount(amount: number) {
@@ -650,8 +650,8 @@ export class ZakatCalculatorPage {
     await this.page.click('[data-testid="calculate-button"]');
   }
 
-  async getZakatAmount(): Promise<string> {
-    return await this.page.textContent('[data-testid="zakat-amount"]');
+  async getTaxAmount(): Promise<string> {
+    return await this.page.textContent('[data-testid="tax-amount"]');
   }
 }
 ```
@@ -659,20 +659,20 @@ export class ZakatCalculatorPage {
 **Step Definitions Use Page Object**:
 
 ```typescript
-let zakatPage: ZakatCalculatorPage;
+let taxPage: TaxCalculatorPage;
 
-given("user navigates to Zakat calculator", async () => {
-  zakatPage = new ZakatCalculatorPage(page);
-  await zakatPage.navigate();
+given("user navigates to Tax calculator", async () => {
+  taxPage = new TaxCalculatorPage(page);
+  await taxPage.navigate();
 });
 
 when("user enters {int} grams of gold", async (amount: number) => {
-  await zakatPage.enterGoldAmount(amount);
-  await zakatPage.clickCalculate();
+  await taxPage.enterGoldAmount(amount);
+  await taxPage.clickCalculate();
 });
 
-then("Zakat amount should display {string}", async (expected: string) => {
-  const actual = await zakatPage.getZakatAmount();
+then("Tax amount should display {string}", async (expected: string) => {
+  const actual = await taxPage.getTaxAmount();
   expect(actual).toBe(expected);
 });
 ```
@@ -714,47 +714,47 @@ Scenario: Intermittent failure
 
 ## Islamic Finance Examples
 
-### Zakat Calculation Automation
+### Tax Calculation Automation
 
 **Feature File**:
 
 ```gherkin
-@zakat @critical @smoke
-Feature: Zakat Calculation for Gold Wealth
+@tax @critical @smoke
+Feature: Tax Calculation for Gold Wealth
 
   @unit @fast
-  Scenario: Standard Zakat calculation
-    Given ZakatCalculator with nisab 85 grams
+  Scenario: Standard Tax calculation
+    Given TaxCalculator with threshold 85 grams
     And GoldWealth of 100 grams
     When calculate is called
-    Then Zakat obligatory is true
-    And Zakat amount is 2.5 grams
+    Then Tax obligatory is true
+    And Tax amount is 2.5 grams
 
   @integration @database
   Scenario: Save calculation to database
     Given user "alice@example.com" in database
-    When POST /api/zakat/calculate with 100g gold
+    When POST /api/tax/calculate with 100g gold
     Then response status 200
     And calculation record saved with user_id
 
   @e2e @ui @slow
-  Scenario: Complete Zakat assessment journey
-    Given user navigates to /zakat/calculator
+  Scenario: Complete Tax assessment journey
+    Given user navigates to /tax/calculator
     When enters 100 grams gold
     And clicks "Calculate"
-    Then sees "Zakat Obligatory: 2.5 grams"
+    Then sees "Tax Obligatory: 2.5 grams"
 ```
 
 **CI Pipeline**:
 
 ```yaml
-zakat-smoke-tests:
+tax-smoke-tests:
   runs-on: ubuntu-latest
   steps:
-    - run: npm run test:bdd -- --tags "@zakat and @smoke"
+    - run: npm run test:bdd -- --tags "@tax and @smoke"
     # Fast (< 2 minutes)
 
-zakat-integration-tests:
+tax-integration-tests:
   runs-on: ubuntu-latest
   services:
     postgres:
@@ -762,29 +762,29 @@ zakat-integration-tests:
       env:
         POSTGRES_DB: ose_test
   steps:
-    - run: npm run test:bdd -- --tags "@zakat and @integration"
+    - run: npm run test:bdd -- --tags "@tax and @integration"
     # Moderate (< 10 minutes)
 
-zakat-e2e-tests:
+tax-e2e-tests:
   runs-on: ubuntu-latest
   steps:
-    - run: npm run test:bdd:e2e -- --tags "@zakat and @e2e"
+    - run: npm run test:bdd:e2e -- --tags "@tax and @e2e"
     # Slow (< 30 minutes)
 ```
 
-### Halal Certification Automation
+### Permitted Certification Automation
 
 **Test Data Factory**:
 
 ```typescript
-// test-factories/halal-product-factory.ts
-export function createHalalProduct(overrides?: Partial<HalalProduct>): HalalProduct {
+// test-factories/permitted-product-factory.ts
+export function createPermittedProduct(overrides?: Partial<PermittedProduct>): PermittedProduct {
   return {
     id: faker.string.uuid(),
     name: faker.commerce.productName(),
     ingredients: [
-      { name: "Olive Oil", status: "halal" },
-      { name: "Salt", status: "halal" },
+      { name: "Olive Oil", status: "permitted" },
+      { name: "Salt", status: "permitted" },
     ],
     certificationAuthority: "JAKIM",
     certificationExpiry: faker.date.future(),
@@ -796,15 +796,15 @@ export function createHalalProduct(overrides?: Partial<HalalProduct>): HalalProd
 **Step Definitions**:
 
 ```typescript
-given("halal product with valid certification", () => {
-  halalProduct = createHalalProduct({
+given("permitted product with valid certification", () => {
+  permittedProduct = createPermittedProduct({
     certificationAuthority: "JAKIM",
     certificationExpiry: new Date("2026-12-31"),
   });
 });
 
-given("halal product with expired certification", () => {
-  halalProduct = createHalalProduct({
+given("permitted product with expired certification", () => {
+  permittedProduct = createPermittedProduct({
     certificationExpiry: new Date("2024-01-01"), // Past date
   });
 });
@@ -813,8 +813,8 @@ given("halal product with expired certification", () => {
 **Parallel Execution** (Fast feedback):
 
 ```bash
-# Run halal scenarios in parallel
-npm run test:bdd -- --tags "@halal" --maxWorkers=4
+# Run permitted scenarios in parallel
+npm run test:bdd -- --tags "@permitted" --maxWorkers=4
 ```
 
 ## Summary
@@ -856,9 +856,9 @@ Strategic automation transforms BDD scenarios into fast, reliable, maintainable 
 
 **Islamic Finance Automation**:
 
-- **Zakat**: Unit (domain), integration (API), E2E (full journey)
-- **Halal**: Parallel execution for certification verification
-- **Compliance**: Fast feedback for Shariah Advisory Board
+- **Tax**: Unit (domain), integration (API), E2E (full journey)
+- **Permitted**: Parallel execution for certification verification
+- **Compliance**: Fast feedback for Compliance Advisory Board
 
 Automation strategy balances speed (fast feedback) with confidence (comprehensive coverage), ensuring BDD scenarios continuously verify that implementation matches business requirements while maintaining development velocity.
 
@@ -866,7 +866,7 @@ Automation strategy balances speed (fast feedback) with confidence (comprehensiv
 
 - **Category**: Explanation
 - **Subcategory**: Software Design > Behavior-Driven Development
-- **Tags**: Automation, CI/CD, Testing, BDD, Jest, Cucumber, GitHub Actions, GitLab CI, Test Data, Parallel Execution, Islamic Finance, Zakat, Halal
+- **Tags**: Automation, CI/CD, Testing, BDD, Jest, Cucumber, GitHub Actions, GitLab CI, Test Data, Parallel Execution, Islamic Finance, Tax, Permitted
 - **Related Files**:
   - [README](./README.md) - BDD documentation overview
   - [09. Step Definitions](./ex-so-de-bdd__09-step-definitions.md) - Implementing steps

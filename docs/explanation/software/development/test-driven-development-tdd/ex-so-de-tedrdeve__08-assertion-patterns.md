@@ -16,15 +16,15 @@ Mastering assertion patterns transforms tests from mere "does it work?" checks i
 
 ```typescript
 // GOOD: Value equality for primitives
-describe("ZakatRate", () => {
+describe("TaxRate", () => {
   it("should return standard rate of 2.5%", () => {
-    const rate = ZakatRate.standard();
+    const rate = TaxRate.standard();
 
     expect(rate.value).toBe(0.025); // Strict equality (===)
   });
 
   it("should return agricultural rate of 5%", () => {
-    const rate = ZakatRate.agricultural();
+    const rate = TaxRate.agricultural();
 
     expect(rate.value).toBe(0.05);
   });
@@ -73,55 +73,55 @@ describe("Money equality", () => {
 
 ```typescript
 // GOOD: Boolean assertions
-describe("ZakatEligibility", () => {
-  it("should be eligible when wealth exceeds nisab", () => {
+describe("TaxEligibility", () => {
+  it("should be eligible when wealth exceeds threshold", () => {
     const wealth = Money.fromGold(100, "grams");
-    const nisab = Money.fromGold(85, "grams");
+    const threshold = Money.fromGold(85, "grams");
 
-    const eligible = wealth.isGreaterThan(nisab);
+    const eligible = wealth.isGreaterThan(threshold);
 
     expect(eligible).toBe(true); // Explicit true
   });
 
-  it("should not be eligible when wealth below nisab", () => {
+  it("should not be eligible when wealth below threshold", () => {
     const wealth = Money.fromGold(50, "grams");
-    const nisab = Money.fromGold(85, "grams");
+    const threshold = Money.fromGold(85, "grams");
 
-    const eligible = wealth.isGreaterThan(nisab);
+    const eligible = wealth.isGreaterThan(threshold);
 
     expect(eligible).toBe(false); // Explicit false
   });
 });
 
 // GOOD: Presence/absence assertions
-describe("HalalCertification", () => {
+describe("PermittedCertification", () => {
   it("should have certification number when approved", () => {
-    const cert = HalalCertification.approve("HALAL-2024-001");
+    const cert = PermittedCertification.approve("PERMITTED-2024-001");
 
     expect(cert.certificationNumber).toBeDefined(); // Not undefined
     expect(cert.certificationNumber).not.toBeNull(); // Not null
   });
 
   it("should not have certification number when pending", () => {
-    const cert = HalalCertification.pending();
+    const cert = PermittedCertification.pending();
 
     expect(cert.certificationNumber).toBeNull(); // Explicitly null
   });
 });
 
 // BAD: Truthy/falsy confusion
-describe("ZakatCalculation", () => {
-  it("should return zakat amount", () => {
-    const amount = calculateZakat(Money.usd(1000));
+describe("TaxCalculation", () => {
+  it("should return tax amount", () => {
+    const amount = calculateTax(Money.usd(1000));
 
     expect(amount).toBeTruthy(); // BAD: 0 would fail, but might be valid ❌
   });
 });
 
 // GOOD: Explicit checks
-describe("ZakatCalculation", () => {
-  it("should return zakat amount", () => {
-    const amount = calculateZakat(Money.usd(1000));
+describe("TaxCalculation", () => {
+  it("should return tax amount", () => {
+    const amount = calculateTax(Money.usd(1000));
 
     expect(amount).toBeGreaterThan(0); // GOOD: Explicit expectation ✅
     expect(amount.equals(Money.usd(25))).toBe(true);
@@ -171,30 +171,30 @@ describe("TakafulPolicy", () => {
 
 ```typescript
 // BAD: Exact equality for floats
-describe("ZakatCalculation", () => {
+describe("TaxCalculation", () => {
   it("should calculate 2.5% of wealth", () => {
     const wealth = Money.usd(1000);
-    const zakat = wealth.multiply(0.025);
+    const tax = wealth.multiply(0.025);
 
-    expect(zakat.amount).toBe(25.0); // BAD: May fail due to floating-point ❌
+    expect(tax.amount).toBe(25.0); // BAD: May fail due to floating-point ❌
   });
 });
 
 // GOOD: Tolerance-based comparison
-describe("ZakatCalculation", () => {
+describe("TaxCalculation", () => {
   it("should calculate 2.5% of wealth", () => {
     const wealth = Money.usd(1000);
-    const zakat = wealth.multiply(0.025);
+    const tax = wealth.multiply(0.025);
 
-    expect(zakat.amount).toBeCloseTo(25.0, 2); // GOOD: Within 0.01 ✅
+    expect(tax.amount).toBeCloseTo(25.0, 2); // GOOD: Within 0.01 ✅
     // toBeCloseTo(expected, decimalPlaces)
   });
 
   it("should handle complex calculation precision", () => {
     const wealth = Money.usd(1234.56);
-    const zakat = wealth.multiply(0.025);
+    const tax = wealth.multiply(0.025);
 
-    expect(zakat.amount).toBeCloseTo(30.864, 3); // Within 0.001
+    expect(tax.amount).toBeCloseTo(30.864, 3); // Within 0.001
   });
 });
 ```
@@ -205,26 +205,26 @@ describe("ZakatCalculation", () => {
 
 ```typescript
 // GOOD: Numeric comparisons
-describe("NisabThreshold", () => {
-  it("should verify wealth exceeds nisab", () => {
+describe("IncomeThreshold", () => {
+  it("should verify wealth exceeds threshold", () => {
     const wealth = Money.fromGold(100, "grams");
-    const nisab = Money.fromGold(85, "grams");
+    const threshold = Money.fromGold(85, "grams");
 
-    expect(wealth.amount).toBeGreaterThan(nisab.amount);
+    expect(wealth.amount).toBeGreaterThan(threshold.amount);
     expect(wealth.amount).toBeGreaterThanOrEqual(85);
   });
 
-  it("should verify wealth below nisab", () => {
+  it("should verify wealth below threshold", () => {
     const wealth = Money.fromGold(50, "grams");
-    const nisab = Money.fromGold(85, "grams");
+    const threshold = Money.fromGold(85, "grams");
 
-    expect(wealth.amount).toBeLessThan(nisab.amount);
+    expect(wealth.amount).toBeLessThan(threshold.amount);
     expect(wealth.amount).toBeLessThanOrEqual(85);
   });
 });
 
 // GOOD: Range assertions
-describe("MurabahaMarkup", () => {
+describe("LoanMarkup", () => {
   it("should be within acceptable range", () => {
     const markup = calculateMarkup(Money.usd(10000), 12);
 
@@ -240,18 +240,18 @@ describe("MurabahaMarkup", () => {
 
 ```typescript
 // GOOD: Array content checks
-describe("ZakatableAssets", () => {
+describe("TaxableAssets", () => {
   it("should return all eligible assets", () => {
     const assets = [Asset.gold(100, "grams"), Asset.silver(500, "grams"), Asset.cash(Money.usd(5000))];
 
-    const zakatable = filterZakatableAssets(assets);
+    const taxable = filterTaxableAssets(assets);
 
-    expect(zakatable).toHaveLength(3); // Exact length
-    expect(zakatable.length).toBeGreaterThan(0); // Non-empty
+    expect(taxable).toHaveLength(3); // Exact length
+    expect(taxable.length).toBeGreaterThan(0); // Non-empty
   });
 
   it("should contain specific asset types", () => {
-    const assets = getZakatableTypes();
+    const assets = getTaxableTypes();
 
     expect(assets).toContain("gold"); // Contains value
     expect(assets).toContain("silver");
@@ -260,7 +260,7 @@ describe("ZakatableAssets", () => {
   });
 
   it("should match expected array", () => {
-    const rates = ZakatRate.all();
+    const rates = TaxRate.all();
 
     expect(rates).toEqual([
       // Deep equality
@@ -272,9 +272,9 @@ describe("ZakatableAssets", () => {
 });
 
 // GOOD: Array with partial matching
-describe("WaqfBeneficiaries", () => {
+describe("DonationBeneficiaries", () => {
   it("should include expected beneficiaries", () => {
-    const beneficiaries = waqf.getBeneficiaries();
+    const beneficiaries = donation.getBeneficiaries();
 
     expect(beneficiaries).toEqual(
       expect.arrayContaining([
@@ -291,9 +291,9 @@ describe("WaqfBeneficiaries", () => {
 
 ```typescript
 // GOOD: Object structure checks
-describe("MurabahaContract", () => {
+describe("LoanContract", () => {
   it("should have required properties", () => {
-    const contract = createMurabahaContract();
+    const contract = createLoanContract();
 
     expect(contract).toHaveProperty("id");
     expect(contract).toHaveProperty("assetPrice");
@@ -302,7 +302,7 @@ describe("MurabahaContract", () => {
   });
 
   it("should match partial structure", () => {
-    const contract = createMurabahaContract();
+    const contract = createLoanContract();
 
     expect(contract).toMatchObject({
       // Partial match
@@ -365,13 +365,13 @@ describe("Money validation", () => {
 });
 
 // GOOD: Async exception handling
-describe("ZakatRepository", () => {
+describe("TaxRepository", () => {
   it("should throw when assessment not found", async () => {
     await expect(repository.findById("INVALID-ID")).rejects.toThrow("Assessment not found");
   });
 
   it("should throw on duplicate save", async () => {
-    const assessment = buildZakatAssessment();
+    const assessment = buildTaxAssessment();
     await repository.save(assessment);
 
     await expect(repository.save(assessment)).rejects.toThrow(DuplicateAssessmentError);
@@ -439,35 +439,35 @@ declare global {
 }
 
 // Usage: Clean, readable assertions
-describe("ZakatCalculation", () => {
+describe("TaxCalculation", () => {
   it("should calculate 2.5% of wealth", () => {
     const wealth = Money.usd(1000);
-    const zakat = calculateZakat(wealth);
+    const tax = calculateTax(wealth);
 
-    expect(zakat).toEqualMoney(Money.usd(25)); // GOOD: Clear intent ✅
-    // vs: expect(zakat.equals(Money.usd(25))).toBe(true); // Less clear
+    expect(tax).toEqualMoney(Money.usd(25)); // GOOD: Clear intent ✅
+    // vs: expect(tax.equals(Money.usd(25))).toBe(true); // Less clear
   });
 });
 ```
 
-### Example: Custom Halal Certification Matcher
+### Example: Custom Permitted Certification Matcher
 
 ```typescript
-// GOOD: Custom matcher for Halal certification status
+// GOOD: Custom matcher for Permitted certification status
 expect.extend({
-  toBeHalalCertified(received: Product) {
-    const pass = received.halalCertification?.status === "APPROVED";
+  toBePermittedCertified(received: Product) {
+    const pass = received.permittedCertification?.status === "APPROVED";
 
     if (pass) {
       return {
-        message: () => `expected product ${received.id} not to be Halal certified`,
+        message: () => `expected product ${received.id} not to be Permitted certified`,
         pass: true,
       };
     } else {
       return {
         message: () =>
-          `expected product ${received.id} to be Halal certified, ` +
-          `but status is ${received.halalCertification?.status ?? "NONE"}`,
+          `expected product ${received.id} to be Permitted certified, ` +
+          `but status is ${received.permittedCertification?.status ?? "NONE"}`,
         pass: false,
       };
     }
@@ -477,48 +477,48 @@ expect.extend({
 declare global {
   namespace jest {
     interface Matchers<R> {
-      toBeHalalCertified(): R;
+      toBePermittedCertified(): R;
     }
   }
 }
 
 // Usage
-describe("HalalProductFilter", () => {
+describe("PermittedProductFilter", () => {
   it("should only return certified products", () => {
-    const products = filterHalalProducts([
-      buildProduct({ halalCertification: approved() }),
-      buildProduct({ halalCertification: pending() }),
-      buildProduct({ halalCertification: approved() }),
+    const products = filterPermittedProducts([
+      buildProduct({ permittedCertification: approved() }),
+      buildProduct({ permittedCertification: pending() }),
+      buildProduct({ permittedCertification: approved() }),
     ]);
 
     products.forEach((product) => {
-      expect(product).toBeHalalCertified(); // GOOD: Expressive ✅
+      expect(product).toBePermittedCertified(); // GOOD: Expressive ✅
     });
   });
 });
 ```
 
-### Example: Custom Zakat Range Matcher
+### Example: Custom Tax Range Matcher
 
 ```typescript
-// GOOD: Custom matcher for Zakat calculation range
+// GOOD: Custom matcher for Tax calculation range
 expect.extend({
-  toBeValidZakatAmount(received: Money, wealth: Money) {
-    const minZakat = wealth.multiply(0.025);
-    const maxZakat = wealth.multiply(0.2); // Max for minerals
+  toBeValidTaxAmount(received: Money, wealth: Money) {
+    const minTax = wealth.multiply(0.025);
+    const maxTax = wealth.multiply(0.2); // Max for minerals
 
-    const pass = received.isGreaterThanOrEqual(minZakat) && received.isLessThanOrEqual(maxZakat);
+    const pass = received.isGreaterThanOrEqual(minTax) && received.isLessThanOrEqual(maxTax);
 
     if (pass) {
       return {
-        message: () => `expected ${received.format()} not to be valid zakat for ${wealth.format()}`,
+        message: () => `expected ${received.format()} not to be valid tax for ${wealth.format()}`,
         pass: true,
       };
     } else {
       return {
         message: () =>
-          `expected ${received.format()} to be between ${minZakat.format()} ` +
-          `and ${maxZakat.format()} for wealth ${wealth.format()}`,
+          `expected ${received.format()} to be between ${minTax.format()} ` +
+          `and ${maxTax.format()} for wealth ${wealth.format()}`,
         pass: false,
       };
     }
@@ -528,18 +528,18 @@ expect.extend({
 declare global {
   namespace jest {
     interface Matchers<R> {
-      toBeValidZakatAmount(wealth: Money): R;
+      toBeValidTaxAmount(wealth: Money): R;
     }
   }
 }
 
 // Usage
-describe("ZakatCalculation", () => {
-  it("should calculate zakat within valid range", () => {
+describe("TaxCalculation", () => {
+  it("should calculate tax within valid range", () => {
     const wealth = Money.fromGold(100, "grams");
-    const zakat = calculateZakat(wealth);
+    const tax = calculateTax(wealth);
 
-    expect(zakat).toBeValidZakatAmount(wealth); // GOOD: Self-documenting ✅
+    expect(tax).toBeValidTaxAmount(wealth); // GOOD: Self-documenting ✅
   });
 });
 ```
@@ -550,8 +550,8 @@ describe("ZakatCalculation", () => {
 
 ```typescript
 // BAD: Multiple unrelated assertions
-it("should handle murabaha contract", () => {
-  const contract = createMurabahaContract();
+it("should handle loan contract", () => {
+  const contract = createLoanContract();
 
   expect(contract.id).toBeDefined(); // ❌ Too many concerns
   expect(contract.assetPrice.amount).toBeGreaterThan(0);
@@ -561,29 +561,29 @@ it("should handle murabaha contract", () => {
 });
 
 // GOOD: Focused tests
-describe("MurabahaContract creation", () => {
+describe("LoanContract creation", () => {
   it("should generate unique ID", () => {
-    const contract = createMurabahaContract();
+    const contract = createLoanContract();
     expect(contract.id).toBeDefined();
   });
 
   it("should require positive asset price", () => {
-    const contract = createMurabahaContract();
+    const contract = createLoanContract();
     expect(contract.assetPrice.amount).toBeGreaterThan(0);
   });
 
   it("should enforce markup limit", () => {
-    const contract = createMurabahaContract();
+    const contract = createLoanContract();
     expect(contract.markup.percentage).toBeLessThan(0.1);
   });
 
   it("should start in pending status", () => {
-    const contract = createMurabahaContract();
+    const contract = createLoanContract();
     expect(contract.status).toBe("PENDING");
   });
 
   it("should have no installments initially", () => {
-    const contract = createMurabahaContract();
+    const contract = createLoanContract();
     expect(contract.installments).toHaveLength(0);
   });
 });
@@ -607,23 +607,23 @@ it("should create equal money objects", () => {
 
 ```typescript
 // BAD: Generic assertion
-it("should calculate zakat correctly", () => {
-  const result = calculateZakat(Money.usd(1000));
+it("should calculate tax correctly", () => {
+  const result = calculateTax(Money.usd(1000));
   expect(result).toBeDefined(); // BAD: Vague ❌
 });
 
 // GOOD: Specific assertion with context
-it("should calculate zakat at 2.5% for standard wealth", () => {
+it("should calculate tax at 2.5% for standard wealth", () => {
   const wealth = Money.usd(1000);
-  const zakat = calculateZakat(wealth);
+  const tax = calculateTax(wealth);
 
-  expect(zakat).toEqualMoney(Money.usd(25)); // GOOD: Clear expectation ✅
+  expect(tax).toEqualMoney(Money.usd(25)); // GOOD: Clear expectation ✅
   // Failure message: "expected $25.00 USD to equal $24.50 USD"
 });
 
 // GOOD: Custom message for complex assertions
-it("should distribute waqf proportionally", () => {
-  const distribution = distributeWaqf(Money.usd(1000), [
+it("should distribute donation proportionally", () => {
+  const distribution = distributeDonation(Money.usd(1000), [
     { name: "Orphanage", weight: 0.5 },
     { name: "School", weight: 0.3 },
     { name: "Clinic", weight: 0.2 },
@@ -652,16 +652,16 @@ it("should distribute waqf proportionally", () => {
 
 ```typescript
 // Production code
-class ZakatCalculator {
+class TaxCalculator {
   calculate(wealth: Money): Money {
     return wealth.multiply(0.025); // 2.5% rate
   }
 }
 
 // WEAK TEST: Mutation survives
-describe("ZakatCalculator", () => {
-  it("should calculate zakat", () => {
-    const calculator = new ZakatCalculator();
+describe("TaxCalculator", () => {
+  it("should calculate tax", () => {
+    const calculator = new TaxCalculator();
     const result = calculator.calculate(Money.usd(1000));
 
     expect(result).toBeDefined(); // BAD: Too weak ❌
@@ -676,17 +676,17 @@ describe("ZakatCalculator", () => {
 
 ```typescript
 // STRONG TEST: Mutation killed
-describe("ZakatCalculator", () => {
-  it("should calculate zakat at exactly 2.5%", () => {
-    const calculator = new ZakatCalculator();
+describe("TaxCalculator", () => {
+  it("should calculate tax at exactly 2.5%", () => {
+    const calculator = new TaxCalculator();
     const wealth = Money.usd(1000);
     const result = calculator.calculate(wealth);
 
     expect(result).toEqualMoney(Money.usd(25)); // GOOD: Precise ✅
   });
 
-  it("should calculate zakat for different amounts", () => {
-    const calculator = new ZakatCalculator();
+  it("should calculate tax for different amounts", () => {
+    const calculator = new TaxCalculator();
 
     expect(calculator.calculate(Money.usd(1000))).toEqualMoney(Money.usd(25));
     expect(calculator.calculate(Money.usd(2000))).toEqualMoney(Money.usd(50));
@@ -735,34 +735,34 @@ npx stryker run
 **Sample Output:**
 
 ```
-Mutant killed: ZakatCalculator.ts:12:24
+Mutant killed: TaxCalculator.ts:12:24
 - return wealth.multiply(0.025);
 + return wealth.multiply(0.030);
-Status: Killed by ZakatCalculator.spec.ts:15
+Status: Killed by TaxCalculator.spec.ts:15
 
-Mutant survived: NisabThreshold.ts:8:18
-- if (wealth.amount > nisab.amount)
-+ if (wealth.amount >= nisab.amount)
+Mutant survived: IncomeThreshold.ts:8:18
+- if (wealth.amount > threshold.amount)
++ if (wealth.amount >= threshold.amount)
 Status: Survived (NO TEST FAILED) ⚠️
 
 Mutation score: 87.5% (7/8 killed)
 ```
 
-### Islamic Finance Example: Halal Certification
+### Islamic Finance Example: Permitted Certification
 
 ```typescript
 // Production code
-class HalalCertificationValidator {
+class PermittedCertificationValidator {
   validate(ingredients: string[]): boolean {
-    const haramIngredients = ["pork", "alcohol", "blood"];
-    return !ingredients.some((ing) => haramIngredients.includes(ing.toLowerCase()));
+    const forbiddenIngredients = ["pork", "alcohol", "blood"];
+    return !ingredients.some((ing) => forbiddenIngredients.includes(ing.toLowerCase()));
   }
 }
 
 // WEAK TEST: Multiple mutations survive
-describe("HalalCertificationValidator - WEAK", () => {
+describe("PermittedCertificationValidator - WEAK", () => {
   it("should validate ingredients", () => {
-    const validator = new HalalCertificationValidator();
+    const validator = new PermittedCertificationValidator();
     const result = validator.validate(["chicken", "salt"]);
 
     expect(result).toBe(true); // ❌ Only tests happy path
@@ -770,39 +770,39 @@ describe("HalalCertificationValidator - WEAK", () => {
 });
 
 // Mutations that survive:
-// 1. Remove "pork" from haramIngredients → Test passes ❌
+// 1. Remove "pork" from forbiddenIngredients → Test passes ❌
 // 2. Change some() to every() → Test passes ❌
 // 3. Remove toLowerCase() → Test passes ❌
 
 // STRONG TEST: Kills mutations
-describe("HalalCertificationValidator - STRONG", () => {
-  it("should approve halal ingredients", () => {
-    const validator = new HalalCertificationValidator();
+describe("PermittedCertificationValidator - STRONG", () => {
+  it("should approve permitted ingredients", () => {
+    const validator = new PermittedCertificationValidator();
 
     expect(validator.validate(["chicken", "salt", "pepper"])).toBe(true);
   });
 
   it("should reject pork", () => {
-    const validator = new HalalCertificationValidator();
+    const validator = new PermittedCertificationValidator();
 
     expect(validator.validate(["pork", "salt"])).toBe(false); // ✅ Catches removal
   });
 
   it("should reject alcohol", () => {
-    const validator = new HalalCertificationValidator();
+    const validator = new PermittedCertificationValidator();
 
     expect(validator.validate(["alcohol"])).toBe(false); // ✅ Catches removal
   });
 
   it("should be case-insensitive", () => {
-    const validator = new HalalCertificationValidator();
+    const validator = new PermittedCertificationValidator();
 
     expect(validator.validate(["PORK"])).toBe(false); // ✅ Catches toLowerCase() removal
     expect(validator.validate(["Alcohol"])).toBe(false);
   });
 
-  it("should reject if any ingredient is haram", () => {
-    const validator = new HalalCertificationValidator();
+  it("should reject if any ingredient is forbidden", () => {
+    const validator = new PermittedCertificationValidator();
 
     expect(validator.validate(["chicken", "pork"])).toBe(false); // ✅ Catches some→every
   });

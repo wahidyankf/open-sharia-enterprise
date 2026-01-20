@@ -26,36 +26,36 @@ This document covers when to write integration tests, how to structure them, tes
 ### Example: Unit vs Integration Test
 
 ```typescript
-// UNIT TEST: ZakatCalculator logic in isolation
-describe("ZakatCalculator - Unit", () => {
+// UNIT TEST: TaxCalculator logic in isolation
+describe("TaxCalculator - Unit", () => {
   it("should calculate 2.5% of wealth", () => {
-    const calculator = new ZakatCalculator();
+    const calculator = new TaxCalculator();
     const wealth = Money.usd(1000);
 
-    const zakat = calculator.calculate(wealth);
+    const tax = calculator.calculate(wealth);
 
-    expect(zakat).toEqualMoney(Money.usd(25));
+    expect(tax).toEqualMoney(Money.usd(25));
   });
   // Fast: <1ms, no dependencies ✅
 });
 
-// INTEGRATION TEST: ZakatRepository with real database
-describe("ZakatRepository - Integration", () => {
-  let repository: ZakatRepository;
+// INTEGRATION TEST: TaxRepository with real database
+describe("TaxRepository - Integration", () => {
+  let repository: TaxRepository;
   let database: TestDatabase;
 
   beforeEach(async () => {
     database = await TestDatabase.create();
     await database.migrate();
-    repository = new ZakatRepository(database);
+    repository = new TaxRepository(database);
   });
 
   afterEach(async () => {
     await database.cleanup();
   });
 
-  it("should save and retrieve zakat assessment", async () => {
-    const assessment = buildZakatAssessment();
+  it("should save and retrieve tax assessment", async () => {
+    const assessment = buildTaxAssessment();
 
     await repository.save(assessment);
     const retrieved = await repository.findById(assessment.id);
@@ -77,7 +77,7 @@ describe("ZakatRepository - Integration", () => {
    - Transaction boundaries
    - Schema compatibility
 
-   **Example**: Verify `MurabahaContractRepository` correctly saves and loads contracts with all related installments.
+   **Example**: Verify `LoanContractRepository` correctly saves and loads contracts with all related installments.
 
 2. **External API Integration**
    - Third-party service calls
@@ -85,7 +85,7 @@ describe("ZakatRepository - Integration", () => {
    - Response parsing
    - Error handling (timeouts, 500 errors)
 
-   **Example**: Test Gold Price API integration returns valid nisab threshold.
+   **Example**: Test Gold Price API integration returns valid threshold threshold.
 
 3. **Message Queue Communication**
    - Event publishing
@@ -93,21 +93,21 @@ describe("ZakatRepository - Integration", () => {
    - Message serialization/deserialization
    - Dead letter queue handling
 
-   **Example**: Verify `ZakatCalculated` event is published and consumed correctly.
+   **Example**: Verify `TaxCalculated` event is published and consumed correctly.
 
 4. **Cross-Boundary Contracts**
    - Bounded context integration (DDD)
    - API contracts between services
    - Shared data formats
 
-   **Example**: Test contract between Zakat Assessment context and Notification context.
+   **Example**: Test contract between Tax Assessment context and Notification context.
 
 5. **File System Operations**
    - File reading/writing
    - CSV/JSON parsing
    - Path resolution
 
-   **Example**: Test Halal certification document upload and retrieval.
+   **Example**: Test Permitted certification document upload and retrieval.
 
 ### Don't Write Integration Tests For
 
@@ -132,11 +132,11 @@ class TestDatabase {
 
   async migrate(): Promise<void> {
     await this.db.exec(`
-      CREATE TABLE zakat_assessments (
+      CREATE TABLE tax_assessments (
         id TEXT PRIMARY KEY,
         wealth_amount REAL NOT NULL,
         wealth_currency TEXT NOT NULL,
-        nisab_amount REAL NOT NULL,
+        threshold_amount REAL NOT NULL,
         calculated_at TEXT NOT NULL
       )
     `);
@@ -148,14 +148,14 @@ class TestDatabase {
 }
 
 // Usage
-describe("ZakatRepository with in-memory DB", () => {
-  let repository: ZakatRepository;
+describe("TaxRepository with in-memory DB", () => {
+  let repository: TaxRepository;
   let database: TestDatabase;
 
   beforeEach(async () => {
     database = await TestDatabase.create();
     await database.migrate();
-    repository = new ZakatRepository(database);
+    repository = new TaxRepository(database);
   });
 
   afterEach(async () => {
@@ -163,10 +163,10 @@ describe("ZakatRepository with in-memory DB", () => {
   });
 
   it("should save assessment", async () => {
-    const assessment = buildZakatAssessment();
+    const assessment = buildTaxAssessment();
     await repository.save(assessment);
 
-    const count = await database.query("SELECT COUNT(*) FROM zakat_assessments");
+    const count = await database.query("SELECT COUNT(*) FROM tax_assessments");
     expect(count).toBe(1);
   });
 });
@@ -183,7 +183,7 @@ import { PostgreSqlContainer } from "testcontainers";
 class TestDatabase {
   static async create(): Promise<TestDatabase> {
     const container = await new PostgreSqlContainer("postgres:16")
-      .withDatabase("zakat_test")
+      .withDatabase("tax_test")
       .withUsername("test")
       .withPassword("test")
       .start();
@@ -206,14 +206,14 @@ class TestDatabase {
 }
 
 // Usage (same as in-memory)
-describe("ZakatRepository with PostgreSQL", () => {
-  let repository: ZakatRepository;
+describe("TaxRepository with PostgreSQL", () => {
+  let repository: TaxRepository;
   let database: TestDatabase;
 
   beforeEach(async () => {
     database = await TestDatabase.create();
     await database.migrate();
-    repository = new ZakatRepository(database);
+    repository = new TaxRepository(database);
   });
 
   afterEach(async () => {
@@ -221,7 +221,7 @@ describe("ZakatRepository with PostgreSQL", () => {
   });
 
   it("should save assessment with PostgreSQL-specific types", async () => {
-    const assessment = buildZakatAssessment();
+    const assessment = buildTaxAssessment();
     await repository.save(assessment);
 
     const retrieved = await repository.findById(assessment.id);
@@ -237,14 +237,14 @@ describe("ZakatRepository with PostgreSQL", () => {
 
 ```typescript
 // GOOD: Comprehensive repository integration test
-describe("MurabahaContractRepository Integration", () => {
-  let repository: MurabahaContractRepository;
+describe("LoanContractRepository Integration", () => {
+  let repository: LoanContractRepository;
   let database: TestDatabase;
 
   beforeEach(async () => {
     database = await TestDatabase.create();
     await database.migrate();
-    repository = new MurabahaContractRepository(database);
+    repository = new LoanContractRepository(database);
   });
 
   afterEach(async () => {
@@ -253,7 +253,7 @@ describe("MurabahaContractRepository Integration", () => {
 
   describe("save", () => {
     it("should persist contract with all properties", async () => {
-      const contract = buildMurabahaContract()
+      const contract = buildLoanContract()
         .withAssetPrice(Money.usd(50000))
         .withMarkup(Money.usd(2500))
         .withTermMonths(12)
@@ -269,7 +269,7 @@ describe("MurabahaContractRepository Integration", () => {
     });
 
     it("should persist installments as child entities", async () => {
-      const contract = buildMurabahaContract()
+      const contract = buildLoanContract()
         .withInstallments([
           buildInstallment({ dueDate: new Date("2024-02-01"), amount: Money.usd(4375) }),
           buildInstallment({ dueDate: new Date("2024-03-01"), amount: Money.usd(4375) }),
@@ -284,7 +284,7 @@ describe("MurabahaContractRepository Integration", () => {
     });
 
     it("should throw on duplicate ID", async () => {
-      const contract = buildMurabahaContract();
+      const contract = buildLoanContract();
       await repository.save(contract);
 
       await expect(repository.save(contract)).rejects.toThrow("Contract already exists");
@@ -299,7 +299,7 @@ describe("MurabahaContractRepository Integration", () => {
     });
 
     it("should retrieve saved contract", async () => {
-      const contract = buildMurabahaContract();
+      const contract = buildLoanContract();
       await repository.save(contract);
 
       const retrieved = await repository.findById(contract.id);
@@ -311,9 +311,9 @@ describe("MurabahaContractRepository Integration", () => {
 
   describe("findByStatus", () => {
     it("should filter contracts by status", async () => {
-      await repository.save(buildMurabahaContract().withStatus("ACTIVE").build());
-      await repository.save(buildMurabahaContract().withStatus("ACTIVE").build());
-      await repository.save(buildMurabahaContract().withStatus("COMPLETED").build());
+      await repository.save(buildLoanContract().withStatus("ACTIVE").build());
+      await repository.save(buildLoanContract().withStatus("ACTIVE").build());
+      await repository.save(buildLoanContract().withStatus("COMPLETED").build());
 
       const active = await repository.findByStatus("ACTIVE");
 
@@ -332,7 +332,7 @@ describe("MurabahaContractRepository Integration", () => {
 
   describe("update", () => {
     it("should update contract status", async () => {
-      const contract = buildMurabahaContract().withStatus("PENDING").build();
+      const contract = buildLoanContract().withStatus("PENDING").build();
       await repository.save(contract);
 
       contract.activate(); // Domain method changes status
@@ -345,7 +345,7 @@ describe("MurabahaContractRepository Integration", () => {
 
   describe("transactions", () => {
     it("should rollback on error", async () => {
-      const contract = buildMurabahaContract();
+      const contract = buildLoanContract();
 
       await expect(async () => {
         await repository.saveWithTransaction(async (tx) => {
@@ -359,7 +359,7 @@ describe("MurabahaContractRepository Integration", () => {
     });
 
     it("should commit on success", async () => {
-      const contract = buildMurabahaContract();
+      const contract = buildLoanContract();
 
       await repository.saveWithTransaction(async (tx) => {
         await tx.save(contract);
@@ -493,38 +493,38 @@ describe("GoldPriceService Contract Test", () => {
 
 ```typescript
 // GOOD: Test event publishing to real message queue
-describe("ZakatEventPublisher Integration", () => {
-  let publisher: ZakatEventPublisher;
+describe("TaxEventPublisher Integration", () => {
+  let publisher: TaxEventPublisher;
   let messageQueue: TestMessageQueue;
 
   beforeEach(async () => {
     messageQueue = await TestMessageQueue.create();
-    publisher = new ZakatEventPublisher(messageQueue);
+    publisher = new TaxEventPublisher(messageQueue);
   });
 
   afterEach(async () => {
     await messageQueue.cleanup();
   });
 
-  it("should publish ZakatCalculated event", async () => {
-    const event = new ZakatCalculated(AssessmentId.generate(), Money.usd(1000), Money.usd(25), new Date());
+  it("should publish TaxCalculated event", async () => {
+    const event = new TaxCalculated(AssessmentId.generate(), Money.usd(1000), Money.usd(25), new Date());
 
     await publisher.publish(event);
 
-    const messages = await messageQueue.getMessages("zakat.calculated");
+    const messages = await messageQueue.getMessages("tax.calculated");
     expect(messages).toHaveLength(1);
-    expect(messages[0].eventType).toBe("ZakatCalculated");
-    expect(messages[0].payload.zakatAmount.amount).toBe(25);
+    expect(messages[0].eventType).toBe("TaxCalculated");
+    expect(messages[0].payload.taxAmount.amount).toBe(25);
   });
 
   it("should retry on transient failures", async () => {
     messageQueue.simulateFailure(2); // Fail first 2 attempts
 
-    const event = new ZakatCalculated(AssessmentId.generate(), Money.usd(1000), Money.usd(25), new Date());
+    const event = new TaxCalculated(AssessmentId.generate(), Money.usd(1000), Money.usd(25), new Date());
 
     await publisher.publish(event);
 
-    const messages = await messageQueue.getMessages("zakat.calculated");
+    const messages = await messageQueue.getMessages("tax.calculated");
     expect(messages).toHaveLength(1); // Eventually succeeds ✅
     expect(messageQueue.getAttemptCount()).toBe(3); // 2 failures + 1 success
   });
@@ -535,27 +535,27 @@ describe("ZakatEventPublisher Integration", () => {
 
 ```typescript
 // GOOD: Test event consumer
-describe("ZakatNotificationHandler Integration", () => {
-  let handler: ZakatNotificationHandler;
+describe("TaxNotificationHandler Integration", () => {
+  let handler: TaxNotificationHandler;
   let messageQueue: TestMessageQueue;
   let notificationService: FakeNotificationService;
 
   beforeEach(async () => {
     messageQueue = await TestMessageQueue.create();
     notificationService = new FakeNotificationService();
-    handler = new ZakatNotificationHandler(notificationService);
+    handler = new TaxNotificationHandler(notificationService);
   });
 
   afterEach(async () => {
     await messageQueue.cleanup();
   });
 
-  it("should send notification on ZakatCalculated event", async () => {
+  it("should send notification on TaxCalculated event", async () => {
     const event = {
-      eventType: "ZakatCalculated",
+      eventType: "TaxCalculated",
       payload: {
         assessmentId: "ASSESS-001",
-        zakatAmount: { amount: 25, currency: "USD" },
+        taxAmount: { amount: 25, currency: "USD" },
       },
     };
 
@@ -563,7 +563,7 @@ describe("ZakatNotificationHandler Integration", () => {
 
     const sentNotifications = notificationService.getSentNotifications();
     expect(sentNotifications).toHaveLength(1);
-    expect(sentNotifications[0].subject).toContain("Zakat Calculated");
+    expect(sentNotifications[0].subject).toContain("Tax Calculated");
     expect(sentNotifications[0].body).toContain("$25.00");
   });
 
@@ -571,10 +571,10 @@ describe("ZakatNotificationHandler Integration", () => {
     notificationService.alwaysFail();
 
     const event = {
-      eventType: "ZakatCalculated",
+      eventType: "TaxCalculated",
       payload: {
         assessmentId: "ASSESS-001",
-        zakatAmount: { amount: 25, currency: "USD" },
+        taxAmount: { amount: 25, currency: "USD" },
       },
     };
 
@@ -593,15 +593,15 @@ describe("ZakatNotificationHandler Integration", () => {
 **Contract testing** verifies that services can communicate without running full integration tests.
 
 ```typescript
-// Consumer side: Zakat Assessment Context
-describe("Zakat to Notification Contract - Consumer", () => {
-  it("should define expected ZakatCalculated event", () => {
+// Consumer side: Tax Assessment Context
+describe("Tax to Notification Contract - Consumer", () => {
+  it("should define expected TaxCalculated event", () => {
     const expectedContract = {
-      eventType: "ZakatCalculated",
+      eventType: "TaxCalculated",
       payload: {
         assessmentId: expect.any(String),
         userId: expect.any(String),
-        zakatAmount: {
+        taxAmount: {
           amount: expect.any(Number),
           currency: expect.stringMatching(/^[A-Z]{3}$/),
         },
@@ -609,7 +609,7 @@ describe("Zakat to Notification Contract - Consumer", () => {
       },
     };
 
-    const actualEvent = new ZakatCalculated(
+    const actualEvent = new TaxCalculated(
       AssessmentId.of("ASSESS-001"),
       UserId.of("USER-001"),
       Money.usd(25),
@@ -621,14 +621,14 @@ describe("Zakat to Notification Contract - Consumer", () => {
 });
 
 // Provider side: Notification Context
-describe("Zakat to Notification Contract - Provider", () => {
-  it("should consume ZakatCalculated event", () => {
+describe("Tax to Notification Contract - Provider", () => {
+  it("should consume TaxCalculated event", () => {
     const event = {
-      eventType: "ZakatCalculated",
+      eventType: "TaxCalculated",
       payload: {
         assessmentId: "ASSESS-001",
         userId: "USER-001",
-        zakatAmount: {
+        taxAmount: {
           amount: 25,
           currency: "USD",
         },
@@ -637,7 +637,7 @@ describe("Zakat to Notification Contract - Provider", () => {
     };
 
     // Verify Notification context can parse this event
-    const handler = new ZakatNotificationHandler();
+    const handler = new TaxNotificationHandler();
     expect(() => handler.handle(event)).not.toThrow();
   });
 });
@@ -648,10 +648,10 @@ describe("Zakat to Notification Contract - Provider", () => {
 ```typescript
 import { Pact } from "@pact-foundation/pact";
 
-// Consumer: Zakat Assessment Service
-describe("Zakat Pact with Gold Price API", () => {
+// Consumer: Tax Assessment Service
+describe("Tax Pact with Gold Price API", () => {
   const provider = new Pact({
-    consumer: "ZakatAssessmentService",
+    consumer: "TaxAssessmentService",
     provider: "GoldPriceAPI",
     port: 1234,
   });
@@ -765,17 +765,17 @@ describe("TakafulClaimService Integration", () => {
 
 ```
 src/
-  zakat/
+  tax/
     domain/
-      ZakatCalculator.ts
-      ZakatCalculator.spec.ts          # Unit tests
+      TaxCalculator.ts
+      TaxCalculator.spec.ts          # Unit tests
     infrastructure/
-      ZakatRepository.ts
-      ZakatRepository.integration.spec.ts  # Integration tests
+      TaxRepository.ts
+      TaxRepository.integration.spec.ts  # Integration tests
     application/
-      ZakatAssessmentService.ts
-      ZakatAssessmentService.spec.ts   # Unit tests
-      ZakatAssessmentService.integration.spec.ts
+      TaxAssessmentService.ts
+      TaxAssessmentService.spec.ts   # Unit tests
+      TaxAssessmentService.integration.spec.ts
 ```
 
 ### Naming Convention

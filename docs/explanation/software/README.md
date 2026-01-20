@@ -43,6 +43,12 @@ Comprehensive documentation on software development practices:
 - **[Test-Driven Development (TDD)](./development/test-driven-development-tdd/README.md)** - Red-Green-Refactor cycle and testing patterns
 - **[Behavior-Driven Development (BDD)](./development/behavior-driven-development-bdd/README.md)** - Gherkin scenarios and specification by example
 
+### ☕ [Programming Languages](./tech-stack-lang/README.md)
+
+Language-specific idioms, best practices, and antipatterns:
+
+- **[Java](./tech-stack-lang/java/README.md)** - Modern Java development (Java 17+) with records, pattern matching, and virtual threads
+
 ---
 
 ## Architecture Documentation
@@ -138,7 +144,7 @@ The open-sharia-enterprise project applies both C4 and DDD principles:
 **DDD Application:**
 
 - Bounded contexts align with Nx project boundaries
-- Islamic finance domain modeled with Ubiquitous Language (Zakat, Halal, Murabaha, Riba)
+- Business domains modeled with Ubiquitous Language (Tax, Loan, Donation)
 - Functional programming adaptations (immutable aggregates, pure domain logic)
 - Event-driven architecture with Domain Events
 

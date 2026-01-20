@@ -14,7 +14,7 @@ Mastering test data builders is essential for maintaining large test suites. The
 
 ```typescript
 // BAD: Repeated construction in every test
-describe("MurabahaContractService", () => {
+describe("LoanContractService", () => {
   it("should calculate monthly installment", () => {
     const contract = {
       id: "CONTRACT-001",
@@ -57,7 +57,7 @@ describe("MurabahaContractService", () => {
 **Problems:**
 
 - Duplication of construction logic
-- Changes to `MurabahaContract` break all tests
+- Changes to `LoanContract` break all tests
 - Hard to identify what matters in each test (signal vs noise)
 - Error-prone (easy to forget required fields)
 
@@ -65,9 +65,9 @@ describe("MurabahaContractService", () => {
 
 ```typescript
 // GOOD: Builder pattern
-describe("MurabahaContractService", () => {
+describe("LoanContractService", () => {
   it("should calculate monthly installment", () => {
-    const contract = buildMurabahaContract()
+    const contract = buildLoanContract()
       .withAssetPrice(Money.fromUSD(50000))
       .withMarkup(Money.fromUSD(2500))
       .withTermMonths(12)
@@ -78,7 +78,7 @@ describe("MurabahaContractService", () => {
   });
 
   it("should validate markup percentage", () => {
-    const contract = buildMurabahaContract()
+    const contract = buildLoanContract()
       .withAssetPrice(Money.fromUSD(40000))
       .withMarkup(Money.fromUSD(5000)) // 12.5% - invalid
       .build();
@@ -102,7 +102,7 @@ The Builder pattern provides a fluent API for constructing objects step by step.
 ### Basic Builder Implementation
 
 ```typescript
-class MurabahaContractBuilder {
+class LoanContractBuilder {
   private id: string = "CONTRACT-DEFAULT";
   private customerId: string = "CUST-DEFAULT";
   private assetDescription: string = "Default Asset";
@@ -147,7 +147,7 @@ class MurabahaContractBuilder {
     return this;
   }
 
-  build(): MurabahaContract {
+  build(): LoanContract {
     return {
       id: this.id,
       customerId: this.customerId,
@@ -165,24 +165,24 @@ class MurabahaContractBuilder {
 }
 
 // Factory function for convenience
-function buildMurabahaContract(): MurabahaContractBuilder {
-  return new MurabahaContractBuilder();
+function buildLoanContract(): LoanContractBuilder {
+  return new LoanContractBuilder();
 }
 ```
 
 ### Usage Examples
 
 ```typescript
-describe("MurabahaContractService", () => {
+describe("LoanContractService", () => {
   it("should create contract with defaults", () => {
-    const contract = buildMurabahaContract().build();
+    const contract = buildLoanContract().build();
 
     expect(contract.assetPrice.equals(Money.fromUSD(10000))).toBe(true);
     expect(contract.termMonths).toBe(12);
   });
 
   it("should create contract with custom values", () => {
-    const contract = buildMurabahaContract()
+    const contract = buildLoanContract()
       .withAssetPrice(Money.fromUSD(75000))
       .withMarkup(Money.fromUSD(3750))
       .withTermMonths(24)
@@ -193,7 +193,7 @@ describe("MurabahaContractService", () => {
   });
 
   it("should create active contract", () => {
-    const contract = buildMurabahaContract().withStatus("ACTIVE").withStartDate(new Date("2024-03-01")).build();
+    const contract = buildLoanContract().withStatus("ACTIVE").withStartDate(new Date("2024-03-01")).build();
 
     expect(contract.status).toBe("ACTIVE");
   });
@@ -208,7 +208,7 @@ The Object Mother pattern provides factory functions for common test scenarios. 
 
 ```typescript
 // Object Mother functions
-function buildDefaultMurabahaContract(overrides?: Partial<MurabahaContract>): MurabahaContract {
+function buildDefaultLoanContract(overrides?: Partial<LoanContract>): LoanContract {
   return {
     id: "CONTRACT-001",
     customerId: "CUST-001",
@@ -225,16 +225,16 @@ function buildDefaultMurabahaContract(overrides?: Partial<MurabahaContract>): Mu
   };
 }
 
-function buildActiveMurabahaContract(overrides?: Partial<MurabahaContract>): MurabahaContract {
-  return buildDefaultMurabahaContract({
+function buildActiveLoanContract(overrides?: Partial<LoanContract>): LoanContract {
+  return buildDefaultLoanContract({
     status: "ACTIVE",
     startDate: new Date("2024-01-01"),
     ...overrides,
   });
 }
 
-function buildCompletedMurabahaContract(overrides?: Partial<MurabahaContract>): MurabahaContract {
-  return buildDefaultMurabahaContract({
+function buildCompletedLoanContract(overrides?: Partial<LoanContract>): LoanContract {
+  return buildDefaultLoanContract({
     status: "COMPLETED",
     startDate: new Date("2023-01-01"),
     installments: [
@@ -244,8 +244,8 @@ function buildCompletedMurabahaContract(overrides?: Partial<MurabahaContract>): 
   });
 }
 
-function buildInvalidMurabahaContract(overrides?: Partial<MurabahaContract>): MurabahaContract {
-  return buildDefaultMurabahaContract({
+function buildInvalidLoanContract(overrides?: Partial<LoanContract>): LoanContract {
+  return buildDefaultLoanContract({
     markup: Money.fromUSD(1500), // 15% - exceeds limit
     ...overrides,
   });
@@ -255,9 +255,9 @@ function buildInvalidMurabahaContract(overrides?: Partial<MurabahaContract>): Mu
 ### Usage Examples
 
 ```typescript
-describe("MurabahaContractService", () => {
+describe("LoanContractService", () => {
   it("should approve valid contract", () => {
-    const contract = buildDefaultMurabahaContract();
+    const contract = buildDefaultLoanContract();
 
     const result = service.validateContract(contract);
 
@@ -265,13 +265,13 @@ describe("MurabahaContractService", () => {
   });
 
   it("should reject contract with excessive markup", () => {
-    const contract = buildInvalidMurabahaContract();
+    const contract = buildInvalidLoanContract();
 
     expect(() => service.validateContract(contract)).toThrow("Markup exceeds 10%");
   });
 
   it("should calculate remaining balance for active contract", () => {
-    const contract = buildActiveMurabahaContract({
+    const contract = buildActiveLoanContract({
       assetPrice: Money.fromUSD(50000),
       markup: Money.fromUSD(2500),
     });
@@ -296,7 +296,7 @@ flowchart TD
     Question2 -->|No| Both[Use Both:<br/>Object Mother<br/>+ overrides]
 
     ObjectMother --> Example1["buildApprovedCertification()<br/>buildRejectedCertification()"]
-    Builder --> Example2["buildWaqf()<br/>.withBeneficiaries([...])<br/>.withAssets([...])"]
+    Builder --> Example2["buildDonation()<br/>.withBeneficiaries([...])<br/>.withAssets([...])"]
     Both --> Example3["buildDefaultContract({<br/>  markup: Money.fromUSD(2000)<br/>})"]
 
     style Start fill:#0173B2,stroke:#000,color:#FFFFFF
@@ -312,13 +312,13 @@ flowchart TD
 
 **Decision Matrix:**
 
-| Scenario                  | Pattern                          | Example                                                  |
-| ------------------------- | -------------------------------- | -------------------------------------------------------- |
-| Few well-defined states   | **Object Mother**                | `buildApprovedClaim()`, `buildRejectedClaim()`           |
-| Many field combinations   | **Builder**                      | `buildWaqf().withBeneficiaries([...]).withAssets([...])` |
-| Simple overrides          | **Object Mother with overrides** | `buildContract({ markup: Money.fromUSD(1000) })`         |
-| Complex nested objects    | **Builder**                      | Fluent API for step-by-step construction                 |
-| Domain-specific scenarios | **Object Mother**                | `buildHalalCertifiedProduct()`                           |
+| Scenario                  | Pattern                          | Example                                                      |
+| ------------------------- | -------------------------------- | ------------------------------------------------------------ |
+| Few well-defined states   | **Object Mother**                | `buildApprovedClaim()`, `buildRejectedClaim()`               |
+| Many field combinations   | **Builder**                      | `buildDonation().withBeneficiaries([...]).withAssets([...])` |
+| Simple overrides          | **Object Mother with overrides** | `buildContract({ markup: Money.fromUSD(1000) })`             |
+| Complex nested objects    | **Builder**                      | Fluent API for step-by-step construction                     |
+| Domain-specific scenarios | **Object Mother**                | `buildPermittedCertifiedProduct()`                           |
 
 ## Combining Builders and Object Mothers
 
@@ -326,13 +326,13 @@ The most powerful approach combines both patterns: use Object Mothers for common
 
 ```typescript
 // Object Mothers for common scenarios
-function buildPendingZakatCalculation(overrides?: Partial<ZakatCalculation>): ZakatCalculation {
+function buildPendingTaxCalculation(overrides?: Partial<TaxCalculation>): TaxCalculation {
   return {
     id: "CALC-001",
     userId: "USER-001",
     wealth: Money.fromGold(100, "grams"),
-    nisab: Money.fromGold(85, "grams"),
-    zakatDue: Money.fromGold(2.5, "grams"),
+    threshold: Money.fromGold(85, "grams"),
+    taxDue: Money.fromGold(2.5, "grams"),
     hawlCompleted: true,
     calculatedAt: new Date("2024-01-15"),
     status: "PENDING",
@@ -340,8 +340,8 @@ function buildPendingZakatCalculation(overrides?: Partial<ZakatCalculation>): Za
   };
 }
 
-function buildPaidZakatCalculation(overrides?: Partial<ZakatCalculation>): ZakatCalculation {
-  return buildPendingZakatCalculation({
+function buildPaidTaxCalculation(overrides?: Partial<TaxCalculation>): TaxCalculation {
+  return buildPendingTaxCalculation({
     status: "PAID",
     paidAt: new Date("2024-01-20"),
     ...overrides,
@@ -349,31 +349,31 @@ function buildPaidZakatCalculation(overrides?: Partial<ZakatCalculation>): Zakat
 }
 
 // Builder for complex scenarios
-class ZakatCalculationBuilder {
-  private data: Partial<ZakatCalculation> = {
+class TaxCalculationBuilder {
+  private data: Partial<TaxCalculation> = {
     id: "CALC-DEFAULT",
     userId: "USER-DEFAULT",
     wealth: Money.fromGold(100, "grams"),
-    nisab: Money.fromGold(85, "grams"),
-    zakatDue: Money.fromGold(2.5, "grams"),
+    threshold: Money.fromGold(85, "grams"),
+    taxDue: Money.fromGold(2.5, "grams"),
     hawlCompleted: true,
     status: "PENDING",
   };
 
   withWealth(wealth: Money): this {
     this.data.wealth = wealth;
-    this.data.zakatDue = wealth.multiply(0.025);
+    this.data.taxDue = wealth.multiply(0.025);
     return this;
   }
 
-  withNisab(nisab: Money): this {
-    this.data.nisab = nisab;
+  withThreshold(threshold: Money): this {
+    this.data.threshold = threshold;
     return this;
   }
 
   notCompletedHawl(): this {
     this.data.hawlCompleted = false;
-    this.data.zakatDue = Money.zero("gold");
+    this.data.taxDue = Money.zero("gold");
     return this;
   }
 
@@ -383,23 +383,23 @@ class ZakatCalculationBuilder {
     return this;
   }
 
-  build(): ZakatCalculation {
+  build(): TaxCalculation {
     return {
       calculatedAt: new Date(),
       ...this.data,
-    } as ZakatCalculation;
+    } as TaxCalculation;
   }
 }
 
-function buildZakatCalculation(): ZakatCalculationBuilder {
-  return new ZakatCalculationBuilder();
+function buildTaxCalculation(): TaxCalculationBuilder {
+  return new TaxCalculationBuilder();
 }
 
 // Usage: Choose the right tool for the job
-describe("ZakatReportingService", () => {
+describe("TaxReportingService", () => {
   it("should generate report for paid calculations", () => {
-    const calc1 = buildPaidZakatCalculation(); // Object Mother - simple
-    const calc2 = buildPaidZakatCalculation({ wealth: Money.fromGold(200, "grams") });
+    const calc1 = buildPaidTaxCalculation(); // Object Mother - simple
+    const calc2 = buildPaidTaxCalculation({ wealth: Money.fromGold(200, "grams") });
 
     const report = service.generateReport([calc1, calc2]);
 
@@ -407,8 +407,8 @@ describe("ZakatReportingService", () => {
   });
 
   it("should exclude incomplete Hawl from report", () => {
-    const completeHawl = buildPaidZakatCalculation();
-    const incompleteHawl = buildZakatCalculation() // Builder - complex scenario
+    const completeHawl = buildPaidTaxCalculation();
+    const incompleteHawl = buildTaxCalculation() // Builder - complex scenario
       .withWealth(Money.fromGold(500, "grams"))
       .notCompletedHawl()
       .build();
@@ -425,9 +425,9 @@ describe("ZakatReportingService", () => {
 ### 1. Builder with Validation
 
 ```typescript
-class WaqfBuilder {
+class DonationBuilder {
   private beneficiaries: Beneficiary[] = [];
-  private assets: WaqfAsset[] = [];
+  private assets: DonationAsset[] = [];
   private custodian?: string;
 
   withBeneficiaries(beneficiaries: Beneficiary[]): this {
@@ -435,7 +435,7 @@ class WaqfBuilder {
     return this;
   }
 
-  withAssets(assets: WaqfAsset[]): this {
+  withAssets(assets: DonationAsset[]): this {
     this.assets = assets;
     return this;
   }
@@ -445,14 +445,14 @@ class WaqfBuilder {
     return this;
   }
 
-  build(): Waqf {
+  build(): Donation {
     // Validation before build
     if (this.beneficiaries.length === 0) {
-      throw new Error("Waqf must have at least one beneficiary");
+      throw new Error("Donation must have at least one beneficiary");
     }
 
     if (this.assets.length === 0) {
-      throw new Error("Waqf must have at least one asset");
+      throw new Error("Donation must have at least one asset");
     }
 
     const totalShares = this.beneficiaries.reduce((sum, b) => sum + b.share, 0);
@@ -461,7 +461,7 @@ class WaqfBuilder {
     }
 
     return {
-      id: generateWaqfId(),
+      id: generateDonationId(),
       beneficiaries: this.beneficiaries,
       assets: this.assets,
       custodian: this.custodian || "DEFAULT_CUSTODIAN",
@@ -526,9 +526,9 @@ const policy = buildTakafulPolicy()
 ```typescript
 import { faker } from "@faker-js/faker";
 
-class RandomZakatCalculationBuilder {
+class RandomTaxCalculationBuilder {
   private wealth?: Money;
-  private nisab?: Money;
+  private threshold?: Money;
 
   withRandomWealth(min: number = 0, max: number = 1000000): this {
     const amount = faker.number.float({ min, max, precision: 0.01 });
@@ -536,21 +536,21 @@ class RandomZakatCalculationBuilder {
     return this;
   }
 
-  withRandomNisab(): this {
-    this.nisab = Money.fromGold(85, "grams"); // Fixed nisab
+  withRandomThreshold(): this {
+    this.threshold = Money.fromGold(85, "grams"); // Fixed threshold
     return this;
   }
 
-  build(): ZakatCalculation {
+  build(): TaxCalculation {
     const wealth = this.wealth || Money.fromGold(faker.number.float({ min: 0, max: 10000, precision: 0.01 }), "grams");
-    const nisab = this.nisab || Money.fromGold(85, "grams");
+    const threshold = this.threshold || Money.fromGold(85, "grams");
 
     return {
       id: faker.string.uuid(),
       userId: faker.string.uuid(),
       wealth,
-      nisab,
-      zakatDue: wealth.gte(nisab) ? wealth.multiply(0.025) : Money.zero("gold"),
+      threshold,
+      taxDue: wealth.gte(threshold) ? wealth.multiply(0.025) : Money.zero("gold"),
       hawlCompleted: faker.datatype.boolean(),
       calculatedAt: faker.date.recent(),
       status: faker.helpers.arrayElement(["PENDING", "PAID", "CANCELLED"]),
@@ -559,29 +559,29 @@ class RandomZakatCalculationBuilder {
 }
 
 // Usage in property-based tests
-it("should always calculate non-negative zakat", () => {
+it("should always calculate non-negative tax", () => {
   for (let i = 0; i < 100; i++) {
-    const calculation = new RandomZakatCalculationBuilder().withRandomWealth().withRandomNisab().build();
+    const calculation = new RandomTaxCalculationBuilder().withRandomWealth().withRandomThreshold().build();
 
-    expect(calculation.zakatDue.amount).toBeGreaterThanOrEqual(0);
+    expect(calculation.taxDue.amount).toBeGreaterThanOrEqual(0);
   }
 });
 ```
 
 ## Test Data Builders for Islamic Finance Domain
 
-### Halal Certification Application Builder
+### Permitted Certification Application Builder
 
 ```typescript
-function buildHalalCertificationApplication(
-  overrides?: Partial<HalalCertificationApplication>,
-): HalalCertificationApplication {
+function buildPermittedCertificationApplication(
+  overrides?: Partial<PermittedCertificationApplication>,
+): PermittedCertificationApplication {
   return {
     id: "APP-001",
-    productName: "Halal Chicken Sausage",
-    manufacturer: "Halal Foods Ltd",
+    productName: "Permitted Chicken Sausage",
+    manufacturer: "Permitted Foods Ltd",
     ingredients: [
-      { name: "chicken", source: "halal-certified-farm", percentage: 80 },
+      { name: "chicken", source: "permitted-certified-farm", percentage: 80 },
       { name: "spices", source: "natural", percentage: 15 },
       { name: "water", source: "municipal", percentage: 5 },
     ],
@@ -594,10 +594,10 @@ function buildHalalCertificationApplication(
   };
 }
 
-function buildApprovedHalalCertification(
-  overrides?: Partial<HalalCertificationApplication>,
-): HalalCertificationApplication {
-  return buildHalalCertificationApplication({
+function buildApprovedPermittedCertification(
+  overrides?: Partial<PermittedCertificationApplication>,
+): PermittedCertificationApplication {
+  return buildPermittedCertificationApplication({
     status: "APPROVED",
     reviewedBy: "REVIEWER-001",
     approvedAt: new Date("2024-01-20"),
@@ -605,17 +605,17 @@ function buildApprovedHalalCertification(
   });
 }
 
-function buildRejectedHalalCertification(
+function buildRejectedPermittedCertification(
   reason: string,
-  overrides?: Partial<HalalCertificationApplication>,
-): HalalCertificationApplication {
-  return buildHalalCertificationApplication({
+  overrides?: Partial<PermittedCertificationApplication>,
+): PermittedCertificationApplication {
+  return buildPermittedCertificationApplication({
     status: "REJECTED",
     reviewedBy: "REVIEWER-001",
     rejectionReason: reason,
     rejectedAt: new Date("2024-01-20"),
     ingredients: [
-      { name: "pork", source: "farm", percentage: 50 }, // Non-halal
+      { name: "pork", source: "farm", percentage: 50 }, // Non-permitted
       { name: "spices", source: "natural", percentage: 50 },
     ],
     ...overrides,
@@ -710,7 +710,7 @@ Builders and Object Mothers should provide realistic defaults that work for most
 
 ```typescript
 // GOOD: Sensible defaults
-function buildMurabahaContract(overrides?: Partial<MurabahaContract>): MurabahaContract {
+function buildLoanContract(overrides?: Partial<LoanContract>): LoanContract {
   return {
     assetPrice: Money.fromUSD(10000), // Reasonable default
     markup: Money.fromUSD(500), // 5% - valid
@@ -721,7 +721,7 @@ function buildMurabahaContract(overrides?: Partial<MurabahaContract>): MurabahaC
 }
 
 // BAD: Unrealistic defaults
-function buildMurabahaContract(overrides?: Partial<MurabahaContract>): MurabahaContract {
+function buildLoanContract(overrides?: Partial<LoanContract>): LoanContract {
   return {
     assetPrice: Money.fromUSD(0), // Unrealistic
     markup: Money.fromUSD(-100), // Invalid
@@ -760,13 +760,13 @@ it("should not renew policy", () => {
 ```
 src/
   domain/
-    MurabahaContract.ts
+    LoanContract.ts
   __tests__/
     builders/
-      MurabahaContractBuilder.ts
+      LoanContractBuilder.ts
       TakafulPolicyBuilder.ts
-      WaqfBuilder.ts
-    MurabahaContractService.test.ts
+      DonationBuilder.ts
+    LoanContractService.test.ts
 ```
 
 ### 4. One Builder File Per Domain Object
@@ -774,16 +774,16 @@ src/
 Organize builders by domain object, not by test file:
 
 ```typescript
-// src/__tests__/builders/MurabahaContractBuilder.ts
-export function buildMurabahaContract(overrides?: Partial<MurabahaContract>): MurabahaContract {
+// src/__tests__/builders/LoanContractBuilder.ts
+export function buildLoanContract(overrides?: Partial<LoanContract>): LoanContract {
   // Implementation
 }
 
-export function buildActiveMurabahaContract(overrides?: Partial<MurabahaContract>): MurabahaContract {
+export function buildActiveLoanContract(overrides?: Partial<LoanContract>): LoanContract {
   // Implementation
 }
 
-export function buildCompletedMurabahaContract(overrides?: Partial<MurabahaContract>): MurabahaContract {
+export function buildCompletedLoanContract(overrides?: Partial<LoanContract>): LoanContract {
   // Implementation
 }
 ```
@@ -792,9 +792,9 @@ export function buildCompletedMurabahaContract(overrides?: Partial<MurabahaContr
 
 ```typescript
 // GOOD: Flexible overrides
-function buildWaqf(overrides?: Partial<Waqf>): Waqf {
+function buildDonation(overrides?: Partial<Donation>): Donation {
   return {
-    id: "WAQF-001",
+    id: "DONATION-001",
     beneficiaries: [],
     assets: [],
     ...overrides,
@@ -802,7 +802,7 @@ function buildWaqf(overrides?: Partial<Waqf>): Waqf {
 }
 
 // Usage: Only override what you need
-const waqf = buildWaqf({ id: "WAQF-CUSTOM" });
+const donation = buildDonation({ id: "DONATION-CUSTOM" });
 ```
 
 ## Summary

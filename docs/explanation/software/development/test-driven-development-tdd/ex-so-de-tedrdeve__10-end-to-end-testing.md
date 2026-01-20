@@ -28,39 +28,39 @@ This document covers when E2E tests are appropriate, how to structure them using
 ### Example: Same Feature, Three Test Levels
 
 ```typescript
-// UNIT TEST: ZakatCalculator logic (fast, isolated)
-describe("ZakatCalculator - Unit", () => {
+// UNIT TEST: TaxCalculator logic (fast, isolated)
+describe("TaxCalculator - Unit", () => {
   it("should calculate 2.5% of wealth", () => {
-    const calculator = new ZakatCalculator();
-    const zakat = calculator.calculate(Money.usd(1000));
+    const calculator = new TaxCalculator();
+    const tax = calculator.calculate(Money.usd(1000));
 
-    expect(zakat).toEqualMoney(Money.usd(25));
+    expect(tax).toEqualMoney(Money.usd(25));
   });
   // Runtime: ~1ms ✅
 });
 
 // INTEGRATION TEST: Repository persistence (real database)
-describe("ZakatRepository - Integration", () => {
+describe("TaxRepository - Integration", () => {
   it("should save and retrieve assessment", async () => {
-    const assessment = buildZakatAssessment();
+    const assessment = buildTaxAssessment();
     await repository.save(assessment);
 
     const retrieved = await repository.findById(assessment.id);
 
-    expect(retrieved!.zakatAmount).toEqualMoney(assessment.zakatAmount);
+    expect(retrieved!.taxAmount).toEqualMoney(assessment.taxAmount);
   });
   // Runtime: ~200ms ✅
 });
 
 // E2E TEST: Full user workflow (browser + backend + database)
-describe("Zakat Assessment - E2E", () => {
-  it("should complete zakat assessment workflow", async ({ page }) => {
-    await page.goto("/zakat/assessment");
+describe("Tax Assessment - E2E", () => {
+  it("should complete tax assessment workflow", async ({ page }) => {
+    await page.goto("/tax/assessment");
     await page.fill("#wealth-amount", "1000");
     await page.selectOption("#wealth-currency", "USD");
-    await page.click("button:text('Calculate Zakat')");
+    await page.click("button:text('Calculate Tax')");
 
-    await expect(page.locator("#zakat-amount")).toHaveText("$25.00 USD");
+    await expect(page.locator("#tax-amount")).toHaveText("$25.00 USD");
   });
   // Runtime: ~3-5 seconds ✅
 });
@@ -82,21 +82,21 @@ describe("Zakat Assessment - E2E", () => {
    - SSO authentication
    - External service dependencies
 
-   **Example**: Halal certification verification with external certification authority API.
+   **Example**: Permitted certification verification with external certification authority API.
 
 3. **UI/Backend Integration**
    - Form validation and submission
    - Real-time updates (WebSockets)
    - File uploads and downloads
 
-   **Example**: Waqf distribution form submission and confirmation email.
+   **Example**: Donation distribution form submission and confirmation email.
 
 4. **Smoke Tests** (Post-Deployment)
    - Verify deployment succeeded
    - Check critical features still work
    - Catch deployment configuration errors
 
-   **Example**: After deploying Zakat calculator, verify homepage loads and calculator works.
+   **Example**: After deploying Tax calculator, verify homepage loads and calculator works.
 
 ### Don't Write E2E Tests For
 
@@ -135,9 +135,9 @@ npx playwright install
 ```typescript
 import { test, expect } from "@playwright/test";
 
-test("should calculate zakat", async ({ page }) => {
+test("should calculate tax", async ({ page }) => {
   // Navigate to page
-  await page.goto("http://localhost:3000/zakat/calculator");
+  await page.goto("http://localhost:3000/tax/calculator");
 
   // Fill form
   await page.fill("#wealth-amount", "1000");
@@ -147,7 +147,7 @@ test("should calculate zakat", async ({ page }) => {
   await page.click("button:text('Calculate')");
 
   // Verify result
-  await expect(page.locator("#result")).toHaveText("Zakat Due: $25.00 USD");
+  await expect(page.locator("#result")).toHaveText("Tax Due: $25.00 USD");
 });
 ```
 
@@ -210,8 +210,8 @@ export default defineConfig({
 
 ```typescript
 // BAD: Brittle, duplicated selectors
-test("should submit murabaha application", async ({ page }) => {
-  await page.goto("/murabaha/apply");
+test("should submit loan application", async ({ page }) => {
+  await page.goto("/loan/apply");
   await page.fill("#customer-name", "Ahmed Ali");
   await page.fill("#customer-email", "ahmed@example.com");
   await page.fill("#asset-description", "Toyota Camry 2024");
@@ -223,7 +223,7 @@ test("should submit murabaha application", async ({ page }) => {
 });
 
 test("should validate required fields", async ({ page }) => {
-  await page.goto("/murabaha/apply");
+  await page.goto("/loan/apply");
   await page.fill("#customer-name", "Ahmed Ali"); // Duplicated selectors ❌
   await page.fill("#customer-email", "ahmed@example.com");
   // Leave asset-description empty
@@ -237,11 +237,11 @@ test("should validate required fields", async ({ page }) => {
 
 ```typescript
 // GOOD: Page Object encapsulates selectors and interactions
-class MurabahaApplicationPage {
+class LoanApplicationPage {
   constructor(private page: Page) {}
 
   async navigate() {
-    await this.page.goto("/murabaha/apply");
+    await this.page.goto("/loan/apply");
   }
 
   async fillCustomerName(name: string) {
@@ -293,8 +293,8 @@ class MurabahaApplicationPage {
 }
 
 // Tests are now readable and maintainable
-test("should submit murabaha application", async ({ page }) => {
-  const applicationPage = new MurabahaApplicationPage(page);
+test("should submit loan application", async ({ page }) => {
+  const applicationPage = new LoanApplicationPage(page);
 
   await applicationPage.navigate();
   await applicationPage.fillCompleteApplication({
@@ -310,7 +310,7 @@ test("should submit murabaha application", async ({ page }) => {
 });
 
 test("should validate required fields", async ({ page }) => {
-  const applicationPage = new MurabahaApplicationPage(page);
+  const applicationPage = new LoanApplicationPage(page);
 
   await applicationPage.navigate();
   await applicationPage.fillCustomerName("Ahmed Ali");
@@ -340,12 +340,12 @@ class NavigationComponent {
     await this.page.click("nav a[href='/']");
   }
 
-  async goToZakatCalculator() {
-    await this.page.click("nav a[href='/zakat/calculator']");
+  async goToTaxCalculator() {
+    await this.page.click("nav a[href='/tax/calculator']");
   }
 
-  async goToMurabahaApplication() {
-    await this.page.click("nav a[href='/murabaha/apply']");
+  async goToLoanApplication() {
+    await this.page.click("nav a[href='/loan/apply']");
   }
 
   async logout() {
@@ -354,7 +354,7 @@ class NavigationComponent {
 }
 
 // Page object with composition
-class ZakatCalculatorPage {
+class TaxCalculatorPage {
   readonly nav: NavigationComponent;
 
   constructor(private page: Page) {
@@ -362,7 +362,7 @@ class ZakatCalculatorPage {
   }
 
   async navigate() {
-    await this.page.goto("/zakat/calculator");
+    await this.page.goto("/tax/calculator");
   }
 
   async fillWealth(amount: string, currency: string) {
@@ -371,17 +371,17 @@ class ZakatCalculatorPage {
   }
 
   async calculate() {
-    await this.page.click("button:text('Calculate Zakat')");
+    await this.page.click("button:text('Calculate Tax')");
   }
 
   async getResult() {
-    return this.page.locator("#zakat-result").textContent();
+    return this.page.locator("#tax-result").textContent();
   }
 }
 
 // Usage
 test("should calculate and navigate", async ({ page }) => {
-  const calculatorPage = new ZakatCalculatorPage(page);
+  const calculatorPage = new TaxCalculatorPage(page);
 
   await calculatorPage.navigate();
   await calculatorPage.fillWealth("1000", "USD");
@@ -415,7 +415,7 @@ test.describe("OSE Platform Web - Homepage", () => {
   test("should display homepage", async ({ page }) => {
     await page.goto("/");
 
-    await expect(page).toHaveTitle(/Open Sharia Enterprise/);
+    await expect(page).toHaveTitle(/Open Compliance Enterprise/);
     await expect(page.locator("h1")).toContainText("Welcome to OSE Platform");
   });
 
@@ -436,18 +436,18 @@ test.describe("OSE Platform Web - Homepage", () => {
 });
 
 test.describe("OSE Platform Web - Content Pages", () => {
-  test("should render Zakat documentation", async ({ page }) => {
-    await page.goto("/docs/zakat/introduction");
+  test("should render Tax documentation", async ({ page }) => {
+    await page.goto("/docs/tax/introduction");
 
-    await expect(page.locator("h1")).toContainText("Zakat Overview");
+    await expect(page.locator("h1")).toContainText("Tax Overview");
     await expect(page.locator("article")).toBeVisible();
   });
 
   test("should have working table of contents", async ({ page }) => {
-    await page.goto("/docs/zakat/calculation");
+    await page.goto("/docs/tax/calculation");
 
-    await page.click(".toc a:text('Nisab Threshold')");
-    await expect(page.locator("#nisab-threshold")).toBeInViewport();
+    await page.click(".toc a:text('Threshold Threshold')");
+    await expect(page.locator("#threshold-threshold")).toBeInViewport();
   });
 
   test("should display code examples with syntax highlighting", async ({ page }) => {
@@ -579,11 +579,11 @@ test("should complete sukuk investment workflow", async ({ page }) => {
 });
 ```
 
-### Waqf Distribution Workflow
+### Donation Distribution Workflow
 
 ```typescript
-test("should distribute waqf funds", async ({ page }) => {
-  await page.goto("/waqf/distribute");
+test("should distribute donation funds", async ({ page }) => {
+  await page.goto("/donation/distribute");
 
   // Add beneficiaries
   await page.click("button:text('Add Beneficiary')");
@@ -619,7 +619,7 @@ test("should distribute waqf funds", async ({ page }) => {
 
 ```typescript
 // BAD: Testing business logic in E2E tests ❌
-test("should calculate zakat for edge cases", async ({ page }) => {
+test("should calculate tax for edge cases", async ({ page }) => {
   // Testing 50 different calculations in browser
   for (const testCase of testCases) {
     await page.fill("#wealth", testCase.wealth);
@@ -630,7 +630,7 @@ test("should calculate zakat for edge cases", async ({ page }) => {
 // Takes 5 minutes to run! ❌
 
 // GOOD: Test edge cases in unit tests, E2E for happy path ✅
-describe("ZakatCalculator - Unit", () => {
+describe("TaxCalculator - Unit", () => {
   testCases.forEach((testCase) => {
     it(`should calculate ${testCase.description}`, () => {
       const result = calculator.calculate(testCase.wealth);
@@ -640,7 +640,7 @@ describe("ZakatCalculator - Unit", () => {
 });
 // Takes <100ms ✅
 
-test("should calculate zakat - E2E smoke test", async ({ page }) => {
+test("should calculate tax - E2E smoke test", async ({ page }) => {
   await page.fill("#wealth", "1000");
   await page.click("button:text('Calculate')");
   await expect(page.locator("#result")).toHaveText("$25.00");

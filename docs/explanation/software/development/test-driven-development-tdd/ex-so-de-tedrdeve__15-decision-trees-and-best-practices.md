@@ -85,61 +85,61 @@ flowchart TD
 
 ### Decision Matrix
 
-| What I'm Testing  | Example                               | Preferred Test Type                   | Reason                                    |
-| ----------------- | ------------------------------------- | ------------------------------------- | ----------------------------------------- |
-| Pure function     | `calculateZakat(amount, nisab)`       | **Unit Test**                         | No side effects, fast, deterministic      |
-| Value object      | `Money`, `ZakatRate`                  | **Unit Test**                         | Self-contained, no dependencies           |
-| Domain entity     | `ZakatAssessment` with validation     | **Unit Test**                         | Mock dependencies, test business logic    |
-| Repository        | `ZakatRepositoryImpl` (with database) | **Integration Test**                  | Real database interaction needed          |
-| External API call | Halal certification API               | **Integration Test** (with stub/mock) | External dependency                       |
-| Service layer     | `ZakatCalculationService`             | **Unit Test** + **Integration Test**  | Unit for logic, integration for full flow |
-| User workflow     | "Submit Zakat calculation"            | **E2E Test**                          | Tests full user journey                   |
-| UI component      | React `ZakatForm`                     | **Unit Test** (RTL) + **E2E Test**    | Unit for rendering, E2E for interaction   |
+| What I'm Testing  | Example                             | Preferred Test Type                   | Reason                                    |
+| ----------------- | ----------------------------------- | ------------------------------------- | ----------------------------------------- |
+| Pure function     | `calculateTax(amount, threshold)`   | **Unit Test**                         | No side effects, fast, deterministic      |
+| Value object      | `Money`, `TaxRate`                  | **Unit Test**                         | Self-contained, no dependencies           |
+| Domain entity     | `TaxAssessment` with validation     | **Unit Test**                         | Mock dependencies, test business logic    |
+| Repository        | `TaxRepositoryImpl` (with database) | **Integration Test**                  | Real database interaction needed          |
+| External API call | Permitted certification API         | **Integration Test** (with stub/mock) | External dependency                       |
+| Service layer     | `TaxCalculationService`             | **Unit Test** + **Integration Test**  | Unit for logic, integration for full flow |
+| User workflow     | "Submit Tax calculation"            | **E2E Test**                          | Tests full user journey                   |
+| UI component      | React `TaxForm`                     | **Unit Test** (RTL) + **E2E Test**    | Unit for rendering, E2E for interaction   |
 
 ### Islamic Finance Example: Decision Tree Application
 
-**Scenario**: Testing Murabaha profit calculation
+**Scenario**: Testing Loan profit calculation
 
 ```typescript
 // 1. Pure calculation logic - UNIT TEST
-function calculateMurabahaProfit(costPrice: Money, profitRate: Percentage): Money {
+function calculateLoanProfit(costPrice: Money, profitRate: Percentage): Money {
   return costPrice.multiply(profitRate.toDecimal());
 }
 
 // ✅ Unit test - pure function
-describe("calculateMurabahaProfit", () => {
+describe("calculateLoanProfit", () => {
   it("calculates profit correctly", () => {
     const cost = Money.fromAmount(10000, "USD");
     const rate = Percentage.fromNumber(10);
 
-    const profit = calculateMurabahaProfit(cost, rate);
+    const profit = calculateLoanProfit(cost, rate);
 
     expect(profit.amount).toBe(1000);
   });
 });
 
 // 2. Domain entity with validation - UNIT TEST
-class MurabahaContract {
+class LoanContract {
   constructor(
     private costPrice: Money,
     private profitRate: Percentage,
-    private validator: MurabahaValidator, // dependency
+    private validator: LoanValidator, // dependency
   ) {}
 
   calculateSellingPrice(): Money {
     this.validator.validateProfitRate(this.profitRate);
-    const profit = calculateMurabahaProfit(this.costPrice, this.profitRate);
+    const profit = calculateLoanProfit(this.costPrice, this.profitRate);
     return this.costPrice.add(profit);
   }
 }
 
 // ✅ Unit test - mock validator
-describe("MurabahaContract", () => {
+describe("LoanContract", () => {
   it("calculates selling price with valid profit rate", () => {
     const validator = {
       validateProfitRate: jest.fn(), // mock
     };
-    const contract = new MurabahaContract(Money.fromAmount(10000, "USD"), Percentage.fromNumber(10), validator);
+    const contract = new LoanContract(Money.fromAmount(10000, "USD"), Percentage.fromNumber(10), validator);
 
     const sellingPrice = contract.calculateSellingPrice();
 
@@ -149,28 +149,28 @@ describe("MurabahaContract", () => {
 });
 
 // 3. Repository with database - INTEGRATION TEST
-class MurabahaContractRepository {
-  async save(contract: MurabahaContract): Promise<void> {
+class LoanContractRepository {
+  async save(contract: LoanContract): Promise<void> {
     // Real database interaction
   }
 
-  async findById(id: string): Promise<MurabahaContract | null> {
+  async findById(id: string): Promise<LoanContract | null> {
     // Real database query
   }
 }
 
 // ✅ Integration test - real database (test containers)
-describe("MurabahaContractRepository", () => {
-  let repository: MurabahaContractRepository;
+describe("LoanContractRepository", () => {
+  let repository: LoanContractRepository;
   let db: TestDatabase;
 
   beforeAll(async () => {
     db = await TestDatabase.start();
-    repository = new MurabahaContractRepository(db);
+    repository = new LoanContractRepository(db);
   });
 
   it("saves and retrieves contract", async () => {
-    const contract = new MurabahaContract(/* ... */);
+    const contract = new LoanContract(/* ... */);
 
     await repository.save(contract);
     const retrieved = await repository.findById(contract.id);
@@ -185,9 +185,9 @@ describe("MurabahaContractRepository", () => {
 
 // 4. User workflow - E2E TEST
 // ✅ E2E test - full user journey
-describe("Murabaha Contract Creation", () => {
-  it("allows user to create Murabaha contract", async () => {
-    await page.goto("/murabaha/new");
+describe("Loan Contract Creation", () => {
+  it("allows user to create Loan contract", async () => {
+    await page.goto("/loan/new");
 
     await page.fill('[name="costPrice"]', "10000");
     await page.fill('[name="profitRate"]', "10");
@@ -232,37 +232,37 @@ graph LR
 
 ### Coverage Strategy Matrix
 
-| Layer              | Coverage Target | Test Type   | Priority     | Rationale                           |
-| ------------------ | --------------- | ----------- | ------------ | ----------------------------------- |
-| **Domain Logic**   | 90-100%         | Unit        | **Critical** | Business rules, Sharia compliance   |
-| **API Endpoints**  | 80-95%          | Integration | **High**     | Contract validation, error handling |
-| **UI Components**  | 70-85%          | Unit + E2E  | **Medium**   | User experience, visual regression  |
-| **Infrastructure** | 60-80%          | Integration | **Medium**   | Database, message queues            |
-| **Utilities**      | 70-90%          | Unit        | **Medium**   | Support functions, helpers          |
-| **Configuration**  | 40-60%          | Integration | **Low**      | Config loading, environment setup   |
+| Layer              | Coverage Target | Test Type   | Priority     | Rationale                             |
+| ------------------ | --------------- | ----------- | ------------ | ------------------------------------- |
+| **Domain Logic**   | 90-100%         | Unit        | **Critical** | Business rules, Compliance compliance |
+| **API Endpoints**  | 80-95%          | Integration | **High**     | Contract validation, error handling   |
+| **UI Components**  | 70-85%          | Unit + E2E  | **Medium**   | User experience, visual regression    |
+| **Infrastructure** | 60-80%          | Integration | **Medium**   | Database, message queues              |
+| **Utilities**      | 70-90%          | Unit        | **Medium**   | Support functions, helpers            |
+| **Configuration**  | 40-60%          | Integration | **Low**      | Config loading, environment setup     |
 
 ### Coverage Calculation Example
 
-**Scenario**: Zakat calculation module coverage
+**Scenario**: Tax calculation module coverage
 
 ```typescript
-// src/zakat/domain/zakat-calculator.ts
-export class ZakatCalculator {
-  // Method 1: calculateZakat - CRITICAL (must be 100%)
-  calculateZakat(wealth: Money, nisab: Money): Money {
-    if (wealth.isLessThan(nisab)) {
+// src/tax/domain/tax-calculator.ts
+export class TaxCalculator {
+  // Method 1: calculateTax - CRITICAL (must be 100%)
+  calculateTax(wealth: Money, threshold: Money): Money {
+    if (wealth.isLessThan(threshold)) {
       return Money.zero(wealth.currency);
     }
     return wealth.multiply(0.025); // 2.5%
   }
 
-  // Method 2: isWealthAboveNisab - CRITICAL (must be 100%)
-  isWealthAboveNisab(wealth: Money, nisab: Money): boolean {
-    return wealth.isGreaterThanOrEqual(nisab);
+  // Method 2: isWealthAboveThreshold - CRITICAL (must be 100%)
+  isWealthAboveThreshold(wealth: Money, threshold: Money): boolean {
+    return wealth.isGreaterThanOrEqual(threshold);
   }
 
-  // Method 3: formatZakatAmount - UTILITY (can be 80%)
-  formatZakatAmount(amount: Money, locale: string): string {
+  // Method 3: formatTaxAmount - UTILITY (can be 80%)
+  formatTaxAmount(amount: Money, locale: string): string {
     return new Intl.NumberFormat(locale, {
       style: "currency",
       currency: amount.currency,
@@ -271,7 +271,7 @@ export class ZakatCalculator {
 
   // Method 4: logCalculation - INFRASTRUCTURE (can be 60%)
   private logCalculation(wealth: Money, result: Money): void {
-    this.logger.info(`Zakat calculated: ${result} from ${wealth}`);
+    this.logger.info(`Tax calculated: ${result} from ${wealth}`);
   }
 }
 ```
@@ -280,60 +280,60 @@ export class ZakatCalculator {
 
 ```typescript
 // ✅ CRITICAL methods - 100% coverage
-describe("ZakatCalculator - Critical Methods", () => {
-  describe("calculateZakat", () => {
-    it("returns zero when wealth below nisab", () => {
-      const calculator = new ZakatCalculator();
+describe("TaxCalculator - Critical Methods", () => {
+  describe("calculateTax", () => {
+    it("returns zero when wealth below threshold", () => {
+      const calculator = new TaxCalculator();
       const wealth = Money.fromAmount(1000, "USD");
-      const nisab = Money.fromAmount(2000, "USD");
+      const threshold = Money.fromAmount(2000, "USD");
 
-      const zakat = calculator.calculateZakat(wealth, nisab);
+      const tax = calculator.calculateTax(wealth, threshold);
 
-      expect(zakat.amount).toBe(0);
+      expect(tax.amount).toBe(0);
     });
 
-    it("calculates 2.5% when wealth above nisab", () => {
-      const calculator = new ZakatCalculator();
+    it("calculates 2.5% when wealth above threshold", () => {
+      const calculator = new TaxCalculator();
       const wealth = Money.fromAmount(10000, "USD");
-      const nisab = Money.fromAmount(2000, "USD");
+      const threshold = Money.fromAmount(2000, "USD");
 
-      const zakat = calculator.calculateZakat(wealth, nisab);
+      const tax = calculator.calculateTax(wealth, threshold);
 
-      expect(zakat.amount).toBe(250); // 2.5% of 10000
+      expect(tax.amount).toBe(250); // 2.5% of 10000
     });
 
-    it("handles exact nisab threshold", () => {
-      const calculator = new ZakatCalculator();
+    it("handles exact threshold threshold", () => {
+      const calculator = new TaxCalculator();
       const wealth = Money.fromAmount(2000, "USD");
-      const nisab = Money.fromAmount(2000, "USD");
+      const threshold = Money.fromAmount(2000, "USD");
 
-      const zakat = calculator.calculateZakat(wealth, nisab);
+      const tax = calculator.calculateTax(wealth, threshold);
 
-      expect(zakat.amount).toBe(50); // 2.5% of 2000
+      expect(tax.amount).toBe(50); // 2.5% of 2000
     });
   });
 
-  describe("isWealthAboveNisab", () => {
-    it("returns false when below nisab", () => {
-      const calculator = new ZakatCalculator();
+  describe("isWealthAboveThreshold", () => {
+    it("returns false when below threshold", () => {
+      const calculator = new TaxCalculator();
 
-      const result = calculator.isWealthAboveNisab(Money.fromAmount(1000, "USD"), Money.fromAmount(2000, "USD"));
+      const result = calculator.isWealthAboveThreshold(Money.fromAmount(1000, "USD"), Money.fromAmount(2000, "USD"));
 
       expect(result).toBe(false);
     });
 
-    it("returns true when above nisab", () => {
-      const calculator = new ZakatCalculator();
+    it("returns true when above threshold", () => {
+      const calculator = new TaxCalculator();
 
-      const result = calculator.isWealthAboveNisab(Money.fromAmount(3000, "USD"), Money.fromAmount(2000, "USD"));
+      const result = calculator.isWealthAboveThreshold(Money.fromAmount(3000, "USD"), Money.fromAmount(2000, "USD"));
 
       expect(result).toBe(true);
     });
 
-    it("returns true when equal to nisab", () => {
-      const calculator = new ZakatCalculator();
+    it("returns true when equal to threshold", () => {
+      const calculator = new TaxCalculator();
 
-      const result = calculator.isWealthAboveNisab(Money.fromAmount(2000, "USD"), Money.fromAmount(2000, "USD"));
+      const result = calculator.isWealthAboveThreshold(Money.fromAmount(2000, "USD"), Money.fromAmount(2000, "USD"));
 
       expect(result).toBe(true);
     });
@@ -341,22 +341,22 @@ describe("ZakatCalculator - Critical Methods", () => {
 });
 
 // ✅ UTILITY methods - 80% coverage (happy path + major edge cases)
-describe("ZakatCalculator - Utility Methods", () => {
-  describe("formatZakatAmount", () => {
+describe("TaxCalculator - Utility Methods", () => {
+  describe("formatTaxAmount", () => {
     it("formats USD correctly", () => {
-      const calculator = new ZakatCalculator();
+      const calculator = new TaxCalculator();
       const amount = Money.fromAmount(1234.56, "USD");
 
-      const formatted = calculator.formatZakatAmount(amount, "en-US");
+      const formatted = calculator.formatTaxAmount(amount, "en-US");
 
       expect(formatted).toBe("$1,234.56");
     });
 
     it("formats EUR correctly", () => {
-      const calculator = new ZakatCalculator();
+      const calculator = new TaxCalculator();
       const amount = Money.fromAmount(1234.56, "EUR");
 
-      const formatted = calculator.formatZakatAmount(amount, "de-DE");
+      const formatted = calculator.formatTaxAmount(amount, "de-DE");
 
       expect(formatted).toBe("1.234,56 €");
     });
@@ -366,12 +366,12 @@ describe("ZakatCalculator - Utility Methods", () => {
 });
 
 // ✅ INFRASTRUCTURE methods - 60% coverage (basic functionality)
-describe("ZakatCalculator - Infrastructure Methods", () => {
-  it("logs calculation when zakat calculated", () => {
+describe("TaxCalculator - Infrastructure Methods", () => {
+  it("logs calculation when tax calculated", () => {
     const logger = { info: jest.fn() };
-    const calculator = new ZakatCalculator(logger);
+    const calculator = new TaxCalculator(logger);
 
-    calculator.calculateZakat(Money.fromAmount(10000, "USD"), Money.fromAmount(2000, "USD"));
+    calculator.calculateTax(Money.fromAmount(10000, "USD"), Money.fromAmount(2000, "USD"));
 
     expect(logger.info).toHaveBeenCalled();
   });
@@ -385,10 +385,10 @@ describe("ZakatCalculator - Infrastructure Methods", () => {
 ```
 File                   | % Stmts | % Branch | % Funcs | % Lines
 -----------------------|---------|----------|---------|--------
-zakat-calculator.ts    |   92.5  |   95.0   |   88.9  |   93.2
-  calculateZakat       |  100.0  |  100.0   |  100.0  |  100.0  ✅
-  isWealthAboveNisab   |  100.0  |  100.0   |  100.0  |  100.0  ✅
-  formatZakatAmount    |   80.0  |   75.0   |   80.0  |   81.2  ✅
+tax-calculator.ts    |   92.5  |   95.0   |   88.9  |   93.2
+  calculateTax       |  100.0  |  100.0   |  100.0  |  100.0  ✅
+  isWealthAboveThreshold   |  100.0  |  100.0   |  100.0  |  100.0  ✅
+  formatTaxAmount    |   80.0  |   75.0   |   80.0  |   81.2  ✅
   logCalculation       |   60.0  |   50.0   |   60.0  |   62.5  ✅
 ```
 
@@ -421,30 +421,30 @@ graph TD
 
 **Islamic Finance Critical Paths**:
 
-1. **Zakat Calculation** (100% coverage)
-   - Nisab threshold
+1. **Tax Calculation** (100% coverage)
+   - Threshold threshold
    - Rate application (2.5%)
    - Currency conversion
    - Rounding rules
 
-2. **Halal Compliance** (100% coverage)
+2. **Permitted Compliance** (100% coverage)
    - Ingredient verification
    - Certification validation
-   - Haram detection
+   - Forbidden detection
 
-3. **Murabaha Contract** (95% coverage)
+3. **Loan Contract** (95% coverage)
    - Cost transparency
    - Profit rate validation
    - Payment schedule
 
-4. **Riba Prevention** (100% coverage)
+4. **Interest Prevention** (100% coverage)
    - Interest detection
    - Prohibited transaction checks
    - Alternative suggestion
 
 5. **Transaction Recording** (80% coverage)
    - Audit trail
-   - Sharia compliance metadata
+   - Compliance compliance metadata
    - Timestamp accuracy
 
 ## Test Observability
@@ -670,17 +670,17 @@ graph TB
     end
 
     subgraph "C4 Level 3: Component"
-        CO1[Zakat Module]
-        CO2[Halal Module]
+        CO1[Tax Module]
+        CO2[Permitted Module]
         CO3[Auth Module]
         CO1 -.->|Component Tests| CO2
         CO2 -.->|Component Tests| CO3
     end
 
     subgraph "C4 Level 4: Code"
-        CD1[ZakatCalculator Class]
+        CD1[TaxCalculator Class]
         CD2[Money Value Object]
-        CD3[ZakatRepository]
+        CD3[TaxRepository]
         CD1 -.->|Unit Tests| CD2
         CD2 -.->|Unit Tests| CD3
     end
@@ -702,34 +702,34 @@ graph TB
 
 | C4 Level                    | Test Type         | Scope                                            | Example                                            | Coverage Target                  |
 | --------------------------- | ----------------- | ------------------------------------------------ | -------------------------------------------------- | -------------------------------- |
-| **Level 1: System Context** | E2E Tests         | Full user journeys across system boundaries      | User completes Zakat calculation and payment       | 20-30% of critical paths         |
+| **Level 1: System Context** | E2E Tests         | Full user journeys across system boundaries      | User completes Tax calculation and payment         | 20-30% of critical paths         |
 | **Level 2: Container**      | Integration Tests | Interactions between containers (API, DB, Queue) | API endpoint saves to database and publishes event | 60-80% of container interactions |
-| **Level 3: Component**      | Component Tests   | Module/component boundaries within container     | Zakat module interacts with Payment module         | 70-85% of component interfaces   |
-| **Level 4: Code**           | Unit Tests        | Individual classes, functions, value objects     | ZakatCalculator.calculateZakat()                   | 90-100% of business logic        |
+| **Level 3: Component**      | Component Tests   | Module/component boundaries within container     | Tax module interacts with Payment module           | 70-85% of component interfaces   |
+| **Level 4: Code**           | Unit Tests        | Individual classes, functions, value objects     | TaxCalculator.calculateTax()                       | 90-100% of business logic        |
 
 ### Islamic Finance Example: C4 Test Mapping
 
 #### Level 1: System Context - E2E Test
 
 ```typescript
-// e2e/zakat-user-journey.spec.ts
-describe("Zakat System - User Journey", () => {
-  it("allows user to calculate, review, and submit Zakat payment", async () => {
+// e2e/tax-user-journey.spec.ts
+describe("Tax System - User Journey", () => {
+  it("allows user to calculate, review, and submit Tax payment", async () => {
     // Test entire system from user perspective
-    await page.goto("/zakat/calculator");
+    await page.goto("/tax/calculator");
 
     // Step 1: Enter wealth information
     await page.fill('[name="gold"]', "100"); // grams
     await page.fill('[name="cash"]', "50000"); // USD
     await page.fill('[name="investments"]', "25000"); // USD
 
-    // Step 2: Calculate Zakat
+    // Step 2: Calculate Tax
     await page.click('[data-testid="calculate-button"]');
-    await expect(page.locator('[data-testid="zakat-amount"]')).toHaveText("$1,875.00");
+    await expect(page.locator('[data-testid="tax-amount"]')).toHaveText("$1,875.00");
 
     // Step 3: Review calculation details
     await page.click('[data-testid="view-details"]');
-    await expect(page.locator('[data-testid="nisab-threshold"]')).toBeVisible();
+    await expect(page.locator('[data-testid="threshold-threshold"]')).toBeVisible();
 
     // Step 4: Submit payment
     await page.click('[data-testid="pay-now"]');
@@ -737,7 +737,7 @@ describe("Zakat System - User Journey", () => {
     await page.click('[data-testid="confirm-payment"]');
 
     // Step 5: Verify confirmation
-    await expect(page.locator('[data-testid="success-message"]')).toContainText("Zakat payment submitted");
+    await expect(page.locator('[data-testid="success-message"]')).toContainText("Tax payment submitted");
     await expect(page.locator('[data-testid="receipt"]')).toBeVisible();
   });
 });
@@ -746,8 +746,8 @@ describe("Zakat System - User Journey", () => {
 #### Level 2: Container - Integration Test
 
 ```typescript
-// integration/zakat-api.integration.spec.ts
-describe("Zakat API Container", () => {
+// integration/tax-api.integration.spec.ts
+describe("Tax API Container", () => {
   let api: TestAPIClient;
   let db: TestDatabase;
   let queue: TestMessageQueue;
@@ -758,9 +758,9 @@ describe("Zakat API Container", () => {
     api = new TestAPIClient("http://localhost:3000");
   });
 
-  it("calculates Zakat and persists result to database", async () => {
+  it("calculates Tax and persists result to database", async () => {
     // Test interaction between API and Database containers
-    const response = await api.post("/zakat/calculate", {
+    const response = await api.post("/tax/calculate", {
       wealth: {
         gold: 100,
         cash: 50000,
@@ -769,26 +769,26 @@ describe("Zakat API Container", () => {
     });
 
     expect(response.status).toBe(200);
-    expect(response.data.zakatAmount).toBe(1875);
+    expect(response.data.taxAmount).toBe(1875);
 
     // Verify database persistence
-    const saved = await db.query("SELECT * FROM zakat_calculations WHERE id = ?", [response.data.id]);
-    expect(saved.zakat_amount).toBe(1875);
+    const saved = await db.query("SELECT * FROM tax_calculations WHERE id = ?", [response.data.id]);
+    expect(saved.tax_amount).toBe(1875);
   });
 
-  it("publishes Zakat calculation event to message queue", async () => {
-    const queueSpy = queue.createSpy("zakat.calculated");
+  it("publishes Tax calculation event to message queue", async () => {
+    const queueSpy = queue.createSpy("tax.calculated");
 
     // Test interaction between API and Message Queue containers
-    await api.post("/zakat/calculate", {
+    await api.post("/tax/calculate", {
       wealth: { gold: 100, cash: 50000, investments: 25000 },
     });
 
     // Verify event published
     await queueSpy.waitForMessage();
     expect(queueSpy.messages).toHaveLength(1);
-    expect(queueSpy.messages[0].type).toBe("zakat.calculated");
-    expect(queueSpy.messages[0].data.zakatAmount).toBe(1875);
+    expect(queueSpy.messages[0].type).toBe("tax.calculated");
+    expect(queueSpy.messages[0].data.taxAmount).toBe(1875);
   });
 
   afterAll(async () => {
@@ -801,19 +801,19 @@ describe("Zakat API Container", () => {
 #### Level 3: Component - Component Test
 
 ```typescript
-// component/zakat-module.component.spec.ts
-describe("Zakat Module Component", () => {
-  it("interacts with Payment module to process Zakat payment", async () => {
-    // Test component boundary between Zakat and Payment modules
-    const zakatModule = new ZakatModule();
+// component/tax-module.component.spec.ts
+describe("Tax Module Component", () => {
+  it("interacts with Payment module to process Tax payment", async () => {
+    // Test component boundary between Tax and Payment modules
+    const taxModule = new TaxModule();
     const paymentModule = new PaymentModule();
 
-    const zakatCalculation = await zakatModule.calculate({
+    const taxCalculation = await taxModule.calculate({
       wealth: { gold: 100, cash: 50000, investments: 25000 },
     });
 
-    const paymentResult = await paymentModule.processZakatPayment({
-      amount: zakatCalculation.zakatAmount,
+    const paymentResult = await paymentModule.processTaxPayment({
+      amount: taxCalculation.taxAmount,
       currency: "USD",
       recipient: "Local Mosque",
     });
@@ -822,22 +822,22 @@ describe("Zakat Module Component", () => {
     expect(paymentResult.transactionId).toBeDefined();
   });
 
-  it("interacts with Notification module to send Zakat reminder", async () => {
-    // Test component boundary between Zakat and Notification modules
-    const zakatModule = new ZakatModule();
+  it("interacts with Notification module to send Tax reminder", async () => {
+    // Test component boundary between Tax and Notification modules
+    const taxModule = new TaxModule();
     const notificationModule = new NotificationModule();
 
     const user = { id: "user-123", email: "user@example.com" };
-    const zakatDue = await zakatModule.calculateZakatDue(user);
+    const taxDue = await taxModule.calculateTaxDue(user);
 
-    if (zakatDue.isDue) {
-      await notificationModule.sendZakatReminder(user, zakatDue);
+    if (taxDue.isDue) {
+      await notificationModule.sendTaxReminder(user, taxDue);
     }
 
     // Verify notification sent
     const notifications = await notificationModule.getNotifications(user.id);
     expect(notifications).toHaveLength(1);
-    expect(notifications[0].type).toBe("zakat_reminder");
+    expect(notifications[0].type).toBe("tax_reminder");
   });
 });
 ```
@@ -845,27 +845,27 @@ describe("Zakat Module Component", () => {
 #### Level 4: Code - Unit Test
 
 ```typescript
-// unit/zakat-calculator.spec.ts
-describe("ZakatCalculator Class", () => {
-  it("calculates Zakat correctly for wealth above nisab", () => {
+// unit/tax-calculator.spec.ts
+describe("TaxCalculator Class", () => {
+  it("calculates Tax correctly for wealth above threshold", () => {
     // Test individual class method
-    const calculator = new ZakatCalculator();
+    const calculator = new TaxCalculator();
     const wealth = Money.fromAmount(10000, "USD");
-    const nisab = Money.fromAmount(2000, "USD");
+    const threshold = Money.fromAmount(2000, "USD");
 
-    const zakat = calculator.calculateZakat(wealth, nisab);
+    const tax = calculator.calculateTax(wealth, threshold);
 
-    expect(zakat.amount).toBe(250); // 2.5% of 10000
+    expect(tax.amount).toBe(250); // 2.5% of 10000
   });
 
-  it("returns zero Zakat for wealth below nisab", () => {
-    const calculator = new ZakatCalculator();
+  it("returns zero Tax for wealth below threshold", () => {
+    const calculator = new TaxCalculator();
     const wealth = Money.fromAmount(1000, "USD");
-    const nisab = Money.fromAmount(2000, "USD");
+    const threshold = Money.fromAmount(2000, "USD");
 
-    const zakat = calculator.calculateZakat(wealth, nisab);
+    const tax = calculator.calculateTax(wealth, threshold);
 
-    expect(zakat.amount).toBe(0);
+    expect(tax.amount).toBe(0);
   });
 });
 
@@ -1170,22 +1170,22 @@ jobs:
 
 ## Islamic Finance Testing Strategies
 
-### Sharia Compliance Testing
+### Compliance Compliance Testing
 
 ```typescript
-// sharia-compliance.spec.ts
-describe("Sharia Compliance Testing", () => {
-  describe("Riba (Interest) Prevention", () => {
+// compliance-compliance.spec.ts
+describe("Compliance Compliance Testing", () => {
+  describe("Interest (Interest) Prevention", () => {
     it("rejects transactions with interest components", () => {
       const transaction = {
         principal: 10000,
-        interest: 500, // ❌ Haram
+        interest: 500, // ❌ Forbidden
         duration: 12,
       };
 
-      const validator = new ShariaComplianceValidator();
+      const validator = new ComplianceValidator();
 
-      expect(() => validator.validateTransaction(transaction)).toThrow("Transaction contains riba (interest)");
+      expect(() => validator.validateTransaction(transaction)).toThrow("Transaction contains interest (interest)");
     });
 
     it("accepts profit-sharing transactions", () => {
@@ -1195,7 +1195,7 @@ describe("Sharia Compliance Testing", () => {
         duration: 12,
       };
 
-      const validator = new ShariaComplianceValidator();
+      const validator = new ComplianceValidator();
 
       expect(() => validator.validateTransaction(musharakaTransaction)).not.toThrow();
     });
@@ -1209,7 +1209,7 @@ describe("Sharia Compliance Testing", () => {
         price: "To be determined",
       };
 
-      const validator = new ShariaComplianceValidator();
+      const validator = new ComplianceValidator();
 
       expect(() => validator.validateContract(contract)).toThrow("Contract contains excessive gharar (uncertainty)");
     });
@@ -1222,162 +1222,162 @@ describe("Sharia Compliance Testing", () => {
         deliveryDate: new Date("2024-06-01"),
       };
 
-      const validator = new ShariaComplianceValidator();
+      const validator = new ComplianceValidator();
 
       expect(() => validator.validateContract(contract)).not.toThrow();
     });
   });
 
-  describe("Halal Product Verification", () => {
-    it("verifies product has valid Halal certification", async () => {
+  describe("Permitted Product Verification", () => {
+    it("verifies product has valid Permitted certification", async () => {
       const product = {
         id: "prod-123",
-        name: "Halal Chicken",
+        name: "Permitted Chicken",
         certificationId: "cert-456",
       };
 
-      const verifier = new HalalVerifier();
+      const verifier = new PermittedVerifier();
       const result = await verifier.verifyProduct(product);
 
-      expect(result.isHalal).toBe(true);
+      expect(result.isPermitted).toBe(true);
       expect(result.certificationValid).toBe(true);
     });
 
-    it("rejects product with haram ingredients", async () => {
+    it("rejects product with forbidden ingredients", async () => {
       const product = {
         id: "prod-789",
         name: "Bacon",
         ingredients: ["pork", "salt", "preservatives"],
       };
 
-      const verifier = new HalalVerifier();
+      const verifier = new PermittedVerifier();
       const result = await verifier.verifyProduct(product);
 
-      expect(result.isHalal).toBe(false);
-      expect(result.haramIngredients).toContain("pork");
+      expect(result.isPermitted).toBe(false);
+      expect(result.forbiddenIngredients).toContain("pork");
     });
   });
 });
 ```
 
-### Zakat Calculation Testing Strategy
+### Tax Calculation Testing Strategy
 
 ```typescript
-// zakat-calculation-strategy.spec.ts
-describe("Zakat Calculation Testing Strategy", () => {
-  // 1. Test nisab threshold variations
-  describe("Nisab Threshold Tests", () => {
+// tax-calculation-strategy.spec.ts
+describe("Tax Calculation Testing Strategy", () => {
+  // 1. Test threshold threshold variations
+  describe("Threshold Threshold Tests", () => {
     const testCases = [
-      { wealth: 1999, nisab: 2000, expectedZakat: 0, scenario: "below nisab" },
-      { wealth: 2000, nisab: 2000, expectedZakat: 50, scenario: "equal to nisab" },
-      { wealth: 2001, nisab: 2000, expectedZakat: 50.025, scenario: "just above nisab" },
-      { wealth: 10000, nisab: 2000, expectedZakat: 250, scenario: "well above nisab" },
+      { wealth: 1999, threshold: 2000, expectedTax: 0, scenario: "below threshold" },
+      { wealth: 2000, threshold: 2000, expectedTax: 50, scenario: "equal to threshold" },
+      { wealth: 2001, threshold: 2000, expectedTax: 50.025, scenario: "just above threshold" },
+      { wealth: 10000, threshold: 2000, expectedTax: 250, scenario: "well above threshold" },
     ];
 
-    testCases.forEach(({ wealth, nisab, expectedZakat, scenario }) => {
+    testCases.forEach(({ wealth, threshold, expectedTax, scenario }) => {
       it(`calculates correctly when wealth is ${scenario}`, () => {
-        const calculator = new ZakatCalculator();
+        const calculator = new TaxCalculator();
 
-        const zakat = calculator.calculateZakat(Money.fromAmount(wealth, "USD"), Money.fromAmount(nisab, "USD"));
+        const tax = calculator.calculateTax(Money.fromAmount(wealth, "USD"), Money.fromAmount(threshold, "USD"));
 
-        expect(zakat.amount).toBeCloseTo(expectedZakat, 2);
+        expect(tax.amount).toBeCloseTo(expectedTax, 2);
       });
     });
   });
 
   // 2. Test different wealth types
   describe("Wealth Type Tests", () => {
-    it("calculates Zakat on cash", () => {
-      const calculator = new ZakatCalculator();
+    it("calculates Tax on cash", () => {
+      const calculator = new TaxCalculator();
       const wealth = { cash: 10000 };
 
-      const zakat = calculator.calculateZakatOnWealth(wealth);
+      const tax = calculator.calculateTaxOnWealth(wealth);
 
-      expect(zakat.amount).toBe(250); // 2.5%
+      expect(tax.amount).toBe(250); // 2.5%
     });
 
-    it("calculates Zakat on gold", () => {
-      const calculator = new ZakatCalculator();
+    it("calculates Tax on gold", () => {
+      const calculator = new TaxCalculator();
       const wealth = { gold: { grams: 100, pricePerGram: 60 } }; // $6000 worth
 
-      const zakat = calculator.calculateZakatOnWealth(wealth);
+      const tax = calculator.calculateTaxOnWealth(wealth);
 
-      expect(zakat.amount).toBe(150); // 2.5% of $6000
+      expect(tax.amount).toBe(150); // 2.5% of $6000
     });
 
-    it("calculates Zakat on mixed wealth", () => {
-      const calculator = new ZakatCalculator();
+    it("calculates Tax on mixed wealth", () => {
+      const calculator = new TaxCalculator();
       const wealth = {
         cash: 5000,
         gold: { grams: 50, pricePerGram: 60 }, // $3000
         investments: 2000,
       }; // Total: $10000
 
-      const zakat = calculator.calculateZakatOnWealth(wealth);
+      const tax = calculator.calculateTaxOnWealth(wealth);
 
-      expect(zakat.amount).toBe(250); // 2.5% of $10000
+      expect(tax.amount).toBe(250); // 2.5% of $10000
     });
   });
 
-  // 3. Test Zakat exemptions
-  describe("Zakat Exemption Tests", () => {
-    it("exempts primary residence from Zakat", () => {
-      const calculator = new ZakatCalculator();
+  // 3. Test Tax exemptions
+  describe("Tax Exemption Tests", () => {
+    it("exempts primary residence from Tax", () => {
+      const calculator = new TaxCalculator();
       const wealth = {
         cash: 10000,
         primaryResidence: 500000, // Exempt
       };
 
-      const zakat = calculator.calculateZakatOnWealth(wealth);
+      const tax = calculator.calculateTaxOnWealth(wealth);
 
-      expect(zakat.amount).toBe(250); // Only on cash
+      expect(tax.amount).toBe(250); // Only on cash
     });
 
-    it("exempts personal vehicles from Zakat", () => {
-      const calculator = new ZakatCalculator();
+    it("exempts personal vehicles from Tax", () => {
+      const calculator = new TaxCalculator();
       const wealth = {
         cash: 10000,
         personalVehicle: 30000, // Exempt
       };
 
-      const zakat = calculator.calculateZakatOnWealth(wealth);
+      const tax = calculator.calculateTaxOnWealth(wealth);
 
-      expect(zakat.amount).toBe(250); // Only on cash
+      expect(tax.amount).toBe(250); // Only on cash
     });
   });
 
   // 4. Test Hawl (lunar year) requirement
   describe("Hawl (Lunar Year) Tests", () => {
     it("requires wealth to be held for full lunar year", () => {
-      const calculator = new ZakatCalculator();
+      const calculator = new TaxCalculator();
       const wealth = Money.fromAmount(10000, "USD");
       const acquisitionDate = new Date("2023-01-01");
       const currentDate = new Date("2023-06-01"); // Only 5 months
 
-      const isZakatDue = calculator.isZakatDue(wealth, acquisitionDate, currentDate);
+      const isTaxDue = calculator.isTaxDue(wealth, acquisitionDate, currentDate);
 
-      expect(isZakatDue).toBe(false);
+      expect(isTaxDue).toBe(false);
     });
 
-    it("confirms Zakat due after full lunar year", () => {
-      const calculator = new ZakatCalculator();
+    it("confirms Tax due after full lunar year", () => {
+      const calculator = new TaxCalculator();
       const wealth = Money.fromAmount(10000, "USD");
       const acquisitionDate = new Date("2023-01-01");
       const currentDate = new Date("2024-01-01"); // 1 lunar year (approximately)
 
-      const isZakatDue = calculator.isZakatDue(wealth, acquisitionDate, currentDate);
+      const isTaxDue = calculator.isTaxDue(wealth, acquisitionDate, currentDate);
 
-      expect(isZakatDue).toBe(true);
+      expect(isTaxDue).toBe(true);
     });
   });
 });
 ```
 
-### Murabaha Contract Testing Strategy
+### Loan Contract Testing Strategy
 
 ```typescript
-// murabaha-contract-strategy.spec.ts
-describe("Murabaha Contract Testing Strategy", () => {
+// loan-contract-strategy.spec.ts
+describe("Loan Contract Testing Strategy", () => {
   // 1. Test cost transparency requirement
   describe("Cost Transparency Tests", () => {
     it("requires cost price disclosure", () => {
@@ -1387,7 +1387,7 @@ describe("Murabaha Contract Testing Strategy", () => {
         // Missing: costPrice ❌
       };
 
-      const validator = new MurabahaValidator();
+      const validator = new LoanValidator();
 
       expect(() => validator.validateContract(contract)).toThrow("Cost price must be disclosed");
     });
@@ -1400,7 +1400,7 @@ describe("Murabaha Contract Testing Strategy", () => {
         sellingPrice: 25000,
       };
 
-      const validator = new MurabahaValidator();
+      const validator = new LoanValidator();
 
       expect(() => validator.validateContract(contract)).not.toThrow();
     });
@@ -1409,7 +1409,7 @@ describe("Murabaha Contract Testing Strategy", () => {
   // 2. Test profit calculation
   describe("Profit Calculation Tests", () => {
     it("calculates profit correctly", () => {
-      const calculator = new MurabahaCalculator();
+      const calculator = new LoanCalculator();
       const costPrice = Money.fromAmount(20000, "USD");
       const profitRate = Percentage.fromNumber(25); // 25%
 
@@ -1419,7 +1419,7 @@ describe("Murabaha Contract Testing Strategy", () => {
     });
 
     it("calculates selling price correctly", () => {
-      const calculator = new MurabahaCalculator();
+      const calculator = new LoanCalculator();
       const costPrice = Money.fromAmount(20000, "USD");
       const profitRate = Percentage.fromNumber(25);
 
@@ -1432,7 +1432,7 @@ describe("Murabaha Contract Testing Strategy", () => {
   // 3. Test payment schedule
   describe("Payment Schedule Tests", () => {
     it("generates deferred payment schedule", () => {
-      const calculator = new MurabahaCalculator();
+      const calculator = new LoanCalculator();
       const sellingPrice = Money.fromAmount(25000, "USD");
       const installments = 12;
 
@@ -1444,7 +1444,7 @@ describe("Murabaha Contract Testing Strategy", () => {
     });
 
     it("allows lump sum payment", () => {
-      const calculator = new MurabahaCalculator();
+      const calculator = new LoanCalculator();
       const sellingPrice = Money.fromAmount(25000, "USD");
 
       const schedule = calculator.generatePaymentSchedule(sellingPrice, 1);
@@ -1464,9 +1464,9 @@ describe("Murabaha Contract Testing Strategy", () => {
         sellerOwnership: false, // ❌ Seller doesn't own asset yet
       };
 
-      const validator = new MurabahaValidator();
+      const validator = new LoanValidator();
 
-      expect(() => validator.validateContract(contract)).toThrow("Seller must own asset before Murabaha sale");
+      expect(() => validator.validateContract(contract)).toThrow("Seller must own asset before Loan sale");
     });
 
     it("accepts contract when seller owns asset", () => {
@@ -1478,7 +1478,7 @@ describe("Murabaha Contract Testing Strategy", () => {
         ownershipDate: new Date("2024-01-01"),
       };
 
-      const validator = new MurabahaValidator();
+      const validator = new LoanValidator();
 
       expect(() => validator.validateContract(contract)).not.toThrow();
     });
@@ -1492,23 +1492,23 @@ describe("Murabaha Contract Testing Strategy", () => {
 
 ```typescript
 // ❌ BAD - Testing internal implementation
-describe("ZakatCalculator", () => {
+describe("TaxCalculator", () => {
   it("calls private method formatAmount", () => {
-    const calculator = new ZakatCalculator();
+    const calculator = new TaxCalculator();
     const spy = jest.spyOn(calculator as any, "formatAmount"); // Testing private method
 
-    calculator.calculateZakat(Money.fromAmount(10000, "USD"), Money.fromAmount(2000, "USD"));
+    calculator.calculateTax(Money.fromAmount(10000, "USD"), Money.fromAmount(2000, "USD"));
 
     expect(spy).toHaveBeenCalled(); // Brittle - breaks on refactoring
   });
 });
 
 // ✅ GOOD - Testing public behavior
-describe("ZakatCalculator", () => {
-  it("returns formatted Zakat amount", () => {
-    const calculator = new ZakatCalculator();
+describe("TaxCalculator", () => {
+  it("returns formatted Tax amount", () => {
+    const calculator = new TaxCalculator();
 
-    const result = calculator.calculateZakat(Money.fromAmount(10000, "USD"), Money.fromAmount(2000, "USD"));
+    const result = calculator.calculateTax(Money.fromAmount(10000, "USD"), Money.fromAmount(2000, "USD"));
 
     expect(result.formatted).toBe("$250.00"); // Test output, not implementation
   });
@@ -1519,36 +1519,36 @@ describe("ZakatCalculator", () => {
 
 ```typescript
 // ❌ BAD - Mocking everything
-describe("ZakatService", () => {
-  it("calculates and saves Zakat", async () => {
-    const mockCalculator = { calculateZakat: jest.fn().mockReturnValue(Money.fromAmount(250, "USD")) };
+describe("TaxService", () => {
+  it("calculates and saves Tax", async () => {
+    const mockCalculator = { calculateTax: jest.fn().mockReturnValue(Money.fromAmount(250, "USD")) };
     const mockRepository = { save: jest.fn() };
     const mockLogger = { info: jest.fn() };
     const mockEventPublisher = { publish: jest.fn() };
 
-    const service = new ZakatService(mockCalculator, mockRepository, mockLogger, mockEventPublisher);
+    const service = new TaxService(mockCalculator, mockRepository, mockLogger, mockEventPublisher);
 
-    await service.processZakat(/* ... */);
+    await service.processTax(/* ... */);
 
     // Test is just verifying mocks were called - not real behavior
-    expect(mockCalculator.calculateZakat).toHaveBeenCalled();
+    expect(mockCalculator.calculateTax).toHaveBeenCalled();
     expect(mockRepository.save).toHaveBeenCalled();
   });
 });
 
 // ✅ GOOD - Mock only external dependencies
-describe("ZakatService", () => {
-  it("calculates and saves Zakat", async () => {
-    const calculator = new ZakatCalculator(); // Real implementation
-    const repository = new InMemoryZakatRepository(); // Test double
-    const service = new ZakatService(calculator, repository);
+describe("TaxService", () => {
+  it("calculates and saves Tax", async () => {
+    const calculator = new TaxCalculator(); // Real implementation
+    const repository = new InMemoryTaxRepository(); // Test double
+    const service = new TaxService(calculator, repository);
 
-    const result = await service.processZakat({
+    const result = await service.processTax({
       wealth: Money.fromAmount(10000, "USD"),
-      nisab: Money.fromAmount(2000, "USD"),
+      threshold: Money.fromAmount(2000, "USD"),
     });
 
-    expect(result.zakatAmount.amount).toBe(250);
+    expect(result.taxAmount.amount).toBe(250);
 
     const saved = await repository.findById(result.id);
     expect(saved).toEqual(result);
@@ -1560,11 +1560,11 @@ describe("ZakatService", () => {
 
 ```typescript
 // ❌ BAD - Non-deterministic test
-describe("ZakatCalculator", () => {
-  it("calculates Zakat with current date", () => {
-    const calculator = new ZakatCalculator();
+describe("TaxCalculator", () => {
+  it("calculates Tax with current date", () => {
+    const calculator = new TaxCalculator();
 
-    const result = calculator.calculateZakatDue({
+    const result = calculator.calculateTaxDue({
       wealth: Money.fromAmount(10000, "USD"),
       acquisitionDate: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000), // 1 year ago (brittle)
     });
@@ -1574,13 +1574,13 @@ describe("ZakatCalculator", () => {
 });
 
 // ✅ GOOD - Deterministic test with explicit dates
-describe("ZakatCalculator", () => {
-  it("calculates Zakat due after 1 lunar year", () => {
-    const calculator = new ZakatCalculator();
+describe("TaxCalculator", () => {
+  it("calculates Tax due after 1 lunar year", () => {
+    const calculator = new TaxCalculator();
     const acquisitionDate = new Date("2023-01-01");
     const currentDate = new Date("2024-01-01");
 
-    const result = calculator.calculateZakatDue(
+    const result = calculator.calculateTaxDue(
       {
         wealth: Money.fromAmount(10000, "USD"),
         acquisitionDate,
@@ -1634,11 +1634,11 @@ describe("Money", () => {
 
 ```typescript
 // ❌ BAD - Skipping failing tests
-describe("ZakatCalculator", () => {
-  it.skip("calculates Zakat on complex wealth portfolio", () => {
+describe("TaxCalculator", () => {
+  it.skip("calculates Tax on complex wealth portfolio", () => {
     // Skipped
     // Test is failing, but instead of fixing it, we skip it
-    const calculator = new ZakatCalculator();
+    const calculator = new TaxCalculator();
     const wealth = {
       cash: 10000,
       gold: { grams: 100, pricePerGram: 60 },
@@ -1646,16 +1646,16 @@ describe("ZakatCalculator", () => {
       realEstate: 200000, // Investment property
     };
 
-    const zakat = calculator.calculateZakatOnWealth(wealth);
+    const tax = calculator.calculateTaxOnWealth(wealth);
 
-    expect(zakat.amount).toBe(/* expected value */);
+    expect(tax.amount).toBe(/* expected value */);
   });
 });
 
 // ✅ GOOD - Fix the test or remove it
-describe("ZakatCalculator", () => {
-  it("calculates Zakat on complex wealth portfolio", () => {
-    const calculator = new ZakatCalculator();
+describe("TaxCalculator", () => {
+  it("calculates Tax on complex wealth portfolio", () => {
+    const calculator = new TaxCalculator();
     const wealth = {
       cash: 10000,
       gold: { grams: 100, pricePerGram: 60 }, // $6000
@@ -1663,10 +1663,10 @@ describe("ZakatCalculator", () => {
       realEstate: 200000, // Exempt if not investment property
     };
 
-    // Total zakatable wealth: $21000
-    const zakat = calculator.calculateZakatOnWealth(wealth);
+    // Total taxable wealth: $21000
+    const tax = calculator.calculateTaxOnWealth(wealth);
 
-    expect(zakat.amount).toBe(525); // 2.5% of $21000
+    expect(tax.amount).toBe(525); // 2.5% of $21000
   });
 });
 ```
@@ -1680,7 +1680,7 @@ describe("ZakatCalculator", () => {
 3. **Test Observability**: Monitor test health metrics (execution time, flakiness, coverage trends)
 4. **C4 Mapping**: Map tests to architectural levels (System Context → E2E, Container → Integration, Component → Component tests, Code → Unit tests)
 5. **CI/CD Integration**: Implement fast feedback loops with staged testing (unit → integration → E2E)
-6. **Islamic Finance**: Apply specialized testing strategies for Sharia compliance, Zakat calculations, and Halal verification
+6. **Islamic Finance**: Apply specialized testing strategies for Compliance compliance, Tax calculations, and Permitted verification
 7. **Avoid Anti-Patterns**: Don't test implementation details, avoid excessive mocking, ensure deterministic tests
 
 **Next Steps**:

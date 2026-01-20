@@ -30,15 +30,15 @@ Use DDD when:
 - **Domain knowledge is valuable**: Understanding the business provides competitive advantage
 - **Collaboration matters**: Close work with domain experts improves outcomes
 
-**Example - Zakat Calculation System**:
+**Example - Tax Calculation System**:
 
-Zakat has complex rules varying by asset type (gold, livestock, business inventory), nisab thresholds, hawl completion requirements, and madhab-specific calculations. DDD helps capture this complexity through:
+Tax has complex rules varying by asset type (gold, livestock, business inventory), threshold thresholds, hawl completion requirements, and madhab-specific calculations. DDD helps capture this complexity through:
 
-- **Entities**: `ZakatAssessment`, `Taxpayer`
-- **Value Objects**: `Nisab`, `HawlPeriod`, `ZakatableAsset`
-- **Aggregates**: `ZakatAssessment` as root managing assets and calculations
-- **Domain Services**: `ZakatCalculator` coordinating complex calculations
-- **Ubiquitous Language**: "nisab", "hawl", "zakatable wealth" used consistently
+- **Entities**: `TaxAssessment`, `Taxpayer`
+- **Value Objects**: `Threshold`, `HawlPeriod`, `TaxableAsset`
+- **Aggregates**: `TaxAssessment` as root managing assets and calculations
+- **Domain Services**: `TaxCalculator` coordinating complex calculations
+- **Ubiquitous Language**: "threshold", "hawl", "taxable wealth" used consistently
 
 Do NOT use DDD when:
 
@@ -65,13 +65,13 @@ Do NOT use DDD when:
 - Rich domain models (data + behavior)
 - Works well for complex business domains
 
-**Example - Murabaha Contract**:
+**Example - Loan Contract**:
 
 CRUD approach:
 
 ```typescript
 // Anemic model - just data
-interface MurabahaContract {
+interface LoanContract {
   id: string;
   buyerId: string;
   sellerId: string;
@@ -84,7 +84,7 @@ interface MurabahaContract {
 
 // Business logic in service layer
 class ContractService {
-  async createContract(data: CreateContractDTO): Promise<MurabahaContract> {
+  async createContract(data: CreateContractDTO): Promise<LoanContract> {
     // Calculate selling price
     const sellingPrice = data.costPrice * (1 + data.markupPercentage);
 
@@ -113,7 +113,7 @@ DDD approach:
 
 ```typescript
 // Rich domain model - data + behavior
-class MurabahaContract {
+class LoanContract {
   private constructor(
     private readonly id: ContractId,
     private readonly buyer: Party,
@@ -129,7 +129,7 @@ class MurabahaContract {
     asset: Asset,
     costPrice: Money,
     markup: Percentage,
-  ): Result<MurabahaContract, DomainError> {
+  ): Result<LoanContract, DomainError> {
     // Business rules enforced during creation
     const sellingPriceResult = costPrice.applyMarkup(markup);
     if (sellingPriceResult.isFailure()) {
@@ -142,7 +142,7 @@ class MurabahaContract {
     }
 
     return Result.success(
-      new MurabahaContract(ContractId.generate(), buyer, seller, asset, termsResult.value, ContractStatus.Draft),
+      new LoanContract(ContractId.generate(), buyer, seller, asset, termsResult.value, ContractStatus.Draft),
     );
   }
 
@@ -177,8 +177,8 @@ Bounded Contexts are explicit boundaries around specific domain models, defining
 
 **Example - Islamic Finance Platform**:
 
-- **Zakat Context**: "Payment" = disbursement to beneficiaries
-- **Halal Certification Context**: "Payment" = certification fees
+- **Tax Context**: "Payment" = disbursement to beneficiaries
+- **Permitted Certification Context**: "Payment" = certification fees
 - **Accounting Context**: "Payment" = general financial transaction
 
 Each context models "Payment" differently based on its needs.
@@ -193,13 +193,13 @@ Strategies:
 4. **Notice Data Ownership**: Different teams managing different data
 5. **Observe Workflow Boundaries**: Handoffs between processes
 
-**Example - Halal Certification Platform**:
+**Example - Permitted Certification Platform**:
 
 Possible contexts:
 
 - **Certification Management**: Issuing, renewing, suspending certificates
 - **Audit & Inspection**: Conducting audits, recording findings
-- **Compliance Checking**: Validating against Shariah standards
+- **Compliance Checking**: Validating against Compliance standards
 - **Facility Management**: Tracking production facilities
 - **Laboratory Testing**: Sample testing for ingredients
 - **Reporting & Analytics**: Compliance reports, dashboards
@@ -222,20 +222,20 @@ Context Mapping documents relationships between bounded contexts.
 - **Partnership**: Teams coordinate closely on both sides
 - **Big Ball of Mud**: Legacy or poorly modeled contexts
 
-**Example - Zakat → Accounting Integration**:
+**Example - Tax → Accounting Integration**:
 
 ```
 ┌─────────────────┐         ACL          ┌─────────────────┐
-│  Zakat Context  │ ─────────────────▶   │ Accounting      │
+│  Tax Context  │ ─────────────────▶   │ Accounting      │
 │                 │  Customer-Supplier    │ Context         │
 │  - Assessment   │                       │                 │
-│  - Nisab        │  Translates Zakat     │  - Transaction  │
+│  - Threshold        │  Translates Tax     │  - Transaction  │
 │  - Hawl         │  concepts to          │  - Journal      │
 │                 │  accounting entries   │  - Ledger       │
 └─────────────────┘                       └─────────────────┘
 ```
 
-Zakat Context uses Anticorruption Layer to translate domain-specific concepts (assessment, nisab) into accounting transactions, preventing accounting terminology from polluting Zakat domain.
+Tax Context uses Anticorruption Layer to translate domain-specific concepts (assessment, threshold) into accounting transactions, preventing accounting terminology from polluting Tax domain.
 
 ### Should each Bounded Context be a microservice?
 
@@ -260,7 +260,7 @@ Could start with:
 
 - **Monolith**: All contexts in one application, separate modules
 - **Modular Monolith**: Clear boundaries, shared database
-- **Microservices**: Separate services for Zakat, Halal, Accounting
+- **Microservices**: Separate services for Tax, Permitted, Accounting
 
 Choose based on team size, deployment needs, not dogma.
 
@@ -280,11 +280,11 @@ Choose based on team size, deployment needs, not dogma.
 - Immutable (no state changes)
 - Replaceable (create new instead of modifying)
 
-**Example - Halal Certification**:
+**Example - Permitted Certification**:
 
 ```typescript
 // Entity - Identity matters
-class HalalCertificate {
+class PermittedCertificate {
   constructor(
     private readonly id: CertificateId, // Identity
     private facility: Facility,
@@ -324,11 +324,11 @@ class FacilityAddress {
 4. **Transactional Boundary**: One transaction per aggregate
 5. **Consistency Boundary**: Strong consistency within, eventual between
 
-**Example - Murabaha Contract**:
+**Example - Loan Contract**:
 
 ```typescript
 // Aggregate Root
-class MurabahaContract {
+class LoanContract {
   constructor(
     private readonly id: ContractId,
     private readonly terms: ContractTerms, // Entity inside aggregate
@@ -354,7 +354,7 @@ Wrong aggregate design:
 
 ```typescript
 // TOO LARGE - includes Asset object
-class MurabahaContract {
+class LoanContract {
   constructor(
     private readonly asset: Asset, // Wrong! Asset is separate aggregate
   ) {}
@@ -379,32 +379,32 @@ class MurabahaContract {
 - Delegate domain logic to domain layer
 - Thin layer (no business logic)
 
-**Example - Zakat Calculation**:
+**Example - Tax Calculation**:
 
 ```typescript
-// Domain Service - contains Zakat calculation logic
-class ZakatCalculator {
-  calculate(assessment: ZakatAssessment, nisab: Nisab): ZakatLiability {
-    const zakatableWealth = assessment.calculateZakatableWealth();
+// Domain Service - contains Tax calculation logic
+class TaxCalculator {
+  calculate(assessment: TaxAssessment, threshold: Threshold): TaxLiability {
+    const taxableWealth = assessment.calculateTaxableWealth();
 
-    if (zakatableWealth.isLessThan(nisab.threshold)) {
-      return ZakatLiability.exempt("Wealth below nisab");
+    if (taxableWealth.isLessThan(threshold.threshold)) {
+      return TaxLiability.exempt("Wealth below threshold");
     }
 
-    // Domain logic: 2.5% of zakatable wealth
+    // Domain logic: 2.5% of taxable wealth
     const rate = Percentage.fromBasisPoints(250);
-    const amount = zakatableWealth.applyRate(rate);
+    const amount = taxableWealth.applyRate(rate);
 
-    return ZakatLiability.obligated(amount);
+    return TaxLiability.obligated(amount);
   }
 }
 
 // Application Service - orchestrates use case
-class FinalizeZakatAssessmentService {
+class FinalizeTaxAssessmentService {
   constructor(
-    private readonly assessmentRepo: ZakatAssessmentRepository,
-    private readonly calculator: ZakatCalculator,
-    private readonly nisabService: NisabService,
+    private readonly assessmentRepo: TaxAssessmentRepository,
+    private readonly calculator: TaxCalculator,
+    private readonly thresholdService: ThresholdService,
     private readonly eventBus: EventBus,
   ) {}
 
@@ -415,14 +415,14 @@ class FinalizeZakatAssessmentService {
       return Result.failure(assessmentResult.error);
     }
 
-    // 2. Get current nisab (external data)
-    const nisabResult = await this.nisabService.getCurrentNisab();
-    if (nisabResult.isFailure()) {
-      return Result.failure(nisabResult.error);
+    // 2. Get current threshold (external data)
+    const thresholdResult = await this.thresholdService.getCurrentThreshold();
+    if (thresholdResult.isFailure()) {
+      return Result.failure(thresholdResult.error);
     }
 
     // 3. Delegate domain logic to domain service
-    const liability = this.calculator.calculate(assessmentResult.value, nisabResult.value);
+    const liability = this.calculator.calculate(assessmentResult.value, thresholdResult.value);
 
     // 4. Update aggregate
     const finalizeResult = assessmentResult.value.finalize(liability);
@@ -533,8 +533,8 @@ class Email {
 1. **Entity/Aggregate Creation**: Business rule validation
 
 ```typescript
-class ZakatAssessment {
-  static create(taxpayer: TaxpayerId, hawlStart: Date, assets: Asset[]): Result<ZakatAssessment, ValidationError> {
+class TaxAssessment {
+  static create(taxpayer: TaxpayerId, hawlStart: Date, assets: Asset[]): Result<TaxAssessment, ValidationError> {
     if (hawlStart > new Date()) {
       return Result.failure(new ValidationError("Hawl start cannot be in future"));
     }
@@ -579,7 +579,7 @@ Use Repository pattern to encapsulate mapping.
 
 ```typescript
 // Domain Model
-class HalalCertification {
+class PermittedCertification {
   constructor(
     private readonly id: CertificationId,
     private readonly facility: Facility,
@@ -602,8 +602,8 @@ interface CertificationProductRecord {
 }
 
 // Repository with mapping
-class HalalCertificationRepository {
-  async save(certification: HalalCertification): Promise<void> {
+class PermittedCertificationRepository {
+  async save(certification: PermittedCertification): Promise<void> {
     // Map domain to persistence
     const record: CertificationRecord = {
       id: certification.id.value,
@@ -623,7 +623,7 @@ class HalalCertificationRepository {
     }
   }
 
-  async findById(id: CertificationId): Promise<Result<HalalCertification, Error>> {
+  async findById(id: CertificationId): Promise<Result<PermittedCertification, Error>> {
     // Load from database
     const record = await this.db.certifications.findById(id.value);
     if (!record) {
@@ -635,7 +635,7 @@ class HalalCertificationRepository {
     const facilityResult = await this.facilityRepo.findById(new FacilityId(record.facility_id));
 
     // Map persistence to domain
-    return HalalCertification.reconstitute(
+    return PermittedCertification.reconstitute(
       new CertificationId(record.id),
       facilityResult.value,
       productRecords.map((r) => new ProductId(r.product_id)),
@@ -704,7 +704,7 @@ Event Sourcing is a persistence strategy that pairs naturally with DDD.
 - Rebuild state by replaying events
 - Complete audit trail
 
-**Example - Murabaha Contract**:
+**Example - Loan Contract**:
 
 Traditional:
 
@@ -742,7 +742,7 @@ Event Sourced:
 ];
 
 // Rebuild state by replaying
-const contract = MurabahaContract.reconstitute(events);
+const contract = LoanContract.reconstitute(events);
 ```
 
 **Benefits**:
@@ -775,11 +775,11 @@ CQRS (Command Query Responsibility Segregation) separates reads from writes.
 - Optimized for specific queries
 - Can be eventually consistent
 
-**Example - Halal Certification**:
+**Example - Permitted Certification**:
 
 ```typescript
 // Command Side - Domain Model
-class HalalCertification {
+class PermittedCertification {
   suspend(reason: string): Result<DomainEvent[], Error> {
     // Business rules enforced
     if (!this.canBeSuspended()) {
@@ -939,13 +939,13 @@ Putting all logic in services, domain objects are just data structures.
 
 ```typescript
 // Wrong - Anemic model
-class ZakatAssessment {
+class TaxAssessment {
   assets: Asset[];
   status: string;
 }
 
-class ZakatService {
-  finalize(assessment: ZakatAssessment): void {
+class TaxService {
+  finalize(assessment: TaxAssessment): void {
     // Logic outside domain
     if (assessment.assets.length === 0) {
       throw new Error("No assets");
@@ -955,7 +955,7 @@ class ZakatService {
 }
 
 // Right - Rich domain model
-class ZakatAssessment {
+class TaxAssessment {
   private constructor(
     private readonly assets: Asset[],
     private status: AssessmentStatus,
@@ -1006,8 +1006,8 @@ Trying to create one model for entire system.
 ```typescript
 // Wrong - One "User" for everything
 class User {
-  // Zakat taxpayer data
-  zakatObligations: ZakatObligation[];
+  // Tax taxpayer data
+  taxObligations: TaxObligation[];
 
   // Certification auditor data
   auditorLicense: string;
@@ -1017,9 +1017,9 @@ class User {
 }
 
 // Right - Different models in different contexts
-// Zakat Context
+// Tax Context
 class Taxpayer {
-  obligations: ZakatObligation[];
+  obligations: TaxObligation[];
 }
 
 // Certification Context
@@ -1062,7 +1062,7 @@ class DataTransferObject {
 }
 
 // Right - Domain language
-class MurabahaContract {
+class LoanContract {
   finalize(): void {}
 }
 ```
@@ -1097,7 +1097,7 @@ interface ContractRepository {
 5. **Refactor Incrementally**: Move functionality to new model over time
 6. **Replace When Ready**: Cut over context by context
 
-**Example - Adding Zakat to Legacy Accounting System**:
+**Example - Adding Tax to Legacy Accounting System**:
 
 ```typescript
 // Legacy System
@@ -1107,24 +1107,24 @@ class AccountingService {
   }
 }
 
-// New Zakat Context (separate)
-class ZakatAssessment {
+// New Tax Context (separate)
+class TaxAssessment {
   // Rich domain model
 }
 
 // Anticorruption Layer
-class ZakatAccountingAdapter {
+class TaxAccountingAdapter {
   constructor(
     private readonly legacyService: AccountingService,
-    private readonly zakatRepo: ZakatAssessmentRepository,
+    private readonly taxRepo: TaxAssessmentRepository,
   ) {}
 
-  recordZakatPayment(assessmentId: AssessmentId, amount: Money): Promise<void> {
+  recordTaxPayment(assessmentId: AssessmentId, amount: Money): Promise<void> {
     // Load from DDD model
-    const assessment = await this.zakatRepo.findById(assessmentId);
+    const assessment = await this.taxRepo.findById(assessmentId);
 
     // Translate to legacy format
-    this.legacyService.processTransaction("ZAKAT_PAYMENT", amount.value);
+    this.legacyService.processTransaction("TAX_PAYMENT", amount.value);
 
     // Both systems updated
   }

@@ -61,44 +61,44 @@ graph TD
 - Unclear what "correct" behavior is
 - Need to preserve existing behavior during refactoring
 
-### Example: Legacy Zakat Calculator
+### Example: Legacy Tax Calculator
 
 ```typescript
 // LEGACY CODE: Untested, unclear logic
-class LegacyZakatCalculator {
+class LegacyTaxCalculator {
   calculate(wealth: number, goldPrice: number): number {
-    let nisab = 85 * goldPrice;
-    if (wealth < nisab) {
+    let threshold = 85 * goldPrice;
+    if (wealth < threshold) {
       return 0;
     }
 
-    let zakat = wealth * 0.025;
+    let tax = wealth * 0.025;
 
     // Mystery adjustment (why?)
     if (wealth > 100000) {
-      zakat = zakat * 1.1;
+      tax = tax * 1.1;
     }
 
     // Round to 2 decimals
-    return Math.round(zakat * 100) / 100;
+    return Math.round(tax * 100) / 100;
   }
 }
 
 // CHARACTERIZATION TEST: Document current behavior
-describe("LegacyZakatCalculator - Characterization", () => {
-  let calculator: LegacyZakatCalculator;
+describe("LegacyTaxCalculator - Characterization", () => {
+  let calculator: LegacyTaxCalculator;
 
   beforeEach(() => {
-    calculator = new LegacyZakatCalculator();
+    calculator = new LegacyTaxCalculator();
   });
 
-  it("should return 0 when wealth below nisab", () => {
+  it("should return 0 when wealth below threshold", () => {
     const result = calculator.calculate(1000, 65.5);
 
     expect(result).toBe(0); // Characterizes current behavior ✅
   });
 
-  it("should calculate 2.5% when wealth >= nisab", () => {
+  it("should calculate 2.5% when wealth >= threshold", () => {
     const result = calculator.calculate(10000, 65.5);
 
     expect(result).toBeCloseTo(250, 2); // 10000 * 0.025 = 250
@@ -133,21 +133,21 @@ describe("LegacyZakatCalculator - Characterization", () => {
 ```typescript
 import { toMatchFile } from "jest-file-snapshot";
 
-describe("HalalCertificationReport - Approval Test", () => {
+describe("PermittedCertificationReport - Approval Test", () => {
   it("should match approved report format", () => {
     const products = [
-      { name: "Product A", status: "APPROVED", certNumber: "HALAL-001" },
+      { name: "Product A", status: "APPROVED", certNumber: "PERMITTED-001" },
       { name: "Product B", status: "PENDING", certNumber: null },
     ];
 
-    const report = generateHalalCertificationReport(products);
+    const report = generatePermittedCertificationReport(products);
 
     // Compare to approved baseline
-    expect(report).toMatchFile("./snapshots/halal-report.approved.txt");
+    expect(report).toMatchFile("./snapshots/permitted-report.approved.txt");
   });
 });
 
-// First run: Creates halal-report.approved.txt
+// First run: Creates permitted-report.approved.txt
 // Subsequent runs: Compares output to approved file
 // If different: Test fails, review diff, approve if intentional
 ```
@@ -174,7 +174,7 @@ describe("HalalCertificationReport - Approval Test", () => {
 
 ```typescript
 // LEGACY: Hard-coded dependency ❌
-class LegacyMurabahaService {
+class LegacyLoanService {
   process(contractId: string): void {
     const db = new ProductionDatabase(); // Hard-coded ❌
     const contract = db.findContract(contractId);
@@ -183,7 +183,7 @@ class LegacyMurabahaService {
 }
 
 // SEAM: Inject dependency ✅
-class MurabahaService {
+class LoanService {
   constructor(private db: Database) {} // Seam: Injectable ✅
 
   process(contractId: string): void {
@@ -193,12 +193,12 @@ class MurabahaService {
 }
 
 // TEST: Use fake at seam
-describe("MurabahaService", () => {
+describe("LoanService", () => {
   it("should process contract", () => {
     const fakeDb = new FakeDatabase();
-    fakeDb.addContract(buildMurabahaContract());
+    fakeDb.addContract(buildLoanContract());
 
-    const service = new MurabahaService(fakeDb); // Use fake ✅
+    const service = new LoanService(fakeDb); // Use fake ✅
 
     service.process("CONTRACT-001");
     // Assertions...
@@ -214,44 +214,44 @@ describe("MurabahaService", () => {
 
 ```typescript
 // BEFORE: Untestable method
-class LegacyZakatService {
+class LegacyTaxService {
   processAssessment(userId: string): void {
     // 200 lines of tangled logic ❌
     const user = globalUserRepository.find(userId);
     const wealth = calculateWealth(user); // Can't test ❌
-    const zakat = wealth * 0.025;
-    globalZakatRepository.save(userId, zakat);
-    sendEmail(user.email, zakat); // Side effect ❌
+    const tax = wealth * 0.025;
+    globalTaxRepository.save(userId, tax);
+    sendEmail(user.email, tax); // Side effect ❌
   }
 }
 
 // AFTER: Sprout method
-class LegacyZakatService {
+class LegacyTaxService {
   processAssessment(userId: string): void {
     const user = globalUserRepository.find(userId);
     const wealth = calculateWealth(user);
 
     // SPROUTED: New testable method ✅
-    const zakat = this.calculateZakat(wealth);
+    const tax = this.calculateTax(wealth);
 
-    globalZakatRepository.save(userId, zakat);
-    sendEmail(user.email, zakat);
+    globalTaxRepository.save(userId, tax);
+    sendEmail(user.email, tax);
   }
 
   // NEW: Pure, testable method ✅
-  private calculateZakat(wealth: number): number {
+  private calculateTax(wealth: number): number {
     return wealth * 0.025;
   }
 }
 
 // TEST: Test sprouted method
-describe("LegacyZakatService - Sprouted Method", () => {
-  it("should calculate zakat at 2.5%", () => {
-    const service = new LegacyZakatService();
+describe("LegacyTaxService - Sprouted Method", () => {
+  it("should calculate tax at 2.5%", () => {
+    const service = new LegacyTaxService();
 
-    const zakat = service["calculateZakat"](1000); // Access private ✅
+    const tax = service["calculateTax"](1000); // Access private ✅
 
-    expect(zakat).toBe(25);
+    expect(tax).toBe(25);
   });
 });
 ```
@@ -268,7 +268,7 @@ describe("LegacyZakatService - Sprouted Method", () => {
 
 ```typescript
 // BEFORE: Complex calculation embedded in service
-class LegacyHalalCertificationService {
+class LegacyPermittedCertificationService {
   evaluate(product: Product): string {
     // 300 lines of ingredient validation logic ❌
     // ...complex, untested code...
@@ -278,9 +278,9 @@ class LegacyHalalCertificationService {
 // AFTER: Sprout class
 class IngredientValidator {
   validate(ingredients: string[]): ValidationResult {
-    const haramIngredients = ["pork", "alcohol", "blood"];
+    const forbiddenIngredients = ["pork", "alcohol", "blood"];
 
-    const violations = ingredients.filter((ing) => haramIngredients.includes(ing.toLowerCase()));
+    const violations = ingredients.filter((ing) => forbiddenIngredients.includes(ing.toLowerCase()));
 
     return {
       isValid: violations.length === 0,
@@ -289,7 +289,7 @@ class IngredientValidator {
   }
 }
 
-class LegacyHalalCertificationService {
+class LegacyPermittedCertificationService {
   private ingredientValidator = new IngredientValidator(); // Use sprouted class ✅
 
   evaluate(product: Product): string {
@@ -313,13 +313,13 @@ describe("IngredientValidator", () => {
     validator = new IngredientValidator();
   });
 
-  it("should approve halal ingredients", () => {
+  it("should approve permitted ingredients", () => {
     const result = validator.validate(["chicken", "salt", "pepper"]);
 
     expect(result.isValid).toBe(true);
   });
 
-  it("should reject haram ingredients", () => {
+  it("should reject forbidden ingredients", () => {
     const result = validator.validate(["chicken", "pork"]);
 
     expect(result.isValid).toBe(false);
@@ -334,14 +334,14 @@ describe("IngredientValidator", () => {
 
 ```typescript
 // BEFORE: Can't add logging without touching untested code
-class LegacyMurabahaContract {
+class LegacyLoanContract {
   activate(): void {
     // 100 lines of activation logic ❌
   }
 }
 
 // AFTER: Wrap method
-class LegacyMurabahaContract {
+class LegacyLoanContract {
   activate(): void {
     this.activateAndLog(); // Wrap ✅
   }
@@ -361,9 +361,9 @@ class LegacyMurabahaContract {
 }
 
 // TEST: Test wrapper
-describe("LegacyMurabahaContract - Wrapper", () => {
+describe("LegacyLoanContract - Wrapper", () => {
   it("should log activation", () => {
-    const contract = new LegacyMurabahaContract();
+    const contract = new LegacyLoanContract();
     const logSpy = jest.spyOn(console, "log");
 
     contract.activate();
@@ -379,32 +379,32 @@ describe("LegacyMurabahaContract - Wrapper", () => {
 
 ```typescript
 // LEGACY: Can't change
-class LegacyZakatRepository {
+class LegacyTaxRepository {
   save(userId: string, amount: number): void {
     // Legacy implementation ❌
   }
 }
 
 // WRAPPER: Add new behavior
-class LoggingZakatRepository {
-  constructor(private legacy: LegacyZakatRepository) {}
+class LoggingTaxRepository {
+  constructor(private legacy: LegacyTaxRepository) {}
 
   save(userId: string, amount: number): void {
-    console.log(`Saving zakat for user ${userId}: ${amount}`);
+    console.log(`Saving tax for user ${userId}: ${amount}`);
     this.legacy.save(userId, amount); // Delegate ✅
   }
 }
 
 // TEST: Test wrapper
-describe("LoggingZakatRepository", () => {
+describe("LoggingTaxRepository", () => {
   it("should log before saving", () => {
-    const legacyRepo = new LegacyZakatRepository();
-    const wrapper = new LoggingZakatRepository(legacyRepo);
+    const legacyRepo = new LegacyTaxRepository();
+    const wrapper = new LoggingTaxRepository(legacyRepo);
     const logSpy = jest.spyOn(console, "log");
 
     wrapper.save("USER-001", 25);
 
-    expect(logSpy).toHaveBeenCalledWith("Saving zakat for user USER-001: 25");
+    expect(logSpy).toHaveBeenCalledWith("Saving tax for user USER-001: 25");
   });
 });
 ```
@@ -428,22 +428,22 @@ graph LR
     style D fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-### Example: Migrating Zakat Calculator
+### Example: Migrating Tax Calculator
 
 ```typescript
 // PHASE 1: Create facade
-class ZakatCalculatorFacade {
-  private legacyCalculator = new LegacyZakatCalculator();
-  private newCalculator = new ModernZakatCalculator();
+class TaxCalculatorFacade {
+  private legacyCalculator = new LegacyTaxCalculator();
+  private newCalculator = new ModernTaxCalculator();
 
-  calculate(wealth: Money, nisab: Money): Money {
+  calculate(wealth: Money, threshold: Money): Money {
     // Route to new implementation when ready
     if (this.isNewCalculatorEnabled()) {
-      return this.newCalculator.calculate(wealth, nisab);
+      return this.newCalculator.calculate(wealth, threshold);
     }
 
     // Fall back to legacy
-    const legacyResult = this.legacyCalculator.calculate(wealth.amount, nisab.amount);
+    const legacyResult = this.legacyCalculator.calculate(wealth.amount, threshold.amount);
     return Money.usd(legacyResult);
   }
 
@@ -453,20 +453,20 @@ class ZakatCalculatorFacade {
 }
 
 // PHASE 2: Test both implementations produce same results
-describe("ZakatCalculatorFacade - Strangler", () => {
+describe("TaxCalculatorFacade - Strangler", () => {
   it("should produce same results from legacy and new", () => {
-    const legacyCalc = new LegacyZakatCalculator();
-    const newCalc = new ModernZakatCalculator();
+    const legacyCalc = new LegacyTaxCalculator();
+    const newCalc = new ModernTaxCalculator();
 
     const testCases = [
-      { wealth: 1000, nisab: 85 },
-      { wealth: 50000, nisab: 5567.5 },
-      { wealth: 100, nisab: 5567.5 },
+      { wealth: 1000, threshold: 85 },
+      { wealth: 50000, threshold: 5567.5 },
+      { wealth: 100, threshold: 5567.5 },
     ];
 
     testCases.forEach((testCase) => {
-      const legacyResult = legacyCalc.calculate(testCase.wealth, testCase.nisab);
-      const newResult = newCalc.calculate(Money.usd(testCase.wealth), Money.usd(testCase.nisab));
+      const legacyResult = legacyCalc.calculate(testCase.wealth, testCase.threshold);
+      const newResult = newCalc.calculate(Money.usd(testCase.wealth), Money.usd(testCase.threshold));
 
       expect(newResult.amount).toBeCloseTo(legacyResult, 2);
     });
@@ -531,7 +531,7 @@ describe("ModernService", () => {
 
 ```typescript
 // LEGACY: Constructor creates dependencies ❌
-class LegacyMurabahaService {
+class LegacyLoanService {
   private emailService: EmailService;
 
   constructor() {
@@ -540,15 +540,15 @@ class LegacyMurabahaService {
 }
 
 // REFACTORED: Constructor accepts dependencies ✅
-class ModernMurabahaService {
+class ModernLoanService {
   constructor(private emailService: EmailService) {} // Injected ✅
 }
 
 // TEST: Inject fake
-describe("ModernMurabahaService", () => {
+describe("ModernLoanService", () => {
   it("should send email", () => {
     const fakeEmail = new FakeEmailService();
-    const service = new ModernMurabahaService(fakeEmail);
+    const service = new ModernLoanService(fakeEmail);
 
     service.notifyCustomer();
 

@@ -166,50 +166,50 @@ This template provides a structured format for documenting a bounded context. Us
 
 ---
 
-## Example: Zakat Calculation Bounded Context
+## Example: Tax Calculation Bounded Context
 
 ### Overview
 
 **Description**:
-Calculates Islamic almsgiving (zakat) obligations for wealth holders based on nisab thresholds, wealth types, and Hijri calendar cycles. Ensures compliance with Islamic jurisprudence rules.
+Calculates Islamic almsgiving (tax) obligations for wealth holders based on threshold thresholds, wealth types, and Hijri calendar cycles. Ensures compliance with Islamic jurisprudence rules.
 
 **Strategic Classification**:
 Core Domain
 
 **Rationale**:
-Zakat calculation is central to the OSE Platform's mission of democratizing Sharia-compliant enterprise systems. The complex rules around nisab thresholds, lunar calendar calculations, and wealth type classifications require deep Islamic finance expertise and provide significant competitive differentiation.
+Tax calculation is central to the OSE Platform's mission of democratizing Compliance-compliant enterprise systems. The complex rules around threshold thresholds, lunar calendar calculations, and wealth type classifications require deep Islamic finance expertise and provide significant competitive differentiation.
 
 ### Ubiquitous Language
 
 **Key Terms** (within this context):
 
-| Term             | Definition                                                                                         | Example                                             |
-| ---------------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| Nisab            | Minimum threshold of wealth that makes zakat obligatory                                            | 85 grams of gold or equivalent value                |
-| Hawl             | Complete lunar year (354-355 days) during which wealth must be held before zakat is due            | From Ramadan 1444 to Ramadan 1445                   |
-| Zakatable Assets | Types of wealth subject to zakat calculation                                                       | Cash, gold, silver, business inventory, trade goods |
-| Zakat Rate       | Percentage of wealth due as zakat, varies by wealth type                                           | 2.5% for cash/gold/silver, 5-10% for agriculture    |
-| Zakat Assessment | Comprehensive evaluation of wealth holdings to determine zakat obligation                          | Annual assessment conducted at end of hawl          |
-| Nawaazil         | Contemporary issues in Islamic jurisprudence requiring scholarly interpretation for zakat purposes | Cryptocurrency, digital assets, stock options       |
+| Term           | Definition                                                                                       | Example                                             |
+| -------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------- |
+| Threshold      | Minimum threshold of wealth that makes tax obligatory                                            | 85 grams of gold or equivalent value                |
+| Hawl           | Complete lunar year (354-355 days) during which wealth must be held before tax is due            | From Ramadan 1444 to Ramadan 1445                   |
+| Taxable Assets | Types of wealth subject to tax calculation                                                       | Cash, gold, silver, business inventory, trade goods |
+| Tax Rate       | Percentage of wealth due as tax, varies by wealth type                                           | 2.5% for cash/gold/silver, 5-10% for agriculture    |
+| Tax Assessment | Comprehensive evaluation of wealth holdings to determine tax obligation                          | Annual assessment conducted at end of hawl          |
+| Nawaazil       | Contemporary issues in Islamic jurisprudence requiring scholarly interpretation for tax purposes | Cryptocurrency, digital assets, stock options       |
 
 **Ambiguous Terms** (different meaning in other contexts):
 
-- **Assessment**: In this context means "zakat obligation calculation", but in **Risk Management Context** means "risk evaluation"
-- **Account**: In this context means "wealth holder's zakat profile", but in **Accounting Context** means "ledger account"
+- **Assessment**: In this context means "tax obligation calculation", but in **Risk Management Context** means "risk evaluation"
+- **Account**: In this context means "wealth holder's tax profile", but in **Accounting Context** means "ledger account"
 
 ### Business Decisions
 
 **What makes this context special?**
 
-1. **Multi-School Jurisprudence**: Support multiple Islamic schools of thought (Hanafi, Maliki, Shafi'i, Hanbali) with different nisab and rate interpretations
+1. **Multi-School Jurisprudence**: Support multiple Islamic schools of thought (Hanafi, Maliki, Shafi'i, Hanbali) with different threshold and rate interpretations
 2. **Hijri Calendar Integration**: All calculations based on Islamic lunar calendar, not Gregorian calendar
-3. **Gold/Silver Price Volatility**: Nisab threshold dynamically calculated based on current precious metal prices
+3. **Gold/Silver Price Volatility**: Threshold threshold dynamically calculated based on current precious metal prices
 4. **Scholarly Verification**: All calculation rules verified by qualified Islamic scholars before implementation
 
 **What problems does it solve?**
 
-- Eliminates manual zakat calculation errors that could lead to religious non-compliance
-- Provides consistent, auditable zakat calculations across different wealth types
+- Eliminates manual tax calculation errors that could lead to religious non-compliance
+- Provides consistent, auditable tax calculations across different wealth types
 - Adapts to contemporary asset classes (stocks, crypto) with scholarly guidance
 - Simplifies complex jurisprudence rules for ordinary Muslims
 
@@ -217,97 +217,97 @@ Zakat calculation is central to the OSE Platform's mission of democratizing Shar
 
 **Aggregates**:
 
-- **ZakatAssessment**: Ensures consistency of zakat calculation for a wealth holder
-  - Root Entity: `ZakatAssessment`
+- **TaxAssessment**: Ensures consistency of tax calculation for a wealth holder
+  - Root Entity: `TaxAssessment`
   - Contained Entities: `WealthDeclaration`, `LunarYearPeriod`
-  - Value Objects: `NisabAmount`, `ZakatRate`, `Money`, `HijriDate`
+  - Value Objects: `ThresholdAmount`, `TaxRate`, `Money`, `HijriDate`
   - Key Invariants:
     - Assessment can only be finalized if hawl is complete (≥354 days)
-    - Total wealth must meet or exceed nisab threshold
-    - All zakatable assets must have valid declarations
-    - Zakat rate must match wealth type and jurisprudence school
+    - Total wealth must meet or exceed threshold threshold
+    - All taxable assets must have valid declarations
+    - Tax rate must match wealth type and jurisprudence school
 
 **Value Objects**:
 
-- **NisabAmount**: Immutable threshold value in grams of gold or equivalent monetary value
-- **ZakatRate**: Immutable percentage (e.g., 2.5%, 5%, 10%) tied to wealth type
+- **ThresholdAmount**: Immutable threshold value in grams of gold or equivalent monetary value
+- **TaxRate**: Immutable percentage (e.g., 2.5%, 5%, 10%) tied to wealth type
 - **HijriDate**: Immutable Islamic calendar date with Gregorian conversion
 - **Money**: Immutable amount with currency (supports multiple currencies for international users)
 - **WealthType**: Enumeration (Cash, Gold, Silver, BusinessInventory, Agriculture, Livestock, Cryptocurrency)
 
 **Domain Services**:
 
-- **NisabCalculationService**: Calculates current nisab threshold based on real-time gold/silver prices
+- **ThresholdCalculationService**: Calculates current threshold threshold based on real-time gold/silver prices
 - **HawlTrackingService**: Determines if lunar year has elapsed for given wealth holdings
-- **JurisprudenceRuleService**: Retrieves zakat rules for specific school of thought
+- **JurisprudenceRuleService**: Retrieves tax rules for specific school of thought
 
 ### Responsibilities
 
 **Core Capabilities**:
 
-1. Calculate zakat obligation for declared wealth holdings
-2. Determine if wealth meets nisab threshold for current year
+1. Calculate tax obligation for declared wealth holdings
+2. Determine if wealth meets threshold threshold for current year
 3. Track hawl completion (lunar year elapsed)
 4. Validate wealth declarations for completeness and consistency
 5. Apply school-specific jurisprudence rules
-6. Generate zakat calculation reports with Islamic jurisprudence citations
+6. Generate tax calculation reports with Islamic jurisprudence citations
 
 **Explicit Non-Responsibilities** (out of scope):
 
 - Payment processing (handled by Billing Context)
 - Wealth tracking and accounting (handled by Accounting Context)
 - Tax calculations (handled by Tax Compliance Context)
-- Zakat distribution to recipients (handled by Zakat Distribution Context)
+- Tax distribution to recipients (handled by Tax Distribution Context)
 - Investment management (handled by Investment Management Context)
 
 ### Integration
 
 **Inbound Dependencies** (who depends on us):
 
-| Context                    | Relationship Pattern | Interface    | Data Provided                            |
-| -------------------------- | -------------------- | ------------ | ---------------------------------------- |
-| Accounting Context         | Customer/Supplier    | API + Events | Zakat amounts for financial reporting    |
-| Zakat Distribution Context | Customer/Supplier    | Events       | Zakat calculated events with amounts due |
-| Reporting Context          | Conformist           | Read API     | Zakat assessment history and reports     |
+| Context                  | Relationship Pattern | Interface    | Data Provided                          |
+| ------------------------ | -------------------- | ------------ | -------------------------------------- |
+| Accounting Context       | Customer/Supplier    | API + Events | Tax amounts for financial reporting    |
+| Tax Distribution Context | Customer/Supplier    | Events       | Tax calculated events with amounts due |
+| Reporting Context        | Conformist           | Read API     | Tax assessment history and reports     |
 
 **Outbound Dependencies** (who we depend on):
 
 | Context               | Relationship Pattern | Interface | Data Consumed                                           |
 | --------------------- | -------------------- | --------- | ------------------------------------------------------- |
 | Accounting Context    | Partnership          | API       | Wealth holdings, asset valuations                       |
-| Pricing Context       | Conformist           | API       | Current gold/silver prices for nisab threshold          |
+| Pricing Context       | Conformist           | API       | Current gold/silver prices for threshold threshold      |
 | Calendar Context      | Shared Kernel        | Library   | Hijri calendar conversions and date calculations        |
 | Jurisprudence Context | Customer/Supplier    | API       | Islamic rulings (fatawa) for contemporary wealth issues |
 
 **External Systems**:
 
-- **Gold Price API**: Real-time precious metal prices for nisab calculation (REST API)
-- **Islamic Scholars Network**: Verification of contemporary asset zakat rules (human workflow)
+- **Gold Price API**: Real-time precious metal prices for threshold calculation (REST API)
+- **Islamic Scholars Network**: Verification of contemporary asset tax rules (human workflow)
 
 ### Domain Events
 
 **Published Events** (we notify others):
 
-- **ZakatCalculated**: Fired when zakat assessment is finalized
-  - Payload: `assessmentId`, `wealthHolderId`, `zakatAmount`, `calculationDate`, `nisabThreshold`, `school`
-  - Consumers: Zakat Distribution Context, Accounting Context, Reporting Context
+- **TaxCalculated**: Fired when tax assessment is finalized
+  - Payload: `assessmentId`, `wealthHolderId`, `taxAmount`, `calculationDate`, `thresholdThreshold`, `school`
+  - Consumers: Tax Distribution Context, Accounting Context, Reporting Context
 
-- **NisabThresholdMet**: Fired when wealth first exceeds nisab threshold
-  - Payload: `wealthHolderId`, `wealthAmount`, `nisabAmount`, `hijriDate`
+- **ThresholdThresholdMet**: Fired when wealth first exceeds threshold threshold
+  - Payload: `wealthHolderId`, `wealthAmount`, `thresholdAmount`, `hijriDate`
   - Consumers: Notification Context (notify user)
 
 - **HawlCompleted**: Fired when lunar year elapses for wealth holdings
   - Payload: `wealthHolderId`, `startDate`, `endDate`
-  - Consumers: Notification Context (prompt user for zakat payment)
+  - Consumers: Notification Context (prompt user for tax payment)
 
 **Consumed Events** (we listen to others):
 
 - **WealthValuationUpdated**: From Accounting Context
-  - Trigger: Re-evaluate nisab threshold status
-  - Side Effects: May trigger `NisabThresholdMet` event
+  - Trigger: Re-evaluate threshold threshold status
+  - Side Effects: May trigger `ThresholdThresholdMet` event
 
 - **GoldPriceUpdated**: From Pricing Context
-  - Trigger: Recalculate nisab threshold in local currency
+  - Trigger: Recalculate threshold threshold in local currency
   - Side Effects: May affect existing assessments near threshold
 
 ### Technology Decisions
@@ -317,7 +317,7 @@ Zakat calculation is central to the OSE Platform's mission of democratizing Shar
 - **Language/Framework**: TypeScript + Nest.js (Node.js)
 - **Database**: PostgreSQL (wealth declarations, assessment history)
 - **Messaging**: RabbitMQ (domain events)
-- **Caching**: Redis (nisab thresholds, gold prices)
+- **Caching**: Redis (threshold thresholds, gold prices)
 
 **Deployment**:
 
@@ -344,14 +344,14 @@ Zakat calculation is central to the OSE Platform's mission of democratizing Shar
 
 **Unresolved Issues**:
 
-1. **Cryptocurrency Zakat**: How to calculate zakat on volatile assets? Awaiting fatwa from scholars council.
-2. **Multi-Currency Support**: Should nisab be calculated per currency or converted to user's primary currency?
-3. **Historical Corrections**: How to handle corrections to past zakat calculations? Retroactive or prospective?
+1. **Cryptocurrency Tax**: How to calculate tax on volatile assets? Awaiting fatwa from scholars council.
+2. **Multi-Currency Support**: Should threshold be calculated per currency or converted to user's primary currency?
+3. **Historical Corrections**: How to handle corrections to past tax calculations? Retroactive or prospective?
 
 **Risks**:
 
 - **Jurisprudence Divergence**: Different scholars may issue conflicting rulings for contemporary assets (Mitigation: Establish scholarly review board)
-- **Gold Price API Downtime**: Nisab calculation depends on external pricing (Mitigation: Cache prices with staleness tolerance, fallback pricing sources)
+- **Gold Price API Downtime**: Threshold calculation depends on external pricing (Mitigation: Cache prices with staleness tolerance, fallback pricing sources)
 - **Performance**: Complex calculations for large wealth portfolios may be slow (Mitigation: Pre-compute common scenarios, async processing)
 
 ---

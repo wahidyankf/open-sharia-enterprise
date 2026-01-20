@@ -16,7 +16,7 @@ Mastering TDD with DDD results in domain models that are expressive, testable, a
 
 **Invariants**: Business rules that must **always** hold true.
 
-**Example**: `MurabahaContract` aggregate ensures:
+**Example**: `LoanContract` aggregate ensures:
 
 1. Markup percentage never exceeds 10%
 2. Contract cannot be activated without complete information
@@ -26,7 +26,7 @@ Mastering TDD with DDD results in domain models that are expressive, testable, a
 
 ```typescript
 // Aggregate Root
-class MurabahaContract {
+class LoanContract {
   private constructor(
     readonly id: ContractId,
     readonly customerId: CustomerId,
@@ -45,8 +45,8 @@ class MurabahaContract {
     assetPrice: Money,
     markup: Money,
     termMonths: number,
-  ): MurabahaContract {
-    const contract = new MurabahaContract(
+  ): LoanContract {
+    const contract = new LoanContract(
       ContractId.generate(),
       customerId,
       assetDescription,
@@ -105,10 +105,10 @@ class MurabahaContract {
 }
 
 // GOOD: Test aggregate invariants
-describe("MurabahaContract - Aggregate", () => {
+describe("LoanContract - Aggregate", () => {
   describe("Invariant: Markup <= 10%", () => {
     it("should create contract with valid markup", () => {
-      const contract = MurabahaContract.create(
+      const contract = LoanContract.create(
         CustomerId.generate(),
         "Toyota Camry",
         Money.usd(50000),
@@ -121,7 +121,7 @@ describe("MurabahaContract - Aggregate", () => {
 
     it("should reject markup > 10%", () => {
       expect(() =>
-        MurabahaContract.create(
+        LoanContract.create(
           CustomerId.generate(),
           "Toyota Camry",
           Money.usd(50000),
@@ -134,15 +134,15 @@ describe("MurabahaContract - Aggregate", () => {
 
   describe("Invariant: Asset price > 0", () => {
     it("should reject zero asset price", () => {
-      expect(() =>
-        MurabahaContract.create(CustomerId.generate(), "Toyota Camry", Money.usd(0), Money.usd(0), 12),
-      ).toThrow("Asset price must be positive");
+      expect(() => LoanContract.create(CustomerId.generate(), "Toyota Camry", Money.usd(0), Money.usd(0), 12)).toThrow(
+        "Asset price must be positive",
+      );
     });
   });
 
   describe("Activation Rules", () => {
     it("should activate when in PENDING status with installments", () => {
-      const contract = MurabahaContract.create(
+      const contract = LoanContract.create(
         CustomerId.generate(),
         "Toyota Camry",
         Money.usd(50000),
@@ -156,7 +156,7 @@ describe("MurabahaContract - Aggregate", () => {
     });
 
     it("should reject activation when not PENDING", () => {
-      const contract = MurabahaContract.create(
+      const contract = LoanContract.create(
         CustomerId.generate(),
         "Toyota Camry",
         Money.usd(50000),
@@ -171,7 +171,7 @@ describe("MurabahaContract - Aggregate", () => {
 
   describe("Installment Generation", () => {
     it("should generate correct number of installments", () => {
-      const contract = MurabahaContract.create(
+      const contract = LoanContract.create(
         CustomerId.generate(),
         "Toyota Camry",
         Money.usd(50000),
@@ -183,7 +183,7 @@ describe("MurabahaContract - Aggregate", () => {
     });
 
     it("should distribute total amount across installments", () => {
-      const contract = MurabahaContract.create(
+      const contract = LoanContract.create(
         CustomerId.generate(),
         "Toyota Camry",
         Money.usd(60000),
@@ -202,9 +202,9 @@ describe("MurabahaContract - Aggregate", () => {
 ### Testing Aggregate State Transitions
 
 ```typescript
-describe("MurabahaContract - State Transitions", () => {
+describe("LoanContract - State Transitions", () => {
   it("should transition PENDING → ACTIVE → COMPLETED", () => {
-    const contract = MurabahaContract.create(CustomerId.generate(), "Asset", Money.usd(10000), Money.usd(500), 12);
+    const contract = LoanContract.create(CustomerId.generate(), "Asset", Money.usd(10000), Money.usd(500), 12);
 
     expect(contract.status).toBe("PENDING");
 
@@ -216,7 +216,7 @@ describe("MurabahaContract - State Transitions", () => {
   });
 
   it("should not allow invalid transitions", () => {
-    const contract = MurabahaContract.create(CustomerId.generate(), "Asset", Money.usd(10000), Money.usd(500), 12);
+    const contract = LoanContract.create(CustomerId.generate(), "Asset", Money.usd(10000), Money.usd(500), 12);
 
     expect(() => contract.complete()).toThrow("Cannot complete contract in PENDING status");
   });
@@ -406,38 +406,38 @@ describe("HijriDate - Value Object", () => {
 
 **Examples**:
 
-- `ZakatCalculated`
-- `MurabahaContractActivated`
+- `TaxCalculated`
+- `LoanContractActivated`
 - `TakafulClaimApproved`
 
 ### Testing Event Creation and Publishing
 
 ```typescript
 // Domain Event
-class ZakatCalculated {
+class TaxCalculated {
   readonly occurredAt: Date;
 
   constructor(
     readonly assessmentId: AssessmentId,
     readonly userId: UserId,
     readonly wealth: Money,
-    readonly zakatAmount: Money,
+    readonly taxAmount: Money,
   ) {
     this.occurredAt = new Date();
   }
 
   toJSON() {
     return {
-      eventType: "ZakatCalculated",
+      eventType: "TaxCalculated",
       assessmentId: this.assessmentId.value,
       userId: this.userId.value,
       wealth: {
         amount: this.wealth.amount,
         currency: this.wealth.currency,
       },
-      zakatAmount: {
-        amount: this.zakatAmount.amount,
-        currency: this.zakatAmount.currency,
+      taxAmount: {
+        amount: this.taxAmount.amount,
+        currency: this.taxAmount.currency,
       },
       occurredAt: this.occurredAt.toISOString(),
     };
@@ -445,18 +445,18 @@ class ZakatCalculated {
 }
 
 // Aggregate emits events
-class ZakatAssessment {
+class TaxAssessment {
   private _domainEvents: DomainEvent[] = [];
 
   calculate(): void {
-    if (this.wealth.isLessThan(this.nisab)) {
-      throw new Error("Wealth below nisab");
+    if (this.wealth.isLessThan(this.threshold)) {
+      throw new Error("Wealth below threshold");
     }
 
-    this._zakatAmount = this.wealth.multiply(0.025);
+    this._taxAmount = this.wealth.multiply(0.025);
 
     // Emit domain event
-    this._domainEvents.push(new ZakatCalculated(this.id, this.userId, this.wealth, this._zakatAmount));
+    this._domainEvents.push(new TaxCalculated(this.id, this.userId, this.wealth, this._taxAmount));
   }
 
   getDomainEvents(): readonly DomainEvent[] {
@@ -469,39 +469,39 @@ class ZakatAssessment {
 }
 
 // GOOD: Test event emission
-describe("ZakatAssessment - Domain Events", () => {
-  it("should emit ZakatCalculated event on calculation", () => {
-    const assessment = new ZakatAssessment(AssessmentId.generate(), UserId.generate(), Money.usd(1000), Money.usd(85));
+describe("TaxAssessment - Domain Events", () => {
+  it("should emit TaxCalculated event on calculation", () => {
+    const assessment = new TaxAssessment(AssessmentId.generate(), UserId.generate(), Money.usd(1000), Money.usd(85));
 
     assessment.calculate();
 
     const events = assessment.getDomainEvents();
     expect(events).toHaveLength(1);
-    expect(events[0]).toBeInstanceOf(ZakatCalculated);
+    expect(events[0]).toBeInstanceOf(TaxCalculated);
   });
 
   it("should include correct data in event", () => {
     const assessmentId = AssessmentId.generate();
     const userId = UserId.generate();
-    const assessment = new ZakatAssessment(assessmentId, userId, Money.usd(1000), Money.usd(85));
+    const assessment = new TaxAssessment(assessmentId, userId, Money.usd(1000), Money.usd(85));
 
     assessment.calculate();
 
-    const event = assessment.getDomainEvents()[0] as ZakatCalculated;
+    const event = assessment.getDomainEvents()[0] as TaxCalculated;
     expect(event.assessmentId.equals(assessmentId)).toBe(true);
     expect(event.userId.equals(userId)).toBe(true);
-    expect(event.zakatAmount).toEqualMoney(Money.usd(25));
+    expect(event.taxAmount).toEqualMoney(Money.usd(25));
   });
 
   it("should not emit event when calculation fails", () => {
-    const assessment = new ZakatAssessment(
+    const assessment = new TaxAssessment(
       AssessmentId.generate(),
       UserId.generate(),
-      Money.usd(50), // Below nisab
+      Money.usd(50), // Below threshold
       Money.usd(85),
     );
 
-    expect(() => assessment.calculate()).toThrow("Wealth below nisab");
+    expect(() => assessment.calculate()).toThrow("Wealth below threshold");
 
     const events = assessment.getDomainEvents();
     expect(events).toHaveLength(0); // No event emitted ✅
@@ -512,9 +512,9 @@ describe("ZakatAssessment - Domain Events", () => {
 ### Testing Event Serialization
 
 ```typescript
-describe("ZakatCalculated - Serialization", () => {
+describe("TaxCalculated - Serialization", () => {
   it("should serialize to JSON correctly", () => {
-    const event = new ZakatCalculated(
+    const event = new TaxCalculated(
       AssessmentId.of("ASSESS-001"),
       UserId.of("USER-001"),
       Money.usd(1000),
@@ -524,14 +524,14 @@ describe("ZakatCalculated - Serialization", () => {
     const json = event.toJSON();
 
     expect(json).toMatchObject({
-      eventType: "ZakatCalculated",
+      eventType: "TaxCalculated",
       assessmentId: "ASSESS-001",
       userId: "USER-001",
       wealth: {
         amount: 1000,
         currency: "USD",
       },
-      zakatAmount: {
+      taxAmount: {
         amount: 25,
         currency: "USD",
       },
@@ -553,39 +553,39 @@ describe("ZakatCalculated - Serialization", () => {
 
 ```typescript
 // Repository interface (domain layer)
-interface ZakatAssessmentRepository {
-  save(assessment: ZakatAssessment): Promise<void>;
-  findById(id: AssessmentId): Promise<ZakatAssessment | undefined>;
-  findByUserId(userId: UserId): Promise<ZakatAssessment[]>;
+interface TaxAssessmentRepository {
+  save(assessment: TaxAssessment): Promise<void>;
+  findById(id: AssessmentId): Promise<TaxAssessment | undefined>;
+  findByUserId(userId: UserId): Promise<TaxAssessment[]>;
 }
 
 // In-memory implementation (for unit tests)
-class InMemoryZakatAssessmentRepository implements ZakatAssessmentRepository {
-  private assessments: Map<string, ZakatAssessment> = new Map();
+class InMemoryTaxAssessmentRepository implements TaxAssessmentRepository {
+  private assessments: Map<string, TaxAssessment> = new Map();
 
-  async save(assessment: ZakatAssessment): Promise<void> {
+  async save(assessment: TaxAssessment): Promise<void> {
     this.assessments.set(assessment.id.value, assessment);
   }
 
-  async findById(id: AssessmentId): Promise<ZakatAssessment | undefined> {
+  async findById(id: AssessmentId): Promise<TaxAssessment | undefined> {
     return this.assessments.get(id.value);
   }
 
-  async findByUserId(userId: UserId): Promise<ZakatAssessment[]> {
+  async findByUserId(userId: UserId): Promise<TaxAssessment[]> {
     return Array.from(this.assessments.values()).filter((a) => a.userId.equals(userId));
   }
 }
 
 // GOOD: Test repository behavior (unit test with in-memory)
-describe("ZakatAssessmentRepository - Unit", () => {
-  let repository: ZakatAssessmentRepository;
+describe("TaxAssessmentRepository - Unit", () => {
+  let repository: TaxAssessmentRepository;
 
   beforeEach(() => {
-    repository = new InMemoryZakatAssessmentRepository();
+    repository = new InMemoryTaxAssessmentRepository();
   });
 
   it("should save and retrieve assessment", async () => {
-    const assessment = buildZakatAssessment();
+    const assessment = buildTaxAssessment();
 
     await repository.save(assessment);
     const retrieved = await repository.findById(assessment.id);
@@ -602,9 +602,9 @@ describe("ZakatAssessmentRepository - Unit", () => {
 
   it("should find assessments by user ID", async () => {
     const userId = UserId.generate();
-    const assessment1 = buildZakatAssessment({ userId });
-    const assessment2 = buildZakatAssessment({ userId });
-    const otherAssessment = buildZakatAssessment(); // Different user
+    const assessment1 = buildTaxAssessment({ userId });
+    const assessment2 = buildTaxAssessment({ userId });
+    const otherAssessment = buildTaxAssessment(); // Different user
 
     await repository.save(assessment1);
     await repository.save(assessment2);
@@ -632,18 +632,18 @@ describe("ZakatAssessmentRepository - Unit", () => {
 - Operation is a domain concept but not entity/value object
 - Operation is stateless
 
-### Example: Zakat Distribution Service
+### Example: Tax Distribution Service
 
 ```typescript
-class ZakatDistributionService {
-  distribute(totalZakat: Money, beneficiaries: Beneficiary[]): Distribution[] {
+class TaxDistributionService {
+  distribute(totalTax: Money, beneficiaries: Beneficiary[]): Distribution[] {
     this.validateBeneficiaries(beneficiaries);
 
     const totalWeight = beneficiaries.reduce((sum, b) => sum + b.weight, 0);
 
     return beneficiaries.map((beneficiary) => {
       const percentage = beneficiary.weight / totalWeight;
-      const amount = totalZakat.multiply(percentage);
+      const amount = totalTax.multiply(percentage);
 
       return new Distribution(beneficiary.id, beneficiary.name, amount, percentage);
     });
@@ -662,11 +662,11 @@ class ZakatDistributionService {
 }
 
 // GOOD: Test domain service
-describe("ZakatDistributionService", () => {
-  let service: ZakatDistributionService;
+describe("TaxDistributionService", () => {
+  let service: TaxDistributionService;
 
   beforeEach(() => {
-    service = new ZakatDistributionService();
+    service = new TaxDistributionService();
   });
 
   it("should distribute proportionally by weight", () => {
@@ -717,11 +717,11 @@ describe("ZakatDistributionService", () => {
 **Factory**: Encapsulates complex aggregate creation logic.
 
 ```typescript
-class MurabahaContractFactory {
-  create(request: MurabahaApplicationRequest): MurabahaContract {
+class LoanContractFactory {
+  create(request: LoanApplicationRequest): LoanContract {
     this.validateRequest(request);
 
-    const contract = MurabahaContract.create(
+    const contract = LoanContract.create(
       request.customerId,
       request.assetDescription,
       request.assetPrice,
@@ -732,7 +732,7 @@ class MurabahaContractFactory {
     return contract;
   }
 
-  private validateRequest(request: MurabahaApplicationRequest): void {
+  private validateRequest(request: LoanApplicationRequest): void {
     if (request.termMonths < 1 || request.termMonths > 60) {
       throw new Error("Term must be between 1 and 60 months");
     }
@@ -747,15 +747,15 @@ class MurabahaContractFactory {
   }
 }
 
-describe("MurabahaContractFactory", () => {
-  let factory: MurabahaContractFactory;
+describe("LoanContractFactory", () => {
+  let factory: LoanContractFactory;
 
   beforeEach(() => {
-    factory = new MurabahaContractFactory();
+    factory = new LoanContractFactory();
   });
 
   it("should create contract with calculated markup", () => {
-    const request = buildMurabahaApplicationRequest({
+    const request = buildLoanApplicationRequest({
       assetPrice: Money.usd(10000),
       termMonths: 12,
     });
@@ -767,7 +767,7 @@ describe("MurabahaContractFactory", () => {
   });
 
   it("should cap markup at 10%", () => {
-    const request = buildMurabahaApplicationRequest({
+    const request = buildLoanApplicationRequest({
       assetPrice: Money.usd(10000),
       termMonths: 60, // 5 years
     });
@@ -779,7 +779,7 @@ describe("MurabahaContractFactory", () => {
   });
 
   it("should reject invalid term", () => {
-    const request = buildMurabahaApplicationRequest({
+    const request = buildLoanApplicationRequest({
       termMonths: 61,
     });
 

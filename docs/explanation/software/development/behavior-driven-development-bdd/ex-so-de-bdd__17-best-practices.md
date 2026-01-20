@@ -50,49 +50,49 @@ Behavior-Driven Development (BDD) succeeds when teams focus on collaboration, sh
 **How to Implement**:
 
 ```gherkin
-# After Three Amigos session with Shariah scholar, developer, and QA
-Feature: Zakat Calculation on Mixed Assets
+# After Three Amigos session with Compliance scholar, developer, and QA
+Feature: Tax Calculation on Mixed Assets
   As a Muslim with diverse wealth types
-  I want accurate Zakat calculation
+  I want accurate Tax calculation
   So that I fulfill my religious obligation correctly
 
   # Discovered in Example Mapping: Edge case where hawl differs by asset
-  Scenario: Calculate Zakat when assets reach nisab at different times
+  Scenario: Calculate Tax when assets reach threshold at different times
     Given I own 50 grams of gold acquired on 2025-01-01
     And I own 300 grams of silver acquired on 2025-06-01
-    And gold nisab is 85 grams
-    And silver nisab is 595 grams
-    When Zakat calculation is performed on 2026-01-15
-    Then only gold should be subject to Zakat
-    And Zakat on gold should be 1.25 grams (2.5%)
+    And gold threshold is 85 grams
+    And silver threshold is 595 grams
+    When Tax calculation is performed on 2026-01-15
+    Then only gold should be subject to Tax
+    And Tax on gold should be 1.25 grams (2.5%)
     And silver should be excluded (hawl not yet complete)
 ```
 
 **Three Amigos Session Template** (25 minutes):
 
 ```markdown
-**Attendees**: Product Owner (Hanan), Developer (Ahmad), Shariah Scholar (Sheikh Abdullah)
+**Attendees**: Product Owner (Hanan), Developer (Ahmad), Compliance Scholar (Sheikh Abdullah)
 
-**Story**: As a Muslim, I want to calculate Zakat on rental property income
+**Story**: As a Muslim, I want to calculate Tax on rental property income
 
 **Questions to Explore**:
 
-1. Does Zakat apply to rental income, property value, or both?
-2. How handle mortgage debt? Does it reduce Zakat obligation?
+1. Does Tax apply to rental income, property value, or both?
+2. How handle mortgage debt? Does it reduce Tax obligation?
 3. What if property purchased mid-year?
 4. Different rulings across Fiqh schools?
 
 **Examples Discovered**:
 
-- Rental income: 2.5% Zakat on accumulated income after hawl
-- Property value: No Zakat (not trade goods per Hanafi school)
-- Mortgage debt: Does NOT reduce Zakat (debt to bank, not individual)
+- Rental income: 2.5% Tax on accumulated income after hawl
+- Property value: No Tax (not trade goods per Hanafi school)
+- Mortgage debt: Does NOT reduce Tax (debt to bank, not individual)
 - Edge case: If property used for business, treated as trade goods
 
 **Scenarios to Write** (collaborative decision):
 
-1. Basic: Zakat on rental income accumulated over hawl
-2. Edge: Rental income with mortgage (debt doesn't reduce Zakat)
+1. Basic: Tax on rental income accumulated over hawl
+2. Edge: Rental income with mortgage (debt doesn't reduce Tax)
 3. Edge: Property used for business vs personal residence
 ```
 
@@ -111,16 +111,16 @@ Feature: Zakat Calculation on Mixed Assets
 
 ```gherkin
 # GOOD: User perspective, declarative
-Scenario: Calculate Zakat on gold holdings
+Scenario: Calculate Tax on gold holdings
   Given I own 100 grams of gold
   And current gold price is $60 per gram
-  When I calculate Zakat
+  When I calculate Tax
   Then I should owe 2.5 grams of gold
   Or $150 in cash equivalent
 
 # BAD: Implementation perspective, imperative (see antipatterns doc)
-# Scenario: Calculate Zakat via API endpoint
-#   Given API endpoint "/api/v1/zakat/calculate" exists
+# Scenario: Calculate Tax via API endpoint
+#   Given API endpoint "/api/v1/tax/calculate" exists
 #   When client sends POST with JSON body containing wealth data
 #   Then response status should be 200
 ```
@@ -142,9 +142,9 @@ Scenario: Calculate Zakat on gold holdings
 
 ```gherkin
 # GOOD: Single behavior
-Scenario: Reject Zakat payment if below minimum threshold
-  Given minimum Zakat payment is $10
-  When I attempt to pay $5 Zakat
+Scenario: Reject Tax payment if below minimum threshold
+  Given minimum Tax payment is $10
+  When I attempt to pay $5 Tax
   Then payment should be rejected
   And I should see error "Minimum payment is $10"
 ```
@@ -166,15 +166,15 @@ Scenario: Reject Zakat payment if below minimum threshold
 
 ```gherkin
 # GOOD: Concrete, specific
-Scenario: Calculate Zakat on gold at nisab threshold
-  Given I own 85 grams of gold (exactly nisab)
+Scenario: Calculate Tax on gold at threshold threshold
+  Given I own 85 grams of gold (exactly threshold)
   And gold price is $60 per gram
-  When Zakat is calculated
+  When Tax is calculated
   Then I owe 2.125 grams of gold (85 * 2.5%)
   And cash equivalent is $127.50
 
 # BAD: Abstract, vague (see antipatterns doc)
-# Scenario: Calculate Zakat on sufficient wealth
+# Scenario: Calculate Tax on sufficient wealth
 #   Given user has enough assets
 #   And assets exceed threshold
 ```
@@ -198,7 +198,7 @@ Given("I own {int} grams of {string}", (amount, assetType) => {
   // Implementation
 });
 
-When("Zakat is calculated", () => {
+When("Tax is calculated", () => {
   // Implementation
 });
 
@@ -209,14 +209,14 @@ Then("I should owe {float} grams of {string}", (amount, assetType) => {
 
 ```gherkin
 # Each scenario is unique, but steps are reused
-Scenario: Zakat on gold at nisab
+Scenario: Tax on gold at threshold
   Given I own 85 grams of "gold"
-  When Zakat is calculated
+  When Tax is calculated
   Then I should owe 2.125 grams of "gold"
 
-Scenario: Zakat on silver above nisab
+Scenario: Tax on silver above threshold
   Given I own 700 grams of "silver"
-  When Zakat is calculated
+  When Tax is calculated
   Then I should owe 17.5 grams of "silver"
 ```
 
@@ -263,15 +263,15 @@ jobs:
 
 ```gherkin
 # Update scenarios when business rules change
-Feature: Zakat Calculation Rules
+Feature: Tax Calculation Rules
   # Updated 2026-01-15: New Fiqh ruling on cryptocurrency
-  # Shariah Board Decision #2026-003
+  # Compliance Board Decision #2026-003
 
-  Scenario: Calculate Zakat on cryptocurrency holdings
+  Scenario: Calculate Tax on cryptocurrency holdings
     Given I own 2 Bitcoin acquired on 2025-01-01
     And Bitcoin price is $50,000 USD
     And one lunar year (hawl) has passed
-    When Zakat is calculated
+    When Tax is calculated
     Then I owe $2,500 USD (2.5% of $100,000)
     # Note: Bitcoin treated as trade goods per Hanafi school
 ```
@@ -290,16 +290,16 @@ Feature: Zakat Calculation Rules
 **How to Implement**:
 
 ```gherkin
-@smoke @critical @zakat
-Scenario: Calculate basic Zakat on cash
+@smoke @critical @tax
+Scenario: Calculate basic Tax on cash
   # Runs in every build (smoke)
 
-@regression @edge-case @zakat
-Scenario: Zakat on assets acquired mid-hawl
+@regression @edge-case @tax
+Scenario: Tax on assets acquired mid-hawl
   # Runs in nightly builds (regression)
 
 @wip @blockchain-integration
-Scenario: Calculate Zakat on DeFi staking rewards
+Scenario: Calculate Tax on DeFi staking rewards
   # Work in progress, not run in CI yet
 ```
 
@@ -330,12 +330,12 @@ Use this checklist to determine if BDD is appropriate:
 
 ```gherkin
 # ✅ GOOD: Business behavior, stakeholder validation needed
-Scenario: Calculate Zakat on mixed gold and silver holdings
+Scenario: Calculate Tax on mixed gold and silver holdings
   Given I own 50 grams of gold and 400 grams of silver
-  # Business rule: Combine values if both below individual nisab
-  # Shariah scholar validation required
-  When Zakat is calculated
-  Then holdings should be combined for nisab calculation
+  # Business rule: Combine values if both below individual threshold
+  # Compliance scholar validation required
+  When Tax is calculated
+  Then holdings should be combined for threshold calculation
 
 # ❌ BAD: Use unit test instead
 Scenario: Test currency conversion utility

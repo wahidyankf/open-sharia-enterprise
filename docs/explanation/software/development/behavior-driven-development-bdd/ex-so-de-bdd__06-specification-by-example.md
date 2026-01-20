@@ -2,7 +2,7 @@
 
 ## Overview
 
-Specification by Example is the foundational principle behind Behavior-Driven Development: using concrete examples to specify requirements rather than abstract descriptions. Formalized by Gojko Adzic in his 2011 book of the same name, this approach recognizes that humans understand specific examples far better than general rules. When a Shariah scholar explains "Zakat is 2.5% of wealth above nisab after one lunar year," a developer might implement it incorrectly. But when the scholar provides concrete examples—"100 grams of gold owned for 12 lunar months yields 2.5 grams Zakat"—implementation becomes unambiguous.
+Specification by Example is the foundational principle behind Behavior-Driven Development: using concrete examples to specify requirements rather than abstract descriptions. Formalized by Gojko Adzic in his 2011 book of the same name, this approach recognizes that humans understand specific examples far better than general rules. When a Compliance scholar explains "Tax is 2.5% of wealth above threshold after one lunar year," a developer might implement it incorrectly. But when the scholar provides concrete examples—"100 grams of gold owned for 12 lunar months yields 2.5 grams Tax"—implementation becomes unambiguous.
 
 The power of Specification by Example lies in its simplicity: instead of writing pages of requirements documentation that people interpret differently, teams collaboratively create concrete examples that everyone understands the same way. These examples then become executable tests, creating "living documentation" that never goes stale. If business rules change, examples must change first, and tests will fail until code is updated—automatic synchronization between requirements and implementation.
 
@@ -70,7 +70,7 @@ Abstract requirements allow multiple interpretations. Examples remove ambiguity 
 **Abstract (Ambiguous):**
 
 ```
-The system shall calculate Zakat for eligible individuals based on wealth
+The system shall calculate Tax for eligible individuals based on wealth
 thresholds and time requirements defined by Islamic jurisprudence.
 ```
 
@@ -78,31 +78,31 @@ thresholds and time requirements defined by Islamic jurisprudence.
 
 - What are the thresholds?
 - What time requirements?
-- How is Zakat calculated?
+- How is Tax calculated?
 - What if wealth fluctuates?
 - Which assets count toward thresholds?
 
 **Concrete Examples (Clear):**
 
 ```gherkin
-Example 1: Gold wealth above nisab for full lunar year
+Example 1: Gold wealth above threshold for full lunar year
   Given individual owns 100 grams of gold
-  And nisab threshold for gold is 85 grams
+  And threshold threshold for gold is 85 grams
   And individual has owned gold for 12 lunar months (Hawl)
-  When Zakat is calculated
-  Then Zakat obligation is 2.5 grams of gold (2.5% rate)
+  When Tax is calculated
+  Then Tax obligation is 2.5 grams of gold (2.5% rate)
 
-Example 2: Gold wealth below nisab threshold
+Example 2: Gold wealth below threshold threshold
   Given individual owns 50 grams of gold
-  And nisab threshold for gold is 85 grams
-  When Zakat is calculated
-  Then Zakat obligation is 0 grams (no Zakat due)
+  And threshold threshold for gold is 85 grams
+  When Tax is calculated
+  Then Tax obligation is 0 grams (no Tax due)
 
-Example 3: Gold wealth meets nisab but Hawl incomplete
-  Given individual owns 100 grams of gold (above nisab)
+Example 3: Gold wealth meets threshold but Hawl incomplete
+  Given individual owns 100 grams of gold (above threshold)
   But has only owned it for 11 months (Hawl incomplete)
-  When Zakat is calculated
-  Then Zakat obligation is 0 grams (Zakat not yet due)
+  When Tax is calculated
+  Then Tax obligation is 0 grams (Tax not yet due)
   And individual should be notified to check again in 1 month
 ```
 
@@ -127,7 +127,7 @@ Human brains process examples differently than abstract rules:
 
 **Islamic Finance Example:**
 
-**Rule (Abstract)**: "Murabaha requires transparent cost and profit disclosure"
+**Rule (Abstract)**: "Loan requires transparent cost and profit disclosure"
 
 **Questions**: What counts as "transparent"? How much detail? To whom?
 
@@ -150,14 +150,14 @@ Now "transparent" has concrete meaning.
 
 Islamic finance involves intricate jurisprudence where precision is critical for religious compliance. Examples provide the specificity required.
 
-**Abstract**: "Riba (interest) is prohibited; Murabaha uses fixed profit markup instead"
+**Abstract**: "Interest (interest) is prohibited; Loan uses fixed profit markup instead"
 
-**Shariah scholar's question**: "How do we ensure profit is truly fixed and not time-dependent?"
+**Compliance scholar's question**: "How do we ensure profit is truly fixed and not time-dependent?"
 
 **Concrete Examples:**
 
 ```gherkin
-Example: Valid Murabaha with fixed profit
+Example: Valid Loan with fixed profit
   Given bank buys asset for 100,000 USD
   And bank sets fixed profit markup of 15,000 USD
   And customer agrees to 115,000 USD total price
@@ -166,15 +166,15 @@ Example: Valid Murabaha with fixed profit
   Then profit remains 15,000 USD (regardless of payment timing)
   And no additional charges for payment duration
 
-Example: Invalid - Time-dependent profit (Riba)
+Example: Invalid - Time-dependent profit (Interest)
   Given bank proposes financing at 5% annual interest rate
   When customer delays payment beyond 12 months
   Then profit increases with time (compounds)
-  And this is Riba (interest), prohibited in Islamic finance
+  And this is Interest (interest), prohibited in Islamic finance
   And system must reject this contract structure
 ```
 
-The scholar can now **verify** that implementation correctly distinguishes fixed markup (permissible) from time-based interest (Riba).
+The scholar can now **verify** that implementation correctly distinguishes fixed markup (permissible) from time-based interest (Interest).
 
 ## The Specification by Example Process
 
@@ -184,24 +184,24 @@ Gojko Adzic identified a seven-step process for Specification by Example:
 
 Start with **business goals**, not technical solutions.
 
-**Wrong**: "Build a Zakat calculator with gold/silver/cash inputs"
+**Wrong**: "Build a Tax calculator with gold/silver/cash inputs"
 
-**Right**: "Enable Muslims to accurately fulfill their Zakat obligation"
+**Right**: "Enable Muslims to accurately fulfill their Tax obligation"
 
 From the goal, derive features that achieve it:
 
-- Calculate Zakat for different asset types
-- Notify users when Zakat becomes due
-- Provide Shariah-compliant calculation methods
-- Generate Zakat payment reminders
+- Calculate Tax for different asset types
+- Notify users when Tax becomes due
+- Provide Compliance-compliant calculation methods
+- Generate Tax payment reminders
 
 ### 2. Specify Collaboratively
 
-Three Amigos (Business-Dev-QA) create examples together. For Islamic finance, include Shariah scholars.
+Three Amigos (Business-Dev-QA) create examples together. For Islamic finance, include Compliance scholars.
 
 **Why Collaboration:**
 
-- **Business/Shariah**: Knows what's required (nisab thresholds, Hawl periods)
+- **Business/Compliance**: Knows what's required (threshold thresholds, Hawl periods)
 - **Development**: Knows what's feasible (data sources, technical constraints)
 - **Testing**: Knows what could go wrong (edge cases, boundary conditions)
 
@@ -215,17 +215,17 @@ Use concrete data, not placeholders like "some value" or "a number."
 
 ```
 Given user has some amount of gold
-When Zakat is calculated
-Then Zakat should be the appropriate amount
+When Tax is calculated
+Then Tax should be the appropriate amount
 ```
 
 **Good (Concrete):**
 
 ```
 Given user owns 100 grams of gold
-And nisab threshold is 85 grams
-When Zakat is calculated
-Then Zakat should be 2.5 grams of gold
+And threshold threshold is 85 grams
+When Tax is calculated
+Then Tax should be 2.5 grams of gold
 ```
 
 ### 4. Refine the Specification
@@ -235,7 +235,7 @@ Iterate on examples until they're clear, complete, and correct.
 **Refinement Process:**
 
 1. **First draft**: Rough examples from discovery session
-2. **Review with stakeholders**: Shariah scholar validates examples
+2. **Review with stakeholders**: Compliance scholar validates examples
 3. **Identify gaps**: What edge cases are missing?
 4. **Add edge cases**: Boundary conditions, error scenarios
 5. **Simplify**: Remove redundant examples, clarify language
@@ -246,43 +246,43 @@ Iterate on examples until they're clear, complete, and correct.
 **Draft 1:**
 
 ```
-When person has gold above nisab, Zakat is 2.5%
+When person has gold above threshold, Tax is 2.5%
 ```
 
 **Draft 2 (More specific):**
 
 ```
-Given person owns 100g gold, nisab is 85g
-When Zakat calculated
-Then Zakat is 2.5g
+Given person owns 100g gold, threshold is 85g
+When Tax calculated
+Then Tax is 2.5g
 ```
 
 **Draft 3 (Complete with Hawl):**
 
 ```gherkin
 Given individual owns 100 grams of gold
-And nisab threshold for gold is 85 grams
+And threshold threshold for gold is 85 grams
 And individual has owned gold for one complete lunar year (Hawl)
-When Zakat calculation is performed
-Then Zakat obligation is 2.5 grams of gold
+When Tax calculation is performed
+Then Tax obligation is 2.5 grams of gold
 ```
 
 **Draft 4 (Edge case added):**
 
 ```gherkin
-Scenario: Zakat obligatory when wealth above nisab and Hawl complete
+Scenario: Tax obligatory when wealth above threshold and Hawl complete
   Given individual owns 100 grams of gold
-  And nisab threshold for gold is 85 grams
+  And threshold threshold for gold is 85 grams
   And one lunar year (Hawl) has passed since acquisition
-  When Zakat calculation is performed
-  Then Zakat should be obligatory
-  And Zakat amount should be 2.5 grams of gold
+  When Tax calculation is performed
+  Then Tax should be obligatory
+  And Tax amount should be 2.5 grams of gold
 
-Scenario: No Zakat when Hawl incomplete
-  Given individual owns 100 grams of gold (above nisab)
+Scenario: No Tax when Hawl incomplete
+  Given individual owns 100 grams of gold (above threshold)
   And only 11 months have passed since acquisition
-  When Zakat is calculated
-  Then Zakat should not be obligatory yet
+  When Tax is calculated
+  Then Tax should not be obligatory yet
   And individual should be notified Hawl is incomplete
 ```
 
@@ -290,15 +290,15 @@ Scenario: No Zakat when Hawl incomplete
 
 Examples become automated tests **without altering the specification language**.
 
-**Specification (Readable by Shariah scholar):**
+**Specification (Readable by Compliance scholar):**
 
 ```gherkin
-Scenario: Calculate Zakat on gold wealth
+Scenario: Calculate Tax on gold wealth
   Given individual owns 100 grams of gold
-  And nisab threshold for gold is 85 grams
+  And threshold threshold for gold is 85 grams
   And one lunar year has passed
-  When Zakat is calculated
-  Then Zakat should be 2.5 grams of gold
+  When Tax is calculated
+  Then Tax should be 2.5 grams of gold
 ```
 
 **Automation (Step Definitions):**
@@ -308,20 +308,20 @@ Given("individual owns {int} grams of gold", (amount: number) => {
   wealth = Money.fromGold(amount, "grams");
 });
 
-Given("nisab threshold for gold is {int} grams", (threshold: number) => {
-  nisab = Money.fromGold(threshold, "grams");
+Given("threshold threshold for gold is {int} grams", (threshold: number) => {
+  threshold = Money.fromGold(threshold, "grams");
 });
 
 Given("one lunar year has passed", () => {
   hawlComplete = true;
 });
 
-When("Zakat is calculated", () => {
-  result = calculateZakat(wealth, nisab, hawlComplete);
+When("Tax is calculated", () => {
+  result = calculateTax(wealth, threshold, hawlComplete);
 });
 
-Then("Zakat should be {float} grams of gold", (expected: number) => {
-  expect(result.zakatAmount.grams).toEqual(expected);
+Then("Tax should be {float} grams of gold", (expected: number) => {
+  expect(result.taxAmount.grams).toEqual(expected);
 });
 ```
 
@@ -381,7 +381,7 @@ Dedicated sessions to create and refine specifications:
 
 **Format**: 1-2 hour workshop with 4-8 participants
 
-**Participants**: Product Owner, Shariah scholar, 2-3 developers, 1-2 QA engineers
+**Participants**: Product Owner, Compliance scholar, 2-3 developers, 1-2 QA engineers
 
 **Agenda:**
 
@@ -395,45 +395,45 @@ Dedicated sessions to create and refine specifications:
 
 ## Islamic Finance Examples
 
-### Zakat Calculation Specifications
+### Tax Calculation Specifications
 
-**Goal**: Enable accurate Zakat calculation per Islamic jurisprudence
+**Goal**: Enable accurate Tax calculation per Islamic jurisprudence
 
 **Concrete Examples:**
 
 ```gherkin
-Feature: Zakat Calculation for Gold Wealth
+Feature: Tax Calculation for Gold Wealth
 
   Background:
-    Given the Zakat rate is 2.5% (one-fortieth)
-    And the nisab threshold for gold is 85 grams (20 Mithqal)
+    Given the Tax rate is 2.5% (one-fortieth)
+    And the threshold threshold for gold is 85 grams (20 Mithqal)
     And Hawl requirement is one complete lunar year
 
-  Example: Wealth above nisab with complete Hawl
+  Example: Wealth above threshold with complete Hawl
     Given individual owns 100 grams of gold
     And individual has owned this gold for 12 lunar months
-    When Zakat is calculated
-    Then Zakat obligation is 2.5 grams of gold
+    When Tax is calculated
+    Then Tax obligation is 2.5 grams of gold
     And individual should be notified of obligation
 
-  Example: Wealth exactly at nisab threshold
+  Example: Wealth exactly at threshold threshold
     Given individual owns exactly 85 grams of gold
     And individual has owned this gold for 12 lunar months
-    When Zakat is calculated
-    Then Zakat obligation is 2.125 grams of gold
-    And Zakat is obligatory (at nisab, not just above)
+    When Tax is calculated
+    Then Tax obligation is 2.125 grams of gold
+    And Tax is obligatory (at threshold, not just above)
 
-  Example: Wealth below nisab threshold
+  Example: Wealth below threshold threshold
     Given individual owns 50 grams of gold
-    When Zakat is calculated
-    Then Zakat obligation is 0 grams
-    And individual should be notified no Zakat is due
+    When Tax is calculated
+    Then Tax obligation is 0 grams
+    And individual should be notified no Tax is due
 
-  Example: Wealth above nisab but Hawl incomplete
+  Example: Wealth above threshold but Hawl incomplete
     Given individual owns 100 grams of gold
     But has only owned it for 11 months
-    When Zakat is calculated
-    Then Zakat obligation is 0 grams (not yet due)
+    When Tax is calculated
+    Then Tax obligation is 0 grams (not yet due)
     And individual should be notified Hawl is incomplete
     And system should remind individual in 1 month
 
@@ -443,38 +443,38 @@ Feature: Zakat Calculation for Gold Wealth
       | Gold               | 100 grams  | 6,000       |
       | Silver             | 600 grams  | 450         |
       | Cash               | 5,000 USD  | 5,000       |
-    And nisab threshold (USD equivalent) is 5,600 USD
-    And total Zakatable wealth is 11,450 USD
-    When Zakat is calculated
-    Then total Zakat obligation is 286.25 USD (2.5% of 11,450)
-    And Zakat breakdown should be:
-      | Asset Type | Zakat Amount (USD) |
+    And threshold threshold (USD equivalent) is 5,600 USD
+    And total Taxable wealth is 11,450 USD
+    When Tax is calculated
+    Then total Tax obligation is 286.25 USD (2.5% of 11,450)
+    And Tax breakdown should be:
+      | Asset Type | Tax Amount (USD) |
       | Gold       | 150.00             |
       | Silver     | 11.25              |
       | Cash       | 125.00             |
 ```
 
-**Value**: Shariah scholar can verify each example matches Islamic jurisprudence. Developer knows exactly what to implement.
+**Value**: Compliance scholar can verify each example matches Islamic jurisprudence. Developer knows exactly what to implement.
 
-### Murabaha Contract Specifications
+### Loan Contract Specifications
 
-**Goal**: Create Shariah-compliant Murabaha financing contracts
+**Goal**: Create Compliance-compliant Loan financing contracts
 
 **Concrete Examples:**
 
 ```gherkin
-Feature: Murabaha Contract Creation
+Feature: Loan Contract Creation
 
   Background:
     Given bank operates under Islamic finance principles
-    And AAOIFI Shariah Standard No. 8 (Murabaha) applies
-    And Riba (interest) is prohibited
+    And AAOIFI Compliance Standard No. 8 (Loan) applies
+    And Interest (interest) is prohibited
 
-  Example: Valid Murabaha with transparent disclosure
+  Example: Valid Loan with transparent disclosure
     Given bank purchases commercial office for 500,000 USD (cost)
     And bank sets profit markup of 75,000 USD
     And total selling price is 575,000 USD (cost + profit)
-    When bank creates Murabaha contract with customer
+    When bank creates Loan contract with customer
     And contract clearly discloses:
       | Field         | Value       |
       | Cost Price    | 500,000 USD |
@@ -482,27 +482,27 @@ Feature: Murabaha Contract Creation
       | Selling Price | 575,000 USD |
     And customer reviews and agrees to terms
     Then contract should be created successfully
-    And Shariah scholar should approve contract
-    And contract should be marked as Shariah-compliant
+    And Compliance scholar should approve contract
+    And contract should be marked as Compliance-compliant
 
   Example: Invalid - Bank does not own asset
     Given bank does NOT own the commercial office
-    When bank attempts to create Murabaha contract for that office
+    When bank attempts to create Loan contract for that office
     Then contract creation should fail immediately
-    And error should state "Bank must own asset before selling in Murabaha"
+    And error should state "Bank must own asset before selling in Loan"
     And no contract should be saved to database
-    And Shariah compliance team should be notified of violation attempt
+    And Compliance compliance team should be notified of violation attempt
 
-  Example: Invalid - Interest rate used (Riba)
+  Example: Invalid - Interest rate used (Interest)
     Given bank owns asset worth 100,000 USD
     When bank attempts to calculate profit using 5% annual interest rate
     Then system should reject calculation immediately
-    And error should state "Riba prohibition: use fixed markup, not interest rate"
+    And error should state "Interest prohibition: use fixed markup, not interest rate"
     And system should log compliance violation
-    And bank officer should receive Shariah compliance training notification
+    And bank officer should receive Compliance compliance training notification
 
   Example: Valid - Customer payment schedule does not affect profit
-    Given Murabaha contract with 500K cost, 75K profit, 575K total
+    Given Loan contract with 500K cost, 75K profit, 575K total
     And customer chooses 60-month payment plan (9,583 USD/month)
     When customer makes payments over 60 months
     Then total profit remains 75,000 USD (fixed)
@@ -513,50 +513,50 @@ Feature: Murabaha Contract Creation
     Given contract proposed with time-dependent profit calculation
     When customer delays payment beyond agreed term
     And profit increases due to delay (e.g., late fees, compounding interest)
-    Then this constitutes Riba (interest)
+    Then this constitutes Interest (interest)
     And contract structure should be rejected
-    And only fixed late fees (if any) permitted per Shariah guidelines
+    And only fixed late fees (if any) permitted per Compliance guidelines
 ```
 
-### Halal Certification Specifications
+### Permitted Certification Specifications
 
-**Goal**: Verify products meet halal certification criteria
+**Goal**: Verify products meet permitted certification criteria
 
 **Concrete Examples:**
 
 ```gherkin
-Feature: Halal Product Certification
+Feature: Permitted Product Certification
 
   Background:
-    Given halal certification follows JAKIM standards
+    Given permitted certification follows JAKIM standards
     And recognized certification authorities include JAKIM, MUI, ISWA
     And certification is valid for 12 months from issuance
 
-  Example: Certify product with all halal ingredients
+  Example: Certify product with all permitted ingredients
     Given product "Organic Dates" has the following ingredients:
-      | Ingredient | Source       | Halal Status    |
-      | Dates      | Saudi Arabia | Certified Halal |
-      | Water      | Local        | Halal           |
-    And supply chain has been audited for halal compliance
+      | Ingredient | Source       | Permitted Status    |
+      | Dates      | Saudi Arabia | Certified Permitted |
+      | Water      | Local        | Permitted           |
+    And supply chain has been audited for permitted compliance
     And no cross-contamination risk identified
     When certification authority JAKIM reviews product
-    Then product should receive halal certification
+    Then product should receive permitted certification
     And certification should be valid for 12 months
     And certification number should be issued (format: JAKIM-2025-12345)
-    And product should appear in public halal product registry
+    And product should appear in public permitted product registry
 
-  Example: Reject product with haram ingredient
+  Example: Reject product with forbidden ingredient
     Given product "Candy" contains ingredient "Pork Gelatin"
-    And pork gelatin is haram (prohibited)
+    And pork gelatin is forbidden (prohibited)
     When certification authority reviews product
     Then certification should be denied
-    And rejection reason should state "Contains haram ingredient: Pork Gelatin"
-    And product should NOT appear in halal registry
+    And rejection reason should state "Contains forbidden ingredient: Pork Gelatin"
+    And product should NOT appear in permitted registry
     And supplier should be notified of rejection
 
   Example: Require verification for ambiguous ingredient
     Given product contains ingredient "Gelatin (source unspecified)"
-    And gelatin can be halal (beef, fish) or haram (pork)
+    And gelatin can be permitted (beef, fish) or forbidden (pork)
     When certification authority reviews product
     Then certification should be marked "Requires Verification"
     And certification authority should request gelatin source documentation
@@ -564,12 +564,12 @@ Feature: Halal Product Certification
     And supplier should receive verification request notification
 
   Example: Expire certification after 12 months
-    Given product "Organic Dates" received halal certification on 2024-01-15
+    Given product "Organic Dates" received permitted certification on 2024-01-15
     And certification was valid for 12 months (expires 2025-01-15)
     And current date is 2025-01-20 (5 days after expiry)
     When system checks product certification status
     Then certification should be marked as expired
-    And product should be removed from active halal registry
+    And product should be removed from active permitted registry
     And supplier should be notified to renew certification
 ```
 
@@ -580,51 +580,51 @@ Feature: Halal Product Certification
 **Initial Example (Broad):**
 
 ```
-When user has gold, Zakat is calculated
+When user has gold, Tax is calculated
 ```
 
 **Refinement 1 (Add specifics):**
 
 ```
 Given user owns 100 grams of gold
-When Zakat is calculated
-Then Zakat is 2.5 grams
+When Tax is calculated
+Then Tax is 2.5 grams
 ```
 
 **Refinement 2 (Add context):**
 
 ```
 Given user owns 100 grams of gold
-And nisab threshold is 85 grams
+And threshold threshold is 85 grams
 And one lunar year has passed
-When Zakat is calculated
-Then Zakat is 2.5 grams
+When Tax is calculated
+Then Tax is 2.5 grams
 ```
 
 **Refinement 3 (Complete scenario):**
 
 ```gherkin
-Scenario: Calculate Zakat when wealth meets nisab and Hawl complete
+Scenario: Calculate Tax when wealth meets threshold and Hawl complete
   Given individual owns 100 grams of gold
-  And nisab threshold for gold is 85 grams
+  And threshold threshold for gold is 85 grams
   And one lunar year (Hawl) has passed since acquisition
-  When Zakat calculation is performed
-  Then Zakat should be obligatory
-  And Zakat amount should be 2.5 grams of gold
-  And individual should be notified of Zakat obligation
+  When Tax calculation is performed
+  Then Tax should be obligatory
+  And Tax amount should be 2.5 grams of gold
+  And individual should be notified of Tax obligation
 ```
 
 ### Challenge with Edge Cases
 
 For every rule, ask: "When doesn't this apply?" "What's the boundary?"
 
-**Rule**: "Zakat is 2.5% when wealth above nisab"
+**Rule**: "Tax is 2.5% when wealth above threshold"
 
 **Challenges**:
 
-- What if wealth exactly at nisab? (Still obligatory)
-- What if wealth 1 gram below nisab? (Not obligatory)
-- What if wealth fluctuates during year? (Requires Shariah ruling)
+- What if wealth exactly at threshold? (Still obligatory)
+- What if wealth 1 gram below threshold? (Not obligatory)
+- What if wealth fluctuates during year? (Requires Compliance ruling)
 - What if Hawl is incomplete? (Not obligatory yet)
 
 Each challenge becomes an example.
@@ -634,13 +634,13 @@ Each challenge becomes an example.
 When same scenario applies to multiple data sets, use Scenario Outline.
 
 ```gherkin
-Scenario Outline: Zakat calculation for various wealth amounts
+Scenario Outline: Tax calculation for various wealth amounts
   Given individual owns <wealth> grams of gold
-  And nisab threshold for gold is 85 grams
+  And threshold threshold for gold is 85 grams
   And one lunar year has passed
-  When Zakat is calculated
-  Then Zakat should be <obligatory>
-  And Zakat amount should be <amount> grams
+  When Tax is calculated
+  Then Tax should be <obligatory>
+  And Tax amount should be <amount> grams
 
   Examples:
     | wealth | obligatory | amount |
@@ -658,21 +658,21 @@ If two examples test the same thing, keep the clearer one and remove redundancy.
 **Redundant:**
 
 ```
-Example 1: Person owns 100g gold → Zakat is 2.5g
-Example 2: Person owns 150g gold → Zakat is 3.75g
-Example 3: Person owns 200g gold → Zakat is 5g
+Example 1: Person owns 100g gold → Tax is 2.5g
+Example 2: Person owns 150g gold → Tax is 3.75g
+Example 3: Person owns 200g gold → Tax is 5g
 ```
 
 **Consolidated with Scenario Outline:**
 
 ```gherkin
-Scenario Outline: Zakat proportional to wealth above nisab
+Scenario Outline: Tax proportional to wealth above threshold
   Given individual owns <wealth> grams of gold
-  When Zakat is calculated
-  Then Zakat should be <zakat> grams
+  When Tax is calculated
+  Then Tax should be <tax> grams
 
   Examples:
-    | wealth | zakat |
+    | wealth | tax |
     | 100    | 2.5   |
     | 150    | 3.75  |
     | 200    | 5.0   |
@@ -687,7 +687,7 @@ Specification by Example creates **living documentation**—specifications that 
 **Requirements Document:**
 
 ```markdown
-## Murabaha Contract Rules
+## Loan Contract Rules
 
 The bank must own the asset before selling to customer. Cost and profit
 must be disclosed. Profit is a fixed markup, not time-based interest.
@@ -700,9 +700,9 @@ must be disclosed. Profit is a fixed markup, not time-based interest.
 **Executable Specification:**
 
 ```gherkin
-Scenario: Bank must own asset before Murabaha contract
+Scenario: Bank must own asset before Loan contract
   Given bank does NOT own commercial office
-  When bank attempts to create Murabaha contract
+  When bank attempts to create Loan contract
   Then contract creation should fail
   And error should state "Bank must own asset before selling"
 ```
@@ -723,10 +723,10 @@ BDD tools generate reports from executed specifications:
 **Example Report:**
 
 ```
-Zakat Calculation Feature
-  ✓ Wealth above nisab with complete Hawl → Zakat obligatory
-  ✓ Wealth exactly at nisab → Zakat obligatory
-  ✓ Wealth below nisab → No Zakat
+Tax Calculation Feature
+  ✓ Wealth above threshold with complete Hawl → Tax obligatory
+  ✓ Wealth exactly at threshold → Tax obligatory
+  ✓ Wealth below threshold → No Tax
   ✗ Wealth fluctuating during Hawl → FAILED (edge case not implemented)
 
 Coverage: 3/4 scenarios passing (75%)
@@ -755,14 +755,14 @@ Specification by Example is the foundational principle of BDD: using concrete ex
 
 **Islamic Finance Applications:**
 
-- **Zakat**: Concrete examples clarify nisab thresholds, Hawl periods, calculation rates
-- **Murabaha**: Examples distinguish fixed markup (permissible) from interest (Riba)
-- **Halal Certification**: Specific ingredient examples define certification criteria
+- **Tax**: Concrete examples clarify threshold thresholds, Hawl periods, calculation rates
+- **Loan**: Examples distinguish fixed markup (permissible) from interest (Interest)
+- **Permitted Certification**: Specific ingredient examples define certification criteria
 
 **Benefits:**
 
 - Prevents ambiguity from abstract requirements
-- Enables stakeholder validation (Shariah scholars can verify examples)
+- Enables stakeholder validation (Compliance scholars can verify examples)
 - Creates executable documentation that never goes stale
 - Reduces rework from misunderstood requirements
 - Provides traceability from requirements to implementation
@@ -775,7 +775,7 @@ The next topic—Discovery and Formulation—explores the two-phase process of f
 
 - **Category**: Explanation
 - **Subcategory**: Software Design > Behavior-Driven Development
-- **Tags**: Specification by Example, SbE, Concrete Examples, Gojko Adzic, Collaborative Specification, Living Documentation, Islamic Finance, Zakat, Murabaha, Halal, Requirements, Acceptance Criteria
+- **Tags**: Specification by Example, SbE, Concrete Examples, Gojko Adzic, Collaborative Specification, Living Documentation, Islamic Finance, Tax, Loan, Permitted, Requirements, Acceptance Criteria
 - **Related Files**:
   - [README](./README.md) - BDD documentation overview
   - [04. Three Amigos Practice](./ex-so-de-bdd__04-three-amigos-practice.md) - Collaborative requirements discovery

@@ -19,7 +19,7 @@ Comprehensive template for documenting a bounded context with team ownership, ub
 
 **Key sections**: Overview, Ubiquitous Language, Business Decisions, Model Components, Integration, Domain Events, Technology, Team Ownership
 
-**Example**: Zakat Calculation Bounded Context with nisab thresholds, hawl tracking, and integration with Accounting/Payment contexts
+**Example**: Tax Calculation Bounded Context with threshold thresholds, hawl tracking, and integration with Accounting/Payment contexts
 
 ---
 
@@ -36,7 +36,7 @@ Mermaid diagram template visualizing relationships between bounded contexts usin
 
 **Key patterns**: Partnership, Shared Kernel, Customer/Supplier, Conformist, Anticorruption Layer, Open Host Service, Published Language, Separate Ways
 
-**Example**: OSE Platform context map showing Zakat Calculation, Accounting, Payment, Distribution contexts with integration patterns
+**Example**: OSE Platform context map showing Tax Calculation, Accounting, Payment, Distribution contexts with integration patterns
 
 ---
 
@@ -53,7 +53,7 @@ Structured format for capturing Event Storming workshop results across 9 phases:
 
 **Key sections**: Session metadata, 9 Event Storming phases, key discoveries, action items, risks/open questions
 
-**Example**: Zakat Calculation Event Storming session with hawl completion, nisab threshold evaluation, and cryptocurrency zakat hotspot
+**Example**: Tax Calculation Event Storming session with hawl completion, threshold threshold evaluation, and cryptocurrency tax hotspot
 
 ---
 
@@ -70,7 +70,7 @@ Comprehensive DDD documentation set combining strategic and tactical design in a
 
 **Key sections**: Bounded Contexts, Context Map, Ubiquitous Language, Core Aggregates, Domain Services, Domain Events, Integration Points, Technology Decisions, Testing Strategy, Migration/Rollout Plan, Risks
 
-**Example**: Halal Product Verification System with ingredient verification, certification issuance, and external E-Number database integration
+**Example**: Permitted Product Verification System with ingredient verification, certification issuance, and external E-Number database integration
 
 ---
 
@@ -89,7 +89,7 @@ Detailed template for designing aggregates with root entities, contained entitie
 
 **Key sections**: Aggregate structure (Mermaid diagram), components (root entity, entities, value objects), invariants, commands, domain events, lifecycle
 
-**Example**: ZakatAssessment aggregate with WealthDeclaration entities, NisabAmount/ZakatRate value objects, and invariants ensuring hawl completion before finalization
+**Example**: TaxAssessment aggregate with WealthDeclaration entities, ThresholdAmount/TaxRate value objects, and invariants ensuring hawl completion before finalization
 
 ---
 
@@ -106,7 +106,7 @@ Comprehensive glossary template for documenting domain terminology with definiti
 
 **Key sections**: Core terms table (term, definition, example, aliases), context-specific terms, ambiguous terms, forbidden terms, synonyms/homonyms
 
-**Example**: Islamic Finance glossary with terms like Nisab, Hawl, Zakatable Assets, distinguishing between "Assessment" (zakat calculation) vs. "Assessment" (risk evaluation)
+**Example**: Islamic Finance glossary with terms like Threshold, Hawl, Taxable Assets, distinguishing between "Assessment" (tax calculation) vs. "Assessment" (risk evaluation)
 
 ---
 
@@ -123,7 +123,7 @@ Comprehensive inventory of all domain events in a bounded context, including tri
 
 **Key sections**: Event specifications table, event flows (Mermaid), processing guarantees (synchronous/asynchronous/ordering), versioning strategy
 
-**Example**: Zakat Calculation events (ZakatCalculated, NisabThresholdMet, HawlCompleted) with event versioning and idempotency strategies
+**Example**: Tax Calculation events (TaxCalculated, ThresholdThresholdMet, HawlCompleted) with event versioning and idempotency strategies
 
 ---
 
@@ -257,7 +257,7 @@ For new features without prior Event Storming:
 ### Documentation Quality
 
 - **Active Voice**: Use active voice ("The aggregate enforces...") instead of passive ("Invariants are enforced...").
-- **Concrete Examples**: Provide real scenarios, not abstract descriptions. "Zakat rate is 2.5% for cash" beats "Rate varies by type".
+- **Concrete Examples**: Provide real scenarios, not abstract descriptions. "Tax rate is 2.5% for cash" beats "Rate varies by type".
 - **Visual Diagrams**: Use Mermaid diagrams with [Color Palette](./ex-so-ar-dodrdedd-te__color-palette.md) for clarity and accessibility.
 - **Link to Code**: Reference actual aggregate classes, domain event types in codebase for traceability.
 
@@ -316,14 +316,14 @@ All Mermaid diagrams in templates use the [Color Palette](./ex-so-ar-dodrdedd-te
 
 All templates include comprehensive Islamic Finance examples from the OSE Platform:
 
-- **Zakat Calculation**: Bounded Context Canvas, Event Storming Output, Aggregate Design (ZakatAssessment aggregate)
-- **Halal Product Verification**: Starter Full Documentation (ProductVerification aggregate, ingredient validation)
+- **Tax Calculation**: Bounded Context Canvas, Event Storming Output, Aggregate Design (TaxAssessment aggregate)
+- **Permitted Product Verification**: Starter Full Documentation (ProductVerification aggregate, ingredient validation)
 - **Islamic Financial Transactions**: Entity/Value Object Template (Money value object, Transaction entity)
 - **Hawl Tracking**: Domain Event Catalog (HawlCompleted event, time-based policies)
 
 **Why Islamic Finance?**
 
-- **Domain Complexity**: Rich business rules (nisab thresholds, hawl cycles, jurisprudence schools) demonstrate DDD value
+- **Domain Complexity**: Rich business rules (threshold thresholds, hawl cycles, jurisprudence schools) demonstrate DDD value
 - **Real-World Relevance**: Examples from OSE Platform production features, not toy scenarios
 - **Learning Aid**: Familiar domain for OSE Platform contributors, but detailed enough for DDD newcomers
 
