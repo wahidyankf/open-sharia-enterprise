@@ -314,104 +314,11 @@ This sequence diagram illustrates a complex microservices orchestration:
 
 This diagram reveals the complexity of distributed systems: synchronous service-to-service calls, asynchronous event propagation, compensation logic, and multiple failure scenarios. Compare this to a monolithic sequence diagram to see the trade-offs of microservices architecture.
 
-#### Dynamic Diagram Formats: Sequence vs. Collaboration
+**Note on Dynamic Diagram Formats**:
 
-The C4 model supports two formats for dynamic diagrams, each with different visualization styles:
+Dynamic diagrams use **sequence format** (vertical timeline) as shown above. While UML includes "collaboration format" (communication diagrams), diagram-as-code tools have limited support.
 
-**Sequence Format** (shown above):
-
-- **Focus**: Time-ordered interactions from top to bottom
-- **Layout**: Vertical timeline with participants as columns
-- **Strengths**: Clear temporal ordering, shows concurrency and parallelism
-- **Best for**: Complex workflows with many steps, error handling with alternatives, asynchronous patterns
-- **Notation**: Similar to UML sequence diagrams
-
-**Collaboration Format**:
-
-- **Focus**: Objects and the numbered messages between them
-- **Layout**: Network-style diagram with objects as nodes
-- **Strengths**: Shows object relationships and message flow without timeline
-- **Best for**: Simple interactions, object collaboration patterns, spatial relationships
-- **Notation**: Similar to UML communication diagrams
-
-**Sequence vs. Collaboration Format Comparison**:
-
-| Aspect                   | Sequence Format                                             | Collaboration Format                                           |
-| ------------------------ | ----------------------------------------------------------- | -------------------------------------------------------------- |
-| **Temporal Focus**       | Strong - vertical timeline                                  | Weak - numbered steps only                                     |
-| **Object Relationships** | Weak - shown as separate columns                            | Strong - spatial proximity shows collaboration                 |
-| **Concurrency**          | Easy to show (parallel vertical lines)                      | Difficult to represent                                         |
-| **Complex Branching**    | Clear with alt/opt/loop blocks                              | Becomes cluttered                                              |
-| **Simple Flows**         | Can feel over-structured for 3-4 steps                      | Concise and clear                                              |
-| **Best Use**             | Complex workflows, microservices orchestration, error paths | Simple request-response, object collaboration, design patterns |
-| **Tool Support**         | Better (UML sequence widely supported)                      | Limited (less common in modern tools)                          |
-
-**When to Use Each Format**:
-
-- **Use Sequence Format** (recommended default):
-  - Workflows with 5+ steps
-  - Asynchronous message patterns
-  - Error handling and alternative flows
-  - Microservices orchestrations
-  - When temporal ordering is critical
-
-- **Use Collaboration Format**:
-  - Simple request-response (3-4 steps)
-  - Showing object relationships in addition to messages
-  - Design pattern illustrations
-  - When spatial layout matters more than timeline
-
-**Example: Authentication Flow (Collaboration Format)**
-
-```mermaid
-graph LR
-    User([User])
-    WebApp[Web Application]
-    AuthSvc[Auth Service]
-    UserDB[(User Database)]
-    TokenStore[(Token Store)]
-
-    User -->|1: Enter credentials| WebApp
-    WebApp -->|2: POST /login| AuthSvc
-    AuthSvc -->|3: Query user| UserDB
-    UserDB -->|4: User record| AuthSvc
-    AuthSvc -->|5: Validate password| AuthSvc
-    AuthSvc -->|6: Store token| TokenStore
-    TokenStore -->|7: Token stored| AuthSvc
-    AuthSvc -->|8: Return JWT token| WebApp
-    WebApp -->|9: Set cookie, redirect| User
-
-    style User fill:#029E73,stroke:#000000,color:#ffffff
-    style WebApp fill:#0173B2,stroke:#000000,color:#ffffff
-    style AuthSvc fill:#0173B2,stroke:#000000,color:#ffffff
-    style UserDB fill:#DE8F05,stroke:#000000,color:#ffffff
-    style TokenStore fill:#DE8F05,stroke:#000000,color:#ffffff
-```
-
-**Diagram Explanation**:
-
-This collaboration-style diagram shows the same authentication flow with numbered steps instead of a vertical timeline:
-
-1. **User submits credentials** to Web Application (form submission)
-2. **Web Application calls Auth Service** via REST API (POST /login)
-3. **Auth Service queries User Database** to retrieve user record
-4. **Database returns user record** with hashed password
-5. **Auth Service validates password** internally (bcrypt comparison)
-6. **Auth Service stores JWT token** in Token Store (Redis for revocation)
-7. **Token Store confirms storage** to Auth Service
-8. **Auth Service returns JWT token** to Web Application
-9. **Web Application sets cookie** and redirects user to dashboard
-
-**Advantages of collaboration format for this flow**:
-
-- **Spatial proximity**: Auth Service at center shows it coordinates the flow
-- **Object relationships clear**: Auth Service interacts with both database and token store
-- **Concise for simple flow**: 9 steps fit naturally without vertical space constraints
-- **Design pattern visible**: Request-response pattern between components
-
-**Compare to sequence format**: The sequence diagram would show the same flow with a vertical timeline, making temporal ordering clearer but using more vertical space. For simple authentication with no error paths or parallelism, collaboration format is sufficient.
-
-**Recommendation**: Use sequence format by default for C4 dynamic diagrams. Collaboration format is less common in modern tooling and harder to render in diagram-as-code tools. Most C4 practitioners use sequence diagrams exclusively.
+**Recommendation**: Always use sequence format for C4 dynamic diagrams.
 
 ### Deployment Diagram
 
@@ -745,7 +652,7 @@ graph TB
 - **Metrics Monitoring**: Compare error rates and latency between stable and canary
 - **Gradual Rollout Process**:
   1. Deploy v1.3.0 to 1 instance (canary receives 20% traffic)
-  2. Monitor canary metrics for 1-2 hours
+  2. Monitor canary metrics for issues
   3. If metrics healthy: deploy to 2 more instances (50% traffic)
   4. If still healthy: deploy to all instances (100% traffic)
   5. If issues detected at any stage: roll back canary instances
@@ -837,3 +744,563 @@ graph TB
 - **Document deployment automation**: Include CI/CD pipeline tools (GitHub Actions, Jenkins) as infrastructure components
 - **Show scaling strategy**: Indicate which containers can scale horizontally
 - **Update during infrastructure changes**: Deployment diagrams become stale quickly; review quarterly
+
+### Expanded Deployment Examples
+
+Modern deployment patterns extend beyond traditional cloud and on-premise architectures. This section covers serverless, edge computing, multi-region, hybrid cloud, and Kubernetes multi-cluster deployments.
+
+#### Example 3: Serverless Architecture (AWS Lambda)
+
+Serverless computing eliminates infrastructure management by running code in stateless compute containers triggered by events. C4 Deployment diagrams show function-as-a-service (FaaS) mappings and managed services.
+
+**Serverless E-Commerce API Deployment**:
+
+```mermaid
+graph TB
+    subgraph "AWS Cloud - us-east-1"
+        subgraph "API Gateway"
+            APIGW[API Gateway<br/>REST API Endpoints<br/>HTTPS]
+        end
+
+        subgraph "Lambda Functions (Serverless Compute)"
+            LAMBDA_USER[User Service<br/>Lambda Function<br/>Node.js 20.x<br/>512 MB RAM]
+            LAMBDA_ORDER[Order Service<br/>Lambda Function<br/>Node.js 20.x<br/>1024 MB RAM]
+            LAMBDA_PAYMENT[Payment Service<br/>Lambda Function<br/>Node.js 20.x<br/>512 MB RAM]
+        end
+
+        subgraph "Data Layer (Managed Services)"
+            DYNAMO_USER[(Users Table<br/>DynamoDB<br/>On-Demand)]
+            DYNAMO_ORDER[(Orders Table<br/>DynamoDB<br/>On-Demand)]
+            S3_RECEIPTS[(Receipt Storage<br/>S3 Bucket<br/>Standard)]
+        end
+
+        subgraph "Integration"
+            SNS[Event Notification<br/>SNS Topic<br/>Order Events]
+            SQS[Processing Queue<br/>SQS FIFO<br/>Payment Processing]
+        end
+
+        subgraph "External Services"
+            STRIPE[Stripe API<br/>External Payment Gateway]
+        end
+    end
+
+    USERS[Users<br/>HTTPS Clients]
+
+    USERS -->|HTTPS requests| APIGW
+    APIGW -->|Invokes<br/>GET /users/:id| LAMBDA_USER
+    APIGW -->|Invokes<br/>POST /orders| LAMBDA_ORDER
+    APIGW -->|Invokes<br/>POST /payments| LAMBDA_PAYMENT
+
+    LAMBDA_USER -->|Read/Write<br/>DynamoDB API| DYNAMO_USER
+    LAMBDA_ORDER -->|Read/Write<br/>DynamoDB API| DYNAMO_ORDER
+    LAMBDA_ORDER -->|Publish event<br/>OrderCreated| SNS
+    SNS -->|Enqueues message| SQS
+    SQS -->|Triggers invocation| LAMBDA_PAYMENT
+    LAMBDA_PAYMENT -->|Charge customer<br/>HTTPS/REST API| STRIPE
+    LAMBDA_PAYMENT -->|Upload receipt PDF<br/>S3 PutObject| S3_RECEIPTS
+
+    style APIGW fill:#CC78BC,stroke:#000000,color:#ffffff
+    style LAMBDA_USER fill:#0173B2,stroke:#000000,color:#ffffff
+    style LAMBDA_ORDER fill:#0173B2,stroke:#000000,color:#ffffff
+    style LAMBDA_PAYMENT fill:#0173B2,stroke:#000000,color:#ffffff
+    style DYNAMO_USER fill:#DE8F05,stroke:#000000,color:#ffffff
+    style DYNAMO_ORDER fill:#DE8F05,stroke:#000000,color:#ffffff
+    style S3_RECEIPTS fill:#DE8F05,stroke:#000000,color:#ffffff
+    style SNS fill:#029E73,stroke:#000000,color:#ffffff
+    style SQS fill:#029E73,stroke:#000000,color:#ffffff
+    style STRIPE fill:#808080,stroke:#000000,color:#ffffff
+    style USERS fill:#029E73,stroke:#000000,color:#ffffff
+```
+
+**Serverless Deployment Characteristics**:
+
+- **Compute**: Lambda functions (no servers to manage, auto-scaling)
+- **Data**: Managed databases (DynamoDB), object storage (S3)
+- **Integration**: Event-driven (SNS topics, SQS queues)
+- **Scaling**: Automatic based on request volume (0 to thousands of concurrent executions)
+- **Cost Model**: Pay-per-invocation (no idle costs)
+- **Cold Start**: First invocation may have higher latency
+
+**When to Use Serverless Deployment Diagrams**:
+
+- Documenting event-driven architectures with FaaS
+- Showing managed service dependencies (API Gateway, DynamoDB, S3)
+- Explaining auto-scaling behavior and resource limits
+- Planning for cold start mitigation strategies
+
+#### Example 4: Edge Computing (Cloudflare Workers)
+
+Edge computing deploys code to geographically distributed edge locations for minimal latency. C4 Deployment diagrams show edge runtime mappings and origin server relationships.
+
+**Global Content API with Edge Caching**:
+
+```mermaid
+graph TB
+    subgraph "Edge Network (Cloudflare)"
+        subgraph "Edge Location 1 (San Francisco)"
+            EDGE_SF[Content API Worker<br/>Cloudflare Worker<br/>V8 Isolate Runtime]
+            KV_SF[(Edge KV Store<br/>Cloudflare KV<br/>Read Replicas)]
+        end
+
+        subgraph "Edge Location 2 (London)"
+            EDGE_LONDON[Content API Worker<br/>Cloudflare Worker<br/>V8 Isolate Runtime]
+            KV_LONDON[(Edge KV Store<br/>Cloudflare KV<br/>Read Replicas)]
+        end
+
+        subgraph "Edge Location 3 (Tokyo)"
+            EDGE_TOKYO[Content API Worker<br/>Cloudflare Worker<br/>V8 Isolate Runtime]
+            KV_TOKYO[(Edge KV Store<br/>Cloudflare KV<br/>Read Replicas)]
+        end
+    end
+
+    subgraph "Origin Server (AWS us-east-1)"
+        ORIGIN_API[Origin API<br/>Container: Node.js/Express<br/>EC2 t3.medium]
+        ORIGIN_DB[(Primary Database<br/>PostgreSQL RDS<br/>db.t3.large)]
+    end
+
+    USERS_US[Users (US)]
+    USERS_EU[Users (EU)]
+    USERS_ASIA[Users (Asia)]
+
+    USERS_US -->|HTTPS GET /content| EDGE_SF
+    USERS_EU -->|HTTPS GET /content| EDGE_LONDON
+    USERS_ASIA -->|HTTPS GET /content| EDGE_TOKYO
+
+    EDGE_SF -->|Cache hit<br/>Read from KV| KV_SF
+    EDGE_SF -.->|Cache miss<br/>HTTPS to origin| ORIGIN_API
+
+    EDGE_LONDON -->|Cache hit<br/>Read from KV| KV_LONDON
+    EDGE_LONDON -.->|Cache miss<br/>HTTPS to origin| ORIGIN_API
+
+    EDGE_TOKYO -->|Cache hit<br/>Read from KV| KV_TOKYO
+    EDGE_TOKYO -.->|Cache miss<br/>HTTPS to origin| ORIGIN_API
+
+    ORIGIN_API -->|SQL queries| ORIGIN_DB
+    ORIGIN_DB -.->|Replicates data<br/>Eventually consistent| KV_SF
+    ORIGIN_DB -.->|Replicates data<br/>Eventually consistent| KV_LONDON
+    ORIGIN_DB -.->|Replicates data<br/>Eventually consistent| KV_TOKYO
+
+    style EDGE_SF fill:#0173B2,stroke:#000000,color:#ffffff
+    style EDGE_LONDON fill:#0173B2,stroke:#000000,color:#ffffff
+    style EDGE_TOKYO fill:#0173B2,stroke:#000000,color:#ffffff
+    style KV_SF fill:#029E73,stroke:#000000,color:#ffffff
+    style KV_LONDON fill:#029E73,stroke:#000000,color:#ffffff
+    style KV_TOKYO fill:#029E73,stroke:#000000,color:#ffffff
+    style ORIGIN_API fill:#CC78BC,stroke:#000000,color:#ffffff
+    style ORIGIN_DB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style USERS_US fill:#808080,stroke:#000000,color:#ffffff
+    style USERS_EU fill:#808080,stroke:#000000,color:#ffffff
+    style USERS_ASIA fill:#808080,stroke:#000000,color:#ffffff
+```
+
+**Edge Computing Deployment Characteristics**:
+
+- **Edge Runtime**: Code runs at 200+ global locations for minimal latency
+- **Routing**: Users automatically routed to nearest edge location
+- **Cache Hit**: Majority of requests served from edge KV store (fast)
+- **Cache Miss**: Edge worker fetches from origin server (slower, then cached)
+- **Replication**: Data replicated from origin to edge (eventually consistent)
+- **Use Cases**: Content delivery, API gateway, authentication, A/B testing
+
+**When to Use Edge Deployment Diagrams**:
+
+- Global applications requiring low latency worldwide
+- Content-heavy applications with edge caching strategies
+- Explaining cache hit/miss behavior and replication lag
+- Documenting edge compute limitations (CPU time, memory, cold start)
+
+#### Example 5: Multi-Region Active-Active Deployment
+
+Multi-region deployments distribute infrastructure across geographic regions for high availability and disaster recovery. Active-Active patterns serve traffic from all regions simultaneously.
+
+**Global E-Commerce Platform (Active-Active Multi-Region)**:
+
+```mermaid
+graph TB
+    subgraph "Global Traffic Management"
+        DNS[Global DNS<br/>Route53<br/>Geolocation Routing]
+    end
+
+    subgraph "Region 1: US East (us-east-1)"
+        LB_US[Load Balancer<br/>AWS ALB]
+        APP_US1[App Instance 1<br/>ECS Fargate]
+        APP_US2[App Instance 2<br/>ECS Fargate]
+        DB_US[(Primary Database<br/>Aurora PostgreSQL<br/>Multi-AZ)]
+        CACHE_US[(Redis Cluster<br/>ElastiCache)]
+    end
+
+    subgraph "Region 2: EU West (eu-west-1)"
+        LB_EU[Load Balancer<br/>AWS ALB]
+        APP_EU1[App Instance 1<br/>ECS Fargate]
+        APP_EU2[App Instance 2<br/>ECS Fargate]
+        DB_EU[(Primary Database<br/>Aurora PostgreSQL<br/>Multi-AZ)]
+        CACHE_EU[(Redis Cluster<br/>ElastiCache)]
+    end
+
+    subgraph "Region 3: Asia Pacific (ap-southeast-1)"
+        LB_ASIA[Load Balancer<br/>AWS ALB]
+        APP_ASIA1[App Instance 1<br/>ECS Fargate]
+        APP_ASIA2[App Instance 2<br/>ECS Fargate]
+        DB_ASIA[(Primary Database<br/>Aurora PostgreSQL<br/>Multi-AZ)]
+        CACHE_ASIA[(Redis Cluster<br/>ElastiCache)]
+    end
+
+    subgraph "Global Data Replication"
+        REPLICATION[Aurora Global Database<br/>Cross-Region Replication<br/>minimal lag]
+    end
+
+    USERS_US[Users (US)]
+    USERS_EU[Users (EU)]
+    USERS_ASIA[Users (Asia)]
+
+    USERS_US -->|Routed to nearest region<br/>HTTPS| DNS
+    USERS_EU -->|Routed to nearest region<br/>HTTPS| DNS
+    USERS_ASIA -->|Routed to nearest region<br/>HTTPS| DNS
+
+    DNS -->|US users| LB_US
+    DNS -->|EU users| LB_EU
+    DNS -->|Asia users| LB_ASIA
+
+    LB_US --> APP_US1
+    LB_US --> APP_US2
+    APP_US1 --> DB_US
+    APP_US2 --> DB_US
+    APP_US1 --> CACHE_US
+    APP_US2 --> CACHE_US
+
+    LB_EU --> APP_EU1
+    LB_EU --> APP_EU2
+    APP_EU1 --> DB_EU
+    APP_EU2 --> DB_EU
+    APP_EU1 --> CACHE_EU
+    APP_EU2 --> CACHE_EU
+
+    LB_ASIA --> APP_ASIA1
+    LB_ASIA --> APP_ASIA2
+    APP_ASIA1 --> DB_ASIA
+    APP_ASIA2 --> DB_ASIA
+    APP_ASIA1 --> CACHE_ASIA
+    APP_ASIA2 --> CACHE_ASIA
+
+    DB_US <-->|Bi-directional replication<br/>Write forwarding| REPLICATION
+    DB_EU <-->|Bi-directional replication<br/>Write forwarding| REPLICATION
+    DB_ASIA <-->|Bi-directional replication<br/>Write forwarding| REPLICATION
+
+    style DNS fill:#CC78BC,stroke:#000000,color:#ffffff
+    style LB_US fill:#CC78BC,stroke:#000000,color:#ffffff
+    style LB_EU fill:#CC78BC,stroke:#000000,color:#ffffff
+    style LB_ASIA fill:#CC78BC,stroke:#000000,color:#ffffff
+    style APP_US1 fill:#0173B2,stroke:#000000,color:#ffffff
+    style APP_US2 fill:#0173B2,stroke:#000000,color:#ffffff
+    style APP_EU1 fill:#0173B2,stroke:#000000,color:#ffffff
+    style APP_EU2 fill:#0173B2,stroke:#000000,color:#ffffff
+    style APP_ASIA1 fill:#0173B2,stroke:#000000,color:#ffffff
+    style APP_ASIA2 fill:#0173B2,stroke:#000000,color:#ffffff
+    style DB_US fill:#DE8F05,stroke:#000000,color:#ffffff
+    style DB_EU fill:#DE8F05,stroke:#000000,color:#ffffff
+    style DB_ASIA fill:#DE8F05,stroke:#000000,color:#ffffff
+    style CACHE_US fill:#029E73,stroke:#000000,color:#ffffff
+    style CACHE_EU fill:#029E73,stroke:#000000,color:#ffffff
+    style CACHE_ASIA fill:#029E73,stroke:#000000,color:#ffffff
+    style REPLICATION fill:#808080,stroke:#000000,color:#ffffff
+    style USERS_US fill:#808080,stroke:#000000,color:#ffffff
+    style USERS_EU fill:#808080,stroke:#000000,color:#ffffff
+    style USERS_ASIA fill:#808080,stroke:#000000,color:#ffffff
+```
+
+**Multi-Region Active-Active Characteristics**:
+
+- **Traffic Routing**: DNS routes users to nearest region (latency-based or geolocation)
+- **Regional Independence**: Each region serves requests independently (no cross-region calls)
+- **Data Replication**: Database changes replicated across regions (<1s lag with Aurora Global)
+- **Failure Handling**: If one region fails, DNS routes traffic to healthy regions
+- **Consistency Trade-off**: Eventual consistency across regions (possible conflicts)
+- **Use Cases**: Global SaaS platforms, financial services, e-commerce
+
+**Active-Active vs Active-Passive**:
+
+| Aspect               | Active-Active                          | Active-Passive                     |
+| -------------------- | -------------------------------------- | ---------------------------------- |
+| **Traffic**          | All regions serve production traffic   | Only primary region serves traffic |
+| **Failover**         | Automatic (DNS routing)                | Manual or automated failover       |
+| **Resource Costs**   | Higher (all regions fully provisioned) | Lower (standby region minimal)     |
+| **RTO**              | Near zero (instant traffic shift)      | Minutes to hours                   |
+| **Data Consistency** | Eventual consistency challenges        | Simpler (single write source)      |
+
+**When to Use Multi-Region Deployment Diagrams**:
+
+- Applications with global user base requiring low latency
+- High availability requirements (99.99%+ uptime SLA)
+- Disaster recovery planning and failover strategies
+- Documenting data replication topology and consistency models
+
+#### Example 6: Hybrid Cloud (On-Premises + Cloud)
+
+Hybrid cloud architectures combine on-premises infrastructure with cloud services, often for regulatory compliance, data residency, or legacy system integration.
+
+**Healthcare Platform (Hybrid Cloud)**:
+
+```mermaid
+graph TB
+    subgraph "On-Premises Data Center"
+        subgraph "DMZ Network"
+            ON_PREM_LB[Load Balancer<br/>F5 BIG-IP]
+            ON_PREM_APP1[Patient Portal<br/>VM: Ubuntu 22.04<br/>8 vCPU, 16GB RAM]
+            ON_PREM_APP2[Patient Portal<br/>VM: Ubuntu 22.04<br/>8 vCPU, 16GB RAM]
+        end
+
+        subgraph "Internal Network (VLAN 100)"
+            ON_PREM_DB[(Patient Records DB<br/>Oracle 19c<br/>RAC Cluster<br/>PII/PHI Data)]
+            ON_PREM_STORAGE[(Medical Images<br/>NetApp SAN<br/>50 TB)]
+        end
+
+        FIREWALL[Enterprise Firewall<br/>Fortinet FortiGate]
+    end
+
+    subgraph "AWS Cloud (us-east-1)"
+        subgraph "VPC (10.0.0.0/16)"
+            VPN_GW[VPN Gateway<br/>Site-to-Site VPN<br/>IPSec Tunnel]
+
+            subgraph "Public Subnet"
+                CLOUD_LB[Load Balancer<br/>AWS ALB]
+                CLOUD_API1[Analytics API<br/>ECS Fargate<br/>2 vCPU, 4GB RAM]
+                CLOUD_API2[Analytics API<br/>ECS Fargate<br/>2 vCPU, 4GB RAM]
+            end
+
+            subgraph "Private Subnet"
+                CLOUD_DB[(Analytics Database<br/>RDS PostgreSQL<br/>Aggregated/De-identified Data)]
+                CLOUD_CACHE[(Redis Cache<br/>ElastiCache)]
+            end
+        end
+
+        S3_REPORTS[(Reports Storage<br/>S3 Bucket<br/>De-identified Reports)]
+    end
+
+    USERS[Patients & Providers<br/>HTTPS Clients]
+    ANALYSTS[Data Analysts<br/>Internal Staff]
+
+    USERS -->|HTTPS requests| ON_PREM_LB
+    ON_PREM_LB --> ON_PREM_APP1
+    ON_PREM_LB --> ON_PREM_APP2
+    ON_PREM_APP1 --> ON_PREM_DB
+    ON_PREM_APP2 --> ON_PREM_DB
+    ON_PREM_APP1 --> ON_PREM_STORAGE
+    ON_PREM_APP2 --> ON_PREM_STORAGE
+
+    ON_PREM_DB -.->|Nightly ETL<br/>De-identified data<br/>VPN Tunnel| VPN_GW
+    FIREWALL <-->|IPSec VPN<br/>256-bit encryption| VPN_GW
+
+    VPN_GW --> CLOUD_API1
+    VPN_GW --> CLOUD_API2
+
+    ANALYSTS -->|HTTPS API calls| CLOUD_LB
+    CLOUD_LB --> CLOUD_API1
+    CLOUD_LB --> CLOUD_API2
+    CLOUD_API1 --> CLOUD_DB
+    CLOUD_API2 --> CLOUD_DB
+    CLOUD_API1 --> CLOUD_CACHE
+    CLOUD_API2 --> CLOUD_CACHE
+    CLOUD_API1 -->|Export reports<br/>S3 PutObject| S3_REPORTS
+
+    style ON_PREM_LB fill:#CC78BC,stroke:#000000,color:#ffffff
+    style ON_PREM_APP1 fill:#0173B2,stroke:#000000,color:#ffffff
+    style ON_PREM_APP2 fill:#0173B2,stroke:#000000,color:#ffffff
+    style ON_PREM_DB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style ON_PREM_STORAGE fill:#DE8F05,stroke:#000000,color:#ffffff
+    style FIREWALL fill:#808080,stroke:#000000,color:#ffffff
+    style VPN_GW fill:#808080,stroke:#000000,color:#ffffff
+    style CLOUD_LB fill:#CC78BC,stroke:#000000,color:#ffffff
+    style CLOUD_API1 fill:#029E73,stroke:#000000,color:#ffffff
+    style CLOUD_API2 fill:#029E73,stroke:#000000,color:#ffffff
+    style CLOUD_DB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style CLOUD_CACHE fill:#029E73,stroke:#000000,color:#ffffff
+    style S3_REPORTS fill:#DE8F05,stroke:#000000,color:#ffffff
+    style USERS fill:#808080,stroke:#000000,color:#ffffff
+    style ANALYSTS fill:#808080,stroke:#000000,color:#ffffff
+```
+
+**Hybrid Cloud Deployment Characteristics**:
+
+- **On-Premises**: Sensitive data (PII/PHI) remains in private data center for compliance
+- **Cloud**: Non-sensitive workloads (analytics, reporting) run in public cloud for scalability
+- **Connectivity**: Site-to-Site VPN or AWS Direct Connect for secure communication
+- **Data Flow**: ETL processes move de-identified data from on-prem to cloud nightly
+- **Security**: Firewall, VPN encryption, network segregation (DMZ, internal VLAN)
+- **Use Cases**: Regulated industries (healthcare, finance), legacy system integration
+
+**When to Use Hybrid Deployment Diagrams**:
+
+- Documenting data residency and compliance requirements
+- Planning cloud migration strategies (lift-and-shift, strangler pattern)
+- Explaining network connectivity and security boundaries
+- Showing data flow between on-prem and cloud environments
+
+#### Example 7: Kubernetes Multi-Cluster Federation
+
+Large-scale Kubernetes deployments span multiple clusters for isolation, blast radius reduction, or multi-tenancy. C4 Deployment diagrams show cluster topology and cross-cluster communication.
+
+**Multi-Cluster Kubernetes Platform**:
+
+```mermaid
+graph TB
+    subgraph "Global Ingress"
+        GLB[Global Load Balancer<br/>Cloudflare / AWS Global Accelerator]
+    end
+
+    subgraph "Production Cluster (us-east-1)"
+        PROD_INGRESS[Ingress Controller<br/>NGINX Ingress<br/>Namespace: ingress-nginx]
+
+        subgraph "Namespace: ecommerce-prod"
+            PROD_APP1[Web App Pod<br/>Deployment: web-app<br/>Replicas: 3]
+            PROD_API1[API Pod<br/>Deployment: api-service<br/>Replicas: 5]
+            PROD_DB1[(Database<br/>StatefulSet: postgres<br/>Replicas: 1)]
+        end
+
+        PROD_METRICS[Prometheus<br/>Namespace: monitoring]
+    end
+
+    subgraph "Staging Cluster (us-west-2)"
+        STAGING_INGRESS[Ingress Controller<br/>NGINX Ingress<br/>Namespace: ingress-nginx]
+
+        subgraph "Namespace: ecommerce-staging"
+            STAGING_APP[Web App Pod<br/>Deployment: web-app<br/>Replicas: 1]
+            STAGING_API[API Pod<br/>Deployment: api-service<br/>Replicas: 2]
+            STAGING_DB[(Database<br/>StatefulSet: postgres<br/>Replicas: 1)]
+        end
+    end
+
+    subgraph "Development Cluster (us-west-2)"
+        DEV_INGRESS[Ingress Controller<br/>NGINX Ingress<br/>Namespace: ingress-nginx]
+
+        subgraph "Namespace: ecommerce-dev"
+            DEV_APP[Web App Pod<br/>Deployment: web-app<br/>Replicas: 1]
+            DEV_API[API Pod<br/>Deployment: api-service<br/>Replicas: 1]
+            DEV_DB[(Database<br/>StatefulSet: postgres<br/>Replicas: 1)]
+        end
+    end
+
+    subgraph "Shared Services Cluster (us-east-1)"
+        SHARED_LOGGING[Logging<br/>Namespace: logging<br/>Elasticsearch + Fluentd]
+        SHARED_VAULT[Secrets Management<br/>Namespace: vault<br/>HashiCorp Vault]
+        SHARED_REGISTRY[Container Registry<br/>Namespace: registry<br/>Harbor]
+    end
+
+    USERS[Production Users]
+    QA[QA Team]
+    DEVS[Developers]
+
+    USERS -->|HTTPS prod.example.com| GLB
+    QA -->|HTTPS staging.example.com| GLB
+    DEVS -->|HTTPS dev.example.com| GLB
+
+    GLB -->|Routes prod traffic| PROD_INGRESS
+    GLB -->|Routes staging traffic| STAGING_INGRESS
+    GLB -->|Routes dev traffic| DEV_INGRESS
+
+    PROD_INGRESS --> PROD_APP1
+    PROD_APP1 --> PROD_API1
+    PROD_API1 --> PROD_DB1
+    PROD_APP1 -.->|Metrics scraping| PROD_METRICS
+
+    STAGING_INGRESS --> STAGING_APP
+    STAGING_APP --> STAGING_API
+    STAGING_API --> STAGING_DB
+
+    DEV_INGRESS --> DEV_APP
+    DEV_APP --> DEV_API
+    DEV_API --> DEV_DB
+
+    PROD_APP1 -.->|Ship logs<br/>Fluentd sidecar| SHARED_LOGGING
+    STAGING_APP -.->|Ship logs<br/>Fluentd sidecar| SHARED_LOGGING
+    DEV_APP -.->|Ship logs<br/>Fluentd sidecar| SHARED_LOGGING
+
+    PROD_API1 -.->|Fetch secrets<br/>Vault Agent| SHARED_VAULT
+    STAGING_API -.->|Fetch secrets<br/>Vault Agent| SHARED_VAULT
+    DEV_API -.->|Fetch secrets<br/>Vault Agent| SHARED_VAULT
+
+    style GLB fill:#CC78BC,stroke:#000000,color:#ffffff
+    style PROD_INGRESS fill:#CC78BC,stroke:#000000,color:#ffffff
+    style STAGING_INGRESS fill:#CC78BC,stroke:#000000,color:#ffffff
+    style DEV_INGRESS fill:#CC78BC,stroke:#000000,color:#ffffff
+    style PROD_APP1 fill:#0173B2,stroke:#000000,color:#ffffff
+    style PROD_API1 fill:#0173B2,stroke:#000000,color:#ffffff
+    style PROD_DB1 fill:#DE8F05,stroke:#000000,color:#ffffff
+    style STAGING_APP fill:#029E73,stroke:#000000,color:#ffffff
+    style STAGING_API fill:#029E73,stroke:#000000,color:#ffffff
+    style STAGING_DB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style DEV_APP fill:#808080,stroke:#000000,color:#ffffff
+    style DEV_API fill:#808080,stroke:#000000,color:#ffffff
+    style DEV_DB fill:#DE8F05,stroke:#000000,color:#ffffff
+    style SHARED_LOGGING fill:#029E73,stroke:#000000,color:#ffffff
+    style SHARED_VAULT fill:#029E73,stroke:#000000,color:#ffffff
+    style SHARED_REGISTRY fill:#029E73,stroke:#000000,color:#ffffff
+    style PROD_METRICS fill:#029E73,stroke:#000000,color:#ffffff
+    style USERS fill:#808080,stroke:#000000,color:#ffffff
+    style QA fill:#808080,stroke:#000000,color:#ffffff
+    style DEVS fill:#808080,stroke:#000000,color:#ffffff
+```
+
+**Multi-Cluster Kubernetes Characteristics**:
+
+- **Cluster Isolation**: Prod, staging, dev in separate clusters (blast radius control)
+- **Namespace Isolation**: Within clusters, namespaces provide soft multi-tenancy
+- **Shared Services**: Centralized logging, secrets, container registry across clusters
+- **Cross-Cluster Communication**: Service mesh or VPN for inter-cluster traffic
+- **Resource Limits**: Different resource quotas per cluster (prod gets more capacity)
+- **Use Cases**: Multi-tenancy, environment separation, regulatory isolation
+
+**When to Use Multi-Cluster Deployment Diagrams**:
+
+- Complex Kubernetes deployments with multiple clusters
+- Explaining cluster-to-cluster communication patterns
+- Documenting shared services architecture
+- Planning Kubernetes federation or multi-cluster service mesh
+
+### Deployment Pattern Comparison Table
+
+| Pattern                      | Latency        | Availability | Cost                   | Complexity | Best For                         |
+| ---------------------------- | -------------- | ------------ | ---------------------- | ---------- | -------------------------------- |
+| **Single Region**            | Regional       | 99.9%        | Low                    | Low        | Startups, regional applications  |
+| **Multi-Region (A-A)**       | Global Low     | 99.99%+      | High                   | High       | Global SaaS, financial services  |
+| **Multi-Region (A-P)**       | Regional       | 99.95%       | Medium                 | Medium     | DR requirements, cost-conscious  |
+| **Serverless**               | Regional       | 99.95%       | Very Low (pay-per-use) | Low        | Event-driven, variable traffic   |
+| **Edge Computing**           | Global Minimal | 99.99%       | Medium-High            | Medium     | Content delivery, real-time APIs |
+| **Hybrid Cloud**             | Variable       | 99.9%        | Medium-High            | High       | Compliance, legacy integration   |
+| **Kubernetes Multi-Cluster** | Regional       | 99.95%       | High                   | Very High  | Large enterprises, multi-tenancy |
+
+### When to Create Deployment Diagrams
+
+Deployment diagrams add value when infrastructure complexity justifies documentation overhead:
+
+**Always Create Deployment Diagrams For**:
+
+- Production environments with multiple infrastructure components
+- Multi-region or multi-cloud deployments
+- Kubernetes clusters with complex pod/service topologies
+- Hybrid cloud architectures bridging on-prem and cloud
+- Serverless architectures with numerous FaaS functions and managed services
+- Compliance-critical systems requiring infrastructure audit trails
+
+**Consider Creating Deployment Diagrams For**:
+
+- Staging environments that differ significantly from production
+- Blue-green or canary deployment strategies
+- Edge computing architectures with cache topologies
+- Database replication topologies (master-slave, multi-master)
+- Disaster recovery and failover architectures
+
+**Skip Deployment Diagrams For**:
+
+- Single-server deployments (e.g., monolith on one VM)
+- Development environments identical to production (docker-compose up)
+- Static sites deployed to CDN (no infrastructure to document)
+- Proof-of-concept applications with temporary infrastructure
+
+**Best Practices**:
+
+- **Start with Container diagram**: Ensure Container diagram exists first (deployment maps containers to infrastructure)
+- **One diagram per environment**: Don't mix dev, staging, prod in single diagram (too complex)
+- **Show infrastructure relationships**: Load balancers, networking, database replication
+- **Indicate scaling strategy**: Fixed instances vs auto-scaling
+- **Update quarterly**: Infrastructure changes frequently; review during architecture reviews
+- **Use color coding**: Distinguish prod (blue), staging (green), dev (gray), shared services (teal)
