@@ -22,7 +22,7 @@ Without Ubiquitous Language, teams suffer from communication breakdowns:
 
 Domain experts speak in business terms:
 
-> "When a Muslim's zakatable wealth exceeds the nisab threshold for one complete hawl, they must pay 2.5% zakat."
+> "When a Muslim's taxable wealth exceeds the threshold threshold for one complete hawl, they must pay 2.5% tax."
 
 Developers translate to technical jargon:
 
@@ -59,12 +59,12 @@ Domain concepts map directly to code:
 
 ```typescript
 // Ubiquitous Language in code
-class ZakatAssessment {
-  calculate(nisabThreshold: NisabAmount, zakatRate: ZakatRate): ZakatAmount {
-    if (this.zakatableWealth.isGreaterThanOrEqual(nisabThreshold)) {
-      return this.zakatableWealth.multiply(zakatRate);
+class TaxAssessment {
+  calculate(thresholdThreshold: ThresholdAmount, taxRate: TaxRate): TaxAmount {
+    if (this.taxableWealth.isGreaterThanOrEqual(thresholdThreshold)) {
+      return this.taxableWealth.multiply(taxRate);
     }
-    return ZakatAmount.zero();
+    return TaxAmount.zero();
   }
 
   hasCompletedHawl(): boolean {
@@ -73,18 +73,18 @@ class ZakatAssessment {
 }
 ```
 
-Domain experts can read this code and recognize their terminology: `ZakatAssessment`, `nisabThreshold`, `zakatableWealth`, `hawl`.
+Domain experts can read this code and recognize their terminology: `TaxAssessment`, `thresholdThreshold`, `taxableWealth`, `hawl`.
 
 **2. Clarifying Definitions**
 
 Each Bounded Context has its own glossary:
 
-**Zakat Calculation Context:**
+**Tax Calculation Context:**
 
-- **Zakat**: Obligatory Islamic almsgiving, one of the Five Pillars of Islam
-- **Nisab**: Minimum threshold of wealth (equivalent to 85g gold or 595g silver) required before zakat becomes obligatory
+- **Tax**: Obligatory Islamic almsgiving, one of the Five Pillars of Islam
+- **Threshold**: Minimum threshold of wealth (equivalent to 85g gold or 595g silver) required before tax becomes obligatory
 - **Hawl**: Complete lunar year (354-355 days) during which wealth must be held
-- **Zakatable Wealth**: Assets subject to zakat (cash, gold, silver, business inventory, agricultural produce)
+- **Taxable Wealth**: Assets subject to tax (cash, gold, silver, business inventory, agricultural produce)
 
 **3. Revealing Domain Insights**
 
@@ -98,13 +98,13 @@ if (user.amount >= config.minValue && user.period >= 354) {
 }
 
 // Ubiquitous Language (reveals domain knowledge)
-const assessment = new ZakatAssessment(zakatableWealth, hawlStartDate);
-if (assessment.meetsNisab(nisabThreshold) && assessment.hasCompletedHawl()) {
-  const zakatOwed = assessment.calculate(ZakatRate.standard());
+const assessment = new TaxAssessment(taxableWealth, hawlStartDate);
+if (assessment.meetsThreshold(thresholdThreshold) && assessment.hasCompletedHawl()) {
+  const taxOwed = assessment.calculate(TaxRate.standard());
 }
 ```
 
-The second version teaches readers about Islamic finance even if they've never heard of zakat.
+The second version teaches readers about Islamic finance even if they've never heard of tax.
 
 ## Creating Ubiquitous Language
 
@@ -129,24 +129,24 @@ Building Ubiquitous Language is a collaborative, iterative process:
 - Challenge assumptions and ambiguities
 - Refine terms based on discussion
 
-**Example Session**: Zakat Calculation for Business Inventory
+**Example Session**: Tax Calculation for Business Inventory
 
-Domain Expert: "Before calculating zakat on business inventory, we need to determine the nisab threshold based on current gold prices."
+Domain Expert: "Before calculating tax on business inventory, we need to determine the threshold threshold based on current gold prices."
 
-Developer: "What exactly is nisab? Is it a fixed number?"
+Developer: "What exactly is threshold? Is it a fixed number?"
 
-Domain Expert: "Nisab is the minimum wealth threshold. It's equivalent to 85 grams of gold. We use the current gold price to convert it to the business's local currency."
+Domain Expert: "Threshold is the minimum wealth threshold. It's equivalent to 85 grams of gold. We use the current gold price to convert it to the business's local currency."
 
-Developer: "So nisab is actually a value that changes based on gold prices?"
+Developer: "So threshold is actually a value that changes based on gold prices?"
 
-Domain Expert: "Exactly. We check gold prices at the end of the lunar year and calculate the nisab in the currency of the zakatable wealth."
+Domain Expert: "Exactly. We check gold prices at the end of the lunar year and calculate the threshold in the currency of the taxable wealth."
 
 **Insights Captured**:
 
-- `NisabAmount`: Value object representing minimum threshold
+- `ThresholdAmount`: Value object representing minimum threshold
 - `GoldPrice`: Value object for current market price of gold
-- `NisabCalculator`: Service to convert gold-equivalent to currency
-- Business rule: Nisab is calculated at the end of hawl using current gold prices
+- `ThresholdCalculator`: Service to convert gold-equivalent to currency
+- Business rule: Threshold is calculated at the end of hawl using current gold prices
 
 ### 2. Event Storming
 
@@ -157,9 +157,9 @@ Domain Expert: "Exactly. We check gold prices at the end of the lunar year and c
 - Gather cross-functional team (domain experts, developers, stakeholders)
 - Use large wall space and sticky notes
 - Timeline the business process from left to right
-- Identify domain events (orange notes): "Zakat Calculated", "Nisab Threshold Determined"
+- Identify domain events (orange notes): "Tax Calculated", "Threshold Threshold Determined"
 - Identify commands (blue notes): "Declare Wealth", "Finalize Assessment"
-- Identify aggregates (yellow notes): "Zakat Assessment"
+- Identify aggregates (yellow notes): "Tax Assessment"
 - Group related events into Bounded Contexts
 
 **Benefits**:
@@ -185,10 +185,10 @@ See [Strategic Design Process](./ex-so-ar-dodrdedd__06-strategic-design-process.
 
 **Example Workshop Output**:
 
-**Term**: Murabaha Contract
+**Term**: Loan Contract
 **Definition**: Islamic cost-plus financing where the bank purchases an asset and resells it to the customer at a markup, with deferred payment terms. The profit margin is agreed upon in advance and remains fixed.
 **Synonyms**: Cost-plus sale
-**Related Terms**: Riba (prohibited), Musharaka (profit-sharing partnership)
+**Related Terms**: Interest (prohibited), Musharaka (profit-sharing partnership)
 **Examples**: Bank purchases equipment for $100,000, sells to customer for $110,000 payable over 12 months
 **Anti-Corruption**: NOT a conventional loan with interest; the markup is a profit margin, not interest
 
@@ -199,39 +199,39 @@ See [Strategic Design Process](./ex-so-ar-dodrdedd__06-strategic-design-process.
 **Format**:
 
 ```markdown
-# Zakat Calculation Context - Glossary
+# Tax Calculation Context - Glossary
 
-## Zakat
+## Tax
 
 **Category**: Core Concept
-**Definition**: Obligatory Islamic almsgiving, one of the Five Pillars of Islam. Muslims with wealth exceeding nisab must donate 2.5% annually to prescribed categories of recipients.
+**Definition**: Obligatory Islamic almsgiving, one of the Five Pillars of Islam. Muslims with wealth exceeding threshold must donate 2.5% annually to prescribed categories of recipients.
 **Arabic**: زكاة (purification, growth)
-**Examples**: Zakat on cash savings, business inventory, gold holdings
-**Related Terms**: Nisab, Hawl, Zakatable Wealth
+**Examples**: Tax on cash savings, business inventory, gold holdings
+**Related Terms**: Threshold, Hawl, Taxable Wealth
 
-## Nisab
+## Threshold
 
 **Category**: Value Object
-**Definition**: Minimum threshold of wealth required before zakat becomes obligatory. Equivalent to 85 grams of gold or 595 grams of silver.
-**Calculation**: Nisab = 85g × Current Gold Price (or 595g × Current Silver Price)
-**Examples**: If gold is $60/gram, nisab = $5,100
-**Related Terms**: Zakat, Zakatable Wealth
+**Definition**: Minimum threshold of wealth required before tax becomes obligatory. Equivalent to 85 grams of gold or 595 grams of silver.
+**Calculation**: Threshold = 85g × Current Gold Price (or 595g × Current Silver Price)
+**Examples**: If gold is $60/gram, threshold = $5,100
+**Related Terms**: Tax, Taxable Wealth
 
 ## Hawl
 
 **Category**: Value Object
-**Definition**: Complete lunar year (354-355 days) during which wealth must be held before zakat becomes due. Calculated using Hijri calendar.
+**Definition**: Complete lunar year (354-355 days) during which wealth must be held before tax becomes due. Calculated using Hijri calendar.
 **Pronunciation**: HOW-l (rhymes with "howl")
-**Examples**: If zakatable wealth first exceeded nisab on 1 Muharram 1444, hawl completes on 1 Muharram 1445
+**Examples**: If taxable wealth first exceeded threshold on 1 Muharram 1444, hawl completes on 1 Muharram 1445
 **Related Terms**: Hijri Date, Lunar Year
 
-## Zakatable Wealth
+## Taxable Wealth
 
 **Category**: Aggregate
-**Definition**: Assets subject to zakat including cash, gold, silver, business inventory, agricultural produce, and livestock. Excludes personal-use items and fixed assets.
+**Definition**: Assets subject to tax including cash, gold, silver, business inventory, agricultural produce, and livestock. Excludes personal-use items and fixed assets.
 **Types**: Cash, Gold, Silver, Trade Goods, Agricultural Produce, Livestock
 **Exclusions**: Primary residence, personal vehicles, work tools
-**Related Terms**: Zakat, Nisab
+**Related Terms**: Tax, Threshold
 ```
 
 **Location**: Store glossaries in:
@@ -246,56 +246,56 @@ See [Glossary Template](./templates/ex-so-ar-dodrdedd-te__ubiquitous-language-gl
 
 Let's examine Ubiquitous Language for Islamic financial concepts:
 
-### Riba Detection Context
+### Interest Detection Context
 
 **Core Terms**:
 
-**Riba** (ربا)
+**Interest** (ربا)
 **Definition**: Prohibited increase or usury in Islamic finance. Any predetermined payment over and above the principal in a loan transaction.
 **Types**:
 
-- **Riba al-Nasi'ah**: Interest on loans (time-based increase)
-- **Riba al-Fadl**: Unequal exchange of same commodity (quantity-based increase)
+- **Interest al-Nasi'ah**: Interest on loans (time-based increase)
+- **Interest al-Fadl**: Unequal exchange of same commodity (quantity-based increase)
   **Examples**: $1,000 loan requiring $1,100 repayment (prohibited)
-  **Halal Alternative**: Murabaha (cost-plus sale), Musharaka (profit-sharing)
+  **Permitted Alternative**: Loan (cost-plus sale), Musharaka (profit-sharing)
 
-**Shariah-Compliant**
-**Definition**: Financial products or transactions that adhere to Islamic law (Shariah), avoiding riba, gharar (excessive uncertainty), and maysir (gambling).
-**Verification**: Approved by Shariah Advisory Board
-**Examples**: Murabaha contracts, Sukuk (Islamic bonds)
+**Compliance-Compliant**
+**Definition**: Financial products or transactions that adhere to Islamic law (Compliance), avoiding interest, gharar (excessive uncertainty), and maysir (gambling).
+**Verification**: Approved by Compliance Advisory Board
+**Examples**: Loan contracts, Sukuk (Islamic bonds)
 
 **Code Example**:
 
 ```typescript
-class RibaDetector {
-  analyze(transaction: FinancialTransaction): RibaAssessment {
+class InterestDetector {
+  analyze(transaction: FinancialTransaction): InterestAssessment {
     const indicators = this.detectIndicators(transaction);
 
     if (indicators.includesInterest) {
-      return RibaAssessment.prohibited(RibaType.AlNasiah, "Transaction includes time-based interest payments");
+      return InterestAssessment.prohibited(InterestType.AlNasiah, "Transaction includes time-based interest payments");
     }
 
     if (indicators.hasUnequalExchange) {
-      return RibaAssessment.prohibited(RibaType.AlFadl, "Unequal exchange of same commodity detected");
+      return InterestAssessment.prohibited(InterestType.AlFadl, "Unequal exchange of same commodity detected");
     }
 
-    return RibaAssessment.compliant();
+    return InterestAssessment.compliant();
   }
 }
 ```
 
-### Halal Certification Context
+### Permitted Certification Context
 
 **Core Terms**:
 
-**Halal** (حلال)
+**Permitted** (حلال)
 **Definition**: Permissible under Islamic law. For products: free from prohibited substances (pork, alcohol, improperly slaughtered meat) and processed according to Islamic principles.
-**Opposite**: Haram (prohibited)
+**Opposite**: Forbidden (prohibited)
 **Verification**: Certified by recognized Islamic authority
-**Examples**: Halal meat, halal-certified cosmetics
+**Examples**: Permitted meat, permitted-certified cosmetics
 
-**Halal Certification Authority**
-**Definition**: Organization authorized to inspect and certify products as halal-compliant.
+**Permitted Certification Authority**
+**Definition**: Organization authorized to inspect and certify products as permitted-compliant.
 **Examples**: JAKIM (Malaysia), HFA (UK), IFANCA (USA)
 **Requirements**: Scholars trained in Islamic jurisprudence, industry-specific knowledge
 
@@ -303,7 +303,7 @@ class RibaDetector {
 
 ```typescript
 class Product {
-  private halalCertification: HalalCertification | null = null;
+  private permittedCertification: PermittedCertification | null = null;
 
   certify(authority: CertificationAuthority, inspectionReport: InspectionReport, expiryDate: Date): void {
     if (!authority.isRecognized()) {
@@ -311,16 +311,20 @@ class Product {
     }
 
     if (!inspectionReport.isCompliant()) {
-      throw new Error("Product does not meet halal standards");
+      throw new Error("Product does not meet permitted standards");
     }
 
-    this.halalCertification = new HalalCertification(authority, expiryDate, inspectionReport.certificationNumber);
+    this.permittedCertification = new PermittedCertification(
+      authority,
+      expiryDate,
+      inspectionReport.certificationNumber,
+    );
 
-    this.addDomainEvent(new ProductCertifiedAsHalal(this.productId, authority, expiryDate));
+    this.addDomainEvent(new ProductCertifiedAsPermitted(this.productId, authority, expiryDate));
   }
 
-  isHalalCertified(): boolean {
-    return this.halalCertification !== null && !this.halalCertification.isExpired();
+  isPermittedCertified(): boolean {
+    return this.permittedCertification !== null && !this.permittedCertification.isExpired();
   }
 }
 ```
@@ -397,7 +401,7 @@ class Payment {
 }
 
 // NEW: After learning about Islamic finance
-class MurabahaContract {
+class LoanContract {
   calculateSellingPrice(costPrice: Money, profitMargin: ProfitMargin): Money {
     // Islamic cost-plus sale: selling price = cost + agreed markup
     return costPrice.add(costPrice.multiply(profitMargin.percentage));
@@ -417,44 +421,44 @@ class MurabahaContract {
 Tests should use Ubiquitous Language extensively:
 
 ```typescript
-describe("Zakat Assessment", () => {
-  it("should exempt wealth holder when zakatable wealth is below nisab", () => {
+describe("Tax Assessment", () => {
+  it("should exempt wealth holder when taxable wealth is below threshold", () => {
     // Arrange
-    const wealthBelowNisab = Money.usd(4000);
-    const nisabThreshold = NisabAmount.fromMoney(Money.usd(5000));
-    const assessment = ZakatAssessment.create(
+    const wealthBelowThreshold = Money.usd(4000);
+    const thresholdThreshold = ThresholdAmount.fromMoney(Money.usd(5000));
+    const assessment = TaxAssessment.create(
       wealthHolderId,
-      zakatableWealth: wealthBelowNisab,
+      taxableWealth: wealthBelowThreshold,
       hawlStartDate: HijriDate.fromString("1444-01-01")
     );
 
     // Act
-    assessment.finalize(nisabThreshold, ZakatRate.standard());
+    assessment.finalize(thresholdThreshold, TaxRate.standard());
 
     // Assert
     expect(assessment.isExempt()).toBe(true);
     expect(assessment.exemptionReason()).toBe(
-      ExemptionReason.BelowNisabThreshold
+      ExemptionReason.BelowThresholdThreshold
     );
   });
 
-  it("should calculate zakat at 2.5% when hawl is complete and wealth exceeds nisab", () => {
+  it("should calculate tax at 2.5% when hawl is complete and wealth exceeds threshold", () => {
     // Arrange: Wealth holder with $10,000 for complete lunar year
-    const zakatableWealth = Money.usd(10000);
-    const nisabThreshold = NisabAmount.fromMoney(Money.usd(5000));
+    const taxableWealth = Money.usd(10000);
+    const thresholdThreshold = ThresholdAmount.fromMoney(Money.usd(5000));
     const pastDate = HijriDate.fromString("1443-01-01"); // Completed hawl
 
-    const assessment = ZakatAssessment.create(
+    const assessment = TaxAssessment.create(
       wealthHolderId,
-      zakatableWealth,
+      taxableWealth,
       pastDate
     );
 
     // Act: Finalize assessment with standard 2.5% rate
-    assessment.finalize(nisabThreshold, ZakatRate.standard());
+    assessment.finalize(thresholdThreshold, TaxRate.standard());
 
-    // Assert: Zakat owed = $10,000 × 2.5% = $250
-    expect(assessment.zakatOwed()).toEqual(Money.usd(250));
+    // Assert: Tax owed = $10,000 × 2.5% = $250
+    expect(assessment.taxOwed()).toEqual(Money.usd(250));
   });
 });
 ```
@@ -465,10 +469,10 @@ Domain experts should be able to read these tests and confirm correctness.
 
 Ensure all documentation uses consistent terminology:
 
-- **User Stories**: "As a wealth holder, I want to declare my zakatable assets so that I can calculate my zakat obligation"
-- **API Documentation**: `POST /zakat-assessments` (not `/tax-calculations`)
-- **UI Labels**: "Nisab Threshold" (not "Minimum Amount")
-- **Database Tables**: `zakat_assessments`, `zakatable_wealth` (not `payments`, `taxable_income`)
+- **User Stories**: "As a wealth holder, I want to declare my taxable assets so that I can calculate my tax obligation"
+- **API Documentation**: `POST /tax-assessments` (not `/tax-calculations`)
+- **UI Labels**: "Threshold Threshold" (not "Minimum Amount")
+- **Database Tables**: `tax_assessments`, `taxable_wealth` (not `payments`, `taxable_income`)
 
 ## Anti-Patterns
 
@@ -487,11 +491,11 @@ class Record {
 }
 
 // BETTER: Domain terminology
-class ZakatAssessment {
-  zakatableWealth: Money;
+class TaxAssessment {
+  taxableWealth: Money;
   status: AssessmentStatus;
-  calculate(zakatRate: ZakatRate): ZakatAmount {
-    return this.zakatableWealth.multiply(zakatRate);
+  calculate(taxRate: TaxRate): TaxAmount {
+    return this.taxableWealth.multiply(taxRate);
   }
 }
 ```
@@ -515,16 +519,16 @@ class AlmsgivingReport {
 }
 
 // BETTER: Consistent terminology
-class ZakatCalculator {
-  calculateZakat(zakatableWealth: Money): ZakatAmount { ... }
+class TaxCalculator {
+  calculateTax(taxableWealth: Money): TaxAmount { ... }
 }
 
-class ZakatService {
-  getZakatOwed(assessment: ZakatAssessment): ZakatAmount { ... }
+class TaxService {
+  getTaxOwed(assessment: TaxAssessment): TaxAmount { ... }
 }
 
-class ZakatReport {
-  generateZakatSummary(): Report { ... }
+class TaxReport {
+  generateTaxSummary(): Report { ... }
 }
 ```
 
@@ -540,7 +544,7 @@ class Account {
 
 // BETTER: Explicit context-specific terms
 class IslamicFinancialAccount {
-  // Clear: Sharia-compliant investment account
+  // Clear: Compliance-compliant investment account
 }
 
 class CustomerAccount {
@@ -580,14 +584,14 @@ class Product {
 }
 ```
 
-**Halal Certification Context**:
+**Permitted Certification Context**:
 
 ```typescript
 class Product {
   productId: ProductId;
   ingredients: Ingredient[];
   supplier: Supplier;
-  halalCertification: HalalCertification | null;
+  permittedCertification: PermittedCertification | null;
 }
 ```
 

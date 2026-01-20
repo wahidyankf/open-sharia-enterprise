@@ -12,7 +12,7 @@ A **Repository** is a persistence abstraction that provides collection-like acce
 - **Persistence Ignorance**: Domain model unaware of database details (SQL, NoSQL, files, etc.)
 - **Consistency Boundary**: Saves and loads entire aggregates atomically
 
-**Example**: `ZakatAssessmentRepository` provides methods like `findById()` and `save()` without exposing whether data is stored in PostgreSQL, MongoDB, or in-memory.
+**Example**: `TaxAssessmentRepository` provides methods like `findById()` and `save()` without exposing whether data is stored in PostgreSQL, MongoDB, or in-memory.
 
 ## Why Repositories Matter
 
@@ -22,11 +22,11 @@ Without repositories, domain code becomes polluted with persistence concerns:
 
 ```typescript
 // WITHOUT Repositories: Persistence logic in domain
-class ZakatCalculationService {
-  async calculateZakat(wealthHolderId: string): Promise<Money> {
+class TaxCalculationService {
+  async calculateTax(wealthHolderId: string): Promise<Money> {
     // Database queries directly in domain service
     const sql = `
-      SELECT * FROM zakat_assessments
+      SELECT * FROM tax_assessments
       WHERE wealth_holder_id = $1 AND status = 'DRAFT'
     `;
     const result = await db.query(sql, [wealthHolderId]);
@@ -36,7 +36,7 @@ class ZakatCalculationService {
     }
 
     // Manual object construction from database rows
-    const assessment = new ZakatAssessment(
+    const assessment = new TaxAssessment(
       result.rows[0].id,
       result.rows[0].wealth_holder_id,
       // ... many more fields
@@ -51,7 +51,7 @@ class ZakatCalculationService {
 
     // ... more database-specific code
 
-    return assessment.finalizedZakat;
+    return assessment.finalizedTax;
   }
 }
 ```
@@ -70,17 +70,17 @@ Repositories solve these problems through clean abstraction:
 
 ```typescript
 // WITH Repositories: Clean separation
-interface ZakatAssessmentRepository {
-  findById(id: AssessmentId): Promise<ZakatAssessment | null>;
-  findDraftByWealthHolder(holderId: WealthHolderId): Promise<ZakatAssessment | null>;
-  save(assessment: ZakatAssessment): Promise<void>;
+interface TaxAssessmentRepository {
+  findById(id: AssessmentId): Promise<TaxAssessment | null>;
+  findDraftByWealthHolder(holderId: WealthHolderId): Promise<TaxAssessment | null>;
+  save(assessment: TaxAssessment): Promise<void>;
   delete(id: AssessmentId): Promise<void>;
 }
 
-class ZakatCalculationService {
-  constructor(private assessmentRepository: ZakatAssessmentRepository) {}
+class TaxCalculationService {
+  constructor(private assessmentRepository: TaxAssessmentRepository) {}
 
-  async calculateZakat(wealthHolderId: WealthHolderId): Promise<Money> {
+  async calculateTax(wealthHolderId: WealthHolderId): Promise<Money> {
     // Clean, domain-focused code
     const assessment = await this.assessmentRepository.findDraftByWealthHolder(wealthHolderId);
 
@@ -88,11 +88,11 @@ class ZakatCalculationService {
       throw new Error("No draft assessment found");
     }
 
-    assessment.finalize(NisabAmount.goldStandard(), ZakatRate.standard());
+    assessment.finalize(ThresholdAmount.goldStandard(), TaxRate.standard());
 
     await this.assessmentRepository.save(assessment);
 
-    return assessment.finalizedZakat!;
+    return assessment.finalizedTax!;
   }
 }
 ```
@@ -122,7 +122,7 @@ class ZakatCalculationService {
 ```typescript
 // ANTI-PATTERN: Repository for internal entity
 interface WealthDeclarationRepository {
-  // WRONG! WealthDeclaration is inside ZakatAssessment aggregate
+  // WRONG! WealthDeclaration is inside TaxAssessment aggregate
   findById(id: WealthDeclarationId): Promise<WealthDeclaration>;
   save(declaration: WealthDeclaration): Promise<void>;
 }
@@ -137,9 +137,9 @@ await wealthDeclarationRepo.save(declaration); // Persists invalid state
 
 ```typescript
 // CORRECT: Repository for aggregate root
-interface ZakatAssessmentRepository {
-  findById(id: AssessmentId): Promise<ZakatAssessment | null>;
-  save(assessment: ZakatAssessment): Promise<void>;
+interface TaxAssessmentRepository {
+  findById(id: AssessmentId): Promise<TaxAssessment | null>;
+  save(assessment: TaxAssessment): Promise<void>;
 }
 
 // Access declarations through aggregate root
@@ -155,20 +155,20 @@ await assessmentRepo.save(assessment); // Entire aggregate saved
 **Collection-Oriented Methods:**
 
 ```typescript
-interface ZakatAssessmentRepository {
+interface TaxAssessmentRepository {
   // Retrieve
-  findById(id: AssessmentId): Promise<ZakatAssessment | null>;
-  findAll(): Promise<ZakatAssessment[]>;
+  findById(id: AssessmentId): Promise<TaxAssessment | null>;
+  findAll(): Promise<TaxAssessment[]>;
 
   // Add/Update
-  save(assessment: ZakatAssessment): Promise<void>; // Insert or update
+  save(assessment: TaxAssessment): Promise<void>; // Insert or update
 
   // Remove
   delete(id: AssessmentId): Promise<void>;
 
   // Query
-  findByWealthHolder(holderId: WealthHolderId): Promise<ZakatAssessment[]>;
-  findFinalized(startDate: HijriDate, endDate: HijriDate): Promise<ZakatAssessment[]>;
+  findByWealthHolder(holderId: WealthHolderId): Promise<TaxAssessment[]>;
+  findFinalized(startDate: HijriDate, endDate: HijriDate): Promise<TaxAssessment[]>;
 }
 ```
 
@@ -183,9 +183,9 @@ interface ZakatAssessmentRepository {
 Some prefer explicit `add()` and `update()` instead of `save()`:
 
 ```typescript
-interface ZakatAssessmentRepository {
-  add(assessment: ZakatAssessment): Promise<void>; // Insert only
-  update(assessment: ZakatAssessment): Promise<void>; // Update only
+interface TaxAssessmentRepository {
+  add(assessment: TaxAssessment): Promise<void>; // Insert only
+  update(assessment: TaxAssessment): Promise<void>; // Update only
   remove(id: AssessmentId): Promise<void>;
 }
 ```
@@ -224,50 +224,50 @@ interface ZakatAssessmentRepository {
 **Domain Layer (Interface):**
 
 ```typescript
-// domain/repositories/ZakatAssessmentRepository.ts
-export interface ZakatAssessmentRepository {
-  findById(id: AssessmentId): Promise<ZakatAssessment | null>;
-  save(assessment: ZakatAssessment): Promise<void>;
-  findByWealthHolder(holderId: WealthHolderId): Promise<ZakatAssessment[]>;
+// domain/repositories/TaxAssessmentRepository.ts
+export interface TaxAssessmentRepository {
+  findById(id: AssessmentId): Promise<TaxAssessment | null>;
+  save(assessment: TaxAssessment): Promise<void>;
+  findByWealthHolder(holderId: WealthHolderId): Promise<TaxAssessment[]>;
 }
 ```
 
 **Infrastructure Layer (Implementation):**
 
 ```typescript
-// infrastructure/repositories/PostgresZakatAssessmentRepository.ts
-import { ZakatAssessmentRepository } from "../../domain/repositories/ZakatAssessmentRepository";
+// infrastructure/repositories/PostgresTaxAssessmentRepository.ts
+import { TaxAssessmentRepository } from "../../domain/repositories/TaxAssessmentRepository";
 
-export class PostgresZakatAssessmentRepository implements ZakatAssessmentRepository {
+export class PostgresTaxAssessmentRepository implements TaxAssessmentRepository {
   constructor(private db: DatabaseConnection) {}
 
-  async findById(id: AssessmentId): Promise<ZakatAssessment | null> {
-    const row = await this.db.query("SELECT * FROM zakat_assessments WHERE id = $1", [id.toString()]);
+  async findById(id: AssessmentId): Promise<TaxAssessment | null> {
+    const row = await this.db.query("SELECT * FROM tax_assessments WHERE id = $1", [id.toString()]);
 
     if (!row) return null;
 
     return this.toDomain(row);
   }
 
-  async save(assessment: ZakatAssessment): Promise<void> {
+  async save(assessment: TaxAssessment): Promise<void> {
     const data = this.toPersistence(assessment);
-    await this.db.query("INSERT INTO zakat_assessments (...) VALUES (...) ON CONFLICT (id) DO UPDATE ...", data);
+    await this.db.query("INSERT INTO tax_assessments (...) VALUES (...) ON CONFLICT (id) DO UPDATE ...", data);
   }
 
-  async findByWealthHolder(holderId: WealthHolderId): Promise<ZakatAssessment[]> {
-    const rows = await this.db.query("SELECT * FROM zakat_assessments WHERE wealth_holder_id = $1", [
+  async findByWealthHolder(holderId: WealthHolderId): Promise<TaxAssessment[]> {
+    const rows = await this.db.query("SELECT * FROM tax_assessments WHERE wealth_holder_id = $1", [
       holderId.toString(),
     ]);
 
     return rows.map((row) => this.toDomain(row));
   }
 
-  private toDomain(row: any): ZakatAssessment {
+  private toDomain(row: any): TaxAssessment {
     // Map database row to domain aggregate
     // ...
   }
 
-  private toPersistence(assessment: ZakatAssessment): any {
+  private toPersistence(assessment: TaxAssessment): any {
     // Map domain aggregate to database row
     // ...
   }
@@ -288,15 +288,15 @@ export class PostgresZakatAssessmentRepository implements ZakatAssessmentReposit
 
 ```typescript
 // ANTI-PATTERN: Returning database DTOs
-interface ZakatAssessmentRepository {
-  findById(id: string): Promise<ZakatAssessmentDTO>; // Wrong! DTO, not domain object
+interface TaxAssessmentRepository {
+  findById(id: string): Promise<TaxAssessmentDTO>; // Wrong! DTO, not domain object
 }
 
-type ZakatAssessmentDTO = {
+type TaxAssessmentDTO = {
   id: string;
   wealth_holder_id: string; // Database column name
   status: string;
-  zakat_amount: number;
+  tax_amount: number;
   // ... flat database structure
 };
 ```
@@ -305,21 +305,21 @@ type ZakatAssessmentDTO = {
 
 ```typescript
 // CORRECT: Returning domain aggregates
-interface ZakatAssessmentRepository {
-  findById(id: AssessmentId): Promise<ZakatAssessment | null>; // Domain aggregate
+interface TaxAssessmentRepository {
+  findById(id: AssessmentId): Promise<TaxAssessment | null>; // Domain aggregate
 }
 
-// ZakatAssessment is rich domain model with behavior
-class ZakatAssessment {
+// TaxAssessment is rich domain model with behavior
+class TaxAssessment {
   constructor(
     readonly id: AssessmentId,
     readonly wealthHolderId: WealthHolderId,
     private declarations: WealthDeclaration[],
     private status: AssessmentStatus,
-    private zakatAmount: Money | null,
+    private taxAmount: Money | null,
   ) {}
 
-  finalize(nisab: NisabAmount, rate: ZakatRate): void {
+  finalize(threshold: ThresholdAmount, rate: TaxRate): void {
     // Rich behavior
   }
 }
@@ -332,16 +332,16 @@ class ZakatAssessment {
 **Common Query Patterns:**
 
 ```typescript
-interface ZakatAssessmentRepository {
+interface TaxAssessmentRepository {
   // Basic CRUD
-  findById(id: AssessmentId): Promise<ZakatAssessment | null>;
-  save(assessment: ZakatAssessment): Promise<void>;
+  findById(id: AssessmentId): Promise<TaxAssessment | null>;
+  save(assessment: TaxAssessment): Promise<void>;
   delete(id: AssessmentId): Promise<void>;
 
   // Domain queries
-  findDraftByWealthHolder(holderId: WealthHolderId): Promise<ZakatAssessment | null>;
-  findFinalizedInPeriod(startDate: HijriDate, endDate: HijriDate): Promise<ZakatAssessment[]>;
-  findExemptBelowNisab(year: number): Promise<ZakatAssessment[]>;
+  findDraftByWealthHolder(holderId: WealthHolderId): Promise<TaxAssessment | null>;
+  findFinalizedInPeriod(startDate: HijriDate, endDate: HijriDate): Promise<TaxAssessment[]>;
+  findExemptBelowThreshold(year: number): Promise<TaxAssessment[]>;
 
   // Existence checks
   existsForWealthHolder(holderId: WealthHolderId, year: number): Promise<boolean>;
@@ -365,10 +365,10 @@ In FP, repositories become pure functions that return I/O actions:
 
 ```typescript
 // FP-style repository: pure functions returning I/O effects
-type ZakatAssessmentRepository = {
-  findById: (id: AssessmentId) => IO<Option<ZakatAssessment>>;
-  save: (assessment: ZakatAssessment) => IO<void>;
-  findByWealthHolder: (holderId: WealthHolderId) => IO<ZakatAssessment[]>;
+type TaxAssessmentRepository = {
+  findById: (id: AssessmentId) => IO<Option<TaxAssessment>>;
+  save: (assessment: TaxAssessment) => IO<void>;
+  findByWealthHolder: (holderId: WealthHolderId) => IO<TaxAssessment[]>;
 };
 
 // IO represents deferred side effect
@@ -378,27 +378,27 @@ type IO<A> = () => Promise<A>;
 type Option<A> = { type: "Some"; value: A } | { type: "None" };
 
 // Implementation
-function createPostgresZakatAssessmentRepository(db: Database): ZakatAssessmentRepository {
+function createPostgresTaxAssessmentRepository(db: Database): TaxAssessmentRepository {
   return {
     findById: (id: AssessmentId) => async () => {
-      const row = await db.query("SELECT * FROM zakat_assessments WHERE id = $1", [id.toString()]);
+      const row = await db.query("SELECT * FROM tax_assessments WHERE id = $1", [id.toString()]);
       return row ? { type: "Some", value: toDomain(row) } : { type: "None" };
     },
 
-    save: (assessment: ZakatAssessment) => async () => {
+    save: (assessment: TaxAssessment) => async () => {
       const data = toPersistence(assessment);
       await db.query("INSERT INTO ... ON CONFLICT ...", data);
     },
 
     findByWealthHolder: (holderId: WealthHolderId) => async () => {
-      const rows = await db.query("SELECT * FROM zakat_assessments WHERE wealth_holder_id = $1", [holderId.toString()]);
+      const rows = await db.query("SELECT * FROM tax_assessments WHERE wealth_holder_id = $1", [holderId.toString()]);
       return rows.map(toDomain);
     },
   };
 }
 
 // Usage: IO actions are composable
-async function calculateZakatUseCase(wealthHolderId: WealthHolderId, repo: ZakatAssessmentRepository): Promise<Money> {
+async function calculateTaxUseCase(wealthHolderId: WealthHolderId, repo: TaxAssessmentRepository): Promise<Money> {
   // Execute I/O action
   const assessments = await repo.findByWealthHolder(wealthHolderId)();
 
@@ -408,11 +408,11 @@ async function calculateZakatUseCase(wealthHolderId: WealthHolderId, repo: Zakat
     throw new Error("No draft assessment");
   }
 
-  const finalized = finalizeAssessment(draftAssessment, NisabAmount.goldStandard(), ZakatRate.standard());
+  const finalized = finalizeAssessment(draftAssessment, ThresholdAmount.goldStandard(), TaxRate.standard());
 
   await repo.save(finalized)();
 
-  return finalized.zakatAmount!;
+  return finalized.taxAmount!;
 }
 ```
 
@@ -430,14 +430,14 @@ See [DDD and Functional Programming](./ex-so-ar-dodrdedd__14-ddd-and-functional-
 ### Pattern 1: In-Memory Repository (Testing)
 
 ```typescript
-export class InMemoryZakatAssessmentRepository implements ZakatAssessmentRepository {
-  private assessments: Map<string, ZakatAssessment> = new Map();
+export class InMemoryTaxAssessmentRepository implements TaxAssessmentRepository {
+  private assessments: Map<string, TaxAssessment> = new Map();
 
-  async findById(id: AssessmentId): Promise<ZakatAssessment | null> {
+  async findById(id: AssessmentId): Promise<TaxAssessment | null> {
     return this.assessments.get(id.toString()) ?? null;
   }
 
-  async save(assessment: ZakatAssessment): Promise<void> {
+  async save(assessment: TaxAssessment): Promise<void> {
     // Clone to simulate persistence (prevent in-memory mutation affecting stored version)
     const clone = this.clone(assessment);
     this.assessments.set(assessment.id.toString(), clone);
@@ -447,7 +447,7 @@ export class InMemoryZakatAssessmentRepository implements ZakatAssessmentReposit
     this.assessments.delete(id.toString());
   }
 
-  async findByWealthHolder(holderId: WealthHolderId): Promise<ZakatAssessment[]> {
+  async findByWealthHolder(holderId: WealthHolderId): Promise<TaxAssessment[]> {
     return Array.from(this.assessments.values()).filter((a) => a.wealthHolderId.equals(holderId));
   }
 
@@ -456,7 +456,7 @@ export class InMemoryZakatAssessmentRepository implements ZakatAssessmentReposit
     this.assessments.clear();
   }
 
-  private clone(assessment: ZakatAssessment): ZakatAssessment {
+  private clone(assessment: TaxAssessment): TaxAssessment {
     // Deep clone implementation
     return JSON.parse(JSON.stringify(assessment));
   }
@@ -468,13 +468,13 @@ export class InMemoryZakatAssessmentRepository implements ZakatAssessmentReposit
 ### Pattern 2: SQL Repository (Relational Database)
 
 ```typescript
-export class PostgresZakatAssessmentRepository implements ZakatAssessmentRepository {
+export class PostgresTaxAssessmentRepository implements TaxAssessmentRepository {
   constructor(private db: DatabaseConnection) {}
 
-  async findById(id: AssessmentId): Promise<ZakatAssessment | null> {
+  async findById(id: AssessmentId): Promise<TaxAssessment | null> {
     const assessmentRow = await this.db.queryOne(
       `
-      SELECT * FROM zakat_assessments
+      SELECT * FROM tax_assessments
       WHERE id = $1
     `,
       [id.toString()],
@@ -494,24 +494,24 @@ export class PostgresZakatAssessmentRepository implements ZakatAssessmentReposit
     return this.toDomain(assessmentRow, declarationRows);
   }
 
-  async save(assessment: ZakatAssessment): Promise<void> {
+  async save(assessment: TaxAssessment): Promise<void> {
     await this.db.transaction(async (tx) => {
       // Upsert assessment
       await tx.query(
         `
-        INSERT INTO zakat_assessments (id, wealth_holder_id, status, zakat_amount, ...)
+        INSERT INTO tax_assessments (id, wealth_holder_id, status, tax_amount, ...)
         VALUES ($1, $2, $3, $4, ...)
         ON CONFLICT (id) DO UPDATE SET
           wealth_holder_id = EXCLUDED.wealth_holder_id,
           status = EXCLUDED.status,
-          zakat_amount = EXCLUDED.zakat_amount,
+          tax_amount = EXCLUDED.tax_amount,
           ...
       `,
         [
           assessment.id.toString(),
           assessment.wealthHolderId.toString(),
           assessment.status,
-          assessment.zakatAmount?.amount ?? null,
+          assessment.taxAmount?.amount ?? null,
           // ...
         ],
       );
@@ -532,17 +532,17 @@ export class PostgresZakatAssessmentRepository implements ZakatAssessmentReposit
     });
   }
 
-  private toDomain(assessmentRow: any, declarationRows: any[]): ZakatAssessment {
+  private toDomain(assessmentRow: any, declarationRows: any[]): TaxAssessment {
     const declarations = declarationRows.map(
       (row) => new WealthDeclaration(WealthDeclarationId.from(row.id), row.wealth_type, Money.usd(row.amount)),
     );
 
-    return new ZakatAssessment(
+    return new TaxAssessment(
       AssessmentId.from(assessmentRow.id),
       WealthHolderId.from(assessmentRow.wealth_holder_id),
       declarations,
       assessmentRow.status,
-      assessmentRow.zakat_amount ? Money.usd(assessmentRow.zakat_amount) : null,
+      assessmentRow.tax_amount ? Money.usd(assessmentRow.tax_amount) : null,
     );
   }
 }
@@ -557,10 +557,10 @@ export class PostgresZakatAssessmentRepository implements ZakatAssessmentReposit
 ### Pattern 3: Document Store Repository (NoSQL)
 
 ```typescript
-export class MongoZakatAssessmentRepository implements ZakatAssessmentRepository {
+export class MongoTaxAssessmentRepository implements TaxAssessmentRepository {
   constructor(private collection: Collection) {}
 
-  async findById(id: AssessmentId): Promise<ZakatAssessment | null> {
+  async findById(id: AssessmentId): Promise<TaxAssessment | null> {
     const doc = await this.collection.findOne({ _id: id.toString() });
 
     if (!doc) return null;
@@ -568,19 +568,19 @@ export class MongoZakatAssessmentRepository implements ZakatAssessmentRepository
     return this.toDomain(doc);
   }
 
-  async save(assessment: ZakatAssessment): Promise<void> {
+  async save(assessment: TaxAssessment): Promise<void> {
     const doc = this.toPersistence(assessment);
 
     await this.collection.replaceOne({ _id: assessment.id.toString() }, doc, { upsert: true });
   }
 
-  async findByWealthHolder(holderId: WealthHolderId): Promise<ZakatAssessment[]> {
+  async findByWealthHolder(holderId: WealthHolderId): Promise<TaxAssessment[]> {
     const docs = await this.collection.find({ wealthHolderId: holderId.toString() }).toArray();
 
     return docs.map((doc) => this.toDomain(doc));
   }
 
-  private toDomain(doc: any): ZakatAssessment {
+  private toDomain(doc: any): TaxAssessment {
     const declarations = doc.declarations.map(
       (d: any) =>
         new WealthDeclaration(
@@ -590,24 +590,24 @@ export class MongoZakatAssessmentRepository implements ZakatAssessmentRepository
         ),
     );
 
-    return new ZakatAssessment(
+    return new TaxAssessment(
       AssessmentId.from(doc._id),
       WealthHolderId.from(doc.wealthHolderId),
       declarations,
       doc.status,
-      doc.zakatAmount ? new Money(doc.zakatAmount.value, doc.zakatAmount.currency) : null,
+      doc.taxAmount ? new Money(doc.taxAmount.value, doc.taxAmount.currency) : null,
     );
   }
 
-  private toPersistence(assessment: ZakatAssessment): any {
+  private toPersistence(assessment: TaxAssessment): any {
     return {
       _id: assessment.id.toString(),
       wealthHolderId: assessment.wealthHolderId.toString(),
       status: assessment.status,
-      zakatAmount: assessment.zakatAmount
+      taxAmount: assessment.taxAmount
         ? {
-            value: assessment.zakatAmount.amount,
-            currency: assessment.zakatAmount.currency,
+            value: assessment.taxAmount.amount,
+            currency: assessment.taxAmount.currency,
           }
         : null,
       declarations: assessment.declarations.map((d) => ({
@@ -632,10 +632,10 @@ export class MongoZakatAssessmentRepository implements ZakatAssessmentRepository
 ### Pattern 4: Event Sourcing Repository
 
 ```typescript
-export class EventSourcedZakatAssessmentRepository implements ZakatAssessmentRepository {
+export class EventSourcedTaxAssessmentRepository implements TaxAssessmentRepository {
   constructor(private eventStore: EventStore) {}
 
-  async findById(id: AssessmentId): Promise<ZakatAssessment | null> {
+  async findById(id: AssessmentId): Promise<TaxAssessment | null> {
     // Load all events for aggregate
     const events = await this.eventStore.getEvents(id.toString());
 
@@ -645,7 +645,7 @@ export class EventSourcedZakatAssessmentRepository implements ZakatAssessmentRep
     return this.replayEvents(events);
   }
 
-  async save(assessment: ZakatAssessment): Promise<void> {
+  async save(assessment: TaxAssessment): Promise<void> {
     // Extract domain events
     const events = assessment.popDomainEvents();
 
@@ -653,16 +653,16 @@ export class EventSourcedZakatAssessmentRepository implements ZakatAssessmentRep
     await this.eventStore.appendEvents(assessment.id.toString(), events);
   }
 
-  private replayEvents(events: DomainEvent[]): ZakatAssessment {
+  private replayEvents(events: DomainEvent[]): TaxAssessment {
     // Start with initial state
-    let assessment: ZakatAssessment | null = null;
+    let assessment: TaxAssessment | null = null;
 
     for (const event of events) {
       if (event instanceof AssessmentCreated) {
-        assessment = ZakatAssessment.create(event.wealthHolderId);
+        assessment = TaxAssessment.create(event.wealthHolderId);
       } else if (event instanceof WealthDeclared && assessment) {
         assessment.declareWealth(event.wealthType, event.amount, event.acquiredDate);
-      } else if (event instanceof ZakatCalculated && assessment) {
+      } else if (event instanceof TaxCalculated && assessment) {
         // Apply finalization
       }
       // ... handle other events
@@ -690,9 +690,9 @@ export class EventSourcedZakatAssessmentRepository implements ZakatAssessmentRep
 ### Unit Testing Domain Logic (Mock Repository)
 
 ```typescript
-describe("ZakatCalculationService", () => {
-  let service: ZakatCalculationService;
-  let mockRepo: ZakatAssessmentRepository;
+describe("TaxCalculationService", () => {
+  let service: TaxCalculationService;
+  let mockRepo: TaxAssessmentRepository;
 
   beforeEach(() => {
     // Mock repository
@@ -702,18 +702,18 @@ describe("ZakatCalculationService", () => {
       findByWealthHolder: jest.fn(),
     } as any;
 
-    service = new ZakatCalculationService(mockRepo);
+    service = new TaxCalculationService(mockRepo);
   });
 
   it("should finalize assessment when called", async () => {
     // Arrange
-    const assessment = ZakatAssessment.create(wealthHolderId);
+    const assessment = TaxAssessment.create(wealthHolderId);
     assessment.addDeclaration(WealthType.Cash, Money.usd(10000));
 
     mockRepo.findByWealthHolder = jest.fn().mockResolvedValue([assessment]);
 
     // Act
-    await service.calculateZakat(wealthHolderId);
+    await service.calculateTax(wealthHolderId);
 
     // Assert
     expect(mockRepo.save).toHaveBeenCalledWith(
@@ -728,13 +728,13 @@ describe("ZakatCalculationService", () => {
 ### Integration Testing Repository Implementation
 
 ```typescript
-describe("PostgresZakatAssessmentRepository", () => {
-  let repo: PostgresZakatAssessmentRepository;
+describe("PostgresTaxAssessmentRepository", () => {
+  let repo: PostgresTaxAssessmentRepository;
   let db: DatabaseConnection;
 
   beforeEach(async () => {
     db = await createTestDatabase();
-    repo = new PostgresZakatAssessmentRepository(db);
+    repo = new PostgresTaxAssessmentRepository(db);
   });
 
   afterEach(async () => {
@@ -743,7 +743,7 @@ describe("PostgresZakatAssessmentRepository", () => {
 
   it("should save and retrieve assessment with declarations", async () => {
     // Arrange
-    const assessment = ZakatAssessment.create(wealthHolderId);
+    const assessment = TaxAssessment.create(wealthHolderId);
     assessment.addDeclaration(WealthType.Cash, Money.usd(10000));
     assessment.addDeclaration(WealthType.Gold, Money.usd(5000));
 
@@ -759,7 +759,7 @@ describe("PostgresZakatAssessmentRepository", () => {
 
   it("should update existing assessment on save", async () => {
     // Arrange
-    const assessment = ZakatAssessment.create(wealthHolderId);
+    const assessment = TaxAssessment.create(wealthHolderId);
     await repo.save(assessment);
 
     // Act
@@ -783,7 +783,7 @@ describe("PostgresZakatAssessmentRepository", () => {
 ```typescript
 // ANTI-PATTERN
 interface WealthDeclarationRepository {
-  // WealthDeclaration is inside ZakatAssessment aggregate
+  // WealthDeclaration is inside TaxAssessment aggregate
   save(declaration: WealthDeclaration): Promise<void>;
 }
 ```
@@ -796,9 +796,9 @@ interface WealthDeclarationRepository {
 
 ```typescript
 // ANTI-PATTERN: Too minimal
-interface ZakatAssessmentRepository {
-  findById(id: AssessmentId): Promise<ZakatAssessment>;
-  save(assessment: ZakatAssessment): Promise<void>;
+interface TaxAssessmentRepository {
+  findById(id: AssessmentId): Promise<TaxAssessment>;
+  save(assessment: TaxAssessment): Promise<void>;
 }
 
 // Forces inefficient in-memory filtering
@@ -810,10 +810,10 @@ const drafts = allAssessments.filter((a) => a.status === AssessmentStatus.Draft)
 
 ```typescript
 // CORRECT
-interface ZakatAssessmentRepository {
-  findById(id: AssessmentId): Promise<ZakatAssessment | null>;
-  save(assessment: ZakatAssessment): Promise<void>;
-  findDraftsByWealthHolder(holderId: WealthHolderId): Promise<ZakatAssessment[]>; // Optimized query
+interface TaxAssessmentRepository {
+  findById(id: AssessmentId): Promise<TaxAssessment | null>;
+  save(assessment: TaxAssessment): Promise<void>;
+  findDraftsByWealthHolder(holderId: WealthHolderId): Promise<TaxAssessment[]>; // Optimized query
 }
 ```
 
@@ -823,7 +823,7 @@ interface ZakatAssessmentRepository {
 
 ```typescript
 // ANTI-PATTERN: Database concepts in interface
-interface ZakatAssessmentRepository {
+interface TaxAssessmentRepository {
   executeQuery(sql: string, params: any[]): Promise<any>; // SQL leak!
   findWithPagination(offset: number, limit: number): Promise<{ rows: any[]; hasMore: boolean }>; // Database pagination
 }
@@ -833,9 +833,9 @@ interface ZakatAssessmentRepository {
 
 ```typescript
 // CORRECT
-interface ZakatAssessmentRepository {
-  findByWealthHolder(holderId: WealthHolderId): Promise<ZakatAssessment[]>;
-  findFinalized(year: number): Promise<ZakatAssessment[]>;
+interface TaxAssessmentRepository {
+  findByWealthHolder(holderId: WealthHolderId): Promise<TaxAssessment[]>;
+  findFinalized(year: number): Promise<TaxAssessment[]>;
 }
 ```
 
@@ -845,8 +845,8 @@ interface ZakatAssessmentRepository {
 
 ```typescript
 // ANTI-PATTERN: Incomplete save
-async save(assessment: ZakatAssessment): Promise<void> {
-  await this.db.query("INSERT INTO zakat_assessments (...) VALUES (...)", [
+async save(assessment: TaxAssessment): Promise<void> {
+  await this.db.query("INSERT INTO tax_assessments (...) VALUES (...)", [
     /*...*/
   ]);
   // Forgot to save declarations!
@@ -870,7 +870,7 @@ async findById(id: string): Promise<AssessmentRow> {
 
 ```typescript
 // CORRECT
-async findById(id: AssessmentId): Promise<ZakatAssessment | null> {
+async findById(id: AssessmentId): Promise<TaxAssessment | null> {
   const row = await this.db.query(/*...*/);
   return this.toDomain(row);
 }

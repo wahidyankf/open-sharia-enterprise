@@ -501,96 +501,96 @@ describe("Money Properties", () => {
 });
 ```
 
-## Islamic Finance Example: Zakat Calculation Properties
+## Islamic Finance Example: Tax Calculation Properties
 
 ```typescript
-// File: zakat-calculator.property.spec.ts
+// File: tax-calculator.property.spec.ts
 import fc from "fast-check";
-import { ZakatCalculator } from "./zakat-calculator";
+import { TaxCalculator } from "./tax-calculator";
 import { Money } from "./money";
 
 // Custom arbitraries
 const wealthArbitrary = () =>
   fc.double({ min: 0, max: 1000000, noNaN: true }).map((amount) => Money.fromAmount(amount, "USD"));
 
-const nisabArbitrary = () =>
+const thresholdArbitrary = () =>
   fc.double({ min: 0, max: 10000, noNaN: true }).map((amount) => Money.fromAmount(amount, "USD"));
 
-describe("ZakatCalculator Properties", () => {
-  let calculator: ZakatCalculator;
+describe("TaxCalculator Properties", () => {
+  let calculator: TaxCalculator;
 
   beforeEach(() => {
-    calculator = new ZakatCalculator();
+    calculator = new TaxCalculator();
   });
 
-  describe("zakat calculation properties", () => {
-    it("should always calculate 2.5% of wealth when above nisab", () => {
+  describe("tax calculation properties", () => {
+    it("should always calculate 2.5% of wealth when above threshold", () => {
       fc.assert(
-        fc.property(wealthArbitrary(), nisabArbitrary(), (wealth, nisab) => {
-          // Pre-condition: wealth >= nisab
-          fc.pre(wealth.isGreaterThanOrEqual(nisab));
+        fc.property(wealthArbitrary(), thresholdArbitrary(), (wealth, threshold) => {
+          // Pre-condition: wealth >= threshold
+          fc.pre(wealth.isGreaterThanOrEqual(threshold));
 
           // Act
-          const zakat = calculator.calculateZakat(wealth, nisab);
+          const tax = calculator.calculateTax(wealth, threshold);
 
           // Assert - always 2.5%
-          const expectedZakat = wealth.multiply(0.025);
-          return Math.abs(zakat.amount - expectedZakat.amount) < 0.01;
+          const expectedTax = wealth.multiply(0.025);
+          return Math.abs(tax.amount - expectedTax.amount) < 0.01;
         }),
       );
     });
 
-    it("should always return zero when wealth below nisab", () => {
+    it("should always return zero when wealth below threshold", () => {
       fc.assert(
-        fc.property(wealthArbitrary(), nisabArbitrary(), (wealth, nisab) => {
-          // Pre-condition: wealth < nisab
-          fc.pre(wealth.amount < nisab.amount);
+        fc.property(wealthArbitrary(), thresholdArbitrary(), (wealth, threshold) => {
+          // Pre-condition: wealth < threshold
+          fc.pre(wealth.amount < threshold.amount);
 
           // Act
-          const zakat = calculator.calculateZakat(wealth, nisab);
+          const tax = calculator.calculateTax(wealth, threshold);
 
-          // Assert - zero zakat
-          return zakat.equals(Money.zero(wealth.currency));
+          // Assert - zero tax
+          return tax.equals(Money.zero(wealth.currency));
         }),
       );
     });
 
-    it("should never return negative zakat", () => {
+    it("should never return negative tax", () => {
       fc.assert(
-        fc.property(wealthArbitrary(), nisabArbitrary(), (wealth, nisab) => {
+        fc.property(wealthArbitrary(), thresholdArbitrary(), (wealth, threshold) => {
           // Act
-          const zakat = calculator.calculateZakat(wealth, nisab);
+          const tax = calculator.calculateTax(wealth, threshold);
 
           // Assert - non-negative
-          return zakat.amount >= 0;
+          return tax.amount >= 0;
         }),
       );
     });
 
     it("should always return amount less than or equal to wealth", () => {
       fc.assert(
-        fc.property(wealthArbitrary(), nisabArbitrary(), (wealth, nisab) => {
+        fc.property(wealthArbitrary(), thresholdArbitrary(), (wealth, threshold) => {
           // Act
-          const zakat = calculator.calculateZakat(wealth, nisab);
+          const tax = calculator.calculateTax(wealth, threshold);
 
-          // Assert - zakat <= wealth
-          return zakat.amount <= wealth.amount;
+          // Assert - tax <= wealth
+          return tax.amount <= wealth.amount;
         }),
       );
     });
 
-    it("should be monotonic: more wealth = more or equal zakat", () => {
+    it("should be monotonic: more wealth = more or equal tax", () => {
       fc.assert(
-        fc.property(wealthArbitrary(), wealthArbitrary(), nisabArbitrary(), (wealth1, wealth2, nisab) => {
+        fc.property(wealthArbitrary(), wealthArbitrary(), thresholdArbitrary(), (wealth1, wealth2, threshold) => {
           // Pre-condition: wealth1 < wealth2
           fc.pre(wealth1.amount < wealth2.amount);
 
           // Act
-          const zakat1 = calculator.calculateZakat(wealth1, nisab);
-          const zakat2 = calculator.calculateZakat(wealth2, nisab);
+          const tax1 = calculator.calculateTax(wealth1, threshold);
+          const tax2 = calculator.calculateTax(wealth2, threshold);
 
           // Assert - monotonic property
-          return zakat2.amount >= zakat1.amount;
+          return tax2.amount >= tax1.amount;
         }),
       );
     });
@@ -601,24 +601,24 @@ describe("ZakatCalculator Properties", () => {
           fc.double({ min: 0, max: 100000, noNaN: true }),
           fc.double({ min: 0, max: 10000, noNaN: true }),
           currencyArbitrary(),
-          (wealthAmount, nisabAmount, currency) => {
+          (wealthAmount, thresholdAmount, currency) => {
             // Arrange
             const wealth = Money.fromAmount(wealthAmount, currency);
-            const nisab = Money.fromAmount(nisabAmount, currency);
+            const threshold = Money.fromAmount(thresholdAmount, currency);
 
             // Act
-            const zakat = calculator.calculateZakat(wealth, nisab);
+            const tax = calculator.calculateTax(wealth, threshold);
 
             // Assert - same currency
-            return zakat.currency === currency;
+            return tax.currency === currency;
           },
         ),
       );
     });
   });
 
-  describe("nisab calculation properties", () => {
-    it("should be linear: double gold price = double nisab", () => {
+  describe("threshold calculation properties", () => {
+    it("should be linear: double gold price = double threshold", () => {
       fc.assert(
         fc.property(fc.double({ min: 1, max: 1000, noNaN: true }), currencyArbitrary(), (goldPrice, currency) => {
           // Arrange
@@ -626,11 +626,11 @@ describe("ZakatCalculator Properties", () => {
           const price2 = Money.fromAmount(goldPrice * 2, currency);
 
           // Act
-          const nisab1 = calculator.calculateNisab(price1);
-          const nisab2 = calculator.calculateNisab(price2);
+          const threshold1 = calculator.calculateThreshold(price1);
+          const threshold2 = calculator.calculateThreshold(price2);
 
           // Assert - linear scaling
-          return Math.abs(nisab2.amount - nisab1.amount * 2) < 0.01;
+          return Math.abs(threshold2.amount - threshold1.amount * 2) < 0.01;
         }),
       );
     });
@@ -642,11 +642,11 @@ describe("ZakatCalculator Properties", () => {
           const price = Money.fromAmount(goldPrice, currency);
 
           // Act
-          const nisab = calculator.calculateNisab(price);
+          const threshold = calculator.calculateThreshold(price);
 
           // Assert - 85 grams
           const expected = goldPrice * 85;
-          return Math.abs(nisab.amount - expected) < 0.01;
+          return Math.abs(threshold.amount - expected) < 0.01;
         }),
       );
     });
@@ -657,12 +657,12 @@ describe("ZakatCalculator Properties", () => {
 const currencyArbitrary = () => fc.constantFrom("USD", "EUR", "SAR", "AED");
 ```
 
-## Example: Riba Detection Properties
+## Example: Interest Detection Properties
 
 ```typescript
-// File: riba-detector.property.spec.ts
+// File: interest-detector.property.spec.ts
 import fc from "fast-check";
-import { RibaDetector } from "./riba-detector";
+import { InterestDetector } from "./interest-detector";
 import { Transaction } from "./transaction";
 
 const transactionArbitrary = () =>
@@ -674,14 +674,14 @@ const transactionArbitrary = () =>
     term: fc.integer({ min: 1, max: 360 }),
   });
 
-describe("RibaDetector Properties", () => {
-  let detector: RibaDetector;
+describe("InterestDetector Properties", () => {
+  let detector: InterestDetector;
 
   beforeEach(() => {
-    detector = new RibaDetector();
+    detector = new InterestDetector();
   });
 
-  describe("riba detection properties", () => {
+  describe("interest detection properties", () => {
     it("should always flag transactions with interest rate > 0", () => {
       fc.assert(
         fc.property(transactionArbitrary(), (txn) => {
@@ -689,10 +689,10 @@ describe("RibaDetector Properties", () => {
           fc.pre(txn.interestRate > 0);
 
           // Act
-          const hasRiba = detector.detectRiba(txn);
+          const hasInterest = detector.detectInterest(txn);
 
           // Assert - always detected
-          return hasRiba === true;
+          return hasInterest === true;
         }),
       );
     });
@@ -704,10 +704,10 @@ describe("RibaDetector Properties", () => {
           const zeroInterestTxn = { ...txn, interestRate: 0 };
 
           // Act
-          const hasRiba = detector.detectRiba(zeroInterestTxn);
+          const hasInterest = detector.detectInterest(zeroInterestTxn);
 
           // Assert - never detected
-          return hasRiba === false;
+          return hasInterest === false;
         }),
       );
     });
@@ -716,8 +716,8 @@ describe("RibaDetector Properties", () => {
       fc.assert(
         fc.property(transactionArbitrary(), (txn) => {
           // Act
-          const result1 = detector.detectRiba(txn);
-          const result2 = detector.detectRiba(txn);
+          const result1 = detector.detectInterest(txn);
+          const result2 = detector.detectInterest(txn);
 
           // Assert - deterministic
           return result1 === result2;
@@ -828,8 +828,8 @@ When fast-check finds a failing test, it automatically shrinks the input to find
 ```typescript
 // ✅ GOOD - Use pre-conditions for logical constraints
 fc.assert(
-  fc.property(wealthArbitrary(), nisabArbitrary(), (wealth, nisab) => {
-    fc.pre(wealth.isGreaterThan(nisab)); // Logical requirement
+  fc.property(wealthArbitrary(), thresholdArbitrary(), (wealth, threshold) => {
+    fc.pre(wealth.isGreaterThan(threshold)); // Logical requirement
     // Test code
   }),
 );

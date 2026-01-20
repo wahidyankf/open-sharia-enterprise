@@ -10,16 +10,16 @@ This template provides Mermaid diagrams illustrating Context Mapping patterns be
 
 ## Complete Context Map Example
 
-Islamic Finance Platform showing relationships between Zakat, Halal Certification, and Accounting contexts.
+Islamic Finance Platform showing relationships between Tax, Permitted Certification, and Accounting contexts.
 
 ```mermaid
 graph TB
-    subgraph "Zakat Management Context"
-        ZM[Zakat Management]
+    subgraph "Tax Management Context"
+        ZM[Tax Management]
     end
 
-    subgraph "Halal Certification Context"
-        HC[Halal Certification]
+    subgraph "Permitted Certification Context"
+        HC[Permitted Certification]
     end
 
     subgraph "Accounting Context"
@@ -74,12 +74,12 @@ graph TB
 
 **Relationships Shown**:
 
-- **Zakat → Accounting**: Customer-Supplier with ACL (Zakat translates domain concepts to accounting transactions)
-- **Zakat ↔ Halal**: Partnership (close collaboration, both benefit)
+- **Tax → Accounting**: Customer-Supplier with ACL (Tax translates domain concepts to accounting transactions)
+- **Tax ↔ Permitted**: Partnership (close collaboration, both benefit)
 - **Identity → All**: Open Host Service (IAM provides authentication/authorization protocol)
 - **Payment → Accounting**: Conformist (Payment accepts Accounting's model)
 - **Accounting → ERP**: ACL protecting from legacy system
-- **Halal ↔ Accounting**: Shared Kernel (common compliance concepts - use cautiously)
+- **Permitted ↔ Accounting**: Shared Kernel (common compliance concepts - use cautiously)
 
 ## Individual Pattern Templates
 
@@ -104,7 +104,7 @@ graph LR
 - Upstream team responsive to downstream needs
 - Both teams collaborate on interface
 
-**Example**: Zakat Assessment Context (downstream) depends on Nisab Service Context (upstream) for current nisab thresholds.
+**Example**: Tax Assessment Context (downstream) depends on Threshold Service Context (upstream) for current threshold thresholds.
 
 ### 2. Conformist Pattern
 
@@ -153,31 +153,31 @@ graph LR
 - Upstream has different semantics
 - Legacy system integration
 
-**Example**: Zakat Context uses ACL to translate its domain concepts (assessment, nisab, hawl) into Accounting Context's journal entries.
+**Example**: Tax Context uses ACL to translate its domain concepts (assessment, threshold, hawl) into Accounting Context's journal entries.
 
 **ACL Implementation**:
 
 ```typescript
 // ACL translates between contexts
-class ZakatAccountingAdapter {
-  toJournalEntry(assessment: ZakatAssessment, liability: ZakatLiability): JournalEntry {
-    // Translate Zakat domain to Accounting domain
+class TaxAccountingAdapter {
+  toJournalEntry(assessment: TaxAssessment, liability: TaxLiability): JournalEntry {
+    // Translate Tax domain to Accounting domain
     return new JournalEntry({
       date: assessment.hawlEnd,
-      description: `Zakat liability for ${assessment.taxpayer.name}`,
+      description: `Tax liability for ${assessment.taxpayer.name}`,
       debits: [
         {
-          account: AccountCode.ZAKAT_EXPENSE,
+          account: AccountCode.TAX_EXPENSE,
           amount: liability.amount,
         },
       ],
       credits: [
         {
-          account: AccountCode.ZAKAT_PAYABLE,
+          account: AccountCode.TAX_PAYABLE,
           amount: liability.amount,
         },
       ],
-      reference: `ZAKAT-${assessment.id.value}`,
+      reference: `TAX-${assessment.id.value}`,
     });
   }
 }
@@ -230,7 +230,7 @@ interface IdentityService {
   /**
    * Checks if user has permission for action
    * @param userId - User's unique identifier
-   * @param permission - Permission to check (e.g., "zakat:assessment:create")
+   * @param permission - Permission to check (e.g., "tax:assessment:create")
    * @returns true if user has permission
    */
   hasPermission(userId: UserId, permission: string): Promise<boolean>;
@@ -268,7 +268,7 @@ graph LR
 // Published event schema
 interface DomainEvent {
   eventId: string; // UUID
-  eventType: string; // e.g., "zakat.assessment.finalized"
+  eventType: string; // e.g., "tax.assessment.finalized"
   aggregateId: string;
   aggregateType: string;
   occurredAt: string; // ISO 8601 timestamp
@@ -307,7 +307,7 @@ graph TB
 - High cost of duplication
 - Teams coordinate closely
 
-**Example**: Halal Certification and Accounting share compliance-related value objects.
+**Example**: Permitted Certification and Accounting share compliance-related value objects.
 
 ```typescript
 // Shared Kernel - used by both contexts
@@ -322,7 +322,7 @@ class ComplianceStatus {
     return new ComplianceStatus("non_compliant");
   }
 
-  // Used by both Halal and Accounting contexts
+  // Used by both Permitted and Accounting contexts
 }
 ```
 
@@ -349,7 +349,7 @@ graph LR
 - Teams coordinate release cycles
 - Shared success criteria
 
-**Example**: Zakat Assessment and Halal Certification contexts both verify Shariah compliance, coordinate on compliance rules.
+**Example**: Tax Assessment and Permitted Certification contexts both verify Compliance compliance, coordinate on compliance rules.
 
 ### 8. Separate Ways Pattern
 
@@ -373,7 +373,7 @@ graph TB
 - Integration cost exceeds value
 - Temporary state before future integration
 
-**Example**: Internal HR system and Zakat Management have no overlap, work completely independently.
+**Example**: Internal HR system and Tax Management have no overlap, work completely independently.
 
 ### 9. Big Ball of Mud Pattern
 
@@ -486,8 +486,8 @@ Large Islamic Finance Platform with multiple contexts and relationship types.
 ```mermaid
 graph TB
     subgraph "Core Domain"
-        ZM[Zakat<br/>Management]
-        HC[Halal<br/>Certification]
+        ZM[Tax<br/>Management]
+        HC[Permitted<br/>Certification]
         IF[Islamic<br/>Finance<br/>Contracts]
     end
 
@@ -559,7 +559,7 @@ graph TB
 
 **Key Insights**:
 
-- Core domains (Zakat, Halal, Islamic Finance) use Partnership for close collaboration
+- Core domains (Tax, Permitted, Islamic Finance) use Partnership for close collaboration
 - All core domains protect themselves from Accounting via ACL
 - Identity provides OHS for all contexts
 - Supporting domains (Notification, Reporting) use Conformist

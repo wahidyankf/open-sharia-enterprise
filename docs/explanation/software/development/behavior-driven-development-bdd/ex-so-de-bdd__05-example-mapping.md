@@ -6,7 +6,7 @@ Example Mapping is a structured conversation technique introduced by Matt Wynne 
 
 The genius of Example Mapping lies in its constraints: the visual layout prevents verbal discussion from meandering, the color coding forces clarity about different types of information, and the 25-minute time-box creates urgency that cuts through bikeshedding and overthinking. What emerges is a clear picture of feature complexity—lots of yellow example cards indicate a well-understood feature, lots of red question cards signal the need for more research before implementation.
 
-In Islamic finance contexts, Example Mapping excels at exploring complex jurisprudence rules. A Zakat calculation feature might have blue cards for rules ("Nisab for gold is 85 grams"), yellow cards for examples ("Person owns 100g gold for 1 year = 2.5g Zakat"), green cards for scenarios to test, and red cards for questions requiring Shariah scholar clarification ("How to handle fluctuating wealth during Hawl period?"). The visual map makes complexity visible and actionable.
+In Islamic finance contexts, Example Mapping excels at exploring complex jurisprudence rules. A Tax calculation feature might have blue cards for rules ("Threshold for gold is 85 grams"), yellow cards for examples ("Person owns 100g gold for 1 year = 2.5g Tax"), green cards for scenarios to test, and red cards for questions requiring Compliance scholar clarification ("How to handle fluctuating wealth during Hawl period?"). The visual map makes complexity visible and actionable.
 
 This document provides comprehensive guidance on conducting Example Mapping sessions, including facilitation techniques, Islamic finance examples, and integration with Three Amigos practice.
 
@@ -106,24 +106,24 @@ Example Mapping now foundational in BDD:
 ```
 ┌─────────────────────────────────────┐
 │ BLUE: Rule                          │
-│ Nisab for gold is 85 grams          │
+│ Threshold for gold is 85 grams          │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ BLUE: Rule                          │
-│ Zakat rate is 2.5% (one-fortieth)   │
+│ Tax rate is 2.5% (one-fortieth)   │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ BLUE: Rule                          │
 │ Hawl (one lunar year) must pass     │
-│ before Zakat is obligatory          │
+│ before Tax is obligatory          │
 └─────────────────────────────────────┘
 ```
 
 **Islamic Finance Examples:**
 
-**Murabaha:**
+**Loan:**
 
 ```
 ┌─────────────────────────────────────┐
@@ -141,7 +141,7 @@ Example Mapping now foundational in BDD:
 ┌─────────────────────────────────────┐
 │ BLUE: Rule                          │
 │ Profit is fixed markup, not         │
-│ time-based interest (Riba)          │
+│ time-based interest (Interest)          │
 └─────────────────────────────────────┘
 ```
 
@@ -153,25 +153,25 @@ Example Mapping now foundational in BDD:
 
 **Examples:**
 
-Under "Nisab for gold is 85 grams" rule:
+Under "Threshold for gold is 85 grams" rule:
 
 ```
 ┌─────────────────────────────────────┐
 │ YELLOW: Example                     │
 │ Person owns 100g gold               │
-│ → Above nisab → Zakat obligatory    │
+│ → Above threshold → Tax obligatory    │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ YELLOW: Example                     │
 │ Person owns 85g gold (exactly)      │
-│ → At nisab → Zakat obligatory       │
+│ → At threshold → Tax obligatory       │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ YELLOW: Example                     │
 │ Person owns 50g gold                │
-│ → Below nisab → No Zakat due        │
+│ → Below threshold → No Tax due        │
 └─────────────────────────────────────┘
 ```
 
@@ -181,13 +181,13 @@ Under "Hawl must pass" rule:
 ┌─────────────────────────────────────┐
 │ YELLOW: Example                     │
 │ Owned 100g gold for 12 lunar months │
-│ → Hawl complete → Zakat obligatory  │
+│ → Hawl complete → Tax obligatory  │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ YELLOW: Example                     │
 │ Owned 100g gold for 11 months       │
-│ → Hawl incomplete → No Zakat yet    │
+│ → Hawl incomplete → No Tax yet    │
 └─────────────────────────────────────┘
 ```
 
@@ -208,18 +208,18 @@ Under "Hawl must pass" rule:
 ```
 ┌─────────────────────────────────────┐
 │ GREEN: Scenario                     │
-│ Calculate Zakat when wealth         │
-│ meets nisab threshold               │
+│ Calculate Tax when wealth         │
+│ meets threshold threshold               │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ GREEN: Scenario                     │
-│ No Zakat when wealth below nisab    │
+│ No Tax when wealth below threshold    │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ GREEN: Scenario                     │
-│ No Zakat when Hawl incomplete       │
+│ No Tax when Hawl incomplete       │
 │ (owned < 1 lunar year)              │
 └─────────────────────────────────────┘
 ```
@@ -227,20 +227,20 @@ Under "Hawl must pass" rule:
 **Later converted to Gherkin:**
 
 ```gherkin
-Scenario: Calculate Zakat when wealth meets nisab threshold
+Scenario: Calculate Tax when wealth meets threshold threshold
   Given individual owns 100 grams of gold
-  And nisab threshold for gold is 85 grams
+  And threshold threshold for gold is 85 grams
   And one lunar year has passed
-  When Zakat calculation is performed
-  Then Zakat should be obligatory
-  And Zakat amount should be 2.5 grams of gold
+  When Tax calculation is performed
+  Then Tax should be obligatory
+  And Tax amount should be 2.5 grams of gold
 ```
 
 ### Red Cards: Questions
 
 **Purpose**: Capture open questions that need research or clarification.
 
-**Format**: Questions requiring Shariah scholar, product owner, or technical research.
+**Format**: Questions requiring Compliance scholar, product owner, or technical research.
 
 **Examples:**
 
@@ -248,21 +248,21 @@ Scenario: Calculate Zakat when wealth meets nisab threshold
 ┌─────────────────────────────────────┐
 │ RED: Question                       │
 │ How to handle wealth that fluctuates│
-│ above/below nisab during year?      │
+│ above/below threshold during year?      │
 │ → Ask Sheikh Ahmed                  │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ RED: Question                       │
 │ Should debts be subtracted from     │
-│ wealth before calculating Zakat?    │
+│ wealth before calculating Tax?    │
 │ → Research jurisprudence            │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ RED: Question                       │
 │ Do we have API access to current    │
-│ gold price for nisab conversion?    │
+│ gold price for threshold conversion?    │
 │ → Check with integrations team      │
 └─────────────────────────────────────┘
 ```
@@ -284,7 +284,7 @@ Scenario: Calculate Zakat when wealth meets nisab threshold
 
 **Participants** (2-5 people):
 
-- Product Owner / Domain Expert (Shariah scholar for Islamic finance)
+- Product Owner / Domain Expert (Compliance scholar for Islamic finance)
 - Developer
 - QA Engineer
 - Optional: UX Designer, Architect
@@ -372,19 +372,19 @@ Scenario: Calculate Zakat when wealth meets nisab threshold
 
 **Action**: If many red cards, stop implementation and research questions first.
 
-## Islamic Finance Example: Zakat Calculation Session
+## Islamic Finance Example: Tax Calculation Session
 
 ### User Story
 
 ```
 As a Muslim individual
-I want to calculate my Zakat obligation on gold wealth
+I want to calculate my Tax obligation on gold wealth
 So that I fulfill my Islamic religious duty accurately
 ```
 
 ### Session Participants
 
-- **Sheikh Ahmed** (Shariah scholar) - Domain expert
+- **Sheikh Ahmed** (Compliance scholar) - Domain expert
 - **Fatima** (Developer) - Implementation
 - **Omar** (QA) - Testing and edge cases
 
@@ -395,24 +395,24 @@ So that I fulfill my Islamic religious duty accurately
 ```
 ┌─────────────────────────────────────┐
 │ BLUE: Rule 1                        │
-│ Nisab for gold is 85 grams          │
+│ Threshold for gold is 85 grams          │
 │ (20 Mithqal)                        │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ BLUE: Rule 2                        │
-│ Zakat rate is 2.5% (one-fortieth)   │
+│ Tax rate is 2.5% (one-fortieth)   │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ BLUE: Rule 3                        │
 │ Hawl (one lunar year) must pass     │
-│ before Zakat is obligatory          │
+│ before Tax is obligatory          │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ BLUE: Rule 4                        │
-│ Personal debts reduce Zakatable     │
+│ Personal debts reduce Taxable     │
 │ wealth                              │
 └─────────────────────────────────────┘
 ```
@@ -423,22 +423,22 @@ So that I fulfill my Islamic religious duty accurately
 ┌─────────────────────────────────────┐
 │ YELLOW: Example 1.1                 │
 │ Person owns 100g gold               │
-│ → Above nisab (85g)                 │
-│ → Zakat obligatory                  │
+│ → Above threshold (85g)                 │
+│ → Tax obligatory                  │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ YELLOW: Example 1.2                 │
 │ Person owns 85g gold (exactly)      │
-│ → At nisab                          │
-│ → Zakat obligatory                  │
+│ → At threshold                          │
+│ → Tax obligatory                  │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ YELLOW: Example 1.3                 │
 │ Person owns 50g gold                │
-│ → Below nisab                       │
-│ → No Zakat due                      │
+│ → Below threshold                       │
+│ → No Tax due                      │
 └─────────────────────────────────────┘
 ```
 
@@ -449,20 +449,20 @@ So that I fulfill my Islamic religious duty accurately
 │ YELLOW: Example 3.1                 │
 │ Owned 100g gold for 12 months       │
 │ (354 days - normal Hijri year)      │
-│ → Hawl complete → Zakat due         │
+│ → Hawl complete → Tax due         │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ YELLOW: Example 3.2                 │
 │ Owned 100g gold for 11 months       │
-│ → Hawl incomplete → No Zakat yet    │
+│ → Hawl incomplete → No Tax yet    │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ YELLOW: Example 3.3                 │
 │ Hijri leap year (355 days)          │
 │ Owned for 355 days → Hawl complete  │
-│ → Zakat due                         │
+│ → Tax due                         │
 └─────────────────────────────────────┘
 ```
 
@@ -471,18 +471,18 @@ So that I fulfill my Islamic religious duty accurately
 ```
 ┌─────────────────────────────────────┐
 │ GREEN: Scenario 1                   │
-│ Zakat obligatory when wealth        │
-│ meets nisab threshold               │
+│ Tax obligatory when wealth        │
+│ meets threshold threshold               │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ GREEN: Scenario 2                   │
-│ No Zakat when wealth below nisab    │
+│ No Tax when wealth below threshold    │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ GREEN: Scenario 3                   │
-│ No Zakat when Hawl incomplete       │
+│ No Tax when Hawl incomplete       │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
@@ -492,7 +492,7 @@ So that I fulfill my Islamic religious duty accurately
 
 ┌─────────────────────────────────────┐
 │ GREEN: Scenario 5                   │
-│ Debts reduce Zakatable wealth       │
+│ Debts reduce Taxable wealth       │
 └─────────────────────────────────────┘
 ```
 
@@ -502,21 +502,21 @@ So that I fulfill my Islamic religious duty accurately
 ┌─────────────────────────────────────┐
 │ RED: Question 1                     │
 │ If wealth fluctuates above/below    │
-│ nisab during year, how to handle?   │
+│ threshold during year, how to handle?   │
 │ → Ask Sheikh Ahmed for ruling       │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ RED: Question 2                     │
-│ Which debts reduce Zakatable wealth?│
+│ Which debts reduce Taxable wealth?│
 │ All debts or only immediate ones?   │
-│ → Research Shariah opinion          │
+│ → Research Compliance opinion          │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ RED: Question 3                     │
 │ Do we need real-time gold price API │
-│ to convert nisab to currency?       │
+│ to convert threshold to currency?       │
 │ → Check with integrations team      │
 └─────────────────────────────────────┘
 ```
@@ -533,14 +533,14 @@ So that I fulfill my Islamic religious duty accurately
 2. Omar: Schedule follow-up with Sheikh Ahmed for questions 1-2
 3. Team: Second Example Mapping session after questions answered
 
-## Islamic Finance Example: Murabaha Contract Session
+## Islamic Finance Example: Loan Contract Session
 
 ### User Story
 
 ```
 As an Islamic bank officer
-I want to create Murabaha financing contracts
-So that customers can purchase assets through Shariah-compliant financing
+I want to create Loan financing contracts
+So that customers can purchase assets through Compliance-compliant financing
 ```
 
 ### Example Mapping Output
@@ -559,12 +559,12 @@ So that customers can purchase assets through Shariah-compliant financing
 
 ┌─────────────────────────────────────┐
 │ Profit is fixed markup, not         │
-│ time-based interest (Riba)          │
+│ time-based interest (Interest)          │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
 │ Contract must reference AAOIFI       │
-│ Shariah Standard No. 8              │
+│ Compliance Standard No. 8              │
 └─────────────────────────────────────┘
 ```
 
@@ -583,14 +583,14 @@ Under Rule 2 (Disclosure):
 
 Under Rule 3 (Fixed profit, not interest):
 - 75K fixed markup → Valid
-- 5% APR interest rate → Invalid (Riba)
-- Profit grows with delayed payment → Invalid (Riba)
+- 5% APR interest rate → Invalid (Interest)
+- Profit grows with delayed payment → Invalid (Interest)
 ```
 
 **Green Cards (Scenarios):**
 
 ```
-- Valid Murabaha with disclosed cost-plus
+- Valid Loan with disclosed cost-plus
 - Reject when bank doesn't own asset
 - Reject when interest rate used
 - Reject when costs not disclosed
@@ -607,7 +607,7 @@ Under Rule 3 (Fixed profit, not interest):
   → Research AAOIFI guidelines
 
 - How to handle contract if customer defaults on payment?
-  → Legal and Shariah review needed
+  → Legal and Compliance review needed
 ```
 
 ## Benefits of Example Mapping
@@ -653,7 +653,7 @@ Missing yellow cards under a rule reveal insufficient understanding.
 
 ```
 ┌─────────────────────────────────────┐
-│ BLUE: Debts reduce Zakatable wealth │
+│ BLUE: Debts reduce Taxable wealth │
 └─────────────────────────────────────┘
   (No yellow cards underneath)
 ```
@@ -725,35 +725,35 @@ Red cards capture questions without derailing discussion.
 - **Screen share**: One person drives, team calls out cards
 - **Hybrid**: Physical cards, take photo and share
 
-## Example Mapping with Shariah Scholars
+## Example Mapping with Compliance Scholars
 
 ### Adapting for Islamic Finance Domain
 
 **Language Considerations:**
 
-- Use Arabic terminology on cards (Nisab, Hawl, Riba, Murabaha)
+- Use Arabic terminology on cards (Threshold, Hawl, Interest, Loan)
 - Provide translations for technical team members
-- Shariah scholar may not understand software concepts—keep business-focused
+- Compliance scholar may not understand software concepts—keep business-focused
 
-**Red Cards (Questions) Often Require Shariah Ruling:**
+**Red Cards (Questions) Often Require Compliance Ruling:**
 
 ```
 ┌─────────────────────────────────────┐
-│ RED: Shariah Question               │
-│ If customer defaults on Murabaha    │
+│ RED: Compliance Question               │
+│ If customer defaults on Loan    │
 │ payment, can bank charge penalty?   │
 │ → Ask Sheikh Fatima                 │
 └─────────────────────────────────────┘
 ```
 
-### Example: Halal Certification Example Mapping
+### Example: Permitted Certification Example Mapping
 
 **Blue Cards (Rules):**
 
 ```
-- All ingredients must be halal certified
+- All ingredients must be permitted certified
 - Supply chain must be audited
-- No cross-contamination with haram products
+- No cross-contamination with forbidden products
 - Certification valid for 12 months
 - Only recognized authorities can issue certification
 ```
@@ -761,8 +761,8 @@ Red cards capture questions without derailing discussion.
 **Yellow Cards (Examples):**
 
 ```
-Under "All ingredients must be halal certified":
-- Product with halal chicken, halal spices → Valid
+Under "All ingredients must be permitted certified":
+- Product with permitted chicken, permitted spices → Valid
 - Product with pork gelatin → Invalid
 - Product with unverified gelatin → Requires review
 
@@ -775,8 +775,8 @@ Under "Recognized authorities":
 **Green Cards (Scenarios):**
 
 ```
-- Certify product with all halal ingredients
-- Reject product with haram ingredient
+- Certify product with all permitted ingredients
+- Reject product with forbidden ingredient
 - Reject product with unverified ingredient
 - Reject certification from unrecognized authority
 - Expire certification after 12 months
@@ -826,9 +826,9 @@ Example Mapping is a structured visual technique for exploring user stories thro
 
 **Islamic Finance Applications:**
 
-- Zakat calculation: Rules (nisab, Hawl, rate) → Examples (100g gold, 85g threshold) → Scenarios (test cases)
-- Murabaha contracts: Rules (asset ownership, profit disclosure) → Examples (valid/invalid contracts) → Scenarios (compliance tests)
-- Halal certification: Rules (ingredient requirements, authorities) → Examples (product compositions) → Scenarios (certification workflows)
+- Tax calculation: Rules (threshold, Hawl, rate) → Examples (100g gold, 85g threshold) → Scenarios (test cases)
+- Loan contracts: Rules (asset ownership, profit disclosure) → Examples (valid/invalid contracts) → Scenarios (compliance tests)
+- Permitted certification: Rules (ingredient requirements, authorities) → Examples (product compositions) → Scenarios (certification workflows)
 
 **Readiness Indicators:**
 
@@ -843,7 +843,7 @@ The next concept—Specification by Example—formalizes the philosophy behind u
 
 - **Category**: Explanation
 - **Subcategory**: Software Design > Behavior-Driven Development
-- **Tags**: Example Mapping, BDD, Visual Discovery, Color-Coded Cards, Requirements Workshop, Matt Wynne, Rules, Examples, Scenarios, Questions, Islamic Finance, Zakat, Murabaha, Halal, Shariah
+- **Tags**: Example Mapping, BDD, Visual Discovery, Color-Coded Cards, Requirements Workshop, Matt Wynne, Rules, Examples, Scenarios, Questions, Islamic Finance, Tax, Loan, Permitted, Compliance
 - **Related Files**:
   - [README](./README.md) - BDD documentation overview
   - [04. Three Amigos Practice](./ex-so-de-bdd__04-three-amigos-practice.md) - Collaborative conversation

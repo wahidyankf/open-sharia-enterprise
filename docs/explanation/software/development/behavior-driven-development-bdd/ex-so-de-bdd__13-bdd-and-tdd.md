@@ -6,7 +6,7 @@ BDD (Behavior-Driven Development) and TDD (Test-Driven Development) are compleme
 
 The confusion between BDD and TDD stems from surface similarities: both write tests before code, both follow iterative cycles, both create executable documentation. However, their purposes and audiences differ fundamentally. TDD answers the developer question "Does this code work correctly?" through unit tests that guide design decisions (object collaborations, method signatures, algorithms). BDD answers the stakeholder question "Does this system behave as expected?" through scenarios that verify business requirements (features work correctly, edge cases handled, regulatory compliance met).
 
-For Islamic finance platforms, this complementary relationship provides layered quality assurance: BDD scenarios verify Shariah compliance at the feature level (Zakat calculated correctly, Riba detected, Halal certification valid), while TDD unit tests verify implementation correctness at the code level (floating-point precision, edge case handling, algorithm efficiency). When a Shariah scholar validates a BDD scenario, they verify business logic correctness. When a developer writes TDD unit tests, they verify technical implementation correctness. Both layers protect quality, but at different abstraction levels with different stakeholders.
+For Islamic finance platforms, this complementary relationship provides layered quality assurance: BDD scenarios verify Compliance compliance at the feature level (Tax calculated correctly, Interest detected, Permitted certification valid), while TDD unit tests verify implementation correctness at the code level (floating-point precision, edge case handling, algorithm efficiency). When a Compliance scholar validates a BDD scenario, they verify business logic correctness. When a developer writes TDD unit tests, they verify technical implementation correctness. Both layers protect quality, but at different abstraction levels with different stakeholders.
 
 This document explores how BDD and TDD complement each other, the outside-in development workflow (double loop pattern), when to apply each practice, practical integration patterns for TypeScript/Node.js projects, and strategies for teams adopting both approaches simultaneously.
 
@@ -42,7 +42,7 @@ This document explores how BDD and TDD complement each other, the outside-in dev
 - **Stakeholder Communication**: Business-readable scenarios everyone understands
 - **Requirements Verification**: Executable specifications verify business needs met
 - **Living Documentation**: Scenarios document current system behavior (never stale)
-- **Domain Expert Validation**: Shariah scholars can verify scenarios match rules
+- **Domain Expert Validation**: Compliance scholars can verify scenarios match rules
 - **Outside-In Thinking**: Start from user needs, not technical implementation
 
 **Together**: BDD ensures you build the right thing (external quality), TDD ensures you build it right (internal quality).
@@ -54,11 +54,11 @@ Some tests blur the boundary:
 **Unit-Level BDD** (BDD syntax, unit test speed):
 
 ```gherkin
-Feature: Zakat Calculator Domain Logic
+Feature: Tax Calculator Domain Logic
 
   @unit
-  Scenario: Calculate Zakat on gold above nisab
-    Given ZakatCalculator with nisab threshold 85 grams
+  Scenario: Calculate Tax on gold above threshold
+    Given TaxCalculator with threshold threshold 85 grams
     And GoldWealth of 100 grams
     When calculate method is invoked
     Then result should be obligatory: true
@@ -68,8 +68,8 @@ Feature: Zakat Calculator Domain Logic
 **Step Definition** (Looks like TDD unit test):
 
 ```typescript
-given("ZakatCalculator with nisab threshold {int} grams", (threshold) => {
-  calculator = new ZakatCalculator(new NisabThreshold(threshold, "grams"));
+given("TaxCalculator with threshold threshold {int} grams", (threshold) => {
+  calculator = new TaxCalculator(new ThresholdThreshold(threshold, "grams"));
 });
 
 given("GoldWealth of {int} grams", (amount) => {
@@ -139,20 +139,20 @@ BDD Outer Loop (Acceptance Test)
 └────────────────────────────────────────────────────┘
 ```
 
-### Outside-In Example: Zakat Calculation
+### Outside-In Example: Tax Calculation
 
 **Step 1: Write Failing BDD Scenario** (Outer loop RED)
 
 ```gherkin
-Feature: Zakat Calculation for Gold Wealth
+Feature: Tax Calculation for Gold Wealth
 
-  Scenario: Calculate Zakat on gold above nisab
+  Scenario: Calculate Tax on gold above threshold
     Given individual owns 100 grams of gold
-    And nisab threshold is 85 grams
+    And threshold threshold is 85 grams
     And one lunar year (Hawl) has passed
-    When Zakat calculation is performed
-    Then Zakat should be obligatory
-    And Zakat amount should be 2.5 grams
+    When Tax calculation is performed
+    Then Tax should be obligatory
+    And Tax amount should be 2.5 grams
 ```
 
 **Run BDD Test**: ❌ FAIL (no implementation exists)
@@ -190,15 +190,15 @@ export class GoldWealth {
 
 **TDD Refactor**: (No refactoring needed yet)
 
-**TDD Cycle 2: NisabThreshold Value Object**
+**TDD Cycle 2: ThresholdThreshold Value Object**
 
 ```typescript
 // TDD Red
-it("should create nisab threshold", () => {
-  const nisab = new NisabThreshold(85, "grams");
+it("should create threshold threshold", () => {
+  const threshold = new ThresholdThreshold(85, "grams");
 
-  expect(nisab.amount).toBe(85);
-  expect(nisab.unit).toBe("grams");
+  expect(threshold.amount).toBe(85);
+  expect(threshold.unit).toBe("grams");
 });
 ```
 
@@ -207,7 +207,7 @@ it("should create nisab threshold", () => {
 **TDD Green**:
 
 ```typescript
-export class NisabThreshold {
+export class ThresholdThreshold {
   constructor(
     public readonly amount: number,
     public readonly unit: string,
@@ -217,25 +217,25 @@ export class NisabThreshold {
 
 **Run**: ✅ PASS
 
-**TDD Cycle 3: ZakatCalculator Domain Logic**
+**TDD Cycle 3: TaxCalculator Domain Logic**
 
 ```typescript
 // TDD Red
-describe("ZakatCalculator", () => {
-  it("should calculate Zakat as obligatory when above nisab", () => {
-    const nisab = new NisabThreshold(85, "grams");
+describe("TaxCalculator", () => {
+  it("should calculate Tax as obligatory when above threshold", () => {
+    const threshold = new ThresholdThreshold(85, "grams");
     const wealth = new GoldWealth(100, "grams");
-    const calculator = new ZakatCalculator(nisab);
+    const calculator = new TaxCalculator(threshold);
 
     const result = calculator.calculate(wealth);
 
     expect(result.obligatory).toBe(true);
   });
 
-  it("should calculate Zakat amount as 2.5% of wealth", () => {
-    const nisab = new NisabThreshold(85, "grams");
+  it("should calculate Tax amount as 2.5% of wealth", () => {
+    const threshold = new ThresholdThreshold(85, "grams");
     const wealth = new GoldWealth(100, "grams");
-    const calculator = new ZakatCalculator(nisab);
+    const calculator = new TaxCalculator(threshold);
 
     const result = calculator.calculate(wealth);
 
@@ -249,18 +249,18 @@ describe("ZakatCalculator", () => {
 **TDD Green**:
 
 ```typescript
-export class ZakatCalculator {
-  private readonly ZAKAT_RATE = 0.025; // 2.5%
+export class TaxCalculator {
+  private readonly TAX_RATE = 0.025; // 2.5%
 
-  constructor(private readonly nisabThreshold: NisabThreshold) {}
+  constructor(private readonly thresholdThreshold: ThresholdThreshold) {}
 
-  calculate(wealth: GoldWealth): ZakatCalculationResult {
-    const meetsNisab = wealth.amount >= this.nisabThreshold.amount;
-    const zakatAmount = meetsNisab ? wealth.amount * this.ZAKAT_RATE : 0;
+  calculate(wealth: GoldWealth): TaxCalculationResult {
+    const meetsThreshold = wealth.amount >= this.thresholdThreshold.amount;
+    const taxAmount = meetsThreshold ? wealth.amount * this.TAX_RATE : 0;
 
     return {
-      obligatory: meetsNisab,
-      amount: zakatAmount,
+      obligatory: meetsThreshold,
+      amount: taxAmount,
       unit: wealth.unit,
     };
   }
@@ -269,7 +269,7 @@ export class ZakatCalculator {
 
 **Run**: ✅ PASS
 
-**TDD Refactor**: Extract ZAKAT_RATE constant, improve naming
+**TDD Refactor**: Extract TAX_RATE constant, improve naming
 
 **Step 3: Return to BDD Outer Loop**
 
@@ -287,7 +287,7 @@ export class ZakatCalculator {
 
 **3. Fast Feedback**: TDD unit tests run in milliseconds (instant feedback during development)
 
-**4. Stakeholder Confidence**: BDD scenarios readable by domain experts (Shariah scholars verify correctness)
+**4. Stakeholder Confidence**: BDD scenarios readable by domain experts (Compliance scholars verify correctness)
 
 **5. Refactoring Safety**: Both test layers catch regressions
 
@@ -300,8 +300,8 @@ export class ZakatCalculator {
 **Use BDD When**:
 
 - ✅ Stakeholder collaboration available (domain experts, product owners)
-- ✅ Complex business rules (Zakat calculations, Halal certification, Riba detection)
-- ✅ Regulatory compliance required (audit trails, Shariah compliance verification)
+- ✅ Complex business rules (Tax calculations, Permitted certification, Interest detection)
+- ✅ Regulatory compliance required (audit trails, Compliance compliance verification)
 - ✅ Multiple interpretations possible (concrete examples remove ambiguity)
 - ✅ Feature-level acceptance criteria needed
 - ✅ Living documentation valuable for non-technical stakeholders
@@ -326,14 +326,14 @@ export class ZakatCalculator {
 
 **BDD-First Scenarios** (Business complexity, stakeholder collaboration):
 
-**Zakat Calculation Rules**:
+**Tax Calculation Rules**:
 
-- Complex business rules requiring Shariah scholar validation
+- Complex business rules requiring Compliance scholar validation
 - Multiple jurisprudence schools with different interpretations
 - Regulatory compliance verification needed
-- **Approach**: BDD scenarios (Shariah scholars review), TDD unit tests (developers ensure correctness)
+- **Approach**: BDD scenarios (Compliance scholars review), TDD unit tests (developers ensure correctness)
 
-**Halal Certification Workflow**:
+**Permitted Certification Workflow**:
 
 - Multi-step approval process with business logic
 - Compliance requirements from multiple authorities
@@ -358,17 +358,17 @@ export class ZakatCalculator {
 
 **Outside-In (BDD + TDD) Scenarios** (Business + Technical complexity):
 
-**Murabaha Contract Creation**:
+**Loan Contract Creation**:
 
-- **BDD Outer Loop**: Scenarios verify contract creation workflow (business rules, Riba detection)
+- **BDD Outer Loop**: Scenarios verify contract creation workflow (business rules, Interest detection)
 - **TDD Inner Loop**: Unit tests verify profit calculations (floating-point precision, rounding)
 - **Why Both**: Business stakeholders validate workflow, developers ensure calculation correctness
 
-**Zakat Mixed Assets Calculation**:
+**Tax Mixed Assets Calculation**:
 
 - **BDD Outer Loop**: Scenarios verify combined asset handling (gold + silver + cash)
 - **TDD Inner Loop**: Unit tests verify currency conversion, asset aggregation algorithms
-- **Why Both**: Shariah scholars validate Zakat rules applied correctly, developers ensure mathematical accuracy
+- **Why Both**: Compliance scholars validate Tax rules applied correctly, developers ensure mathematical accuracy
 
 ## Integration Patterns
 
@@ -377,21 +377,21 @@ export class ZakatCalculator {
 ```
 apps/ose-backend-api/
 ├── src/
-│   └── zakat-calculation/
+│   └── tax-calculation/
 │       ├── domain/
-│       │   ├── zakat-calculator.ts
-│       │   ├── zakat-calculator.spec.ts         # TDD unit tests
+│       │   ├── tax-calculator.ts
+│       │   ├── tax-calculator.spec.ts         # TDD unit tests
 │       │   ├── gold-wealth.ts
 │       │   ├── gold-wealth.spec.ts              # TDD unit tests
-│       │   └── nisab-threshold.ts
+│       │   └── threshold-threshold.ts
 │       ├── application/
-│       │   ├── calculate-zakat.use-case.ts
-│       │   └── calculate-zakat.use-case.spec.ts # TDD unit tests
+│       │   ├── calculate-tax.use-case.ts
+│       │   └── calculate-tax.use-case.spec.ts # TDD unit tests
 │       └── infrastructure/
-│           ├── zakat-calculator.repository.ts
-│           └── zakat-calculator.repository.spec.ts # TDD unit tests
+│           ├── tax-calculator.repository.ts
+│           └── tax-calculator.repository.spec.ts # TDD unit tests
 └── features/
-    └── zakat-calculation/
+    └── tax-calculation/
         ├── gold-calculation.feature              # BDD scenarios
         └── gold-calculation.steps.ts             # BDD step definitions
 ```
@@ -531,9 +531,9 @@ npm run test -- --coverage
 **Before** (Pure TDD):
 
 ```typescript
-describe("ZakatCalculator", () => {
-  it("should calculate Zakat as obligatory when above nisab", () => {
-    const calculator = new ZakatCalculator(new NisabThreshold(85, "grams"));
+describe("TaxCalculator", () => {
+  it("should calculate Tax as obligatory when above threshold", () => {
+    const calculator = new TaxCalculator(new ThresholdThreshold(85, "grams"));
     const result = calculator.calculate(new GoldWealth(100, "grams"));
     expect(result.obligatory).toBe(true);
   });
@@ -543,11 +543,11 @@ describe("ZakatCalculator", () => {
 **After** (BDD-style TDD):
 
 ```gherkin
-Feature: ZakatCalculator Domain Logic
+Feature: TaxCalculator Domain Logic
 
   @unit
-  Scenario: Calculate Zakat on gold above nisab
-    Given ZakatCalculator with nisab 85 grams
+  Scenario: Calculate Tax on gold above threshold
+    Given TaxCalculator with threshold 85 grams
     When calculate is called with GoldWealth 100 grams
     Then result obligatory should be true
 ```
@@ -613,52 +613,52 @@ Feature: ZakatCalculator Domain Logic
 
 ## Islamic Finance Examples
 
-### Example 1: Zakat Calculation (BDD + TDD)
+### Example 1: Tax Calculation (BDD + TDD)
 
 **BDD Scenario** (Outer loop - business verification):
 
 ```gherkin
-@zakat @critical
-Feature: Zakat Calculation for Gold Wealth
+@tax @critical
+Feature: Tax Calculation for Gold Wealth
 
-  Scenario: Calculate Zakat on gold above nisab
+  Scenario: Calculate Tax on gold above threshold
     Given individual owns 100 grams of gold
-    And nisab threshold is 85 grams
+    And threshold threshold is 85 grams
     And one lunar year (Hawl) has passed
-    When Zakat calculation is performed
-    Then Zakat should be obligatory
-    And Zakat amount should be 2.5 grams
-    And Zakat rate should be 2.5%
+    When Tax calculation is performed
+    Then Tax should be obligatory
+    And Tax amount should be 2.5 grams
+    And Tax rate should be 2.5%
 ```
 
 **TDD Unit Tests** (Inner loop - implementation verification):
 
 ```typescript
-describe("ZakatCalculator", () => {
+describe("TaxCalculator", () => {
   describe("calculate", () => {
-    it("should return obligatory when wealth meets nisab", () => {
-      const calculator = new ZakatCalculator(new NisabThreshold(85, "grams"));
+    it("should return obligatory when wealth meets threshold", () => {
+      const calculator = new TaxCalculator(new ThresholdThreshold(85, "grams"));
       const result = calculator.calculate(new GoldWealth(100, "grams"));
 
       expect(result.obligatory).toBe(true);
     });
 
     it("should calculate amount as 2.5% of wealth", () => {
-      const calculator = new ZakatCalculator(new NisabThreshold(85, "grams"));
+      const calculator = new TaxCalculator(new ThresholdThreshold(85, "grams"));
       const result = calculator.calculate(new GoldWealth(100, "grams"));
 
       expect(result.amount).toBeCloseTo(2.5, 2);
     });
 
-    it("should return not obligatory when wealth below nisab", () => {
-      const calculator = new ZakatCalculator(new NisabThreshold(85, "grams"));
+    it("should return not obligatory when wealth below threshold", () => {
+      const calculator = new TaxCalculator(new ThresholdThreshold(85, "grams"));
       const result = calculator.calculate(new GoldWealth(50, "grams"));
 
       expect(result.obligatory).toBe(false);
     });
 
-    it("should handle wealth exactly at nisab threshold", () => {
-      const calculator = new ZakatCalculator(new NisabThreshold(85, "grams"));
+    it("should handle wealth exactly at threshold threshold", () => {
+      const calculator = new TaxCalculator(new ThresholdThreshold(85, "grams"));
       const result = calculator.calculate(new GoldWealth(85, "grams"));
 
       expect(result.obligatory).toBe(true);
@@ -666,7 +666,7 @@ describe("ZakatCalculator", () => {
     });
 
     it("should handle floating-point precision correctly", () => {
-      const calculator = new ZakatCalculator(new NisabThreshold(85, "grams"));
+      const calculator = new TaxCalculator(new ThresholdThreshold(85, "grams"));
       const result = calculator.calculate(new GoldWealth(85.5, "grams"));
 
       expect(result.amount).toBeCloseTo(2.1375, 4);
@@ -677,57 +677,57 @@ describe("ZakatCalculator", () => {
 
 **Complementary Coverage**:
 
-- **BDD**: Verifies business rule (2.5% Zakat on gold above nisab)
-- **TDD**: Verifies edge cases (exactly at nisab, below nisab, floating-point precision)
+- **BDD**: Verifies business rule (2.5% Tax on gold above threshold)
+- **TDD**: Verifies edge cases (exactly at threshold, below threshold, floating-point precision)
 
-### Example 2: Murabaha Riba Detection (BDD + TDD)
+### Example 2: Loan Interest Detection (BDD + TDD)
 
 **BDD Scenario** (Business rule verification):
 
 ```gherkin
-@murabaha @riba @compliance @critical
-Feature: Riba Detection in Murabaha Contracts
+@loan @interest @compliance @critical
+Feature: Interest Detection in Loan Contracts
 
-  Scenario: Reject time-based interest (Riba prohibited)
+  Scenario: Reject time-based interest (Interest prohibited)
     Given bank purchases asset for 100,000 USD
     When bank attempts to calculate profit using annual interest rate
     Then contract should be rejected
-    And reason should be "Riba prohibited: Time-based interest detected"
+    And reason should be "Interest prohibited: Time-based interest detected"
     And compliance officer should be notified
 ```
 
 **TDD Unit Tests** (Algorithm verification):
 
 ```typescript
-describe("RibaDetector", () => {
+describe("InterestDetector", () => {
   describe("detectTimeBasedInterest", () => {
     it("should detect interest rate in profit calculation", () => {
-      const contract = new MurabahaContract({
+      const contract = new LoanContract({
         costPrice: 100000,
         profitMethod: { type: "interest-rate", rate: 0.05 },
       });
 
-      const detector = new RibaDetector();
+      const detector = new InterestDetector();
       const result = detector.detect(contract);
 
-      expect(result.ribaDetected).toBe(true);
+      expect(result.interestDetected).toBe(true);
       expect(result.type).toBe("TIME_BASED_INTEREST");
     });
 
     it("should not flag fixed profit markup", () => {
-      const contract = new MurabahaContract({
+      const contract = new LoanContract({
         costPrice: 100000,
         profitMethod: { type: "fixed-markup", amount: 15000 },
       });
 
-      const detector = new RibaDetector();
+      const detector = new InterestDetector();
       const result = detector.detect(contract);
 
-      expect(result.ribaDetected).toBe(false);
+      expect(result.interestDetected).toBe(false);
     });
 
     it("should detect compounding interest", () => {
-      const contract = new MurabahaContract({
+      const contract = new LoanContract({
         costPrice: 100000,
         profitMethod: {
           type: "interest-rate",
@@ -736,10 +736,10 @@ describe("RibaDetector", () => {
         },
       });
 
-      const detector = new RibaDetector();
+      const detector = new InterestDetector();
       const result = detector.detect(contract);
 
-      expect(result.ribaDetected).toBe(true);
+      expect(result.interestDetected).toBe(true);
       expect(result.severity).toBe("CRITICAL");
     });
   });
@@ -748,8 +748,8 @@ describe("RibaDetector", () => {
 
 **Complementary Coverage**:
 
-- **BDD**: Verifies Shariah compliance rule enforced (Riba rejection)
-- **TDD**: Verifies detection algorithm handles different Riba forms (simple interest, compounding, late penalties)
+- **BDD**: Verifies Compliance compliance rule enforced (Interest rejection)
+- **TDD**: Verifies detection algorithm handles different Interest forms (simple interest, compounding, late penalties)
 
 ## Summary
 
@@ -779,7 +779,7 @@ BDD and TDD are complementary practices that work together to ensure both extern
 
 **Islamic Finance Benefits**:
 
-- **BDD**: Shariah scholars verify business rules (Zakat rates, Riba detection, Halal certification)
+- **BDD**: Compliance scholars verify business rules (Tax rates, Interest detection, Permitted certification)
 - **TDD**: Developers ensure implementation correctness (calculations, algorithms, edge cases)
 - **Together**: Layered quality assurance (compliance + correctness)
 
@@ -789,7 +789,7 @@ Use BDD and TDD together in outside-in development to create well-designed, well
 
 - **Category**: Explanation
 - **Subcategory**: Software Design > Behavior-Driven Development
-- **Tags**: BDD, TDD, Outside-In Development, Double Loop, Test-Driven Development, Acceptance Testing, Unit Testing, Islamic Finance, Zakat, Murabaha, Riba
+- **Tags**: BDD, TDD, Outside-In Development, Double Loop, Test-Driven Development, Acceptance Testing, Unit Testing, Islamic Finance, Tax, Loan, Interest
 - **Related Files**:
   - [README](./README.md) - BDD documentation overview
   - [TDD Introduction](../test-driven-development-tdd/ex-so-de-tedrdeve__01-introduction-and-philosophy.md) - TDD philosophy

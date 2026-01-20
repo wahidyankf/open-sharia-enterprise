@@ -6,7 +6,7 @@ Discovery and Formulation represents the two-phase heartbeat of Behavior-Driven 
 
 The discovery phase is messy and creative: stakeholders, developers, and testers explore a feature through unstructured conversation, sketches, and rough examples. The formulation phase is structured and precise: the team converts discovered examples into Given-When-Then scenarios that can be automated. Separating these phases prevents premature formalization (writing Gherkin before understanding requirements) and ensures formulated specifications reflect genuine shared understanding.
 
-In Islamic finance contexts, this separation is especially valuable. During discovery, a Shariah scholar might explain complex jurisprudence rules through stories and analogies: "Imagine someone whose wealth fluctuates monthly..." During formulation, the team converts that narrative into precise Gherkin scenarios with specific numbers and conditions. Rushing to formalization would miss the nuanced understanding gained through discovery conversations.
+In Islamic finance contexts, this separation is especially valuable. During discovery, a Compliance scholar might explain complex jurisprudence rules through stories and analogies: "Imagine someone whose wealth fluctuates monthly..." During formulation, the team converts that narrative into precise Gherkin scenarios with specific numbers and conditions. Rushing to formalization would miss the nuanced understanding gained through discovery conversations.
 
 This document explores discovery and formulation in depth: the goals of each phase, techniques for effective discovery, best practices for formulation, and how the two phases work together to create specifications that are both collaborative and precise.
 
@@ -85,46 +85,46 @@ Visual discovery using color-coded cards (see [File 05](./ex-so-de-bdd__05-examp
 
 #### Domain Expert Interviews
 
-For complex domains like Islamic finance, dedicated sessions with experts (Shariah scholars).
+For complex domains like Islamic finance, dedicated sessions with experts (Compliance scholars).
 
 **Format**: 60-90 minute interview/workshop
 
 **Process:**
 
-1. **Context**: Expert explains domain concepts (Zakat, Murabaha, Halal)
+1. **Context**: Expert explains domain concepts (Tax, Loan, Permitted)
 2. **Examples**: Expert provides concrete scenarios from jurisprudence
 3. **Edge cases**: Team challenges with "what if" questions
 4. **Clarification**: Resolve ambiguities and conflicting interpretations
 
-**Example: Zakat Discovery with Shariah Scholar**
+**Example: Tax Discovery with Compliance Scholar**
 
-**Developer**: "Sheikh Ahmed, can you explain when Zakat becomes obligatory for gold?"
+**Developer**: "Sheikh Ahmed, can you explain when Tax becomes obligatory for gold?"
 
-**Sheikh Ahmed**: "Zakat on gold is obligatory when someone owns at least 85 grams—the nisab threshold—and has owned it for one complete lunar year, called Hawl. The rate is 2.5%, or one-fortieth of the total."
+**Sheikh Ahmed**: "Tax on gold is obligatory when someone owns at least 85 grams—the threshold threshold—and has owned it for one complete lunar year, called Hawl. The rate is 2.5%, or one-fortieth of the total."
 
 **Developer**: "What if they own exactly 85 grams?"
 
-**Sheikh Ahmed**: "Still obligatory. At or above nisab means Zakat is due."
+**Sheikh Ahmed**: "Still obligatory. At or above threshold means Tax is due."
 
 **QA**: "What if they own 100 grams but only for 11 months?"
 
-**Sheikh Ahmed**: "Hawl is incomplete, so Zakat is not yet due. They must wait until the full lunar year has passed."
+**Sheikh Ahmed**: "Hawl is incomplete, so Tax is not yet due. They must wait until the full lunar year has passed."
 
 **Developer**: "What if their wealth fluctuates—say, 100 grams at the start of the year, drops to 70 grams mid-year, then back to 100 grams at the end?"
 
-**Sheikh Ahmed**: "This is where scholars differ. Some schools require maintaining nisab throughout the year. Others only check at the beginning and end of Hawl. For our purposes, let's use the simpler interpretation: check at the end of the lunar year. But we should allow users to select their followed school of jurisprudence."
+**Sheikh Ahmed**: "This is where scholars differ. Some schools require maintaining threshold throughout the year. Others only check at the beginning and end of Hawl. For our purposes, let's use the simpler interpretation: check at the end of the lunar year. But we should allow users to select their followed school of jurisprudence."
 
-**Key Discovery Outcome**: Team now understands nisab, Hawl, rate, and discovered complexity around wealth fluctuation that requires configuration option.
+**Key Discovery Outcome**: Team now understands threshold, Hawl, rate, and discovered complexity around wealth fluctuation that requires configuration option.
 
 #### Story Slicing During Discovery
 
 Discovery often reveals stories are too large. Break them down.
 
-**Original Story**: "Calculate Zakat for all asset types"
+**Original Story**: "Calculate Tax for all asset types"
 
 **Discovery Reveals Complexity**:
 
-- Gold has one nisab threshold (85g)
+- Gold has one threshold threshold (85g)
 - Silver has different threshold (595g)
 - Cash threshold varies by gold price
 - Agricultural products have different rules (10% or 5% depending on irrigation)
@@ -132,11 +132,11 @@ Discovery often reveals stories are too large. Break them down.
 
 **Slice into Smaller Stories**:
 
-1. Calculate Zakat for gold wealth (start here)
-2. Calculate Zakat for silver wealth
-3. Calculate Zakat for cash and trade goods
-4. Calculate Zakat for agricultural products
-5. Calculate Zakat for livestock
+1. Calculate Tax for gold wealth (start here)
+2. Calculate Tax for silver wealth
+3. Calculate Tax for cash and trade goods
+4. Calculate Tax for agricultural products
+5. Calculate Tax for livestock
 
 **Benefit**: Team can implement and validate gold calculation before tackling complex livestock rules.
 
@@ -147,17 +147,17 @@ What emerges from discovery phase:
 **1. Rough Examples (Not Polished Gherkin)**
 
 ```
-Example 1: Person owns 100g gold for 1 year → Zakat is 2.5g
-Example 2: Person owns 50g gold → No Zakat (below nisab)
-Example 3: Person owns 100g gold but only 11 months → No Zakat yet (Hawl incomplete)
+Example 1: Person owns 100g gold for 1 year → Tax is 2.5g
+Example 2: Person owns 50g gold → No Tax (below threshold)
+Example 3: Person owns 100g gold but only 11 months → No Tax yet (Hawl incomplete)
 ```
 
 **2. Business Rules Identified**
 
-- Nisab for gold: 85 grams
-- Zakat rate: 2.5%
+- Threshold for gold: 85 grams
+- Tax rate: 2.5%
 - Hawl: one complete lunar year (354 or 355 days)
-- Debts may reduce Zakatable wealth (requires Shariah clarification)
+- Debts may reduce Taxable wealth (requires Compliance clarification)
 
 **3. Edge Cases and Questions**
 
@@ -168,7 +168,7 @@ Example 3: Person owns 100g gold but only 11 months → No Zakat yet (Hawl incom
 
 **4. Shared Understanding**
 
-All team members (including Shariah scholar) have same mental model of Zakat calculation requirements.
+All team members (including Compliance scholar) have same mental model of Tax calculation requirements.
 
 ## Formulation: Structuring for Automation
 
@@ -192,28 +192,28 @@ The **Formulation** phase converts discovered examples into **structured, execut
 **Discovery Output (Rough):**
 
 ```
-Example 1: Person owns 100g gold for 1 year → Zakat is 2.5g
+Example 1: Person owns 100g gold for 1 year → Tax is 2.5g
 ```
 
 **Formulation Output (Gherkin):**
 
 ```gherkin
-Scenario: Calculate Zakat when gold wealth meets nisab and Hawl complete
+Scenario: Calculate Tax when gold wealth meets threshold and Hawl complete
   Given a Muslim individual owns 100 grams of gold
-  And the nisab threshold for gold is 85 grams
+  And the threshold threshold for gold is 85 grams
   And one lunar year (Hawl) has passed since acquisition
-  When Zakat calculation is performed
-  Then Zakat should be obligatory
-  And Zakat amount should be 2.5 grams of gold
+  When Tax calculation is performed
+  Then Tax should be obligatory
+  And Tax amount should be 2.5 grams of gold
 ```
 
 **What Changed:**
 
 - Added Given-When-Then structure
-- Made context explicit ("nisab threshold for gold is 85 grams")
+- Made context explicit ("threshold threshold for gold is 85 grams")
 - Clarified preconditions ("one lunar year has passed")
-- Specified expected outcomes ("Zakat should be obligatory" + amount)
-- Used business language ("Muslim individual", "Hawl", "nisab")
+- Specified expected outcomes ("Tax should be obligatory" + amount)
+- Used business language ("Muslim individual", "Hawl", "threshold")
 
 ### Formulation Best Practices
 
@@ -223,8 +223,8 @@ Scenario: Calculate Zakat when gold wealth meets nisab and Hawl complete
 
 ```gherkin
 Scenario: Database insert
-  Given database table "zakat_calc" is empty
-  When POST request sent to /api/zakat with payload {"gold": 100}
+  Given database table "tax_calc" is empty
+  When POST request sent to /api/tax with payload {"gold": 100}
   Then database should execute INSERT statement
   And row should have column "amount" = 2.5
 ```
@@ -232,11 +232,11 @@ Scenario: Database insert
 **Good (Business Language):**
 
 ```gherkin
-Scenario: Calculate Zakat on gold wealth
+Scenario: Calculate Tax on gold wealth
   Given individual owns 100 grams of gold
-  And nisab threshold for gold is 85 grams
-  When Zakat is calculated
-  Then Zakat amount should be 2.5 grams of gold
+  And threshold threshold for gold is 85 grams
+  When Tax is calculated
+  Then Tax amount should be 2.5 grams of gold
 ```
 
 #### 2. Make Context Explicit
@@ -246,21 +246,21 @@ Don't assume implicit context—state all preconditions.
 **Bad (Implicit):**
 
 ```gherkin
-Scenario: Calculate Zakat
-  When Zakat is calculated
-  Then Zakat is 2.5 grams
+Scenario: Calculate Tax
+  When Tax is calculated
+  Then Tax is 2.5 grams
 ```
 
 **Good (Explicit):**
 
 ```gherkin
-Scenario: Calculate Zakat when wealth meets nisab
+Scenario: Calculate Tax when wealth meets threshold
   Given individual owns 100 grams of gold
-  And nisab threshold for gold is 85 grams
+  And threshold threshold for gold is 85 grams
   And one lunar year (Hawl) has passed
-  When Zakat calculation is performed
-  Then Zakat should be obligatory
-  And Zakat amount should be 2.5 grams of gold
+  When Tax calculation is performed
+  Then Tax should be obligatory
+  And Tax amount should be 2.5 grams of gold
 ```
 
 #### 3. Use Declarative Style (WHAT, Not HOW)
@@ -268,8 +268,8 @@ Scenario: Calculate Zakat when wealth meets nisab
 **Imperative (HOW to do it):**
 
 ```gherkin
-Scenario: User enters Zakat calculation
-  When user navigates to /zakat/calculator
+Scenario: User enters Tax calculation
+  When user navigates to /tax/calculator
   And user clicks "Gold" radio button
   And user types "100" into "amount" field
   And user clicks "Calculate" button
@@ -279,10 +279,10 @@ Scenario: User enters Zakat calculation
 **Declarative (WHAT should happen):**
 
 ```gherkin
-Scenario: Calculate Zakat on gold wealth
+Scenario: Calculate Tax on gold wealth
   Given individual owns 100 grams of gold
-  When Zakat is calculated
-  Then Zakat amount should be 2.5 grams of gold
+  When Tax is calculated
+  Then Tax amount should be 2.5 grams of gold
 ```
 
 #### 4. One Scenario Per Behavior
@@ -292,11 +292,11 @@ Don't combine multiple behaviors into one scenario.
 **Bad (Multiple Behaviors):**
 
 ```gherkin
-Scenario: User registration and Zakat calculation
+Scenario: User registration and Tax calculation
   When user registers with email "alice@example.com"
   Then user should be created
-  When user calculates Zakat for 100g gold
-  Then Zakat should be 2.5g
+  When user calculates Tax for 100g gold
+  Then Tax should be 2.5g
 ```
 
 **Good (Separate Scenarios):**
@@ -307,10 +307,10 @@ Scenario: User registers for account
   Then user account should be created
   And welcome email should be sent
 
-Scenario: Calculate Zakat on gold wealth
+Scenario: Calculate Tax on gold wealth
   Given user is authenticated
-  When user calculates Zakat for 100 grams of gold
-  Then Zakat amount should be 2.5 grams of gold
+  When user calculates Tax for 100 grams of gold
+  Then Tax amount should be 2.5 grams of gold
 ```
 
 #### 5. Use Data Tables for Complex Data
@@ -326,7 +326,7 @@ And individual owns 5,000 USD cash
 **With Tables (Clear):**
 
 ```gherkin
-Given individual owns the following Zakatable assets:
+Given individual owns the following Taxable assets:
   | Asset Type | Amount    | Value (USD) |
   | Gold       | 100 grams | 6,000       |
   | Silver     | 600 grams | 450         |
@@ -341,23 +341,23 @@ From discovery, group examples by feature/rule.
 
 **Discovery Examples:**
 
-- Person owns 100g gold → Zakat 2.5g
-- Person owns 85g gold → Zakat 2.125g
-- Person owns 50g gold → No Zakat
-- Person owns 100g gold but only 11 months → No Zakat yet
+- Person owns 100g gold → Tax 2.5g
+- Person owns 85g gold → Tax 2.125g
+- Person owns 50g gold → No Tax
+- Person owns 100g gold but only 11 months → No Tax yet
 
 **Grouped by Rule:**
 
-**Group A (Nisab threshold):**
+**Group A (Threshold threshold):**
 
-- 100g gold (above nisab) → Zakat due
-- 85g gold (at nisab) → Zakat due
-- 50g gold (below nisab) → No Zakat
+- 100g gold (above threshold) → Tax due
+- 85g gold (at threshold) → Tax due
+- 50g gold (below threshold) → No Tax
 
 **Group B (Hawl requirement):**
 
-- Owned for 12 months → Zakat due
-- Owned for 11 months → No Zakat yet
+- Owned for 12 months → Tax due
+- Owned for 11 months → No Tax yet
 
 **Step 2: Write Scenarios for Each Example**
 
@@ -368,37 +368,37 @@ Convert each example into Given-When-Then scenario.
 Create feature file with related scenarios.
 
 ```gherkin
-Feature: Zakat Calculation for Gold Wealth
+Feature: Tax Calculation for Gold Wealth
 
   Background:
-    Given the Zakat rate for gold is 2.5%
-    And the nisab threshold for gold is 85 grams
+    Given the Tax rate for gold is 2.5%
+    And the threshold threshold for gold is 85 grams
 
-  Scenario: Wealth above nisab threshold
+  Scenario: Wealth above threshold threshold
     Given individual owns 100 grams of gold
     And one lunar year (Hawl) has passed
-    When Zakat is calculated
-    Then Zakat should be obligatory
-    And Zakat amount should be 2.5 grams of gold
+    When Tax is calculated
+    Then Tax should be obligatory
+    And Tax amount should be 2.5 grams of gold
 
-  Scenario: Wealth exactly at nisab threshold
+  Scenario: Wealth exactly at threshold threshold
     Given individual owns 85 grams of gold
     And one lunar year (Hawl) has passed
-    When Zakat is calculated
-    Then Zakat should be obligatory
-    And Zakat amount should be 2.125 grams of gold
+    When Tax is calculated
+    Then Tax should be obligatory
+    And Tax amount should be 2.125 grams of gold
 
-  Scenario: Wealth below nisab threshold
+  Scenario: Wealth below threshold threshold
     Given individual owns 50 grams of gold
-    When Zakat is calculated
-    Then Zakat should not be obligatory
-    And Zakat amount should be 0 grams
+    When Tax is calculated
+    Then Tax should not be obligatory
+    And Tax amount should be 0 grams
 
-  Scenario: Wealth meets nisab but Hawl incomplete
+  Scenario: Wealth meets threshold but Hawl incomplete
     Given individual owns 100 grams of gold
     And only 11 months have passed since acquisition
-    When Zakat is calculated
-    Then Zakat should not be obligatory yet
+    When Tax is calculated
+    Then Tax should not be obligatory yet
     And individual should be notified Hawl is incomplete
 ```
 
@@ -406,7 +406,7 @@ Feature: Zakat Calculation for Gold Wealth
 
 - Remove redundancy
 - Ensure clarity
-- Validate with domain expert (Shariah scholar)
+- Validate with domain expert (Compliance scholar)
 - Confirm scenarios are testable
 
 ## The Discovery-Formulation Workflow
@@ -474,11 +474,11 @@ Feature: Zakat Calculation for Gold Wealth
 
 ## Islamic Finance Example: Complete Discovery-Formulation Workflow
 
-### Phase 1: Discovery (Three Amigos + Shariah Scholar)
+### Phase 1: Discovery (Three Amigos + Compliance Scholar)
 
 **Participants**:
 
-- Sheikh Ahmed (Shariah scholar) - Domain expert
+- Sheikh Ahmed (Compliance scholar) - Domain expert
 - Fatima (Developer) - Implementation
 - Omar (QA) - Testing
 - Product Owner (Business)
@@ -487,70 +487,70 @@ Feature: Zakat Calculation for Gold Wealth
 
 ```
 As a Muslim individual
-I want to determine if I owe Zakat on my Murabaha financing asset
+I want to determine if I owe Tax on my Loan financing asset
 So that I fulfill my Islamic obligation correctly
 ```
 
 **Discovery Conversation:**
 
-**PO**: "Sheikh Ahmed, does someone owe Zakat on assets purchased through Murabaha financing?"
+**PO**: "Sheikh Ahmed, does someone owe Tax on assets purchased through Loan financing?"
 
-**Sheikh Ahmed**: "It depends on ownership. In Murabaha, the bank buys the asset and sells it to the customer at cost plus profit. During payment period, who owns the asset determines Zakat obligation."
+**Sheikh Ahmed**: "It depends on ownership. In Loan, the bank buys the asset and sells it to the customer at cost plus profit. During payment period, who owns the asset determines Tax obligation."
 
-**Fatima (Dev)**: "So if the customer is making payments but hasn't paid in full, does the customer or the bank owe Zakat?"
+**Fatima (Dev)**: "So if the customer is making payments but hasn't paid in full, does the customer or the bank owe Tax?"
 
-**Sheikh Ahmed**: "Most scholars hold that the customer owns the asset from the moment of contract, even if payments are incomplete. The customer owes Zakat on the asset's value, minus any remaining debt to the bank."
+**Sheikh Ahmed**: "Most scholars hold that the customer owns the asset from the moment of contract, even if payments are incomplete. The customer owes Tax on the asset's value, minus any remaining debt to the bank."
 
-**Omar (QA)**: "What if the customer defaults on payment—does that change the Zakat obligation?"
+**Omar (QA)**: "What if the customer defaults on payment—does that change the Tax obligation?"
 
-**Sheikh Ahmed**: "If the asset returns to the bank due to default, then the bank would owe Zakat (if they hold it for a full year). But during the payment period, it's the customer's obligation."
+**Sheikh Ahmed**: "If the asset returns to the bank due to default, then the bank would owe Tax (if they hold it for a full year). But during the payment period, it's the customer's obligation."
 
 **Fatima**: "Can you give a concrete example?"
 
-**Sheikh Ahmed**: "Certainly. Say a customer buys a commercial property through Murabaha. Cost is 500,000 USD, profit is 75,000 USD, total is 575,000 USD. Customer pays 10,000 USD per month for 57.5 months. After 12 months, customer has paid 120,000 USD, owes 455,000 USD remaining. The property is worth, say, 600,000 USD at that point (market value). Customer's Zakatable wealth from this property is 600,000 USD (market value) minus 455,000 USD (debt) = 145,000 USD. Zakat is 2.5% of 145,000 USD = 3,625 USD."
+**Sheikh Ahmed**: "Certainly. Say a customer buys a commercial property through Loan. Cost is 500,000 USD, profit is 75,000 USD, total is 575,000 USD. Customer pays 10,000 USD per month for 57.5 months. After 12 months, customer has paid 120,000 USD, owes 455,000 USD remaining. The property is worth, say, 600,000 USD at that point (market value). Customer's Taxable wealth from this property is 600,000 USD (market value) minus 455,000 USD (debt) = 145,000 USD. Tax is 2.5% of 145,000 USD = 3,625 USD."
 
 **Omar**: "What if the customer hasn't owned it for a full year yet?"
 
-**Sheikh Ahmed**: "Same as other assets—no Zakat until Hawl (one lunar year) of ownership is complete."
+**Sheikh Ahmed**: "Same as other assets—no Tax until Hawl (one lunar year) of ownership is complete."
 
 **Discovery Output (Rough Examples):**
 
 ```
-1. Customer has Murabaha asset, owned 1 year, market value 600K, debt 455K
-   → Zakatable wealth = 600K - 455K = 145K
-   → Zakat = 2.5% of 145K = 3,625 USD
+1. Customer has Loan asset, owned 1 year, market value 600K, debt 455K
+   → Taxable wealth = 600K - 455K = 145K
+   → Tax = 2.5% of 145K = 3,625 USD
 
-2. Customer has Murabaha asset but only 6 months
-   → Hawl incomplete → No Zakat yet
+2. Customer has Loan asset but only 6 months
+   → Hawl incomplete → No Tax yet
 
-3. Customer fully paid off Murabaha asset, market value 600K, no debt
-   → Zakatable wealth = 600K
-   → Zakat = 2.5% of 600K = 15,000 USD
+3. Customer fully paid off Loan asset, market value 600K, no debt
+   → Taxable wealth = 600K
+   → Tax = 2.5% of 600K = 15,000 USD
 
 4. Customer defaults, asset returns to bank
-   → Bank owns asset → Bank owes Zakat (if held for 1 year)
+   → Bank owns asset → Bank owes Tax (if held for 1 year)
 ```
 
 ### Phase 2: Formulation (Developer + QA)
 
 Convert discovery examples into Gherkin scenarios.
 
-**Feature File: `murabaha-zakat-calculation.feature`**
+**Feature File: `loan-tax-calculation.feature`**
 
 ```gherkin
-Feature: Zakat Calculation for Murabaha Financed Assets
+Feature: Tax Calculation for Loan Financed Assets
 
   As a Muslim individual
-  I want to determine my Zakat obligation on Murabaha-financed assets
+  I want to determine my Tax obligation on Loan-financed assets
   So that I fulfill my Islamic religious duty accurately
 
   Background:
-    Given the Zakat rate is 2.5% (one-fortieth)
+    Given the Tax rate is 2.5% (one-fortieth)
     And Hawl requirement is one complete lunar year of ownership
 
-  Scenario: Calculate Zakat on Murabaha asset with outstanding debt
-    Given customer purchased commercial property through Murabaha financing
-    And Murabaha contract terms are:
+  Scenario: Calculate Tax on Loan asset with outstanding debt
+    Given customer purchased commercial property through Loan financing
+    And Loan contract terms are:
       | Field                | Value       |
       | Cost Price           | 500,000 USD |
       | Profit Markup        | 75,000 USD  |
@@ -560,61 +560,61 @@ Feature: Zakat Calculation for Murabaha Financed Assets
     And remaining debt to bank is 455,000 USD
     And property current market value is 600,000 USD
     And one lunar year (Hawl) has passed since ownership transfer
-    When Zakat is calculated on this asset
-    Then Zakatable wealth should be 145,000 USD (market value minus debt)
-    And Zakat obligation should be 3,625 USD (2.5% of 145,000)
-    And customer should be notified of Zakat due
+    When Tax is calculated on this asset
+    Then Taxable wealth should be 145,000 USD (market value minus debt)
+    And Tax obligation should be 3,625 USD (2.5% of 145,000)
+    And customer should be notified of Tax due
 
-  Scenario: No Zakat when Hawl incomplete for Murabaha asset
-    Given customer purchased asset through Murabaha 6 months ago
+  Scenario: No Tax when Hawl incomplete for Loan asset
+    Given customer purchased asset through Loan 6 months ago
     And property market value is 600,000 USD
     And remaining debt is 515,000 USD
-    When Zakat calculation is performed
-    Then Zakat should not be obligatory yet
+    When Tax calculation is performed
+    Then Tax should not be obligatory yet
     And customer should be notified Hawl is incomplete
     And system should remind customer in 6 months
 
-  Scenario: Calculate Zakat on fully paid Murabaha asset
-    Given customer purchased asset through Murabaha financing
-    And customer has fully paid off the Murabaha contract
+  Scenario: Calculate Tax on fully paid Loan asset
+    Given customer purchased asset through Loan financing
+    And customer has fully paid off the Loan contract
     And property current market value is 600,000 USD
     And no remaining debt to bank
     And one lunar year has passed since full payment
-    When Zakat is calculated
-    Then Zakatable wealth should be 600,000 USD (full market value)
-    And Zakat obligation should be 15,000 USD (2.5% of 600,000)
+    When Tax is calculated
+    Then Taxable wealth should be 600,000 USD (full market value)
+    And Tax obligation should be 15,000 USD (2.5% of 600,000)
 
-  Scenario: Bank owes Zakat when customer defaults and asset returns
-    Given customer defaulted on Murabaha contract
+  Scenario: Bank owes Tax when customer defaults and asset returns
+    Given customer defaulted on Loan contract
     And asset ownership returned to bank
     And bank has held repossessed asset for one lunar year
     And asset market value is 600,000 USD
-    When bank calculates Zakat on assets
-    Then bank should owe Zakat on this asset (2.5% of value)
-    And Zakat should be calculated as part of bank's total Zakatable assets
+    When bank calculates Tax on assets
+    Then bank should owe Tax on this asset (2.5% of value)
+    And Tax should be calculated as part of bank's total Taxable assets
 ```
 
-### Phase 3: Review with Shariah Scholar
+### Phase 3: Review with Compliance Scholar
 
 **Fatima**: "Sheikh Ahmed, we formalized the examples into these scenarios. Can you verify they match Islamic jurisprudence?"
 
 **Sheikh Ahmed** (reviews scenarios):
 
-"Yes, these accurately reflect the Shariah ruling. The key points are correct:
+"Yes, these accurately reflect the Compliance ruling. The key points are correct:
 
-1. Customer's Zakatable wealth is market value minus remaining debt—correct.
-2. Hawl must complete before Zakat is due—correct.
-3. Fully paid asset has Zakat on full market value—correct.
-4. Bank owes Zakat if asset returns and bank holds it for a year—correct.
+1. Customer's Taxable wealth is market value minus remaining debt—correct.
+2. Hawl must complete before Tax is due—correct.
+3. Fully paid asset has Tax on full market value—correct.
+4. Bank owes Tax if asset returns and bank holds it for a year—correct.
 
-One addition: you should note that some scholars consider the debt fully deductible only if it's a genuine debt (which Murabaha is). This distinguishes from conventional interest-based loans where scholars differ on deductibility."
+One addition: you should note that some scholars consider the debt fully deductible only if it's a genuine debt (which Loan is). This distinguishes from conventional interest-based loans where scholars differ on deductibility."
 
 **Formulation Updated:**
 
 Add note to scenarios:
 
 ```gherkin
-  # Note: Murabaha debt is genuinely deductible per Shariah,
+  # Note: Loan debt is genuinely deductible per Compliance,
   # as it's a valid Islamic financing structure (cost-plus sale).
   # Conventional interest-based loans may have different rulings.
 ```
@@ -647,7 +647,7 @@ Developer writes step definitions and implements calculation logic to make scena
 
 ### Pitfall 4: Formulation Without Domain Expert Validation
 
-**Problem**: Developer formalizes examples, but Shariah scholar never reviews Gherkin.
+**Problem**: Developer formalizes examples, but Compliance scholar never reviews Gherkin.
 
 **Result**: Scenarios may misrepresent Islamic jurisprudence.
 
@@ -670,7 +670,7 @@ Discovery and Formulation represent the two-phase heartbeat of BDD: first discov
 - **Goal**: Learning and shared understanding through conversation
 - **Techniques**: Three Amigos, Example Mapping, domain expert interviews
 - **Output**: Rough examples, business rules, edge cases, open questions
-- **Participants**: Whole team including domain experts (Shariah scholars)
+- **Participants**: Whole team including domain experts (Compliance scholars)
 - **Focus**: Explore, question, clarify—not document
 
 **Formulation Phase:**
@@ -686,13 +686,13 @@ Discovery and Formulation represent the two-phase heartbeat of BDD: first discov
 - **Conversation over documentation**: Discovery conversations are more valuable than the documents produced
 - **Separate phases**: Don't formalize prematurely during discovery
 - **Collaborative discovery, technical formulation**: Whole team discovers, developers formalize
-- **Domain expert validation**: Shariah scholars review formulated scenarios for correctness
+- **Domain expert validation**: Compliance scholars review formulated scenarios for correctness
 
 **Islamic Finance Applications:**
 
-- **Zakat**: Discovery explores nisab, Hawl, exemptions with Shariah scholar → Formulation creates precise Gherkin scenarios
-- **Murabaha**: Discovery clarifies ownership, debt deductibility, Zakat obligations → Formulation structures into testable scenarios
-- **Halal**: Discovery identifies ingredient requirements, certification authorities → Formulation defines certification workflows
+- **Tax**: Discovery explores threshold, Hawl, exemptions with Compliance scholar → Formulation creates precise Gherkin scenarios
+- **Loan**: Discovery clarifies ownership, debt deductibility, Tax obligations → Formulation structures into testable scenarios
+- **Permitted**: Discovery identifies ingredient requirements, certification authorities → Formulation defines certification workflows
 
 **Workflow:**
 
@@ -710,7 +710,7 @@ The next section covers the technical implementation of BDD specifications, star
 
 - **Category**: Explanation
 - **Subcategory**: Software Design > Behavior-Driven Development
-- **Tags**: Discovery, Formulation, Requirements Discovery, Conversation, Gherkin, Three Amigos, Example Mapping, Domain Experts, Shariah Scholar, Islamic Finance, Zakat, Murabaha, Collaborative Specification
+- **Tags**: Discovery, Formulation, Requirements Discovery, Conversation, Gherkin, Three Amigos, Example Mapping, Domain Experts, Compliance Scholar, Islamic Finance, Tax, Loan, Collaborative Specification
 - **Related Files**:
   - [README](./README.md) - BDD documentation overview
   - [04. Three Amigos Practice](./ex-so-de-bdd__04-three-amigos-practice.md) - Collaborative discovery

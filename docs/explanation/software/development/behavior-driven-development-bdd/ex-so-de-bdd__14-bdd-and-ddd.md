@@ -4,9 +4,9 @@
 
 BDD (Behavior-Driven Development) and DDD (Domain-Driven Design) are highly complementary practices that strengthen each other when used together. DDD provides strategic design patterns (bounded contexts, ubiquitous language, domain model) that organize complex domains, while BDD provides tactical collaboration patterns (scenarios, examples, executable specifications) that verify domain behavior matches stakeholder expectations. Together, they create a powerful synergy: DDD shapes how you structure your system, BDD verifies each piece works correctly.
 
-The connection between BDD and DDD centers on **ubiquitous language**—the shared vocabulary between domain experts and developers. DDD's ubiquitous language becomes BDD's Gherkin scenarios. When a Shariah scholar discusses "nisab threshold" or "Riba detection," these exact terms appear in both domain model code (DDD) and feature file scenarios (BDD). This linguistic alignment ensures everyone—business stakeholders, domain experts, developers, testers—speaks the same language, reducing miscommunication and ensuring implementation matches domain understanding.
+The connection between BDD and DDD centers on **ubiquitous language**—the shared vocabulary between domain experts and developers. DDD's ubiquitous language becomes BDD's Gherkin scenarios. When a Compliance scholar discusses "threshold threshold" or "Interest detection," these exact terms appear in both domain model code (DDD) and feature file scenarios (BDD). This linguistic alignment ensures everyone—business stakeholders, domain experts, developers, testers—speaks the same language, reducing miscommunication and ensuring implementation matches domain understanding.
 
-For Islamic finance platforms, BDD+DDD integration is particularly powerful. DDD's bounded contexts (Zakat Calculation, Halal Certification, Murabaha Financing) map directly to BDD feature files. Each bounded context has its own ubiquitous language (Zakat uses "nisab," "hawl," "zakatable assets"; Murabaha uses "cost price," "profit markup," "Riba"), and BDD scenarios in each context use that context's terminology. Domain events (HawlCompleted, ZakatCalculated, RibaDetected) become Then steps in scenarios. Aggregates (ZakatAssessment, MurabahaContract) are created and tested through Given/When steps.
+For Islamic finance platforms, BDD+DDD integration is particularly powerful. DDD's bounded contexts (Tax Calculation, Permitted Certification, Loan Financing) map directly to BDD feature files. Each bounded context has its own ubiquitous language (Tax uses "threshold," "hawl," "taxable assets"; Loan uses "cost price," "profit markup," "Interest"), and BDD scenarios in each context use that context's terminology. Domain events (HawlCompleted, TaxCalculated, InterestDetected) become Then steps in scenarios. Aggregates (TaxAssessment, LoanContract) are created and tested through Given/When steps.
 
 This document explores how BDD and DDD complement each other, practical integration patterns (features per bounded context, ubiquitous language in scenarios, testing aggregates and domain events), organizing BDD tests by domain architecture, and strategies for teams adopting both practices.
 
@@ -14,7 +14,7 @@ This document explores how BDD and DDD complement each other, practical integrat
 
 ### DDD Ubiquitous Language Principle
 
-**DDD Core Concept**: Use the same terminology everywhere—conversations, code, documentation, tests. If domain experts say "nisab," use `nisab` in code, not `minimumThreshold` or `zakatThresholdAmount`.
+**DDD Core Concept**: Use the same terminology everywhere—conversations, code, documentation, tests. If domain experts say "threshold," use `threshold` in code, not `minimumThreshold` or `taxThresholdAmount`.
 
 **Benefits**:
 
@@ -27,38 +27,38 @@ This document explores how BDD and DDD complement each other, practical integrat
 
 **BDD Natural Extension**: Gherkin scenarios use ubiquitous language, making them readable to domain experts.
 
-**Example: Zakat Calculation** (Islamic Finance Domain)
+**Example: Tax Calculation** (Islamic Finance Domain)
 
-**Domain Expert Conversation** (Shariah Scholar):
+**Domain Expert Conversation** (Compliance Scholar):
 
-> "Zakat becomes obligatory when zakatable wealth meets or exceeds the nisab threshold and has been owned for one complete hawl. The Zakat rate is 2.5%, which represents one-fortieth of the wealth. Personal-use assets like one's primary residence are not zakatable."
+> "Tax becomes obligatory when taxable wealth meets or exceeds the threshold threshold and has been owned for one complete hawl. The Tax rate is 2.5%, which represents one-fortieth of the wealth. Personal-use assets like one's primary residence are not taxable."
 
 **DDD Domain Model** (Uses ubiquitous language):
 
 ```typescript
-// domain/zakat-calculation/zakat-assessment.aggregate.ts
-export class ZakatAssessment {
+// domain/tax-calculation/tax-assessment.aggregate.ts
+export class TaxAssessment {
   constructor(
-    private readonly zakatableWealth: ZakatableWealth,
-    private readonly nisabThreshold: NisabThreshold,
+    private readonly taxableWealth: TaxableWealth,
+    private readonly thresholdThreshold: ThresholdThreshold,
     private readonly hawlPeriod: HawlPeriod,
   ) {}
 
-  calculateZakat(): ZakatObligation {
-    if (!this.meetsNisab()) {
-      return ZakatObligation.notDue("Wealth below nisab threshold");
+  calculateTax(): TaxObligation {
+    if (!this.meetsThreshold()) {
+      return TaxObligation.notDue("Wealth below threshold threshold");
     }
 
     if (!this.hawlPeriod.isComplete()) {
-      return ZakatObligation.notDue("Hawl not complete");
+      return TaxObligation.notDue("Hawl not complete");
     }
 
-    const zakatAmount = this.zakatableWealth.amount * ZakatRate.STANDARD; // 2.5%
-    return ZakatObligation.due(zakatAmount);
+    const taxAmount = this.taxableWealth.amount * TaxRate.STANDARD; // 2.5%
+    return TaxObligation.due(taxAmount);
   }
 
-  private meetsNisab(): boolean {
-    return this.zakatableWealth.amount >= this.nisabThreshold.amount;
+  private meetsThreshold(): boolean {
+    return this.taxableWealth.amount >= this.thresholdThreshold.amount;
   }
 }
 ```
@@ -66,35 +66,35 @@ export class ZakatAssessment {
 **BDD Scenario** (Uses same ubiquitous language):
 
 ```gherkin
-Feature: Zakat Assessment
+Feature: Tax Assessment
 
-  Scenario: Zakat obligatory when conditions met
-    Given individual has zakatable wealth of 10,000 USD
-    And nisab threshold is 5,600 USD
+  Scenario: Tax obligatory when conditions met
+    Given individual has taxable wealth of 10,000 USD
+    And threshold threshold is 5,600 USD
     And hawl period of one lunar year is complete
-    When Zakat assessment is performed
-    Then Zakat should be obligatory
-    And Zakat amount should be 250 USD (2.5% of zakatable wealth)
+    When Tax assessment is performed
+    Then Tax should be obligatory
+    And Tax amount should be 250 USD (2.5% of taxable wealth)
 
-  Scenario: Personal residence excluded from zakatable wealth
+  Scenario: Personal residence excluded from taxable wealth
     Given individual owns:
-      | Asset Type         | Value      | Zakatable |
+      | Asset Type         | Value      | Taxable |
       | Primary Residence  | 300,000 USD| No        |
       | Investment Property| 100,000 USD| Yes       |
       | Cash Savings       | 20,000 USD | Yes       |
-    When zakatable wealth is calculated
+    When taxable wealth is calculated
     Then primary residence should be excluded
-    And zakatable wealth should be 120,000 USD
+    And taxable wealth should be 120,000 USD
 ```
 
 **Linguistic Alignment**:
 
-- ✅ "zakatable wealth" (not "taxable amount" or "wealth_to_tax")
-- ✅ "nisab threshold" (not "minimum_wealth_limit")
+- ✅ "taxable wealth" (not "taxable amount" or "wealth_to_tax")
+- ✅ "threshold threshold" (not "minimum_wealth_limit")
 - ✅ "hawl" (not "annual_period" or "one_year_duration")
-- ✅ "Zakat obligatory" (not "tax_required")
+- ✅ "Tax obligatory" (not "tax_required")
 
-**Result**: Shariah scholar can read and validate scenarios without technical translation.
+**Result**: Compliance scholar can read and validate scenarios without technical translation.
 
 ### Building Ubiquitous Language Through BDD
 
@@ -102,33 +102,33 @@ Feature: Zakat Assessment
 
 **Three Amigos Session** (Discovering terminology):
 
-**Product Owner**: "Users need to know if they owe Zakat."
+**Product Owner**: "Users need to know if they owe Tax."
 
-**Developer**: "What triggers Zakat?"
+**Developer**: "What triggers Tax?"
 
-**Shariah Scholar** (Domain Expert): "Zakat is obligatory when wealth meets nisab—the minimum threshold—and has been owned for hawl, which is one complete lunar year in the Hijri calendar."
+**Compliance Scholar** (Domain Expert): "Tax is obligatory when wealth meets threshold—the minimum threshold—and has been owned for hawl, which is one complete lunar year in the Hijri calendar."
 
 **Developer**: "So we check if `wealth >= threshold` and `timeOwned >= oneYear`?"
 
-**Shariah Scholar**: "Not quite. The threshold is specifically called nisab, and the time period is hawl. Also, the calendar is Hijri, not Gregorian, so one year is 354 days, not 365."
+**Compliance Scholar**: "Not quite. The threshold is specifically called threshold, and the time period is hawl. Also, the calendar is Hijri, not Gregorian, so one year is 354 days, not 365."
 
 **Outcome**: Ubiquitous language captured
 
 **Gherkin Scenario** (Documenting agreed language):
 
 ```gherkin
-Scenario: Zakat obligatory when wealth meets nisab for hawl
+Scenario: Tax obligatory when wealth meets threshold for hawl
   Given individual owns 100 grams of gold
-  And nisab threshold for gold is 85 grams
+  And threshold threshold for gold is 85 grams
   And hawl period of 354 days has passed
-  When Zakat obligation is evaluated
-  Then Zakat should be obligatory
+  When Tax obligation is evaluated
+  Then Tax should be obligatory
 ```
 
 **Domain Model** (Implementing with ubiquitous language):
 
 ```typescript
-export class NisabThreshold {
+export class ThresholdThreshold {
   constructor(
     public readonly amount: number,
     public readonly unit: string,
@@ -151,7 +151,7 @@ export class HawlPeriod {
 }
 ```
 
-**Result**: Term "nisab" and "hawl" used consistently across conversations, scenarios, and code.
+**Result**: Term "threshold" and "hawl" used consistently across conversations, scenarios, and code.
 
 ## Features per Bounded Context
 
@@ -166,14 +166,14 @@ export class HawlPeriod {
 │                  Islamic Finance Platform                │
 └─────────────────────────────────────────────────────────┘
            │
-           ├─── Zakat Calculation Context
-           │    └─ Language: nisab, hawl, zakatable assets, Zakat rate
+           ├─── Tax Calculation Context
+           │    └─ Language: threshold, hawl, taxable assets, Tax rate
            │
-           ├─── Halal Certification Context
-           │    └─ Language: halal, haram, mashbooh, certification authority
+           ├─── Permitted Certification Context
+           │    └─ Language: permitted, forbidden, mashbooh, certification authority
            │
-           ├─── Murabaha Financing Context
-           │    └─ Language: cost price, profit markup, Riba, Murabaha contract
+           ├─── Loan Financing Context
+           │    └─ Language: cost price, profit markup, Interest, Loan contract
            │
            └─── Accounting Context
                 └─ Language: journal entry, account, transaction, balance
@@ -187,26 +187,26 @@ export class HawlPeriod {
 
 ```
 features/
-├── zakat-calculation/           # Bounded Context: Zakat Calculation
+├── tax-calculation/           # Bounded Context: Tax Calculation
 │   ├── README.md               # Context overview, ubiquitous language glossary
-│   ├── gold-zakat.feature
-│   ├── silver-zakat.feature
-│   ├── cash-zakat.feature
-│   ├── agricultural-zakat.feature
-│   └── mixed-assets-zakat.feature
+│   ├── gold-tax.feature
+│   ├── silver-tax.feature
+│   ├── cash-tax.feature
+│   ├── agricultural-tax.feature
+│   └── mixed-assets-tax.feature
 │
-├── halal-certification/         # Bounded Context: Halal Certification
+├── permitted-certification/         # Bounded Context: Permitted Certification
 │   ├── README.md
 │   ├── ingredient-verification.feature
 │   ├── certification-authority-validation.feature
 │   ├── supply-chain-traceability.feature
 │   └── certificate-lifecycle.feature
 │
-├── murabaha-financing/          # Bounded Context: Murabaha Financing
+├── loan-financing/          # Bounded Context: Loan Financing
 │   ├── README.md
 │   ├── contract-creation.feature
 │   ├── profit-calculation.feature
-│   ├── riba-detection.feature
+│   ├── interest-detection.feature
 │   └── payment-schedule.feature
 │
 └── accounting/                  # Bounded Context: Accounting
@@ -216,36 +216,36 @@ features/
     └── financial-reporting.feature
 ```
 
-**Context README Example** (`zakat-calculation/README.md`):
+**Context README Example** (`tax-calculation/README.md`):
 
 ```markdown
-# Zakat Calculation Bounded Context
+# Tax Calculation Bounded Context
 
 ## Ubiquitous Language
 
-- **Zakat**: Mandatory charitable contribution (one of Five Pillars of Islam)
-- **Nisab**: Minimum wealth threshold triggering Zakat obligation (85g gold / 595g silver)
+- **Tax**: Mandatory charitable contribution (one of Five Pillars of Islam)
+- **Threshold**: Minimum wealth threshold triggering Tax obligation (85g gold / 595g silver)
 - **Hawl**: One complete lunar year (354 days in Hijri calendar)
-- **Zakatable Wealth**: Assets subject to Zakat (excludes personal-use items)
-- **Zakat Rate**: 2.5% (one-fortieth) for most wealth types
+- **Taxable Wealth**: Assets subject to Tax (excludes personal-use items)
+- **Tax Rate**: 2.5% (one-fortieth) for most wealth types
 
 ## Business Rules
 
-1. Zakat obligatory when: `zakatable_wealth >= nisab AND hawl_complete`
-2. Personal residence excluded from zakatable wealth
+1. Tax obligatory when: `taxable_wealth >= threshold AND hawl_complete`
+2. Personal residence excluded from taxable wealth
 3. Different rates for agricultural produce (5% irrigated, 10% rain-fed)
 
 ## Features
 
-- Gold Zakat (`gold-zakat.feature`)
-- Silver Zakat (`silver-zakat.feature`)
-- Cash Zakat (`cash-zakat.feature`)
+- Gold Tax (`gold-tax.feature`)
+- Silver Tax (`silver-tax.feature`)
+- Cash Tax (`cash-tax.feature`)
 ```
 
 **Benefits**:
 
 - **Clear Ownership**: Each bounded context owned by specific team
-- **Context Isolation**: Zakat scenarios don't mix with Murabaha scenarios
+- **Context Isolation**: Tax scenarios don't mix with Loan scenarios
 - **Language Isolation**: Each context uses its own ubiquitous language
 - **Scalability**: Add contexts without affecting others
 
@@ -253,30 +253,30 @@ features/
 
 **When Features Span Contexts** (Integration scenarios):
 
-**Scenario**: Zakat calculation requires accounting transaction recording
+**Scenario**: Tax calculation requires accounting transaction recording
 
 ```gherkin
-# features/integration/zakat-accounting-integration.feature
-Feature: Zakat Payment Recording in Accounting System
+# features/integration/tax-accounting-integration.feature
+Feature: Tax Payment Recording in Accounting System
 
   # This scenario spans two bounded contexts:
-  # - Zakat Calculation (calculates amount)
+  # - Tax Calculation (calculates amount)
   # - Accounting (records transaction)
 
   @integration @cross-context
-  Scenario: Record Zakat payment as accounting transaction
-    # Zakat Calculation Context
-    Given individual has zakatable wealth of 10,000 USD
-    When Zakat is calculated
-    Then Zakat amount is 250 USD
+  Scenario: Record Tax payment as accounting transaction
+    # Tax Calculation Context
+    Given individual has taxable wealth of 10,000 USD
+    When Tax is calculated
+    Then Tax amount is 250 USD
 
     # Accounting Context
-    When Zakat payment is processed
+    When Tax payment is processed
     Then journal entry should be created:
       | Account           | Debit  | Credit |
-      | Zakat Expense     | 250    |        |
+      | Tax Expense     | 250    |        |
       | Cash              |        | 250    |
-    And transaction should be recorded with category "Zakat"
+    And transaction should be recorded with category "Tax"
 ```
 
 **Pattern**: Integration scenarios explicitly span contexts, clearly marked with `@integration @cross-context` tags.
@@ -287,40 +287,40 @@ Feature: Zakat Payment Recording in Accounting System
 
 **DDD Tactical Pattern**: Aggregate is a cluster of domain objects treated as a single unit for data changes. One entity is the Aggregate Root (controls access to other entities in the cluster).
 
-**Example: ZakatAssessment Aggregate**
+**Example: TaxAssessment Aggregate**
 
 ```typescript
-// domain/zakat-calculation/zakat-assessment.aggregate.ts
-export class ZakatAssessment {
+// domain/tax-calculation/tax-assessment.aggregate.ts
+export class TaxAssessment {
   constructor(
     private readonly assessmentId: AssessmentId,
     private wealth: WealthPortfolio, // Entity
-    private nisab: NisabThreshold, // Value Object
+    private threshold: ThresholdThreshold, // Value Object
     private hawlPeriod: HawlPeriod, // Value Object
-    private zakatObligation?: ZakatObligation, // Value Object
+    private taxObligation?: TaxObligation, // Value Object
   ) {}
 
   // Aggregate root method (business rule enforcement)
-  calculateZakat(): void {
-    if (!this.meetsNisab()) {
-      this.zakatObligation = ZakatObligation.notDue("Below nisab");
+  calculateTax(): void {
+    if (!this.meetsThreshold()) {
+      this.taxObligation = TaxObligation.notDue("Below threshold");
       return;
     }
 
     if (!this.hawlPeriod.isComplete()) {
-      this.zakatObligation = ZakatObligation.notDue("Hawl incomplete");
+      this.taxObligation = TaxObligation.notDue("Hawl incomplete");
       return;
     }
 
-    const amount = this.wealth.calculateZakatableAmount() * ZakatRate.STANDARD;
-    this.zakatObligation = ZakatObligation.due(amount);
+    const amount = this.wealth.calculateTaxableAmount() * TaxRate.STANDARD;
+    this.taxObligation = TaxObligation.due(amount);
 
     // Domain event
-    this.addDomainEvent(new ZakatCalculated(this.assessmentId, amount));
+    this.addDomainEvent(new TaxCalculated(this.assessmentId, amount));
   }
 
-  private meetsNisab(): boolean {
-    return this.wealth.totalValue() >= this.nisab.amount;
+  private meetsThreshold(): boolean {
+    return this.wealth.totalValue() >= this.threshold.amount;
   }
 }
 ```
@@ -330,27 +330,27 @@ export class ZakatAssessment {
 **Pattern**: Test aggregate behavior through BDD scenarios
 
 ```gherkin
-Feature: Zakat Assessment Aggregate
+Feature: Tax Assessment Aggregate
 
   # Test aggregate root business rules
-  @aggregate @zakat-assessment
-  Scenario: Calculate Zakat through aggregate
-    Given ZakatAssessment aggregate with:
-      | Assessment ID | Individual      | Wealth    | Nisab     |
+  @aggregate @tax-assessment
+  Scenario: Calculate Tax through aggregate
+    Given TaxAssessment aggregate with:
+      | Assessment ID | Individual      | Wealth    | Threshold     |
       | ZA-001        | alice@example   | 10,000 USD| 5,600 USD |
     And hawl period is complete
-    When calculateZakat method is invoked
-    Then ZakatObligation should be "due"
-    And Zakat amount should be 250 USD
-    And ZakatCalculated domain event should be raised
+    When calculateTax method is invoked
+    Then TaxObligation should be "due"
+    And Tax amount should be 250 USD
+    And TaxCalculated domain event should be raised
 
   # Test aggregate invariant enforcement
   @aggregate @invariant
-  Scenario: Aggregate enforces nisab invariant
-    Given ZakatAssessment aggregate with wealth below nisab
-    When calculateZakat method is invoked
-    Then ZakatObligation should be "not due"
-    And reason should be "Below nisab"
+  Scenario: Aggregate enforces threshold invariant
+    Given TaxAssessment aggregate with wealth below threshold
+    When calculateTax method is invoked
+    Then TaxObligation should be "not due"
+    And reason should be "Below threshold"
     And no domain events should be raised
 ```
 
@@ -358,21 +358,21 @@ Feature: Zakat Assessment Aggregate
 
 ```typescript
 import { defineFeature, loadFeature } from "jest-cucumber";
-import { ZakatAssessment } from "../domain/zakat-assessment.aggregate";
+import { TaxAssessment } from "../domain/tax-assessment.aggregate";
 import { WealthPortfolio } from "../domain/wealth-portfolio";
 
-const feature = loadFeature("./features/zakat-assessment-aggregate.feature");
+const feature = loadFeature("./features/tax-assessment-aggregate.feature");
 
 defineFeature(feature, (test) => {
-  let aggregate: ZakatAssessment;
+  let aggregate: TaxAssessment;
 
-  test("Calculate Zakat through aggregate", ({ given, and, when, then }) => {
-    given(/ZakatAssessment aggregate with:/, (table) => {
+  test("Calculate Tax through aggregate", ({ given, and, when, then }) => {
+    given(/TaxAssessment aggregate with:/, (table) => {
       const row = table[0];
-      aggregate = new ZakatAssessment(
+      aggregate = new TaxAssessment(
         new AssessmentId(row["Assessment ID"]),
         new WealthPortfolio([{ amount: 10000, currency: "USD" }]),
-        new NisabThreshold(5600, "USD"),
+        new ThresholdThreshold(5600, "USD"),
         HawlPeriod.complete(),
       );
     });
@@ -381,22 +381,22 @@ defineFeature(feature, (test) => {
       // Already set up in aggregate construction
     });
 
-    when("calculateZakat method is invoked", () => {
-      aggregate.calculateZakat();
+    when("calculateTax method is invoked", () => {
+      aggregate.calculateTax();
     });
 
-    then(/ZakatObligation should be "(.+)"/, (status: string) => {
-      expect(aggregate.zakatObligation?.status).toBe(status);
+    then(/TaxObligation should be "(.+)"/, (status: string) => {
+      expect(aggregate.taxObligation?.status).toBe(status);
     });
 
-    and("Zakat amount should be {int} USD", (expectedAmount: number) => {
-      expect(aggregate.zakatObligation?.amount.value).toBe(expectedAmount);
+    and("Tax amount should be {int} USD", (expectedAmount: number) => {
+      expect(aggregate.taxObligation?.amount.value).toBe(expectedAmount);
     });
 
-    and("ZakatCalculated domain event should be raised", () => {
+    and("TaxCalculated domain event should be raised", () => {
       const events = aggregate.getDomainEvents();
-      const zakatCalculatedEvent = events.find((e) => e instanceof ZakatCalculated);
-      expect(zakatCalculatedEvent).toBeDefined();
+      const taxCalculatedEvent = events.find((e) => e instanceof TaxCalculated);
+      expect(taxCalculatedEvent).toBeDefined();
     });
   });
 });
@@ -411,8 +411,8 @@ defineFeature(feature, (test) => {
 **Example Domain Events** (Islamic Finance):
 
 ```typescript
-// domain/zakat-calculation/events/zakat-calculated.event.ts
-export class ZakatCalculated extends DomainEvent {
+// domain/tax-calculation/events/tax-calculated.event.ts
+export class TaxCalculated extends DomainEvent {
   constructor(
     public readonly assessmentId: AssessmentId,
     public readonly amount: Money,
@@ -423,7 +423,7 @@ export class ZakatCalculated extends DomainEvent {
   }
 }
 
-// domain/zakat-calculation/events/hawl-completed.event.ts
+// domain/tax-calculation/events/hawl-completed.event.ts
 export class HawlCompleted extends DomainEvent {
   constructor(
     public readonly individualId: IndividualId,
@@ -434,11 +434,11 @@ export class HawlCompleted extends DomainEvent {
   }
 }
 
-// domain/murabaha-financing/events/riba-detected.event.ts
-export class RibaDetected extends DomainEvent {
+// domain/loan-financing/events/interest-detected.event.ts
+export class InterestDetected extends DomainEvent {
   constructor(
     public readonly contractId: ContractId,
-    public readonly ribaType: RibaType,
+    public readonly interestType: InterestType,
     public readonly severity: Severity,
     public readonly occurredAt: Date = new Date(),
   ) {
@@ -452,15 +452,15 @@ export class RibaDetected extends DomainEvent {
 **Pattern**: Use Then steps to verify domain events are raised
 
 ```gherkin
-Feature: Zakat Calculation Domain Events
+Feature: Tax Calculation Domain Events
 
-  @domain-events @zakat-calculated
-  Scenario: ZakatCalculated event raised when Zakat calculated
-    Given individual has zakatable wealth of 10,000 USD
-    And nisab threshold is 5,600 USD
+  @domain-events @tax-calculated
+  Scenario: TaxCalculated event raised when Tax calculated
+    Given individual has taxable wealth of 10,000 USD
+    And threshold threshold is 5,600 USD
     And hawl is complete
-    When Zakat assessment is performed
-    Then ZakatCalculated event should be published
+    When Tax assessment is performed
+    Then TaxCalculated event should be published
     And event should contain:
       | Field      | Value    |
       | amount     | 250 USD  |
@@ -473,13 +473,13 @@ Feature: Zakat Calculation Domain Events
     And current date is 2026-01-20 (354 days later)
     When hawl period is evaluated
     Then HawlCompleted event should be published
-    And event should trigger Zakat calculation workflow
+    And event should trigger Tax calculation workflow
 
-  @domain-events @riba-detected @compliance
-  Scenario: RibaDetected event raised for compliance violation
-    Given Murabaha contract with time-based interest
-    When Shariah compliance check is performed
-    Then RibaDetected event should be published
+  @domain-events @interest-detected @compliance
+  Scenario: InterestDetected event raised for compliance violation
+    Given Loan contract with time-based interest
+    When Compliance compliance check is performed
+    Then InterestDetected event should be published
     And event severity should be "CRITICAL"
     And event should trigger compliance officer notification
 ```
@@ -500,31 +500,31 @@ beforeEach(() => {
   });
 });
 
-then("ZakatCalculated event should be published", () => {
-  const zakatCalculatedEvent = publishedEvents.find((e) => e instanceof ZakatCalculated);
-  expect(zakatCalculatedEvent).toBeDefined();
+then("TaxCalculated event should be published", () => {
+  const taxCalculatedEvent = publishedEvents.find((e) => e instanceof TaxCalculated);
+  expect(taxCalculatedEvent).toBeDefined();
 });
 
 then("event should contain:", (table) => {
-  const zakatEvent = publishedEvents.find((e) => e instanceof ZakatCalculated) as ZakatCalculated;
+  const taxEvent = publishedEvents.find((e) => e instanceof TaxCalculated) as TaxCalculated;
 
   table.forEach((row) => {
     const field = row["Field"];
     const expectedValue = row["Value"];
 
     if (field === "amount") {
-      expect(zakatEvent.amount.toString()).toBe(expectedValue);
+      expect(taxEvent.amount.toString()).toBe(expectedValue);
     } else if (field === "dueDate") {
       if (expectedValue === "today") {
-        expect(zakatEvent.dueDate.toDateString()).toBe(new Date().toDateString());
+        expect(taxEvent.dueDate.toDateString()).toBe(new Date().toDateString());
       }
     }
   });
 });
 
-then("event should trigger Zakat calculation workflow", async () => {
+then("event should trigger Tax calculation workflow", async () => {
   // Verify event handler invoked
-  const workflowTriggered = await workflowOrchestrator.wasTriggered("ZakatCalculation");
+  const workflowTriggered = await workflowOrchestrator.wasTriggered("TaxCalculation");
   expect(workflowTriggered).toBe(true);
 });
 ```
@@ -533,7 +533,7 @@ then("event should trigger Zakat calculation workflow", async () => {
 
 ### DDD Value Objects
 
-**DDD Pattern**: Value objects are immutable objects defined by their attributes (no identity). Examples: Money, NisabThreshold, HawlPeriod.
+**DDD Pattern**: Value objects are immutable objects defined by their attributes (no identity). Examples: Money, ThresholdThreshold, HawlPeriod.
 
 **Example Value Objects**:
 
@@ -561,15 +561,15 @@ export class Money {
   }
 }
 
-// domain/zakat-calculation/nisab-threshold.value-object.ts
-export class NisabThreshold {
+// domain/tax-calculation/threshold-threshold.value-object.ts
+export class ThresholdThreshold {
   constructor(
     public readonly amount: number,
     public readonly unit: string,
     public readonly assetType: AssetType,
   ) {
     if (amount <= 0) {
-      throw new InvalidNisabError("Nisab must be positive");
+      throw new InvalidThresholdError("Threshold must be positive");
     }
   }
 
@@ -678,136 +678,136 @@ test("Add money with same currency", ({ given, and, when, then }) => {
 
 ```
 features/
-├── zakat-calculation/
+├── tax-calculation/
 │   ├── domain/                          # Unit-level BDD (domain layer)
-│   │   ├── zakat-assessment.feature    # Aggregate behavior
+│   │   ├── tax-assessment.feature    # Aggregate behavior
 │   │   ├── money.feature                # Value object behavior
 │   │   └── domain-events.feature        # Event raising
 │   │
 │   ├── application/                     # Integration BDD (use cases)
-│   │   ├── calculate-zakat-use-case.feature
-│   │   └── submit-zakat-payment-use-case.feature
+│   │   ├── calculate-tax-use-case.feature
+│   │   └── submit-tax-payment-use-case.feature
 │   │
 │   └── e2e/                             # E2E BDD (full stack)
-│       └── zakat-self-assessment-journey.feature
+│       └── tax-self-assessment-journey.feature
 ```
 
 **Domain Layer BDD** (Fast, isolated):
 
 ```gherkin
-# features/zakat-calculation/domain/zakat-assessment.feature
+# features/tax-calculation/domain/tax-assessment.feature
 @unit @domain
-Feature: ZakatAssessment Aggregate
+Feature: TaxAssessment Aggregate
 
-  Scenario: Calculate Zakat on aggregate
-    Given ZakatAssessment with wealth 10,000 USD and nisab 5,600 USD
-    When calculateZakat is called
-    Then Zakat should be due
+  Scenario: Calculate Tax on aggregate
+    Given TaxAssessment with wealth 10,000 USD and threshold 5,600 USD
+    When calculateTax is called
+    Then Tax should be due
     And amount should be 250 USD
 ```
 
 **Application Layer BDD** (Integration, use case orchestration):
 
 ```gherkin
-# features/zakat-calculation/application/calculate-zakat-use-case.feature
+# features/tax-calculation/application/calculate-tax-use-case.feature
 @integration @use-case
-Feature: Calculate Zakat Use Case
+Feature: Calculate Tax Use Case
 
-  Scenario: Execute Zakat calculation use case
+  Scenario: Execute Tax calculation use case
     Given individual "alice@example.com" exists in database
     And individual has wealth 10,000 USD
-    When CalculateZakatUseCase is executed for individual
-    Then Zakat calculation should be saved to database
-    And ZakatCalculated event should be published
+    When CalculateTaxUseCase is executed for individual
+    Then Tax calculation should be saved to database
+    And TaxCalculated event should be published
     And individual should be notified via email
 ```
 
 **E2E Layer BDD** (Full journey):
 
 ```gherkin
-# features/zakat-calculation/e2e/zakat-self-assessment-journey.feature
+# features/tax-calculation/e2e/tax-self-assessment-journey.feature
 @e2e @journey
-Feature: Zakat Self-Assessment Journey
+Feature: Tax Self-Assessment Journey
 
-  Scenario: User completes Zakat self-assessment
-    Given user navigates to /zakat/assessment
+  Scenario: User completes Tax self-assessment
+    Given user navigates to /tax/assessment
     When user enters wealth details
-    And clicks "Calculate Zakat"
-    Then user sees "Zakat Due: 250 USD"
+    And clicks "Calculate Tax"
+    Then user sees "Tax Due: 250 USD"
     And user receives email confirmation
 ```
 
 ## Islamic Finance Examples
 
-### Example 1: Zakat Calculation Bounded Context
+### Example 1: Tax Calculation Bounded Context
 
 **Ubiquitous Language in Scenarios**:
 
 ```gherkin
-# features/zakat-calculation/gold-zakat.feature
-Feature: Zakat Calculation for Gold Wealth
+# features/tax-calculation/gold-tax.feature
+Feature: Tax Calculation for Gold Wealth
 
-  # Ubiquitous language: nisab, hawl, zakatable, Zakat rate
+  # Ubiquitous language: threshold, hawl, taxable, Tax rate
 
   Background:
-    Given nisab threshold for gold is 85 grams
-    And Zakat rate for gold is 2.5%
+    Given threshold threshold for gold is 85 grams
+    And Tax rate for gold is 2.5%
 
-  Scenario: Zakat obligatory when gold meets nisab for hawl
+  Scenario: Tax obligatory when gold meets threshold for hawl
     Given individual owns 100 grams of gold
     And gold has been owned for one complete hawl (354 days)
-    When Zakat obligation is evaluated
-    Then Zakat should be obligatory
-    And Zakat amount should be 2.5 grams of gold
+    When Tax obligation is evaluated
+    Then Tax should be obligatory
+    And Tax amount should be 2.5 grams of gold
 
-  Scenario: Zakat not obligatory when gold below nisab
-    Given individual owns 50 grams of gold (below nisab)
-    When Zakat obligation is evaluated
-    Then Zakat should not be obligatory
-    And individual should be informed "Wealth below nisab threshold"
+  Scenario: Tax not obligatory when gold below threshold
+    Given individual owns 50 grams of gold (below threshold)
+    When Tax obligation is evaluated
+    Then Tax should not be obligatory
+    And individual should be informed "Wealth below threshold threshold"
 ```
 
 **Domain Model Uses Same Language**:
 
 ```typescript
-export class GoldZakatCalculator {
-  private readonly NISAB_GOLD_GRAMS = 85;
-  private readonly ZAKAT_RATE = 0.025;
+export class GoldTaxCalculator {
+  private readonly THRESHOLD_GOLD_GRAMS = 85;
+  private readonly TAX_RATE = 0.025;
   private readonly HAWL_DAYS = 354;
 
-  calculateZakat(goldWealth: GoldWealth, hawlPeriod: HawlPeriod): ZakatObligation {
-    if (!this.meetsNisab(goldWealth)) {
-      return ZakatObligation.notDue("Wealth below nisab threshold");
+  calculateTax(goldWealth: GoldWealth, hawlPeriod: HawlPeriod): TaxObligation {
+    if (!this.meetsThreshold(goldWealth)) {
+      return TaxObligation.notDue("Wealth below threshold threshold");
     }
 
     if (!hawlPeriod.isComplete(this.HAWL_DAYS)) {
-      return ZakatObligation.notDue("Hawl not complete");
+      return TaxObligation.notDue("Hawl not complete");
     }
 
-    const zakatAmount = goldWealth.amount * this.ZAKAT_RATE;
-    return ZakatObligation.due(zakatAmount, "grams");
+    const taxAmount = goldWealth.amount * this.TAX_RATE;
+    return TaxObligation.due(taxAmount, "grams");
   }
 
-  private meetsNisab(goldWealth: GoldWealth): boolean {
-    return goldWealth.amount >= this.NISAB_GOLD_GRAMS;
+  private meetsThreshold(goldWealth: GoldWealth): boolean {
+    return goldWealth.amount >= this.THRESHOLD_GOLD_GRAMS;
   }
 }
 ```
 
-### Example 2: Halal Certification with Domain Events
+### Example 2: Permitted Certification with Domain Events
 
 **Feature with Domain Events**:
 
 ```gherkin
-# features/halal-certification/certification-lifecycle.feature
-@halal @domain-events
-Feature: Halal Certification Lifecycle
+# features/permitted-certification/certification-lifecycle.feature
+@permitted @domain-events
+Feature: Permitted Certification Lifecycle
 
-  Scenario: Issue halal certification
+  Scenario: Issue permitted certification
     Given product "Organic Dates" passed all verifications
     And certification authority is "JAKIM"
-    When halal certificate is issued
-    Then HalalCertificateIssued event should be published
+    When permitted certificate is issued
+    Then PermittedCertificateIssued event should be published
     And event should contain:
       | Field              | Value                |
       | product            | Organic Dates        |
@@ -819,7 +819,7 @@ Feature: Halal Certification Lifecycle
   Scenario: Revoke expired certification
     Given product "Snack Mix" has expired certification (expired 30 days ago)
     When certification expiry check is performed
-    Then HalalCertificateRevoked event should be published
+    Then PermittedCertificateRevoked event should be published
     And product status should be updated to "Certification Expired"
     And supplier should be alerted
 ```
@@ -827,65 +827,65 @@ Feature: Halal Certification Lifecycle
 **Domain Event Handler**:
 
 ```typescript
-@EventHandler(HalalCertificateIssued)
+@EventHandler(PermittedCertificateIssued)
 export class SendCertificateNotificationHandler {
   constructor(
     private readonly emailService: EmailService,
     private readonly pdfGenerator: PdfGenerator,
   ) {}
 
-  async handle(event: HalalCertificateIssued): Promise<void> {
+  async handle(event: PermittedCertificateIssued): Promise<void> {
     const certificatePdf = await this.pdfGenerator.generate(event.certificateId);
 
     await this.emailService.send({
       to: event.supplierEmail,
-      subject: "Halal Certificate Issued",
-      body: `Your product "${event.productName}" has been certified halal by ${event.certificationBody}.`,
+      subject: "Permitted Certificate Issued",
+      body: `Your product "${event.productName}" has been certified permitted by ${event.certificationBody}.`,
       attachments: [certificatePdf],
     });
   }
 }
 ```
 
-### Example 3: Murabaha Financing Aggregate
+### Example 3: Loan Financing Aggregate
 
 **Testing Aggregate Invariants**:
 
 ```gherkin
-# features/murabaha-financing/murabaha-contract-aggregate.feature
-@aggregate @murabaha
-Feature: Murabaha Contract Aggregate
+# features/loan-financing/loan-contract-aggregate.feature
+@aggregate @loan
+Feature: Loan Contract Aggregate
 
-  Scenario: Create valid Murabaha contract
+  Scenario: Create valid Loan contract
     Given bank purchases asset for 100,000 USD (cost price)
     And bank discloses cost price to customer
     And profit markup is 15,000 USD (15%)
-    When MurabahaContract aggregate is created
+    When LoanContract aggregate is created
     Then contract should be valid
     And selling price should be 115,000 USD
     And ContractCreated event should be raised
 
-  @invariant @riba
+  @invariant @interest
   Scenario: Aggregate rejects time-based interest (invariant violation)
     Given bank attempts to create contract with interest rate 5%
-    When MurabahaContract aggregate is created
+    When LoanContract aggregate is created
     Then InvalidContractError should be thrown
-    And error should be "Riba prohibited: Time-based interest not allowed in Murabaha"
+    And error should be "Interest prohibited: Time-based interest not allowed in Loan"
     And no domain events should be raised
 
   @invariant @disclosure
   Scenario: Aggregate enforces cost disclosure (invariant)
     Given bank purchases asset for 100,000 USD
     And cost price NOT disclosed to customer
-    When MurabahaContract aggregate is created
+    When LoanContract aggregate is created
     Then InvalidContractError should be thrown
-    And error should be "Shariah requirement: Cost price must be disclosed to customer"
+    And error should be "Compliance requirement: Cost price must be disclosed to customer"
 ```
 
 **Aggregate with Invariants**:
 
 ```typescript
-export class MurabahaContract {
+export class LoanContract {
   constructor(
     private readonly contractId: ContractId,
     private readonly costPrice: Money,
@@ -896,14 +896,14 @@ export class MurabahaContract {
   }
 
   private validateInvariants(): void {
-    // Invariant: Cost must be disclosed (Shariah requirement)
+    // Invariant: Cost must be disclosed (Compliance requirement)
     if (!this.costDisclosedToCustomer) {
-      throw new InvalidContractError("Shariah requirement: Cost price must be disclosed to customer");
+      throw new InvalidContractError("Compliance requirement: Cost price must be disclosed to customer");
     }
 
     // Invariant: Profit must be fixed markup, not interest
     if (this.profitMarkup.isTimeBasedInterest()) {
-      throw new InvalidContractError("Riba prohibited: Time-based interest not allowed in Murabaha");
+      throw new InvalidContractError("Interest prohibited: Time-based interest not allowed in Loan");
     }
   }
 
@@ -920,19 +920,19 @@ BDD and DDD are highly complementary practices that strengthen each other throug
 **Ubiquitous Language**:
 
 - **DDD Provides**: Shared vocabulary between domain experts and developers
-- **BDD Uses**: Same vocabulary in Gherkin scenarios (nisab, hawl, Riba, halal)
+- **BDD Uses**: Same vocabulary in Gherkin scenarios (threshold, hawl, Interest, permitted)
 - **Result**: Domain experts can read and validate scenarios without translation
 
 **Features per Bounded Context**:
 
 - **DDD Provides**: Strategic boundaries dividing complex domains
-- **BDD Organizes**: Feature files per bounded context (Zakat, Halal, Murabaha)
+- **BDD Organizes**: Feature files per bounded context (Tax, Permitted, Loan)
 - **Result**: Clear ownership, context isolation, scalable organization
 
 **Testing Domain Patterns**:
 
 - **Aggregates**: BDD scenarios verify aggregate behavior and invariants
-- **Domain Events**: Then steps verify events raised (ZakatCalculated, RibaDetected)
+- **Domain Events**: Then steps verify events raised (TaxCalculated, InterestDetected)
 - **Value Objects**: BDD tests verify immutability, equality, operations
 - **Use Cases**: Integration BDD tests verify application layer orchestration
 
@@ -944,10 +944,10 @@ BDD and DDD are highly complementary practices that strengthen each other throug
 
 **Islamic Finance Benefits**:
 
-- Shariah scholars validate BDD scenarios using domain language
-- Bounded contexts mirror Islamic finance domains (Zakat, Halal, Murabaha)
-- Domain events track compliance (RibaDetected, CertificationRevoked)
-- Aggregates enforce Shariah invariants (cost disclosure, Riba prohibition)
+- Compliance scholars validate BDD scenarios using domain language
+- Bounded contexts mirror Islamic finance domains (Tax, Permitted, Loan)
+- Domain events track compliance (InterestDetected, CertificationRevoked)
+- Aggregates enforce Compliance invariants (cost disclosure, Interest prohibition)
 
 Use BDD and DDD together to create domain-aligned, stakeholder-verified, well-tested software that accurately models complex business domains while remaining accessible to domain experts.
 
@@ -955,7 +955,7 @@ Use BDD and DDD together to create domain-aligned, stakeholder-verified, well-te
 
 - **Category**: Explanation
 - **Subcategory**: Software Design > Behavior-Driven Development
-- **Tags**: BDD, DDD, Domain-Driven Design, Ubiquitous Language, Bounded Context, Aggregates, Domain Events, Value Objects, Islamic Finance, Zakat, Halal, Murabaha
+- **Tags**: BDD, DDD, Domain-Driven Design, Ubiquitous Language, Bounded Context, Aggregates, Domain Events, Value Objects, Islamic Finance, Tax, Permitted, Loan
 - **Related Files**:
   - [README](./README.md) - BDD documentation overview
   - [DDD Introduction](../architecture/domain-driven-design-ddd/README.md) - Domain-Driven Design overview

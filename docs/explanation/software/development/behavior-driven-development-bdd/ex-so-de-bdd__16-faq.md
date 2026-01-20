@@ -45,26 +45,26 @@ Cucumber and Gherkin are useful automation tools, but you can practice BDD witho
 
 ```gherkin
 # This Gherkin scenario is useful...
-Scenario: Calculate Zakat on gold above nisab
+Scenario: Calculate Tax on gold above threshold
   Given individual owns 100 grams of gold
   And gold has been owned for one lunar year
-  When Zakat calculation is performed
-  Then Zakat should be obligatory
-  And Zakat amount should be 2.5 grams of gold
+  When Tax calculation is performed
+  Then Tax should be obligatory
+  And Tax amount should be 2.5 grams of gold
 ```
 
 ```markdown
 # ...but the real BDD value came from this conversation:
 
-**Product Owner**: "We need to calculate Zakat for gold."
+**Product Owner**: "We need to calculate Tax for gold."
 
-**Developer**: "What if they own exactly 85 grams? Is that above or at nisab?"
+**Developer**: "What if they own exactly 85 grams? Is that above or at threshold?"
 
-**Shariah Advisor**: "85 grams IS the nisab threshold. Zakat is due at or above nisab."
+**Compliance Advisor**: "85 grams IS the threshold threshold. Tax is due at or above threshold."
 
 **Tester**: "What if they just bought gold yesterday?"
 
-**Shariah Advisor**: "One lunar year (Hawl) must pass. No Zakat until then."
+**Compliance Advisor**: "One lunar year (Hawl) must pass. No Tax until then."
 
 [This conversation creates shared understanding that the scenario merely documents]
 ```
@@ -91,11 +91,11 @@ BDD and TDD work at different levels:
 
 ```gherkin
 # BDD Scenario - Business perspective
-Scenario: Pay Zakat obligation
-  Given individual has Zakat obligation of 250 USD
-  When individual submits Zakat payment
+Scenario: Pay Tax obligation
+  Given individual has Tax obligation of 250 USD
+  When individual submits Tax payment
   Then payment should be processed successfully
-  And Zakat obligation should be marked fulfilled
+  And Tax obligation should be marked fulfilled
 ```
 
 **TDD (Inside-Out)**:
@@ -108,13 +108,13 @@ Scenario: Pay Zakat obligation
 
 ```typescript
 // TDD Test - Developer perspective
-describe("ZakatCalculator", () => {
-  it("calculates 2.5% for wealth above nisab", () => {
-    const calculator = new ZakatCalculator();
+describe("TaxCalculator", () => {
+  it("calculates 2.5% for wealth above threshold", () => {
+    const calculator = new TaxCalculator();
 
-    const zakat = calculator.calculateZakat(Money.fromAmount(10000, "USD"), Money.fromAmount(2000, "USD"));
+    const tax = calculator.calculateTax(Money.fromAmount(10000, "USD"), Money.fromAmount(2000, "USD"));
 
-    expect(zakat.amount).toBe(250);
+    expect(tax.amount).toBe(250);
   });
 });
 ```
@@ -131,46 +131,46 @@ Production Code (implementation)
 
 **Example Workflow**:
 
-1. **BDD**: Three Amigos write scenario "Calculate Zakat on gold above nisab"
-2. **TDD**: Developer writes unit tests for `ZakatCalculator` class
-3. **TDD**: Developer implements `ZakatCalculator` using Red-Green-Refactor
+1. **BDD**: Three Amigos write scenario "Calculate Tax on gold above threshold"
+2. **TDD**: Developer writes unit tests for `TaxCalculator` class
+3. **TDD**: Developer implements `TaxCalculator` using Red-Green-Refactor
 4. **BDD**: Step definitions connect scenario to production code
 5. **BDD**: Scenario passes, acceptance criteria met
 
 **When to Use Each**:
 
-| Situation                          | Use BDD                      | Use TDD                         |
-| ---------------------------------- | ---------------------------- | ------------------------------- |
-| Defining acceptance criteria       | Yes (Gherkin scenarios)      | No                              |
-| Driving code design                | No                           | Yes (unit tests)                |
-| Collaborating with business        | Yes (living documentation)   | No (technical)                  |
-| Testing domain logic               | No (too granular)            | Yes (precise assertions)        |
-| End-to-end workflow                | Yes (user perspective)       | No (too slow for unit feedback) |
-| Refactoring with confidence        | Partially (high-level tests) | Yes (fast unit tests)           |
-| Validating Shariah compliance      | Yes (scenarios)              | Yes (unit tests for rules)      |
-| Documenting business rules         | Yes (readable scenarios)     | No (code-level)                 |
-| Testing edge cases (null, zero)    | No (too detailed)            | Yes (comprehensive coverage)    |
-| Communicating with Shariah experts | Yes (natural language)       | No (code syntax)                |
+| Situation                             | Use BDD                      | Use TDD                         |
+| ------------------------------------- | ---------------------------- | ------------------------------- |
+| Defining acceptance criteria          | Yes (Gherkin scenarios)      | No                              |
+| Driving code design                   | No                           | Yes (unit tests)                |
+| Collaborating with business           | Yes (living documentation)   | No (technical)                  |
+| Testing domain logic                  | No (too granular)            | Yes (precise assertions)        |
+| End-to-end workflow                   | Yes (user perspective)       | No (too slow for unit feedback) |
+| Refactoring with confidence           | Partially (high-level tests) | Yes (fast unit tests)           |
+| Validating Compliance compliance      | Yes (scenarios)              | Yes (unit tests for rules)      |
+| Documenting business rules            | Yes (readable scenarios)     | No (code-level)                 |
+| Testing edge cases (null, zero)       | No (too detailed)            | Yes (comprehensive coverage)    |
+| Communicating with Compliance experts | Yes (natural language)       | No (code syntax)                |
 
 **Islamic Finance Example**:
 
 ```gherkin
-# BDD - Acceptance test for Murabaha contract
-Scenario: Create Murabaha contract with Shariah-compliant profit
+# BDD - Acceptance test for Loan contract
+Scenario: Create Loan contract with Compliance-compliant profit
   Given bank purchases asset at cost price 100,000 USD
   When bank sells asset to customer with 10% profit margin
   Then contract selling price should be 110,000 USD
   And profit should be disclosed to customer
-  And contract should be validated as Shariah-compliant
+  And contract should be validated as Compliance-compliant
 
 # This scenario drives multiple TDD tests...
 ```
 
 ```typescript
 // TDD - Unit test for profit calculation
-describe("MurabahaContract", () => {
+describe("LoanContract", () => {
   it("calculates selling price with profit margin", () => {
-    const contract = new MurabahaContract(
+    const contract = new LoanContract(
       Money.fromAmount(100000, "USD"),
       0.1, // 10% profit
     );
@@ -182,9 +182,9 @@ describe("MurabahaContract", () => {
 });
 
 // TDD - Unit test for profit disclosure requirement
-describe("MurabahaContract", () => {
+describe("LoanContract", () => {
   it("requires profit disclosure to customer", () => {
-    const contract = new MurabahaContract(/* ... */);
+    const contract = new LoanContract(/* ... */);
 
     const disclosure = contract.getProfitDisclosure();
 
@@ -235,30 +235,30 @@ describe("MurabahaContract", () => {
 
 **Who Does What**:
 
-| Role                   | Responsibility                                  | Example                                             |
-| ---------------------- | ----------------------------------------------- | --------------------------------------------------- |
-| **Business Analyst**   | Provides domain knowledge, business rules       | "Zakat is 2.5% on wealth held for lunar year"       |
-| **Shariah Advisor**    | Validates Islamic compliance, edge cases        | "Nisab for gold is 85 grams, silver is 595 grams"   |
-| **Developer**          | Asks implementation questions, writes step defs | "What currency conversions do we support?"          |
-| **Tester**             | Identifies edge cases, negative scenarios       | "What if user owns 84.99 grams? What if 85.01?"     |
-| **Product Owner**      | Prioritizes scenarios, accepts completion       | "Let's handle gold first, defer silver to Sprint 3" |
-| **All (Three Amigos)** | Collaborative discovery, shared understanding   | Workshop discussion creates examples together       |
+| Role                   | Responsibility                                  | Example                                               |
+| ---------------------- | ----------------------------------------------- | ----------------------------------------------------- |
+| **Business Analyst**   | Provides domain knowledge, business rules       | "Tax is 2.5% on wealth held for lunar year"           |
+| **Compliance Advisor** | Validates Islamic compliance, edge cases        | "Threshold for gold is 85 grams, silver is 595 grams" |
+| **Developer**          | Asks implementation questions, writes step defs | "What currency conversions do we support?"            |
+| **Tester**             | Identifies edge cases, negative scenarios       | "What if user owns 84.99 grams? What if 85.01?"       |
+| **Product Owner**      | Prioritizes scenarios, accepts completion       | "Let's handle gold first, defer silver to Sprint 3"   |
+| **All (Three Amigos)** | Collaborative discovery, shared understanding   | Workshop discussion creates examples together         |
 
-**Real Example - Zakat Feature**:
+**Real Example - Tax Feature**:
 
 ```markdown
 ## Example Mapping Session (25 minutes)
 
-**Story Card**: As a Muslim user, I want to calculate Zakat on my gold holdings
+**Story Card**: As a Muslim user, I want to calculate Tax on my gold holdings
 
-**Rule Card 1**: Nisab threshold for gold is 85 grams
+**Rule Card 1**: Threshold threshold for gold is 85 grams
 **Rule Card 2**: Wealth must be owned for one lunar year (Hawl)
-**Rule Card 3**: Zakat rate is 2.5% of eligible wealth
+**Rule Card 3**: Tax rate is 2.5% of eligible wealth
 
-**Example Card 1**: User owns 100g gold for 1 year → Zakat is 2.5g
-**Example Card 2**: User owns 85g gold for 1 year → Zakat is 2.125g (at threshold)
-**Example Card 3**: User owns 84g gold → No Zakat (below nisab)
-**Example Card 4**: User owns 100g gold for 11 months → No Zakat (Hawl not met)
+**Example Card 1**: User owns 100g gold for 1 year → Tax is 2.5g
+**Example Card 2**: User owns 85g gold for 1 year → Tax is 2.125g (at threshold)
+**Example Card 3**: User owns 84g gold → No Tax (below threshold)
+**Example Card 4**: User owns 100g gold for 11 months → No Tax (Hawl not met)
 
 **Question Card 1**: What if gold price fluctuates during the year?
 **Question Card 2**: Do we support multiple gold types (24k, 22k, 18k)?
@@ -269,12 +269,12 @@ describe("MurabahaContract", () => {
 
 ```gherkin
 # Developer formalizes Example Card 1 as scenario
-Scenario: Calculate Zakat on gold above nisab held for one year
+Scenario: Calculate Tax on gold above threshold held for one year
   Given individual owns 100 grams of gold
   And gold has been owned for one lunar year
-  When Zakat calculation is performed
-  Then Zakat should be obligatory
-  And Zakat amount should be 2.5 grams of gold
+  When Tax calculation is performed
+  Then Tax should be obligatory
+  And Tax amount should be 2.5 grams of gold
 ```
 
 **Common Mistakes**:
@@ -283,32 +283,32 @@ Scenario: Calculate Zakat on gold above nisab held for one year
 
 ```gherkin
 # Too abstract - no collaboration
-Scenario: Zakat calculation
+Scenario: Tax calculation
   Given user has wealth
   When calculation happens
-  Then Zakat is shown
+  Then Tax is shown
 ```
 
 **Mistake 2: Developers write scenarios alone**
 
 ```gherkin
 # Too technical - not business-readable
-Scenario: Zakat API calculation
-  Given POST request to /api/zakat with JSON payload
+Scenario: Tax API calculation
+  Given POST request to /api/tax with JSON payload
   When response status is 200
-  Then JSON contains zakatAmount field
+  Then JSON contains taxAmount field
 ```
 
 **Correct Approach: Collaborative scenarios**
 
 ```gherkin
 # Right level of detail - business-readable, specific enough to automate
-Scenario: Calculate Zakat on gold above nisab
+Scenario: Calculate Tax on gold above threshold
   Given individual owns 100 grams of gold
   And gold has been owned for one lunar year
-  When Zakat calculation is performed
-  Then Zakat should be obligatory
-  And Zakat amount should be 2.5 grams of gold
+  When Tax calculation is performed
+  Then Tax should be obligatory
+  And Tax amount should be 2.5 grams of gold
 ```
 
 **Summary**: Business + Developer + Tester collaborate to discover examples. Developer usually writes the Gherkin, but it reflects team's shared understanding, not individual interpretation.
@@ -323,64 +323,64 @@ Scenario: Calculate Zakat on gold above nisab
 
 **Automation Decision Matrix**:
 
-| Scenario Type                      | Automate? | Reason                                        |
-| ---------------------------------- | --------- | --------------------------------------------- |
-| **Core business rules**            | Yes       | Must always work (Zakat calculation)          |
-| **Compliance requirements**        | Yes       | Regulatory/Shariah validation                 |
-| **Critical user workflows**        | Yes       | Login, payment, data entry                    |
-| **Happy path scenarios**           | Yes       | Most common user journeys                     |
-| **Edge cases (important)**         | Yes       | Boundary conditions (wealth exactly at nisab) |
-| **Exploratory scenarios**          | No        | Temporary investigation, not permanent tests  |
-| **Rapidly changing features**      | No        | Wait until design stabilizes                  |
-| **UI-specific styling**            | No        | Visual testing tools more appropriate         |
-| **One-off manual test cases**      | No        | Not worth automation overhead                 |
-| **Performance testing**            | No        | Use specialized performance tools             |
-| **Security penetration scenarios** | No        | Security testing tools more appropriate       |
+| Scenario Type                      | Automate? | Reason                                            |
+| ---------------------------------- | --------- | ------------------------------------------------- |
+| **Core business rules**            | Yes       | Must always work (Tax calculation)                |
+| **Compliance requirements**        | Yes       | Regulatory/Compliance validation                  |
+| **Critical user workflows**        | Yes       | Login, payment, data entry                        |
+| **Happy path scenarios**           | Yes       | Most common user journeys                         |
+| **Edge cases (important)**         | Yes       | Boundary conditions (wealth exactly at threshold) |
+| **Exploratory scenarios**          | No        | Temporary investigation, not permanent tests      |
+| **Rapidly changing features**      | No        | Wait until design stabilizes                      |
+| **UI-specific styling**            | No        | Visual testing tools more appropriate             |
+| **One-off manual test cases**      | No        | Not worth automation overhead                     |
+| **Performance testing**            | No        | Use specialized performance tools                 |
+| **Security penetration scenarios** | No        | Security testing tools more appropriate           |
 
 **Example - Islamic Finance Platform**:
 
 ```gherkin
-# ✅ AUTOMATE - Core business rule (Zakat calculation)
-Scenario: Calculate Zakat on gold above nisab
+# ✅ AUTOMATE - Core business rule (Tax calculation)
+Scenario: Calculate Tax on gold above threshold
   Given individual owns 100 grams of gold
   And gold has been owned for one lunar year
-  When Zakat calculation is performed
-  Then Zakat should be obligatory
-  And Zakat amount should be 2.5 grams of gold
+  When Tax calculation is performed
+  Then Tax should be obligatory
+  And Tax amount should be 2.5 grams of gold
 
-# ✅ AUTOMATE - Compliance requirement (Riba prevention)
-Scenario: Reject Murabaha contract with interest-based profit
-  Given Murabaha contract with cost price 100,000 USD
+# ✅ AUTOMATE - Compliance requirement (Interest prevention)
+Scenario: Reject Loan contract with interest-based profit
+  Given Loan contract with cost price 100,000 USD
   When bank attempts to add 5% annual interest rate
   Then contract should be rejected
-  And rejection reason should state "Interest (Riba) is prohibited"
+  And rejection reason should state "Interest (Interest) is prohibited"
 
 # ✅ AUTOMATE - Critical workflow (Payment processing)
-Scenario: Pay Zakat obligation
-  Given individual has Zakat obligation of 250 USD
+Scenario: Pay Tax obligation
+  Given individual has Tax obligation of 250 USD
   When individual submits payment via credit card
   Then payment should be processed successfully
-  And Zakat obligation should be marked fulfilled
+  And Tax obligation should be marked fulfilled
   And receipt should be emailed to individual
 
 # ⏭️ SKIP AUTOMATION - Exploratory scenario
-Scenario: Explore alternative Zakat calculation methods
-  Given different Fiqh schools have varying nisab interpretations
+Scenario: Explore alternative Tax calculation methods
+  Given different Fiqh schools have varying threshold interpretations
   When we compare Hanafi vs Shafi'i approaches
   Then we document differences for future consideration
   # Not automated - exploratory research, not permanent behavior
 
 # ⏭️ SKIP AUTOMATION - UI styling
-Scenario: Display Zakat calculator with green submit button
-  Given user is on Zakat calculator page
+Scenario: Display Tax calculator with green submit button
+  Given user is on Tax calculator page
   Then submit button should be green
   And button text should be centered
   # Visual testing tools better suited than BDD automation
 
 # ⏭️ SKIP AUTOMATION - Rapidly changing feature (prototype phase)
-Scenario: Prototype Halal product recommendation engine
+Scenario: Prototype Permitted product recommendation engine
   Given user browsing food products
-  When AI suggests Halal alternatives
+  When AI suggests Permitted alternatives
   Then suggestions should appear in sidebar
   # Wait until design is stable before automating
 ```
@@ -435,23 +435,23 @@ Even without automation, BDD provides:
 
 ```gherkin
 # Scenario written collaboratively, tested manually
-Scenario: Calculate Zakat on mixed asset portfolio
+Scenario: Calculate Tax on mixed asset portfolio
   Given individual owns:
     | Asset Type | Amount    | Value (USD) |
     | Gold       | 100 grams | 6,000       |
     | Silver     | 700 grams | 350         |
     | Cash       | -         | 4,000       |
   And assets have been owned for one lunar year
-  When Zakat calculation is performed
-  Then total Zakat should be 257.50 USD
+  When Tax calculation is performed
+  Then total Tax should be 257.50 USD
   And calculation breakdown should show:
-    | Asset  | Zakat Amount |
+    | Asset  | Tax Amount |
     | Gold   | 150.00 USD   |
     | Silver | 7.50 USD     |
     | Cash   | 100.00 USD   |
 
 # Tested manually by QA:
-# 1. Tester enters data into Zakat calculator UI
+# 1. Tester enters data into Tax calculator UI
 # 2. Tester verifies total matches expected (257.50 USD)
 # 3. Tester checks breakdown table matches examples
 # 4. Tester marks scenario as "Pass" or "Fail"
@@ -460,7 +460,7 @@ Scenario: Calculate Zakat on mixed asset portfolio
 **When Manual BDD Makes Sense**:
 
 - **Early-stage startups**: Focus on product-market fit, automate later
-- **Complex domain validation**: Shariah scholars manually review scenarios
+- **Complex domain validation**: Compliance scholars manually review scenarios
 - **Exploratory testing**: Scenarios guide manual exploratory sessions
 - **UI-heavy features**: Manual testing faster than brittle UI automation
 - **Small teams**: Automation overhead too high for team size
@@ -477,31 +477,31 @@ Phase 3: Expand automation gradually (critical workflows)
 Phase 4: Maintain hybrid approach (automate stable, test manually changing)
 ```
 
-**Example - Halal Certification Workflow**:
+**Example - Permitted Certification Workflow**:
 
 ```gherkin
-# Complex scenario - manual review by Shariah advisor
-Scenario: Certify restaurant as Halal-compliant
-  Given restaurant "Al-Barakah Grill" applies for Halal certification
+# Complex scenario - manual review by Compliance advisor
+Scenario: Certify restaurant as Permitted-compliant
+  Given restaurant "Al-Barakah Grill" applies for Permitted certification
   And restaurant provides:
     | Document              | Status   |
     | Supplier certificates | Uploaded |
     | Kitchen photos        | Uploaded |
     | Staff training logs   | Uploaded |
     | Menu with ingredients | Uploaded |
-  When Shariah advisor reviews application
+  When Compliance advisor reviews application
   Then advisor should verify:
     | Check                              | Result |
     | No pork/alcohol in ingredients     | Pass   |
-    | Halal meat suppliers certified     | Pass   |
+    | Permitted meat suppliers certified     | Pass   |
     | Separate kitchen equipment         | Pass   |
-    | Staff trained on Halal procedures  | Pass   |
+    | Staff trained on Permitted procedures  | Pass   |
   And certification should be approved
   And certificate should be valid for one year
 
-# Manual testing by Shariah advisor:
+# Manual testing by Compliance advisor:
 # Advisor reviews actual documents, photos, logs
-# Automation would miss nuanced Shariah compliance details
+# Automation would miss nuanced Compliance compliance details
 ```
 
 **Summary**: BDD provides value even without automation through collaboration and clear requirements. Automate strategically (core rules, stable workflows), test manually when appropriate (complex validation, exploratory testing).
@@ -555,35 +555,35 @@ Scenario: Certify restaurant as Halal-compliant
 │  YELLOW CARD: User Story                    │
 │                                             │
 │  As a Muslim user                           │
-│  I want to calculate Zakat on my wealth     │
+│  I want to calculate Tax on my wealth     │
 │  So that I can fulfill my religious duty    │
 └─────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────┐
 │  BLUE CARD: Rule                            │
 │                                             │
-│  Nisab threshold for gold is 85 grams       │
+│  Threshold threshold for gold is 85 grams       │
 └─────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────┐
 │  GREEN CARD: Example                        │
 │                                             │
 │  User owns 100g gold for 1 year             │
-│  → Zakat: 2.5g gold (2.5%)                  │
+│  → Tax: 2.5g gold (2.5%)                  │
 └─────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────┐
 │  GREEN CARD: Example                        │
 │                                             │
 │  User owns 84g gold                         │
-│  → No Zakat (below nisab)                   │
+│  → No Tax (below threshold)                   │
 └─────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────┐
 │  GREEN CARD: Example                        │
 │                                             │
 │  User owns 100g gold for 11 months          │
-│  → No Zakat (Hawl not completed)            │
+│  → No Tax (Hawl not completed)            │
 └─────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────┐
@@ -640,7 +640,7 @@ Overwhelming complexity
 **Islamic Finance Example Session**:
 
 ```markdown
-**Story**: Validate Murabaha contract for Shariah compliance
+**Story**: Validate Loan contract for Compliance compliance
 
 **Rules** (3 blue cards):
 
@@ -652,16 +652,16 @@ Overwhelming complexity
 
 1. Bank buys car at 20,000 USD, sells for 22,000 USD (10% profit) → Valid
 2. Bank buys house at 200,000 USD, sells for 240,000 USD (20% profit) → Valid
-3. Bank adds 5% annual interest to price → Invalid (Riba)
+3. Bank adds 5% annual interest to price → Invalid (Interest)
 4. Bank sells asset before owning it → Invalid (Gharar)
 5. Bank discloses cost 20,000 USD and profit 2,000 USD to customer → Valid (transparency)
 
 **Questions** (2 red cards):
 
 1. What if bank negotiates profit margin with customer? (Is that allowed?)
-2. Can profit margin exceed 30%? (Any Shariah limit?)
+2. Can profit margin exceed 30%? (Any Compliance limit?)
 
-**Decision**: Story ready, but need Shariah advisor to answer questions before sprint
+**Decision**: Story ready, but need Compliance advisor to answer questions before sprint
 ```
 
 **Summary**: Time-box to 25 minutes, use Example Mapping cards (yellow=story, blue=rule, green=example, red=question), decide if story is ready/needs research/too large.
@@ -680,15 +680,15 @@ Overwhelming complexity
 
 ```gherkin
 # ❌ BAD - Technical jargon
-Scenario: Persist Zakat entity to database
-  Given ZakatEntity with id=123, amount=250, user_id=456
+Scenario: Persist Tax entity to database
+  Given TaxEntity with id=123, amount=250, user_id=456
   When repository.save() is called
-  Then database row should exist in zakat_calculations table
+  Then database row should exist in tax_calculations table
 
 # ✅ GOOD - Business language
-Scenario: Record Zakat obligation for individual
-  Given individual has Zakat obligation of 250 USD
-  When Zakat obligation is recorded
+Scenario: Record Tax obligation for individual
+  Given individual has Tax obligation of 250 USD
+  When Tax obligation is recorded
   Then individual should see obligation in their dashboard
   And obligation status should be "pending"
 ```
@@ -697,34 +697,34 @@ Scenario: Record Zakat obligation for individual
 
 ```gherkin
 # ❌ BAD - Implementation details
-Scenario: API call to Halal certification service
+Scenario: API call to Permitted certification service
   Given HTTP client configured with API key
   When GET request to /api/products/123/certification
   Then response JSON should have "certified": true
 
 # ✅ GOOD - Business outcome
-Scenario: Verify product Halal certification
-  Given product "Halal Chicken Wings" is registered
+Scenario: Verify product Permitted certification
+  Given product "Permitted Chicken Wings" is registered
   When customer checks product certification status
-  Then product should display "Halal Certified" badge
+  Then product should display "Permitted Certified" badge
   And certification expiry date should be shown
 ```
 
 1. **Use Domain Expert Vocabulary**
 
-**Example - Working with Shariah Advisors**:
+**Example - Working with Compliance Advisors**:
 
 ```gherkin
-# Scenario uses Islamic finance terminology Shariah advisors understand
-Scenario: Calculate Murabaha contract selling price
+# Scenario uses Islamic finance terminology Compliance advisors understand
+Scenario: Calculate Loan contract selling price
   Given bank purchases asset at cost price (Thamanu al-Shira) 100,000 SAR
   And bank agrees to profit margin (Ribh) of 15,000 SAR
-  When Murabaha contract is created
+  When Loan contract is created
   Then selling price (Thaman al-Bai) should be 115,000 SAR
   And cost price should be disclosed (I'lam) to customer
   And payment terms should be specified (Ajal)
 
-# Shariah advisor can validate this because it uses Arabic/Islamic terms they know:
+# Compliance advisor can validate this because it uses Arabic/Islamic terms they know:
 # - Thamanu al-Shira (cost price)
 # - Ribh (profit)
 # - Thaman al-Bai (selling price)
@@ -734,26 +734,26 @@ Scenario: Calculate Murabaha contract selling price
 
 1. **Facilitate Workshops (Example Mapping)**
 
-**Shariah Compliance Workshop Example**:
+**Compliance Compliance Workshop Example**:
 
 ```
 Attendees:
   - Product Owner: Outlines feature
-  - Shariah Advisor: Provides Islamic jurisprudence expertise
+  - Compliance Advisor: Provides Islamic jurisprudence expertise
   - Developer: Asks technical feasibility questions
   - Tester: Explores edge cases
 
 Duration: 25 minutes
 
-Topic: Riba (interest) prevention in loan contracts
+Topic: Interest (interest) prevention in loan contracts
 
 Output:
   - 3 rules (blue cards): No time-based profit, no penalty interest, no variable rates
   - 6 examples (green cards): Various contract scenarios (valid/invalid)
-  - 4 questions (red cards): Edge cases requiring Shariah research
+  - 4 questions (red cards): Edge cases requiring Compliance research
 
 Next Steps:
-  - Shariah advisor researches questions
+  - Compliance advisor researches questions
   - Developer writes scenarios from examples
   - Team reviews scenarios next meeting
 ```
@@ -769,47 +769,47 @@ Scenario: [Describe what user is doing]
   Then [what should happen?]
   And [any other expected outcomes?]
 
-# Shariah advisor fills in:
-Scenario: Calculate Zakat on gold jewelry
+# Compliance advisor fills in:
+Scenario: Calculate Tax on gold jewelry
   Given Muslim woman owns 100 grams of gold jewelry
   And jewelry has been owned for one lunar year
   And woman uses jewelry regularly (not for trade)
-  When Zakat calculation is performed
-  Then Zakat should be calculated on weight exceeding nisab (85g)
-  And Zakat amount should be 2.5% of excess weight
+  When Tax calculation is performed
+  Then Tax should be calculated on weight exceeding threshold (85g)
+  And Tax amount should be 2.5% of excess weight
   # Note: Some scholars exempt regularly worn jewelry
 ```
 
 **Communication Strategies**:
 
-| Strategy                      | Technique                                                        | Example                                                          |
-| ----------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- |
-| **Visual Aids**               | Use diagrams, flowcharts to explain scenarios                    | Flowchart showing Zakat calculation decision tree                |
-| **Glossary**                  | Maintain shared terminology document                             | "Nisab = minimum wealth threshold for Zakat obligation"          |
-| **Read-Back Sessions**        | Developer reads scenario aloud, stakeholder validates            | "Did I capture this correctly?"                                  |
-| **Pair Writing**              | Stakeholder dictates, developer types scenario                   | Shariah advisor describes rule, developer writes Gherkin         |
-| **Incremental Disclosure**    | Start simple, add complexity gradually                           | Basic Zakat scenario first, then mixed assets                    |
-| **Real-World Examples First** | Begin with concrete examples, derive rules after                 | Show 3 real Murabaha contracts, then extract common pattern      |
-| **Avoid Technical Terms**     | Replace jargon with business language                            | "User sees confirmation" not "API returns 200 OK"                |
-| **Visual Scenario Review**    | Display scenarios on projector, team reviews together            | Review Gherkin on screen during Three Amigos session             |
-| **Frequent Check-Ins**        | Ask "Does this match your understanding?" after each scenario    | "Is this how Zakat calculation should work?"                     |
-| **Use Stakeholder Stories**   | Let stakeholders describe real-world situations, transcribe them | Shariah advisor recounts fatwa case, developer captures scenario |
-| **Analogies**                 | Relate technical concepts to familiar domain concepts            | "Step definition is like a procedure manual"                     |
-| **Demo Sessions**             | Show automated scenarios running, explain what's happening       | Run Cucumber tests, narrate execution                            |
+| Strategy                      | Technique                                                        | Example                                                             |
+| ----------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------- |
+| **Visual Aids**               | Use diagrams, flowcharts to explain scenarios                    | Flowchart showing Tax calculation decision tree                     |
+| **Glossary**                  | Maintain shared terminology document                             | "Threshold = minimum wealth threshold for Tax obligation"           |
+| **Read-Back Sessions**        | Developer reads scenario aloud, stakeholder validates            | "Did I capture this correctly?"                                     |
+| **Pair Writing**              | Stakeholder dictates, developer types scenario                   | Compliance advisor describes rule, developer writes Gherkin         |
+| **Incremental Disclosure**    | Start simple, add complexity gradually                           | Basic Tax scenario first, then mixed assets                         |
+| **Real-World Examples First** | Begin with concrete examples, derive rules after                 | Show 3 real Loan contracts, then extract common pattern             |
+| **Avoid Technical Terms**     | Replace jargon with business language                            | "User sees confirmation" not "API returns 200 OK"                   |
+| **Visual Scenario Review**    | Display scenarios on projector, team reviews together            | Review Gherkin on screen during Three Amigos session                |
+| **Frequent Check-Ins**        | Ask "Does this match your understanding?" after each scenario    | "Is this how Tax calculation should work?"                          |
+| **Use Stakeholder Stories**   | Let stakeholders describe real-world situations, transcribe them | Compliance advisor recounts fatwa case, developer captures scenario |
+| **Analogies**                 | Relate technical concepts to familiar domain concepts            | "Step definition is like a procedure manual"                        |
+| **Demo Sessions**             | Show automated scenarios running, explain what's happening       | Run Cucumber tests, narrate execution                               |
 
-**Example - Shariah Board Scenario Review**:
+**Example - Compliance Board Scenario Review**:
 
 ```gherkin
-# Scenario written by developer, reviewed with Shariah board
+# Scenario written by developer, reviewed with Compliance board
 Scenario: Reject Sukuk with interest-bearing underlying assets
   Given Islamic bond (Sukuk) backed by asset portfolio
   And portfolio contains conventional bonds with interest
-  When Shariah board reviews Sukuk structure
+  When Compliance board reviews Sukuk structure
   Then Sukuk should be rejected
-  And rejection reason should state "Underlying assets must be Shariah-compliant"
+  And rejection reason should state "Underlying assets must be Compliance-compliant"
 
 # Review meeting:
-Shariah Advisor: "This is correct, but we should also check asset ownership.
+Compliance Advisor: "This is correct, but we should also check asset ownership.
                   Add: 'And Sukuk holders should have proportionate ownership
                   of underlying assets' to the Given steps."
 
@@ -856,22 +856,22 @@ Developer: "Great, I'll update the scenario."
 - **Flexibility**: Can change automation approach without rewriting scenarios
 - **Clarity**: Scenarios define "what" before "how"
 
-**Example - Zakat Calculation Feature**:
+**Example - Tax Calculation Feature**:
 
 ```gherkin
 # Step 1: Write scenario during Three Amigos (no step defs yet)
-Scenario: Calculate Zakat on gold above nisab
+Scenario: Calculate Tax on gold above threshold
   Given individual owns 100 grams of gold
   And gold has been owned for one lunar year
-  When Zakat calculation is performed
-  Then Zakat should be obligatory
-  And Zakat amount should be 2.5 grams of gold
+  When Tax calculation is performed
+  Then Tax should be obligatory
+  And Tax amount should be 2.5 grams of gold
 
 # Step 2: Implement step definitions during sprint (developer)
 ```
 
 ```typescript
-// step-definitions/zakat-steps.ts
+// step-definitions/tax-steps.ts
 import { Given, When, Then } from "@cucumber/cucumber";
 
 Given("individual owns {int} grams of gold", function (grams: number) {
@@ -882,17 +882,17 @@ Given("gold has been owned for one lunar year", function () {
   this.ownershipDuration = Duration.lunarYear();
 });
 
-When("Zakat calculation is performed", function () {
-  const calculator = new ZakatCalculator();
+When("Tax calculation is performed", function () {
+  const calculator = new TaxCalculator();
   this.result = calculator.calculate(this.wealth, this.ownershipDuration);
 });
 
-Then("Zakat should be obligatory", function () {
+Then("Tax should be obligatory", function () {
   expect(this.result.isObligatory).toBe(true);
 });
 
-Then("Zakat amount should be {float} grams of gold", function (grams: number) {
-  expect(this.result.zakatAmount.toGrams()).toBeCloseTo(grams, 2);
+Then("Tax amount should be {float} grams of gold", function (grams: number) {
+  expect(this.result.taxAmount.toGrams()).toBeCloseTo(grams, 2);
 });
 ```
 
@@ -903,12 +903,12 @@ Then("Zakat amount should be {float} grams of gold", function (grams: number) {
 
 ```gherkin
 # Rare case: All steps already implemented from previous scenarios
-Scenario: Calculate Zakat on silver above nisab
+Scenario: Calculate Tax on silver above threshold
   Given individual owns 600 grams of silver  # Existing step (parameterized)
   And silver has been owned for one lunar year  # Existing step
-  When Zakat calculation is performed  # Existing step
-  Then Zakat should be obligatory  # Existing step
-  And Zakat amount should be 15 grams of silver  # Existing step (parameterized)
+  When Tax calculation is performed  # Existing step
+  Then Tax should be obligatory  # Existing step
+  And Tax amount should be 15 grams of silver  # Existing step (parameterized)
 
 # No new step definitions needed, scenario runs immediately
 ```
@@ -950,16 +950,16 @@ Then("result is {int}", function (value) {
 Use when testing same behavior with different inputs:
 
 ```gherkin
-# Multiple Zakat calculations with different wealth amounts
-Scenario Outline: Calculate Zakat for various wealth levels
+# Multiple Tax calculations with different wealth amounts
+Scenario Outline: Calculate Tax for various wealth levels
   Given individual owns <wealth> grams of gold
   And gold has been owned for one lunar year
-  When Zakat calculation is performed
-  Then Zakat should be <status>
-  And Zakat amount should be <zakat_amount> grams of gold
+  When Tax calculation is performed
+  Then Tax should be <status>
+  And Tax amount should be <tax_amount> grams of gold
 
   Examples:
-    | wealth | status      | zakat_amount |
+    | wealth | status      | tax_amount |
     | 100    | obligatory  | 2.5          |
     | 85     | obligatory  | 2.125        |
     | 84     | not due     | 0            |
@@ -974,7 +974,7 @@ Given("individual owns {int} grams of gold", function (grams: number) {
   this.wealth = Money.fromGrams(grams, "gold");
 });
 
-Then("Zakat should be {word}", function (status: string) {
+Then("Tax should be {word}", function (status: string) {
   if (status === "obligatory") {
     expect(this.result.isObligatory).toBe(true);
   } else {
@@ -988,8 +988,8 @@ Then("Zakat should be {word}", function (status: string) {
 Use when step needs structured data:
 
 ```gherkin
-# Zakat on mixed asset portfolio
-Scenario: Calculate Zakat on diversified wealth
+# Tax on mixed asset portfolio
+Scenario: Calculate Tax on diversified wealth
   Given individual owns the following assets:
     | Asset Type | Amount    | Value (USD) |
     | Gold       | 100 grams | 6,000       |
@@ -997,10 +997,10 @@ Scenario: Calculate Zakat on diversified wealth
     | Cash       | -         | 4,000       |
     | Stocks     | 50 shares | 2,500       |
   And assets have been owned for one lunar year
-  When Zakat calculation is performed
-  Then total Zakat should be 318.75 USD
+  When Tax calculation is performed
+  Then total Tax should be 318.75 USD
   And breakdown should show:
-    | Asset  | Zakat Amount (USD) |
+    | Asset  | Tax Amount (USD) |
     | Gold   | 150.00             |
     | Silver | 8.75               |
     | Cash   | 100.00             |
@@ -1024,7 +1024,7 @@ Then("breakdown should show:", function (dataTable: DataTable) {
   const expected = dataTable.hashes();
   expected.forEach((row) => {
     const asset = row["Asset"];
-    const expectedAmount = parseFloat(row["Zakat Amount (USD)"]);
+    const expectedAmount = parseFloat(row["Tax Amount (USD)"]);
     const actualAmount = this.result.breakdown[asset];
     expect(actualAmount).toBeCloseTo(expectedAmount, 2);
   });
@@ -1036,15 +1036,15 @@ Then("breakdown should show:", function (dataTable: DataTable) {
 Use when multiple scenarios share same setup:
 
 ```gherkin
-Feature: Halal product certification
+Feature: Permitted product certification
 
   Background:
     Given user is logged in as certification manager
-    And Halal certification database is accessible
+    And Permitted certification database is accessible
     And current date is 2026-01-20
 
-  Scenario: Approve product with valid Halal certificate
-    Given product "Halal Chicken" has valid certificate
+  Scenario: Approve product with valid Permitted certificate
+    Given product "Permitted Chicken" has valid certificate
     When manager reviews product certification
     Then product should be approved
     And approval date should be 2026-01-20
@@ -1067,12 +1067,12 @@ Feature: Halal product certification
 Use for JSON payloads, long text, or formatted content:
 
 ```gherkin
-Scenario: Validate Murabaha contract JSON schema
-  Given Murabaha contract API expects JSON payload
+Scenario: Validate Loan contract JSON schema
+  Given Loan contract API expects JSON payload
   When client sends contract creation request:
     """
     {
-      "contractType": "murabaha",
+      "contractType": "loan",
       "costPrice": {
         "amount": 100000,
         "currency": "USD"
@@ -1101,7 +1101,7 @@ Scenario: Validate Murabaha contract JSON schema
 ```typescript
 When("client sends contract creation request:", function (docString: string) {
   const payload = JSON.parse(docString);
-  this.contract = this.api.createMurabahaContract(payload);
+  this.contract = this.api.createLoanContract(payload);
 });
 ```
 
@@ -1111,42 +1111,42 @@ When("client sends contract creation request:", function (docString: string) {
 Feature: Sukuk (Islamic Bond) compliance validation
 
   Background:
-    Given Shariah board is available for review
+    Given Compliance board is available for review
     And Sukuk validation rules are loaded
 
   Scenario Outline: Validate Sukuk structure types
     Given Sukuk of type "<sukuk_type>"
     And underlying assets are "<asset_type>"
-    When Shariah board validates structure
+    When Compliance board validates structure
     Then validation result should be "<result>"
 
     Examples:
       | sukuk_type  | asset_type           | result   |
       | Ijara       | Real estate lease    | Approved |
       | Mudaraba    | Business partnership | Approved |
-      | Murabaha    | Trade financing      | Approved |
+      | Loan    | Trade financing      | Approved |
       | Hybrid      | Mixed conventional   | Rejected |
       | Asset-based | Interest bonds       | Rejected |
 
   Scenario: Validate complex Sukuk asset portfolio
     Given Sukuk backed by asset portfolio:
-      | Asset Type       | Value (USD) | Shariah Compliant |
+      | Asset Type       | Value (USD) | Compliance Compliant |
       | Real Estate      | 10,000,000  | Yes               |
-      | Halal Business   | 5,000,000   | Yes               |
+      | Permitted Business   | 5,000,000   | Yes               |
       | Equipment Lease  | 3,000,000   | Yes               |
       | Conventional Loan| 2,000,000   | No                |
-    When Shariah board calculates compliance ratio
+    When Compliance board calculates compliance ratio
     Then compliant assets should be 90% of portfolio
     And Sukuk should be rejected due to 10% non-compliant assets
     And board recommendation should state:
       """
       Sukuk rejected: Portfolio contains 2,000,000 USD (10%) in
-      non-Shariah-compliant conventional loans.
+      non-Compliance-compliant conventional loans.
 
-      Requirement: 100% of underlying assets must be Shariah-compliant.
+      Requirement: 100% of underlying assets must be Compliance-compliant.
 
       Recommendation: Remove conventional loan from portfolio and
-      replace with Shariah-compliant financing.
+      replace with Compliance-compliant financing.
       """
 ```
 
@@ -1164,22 +1164,22 @@ Feature: Sukuk (Islamic Bond) compliance validation
 
 ```
 features/
-├── zakat-calculation/
-│   ├── gold-zakat.feature
-│   ├── silver-zakat.feature
-│   ├── cash-zakat.feature
-│   └── mixed-assets-zakat.feature
+├── tax-calculation/
+│   ├── gold-tax.feature
+│   ├── silver-tax.feature
+│   ├── cash-tax.feature
+│   └── mixed-assets-tax.feature
 │
-├── halal-certification/
+├── permitted-certification/
 │   ├── product-certification.feature
 │   ├── supplier-verification.feature
 │   └── certificate-expiry.feature
 │
 ├── islamic-contracts/
-│   ├── murabaha-contracts.feature
+│   ├── loan-contracts.feature
 │   ├── ijara-leasing.feature
 │   ├── mudaraba-partnership.feature
-│   └── riba-prevention.feature
+│   └── interest-prevention.feature
 │
 ├── sukuk-issuance/
 │   ├── asset-backed-sukuk.feature
@@ -1188,8 +1188,8 @@ features/
 │
 └── support/
     ├── step-definitions/
-    │   ├── zakat-steps.ts
-    │   ├── halal-certification-steps.ts
+    │   ├── tax-steps.ts
+    │   ├── permitted-certification-steps.ts
     │   ├── contract-steps.ts
     │   └── sukuk-steps.ts
     │
@@ -1203,41 +1203,41 @@ features/
 [business-capability]-[specific-behavior].feature
 
 Examples:
-  ✅ gold-zakat.feature
-  ✅ murabaha-contracts.feature
-  ✅ halal-product-certification.feature
+  ✅ gold-tax.feature
+  ✅ loan-contracts.feature
+  ✅ permitted-product-certification.feature
 
 Avoid:
   ❌ test1.feature
-  ❌ zakat.feature (too broad)
-  ❌ TestZakatCalculation.feature (technical naming)
+  ❌ tax.feature (too broad)
+  ❌ TestTaxCalculation.feature (technical naming)
 ```
 
 **Tagging for Cross-Cutting Concerns**:
 
 ```gherkin
-# features/zakat-calculation/gold-zakat.feature
+# features/tax-calculation/gold-tax.feature
 
-@zakat @compliance @critical
-Feature: Gold Zakat calculation
+@tax @compliance @critical
+Feature: Gold Tax calculation
 
   @happy-path @smoke
-  Scenario: Calculate Zakat on gold above nisab
+  Scenario: Calculate Tax on gold above threshold
     Given individual owns 100 grams of gold
-    When Zakat calculation is performed
-    Then Zakat should be obligatory
+    When Tax calculation is performed
+    Then Tax should be obligatory
 
   @edge-case
-  Scenario: Calculate Zakat on gold exactly at nisab
+  Scenario: Calculate Tax on gold exactly at threshold
     Given individual owns 85 grams of gold
-    When Zakat calculation is performed
-    Then Zakat should be obligatory
+    When Tax calculation is performed
+    Then Tax should be obligatory
 
   @regression @slow
-  Scenario: Calculate Zakat on large gold holdings
+  Scenario: Calculate Tax on large gold holdings
     Given individual owns 10,000 grams of gold
-    When Zakat calculation is performed
-    Then Zakat should be 250 grams of gold
+    When Tax calculation is performed
+    Then Tax should be 250 grams of gold
 ```
 
 **Running Scenarios by Tag**:
@@ -1249,20 +1249,20 @@ npm run bdd -- --tags "@critical"
 # Run smoke tests only
 npm run bdd -- --tags "@smoke"
 
-# Run all Zakat scenarios
-npm run bdd -- --tags "@zakat"
+# Run all Tax scenarios
+npm run bdd -- --tags "@tax"
 
 # Run compliance scenarios excluding slow tests
 npm run bdd -- --tags "@compliance and not @slow"
 
 # Run scenarios by multiple tags
-npm run bdd -- --tags "@zakat or @halal"
+npm run bdd -- --tags "@tax or @permitted"
 ```
 
 **Step Definition Organization**:
 
 ```typescript
-// support/step-definitions/zakat-steps.ts
+// support/step-definitions/tax-steps.ts
 import { Given, When, Then } from "@cucumber/cucumber";
 
 // Group related steps in same file
@@ -1274,11 +1274,11 @@ Given("gold has been owned for one lunar year", function () {
   // Implementation
 });
 
-When("Zakat calculation is performed", function () {
+When("Tax calculation is performed", function () {
   // Implementation
 });
 
-Then("Zakat should be obligatory", function () {
+Then("Tax should be obligatory", function () {
   // Implementation
 });
 ```
@@ -1312,8 +1312,8 @@ import { setWorldConstructor, World, IWorldOptions } from "@cucumber/cucumber";
 
 export class CustomWorld extends World {
   public wealth?: Money;
-  public nisab?: Money;
-  public result?: ZakatResult;
+  public threshold?: Money;
+  public result?: TaxResult;
   public currentUser?: User;
   public currentDate?: Date;
 
@@ -1324,7 +1324,7 @@ export class CustomWorld extends World {
   // Helper methods available to all steps
   public reset() {
     this.wealth = undefined;
-    this.nisab = undefined;
+    this.threshold = undefined;
     this.result = undefined;
   }
 }
@@ -1367,14 +1367,14 @@ AfterAll(async function () {
 apps/
 └── islamic-finance-platform/
     ├── features/              # BDD scenarios
-    │   ├── zakat/
-    │   ├── halal/
+    │   ├── tax/
+    │   ├── permitted/
     │   └── contracts/
     │
     ├── src/
     │   └── domain/            # Domain logic (tested by BDD + TDD)
-    │       ├── zakat/
-    │       ├── halal/
+    │       ├── tax/
+    │       ├── permitted/
     │       └── contracts/
     │
     └── cucumber.config.ts     # Cucumber configuration
@@ -1382,9 +1382,9 @@ apps/
 
 **Large-Scale Organization Tips**:
 
-1. **Feature Folders**: Group by business capability (Zakat, Halal, Contracts)
+1. **Feature Folders**: Group by business capability (Tax, Permitted, Contracts)
 2. **Clear Naming**: Use descriptive feature file names
-3. **Tagging Strategy**: Tag by type (@smoke, @regression), priority (@critical), domain (@zakat, @halal)
+3. **Tagging Strategy**: Tag by type (@smoke, @regression), priority (@critical), domain (@tax, @permitted)
 4. **Shared Steps**: Extract common steps to `common-steps.ts`
 5. **World Object**: Use for sharing context between steps
 6. **Hooks**: Setup/teardown at scenario and suite level
@@ -1422,8 +1422,8 @@ Domain Model (implementation)
 Bounded Context: Islamic Finance Contracts
 
 Terms:
-  - Murabaha: Cost-plus-profit sale contract
-  - Riba: Interest (prohibited)
+  - Loan: Cost-plus-profit sale contract
+  - Interest: Interest (prohibited)
   - Gharar: Excessive uncertainty (prohibited)
   - Thamanu al-Shira: Cost price
   - Ribh: Profit margin
@@ -1435,13 +1435,13 @@ Terms:
 
 ```gherkin
 # Scenario uses DDD terms directly
-Scenario: Create Murabaha contract with disclosed profit
+Scenario: Create Loan contract with disclosed profit
   Given bank purchases asset at cost price (Thamanu al-Shira) 100,000 SAR
   And bank sets profit margin (Ribh) of 15,000 SAR
-  When Murabaha contract is created
+  When Loan contract is created
   Then selling price (Thaman al-Bai) should be 115,000 SAR
   And cost price should be disclosed (I'lam) to customer
-  And profit should be fixed (no Riba)
+  And profit should be fixed (no Interest)
   And asset ownership should be clear (no Gharar)
 
 # Step definitions map to DDD domain model
@@ -1449,7 +1449,7 @@ Scenario: Create Murabaha contract with disclosed profit
 
 ```typescript
 // Domain Model (DDD)
-class MurabahaContract {
+class LoanContract {
   constructor(
     private costPrice: Money, // Thamanu al-Shira
     private profitMargin: Money, // Ribh
@@ -1466,11 +1466,11 @@ class MurabahaContract {
     return new ProfitDisclosure(this.costPrice, this.profitMargin);
   }
 
-  validateNoRiba(): ValidationResult {
+  validateNoInterest(): ValidationResult {
     // Check profit is fixed, not time-based interest
     return this.profitMargin.isFixed()
       ? ValidationResult.valid()
-      : ValidationResult.invalid("Profit must be fixed to avoid Riba");
+      : ValidationResult.invalid("Profit must be fixed to avoid Interest");
   }
 }
 
@@ -1479,8 +1479,8 @@ Given("bank purchases asset at cost price (Thamanu al-Shira) {int} SAR", functio
   this.costPrice = Money.fromAmount(amount, "SAR");
 });
 
-When("Murabaha contract is created", function () {
-  this.contract = new MurabahaContract(this.costPrice, this.profitMargin, this.customer);
+When("Loan contract is created", function () {
+  this.contract = new LoanContract(this.costPrice, this.profitMargin, this.customer);
 });
 
 Then("selling price (Thaman al-Bai) should be {int} SAR", function (expected: number) {
@@ -1491,69 +1491,69 @@ Then("selling price (Thaman al-Bai) should be {int} SAR", function (expected: nu
 
 **BDD + DDD Benefits**:
 
-1. **Shared Language**: Scenarios use domain expert vocabulary (Murabaha, Riba, I'lam)
+1. **Shared Language**: Scenarios use domain expert vocabulary (Loan, Interest, I'lam)
 2. **Validation**: Scenarios validate domain model correctness
 3. **Documentation**: Scenarios document domain behavior
 4. **Discovery**: Example Mapping workshops discover domain concepts
 5. **Alignment**: Ensures code matches business understanding
 
-**Example - Zakat Aggregate (DDD) with BDD Scenarios**:
+**Example - Tax Aggregate (DDD) with BDD Scenarios**:
 
 ```typescript
 // DDD Aggregate Root
-class ZakatAssessment {
+class TaxAssessment {
   constructor(
     private wealth: Wealth, // Aggregate of gold, cash, stocks
-    private nisab: Nisab, // Threshold calculator
+    private threshold: Threshold, // Threshold calculator
     private hawl: Hawl, // Lunar year tracker
   ) {}
 
-  calculateZakat(): ZakatObligation {
+  calculateTax(): TaxObligation {
     if (!this.hawl.isComplete()) {
-      return ZakatObligation.notDue("Hawl not completed");
+      return TaxObligation.notDue("Hawl not completed");
     }
 
-    if (!this.wealth.meetsNisab(this.nisab)) {
-      return ZakatObligation.notDue("Wealth below nisab");
+    if (!this.wealth.meetsThreshold(this.threshold)) {
+      return TaxObligation.notDue("Wealth below threshold");
     }
 
-    const zakatAmount = this.wealth.multiply(0.025); // 2.5%
-    return ZakatObligation.due(zakatAmount);
+    const taxAmount = this.wealth.multiply(0.025); // 2.5%
+    return TaxObligation.due(taxAmount);
   }
 }
 ```
 
 ```gherkin
 # BDD Scenario validates DDD aggregate behavior
-Scenario: Zakat not due when Hawl incomplete
-  Given individual owns 100 grams of gold (above nisab)
+Scenario: Tax not due when Hawl incomplete
+  Given individual owns 100 grams of gold (above threshold)
   And gold has been owned for 11 months (Hawl incomplete)
-  When Zakat assessment is performed
-  Then Zakat should not be due
+  When Tax assessment is performed
+  Then Tax should not be due
   And reason should be "Hawl not completed"
 
-Scenario: Zakat due when Hawl complete and wealth above nisab
+Scenario: Tax due when Hawl complete and wealth above threshold
   Given individual owns 100 grams of gold
   And gold has been owned for one lunar year (Hawl complete)
-  And nisab threshold is 85 grams
-  When Zakat assessment is performed
-  Then Zakat should be due
-  And Zakat amount should be 2.5 grams of gold
+  And threshold threshold is 85 grams
+  When Tax assessment is performed
+  Then Tax should be due
+  And Tax amount should be 2.5 grams of gold
 ```
 
 **DDD Strategic Patterns and BDD**:
 
-| DDD Pattern             | BDD Usage                                      | Example                                                |
-| ----------------------- | ---------------------------------------------- | ------------------------------------------------------ |
-| **Ubiquitous Language** | Scenario steps use domain vocabulary           | "Murabaha", "Riba", "Nisab", "Hawl"                    |
-| **Bounded Context**     | Feature files organized by bounded context     | `features/islamic-finance/`, `features/halal-cert/`    |
-| **Aggregates**          | Scenarios test aggregate behavior (invariants) | Zakat assessment validates Hawl + Nisab rules together |
-| **Domain Events**       | Scenarios verify events published              | "Zakat obligation recorded" event                      |
-| **Value Objects**       | Scenarios use value objects in Given/Then      | `Money`, `Nisab`, `Hawl`                               |
-| **Entities**            | Scenarios test entity lifecycle                | Create contract → Approve → Execute → Close            |
-| **Repositories**        | Scenarios test persistence (integration tests) | "Zakat obligation should be saved"                     |
-| **Domain Services**     | Scenarios test cross-aggregate operations      | "Transfer Zakat payment to charity fund"               |
-| **Specifications**      | Business rules become scenario conditions      | "If wealth >= nisab and Hawl complete, then Zakat due" |
+| DDD Pattern             | BDD Usage                                      | Example                                                  |
+| ----------------------- | ---------------------------------------------- | -------------------------------------------------------- |
+| **Ubiquitous Language** | Scenario steps use domain vocabulary           | "Loan", "Interest", "Threshold", "Hawl"                  |
+| **Bounded Context**     | Feature files organized by bounded context     | `features/islamic-finance/`, `features/permitted-cert/`  |
+| **Aggregates**          | Scenarios test aggregate behavior (invariants) | Tax assessment validates Hawl + Threshold rules together |
+| **Domain Events**       | Scenarios verify events published              | "Tax obligation recorded" event                          |
+| **Value Objects**       | Scenarios use value objects in Given/Then      | `Money`, `Threshold`, `Hawl`                             |
+| **Entities**            | Scenarios test entity lifecycle                | Create contract → Approve → Execute → Close              |
+| **Repositories**        | Scenarios test persistence (integration tests) | "Tax obligation should be saved"                         |
+| **Domain Services**     | Scenarios test cross-aggregate operations      | "Transfer Tax payment to charity fund"                   |
+| **Specifications**      | Business rules become scenario conditions      | "If wealth >= threshold and Hawl complete, then Tax due" |
 
 **Summary**: BDD scenarios use DDD ubiquitous language, validate domain model behavior, and document domain concepts. Both practices reinforce each other through shared vocabulary and collaborative discovery.
 
@@ -1593,7 +1593,7 @@ Scenario: Zakat due when Hawl complete and wealth above nisab
                 ↓
 ┌────────────────────────────────────────────────────┐
 │  Deployment to Production                          │
-│  - Run @critical scenarios (Shariah compliance)    │
+│  - Run @critical scenarios (Compliance compliance)    │
 │  - Alert on failures                               │
 └────────────────────────────────────────────────────┘
 ```
@@ -1664,12 +1664,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
 
-      - name: Run Shariah compliance scenarios
-        run: npm run bdd -- --tags "@shariah-compliance and @critical"
+      - name: Run Compliance compliance scenarios
+        run: npm run bdd -- --tags "@compliance-compliance and @critical"
 
       - name: Notify on failure
         if: failure()
-        run: echo "Shariah compliance tests failed - blocking deployment"
+        run: echo "Compliance compliance tests failed - blocking deployment"
 ```
 
 **Nx Monorepo BDD Configuration**:
@@ -1710,35 +1710,35 @@ jobs:
 **Tagging Strategy for CI/CD**:
 
 ```gherkin
-# features/zakat-calculation/gold-zakat.feature
+# features/tax-calculation/gold-tax.feature
 
-@zakat @shariah-compliance
-Feature: Gold Zakat calculation
+@tax @compliance-compliance
+Feature: Gold Tax calculation
 
   @smoke @critical
-  Scenario: Calculate Zakat on gold above nisab
+  Scenario: Calculate Tax on gold above threshold
     # Runs in: Pre-commit, CI smoke tests, Staging, Production
     Given individual owns 100 grams of gold
-    When Zakat calculation is performed
-    Then Zakat should be obligatory
+    When Tax calculation is performed
+    Then Tax should be obligatory
 
   @regression
-  Scenario: Calculate Zakat with multiple gold types
+  Scenario: Calculate Tax with multiple gold types
     # Runs in: CI regression tests
     Given individual owns:
       | Gold Type | Weight (grams) |
       | 24k       | 50             |
       | 22k       | 30             |
       | 18k       | 20             |
-    When Zakat calculation is performed
-    Then Zakat should be calculated on total equivalent 24k weight
+    When Tax calculation is performed
+    Then Tax should be calculated on total equivalent 24k weight
 
   @integration @slow
-  Scenario: Calculate Zakat and persist to database
+  Scenario: Calculate Tax and persist to database
     # Runs in: CI integration tests (with database)
     Given individual owns 100 grams of gold
-    When Zakat calculation is performed and saved
-    Then Zakat record should exist in database
+    When Tax calculation is performed and saved
+    Then Tax record should exist in database
 ```
 
 **Living Documentation Generation**:
@@ -1755,7 +1755,7 @@ const options = {
   scenarioTimestamp: true,
   launchReport: false,
   metadata: {
-    "App Name": "Open Sharia Enterprise",
+    "App Name": "Open Compliance Enterprise",
     "Test Environment": "CI/CD Pipeline",
     Platform: "Linux",
     Executed: new Date().toISOString(),
@@ -1802,10 +1802,10 @@ jobs:
 
 ```gherkin
 @production-only
-Scenario: Verify Shariah board approval for Murabaha
-  Given Murabaha contract is created
+Scenario: Verify Compliance board approval for Loan
+  Given Loan contract is created
   When contract is submitted for approval
-  Then Shariah board should review contract
+  Then Compliance board should review contract
   And approval certificate should be issued
 ```
 
@@ -1822,36 +1822,36 @@ fi
 
 ## Islamic Finance Specific Questions
 
-### Q13: How do I write BDD scenarios for Shariah compliance rules?
+### Q13: How do I write BDD scenarios for Compliance compliance rules?
 
-**Short Answer**: Collaborate with Shariah advisors during Three Amigos sessions, use Islamic terminology in scenarios, make rules explicit through concrete examples.
+**Short Answer**: Collaborate with Compliance advisors during Three Amigos sessions, use Islamic terminology in scenarios, make rules explicit through concrete examples.
 
 **Detailed Answer**:
 
-**Approach to Shariah Compliance Scenarios**:
+**Approach to Compliance Compliance Scenarios**:
 
-1. **Invite Shariah Advisor to Three Amigos Sessions**
+1. **Invite Compliance Advisor to Three Amigos Sessions**
 
 ```markdown
-Three Amigos for Murabaha Feature:
+Three Amigos for Loan Feature:
 
 - Product Owner: Business requirements
 - Developer: Technical implementation questions
-- Shariah Advisor: Islamic jurisprudence validation
+- Compliance Advisor: Islamic jurisprudence validation
 - Tester: Edge case exploration
 
-Output: Scenarios validated by Shariah expert
+Output: Scenarios validated by Compliance expert
 ```
 
 1. **Use Islamic Terminology (Ubiquitous Language)**
 
 ```gherkin
 # ✅ GOOD - Uses Islamic finance terms
-Scenario: Reject Murabaha contract with Riba
-  Given Murabaha contract with cost price (Thamanu al-Shira) 100,000 SAR
-  When bank attempts to add time-based interest (Riba)
+Scenario: Reject Loan contract with Interest
+  Given Loan contract with cost price (Thamanu al-Shira) 100,000 SAR
+  When bank attempts to add time-based interest (Interest)
   Then contract should be rejected
-  And rejection reason should state "Riba is prohibited in Islamic finance"
+  And rejection reason should state "Interest is prohibited in Islamic finance"
 
 # ❌ BAD - Generic financial terms
 Scenario: Reject contract with interest
@@ -1860,20 +1860,20 @@ Scenario: Reject contract with interest
   Then contract should fail validation
 ```
 
-1. **Make Shariah Rules Explicit**
+1. **Make Compliance Rules Explicit**
 
 ```gherkin
-# Rule 1: Riba (interest) prohibition
-@shariah-compliance @riba-prevention
+# Rule 1: Interest (interest) prohibition
+@compliance-compliance @interest-prevention
 Scenario: Reject loan with interest-based profit
   Given loan contract with principal 50,000 USD
   When bank calculates profit using 5% annual interest rate
   Then contract should be rejected
-  And rejection reason should state "Interest (Riba) is prohibited"
+  And rejection reason should state "Interest (Interest) is prohibited"
   And alternative Mudaraba partnership should be suggested
 
 # Rule 2: Gharar (uncertainty) prohibition
-@shariah-compliance @gharar-prevention
+@compliance-compliance @gharar-prevention
 Scenario: Reject contract with undefined asset
   Given sale contract for "unspecified goods"
   And delivery date is "to be determined"
@@ -1881,103 +1881,103 @@ Scenario: Reject contract with undefined asset
   Then contract should be rejected
   And rejection reason should state "Excessive uncertainty (Gharar) is prohibited"
 
-# Rule 3: Asset ownership requirement (Murabaha)
-@shariah-compliance @murabaha
-Scenario: Reject Murabaha sale before asset ownership
+# Rule 3: Asset ownership requirement (Loan)
+@compliance-compliance @loan
+Scenario: Reject Loan sale before asset ownership
   Given bank has NOT purchased asset
   When bank attempts to sell asset to customer
   Then sale should be rejected
-  And rejection reason should state "Bank must own asset before Murabaha sale"
+  And rejection reason should state "Bank must own asset before Loan sale"
 ```
 
 1. **Validate Compliance Requirements**
 
 ```gherkin
-@shariah-compliance @zakat
-Feature: Zakat calculation Shariah compliance
+@compliance-compliance @tax
+Feature: Tax calculation Compliance compliance
 
   Background:
-    Given Shariah rules for Zakat are:
+    Given Compliance rules for Tax are:
       | Rule                     | Description                                |
-      | Nisab Threshold          | Minimum wealth: 85g gold or 595g silver    |
+      | Threshold Threshold          | Minimum wealth: 85g gold or 595g silver    |
       | Hawl Requirement         | Wealth owned for one lunar year (354 days) |
-      | Zakat Rate               | 2.5% of eligible wealth                    |
+      | Tax Rate               | 2.5% of eligible wealth                    |
       | Eligible Asset Types     | Gold, silver, cash, trade goods, stocks    |
       | Exempted Assets          | Personal residence, tools of trade         |
 
   @compliance-validation
-  Scenario: Validate Zakat calculation meets Shariah requirements
+  Scenario: Validate Tax calculation meets Compliance requirements
     Given individual owns 100 grams of gold
     And gold has been owned for 355 days (Hawl complete)
-    When Zakat calculation is performed
-    Then Zakat should be obligatory
-    And Zakat amount should be 2.5 grams of gold (exactly 2.5%)
-    And calculation should reference Shariah source:
+    When Tax calculation is performed
+    Then Tax should be obligatory
+    And Tax amount should be 2.5 grams of gold (exactly 2.5%)
+    And calculation should reference Compliance source:
       """
-      Source: Sahih Bukhari, Book of Zakat
-      Nisab: 20 Mithqal (approximately 85 grams) of gold
+      Source: Sahih Bukhari, Book of Tax
+      Threshold: 20 Mithqal (approximately 85 grams) of gold
       Rate: One-fortieth (2.5%) of wealth
       """
 
   @compliance-edge-case
   Scenario: Exemption for wealth held less than Hawl
-    Given individual owns 1000 grams of gold (well above nisab)
+    Given individual owns 1000 grams of gold (well above threshold)
     And gold has been owned for 353 days (Hawl incomplete by 1 day)
-    When Zakat calculation is performed
-    Then Zakat should not be due
+    When Tax calculation is performed
+    Then Tax should not be due
     And exemption reason should state "Hawl requirement not met"
 ```
 
 1. **Multi-Madhab (School of Thought) Scenarios**
 
 ```gherkin
-@shariah-compliance @madhab-differences
-Feature: Zakat on personal jewelry (Madhab variations)
+@compliance-compliance @madhab-differences
+Feature: Tax on personal jewelry (Madhab variations)
 
-  Scenario: Hanafi Madhab - Zakat on all gold jewelry
+  Scenario: Hanafi Madhab - Tax on all gold jewelry
     Given system configured for Hanafi Fiqh
     And woman owns 100 grams of gold jewelry worn regularly
-    When Zakat calculation is performed
-    Then Zakat should be obligatory on all 100 grams
-    And Zakat amount should be 2.5 grams
+    When Tax calculation is performed
+    Then Tax should be obligatory on all 100 grams
+    And Tax amount should be 2.5 grams
 
   Scenario: Shafi'i Madhab - Exemption for regularly worn jewelry
     Given system configured for Shafi'i Fiqh
     And woman owns 100 grams of gold jewelry worn regularly
-    When Zakat calculation is performed
-    Then jewelry should be exempted from Zakat
-    And Zakat amount should be 0 grams
+    When Tax calculation is performed
+    Then jewelry should be exempted from Tax
+    And Tax amount should be 0 grams
 
   Scenario: User selects Madhab preference
     Given user is Muslim individual
-    When user configures Zakat calculation preferences
+    When user configures Tax calculation preferences
     Then user should be able to select Madhab:
       | Madhab  | Jewelry Rule                    |
-      | Hanafi  | Zakat on all jewelry            |
+      | Hanafi  | Tax on all jewelry            |
       | Shafi'i | Exempt regularly worn jewelry   |
       | Maliki  | Exempt regularly worn jewelry   |
       | Hanbali | Exempt regularly worn jewelry   |
 ```
 
-**Working with Shariah Advisors**:
+**Working with Compliance Advisors**:
 
 ```gherkin
-# Scenario reviewed and approved by Shariah board
-@shariah-board-approved @sukuk
+# Scenario reviewed and approved by Compliance board
+@compliance-board-approved @sukuk
 Scenario: Validate Sukuk asset-backed structure
   Given Sukuk issuance of 100,000,000 USD
   And Sukuk backed by real estate assets worth 120,000,000 USD
   And assets are fully owned by Special Purpose Vehicle (SPV)
   And Sukuk holders have proportionate ownership of assets
-  When Shariah board validates structure
-  Then structure should be approved as Shariah-compliant
+  When Compliance board validates structure
+  Then structure should be approved as Compliance-compliant
   And approval certificate should be issued
   And certificate should reference:
     | AAOIFI Standard | Description                          |
     | FAS 33          | Investment in Sukuk, Shares and Similar Instruments |
     | SS 17           | Sukuk                                |
 
-  # Shariah Advisor sign-off:
+  # Compliance Advisor sign-off:
   # Reviewed by: Sheikh Dr. Ahmed Al-Farsi
   # Date: 2026-01-20
   # Approval: Compliant with AAOIFI standards
@@ -1986,28 +1986,28 @@ Scenario: Validate Sukuk asset-backed structure
 **Compliance Reporting Scenarios**:
 
 ```gherkin
-@shariah-compliance @audit
-Scenario: Generate Shariah compliance audit report
+@compliance-compliance @audit
+Scenario: Generate Compliance compliance audit report
   Given platform has processed 1000 Islamic finance transactions
   And reporting period is Q1 2026
-  When Shariah compliance audit is generated
+  When Compliance compliance audit is generated
   Then report should show:
     | Metric                  | Value   |
     | Total Transactions      | 1000    |
-    | Shariah Compliant       | 985     |
+    | Compliance Compliant       | 985     |
     | Flagged for Review      | 10      |
     | Rejected (Non-Compliant)| 5       |
   And flagged transactions should list reasons:
     | Transaction ID | Flag Reason                           |
     | TXN-123        | Potential Gharar: Delivery date unclear |
-    | TXN-456        | Requires Shariah board review          |
+    | TXN-456        | Requires Compliance board review          |
   And rejected transactions should list reasons:
     | Transaction ID | Rejection Reason       |
-    | TXN-789        | Contains Riba          |
-    | TXN-890        | Asset not Halal        |
+    | TXN-789        | Contains Interest          |
+    | TXN-890        | Asset not Permitted        |
 ```
 
-**Summary**: Collaborate with Shariah advisors in Three Amigos sessions, use Islamic terminology (Riba, Gharar, Murabaha), make Shariah rules explicit through concrete examples, handle multi-Madhab differences, and create compliance audit scenarios.
+**Summary**: Collaborate with Compliance advisors in Three Amigos sessions, use Islamic terminology (Interest, Gharar, Loan), make Compliance rules explicit through concrete examples, handle multi-Madhab differences, and create compliance audit scenarios.
 
 ---
 
@@ -2021,36 +2021,36 @@ Scenario: Generate Shariah compliance audit report
 
 ```gherkin
 # Primary scenario in English, Arabic terms in parentheses
-@zakat @bilingual
-Scenario: Calculate Zakat (زكاة) on gold above Nisab (نصاب)
+@tax @bilingual
+Scenario: Calculate Tax (زكاة) on gold above Threshold (نصاب)
   Given individual owns 100 grams of gold (ذهب)
   And gold has been owned for one lunar year (Hawl / حول)
-  And Nisab threshold (نصاب) for gold is 85 grams
-  When Zakat calculation (حساب الزكاة) is performed
-  Then Zakat should be obligatory (واجب)
-  And Zakat amount should be 2.5 grams (2.5٪)
+  And Threshold threshold (نصاب) for gold is 85 grams
+  When Tax calculation (حساب الزكاة) is performed
+  Then Tax should be obligatory (واجب)
+  And Tax amount should be 2.5 grams (2.5٪)
 
 # Step definitions work with English text
-# Arabic provides context for Shariah advisors who prefer Arabic terminology
+# Arabic provides context for Compliance advisors who prefer Arabic terminology
 ```
 
-**Benefit**: English scenarios work with automation tools, Arabic terms provide clarity for Arabic-speaking Shariah advisors.
+**Benefit**: English scenarios work with automation tools, Arabic terms provide clarity for Arabic-speaking Compliance advisors.
 
 **Alternative: Separate Arabic Feature Files (for stakeholder review only)**
 
 ```
 features/
 ├── en/
-│   ├── zakat-calculation.feature      # English (primary, automated)
-│   └── murabaha-contracts.feature
+│   ├── tax-calculation.feature      # English (primary, automated)
+│   └── loan-contracts.feature
 │
 └── ar/
-    ├── zakat-calculation-ar.feature   # Arabic (stakeholder review, not automated)
-    └── murabaha-contracts-ar.feature
+    ├── tax-calculation-ar.feature   # Arabic (stakeholder review, not automated)
+    └── loan-contracts-ar.feature
 ```
 
 ```gherkin
-# features/ar/zakat-calculation-ar.feature (Arabic translation for review)
+# features/ar/tax-calculation-ar.feature (Arabic translation for review)
 @زكاة
 ميزة: حساب زكاة الذهب
 
@@ -2062,7 +2062,7 @@ features/
     إذاً يجب أن تكون الزكاة واجبة
     و مبلغ الزكاة يجب أن يكون 2.5 جرام
 
-# Note: Arabic scenarios are for Shariah advisor review only
+# Note: Arabic scenarios are for Compliance advisor review only
 # English scenarios are the source of truth for automation
 ```
 
@@ -2075,14 +2075,14 @@ Maintain bilingual glossary in documentation:
 
 | English          | Arabic     | Definition                          |
 | ---------------- | ---------- | ----------------------------------- |
-| Zakat            | زكاة       | Obligatory charity (2.5% of wealth) |
-| Nisab            | نصاب       | Minimum wealth threshold for Zakat  |
+| Tax              | زكاة       | Obligatory charity (2.5% of wealth) |
+| Threshold        | نصاب       | Minimum wealth threshold for Tax    |
 | Hawl             | حول        | One lunar year (354 days)           |
-| Murabaha         | مرابحة     | Cost-plus-profit sale               |
-| Riba             | ربا        | Interest (prohibited)               |
+| Loan             | مرابحة     | Cost-plus-profit sale               |
+| Interest         | ربا        | Interest (prohibited)               |
 | Gharar           | غرر        | Excessive uncertainty (prohibited)  |
-| Halal            | حلال       | Permissible                         |
-| Haram            | حرام       | Forbidden                           |
+| Permitted        | حلال       | Permissible                         |
+| Forbidden        | حرام       | Forbidden                           |
 | Thamanu al-Shira | ثمن الشراء | Cost price                          |
 | Ribh             | ربح        | Profit                              |
 | Thaman al-Bai    | ثمن البيع  | Selling price                       |
@@ -2099,8 +2099,8 @@ Given("individual owns {int} grams of gold (ذهب)", function (grams: number) {
   this.wealth = Money.fromGrams(grams, "gold");
 });
 
-When("Zakat calculation (حساب الزكاة) is performed", function () {
-  const calculator = new ZakatCalculator();
+When("Tax calculation (حساب الزكاة) is performed", function () {
+  const calculator = new TaxCalculator();
   this.result = calculator.calculate(this.wealth);
 });
 ```
@@ -2110,8 +2110,8 @@ When("Zakat calculation (حساب الزكاة) is performed", function () {
 ```
 1. Developer writes scenarios in English (with Arabic terms in parentheses)
 2. Scenarios automated and tested
-3. Generate Arabic translation for Shariah board review (manual or tool-assisted)
-4. Shariah board reviews Arabic version, provides feedback
+3. Generate Arabic translation for Compliance board review (manual or tool-assisted)
+4. Compliance board reviews Arabic version, provides feedback
 5. Developer updates English scenarios based on feedback
 6. Repeat until approval
 ```
@@ -2140,36 +2140,36 @@ jobs:
           path: reports/scenarios-ar.pdf
 ```
 
-**Islamic Finance Example (Murabaha)**:
+**Islamic Finance Example (Loan)**:
 
 ```gherkin
 # English primary, Arabic in comments
-@murabaha @shariah-compliance
-Feature: Murabaha (مرابحة) contract validation
+@loan @compliance-compliance
+Feature: Loan (مرابحة) contract validation
 
   Background:
     Given Islamic finance platform is configured
-    And Shariah compliance rules are loaded
+    And Compliance compliance rules are loaded
 
   @cost-disclosure
-  Scenario: Murabaha requires cost price disclosure (إعلام ثمن الشراء)
+  Scenario: Loan requires cost price disclosure (إعلام ثمن الشراء)
     Given bank purchases asset at cost price (ثمن الشراء) 100,000 SAR
     And bank sets profit margin (ربح) 15,000 SAR
-    When Murabaha contract is created
+    When Loan contract is created
     Then cost price (ثمن الشراء) should be disclosed to customer
     And profit margin (ربح) should be disclosed separately
     And selling price (ثمن البيع) should be 115,000 SAR
 
-  @riba-prevention
-  Scenario: Murabaha prohibits time-based interest (منع الربا)
-    Given Murabaha contract with cost price 100,000 SAR
+  @interest-prevention
+  Scenario: Loan prohibits time-based interest (منع الربا)
+    Given Loan contract with cost price 100,000 SAR
     When bank attempts to add 5% annual interest rate (ربا)
     Then contract should be rejected
-    And rejection reason should state "Riba (ربا) is prohibited"
+    And rejection reason should state "Interest (ربا) is prohibited"
     And system should suggest fixed profit margin instead
 
 # Arabic terms provide context without breaking automation
-# Shariah advisors can validate using familiar terminology
+# Compliance advisors can validate using familiar terminology
 ```
 
 **Summary**: Write scenarios in English with Arabic terms in parentheses, maintain bilingual glossary, optionally generate Arabic translations for stakeholder review, keep automation in English for tool compatibility.
@@ -2208,7 +2208,7 @@ Deliverables:
 Activities:
 
 - Select pilot feature (medium complexity, business-critical)
-  Example: "Zakat calculation for gold"
+  Example: "Tax calculation for gold"
 - Run first Three Amigos session (25 minutes)
 - Write 3-5 scenarios collaboratively
 - Developer automates scenarios
@@ -2225,7 +2225,7 @@ Deliverables:
 Activities:
 
 - Select second feature (different domain)
-  Example: "Halal product certification"
+  Example: "Permitted product certification"
 - Apply learnings from pilot
 - Refine Three Amigos process
 - Create reusable step definitions
@@ -2280,32 +2280,32 @@ Deliverables:
 | **Testability**          | Clear inputs/outputs, deterministic          | Non-deterministic, hard to assert           |
 | **Stakeholder Interest** | Business owner engaged, wants to participate | No stakeholder interest                     |
 
-**Example Pilot Feature - Zakat Calculation**:
+**Example Pilot Feature - Tax Calculation**:
 
 ```markdown
-## Pilot Feature: Gold Zakat Calculation
+## Pilot Feature: Gold Tax Calculation
 
 **Why Good Pilot**:
 
 - Medium complexity (business logic, not just CRUD)
 - Business-critical (Islamic finance platform core feature)
-- Requires Shariah advisor collaboration (BDD shines here)
-- Stable requirements (Shariah rules well-defined)
+- Requires Compliance advisor collaboration (BDD shines here)
+- Stable requirements (Compliance rules well-defined)
 - Clear testability (numeric calculations, deterministic)
-- Stakeholder engagement (Shariah board wants to validate)
+- Stakeholder engagement (Compliance board wants to validate)
 
 **Three Amigos Session 1** (Week 3):
 
-Attendees: Product Owner, Shariah Advisor, Developer, Tester
+Attendees: Product Owner, Compliance Advisor, Developer, Tester
 Duration: 25 minutes
 Output: 4 example cards, 2 rule cards, 3 question cards
 
 **Scenarios Written** (Week 3):
 
-1. Calculate Zakat on gold above nisab (happy path)
-2. No Zakat when below nisab (boundary)
-3. No Zakat when Hawl incomplete (rule validation)
-4. Calculate Zakat exactly at nisab threshold (edge case)
+1. Calculate Tax on gold above threshold (happy path)
+2. No Tax when below threshold (boundary)
+3. No Tax when Hawl incomplete (rule validation)
+4. Calculate Tax exactly at threshold threshold (edge case)
 
 **Automation** (Week 4):
 Developer implements step definitions, connects to domain logic
@@ -2367,9 +2367,9 @@ Team sees value of BDD, ready for second feature
 - 1 Frontend Developer
 - 1 QA Engineer
 - 1 Product Owner
-- 1 Shariah Advisor (part-time)
+- 1 Compliance Advisor (part-time)
 
-**Pilot Feature**: Murabaha contract validation
+**Pilot Feature**: Loan contract validation
 
 **Week 1-2**: Training
 
@@ -2379,8 +2379,8 @@ Team sees value of BDD, ready for second feature
 
 **Week 3**: First Three Amigos
 
-- Attendees: PO, Shariah Advisor, Developer, QA
-- Output: 5 scenarios for Murabaha validation
+- Attendees: PO, Compliance Advisor, Developer, QA
+- Output: 5 scenarios for Loan validation
 - Duration: 30 minutes (slightly over, first time)
 
 **Week 4**: Automation
@@ -2389,9 +2389,9 @@ Team sees value of BDD, ready for second feature
 - Scenarios automated, integrated into CI
 - 5/5 scenarios passing
 
-**Week 5-6**: Second Feature (Zakat calculation)
+**Week 5-6**: Second Feature (Tax calculation)
 
-- Applied learnings from Murabaha
+- Applied learnings from Loan
 - Completed in 1 week (faster than pilot)
 - 7 scenarios automated
 
@@ -2405,7 +2405,7 @@ Team sees value of BDD, ready for second feature
 
 - 12 automated scenarios after 8 weeks
 - Team confident in BDD practice
-- Shariah advisor engaged and providing feedback
+- Compliance advisor engaged and providing feedback
 - Living documentation published to team wiki
 ```
 
@@ -2429,7 +2429,7 @@ Team sees value of BDD, ready for second feature
 10. **Organization**: Feature-based folders, clear naming, tagging for cross-cutting concerns (@smoke, @regression, @critical)
 11. **BDD + DDD Synergy**: BDD scenarios use DDD ubiquitous language, validate domain model behavior
 12. **CI/CD Integration**: Run scenarios in pipeline using tags, generate living documentation, publish for stakeholders
-13. **Shariah Compliance**: Collaborate with Shariah advisors, use Islamic terminology, make rules explicit through examples
+13. **Compliance Compliance**: Collaborate with Compliance advisors, use Islamic terminology, make rules explicit through examples
 14. **Multilingual Scenarios**: Write in English with Arabic terms in parentheses, maintain bilingual glossary, translate for stakeholder review if needed
 15. **Adoption Strategy**: Start small (pilot feature), train team, automate gradually, integrate into workflow over 6-12 weeks
 

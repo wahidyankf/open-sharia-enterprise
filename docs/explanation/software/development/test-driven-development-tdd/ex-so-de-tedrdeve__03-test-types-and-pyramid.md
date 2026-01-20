@@ -205,15 +205,15 @@ class Money {
 **Use unit tests for:**
 
 1. **Business logic**: Calculations, validations, transformations
-   - Example: Zakat calculation formulas, nisab threshold checks
+   - Example: Tax calculation formulas, threshold threshold checks
 2. **Domain models**: Value objects, entities with invariants
-   - Example: Money, HijriDate, ZakatRate
+   - Example: Money, HijriDate, TaxRate
 3. **Utilities and helpers**: Pure functions without side effects
    - Example: Date formatting, currency conversion, string manipulation
 4. **Edge cases and error handling**: Boundary conditions, invalid inputs
    - Example: Negative amounts, null values, empty arrays
 5. **Algorithms**: Sorting, filtering, searching
-   - Example: Finding eligible assets for zakat, calculating Hawl period
+   - Example: Finding eligible assets for tax, calculating Hawl period
 
 **Don't use unit tests for:**
 
@@ -257,28 +257,28 @@ class Money {
 - **Bounded Context + Bounded Context**: Verify inter-context communication (contract testing)
 - **Application + Message Queue**: Verify event publishing and consumption
 
-### Example: Testing ZakatRepository (Integration Test)
+### Example: Testing TaxRepository (Integration Test)
 
 ```typescript
-// GOOD EXAMPLE: Integration test for ZakatRepository with database
-describe("ZakatRepository Integration", () => {
-  let repository: ZakatRepository;
+// GOOD EXAMPLE: Integration test for TaxRepository with database
+describe("TaxRepository Integration", () => {
+  let repository: TaxRepository;
   let database: TestDatabase;
 
   beforeEach(async () => {
     // Set up test database (real database, not mock)
     database = await TestDatabase.create();
     await database.migrate();
-    repository = new ZakatRepository(database);
+    repository = new TaxRepository(database);
   });
 
   afterEach(async () => {
     await database.cleanup();
   });
 
-  it("should save and retrieve zakat assessment", async () => {
+  it("should save and retrieve tax assessment", async () => {
     // Arrange
-    const assessment = new ZakatAssessment(
+    const assessment = new TaxAssessment(
       AssessmentId.generate(),
       Money.fromGold(100, "grams"),
       Money.fromGold(85, "grams"),
@@ -295,7 +295,7 @@ describe("ZakatRepository Integration", () => {
     expect(retrieved).toBeDefined();
     expect(retrieved!.id.equals(assessment.id)).toBe(true);
     expect(retrieved!.wealth.equals(assessment.wealth)).toBe(true);
-    expect(retrieved!.nisab.equals(assessment.nisab)).toBe(true);
+    expect(retrieved!.threshold.equals(assessment.threshold)).toBe(true);
   });
 
   it("should find assessments by date range", async () => {
@@ -335,45 +335,45 @@ describe("ZakatRepository Integration", () => {
 });
 
 // Implementation uses real database connection
-class ZakatRepository {
+class TaxRepository {
   constructor(private db: Database) {}
 
-  async save(assessment: ZakatAssessment): Promise<void> {
+  async save(assessment: TaxAssessment): Promise<void> {
     await this.db.query(
-      `INSERT INTO zakat_assessments (id, wealth_amount, wealth_currency, nisab_amount, nisab_currency, calculated_at)
+      `INSERT INTO tax_assessments (id, wealth_amount, wealth_currency, threshold_amount, threshold_currency, calculated_at)
        VALUES ($1, $2, $3, $4, $5, $6)
        ON CONFLICT (id) DO UPDATE SET
-         wealth_amount = $2, wealth_currency = $3, nisab_amount = $4, nisab_currency = $5`,
+         wealth_amount = $2, wealth_currency = $3, threshold_amount = $4, threshold_currency = $5`,
       [
         assessment.id.value,
         assessment.wealth.amount,
         assessment.wealth.currency,
-        assessment.nisab.amount,
-        assessment.nisab.currency,
+        assessment.threshold.amount,
+        assessment.threshold.currency,
         assessment.calculatedAt.toISOString(),
       ],
     );
   }
 
-  async findById(id: AssessmentId): Promise<ZakatAssessment | null> {
-    const result = await this.db.query("SELECT * FROM zakat_assessments WHERE id = $1", [id.value]);
+  async findById(id: AssessmentId): Promise<TaxAssessment | null> {
+    const result = await this.db.query("SELECT * FROM tax_assessments WHERE id = $1", [id.value]);
     return result.rows[0] ? this.mapToEntity(result.rows[0]) : null;
   }
 
-  async findByDateRange(start: HijriDate, end: HijriDate): Promise<ZakatAssessment[]> {
+  async findByDateRange(start: HijriDate, end: HijriDate): Promise<TaxAssessment[]> {
     const result = await this.db.query(
-      "SELECT * FROM zakat_assessments WHERE calculated_at BETWEEN $1 AND $2 ORDER BY calculated_at",
+      "SELECT * FROM tax_assessments WHERE calculated_at BETWEEN $1 AND $2 ORDER BY calculated_at",
       [start.toISOString(), end.toISOString()],
     );
     return result.rows.map((row) => this.mapToEntity(row));
   }
 
-  private mapToEntity(row: any): ZakatAssessment {
+  private mapToEntity(row: any): TaxAssessment {
     // Map database row to domain entity
-    return new ZakatAssessment(
+    return new TaxAssessment(
       AssessmentId.fromString(row.id),
       new Money(row.wealth_amount, row.wealth_currency),
-      new Money(row.nisab_amount, row.nisab_currency),
+      new Money(row.threshold_amount, row.threshold_currency),
       HijriDate.fromISOString(row.calculated_at),
     );
   }
@@ -387,15 +387,15 @@ class ZakatRepository {
 **Use integration tests for:**
 
 1. **Repository/DAO patterns**: Verify database persistence and queries work
-   - Example: ZakatRepository, HalalCertificationRepository
+   - Example: TaxRepository, PermittedCertificationRepository
 2. **External API integration**: Verify third-party service calls
-   - Example: Halal certification authority API, currency exchange rate API
+   - Example: Permitted certification authority API, currency exchange rate API
 3. **Message queue integration**: Verify event publishing and consumption
-   - Example: Publishing ZakatCalculated domain events to RabbitMQ
+   - Example: Publishing TaxCalculated domain events to RabbitMQ
 4. **Bounded context integration**: Verify communication between contexts
-   - Example: Zakat context calling Accounting context for wealth data
+   - Example: Tax context calling Accounting context for wealth data
 5. **File system operations**: Verify file read/write, CSV parsing
-   - Example: Importing zakat data from CSV files
+   - Example: Importing tax data from CSV files
 
 **Don't use integration tests for:**
 
@@ -424,7 +424,7 @@ class ZakatRepository {
 // Use Docker containers for isolated database tests
 import { GenericContainer } from "testcontainers";
 
-describe("ZakatRepository", () => {
+describe("TaxRepository", () => {
   let container: StartedTestContainer;
   let db: Database;
 
@@ -452,10 +452,10 @@ describe("ZakatRepository", () => {
 **2. Clean State Between Tests**
 
 ```typescript
-describe("ZakatRepository", () => {
+describe("TaxRepository", () => {
   beforeEach(async () => {
     // Clear database before each test
-    await database.query("TRUNCATE TABLE zakat_assessments CASCADE");
+    await database.query("TRUNCATE TABLE tax_assessments CASCADE");
   });
 
   // Each test starts with clean state ✅
@@ -481,7 +481,7 @@ it("should execute correct SQL query", async () => {
   const spy = jest.spyOn(db, "query");
   await repository.findById(someId);
 
-  expect(spy).toHaveBeenCalledWith("SELECT * FROM zakat_assessments WHERE id = $1", [someId]);
+  expect(spy).toHaveBeenCalledWith("SELECT * FROM tax_assessments WHERE id = $1", [someId]);
 });
 ```
 
@@ -506,16 +506,16 @@ it("should execute correct SQL query", async () => {
 - System behaves as expected from user's perspective
 - Major user journeys don't break after deployments
 
-### Example: Testing Zakat Calculation Workflow (E2E Test)
+### Example: Testing Tax Calculation Workflow (E2E Test)
 
 ```typescript
-// GOOD EXAMPLE: E2E test for complete Zakat assessment workflow
+// GOOD EXAMPLE: E2E test for complete Tax assessment workflow
 import { test, expect } from "@playwright/test";
 
-test.describe("Zakat Assessment Workflow", () => {
-  test("should complete full zakat assessment for gold assets", async ({ page }) => {
+test.describe("Tax Assessment Workflow", () => {
+  test("should complete full tax assessment for gold assets", async ({ page }) => {
     // Navigate to application
-    await page.goto("https://localhost:3000/zakat/assessment");
+    await page.goto("https://localhost:3000/tax/assessment");
 
     // Step 1: User selects asset type
     await page.click('button:text("Add Asset")');
@@ -528,12 +528,12 @@ test.describe("Zakat Assessment Workflow", () => {
     await expect(page.locator(".asset-list")).toContainText("100 grams of gold");
 
     // Step 2: User triggers calculation
-    await page.click('button:text("Calculate Zakat")');
+    await page.click('button:text("Calculate Tax")');
 
     // Step 3: Verify results displayed
-    await expect(page.locator(".nisab-threshold")).toContainText("Nisab: 85 grams");
-    await expect(page.locator(".zakat-amount")).toContainText("Zakat Due: 2.5 grams");
-    await expect(page.locator(".zakat-percentage")).toContainText("2.5%");
+    await expect(page.locator(".threshold-threshold")).toContainText("Threshold: 85 grams");
+    await expect(page.locator(".tax-amount")).toContainText("Tax Due: 2.5 grams");
+    await expect(page.locator(".tax-percentage")).toContainText("2.5%");
 
     // Step 4: User saves assessment
     await page.click('button:text("Save Assessment")');
@@ -547,21 +547,21 @@ test.describe("Zakat Assessment Workflow", () => {
     await expect(page.locator(".assessment-history")).toContainText("2.5 grams");
   });
 
-  test("should show error when wealth below nisab threshold", async ({ page }) => {
-    await page.goto("https://localhost:3000/zakat/assessment");
+  test("should show error when wealth below threshold threshold", async ({ page }) => {
+    await page.goto("https://localhost:3000/tax/assessment");
 
-    // Add asset below nisab (50 grams, nisab is 85 grams)
+    // Add asset below threshold (50 grams, threshold is 85 grams)
     await page.click('button:text("Add Asset")');
     await page.selectOption('select[name="assetType"]', "gold");
     await page.fill('input[name="amount"]', "50");
     await page.click('button:text("Add")');
 
     // Calculate
-    await page.click('button:text("Calculate Zakat")');
+    await page.click('button:text("Calculate Tax")');
 
-    // Verify "no zakat due" message
-    await expect(page.locator(".zakat-result")).toContainText("Wealth below nisab threshold");
-    await expect(page.locator(".zakat-amount")).toContainText("0 grams");
+    // Verify "no tax due" message
+    await expect(page.locator(".tax-result")).toContainText("Wealth below threshold threshold");
+    await expect(page.locator(".tax-amount")).toContainText("0 grams");
   });
 });
 
@@ -574,9 +574,9 @@ test.describe("Zakat Assessment Workflow", () => {
 **Use E2E tests for:**
 
 1. **Critical user journeys**: Login, checkout, payment, key workflows
-   - Example: Complete zakat assessment workflow (add assets → calculate → save)
+   - Example: Complete tax assessment workflow (add assets → calculate → save)
 2. **Happy path verification**: Most common user scenarios
-   - Example: User with gold above nisab calculates zakat successfully
+   - Example: User with gold above threshold calculates tax successfully
 3. **Smoke tests after deployment**: Verify system is functional
    - Example: Can access application, database is accessible, external APIs respond
 4. **Cross-cutting concerns**: Security, authentication, authorization flows
@@ -624,7 +624,7 @@ test("should show validation error for invalid email in profile", async ({ page 
 
 ```typescript
 // GOOD: Extract page interactions into Page Objects
-class ZakatAssessmentPage {
+class TaxAssessmentPage {
   constructor(private page: Page) {}
 
   async addGoldAsset(grams: number): Promise<void> {
@@ -635,21 +635,21 @@ class ZakatAssessmentPage {
   }
 
   async calculate(): Promise<void> {
-    await this.page.click('button:text("Calculate Zakat")');
+    await this.page.click('button:text("Calculate Tax")');
   }
 
-  async getZakatAmount(): Promise<string> {
-    return this.page.locator(".zakat-amount").textContent();
+  async getTaxAmount(): Promise<string> {
+    return this.page.locator(".tax-amount").textContent();
   }
 }
 
 // Test becomes readable
-test("should calculate zakat for gold", async ({ page }) => {
-  const assessmentPage = new ZakatAssessmentPage(page);
+test("should calculate tax for gold", async ({ page }) => {
+  const assessmentPage = new TaxAssessmentPage(page);
   await assessmentPage.addGoldAsset(100);
   await assessmentPage.calculate();
 
-  expect(await assessmentPage.getZakatAmount()).toContain("2.5 grams");
+  expect(await assessmentPage.getTaxAmount()).toContain("2.5 grams");
 });
 ```
 
@@ -658,7 +658,7 @@ test("should calculate zakat for gold", async ({ page }) => {
 ```typescript
 // GOOD: 20-30 E2E tests covering critical journeys
 // - User registration and login
-// - Zakat assessment workflow
+// - Tax assessment workflow
 // - Report generation
 // - Payment processing
 
@@ -687,29 +687,29 @@ For a typical application:
 **Total execution time**: ~25 minutes for full suite
 **Fast feedback**: 10 seconds for unit tests (run on every save)
 
-### Zakat Calculation Module: Pyramid Example
+### Tax Calculation Module: Pyramid Example
 
 **Unit Tests (70%, ~140 tests)**:
 
 - Money value object (20 tests)
-- ZakatRate value object (10 tests)
-- NisabThreshold value object (15 tests)
+- TaxRate value object (10 tests)
+- IncomeThreshold value object (15 tests)
 - HijriDate value object (20 tests)
-- ZakatCalculator business logic (30 tests)
+- TaxCalculator business logic (30 tests)
 - Asset classification logic (15 tests)
 - Hawl period calculations (20 tests)
 - Edge cases and error handling (10 tests)
 
 **Integration Tests (25%, ~50 tests)**:
 
-- ZakatRepository database persistence (15 tests)
-- Halal certification API integration (10 tests)
-- ZakatService orchestrating multiple components (15 tests)
+- TaxRepository database persistence (15 tests)
+- Permitted certification API integration (10 tests)
+- TaxService orchestrating multiple components (15 tests)
 - Event publishing to message queue (10 tests)
 
 **E2E Tests (5%, ~10 tests)**:
 
-- Complete zakat assessment workflow (3 tests)
+- Complete tax assessment workflow (3 tests)
 - Asset management UI interactions (3 tests)
 - Report generation and download (2 tests)
 - User authentication and authorization (2 tests)

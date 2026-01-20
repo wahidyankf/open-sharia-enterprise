@@ -35,62 +35,62 @@ This guide presents proven best practices that maximize TDD's value. Understandi
 
 **Why It Matters**: This cycle ensures tests genuinely verify new functionality rather than existing code. Skipping the red phase risks writing tests that always pass.
 
-**Example: Zakat Calculation**
+**Example: Tax Calculation**
 
 ```typescript
 // ❌ WRONG: Writing implementation first
-class ZakatCalculator {
-  calculateZakat(wealth: number): number {
-    const nisab = 85 * 4.25; // 85 grams of gold at $4.25/gram
-    const zakatRate = 0.025; // 2.5%
+class TaxCalculator {
+  calculateTax(wealth: number): number {
+    const threshold = 85 * 4.25; // 85 grams of gold at $4.25/gram
+    const taxRate = 0.025; // 2.5%
 
-    return wealth >= nisab ? wealth * zakatRate : 0;
+    return wealth >= threshold ? wealth * taxRate : 0;
   }
 }
 
 // Then writing test...
 
 // ✅ RIGHT: Red phase first
-describe("ZakatCalculator", () => {
-  it("should return 0 for wealth below nisab", () => {
-    const calculator = new ZakatCalculator();
-    const result = calculator.calculateZakat(300); // Below nisab
+describe("TaxCalculator", () => {
+  it("should return 0 for wealth below threshold", () => {
+    const calculator = new TaxCalculator();
+    const result = calculator.calculateTax(300); // Below threshold
 
     expect(result).toBe(0); // This FAILS - good!
   });
 });
 
 // Green phase: Minimal implementation
-class ZakatCalculator {
-  calculateZakat(wealth: number): number {
+class TaxCalculator {
+  calculateTax(wealth: number): number {
     return 0; // Simplest code to pass
   }
 }
 
 // Next test drives real logic
-it("should calculate 2.5% for wealth at nisab", () => {
-  const calculator = new ZakatCalculator();
-  const nisab = 85 * 4.25; // ~361.25
-  const result = calculator.calculateZakat(nisab);
+it("should calculate 2.5% for wealth at threshold", () => {
+  const calculator = new TaxCalculator();
+  const threshold = 85 * 4.25; // ~361.25
+  const result = calculator.calculateTax(threshold);
 
-  expect(result).toBe(nisab * 0.025); // Fails - drives implementation
+  expect(result).toBe(threshold * 0.025); // Fails - drives implementation
 });
 
 // Refactor phase: Extract constants, improve naming
-class ZakatCalculator {
-  private static readonly GOLD_GRAMS_FOR_NISAB = 85;
+class TaxCalculator {
+  private static readonly GOLD_GRAMS_FOR_THRESHOLD = 85;
   private static readonly GOLD_PRICE_PER_GRAM = 4.25;
-  private static readonly ZAKAT_RATE = 0.025;
+  private static readonly TAX_RATE = 0.025;
 
-  private static get nisab(): number {
-    return this.GOLD_GRAMS_FOR_NISAB * this.GOLD_PRICE_PER_GRAM;
+  private static get threshold(): number {
+    return this.GOLD_GRAMS_FOR_THRESHOLD * this.GOLD_PRICE_PER_GRAM;
   }
 
-  calculateZakat(wealth: number): number {
-    if (wealth < ZakatCalculator.nisab) {
+  calculateTax(wealth: number): number {
+    if (wealth < TaxCalculator.threshold) {
       return 0;
     }
-    return wealth * ZakatCalculator.ZAKAT_RATE;
+    return wealth * TaxCalculator.TAX_RATE;
   }
 }
 ```
@@ -195,14 +195,14 @@ describe("HijriDateValidator", () => {
 
 **Why It Matters**: Simple starting points build confidence and momentum. Consistency reduces cognitive load when reading or maintaining tests.
 
-**Example: Murabaha Profit Calculation**
+**Example: Loan Profit Calculation**
 
 ```typescript
 // ✅ RIGHT: Start with simplest case
-describe("MurabahaProfitCalculator", () => {
+describe("LoanProfitCalculator", () => {
   // Test 1: Simplest possible case
   it("should calculate profit for 1 year term with 10% markup", () => {
-    const calculator = new MurabahaProfitCalculator();
+    const calculator = new LoanProfitCalculator();
     const cost = 1000;
     const markupRate = 0.1; // 10%
     const termYears = 1;
@@ -214,7 +214,7 @@ describe("MurabahaProfitCalculator", () => {
 
   // Test 2: Build on simplest case
   it("should calculate profit for multi-year term", () => {
-    const calculator = new MurabahaProfitCalculator();
+    const calculator = new LoanProfitCalculator();
     const cost = 1000;
     const markupRate = 0.1;
     const termYears = 3;
@@ -226,7 +226,7 @@ describe("MurabahaProfitCalculator", () => {
 
   // Test 3: Add complexity incrementally
   it("should calculate profit for fractional year term", () => {
-    const calculator = new MurabahaProfitCalculator();
+    const calculator = new LoanProfitCalculator();
     const cost = 1000;
     const markupRate = 0.1;
     const termYears = 0.5; // 6 months
@@ -238,7 +238,7 @@ describe("MurabahaProfitCalculator", () => {
 
   // Test 4: Edge cases come after happy path
   it("should return 0 profit for 0% markup rate", () => {
-    const calculator = new MurabahaProfitCalculator();
+    const calculator = new LoanProfitCalculator();
     const cost = 1000;
     const markupRate = 0;
     const termYears = 1;
@@ -665,7 +665,7 @@ branches:
 // ✅ RIGHT: Fast, isolated unit tests
 describe("IslamicLoanCalculator (Unit)", () => {
   // Each test runs in <10ms
-  it("should calculate monthly payment for Murabaha contract", () => {
+  it("should calculate monthly payment for Loan contract", () => {
     const calculator = new IslamicLoanCalculator();
     const principal = 100000;
     const profitRate = 0.05;
@@ -681,15 +681,15 @@ describe("IslamicLoanCalculator (Unit)", () => {
   });
 
   // Test uses test doubles for fast execution
-  it("should fetch current gold price for nisab calculation", async () => {
+  it("should fetch current gold price for threshold calculation", async () => {
     const mockPriceService = {
       getCurrentGoldPrice: jest.fn().mockResolvedValue(65.5),
     };
     const calculator = new IslamicLoanCalculator(mockPriceService);
 
-    const nisab = await calculator.calculateNisab();
+    const threshold = await calculator.calculateThreshold();
 
-    expect(nisab).toBeCloseTo(85 * 65.5, 2); // 85 grams * price
+    expect(threshold).toBeCloseTo(85 * 65.5, 2); // 85 grams * price
     expect(mockPriceService.getCurrentGoldPrice).toHaveBeenCalledTimes(1);
   });
 });
@@ -701,11 +701,11 @@ describe("IslamicLoanCalculator (Integration)", () => {
     const realPriceService = new GoldPriceService();
     const calculator = new IslamicLoanCalculator(realPriceService);
 
-    const nisab = await calculator.calculateNisab();
+    const threshold = await calculator.calculateThreshold();
 
     // Verify integration but allow reasonable range
-    expect(nisab).toBeGreaterThan(5000); // Gold prices fluctuate
-    expect(nisab).toBeLessThan(10000);
+    expect(threshold).toBeGreaterThan(5000); // Gold prices fluctuate
+    expect(threshold).toBeLessThan(10000);
   }, 30000); // Longer timeout for network call
 });
 ```
@@ -715,19 +715,19 @@ describe("IslamicLoanCalculator (Integration)", () => {
 ```typescript
 // Fast tests (run on every save, pre-commit)
 // Unit tests: <10ms each, no external dependencies
-describe("Unit: ZakatCalculator", () => {
+describe("Unit: TaxCalculator", () => {
   /* ... */
 });
 
 // Medium tests (run on pre-push, CI pull requests)
 // Integration tests: <1s each, use test database/mocks
-describe("Integration: ZakatReportGenerator", () => {
+describe("Integration: TaxReportGenerator", () => {
   /* ... */
 });
 
 // Slow tests (run on CI main branch, pre-deployment)
 // E2E tests: <30s each, full system
-describe("E2E: Zakat Submission Flow", () => {
+describe("E2E: Tax Submission Flow", () => {
   /* ... */
 });
 ```
@@ -736,8 +736,8 @@ describe("E2E: Zakat Submission Flow", () => {
 
 ```typescript
 // ✅ Deterministic: Always produces same result
-it("should calculate Zakat for fixed wealth amount", () => {
-  const calculator = new ZakatCalculator();
+it("should calculate Tax for fixed wealth amount", () => {
+  const calculator = new TaxCalculator();
   const result = calculator.calculate(10000);
 
   expect(result).toBe(250); // Always 250
@@ -810,20 +810,20 @@ describe("tests", () => {
 });
 
 // ✅ RIGHT: Production-quality test code
-describe("ZakatCalculator", () => {
-  describe("calculateZakat", () => {
-    let calculator: ZakatCalculator;
+describe("TaxCalculator", () => {
+  describe("calculateTax", () => {
+    let calculator: TaxCalculator;
 
     // Setup/teardown for reusable test fixtures
     beforeEach(() => {
-      calculator = new ZakatCalculator();
+      calculator = new TaxCalculator();
     });
 
     // Helper function to reduce duplication
     const calculateForWealth = (wealth: number): number => {
-      const zakatRate = 0.025;
+      const taxRate = 0.025;
       const termYears = 1;
-      return calculator.calculateZakat(wealth, zakatRate, termYears);
+      return calculator.calculateTax(wealth, taxRate, termYears);
     };
 
     it("should calculate 25 for 1000 wealth at standard rate", () => {
@@ -841,7 +841,7 @@ describe("ZakatCalculator", () => {
       const doubleRate = 0.05;
       const termYears = 1;
 
-      const result = calculator.calculateZakat(wealth, doubleRate, termYears);
+      const result = calculator.calculateTax(wealth, doubleRate, termYears);
 
       expect(result).toBe(50);
     });
@@ -849,9 +849,9 @@ describe("ZakatCalculator", () => {
 });
 
 // Even better: Extract test data builders
-class ZakatTestDataBuilder {
+class TaxTestDataBuilder {
   private wealth: number = 10000;
-  private zakatRate: number = 0.025;
+  private taxRate: number = 0.025;
   private termYears: number = 1;
 
   withWealth(wealth: number): this {
@@ -860,7 +860,7 @@ class ZakatTestDataBuilder {
   }
 
   withRate(rate: number): this {
-    this.zakatRate = rate;
+    this.taxRate = rate;
     return this;
   }
 
@@ -872,31 +872,31 @@ class ZakatTestDataBuilder {
   build() {
     return {
       wealth: this.wealth,
-      zakatRate: this.zakatRate,
+      taxRate: this.taxRate,
       termYears: this.termYears,
     };
   }
 }
 
-describe("ZakatCalculator (with builder)", () => {
-  let calculator: ZakatCalculator;
+describe("TaxCalculator (with builder)", () => {
+  let calculator: TaxCalculator;
 
   beforeEach(() => {
-    calculator = new ZakatCalculator();
+    calculator = new TaxCalculator();
   });
 
   it("should calculate correctly for standard scenario", () => {
-    const scenario = new ZakatTestDataBuilder().withWealth(1000).build();
+    const scenario = new TaxTestDataBuilder().withWealth(1000).build();
 
-    const result = calculator.calculateZakat(scenario.wealth, scenario.zakatRate, scenario.termYears);
+    const result = calculator.calculateTax(scenario.wealth, scenario.taxRate, scenario.termYears);
 
     expect(result).toBe(25);
   });
 
   it("should calculate correctly for high-wealth scenario", () => {
-    const scenario = new ZakatTestDataBuilder().withWealth(100000).build();
+    const scenario = new TaxTestDataBuilder().withWealth(100000).build();
 
-    const result = calculator.calculateZakat(scenario.wealth, scenario.zakatRate, scenario.termYears);
+    const result = calculator.calculateTax(scenario.wealth, scenario.taxRate, scenario.termYears);
 
     expect(result).toBe(2500);
   });
@@ -923,7 +923,7 @@ describe("ZakatCalculator (with builder)", () => {
 
 ```typescript
 // ❌ WRONG: Vague, technical names
-describe("ZakatService", () => {
+describe("TaxService", () => {
   it("works", () => {
     /* ... */
   });
@@ -939,13 +939,13 @@ describe("ZakatService", () => {
 });
 
 // ✅ RIGHT: Descriptive, behavior-focused names
-describe("ZakatService", () => {
-  describe("calculateZakat", () => {
-    it("should return 2.5% of wealth when above nisab threshold", () => {
+describe("TaxService", () => {
+  describe("calculateTax", () => {
+    it("should return 2.5% of wealth when above threshold threshold", () => {
       // Test implementation
     });
 
-    it("should return zero when wealth is below nisab threshold", () => {
+    it("should return zero when wealth is below threshold threshold", () => {
       // Test implementation
     });
 
@@ -958,16 +958,16 @@ describe("ZakatService", () => {
     });
   });
 
-  describe("isWealthAboveNisab", () => {
-    it("should return true when wealth equals nisab exactly", () => {
+  describe("isWealthAboveThreshold", () => {
+    it("should return true when wealth equals threshold exactly", () => {
       // Test implementation
     });
 
-    it("should return true when wealth exceeds nisab by any amount", () => {
+    it("should return true when wealth exceeds threshold by any amount", () => {
       // Test implementation
     });
 
-    it("should return false when wealth is one cent below nisab", () => {
+    it("should return false when wealth is one cent below threshold", () => {
       // Test implementation
     });
   });
@@ -982,11 +982,11 @@ it("should calculate profit when term is in years", () => {});
 it("should throw error when currency is unsupported", () => {});
 
 // Pattern 2: should [expected behavior] for [scenario]
-it("should return zero for wealth below nisab", () => {});
+it("should return zero for wealth below threshold", () => {});
 it("should apply discount for early payment", () => {});
 
 // Pattern 3: [behavior] with [specific condition]
-it("calculates Zakat with standard 2.5% rate", () => {});
+it("calculates Tax with standard 2.5% rate", () => {});
 it("validates Hijri date with leap year rules", () => {});
 
 // Pattern 4: given [precondition], when [action], then [outcome]
@@ -1011,12 +1011,12 @@ it("given valid donation, when processing, then creates receipt", () => {});
 
 ```typescript
 // ❌ SLOW: Unnecessary async operations
-describe("ZakatCalculator (Slow)", () => {
-  it("should calculate Zakat amount", async () => {
-    const calculator = new ZakatCalculator();
+describe("TaxCalculator (Slow)", () => {
+  it("should calculate Tax amount", async () => {
+    const calculator = new TaxCalculator();
 
     // Unnecessary database call for static data
-    const nisabThreshold = await database.getNisabThreshold();
+    const incomeThreshold = await database.getIncomeThreshold();
 
     // Unnecessary API call for calculation
     const result = await calculator.calculateFromAPI(10000);
@@ -1026,30 +1026,30 @@ describe("ZakatCalculator (Slow)", () => {
 });
 
 // ✅ FAST: Synchronous, isolated unit test
-describe("ZakatCalculator (Fast)", () => {
-  it("should calculate Zakat amount", () => {
-    const calculator = new ZakatCalculator();
+describe("TaxCalculator (Fast)", () => {
+  it("should calculate Tax amount", () => {
+    const calculator = new TaxCalculator();
     const wealth = 10000;
-    const nisab = 361.25; // Static value, no DB needed
+    const threshold = 361.25; // Static value, no DB needed
 
-    const result = calculator.calculate(wealth, nisab);
+    const result = calculator.calculate(wealth, threshold);
 
     expect(result).toBe(250);
   });
 });
 
 // For tests requiring external data, use test doubles
-describe("ZakatCalculator (with dependencies)", () => {
-  it("should fetch current nisab from price service", async () => {
+describe("TaxCalculator (with dependencies)", () => {
+  it("should fetch current threshold from price service", async () => {
     // Fast: Mock returns immediately
     const mockPriceService = {
       getCurrentGoldPrice: jest.fn().mockResolvedValue(65.5),
     };
-    const calculator = new ZakatCalculator(mockPriceService);
+    const calculator = new TaxCalculator(mockPriceService);
 
-    const nisab = await calculator.getNisab();
+    const threshold = await calculator.getThreshold();
 
-    expect(nisab).toBeCloseTo(5567.5, 2); // 85g * $65.50
+    expect(threshold).toBeCloseTo(5567.5, 2); // 85g * $65.50
   });
 });
 ```

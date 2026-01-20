@@ -10,8 +10,8 @@ tags:
   - strategic-design
   - tactical-design
   - islamic-finance
-  - zakat
-  - murabaha
+  - tax
+  - loan
 ---
 
 # Best Practices in Domain-Driven Design
@@ -20,13 +20,13 @@ tags:
 
 ## Overview
 
-Domain-Driven Design (DDD) is a powerful approach for tackling complex business domains, but it requires careful application to achieve success. This guide explores proven best practices with examples from Islamic finance and Shariah-compliant business systems.
+Domain-Driven Design (DDD) is a powerful approach for tackling complex business domains, but it requires careful application to achieve success. This guide explores proven best practices with examples from Islamic finance and Compliance-compliant business systems.
 
 Success in DDD comes from balancing strategic design (understanding the business domain) with tactical patterns (implementing the code), while maintaining close collaboration with domain experts and avoiding over-engineering.
 
 The benefits of following DDD best practices include:
 
-- **Reduced Business Risk**: Accurate domain models minimize Shariah compliance violations and business logic errors
+- **Reduced Business Risk**: Accurate domain models minimize Compliance compliance violations and business logic errors
 - **Faster Feature Development**: Clear bounded contexts and ubiquitous language accelerate development after initial investment
 - **Better Communication**: Shared vocabulary eliminates translation errors between business and technical teams
 - **Maintainable Code**: Rich domain models localize business logic, making changes easier and safer
@@ -53,21 +53,21 @@ The benefits of following DDD best practices include:
 **How**:
 
 ```markdown
-## Business Outcome Example: Zakat Automation
+## Business Outcome Example: Tax Automation
 
-**Current State**: Manual Zakat calculations take 2-3 days per client, error rate 15%
+**Current State**: Manual Tax calculations take 2-3 days per client, error rate 15%
 **Desired State**: Automated calculations in minutes, error rate <1%
-**Business Value**: Process 10x more clients, reduce Shariah compliance risk
+**Business Value**: Process 10x more clients, reduce Compliance compliance risk
 **Investment Justification**: $200k development cost vs $500k annual operational savings
 ```
 
 **Islamic Finance Example**:
 
-For a Murabaha financing system:
+For a Loan financing system:
 
 - **Business Outcome**: Reduce contract processing time from 5 days to 1 day
 - **Value**: Handle 5x more financing requests with same staff
-- **Risk Reduction**: Automated Shariah compliance checks reduce fatwa violations
+- **Risk Reduction**: Automated Compliance compliance checks reduce fatwa violations
 - **Revenue Impact**: Faster processing = more transactions = higher revenue
 
 **When to Apply**: Before any DDD project starts, during initial discovery workshops.
@@ -95,31 +95,31 @@ class Transaction {
 }
 
 // GOOD: Ubiquitous Language from Islamic finance
-class ZakatPayment {
-  nisab: Money; // Minimum wealth threshold
-  zakatableAmount: Money; // 2.5% of qualifying assets
+class TaxPayment {
+  threshold: Money; // Minimum wealth threshold
+  taxableAmount: Money; // 2.5% of qualifying assets
   hawl: HijriYear; // Lunar year completion
-  recipient: ZakatRecipient; // One of eight categories
+  recipient: TaxRecipient; // One of eight categories
 }
 ```
 
 **Islamic Finance Example**:
 
-**Ubiquitous Language Glossary for Murabaha Bounded Context**:
+**Ubiquitous Language Glossary for Loan Bounded Context**:
 
-| Term     | Arabic | Meaning               | Code Representation          |
-| -------- | ------ | --------------------- | ---------------------------- |
-| Murabaha | مرابحة | Cost-plus financing   | `MurabahaContract` class     |
-| Mithali  | مثلي   | Fungible commodity    | `FungibleAsset` value object |
-| Qimiyy   | قيمي   | Non-fungible asset    | `UniqueAsset` value object   |
-| Tamlik   | تمليك  | Transfer of ownership | `OwnershipTransfer` event    |
-| Qabdh    | قبض    | Possession            | `PossessionTaken` event      |
+| Term    | Arabic | Meaning               | Code Representation          |
+| ------- | ------ | --------------------- | ---------------------------- |
+| Loan    | مرابحة | Cost-plus financing   | `LoanContract` class         |
+| Mithali | مثلي   | Fungible commodity    | `FungibleAsset` value object |
+| Qimiyy  | قيمي   | Non-fungible asset    | `UniqueAsset` value object   |
+| Tamlik  | تمليك  | Transfer of ownership | `OwnershipTransfer` event    |
+| Qabdh   | قبض    | Possession            | `PossessionTaken` event      |
 
 **When to Apply**: During discovery workshops, event storming sessions, and continuously throughout development.
 
 **Red Flags**:
 
-- Developers saying "users" when domain experts say "Zakat payers"
+- Developers saying "users" when domain experts say "Tax payers"
 - Code using "payment" when business uses "Sadaqah contribution"
 - Translation layer between business language and code
 
@@ -135,11 +135,11 @@ class ZakatPayment {
 Islamic Finance Platform Bounded Contexts:
 
 ┌─────────────────────┐  ┌──────────────────────┐  ┌─────────────────────┐
-│  Zakat Management   │  │  Waqf Administration │  │  Murabaha Financing │
+│  Tax Management   │  │  Donation Administration │  │  Loan Financing │
 │                     │  │                      │  │                     │
-│  - ZakatCalculation │  │  - WaqfEndowment     │  │  - MurabahaContract │
-│  - NisabThreshold   │  │  - BeneficiaryGrant  │  │  - AssetPurchase    │
-│  - ZakatRecipient   │  │  - PropertyManagement│  │  - InstallmentPlan  │
+│  - TaxCalculation │  │  - DonationEndowment     │  │  - LoanContract │
+│  - ThresholdThreshold   │  │  - BeneficiaryGrant  │  │  - AssetPurchase    │
+│  - TaxRecipient   │  │  - PropertyManagement│  │  - InstallmentPlan  │
 └─────────────────────┘  └──────────────────────┘  └─────────────────────┘
          │                          │                         │
          └──────────────────────────┴─────────────────────────┘
@@ -157,9 +157,9 @@ Islamic Finance Platform Bounded Contexts:
 
 The term "Asset" means different things in different contexts:
 
-- **Zakat Management Context**: Asset = property subject to Zakat calculation (gold, cash, inventory)
-- **Waqf Context**: Asset = endowed property generating income for beneficiaries
-- **Murabaha Context**: Asset = commodity being sold with markup
+- **Tax Management Context**: Asset = property subject to Tax calculation (gold, cash, inventory)
+- **Donation Context**: Asset = endowed property generating income for beneficiaries
+- **Loan Context**: Asset = commodity being sold with markup
 
 Each bounded context has its own `Asset` model with different properties and behaviors.
 
@@ -188,12 +188,12 @@ Microservice Architecture for Islamic Finance Platform:
          │              │                 │
          ▼              ▼                 ▼
 ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐
-│   Zakat     │  │    Waqf     │  │    Murabaha     │
+│   Tax     │  │    Donation     │  │    Loan     │
 │   Service   │  │   Service   │  │     Service     │
 ├─────────────┤  ├─────────────┤  ├─────────────────┤
 │ Bounded     │  │ Bounded     │  │ Bounded         │
 │ Context:    │  │ Context:    │  │ Context:        │
-│ Zakat Mgmt  │  │ Waqf Admin  │  │ Murabaha Fin.   │
+│ Tax Mgmt  │  │ Donation Admin  │  │ Loan Fin.   │
 ├─────────────┤  ├─────────────┤  ├─────────────────┤
 │ Own DB      │  │ Own DB      │  │ Own DB          │
 └─────────────┘  └─────────────┘  └─────────────────┘
@@ -201,17 +201,17 @@ Microservice Architecture for Islamic Finance Platform:
 
 **Islamic Finance Example**:
 
-**Zakat Service** (autonomous):
+**Tax Service** (autonomous):
 
-- **Database**: Zakat-specific schema (calculations, recipients, distributions)
-- **Team**: Zakat domain experts + developers
+- **Database**: Tax-specific schema (calculations, recipients, distributions)
+- **Team**: Tax domain experts + developers
 - **Deployment**: Independent release cycle
-- **Integration**: Publishes `ZakatCalculated` event to event bus
+- **Integration**: Publishes `TaxCalculated` event to event bus
 
-**Waqf Service** (autonomous):
+**Donation Service** (autonomous):
 
-- **Database**: Waqf-specific schema (endowments, beneficiaries, grants)
-- **Team**: Waqf domain experts + developers
+- **Database**: Donation-specific schema (endowments, beneficiaries, grants)
+- **Team**: Donation domain experts + developers
 - **Deployment**: Independent release cycle
 - **Integration**: Subscribes to `DonationReceived` event
 
@@ -232,7 +232,7 @@ Microservice Architecture for Islamic Finance Platform:
 **How**:
 
 ```
-Event Storming Session Output (Murabaha Financing):
+Event Storming Session Output (Loan Financing):
 
 Domain Events (Orange):
 ┌──────────────────┐  ┌─────────────────┐  ┌──────────────────┐
@@ -245,7 +245,7 @@ Commands (Blue):      Commands (Blue):      Commands (Blue):
 - Verify Eligibility  - Verify Possession   - Calculate Markup
 
 Aggregates (Yellow):
-- FinancingRequest    - AssetPurchase       - MurabahaContract
+- FinancingRequest    - AssetPurchase       - LoanContract
 
 Policies (Purple):
                       "When Asset          "When Contract
@@ -256,36 +256,36 @@ Policies (Purple):
 
 **Islamic Finance Example**:
 
-**Event Storming for Zakat Calculation Bounded Context**:
+**Event Storming for Tax Calculation Bounded Context**:
 
 **Step 1: Domain Events**
 
-- `ZakatYearStarted`
+- `TaxYearStarted`
 - `AssetDeclared`
-- `NisabThresholdMet`
+- `ThresholdThresholdMet`
 - `HawlCompleted`
-- `ZakatCalculated`
-- `ZakatPaid`
+- `TaxCalculated`
+- `TaxPaid`
 - `ReceiptIssued`
 
 **Step 2: Commands**
 
-- `StartZakatYear`
+- `StartTaxYear`
 - `DeclareAsset`
-- `CalculateZakat`
-- `PayZakat`
+- `CalculateTax`
+- `PayTax`
 
 **Step 3: Aggregates**
 
-- `ZakatCalculation` (root)
-- `ZakatableAsset`
-- `ZakatPayment`
+- `TaxCalculation` (root)
+- `TaxableAsset`
+- `TaxPayment`
 
 **Step 4: Policies**
 
-- "When Hawl Completed, Then Calculate Zakat"
-- "When Zakat Calculated, Then Notify Payer"
-- "When Zakat Paid, Then Issue Receipt"
+- "When Hawl Completed, Then Calculate Tax"
+- "When Tax Calculated, Then Notify Payer"
+- "When Tax Paid, Then Issue Receipt"
 
 **When to Apply**: Early in discovery phase, when entering new subdomains, when redesigning existing systems.
 
@@ -307,17 +307,17 @@ Policies (Purple):
 
 ```typescript
 // BAD: Anemic model (data bag)
-class ZakatCalculation {
+class TaxCalculation {
   assets: Asset[];
-  nisabThreshold: number;
-  zakatAmount: number;
+  thresholdThreshold: number;
+  taxAmount: number;
 }
 
 // Service contains all logic
-class ZakatService {
-  calculateZakat(calculation: ZakatCalculation): number {
+class TaxService {
+  calculateTax(calculation: TaxCalculation): number {
     const totalAssets = calculation.assets.reduce((sum, asset) => sum + asset.value, 0);
-    if (totalAssets < calculation.nisabThreshold) {
+    if (totalAssets < calculation.thresholdThreshold) {
       return 0;
     }
     return totalAssets * 0.025;
@@ -325,28 +325,28 @@ class ZakatService {
 }
 
 // GOOD: Rich domain model
-class ZakatCalculation {
+class TaxCalculation {
   private assets: Asset[];
-  private nisabThreshold: Money;
+  private thresholdThreshold: Money;
   private hawlStartDate: HijriDate;
 
   addAsset(asset: Asset): void {
-    if (!asset.isZakatable()) {
-      throw new NonZakatableAssetError(asset);
+    if (!asset.isTaxable()) {
+      throw new NonTaxableAssetError(asset);
     }
     this.assets.push(asset);
   }
 
-  calculateZakat(currentDate: HijriDate): Money {
+  calculateTax(currentDate: HijriDate): Money {
     this.verifyHawlCompleted(currentDate);
 
-    const zakatableAmount = this.calculateZakatableAmount();
+    const taxableAmount = this.calculateTaxableAmount();
 
-    if (zakatableAmount.isLessThan(this.nisabThreshold)) {
+    if (taxableAmount.isLessThan(this.thresholdThreshold)) {
       return Money.zero();
     }
 
-    return zakatableAmount.multiply(0.025);
+    return taxableAmount.multiply(0.025);
   }
 
   private verifyHawlCompleted(currentDate: HijriDate): void {
@@ -357,20 +357,20 @@ class ZakatCalculation {
     }
   }
 
-  private calculateZakatableAmount(): Money {
+  private calculateTaxableAmount(): Money {
     return this.assets
-      .filter((asset) => asset.isZakatable())
-      .reduce((sum, asset) => sum.add(asset.zakatableValue()), Money.zero());
+      .filter((asset) => asset.isTaxable())
+      .reduce((sum, asset) => sum.add(asset.taxableValue()), Money.zero());
   }
 }
 ```
 
 **Islamic Finance Example**:
 
-**Rich Murabaha Contract Aggregate**:
+**Rich Loan Contract Aggregate**:
 
 ```typescript
-class MurabahaContract {
+class LoanContract {
   private status: ContractStatus;
   private assetPurchase: AssetPurchase;
   private markup: Percentage;
@@ -391,14 +391,14 @@ class MurabahaContract {
   // Business rule: Markup must be fixed, not variable
   calculateTotalPrice(): Money {
     if (this.markup.isVariable()) {
-      throw new VariableMarkupNotAllowedError("Murabaha requires fixed markup");
+      throw new VariableMarkupNotAllowedError("Loan requires fixed markup");
     }
 
     const cost = this.assetPurchase.totalCost();
     return cost.add(cost.multiply(this.markup));
   }
 
-  // Business rule: Asset must be Shariah-compliant
+  // Business rule: Asset must be Compliance-compliant
   private validateAssetCompliance(): void {
     if (this.assetPurchase.asset.isProhibited()) {
       throw new ProhibitedAssetError(`Cannot finance ${this.assetPurchase.asset.category}`);
@@ -424,9 +424,9 @@ class MurabahaContract {
 **How**:
 
 ```typescript
-// Aggregate Root: WaqfEndowment
-class WaqfEndowment {
-  private readonly id: WaqfId;
+// Aggregate Root: DonationEndowment
+class DonationEndowment {
+  private readonly id: DonationId;
   private beneficiaries: Beneficiary[];
   private totalDistributed: Money;
   private readonly principal: Money; // Cannot be touched
@@ -453,7 +453,7 @@ class WaqfEndowment {
 
   // INVARIANT: Principal must remain intact
   withdrawPrincipal(amount: Money): void {
-    throw new PrincipalCannotBeWithdrawnError("Waqf principal is perpetual and cannot be withdrawn");
+    throw new PrincipalCannotBeWithdrawnError("Donation principal is perpetual and cannot be withdrawn");
   }
 
   // INVARIANT: Beneficiaries must sum to 100%
@@ -471,30 +471,30 @@ class WaqfEndowment {
 
 **Islamic Finance Example**:
 
-**Zakat Calculation Aggregate Invariants**:
+**Tax Calculation Aggregate Invariants**:
 
 ```typescript
-class ZakatCalculation {
+class TaxCalculation {
   // INVARIANT: Hawl must be complete before calculation
-  calculateZakat(): Money {
+  calculateTax(): Money {
     if (!this.hawlCompleted) {
       throw new HawlNotCompletedError();
     }
     // ... calculation logic
   }
 
-  // INVARIANT: Only zakatable assets count
+  // INVARIANT: Only taxable assets count
   addAsset(asset: Asset): void {
-    if (!asset.isZakatable()) {
-      throw new NonZakatableAssetError();
+    if (!asset.isTaxable()) {
+      throw new NonTaxableAssetError();
     }
     this.assets.push(asset);
   }
 
-  // INVARIANT: Nisab threshold must be met
-  private verifyNisabMet(totalAssets: Money): void {
-    if (totalAssets.isLessThan(this.nisabThreshold)) {
-      throw new NisabNotMetError();
+  // INVARIANT: Threshold threshold must be met
+  private verifyThresholdMet(totalAssets: Money): void {
+    if (totalAssets.isLessThan(this.thresholdThreshold)) {
+      throw new ThresholdNotMetError();
     }
   }
 }
@@ -598,10 +598,10 @@ class HijriDate {
 
 **Islamic Finance Example**:
 
-**Value Objects in Zakat Domain**:
+**Value Objects in Tax Domain**:
 
 ```typescript
-// Percentage (used for Zakat rate)
+// Percentage (used for Tax rate)
 class Percentage {
   private readonly value: number;
 
@@ -612,7 +612,7 @@ class Percentage {
     return new Percentage(value);
   }
 
-  static zakatRate(): Percentage {
+  static taxRate(): Percentage {
     return Percentage.of(2.5); // Fixed 2.5%
   }
 
@@ -621,19 +621,19 @@ class Percentage {
   }
 }
 
-// NisabThreshold (minimum wealth for Zakat)
-class NisabThreshold {
+// ThresholdThreshold (minimum wealth for Tax)
+class ThresholdThreshold {
   private readonly amount: Money;
   private readonly asOfDate: HijriDate;
 
-  static goldNisab(goldPricePerGram: Money): NisabThreshold {
-    const nisabGrams = 85; // 85 grams of gold
-    return new NisabThreshold(goldPricePerGram.multiply(nisabGrams), HijriDate.today());
+  static goldThreshold(goldPricePerGram: Money): ThresholdThreshold {
+    const thresholdGrams = 85; // 85 grams of gold
+    return new ThresholdThreshold(goldPricePerGram.multiply(thresholdGrams), HijriDate.today());
   }
 
-  static silverNisab(silverPricePerGram: Money): NisabThreshold {
-    const nisabGrams = 595; // 595 grams of silver
-    return new NisabThreshold(silverPricePerGram.multiply(nisabGrams), HijriDate.today());
+  static silverThreshold(silverPricePerGram: Money): ThresholdThreshold {
+    const thresholdGrams = 595; // 595 grams of silver
+    return new ThresholdThreshold(silverPricePerGram.multiply(thresholdGrams), HijriDate.today());
   }
 
   isMet(totalAssets: Money): boolean {
@@ -666,46 +666,46 @@ interface DomainEvent {
   readonly aggregateId: string;
 }
 
-class ZakatCalculated implements DomainEvent {
+class TaxCalculated implements DomainEvent {
   readonly eventId: string;
   readonly occurredOn: Date;
-  readonly aggregateId: string; // ZakatCalculationId
+  readonly aggregateId: string; // TaxCalculationId
 
-  readonly zakatableAmount: Money;
-  readonly nisabThreshold: Money;
-  readonly zakatDue: Money;
+  readonly taxableAmount: Money;
+  readonly thresholdThreshold: Money;
+  readonly taxDue: Money;
   readonly hawlYear: HijriYear;
 
   constructor(
     calculationId: string,
-    zakatableAmount: Money,
-    nisabThreshold: Money,
-    zakatDue: Money,
+    taxableAmount: Money,
+    thresholdThreshold: Money,
+    taxDue: Money,
     hawlYear: HijriYear,
   ) {
     this.eventId = uuid();
     this.occurredOn = new Date();
     this.aggregateId = calculationId;
-    this.zakatableAmount = zakatableAmount;
-    this.nisabThreshold = nisabThreshold;
-    this.zakatDue = zakatDue;
+    this.taxableAmount = taxableAmount;
+    this.thresholdThreshold = thresholdThreshold;
+    this.taxDue = taxDue;
     this.hawlYear = hawlYear;
   }
 }
 
 // Aggregate publishes events
-class ZakatCalculation {
+class TaxCalculation {
   private events: DomainEvent[] = [];
 
-  calculateZakat(currentDate: HijriDate): Money {
+  calculateTax(currentDate: HijriDate): Money {
     // ... business logic ...
 
-    const zakatDue = this.performCalculation();
+    const taxDue = this.performCalculation();
 
     // Record domain event
-    this.recordEvent(new ZakatCalculated(this.id, this.zakatableAmount, this.nisabThreshold, zakatDue, this.hawlYear));
+    this.recordEvent(new TaxCalculated(this.id, this.taxableAmount, this.thresholdThreshold, taxDue, this.hawlYear));
 
-    return zakatDue;
+    return taxDue;
   }
 
   private recordEvent(event: DomainEvent): void {
@@ -723,14 +723,14 @@ class ZakatCalculation {
 
 // Event Handler in another bounded context
 class NotificationService {
-  @EventHandler(ZakatCalculated)
-  async onZakatCalculated(event: ZakatCalculated): Promise<void> {
+  @EventHandler(TaxCalculated)
+  async onTaxCalculated(event: TaxCalculated): Promise<void> {
     const user = await this.userRepository.findById(event.aggregateId);
 
     await this.emailService.send({
       to: user.email,
-      subject: "Your Zakat Calculation is Ready",
-      body: `Your Zakat due: ${event.zakatDue.format()}`,
+      subject: "Your Tax Calculation is Ready",
+      body: `Your Tax due: ${event.taxDue.format()}`,
     });
   }
 }
@@ -738,10 +738,10 @@ class NotificationService {
 
 **Islamic Finance Example**:
 
-**Murabaha Contract Events**:
+**Loan Contract Events**:
 
 ```typescript
-// Events in Murabaha bounded context
+// Events in Loan bounded context
 class AssetPurchased implements DomainEvent {
   constructor(
     public readonly contractId: string,
@@ -783,9 +783,9 @@ class AccountingService {
   async onContractSigned(event: ContractSigned): Promise<void> {
     // Create accounting entries
     await this.ledgerService.createJournalEntry({
-      debit: { account: "Murabaha Receivables", amount: event.totalPrice },
+      debit: { account: "Loan Receivables", amount: event.totalPrice },
       credit: { account: "Inventory", amount: event.purchasePrice },
-      credit: { account: "Murabaha Revenue", amount: event.markup },
+      credit: { account: "Loan Revenue", amount: event.markup },
     });
   }
 }
@@ -808,9 +808,9 @@ class AccountingService {
 **How**:
 
 ```typescript
-// BAD: Large aggregate (one aggregate for entire Waqf)
-class WaqfManagement {
-  private endowments: WaqfEndowment[];
+// BAD: Large aggregate (one aggregate for entire Donation)
+class DonationManagement {
+  private endowments: DonationEndowment[];
   private beneficiaries: Beneficiary[];
   private properties: Property[];
   private financialTransactions: Transaction[];
@@ -821,9 +821,9 @@ class WaqfManagement {
 }
 
 // GOOD: Small, focused aggregates
-class WaqfEndowment {
+class DonationEndowment {
   // Aggregate root
-  private readonly id: WaqfId;
+  private readonly id: DonationId;
   private status: EndowmentStatus;
   private principal: Money;
 
@@ -851,32 +851,32 @@ class Property {
 
 **Islamic Finance Example**:
 
-**Zakat Bounded Context - Small Aggregates**:
+**Tax Bounded Context - Small Aggregates**:
 
 ```typescript
-// Aggregate 1: ZakatCalculation (focused on calculation)
-class ZakatCalculation {
-  private readonly id: ZakatCalculationId;
-  private assets: ZakatableAsset[]; // Value objects, not entities
-  private nisabThreshold: NisabThreshold;
+// Aggregate 1: TaxCalculation (focused on calculation)
+class TaxCalculation {
+  private readonly id: TaxCalculationId;
+  private assets: TaxableAsset[]; // Value objects, not entities
+  private thresholdThreshold: ThresholdThreshold;
   private hawlYear: HijriYear;
 
   // Reference to payer, not embedded
   private readonly payerId: PayerId;
 
-  calculateZakat(): Money {
+  calculateTax(): Money {
     // Focused responsibility
   }
 }
 
-// Aggregate 2: ZakatPayment (focused on payment)
-class ZakatPayment {
-  private readonly id: ZakatPaymentId;
+// Aggregate 2: TaxPayment (focused on payment)
+class TaxPayment {
+  private readonly id: TaxPaymentId;
   private amount: Money;
   private status: PaymentStatus;
 
   // References to other aggregates
-  private readonly calculationId: ZakatCalculationId;
+  private readonly calculationId: TaxCalculationId;
   private readonly recipientId: RecipientId;
 
   processPayment(): void {
@@ -884,8 +884,8 @@ class ZakatPayment {
   }
 }
 
-// Aggregate 3: ZakatRecipient (focused on recipient management)
-class ZakatRecipient {
+// Aggregate 3: TaxRecipient (focused on recipient management)
+class TaxRecipient {
   private readonly id: RecipientId;
   private category: RecipientCategory; // One of eight categories
   private verificationStatus: VerificationStatus;
@@ -916,7 +916,7 @@ class ZakatRecipient {
 
 ```typescript
 // ENTITY: Has identity, mutable lifecycle
-class ZakatPayer {
+class TaxPayer {
   private readonly id: PayerId; // Identity
   private name: string;
   private email: Email;
@@ -927,7 +927,7 @@ class ZakatPayer {
     this.name = newName;
   }
 
-  equals(other: ZakatPayer): boolean {
+  equals(other: TaxPayer): boolean {
     return this.id.equals(other.id); // Identity-based equality
   }
 }
@@ -958,11 +958,11 @@ class Email {
 
 **Islamic Finance Example**:
 
-**Entities vs Value Objects in Murabaha**:
+**Entities vs Value Objects in Loan**:
 
 ```typescript
-// ENTITY: MurabahaContract (has identity and lifecycle)
-class MurabahaContract {
+// ENTITY: LoanContract (has identity and lifecycle)
+class LoanContract {
   private readonly id: ContractId; // Identity
   private status: ContractStatus; // Changes over time
   private signingDate?: Date; // Set later
@@ -1029,7 +1029,7 @@ class User {
 }
 
 // TRUE INVARIANT - business rule
-class WaqfEndowment {
+class DonationEndowment {
   private principal: Money;
   private distributed: Money;
 
@@ -1046,23 +1046,23 @@ class WaqfEndowment {
 
   // This method should not exist - violates invariant
   withdrawPrincipal(amount: Money): void {
-    throw new InvariantViolationError("Waqf principal is perpetual and cannot be withdrawn");
+    throw new InvariantViolationError("Donation principal is perpetual and cannot be withdrawn");
   }
 }
 ```
 
 **Islamic Finance Example**:
 
-**True Invariants in Zakat Domain**:
+**True Invariants in Tax Domain**:
 
 ```typescript
-class ZakatCalculation {
-  // INVARIANT: Zakat rate is always 2.5% (divine mandate)
-  private static readonly ZAKAT_RATE = 0.025;
+class TaxCalculation {
+  // INVARIANT: Tax rate is always 2.5% (divine mandate)
+  private static readonly TAX_RATE = 0.025;
 
-  calculateZakat(): Money {
-    // Cannot be changed - it's Shariah law
-    return this.zakatableAmount.multiply(ZakatCalculation.ZAKAT_RATE);
+  calculateTax(): Money {
+    // Cannot be changed - it's Compliance law
+    return this.taxableAmount.multiply(TaxCalculation.TAX_RATE);
   }
 
   // INVARIANT: Hawl (lunar year) must be complete
@@ -1075,20 +1075,20 @@ class ZakatCalculation {
     }
   }
 
-  // INVARIANT: Only zakatable assets count
+  // INVARIANT: Only taxable assets count
   addAsset(asset: Asset): void {
-    if (!asset.isZakatable()) {
-      throw new InvariantViolationError(`${asset.type} is not zakatable`);
+    if (!asset.isTaxable()) {
+      throw new InvariantViolationError(`${asset.type} is not taxable`);
     }
     this.assets.push(asset);
   }
 }
 
-// INVARIANT: Murabaha markup must be fixed (not variable interest)
-class MurabahaContract {
+// INVARIANT: Loan markup must be fixed (not variable interest)
+class LoanContract {
   setMarkup(markup: Markup): void {
     if (markup.isVariable()) {
-      throw new InvariantViolationError("Murabaha requires fixed markup - variable rates prohibited (riba)");
+      throw new InvariantViolationError("Loan requires fixed markup - variable rates prohibited (interest)");
     }
     this.markup = markup;
   }
@@ -1114,14 +1114,14 @@ class MurabahaContract {
 **How**:
 
 ```markdown
-## Collaboration Cadence for Zakat Module
+## Collaboration Cadence for Tax Module
 
 **Weekly Domain Sessions** (1 hour):
 
 - Review: Code from previous week
 - Model: New scenarios discovered
 - Validate: Ubiquitous Language consistency
-- Attendees: Shariah scholar, senior developer, product owner
+- Attendees: Compliance scholar, senior developer, product owner
 
 **Event Storming Workshops** (4 hours, monthly):
 
@@ -1139,7 +1139,7 @@ class MurabahaContract {
 
 **Islamic Finance Example**:
 
-**Domain Expert Involvement in Murabaha Implementation**:
+**Domain Expert Involvement in Loan Implementation**:
 
 **Week 1: Initial Modeling**
 
@@ -1155,8 +1155,8 @@ class MurabahaContract {
 
 **Week 5: Validation**
 
-- **Expert**: Reviews code for `MurabahaContract`
-- **Expert**: "This allows variable markup - that's riba! Must be fixed"
+- **Expert**: Reviews code for `LoanContract`
+- **Expert**: "This allows variable markup - that's interest! Must be fixed"
 - **Developer**: Adds invariant check for fixed markup
 
 **When to Apply**: Throughout entire development lifecycle, not just at the beginning.
@@ -1169,58 +1169,58 @@ class MurabahaContract {
 
 ### Practice 14: Create a Glossary of Domain Terms
 
-**What**: Maintain a living document that defines all domain terms with their meanings, Arabic terms, and Shariah rulings.
+**What**: Maintain a living document that defines all domain terms with their meanings, Arabic terms, and Compliance rulings.
 
 **Why**: A glossary ensures consistent understanding across the team and serves as a reference for new team members.
 
 **How**:
 
 ```markdown
-# Zakat Management Domain Glossary
+# Tax Management Domain Glossary
 
 ## Terms
 
-### Nisab (نصاب)
+### Threshold (نصاب)
 
-**Definition**: Minimum threshold of wealth that makes Zakat obligatory
+**Definition**: Minimum threshold of wealth that makes Tax obligatory
 **Calculation**: 85 grams of gold OR 595 grams of silver
-**Code**: `NisabThreshold` value object
-**Shariah Ruling**: Must be maintained for full lunar year (hawl)
+**Code**: `ThresholdThreshold` value object
+**Compliance Ruling**: Must be maintained for full lunar year (hawl)
 
 ### Hawl (حول)
 
 **Definition**: Lunar year (354 days) during which wealth is maintained
-**Calculation**: From first day nisab is met until Zakat calculation
+**Calculation**: From first day threshold is met until Tax calculation
 **Code**: `HijriYear` value object
-**Shariah Ruling**: Wealth must remain above nisab for entire period
+**Compliance Ruling**: Wealth must remain above threshold for entire period
 
-### Zakatable Assets (أموال زكوية)
+### Taxable Assets (أموال زكوية)
 
-**Definition**: Assets subject to Zakat calculation
+**Definition**: Assets subject to Tax calculation
 **Categories**:
 
 - Cash and savings
 - Gold and silver
 - Business inventory (عروض التجارة)
 - Agricultural produce (زكاة الزروع)
-  **Code**: `ZakatableAsset` value object with `AssetCategory` enum
+  **Code**: `TaxableAsset` value object with `AssetCategory` enum
   **Exclusions**: Personal use items, tools of trade
 
-### Zakat Recipients (مستحقو الزكاة)
+### Tax Recipients (مستحقو الزكاة)
 
-**Definition**: Eight categories eligible to receive Zakat
+**Definition**: Eight categories eligible to receive Tax
 **Categories**:
 
 1. Fuqara (الفقراء) - The poor
 2. Masakin (المساكين) - The needy
-3. Amilin (العاملون عليها) - Zakat administrators
+3. Amilin (العاملون عليها) - Tax administrators
 4. Muallaf (المؤلفة قلوبهم) - New Muslims
 5. Riqab (الرقاب) - Freeing slaves
 6. Gharimin (الغارمون) - Those in debt
 7. Fi Sabilillah (في سبيل الله) - In the path of Allah
 8. Ibn Sabil (ابن السبيل) - Stranded travelers
    **Code**: `RecipientCategory` enum
-   **Shariah Ruling**: Cannot give to non-eligible categories
+   **Compliance Ruling**: Cannot give to non-eligible categories
 ```
 
 **When to Apply**: From day one, updated continuously as understanding deepens.
@@ -1242,7 +1242,7 @@ class MurabahaContract {
 **How**:
 
 ```
-Layered Architecture for Zakat Service:
+Layered Architecture for Tax Service:
 
 ┌─────────────────────────────────────────────────┐
 │         Presentation Layer                      │
@@ -1260,8 +1260,8 @@ Layered Architecture for Zakat Service:
                      ↓
 ┌─────────────────────────────────────────────────┐
 │         Domain Layer (Pure Business Logic)      │
-│  - Aggregates (ZakatCalculation)                │
-│  - Entities (ZakatPayer)                        │
+│  - Aggregates (TaxCalculation)                │
+│  - Entities (TaxPayer)                        │
 │  - Value Objects (Money, HijriDate)             │
 │  - Domain Events                                │
 │  - Domain Services                              │
@@ -1279,73 +1279,73 @@ Layered Architecture for Zakat Service:
 
 **Islamic Finance Example**:
 
-**Zakat Calculation Use Case**:
+**Tax Calculation Use Case**:
 
 ```typescript
 // DOMAIN LAYER (pure business logic)
-class ZakatCalculation {
-  calculateZakat(currentDate: HijriDate): Money {
+class TaxCalculation {
+  calculateTax(currentDate: HijriDate): Money {
     // Pure domain logic, no infrastructure
     this.verifyHawlCompleted(currentDate);
-    const zakatableAmount = this.calculateZakatableAmount();
-    return zakatableAmount.multiply(0.025);
+    const taxableAmount = this.calculateTaxableAmount();
+    return taxableAmount.multiply(0.025);
   }
 }
 
 // APPLICATION LAYER (orchestration)
-class CalculateZakatUseCase {
+class CalculateTaxUseCase {
   constructor(
-    private zakatRepository: ZakatRepository,
+    private taxRepository: TaxRepository,
     private eventBus: EventBus,
   ) {}
 
-  async execute(command: CalculateZakatCommand): Promise<ZakatCalculationResult> {
+  async execute(command: CalculateTaxCommand): Promise<TaxCalculationResult> {
     // Load aggregate
-    const calculation = await this.zakatRepository.findById(command.calculationId);
+    const calculation = await this.taxRepository.findById(command.calculationId);
 
     // Execute domain logic
-    const zakatDue = calculation.calculateZakat(HijriDate.today());
+    const taxDue = calculation.calculateTax(HijriDate.today());
 
     // Save and publish events
-    await this.zakatRepository.save(calculation);
+    await this.taxRepository.save(calculation);
     await this.eventBus.publishAll(calculation.getUncommittedEvents());
 
     // Return DTO
-    return new ZakatCalculationResult(calculation.id, zakatDue);
+    return new TaxCalculationResult(calculation.id, taxDue);
   }
 }
 
 // PRESENTATION LAYER (HTTP API)
-@Controller("/api/zakat")
-class ZakatController {
-  constructor(private calculateZakat: CalculateZakatUseCase) {}
+@Controller("/api/tax")
+class TaxController {
+  constructor(private calculateTax: CalculateTaxUseCase) {}
 
   @Post("/calculate")
-  async calculate(@Body() request: CalculateZakatRequest) {
+  async calculate(@Body() request: CalculateTaxRequest) {
     // Convert DTO to command
-    const command = new CalculateZakatCommand(request.calculationId);
+    const command = new CalculateTaxCommand(request.calculationId);
 
     // Execute use case
-    const result = await this.calculateZakat.execute(command);
+    const result = await this.calculateTax.execute(command);
 
     // Return HTTP response
     return {
       calculationId: result.calculationId,
-      zakatDue: result.zakatDue.toString(),
+      taxDue: result.taxDue.toString(),
     };
   }
 }
 
 // INFRASTRUCTURE LAYER (persistence)
-class PostgresZakatRepository implements ZakatRepository {
-  async findById(id: string): Promise<ZakatCalculation> {
-    const record = await this.db.query("SELECT * FROM zakat_calculations WHERE id = $1", [id]);
+class PostgresTaxRepository implements TaxRepository {
+  async findById(id: string): Promise<TaxCalculation> {
+    const record = await this.db.query("SELECT * FROM tax_calculations WHERE id = $1", [id]);
     return this.toDomain(record);
   }
 
-  async save(calculation: ZakatCalculation): Promise<void> {
+  async save(calculation: TaxCalculation): Promise<void> {
     const data = this.toDatabase(calculation);
-    await this.db.query("INSERT INTO zakat_calculations (...) VALUES (...)", data);
+    await this.db.query("INSERT INTO tax_calculations (...) VALUES (...)", data);
   }
 }
 ```
@@ -1368,9 +1368,9 @@ class PostgresZakatRepository implements ZakatRepository {
 
 ```typescript
 // BAD: Strong consistency across aggregates (large transaction)
-class ZakatService {
+class TaxService {
   @Transactional() // Large transaction
-  async processZakatPayment(paymentId: string): Promise<void> {
+  async processTaxPayment(paymentId: string): Promise<void> {
     const payment = await this.paymentRepo.findById(paymentId);
     const calculation = await this.calculationRepo.findById(payment.calculationId);
     const recipient = await this.recipientRepo.findById(payment.recipientId);
@@ -1387,28 +1387,28 @@ class ZakatService {
 }
 
 // GOOD: Eventual consistency (events)
-class ZakatPayment {
+class TaxPayment {
   process(): void {
     this.status = PaymentStatus.Processed;
 
     // Publish event - eventual consistency
-    this.recordEvent(new ZakatPaymentProcessed(this.id, this.calculationId, this.recipientId, this.amount));
+    this.recordEvent(new TaxPaymentProcessed(this.id, this.calculationId, this.recipientId, this.amount));
   }
 }
 
 // Separate bounded contexts react to event
-@EventHandler(ZakatPaymentProcessed)
+@EventHandler(TaxPaymentProcessed)
 class CalculationEventHandler {
-  async onPaymentProcessed(event: ZakatPaymentProcessed): Promise<void> {
+  async onPaymentProcessed(event: TaxPaymentProcessed): Promise<void> {
     const calculation = await this.repo.findById(event.calculationId);
     calculation.markAsPaid();
     await this.repo.save(calculation);
   }
 }
 
-@EventHandler(ZakatPaymentProcessed)
+@EventHandler(TaxPaymentProcessed)
 class RecipientEventHandler {
-  async onPaymentProcessed(event: ZakatPaymentProcessed): Promise<void> {
+  async onPaymentProcessed(event: TaxPaymentProcessed): Promise<void> {
     const recipient = await this.repo.findById(event.recipientId);
     recipient.recordReceived(event.amount);
     await this.repo.save(recipient);
@@ -1418,11 +1418,11 @@ class RecipientEventHandler {
 
 **Islamic Finance Example**:
 
-**Waqf Distribution Process (Eventual Consistency)**:
+**Donation Distribution Process (Eventual Consistency)**:
 
 ```typescript
 // Step 1: Distribute income (immediate consistency within aggregate)
-class WaqfEndowment {
+class DonationEndowment {
   distributeIncome(distributions: Distribution[]): void {
     // Strong consistency within this aggregate
     distributions.forEach((d) => {
@@ -1456,7 +1456,7 @@ class AccountingEventHandler {
     // Eventually consistent
     await this.ledger.createJournalEntry({
       debit: { account: "Beneficiary Distributions", amount: event.totalAmount },
-      credit: { account: "Waqf Income", amount: event.totalAmount },
+      credit: { account: "Donation Income", amount: event.totalAmount },
     });
   }
 }
@@ -1472,32 +1472,32 @@ class AccountingEventHandler {
 
 ## Islamic Finance Examples
 
-### Example 1: Zakat Calculation Domain
+### Example 1: Tax Calculation Domain
 
-**Bounded Context**: Zakat Management
+**Bounded Context**: Tax Management
 
 **Ubiquitous Language**:
 
-- Nisab (نصاب) - Minimum threshold
+- Threshold (نصاب) - Minimum threshold
 - Hawl (حول) - Lunar year
-- Zakatable Assets (أموال زكوية) - Assets subject to Zakat
+- Taxable Assets (أموال زكوية) - Assets subject to Tax
 - Eight Categories (الأصناف الثمانية) - Eligible recipients
 
 **Aggregates**:
 
 ```typescript
-class ZakatCalculation {
+class TaxCalculation {
   // Invariants
   private verifyHawlCompleted(): void {
     /* Must complete lunar year */
   }
-  private verifyNisabMet(): void {
+  private verifyThresholdMet(): void {
     /* Must meet threshold */
   }
 
   // Domain events
-  calculateZakat(): void {
-    this.recordEvent(new ZakatCalculated(/* ... */));
+  calculateTax(): void {
+    this.recordEvent(new TaxCalculated(/* ... */));
   }
 }
 ```
@@ -1505,15 +1505,15 @@ class ZakatCalculation {
 **Best Practices Applied**:
 
 - Rich domain model (calculation logic in aggregate)
-- Value objects (Money, HijriDate, NisabThreshold)
+- Value objects (Money, HijriDate, ThresholdThreshold)
 - Domain events for cross-context communication
-- Ubiquitous language from Shariah terminology
+- Ubiquitous language from Compliance terminology
 
 **Antipatterns Avoided**:
 
 - Not anemic (logic lives in aggregate, not service)
 - Not database-driven (domain-first design)
-- Not missing experts (Shariah scholar involved)
+- Not missing experts (Compliance scholar involved)
 
 ## Summary
 

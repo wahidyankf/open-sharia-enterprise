@@ -28,9 +28,9 @@ Test-Driven Development (TDD) antipatterns are common mistakes that undermine th
 
 ```typescript
 // ❌ THE LIAR: Test passes but doesn't verify behavior
-describe("HalalCertificationValidator", () => {
-  it("should reject non-halal ingredients", () => {
-    const validator = new HalalCertificationValidator();
+describe("PermittedCertificationValidator", () => {
+  it("should reject non-permitted ingredients", () => {
+    const validator = new PermittedCertificationValidator();
     const ingredients = ["gelatin", "alcohol", "pork"];
 
     validator.validate(ingredients);
@@ -39,7 +39,7 @@ describe("HalalCertificationValidator", () => {
   });
 
   it("should throw error for prohibited ingredients", () => {
-    const validator = new HalalCertificationValidator();
+    const validator = new PermittedCertificationValidator();
     const ingredients = ["gelatin"];
 
     try {
@@ -51,7 +51,7 @@ describe("HalalCertificationValidator", () => {
   });
 
   it("should return validation result", () => {
-    const validator = new HalalCertificationValidator();
+    const validator = new PermittedCertificationValidator();
     const ingredients = ["chicken", "rice", "vegetables"];
 
     const result = validator.validate(ingredients);
@@ -62,37 +62,37 @@ describe("HalalCertificationValidator", () => {
 });
 
 // ✅ HONEST TESTS: Verify actual behavior
-describe("HalalCertificationValidator", () => {
-  it("should reject non-halal ingredients", () => {
-    const validator = new HalalCertificationValidator();
+describe("PermittedCertificationValidator", () => {
+  it("should reject non-permitted ingredients", () => {
+    const validator = new PermittedCertificationValidator();
     const ingredients = ["gelatin", "alcohol", "pork"];
 
     const result = validator.validate(ingredients);
 
     expect(result.isValid).toBe(false);
     expect(result.violations).toHaveLength(3);
-    expect(result.violations).toContain("gelatin is not halal-certified");
+    expect(result.violations).toContain("gelatin is not permitted-certified");
     expect(result.violations).toContain("alcohol is prohibited");
     expect(result.violations).toContain("pork is prohibited");
   });
 
   it("should throw ProhibitedIngredientError for prohibited ingredients", () => {
-    const validator = new HalalCertificationValidator();
+    const validator = new PermittedCertificationValidator();
     const ingredients = ["pork"];
 
     expect(() => validator.validateStrict(ingredients)).toThrow(ProhibitedIngredientError);
     expect(() => validator.validateStrict(ingredients)).toThrow("Prohibited ingredient found: pork");
   });
 
-  it("should return valid result for halal ingredients", () => {
-    const validator = new HalalCertificationValidator();
+  it("should return valid result for permitted ingredients", () => {
+    const validator = new PermittedCertificationValidator();
     const ingredients = ["chicken", "rice", "vegetables"];
 
     const result = validator.validate(ingredients);
 
     expect(result.isValid).toBe(true);
     expect(result.violations).toHaveLength(0);
-    expect(result.certificationLevel).toBe("halal");
+    expect(result.certificationLevel).toBe("permitted");
   });
 });
 ```
@@ -113,8 +113,8 @@ it("should return donation receipt", () => {
 });
 
 // Testing wrong thing
-it("should calculate Zakat correctly", () => {
-  const calculator = new ZakatCalculator();
+it("should calculate Tax correctly", () => {
+  const calculator = new TaxCalculator();
   expect(calculator).toBeDefined(); // Tests constructor, not calculation!
 });
 
@@ -147,8 +147,8 @@ it("should throw on invalid input", async () => {
 
 ```typescript
 // ❌ EXCESSIVE SETUP: Obscures test intent
-describe("ZakatDistributionService", () => {
-  it("should distribute Zakat to eligible recipients", async () => {
+describe("TaxDistributionService", () => {
+  it("should distribute Tax to eligible recipients", async () => {
     // 50 lines of setup!
     const database = new TestDatabase();
     await database.connect();
@@ -182,7 +182,7 @@ describe("ZakatDistributionService", () => {
       taxId: "TAX-002",
     });
 
-    const zakatPool = await database.zakatPools.create({
+    const taxPool = await database.taxPools.create({
       totalAmount: 10000,
       currency: "USD",
       collectionYear: 1445,
@@ -199,7 +199,7 @@ describe("ZakatDistributionService", () => {
       maxAllocation: 5000,
     });
 
-    const service = new ZakatDistributionService(
+    const service = new TaxDistributionService(
       database,
       distributionRules,
       new NotificationService(),
@@ -208,7 +208,7 @@ describe("ZakatDistributionService", () => {
     );
 
     // Finally, the actual test!
-    const result = await service.distribute(zakatPool.id);
+    const result = await service.distribute(taxPool.id);
 
     expect(result.totalDistributed).toBe(10000);
 
@@ -218,7 +218,7 @@ describe("ZakatDistributionService", () => {
 });
 
 // ✅ MINIMAL SETUP: Clear and focused
-describe("ZakatDistributionService", () => {
+describe("TaxDistributionService", () => {
   // Shared test data builders
   const createRecipient = (overrides = {}) => ({
     id: "recipient-123",
@@ -227,7 +227,7 @@ describe("ZakatDistributionService", () => {
     ...overrides,
   });
 
-  const createZakatPool = (overrides = {}) => ({
+  const createTaxPool = (overrides = {}) => ({
     id: "pool-456",
     totalAmount: 10000,
     currency: "USD",
@@ -235,22 +235,22 @@ describe("ZakatDistributionService", () => {
     ...overrides,
   });
 
-  it("should distribute Zakat to eligible recipients", async () => {
+  it("should distribute Tax to eligible recipients", async () => {
     const recipients = [
       createRecipient({ id: "r1", category: "poor" }),
       createRecipient({ id: "r2", category: "needy" }),
     ];
-    const zakatPool = createZakatPool();
+    const taxPool = createTaxPool();
 
     // Use test doubles instead of real database
     const mockRepository = {
       getEligibleRecipients: jest.fn().mockResolvedValue(recipients),
-      getZakatPool: jest.fn().mockResolvedValue(zakatPool),
+      getTaxPool: jest.fn().mockResolvedValue(taxPool),
       recordDistribution: jest.fn(),
     };
 
-    const service = new ZakatDistributionService(mockRepository);
-    const result = await service.distribute(zakatPool.id);
+    const service = new TaxDistributionService(mockRepository);
+    const result = await service.distribute(taxPool.id);
 
     expect(result.totalDistributed).toBe(10000);
     expect(mockRepository.recordDistribution).toHaveBeenCalledTimes(2);
@@ -280,31 +280,31 @@ describe("IslamicFinanceCalculator", () => {
   it("should handle all calculation scenarios", () => {
     const calculator = new IslamicFinanceCalculator();
 
-    // Murabaha calculations
-    expect(calculator.murabaha(1000, 0.05, 12)).toBe(1050);
-    expect(calculator.murabaha(2000, 0.05, 12)).toBe(2100);
-    expect(calculator.murabaha(1000, 0.1, 12)).toBe(1100);
+    // Loan calculations
+    expect(calculator.loan(1000, 0.05, 12)).toBe(1050);
+    expect(calculator.loan(2000, 0.05, 12)).toBe(2100);
+    expect(calculator.loan(1000, 0.1, 12)).toBe(1100);
 
     // Ijara calculations
     expect(calculator.ijara(5000, 0.04, 24)).toBe(5200);
     expect(calculator.ijara(10000, 0.04, 24)).toBe(10400);
 
-    // Zakat calculations
-    expect(calculator.zakat(10000)).toBe(250);
-    expect(calculator.zakat(20000)).toBe(500);
-    expect(calculator.zakat(300)).toBe(0); // Below nisab
+    // Tax calculations
+    expect(calculator.tax(10000)).toBe(250);
+    expect(calculator.tax(20000)).toBe(500);
+    expect(calculator.tax(300)).toBe(0); // Below threshold
 
     // Profit sharing calculations
     expect(calculator.profitShare(1000, 0.6)).toBe(600);
     expect(calculator.profitShare(2000, 0.4)).toBe(800);
 
     // Edge cases
-    expect(calculator.murabaha(0, 0.05, 12)).toBe(0);
-    expect(() => calculator.murabaha(-1000, 0.05, 12)).toThrow();
-    expect(() => calculator.zakat(-100)).toThrow();
+    expect(calculator.loan(0, 0.05, 12)).toBe(0);
+    expect(() => calculator.loan(-1000, 0.05, 12)).toThrow();
+    expect(() => calculator.tax(-100)).toThrow();
 
     // Integration scenarios
-    const contract = calculator.createMurabahaContract(1000, 0.05, 12);
+    const contract = calculator.createLoanContract(1000, 0.05, 12);
     expect(contract.totalAmount).toBe(1050);
     expect(contract.monthlyPayment).toBeCloseTo(87.5, 2);
     expect(contract.startDate).toBeDefined();
@@ -314,28 +314,28 @@ describe("IslamicFinanceCalculator", () => {
 
 // ✅ FOCUSED TESTS: One behavior per test
 describe("IslamicFinanceCalculator", () => {
-  describe("murabaha", () => {
+  describe("loan", () => {
     it("should calculate total amount with 5% profit for 1000 principal", () => {
       const calculator = new IslamicFinanceCalculator();
-      const result = calculator.murabaha(1000, 0.05, 12);
+      const result = calculator.loan(1000, 0.05, 12);
       expect(result).toBe(1050);
     });
 
     it("should scale linearly with principal amount", () => {
       const calculator = new IslamicFinanceCalculator();
-      const result = calculator.murabaha(2000, 0.05, 12);
+      const result = calculator.loan(2000, 0.05, 12);
       expect(result).toBe(2100);
     });
 
     it("should return 0 for 0 principal", () => {
       const calculator = new IslamicFinanceCalculator();
-      const result = calculator.murabaha(0, 0.05, 12);
+      const result = calculator.loan(0, 0.05, 12);
       expect(result).toBe(0);
     });
 
     it("should throw InvalidPrincipalError for negative amount", () => {
       const calculator = new IslamicFinanceCalculator();
-      expect(() => calculator.murabaha(-1000, 0.05, 12)).toThrow(InvalidPrincipalError);
+      expect(() => calculator.loan(-1000, 0.05, 12)).toThrow(InvalidPrincipalError);
     });
   });
 
@@ -347,16 +347,16 @@ describe("IslamicFinanceCalculator", () => {
     });
   });
 
-  describe("zakat", () => {
-    it("should calculate 2.5% for wealth above nisab", () => {
+  describe("tax", () => {
+    it("should calculate 2.5% for wealth above threshold", () => {
       const calculator = new IslamicFinanceCalculator();
-      const result = calculator.zakat(10000);
+      const result = calculator.tax(10000);
       expect(result).toBe(250);
     });
 
-    it("should return 0 for wealth below nisab", () => {
+    it("should return 0 for wealth below threshold", () => {
       const calculator = new IslamicFinanceCalculator();
-      const result = calculator.zakat(300);
+      const result = calculator.tax(300);
       expect(result).toBe(0);
     });
   });
@@ -381,7 +381,7 @@ describe("IslamicFinanceCalculator", () => {
 
 ```typescript
 // ❌ NEGLECTING REFACTORING: Tests pass but code needs improvement
-class ZakatCalculator {
+class TaxCalculator {
   calculate(wealth: number, goldPrice: number, silverPrice: number): number {
     // Test passes, but code is messy
     if (wealth >= 85 * goldPrice || wealth >= 595 * silverPrice) {
@@ -392,63 +392,63 @@ class ZakatCalculator {
 }
 
 // Tests pass - developer moves on
-describe("ZakatCalculator", () => {
-  it("should calculate Zakat for wealth above gold nisab", () => {
-    const calculator = new ZakatCalculator();
+describe("TaxCalculator", () => {
+  it("should calculate Tax for wealth above gold threshold", () => {
+    const calculator = new TaxCalculator();
     const result = calculator.calculate(10000, 50, 3);
     expect(result).toBe(250); // ✅ Passes
   });
 
-  it("should calculate Zakat for wealth above silver nisab", () => {
-    const calculator = new ZakatCalculator();
+  it("should calculate Tax for wealth above silver threshold", () => {
+    const calculator = new TaxCalculator();
     const result = calculator.calculate(2000, 100, 3);
     expect(result).toBe(50); // ✅ Passes
   });
 });
 
 // ✅ WITH REFACTORING: Tests still pass, code is cleaner
-class ZakatCalculator {
-  private static readonly GOLD_NISAB_GRAMS = 85;
-  private static readonly SILVER_NISAB_GRAMS = 595;
-  private static readonly ZAKAT_RATE = 0.025;
+class TaxCalculator {
+  private static readonly GOLD_THRESHOLD_GRAMS = 85;
+  private static readonly SILVER_THRESHOLD_GRAMS = 595;
+  private static readonly TAX_RATE = 0.025;
 
   calculate(wealth: number, goldPrice: number, silverPrice: number): number {
-    if (this.isAboveNisab(wealth, goldPrice, silverPrice)) {
-      return this.calculateZakatAmount(wealth);
+    if (this.isAboveThreshold(wealth, goldPrice, silverPrice)) {
+      return this.calculateTaxAmount(wealth);
     }
     return 0;
   }
 
-  private isAboveNisab(wealth: number, goldPrice: number, silverPrice: number): boolean {
-    const goldNisab = this.calculateGoldNisab(goldPrice);
-    const silverNisab = this.calculateSilverNisab(silverPrice);
+  private isAboveThreshold(wealth: number, goldPrice: number, silverPrice: number): boolean {
+    const goldThreshold = this.calculateGoldThreshold(goldPrice);
+    const silverThreshold = this.calculateSilverThreshold(silverPrice);
 
-    return wealth >= goldNisab || wealth >= silverNisab;
+    return wealth >= goldThreshold || wealth >= silverThreshold;
   }
 
-  private calculateGoldNisab(goldPrice: number): number {
-    return ZakatCalculator.GOLD_NISAB_GRAMS * goldPrice;
+  private calculateGoldThreshold(goldPrice: number): number {
+    return TaxCalculator.GOLD_THRESHOLD_GRAMS * goldPrice;
   }
 
-  private calculateSilverNisab(silverPrice: number): number {
-    return ZakatCalculator.SILVER_NISAB_GRAMS * silverPrice;
+  private calculateSilverThreshold(silverPrice: number): number {
+    return TaxCalculator.SILVER_THRESHOLD_GRAMS * silverPrice;
   }
 
-  private calculateZakatAmount(wealth: number): number {
-    return wealth * ZakatCalculator.ZAKAT_RATE;
+  private calculateTaxAmount(wealth: number): number {
+    return wealth * TaxCalculator.TAX_RATE;
   }
 }
 
 // Same tests, better code
-describe("ZakatCalculator", () => {
-  it("should calculate Zakat for wealth above gold nisab", () => {
-    const calculator = new ZakatCalculator();
+describe("TaxCalculator", () => {
+  it("should calculate Tax for wealth above gold threshold", () => {
+    const calculator = new TaxCalculator();
     const result = calculator.calculate(10000, 50, 3);
     expect(result).toBe(250); // ✅ Still passes
   });
 
-  it("should calculate Zakat for wealth above silver nisab", () => {
-    const calculator = new ZakatCalculator();
+  it("should calculate Tax for wealth above silver threshold", () => {
+    const calculator = new TaxCalculator();
     const result = calculator.calculate(2000, 100, 3);
     expect(result).toBe(50); // ✅ Still passes
   });
@@ -501,8 +501,8 @@ describe("ReceiptGenerator", () => {
 });
 
 // ❌ CAN'T FAIL: Testing mocks instead of behavior
-describe("ZakatCalculator", () => {
-  it("should calculate Zakat", () => {
+describe("TaxCalculator", () => {
+  it("should calculate Tax", () => {
     const mockCalculator = {
       calculate: jest.fn().mockReturnValue(250),
     };
@@ -563,13 +563,13 @@ describe("ReceiptGenerator", () => {
   });
 });
 
-describe("ZakatCalculator", () => {
-  it("should calculate 2.5% of wealth above nisab", () => {
-    const calculator = new ZakatCalculator(); // Real instance
+describe("TaxCalculator", () => {
+  it("should calculate 2.5% of wealth above threshold", () => {
+    const calculator = new TaxCalculator(); // Real instance
     const wealth = 10000;
-    const nisab = 361.25;
+    const threshold = 361.25;
 
-    const result = calculator.calculate(wealth, nisab);
+    const result = calculator.calculate(wealth, threshold);
 
     expect(result).toBe(250); // Tests real calculation
   });
@@ -675,17 +675,17 @@ describe("IslamicDateConverter", () => {
 
 ```typescript
 // Good: Coverage reveals untested scenarios
-describe("ZakatCalculator", () => {
-  it("should calculate Zakat for wealth above nisab", () => {
-    const calculator = new ZakatCalculator();
+describe("TaxCalculator", () => {
+  it("should calculate Tax for wealth above threshold", () => {
+    const calculator = new TaxCalculator();
     const result = calculator.calculate(10000);
     expect(result).toBe(250);
   });
 
-  // Coverage report shows below-nisab path untested
+  // Coverage report shows below-threshold path untested
   // Add meaningful test for that scenario:
-  it("should return 0 for wealth below nisab", () => {
-    const calculator = new ZakatCalculator();
+  it("should return 0 for wealth below threshold", () => {
+    const calculator = new TaxCalculator();
     const result = calculator.calculate(300);
     expect(result).toBe(0);
   });
@@ -693,7 +693,7 @@ describe("ZakatCalculator", () => {
   // Coverage shows error handling untested
   // Add meaningful test for error path:
   it("should throw for negative wealth", () => {
-    const calculator = new ZakatCalculator();
+    const calculator = new TaxCalculator();
     expect(() => calculator.calculate(-1000)).toThrow(InvalidWealthError);
   });
 });
@@ -835,7 +835,7 @@ describe("DonationRepository", () => {
 
 ```typescript
 // ❌ TESTING IMPLEMENTATION: Brittle and coupled
-class ZakatReportGenerator {
+class TaxReportGenerator {
   generate(donations: Donation[]): Report {
     const categories = this.categorizeByType(donations);
     const totals = this.calculateTotals(categories);
@@ -856,9 +856,9 @@ class ZakatReportGenerator {
   }
 }
 
-describe("ZakatReportGenerator", () => {
+describe("TaxReportGenerator", () => {
   it("should call internal methods in correct order", () => {
-    const generator = new ZakatReportGenerator();
+    const generator = new TaxReportGenerator();
     const categorizeSpy = jest.spyOn(generator as any, "categorizeByType");
     const totalsSpy = jest.spyOn(generator as any, "calculateTotals");
     const formatSpy = jest.spyOn(generator as any, "formatReport");
@@ -871,7 +871,7 @@ describe("ZakatReportGenerator", () => {
   });
 
   it("should use Map for categorization", () => {
-    const generator = new ZakatReportGenerator();
+    const generator = new TaxReportGenerator();
     const spy = jest.spyOn(generator as any, "categorizeByType");
 
     generator.generate(sampleDonations);
@@ -882,34 +882,34 @@ describe("ZakatReportGenerator", () => {
 });
 
 // ✅ TESTING BEHAVIOR: Resilient and meaningful
-describe("ZakatReportGenerator", () => {
+describe("TaxReportGenerator", () => {
   it("should generate report with correct category totals", () => {
-    const generator = new ZakatReportGenerator();
+    const generator = new TaxReportGenerator();
     const donations = [
-      { type: "zakat", amount: 1000 },
-      { type: "zakat", amount: 500 },
+      { type: "tax", amount: 1000 },
+      { type: "tax", amount: 500 },
       { type: "sadaqah", amount: 200 },
     ];
 
     const report = generator.generate(donations);
 
     // Tests observable behavior only
-    expect(report.categories.zakat.total).toBe(1500);
+    expect(report.categories.tax.total).toBe(1500);
     expect(report.categories.sadaqah.total).toBe(200);
     expect(report.grandTotal).toBe(1700);
   });
 
   it("should include donation count per category", () => {
-    const generator = new ZakatReportGenerator();
+    const generator = new TaxReportGenerator();
     const donations = [
-      { type: "zakat", amount: 1000 },
-      { type: "zakat", amount: 500 },
+      { type: "tax", amount: 1000 },
+      { type: "tax", amount: 500 },
       { type: "sadaqah", amount: 200 },
     ];
 
     const report = generator.generate(donations);
 
-    expect(report.categories.zakat.count).toBe(2);
+    expect(report.categories.tax.count).toBe(2);
     expect(report.categories.sadaqah.count).toBe(1);
   });
 
@@ -1017,7 +1017,7 @@ describe("IslamicLoanCalculator", () => {
 // ✅ CLEAR FAILURES: Self-documenting
 describe("IslamicLoanCalculator", () => {
   describe("calculateMonthlyPayment", () => {
-    it("should calculate correct monthly payment for 100K Murabaha over 5 years at 5% profit", () => {
+    it("should calculate correct monthly payment for 100K Loan over 5 years at 5% profit", () => {
       const calculator = new IslamicLoanCalculator();
       const principal = 100000;
       const profitRate = 0.05;

@@ -31,7 +31,7 @@ Building a monolithic "Product" entity used everywhere:
 
 - Shopping catalog needs images and descriptions
 - Inventory needs stock levels and warehouse locations
-- Halal certification needs ingredients and suppliers
+- Permitted certification needs ingredients and suppliers
 - One bloated entity trying to satisfy all contexts
 
 **2. Missing Business Priorities**
@@ -119,7 +119,7 @@ A workshop where:
 
 - Named in past tense
 - Business-relevant, not technical
-- Examples: "Order Placed", "Zakat Calculated", "Product Certified as Halal"
+- Examples: "Order Placed", "Tax Calculated", "Product Certified as Permitted"
 
 **Process:**
 
@@ -144,10 +144,10 @@ A workshop where:
 
 ```
 Customer Registered → Product Catalog Viewed → Product Selected →
-Cart Updated → Halal Certification Verified → Order Placed →
+Cart Updated → Permitted Certification Verified → Order Placed →
 Payment Processed → Inventory Reserved → Order Fulfilled →
-Product Shipped → Delivery Confirmed → Zakat Calculated →
-Zakat Payment Made
+Product Shipped → Delivery Confirmed → Tax Calculated →
+Tax Payment Made
 ```
 
 **Facilitator Tips:**
@@ -178,9 +178,9 @@ Zakat Payment Made
 
 **Example Corrections**:
 
-- Move "Halal Certification Verified" before "Product Added to Catalog"
-- Add "Nisab Threshold Determined" before "Zakat Calculated"
-- Identify parallel flow: "Product Shipped" and "Zakat Assessment Started" happen independently
+- Move "Permitted Certification Verified" before "Product Added to Catalog"
+- Add "Threshold Threshold Determined" before "Tax Calculated"
+- Identify parallel flow: "Product Shipped" and "Tax Assessment Started" happen independently
 
 #### Phase 3: Identify Commands (30 minutes)
 
@@ -191,7 +191,7 @@ Zakat Payment Made
 - Named as imperative verb
 - Blue sticky notes
 - Placed before corresponding event
-- Examples: "Place Order", "Calculate Zakat", "Certify Product as Halal"
+- Examples: "Place Order", "Calculate Tax", "Certify Product as Permitted"
 
 **Process:**
 
@@ -203,8 +203,8 @@ Zakat Payment Made
 
    ```
    [Place Order] → [Order Placed]
-   [Calculate Zakat] → [Zakat Calculated]
-   [Certify Product] → [Product Certified as Halal]
+   [Calculate Tax] → [Tax Calculated]
+   [Certify Product] → [Product Certified as Permitted]
    ```
 
 3. **Identify Actors**:
@@ -243,9 +243,9 @@ Not every event needs a command explicitly modeled. Focus on user intentions and
 
 **Example Policies (Islamic E-Commerce)**:
 
-- **Order Validation Policy**: "Whenever Order Placed, verify all products are Halal Certified"
-- **Zakat Trigger Policy**: "Whenever Hawl Completed, automatically Calculate Zakat"
-- **Riba Detection Policy**: "Whenever Transaction Submitted, check for Riba indicators"
+- **Order Validation Policy**: "Whenever Order Placed, verify all products are Permitted Certified"
+- **Tax Trigger Policy**: "Whenever Hawl Completed, automatically Calculate Tax"
+- **Interest Detection Policy**: "Whenever Transaction Submitted, check for Interest indicators"
 
 #### Phase 5: Identify Aggregates (30 minutes)
 
@@ -255,7 +255,7 @@ Not every event needs a command explicitly modeled. Focus on user intentions and
 
 - Yellow sticky notes
 - Placed between command and event
-- Examples: "Order", "ZakatAssessment", "Product"
+- Examples: "Order", "TaxAssessment", "Product"
 
 **Process:**
 
@@ -263,7 +263,7 @@ Not every event needs a command explicitly modeled. Focus on user intentions and
 
    ```
    [Place Order] → [ORDER] → [Order Placed]
-   [Calculate Zakat] → [ZAKAT ASSESSMENT] → [Zakat Calculated]
+   [Calculate Tax] → [TAX ASSESSMENT] → [Tax Calculated]
    ```
 
 2. **Look for State Changes**:
@@ -277,8 +277,8 @@ Not every event needs a command explicitly modeled. Focus on user intentions and
 **Example Aggregates**:
 
 - **Order**: Handles "Place Order", "Cancel Order", "Fulfill Order"
-- **ZakatAssessment**: Handles "Declare Wealth", "Finalize Assessment"
-- **Product**: Handles "Certify as Halal", "Revoke Certification"
+- **TaxAssessment**: Handles "Declare Wealth", "Finalize Assessment"
+- **Product**: Handles "Certify as Permitted", "Revoke Certification"
 
 #### Phase 6: Identify Read Models (20 minutes)
 
@@ -287,7 +287,7 @@ Not every event needs a command explicitly modeled. Focus on user intentions and
 **Read Model**: Data presented to users to make decisions.
 
 - Green sticky notes
-- Examples: "Product Catalog", "Zakat Dashboard", "Order History"
+- Examples: "Product Catalog", "Tax Dashboard", "Order History"
 
 **Process:**
 
@@ -303,8 +303,8 @@ Not every event needs a command explicitly modeled. Focus on user intentions and
 
 **Example Read Models**:
 
-- **Halal Product Catalog**: List of certified halal products
-- **Zakat Assessment Dashboard**: Current zakatable wealth, nisab threshold, zakat owed
+- **Permitted Product Catalog**: List of certified permitted products
+- **Tax Assessment Dashboard**: Current taxable wealth, threshold threshold, tax owed
 - **Order Status View**: Order state, tracking number, estimated delivery
 
 #### Phase 7: Identify Hotspots (Ongoing)
@@ -314,7 +314,7 @@ Not every event needs a command explicitly modeled. Focus on user intentions and
 **Hotspot**: Unresolved question or problem area.
 
 - Pink sticky notes
-- Examples: "How do we handle refunds for zakat?", "What if certification expires mid-order?"
+- Examples: "How do we handle refunds for tax?", "What if certification expires mid-order?"
 
 **Process:**
 
@@ -328,9 +328,9 @@ Not every event needs a command explicitly modeled. Focus on user intentions and
 
 **Example Hotspots**:
 
-- "What happens if product loses halal certification after order but before shipment?"
-- "How do we calculate zakat on cryptocurrency holdings?"
-- "Should riba detection block transaction or just warn?"
+- "What happens if product loses permitted certification after order but before shipment?"
+- "How do we calculate tax on cryptocurrency holdings?"
+- "Should interest detection block transaction or just warn?"
 
 #### Phase 8: Group into Bounded Contexts (45-60 minutes)
 
@@ -363,11 +363,11 @@ Not every event needs a command explicitly modeled. Focus on user intentions and
 └─────────────────────────┘  └──────────────────────────┘
 
 ┌─────────────────────────┐  ┌──────────────────────────┐
-│ HALAL CERTIFICATION     │  │ ZAKAT CALCULATION        │
+│ PERMITTED CERTIFICATION     │  │ TAX CALCULATION          │
 │                         │  │                          │
 │ - Product Certified     │  │ - Wealth Declared        │
 │ - Certification Expired │  │ - Hawl Completed         │
-│ - Certification Revoked │  │ - Zakat Calculated       │
+│ - Certification Revoked │  │ - Tax Calculated       │
 └─────────────────────────┘  └──────────────────────────┘
 
 ┌─────────────────────────┐  ┌──────────────────────────┐
@@ -399,8 +399,8 @@ Not every event needs a command explicitly modeled. Focus on user intentions and
 
 2. **Identify Integration Patterns**:
    - Customer/Supplier: Order Processing → Inventory
-   - Anti-Corruption Layer: Halal Certification → Legacy ERP
-   - Shared Kernel: Zakat Calculation and Islamic Financial Accounting share Money, HijriDate
+   - Anti-Corruption Layer: Permitted Certification → Legacy ERP
+   - Shared Kernel: Tax Calculation and Islamic Financial Accounting share Money, HijriDate
 
 3. **Draw Context Map**:
    - Visualize contexts and relationships
@@ -410,14 +410,14 @@ Not every event needs a command explicitly modeled. Focus on user intentions and
 
 ```mermaid
 graph TD
-    ZC[Zakat Calculation<br/>Core]
-    HC[Halal Certification<br/>Supporting]
+    ZC[Tax Calculation<br/>Core]
+    HC[Permitted Certification<br/>Supporting]
     OP[Order Processing<br/>Supporting]
     INV[Inventory<br/>Supporting]
     PAY[Payment Gateway<br/>Generic]
 
     OP -->|"Customer/Supplier<br/>Stock Availability"| INV
-    OP -->|"Customer/Supplier<br/>Halal Status"| HC
+    OP -->|"Customer/Supplier<br/>Permitted Status"| HC
     OP -->|"Conformist<br/>Payment API"| PAY
 
     style ZC fill:#0173B2,stroke:#000,color:#FFFFFF
@@ -504,16 +504,16 @@ A structured template for documenting a bounded context:
    - Other bounded contexts consumed
    - External systems integrated
 
-**Example Canvas: Zakat Calculation Context**
+**Example Canvas: Tax Calculation Context**
 
 ```markdown
-# Bounded Context Canvas: Zakat Calculation
+# Bounded Context Canvas: Tax Calculation
 
 ## Name and Description
 
-**Name**: Zakat Calculation
+**Name**: Tax Calculation
 **Classification**: Core Domain
-**Purpose**: Calculate Islamic almsgiving (zakat) obligations for wealth holders based on nisab thresholds, wealth types, and Hijri calendar cycles.
+**Purpose**: Calculate Islamic almsgiving (tax) obligations for wealth holders based on threshold thresholds, wealth types, and Hijri calendar cycles.
 
 ## Strategic Classification
 
@@ -522,27 +522,27 @@ A structured template for documenting a bounded context:
 
 ## Business Decisions
 
-1. Determine if wealth holder meets nisab threshold
-2. Calculate zakat owed based on wealth type and zakat rate
+1. Determine if wealth holder meets threshold threshold
+2. Calculate tax owed based on wealth type and tax rate
 3. Track hawl (lunar year) completion for wealth holdings
-4. Exempt wealth holders below nisab from zakat obligation
-5. Apply different zakat rates for different wealth types
+4. Exempt wealth holders below threshold from tax obligation
+5. Apply different tax rates for different wealth types
 6. Validate wealth declarations for completeness
 
 ## Ubiquitous Language
 
-- **Zakat**: Obligatory Islamic almsgiving, one of Five Pillars
-- **Nisab**: Minimum wealth threshold (85g gold equivalent)
+- **Tax**: Obligatory Islamic almsgiving, one of Five Pillars
+- **Threshold**: Minimum wealth threshold (85g gold equivalent)
 - **Hawl**: Complete lunar year (354-355 days)
-- **Zakatable Wealth**: Assets subject to zakat
-- **Zakat Rate**: Percentage due (typically 2.5%)
+- **Taxable Wealth**: Assets subject to tax
+- **Tax Rate**: Percentage due (typically 2.5%)
 - **Wealth Declaration**: Statement of assets held
 
 ## Domain Model
 
 **Aggregates:**
 
-- `ZakatAssessment`: Root aggregate managing zakat calculation lifecycle
+- `TaxAssessment`: Root aggregate managing tax calculation lifecycle
 
 **Entities:**
 
@@ -550,27 +550,27 @@ A structured template for documenting a bounded context:
 
 **Value Objects:**
 
-- `AssessmentId`, `NisabAmount`, `ZakatRate`, `Money`, `HijriDate`, `LunarYearPeriod`
+- `AssessmentId`, `ThresholdAmount`, `TaxRate`, `Money`, `HijriDate`, `LunarYearPeriod`
 
 ## Inbound Communication
 
 **Commands:**
 
 - `DeclareWealth`: Wealth holder declares assets
-- `FinalizeAssessment`: Complete assessment and calculate zakat
+- `FinalizeAssessment`: Complete assessment and calculate tax
 - `CancelAssessment`: Cancel in-progress assessment
 
 **Events Consumed:**
 
 - `WealthSnapshotUpdated` (from Islamic Financial Accounting)
-- `NisabThresholdDetermined` (from Market Data)
+- `ThresholdThresholdDetermined` (from Market Data)
 
 ## Outbound Communication
 
 **Events Published:**
 
-- `ZakatCalculated`: Assessment finalized with zakat amount
-- `ZakatExemptionGranted`: Wealth holder exempt (below nisab)
+- `TaxCalculated`: Assessment finalized with tax amount
+- `TaxExemptionGranted`: Wealth holder exempt (below threshold)
 - `AssessmentCreated`: New assessment started
 
 **APIs Provided:**
@@ -583,7 +583,7 @@ A structured template for documenting a bounded context:
 **Bounded Contexts:**
 
 - Islamic Financial Accounting (wealth data)
-- Market Data (gold/silver prices for nisab)
+- Market Data (gold/silver prices for threshold)
 
 **External Systems:**
 

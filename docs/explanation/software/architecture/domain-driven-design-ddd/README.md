@@ -1,6 +1,6 @@
 # Domain-Driven Design (DDD) Documentation
 
-Comprehensive documentation on Domain-Driven Design patterns, principles, and practices for building complex business software systems. This documentation emphasizes both strategic patterns (Bounded Contexts, Context Mapping) and tactical patterns (Aggregates, Value Objects, Entities), with examples drawn from Islamic finance and Sharia-compliant business domains.
+Comprehensive documentation on Domain-Driven Design patterns, principles, and practices for building complex business software systems. This documentation emphasizes both strategic patterns (Bounded Contexts, Context Mapping) and tactical patterns (Aggregates, Value Objects, Entities), with examples drawn from generic business domains including finance, e-commerce, and regulatory compliance.
 
 ## What is Domain-Driven Design?
 
@@ -238,61 +238,61 @@ Focus on collaboration and model validation:
 
 ## Domain Examples Throughout Documentation
 
-Examples focus on **Sharia-compliant business systems**:
+Examples focus on **finance and business systems**:
 
-### Core Domain: Zakat Calculation
+### Core Domain: Tax Calculation
 
-Zakat (Islamic almsgiving) requires precise calculations based on Islamic jurisprudence:
+Tax calculation requires precise calculations based on regulatory requirements:
 
-- **Aggregates**: `ZakatAssessment` with nisab threshold validation
-- **Value Objects**: `ZakatRate`, `NisabAmount`, `HijriDate`, `Money`
-- **Domain Events**: `ZakatCalculated`, `NisabThresholdMet`, `AssessmentCreated`
-- **Business Rules**: Minimum nisab threshold, lunar year calculations, wealth type classifications
+- **Aggregates**: `TaxAssessment` with income threshold validation
+- **Value Objects**: `TaxRate`, `IncomeThreshold`, `FiscalDate`, `Money`
+- **Domain Events**: `TaxCalculated`, `ThresholdMet`, `AssessmentCreated`
+- **Business Rules**: Minimum income threshold, fiscal year calculations, income type classifications
 
-### Supporting Domain: Halal Certification
+### Supporting Domain: Product Certification
 
-Product verification for Islamic compliance:
+Product verification for regulatory compliance:
 
-- **Aggregates**: `Product` with halal certification status
-- **Value Objects**: `HalalCertification`, `CertificationAuthority`, `ExpiryDate`
+- **Aggregates**: `Product` with certification status
+- **Value Objects**: `Certification`, `CertificationAuthority`, `ExpiryDate`
 - **Domain Events**: `ProductCertified`, `CertificationExpired`, `CertificationRevoked`
 - **Business Rules**: Authority validation, expiry tracking, supply chain verification
 
-### Supporting Domain: Islamic Financial Accounting
+### Supporting Domain: Financial Accounting
 
-Riba-free (interest-free) transaction management:
+Transaction management with regulatory compliance:
 
-- **Aggregates**: `IslamicFinancialAccount`, `MurabahaContract`
-- **Value Objects**: `Money`, `ProfitSharingRatio`, `ContractTerms`
-- **Domain Events**: `TransactionApplied`, `RibaDetected`, `ContractApproved`
-- **Business Rules**: Interest detection, profit-sharing calculations, contract validity
+- **Aggregates**: `FinancialAccount`, `LoanAgreement`
+- **Value Objects**: `Money`, `InterestRate`, `ContractTerms`
+- **Domain Events**: `TransactionApplied`, `ComplianceViolationDetected`, `ContractApproved`
+- **Business Rules**: Compliance detection, interest calculations, contract validity
 
 ### Integration Example: Bounded Context Map
 
 ```mermaid
 graph TD
-    ZC[Zakat Calculation<br/>Core Domain]
+    TC[Tax Calculation<br/>Core Domain]
     IM[Inventory Management<br/>Supporting]
-    IFA[Islamic Financial<br/>Accounting<br/>Supporting]
+    FA[Financial<br/>Accounting<br/>Supporting]
     PAY[Payment Processing<br/>Generic]
 
-    ZC -->|"Shared Kernel:<br/>Money, HijriDate"| IM
-    ZC -->|"Customer/Supplier"| IFA
+    TC -->|"Shared Kernel:<br/>Money, FiscalDate"| IM
+    TC -->|"Customer/Supplier"| FA
     IM -->|"Conformist"| PAY
-    IFA -->|"Partnership"| PAY
+    FA -->|"Partnership"| PAY
 
-    style ZC fill:#0173B2,stroke:#000,color:#FFFFFF
+    style TC fill:#0173B2,stroke:#000,color:#FFFFFF
     style IM fill:#029E73,stroke:#000,color:#FFFFFF
-    style IFA fill:#029E73,stroke:#000,color:#FFFFFF
+    style FA fill:#029E73,stroke:#000,color:#FFFFFF
     style PAY fill:#808080,stroke:#000,color:#000000
 ```
 
 These examples demonstrate:
 
-- **Complex business rules** requiring domain expert collaboration (Islamic scholars)
-- **High cost of defects** (religious compliance consequences)
-- **Regulatory requirements** (halal certification standards)
-- **Long-term evolution** (adapting to Islamic jurisprudence interpretations)
+- **Complex business rules** requiring domain expert collaboration (tax specialists, accountants)
+- **High cost of defects** (regulatory compliance consequences)
+- **Regulatory requirements** (certification and compliance standards)
+- **Long-term evolution** (adapting to changing regulations and business rules)
 
 ## Relationship to Other Documentation
 
@@ -324,7 +324,7 @@ See [DDD and Functional Programming](./ex-so-ar-dodrdedd__14-ddd-and-functional-
 
 **[Repository Governance Architecture](../../../../governance/repository-governance-architecture.md)**
 
-- **Layer 0: Vision** - DDD supports democratizing Sharia-compliant enterprise systems
+- **Layer 0: Vision** - DDD supports building enterprise business systems
 - **Layer 1: Principles** - Simplicity, explicitness, automation align with DDD philosophy
 - **Layer 2: Conventions** - Documentation standards, diagram colors, file naming
 - **Layer 3: Development** - FP patterns, implementation workflow integrate with DDD
@@ -476,7 +476,7 @@ Ready to apply DDD to your project? Follow this checklist:
 - [Virtual Domain-Driven Design Community](https://virtualddd.com/) - Meetups and recordings
 - [Domain-Driven Design Europe](https://dddeurope.com/) - Annual conference
 
-### Related Open Sharia Enterprise Documentation
+### Related Open Compliance Enterprise Documentation
 
 - [C4 Architecture Model](../c4-architecture-model/README.md) - Visual architecture documentation
 - [Functional Programming Principles](../../../../governance/development/pattern/functional-programming.md) - FP alignment with DDD
@@ -485,9 +485,9 @@ Ready to apply DDD to your project? Follow this checklist:
 
 ## Contributing
 
-This documentation evolves as we apply DDD to the Open Sharia Enterprise platform. Contributions welcome:
+This documentation evolves as we apply DDD to the Open Compliance Enterprise platform. Contributions welcome:
 
-- **Examples**: Additional Islamic finance/Sharia-compliant examples
+- **Examples**: Additional finance and business domain examples
 - **Clarifications**: Improved explanations of complex concepts
 - **Diagrams**: Enhanced Mermaid diagrams (use [Color Palette](./templates/ex-so-ar-dodrdedd-te__color-palette.md))
 - **Templates**: New templates for DDD practices
@@ -499,7 +499,7 @@ See [Repository Governance Architecture](../../../../governance/repository-gover
 
 - **Category**: Explanation
 - **Subcategory**: Architecture
-- **Tags**: Domain-Driven Design, DDD, Strategic Design, Tactical Design, Bounded Contexts, Aggregates, Value Objects, Entities, Domain Events, Islamic Finance, Sharia-Compliant Systems
+- **Tags**: Domain-Driven Design, DDD, Strategic Design, Tactical Design, Bounded Contexts, Aggregates, Value Objects, Entities, Domain Events, Finance, Business Systems
 - **Last Updated**: 2026-01-20
 - **Status**: Active
 - **Related Documentation**:

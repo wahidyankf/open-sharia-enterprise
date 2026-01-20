@@ -16,41 +16,41 @@ Mastering TDD in a functional style results in code that is easier to reason abo
 
 ```typescript
 // PURE: Easy to test ✅
-function calculateZakat(wealth: Money): Money {
+function calculateTax(wealth: Money): Money {
   return wealth.multiply(0.025);
 }
 
 // Test: Simple, no setup
-describe("calculateZakat", () => {
+describe("calculateTax", () => {
   it("should calculate 2.5% of wealth", () => {
-    const zakat = calculateZakat(Money.usd(1000));
-    expect(zakat).toEqualMoney(Money.usd(25));
+    const tax = calculateTax(Money.usd(1000));
+    expect(tax).toEqualMoney(Money.usd(25));
   });
 });
 
 // IMPURE: Hard to test ❌
-class ZakatService {
+class TaxService {
   private goldPriceApi: GoldPriceAPI;
-  private repository: ZakatRepository;
+  private repository: TaxRepository;
 
   async calculateAndSave(wealthId: string): Promise<void> {
     const wealth = await this.repository.findWealth(wealthId); // Side effect
     const goldPrice = await this.goldPriceApi.getCurrentPrice(); // Side effect
-    const zakat = wealth.multiply(0.025);
-    await this.repository.saveZakat(zakat); // Side effect
+    const tax = wealth.multiply(0.025);
+    await this.repository.saveTax(tax); // Side effect
   }
 }
 
 // Test: Complex, requires mocks
-describe("ZakatService", () => {
-  let service: ZakatService;
-  let mockRepository: jest.Mocked<ZakatRepository>;
+describe("TaxService", () => {
+  let service: TaxService;
+  let mockRepository: jest.Mocked<TaxRepository>;
   let mockGoldApi: jest.Mocked<GoldPriceAPI>;
 
   beforeEach(() => {
-    mockRepository = createMock<ZakatRepository>();
+    mockRepository = createMock<TaxRepository>();
     mockGoldApi = createMock<GoldPriceAPI>();
-    service = new ZakatService(mockGoldApi, mockRepository);
+    service = new TaxService(mockGoldApi, mockRepository);
   });
 
   it("should calculate and save", async () => {
@@ -59,7 +59,7 @@ describe("ZakatService", () => {
 
     await service.calculateAndSave("WEALTH-001");
 
-    expect(mockRepository.saveZakat).toHaveBeenCalledWith(Money.usd(25));
+    expect(mockRepository.saveTax).toHaveBeenCalledWith(Money.usd(25));
   });
 });
 ```
@@ -72,26 +72,26 @@ Pure functions are **deterministic**: same input always produces same output.
 
 ```typescript
 // GOOD: Pure, deterministic
-function isEligibleForZakat(wealth: Money, nisab: Money): boolean {
-  return wealth.isGreaterThanOrEqual(nisab);
+function isEligibleForTax(wealth: Money, threshold: Money): boolean {
+  return wealth.isGreaterThanOrEqual(threshold);
 }
 
 // Test: No flakiness, always passes
-it("should be eligible when wealth >= nisab", () => {
-  expect(isEligibleForZakat(Money.usd(1000), Money.usd(85))).toBe(true);
-  expect(isEligibleForZakat(Money.usd(1000), Money.usd(85))).toBe(true); // Same result
+it("should be eligible when wealth >= threshold", () => {
+  expect(isEligibleForTax(Money.usd(1000), Money.usd(85))).toBe(true);
+  expect(isEligibleForTax(Money.usd(1000), Money.usd(85))).toBe(true); // Same result
 });
 
 // BAD: Impure, non-deterministic
-function isEligibleForZakatNow(wealth: Money): boolean {
+function isEligibleForTaxNow(wealth: Money): boolean {
   const currentGoldPrice = fetchGoldPrice(); // External call ❌
-  const nisab = Money.fromGold(85, "grams", currentGoldPrice);
-  return wealth.isGreaterThanOrEqual(nisab);
+  const threshold = Money.fromGold(85, "grams", currentGoldPrice);
+  return wealth.isGreaterThanOrEqual(threshold);
 }
 
 // Test: Flaky, depends on external API
-it("should be eligible when wealth >= nisab", async () => {
-  const eligible = await isEligibleForZakatNow(Money.usd(1000));
+it("should be eligible when wealth >= threshold", async () => {
+  const eligible = await isEligibleForTaxNow(Money.usd(1000));
   expect(eligible).toBe(true); // May fail if API changes ❌
 });
 ```
@@ -102,64 +102,64 @@ it("should be eligible when wealth >= nisab", async () => {
 
 ```typescript
 // FUNCTIONAL CORE: Pure logic
-function calculateZakatAmount(wealth: Money, nisab: Money, rate: number): Money | null {
-  if (wealth.isLessThan(nisab)) {
+function calculateTaxAmount(wealth: Money, threshold: Money, rate: number): Money | null {
+  if (wealth.isLessThan(threshold)) {
     return null;
   }
   return wealth.multiply(rate);
 }
 
 // IMPERATIVE SHELL: Side effects at edges
-class ZakatAssessmentService {
+class TaxAssessmentService {
   constructor(
-    private repository: ZakatRepository,
+    private repository: TaxRepository,
     private goldPriceApi: GoldPriceAPI,
   ) {}
 
-  async assessZakat(userId: string): Promise<AssessmentResult> {
+  async assessTax(userId: string): Promise<AssessmentResult> {
     // Gather inputs (imperative)
     const wealth = await this.repository.getUserWealth(userId);
     const goldPrice = await this.goldPriceApi.getCurrentPrice();
-    const nisab = Money.fromGold(85, "grams", goldPrice);
+    const threshold = Money.fromGold(85, "grams", goldPrice);
 
     // Pure calculation (functional core)
-    const zakatAmount = calculateZakatAmount(wealth, nisab, 0.025);
+    const taxAmount = calculateTaxAmount(wealth, threshold, 0.025);
 
     // Persist result (imperative)
-    if (zakatAmount) {
-      await this.repository.saveAssessment({ userId, zakatAmount });
+    if (taxAmount) {
+      await this.repository.saveAssessment({ userId, taxAmount });
     }
 
-    return { zakatAmount };
+    return { taxAmount };
   }
 }
 
 // Test functional core: Simple, no mocks
-describe("calculateZakatAmount", () => {
-  it("should calculate when wealth >= nisab", () => {
-    const zakat = calculateZakatAmount(Money.usd(1000), Money.usd(85), 0.025);
-    expect(zakat).toEqualMoney(Money.usd(25));
+describe("calculateTaxAmount", () => {
+  it("should calculate when wealth >= threshold", () => {
+    const tax = calculateTaxAmount(Money.usd(1000), Money.usd(85), 0.025);
+    expect(tax).toEqualMoney(Money.usd(25));
   });
 
-  it("should return null when wealth < nisab", () => {
-    const zakat = calculateZakatAmount(Money.usd(50), Money.usd(85), 0.025);
-    expect(zakat).toBeNull();
+  it("should return null when wealth < threshold", () => {
+    const tax = calculateTaxAmount(Money.usd(50), Money.usd(85), 0.025);
+    expect(tax).toBeNull();
   });
 });
 
 // Test imperative shell: Mock only at edges
-describe("ZakatAssessmentService", () => {
-  it("should assess zakat", async () => {
-    const mockRepo = createMock<ZakatRepository>();
+describe("TaxAssessmentService", () => {
+  it("should assess tax", async () => {
+    const mockRepo = createMock<TaxRepository>();
     const mockApi = createMock<GoldPriceAPI>();
 
     mockRepo.getUserWealth.mockResolvedValue(Money.usd(1000));
     mockApi.getCurrentPrice.mockResolvedValue(GoldPrice.of(65.5));
 
-    const service = new ZakatAssessmentService(mockRepo, mockApi);
-    const result = await service.assessZakat("USER-001");
+    const service = new TaxAssessmentService(mockRepo, mockApi);
+    const result = await service.assessTax("USER-001");
 
-    expect(result.zakatAmount).toEqualMoney(Money.usd(25));
+    expect(result.taxAmount).toEqualMoney(Money.usd(25));
   });
 });
 ```
@@ -301,11 +301,11 @@ const ok = <T, E>(value: T): Result<T, E> => ({ ok: true, value });
 const err = <T, E>(error: E): Result<T, E> => ({ ok: false, error });
 
 // Pure functions returning Result
-function validateNisab(nisab: Money): Result<Money, string> {
-  if (nisab.amount <= 0) {
-    return err("Nisab must be positive");
+function validateThreshold(threshold: Money): Result<Money, string> {
+  if (threshold.amount <= 0) {
+    return err("Threshold must be positive");
   }
-  return ok(nisab);
+  return ok(threshold);
 }
 
 function validateWealth(wealth: Money): Result<Money, string> {
@@ -315,31 +315,31 @@ function validateWealth(wealth: Money): Result<Money, string> {
   return ok(wealth);
 }
 
-function calculateZakat(wealth: Money, nisab: Money): Result<Money, string> {
-  if (wealth.isLessThan(nisab)) {
-    return err("Wealth below nisab threshold");
+function calculateTax(wealth: Money, threshold: Money): Result<Money, string> {
+  if (wealth.isLessThan(threshold)) {
+    return err("Wealth below threshold threshold");
   }
   return ok(wealth.multiply(0.025));
 }
 
 // Chain validations
-function assessZakat(wealthInput: number, nisabInput: number): Result<Money, string> {
+function assessTax(wealthInput: number, thresholdInput: number): Result<Money, string> {
   const wealth = Money.usd(wealthInput);
-  const nisab = Money.usd(nisabInput);
+  const threshold = Money.usd(thresholdInput);
 
   const wealthResult = validateWealth(wealth);
   if (!wealthResult.ok) return wealthResult;
 
-  const nisabResult = validateNisab(nisab);
-  if (!nisabResult.ok) return nisabResult;
+  const thresholdResult = validateThreshold(threshold);
+  if (!thresholdResult.ok) return thresholdResult;
 
-  return calculateZakat(wealth, nisab);
+  return calculateTax(wealth, threshold);
 }
 
 // Test: Railway-oriented flow
-describe("assessZakat - Railway-Oriented", () => {
+describe("assessTax - Railway-Oriented", () => {
   it("should calculate when all validations pass", () => {
-    const result = assessZakat(1000, 85);
+    const result = assessTax(1000, 85);
 
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -348,7 +348,7 @@ describe("assessZakat - Railway-Oriented", () => {
   });
 
   it("should fail on negative wealth", () => {
-    const result = assessZakat(-100, 85);
+    const result = assessTax(-100, 85);
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
@@ -356,21 +356,21 @@ describe("assessZakat - Railway-Oriented", () => {
     }
   });
 
-  it("should fail on zero nisab", () => {
-    const result = assessZakat(1000, 0);
+  it("should fail on zero threshold", () => {
+    const result = assessTax(1000, 0);
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.error).toBe("Nisab must be positive");
+      expect(result.error).toBe("Threshold must be positive");
     }
   });
 
-  it("should fail when wealth below nisab", () => {
-    const result = assessZakat(50, 85);
+  it("should fail when wealth below threshold", () => {
+    const result = assessTax(50, 85);
 
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.error).toBe("Wealth below nisab threshold");
+      expect(result.error).toBe("Wealth below threshold threshold");
     }
   });
 });
@@ -462,37 +462,37 @@ describe("Money - Property-Based Tests", () => {
 });
 ```
 
-### Islamic Finance Example: Riba Detection Properties
+### Islamic Finance Example: Interest Detection Properties
 
 ```typescript
-// Riba detection: Interest-based transactions are prohibited
-function detectRiba(principal: Money, payment: Money, timeMonths: number): boolean {
+// Interest detection: Interest-based transactions are prohibited
+function detectInterest(principal: Money, payment: Money, timeMonths: number): boolean {
   if (timeMonths === 0) return false;
 
   const excess = payment.subtract(principal);
-  return excess.amount > 0; // Any excess is Riba
+  return excess.amount > 0; // Any excess is Interest
 }
 
-describe("detectRiba - Property-Based", () => {
-  it("should detect riba when payment > principal", () => {
+describe("detectInterest - Property-Based", () => {
+  it("should detect interest when payment > principal", () => {
     fc.assert(
       fc.property(fc.integer({ min: 100, max: 100000 }), fc.integer({ min: 1, max: 60 }), (principal, months) => {
         const payment = Money.usd(principal * 1.05); // 5% excess
-        return detectRiba(Money.usd(principal), payment, months) === true;
+        return detectInterest(Money.usd(principal), payment, months) === true;
       }),
     );
   });
 
-  it("should not detect riba when payment === principal", () => {
+  it("should not detect interest when payment === principal", () => {
     fc.assert(
       fc.property(fc.integer({ min: 100, max: 100000 }), fc.integer({ min: 1, max: 60 }), (principal, months) => {
         const payment = Money.usd(principal); // No excess
-        return detectRiba(Money.usd(principal), payment, months) === false;
+        return detectInterest(Money.usd(principal), payment, months) === false;
       }),
     );
   });
 
-  it("should always detect riba when payment - principal > 0 (invariant)", () => {
+  it("should always detect interest when payment - principal > 0 (invariant)", () => {
     fc.assert(
       fc.property(
         fc.integer({ min: 100, max: 100000 }),
@@ -501,7 +501,7 @@ describe("detectRiba - Property-Based", () => {
         (principal, excessRate, months) => {
           const excess = principal * excessRate;
           const payment = Money.usd(principal + excess);
-          return detectRiba(Money.usd(principal), payment, months) === true;
+          return detectInterest(Money.usd(principal), payment, months) === true;
         },
       ),
     );
@@ -658,8 +658,8 @@ Functional programming and TDD are natural partners:
 
 **Islamic Finance Examples:**
 
-- Pure Zakat calculation functions
-- Riba detection properties (no excess over principal)
+- Pure Tax calculation functions
+- Interest detection properties (no excess over principal)
 - Functional Money operations
 - Immutable asset lists
 

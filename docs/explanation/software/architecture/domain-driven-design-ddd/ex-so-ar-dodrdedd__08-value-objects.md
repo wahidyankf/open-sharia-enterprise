@@ -22,18 +22,18 @@ Using primitive types (strings, numbers, booleans) for domain concepts leads to:
 
 ```typescript
 // WITHOUT Value Objects: Primitive obsession
-function calculateZakat(wealthAmount: number, zakatRate: number, nisabThreshold: number): number {
-  if (wealthAmount >= nisabThreshold) {
-    return wealthAmount * zakatRate;
+function calculateTax(wealthAmount: number, taxRate: number, thresholdThreshold: number): number {
+  if (wealthAmount >= thresholdThreshold) {
+    return wealthAmount * taxRate;
   }
   return 0;
 }
 
 // Problematic usage:
-calculateZakat(10000, 0.025, 85); // What do these numbers mean?
-calculateZakat(0.025, 10000, 85); // Swapped arguments - silent bug!
-calculateZakat(10000, 25, 85); // Forgot to convert 25% to 0.25
-calculateZakat(10000, 0.025, -85); // Negative nisab - nonsensical!
+calculateTax(10000, 0.025, 85); // What do these numbers mean?
+calculateTax(0.025, 10000, 85); // Swapped arguments - silent bug!
+calculateTax(10000, 25, 85); // Forgot to convert 25% to 0.25
+calculateTax(10000, 0.025, -85); // Negative threshold - nonsensical!
 ```
 
 **Problems:**
@@ -80,24 +80,24 @@ class Money {
   }
 }
 
-class ZakatRate {
+class TaxRate {
   private constructor(readonly percentage: number) {
     if (percentage < 0 || percentage > 1) {
-      throw new Error("Zakat rate must be between 0 and 1");
+      throw new Error("Tax rate must be between 0 and 1");
     }
   }
 
-  static standard(): ZakatRate {
-    return new ZakatRate(0.025); // 2.5%
+  static standard(): TaxRate {
+    return new TaxRate(0.025); // 2.5%
   }
 }
 
-class NisabAmount {
+class ThresholdAmount {
   private constructor(private readonly value: Money) {}
 
-  static goldStandard(): NisabAmount {
+  static goldStandard(): ThresholdAmount {
     // 85 grams of gold at current price
-    return new NisabAmount(Money.usd(5000)); // Simplified
+    return new ThresholdAmount(Money.usd(5000)); // Simplified
   }
 
   toMoney(): Money {
@@ -106,18 +106,18 @@ class NisabAmount {
 }
 
 // Type-safe, self-documenting usage
-function calculateZakat(wealth: Money, zakatRate: ZakatRate, nisab: NisabAmount): Money {
-  if (wealth.isGreaterThanOrEqual(nisab.toMoney())) {
-    return wealth.multiply(zakatRate.percentage);
+function calculateTax(wealth: Money, taxRate: TaxRate, threshold: ThresholdAmount): Money {
+  if (wealth.isGreaterThanOrEqual(threshold.toMoney())) {
+    return wealth.multiply(taxRate.percentage);
   }
   return Money.zero();
 }
 
 // Clear, type-safe invocation
-const zakat = calculateZakat(
+const tax = calculateTax(
   Money.usd(10000), // Wealth
-  ZakatRate.standard(), // 2.5%
-  NisabAmount.goldStandard(), // Minimum threshold
+  TaxRate.standard(), // 2.5%
+  ThresholdAmount.goldStandard(), // Minimum threshold
 );
 ```
 
@@ -145,13 +145,13 @@ Does the object have a unique identity that matters?
 
 **Key Differences:**
 
-| Aspect           | Value Object                          | Entity                                |
-| ---------------- | ------------------------------------- | ------------------------------------- |
-| **Identity**     | No identity (defined by attributes)   | Has unique ID                         |
-| **Equality**     | Structural (same attributes = equal)  | ID-based (same ID = same entity)      |
-| **Immutability** | Always immutable                      | Usually mutable                       |
-| **Lifecycle**    | Created complete, replaced if changed | Created, modified, deleted            |
-| **Example**      | `Money`, `HijriDate`, `ZakatRate`     | `ZakatAssessment`, `MurabahaContract` |
+| Aspect           | Value Object                          | Entity                           |
+| ---------------- | ------------------------------------- | -------------------------------- |
+| **Identity**     | No identity (defined by attributes)   | Has unique ID                    |
+| **Equality**     | Structural (same attributes = equal)  | ID-based (same ID = same entity) |
+| **Immutability** | Always immutable                      | Usually mutable                  |
+| **Lifecycle**    | Created complete, replaced if changed | Created, modified, deleted       |
+| **Example**      | `Money`, `HijriDate`, `TaxRate`       | `TaxAssessment`, `LoanContract`  |
 
 **Examples from Islamic Finance:**
 
@@ -159,18 +159,18 @@ Does the object have a unique identity that matters?
 
 - `Money` - $100 USD is identical to any other $100 USD
 - `HijriDate` - 1445-01-01 is the same date everywhere
-- `ZakatRate` - 2.5% is 2.5% regardless of context
-- `NisabAmount` - Threshold value defined by its amount
-- `HalalCertification` (as value) - Certification details without identity
+- `TaxRate` - 2.5% is 2.5% regardless of context
+- `ThresholdAmount` - Threshold value defined by its amount
+- `PermittedCertification` (as value) - Certification details without identity
 - `Percentage` - 5% is 5% anywhere
 - `EmailAddress` - Same email string = same address
 
 **Entities:**
 
-- `ZakatAssessment` - Unique assessment with lifecycle
+- `TaxAssessment` - Unique assessment with lifecycle
 - `WealthDeclaration` - Specific declaration tracked over time
 - `Product` - Individual product with stock and history
-- `MurabahaContract` - Unique contract with approval workflow
+- `LoanContract` - Unique contract with approval workflow
 
 ## Value Object Design Principles
 
@@ -407,39 +407,39 @@ class EmailAddress {
 ### Pattern 2: Value Object with Business Logic
 
 ```typescript
-class NisabAmount {
+class ThresholdAmount {
   private constructor(private readonly goldGrams: number) {
     if (goldGrams <= 0) {
-      throw new Error("Nisab must be positive");
+      throw new Error("Threshold must be positive");
     }
     Object.freeze(this);
   }
 
-  static goldStandard(): NisabAmount {
-    return new NisabAmount(85); // 85 grams of gold
+  static goldStandard(): ThresholdAmount {
+    return new ThresholdAmount(85); // 85 grams of gold
   }
 
-  static silverStandard(): NisabAmount {
-    return new NisabAmount(595); // 595 grams of silver (converted to gold equivalent)
+  static silverStandard(): ThresholdAmount {
+    return new ThresholdAmount(595); // 595 grams of silver (converted to gold equivalent)
   }
 
   toMoney(goldPricePerGram: Money): Money {
     return goldPricePerGram.multiply(this.goldGrams);
   }
 
-  equals(other: NisabAmount): boolean {
+  equals(other: ThresholdAmount): boolean {
     return this.goldGrams === other.goldGrams;
   }
 
-  isGreaterThan(other: NisabAmount): boolean {
+  isGreaterThan(other: ThresholdAmount): boolean {
     return this.goldGrams > other.goldGrams;
   }
 }
 
 // Usage
-const nisab = NisabAmount.goldStandard();
+const threshold = ThresholdAmount.goldStandard();
 const goldPrice = Money.usd(60); // Per gram
-const nisabInMoney = nisab.toMoney(goldPrice); // $5,100
+const thresholdInMoney = threshold.toMoney(goldPrice); // $5,100
 ```
 
 ### Pattern 3: Multi-Attribute Value Object
@@ -707,27 +707,27 @@ class HijriDate {
 }
 ```
 
-### 3. ZakatRate
+### 3. TaxRate
 
 ```typescript
-class ZakatRate {
+class TaxRate {
   private constructor(readonly percentage: number) {
     if (percentage < 0 || percentage > 1) {
-      throw new Error("Zakat rate must be between 0 and 1");
+      throw new Error("Tax rate must be between 0 and 1");
     }
     Object.freeze(this);
   }
 
-  static standard(): ZakatRate {
-    return new ZakatRate(0.025); // 2.5%
+  static standard(): TaxRate {
+    return new TaxRate(0.025); // 2.5%
   }
 
-  static agricultural(isRainFed: boolean): ZakatRate {
-    return new ZakatRate(isRainFed ? 0.1 : 0.05); // 10% or 5%
+  static agricultural(isRainFed: boolean): TaxRate {
+    return new TaxRate(isRainFed ? 0.1 : 0.05); // 10% or 5%
   }
 
-  static riqaz(): ZakatRate {
-    return new ZakatRate(0.2); // 20% for buried treasure
+  static riqaz(): TaxRate {
+    return new TaxRate(0.2); // 20% for buried treasure
   }
 
   applyTo(amount: Money): Money {
@@ -738,16 +738,16 @@ class ZakatRate {
     return this.percentage * 100;
   }
 
-  equals(other: ZakatRate): boolean {
+  equals(other: TaxRate): boolean {
     return this.percentage === other.percentage;
   }
 }
 ```
 
-### 4. HalalCertification (as Value Object)
+### 4. PermittedCertification (as Value Object)
 
 ```typescript
-class HalalCertification {
+class PermittedCertification {
   constructor(
     readonly authority: CertificationAuthority,
     readonly certificateNumber: string,
@@ -769,7 +769,7 @@ class HalalCertification {
     return !this.isValid();
   }
 
-  equals(other: HalalCertification): boolean {
+  equals(other: PermittedCertification): boolean {
     return (
       this.authority === other.authority &&
       this.certificateNumber === other.certificateNumber &&
@@ -783,7 +783,7 @@ enum CertificationAuthority {
   JAKIM = "JAKIM", // Malaysia
   MUI = "MUI", // Indonesia
   ESMA = "ESMA", // UAE
-  HFA = "HFA", // Halal Food Authority
+  HFA = "HFA", // Permitted Food Authority
 }
 ```
 
@@ -792,24 +792,24 @@ enum CertificationAuthority {
 Value objects are often contained within aggregates and entities:
 
 ```typescript
-class ZakatAssessment {
+class TaxAssessment {
   // Aggregate root
   constructor(
     readonly id: AssessmentId,
     readonly wealthHolderId: WealthHolderId,
     readonly assessmentPeriod: LunarYearPeriod, // Value object
     private declarations: WealthDeclaration[],
-    private zakatAmount: Money | null, // Value object
+    private taxAmount: Money | null, // Value object
   ) {}
 
-  finalize(nisabThreshold: NisabAmount, zakatRate: ZakatRate): void {
+  finalize(thresholdThreshold: ThresholdAmount, taxRate: TaxRate): void {
     // Value objects used in domain logic
     const totalWealth = this.calculateTotalWealth();
 
-    if (totalWealth.isGreaterThanOrEqual(nisabThreshold.toMoney())) {
-      this.zakatAmount = zakatRate.applyTo(totalWealth);
+    if (totalWealth.isGreaterThanOrEqual(thresholdThreshold.toMoney())) {
+      this.taxAmount = taxRate.applyTo(totalWealth);
     } else {
-      this.zakatAmount = Money.zero();
+      this.taxAmount = Money.zero();
     }
   }
 

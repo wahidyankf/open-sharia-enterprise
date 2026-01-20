@@ -61,22 +61,22 @@ In traditional development, tests are written after code to verify correctness. 
 
 ```typescript
 // Step 1: Write implementation
-class ZakatCalculator {
+class TaxCalculator {
   constructor(
-    private nisabProvider: NisabProvider,
+    private thresholdProvider: ThresholdProvider,
     private rateProvider: RateProvider,
     private logger: Logger,
     private cache: Cache,
   ) {}
 
-  async calculate(wealth: number, assetType: string): Promise<number> {
-    const nisab = await this.nisabProvider.getNisab(assetType);
-    const rate = await this.rateProvider.getRate(assetType);
-    this.logger.log(`Calculating zakat for ${wealth} ${assetType}`);
-    const cached = this.cache.get(`${wealth}-${assetType}`);
+  async calculate(income: number, incomeType: string): Promise<number> {
+    const threshold = await this.thresholdProvider.getThreshold(incomeType);
+    const rate = await this.rateProvider.getRate(incomeType);
+    this.logger.log(`Calculating tax for ${income} ${incomeType}`);
+    const cached = this.cache.get(`${income}-${incomeType}`);
     if (cached) return cached;
-    const result = wealth >= nisab ? wealth * rate : 0;
-    this.cache.set(`${wealth}-${assetType}`, result);
+    const result = income >= threshold ? income * rate : 0;
+    this.cache.set(`${income}-${incomeType}`, result);
     return result;
   }
 }
@@ -89,27 +89,27 @@ class ZakatCalculator {
 
 ```typescript
 // Step 1: Write test for behavior
-describe("ZakatCalculator", () => {
-  it("should calculate zakat when wealth meets nisab threshold", () => {
+describe("TaxCalculator", () => {
+  it("should calculate tax when income meets threshold", () => {
     // Arrange
-    const nisabAmount = Money.fromGold(85, "grams");
-    const wealth = Money.fromGold(100, "grams");
-    const zakatRate = ZakatRate.standard(); // 2.5%
+    const threshold = Money.usd(50000);
+    const income = Money.usd(100000);
+    const taxRate = TaxRate.standard(); // 20%
 
     // Act
-    const zakatAmount = calculateZakat(wealth, nisabAmount, zakatRate);
+    const taxAmount = calculateTax(income, threshold, taxRate);
 
     // Assert
-    expect(zakatAmount.equals(Money.fromGold(2.5, "grams"))).toBe(true);
+    expect(taxAmount.equals(Money.usd(20000))).toBe(true);
   });
 });
 
 // Step 2: Simplest implementation emerges
-function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
-  if (wealth.isLessThan(nisab)) {
-    return Money.zero(wealth.currency);
+function calculateTax(income: Money, threshold: Money, rate: TaxRate): Money {
+  if (income.isLessThan(threshold)) {
+    return Money.zero(income.currency);
   }
-  return wealth.multiply(rate.percentage);
+  return income.multiply(rate.percentage);
 }
 
 // No unnecessary dependencies, pure function, easy to test
@@ -186,13 +186,13 @@ Writing tests after code often reveals design problems too late. Tight coupling,
 
 ```typescript
 // DIFFICULT TO TEST (written code-first)
-class HalalCertificationService {
+class ComplianceCertificationService {
   async certifyProduct(productId: string): Promise<void> {
     // Direct database access
     const product = await db.query("SELECT * FROM products WHERE id = ?", [productId]);
 
     // Hard-coded external API call
-    const response = await fetch("https://halal-authority.com/api/verify", {
+    const response = await fetch("https://certification-authority.com/api/verify", {
       method: "POST",
       body: JSON.stringify({ ingredients: product.ingredients }),
     });
@@ -212,7 +212,7 @@ class HalalCertificationService {
 ```typescript
 // TESTABLE BY DESIGN (written test-first)
 // Test forces separation of concerns
-describe("HalalCertificationService", () => {
+describe("ComplianceCertificationService", () => {
   it("should certify product when ingredients are verified", async () => {
     // Arrange
     const product = { id: "123", ingredients: ["water", "dates"] };
@@ -220,7 +220,7 @@ describe("HalalCertificationService", () => {
       verify: () => Promise.resolve({ approved: true }),
     });
 
-    const service = new HalalCertificationService(mockAuthority);
+    const service = new ComplianceCertificationService(mockAuthority);
 
     // Act
     const result = await service.certifyProduct(product);
@@ -231,7 +231,7 @@ describe("HalalCertificationService", () => {
 });
 
 // Implementation emerges with dependency injection
-class HalalCertificationService {
+class ComplianceCertificationService {
   constructor(private certificationAuthority: ICertificationAuthority) {}
 
   async certifyProduct(product: Product): Promise<CertificationResult> {
@@ -253,43 +253,43 @@ Code comments and documentation go stale. Tests, when well-written, serve as **e
 
 ```typescript
 // DOCUMENTATION THROUGH TESTS
-describe("Zakat Calculation for Different Asset Types", () => {
-  it("should apply 2.5% rate to gold and silver", () => {
-    const goldWealth = Money.fromGold(100, "grams");
-    const nisab = Money.fromGold(85, "grams");
+describe("Tax Calculation for Different Income Types", () => {
+  it("should apply 20% rate to investment income", () => {
+    const investmentIncome = Money.usd(100000);
+    const threshold = Money.usd(50000);
 
-    const zakat = calculateZakat(goldWealth, nisab, ZakatRate.standard());
+    const tax = calculateTax(investmentIncome, threshold, TaxRate.standard());
 
-    expect(zakat.equals(Money.fromGold(2.5, "grams"))).toBe(true);
+    expect(tax.equals(Money.usd(20000))).toBe(true);
   });
 
-  it("should apply 10% rate to irrigated agricultural produce", () => {
-    const harvest = AgricultureYield.fromTons(50, "wheat", "irrigated");
+  it("should apply 15% rate to capital gains", () => {
+    const capitalGain = Money.usd(50000);
 
-    const zakat = calculateAgriculturalZakat(harvest);
+    const tax = calculateCapitalGainsTax(capitalGain);
 
-    expect(zakat.tons).toBe(5.0); // 10% of 50 tons
+    expect(tax.equals(Money.usd(7500))).toBe(true); // 15% of 50000
   });
 
-  it("should apply 20% rate to rain-fed agricultural produce", () => {
-    const harvest = AgricultureYield.fromTons(50, "wheat", "rain-fed");
+  it("should apply 25% rate to business profits", () => {
+    const businessProfit = Money.usd(200000);
 
-    const zakat = calculateAgriculturalZakat(harvest);
+    const tax = calculateBusinessTax(businessProfit);
 
-    expect(zakat.tons).toBe(10.0); // 20% of 50 tons
+    expect(tax.equals(Money.usd(50000))).toBe(true); // 25% of 200000
   });
 
-  it("should exempt wealth below nisab threshold", () => {
-    const smallWealth = Money.fromGold(50, "grams"); // Below 85g nisab
-    const nisab = Money.fromGold(85, "grams");
+  it("should exempt income below minimum threshold", () => {
+    const lowIncome = Money.usd(30000); // Below 50000 threshold
+    const threshold = Money.usd(50000);
 
-    const zakat = calculateZakat(smallWealth, nisab, ZakatRate.standard());
+    const tax = calculateTax(lowIncome, threshold, TaxRate.standard());
 
-    expect(zakat.equals(Money.zero("gold"))).toBe(true);
+    expect(tax.equals(Money.zero("USD"))).toBe(true);
   });
 });
 
-// These tests document Shariah rules more clearly than comments
+// These tests document tax rules more clearly than comments
 // They're always up-to-date because they must pass for code to work
 ```
 
@@ -339,33 +339,33 @@ Without tests, refactoring is risky. Developers fear breaking existing functiona
 
 ```typescript
 // BEFORE REFACTORING: Procedural approach
-function calculateZakat(
-  wealthAmount: number,
-  wealthCurrency: string,
-  nisabAmount: number,
-  nisabCurrency: string,
+function calculateTax(
+  incomeAmount: number,
+  incomeCurrency: string,
+  thresholdAmount: number,
+  thresholdCurrency: string,
   ratePercentage: number,
 ): number {
-  if (wealthCurrency !== nisabCurrency) {
+  if (incomeCurrency !== thresholdCurrency) {
     throw new Error("Currency mismatch");
   }
-  if (wealthAmount < nisabAmount) {
+  if (incomeAmount < thresholdAmount) {
     return 0;
   }
-  return wealthAmount * (ratePercentage / 100);
+  return incomeAmount * (ratePercentage / 100);
 }
 
 // Tests pass ✅
 
 // AFTER REFACTORING: Object-oriented approach
-function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
-  if (!wealth.hasSameCurrency(nisab)) {
-    throw new CurrencyMismatchError(wealth.currency, nisab.currency);
+function calculateTax(income: Money, threshold: Money, rate: TaxRate): Money {
+  if (!income.hasSameCurrency(threshold)) {
+    throw new CurrencyMismatchError(income.currency, threshold.currency);
   }
-  if (wealth.isLessThan(nisab)) {
-    return Money.zero(wealth.currency);
+  if (income.isLessThan(threshold)) {
+    return Money.zero(income.currency);
   }
-  return wealth.multiply(rate.percentage);
+  return income.multiply(rate.percentage);
 }
 
 // Same tests still pass ✅
@@ -389,23 +389,23 @@ TDD provides tangible benefits that improve software quality, team productivity,
 
 ```typescript
 // Test reveals need for value object
-it("should prevent negative nisab threshold", () => {
-  expect(() => NisabAmount.fromGold(-85, "grams")).toThrow("Nisab cannot be negative");
+it("should prevent negative income threshold", () => {
+  expect(() => ThresholdAmount.usd(-50000)).toThrow("Threshold cannot be negative");
 });
 
 // Implementation enforces invariant
-class NisabAmount {
+class ThresholdAmount {
   private constructor(
     readonly value: number,
-    readonly unit: string,
+    readonly currency: string,
   ) {
     if (value < 0) {
-      throw new InvalidNisabError("Nisab cannot be negative");
+      throw new InvalidThresholdError("Threshold cannot be negative");
     }
   }
 
-  static fromGold(grams: number, unit: string = "grams"): NisabAmount {
-    return new NisabAmount(grams, unit);
+  static usd(amount: number): ThresholdAmount {
+    return new ThresholdAmount(amount, "USD");
   }
 }
 
@@ -423,38 +423,38 @@ class NisabAmount {
 **Example: Self-Documenting Test Suite**
 
 ```typescript
-describe("Islamic Finance: Murabaha Contract", () => {
-  describe("Profit Calculation", () => {
-    it("should calculate profit as percentage of cost price", () => {
-      const costPrice = Money.usd(10000);
-      const profitRate = Percentage.of(15); // 15% profit margin
+describe("Finance: Loan Agreement", () => {
+  describe("Interest Calculation", () => {
+    it("should calculate interest as percentage of principal", () => {
+      const principal = Money.usd(10000);
+      const interestRate = Percentage.of(5); // 5% interest rate
 
-      const contract = MurabahaContract.create(costPrice, profitRate);
+      const agreement = LoanAgreement.create(principal, interestRate);
 
-      expect(contract.sellingPrice.equals(Money.usd(11500))).toBe(true);
+      expect(agreement.totalAmount.equals(Money.usd(10500))).toBe(true);
     });
   });
 
-  describe("Shariah Compliance", () => {
-    it("should prohibit interest-based profit (Riba)", () => {
-      const costPrice = Money.usd(10000);
-      const interestRate = InterestRate.of(5); // Interest, not profit
+  describe("Regulatory Compliance", () => {
+    it("should enforce maximum interest rate limits", () => {
+      const principal = Money.usd(10000);
+      const excessiveRate = InterestRate.of(35); // Above legal limit
 
-      expect(() => MurabahaContract.create(costPrice, interestRate)).toThrow(RibaProhibitionError);
+      expect(() => LoanAgreement.create(principal, excessiveRate)).toThrow(RateLimitExceededError);
     });
 
-    it("should require asset ownership before sale", () => {
-      const asset = Asset.create("car", Money.usd(20000));
-      const buyer = Customer.create("Ahmad");
+    it("should require collateral for loans above threshold", () => {
+      const largeLoan = Money.usd(100000);
+      const borrower = Customer.create("John");
 
-      expect(() => MurabahaContract.sellWithoutOwnership(asset, buyer)).toThrow(
-        "Bank must own asset before selling in Murabaha",
+      expect(() => LoanAgreement.createWithoutCollateral(largeLoan, borrower)).toThrow(
+        "Collateral required for loans above $50,000",
       );
     });
   });
 });
 
-// Tests document Murabaha rules better than Word docs
+// Tests document loan rules better than Word docs
 ```
 
 ### 3. Faster Debugging and Defect Detection
@@ -469,17 +469,17 @@ describe("Islamic Finance: Murabaha Contract", () => {
 
 ```typescript
 // Test fails immediately when logic breaks
-describe("Zakat Exemption Rules", () => {
-  it("should exempt personal residence from zakat calculation", () => {
-    const wealth = [
+describe("Tax Exemption Rules", () => {
+  it("should exempt personal residence from property tax calculation", () => {
+    const assets = [
       Asset.cash(Money.usd(50000)),
       Asset.personalResidence(Money.usd(300000)), // Exempt
       Asset.investmentProperty(Money.usd(200000)), // Taxable
     ];
 
-    const zakatableWealth = calculateZakatableWealth(wealth);
+    const taxableAssets = calculateTaxableAssets(assets);
 
-    expect(zakatableWealth.equals(Money.usd(250000))).toBe(true);
+    expect(taxableAssets.equals(Money.usd(250000))).toBe(true);
   });
 });
 
@@ -544,31 +544,31 @@ class Money {
 
 ```typescript
 // TDD forces consideration of edge cases before production
-describe("Hawl Period Validation (Zakat Lunar Year)", () => {
-  it("should require full lunar year before zakat is due", () => {
-    const acquisitionDate = HijriDate.of(1445, 1, 1);
-    const currentDate = HijriDate.of(1445, 12, 29); // 354 days later
+describe("Fiscal Year Period Validation", () => {
+  it("should require full fiscal year before tax is due", () => {
+    const startDate = new Date(2024, 0, 1); // January 1, 2024
+    const currentDate = new Date(2024, 11, 30); // December 30, 2024 - 364 days
 
-    const hasPassed = Hawl.hasCompleted(acquisitionDate, currentDate);
+    const hasPassed = FiscalYear.hasCompleted(startDate, currentDate);
 
     expect(hasPassed).toBe(false); // One day short of full year
   });
 
-  it("should consider zakat due on completion of lunar year", () => {
-    const acquisitionDate = HijriDate.of(1445, 1, 1);
-    const currentDate = HijriDate.of(1446, 1, 1); // Exactly one lunar year
+  it("should consider tax due on completion of fiscal year", () => {
+    const startDate = new Date(2024, 0, 1); // January 1, 2024
+    const endDate = new Date(2024, 11, 31); // December 31, 2024 - 365 days
 
-    const hasPassed = Hawl.hasCompleted(acquisitionDate, currentDate);
+    const hasPassed = FiscalYear.hasCompleted(startDate, endDate);
 
     expect(hasPassed).toBe(true);
   });
 
-  it("should handle leap year edge cases in Hijri calendar", () => {
-    // Hijri calendar has 355 days in leap years
-    const leapYearAcquisition = HijriDate.of(1444, 12, 30); // Leap year
-    const afterOneYear = HijriDate.of(1446, 1, 1);
+  it("should handle leap year edge cases", () => {
+    // 2024 is a leap year with 366 days
+    const leapYearStart = new Date(2024, 0, 1);
+    const afterOneYear = new Date(2024, 11, 31); // 366 days in leap year
 
-    const hasPassed = Hawl.hasCompleted(leapYearAcquisition, afterOneYear);
+    const hasPassed = FiscalYear.hasCompleted(leapYearStart, afterOneYear);
 
     expect(hasPassed).toBe(true);
   });
@@ -600,17 +600,17 @@ describe("Money", () => {
   });
 });
 
-// Developer B: Uses Money in ZakatCalculator
+// Developer B: Uses Money in TaxCalculator
 // Tests show exactly how Money behaves
-describe("ZakatCalculator", () => {
-  it("should calculate zakat using Money value object", () => {
-    const wealth = Money.fromGold(100, "grams");
-    const nisab = Money.fromGold(85, "grams");
+describe("TaxCalculator", () => {
+  it("should calculate tax using Money value object", () => {
+    const income = Money.usd(100000);
+    const threshold = Money.usd(50000);
 
-    const zakat = calculator.calculate(wealth, nisab);
+    const tax = calculator.calculate(income, threshold);
 
-    expect(zakat.currency).toBe("gold");
-    expect(zakat.amount).toBeCloseTo(2.5);
+    expect(tax.currency).toBe("USD");
+    expect(tax.amount).toBeCloseTo(20000);
   });
 });
 
@@ -632,19 +632,19 @@ describe("ZakatCalculator", () => {
 
 ```typescript
 // HARD TO TEST (signals design problem)
-class ZakatReportGenerator {
+class TaxReportGenerator {
   async generateReport(userId: string): Promise<void> {
     // Directly accesses database
     const user = await database.users.findById(userId);
-    const assets = await database.assets.findByUserId(userId);
+    const income = await database.income.findByUserId(userId);
     const rates = await externalAPI.fetchCurrentRates();
 
     // Mixes calculation with I/O
-    const totalWealth = assets.reduce((sum, a) => sum + a.value, 0);
-    const nisab = rates.nisabThresholds.gold * rates.goldPrice;
+    const totalIncome = income.reduce((sum, i) => sum + i.amount, 0);
+    const threshold = rates.taxThresholds.standard;
 
     // Directly writes to filesystem
-    const report = this.formatReport(user, totalWealth, nisab);
+    const report = this.formatReport(user, totalIncome, threshold);
     await filesystem.writeFile(`/reports/${userId}.pdf`, report);
 
     // Sends email
@@ -658,16 +658,16 @@ class ZakatReportGenerator {
 
 ```typescript
 // EASY TO TEST (after refactoring based on test feedback)
-class ZakatCalculationService {
-  calculate(assets: Asset[], nisab: NisabThreshold): ZakatSummary {
-    const totalWealth = this.sumAssetValues(assets);
-    const zakatableWealth = totalWealth.isGreaterThan(nisab.amount) ? totalWealth : Money.zero(totalWealth.currency);
+class TaxCalculationService {
+  calculate(income: IncomeSource[], threshold: TaxThreshold): TaxSummary {
+    const totalIncome = this.sumIncomeValues(income);
+    const taxableIncome = totalIncome.isGreaterThan(threshold.amount) ? totalIncome : Money.zero(totalIncome.currency);
 
-    return new ZakatSummary(zakatableWealth, nisab, ZakatRate.standard());
+    return new TaxSummary(taxableIncome, threshold, TaxRate.standard());
   }
 
-  private sumAssetValues(assets: Asset[]): Money {
-    return assets.reduce((sum, asset) => sum.add(asset.value), Money.zero());
+  private sumIncomeValues(income: IncomeSource[]): Money {
+    return income.reduce((sum, source) => sum.add(source.amount), Money.zero());
   }
 }
 
@@ -694,9 +694,9 @@ Apply TDD when your project has:
 
 **Examples**:
 
-- **Zakat Calculation**: Multiple asset types, nisab thresholds, Hawl period tracking, exemption rules
-- **Islamic Finance Contracts**: Murabaha profit calculations, Riba detection, Shariah compliance validation
-- **Supply Chain Halal Certification**: Ingredient verification, supply chain tracking, certification authority integration
+- **Tax Calculation**: Multiple income types, threshold rules, fiscal year tracking, exemption rules
+- **Financial Contracts**: Loan interest calculations, rate limit validation, regulatory compliance checks
+- **Supply Chain Compliance Tracking**: Ingredient verification, supply chain tracking, certification authority integration
 
 **Why TDD Helps**: Tests document edge cases and invariants that would be easy to miss. Each rule becomes an executable specification.
 
@@ -706,7 +706,7 @@ Apply TDD when your project has:
 
 - High cost of defects (financial, legal, safety)
 - Regulatory compliance requirements
-- Religious obligations (e.g., Shariah compliance)
+- Legal obligations (e.g., tax reporting, financial compliance)
 - Systems where bugs cause significant harm
 
 **Examples**:
@@ -841,14 +841,14 @@ Score each dimension from 1-5, then calculate total.
 - **10-15 points**: TDD optional, evaluate based on team preference and learning goals
 - **6-9 points**: Consider lightweight testing instead of full TDD
 
-**Example Scoring: Zakat Calculation Module**
+**Example Scoring: Tax Calculation Module**
 
-- Business Logic Complexity: **5** (multiple asset types, thresholds, Hawl calculations)
-- Domain Criticality: **5** (religious obligation, regulatory reporting)
-- Code Longevity: **5** (long-lived, evolving Shariah interpretations)
+- Business Logic Complexity: **5** (multiple income types, deduction rules, rate brackets)
+- Domain Criticality: **5** (regulatory compliance, financial reporting)
+- Code Longevity: **5** (long-lived, evolving tax regulations)
 - Team TDD Experience: **3** (moderate training)
 - Refactoring Frequency: **4** (changing business rules)
-- Collaboration Complexity: **4** (developers + Shariah scholars)
+- Collaboration Complexity: **4** (developers + tax experts)
 
 **Total: 26 points** → TDD strongly recommended
 
@@ -961,7 +961,7 @@ TDD and FP are natural allies. See [TDD and Functional Programming](./ex-so-de-t
 
 Tests express domain concepts using ubiquitous language:
 
-- Test names use domain terminology (Zakat, Nisab, Hawl)
+- Test names use domain terminology (Tax, Threshold, FiscalYear)
 - Tests verify domain invariants (aggregate rules)
 - Tests document domain events and behaviors
 

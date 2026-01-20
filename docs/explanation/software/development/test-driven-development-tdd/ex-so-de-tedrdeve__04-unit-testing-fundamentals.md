@@ -25,19 +25,19 @@ A good unit test has five key characteristics, summarized by the **FIRST** princ
 
 ```typescript
 // GOOD: Fast test (< 1ms)
-it("should calculate zakat at 2.5% rate", () => {
+it("should calculate tax at 2.5% rate", () => {
   const wealth = Money.fromGold(100, "grams");
-  const zakat = wealth.multiply(0.025);
-  expect(zakat.equals(Money.fromGold(2.5, "grams"))).toBe(true);
+  const tax = wealth.multiply(0.025);
+  expect(tax.equals(Money.fromGold(2.5, "grams"))).toBe(true);
 });
 
 // BAD: Slow test (> 500ms)
-it("should save zakat calculation to database", async () => {
+it("should save tax calculation to database", async () => {
   const wealth = Money.fromGold(100, "grams");
   await database.connect(); // Slow I/O
-  await database.save({ wealth, zakat: wealth.multiply(0.025) });
-  const result = await database.query("SELECT * FROM zakat");
-  expect(result.rows[0].zakat).toBe(2.5);
+  await database.save({ wealth, tax: wealth.multiply(0.025) });
+  const result = await database.query("SELECT * FROM tax");
+  expect(result.rows[0].tax).toBe(2.5);
 });
 ```
 
@@ -70,18 +70,18 @@ describe("Money", () => {
 });
 
 // BAD: Dependent tests (shared state)
-describe("ZakatCalculator", () => {
-  let calculator = new ZakatCalculator(); // Shared instance
+describe("TaxCalculator", () => {
+  let calculator = new TaxCalculator(); // Shared instance
 
-  it("should set nisab threshold", () => {
-    calculator.setNisab(Money.fromGold(85, "grams"));
-    expect(calculator.nisab.amount).toBe(85);
+  it("should set threshold threshold", () => {
+    calculator.setThreshold(Money.fromGold(85, "grams"));
+    expect(calculator.threshold.amount).toBe(85);
   });
 
-  it("should calculate zakat", () => {
-    // Depends on previous test setting nisab ❌
-    const zakat = calculator.calculate(Money.fromGold(100, "grams"));
-    expect(zakat.amount).toBe(2.5);
+  it("should calculate tax", () => {
+    // Depends on previous test setting threshold ❌
+    const tax = calculator.calculate(Money.fromGold(100, "grams"));
+    expect(tax.amount).toBe(2.5);
   });
 });
 ```
@@ -111,10 +111,10 @@ it("should verify Hawl period completion", () => {
 });
 
 // BAD: Non-repeatable test
-it("should calculate zakat for current year", () => {
+it("should calculate tax for current year", () => {
   const currentYear = new Date().getFullYear(); // Changes every year ❌
-  const nisab = getNisabForYear(currentYear);
-  expect(nisab).toBeDefined();
+  const threshold = getThresholdForYear(currentYear);
+  expect(threshold).toBeDefined();
   // Test will break on January 1st next year
 });
 ```
@@ -133,14 +133,14 @@ it("should calculate zakat for current year", () => {
 
 ```typescript
 // GOOD: Self-validating
-it("should reject negative nisab amount", () => {
-  expect(() => NisabThreshold.fromGold(-85, "grams")).toThrow("Nisab cannot be negative");
+it("should reject negative threshold amount", () => {
+  expect(() => IncomeThreshold.fromGold(-85, "grams")).toThrow("Threshold cannot be negative");
 });
 
 // BAD: Requires manual verification
-it("should reject negative nisab amount", () => {
+it("should reject negative threshold amount", () => {
   try {
-    NisabThreshold.fromGold(-85, "grams");
+    IncomeThreshold.fromGold(-85, "grams");
     console.log("FAIL: Should have thrown error"); // Manual check ❌
   } catch (e) {
     console.log("PASS: Error thrown correctly"); // Manual check ❌
@@ -216,18 +216,18 @@ The Arrange-Act-Assert pattern provides a clear, consistent structure for unit t
 ### AAA Pattern Example
 
 ```typescript
-describe("calculateZakat", () => {
-  it("should return zero when wealth is below nisab", () => {
+describe("calculateTax", () => {
+  it("should return zero when wealth is below threshold", () => {
     // ARRANGE: Set up test data
-    const wealth = Money.fromGold(50, "grams"); // Below nisab
-    const nisab = Money.fromGold(85, "grams");
-    const rate = ZakatRate.standard();
+    const wealth = Money.fromGold(50, "grams"); // Below threshold
+    const threshold = Money.fromGold(85, "grams");
+    const rate = TaxRate.standard();
 
     // ACT: Execute the function
-    const zakatAmount = calculateZakat(wealth, nisab, rate);
+    const taxAmount = calculateTax(wealth, threshold, rate);
 
     // ASSERT: Verify the result
-    expect(zakatAmount.equals(Money.zero("gold"))).toBe(true);
+    expect(taxAmount.equals(Money.zero("gold"))).toBe(true);
   });
 });
 ```
@@ -237,11 +237,11 @@ describe("calculateZakat", () => {
 Use comments to visually separate the three phases when tests are complex:
 
 ```typescript
-it("should calculate profit for Murabaha contract", () => {
+it("should calculate profit for Loan contract", () => {
   // Arrange
   const costPrice = Money.usd(10000);
   const profitRate = Percentage.of(15);
-  const contract = MurabahaContract.create(costPrice, profitRate);
+  const contract = LoanContract.create(costPrice, profitRate);
 
   // Act
   const sellingPrice = contract.calculateSellingPrice();
@@ -258,22 +258,22 @@ it("should calculate profit for Murabaha contract", () => {
 
 ```typescript
 // GOOD: Multiple asserts for one concept (object equality)
-it("should create zakat assessment with correct properties", () => {
-  const assessment = ZakatAssessment.create(Money.fromGold(100, "grams"), Money.fromGold(85, "grams"));
+it("should create tax assessment with correct properties", () => {
+  const assessment = TaxAssessment.create(Money.fromGold(100, "grams"), Money.fromGold(85, "grams"));
 
   expect(assessment.wealth.amount).toBe(100);
-  expect(assessment.nisab.amount).toBe(85);
-  expect(assessment.meetsNisab()).toBe(true);
+  expect(assessment.threshold.amount).toBe(85);
+  expect(assessment.meetsThreshold()).toBe(true);
   // All assertions verify the "assessment creation" concept ✅
 });
 
 // BAD: Multiple unrelated concepts in one test
-it("should handle zakat calculations and storage", () => {
-  const zakat = calculateZakat(wealth, nisab, rate);
-  expect(zakat.amount).toBe(2.5); // Testing calculation
+it("should handle tax calculations and storage", () => {
+  const tax = calculateTax(wealth, threshold, rate);
+  expect(tax.amount).toBe(2.5); // Testing calculation
 
-  await repository.save(zakat);
-  expect(await repository.findById(zakat.id)).toBeDefined();
+  await repository.save(tax);
+  expect(await repository.findById(tax.id)).toBeDefined();
   // Testing storage - should be separate test ❌
 });
 ```
@@ -299,33 +299,33 @@ Pass dependencies as parameters instead of hardcoding:
 
 ```typescript
 // BAD: Hard-coded dependency (not testable)
-class ZakatCalculator {
+class TaxCalculator {
   calculate(wealth: Money): Money {
-    const nisab = database.query("SELECT nisab FROM config"); // Hard-coded DB ❌
-    return wealth.isGreaterThan(nisab) ? wealth.multiply(0.025) : Money.zero();
+    const threshold = database.query("SELECT threshold FROM config"); // Hard-coded DB ❌
+    return wealth.isGreaterThan(threshold) ? wealth.multiply(0.025) : Money.zero();
   }
 }
 
 // GOOD: Dependency injection (testable)
-class ZakatCalculator {
-  constructor(private nisabProvider: NisabProvider) {}
+class TaxCalculator {
+  constructor(private thresholdProvider: ThresholdProvider) {}
 
   calculate(wealth: Money): Money {
-    const nisab = this.nisabProvider.getNisab();
-    return wealth.isGreaterThan(nisab) ? wealth.multiply(0.025) : Money.zero();
+    const threshold = this.thresholdProvider.getThreshold();
+    return wealth.isGreaterThan(threshold) ? wealth.multiply(0.025) : Money.zero();
   }
 }
 
 // Test with mock
-it("should calculate zakat using provided nisab", () => {
-  const mockNisabProvider = {
-    getNisab: () => Money.fromGold(85, "grams"),
+it("should calculate tax using provided threshold", () => {
+  const mockThresholdProvider = {
+    getThreshold: () => Money.fromGold(85, "grams"),
   };
-  const calculator = new ZakatCalculator(mockNisabProvider);
+  const calculator = new TaxCalculator(mockThresholdProvider);
 
-  const zakat = calculator.calculate(Money.fromGold(100, "grams"));
+  const tax = calculator.calculate(Money.fromGold(100, "grams"));
 
-  expect(zakat.equals(Money.fromGold(2.5, "grams"))).toBe(true);
+  expect(tax.equals(Money.fromGold(2.5, "grams"))).toBe(true);
 });
 ```
 
@@ -335,17 +335,17 @@ Pure functions have no dependencies—they're inherently isolated:
 
 ```typescript
 // Pure function - perfect for unit testing
-function calculateZakat(wealth: Money, nisab: Money, rate: ZakatRate): Money {
-  if (wealth.isLessThan(nisab)) {
+function calculateTax(wealth: Money, threshold: Money, rate: TaxRate): Money {
+  if (wealth.isLessThan(threshold)) {
     return Money.zero(wealth.currency);
   }
   return wealth.multiply(rate.percentage);
 }
 
 // Test is trivial - no mocking needed ✅
-it("should calculate zakat", () => {
-  const zakat = calculateZakat(Money.fromGold(100, "grams"), Money.fromGold(85, "grams"), ZakatRate.standard());
-  expect(zakat.equals(Money.fromGold(2.5, "grams"))).toBe(true);
+it("should calculate tax", () => {
+  const tax = calculateTax(Money.fromGold(100, "grams"), Money.fromGold(85, "grams"), TaxRate.standard());
+  expect(tax.equals(Money.fromGold(2.5, "grams"))).toBe(true);
 });
 ```
 
@@ -360,7 +360,7 @@ When dependencies are necessary, use test doubles. See [05. Test Doubles](./ex-s
 - **Fake**: Simplified working implementation (in-memory database)
 
 ```typescript
-// Using stub for HalalCertificationAuthority
+// Using stub for PermittedCertificationAuthority
 it("should certify product when authority approves", async () => {
   const stubAuthority = {
     verify: () => Promise.resolve({ approved: true }),
@@ -381,17 +381,17 @@ Good test names serve as documentation. They should describe **behavior**, not i
 
 ```typescript
 // GOOD: Descriptive behavior
-describe("Nisab Threshold Validation", () => {
-  it("should return true when wealth meets nisab threshold", () => {});
-  it("should return true when wealth exceeds nisab threshold", () => {});
-  it("should return false when wealth is below nisab threshold", () => {});
-  it("should throw error when wealth and nisab have different currencies", () => {});
+describe("Threshold Threshold Validation", () => {
+  it("should return true when wealth meets threshold threshold", () => {});
+  it("should return true when wealth exceeds threshold threshold", () => {});
+  it("should return false when wealth is below threshold threshold", () => {});
+  it("should throw error when wealth and threshold have different currencies", () => {});
 });
 
 // BAD: Implementation-focused or vague
-describe("Nisab Threshold Validation", () => {
+describe("Threshold Threshold Validation", () => {
   it("test1", () => {}); // Meaningless ❌
-  it("nisab works", () => {}); // Vague ❌
+  it("threshold works", () => {}); // Vague ❌
   it("should call isGreaterThan method", () => {}); // Implementation detail ❌
   it("should return boolean", () => {}); // Too generic ❌
 });
@@ -426,13 +426,13 @@ Test names should be readable without code knowledge:
 
 ```typescript
 // GOOD: Business language
-it("should exempt personal residence from zakat calculation", () => {});
+it("should exempt personal residence from tax calculation", () => {});
 it("should apply 2.5% rate to gold and silver assets", () => {});
 it("should verify Hawl period of one lunar year has passed", () => {});
 
 // BAD: Technical jargon
 it("should filter assets where taxable === false", () => {}); // Use "exempt" not "taxable === false"
-it("should apply ZAKAT_RATE constant to metals array", () => {}); // Use "2.5% rate" not "ZAKAT_RATE constant"
+it("should apply TAX_RATE constant to metals array", () => {}); // Use "2.5% rate" not "TAX_RATE constant"
 ```
 
 ## Assertions: Verifying Outcomes
@@ -445,8 +445,8 @@ Assertions are how tests express expected behavior. Good assertions are clear, s
 
 ```typescript
 // Primitive equality
-expect(zakatAmount.amount).toBe(2.5);
-expect(nisabMet).toBe(true);
+expect(taxAmount.amount).toBe(2.5);
+expect(thresholdMet).toBe(true);
 
 // Object equality (deep comparison)
 expect(money).toEqual({ amount: 100, currency: "USD" });
@@ -461,7 +461,7 @@ expect(money.equals(Money.usd(100))).toBe(true);
 expect(result).toBeDefined();
 expect(result).not.toBeNull();
 expect(list.length).toBeGreaterThan(0);
-expect(wealth.amount).toBeGreaterThanOrEqual(nisab.amount);
+expect(wealth.amount).toBeGreaterThanOrEqual(threshold.amount);
 ```
 
 #### 3. Error Assertions
@@ -479,7 +479,7 @@ await expect(service.certifyProduct(invalidProduct)).rejects.toThrow(ValidationE
 ```typescript
 expect(assets).toHaveLength(3);
 expect(assets).toContain(goldAsset);
-expect(zakatableAssets).toEqual(expect.arrayContaining([goldAsset, silverAsset]));
+expect(taxableAssets).toEqual(expect.arrayContaining([goldAsset, silverAsset]));
 ```
 
 ### Custom Matchers for Domain Objects
@@ -499,7 +499,7 @@ expect.extend({
 });
 
 // Usage
-expect(zakatAmount).toEqualMoney(Money.fromGold(2.5, "grams"));
+expect(taxAmount).toEqualMoney(Money.fromGold(2.5, "grams"));
 ```
 
 ## Organizing Test Files
@@ -512,13 +512,13 @@ Match test file structure to source file structure:
 src/
 ├── domain/
 │   ├── money.ts
-│   ├── zakat-calculator.ts
-│   └── nisab-threshold.ts
+│   ├── tax-calculator.ts
+│   └── threshold-threshold.ts
 └── domain/
     ├── __tests__/
     │   ├── money.spec.ts
-    │   ├── zakat-calculator.spec.ts
-    │   └── nisab-threshold.spec.ts
+    │   ├── tax-calculator.spec.ts
+    │   └── threshold-threshold.spec.ts
 ```
 
 Or use co-located pattern:
@@ -528,34 +528,34 @@ src/
 └── domain/
     ├── money.ts
     ├── money.spec.ts
-    ├── zakat-calculator.ts
-    ├── zakat-calculator.spec.ts
-    ├── nisab-threshold.ts
-    └── nisab-threshold.spec.ts
+    ├── tax-calculator.ts
+    ├── tax-calculator.spec.ts
+    ├── threshold-threshold.ts
+    └── threshold-threshold.spec.ts
 ```
 
 ### Test Suite Organization
 
 ```typescript
 // One describe block per class/module
-describe("ZakatCalculator", () => {
+describe("TaxCalculator", () => {
   // Nested describe for each public method/behavior
   describe("calculate", () => {
     // Tests for happy path
-    it("should calculate 2.5% zakat when wealth exceeds nisab", () => {});
+    it("should calculate 2.5% tax when wealth exceeds threshold", () => {});
 
     // Tests for edge cases
-    it("should return zero when wealth equals nisab threshold", () => {});
+    it("should return zero when wealth equals threshold threshold", () => {});
     it("should handle very large wealth amounts", () => {});
 
     // Tests for error conditions
-    it("should throw when wealth and nisab currencies differ", () => {});
+    it("should throw when wealth and threshold currencies differ", () => {});
     it("should throw when rate is negative", () => {});
   });
 
-  describe("setNisab", () => {
-    it("should update nisab threshold", () => {});
-    it("should throw when nisab is negative", () => {});
+  describe("setThreshold", () => {
+    it("should update threshold threshold", () => {});
+    it("should throw when threshold is negative", () => {});
   });
 });
 ```
@@ -568,9 +568,9 @@ Use builder pattern for complex test objects. See [07. Test Data Builders](./ex-
 
 ```typescript
 // Builder for complex domain objects
-class ZakatAssessmentBuilder {
+class TaxAssessmentBuilder {
   private wealth = Money.fromGold(100, "grams");
-  private nisab = Money.fromGold(85, "grams");
+  private threshold = Money.fromGold(85, "grams");
   private date = HijriDate.now();
 
   withWealth(wealth: Money): this {
@@ -578,8 +578,8 @@ class ZakatAssessmentBuilder {
     return this;
   }
 
-  withNisab(nisab: Money): this {
-    this.nisab = nisab;
+  withThreshold(threshold: Money): this {
+    this.threshold = threshold;
     return this;
   }
 
@@ -588,21 +588,21 @@ class ZakatAssessmentBuilder {
     return this;
   }
 
-  build(): ZakatAssessment {
-    return new ZakatAssessment(AssessmentId.generate(), this.wealth, this.nisab, this.date);
+  build(): TaxAssessment {
+    return new TaxAssessment(AssessmentId.generate(), this.wealth, this.threshold, this.date);
   }
 }
 
 // Usage in tests
-it("should calculate zakat for assessment", () => {
-  const assessment = new ZakatAssessmentBuilder()
+it("should calculate tax for assessment", () => {
+  const assessment = new TaxAssessmentBuilder()
     .withWealth(Money.fromGold(200, "grams"))
-    .withNisab(Money.fromGold(85, "grams"))
+    .withThreshold(Money.fromGold(85, "grams"))
     .build();
 
-  const zakat = assessment.calculateZakat(ZakatRate.standard());
+  const tax = assessment.calculateTax(TaxRate.standard());
 
-  expect(zakat.equals(Money.fromGold(5.0, "grams"))).toBe(true);
+  expect(tax.equals(Money.fromGold(5.0, "grams"))).toBe(true);
 });
 ```
 
@@ -620,7 +620,7 @@ function createSilverAsset(grams: number): Asset {
 }
 
 // Usage
-it("should calculate zakat for multiple assets", () => {
+it("should calculate tax for multiple assets", () => {
   const assets = [createGoldAsset(100), createSilverAsset(600)];
   // ...
 });
@@ -628,29 +628,29 @@ it("should calculate zakat for multiple assets", () => {
 
 ## Testing Islamic Finance Domain: Examples
 
-### Example 1: Zakat Calculation for Different Asset Types
+### Example 1: Tax Calculation for Different Asset Types
 
 ```typescript
-describe("Zakat Calculation", () => {
+describe("Tax Calculation", () => {
   describe("Gold and Silver Assets", () => {
-    it("should apply 2.5% rate to gold when above 85g nisab", () => {
+    it("should apply 2.5% rate to gold when above 85g threshold", () => {
       const wealth = Money.fromGold(100, "grams");
-      const nisab = Money.fromGold(85, "grams");
-      const rate = ZakatRate.precious Metals(); // 2.5%
+      const threshold = Money.fromGold(85, "grams");
+      const rate = TaxRate.precious Metals(); // 2.5%
 
-      const zakat = calculateZakat(wealth, nisab, rate);
+      const tax = calculateTax(wealth, threshold, rate);
 
-      expect(zakat.equals(Money.fromGold(2.5, "grams"))).toBe(true);
+      expect(tax.equals(Money.fromGold(2.5, "grams"))).toBe(true);
     });
 
-    it("should apply 2.5% rate to silver when above 595g nisab", () => {
+    it("should apply 2.5% rate to silver when above 595g threshold", () => {
       const wealth = Money.fromSilver(600, "grams");
-      const nisab = Money.fromSilver(595, "grams");
-      const rate = ZakatRate.preciousMetals();
+      const threshold = Money.fromSilver(595, "grams");
+      const rate = TaxRate.preciousMetals();
 
-      const zakat = calculateZakat(wealth, nisab, rate);
+      const tax = calculateTax(wealth, threshold, rate);
 
-      expect(zakat.equals(Money.fromSilver(15.0, "grams"))).toBe(true);
+      expect(tax.equals(Money.fromSilver(15.0, "grams"))).toBe(true);
     });
   });
 
@@ -658,17 +658,17 @@ describe("Zakat Calculation", () => {
     it("should apply 10% rate to irrigated crops", () => {
       const harvest = AgricultureYield.fromTons(50, "wheat", "irrigated");
 
-      const zakat = calculateAgriculturalZakat(harvest);
+      const tax = calculateAgriculturalTax(harvest);
 
-      expect(zakat.tons).toBe(5.0); // 10% of 50 tons
+      expect(tax.tons).toBe(5.0); // 10% of 50 tons
     });
 
     it("should apply 20% rate to rain-fed crops", () => {
       const harvest = AgricultureYield.fromTons(50, "wheat", "rain-fed");
 
-      const zakat = calculateAgriculturalZakat(harvest);
+      const tax = calculateAgriculturalTax(harvest);
 
-      expect(zakat.tons).toBe(10.0); // 20% of 50 tons
+      expect(tax.tons).toBe(10.0); // 20% of 50 tons
     });
   });
 
@@ -680,9 +680,9 @@ describe("Zakat Calculation", () => {
         Asset.investmentProperty(Money.usd(200000)),
       ];
 
-      const zakatableWealth = calculateZakatableWealth(assets);
+      const taxableWealth = calculateTaxableWealth(assets);
 
-      expect(zakatableWealth.equals(Money.usd(250000))).toBe(true);
+      expect(taxableWealth.equals(Money.usd(250000))).toBe(true);
     });
   });
 });
@@ -721,16 +721,16 @@ describe("Hawl Period (Lunar Year)", () => {
 });
 ```
 
-### Example 3: Murabaha Contract Profit Calculation
+### Example 3: Loan Contract Profit Calculation
 
 ```typescript
-describe("Murabaha Contract", () => {
+describe("Loan Contract", () => {
   describe("Profit Calculation", () => {
     it("should calculate selling price as cost plus profit margin", () => {
       const costPrice = Money.usd(10000);
       const profitRate = Percentage.of(15); // 15% profit
 
-      const contract = MurabahaContract.create(costPrice, profitRate);
+      const contract = LoanContract.create(costPrice, profitRate);
 
       expect(contract.sellingPrice.equals(Money.usd(11500))).toBe(true);
       expect(contract.profitAmount.equals(Money.usd(1500))).toBe(true);
@@ -740,28 +740,28 @@ describe("Murabaha Contract", () => {
       const costPrice = Money.usd(10000);
       const profitRate = Percentage.of(0);
 
-      const contract = MurabahaContract.create(costPrice, profitRate);
+      const contract = LoanContract.create(costPrice, profitRate);
 
       expect(contract.sellingPrice.equals(Money.usd(10000))).toBe(true);
       expect(contract.profitAmount.equals(Money.zero("USD"))).toBe(true);
     });
   });
 
-  describe("Shariah Compliance", () => {
+  describe("Compliance Compliance", () => {
     it("should require bank ownership before sale", () => {
       const asset = Asset.create("car", Money.usd(20000));
       const buyer = Customer.create("Ahmad");
 
-      expect(() => MurabahaContract.sellWithoutOwnership(asset, buyer)).toThrow(
-        "Bank must own asset before selling in Murabaha",
+      expect(() => LoanContract.sellWithoutOwnership(asset, buyer)).toThrow(
+        "Bank must own asset before selling in Loan",
       );
     });
 
-    it("should prohibit interest-based pricing (Riba)", () => {
+    it("should prohibit interest-based pricing (Interest)", () => {
       const costPrice = Money.usd(10000);
       const interestRate = InterestRate.of(5); // Interest, not profit
 
-      expect(() => MurabahaContract.create(costPrice, interestRate)).toThrow(RibaProhibitionError);
+      expect(() => LoanContract.create(costPrice, interestRate)).toThrow(InterestProhibitionError);
     });
   });
 });
@@ -775,14 +775,14 @@ describe("Murabaha Contract", () => {
 // BAD: Testing how it works
 it("should call multiply method with 0.025", () => {
   const spy = jest.spyOn(money, "multiply");
-  calculateZakat(money, nisab, rate);
+  calculateTax(money, threshold, rate);
   expect(spy).toHaveBeenCalledWith(0.025); // Testing implementation ❌
 });
 
 // GOOD: Testing what it does
-it("should calculate 2.5% zakat", () => {
-  const zakat = calculateZakat(money, nisab, rate);
-  expect(zakat.equals(Money.fromGold(2.5, "grams"))).toBe(true); // Testing behavior ✅
+it("should calculate 2.5% tax", () => {
+  const tax = calculateTax(money, threshold, rate);
+  expect(tax.equals(Money.fromGold(2.5, "grams"))).toBe(true); // Testing behavior ✅
 });
 ```
 
@@ -790,22 +790,22 @@ it("should calculate 2.5% zakat", () => {
 
 ```typescript
 // BAD: Testing multiple unrelated things
-it("should handle zakat calculation and validation", () => {
-  const result = calculateZakat(wealth, nisab, rate);
+it("should handle tax calculation and validation", () => {
+  const result = calculateTax(wealth, threshold, rate);
   expect(result.amount).toBe(2.5); // Testing calculation
 
-  expect(() => calculateZakat(invalidWealth, nisab, rate)).toThrow(); // Testing validation
+  expect(() => calculateTax(invalidWealth, threshold, rate)).toThrow(); // Testing validation
   // Split into two tests ❌
 });
 
 // GOOD: One behavior per test
-it("should calculate 2.5% zakat when wealth exceeds nisab", () => {
-  const result = calculateZakat(wealth, nisab, rate);
+it("should calculate 2.5% tax when wealth exceeds threshold", () => {
+  const result = calculateTax(wealth, threshold, rate);
   expect(result.amount).toBe(2.5);
 });
 
 it("should throw error for negative wealth", () => {
-  expect(() => calculateZakat(Money.usd(-100), nisab, rate)).toThrow();
+  expect(() => calculateTax(Money.usd(-100), threshold, rate)).toThrow();
 });
 ```
 
@@ -813,18 +813,18 @@ it("should throw error for negative wealth", () => {
 
 ```typescript
 // BAD: Mocking value objects (no side effects, pure data)
-it("should calculate zakat", () => {
+it("should calculate tax", () => {
   const mockMoney = jest.fn().mockReturnValue({ amount: 2.5 });
-  const mockNisab = jest.fn().mockReturnValue({ amount: 85 });
+  const mockThreshold = jest.fn().mockReturnValue({ amount: 85 });
   // Mocking simple value objects adds no value ❌
 });
 
 // GOOD: Use real value objects
-it("should calculate zakat", () => {
+it("should calculate tax", () => {
   const wealth = Money.fromGold(100, "grams"); // Real object
-  const nisab = Money.fromGold(85, "grams"); // Real object
-  const zakat = calculateZakat(wealth, nisab, ZakatRate.standard());
-  expect(zakat.equals(Money.fromGold(2.5, "grams"))).toBe(true);
+  const threshold = Money.fromGold(85, "grams"); // Real object
+  const tax = calculateTax(wealth, threshold, TaxRate.standard());
+  expect(tax.equals(Money.fromGold(2.5, "grams"))).toBe(true);
 });
 ```
 

@@ -81,40 +81,40 @@ export class [EntityName]Builder {
 }
 ```
 
-## Islamic Finance Example: Zakat Assessment Builder
+## Islamic Finance Example: Tax Assessment Builder
 
 ### Domain Entity
 
 ```typescript
-// File: zakat-assessment.ts
+// File: tax-assessment.ts
 import { Money } from "./money";
 
-export class ZakatAssessment {
+export class TaxAssessment {
   constructor(
     public readonly id: string,
     public readonly donorId: string,
     public readonly wealth: Money,
-    public readonly nisab: Money,
-    public readonly zakatAmount: Money,
+    public readonly threshold: Money,
+    public readonly taxAmount: Money,
     public readonly assessmentDate: Date,
-    public readonly status: ZakatStatus,
+    public readonly status: TaxStatus,
     public readonly notes?: string,
   ) {}
 
   isPending(): boolean {
-    return this.status === ZakatStatus.PENDING;
+    return this.status === TaxStatus.PENDING;
   }
 
   isPaid(): boolean {
-    return this.status === ZakatStatus.PAID;
+    return this.status === TaxStatus.PAID;
   }
 
-  isZakatDue(): boolean {
-    return this.wealth.isGreaterThanOrEqual(this.nisab);
+  isTaxDue(): boolean {
+    return this.wealth.isGreaterThanOrEqual(this.threshold);
   }
 }
 
-export enum ZakatStatus {
+export enum TaxStatus {
   PENDING = "PENDING",
   PAID = "PAID",
   CANCELLED = "CANCELLED",
@@ -124,20 +124,20 @@ export enum ZakatStatus {
 ### Complete Test Data Builder
 
 ```typescript
-// File: zakat-assessment.builder.ts
+// File: tax-assessment.builder.ts
 import { v4 as uuidv4 } from "uuid";
-import { ZakatAssessment, ZakatStatus } from "./zakat-assessment";
+import { TaxAssessment, TaxStatus } from "./tax-assessment";
 import { Money } from "./money";
 
-export class ZakatAssessmentBuilder {
+export class TaxAssessmentBuilder {
   // Sensible defaults
   private id: string = uuidv4();
   private donorId: string = "donor-default";
   private wealth: Money = Money.fromAmount(10000, "USD");
-  private nisab: Money = Money.fromAmount(2000, "USD");
-  private zakatAmount: Money = Money.fromAmount(250, "USD"); // 2.5% of 10000
+  private threshold: Money = Money.fromAmount(2000, "USD");
+  private taxAmount: Money = Money.fromAmount(250, "USD"); // 2.5% of 10000
   private assessmentDate: Date = new Date("2024-01-01");
-  private status: ZakatStatus = ZakatStatus.PENDING;
+  private status: TaxStatus = TaxStatus.PENDING;
   private notes?: string;
 
   // Fluent setter methods
@@ -161,23 +161,23 @@ export class ZakatAssessmentBuilder {
     return this;
   }
 
-  withNisab(nisab: Money): this {
-    this.nisab = nisab;
+  withThreshold(threshold: Money): this {
+    this.threshold = threshold;
     return this;
   }
 
-  withNisabAmount(amount: number, currency: string = "USD"): this {
-    this.nisab = Money.fromAmount(amount, currency);
+  withThresholdAmount(amount: number, currency: string = "USD"): this {
+    this.threshold = Money.fromAmount(amount, currency);
     return this;
   }
 
-  withZakatAmount(zakatAmount: Money): this {
-    this.zakatAmount = zakatAmount;
+  withTaxAmount(taxAmount: Money): this {
+    this.taxAmount = taxAmount;
     return this;
   }
 
-  withZakatAmountValue(amount: number, currency: string = "USD"): this {
-    this.zakatAmount = Money.fromAmount(amount, currency);
+  withTaxAmountValue(amount: number, currency: string = "USD"): this {
+    this.taxAmount = Money.fromAmount(amount, currency);
     return this;
   }
 
@@ -186,7 +186,7 @@ export class ZakatAssessmentBuilder {
     return this;
   }
 
-  withStatus(status: ZakatStatus): this {
+  withStatus(status: TaxStatus): this {
     this.status = status;
     return this;
   }
@@ -197,13 +197,13 @@ export class ZakatAssessmentBuilder {
   }
 
   // Build method
-  build(): ZakatAssessment {
-    return new ZakatAssessment(
+  build(): TaxAssessment {
+    return new TaxAssessment(
       this.id,
       this.donorId,
       this.wealth,
-      this.nisab,
-      this.zakatAmount,
+      this.threshold,
+      this.taxAmount,
       this.assessmentDate,
       this.status,
       this.notes,
@@ -211,56 +211,56 @@ export class ZakatAssessmentBuilder {
   }
 
   // Common scenario builders
-  static aValidAssessment(): ZakatAssessmentBuilder {
-    return new ZakatAssessmentBuilder();
+  static aValidAssessment(): TaxAssessmentBuilder {
+    return new TaxAssessmentBuilder();
   }
 
-  static aPendingAssessment(): ZakatAssessmentBuilder {
-    return new ZakatAssessmentBuilder().withStatus(ZakatStatus.PENDING);
+  static aPendingAssessment(): TaxAssessmentBuilder {
+    return new TaxAssessmentBuilder().withStatus(TaxStatus.PENDING);
   }
 
-  static aPaidAssessment(): ZakatAssessmentBuilder {
-    return new ZakatAssessmentBuilder().withStatus(ZakatStatus.PAID).withNotes("Paid via bank transfer");
+  static aPaidAssessment(): TaxAssessmentBuilder {
+    return new TaxAssessmentBuilder().withStatus(TaxStatus.PAID).withNotes("Paid via bank transfer");
   }
 
-  static aCancelledAssessment(): ZakatAssessmentBuilder {
-    return new ZakatAssessmentBuilder().withStatus(ZakatStatus.CANCELLED).withNotes("Cancelled by donor");
+  static aCancelledAssessment(): TaxAssessmentBuilder {
+    return new TaxAssessmentBuilder().withStatus(TaxStatus.CANCELLED).withNotes("Cancelled by donor");
   }
 
-  static anAssessmentAboveNisab(): ZakatAssessmentBuilder {
-    return new ZakatAssessmentBuilder()
+  static anAssessmentAboveThreshold(): TaxAssessmentBuilder {
+    return new TaxAssessmentBuilder()
       .withWealthAmount(10000, "USD")
-      .withNisabAmount(2000, "USD")
-      .withZakatAmountValue(250, "USD");
+      .withThresholdAmount(2000, "USD")
+      .withTaxAmountValue(250, "USD");
   }
 
-  static anAssessmentBelowNisab(): ZakatAssessmentBuilder {
-    return new ZakatAssessmentBuilder()
+  static anAssessmentBelowThreshold(): TaxAssessmentBuilder {
+    return new TaxAssessmentBuilder()
       .withWealthAmount(1000, "USD")
-      .withNisabAmount(2000, "USD")
-      .withZakatAmountValue(0, "USD");
+      .withThresholdAmount(2000, "USD")
+      .withTaxAmountValue(0, "USD");
   }
 
-  static anAssessmentAtNisab(): ZakatAssessmentBuilder {
-    return new ZakatAssessmentBuilder()
+  static anAssessmentAtThreshold(): TaxAssessmentBuilder {
+    return new TaxAssessmentBuilder()
       .withWealthAmount(2000, "USD")
-      .withNisabAmount(2000, "USD")
-      .withZakatAmountValue(50, "USD");
+      .withThresholdAmount(2000, "USD")
+      .withTaxAmountValue(50, "USD");
   }
 
-  static anAssessmentForDonor(donorId: string): ZakatAssessmentBuilder {
-    return new ZakatAssessmentBuilder().withDonorId(donorId);
+  static anAssessmentForDonor(donorId: string): TaxAssessmentBuilder {
+    return new TaxAssessmentBuilder().withDonorId(donorId);
   }
 
-  static anAssessmentInCurrency(currency: string): ZakatAssessmentBuilder {
-    return new ZakatAssessmentBuilder()
+  static anAssessmentInCurrency(currency: string): TaxAssessmentBuilder {
+    return new TaxAssessmentBuilder()
       .withWealthAmount(10000, currency)
-      .withNisabAmount(2000, currency)
-      .withZakatAmountValue(250, currency);
+      .withThresholdAmount(2000, currency)
+      .withTaxAmountValue(250, currency);
   }
 
-  static anAssessmentOnDate(date: Date): ZakatAssessmentBuilder {
-    return new ZakatAssessmentBuilder().withAssessmentDate(date);
+  static anAssessmentOnDate(date: Date): TaxAssessmentBuilder {
+    return new TaxAssessmentBuilder().withAssessmentDate(date);
   }
 }
 ```
@@ -268,15 +268,15 @@ export class ZakatAssessmentBuilder {
 ### Using the Builder in Tests
 
 ```typescript
-// File: zakat-assessment.spec.ts
-import { ZakatAssessmentBuilder } from "./zakat-assessment.builder";
-import { ZakatStatus } from "./zakat-assessment";
+// File: tax-assessment.spec.ts
+import { TaxAssessmentBuilder } from "./tax-assessment.builder";
+import { TaxStatus } from "./tax-assessment";
 
-describe("ZakatAssessment", () => {
+describe("TaxAssessment", () => {
   describe("isPending", () => {
     it("should return true for pending assessment", () => {
       // Arrange - using builder
-      const assessment = ZakatAssessmentBuilder.aPendingAssessment().build();
+      const assessment = TaxAssessmentBuilder.aPendingAssessment().build();
 
       // Act
       const result = assessment.isPending();
@@ -287,7 +287,7 @@ describe("ZakatAssessment", () => {
 
     it("should return false for paid assessment", () => {
       // Arrange
-      const assessment = ZakatAssessmentBuilder.aPaidAssessment().build();
+      const assessment = TaxAssessmentBuilder.aPaidAssessment().build();
 
       // Act
       const result = assessment.isPending();
@@ -297,35 +297,35 @@ describe("ZakatAssessment", () => {
     });
   });
 
-  describe("isZakatDue", () => {
-    it("should return true when wealth is above nisab", () => {
+  describe("isTaxDue", () => {
+    it("should return true when wealth is above threshold", () => {
       // Arrange
-      const assessment = ZakatAssessmentBuilder.anAssessmentAboveNisab().build();
+      const assessment = TaxAssessmentBuilder.anAssessmentAboveThreshold().build();
 
       // Act
-      const result = assessment.isZakatDue();
+      const result = assessment.isTaxDue();
 
       // Assert
       expect(result).toBe(true);
     });
 
-    it("should return false when wealth is below nisab", () => {
+    it("should return false when wealth is below threshold", () => {
       // Arrange
-      const assessment = ZakatAssessmentBuilder.anAssessmentBelowNisab().build();
+      const assessment = TaxAssessmentBuilder.anAssessmentBelowThreshold().build();
 
       // Act
-      const result = assessment.isZakatDue();
+      const result = assessment.isTaxDue();
 
       // Assert
       expect(result).toBe(false);
     });
 
-    it("should return true when wealth equals nisab", () => {
+    it("should return true when wealth equals threshold", () => {
       // Arrange
-      const assessment = ZakatAssessmentBuilder.anAssessmentAtNisab().build();
+      const assessment = TaxAssessmentBuilder.anAssessmentAtThreshold().build();
 
       // Act
-      const result = assessment.isZakatDue();
+      const result = assessment.isTaxDue();
 
       // Assert
       expect(result).toBe(true);
@@ -335,30 +335,30 @@ describe("ZakatAssessment", () => {
   describe("with custom values", () => {
     it("should handle custom donor and status", () => {
       // Arrange - fluent customization
-      const assessment = ZakatAssessmentBuilder.aValidAssessment()
+      const assessment = TaxAssessmentBuilder.aValidAssessment()
         .withDonorId("donor-123")
-        .withStatus(ZakatStatus.PAID)
+        .withStatus(TaxStatus.PAID)
         .withNotes("Paid in full")
         .build();
 
       // Assert
       expect(assessment.donorId).toBe("donor-123");
-      expect(assessment.status).toBe(ZakatStatus.PAID);
+      expect(assessment.status).toBe(TaxStatus.PAID);
       expect(assessment.notes).toBe("Paid in full");
     });
 
     it("should handle custom amounts in different currency", () => {
       // Arrange
-      const assessment = ZakatAssessmentBuilder.anAssessmentInCurrency("EUR")
+      const assessment = TaxAssessmentBuilder.anAssessmentInCurrency("EUR")
         .withWealthAmount(8000, "EUR")
-        .withNisabAmount(1800, "EUR")
-        .withZakatAmountValue(200, "EUR")
+        .withThresholdAmount(1800, "EUR")
+        .withTaxAmountValue(200, "EUR")
         .build();
 
       // Assert
       expect(assessment.wealth.currency).toBe("EUR");
       expect(assessment.wealth.amount).toBe(8000);
-      expect(assessment.zakatAmount.amount).toBe(200);
+      expect(assessment.taxAmount.amount).toBe(200);
     });
   });
 });
@@ -405,48 +405,48 @@ export class MoneyBuilder {
     return new MoneyBuilder().withAmount(0).withCurrency(currency).build();
   }
 
-  static nisabUsd(): Money {
+  static thresholdUsd(): Money {
     return new MoneyBuilder().withAmount(2000).withCurrency("USD").build();
   }
 
-  static wealthAboveNisabUsd(): Money {
+  static wealthAboveThresholdUsd(): Money {
     return new MoneyBuilder().withAmount(10000).withCurrency("USD").build();
   }
 
-  static wealthBelowNisabUsd(): Money {
+  static wealthBelowThresholdUsd(): Money {
     return new MoneyBuilder().withAmount(1000).withCurrency("USD").build();
   }
 }
 
 // Usage in tests
-describe("ZakatCalculator", () => {
-  it("should calculate zakat for wealth above nisab", () => {
-    const wealth = MoneyBuilder.wealthAboveNisabUsd();
-    const nisab = MoneyBuilder.nisabUsd();
+describe("TaxCalculator", () => {
+  it("should calculate tax for wealth above threshold", () => {
+    const wealth = MoneyBuilder.wealthAboveThresholdUsd();
+    const threshold = MoneyBuilder.thresholdUsd();
 
-    const zakat = calculator.calculateZakat(wealth, nisab);
+    const tax = calculator.calculateTax(wealth, threshold);
 
-    expect(zakat.amount).toBe(250);
+    expect(tax.amount).toBe(250);
   });
 
   it("should handle EUR currency", () => {
     const wealth = MoneyBuilder.eur(8000);
-    const nisab = MoneyBuilder.eur(1800);
+    const threshold = MoneyBuilder.eur(1800);
 
-    const zakat = calculator.calculateZakat(wealth, nisab);
+    const tax = calculator.calculateTax(wealth, threshold);
 
-    expect(zakat.currency).toBe("EUR");
+    expect(tax.currency).toBe("EUR");
   });
 });
 ```
 
-## Complex Example: Murabaha Contract Builder
+## Complex Example: Loan Contract Builder
 
 ```typescript
-// File: murabaha-contract.ts
+// File: loan-contract.ts
 import { Money } from "./money";
 
-export class MurabahaContract {
+export class LoanContract {
   constructor(
     public readonly id: string,
     public readonly customerId: string,
@@ -480,12 +480,12 @@ export enum ContractStatus {
 ```
 
 ```typescript
-// File: murabaha-contract.builder.ts
+// File: loan-contract.builder.ts
 import { v4 as uuidv4 } from "uuid";
-import { MurabahaContract, ContractStatus } from "./murabaha-contract";
+import { LoanContract, ContractStatus } from "./loan-contract";
 import { Money } from "./money";
 
-export class MurabahaContractBuilder {
+export class LoanContractBuilder {
   private id: string = uuidv4();
   private customerId: string = "customer-001";
   private assetDescription: string = "Honda Civic 2024";
@@ -568,8 +568,8 @@ export class MurabahaContractBuilder {
     return this;
   }
 
-  build(): MurabahaContract {
-    return new MurabahaContract(
+  build(): LoanContract {
+    return new LoanContract(
       this.id,
       this.customerId,
       this.assetDescription,
@@ -586,32 +586,32 @@ export class MurabahaContractBuilder {
   }
 
   // Common scenarios
-  static aValidContract(): MurabahaContractBuilder {
-    return new MurabahaContractBuilder();
+  static aValidContract(): LoanContractBuilder {
+    return new LoanContractBuilder();
   }
 
-  static anActiveContract(): MurabahaContractBuilder {
-    return new MurabahaContractBuilder().withStatus(ContractStatus.ACTIVE);
+  static anActiveContract(): LoanContractBuilder {
+    return new LoanContractBuilder().withStatus(ContractStatus.ACTIVE);
   }
 
-  static aCompletedContract(): MurabahaContractBuilder {
-    return new MurabahaContractBuilder().withStatus(ContractStatus.COMPLETED);
+  static aCompletedContract(): LoanContractBuilder {
+    return new LoanContractBuilder().withStatus(ContractStatus.COMPLETED);
   }
 
-  static aDefaultedContract(): MurabahaContractBuilder {
-    return new MurabahaContractBuilder().withStatus(ContractStatus.DEFAULTED);
+  static aDefaultedContract(): LoanContractBuilder {
+    return new LoanContractBuilder().withStatus(ContractStatus.DEFAULTED);
   }
 
-  static aCarFinancingContract(): MurabahaContractBuilder {
-    return new MurabahaContractBuilder()
+  static aCarFinancingContract(): LoanContractBuilder {
+    return new LoanContractBuilder()
       .withAssetDescription("Honda Civic 2024")
       .withCostPrice(Money.fromAmount(25000, "USD"))
       .withProfitMargin(0.1)
       .withInstallments(12);
   }
 
-  static aPropertyFinancingContract(): MurabahaContractBuilder {
-    return new MurabahaContractBuilder()
+  static aPropertyFinancingContract(): LoanContractBuilder {
+    return new LoanContractBuilder()
       .withAssetDescription("Residential Property - 123 Main St")
       .withCostPrice(Money.fromAmount(300000, "USD"))
       .withProfitMargin(0.15)
@@ -619,12 +619,12 @@ export class MurabahaContractBuilder {
       .withCollateral("Property title deed");
   }
 
-  static aShortTermContract(): MurabahaContractBuilder {
-    return new MurabahaContractBuilder().withInstallments(6).withEndDate(new Date("2024-06-30"));
+  static aShortTermContract(): LoanContractBuilder {
+    return new LoanContractBuilder().withInstallments(6).withEndDate(new Date("2024-06-30"));
   }
 
-  static aLongTermContract(): MurabahaContractBuilder {
-    return new MurabahaContractBuilder().withInstallments(60).withEndDate(new Date("2028-12-31"));
+  static aLongTermContract(): LoanContractBuilder {
+    return new LoanContractBuilder().withInstallments(60).withEndDate(new Date("2028-12-31"));
   }
 }
 ```
@@ -635,20 +635,20 @@ export class MurabahaContractBuilder {
 
 ```typescript
 // ✅ GOOD - Defaults make simple tests easy
-export class ZakatAssessmentBuilder {
+export class TaxAssessmentBuilder {
   private wealth: Money = Money.fromAmount(10000, "USD");
-  private nisab: Money = Money.fromAmount(2000, "USD");
-  private status: ZakatStatus = ZakatStatus.PENDING;
+  private threshold: Money = Money.fromAmount(2000, "USD");
+  private status: TaxStatus = TaxStatus.PENDING;
   // ...
 }
 
 // Usage - minimal customization needed
-const assessment = new ZakatAssessmentBuilder().build();
+const assessment = new TaxAssessmentBuilder().build();
 
 // ❌ BAD - No defaults, all values required
-export class ZakatAssessmentBuilder {
+export class TaxAssessmentBuilder {
   private wealth?: Money;
-  private nisab?: Money;
+  private threshold?: Money;
   // Must set everything
 }
 ```
@@ -657,17 +657,17 @@ export class ZakatAssessmentBuilder {
 
 ```typescript
 // ✅ GOOD - Fluent chaining
-const assessment = ZakatAssessmentBuilder.aValidAssessment()
+const assessment = TaxAssessmentBuilder.aValidAssessment()
   .withDonorId("donor-123")
   .withWealthAmount(15000, "USD")
-  .withStatus(ZakatStatus.PAID)
+  .withStatus(TaxStatus.PAID)
   .build();
 
 // ❌ BAD - Verbose setter calls
-const builder = new ZakatAssessmentBuilder();
+const builder = new TaxAssessmentBuilder();
 builder.setDonorId("donor-123");
 builder.setWealthAmount(15000, "USD");
-builder.setStatus(ZakatStatus.PAID);
+builder.setStatus(TaxStatus.PAID);
 const assessment = builder.build();
 ```
 
@@ -675,12 +675,12 @@ const assessment = builder.build();
 
 ```typescript
 // ✅ GOOD - Express intent clearly
-const pending = ZakatAssessmentBuilder.aPendingAssessment().build();
-const aboveNisab = ZakatAssessmentBuilder.anAssessmentAboveNisab().build();
-const inEur = ZakatAssessmentBuilder.anAssessmentInCurrency("EUR").build();
+const pending = TaxAssessmentBuilder.aPendingAssessment().build();
+const aboveThreshold = TaxAssessmentBuilder.anAssessmentAboveThreshold().build();
+const inEur = TaxAssessmentBuilder.anAssessmentInCurrency("EUR").build();
 
 // ❌ BAD - Have to know implementation details
-const pending = new ZakatAssessmentBuilder().withStatus(ZakatStatus.PENDING).build();
+const pending = new TaxAssessmentBuilder().withStatus(TaxStatus.PENDING).build();
 ```
 
 ### 4. Calculate Dependent Values Automatically
@@ -706,16 +706,16 @@ withProfitMargin(margin: number): this {
 
 ```typescript
 // ✅ GOOD - Compose builders
-export class ZakatAssessmentBuilder {
-  private wealth: Money = MoneyBuilder.wealthAboveNisabUsd();
-  private nisab: Money = MoneyBuilder.nisabUsd();
+export class TaxAssessmentBuilder {
+  private wealth: Money = MoneyBuilder.wealthAboveThresholdUsd();
+  private threshold: Money = MoneyBuilder.thresholdUsd();
   // ...
 }
 
 // ❌ BAD - Duplicate default creation logic
-export class ZakatAssessmentBuilder {
+export class TaxAssessmentBuilder {
   private wealth: Money = Money.fromAmount(10000, "USD");
-  private nisab: Money = Money.fromAmount(2000, "USD");
+  private threshold: Money = Money.fromAmount(2000, "USD");
   // ...
 }
 ```
@@ -724,17 +724,17 @@ export class ZakatAssessmentBuilder {
 
 ```typescript
 // ✅ GOOD - Immutable builder (advanced)
-export class ZakatAssessmentBuilder {
-  private constructor(private readonly data: ZakatData) {}
+export class TaxAssessmentBuilder {
+  private constructor(private readonly data: TaxData) {}
 
-  static create(): ZakatAssessmentBuilder {
-    return new ZakatAssessmentBuilder({
+  static create(): TaxAssessmentBuilder {
+    return new TaxAssessmentBuilder({
       /* defaults */
     });
   }
 
-  withDonorId(donorId: string): ZakatAssessmentBuilder {
-    return new ZakatAssessmentBuilder({
+  withDonorId(donorId: string): TaxAssessmentBuilder {
+    return new TaxAssessmentBuilder({
       ...this.data,
       donorId,
     });
@@ -742,9 +742,9 @@ export class ZakatAssessmentBuilder {
 }
 
 // Can reuse builders safely
-const base = ZakatAssessmentBuilder.create().withDonorId("donor-001");
-const variant1 = base.withStatus(ZakatStatus.PAID); // Doesn't affect base
-const variant2 = base.withStatus(ZakatStatus.PENDING);
+const base = TaxAssessmentBuilder.create().withDonorId("donor-001");
+const variant1 = base.withStatus(TaxStatus.PAID); // Doesn't affect base
+const variant2 = base.withStatus(TaxStatus.PENDING);
 ```
 
 ## Checklist for Test Data Builders

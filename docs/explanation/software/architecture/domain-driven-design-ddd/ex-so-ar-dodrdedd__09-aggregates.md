@@ -256,40 +256,40 @@ class InventoryEventHandler {
 }
 ```
 
-## Aggregate Example: Zakat Assessment
+## Aggregate Example: Tax Assessment
 
-Let's design a comprehensive aggregate for Islamic zakat calculation:
+Let's design a comprehensive aggregate for Islamic tax calculation:
 
 ### Business Requirements
 
 **Invariants** (must always be true):
 
 - Assessment can only be finalized if hawl (lunar year) is complete
-- Total wealth must meet or exceed nisab threshold to owe zakat
-- All zakatable assets must have valid declarations
-- Zakat amount equals wealth multiplied by correct rate
+- Total wealth must meet or exceed threshold threshold to owe tax
+- All taxable assets must have valid declarations
+- Tax amount equals wealth multiplied by correct rate
 - Once finalized, assessment is immutable
 
 **Entities**:
 
-- `ZakatAssessment`: Aggregate root
+- `TaxAssessment`: Aggregate root
 - `WealthDeclaration`: Entity for each asset type declared
 
 **Value Objects**:
 
-- `AssessmentId`, `NisabAmount`, `ZakatRate`, `Money`, `HijriDate`
+- `AssessmentId`, `ThresholdAmount`, `TaxRate`, `Money`, `HijriDate`
 
 ### Design
 
 ```typescript
 // Aggregate Root
-class ZakatAssessment {
+class TaxAssessment {
   private readonly assessmentId: AssessmentId;
   private readonly wealthHolderId: WealthHolderId;
   private readonly assessmentPeriod: LunarYearPeriod;
   private wealthDeclarations: WealthDeclaration[] = [];
   private status: AssessmentStatus;
-  private zakatAmount: Money | null = null;
+  private taxAmount: Money | null = null;
   private finalizedAt: HijriDate | null = null;
 
   private constructor(assessmentId: AssessmentId, wealthHolderId: WealthHolderId, assessmentPeriod: LunarYearPeriod) {
@@ -300,10 +300,10 @@ class ZakatAssessment {
   }
 
   // Factory method
-  static create(wealthHolderId: WealthHolderId, startDate: HijriDate): ZakatAssessment {
+  static create(wealthHolderId: WealthHolderId, startDate: HijriDate): TaxAssessment {
     const assessmentId = AssessmentId.generate();
     const period = LunarYearPeriod.fromStartDate(startDate);
-    return new ZakatAssessment(assessmentId, wealthHolderId, period);
+    return new TaxAssessment(assessmentId, wealthHolderId, period);
   }
 
   // Command: Add wealth declaration
@@ -324,7 +324,7 @@ class ZakatAssessment {
   }
 
   // Command: Finalize assessment
-  finalize(nisabThreshold: NisabAmount, zakatRate: ZakatRate): void {
+  finalize(thresholdThreshold: ThresholdAmount, taxRate: TaxRate): void {
     // Enforce invariant: hawl must be complete
     if (!this.assessmentPeriod.isComplete()) {
       throw new Error("Cannot finalize: hawl not yet complete");
@@ -338,22 +338,20 @@ class ZakatAssessment {
     // Calculate total wealth
     const totalWealth = this.calculateTotalWealth();
 
-    // Enforce invariant: must meet nisab threshold
-    if (totalWealth.isLessThan(nisabThreshold.toMoney())) {
-      this.zakatAmount = Money.zero();
-      this.status = AssessmentStatus.ExemptBelowNisab;
+    // Enforce invariant: must meet threshold threshold
+    if (totalWealth.isLessThan(thresholdThreshold.toMoney())) {
+      this.taxAmount = Money.zero();
+      this.status = AssessmentStatus.ExemptBelowThreshold;
     } else {
-      // Calculate zakat owed
-      this.zakatAmount = totalWealth.multiply(zakatRate.percentage);
+      // Calculate tax owed
+      this.taxAmount = totalWealth.multiply(taxRate.percentage);
       this.status = AssessmentStatus.Finalized;
     }
 
     this.finalizedAt = HijriDate.now();
 
     // Publish domain event
-    this.addDomainEvent(
-      new ZakatCalculated(this.assessmentId, this.wealthHolderId, this.zakatAmount, this.finalizedAt),
-    );
+    this.addDomainEvent(new TaxCalculated(this.assessmentId, this.wealthHolderId, this.taxAmount, this.finalizedAt));
   }
 
   // Query: Calculate total declared wealth
@@ -361,9 +359,9 @@ class ZakatAssessment {
     return this.wealthDeclarations.reduce((total, declaration) => total.add(declaration.amount), Money.zero());
   }
 
-  // Query: Check if meets nisab
-  meetsNisab(nisabThreshold: NisabAmount): boolean {
-    return this.calculateTotalWealth().isGreaterThanOrEqual(nisabThreshold.toMoney());
+  // Query: Check if meets threshold
+  meetsThreshold(thresholdThreshold: ThresholdAmount): boolean {
+    return this.calculateTotalWealth().isGreaterThanOrEqual(thresholdThreshold.toMoney());
   }
 
   // Getters (read-only access)
@@ -430,15 +428,15 @@ class LunarYearPeriod {
 enum AssessmentStatus {
   Draft = "DRAFT",
   Finalized = "FINALIZED",
-  ExemptBelowNisab = "EXEMPT_BELOW_NISAB",
+  ExemptBelowThreshold = "EXEMPT_BELOW_THRESHOLD",
 }
 
 // Domain Event
-class ZakatCalculated {
+class TaxCalculated {
   constructor(
     readonly assessmentId: AssessmentId,
     readonly wealthHolderId: WealthHolderId,
-    readonly zakatAmount: Money,
+    readonly taxAmount: Money,
     readonly calculatedAt: HijriDate,
   ) {}
 }
@@ -448,8 +446,8 @@ class ZakatCalculated {
 
 **Aggregate Boundary**:
 
-- `ZakatAssessment` (root) + `WealthDeclaration` (entities) + value objects
-- Size: Small, focused on zakat calculation consistency
+- `TaxAssessment` (root) + `WealthDeclaration` (entities) + value objects
+- Size: Small, focused on tax calculation consistency
 
 **Invariants Protected**:
 
@@ -457,7 +455,7 @@ class ZakatCalculated {
 2. Declarations within assessment period ✓
 3. Hawl complete before finalization ✓
 4. Must have declarations before finalization ✓
-5. Zakat calculation correctness ✓
+5. Tax calculation correctness ✓
 
 **External References by ID**:
 
@@ -469,7 +467,7 @@ class ZakatCalculated {
 
 **Eventual Consistency**:
 
-- Integration with billing/payment systems via `ZakatCalculated` event
+- Integration with billing/payment systems via `TaxCalculated` event
 
 ## Functional Programming Perspective
 
@@ -477,22 +475,22 @@ Aggregates work beautifully in FP with immutable data structures and pure functi
 
 ```typescript
 // FP-style aggregate with immutable updates
-type ZakatAssessment = {
+type TaxAssessment = {
   readonly assessmentId: AssessmentId;
   readonly wealthHolderId: WealthHolderId;
   readonly assessmentPeriod: LunarYearPeriod;
   readonly declarations: ReadonlyArray<WealthDeclaration>;
   readonly status: AssessmentStatus;
-  readonly zakatAmount: Money | null;
+  readonly taxAmount: Money | null;
 };
 
 // Pure function to add declaration
 function declareWealth(
-  assessment: ZakatAssessment,
+  assessment: TaxAssessment,
   wealthType: WealthType,
   amount: Money,
   acquiredDate: HijriDate,
-): Result<ZakatAssessment, DomainError> {
+): Result<TaxAssessment, DomainError> {
   // Validate invariants
   if (assessment.status !== AssessmentStatus.Draft) {
     return Err(new Error("Cannot add declarations to finalized assessment"));
@@ -518,29 +516,29 @@ function declareWealth(
 
 // Pure function to finalize
 function finalize(
-  assessment: ZakatAssessment,
-  nisabThreshold: NisabAmount,
-  zakatRate: ZakatRate,
-): Result<[ZakatAssessment, ZakatCalculated], DomainError> {
+  assessment: TaxAssessment,
+  thresholdThreshold: ThresholdAmount,
+  taxRate: TaxRate,
+): Result<[TaxAssessment, TaxCalculated], DomainError> {
   // Validate invariants
   if (!assessment.assessmentPeriod.isComplete()) {
     return Err(new Error("Hawl not complete"));
   }
 
   const totalWealth = calculateTotalWealth(assessment);
-  const zakatAmount = totalWealth.isGreaterThanOrEqual(nisabThreshold.toMoney())
-    ? totalWealth.multiply(zakatRate.percentage)
+  const taxAmount = totalWealth.isGreaterThanOrEqual(thresholdThreshold.toMoney())
+    ? totalWealth.multiply(taxRate.percentage)
     : Money.zero();
 
-  const newStatus = zakatAmount.isZero() ? AssessmentStatus.ExemptBelowNisab : AssessmentStatus.Finalized;
+  const newStatus = taxAmount.isZero() ? AssessmentStatus.ExemptBelowThreshold : AssessmentStatus.Finalized;
 
   const updatedAssessment = {
     ...assessment,
-    zakatAmount,
+    taxAmount,
     status: newStatus,
   };
 
-  const event = new ZakatCalculated(assessment.assessmentId, assessment.wealthHolderId, zakatAmount, HijriDate.now());
+  const event = new TaxCalculated(assessment.assessmentId, assessment.wealthHolderId, taxAmount, HijriDate.now());
 
   return Ok([updatedAssessment, event]);
 }
@@ -562,10 +560,10 @@ See [DDD and Functional Programming](./ex-so-ar-dodrdedd__14-ddd-and-functional-
 
 **When**: Entity has no closely related entities, only value objects.
 
-**Example**: Halal Certification
+**Example**: Permitted Certification
 
 ```typescript
-class HalalCertification {
+class PermittedCertification {
   // Aggregate root (single entity)
   private readonly certificationId: CertificationId;
   private readonly productId: ProductId; // External reference
@@ -626,10 +624,10 @@ class OrderLine {
 
 **When**: Aggregate has distinct states with different allowed operations.
 
-**Example**: Murabaha Contract (Islamic Financing)
+**Example**: Loan Contract (Islamic Financing)
 
 ```typescript
-class MurabahaContract {
+class LoanContract {
   // Aggregate root with lifecycle
   private status: ContractStatus;
 
@@ -647,7 +645,7 @@ class MurabahaContract {
     if (this.status !== ContractStatus.Submitted) {
       throw new Error("Can only approve submitted contracts");
     }
-    this.validateRibaCompliance();
+    this.validateInterestCompliance();
     this.status = ContractStatus.Approved;
     this.addDomainEvent(new ContractApproved(this.contractId));
   }
@@ -706,10 +704,10 @@ See [Decision Trees and Best Practices](./ex-so-ar-dodrdedd__16-decision-trees-a
 ### Repository Interface
 
 ```typescript
-interface ZakatAssessmentRepository {
-  findById(id: AssessmentId): ZakatAssessment | null;
-  save(assessment: ZakatAssessment): void;
-  findByWealthHolder(holderId: WealthHolderId): ZakatAssessment[];
+interface TaxAssessmentRepository {
+  findById(id: AssessmentId): TaxAssessment | null;
+  save(assessment: TaxAssessment): void;
+  findByWealthHolder(holderId: WealthHolderId): TaxAssessment[];
 }
 ```
 
@@ -724,17 +722,17 @@ interface ZakatAssessmentRepository {
 **Option 1: Single Table** (for small aggregates)
 
 ```sql
-CREATE TABLE zakat_assessments (
+CREATE TABLE tax_assessments (
   assessment_id UUID PRIMARY KEY,
   wealth_holder_id UUID NOT NULL,
   status VARCHAR(50) NOT NULL,
-  zakat_amount DECIMAL(19,4),
+  tax_amount DECIMAL(19,4),
   -- Other root fields
 );
 
 CREATE TABLE wealth_declarations (
   declaration_id UUID PRIMARY KEY,
-  assessment_id UUID NOT NULL REFERENCES zakat_assessments(assessment_id),
+  assessment_id UUID NOT NULL REFERENCES tax_assessments(assessment_id),
   wealth_type VARCHAR(50) NOT NULL,
   amount DECIMAL(19,4) NOT NULL,
   acquired_date VARCHAR(10) NOT NULL,
@@ -769,33 +767,33 @@ Store all domain events, reconstruct aggregate by replaying events.
 Aggregates are highly testable due to clear boundaries:
 
 ```typescript
-describe("ZakatAssessment Aggregate", () => {
+describe("TaxAssessment Aggregate", () => {
   it("should enforce hawl completion before finalization", () => {
     // Arrange
     const startDate = HijriDate.fromString("1444-01-01");
-    const assessment = ZakatAssessment.create(wealthHolderId, startDate);
+    const assessment = TaxAssessment.create(wealthHolderId, startDate);
     assessment.declareWealth(WealthType.Cash, Money.usd(10000), startDate);
 
     // Act & Assert
     expect(() => {
-      assessment.finalize(NisabAmount.goldStandard(), ZakatRate.standard());
+      assessment.finalize(ThresholdAmount.goldStandard(), TaxRate.standard());
     }).toThrow("hawl not yet complete");
   });
 
-  it("should calculate zakat correctly when above nisab", () => {
+  it("should calculate tax correctly when above threshold", () => {
     // Arrange
     const pastDate = HijriDate.fromString("1443-01-01");
-    const assessment = ZakatAssessment.create(wealthHolderId, pastDate);
+    const assessment = TaxAssessment.create(wealthHolderId, pastDate);
     assessment.declareWealth(WealthType.Cash, Money.usd(10000), pastDate);
 
     // Act
     assessment.finalize(
-      NisabAmount.fromMoney(Money.usd(5000)),
-      ZakatRate.standard(), // 2.5%
+      ThresholdAmount.fromMoney(Money.usd(5000)),
+      TaxRate.standard(), // 2.5%
     );
 
     // Assert
-    expect(assessment.zakatAmount.value).toBe(250); // 10000 * 0.025
+    expect(assessment.taxAmount.value).toBe(250); // 10000 * 0.025
     expect(assessment.status).toBe(AssessmentStatus.Finalized);
   });
 });

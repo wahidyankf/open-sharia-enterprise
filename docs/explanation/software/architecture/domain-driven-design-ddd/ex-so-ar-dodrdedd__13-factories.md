@@ -31,11 +31,11 @@ Static methods on the domain object itself handle simple creation scenarios.
 - No external dependencies needed
 - Natural fit for the domain object's interface
 
-**Example - Zakat Assessment Creation**:
+**Example - Tax Assessment Creation**:
 
 ```typescript
 // TypeScript - OOP Factory Method
-class ZakatAssessment {
+class TaxAssessment {
   private constructor(
     private readonly id: AssessmentId,
     private readonly taxpayer: TaxpayerId,
@@ -46,7 +46,7 @@ class ZakatAssessment {
     // Private constructor prevents direct instantiation
   }
 
-  static create(taxpayer: TaxpayerId, hawlStart: Date, assets: Asset[]): Result<ZakatAssessment, ValidationError> {
+  static create(taxpayer: TaxpayerId, hawlStart: Date, assets: Asset[]): Result<TaxAssessment, ValidationError> {
     // Validate hawl start date
     if (hawlStart > new Date()) {
       return Result.failure(new ValidationError("Hawl start date cannot be in the future"));
@@ -59,7 +59,7 @@ class ZakatAssessment {
 
     // Create with valid initial state
     return Result.success(
-      new ZakatAssessment(AssessmentId.generate(), taxpayer, hawlStart, assets, AssessmentStatus.Draft),
+      new TaxAssessment(AssessmentId.generate(), taxpayer, hawlStart, assets, AssessmentStatus.Draft),
     );
   }
 
@@ -69,15 +69,15 @@ class ZakatAssessment {
     hawlStart: Date,
     assets: Asset[],
     status: AssessmentStatus,
-  ): ZakatAssessment {
+  ): TaxAssessment {
     // Reconstitute from persistence without validation
     // Assumes persisted data was already validated
-    return new ZakatAssessment(id, taxpayer, hawlStart, assets, status);
+    return new TaxAssessment(id, taxpayer, hawlStart, assets, status);
   }
 }
 
 // Usage
-const result = ZakatAssessment.create(taxpayerId, new Date("2024-01-01"), [asset1, asset2]);
+const result = TaxAssessment.create(taxpayerId, new Date("2024-01-01"), [asset1, asset2]);
 
 if (result.isSuccess()) {
   const assessment = result.value;
@@ -89,7 +89,7 @@ if (result.isSuccess()) {
 
 ```typescript
 // TypeScript - FP Factory Function
-type ZakatAssessment = {
+type TaxAssessment = {
   readonly id: AssessmentId;
   readonly taxpayer: TaxpayerId;
   readonly hawlStart: Date;
@@ -97,13 +97,13 @@ type ZakatAssessment = {
   readonly status: AssessmentStatus;
 };
 
-type CreateZakatAssessment = (
+type CreateTaxAssessment = (
   taxpayer: TaxpayerId,
   hawlStart: Date,
   assets: ReadonlyArray<Asset>,
-) => Result<ZakatAssessment, ValidationError>;
+) => Result<TaxAssessment, ValidationError>;
 
-const createZakatAssessment: CreateZakatAssessment = (taxpayer, hawlStart, assets) => {
+const createTaxAssessment: CreateTaxAssessment = (taxpayer, hawlStart, assets) => {
   // Validation pipeline
   return pipe(
     validateHawlStartDate(hawlStart),
@@ -131,15 +131,15 @@ const validateAssets = (assets: ReadonlyArray<Asset>): Result<void, ValidationEr
 };
 
 // Reconstitution function
-type ReconstituteZakatAssessment = (
+type ReconstituteTaxAssessment = (
   id: AssessmentId,
   taxpayer: TaxpayerId,
   hawlStart: Date,
   assets: ReadonlyArray<Asset>,
   status: AssessmentStatus,
-) => ZakatAssessment;
+) => TaxAssessment;
 
-const reconstituteZakatAssessment: ReconstituteZakatAssessment = (id, taxpayer, hawlStart, assets, status) => ({
+const reconstituteTaxAssessment: ReconstituteTaxAssessment = (id, taxpayer, hawlStart, assets, status) => ({
   id,
   taxpayer,
   hawlStart,
@@ -148,7 +148,7 @@ const reconstituteZakatAssessment: ReconstituteZakatAssessment = (id, taxpayer, 
 });
 
 // Usage
-const result = createZakatAssessment(taxpayerId, new Date("2024-01-01"), [asset1, asset2]);
+const result = createTaxAssessment(taxpayerId, new Date("2024-01-01"), [asset1, asset2]);
 
 pipe(
   result,
@@ -168,25 +168,25 @@ Separate factory classes handle complex creation requiring external dependencies
 - Multiple creation strategies exist
 - Creation logic is complex enough to warrant separate testing
 
-**Example - Murabaha Contract Factory**:
+**Example - Loan Contract Factory**:
 
 ```typescript
 // TypeScript - OOP Factory Object
-interface MurabahaContractFactory {
+interface LoanContractFactory {
   createFromTemplate(
     template: ContractTemplate,
     buyer: Party,
     seller: Party,
     asset: Asset,
     markup: Percentage,
-  ): Promise<Result<MurabahaContract, DomainError>>;
+  ): Promise<Result<LoanContract, DomainError>>;
 
-  createCustom(specification: ContractSpecification): Promise<Result<MurabahaContract, DomainError>>;
+  createCustom(specification: ContractSpecification): Promise<Result<LoanContract, DomainError>>;
 }
 
-class DefaultMurabahaContractFactory implements MurabahaContractFactory {
+class DefaultLoanContractFactory implements LoanContractFactory {
   constructor(
-    private readonly complianceChecker: ShariahComplianceChecker,
+    private readonly complianceChecker: ComplianceComplianceChecker,
     private readonly pricingService: PricingService,
     private readonly documentGenerator: ContractDocumentGenerator,
   ) {}
@@ -197,7 +197,7 @@ class DefaultMurabahaContractFactory implements MurabahaContractFactory {
     seller: Party,
     asset: Asset,
     markup: Percentage,
-  ): Promise<Result<MurabahaContract, DomainError>> {
+  ): Promise<Result<LoanContract, DomainError>> {
     // 1. Calculate cost price
     const costPriceResult = await this.pricingService.calculateCostPrice(asset);
     if (costPriceResult.isFailure()) {
@@ -225,7 +225,7 @@ class DefaultMurabahaContractFactory implements MurabahaContractFactory {
       return Result.failure(termsResult.error);
     }
 
-    // 5. Check Shariah compliance
+    // 5. Check Compliance compliance
     const complianceResult = await this.complianceChecker.validate(termsResult.value);
     if (complianceResult.isFailure()) {
       return Result.failure(complianceResult.error);
@@ -238,7 +238,7 @@ class DefaultMurabahaContractFactory implements MurabahaContractFactory {
     }
 
     // 7. Create contract aggregate
-    return MurabahaContract.create(
+    return LoanContract.create(
       buyer,
       seller,
       asset,
@@ -248,17 +248,17 @@ class DefaultMurabahaContractFactory implements MurabahaContractFactory {
     );
   }
 
-  async createCustom(specification: ContractSpecification): Promise<Result<MurabahaContract, DomainError>> {
+  async createCustom(specification: ContractSpecification): Promise<Result<LoanContract, DomainError>> {
     // Custom creation logic
     // Similar multi-step process with different inputs
   }
 }
 
 // Usage
-const factory = new DefaultMurabahaContractFactory(complianceChecker, pricingService, documentGenerator);
+const factory = new DefaultLoanContractFactory(complianceChecker, pricingService, documentGenerator);
 
 const contractResult = await factory.createFromTemplate(
-  standardMurabahaTemplate,
+  standardLoanTemplate,
   buyer,
   seller,
   propertyAsset,
@@ -270,23 +270,23 @@ const contractResult = await factory.createFromTemplate(
 
 ```typescript
 // TypeScript - FP Factory with Dependencies
-type MurabahaContractFactoryDeps = {
-  readonly complianceChecker: ShariahComplianceChecker;
+type LoanContractFactoryDeps = {
+  readonly complianceChecker: ComplianceComplianceChecker;
   readonly pricingService: PricingService;
   readonly documentGenerator: ContractDocumentGenerator;
 };
 
-type CreateMurabahaFromTemplate = (
-  deps: MurabahaContractFactoryDeps,
+type CreateLoanFromTemplate = (
+  deps: LoanContractFactoryDeps,
 ) => (
   template: ContractTemplate,
   buyer: Party,
   seller: Party,
   asset: Asset,
   markup: Percentage,
-) => TaskEither<DomainError, MurabahaContract>;
+) => TaskEither<DomainError, LoanContract>;
 
-const createMurabahaFromTemplate: CreateMurabahaFromTemplate = (deps) => (template, buyer, seller, asset, markup) => {
+const createLoanFromTemplate: CreateLoanFromTemplate = (deps) => (template, buyer, seller, asset, markup) => {
   return pipe(
     // 1. Calculate cost price
     deps.pricingService.calculateCostPrice(asset),
@@ -311,7 +311,7 @@ const createMurabahaFromTemplate: CreateMurabahaFromTemplate = (deps) => (templa
       ),
     ),
 
-    // 5. Check Shariah compliance
+    // 5. Check Compliance compliance
     TaskEither.flatMap((terms) =>
       pipe(
         deps.complianceChecker.validate(terms),
@@ -329,22 +329,19 @@ const createMurabahaFromTemplate: CreateMurabahaFromTemplate = (deps) => (templa
 
     // 7. Create contract aggregate
     TaskEither.flatMap(({ terms, compliance, documents }) =>
-      pipe(
-        createMurabahaContract(buyer, seller, asset, terms, documents, compliance.certificate),
-        TaskEither.fromResult,
-      ),
+      pipe(createLoanContract(buyer, seller, asset, terms, documents, compliance.certificate), TaskEither.fromResult),
     ),
   );
 };
 
 // Usage
-const factory = createMurabahaFromTemplate({
+const factory = createLoanFromTemplate({
   complianceChecker,
   pricingService,
   documentGenerator,
 });
 
-const contractTask = factory(standardMurabahaTemplate, buyer, seller, propertyAsset, percentageFromBasisPoints(1500));
+const contractTask = factory(standardLoanTemplate, buyer, seller, propertyAsset, percentageFromBasisPoints(1500));
 
 // Execute the task
 const contractResult = await contractTask();
@@ -356,11 +353,11 @@ const contractResult = await contractTask();
 
 Aggregates often have invariants spanning multiple entities and value objects.
 
-**Example - Halal Certification Aggregate**:
+**Example - Permitted Certification Aggregate**:
 
 ```typescript
 // TypeScript - OOP Aggregate Factory
-class HalalCertification {
+class PermittedCertification {
   private constructor(
     private readonly id: CertificationId,
     private readonly facility: Facility,
@@ -397,7 +394,7 @@ class HalalCertification {
     products: Product[],
     auditService: AuditService,
     certificateService: CertificateService,
-  ): Promise<Result<HalalCertification, DomainError>> {
+  ): Promise<Result<PermittedCertification, DomainError>> {
     // 1. Validate facility eligibility
     const eligibilityResult = facility.checkCertificationEligibility();
     if (eligibilityResult.isFailure()) {
@@ -434,7 +431,7 @@ class HalalCertification {
     // 5. Create aggregate (invariants validated in constructor)
     try {
       return Result.success(
-        new HalalCertification(
+        new PermittedCertification(
           CertificationId.generate(),
           facility,
           products,
@@ -458,9 +455,9 @@ class HalalCertification {
     audits: Audit[],
     certificate: Certificate,
     status: CertificationStatus,
-  ): Result<HalalCertification, InvariantViolation> {
+  ): Result<PermittedCertification, InvariantViolation> {
     try {
-      return Result.success(new HalalCertification(id, facility, products, audits, certificate, status));
+      return Result.success(new PermittedCertification(id, facility, products, audits, certificate, status));
     } catch (error) {
       if (error instanceof InvariantViolation) {
         return Result.failure(error);
@@ -475,7 +472,7 @@ class HalalCertification {
 
 ```typescript
 // TypeScript - FP Aggregate Factory
-type HalalCertification = {
+type PermittedCertification = {
   readonly id: CertificationId;
   readonly facility: Facility;
   readonly products: ReadonlyArray<Product>;
@@ -521,7 +518,9 @@ const certificationInvariants: CertificationInvariants = {
   },
 };
 
-const validateAllInvariants = (certification: HalalCertification): Result<HalalCertification, InvariantViolation> => {
+const validateAllInvariants = (
+  certification: PermittedCertification,
+): Result<PermittedCertification, InvariantViolation> => {
   return pipe(
     certificationInvariants.productsMatchFacility(certification.facility, certification.products),
     Result.flatMap(() => certificationInvariants.hasPassingAudit(certification.audits)),
@@ -533,7 +532,7 @@ const validateAllInvariants = (certification: HalalCertification): Result<HalalC
 type CreateInitialCertification = (deps: {
   readonly auditService: AuditService;
   readonly certificateService: CertificateService;
-}) => (facility: Facility, products: ReadonlyArray<Product>) => TaskEither<DomainError, HalalCertification>;
+}) => (facility: Facility, products: ReadonlyArray<Product>) => TaskEither<DomainError, PermittedCertification>;
 
 const createInitialCertification: CreateInitialCertification = (deps) => (facility, products) => {
   return pipe(
@@ -596,7 +595,7 @@ const reconstituteCertification = (
   audits: ReadonlyArray<Audit>,
   certificate: Certificate,
   status: CertificationStatus,
-): Result<HalalCertification, InvariantViolation> => {
+): Result<PermittedCertification, InvariantViolation> => {
   return validateAllInvariants({
     id,
     facility,
@@ -713,7 +712,7 @@ const agreementResult = new MudarabahAgreementBuilder()
   .setMudarib(entrepreneur)
   .setCapital(Money.usd(100000))
   .setProfitShareRatio(ProfitShareRatio.create(60, 40)) // 60% investor, 40% entrepreneur
-  .setBusinessPurpose("Halal food distribution business")
+  .setBusinessPurpose("Permitted food distribution business")
   .setDuration(Duration.years(3))
   .withManagementFees(Money.usd(500))
   .withTerminationClauses([earlyTerminationClause])
@@ -726,10 +725,10 @@ Factories require thorough testing to ensure valid object creation.
 
 ```typescript
 // Factory tests
-describe("ZakatAssessment Factory", () => {
+describe("TaxAssessment Factory", () => {
   describe("create", () => {
     it("creates valid assessment with correct initial state", () => {
-      const result = ZakatAssessment.create(taxpayerId, new Date("2024-01-01"), [asset1, asset2]);
+      const result = TaxAssessment.create(taxpayerId, new Date("2024-01-01"), [asset1, asset2]);
 
       expect(result.isSuccess()).toBe(true);
       const assessment = result.value;
@@ -741,14 +740,14 @@ describe("ZakatAssessment Factory", () => {
       const futureDate = new Date();
       futureDate.setFullYear(futureDate.getFullYear() + 1);
 
-      const result = ZakatAssessment.create(taxpayerId, futureDate, [asset1]);
+      const result = TaxAssessment.create(taxpayerId, futureDate, [asset1]);
 
       expect(result.isFailure()).toBe(true);
       expect(result.error.message).toContain("future");
     });
 
     it("fails when no assets provided", () => {
-      const result = ZakatAssessment.create(taxpayerId, new Date("2024-01-01"), []);
+      const result = TaxAssessment.create(taxpayerId, new Date("2024-01-01"), []);
 
       expect(result.isFailure()).toBe(true);
       expect(result.error.message).toContain("at least one asset");
@@ -758,7 +757,7 @@ describe("ZakatAssessment Factory", () => {
   describe("reconstitute", () => {
     it("recreates assessment without validation", () => {
       // Can recreate with any status
-      const assessment = ZakatAssessment.reconstitute(
+      const assessment = TaxAssessment.reconstitute(
         assessmentId,
         taxpayerId,
         new Date("2024-01-01"),
@@ -791,8 +790,8 @@ describe("ZakatAssessment Factory", () => {
 
 ```typescript
 // Separate methods make intent clear
-const newAssessment = ZakatAssessment.create(/* ... */);
-const existingAssessment = ZakatAssessment.reconstitute(/* ... */);
+const newAssessment = TaxAssessment.create(/* ... */);
+const existingAssessment = TaxAssessment.reconstitute(/* ... */);
 ```
 
 ### 2. Use Result Types for Creation
@@ -801,14 +800,14 @@ Return `Result<T, E>` instead of throwing exceptions during creation.
 
 ```typescript
 // Good - Explicit error handling
-const result = ZakatAssessment.create(params);
+const result = TaxAssessment.create(params);
 if (result.isFailure()) {
   // Handle error
 }
 
 // Avoid - Hidden failure paths
 try {
-  const assessment = new ZakatAssessment(params); // Can throw
+  const assessment = new TaxAssessment(params); // Can throw
 } catch (error) {
   // Catch-all error handling
 }
@@ -827,11 +826,11 @@ Perform all validation in the factory, not after creation.
 
 ```typescript
 // Good - Factory ensures validity
-const result = ZakatAssessment.create(params);
+const result = TaxAssessment.create(params);
 // If successful, assessment is guaranteed valid
 
 // Avoid - Validation after construction
-const assessment = new ZakatAssessment(params);
+const assessment = new TaxAssessment(params);
 const errors = assessment.validate(); // Too late!
 ```
 
@@ -840,13 +839,13 @@ const errors = assessment.validate(); // Too late!
 Prevent direct instantiation, force clients through factory methods.
 
 ```typescript
-class ZakatAssessment {
+class TaxAssessment {
   private constructor(/* ... */) {
     // Only accessible to factory methods
   }
 
   static create(/* ... */) {
-    return new ZakatAssessment(/* ... */);
+    return new TaxAssessment(/* ... */);
   }
 }
 ```
@@ -877,9 +876,9 @@ abstract class ContractFactory<T extends Contract> {
   protected abstract buildContract(terms: ContractTerms, compliance: ComplianceValidation): Result<T, DomainError>;
 }
 
-class MurabahaContractFactory extends ContractFactory<MurabahaContract> {
+class LoanContractFactory extends ContractFactory<LoanContract> {
   protected async createTerms(spec: ContractSpecification): Promise<Result<ContractTerms, DomainError>> {
-    // Murabaha-specific term creation
+    // Loan-specific term creation
   }
 
   // Implement other abstract methods...
@@ -906,10 +905,10 @@ class ContractFactoryRegistry {
 
 // Usage
 const registry = new ContractFactoryRegistry();
-registry.register(ContractType.Murabaha, new MurabahaContractFactory());
+registry.register(ContractType.Loan, new LoanContractFactory());
 registry.register(ContractType.Ijarah, new IjarahContractFactory());
 
-const factoryResult = registry.getFactory(ContractType.Murabaha);
+const factoryResult = registry.getFactory(ContractType.Loan);
 ```
 
 ## See Also

@@ -439,7 +439,7 @@ npx nx affected:test --base=origin/main --parallel=3
 npx nx run-many --target=test --all --parallel=3
 
 # Specific project
-npx nx test ts-zakat --parallel
+npx nx test ts-tax --parallel
 ```
 
 ### Jest Configuration for CI
@@ -534,7 +534,7 @@ jobs:
 
 ```properties
 # sonar-project.properties
-sonar.projectKey=open-sharia-enterprise
+sonar.projectKey=open-compliance-enterprise
 sonar.organization=your-org
 sonar.sources=libs,apps
 sonar.tests=libs,apps

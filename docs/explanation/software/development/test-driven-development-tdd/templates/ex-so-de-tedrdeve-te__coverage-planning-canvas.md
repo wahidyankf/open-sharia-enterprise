@@ -33,7 +33,7 @@ The Coverage Planning Canvas helps you systematically plan test coverage for a m
 
 **Module Name**: [Name of the module/feature]
 
-**Domain**: [Business domain, e.g., Zakat, Halal Certification, Murabaha Financing]
+**Domain**: [Business domain, e.g., Tax, Permitted Certification, Loan Financing]
 
 **Purpose**: [One-sentence description of what this module does]
 
@@ -45,12 +45,12 @@ The Coverage Planning Canvas helps you systematically plan test coverage for a m
 
 List all components in the module:
 
-| Component Type | Component Name  | Complexity | Risk | Test Priority |
-| -------------- | --------------- | ---------- | ---- | ------------- |
-| Value Object   | Money           | Medium     | High | P0            |
-| Entity         | ZakatAssessment | Medium     | High | P0            |
-| Service        | ZakatCalculator | Low        | High | P0            |
-| Repository     | ZakatRepository | Medium     | Med  | P1            |
+| Component Type | Component Name | Complexity | Risk | Test Priority |
+| -------------- | -------------- | ---------- | ---- | ------------- |
+| Value Object   | Money          | Medium     | High | P0            |
+| Entity         | TaxAssessment  | Medium     | High | P0            |
+| Service        | TaxCalculator  | Low        | High | P0            |
+| Repository     | TaxRepository  | Medium     | Med  | P1            |
 
 ### Section 3: Coverage Targets by Component Type
 
@@ -80,15 +80,15 @@ Plan the mix of test types:
 
 Identify the most important paths through the system:
 
-**Critical Path 1**: Zakat Calculation for Wealth Above Nisab
+**Critical Path 1**: Tax Calculation for Wealth Above Threshold
 
-- **Flow**: User wealth → Check nisab → Calculate 2.5% → Return zakat amount
+- **Flow**: User wealth → Check threshold → Calculate 2.5% → Return tax amount
 - **Risk**: HIGH (incorrect calculation = incorrect religious obligation)
 - **Test Coverage Required**: 100%
 - **Test Types**: Unit + Property-based
 - **Edge Cases**: Boundary values, currency handling, floating point precision
 
-**Critical Path 2**: Zakat Payment Recording
+**Critical Path 2**: Tax Payment Recording
 
 - **Flow**: Assessment created → Payment processed → Status updated → Receipt generated
 - **Risk**: CRITICAL (financial transaction)
@@ -100,38 +100,38 @@ Identify the most important paths through the system:
 
 #### Happy Paths
 
-| Scenario ID | Description                        | Test Type   | Priority | Status  |
-| ----------- | ---------------------------------- | ----------- | -------- | ------- |
-| HP-01       | Calculate zakat for wealth > nisab | Unit        | P0       | Done    |
-| HP-02       | Save assessment to database        | Integration | P0       | Done    |
-| HP-03       | Retrieve assessment by ID          | Integration | P1       | Pending |
+| Scenario ID | Description                          | Test Type   | Priority | Status  |
+| ----------- | ------------------------------------ | ----------- | -------- | ------- |
+| HP-01       | Calculate tax for wealth > threshold | Unit        | P0       | Done    |
+| HP-02       | Save assessment to database          | Integration | P0       | Done    |
+| HP-03       | Retrieve assessment by ID            | Integration | P1       | Pending |
 
 #### Edge Cases
 
-| Scenario ID | Description                         | Test Type   | Priority | Status  |
-| ----------- | ----------------------------------- | ----------- | -------- | ------- |
-| EC-01       | Wealth exactly equals nisab         | Unit        | P0       | Done    |
-| EC-02       | Wealth just below nisab (0.01 less) | Unit        | P0       | Done    |
-| EC-03       | Zero wealth                         | Unit        | P1       | Done    |
-| EC-04       | Very large wealth (millions)        | Unit + Prop | P1       | Pending |
-| EC-05       | Floating point precision edge       | Property    | P1       | Pending |
+| Scenario ID | Description                             | Test Type   | Priority | Status  |
+| ----------- | --------------------------------------- | ----------- | -------- | ------- |
+| EC-01       | Wealth exactly equals threshold         | Unit        | P0       | Done    |
+| EC-02       | Wealth just below threshold (0.01 less) | Unit        | P0       | Done    |
+| EC-03       | Zero wealth                             | Unit        | P1       | Done    |
+| EC-04       | Very large wealth (millions)            | Unit + Prop | P1       | Pending |
+| EC-05       | Floating point precision edge           | Property    | P1       | Pending |
 
 #### Error Cases
 
-| Scenario ID | Description                         | Test Type   | Priority | Status  |
-| ----------- | ----------------------------------- | ----------- | -------- | ------- |
-| ER-01       | Negative wealth amount              | Unit        | P0       | Done    |
-| ER-02       | Different currencies (wealth/nisab) | Unit        | P0       | Done    |
-| ER-03       | Invalid currency code               | Unit        | P0       | Done    |
-| ER-04       | Database connection failure         | Integration | P1       | Pending |
-| ER-05       | Concurrent update conflict          | Integration | P2       | Pending |
+| Scenario ID | Description                             | Test Type   | Priority | Status  |
+| ----------- | --------------------------------------- | ----------- | -------- | ------- |
+| ER-01       | Negative wealth amount                  | Unit        | P0       | Done    |
+| ER-02       | Different currencies (wealth/threshold) | Unit        | P0       | Done    |
+| ER-03       | Invalid currency code                   | Unit        | P0       | Done    |
+| ER-04       | Database connection failure             | Integration | P1       | Pending |
+| ER-05       | Concurrent update conflict              | Integration | P2       | Pending |
 
 #### Business Rules
 
 | Scenario ID | Description                         | Test Type   | Priority | Status |
 | ----------- | ----------------------------------- | ----------- | -------- | ------ |
-| BR-01       | Zakat rate is exactly 2.5%          | Unit + Prop | P0       | Done   |
-| BR-02       | Nisab is 85 grams of gold           | Unit        | P0       | Done   |
+| BR-01       | Tax rate is exactly 2.5%            | Unit + Prop | P0       | Done   |
+| BR-02       | Threshold is 85 grams of gold       | Unit        | P0       | Done   |
 | BR-03       | Currency must match for operations  | Unit        | P0       | Done   |
 | BR-04       | Assessment date recorded accurately | Integration | P1       | Done   |
 
@@ -149,22 +149,22 @@ Identify the most important paths through the system:
 
 Identify missing tests:
 
-| Component       | Current Coverage | Target | Gap | Missing Test Scenarios                   |
-| --------------- | ---------------- | ------ | --- | ---------------------------------------- |
-| ZakatCalculator | 95%              | 100%   | 5%  | Multi-currency handling                  |
-| ZakatRepository | 75%              | 80%    | 5%  | Concurrent updates, bulk operations      |
-| Money           | 100%             | 100%   | 0%  | Complete                                 |
-| ZakatAssessment | 90%              | 100%   | 10% | State transitions, validation edge cases |
+| Component     | Current Coverage | Target | Gap | Missing Test Scenarios                   |
+| ------------- | ---------------- | ------ | --- | ---------------------------------------- |
+| TaxCalculator | 95%              | 100%   | 5%  | Multi-currency handling                  |
+| TaxRepository | 75%              | 80%    | 5%  | Concurrent updates, bulk operations      |
+| Money         | 100%             | 100%   | 0%  | Complete                                 |
+| TaxAssessment | 90%              | 100%   | 10% | State transitions, validation edge cases |
 
-## Complete Example: Zakat Module Coverage Plan
+## Complete Example: Tax Module Coverage Plan
 
 ### Section 1: Module Overview
 
-**Module Name**: Zakat Calculation and Management
+**Module Name**: Tax Calculation and Management
 
-**Domain**: Islamic Finance - Zakat
+**Domain**: Islamic Finance - Tax
 
-**Purpose**: Calculate, track, and manage Zakat obligations for individuals and organizations
+**Purpose**: Calculate, track, and manage Tax obligations for individuals and organizations
 
 **Dependencies**:
 
@@ -184,16 +184,16 @@ Identify missing tests:
 | Component Type | Component Name    | Complexity | Risk     | Test Priority | Notes                    |
 | -------------- | ----------------- | ---------- | -------- | ------------- | ------------------------ |
 | Value Object   | Money             | Medium     | High     | P0            | Foundation for all calcs |
-| Value Object   | NisabThreshold    | Low        | Medium   | P1            | Configurable threshold   |
-| Entity         | ZakatAssessment   | Medium     | High     | P0            | Core entity              |
+| Value Object   | IncomeThreshold   | Low        | Medium   | P1            | Configurable threshold   |
+| Entity         | TaxAssessment     | Medium     | High     | P0            | Core entity              |
 | Entity         | Donor             | Low        | Medium   | P1            | User information         |
-| Service        | ZakatCalculator   | Low        | Critical | P0            | Core calculation logic   |
-| Service        | NisabService      | Low        | High     | P0            | Gold price integration   |
-| Service        | ZakatDistributor  | Medium     | Medium   | P1            | Payment distribution     |
-| Repository     | ZakatRepository   | Medium     | High     | P0            | Data persistence         |
+| Service        | TaxCalculator     | Low        | Critical | P0            | Core calculation logic   |
+| Service        | ThresholdService  | Low        | High     | P0            | Gold price integration   |
+| Service        | TaxDistributor    | Medium     | Medium   | P1            | Payment distribution     |
+| Repository     | TaxRepository     | Medium     | High     | P0            | Data persistence         |
 | Repository     | DonorRepository   | Low        | Medium   | P1            | User data                |
 | Factory        | AssessmentFactory | Low        | Medium   | P1            | Entity creation          |
-| Validator      | ZakatValidator    | Low        | Medium   | P1            | Input validation         |
+| Validator      | TaxValidator      | Low        | Medium   | P1            | Input validation         |
 
 ### Section 3: Coverage Targets
 
@@ -219,16 +219,16 @@ Identify missing tests:
 
 ### Section 5: Critical Paths
 
-#### Critical Path 1: Calculate Zakat for Individual
+#### Critical Path 1: Calculate Tax for Individual
 
 **Flow**:
 
 1. Retrieve donor information
-2. Calculate current nisab (based on gold price)
-3. Gather donor's zakatable assets
+2. Calculate current threshold (based on gold price)
+3. Gather donor's taxable assets
 4. Calculate total wealth
-5. Compare with nisab
-6. Calculate zakat (2.5% if above nisab)
+5. Compare with threshold
+6. Calculate tax (2.5% if above threshold)
 7. Create assessment record
 8. Return assessment to user
 
@@ -240,15 +240,15 @@ Identify missing tests:
 
 **Key Test Scenarios**:
 
-- Wealth > nisab by various amounts
-- Wealth = nisab (boundary)
-- Wealth < nisab
+- Wealth > threshold by various amounts
+- Wealth = threshold (boundary)
+- Wealth < threshold
 - Multiple asset types
 - Different currencies
 - Gold price fluctuations
 - Historical assessments
 
-#### Critical Path 2: Process Zakat Payment
+#### Critical Path 2: Process Tax Payment
 
 **Flow**:
 
@@ -275,7 +275,7 @@ Identify missing tests:
 - Concurrent payments
 - Duplicate payment prevention
 
-#### Critical Path 3: Nisab Threshold Calculation
+#### Critical Path 3: Threshold Threshold Calculation
 
 **Flow**:
 
@@ -283,7 +283,7 @@ Identify missing tests:
 2. Apply 85-gram standard
 3. Convert to local currency
 4. Cache for performance
-5. Return nisab threshold
+5. Return threshold threshold
 
 **Risk Level**: HIGH
 
@@ -303,74 +303,74 @@ Identify missing tests:
 
 #### Happy Paths (15 scenarios)
 
-| ID    | Description                                 | Component         | Test Type   | Priority | Status | Notes                  |
-| ----- | ------------------------------------------- | ----------------- | ----------- | -------- | ------ | ---------------------- |
-| HP-01 | Calculate zakat for wealth 5x nisab         | ZakatCalculator   | Unit        | P0       | ✅     | Common case            |
-| HP-02 | Calculate zakat for wealth 2x nisab         | ZakatCalculator   | Unit        | P0       | ✅     | Moderate wealth        |
-| HP-03 | Save new assessment to database             | ZakatRepository   | Integration | P0       | ✅     | Basic persistence      |
-| HP-04 | Retrieve assessment by ID                   | ZakatRepository   | Integration | P0       | ✅     | Basic retrieval        |
-| HP-05 | List all assessments for donor              | ZakatRepository   | Integration | P1       | ✅     | User history           |
-| HP-06 | Calculate nisab from gold price             | NisabService      | Unit        | P0       | ✅     | Gold standard          |
-| HP-07 | Update assessment status to PAID            | ZakatAssessment   | Unit        | P0       | ✅     | State transition       |
-| HP-08 | Create donor with valid information         | Donor             | Unit        | P1       | ✅     | Basic entity           |
-| HP-09 | Add multiple asset types to wealth          | ZakatCalculator   | Unit        | P1       | ✅     | Complex calculation    |
-| HP-10 | Generate assessment for multiple years      | ZakatCalculator   | Integration | P1       | ✅     | Historical tracking    |
-| HP-11 | Calculate total zakat collected (reporting) | ZakatRepository   | Integration | P1       | ✅     | Reporting feature      |
-| HP-12 | Validate correct zakat percentage (2.5%)    | ZakatValidator    | Unit        | P0       | ✅     | Core rule validation   |
-| HP-13 | Money addition preserves currency           | Money             | Unit        | P0       | ✅     | Value object behavior  |
-| HP-14 | Money multiplication scales correctly       | Money             | Unit        | P0       | ✅     | Calculation foundation |
-| HP-15 | Assessment factory creates valid entity     | AssessmentFactory | Unit        | P1       | ✅     | Entity creation        |
+| ID    | Description                               | Component         | Test Type   | Priority | Status | Notes                  |
+| ----- | ----------------------------------------- | ----------------- | ----------- | -------- | ------ | ---------------------- |
+| HP-01 | Calculate tax for wealth 5x threshold     | TaxCalculator     | Unit        | P0       | ✅     | Common case            |
+| HP-02 | Calculate tax for wealth 2x threshold     | TaxCalculator     | Unit        | P0       | ✅     | Moderate wealth        |
+| HP-03 | Save new assessment to database           | TaxRepository     | Integration | P0       | ✅     | Basic persistence      |
+| HP-04 | Retrieve assessment by ID                 | TaxRepository     | Integration | P0       | ✅     | Basic retrieval        |
+| HP-05 | List all assessments for donor            | TaxRepository     | Integration | P1       | ✅     | User history           |
+| HP-06 | Calculate threshold from gold price       | ThresholdService  | Unit        | P0       | ✅     | Gold standard          |
+| HP-07 | Update assessment status to PAID          | TaxAssessment     | Unit        | P0       | ✅     | State transition       |
+| HP-08 | Create donor with valid information       | Donor             | Unit        | P1       | ✅     | Basic entity           |
+| HP-09 | Add multiple asset types to wealth        | TaxCalculator     | Unit        | P1       | ✅     | Complex calculation    |
+| HP-10 | Generate assessment for multiple years    | TaxCalculator     | Integration | P1       | ✅     | Historical tracking    |
+| HP-11 | Calculate total tax collected (reporting) | TaxRepository     | Integration | P1       | ✅     | Reporting feature      |
+| HP-12 | Validate correct tax percentage (2.5%)    | TaxValidator      | Unit        | P0       | ✅     | Core rule validation   |
+| HP-13 | Money addition preserves currency         | Money             | Unit        | P0       | ✅     | Value object behavior  |
+| HP-14 | Money multiplication scales correctly     | Money             | Unit        | P0       | ✅     | Calculation foundation |
+| HP-15 | Assessment factory creates valid entity   | AssessmentFactory | Unit        | P1       | ✅     | Entity creation        |
 
 #### Edge Cases (12 scenarios)
 
-| ID    | Description                             | Component       | Test Type   | Priority | Status | Notes                |
-| ----- | --------------------------------------- | --------------- | ----------- | -------- | ------ | -------------------- |
-| EC-01 | Wealth exactly equals nisab             | ZakatCalculator | Unit        | P0       | ✅     | Boundary condition   |
-| EC-02 | Wealth 0.01 below nisab                 | ZakatCalculator | Unit        | P0       | ✅     | Just below threshold |
-| EC-03 | Wealth 0.01 above nisab                 | ZakatCalculator | Unit        | P0       | ✅     | Just above threshold |
-| EC-04 | Zero wealth                             | ZakatCalculator | Unit        | P1       | ✅     | Minimum value        |
-| EC-05 | Extremely large wealth (billions)       | ZakatCalculator | Property    | P1       | ✅     | Scalability          |
-| EC-06 | Floating point precision (0.025 rate)   | ZakatCalculator | Property    | P0       | ✅     | Calculation accuracy |
-| EC-07 | Gold price at historical low            | NisabService    | Unit        | P1       | ⏳     | Price volatility     |
-| EC-08 | Gold price at historical high           | NisabService    | Unit        | P1       | ⏳     | Price volatility     |
-| EC-09 | Assessment on leap year date            | ZakatAssessment | Unit        | P2       | ✅     | Date edge case       |
-| EC-10 | Donor with 10+ years of history         | ZakatRepository | Integration | P2       | ⏳     | Long-term usage      |
-| EC-11 | Currency with many decimal places (BTC) | Money           | Unit        | P2       | ❌     | Future enhancement   |
-| EC-12 | Concurrent assessment creation          | ZakatRepository | Integration | P1       | ⏳     | Race condition       |
+| ID    | Description                             | Component        | Test Type   | Priority | Status | Notes                |
+| ----- | --------------------------------------- | ---------------- | ----------- | -------- | ------ | -------------------- |
+| EC-01 | Wealth exactly equals threshold         | TaxCalculator    | Unit        | P0       | ✅     | Boundary condition   |
+| EC-02 | Wealth 0.01 below threshold             | TaxCalculator    | Unit        | P0       | ✅     | Just below threshold |
+| EC-03 | Wealth 0.01 above threshold             | TaxCalculator    | Unit        | P0       | ✅     | Just above threshold |
+| EC-04 | Zero wealth                             | TaxCalculator    | Unit        | P1       | ✅     | Minimum value        |
+| EC-05 | Extremely large wealth (billions)       | TaxCalculator    | Property    | P1       | ✅     | Scalability          |
+| EC-06 | Floating point precision (0.025 rate)   | TaxCalculator    | Property    | P0       | ✅     | Calculation accuracy |
+| EC-07 | Gold price at historical low            | ThresholdService | Unit        | P1       | ⏳     | Price volatility     |
+| EC-08 | Gold price at historical high           | ThresholdService | Unit        | P1       | ⏳     | Price volatility     |
+| EC-09 | Assessment on leap year date            | TaxAssessment    | Unit        | P2       | ✅     | Date edge case       |
+| EC-10 | Donor with 10+ years of history         | TaxRepository    | Integration | P2       | ⏳     | Long-term usage      |
+| EC-11 | Currency with many decimal places (BTC) | Money            | Unit        | P2       | ❌     | Future enhancement   |
+| EC-12 | Concurrent assessment creation          | TaxRepository    | Integration | P1       | ⏳     | Race condition       |
 
 #### Error Cases (10 scenarios)
 
-| ID    | Description                                | Component       | Test Type   | Priority | Status | Notes                    |
-| ----- | ------------------------------------------ | --------------- | ----------- | -------- | ------ | ------------------------ |
-| ER-01 | Negative wealth amount                     | Money           | Unit        | P0       | ✅     | Invalid input            |
-| ER-02 | Negative nisab                             | ZakatCalculator | Unit        | P0       | ✅     | Invalid input            |
-| ER-03 | Mismatched currencies (wealth vs nisab)    | ZakatCalculator | Unit        | P0       | ✅     | Type safety              |
-| ER-04 | Invalid currency code (non-ISO)            | Money           | Unit        | P0       | ✅     | Input validation         |
-| ER-05 | Empty donor ID                             | Donor           | Unit        | P0       | ✅     | Required field           |
-| ER-06 | Duplicate assessment ID                    | ZakatRepository | Integration | P0       | ✅     | Unique constraint        |
-| ER-07 | Database connection failure                | ZakatRepository | Integration | P1       | ✅     | Infrastructure failure   |
-| ER-08 | Gold price API timeout                     | NisabService    | Integration | P1       | ✅     | External dependency      |
-| ER-09 | Invalid status transition (PAID → PENDING) | ZakatAssessment | Unit        | P0       | ✅     | State machine validation |
-| ER-10 | Assessment for non-existent donor          | ZakatRepository | Integration | P1       | ✅     | Foreign key constraint   |
+| ID    | Description                                 | Component        | Test Type   | Priority | Status | Notes                    |
+| ----- | ------------------------------------------- | ---------------- | ----------- | -------- | ------ | ------------------------ |
+| ER-01 | Negative wealth amount                      | Money            | Unit        | P0       | ✅     | Invalid input            |
+| ER-02 | Negative threshold                          | TaxCalculator    | Unit        | P0       | ✅     | Invalid input            |
+| ER-03 | Mismatched currencies (wealth vs threshold) | TaxCalculator    | Unit        | P0       | ✅     | Type safety              |
+| ER-04 | Invalid currency code (non-ISO)             | Money            | Unit        | P0       | ✅     | Input validation         |
+| ER-05 | Empty donor ID                              | Donor            | Unit        | P0       | ✅     | Required field           |
+| ER-06 | Duplicate assessment ID                     | TaxRepository    | Integration | P0       | ✅     | Unique constraint        |
+| ER-07 | Database connection failure                 | TaxRepository    | Integration | P1       | ✅     | Infrastructure failure   |
+| ER-08 | Gold price API timeout                      | ThresholdService | Integration | P1       | ✅     | External dependency      |
+| ER-09 | Invalid status transition (PAID → PENDING)  | TaxAssessment    | Unit        | P0       | ✅     | State machine validation |
+| ER-10 | Assessment for non-existent donor           | TaxRepository    | Integration | P1       | ✅     | Foreign key constraint   |
 
 #### Business Rules (8 scenarios)
 
-| ID    | Description                                | Component       | Test Type   | Priority | Status | Notes                  |
-| ----- | ------------------------------------------ | --------------- | ----------- | -------- | ------ | ---------------------- |
-| BR-01 | Zakat rate is exactly 2.5% (never changes) | ZakatCalculator | Unit + Prop | P0       | ✅     | Immutable rate         |
-| BR-02 | Nisab is 85 grams of gold (never changes)  | NisabService    | Unit        | P0       | ✅     | Islamic standard       |
-| BR-03 | Zakat is zero when wealth < nisab          | ZakatCalculator | Unit + Prop | P0       | ✅     | Core rule              |
-| BR-04 | Currency must be 3-letter ISO code         | Money           | Unit        | P0       | ✅     | Standard compliance    |
-| BR-05 | Amount cannot be negative                  | Money           | Unit + Prop | P0       | ✅     | Domain constraint      |
-| BR-06 | Assessment date cannot be future           | ZakatAssessment | Unit        | P1       | ✅     | Business logic         |
-| BR-07 | One assessment per donor per lunar year    | ZakatRepository | Integration | P1       | ⏳     | Frequency rule         |
-| BR-08 | Money operations preserve immutability     | Money           | Property    | P0       | ✅     | Value object invariant |
+| ID    | Description                                   | Component        | Test Type   | Priority | Status | Notes                  |
+| ----- | --------------------------------------------- | ---------------- | ----------- | -------- | ------ | ---------------------- |
+| BR-01 | Tax rate is exactly 2.5% (never changes)      | TaxCalculator    | Unit + Prop | P0       | ✅     | Immutable rate         |
+| BR-02 | Threshold is 85 grams of gold (never changes) | ThresholdService | Unit        | P0       | ✅     | Islamic standard       |
+| BR-03 | Tax is zero when wealth < threshold           | TaxCalculator    | Unit + Prop | P0       | ✅     | Core rule              |
+| BR-04 | Currency must be 3-letter ISO code            | Money            | Unit        | P0       | ✅     | Standard compliance    |
+| BR-05 | Amount cannot be negative                     | Money            | Unit + Prop | P0       | ✅     | Domain constraint      |
+| BR-06 | Assessment date cannot be future              | TaxAssessment    | Unit        | P1       | ✅     | Business logic         |
+| BR-07 | One assessment per donor per lunar year       | TaxRepository    | Integration | P1       | ⏳     | Frequency rule         |
+| BR-08 | Money operations preserve immutability        | Money            | Property    | P0       | ✅     | Value object invariant |
 
 ### Section 7: Risk Assessment Matrix
 
 | Risk ID | Risk Description            | Impact   | Probability | Risk Score | Mitigation Strategy                     | Test Coverage |
 | ------- | --------------------------- | -------- | ----------- | ---------- | --------------------------------------- | ------------- |
-| R-01    | Incorrect zakat calculation | CRITICAL | MEDIUM      | CRITICAL   | 100% unit + property tests, peer review | 100%          |
+| R-01    | Incorrect tax calculation   | CRITICAL | MEDIUM      | CRITICAL   | 100% unit + property tests, peer review | 100%          |
 | R-02    | Data loss/corruption        | HIGH     | LOW         | MEDIUM     | Integration tests, DB constraints       | 90%           |
 | R-03    | Currency mismatch errors    | MEDIUM   | MEDIUM      | MEDIUM     | Strong typing, validation tests         | 100%          |
 | R-04    | Floating point precision    | HIGH     | MEDIUM      | HIGH       | Property-based tests, decimal type      | 100%          |
@@ -383,22 +383,22 @@ Identify missing tests:
 
 | Component         | Current Line % | Current Branch % | Target % | Gap   | Missing Scenarios                             | Action Plan                |
 | ----------------- | -------------- | ---------------- | -------- | ----- | --------------------------------------------- | -------------------------- |
-| ZakatCalculator   | 100%           | 100%             | 100%     | 0%    | None                                          | Maintain                   |
-| ZakatRepository   | 82%            | 80%              | 85%      | 3-5%  | Bulk operations, concurrent updates           | Add 3 integration tests    |
+| TaxCalculator     | 100%           | 100%             | 100%     | 0%    | None                                          | Maintain                   |
+| TaxRepository     | 82%            | 80%              | 85%      | 3-5%  | Bulk operations, concurrent updates           | Add 3 integration tests    |
 | Money             | 100%           | 100%             | 100%     | 0%    | None                                          | Maintain                   |
-| NisabService      | 88%            | 85%              | 95%      | 7-10% | API failure scenarios, cache edge cases       | Add 4 unit + 2 integration |
-| ZakatAssessment   | 95%            | 92%              | 100%     | 5-8%  | Some state transitions, validation edge cases | Add 3 unit tests           |
+| ThresholdService  | 88%            | 85%              | 95%      | 7-10% | API failure scenarios, cache edge cases       | Add 4 unit + 2 integration |
+| TaxAssessment     | 95%            | 92%              | 100%     | 5-8%  | Some state transitions, validation edge cases | Add 3 unit tests           |
 | Donor             | 90%            | 88%              | 95%      | 5-7%  | Complex validation scenarios                  | Add 2 unit tests           |
-| ZakatValidator    | 100%           | 100%             | 100%     | 0%    | None                                          | Maintain                   |
+| TaxValidator      | 100%           | 100%             | 100%     | 0%    | None                                          | Maintain                   |
 | AssessmentFactory | 92%            | 90%              | 90%      | 0%    | None (target met)                             | Maintain                   |
 
 **Overall Module Coverage**: 92% (Target: 95%)
 
 **Action Items**:
 
-1. Add 3 integration tests for ZakatRepository (bulk operations, concurrent updates)
-2. Add 6 tests for NisabService (API failures, cache edge cases)
-3. Add 3 unit tests for ZakatAssessment (state transitions)
+1. Add 3 integration tests for TaxRepository (bulk operations, concurrent updates)
+2. Add 6 tests for ThresholdService (API failures, cache edge cases)
+3. Add 3 unit tests for TaxAssessment (state transitions)
 4. Add 2 unit tests for Donor (validation)
 5. Review and add property-based tests for edge cases in Money operations
 

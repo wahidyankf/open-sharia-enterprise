@@ -148,10 +148,10 @@ nx generate @nx/js:library ts-test-utils --directory=libs/ts-test-utils
 #       index.ts
 #       builders/              # Test data builders
 #         money-builder.ts
-#         zakat-assessment-builder.ts
+#         tax-assessment-builder.ts
 #       fixtures/              # Test fixtures
 #         money-fixtures.ts
-#         zakat-fixtures.ts
+#         tax-fixtures.ts
 #       helpers/               # Test helpers
 #         test-database.ts
 #         test-assertions.ts
@@ -163,7 +163,7 @@ nx generate @nx/js:library ts-test-utils --directory=libs/ts-test-utils
 
 ```typescript
 // libs/ts-test-utils/src/builders/money-builder.ts
-import { Money } from "@open-sharia-enterprise/ts-money";
+import { Money } from "@open-compliance-enterprise/ts-money";
 
 export class MoneyBuilder {
   private amount: number = 0;
@@ -198,17 +198,17 @@ export class MoneyBuilder {
 }
 
 // Usage in tests across multiple projects
-import { MoneyBuilder } from "@open-sharia-enterprise/ts-test-utils";
+import { MoneyBuilder } from "@open-compliance-enterprise/ts-test-utils";
 
-describe("ZakatCalculator", () => {
-  it("calculates Zakat correctly", () => {
+describe("TaxCalculator", () => {
+  it("calculates Tax correctly", () => {
     const wealth = MoneyBuilder.usd(10000);
-    const nisab = MoneyBuilder.usd(2000);
+    const threshold = MoneyBuilder.usd(2000);
 
-    const calculator = new ZakatCalculator();
-    const zakat = calculator.calculateZakat(wealth, nisab);
+    const calculator = new TaxCalculator();
+    const tax = calculator.calculateTax(wealth, threshold);
 
-    expect(zakat.amount).toBe(250);
+    expect(tax.amount).toBe(250);
   });
 });
 ```
@@ -216,59 +216,59 @@ describe("ZakatCalculator", () => {
 ### Example: Shared Test Fixtures
 
 ```typescript
-// libs/ts-test-utils/src/fixtures/zakat-fixtures.ts
-import { Money } from "@open-sharia-enterprise/ts-money";
-import { ZakatAssessment } from "@open-sharia-enterprise/ts-zakat";
+// libs/ts-test-utils/src/fixtures/tax-fixtures.ts
+import { Money } from "@open-compliance-enterprise/ts-money";
+import { TaxAssessment } from "@open-compliance-enterprise/ts-tax";
 
-export const zakatFixtures = {
-  wealthAboveNisab: {
+export const taxFixtures = {
+  wealthAboveThreshold: {
     cash: Money.fromAmount(10000, "USD"),
     gold: Money.fromAmount(5000, "USD"),
     investments: Money.fromAmount(3000, "USD"),
     totalWealth: Money.fromAmount(18000, "USD"),
   },
 
-  wealthBelowNisab: {
+  wealthBelowThreshold: {
     cash: Money.fromAmount(500, "USD"),
     gold: Money.fromAmount(300, "USD"),
     investments: Money.fromAmount(0, "USD"),
     totalWealth: Money.fromAmount(800, "USD"),
   },
 
-  nisabThresholds: {
+  incomeThresholds: {
     usd: Money.fromAmount(2000, "USD"),
     eur: Money.fromAmount(1800, "EUR"),
     gbp: Money.fromAmount(1600, "GBP"),
   },
 
-  zakatAssessments: {
+  taxAssessments: {
     typical: {
-      id: "zakat-001",
+      id: "tax-001",
       userId: "user-123",
       wealth: Money.fromAmount(10000, "USD"),
-      nisab: Money.fromAmount(2000, "USD"),
-      zakatDue: Money.fromAmount(250, "USD"),
+      threshold: Money.fromAmount(2000, "USD"),
+      taxDue: Money.fromAmount(250, "USD"),
       assessmentDate: new Date("2024-01-01"),
     },
 
-    noZakatDue: {
-      id: "zakat-002",
+    noTaxDue: {
+      id: "tax-002",
       userId: "user-456",
       wealth: Money.fromAmount(1000, "USD"),
-      nisab: Money.fromAmount(2000, "USD"),
-      zakatDue: Money.fromAmount(0, "USD"),
+      threshold: Money.fromAmount(2000, "USD"),
+      taxDue: Money.fromAmount(0, "USD"),
       assessmentDate: new Date("2024-01-01"),
     },
   },
 };
 
 // Usage in tests
-import { zakatFixtures } from "@open-sharia-enterprise/ts-test-utils";
+import { taxFixtures } from "@open-compliance-enterprise/ts-test-utils";
 
-describe("ZakatRepository", () => {
-  it("saves Zakat assessment", async () => {
-    const repository = new ZakatRepository();
-    const assessment = zakatFixtures.zakatAssessments.typical;
+describe("TaxRepository", () => {
+  it("saves Tax assessment", async () => {
+    const repository = new TaxRepository();
+    const assessment = taxFixtures.taxAssessments.typical;
 
     await repository.save(assessment);
 
@@ -336,9 +336,9 @@ export class TestDatabase {
 }
 
 // Usage in integration tests
-import { TestDatabase } from '@open-sharia-enterprise/ts-test-utils';
+import { TestDatabase } from '@open-compliance-enterprise/ts-test-utils';
 
-describe('ZakatRepository Integration Tests', () => {
+describe('TaxRepository Integration Tests', () => {
   let dataSource: DataSource;
 
   beforeAll(async () => {
@@ -353,8 +353,8 @@ describe('ZakatRepository Integration Tests', () => {
     await TestDatabase.stop();
   });
 
-  it('saves and retrieves Zakat assessment', async () => {
-    const repository = new ZakatRepository(dataSource);
+  it('saves and retrieves Tax assessment', async () => {
+    const repository = new TaxRepository(dataSource);
     const assessment = /* ... */;
 
     await repository.save(assessment);
@@ -394,16 +394,16 @@ export class InMemoryRepository<T extends { id: string }> {
 }
 
 // Usage in tests
-import { InMemoryRepository } from "@open-sharia-enterprise/ts-test-utils";
+import { InMemoryRepository } from "@open-compliance-enterprise/ts-test-utils";
 
-describe("ZakatService", () => {
-  it("calculates and saves Zakat", async () => {
-    const repository = new InMemoryRepository<ZakatAssessment>();
-    const service = new ZakatService(repository);
+describe("TaxService", () => {
+  it("calculates and saves Tax", async () => {
+    const repository = new InMemoryRepository<TaxAssessment>();
+    const service = new TaxService(repository);
 
-    const result = await service.calculateZakat({
+    const result = await service.calculateTax({
       wealth: Money.fromAmount(10000, "USD"),
-      nisab: Money.fromAmount(2000, "USD"),
+      threshold: Money.fromAmount(2000, "USD"),
     });
 
     const saved = await repository.findById(result.id);
@@ -466,26 +466,26 @@ describe("Money Library", () => {
 **Apps should focus on integration and E2E tests**, relying on well-tested libraries for business logic.
 
 ```typescript
-// apps/zakat-app/src/app/zakat.service.spec.ts
-describe("Zakat App - ZakatService", () => {
+// apps/tax-app/src/app/tax.service.spec.ts
+describe("Tax App - TaxService", () => {
   // Integration tests focusing on service orchestration
-  it("calculates Zakat using Money library", async () => {
-    const service = new ZakatService();
+  it("calculates Tax using Money library", async () => {
+    const service = new TaxService();
 
-    const result = await service.calculateZakat({
+    const result = await service.calculateTax({
       userId: "user-123",
       wealth: { cash: 10000, gold: 5000 },
       currency: "USD",
     });
 
-    expect(result.zakatDue.amount).toBe(375); // 2.5% of 15000
+    expect(result.taxDue.amount).toBe(375); // 2.5% of 15000
   });
 
-  it("saves Zakat assessment to repository", async () => {
-    const repository = new InMemoryZakatRepository();
-    const service = new ZakatService(repository);
+  it("saves Tax assessment to repository", async () => {
+    const repository = new InMemoryTaxRepository();
+    const service = new TaxService(repository);
 
-    const result = await service.calculateZakat({
+    const result = await service.calculateTax({
       userId: "user-123",
       wealth: { cash: 10000 },
       currency: "USD",
@@ -523,14 +523,14 @@ describe("Zakat App - ZakatService", () => {
   }
 }
 
-// apps/zakat-app/project.json
+// apps/tax-app/project.json
 {
-  "name": "zakat-app",
+  "name": "tax-app",
   "targets": {
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/zakat-app/jest.config.ts",
+        "jestConfig": "apps/tax-app/jest.config.ts",
         "passWithNoTests": false,
         "coverage": true,
         "coverageThreshold": {
@@ -546,14 +546,14 @@ describe("Zakat App - ZakatService", () => {
     "test:integration": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/zakat-app/jest.integration.config.ts",
+        "jestConfig": "apps/tax-app/jest.integration.config.ts",
         "testPathPattern": ".integration.spec.ts$"
       }
     },
     "e2e": {
       "executor": "@nx/playwright:playwright",
       "options": {
-        "config": "apps/zakat-app/playwright.config.ts"
+        "config": "apps/tax-app/playwright.config.ts"
       }
     }
   }
@@ -565,22 +565,22 @@ describe("Zakat App - ZakatService", () => {
 ### Directory Structure
 
 ```
-open-sharia-enterprise/
+open-compliance-enterprise/
 ├── apps/
-│   ├── zakat-app/
+│   ├── tax-app/
 │   │   ├── src/
 │   │   │   ├── app/
-│   │   │   │   ├── zakat.service.ts
-│   │   │   │   ├── zakat.service.spec.ts          # Unit tests
-│   │   │   │   ├── zakat.service.integration.spec.ts  # Integration tests
+│   │   │   │   ├── tax.service.ts
+│   │   │   │   ├── tax.service.spec.ts          # Unit tests
+│   │   │   │   ├── tax.service.integration.spec.ts  # Integration tests
 │   │   │   └── test/
 │   │   │       ├── fixtures/                      # App-specific fixtures
 │   │   │       └── helpers/                       # App-specific helpers
 │   │   └── e2e/
-│   │       ├── zakat-calculator.spec.ts           # E2E tests
-│   │       └── zakat-payment.spec.ts
+│   │       ├── tax-calculator.spec.ts           # E2E tests
+│   │       └── tax-payment.spec.ts
 │   │
-│   ├── halal-certification-app/
+│   ├── permitted-certification-app/
 │   │   ├── src/
 │   │   │   ├── app/
 │   │   │   │   ├── certification.service.ts
@@ -599,22 +599,22 @@ open-sharia-enterprise/
 │   │   │   └── percentage.spec.ts
 │   │   └── README.md
 │   │
-│   ├── ts-zakat/                                  # Domain library
+│   ├── ts-tax/                                  # Domain library
 │   │   ├── src/
-│   │   │   ├── zakat-calculator.ts
-│   │   │   ├── zakat-calculator.spec.ts
-│   │   │   ├── zakat-assessment.ts
-│   │   │   └── zakat-assessment.spec.ts
+│   │   │   ├── tax-calculator.ts
+│   │   │   ├── tax-calculator.spec.ts
+│   │   │   ├── tax-assessment.ts
+│   │   │   └── tax-assessment.spec.ts
 │   │   └── README.md
 │   │
 │   ├── ts-test-utils/                             # Shared test utilities
 │   │   ├── src/
 │   │   │   ├── builders/
 │   │   │   │   ├── money-builder.ts
-│   │   │   │   └── zakat-assessment-builder.ts
+│   │   │   │   └── tax-assessment-builder.ts
 │   │   │   ├── fixtures/
 │   │   │   │   ├── money-fixtures.ts
-│   │   │   │   └── zakat-fixtures.ts
+│   │   │   │   └── tax-fixtures.ts
 │   │   │   ├── helpers/
 │   │   │   │   ├── test-database.ts
 │   │   │   │   └── test-assertions.ts
@@ -628,15 +628,15 @@ open-sharia-enterprise/
 ```typescript
 // Unit tests: *.spec.ts
 money.spec.ts;
-zakat - calculator.spec.ts;
+tax - calculator.spec.ts;
 
 // Integration tests: *.integration.spec.ts
-zakat - repository.integration.spec.ts;
+tax - repository.integration.spec.ts;
 payment - service.integration.spec.ts;
 
 // E2E tests: *.e2e.spec.ts or in e2e/ directory
-zakat - calculator.e2e.spec.ts;
-apps / zakat - app / e2e / user - journey.spec.ts;
+tax - calculator.e2e.spec.ts;
+apps / tax - app / e2e / user - journey.spec.ts;
 ```
 
 ## Running Affected Tests Only
@@ -661,21 +661,21 @@ nx affected:graph --files=libs/ts-money/src/money.ts
 // Nx dependency graph:
 // libs/ts-money
 //   ↓ (used by)
-// libs/ts-zakat
+// libs/ts-tax
 //   ↓ (used by)
-// apps/zakat-app
+// apps/tax-app
 
 // Running affected tests will test:
 // 1. libs/ts-money (direct change)
-// 2. libs/ts-zakat (depends on ts-money)
-// 3. apps/zakat-app (depends on ts-zakat)
+// 2. libs/ts-tax (depends on ts-money)
+// 3. apps/tax-app (depends on ts-tax)
 
 nx affected --target=test
 // Output:
 // ✅ ts-money:test
-// ✅ ts-zakat:test
-// ✅ zakat-app:test
-// ⏭️ halal-certification-app:test (not affected, skipped)
+// ✅ ts-tax:test
+// ✅ tax-app:test
+// ⏭️ permitted-certification-app:test (not affected, skipped)
 ```
 
 ### Affected Tests in CI/CD
@@ -1054,36 +1054,36 @@ describe("Money", () => {
 ### Using Money in Other Projects
 
 ```typescript
-// libs/ts-zakat/src/zakat-calculator.spec.ts
-import { Money } from "@open-sharia-enterprise/ts-money";
-import { MoneyBuilder } from "@open-sharia-enterprise/ts-test-utils";
+// libs/ts-tax/src/tax-calculator.spec.ts
+import { Money } from "@open-compliance-enterprise/ts-money";
+import { MoneyBuilder } from "@open-compliance-enterprise/ts-test-utils";
 
-describe("ZakatCalculator", () => {
+describe("TaxCalculator", () => {
   it("uses Money library for calculations", () => {
-    const calculator = new ZakatCalculator();
+    const calculator = new TaxCalculator();
     const wealth = MoneyBuilder.usd(10000);
-    const nisab = MoneyBuilder.usd(2000);
+    const threshold = MoneyBuilder.usd(2000);
 
-    const zakat = calculator.calculateZakat(wealth, nisab);
+    const tax = calculator.calculateTax(wealth, threshold);
 
-    expect(zakat.amount).toBe(250);
-    expect(zakat.currency).toBe("USD");
+    expect(tax.amount).toBe(250);
+    expect(tax.currency).toBe("USD");
   });
 });
 
-// apps/zakat-app/src/app/zakat.service.spec.ts
-import { Money } from "@open-sharia-enterprise/ts-money";
+// apps/tax-app/src/app/tax.service.spec.ts
+import { Money } from "@open-compliance-enterprise/ts-money";
 
-describe("ZakatService", () => {
-  it("calculates Zakat using Money library", async () => {
-    const service = new ZakatService();
+describe("TaxService", () => {
+  it("calculates Tax using Money library", async () => {
+    const service = new TaxService();
 
-    const result = await service.calculateZakat({
+    const result = await service.calculateTax({
       wealth: Money.fromAmount(10000, "USD"),
-      nisab: Money.fromAmount(2000, "USD"),
+      threshold: Money.fromAmount(2000, "USD"),
     });
 
-    expect(result.zakatDue).toEqual(Money.fromAmount(250, "USD"));
+    expect(result.taxDue).toEqual(Money.fromAmount(250, "USD"));
   });
 });
 ```
@@ -1104,7 +1104,7 @@ export const jestPreset = {
 };
 
 // Usage in library jest.config.ts
-import { jestPreset } from "@open-sharia-enterprise/ts-test-utils";
+import { jestPreset } from "@open-compliance-enterprise/ts-test-utils";
 
 export default {
   ...jestPreset,
@@ -1116,17 +1116,17 @@ export default {
 ### Pattern 2: Dependency Injection for Testability
 
 ```typescript
-// libs/ts-zakat/src/zakat-service.ts
-export class ZakatService {
+// libs/ts-tax/src/tax-service.ts
+export class TaxService {
   constructor(
-    private calculator: ZakatCalculator,
-    private repository: ZakatRepository,
+    private calculator: TaxCalculator,
+    private repository: TaxRepository,
   ) {}
 
-  async calculateZakat(input: ZakatInput): Promise<ZakatAssessment> {
-    const zakat = this.calculator.calculateZakat(input.wealth, input.nisab);
+  async calculateTax(input: TaxInput): Promise<TaxAssessment> {
+    const tax = this.calculator.calculateTax(input.wealth, input.threshold);
 
-    const assessment = new ZakatAssessment(generateId(), input.userId, input.wealth, input.nisab, zakat, new Date());
+    const assessment = new TaxAssessment(generateId(), input.userId, input.wealth, input.threshold, tax, new Date());
 
     await this.repository.save(assessment);
 
@@ -1135,20 +1135,20 @@ export class ZakatService {
 }
 
 // Testing with dependency injection
-describe("ZakatService", () => {
+describe("TaxService", () => {
   it("uses injected dependencies", async () => {
-    const calculator = new ZakatCalculator(); // Real
+    const calculator = new TaxCalculator(); // Real
     const repository = new InMemoryRepository(); // Test double
 
-    const service = new ZakatService(calculator, repository);
+    const service = new TaxService(calculator, repository);
 
-    const result = await service.calculateZakat({
+    const result = await service.calculateTax({
       userId: "user-123",
       wealth: Money.fromAmount(10000, "USD"),
-      nisab: Money.fromAmount(2000, "USD"),
+      threshold: Money.fromAmount(2000, "USD"),
     });
 
-    expect(result.zakatDue.amount).toBe(250);
+    expect(result.taxDue.amount).toBe(250);
 
     const saved = await repository.findById(result.id);
     expect(saved).toEqual(result);
@@ -1173,15 +1173,15 @@ export class FeatureFlags {
 }
 
 // Testing with feature flags
-describe("ZakatService", () => {
-  it("uses new Zakat calculation when feature flag enabled", () => {
+describe("TaxService", () => {
+  it("uses new Tax calculation when feature flag enabled", () => {
     const featureFlags = FeatureFlags.forTesting({
-      "new-zakat-calculation": true,
+      "new-tax-calculation": true,
     });
 
-    const service = new ZakatService(featureFlags);
+    const service = new TaxService(featureFlags);
 
-    const result = service.calculateZakat(/* ... */);
+    const result = service.calculateTax(/* ... */);
 
     // Verify new calculation logic used
     expect(result).toMatchSnapshot();

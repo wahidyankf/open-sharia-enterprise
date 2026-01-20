@@ -30,27 +30,27 @@ Scenario: [Clear scenario name describing what is being tested]
   And [additional expected outcomes]
 ```
 
-## Islamic Finance Example: Murabaha Contract Validation
+## Islamic Finance Example: Loan Contract Validation
 
 ### Simple Scenario (Happy Path)
 
 ```gherkin
-@murabaha @happy-path @smoke
-Scenario: Create valid Murabaha contract with profit disclosure
+@loan @happy-path @smoke
+Scenario: Create valid Loan contract with profit disclosure
   Given bank purchases asset at cost price 100,000 SAR
   And bank sets profit margin 15,000 SAR
-  When Murabaha contract is created
+  When Loan contract is created
   Then selling price should be 115,000 SAR
   And cost price should be disclosed to customer
   And profit margin should be disclosed separately
-  And contract should be marked as Shariah-compliant
+  And contract should be marked as Compliance-compliant
 ```
 
 ### Scenario with Data Tables (Complex Input)
 
 ```gherkin
-@murabaha @complex-data @regression
-Scenario: Create Murabaha contract with detailed asset information
+@loan @complex-data @regression
+Scenario: Create Loan contract with detailed asset information
   Given bank purchases asset with specifications:
     | Property        | Value                 |
     | Asset Type      | Toyota Camry 2025     |
@@ -65,7 +65,7 @@ Scenario: Create Murabaha contract with detailed asset information
     | Credit Rating   | Excellent          |
     | Approved Amount | 120,000 SAR        |
   And bank sets profit margin 20,000 SAR
-  When Murabaha contract is created
+  When Loan contract is created
   Then contract should include:
     | Field             | Value              |
     | Cost Price        | 80,000 SAR         |
@@ -75,32 +75,32 @@ Scenario: Create Murabaha contract with detailed asset information
     | Asset Description | Toyota Camry 2025  |
   And contract document should be generated
   And customer should receive disclosure statement
-  And Shariah board should receive contract for review
+  And Compliance board should receive contract for review
 ```
 
 ### Scenario with Validation (Error Case)
 
 ```gherkin
-@murabaha @riba-prevention @critical
-Scenario: Reject Murabaha contract with time-based interest (Riba)
-  Given Murabaha contract with cost price 100,000 SAR
+@loan @interest-prevention @critical
+Scenario: Reject Loan contract with time-based interest (Interest)
+  Given Loan contract with cost price 100,000 SAR
   When bank attempts to add 5% annual interest rate
   Then contract should be rejected
-  And rejection reason should state "Interest (Riba) is prohibited"
+  And rejection reason should state "Interest (Interest) is prohibited"
   And system should suggest using fixed profit margin instead
-  And compliance log should record attempted Riba violation
+  And compliance log should record attempted Interest violation
 ```
 
 ### Scenario with DocString (Multi-line Text)
 
 ```gherkin
-@murabaha @api-integration @integration
-Scenario: Create Murabaha contract via API
-  Given Murabaha contract API endpoint is available
+@loan @api-integration @integration
+Scenario: Create Loan contract via API
+  Given Loan contract API endpoint is available
   When client sends POST request with payload:
     """json
     {
-      "contractType": "murabaha",
+      "contractType": "loan",
       "costPrice": {
         "amount": 100000,
         "currency": "SAR"
@@ -117,7 +117,7 @@ Scenario: Create Murabaha contract via API
         "description": "Toyota Camry 2025",
         "assetId": "ASSET-456"
       },
-      "shariah Compliance": {
+      "compliance Compliance": {
         "reviewRequired": true,
         "madhab": "Shafi'i"
       }
@@ -125,20 +125,20 @@ Scenario: Create Murabaha contract via API
     """
   Then response status should be 201 Created
   And response should contain contract ID
-  And contract should be in "pending_shariah_review" status
-  And Shariah board should be notified for review
+  And contract should be in "pending_compliance_review" status
+  And Compliance board should be notified for review
 ```
 
 ### Scenario Testing Business Rule (Domain Logic)
 
 ```gherkin
-@murabaha @asset-ownership @shariah-compliance
-Scenario: Reject Murabaha sale before bank owns asset
+@loan @asset-ownership @compliance-compliance
+Scenario: Reject Loan sale before bank owns asset
   Given bank has NOT purchased asset
-  And customer requests Murabaha contract for car purchase
-  When bank attempts to create Murabaha contract
+  And customer requests Loan contract for car purchase
+  When bank attempts to create Loan contract
   Then contract creation should fail
-  And error message should state "Bank must own asset before Murabaha sale"
+  And error message should state "Bank must own asset before Loan sale"
   And system should suggest purchasing asset first
   And workflow should direct bank to asset purchase screen
 ```
@@ -146,11 +146,11 @@ Scenario: Reject Murabaha sale before bank owns asset
 ### Scenario with Multiple Assertions (Related Outcomes)
 
 ```gherkin
-@murabaha @disclosure-requirement @compliance
-Scenario: Ensure full transparency in Murabaha contract
+@loan @disclosure-requirement @compliance
+Scenario: Ensure full transparency in Loan contract
   Given bank purchases asset at cost price 100,000 SAR
   And bank sets profit margin 15,000 SAR
-  When Murabaha contract is created
+  When Loan contract is created
   Then customer disclosure document should show:
     | Item                   | Value       |
     | Cost Price             | 100,000 SAR |
@@ -166,12 +166,12 @@ Scenario: Ensure full transparency in Murabaha contract
 ### Scenario with Preconditions (Background Context)
 
 ```gherkin
-@murabaha @madhab-variation @fiqh-schools
-Scenario: Apply Hanafi Madhab rules to Murabaha contract
+@loan @madhab-variation @fiqh-schools
+Scenario: Apply Hanafi Madhab rules to Loan contract
   Given system is configured for Hanafi Fiqh school
   And bank has purchased asset (ownership established)
   And asset ownership duration is 2 days
-  When Murabaha contract is created
+  When Loan contract is created
   Then contract should be valid under Hanafi rules
   And note should state "Hanafi: Minimum ownership duration met (1 day required)"
   And contract should reference Hanafi jurisprudence source
@@ -180,9 +180,9 @@ Scenario: Apply Hanafi Madhab rules to Murabaha contract
 ### Scenario with Calculation Verification
 
 ```gherkin
-@murabaha @profit-calculation @regression
-Scenario: Calculate installment payments for Murabaha contract
-  Given Murabaha contract with:
+@loan @profit-calculation @regression
+Scenario: Calculate installment payments for Loan contract
+  Given Loan contract with:
     | Cost Price    | 100,000 SAR |
     | Profit Margin | 20,000 SAR  |
     | Selling Price | 120,000 SAR |
@@ -204,7 +204,7 @@ Scenario: Calculate installment payments for Murabaha contract
 
 ### Scenario Meta
 
-- `@[tag-type]`: Functional tag (@murabaha, @zakat, @halal)
+- `@[tag-type]`: Functional tag (@loan, @tax, @permitted)
 - `@[tag-priority]`: Priority level (@critical, @high, @smoke)
 - `[scenario name]`: Descriptive name (what behavior is tested)
 
@@ -220,7 +220,7 @@ Scenario: Calculate installment payments for Murabaha contract
 
 - `[action]`: What user or system does
 - Examples:
-  - "Murabaha contract is created"
+  - "Loan contract is created"
   - "bank attempts to add interest rate"
   - "customer submits payment"
 
@@ -278,47 +278,47 @@ Scenario: [Workflow step description]
 
 ## Islamic Finance Scenario Examples
 
-### Zakat Calculation
+### Tax Calculation
 
 ```gherkin
-@zakat @calculation @smoke
-Scenario: Calculate Zakat on gold above Nisab
+@tax @calculation @smoke
+Scenario: Calculate Tax on gold above Threshold
   Given individual owns 100 grams of gold
   And gold has been owned for one lunar year
-  And Nisab threshold for gold is 85 grams
-  When Zakat calculation is performed
-  Then Zakat should be obligatory
-  And Zakat amount should be 2.5 grams of gold (2.5% of total)
+  And Threshold threshold for gold is 85 grams
+  When Tax calculation is performed
+  Then Tax should be obligatory
+  And Tax amount should be 2.5 grams of gold (2.5% of total)
   And individual should be notified of obligation
 ```
 
-### Halal Certification
+### Permitted Certification
 
 ```gherkin
-@halal @certification @compliance
-Scenario: Approve product with valid Halal certificate
-  Given product "Halal Chicken Wings" is registered
-  And product has valid Halal certificate from recognized authority
+@permitted @certification @compliance
+Scenario: Approve product with valid Permitted certificate
+  Given product "Permitted Chicken Wings" is registered
+  And product has valid Permitted certificate from recognized authority
   And certificate expiry date is 2027-12-31
   When certification manager reviews product
   Then product should be approved
-  And approval status should be "Halal Certified"
+  And approval status should be "Permitted Certified"
   And certificate expiry should be tracked for renewal
-  And product should display Halal badge on website
+  And product should display Permitted badge on website
 ```
 
-### Riba Prevention
+### Interest Prevention
 
 ```gherkin
-@riba @compliance @critical
+@interest @compliance @critical
 Scenario: Reject loan with interest-based profit
   Given loan contract with principal 50,000 USD
   When bank attempts to calculate profit using 5% annual interest rate
   Then contract should be rejected
-  And rejection reason should state "Interest (Riba) is prohibited in Islamic finance"
-  And system should suggest Shariah-compliant alternatives:
+  And rejection reason should state "Interest (Interest) is prohibited in Islamic finance"
+  And system should suggest Compliance-compliant alternatives:
     | Alternative           | Description                           |
-    | Murabaha             | Cost-plus-profit sale                 |
+    | Loan             | Cost-plus-profit sale                 |
     | Mudaraba             | Profit-sharing partnership            |
     | Musharaka            | Joint venture investment              |
   And compliance team should be notified of attempted violation
@@ -327,16 +327,16 @@ Scenario: Reject loan with interest-based profit
 ### Sukuk Validation
 
 ```gherkin
-@sukuk @asset-backed @shariah-compliance
-Scenario: Validate Sukuk backed by Shariah-compliant assets
+@sukuk @asset-backed @compliance-compliance
+Scenario: Validate Sukuk backed by Compliance-compliant assets
   Given Sukuk issuance of 100,000,000 USD
   And Sukuk backed by asset portfolio:
-    | Asset Type       | Value (USD)  | Shariah Compliant |
+    | Asset Type       | Value (USD)  | Compliance Compliant |
     | Real Estate      | 50,000,000   | Yes               |
-    | Halal Business   | 30,000,000   | Yes               |
+    | Permitted Business   | 30,000,000   | Yes               |
     | Equipment Lease  | 20,000,000   | Yes               |
-  When Shariah board validates Sukuk structure
-  Then Sukuk should be approved as Shariah-compliant
+  When Compliance board validates Sukuk structure
+  Then Sukuk should be approved as Compliance-compliant
   And approval certificate should be issued
   And certificate should reference AAOIFI FAS 33 standard
   And investors should receive disclosure of underlying assets
@@ -349,29 +349,29 @@ Scenario: Validate Sukuk backed by Shariah-compliant assets
 **1. Descriptive Names**
 
 ```gherkin
-✅ GOOD: Scenario: Reject Murabaha contract with time-based interest (Riba)
+✅ GOOD: Scenario: Reject Loan contract with time-based interest (Interest)
 ❌ BAD:  Scenario: Test contract validation
 ```
 
 **2. Business Language**
 
 ```gherkin
-✅ GOOD: When customer submits Zakat payment
-❌ BAD:  When POST request to /api/zakat/payment with user_id=123
+✅ GOOD: When customer submits Tax payment
+❌ BAD:  When POST request to /api/tax/payment with user_id=123
 ```
 
 **3. Declarative Style (what, not how)**
 
 ```gherkin
-✅ GOOD: Then product should display "Halal Certified" badge
-❌ BAD:  Then UI element with id="halal-badge" should have class="visible"
+✅ GOOD: Then product should display "Permitted Certified" badge
+❌ BAD:  Then UI element with id="permitted-badge" should have class="visible"
 ```
 
 **4. One Behavior Per Scenario**
 
 ```gherkin
-✅ GOOD: Test Zakat calculation OR payment processing (separate scenarios)
-❌ BAD:  Test Zakat calculation AND payment processing (one scenario)
+✅ GOOD: Test Tax calculation OR payment processing (separate scenarios)
+❌ BAD:  Test Tax calculation AND payment processing (one scenario)
 ```
 
 **5. Independent Scenarios**
@@ -387,14 +387,14 @@ Scenario: Validate Sukuk backed by Shariah-compliant assets
 
 ```gherkin
 ❌ BAD:
-Scenario: Database stores Murabaha contract
+Scenario: Database stores Loan contract
   Given contract data
   When repository.save() is called
   Then database row should exist in contracts table
 
 ✅ GOOD:
-Scenario: Record Murabaha contract
-  Given valid Murabaha contract
+Scenario: Record Loan contract
+  Given valid Loan contract
   When contract is saved
   Then contract should be retrievable by contract ID
 ```
@@ -410,9 +410,9 @@ Scenario: Create contract
   And user clicks "Submit"
 
 ✅ GOOD:
-Scenario: Create Murabaha contract
+Scenario: Create Loan contract
   Given user is on contract creation page
-  When user creates Murabaha contract with cost price 100,000 SAR
+  When user creates Loan contract with cost price 100,000 SAR
   Then contract should be saved successfully
 ```
 
@@ -420,16 +420,16 @@ Scenario: Create Murabaha contract
 
 ```gherkin
 ❌ BAD:
-Scenario: Test entire Murabaha workflow
+Scenario: Test entire Loan workflow
   Given [setup]
   When [action]
   Then [20 different assertions testing multiple behaviors]
 
 ✅ GOOD: Split into multiple focused scenarios
-Scenario: Create Murabaha contract
+Scenario: Create Loan contract
   [Test contract creation only]
 
-Scenario: Validate Murabaha profit disclosure
+Scenario: Validate Loan profit disclosure
   [Test disclosure only]
 ```
 
@@ -439,17 +439,17 @@ Scenario: Validate Murabaha profit disclosure
 
 What specific behavior are you specifying?
 
-- Zakat calculation for gold?
-- Murabaha contract validation?
-- Halal certification approval?
+- Tax calculation for gold?
+- Loan contract validation?
+- Permitted certification approval?
 
 ### Step 2: Write Scenario Name
 
 Describe what is being tested in business terms:
 
-- "Calculate Zakat on gold above Nisab"
-- "Reject Murabaha contract with Riba"
-- "Approve product with valid Halal certificate"
+- "Calculate Tax on gold above Threshold"
+- "Reject Loan contract with Interest"
+- "Approve product with valid Permitted certificate"
 
 ### Step 3: Define Preconditions (Given)
 
@@ -457,13 +457,13 @@ What context is needed?
 
 - User state (logged in, role)
 - Data setup (owns 100g gold, contract exists)
-- System configuration (Hanafi Madhab, Nisab thresholds)
+- System configuration (Hanafi Madhab, Threshold thresholds)
 
 ### Step 4: Define Action (When)
 
 What action triggers the behavior?
 
-- "Zakat calculation is performed"
+- "Tax calculation is performed"
 - "bank attempts to add interest rate"
 - "certification manager reviews product"
 
@@ -471,7 +471,7 @@ What action triggers the behavior?
 
 What should happen?
 
-- "Zakat should be obligatory"
+- "Tax should be obligatory"
 - "contract should be rejected"
 - "product should be approved"
 
@@ -480,7 +480,7 @@ What should happen?
 Additional preconditions or outcomes:
 
 - "And gold has been owned for one lunar year"
-- "And rejection reason should state \'Riba is prohibited\'"
+- "And rejection reason should state \'Interest is prohibited\'"
 
 ### Step 7: Review with Three Amigos
 

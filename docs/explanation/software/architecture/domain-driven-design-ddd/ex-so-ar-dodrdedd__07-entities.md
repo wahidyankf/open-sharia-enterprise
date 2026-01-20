@@ -89,30 +89,30 @@ Does the object need to be tracked over time?
 
 **Key Differences:**
 
-| Aspect         | Entity                                  | Value Object                            |
-| -------------- | --------------------------------------- | --------------------------------------- |
-| **Identity**   | Has unique ID                           | No identity (defined by attributes)     |
-| **Equality**   | ID-based (same ID = same entity)        | Structural (same attributes = equal)    |
-| **Mutability** | Usually mutable (state can change)      | Always immutable                        |
-| **Lifecycle**  | Created, modified, deleted              | Created as complete, replaced if needed |
-| **Example**    | `WealthDeclaration`, `MurabahaContract` | `Money`, `HijriDate`, `ZakatRate`       |
+| Aspect         | Entity                              | Value Object                            |
+| -------------- | ----------------------------------- | --------------------------------------- |
+| **Identity**   | Has unique ID                       | No identity (defined by attributes)     |
+| **Equality**   | ID-based (same ID = same entity)    | Structural (same attributes = equal)    |
+| **Mutability** | Usually mutable (state can change)  | Always immutable                        |
+| **Lifecycle**  | Created, modified, deleted          | Created as complete, replaced if needed |
+| **Example**    | `WealthDeclaration`, `LoanContract` | `Money`, `HijriDate`, `TaxRate`         |
 
 **Examples from Islamic Finance:**
 
 **Entities:**
 
-- `ZakatAssessment` - Unique assessment tracked from draft to finalized state
+- `TaxAssessment` - Unique assessment tracked from draft to finalized state
 - `WealthDeclaration` - Specific declaration of wealth that can be amended
-- `MurabahaContract` - Unique contract tracked through approval workflow
+- `LoanContract` - Unique contract tracked through approval workflow
 - `Transaction` - Specific financial transaction in account history
-- `HalalCertification` - Unique certification with lifecycle (issued, renewed, revoked)
+- `PermittedCertification` - Unique certification with lifecycle (issued, renewed, revoked)
 
 **Value Objects:**
 
 - `Money` - $100 USD is interchangeable with any other $100 USD
 - `HijriDate` - 1445-01-01 is the same date regardless of where used
-- `ZakatRate` - 2.5% is 2.5% everywhere
-- `NisabAmount` - Nisab threshold defined purely by its value
+- `TaxRate` - 2.5% is 2.5% everywhere
+- `ThresholdAmount` - Threshold threshold defined purely by its value
 - `Email` - Two email addresses with same string are identical
 
 ## Identity Management
@@ -236,7 +236,7 @@ class WealthDeclarationId {
 
 ```typescript
 // ANTI-PATTERN: Don't do this!
-class ZakatAssessment {
+class TaxAssessment {
   private assessmentId: AssessmentId; // Mutable ID field
 
   changeId(newId: AssessmentId): void {
@@ -249,7 +249,7 @@ class ZakatAssessment {
 
 ```typescript
 // CORRECT: Identity is immutable
-class ZakatAssessment {
+class TaxAssessment {
   constructor(
     readonly id: AssessmentId, // readonly = immutable
     // other fields...
@@ -268,7 +268,7 @@ Entities use **identity-based equality**, not structural equality.
 ### Object-Oriented Implementation
 
 ```typescript
-class MurabahaContract {
+class LoanContract {
   constructor(
     readonly contractId: ContractId,
     public customerName: string,
@@ -277,8 +277,8 @@ class MurabahaContract {
   ) {}
 
   // Identity-based equality
-  equals(other: MurabahaContract): boolean {
-    if (!(other instanceof MurabahaContract)) {
+  equals(other: LoanContract): boolean {
+    if (!(other instanceof LoanContract)) {
       return false;
     }
     return this.contractId.equals(other.contractId);
@@ -291,14 +291,9 @@ class MurabahaContract {
 }
 
 // Usage
-const contract1 = new MurabahaContract(
-  ContractId.from("contract-001"),
-  "Ali Hassan",
-  Money.usd(50000),
-  Percentage.from(5),
-);
+const contract1 = new LoanContract(ContractId.from("contract-001"), "Ali Hassan", Money.usd(50000), Percentage.from(5));
 
-const contract2 = new MurabahaContract(
+const contract2 = new LoanContract(
   ContractId.from("contract-001"), // Same ID
   "Ali Hassan (Updated)", // Different name
   Money.usd(55000), // Different amount
@@ -320,7 +315,7 @@ FP uses immutable data structures with explicit equality functions:
 
 ```typescript
 // FP-style entity with immutable data
-type MurabahaContract = {
+type LoanContract = {
   readonly contractId: ContractId;
   readonly customerName: string;
   readonly amount: Money;
@@ -329,12 +324,12 @@ type MurabahaContract = {
 };
 
 // Pure function for identity-based equality
-function contractEquals(contract1: MurabahaContract, contract2: MurabahaContract): boolean {
+function contractEquals(contract1: LoanContract, contract2: LoanContract): boolean {
   return contractId.equals(contract1.contractId, contract2.contractId);
 }
 
 // Usage
-const contract1: MurabahaContract = {
+const contract1: LoanContract = {
   contractId: ContractId.from("contract-001"),
   customerName: "Ali Hassan",
   amount: Money.usd(50000),
@@ -342,7 +337,7 @@ const contract1: MurabahaContract = {
   status: ContractStatus.Draft,
 };
 
-const contract2: MurabahaContract = {
+const contract2: LoanContract = {
   ...contract1,
   customerName: "Ali Hassan (Updated)", // Different attributes
   status: ContractStatus.Approved, // Different status
@@ -391,10 +386,10 @@ stateDiagram-v2
 
 **Note**: This diagram uses WCAG AA-compliant colors. See [Color Palette Template](./templates/ex-so-ar-dodrdedd-te__color-palette.md).
 
-### Lifecycle Example: Halal Certification
+### Lifecycle Example: Permitted Certification
 
 ```typescript
-class HalalCertification {
+class PermittedCertification {
   private constructor(
     readonly id: CertificationId,
     readonly productId: ProductId,
@@ -410,12 +405,12 @@ class HalalCertification {
     productId: ProductId,
     authority: CertificationAuthority,
     validityPeriod: LunarMonths,
-  ): HalalCertification {
+  ): PermittedCertification {
     const id = CertificationId.generate();
     const issuedDate = HijriDate.now();
     const expiryDate = issuedDate.addMonths(validityPeriod.value);
 
-    return new HalalCertification(id, productId, authority, issuedDate, expiryDate, CertificationStatus.Active);
+    return new PermittedCertification(id, productId, authority, issuedDate, expiryDate, CertificationStatus.Active);
   }
 
   // Lifecycle: Renewal
@@ -464,11 +459,11 @@ enum CertificationStatus {
 Each lifecycle transition can publish domain events:
 
 ```typescript
-class HalalCertification {
+class PermittedCertification {
   private domainEvents: DomainEvent[] = [];
 
-  static issue(/*...*/): HalalCertification {
-    const certification = new HalalCertification(/*...*/);
+  static issue(/*...*/): PermittedCertification {
+    const certification = new PermittedCertification(/*...*/);
     certification.addDomainEvent(
       new CertificationIssued(certification.id, certification.productId, certification.authority),
     );
@@ -505,18 +500,18 @@ See [Domain Events](./ex-so-ar-dodrdedd__12-domain-events.md) for event publishi
 Entities encapsulate both data and behavior (OOP approach):
 
 ```typescript
-class ZakatAssessment {
+class TaxAssessment {
   private constructor(
     readonly id: AssessmentId,
     readonly wealthHolderId: WealthHolderId,
     private declarations: WealthDeclaration[],
     private status: AssessmentStatus,
-    private zakatAmount: Money | null,
+    private taxAmount: Money | null,
   ) {}
 
   // Factory
-  static create(wealthHolderId: WealthHolderId): ZakatAssessment {
-    return new ZakatAssessment(
+  static create(wealthHolderId: WealthHolderId): TaxAssessment {
+    return new TaxAssessment(
       AssessmentId.generate(),
       wealthHolderId,
       [], // empty declarations
@@ -536,7 +531,7 @@ class ZakatAssessment {
   }
 
   // Command: Finalize
-  finalize(nisabThreshold: NisabAmount, zakatRate: ZakatRate): void {
+  finalize(thresholdThreshold: ThresholdAmount, taxRate: TaxRate): void {
     if (this.status !== AssessmentStatus.Draft) {
       throw new Error("Assessment already finalized");
     }
@@ -547,12 +542,12 @@ class ZakatAssessment {
 
     const totalWealth = this.calculateTotalWealth();
 
-    if (totalWealth.isGreaterThanOrEqual(nisabThreshold.toMoney())) {
-      this.zakatAmount = totalWealth.multiply(zakatRate.percentage);
+    if (totalWealth.isGreaterThanOrEqual(thresholdThreshold.toMoney())) {
+      this.taxAmount = totalWealth.multiply(taxRate.percentage);
       this.status = AssessmentStatus.Finalized;
     } else {
-      this.zakatAmount = Money.zero();
-      this.status = AssessmentStatus.ExemptBelowNisab;
+      this.taxAmount = Money.zero();
+      this.status = AssessmentStatus.ExemptBelowThreshold;
     }
   }
 
@@ -566,8 +561,8 @@ class ZakatAssessment {
     return this.calculateTotalWealth();
   }
 
-  get finalizedZakat(): Money | null {
-    return this.zakatAmount;
+  get finalizedTax(): Money | null {
+    return this.taxAmount;
   }
 }
 ```
@@ -589,31 +584,31 @@ Separate data structures from operations:
 
 ```typescript
 // Data structure (anemic entity)
-type ZakatAssessment = {
+type TaxAssessment = {
   readonly id: AssessmentId;
   readonly wealthHolderId: WealthHolderId;
   readonly declarations: readonly WealthDeclaration[];
   readonly status: AssessmentStatus;
-  readonly zakatAmount: Money | null;
+  readonly taxAmount: Money | null;
 };
 
 // Factory function
-function createZakatAssessment(wealthHolderId: WealthHolderId): ZakatAssessment {
+function createTaxAssessment(wealthHolderId: WealthHolderId): TaxAssessment {
   return {
     id: AssessmentId.generate(),
     wealthHolderId,
     declarations: [],
     status: AssessmentStatus.Draft,
-    zakatAmount: null,
+    taxAmount: null,
   };
 }
 
 // Pure function for adding declaration
 function addDeclaration(
-  assessment: ZakatAssessment,
+  assessment: TaxAssessment,
   wealthType: WealthType,
   amount: Money,
-): Result<ZakatAssessment, DomainError> {
+): Result<TaxAssessment, DomainError> {
   // Validate
   if (assessment.status !== AssessmentStatus.Draft) {
     return Err(new Error("Cannot add declarations to finalized assessment"));
@@ -629,10 +624,10 @@ function addDeclaration(
 
 // Pure function for finalization
 function finalizeAssessment(
-  assessment: ZakatAssessment,
-  nisabThreshold: NisabAmount,
-  zakatRate: ZakatRate,
-): Result<ZakatAssessment, DomainError> {
+  assessment: TaxAssessment,
+  thresholdThreshold: ThresholdAmount,
+  taxRate: TaxRate,
+): Result<TaxAssessment, DomainError> {
   // Validate
   if (assessment.status !== AssessmentStatus.Draft) {
     return Err(new Error("Assessment already finalized"));
@@ -644,22 +639,22 @@ function finalizeAssessment(
 
   // Calculate
   const totalWealth = calculateTotalWealth(assessment);
-  const meetsNisab = totalWealth.isGreaterThanOrEqual(nisabThreshold.toMoney());
+  const meetsThreshold = totalWealth.isGreaterThanOrEqual(thresholdThreshold.toMoney());
 
-  const zakatAmount = meetsNisab ? totalWealth.multiply(zakatRate.percentage) : Money.zero();
+  const taxAmount = meetsThreshold ? totalWealth.multiply(taxRate.percentage) : Money.zero();
 
-  const status = meetsNisab ? AssessmentStatus.Finalized : AssessmentStatus.ExemptBelowNisab;
+  const status = meetsThreshold ? AssessmentStatus.Finalized : AssessmentStatus.ExemptBelowThreshold;
 
   // Return new state
   return Ok({
     ...assessment,
-    zakatAmount,
+    taxAmount,
     status,
   });
 }
 
 // Pure query function
-function calculateTotalWealth(assessment: ZakatAssessment): Money {
+function calculateTotalWealth(assessment: TaxAssessment): Money {
   return assessment.declarations.reduce((total, decl) => total.add(decl.amount), Money.zero());
 }
 ```
@@ -683,7 +678,7 @@ See [DDD and Functional Programming](./ex-so-ar-dodrdedd__14-ddd-and-functional-
 Entities with complex lifecycle transitions benefit from explicit state machines:
 
 ```typescript
-class MurabahaContract {
+class LoanContract {
   private constructor(
     readonly id: ContractId,
     readonly customerId: CustomerId,
@@ -707,7 +702,7 @@ class MurabahaContract {
       throw new Error(`Cannot approve contract in ${this.status} status`);
     }
 
-    this.validateRibaCompliance(); // Islamic finance rules
+    this.validateInterestCompliance(); // Islamic finance rules
     this.status = ContractStatus.Approved;
   }
 
@@ -734,7 +729,7 @@ class MurabahaContract {
     // Check all required fields present
   }
 
-  private validateRibaCompliance(): void {
+  private validateInterestCompliance(): void {
     // Validate interest-free structure
   }
 }
@@ -763,7 +758,7 @@ enum ContractStatus {
 
 ```typescript
 // ANTI-PATTERN: Primitive ID
-class ZakatAssessment {
+class TaxAssessment {
   constructor(
     public id: string, // Raw string
     // ...
@@ -771,7 +766,7 @@ class ZakatAssessment {
 }
 
 // Type-unsafe usage
-const assessment = new ZakatAssessment("customer-123" /*...*/); // Whoops! Used customer ID instead of assessment ID
+const assessment = new TaxAssessment("customer-123" /*...*/); // Whoops! Used customer ID instead of assessment ID
 ```
 
 **Solution:** Wrap IDs in value objects for type safety.
@@ -790,7 +785,7 @@ class AssessmentId {
   }
 }
 
-class ZakatAssessment {
+class TaxAssessment {
   constructor(
     readonly id: AssessmentId, // Type-safe
     // ...
@@ -798,7 +793,7 @@ class ZakatAssessment {
 }
 
 // Type-safe usage
-const assessment = new ZakatAssessment(
+const assessment = new TaxAssessment(
   CustomerId.from("customer-123"), // Compile error! Wrong type
 );
 ```
@@ -863,7 +858,7 @@ class Transaction {
 
 ```typescript
 // ANTI-PATTERN: Anemic entity
-class MurabahaContract {
+class LoanContract {
   private status: ContractStatus;
 
   getStatus(): ContractStatus {
@@ -885,7 +880,7 @@ if (contract.getStatus() === ContractStatus.Submitted) {
 
 ```typescript
 // CORRECT: Rich domain model
-class MurabahaContract {
+class LoanContract {
   private status: ContractStatus;
 
   approve(): void {
@@ -893,7 +888,7 @@ class MurabahaContract {
       throw new Error("Can only approve submitted contracts");
     }
 
-    this.validateRibaCompliance(); // Business logic
+    this.validateInterestCompliance(); // Business logic
     this.status = ContractStatus.Approved;
   }
 }
@@ -910,7 +905,7 @@ contract.approve(); // Business rules enforced
 
 ```typescript
 // ANTI-PATTERN: Mutable collection exposure
-class ZakatAssessment {
+class TaxAssessment {
   private declarations: WealthDeclaration[] = [];
 
   getDeclarations(): WealthDeclaration[] {
@@ -919,7 +914,7 @@ class ZakatAssessment {
 }
 
 // External code violates invariants
-const assessment = new ZakatAssessment();
+const assessment = new TaxAssessment();
 assessment.getDeclarations().push(invalidDeclaration); // Bypassed validation!
 ```
 
@@ -927,7 +922,7 @@ assessment.getDeclarations().push(invalidDeclaration); // Bypassed validation!
 
 ```typescript
 // CORRECT: Immutable view
-class ZakatAssessment {
+class TaxAssessment {
   private declarations: WealthDeclaration[] = [];
 
   get declarations(): readonly WealthDeclaration[] {
@@ -995,7 +990,7 @@ class OrderLine {
 Entities are straightforward to test due to clear identity and behavior:
 
 ```typescript
-describe("HalalCertification Entity", () => {
+describe("PermittedCertification Entity", () => {
   it("should have stable identity across attribute changes", () => {
     // Arrange
     const certificationId = CertificationId.from("cert-001");
@@ -1003,9 +998,9 @@ describe("HalalCertification Entity", () => {
     const authority2 = CertificationAuthority.from("MUI");
 
     // Act
-    const cert1 = new HalalCertification(certificationId, productId, authority1, issuedDate, expiryDate);
+    const cert1 = new PermittedCertification(certificationId, productId, authority1, issuedDate, expiryDate);
 
-    const cert2 = new HalalCertification(certificationId, productId, authority2, issuedDate, expiryDate);
+    const cert2 = new PermittedCertification(certificationId, productId, authority2, issuedDate, expiryDate);
 
     // Assert: Same ID = same entity despite different authority
     expect(cert1.equals(cert2)).toBe(true);
@@ -1013,7 +1008,7 @@ describe("HalalCertification Entity", () => {
 
   it("should prevent revocation of already revoked certification", () => {
     // Arrange
-    const certification = HalalCertification.issue(productId, authority, validityPeriod);
+    const certification = PermittedCertification.issue(productId, authority, validityPeriod);
     certification.revoke("Contamination detected");
 
     // Act & Assert
@@ -1025,7 +1020,7 @@ describe("HalalCertification Entity", () => {
   it("should mark as expired when past expiry date", () => {
     // Arrange
     const pastDate = HijriDate.fromString("1443-01-01"); // Date in past
-    const certification = new HalalCertification(
+    const certification = new PermittedCertification(
       certificationId,
       productId,
       authority,

@@ -12,7 +12,7 @@ A **Domain Service** is a stateless operation that expresses domain logic that d
 - **Named After Ubiquitous Language**: Service names reflect domain concepts
 - **Immutability**: FP style uses pure functions; OOP style uses stateless classes
 
-**Example**: `ZakatCalculationService` encapsulates complex zakat calculation logic that involves nisab thresholds, Islamic calendar calculations, and multiple wealth types - logic too complex for any single aggregate.
+**Example**: `TaxCalculationService` encapsulates complex tax calculation logic that involves threshold thresholds, Islamic calendar calculations, and multiple wealth types - logic too complex for any single aggregate.
 
 ## Why Domain Services Matter
 
@@ -24,14 +24,14 @@ Some domain logic doesn't naturally belong in entities or value objects:
 // WITHOUT Domain Services: Logic misplaced
 
 // Option 1: Bloated aggregate
-class ZakatAssessment {
+class TaxAssessment {
   // Assessment logic
-  finalize(nisab: NisabAmount, rate: ZakatRate): void {
+  finalize(threshold: ThresholdAmount, rate: TaxRate): void {
     // ...
   }
 
   // Doesn't belong here - operates on multiple assessments
-  static compareTwoAssessments(a1: ZakatAssessment, a2: ZakatAssessment): ComparisonReport {
+  static compareTwoAssessments(a1: TaxAssessment, a2: TaxAssessment): ComparisonReport {
     // Complex multi-aggregate logic
   }
 
@@ -41,19 +41,19 @@ class ZakatAssessment {
   }
 
   // Doesn't belong here - crosses aggregate boundaries
-  static detectRibaInTransaction(transaction: Transaction, account: IslamicFinancialAccount): boolean {
+  static detectInterestInTransaction(transaction: Transaction, account: IslamicFinancialAccount): boolean {
     // Requires knowledge of both aggregates
   }
 }
 
 // Option 2: Application layer (wrong layer)
-class ZakatApplicationService {
-  async calculateZakat(wealthHolderId: WealthHolderId): Promise<Money> {
+class TaxApplicationService {
+  async calculateTax(wealthHolderId: WealthHolderId): Promise<Money> {
     const assessment = await this.repo.findById(id);
 
     // Domain logic in application layer - WRONG!
     const goldPrice = await this.goldPriceService.getCurrentPrice();
-    const nisab = NisabAmount.fromGoldPrice(goldPrice);
+    const threshold = ThresholdAmount.fromGoldPrice(goldPrice);
 
     const isLunarYearComplete = this.calculateHawl(assessment.startDate);
 
@@ -80,13 +80,13 @@ Domain services provide a clear home for complex domain logic:
 ```typescript
 // WITH Domain Services: Clear separation
 
-// Domain Service: Zakat calculation logic
-class ZakatCalculationService {
-  calculateNisabThreshold(goldPrice: Money): NisabAmount {
-    // Business rule: Nisab = 85 grams of gold
+// Domain Service: Tax calculation logic
+class TaxCalculationService {
+  calculateThresholdThreshold(goldPrice: Money): ThresholdAmount {
+    // Business rule: Threshold = 85 grams of gold
     const goldGrams = 85;
-    const nisabValue = goldPrice.multiply(goldGrams);
-    return NisabAmount.fromMoney(nisabValue);
+    const thresholdValue = goldPrice.multiply(goldGrams);
+    return ThresholdAmount.fromMoney(thresholdValue);
   }
 
   isHawlComplete(startDate: HijriDate): boolean {
@@ -95,9 +95,9 @@ class ZakatCalculationService {
     return HijriDate.now().isAfterOrEqual(oneYearLater);
   }
 
-  calculateZakatForWealth(wealth: Money, nisab: NisabAmount, rate: ZakatRate): Money {
-    // Business rule: Zakat only owed if wealth >= nisab
-    if (wealth.isLessThan(nisab.toMoney())) {
+  calculateTaxForWealth(wealth: Money, threshold: ThresholdAmount, rate: TaxRate): Money {
+    // Business rule: Tax only owed if wealth >= threshold
+    if (wealth.isLessThan(threshold.toMoney())) {
       return Money.zero();
     }
 
@@ -105,21 +105,21 @@ class ZakatCalculationService {
   }
 }
 
-// Domain Service: Riba detection
-class RibaDetectionService {
-  detectRiba(transaction: Transaction, account: IslamicFinancialAccount): RibaDetectionResult {
+// Domain Service: Interest detection
+class InterestDetectionService {
+  detectInterest(transaction: Transaction, account: IslamicFinancialAccount): InterestDetectionResult {
     // Complex business logic for detecting interest-based transactions
     // Crosses aggregate boundaries (Transaction + Account)
 
     if (this.hasInterestComponent(transaction)) {
-      return RibaDetectionResult.ribaDetected("Interest component found");
+      return InterestDetectionResult.interestDetected("Interest component found");
     }
 
     if (this.violatesProfitSharingRules(transaction, account)) {
-      return RibaDetectionResult.ribaDetected("Profit-sharing violation");
+      return InterestDetectionResult.interestDetected("Profit-sharing violation");
     }
 
-    return RibaDetectionResult.compliant();
+    return InterestDetectionResult.compliant();
   }
 
   private hasInterestComponent(transaction: Transaction): boolean {
@@ -132,14 +132,14 @@ class RibaDetectionService {
 }
 
 // Application service uses domain services
-class ZakatApplicationService {
+class TaxApplicationService {
   constructor(
-    private assessmentRepo: ZakatAssessmentRepository,
-    private zakatCalculationService: ZakatCalculationService,
+    private assessmentRepo: TaxAssessmentRepository,
+    private taxCalculationService: TaxCalculationService,
     private goldPriceService: GoldPriceService, // Infrastructure
   ) {}
 
-  async calculateZakat(wealthHolderId: WealthHolderId): Promise<Money> {
+  async calculateTax(wealthHolderId: WealthHolderId): Promise<Money> {
     const assessment = await this.assessmentRepo.findDraftByWealthHolder(wealthHolderId);
 
     if (!assessment) {
@@ -148,16 +148,16 @@ class ZakatApplicationService {
 
     // Domain service encapsulates domain logic
     const goldPrice = await this.goldPriceService.getCurrentPrice();
-    const nisab = this.zakatCalculationService.calculateNisabThreshold(goldPrice);
+    const threshold = this.taxCalculationService.calculateThresholdThreshold(goldPrice);
 
-    if (!this.zakatCalculationService.isHawlComplete(assessment.startDate)) {
+    if (!this.taxCalculationService.isHawlComplete(assessment.startDate)) {
       throw new Error("Hawl incomplete");
     }
 
     const totalWealth = assessment.totalWealth;
-    const zakatAmount = this.zakatCalculationService.calculateZakatForWealth(totalWealth, nisab, ZakatRate.standard());
+    const taxAmount = this.taxCalculationService.calculateTaxForWealth(totalWealth, threshold, TaxRate.standard());
 
-    return zakatAmount;
+    return taxAmount;
   }
 }
 ```
@@ -174,23 +174,23 @@ class ZakatApplicationService {
 
 **Key Distinction:**
 
-| Aspect           | Domain Service                                    | Application Service                                    |
-| ---------------- | ------------------------------------------------- | ------------------------------------------------------ |
-| **Layer**        | Domain layer                                      | Application layer                                      |
-| **Purpose**      | Express domain logic                              | Orchestrate use cases                                  |
-| **Dependencies** | Only domain objects (aggregates, value objects)   | Domain services + repositories + infrastructure        |
-| **State**        | Stateless                                         | Stateless (but may inject stateful infrastructure)     |
-| **Transaction**  | No transaction management                         | Manages transactions                                   |
-| **Example**      | `ZakatCalculationService`, `RibaDetectionService` | `ZakatApplicationService`, `PaymentApplicationService` |
+| Aspect           | Domain Service                                      | Application Service                                  |
+| ---------------- | --------------------------------------------------- | ---------------------------------------------------- |
+| **Layer**        | Domain layer                                        | Application layer                                    |
+| **Purpose**      | Express domain logic                                | Orchestrate use cases                                |
+| **Dependencies** | Only domain objects (aggregates, value objects)     | Domain services + repositories + infrastructure      |
+| **State**        | Stateless                                           | Stateless (but may inject stateful infrastructure)   |
+| **Transaction**  | No transaction management                           | Manages transactions                                 |
+| **Example**      | `TaxCalculationService`, `InterestDetectionService` | `TaxApplicationService`, `PaymentApplicationService` |
 
 **Domain Service Example:**
 
 ```typescript
 // Domain layer - pure business logic
-class ZakatCalculationService {
+class TaxCalculationService {
   // Pure domain logic, no infrastructure
-  calculateZakat(wealth: Money, nisab: NisabAmount, rate: ZakatRate): Money {
-    if (wealth.isLessThan(nisab.toMoney())) {
+  calculateTax(wealth: Money, threshold: ThresholdAmount, rate: TaxRate): Money {
+    if (wealth.isLessThan(threshold.toMoney())) {
       return Money.zero();
     }
     return rate.applyTo(wealth);
@@ -206,10 +206,10 @@ class ZakatCalculationService {
 
 ```typescript
 // Application layer - orchestrates use case
-class ZakatApplicationService {
+class TaxApplicationService {
   constructor(
-    private assessmentRepo: ZakatAssessmentRepository, // Infrastructure dependency
-    private zakatService: ZakatCalculationService, // Domain service dependency
+    private assessmentRepo: TaxAssessmentRepository, // Infrastructure dependency
+    private taxService: TaxCalculationService, // Domain service dependency
     private eventPublisher: EventPublisher, // Infrastructure dependency
   ) {}
 
@@ -224,22 +224,22 @@ class ZakatApplicationService {
     }
 
     // Delegate to domain service
-    if (!this.zakatService.isHawlComplete(assessment.startDate)) {
+    if (!this.taxService.isHawlComplete(assessment.startDate)) {
       throw new Error("Cannot finalize: hawl incomplete");
     }
 
-    const zakatAmount = this.zakatService.calculateZakat(
+    const taxAmount = this.taxService.calculateTax(
       assessment.totalWealth,
-      NisabAmount.goldStandard(),
-      ZakatRate.standard(),
+      ThresholdAmount.goldStandard(),
+      TaxRate.standard(),
     );
 
-    assessment.finalize(zakatAmount);
+    assessment.finalize(taxAmount);
 
     await this.assessmentRepo.save(assessment);
 
     // Publish events (infrastructure concern)
-    await this.eventPublisher.publish(new ZakatCalculated(assessmentId, zakatAmount));
+    await this.eventPublisher.publish(new TaxCalculated(assessmentId, taxAmount));
   }
 }
 ```
@@ -272,11 +272,11 @@ class TransferFundsService {
 
   private isTransferAllowed(from: IslamicFinancialAccount, to: IslamicFinancialAccount, amount: Money): boolean {
     // Domain rules for Islamic finance transfers
-    return from.balance.isGreaterThanOrEqual(amount) && !this.violatesRibaRules(from, to, amount);
+    return from.balance.isGreaterThanOrEqual(amount) && !this.violatesInterestRules(from, to, amount);
   }
 
-  private violatesRibaRules(from: IslamicFinancialAccount, to: IslamicFinancialAccount, amount: Money): boolean {
-    // Complex riba detection logic
+  private violatesInterestRules(from: IslamicFinancialAccount, to: IslamicFinancialAccount, amount: Money): boolean {
+    // Complex interest detection logic
   }
 }
 ```
@@ -284,19 +284,19 @@ class TransferFundsService {
 **2. Complex Calculation Beyond Single Aggregate**
 
 ```typescript
-// Domain service: nisab threshold calculation
-class NisabThresholdService {
-  calculateThreshold(goldPrice: Money, silverPrice: Money): NisabAmount {
-    // Business rule: Use lower of gold or silver nisab
-    const goldNisab = goldPrice.multiply(85); // 85 grams gold
-    const silverNisab = silverPrice.multiply(595); // 595 grams silver
+// Domain service: threshold threshold calculation
+class ThresholdThresholdService {
+  calculateThreshold(goldPrice: Money, silverPrice: Money): ThresholdAmount {
+    // Business rule: Use lower of gold or silver threshold
+    const goldThreshold = goldPrice.multiply(85); // 85 grams gold
+    const silverThreshold = silverPrice.multiply(595); // 595 grams silver
 
-    const threshold = goldNisab.isLessThan(silverNisab) ? goldNisab : silverNisab;
+    const threshold = goldThreshold.isLessThan(silverThreshold) ? goldThreshold : silverThreshold;
 
-    return NisabAmount.fromMoney(threshold);
+    return ThresholdAmount.fromMoney(threshold);
   }
 
-  adjustForRegion(nisab: NisabAmount, region: GeographicRegion): NisabAmount {
+  adjustForRegion(threshold: ThresholdAmount, region: GeographicRegion): ThresholdAmount {
     // Regional adjustments based on Islamic jurisprudence
     // ...
   }
@@ -306,10 +306,10 @@ class NisabThresholdService {
 **3. Domain Logic Without Natural Owner**
 
 ```typescript
-// Domain service: halal certification validation
-class HalalCertificationValidator {
-  validateCertification(cert: HalalCertification, product: Product): ValidationResult {
-    // Doesn't naturally belong to Product or HalalCertification
+// Domain service: permitted certification validation
+class PermittedCertificationValidator {
+  validateCertification(cert: PermittedCertification, product: Product): ValidationResult {
+    // Doesn't naturally belong to Product or PermittedCertification
 
     if (cert.isExpired()) {
       return ValidationResult.invalid("Certification expired");
@@ -330,7 +330,7 @@ class HalalCertificationValidator {
     // Domain rule: recognized certification authorities
   }
 
-  private productMatchesCertification(product: Product, cert: HalalCertification): boolean {
+  private productMatchesCertification(product: Product, cert: PermittedCertification): boolean {
     // Domain rule: product-certification matching
   }
 }
@@ -339,22 +339,20 @@ class HalalCertificationValidator {
 **4. Policy or Strategy Implementation**
 
 ```typescript
-// Domain service: zakat rate selection policy
-class ZakatRatePolicy {
-  determineRate(wealthType: WealthType, acquisitionMethod: AcquisitionMethod): ZakatRate {
+// Domain service: tax rate selection policy
+class TaxRatePolicy {
+  determineRate(wealthType: WealthType, acquisitionMethod: AcquisitionMethod): TaxRate {
     // Business policy for rate selection
 
     if (wealthType === WealthType.Agricultural) {
-      return acquisitionMethod === AcquisitionMethod.RainFed
-        ? ZakatRate.agricultural(true)
-        : ZakatRate.agricultural(false);
+      return acquisitionMethod === AcquisitionMethod.RainFed ? TaxRate.agricultural(true) : TaxRate.agricultural(false);
     }
 
     if (wealthType === WealthType.BuriedTreasure) {
-      return ZakatRate.riqaz(); // 20%
+      return TaxRate.riqaz(); // 20%
     }
 
-    return ZakatRate.standard(); // 2.5%
+    return TaxRate.standard(); // 2.5%
   }
 }
 ```
@@ -363,11 +361,11 @@ class ZakatRatePolicy {
 
 ```typescript
 // OOP-style: Stateless class
-class ZakatCalculationService {
+class TaxCalculationService {
   // No instance fields (stateless)
 
-  calculateZakat(wealth: Money, nisab: NisabAmount, rate: ZakatRate): Money {
-    if (wealth.isLessThan(nisab.toMoney())) {
+  calculateTax(wealth: Money, threshold: ThresholdAmount, rate: TaxRate): Money {
+    if (wealth.isLessThan(threshold.toMoney())) {
       return Money.zero();
     }
 
@@ -379,10 +377,10 @@ class ZakatCalculationService {
     return currentDate.isAfterOrEqual(requiredDate);
   }
 
-  calculateNisabThreshold(goldPricePerGram: Money): NisabAmount {
-    const goldGrams = 85; // Shariah standard
-    const nisabValue = goldPricePerGram.multiply(goldGrams);
-    return NisabAmount.fromMoney(nisabValue);
+  calculateThresholdThreshold(goldPricePerGram: Money): ThresholdAmount {
+    const goldGrams = 85; // Compliance standard
+    const thresholdValue = goldPricePerGram.multiply(goldGrams);
+    return ThresholdAmount.fromMoney(thresholdValue);
   }
 
   aggregateWealthByType(declarations: WealthDeclaration[]): Map<WealthType, Money> {
@@ -398,13 +396,13 @@ class ZakatCalculationService {
 }
 
 // Usage
-const zakatService = new ZakatCalculationService();
+const taxService = new TaxCalculationService();
 
 const totalWealth = Money.usd(10000);
-const nisab = zakatService.calculateNisabThreshold(Money.usd(60)); // $60/gram
-const zakatOwed = zakatService.calculateZakat(totalWealth, nisab, ZakatRate.standard());
+const threshold = taxService.calculateThresholdThreshold(Money.usd(60)); // $60/gram
+const taxOwed = taxService.calculateTax(totalWealth, threshold, TaxRate.standard());
 
-console.log(zakatOwed.amount); // $250 (2.5% of $10,000)
+console.log(taxOwed.amount); // $250 (2.5% of $10,000)
 ```
 
 **OOP Benefits:**
@@ -418,9 +416,9 @@ console.log(zakatOwed.amount); // $250 (2.5% of $10,000)
 ```typescript
 // FP-style: Pure functions (no classes)
 
-// Pure function: calculate zakat
-function calculateZakat(wealth: Money, nisab: NisabAmount, rate: ZakatRate): Money {
-  if (wealth.isLessThan(nisab.toMoney())) {
+// Pure function: calculate tax
+function calculateTax(wealth: Money, threshold: ThresholdAmount, rate: TaxRate): Money {
+  if (wealth.isLessThan(threshold.toMoney())) {
     return Money.zero();
   }
 
@@ -433,11 +431,11 @@ function isHawlComplete(startDate: HijriDate, currentDate: HijriDate = HijriDate
   return currentDate.isAfterOrEqual(requiredDate);
 }
 
-// Pure function: calculate nisab
-function calculateNisabThreshold(goldPricePerGram: Money): NisabAmount {
+// Pure function: calculate threshold
+function calculateThresholdThreshold(goldPricePerGram: Money): ThresholdAmount {
   const goldGrams = 85;
-  const nisabValue = goldPricePerGram.multiply(goldGrams);
-  return NisabAmount.fromMoney(nisabValue);
+  const thresholdValue = goldPricePerGram.multiply(goldGrams);
+  return ThresholdAmount.fromMoney(thresholdValue);
 }
 
 // Pure function: aggregate wealth
@@ -450,11 +448,11 @@ function aggregateWealthByType(declarations: readonly WealthDeclaration[]): Map<
 }
 
 // Usage: compose functions
-const nisab = calculateNisabThreshold(Money.usd(60));
+const threshold = calculateThresholdThreshold(Money.usd(60));
 const totalWealth = Money.usd(10000);
-const zakatOwed = calculateZakat(totalWealth, nisab, ZakatRate.standard());
+const taxOwed = calculateTax(totalWealth, threshold, TaxRate.standard());
 
-console.log(zakatOwed.amount); // $250
+console.log(taxOwed.amount); // $250
 ```
 
 **FP Benefits:**
@@ -468,44 +466,44 @@ console.log(zakatOwed.amount); // $250
 
 ```typescript
 // Group related functions in module
-export const ZakatCalculation = {
-  calculateZakat,
+export const TaxCalculation = {
+  calculateTax,
   isHawlComplete,
-  calculateNisabThreshold,
+  calculateThresholdThreshold,
   aggregateWealthByType,
 } as const;
 
 // Usage
-import { ZakatCalculation } from "./domain/services/ZakatCalculation";
+import { TaxCalculation } from "./domain/services/TaxCalculation";
 
-const zakatOwed = ZakatCalculation.calculateZakat(wealth, nisab, rate);
+const taxOwed = TaxCalculation.calculateTax(wealth, threshold, rate);
 ```
 
 See [DDD and Functional Programming](./ex-so-ar-dodrdedd__14-ddd-and-functional-programming.md) for comprehensive FP patterns.
 
 ## Domain Service Examples
 
-### Example 1: Riba Detection Service
+### Example 1: Interest Detection Service
 
 ```typescript
-class RibaDetectionService {
-  detectRibaInTransaction(transaction: Transaction, account: IslamicFinancialAccount): RibaDetectionResult {
+class InterestDetectionService {
+  detectInterestInTransaction(transaction: Transaction, account: IslamicFinancialAccount): InterestDetectionResult {
     // Check for explicit interest
     if (this.hasInterestComponent(transaction)) {
-      return RibaDetectionResult.ribaDetected("Explicit interest found");
+      return InterestDetectionResult.interestDetected("Explicit interest found");
     }
 
     // Check for implicit interest (delayed payment markup)
     if (this.hasImplicitInterest(transaction)) {
-      return RibaDetectionResult.ribaDetected("Implicit interest (delayed payment markup)");
+      return InterestDetectionResult.interestDetected("Implicit interest (delayed payment markup)");
     }
 
     // Check for gharar (excessive uncertainty)
     if (this.hasGharar(transaction)) {
-      return RibaDetectionResult.ribaDetected("Gharar detected");
+      return InterestDetectionResult.interestDetected("Gharar detected");
     }
 
-    return RibaDetectionResult.compliant();
+    return InterestDetectionResult.compliant();
   }
 
   private hasInterestComponent(transaction: Transaction): boolean {
@@ -532,18 +530,18 @@ class RibaDetectionService {
   }
 }
 
-class RibaDetectionResult {
+class InterestDetectionResult {
   private constructor(
     readonly isCompliant: boolean,
     readonly reason: string | null,
   ) {}
 
-  static compliant(): RibaDetectionResult {
-    return new RibaDetectionResult(true, null);
+  static compliant(): InterestDetectionResult {
+    return new InterestDetectionResult(true, null);
   }
 
-  static ribaDetected(reason: string): RibaDetectionResult {
-    return new RibaDetectionResult(false, reason);
+  static interestDetected(reason: string): InterestDetectionResult {
+    return new InterestDetectionResult(false, reason);
   }
 }
 ```
@@ -576,8 +574,8 @@ class IslamicCalendarService {
     return date.month === 9;
   }
 
-  calculateZakatDueDate(assessmentYear: number): HijriDate {
-    // Business rule: Zakat due by end of Ramadan
+  calculateTaxDueDate(assessmentYear: number): HijriDate {
+    // Business rule: Tax due by end of Ramadan
     return new HijriDate(assessmentYear, 9, 29); // 29th of Ramadan
   }
 
@@ -599,26 +597,26 @@ class IslamicCalendarService {
 }
 ```
 
-### Example 3: Product Halal Verification Service
+### Example 3: Product Permitted Verification Service
 
 ```typescript
-class ProductHalalVerificationService {
-  verifyProduct(product: Product, certifications: HalalCertification[]): VerificationResult {
+class ProductPermittedVerificationService {
+  verifyProduct(product: Product, certifications: PermittedCertification[]): VerificationResult {
     // Check if product has valid certification
     const validCert = this.findValidCertification(product, certifications);
 
     if (!validCert) {
-      return VerificationResult.notHalal("No valid halal certification");
+      return VerificationResult.notPermitted("No valid permitted certification");
     }
 
     // Check ingredients
-    if (this.containsHaramIngredients(product)) {
-      return VerificationResult.notHalal("Contains haram ingredients");
+    if (this.containsForbiddenIngredients(product)) {
+      return VerificationResult.notPermitted("Contains forbidden ingredients");
     }
 
     // Check production process
     if (!this.hasValidProductionProcess(product)) {
-      return VerificationResult.notHalal("Production process not compliant");
+      return VerificationResult.notPermitted("Production process not compliant");
     }
 
     // Check cross-contamination risk
@@ -626,10 +624,13 @@ class ProductHalalVerificationService {
       return VerificationResult.mashbooh("Cross-contamination risk (doubtful)");
     }
 
-    return VerificationResult.halal(validCert);
+    return VerificationResult.permitted(validCert);
   }
 
-  private findValidCertification(product: Product, certifications: HalalCertification[]): HalalCertification | null {
+  private findValidCertification(
+    product: Product,
+    certifications: PermittedCertification[],
+  ): PermittedCertification | null {
     return (
       certifications.find(
         (cert) => cert.productId.equals(product.id) && cert.isValid() && this.isAuthorityRecognized(cert.authority),
@@ -647,11 +648,11 @@ class ProductHalalVerificationService {
     return recognizedAuthorities.includes(authority);
   }
 
-  private containsHaramIngredients(product: Product): boolean {
-    const haramIngredients = ["pork", "alcohol", "blood", "carnivorous animals"];
+  private containsForbiddenIngredients(product: Product): boolean {
+    const forbiddenIngredients = ["pork", "alcohol", "blood", "carnivorous animals"];
 
     return product.ingredients.some((ingredient) =>
-      haramIngredients.some((haram) => ingredient.toLowerCase().includes(haram)),
+      forbiddenIngredients.some((forbidden) => ingredient.toLowerCase().includes(forbidden)),
     );
   }
 
@@ -664,27 +665,27 @@ class ProductHalalVerificationService {
   }
 
   private hasCrossContaminationRisk(product: Product): boolean {
-    return product.sharedEquipmentWithNonHalal;
+    return product.sharedEquipmentWithNonPermitted;
   }
 }
 
 class VerificationResult {
   private constructor(
-    readonly status: "HALAL" | "NOT_HALAL" | "MASHBOOH",
+    readonly status: "PERMITTED" | "NOT_PERMITTED" | "DOUBTFUL",
     readonly reason: string | null,
-    readonly certification: HalalCertification | null,
+    readonly certification: PermittedCertification | null,
   ) {}
 
-  static halal(certification: HalalCertification): VerificationResult {
-    return new VerificationResult("HALAL", null, certification);
+  static permitted(certification: PermittedCertification): VerificationResult {
+    return new VerificationResult("PERMITTED", null, certification);
   }
 
-  static notHalal(reason: string): VerificationResult {
-    return new VerificationResult("NOT_HALAL", reason, null);
+  static notPermitted(reason: string): VerificationResult {
+    return new VerificationResult("NOT_PERMITTED", reason, null);
   }
 
   static mashbooh(reason: string): VerificationResult {
-    return new VerificationResult("MASHBOOH", reason, null);
+    return new VerificationResult("DOUBTFUL", reason, null);
   }
 }
 ```
@@ -697,14 +698,14 @@ class VerificationResult {
 
 ```typescript
 // ANTI-PATTERN: Stateful domain service
-class ZakatCalculationService {
+class TaxCalculationService {
   private lastCalculation: Money | null = null; // State!
 
-  calculateZakat(wealth: Money, nisab: NisabAmount, rate: ZakatRate): Money {
-    const zakat = wealth.isGreaterThanOrEqual(nisab.toMoney()) ? rate.applyTo(wealth) : Money.zero();
+  calculateTax(wealth: Money, threshold: ThresholdAmount, rate: TaxRate): Money {
+    const tax = wealth.isGreaterThanOrEqual(threshold.toMoney()) ? rate.applyTo(wealth) : Money.zero();
 
-    this.lastCalculation = zakat; // Mutation!
-    return zakat;
+    this.lastCalculation = tax; // Mutation!
+    return tax;
   }
 }
 ```
@@ -713,9 +714,9 @@ class ZakatCalculationService {
 
 ```typescript
 // CORRECT: Stateless
-class ZakatCalculationService {
-  calculateZakat(wealth: Money, nisab: NisabAmount, rate: ZakatRate): Money {
-    return wealth.isGreaterThanOrEqual(nisab.toMoney()) ? rate.applyTo(wealth) : Money.zero();
+class TaxCalculationService {
+  calculateTax(wealth: Money, threshold: ThresholdAmount, rate: TaxRate): Money {
+    return wealth.isGreaterThanOrEqual(threshold.toMoney()) ? rate.applyTo(wealth) : Money.zero();
   }
 }
 ```
@@ -726,8 +727,8 @@ class ZakatCalculationService {
 
 ```typescript
 // ANTI-PATTERN: Infrastructure in domain service
-class ZakatCalculationService {
-  async calculateZakat(wealthHolderId: WealthHolderId): Promise<Money> {
+class TaxCalculationService {
+  async calculateTax(wealthHolderId: WealthHolderId): Promise<Money> {
     // Database access - WRONG LAYER!
     const assessment = await db.query("SELECT * FROM assessments WHERE ...");
 
@@ -744,27 +745,27 @@ class ZakatCalculationService {
 
 ```typescript
 // CORRECT: Pure domain logic
-class ZakatCalculationService {
-  calculateZakat(wealth: Money, nisab: NisabAmount, rate: ZakatRate): Money {
+class TaxCalculationService {
+  calculateTax(wealth: Money, threshold: ThresholdAmount, rate: TaxRate): Money {
     // Pure business logic
-    return wealth.isGreaterThanOrEqual(nisab.toMoney()) ? rate.applyTo(wealth) : Money.zero();
+    return wealth.isGreaterThanOrEqual(threshold.toMoney()) ? rate.applyTo(wealth) : Money.zero();
   }
 }
 
 // Application service handles infrastructure
-class ZakatApplicationService {
+class TaxApplicationService {
   constructor(
-    private repo: ZakatAssessmentRepository,
+    private repo: TaxAssessmentRepository,
     private goldPriceService: GoldPriceService,
-    private zakatCalculationService: ZakatCalculationService,
+    private taxCalculationService: TaxCalculationService,
   ) {}
 
-  async calculateZakat(wealthHolderId: WealthHolderId): Promise<Money> {
+  async calculateTax(wealthHolderId: WealthHolderId): Promise<Money> {
     const assessment = await this.repo.findByWealthHolder(wealthHolderId);
     const goldPrice = await this.goldPriceService.getCurrentPrice();
 
-    const nisab = NisabAmount.fromGoldPrice(goldPrice);
-    return this.zakatCalculationService.calculateZakat(assessment.totalWealth, nisab, ZakatRate.standard());
+    const threshold = ThresholdAmount.fromGoldPrice(goldPrice);
+    return this.taxCalculationService.calculateTax(assessment.totalWealth, threshold, TaxRate.standard());
   }
 }
 ```
@@ -775,9 +776,9 @@ class ZakatApplicationService {
 
 ```typescript
 // ANTI-PATTERN: Aggregate logic in service
-class ZakatAssessmentService {
-  addDeclaration(assessment: ZakatAssessment, wealthType: WealthType, amount: Money): ZakatAssessment {
-    // This logic belongs in ZakatAssessment aggregate!
+class TaxAssessmentService {
+  addDeclaration(assessment: TaxAssessment, wealthType: WealthType, amount: Money): TaxAssessment {
+    // This logic belongs in TaxAssessment aggregate!
     if (assessment.status !== AssessmentStatus.Draft) {
       throw new Error("Cannot add to finalized assessment");
     }
@@ -792,7 +793,7 @@ class ZakatAssessmentService {
 
 ```typescript
 // CORRECT: Logic in aggregate
-class ZakatAssessment {
+class TaxAssessment {
   addDeclaration(wealthType: WealthType, amount: Money): void {
     if (this.status !== AssessmentStatus.Draft) {
       throw new Error("Cannot add to finalized assessment");
@@ -810,8 +811,8 @@ class ZakatAssessment {
 
 ```typescript
 // ANTI-PATTERN: Anemic domain service
-class ZakatCalculationService {
-  calculateZakat(wealth: Money, rate: ZakatRate): Money {
+class TaxCalculationService {
+  calculateTax(wealth: Money, rate: TaxRate): Money {
     return rate.applyTo(wealth); // Just delegates, no logic added
   }
 }
@@ -821,7 +822,7 @@ class ZakatCalculationService {
 
 ```typescript
 // Better: Call directly, no service needed
-const zakatAmount = ZakatRate.standard().applyTo(wealth);
+const taxAmount = TaxRate.standard().applyTo(wealth);
 ```
 
 ## Testing Domain Services
@@ -829,30 +830,30 @@ const zakatAmount = ZakatRate.standard().applyTo(wealth);
 Domain services are extremely easy to test due to statelessness and pure logic:
 
 ```typescript
-describe("ZakatCalculationService", () => {
-  let service: ZakatCalculationService;
+describe("TaxCalculationService", () => {
+  let service: TaxCalculationService;
 
   beforeEach(() => {
-    service = new ZakatCalculationService();
+    service = new TaxCalculationService();
   });
 
-  describe("calculateZakat", () => {
-    it("should return zero when wealth below nisab", () => {
+  describe("calculateTax", () => {
+    it("should return zero when wealth below threshold", () => {
       const wealth = Money.usd(4000);
-      const nisab = NisabAmount.fromMoney(Money.usd(5000));
-      const rate = ZakatRate.standard();
+      const threshold = ThresholdAmount.fromMoney(Money.usd(5000));
+      const rate = TaxRate.standard();
 
-      const result = service.calculateZakat(wealth, nisab, rate);
+      const result = service.calculateTax(wealth, threshold, rate);
 
       expect(result.equals(Money.zero())).toBe(true);
     });
 
-    it("should calculate 2.5% when wealth meets nisab", () => {
+    it("should calculate 2.5% when wealth meets threshold", () => {
       const wealth = Money.usd(10000);
-      const nisab = NisabAmount.fromMoney(Money.usd(5000));
-      const rate = ZakatRate.standard(); // 2.5%
+      const threshold = ThresholdAmount.fromMoney(Money.usd(5000));
+      const rate = TaxRate.standard(); // 2.5%
 
-      const result = service.calculateZakat(wealth, nisab, rate);
+      const result = service.calculateTax(wealth, threshold, rate);
 
       expect(result.amount).toBe(250); // 2.5% of 10000
     });

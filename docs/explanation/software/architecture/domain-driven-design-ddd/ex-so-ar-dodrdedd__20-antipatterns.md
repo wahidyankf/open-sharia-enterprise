@@ -31,10 +31,10 @@ The cost of these antipatterns is significant: wasted development time, maintena
 
 ```typescript
 // ANTIPATTERN: Anemic model
-class ZakatCalculation {
+class TaxCalculation {
   public assets: Asset[];
-  public nisabThreshold: number;
-  public zakatAmount: number;
+  public thresholdThreshold: number;
+  public taxAmount: number;
 
   // Just getters/setters, no behavior
   getAssets() {
@@ -45,12 +45,12 @@ class ZakatCalculation {
   }
 }
 
-class ZakatService {
+class TaxService {
   // All logic in service
-  calculateZakat(calculation: ZakatCalculation): number {
+  calculateTax(calculation: TaxCalculation): number {
     const total = calculation.getAssets().reduce((sum, a) => sum + a.value, 0);
 
-    if (total < calculation.nisabThreshold) {
+    if (total < calculation.thresholdThreshold) {
       return 0;
     }
 
@@ -59,23 +59,23 @@ class ZakatService {
 }
 
 // CORRECT: Rich domain model
-class ZakatCalculation {
+class TaxCalculation {
   private assets: Asset[];
-  private nisabThreshold: Money;
+  private thresholdThreshold: Money;
 
-  calculateZakat(): Money {
+  calculateTax(): Money {
     // Business logic lives in domain model
-    const zakatableAmount = this.calculateZakatableAmount();
+    const taxableAmount = this.calculateTaxableAmount();
 
-    if (!this.nisabThreshold.isMet(zakatableAmount)) {
+    if (!this.thresholdThreshold.isMet(taxableAmount)) {
       return Money.zero();
     }
 
-    return zakatableAmount.multiply(0.025);
+    return taxableAmount.multiply(0.025);
   }
 
-  private calculateZakatableAmount(): Money {
-    return this.assets.filter((a) => a.isZakatable()).reduce((sum, a) => sum.add(a.value()), Money.zero());
+  private calculateTaxableAmount(): Money {
+    return this.assets.filter((a) => a.isTaxable()).reduce((sum, a) => sum.add(a.value()), Money.zero());
   }
 }
 ```
@@ -125,15 +125,15 @@ class UserProfileService {
 
 **When NOT to use DDD**:
 
-- **Simple lookup tables**: Zakat recipient categories (just 8 fixed values)
-- **Configuration**: Nisab threshold updates (simple CRUD)
+- **Simple lookup tables**: Tax recipient categories (just 8 fixed values)
+- **Configuration**: Threshold threshold updates (simple CRUD)
 - **Logging**: Audit trail of user actions (write-only, no business logic)
 
 **When to use DDD**:
 
-- **Complex calculations**: Zakat on business inventory (complex rules, formulas, exceptions)
-- **Invariants**: Waqf principal preservation (critical business rule)
-- **Workflows**: Murabaha contract lifecycle (multiple states, events, validations)
+- **Complex calculations**: Tax on business inventory (complex rules, formulas, exceptions)
+- **Invariants**: Donation principal preservation (critical business rule)
+- **Workflows**: Loan contract lifecycle (multiple states, events, validations)
 
 **How to Fix**: Start simple. Only introduce DDD patterns when complexity justifies them.
 
@@ -154,16 +154,16 @@ class UserProfileService {
 ```typescript
 // ANTIPATTERN: One "Asset" model for everything
 class Asset {
-  // Zakat-specific fields
-  isZakatable: boolean;
-  zakatRate: number;
+  // Tax-specific fields
+  isTaxable: boolean;
+  taxRate: number;
 
-  // Waqf-specific fields
-  isWaqfProperty: boolean;
+  // Donation-specific fields
+  isDonationProperty: boolean;
   rentalIncome: number;
 
-  // Murabaha-specific fields
-  isShariaCompliant: boolean;
+  // Loan-specific fields
+  isComplianceCompliant: boolean;
   purchasePrice: number;
   markup: number;
 
@@ -171,30 +171,30 @@ class Asset {
 }
 
 // CORRECT: Separate models per bounded context
-// Zakat Context
-class ZakatableAsset {
+// Tax Context
+class TaxableAsset {
   value: Money;
   category: AssetCategory;
-  isZakatable(): boolean {
-    /* Zakat-specific logic */
+  isTaxable(): boolean {
+    /* Tax-specific logic */
   }
 }
 
-// Waqf Context
-class WaqfProperty {
+// Donation Context
+class DonationProperty {
   valuation: Money;
   rentalIncome: Money;
   generateIncome(): Money {
-    /* Waqf-specific logic */
+    /* Donation-specific logic */
   }
 }
 
-// Murabaha Context
+// Loan Context
 class FinancedAsset {
   purchasePrice: Money;
   markup: Percentage;
-  isShariaCompliant(): boolean {
-    /* Murabaha-specific logic */
+  isComplianceCompliant(): boolean {
+    /* Loan-specific logic */
   }
 }
 ```
@@ -226,22 +226,22 @@ class TransactionProcessor {
   }
 }
 
-// Domain expert: "Where is the Zakat distribution logic?"
+// Domain expert: "Where is the Tax distribution logic?"
 // Developer: "It's in the transaction processor"
 // Expert: "What's a transaction processor?"
 
 // CORRECT: Ubiquitous Language
-class ZakatDistributor {
-  distributeToRecipient(distribution: ZakatDistribution): void {
+class TaxDistributor {
+  distributeToRecipient(distribution: TaxDistribution): void {
     const recipient = this.recipientRepo.findById(distribution.recipientId);
 
-    recipient.receiveZakat(distribution.amount);
+    recipient.receiveTax(distribution.amount);
     this.recipientRepo.save(recipient);
   }
 }
 
-// Domain expert: "Where is the Zakat distribution logic?"
-// Developer: "In the ZakatDistributor class"
+// Domain expert: "Where is the Tax distribution logic?"
+// Developer: "In the TaxDistributor class"
 // Expert: "Perfect, that matches our business process"
 ```
 
@@ -263,35 +263,35 @@ class ZakatDistributor {
 
 ```typescript
 // ANTIPATTERN: Developer assumptions
-class ZakatCalculator {
-  calculateZakat(assets: Asset[]): number {
-    // Developer assumption: "Zakat is 2.5% of everything"
+class TaxCalculator {
+  calculateTax(assets: Asset[]): number {
+    // Developer assumption: "Tax is 2.5% of everything"
     const total = assets.reduce((sum, a) => sum + a.value, 0);
     return total * 0.025;
   }
 }
 
 // Missing domain knowledge:
-// - Not all assets are zakatable
+// - Not all assets are taxable
 // - Different asset types have different rates
-// - Nisab threshold must be met
+// - Threshold threshold must be met
 // - Hawl (lunar year) must be complete
 // - Personal use items are excluded
 
 // CORRECT: Domain expert collaboration
-class ZakatCalculation {
-  calculateZakat(currentDate: HijriDate): Money {
+class TaxCalculation {
+  calculateTax(currentDate: HijriDate): Money {
     // Domain expert: "First verify hawl is complete"
     this.verifyHawlCompleted(currentDate);
 
-    // Domain expert: "Only zakatable assets count"
-    const zakatableAssets = this.assets.filter((a) => a.isZakatable());
+    // Domain expert: "Only taxable assets count"
+    const taxableAssets = this.assets.filter((a) => a.isTaxable());
 
     // Domain expert: "Different categories have different rules"
-    const total = this.calculateByCategory(zakatableAssets);
+    const total = this.calculateByCategory(taxableAssets);
 
-    // Domain expert: "Must meet nisab threshold"
-    if (!this.nisabThreshold.isMet(total)) {
+    // Domain expert: "Must meet threshold threshold"
+    if (!this.thresholdThreshold.isMet(total)) {
       return Money.zero();
     }
 
@@ -322,43 +322,43 @@ class ZakatCalculation {
 ```typescript
 // ANTIPATTERN: Database-first
 // Start by creating tables
-CREATE TABLE zakat_calculations (
+CREATE TABLE tax_calculations (
   id UUID,
   user_id UUID,
   asset_ids UUID[], -- Array of foreign keys
   total_amount DECIMAL,
-  zakat_amount DECIMAL,
+  tax_amount DECIMAL,
   created_at TIMESTAMP
 );
 
 // Then create anemic models matching tables
-class ZakatCalculation {
+class TaxCalculation {
   id: string;
   userId: string;
   assetIds: string[];
   totalAmount: number;
-  zakatAmount: number;
+  taxAmount: number;
 }
 
 // CORRECT: Domain-first
 // Start with domain model
-class ZakatCalculation {
-  private assets: ZakatableAsset[];
-  private nisabThreshold: NisabThreshold;
+class TaxCalculation {
+  private assets: TaxableAsset[];
+  private thresholdThreshold: ThresholdThreshold;
   private hawlYear: HijriYear;
 
-  calculateZakat(): Money {
+  calculateTax(): Money {
     // Rich behavior
   }
 
-  addAsset(asset: ZakatableAsset): void {
+  addAsset(asset: TaxableAsset): void {
     // Enforces invariants
   }
 }
 
 // Then map to database (ORM handles this)
 @Entity()
-class ZakatCalculationEntity {
+class TaxCalculationEntity {
   @PrimaryColumn()
   id: string;
 
@@ -400,17 +400,17 @@ class ZakatCalculationEntity {
 
 // CORRECT: Business capability-based contexts
 ┌────────────────────────┐  ┌──────────────────────┐
-│  Zakat Management      │  │  Waqf Administration │
+│  Tax Management      │  │  Donation Administration │
 │                        │  │                      │
 │  Capabilities:         │  │  Capabilities:       │
-│  - Calculate Zakat     │  │  - Manage Endowments │
+│  - Calculate Tax     │  │  - Manage Endowments │
 │  - Distribute Funds    │  │  - Track Grants      │
 │  - Track Recipients    │  │  - Report Income     │
 │                        │  │                      │
 │  Entities:             │  │  Entities:           │
-│  - ZakatCalculation    │  │  - WaqfEndowment     │
-│  - ZakatPayer          │  │  - Beneficiary       │
-│  - ZakatRecipient      │  │  - Property          │
+│  - TaxCalculation    │  │  - DonationEndowment     │
+│  - TaxPayer          │  │  - Beneficiary       │
+│  - TaxRecipient      │  │  - Property          │
 └────────────────────────┘  └──────────────────────┘
 ```
 
@@ -434,11 +434,11 @@ class ZakatCalculationEntity {
 
 ```typescript
 // ANTIPATTERN: ID references everywhere
-class ZakatCalculation {
+class TaxCalculation {
   payerId: string; // Just ID
   recipientIds: string[]; // Just IDs
 
-  async distributeZakat() {
+  async distributeTax() {
     // Have to fetch separately
     const payer = await this.payerRepo.findById(this.payerId);
     const recipients = await Promise.all(this.recipientIds.map((id) => this.recipientRepo.findById(id)));
@@ -447,16 +447,16 @@ class ZakatCalculation {
 }
 
 // CORRECT: Object references within aggregate
-class ZakatCalculation {
-  private payer: ZakatPayer; // Entity reference
+class TaxCalculation {
+  private payer: TaxPayer; // Entity reference
   private distributions: Distribution[]; // Value objects
 
-  distributeZakat(): void {
+  distributeTax(): void {
     // Direct access, type-safe
-    const zakatDue = this.calculateZakat();
+    const taxDue = this.calculateTax();
 
     this.distributions.forEach((distribution) => {
-      distribution.allocateFrom(zakatDue);
+      distribution.allocateFrom(taxDue);
     });
 
     // Clear aggregate boundary
@@ -464,8 +464,8 @@ class ZakatCalculation {
 }
 
 // Use IDs only for cross-aggregate references
-class ZakatPayment {
-  private calculationId: ZakatCalculationId; // Different aggregate
+class TaxPayment {
+  private calculationId: TaxCalculationId; // Different aggregate
   private recipientId: RecipientId; // Different aggregate
 }
 ```
@@ -494,11 +494,11 @@ class Money {
   currency: string;
 }
 
-// ANTIPATTERN: ZakatPayer as value object (wrong)
-class ZakatPayer {
+// ANTIPATTERN: TaxPayer as value object (wrong)
+class TaxPayer {
   name: string;
 
-  equals(other: ZakatPayer): boolean {
+  equals(other: TaxPayer): boolean {
     return this.name === other.name; // Wrong - comparing by value
   }
 }
@@ -516,11 +516,11 @@ class Money {
 }
 
 // CORRECT: Entities for concepts with identity
-class ZakatPayer {
+class TaxPayer {
   private readonly id: PayerId;
   private name: string;
 
-  equals(other: ZakatPayer): boolean {
+  equals(other: TaxPayer): boolean {
     return this.id.equals(other.id); // Identity-based
   }
 
@@ -557,9 +557,9 @@ class Payment {
 }
 
 // But missed that "Payment" means different things:
-// - Zakat Payment (charitable, tax-deductible, specific recipients)
-// - Murabaha Installment (financing, interest-free, asset-backed)
-// - Waqf Donation (endowment, principal preserved, generates income)
+// - Tax Payment (charitable, tax-deductible, specific recipients)
+// - Loan Installment (financing, interest-free, asset-backed)
+// - Donation Donation (endowment, principal preserved, generates income)
 
 // Should have been separate bounded contexts!
 
@@ -570,9 +570,9 @@ class Payment {
 // 4. THEN implement tactical patterns
 
 Bounded Contexts:
-- Zakat Management → ZakatPayment aggregate
-- Murabaha Financing → InstallmentPayment aggregate
-- Waqf Administration → WaqfDonation aggregate
+- Tax Management → TaxPayment aggregate
+- Loan Financing → InstallmentPayment aggregate
+- Donation Administration → DonationDonation aggregate
 ```
 
 **How to Fix**: Always start with strategic design. Tactical patterns come after bounded contexts are identified.
@@ -607,11 +607,11 @@ Result: No domain expert time allocated, DDD becomes just anemic models with fan
 
 # CORRECT: Business-driven DDD
 
-**Developer**: "Zakat calculation has complex rules and frequent errors. Can we get Shariah scholar time?"
+**Developer**: "Tax calculation has complex rules and frequent errors. Can we get Compliance scholar time?"
 **Manager**: "How much time and what's the ROI?"
-**Developer**: "4 hours/week for 3 months. ROI: 90% reduction in Shariah compliance bugs, faster feature development after initial investment"
+**Developer**: "4 hours/week for 3 months. ROI: 90% reduction in Compliance compliance bugs, faster feature development after initial investment"
 **Manager**: "Approved. What do you need?"
-**Developer**: "Weekly sessions with Sheikh Ahmad to model Zakat rules correctly"
+**Developer**: "Weekly sessions with Sheikh Ahmad to model Tax rules correctly"
 
 Result: Business understands value, allocates resources, DDD succeeds.
 ```
@@ -626,32 +626,32 @@ Result: Business understands value, allocates resources, DDD succeeds.
 
 ## Islamic Finance Examples
 
-### Example 1: Zakat Calculation Domain
+### Example 1: Tax Calculation Domain
 
-**Bounded Context**: Zakat Management
+**Bounded Context**: Tax Management
 
 **Ubiquitous Language**:
 
-- Nisab (نصاب) - Minimum threshold
+- Threshold (نصاب) - Minimum threshold
 - Hawl (حول) - Lunar year
-- Zakatable Assets (أموال زكوية) - Assets subject to Zakat
+- Taxable Assets (أموال زكوية) - Assets subject to Tax
 - Eight Categories (الأصناف الثمانية) - Eligible recipients
 
 **Aggregates**:
 
 ```typescript
-class ZakatCalculation {
+class TaxCalculation {
   // Invariants
   private verifyHawlCompleted(): void {
     /* Must complete lunar year */
   }
-  private verifyNisabMet(): void {
+  private verifyThresholdMet(): void {
     /* Must meet threshold */
   }
 
   // Domain events
-  calculateZakat(): void {
-    this.recordEvent(new ZakatCalculated(/* ... */));
+  calculateTax(): void {
+    this.recordEvent(new TaxCalculated(/* ... */));
   }
 }
 ```
@@ -659,31 +659,31 @@ class ZakatCalculation {
 **Best Practices Applied**:
 
 - Rich domain model (calculation logic in aggregate)
-- Value objects (Money, HijriDate, NisabThreshold)
+- Value objects (Money, HijriDate, ThresholdThreshold)
 - Domain events for cross-context communication
-- Ubiquitous language from Shariah terminology
+- Ubiquitous language from Compliance terminology
 
 **Antipatterns Avoided**:
 
 - Not anemic (logic lives in aggregate, not service)
 - Not database-driven (domain-first design)
-- Not missing experts (Shariah scholar involved)
+- Not missing experts (Compliance scholar involved)
 
-### Example 2: Murabaha Financing Domain
+### Example 2: Loan Financing Domain
 
-**Bounded Context**: Murabaha Financing
+**Bounded Context**: Loan Financing
 
 **Ubiquitous Language**:
 
-- Murabaha (مرابحة) - Cost-plus financing
+- Loan (مرابحة) - Cost-plus financing
 - Qabdh (قبض) - Possession
 - Tamlik (تمليك) - Ownership transfer
-- Fixed Markup - Not riba (interest)
+- Fixed Markup - Not interest (interest)
 
 **Aggregates**:
 
 ```typescript
-class MurabahaContract {
+class LoanContract {
   // Invariant: Bank must possess before selling
   draftContract(): void {
     if (!this.possessionTransferred) {
@@ -694,7 +694,7 @@ class MurabahaContract {
   // Invariant: Markup must be fixed
   setMarkup(markup: Markup): void {
     if (markup.isVariable()) {
-      throw new InvariantViolationError("Riba prohibited");
+      throw new InvariantViolationError("Interest prohibited");
     }
   }
 }
@@ -710,8 +710,8 @@ class MurabahaContract {
 **Antipatterns Avoided**:
 
 - Not premature complexity (complex domain justifies DDD)
-- Not ignoring bounded contexts (separate from Zakat, Waqf)
-- Not missing ubiquitous language (Shariah terms in code)
+- Not ignoring bounded contexts (separate from Tax, Donation)
+- Not missing ubiquitous language (Compliance terms in code)
 
 ## Summary
 

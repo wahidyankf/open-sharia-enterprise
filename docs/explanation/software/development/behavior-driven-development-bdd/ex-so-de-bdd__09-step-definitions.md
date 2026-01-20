@@ -6,7 +6,7 @@ Step definitions serve as the "glue code" connecting Gherkin scenarios (business
 
 The art of writing step definitions involves balancing several competing concerns: reusability (steps should work across multiple scenarios), readability (steps should clearly express intent), maintainability (steps shouldn't be brittle), and test isolation (steps shouldn't leak state between scenarios). Poor step definitions lead to either excessive duplication (every scenario has unique steps) or excessive abstraction (steps are so generic they obscure meaning).
 
-For Islamic finance applications, step definitions must bridge the gap between Shariah terminology (nisab, hawl, zakatable assets, riba) and technical implementation (database queries, API calls, calculation algorithms). A step like `Given individual owns 100 grams of gold` must set up test data representing gold wealth in the system, while a step like `Then Zakat should be 2.5 grams` must verify the calculation result matches Islamic jurisprudence.
+For Islamic finance applications, step definitions must bridge the gap between Compliance terminology (threshold, hawl, taxable assets, interest) and technical implementation (database queries, API calls, calculation algorithms). A step like `Given individual owns 100 grams of gold` must set up test data representing gold wealth in the system, while a step like `Then Tax should be 2.5 grams` must verify the calculation result matches Islamic jurisprudence.
 
 This document covers step definition syntax, implementation patterns for Given/When/Then steps, parameterization for reusability, organizing step definitions for maintainability, testing strategies, and TypeScript/JavaScript best practices for Node.js-based projects.
 
@@ -17,54 +17,54 @@ This document covers step definition syntax, implementation patterns for Given/W
 **Gherkin Scenario**:
 
 ```gherkin
-Scenario: Calculate Zakat on gold wealth
+Scenario: Calculate Tax on gold wealth
   Given individual owns 100 grams of gold
-  And nisab threshold for gold is 85 grams
-  When Zakat calculation is performed
-  Then Zakat should be obligatory
-  And Zakat amount should be 2.5 grams of gold
+  And threshold threshold for gold is 85 grams
+  When Tax calculation is performed
+  Then Tax should be obligatory
+  And Tax amount should be 2.5 grams of gold
 ```
 
 **Step Definitions** (Jest-Cucumber, TypeScript):
 
 ```typescript
 import { defineFeature, loadFeature } from "jest-cucumber";
-import { ZakatCalculator } from "../domain/zakat-calculator";
+import { TaxCalculator } from "../domain/tax-calculator";
 import { GoldWealth } from "../domain/gold-wealth";
-import { NisabThreshold } from "../domain/nisab-threshold";
+import { ThresholdThreshold } from "../domain/threshold-threshold";
 
-const feature = loadFeature("./features/zakat-gold-calculation.feature");
+const feature = loadFeature("./features/tax-gold-calculation.feature");
 
 defineFeature(feature, (test) => {
   let goldWealth: GoldWealth;
-  let nisabThreshold: NisabThreshold;
-  let zakatCalculator: ZakatCalculator;
+  let thresholdThreshold: ThresholdThreshold;
+  let taxCalculator: TaxCalculator;
   let calculationResult: { obligatory: boolean; amount: number };
 
-  test("Calculate Zakat on gold wealth", ({ given, and, when, then }) => {
+  test("Calculate Tax on gold wealth", ({ given, and, when, then }) => {
     // GIVEN: Individual owns 100 grams of gold
     given("individual owns 100 grams of gold", () => {
       goldWealth = new GoldWealth(100, "grams");
     });
 
-    // AND: Nisab threshold for gold is 85 grams
-    and("nisab threshold for gold is 85 grams", () => {
-      nisabThreshold = new NisabThreshold(85, "grams");
+    // AND: Threshold threshold for gold is 85 grams
+    and("threshold threshold for gold is 85 grams", () => {
+      thresholdThreshold = new ThresholdThreshold(85, "grams");
     });
 
-    // WHEN: Zakat calculation is performed
-    when("Zakat calculation is performed", () => {
-      zakatCalculator = new ZakatCalculator(nisabThreshold);
-      calculationResult = zakatCalculator.calculate(goldWealth);
+    // WHEN: Tax calculation is performed
+    when("Tax calculation is performed", () => {
+      taxCalculator = new TaxCalculator(thresholdThreshold);
+      calculationResult = taxCalculator.calculate(goldWealth);
     });
 
-    // THEN: Zakat should be obligatory
-    then("Zakat should be obligatory", () => {
+    // THEN: Tax should be obligatory
+    then("Tax should be obligatory", () => {
       expect(calculationResult.obligatory).toBe(true);
     });
 
-    // AND: Zakat amount should be 2.5 grams of gold
-    and("Zakat amount should be 2.5 grams of gold", () => {
+    // AND: Tax amount should be 2.5 grams of gold
+    and("Tax amount should be 2.5 grams of gold", () => {
       expect(calculationResult.amount).toBeCloseTo(2.5, 2);
     });
   });
@@ -111,11 +111,11 @@ Given("individual owns {int} grams of gold", function (goldAmount: number) {
   this.goldWealth = new GoldWealth(goldAmount, "grams");
 });
 
-When("Zakat calculation is performed", function () {
-  this.calculationResult = this.zakatCalculator.calculate(this.goldWealth);
+When("Tax calculation is performed", function () {
+  this.calculationResult = this.taxCalculator.calculate(this.goldWealth);
 });
 
-Then("Zakat should be obligatory", function () {
+Then("Tax should be obligatory", function () {
   expect(this.calculationResult.obligatory).toBe(true);
 });
 ```
@@ -128,10 +128,10 @@ Then("Zakat should be obligatory", function () {
 
 ```csharp
 [Binding]
-public class ZakatCalculationSteps
+public class TaxCalculationSteps
 {
     private GoldWealth _goldWealth;
-    private ZakatCalculationResult _result;
+    private TaxCalculationResult _result;
 
     [Given(@"individual owns (\d+) grams of gold")]
     public void GivenIndividualOwnsGold(int goldAmount)
@@ -139,15 +139,15 @@ public class ZakatCalculationSteps
         _goldWealth = new GoldWealth(goldAmount, WeightUnit.Grams);
     }
 
-    [When(@"Zakat calculation is performed")]
-    public void WhenZakatCalculationPerformed()
+    [When(@"Tax calculation is performed")]
+    public void WhenTaxCalculationPerformed()
     {
-        var calculator = new ZakatCalculator();
+        var calculator = new TaxCalculator();
         _result = calculator.Calculate(_goldWealth);
     }
 
-    [Then(@"Zakat should be obligatory")]
-    public void ThenZakatShouldBeObligatory()
+    [Then(@"Tax should be obligatory")]
+    public void ThenTaxShouldBeObligatory()
     {
         Assert.IsTrue(_result.Obligatory);
     }
@@ -251,20 +251,20 @@ given("individual owns the following assets:", (table) => {
 
 ```gherkin
 Background:
-  Given the Zakat rate is 2.5%
-  And the nisab threshold for gold is 85 grams
+  Given the Tax rate is 2.5%
+  And the threshold threshold for gold is 85 grams
   And the current date is 2026-01-20
 ```
 
 **Step Definitions**:
 
 ```typescript
-given("the Zakat rate is {float}%", (rate: number) => {
-  zakatConfig.rate = rate / 100; // Convert percentage to decimal
+given("the Tax rate is {float}%", (rate: number) => {
+  taxConfig.rate = rate / 100; // Convert percentage to decimal
 });
 
-given("the nisab threshold for gold is {int} grams", (threshold: number) => {
-  zakatConfig.goldNisab = new NisabThreshold(threshold, "grams");
+given("the threshold threshold for gold is {int} grams", (threshold: number) => {
+  taxConfig.goldThreshold = new ThresholdThreshold(threshold, "grams");
 });
 
 given("the current date is {word}", (dateStr: string) => {
@@ -295,15 +295,15 @@ given("the current date is {word}", (dateStr: string) => {
 **Scenario**:
 
 ```gherkin
-When Zakat calculation is performed
+When Tax calculation is performed
 ```
 
 **Step Definition**:
 
 ```typescript
-when("Zakat calculation is performed", () => {
-  zakatCalculator = new ZakatCalculator(zakatConfig);
-  calculationResult = zakatCalculator.calculate(wealthPortfolio);
+when("Tax calculation is performed", () => {
+  taxCalculator = new TaxCalculator(taxConfig);
+  calculationResult = taxCalculator.calculate(wealthPortfolio);
 });
 ```
 
@@ -312,15 +312,15 @@ when("Zakat calculation is performed", () => {
 **Scenario**:
 
 ```gherkin
-When user submits Zakat calculation for "Hanafi" school of jurisprudence
+When user submits Tax calculation for "Hanafi" school of jurisprudence
 ```
 
 **Step Definition**:
 
 ```typescript
-when("user submits Zakat calculation for {string} school of jurisprudence", (school: string) => {
-  zakatCalculator = new ZakatCalculator(zakatConfig, school);
-  calculationResult = zakatCalculator.calculate(wealthPortfolio);
+when("user submits Tax calculation for {string} school of jurisprudence", (school: string) => {
+  taxCalculator = new TaxCalculator(taxConfig, school);
+  calculationResult = taxCalculator.calculate(wealthPortfolio);
 });
 ```
 
@@ -329,22 +329,22 @@ when("user submits Zakat calculation for {string} school of jurisprudence", (sch
 **Scenario**:
 
 ```gherkin
-When client sends POST request to /api/zakat/calculate
+When client sends POST request to /api/tax/calculate
 ```
 
 **Step Definition**:
 
 ```typescript
-when("client sends POST request to /api/zakat/calculate", async () => {
-  apiResponse = await apiClient.post("/api/zakat/calculate", {
+when("client sends POST request to /api/tax/calculate", async () => {
+  apiResponse = await apiClient.post("/api/tax/calculate", {
     wealth: {
       amount: goldWealth.amount,
       unit: goldWealth.unit,
       type: "gold",
     },
-    nisab: {
-      amount: zakatConfig.goldNisab.amount,
-      unit: zakatConfig.goldNisab.unit,
+    threshold: {
+      amount: taxConfig.goldThreshold.amount,
+      unit: taxConfig.goldThreshold.unit,
     },
     hawlComplete: true,
   });
@@ -394,13 +394,13 @@ when("Hawl completion event is triggered", () => {
 **Scenario**:
 
 ```gherkin
-Then Zakat should be obligatory
+Then Tax should be obligatory
 ```
 
 **Step Definition**:
 
 ```typescript
-then("Zakat should be obligatory", () => {
+then("Tax should be obligatory", () => {
   expect(calculationResult.obligatory).toBe(true);
 });
 ```
@@ -410,13 +410,13 @@ then("Zakat should be obligatory", () => {
 **Scenario**:
 
 ```gherkin
-Then Zakat amount should be 2.5 grams of gold
+Then Tax amount should be 2.5 grams of gold
 ```
 
 **Step Definition**:
 
 ```typescript
-then("Zakat amount should be {float} grams of gold", (expectedAmount: number) => {
+then("Tax amount should be {float} grams of gold", (expectedAmount: number) => {
   expect(calculationResult.amount).toBeCloseTo(expectedAmount, 2); // 2 decimal places
   expect(calculationResult.unit).toBe("grams");
   expect(calculationResult.assetType).toBe("gold");
@@ -428,11 +428,11 @@ then("Zakat amount should be {float} grams of gold", (expectedAmount: number) =>
 **Scenario**:
 
 ```gherkin
-Then response should contain Zakat calculation:
+Then response should contain Tax calculation:
   """
   {
-    "zakatDue": true,
-    "zakatAmount": { "amount": 2.5, "unit": "grams", "type": "gold" }
+    "taxDue": true,
+    "taxAmount": { "amount": 2.5, "unit": "grams", "type": "gold" }
   }
   """
 ```
@@ -440,7 +440,7 @@ Then response should contain Zakat calculation:
 **Step Definition** (Docstring):
 
 ```typescript
-then("response should contain Zakat calculation:", (docString) => {
+then("response should contain Tax calculation:", (docString) => {
   const expectedResponse = JSON.parse(docString);
 
   expect(apiResponse.status).toBe(200);
@@ -454,7 +454,7 @@ then("response should contain Zakat calculation:", (docString) => {
 
 ```gherkin
 Then calculation should be rejected
-And error message should be "Riba (interest) prohibited"
+And error message should be "Interest (interest) prohibited"
 ```
 
 **Step Definitions**:
@@ -521,7 +521,7 @@ Given("individual owns {int} grams of {word}", (amount: number, metal: string) =
   wealth = createWealth(metal, amount);
 });
 
-When("user calculates Zakat on {string} date", (dateStr: string) => {
+When("user calculates Tax on {string} date", (dateStr: string) => {
   // String is extracted from quotes
   calculationDate = new Date(dateStr);
 });
@@ -551,7 +551,7 @@ Given("user is authenticated as {string}", (userRole: string) => {
 **Import in Feature-Specific Steps**:
 
 ```typescript
-// zakat-calculation.steps.ts
+// tax-calculation.steps.ts
 import "./shared-steps/date-time.steps";
 import "./shared-steps/currency.steps";
 import "./shared-steps/authentication.steps";
@@ -570,10 +570,10 @@ Given("individual owns {int} grams of gold", (amount: number) => {
 
 ```
 features/
-├── zakat-calculation/
+├── tax-calculation/
 │   ├── gold-calculation.feature
 │   └── gold-calculation.steps.ts
-├── halal-certification/
+├── permitted-certification/
 │   ├── ingredient-verification.feature
 │   └── ingredient-verification.steps.ts
 └── shared-steps/
@@ -587,16 +587,16 @@ features/
 ```
 apps/ose-backend-api/
 └── features/
-    ├── zakat-calculation/
+    ├── tax-calculation/
     │   ├── gold-calculation.feature
     │   ├── silver-calculation.feature
     │   └── step-definitions/
-    │       ├── zakat-calculation.steps.ts
-    │       └── shared-zakat.steps.ts
-    ├── halal-certification/
+    │       ├── tax-calculation.steps.ts
+    │       └── shared-tax.steps.ts
+    ├── permitted-certification/
     │   ├── ingredient-verification.feature
     │   └── step-definitions/
-    │       └── halal-certification.steps.ts
+    │       └── permitted-certification.steps.ts
     └── shared/
         ├── date-time.steps.ts
         ├── currency.steps.ts
@@ -609,9 +609,9 @@ apps/ose-backend-api/
 
 **Examples**:
 
-- `zakat-gold-calculation.steps.ts`
-- `halal-ingredient-verification.steps.ts`
-- `murabaha-profit-calculation.steps.ts`
+- `tax-gold-calculation.steps.ts`
+- `permitted-ingredient-verification.steps.ts`
+- `loan-profit-calculation.steps.ts`
 
 **Shared Steps**: `<domain>.steps.ts`
 
@@ -631,8 +631,8 @@ import { setWorldConstructor, World, IWorldOptions } from "@cucumber/cucumber";
 export class CustomWorld extends World {
   // Test state
   goldWealth?: GoldWealth;
-  zakatCalculator?: ZakatCalculator;
-  calculationResult?: ZakatCalculationResult;
+  taxCalculator?: TaxCalculator;
+  calculationResult?: TaxCalculationResult;
 
   constructor(options: IWorldOptions) {
     super(options);
@@ -643,11 +643,11 @@ export class CustomWorld extends World {
     this.goldWealth = new GoldWealth(amount, "grams");
   }
 
-  calculateZakat() {
-    if (!this.zakatCalculator || !this.goldWealth) {
+  calculateTax() {
+    if (!this.taxCalculator || !this.goldWealth) {
       throw new Error("Calculator or wealth not initialized");
     }
-    this.calculationResult = this.zakatCalculator.calculate(this.goldWealth);
+    this.calculationResult = this.taxCalculator.calculate(this.goldWealth);
   }
 }
 
@@ -661,11 +661,11 @@ Given("individual owns {int} grams of gold", function (this: CustomWorld, amount
   this.createGoldWealth(amount);
 });
 
-When("Zakat calculation is performed", function (this: CustomWorld) {
-  this.calculateZakat();
+When("Tax calculation is performed", function (this: CustomWorld) {
+  this.calculateTax();
 });
 
-Then("Zakat should be obligatory", function (this: CustomWorld) {
+Then("Tax should be obligatory", function (this: CustomWorld) {
   expect(this.calculationResult?.obligatory).toBe(true);
 });
 ```
@@ -678,28 +678,28 @@ Then("Zakat should be obligatory", function (this: CustomWorld) {
 defineFeature(feature, (test) => {
   // Test-scoped variables
   let goldWealth: GoldWealth;
-  let zakatCalculator: ZakatCalculator;
-  let calculationResult: ZakatCalculationResult;
+  let taxCalculator: TaxCalculator;
+  let calculationResult: TaxCalculationResult;
 
   // Before each scenario
   beforeEach(() => {
     // Reset state
     goldWealth = null as any;
-    zakatCalculator = null as any;
+    taxCalculator = null as any;
     calculationResult = null as any;
   });
 
-  test("Calculate Zakat on gold wealth", ({ given, when, then }) => {
+  test("Calculate Tax on gold wealth", ({ given, when, then }) => {
     given("individual owns 100 grams of gold", () => {
       goldWealth = new GoldWealth(100, "grams");
     });
 
-    when("Zakat calculation is performed", () => {
-      zakatCalculator = new ZakatCalculator();
-      calculationResult = zakatCalculator.calculate(goldWealth);
+    when("Tax calculation is performed", () => {
+      taxCalculator = new TaxCalculator();
+      calculationResult = taxCalculator.calculate(goldWealth);
     });
 
-    then("Zakat should be obligatory", () => {
+    then("Tax should be obligatory", () => {
       expect(calculationResult.obligatory).toBe(true);
     });
   });
@@ -755,21 +755,21 @@ After({ tags: "@cleanup-files" }, async function () {
 **Scenario**: Test domain behavior in isolation
 
 ```gherkin
-Feature: Zakat Calculation Logic (Unit)
+Feature: Tax Calculation Logic (Unit)
 
-  Scenario: Calculate Zakat on gold above nisab
-    Given a ZakatCalculator with 85g nisab threshold
+  Scenario: Calculate Tax on gold above threshold
+    Given a TaxCalculator with 85g threshold threshold
     And GoldWealth of 100 grams
     When calculate method is called
-    Then ZakatCalculationResult obligatory is true
-    And ZakatCalculationResult amount is 2.5 grams
+    Then TaxCalculationResult obligatory is true
+    And TaxCalculationResult amount is 2.5 grams
 ```
 
 **Step Definition**:
 
 ```typescript
-given("a ZakatCalculator with {int}g nisab threshold", (threshold: number) => {
-  zakatCalculator = new ZakatCalculator(new NisabThreshold(threshold, "grams"));
+given("a TaxCalculator with {int}g threshold threshold", (threshold: number) => {
+  taxCalculator = new TaxCalculator(new ThresholdThreshold(threshold, "grams"));
 });
 
 given("GoldWealth of {int} grams", (amount: number) => {
@@ -777,7 +777,7 @@ given("GoldWealth of {int} grams", (amount: number) => {
 });
 
 when("calculate method is called", () => {
-  calculationResult = zakatCalculator.calculate(goldWealth);
+  calculationResult = taxCalculator.calculate(goldWealth);
 });
 ```
 
@@ -788,14 +788,14 @@ when("calculate method is called", () => {
 **Scenario**: Test full flow including database
 
 ```gherkin
-Feature: Zakat Calculation API (Integration)
+Feature: Tax Calculation API (Integration)
 
-  Scenario: Calculate Zakat via API
+  Scenario: Calculate Tax via API
     Given database contains user "alice@example.com"
     And user owns 100 grams of gold (stored in database)
-    When client sends POST request to /api/zakat/calculate
+    When client sends POST request to /api/tax/calculate
     Then response status should be 200
-    And response contains Zakat amount 2.5 grams
+    And response contains Tax amount 2.5 grams
     And calculation is saved to database
 ```
 
@@ -815,14 +815,14 @@ given("user owns {int} grams of gold (stored in database)", async (amount: numbe
   });
 });
 
-when("client sends POST request to /api/zakat/calculate", async () => {
-  apiResponse = await apiClient.post("/api/zakat/calculate", {
+when("client sends POST request to /api/tax/calculate", async () => {
+  apiResponse = await apiClient.post("/api/tax/calculate", {
     userId,
   });
 });
 
 then("calculation is saved to database", async () => {
-  const savedCalculation = await database.zakatCalculations.findByUserId(userId);
+  const savedCalculation = await database.taxCalculations.findByUserId(userId);
   expect(savedCalculation).toBeDefined();
   expect(savedCalculation.amount).toBeCloseTo(2.5, 2);
 });
@@ -833,23 +833,23 @@ then("calculation is saved to database", async () => {
 **Scenario**: Test complete user journey
 
 ```gherkin
-Feature: Zakat Self-Assessment Journey (E2E)
+Feature: Tax Self-Assessment Journey (E2E)
 
-  Scenario: User completes Zakat assessment
-    Given user navigates to Zakat calculator
+  Scenario: User completes Tax assessment
+    Given user navigates to Tax calculator
     When user enters 100 grams of gold
     And user confirms Hawl is complete
-    And user clicks "Calculate Zakat" button
-    Then user sees "Zakat Obligatory" message
+    And user clicks "Calculate Tax" button
+    Then user sees "Tax Obligatory" message
     And user sees "2.5 grams of gold" amount
-    And user sees "Pay Zakat" button
+    And user sees "Pay Tax" button
 ```
 
 **Step Definition** (Using Playwright):
 
 ```typescript
-given("user navigates to Zakat calculator", async () => {
-  await page.goto("/zakat/calculator");
+given("user navigates to Tax calculator", async () => {
+  await page.goto("/tax/calculator");
 });
 
 when("user enters {int} grams of gold", async (amount: number) => {
@@ -871,43 +871,43 @@ then("user sees {string} message", async (message: string) => {
 
 ## Islamic Finance Examples
 
-### Example 1: Zakat Calculation Step Definitions
+### Example 1: Tax Calculation Step Definitions
 
-**Feature File**: `zakat-gold-calculation.feature`
+**Feature File**: `tax-gold-calculation.feature`
 
 ```gherkin
-Feature: Zakat Calculation for Gold Wealth
+Feature: Tax Calculation for Gold Wealth
 
   Background:
-    Given the Zakat rate for gold is 2.5%
-    And the nisab threshold for gold is 85 grams
+    Given the Tax rate for gold is 2.5%
+    And the threshold threshold for gold is 85 grams
 
-  Scenario: Wealth above nisab threshold
+  Scenario: Wealth above threshold threshold
     Given individual owns 100 grams of gold
     And one lunar year (Hawl) has passed
-    When Zakat calculation is performed
-    Then Zakat should be obligatory
-    And Zakat amount should be 2.5 grams of gold
+    When Tax calculation is performed
+    Then Tax should be obligatory
+    And Tax amount should be 2.5 grams of gold
 ```
 
-**Step Definitions**: `zakat-gold-calculation.steps.ts`
+**Step Definitions**: `tax-gold-calculation.steps.ts`
 
 ```typescript
 import { defineFeature, loadFeature } from "jest-cucumber";
-import { ZakatCalculator } from "../domain/zakat-calculator";
+import { TaxCalculator } from "../domain/tax-calculator";
 import { GoldWealth } from "../domain/gold-wealth";
-import { NisabThreshold } from "../domain/nisab-threshold";
-import { ZakatRate } from "../domain/zakat-rate";
+import { ThresholdThreshold } from "../domain/threshold-threshold";
+import { TaxRate } from "../domain/tax-rate";
 import { HawlPeriod } from "../domain/hawl-period";
 
-const feature = loadFeature("./features/zakat-gold-calculation.feature");
+const feature = loadFeature("./features/tax-gold-calculation.feature");
 
 defineFeature(feature, (test) => {
-  let zakatRate: ZakatRate;
-  let nisabThreshold: NisabThreshold;
+  let taxRate: TaxRate;
+  let thresholdThreshold: ThresholdThreshold;
   let goldWealth: GoldWealth;
   let hawlPeriod: HawlPeriod;
-  let zakatCalculator: ZakatCalculator;
+  let taxCalculator: TaxCalculator;
   let calculationResult: {
     obligatory: boolean;
     amount: number;
@@ -917,23 +917,23 @@ defineFeature(feature, (test) => {
 
   beforeEach(() => {
     // Reset state before each scenario
-    zakatRate = null as any;
-    nisabThreshold = null as any;
+    taxRate = null as any;
+    thresholdThreshold = null as any;
     goldWealth = null as any;
     hawlPeriod = null as any;
-    zakatCalculator = null as any;
+    taxCalculator = null as any;
     calculationResult = null as any;
   });
 
-  test("Wealth above nisab threshold", ({ given, and, when, then }) => {
-    given(/the Zakat rate for gold is (.+)%/, (rateStr) => {
+  test("Wealth above threshold threshold", ({ given, and, when, then }) => {
+    given(/the Tax rate for gold is (.+)%/, (rateStr) => {
       const rate = parseFloat(rateStr);
-      zakatRate = new ZakatRate(rate / 100); // Convert percentage to decimal
+      taxRate = new TaxRate(rate / 100); // Convert percentage to decimal
     });
 
-    and(/the nisab threshold for gold is (\d+) grams/, (thresholdStr) => {
+    and(/the threshold threshold for gold is (\d+) grams/, (thresholdStr) => {
       const threshold = parseInt(thresholdStr, 10);
-      nisabThreshold = new NisabThreshold(threshold, "grams", "gold");
+      thresholdThreshold = new ThresholdThreshold(threshold, "grams", "gold");
     });
 
     given(/individual owns (\d+) grams of gold/, (amountStr) => {
@@ -948,19 +948,19 @@ defineFeature(feature, (test) => {
       expect(hawlPeriod.isComplete()).toBe(true);
     });
 
-    when("Zakat calculation is performed", () => {
-      zakatCalculator = new ZakatCalculator({
-        rate: zakatRate,
-        nisabThreshold,
+    when("Tax calculation is performed", () => {
+      taxCalculator = new TaxCalculator({
+        rate: taxRate,
+        thresholdThreshold,
       });
-      calculationResult = zakatCalculator.calculate(goldWealth, hawlPeriod);
+      calculationResult = taxCalculator.calculate(goldWealth, hawlPeriod);
     });
 
-    then("Zakat should be obligatory", () => {
+    then("Tax should be obligatory", () => {
       expect(calculationResult.obligatory).toBe(true);
     });
 
-    and(/Zakat amount should be (.+) grams of gold/, (expectedAmountStr) => {
+    and(/Tax amount should be (.+) grams of gold/, (expectedAmountStr) => {
       const expectedAmount = parseFloat(expectedAmountStr);
       expect(calculationResult.amount).toBeCloseTo(expectedAmount, 2);
       expect(calculationResult.unit).toBe("grams");
@@ -970,50 +970,50 @@ defineFeature(feature, (test) => {
 });
 ```
 
-### Example 2: Halal Certification Step Definitions
+### Example 2: Permitted Certification Step Definitions
 
-**Feature File**: `halal-ingredient-verification.feature`
+**Feature File**: `permitted-ingredient-verification.feature`
 
 ```gherkin
-Feature: Halal Ingredient Verification
+Feature: Permitted Ingredient Verification
 
-  Scenario: Verify ingredient in halal database
-    Given halal ingredient database is loaded
-    And database contains "Olive Oil" as halal
+  Scenario: Verify ingredient in permitted database
+    Given permitted ingredient database is loaded
+    And database contains "Olive Oil" as permitted
     When product "Organic Snack" contains ingredient "Olive Oil"
-    Then ingredient should be verified as halal
+    Then ingredient should be verified as permitted
     And verification confidence should be "High"
 ```
 
-**Step Definitions**: `halal-ingredient-verification.steps.ts`
+**Step Definitions**: `permitted-ingredient-verification.steps.ts`
 
 ```typescript
 import { defineFeature, loadFeature } from "jest-cucumber";
-import { HalalIngredientDatabase } from "../domain/halal-ingredient-database";
+import { PermittedIngredientDatabase } from "../domain/permitted-ingredient-database";
 import { IngredientVerifier } from "../domain/ingredient-verifier";
 import { Product } from "../domain/product";
 
-const feature = loadFeature("./features/halal-ingredient-verification.feature");
+const feature = loadFeature("./features/permitted-ingredient-verification.feature");
 
 defineFeature(feature, (test) => {
-  let database: HalalIngredientDatabase;
+  let database: PermittedIngredientDatabase;
   let verifier: IngredientVerifier;
   let product: Product;
   let verificationResult: {
-    status: "halal" | "haram" | "mashbooh";
+    status: "permitted" | "forbidden" | "mashbooh";
     confidence: "High" | "Medium" | "Low";
     reason?: string;
   };
 
-  test("Verify ingredient in halal database", ({ given, and, when, then }) => {
-    given("halal ingredient database is loaded", () => {
-      database = HalalIngredientDatabase.loadDefault();
+  test("Verify ingredient in permitted database", ({ given, and, when, then }) => {
+    given("permitted ingredient database is loaded", () => {
+      database = PermittedIngredientDatabase.loadDefault();
     });
 
-    and(/database contains "(.+)" as halal/, (ingredientName: string) => {
+    and(/database contains "(.+)" as permitted/, (ingredientName: string) => {
       database.addIngredient({
         name: ingredientName,
-        status: "halal",
+        status: "permitted",
         confidence: "High",
         source: "Verified by JAKIM",
       });
@@ -1027,8 +1027,8 @@ defineFeature(feature, (test) => {
       verificationResult = verifier.verify(product.ingredients[0]);
     });
 
-    then("ingredient should be verified as halal", () => {
-      expect(verificationResult.status).toBe("halal");
+    then("ingredient should be verified as permitted", () => {
+      expect(verificationResult.status).toBe("permitted");
     });
 
     and(/verification confidence should be "(.+)"/, (confidence: string) => {
@@ -1038,44 +1038,44 @@ defineFeature(feature, (test) => {
 });
 ```
 
-### Example 3: Murabaha Riba Detection Step Definitions
+### Example 3: Loan Interest Detection Step Definitions
 
-**Feature File**: `murabaha-riba-detection.feature`
+**Feature File**: `loan-interest-detection.feature`
 
 ```gherkin
-Feature: Riba Detection in Murabaha Contracts
+Feature: Interest Detection in Loan Contracts
 
-  Scenario: Reject time-based interest calculation (Riba)
+  Scenario: Reject time-based interest calculation (Interest)
     Given bank purchases asset for 100,000 USD
     When bank attempts to calculate profit using annual interest rate
     And profit increases with time (5% per year)
     Then contract should be rejected
-    And reason should be "Riba prohibited: Time-based interest detected"
+    And reason should be "Interest prohibited: Time-based interest detected"
 ```
 
-**Step Definitions**: `murabaha-riba-detection.steps.ts`
+**Step Definitions**: `loan-interest-detection.steps.ts`
 
 ```typescript
 import { defineFeature, loadFeature } from "jest-cucumber";
-import { MurabahaContract } from "../domain/murabaha-contract";
-import { RibaDetector } from "../domain/riba-detector";
+import { LoanContract } from "../domain/loan-contract";
+import { InterestDetector } from "../domain/interest-detector";
 import { ProfitCalculationMethod } from "../domain/profit-calculation-method";
 
-const feature = loadFeature("./features/murabaha-riba-detection.feature");
+const feature = loadFeature("./features/loan-interest-detection.feature");
 
 defineFeature(feature, (test) => {
-  let contract: MurabahaContract;
-  let ribaDetector: RibaDetector;
+  let contract: LoanContract;
+  let interestDetector: InterestDetector;
   let profitMethod: ProfitCalculationMethod;
   let validationResult: {
     valid: boolean;
     errors: Array<{ code: string; message: string }>;
   };
 
-  test("Reject time-based interest calculation (Riba)", ({ given, when, and, then }) => {
+  test("Reject time-based interest calculation (Interest)", ({ given, when, and, then }) => {
     given(/bank purchases asset for (.+) USD/, (costPriceStr: string) => {
       const costPrice = parseFloat(costPriceStr.replace(",", ""));
-      contract = new MurabahaContract({
+      contract = new LoanContract({
         costPrice,
         currency: "USD",
       });
@@ -1097,16 +1097,16 @@ defineFeature(feature, (test) => {
     });
 
     then("contract should be rejected", () => {
-      ribaDetector = new RibaDetector();
-      validationResult = ribaDetector.validate(contract);
+      interestDetector = new InterestDetector();
+      validationResult = interestDetector.validate(contract);
       expect(validationResult.valid).toBe(false);
       expect(validationResult.errors.length).toBeGreaterThan(0);
     });
 
     and(/reason should be "(.+)"/, (expectedReason: string) => {
-      const ribaError = validationResult.errors.find((error) => error.code === "RIBA_PROHIBITED");
-      expect(ribaError).toBeDefined();
-      expect(ribaError?.message).toContain(expectedReason);
+      const interestError = validationResult.errors.find((error) => error.code === "INTEREST_PROHIBITED");
+      expect(interestError).toBeDefined();
+      expect(interestError?.message).toContain(expectedReason);
     });
   });
 });
@@ -1119,7 +1119,7 @@ defineFeature(feature, (test) => {
 **Bad (Imperative, UI-coupled)**:
 
 ```typescript
-when("user calculates Zakat", async () => {
+when("user calculates Tax", async () => {
   await page.click("#gold-radio-button");
   await page.fill("#amount-input", "100");
   await page.click("#calculate-button");
@@ -1129,8 +1129,8 @@ when("user calculates Zakat", async () => {
 **Good (Declarative, UI-agnostic)**:
 
 ```typescript
-when("user calculates Zakat on {int} grams of gold", async (amount: number) => {
-  await zakatCalculationPage.calculateZakat({ assetType: "gold", amount });
+when("user calculates Tax on {int} grams of gold", async (amount: number) => {
+  await taxCalculationPage.calculateTax({ assetType: "gold", amount });
 });
 ```
 
@@ -1139,17 +1139,17 @@ when("user calculates Zakat on {int} grams of gold", async (amount: number) => {
 **Bad (Business logic in steps)**:
 
 ```typescript
-then("Zakat should be obligatory", () => {
-  // DON'T: Calculate Zakat in step definition
-  const zakatAmount = goldWealth.amount >= 85 ? goldWealth.amount * 0.025 : 0;
-  expect(calculationResult.amount).toBe(zakatAmount);
+then("Tax should be obligatory", () => {
+  // DON'T: Calculate Tax in step definition
+  const taxAmount = goldWealth.amount >= 85 ? goldWealth.amount * 0.025 : 0;
+  expect(calculationResult.amount).toBe(taxAmount);
 });
 ```
 
 **Good (Delegate to domain code)**:
 
 ```typescript
-then("Zakat should be obligatory", () => {
+then("Tax should be obligatory", () => {
   // Domain code calculates, step definition asserts
   expect(calculationResult.obligatory).toBe(true);
 });
@@ -1157,24 +1157,24 @@ then("Zakat should be obligatory", () => {
 
 ### 3. Use Page Object Pattern for UI Tests
 
-**Page Object** (`zakat-calculator-page.ts`):
+**Page Object** (`tax-calculator-page.ts`):
 
 ```typescript
-export class ZakatCalculatorPage {
+export class TaxCalculatorPage {
   constructor(private page: Page) {}
 
   async navigateTo() {
-    await this.page.goto("/zakat/calculator");
+    await this.page.goto("/tax/calculator");
   }
 
-  async calculateZakat(params: { assetType: string; amount: number }) {
+  async calculateTax(params: { assetType: string; amount: number }) {
     await this.page.selectOption("#asset-type", params.assetType);
     await this.page.fill("#amount", params.amount.toString());
     await this.page.click("#calculate-button");
   }
 
-  async getZakatAmount(): Promise<number> {
-    const text = await this.page.textContent("#zakat-amount");
+  async getTaxAmount(): Promise<number> {
+    const text = await this.page.textContent("#tax-amount");
     return parseFloat(text || "0");
   }
 }
@@ -1183,19 +1183,19 @@ export class ZakatCalculatorPage {
 **Step Definitions Using Page Object**:
 
 ```typescript
-let zakatPage: ZakatCalculatorPage;
+let taxPage: TaxCalculatorPage;
 
-given("user navigates to Zakat calculator", async () => {
-  zakatPage = new ZakatCalculatorPage(page);
-  await zakatPage.navigateTo();
+given("user navigates to Tax calculator", async () => {
+  taxPage = new TaxCalculatorPage(page);
+  await taxPage.navigateTo();
 });
 
-when("user calculates Zakat on {int} grams of gold", async (amount: number) => {
-  await zakatPage.calculateZakat({ assetType: "gold", amount });
+when("user calculates Tax on {int} grams of gold", async (amount: number) => {
+  await taxPage.calculateTax({ assetType: "gold", amount });
 });
 
-then("Zakat amount should be {float} grams", async (expectedAmount: number) => {
-  const actualAmount = await zakatPage.getZakatAmount();
+then("Tax amount should be {float} grams", async (expectedAmount: number) => {
+  const actualAmount = await taxPage.getTaxAmount();
   expect(actualAmount).toBeCloseTo(expectedAmount, 2);
 });
 ```
@@ -1279,9 +1279,9 @@ Step definitions bridge Gherkin scenarios (business-readable specifications) to 
 
 **Islamic Finance Examples**:
 
-- **Zakat Calculation**: Step definitions for nisab, hawl, rate, calculation
-- **Halal Certification**: Step definitions for ingredient verification, database checks
-- **Murabaha Financing**: Step definitions for Riba detection, profit calculation
+- **Tax Calculation**: Step definitions for threshold, hawl, rate, calculation
+- **Permitted Certification**: Step definitions for ingredient verification, database checks
+- **Loan Financing**: Step definitions for Interest detection, profit calculation
 
 **Best Practices**:
 
@@ -1297,7 +1297,7 @@ Step definitions are the "glue code" that makes BDD specifications executable. B
 
 - **Category**: Explanation
 - **Subcategory**: Software Design > Behavior-Driven Development
-- **Tags**: Step Definitions, Gherkin, Jest-Cucumber, Cucumber.js, SpecFlow, Automation, Given-When-Then, Islamic Finance, Zakat, Halal, Murabaha, Testing
+- **Tags**: Step Definitions, Gherkin, Jest-Cucumber, Cucumber.js, SpecFlow, Automation, Given-When-Then, Islamic Finance, Tax, Permitted, Loan, Testing
 - **Related Files**:
   - [README](./README.md) - BDD documentation overview
   - [02. Gherkin Syntax and Scenarios](./ex-so-de-bdd__02-gherkin-syntax-and-scenarios.md) - Scenario writing

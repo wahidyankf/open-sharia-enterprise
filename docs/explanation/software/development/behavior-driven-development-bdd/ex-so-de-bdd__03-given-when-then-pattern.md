@@ -4,7 +4,7 @@
 
 The Given-When-Then (GWT) pattern is the foundational structure of Behavior-Driven Development scenarios. Introduced as part of BDD in the mid-2000s, this simple three-part pattern provides a universal template for describing expected behavior: establish context (Given), trigger action (When), verify outcome (Then). What makes GWT powerful is not its complexity but its clarity—it forces specification writers to think precisely about preconditions, actions, and expectations.
 
-This pattern emerged from recognizing that software behavior can be universally described as "when [something happens] in [some context], then [this outcome occurs]." By standardizing this structure, BDD creates specifications that are immediately understandable to anyone—from Shariah scholars validating Islamic finance rules to QA engineers designing test cases to developers implementing features.
+This pattern emerged from recognizing that software behavior can be universally described as "when [something happens] in [some context], then [this outcome occurs]." By standardizing this structure, BDD creates specifications that are immediately understandable to anyone—from Compliance scholars validating Islamic finance rules to QA engineers designing test cases to developers implementing features.
 
 This document explores the Given-When-Then pattern in depth, covering the purpose of each section, common patterns across different domains, and practical techniques for writing clear, maintainable scenarios. Understanding GWT thoroughly is essential for writing effective BDD specifications that serve as both documentation and executable tests.
 
@@ -40,7 +40,7 @@ This maps directly to the **Arrange-Act-Assert (AAA)** pattern from unit testing
 **Communication:**
 
 - Non-technical stakeholders understand the pattern immediately
-- Shariah scholars can validate Islamic finance rules without programming knowledge
+- Compliance scholars can validate Islamic finance rules without programming knowledge
 - Developers know exactly what to implement
 
 **Automation:**
@@ -49,28 +49,28 @@ This maps directly to the **Arrange-Act-Assert (AAA)** pattern from unit testing
 - Step definitions implement each phase independently
 - Test frameworks can provide phase-specific hooks and reporting
 
-### Islamic Finance Example: Zakat Calculation
+### Islamic Finance Example: Tax Calculation
 
 ```gherkin
-Scenario: Calculate Zakat when gold wealth meets nisab threshold
+Scenario: Calculate Tax when gold wealth meets threshold threshold
   # GIVEN: Set up initial context
   Given a Muslim individual owns 100 grams of gold
-  And the nisab threshold for gold is 85 grams
+  And the threshold threshold for gold is 85 grams
   And one lunar year (Hawl) has passed since acquisition
 
   # WHEN: Perform the action being tested
-  When Zakat calculation is performed
+  When Tax calculation is performed
 
   # THEN: Verify expected outcomes
-  Then Zakat should be obligatory
-  And Zakat amount should be 2.5 grams of gold (2.5% rate)
-  And Zakat should be distributed to eligible recipients
+  Then Tax should be obligatory
+  And Tax amount should be 2.5 grams of gold (2.5% rate)
+  And Tax should be distributed to eligible recipients
 ```
 
 **Why this works:**
 
-- **Given**: Shariah scholar can verify preconditions (nisab=85g, Hawl=lunar year)
-- **When**: Clear action (calculate Zakat)
+- **Given**: Compliance scholar can verify preconditions (threshold=85g, Hawl=lunar year)
+- **When**: Clear action (calculate Tax)
 - **Then**: Verifiable outcomes (obligatory, 2.5g amount, distribution requirement)
 
 ## Given: Initial Context and Preconditions
@@ -84,7 +84,7 @@ The **Given** section establishes the world state before the action occurs. It s
 - Set up test data (users, products, configuration)
 - Establish system state (authenticated user, feature flags enabled)
 - Configure external systems (mock API responses, database state)
-- Define business rules and thresholds (nisab values, certification authorities)
+- Define business rules and thresholds (threshold values, certification authorities)
 
 **What Given steps do NOT do:**
 
@@ -99,14 +99,14 @@ The **Given** section establishes the world state before the action occurs. It s
 ```gherkin
 Given user is authenticated as admin
 Given product "Organic Dates" exists in catalog
-Given halal certification database is operational
+Given permitted certification database is operational
 ```
 
 #### Pattern 2: Compound Preconditions with And
 
 ```gherkin
 Given a Muslim individual owns 100 grams of gold
-And the nisab threshold for gold is 85 grams
+And the threshold threshold for gold is 85 grams
 And one lunar year (Hawl) has passed since acquisition
 And individual has already paid debts
 ```
@@ -114,44 +114,44 @@ And individual has already paid debts
 #### Pattern 3: Data Tables for Complex Setup
 
 ```gherkin
-Given the following halal products exist in system:
+Given the following permitted products exist in system:
   | name             | category | certification | expiry_date |
   | Organic Dates    | Food     | JAKIM         | 2025-12-31  |
-  | Halal Chicken    | Meat     | MUI           | 2025-06-30  |
+  | Permitted Chicken    | Meat     | MUI           | 2025-06-30  |
   | Olive Oil        | Food     | ISWA          | 2026-03-15  |
 ```
 
 #### Pattern 4: Background Knowledge/Business Rules
 
 ```gherkin
-Given Zakat rate for cash and gold is 2.5% (One-fortieth)
-And nisab for gold is 85 grams (20 Mithqal)
-And nisab for silver is 595 grams (200 Dirhams)
+Given Tax rate for cash and gold is 2.5% (One-fortieth)
+And threshold for gold is 85 grams (20 Mithqal)
+And threshold for silver is 595 grams (200 Dirhams)
 And Hawl requirement is one complete lunar year (354 or 355 days)
 ```
 
 ### Islamic Finance Examples
 
-**Murabaha Contract Setup:**
+**Loan Contract Setup:**
 
 ```gherkin
 Given Islamic bank has liquidity of 1,000,000 USD
 And bank has reviewed asset "Commercial Office Building"
 And asset market value is 500,000 USD
 And customer "ABC Corporation" has been approved for financing
-And Shariah scholar "Sheikh Ahmed" is available for contract review
-And Riba (interest) detection is enabled in contract validation
+And Compliance scholar "Sheikh Ahmed" is available for contract review
+And Interest (interest) detection is enabled in contract validation
 ```
 
-**Halal Certification Prerequisites:**
+**Permitted Certification Prerequisites:**
 
 ```gherkin
-Given halal certification authority JAKIM is recognized
+Given permitted certification authority JAKIM is recognized
 And JAKIM certification is valid for 12 months
 And product "Organic Dates" has the following ingredients:
-  | Ingredient | Source      | Halal Status |
-  | Dates      | Saudi Arabia| Verified Halal|
-  | Water      | Local       | Halal        |
+  | Ingredient | Source      | Permitted Status |
+  | Dates      | Saudi Arabia| Verified Permitted|
+  | Water      | Local       | Permitted        |
 And supply chain has been audited
 And no cross-contamination risk identified
 ```
@@ -198,7 +198,7 @@ The **When** section describes the action being tested or the event that trigger
 
 - Trigger user actions (submit form, click button, make API call)
 - Simulate system events (time passing, external system callback)
-- Execute business operations (calculate Zakat, validate certification)
+- Execute business operations (calculate Tax, validate certification)
 
 **What When steps do NOT do:**
 
@@ -211,24 +211,24 @@ The **When** section describes the action being tested or the event that trigger
 #### Pattern 1: User Action
 
 ```gherkin
-When user submits halal certification request
-When customer applies for Murabaha financing
+When user submits permitted certification request
+When customer applies for Loan financing
 When admin approves product listing
 ```
 
 #### Pattern 2: System Operation
 
 ```gherkin
-When Zakat calculation is performed
-When halal certification validation runs
-When Riba detection algorithm analyzes contract
+When Tax calculation is performed
+When permitted certification validation runs
+When Interest detection algorithm analyzes contract
 ```
 
 #### Pattern 3: API Call
 
 ```gherkin
-When client sends POST request to /api/zakat/calculate
-When client sends GET request to /api/halal-products
+When client sends POST request to /api/tax/calculate
+When client sends GET request to /api/permitted-products
 When API receives certification webhook from JAKIM
 ```
 
@@ -236,62 +236,62 @@ When API receives certification webhook from JAKIM
 
 ```gherkin
 When one lunar year (Hawl) has passed since wealth acquisition
-When halal certification reaches expiry date
-When Murabaha payment due date arrives
+When permitted certification reaches expiry date
+When Loan payment due date arrives
 ```
 
 #### Pattern 5: External System Event
 
 ```gherkin
 When certification authority sends approval notification
-When payment gateway confirms Murabaha installment received
-When gold price feed updates nisab threshold
+When payment gateway confirms Loan installment received
+When gold price feed updates threshold threshold
 ```
 
 ### Islamic Finance Examples
 
-**Zakat Calculation:**
+**Tax Calculation:**
 
 ```gherkin
 # Simple action
-When Zakat calculation is performed
+When Tax calculation is performed
 
 # Action with parameters
-When Zakat is calculated for lunar year 1445 Hijri
+When Tax is calculated for lunar year 1445 Hijri
 
 # Multi-step action (use sparingly)
 When user enters wealth amount
 And user selects asset type "gold"
-And user clicks "Calculate Zakat"
+And user clicks "Calculate Tax"
 ```
 
-**Murabaha Contract:**
+**Loan Contract:**
 
 ```gherkin
 # Contract creation
-When bank creates Murabaha contract with:
+When bank creates Loan contract with:
   | Cost Price    | 500,000 USD |
   | Profit Markup | 75,000 USD  |
   | Payment Term  | 60 months   |
 
 # Contract validation
-When Shariah scholar reviews Murabaha contract
+When Compliance scholar reviews Loan contract
 
-# Riba detection
-When system analyzes contract for Riba (interest) indicators
+# Interest detection
+When system analyzes contract for Interest (interest) indicators
 ```
 
-**Halal Certification:**
+**Permitted Certification:**
 
 ```gherkin
 # Certification request
-When supplier submits product for halal certification
+When supplier submits product for permitted certification
 
 # Ingredient validation
 When certification authority verifies ingredient "Gelatin"
 
 # Supply chain audit
-When auditor inspects entire supply chain for halal compliance
+When auditor inspects entire supply chain for permitted compliance
 ```
 
 ### Best Practices for When Steps
@@ -320,15 +320,15 @@ And user creates product
 And user submits for certification  # Too many actions, split into separate scenarios
 
 # ✅ GOOD: Single focused action
-When user submits product for halal certification
+When user submits product for permitted certification
 
 # ❌ BAD: Implementation details
-When user clicks button with id "btn-calculate-zakat"
-And POST request is sent to "/api/zakat"
-And database executes stored procedure sp_calculate_zakat
+When user clicks button with id "btn-calculate-tax"
+And POST request is sent to "/api/tax"
+And database executes stored procedure sp_calculate_tax
 
 # ✅ GOOD: Business action
-When Zakat calculation is performed
+When Tax calculation is performed
 
 # ❌ BAD: When step that's really an assertion
 When user should see error message  # This belongs in Then
@@ -357,13 +357,13 @@ Scenario: User logs in with valid credentials
   When user logs in with correct email and password
   Then user should access dashboard
 
-Scenario: User submits product for halal certification
+Scenario: User submits product for permitted certification
   Given user is logged in as supplier
   When user submits product "Organic Dates" for certification
   Then certification request should be created
   And certification authority should receive notification
 
-Scenario: User pays halal certification fee
+Scenario: User pays permitted certification fee
   Given user has pending certification request
   When user submits payment for certification fee
   Then payment should be processed
@@ -380,7 +380,7 @@ The **Then** section specifies the expected outcome after the action. It describ
 
 - Verify observable outcomes (UI changes, data updates, notifications)
 - Confirm system state changes (user authenticated, product certified)
-- Assert calculations are correct (Zakat amount, Murabaha profit)
+- Assert calculations are correct (Tax amount, Loan profit)
 - Check side effects occurred (emails sent, logs written, events published)
 
 **What Then steps do NOT do:**
@@ -394,24 +394,24 @@ The **Then** section specifies the expected outcome after the action. It describ
 #### Pattern 1: State Verification
 
 ```gherkin
-Then Zakat should be obligatory
-Then product status should be "Halal Certified"
+Then Tax should be obligatory
+Then product status should be "Permitted Certified"
 Then user should be authenticated
-Then contract should be approved by Shariah scholar
+Then contract should be approved by Compliance scholar
 ```
 
 #### Pattern 2: Calculation Verification
 
 ```gherkin
-Then Zakat amount should be 2.5 grams of gold
-Then Murabaha selling price should be 575,000 USD
-Then total Zakatable wealth should be 36,450 USD
+Then Tax amount should be 2.5 grams of gold
+Then Loan selling price should be 575,000 USD
+Then total Taxable wealth should be 36,450 USD
 ```
 
 #### Pattern 3: Multiple Outcomes with And
 
 ```gherkin
-Then product should be halal certified
+Then product should be permitted certified
 And certification should be valid for 12 months
 And certification badge should display on product page
 And supplier should receive certification email
@@ -422,16 +422,16 @@ And certification should appear in audit log
 
 ```gherkin
 Then contract should be rejected
-And error message should state "Riba detected: interest-based calculation prohibited"
+And error message should state "Interest detected: interest-based calculation prohibited"
 And no contract should be saved to database
-And Shariah compliance team should be notified
+And Compliance compliance team should be notified
 ```
 
 #### Pattern 5: Data Table Verification
 
 ```gherkin
-Then Zakat breakdown should be:
-  | Asset Type         | Zakat Amount |
+Then Tax breakdown should be:
+  | Asset Type         | Tax Amount |
   | Gold               | 2.5 grams    |
   | Silver             | 15 grams     |
   | Cash               | 125 USD      |
@@ -449,56 +449,56 @@ And no audit should be required  # Low-risk product
 
 ### Islamic Finance Examples
 
-**Zakat Calculation Outcomes:**
+**Tax Calculation Outcomes:**
 
 ```gherkin
-Scenario: Calculate Zakat on mixed asset portfolio
-  Given individual owns multiple Zakatable assets
-  And total wealth exceeds nisab threshold
+Scenario: Calculate Tax on mixed asset portfolio
+  Given individual owns multiple Taxable assets
+  And total wealth exceeds threshold threshold
   And Hawl period is complete
-  When Zakat is calculated
-  Then total Zakat obligation should be 911.25 USD
-  And Zakat breakdown should show:
-    | Asset Type         | Zakat Amount USD |
+  When Tax is calculated
+  Then total Tax obligation should be 911.25 USD
+  And Tax breakdown should show:
+    | Asset Type         | Tax Amount USD |
     | Gold               | 150.00           |
     | Silver             | 11.25            |
     | Cash               | 125.00           |
     | Business Inventory | 375.00           |
     | Investment Stock   | 250.00           |
   And personal residence should be excluded from calculation
-  And Zakat payment reminder should be sent to individual
-  And Zakat due date should be set to end of current Hijri month
+  And Tax payment reminder should be sent to individual
+  And Tax due date should be set to end of current Hijri month
 ```
 
-**Murabaha Contract Validation:**
+**Loan Contract Validation:**
 
 ```gherkin
-Scenario: Approve valid Murabaha contract
-  Given bank has created Murabaha contract
+Scenario: Approve valid Loan contract
+  Given bank has created Loan contract
   And contract uses fixed markup (not interest rate)
   And bank owns the asset before selling
   And all costs are disclosed to customer
-  When Shariah scholar reviews contract
+  When Compliance scholar reviews contract
   Then contract should be approved
-  And approval should reference AAOIFI Shariah Standard No. 8
+  And approval should reference AAOIFI Compliance Standard No. 8
   And contract should be executable
   And customer should receive contract terms document
   But no interest-based calculations should be present
 ```
 
-**Halal Certification:**
+**Permitted Certification:**
 
 ```gherkin
-Scenario: Certify product with all halal ingredients
-  Given product has verified halal ingredients
+Scenario: Certify product with all permitted ingredients
+  Given product has verified permitted ingredients
   And supply chain has been audited
   And no cross-contamination risk exists
   When certification authority completes verification
-  Then product should receive halal certification
+  Then product should receive permitted certification
   And certification should be valid for 12 months from issuance
   And certification number should be generated (format: JAKIM-2025-12345)
   And digital certificate should be issued to supplier
-  And product should appear in public halal product registry
+  And product should appear in public permitted product registry
   And certification seal image should be available for packaging
   But certification should not cover unapproved variations
 ```
@@ -523,21 +523,21 @@ Scenario: Certify product with all halal ingredients
 
 ```gherkin
 # ❌ BAD: Testing internal implementation
-Then database table "zakat_calculations" should have new row
+Then database table "tax_calculations" should have new row
 And row should have column "amount" = 2.5
 And transaction should be committed
 
 # ✅ GOOD: Testing observable behavior
-Then Zakat calculation result should be saved
-And Zakat amount should be retrievable as 2.5 grams gold
-And calculation should appear in user's Zakat history
+Then Tax calculation result should be saved
+And Tax amount should be retrievable as 2.5 grams gold
+And calculation should appear in user's Tax history
 
 # ❌ BAD: Vague assertion
 Then the system should respond appropriately
 
 # ✅ GOOD: Specific assertion
 Then contract should be rejected within 100ms
-And error message should clearly state Riba prohibition
+And error message should clearly state Interest prohibition
 And rejection should be logged for compliance audit
 
 # ❌ BAD: Too many unrelated assertions
@@ -547,10 +547,10 @@ And backup should run  # Unrelated
 And email should be sent  # May be related
 
 # ✅ GOOD: Focused related assertions
-Then product should be halal certified
+Then product should be permitted certified
 And certification should be valid for 12 months
 And supplier should receive certification email
-And product should appear in halal registry
+And product should appear in permitted registry
 ```
 
 ## Common Given-When-Then Patterns by Domain
@@ -589,7 +589,7 @@ Scenario: Restrict access to admin-only feature
 
 ```gherkin
 # Create
-Scenario: Create new halal product listing
+Scenario: Create new permitted product listing
   Given user is authenticated as supplier
   And product "Organic Dates" does not exist
   When user creates product with:
@@ -601,7 +601,7 @@ Scenario: Create new halal product listing
   And product ID should be generated
 
 # Read
-Scenario: Retrieve halal product details
+Scenario: Retrieve permitted product details
   Given product "Organic Dates" exists with ID 123
   When user requests product details for ID 123
   Then product information should be returned
@@ -610,8 +610,8 @@ Scenario: Retrieve halal product details
 # Update
 Scenario: Update product certification status
   Given product "Organic Dates" exists with status "Pending Review"
-  When admin updates product status to "Halal Certified"
-  Then product status should be "Halal Certified"
+  When admin updates product status to "Permitted Certified"
+  Then product status should be "Permitted Certified"
   And certification timestamp should be recorded
   And product should appear in certified products list
 
@@ -628,29 +628,29 @@ Scenario: Remove expired product listing
 
 ```gherkin
 # Valid input
-Scenario: Accept valid Zakat calculation input
-  Given user is on Zakat calculator page
+Scenario: Accept valid Tax calculation input
+  Given user is on Tax calculator page
   When user enters wealth amount "100" grams of "gold"
   Then input should be accepted
   And calculate button should be enabled
 
 # Invalid input - empty
 Scenario: Reject empty wealth amount
-  Given user is on Zakat calculator page
+  Given user is on Tax calculator page
   When user leaves wealth amount field empty
   Then validation error should display "Wealth amount is required"
   And calculate button should be disabled
 
 # Invalid input - negative
 Scenario: Reject negative wealth amount
-  Given user is on Zakat calculator page
+  Given user is on Tax calculator page
   When user enters wealth amount "-50" grams
   Then validation error should display "Wealth amount must be positive"
   And calculate button should be disabled
 
 # Invalid input - format
 Scenario: Reject non-numeric wealth input
-  Given user is on Zakat calculator page
+  Given user is on Tax calculator page
   When user enters wealth amount "abc" grams
   Then validation error should display "Wealth amount must be a number"
   And calculate button should be disabled
@@ -660,29 +660,29 @@ Scenario: Reject non-numeric wealth input
 
 ```gherkin
 # Rule enforcement - success
-Scenario: Accept Murabaha with disclosed profit markup
+Scenario: Accept Loan with disclosed profit markup
   Given bank creates contract with cost 100,000 and profit 15,000
   And contract discloses both cost and profit to customer
-  When Shariah compliance validator checks contract
+  When Compliance compliance validator checks contract
   Then contract should pass validation
   And validation should confirm "Transparent cost-plus structure"
 
 # Rule enforcement - violation
-Scenario: Reject Murabaha with hidden costs
+Scenario: Reject Loan with hidden costs
   Given bank creates contract with undisclosed fees
-  When Shariah compliance validator checks contract
+  When Compliance compliance validator checks contract
   Then contract should fail validation
-  And error should state "All costs must be disclosed per Shariah requirements"
+  And error should state "All costs must be disclosed per Compliance requirements"
   And contract should not be executable
 
 # Complex rule - multiple conditions
-Scenario: Enforce Zakat obligation with all conditions met
-  Given wealth is 100 grams gold (above nisab of 85 grams)
+Scenario: Enforce Tax obligation with all conditions met
+  Given wealth is 100 grams gold (above threshold of 85 grams)
   And wealth is owned for full lunar year (Hawl complete)
   And debts have been paid
   And basic needs are covered
-  When Zakat obligation is determined
-  Then Zakat should be obligatory
+  When Tax obligation is determined
+  Then Tax should be obligatory
   And individual should be notified of obligation
   And calculation should show 2.5 grams due
 ```
@@ -692,16 +692,16 @@ Scenario: Enforce Zakat obligation with all conditions met
 ```gherkin
 # Valid transition
 Scenario: Transition contract from Draft to Under Review
-  Given Murabaha contract is in "Draft" status
+  Given Loan contract is in "Draft" status
   And all required fields are completed
-  When bank submits contract for Shariah review
+  When bank submits contract for Compliance review
   Then contract status should change to "Under Review"
-  And Shariah scholar should be assigned
+  And Compliance scholar should be assigned
   And review timestamp should be recorded
 
 # Invalid transition
 Scenario: Prevent transition from Approved to Draft
-  Given Murabaha contract is in "Approved" status
+  Given Loan contract is in "Approved" status
   When user attempts to change status to "Draft"
   Then status change should be rejected
   And error should state "Cannot revert approved contract to draft"
@@ -709,7 +709,7 @@ Scenario: Prevent transition from Approved to Draft
 
 # State-dependent behavior
 Scenario: Allow editing only in Draft status
-  Given Murabaha contract is in "Approved" status
+  Given Loan contract is in "Approved" status
   When user attempts to edit contract terms
   Then edit should be rejected
   And error should state "Cannot edit approved contract"
@@ -719,13 +719,13 @@ Scenario: Allow editing only in Draft status
 ### Pattern: API Contract Testing
 
 ```gherkin
-Scenario: Zakat calculation API returns correct response
+Scenario: Tax calculation API returns correct response
   Given API client is authenticated
-  When client sends POST to /api/zakat/calculate with:
+  When client sends POST to /api/tax/calculate with:
     """
     {
       "wealth": { "amount": 100, "unit": "grams", "type": "gold" },
-      "nisab": { "amount": 85, "unit": "grams" }
+      "threshold": { "amount": 85, "unit": "grams" }
     }
     """
   Then response status should be 200 OK
@@ -733,8 +733,8 @@ Scenario: Zakat calculation API returns correct response
   And response body should match schema:
     """
     {
-      "zakatDue": boolean,
-      "zakatAmount": { "amount": number, "unit": string },
+      "taxDue": boolean,
+      "taxAmount": { "amount": number, "unit": string },
       "calculation": { ... }
     }
     """
@@ -744,14 +744,14 @@ Scenario: Zakat calculation API returns correct response
 ### Pattern: Event-Driven Behavior
 
 ```gherkin
-Scenario: Publish event when product receives halal certification
+Scenario: Publish event when product receives permitted certification
   Given product "Organic Dates" is pending certification
   When certification authority approves product
   Then ProductCertified event should be published
   And event should contain:
     | Field              | Value                |
     | productId          | 123                  |
-    | certificationType  | Halal                |
+    | certificationType  | Permitted                |
     | certificationBody  | JAKIM                |
     | certifiedAt        | 2025-01-15T10:30:00Z |
   And event consumers should receive notification
@@ -808,7 +808,7 @@ Scenario: User registers for new account
 **Benefits:**
 
 - Survives UI changes (registration could become API call, form redesign, etc.)
-- Readable by business stakeholders and Shariah scholars
+- Readable by business stakeholders and Compliance scholars
 - Focuses on business value, not implementation details
 - Step definitions handle UI specifics
 
@@ -817,8 +817,8 @@ Scenario: User registers for new account
 **Imperative (avoid):**
 
 ```gherkin
-Scenario: Calculate Zakat
-  Given I navigate to "https://zakat.example.com/calculator"
+Scenario: Calculate Tax
+  Given I navigate to "https://tax.example.com/calculator"
   When I select dropdown "asset-type" and choose "Gold"
   And I type "100" into textbox with name "amount"
   And I select radio button "unit-grams"
@@ -829,11 +829,11 @@ Scenario: Calculate Zakat
 **Declarative (preferred):**
 
 ```gherkin
-Scenario: Calculate Zakat on gold wealth
-  Given I am on the Zakat calculator
-  When I calculate Zakat for 100 grams of gold
-  Then Zakat amount should be 2.5 grams
-  And calculation should reference nisab threshold of 85 grams
+Scenario: Calculate Tax on gold wealth
+  Given I am on the Tax calculator
+  When I calculate Tax for 100 grams of gold
+  Then Tax amount should be 2.5 grams
+  And calculation should reference threshold threshold of 85 grams
   And I should see explanation of 2.5% rate
 ```
 
@@ -844,7 +844,7 @@ Scenario: Calculate Zakat on gold wealth
 ```gherkin
 @ui-behavior
 Scenario: Form validation displays inline error messages
-  Given I am on Zakat calculator page
+  Given I am on Tax calculator page
   When I enter "-50" in wealth amount field
   Then error message should appear below the field
   And error text should be "Amount must be positive"
@@ -888,9 +888,9 @@ The Given-When-Then pattern provides a universal structure for describing expect
 
 **Islamic Finance Applications:**
 
-- Zakat calculation scenarios clearly separate wealth/nisab context (Given), calculation (When), and obligation/amount outcomes (Then)
-- Murabaha contracts verify Shariah compliance through explicit preconditions (cost disclosed, asset owned) and expected outcomes (contract approved, Riba absent)
-- Halal certification scenarios make validation criteria and certification outcomes transparent to stakeholders
+- Tax calculation scenarios clearly separate wealth/threshold context (Given), calculation (When), and obligation/amount outcomes (Then)
+- Loan contracts verify Compliance compliance through explicit preconditions (cost disclosed, asset owned) and expected outcomes (contract approved, Interest absent)
+- Permitted certification scenarios make validation criteria and certification outcomes transparent to stakeholders
 
 The Given-When-Then pattern transforms complex business rules into clear, executable specifications. By forcing separation of context, action, and outcome, it prevents ambiguous requirements and creates living documentation that stakeholders can validate.
 
@@ -900,7 +900,7 @@ The next step is exploring **collaborative practices** that use GWT scenarios to
 
 - **Category**: Explanation
 - **Subcategory**: Software Design > Behavior-Driven Development
-- **Tags**: Given-When-Then, GWT, BDD, Scenario Structure, Arrange-Act-Assert, Islamic Finance, Zakat, Murabaha, Halal, Declarative, Imperative
+- **Tags**: Given-When-Then, GWT, BDD, Scenario Structure, Arrange-Act-Assert, Islamic Finance, Tax, Loan, Permitted, Declarative, Imperative
 - **Related Files**:
   - [README](./README.md) - BDD documentation overview
   - [01. Introduction and Philosophy](./ex-so-de-bdd__01-introduction-and-philosophy.md) - BDD foundations

@@ -57,25 +57,25 @@
 - [Actions before story can be developed]
 ```
 
-## Islamic Finance Example: Zakat Mixed Assets
+## Islamic Finance Example: Tax Mixed Assets
 
 ```markdown
-## Three Amigos Session: Zakat on Mixed Asset Portfolio
+## Three Amigos Session: Tax on Mixed Asset Portfolio
 
 ### Participants
 
 - **Business**: Ahmed (Product Owner)
 - **Development**: Fatima (Backend Developer)
 - **Testing**: Omar (QA Engineer)
-- **Domain Expert**: Sheikh Dr. Khalid (Shariah Advisor)
+- **Domain Expert**: Sheikh Dr. Khalid (Compliance Advisor)
 
 ### Agenda
 
-Completed in 28 minutes (slightly over due to Shariah complexity)
+Completed in 28 minutes (slightly over due to Compliance complexity)
 
 ### Feature Description
 
-Users with diversified wealth (gold, silver, cash, stocks, real estate) need Zakat calculation across all assets with proper exemptions and aggregation.
+Users with diversified wealth (gold, silver, cash, stocks, real estate) need Tax calculation across all assets with proper exemptions and aggregation.
 
 ### Discussion Notes
 
@@ -83,14 +83,14 @@ Users with diversified wealth (gold, silver, cash, stocks, real estate) need Zak
 
 - 60% of users have mixed assets, not single asset type
 - Current system only handles gold/silver individually
-- Need: aggregate zakatable wealth, apply 2.5% once
+- Need: aggregate taxable wealth, apply 2.5% once
 
-**Shariah Advisor Input**:
+**Compliance Advisor Input**:
 
-- Personal residence exempt (not zakatable)
+- Personal residence exempt (not taxable)
 - Tools of trade exempt (work equipment, professional car)
-- Investment real estate IS zakatable
-- Stocks zakatable at current market value
+- Investment real estate IS taxable
+- Stocks taxable at current market value
 
 **Technical Questions**:
 Q: How to handle currency conversion?
@@ -99,15 +99,15 @@ A: Use daily exchange rates, convert all to user's base currency
 **Test Scenarios**:
 
 - Mixed portfolio with exempt assets
-- All assets below individual nisab but above combined
+- All assets below individual threshold but above combined
 - Real-time stock prices vs end-of-day
 
 ### Examples Discovered
 
-1. User owns: 50g gold (below nisab) + 400g silver (below nisab) + 5K cash
-   → Combined value above nisab → Zakat DUE
-2. User owns: personal home (exempt) + investment property (zakatable)
-3. User owns: work laptop (exempt) + investment stocks (zakatable)
+1. User owns: 50g gold (below threshold) + 400g silver (below threshold) + 5K cash
+   → Combined value above threshold → Tax DUE
+2. User owns: personal home (exempt) + investment property (taxable)
+3. User owns: work laptop (exempt) + investment stocks (taxable)
 
 ### Decision
 

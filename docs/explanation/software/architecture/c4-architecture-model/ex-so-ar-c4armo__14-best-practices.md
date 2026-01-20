@@ -26,28 +26,28 @@ The C4 model's strength lies in its simplicity and pragmatism, but these same qu
 
 ```mermaid
 C4Context
-    title System Context Diagram for Zakat Management Platform
+    title System Context Diagram for Tax Management Platform
 
-    Person(donor, "Donor", "Muslim individual or organization calculating and paying Zakat")
-    Person(admin, "Platform Admin", "Manages Zakat distribution and beneficiary verification")
+    Person(taxpayer, "Taxpayer", "Individual or organization calculating and paying taxes")
+    Person(admin, "Platform Admin", "Manages tax distribution and beneficiary verification")
 
-    System(zakat, "Zakat Management Platform", "Calculates Zakat obligations, processes payments, and manages distribution to verified beneficiaries")
+    System(tax, "Tax Management Platform", "Calculates tax obligations, processes payments, and manages distribution to verified beneficiaries")
 
-    System_Ext(payment, "Payment Gateway", "Processes Sharia-compliant payment transactions [Stripe/PayPal]")
-    System_Ext(bank, "Islamic Banking API", "Provides account balance data for Zakat calculation")
-    System_Ext(scholar, "Fatwa Database", "Provides Sharia rulings and calculation methodologies")
-    System_Ext(beneficiary, "Beneficiary Verification Service", "Verifies eligibility of Zakat recipients")
+    System_Ext(payment, "Payment Gateway", "Processes payment transactions [Stripe/PayPal]")
+    System_Ext(bank, "Banking API", "Provides account balance data for tax calculation")
+    System_Ext(regulation, "Regulation Database", "Provides regulatory rulings and calculation methodologies")
+    System_Ext(beneficiary, "Beneficiary Verification Service", "Verifies eligibility of tax recipients")
 
-    Rel(donor, zakat, "Calculates Zakat, Makes payments", "HTTPS/JSON")
-    Rel(admin, zakat, "Manages beneficiaries, Reviews distributions", "HTTPS/JSON")
-    Rel(zakat, payment, "Processes payments", "REST API")
-    Rel(zakat, bank, "Retrieves account balances", "REST API/OAuth2")
-    Rel(zakat, scholar, "Queries Zakat rulings", "REST API")
-    Rel(zakat, beneficiary, "Verifies recipient eligibility", "REST API")
+    Rel(taxpayer, tax, "Calculates taxes, Makes payments", "HTTPS/JSON")
+    Rel(admin, tax, "Manages beneficiaries, Reviews distributions", "HTTPS/JSON")
+    Rel(tax, payment, "Processes payments", "REST API")
+    Rel(tax, bank, "Retrieves account balances", "REST API/OAuth2")
+    Rel(tax, regulation, "Queries tax rulings", "REST API")
+    Rel(tax, beneficiary, "Verifies recipient eligibility", "REST API")
 
-    UpdateElementStyle(zakat, $fontColor="white", $bgColor="green", $borderColor="darkgreen")
-    UpdateRelStyle(donor, zakat, $textColor="blue", $lineColor="blue")
-    UpdateRelStyle(admin, zakat, $textColor="blue", $lineColor="blue")
+    UpdateElementStyle(tax, $fontColor="white", $bgColor="green", $borderColor="darkgreen")
+    UpdateRelStyle(taxpayer, tax, $textColor="blue", $lineColor="blue")
+    UpdateRelStyle(admin, tax, $textColor="blue", $lineColor="blue")
 ```
 
 **Benefits**:
@@ -73,10 +73,10 @@ C4Context
 
 ```mermaid
 C4Container
-    title Container Diagram for Halal Certification System (Core Containers Only)
+    title Container Diagram for Product Certification System (Core Containers Only)
 
-    Person(applicant, "Business Owner", "Applies for Halal certification")
-    Person(auditor, "Halal Auditor", "Conducts facility inspections and reviews")
+    Person(applicant, "Business Owner", "Applies for product certification")
+    Person(auditor, "Product Auditor", "Conducts facility inspections and reviews")
 
     Container(web, "Web Application", "React", "Provides certification application and tracking interface")
     Container(api, "API Gateway", "Spring Cloud Gateway", "Routes requests and handles authentication")
@@ -119,10 +119,10 @@ C4Container
 
 **Example - Minimal Viable Documentation Set**:
 
-For a simple Halal product lookup mobile app:
+For a simple Product lookup mobile app:
 
 1. **System Context** (Required):
-   - Shows mobile app, users, and external Halal database API
+   - Shows mobile app, users, and external product database API
    - Sufficient for stakeholder communication
 
 2. **Container** (Skip):
@@ -133,7 +133,7 @@ For a simple Halal product lookup mobile app:
    - Could document internal app architecture if complex
    - Better served by mobile app architecture diagrams (MVC/MVVM)
 
-For a complex Islamic banking platform:
+For a complex banking platform:
 
 1. **System Context** (Required):
    - Shows integration with external systems (payment gateways, credit bureaus, central bank)
@@ -143,11 +143,11 @@ For a complex Islamic banking platform:
    - Critical for understanding deployment and scaling
 
 3. **Component** (Selective):
-   - Create only for complex services (e.g., Murabaha financing calculator)
+   - Create only for complex services (e.g., loan financing calculator)
    - Skip for simple CRUD services
 
 4. **Code** (Rarely):
-   - Create only for critical algorithms (e.g., Tawarruq transaction flow)
+   - Create only for critical algorithms (e.g., Securities transaction flow)
 
 ### 4. Maintain Consistency
 
@@ -179,46 +179,46 @@ For a complex Islamic banking platform:
 
 ```mermaid
 C4Context
-    title System Context - Sukuk Management Platform
+    title System Context - Bond Management Platform
 
-    Person(investor, "Sukuk Investor", "Invests in Sharia-compliant bonds")
-    System(sukuk_platform, "Sukuk Management Platform", "Manages Sukuk issuance, trading, and profit distribution")
-    System_Ext(custody, "Asset Custody Service", "Holds underlying assets for Sukuk")
+    Person(investor, "Bond Investor", "Invests in compliant bonds")
+    System(bond_platform, "Bond Management Platform", "Manages bonds issuance, trading, and profit distribution")
+    System_Ext(custody, "Asset Custody Service", "Holds underlying assets for bonds")
 
-    Rel(investor, sukuk_platform, "Trades Sukuk, Receives profit distributions")
-    Rel(sukuk_platform, custody, "Verifies asset ownership")
+    Rel(investor, bond_platform, "Trades bonds, Receives profit distributions")
+    Rel(bond_platform, custody, "Verifies asset ownership")
 
-    UpdateElementStyle(sukuk_platform, $fontColor="white", $bgColor="green", $borderColor="darkgreen")
+    UpdateElementStyle(bond_platform, $fontColor="white", $bgColor="green", $borderColor="darkgreen")
 ```
 
 **Corresponding Container Diagram**:
 
 ```mermaid
 C4Container
-    title Container Diagram - Sukuk Management Platform
+    title Container Diagram - Bond Management Platform
 
-    Person(investor, "Sukuk Investor")
+    Person(investor, "Bond Investor")
 
-    System_Boundary(sukuk_platform, "Sukuk Management Platform") {
-        Container(web, "Investor Portal", "React", "Web interface for Sukuk trading")
-        Container(trading_api, "Trading Service", "Spring Boot", "Handles Sukuk buy/sell orders")
+    System_Boundary(bond_platform, "Bond Management Platform") {
+        Container(web, "Investor Portal", "React", "Web interface for bond trading")
+        Container(trading_api, "Trading Service", "Spring Boot", "Handles bond buy/sell orders")
         Container(profit_api, "Profit Distribution Service", "Spring Boot", "Calculates and distributes profits")
-        Container(db, "Sukuk Database", "PostgreSQL", "Stores Sukuk data and transactions")
+        Container(db, "Bond Database", "PostgreSQL", "Stores bond data and transactions")
     }
 
     System_Ext(custody, "Asset Custody Service")
 
-    Rel(investor, web, "Trades Sukuk", "HTTPS")
+    Rel(investor, web, "Trades bonds", "HTTPS")
     Rel(web, trading_api, "Submits orders", "REST/JSON")
     Rel(trading_api, db, "Stores trades", "JDBC")
-    Rel(profit_api, db, "Reads Sukuk holdings", "JDBC")
+    Rel(profit_api, db, "Reads bond holdings", "JDBC")
     Rel(trading_api, custody, "Verifies assets", "REST API")
 
     UpdateElementStyle(trading_api, $fontColor="white", $bgColor="green", $borderColor="darkgreen")
     UpdateElementStyle(profit_api, $fontColor="white", $bgColor="green", $borderColor="darkgreen")
 ```
 
-**Note**: System name "Sukuk Management Platform" is identical across Context and Container diagrams. Services within the platform use consistent naming (e.g., "Trading Service" not "Trade Service" or "Trading API").
+**Note**: System name "Bond Management Platform" is identical across Context and Container diagrams. Services within the platform use consistent naming (e.g., "Trading Service" not "Trade Service" or "Trading API").
 
 ### 5. Iterative Refinement
 
@@ -263,7 +263,7 @@ C4Container
 **Version 1 (Initial Whiteboard Sketch)**:
 
 ```
-[Donor] --> [Zakat System] --> [Payment Gateway]
+[Taxpayer] --> [tax System] --> [Payment Gateway]
               |
               v
          [Database]
@@ -273,38 +273,38 @@ C4Container
 
 ```mermaid
 C4Context
-    Person(donor, "Donor")
-    System(zakat, "Zakat Management System")
+    Person(taxpayer, "Taxpayer")
+    System(tax, "Tax Management System")
     System_Ext(payment, "Payment Gateway")
     System_Ext(bank, "Banking API")
 
-    Rel(donor, zakat, "Uses")
-    Rel(zakat, payment, "Processes payments")
-    Rel(zakat, bank, "Gets account data")
+    Rel(taxpayer, tax, "Uses")
+    Rel(tax, payment, "Processes payments")
+    Rel(tax, bank, "Gets account data")
 ```
 
 **Version 3 (After Feedback - Missing Scholars)**:
 
 ```mermaid
 C4Context
-    title Zakat Management Platform - System Context
+    title Tax Management Platform - System Context
 
-    Person(donor, "Donor", "Muslim individual calculating Zakat")
+    Person(taxpayer, "Taxpayer", "Individual calculating tax")
     Person(admin, "Administrator")
 
-    System(zakat, "Zakat Management Platform", "Calculates Zakat and manages distribution")
+    System(tax, "Tax Management Platform", "Calculates tax and manages distribution")
 
     System_Ext(payment, "Payment Gateway", "Stripe API")
-    System_Ext(bank, "Islamic Banking API", "Retrieves account balances")
-    System_Ext(scholar, "Fatwa Database", "Provides Sharia rulings")
+    System_Ext(bank, "Banking API", "Retrieves account balances")
+    System_Ext(scholar, "Regulation Database", "Provides regulatory rulings")
 
-    Rel(donor, zakat, "Calculates Zakat, Makes payments", "HTTPS")
-    Rel(admin, zakat, "Manages beneficiaries", "HTTPS")
-    Rel(zakat, payment, "Processes payments", "REST API")
-    Rel(zakat, bank, "Retrieves balances", "REST API")
-    Rel(zakat, scholar, "Queries rulings", "REST API")
+    Rel(taxpayer, tax, "Calculates tax, Makes payments", "HTTPS")
+    Rel(admin, tax, "Manages beneficiaries", "HTTPS")
+    Rel(tax, payment, "Processes payments", "REST API")
+    Rel(tax, bank, "Retrieves balances", "REST API")
+    Rel(tax, scholar, "Queries rulings", "REST API")
 
-    UpdateElementStyle(zakat, $fontColor="white", $bgColor="green", $borderColor="darkgreen")
+    UpdateElementStyle(tax, $fontColor="white", $bgColor="green", $borderColor="darkgreen")
 ```
 
 ### 6. Diagram-as-Code Approach
@@ -338,12 +338,12 @@ C4Context
 **Example - Structurizr DSL**:
 
 ```dsl
-workspace "Halal Certification Platform" {
+workspace "Product Certification Platform" {
     model {
-        applicant = person "Business Owner" "Applies for Halal certification"
-        auditor = person "Halal Auditor" "Conducts facility inspections"
+        applicant = person "Business Owner" "Applies for product certification"
+        auditor = person "Product Auditor" "Conducts facility inspections"
 
-        certificationSystem = softwareSystem "Halal Certification System" {
+        certificationSystem = softwareSystem "Product Certification System" {
             webApp = container "Web Application" "React" "Provides certification application interface"
             apiGateway = container "API Gateway" "Spring Cloud Gateway" "Routes requests"
             certService = container "Certification Service" "Spring Boot" "Manages certification lifecycle"
@@ -445,40 +445,40 @@ jobs:
 
 ```mermaid
 C4Context
-    title System Context - Murabaha Financing Platform
+    title System Context - Installment Purchase Financing Platform
 
-    Person(customer, "Customer", "Applies for Sharia-compliant financing")
+    Person(customer, "Customer", "Applies for compliant financing")
 
-    System(murabaha, "Murabaha Financing Platform", "Manages cost-plus financing applications and contracts")
+    System(loan, "Installment Purchase Financing Platform", "Manages cost-plus financing applications and contracts")
 
     System_Ext(crm, "CRM System", "Customer relationship management")
     System_Ext(credit, "Credit Bureau", "Credit scoring and history")
     System_Ext(asset, "Asset Registry", "Verifies asset ownership and pricing")
     System_Ext(bank, "Core Banking System", "Processes fund transfers")
 
-    Rel(customer, murabaha, "Applies for financing", "HTTPS")
-    Rel(murabaha, crm, "Retrieves customer data", "REST API")
-    Rel(murabaha, credit, "Checks credit score", "REST API")
-    Rel(murabaha, asset, "Verifies asset details", "REST API")
-    Rel(murabaha, bank, "Initiates fund transfer", "ISO 20022")
+    Rel(customer, loan, "Applies for financing", "HTTPS")
+    Rel(loan, crm, "Retrieves customer data", "REST API")
+    Rel(loan, credit, "Checks credit score", "REST API")
+    Rel(loan, asset, "Verifies asset details", "REST API")
+    Rel(loan, bank, "Initiates fund transfer", "ISO 20022")
 
-    UpdateElementStyle(murabaha, $fontColor="white", $bgColor="green", $borderColor="darkgreen")
+    UpdateElementStyle(loan, $fontColor="white", $bgColor="green", $borderColor="darkgreen")
 ```
 
 **Container** (Correct - Shows Deployable Units):
 
 ```mermaid
 C4Container
-    title Container Diagram - Murabaha Financing Platform
+    title Container Diagram - Installment Purchase Financing Platform
 
     Person(customer, "Customer")
 
-    System_Boundary(murabaha, "Murabaha Financing Platform") {
+    System_Boundary(loan, "Installment Purchase Financing Platform") {
         Container(web, "Customer Portal", "React", "Web application for financing applications")
         Container(mobile, "Mobile App", "React Native", "Mobile application for customers")
         Container(api_gateway, "API Gateway", "Kong", "Routes and secures API requests")
         Container(application_service, "Application Service", "Spring Boot", "Processes financing applications")
-        Container(contract_service, "Contract Service", "Spring Boot", "Generates Sharia-compliant contracts")
+        Container(contract_service, "Contract Service", "Spring Boot", "Generates compliant contracts")
         Container(workflow_engine, "Workflow Engine", "Camunda", "Orchestrates approval workflow")
         Container(db, "Application Database", "PostgreSQL", "Stores applications and contracts")
         Container(cache, "Cache", "Redis", "Caches customer and pricing data")
@@ -510,8 +510,8 @@ C4Component
 
     Container_Boundary(application_service, "Application Service") {
         Component(controller, "Application Controller", "Spring MVC", "Handles HTTP requests")
-        Component(validation, "Application Validator", "Spring Component", "Validates Sharia compliance")
-        Component(pricing, "Pricing Calculator", "Spring Component", "Calculates Murabaha markup")
+        Component(validation, "Application Validator", "Spring Component", "Validates regulatory compliance")
+        Component(pricing, "Pricing Calculator", "Spring Component", "Calculates Installment Purchase markup")
         Component(service, "Application Manager", "Spring Service", "Core business logic")
         Component(repository, "Application Repository", "Spring Data JPA", "Data access layer")
     }
@@ -593,9 +593,9 @@ Before finalizing a C4 diagram, verify:
 
 **Related Documentation**:
 
-- System Context Diagrams: [ex-so-ar-c4armo\_\_02-system-context-diagrams.md](./ex-so-ar-c4armo__02-system-context-diagrams.md)
-- Container Diagrams: [ex-so-ar-c4armo\_\_03-container-diagrams.md](./ex-so-ar-c4armo__03-container-diagrams.md)
-- Component Diagrams: [ex-so-ar-c4armo\_\_04-component-diagrams.md](./ex-so-ar-c4armo__04-component-diagrams.md)
+- System Context Diagrams: [ex-so-ar-c4armo\_\_02-system-context-diagrams.md](./ex-so-ar-c4armo__01-level-1-system-context.md)
+- Container Diagrams: [ex-so-ar-c4armo\_\_03-container-diagrams.md](./ex-so-ar-c4armo__02-level-2-container.md)
+- Component Diagrams: [ex-so-ar-c4armo\_\_04-component-diagrams.md](./ex-so-ar-c4armo__03-level-3-component.md)
 - Antipatterns: [ex-so-ar-c4armo\_\_15-antipatterns.md](./ex-so-ar-c4armo__15-antipatterns.md)
 
 ## Conclusion

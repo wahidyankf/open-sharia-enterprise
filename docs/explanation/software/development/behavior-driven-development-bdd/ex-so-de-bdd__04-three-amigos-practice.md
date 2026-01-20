@@ -6,7 +6,7 @@ The Three Amigos practice is a collaborative conversation technique that brings 
 
 Rather than having business analysts write requirements documents that developers interpret and QA engineers test, Three Amigos creates shared understanding through facilitated discussion. Each perspective contributes unique insights: Business knows what's needed, Development understands technical constraints and possibilities, Testing identifies edge cases and failure scenarios. Together, these perspectives produce richer, more complete requirements than any individual could create alone.
 
-In Islamic finance contexts, the Three Amigos expands to include domain experts like Shariah scholars who validate religious compliance. A typical Zakat calculation feature might involve a Shariah scholar (what Islamic jurisprudence requires), a developer (how to implement the calculation), and a QA engineer (what edge cases could break the system). This collaborative conversation prevents misunderstandings that could lead to religiously non-compliant software.
+In Islamic finance contexts, the Three Amigos expands to include domain experts like Compliance scholars who validate religious compliance. A typical Tax calculation feature might involve a Compliance scholar (what Islamic jurisprudence requires), a developer (how to implement the calculation), and a QA engineer (what edge cases could break the system). This collaborative conversation prevents misunderstandings that could lead to religiously non-compliant software.
 
 This document explores the Three Amigos practice in depth: who participates, how to run effective sessions, facilitation techniques, and practical examples from Islamic finance domains.
 
@@ -50,7 +50,7 @@ Matt Wynne, Aslak Hellesøy, and the Cucumber team popularized Three Amigos as a
 
 Three Amigos now extends beyond traditional roles:
 
-- **Domain Experts**: Shariah scholars (Islamic finance), doctors (healthcare), lawyers (legal tech)
+- **Domain Experts**: Compliance scholars (Islamic finance), doctors (healthcare), lawyers (legal tech)
 - **Security Engineers**: Security requirements and threat modeling
 - **DevOps/SRE**: Operational concerns, scalability, monitoring
 - **UX Designers**: User experience and accessibility
@@ -75,12 +75,12 @@ Three Amigos now extends beyond traditional roles:
 - "What are the business rules that must be enforced?"
 - "Are there regulatory or compliance requirements?"
 
-**Islamic Finance Example: Shariah Scholar as Business**
+**Islamic Finance Example: Compliance Scholar as Business**
 
-For Zakat calculation features, the Shariah scholar:
+For Tax calculation features, the Compliance scholar:
 
-- Explains Islamic jurisprudence on Zakat obligations
-- Provides nisab thresholds (85g gold, 595g silver)
+- Explains Islamic jurisprudence on Tax obligations
+- Provides threshold thresholds (85g gold, 595g silver)
 - Clarifies Hawl (lunar year) requirement
 - Validates that scenarios match Islamic law
 - Identifies edge cases in religious rulings (wealth fluctuation, partial years)
@@ -107,12 +107,12 @@ For Zakat calculation features, the Shariah scholar:
 
 **Islamic Finance Example:**
 
-For Murabaha contracts:
+For Loan contracts:
 
 - "Can we integrate with existing asset management system?"
 - "How do we validate asset ownership before creating contract?"
 - "What's the data model for storing profit markup vs. interest rate?"
-- "Do we need real-time Shariah scholar approval or asynchronous workflow?"
+- "Do we need real-time Compliance scholar approval or asynchronous workflow?"
 
 ### 3. Testing (QA Engineer)
 
@@ -136,7 +136,7 @@ For Murabaha contracts:
 
 **Islamic Finance Example:**
 
-For Halal certification:
+For Permitted certification:
 
 - "What if product has ingredients from multiple suppliers with different certifications?"
 - "What if certification expires during product manufacturing?"
@@ -177,7 +177,7 @@ For Halal certification:
 
 **Minimum**: Stories with:
 
-- Complex business rules (Zakat calculation, Murabaha validation)
+- Complex business rules (Tax calculation, Loan validation)
 - Unclear requirements or ambiguity
 - High business value or risk
 - Novel functionality (not similar to existing features)
@@ -265,43 +265,43 @@ For Halal certification:
 - Identified edge cases and boundary conditions
 - Prioritized scenarios (must-have vs. nice-to-have)
 
-## Islamic Finance Example: Three Amigos for Zakat Calculation
+## Islamic Finance Example: Three Amigos for Tax Calculation
 
 ### User Story
 
 ```
 As a Muslim individual
-I want to calculate my Zakat obligation on gold wealth
+I want to calculate my Tax obligation on gold wealth
 So that I fulfill my Islamic religious duty accurately
 ```
 
 ### Session Participants
 
-- **Business (Shariah Scholar - Sheikh Ahmed)**: Islamic finance expert validating jurisprudence
+- **Business (Compliance Scholar - Sheikh Ahmed)**: Islamic finance expert validating jurisprudence
 - **Development (Senior Developer - Fatima)**: Implements calculation logic
 - **Testing (QA Engineer - Omar)**: Ensures correctness and edge case coverage
 
 ### Session Transcript (Simplified)
 
-**Product Owner (PO)**: "This story is about calculating Zakat on gold. Sheikh Ahmed, can you explain the requirements?"
+**Product Owner (PO)**: "This story is about calculating Tax on gold. Sheikh Ahmed, can you explain the requirements?"
 
-**Sheikh Ahmed (Business)**: "Zakat is obligatory when someone owns at least 85 grams of gold—the nisab threshold—and has owned it for one full lunar year, called Hawl. The Zakat rate is 2.5%, or one-fortieth of the total amount."
+**Sheikh Ahmed (Business)**: "Tax is obligatory when someone owns at least 85 grams of gold—the threshold threshold—and has owned it for one full lunar year, called Hawl. The Tax rate is 2.5%, or one-fortieth of the total amount."
 
-**Fatima (Dev)**: "So if someone owns 100 grams of gold, the Zakat would be 2.5 grams?"
+**Fatima (Dev)**: "So if someone owns 100 grams of gold, the Tax would be 2.5 grams?"
 
 **Sheikh Ahmed**: "Correct, assuming the Hawl condition is met."
 
 **Omar (QA)**: "What if someone owns exactly 85 grams—the threshold amount?"
 
-**Sheikh Ahmed**: "Still obligatory. At or above nisab means Zakat is due. So 85 grams × 2.5% = 2.125 grams of Zakat."
+**Sheikh Ahmed**: "Still obligatory. At or above threshold means Tax is due. So 85 grams × 2.5% = 2.125 grams of Tax."
 
 **Fatima (Dev)**: "What if they own 84 grams—just below the threshold?"
 
-**Sheikh Ahmed**: "No Zakat obligation. Below nisab means no Zakat is due."
+**Sheikh Ahmed**: "No Tax obligation. Below threshold means no Tax is due."
 
 **Omar (QA)**: "What if someone owned 100 grams of gold but only for 11 months, not a full year?"
 
-**Sheikh Ahmed**: "Hawl is incomplete, so no Zakat yet. They must wait until the full lunar year has passed."
+**Sheikh Ahmed**: "Hawl is incomplete, so no Tax yet. They must wait until the full lunar year has passed."
 
 **Fatima (Dev)**: "Lunar year—is that the Hijri calendar? 354 or 355 days?"
 
@@ -309,7 +309,7 @@ So that I fulfill my Islamic religious duty accurately
 
 **Omar (QA)**: "What if someone's wealth fluctuates during the year? Say they had 100 grams at the start but dropped to 70 grams in the middle?"
 
-**Sheikh Ahmed**: "Scholars differ on this. One opinion requires maintaining nisab throughout the year. Another only checks at the start and end of Hawl. I recommend checking with individual's followed school of jurisprudence, but for simplicity, we could check at the end of Hawl period."
+**Sheikh Ahmed**: "Scholars differ on this. One opinion requires maintaining threshold throughout the year. Another only checks at the start and end of Hawl. I recommend checking with individual's followed school of jurisprudence, but for simplicity, we could check at the end of Hawl period."
 
 **Fatima (Dev)**: "That sounds complex. Let's start with the simple case: wealth at end of Hawl, and add fluctuation handling later."
 
@@ -318,35 +318,35 @@ So that I fulfill my Islamic religious duty accurately
 ### Scenarios Created
 
 ```gherkin
-Feature: Zakat Calculation for Gold Wealth
+Feature: Tax Calculation for Gold Wealth
 
-  Scenario: Wealth meets gold nisab threshold
+  Scenario: Wealth meets gold threshold threshold
     Given a Muslim individual owns 100 grams of gold
-    And the nisab threshold for gold is 85 grams
+    And the threshold threshold for gold is 85 grams
     And one lunar year (Hawl) has passed since acquisition
-    When Zakat calculation is performed
-    Then Zakat should be obligatory
-    And Zakat amount should be 2.5 grams of gold
+    When Tax calculation is performed
+    Then Tax should be obligatory
+    And Tax amount should be 2.5 grams of gold
 
-  Scenario: Wealth exactly at nisab threshold
-    Given a Muslim individual owns 85 grams of gold (exactly nisab)
+  Scenario: Wealth exactly at threshold threshold
+    Given a Muslim individual owns 85 grams of gold (exactly threshold)
     And one lunar year (Hawl) has passed since acquisition
-    When Zakat calculation is performed
-    Then Zakat should be obligatory
-    And Zakat amount should be 2.125 grams of gold
+    When Tax calculation is performed
+    Then Tax should be obligatory
+    And Tax amount should be 2.125 grams of gold
 
-  Scenario: Wealth below nisab threshold
-    Given a Muslim individual owns 84 grams of gold (below nisab)
-    When Zakat calculation is performed
-    Then Zakat should not be obligatory
-    And Zakat amount should be 0 grams
+  Scenario: Wealth below threshold threshold
+    Given a Muslim individual owns 84 grams of gold (below threshold)
+    When Tax calculation is performed
+    Then Tax should not be obligatory
+    And Tax amount should be 0 grams
 
-  Scenario: Wealth meets nisab but Hawl incomplete
+  Scenario: Wealth meets threshold but Hawl incomplete
     Given a Muslim individual owns 100 grams of gold
     And only 11 months have passed since acquisition
-    When Zakat calculation is performed
-    Then Zakat should not be obligatory yet
-    And Zakat amount should be 0 grams
+    When Tax calculation is performed
+    Then Tax should not be obligatory yet
+    And Tax amount should be 0 grams
     And individual should be notified that Hawl is incomplete
 
   Scenario: Hijri leap year Hawl calculation
@@ -355,114 +355,114 @@ Feature: Zakat Calculation for Gold Wealth
     And individual owns 100 grams of gold
     When Hawl completion is checked
     Then Hawl should be considered complete
-    And Zakat should be obligatory
+    And Tax should be obligatory
 ```
 
 ### Open Questions Identified
 
 1. **Wealth fluctuation**: Require Sheikh Ahmed to clarify school of jurisprudence for fluctuating wealth
 2. **Mixed assets**: How to calculate when individual owns gold + silver + cash (defer to next story)
-3. **Debts**: Should Zakat be calculated on gross wealth or net (wealth minus debts)? (Research required)
+3. **Debts**: Should Tax be calculated on gross wealth or net (wealth minus debts)? (Research required)
 
 ### Outcome
 
-- **5 scenarios** covering core Zakat calculation rules
-- **Edge cases identified**: exactly at nisab, below nisab, incomplete Hawl, leap year
+- **5 scenarios** covering core Tax calculation rules
+- **Edge cases identified**: exactly at threshold, below threshold, incomplete Hawl, leap year
 - **Open questions** captured for follow-up with Sheikh Ahmed
 - **Shared understanding**: All three perspectives aligned on requirements
 - **Implementation ready**: Developer can start with clear acceptance criteria
 
-## Islamic Finance Example: Three Amigos for Murabaha Contract
+## Islamic Finance Example: Three Amigos for Loan Contract
 
 ### User Story
 
 ```
 As an Islamic bank officer
-I want to create Murabaha financing contracts
-So that customers can purchase assets through Shariah-compliant financing
+I want to create Loan financing contracts
+So that customers can purchase assets through Compliance-compliant financing
 ```
 
 ### Session Participants
 
-- **Business (Shariah Scholar - Sheikh Fatima)**: Validates Shariah compliance
+- **Business (Compliance Scholar - Sheikh Fatima)**: Validates Compliance compliance
 - **Development (Backend Developer - Yusuf)**: Implements contract creation
 - **Testing (QA Lead - Aisha)**: Identifies compliance risks and edge cases
 
 ### Key Discussion Points
 
-**Sheikh Fatima**: "Murabaha is cost-plus financing. The bank must own the asset before selling it to the customer. We disclose both the cost price and profit margin—transparency is required. This distinguishes Murabaha from Riba (interest), which would be time-based profit that grows with delayed payment."
+**Sheikh Fatima**: "Loan is cost-plus financing. The bank must own the asset before selling it to the customer. We disclose both the cost price and profit margin—transparency is required. This distinguishes Loan from Interest (interest), which would be time-based profit that grows with delayed payment."
 
 **Yusuf (Dev)**: "So we need to verify the bank owns the asset before creating the contract?"
 
-**Sheikh Fatima**: "Yes, absolutely. If the bank doesn't own it, the contract is invalid under Shariah law."
+**Sheikh Fatima**: "Yes, absolutely. If the bank doesn't own it, the contract is invalid under Compliance law."
 
-**Aisha (QA)**: "What if the bank starts a Murabaha contract, but then the asset is sold to someone else before the customer accepts?"
+**Aisha (QA)**: "What if the bank starts a Loan contract, but then the asset is sold to someone else before the customer accepts?"
 
 **Sheikh Fatima**: "Contract would be void. The asset must remain under bank ownership until transferred to customer."
 
-**Yusuf (Dev)**: "Should we block asset sales when a Murabaha contract is in progress?"
+**Yusuf (Dev)**: "Should we block asset sales when a Loan contract is in progress?"
 
-**Sheikh Fatima**: "Yes, or at least warn that existing Murabaha contracts would be affected."
+**Sheikh Fatima**: "Yes, or at least warn that existing Loan contracts would be affected."
 
-**Aisha (QA)**: "What if someone tries to create a Murabaha contract using an interest rate instead of a fixed profit markup?"
+**Aisha (QA)**: "What if someone tries to create a Loan contract using an interest rate instead of a fixed profit markup?"
 
-**Sheikh Fatima**: "The system should reject it immediately. Interest rates are Riba and prohibited. Only fixed markup is permissible."
+**Sheikh Fatima**: "The system should reject it immediately. Interest rates are Interest and prohibited. Only fixed markup is permissible."
 
 **Yusuf (Dev)**: "How do we calculate the profit? Is there a maximum profit margin?"
 
-**Sheikh Fatima**: "Profit margin is negotiated between bank and customer—Shariah doesn't set a maximum. However, excessive profit that exploits the customer could be questioned. Generally, market rates guide what's acceptable."
+**Sheikh Fatima**: "Profit margin is negotiated between bank and customer—Compliance doesn't set a maximum. However, excessive profit that exploits the customer could be questioned. Generally, market rates guide what's acceptable."
 
 ### Scenarios Created
 
 ```gherkin
-Feature: Murabaha Contract Creation
+Feature: Loan Contract Creation
 
   Background:
     Given Islamic bank is operational
-    And Shariah compliance validation is enabled
-    And Riba (interest) detection is active
+    And Compliance compliance validation is enabled
+    And Interest (interest) detection is active
 
-  Scenario: Create valid Murabaha contract
+  Scenario: Create valid Loan contract
     Given bank owns asset "Commercial Office" valued at 500,000 USD
     And customer "ABC Corp" is approved for financing
-    When bank creates Murabaha contract with:
+    When bank creates Loan contract with:
       | Cost Price    | 500,000 USD |
       | Profit Markup | 75,000 USD  |
       | Selling Price | 575,000 USD |
       | Payment Term  | 60 months   |
     And contract discloses both cost and profit to customer
     Then contract should be created successfully
-    And Shariah scholar should approve contract
-    And contract should reference AAOIFI Shariah Standard No. 8 (Murabaha)
+    And Compliance scholar should approve contract
+    And contract should reference AAOIFI Compliance Standard No. 8 (Loan)
 
-  Scenario: Reject Murabaha when bank does not own asset
+  Scenario: Reject Loan when bank does not own asset
     Given bank does NOT own asset "Office Building"
-    When bank attempts to create Murabaha contract for that asset
+    When bank attempts to create Loan contract for that asset
     Then contract creation should fail
-    And error should state "Bank must own asset before selling in Murabaha"
+    And error should state "Bank must own asset before selling in Loan"
     And no contract should be saved to database
 
-  Scenario: Reject Murabaha with interest-based calculation
+  Scenario: Reject Loan with interest-based calculation
     Given bank owns asset valued at 100,000 USD
     When bank attempts to calculate profit using annual interest rate (e.g., 5% APR)
     Then calculation should be rejected
-    And error should state "Riba prohibition: use fixed markup, not interest rate"
-    And system should log Shariah compliance violation attempt
+    And error should state "Interest prohibition: use fixed markup, not interest rate"
+    And system should log Compliance compliance violation attempt
 
-  Scenario: Prevent asset sale during active Murabaha contract
+  Scenario: Prevent asset sale during active Loan contract
     Given bank owns asset "Office Building"
-    And Murabaha contract for that asset is in progress
+    And Loan contract for that asset is in progress
     When bank attempts to sell asset to different buyer
     Then sale should be blocked
-    And error should state "Asset is reserved for active Murabaha contract"
+    And error should state "Asset is reserved for active Loan contract"
     And bank officer should be notified
 
   Scenario: Require cost and profit disclosure
-    Given bank creates Murabaha contract
+    Given bank creates Loan contract
     But does not disclose profit markup to customer
     When contract is submitted for validation
     Then validation should fail
-    And error should state "Murabaha requires transparent disclosure of cost and profit"
+    And error should state "Loan requires transparent disclosure of cost and profit"
     And contract should not be executable
 ```
 
@@ -474,7 +474,7 @@ Traditional workflow: Business writes requirements → Dev implements → QA tes
 
 Three Amigos workflow: Business-Dev-QA discuss → Agreement on requirements → Dev implements → Tests pass first time.
 
-**Example**: Without Three Amigos, developer might implement Zakat calculation without Hawl requirement. QA discovers issue during testing. Major rework required.
+**Example**: Without Three Amigos, developer might implement Tax calculation without Hawl requirement. QA discovers issue during testing. Major rework required.
 
 With Three Amigos, Hawl requirement surfaced in discussion. Developer implements correctly from the start. No rework.
 
@@ -495,9 +495,9 @@ Three Amigos finds defects at the **1x** stage.
 
 Each perspective contributes unique insights:
 
-- Business: "Zakat rate is 2.5%"
+- Business: "Tax rate is 2.5%"
 - Dev: "What if input is negative?"
-- QA: "What if exactly at nisab? What if Hawl is one day short?"
+- QA: "What if exactly at threshold? What if Hawl is one day short?"
 
 **Together**, scenarios cover happy path + edge cases + error conditions.
 
@@ -514,7 +514,7 @@ Clear acceptance criteria before coding prevent:
 
 Three Amigos spreads knowledge:
 
-- Developers learn business domain (Shariah rules)
+- Developers learn business domain (Compliance rules)
 - Business learns technical constraints
 - QA understands both business goals and technical limitations
 
@@ -522,11 +522,11 @@ This prevents silos and "only person who knows X" bottlenecks.
 
 ### 6. Domain Expert Validation (Islamic Finance)
 
-Shariah scholars validate requirements **before** implementation, preventing religious compliance issues.
+Compliance scholars validate requirements **before** implementation, preventing religious compliance issues.
 
-**Without Three Amigos**: Developer implements Murabaha using interest rate formula (Riba). Shariah scholar rejects during final review. Complete rewrite required.
+**Without Three Amigos**: Developer implements Loan using interest rate formula (Interest). Compliance scholar rejects during final review. Complete rewrite required.
 
-**With Three Amigos**: Shariah scholar explains Riba prohibition during session. Developer uses fixed markup from the start. No rework.
+**With Three Amigos**: Compliance scholar explains Interest prohibition during session. Developer uses fixed markup from the start. No rework.
 
 ## Common Challenges and Solutions
 
@@ -586,29 +586,29 @@ Shariah scholars validate requirements **before** implementation, preventing rel
 - **Smaller groups**: Sometimes 2-3 people works better than larger groups remotely
 - **Async components**: Prep work before session, follow-up after
 
-## Three Amigos with Shariah Scholars
+## Three Amigos with Compliance Scholars
 
-Islamic finance adds a fourth perspective: **Shariah compliance**.
+Islamic finance adds a fourth perspective: **Compliance compliance**.
 
 ### Expanded Roles
 
 1. **Business (Product Owner)**: Market needs, customer requests
 2. **Development (Engineer)**: Technical implementation
 3. **Testing (QA)**: Quality and edge cases
-4. **Shariah Scholar**: Religious compliance and jurisprudence
+4. **Compliance Scholar**: Religious compliance and jurisprudence
 
 Or combine roles:
 
-- **Shariah Scholar as Business**: Scholar represents both business rules (Islamic jurisprudence) and compliance validation
+- **Compliance Scholar as Business**: Scholar represents both business rules (Islamic jurisprudence) and compliance validation
 - **Result**: Still three people, but scholar covers both business and domain expertise
 
-### Adapting Sessions for Shariah Scholars
+### Adapting Sessions for Compliance Scholars
 
 **Language Considerations:**
 
-- Use Arabic terminology where appropriate (Zakat, Nisab, Hawl, Riba, Murabaha)
+- Use Arabic terminology where appropriate (Tax, Threshold, Hawl, Interest, Loan)
 - Explain technical concepts without jargon
-- Shariah scholar may not understand software development—keep business-focused
+- Compliance scholar may not understand software development—keep business-focused
 
 **Cultural Considerations:**
 
@@ -618,14 +618,14 @@ Or combine roles:
 
 **Example Opening:**
 
-"Sheikh Ahmed, we're building a Zakat calculator. We want to ensure it's religiously compliant. Could you explain the conditions for Zakat obligation on gold?"
+"Sheikh Ahmed, we're building a Tax calculator. We want to ensure it's religiously compliant. Could you explain the conditions for Tax obligation on gold?"
 
-### Scenarios Requiring Shariah Validation
+### Scenarios Requiring Compliance Validation
 
-- Zakat calculation rules (nisab, Hawl, exemptions)
-- Murabaha contract terms (asset ownership, profit disclosure)
-- Riba detection (interest vs. profit markup)
-- Halal certification criteria (ingredients, supply chain)
+- Tax calculation rules (threshold, Hawl, exemptions)
+- Loan contract terms (asset ownership, profit disclosure)
+- Interest detection (interest vs. profit markup)
+- Permitted certification criteria (ingredients, supply chain)
 - Takaful (Islamic insurance) profit sharing
 
 ## Summary
@@ -647,14 +647,14 @@ The Three Amigos practice brings together Business, Development, and Testing per
 - Richer scenarios from multiple perspectives
 - Reduced rework and implementation churn
 - Knowledge sharing across team members
-- Domain expert validation (Shariah scholars in Islamic finance)
+- Domain expert validation (Compliance scholars in Islamic finance)
 
 **Islamic Finance Applications:**
 
-- Shariah scholars validate religious compliance during requirements discovery
-- Prevents implementing prohibited practices (Riba/interest)
+- Compliance scholars validate religious compliance during requirements discovery
+- Prevents implementing prohibited practices (Interest/interest)
 - Ensures jurisprudence rules correctly translated to software logic
-- Examples: Zakat calculation (nisab, Hawl), Murabaha contracts (asset ownership, profit disclosure)
+- Examples: Tax calculation (threshold, Hawl), Loan contracts (asset ownership, profit disclosure)
 
 **Session Structure:**
 
@@ -671,7 +671,7 @@ The next technique—Example Mapping—provides a structured approach for facili
 
 - **Category**: Explanation
 - **Subcategory**: Software Design > Behavior-Driven Development
-- **Tags**: Three Amigos, BDD, Collaboration, Requirements Discovery, Business-Dev-QA, Shariah Scholar, Islamic Finance, Zakat, Murabaha, Domain Experts, Stakeholder Involvement
+- **Tags**: Three Amigos, BDD, Collaboration, Requirements Discovery, Business-Dev-QA, Compliance Scholar, Islamic Finance, Tax, Loan, Domain Experts, Stakeholder Involvement
 - **Related Files**:
   - [README](./README.md) - BDD documentation overview
   - [01. Introduction and Philosophy](./ex-so-de-bdd__01-introduction-and-philosophy.md) - BDD core philosophy

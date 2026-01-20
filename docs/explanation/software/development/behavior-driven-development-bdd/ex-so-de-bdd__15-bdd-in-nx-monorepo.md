@@ -4,9 +4,9 @@
 
 Nx provides powerful monorepo tooling that enhances BDD workflows through affected command detection, project graph analysis, distributed caching, and unified test execution. When BDD scenarios are properly integrated with Nx, the monorepo intelligently runs only affected feature tests when code changes, dramatically reducing CI/CD time while maintaining confidence that all impacted scenarios pass. Nx's computational caching further speeds repeated test runs, making BDD feasible even in large monorepos with hundreds of scenarios.
 
-The key to successful BDD in Nx monorepos is proper project configuration. Each app or library can have its own feature files co-located with source code, with Nx executors configured to run BDD tests using Jest-Cucumber or Cucumber.js. The project graph tracks dependencies, so changing a shared library automatically triggers BDD tests in all consuming apps. Tags organize scenarios by domain (e.g., `@zakat`, `@halal`, `@murabaha`), and Nx commands filter execution (`nx affected:test --tags=@critical`).
+The key to successful BDD in Nx monorepos is proper project configuration. Each app or library can have its own feature files co-located with source code, with Nx executors configured to run BDD tests using Jest-Cucumber or Cucumber.js. The project graph tracks dependencies, so changing a shared library automatically triggers BDD tests in all consuming apps. Tags organize scenarios by domain (e.g., `@tax`, `@permitted`, `@loan`), and Nx commands filter execution (`nx affected:test --tags=@critical`).
 
-For Islamic finance platforms with multiple apps (ose-backend-api, ose-frontend-web, ayokoding-web) and shared libraries (ts-zakat-calculator, ts-halal-validator), Nx ensures that changing the Zakat calculation library triggers BDD scenarios in all dependent applications. Feature files organized by bounded context align with Nx's project structure, and distributed task execution parallelizes scenario execution across CI/CD workers, providing fast feedback even with comprehensive BDD coverage.
+For Islamic finance platforms with multiple apps (ose-backend-api, ose-frontend-web, ayokoding-web) and shared libraries (ts-tax-calculator, ts-permitted-validator), Nx ensures that changing the Tax calculation library triggers BDD scenarios in all dependent applications. Feature files organized by bounded context align with Nx's project structure, and distributed task execution parallelizes scenario execution across CI/CD workers, providing fast feedback even with comprehensive BDD coverage.
 
 This document covers Nx configuration for BDD tests, affected command strategies, project graph integration, organizing features in monorepo structure, caching strategies, and CI/CD patterns for Nx + BDD workflows.
 
@@ -17,30 +17,30 @@ This document covers Nx configuration for BDD tests, affected command strategies
 **Directory Structure** (Nx monorepo):
 
 ```
-open-sharia-enterprise/
+open-compliance-enterprise/
 ├── apps/
 │   ├── ose-backend-api/
 │   │   ├── src/
-│   │   │   ├── zakat-calculation/
+│   │   │   ├── tax-calculation/
 │   │   │   │   ├── domain/
-│   │   │   │   │   ├── zakat-calculator.ts
-│   │   │   │   │   └── zakat-calculator.spec.ts
+│   │   │   │   │   ├── tax-calculator.ts
+│   │   │   │   │   └── tax-calculator.spec.ts
 │   │   │   │   └── application/
-│   │   │   └── halal-certification/
+│   │   │   └── permitted-certification/
 │   │   ├── features/                      # BDD feature files
-│   │   │   ├── zakat-calculation/
+│   │   │   ├── tax-calculation/
 │   │   │   │   ├── gold-calculation.feature
 │   │   │   │   └── gold-calculation.steps.ts
-│   │   │   └── halal-certification/
+│   │   │   └── permitted-certification/
 │   │   │       └── ingredient-verification.feature
 │   │   ├── jest.config.ts
 │   │   └── project.json                   # Nx project config
 │   └── ose-frontend-web/
 │       ├── features/
-│       │   └── zakat-calculator-ui.feature
+│       │   └── tax-calculator-ui.feature
 │       └── project.json
 └── libs/
-    └── ts-zakat-calculator/
+    └── ts-tax-calculator/
         ├── src/
         │   └── lib/
         ├── features/                       # BDD tests for library
@@ -164,26 +164,26 @@ nx affected:test
 **Example Workflow**:
 
 ```bash
-# Developer modifies Zakat calculation library
-# File changed: libs/ts-zakat-calculator/src/lib/calculator.ts
+# Developer modifies Tax calculation library
+# File changed: libs/ts-tax-calculator/src/lib/calculator.ts
 
 # Nx detects affected projects:
-# - libs/ts-zakat-calculator (library itself)
-# - apps/ose-backend-api (depends on ts-zakat-calculator)
-# - apps/ose-frontend-web (depends on ts-zakat-calculator)
+# - libs/ts-tax-calculator (library itself)
+# - apps/ose-backend-api (depends on ts-tax-calculator)
+# - apps/ose-frontend-web (depends on ts-tax-calculator)
 
 # Run BDD tests for affected projects only
 nx affected:test --target=test:bdd
 
 # Output:
 # Running BDD tests for 3 affected projects:
-# ✓ libs/ts-zakat-calculator - 12 scenarios (passed)
+# ✓ libs/ts-tax-calculator - 12 scenarios (passed)
 # ✓ apps/ose-backend-api - 45 scenarios (passed)
 # ✓ apps/ose-frontend-web - 8 E2E scenarios (passed)
 #
 # Skipped (not affected):
 # - apps/ayokoding-web
-# - libs/ts-halal-validator
+# - libs/ts-permitted-validator
 ```
 
 **Time Savings**:
@@ -244,7 +244,7 @@ nx graph
 └──────────────────────┘    │
                             ▼
                      ┌──────────────────────┐
-                     │ ts-zakat-calculator  │
+                     │ ts-tax-calculator  │
                      │ (lib)                │
                      └──────────────────────┘
                             ▲
@@ -254,14 +254,14 @@ nx graph
 └──────────────────────┘
 
 ┌──────────────────────┐
-│ ayokoding-web        │ (no dependency on Zakat)
+│ ayokoding-web        │ (no dependency on Tax)
 │ (app)                │
 └──────────────────────┘
 ```
 
 **Dependency Impact**:
 
-- Change `ts-zakat-calculator` → Affects `ose-backend-api` and `ose-frontend-web`
+- Change `ts-tax-calculator` → Affects `ose-backend-api` and `ose-frontend-web`
 - Change `ose-backend-api` → Affects only `ose-backend-api`
 - Change `ayokoding-web` → Affects only `ayokoding-web`
 
@@ -272,7 +272,7 @@ nx graph
 **Library with BDD Tests**:
 
 ```
-libs/ts-zakat-calculator/
+libs/ts-tax-calculator/
 ├── src/
 │   └── lib/
 │       ├── calculator.ts
@@ -286,13 +286,13 @@ libs/ts-zakat-calculator/
 **App Importing Library**:
 
 ```typescript
-// apps/ose-backend-api/src/zakat-calculation/application/calculate-zakat.use-case.ts
-import { ZakatCalculator } from "@open-sharia-enterprise/ts-zakat-calculator";
+// apps/ose-backend-api/src/tax-calculation/application/calculate-tax.use-case.ts
+import { TaxCalculator } from "@open-compliance-enterprise/ts-tax-calculator";
 
-export class CalculateZakatUseCase {
-  constructor(private readonly calculator: ZakatCalculator) {}
+export class CalculateTaxUseCase {
+  constructor(private readonly calculator: TaxCalculator) {}
 
-  async execute(wealth: Wealth): Promise<ZakatCalculationResult> {
+  async execute(wealth: Wealth): Promise<TaxCalculationResult> {
     return this.calculator.calculate(wealth);
   }
 }
@@ -300,10 +300,10 @@ export class CalculateZakatUseCase {
 
 **Affected Test Execution**:
 
-1. Developer modifies `libs/ts-zakat-calculator/src/lib/calculator.ts`
+1. Developer modifies `libs/ts-tax-calculator/src/lib/calculator.ts`
 2. Nx detects change via project graph
 3. Nx runs:
-   - `libs/ts-zakat-calculator` BDD tests (library scenarios)
+   - `libs/ts-tax-calculator` BDD tests (library scenarios)
    - `apps/ose-backend-api` BDD tests (integration scenarios using library)
 
 ## Organizing Features in Monorepo
@@ -313,7 +313,7 @@ export class CalculateZakatUseCase {
 **Pattern 1: Co-located with Code** (Recommended for libraries)
 
 ```
-libs/ts-zakat-calculator/
+libs/ts-tax-calculator/
 ├── src/lib/
 │   └── calculator.ts
 └── features/
@@ -326,15 +326,15 @@ libs/ts-zakat-calculator/
 ```
 apps/ose-backend-api/
 ├── src/
-│   ├── zakat-calculation/
+│   ├── tax-calculation/
 │   │   └── domain/
-│   └── halal-certification/
+│   └── permitted-certification/
 │       └── domain/
 └── features/
-    ├── zakat-calculation/
+    ├── tax-calculation/
     │   ├── gold-calculation.feature
     │   └── gold-calculation.steps.ts
-    └── halal-certification/
+    └── permitted-certification/
         ├── ingredient-verification.feature
         └── ingredient-verification.steps.ts
 ```
@@ -344,14 +344,14 @@ apps/ose-backend-api/
 ```
 apps/ose-backend-api/
 ├── src/
-│   ├── zakat-calculation/
+│   ├── tax-calculation/
 │   │   ├── domain/
 │   │   │   ├── calculator.ts
 │   │   │   └── calculator.spec.ts       # TDD unit tests
 │   │   └── features/                    # BDD scenarios for this module
 │   │       ├── domain-logic.feature
 │   │       └── domain-logic.steps.ts
-│   └── halal-certification/
+│   └── permitted-certification/
 │       ├── domain/
 │       └── features/
 │           └── ingredient-verification.feature
@@ -365,26 +365,26 @@ apps/ose-backend-api/
 apps/ose-backend-api/
 └── features/
     └── integration/
-        └── zakat-accounting-integration.feature   # Spans Zakat + Accounting contexts
+        └── tax-accounting-integration.feature   # Spans Tax + Accounting contexts
 ```
 
 **Feature File**:
 
 ```gherkin
 @integration @cross-context
-Feature: Zakat Payment Recording in Accounting
+Feature: Tax Payment Recording in Accounting
 
-  Scenario: Record Zakat payment as journal entry
-    # Zakat Calculation Context
-    Given individual has zakatable wealth of 10,000 USD
-    When Zakat is calculated
-    Then Zakat amount is 250 USD
+  Scenario: Record Tax payment as journal entry
+    # Tax Calculation Context
+    Given individual has taxable wealth of 10,000 USD
+    When Tax is calculated
+    Then Tax amount is 250 USD
 
     # Accounting Context
-    When Zakat payment is processed
+    When Tax payment is processed
     Then journal entry should be created:
       | Account       | Debit | Credit |
-      | Zakat Expense | 250   |        |
+      | Tax Expense | 250   |        |
       | Cash          |       | 250    |
 ```
 
@@ -466,7 +466,7 @@ nx connect-to-nx-cloud
 
 ```bash
 # Modify feature file
-echo "# Comment" >> apps/ose-backend-api/features/zakat-calculation/gold-calculation.feature
+echo "# Comment" >> apps/ose-backend-api/features/tax-calculation/gold-calculation.feature
 
 # Run BDD tests
 nx test:bdd ose-backend-api
@@ -576,17 +576,17 @@ jobs:
 
 ## Islamic Finance Examples
 
-### Example 1: Zakat Calculator Library with BDD
+### Example 1: Tax Calculator Library with BDD
 
 **Library Structure**:
 
 ```
-libs/ts-zakat-calculator/
+libs/ts-tax-calculator/
 ├── src/
 │   └── lib/
 │       ├── calculator.ts
 │       ├── calculator.spec.ts            # TDD unit tests
-│       ├── nisab-threshold.ts
+│       ├── threshold-threshold.ts
 │       └── hawl-period.ts
 ├── features/
 │   ├── gold-calculation.feature          # BDD scenarios
@@ -601,21 +601,21 @@ libs/ts-zakat-calculator/
 
 ```json
 {
-  "name": "ts-zakat-calculator",
-  "sourceRoot": "libs/ts-zakat-calculator/src",
+  "name": "ts-tax-calculator",
+  "sourceRoot": "libs/ts-tax-calculator/src",
   "projectType": "library",
-  "tags": ["type:lib", "scope:shared", "domain:zakat"],
+  "tags": ["type:lib", "scope:shared", "domain:tax"],
   "targets": {
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/ts-zakat-calculator/jest.config.ts"
+        "jestConfig": "libs/ts-tax-calculator/jest.config.ts"
       }
     },
     "test:bdd": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/ts-zakat-calculator/jest.config.ts",
+        "jestConfig": "libs/ts-tax-calculator/jest.config.ts",
         "testMatch": ["<rootDir>/features/**/*.steps.ts"]
       }
     }
@@ -627,11 +627,11 @@ libs/ts-zakat-calculator/
 
 ```bash
 # Run BDD tests for library
-nx test:bdd ts-zakat-calculator
+nx test:bdd ts-tax-calculator
 
 # Run affected BDD tests (if library changed)
 nx affected:test --target=test:bdd
-# Runs: ts-zakat-calculator + all consuming apps
+# Runs: ts-tax-calculator + all consuming apps
 ```
 
 ### Example 2: Backend API with Multiple Bounded Contexts
@@ -641,23 +641,23 @@ nx affected:test --target=test:bdd
 ```
 apps/ose-backend-api/
 ├── src/
-│   ├── zakat-calculation/
-│   ├── halal-certification/
-│   ├── murabaha-financing/
+│   ├── tax-calculation/
+│   ├── permitted-certification/
+│   ├── loan-financing/
 │   └── accounting/
 └── features/
-    ├── zakat-calculation/
+    ├── tax-calculation/
     │   ├── gold-calculation.feature
     │   ├── silver-calculation.feature
     │   └── mixed-assets.feature
-    ├── halal-certification/
+    ├── permitted-certification/
     │   ├── ingredient-verification.feature
     │   └── supply-chain-traceability.feature
-    ├── murabaha-financing/
+    ├── loan-financing/
     │   ├── contract-creation.feature
-    │   └── riba-detection.feature
+    │   └── interest-detection.feature
     └── integration/
-        └── zakat-accounting-integration.feature
+        └── tax-accounting-integration.feature
 ```
 
 **Targeted Test Execution**:
@@ -666,13 +666,13 @@ apps/ose-backend-api/
 # Run all BDD tests for backend API
 nx test:bdd ose-backend-api
 
-# Run only Zakat scenarios
-nx test:bdd ose-backend-api -- --testNamePattern="zakat"
+# Run only Tax scenarios
+nx test:bdd ose-backend-api -- --testNamePattern="tax"
 
 # Run only critical scenarios
 nx test:bdd ose-backend-api -- --testNamePattern="@critical"
 
-# Run affected tests after Zakat module change
+# Run affected tests after Tax module change
 nx affected:test --target=test:bdd
 ```
 
@@ -700,7 +700,7 @@ nx affected:test --target=test:bdd
 
 ```gherkin
 @smoke @critical
-Scenario: Critical Zakat calculation
+Scenario: Critical Tax calculation
   # Runs in smoke test suite
 ```
 
@@ -758,10 +758,10 @@ Nx provides powerful monorepo tooling that enhances BDD workflows through intell
 
 **Islamic Finance Benefits**:
 
-- Zakat library changes trigger tests in all dependent apps
+- Tax library changes trigger tests in all dependent apps
 - Bounded contexts map to Nx project structure
-- Affected detection prevents running unrelated scenarios (Halal tests don't run when Zakat changes)
-- Distributed caching speeds up Shariah compliance verification
+- Affected detection prevents running unrelated scenarios (Permitted tests don't run when Tax changes)
+- Distributed caching speeds up Compliance compliance verification
 
 Use Nx's affected commands, caching, and project graph to maintain fast BDD feedback loops even as your Islamic finance monorepo grows to dozens of projects and hundreds of scenarios.
 
@@ -769,7 +769,7 @@ Use Nx's affected commands, caching, and project graph to maintain fast BDD feed
 
 - **Category**: Explanation
 - **Subcategory**: Software Design > Behavior-Driven Development
-- **Tags**: BDD, Nx, Monorepo, Affected Commands, Project Graph, Caching, CI/CD, Jest-Cucumber, Islamic Finance, Zakat, Halal
+- **Tags**: BDD, Nx, Monorepo, Affected Commands, Project Graph, Caching, CI/CD, Jest-Cucumber, Islamic Finance, Tax, Permitted
 - **Related Files**:
   - [README](./README.md) - BDD documentation overview
   - [11. BDD Frameworks](./ex-so-de-bdd__11-bdd-frameworks.md) - Jest-Cucumber setup

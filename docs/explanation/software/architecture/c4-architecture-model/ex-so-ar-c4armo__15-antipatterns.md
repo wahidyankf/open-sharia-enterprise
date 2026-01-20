@@ -44,11 +44,11 @@ Create separate diagrams for each abstraction level:
 
 ```mermaid
 C4Container
-    title Container Diagram - Qard Hasan Microfinance Platform (Correct)
+    title Container Diagram - Microfinance Platform (Correct)
 
     Person(borrower, "Borrower")
 
-    System_Boundary(qard, "Qard Hasan Platform") {
+    System_Boundary(microfinance, "Microfinance Platform") {
         Container(web, "Web Application", "React", "Borrower interface")
         Container(api_gateway, "API Gateway", "Kong", "Routes API requests")
         Container(loan_service, "Loan Service", "Spring Boot", "Manages interest-free loans")
@@ -138,11 +138,11 @@ Use standard C4 levels with clear boundaries:
 
 ```mermaid
 C4Container
-    title Container Diagram - Wakaf Management Platform (Incorrect - Overusing Subsystems)
+    title Container Diagram - Endowment Management Platform (Incorrect - Overusing Subsystems)
 
     Person(donor, "Donor")
 
-    System_Boundary(wakaf, "Wakaf Management Platform") {
+    System_Boundary(endowment, "Endowment Management Platform") {
         Container_Boundary(frontend_subsystem, "Frontend Subsystem") {
             Container(web, "Web App", "React")
             Container(mobile, "Mobile App", "React Native")
@@ -150,7 +150,7 @@ C4Container
 
         Container_Boundary(backend_subsystem, "Backend Subsystem") {
             Container(api, "API Gateway", "Kong")
-            Container(wakaf_service, "Wakaf Service", "Spring Boot")
+            Container(endowment_service, "Endowment Service", "Spring Boot")
             Container(beneficiary_service, "Beneficiary Service", "Spring Boot")
         }
 
@@ -160,7 +160,7 @@ C4Container
         }
     }
 
-    Rel(donor, web, "Donates Wakaf", "HTTPS")
+    Rel(donor, web, "Donates Endowment", "HTTPS")
     Rel(web, api, "Makes API calls", "REST")
 ```
 
@@ -170,36 +170,36 @@ C4Container
 
 ```mermaid
 C4Container
-    title Container Diagram - Wakaf Management Platform (Correct - No Unnecessary Subsystems)
+    title Container Diagram - Endowment Management Platform (Correct - No Unnecessary Subsystems)
 
-    Person(donor, "Wakaf Donor", "Donates to endowment projects")
-    Person(beneficiary, "Beneficiary", "Receives Wakaf benefits")
+    Person(donor, "Endowment Donor", "Donates to endowment projects")
+    Person(beneficiary, "Beneficiary", "Receives Endowment benefits")
 
-    System_Boundary(wakaf, "Wakaf Management Platform") {
+    System_Boundary(endowment, "Endowment Management Platform") {
         Container(web, "Web Application", "React", "Donor and beneficiary interface")
         Container(mobile, "Mobile App", "React Native", "Mobile donor interface")
         Container(api, "API Gateway", "Kong", "Routes and secures requests")
-        Container(wakaf_service, "Wakaf Service", "Spring Boot", "Manages Wakaf endowments and distributions")
+        Container(endowment_service, "Endowment Service", "Spring Boot", "Manages Endowment endowments and distributions")
         Container(beneficiary_service, "Beneficiary Service", "Spring Boot", "Manages beneficiary verification")
-        Container(db, "Wakaf Database", "PostgreSQL", "Stores endowment and beneficiary data")
+        Container(db, "Endowment Database", "PostgreSQL", "Stores endowment and beneficiary data")
         Container(cache, "Cache", "Redis", "Caches frequently accessed data")
     }
 
-    System_Ext(property_registry, "Property Registry", "Verifies Wakaf property ownership")
+    System_Ext(property_registry, "Property Registry", "Verifies Endowment property ownership")
 
-    Rel(donor, web, "Donates Wakaf", "HTTPS")
-    Rel(donor, mobile, "Donates Wakaf", "HTTPS")
+    Rel(donor, web, "Donates Endowment", "HTTPS")
+    Rel(donor, mobile, "Donates Endowment", "HTTPS")
     Rel(beneficiary, web, "Applies for benefits", "HTTPS")
     Rel(web, api, "Makes API calls", "REST/JSON")
     Rel(mobile, api, "Makes API calls", "REST/JSON")
-    Rel(api, wakaf_service, "Routes requests", "HTTP")
+    Rel(api, endowment_service, "Routes requests", "HTTP")
     Rel(api, beneficiary_service, "Routes requests", "HTTP")
-    Rel(wakaf_service, db, "Stores endowments", "JDBC")
-    Rel(wakaf_service, cache, "Caches data", "Redis Protocol")
+    Rel(endowment_service, db, "Stores endowments", "JDBC")
+    Rel(endowment_service, cache, "Caches data", "Redis Protocol")
     Rel(beneficiary_service, db, "Stores beneficiaries", "JDBC")
-    Rel(wakaf_service, property_registry, "Verifies property", "REST API")
+    Rel(endowment_service, property_registry, "Verifies property", "REST API")
 
-    UpdateElementStyle(wakaf_service, $fontColor="white", $bgColor="green", $borderColor="darkgreen")
+    UpdateElementStyle(endowment_service, $fontColor="white", $bgColor="green", $borderColor="darkgreen")
     UpdateElementStyle(beneficiary_service, $fontColor="white", $bgColor="green", $borderColor="darkgreen")
 ```
 
@@ -209,12 +209,12 @@ Subsystems make sense when they represent actual logical or physical boundaries:
 
 ```mermaid
 C4Container
-    title Container Diagram - Multi-Tenant Islamic Banking Platform (Correct Subsystem Use)
+    title Container Diagram - Multi-Tenant Banking Platform (Correct Subsystem Use)
 
     Person(customer_a, "Customer (Tenant A)")
     Person(customer_b, "Customer (Tenant B)")
 
-    System_Boundary(platform, "Islamic Banking Platform") {
+    System_Boundary(platform, "Banking Platform") {
         Container(router, "Tenant Router", "Nginx", "Routes requests to correct tenant")
 
         Container_Boundary(tenant_a, "Tenant A Infrastructure") {
@@ -261,7 +261,7 @@ Here, subsystems represent actual deployment isolation between tenants.
 ```
 ❌ System Context (WRONG - Shows internal details of external system)
 
-[Takaful Platform] ---> [Payment Gateway Web Server]
+[Insurance Platform] ---> [Payment Gateway Web Server]
                    ---> [Payment Gateway Database]
                    ---> [Payment Gateway Message Queue]
 
@@ -272,26 +272,26 @@ Here, subsystems represent actual deployment isolation between tenants.
 
 ```mermaid
 C4Context
-    title System Context - Takaful Management Platform (Correct - External Systems as Black Boxes)
+    title System Context - Insurance Management Platform (Correct - External Systems as Black Boxes)
 
-    Person(policyholder, "Policyholder", "Purchases and manages Takaful policies")
-    Person(operator, "Takaful Operator", "Manages risk pool and claims")
+    Person(policyholder, "Policyholder", "Purchases and manages Insurance policies")
+    Person(operator, "Insurance Operator", "Manages risk pool and claims")
 
-    System(takaful, "Takaful Management Platform", "Manages cooperative insurance policies and claims")
+    System(insurance, "Insurance Management Platform", "Manages cooperative insurance policies and claims")
 
     System_Ext(payment, "Payment Gateway", "Processes premium payments and claim disbursements")
     System_Ext(actuarial, "Actuarial System", "Provides risk calculations and pricing")
-    System_Ext(reinsurance, "Retakaful Platform", "Manages reinsurance arrangements")
+    System_Ext(reinsurance, "Reinsurance Platform", "Manages reinsurance arrangements")
     System_Ext(regulatory, "Regulatory Reporting System", "Receives compliance reports")
 
-    Rel(policyholder, takaful, "Purchases policies, Files claims", "HTTPS")
-    Rel(operator, takaful, "Manages risk pool, Approves claims", "HTTPS")
-    Rel(takaful, payment, "Processes payments", "REST API")
-    Rel(takaful, actuarial, "Calculates premiums", "REST API")
-    Rel(takaful, reinsurance, "Arranges Retakaful", "REST API")
-    Rel(takaful, regulatory, "Submits reports", "SFTP")
+    Rel(policyholder, insurance, "Purchases policies, Files claims", "HTTPS")
+    Rel(operator, insurance, "Manages risk pool, Approves claims", "HTTPS")
+    Rel(insurance, payment, "Processes payments", "REST API")
+    Rel(insurance, actuarial, "Calculates premiums", "REST API")
+    Rel(insurance, reinsurance, "Arranges Reinsurance", "REST API")
+    Rel(insurance, regulatory, "Submits reports", "SFTP")
 
-    UpdateElementStyle(takaful, $fontColor="white", $bgColor="green", $borderColor="darkgreen")
+    UpdateElementStyle(insurance, $fontColor="white", $bgColor="green", $borderColor="darkgreen")
 ```
 
 **When to Show External System Details**:
@@ -331,12 +331,12 @@ Only show external system internals if:
 
 ```mermaid
 C4Container
-    title Container Diagram for Sadaqah Donation Platform
+    title Container Diagram for Charitable Donation Platform
 
     Person(donor, "Donor", "Makes charitable donations")
     Person(charity_admin, "Charity Administrator", "Manages donation campaigns and beneficiaries")
 
-    System_Boundary(sadaqah, "Sadaqah Donation Platform") {
+    System_Boundary(charitable_donation, "Charitable Donation Platform") {
         Container(web, "Donor Portal", "React, TypeScript", "Allows donors to browse campaigns and make donations")
         Container(admin_web, "Admin Portal", "React, TypeScript", "Campaign and beneficiary management interface")
         Container(api, "Donation API", "Node.js, Express", "Handles donation processing and campaign management")
@@ -425,11 +425,11 @@ When the mobile app is part of a larger distributed system:
 
 ```mermaid
 C4Container
-    title Container Diagram - Islamic Finance Advisory Platform (Correct - Mobile as One Container)
+    title Container Diagram - Finance Advisory Platform (Correct - Mobile as One Container)
 
-    Person(user, "User", "Seeks Sharia-compliant financial advice")
+    Person(user, "User", "Seeks compliant financial advice")
 
-    System_Boundary(advisory, "Islamic Finance Advisory Platform") {
+    System_Boundary(advisory, "Finance Advisory Platform") {
         Container(ios_app, "iOS App", "Swift, SwiftUI", "Native iOS client for financial advice")
         Container(android_app, "Android App", "Kotlin, Jetpack Compose", "Native Android client")
         Container(api, "Advisory API", "Spring Boot", "Provides personalized financial advice")
@@ -437,7 +437,7 @@ C4Container
         Container(db, "User Database", "PostgreSQL", "Stores user profiles and advice history")
     }
 
-    System_Ext(fatwa_db, "Fatwa Database", "External Sharia rulings database")
+    System_Ext(regulation_db, "Regulation Database", "External regulatory rulings database")
 
     Rel(user, ios_app, "Seeks advice", "Touch/Gestures")
     Rel(user, android_app, "Seeks advice", "Touch/Gestures")
@@ -445,7 +445,7 @@ C4Container
     Rel(android_app, api, "Requests advice", "REST API/HTTPS")
     Rel(api, ml_service, "Generates recommendations", "gRPC")
     Rel(api, db, "Stores user data", "JDBC")
-    Rel(api, fatwa_db, "Retrieves Sharia rulings", "REST API")
+    Rel(api, regulation_db, "Retrieves regulatory rulings", "REST API")
     Rel(ml_service, db, "Reads historical data", "JDBC")
 
     UpdateElementStyle(api, $fontColor="white", $bgColor="green", $borderColor="darkgreen")

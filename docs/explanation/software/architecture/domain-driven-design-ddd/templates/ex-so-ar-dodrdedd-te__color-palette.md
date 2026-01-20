@@ -34,7 +34,7 @@ This color palette ensures all Mermaid diagrams in the DDD documentation meet WC
 - **Usage**: Value Objects, Domain Events
 - **Text Color**: Black (`#000000`)
 - **Contrast Ratio**: 8.12:1 (WCAG AAA compliant)
-- **Example**: Money, ZakatRate, DomainEvent classes
+- **Example**: Money, TaxRate, DomainEvent classes
 
 **Brown: `#CA9161`**
 
@@ -128,7 +128,7 @@ Use `<br/>` for multi-line labels to improve readability:
 
 ```mermaid
 graph TD
-    BC[Zakat Calculation<br/>Bounded Context<br/>Core Domain]
+    BC[Tax Calculation<br/>Bounded Context<br/>Core Domain]
     style BC fill:#0173B2,stroke:#000,color:#FFFFFF
 ```
 
@@ -152,19 +152,19 @@ Use UML-style stereotypes for clarity:
 
 ```mermaid
 classDiagram
-    class ZakatAssessment {
+    class TaxAssessment {
         <<Aggregate Root>>
         +id: AssessmentId
-        +calculate() ZakatAmount
+        +calculate() TaxAmount
     }
-    style ZakatAssessment fill:#0173B2,stroke:#000,color:#FFFFFF
+    style TaxAssessment fill:#0173B2,stroke:#000,color:#FFFFFF
 
-    class ZakatRate {
+    class TaxRate {
         <<Value Object>>
         +percentage: Decimal
         +equals(other) boolean
     }
-    style ZakatRate fill:#DE8F05,stroke:#000,color:#000000
+    style TaxRate fill:#DE8F05,stroke:#000,color:#000000
 ```
 
 ## Color Contrast Verification
@@ -186,7 +186,7 @@ All colors have been tested against WCAG AA standards (4.5:1 for normal text, 3:
 
 ```mermaid
 graph TD
-    ZC[Zakat Calculation<br/>Core Domain]
+    ZC[Tax Calculation<br/>Core Domain]
     IM[Inventory Management<br/>Supporting]
     PAY[Payment Processing<br/>Generic]
     ERP[Legacy ERP<br/>System]

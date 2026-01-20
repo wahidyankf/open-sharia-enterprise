@@ -6,7 +6,7 @@ BDD frameworks automate the execution of Gherkin scenarios, bridging business-re
 
 Choosing the right BDD framework depends on your technology stack (JavaScript/TypeScript, C#/.NET, Python, Java), team preferences (test runner integration vs. standalone), and project requirements (simple scenarios vs. complex workflows). Each framework has strengths: Cucumber.js offers mature Gherkin support across languages, Jest-Cucumber integrates seamlessly with Jest's ecosystem, SpecFlow dominates .NET development, and Behave provides Pythonic BDD.
 
-For Islamic finance platforms built on Node.js/TypeScript (like this repository's Nx monorepo), Jest-Cucumber and Cucumber.js are primary choices. Jest-Cucumber excels when you're already using Jest for unit tests and want unified test infrastructure. Cucumber.js provides more advanced features (World object, hooks, plugins) at the cost of additional configuration. Both support the Gherkin scenarios needed to document Shariah compliance rules that domain experts can verify.
+For Islamic finance platforms built on Node.js/TypeScript (like this repository's Nx monorepo), Jest-Cucumber and Cucumber.js are primary choices. Jest-Cucumber excels when you're already using Jest for unit tests and want unified test infrastructure. Cucumber.js provides more advanced features (World object, hooks, plugins) at the cost of additional configuration. Both support the Gherkin scenarios needed to document Compliance compliance rules that domain experts can verify.
 
 This document compares major BDD frameworks, provides setup instructions for Node.js/TypeScript projects, demonstrates integration with test runners, and offers guidance for framework selection based on project context.
 
@@ -118,10 +118,10 @@ module.exports = {
 ### Step Definitions (Cucumber.js)
 
 ```typescript
-// features/step-definitions/zakat-calculation.steps.ts
+// features/step-definitions/tax-calculation.steps.ts
 import { Given, When, Then, Before, After, setDefaultTimeout } from "@cucumber/cucumber";
 import { expect } from "@jest/globals";
-import { ZakatCalculator } from "../../src/domain/zakat-calculator";
+import { TaxCalculator } from "../../src/domain/tax-calculator";
 import { GoldWealth } from "../../src/domain/gold-wealth";
 
 // Set timeout for async operations
@@ -132,16 +132,16 @@ Given("individual owns {int} grams of gold", function (this: any, goldAmount: nu
   this.goldWealth = new GoldWealth(goldAmount, "grams");
 });
 
-When("Zakat calculation is performed", function (this: any) {
-  this.zakatCalculator = new ZakatCalculator();
-  this.calculationResult = this.zakatCalculator.calculate(this.goldWealth);
+When("Tax calculation is performed", function (this: any) {
+  this.taxCalculator = new TaxCalculator();
+  this.calculationResult = this.taxCalculator.calculate(this.goldWealth);
 });
 
-Then("Zakat should be obligatory", function (this: any) {
+Then("Tax should be obligatory", function (this: any) {
   expect(this.calculationResult.obligatory).toBe(true);
 });
 
-Then("Zakat amount should be {float} grams of gold", function (this: any, expectedAmount: number) {
+Then("Tax amount should be {float} grams of gold", function (this: any, expectedAmount: number) {
   expect(this.calculationResult.amount).toBeCloseTo(expectedAmount, 2);
 });
 
@@ -166,7 +166,7 @@ After(async function (scenario) {
 npx cucumber-js
 
 # Run specific feature
-npx cucumber-js features/zakat-calculation.feature
+npx cucumber-js features/tax-calculation.feature
 
 # Run scenarios with specific tag
 npx cucumber-js --tags "@critical"
@@ -188,8 +188,8 @@ import { setWorldConstructor, World, IWorldOptions } from "@cucumber/cucumber";
 
 export class CustomWorld extends World {
   goldWealth?: GoldWealth;
-  zakatCalculator?: ZakatCalculator;
-  calculationResult?: ZakatCalculationResult;
+  taxCalculator?: TaxCalculator;
+  calculationResult?: TaxCalculationResult;
   apiClient?: ApiClient;
 
   constructor(options: IWorldOptions) {
@@ -197,11 +197,11 @@ export class CustomWorld extends World {
   }
 
   // Helper methods
-  async calculateZakat() {
-    if (!this.zakatCalculator || !this.goldWealth) {
+  async calculateTax() {
+    if (!this.taxCalculator || !this.goldWealth) {
       throw new Error("Calculator or wealth not initialized");
     }
-    this.calculationResult = await this.zakatCalculator.calculate(this.goldWealth);
+    this.calculationResult = await this.taxCalculator.calculate(this.goldWealth);
   }
 
   async makeApiCall(endpoint: string, data: any) {
@@ -223,11 +223,11 @@ Given("individual owns {int} grams of gold", function (this: CustomWorld, amount
   this.goldWealth = new GoldWealth(amount, "grams");
 });
 
-When("Zakat calculation is performed", async function (this: CustomWorld) {
-  await this.calculateZakat();
+When("Tax calculation is performed", async function (this: CustomWorld) {
+  await this.calculateTax();
 });
 
-Then("Zakat should be obligatory", function (this: CustomWorld) {
+Then("Tax should be obligatory", function (this: CustomWorld) {
   expect(this.calculationResult?.obligatory).toBe(true);
 });
 ```
@@ -278,27 +278,27 @@ export default {
 ### Step Definitions (Jest-Cucumber)
 
 ```typescript
-// features/zakat-calculation.steps.ts
+// features/tax-calculation.steps.ts
 import { defineFeature, loadFeature } from "jest-cucumber";
-import { ZakatCalculator } from "../src/domain/zakat-calculator";
+import { TaxCalculator } from "../src/domain/tax-calculator";
 import { GoldWealth } from "../src/domain/gold-wealth";
 
-const feature = loadFeature("./features/zakat-calculation.feature");
+const feature = loadFeature("./features/tax-calculation.feature");
 
 defineFeature(feature, (test) => {
   // Test-scoped variables
   let goldWealth: GoldWealth;
-  let zakatCalculator: ZakatCalculator;
-  let calculationResult: ZakatCalculationResult;
+  let taxCalculator: TaxCalculator;
+  let calculationResult: TaxCalculationResult;
 
   beforeEach(() => {
     // Reset state before each scenario
     goldWealth = null as any;
-    zakatCalculator = new ZakatCalculator();
+    taxCalculator = new TaxCalculator();
     calculationResult = null as any;
   });
 
-  test("Wealth above nisab threshold", ({ given, and, when, then }) => {
+  test("Wealth above threshold threshold", ({ given, and, when, then }) => {
     given(/individual owns (\d+) grams of gold/, (goldAmountStr) => {
       const goldAmount = parseInt(goldAmountStr, 10);
       goldWealth = new GoldWealth(goldAmount, "grams");
@@ -308,15 +308,15 @@ defineFeature(feature, (test) => {
       // Mock system date or set hawl period
     });
 
-    when("Zakat calculation is performed", () => {
-      calculationResult = zakatCalculator.calculate(goldWealth);
+    when("Tax calculation is performed", () => {
+      calculationResult = taxCalculator.calculate(goldWealth);
     });
 
-    then("Zakat should be obligatory", () => {
+    then("Tax should be obligatory", () => {
       expect(calculationResult.obligatory).toBe(true);
     });
 
-    and(/Zakat amount should be (.+) grams of gold/, (expectedAmountStr) => {
+    and(/Tax amount should be (.+) grams of gold/, (expectedAmountStr) => {
       const expectedAmount = parseFloat(expectedAmountStr);
       expect(calculationResult.amount).toBeCloseTo(expectedAmount, 2);
     });
@@ -331,7 +331,7 @@ defineFeature(feature, (test) => {
 npm test
 
 # Run specific feature
-npm test -- zakat-calculation.steps.ts
+npm test -- tax-calculation.steps.ts
 
 # Run with coverage
 npm test -- --coverage
@@ -426,16 +426,16 @@ dotnet add package SpecFlow.Tools.MsBuild.Generation
 ### Step Definitions (SpecFlow)
 
 ```csharp
-// Steps/ZakatCalculationSteps.cs
+// Steps/TaxCalculationSteps.cs
 using TechTalk.SpecFlow;
 using NUnit.Framework;
 
 [Binding]
-public class ZakatCalculationSteps
+public class TaxCalculationSteps
 {
     private GoldWealth _goldWealth;
-    private ZakatCalculator _zakatCalculator;
-    private ZakatCalculationResult _result;
+    private TaxCalculator _taxCalculator;
+    private TaxCalculationResult _result;
 
     [Given(@"individual owns (\d+) grams of gold")]
     public void GivenIndividualOwnsGold(int goldAmount)
@@ -449,21 +449,21 @@ public class ZakatCalculationSteps
         // Set up hawl period
     }
 
-    [When(@"Zakat calculation is performed")]
-    public void WhenZakatCalculationPerformed()
+    [When(@"Tax calculation is performed")]
+    public void WhenTaxCalculationPerformed()
     {
-        _zakatCalculator = new ZakatCalculator();
-        _result = _zakatCalculator.Calculate(_goldWealth);
+        _taxCalculator = new TaxCalculator();
+        _result = _taxCalculator.Calculate(_goldWealth);
     }
 
-    [Then(@"Zakat should be obligatory")]
-    public void ThenZakatShouldBeObligatory()
+    [Then(@"Tax should be obligatory")]
+    public void ThenTaxShouldBeObligatory()
     {
         Assert.IsTrue(_result.Obligatory);
     }
 
-    [Then(@"Zakat amount should be (.*) grams of gold")]
-    public void ThenZakatAmountShouldBe(decimal expectedAmount)
+    [Then(@"Tax amount should be (.*) grams of gold")]
+    public void ThenTaxAmountShouldBe(decimal expectedAmount)
     {
         Assert.AreEqual(expectedAmount, _result.Amount, 0.01m);
     }
@@ -533,9 +533,9 @@ pip install behave-html-formatter  # Optional: HTML reports
 ### Step Definitions (Behave)
 
 ```python
-# features/steps/zakat_calculation_steps.py
+# features/steps/tax_calculation_steps.py
 from behave import given, when, then
-from domain.zakat_calculator import ZakatCalculator
+from domain.tax_calculator import TaxCalculator
 from domain.gold_wealth import GoldWealth
 
 @given('individual owns {gold_amount:d} grams of gold')
@@ -547,17 +547,17 @@ def step_hawl_has_passed(context):
     # Set up hawl period
     pass
 
-@when('Zakat calculation is performed')
-def step_perform_zakat_calculation(context):
-    context.zakat_calculator = ZakatCalculator()
-    context.calculation_result = context.zakat_calculator.calculate(context.gold_wealth)
+@when('Tax calculation is performed')
+def step_perform_tax_calculation(context):
+    context.tax_calculator = TaxCalculator()
+    context.calculation_result = context.tax_calculator.calculate(context.gold_wealth)
 
-@then('Zakat should be obligatory')
-def step_zakat_obligatory(context):
+@then('Tax should be obligatory')
+def step_tax_obligatory(context):
     assert context.calculation_result.obligatory is True
 
-@then('Zakat amount should be {expected_amount:f} grams of gold')
-def step_zakat_amount(context, expected_amount):
+@then('Tax amount should be {expected_amount:f} grams of gold')
+def step_tax_amount(context, expected_amount):
     assert abs(context.calculation_result.amount - expected_amount) < 0.01
 ```
 
@@ -572,7 +572,7 @@ def before_feature(context, feature):
 def before_scenario(context, scenario):
     # Setup before each scenario
     context.gold_wealth = None
-    context.zakat_calculator = None
+    context.tax_calculator = None
 
 def after_scenario(context, scenario):
     # Cleanup after each scenario
@@ -677,13 +677,13 @@ def after_feature(context, feature):
 **Example Setup** (Jest-Cucumber for OSE Platform):
 
 ```typescript
-// apps/ose-backend-api/features/zakat-calculation.steps.ts
+// apps/ose-backend-api/features/tax-calculation.steps.ts
 import { defineFeature, loadFeature } from "jest-cucumber";
 
-const feature = loadFeature("./features/zakat-calculation.feature");
+const feature = loadFeature("./features/tax-calculation.feature");
 
 defineFeature(feature, (test) => {
-  // Zakat calculation scenarios
+  // Tax calculation scenarios
 });
 ```
 
@@ -704,15 +704,15 @@ nx affected:test --target=test:bdd
 ```
 apps/ose-backend-api/
 ├── src/
-│   ├── zakat-calculation/
+│   ├── tax-calculation/
 │   │   ├── domain/
-│   │   │   └── zakat-calculator.ts
-│   │   └── zakat-calculator.spec.ts (unit tests)
+│   │   │   └── tax-calculator.ts
+│   │   └── tax-calculator.spec.ts (unit tests)
 ├── features/
-│   ├── zakat-calculation/
+│   ├── tax-calculation/
 │   │   ├── gold-calculation.feature
 │   │   └── gold-calculation.steps.ts
-│   └── halal-certification/
+│   └── permitted-certification/
 │       ├── ingredient-verification.feature
 │       └── ingredient-verification.steps.ts
 ├── jest.config.ts
@@ -810,10 +810,10 @@ BDD frameworks automate executable specifications, transforming Gherkin scenario
 
 **Islamic Finance Integration**:
 
-- Feature files document Shariah compliance (Zakat, Halal, Riba detection)
+- Feature files document Compliance compliance (Tax, Permitted, Interest detection)
 - Step definitions implement Islamic finance rules in executable form
-- Reports provide audit trail for Shariah Advisory Board review
-- Living documentation keeps Shariah scholars informed of implementation
+- Reports provide audit trail for Compliance Advisory Board review
+- Living documentation keeps Compliance scholars informed of implementation
 
 Choose your framework based on language/platform, existing test infrastructure, team expertise, and feature requirements. For Nx monorepos with Jest, Jest-Cucumber provides the smoothest integration path while maintaining full BDD capabilities.
 

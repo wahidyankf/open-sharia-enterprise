@@ -160,7 +160,7 @@ This template provides a structured format for documenting Event Storming worksh
 
 **Policy Examples** (common patterns):
 
-- **Time-Based Policies**: [e.g., "Every lunar year, calculate zakat"]
+- **Time-Based Policies**: [e.g., "Every lunar year, calculate tax"]
 - **Event-Driven Policies**: [e.g., "When payment received, unlock premium features"]
 - **Threshold Policies**: [e.g., "When inventory below 10 units, reorder stock"]
 
@@ -377,7 +377,7 @@ This template provides a structured format for documenting Event Storming worksh
 
 ---
 
-## Example: Zakat Calculation Event Storming
+## Example: Tax Calculation Event Storming
 
 ### Session Metadata
 
@@ -397,19 +397,19 @@ This template provides a structured format for documenting Event Storming worksh
 
 **Session Type**: Tactical Event Storming
 
-**Scope**: Zakat calculation workflow from wealth declaration to payment distribution
+**Scope**: Tax calculation workflow from wealth declaration to payment distribution
 
 ### Workshop Objective
 
 **Goal**:
-Design the bounded context for calculating zakat obligations, identifying key aggregates, commands, events, and integration points with accounting and payment systems.
+Design the bounded context for calculating tax obligations, identifying key aggregates, commands, events, and integration points with accounting and payment systems.
 
 **Success Criteria**:
 
-- Identify all domain events related to zakat lifecycle
+- Identify all domain events related to tax lifecycle
 - Define transactional boundaries (aggregates)
 - Clarify integration points with Accounting and Distribution contexts
-- Resolve ambiguities around nisab threshold calculations
+- Resolve ambiguities around threshold threshold calculations
 - Validate all rules with Islamic scholar
 
 ---
@@ -422,45 +422,45 @@ Design the bounded context for calculating zakat obligations, identifying key ag
 
 1. **WealthDeclared**
    - When: User submits annual wealth declaration form
-   - Business Impact: Initiates zakat calculation process
+   - Business Impact: Initiates tax calculation process
    - Frequency: Annually per user
 
-2. **NisabThresholdEvaluated**
-   - When: System checks if declared wealth exceeds nisab (minimum threshold)
-   - Business Impact: Determines if zakat is obligatory
+2. **ThresholdThresholdEvaluated**
+   - When: System checks if declared wealth exceeds threshold (minimum threshold)
+   - Business Impact: Determines if tax is obligatory
    - Frequency: Immediately after wealth declaration
 
-3. **NisabThresholdMet**
-   - When: Wealth exceeds nisab threshold
-   - Business Impact: User is obligated to pay zakat
+3. **ThresholdThresholdMet**
+   - When: Wealth exceeds threshold threshold
+   - Business Impact: User is obligated to pay tax
    - Frequency: ~60% of wealth declarations (varies by user base)
 
-4. **NisabThresholdNotMet**
-   - When: Wealth below nisab threshold
-   - Business Impact: User is exempt from zakat this year
+4. **ThresholdThresholdNotMet**
+   - When: Wealth below threshold threshold
+   - Business Impact: User is exempt from tax this year
    - Frequency: ~40% of wealth declarations
 
 5. **HawlCompleted**
-   - When: One full lunar year (354 days) passes since wealth first met nisab
-   - Business Impact: Zakat becomes due
+   - When: One full lunar year (354 days) passes since wealth first met threshold
+   - Business Impact: Tax becomes due
    - Frequency: Annually per qualifying user
 
-6. **ZakatCalculated**
-   - When: System applies zakat rate (2.5% for cash/gold) to qualifying wealth
+6. **TaxCalculated**
+   - When: System applies tax rate (2.5% for cash/gold) to qualifying wealth
    - Business Impact: Determines exact payment amount
    - Frequency: Annually per qualifying user
 
-7. **ZakatAssessmentFinalized**
-   - When: User reviews and confirms zakat calculation
-   - Business Impact: Creates binding zakat obligation
+7. **TaxAssessmentFinalized**
+   - When: User reviews and confirms tax calculation
+   - Business Impact: Creates binding tax obligation
    - Frequency: Annually per qualifying user
 
-8. **ZakatPaymentRecorded**
-   - When: User makes zakat payment (handled by Payment Context)
+8. **TaxPaymentRecorded**
+   - When: User makes tax payment (handled by Payment Context)
    - Business Impact: Fulfills religious obligation
    - Frequency: After finalized assessment
 
-9. **ZakatDistributionInitiated**
+9. **TaxDistributionInitiated**
    - When: Payment confirmed, funds transferred to Distribution Context
    - Business Impact: Begins allocation to eligible recipients
    - Frequency: Shortly after payment
@@ -468,14 +468,14 @@ Design the bounded context for calculating zakat obligations, identifying key ag
 **Timeline Patterns**:
 
 - Events are sequential with clear temporal dependencies
-- Two divergent paths: NisabThresholdMet vs. NisabThresholdNotMet
+- Two divergent paths: ThresholdThresholdMet vs. ThresholdThresholdNotMet
 - Hawl completion is time-based, not user-triggered
 
 **Event Clusters**:
 
-- **Assessment Cluster**: WealthDeclared, NisabThresholdEvaluated, NisabThresholdMet/NotMet
-- **Calculation Cluster**: HawlCompleted, ZakatCalculated, ZakatAssessmentFinalized
-- **Payment Cluster**: ZakatPaymentRecorded, ZakatDistributionInitiated
+- **Assessment Cluster**: WealthDeclared, ThresholdThresholdEvaluated, ThresholdThresholdMet/NotMet
+- **Calculation Cluster**: HawlCompleted, TaxCalculated, TaxAssessmentFinalized
+- **Payment Cluster**: TaxPaymentRecorded, TaxDistributionInitiated
 
 ---
 
@@ -483,38 +483,38 @@ Design the bounded context for calculating zakat obligations, identifying key ag
 
 **Identified Issues**:
 
-1. **Cryptocurrency Zakat** (Type: Ambiguity)
-   - **Description**: Islamic scholars disagree on whether cryptocurrency is zakatable wealth and what rate applies
-   - **Impact**: Cannot implement zakat calculation for crypto holdings without jurisprudence clarity
+1. **Cryptocurrency Tax** (Type: Ambiguity)
+   - **Description**: Islamic scholars disagree on whether cryptocurrency is taxable wealth and what rate applies
+   - **Impact**: Cannot implement tax calculation for crypto holdings without jurisprudence clarity
    - **Participants Affected**: Sheikh Ahmad (domain expert), Product Owner
    - **Resolution Status**: Parking Lot
    - **Resolution Notes**: Sheikh Ahmad will consult scholarly council and provide fatwa within 2 weeks
 
 2. **Gold Price Volatility** (Type: Technical Concern)
-   - **Description**: Nisab threshold calculated from gold price (85 grams), but gold price fluctuates daily. Which price to use?
-   - **Impact**: Threshold calculation inconsistency could affect user zakat obligation
+   - **Description**: Threshold threshold calculated from gold price (85 grams), but gold price fluctuates daily. Which price to use?
+   - **Impact**: Threshold calculation inconsistency could affect user tax obligation
    - **Participants Affected**: Tech Lead, Islamic Scholar
    - **Resolution Status**: Resolved
    - **Resolution Notes**: Use closing gold price on last day of lunar year. Cache daily prices to avoid API dependency during calculations.
 
 3. **Multi-Currency Wealth** (Type: Process Gap)
-   - **Description**: Users may hold wealth in multiple currencies (USD, EUR, SAR). How to aggregate for nisab threshold?
+   - **Description**: Users may hold wealth in multiple currencies (USD, EUR, SAR). How to aggregate for threshold threshold?
    - **Impact**: Complex currency conversion logic, exchange rate timing issues
    - **Participants Affected**: Backend Developer, Product Owner
    - **Resolution Status**: Resolved
    - **Resolution Notes**: Convert all wealth to user's primary currency using exchange rates from last day of hawl. Store conversion metadata for audit trail.
 
 4. **Partial Year Wealth Changes** (Type: Ambiguity)
-   - **Description**: What if wealth fluctuates above/below nisab during the lunar year? Does hawl restart?
-   - **Impact**: Incorrect hawl tracking could delay or incorrectly trigger zakat
+   - **Description**: What if wealth fluctuates above/below threshold during the lunar year? Does hawl restart?
+   - **Impact**: Incorrect hawl tracking could delay or incorrectly trigger tax
    - **Participants Affected**: Sheikh Ahmad, Tech Lead
    - **Resolution Status**: Resolved
-   - **Resolution Notes**: Per Hanafi school (our default), hawl does NOT restart if wealth temporarily dips below nisab mid-year. Track initial nisab-met date and check at year-end.
+   - **Resolution Notes**: Per Hanafi school (our default), hawl does NOT restart if wealth temporarily dips below threshold mid-year. Track initial threshold-met date and check at year-end.
 
 **Parking Lot Questions**:
 
-- How to handle zakat for users who change Islamic schools mid-year? (Edge case, low priority)
-- Should we support zakat-ul-fitr (end of Ramadan) or only zakat-ul-mal (wealth zakat)? (Future feature)
+- How to handle tax for users who change Islamic schools mid-year? (Edge case, low priority)
+- Should we support tax-ul-fitr (end of Ramadan) or only tax-ul-mal (wealth tax)? (Future feature)
 
 ---
 
@@ -524,41 +524,41 @@ Design the bounded context for calculating zakat obligations, identifying key ag
 
 1. **DeclareWealth**
    - **Triggered By**: User (wealth holder)
-   - **Resulting Events**: WealthDeclared, NisabThresholdEvaluated, NisabThresholdMet/NotMet
+   - **Resulting Events**: WealthDeclared, ThresholdThresholdEvaluated, ThresholdThresholdMet/NotMet
    - **Preconditions**: User authenticated, lunar year end date known
-   - **Business Rules**: Must declare all zakatable asset types (cash, gold, silver, business inventory)
+   - **Business Rules**: Must declare all taxable asset types (cash, gold, silver, business inventory)
 
-2. **CalculateZakat**
+2. **CalculateTax**
    - **Triggered By**: Automated Policy (when HawlCompleted event fires)
-   - **Resulting Events**: ZakatCalculated
-   - **Preconditions**: NisabThresholdMet, Hawl completed (≥354 days)
+   - **Resulting Events**: TaxCalculated
+   - **Preconditions**: ThresholdThresholdMet, Hawl completed (≥354 days)
    - **Business Rules**: Apply 2.5% rate for cash/gold/silver, 5-10% for agriculture (based on irrigation method)
 
 3. **FinalizeAssessment**
    - **Triggered By**: User (wealth holder)
-   - **Resulting Events**: ZakatAssessmentFinalized
-   - **Preconditions**: ZakatCalculated, user reviewed calculation
+   - **Resulting Events**: TaxAssessmentFinalized
+   - **Preconditions**: TaxCalculated, user reviewed calculation
    - **Business Rules**: User can adjust calculation if they have additional deductions (debts)
 
 4. **RecordPayment**
    - **Triggered By**: Payment Context (external event)
-   - **Resulting Events**: ZakatPaymentRecorded, ZakatDistributionInitiated
-   - **Preconditions**: ZakatAssessmentFinalized, payment successful
+   - **Resulting Events**: TaxPaymentRecorded, TaxDistributionInitiated
+   - **Preconditions**: TaxAssessmentFinalized, payment successful
    - **Business Rules**: Payment amount must match finalized assessment
 
-5. **UpdateNisabThreshold**
+5. **UpdateThresholdThreshold**
    - **Triggered By**: Scheduled Job (daily)
-   - **Resulting Events**: NisabThresholdUpdated
+   - **Resulting Events**: ThresholdThresholdUpdated
    - **Preconditions**: Gold price API available
    - **Business Rules**: Calculate 85 grams of gold equivalent in all supported currencies
 
 **Command-Event Chains**:
 
 ```
-DeclareWealth --> WealthDeclared --> NisabThresholdEvaluated --> NisabThresholdMet
-  --> [Wait 354 days] --> HawlCompleted --> CalculateZakat --> ZakatCalculated
-  --> FinalizeAssessment --> ZakatAssessmentFinalized
-  --> RecordPayment --> ZakatPaymentRecorded --> ZakatDistributionInitiated
+DeclareWealth --> WealthDeclared --> ThresholdThresholdEvaluated --> ThresholdThresholdMet
+  --> [Wait 354 days] --> HawlCompleted --> CalculateTax --> TaxCalculated
+  --> FinalizeAssessment --> TaxAssessmentFinalized
+  --> RecordPayment --> TaxPaymentRecorded --> TaxDistributionInitiated
 ```
 
 ---
@@ -568,9 +568,9 @@ DeclareWealth --> WealthDeclared --> NisabThresholdEvaluated --> NisabThresholdM
 **Identified Actors**:
 
 1. **Wealth Holder** (Type: Human Role)
-   - **Responsibilities**: Declare annual wealth, review zakat calculation, make payment
+   - **Responsibilities**: Declare annual wealth, review tax calculation, make payment
    - **Commands They Trigger**: DeclareWealth, FinalizeAssessment
-   - **Events They React To**: NisabThresholdMet (notification), ZakatCalculated (review prompt)
+   - **Events They React To**: ThresholdThresholdMet (notification), TaxCalculated (review prompt)
    - **Access Needs**: Wealth declaration form, calculation history, payment interface
 
 2. **Islamic Scholar** (Type: Human Role)
@@ -579,22 +579,22 @@ DeclareWealth --> WealthDeclared --> NisabThresholdEvaluated --> NisabThresholdM
    - **Events They React To**: None (consulted offline)
    - **Access Needs**: Rule configuration interface (admin panel)
 
-3. **Nisab Threshold Service** (Type: Automated Process)
-   - **Responsibilities**: Fetch daily gold prices, calculate nisab thresholds in all currencies
-   - **Commands They Trigger**: UpdateNisabThreshold
+3. **Threshold Threshold Service** (Type: Automated Process)
+   - **Responsibilities**: Fetch daily gold prices, calculate threshold thresholds in all currencies
+   - **Commands They Trigger**: UpdateThresholdThreshold
    - **Events They React To**: None (time-based cron job)
    - **Access Needs**: Gold Price API (external), currency exchange rate API
 
 4. **Hawl Tracker** (Type: Automated Process)
    - **Responsibilities**: Monitor lunar calendar, fire HawlCompleted events after 354 days
-   - **Commands They Trigger**: CalculateZakat (via HawlCompleted event)
-   - **Events They React To**: NisabThresholdMet (starts tracking hawl)
+   - **Commands They Trigger**: CalculateTax (via HawlCompleted event)
+   - **Events They React To**: ThresholdThresholdMet (starts tracking hawl)
    - **Access Needs**: Hijri calendar library, user wealth declaration records
 
 5. **Payment Gateway** (Type: External System)
-   - **Responsibilities**: Process zakat payments, confirm successful transactions
+   - **Responsibilities**: Process tax payments, confirm successful transactions
    - **Commands They Trigger**: RecordPayment
-   - **Events They React To**: ZakatAssessmentFinalized (receive payment request)
+   - **Events They React To**: TaxAssessmentFinalized (receive payment request)
    - **Access Needs**: Payment Context API (separate bounded context)
 
 **Actor-System Interactions**:
@@ -610,33 +610,33 @@ DeclareWealth --> WealthDeclared --> NisabThresholdEvaluated --> NisabThresholdM
 
 1. **Auto-Calculate After Hawl**
    - **Triggering Event**: HawlCompleted
-   - **Resulting Action**: CalculateZakat command
+   - **Resulting Action**: CalculateTax command
    - **Business Rationale**: Users should not manually trigger calculation; it's automatic after lunar year
    - **Exceptions**: None (always automated)
 
-2. **Notify User on Nisab Threshold Met**
-   - **Triggering Event**: NisabThresholdMet
+2. **Notify User on Threshold Threshold Met**
+   - **Triggering Event**: ThresholdThresholdMet
    - **Resulting Action**: Send notification to Wealth Holder
-   - **Business Rationale**: Users need to know they are obligated to pay zakat in ~354 days
-   - **Exceptions**: User has disabled zakat notifications (opt-out)
+   - **Business Rationale**: Users need to know they are obligated to pay tax in ~354 days
+   - **Exceptions**: User has disabled tax notifications (opt-out)
 
 3. **Distribute After Payment**
-   - **Triggering Event**: ZakatPaymentRecorded
-   - **Resulting Action**: Publish ZakatDistributionInitiated event to Distribution Context
+   - **Triggering Event**: TaxPaymentRecorded
+   - **Resulting Action**: Publish TaxDistributionInitiated event to Distribution Context
    - **Business Rationale**: Funds must reach eligible recipients promptly (Islamic requirement)
    - **Exceptions**: Payment flagged for fraud review (manual hold)
 
-4. **Daily Nisab Update**
+4. **Daily Threshold Update**
    - **Triggering Event**: Midnight UTC daily
-   - **Resulting Action**: UpdateNisabThreshold command
+   - **Resulting Action**: UpdateThresholdThreshold command
    - **Business Rationale**: Gold prices change daily, threshold must reflect current market
    - **Exceptions**: Gold Price API unavailable (use cached value from previous day, log warning)
 
 **Policy Examples**:
 
-- **Time-Based Policies**: Daily nisab update, annual hawl tracking
-- **Event-Driven Policies**: Auto-calculate on hawl completion, notify on nisab met
-- **Threshold Policies**: None in this domain (threshold logic is in nisab evaluation, not policy)
+- **Time-Based Policies**: Daily threshold update, annual hawl tracking
+- **Event-Driven Policies**: Auto-calculate on hawl completion, notify on threshold met
+- **Threshold Policies**: None in this domain (threshold logic is in threshold evaluation, not policy)
 
 ---
 
@@ -644,38 +644,38 @@ DeclareWealth --> WealthDeclared --> NisabThresholdEvaluated --> NisabThresholdM
 
 **Identified Read Models**:
 
-1. **Zakat Assessment Dashboard**
-   - **Purpose**: Show user current year zakat status (obligated or exempt), projected amount
+1. **Tax Assessment Dashboard**
+   - **Purpose**: Show user current year tax status (obligated or exempt), projected amount
    - **Actor**: Wealth Holder
-   - **Data Sources**: ZakatAssessment aggregate, NisabThreshold value object
-   - **Update Trigger**: Real-time after WealthDeclared, ZakatCalculated events
-   - **Key Fields**: Obligation status, nisab threshold, wealth total, zakat amount, hawl end date
+   - **Data Sources**: TaxAssessment aggregate, ThresholdThreshold value object
+   - **Update Trigger**: Real-time after WealthDeclared, TaxCalculated events
+   - **Key Fields**: Obligation status, threshold threshold, wealth total, tax amount, hawl end date
 
-2. **Zakat Calculation History**
-   - **Purpose**: Historical record of past zakat assessments for audit/review
+2. **Tax Calculation History**
+   - **Purpose**: Historical record of past tax assessments for audit/review
    - **Actor**: Wealth Holder, Auditor (future)
-   - **Data Sources**: Event store (all ZakatAssessmentFinalized events)
+   - **Data Sources**: Event store (all TaxAssessmentFinalized events)
    - **Update Trigger**: Eventual consistency (updated nightly)
-   - **Key Fields**: Year, wealth declared, zakat paid, payment date, school of thought used
+   - **Key Fields**: Year, wealth declared, tax paid, payment date, school of thought used
 
-3. **Nisab Threshold Display**
-   - **Purpose**: Show current nisab threshold in user's preferred currency
+3. **Threshold Threshold Display**
+   - **Purpose**: Show current threshold threshold in user's preferred currency
    - **Actor**: Wealth Holder (during wealth declaration)
-   - **Data Sources**: NisabThreshold aggregate
-   - **Update Trigger**: Real-time after UpdateNisabThreshold command
+   - **Data Sources**: ThresholdThreshold aggregate
+   - **Update Trigger**: Real-time after UpdateThresholdThreshold command
    - **Key Fields**: Threshold amount, currency, gold price (grams), last update timestamp
 
 4. **Pending Assessments Admin View**
-   - **Purpose**: Show all users with pending zakat assessments (for customer support)
+   - **Purpose**: Show all users with pending tax assessments (for customer support)
    - **Actor**: Support Team
-   - **Data Sources**: ZakatAssessment aggregate (status = pending)
+   - **Data Sources**: TaxAssessment aggregate (status = pending)
    - **Update Trigger**: Real-time
    - **Key Fields**: User ID, wealth declared, days until hawl completion, contact info
 
 **CQRS Implications**:
 
-- Zakat Calculation History can tolerate eventual consistency (updated nightly via batch job)
-- Dashboard and Nisab Display need real-time updates (sub-second latency)
+- Tax Calculation History can tolerate eventual consistency (updated nightly via batch job)
+- Dashboard and Threshold Display need real-time updates (sub-second latency)
 - Consider read-model database (PostgreSQL materialized views or separate read replica)
 
 ---
@@ -685,23 +685,23 @@ DeclareWealth --> WealthDeclared --> NisabThresholdEvaluated --> NisabThresholdM
 **External System Integrations**:
 
 1. **Gold Price API** (Type: Third-Party API - GoldAPI.io)
-   - **Purpose**: Provide real-time gold prices for nisab threshold calculation
+   - **Purpose**: Provide real-time gold prices for threshold threshold calculation
    - **Integration Direction**: Outbound (we call them)
    - **Data Exchanged**: Daily gold price per gram in USD, EUR, SAR
-   - **Events Triggered**: None directly (Nisab Threshold Service polls API)
-   - **Commands Triggered**: UpdateNisabThreshold
+   - **Events Triggered**: None directly (Threshold Threshold Service polls API)
+   - **Commands Triggered**: UpdateThresholdThreshold
    - **Risks/Concerns**: API downtime (mitigation: cache last known price, retry logic, fallback to manual price entry)
 
 2. **Payment Context** (Type: Internal Bounded Context)
-   - **Purpose**: Process zakat payments
+   - **Purpose**: Process tax payments
    - **Integration Direction**: Bidirectional (events both ways)
    - **Data Exchanged**: Payment amount, user ID, transaction ID
-   - **Events Triggered**: ZakatPaymentRecorded (inbound from Payment Context)
+   - **Events Triggered**: TaxPaymentRecorded (inbound from Payment Context)
    - **Commands Triggered**: RecordPayment (received from Payment Context)
    - **Risks/Concerns**: Event ordering issues (mitigation: idempotent event handlers)
 
 3. **Accounting Context** (Type: Internal Bounded Context)
-   - **Purpose**: Track wealth holdings for nisab evaluation
+   - **Purpose**: Track wealth holdings for threshold evaluation
    - **Integration Direction**: Outbound (we query them)
    - **Data Exchanged**: Asset valuations (cash, gold, silver, inventory)
    - **Events Triggered**: None (synchronous API calls)
@@ -718,7 +718,7 @@ DeclareWealth --> WealthDeclared --> NisabThresholdEvaluated --> NisabThresholdM
 
 **Anti-Corruption Layer Needs**:
 
-- **Accounting Context**: Uses term "Account" (ledger account), we use "Assessment" (zakat calculation). ACL translates terminology.
+- **Accounting Context**: Uses term "Account" (ledger account), we use "Assessment" (tax calculation). ACL translates terminology.
 - **Gold Price API**: Returns prices in troy ounces, we calculate in grams. ACL converts units.
 
 ---
@@ -727,43 +727,43 @@ DeclareWealth --> WealthDeclared --> NisabThresholdEvaluated --> NisabThresholdM
 
 **Identified Aggregates**:
 
-1. **ZakatAssessment**
-   - **Root Entity**: `ZakatAssessment` (ID: `assessmentId`)
+1. **TaxAssessment**
+   - **Root Entity**: `TaxAssessment` (ID: `assessmentId`)
    - **Contained Entities**: `WealthDeclaration`, `LunarYearPeriod`
-   - **Value Objects**: `NisabAmount`, `ZakatRate`, `Money`, `HijriDate`, `WealthType`
+   - **Value Objects**: `ThresholdAmount`, `TaxRate`, `Money`, `HijriDate`, `WealthType`
    - **Invariants**:
      - Assessment can only be finalized if hawl is complete (≥354 days)
-     - Total wealth must meet or exceed nisab threshold for zakat to be calculated
-     - Zakat rate must match wealth type and jurisprudence school
+     - Total wealth must meet or exceed threshold threshold for tax to be calculated
+     - Tax rate must match wealth type and jurisprudence school
      - Cannot modify assessment after finalization (immutable once locked)
-   - **Commands Handled**: DeclareWealth, CalculateZakat, FinalizeAssessment
-   - **Events Published**: WealthDeclared, NisabThresholdEvaluated, NisabThresholdMet/NotMet, ZakatCalculated, ZakatAssessmentFinalized
+   - **Commands Handled**: DeclareWealth, CalculateTax, FinalizeAssessment
+   - **Events Published**: WealthDeclared, ThresholdThresholdEvaluated, ThresholdThresholdMet/NotMet, TaxCalculated, TaxAssessmentFinalized
    - **Lifecycle**:
      - Created: When user triggers DeclareWealth command
-     - Updated: When CalculateZakat command fires (after hawl completion)
+     - Updated: When CalculateTax command fires (after hawl completion)
      - Finalized: When user confirms calculation (FinalizeAssessment)
      - Archived: After payment recorded (read-only historical record)
 
-2. **NisabThreshold**
-   - **Root Entity**: `NisabThreshold` (ID: `thresholdId` - singleton per currency per day)
+2. **ThresholdThreshold**
+   - **Root Entity**: `ThresholdThreshold` (ID: `thresholdId` - singleton per currency per day)
    - **Contained Entities**: None
    - **Value Objects**: `Money` (threshold amount), `GoldPrice` (per gram), `Currency`, `Date`
    - **Invariants**:
      - Threshold must be calculated from 85 grams of gold (Hanafi school default)
      - Gold price must be positive non-zero value
      - Threshold updated at most once per day
-   - **Commands Handled**: UpdateNisabThreshold
-   - **Events Published**: NisabThresholdUpdated
+   - **Commands Handled**: UpdateThresholdThreshold
+   - **Events Published**: ThresholdThresholdUpdated
    - **Lifecycle**:
-     - Created: First time nisab calculated for a currency
+     - Created: First time threshold calculated for a currency
      - Updated: Daily via automated process
      - Never deleted: Historical thresholds archived for audit
 
 **Aggregate Design Decisions**:
 
-- **Why separate NisabThreshold from ZakatAssessment?** Nisab threshold is a globally shared value (same for all users on a given day), while ZakatAssessment is user-specific. Different consistency boundaries.
-- **Why include WealthDeclaration inside ZakatAssessment?** Wealth declaration has no meaning outside the context of a zakat assessment. Strong lifecycle coupling.
-- **Why not include Payment inside ZakatAssessment?** Payment processing has different consistency requirements (transactional, immediate) and belongs in Payment Context. Integration via domain events.
+- **Why separate ThresholdThreshold from TaxAssessment?** Threshold threshold is a globally shared value (same for all users on a given day), while TaxAssessment is user-specific. Different consistency boundaries.
+- **Why include WealthDeclaration inside TaxAssessment?** Wealth declaration has no meaning outside the context of a tax assessment. Strong lifecycle coupling.
+- **Why not include Payment inside TaxAssessment?** Payment processing has different consistency requirements (transactional, immediate) and belongs in Payment Context. Integration via domain events.
 
 ---
 
@@ -771,21 +771,21 @@ DeclareWealth --> WealthDeclared --> NisabThresholdEvaluated --> NisabThresholdM
 
 **Identified Bounded Contexts**:
 
-1. **Zakat Calculation Context**
+1. **Tax Calculation Context**
    - **Core Domain / Supporting / Generic**: Core Domain
-   - **Ubiquitous Language Terms**: Nisab, Hawl, Zakatable Assets, Zakat Rate, Assessment, Lunar Year, Jurisprudence School
+   - **Ubiquitous Language Terms**: Threshold, Hawl, Taxable Assets, Tax Rate, Assessment, Lunar Year, Jurisprudence School
    - **Responsibilities**:
-     - Calculate zakat obligations based on Islamic jurisprudence rules
+     - Calculate tax obligations based on Islamic jurisprudence rules
      - Track hawl (lunar year) completion for wealth holders
-     - Determine nisab threshold based on gold prices
+     - Determine threshold threshold based on gold prices
      - Validate wealth declarations for completeness
-   - **Aggregates**: ZakatAssessment, NisabThreshold
+   - **Aggregates**: TaxAssessment, ThresholdThreshold
    - **External Dependencies**:
      - Accounting Context (wealth data)
      - Payment Context (payment confirmation)
      - Gold Price API (market prices)
      - Hijri Calendar Library (date conversions)
-   - **Published Events**: ZakatCalculated, NisabThresholdMet, ZakatAssessmentFinalized, ZakatPaymentRecorded
+   - **Published Events**: TaxCalculated, ThresholdThresholdMet, TaxAssessmentFinalized, TaxPaymentRecorded
    - **Team Ownership**: Core Domain Team (Islamic Finance Specialists)
 
 2. **Accounting Context**
@@ -793,10 +793,10 @@ DeclareWealth --> WealthDeclared --> NisabThresholdEvaluated --> NisabThresholdM
    - **Ubiquitous Language Terms**: Account, Asset, Valuation, Ledger, Balance, Transaction
    - **Responsibilities**:
      - Track wealth holdings (cash, gold, silver, inventory)
-     - Provide asset valuations for zakat calculation
+     - Provide asset valuations for tax calculation
      - Record financial transactions
    - **Aggregates**: Account, Transaction (not part of this Event Storming session)
-   - **External Dependencies**: Zakat Calculation Context (provides valuation data)
+   - **External Dependencies**: Tax Calculation Context (provides valuation data)
    - **Published Events**: WealthValuationUpdated, AssetAcquired
    - **Team Ownership**: Finance Team
 
@@ -804,7 +804,7 @@ DeclareWealth --> WealthDeclared --> NisabThresholdEvaluated --> NisabThresholdM
    - **Core Domain / Supporting / Generic**: Generic Subdomain
    - **Ubiquitous Language Terms**: Payment, Transaction, Gateway, Confirmation, Receipt
    - **Responsibilities**:
-     - Process zakat payments via payment gateways (Stripe, PayPal)
+     - Process tax payments via payment gateways (Stripe, PayPal)
      - Confirm payment success/failure
      - Issue receipts
    - **Aggregates**: Payment (not part of this Event Storming session)
@@ -812,15 +812,15 @@ DeclareWealth --> WealthDeclared --> NisabThresholdEvaluated --> NisabThresholdM
    - **Published Events**: PaymentConfirmed, PaymentFailed
    - **Team Ownership**: Platform Team (generic payment processing)
 
-4. **Zakat Distribution Context**
+4. **Tax Distribution Context**
    - **Core Domain / Supporting / Generic**: Core Domain
-   - **Ubiquitous Language Terms**: Eligible Recipient, Distribution, Mustahiq (those entitled to zakat), Allocation, Category (8 categories in Quran)
+   - **Ubiquitous Language Terms**: Eligible Recipient, Distribution, Mustahiq (those entitled to tax), Allocation, Category (8 categories in Quran)
    - **Responsibilities**:
-     - Allocate zakat funds to eligible recipients
+     - Allocate tax funds to eligible recipients
      - Verify recipient eligibility
      - Distribute funds according to Islamic priorities
    - **Aggregates**: Distribution, Recipient (not part of this Event Storming session)
-   - **External Dependencies**: Zakat Calculation Context (receives payment events)
+   - **External Dependencies**: Tax Calculation Context (receives payment events)
    - **Published Events**: FundsDistributed
    - **Team Ownership**: Core Domain Team (Social Welfare Specialists)
 
@@ -828,7 +828,7 @@ DeclareWealth --> WealthDeclared --> NisabThresholdEvaluated --> NisabThresholdM
 
 ```mermaid
 graph TD
-    ZC[Zakat Calculation<br/>Core Domain]
+    ZC[Tax Calculation<br/>Core Domain]
     AC[Accounting<br/>Supporting]
     PC[Payment<br/>Generic]
     DC[Distribution<br/>Core Domain]
@@ -849,9 +849,9 @@ graph TD
 
 **Context Boundaries** (why these boundaries?):
 
-- **Zakat Calculation vs. Accounting**: Different language ("Assessment" vs. "Account"), different consistency needs (annual zakat calculation vs. real-time ledger updates), different team expertise (Islamic scholars vs. accountants)
-- **Zakat Calculation vs. Payment**: Zakat calculation is domain-specific, payment processing is generic (reusable for any payment). Payment Context isolates third-party gateway complexity.
-- **Zakat Calculation vs. Distribution**: Calculation determines "how much", distribution determines "to whom". Different Islamic jurisprudence rules, different stakeholders (individual wealth holders vs. social welfare organizations).
+- **Tax Calculation vs. Accounting**: Different language ("Assessment" vs. "Account"), different consistency needs (annual tax calculation vs. real-time ledger updates), different team expertise (Islamic scholars vs. accountants)
+- **Tax Calculation vs. Payment**: Tax calculation is domain-specific, payment processing is generic (reusable for any payment). Payment Context isolates third-party gateway complexity.
+- **Tax Calculation vs. Distribution**: Calculation determines "how much", distribution determines "to whom". Different Islamic jurisprudence rules, different stakeholders (individual wealth holders vs. social welfare organizations).
 
 ---
 
@@ -861,41 +861,41 @@ graph TD
 
 **Shared Terms Across Contexts**:
 
-| Term       | Zakat Context Meaning                | Accounting Context Meaning | Conflict? |
-| ---------- | ------------------------------------ | -------------------------- | --------- |
-| Assessment | Zakat obligation calculation         | Risk evaluation            | Yes       |
-| Account    | Wealth holder's zakat profile        | Ledger account             | Yes       |
-| Balance    | Total wealth subject to zakat        | Account balance (general)  | No        |
-| Payment    | Zakat payment (religious obligation) | Generic transaction        | Minor     |
-| Rate       | Zakat percentage (2.5%, 5%, 10%)     | Interest rate (forbidden)  | Yes       |
+| Term       | Tax Context Meaning                | Accounting Context Meaning | Conflict? |
+| ---------- | ---------------------------------- | -------------------------- | --------- |
+| Assessment | Tax obligation calculation         | Risk evaluation            | Yes       |
+| Account    | Wealth holder's tax profile        | Ledger account             | Yes       |
+| Balance    | Total wealth subject to tax        | Account balance (general)  | No        |
+| Payment    | Tax payment (religious obligation) | Generic transaction        | Minor     |
+| Rate       | Tax percentage (2.5%, 5%, 10%)     | Interest rate (forbidden)  | Yes       |
 
 **Domain-Specific Terminology** (terms experts used repeatedly):
 
-- **Nisab**: "The threshold that makes zakat obligatory. 85 grams of gold or equivalent value." (Sheikh Ahmad emphasized this repeatedly)
+- **Threshold**: "The threshold that makes tax obligatory. 85 grams of gold or equivalent value." (Sheikh Ahmad emphasized this repeatedly)
 - **Hawl**: "The complete lunar year. Not 365 days, but 354-355 days in the Islamic calendar." (Critical distinction from Gregorian year)
-- **Zakatable Assets**: "Cash, gold, silver, business inventory, trade goods. NOT personal residence or tools of trade." (Clear exclusions prevent errors)
+- **Taxable Assets**: "Cash, gold, silver, business inventory, trade goods. NOT personal residence or tools of trade." (Clear exclusions prevent errors)
 - **Nawaazil**: "Contemporary issues like cryptocurrency where scholars must issue new rulings." (Highlighted as ongoing challenge)
 
 ### Business Process Insights
 
 **Surprising Discoveries**:
 
-- **Hawl does NOT restart**: Assumed wealth must stay above nisab for entire year. Learned (Hanafi school) that temporary dips mid-year do NOT reset the lunar year timer. Major simplification.
-- **Gold price volatility**: Did not anticipate daily nisab threshold changes. Requires caching strategy and clear timestamp documentation ("nisab as of [date]").
-- **Multi-school support critical**: Users expect ability to choose Islamic school (Hanafi, Maliki, Shafi'i, Hanbali) with different nisab and rate rules. Cannot hardcode single interpretation.
+- **Hawl does NOT restart**: Assumed wealth must stay above threshold for entire year. Learned (Hanafi school) that temporary dips mid-year do NOT reset the lunar year timer. Major simplification.
+- **Gold price volatility**: Did not anticipate daily threshold threshold changes. Requires caching strategy and clear timestamp documentation ("threshold as of [date]").
+- **Multi-school support critical**: Users expect ability to choose Islamic school (Hanafi, Maliki, Shafi'i, Hanbali) with different threshold and rate rules. Cannot hardcode single interpretation.
 
 **Simplification Opportunities**:
 
-- **Auto-calculation after hawl**: Users should never manually trigger zakat calculation. Policy-based automation eliminates user error and ensures compliance.
+- **Auto-calculation after hawl**: Users should never manually trigger tax calculation. Policy-based automation eliminates user error and ensures compliance.
 - **Pre-fill wealth from Accounting**: Instead of manual declaration, pre-populate wealth declaration from Accounting Context balances. User only confirms/adjusts.
-- **Notification-driven workflow**: Notify users at nisab threshold (start tracking), 30 days before hawl completion (prepare payment), and at hawl completion (calculation ready). Reduces cognitive load.
+- **Notification-driven workflow**: Notify users at threshold threshold (start tracking), 30 days before hawl completion (prepare payment), and at hawl completion (calculation ready). Reduces cognitive load.
 
 **Business Rules Uncovered**:
 
-1. **Nisab threshold = 85 grams of gold OR 595 grams of silver** (Hanafi school). If user has mix of assets, use gold price (more conservative).
-2. **Debts deducted from wealth before nisab evaluation**. User with $10,000 cash but $8,000 debt has $2,000 zakatable wealth (may fall below nisab).
-3. **Agricultural zakat rate varies by irrigation**: 10% if rain-fed, 5% if manually irrigated. Reflects labor/cost difference.
-4. **Zakat on business inventory**: Calculated on current market value, not purchase price. Requires annual inventory appraisal.
+1. **Threshold threshold = 85 grams of gold OR 595 grams of silver** (Hanafi school). If user has mix of assets, use gold price (more conservative).
+2. **Debts deducted from wealth before threshold evaluation**. User with $10,000 cash but $8,000 debt has $2,000 taxable wealth (may fall below threshold).
+3. **Agricultural tax rate varies by irrigation**: 10% if rain-fed, 5% if manually irrigated. Reflects labor/cost difference.
+4. **Tax on business inventory**: Calculated on current market value, not purchase price. Requires annual inventory appraisal.
 
 ---
 
@@ -903,29 +903,29 @@ graph TD
 
 **Immediate Next Steps**:
 
-1. **Resolve cryptocurrency zakat ruling** - Assigned to: Sheikh Ahmad, Due: 2025-11-29 (2 weeks)
-2. **Design NisabThreshold aggregate** - Assigned to: Omar (Tech Lead), Due: 2025-11-20 (5 days)
-3. **Create Bounded Context Canvas for Zakat Calculation Context** - Assigned to: Fatimah (PO), Due: 2025-11-22 (1 week)
+1. **Resolve cryptocurrency tax ruling** - Assigned to: Sheikh Ahmad, Due: 2025-11-29 (2 weeks)
+2. **Design ThresholdThreshold aggregate** - Assigned to: Omar (Tech Lead), Due: 2025-11-20 (5 days)
+3. **Create Bounded Context Canvas for Tax Calculation Context** - Assigned to: Fatimah (PO), Due: 2025-11-22 (1 week)
 4. **Implement Gold Price API integration (spike)** - Assigned to: Aisha (Backend Dev), Due: 2025-11-18 (3 days)
 5. **Design multi-school jurisprudence configuration** - Assigned to: Omar + Sheikh Ahmad, Due: 2025-11-25 (10 days)
 
 **Follow-Up Workshops Needed**:
 
-- **Zakat Distribution Context Event Storming**: Explore "to whom" allocation rules (8 Quranic categories)
-- **Aggregate Design Workshop**: Deep dive into ZakatAssessment invariants and command validation
+- **Tax Distribution Context Event Storming**: Explore "to whom" allocation rules (8 Quranic categories)
+- **Aggregate Design Workshop**: Deep dive into TaxAssessment invariants and command validation
 
 **Technical Investigations**:
 
 - **Hijri calendar library evaluation**: Test hijri-calendar npm package accuracy vs. Islamic authority sources
-- **Event sourcing feasibility**: Should ZakatAssessment be event-sourced for full audit trail?
-- **CQRS read model performance**: Benchmark PostgreSQL materialized views vs. separate read database for Zakat Assessment Dashboard
+- **Event sourcing feasibility**: Should TaxAssessment be event-sourced for full audit trail?
+- **CQRS read model performance**: Benchmark PostgreSQL materialized views vs. separate read database for Tax Assessment Dashboard
 
 **Documentation to Create**:
 
-- [Bounded Context Canvas](./ex-so-ar-dodrdedd-te__bounded-context-canvas.md) for Zakat Calculation Context
-- [Aggregate Design Template](./ex-so-ar-dodrdedd-te__aggregate-design-template.md) for ZakatAssessment
+- [Bounded Context Canvas](./ex-so-ar-dodrdedd-te__bounded-context-canvas.md) for Tax Calculation Context
+- [Aggregate Design Template](./ex-so-ar-dodrdedd-te__aggregate-design-template.md) for TaxAssessment
 - [Context Map Diagram](./ex-so-ar-dodrdedd-te__context-map-diagram.md) showing all 4 contexts
-- [Ubiquitous Language Glossary](./ex-so-ar-dodrdedd-te__ubiquitous-language-glossary.md) for Zakat domain terms
+- [Ubiquitous Language Glossary](./ex-so-ar-dodrdedd-te__ubiquitous-language-glossary.md) for Tax domain terms
 
 ---
 
@@ -933,16 +933,16 @@ graph TD
 
 **Technical Risks**:
 
-1. **Gold Price API Downtime**: Nisab threshold calculation depends on external GoldAPI.io service. If API is down, cannot calculate nisab.
+1. **Gold Price API Downtime**: Threshold threshold calculation depends on external GoldAPI.io service. If API is down, cannot calculate threshold.
    - **Impact**: Users cannot declare wealth or see current thresholds
    - **Mitigation**: Cache last known price (max 24 hours stale), implement retry logic with exponential backoff, add manual admin override for price entry, monitor API uptime via health checks
 
 2. **Hijri Calendar Accuracy**: Open-source library may have calculation errors vs. official Islamic calendar authorities
-   - **Impact**: Incorrect hawl tracking could delay zakat or trigger it prematurely (religious non-compliance)
+   - **Impact**: Incorrect hawl tracking could delay tax or trigger it prematurely (religious non-compliance)
    - **Mitigation**: Cross-validate library against multiple authoritative sources (Umm al-Qura calendar), implement automated tests for known date conversions, allow manual date adjustment by admin
 
 3. **Event Ordering in Distributed System**: Payment Context publishes PaymentConfirmed event, but network delays could cause out-of-order processing
-   - **Impact**: ZakatDistributionInitiated fires before ZakatPaymentRecorded persists, causing data inconsistency
+   - **Impact**: TaxDistributionInitiated fires before TaxPaymentRecorded persists, causing data inconsistency
    - **Mitigation**: Idempotent event handlers (deduplicate events by ID), event versioning/timestamps, eventual consistency acceptance (distribution can wait for payment confirmation within 1 minute SLA)
 
 **Business Risks**:
@@ -951,14 +951,14 @@ graph TD
    - **Impact**: Platform may implement rule later deemed incorrect by users' preferred scholars, causing trust issues
    - **Mitigation**: Establish scholarly review board with representation from multiple schools, clearly label which school's ruling is implemented, allow users to choose school, provide rule citation sources
 
-2. **Regulatory Compliance**: Some countries have mandatory zakat collection laws (Saudi Arabia, Pakistan). Platform may conflict with local regulations.
+2. **Regulatory Compliance**: Some countries have mandatory tax collection laws (Saudi Arabia, Pakistan). Platform may conflict with local regulations.
    - **Impact**: Legal liability, service unavailable in certain jurisdictions
-   - **Mitigation**: Legal review per target market, geofencing to exclude unsupported countries, partnership with local zakat authorities where required
+   - **Mitigation**: Legal review per target market, geofencing to exclude unsupported countries, partnership with local tax authorities where required
 
 **Unresolved Questions**:
 
-1. **Cryptocurrency zakat**: Awaiting fatwa from Sheikh Ahmad's scholarly council. Parking lot for 2 weeks.
-2. **Historical corrections**: If user discovers error in past year's zakat calculation, do we allow retroactive corrections? Or only prospective adjustments? (Needs Islamic jurisprudence research)
+1. **Cryptocurrency tax**: Awaiting fatwa from Sheikh Ahmad's scholarly council. Parking lot for 2 weeks.
+2. **Historical corrections**: If user discovers error in past year's tax calculation, do we allow retroactive corrections? Or only prospective adjustments? (Needs Islamic jurisprudence research)
 3. **Wealth declaration audit**: Should platform verify user wealth declarations (e.g., request bank statements)? Or trust user honesty (Islamic principle of trustworthiness)? (Product decision needed)
 
 ---
@@ -967,17 +967,17 @@ graph TD
 
 **Photos of Sticky Notes**:
 
-- [Link to Miro board export: zakat-event-storming-2025-11-15.pdf]
+- [Link to Miro board export: tax-event-storming-2025-11-15.pdf]
 
 **Miro/Mural Board**:
 
-- [https://miro.com/app/board/zakat-calculation-event-storming-nov-2025]
+- [https://miro.com/app/board/tax-calculation-event-storming-nov-2025]
 
 **Raw Notes**:
 
 - Sheikh Ahmad emphasized the importance of citing Quranic verses and hadith for each business rule. Suggested adding "Jurisprudence Source" field to rule configuration.
-- Aisha raised concern about transaction volume: 100,000 users × daily nisab update = potential performance bottleneck. Consider batch updates or lazy calculation (only update when user requests).
-- Yusuf (frontend dev) requested early mockups for Zakat Assessment Dashboard. Assigned to design team (not present in workshop).
+- Aisha raised concern about transaction volume: 100,000 users × daily threshold update = potential performance bottleneck. Consider batch updates or lazy calculation (only update when user requests).
+- Yusuf (frontend dev) requested early mockups for Tax Assessment Dashboard. Assigned to design team (not present in workshop).
 
 ---
 

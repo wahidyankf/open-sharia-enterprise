@@ -49,20 +49,20 @@ graph TD
 
 ```typescript
 // DUMMY: DateProvider passed but never called
-describe("ZakatCalculator", () => {
-  it("should return zero when wealth below nisab", () => {
+describe("TaxCalculator", () => {
+  it("should return zero when wealth below threshold", () => {
     // Arrange
-    const nisabProvider = { getNisab: () => Money.fromGold(85, "grams") };
+    const thresholdProvider = { getThreshold: () => Money.fromGold(85, "grams") };
     const dateProvider = null as any; // DUMMY - not used in this test
-    const calculator = new ZakatCalculator(nisabProvider, dateProvider);
+    const calculator = new TaxCalculator(thresholdProvider, dateProvider);
 
     const wealth = Money.fromGold(50, "grams");
 
     // Act
-    const zakat = calculator.calculate(wealth);
+    const tax = calculator.calculate(wealth);
 
     // Assert
-    expect(zakat.equals(Money.zero("gold"))).toBe(true);
+    expect(tax.equals(Money.zero("gold"))).toBe(true);
   });
 });
 ```
@@ -82,26 +82,26 @@ describe("ZakatCalculator", () => {
 
 **When to use**: You need to control the response from a dependency but don't care how many times it's called or with what arguments.
 
-**Example - Nisab Provider Stub:**
+**Example - Threshold Provider Stub:**
 
 ```typescript
-// STUB: Returns fixed nisab value, no verification
-describe("ZakatCalculator", () => {
-  it("should calculate 2.5% when wealth exceeds nisab", () => {
+// STUB: Returns fixed threshold value, no verification
+describe("TaxCalculator", () => {
+  it("should calculate 2.5% when wealth exceeds threshold", () => {
     // Arrange - Stub returns fixed value
-    const nisabProvider = {
-      getNisab: (assetType: string) => Money.fromGold(85, "grams"),
+    const thresholdProvider = {
+      getThreshold: (assetType: string) => Money.fromGold(85, "grams"),
     };
 
-    const calculator = new ZakatCalculator(nisabProvider);
+    const calculator = new TaxCalculator(thresholdProvider);
     const wealth = Money.fromGold(100, "grams");
 
     // Act
-    const zakat = calculator.calculate(wealth);
+    const tax = calculator.calculate(wealth);
 
     // Assert - Only verify calculation result
-    expect(zakat.equals(Money.fromGold(2.5, "grams"))).toBe(true);
-    // No verification of nisabProvider calls
+    expect(tax.equals(Money.fromGold(2.5, "grams"))).toBe(true);
+    // No verification of thresholdProvider calls
   });
 });
 ```
@@ -129,7 +129,7 @@ describe("ZakatCalculator", () => {
 
 ```typescript
 // SPY: Records calls for later verification
-describe("HalalCertification", () => {
+describe("PermittedCertification", () => {
   it("should log certification approval to audit trail", () => {
     // Arrange
     const auditLogSpy = {
@@ -139,9 +139,9 @@ describe("HalalCertification", () => {
       },
     };
 
-    const certificationService = new HalalCertificationService(auditLogSpy);
+    const certificationService = new PermittedCertificationService(auditLogSpy);
     const application = buildCertificationApplication({
-      productName: "Halal Beef Sausage",
+      productName: "Permitted Beef Sausage",
       ingredients: ["beef", "spices", "water"],
     });
 
@@ -151,7 +151,7 @@ describe("HalalCertification", () => {
     // Assert - Verify spy recorded the call
     expect(auditLogSpy.calls).toHaveLength(1);
     expect(auditLogSpy.calls[0].eventType).toBe("CERTIFICATION_APPROVED");
-    expect(auditLogSpy.calls[0].productName).toBe("Halal Beef Sausage");
+    expect(auditLogSpy.calls[0].productName).toBe("Permitted Beef Sausage");
   });
 });
 ```
@@ -170,7 +170,7 @@ import sinon from "sinon";
 
 it("should call audit log with certification event", () => {
   const auditLog = { log: sinon.spy() };
-  const service = new HalalCertificationService(auditLog);
+  const service = new PermittedCertificationService(auditLog);
 
   service.approve(application);
 
@@ -260,49 +260,49 @@ it("should transfer funds through Islamic bank", async () => {
 
 **When to use**: Real implementation is too slow or complex, but you need more realistic behavior than a stub provides.
 
-**Example - In-Memory Waqf Repository (Fake Database):**
+**Example - In-Memory Donation Repository (Fake Database):**
 
 ```typescript
 // FAKE: In-memory implementation of repository
-class InMemoryWaqfRepository implements WaqfRepository {
-  private waqfs: Map<WaqfId, Waqf> = new Map();
+class InMemoryDonationRepository implements DonationRepository {
+  private donations: Map<DonationId, Donation> = new Map();
 
-  async save(waqf: Waqf): Promise<void> {
-    this.waqfs.set(waqf.id, waqf);
+  async save(donation: Donation): Promise<void> {
+    this.donations.set(donation.id, donation);
   }
 
-  async findById(id: WaqfId): Promise<Waqf | null> {
-    return this.waqfs.get(id) || null;
+  async findById(id: DonationId): Promise<Donation | null> {
+    return this.donations.get(id) || null;
   }
 
-  async findByBeneficiary(beneficiaryId: string): Promise<Waqf[]> {
-    return Array.from(this.waqfs.values()).filter((w) => w.beneficiaries.some((b) => b.id === beneficiaryId));
+  async findByBeneficiary(beneficiaryId: string): Promise<Donation[]> {
+    return Array.from(this.donations.values()).filter((w) => w.beneficiaries.some((b) => b.id === beneficiaryId));
   }
 
   clear() {
-    this.waqfs.clear();
+    this.donations.clear();
   }
 }
 
-describe("WaqfManagementService", () => {
-  let repository: InMemoryWaqfRepository;
-  let service: WaqfManagementService;
+describe("DonationManagementService", () => {
+  let repository: InMemoryDonationRepository;
+  let service: DonationManagementService;
 
   beforeEach(() => {
-    repository = new InMemoryWaqfRepository();
-    service = new WaqfManagementService(repository);
+    repository = new InMemoryDonationRepository();
+    service = new DonationManagementService(repository);
   });
 
-  it("should create and retrieve waqf by id", async () => {
+  it("should create and retrieve donation by id", async () => {
     // Arrange
-    const waqfInput = {
+    const donationInput = {
       beneficiaries: [{ id: "mosque-001", share: 100 }],
       assets: [{ type: "LAND", value: Money.fromUSD(100000) }],
     };
 
     // Act
-    const waqfId = await service.createWaqf(waqfInput);
-    const retrieved = await service.getWaqf(waqfId);
+    const donationId = await service.createDonation(donationInput);
+    const retrieved = await service.getDonation(donationId);
 
     // Assert
     expect(retrieved).toBeDefined();
@@ -370,14 +370,14 @@ flowchart TD
 
 ## Test Doubles in Practice
 
-### Example 1: Zakat Calculation with Multiple Doubles
+### Example 1: Tax Calculation with Multiple Doubles
 
 ```typescript
-describe("ZakatCalculationService", () => {
-  it("should calculate zakat and record in audit log", async () => {
-    // STUB: Fixed nisab threshold
-    const nisabProvider = {
-      getNisab: (assetType: string) => Money.fromGold(85, "grams"),
+describe("TaxCalculationService", () => {
+  it("should calculate tax and record in audit log", async () => {
+    // STUB: Fixed threshold threshold
+    const thresholdProvider = {
+      getThreshold: (assetType: string) => Money.fromGold(85, "grams"),
     };
 
     // STUB: Fixed date for Hawl calculation
@@ -394,10 +394,10 @@ describe("ZakatCalculationService", () => {
     };
 
     // FAKE: In-memory repository
-    const repository = new InMemoryZakatRepository();
+    const repository = new InMemoryTaxRepository();
 
-    const service = new ZakatCalculationService({
-      nisabProvider,
+    const service = new TaxCalculationService({
+      thresholdProvider,
       clock: clockStub,
       auditLog: auditLogSpy,
       repository,
@@ -408,11 +408,11 @@ describe("ZakatCalculationService", () => {
     const result = await service.calculateAndRecord(wealth, "gold");
 
     // Assert - Verify calculation
-    expect(result.zakatDue.equals(Money.fromGold(2.5, "grams"))).toBe(true);
+    expect(result.taxDue.equals(Money.fromGold(2.5, "grams"))).toBe(true);
 
     // Assert - Verify audit logging (spy)
     expect(auditLogSpy.entries).toHaveLength(1);
-    expect(auditLogSpy.entries[0].action).toBe("ZAKAT_CALCULATED");
+    expect(auditLogSpy.entries[0].action).toBe("TAX_CALCULATED");
 
     // Assert - Verify persistence (fake)
     const stored = await repository.findByDate(new Date("2024-01-15"));
@@ -421,10 +421,10 @@ describe("ZakatCalculationService", () => {
 });
 ```
 
-### Example 2: Murabaha Contract with Mock Expectations
+### Example 2: Loan Contract with Mock Expectations
 
 ```typescript
-describe("MurabahaContractService", () => {
+describe("LoanContractService", () => {
   it("should execute contract flow with bank approval", async () => {
     // MOCK: Islamic bank requires specific approval sequence
     const bankMock = {
@@ -455,7 +455,7 @@ describe("MurabahaContractService", () => {
       },
     };
 
-    const service = new MurabahaContractService(bankMock);
+    const service = new LoanContractService(bankMock);
 
     // Act
     await service.executeContract({
@@ -477,51 +477,51 @@ Show how test doubles evolve as requirements change:
 
 ```typescript
 // ITERATION 1: Simple stub
-it("should calculate zakat - v1", () => {
-  const nisabProvider = { getNisab: () => 85 }; // Simple stub
-  const calculator = new ZakatCalculator(nisabProvider);
+it("should calculate tax - v1", () => {
+  const thresholdProvider = { getThreshold: () => 85 }; // Simple stub
+  const calculator = new TaxCalculator(thresholdProvider);
 
-  const zakat = calculator.calculate(100);
-  expect(zakat).toBe(2.5);
+  const tax = calculator.calculate(100);
+  expect(tax).toBe(2.5);
 });
 
 // ITERATION 2: Stub with different asset types
-it("should calculate zakat - v2", () => {
-  const nisabProvider = {
-    getNisab: (assetType: string) => {
-      return assetType === "gold" ? 85 : 595; // Silver nisab
+it("should calculate tax - v2", () => {
+  const thresholdProvider = {
+    getThreshold: (assetType: string) => {
+      return assetType === "gold" ? 85 : 595; // Silver threshold
     },
   };
 
-  const calculator = new ZakatCalculator(nisabProvider);
+  const calculator = new TaxCalculator(thresholdProvider);
 
   expect(calculator.calculate(100, "gold")).toBe(2.5);
   expect(calculator.calculate(600, "silver")).toBe(15);
 });
 
 // ITERATION 3: Spy to verify caching behavior
-it("should calculate zakat - v3 (cached)", () => {
-  const nisabProviderSpy = {
+it("should calculate tax - v3 (cached)", () => {
+  const thresholdProviderSpy = {
     callCount: 0,
-    getNisab: (assetType: string) => {
-      nisabProviderSpy.callCount++;
+    getThreshold: (assetType: string) => {
+      thresholdProviderSpy.callCount++;
       return assetType === "gold" ? 85 : 595;
     },
   };
 
-  const calculator = new ZakatCalculator(nisabProviderSpy);
+  const calculator = new TaxCalculator(thresholdProviderSpy);
 
   calculator.calculate(100, "gold");
   calculator.calculate(100, "gold"); // Should use cache
 
-  expect(nisabProviderSpy.callCount).toBe(1); // Called only once
+  expect(thresholdProviderSpy.callCount).toBe(1); // Called only once
 });
 
 // ITERATION 4: Fake repository for integration
-it("should calculate zakat - v4 (persisted)", async () => {
-  const repository = new InMemoryZakatRepository();
-  const nisabProvider = { getNisab: (type: string) => 85 };
-  const service = new ZakatCalculationService(nisabProvider, repository);
+it("should calculate tax - v4 (persisted)", async () => {
+  const repository = new InMemoryTaxRepository();
+  const thresholdProvider = { getThreshold: (type: string) => 85 };
+  const service = new TaxCalculationService(thresholdProvider, repository);
 
   await service.calculateAndStore(100, "gold", "USER-001");
 
@@ -546,8 +546,8 @@ mockFn.mockReturnValue(42);
 mockFn.mockResolvedValue(Promise.resolve(42));
 
 // Mock module
-jest.mock("./nisabProvider", () => ({
-  getNisab: jest.fn().mockReturnValue(85),
+jest.mock("./thresholdProvider", () => ({
+  getThreshold: jest.fn().mockReturnValue(85),
 }));
 
 // Spy on existing method
@@ -579,15 +579,15 @@ mock.verify();
 
 ```java
 // Mock
-NisabProvider nisabProvider = mock(NisabProvider.class);
-when(nisabProvider.getNisab("gold")).thenReturn(Money.fromGold(85));
+ThresholdProvider thresholdProvider = mock(ThresholdProvider.class);
+when(thresholdProvider.getThreshold("gold")).thenReturn(Money.fromGold(85));
 
 // Verify
 verify(auditLog).log(any(AuditEvent.class));
-verify(auditLog, times(1)).log(argThat(e -> e.getType().equals("ZAKAT")));
+verify(auditLog, times(1)).log(argThat(e -> e.getType().equals("TAX")));
 
 // Spy (partial mock)
-ZakatCalculator calculator = spy(new ZakatCalculator());
+TaxCalculator calculator = spy(new TaxCalculator());
 doReturn(Money.fromGold(2.5)).when(calculator).calculate(any());
 ```
 
@@ -597,8 +597,8 @@ doReturn(Money.fromGold(2.5)).when(calculator).calculate(any());
 
 ```csharp
 // Mock
-var nisabProvider = new Mock<INisabProvider>();
-nisabProvider.Setup(p => p.GetNisab("gold")).Returns(Money.FromGold(85));
+var thresholdProvider = new Mock<IThresholdProvider>();
+thresholdProvider.Setup(p => p.GetThreshold("gold")).Returns(Money.FromGold(85));
 
 // Verify
 auditLog.Verify(log => log.Log(It.IsAny<AuditEvent>()), Times.Once);
@@ -616,7 +616,7 @@ strictMock.Setup(b => b.Transfer(It.IsAny<Account>(), It.IsAny<Money>()));
 
 ```typescript
 // BAD: Over-mocked test
-it("should process halal certification", async () => {
+it("should process permitted certification", async () => {
   const validatorMock = jest.fn().mockResolvedValue(true);
   const loggerMock = jest.fn();
   const cacheMock = { get: jest.fn(), set: jest.fn() };
@@ -624,7 +624,7 @@ it("should process halal certification", async () => {
   const eventBusMock = { publish: jest.fn() };
   const notifierMock = { notify: jest.fn() };
 
-  const service = new HalalCertificationService(
+  const service = new PermittedCertificationService(
     validatorMock,
     loggerMock,
     cacheMock,
@@ -647,8 +647,8 @@ it("should process halal certification", async () => {
 // GOOD: Test behavior, not implementation
 it("should approve certification for compliant product", async () => {
   const repository = new InMemoryRepository();
-  const validator = new RealHalalValidator(); // Real validator
-  const service = new HalalCertificationService(validator, repository);
+  const validator = new RealPermittedValidator(); // Real validator
+  const service = new PermittedCertificationService(validator, repository);
 
   const result = await service.certify(compliantApplication);
 
@@ -667,22 +667,22 @@ it("should approve certification for compliant product", async () => {
 
 ```typescript
 // BAD: Mocking value object
-it("should calculate zakat", () => {
+it("should calculate tax", () => {
   const moneyMock = jest.fn().mockReturnValue({
     amount: 100,
     multiply: jest.fn().mockReturnValue({ amount: 2.5 }),
   });
 
-  const calculator = new ZakatCalculator();
+  const calculator = new TaxCalculator();
   const result = calculator.calculate(moneyMock);
 
   expect(result.amount).toBe(2.5);
 });
 
 // GOOD: Use real value objects
-it("should calculate zakat", () => {
+it("should calculate tax", () => {
   const wealth = Money.fromGold(100, "grams");
-  const calculator = new ZakatCalculator();
+  const calculator = new TaxCalculator();
 
   const result = calculator.calculate(wealth);
 
@@ -698,18 +698,18 @@ it("should calculate zakat", () => {
 
 ```typescript
 // BAD: Shared mock state
-describe("ZakatService", () => {
+describe("TaxService", () => {
   const repositoryMock = { save: jest.fn() }; // Shared across tests
 
   it("should save calculation - test 1", async () => {
-    const service = new ZakatService(repositoryMock);
+    const service = new TaxService(repositoryMock);
     await service.calculate(100);
 
     expect(repositoryMock.save).toHaveBeenCalledTimes(1);
   });
 
   it("should save calculation - test 2", async () => {
-    const service = new ZakatService(repositoryMock);
+    const service = new TaxService(repositoryMock);
     await service.calculate(200);
 
     // FAILS: Called twice (once from previous test)
@@ -718,7 +718,7 @@ describe("ZakatService", () => {
 });
 
 // GOOD: Fresh mock per test
-describe("ZakatService", () => {
+describe("TaxService", () => {
   let repositoryMock: any;
 
   beforeEach(() => {
@@ -726,14 +726,14 @@ describe("ZakatService", () => {
   });
 
   it("should save calculation - test 1", async () => {
-    const service = new ZakatService(repositoryMock);
+    const service = new TaxService(repositoryMock);
     await service.calculate(100);
 
     expect(repositoryMock.save).toHaveBeenCalledTimes(1);
   });
 
   it("should save calculation - test 2", async () => {
-    const service = new ZakatService(repositoryMock);
+    const service = new TaxService(repositoryMock);
     await service.calculate(200);
 
     expect(repositoryMock.save).toHaveBeenCalledTimes(1); // PASSES
@@ -783,25 +783,25 @@ Use in-memory fakes for data access rather than mocks:
 
 ```typescript
 // Repository interface
-interface ZakatRepository {
-  save(record: ZakatRecord): Promise<void>;
-  findByUser(userId: string): Promise<ZakatRecord[]>;
-  findByDateRange(start: Date, end: Date): Promise<ZakatRecord[]>;
+interface TaxRepository {
+  save(record: TaxRecord): Promise<void>;
+  findByUser(userId: string): Promise<TaxRecord[]>;
+  findByDateRange(start: Date, end: Date): Promise<TaxRecord[]>;
 }
 
 // Fake implementation (reusable across all tests)
-class InMemoryZakatRepository implements ZakatRepository {
-  private records: ZakatRecord[] = [];
+class InMemoryTaxRepository implements TaxRepository {
+  private records: TaxRecord[] = [];
 
-  async save(record: ZakatRecord): Promise<void> {
+  async save(record: TaxRecord): Promise<void> {
     this.records.push(record);
   }
 
-  async findByUser(userId: string): Promise<ZakatRecord[]> {
+  async findByUser(userId: string): Promise<TaxRecord[]> {
     return this.records.filter((r) => r.userId === userId);
   }
 
-  async findByDateRange(start: Date, end: Date): Promise<ZakatRecord[]> {
+  async findByDateRange(start: Date, end: Date): Promise<TaxRecord[]> {
     return this.records.filter((r) => r.calculatedAt >= start && r.calculatedAt <= end);
   }
 
@@ -811,22 +811,22 @@ class InMemoryZakatRepository implements ZakatRepository {
 }
 
 // Usage in tests
-describe("ZakatReportingService", () => {
-  let repository: InMemoryZakatRepository;
+describe("TaxReportingService", () => {
+  let repository: InMemoryTaxRepository;
 
   beforeEach(() => {
-    repository = new InMemoryZakatRepository();
+    repository = new InMemoryTaxRepository();
   });
 
   it("should generate annual report", async () => {
-    const service = new ZakatReportingService(repository);
+    const service = new TaxReportingService(repository);
 
-    await repository.save(buildZakatRecord({ userId: "USER-001", amount: 100 }));
-    await repository.save(buildZakatRecord({ userId: "USER-001", amount: 200 }));
+    await repository.save(buildTaxRecord({ userId: "USER-001", amount: 100 }));
+    await repository.save(buildTaxRecord({ userId: "USER-001", amount: 200 }));
 
     const report = await service.generateAnnualReport("USER-001", 2024);
 
-    expect(report.totalZakat).toBe(300);
+    expect(report.totalTax).toBe(300);
   });
 });
 ```
@@ -899,7 +899,7 @@ Focus on observable outcomes, not internal method calls:
 // BAD: Testing implementation details
 it("should use cache when available", async () => {
   const cacheMock = { get: jest.fn(), set: jest.fn() };
-  const service = new ZakatService(cacheMock);
+  const service = new TaxService(cacheMock);
 
   await service.calculate(100);
 
@@ -908,9 +908,9 @@ it("should use cache when available", async () => {
 });
 
 // GOOD: Test observable behavior
-it("should calculate zakat faster on second call (cached)", async () => {
+it("should calculate tax faster on second call (cached)", async () => {
   const repository = new InMemoryRepository();
-  const service = new ZakatService(repository);
+  const service = new TaxService(repository);
 
   const start1 = Date.now();
   await service.calculate(100);

@@ -160,46 +160,46 @@ Repeat this cycle for each small behavior until feature is complete.
 
 ## Islamic Finance TDD Example Checklist
 
-### Example: Implementing Zakat Calculator
+### Example: Implementing Tax Calculator
 
 #### Planning Phase
 
-- [ ] **Requirement**: Calculate Zakat (2.5%) on wealth above nisab threshold
+- [ ] **Requirement**: Calculate Tax (2.5%) on wealth above threshold threshold
 - [ ] **Acceptance Criteria**:
-  - [ ] Zakat is 2.5% of wealth when wealth >= nisab
-  - [ ] Zakat is zero when wealth < nisab
+  - [ ] Tax is 2.5% of wealth when wealth >= threshold
+  - [ ] Tax is zero when wealth < threshold
   - [ ] Currency is preserved in result
   - [ ] Negative amounts are rejected
 
-#### Cycle 1: Zakat calculation above nisab
+#### Cycle 1: Tax calculation above threshold
 
 **RED**:
 
-- [ ] Write test: "should calculate 2.5% when wealth is above nisab"
-- [ ] Test expects 250 USD zakat for 10,000 USD wealth (nisab 2,000 USD)
-- [ ] Run test: FAILS (calculateZakat method doesn't exist)
+- [ ] Write test: "should calculate 2.5% when wealth is above threshold"
+- [ ] Test expects 250 USD tax for 10,000 USD wealth (threshold 2,000 USD)
+- [ ] Run test: FAILS (calculateTax method doesn't exist)
 
 **GREEN**:
 
-- [ ] Create ZakatCalculator class
-- [ ] Implement calculateZakat method: return wealth \* 0.025
+- [ ] Create TaxCalculator class
+- [ ] Implement calculateTax method: return wealth \* 0.025
 - [ ] Run test: PASSES
 
 **REFACTOR**:
 
-- [ ] Extract ZAKAT_RATE constant (0.025)
+- [ ] Extract TAX_RATE constant (0.025)
 - [ ] Run tests: PASS
 
-#### Cycle 2: Zakat is zero below nisab
+#### Cycle 2: Tax is zero below threshold
 
 **RED**:
 
-- [ ] Write test: "should return zero when wealth is below nisab"
+- [ ] Write test: "should return zero when wealth is below threshold"
 - [ ] Run test: FAILS (returns 25 USD instead of 0)
 
 **GREEN**:
 
-- [ ] Add if condition: if (wealth < nisab) return zero
+- [ ] Add if condition: if (wealth < threshold) return zero
 - [ ] Run test: PASSES
 
 **REFACTOR**:
@@ -207,11 +207,11 @@ Repeat this cycle for each small behavior until feature is complete.
 - [ ] Use Money.isLessThan method instead of < operator
 - [ ] Run tests: PASS
 
-#### Cycle 3: Wealth equals nisab (boundary case)
+#### Cycle 3: Wealth equals threshold (boundary case)
 
 **RED**:
 
-- [ ] Write test: "should calculate zakat when wealth equals nisab"
+- [ ] Write test: "should calculate tax when wealth equals threshold"
 - [ ] Run test: PASSES (no refactoring needed, existing code handles it)
 
 **GREEN**:
@@ -241,8 +241,8 @@ Repeat this cycle for each small behavior until feature is complete.
 #### Completion
 
 - [ ] All tests pass (4/4)
-- [ ] Coverage: 100% of ZakatCalculator
-- [ ] Commit: "feat(zakat): add zakat calculator with nisab threshold"
+- [ ] Coverage: 100% of TaxCalculator
+- [ ] Commit: "feat(tax): add tax calculator with threshold threshold"
 
 ## Team Adoption Checklist
 

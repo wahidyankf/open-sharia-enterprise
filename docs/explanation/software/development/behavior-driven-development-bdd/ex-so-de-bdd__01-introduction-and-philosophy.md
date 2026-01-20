@@ -35,16 +35,16 @@ Aslak Hellesøy created Cucumber and introduced Gherkin syntax—the Given-When-
 **Example Gherkin Scenario**:
 
 ```gherkin
-Scenario: Calculate Zakat when wealth meets nisab threshold
+Scenario: Calculate Tax when wealth meets threshold threshold
   Given a Muslim individual owns 100 grams of gold
-  And the nisab threshold for gold is 85 grams
+  And the threshold threshold for gold is 85 grams
   And one lunar year (Hawl) has passed since acquisition
-  When Zakat calculation is performed
-  Then Zakat should be obligatory
-  And Zakat amount should be 2.5 grams of gold (2.5%)
+  When Tax calculation is performed
+  Then Tax should be obligatory
+  And Tax amount should be 2.5 grams of gold (2.5%)
 ```
 
-This format is readable by Shariah scholars (who validate the religious rules) and executable by developers (who implement the calculation).
+This format is readable by Compliance scholars (who validate the religious rules) and executable by developers (who implement the calculation).
 
 **2011: Specification by Example**
 
@@ -88,59 +88,59 @@ The most valuable part of BDD is not the automated tests—it's the **collaborat
 **Traditional Approach (Requirements Document)**:
 
 ```markdown
-## Zakat Calculation Requirements
+## Tax Calculation Requirements
 
-The system shall calculate Zakat for eligible individuals based on
-wealth thresholds defined by Islamic jurisprudence. The nisab
+The system shall calculate Tax for eligible individuals based on
+wealth thresholds defined by Islamic jurisprudence. The threshold
 threshold for gold is 85 grams. Individuals whose wealth meets or
-exceeds nisab for one lunar year must pay 2.5% Zakat.
+exceeds threshold for one lunar year must pay 2.5% Tax.
 ```
 
 **Problems with Traditional Approach**:
 
 - Abstract language ("shall calculate", "based on thresholds") leaves room for interpretation
 - No concrete examples to validate understanding
-- Shariah scholar can't verify correctness without seeing specific calculations
-- Developer doesn't know edge cases (wealth exactly at nisab? one day short of lunar year?)
+- Compliance scholar can't verify correctness without seeing specific calculations
+- Developer doesn't know edge cases (wealth exactly at threshold? one day short of lunar year?)
 
 **BDD Approach (Concrete Examples)**:
 
 ```gherkin
-Feature: Zakat Calculation for Gold Wealth
+Feature: Tax Calculation for Gold Wealth
 
-  Scenario: Wealth meets gold nisab threshold
+  Scenario: Wealth meets gold threshold threshold
     Given a Muslim individual owns 100 grams of gold
-    And the nisab threshold for gold is 85 grams
+    And the threshold threshold for gold is 85 grams
     And one lunar year (Hawl) has passed since acquisition
-    When Zakat calculation is performed
-    Then Zakat should be obligatory
-    And Zakat amount should be 2.5 grams of gold
+    When Tax calculation is performed
+    Then Tax should be obligatory
+    And Tax amount should be 2.5 grams of gold
 
-  Scenario: Wealth exactly at nisab threshold
-    Given a Muslim individual owns 85 grams of gold (exactly nisab)
+  Scenario: Wealth exactly at threshold threshold
+    Given a Muslim individual owns 85 grams of gold (exactly threshold)
     And one lunar year (Hawl) has passed since acquisition
-    When Zakat calculation is performed
-    Then Zakat should be obligatory
-    And Zakat amount should be 2.125 grams of gold
+    When Tax calculation is performed
+    Then Tax should be obligatory
+    And Tax amount should be 2.125 grams of gold
 
-  Scenario: Wealth below nisab threshold
+  Scenario: Wealth below threshold threshold
     Given a Muslim individual owns 50 grams of gold
-    When Zakat calculation is performed
-    Then Zakat should not be obligatory
-    And Zakat amount should be 0 grams
+    When Tax calculation is performed
+    Then Tax should not be obligatory
+    And Tax amount should be 0 grams
 
-  Scenario: Wealth meets nisab but Hawl incomplete
+  Scenario: Wealth meets threshold but Hawl incomplete
     Given a Muslim individual owns 100 grams of gold
     And only 11 months have passed since acquisition
-    When Zakat calculation is performed
-    Then Zakat should not be obligatory yet
-    And Zakat amount should be 0 grams
+    When Tax calculation is performed
+    Then Tax should not be obligatory yet
+    And Tax amount should be 0 grams
 ```
 
 **Value of BDD Approach**:
 
 - **Concrete examples** remove ambiguity
-- **Shariah scholar** can validate each scenario matches Islamic jurisprudence
+- **Compliance scholar** can validate each scenario matches Islamic jurisprudence
 - **Developer** understands edge cases (exactly at threshold, incomplete Hawl)
 - **QA engineer** knows what to test
 - **Everyone** has same understanding
@@ -154,7 +154,7 @@ Human brains understand **examples** better than abstract rules. BDD leverages t
 **Abstract Description (Ambiguous)**:
 
 ```
-"The system should validate halal certification authority before accepting
+"The system should validate permitted certification authority before accepting
 certifications."
 ```
 
@@ -169,22 +169,22 @@ Questions left unanswered:
 
 ```gherkin
 Scenario: Accept certification from recognized authority
-  Given halal certification authority "JAKIM" (Malaysia)
+  Given permitted certification authority "JAKIM" (Malaysia)
   And JAKIM is in the list of recognized authorities
-  When product receives halal certification from JAKIM
+  When product receives permitted certification from JAKIM
   Then certification should be accepted
-  And product status should be "Halal Certified"
+  And product status should be "Permitted Certified"
 
 Scenario: Reject certification from unrecognized authority
-  Given halal certification authority "UnknownCertifier"
+  Given permitted certification authority "UnknownCertifier"
   And UnknownCertifier is NOT in recognized authorities list
-  When product receives halal certification from UnknownCertifier
+  When product receives permitted certification from UnknownCertifier
   Then certification should be rejected
   And product status should remain "Uncertified"
   And rejection reason should be "Unrecognized certification authority"
 
 Scenario: Reject expired certification
-  Given halal certification from JAKIM issued on 2024-01-01
+  Given permitted certification from JAKIM issued on 2024-01-01
   And certification is valid for 12 months
   And current date is 2025-02-01 (13 months later)
   When system checks certification validity
@@ -202,16 +202,16 @@ BDD encourages **outside-in development**—beginning with acceptance criteria (
 
 **Outside-In Flow**:
 
-1. **Business Need**: "Shariah scholars need to verify Zakat calculations match Islamic jurisprudence"
+1. **Business Need**: "Compliance scholars need to verify Tax calculations match Islamic jurisprudence"
 2. **BDD Scenarios**: Write Gherkin scenarios describing expected behavior
 3. **Acceptance Tests**: Automate scenarios as acceptance tests (initially failing)
 4. **Implementation**: Build features to make acceptance tests pass (using TDD for unit tests)
-5. **Validation**: Shariah scholars verify scenarios match jurisprudence
+5. **Validation**: Compliance scholars verify scenarios match jurisprudence
 
 **Inside-Out Flow (Anti-Pattern)**:
 
-1. Build `ZakatCalculator` class
-2. Build `NisabThreshold` value object
+1. Build `TaxCalculator` class
+2. Build `ThresholdThreshold` value object
 3. Build `HawlPeriod` checker
 4. Hope they combine correctly to solve business problem
 5. Discover requirements misunderstood only at end
@@ -227,7 +227,7 @@ Traditional documentation goes stale. Code comments lie. But BDD scenarios are *
 **Traditional Documentation (Goes Stale)**:
 
 ```markdown
-## Murabaha Contract Calculation
+## Loan Contract Calculation
 
 The bank calculates selling price by adding profit margin to cost price.
 Profit margins typically range from 5-20% depending on contract terms.
@@ -238,19 +238,19 @@ Profit margins typically range from 5-20% depending on contract terms.
 **Living Documentation (Executable)**:
 
 ```gherkin
-Scenario: Calculate Murabaha selling price with profit margin
+Scenario: Calculate Loan selling price with profit margin
   Given bank purchases asset for 10,000 USD (cost price)
-  And Murabaha contract specifies 15% profit margin
+  And Loan contract specifies 15% profit margin
   When bank calculates selling price for customer
   Then selling price should be 11,500 USD
   And profit amount should be 1,500 USD
   And contract should disclose both cost and profit to customer
 
-Scenario: Reject interest-based calculation (Riba prohibition)
+Scenario: Reject interest-based calculation (Interest prohibition)
   Given bank purchases asset for 10,000 USD
   When bank attempts to calculate price using interest rate instead of profit margin
   Then calculation should be rejected
-  And error should indicate "Riba (interest) prohibited in Islamic finance"
+  And error should indicate "Interest (interest) prohibited in Islamic finance"
 ```
 
 These scenarios **must pass** for the feature to ship. If business rules change, scenarios must change. Documentation never lies.
@@ -274,15 +274,15 @@ Scenario: Update database record
 **Good: Business Language (Ubiquitous Language)**:
 
 ```gherkin
-Scenario: Certify product as halal
+Scenario: Certify product as permitted
   Given product "Organic Dates" is pending certification
-  When certification authority approves product as halal
-  Then product should be marked as halal certified
-  And customers should see "Halal Certified" badge
+  When certification authority approves product as permitted
+  Then product should be marked as permitted certified
+  And customers should see "Permitted Certified" badge
   And certification expiry date should be 12 months from approval
 ```
 
-The second scenario uses terms from the **business domain** (product, certification authority, halal certified, customers) that domain experts naturally use.
+The second scenario uses terms from the **business domain** (product, certification authority, permitted certified, customers) that domain experts naturally use.
 
 ### 6. Three Amigos Collaboration
 
@@ -294,31 +294,31 @@ BDD's "Three Amigos" practice brings together three perspectives:
 2. **Development** (Software Engineer) - How we'll build it
 3. **Testing** (QA Engineer) - What could go wrong
 
-**Example: Three Amigos for Zakat Feature**
+**Example: Three Amigos for Tax Feature**
 
-**Business (Shariah Scholar)**: "Zakat is obligatory when wealth meets nisab for one lunar year."
+**Business (Compliance Scholar)**: "Tax is obligatory when wealth meets threshold for one lunar year."
 
-**Developer**: "How do we handle wealth that fluctuates? What if it drops below nisab mid-year?"
+**Developer**: "How do we handle wealth that fluctuates? What if it drops below threshold mid-year?"
 
-**QA**: "What about edge cases? Wealth exactly at nisab? Leap years in Hijri calendar?"
+**QA**: "What about edge cases? Wealth exactly at threshold? Leap years in Hijri calendar?"
 
 **Outcome**: Scenarios covering previously unconsidered edge cases:
 
 ```gherkin
-Scenario: Wealth fluctuates but meets nisab at year end
+Scenario: Wealth fluctuates but meets threshold at year end
   Given individual's wealth fluctuates throughout the year
-  But wealth is above nisab at the beginning of Hawl period
-  And wealth is above nisab at the end of Hawl period
-  When Zakat calculation is performed
-  Then Zakat should be calculated on wealth at year end
-  # Note: Some scholars require nisab throughout year; add alternate scenario
+  But wealth is above threshold at the beginning of Hawl period
+  And wealth is above threshold at the end of Hawl period
+  When Tax calculation is performed
+  Then Tax should be calculated on wealth at year end
+  # Note: Some scholars require threshold throughout year; add alternate scenario
 
 Scenario: Hijri calendar leap year handling
   Given Hijri calendar has 355 days in leap year (vs. 354 normal)
   And individual acquired wealth on 30 Dhul Hijjah 1444 (leap year)
   When checking if Hawl has passed on 1 Muharram 1446
   Then Hawl should be considered complete
-  And Zakat should be obligatory
+  And Tax should be obligatory
 ```
 
 These scenarios emerged from **conversation**, not from a requirements document.
@@ -333,18 +333,18 @@ BDD provides tangible benefits that improve software quality, team collaboration
 
 Traditional requirements documents are interpreted differently by different people. BDD's concrete examples eliminate ambiguity and create shared mental models.
 
-**Example**: Zakat calculation involves Shariah scholars (domain experts) who don't write code. BDD scenarios let them verify correctness:
+**Example**: Tax calculation involves Compliance scholars (domain experts) who don't write code. BDD scenarios let them verify correctness:
 
 ```gherkin
-Scenario: Agricultural Zakat for rain-fed crops
+Scenario: Agricultural Tax for rain-fed crops
   Given farmer harvests 1,000 kg of wheat
   And wheat was grown using rainwater (no irrigation)
-  When agricultural Zakat is calculated
-  Then Zakat should be 100 kg of wheat (10% for rain-fed crops)
-  And farmer should distribute Zakat to eligible recipients
+  When agricultural Tax is calculated
+  Then Tax should be 100 kg of wheat (10% for rain-fed crops)
+  And farmer should distribute Tax to eligible recipients
 ```
 
-The Shariah scholar reads this and confirms: "Yes, 10% (ushr) for rain-fed crops is correct according to Islamic jurisprudence."
+The Compliance scholar reads this and confirms: "Yes, 10% (ushr) for rain-fed crops is correct according to Islamic jurisprudence."
 
 ### 2. Reduced Ambiguity and Miscommunication
 
@@ -355,33 +355,33 @@ Abstract requirements allow multiple interpretations. BDD scenarios provide **sp
 **Example: Ambiguous Requirement**:
 
 ```
-"System should prevent Riba (interest) in Murabaha contracts."
+"System should prevent Interest (interest) in Loan contracts."
 ```
 
 **Clarifying Questions**:
 
-- What specifically constitutes Riba in this context?
+- What specifically constitutes Interest in this context?
 - How should the system detect it?
-- What happens when Riba is detected?
+- What happens when Interest is detected?
 
 **BDD Scenarios Remove Ambiguity**:
 
 ```gherkin
-Scenario: Detect Riba when profit calculated as time-based interest
-  Given Murabaha contract with 10,000 USD cost price
+Scenario: Detect Interest when profit calculated as time-based interest
+  Given Loan contract with 10,000 USD cost price
   When system detects profit calculated using annual interest rate formula
   Then contract should be rejected before execution
-  And error message should explain "Riba prohibition: profit must be fixed markup, not time-based interest"
+  And error message should explain "Interest prohibition: profit must be fixed markup, not time-based interest"
 
 Scenario: Accept valid profit markup disclosed to customer
-  Given Murabaha contract with 10,000 USD cost price
+  Given Loan contract with 10,000 USD cost price
   And bank discloses 1,500 USD fixed profit markup (15%)
   When customer agrees to terms
   Then contract should be valid per Islamic finance principles
   And total selling price should be 11,500 USD
 ```
 
-Now everyone understands **exactly** what "prevent Riba" means in implementation terms.
+Now everyone understands **exactly** what "prevent Interest" means in implementation terms.
 
 ### 3. Living Documentation That Never Goes Stale
 
@@ -393,19 +393,19 @@ Documentation that isn't executable inevitably drifts from reality. BDD scenario
 
 ```gherkin
 # This scenario is executable and runs in CI/CD pipeline
-Scenario: Zakat calculation for mixed assets
+Scenario: Tax calculation for mixed assets
   Given individual owns:
     | Asset Type         | Value      |
     | Gold               | 100 grams  |
     | Cash               | 5,000 USD  |
     | Business Inventory | 10,000 USD |
-  And nisab threshold in USD is 5,600 (based on current gold price)
+  And threshold threshold in USD is 5,600 (based on current gold price)
   And total wealth is 15,000 USD equivalent
-  When Zakat is calculated
-  Then total Zakat should be 375 USD (2.5% of 15,000)
+  When Tax is calculated
+  Then total Tax should be 375 USD (2.5% of 15,000)
 ```
 
-If business rules change (different nisab threshold, different assets included), this scenario will **fail** until updated. Documentation automatically stays current.
+If business rules change (different threshold threshold, different assets included), this scenario will **fail** until updated. Documentation automatically stays current.
 
 ### 4. Stakeholder Confidence Through Validation
 
@@ -413,29 +413,29 @@ If business rules change (different nisab threshold, different assets included),
 
 Non-technical stakeholders can read and verify BDD scenarios, building confidence that requirements are correctly understood and implemented.
 
-**Example**: Halal certification authority can read and validate:
+**Example**: Permitted certification authority can read and validate:
 
 ```gherkin
-Feature: Halal Supply Chain Verification
+Feature: Permitted Supply Chain Verification
 
-  Scenario: Verify entire supply chain is halal
-    Given product "Halal Beef Burger" has supply chain:
+  Scenario: Verify entire supply chain is permitted
+    Given product "Permitted Beef Burger" has supply chain:
       | Component      | Supplier      | Certification |
-      | Beef           | Farm A        | JAKIM Halal   |
-      | Bun            | Bakery B      | JAKIM Halal   |
-      | Packaging      | Company C     | Halal         |
+      | Beef           | Farm A        | JAKIM Permitted   |
+      | Bun            | Bakery B      | JAKIM Permitted   |
+      | Packaging      | Company C     | Permitted         |
     When supply chain verification is performed
-    Then all components should be verified as halal
-    And product should receive supply chain halal certification
+    Then all components should be verified as permitted
+    And product should receive supply chain permitted certification
 
-  Scenario: Reject product with non-halal component
+  Scenario: Reject product with non-permitted component
     Given product "Burger" has supply chain:
       | Component      | Supplier      | Certification |
-      | Beef           | Farm A        | JAKIM Halal   |
+      | Beef           | Farm A        | JAKIM Permitted   |
       | Cheese         | Factory D     | None          |
     When supply chain verification is performed
     Then product should be rejected
-    And rejection reason should be "Non-halal component: Cheese from Factory D lacks halal certification"
+    And rejection reason should be "Non-permitted component: Cheese from Factory D lacks permitted certification"
 ```
 
 Certification authority can read these scenarios and confirm: "Yes, this matches our validation process."
@@ -448,23 +448,23 @@ Traditional development often discovers requirement misunderstandings late—aft
 
 **Example**: During Three Amigos session:
 
-**Developer**: "So Zakat is 2.5% of total wealth, right?"
+**Developer**: "So Tax is 2.5% of total wealth, right?"
 
-**Shariah Scholar**: "Not quite. Some assets are exempt—personal residence, basic household items, tools needed for livelihood. Only Zakatable assets count."
+**Compliance Scholar**: "Not quite. Some assets are exempt—personal residence, basic household items, tools needed for livelihood. Only Taxable assets count."
 
 **Outcome**: Scenarios updated before coding starts:
 
 ```gherkin
-Scenario: Exempt personal residence from Zakat calculation
+Scenario: Exempt personal residence from Tax calculation
   Given individual owns:
-    | Asset Type           | Value       | Zakatable |
+    | Asset Type           | Value       | Taxable |
     | Personal Residence   | 300,000 USD | No        |
     | Investment Property  | 200,000 USD | Yes       |
     | Cash                 | 50,000 USD  | Yes       |
-  When Zakat is calculated
+  When Tax is calculated
   Then personal residence should be excluded
-  And Zakatable wealth should be 250,000 USD
-  And Zakat should be 6,250 USD (2.5% of 250,000)
+  And Taxable wealth should be 250,000 USD
+  And Tax should be 6,250 USD (2.5% of 250,000)
 ```
 
 Discovered during planning, not during QA or production.
@@ -477,10 +477,10 @@ BDD scenarios provide traceability: Business need → Scenario → Step Definiti
 
 **Traceability Example**:
 
-1. **Business Need**: "Calculate Zakat on gold wealth"
-2. **BDD Scenario**: `Scenario: Wealth meets gold nisab threshold`
+1. **Business Need**: "Calculate Tax on gold wealth"
+2. **BDD Scenario**: `Scenario: Wealth meets gold threshold threshold`
 3. **Step Definitions**: `Given a Muslim individual owns {amount} grams of gold`
-4. **Application Code**: `class GoldWealthZakatCalculator`
+4. **Application Code**: `class GoldWealthTaxCalculator`
 5. **Audit Trail**: BDD report shows which scenarios pass/fail
 
 When audited for regulatory compliance, this traceability demonstrates requirements were correctly implemented.
@@ -504,7 +504,7 @@ Apply BDD when your project has:
 
 **Examples**:
 
-- **Islamic Finance**: Shariah scholars validate religious compliance
+- **Islamic Finance**: Compliance scholars validate religious compliance
 - **Healthcare**: Doctors validate medical workflows and clinical decision support
 - **Legal Tech**: Lawyers validate contract generation and compliance checks
 
@@ -521,9 +521,9 @@ Apply BDD when your project has:
 
 **Examples**:
 
-- Zakat calculation (multiple asset types, thresholds, exemptions, Hijri calendar)
-- Halal certification (supply chain traceability, ingredient validation, authority verification)
-- Murabaha contracts (profit calculation, Riba detection, asset ownership verification)
+- Tax calculation (multiple asset types, thresholds, exemptions, Hijri calendar)
+- Permitted certification (supply chain traceability, ingredient validation, authority verification)
+- Loan contracts (profit calculation, Interest detection, asset ownership verification)
 
 **Why BDD Helps**: Concrete examples document complex rules in executable form, preventing knowledge loss and ensuring correct implementation.
 
@@ -549,7 +549,7 @@ Apply BDD when your project has:
 
 **Examples**:
 
-- Islamic finance regulatory reporting (Zakat calculations, Shariah compliance audits)
+- Islamic finance regulatory reporting (Tax calculations, Compliance compliance audits)
 - Healthcare HIPAA compliance (data privacy, audit logs)
 - Financial services (KYC, AML regulations)
 
@@ -672,7 +672,7 @@ Not every feature needs BDD scenarios. Simple CRUD operations, technical infrast
 
 **BDD Coverage Guidance**:
 
-- **100% coverage**: Business-critical features (Zakat calculation, Riba detection, Halal certification)
+- **100% coverage**: Business-critical features (Tax calculation, Interest detection, Permitted certification)
 - **Selective coverage**: Complex workflows, frequently changing features
 - **No BDD coverage**: Simple CRUD, obvious behaviors, technical utilities
 
@@ -696,13 +696,13 @@ BDD scenarios can specify API contracts, service boundaries, and integration beh
 **Example**:
 
 ```gherkin
-Scenario: API returns Zakat calculation
+Scenario: API returns Tax calculation
   Given API client is authenticated
-  When client sends POST request to /api/zakat/calculate with:
+  When client sends POST request to /api/tax/calculate with:
     """
     {
       "wealth": { "amount": 100, "unit": "grams", "type": "gold" },
-      "nisab": { "amount": 85, "unit": "grams", "type": "gold" },
+      "threshold": { "amount": 85, "unit": "grams", "type": "gold" },
       "hawlComplete": true
     }
     """
@@ -710,8 +710,8 @@ Scenario: API returns Zakat calculation
   And response body should contain:
     """
     {
-      "zakatDue": true,
-      "zakatAmount": { "amount": 2.5, "unit": "grams", "type": "gold" }
+      "taxDue": true,
+      "taxAmount": { "amount": 2.5, "unit": "grams", "type": "gold" }
     }
     """
 ```
@@ -736,7 +736,7 @@ BDD aligns naturally with this philosophy:
 
 BDD scenarios use DDD's ubiquitous language:
 
-- Test names use domain terminology (Zakat, Nisab, Hawl, Murabaha, Riba)
+- Test names use domain terminology (Tax, Threshold, Hawl, Loan, Interest)
 - Scenarios verify domain invariants and business rules
 - Feature files map to bounded contexts
 - Domain events appear in Then steps

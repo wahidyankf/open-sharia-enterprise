@@ -104,39 +104,39 @@ describe("[ComponentUnderTest] Integration", () => {
 });
 ```
 
-## Islamic Finance Example: Zakat Repository Integration Tests
+## Islamic Finance Example: Tax Repository Integration Tests
 
 ### Repository Under Test
 
 ```typescript
-// File: zakat-repository.ts
+// File: tax-repository.ts
 import { Repository, DataSource } from "typeorm";
-import { ZakatAssessment } from "./zakat-assessment.entity";
+import { TaxAssessment } from "./tax-assessment.entity";
 import { Money } from "./money";
 
-export class ZakatRepository {
-  private repository: Repository<ZakatAssessment>;
+export class TaxRepository {
+  private repository: Repository<TaxAssessment>;
 
   constructor(private readonly dataSource: DataSource) {
-    this.repository = dataSource.getRepository(ZakatAssessment);
+    this.repository = dataSource.getRepository(TaxAssessment);
   }
 
-  async save(assessment: ZakatAssessment): Promise<ZakatAssessment> {
+  async save(assessment: TaxAssessment): Promise<TaxAssessment> {
     return await this.repository.save(assessment);
   }
 
-  async findById(id: string): Promise<ZakatAssessment | null> {
+  async findById(id: string): Promise<TaxAssessment | null> {
     return await this.repository.findOne({ where: { id } });
   }
 
-  async findByDonorId(donorId: string): Promise<ZakatAssessment[]> {
+  async findByDonorId(donorId: string): Promise<TaxAssessment[]> {
     return await this.repository.find({
       where: { donorId },
       order: { assessmentDate: "DESC" },
     });
   }
 
-  async findPendingAssessments(): Promise<ZakatAssessment[]> {
+  async findPendingAssessments(): Promise<TaxAssessment[]> {
     return await this.repository.find({
       where: { status: "PENDING" },
       order: { assessmentDate: "ASC" },
@@ -147,10 +147,10 @@ export class ZakatRepository {
     await this.repository.update(id, { status });
   }
 
-  async calculateTotalZakatCollected(startDate: Date, endDate: Date): Promise<Money> {
+  async calculateTotalTaxCollected(startDate: Date, endDate: Date): Promise<Money> {
     const result = await this.repository
       .createQueryBuilder("assessment")
-      .select("SUM(assessment.zakatAmount)", "total")
+      .select("SUM(assessment.taxAmount)", "total")
       .addSelect("assessment.currency", "currency")
       .where("assessment.status = :status", { status: "PAID" })
       .andWhere("assessment.paymentDate BETWEEN :startDate AND :endDate", {
@@ -173,11 +173,11 @@ export class ZakatRepository {
 ### Entity Definition
 
 ```typescript
-// File: zakat-assessment.entity.ts
+// File: tax-assessment.entity.ts
 import { Entity, Column, PrimaryColumn, CreateDateColumn } from "typeorm";
 
-@Entity("zakat_assessments")
-export class ZakatAssessment {
+@Entity("tax_assessments")
+export class TaxAssessment {
   @PrimaryColumn("uuid")
   id: string;
 
@@ -188,10 +188,10 @@ export class ZakatAssessment {
   wealthAmount: number;
 
   @Column("decimal", { precision: 10, scale: 2 })
-  nisabAmount: number;
+  thresholdAmount: number;
 
   @Column("decimal", { precision: 10, scale: 2 })
-  zakatAmount: number;
+  taxAmount: number;
 
   @Column()
   currency: string;
@@ -213,23 +213,23 @@ export class ZakatAssessment {
 ### Complete Integration Test Suite
 
 ```typescript
-// File: zakat-repository.integration.spec.ts
+// File: tax-repository.integration.spec.ts
 import { DataSource } from "typeorm";
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from "@testcontainers/postgresql";
-import { ZakatRepository } from "./zakat-repository";
-import { ZakatAssessment } from "./zakat-assessment.entity";
+import { TaxRepository } from "./tax-repository";
+import { TaxAssessment } from "./tax-assessment.entity";
 import { Money } from "./money";
 import { v4 as uuidv4 } from "uuid";
 
-describe("ZakatRepository Integration", () => {
+describe("TaxRepository Integration", () => {
   let container: StartedPostgreSqlContainer;
   let dataSource: DataSource;
-  let repository: ZakatRepository;
+  let repository: TaxRepository;
 
   // Start PostgreSQL container before all tests
   beforeAll(async () => {
     container = await new PostgreSqlContainer("postgres:16-alpine")
-      .withDatabase("zakat_test")
+      .withDatabase("tax_test")
       .withUsername("test_user")
       .withPassword("test_password")
       .start();
@@ -242,7 +242,7 @@ describe("ZakatRepository Integration", () => {
       username: container.getUsername(),
       password: container.getPassword(),
       database: container.getDatabase(),
-      entities: [ZakatAssessment],
+      entities: [TaxAssessment],
       synchronize: true, // Auto-create schema for tests
       logging: false,
     });
@@ -263,19 +263,19 @@ describe("ZakatRepository Integration", () => {
   // Create fresh repository before each test
   beforeEach(async () => {
     // Clean all data
-    await dataSource.getRepository(ZakatAssessment).clear();
-    repository = new ZakatRepository(dataSource);
+    await dataSource.getRepository(TaxAssessment).clear();
+    repository = new TaxRepository(dataSource);
   });
 
   describe("save", () => {
-    it("should persist ZakatAssessment to database", async () => {
+    it("should persist TaxAssessment to database", async () => {
       // Arrange
       const assessment = createTestAssessment({
         id: uuidv4(),
         donorId: "donor-001",
         wealthAmount: 10000,
-        nisabAmount: 2000,
-        zakatAmount: 250,
+        thresholdAmount: 2000,
+        taxAmount: 250,
         currency: "USD",
         status: "PENDING",
       });
@@ -291,7 +291,7 @@ describe("ZakatRepository Integration", () => {
       const retrieved = await repository.findById(assessment.id);
       expect(retrieved).toBeDefined();
       expect(retrieved?.donorId).toBe("donor-001");
-      expect(retrieved?.zakatAmount).toBe(250);
+      expect(retrieved?.taxAmount).toBe(250);
     });
 
     it("should handle multiple assessments for same donor", async () => {
@@ -300,13 +300,13 @@ describe("ZakatRepository Integration", () => {
       const assessment1 = createTestAssessment({
         id: uuidv4(),
         donorId,
-        zakatAmount: 250,
+        taxAmount: 250,
         assessmentDate: new Date("2024-01-15"),
       });
       const assessment2 = createTestAssessment({
         id: uuidv4(),
         donorId,
-        zakatAmount: 300,
+        taxAmount: 300,
         assessmentDate: new Date("2024-06-15"),
       });
 
@@ -317,15 +317,15 @@ describe("ZakatRepository Integration", () => {
       // Assert
       const assessments = await repository.findByDonorId(donorId);
       expect(assessments).toHaveLength(2);
-      expect(assessments[0].zakatAmount).toBe(300); // Most recent first
-      expect(assessments[1].zakatAmount).toBe(250);
+      expect(assessments[0].taxAmount).toBe(300); // Most recent first
+      expect(assessments[1].taxAmount).toBe(250);
     });
 
     it("should enforce unique id constraint", async () => {
       // Arrange
       const id = uuidv4();
-      const assessment1 = createTestAssessment({ id, zakatAmount: 250 });
-      const assessment2 = createTestAssessment({ id, zakatAmount: 300 });
+      const assessment1 = createTestAssessment({ id, taxAmount: 250 });
+      const assessment2 = createTestAssessment({ id, taxAmount: 300 });
 
       // Act
       await repository.save(assessment1);
@@ -341,7 +341,7 @@ describe("ZakatRepository Integration", () => {
       const assessment = createTestAssessment({
         id: uuidv4(),
         donorId: "donor-003",
-        zakatAmount: 500,
+        taxAmount: 500,
       });
       await repository.save(assessment);
 
@@ -352,7 +352,7 @@ describe("ZakatRepository Integration", () => {
       expect(retrieved).toBeDefined();
       expect(retrieved?.id).toBe(assessment.id);
       expect(retrieved?.donorId).toBe("donor-003");
-      expect(retrieved?.zakatAmount).toBe(500);
+      expect(retrieved?.taxAmount).toBe(500);
     });
 
     it("should return null for non-existent id", async () => {
@@ -480,7 +480,7 @@ describe("ZakatRepository Integration", () => {
       const assessment = createTestAssessment({
         id: uuidv4(),
         donorId: "donor-011",
-        zakatAmount: 750,
+        taxAmount: 750,
         status: "PENDING",
       });
       await repository.save(assessment);
@@ -492,12 +492,12 @@ describe("ZakatRepository Integration", () => {
       const updated = await repository.findById(assessment.id);
       expect(updated?.status).toBe("CANCELLED");
       expect(updated?.donorId).toBe("donor-011"); // Unchanged
-      expect(updated?.zakatAmount).toBe(750); // Unchanged
+      expect(updated?.taxAmount).toBe(750); // Unchanged
     });
   });
 
-  describe("calculateTotalZakatCollected", () => {
-    it("should sum paid zakat amounts within date range", async () => {
+  describe("calculateTotalTaxCollected", () => {
+    it("should sum paid tax amounts within date range", async () => {
       // Arrange
       const startDate = new Date("2024-01-01");
       const endDate = new Date("2024-12-31");
@@ -507,7 +507,7 @@ describe("ZakatRepository Integration", () => {
         createTestAssessment({
           id: uuidv4(),
           status: "PAID",
-          zakatAmount: 250,
+          taxAmount: 250,
           currency: "USD",
           paymentDate: new Date("2024-03-15"),
         }),
@@ -516,7 +516,7 @@ describe("ZakatRepository Integration", () => {
         createTestAssessment({
           id: uuidv4(),
           status: "PAID",
-          zakatAmount: 500,
+          taxAmount: 500,
           currency: "USD",
           paymentDate: new Date("2024-06-15"),
         }),
@@ -525,14 +525,14 @@ describe("ZakatRepository Integration", () => {
         createTestAssessment({
           id: uuidv4(),
           status: "PAID",
-          zakatAmount: 300,
+          taxAmount: 300,
           currency: "USD",
           paymentDate: new Date("2024-09-15"),
         }),
       );
 
       // Act
-      const total = await repository.calculateTotalZakatCollected(startDate, endDate);
+      const total = await repository.calculateTotalTaxCollected(startDate, endDate);
 
       // Assert
       expect(total.amount).toBe(1050); // 250 + 500 + 300
@@ -548,7 +548,7 @@ describe("ZakatRepository Integration", () => {
         createTestAssessment({
           id: uuidv4(),
           status: "PAID",
-          zakatAmount: 250,
+          taxAmount: 250,
           paymentDate: new Date("2024-03-15"),
         }),
       );
@@ -556,13 +556,13 @@ describe("ZakatRepository Integration", () => {
         createTestAssessment({
           id: uuidv4(),
           status: "PENDING",
-          zakatAmount: 500,
+          taxAmount: 500,
           assessmentDate: new Date("2024-03-15"),
         }),
       );
 
       // Act
-      const total = await repository.calculateTotalZakatCollected(startDate, endDate);
+      const total = await repository.calculateTotalTaxCollected(startDate, endDate);
 
       // Assert
       expect(total.amount).toBe(250); // Only paid amount
@@ -577,7 +577,7 @@ describe("ZakatRepository Integration", () => {
         createTestAssessment({
           id: uuidv4(),
           status: "PAID",
-          zakatAmount: 100,
+          taxAmount: 100,
           paymentDate: new Date("2024-03-15"), // Before range
         }),
       );
@@ -585,7 +585,7 @@ describe("ZakatRepository Integration", () => {
         createTestAssessment({
           id: uuidv4(),
           status: "PAID",
-          zakatAmount: 250,
+          taxAmount: 250,
           paymentDate: new Date("2024-05-15"), // Within range
         }),
       );
@@ -593,13 +593,13 @@ describe("ZakatRepository Integration", () => {
         createTestAssessment({
           id: uuidv4(),
           status: "PAID",
-          zakatAmount: 300,
+          taxAmount: 300,
           paymentDate: new Date("2024-07-15"), // After range
         }),
       );
 
       // Act
-      const total = await repository.calculateTotalZakatCollected(startDate, endDate);
+      const total = await repository.calculateTotalTaxCollected(startDate, endDate);
 
       // Assert
       expect(total.amount).toBe(250); // Only payment within range
@@ -611,7 +611,7 @@ describe("ZakatRepository Integration", () => {
       const endDate = new Date("2024-12-31");
 
       // Act
-      const total = await repository.calculateTotalZakatCollected(startDate, endDate);
+      const total = await repository.calculateTotalTaxCollected(startDate, endDate);
 
       // Assert
       expect(total.amount).toBe(0);
@@ -634,7 +634,7 @@ describe("ZakatRepository Integration", () => {
       await expect(repository.save(invalidAssessment)).rejects.toThrow();
 
       // Verify rollback - no data persisted
-      const count = await dataSource.getRepository(ZakatAssessment).count();
+      const count = await dataSource.getRepository(TaxAssessment).count();
       expect(count).toBe(0);
     });
   });
@@ -642,13 +642,13 @@ describe("ZakatRepository Integration", () => {
 
 // Test Helper Functions
 
-function createTestAssessment(overrides: Partial<ZakatAssessment> = {}): ZakatAssessment {
-  const assessment = new ZakatAssessment();
+function createTestAssessment(overrides: Partial<TaxAssessment> = {}): TaxAssessment {
+  const assessment = new TaxAssessment();
   assessment.id = overrides.id || uuidv4();
   assessment.donorId = overrides.donorId || "donor-default";
   assessment.wealthAmount = overrides.wealthAmount ?? 10000;
-  assessment.nisabAmount = overrides.nisabAmount ?? 2000;
-  assessment.zakatAmount = overrides.zakatAmount ?? 250;
+  assessment.thresholdAmount = overrides.thresholdAmount ?? 2000;
+  assessment.taxAmount = overrides.taxAmount ?? 250;
   assessment.currency = overrides.currency || "USD";
   assessment.status = overrides.status || "PENDING";
   assessment.assessmentDate = overrides.assessmentDate || new Date();
@@ -658,20 +658,20 @@ function createTestAssessment(overrides: Partial<ZakatAssessment> = {}): ZakatAs
 }
 ```
 
-## Additional Example: Halal Certification Repository
+## Additional Example: Permitted Certification Repository
 
 ```typescript
-// File: halal-certification-repository.integration.spec.ts
+// File: permitted-certification-repository.integration.spec.ts
 import { DataSource } from "typeorm";
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from "@testcontainers/postgresql";
-import { HalalCertificationRepository } from "./halal-certification-repository";
-import { HalalCertification } from "./halal-certification.entity";
+import { PermittedCertificationRepository } from "./permitted-certification-repository";
+import { PermittedCertification } from "./permitted-certification.entity";
 import { v4 as uuidv4 } from "uuid";
 
-describe("HalalCertificationRepository Integration", () => {
+describe("PermittedCertificationRepository Integration", () => {
   let container: StartedPostgreSqlContainer;
   let dataSource: DataSource;
-  let repository: HalalCertificationRepository;
+  let repository: PermittedCertificationRepository;
 
   beforeAll(async () => {
     container = await new PostgreSqlContainer("postgres:16-alpine").start();
@@ -683,7 +683,7 @@ describe("HalalCertificationRepository Integration", () => {
       username: container.getUsername(),
       password: container.getPassword(),
       database: container.getDatabase(),
-      entities: [HalalCertification],
+      entities: [PermittedCertification],
       synchronize: true,
       logging: false,
     });
@@ -697,8 +697,8 @@ describe("HalalCertificationRepository Integration", () => {
   });
 
   beforeEach(async () => {
-    await dataSource.getRepository(HalalCertification).clear();
-    repository = new HalalCertificationRepository(dataSource);
+    await dataSource.getRepository(PermittedCertification).clear();
+    repository = new PermittedCertificationRepository(dataSource);
   });
 
   describe("findActiveCertifications", () => {
@@ -754,8 +754,8 @@ describe("HalalCertificationRepository Integration", () => {
   });
 });
 
-function createCertification(overrides: Partial<HalalCertification> = {}): HalalCertification {
-  const cert = new HalalCertification();
+function createCertification(overrides: Partial<PermittedCertification> = {}): PermittedCertification {
+  const cert = new PermittedCertification();
   cert.id = overrides.id || uuidv4();
   cert.productId = overrides.productId || "product-001";
   cert.certificationBody = overrides.certificationBody || "JAKIM";
@@ -790,7 +790,7 @@ beforeAll(async () => {
 ```typescript
 // ✅ GOOD - Clean state before each test
 beforeEach(async () => {
-  await dataSource.getRepository(ZakatAssessment).clear();
+  await dataSource.getRepository(TaxAssessment).clear();
   // Or use transactions and rollback
 });
 
@@ -892,7 +892,7 @@ describe("performance", () => {
 ```typescript
 beforeAll(async () => {
   container = await new PostgreSqlContainer("postgres:16-alpine")
-    .withDatabase("zakat_test")
+    .withDatabase("tax_test")
     .withUsername("test_user")
     .withPassword("test_password")
     .withExposedPorts(5432)

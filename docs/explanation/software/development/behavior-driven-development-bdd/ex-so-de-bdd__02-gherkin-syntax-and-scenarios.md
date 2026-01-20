@@ -2,7 +2,7 @@
 
 ## Overview
 
-Gherkin is the natural language syntax used in Behavior-Driven Development to write executable specifications. Developed alongside Cucumber in 2008 by Aslak Hellesøy, Gherkin provides a structured yet readable format that bridges the communication gap between business stakeholders and technical teams. It allows domain experts—such as Shariah scholars in Islamic finance systems—to read, validate, and even contribute to specifications without needing programming knowledge.
+Gherkin is the natural language syntax used in Behavior-Driven Development to write executable specifications. Developed alongside Cucumber in 2008 by Aslak Hellesøy, Gherkin provides a structured yet readable format that bridges the communication gap between business stakeholders and technical teams. It allows domain experts—such as Compliance scholars in Islamic finance systems—to read, validate, and even contribute to specifications without needing programming knowledge.
 
 At its core, Gherkin uses simple keywords (Feature, Scenario, Given, When, Then) to describe expected behavior through concrete examples. These specifications become executable tests that verify the system behaves as intended, creating "living documentation" that never goes stale. Gherkin's power lies in its simplicity: it's expressive enough to capture complex business rules yet simple enough for non-technical stakeholders to understand and validate.
 
@@ -25,25 +25,25 @@ Gherkin is a **domain-specific language (DSL)** designed for behavior specificat
 **Example Gherkin File:**
 
 ```gherkin
-# File: features/zakat-calculation.feature
-Feature: Zakat Calculation for Gold Wealth
+# File: features/tax-calculation.feature
+Feature: Tax Calculation for Gold Wealth
 
   As a Muslim individual
-  I want the system to calculate my Zakat obligation on gold wealth
+  I want the system to calculate my Tax obligation on gold wealth
   So that I can fulfill my Islamic religious duty accurately
 
-  Scenario: Wealth meets gold nisab threshold
+  Scenario: Wealth meets gold threshold threshold
     Given a Muslim individual owns 100 grams of gold
-    And the nisab threshold for gold is 85 grams
+    And the threshold threshold for gold is 85 grams
     And one lunar year (Hawl) has passed since acquisition
-    When Zakat calculation is performed
-    Then Zakat should be obligatory
-    And Zakat amount should be 2.5 grams of gold
+    When Tax calculation is performed
+    Then Tax should be obligatory
+    And Tax amount should be 2.5 grams of gold
 ```
 
 This specification is:
 
-- **Readable**: Shariah scholar can validate the 85-gram nisab and 2.5% rate
+- **Readable**: Compliance scholar can validate the 85-gram threshold and 2.5% rate
 - **Testable**: Automation framework can execute as test
 - **Maintainable**: Changes to business rules update specification first
 - **Traceable**: Maps directly from requirement to implementation
@@ -113,13 +113,13 @@ Feature: [One-line description]
 ### Islamic Finance Example
 
 ```gherkin
-Feature: Murabaha Contract Profit Calculation
+Feature: Loan Contract Profit Calculation
 
   As an Islamic bank
-  I want to calculate Murabaha contract profit as fixed markup
-  So that financing remains compliant with Shariah prohibition of Riba (interest)
+  I want to calculate Loan contract profit as fixed markup
+  So that financing remains compliant with Compliance prohibition of Interest (interest)
 
-  Murabaha is a cost-plus financing contract where the bank purchases
+  Loan is a cost-plus financing contract where the bank purchases
   an asset and sells it to the customer at cost price plus a disclosed
   profit margin. Unlike conventional interest-based financing, the profit
   is a fixed markup agreed upfront, not time-dependent interest that grows
@@ -128,8 +128,8 @@ Feature: Murabaha Contract Profit Calculation
 
 This feature description:
 
-- Clearly states business purpose (Shariah compliance)
-- Explains domain concept (Murabaha) for team members unfamiliar with Islamic finance
+- Clearly states business purpose (Compliance compliance)
+- Explains domain concept (Loan) for team members unfamiliar with Islamic finance
 - Provides context on why this differs from conventional financing
 - Sets expectation for scenarios that follow
 
@@ -193,29 +193,29 @@ Scenario: User logs in with valid credentials
   Then login should succeed
 ```
 
-### Islamic Finance Example: Halal Certification
+### Islamic Finance Example: Permitted Certification
 
 ```gherkin
-Feature: Halal Certification Authority Validation
+Feature: Permitted Certification Authority Validation
 
   Scenario: Accept certification from recognized authority
-    Given halal certification authority "JAKIM" (Malaysia)
+    Given permitted certification authority "JAKIM" (Malaysia)
     And JAKIM is in the list of recognized certification bodies
-    When product receives halal certificate from JAKIM
+    When product receives permitted certificate from JAKIM
     Then certification should be accepted as valid
-    And product status should be "Halal Certified"
+    And product status should be "Permitted Certified"
     And certification expiry date should be 12 months from issuance
 
   Scenario: Reject certification from unrecognized authority
-    Given halal certification authority "UnknownCertifier"
+    Given permitted certification authority "UnknownCertifier"
     And UnknownCertifier is NOT in recognized certification bodies list
-    When product receives halal certificate from UnknownCertifier
+    When product receives permitted certificate from UnknownCertifier
     Then certification should be rejected
     And product status should remain "Uncertified"
     And rejection reason should state "Unrecognized certification authority"
 
-  Scenario: Reject expired halal certification
-    Given product has halal certification from JAKIM
+  Scenario: Reject expired permitted certification
+    Given product has permitted certification from JAKIM
     And certification was issued on 2024-01-15
     And certification validity period is 12 months
     And current date is 2025-02-01 (13 months after issuance)
@@ -229,7 +229,7 @@ These scenarios demonstrate:
 
 - **Independence**: Each scenario sets up its own context (Given steps)
 - **Concrete examples**: Specific dates, authority names, time periods
-- **Business language**: "JAKIM", "recognized certification bodies", "halal certified"
+- **Business language**: "JAKIM", "recognized certification bodies", "permitted certified"
 - **Complete coverage**: Happy path, rejection, expiration edge cases
 
 ## Given-When-Then Keywords
@@ -260,7 +260,7 @@ The core of Gherkin's expressiveness comes from three primary keywords that stru
 ```gherkin
 # Setting up data
 Given a Muslim individual owns 100 grams of gold
-Given the nisab threshold for gold is 85 grams
+Given the threshold threshold for gold is 85 grams
 
 # Multiple preconditions with And
 Given user is authenticated as admin
@@ -298,20 +298,20 @@ Given the following users exist in the system:
 
 ```gherkin
 # User action
-When user submits halal certification request
+When user submits permitted certification request
 
 # System event
-When Zakat calculation is performed
+When Tax calculation is performed
 
 # API call
-When client sends POST request to /api/zakat/calculate
+When client sends POST request to /api/tax/calculate
 
 # Time-based event
 When one lunar year (Hawl) has passed since wealth acquisition
 
 # Multiple actions (use sparingly)
 When user logs in with valid credentials
-And user navigates to Zakat calculator
+And user navigates to Tax calculator
 And user enters wealth amount of 100 grams gold
 ```
 
@@ -338,15 +338,15 @@ And user enters wealth amount of 100 grams gold
 
 ```gherkin
 # State verification
-Then Zakat should be obligatory
-Then product status should be "Halal Certified"
+Then Tax should be obligatory
+Then product status should be "Permitted Certified"
 
 # Calculation verification
-Then Zakat amount should be 2.5 grams of gold
+Then Tax amount should be 2.5 grams of gold
 
 # Multiple outcomes
 Then certification should be accepted
-And product should appear in halal products list
+And product should appear in permitted products list
 And certification expiry should be 12 months from today
 And notification email should be sent to supplier
 
@@ -363,19 +363,19 @@ But no notification should be sent
 **But**: Continues a Then step with negation (something should NOT happen)
 
 ```gherkin
-Scenario: Zakat calculation with multiple asset types
+Scenario: Tax calculation with multiple asset types
   Given individual owns the following assets:
     | Asset Type    | Amount     |
     | Gold          | 100 grams  |
     | Silver        | 600 grams  |
     | Cash          | 5000 USD   |
-  And gold nisab threshold is 85 grams
-  And silver nisab threshold is 595 grams
+  And gold threshold threshold is 85 grams
+  And silver threshold threshold is 595 grams
   And one lunar year has passed for all assets
-  When total Zakat is calculated across all assets
-  Then Zakat on gold should be 2.5 grams
-  And Zakat on silver should be 15 grams
-  And Zakat on cash should be 125 USD
+  When total Tax is calculated across all assets
+  Then Tax on gold should be 2.5 grams
+  And Tax on silver should be 15 grams
+  And Tax on cash should be 125 USD
   But personal residence should be excluded from calculation
   And basic household items should be excluded from calculation
 ```
@@ -419,50 +419,50 @@ Feature: Feature name
 - Setup is scenario-specific
 - Background becomes very long (split into multiple feature files)
 
-### Islamic Finance Example: Murabaha Contracts
+### Islamic Finance Example: Loan Contracts
 
 ```gherkin
-Feature: Murabaha Contract Validation
+Feature: Loan Contract Validation
 
   Background:
     Given Islamic bank is operational
     And bank has liquidity to purchase assets
-    And the following Shariah scholars are available for approval:
+    And the following Compliance scholars are available for approval:
       | Name          | Certification       | Specialization |
       | Sheikh Ahmed  | Al-Azhar University | Muamalat       |
       | Sheikh Fatima | IIU Malaysia        | Islamic Banking|
-    And Riba (interest) detection is enabled
+    And Interest (interest) detection is enabled
     And contract templates comply with AAOIFI standards
 
-  Scenario: Create valid Murabaha contract
+  Scenario: Create valid Loan contract
     Given customer requests financing for asset worth 10,000 USD
-    When bank creates Murabaha contract with:
+    When bank creates Loan contract with:
       | Cost Price    | 10,000 USD |
       | Profit Markup | 1,500 USD  |
       | Selling Price | 11,500 USD |
     Then contract should be valid
-    And Shariah scholar should approve contract
+    And Compliance scholar should approve contract
     And both cost and profit should be disclosed to customer
 
-  Scenario: Reject Murabaha with interest-based calculation
+  Scenario: Reject Loan with interest-based calculation
     Given customer requests financing for asset worth 10,000 USD
     When bank attempts to calculate profit using annual interest rate
     Then contract should be rejected before creation
-    And error should indicate "Riba prohibition: use fixed markup, not interest rate"
+    And error should indicate "Interest prohibition: use fixed markup, not interest rate"
     And no contract should be stored in database
 
-  Scenario: Reject Murabaha without asset ownership
+  Scenario: Reject Loan without asset ownership
     Given customer requests financing for 10,000 USD asset
     When bank creates contract without first owning the asset
     Then contract should be rejected
-    And error should indicate "Bank must own asset before selling in Murabaha"
+    And error should indicate "Bank must own asset before selling in Loan"
 ```
 
 The Background ensures:
 
 - All scenarios start with bank operational and scholars available
-- Riba detection is always enabled
-- Contract templates are always Shariah-compliant
+- Interest detection is always enabled
+- Contract templates are always Compliance-compliant
 - No need to repeat setup in each scenario
 
 ## Scenario Outline and Examples
@@ -491,26 +491,26 @@ Scenario Outline: Template description with <placeholders>
 3. Each row generates one scenario execution
 4. Placeholders are replaced with values from corresponding column
 
-### Islamic Finance Example: Zakat Threshold Validation
+### Islamic Finance Example: Tax Threshold Validation
 
 ```gherkin
-Scenario Outline: Validate Zakat obligation based on nisab thresholds
+Scenario Outline: Validate Tax obligation based on threshold thresholds
   Given individual owns <wealth_amount> <wealth_unit> of <asset_type>
-  And nisab threshold for <asset_type> is <nisab_amount> <nisab_unit>
+  And threshold threshold for <asset_type> is <threshold_amount> <threshold_unit>
   And <hawl_status> has passed
-  When Zakat calculation is performed
-  Then Zakat should be <obligation_status>
-  And Zakat amount should be <zakat_amount> <wealth_unit>
+  When Tax calculation is performed
+  Then Tax should be <obligation_status>
+  And Tax amount should be <tax_amount> <wealth_unit>
 
   Examples: Gold wealth scenarios
-    | wealth_amount | wealth_unit | asset_type | nisab_amount | nisab_unit | hawl_status          | obligation_status | zakat_amount |
+    | wealth_amount | wealth_unit | asset_type | threshold_amount | threshold_unit | hawl_status          | obligation_status | tax_amount |
     | 100           | grams       | gold       | 85           | grams      | one lunar year       | obligatory        | 2.5          |
     | 85            | grams       | gold       | 85           | grams      | one lunar year       | obligatory        | 2.125        |
     | 50            | grams       | gold       | 85           | grams      | one lunar year       | not obligatory    | 0            |
     | 100           | grams       | gold       | 85           | grams      | only 11 months       | not obligatory    | 0            |
 
   Examples: Silver wealth scenarios
-    | wealth_amount | wealth_unit | asset_type | nisab_amount | nisab_unit | hawl_status          | obligation_status | zakat_amount |
+    | wealth_amount | wealth_unit | asset_type | threshold_amount | threshold_unit | hawl_status          | obligation_status | tax_amount |
     | 700           | grams       | silver     | 595          | grams      | one lunar year       | obligatory        | 17.5         |
     | 595           | grams       | silver     | 595          | grams      | one lunar year       | obligatory        | 14.875       |
     | 500           | grams       | silver     | 595          | grams      | one lunar year       | not obligatory    | 0            |
@@ -523,30 +523,30 @@ This Scenario Outline generates **7 scenarios** (4 gold + 3 silver) from a singl
 - **DRY**: One template instead of 7 repeated scenarios
 - **Comprehensive**: Easy to see all tested cases at a glance
 - **Maintainable**: Add new test case by adding table row
-- **Clear patterns**: Gold vs. silver nisab differences clearly visible
+- **Clear patterns**: Gold vs. silver threshold differences clearly visible
 
 ### Multiple Examples Tables
 
 You can have multiple Examples tables with descriptive names:
 
 ```gherkin
-Scenario Outline: Halal ingredient validation
+Scenario Outline: Permitted ingredient validation
   Given product contains ingredient "<ingredient>"
-  When halal certification authority verifies ingredient
+  When permitted certification authority verifies ingredient
   Then ingredient should be classified as "<classification>"
 
-  Examples: Clearly halal ingredients
+  Examples: Clearly permitted ingredients
     | ingredient          | classification |
-    | Dates               | Halal          |
-    | Olive oil           | Halal          |
-    | Honey               | Halal          |
-    | Vegetables          | Halal          |
+    | Dates               | Permitted          |
+    | Olive oil           | Permitted          |
+    | Honey               | Permitted          |
+    | Vegetables          | Permitted          |
 
-  Examples: Clearly haram ingredients
+  Examples: Clearly forbidden ingredients
     | ingredient          | classification |
-    | Pork gelatin        | Haram          |
-    | Alcohol             | Haram          |
-    | Lard                | Haram          |
+    | Pork gelatin        | Forbidden          |
+    | Alcohol             | Forbidden          |
+    | Lard                | Forbidden          |
 
   Examples: Requires verification
     | ingredient          | classification    |
@@ -573,17 +573,17 @@ Given the following data:
 **Horizontal Table (Multiple Records):**
 
 ```gherkin
-Given the following halal products exist:
+Given the following permitted products exist:
   | name            | category | certification | expiry_date |
   | Organic Dates   | Food     | JAKIM         | 2025-12-31  |
-  | Halal Chicken   | Meat     | MUI           | 2025-06-30  |
+  | Permitted Chicken   | Meat     | MUI           | 2025-06-30  |
   | Olive Oil       | Food     | ISWA          | 2026-03-15  |
 ```
 
 **Vertical Table (Single Record with Many Fields):**
 
 ```gherkin
-Given a Murabaha contract with the following terms:
+Given a Loan contract with the following terms:
   | Field              | Value            |
   | Asset              | Commercial Office|
   | Cost Price         | 500,000 USD      |
@@ -591,32 +591,32 @@ Given a Murabaha contract with the following terms:
   | Selling Price      | 575,000 USD      |
   | Payment Terms      | 60 months        |
   | Customer           | ABC Corporation  |
-  | Shariah Approver   | Sheikh Ahmed     |
+  | Compliance Approver   | Sheikh Ahmed     |
 ```
 
-### Islamic Finance Example: Mixed Asset Zakat
+### Islamic Finance Example: Mixed Asset Tax
 
 ```gherkin
-Scenario: Calculate Zakat on mixed asset portfolio
-  Given individual owns the following Zakatable assets:
+Scenario: Calculate Tax on mixed asset portfolio
+  Given individual owns the following Taxable assets:
     | Asset Type         | Amount        | Current Value USD |
     | Gold               | 100 grams     | 6,000             |
     | Silver             | 600 grams     | 450               |
     | Cash (USD)         | 5,000         | 5,000             |
     | Business Inventory | N/A           | 15,000            |
     | Investment Stock   | 50 shares     | 10,000            |
-  And the following assets are exempt from Zakat:
+  And the following assets are exempt from Tax:
     | Asset Type          | Amount        | Reason              |
     | Personal Residence  | 1 property    | Personal use        |
     | Personal Vehicle    | 1 car         | Personal use        |
     | Household Items     | Various       | Basic necessities   |
     | Work Equipment      | Computer, etc | Tools of livelihood |
-  And nisab threshold in USD is 5,600 (based on gold price)
-  And total Zakatable wealth is 36,450 USD
-  When Zakat is calculated
-  Then total Zakat obligation should be 911.25 USD (2.5% of 36,450)
-  And Zakat distribution should be:
-    | Asset Type         | Zakat Amount USD |
+  And threshold threshold in USD is 5,600 (based on gold price)
+  And total Taxable wealth is 36,450 USD
+  When Tax is calculated
+  Then total Tax obligation should be 911.25 USD (2.5% of 36,450)
+  And Tax distribution should be:
+    | Asset Type         | Tax Amount USD |
     | Gold               | 150.00           |
     | Silver             | 11.25            |
     | Cash               | 125.00           |
@@ -642,9 +642,9 @@ When client sends request with body:
 ### Islamic Finance Example: API Contract Testing
 
 ```gherkin
-Scenario: Zakat calculation API returns correct JSON response
+Scenario: Tax calculation API returns correct JSON response
   Given API client is authenticated with valid token
-  When client sends POST request to /api/zakat/calculate with body:
+  When client sends POST request to /api/tax/calculate with body:
     """
     {
       "wealth": {
@@ -653,7 +653,7 @@ Scenario: Zakat calculation API returns correct JSON response
           { "type": "cash", "amount": 5000, "currency": "USD" }
         ]
       },
-      "nisabThresholds": {
+      "thresholdThresholds": {
         "gold": { "amount": 85, "unit": "grams" },
         "cash": { "amount": 5600, "currency": "USD" }
       },
@@ -665,19 +665,19 @@ Scenario: Zakat calculation API returns correct JSON response
   And response body should match:
     """
     {
-      "zakatDue": true,
-      "totalZakatUSD": 275.00,
+      "taxDue": true,
+      "totalTaxUSD": 275.00,
       "breakdown": [
         {
           "assetType": "gold",
-          "zakatAmount": 2.5,
-          "zakatUnit": "grams",
-          "zakatValueUSD": 150.00
+          "taxAmount": 2.5,
+          "taxUnit": "grams",
+          "taxValueUSD": 150.00
         },
         {
           "assetType": "cash",
-          "zakatAmount": 125.00,
-          "zakatUnit": "USD"
+          "taxAmount": 125.00,
+          "taxUnit": "USD"
         }
       ]
     }
@@ -692,17 +692,17 @@ Comments start with `#` and are ignored by parsers. Use for:
 
 - Explaining complex scenarios
 - Documenting business rules
-- Noting Shariah jurisprudence references
+- Noting Compliance jurisprudence references
 - TODOs and future considerations
 
 ```gherkin
-# Reference: AAOIFI Shariah Standard No. 35 on Zakat
-# Scholar consensus: Nisab for gold is 85 grams (20 Mithqal)
-Scenario: Gold nisab threshold validation
-  Given individual owns 85 grams of gold  # Exactly at nisab
+# Reference: AAOIFI Compliance Standard No. 35 on Tax
+# Scholar consensus: Threshold for gold is 85 grams (20 Mithqal)
+Scenario: Gold threshold threshold validation
+  Given individual owns 85 grams of gold  # Exactly at threshold
   # TODO: Verify with Sheikh Ahmed if partial grams round up or down
-  When Zakat is calculated
-  Then Zakat should be obligatory
+  When Tax is calculated
+  Then Tax should be obligatory
 ```
 
 ### Tags
@@ -713,14 +713,14 @@ Tags organize and filter scenarios. Tags start with `@` and appear before Featur
 
 ```gherkin
 @smoke @critical
-Feature: Zakat Calculation
+Feature: Tax Calculation
 
   @happy-path @gold
-  Scenario: Calculate Zakat on gold wealth
+  Scenario: Calculate Tax on gold wealth
     # ... scenario steps
 
   @edge-case @silver
-  Scenario: Silver wealth exactly at nisab
+  Scenario: Silver wealth exactly at threshold
     # ... scenario steps
 ```
 
@@ -734,7 +734,7 @@ Feature: Zakat Calculation
 @smoke @regression @integration @e2e
 
 # Domain area
-@zakat @halal @murabaha @riba-detection
+@tax @permitted @loan @interest-detection
 
 # Status
 @wip @manual @automated @flaky
@@ -751,43 +751,43 @@ Feature: Zakat Calculation
 ```bash
 # Cucumber examples
 cucumber --tags @smoke
-cucumber --tags "@zakat and @critical"
-cucumber --tags "@zakat and not @manual"
+cucumber --tags "@tax and @critical"
+cucumber --tags "@tax and not @manual"
 ```
 
 ### Islamic Finance Example with Tags
 
 ```gherkin
-@zakat @critical @shariah-compliance
-Feature: Zakat Calculation Core Rules
+@tax @critical @compliance-compliance
+Feature: Tax Calculation Core Rules
 
   Background:
-    Given Zakat calculation engine is initialized
-    And Shariah scholars have validated calculation rules
+    Given Tax calculation engine is initialized
+    And Compliance scholars have validated calculation rules
 
   @happy-path @gold @automated
-  Scenario: Gold wealth meets nisab threshold
+  Scenario: Gold wealth meets threshold threshold
     Given individual owns 100 grams of gold
-    And nisab threshold for gold is 85 grams
-    When Zakat is calculated
-    Then Zakat should be 2.5 grams of gold
+    And threshold threshold for gold is 85 grams
+    When Tax is calculated
+    Then Tax should be 2.5 grams of gold
 
   @edge-case @gold @automated
-  Scenario: Gold wealth exactly at nisab threshold
+  Scenario: Gold wealth exactly at threshold threshold
     Given individual owns 85 grams of gold
-    And nisab threshold for gold is 85 grams
-    When Zakat is calculated
-    Then Zakat should be 2.125 grams of gold
+    And threshold threshold for gold is 85 grams
+    When Tax is calculated
+    Then Tax should be 2.125 grams of gold
 
   @error-handling @gold @automated
   Scenario: Reject negative gold wealth
     Given individual owns -50 grams of gold  # Invalid
-    When Zakat calculation is attempted
+    When Tax calculation is attempted
     Then calculation should fail with error "Wealth cannot be negative"
 
   @manual @silver @requires-scholar-review
   Scenario: Mixed metal holdings with fluctuating prices
-    # This scenario requires Shariah scholar review for ruling
+    # This scenario requires Compliance scholar review for ruling
     # on how to handle metals when relative prices fluctuate
     Given individual owns both gold and silver
     # Steps omitted - pending scholar guidance
@@ -853,10 +853,10 @@ Scenario: Publish article as authenticated editor
 
 ```gherkin
 # ❌ Too many steps
-Scenario: Complete Murabaha contract workflow
+Scenario: Complete Loan contract workflow
   Given I am logged in as bank officer
   When I navigate to contracts page
-  And I click "New Murabaha Contract"
+  And I click "New Loan Contract"
   And I enter customer name "ABC Corp"
   And I enter asset description "Office Building"
   And I enter cost price "500000"
@@ -865,23 +865,23 @@ Scenario: Complete Murabaha contract workflow
   And I verify selling price is "575000"
   And I select payment term "60 months"
   And I upload asset ownership proof
-  And I assign Shariah scholar "Sheikh Ahmed"
+  And I assign Compliance scholar "Sheikh Ahmed"
   And I click "Submit for Review"
   Then contract should be submitted
   # ... continues
 
 # ✅ Focused scenario with high-level steps
-Scenario: Submit Murabaha contract for Shariah review
+Scenario: Submit Loan contract for Compliance review
   Given I am authenticated as bank officer
-  When I create Murabaha contract with:
+  When I create Loan contract with:
     | Customer       | ABC Corp        |
     | Asset          | Office Building |
     | Cost Price     | 500,000 USD     |
     | Profit Markup  | 75,000 USD      |
-  And I assign contract to Shariah scholar "Sheikh Ahmed"
+  And I assign contract to Compliance scholar "Sheikh Ahmed"
   Then contract should be submitted for review
   And Sheikh Ahmed should receive notification
-  And contract status should be "Pending Shariah Review"
+  And contract status should be "Pending Compliance Review"
 ```
 
 ### 4. Use Business Language from Domain
@@ -896,12 +896,12 @@ Scenario: Update database record
   Then database row should have certified = 1
 
 # ✅ Islamic Finance business language
-Scenario: Certify product as halal compliant
+Scenario: Certify product as permitted compliant
   Given product "Organic Dates" is pending certification
-  When halal certification authority approves product
-  Then product should be marked as halal certified
-  And product should display halal certification badge
-  And customers should be able to filter halal products
+  When permitted certification authority approves product
+  Then product should be marked as permitted certified
+  And product should display permitted certification badge
+  And customers should be able to filter permitted products
 ```
 
 ### 5. Make Scenarios Independently Executable
@@ -915,19 +915,19 @@ Each scenario must:
 
 ```gherkin
 # ✅ Independent scenarios
-Scenario: Calculate Zakat on gold wealth
+Scenario: Calculate Tax on gold wealth
   Given individual owns 100 grams of gold
-  And nisab threshold for gold is 85 grams
+  And threshold threshold for gold is 85 grams
   And one lunar year has passed
-  When Zakat is calculated
-  Then Zakat should be 2.5 grams of gold
+  When Tax is calculated
+  Then Tax should be 2.5 grams of gold
 
-Scenario: Calculate Zakat on silver wealth
+Scenario: Calculate Tax on silver wealth
   Given individual owns 600 grams of silver
-  And nisab threshold for silver is 595 grams
+  And threshold threshold for silver is 595 grams
   And one lunar year has passed
-  When Zakat is calculated
-  Then Zakat should be 15 grams of silver
+  When Tax is calculated
+  Then Tax should be 15 grams of silver
 ```
 
 ## Common Gherkin Anti-Patterns
@@ -942,8 +942,8 @@ Scenario: Save to database
   And transaction should be committed
 
 # ✅ Behavior-focused
-Scenario: Persist halal certification
-  When product receives halal certification
+Scenario: Persist permitted certification
+  When product receives permitted certification
   Then certification should be stored in system
   And certification should be retrievable by product ID
 ```
@@ -955,7 +955,7 @@ Scenario: Persist halal certification
 Then the system should respond appropriately
 
 # ✅ Specific
-Then Zakat calculation should complete within 500ms
+Then Tax calculation should complete within 500ms
 And result should be accurate to 2 decimal places
 ```
 
@@ -963,24 +963,24 @@ And result should be accurate to 2 decimal places
 
 ```gherkin
 # ❌ Repetitive
-Scenario: Zakat on 100 grams gold
+Scenario: Tax on 100 grams gold
   Given individual owns 100 grams of gold
-  When Zakat is calculated
-  Then Zakat should be 2.5 grams
+  When Tax is calculated
+  Then Tax should be 2.5 grams
 
-Scenario: Zakat on 200 grams gold
+Scenario: Tax on 200 grams gold
   Given individual owns 200 grams of gold
-  When Zakat is calculated
-  Then Zakat should be 5 grams
+  When Tax is calculated
+  Then Tax should be 5 grams
 
 # ✅ Use Scenario Outline
-Scenario Outline: Calculate Zakat on various gold amounts
+Scenario Outline: Calculate Tax on various gold amounts
   Given individual owns <amount> grams of gold
-  When Zakat is calculated
-  Then Zakat should be <zakat> grams
+  When Tax is calculated
+  Then Tax should be <tax> grams
 
   Examples:
-    | amount | zakat |
+    | amount | tax |
     | 100    | 2.5   |
     | 200    | 5.0   |
     | 500    | 12.5  |
@@ -993,11 +993,11 @@ Gherkin scenarios are **specifications**, not tests. They become executable thro
 **Gherkin Scenario:**
 
 ```gherkin
-Scenario: Calculate Zakat on gold wealth
+Scenario: Calculate Tax on gold wealth
   Given individual owns 100 grams of gold
-  And nisab threshold for gold is 85 grams
-  When Zakat is calculated
-  Then Zakat should be 2.5 grams of gold
+  And threshold threshold for gold is 85 grams
+  When Tax is calculated
+  Then Tax should be 2.5 grams of gold
 ```
 
 **Step Definitions (TypeScript with Cucumber):**
@@ -1009,16 +1009,16 @@ Given("individual owns {int} grams of gold", function (amount: number) {
   this.wealth = Money.fromGold(amount, "grams");
 });
 
-Given("nisab threshold for gold is {int} grams", function (threshold: number) {
-  this.nisab = Money.fromGold(threshold, "grams");
+Given("threshold threshold for gold is {int} grams", function (threshold: number) {
+  this.threshold = Money.fromGold(threshold, "grams");
 });
 
-When("Zakat is calculated", function () {
-  this.zakatAmount = calculateZakat(this.wealth, this.nisab, ZakatRate.standard());
+When("Tax is calculated", function () {
+  this.taxAmount = calculateTax(this.wealth, this.threshold, TaxRate.standard());
 });
 
-Then("Zakat should be {float} grams of gold", function (expectedAmount: number) {
-  expect(this.zakatAmount.equals(Money.fromGold(expectedAmount, "grams"))).toBe(true);
+Then("Tax should be {float} grams of gold", function (expectedAmount: number) {
+  expect(this.taxAmount.equals(Money.fromGold(expectedAmount, "grams"))).toBe(true);
 });
 ```
 
@@ -1049,10 +1049,10 @@ Gherkin provides a structured natural language syntax for writing executable spe
 
 **Common Patterns in Islamic Finance:**
 
-- Zakat calculation scenarios with nisab thresholds and Hawl periods
-- Halal certification validation with recognized authorities
-- Murabaha contract creation with Shariah compliance checks
-- Riba (interest) detection and rejection scenarios
+- Tax calculation scenarios with threshold thresholds and Hawl periods
+- Permitted certification validation with recognized authorities
+- Loan contract creation with Compliance compliance checks
+- Interest (interest) detection and rejection scenarios
 
 Gherkin specifications become **living documentation** that never goes stale because they must pass for the system to work. When business rules change, scenarios are updated first, ensuring implementation stays aligned with requirements.
 
@@ -1062,7 +1062,7 @@ The next step is understanding the **Given-When-Then pattern** in depth, explori
 
 - **Category**: Explanation
 - **Subcategory**: Software Design > Behavior-Driven Development
-- **Tags**: Gherkin, BDD, Given-When-Then, Scenario, Feature, Background, Scenario Outline, Data Tables, Islamic Finance, Zakat, Halal, Murabaha
+- **Tags**: Gherkin, BDD, Given-When-Then, Scenario, Feature, Background, Scenario Outline, Data Tables, Islamic Finance, Tax, Permitted, Loan
 - **Related Files**:
   - [README](./README.md) - BDD documentation overview
   - [01. Introduction and Philosophy](./ex-so-de-bdd__01-introduction-and-philosophy.md) - BDD foundations

@@ -17,15 +17,15 @@
 
 This template provides a complete, working test suite that includes unit tests, integration tests, property-based tests, test data builders, and test utilities. Use this as a starting point for testing a new feature or module.
 
-## Example: Halal Certification System
+## Example: Permitted Certification System
 
-We'll build a complete test suite for a Halal certification system that validates products, issues certifications, and manages expiry dates.
+We'll build a complete test suite for a Permitted certification system that validates products, issues certifications, and manages expiry dates.
 
 ## Project Structure
 
 ```
 libs/
-  ts-halal-certification/
+  ts-permitted-certification/
     src/
       lib/
         # Domain Models
@@ -146,16 +146,16 @@ export class Product {
     public readonly category: ProductCategory,
   ) {}
 
-  hasHaramIngredients(): boolean {
-    return this.ingredients.some((ing) => ing.isHaram());
+  hasForbiddenIngredients(): boolean {
+    return this.ingredients.some((ing) => ing.isForbidden());
   }
 
   hasDoubtfulIngredients(): boolean {
     return this.ingredients.some((ing) => ing.isDoubtful());
   }
 
-  isFullyHalal(): boolean {
-    return !this.hasHaramIngredients() && !this.hasDoubtfulIngredients();
+  isFullyPermitted(): boolean {
+    return !this.hasForbiddenIngredients() && !this.hasDoubtfulIngredients();
   }
 
   addIngredient(ingredient: Ingredient): Product {
@@ -180,42 +180,42 @@ export class Ingredient {
   constructor(
     public readonly name: string,
     public readonly source: IngredientSource,
-    public readonly status: HalalStatus,
+    public readonly status: PermittedStatus,
   ) {
     if (!name || name.trim().length === 0) {
       throw new Error("Ingredient name cannot be empty");
     }
   }
 
-  isHalal(): boolean {
-    return this.status === HalalStatus.HALAL;
+  isPermitted(): boolean {
+    return this.status === PermittedStatus.PERMITTED;
   }
 
-  isHaram(): boolean {
-    return this.status === HalalStatus.HARAM;
+  isForbidden(): boolean {
+    return this.status === PermittedStatus.FORBIDDEN;
   }
 
   isDoubtful(): boolean {
-    return this.status === HalalStatus.DOUBTFUL;
+    return this.status === PermittedStatus.DOUBTFUL;
   }
 
   static fromName(name: string): Ingredient {
     const normalized = name.toLowerCase().trim();
 
-    // Check haram ingredients
-    const haramIngredients = ["pork", "bacon", "lard", "alcohol", "wine", "beer"];
-    if (haramIngredients.some((haram) => normalized.includes(haram))) {
-      return new Ingredient(name, IngredientSource.UNKNOWN, HalalStatus.HARAM);
+    // Check forbidden ingredients
+    const forbiddenIngredients = ["pork", "bacon", "lard", "alcohol", "wine", "beer"];
+    if (forbiddenIngredients.some((forbidden) => normalized.includes(forbidden))) {
+      return new Ingredient(name, IngredientSource.UNKNOWN, PermittedStatus.FORBIDDEN);
     }
 
     // Check doubtful ingredients
     const doubtfulIngredients = ["gelatin", "enzymes", "emulsifiers", "mono-diglycerides"];
     if (doubtfulIngredients.some((doubtful) => normalized.includes(doubtful))) {
-      return new Ingredient(name, IngredientSource.UNKNOWN, HalalStatus.DOUBTFUL);
+      return new Ingredient(name, IngredientSource.UNKNOWN, PermittedStatus.DOUBTFUL);
     }
 
-    // Default to halal if not identified as haram or doubtful
-    return new Ingredient(name, IngredientSource.PLANT, HalalStatus.HALAL);
+    // Default to permitted if not identified as forbidden or doubtful
+    return new Ingredient(name, IngredientSource.PLANT, PermittedStatus.PERMITTED);
   }
 }
 
@@ -227,9 +227,9 @@ export enum IngredientSource {
   UNKNOWN = "UNKNOWN",
 }
 
-export enum HalalStatus {
-  HALAL = "HALAL",
-  HARAM = "HARAM",
+export enum PermittedStatus {
+  PERMITTED = "PERMITTED",
+  FORBIDDEN = "FORBIDDEN",
   DOUBTFUL = "DOUBTFUL",
 }
 ```
@@ -353,62 +353,62 @@ describe("Certification", () => {
 // File: product.spec.ts
 import { Product, ProductCategory } from "./product";
 import { ProductBuilder } from "./__test-helpers__/product.builder";
-import { Ingredient, HalalStatus, IngredientSource } from "./ingredient";
+import { Ingredient, PermittedStatus, IngredientSource } from "./ingredient";
 
 describe("Product", () => {
-  describe("hasHaramIngredients", () => {
-    it("should return true when product contains haram ingredients", () => {
+  describe("hasForbiddenIngredients", () => {
+    it("should return true when product contains forbidden ingredients", () => {
       const product = ProductBuilder.aProduct()
-        .withIngredient(new Ingredient("pork", IngredientSource.ANIMAL, HalalStatus.HARAM))
+        .withIngredient(new Ingredient("pork", IngredientSource.ANIMAL, PermittedStatus.FORBIDDEN))
         .build();
 
-      expect(product.hasHaramIngredients()).toBe(true);
+      expect(product.hasForbiddenIngredients()).toBe(true);
     });
 
-    it("should return false when product contains only halal ingredients", () => {
-      const product = ProductBuilder.aHalalProduct().build();
+    it("should return false when product contains only permitted ingredients", () => {
+      const product = ProductBuilder.aPermittedProduct().build();
 
-      expect(product.hasHaramIngredients()).toBe(false);
+      expect(product.hasForbiddenIngredients()).toBe(false);
     });
   });
 
   describe("hasDoubtfulIngredients", () => {
     it("should return true when product contains doubtful ingredients", () => {
       const product = ProductBuilder.aProduct()
-        .withIngredient(new Ingredient("gelatin", IngredientSource.ANIMAL, HalalStatus.DOUBTFUL))
+        .withIngredient(new Ingredient("gelatin", IngredientSource.ANIMAL, PermittedStatus.DOUBTFUL))
         .build();
 
       expect(product.hasDoubtfulIngredients()).toBe(true);
     });
 
-    it("should return false when product contains only halal ingredients", () => {
-      const product = ProductBuilder.aHalalProduct().build();
+    it("should return false when product contains only permitted ingredients", () => {
+      const product = ProductBuilder.aPermittedProduct().build();
 
       expect(product.hasDoubtfulIngredients()).toBe(false);
     });
   });
 
-  describe("isFullyHalal", () => {
-    it("should return true when all ingredients are halal", () => {
-      const product = ProductBuilder.aHalalProduct().build();
+  describe("isFullyPermitted", () => {
+    it("should return true when all ingredients are permitted", () => {
+      const product = ProductBuilder.aPermittedProduct().build();
 
-      expect(product.isFullyHalal()).toBe(true);
+      expect(product.isFullyPermitted()).toBe(true);
     });
 
-    it("should return false when product has haram ingredients", () => {
+    it("should return false when product has forbidden ingredients", () => {
       const product = ProductBuilder.aProduct()
-        .withIngredient(new Ingredient("pork", IngredientSource.ANIMAL, HalalStatus.HARAM))
+        .withIngredient(new Ingredient("pork", IngredientSource.ANIMAL, PermittedStatus.FORBIDDEN))
         .build();
 
-      expect(product.isFullyHalal()).toBe(false);
+      expect(product.isFullyPermitted()).toBe(false);
     });
 
     it("should return false when product has doubtful ingredients", () => {
       const product = ProductBuilder.aProduct()
-        .withIngredient(new Ingredient("gelatin", IngredientSource.ANIMAL, HalalStatus.DOUBTFUL))
+        .withIngredient(new Ingredient("gelatin", IngredientSource.ANIMAL, PermittedStatus.DOUBTFUL))
         .build();
 
-      expect(product.isFullyHalal()).toBe(false);
+      expect(product.isFullyPermitted()).toBe(false);
     });
   });
 
@@ -416,7 +416,7 @@ describe("Product", () => {
     it("should return new product with added ingredient", () => {
       const product = ProductBuilder.aProduct().withIngredients([]).build();
 
-      const newIngredient = new Ingredient("salt", IngredientSource.PLANT, HalalStatus.HALAL);
+      const newIngredient = new Ingredient("salt", IngredientSource.PLANT, PermittedStatus.PERMITTED);
       const updatedProduct = product.addIngredient(newIngredient);
 
       expect(updatedProduct.ingredients).toHaveLength(1);
@@ -426,7 +426,7 @@ describe("Product", () => {
     it("should not mutate original product", () => {
       const product = ProductBuilder.aProduct().withIngredients([]).build();
 
-      const newIngredient = new Ingredient("salt", IngredientSource.PLANT, HalalStatus.HALAL);
+      const newIngredient = new Ingredient("salt", IngredientSource.PLANT, PermittedStatus.PERMITTED);
       product.addIngredient(newIngredient);
 
       expect(product.ingredients).toHaveLength(0); // Original unchanged
@@ -439,55 +439,55 @@ describe("Product", () => {
 
 ```typescript
 // File: ingredient.spec.ts
-import { Ingredient, HalalStatus, IngredientSource } from "./ingredient";
+import { Ingredient, PermittedStatus, IngredientSource } from "./ingredient";
 
 describe("Ingredient", () => {
   describe("constructor", () => {
     it("should create ingredient with valid data", () => {
-      const ingredient = new Ingredient("chicken", IngredientSource.ANIMAL, HalalStatus.HALAL);
+      const ingredient = new Ingredient("chicken", IngredientSource.ANIMAL, PermittedStatus.PERMITTED);
 
       expect(ingredient.name).toBe("chicken");
       expect(ingredient.source).toBe(IngredientSource.ANIMAL);
-      expect(ingredient.status).toBe(HalalStatus.HALAL);
+      expect(ingredient.status).toBe(PermittedStatus.PERMITTED);
     });
 
     it("should throw error for empty name", () => {
-      expect(() => new Ingredient("", IngredientSource.PLANT, HalalStatus.HALAL)).toThrow(
+      expect(() => new Ingredient("", IngredientSource.PLANT, PermittedStatus.PERMITTED)).toThrow(
         "Ingredient name cannot be empty",
       );
     });
 
     it("should throw error for whitespace-only name", () => {
-      expect(() => new Ingredient("   ", IngredientSource.PLANT, HalalStatus.HALAL)).toThrow(
+      expect(() => new Ingredient("   ", IngredientSource.PLANT, PermittedStatus.PERMITTED)).toThrow(
         "Ingredient name cannot be empty",
       );
     });
   });
 
   describe("fromName", () => {
-    describe("haram ingredients", () => {
-      it("should identify pork as haram", () => {
+    describe("forbidden ingredients", () => {
+      it("should identify pork as forbidden", () => {
         const ingredient = Ingredient.fromName("pork");
 
-        expect(ingredient.isHaram()).toBe(true);
+        expect(ingredient.isForbidden()).toBe(true);
       });
 
-      it("should identify bacon as haram", () => {
+      it("should identify bacon as forbidden", () => {
         const ingredient = Ingredient.fromName("bacon");
 
-        expect(ingredient.isHaram()).toBe(true);
+        expect(ingredient.isForbidden()).toBe(true);
       });
 
-      it("should identify alcohol as haram", () => {
+      it("should identify alcohol as forbidden", () => {
         const ingredient = Ingredient.fromName("alcohol");
 
-        expect(ingredient.isHaram()).toBe(true);
+        expect(ingredient.isForbidden()).toBe(true);
       });
 
-      it("should be case-insensitive for haram detection", () => {
+      it("should be case-insensitive for forbidden detection", () => {
         const ingredient = Ingredient.fromName("PORK");
 
-        expect(ingredient.isHaram()).toBe(true);
+        expect(ingredient.isForbidden()).toBe(true);
       });
     });
 
@@ -505,17 +505,17 @@ describe("Ingredient", () => {
       });
     });
 
-    describe("halal ingredients", () => {
-      it("should identify chicken as halal", () => {
+    describe("permitted ingredients", () => {
+      it("should identify chicken as permitted", () => {
         const ingredient = Ingredient.fromName("chicken");
 
-        expect(ingredient.isHalal()).toBe(true);
+        expect(ingredient.isPermitted()).toBe(true);
       });
 
-      it("should identify wheat as halal", () => {
+      it("should identify wheat as permitted", () => {
         const ingredient = Ingredient.fromName("wheat flour");
 
-        expect(ingredient.isHalal()).toBe(true);
+        expect(ingredient.isPermitted()).toBe(true);
       });
     });
   });
@@ -530,12 +530,12 @@ import fc from "fast-check";
 import { Ingredient } from "./ingredient";
 
 describe("Ingredient Properties", () => {
-  it("should always have exactly one halal status", () => {
+  it("should always have exactly one permitted status", () => {
     fc.assert(
       fc.property(fc.string({ minLength: 1 }), (name) => {
         const ingredient = Ingredient.fromName(name);
 
-        const statusCount = [ingredient.isHalal(), ingredient.isHaram(), ingredient.isDoubtful()].filter(
+        const statusCount = [ingredient.isPermitted(), ingredient.isForbidden(), ingredient.isDoubtful()].filter(
           (s) => s,
         ).length;
 
@@ -584,7 +584,7 @@ describe("CertificationRepository Integration", () => {
 
   beforeAll(async () => {
     container = await new PostgreSqlContainer("postgres:16-alpine")
-      .withDatabase("halal_test")
+      .withDatabase("permitted_test")
       .withUsername("test_user")
       .withPassword("test_password")
       .start();
@@ -667,7 +667,7 @@ import { Certification, CertificationStatus } from "../certification";
 export class CertificationBuilder {
   private id: string = uuidv4();
   private productId: string = "product-default";
-  private certificationNumber: string = "HALAL-2024-0001";
+  private certificationNumber: string = "PERMITTED-2024-0001";
   private issueDate: Date = new Date("2024-01-01");
   private expiryDate: Date = new Date("2025-01-01");
   private status: CertificationStatus = CertificationStatus.ACTIVE;
@@ -747,7 +747,7 @@ export class CertificationBuilder {
 // File: __test-helpers__/product.builder.ts
 import { v4 as uuidv4 } from "uuid";
 import { Product, ProductCategory } from "../product";
-import { Ingredient, HalalStatus, IngredientSource } from "../ingredient";
+import { Ingredient, PermittedStatus, IngredientSource } from "../ingredient";
 
 export class ProductBuilder {
   private id: string = uuidv4();
@@ -794,25 +794,25 @@ export class ProductBuilder {
     return new ProductBuilder();
   }
 
-  static aHalalProduct(): ProductBuilder {
+  static aPermittedProduct(): ProductBuilder {
     return new ProductBuilder().withIngredients([
-      new Ingredient("wheat flour", IngredientSource.PLANT, HalalStatus.HALAL),
-      new Ingredient("water", IngredientSource.PLANT, HalalStatus.HALAL),
-      new Ingredient("salt", IngredientSource.PLANT, HalalStatus.HALAL),
+      new Ingredient("wheat flour", IngredientSource.PLANT, PermittedStatus.PERMITTED),
+      new Ingredient("water", IngredientSource.PLANT, PermittedStatus.PERMITTED),
+      new Ingredient("salt", IngredientSource.PLANT, PermittedStatus.PERMITTED),
     ]);
   }
 
-  static aProductWithHaramIngredients(): ProductBuilder {
+  static aProductWithForbiddenIngredients(): ProductBuilder {
     return new ProductBuilder().withIngredients([
-      new Ingredient("wheat flour", IngredientSource.PLANT, HalalStatus.HALAL),
-      new Ingredient("pork", IngredientSource.ANIMAL, HalalStatus.HARAM),
+      new Ingredient("wheat flour", IngredientSource.PLANT, PermittedStatus.PERMITTED),
+      new Ingredient("pork", IngredientSource.ANIMAL, PermittedStatus.FORBIDDEN),
     ]);
   }
 
   static aProductWithDoubtfulIngredients(): ProductBuilder {
     return new ProductBuilder().withIngredients([
-      new Ingredient("sugar", IngredientSource.PLANT, HalalStatus.HALAL),
-      new Ingredient("gelatin", IngredientSource.ANIMAL, HalalStatus.DOUBTFUL),
+      new Ingredient("sugar", IngredientSource.PLANT, PermittedStatus.PERMITTED),
+      new Ingredient("gelatin", IngredientSource.ANIMAL, PermittedStatus.DOUBTFUL),
     ]);
   }
 }
@@ -823,7 +823,7 @@ export class ProductBuilder {
 ```typescript
 // File: jest.config.ts
 export default {
-  displayName: "ts-halal-certification",
+  displayName: "ts-permitted-certification",
   preset: "../../jest.preset.js",
   testEnvironment: "node",
   transform: {
@@ -835,7 +835,7 @@ export default {
     ],
   },
   moduleFileExtensions: ["ts", "js", "html"],
-  coverageDirectory: "../../coverage/libs/ts-halal-certification",
+  coverageDirectory: "../../coverage/libs/ts-permitted-certification",
   coverageThreshold: {
     global: {
       branches: 85,
@@ -852,12 +852,12 @@ export default {
 
 ### 1. Adapt to Your Domain
 
-Replace Halal Certification concepts with your domain:
+Replace Permitted Certification concepts with your domain:
 
 - **Certification** → Your main entity (Invoice, Contract, Order)
 - **Product** → Related entity (Customer, Item, Service)
 - **Ingredient** → Value object or component
-- **HalalStatus** → Your domain status enum
+- **PermittedStatus** → Your domain status enum
 - **JAKIM** → Your regulatory body or standard
 
 ### 2. Adjust Test Coverage Targets
