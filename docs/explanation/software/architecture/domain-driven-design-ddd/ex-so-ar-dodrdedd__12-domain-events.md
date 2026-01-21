@@ -1147,3 +1147,10 @@ Domain events capture significant business occurrences:
 - Martin Fowler, ["Event Sourcing"](https://martinfowler.com/eaaDev/EventSourcing.html)
 - Udi Dahan, ["Domain Events - Salvation"](https://udidahan.com/2009/06/14/domain-events-salvation/)
 - Greg Young, ["CQRS and Event Sourcing"](https://cqrs.files.wordpress.com/2010/11/cqrs_documents.pdf)
+
+## Related Principles
+
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Domain events are immutable facts representing what has occurred
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Events make state changes and workflows explicit
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.

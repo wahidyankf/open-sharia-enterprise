@@ -516,3 +516,10 @@ Once identified, document each context clearly and integrate them through the pa
 - Vaughn Vernon, "Implementing Domain-Driven Design" (2013) - Chapters 2-3
 - Martin Fowler, ["Bounded Context"](https://martinfowler.com/bliki/BoundedContext.html)
 - [Context Mapper](https://contextmapper.org/) - Tool for modeling bounded contexts
+
+## Related Principles
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Bounded contexts make domain boundaries and model ownership explicit
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Clear context boundaries enable reproducible integration patterns
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.

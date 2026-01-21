@@ -1143,3 +1143,10 @@ Layered Architecture with DDD provides:
 - Alistair Cockburn, ["Hexagonal Architecture"](https://alistair.cockburn.us/hexagonal-architecture/)
 - Robert C. Martin, "Clean Architecture" (2017) - Dependency Inversion Principle
 - Mark Seemann, ["Functional Architecture is Ports and Adapters"](https://blog.ploeh.dk/2016/03/18/functional-architecture-is-ports-and-adapters/)
+
+## Related Principles
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Layered architecture separates pure domain logic from impure infrastructure
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Clear layer boundaries make dependencies explicit
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.

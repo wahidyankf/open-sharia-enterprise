@@ -8,11 +8,27 @@ This document provides comprehensive guidance on best practices when using the C
 
 The C4 model's strength lies in its simplicity and pragmatism, but these same qualities can be undermined by misuse. This guide draws from real-world experience and community best practices to help teams maximize the value of their architecture documentation while avoiding common pitfalls.
 
+## Software Engineering Principles Alignment
+
+C4 best practices directly implement core software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - The "Avoid Ambiguity" best practice requires explicit labels, clear technology choices, and descriptive relationships on every diagram element. No hidden assumptions allowed.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - The "Keep It Simple" best practice enforces simple boxes and lines instead of complex UML notation. The "Focus on Necessary Diagrams Only" practice prevents over-documentation.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - The "Iterative Refinement" best practice encourages diagram-as-code with Structurizr DSL, PlantUML, or Mermaid, enabling version control and CI/CD integration.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - The "Maintain Consistency" best practice establishes standardized naming, colors, and conventions that enable reproducible documentation across teams and systems.
+
+Each best practice below demonstrates how these principles apply to architecture documentation.
+
 ## Core Best Practices
 
 ### 1. Avoid Ambiguity
 
 **Principle**: Every diagram should be immediately understandable without requiring extensive explanation or context.
+
+This best practice directly implements **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**. By requiring explicit labels on all diagram elements, clear technology choices in square brackets, and descriptive relationship names, we eliminate hidden assumptions that plague architecture documentation. Every stakeholder should understand system boundaries, interactions, and technology decisions without needing to ask clarifying questions.
 
 **Key Guidelines**:
 
@@ -60,6 +76,8 @@ C4Context
 ### 2. Keep It Simple
 
 **Principle**: C4 is deliberately simple and pragmatic. Don't overcomplicate diagrams with unnecessary notation or complexity.
+
+This best practice embodies **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)**. C4 deliberately uses simple boxes and lines instead of complex UML notation, reducing cognitive load for all audiences. The four-level hierarchy provides progressive disclosure—you add detail only where it creates value, avoiding the over-engineering trap that makes documentation intimidating and unmaintainable.
 
 **Key Guidelines**:
 
@@ -153,6 +171,8 @@ For a complex banking platform:
 
 **Principle**: Use consistent naming, symbols, colors, and conventions across all diagrams in a system or organization.
 
+This best practice implements both **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** and **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**. Consistent naming makes system elements explicit and unambiguous across abstraction levels. Standardized notation and color conventions enable different team members to produce reproducible documentation—the same system will be diagrammed consistently regardless of who creates the diagram.
+
 **Consistency Guidelines**:
 
 **Naming Conventions**:
@@ -223,6 +243,8 @@ C4Container
 ### 5. Iterative Refinement
 
 **Principle**: Start with rough diagrams and refine them through collaboration and feedback.
+
+This best practice demonstrates **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**. By adopting diagram-as-code with tools like Structurizr DSL, PlantUML, or Mermaid, teams can version control diagrams, automate updates through CI/CD pipelines, and keep architecture documentation synchronized with code changes. Iterative refinement becomes efficient when diagrams are text files that can be reviewed, merged, and automatically validated.
 
 **Iterative Process**:
 
@@ -597,6 +619,20 @@ Before finalizing a C4 diagram, verify:
 - Container Diagrams: [ex-so-ar-c4armo\_\_03-container-diagrams.md](./ex-so-ar-c4armo__02-level-2-container.md)
 - Component Diagrams: [ex-so-ar-c4armo\_\_04-component-diagrams.md](./ex-so-ar-c4armo__03-level-3-component.md)
 - Antipatterns: [ex-so-ar-c4armo\_\_15-antipatterns.md](./ex-so-ar-c4armo__15-antipatterns.md)
+
+## Related Principles
+
+C4 best practices demonstrate alignment with core software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - "Avoid Ambiguity" and "Maintain Consistency" practices require explicit labels, clear technology choices, and visible relationships on all diagrams, eliminating architecture assumptions.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - "Keep It Simple" and "Focus on Necessary Diagrams Only" practices enforce simple notation and progressive disclosure, creating accessible documentation without over-engineering.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - "Iterative Refinement" practice encourages diagram-as-code (Structurizr DSL, PlantUML, Mermaid) for version control and CI/CD integration.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - "Maintain Consistency" practice establishes standardized naming and notation conventions that enable reproducible documentation across teams.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Conclusion
 

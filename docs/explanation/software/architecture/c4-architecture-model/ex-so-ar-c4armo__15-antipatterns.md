@@ -8,18 +8,35 @@ This document identifies common antipatterns and mistakes when using the C4 mode
 
 The C4 model's strength lies in its simplicity and pragmatism. When misused through these antipatterns, it loses its effectiveness and becomes just another confusing architecture notation. This guide helps teams recognize and avoid common pitfalls that reduce the value of their architecture documentation.
 
+## Principle Violations
+
+Every C4 antipattern violates one or more core software engineering principles. Understanding these violations helps explain why each antipattern undermines architecture documentation quality:
+
+| Antipattern                                 | Violated Principle(s)                                                                                                                                                                                             | Why It Matters                                                                       |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Mixing Container/Component Abstractions     | **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**, **[Simplicity](../../../../../governance/principles/general/simplicity-over-complexity.md)**   | Creates ambiguity about deployment boundaries, adds unnecessary complexity           |
+| Adding Arbitrary Abstraction Levels         | **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)**, **[Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)** | Defeats standard model purpose, reduces team-to-team reproducibility                 |
+| Overusing Subsystems                        | **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)**                                                                                                      | Adds visual complexity without clarity, hides important relationships                |
+| Detailing External Containers               | **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**, **[Simplicity](../../../../../governance/principles/general/simplicity-over-complexity.md)**   | Documents systems you don't control, creates maintenance burden with external change |
+| Ambiguous Diagrams (Missing Labels/Legends) | **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**                                                                                                 | Forces implicit understanding, violates core requirement for explicit communication  |
+| Using C4 for Wrong System Types             | **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)**                                                                                                      | Creates unnecessary documentation for systems better served by simpler approaches    |
+
+Each antipattern description below references the specific principle(s) it violates.
+
 ## Common Antipatterns
 
 ### 1. Mixing Container and Component Abstractions
 
 **Problem**: Showing both containers (deployable units) and components (internal code structures) in the same diagram.
 
+**Violates**: **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**, **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)**
+
 **Why It's Wrong**:
 
-- Violates separation of abstraction levels
-- Creates confusion about deployment boundaries
-- Makes diagrams harder to understand
-- Loses the clarity that makes C4 valuable
+- Violates separation of abstraction levels (creates implicit assumptions about what elements represent)
+- Creates confusion about deployment boundaries (explicit container boundaries become ambiguous)
+- Makes diagrams harder to understand (adds complexity without clarity)
+- Loses the clarity that makes C4 valuable (defeats the explicit four-level hierarchy)
 
 **Example - Incorrect Mixing**:
 
@@ -306,12 +323,14 @@ Only show external system internals if:
 
 **Problem**: Creating diagrams without sufficient context, labels, or explanations.
 
+**Violates**: **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+
 **Why It's Wrong**:
 
-- Requires verbal explanation (diagrams should be self-explanatory)
-- Different stakeholders interpret diagrams differently
-- Diagrams lose value when reviewed later
-- Wastes time in meetings explaining unclear elements
+- Requires verbal explanation (violates explicit communication—diagrams should be self-explanatory)
+- Different stakeholders interpret diagrams differently (implicit assumptions lead to misunderstandings)
+- Diagrams lose value when reviewed later (lack of explicit labels makes diagrams unmaintainable)
+- Wastes time in meetings explaining unclear elements (implicit design forces constant clarification)
 
 **Example - Ambiguous Diagram**:
 
@@ -532,6 +551,18 @@ Before finalizing a C4 diagram, verify you're NOT doing these:
 - System Context Diagrams: [ex-so-ar-c4armo\_\_01-level-1-system-context.md](./ex-so-ar-c4armo__01-level-1-system-context.md)
 - Container Diagrams: [ex-so-ar-c4armo\_\_02-level-2-container.md](./ex-so-ar-c4armo__02-level-2-container.md)
 - Component Diagrams: [ex-so-ar-c4armo\_\_03-level-3-component.md](./ex-so-ar-c4armo__03-level-3-component.md)
+
+## Related Principles
+
+C4 antipatterns violate core software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Antipatterns #1 (Mixing Abstractions) and #5 (Ambiguous Diagrams) create implicit assumptions by mixing abstraction levels or omitting critical labels, forcing stakeholders to guess system boundaries and relationships.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Antipatterns #2 (Arbitrary Levels), #3 (Overusing Subsystems), and #6 (Wrong System Types) add unnecessary complexity that obscures rather than clarifies architecture.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Antipattern #2 (Arbitrary Levels) defeats the standard C4 model, making it impossible for different teams to produce consistent, reproducible documentation.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Conclusion
 

@@ -598,3 +598,10 @@ Subdomain distillation ensures teams focus on what truly matters: the Core Domai
 - Vaughn Vernon, "Domain-Driven Design Distilled" (2016) - Chapter 2: Strategic Design with Subdomains
 - Alberto Brandolini, "Strategic Domain-Driven Design with Context Mapping" - Subdomain discovery
 - Mathias Verraes, ["Towards a Theory of Classification in DDD"](https://verraes.net/2021/09/theory-of-classification-in-ddd/)
+
+## Related Principles
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Subdomain classification (core/supporting/generic) makes strategic priorities explicit
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Generic subdomains can use simple off-the-shelf solutions
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.

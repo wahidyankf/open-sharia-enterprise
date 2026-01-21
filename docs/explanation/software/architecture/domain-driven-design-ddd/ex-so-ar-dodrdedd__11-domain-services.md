@@ -926,3 +926,10 @@ Domain services provide a home for domain logic that doesn't belong in entities 
 - Vaughn Vernon, "Implementing Domain-Driven Design" (2013) - Chapter 7: Services
 - Martin Fowler, ["Anemic Domain Model"](https://martinfowler.com/bliki/AnemicDomainModel.html) - Anti-pattern
 - Scott Wlaschin, "Domain Modeling Made Functional" (2018) - FP services
+
+## Related Principles
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Domain services are stateless operations, often implemented as pure functions
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Domain services make cross-aggregate operations explicit
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.

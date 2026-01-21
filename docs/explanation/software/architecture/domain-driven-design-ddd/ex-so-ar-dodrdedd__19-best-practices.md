@@ -32,6 +32,22 @@ The benefits of following DDD best practices include:
 - **Maintainable Code**: Rich domain models localize business logic, making changes easier and safer
 - **Scalable Architecture**: Proper aggregate boundaries and eventual consistency enable system growth
 
+## Core Principles
+
+DDD best practices implement core software engineering principles throughout strategic and tactical design:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Ubiquitous Language (Practice 2) and domain glossaries (Practice 14) make business rules explicit in code. Aggregate invariants (Practice 7, 12) explicitly encode domain constraints. Bounded contexts (Practice 3) make system boundaries explicit.
+
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Value Objects (Practice 8) are immutable by definition. Domain Events (Practice 9) use immutable event records. Rich domain models (Practice 6) favor immutable data structures to prevent invalid state transitions.
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Domain Services and value object operations are pure functions without side effects. Layered Architecture (Practice 15) separates pure domain logic from impure infrastructure.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Event Storming (Practice 5) automates domain discovery through collaborative workshops. Domain events enable automated workflow orchestration. Type systems and validation functions automate invariant enforcement.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Bounded contexts with explicit interfaces enable reproducible integration patterns. Ubiquitous Language ensures consistent domain modeling across teams. Aggregates provide reproducible consistency boundaries.
+
+Each practice below demonstrates specific applications of these principles.
+
 ## Table of Contents
 
 - [Strategic Design Best Practices](#strategic-design-best-practices)
@@ -83,6 +99,8 @@ For a Loan financing system:
 **What**: Create a shared vocabulary between developers and domain experts that is used consistently in code, conversations, and documentation.
 
 **Why**: Miscommunication is the primary source of software defects in complex domains. A shared language eliminates translation errors.
+
+This practice directly implements **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**. By encoding business terminology directly in code (class names, method names, variable names), we make domain concepts explicit rather than forcing developers to mentally translate between business language and technical abstractions. When code uses "ZakatPayment" instead of "Transaction," business rules become self-documenting.
 
 **How**:
 
@@ -228,6 +246,8 @@ Microservice Architecture for Islamic Finance Platform:
 **What**: Run collaborative workshops where domain experts and developers explore the domain by identifying domain events, commands, and aggregates.
 
 **Why**: Event storming quickly reveals domain complexity, highlights bottlenecks, and builds shared understanding without getting bogged down in implementation details.
+
+This practice demonstrates **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** by automating domain discovery through structured collaborative workshops. Instead of manual, ad-hoc requirements gathering over weeks or months, Event Storming systematically surfaces domain events, commands, aggregates, and policies in hours. The structured format automates knowledge extraction from domain experts.
 
 **How**:
 
@@ -514,6 +534,8 @@ class TaxCalculation {
 
 **Why**: Value objects reduce bugs (immutability), make code more expressive, and encapsulate validation logic.
 
+This practice fully implements **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)**. Value objects are immutable by definition—once created, they cannot change. This eliminates race conditions, temporal coupling, defensive copying, and unexpected state mutations. Operations return new instances rather than modifying existing ones, making code predictable and thread-safe.
+
 **How**:
 
 ```typescript
@@ -655,6 +677,8 @@ class ThresholdThreshold {
 **What**: Model significant domain occurrences as immutable domain events. Publish events when state changes occur.
 
 **Why**: Events enable eventual consistency, decouple bounded contexts, create audit trails, and enable event sourcing.
+
+This practice applies **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** to domain events. Events represent facts that have already occurred—they cannot and should not change. Immutable events create reliable audit trails, enable event sourcing (replay events to rebuild state), and eliminate bugs from accidental event modification during processing.
 
 **How**:
 
@@ -1514,6 +1538,24 @@ class TaxCalculation {
 - Not anemic (logic lives in aggregate, not service)
 - Not database-driven (domain-first design)
 - Not missing experts (Compliance scholar involved)
+
+## Principles Implemented
+
+DDD best practices demonstrate comprehensive alignment with core software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Ubiquitous Language (Practice 2) and domain glossaries (Practice 14) make business terminology explicit in code. Aggregate invariants (Practices 7, 12) explicitly encode domain constraints. Bounded contexts (Practice 3) make system boundaries and integration points explicit. All domain rules are visible rather than hidden in implicit assumptions.
+
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Value Objects (Practice 8) are immutable by definition, eliminating race conditions and temporal coupling. Domain Events (Practice 9) use immutable event records that represent facts that have occurred. Rich domain models (Practice 6) favor immutable data structures to prevent invalid state transitions. Eventual consistency (Practice 16) relies on immutable events for reliable cross-aggregate communication.
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Domain Services contain pure functions without side effects. Value object operations return new instances without mutation. Layered Architecture (Practice 15) separates pure domain logic (functional core) from impure infrastructure (imperative shell). Aggregates expose pure validation functions that can be tested without mocks.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Event Storming (Practice 5) automates domain discovery through structured workshops, surfacing events, commands, and aggregates systematically. Domain events enable automated workflow orchestration across bounded contexts. Type systems and aggregate validation functions automate invariant enforcement, catching violations at compile time or construction.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Bounded contexts with explicit interfaces enable reproducible integration patterns. Ubiquitous Language ensures consistent domain modeling across teams—same concepts produce same code structures. Aggregates provide reproducible consistency boundaries. Rich domain models with explicit validation produce deterministic behavior.
+
+Each of the 16 practices above applies one or more of these principles to specific DDD patterns. Understanding these principle alignments helps explain why DDD practices work and guides decision-making when adapting patterns to specific contexts.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Summary
 

@@ -169,3 +169,10 @@ This diagram reveals the microservices architecture inside the E-Commerce Platfo
 3. **Event-Driven Communication**: Services communicate asynchronously via message bus
 4. **Polyglot Persistence**: Different database technologies (PostgreSQL, MongoDB, MySQL) based on service needs
 5. **Independent Deployment**: Each microservice can be deployed, scaled, and updated independently
+
+## Related Principles
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Container diagrams make deployment boundaries and technology choices explicit
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Shows only deployable units, hiding internal component complexity
+
+See [C4 Model Best Practices](./ex-so-ar-c4armo__14-best-practices.md) for comprehensive guidance.

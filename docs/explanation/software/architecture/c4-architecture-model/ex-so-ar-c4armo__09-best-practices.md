@@ -2,6 +2,18 @@
 
 Comprehensive guide on when to use the C4 model, comparisons with other approaches, and common pitfalls to avoid.
 
+## Core Principles
+
+C4 model selection and tooling decisions embody core software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - C4 provides explicit guidance on when it fits vs when alternative approaches are more appropriate. This document makes those tradeoffs transparent rather than leaving teams to discover limitations through trial and error.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - C4's core value proposition is simplicity over heavyweight alternatives like UML or ArchiMate. The "When to Use C4" guidance helps teams choose the right level of complexity for their context.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - The tooling philosophy section emphasizes diagram-as-code approaches (Mermaid, Structurizr, PlantUML) that enable version control, CI/CD integration, and automated diagram generation rather than manual drawing tools.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Text-based diagram definitions ensure architecture documentation can be reproduced consistently across teams, tools, and time. Standard Mermaid syntax choice prioritizes long-term stability over experimental features.
+
 ## When to Use the C4 Model
 
 ### Ideal Use Cases
@@ -26,6 +38,8 @@ Particularly valuable when:
 - Multiple audiences need different levels of detail
 - Agile/continuous delivery workflows require lightweight documentation
 - New team members need onboarding materials
+
+This context directly implements **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)**. C4's core value is rejecting heavyweight modeling approaches in favor of simple boxes and lines that developers will actually create and maintain. When teams find UML overwhelming, C4 provides the minimum viable architecture documentation approach.
 
 ### When C4 May Not Fit
 
@@ -125,6 +139,8 @@ For very large systems with high complexity:
 - If the system is simple (3-4 components), C4 may be overkill - a single diagram might suffice
 
 ## Comparison to Other Approaches
+
+This comparison section demonstrates **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** by making architectural modeling tradeoffs explicit. Rather than assuming one approach fits all contexts, we transparently compare C4 against alternatives so teams can make informed decisions about their documentation strategy.
 
 ### C4 vs. UML (Unified Modeling Language)
 
@@ -500,6 +516,8 @@ Open Sharia Enterprise uses **Mermaid diagrams** for C4 model documentation:
 - **Accessible**: WCAG-compliant color palette enforced
 - **Portable**: Works in Obsidian, VS Code, documentation sites
 - **No build step**: Renders client-side in browser
+
+This tooling decision embodies **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** and **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**. Text-based diagrams enable version control, code review, and CI/CD integration—treating architecture documentation as code rather than manual artifacts. Standard Mermaid syntax ensures diagrams remain reproducible across tools and time, avoiding experimental feature breakage.
 
 **Trade-offs Accepted**:
 
@@ -2344,3 +2362,17 @@ To see C4 model in practice, review:
 4. **Sequence Diagrams**: Runtime flows and interactions
 
 These diagrams demonstrate how C4 model scales from simple overview to detailed implementation documentation while maintaining clarity at each level.
+
+## Related Principles
+
+C4 model selection and guidance demonstrates alignment with core software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - This document makes architecture modeling tradeoffs explicit, helping teams understand when C4 fits vs when alternatives are more appropriate. Comparison tables and suitability matrices eliminate guesswork.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - C4's core value proposition is simplicity over heavyweight modeling approaches. The "When to Use C4" section helps teams avoid both under-modeling and over-modeling their systems.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Tooling philosophy emphasizes diagram-as-code approaches (Mermaid, Structurizr, PlantUML) over manual drawing tools, enabling version control and CI/CD integration.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Text-based diagram definitions ensure consistent architecture documentation across teams and time. Standard Mermaid syntax choice prioritizes long-term stability over experimental features.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.

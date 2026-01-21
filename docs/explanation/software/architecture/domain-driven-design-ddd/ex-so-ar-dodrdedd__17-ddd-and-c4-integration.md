@@ -795,3 +795,12 @@ DDD and C4 are complementary:
 - [C4-PlantUML](https://github.com/plantuml-stdlib/C4-PlantUML) - PlantUML C4 library
 - Eric Evans, "Domain-Driven Design" (2003)
 - Vaughn Vernon, "Implementing Domain-Driven Design" (2013)
+
+## Related Principles
+
+DDD and C4 integration embodies shared principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Both DDD and C4 make boundaries, relationships, and responsibilities explicit
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Both favor pragmatic simplicity over complex formalism
+
+See [C4 Model](../c4-architecture-model/README.md) and [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md).

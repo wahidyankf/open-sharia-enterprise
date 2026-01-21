@@ -891,3 +891,10 @@ Well-designed context maps help teams:
 - Vaughn Vernon, "Domain-Driven Design Distilled" (2016) - Chapter 4: Strategic Design with Context Mapping
 - [Context Mapper](https://contextmapper.org/) - Tool for modeling context maps
 - Michael Plöd, ["Context Mapping"](https://github.com/ddd-crew/context-mapping) - DDD Crew resources
+
+## Related Principles
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Context mapping makes integration patterns and team relationships explicit
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Choosing appropriate integration patterns prevents over-complex coupling
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.

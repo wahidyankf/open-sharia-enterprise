@@ -10,6 +10,16 @@ The C4 model uses five fundamental elements:
 4. **Component**: Grouping of related functionality within a container
 5. **Relationship**: Line connecting elements showing interaction
 
+### Core Principles
+
+C4 notation and conventions embody software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - C4 requires explicit labels on all elements (name, type, technology) and relationships. Every diagram must have an explicit title and legend. No hidden assumptions about what shapes or colors mean.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Standardized notation conventions enable different teams to produce consistent, reproducible documentation. The same system diagrammed by different architects using C4 conventions will have comparable structure and clarity.
+
+These principles manifest in C4's required labeling format, mandatory legends, and consistent element types across all abstraction levels.
+
 ### Visual Conventions
 
 **Flexibility First - Notation Independence**:
@@ -233,3 +243,13 @@ Colors are not mandated but recommended for clarity:
 - Infrastructure: #457b9d (slate blue)
 - Databases: #9d0208 (dark red)
 ```
+
+### Related Principles
+
+C4 notation and conventions demonstrate alignment with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Mandatory labeling (name, type, technology) and required legends make all diagram elements explicit. No ambiguity about what shapes, colors, or relationships represent.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Standardized conventions enable consistent documentation across teams, tools, and time. The same notation rules produce comparable diagrams regardless of who creates them.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.

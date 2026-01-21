@@ -526,3 +526,10 @@ For simple systems, a well-structured README can provide more value than diagram
 **Final Recommendation**:
 
 Create C4 diagrams when they **clarify complexity**, not when they **restate simplicity**. A well-structured README for a simple system is better than comprehensive C4 diagrams that nobody maintains.
+
+## Related Principles
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Simple apps often don't need complex C4 diagrams—avoid over-documentation
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - When diagrams do add value, they make system structure explicit
+
+See [C4 Model Best Practices](./ex-so-ar-c4armo__14-best-practices.md) for when to create C4 diagrams.

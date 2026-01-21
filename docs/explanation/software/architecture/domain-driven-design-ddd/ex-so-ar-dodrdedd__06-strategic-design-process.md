@@ -782,3 +782,10 @@ Start your DDD journey with Event Storming. It's the fastest, most effective way
 - Nick Tune, ["Bounded Context Design Canvas"](https://github.com/ddd-crew/bounded-context-canvas) - Canvas template and guide
 - Mathias Verraes, ["Workshop Facilitation Patterns"](https://verraes.net/2013/08/workshop-facilitation-patterns/) - Facilitation techniques
 - Paul Rayner, ["Event Storming Glossary & Cheat Sheet"](https://www.eventstormingjournal.com/glossary/) - Quick reference
+
+## Related Principles
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Event Storming automates domain discovery through structured workshops
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Strategic design makes domain complexity and boundaries explicit
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.

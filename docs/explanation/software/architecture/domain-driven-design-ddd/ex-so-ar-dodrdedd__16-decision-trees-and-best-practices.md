@@ -1014,3 +1014,12 @@ Good DDD decisions require:
 - Michael Feathers, "Working Effectively with Legacy Code" (2004) - Refactoring anemic models
 - Eric Evans, "Domain-Driven Design" (2003) - Original patterns
 - Vlad Khononov, "Learning Domain-Driven Design" (2021) - Modern DDD practices
+
+## Related Principles
+
+DDD decision-making aligns with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Decision trees make design choices and trade-offs explicit
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Best practices guide toward simplicity while avoiding over-engineering
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.

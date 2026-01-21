@@ -1086,3 +1086,10 @@ Use value objects when:
 - Vaughn Vernon, "Implementing Domain-Driven Design" (2013) - Chapter 5: Entities
 - Martin Fowler, ["Value Object"](https://martinfowler.com/bliki/ValueObject.html) - Contrasts with entities
 - Scott Wlaschin, "Domain Modeling Made Functional" (2018) - FP perspective on entities
+
+## Related Principles
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Entities make identity and lifecycle explicit through unique identifiers
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Entity validation methods can be pure functions
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.

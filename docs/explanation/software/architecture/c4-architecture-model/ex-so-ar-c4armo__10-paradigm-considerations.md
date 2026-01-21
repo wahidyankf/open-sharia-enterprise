@@ -541,3 +541,11 @@ Backend (OOP):
 
 - System Context: See examples in [Level 1: System Context](./ex-so-ar-c4armo__01-level-1-system-context.md)
 - Container: See examples in [Level 2: Container](./ex-so-ar-c4armo__02-level-2-container.md)
+
+## Related Principles
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - FP paradigms separate pure domain logic from side effects
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - FP emphasizes immutable data structures
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Both OOP and FP benefit from explicit architecture documentation
+
+See [DDD Functional Programming](../domain-driven-design-ddd/ex-so-ar-dodrdedd__14-ddd-and-functional-programming.md) for FP-specific patterns.

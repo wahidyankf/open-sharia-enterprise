@@ -1144,3 +1144,12 @@ class TaxAccountingAdapter {
 - [Strategic Design](./ex-so-ar-dodrdedd__03-bounded-contexts.md) - Bounded contexts and context mapping
 - [Tactical Patterns](./ex-so-ar-dodrdedd__09-aggregates.md) - Entities, value objects, aggregates
 - [Templates](./templates/) - Practical templates for DDD artifacts
+
+## Related Principles
+
+DDD practices align with core software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - DDD makes domain concepts and boundaries explicit
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Apply DDD patterns pragmatically, avoiding over-engineering
+
+See [Best Practices](./ex-so-ar-dodrdedd__19-best-practices.md) and [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md).

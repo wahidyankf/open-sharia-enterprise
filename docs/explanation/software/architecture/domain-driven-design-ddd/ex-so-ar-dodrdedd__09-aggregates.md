@@ -66,6 +66,18 @@ Version numbers on aggregate roots detect conflicting modifications.
 
 Load only the aggregate you need, not the entire domain graph.
 
+## Core Principles
+
+Aggregates implement multiple software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Aggregates make consistency boundaries explicit. The aggregate root as the single entry point makes it explicit which objects must change together in a transaction. Invariants are explicitly encoded and enforced rather than scattered as implicit assumptions across the codebase.
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Aggregate validation methods can be implemented as pure functions that return validation results without side effects. Business rule checks like `isEligibleForFinancing()` or `hasCompletedHawl()` are deterministic calculations that don't modify state.
+
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Aggregates protect invariants by controlling all state changes. In functional programming approaches, aggregates return new instances rather than mutating existing state, preventing invalid state transitions.
+
+These principles working together make aggregates the fundamental building block for maintaining domain integrity and consistency.
+
 ## Aggregate Design Principles
 
 ### 1. Keep Aggregates Small
@@ -855,6 +867,22 @@ class Order {
 **Problem**: Saving entities within aggregate independently.
 
 **Solution**: Save entire aggregate atomically via aggregate root repository.
+
+## Principles Implemented
+
+Aggregates demonstrate alignment with core software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Aggregates make consistency boundaries, transactional boundaries, and invariants explicit. The aggregate root pattern makes it explicit which objects must change together. Business rules are enforced at a single, explicit entry point rather than scattered as implicit validation logic.
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Aggregate validation and business rule checks can be implemented as pure functions that calculate results deterministically without side effects. Methods like `canApproveFinancing()` or `isEligibleForTax()` return consistent results for the same inputs.
+
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Aggregates prevent invalid state transitions by controlling all modifications through the root. In functional approaches, aggregates return new instances instead of mutating state, making invalid states impossible to represent.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Well-defined aggregate boundaries enable reproducible consistency patterns. The same aggregate design produces consistent behavior across different developers, teams, and contexts. Clear boundaries make transactional behavior predictable.
+
+Aggregates are where DDD principles manifest most concretely—they transform abstract consistency requirements into explicit, enforceable code structures.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Summary
 
