@@ -7,6 +7,12 @@
 - **Use Case**: Test same behavior with multiple data examples
 - **Complexity**: Beginner
 
+## Core Principles
+
+Scenario outlines align with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Examples tables make test data explicit rather than embedding in prose.
+
 ## Template Structure
 
 ```gherkin

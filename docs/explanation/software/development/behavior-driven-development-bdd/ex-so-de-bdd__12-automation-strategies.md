@@ -10,6 +10,16 @@ For Islamic finance platforms, automation strategy directly impacts compliance v
 
 This document covers CI/CD integration patterns, test data strategies, parallel execution, environment management, maintenance practices, and optimization techniques for keeping BDD suites fast and reliable as they grow.
 
+## Core Principles
+
+Strategic automation embodies fundamental software engineering principles:
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Manual test execution is slow, error-prone, and doesn't scale. Automated BDD scenarios in CI/CD pipelines provide instant feedback on every commit, catching regressions before they reach production. Multi-stage pipelines (smoke → regression → E2E) balance speed with coverage, running critical scenarios in minutes and comprehensive suites overnight. This automation transforms scenarios from documentation into continuous verification mechanisms.
+
+- **[Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)** - Test automation must produce consistent results regardless of when or where tests run. Transaction rollback ensures each scenario starts with clean state. Docker Compose provides identical test databases across development and CI. Environment configuration files (`.env.test`) guarantee reproducible test conditions. When tests fail, reproducibility ensures the failure is real, not environmental flakiness.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - The test pyramid guides complexity management: many simple unit-level BDD tests, fewer integration tests, minimal E2E tests. This distribution keeps test suites fast and maintainable while providing confidence. Page Objects and parameterized step definitions reduce duplication without introducing unnecessary abstraction.
+
 ## CI/CD Integration Patterns
 
 ### Basic Pipeline Integration
@@ -312,7 +322,7 @@ After({ tags: "@database" }, async function () {
 
 ### Test Isolation
 
-**Transaction Rollback Pattern**:
+**Transaction Rollback Pattern** (implements **[Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)**):
 
 ```typescript
 import { Before, After } from "@cucumber/cucumber";
@@ -334,6 +344,7 @@ After(async function () {
 - Fast (no full database reset)
 - Complete isolation (each scenario starts clean)
 - No test interference (parallel scenarios safe)
+- Reproducible results (identical starting state every run)
 
 **Docker Compose for Test Database**:
 
@@ -861,6 +872,16 @@ Strategic automation transforms BDD scenarios into fast, reliable, maintainable 
 - **Compliance**: Fast feedback for Compliance Advisory Board
 
 Automation strategy balances speed (fast feedback) with confidence (comprehensive coverage), ensuring BDD scenarios continuously verify that implementation matches business requirements while maintaining development velocity.
+
+## Related Principles
+
+Automation strategies demonstrate alignment with core software engineering principles:
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - CI/CD pipelines automatically execute scenarios, manage test data, run parallel tests, and detect flaky tests, eliminating manual test execution and maintenance.
+- **[Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)** - Environment configuration, Docker Compose, transaction rollback, and test fixtures ensure scenarios produce identical results across development machines and CI environments.
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - The test pyramid maintains simplicity by favoring many fast unit tests over few slow E2E tests, balancing coverage with execution speed.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Document Metadata
 

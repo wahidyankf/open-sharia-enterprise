@@ -16,6 +16,13 @@
 
 This template connects user stories to BDD scenarios, transforming abstract requirements into concrete executable specifications. User stories describe the "who, what, why" of features, while BDD scenarios provide testable acceptance criteria that define "done."
 
+## Core Principles
+
+User stories with BDD acceptance criteria align with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Acceptance criteria make "done" explicit through executable scenarios.
+- **[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Scenarios document expected behavior before implementation.
+
 ## Template Structure
 
 ```markdown

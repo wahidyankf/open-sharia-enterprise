@@ -8,6 +8,16 @@ The Builder pattern and Object Mother pattern are the two primary approaches. Bu
 
 Mastering test data builders is essential for maintaining large test suites. They transform brittle, verbose test setup into expressive, maintainable code.
 
+## Core Principles
+
+Test data builders embody foundational principles from this repository's [software engineering principles](../../../../../governance/principles/software-engineering/):
+
+**[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)**: Builders create immutable test fixtures. Each builder method returns a new builder instance rather than mutating the existing one. This ensures test data remains consistent and predictable—tests cannot accidentally modify shared fixtures.
+
+**[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**: Builders provide deterministic test data. The same builder configuration always produces identical fixtures, enabling reproducible test execution across environments and team members. Sensible defaults eliminate "works on my machine" test failures.
+
+These principles make test data builders reliable infrastructure for maintainable test suites. Immutable fixtures prevent test interference, while reproducible data ensures consistent results.
+
 ## Why Test Data Builders Matter
 
 ### The Problem: Verbose Test Setup
@@ -804,6 +814,19 @@ function buildDonation(overrides?: Partial<Donation>): Donation {
 // Usage: Only override what you need
 const donation = buildDonation({ id: "DONATION-CUSTOM" });
 ```
+
+## Related Principles
+
+**Software Engineering Principles**:
+
+- [Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md) - Builders create immutable fixtures that prevent test interference
+- [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md) - Builders provide deterministic test data across environments
+- [Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md) - Sensible defaults reduce complexity, add specificity only when needed
+
+**Related Practices**:
+
+- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Builders for immutable data structures
+- [Code Quality](../../../../../governance/development/quality/code.md) - Test code quality standards apply to builders
 
 ## Summary
 

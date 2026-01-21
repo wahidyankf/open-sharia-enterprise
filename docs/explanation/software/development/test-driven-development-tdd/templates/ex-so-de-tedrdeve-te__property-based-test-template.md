@@ -16,6 +16,13 @@
 
 Property-based testing generates hundreds of random test cases to verify that properties (invariants) hold for all inputs. Instead of writing specific examples, you describe the general behavior that should always be true.
 
+## Core Principles
+
+Property-based testing aligns with software engineering principles:
+
+- **[Pure Functions Over Side Effects](../../../../../../governance/principles/software-engineering/pure-functions.md)** - Property tests verify mathematical properties and invariants that hold for pure functions across all valid inputs.
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Tests explicitly document invariants and properties that must always hold, making implicit assumptions visible.
+
 ## When to Use Property-Based Tests
 
 **Use Property-Based Tests When**:
@@ -898,6 +905,14 @@ fc.assert(
 
 - [Unit Test Template](./ex-so-de-tedrdeve-te__unit-test-template.md) - Complementary example-based tests
 - [Test Data Builder Template](./ex-so-de-tedrdeve-te__test-data-builder-template.md) - Can be used in arbitraries
+
+## Related Principles
+
+Property-based testing demonstrates alignment with:
+
+- **[Pure Functions Over Side Effects](../../../../../../governance/principles/software-engineering/pure-functions.md)** - Properties verify that pure functions maintain mathematical invariants across all inputs.
+
+See [Software Engineering Principles](../../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Summary
 

@@ -10,9 +10,23 @@ This document covers the fundamentals of writing effective unit tests: test stru
 
 A good unit test has five key characteristics, summarized by the **FIRST** principles:
 
+## Core Principles Alignment
+
+The FIRST principles framework directly implements software engineering principles:
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - **Fast** tests (no I/O) enable continuous automated execution. **Timely** tests (written immediately) automate verification cycles rather than deferring to manual QA phases. Self-Validating tests provide automated pass/fail without manual inspection.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - **Independent** tests (no shared state) and **Repeatable** tests (deterministic) ensure reproducible verification. Same test always produces same result across environments and time. No flaky tests, no environment-specific failures.
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - **Self-Validating** tests (boolean pass/fail) make test intent explicit. No manual inspection required to determine success. Test assertions explicitly declare expected outcomes.
+
+The FIRST framework operationalizes these principles for unit testing. Violating FIRST principles typically means violating foundational software engineering principles.
+
 ### F - Fast
 
 **Characteristic**: Unit tests execute in milliseconds.
+
+This principle implements **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**. Fast tests enable continuous automated execution—developers run tests hundreds of times daily during TDD. Slow tests break flow and discourage frequent execution, defeating automation's core value.
 
 **Why it matters**: Developers run tests constantly during TDD. Slow tests break flow and discourage frequent execution.
 
@@ -44,6 +58,8 @@ it("should save tax calculation to database", async () => {
 ### I - Independent (Isolated)
 
 **Characteristic**: Each test runs independently without shared state.
+
+This principle implements **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** and **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)**. Independent tests enable reproducible verification—no shared mutable state means tests produce consistent results regardless of execution order. Parallel execution becomes possible.
 
 **Why it matters**: Tests that depend on each other are fragile. Changing one test breaks others. Parallel execution becomes impossible.
 
@@ -90,6 +106,8 @@ describe("TaxCalculator", () => {
 
 **Characteristic**: Running the same test multiple times always produces the same result.
 
+This principle embodies **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**. Repeatable tests provide deterministic verification—same inputs always produce same outputs, enabling reproducible test execution across environments and time. No flaky tests, no environment-specific failures.
+
 **Why it matters**: Flaky tests (pass/fail randomly) destroy confidence in the test suite. Developers ignore failures if tests are unreliable.
 
 **How to achieve**:
@@ -123,6 +141,8 @@ it("should calculate tax for current year", () => {
 
 **Characteristic**: Test either passes (green) or fails (red) automatically. No manual verification needed.
 
+This principle implements **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** and **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**. Self-validating tests automate verification through explicit assertions—no manual inspection of console output or log files. Boolean pass/fail enables continuous integration without human intervention.
+
 **Why it matters**: Manual verification doesn't scale. Automated pass/fail enables continuous integration.
 
 **How to achieve**:
@@ -151,6 +171,8 @@ it("should reject negative threshold amount", () => {
 ### T - Thorough (Timely)
 
 **Characteristic**: Tests cover important behaviors, edge cases, and error conditions. Written at the right time (before production code in TDD).
+
+This principle implements **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**. **Timely** test writing (before implementation in TDD) automates verification cycles—no deferred manual QA phase. **Thorough** coverage (happy path, edge cases, errors) automates verification of all important behaviors, not just the obvious ones.
 
 **Why it matters**: Incomplete tests give false confidence. Critical bugs slip through.
 
@@ -875,6 +897,22 @@ describe("FeatureName", () => {
 - **[05. Test Doubles](./ex-so-de-tedrdeve__05-test-doubles.md)**: Mocks, stubs, spies, fakes
 - **[06. Testing Patterns](./ex-so-de-tedrdeve__06-testing-patterns.md)**: AAA, Given-When-Then, table-driven tests
 - **[07. Test Data Builders](./ex-so-de-tedrdeve__07-test-data-builders.md)**: Builder pattern for test fixtures
+
+## Related Principles
+
+Unit testing fundamentals demonstrate alignment with core software engineering principles:
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - FIRST principles (Fast, Self-Validating, Timely) enable continuous automated verification. Fast tests run hundreds of times daily. Self-validating tests provide automated pass/fail without manual inspection. Timely tests (written before implementation) automate verification cycles.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - FIRST principles (Independent, Repeatable) ensure reproducible test execution. Independent tests (no shared state) produce consistent results regardless of execution order. Repeatable tests (deterministic) eliminate flaky failures and environment-specific issues.
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - AAA pattern (Arrange-Act-Assert) makes test structure explicit. Self-validating tests explicitly declare expected outcomes through assertions. Descriptive test names explicitly communicate behavior being verified.
+
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Independent tests avoid shared mutable state. Each test creates fresh instances in Arrange phase, preventing temporal coupling and race conditions.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Single behavior per test prevents complexity. AAA provides minimal viable test structure without over-engineering. Fast tests (no I/O) keep implementation simple.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation of foundational principles guiding TDD practices.
 
 ## Document Metadata
 

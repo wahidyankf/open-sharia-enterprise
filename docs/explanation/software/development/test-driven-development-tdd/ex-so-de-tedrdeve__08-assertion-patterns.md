@@ -8,6 +8,12 @@ This document covers essential assertion patterns: equality checks, truthiness, 
 
 Mastering assertion patterns transforms tests from mere "does it work?" checks into precise specifications of behavior that serve as executable documentation.
 
+## Core Principles
+
+Assertion patterns align with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Assertions explicitly state expected outcomes rather than relying on implicit behavior. Custom matchers with domain-specific names (like `toBeValidContract()`) make test intent immediately clear and failures easy to diagnose.
+
 ## Basic Assertions
 
 ### Equality Assertions
@@ -874,3 +880,7 @@ Strong assertions make tests self-documenting, failures easy to diagnose, and mu
 - **[11. TDD and Functional Programming](./ex-so-de-tedrdeve__11-tdd-and-functional-programming.md)** - Property-based testing assertions
 - **[18. Best Practices](./ex-so-de-tedrdeve__18-best-practices.md)** - TDD best practices
 - **[19. Antipatterns](./ex-so-de-tedrdeve__19-antipatterns.md)** - Common assertion mistakes
+
+## Related Principles
+
+- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)

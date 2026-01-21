@@ -26,6 +26,13 @@
 
 This FAQ addresses common questions about Behavior-Driven Development (BDD), covering both general practices and Islamic finance-specific scenarios. Questions are organized by category and include practical examples using Gherkin syntax and real-world contexts.
 
+## Core Principles
+
+BDD practices align with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - BDD makes requirements explicit through concrete examples and Given-When-Then scenarios.
+- **[Documentation First](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Scenarios document expected behavior before implementation.
+
 ## General BDD Questions
 
 ### Q1: Is BDD just Cucumber/Gherkin?
@@ -2446,6 +2453,15 @@ Team sees value of BDD, ready for second feature
 - [Example Mapping](./ex-so-de-bdd__05-example-mapping.md)
 - [BDD and TDD](./ex-so-de-bdd__13-bdd-and-tdd.md)
 - [BDD and DDD](./ex-so-de-bdd__14-bdd-and-ddd.md)
+
+## Related Principles
+
+BDD practices demonstrate alignment with:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Concrete examples make requirements explicit.
+- **[Documentation First](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Scenarios document behavior before code.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Document Metadata
 

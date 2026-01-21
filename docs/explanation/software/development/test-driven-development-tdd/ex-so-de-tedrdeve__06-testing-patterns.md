@@ -6,6 +6,12 @@ Testing patterns are structured approaches to organizing and writing tests. They
 
 This document covers the most important testing patterns in TDD: Arrange-Act-Assert (AAA), Given-When-Then (BDD style), table-driven tests, parameterized tests, snapshot testing, and test organization strategies. Mastering these patterns accelerates test writing and improves test quality.
 
+## Core Principles
+
+Testing patterns align with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - AAA and Given-When-Then patterns make test structure explicit: setup, execution, and verification are clearly delineated. Table-driven tests explicitly show all test cases in one place, making coverage immediately visible.
+
 ## Arrange-Act-Assert (AAA) Pattern
 
 The AAA pattern is the fundamental structure for unit tests. It divides each test into three clear phases:
@@ -729,3 +735,7 @@ Testing patterns provide structure and consistency:
 - **[07. Test Data Builders](./ex-so-de-tedrdeve__07-test-data-builders.md)** - Builder pattern and Object Mother
 - **[08. Assertion Patterns](./ex-so-de-tedrdeve__08-assertion-patterns.md)** - Effective assertions and custom matchers
 - **[11. TDD and Functional Programming](./ex-so-de-tedrdeve__11-tdd-and-functional-programming.md)** - Property-based testing in depth
+
+## Related Principles
+
+- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)

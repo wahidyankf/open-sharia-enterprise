@@ -9,6 +9,12 @@
 - **Prerequisites**: Understanding of Nx, monorepo architecture
 - **Complexity**: Intermediate
 
+## Core Principles
+
+TDD in Nx monorepo aligns with software engineering principles:
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Nx's affected command analysis automatically identifies which tests need to run based on code changes. This automation eliminates manual tracking of test dependencies and accelerates feedback loops in CI/CD.
+
 ## Table of Contents
 
 - [Overview](#overview)
@@ -1282,3 +1288,7 @@ jobs:
 **Related Resources**:
 
 - [Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md)
+
+## Related Principles
+
+- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)

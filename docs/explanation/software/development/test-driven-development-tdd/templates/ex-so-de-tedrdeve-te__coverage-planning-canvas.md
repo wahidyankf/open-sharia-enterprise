@@ -16,6 +16,13 @@
 
 The Coverage Planning Canvas helps you systematically plan test coverage for a module, feature, or entire domain. It ensures you don't miss critical test scenarios and helps prioritize testing effort based on risk and complexity.
 
+## Core Principles
+
+Test coverage planning aligns with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Coverage planning explicitly documents test scenarios, gaps, and acceptance criteria before implementation begins.
+- **[Simplicity Over Complexity](../../../../../../governance/principles/general/simplicity-over-complexity.md)** - Coverage targets prioritize testing effort based on component risk, impact, and complexity rather than arbitrary metrics.
+
 ## When to Use Coverage Planning Canvas
 
 **Use This Canvas When**:
@@ -437,6 +444,14 @@ Identify what could go wrong and plan mitigation.
 ### Step 8: Analyze Gaps
 
 Compare current coverage to targets, plan improvements.
+
+## Related Principles
+
+Test coverage planning demonstrates alignment with:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Planning canvas makes test strategy, scenarios, and quality gates explicit and visible.
+
+See [Software Engineering Principles](../../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Summary
 

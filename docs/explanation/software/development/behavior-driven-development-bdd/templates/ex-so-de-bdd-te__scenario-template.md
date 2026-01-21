@@ -18,6 +18,13 @@ This template provides structure for writing individual BDD scenarios using the 
 
 Each scenario follows a simple structure: Given (preconditions), When (action), Then (expected outcome). This format creates executable specifications that verify system behavior matches business requirements.
 
+## Core Principles
+
+Scenario structure aligns with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Given-When-Then makes preconditions, actions, and outcomes explicit.
+- **[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Scenarios document expected behavior before implementation.
+
 ## Template Structure
 
 ```gherkin

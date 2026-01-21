@@ -10,6 +10,14 @@ For Islamic finance platforms, living documentation provides critical value: Com
 
 This document explores the philosophy of living documentation, implementation patterns for maintaining executable specifications, reporting and visualization tools, strategies for keeping documentation current, and integration with CI/CD pipelines to ensure documentation evolves with the codebase.
 
+## Core Principles
+
+Living documentation embodies fundamental software engineering principles:
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Traditional documentation requires manual updates that inevitably get skipped. Living documentation automates synchronization between specification and implementation—when code changes, tests fail until documentation updates, forcing consistency. This automation eliminates the documentation drift that plagues manual processes. CI/CD pipelines automatically generate reports, publish documentation, and validate scenarios on every commit, removing human error from the documentation lifecycle.
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Living documentation makes system behavior explicit through executable examples. Instead of prose that can be interpreted multiple ways ("the system should validate inputs"), scenarios explicitly state "Given invalid email format, then system rejects registration with error 'Invalid email format'." This explicitness ensures everyone understands exactly how the system behaves.
+
 ## The Living Documentation Philosophy
 
 ### Documentation as Executable Specification
@@ -78,7 +86,7 @@ Feature: Tax Calculation for Gold Wealth
 
 **The Guarantee**: Living documentation cannot be wrong about current system behavior.
 
-**Enforcement Mechanism**: CI/CD pipeline
+**Enforcement Mechanism**: CI/CD pipeline (implementing **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**)
 
 ```bash
 # CI/CD Pipeline
@@ -1074,6 +1082,15 @@ Living documentation transforms BDD scenarios from tests into authoritative, alw
 - **Knowledge Preservation**: Scenarios capture domain knowledge (threshold, hawl, Interest rules)
 
 Living documentation ensures that what you document is what you build, and what you build is what gets deployed—creating a single source of truth that evolves with your system.
+
+## Related Principles
+
+Living documentation demonstrates alignment with core software engineering principles:
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - CI/CD pipelines automatically execute scenarios, generate reports, detect drift, and publish documentation, eliminating manual documentation maintenance.
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Executable scenarios explicitly state system behavior through concrete examples that run in CI/CD and fail when implementation deviates from specification.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Document Metadata
 

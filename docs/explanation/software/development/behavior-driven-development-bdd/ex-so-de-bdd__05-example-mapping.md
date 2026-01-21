@@ -23,6 +23,18 @@ This document provides comprehensive guidance on conducting Example Mapping sess
 
 **Format**: 25-minute time-boxed session with 2-5 participants arranged around a table or virtual board.
 
+## Core Principles
+
+Example Mapping embodies fundamental software engineering principles through structured constraints:
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - The 25-minute time-box is a hard constraint that enforces simplicity. This forces teams to focus on essential examples, preventing over-analysis and design paralysis. If a story can't be mapped in 25 minutes, it's too complex and needs splitting—the time-box acts as a complexity detector.
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Color-coded cards create explicit structure: blue for rules, yellow for examples, green for scenarios, red for questions. This visual system makes implicit information explicit—no ambiguity about what type of information you're discussing. The spatial layout explicitly shows rule-to-example-to-scenario relationships.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Green scenario cards become automated tests. The mapping session produces executable specifications, not static documentation. Red question cards prevent premature automation of unclear requirements.
+
+Example Mapping's genius lies in using constraints (time-box, colors, visual layout) to drive better outcomes.
+
 ### Visual Layout
 
 ```
@@ -838,6 +850,18 @@ Example Mapping is a structured visual technique for exploring user stories thro
 Example Mapping transforms abstract requirements into concrete examples through a simple, visual, time-boxed practice. When combined with Three Amigos and Gherkin, it provides a complete workflow from conversation to executable specifications.
 
 The next concept—Specification by Example—formalizes the philosophy behind using concrete examples to drive requirements discovery.
+
+## Related Principles
+
+Example Mapping demonstrates alignment with core software engineering principles:
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - 25-minute time-box enforces simplicity by preventing over-analysis. Four card types (not twenty) provide just enough structure. If a story can't be mapped in 25 minutes, it's too complex—the constraint acts as a complexity detector.
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Color-coded cards make information type explicit: blue=rules, yellow=examples, green=scenarios, red=questions. Visual spatial layout explicitly shows relationships. No ambiguity about what you're discussing.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Green scenario cards become automated tests. Example Mapping produces executable specifications, not static documentation. Visual map shows which scenarios will be automated.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation of foundational principles guiding BDD practices.
 
 ## Document Metadata
 

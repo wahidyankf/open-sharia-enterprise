@@ -16,6 +16,13 @@
 
 Test Data Builders use the Builder pattern to create test objects with sensible defaults while allowing easy customization. They improve test readability, reduce duplication, and make tests resilient to changes in object construction.
 
+## Core Principles
+
+Test data builders align with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Builders make test data creation explicit through fluent APIs, clearly expressing test intent and required data variations.
+- **[Pure Functions Over Side Effects](../../../../../../governance/principles/software-engineering/pure-functions.md)** - Builders create immutable test objects without side effects, supporting deterministic test behavior.
+
 ## When to Use Test Data Builders
 
 **Use Test Data Builders When**:
@@ -766,6 +773,14 @@ const variant2 = base.withStatus(TaxStatus.PENDING);
 - [Unit Test Template](./ex-so-de-tedrdeve-te__unit-test-template.md) - Using builders in unit tests
 - [Integration Test Template](./ex-so-de-tedrdeve-te__integration-test-template.md) - Using builders in integration tests
 - [Property-Based Test Template](./ex-so-de-tedrdeve-te__property-based-test-template.md) - Combining builders with property tests
+
+## Related Principles
+
+Test data builders demonstrate alignment with:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Fluent builder APIs explicitly document test scenarios and data requirements.
+
+See [Software Engineering Principles](../../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Summary
 

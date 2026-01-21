@@ -8,6 +8,12 @@ The Red-Green-Refactor cycle embeds refactoring as a first-class activity in TDD
 
 This document covers safe refactoring under test coverage: common refactorings (Extract Method, Move Method, Replace Conditional with Polymorphism), when to refactor during TDD, dealing with test breakage, and refactoring domain models in Islamic finance contexts.
 
+## Core Principles
+
+Refactoring with tests aligns with software engineering principles:
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Refactoring simplifies code structure while preserving behavior. Tests provide the safety net that enables aggressive simplification—extract methods, eliminate duplication, replace conditionals with polymorphism—without fear of breaking functionality.
+
 ## Refactoring in the TDD Cycle
 
 ### Red-Green-Refactor Discipline
@@ -530,3 +536,7 @@ Refactoring under test coverage is safe and sustainable. Tests provide confidenc
 - **[18. Best Practices](./ex-so-de-tedrdeve__18-best-practices.md)** - TDD best practices
 - **[19. Antipatterns](./ex-so-de-tedrdeve__19-antipatterns.md)** - Avoiding brittle tests
 - **[12. TDD and DDD](./ex-so-de-tedrdeve__12-tdd-and-ddd.md)** - Refactoring domain models
+
+## Related Principles
+
+- [Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)

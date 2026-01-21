@@ -10,6 +10,13 @@ For Islamic finance platforms built on Node.js/TypeScript (like this repository'
 
 This document compares major BDD frameworks, provides setup instructions for Node.js/TypeScript projects, demonstrates integration with test runners, and offers guidance for framework selection based on project context.
 
+## Core Principles
+
+Framework selection aligns with software engineering principles:
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Choose frameworks that integrate seamlessly with existing infrastructure rather than adding complexity.
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - BDD frameworks automate scenario execution, turning specifications into executable tests.
+
 ## Framework Landscape
 
 ### Major BDD Frameworks by Language
@@ -816,6 +823,15 @@ BDD frameworks automate executable specifications, transforming Gherkin scenario
 - Living documentation keeps Compliance scholars informed of implementation
 
 Choose your framework based on language/platform, existing test infrastructure, team expertise, and feature requirements. For Nx monorepos with Jest, Jest-Cucumber provides the smoothest integration path while maintaining full BDD capabilities.
+
+## Related Principles
+
+Framework selection demonstrates alignment with:
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Prefer frameworks that integrate with existing tools.
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Frameworks automate executable specification verification.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Document Metadata
 

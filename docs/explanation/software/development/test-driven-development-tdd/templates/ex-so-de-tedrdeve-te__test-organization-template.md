@@ -16,6 +16,13 @@
 
 Test organization determines how test files are structured, named, and located within your project. Good organization makes tests easy to find, run, and maintain.
 
+## Core Principles
+
+Test organization aligns with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Clear naming conventions and co-located tests make test-to-source relationships explicit and discoverable.
+- **[Simplicity Over Complexity](../../../../../../governance/principles/general/simplicity-over-complexity.md)** - Simple, flat test organization prevents over-engineered directory hierarchies and reduces cognitive overhead.
+
 ## Organization Strategies
 
 ### Strategy 1: Co-located Tests (Recommended)
@@ -744,6 +751,14 @@ describe("TaxCalculator", () => {
 - [ ] Coverage thresholds configured
 - [ ] Clear separation between fast and slow tests
 - [ ] Test utilities shared across tests
+
+## Related Principles
+
+Test organization demonstrates alignment with:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Co-located tests and clear naming make test structure self-documenting.
+
+See [Software Engineering Principles](../../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Summary
 

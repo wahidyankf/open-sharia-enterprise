@@ -23,6 +23,13 @@ Comprehensive catalog of common BDD antipatterns and how to avoid them. This doc
 
 Behavior-Driven Development fails when treated as merely another testing framework or when scenarios become coupled to implementation details. This guide identifies common BDD antipatterns based on industry experience and provides actionable guidance for avoidance and correction.
 
+## Core Principles
+
+Antipatterns violate software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Antipatterns like UI-coupled scenarios make implicit assumptions about implementation.
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Multiple behaviors per scenario and obsolete scenarios add unnecessary complexity.
+
 **Warning Signs of BDD Problems**:
 
 - Scenarios break with every UI change
@@ -505,6 +512,15 @@ Key references used in this document:
 - [Cucumber Anti-Patterns](https://www.thinkcode.se/blog/2016/06/22/cucumber-antipatterns)
 - [Three BDD antipatterns](https://www.andrewl.net/article/three-bdd-antipatterns/)
 - [BDD 101: Writing Good Gherkin](https://automationpanda.com/2017/01/30/bdd-101-writing-good-gherkin/)
+
+## Related Principles
+
+Avoiding antipatterns demonstrates alignment with:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Well-structured scenarios make requirements explicit.
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Focused scenarios maintain simplicity.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ---
 

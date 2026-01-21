@@ -36,6 +36,20 @@ Deciding what type of test to write, what coverage to aim for, and how to integr
 - How do I integrate TDD into CI/CD pipelines?
 - What are special considerations for Islamic finance testing?
 
+## Core Principles
+
+Testing decisions should align with foundational principles from this repository's [software engineering principles](../../../../../governance/principles/software-engineering/):
+
+**[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**: Decision criteria favor automated testing over manual verification. Tests should run automatically in CI/CD pipelines, providing fast feedback without human intervention. Choose test types based on automation efficiency—unit tests run on every commit, integration tests on PR, E2E tests before deployment.
+
+**[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**: Test coverage goals should be explicit, not assumed. Decision matrices provide clear criteria for when to use each test type. Coverage targets are stated explicitly by component type (domain logic: 90-100%, infrastructure: 60-80%).
+
+**[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)**: Start with simple unit tests, add complex integration/E2E tests only when needed. The testing pyramid guides this principle—most tests are simple, fast unit tests; fewer complex, slow E2E tests. Avoid over-testing trivial code.
+
+**[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**: Tests should produce consistent results across environments. Decision criteria include test determinism—avoid tests that rely on timing, external services, or local environment configuration. Reproducible tests enable reliable CI/CD.
+
+These principles guide testing decisions toward effective, maintainable test suites that support development velocity.
+
 ## Test Type Decision Tree
 
 ### Decision Flow Diagram
@@ -941,7 +955,7 @@ flowchart LR
 
 ### Best Practices
 
-1. **Fast Feedback Loop**
+1. **Fast Feedback Loop** (aligns with **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**)
    - Run unit tests first (fastest)
    - Run integration tests only if unit tests pass
    - Run E2E tests only if integration tests pass
@@ -1670,6 +1684,21 @@ describe("TaxCalculator", () => {
   });
 });
 ```
+
+## Related Principles
+
+**Software Engineering Principles**:
+
+- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md) - Automated test execution in CI/CD pipelines
+- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md) - Explicit coverage targets and test criteria
+- [Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md) - Testing pyramid: start simple, add complexity only when needed
+- [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md) - Deterministic, reproducible test execution
+
+**Related Practices**:
+
+- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Pure functions simplify testing
+- [Implementation Workflow](../../../../../governance/development/workflow/implementation.md) - When to write tests during development
+- [Code Quality](../../../../../governance/development/quality/code.md) - Automated quality gates
 
 ## Summary
 

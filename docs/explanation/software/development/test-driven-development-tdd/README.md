@@ -132,6 +132,28 @@ _Proceedings of the 25th International Conference on Software Engineering (ICSE 
 
 These peer-reviewed studies provide strong empirical evidence for TDD's effectiveness in industrial software development contexts.
 
+## TDD and Software Engineering Principles
+
+TDD benefits stem from alignment with core software engineering principles:
+
+| TDD Practice                         | Principle                                                                                                           | How They Connect                                                                  |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Red-Green-Refactor cycle             | **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**   | Automates verification cycles; replaces manual testing                            |
+| Test-first approach                  | **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**   | Tests make requirements explicit before implementation                            |
+| FIRST principles (Fast, Independent) | **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**   | Fast tests enable continuous automation; independent tests ensure reproducibility |
+| FIRST principles (Repeatable)        | **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**           | Deterministic tests produce same results across environments and time             |
+| Minimal implementation (Green phase) | **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)**        | Write simplest code to pass; no gold-plating                                      |
+| Pure functions testing               | **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** | Pure functions inherently testable; no mocks needed                               |
+| Test data builders                   | **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)**       | Create immutable test fixtures; no shared state                                   |
+| Property-based testing               | **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**   | Automates test case generation and invariant checking                             |
+| AAA pattern (Arrange-Act-Assert)     | **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**   | Explicit three-phase test structure makes intent clear                            |
+| Refactoring with tests               | **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)**        | Improve design structure incrementally while keeping tests green                  |
+| Independent tests (FIRST-I)          | **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**           | No shared state ensures reproducible test execution                               |
+| Tests as living documentation        | **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**   | Executable specifications automatically stay synchronized with code               |
+| Deterministic test data              | **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**           | Fixed test data ensures repeatable test execution                                 |
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for foundational philosophy.
+
 ## Documentation Structure
 
 This documentation is organized into foundational concepts, core practices, advanced integration, and meta-guidance.
@@ -465,6 +487,24 @@ TDD provides the feedback loops and safety net that enable this iterative workfl
 - **[Implementation Workflow](../../../../../governance/development/workflow/implementation.md)** - TDD in development process
 - **[Code Quality Standards](../../../../../governance/development/quality/code.md)** - Testing in quality assurance
 - **[Nx Monorepo Documentation](../../../../../docs/reference/re__monorepo-structure.md)** - Testing in monorepo context
+
+## Related Principles
+
+TDD practices demonstrate alignment with core software engineering principles:
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Red-Green-Refactor cycle automates verification cycles. FIRST principles (Fast, Self-Validating, Timely) enable continuous automated testing. Tests run constantly (every 1-2 minutes), replacing manual verification entirely.
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Test-first approach makes requirements explicit before implementation. AAA pattern explicitly declares test structure. Test names explicitly describe expected behavior.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Green phase enforces simplest code to pass. Refactoring improves design incrementally through small steps. Each cycle takes minutes—simplicity through tiny verified steps.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - FIRST principles (Independent, Repeatable) ensure reproducible test execution. Deterministic tests produce same results across environments and time. No flaky tests, no environment-specific failures.
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Pure functions are inherently testable—no mocks, no setup, no teardown. TDD drives toward pure, composable functions through test feedback.
+
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Test data builders create immutable test fixtures. Independent tests avoid shared mutable state. Value objects tested for immutability invariants.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation of foundational principles guiding TDD.
 
 ## Document Metadata
 

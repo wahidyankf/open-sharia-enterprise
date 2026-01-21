@@ -8,6 +8,13 @@ The **Testing Pyramid** is a conceptual model that helps teams balance their tes
 
 This document explores three primary test types (unit, integration, end-to-end), their characteristics, when to use each, and how to structure your test suite following the pyramid principle.
 
+## Core Principles
+
+Test types and the testing pyramid align with software engineering principles:
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - The testing pyramid prescribes a simple distribution: many fast unit tests, fewer integration tests, and minimal E2E tests. This simplicity maximizes feedback speed while maintaining comprehensive coverage.
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Automated testing across all pyramid levels eliminates manual verification, enabling rapid iteration and continuous deployment with confidence.
+
 ## The Testing Pyramid
 
 The Testing Pyramid was popularized by Mike Cohn in his book "Succeeding with Agile" (2009) and has become the standard model for test suite composition.
@@ -770,6 +777,11 @@ For a typical application:
 - **[Unit Testing Fundamentals](./ex-so-de-tedrdeve__04-unit-testing-fundamentals.md)**: Deep dive into unit testing techniques
 - **[Integration Testing](./ex-so-de-tedrdeve__09-integration-testing.md)**: Contract testing, database integration
 - **[End-to-End Testing](./ex-so-de-tedrdeve__10-end-to-end-testing.md)**: Playwright, user journeys, Page Object Model
+
+## Related Principles
+
+- [Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)
+- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)
 
 ## Document Metadata
 

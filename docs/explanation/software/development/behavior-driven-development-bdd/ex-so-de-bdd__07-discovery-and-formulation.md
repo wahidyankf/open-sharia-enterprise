@@ -10,6 +10,13 @@ In Islamic finance contexts, this separation is especially valuable. During disc
 
 This document explores discovery and formulation in depth: the goals of each phase, techniques for effective discovery, best practices for formulation, and how the two phases work together to create specifications that are both collaborative and precise.
 
+## Core Principles
+
+Discovery and formulation align with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Formulation phase converts conversations into explicit Given-When-Then scenarios with clear preconditions and expected outcomes.
+- **[Documentation First](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Scenarios are documented during formulation before implementation begins.
+
 ## Discovery: Learning Through Conversation
 
 ### Purpose of Discovery
@@ -705,6 +712,15 @@ Discovery and Formulation represent the two-phase heartbeat of BDD: first discov
 Discovery and Formulation ensure that BDD specifications are both collaborative (built through conversation) and precise (structured for automation). This two-phase approach prevents the common pitfall of premature formalization while ensuring discovered requirements are captured accurately.
 
 The next section covers the technical implementation of BDD specifications, starting with feature file organization.
+
+## Related Principles
+
+Discovery and formulation demonstrate alignment with:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Formulation makes implicit conversations explicit through structured Gherkin.
+- **[Documentation First](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Scenarios documented before code implementation.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Document Metadata
 

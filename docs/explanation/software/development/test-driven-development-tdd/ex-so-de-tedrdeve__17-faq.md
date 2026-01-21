@@ -24,6 +24,13 @@
 
 This FAQ addresses common questions about Test-Driven Development (TDD), covering both general practices and Islamic finance-specific scenarios. Questions are organized by category and include practical examples.
 
+## Core Principles
+
+TDD practices align with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - TDD makes requirements explicit through tests before writing implementation. Each test explicitly documents expected behavior, transforming implicit assumptions into verifiable specifications.
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - TDD automates verification of correctness through executable tests rather than manual inspection. This automation enables confident refactoring and rapid feedback on code changes.
+
 ## General TDD Questions
 
 ### Q1: How much test coverage is enough?
@@ -1467,3 +1474,8 @@ describe("ModernTaxCalculator", () => {
 - [Core Concepts](./ex-so-de-tedrdeve__01-introduction-and-philosophy.md)
 - [Red-Green-Refactor](./ex-so-de-tedrdeve__02-red-green-refactor-cycle.md)
 - [Testing Pyramid](./ex-so-de-tedrdeve__03-test-types-and-pyramid.md)
+
+## Related Principles
+
+- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
+- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)

@@ -16,6 +16,13 @@
 
 This checklist provides a systematic workflow for practicing Test-Driven Development following the Red-Green-Refactor cycle. Use this checklist to ensure you're following TDD discipline and not skipping important steps.
 
+## Core Principles
+
+TDD workflow aligns with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - TDD makes requirements explicit by writing tests first, documenting expected behavior before implementation.
+- **[Simplicity Over Complexity](../../../../../../governance/principles/general/simplicity-over-complexity.md)** - Red-Green-Refactor cycle enforces minimal implementation to pass tests, preventing over-engineering and unnecessary complexity.
+
 ## Before Starting TDD Session
 
 ### Environment Setup
@@ -368,6 +375,14 @@ When reviewing code written with TDD, check:
 - [ ] Commit or stash changes
 - [ ] Push to remote (if team practice)
 - [ ] Note where you left off for tomorrow
+
+## Related Principles
+
+TDD workflow demonstrates alignment with:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Tests first approach makes all behavior expectations explicit before coding.
+
+See [Software Engineering Principles](../../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Summary
 

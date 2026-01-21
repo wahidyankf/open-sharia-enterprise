@@ -10,6 +10,13 @@ For Islamic finance applications, step definitions must bridge the gap between C
 
 This document covers step definition syntax, implementation patterns for Given/When/Then steps, parameterization for reusability, organizing step definitions for maintainability, testing strategies, and TypeScript/JavaScript best practices for Node.js-based projects.
 
+## Core Principles
+
+Step definitions align with software engineering principles:
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Well-designed step definitions minimize side effects and isolate state changes.
+- **[Immutability](../../../../../governance/principles/software-engineering/immutability.md)** - Test data and domain objects should be immutable where possible to prevent state leakage between scenarios.
+
 ## Step Definition Fundamentals
 
 ### Mapping Steps to Code
@@ -1292,6 +1299,15 @@ Step definitions bridge Gherkin scenarios (business-readable specifications) to 
 - Clean up after tests with **hooks**
 
 Step definitions are the "glue code" that makes BDD specifications executable. By following these patterns and best practices, step definitions remain maintainable, reusable, and aligned with business language, enabling true living documentation that both domain experts and developers can understand and trust.
+
+## Related Principles
+
+Step definitions demonstrate alignment with:
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Minimize side effects in Given/When steps.
+- **[Immutability](../../../../../governance/principles/software-engineering/immutability.md)** - Use immutable test data and value objects.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Document Metadata
 

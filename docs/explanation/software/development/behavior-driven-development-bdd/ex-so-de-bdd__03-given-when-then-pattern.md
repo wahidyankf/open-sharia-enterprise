@@ -8,6 +8,16 @@ This pattern emerged from recognizing that software behavior can be universally 
 
 This document explores the Given-When-Then pattern in depth, covering the purpose of each section, common patterns across different domains, and practical techniques for writing clear, maintainable scenarios. Understanding GWT thoroughly is essential for writing effective BDD specifications that serve as both documentation and executable tests.
 
+## Core Principles
+
+The Given-When-Then pattern embodies fundamental software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - GWT forces explicit structure: preconditions (Given), action (When), and expected outcome (Then). This eliminates hidden assumptions and makes test intent immediately clear. No reader needs to infer what the test validates—the three-phase structure declares it explicitly.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Three-phase structure provides just enough organization without over-engineering. More complex patterns (Setup-Exercise-Verify-Teardown, Four-Phase Test) add cognitive load without commensurate clarity gains. GWT is the minimum viable structure for clear behavior specification.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Given section establishes repeatable preconditions. Same preconditions always produce same outcomes, enabling deterministic test execution across environments and time. No flaky tests, no environment-specific failures.
+
 ## The Given-When-Then Structure
 
 ### Pattern Overview
@@ -33,9 +43,12 @@ This maps directly to the **Arrange-Act-Assert (AAA)** pattern from unit testing
 
 **Cognitive Clarity:**
 
+This structure embodies **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** through forced separation of concerns:
+
 - Humans naturally think in "when X happens in context Y, then Z should occur"
 - Separating context/action/outcome prevents conflating different concerns
 - Clear structure makes scenarios scannable and reviewable
+- No implicit assumptions—all preconditions, actions, and expectations are stated explicitly
 
 **Communication:**
 
@@ -158,11 +171,13 @@ And no cross-contamination risk identified
 
 ### Best Practices for Given Steps
 
+These practices implement **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** and **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)**:
+
 **DO:**
 
 - Use past tense: "Given user **has** logged in" (state already established)
-- Be explicit about all preconditions needed for scenario
-- Set up only what's necessary (avoid irrelevant details)
+- Be explicit about all preconditions needed for scenario—no implicit assumptions
+- Set up only what's necessary (avoid irrelevant details—simplicity over completeness)
 - Use data tables for complex multi-attribute setup
 
 **DON'T:**
@@ -339,7 +354,7 @@ When user attempts to create contract with interest rate
 
 ### Single Action Principle
 
-Each scenario should test **one primary action**. If you find yourself with multiple When steps describing different actions, consider splitting into multiple scenarios.
+Each scenario should test **one primary action**—a direct application of **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)**. Testing multiple behaviors in one scenario creates cognitive overload and makes failures ambiguous. If you find yourself with multiple When steps describing different actions, consider splitting into multiple scenarios.
 
 ```gherkin
 # ❌ BAD: Multiple actions blur what's being tested
@@ -895,6 +910,20 @@ The Given-When-Then pattern provides a universal structure for describing expect
 The Given-When-Then pattern transforms complex business rules into clear, executable specifications. By forcing separation of context, action, and outcome, it prevents ambiguous requirements and creates living documentation that stakeholders can validate.
 
 The next step is exploring **collaborative practices** that use GWT scenarios to facilitate team communication—starting with the Three Amigos practice.
+
+## Related Principles
+
+The Given-When-Then pattern demonstrates alignment with core software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Three-phase structure forces explicit declaration of preconditions, actions, and expectations. The "Cognitive Clarity" benefit stems directly from explicit structure eliminating implicit assumptions.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - GWT provides minimal viable structure for behavior specification. The "Single Action Principle" prevents complexity creep by limiting each scenario to one primary behavior.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Given steps establish repeatable preconditions enabling deterministic test execution. Same initial context always produces same outcomes.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - GWT structure maps directly to automated test frameworks (Arrange-Act-Assert pattern). Scenarios become executable specifications, not manual test scripts.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation of foundational principles guiding BDD practices.
 
 ## Document Metadata
 

@@ -342,6 +342,17 @@ To add new templates to this collection:
 4. **Document Usage**: When to use, what it contains, how to customize
 5. **Link to Main Docs**: Reference from README and related docs
 
+## Related Principles
+
+BDD templates embody software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Templates enforce explicit Given-When-Then structure, concrete examples over abstract descriptions, and business-readable specifications.
+- **[Simplicity Over Complexity](../../../../../../governance/principles/general/simplicity-over-complexity.md)** - Templates provide minimal structure without over-engineering. Three-phase scenarios, 25-minute workshops, and focused examples prevent unnecessary complexity.
+- **[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Step definition templates enable automated scenario execution, eliminating manual regression testing.
+- **[Reproducibility First](../../../../../../governance/principles/software-engineering/reproducibility.md)** - Templates stored in version control ensure reproducible specifications across teams and environments.
+
+See [Software Engineering Principles](../../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
+
 ## Summary
 
 **Available Templates (7)**:

@@ -92,6 +92,27 @@ BDD may not be appropriate for:
 
 **Note**: Even in these cases, **some** collaboration and concrete examples are valuable. The question is whether to adopt full BDD practices (Three Amigos, Example Mapping, Gherkin scenarios) or lightweight alternatives.
 
+## BDD and Software Engineering Principles
+
+BDD benefits stem from alignment with core software engineering principles:
+
+| BDD Practice                     | Principle                                                                                                         | How They Connect                                                      |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Given-When-Then structure        | **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** | Three-phase pattern makes test intent explicit; no hidden assumptions |
+| Specification by Example         | **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** | Concrete examples replace ambiguous requirements                      |
+| 25-minute Example Mapping        | **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)**      | Time-box constraint prevents over-engineering                         |
+| Living Documentation             | **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** | Scenarios execute automatically; no manual verification               |
+| Feature files in version control | **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**         | Specifications reproducible across teams and time                     |
+| Scenario independence            | **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)**     | No shared mutable state between scenarios                             |
+| Three Amigos (3 perspectives)    | **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)**      | Just enough roles; avoids bloated stakeholder meetings                |
+| Ubiquitous language              | **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** | Same explicit terminology in conversations, docs, and code            |
+| CI/CD integration                | **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** | Automated scenario execution replaces manual regression testing       |
+| Gherkin in version control       | **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**         | Version-controlled specifications ensure reproducible requirements    |
+| Deterministic Given steps        | **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**         | Same preconditions always produce same outcomes                       |
+| Outside-in development           | **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** | Start with explicit acceptance criteria, not implicit implementation  |
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for foundational philosophy.
+
 ## Documentation Structure
 
 This documentation is organized into foundation (core concepts), collaboration (BDD's unique value), implementation (technical practices), integration (with other methodologies), and meta-guidance.
@@ -448,6 +469,22 @@ Ready to apply BDD to your project? Start here:
 5. **Choose framework**: Review [BDD Frameworks](./ex-so-de-bdd__11-bdd-frameworks.md) comparison
 6. **Write first feature**: Use [Feature File Template](./templates/ex-so-de-bdd-te__feature-file-template.md)
 7. **Implement steps**: Follow [Step Definitions Guide](./ex-so-de-bdd__09-step-definitions.md)
+
+## Related Principles
+
+BDD practices demonstrate alignment with core software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Given-When-Then structure explicitly declares preconditions, actions, expectations. Specification by Example replaces ambiguous abstractions with concrete scenarios. Ubiquitous language makes domain terminology explicit across all communication.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Example Mapping's 25-minute time-box prevents over-analysis. Three Amigos (3 roles) provides just enough perspectives without bloated meetings. Gherkin syntax prioritizes readability over complex notation.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Living documentation automates specification verification. CI/CD integration automates scenario execution, replacing manual regression testing. Executable specifications ensure documentation stays current automatically.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Version-controlled feature files enable reproducible specifications across teams and time. Deterministic Given steps ensure same preconditions produce same outcomes. No flaky tests—scenarios pass consistently.
+
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Independent scenarios avoid shared mutable state. Each scenario establishes its own preconditions without depending on prior scenario state changes.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation of foundational principles guiding BDD.
 
 ## Document Metadata
 
