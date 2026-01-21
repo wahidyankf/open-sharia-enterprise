@@ -49,6 +49,22 @@ Language-specific idioms, best practices, and antipatterns:
 
 - **[Java](./stack-lang/java/README.md)** - Modern Java development (Java 17+) with records, pattern matching, and virtual threads
 
+## Why This Structure?
+
+**Three complementary dimensions of software design:**
+
+- **Architecture** answers _"What are we building?"_ - System structure, boundaries, and strategic design decisions
+- **Development** answers _"How do we build reliably?"_ - Testing practices that ensure correctness and alignment with requirements
+- **Programming Languages** answers _"How do we write idiomatic code?"_ - Language-specific patterns that leverage each language's strengths
+
+**Think of it as:**
+
+- **Architecture** = Building blueprint (rooms, walls, plumbing)
+- **Development** = Construction methodology (inspection checkpoints, quality control)
+- **Languages** = Craftsmanship (how to properly use tools and materials)
+
+All three work together: you need good architecture to know what to build, solid development practices to build it correctly, and language expertise to build it idiomatically.
+
 ---
 
 ## Architecture Documentation

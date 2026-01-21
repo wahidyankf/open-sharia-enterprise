@@ -19,12 +19,36 @@ updated: 2026-01-20
 
 ## Overview
 
-This directory contains comprehensive documentation on two complementary architectural approaches:
+**The Challenge**: You're building a complex system. Stakeholders ask "how does it work?" Junior developers ask "where should this code go?" Teams in different contexts use different terms for the same concept. Architecture documentation gets outdated the moment you write it.
+
+**Our Approach**: We combine two complementary practices that solve different but related problems:
 
 1. **C4 Architecture Model** - Visual communication of software architecture through hierarchical diagrams
 2. **Domain-Driven Design (DDD)** - Strategic and tactical patterns for modeling complex business domains
 
 These approaches work together to help teams design, communicate, and implement robust software systems that align with business needs while maintaining technical excellence.
+
+## Why Architecture Documentation Matters
+
+Clear architecture documentation delivers tangible benefits:
+
+- **Faster Onboarding** - New developers understand system structure in hours instead of weeks
+- **Better Communication** - Stakeholders, developers, and domain experts share a common visual language
+- **Reduced Technical Debt** - Explicit boundaries and responsibilities prevent "big ball of mud" architectures
+- **Confident Evolution** - Teams make changes knowing the ripple effects and integration points
+
+## Quick Decision: Which Documentation Do I Need?
+
+| Your Situation                                       | Start With                                                                                                           |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Need to explain system to stakeholders               | [C4 System Context](./c4-architecture-model/README.md)                                                               |
+| Building complex business rules system               | [DDD Introduction](./domain-driven-design-ddd/README.md)                                                             |
+| Aligning multiple teams on integration               | [DDD Context Mapping](./domain-driven-design-ddd/ex-so-ar-dodrdedd__04-context-mapping.md)                           |
+| Creating architecture diagrams from scratch          | [C4 Templates](./c4-architecture-model/templates/README.md)                                                          |
+| Modeling domain logic with functional programming    | [DDD and Functional Programming](./domain-driven-design-ddd/ex-so-ar-dodrdedd__14-ddd-and-functional-programming.md) |
+| Combining strategic design with visual communication | [DDD and C4 Integration](./domain-driven-design-ddd/ex-so-ar-dodrdedd__17-ddd-and-c4-integration.md)                 |
+
+---
 
 ## Documentation Structure
 
@@ -54,7 +78,9 @@ The C4 model provides a systematic way to create architecture diagrams at four l
 
 **Strategic and tactical patterns for modeling complex business domains**
 
-Domain-Driven Design is a software development approach that places the business domain at the center of design. Introduced by Eric Evans in 2003, DDD provides patterns for managing complexity in large-scale systems through strategic design (understanding the business) and tactical patterns (implementing the model).
+Domain-Driven Design places the business domain at the center of software design. Introduced by Eric Evans in 2003, DDD helps teams manage complexity in large-scale systems.
+
+DDD provides two complementary pattern sets: strategic design for understanding the business and tactical patterns for implementing the domain model.
 
 **Key Documentation:**
 
@@ -72,6 +98,8 @@ Domain-Driven Design is a software development approach that places the business
 - Access to domain experts for collaboration
 - Long-lived systems expected to evolve over years
 - High cost of defects or regulatory compliance requirements
+
+---
 
 ## How C4 and DDD Work Together
 
@@ -95,6 +123,8 @@ C4 and DDD complement each other throughout the design process:
 6. Document **runtime behavior** with Dynamic diagrams (C4) and Domain Events (DDD)
 
 See [DDD and C4 Integration](./domain-driven-design-ddd/ex-so-ar-dodrdedd__17-ddd-and-c4-integration.md) for comprehensive examples and guidance.
+
+---
 
 ## Learning Paths
 

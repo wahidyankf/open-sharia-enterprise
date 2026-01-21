@@ -20,12 +20,46 @@ updated: 2026-01-20
 
 ## Overview
 
-This directory contains comprehensive documentation on two complementary development practices:
+**The Problem**: Writing tests after code leads to untestable designs, incomplete coverage, and tests that simply verify existing implementation. Business requirements get lost in translation between stakeholders and developers. Teams debate whether tests are worth the effort.
+
+**Our Solution**: Test-first development practices that drive design, ensure coverage, and align implementation with requirements:
 
 1. **Test-Driven Development (TDD)** - Write tests first, then implement code to pass those tests
 2. **Behavior-Driven Development (BDD)** - Specify behavior through examples in collaboration with domain experts
 
 Both practices emphasize writing tests before implementation, but at different levels of abstraction. TDD focuses on technical correctness at the unit level, while BDD focuses on business behavior at the feature level.
+
+## Quick Decision: TDD, BDD, or Both?
+
+```mermaid
+graph TD
+    A[What are you building?] --> B{Complex business rules?}
+    B -->|Yes + Stakeholder collaboration| C[BDD + TDD]
+    B -->|Yes + Technical only| D[TDD Only]
+    B -->|No + Simple CRUD| E[TDD Only]
+
+    C --> F[Use BDD for acceptance tests<br/>Use TDD for unit tests<br/>Outside-In approach]
+    D --> G[Use TDD for all tests<br/>Focus on domain logic]
+    E --> H[Use TDD for core logic<br/>Integration tests for APIs]
+
+    style C fill:#029E73,stroke:#000000,color:#FFFFFF
+    style D fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style E fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style F fill:#029E73,stroke:#000000,color:#FFFFFF
+    style G fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style H fill:#DE8F05,stroke:#000000,color:#FFFFFF
+```
+
+**Decision Matrix**:
+
+| Your Situation                          | Recommended Approach   | Start With                                                            |
+| --------------------------------------- | ---------------------- | --------------------------------------------------------------------- |
+| Complex business rules + domain experts | BDD + TDD              | [BDD Three Amigos](./behavior-driven-development-bdd/README.md)       |
+| Technical library or framework          | TDD Only               | [TDD Red-Green-Refactor](./test-driven-development-tdd/README.md)     |
+| API with business logic                 | BDD + TDD              | [Outside-In TDD](./test-driven-development-tdd/README.md)             |
+| Pure functions and algorithms           | TDD Only               | [TDD and FP](./test-driven-development-tdd/README.md)                 |
+| Legacy code without tests               | TDD (Characterization) | [TDD Characterization Tests](./test-driven-development-tdd/README.md) |
+| New feature with acceptance criteria    | BDD + TDD              | [BDD Gherkin Scenarios](./behavior-driven-development-bdd/README.md)  |
 
 ## Documentation Structure
 
@@ -110,6 +144,35 @@ TDD and BDD complement each other throughout the development process:
 5. **Integration** - Run BDD scenario end-to-end (GREEN - passes)
 6. **Refactor** - Improve design across all layers
 7. **Living Documentation** - BDD scenarios serve as up-to-date specification
+
+```mermaid
+graph TD
+    A[Discovery: Three Amigos] --> B[Formulation: Write Gherkin]
+    B --> C[Automation: Step Definitions RED]
+    C --> D{For Each Step}
+
+    D --> E[TDD: Write Unit Test RED]
+    E --> F[TDD: Minimal Code GREEN]
+    F --> G[TDD: Refactor]
+    G --> H{More Steps?}
+
+    H -->|Yes| D
+    H -->|No| I[Integration: BDD Scenario GREEN]
+    I --> J[Refactor: All Layers]
+    J --> K[Living Documentation]
+
+    style A fill:#029E73,stroke:#000000,color:#FFFFFF
+    style B fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style C fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style E fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style F fill:#029E73,stroke:#000000,color:#FFFFFF
+    style G fill:#CA9161,stroke:#000000,color:#FFFFFF
+    style I fill:#029E73,stroke:#000000,color:#FFFFFF
+    style J fill:#CA9161,stroke:#000000,color:#FFFFFF
+    style K fill:#CC78BC,stroke:#000000,color:#FFFFFF
+```
+
+**Legend**: 🟢 Teal = Passing tests (GREEN) | 🟠 Orange = Failing tests (RED) | 🟤 Brown = Refactoring
 
 See [BDD and TDD Integration](./behavior-driven-development-bdd/ex-so-de-bdd__13-bdd-and-tdd.md) for comprehensive examples.
 

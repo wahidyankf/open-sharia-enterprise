@@ -15,7 +15,19 @@ last_updated: 2026-01-21
 
 # FSM Templates
 
-Production-ready templates for Finite State Machine design, implementation, and testing.
+**Don't start from scratch. Build on proven patterns.**
+
+Production-ready templates for Finite State Machine design, implementation, and testing. Every template includes complete Islamic Finance examples, WCAG-compliant diagrams, and implementation guidance.
+
+## Most Popular Templates
+
+**New to FSM or just want the essentials?** Start here:
+
+1. **[Starter Full Documentation](./ex-so-ar-fsm-te__starter-full-documentation.md)** - Complete FSM package (diagram, spec, tests, deployment) in one template
+2. **[Blank State Machine Diagram](./ex-so-ar-fsm-te__blank-state-machine-diagram.md)** - Visual FSM with Mermaid syntax and state tables
+3. **[Framework: Spring State Machine](./ex-so-ar-fsm-te__framework-spring-state-machine.md)** - Java/Spring Boot implementation template
+
+**These three templates cover 90% of FSM use cases.**
 
 ## Available Templates
 
