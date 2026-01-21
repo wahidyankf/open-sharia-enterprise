@@ -45,6 +45,13 @@ updated: 2026-01-21
 - [Test-Driven Development](./ex-so-stla-ja__test-driven-development.md) - Testing domain models
 - [Platform DDD Overview](../../architecture/domain-driven-design-ddd/README.md) - Strategic DDD
 
+DDD tactical patterns in Java align with [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
+
+- **Value Objects** (records) embody [Immutability](../../../../../governance/principles/software-engineering/immutability.md)
+- **Domain Services** implement [Pure Functions](../../../../../governance/principles/software-engineering/pure-functions.md) for business logic
+- **Aggregates** enforce [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md) boundaries
+- **Factories** provide [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md) object creation
+
 ## Why DDD in Finance
 
 Domain-Driven Design is essential for financial systems because it:
@@ -1976,6 +1983,17 @@ void testZakatCalculationBelowNisab() {
 - **[Platform DDD Overview](../../architecture/domain-driven-design-ddd/README.md)** - Strategic DDD
 - **[Tech Stack Languages Index](../README.md)** - Parent language documentation
 - **[Software Design Index](../../README.md)** - Software documentation root
+
+## Related Principles
+
+Domain-Driven Design demonstrates core software engineering principles:
+
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Value objects as immutable domain primitives
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Domain services with pure business logic
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Explicit aggregate boundaries, explicit invariants
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Axon Framework automates CQRS and event sourcing
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ---
 

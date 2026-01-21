@@ -256,6 +256,227 @@ public class TaxService {
 }
 ```
 
+## Automation Over Manual
+
+Modern Java provides extensive automation to eliminate manual, error-prone tasks. Embrace these automation features to follow the [Automation Over Manual principle](../../../../../governance/principles/software-engineering/automation-over-manual.md).
+
+### Build Automation
+
+**Gradle Build Scripts** (Automate compilation, testing, packaging):
+
+```kotlin
+// build.gradle.kts
+tasks.test {
+    useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)  // Auto-generate coverage after tests
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+```
+
+**Benefits**:
+
+- Single command (`./gradlew build`) runs all checks
+- CI/CD uses same build process
+- Failures caught early
+
+### Code Generation Automation
+
+**Records** (Automate boilerplate):
+
+```java
+// Manual: 50+ lines of boilerplate
+public class Money {
+    private final BigDecimal amount;
+    private final Currency currency;
+
+    public Money(BigDecimal amount, Currency currency) { /* ... */ }
+    public BigDecimal getAmount() { /* ... */ }
+    public Currency getCurrency() { /* ... */ }
+    @Override public boolean equals(Object o) { /* ... */ }
+    @Override public int hashCode() { /* ... */ }
+    @Override public String toString() { /* ... */ }
+}
+
+// Automated: 5 lines with record
+public record Money(BigDecimal amount, Currency currency) {
+    // Compiler auto-generates all boilerplate
+}
+```
+
+**Annotation Processing** (Generate type-safe queries):
+
+```java
+// JPA Metamodel - auto-generated from entities
+TypedQuery<Donation> query = em.createQuery(
+    cb.select(donation)
+      .from(Donation.class)
+      .where(cb.equal(donation.get(Donation_.status), "PENDING")),
+    Donation.class
+);
+```
+
+### Static Analysis Automation
+
+**Error Prone** (Catch bugs at compile time):
+
+```java
+// FAIL: Error Prone detects at compile-time
+List<String> list = Arrays.asList("a", "b");
+list.add("c");  // Compile error: Arrays.asList returns immutable list
+
+// PASS: Use mutable list explicitly
+List<String> list = new ArrayList<>(Arrays.asList("a", "b"));
+list.add("c");  // OK
+```
+
+**NullAway** (Automate null safety):
+
+```java
+@NullMarked  // All fields non-null by default
+public class DonationService {
+    private final DonationRepository repository;  // Non-null
+
+    public @Nullable Donation findById(String id) {  // Explicit nullable
+        return repository.findById(id).orElse(null);
+    }
+
+    public void process(Donation donation) {
+        // NullAway error if passing nullable to non-null param
+        save(donation);  // Compile-time check
+    }
+}
+```
+
+**Benefits**:
+
+- Bugs caught during development, not production
+- Consistent across all developers
+- No manual code review needed for these issues
+
+### Testing Automation
+
+**JUnit 5 Parameterized Tests** (Automate multiple test cases):
+
+```java
+@ParameterizedTest
+@CsvSource({
+    "10000, 5000, 250",   // wealth, nisab, expected zakat
+    "3000, 5000, 0",      // below nisab
+    "20000, 5000, 500"
+})
+void testZakatCalculation(BigDecimal wealth, BigDecimal nisab, BigDecimal expected) {
+    Money result = ZakatCalculator.calculate(new Money(wealth), new Money(nisab));
+    assertEquals(new Money(expected), result);
+}
+```
+
+**TestContainers** (Automate infrastructure setup):
+
+```java
+@Testcontainers
+class DonationRepositoryTest {
+    @Container
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16");
+
+    // Database automatically started/stopped for tests
+    // No manual Docker management needed
+}
+```
+
+**See**:
+
+- [Automation Over Manual Principle](../../../../../governance/principles/software-engineering/automation-over-manual.md)
+- [Java Idioms - Records](./ex-so-stla-ja__idioms.md#1-records-for-immutable-data)
+- [Java Type Safety - Static Analysis](./ex-so-stla-ja__type-safety.md#static-analysis-with-checker-framework)
+
+## Reproducibility First
+
+Follow the [Reproducibility First principle](../../../../../governance/principles/software-engineering/reproducibility.md) to ensure consistent builds across all development environments.
+
+### Version Pinning
+
+**Java Version** (.sdkmanrc):
+
+```bash
+java=21.0.1-tem
+```
+
+**Gradle Version** (gradle-wrapper.properties):
+
+```properties
+distributionUrl=https\://services.gradle.org/distributions/gradle-9.0-bin.zip
+```
+
+**Dependency Versions** (build.gradle.kts):
+
+```kotlin
+dependencies {
+    // Explicit versions (not "latest" or "+")
+    implementation("org.springframework.boot:spring-boot-starter:3.2.0")
+    implementation("org.axonframework:axon-spring-boot-starter:4.9.0")
+
+    // Version catalog for consistency
+    implementation(libs.spring.boot.starter)
+}
+```
+
+### Dependency Locking
+
+**Gradle Lockfile**:
+
+```bash
+# Generate gradle.lockfile
+./gradlew dependencies --write-locks
+
+# Commit lockfile to git
+git add gradle.lockfile
+git commit -m "chore: lock dependency versions"
+
+# CI uses locked versions
+./gradlew build --locked
+```
+
+**Benefits**:
+
+- Same dependency tree on all machines
+- Builds reproducible 6 months later
+- Security audits know exact versions
+
+### Documented Setup
+
+**README.md**:
+
+```markdown
+## Prerequisites
+
+- Java 21 (LTS) - managed via SDKMAN!
+- Gradle 9.0 - via Gradle wrapper (./gradlew)
+- Docker 24+ (for TestContainers)
+- PostgreSQL 16 (via Docker Compose)
+
+## Setup
+
+1. Install SDKMAN!: `curl -s "https://get.sdkman.io" | bash`
+2. Clone repository: `git clone https://github.com/org/repo.git`
+3. Enter directory: `cd repo` (SDKMAN! auto-activates Java 21)
+4. Build project: `./gradlew build`
+5. Run tests: `./gradlew test`
+
+Expected: All tests pass, build succeeds
+```
+
+**See**:
+
+- [Reproducibility First Principle](../../../../../governance/principles/software-engineering/reproducibility.md)
+- [Reproducible Environments](../../../../../governance/development/workflow/reproducible-environments.md)
+
 ## Code Organization
 
 ### 1. Keep Methods Small and Focused (10-20 Lines)
