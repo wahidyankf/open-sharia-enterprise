@@ -32,9 +32,9 @@ These conventions define **WHAT content quality standards apply** to documentati
 
 ## Related Documentation
 
-- [Conventions Index](./README.md) - All documentation conventions
-- [Content Principles](./README.md) - Foundational values these conventions implement
-- [Formatting Conventions](./README.md) - Markdown syntax and visual elements
+- [Conventions Index](../README.md) - All documentation conventions
+- [Content Principles](../../principles/content/README.md) - Foundational values these conventions implement
+- [Formatting Conventions](../formatting/README.md) - Markdown syntax and visual elements
 - [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected

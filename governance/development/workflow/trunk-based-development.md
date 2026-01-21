@@ -533,7 +533,7 @@ TBD works best when combined with:
 
 - **[TrunkBasedDevelopment.com](https://trunkbaseddevelopment.com/)** - Official TBD resource with detailed guides
 - **Conventional Commits**: [Commit Message Convention](./commit-messages.md)
-- **Development Practices**: [Development Index](./README.md)
+- **Development Practices**: [Development Index](../README.md)
 
 ---
 

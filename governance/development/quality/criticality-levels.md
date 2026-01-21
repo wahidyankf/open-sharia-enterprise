@@ -1212,7 +1212,7 @@ def parse_findings(audit_report):
 
 ## Principles Respected
 
-This convention implements the following principles from [Core Principles Index](./README.md):
+This convention implements the following principles from [Core Principles Index](../../principles/README.md):
 
 ### Explicit Over Implicit
 

@@ -474,7 +474,7 @@ The repository underwent a comprehensive 3-phase reorganization to introduce sub
 
 - [Linking Convention](../formatting/linking.md) - How to link between documentation files
 - [Diátaxis Framework](./diataxis-framework.md) - Understanding the documentation organization framework
-- [Conventions Index](./README.md) - Index of all documentation conventions
+- [Conventions Index](../README.md) - Index of all documentation conventions
 
 ---
 

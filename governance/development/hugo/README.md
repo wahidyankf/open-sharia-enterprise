@@ -28,8 +28,8 @@ These standards define **HOW to develop Hugo themes and layouts**, covering them
 
 ## Related Documentation
 
-- [Development Index](./README.md) - All development practices
-- [Hugo Content Conventions](./README.md) - Hugo content writing standards
+- [Development Index](../README.md) - All development practices
+- [Hugo Content Conventions](../../conventions/hugo/README.md) - Hugo content writing standards
 - [Reproducibility First Principle](../../principles/software-engineering/reproducibility.md) - Why build reproducibility matters
 - [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
 
@@ -45,7 +45,7 @@ This set of development practices implements/respects the following core princip
 
 This set of development practices respects the following conventions:
 
-- **[Hugo Content Conventions](./README.md)**: Development aligns with content requirements, supporting theme-specific frontmatter and multilingual infrastructure.
+- **[Hugo Content Conventions](../../conventions/hugo/README.md)**: Development aligns with content requirements, supporting theme-specific frontmatter and multilingual infrastructure.
 
 - **[Color Accessibility Convention](../../conventions/formatting/color-accessibility.md)**: Hugo themes and layouts use verified accessible color palette for all UI elements and interactive components.
 

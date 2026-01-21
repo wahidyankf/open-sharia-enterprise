@@ -374,9 +374,9 @@ Check that changes:
 
 - [Repository Architecture](../repository-governance-architecture.md) - Complete six-layer architecture explanation
 - [Vision](../vision/open-sharia-enterprise.md) - Layer 0: Foundational purpose that inspires all principles
-- [Conventions Index](./README.md) - Layer 2: Documentation conventions embodying these principles
-- [Development Index](./README.md) - Layer 3: Development practices embodying these principles
-- [Explanation Index](./README.md) - All conceptual documentation
+- [Conventions Index](../conventions/README.md) - Layer 2: Documentation conventions embodying these principles
+- [Development Index](../development/README.md) - Layer 3: Development practices embodying these principles
+- [Explanation Index](../../docs/explanation/README.md) - All conceptual documentation
 
 ---
 

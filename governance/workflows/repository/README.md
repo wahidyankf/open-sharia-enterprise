@@ -27,10 +27,10 @@ These workflows define **WHEN and HOW to validate repository rules**, orchestrat
 
 ## Related Documentation
 
-- [Workflows Index](./README.md) - All orchestrated workflows
+- [Workflows Index](../README.md) - All orchestrated workflows
 - [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model these workflows enforce
 - [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Core workflow pattern
-- [Core Principles](./README.md) - Layer 1 governance
+- [Core Principles](../../principles/README.md) - Layer 1 governance
 
 ---
 

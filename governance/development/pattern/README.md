@@ -28,7 +28,7 @@ These patterns define **HOW to structure development workflows and code**, cover
 
 ## Related Documentation
 
-- [Development Index](./README.md) - All development practices
+- [Development Index](../README.md) - All development practices
 - [Pure Functions Over Side Effects Principle](../../principles/software-engineering/pure-functions.md) - Why functional programming matters
 - [Immutability Over Mutability Principle](../../principles/software-engineering/immutability.md) - Why immutability matters
 - [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model

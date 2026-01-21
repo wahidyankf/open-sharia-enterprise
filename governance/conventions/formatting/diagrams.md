@@ -1359,7 +1359,7 @@ Renders as: "HashMap<K, V> / O(1) lookup / Values: [1, 2, 3] / Dict: {a: 1}"
 - [File Naming Convention](../meta/file-naming.md) - How to name documentation files
 - [Linking Convention](./linking.md) - How to link between files
 - [Diátaxis Framework](../meta/diataxis-framework.md) - Documentation organization principles
-- [Conventions Index](./README.md) - Overview of all conventions
+- [Conventions Index](../README.md) - Overview of all conventions
 
 ## External Resources
 

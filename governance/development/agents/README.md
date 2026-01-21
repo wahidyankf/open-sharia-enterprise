@@ -28,9 +28,9 @@ These standards define **HOW to develop AI agents**, covering agent file structu
 
 ## Related Documentation
 
-- [Development Index](./README.md) - All development practices
+- [Development Index](../README.md) - All development practices
 - [Automation Over Manual Principle](../../principles/software-engineering/automation-over-manual.md) - Why we build agents
-- [Agents Index](./README.md) - All available agents
+- [Agents Index](../../../.claude/agents/README.md) - All available agents
 - [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected

@@ -28,9 +28,9 @@ These conventions define **HOW documentation should be organized** at the struct
 
 ## Related Documentation
 
-- [Conventions Index](./README.md) - All documentation conventions
+- [Conventions Index](../README.md) - All documentation conventions
 - [Explicit Over Implicit Principle](../../principles/software-engineering/explicit-over-implicit.md) - Why explicit naming matters
-- [Content Conventions](./README.md) - Content quality standards
+- [Content Conventions](../content/README.md) - Content quality standards
 - [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
 
 ## Principles Implemented/Respected

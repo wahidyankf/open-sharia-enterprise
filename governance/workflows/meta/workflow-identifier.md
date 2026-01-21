@@ -799,4 +799,4 @@ This convention respects:
 - [Maker-Checker-Fixer Pattern](../../development/pattern/maker-checker-fixer.md) - Core workflow pattern
 - [Plans Organization](../../conventions/project/plans-organization.md) - How plans relate to workflows
 - [Implementation Workflow](../../development/workflow/implementation.md) - Development process workflow
-- [Workflows Index](./README.md) - All available workflows
+- [Workflows Index](../README.md) - All available workflows

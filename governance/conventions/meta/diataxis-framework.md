@@ -383,7 +383,7 @@ Start here
 
 ## Related Documentation
 
-- [Conventions Index](./README.md) - Overview of all documentation conventions
+- [Conventions Index](../README.md) - Overview of all documentation conventions
 - [File Naming Convention](./file-naming.md) - How to name files with category prefixes
 - [Linking Convention](../formatting/linking.md) - How to link between documents
 - [OSS Documentation Convention](../content/oss-documentation.md) - Repository-level documentation (README, CONTRIBUTING, ADRs) - complements Diátaxis internal docs structure
