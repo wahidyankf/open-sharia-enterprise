@@ -12,17 +12,24 @@ This guide explains how to create a new Skill in `.claude/skills/` for Claude Co
 
 Create a new Skill when you need to:
 
-- **Encode complex conventions** that are referenced by multiple agents
-- **Provide reusable knowledge** across different agent workflows
-- **Reduce agent file sizes** by extracting common knowledge
-- **Enable progressive disclosure** (Skills auto-load only when relevant)
-- **Compose knowledge** (agents can reference multiple Skills)
+- **Encode complex conventions** that are referenced by multiple agents (inline mode)
+- **Provide reusable knowledge** across different agent workflows (inline mode)
+- **Reduce agent file sizes** by extracting common knowledge (inline mode)
+- **Enable progressive disclosure** (Skills auto-load only when relevant) (inline mode)
+- **Compose knowledge** (agents can reference multiple Skills) (inline mode)
+- **Delegate specialized tasks** to focused agents in isolated contexts (fork mode)
+
+**Skill Modes**:
+
+- **Inline Skills** (default) - Inject knowledge into current conversation
+- **Fork Skills** (`context: fork`) - Spawn isolated agent contexts for focused work
 
 **Do NOT create a Skill when**:
 
 - Information belongs in a convention document (Skills reference conventions, not replace them)
 - Knowledge is specific to a single agent (keep it in the agent file)
 - Content is simple enough for CLAUDE.md (Skills are for complex, detailed knowledge)
+- Task can be handled in main conversation (no need for fork skill)
 
 ## Decision: Single-File vs Multi-File Structure
 
@@ -75,20 +82,36 @@ mv .claude/skills/your-skill-name.md .claude/skills/your-skill-name/SKILL.md
 
 Update the frontmatter with accurate information:
 
+**For Inline Skills (default - knowledge injection)**:
+
 ```yaml
 ---
 name: domain__your-skill-name
 description: Clear, action-oriented description for auto-loading. CRITICAL - must be specific enough to trigger when relevant tasks are described, unique across all Skills. Example - "Provides comprehensive guide for creating maker-checker-fixer workflows. Auto-loads when task mentions content quality validation, audit reports, three-stage workflows, or implementing checker/fixer agents."
+context: inline # Optional - this is the default
 allowed-tools: [Read, Grep] # Optional - specify if Skill needs specific tools
 model: sonnet # Optional - specify if Skill requires specific model
 ---
 ```
 
+**For Fork Skills (task delegation)**:
+
+```yaml
+---
+name: domain__your-research-skill
+description: Research-focused description that triggers for deep analysis tasks
+context: fork # Required for delegation mode
+agent: Explore # Required - specifies which agent type to spawn
+---
+```
+
 **Frontmatter Guidelines**:
 
-- **name**: Must use domain prefix pattern `[domain]__[skill-name]` (e.g., `docs__`, `wow__`, `plan__`), descriptive, unique
+- **name**: Must use domain prefix pattern `[domain]__[skill-name]` (e.g., `docs__`, `repo__`, `plan__`), descriptive, unique
 - **description**: Action-oriented, specific triggers, comprehensive (150-250 words recommended)
-- **allowed-tools**: Only if Skill examples require specific tools
+- **context**: Optional for inline (default), required `fork` for delegation mode
+- **agent**: Required when `context: fork` - specifies agent type (Explore, custom agents, etc.)
+- **allowed-tools**: Only if Skill examples require specific tools (inline mode only)
 - **model**: Only if Skill requires advanced reasoning (sonnet for complex workflows, opus for specialized tasks)
 
 ### Step 3: Write Core Content
@@ -421,4 +444,9 @@ wow__understanding-repository-architecture/
 
 ---
 
-**Note**: Skills are delivery infrastructure (Layer 2), not governance (Layers 0-3). They encode conventions for AI agents but don't create new rules. Conventions remain the authoritative source.
+**Note**: Skills are delivery infrastructure serving agents, not a governance layer. They operate in two modes:
+
+- **Inline skills** - Inject knowledge from conventions into current conversation
+- **Fork skills** - Delegate specialized tasks to agents in isolated contexts
+
+Skills serve agents but don't govern them (service relationship, not governance). Conventions remain the authoritative source.

@@ -21,6 +21,10 @@ Skills use identical format for both Claude Code and OpenCode systems:
 ```yaml
 ---
 description: Brief description for progressive disclosure
+context: inline # Default: inline knowledge injection
+# OR
+context: fork # Task delegation mode
+agent: AgentName # Required when context: fork
 ---
 
 # Skill Name
@@ -34,6 +38,26 @@ Detailed guidance, standards, examples
 ## References
 Links to conventions, related skills
 ```
+
+## Skill Modes: Inline vs Fork
+
+**Inline Skills** (default) - Knowledge injection:
+
+- Progressive disclosure of standards and conventions
+- Injected into current conversation context
+- Enable knowledge composition across multiple skills
+- Used for: Style guides, conventions, domain knowledge
+
+**Fork Skills** (`context: fork`) - Task delegation:
+
+- Spawn isolated agent contexts for focused work
+- Delegate specialized tasks to specific agent types
+- Return summarized results to main conversation
+- Used for: Deep research, focused analysis, exploration
+
+**Key difference**: Inline skills add knowledge, fork skills delegate tasks.
+
+**Service relationship**: Skills serve agents but don't govern them (delivery infrastructure, not governance layer).
 
 ## All 23 Skills
 
