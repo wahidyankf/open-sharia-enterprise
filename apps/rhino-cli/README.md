@@ -1,5 +1,7 @@
 # rhino-cli
 
+**RHINO** – Repository Hygiene & INtegration Orchestrator
+
 Command-line tools for repository management and automation.
 
 ## What is rhino-cli?
