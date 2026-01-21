@@ -328,20 +328,20 @@ That's it. Two diagrams. This covers 80% of what stakeholders need.
 
 **Repository Architecture**:
 
-- [System Architecture Reference](../../reference/re__system-architecture.md) - C4 diagrams for OSE platform
-- [Monorepo Structure Reference](../../reference/re__monorepo-structure.md) - Nx workspace architecture
-- [Repository Governance Architecture](../../../../governance/repository-governance-architecture.md) - Six-layer governance
+- [System Architecture Reference](../../../../reference/re__system-architecture.md) - C4 diagrams for OSE platform
+- [Monorepo Structure Reference](../../../../reference/re__monorepo-structure.md) - Nx workspace architecture
+- [Repository Governance Architecture](../../../../../governance/repository-governance-architecture.md) - Six-layer governance
 
 **Documentation Standards**:
 
-- [Diátaxis Framework](../../../../governance/conventions/meta/diataxis-framework.md) - Documentation organization
-- [Diagrams Convention](../../../../governance/conventions/formatting/diagrams.md) - Mermaid diagram standards
-- [Accessible Diagrams Skill](../../../.claude/skills/docs-creating-accessible-diagrams/SKILL.md) - WCAG-compliant color palette
+- [Diátaxis Framework](../../../../../governance/conventions/meta/diataxis-framework.md) - Documentation organization
+- [Diagrams Convention](../../../../../governance/conventions/formatting/diagrams.md) - Mermaid diagram standards
+- [Accessible Diagrams Skill](../../../../../.claude/skills/docs-creating-accessible-diagrams/SKILL.md) - WCAG-compliant color palette
 
 **Development Practices**:
 
-- [Simplicity Over Complexity Principle](../../../../governance/principles/general/simplicity-over-complexity.md) - Why C4 model fits our values
-- [Explicit Over Implicit Principle](../../../../governance/principles/software-engineering/explicit-over-implicit.md) - Clear architecture documentation
+- [Simplicity Over Complexity Principle](../../../../../governance/principles/general/simplicity-over-complexity.md) - Why C4 model fits our values
+- [Explicit Over Implicit Principle](../../../../../governance/principles/software-engineering/explicit-over-implicit.md) - Clear architecture documentation
 
 ## Sources
 
@@ -366,3 +366,10 @@ This document was created using information from the following authoritative sou
 - **Author**: Claude Code (AI agent)
 - **License**: MIT (same as repository)
 - **Validation**: Web-searched and verified against official C4 model sources
+
+## Related Principles
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - C4 requires explicit labels and clear boundaries
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - C4's simplicity makes it accessible and practical
+
+See [C4 Model Best Practices](./ex-so-ar-c4armo__14-best-practices.md) for comprehensive guidance.

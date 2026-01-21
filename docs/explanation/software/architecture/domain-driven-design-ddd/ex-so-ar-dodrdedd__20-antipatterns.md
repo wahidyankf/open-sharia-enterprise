@@ -746,3 +746,12 @@ class LoanContract {
 - [Introduction and Philosophy](./ex-so-ar-dodrdedd__01-introduction-and-philosophy.md) - DDD introduction and core concepts
 - [Bounded Contexts](./ex-so-ar-dodrdedd__03-bounded-contexts.md) - Strategic design patterns
 - [Aggregates](./ex-so-ar-dodrdedd__09-aggregates.md) - Tactical design patterns
+
+## Related Principles
+
+DDD antipatterns violate core software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Anemic models hide business logic, making domain rules implicit
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Over-engineering with unnecessary patterns adds complexity without value
+
+See [Best Practices](./ex-so-ar-dodrdedd__19-best-practices.md) for positive guidance and [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md).

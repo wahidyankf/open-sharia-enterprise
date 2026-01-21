@@ -668,3 +668,10 @@ Avoid:
 - **Deployment Diagram**: Show message broker infrastructure (Kafka cluster, Zookeeper, etc.)
 
 Event-driven architectures are complex, but clear C4 diagrams make them understandable and maintainable.
+
+## Related Principles
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Event-driven diagrams make async workflows and event flows explicit
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Events are immutable facts that drive system behavior
+
+See [C4 Model Best Practices](./ex-so-ar-c4armo__14-best-practices.md) and [DDD Domain Events](../domain-driven-design-ddd/ex-so-ar-dodrdedd__12-domain-events.md).

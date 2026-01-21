@@ -350,3 +350,10 @@ classDiagram
 5. **Optimistic Locking**: Version field in Order entity for concurrency control
 
 These code-level diagrams guide developers implementing the Order Service microservice. The ER diagram shows database-per-service isolation, while the class diagram reveals layered architecture with resilience patterns for distributed systems.
+
+## Related Principles
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Code diagrams make class relationships and dependencies explicit
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Use sparingly, only for critical or complex code requiring detailed documentation
+
+See [C4 Model Best Practices](./ex-so-ar-c4armo__14-best-practices.md) for when to create code-level diagrams.

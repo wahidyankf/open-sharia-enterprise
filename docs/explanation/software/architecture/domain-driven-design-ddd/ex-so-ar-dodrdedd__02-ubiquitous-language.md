@@ -75,6 +75,18 @@ class TaxAssessment {
 
 Domain experts can read this code and recognize their terminology: `TaxAssessment`, `thresholdThreshold`, `taxableWealth`, `hawl`.
 
+## Core Principles
+
+Ubiquitous Language embodies the **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** principle completely:
+
+- **Explicit Domain Concepts** - Every business concept has an explicit, named representation in code. No hidden translations between business terminology and technical abstractions. When domain experts say "nisab" (نصاب), the code uses `NisabThreshold`, not generic terms like `minValue` or `threshold_amt`.
+
+- **Explicit Boundaries** - Ubiquitous Language is bounded to specific contexts. The term "Customer" means different things in Sales vs. Billing contexts, and this ambiguity is made explicit through separate bounded contexts with distinct vocabularies.
+
+- **Explicit Business Rules** - Code that uses Ubiquitous Language makes business rules self-documenting. `assessment.hasCompletedHawl()` explicitly reveals the domain requirement for a full lunar year, while `user.period >= 354` hides this rule behind magic numbers.
+
+Without Ubiquitous Language, domain knowledge remains implicit—locked in developers' heads, scattered across documentation, hidden behind technical jargon. With Ubiquitous Language, every business concept, rule, and boundary becomes explicit and traceable.
+
 **2. Clarifying Definitions**
 
 Each Bounded Context has its own glossary:
@@ -624,6 +636,22 @@ Use the standardized template to document your Ubiquitous Language:
 - Related terms and synonyms
 - Examples and counter-examples
 - Code representation
+
+## Principles Implemented
+
+Ubiquitous Language demonstrates the **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** principle in action:
+
+- **Explicit Domain Vocabulary** - Every business concept has an explicit name that appears consistently in conversations, code, tests, and documentation. No implicit translations between business and technical terminology.
+
+- **Explicit Context Boundaries** - Terms are explicitly scoped to bounded contexts. When "Customer" means different things in different contexts, this ambiguity is made explicit through separate vocabularies rather than implicit assumptions.
+
+- **Explicit Business Rules** - Code using Ubiquitous Language makes business logic self-documenting. Method names like `hasCompletedHawl()` explicitly reveal domain rules, while generic names like `isPeriodValid()` hide them.
+
+- **Explicit Team Communication** - Shared vocabulary eliminates implicit knowledge gaps. Domain experts and developers use identical terminology, making requirements, implementations, and validations explicitly aligned.
+
+Ubiquitous Language transforms implicit domain knowledge into explicit, traceable artifacts. It is the foundation that enables all other DDD practices by ensuring everyone—domain experts, developers, architects, testers—speaks the same language with the same meanings.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Summary
 

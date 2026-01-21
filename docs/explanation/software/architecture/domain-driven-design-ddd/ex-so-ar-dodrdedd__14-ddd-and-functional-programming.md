@@ -8,6 +8,22 @@ This document shows how to adapt DDD tactical patterns (Entities, Value Objects,
 
 **Key Insight**: DDD is about modeling business domains accurately, not about using classes or objects. FP provides different tools for the same goal: representing business concepts clearly and enforcing business rules reliably.
 
+## Core Principles
+
+Functional programming embodies all five core software engineering principles, making it a natural fit for Domain-Driven Design:
+
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - FP's immutable data structures eliminate invalid state transitions and race conditions. Aggregate invariant protection becomes automatic—invalid states cannot exist. No defensive copying, no temporal coupling, no mutation bugs.
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - FP separates pure domain logic from infrastructure side effects (Functional Core, Imperative Shell pattern). Domain operations become trivially testable—no mocks required. Same inputs always produce same outputs.
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - FP requires explicit function dependencies—no hidden state, no implicit context. Railway-Oriented Programming makes error handling explicit through Result/Either types instead of exceptions. All data flow is visible in function signatures.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - FP tooling (type inference, exhaustive pattern matching, compiler checks) automates correctness verification. Type systems catch domain rule violations at compile time rather than runtime.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Pure functions are deterministic by definition. Given the same inputs, they always produce the same outputs. Testing becomes reproducible without complex setup or teardown. Domain logic behaves identically in development, testing, and production.
+
+The sections below demonstrate how these principles manifest in FP-style DDD implementations.
+
 ## Why FP Aligns with DDD
 
 ### 1. Immutability Prevents Invalid State
@@ -15,6 +31,8 @@ This document shows how to adapt DDD tactical patterns (Entities, Value Objects,
 **DDD Goal**: Aggregates protect invariants by controlling all state changes.
 
 **FP Advantage**: Immutable data structures make invalid state transitions impossible.
+
+This directly implements **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)**. FP's immutable data structures eliminate entire categories of bugs—race conditions, temporal coupling, defensive copying—while making aggregate invariant protection automatic. Invalid state transitions cannot occur because state cannot mutate.
 
 ```typescript
 // OOP: Mutable state requires careful protection
@@ -55,6 +73,8 @@ function finalize(assessment: TaxAssessment): Result<TaxAssessment, DomainError>
 
 **FP Advantage**: Pure functions have no side effects, making testing trivial.
 
+This embodies **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)**. FP separates pure domain logic from infrastructure side effects using the Functional Core, Imperative Shell pattern. Domain operations become trivially testable—no mocks, no setup, no dependencies. Same inputs always produce same outputs, making behavior predictable and deterministic.
+
 ```typescript
 // OOP: Testing requires mocking dependencies
 class TaxCalculator {
@@ -84,6 +104,8 @@ expect(calculateTax(Money.usd(10000), TaxRate.standard())).toEqual(Money.usd(250
 **DDD Goal**: Domain operations should validate inputs and enforce business rules.
 
 **FP Advantage**: Result/Either types compose error handling without exceptions.
+
+This demonstrates both **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** and **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**. Result/Either types make error handling explicit in function signatures—no hidden exceptions, no implicit control flow. Pure functions return Results instead of throwing, enabling functional composition and making all error paths visible and testable.
 
 ```typescript
 // Result type for error handling
@@ -123,6 +145,8 @@ match(result, {
 **DDD Goal**: Domain logic should be isolated from infrastructure.
 
 **FP Advantage**: Pure domain functions, impure I/O at edges.
+
+This architecture pattern directly applies **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)**. By separating pure domain logic (functional core) from impure infrastructure operations (imperative shell), we make domain logic trivially testable, predictable, and independent of framework choices. Side effects are pushed to system boundaries where they're easier to manage and test.
 
 ```mermaid
 graph LR
@@ -1145,6 +1169,24 @@ describe("TaxAssessment (FP)", () => {
 ```
 
 **No Mocks Needed**: All domain logic is pure functions with no side effects.
+
+## Principles Implemented
+
+Functional programming demonstrates complete alignment with all five core software engineering principles, making it exceptionally well-suited for Domain-Driven Design:
+
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - FP's immutable data structures eliminate invalid state transitions, race conditions, temporal coupling, and defensive copying. Aggregate invariant protection becomes automatic—invalid states cannot be represented. This is not an optional feature but a core characteristic of functional programming.
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - FP separates pure domain logic from impure infrastructure through the Functional Core, Imperative Shell pattern. Domain operations become trivially testable with no mocks, no setup, no dependencies. Same inputs always produce same outputs, making behavior deterministic and predictable.
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - FP requires explicit function dependencies—no hidden state, no implicit context, no global variables. Railway-Oriented Programming makes error handling explicit through Result/Either types instead of exceptions. All data flow is visible in function signatures, eliminating implicit control flow.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - FP tooling automates correctness verification through type inference, exhaustive pattern matching, and compile-time checking. Type systems catch domain rule violations before runtime. The compiler becomes an automated quality gate, preventing invalid states and missing error handling.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Pure functions are deterministic by definition—given the same inputs, they always produce the same outputs, regardless of when or where they execute. Testing becomes reproducible without complex setup or teardown. Domain logic behaves identically in development, testing, and production environments.
+
+FP is not merely compatible with these principles—it is the direct embodiment of these principles applied to programming paradigm design. This is why functional programming aligns so naturally with Domain-Driven Design's goals of clarity, correctness, and maintainability.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Summary
 

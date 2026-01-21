@@ -316,7 +316,7 @@ DDD concepts complement other architectural approaches in this repository:
   - Aggregates map to C4 Components
   - See [DDD and C4 Integration](./ex-so-ar-dodrdedd__17-ddd-and-c4-integration.md)
 
-- **[Functional Programming Principles](../../../../governance/development/pattern/functional-programming.md)**: FP and DDD align on immutability and explicit data flow
+- **[Functional Programming Principles](../../../../../governance/development/pattern/functional-programming.md)**: FP and DDD align on immutability and explicit data flow
   - See [DDD and Functional Programming](./ex-so-ar-dodrdedd__14-ddd-and-functional-programming.md)
 
 - **[Layered Architecture](./ex-so-ar-dodrdedd__15-layered-architecture.md)**: DDD's domain layer fits into broader architectural patterns
@@ -353,3 +353,12 @@ Continue your DDD journey with:
 - Scott Wlaschin, "Domain Modeling Made Functional" (2018) - FP perspective
 - Martin Fowler, ["Bounded Context"](https://martinfowler.com/bliki/BoundedContext.html)
 - [DDD Community Resources](https://github.com/ddd-crew)
+
+## Related Principles
+
+DDD philosophy aligns with core software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - DDD makes domain concepts, boundaries, and rules explicit through Ubiquitous Language and bounded contexts
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - DDD tactical patterns focus on essential complexity, avoiding over-engineering
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.

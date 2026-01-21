@@ -907,3 +907,10 @@ Repositories provide clean persistence abstraction:
 - Vaughn Vernon, "Implementing Domain-Driven Design" (2013) - Chapter 12: Repositories
 - Martin Fowler, ["Repository Pattern"](https://martinfowler.com/eaaCatalog/repository.html)
 - Martin Fowler, ["Data Mapper"](https://martinfowler.com/eaaCatalog/dataMapper.html)
+
+## Related Principles
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Repository interfaces make persistence abstraction explicit
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Domain logic remains pure; repositories handle impure I/O
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.

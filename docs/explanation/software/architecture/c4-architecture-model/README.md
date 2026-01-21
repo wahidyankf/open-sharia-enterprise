@@ -77,6 +77,22 @@ The C4 model addresses several common challenges in software architecture docume
 - Most teams find context and container diagrams sufficient
 - Component and code diagrams reserved for complex areas
 
+## Software Engineering Principles
+
+The C4 model naturally aligns with core software engineering principles:
+
+1. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - C4 enforces explicit labels on all elements and relationships, clear system boundaries, visible technology choices, and named communication protocols. Every diagram element must explicitly state what it is and how it interacts with others, eliminating hidden assumptions that plague architecture documentation.
+
+2. **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - C4 deliberately uses simple boxes and lines instead of complex UML notation, reducing cognitive load and making diagrams accessible to all stakeholders. The four-level hierarchy provides progressive disclosure—you only add complexity where it adds value, avoiding over-engineered documentation.
+
+3. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - C4 supports diagram-as-code approaches with Structurizr DSL, PlantUML, and Mermaid, enabling version-controlled architecture documentation that integrates with CI/CD pipelines. Automated diagram generation from code keeps documentation synchronized with implementation.
+
+4. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - C4 provides standardized notation and consistent conventions across all diagram types, enabling teams to produce reproducible documentation. The same abstractions and notation rules apply regardless of tool or team member, ensuring consistent communication.
+
+5. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - C4 can effectively model immutable architecture patterns like functional core/imperative shell, event sourcing, and CQRS. The model naturally represents data flow in systems that favor immutable data structures.
+
+See [Best Practices](./ex-so-ar-c4armo__14-best-practices.md) for detailed examples of how these principles apply to C4 diagrams.
+
 ## Documentation Structure
 
 This C4 model documentation is organized into multiple interconnected guides:
@@ -189,7 +205,7 @@ Choose your path based on available time and learning goals:
 
 1. **Notation Standards**:
    - Read **[Notation and Conventions](./ex-so-ar-c4armo__08-notation-and-conventions.md)** - Labeling, colors, shapes
-   - Review **[Repository Diagram Convention](../../../../governance/conventions/formatting/diagrams.md)** - Accessibility requirements
+   - Review **[Repository Diagram Convention](../../../../../governance/conventions/formatting/diagrams.md)** - Accessibility requirements
 2. **Create Production Diagrams**:
    - **Context Diagram**: Include all external systems and users
    - **Container Diagram**: Show all deployable units with technology stacks
@@ -260,7 +276,7 @@ Choose documentation based on your system characteristics:
 - **Mermaid Users**:
   - See: [Best Practices: Standard Mermaid vs. Experimental C4 Syntax](./ex-so-ar-c4armo__09-best-practices.md#standard-mermaid-vs-experimental-c4-syntax)
   - Use: `graph TB` syntax with WCAG color palette
-  - Check: [Repository Diagram Convention](../../../../governance/conventions/formatting/diagrams.md)
+  - Check: [Repository Diagram Convention](../../../../../governance/conventions/formatting/diagrams.md)
 - **Structurizr Users**:
   - See: [Best Practices: Tooling Philosophy](./ex-so-ar-c4armo__09-best-practices.md#tooling-philosophy-modeling-vs-diagramming)
   - Benefit: Model-first approach, automatic layout
@@ -270,6 +286,16 @@ Choose documentation based on your system characteristics:
 
 ## Related Documentation
 
+**Software Engineering Principles**:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - C4's explicit labeling and visible relationships eliminate architecture ambiguity
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Simple boxes and lines instead of complex UML notation
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Diagram-as-code with Structurizr DSL, PlantUML, and Mermaid
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Standardized notation ensures consistent documentation
+- **[Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md)** - Comprehensive documentation of all principles
+
+**Repository Context**:
+
 - **Repository Context**: [C4 Model in This Repository](./ex-so-ar-c4armo__09-best-practices.md#c4-model-in-this-repository)
 - **Further Learning**: [External Resources](./ex-so-ar-c4armo__11-faq.md#further-learning)
-- **Conventions**: [Diagram and Schema Convention](../../../../governance/conventions/formatting/diagrams.md)
+- **Conventions**: [Diagram and Schema Convention](../../../../../governance/conventions/formatting/diagrams.md)

@@ -147,3 +147,10 @@ flowchart TB
 - Spring ecosystem provides required integrations (Spring Security, Spring Cloud)
 
 **Key Insight**: Both approaches implement the same Component-level architecture (separation of concerns, layered design, external service integration). The paradigm affects HOW components are implemented (classes vs modules), not WHAT components exist.
+
+## Related Principles
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Component diagrams make functional modules and data flow explicit
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - FP components separate pure domain logic from impure I/O
+
+See [C4 Model Best Practices](./ex-so-ar-c4armo__14-best-practices.md) and [DDD Functional Programming](../domain-driven-design-ddd/ex-so-ar-dodrdedd__14-ddd-and-functional-programming.md).

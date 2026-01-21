@@ -311,7 +311,7 @@ See [DDD and C4 Integration](./ex-so-ar-dodrdedd__17-ddd-and-c4-integration.md) 
 
 ### Functional Programming Principles
 
-**[Functional Programming Principles](../../../../governance/development/pattern/functional-programming.md)**
+**[Functional Programming Principles](../../../../../governance/development/pattern/functional-programming.md)**
 
 - **Immutability** aligns with Value Objects and Entity snapshots
 - **Pure Functions** express domain logic without side effects
@@ -320,9 +320,47 @@ See [DDD and C4 Integration](./ex-so-ar-dodrdedd__17-ddd-and-c4-integration.md) 
 
 See [DDD and Functional Programming](./ex-so-ar-dodrdedd__14-ddd-and-functional-programming.md) for FP-adapted patterns.
 
+### Software Engineering Principles
+
+**[Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md)**
+
+DDD patterns naturally align with core software engineering principles. This matrix shows which principles each DDD pattern embodies:
+
+| DDD Pattern              | Immutability | Pure Functions | Explicit   | Automation | Reproducibility |
+| ------------------------ | ------------ | -------------- | ---------- | ---------- | --------------- |
+| **Value Objects**        | ✅ PRIMARY   | ✅             | ✅         |            |                 |
+| **Domain Events**        | ✅ PRIMARY   |                | ✅         |            |                 |
+| **Aggregates**           | ✅           | ✅             | ✅ PRIMARY |            | ✅              |
+| **Ubiquitous Language**  |              |                | ✅ PRIMARY |            |                 |
+| **Bounded Contexts**     |              |                | ✅ PRIMARY |            | ✅              |
+| **Domain Services**      |              | ✅ PRIMARY     |            |            |                 |
+| **Event Storming**       |              |                |            | ✅ PRIMARY |                 |
+| **FP Integration**       | ✅           | ✅             | ✅         | ✅         | ✅              |
+| **Layered Architecture** |              | ✅ PRIMARY     | ✅         |            |                 |
+| **Context Mapping**      |              |                | ✅         |            |                 |
+| **Entities**             |              | ✅             | ✅         |            |                 |
+| **Repositories**         |              | ✅             | ✅         |            |                 |
+| **Factories**            |              | ✅             | ✅         |            |                 |
+
+**Legend**:
+
+- ✅ PRIMARY - Core principle that defines the pattern
+- ✅ - Principle demonstrated by the pattern
+- (empty) - Principle not directly applicable
+
+**Principle Descriptions**:
+
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Value Objects and Domain Events are immutable by definition, eliminating entire bug categories
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Domain Services, validation methods, and FP integration favor pure functions
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Ubiquitous Language, Aggregates, and Bounded Contexts make domain concepts explicit
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Event Storming automates domain discovery through structured workshops
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Clear boundaries and patterns enable consistent, reproducible implementations
+
+See individual pattern documentation for detailed principle applications and examples.
+
 ### Repository Governance
 
-**[Repository Governance Architecture](../../../../governance/repository-governance-architecture.md)**
+**[Repository Governance Architecture](../../../../../governance/repository-governance-architecture.md)**
 
 - **Layer 0: Vision** - DDD supports building enterprise business systems
 - **Layer 1: Principles** - Simplicity, explicitness, automation align with DDD philosophy
@@ -331,7 +369,7 @@ See [DDD and Functional Programming](./ex-so-ar-dodrdedd__14-ddd-and-functional-
 
 ### Nx Monorepo Architecture
 
-**[Monorepo Structure](../../../reference/re__monorepo-structure.md)**
+**[Monorepo Structure](../../../../reference/re__monorepo-structure.md)**
 
 - **`apps/`** - Each app can be one or more bounded contexts
 - **`libs/`** - Shared kernel components, domain primitives, infrastructure
@@ -479,9 +517,9 @@ Ready to apply DDD to your project? Follow this checklist:
 ### Related Open Compliance Enterprise Documentation
 
 - [C4 Architecture Model](../c4-architecture-model/README.md) - Visual architecture documentation
-- [Functional Programming Principles](../../../../governance/development/pattern/functional-programming.md) - FP alignment with DDD
-- [Repository Governance Architecture](../../../../governance/repository-governance-architecture.md) - Six-layer hierarchy
-- [Monorepo Structure](../../../reference/re__monorepo-structure.md) - Nx workspace organization
+- [Functional Programming Principles](../../../../../governance/development/pattern/functional-programming.md) - FP alignment with DDD
+- [Repository Governance Architecture](../../../../../governance/repository-governance-architecture.md) - Six-layer hierarchy
+- [Monorepo Structure](../../../../reference/re__monorepo-structure.md) - Nx workspace organization
 
 ## Contributing
 
@@ -493,7 +531,7 @@ This documentation evolves as we apply DDD to the Open Compliance Enterprise pla
 - **Templates**: New templates for DDD practices
 - **Cross-references**: Links to related governance and development docs
 
-See [Repository Governance Architecture](../../../../governance/repository-governance-architecture.md) for contribution guidelines.
+See [Repository Governance Architecture](../../../../../governance/repository-governance-architecture.md) for contribution guidelines.
 
 ## Document Metadata
 
@@ -504,5 +542,5 @@ See [Repository Governance Architecture](../../../../governance/repository-gover
 - **Status**: Active
 - **Related Documentation**:
   - [C4 Architecture Model](../c4-architecture-model/README.md)
-  - [Functional Programming Principles](../../../../governance/development/pattern/functional-programming.md)
-  - [Repository Governance Architecture](../../../../governance/repository-governance-architecture.md)
+  - [Functional Programming Principles](../../../../../governance/development/pattern/functional-programming.md)
+  - [Repository Governance Architecture](../../../../../governance/repository-governance-architecture.md)

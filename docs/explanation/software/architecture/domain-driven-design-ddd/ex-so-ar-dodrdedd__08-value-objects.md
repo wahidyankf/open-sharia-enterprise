@@ -8,11 +8,23 @@ A **Value Object** is an immutable object that has no conceptual identity and is
 
 - **No Identity**: Defined purely by attributes, no unique ID
 - **Structural Equality**: Two instances with same attributes are equal
-- **Immutability**: Cannot be changed after creation; create new instance for changes
+- **Immutability**: Cannot be changed after creation; create new instance for changes. This directly implements **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)**, eliminating race conditions, temporal coupling, and entire bug categories while making code predictable and thread-safe.
 - **Replaceability**: One instance is freely substitutable with another with same attributes
 - **Side-Effect Free Behavior**: Methods produce new value objects without modifying state
 
 **Example**: `Money.usd(100)` is identical to any other `Money.usd(100)`. There's no "first $100" or "second $100" - all are interchangeable.
+
+## Core Principles
+
+Value Objects embody fundamental software engineering principles with 100% alignment:
+
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Value objects are immutable by definition. Once created, they cannot change. This eliminates entire categories of bugs—race conditions, temporal coupling, defensive copying, unexpected state changes—and makes code predictable, thread-safe, and trivially testable. Immutability is not optional for value objects; it is their defining characteristic.
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Value object operations are pure functions that produce new instances without side effects. `money.add(amount)` returns a new `Money` without modifying the original. This enables functional composition, makes testing trivial (no mocks needed), and ensures operations are always predictable.
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Value objects make business rules explicit through self-validation at construction. Invalid states become impossible to represent. Instead of scattered validation logic, business rules live in one place—the value object constructor—making domain constraints explicit and enforceable.
+
+These principles are not just applied to value objects—they define what value objects are. Understanding these principles is essential to understanding why value objects are fundamental to clean domain models.
 
 ## Why Value Objects Matter
 
@@ -1065,6 +1077,20 @@ describe("Money Value Object", () => {
 - Test structural equality
 - Test immutability (original instance unchanged)
 - Test business logic encapsulated in value object
+
+## Principles Implemented
+
+Value Objects demonstrate complete alignment with core software engineering principles:
+
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Value objects are immutable by definition, eliminating race conditions, temporal coupling, defensive copying needs, and unexpected state changes. Immutability is their fundamental characteristic, not an optional feature.
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - All value object operations are pure functions that return new instances without side effects. This makes testing trivial (no mocks), enables functional composition, and guarantees predictable behavior.
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Value objects make business rules explicit through self-validation at construction. Invalid states become impossible to represent. Domain constraints live in one place—the constructor—rather than scattered validation logic throughout the codebase.
+
+Value objects are not just an application of these principles—they are the embodiment of these principles in domain modeling. Understanding this relationship is essential for building robust, maintainable domain models.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Summary
 

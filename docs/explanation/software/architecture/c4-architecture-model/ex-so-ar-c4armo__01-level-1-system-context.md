@@ -33,6 +33,8 @@
 - Show the big picture that everyone can understand
 - Include major user types and external dependencies
 
+System Context diagrams implement **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** by making system boundaries and external dependencies explicit. Every user type, external system, and integration point is visibly documented, eliminating hidden assumptions about system scope.
+
 **When to Use**:
 
 - Starting point for all architecture documentation
@@ -95,3 +97,10 @@ graph TB
 - **Relationships**: Show how diverse users and external systems interact with the platform
 
 This high-level view answers: "What does this distributed system do?" and "How does it fit into the broader ecosystem?" Notice we don't show internal microservices here - that's for the Container diagram.
+
+## Related Principles
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - System Context diagrams make system boundaries, user types, and external dependencies explicit
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - High-level abstraction shows only essential elements, hiding internal complexity
+
+See [C4 Model Best Practices](./ex-so-ar-c4armo__14-best-practices.md) for comprehensive guidance.

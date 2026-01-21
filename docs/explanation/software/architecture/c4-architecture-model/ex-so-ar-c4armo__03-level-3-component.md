@@ -185,3 +185,10 @@ This diagram shows the internal architecture of the Order Service microservice. 
 4. **Circuit Breaker**: Resilience pattern to handle failures in dependent services
 5. **Caching**: Redis cache to reduce database load and improve response times
 6. **Domain-Driven Design**: Facade and domain service separation for complex orchestration
+
+## Related Principles
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Component diagrams make internal structure and responsibilities explicit
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Shows only necessary components, avoiding over-detailed design
+
+See [C4 Model Best Practices](./ex-so-ar-c4armo__14-best-practices.md) for comprehensive guidance.

@@ -353,3 +353,10 @@ end
 - Code is better documentation than diagrams (for simple modules)
 
 **Key Insight**: FP code diagrams emphasize **data flow and transformations** rather than object hierarchies. The goal is showing how data moves through pure functions (functional core) and where side effects occur (imperative shell), not inheritance trees.
+
+## Related Principles
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - FP code diagrams emphasize pure functions and data flow
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - FP code structures use immutable data transformations
+
+See [C4 Model Best Practices](./ex-so-ar-c4armo__14-best-practices.md) and [DDD Functional Programming](../domain-driven-design-ddd/ex-so-ar-dodrdedd__14-ddd-and-functional-programming.md).

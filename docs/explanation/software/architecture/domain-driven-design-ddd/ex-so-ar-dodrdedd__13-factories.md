@@ -917,3 +917,10 @@ const factoryResult = registry.getFactory(ContractType.Loan);
 - [Value Objects](./ex-so-ar-dodrdedd__08-value-objects.md) - Creating immutable value objects
 - [Repositories](./ex-so-ar-dodrdedd__10-repositories.md) - Persisting and reconstituting aggregates
 - [Domain Events](./ex-so-ar-dodrdedd__12-domain-events.md) - Events raised during object creation
+
+## Related Principles
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Factories make complex object creation and validation explicit
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Factory methods can be pure functions returning new instances
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
