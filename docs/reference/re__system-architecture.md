@@ -1725,8 +1725,8 @@ graph TB
 **Steps:**
 
 1. Checkout PR branch
-2. Setup Python 3.12
-3. Run link validation script (`scripts/validate-links.py`)
+2. Setup Go 1.24.2
+3. Run link validation (`butler-cli validate-links`)
 4. Fail PR if broken links detected
 
 **Purpose**: Prevent merging PRs with broken markdown links
