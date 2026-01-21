@@ -1,7 +1,8 @@
 ---
+name: apps-ose-platform-web-deployer
 description: Deploys ose-platform-web to production environment branch (prod-ose-platform-web) after validation. Vercel listens to production branch for automatic builds.
 model: haiku
-tools: [Bash, Grep]
+tools: Bash, Grep
 ---
 
 ## Agent Metadata

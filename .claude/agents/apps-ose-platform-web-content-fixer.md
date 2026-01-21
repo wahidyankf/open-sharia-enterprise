@@ -1,7 +1,8 @@
 ---
+name: apps-ose-platform-web-content-fixer
 description: Applies validated fixes from content-checker audit reports. Re-validates before applying changes.
 model: sonnet
-tools: [Read, Edit, Write, Glob, Grep, Bash]
+tools: Read, Edit, Write, Glob, Grep, Bash
 ---
 
 ## Agent Metadata

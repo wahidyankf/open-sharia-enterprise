@@ -70,13 +70,16 @@ Agents use YAML frontmatter with the following structure:
 
 ```yaml
 ---
+name: agent-name
 description: Brief description of agent purpose and when to use it
 model: sonnet # Optional: sonnet, opus, haiku (omit to inherit)
-tools: [Read, Write, Edit, Glob, Grep, Bash, TodoWrite, WebFetch, WebSearch]
+tools: Read, Write, Edit, Glob, Grep, Bash, TodoWrite, WebFetch, WebSearch
 ---
 ```
 
-**Tools**: Array format with capitalized tool names
+**Name**: Required field - unique identifier using lowercase letters and hyphens
+**Description**: Required field - when Claude should delegate to this agent
+**Tools**: Comma-separated string with capitalized tool names
 **Model**: Optional field - omit to inherit from parent context
 
 ## Maker-Checker-Fixer Pattern

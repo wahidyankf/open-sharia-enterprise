@@ -1,7 +1,8 @@
 ---
+name: plan-executor
 description: Executes project plans systematically by following delivery checklists, implementing steps sequentially, validating work, and updating progress. Stops at final validation for plan-execution-checker handoff.
 model: sonnet
-tools: [Read, Write, Edit, Glob, Grep, Bash]
+tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 ## Agent Metadata

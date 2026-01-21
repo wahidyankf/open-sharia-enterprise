@@ -1,7 +1,8 @@
 ---
+name: docs-fixer
 description: Applies validated fixes from docs-checker audit reports. Re-validates factual accuracy findings before applying changes. Use after reviewing docs-checker output.
 model: sonnet
-tools: [Read, Edit, Glob, Grep, Write, Bash]
+tools: Read, Edit, Glob, Grep, Write, Bash
 ---
 
 ## Agent Metadata

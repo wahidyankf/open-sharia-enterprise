@@ -1,7 +1,8 @@
 ---
+name: repo-workflow-maker
 description: Creates workflow documentation in governance/workflows/ following workflow pattern convention.
 model: sonnet
-tools: [Read, Write, Edit, Glob, Grep]
+tools: Read, Write, Edit, Glob, Grep
 ---
 
 ## Agent Metadata

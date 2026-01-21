@@ -1,7 +1,8 @@
 ---
+name: docs-tutorial-checker
 description: Validates tutorial quality focusing on pedagogical structure, narrative flow, visual completeness, hands-on elements, and tutorial type compliance. Complements docs-checker (accuracy) and docs-link-general-checker (links).
 model: sonnet
-tools: [Read, Glob, Grep, WebFetch, WebSearch, Write, Bash]
+tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
 ---
 
 ## Agent Metadata

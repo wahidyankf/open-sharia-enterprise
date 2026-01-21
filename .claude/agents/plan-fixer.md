@@ -1,7 +1,8 @@
 ---
+name: plan-fixer
 description: Applies validated fixes from plan-checker audit reports. Re-validates plan findings before applying changes. Use after reviewing plan-checker output.
 model: sonnet
-tools: [Read, Edit, Write, Glob, Grep, Bash]
+tools: Read, Edit, Write, Glob, Grep, Bash
 ---
 
 ## Agent Metadata

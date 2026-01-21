@@ -1,7 +1,8 @@
 ---
+name: docs-tutorial-fixer
 description: Applies validated fixes from docs-tutorial-checker audit reports. Re-validates pedagogical findings before applying changes. Use after reviewing docs-tutorial-checker output.
 model: sonnet
-tools: [Read, Edit, Glob, Grep, Write, Bash]
+tools: Read, Edit, Glob, Grep, Write, Bash
 ---
 
 ## Agent Metadata

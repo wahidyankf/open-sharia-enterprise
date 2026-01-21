@@ -1,7 +1,8 @@
 ---
+name: docs-file-manager
 description: Expert at managing files and directories in docs/ directory. Use for renaming, moving, or deleting files/directories while maintaining conventions, updating prefixes, fixing links, and preserving git history.
 model: sonnet
-tools: [Read, Edit, Glob, Grep, Bash]
+tools: Read, Edit, Glob, Grep, Bash
 ---
 
 ## Agent Metadata

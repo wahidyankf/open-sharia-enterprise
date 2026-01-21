@@ -1,7 +1,8 @@
 ---
+name: apps-ayokoding-web-structure-checker
 description: Validates ayokoding-web content structure including folder organization, level-based weights, navigation depth, and bilingual completeness.
 model: sonnet
-tools: [Read, Glob, Grep, Write, Bash]
+tools: Read, Glob, Grep, Write, Bash
 ---
 
 ## Agent Metadata

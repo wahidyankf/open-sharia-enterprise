@@ -1,7 +1,8 @@
 ---
+name: repo-governance-maker
 description: Creates repository rules and conventions in docs/explanation/ directories. Documents standards, patterns, and quality requirements.
 model: sonnet
-tools: [Read, Write, Edit, Glob, Grep]
+tools: Read, Write, Edit, Glob, Grep
 ---
 
 ## Agent Metadata

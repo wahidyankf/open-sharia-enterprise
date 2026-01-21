@@ -1,7 +1,8 @@
 ---
+name: plan-checker
 description: Validates project plan quality including requirements completeness, technical documentation clarity, and delivery checklist executability. Use when reviewing plans before execution.
 model: sonnet
-tools: [Read, Glob, Grep, Write, Bash]
+tools: Read, Glob, Grep, Write, Bash
 ---
 
 ## Agent Metadata

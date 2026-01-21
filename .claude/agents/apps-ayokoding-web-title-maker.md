@@ -1,7 +1,8 @@
 ---
+name: apps-ayokoding-web-title-maker
 description: Generates appropriate titles for ayokoding-web content based on type (by-concept, by-example) and level.
 model: haiku
-tools: [Read, Edit]
+tools: Read, Edit
 ---
 
 ## Agent Metadata
