@@ -1,7 +1,8 @@
 ---
+name: repo-workflow-fixer
 description: Applies validated fixes from workflow-checker audit reports. Re-validates before applying changes.
 model: sonnet
-tools: [Read, Edit, Write, Glob, Grep, Bash]
+tools: Read, Edit, Write, Glob, Grep, Bash
 ---
 
 ## Agent Metadata

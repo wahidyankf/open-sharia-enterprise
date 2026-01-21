@@ -1,7 +1,8 @@
 ---
+name: social-linkedin-post-maker
 description: Creates LinkedIn posts from project updates and documentation. Optimizes for engagement and professional tone.
 model: sonnet
-tools: [Read, Grep]
+tools: Read, Grep
 ---
 
 ## Agent Metadata

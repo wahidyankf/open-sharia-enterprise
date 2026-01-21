@@ -1,7 +1,8 @@
 ---
+name: plan-maker
 description: Creates comprehensive project plans with requirements, technical documentation, and delivery checklists. Structures plans for systematic execution by plan-executor agent.
 model: sonnet
-tools: [Read, Write, Edit, Glob, Grep, Bash]
+tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 ## Agent Metadata

@@ -1,7 +1,8 @@
 ---
+name: swe-hugo-developer
 description: Develops Hugo sites (ayokoding-web, ose-platform-web) including theme customization, template development, and build optimization.
 model: sonnet
-tools: [Read, Write, Edit, Glob, Grep, Bash]
+tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 ## Agent Metadata

@@ -1,7 +1,8 @@
 ---
+name: apps-ayokoding-web-general-maker
 description: Creates general ayokoding-web content (by-concept tutorials, guides, references). Ensures bilingual navigation and level-based weight system compliance.
 model: sonnet
-tools: [Read, Write, Edit, Glob, Grep, Bash]
+tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 ## Agent Metadata

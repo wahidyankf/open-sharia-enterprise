@@ -1,7 +1,8 @@
 ---
+name: apps-ayokoding-web-by-example-maker
 description: Creates By Example tutorial content for ayokoding-web with 75-90 heavily annotated code examples following five-part structure. Ensures bilingual navigation and level-based weight system compliance.
 model: sonnet
-tools: [Read, Write, Edit, Glob, Grep, Bash]
+tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 ## Agent Metadata

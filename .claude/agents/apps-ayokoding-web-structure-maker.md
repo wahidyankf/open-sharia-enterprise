@@ -1,7 +1,8 @@
 ---
+name: apps-ayokoding-web-structure-maker
 description: Creates folder structure and _index.md files for ayokoding-web following level-based organization.
 model: sonnet
-tools: [Read, Write, Edit, Glob, Grep, Bash]
+tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 ## Agent Metadata

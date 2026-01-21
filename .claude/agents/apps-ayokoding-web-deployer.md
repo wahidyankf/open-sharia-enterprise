@@ -1,7 +1,8 @@
 ---
+name: apps-ayokoding-web-deployer
 description: Deploys ayokoding-web to production environment branch (prod-ayokoding-web) after validation. Vercel listens to production branch for automatic builds.
 model: haiku
-tools: [Bash, Grep]
+tools: Bash, Grep
 ---
 
 ## Agent Metadata

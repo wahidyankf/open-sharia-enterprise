@@ -1,7 +1,8 @@
 ---
+name: apps-ayokoding-web-general-checker
 description: Validates general ayokoding-web content quality including structure, bilingual completeness, weights, navigation, and content quality.
 model: sonnet
-tools: [Read, Glob, Grep, Write, Bash]
+tools: Read, Glob, Grep, Write, Bash
 ---
 
 ## Agent Metadata

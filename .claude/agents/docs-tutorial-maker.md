@@ -1,7 +1,8 @@
 ---
+name: docs-tutorial-maker
 description: Creates and updates tutorial documentation following Diátaxis framework and tutorial conventions
 model: sonnet
-tools: [Read, Write, Edit, Grep, Glob, Bash]
+tools: Read, Write, Edit, Grep, Glob, Bash
 ---
 
 # Tutorial Documentation Maker

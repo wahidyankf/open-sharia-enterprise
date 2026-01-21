@@ -1,7 +1,8 @@
 ---
+name: apps-ayokoding-web-link-fixer
 description: Applies validated fixes from link-checker audit reports. Re-validates link findings before applying changes.
 model: sonnet
-tools: [Read, Edit, Write, Glob, Grep, Bash, WebFetch, WebSearch]
+tools: Read, Edit, Write, Glob, Grep, Bash, WebFetch, WebSearch
 ---
 
 ## Agent Metadata

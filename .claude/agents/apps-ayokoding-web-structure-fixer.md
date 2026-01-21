@@ -1,7 +1,8 @@
 ---
+name: apps-ayokoding-web-structure-fixer
 description: Applies validated fixes from structure-checker audit reports. Re-validates structure findings before applying changes.
 model: sonnet
-tools: [Read, Edit, Write, Glob, Grep, Bash]
+tools: Read, Edit, Write, Glob, Grep, Bash
 ---
 
 ## Agent Metadata

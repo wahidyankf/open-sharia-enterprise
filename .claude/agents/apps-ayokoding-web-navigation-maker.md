@@ -1,7 +1,8 @@
 ---
+name: apps-ayokoding-web-navigation-maker
 description: Updates prev/next navigation links in ayokoding-web content frontmatter.
 model: haiku
-tools: [Read, Edit, Glob, Grep]
+tools: Read, Edit, Glob, Grep
 ---
 
 ## Agent Metadata

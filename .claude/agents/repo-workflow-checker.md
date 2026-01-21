@@ -1,7 +1,8 @@
 ---
+name: repo-workflow-checker
 description: Validates workflow documentation quality and compliance with workflow pattern convention.
 model: sonnet
-tools: [Read, Glob, Grep, Write, Bash]
+tools: Read, Glob, Grep, Write, Bash
 ---
 
 ## Agent Metadata
