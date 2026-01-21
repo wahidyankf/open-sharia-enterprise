@@ -13,10 +13,10 @@
     </parent>
 
     <groupId>com.opencode</groupId>
-    <artifactId>dolphin-be</artifactId>
+    <artifactId>orca-grid-be</artifactId>
     <version>1.0.0</version>
-    <name>dolphin-be</name>
-    <description>Learning Management System Backend</description>
+    <name>orca-grid-be</name>
+    <description>Knowledge Management System Backend</description>
 
     <properties>
         <java.version>25</java.version>

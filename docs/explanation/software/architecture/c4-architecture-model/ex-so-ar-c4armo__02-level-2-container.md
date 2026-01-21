@@ -33,10 +33,10 @@ NOT Docker containers (though they often align).
 
 **Example Elements**:
 
-- **Web Containers**: ose-platform-web (Hugo Static Site), ayokoding-web (Hugo Static Site), dolphin-fe (Next.js)
-- **Backend Containers**: dolphin-be (Spring Boot)
+- **Web Containers**: ose-platform-web (Hugo Static Site), ayokoding-web (Hugo Static Site), orca-grid-fe (Next.js)
+- **Backend Containers**: orca-grid-be (Spring Boot)
 - **CLI Tools**: ayokoding-cli (Go), butler-cli (Go)
-- **Test Containers**: dolphin-fe-e2e (Playwright), dolphin-be-e2e (Playwright)
+- **Test Containers**: orca-grid-fe-e2e (Playwright), orca-grid-be-e2e (Playwright)
 - **Infrastructure**: Nx Workspace, Shared Libraries
 
 **Best Practices**:

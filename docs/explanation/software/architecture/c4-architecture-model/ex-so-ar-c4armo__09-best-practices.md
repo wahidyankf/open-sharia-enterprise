@@ -2301,22 +2301,22 @@ Track all diagrams in a simple dashboard (spreadsheet or documentation tool).
 
 The Open Sharia Enterprise platform uses C4 model for architecture documentation in:
 
-**Reference Documentation**: [docs/reference/re\_\_system-architecture.md](../../reference/re__system-architecture.md)
+**Reference Documentation**: [docs/reference/re\_\_system-architecture.md](../../../../reference/re__system-architecture.md)
 
 **C4 Levels Implemented**:
 
 1. **System Context** (Level 1): Shows OSE platform, users, and external systems
 2. **Container Diagram** (Level 2): Shows 8 applications across technology stacks
 3. **Component Diagrams** (Level 3): Detailed breakdowns for:
-   - dolphin-be (Spring Boot backend)
-   - dolphin-fe (Next.js frontend)
+   - orca-grid-be (Spring Boot backend)
+   - orca-grid-fe (Next.js frontend)
    - ayokoding-cli (Go CLI tool)
    - butler-cli (Go CLI tool)
    - ose-platform-web (Hugo static site)
    - ayokoding-web (Hugo static site)
    - E2E test suites (Playwright)
 4. **Code Diagrams** (Level 4): Includes:
-   - Database ER diagrams for dolphin-be
+   - Database ER diagrams for orca-grid-be
    - Class diagrams for Spring Boot architecture
    - Component hierarchies for React/Next.js
    - Package structures for Go applications
@@ -2330,7 +2330,7 @@ The Open Sharia Enterprise platform uses C4 model for architecture documentation
 
 **Tool**: Mermaid diagrams (text-based, version-controlled)
 
-**Color Palette**: WCAG-compliant, color-blind friendly palette from [governance/conventions/formatting/diagrams.md](../../../../governance/conventions/formatting/diagrams.md)
+**Color Palette**: WCAG-compliant, color-blind friendly palette from [governance/conventions/formatting/diagrams.md](../../../../../governance/conventions/formatting/diagrams.md)
 
 **Accessibility**: All diagrams include proper legends and contrast ratios meeting WCAG AA standards
 

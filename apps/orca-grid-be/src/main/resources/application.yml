@@ -1,6 +1,6 @@
 spring:
   application:
-    name: dolphin-be
+    name: orca-grid-be
   profiles:
     active: dev
 
