@@ -210,6 +210,81 @@ Comprehensive guide to concurrent and parallel programming in modern Java.
 - Common concurrency problems (deadlocks, race conditions)
 - Modern patterns (Scoped Values, CompletableFuture)
 
+#### [Java Type Safety](./ex-so-stla-ja__type-safety.md)
+
+Comprehensive guide to achieving type safety and minimizing runtime errors in Java.
+
+**Covers**:
+
+- Null safety with JSpecify and NullAway (compile-time null checking)
+- Static analysis with Checker Framework (tainting, units, regex checkers)
+- Error Prone for bug prevention (Google's static analyzer)
+- Sealed classes for exhaustive handling
+- Optional for null-safe APIs
+- Pattern matching for type-safe decomposition
+- Records and immutability for compile-time guarantees
+- Phantom types and type-safe builders
+
+#### [Java Functional Programming](./ex-so-stla-ja__functional-programming.md)
+
+Comprehensive guide to functional programming patterns and practices in Java.
+
+**Covers**:
+
+- Pure functions and referential transparency
+- Immutability with records and persistent data structures
+- Vavr library (immutable collections, monads, pattern matching)
+- Streams API for declarative collection processing
+- Function composition and higher-order functions
+- Monads (Optional, CompletableFuture, Vavr Try/Either)
+- Functional core, imperative shell architecture
+- Property-based testing for functional code
+
+#### [Java Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md)
+
+Comprehensive guide to implementing DDD tactical patterns with Java frameworks.
+
+**Covers**:
+
+- Value objects with records (Money, Email, immutable domain primitives)
+- Entities with identity and lifecycle
+- Aggregates and consistency boundaries
+- Domain events for significant occurrences
+- Repositories for persistence abstraction
+- Domain services for cross-aggregate logic
+- Axon Framework for CQRS and event sourcing
+- Spring Boot integration for DDD applications
+
+#### [Java Test-Driven Development](./ex-so-stla-ja__test-driven-development.md)
+
+Comprehensive guide to TDD practices with JUnit 5, Mockito, and AssertJ.
+
+**Covers**:
+
+- Red-Green-Refactor cycle and TDD workflow
+- JUnit 5 fundamentals (tests, assertions, parameterized tests)
+- AssertJ for fluent assertions
+- Mockito for test doubles and mocking
+- Testing strategies (unit, integration, E2E)
+- TestContainers for database testing
+- Testing domain models (value objects, entities, aggregates)
+- TDD best practices and patterns
+
+#### [Java Behavior-Driven Development](./ex-so-stla-ja__behaviour-driven-development.md)
+
+Comprehensive guide to BDD with Cucumber, Gherkin, and collaborative testing.
+
+**Covers**:
+
+- BDD core concepts (discovery, formulation, automation)
+- Gherkin syntax (Given-When-Then, scenarios, scenario outlines)
+- Cucumber JVM for Java BDD
+- Step definitions connecting Gherkin to code
+- Data tables and parameter types for domain objects
+- BDD patterns and anti-patterns
+- Three Amigos and Example Mapping collaboration
+- BDD vs TDD complementary practices
+
 ## Java in the Platform
 
 ### Primary Use Cases
@@ -480,6 +555,11 @@ public class TaxService {
 - **[Java Security](./ex-so-stla-ja__security.md)** - Secure application development
 - **[Java Performance](./ex-so-stla-ja__performance.md)** - JVM tuning and optimization
 - **[Java Concurrency and Parallelism](./ex-so-stla-ja__concurrency-and-parallelism.md)** - Concurrent programming
+- **[Java Type Safety](./ex-so-stla-ja__type-safety.md)** - Null safety, static analysis, compile-time guarantees
+- **[Java Functional Programming](./ex-so-stla-ja__functional-programming.md)** - Pure functions, immutability, Vavr, monads
+- **[Java Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md)** - DDD tactical patterns, Axon, Spring Boot
+- **[Java Test-Driven Development](./ex-so-stla-ja__test-driven-development.md)** - TDD with JUnit 5, Mockito, AssertJ
+- **[Java Behavior-Driven Development](./ex-so-stla-ja__behaviour-driven-development.md)** - BDD with Cucumber, Gherkin
 
 ### Platform Documentation
 
