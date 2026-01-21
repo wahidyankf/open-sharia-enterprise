@@ -1056,6 +1056,6 @@ public void iCalculateZakat() {
 
 ---
 
-**Last Updated**: 2026-01-21
-**Java Version**: 8+ (Cucumber requires Java 8+)
-**Blessed Frameworks**: Cucumber JVM 7.21.0, JUnit Platform 1.11.4, JUnit Jupiter 5.14.2
+- **Last Updated**: 2026-01-21
+- **Java Version**: 8+ (Cucumber requires Java 8+)
+- **Blessed Frameworks**: Cucumber JVM 7.21.0, JUnit Platform 1.11.4, JUnit Jupiter 5.14.2

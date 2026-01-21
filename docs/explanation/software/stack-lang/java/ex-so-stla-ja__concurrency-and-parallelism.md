@@ -1987,6 +1987,6 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 
 ---
 
-**Last Updated**: 2026-01-21
-**Java Versions**: 17 LTS, 21 LTS, 25 LTS (Structured Concurrency preview)
-**Key Features**: Virtual Threads, Structured Concurrency, Scoped Values
+- **Last Updated**: 2026-01-21
+- **Java Versions**: 17 LTS, 21 LTS, 25 LTS (Structured Concurrency preview)
+- **Key Features**: Virtual Threads, Structured Concurrency, Scoped Values

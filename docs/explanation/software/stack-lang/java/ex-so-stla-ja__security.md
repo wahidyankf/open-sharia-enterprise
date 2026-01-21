@@ -2105,6 +2105,6 @@ This documentation is based on authoritative sources and up-to-date (2026) secur
 
 ---
 
-**Last Updated**: 2026-01-21
-**Java Versions**: 17 LTS, 21 LTS, 25 LTS
-**Compliance**: OWASP Top 10 2021, PCI-DSS 4.0, GDPR
+- **Last Updated**: 2026-01-21
+- **Java Versions**: 17 LTS, 21 LTS, 25 LTS
+- **Compliance**: OWASP Top 10 2021, PCI-DSS 4.0, GDPR

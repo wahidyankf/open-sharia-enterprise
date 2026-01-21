@@ -1989,6 +1989,6 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 
 ---
 
-**Last Updated**: 2026-01-21
-**Java Version**: 17+ (records for value objects, sealed classes for aggregates)
-**Blessed Frameworks**: Axon Framework 4.10.3 (CQRS, Event Sourcing), Spring Boot 4 (DI, transaction management, event publishing)
+- **Last Updated**: 2026-01-21
+- **Java Version**: 17+ (records for value objects, sealed classes for aggregates)
+- **Blessed Frameworks**: Axon Framework 4.10.3 (CQRS, Event Sourcing), Spring Boot 4 (DI, transaction management, event publishing)

@@ -1644,6 +1644,6 @@ Use JaCoCo for coverage reports.
 
 ---
 
-**Last Updated**: 2026-01-21
-**Java Version**: 8+ (JUnit 5 requires Java 8+)
-**Blessed Frameworks**: JUnit 5.14.2, Mockito 5.15.2, AssertJ 3.27.6, TestContainers 1.20.4
+- **Last Updated**: 2026-01-21
+- **Java Version**: 8+ (JUnit 5 requires Java 8+)
+- **Blessed Frameworks**: JUnit 5.14.2, Mockito 5.15.2, AssertJ 3.27.6, TestContainers 1.20.4

@@ -1604,6 +1604,6 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 
 ---
 
-**Last Updated**: 2026-01-21
-**Java Version**: 8+ (lambdas, streams), 17+ (sealed classes, records), 21+ (pattern matching)
-**Blessed Libraries**: Vavr 0.11.0 (immutable collections, monads, functional control flow)
+- **Last Updated**: 2026-01-21
+- **Java Version**: 8+ (lambdas, streams), 17+ (sealed classes, records), 21+ (pattern matching)
+- **Blessed Libraries**: Vavr 0.11.0 (immutable collections, monads, functional control flow)
