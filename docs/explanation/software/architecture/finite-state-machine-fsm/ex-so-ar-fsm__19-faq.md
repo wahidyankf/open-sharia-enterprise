@@ -160,6 +160,7 @@ export async function loanWorkflow(loanId: string) {
    - Natural load distribution
 
 4. **Caching**
+
    ```java
    // Cache FSM configuration (not state)
    private static final StateMachine<State, Event> FSM = buildFSM();

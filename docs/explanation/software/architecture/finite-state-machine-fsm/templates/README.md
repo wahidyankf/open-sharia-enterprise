@@ -35,31 +35,31 @@ Production-ready templates for Finite State Machine design, implementation, and 
 
 ### Documentation Templates
 
-3. **[State Transition Table](./ex-so-ar-fsm-te__state-transition-table.md)**
+1. **[State Transition Table](./ex-so-ar-fsm-te__state-transition-table.md)**
    - Tabular transition documentation
    - Guard/action specifications
    - Invalid transitions
    - Example: Qard Hasan (Interest-Free Loan) FSM
 
-4. **[State Machine Specification](./ex-so-ar-fsm-te__state-machine-specification.md)**
+2. **[State Machine Specification](./ex-so-ar-fsm-te__state-machine-specification.md)**
    - Formal FSM specification
    - Implementation contract
    - Business rules
    - Example: Donation Campaign FSM
 
-5. **[FSM Testing Strategy](./ex-so-ar-fsm-te__testing-strategy.md)**
+3. **[FSM Testing Strategy](./ex-so-ar-fsm-te__testing-strategy.md)**
    - State/transition coverage
    - Guard/action testing
    - Integration tests
    - Example: Islamic Financial Contract FSM
 
-6. **[Implementation Checklist](./ex-so-ar-fsm-te__implementation-checklist.md)**
+4. **[Implementation Checklist](./ex-so-ar-fsm-te__implementation-checklist.md)**
    - 7-phase implementation tracking
    - Design validation
    - Paradigm-specific checklists
    - Example: Zakat Calculation Workflow
 
-7. **[Starter Full Documentation](./ex-so-ar-fsm-te__starter-full-documentation.md)**
+5. **[Starter Full Documentation](./ex-so-ar-fsm-te__starter-full-documentation.md)**
    - All-in-one FSM package
    - Diagram + Spec + Tests + Deployment
    - Single-source documentation
@@ -67,23 +67,23 @@ Production-ready templates for Finite State Machine design, implementation, and 
 
 ### Implementation Templates
 
-8. **[Framework: Spring State Machine](./ex-so-ar-fsm-te__framework-spring-state-machine.md)**
+1. **[Framework: Spring State Machine](./ex-so-ar-fsm-te__framework-spring-state-machine.md)**
    - Java/Spring Boot integration
    - Configuration, guards, actions
    - JPA persistence
    - Example: Zakat Distribution FSM
 
-9. **[Framework: XState](./ex-so-ar-fsm-te__framework-xstate.md)**
+2. **[Framework: XState](./ex-so-ar-fsm-te__framework-xstate.md)**
    - TypeScript/JavaScript + React
    - Machine definition
    - React hooks integration
    - Example: Donation Campaign FSM
 
-10. **[Event-Driven: Saga Pattern](./ex-so-ar-fsm-te__event-driven-saga-pattern.md)**
-    - Distributed FSM with sagas
-    - Orchestration/choreography
-    - Compensation logic
-    - Example: Islamic Contract Approval Saga
+3. **[Event-Driven: Saga Pattern](./ex-so-ar-fsm-te__event-driven-saga-pattern.md)**
+   - Distributed FSM with sagas
+   - Orchestration/choreography
+   - Compensation logic
+   - Example: Islamic Contract Approval Saga
 
 ## Quick Start
 
