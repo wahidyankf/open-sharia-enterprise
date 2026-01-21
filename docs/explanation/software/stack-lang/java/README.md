@@ -101,7 +101,7 @@ Proven approaches for writing clean, maintainable Java code based on 2025-2026 s
 - Security practices
 - Modern framework usage
 
-### [Java Antipatterns](./ex-so-stla-ja__antipatterns.md)
+### [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md)
 
 Common mistakes, pitfalls, and problematic patterns to avoid in Java development.
 
@@ -114,6 +114,101 @@ Common mistakes, pitfalls, and problematic patterns to avoid in Java development
 - Over-engineering and complexity
 - Misuse of frameworks and libraries
 - Legacy patterns that are now obsolete
+
+### Release Documentation
+
+Comprehensive guides to major Java LTS releases, documenting important features and changes:
+
+#### [Java 17 LTS Release](./ex-so-stla-ja__release-17.md)
+
+Released September 2021. Minimum required version for the platform.
+
+**Major Features**:
+
+- Sealed classes and interfaces (finalized)
+- Pattern matching for switch (preview)
+- Strict floating-point semantics
+- Enhanced pseudo-random number generators
+- macOS/AArch64 support (Apple Silicon)
+
+#### [Java 21 LTS Release](./ex-so-stla-ja__release-21.md)
+
+Released September 2023. Recommended target version.
+
+**Major Features**:
+
+- Virtual threads (finalized) - revolutionary concurrency model
+- Record patterns (finalized)
+- Pattern matching for switch (finalized)
+- Sequenced collections
+- String templates (preview)
+- Scoped values (preview)
+- Structured concurrency (preview)
+
+#### [Java 25 LTS Release](./ex-so-stla-ja__release-25.md)
+
+Released September 2025. Latest LTS version with focus on performance.
+
+**Major Features**:
+
+- Compact source files and instance main methods (finalized)
+- Flexible constructor bodies (finalized)
+- Scoped values (finalized)
+- Module import declarations (finalized)
+- Ahead-of-time method profiling (finalized)
+- Compact object headers (20% memory reduction)
+- Primitive types in patterns (preview)
+- Generational Shenandoah GC
+
+### Specialized Topics
+
+Deep-dive documentation on critical Java development areas:
+
+#### [Java Security](./ex-so-stla-ja__security.md)
+
+Comprehensive guide to building secure Java applications aligned with OWASP guidelines.
+
+**Covers**:
+
+- Input validation and sanitization (allowlist approach)
+- Injection prevention (SQL, XSS, command injection)
+- Authentication and authorization (RBAC, MFA)
+- Cryptography (AES-GCM, hybrid encryption, key management)
+- Secure coding practices (error handling, resource management)
+- Dependency management (vulnerability scanning)
+- Audit logging (financial compliance)
+- Modern Java security features (sealed classes, pattern matching)
+
+#### [Java Performance](./ex-so-stla-ja__performance.md)
+
+Comprehensive guide to JVM tuning, optimization, and performance engineering.
+
+**Covers**:
+
+- JVM architecture and memory management
+- Garbage collection tuning (G1GC, ZGC, Shenandoah)
+- Memory optimization (object allocation, compact headers)
+- CPU optimization (JIT compilation, AOT profiling)
+- I/O optimization (database queries, connection pooling)
+- Caching strategies (Caffeine, Redis)
+- Profiling tools (JFR, async-profiler, JMH)
+- Modern Java performance features (virtual threads impact, generational GC)
+
+#### [Java Concurrency and Parallelism](./ex-so-stla-ja__concurrency-and-parallelism.md)
+
+Comprehensive guide to concurrent and parallel programming in modern Java.
+
+**Covers**:
+
+- Virtual threads (lightweight concurrency, Java 21+)
+- Structured concurrency (hierarchical task management, Java 21+ preview)
+- Thread safety (immutability, volatile, synchronization)
+- Synchronization mechanisms (ReentrantLock, ReadWriteLock, semaphores)
+- Concurrent collections (ConcurrentHashMap, BlockingQueue)
+- Atomic operations (AtomicInteger, LongAdder)
+- Parallel streams and Fork/Join framework
+- Common concurrency problems (deadlocks, race conditions)
+- Modern patterns (Scoped Values, CompletableFuture)
 
 ## Java in the Platform
 
@@ -205,9 +300,9 @@ Read [Java Best Practices](./ex-so-stla-ja__best-practices.md) to write clean co
 - Test comprehensively with JUnit 5
 - Use immutability and final fields
 
-### 3. Avoid Antipatterns
+### 3. Avoid Anti-Patterns
 
-Read [Java Antipatterns](./ex-so-stla-ja__antipatterns.md) to prevent common mistakes:
+Read [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) to prevent common mistakes:
 
 - Thread safety issues (SimpleDateFormat, shared state)
 - Resource leaks (unclosed streams, connections)
@@ -368,6 +463,26 @@ public class TaxService {
 
 ## Related Documentation
 
+### Core Java Documentation
+
+- **[Java Idioms](./ex-so-stla-ja__idioms.md)** - Modern Java patterns and conventions
+- **[Java Best Practices](./ex-so-stla-ja__best-practices.md)** - Clean code guidelines
+- **[Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md)** - Common mistakes to avoid
+
+### Java Release Documentation
+
+- **[Java 17 LTS Release](./ex-so-stla-ja__release-17.md)** - Baseline version features
+- **[Java 21 LTS Release](./ex-so-stla-ja__release-21.md)** - Recommended version features
+- **[Java 25 LTS Release](./ex-so-stla-ja__release-25.md)** - Latest LTS features
+
+### Specialized Topics
+
+- **[Java Security](./ex-so-stla-ja__security.md)** - Secure application development
+- **[Java Performance](./ex-so-stla-ja__performance.md)** - JVM tuning and optimization
+- **[Java Concurrency and Parallelism](./ex-so-stla-ja__concurrency-and-parallelism.md)** - Concurrent programming
+
+### Platform Documentation
+
 - **[Tech Stack Languages Index](../README.md)** - Parent language documentation
 - **[Software Design Index](../../README.md)** - Software documentation root
 - **[Explanation Documentation Index](../../../README.md)** - All conceptual docs
@@ -375,5 +490,5 @@ public class TaxService {
 
 ---
 
-**Last Updated**: 2026-01-20
-**Java Version**: 17+ (baseline), 21+ (recommended), 25 (emerging)
+**Last Updated**: 2026-01-21
+**Java Version**: 17+ (baseline), 21+ (recommended), 25 (latest LTS)
