@@ -43,11 +43,11 @@ Comprehensive documentation on software development practices:
 - **[Test-Driven Development (TDD)](./development/test-driven-development-tdd/README.md)** - Red-Green-Refactor cycle and testing patterns
 - **[Behavior-Driven Development (BDD)](./development/behavior-driven-development-bdd/README.md)** - Gherkin scenarios and specification by example
 
-### ☕ [Programming Languages](./tech-stack-lang/README.md)
+### ☕ [Programming Languages](./stack-lang/README.md)
 
 Language-specific idioms, best practices, and antipatterns:
 
-- **[Java](./tech-stack-lang/java/README.md)** - Modern Java development (Java 17+) with records, pattern matching, and virtual threads
+- **[Java](./stack-lang/java/README.md)** - Modern Java development (Java 17+) with records, pattern matching, and virtual threads
 
 ---
 
