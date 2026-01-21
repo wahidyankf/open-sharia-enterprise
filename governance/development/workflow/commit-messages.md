@@ -822,8 +822,8 @@ Closes #123
 
 - [AI Agents Convention](../agents/ai-agents.md) - Standards for AI agents
 - [Code Quality Convention](../quality/code.md) - Automated tools and git hooks for code formatting and commit validation
-- [Development Index](./README.md) - Overview of development conventions
-- [Conventions Index](./README.md) - Documentation conventions
+- [Development Index](../README.md) - Overview of development conventions
+- [Conventions Index](../../conventions/README.md) - Documentation conventions
 
 ## External Resources
 

@@ -28,7 +28,7 @@ These standards define **HOW to manage development infrastructure**, including w
 
 ## Related Documentation
 
-- [Development Index](./README.md) - All development practices
+- [Development Index](../README.md) - All development practices
 - [Explicit Over Implicit Principle](../../principles/software-engineering/explicit-over-implicit.md) - Why clear organization matters
 - [AI Agents Convention](../agents/ai-agents.md) - Agent development standards
 - [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model

@@ -913,7 +913,7 @@ The verified accessible color palette is based on scientific consensus:
 - [Diagram and Schema Convention](./diagrams.md) - Standards for Mermaid diagrams with color accessibility requirements
 - [Emoji Usage Convention](./emoji.md) - Emoji usage including colored square emoji accessibility guidance
 - [AI Agents Convention](../../development/agents/ai-agents.md) - Agent color categorization (blue, green, yellow, purple)
-- [Conventions Index](./README.md) - Overview of all repository conventions
+- [Conventions Index](../README.md) - Overview of all repository conventions
 
 ## Conclusion
 

@@ -241,10 +241,10 @@ All workflows must respect core principles:
 
 - [Repository Governance Architecture](../repository-governance-architecture.md) - Complete six-layer architecture explanation
 - [Vision](../vision/open-sharia-enterprise.md) - Layer 0: Foundational purpose
-- [Core Principles](./README.md) - Layer 1: Foundational values
-- [Conventions](./README.md) - Layer 2: Documentation rules
-- [Development](./README.md) - Layer 3: Software practices
-- [AI Agents](./README.md) - Layer 4: Task executors
+- [Core Principles](../principles/README.md) - Layer 1: Foundational values
+- [Conventions](../conventions/README.md) - Layer 2: Documentation rules
+- [Development](../development/README.md) - Layer 3: Software practices
+- [AI Agents](../../.claude/agents/README.md) - Layer 4: Task executors
 
 ## Future Enhancements
 

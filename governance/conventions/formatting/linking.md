@@ -100,7 +100,7 @@ Use standard markdown link syntax with relative paths:
 <!-- Link to nested files -->
 
 [File Naming Convention](../meta/file-naming.md)
-[Conventions Index](./README.md)
+[Conventions Index](../README.md)
 ```
 
 ### Linking from Category Index (`docs/tutorials/README.md`)
@@ -131,7 +131,7 @@ Use standard markdown link syntax with relative paths:
 
 <!-- Link to parent directory -->
 
-[Explanation Index](./README.md)
+[Explanation Index](../../docs/explanation/README.md)
 
 <!-- Link to root -->
 
@@ -275,7 +275,7 @@ Understanding relative paths is crucial when linking from files at different nes
 
 [Software Engineering Principles](./README.md) <!-- Parent directory -->
 [All Principles](./README.md) <!-- Grandparent directory -->
-[Explanation Index](./README.md) <!-- Great-grandparent -->
+[Explanation Index](../../docs/explanation/README.md) <!-- Great-grandparent -->
 ```
 
 ### Verification Tip
@@ -362,7 +362,7 @@ When creating documentation, verify links by:
 ## Related Documentation
 
 - [File Naming Convention](../meta/file-naming.md) - How to name documentation files
-- [Conventions Index](./README.md) - Overview of all documentation conventions
+- [Conventions Index](../README.md) - Overview of all documentation conventions
 
 ---
 

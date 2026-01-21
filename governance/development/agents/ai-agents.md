@@ -367,7 +367,7 @@ skills:
 
 This pattern provides both auto-loaded knowledge (Skills) and explicit references for specific requirements.
 
-See [Skills README](./README.md) for complete details on Skills creation, structure, and usage patterns.
+See [Skills README](../../../.claude/skills/README.md) for complete details on Skills creation, structure, and usage patterns.
 
 ### Document Structure
 
@@ -2369,12 +2369,12 @@ When simplifying an agent:
 - `validating-links` - Link validation, caching
 - Plus 8 more in Content Creation, Standards Application, Process Execution categories
 
-See [Skills README](./README.md) for complete catalog.
+See [Skills README](../../../.claude/skills/README.md) for complete catalog.
 
 ## Related Documentation
 
-- [Development Index](./README.md) - Overview of development conventions
-- [Conventions Index](./README.md) - Documentation conventions
+- [Development Index](../README.md) - Overview of development conventions
+- [Conventions Index](../../conventions/README.md) - Documentation conventions
 - [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - Master reference for all color usage (agent categorization, diagrams, accessibility standards)
 - [File Naming Convention](../../conventions/meta/file-naming.md) - How to name files
 - [Linking Convention](../../conventions/formatting/linking.md) - How to link between files
@@ -2498,10 +2498,10 @@ Skills are **directly copied** from `.claude/skills/` to `.opencode/skill/` (no 
 
 - **[CLAUDE.md](../../../CLAUDE.md)** (PRIMARY) - Claude Code configuration
 - **[AGENTS.md](../../../AGENTS.md)** (SECONDARY) - OpenCode configuration with auto-generated warning
-- **[.claude/agents/README.md](./README.md)** (PRIMARY) - Agent catalog
-- **[.opencode/agent/README.md](./README.md)** (SECONDARY) - OpenCode agent catalog with warning
-- **[.claude/skills/README.md](./README.md)** (PRIMARY) - Skills catalog
-- **[.opencode/skill/README.md](./README.md)** (SECONDARY) - OpenCode skills catalog with warning
+- **[.claude/agents/README.md](../../../.claude/agents/README.md)** (PRIMARY) - Agent catalog
+- **[.opencode/agent/README.md](../../../.opencode/agent/README.md)** (SECONDARY) - OpenCode agent catalog with warning
+- **[.claude/skills/README.md](../../../.claude/skills/README.md)** (PRIMARY) - Skills catalog
+- **[.opencode/skill/README.md](../../../.opencode/skill/README.md)** (SECONDARY) - OpenCode skills catalog with warning
 
 ### Migration History
 

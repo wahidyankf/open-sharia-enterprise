@@ -382,11 +382,11 @@ We know we're succeeding when:
 
 ## Related Documentation
 
-- [Core Principles](./README.md) - How our principles serve this vision
-- [Conventions](./README.md) - Documentation standards supporting the vision
-- [Development](./README.md) - Development practices aligned with the vision
-- [AI Agents](./README.md) - How automation serves our mission
-- [Workflows](./README.md) - Processes supporting our goals
+- [Core Principles](../principles/README.md) - How our principles serve this vision
+- [Conventions](../conventions/README.md) - Documentation standards supporting the vision
+- [Development](../development/README.md) - Development practices aligned with the vision
+- [AI Agents](../../.claude/agents/README.md) - How automation serves our mission
+- [Workflows](../workflows/README.md) - Processes supporting our goals
 
 ---
 

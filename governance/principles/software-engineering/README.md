@@ -52,8 +52,8 @@ Each principle is demonstrated across the platform's technology stack:
 
 ## Related Documentation
 
-- [Core Principles Index](./README.md) - All foundational principles
-- [Development Practices Index](./README.md) - Development practices implementing these principles
+- [Core Principles Index](../README.md) - All foundational principles
+- [Development Practices Index](../../development/README.md) - Development practices implementing these principles
 - [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
 
 ---

@@ -583,7 +583,7 @@ When creating a convention:
 **Repository Guidance:**
 
 - [AGENTS.md](../../../AGENTS.md) - Project-wide guidance for AI agents
-- [Conventions Index](./README.md) - Index of all convention documents
+- [Conventions Index](../README.md) - Index of all convention documents
 
 **Agents:**
 

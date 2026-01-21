@@ -506,7 +506,7 @@ calculate(value: number): number
 **Related Standards**:
 
 - [Content Quality Principles](../content/quality.md) - Universal content standards
-- [Conventions Index](./README.md) - All documentation conventions
+- [Conventions Index](../README.md) - All documentation conventions
 
 ---
 

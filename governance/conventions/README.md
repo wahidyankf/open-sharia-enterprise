@@ -14,7 +14,7 @@ updated: 2025-12-28
 
 Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, and linked. Contains 24 conventions covering all aspects of documentation writing and formatting.
 
-**Governance**: All conventions in this directory serve the [Vision](../vision/open-sharia-enterprise.md) (Layer 0) and implement the [Core Principles](./README.md) (Layer 1) as part of the six-layer architecture. Each convention MUST include a "Principles Implemented/Respected" section that explicitly traces back to foundational principles. See [Repository Governance Architecture](../repository-governance-architecture.md) for complete governance model and [Convention Writing Convention](./content/convention-writing.md) for structure requirements.
+**Governance**: All conventions in this directory serve the [Vision](../vision/open-sharia-enterprise.md) (Layer 0) and implement the [Core Principles](../principles/README.md) (Layer 1) as part of the six-layer architecture. Each convention MUST include a "Principles Implemented/Respected" section that explicitly traces back to foundational principles. See [Repository Governance Architecture](../repository-governance-architecture.md) for complete governance model and [Convention Writing Convention](./content/convention-writing.md) for structure requirements.
 
 ## 🎯 Scope
 
@@ -31,7 +31,7 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 - Hugo **content** writing (frontmatter, markdown, archetypes)
 - Repository documentation standards (README, CONTRIBUTING)
 
-**❌ Does NOT Belong Here (use [Development](./README.md) instead):**
+**❌ Does NOT Belong Here (use [Development](../development/README.md) instead):**
 
 - Software development methodologies (BDD, testing, agile)
 - Build processes and tooling workflows
@@ -135,8 +135,8 @@ Project-level documentation and planning organization.
 ## 📚 Related Documentation
 
 - [Repository Governance Architecture](../repository-governance-architecture.md) - Complete six-layer architecture (Layer 2: Conventions)
-- [Core Principles](./README.md) - Layer 1: Foundational values that govern conventions
-- [Development](./README.md) - Layer 3: Software practices (parallel governance with conventions)
+- [Core Principles](../principles/README.md) - Layer 1: Foundational values that govern conventions
+- [Development](../development/README.md) - Layer 3: Software practices (parallel governance with conventions)
 
 ---
 
