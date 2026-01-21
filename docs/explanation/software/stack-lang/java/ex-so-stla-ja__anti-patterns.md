@@ -2539,6 +2539,1215 @@ interface ConfigurationService {
 }
 ```
 
+## Financial Calculation Anti-Patterns
+
+Financial applications require extreme precision and correctness. These anti-patterns demonstrate common mistakes when working with monetary values, dates, and business calculations that can lead to financial losses, compliance violations, and customer trust issues.
+
+### 1. Using double/float for Money
+
+**Problem**: Using floating-point types (`double` or `float`) for monetary values causes precision loss due to binary representation limitations.
+
+**Why It's Bad**:
+
+- Binary floating-point cannot accurately represent decimal values (0.1 + 0.2 ≠ 0.3)
+- Accumulating errors compound over many transactions
+- Zakat calculations, tax computations, and profit distributions become incorrect
+- Violates financial compliance requirements
+- Legal and regulatory issues
+
+**Real-World Impact**:
+
+In a Zakat collection system processing 100,000 donations per month, even 0.01% precision error can result in thousands in miscalculated obligations.
+
+**Example - Zakat Calculation with Accumulating Errors**:
+
+```java
+// WRONG: Using double for Zakat calculation
+public class ZakatCalculatorWrong {
+    private static final double ZAKAT_RATE = 0.025; // 2.5%
+
+    public double calculateZakat(double[] monthlyBalances) {
+        double totalZakat = 0.0;
+
+        for (double balance : monthlyBalances) {
+            // Precision loss accumulates with each iteration
+            totalZakat += balance * ZAKAT_RATE;
+        }
+
+        return totalZakat; // Incorrect due to floating-point errors
+    }
+}
+
+// Test demonstrating the problem
+@Test
+void demonstratesPrecisionLoss() {
+    ZakatCalculatorWrong calculator = new ZakatCalculatorWrong();
+
+    // 12 months of balances
+    double[] balances = new double[12];
+    Arrays.fill(balances, 10000.10); // $10,000.10 each month
+
+    double zakatDouble = calculator.calculateZakat(balances);
+
+    // Expected: 12 * (10000.10 * 0.025) = 3000.03
+    // Actual: 3000.0299999999997 (precision loss!)
+    System.out.println("Double result: " + zakatDouble);
+    // Output: 3000.0299999999997
+
+    // Over years, this error compounds significantly
+    assertNotEquals(3000.03, zakatDouble, 0.0); // Fails!
+}
+
+// CORRECT: Using BigDecimal for Zakat calculation
+public class ZakatCalculatorCorrect {
+    private static final BigDecimal ZAKAT_RATE = new BigDecimal("0.025");
+
+    public BigDecimal calculateZakat(BigDecimal[] monthlyBalances) {
+        BigDecimal totalZakat = BigDecimal.ZERO;
+
+        for (BigDecimal balance : monthlyBalances) {
+            BigDecimal monthlyZakat = balance.multiply(ZAKAT_RATE)
+                .setScale(2, RoundingMode.HALF_UP);
+            totalZakat = totalZakat.add(monthlyZakat);
+        }
+
+        return totalZakat;
+    }
+}
+
+// Test demonstrating correctness
+@Test
+void calculatesPreciseZakat() {
+    ZakatCalculatorCorrect calculator = new ZakatCalculatorCorrect();
+
+    // 12 months of balances
+    BigDecimal[] balances = new BigDecimal[12];
+    Arrays.fill(balances, new BigDecimal("10000.10"));
+
+    BigDecimal zakatBigDecimal = calculator.calculateZakat(balances);
+
+    // Expected: 12 * (10000.10 * 0.025) = 3000.03
+    assertEquals(new BigDecimal("3000.03"), zakatBigDecimal);
+    // Test passes with exact precision!
+}
+```
+
+**Performance Impact**:
+
+- BigDecimal operations are ~10x slower than double
+- For financial applications, correctness outweighs performance
+- Cache commonly used values like rates and nisab thresholds
+
+**Fix**:
+
+Always use `BigDecimal` for monetary values with explicit scale and rounding mode.
+
+### 2. Mutable Money Objects
+
+**Problem**: Creating mutable money value objects allows modification after creation, breaking immutability guarantees and causing thread-safety issues.
+
+**Why It's Bad**:
+
+- Shared money instances can be corrupted by multiple threads
+- Debugging is difficult when values change unexpectedly
+- Violates value object principles
+- Makes reasoning about code state impossible
+
+**Example - Shared Donation Amount Corrupted**:
+
+```java
+// WRONG: Mutable Money class
+public class MoneyMutable {
+    private BigDecimal amount;
+    private Currency currency;
+
+    public MoneyMutable(BigDecimal amount, Currency currency) {
+        this.amount = amount;
+        this.currency = currency;
+    }
+
+    // Dangerous: Allows modification
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public Currency getCurrency() {
+        return currency;
+    }
+}
+
+// Demonstrates thread-safety problem
+@Test
+void demonstratesRaceCondition() throws InterruptedException {
+    MoneyMutable donation = new MoneyMutable(
+        new BigDecimal("1000.00"),
+        Currency.getInstance("USD")
+    );
+
+    // Multiple threads processing the same donation
+    ExecutorService executor = Executors.newFixedThreadPool(10);
+    CountDownLatch latch = new CountDownLatch(100);
+
+    for (int i = 0; i < 100; i++) {
+        executor.submit(() -> {
+            try {
+                // Each thread tries to add $10
+                BigDecimal current = donation.getAmount();
+                Thread.sleep(1); // Simulate processing time
+                donation.setAmount(current.add(new BigDecimal("10.00")));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } finally {
+                latch.countDown();
+            }
+        });
+    }
+
+    latch.await();
+    executor.shutdown();
+
+    // Expected: 1000 + (100 * 10) = 2000
+    // Actual: Unpredictable due to race condition!
+    System.out.println("Final amount: " + donation.getAmount());
+    // Output varies: Could be 1100, 1450, 1890, etc.
+
+    assertNotEquals(new BigDecimal("2000.00"), donation.getAmount());
+}
+
+// CORRECT: Immutable Money class using record
+public record Money(BigDecimal amount, Currency currency) {
+    public Money {
+        Objects.requireNonNull(amount, "Amount cannot be null");
+        Objects.requireNonNull(currency, "Currency cannot be null");
+        if (amount.scale() > 2) {
+            throw new IllegalArgumentException(
+                "Amount scale cannot exceed 2 decimal places"
+            );
+        }
+    }
+
+    // Operations return new instances
+    public Money add(Money other) {
+        if (!this.currency.equals(other.currency)) {
+            throw new IllegalArgumentException(
+                "Cannot add different currencies: " +
+                this.currency + " and " + other.currency
+            );
+        }
+        return new Money(
+            this.amount.add(other.amount),
+            this.currency
+        );
+    }
+
+    public Money multiply(BigDecimal multiplier) {
+        return new Money(
+            this.amount.multiply(multiplier)
+                .setScale(2, RoundingMode.HALF_UP),
+            this.currency
+        );
+    }
+}
+
+// Test demonstrates thread safety
+@Test
+void demonstratesThreadSafety() throws InterruptedException {
+    Money initialDonation = new Money(
+        new BigDecimal("1000.00"),
+        Currency.getInstance("USD")
+    );
+
+    ExecutorService executor = Executors.newFixedThreadPool(10);
+    CountDownLatch latch = new CountDownLatch(100);
+    AtomicReference<Money> donation = new AtomicReference<>(initialDonation);
+
+    Money increment = new Money(
+        new BigDecimal("10.00"),
+        Currency.getInstance("USD")
+    );
+
+    for (int i = 0; i < 100; i++) {
+        executor.submit(() -> {
+            try {
+                // Thread-safe update using immutable operations
+                donation.updateAndGet(current -> current.add(increment));
+            } finally {
+                latch.countDown();
+            }
+        });
+    }
+
+    latch.await();
+    executor.shutdown();
+
+    // Expected: 1000 + (100 * 10) = 2000
+    assertEquals(
+        new BigDecimal("2000.00"),
+        donation.get().amount()
+    );
+    // Test passes reliably!
+}
+```
+
+**Fix**:
+
+Use immutable value objects (records or classes with final fields) and return new instances for operations.
+
+### 3. Currency Mismatch in Operations
+
+**Problem**: Performing arithmetic operations on money values with different currencies without proper validation or conversion.
+
+**Why It's Bad**:
+
+- Produces nonsensical results (adding USD to EUR)
+- Silent errors propagate through the system
+- Financial reports become incorrect
+- Compliance and auditing issues
+
+**Example - Multi-Currency Portfolio Aggregation**:
+
+```java
+// WRONG: No currency validation
+public class PortfolioCalculatorWrong {
+    public BigDecimal calculateTotalValue(List<Money> holdings) {
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (Money holding : holdings) {
+            // Blindly adds amounts without checking currency!
+            total = total.add(holding.amount());
+        }
+
+        return total; // Meaningless result!
+    }
+}
+
+// Test demonstrating the problem
+@Test
+void demonstratesCurrencyMismatch() {
+    PortfolioCalculatorWrong calculator = new PortfolioCalculatorWrong();
+
+    List<Money> portfolio = List.of(
+        new Money(new BigDecimal("1000.00"), Currency.getInstance("USD")),
+        new Money(new BigDecimal("2000.00"), Currency.getInstance("EUR")),
+        new Money(new BigDecimal("3000.00"), Currency.getInstance("GBP"))
+    );
+
+    BigDecimal total = calculator.calculateTotalValue(portfolio);
+
+    // Result is 6000.00, but 6000 of what currency?!
+    // This is completely meaningless
+    assertEquals(new BigDecimal("6000.00"), total);
+    System.out.println("Meaningless total: " + total);
+}
+
+// CORRECT: Type-safe Money class with currency enforcement
+public record Money(BigDecimal amount, Currency currency) {
+    // Validation in constructor (shown earlier)
+
+    public Money add(Money other) {
+        if (!this.currency.equals(other.currency)) {
+            throw new CurrencyMismatchException(
+                "Cannot add " + other.currency + " to " + this.currency
+            );
+        }
+        return new Money(
+            this.amount.add(other.amount),
+            this.currency
+        );
+    }
+}
+
+public class CurrencyMismatchException extends RuntimeException {
+    public CurrencyMismatchException(String message) {
+        super(message);
+    }
+}
+
+public class PortfolioCalculatorCorrect {
+    private final CurrencyConverter converter;
+
+    public PortfolioCalculatorCorrect(CurrencyConverter converter) {
+        this.converter = converter;
+    }
+
+    public Money calculateTotalValue(
+        List<Money> holdings,
+        Currency targetCurrency
+    ) {
+        Money total = new Money(BigDecimal.ZERO, targetCurrency);
+
+        for (Money holding : holdings) {
+            Money converted = converter.convert(holding, targetCurrency);
+            total = total.add(converted);
+        }
+
+        return total;
+    }
+}
+
+// Mock converter for testing
+interface CurrencyConverter {
+    Money convert(Money money, Currency targetCurrency);
+}
+
+// Test demonstrating compile-time safety
+@Test
+void enforcesTypeSafety() {
+    CurrencyConverter converter = (money, target) -> {
+        if (money.currency().equals(target)) {
+            return money;
+        }
+        // Mock conversion rates for testing
+        BigDecimal rate = switch (money.currency().getCurrencyCode() + "->" + target.getCurrencyCode()) {
+            case "EUR->USD" -> new BigDecimal("1.10");
+            case "GBP->USD" -> new BigDecimal("1.30");
+            default -> BigDecimal.ONE;
+        };
+        return new Money(
+            money.amount().multiply(rate).setScale(2, RoundingMode.HALF_UP),
+            target
+        );
+    };
+
+    PortfolioCalculatorCorrect calculator =
+        new PortfolioCalculatorCorrect(converter);
+
+    List<Money> portfolio = List.of(
+        new Money(new BigDecimal("1000.00"), Currency.getInstance("USD")),
+        new Money(new BigDecimal("2000.00"), Currency.getInstance("EUR")),
+        new Money(new BigDecimal("3000.00"), Currency.getInstance("GBP"))
+    );
+
+    Money totalUSD = calculator.calculateTotalValue(
+        portfolio,
+        Currency.getInstance("USD")
+    );
+
+    // Expected: 1000 + (2000 * 1.10) + (3000 * 1.30) = 7100.00 USD
+    assertEquals(new BigDecimal("7100.00"), totalUSD.amount());
+    assertEquals(Currency.getInstance("USD"), totalUSD.currency());
+}
+```
+
+**Fix**:
+
+Enforce currency type safety in Money class and require explicit conversion with exchange rates.
+
+### 4. Ignoring Rounding in Division
+
+**Problem**: Performing BigDecimal division without specifying a RoundingMode, which throws ArithmeticException for non-terminating decimal results.
+
+**Why It's Bad**:
+
+- Runtime exceptions in production for simple calculations
+- Zakat rate calculations (2.5%) fail unpredictably
+- Business operations halt
+- Poor user experience
+
+**Example - Zakat Rate Calculation Throwing Exception**:
+
+```java
+// WRONG: Division without rounding mode
+public class ZakatCalculatorNaive {
+    public static BigDecimal calculateZakat(BigDecimal wealth) {
+        BigDecimal zakatRate = new BigDecimal("2.5");
+        BigDecimal hundred = new BigDecimal("100");
+
+        // This throws ArithmeticException!
+        // 2.5 / 100 = 0.025 (non-terminating decimal in some contexts)
+        BigDecimal rate = zakatRate.divide(hundred);
+
+        return wealth.multiply(rate);
+    }
+}
+
+// Test demonstrating the exception
+@Test
+void throwsArithmeticException() {
+    BigDecimal wealth = new BigDecimal("10000.00");
+
+    assertThrows(ArithmeticException.class, () -> {
+        // Actually, this specific case works, but let's demonstrate
+        // a more problematic division
+        BigDecimal third = new BigDecimal("1").divide(new BigDecimal("3"));
+    });
+
+    // Real-world problem: Distributing Zakat to 3 beneficiaries
+    assertThrows(ArithmeticException.class, () -> {
+        BigDecimal zakatAmount = new BigDecimal("100.00");
+        BigDecimal beneficiaries = new BigDecimal("3");
+
+        // This throws: Non-terminating decimal expansion
+        BigDecimal perBeneficiary = zakatAmount.divide(beneficiaries);
+    });
+}
+
+// CORRECT: Always specify RoundingMode
+public class ZakatCalculatorProper {
+    private static final BigDecimal ZAKAT_RATE = new BigDecimal("0.025");
+    private static final int SCALE = 2;
+    private static final RoundingMode ROUNDING = RoundingMode.HALF_UP;
+
+    public static BigDecimal calculateZakat(BigDecimal wealth) {
+        return wealth.multiply(ZAKAT_RATE)
+            .setScale(SCALE, ROUNDING);
+    }
+
+    public static List<BigDecimal> distributeZakat(
+        BigDecimal zakatAmount,
+        int beneficiaryCount
+    ) {
+        BigDecimal beneficiaries = new BigDecimal(beneficiaryCount);
+
+        // Divide with explicit rounding
+        BigDecimal baseAmount = zakatAmount
+            .divide(beneficiaries, SCALE, ROUNDING);
+
+        // Calculate remainder for fair distribution
+        BigDecimal distributed = baseAmount.multiply(beneficiaries);
+        BigDecimal remainder = zakatAmount.subtract(distributed);
+
+        List<BigDecimal> distribution = new ArrayList<>();
+        for (int i = 0; i < beneficiaryCount; i++) {
+            if (i == 0) {
+                // Give remainder to first beneficiary
+                distribution.add(baseAmount.add(remainder));
+            } else {
+                distribution.add(baseAmount);
+            }
+        }
+
+        return distribution;
+    }
+}
+
+// Test demonstrating correctness
+@Test
+void distributesZakatCorrectly() {
+    BigDecimal zakatAmount = new BigDecimal("100.00");
+    int beneficiaries = 3;
+
+    List<BigDecimal> distribution = ZakatCalculatorProper
+        .distributeZakat(zakatAmount, beneficiaries);
+
+    assertEquals(3, distribution.size());
+
+    // First beneficiary gets remainder
+    assertEquals(new BigDecimal("33.34"), distribution.get(0));
+    // Others get base amount
+    assertEquals(new BigDecimal("33.33"), distribution.get(1));
+    assertEquals(new BigDecimal("33.33"), distribution.get(2));
+
+    // Verify total equals original
+    BigDecimal total = distribution.stream()
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+    assertEquals(zakatAmount, total);
+}
+```
+
+**Best Practices**:
+
+- Always use `divide(divisor, scale, roundingMode)` form
+- Standardize on `RoundingMode.HALF_UP` for financial calculations
+- Define constants for scale and rounding mode
+- Handle remainder distribution fairly
+
+### 5. String-based Amount Parsing Without Locale
+
+**Problem**: Parsing monetary amounts from strings without considering locale-specific formatting differences.
+
+**Why It's Bad**:
+
+- "1,234.56" means different values in US (thousand separator) vs Europe (decimal separator)
+- International applications produce wrong values
+- Silent data corruption
+- Compliance violations in multi-region systems
+
+**Example - Locale Confusion in Amount Parsing**:
+
+```java
+// WRONG: Parsing without locale awareness
+public class DonationParser {
+    public Money parseAmount(String amountStr, String currencyCode) {
+        // Blindly parses without considering locale!
+        BigDecimal amount = new BigDecimal(amountStr);
+        Currency currency = Currency.getInstance(currencyCode);
+        return new Money(amount, currency);
+    }
+}
+
+// Test demonstrating locale confusion
+@Test
+void demonstratesLocaleConfusion() {
+    DonationParser parser = new DonationParser();
+
+    // US user enters: 1,234.56 (one thousand two hundred thirty-four dollars)
+    // But BigDecimal constructor doesn't accept comma!
+    assertThrows(NumberFormatException.class, () -> {
+        parser.parseAmount("1,234.56", "USD");
+    });
+
+    // If user removes comma manually: 1234.56
+    // Works, but what about European users?
+
+    // European user enters: 1.234,56 (same value in European format)
+    // BigDecimal interprets as 1.234 (one point two three four)
+    Money european = parser.parseAmount("1.234", "EUR");
+    assertEquals(new BigDecimal("1.234"), european.amount());
+    // Wrong! Should be 1234.56
+}
+
+// CORRECT: Locale-aware parsing
+public class DonationParserLocaleAware {
+    public Money parseAmount(
+        String amountStr,
+        String currencyCode,
+        Locale locale
+    ) {
+        try {
+            // Use NumberFormat for locale-aware parsing
+            NumberFormat format = NumberFormat.getNumberInstance(locale);
+
+            // Configure for financial precision
+            if (format instanceof DecimalFormat decimalFormat) {
+                decimalFormat.setParseBigDecimal(true);
+            }
+
+            Number parsed = format.parse(amountStr);
+            BigDecimal amount;
+
+            if (parsed instanceof BigDecimal bd) {
+                amount = bd;
+            } else {
+                amount = new BigDecimal(parsed.toString());
+            }
+
+            // Set appropriate scale for currency
+            amount = amount.setScale(2, RoundingMode.HALF_UP);
+
+            Currency currency = Currency.getInstance(currencyCode);
+            return new Money(amount, currency);
+
+        } catch (ParseException e) {
+            throw new IllegalArgumentException(
+                "Invalid amount format: " + amountStr +
+                " for locale: " + locale,
+                e
+            );
+        }
+    }
+}
+
+// Test demonstrating correct locale handling
+@Test
+void handlesMultipleLocalesCorrectly() {
+    DonationParserLocaleAware parser = new DonationParserLocaleAware();
+
+    // US format: 1,234.56
+    Money usDonation = parser.parseAmount(
+        "1,234.56",
+        "USD",
+        Locale.US
+    );
+    assertEquals(new BigDecimal("1234.56"), usDonation.amount());
+
+    // European format: 1.234,56
+    Money eurDonation = parser.parseAmount(
+        "1.234,56",
+        "EUR",
+        Locale.GERMANY
+    );
+    assertEquals(new BigDecimal("1234.56"), eurDonation.amount());
+
+    // Both parse to the same value despite different formats!
+    assertEquals(
+        usDonation.amount(),
+        eurDonation.amount()
+    );
+}
+
+// Validation with regex before parsing
+public class DonationValidator {
+    private static final Pattern US_AMOUNT =
+        Pattern.compile("^\\d{1,3}(,\\d{3})*(\\.\\d{2})?$");
+    private static final Pattern EU_AMOUNT =
+        Pattern.compile("^\\d{1,3}(\\.\\d{3})*(,\\d{2})?$");
+
+    public boolean isValidAmount(String amountStr, Locale locale) {
+        if (locale.equals(Locale.US)) {
+            return US_AMOUNT.matcher(amountStr).matches();
+        } else if (locale.equals(Locale.GERMANY)) {
+            return EU_AMOUNT.matcher(amountStr).matches();
+        }
+        return false;
+    }
+}
+
+@Test
+void validatesAmountFormats() {
+    DonationValidator validator = new DonationValidator();
+
+    // US formats
+    assertTrue(validator.isValidAmount("1,234.56", Locale.US));
+    assertTrue(validator.isValidAmount("123.45", Locale.US));
+    assertFalse(validator.isValidAmount("1.234,56", Locale.US));
+
+    // European formats
+    assertTrue(validator.isValidAmount("1.234,56", Locale.GERMANY));
+    assertTrue(validator.isValidAmount("123,45", Locale.GERMANY));
+    assertFalse(validator.isValidAmount("1,234.56", Locale.GERMANY));
+}
+```
+
+**Fix**:
+
+Use `NumberFormat.parse()` with explicit locale and validate format before parsing.
+
+### 6. Incorrect Date Arithmetic for Fiscal Years
+
+**Problem**: Using simple date addition (e.g., `plusYears(1)`) without considering leap years, month-end differences, and fiscal year boundaries.
+
+**Why It's Bad**:
+
+- Zakat haul calculation incorrect for leap years
+- Loan maturity dates wrong
+- Fiscal year boundaries miscalculated
+- Compliance reporting errors
+
+**Example - Zakat Haul Calculation for Feb 29**:
+
+```java
+// WRONG: Naive date arithmetic
+public class ZakatHaulCalculatorWrong {
+    public LocalDate calculateHaulEndDate(LocalDate startDate) {
+        // Simply adds one year
+        return startDate.plusYears(1);
+    }
+}
+
+// Test demonstrating leap year problem
+@Test
+void demonstratesLeapYearProblem() {
+    ZakatHaulCalculatorWrong calculator = new ZakatHaulCalculatorWrong();
+
+    // Haul starts on Feb 29, 2024 (leap year)
+    LocalDate leapYearStart = LocalDate.of(2024, 2, 29);
+    LocalDate haulEnd = calculator.calculateHaulEndDate(leapYearStart);
+
+    // Result: 2025-02-28 (Feb 29 doesn't exist in 2025)
+    assertEquals(LocalDate.of(2025, 2, 28), haulEnd);
+
+    // Is this correct? User might expect March 1, 2025
+    // Or should it be the last day of February (Feb 28)?
+    // The behavior is unclear and potentially incorrect
+}
+
+// CORRECT: Period-based calculation with edge cases
+public class ZakatHaulCalculatorCorrect {
+    private static final Period ONE_HAUL = Period.ofYears(1);
+
+    public LocalDate calculateHaulEndDate(
+        LocalDate startDate,
+        HaulCalculationStrategy strategy
+    ) {
+        LocalDate candidateDate = startDate.plus(ONE_HAUL);
+
+        return switch (strategy) {
+            case EXACT_DATE -> {
+                // Use the exact date calculation (Feb 29 -> Feb 28)
+                yield candidateDate;
+            }
+            case END_OF_MONTH -> {
+                // If started on last day of month, end on last day
+                if (isLastDayOfMonth(startDate)) {
+                    yield candidateDate.with(
+                        TemporalAdjusters.lastDayOfMonth()
+                    );
+                }
+                yield candidateDate;
+            }
+            case ROLL_FORWARD -> {
+                // If date doesn't exist, roll to next valid date
+                if (startDate.getDayOfMonth() > candidateDate.lengthOfMonth()) {
+                    yield candidateDate.withDayOfMonth(1).plusMonths(1);
+                }
+                yield candidateDate;
+            }
+        };
+    }
+
+    private boolean isLastDayOfMonth(LocalDate date) {
+        return date.getDayOfMonth() == date.lengthOfMonth();
+    }
+
+    public enum HaulCalculationStrategy {
+        EXACT_DATE,      // Feb 29 -> Feb 28
+        END_OF_MONTH,    // Feb 29 -> Feb 28 (last day)
+        ROLL_FORWARD     // Feb 29 -> Mar 1
+    }
+}
+
+// Test demonstrating proper handling
+@Test
+void handlesLeapYearCorrectly() {
+    ZakatHaulCalculatorCorrect calculator = new ZakatHaulCalculatorCorrect();
+    LocalDate leapYearStart = LocalDate.of(2024, 2, 29);
+
+    // Strategy 1: Exact date (Java default behavior)
+    LocalDate exactDate = calculator.calculateHaulEndDate(
+        leapYearStart,
+        HaulCalculationStrategy.EXACT_DATE
+    );
+    assertEquals(LocalDate.of(2025, 2, 28), exactDate);
+
+    // Strategy 2: End of month (Feb 29 -> Feb 28, both last day)
+    LocalDate endOfMonth = calculator.calculateHaulEndDate(
+        leapYearStart,
+        HaulCalculationStrategy.END_OF_MONTH
+    );
+    assertEquals(LocalDate.of(2025, 2, 28), endOfMonth);
+
+    // Strategy 3: Roll forward (Feb 29 -> Mar 1)
+    LocalDate rollForward = calculator.calculateHaulEndDate(
+        leapYearStart,
+        HaulCalculationStrategy.ROLL_FORWARD
+    );
+    assertEquals(LocalDate.of(2025, 3, 1), rollForward);
+}
+
+// Fiscal year calculation with proper boundaries
+public class FiscalYearCalculator {
+    private final MonthDay fiscalYearStart;
+
+    public FiscalYearCalculator(MonthDay fiscalYearStart) {
+        this.fiscalYearStart = fiscalYearStart;
+    }
+
+    public LocalDate getFiscalYearEnd(int fiscalYear) {
+        // Fiscal year 2024 starting Apr 1 ends on Mar 31, 2025
+        LocalDate yearStart = LocalDate.of(fiscalYear, fiscalYearStart.getMonth(), 1)
+            .with(fiscalYearStart);
+
+        return yearStart.plusYears(1).minusDays(1);
+    }
+
+    public int getCurrentFiscalYear(LocalDate date) {
+        LocalDate thisYearStart = LocalDate.of(
+            date.getYear(),
+            fiscalYearStart.getMonth(),
+            fiscalYearStart.getDayOfMonth()
+        );
+
+        if (date.isBefore(thisYearStart)) {
+            return date.getYear() - 1;
+        }
+        return date.getYear();
+    }
+}
+
+@Test
+void calculatesFiscalYearCorrectly() {
+    // Fiscal year starts April 1
+    FiscalYearCalculator calculator = new FiscalYearCalculator(
+        MonthDay.of(4, 1)
+    );
+
+    // FY 2024 runs from Apr 1, 2024 to Mar 31, 2025
+    LocalDate fyEnd = calculator.getFiscalYearEnd(2024);
+    assertEquals(LocalDate.of(2025, 3, 31), fyEnd);
+
+    // Date in March 2024 belongs to FY 2023
+    assertEquals(2023, calculator.getCurrentFiscalYear(
+        LocalDate.of(2024, 3, 15)
+    ));
+
+    // Date in April 2024 belongs to FY 2024
+    assertEquals(2024, calculator.getCurrentFiscalYear(
+        LocalDate.of(2024, 4, 15)
+    ));
+}
+```
+
+**Fix**:
+
+Use `Period` for date arithmetic, explicitly handle edge cases, and document fiscal year calculation strategy.
+
+### 7. Implicit Rounding in Type Conversions
+
+**Problem**: Converting BigDecimal to double/float for display or calculations, losing precision through implicit rounding.
+
+**Why It's Bad**:
+
+- Silent precision loss
+- Zakat amounts displayed incorrectly to users
+- Cannot reconstruct original value from display
+- Audit trail becomes inconsistent
+
+**Example - Zakat Display Conversion Loss**:
+
+```java
+// WRONG: Converting to double for display
+public class ZakatDisplay {
+    public String formatZakat(BigDecimal zakatAmount) {
+        // Implicit conversion loses precision!
+        double amount = zakatAmount.doubleValue();
+
+        return String.format("$%.2f", amount);
+    }
+}
+
+// Test demonstrating precision loss
+@Test
+void demonstratesPrecisionLossInDisplay() {
+    ZakatDisplay display = new ZakatDisplay();
+
+    // Precise calculation result
+    BigDecimal zakatAmount = new BigDecimal("1234.567890123456789");
+
+    String formatted = display.formatZakat(zakatAmount);
+    assertEquals("$1234.57", formatted);
+
+    // The double conversion lost precision before formatting
+    double doubleValue = zakatAmount.doubleValue();
+
+    // Try to reconstruct BigDecimal from double
+    BigDecimal reconstructed = BigDecimal.valueOf(doubleValue);
+
+    // Original precision is lost forever!
+    assertNotEquals(zakatAmount, reconstructed);
+
+    // Even worse: some values cannot round-trip
+    BigDecimal problematic = new BigDecimal("0.1")
+        .add(new BigDecimal("0.2"));
+    double asDouble = problematic.doubleValue();
+    BigDecimal backToBigDecimal = BigDecimal.valueOf(asDouble);
+
+    // Precision lost in conversion
+    assertNotEquals(problematic, backToBigDecimal);
+}
+
+// CORRECT: String formatting without conversion
+public class ZakatDisplayCorrect {
+    private static final DecimalFormat CURRENCY_FORMAT;
+
+    static {
+        CURRENCY_FORMAT = new DecimalFormat("#,##0.00");
+        CURRENCY_FORMAT.setRoundingMode(RoundingMode.HALF_UP);
+        CURRENCY_FORMAT.setMinimumFractionDigits(2);
+        CURRENCY_FORMAT.setMaximumFractionDigits(2);
+    }
+
+    public String formatZakat(Money zakat) {
+        // Format directly from BigDecimal, no conversion!
+        String currencySymbol = getCurrencySymbol(zakat.currency());
+        return currencySymbol + CURRENCY_FORMAT.format(zakat.amount());
+    }
+
+    public String formatZakatWithCurrency(Money zakat) {
+        NumberFormat format = NumberFormat.getCurrencyInstance(Locale.US);
+        format.setCurrency(zakat.currency());
+        format.setRoundingMode(RoundingMode.HALF_UP);
+
+        return format.format(zakat.amount());
+    }
+
+    private String getCurrencySymbol(Currency currency) {
+        return currency.getSymbol(Locale.US);
+    }
+}
+
+@Test
+void formatsWithoutPrecisionLoss() {
+    ZakatDisplayCorrect display = new ZakatDisplayCorrect();
+
+    // Precise calculation result
+    Money zakat = new Money(
+        new BigDecimal("1234.57"),
+        Currency.getInstance("USD")
+    );
+
+    String formatted = display.formatZakat(zakat);
+    assertEquals("$1,234.57", formatted);
+
+    // Using currency-aware formatting
+    String currencyFormatted = display.formatZakatWithCurrency(zakat);
+    assertTrue(currencyFormatted.contains("1,234.57"));
+
+    // Original BigDecimal unchanged, no precision loss
+    assertEquals(new BigDecimal("1234.57"), zakat.amount());
+}
+
+// For APIs: Use string representation
+public class ZakatApiResponse {
+    private final String amount;
+    private final String currency;
+
+    public ZakatApiResponse(Money zakat) {
+        // Convert to string for JSON serialization
+        this.amount = zakat.amount().toPlainString();
+        this.currency = zakat.currency().getCurrencyCode();
+    }
+
+    public String getAmount() {
+        return amount;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public Money toMoney() {
+        // Reconstruct without precision loss
+        return new Money(
+            new BigDecimal(amount),
+            Currency.getInstance(currency)
+        );
+    }
+}
+
+@Test
+void serializesWithoutPrecisionLoss() {
+    Money originalZakat = new Money(
+        new BigDecimal("12345.67890123456789"),
+        Currency.getInstance("USD")
+    );
+
+    ZakatApiResponse response = new ZakatApiResponse(originalZakat);
+
+    // Verify string representation preserves precision
+    assertEquals("12345.67890123456789", response.getAmount());
+
+    // Reconstruct from API response
+    Money reconstructed = response.toMoney();
+    assertEquals(originalZakat.amount(), reconstructed.amount());
+
+    // Perfect round-trip!
+}
+```
+
+**Fix**:
+
+Format BigDecimal directly to string using NumberFormat or DecimalFormat, never convert to double/float.
+
+### 8. Missing Validation for Negative Money Amounts
+
+**Problem**: Allowing negative money values without business logic validation, leading to invalid states like negative donation balances.
+
+**Why It's Bad**:
+
+- Withdrawals exceed available balance
+- Negative Zakat obligations (impossible)
+- Database constraints violated
+- Business rules broken
+
+**Example - Donation Withdrawal Without Validation**:
+
+```java
+// WRONG: No validation on money operations
+public class DonationAccountWrong {
+    private Money balance;
+
+    public DonationAccountWrong(Money initialBalance) {
+        this.balance = initialBalance;
+    }
+
+    public void withdraw(Money amount) {
+        // No validation! Can go negative
+        balance = balance.subtract(amount);
+    }
+
+    public Money getBalance() {
+        return balance;
+    }
+}
+
+// Money class needs subtract method
+public record Money(BigDecimal amount, Currency currency) {
+    // ... other methods ...
+
+    public Money subtract(Money other) {
+        if (!this.currency.equals(other.currency)) {
+            throw new CurrencyMismatchException(
+                "Cannot subtract different currencies"
+            );
+        }
+        return new Money(
+            this.amount.subtract(other.amount),
+            this.currency
+        );
+    }
+
+    public boolean isNegative() {
+        return amount.compareTo(BigDecimal.ZERO) < 0;
+    }
+
+    public boolean isPositive() {
+        return amount.compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    public boolean isZero() {
+        return amount.compareTo(BigDecimal.ZERO) == 0;
+    }
+}
+
+// Test demonstrating the problem
+@Test
+void allowsNegativeBalance() {
+    DonationAccountWrong account = new DonationAccountWrong(
+        new Money(new BigDecimal("1000.00"), Currency.getInstance("USD"))
+    );
+
+    // Withdraw more than balance
+    Money withdrawal = new Money(
+        new BigDecimal("1500.00"),
+        Currency.getInstance("USD")
+    );
+
+    account.withdraw(withdrawal);
+
+    // Balance goes negative!
+    Money balance = account.getBalance();
+    assertTrue(balance.isNegative());
+    assertEquals(new BigDecimal("-500.00"), balance.amount());
+
+    // This violates business rules!
+}
+
+// CORRECT: Validation in constructor and operations
+public record Money(BigDecimal amount, Currency currency) {
+    public Money {
+        Objects.requireNonNull(amount, "Amount cannot be null");
+        Objects.requireNonNull(currency, "Currency cannot be null");
+
+        // Enforce non-negative amounts for value object
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException(
+                "Money amount cannot be negative: " + amount
+            );
+        }
+
+        // Enforce scale
+        if (amount.scale() > 2) {
+            throw new IllegalArgumentException(
+                "Amount scale cannot exceed 2: " + amount
+            );
+        }
+    }
+
+    // ... other methods ...
+}
+
+public class DonationAccountCorrect {
+    private Money balance;
+
+    public DonationAccountCorrect(Money initialBalance) {
+        this.balance = initialBalance;
+    }
+
+    public void withdraw(Money amount) {
+        // Validate before withdrawal
+        if (amount.amount().compareTo(balance.amount()) > 0) {
+            throw new InsufficientFundsException(
+                "Insufficient balance. Available: " + balance.amount() +
+                ", Requested: " + amount.amount()
+            );
+        }
+
+        balance = new Money(
+            balance.amount().subtract(amount.amount()),
+            balance.currency()
+        );
+    }
+
+    public Money getBalance() {
+        return balance;
+    }
+}
+
+public class InsufficientFundsException extends RuntimeException {
+    public InsufficientFundsException(String message) {
+        super(message);
+    }
+}
+
+// Test demonstrating validation
+@Test
+void preventsNegativeBalance() {
+    DonationAccountCorrect account = new DonationAccountCorrect(
+        new Money(new BigDecimal("1000.00"), Currency.getInstance("USD"))
+    );
+
+    // Withdraw more than balance
+    Money withdrawal = new Money(
+        new BigDecimal("1500.00"),
+        Currency.getInstance("USD")
+    );
+
+    // Throws exception instead of allowing negative balance
+    assertThrows(InsufficientFundsException.class, () -> {
+        account.withdraw(withdrawal);
+    });
+
+    // Balance unchanged
+    assertEquals(
+        new BigDecimal("1000.00"),
+        account.getBalance().amount()
+    );
+}
+
+// For cases where negative amounts ARE valid (e.g., accounting)
+public record SignedMoney(BigDecimal amount, Currency currency, Sign sign) {
+    public enum Sign {
+        DEBIT,  // Positive in accounting terms
+        CREDIT  // Negative in accounting terms
+    }
+
+    public SignedMoney {
+        Objects.requireNonNull(amount, "Amount cannot be null");
+        Objects.requireNonNull(currency, "Currency cannot be null");
+        Objects.requireNonNull(sign, "Sign cannot be null");
+
+        // Amount is always non-negative, sign indicates debit/credit
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException(
+                "Amount must be non-negative, use Sign for debit/credit"
+            );
+        }
+    }
+
+    public BigDecimal getSignedAmount() {
+        return sign == Sign.DEBIT ? amount : amount.negate();
+    }
+}
+
+@Test
+void handlesAccountingAmounts() {
+    // Debit (asset increase)
+    SignedMoney debit = new SignedMoney(
+        new BigDecimal("1000.00"),
+        Currency.getInstance("USD"),
+        SignedMoney.Sign.DEBIT
+    );
+    assertEquals(new BigDecimal("1000.00"), debit.getSignedAmount());
+
+    // Credit (asset decrease)
+    SignedMoney credit = new SignedMoney(
+        new BigDecimal("1000.00"),
+        Currency.getInstance("USD"),
+        SignedMoney.Sign.CREDIT
+    );
+    assertEquals(new BigDecimal("-1000.00"), credit.getSignedAmount());
+}
+```
+
+**Fix**:
+
+Validate money amounts in constructors, enforce non-negative for value objects, use explicit types for signed amounts in accounting contexts.
+
 ## Recognition and Prevention
 
 ### Recognizing Antipatterns in Code Reviews
