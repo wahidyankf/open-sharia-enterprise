@@ -262,27 +262,38 @@ Modern Java provides extensive automation to eliminate manual, error-prone tasks
 
 ### Build Automation
 
-**Gradle Build Scripts** (Automate compilation, testing, packaging):
+**Maven Build Configuration** (Automate compilation, testing, packaging):
 
-```kotlin
-// build.gradle.kts
-tasks.test {
-    useJUnitPlatform()
-    finalizedBy(tasks.jacocoTestReport)  // Auto-generate coverage after tests
-}
-
-tasks.jacocoTestReport {
-    dependsOn(tasks.test)
-    reports {
-        xml.required.set(true)
-        html.required.set(true)
-    }
-}
+```xml
+<!-- pom.xml -->
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.15</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>prepare-agent</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>report</id>
+                    <phase>test</phase>
+                    <goals>
+                        <goal>report</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
 ```
 
 **Benefits**:
 
-- Single command (`./gradlew build`) runs all checks
+- Single command (`./mvnw clean install`) runs all checks
 - CI/CD uses same build process
 - Failures caught early
 
@@ -408,39 +419,78 @@ Follow the [Reproducibility First principle](../../../../../governance/principle
 java=21.0.1-tem
 ```
 
-**Gradle Version** (gradle-wrapper.properties):
+**Maven Version** (maven-wrapper.properties):
 
 ```properties
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.0-bin.zip
+distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.12/apache-maven-3.9.12-bin.zip
+wrapperUrl=https://repo.maven.apache.org/maven2/org/apache/maven/wrapper/maven-wrapper/3.3.2/maven-wrapper-3.3.2.jar
 ```
 
-**Dependency Versions** (build.gradle.kts):
+**Dependency Versions** (pom.xml):
 
-```kotlin
-dependencies {
-    // Explicit versions (not "latest" or "+")
-    implementation("org.springframework.boot:spring-boot-starter:3.2.0")
-    implementation("org.axonframework:axon-spring-boot-starter:4.9.0")
+```xml
+<properties>
+    <spring-boot.version>3.2.0</spring-boot.version>
+    <axon.version>4.9.0</axon.version>
+</properties>
 
-    // Version catalog for consistency
-    implementation(libs.spring.boot.starter)
-}
+<dependencies>
+    <!-- Explicit versions (not LATEST or RELEASE) -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+        <version>${spring-boot.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.axonframework</groupId>
+        <artifactId>axon-spring-boot-starter</artifactId>
+        <version>${axon.version}</version>
+    </dependency>
+</dependencies>
 ```
 
-### Dependency Locking
+### Dependency Version Management
 
-**Gradle Lockfile**:
+**Maven Dependency Management**:
 
-```bash
-# Generate gradle.lockfile
-./gradlew dependencies --write-locks
+```xml
+<!-- pom.xml -->
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-dependencies</artifactId>
+            <version>3.2.0</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
 
-# Commit lockfile to git
-git add gradle.lockfile
-git commit -m "chore: lock dependency versions"
-
-# CI uses locked versions
-./gradlew build --locked
+<!-- Enforce version consistency -->
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <version>3.6.2</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>enforce</goal>
+                    </goals>
+                    <configuration>
+                        <rules>
+                            <requireReleaseDeps>
+                                <message>No Snapshots Allowed!</message>
+                            </requireReleaseDeps>
+                        </rules>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
 ```
 
 **Benefits**:
@@ -457,7 +507,7 @@ git commit -m "chore: lock dependency versions"
 ## Prerequisites
 
 - Java 21 (LTS) - managed via SDKMAN!
-- Gradle 9.0 - via Gradle wrapper (./gradlew)
+- Maven 3.9+ - via Maven wrapper (./mvnw)
 - Docker 24+ (for TestContainers)
 - PostgreSQL 16 (via Docker Compose)
 
@@ -466,8 +516,8 @@ git commit -m "chore: lock dependency versions"
 1. Install SDKMAN!: `curl -s "https://get.sdkman.io" | bash`
 2. Clone repository: `git clone https://github.com/org/repo.git`
 3. Enter directory: `cd repo` (SDKMAN! auto-activates Java 21)
-4. Build project: `./gradlew build`
-5. Run tests: `./gradlew test`
+4. Build project: `./mvnw clean install`
+5. Run tests: `./mvnw test`
 
 Expected: All tests pass, build succeeds
 ```
@@ -664,7 +714,7 @@ com.ose.platform.models
 
 ### 4. Keep Dependencies Current
 
-Regularly update dependencies to get security patches, bug fixes, and new features. Use tools like Maven Versions Plugin or Gradle Dependabot.
+Regularly update dependencies to get security patches, bug fixes, and new features. Use tools like Maven Versions Plugin.
 
 **Why it matters**: finance platforms handle sensitive financial data. Outdated dependencies expose systems to known vulnerabilities.
 
@@ -713,7 +763,7 @@ Integrate dependency scanning tools (OWASP Dependency-Check, Snyk) into CI/CD pi
 <plugin>
     <groupId>org.owasp</groupId>
     <artifactId>dependency-check-maven</artifactId>
-    <version>10.0.3</version>
+    <version>12.2.0</version>
     <executions>
         <execution>
             <goals>
@@ -728,23 +778,6 @@ Integrate dependency scanning tools (OWASP Dependency-Check, Snyk) into CI/CD pi
 
 <!-- Run dependency scan -->
 <!-- mvn dependency-check:check -->
-```
-
-```groovy
-// Gradle: Dependency-Check Plugin
-plugins {
-    id 'org.owasp.dependencycheck' version '10.0.3'
-}
-
-dependencyCheck {
-    failBuildOnCVSS = 7
-    analyzers {
-        assemblyEnabled = false
-    }
-}
-
-// Run dependency scan
-// ./gradlew dependencyCheckAnalyze
 ```
 
 ### 6. Use Switch Expressions (Java 14+)

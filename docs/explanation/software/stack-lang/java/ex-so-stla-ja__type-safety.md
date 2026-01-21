@@ -597,29 +597,6 @@ NullAway is a fast, practical null-checking tool from Uber that:
 
 ### Setup and Configuration
 
-**Gradle Configuration**:
-
-```gradle
-plugins {
-    id 'java'
-    id 'net.ltgt.errorprone' version '4.1.0'
-}
-
-dependencies {
-    errorprone 'com.google.errorprone:error_prone_core:2.36.0'
-    errorprone 'com.uber.nullaway:nullaway:0.12.4'
-
-    compileOnly 'org.jspecify:jspecify:1.0.0'
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.errorprone {
-        check("NullAway", CheckSeverity.ERROR)
-        option("NullAway:AnnotatedPackages", "com.example.finance")
-    }
-}
-```
-
 **Maven Configuration**:
 
 ```xml
@@ -633,7 +610,7 @@ tasks.withType(JavaCompile).configureEach {
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-compiler-plugin</artifactId>
-    <version>3.13.0</version>
+    <version>3.14.1</version>
     <configuration>
         <compilerArgs>
             <arg>-Xplugin:ErrorProne -Xep:NullAway:ERROR
@@ -643,12 +620,12 @@ tasks.withType(JavaCompile).configureEach {
             <path>
                 <groupId>com.google.errorprone</groupId>
                 <artifactId>error_prone_core</artifactId>
-                <version>2.36.0</version>
+                <version>2.46.0</version>
             </path>
             <path>
                 <groupId>com.uber.nullaway</groupId>
                 <artifactId>nullaway</artifactId>
-                <version>0.12.4</version>
+                <version>0.12.15</version>
             </path>
         </annotationProcessorPaths>
     </configuration>
@@ -963,28 +940,42 @@ public class DonorValidator {
 }
 ```
 
-### Gradle Configuration for Checker Framework
+### Maven Configuration for Checker Framework
 
-```gradle
-plugins {
-    id 'java'
-    id 'org.checkerframework' version '0.6.47'
-}
-
-dependencies {
-    checkerFramework 'org.checkerframework:checker:3.48.2'
-}
-
-checkerFramework {
-    checkers = [
-        'org.checkerframework.checker.nullness.NullnessChecker',
-        'org.checkerframework.checker.tainting.TaintingChecker',
-        'org.checkerframework.checker.regex.RegexChecker'
-    ]
-    extraJavacArgs = [
-        '-AsuppressWarnings=type.anno.before.modifier'
-    ]
-}
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>3.14.1</version>
+    <configuration>
+        <source>21</source>
+        <target>21</target>
+        <compilerArgs>
+            <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+            <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+            <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+            <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+            <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+            <arg>-Xmaxerrs</arg>
+            <arg>10000</arg>
+            <arg>-Xmaxwarns</arg>
+            <arg>10000</arg>
+            <arg>-AsuppressWarnings=type.anno.before.modifier</arg>
+        </compilerArgs>
+        <annotationProcessorPaths>
+            <path>
+                <groupId>org.checkerframework</groupId>
+                <artifactId>checker</artifactId>
+                <version>3.53.0</version>
+            </path>
+        </annotationProcessorPaths>
+        <annotationProcessors>
+            <annotationProcessor>org.checkerframework.checker.nullness.NullnessChecker</annotationProcessor>
+            <annotationProcessor>org.checkerframework.checker.tainting.TaintingChecker</annotationProcessor>
+            <annotationProcessor>org.checkerframework.checker.regex.RegexChecker</annotationProcessor>
+        </annotationProcessors>
+    </configuration>
+</plugin>
 ```
 
 ## Error-Prone for Bug Prevention
@@ -993,20 +984,29 @@ Error Prone is Google's static analysis tool that catches common programming mis
 
 ### Setup
 
-**Gradle**:
+**Maven Configuration**:
 
-```gradle
-plugins {
-    id 'net.ltgt.errorprone' version '4.1.0'
-}
-
-dependencies {
-    errorprone 'com.google.errorprone:error_prone_core:2.36.0'
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.errorprone.disableWarningsInGeneratedCode = true
-}
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>3.14.1</version>
+    <configuration>
+        <source>21</source>
+        <target>21</target>
+        <compilerArgs>
+            <arg>-XDcompilePolicy=simple</arg>
+            <arg>-Xplugin:ErrorProne</arg>
+        </compilerArgs>
+        <annotationProcessorPaths>
+            <path>
+                <groupId>com.google.errorprone</groupId>
+                <artifactId>error_prone_core</artifactId>
+                <version>2.46.0</version>
+            </path>
+        </annotationProcessorPaths>
+    </configuration>
+</plugin>
 ```
 
 ### Common Error-Prone Checks for Finance
@@ -1845,7 +1845,7 @@ Optional boxing is negligible for non-hot paths.
 
 - **Extension**: Language Support for Java (Red Hat)
 - **JSpecify**: Supported via Eclipse JDT language server
-- **Error Prone**: Requires Gradle/Maven configuration
+- **Error Prone**: Requires Maven configuration
 
 ### Eclipse
 
