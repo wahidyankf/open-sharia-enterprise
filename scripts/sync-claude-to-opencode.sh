@@ -93,11 +93,17 @@ convert_agent() {
   tools_yaml=$(awk '
     BEGIN { in_front=0; in_tools=0 }
     /^---$/ { in_front++; if (in_front==2) exit; next }
-    in_front==1 && /^tools: \[/ {
-      # Array format: tools: [Read, Write, Edit]
+    in_front==1 && /^tools:/ {
       line=$0
-      sub(/^tools: \[/, "", line)
-      sub(/\].*$/, "", line)
+      # Handle both formats: tools: [Read, Write] and tools: Read, Write, Edit
+      if (line ~ /\[/) {
+        # Array format: tools: [Read, Write, Edit]
+        sub(/^tools: \[/, "", line)
+        sub(/\].*$/, "", line)
+      } else {
+        # Comma-separated format: tools: Read, Write, Edit
+        sub(/^tools: */, "", line)
+      }
       # Split by comma and process each tool
       split(line, tools, /, */)
       for (i in tools) {
@@ -127,14 +133,45 @@ convert_agent() {
   if [[ -z "$model_line" ]]; then
     model_line="model: inherit"
   fi
-  
+
+  # Extract skills array (copy as-is, same format for both Claude Code and OpenCode)
+  skills_yaml=$(awk '
+    BEGIN { in_front=0; in_skills=0; printed_header=0 }
+    /^---$/ { in_front++; if (in_front==2) exit; next }
+    in_front==1 && /^skills:/ {
+      in_skills=1
+      # Check if inline array format: skills: [...]
+      if ($0 ~ /\[/) {
+        print $0
+        exit
+      }
+      print "skills:"
+      printed_header=1
+      next
+    }
+    in_front==1 && in_skills && /^  - / {
+      # Multi-line array format
+      print $0
+      next
+    }
+    in_front==1 && in_skills && /^[a-z]/ {
+      # Hit next field, stop
+      exit
+    }
+  ' "$input_file")
+
+  # If no skills found, default to empty array
+  if [[ -z "$skills_yaml" ]]; then
+    skills_yaml="skills: []"
+  fi
+
   # Extract markdown body
   body=$(awk '
     BEGIN { count=0; printing=0 }
     /^---$/ { count++; if (count>=2) { printing=1; next } }
     printing { print }
   ' "$input_file")
-  
+
   # Write OpenCode format
   if ! $DRY_RUN; then
     {
@@ -143,6 +180,7 @@ convert_agent() {
       echo "$model_line"
       echo "tools:"
       echo "$tools_yaml"
+      echo "$skills_yaml"
       echo "---"
       echo "$body"
     } > "$output_file"

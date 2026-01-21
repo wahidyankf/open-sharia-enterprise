@@ -3,6 +3,14 @@ name: docs-checker
 description: Expert at validating factual correctness and content consistency of documentation using web verification. Checks technical accuracy, detects contradictions, validates examples and commands, and identifies outdated information. Use when verifying technical claims, checking command syntax, detecting contradictions, or auditing documentation accuracy.
 model: sonnet
 tools: Read, Glob, Grep, Write, Bash, WebFetch, WebSearch
+color: green
+skills:
+  - docs-applying-content-quality
+  - docs-applying-diataxis-framework
+  - docs-validating-factual-accuracy
+  - repo-generating-validation-reports
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

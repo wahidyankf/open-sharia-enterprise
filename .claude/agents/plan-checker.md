@@ -3,6 +3,14 @@ name: plan-checker
 description: Validates project plan quality including requirements completeness, technical documentation clarity, and delivery checklist executability. Use when reviewing plans before execution.
 model: sonnet
 tools: Read, Glob, Grep, Write, Bash
+color: green
+skills:
+  - docs-applying-content-quality
+  - plan-writing-gherkin-criteria
+  - plan-creating-project-plans
+  - repo-generating-validation-reports
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

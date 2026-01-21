@@ -2,7 +2,10 @@
 description: Creates LinkedIn posts from project updates and documentation. Optimizes for engagement and professional tone.
 model: zai/glm-4.7
 tools:
-  read: false
+  grep: true
+  read: true
+skills:
+  - docs-applying-content-quality
 ---
 
 ## Agent Metadata

@@ -3,6 +3,12 @@ name: apps-ose-platform-web-content-fixer
 description: Applies validated fixes from content-checker audit reports. Re-validates before applying changes.
 model: sonnet
 tools: Read, Edit, Write, Glob, Grep, Bash
+color: yellow
+skills:
+  - docs-applying-content-quality
+  - apps-ose-platform-web-developing-content
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

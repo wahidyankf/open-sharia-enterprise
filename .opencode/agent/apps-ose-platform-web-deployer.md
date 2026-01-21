@@ -2,7 +2,11 @@
 description: Deploys ose-platform-web to production environment branch (prod-ose-platform-web) after validation. Vercel listens to production branch for automatic builds.
 model: zai/glm-4.5-air
 tools:
-  read: false
+  grep: true
+  bash: true
+skills:
+  - repo-practicing-trunk-based-development
+  - apps-ose-platform-web-developing-content
 ---
 
 ## Agent Metadata

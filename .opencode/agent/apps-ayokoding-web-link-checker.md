@@ -2,7 +2,20 @@
 description: Validates links in ayokoding-web content following absolute path convention (/docs/path without .md). Checks internal and external links.
 model: zai/glm-4.5-air
 tools:
-  read: false
+  grep: true
+  write: true
+  websearch: true
+  glob: true
+  read: true
+  webfetch: true
+  bash: true
+skills:
+  - docs-applying-content-quality
+  - docs-validating-links
+  - apps-ayokoding-web-developing-content
+  - repo-generating-validation-reports
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

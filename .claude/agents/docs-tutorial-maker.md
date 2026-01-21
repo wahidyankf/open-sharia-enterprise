@@ -3,6 +3,11 @@ name: docs-tutorial-maker
 description: Creates and updates tutorial documentation following Diátaxis framework and tutorial conventions
 model: sonnet
 tools: Read, Write, Edit, Grep, Glob, Bash
+color: blue
+skills:
+  - docs-creating-accessible-diagrams
+  - docs-applying-content-quality
+  - docs-applying-diataxis-framework
 ---
 
 # Tutorial Documentation Maker

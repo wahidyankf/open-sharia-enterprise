@@ -2,7 +2,16 @@
 description: Executes project plans systematically by following delivery checklists, implementing steps sequentially, validating work, and updating progress. Stops at final validation for plan-execution-checker handoff.
 model: zai/glm-4.7
 tools:
-  read: false
+  edit: true
+  bash: true
+  grep: true
+  write: true
+  read: true
+  glob: true
+skills:
+  - docs-applying-content-quality
+  - plan-writing-gherkin-criteria
+  - plan-creating-project-plans
 ---
 
 ## Agent Metadata

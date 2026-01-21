@@ -2,7 +2,19 @@
 description: Validates tutorial quality focusing on pedagogical structure, narrative flow, visual completeness, hands-on elements, and tutorial type compliance. Complements docs-checker (accuracy) and docs-link-general-checker (links).
 model: zai/glm-4.7
 tools:
-  read: false
+  grep: true
+  write: true
+  websearch: true
+  glob: true
+  read: true
+  webfetch: true
+  bash: true
+skills:
+  - docs-applying-content-quality
+  - docs-applying-diataxis-framework
+  - repo-generating-validation-reports
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

@@ -2,7 +2,17 @@
 description: Validates ose-platform-web content quality including PaperMod theme compliance and landing page standards.
 model: zai/glm-4.7
 tools:
-  read: false
+  grep: true
+  bash: true
+  glob: true
+  read: true
+  write: true
+skills:
+  - docs-applying-content-quality
+  - apps-ose-platform-web-developing-content
+  - repo-generating-validation-reports
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

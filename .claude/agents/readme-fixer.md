@@ -3,6 +3,12 @@ name: readme-fixer
 description: Applies validated fixes from readme-checker audit reports. Re-validates README findings before applying changes. Use after reviewing readme-checker output.
 model: sonnet
 tools: Read, Edit, Glob, Grep, Write, Bash
+color: yellow
+skills:
+  - docs-applying-content-quality
+  - readme-writing-readme-files
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

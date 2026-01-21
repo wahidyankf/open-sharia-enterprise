@@ -2,7 +2,17 @@
 description: Applies validated fixes from docs-tutorial-checker audit reports. Re-validates pedagogical findings before applying changes. Use after reviewing docs-tutorial-checker output.
 model: zai/glm-4.7
 tools:
-  read: false
+  glob: true
+  bash: true
+  write: true
+  edit: true
+  read: true
+  grep: true
+skills:
+  - docs-applying-content-quality
+  - docs-applying-diataxis-framework
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata
