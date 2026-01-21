@@ -35,7 +35,7 @@ NOT Docker containers (though they often align).
 
 - **Web Containers**: ose-platform-web (Hugo Static Site), ayokoding-web (Hugo Static Site), orca-grid-fe (Next.js)
 - **Backend Containers**: orca-grid-be (Spring Boot)
-- **CLI Tools**: ayokoding-cli (Go), butler-cli (Go)
+- **CLI Tools**: ayokoding-cli (Go), rhino-cli (Go)
 - **Test Containers**: orca-grid-fe-e2e (Playwright), orca-grid-be-e2e (Playwright)
 - **Infrastructure**: Nx Workspace, Shared Libraries
 

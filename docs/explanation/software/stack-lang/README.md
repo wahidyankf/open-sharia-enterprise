@@ -36,7 +36,7 @@ This directory contains comprehensive documentation on programming languages use
 | Complex domain logic with DDD            | Java                   | [Java Idioms](./java/README.md)         |
 | REST API with business rules             | Java                   | [Java Best Practices](./java/README.md) |
 | Frontend web application                 | TypeScript             | TypeScript docs (planned)               |
-| CLI tool for repository automation       | Go                     | See butler-cli, ayokoding-cli           |
+| CLI tool for repository automation       | Go                     | See rhino-cli, ayokoding-cli            |
 | Data processing and analytics            | Python                 | Python docs (planned)                   |
 | Microservice with high concurrency       | Java (Virtual Threads) | [Java Concurrency](./java/README.md)    |
 | Infrastructure tooling                   | Go                     | See existing CLI tools                  |
@@ -46,7 +46,7 @@ This directory contains comprehensive documentation on programming languages use
 
 - **Java**: Primary language for domain models, aggregates, and business logic
 - **TypeScript**: Future frontend applications and Node.js services
-- **Go**: Active for CLI tools (butler-cli, ayokoding-cli)
+- **Go**: Active for CLI tools (rhino-cli, ayokoding-cli)
 - **Python**: Planned for data processing and AI/ML integration
 
 ## Purpose
@@ -151,12 +151,12 @@ Languages in this documentation are chosen based on:
 
 ### Current Language Usage
 
-| Language       | Primary Use Cases                               | Status                                |
-| -------------- | ----------------------------------------------- | ------------------------------------- |
-| **Java** ☕    | Backend services, domain models, business logic | ✅ Active - In production             |
-| **TypeScript** | Frontend applications, Node.js services         | 📋 Planned - Documentation ready      |
-| **Go**         | CLI tools, infrastructure services              | ✅ Active - butler-cli, ayokoding-cli |
-| **Python**     | Data processing, AI/ML integration              | 📋 Planned - Future integration       |
+| Language       | Primary Use Cases                               | Status                               |
+| -------------- | ----------------------------------------------- | ------------------------------------ |
+| **Java** ☕    | Backend services, domain models, business logic | ✅ Active - In production            |
+| **TypeScript** | Frontend applications, Node.js services         | 📋 Planned - Documentation ready     |
+| **Go**         | CLI tools, infrastructure services              | ✅ Active - rhino-cli, ayokoding-cli |
+| **Python**     | Data processing, AI/ML integration              | 📋 Planned - Future integration      |
 
 **Legend**: ✅ Active (in use) | 📋 Planned (documentation ready, not yet implemented)
 

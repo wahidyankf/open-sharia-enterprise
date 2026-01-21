@@ -127,12 +127,12 @@ The platform consists of 8 applications across 5 technology stacks:
   - Integrated into pre-commit hooks
 - **Usage**: Automatically runs during git commit when ayokoding-web content changes
 
-#### butler-cli
+#### rhino-cli
 
 - **Purpose**: Repository management and automation
 - **Language**: Go 1.24+
-- **Build Command**: `nx build butler-cli`
-- **Location**: `apps/butler-cli/`
+- **Build Command**: `nx build rhino-cli`
+- **Location**: `apps/rhino-cli/`
 - **Status**: Active development
 
 ### Frontend Applications (Next.js)
@@ -217,7 +217,7 @@ graph TB
 
     subgraph "CLI Tools"
         AYOCLI[ayokoding-cli<br/>Go CLI]
-        BUTLER[butler-cli<br/>Go CLI]
+        RHINO[rhino-cli<br/>Go CLI]
     end
 
     subgraph "Shared Infrastructure"
@@ -226,7 +226,7 @@ graph TB
     end
 
     AYOCLI -->|Updates content| AYO
-    BUTLER -->|Repository automation| NX
+    RHINO -->|Repository automation| NX
 
     ORCA_GRID_FE -->|REST API calls| ORCA_GRID_BE
     ORCA_GRID_FE_E2E -->|Tests UI| ORCA_GRID_FE
@@ -235,7 +235,7 @@ graph TB
     NX -.->|Manages| OSE
     NX -.->|Manages| AYO
     NX -.->|Manages| AYOCLI
-    NX -.->|Manages| BUTLER
+    NX -.->|Manages| RHINO
     NX -.->|Manages| ORCA_GRID_FE
     NX -.->|Manages| ORCA_GRID_BE
     NX -.->|Manages| ORCA_GRID_FE_E2E
@@ -253,7 +253,7 @@ graph TB
     style ORCA_GRID_FE_E2E fill:#f4a261,stroke:#e76f51,color:#ffffff
     style ORCA_GRID_BE_E2E fill:#f4a261,stroke:#e76f51,color:#ffffff
     style AYOCLI fill:#2a9d8f,stroke:#264653,color:#ffffff
-    style BUTLER fill:#2a9d8f,stroke:#264653,color:#ffffff
+    style RHINO fill:#2a9d8f,stroke:#264653,color:#ffffff
     style NX fill:#6a4c93,stroke:#22223b,color:#ffffff
     style LIBS fill:#457b9d,stroke:#1d3557,color:#ffffff
 ```
@@ -573,13 +573,13 @@ graph TB
 - **Weight Calculator**: Calculate level-based ordering (level 1 = 100, level 2 = 200, etc.)
 - **YAML Parser**: Parse and serialize YAML frontmatter
 
-#### butler-cli Components (Go CLI Tool)
+#### rhino-cli Components (Go CLI Tool)
 
 ```mermaid
 graph TB
     subgraph "CLI Interface"
-        BUTLER_ROOT[Root Command<br/>Repository automation]
-        BUTLER_FLAGS[Flags Parser<br/>Command-line arguments]
+        RHINO_ROOT[Root Command<br/>Repository automation]
+        RHINO_FLAGS[Flags Parser<br/>Command-line arguments]
     end
 
     subgraph "Automation Modules"
@@ -587,16 +587,16 @@ graph TB
     end
 
     subgraph "Infrastructure"
-        BUTLER_CONFIG[Config Loader<br/>Configuration]
-        BUTLER_LOGGER[Logger<br/>Logging]
+        RHINO_CONFIG[Config Loader<br/>Configuration]
+        RHINO_LOGGER[Logger<br/>Logging]
     end
 
-    BUTLER_ROOT --> AUTO_MODULE
-    BUTLER_ROOT --> BUTLER_FLAGS
-    AUTO_MODULE --> BUTLER_CONFIG
-    AUTO_MODULE --> BUTLER_LOGGER
+    RHINO_ROOT --> AUTO_MODULE
+    RHINO_ROOT --> RHINO_FLAGS
+    AUTO_MODULE --> RHINO_CONFIG
+    AUTO_MODULE --> RHINO_LOGGER
 
-    style BUTLER_ROOT fill:#0077b6,stroke:#03045e,color:#ffffff
+    style RHINO_ROOT fill:#0077b6,stroke:#03045e,color:#ffffff
     style AUTO_MODULE fill:#2a9d8f,stroke:#264653,color:#ffffff
 ```
 
@@ -1726,7 +1726,7 @@ graph TB
 
 1. Checkout PR branch
 2. Setup Go 1.24.2
-3. Run link validation (`butler-cli validate-links`)
+3. Run link validation (`rhino-cli validate-links`)
 4. Fail PR if broken links detected
 
 **Purpose**: Prevent merging PRs with broken markdown links
@@ -2071,7 +2071,7 @@ graph TB
 - **Language**: Go 1.24+
 - **Build**: Native Go toolchain via Nx
 - **Distribution**: Local binaries
-- **Applications**: ayokoding-cli, butler-cli
+- **Applications**: ayokoding-cli, rhino-cli
 
 ### E2E Testing
 

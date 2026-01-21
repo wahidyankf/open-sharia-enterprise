@@ -2329,7 +2329,7 @@ The Open Sharia Enterprise platform uses C4 model for architecture documentation
    - orca-grid-be (Spring Boot backend)
    - orca-grid-fe (Next.js frontend)
    - ayokoding-cli (Go CLI tool)
-   - butler-cli (Go CLI tool)
+   - rhino-cli (Go CLI tool)
    - ose-platform-web (Hugo static site)
    - ayokoding-web (Hugo static site)
    - E2E test suites (Playwright)

@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/cobra"
-	"github.com/wahidyankf/open-sharia-enterprise/apps/butler-cli/internal/links"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/links"
 )
 
 var (
@@ -25,19 +25,19 @@ placeholder links are automatically skipped.
 By default, scans all markdown files in core directories (docs/, governance/,
 .claude/, and root). Use --staged-only to validate only staged files.`,
 	Example: `  # Validate all markdown files
-  butler-cli validate-links
+  rhino-cli validate-links
 
   # Validate only staged files (useful in pre-commit hooks)
-  butler-cli validate-links --staged-only
+  rhino-cli validate-links --staged-only
 
   # Output as JSON
-  butler-cli validate-links -o json
+  rhino-cli validate-links -o json
 
   # Output as markdown report
-  butler-cli validate-links -o markdown
+  rhino-cli validate-links -o markdown
 
   # Verbose mode with quiet output
-  butler-cli validate-links -v -q`,
+  rhino-cli validate-links -v -q`,
 	SilenceErrors: true, // We handle error messages ourselves
 	RunE:          runValidateLinks,
 }

@@ -13,7 +13,7 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 - `ose-platform-web` - OSE Platform website ([oseplatform.com](https://oseplatform.com)) - Hugo static site
 - `ayokoding-web` - AyoKoding educational platform ([ayokoding.com](https://ayokoding.com)) - Hugo static site
 - `ayokoding-cli` - AyoKoding CLI tool for navigation generation - Go application
-- `butler-cli` - Repository management CLI tools - Go application
+- `rhino-cli` - Repository management CLI tools - Go application
 
 ## Application Characteristics
 
@@ -55,7 +55,7 @@ apps/ayokoding-cli/
 ```
 
 ```
-apps/butler-cli/
+apps/rhino-cli/
 ├── cmd/                     # CLI commands
 ├── internal/                # Internal packages
 ├── dist/                    # Build output (gitignored)
@@ -141,10 +141,10 @@ nx dev ayokoding-web
 nx build ose-platform-web
 nx build ayokoding-web
 nx build ayokoding-cli
-nx build butler-cli
+nx build rhino-cli
 
 # Run CLI applications
-nx run butler-cli
+nx run rhino-cli
 
 # Clean build artifacts
 nx clean ose-platform-web

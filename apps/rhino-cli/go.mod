@@ -1,4 +1,4 @@
-module github.com/wahidyankf/open-sharia-enterprise/apps/butler-cli
+module github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli
 
 go 1.24.2
 

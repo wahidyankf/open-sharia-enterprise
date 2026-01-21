@@ -23,4 +23,4 @@ jobs:
           go-version: "1.24.2"
 
       - name: Run link validation
-        run: CGO_ENABLED=0 go run -C apps/butler-cli main.go validate-links
+        run: CGO_ENABLED=0 go run -C apps/rhino-cli main.go validate-links
