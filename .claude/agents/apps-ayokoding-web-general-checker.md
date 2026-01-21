@@ -23,7 +23,7 @@ tools: Read, Glob, Grep, Write, Bash
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery

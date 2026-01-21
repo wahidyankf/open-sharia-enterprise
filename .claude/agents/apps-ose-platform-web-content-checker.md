@@ -47,7 +47,7 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
 2. **`apps-ose-platform-web-developing-content`** - Progressive knowledge delivery
