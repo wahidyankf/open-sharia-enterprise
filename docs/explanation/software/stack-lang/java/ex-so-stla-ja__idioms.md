@@ -2378,7 +2378,7 @@ Use this checklist when adopting modern Java idioms:
 
 - [ ] Use Java 17 or later (preferably Java 21 LTS)
 - [ ] Enable preview features if needed
-- [ ] Configure build tool (Maven/Gradle) for modern Java
+- [ ] Configure build tool (Maven) for modern Java
 - [ ] Set up IDE for modern Java syntax
 
 **Code Transformation**

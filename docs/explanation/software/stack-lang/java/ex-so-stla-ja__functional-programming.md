@@ -774,14 +774,6 @@ Vavr is a functional library that enhances Java with functional data structures 
 
 ### Installation
 
-**Gradle**:
-
-```gradle
-dependencies {
-    implementation 'io.vavr:vavr:0.11.0'
-}
-```
-
 **Maven**:
 
 ```xml

@@ -275,19 +275,6 @@ JUnit 5 is the modern testing framework for Java.
 
 ### Installation
 
-**Gradle**:
-
-```gradle
-dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.14.2'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
-
-test {
-    useJUnitPlatform()
-}
-```
-
 **Maven**:
 
 ```xml
@@ -533,14 +520,6 @@ AssertJ provides fluent, readable assertions.
 
 ### Installation
 
-**Gradle**:
-
-```gradle
-dependencies {
-    testImplementation 'org.assertj:assertj-core:3.27.6'
-}
-```
-
 **Maven**:
 
 ```xml
@@ -732,15 +711,6 @@ void testCustomAssertions() {
 Mockito provides test doubles for isolating units under test.
 
 ### Installation
-
-**Gradle**:
-
-```gradle
-dependencies {
-    testImplementation 'org.mockito:mockito-core:5.15.2'
-    testImplementation 'org.mockito:mockito-junit-jupiter:5.15.2'
-}
-```
 
 **Maven**:
 
@@ -1009,12 +979,25 @@ Use real databases in tests.
 
 **Installation**:
 
-```gradle
-dependencies {
-    testImplementation 'org.testcontainers:testcontainers:1.20.4'
-    testImplementation 'org.testcontainers:postgresql:1.20.4'
-    testImplementation 'org.testcontainers:junit-jupiter:1.20.4'
-}
+```xml
+<dependency>
+    <groupId>org.testcontainers</groupId>
+    <artifactId>testcontainers</artifactId>
+    <version>1.20.4</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.testcontainers</groupId>
+    <artifactId>postgresql</artifactId>
+    <version>1.20.4</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.testcontainers</groupId>
+    <artifactId>junit-jupiter</artifactId>
+    <version>1.20.4</version>
+    <scope>test</scope>
+</dependency>
 ```
 
 **Example**:
@@ -1589,27 +1572,28 @@ void slowIntegrationTest() {
 
 Use JaCoCo for coverage reports.
 
-**Gradle**:
+**Maven**:
 
-```gradle
-plugins {
-    id 'jacoco'
-}
-
-test {
-    finalizedBy jacocoTestReport
-}
-
-jacoco {
-    toolVersion = "0.8.12"
-}
-
-jacocoTestReport {
-    reports {
-        xml.required.set(true)
-        html.required.set(true)
-    }
-}
+```xml
+<plugin>
+    <groupId>org.jacoco</groupId>
+    <artifactId>jacoco-maven-plugin</artifactId>
+    <version>0.8.15</version>
+    <executions>
+        <execution>
+            <goals>
+                <goal>prepare-agent</goal>
+            </goals>
+        </execution>
+        <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+                <goal>report</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
 ```
 
 **Target Coverage**:

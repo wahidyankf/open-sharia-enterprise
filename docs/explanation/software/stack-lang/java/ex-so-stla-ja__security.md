@@ -1458,7 +1458,7 @@ Use tools to detect CVEs in dependencies:
         <plugin>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
-            <version>10.0.4</version>
+            <version>12.2.0</version>
             <executions>
                 <execution>
                     <goals>
@@ -1474,19 +1474,6 @@ Use tools to detect CVEs in dependencies:
 </build>
 ```
 
-**Gradle Configuration:**
-
-```gradle
-plugins {
-    id 'org.owasp.dependencycheck' version '10.0.4'
-}
-
-dependencyCheck {
-    failBuildOnCVSS = 7
-    suppressionFile = 'dependency-check-suppressions.xml'
-}
-```
-
 ### Keep Dependencies Updated
 
 Regularly update to latest secure versions.
@@ -1494,9 +1481,6 @@ Regularly update to latest secure versions.
 ```bash
 # Maven: Check for updates
 mvn versions:display-dependency-updates
-
-# Gradle: Check for updates
-./gradlew dependencyUpdates
 ```
 
 ### Minimal Dependencies
@@ -1534,12 +1518,6 @@ Use checksums and signatures to verify downloads.
         <url>https://repo.maven.apache.org/maven2</url>
     </repository>
 </repositories>
-
-<!-- Gradle: Use HTTPS -->
-repositories {
-    mavenCentral() // HTTPS by default
-    // Avoid: maven { url 'http://...' } // Insecure!
-}
 ```
 
 ---

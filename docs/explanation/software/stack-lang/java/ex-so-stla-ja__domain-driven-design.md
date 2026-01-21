@@ -1417,14 +1417,6 @@ Axon Framework supports CQRS (Command Query Responsibility Segregation) and Even
 
 ### Installation
 
-**Gradle**:
-
-```gradle
-dependencies {
-    implementation 'org.axonframework:axon-spring-boot-starter:4.10.3'
-}
-```
-
 **Maven**:
 
 ```xml

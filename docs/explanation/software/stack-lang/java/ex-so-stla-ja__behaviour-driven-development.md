@@ -394,21 +394,6 @@ Cucumber is the Java implementation of BDD.
 
 ### Installation
 
-**Gradle**:
-
-```gradle
-dependencies {
-    testImplementation 'io.cucumber:cucumber-java:7.21.0'
-    testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.21.0'
-    testImplementation 'org.junit.platform:junit-platform-suite:1.11.4'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.14.2'
-}
-
-test {
-    useJUnitPlatform()
-}
-```
-
 **Maven**:
 
 ```xml

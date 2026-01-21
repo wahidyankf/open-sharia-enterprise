@@ -38,7 +38,7 @@ Java development in this platform follows the five software engineering principl
 2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Java enforces through sealed types, explicit configuration, module system
 3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Java provides records, final fields, immutable collections for thread-safe code
 4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Java supports through functional interfaces, streams, and functional core architecture
-5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Java enables through version pinning, Gradle wrapper, dependency locks
+5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Java enables through version pinning, Maven wrapper, dependency management
 
 **See Also**: [Functional Programming](./ex-so-stla-ja__functional-programming.md) for pure functions and immutability patterns, [Best Practices](./ex-so-stla-ja__best-practices.md) for explicit coding standards.
 
@@ -52,7 +52,7 @@ Java development in this platform follows the five software engineering principl
 
 - Long-term support (LTS) release
 - Modern language features (sealed classes, pattern matching foundations, records)
-- Framework requirement (Spring Boot 3+, Jakarta EE 10+, Gradle 9, Maven 4)
+- Framework requirement (Spring Boot 3+, Jakarta EE 10+, Maven 3.9+)
 - Industry standard as of 2025-2026
 
 ### Target Version: Java 21+ (LTS)
@@ -505,16 +505,16 @@ public class TaxService {
 
 ### Build Tools
 
-**Gradle 9** (Primary):
+**Maven 3.9+** (Primary):
 
-- Kotlin DSL for build scripts
-- Dependency version catalogs
-- Nx Gradle plugin for monorepo integration
+- POM XML for build configuration
+- Dependency management and version control
+- Plugin-based extensibility
 
-**Maven 4** (Alternative):
+**Maven 4** (Future):
 
-- POM-based configuration
-- Central dependency management
+- Enhanced performance and build caching
+- Improved dependency resolution
 
 ### Code Quality
 
@@ -541,16 +541,14 @@ public class TaxService {
 
 ```bash
 java=21.0.1-tem
-gradle=9.0
-maven=4.0.0
+maven=3.9.12
 ```
 
 **Build Reproducibility**:
 
-- **Gradle Wrapper** (`gradle-wrapper.jar`) pins Gradle version - committed to git
 - **Maven Wrapper** (`mvnw`) pins Maven version - committed to git
-- **gradle.lockfile** (Gradle 8+) pins dependency versions
-- **Maven Dependency Lock** (Maven 3.9+) pins dependency versions
+- **Dependency Management** (`<dependencyManagement>` section) pins dependency versions
+- **Maven Enforcer Plugin** enforces version consistency and prevents SNAPSHOT dependencies
 
 **Setup Script**:
 
@@ -566,9 +564,8 @@ fi
 # Use versions from .sdkmanrc
 sdk env install
 
-# Install dependencies with locked versions
-./gradlew --write-locks  # Generate gradle.lockfile
-./gradlew build
+# Install dependencies and build
+./mvnw clean install
 ```
 
 **Docker Development Container** (Optional):
@@ -577,20 +574,20 @@ sdk env install
 FROM eclipse-temurin:21-jdk
 WORKDIR /app
 COPY . .
-RUN ./gradlew build
+RUN ./mvnw clean install
 ```
 
 **See**: [Reproducibility First principle](../../../../../governance/principles/software-engineering/reproducibility.md)
 
 ### Build Automation
 
-**Gradle Plugins** (Automation Over Manual):
+**Maven Plugins** (Automation Over Manual):
 
-- [Spotless](https://github.com/diffplug/spotless) - Code formatting automation
-- [Error Prone](https://errorprone.info/) - Compile-time bug detection
-- [NullAway](https://github.com/uber/NullAway) - Null safety automation
-- [JaCoCo](https://www.jacoco.org/jacoco/) - Code coverage reporting
-- [Checkstyle](https://checkstyle.org/) - Style checking automation
+- [Spotless Maven Plugin](https://github.com/diffplug/spotless/tree/main/plugin-maven) - Code formatting automation
+- [Error Prone](https://errorprone.info/) - Compile-time bug detection (via maven-compiler-plugin)
+- [NullAway](https://github.com/uber/NullAway) - Null safety automation (via annotation processor)
+- [JaCoCo Maven Plugin](https://www.jacoco.org/jacoco/trunk/doc/maven.html) - Code coverage reporting
+- [Maven Checkstyle Plugin](https://maven.apache.org/plugins/maven-checkstyle-plugin/) - Style checking automation
 
 **Code Generation**:
 

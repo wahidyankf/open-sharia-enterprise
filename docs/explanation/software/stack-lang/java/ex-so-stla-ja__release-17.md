@@ -494,7 +494,7 @@ Java 17 includes thousands of performance, stability, and security improvements:
 1. **Update Dependencies**: Ensure all libraries are compatible with Java 17
 2. **Test Thoroughly**: Run comprehensive test suite
 3. **Review Warnings**: Address deprecation warnings
-4. **Update Build Tools**: Ensure Maven/Gradle plugins support Java 17
+4. **Update Build Tools**: Ensure Maven plugins support Java 17
 5. **Performance Testing**: Verify performance meets expectations
 
 ## Why Upgrade to Java 17?
@@ -709,7 +709,7 @@ Safer string interpolation (preview feature, use with `--enable-preview`).
 
 **Phase 1: Preparation (Week 1-2)**
 
-- [ ] Update build tools (Maven 3.8+, Gradle 8+)
+- [ ] Update build tools (Maven 3.9+)
 - [ ] Update dependencies to Java 21 compatible versions
 - [ ] Review deprecated API usage with `jdeps`
 - [ ] Set up Java 21 development environment

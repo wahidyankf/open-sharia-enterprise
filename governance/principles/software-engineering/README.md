@@ -48,7 +48,7 @@ Each principle is demonstrated across the platform's technology stack:
 - **Explicit Over Implicit**: Sealed classes define explicit type hierarchies, pattern matching ensures exhaustive handling
 - **Immutability Over Mutability**: Records, final fields, immutable collections enable thread-safe concurrent code
 - **Pure Functions Over Side Effects**: Functional core/imperative shell separates domain logic from I/O
-- **Reproducibility First**: SDKMAN! pins Java versions, Gradle wrapper pins build tools, gradle.lockfile pins dependencies
+- **Reproducibility First**: SDKMAN! pins Java versions, Maven wrapper pins build tools, dependency management pins versions
 
 ## Related Documentation
 
