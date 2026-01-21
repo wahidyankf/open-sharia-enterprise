@@ -14,26 +14,15 @@ updated: 2026-01-20
 
 # C4 Diagram Templates
 
-Ready-to-use templates for creating C4 architecture diagrams in your project. All templates include WCAG-compliant color palettes, proper structure, and clear placeholders.
+**Stop reinventing diagrams, start with templates.**
 
-## Available Templates
-
-### Individual Diagram Templates
-
-1. **[Blank Context Diagram](./ex-so-ar-c4armo-te__blank-context-diagram.md)** - System-level view showing external actors and systems
-2. **[Blank Container Diagram](./ex-so-ar-c4armo-te__blank-container-diagram.md)** - High-level technical building blocks (apps, databases, services)
-3. **[Blank Component Diagram](./ex-so-ar-c4armo-te__blank-component-diagram.md)** - Internal structure of containers (classes, modules, services)
-4. **[Blank Dynamic Diagram](./ex-so-ar-c4armo-te__blank-dynamic-diagram.md)** - Sequence diagram showing interactions over time
-5. **[Blank Deployment Diagram](./ex-so-ar-c4armo-te__blank-deployment-diagram.md)** - Infrastructure mapping (servers, containers, cloud resources)
-
-### Reference Materials
-
-1. **[Color Palette Reference](./ex-so-ar-c4armo-te__color-palette.md)** - WCAG AA-compliant color palette with hex codes, contrast ratios, and usage guidelines
-2. **[Starter Full Documentation](./ex-so-ar-c4armo-te__starter-full-documentation.md)** - Complete C4 documentation set for new systems (Context + Container + Component)
+Ready-to-use templates for creating C4 architecture diagrams in your project. All templates include WCAG-compliant color palettes, proper structure, and clear placeholders. Copy, customize, and focus on your system's unique characteristics instead of diagram formatting.
 
 ## Quick Start
 
-### For New Systems
+**New to C4 or just want to start quickly?**
+
+### For New Systems (Recommended)
 
 1. **Start with Context + Container**:
    - Copy [Blank Context Diagram](./ex-so-ar-c4armo-te__blank-context-diagram.md) to your project
@@ -58,6 +47,21 @@ Use [Starter Full Documentation](./ex-so-ar-c4armo-te__starter-full-documentatio
 - Container Diagram
 - Component Diagram (for one complex container)
 - All templates pre-linked and ready to customize
+
+## Available Templates
+
+### Individual Diagram Templates
+
+1. **[Blank Context Diagram](./ex-so-ar-c4armo-te__blank-context-diagram.md)** - System-level view showing external actors and systems
+2. **[Blank Container Diagram](./ex-so-ar-c4armo-te__blank-container-diagram.md)** - High-level technical building blocks (apps, databases, services)
+3. **[Blank Component Diagram](./ex-so-ar-c4armo-te__blank-component-diagram.md)** - Internal structure of containers (classes, modules, services)
+4. **[Blank Dynamic Diagram](./ex-so-ar-c4armo-te__blank-dynamic-diagram.md)** - Sequence diagram showing interactions over time
+5. **[Blank Deployment Diagram](./ex-so-ar-c4armo-te__blank-deployment-diagram.md)** - Infrastructure mapping (servers, containers, cloud resources)
+
+### Reference Materials
+
+1. **[Color Palette Reference](./ex-so-ar-c4armo-te__color-palette.md)** - WCAG AA-compliant color palette with hex codes, contrast ratios, and usage guidelines
+2. **[Starter Full Documentation](./ex-so-ar-c4armo-te__starter-full-documentation.md)** - Complete C4 documentation set for new systems (Context + Container + Component)
 
 ## Color Palette Summary
 
@@ -138,7 +142,7 @@ Templates use the following placeholder conventions:
 - **[Level 3: Component](../ex-so-ar-c4armo__03-level-3-component.md)** - Component diagram guide
 - **[Supplementary Diagrams](../ex-so-ar-c4armo__07-supplementary-diagrams.md)** - Dynamic and Deployment diagrams
 - **[Best Practices](../ex-so-ar-c4armo__09-best-practices.md)** - When to use C4, common mistakes, tooling
-- **[Repository Diagram Convention](../../../../../governance/conventions/formatting/diagrams.md)** - Accessibility requirements
+- **[Repository Diagram Convention](../../../../../../governance/conventions/formatting/diagrams.md)** - Accessibility requirements
 
 ## Feedback and Improvements
 

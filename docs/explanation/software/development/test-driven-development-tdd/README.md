@@ -15,6 +15,26 @@ Test-Driven Development (TDD) is a software development approach where tests are
 - **Living Documentation**: Tests document expected behavior in executable form
 - **Design Feedback**: Test difficulty signals design problems early
 
+### The Red-Green-Refactor Cycle
+
+```mermaid
+graph LR
+    A[🔴 RED:<br/>Write Failing Test] --> B[🟢 GREEN:<br/>Make Test Pass<br/>Minimal Code]
+    B --> C[🟤 REFACTOR:<br/>Improve Design<br/>Keep Tests Green]
+    C --> A
+
+    style A fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style B fill:#029E73,stroke:#000000,color:#FFFFFF
+    style C fill:#CA9161,stroke:#000000,color:#FFFFFF
+```
+
+**The Cycle Explained:**
+
+1. **🔴 RED** - Write a failing test that defines desired behavior
+2. **🟢 GREEN** - Write minimal code to make the test pass
+3. **🟤 REFACTOR** - Improve code quality while keeping tests green
+4. **Repeat** - Continue cycle for next behavior
+
 **Core Philosophy:**
 
 TDD is not just about testing—it's fundamentally a design technique. By writing tests first, you:

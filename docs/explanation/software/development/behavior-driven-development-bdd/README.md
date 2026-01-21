@@ -15,6 +15,35 @@ Behavior-Driven Development (BDD) is a collaborative software development approa
 - **Ubiquitous Language**: Shared vocabulary between technical and non-technical team members
 - **Stakeholder Involvement**: Domain experts actively participate in requirements discovery
 
+### The BDD Workflow
+
+```mermaid
+graph TD
+    A[🤝 DISCOVERY:<br/>Three Amigos Session<br/>Business + Dev + QA] --> B[💡 FORMULATION:<br/>Write Gherkin<br/>Given-When-Then]
+    B --> C[⚙️ AUTOMATION:<br/>Step Definitions<br/>Connect to Code]
+    C --> D[🧪 EXECUTION:<br/>Run Scenarios<br/>Red → Green]
+    D --> E[📚 LIVING DOCS:<br/>Scenarios = Specs<br/>Always Up-to-Date]
+    E --> F{Requirements<br/>Change?}
+    F -->|Yes| A
+    F -->|No| G[✅ Done]
+
+    style A fill:#029E73,stroke:#000000,color:#FFFFFF
+    style B fill:#0173B2,stroke:#000000,color:#FFFFFF
+    style C fill:#CA9161,stroke:#000000,color:#FFFFFF
+    style D fill:#DE8F05,stroke:#000000,color:#FFFFFF
+    style E fill:#CC78BC,stroke:#000000,color:#FFFFFF
+    style G fill:#029E73,stroke:#000000,color:#FFFFFF
+```
+
+**The Workflow Explained:**
+
+1. **🤝 DISCOVERY** - Three Amigos collaborate to explore feature requirements through examples
+2. **💡 FORMULATION** - Write concrete scenarios in Gherkin (Given-When-Then format)
+3. **⚙️ AUTOMATION** - Implement step definitions that connect scenarios to application code
+4. **🧪 EXECUTION** - Run automated scenarios (BDD tests guide TDD implementation)
+5. **📚 LIVING DOCS** - Scenarios become executable documentation that must stay current
+6. **🔄 ITERATE** - When requirements evolve, update scenarios and repeat
+
 **Core Philosophy:**
 
 BDD is not about tools (like Cucumber)—it's about **conversation**. The real value comes from:

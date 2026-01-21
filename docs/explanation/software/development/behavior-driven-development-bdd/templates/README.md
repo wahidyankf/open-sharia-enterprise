@@ -1,5 +1,7 @@
 # BDD Templates
 
+**Stop staring at blank Gherkin files. Start with proven scenarios.**
+
 ## Metadata
 
 - **Parent Directory**: [Behavior-Driven Development (BDD)](../README.md)
@@ -12,6 +14,23 @@
 This directory provides immediately usable templates for practicing Behavior-Driven Development (BDD). Templates cover scenarios, feature files, collaboration workshops, and step definitions. Each template includes Islamic Finance examples (Tax, Permitted certification, Loan contracts) that demonstrate BDD practices in a real-world domain.
 
 These templates serve as starting points for teams adopting BDD or individuals learning the practice. Copy templates, replace placeholders with your domain-specific content, and adapt to your project's needs.
+
+## Quick Reference: Template Selection
+
+**Starting new feature?**
+→ Example Mapping Session → Feature File Template
+
+**Writing acceptance criteria?**
+→ User Story with Acceptance Criteria → Scenario Template
+
+**Automating scenarios?**
+→ Step Definition Template
+
+**Testing with multiple examples?**
+→ Scenario Outline Template
+
+**Running collaborative session?**
+→ Three Amigos Session Template
 
 ## Available Templates
 
@@ -293,23 +312,6 @@ Formulation Phase:
 Automation Phase:
   → Step Definition Template
 ```
-
-## Quick Reference: Template Selection
-
-**Starting new feature?**
-→ Example Mapping Session → Feature File Template
-
-**Writing acceptance criteria?**
-→ User Story with Acceptance Criteria → Scenario Template
-
-**Automating scenarios?**
-→ Step Definition Template
-
-**Testing with multiple examples?**
-→ Scenario Outline Template
-
-**Running collaborative session?**
-→ Three Amigos Session Template
 
 ## Template Quality Guidelines
 

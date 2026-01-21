@@ -81,6 +81,28 @@ Java development in this platform follows the five software engineering principl
 
 ## Java Version Strategy
 
+```mermaid
+timeline
+    title Java LTS Version Timeline (2018-2025)
+    2018 : Java 11 LTS
+         : Var keyword
+         : HTTP Client API
+    2021 : Java 17 LTS ⭐
+         : Records
+         : Sealed Classes
+         : Pattern Matching (Preview)
+    2023 : Java 21 LTS ✅
+         : Virtual Threads
+         : Sequenced Collections
+         : Record Patterns
+    2025 : Java 25 LTS 🚀
+         : Stream Gatherers
+         : Scoped Values
+         : Flexible Constructor Bodies
+```
+
+**Platform Strategy**: Java 17+ (baseline) → Java 21+ (target) → Java 25 (latest)
+
 ### Current Baseline: Java 17+ (LTS)
 
 **Platform Standard**: Java 17 is the minimum required version for all Java projects in the platform.
