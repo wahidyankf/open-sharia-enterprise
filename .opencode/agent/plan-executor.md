@@ -2,12 +2,7 @@
 description: Executes project plans systematically by following delivery checklists, implementing steps sequentially, validating work, and updating progress. Stops at final validation for plan-execution-checker handoff.
 model: zai/glm-4.7
 tools:
-  edit: true
-  bash: true
-  grep: true
-  write: true
-  read: true
-  glob: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -18,7 +13,7 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 
@@ -135,9 +130,9 @@ After ALL implementation phases complete:
 
 **Project Guidance:**
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../../governance/conventions/project/plans-organization.md) - Plan structure
-- [Trunk Based Development Convention](../../../governance/development/workflow/trunk-based-development.md) - Git workflow
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [Plans Organization Convention](../../governance/conventions/project/plans-organization.md) - Plan structure
+- [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) - Git workflow
 
 **Related Agents:**
 

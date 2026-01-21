@@ -2,12 +2,7 @@
 description: Applies validated fixes from apps-ayokoding-web-by-example-checker audit reports. Re-validates By Example findings before applying changes. Use after reviewing checker output.
 model: zai/glm-4.7
 tools:
-  write: true
-  bash: true
-  grep: true
-  edit: true
-  read: true
-  glob: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -44,9 +39,8 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
-1. **`repo-applying-fixer-workflow`** - Progressive knowledge delivery
 2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 3. **`docs-creating-by-example-tutorials`** - Progressive knowledge delivery
 4. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
@@ -96,7 +90,7 @@ The `repo-applying-maker-checker-fixer` Skill provides complete mode parameter l
 
 ## How This Agent Works
 
-**See `repo-applying-fixer-workflow` Skill for complete workflow details** including:
+**See `repo-applying-maker-checker-fixer` Skill for complete workflow details** including:
 
 1. **Report Discovery**: Auto-detect latest audit report with manual override support
 2. **Validation Strategy**: Re-validate each finding to assess HIGH/MEDIUM/FALSE_POSITIVE confidence
@@ -135,9 +129,9 @@ The `repo-assessing-criticality-confidence` Skill provides confidence definition
 
 **Project Guidance:**
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md) - Complete standards
-- [By Example Content Standard](../../../governance/conventions/tutorial/programming-language-content.md) - Annotation requirements
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Complete standards
+- [By Example Content Standard](../../governance/conventions/tutorial/programming-language-content.md) - Annotation requirements
 
 **Related Agents:**
 
@@ -146,8 +140,8 @@ The `repo-assessing-criticality-confidence` Skill provides confidence definition
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../../governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
-- [Maker-Checker-Fixer Pattern Convention](../../../governance/development/pattern/maker-checker-fixer.md) - Workflow
+- [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
+- [Maker-Checker-Fixer Pattern Convention](../../governance/development/pattern/maker-checker-fixer.md) - Workflow
 
 **Skills:**
 

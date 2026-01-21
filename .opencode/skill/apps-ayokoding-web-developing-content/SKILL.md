@@ -421,14 +421,14 @@ Vercel automatically:
 
 ## References
 
-**Primary Convention**: [Hugo Content Convention - ayokoding-web](../../../../governance/conventions/hugo/ayokoding.md)
+**Primary Convention**: [Hugo Content Convention - ayokoding-web](../../../governance/conventions/hugo/ayokoding.md)
 
 **Related Conventions**:
 
-- [Programming Language Tutorial Structure](../../../../governance/conventions/tutorial/programming-language-structure.md) - Dual-path organization
-- [By Example Tutorial Convention](../../../../governance/conventions/tutorial/by-example.md) - Annotation standards
-- [Hugo Content Shared](../../../../governance/conventions/hugo/shared.md) - Shared Hugo patterns
-- [Content Quality Principles](../../../../governance/conventions/content/quality.md) - Universal quality standards
+- [Programming Language Tutorial Structure](../../../governance/conventions/tutorial/programming-language-structure.md) - Dual-path organization
+- [By Example Tutorial Convention](../../../governance/conventions/tutorial/by-example.md) - Annotation standards
+- [Hugo Content Shared](../../../governance/conventions/hugo/shared.md) - Shared Hugo patterns
+- [Content Quality Principles](../../../governance/conventions/content/quality.md) - Universal quality standards
 
 **Related Skills**:
 

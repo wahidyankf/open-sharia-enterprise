@@ -2,12 +2,7 @@
 description: Applies validated fixes from content-checker audit reports. Re-validates before applying changes.
 model: zai/glm-4.7
 tools:
-  write: true
-  bash: true
-  grep: true
-  edit: true
-  read: true
-  glob: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -44,9 +39,8 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
-1. **`repo-applying-fixer-workflow`** - Progressive knowledge delivery
 2. **`apps-ose-platform-web-developing-content`** - Progressive knowledge delivery
 3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
 4. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
@@ -90,8 +84,8 @@ Skills: `apps-ose-platform-web-developing-content`, `repo-assessing-criticality-
 
 **Project Guidance**:
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [ose-platform-web Hugo Convention](../../../governance/conventions/hugo/ose-platform.md)
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 
 **Related Agents**:
 
@@ -100,11 +94,11 @@ Skills: `apps-ose-platform-web-developing-content`, `repo-assessing-criticality-
 
 **Related Conventions**:
 
-- [ose-platform-web Hugo Convention](../../../governance/conventions/hugo/ose-platform.md)
-- [Fixer Confidence Levels](../../../governance/development/quality/fixer-confidence-levels.md)
+- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md)
 
 **Skills**:
 
-- `repo-applying-fixer-workflow` - Fixer workflow pattern
+- `repo-applying-maker-checker-fixer` - Fixer workflow pattern
 - `apps-ose-platform-web-developing-content` - ose-platform-web standards
 - `repo-assessing-criticality-confidence` - Confidence assessment

@@ -2,10 +2,7 @@
 description: Updates prev/next navigation links in ayokoding-web content frontmatter.
 model: zai/glm-4.5-air
 tools:
-  glob: true
-  edit: true
-  read: true
-  grep: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -16,7 +13,7 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 
@@ -51,14 +48,14 @@ Calculate and update prev/next links based on weight ordering.
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 
 ## Reference Documentation
 
 **Project Guidance**:
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 
 **Related Agents**:
 
@@ -67,7 +64,7 @@ Calculate and update prev/next links based on weight ordering.
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 
 **Skills**:
 

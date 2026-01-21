@@ -2,14 +2,7 @@
 description: Applies validated fixes from link-checker audit reports. Re-validates link findings before applying changes.
 model: zai/glm-4.7
 tools:
-  write: true
-  websearch: true
-  bash: true
-  grep: true
-  edit: true
-  read: true
-  glob: true
-  webfetch: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -46,9 +39,8 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
-1. **`repo-applying-fixer-workflow`** - Progressive knowledge delivery
 2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 3. **`docs-validating-links`** - Progressive knowledge delivery
 4. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
@@ -101,8 +93,8 @@ The `repo-applying-maker-checker-fixer` Skill provides mode logic.
 
 ## Reference Documentation
 
-- [AGENTS.md](../../../CLAUDE.md)
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
+- [AGENTS.md](../../CLAUDE.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 
 **Skills:**
 

@@ -2,14 +2,7 @@
 description: Applies validated fixes from facts-checker audit reports. Re-validates factual findings before applying changes.
 model: zai/glm-4.7
 tools:
-  write: true
-  websearch: true
-  bash: true
-  grep: true
-  edit: true
-  read: true
-  glob: true
-  webfetch: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -46,9 +39,8 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
-1. **`repo-applying-fixer-workflow`** - Progressive knowledge delivery
 2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 3. **`docs-validating-factual-accuracy`** - Progressive knowledge delivery
 4. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
@@ -105,8 +97,8 @@ The `repo-assessing-criticality-confidence` Skill provides definitions.
 
 ## Reference Documentation
 
-- [AGENTS.md](../../../CLAUDE.md)
-- [Fixer Confidence Levels Convention](../../../governance/development/quality/fixer-confidence-levels.md)
+- [AGENTS.md](../../CLAUDE.md)
+- [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md)
 
 **Skills:**
 

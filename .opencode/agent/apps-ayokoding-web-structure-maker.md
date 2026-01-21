@@ -2,12 +2,7 @@
 description: Creates folder structure and _index.md files for ayokoding-web following level-based organization.
 model: zai/glm-4.7
 tools:
-  edit: true
-  bash: true
-  grep: true
-  write: true
-  read: true
-  glob: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -18,7 +13,7 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 
@@ -60,15 +55,15 @@ Create folder structure and \_index.md files for ayokoding-web.
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - Skill: `apps-ayokoding-web-developing-content`
 
 ## Reference Documentation
 
 **Project Guidance**:
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 
 **Related Agents**:
 
@@ -77,8 +72,8 @@ Create folder structure and \_index.md files for ayokoding-web.
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
-- [Tutorial Folder Arrangement](../../../governance/conventions/tutorial/programming-language-structure.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
+- [Tutorial Folder Arrangement](../../governance/conventions/tutorial/programming-language-structure.md)
 
 **Skills**:
 

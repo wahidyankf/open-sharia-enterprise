@@ -49,7 +49,6 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 This agent leverages Skills from `.claude/skills/`:
 
-1. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
 2. **`apps-ose-platform-web-developing-content`** - Progressive knowledge delivery
 3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
 4. **`repo-generating-validation-reports`** - Progressive knowledge delivery
@@ -107,6 +106,6 @@ Skill: `repo-generating-validation-reports`
 
 **Skills**:
 
-- `repo-executing-checker-workflow` - Checker workflow pattern
+- `repo-applying-maker-checker-fixer` - Checker workflow pattern
 - `apps-ose-platform-web-developing-content` - ose-platform-web standards
 - `repo-assessing-criticality-confidence` - Criticality assessment

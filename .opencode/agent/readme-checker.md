@@ -2,11 +2,7 @@
 description: Validates README.md for engagement, accessibility, and quality standards. Checks for jargon, scannability, proper structure, and consistency with documentation. Use when reviewing README changes or auditing README quality.
 model: zai/glm-4.7
 tools:
-  grep: true
-  bash: true
-  glob: true
-  read: true
-  write: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -27,9 +23,8 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
-1. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
 2. **`readme-writing-readme-files`** - Progressive knowledge delivery
 3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
 4. **`repo-generating-validation-reports`** - Progressive knowledge delivery
@@ -77,9 +72,9 @@ The `repo-generating-validation-reports` Skill provides:
 
 **CRITICAL - Read these first**:
 
-- [README Quality Convention](../../../governance/conventions/content/readme-quality.md) - MASTER reference for all README standards
-- [Content Quality Principles](../../../governance/conventions/content/quality.md) - General content quality standards
-- [Emoji Usage Convention](../../../governance/conventions/formatting/emoji.md) - Emoji guidelines
+- [README Quality Convention](../../governance/conventions/content/readme-quality.md) - MASTER reference for all README standards
+- [Content Quality Principles](../../governance/conventions/content/quality.md) - General content quality standards
+- [Emoji Usage Convention](../../governance/conventions/formatting/emoji.md) - Emoji guidelines
 
 ## Validation Scope
 
@@ -145,7 +140,7 @@ See `readme-writing-readme-files` Skill for complete validation criteria and exa
 
 ## Workflow Overview
 
-**See `repo-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+**See `repo-applying-maker-checker-fixer` Skill for standard checker workflow pattern** including:
 
 1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
 2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
@@ -286,9 +281,9 @@ Use this agent when:
 
 **Project Guidance:**
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [README Quality Convention](../../../governance/conventions/content/readme-quality.md) - Complete README standards
-- [Content Quality Principles](../../../governance/conventions/content/quality.md) - General quality standards
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [README Quality Convention](../../governance/conventions/content/readme-quality.md) - Complete README standards
+- [Content Quality Principles](../../governance/conventions/content/quality.md) - General quality standards
 
 **Related Agents:**
 

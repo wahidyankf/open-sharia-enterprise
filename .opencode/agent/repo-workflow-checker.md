@@ -2,11 +2,7 @@
 description: Validates workflow documentation quality and compliance with workflow pattern convention.
 model: zai/glm-4.7
 tools:
-  grep: true
-  bash: true
-  glob: true
-  read: true
-  write: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -27,7 +23,7 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
@@ -64,15 +60,15 @@ Skill: `repo-generating-validation-reports`
 
 ## Reference
 
-- [Workflow Pattern Convention](../../../governance/workflows/meta/workflow-identifier.md)
+- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
 - Skills: `docs-applying-diataxis-framework`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 
 ## Reference Documentation
 
 **Project Guidance**:
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [Workflow Pattern Convention](../../../governance/workflows/meta/workflow-identifier.md)
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
 
 **Related Agents**:
 
@@ -81,11 +77,11 @@ Skill: `repo-generating-validation-reports`
 
 **Related Conventions**:
 
-- [Workflow Pattern Convention](../../../governance/workflows/meta/workflow-identifier.md)
-- [Execution Modes Convention](../../../governance/workflows/meta/execution-modes.md)
+- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
+- [Execution Modes Convention](../../governance/workflows/meta/execution-modes.md)
 
 **Skills**:
 
-- `repo-executing-checker-workflow` - Checker workflow pattern
+- `repo-applying-maker-checker-fixer` - Checker workflow pattern
 - `repo-defining-workflows` - Workflow structure and patterns
 - `repo-assessing-criticality-confidence` - Criticality assessment

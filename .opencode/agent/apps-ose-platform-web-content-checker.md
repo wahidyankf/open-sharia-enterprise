@@ -2,11 +2,7 @@
 description: Validates ose-platform-web content quality including PaperMod theme compliance and landing page standards.
 model: zai/glm-4.7
 tools:
-  grep: true
-  bash: true
-  glob: true
-  read: true
-  write: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -51,9 +47,8 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
-1. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
 2. **`apps-ose-platform-web-developing-content`** - Progressive knowledge delivery
 3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
 4. **`repo-generating-validation-reports`** - Progressive knowledge delivery
@@ -89,15 +84,15 @@ Skill: `repo-generating-validation-reports`
 
 ## Reference
 
-- [ose-platform-web Hugo Convention](../../../governance/conventions/hugo/ose-platform.md)
+- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 - Skills: `apps-ose-platform-web-developing-content`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 
 ## Reference Documentation
 
 **Project Guidance**:
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [ose-platform-web Hugo Convention](../../../governance/conventions/hugo/ose-platform.md)
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 
 **Related Agents**:
 
@@ -106,11 +101,11 @@ Skill: `repo-generating-validation-reports`
 
 **Related Conventions**:
 
-- [ose-platform-web Hugo Convention](../../../governance/conventions/hugo/ose-platform.md)
-- [Content Quality Principles](../../../governance/conventions/content/quality.md)
+- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [Content Quality Principles](../../governance/conventions/content/quality.md)
 
 **Skills**:
 
-- `repo-executing-checker-workflow` - Checker workflow pattern
+- `repo-applying-maker-checker-fixer` - Checker workflow pattern
 - `apps-ose-platform-web-developing-content` - ose-platform-web standards
 - `repo-assessing-criticality-confidence` - Criticality assessment

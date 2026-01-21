@@ -301,6 +301,6 @@ See wow\_\_generating-validation-reports Skill for report structure.
 
 **Skills**:
 
-- `repo-applying-fixer-workflow` - Fixer workflow pattern
+- `repo-applying-maker-checker-fixer` - Fixer workflow pattern
 - `repo-assessing-criticality-confidence` - Confidence assessment
 - `repo-applying-maker-checker-fixer` - Three-stage workflow

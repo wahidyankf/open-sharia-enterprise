@@ -16,4 +16,4 @@ Comprehensive guidance for validating markdown links across repository.
 
 ## References
 
-[Linking Convention](../../../../governance/conventions/formatting/linking.md)
+[Linking Convention](../../../governance/conventions/formatting/linking.md)

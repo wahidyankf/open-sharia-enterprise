@@ -2,12 +2,7 @@
 description: Applies validated fixes from general-checker audit reports. Re-validates before applying changes.
 model: zai/glm-4.7
 tools:
-  write: true
-  bash: true
-  grep: true
-  edit: true
-  read: true
-  glob: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -44,9 +39,8 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
-1. **`repo-applying-fixer-workflow`** - Progressive knowledge delivery
 2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
 4. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
@@ -101,8 +95,8 @@ Skills: `apps-ayokoding-web-developing-content`, `repo-assessing-criticality-con
 
 **Project Guidance**:
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 
 **Related Agents**:
 
@@ -111,11 +105,11 @@ Skills: `apps-ayokoding-web-developing-content`, `repo-assessing-criticality-con
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
-- [Fixer Confidence Levels](../../../governance/development/quality/fixer-confidence-levels.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
+- [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md)
 
 **Skills**:
 
-- `repo-applying-fixer-workflow` - Fixer workflow pattern
+- `repo-applying-maker-checker-fixer` - Fixer workflow pattern
 - `apps-ayokoding-web-developing-content` - ayokoding-web standards
 - `repo-assessing-criticality-confidence` - Confidence assessment

@@ -2,11 +2,7 @@
 description: Validates general ayokoding-web content quality including structure, bilingual completeness, weights, navigation, and content quality.
 model: zai/glm-4.7
 tools:
-  grep: true
-  bash: true
-  glob: true
-  read: true
-  write: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -27,12 +23,11 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
 3. **`repo-generating-validation-reports`** - Progressive knowledge delivery
-4. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -77,15 +72,15 @@ Skill: `repo-generating-validation-reports`
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - Skills: `apps-ayokoding-web-developing-content`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 
 ## Reference Documentation
 
 **Project Guidance**:
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 
 **Related Agents**:
 
@@ -94,11 +89,11 @@ Skill: `repo-generating-validation-reports`
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
-- [Content Quality Principles](../../../governance/conventions/content/quality.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
+- [Content Quality Principles](../../governance/conventions/content/quality.md)
 
 **Skills**:
 
-- `repo-executing-checker-workflow` - Checker workflow pattern
+- `repo-applying-maker-checker-fixer` - Checker workflow pattern
 - `apps-ayokoding-web-developing-content` - ayokoding-web content standards
 - `repo-assessing-criticality-confidence` - Criticality assessment

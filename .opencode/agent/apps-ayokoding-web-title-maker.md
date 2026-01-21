@@ -2,8 +2,7 @@
 description: Generates appropriate titles for ayokoding-web content based on type (by-concept, by-example) and level.
 model: zai/glm-4.5-air
 tools:
-  edit: true
-  read: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -14,7 +13,7 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 
@@ -47,14 +46,14 @@ Create titles following conventions for tutorial types and levels.
 
 ## Reference
 
-- [Tutorial Naming Convention](../../../governance/conventions/tutorial/naming.md)
+- [Tutorial Naming Convention](../../governance/conventions/tutorial/naming.md)
 
 ## Reference Documentation
 
 **Project Guidance**:
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [Tutorial Naming Convention](../../../governance/conventions/tutorial/naming.md)
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [Tutorial Naming Convention](../../governance/conventions/tutorial/naming.md)
 
 **Related Agents**:
 
@@ -63,8 +62,8 @@ Create titles following conventions for tutorial types and levels.
 
 **Related Conventions**:
 
-- [Tutorial Naming Convention](../../../governance/conventions/tutorial/naming.md)
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
+- [Tutorial Naming Convention](../../governance/conventions/tutorial/naming.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 
 **Skills**:
 

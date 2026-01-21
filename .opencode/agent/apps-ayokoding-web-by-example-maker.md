@@ -2,12 +2,7 @@
 description: Creates By Example tutorial content for ayokoding-web with 75-90 heavily annotated code examples following five-part structure. Ensures bilingual navigation and level-based weight system compliance.
 model: zai/glm-4.7
 tools:
-  edit: true
-  bash: true
-  grep: true
-  write: true
-  read: true
-  glob: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -18,7 +13,7 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 2. **`docs-creating-by-example-tutorials`** - Progressive knowledge delivery
@@ -58,9 +53,9 @@ Create By Example tutorial content in `apps/ayokoding-web/content/` following ay
 
 **CRITICAL - Read these first**:
 
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md) - Hextra theme, bilingual, weights, navigation
-- [By Example Content Standard](../../../governance/conventions/tutorial/programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../../governance/conventions/tutorial/naming.md) - By Example type definition
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Hextra theme, bilingual, weights, navigation
+- [By Example Content Standard](../../governance/conventions/tutorial/programming-language-content.md) - Annotation requirements
+- [Tutorial Naming Convention](../../governance/conventions/tutorial/naming.md) - By Example type definition
 
 ## When to Use This Agent
 
@@ -204,10 +199,10 @@ The `docs-applying-content-quality` Skill provides general content quality stand
 
 **Project Guidance:**
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md) - Complete ayokoding-web standards
-- [By Example Content Standard](../../../governance/conventions/tutorial/programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../../governance/conventions/tutorial/naming.md) - By Example definition
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Complete ayokoding-web standards
+- [By Example Content Standard](../../governance/conventions/tutorial/programming-language-content.md) - Annotation requirements
+- [Tutorial Naming Convention](../../governance/conventions/tutorial/naming.md) - By Example definition
 
 **Related Agents:**
 

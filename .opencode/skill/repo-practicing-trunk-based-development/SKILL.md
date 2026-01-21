@@ -528,13 +528,13 @@ Before pushing to `main`:
 
 ## References
 
-**Primary Convention**: [Trunk Based Development Convention](../../../../governance/development/workflow/trunk-based-development.md)
+**Primary Convention**: [Trunk Based Development Convention](../../../governance/development/workflow/trunk-based-development.md)
 
 **Related Conventions**:
 
-- [Commit Message Convention](../../../../governance/development/workflow/commit-messages.md) - Conventional Commits format
-- [Implementation Workflow](../../../../governance/development/workflow/implementation.md) - Development workflow stages
-- [Plans Organization](../../../../governance/conventions/project/plans-organization.md) - Git workflow in plans
+- [Commit Message Convention](../../../governance/development/workflow/commit-messages.md) - Conventional Commits format
+- [Implementation Workflow](../../../governance/development/workflow/implementation.md) - Development workflow stages
+- [Plans Organization](../../../governance/conventions/project/plans-organization.md) - Git workflow in plans
 
 **Related Skills**:
 

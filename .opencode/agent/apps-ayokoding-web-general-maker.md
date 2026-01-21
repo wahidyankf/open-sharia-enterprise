@@ -2,12 +2,7 @@
 description: Creates general ayokoding-web content (by-concept tutorials, guides, references). Ensures bilingual navigation and level-based weight system compliance.
 model: zai/glm-4.7
 tools:
-  edit: true
-  bash: true
-  grep: true
-  write: true
-  read: true
-  glob: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -18,7 +13,7 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 2. **`docs-creating-accessible-diagrams`** - Progressive knowledge delivery
@@ -51,7 +46,7 @@ Create by-concept tutorials and general content for ayokoding-web.
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - Skills: `apps-ayokoding-web-developing-content` (bilingual, weights, navigation), `docs-creating-accessible-diagrams`, `docs-applying-content-quality`
 
 ## Workflow
@@ -68,8 +63,8 @@ Create by-concept tutorials and general content for ayokoding-web.
 
 **Project Guidance**:
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 
 **Related Agents**:
 
@@ -78,8 +73,8 @@ Create by-concept tutorials and general content for ayokoding-web.
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
-- [Programming Language Content](../../../governance/conventions/tutorial/programming-language-content.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
+- [Programming Language Content](../../governance/conventions/tutorial/programming-language-content.md)
 
 **Skills**:
 
