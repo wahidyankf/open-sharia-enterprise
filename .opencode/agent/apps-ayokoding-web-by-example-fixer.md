@@ -2,7 +2,18 @@
 description: Applies validated fixes from apps-ayokoding-web-by-example-checker audit reports. Re-validates By Example findings before applying changes. Use after reviewing checker output.
 model: zai/glm-4.7
 tools:
-  read: false
+  write: true
+  bash: true
+  grep: true
+  edit: true
+  read: true
+  glob: true
+skills:
+  - docs-applying-content-quality
+  - docs-creating-by-example-tutorials
+  - apps-ayokoding-web-developing-content
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

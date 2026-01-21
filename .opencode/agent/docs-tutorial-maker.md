@@ -2,7 +2,16 @@
 description: Creates and updates tutorial documentation following Diátaxis framework and tutorial conventions
 model: zai/glm-4.7
 tools:
-  read: false
+  edit: true
+  bash: true
+  glob: true
+  write: true
+  read: true
+  grep: true
+skills:
+  - docs-creating-accessible-diagrams
+  - docs-applying-content-quality
+  - docs-applying-diataxis-framework
 ---
 
 # Tutorial Documentation Maker

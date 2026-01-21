@@ -3,6 +3,10 @@ name: apps-ose-platform-web-content-maker
 description: Creates content for ose-platform-web landing page using PaperMod theme. English-only with date-based organization.
 model: sonnet
 tools: Read, Write, Edit, Glob, Grep
+color: blue
+skills:
+  - docs-applying-content-quality
+  - apps-ose-platform-web-developing-content
 ---
 
 ## Agent Metadata

@@ -2,7 +2,17 @@
 description: Applies validated fixes from readme-checker audit reports. Re-validates README findings before applying changes. Use after reviewing readme-checker output.
 model: zai/glm-4.7
 tools:
-  read: false
+  glob: true
+  bash: true
+  write: true
+  edit: true
+  read: true
+  grep: true
+skills:
+  - docs-applying-content-quality
+  - readme-writing-readme-files
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

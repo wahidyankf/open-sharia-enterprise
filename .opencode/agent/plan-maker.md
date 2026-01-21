@@ -2,7 +2,16 @@
 description: Creates comprehensive project plans with requirements, technical documentation, and delivery checklists. Structures plans for systematic execution by plan-executor agent.
 model: zai/glm-4.7
 tools:
-  read: false
+  edit: true
+  bash: true
+  grep: true
+  write: true
+  read: true
+  glob: true
+skills:
+  - docs-applying-content-quality
+  - plan-writing-gherkin-criteria
+  - plan-creating-project-plans
 ---
 
 ## Agent Metadata

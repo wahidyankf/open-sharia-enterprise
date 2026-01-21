@@ -2,7 +2,14 @@
 description: Creates repository rules and conventions in docs/explanation/ directories. Documents standards, patterns, and quality requirements.
 model: zai/glm-4.7
 tools:
-  read: false
+  edit: true
+  grep: true
+  write: true
+  read: true
+  glob: true
+skills:
+  - docs-applying-content-quality
+  - repo-understanding-repository-architecture
 ---
 
 ## Agent Metadata

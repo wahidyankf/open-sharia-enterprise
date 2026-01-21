@@ -3,6 +3,13 @@ name: docs-fixer
 description: Applies validated fixes from docs-checker audit reports. Re-validates factual accuracy findings before applying changes. Use after reviewing docs-checker output.
 model: sonnet
 tools: Read, Edit, Glob, Grep, Write, Bash
+color: yellow
+skills:
+  - docs-applying-content-quality
+  - docs-applying-diataxis-framework
+  - docs-validating-factual-accuracy
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

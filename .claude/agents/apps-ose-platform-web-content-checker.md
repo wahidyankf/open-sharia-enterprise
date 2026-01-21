@@ -3,6 +3,13 @@ name: apps-ose-platform-web-content-checker
 description: Validates ose-platform-web content quality including PaperMod theme compliance and landing page standards.
 model: sonnet
 tools: Read, Glob, Grep, Write, Bash
+color: green
+skills:
+  - docs-applying-content-quality
+  - apps-ose-platform-web-developing-content
+  - repo-generating-validation-reports
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

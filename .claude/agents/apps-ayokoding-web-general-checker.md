@@ -3,6 +3,13 @@ name: apps-ayokoding-web-general-checker
 description: Validates general ayokoding-web content quality including structure, bilingual completeness, weights, navigation, and content quality.
 model: sonnet
 tools: Read, Glob, Grep, Write, Bash
+color: green
+skills:
+  - docs-applying-content-quality
+  - apps-ayokoding-web-developing-content
+  - repo-generating-validation-reports
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

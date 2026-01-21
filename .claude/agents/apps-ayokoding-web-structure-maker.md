@@ -3,6 +3,10 @@ name: apps-ayokoding-web-structure-maker
 description: Creates folder structure and _index.md files for ayokoding-web following level-based organization.
 model: sonnet
 tools: Read, Write, Edit, Glob, Grep, Bash
+color: blue
+skills:
+  - docs-applying-content-quality
+  - apps-ayokoding-web-developing-content
 ---
 
 ## Agent Metadata

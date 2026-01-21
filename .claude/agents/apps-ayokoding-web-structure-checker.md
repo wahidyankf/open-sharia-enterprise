@@ -3,6 +3,13 @@ name: apps-ayokoding-web-structure-checker
 description: Validates ayokoding-web content structure including folder organization, level-based weights, navigation depth, and bilingual completeness.
 model: sonnet
 tools: Read, Glob, Grep, Write, Bash
+color: green
+skills:
+  - docs-applying-content-quality
+  - apps-ayokoding-web-developing-content
+  - repo-generating-validation-reports
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

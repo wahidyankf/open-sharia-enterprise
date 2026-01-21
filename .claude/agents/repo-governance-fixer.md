@@ -3,6 +3,12 @@ name: repo-governance-fixer
 description: Applies validated fixes from repository rules audit reports including agent-Skill duplication removal, Skills coverage gap remediation, and rules governance fixes (contradictions, inaccuracies, inconsistencies). Uses bash tools for .opencode folder modifications.
 model: sonnet
 tools: Read, Glob, Grep, Write, Bash
+color: yellow
+skills:
+  - docs-applying-content-quality
+  - repo-understanding-repository-architecture
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata
