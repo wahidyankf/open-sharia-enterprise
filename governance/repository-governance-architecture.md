@@ -47,7 +47,7 @@ graph TD
     subgraph Delivery["Delivery Infrastructure"]
         CM[CLAUDE.md<br/>Claude Code context]
         AM[AGENTS.md<br/>OpenCode context]
-        SK[Skills<br/>Shared knowledge<br/>.claude/skills/ PRIMARY<br/>.opencode/skill/ SYNCED]
+        SK[Skills<br/>Knowledge inline, Delegation fork<br/>.claude/skills/ PRIMARY<br/>.opencode/skill/ SYNCED]
         DR[Direct References<br/>Explicit links]
     end
 
@@ -71,6 +71,7 @@ graph TD
     OC -->|spawns| L4
     SK -->|on-demand via Skill tool| CC
     SK -->|on-demand via skill tool| OC
+    SK -->|context: fork spawns| L4
     DR -->|explicitly delivers to| L4
 
     style L0 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:3px
@@ -204,7 +205,7 @@ Agent: docs__file-manager (enforces naming when renaming files)
 - Source code (JavaScript, TypeScript, future: Java, Kotlin, Python)
 - Hugo themes and layouts
 - Build systems and tooling
-- AI agents (`.opencode/agent/`, `.opencode/agent/`)
+- AI agents (`.claude/agents/` PRIMARY, `.opencode/agent/` SYNCED)
 - Git workflows
 
 **Example Practices**:
@@ -252,8 +253,8 @@ See [AI Agents Convention](./development/agents/ai-agents.md) for dual-mode form
 
 **Key Documents**:
 
-- [Claude Agents Index](./README.md) (primary source)
-- [OpenCode Agents Index](./README.md) (auto-generated)
+- [Claude Agents Index](../.claude/agents/README.md) (primary source)
+- [OpenCode Agents Index](../.opencode/agent/README.md) (auto-generated)
 
 **Agent Families**:
 
@@ -320,26 +321,96 @@ In addition to the six governance layers, the repository uses **delivery infrast
 
 ### Delivery Mechanisms (Dual-Mode)
 
-| Mechanism             | Location                                                    | Purpose                            | Tool(s)                | When Loaded                |
-| --------------------- | ----------------------------------------------------------- | ---------------------------------- | ---------------------- | -------------------------- |
-| **CLAUDE.md**         | Root                                                        | Comprehensive project instructions | Claude Code            | Always at startup          |
-| **AGENTS.md**         | Root                                                        | Comprehensive project instructions | OpenCode               | Always at startup          |
-| **Skills**            | `.claude/skills/` (primary)<br/>`.opencode/skill/` (synced) | Progressive knowledge packages     | Claude Code / OpenCode | On-demand (tool-specific)  |
-| **Direct References** | In agent prompts                                            | Links to convention docs           | Both systems           | When explicitly referenced |
+| Mechanism             | Location                                                    | Purpose                            | Tool(s)                | When Loaded                | Behavior                         |
+| --------------------- | ----------------------------------------------------------- | ---------------------------------- | ---------------------- | -------------------------- | -------------------------------- |
+| **CLAUDE.md**         | Root                                                        | Comprehensive project instructions | Claude Code            | Always at startup          | Context injection                |
+| **AGENTS.md**         | Root                                                        | Comprehensive project instructions | OpenCode               | Always at startup          | Context injection                |
+| **Skills (inline)**   | `.claude/skills/` (primary)<br/>`.opencode/skill/` (synced) | Progressive knowledge packages     | Claude Code / OpenCode | On-demand (tool-specific)  | Inject into current conversation |
+| **Skills (fork)**     | `.claude/skills/` (primary)<br/>`.opencode/skill/` (synced) | Task delegation to agents          | Claude Code / OpenCode | On-demand (tool-specific)  | Spawn isolated agent context     |
+| **Direct References** | In agent prompts                                            | Links to convention docs           | Both systems           | When explicitly referenced | Explicit read                    |
 
 ### Skills as Infrastructure
 
-**Skills** are model-invoked markdown knowledge packages that:
+**Skills** are model-invoked markdown knowledge packages that operate in two distinct modes:
+
+#### Inline Skills (Knowledge Delivery)
+
+**Default behavior** when `context` field is omitted or set to `inline`:
 
 - **Enable progressive disclosure** - Name/description at startup, full content on-demand
 - **Encode convention/development knowledge** - Packaged for efficient agent consumption
+- **Inject into current conversation** - Skills add knowledge to ongoing work
 - **Support knowledge composition** - Multiple Skills work together seamlessly
-- **Follow open standard** - agentskills.io format for portability
+
+**Example use cases**: Style guides, coding conventions, domain knowledge, reference material
+
+#### Fork Skills (Task Delegation)
+
+**Delegation behavior** when `context: fork` is set with `agent` field:
+
+- **Spawn isolated subagent contexts** - Skills create separate execution environments
+- **Delegate tasks to specialized agents** - Agent field specifies which agent type to use
+- **Act as lightweight orchestrators** - Skills can invoke agents for focused work
+- **Return summarized results** - Subagent output returns to main conversation
+
+**Example use cases**: Deep research, focused analysis, specialized exploration
+
+**Configuration syntax**:
+
+```yaml
+---
+name: deep-research
+context: fork
+agent: Explore # Built-in or custom agent from .claude/agents/
+---
+Research $ARGUMENTS thoroughly...
+```
+
+**All skills follow open standard** - agentskills.io format for portability
+
+#### Practical Examples from Repository
+
+**Inline skill example** - `applying-content-quality`:
+
+```yaml
+---
+name: applying-content-quality
+description: Universal markdown content quality standards
+---
+When creating or editing markdown content:
+  - Use active voice
+  - Maintain proper heading hierarchy
+  - Include alt text for images
+  - Ensure WCAG AA color contrast
+```
+
+This skill injects quality standards into current conversation without spawning agents.
+
+**Fork skill example** - Hypothetical `deep-codebase-research`:
+
+```yaml
+---
+name: deep-codebase-research
+description: Comprehensive codebase analysis
+context: fork
+agent: Explore
+---
+
+Research $ARGUMENTS across the codebase:
+1. Use Glob to find all relevant files
+2. Use Grep to search for patterns
+3. Read and analyze implementation details
+4. Return comprehensive findings with file references
+```
+
+This skill delegates research to the Explore agent in an isolated context.
+
+**Key difference**: Inline skills add knowledge, fork skills delegate tasks.
 
 **Key Documents**:
 
-- [Claude Skills Directory](./README.md) (primary source)
-- [OpenCode Skills Directory](./README.md) (auto-generated)
+- [Claude Skills Directory](../.claude/skills/README.md) (primary source)
+- [OpenCode Skills Directory](../.opencode/skill/README.md) (auto-generated)
 
 **23 Skills Available**: See Skills directories for complete catalog.
 
@@ -372,6 +443,14 @@ See [CLAUDE.md](../CLAUDE.md) for Claude Code details and [AGENTS.md](../AGENTS.
 
 **Skills don't govern agents. Skills serve agents.**
 
+**Fork skills and task delegation**: While fork skills (`context: fork`) can spawn agents and delegate tasks, this remains a service relationship, not governance:
+
+- **Inline skills** deliver knowledge to current conversation (knowledge service)
+- **Fork skills** delegate tasks to specialized agents (execution service)
+- Neither mode enforces rules on agents or creates obligations
+- Fork skills act as lightweight orchestrators, not governors
+- Agents remain governed by Conventions (Layer 2) and Development (Layer 3)
+
 **Delivery infrastructure** has different characteristics:
 
 - Transports or delivers something
@@ -388,7 +467,8 @@ Governance (enforces rules):
 Delivery (serves knowledge, dual-mode):
   CLAUDE.md ──loaded at startup──> Claude Code ──spawns──> Agents (isolated contexts)
   AGENTS.md ──loaded at startup──> OpenCode ──spawns──> Agents (isolated contexts)
-  Skills ──delivers via Skill/skill tool──> Claude Code / OpenCode ──> Agents
+  Skills (inline) ──delivers knowledge via tool──> Claude Code / OpenCode
+  Skills (fork) ──delegates via context: fork──> Agents (isolated contexts)
   Direct References ──explicit links──> Agents
 ```
 
@@ -644,8 +724,8 @@ This architecture document implements/respects the following principles:
 
 **Layer 4** (Dual-Mode):
 
-- [Claude Agents Index](./README.md) (primary source)
-- [OpenCode Agents Index](./README.md) (auto-generated)
+- [Claude Agents Index](../.claude/agents/README.md) (primary source)
+- [OpenCode Agents Index](../.opencode/agent/README.md) (auto-generated)
 - Agent files in `.claude/agents/` (Claude Code format, primary)
 - Agent files in `.opencode/agent/` (OpenCode format, synced)
 
@@ -656,8 +736,8 @@ This architecture document implements/respects the following principles:
 
 **Delivery Infrastructure** (Dual-Mode):
 
-- [Claude Skills Directory](./README.md) - 23 knowledge packages (primary)
-- [OpenCode Skills Directory](./README.md) - 23 knowledge packages (synced)
+- [Claude Skills Directory](../.claude/skills/README.md) - 23 knowledge packages (primary)
+- [OpenCode Skills Directory](../.opencode/skill/README.md) - 23 knowledge packages (synced)
 - [How to Create a Skill](../docs/how-to/hoto__create-new-skill.md) - Step-by-step guide
 - [CLAUDE.md](../CLAUDE.md) - Claude Code comprehensive instructions
 - [AGENTS.md](../AGENTS.md) - OpenCode comprehensive instructions

@@ -1,6 +1,6 @@
 # Claude Code Agents
 
-This directory contains 46 specialized AI agents for the open-sharia-enterprise project. These agents are organized by role and follow the Maker-Checker-Fixer pattern where applicable.
+This directory contains 45 specialized AI agents for the open-sharia-enterprise project. These agents are organized by role and follow the Maker-Checker-Fixer pattern where applicable.
 
 ## Agent Organization
 
@@ -131,5 +131,5 @@ All agents follow governance principles:
 
 ---
 
-**Total Agents**: 46
+**Total Agents**: 45
 **Last Updated**: 2026-01-16
