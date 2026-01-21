@@ -42,6 +42,8 @@ updated: 2026-01-21
 - [Java Security](./ex-so-stla-ja__security.md) - Secure application development
 - [Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md) - DDD with type-safe models
 
+Type safety in Java enforces the [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md) principle - making nullable/non-nullable explicit, making type hierarchies explicit, and catching errors at compile-time rather than runtime. This alignment is critical for Shariah-compliant systems where financial calculations must be verifiable and correct.
+
 ## Why Type Safety Matters in Finance
 
 Type safety prevents runtime errors by catching type mismatches at compile time, which is critical in financial systems where runtime failures can cause:
@@ -1894,6 +1896,16 @@ Optional boxing is negligible for non-hot paths.
 - **[Tech Stack Languages Index](../README.md)** - Parent language documentation
 - **[Software Design Index](../../README.md)** - Software documentation root
 - **[Code Quality Standards](../../../../../governance/development/quality/code.md)** - Quality requirements including type safety
+
+## Related Principles
+
+Type safety demonstrates core software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Explicit nullable types, sealed hierarchies, pattern matching exhaustiveness
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Compile-time checking automates error detection
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Records enforce immutability for type-safe value objects
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ---
 

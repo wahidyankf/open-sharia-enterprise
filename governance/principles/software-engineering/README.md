@@ -29,6 +29,27 @@ These principles define **WHY we value specific approaches to software developme
 - [Pure Functions Over Side Effects](./pure-functions.md) - Prefer pure functions (deterministic, no side effects) over functions with side effects
 - [Reproducibility First](./reproducibility.md) - Development environments and builds should be reproducible from the start
 
+## Examples from Platform
+
+Each principle is demonstrated across the platform's technology stack:
+
+### Java Examples
+
+- **[Java Idioms](../../../docs/explanation/software/stack-lang/java/ex-so-stla-ja__idioms.md)** - Records (Immutability), Pattern Matching (Explicit), Try-with-resources (Automation)
+- **[Java Functional Programming](../../../docs/explanation/software/stack-lang/java/ex-so-stla-ja__functional-programming.md)** - Pure Functions, Immutability, Functional Core architecture
+- **[Java Type Safety](../../../docs/explanation/software/stack-lang/java/ex-so-stla-ja__type-safety.md)** - Explicit nullable types, Static analysis (Automation)
+- **[Java Concurrency](../../../docs/explanation/software/stack-lang/java/ex-so-stla-ja__concurrency-and-parallelism.md)** - Immutability for thread-safety, Virtual threads
+- **[Java Domain-Driven Design](../../../docs/explanation/software/stack-lang/java/ex-so-stla-ja__domain-driven-design.md)** - Value Objects (Immutability), Domain Services (Pure Functions)
+- **[Java Best Practices](../../../docs/explanation/software/stack-lang/java/ex-so-stla-ja__best-practices.md)** - Build automation, Reproducible development
+
+### Principle-Specific Examples
+
+- **Automation Over Manual**: Java records auto-generate boilerplate, static analysis catches bugs, TestContainers automate infrastructure
+- **Explicit Over Implicit**: Sealed classes define explicit type hierarchies, pattern matching ensures exhaustive handling
+- **Immutability Over Mutability**: Records, final fields, immutable collections enable thread-safe concurrent code
+- **Pure Functions Over Side Effects**: Functional core/imperative shell separates domain logic from I/O
+- **Reproducibility First**: SDKMAN! pins Java versions, Gradle wrapper pins build tools, gradle.lockfile pins dependencies
+
 ## Related Documentation
 
 - [Core Principles Index](./README.md) - All foundational principles
@@ -37,4 +58,4 @@ These principles define **WHY we value specific approaches to software developme
 
 ---
 
-**Last Updated**: 2026-01-01
+**Last Updated**: 2026-01-21

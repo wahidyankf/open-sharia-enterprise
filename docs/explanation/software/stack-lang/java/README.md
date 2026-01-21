@@ -30,6 +30,18 @@ Java is a primary language for backend services, domain-driven design implementa
 - Immutability and type safety
 - Modern frameworks (Spring Boot 4, Jakarta EE 11)
 
+## Software Engineering Principles
+
+Java development in this platform follows the five software engineering principles from [governance/principles/software-engineering/](../../../../../governance/principles/software-engineering/README.md):
+
+1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Java automates through records, try-with-resources, static analysis, and build tools
+2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Java enforces through sealed types, explicit configuration, module system
+3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Java provides records, final fields, immutable collections for thread-safe code
+4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Java supports through functional interfaces, streams, and functional core architecture
+5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Java enables through version pinning, Gradle wrapper, dependency locks
+
+**See Also**: [Functional Programming](./ex-so-stla-ja__functional-programming.md) for pure functions and immutability patterns, [Best Practices](./ex-so-stla-ja__best-practices.md) for explicit coding standards.
+
 ## Java Version Strategy
 
 ### Current Baseline: Java 17+ (LTS)
@@ -516,6 +528,85 @@ public class TaxService {
 **IntelliJ IDEA**: Primary IDE
 **Eclipse**: Alternative IDE
 **VS Code**: Lightweight option with Java extensions
+
+### Reproducible Java Development
+
+**Version Management**:
+
+- Recommended: [SDKMAN!](https://sdkman.io/) for automatic Java version switching
+- Alternative: [jEnv](https://www.jenv.be/), [MISE](https://mise.jdx.dev/), [Asdf](https://asdf-vm.com/)
+- Create `.sdkmanrc` or `.tool-versions` to pin Java version
+
+**Example .sdkmanrc**:
+
+```bash
+java=21.0.1-tem
+gradle=9.0
+maven=4.0.0
+```
+
+**Build Reproducibility**:
+
+- **Gradle Wrapper** (`gradle-wrapper.jar`) pins Gradle version - committed to git
+- **Maven Wrapper** (`mvnw`) pins Maven version - committed to git
+- **gradle.lockfile** (Gradle 8+) pins dependency versions
+- **Maven Dependency Lock** (Maven 3.9+) pins dependency versions
+
+**Setup Script**:
+
+```bash
+#!/bin/bash
+# setup-java.sh
+
+# Install SDKMAN! if not present
+if ! command -v sdk &> /dev/null; then
+    curl -s "https://get.sdkman.io" | bash
+fi
+
+# Use versions from .sdkmanrc
+sdk env install
+
+# Install dependencies with locked versions
+./gradlew --write-locks  # Generate gradle.lockfile
+./gradlew build
+```
+
+**Docker Development Container** (Optional):
+
+```dockerfile
+FROM eclipse-temurin:21-jdk
+WORKDIR /app
+COPY . .
+RUN ./gradlew build
+```
+
+**See**: [Reproducibility First principle](../../../../../governance/principles/software-engineering/reproducibility.md)
+
+### Build Automation
+
+**Gradle Plugins** (Automation Over Manual):
+
+- [Spotless](https://github.com/diffplug/spotless) - Code formatting automation
+- [Error Prone](https://errorprone.info/) - Compile-time bug detection
+- [NullAway](https://github.com/uber/NullAway) - Null safety automation
+- [JaCoCo](https://www.jacoco.org/jacoco/) - Code coverage reporting
+- [Checkstyle](https://checkstyle.org/) - Style checking automation
+
+**Code Generation**:
+
+- Records (Java 17+) - Auto-generate getters, equals, hashCode, toString
+- Lombok - Annotation-based code generation (consider records first)
+- JPA Metamodel Generator - Type-safe JPA queries
+- Annotation Processing - Custom code generation
+
+**Testing Automation**:
+
+- JUnit 5 - Automated unit testing
+- TestContainers - Automated integration testing with Docker
+- Mockito - Automated mock creation
+- Property-based testing (jqwik) - Automated test case generation
+
+**See**: [Automation Over Manual principle](../../../../../governance/principles/software-engineering/automation-over-manual.md)
 
 ## Resources and References
 

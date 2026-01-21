@@ -45,6 +45,14 @@ As of 2025-2026, these features form the baseline for modern Java development:
 
 ## Core Modern Idioms
 
+Modern Java idioms align strongly with [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
+
+- **Records** embody [Immutability](../../../../../governance/principles/software-engineering/immutability.md) and [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
+- **Pattern Matching** enforces [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md) with exhaustive type handling
+- **Optional** supports [Pure Functions](../../../../../governance/principles/software-engineering/pure-functions.md) by eliminating null-based side effects
+- **Streams** enable [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md) through functional transformations
+- **Try-with-resources** automates resource management ([Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md))
+
 ### 1. Records for Immutable Data
 
 **Pattern**: Use records for data carrier classes that should be immutable, transparent, and concise.
@@ -2399,6 +2407,17 @@ Use this checklist when adopting modern Java idioms:
 - [ ] Update coding standards
 - [ ] Review and update existing code gradually
 - [ ] Document idiom usage in team wiki
+
+## Related Principles
+
+Java idioms demonstrate alignment with core software engineering principles:
+
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Records, final fields, immutable collections
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Optional, streams, functional interfaces
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Sealed types, pattern matching, module system
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Records, try-with-resources, static analysis
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive principle documentation.
 
 ## Related Documentation
 

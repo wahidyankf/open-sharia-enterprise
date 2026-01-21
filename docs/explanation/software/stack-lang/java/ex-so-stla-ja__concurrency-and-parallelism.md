@@ -50,7 +50,7 @@ Concurrency and parallelism enable Java applications to execute multiple tasks s
 
 **Core Principles:**
 
-1. **Immutability First**: Immutable objects are inherently thread-safe
+1. **Immutability First**: Immutable objects are inherently thread-safe. This aligns with the [Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md) software engineering principle. Immutable data structures are inherently thread-safe because they cannot be modified after creation, eliminating race conditions and the need for synchronization.
 2. **Minimize Sharing**: Reduce shared mutable state
 3. **Synchronize Only When Necessary**: Locks have performance costs
 4. **Fail Fast**: Detect concurrency errors early
@@ -1973,6 +1973,17 @@ This documentation is based on authoritative sources and up-to-date (2026) concu
 - [Beyond Loom: Weaving new concurrency patterns](https://developers.redhat.com/articles/2023/10/03/beyond-loom-weaving-new-concurrency-patterns)
 - [Multithreading in Java: A Comprehensive Guide](https://blog.jyotiprakash.org/multithreading-in-java-a-comprehensive-guide-to-concurrency-and-parallelism)
 - [Programmer-friendly structured concurrency for Java](https://softwaremill.com/programmer-friendly-structured-concurrency-for-java/)
+
+## Related Principles
+
+Concurrent programming demonstrates core software engineering principles:
+
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Immutable data eliminates race conditions in multi-threaded code
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Pure functions are inherently thread-safe and parallelizable
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Explicit synchronization and thread management over hidden concurrency
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Virtual threads enable reproducible, scalable concurrency
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ---
 

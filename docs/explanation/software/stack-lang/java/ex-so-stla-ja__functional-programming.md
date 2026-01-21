@@ -42,6 +42,13 @@ updated: 2026-01-21
 - [Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md) - Functional domain models
 - [Java Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md) - Immutability for thread safety
 
+Functional programming in Java directly implements two core [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
+
+1. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Functions that always return the same output for the same input, with no side effects
+2. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Data structures that cannot be modified after creation
+
+These principles make Java code safer, more testable, and easier to reason about - especially critical for Shariah-compliant business logic requiring audit trails and deterministic calculations.
+
 ## Why Functional Programming in Finance
 
 Functional programming brings critical benefits to financial systems:
@@ -1591,6 +1598,17 @@ List<Money> first10 = donations.take(10).toJavaList();
 - **[Functional Programming Principle](../../../../../governance/development/pattern/functional-programming.md)** - Platform-wide functional guidelines
 - **[Tech Stack Languages Index](../README.md)** - Parent language documentation
 - **[Software Design Index](../../README.md)** - Software documentation root
+
+## Related Principles
+
+Functional programming embodies core software engineering principles:
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Entire functional programming paradigm based on pure functions
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Immutable data structures prevent accidental state changes
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Dependencies explicit in function signatures (no hidden state)
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Pure functions enable deterministic, reproducible behavior
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ---
 
