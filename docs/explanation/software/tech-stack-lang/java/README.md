@@ -71,7 +71,7 @@ Java is a primary language for backend services, domain-driven design implementa
 
 ## Documentation Structure
 
-### [Java Idioms](./ex-so-testla-ja__01-idioms.md)
+### [Java Idioms](./ex-so-testla-ja__idioms.md)
 
 Language-specific patterns and conventions for writing idiomatic Java code.
 
@@ -86,7 +86,7 @@ Language-specific patterns and conventions for writing idiomatic Java code.
 - Text blocks for multi-line strings
 - Sealed classes for domain modeling
 
-### [Java Best Practices](./ex-so-testla-ja__02-best-practices.md)
+### [Java Best Practices](./ex-so-testla-ja__best-practices.md)
 
 Proven approaches for writing clean, maintainable Java code based on 2025-2026 standards.
 
@@ -101,7 +101,7 @@ Proven approaches for writing clean, maintainable Java code based on 2025-2026 s
 - Security practices
 - Modern framework usage
 
-### [Java Antipatterns](./ex-so-testla-ja__03-antipatterns.md)
+### [Java Antipatterns](./ex-so-testla-ja__antipatterns.md)
 
 Common mistakes, pitfalls, and problematic patterns to avoid in Java development.
 
@@ -189,7 +189,7 @@ Common mistakes, pitfalls, and problematic patterns to avoid in Java development
 
 ### 1. Start with Idioms
 
-Read [Java Idioms](./ex-so-testla-ja__01-idioms.md) to understand modern Java patterns:
+Read [Java Idioms](./ex-so-testla-ja__idioms.md) to understand modern Java patterns:
 
 - Records for data classes
 - Pattern matching for type checks
@@ -198,7 +198,7 @@ Read [Java Idioms](./ex-so-testla-ja__01-idioms.md) to understand modern Java pa
 
 ### 2. Apply Best Practices
 
-Read [Java Best Practices](./ex-so-testla-ja__02-best-practices.md) to write clean code:
+Read [Java Best Practices](./ex-so-testla-ja__best-practices.md) to write clean code:
 
 - Keep methods and classes focused (10-20 lines per method)
 - Name with intention and clarity
@@ -207,7 +207,7 @@ Read [Java Best Practices](./ex-so-testla-ja__02-best-practices.md) to write cle
 
 ### 3. Avoid Antipatterns
 
-Read [Java Antipatterns](./ex-so-testla-ja__03-antipatterns.md) to prevent common mistakes:
+Read [Java Antipatterns](./ex-so-testla-ja__antipatterns.md) to prevent common mistakes:
 
 - Thread safety issues (SimpleDateFormat, shared state)
 - Resource leaks (unclosed streams, connections)

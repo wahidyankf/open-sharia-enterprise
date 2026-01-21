@@ -2103,8 +2103,8 @@ Use this checklist when adopting modern Java idioms:
 
 ## Related Documentation
 
-- [Java Best Practices](./ex-so-testla-ja__02-best-practices.md) - Recommended coding standards
-- [Java Antipatterns](./ex-so-testla-ja__03-antipatterns.md) - Common mistakes to avoid
+- [Java Best Practices](./ex-so-testla-ja__best-practices.md) - Recommended coding standards
+- [Java Antipatterns](./ex-so-testla-ja__antipatterns.md) - Common mistakes to avoid
 - [Functional Programming Patterns](../../../../../governance/development/pattern/functional-programming.md) - OSE functional programming conventions
 - [Code Quality Standards](../../../../../governance/development/quality/code.md)
 
