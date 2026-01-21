@@ -7,8 +7,8 @@ import (
 )
 
 func TestRootCommand_Initialization(t *testing.T) {
-	if rootCmd.Use != "butler-cli" {
-		t.Errorf("Expected use 'butler-cli', got %s", rootCmd.Use)
+	if rootCmd.Use != "rhino-cli" {
+		t.Errorf("Expected use 'rhino-cli', got %s", rootCmd.Use)
 	}
 
 	if rootCmd.Short != "CLI tools for repository management" {
@@ -73,7 +73,7 @@ func TestRootCommand_Version(t *testing.T) {
 		t.Errorf("Version output should contain '0.1.0', got: %s", output)
 	}
 
-	if !strings.Contains(output, "butler-cli") {
-		t.Errorf("Version output should contain 'butler-cli', got: %s", output)
+	if !strings.Contains(output, "rhino-cli") {
+		t.Errorf("Version output should contain 'rhino-cli', got: %s", output)
 	}
 }

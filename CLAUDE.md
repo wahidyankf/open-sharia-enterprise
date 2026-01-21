@@ -19,7 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `ose-platform-web` - Hugo static site (PaperMod theme)
   - `ayokoding-web` - Hugo static site (Hextra theme, bilingual)
   - `ayokoding-cli` - Go CLI tool for content automation
-  - `butler-cli` - Go CLI tool for repository management
+  - `rhino-cli` - Go CLI tool for repository management (Repository Hygiene & INtegration Orchestrator)
 
 ## Project Structure
 
@@ -29,7 +29,7 @@ open-sharia-enterprise/
 │   ├── ose-platform-web/    # OSE Platform website
 │   ├── ayokoding-web/       # AyoKoding website (bilingual)
 │   ├── ayokoding-cli/       # Content automation CLI
-│   └── butler-cli/          # Repository management CLI
+│   └── rhino-cli/          # Repository management CLI
 ├── apps-labs/                # Experimental apps (NOT in Nx)
 ├── libs/                     # Reusable libraries (Nx, flat structure)
 ├── docs/                     # Documentation (Diátaxis framework)

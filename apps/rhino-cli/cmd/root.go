@@ -1,4 +1,4 @@
-// Package cmd implements the CLI commands for butler-cli.
+// Package cmd implements the CLI commands for rhino-cli.
 package cmd
 
 import (
@@ -18,7 +18,7 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:               "butler-cli",
+	Use:               "rhino-cli",
 	Short:             "CLI tools for repository management",
 	Long:              `Command-line tools for repository management and automation.`,
 	Version:           "0.1.0",

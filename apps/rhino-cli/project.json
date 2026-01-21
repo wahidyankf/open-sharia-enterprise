@@ -1,35 +1,35 @@
 {
-  "name": "butler-cli",
-  "sourceRoot": "apps/butler-cli",
+  "name": "rhino-cli",
+  "sourceRoot": "apps/rhino-cli",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "go build -o dist/butler-cli",
-        "cwd": "apps/butler-cli"
+        "command": "CGO_ENABLED=0 go build -o dist/rhino-cli",
+        "cwd": "apps/rhino-cli"
       },
       "outputs": ["{projectRoot}/dist"]
     },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "go test ./...",
-        "cwd": "apps/butler-cli"
+        "command": "CGO_ENABLED=0 go test ./...",
+        "cwd": "apps/rhino-cli"
       }
     },
     "run": {
       "executor": "nx:run-commands",
       "options": {
         "command": "go run main.go",
-        "cwd": "apps/butler-cli"
+        "cwd": "apps/rhino-cli"
       }
     },
     "install": {
       "executor": "nx:run-commands",
       "options": {
         "command": "go mod tidy",
-        "cwd": "apps/butler-cli"
+        "cwd": "apps/rhino-cli"
       }
     }
   }

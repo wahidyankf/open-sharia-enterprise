@@ -1,8 +1,8 @@
-# butler-cli
+# rhino-cli
 
 Command-line tools for repository management and automation.
 
-## What is butler-cli?
+## What is rhino-cli?
 
 A Go-based CLI tool that provides utilities for repository management and automation tasks. Built with Cobra CLI framework for powerful command-line interfaces.
 
@@ -10,19 +10,19 @@ A Go-based CLI tool that provides utilities for repository management and automa
 
 ```bash
 # Validate markdown links in the repository
-butler-cli validate-links
+rhino-cli validate-links
 
 # Validate only staged files (useful in git hooks)
-butler-cli validate-links --staged-only
+rhino-cli validate-links --staged-only
 
 # Echo a message
-butler-cli --say "hello world"
+rhino-cli --say "hello world"
 
 # Verbose output with timestamps
-butler-cli --say "hello" --verbose
+rhino-cli --say "hello" --verbose
 
 # Quiet mode (errors only)
-butler-cli --say "hello" --quiet
+rhino-cli --say "hello" --quiet
 ```
 
 ## Installation
@@ -30,11 +30,11 @@ butler-cli --say "hello" --quiet
 Build the CLI tool from the repository root:
 
 ```bash
-cd apps/butler-cli
-go build -o dist/butler-cli
+cd apps/rhino-cli
+go build -o dist/rhino-cli
 ```
 
-The binary will be created at `apps/butler-cli/dist/butler-cli`.
+The binary will be created at `apps/rhino-cli/dist/rhino-cli`.
 
 ## Global Flags
 
@@ -44,16 +44,16 @@ Echo a message to standard output.
 
 ```bash
 # Basic usage
-butler-cli --say "hello world"
+rhino-cli --say "hello world"
 
 # Verbose output with timestamps
-butler-cli --say "hello" --verbose
+rhino-cli --say "hello" --verbose
 
 # Quiet mode
-butler-cli --say "hello" --quiet
+rhino-cli --say "hello" --quiet
 
 # Custom output format
-butler-cli --say "hello" -o json
+rhino-cli --say "hello" -o json
 ```
 
 **What it does:**
@@ -79,22 +79,22 @@ Validate markdown links in the repository. Scans markdown files for broken inter
 
 ```bash
 # Validate all markdown files
-butler-cli validate-links
+rhino-cli validate-links
 
 # Validate only staged files (useful in pre-commit hooks)
-butler-cli validate-links --staged-only
+rhino-cli validate-links --staged-only
 
 # Output as JSON
-butler-cli validate-links -o json
+rhino-cli validate-links -o json
 
 # Output as markdown report
-butler-cli validate-links -o markdown
+rhino-cli validate-links -o markdown
 
 # Verbose mode
-butler-cli validate-links -v
+rhino-cli validate-links -v
 
 # Quiet mode (errors only)
-butler-cli validate-links -q
+rhino-cli validate-links -q
 ```
 
 **What it does:**
@@ -179,20 +179,20 @@ This command replaces the Python script at `scripts/validate-links.py` with a fa
 
 ```bash
 # General help
-butler-cli --help
-butler-cli help
+rhino-cli --help
+rhino-cli help
 
 # Command-specific help
-butler-cli validate-links --help
+rhino-cli validate-links --help
 
 # Version
-butler-cli --version
+rhino-cli --version
 ```
 
 ## Architecture
 
 ```
-apps/butler-cli/
+apps/rhino-cli/
 ├── cmd/
 │   ├── root.go               # Cobra root command, global flags
 │   ├── root_test.go          # Tests for root command
@@ -222,7 +222,7 @@ apps/butler-cli/
 ### Build
 
 ```bash
-go build -o dist/butler-cli
+go build -o dist/rhino-cli
 ```
 
 ### Test
@@ -255,16 +255,16 @@ The CLI is integrated into the Nx workspace:
 
 ```bash
 # Build via Nx
-nx build butler-cli
+nx build rhino-cli
 
 # Run unit tests via Nx
-nx test:quick butler-cli
+nx test:quick rhino-cli
 
 # Run via Nx
-nx run butler-cli
+nx run rhino-cli
 
 # Install dependencies via Nx
-nx install butler-cli
+nx install rhino-cli
 ```
 
 **Available Nx Targets:**
@@ -310,14 +310,14 @@ go tool cover -html=coverage.out
 **Basic usage:**
 
 ```bash
-butler-cli --say "hello world"
+rhino-cli --say "hello world"
 # Output: hello world
 ```
 
 **With verbose flag:**
 
 ```bash
-butler-cli --say "hello" --verbose
+rhino-cli --say "hello" --verbose
 # Output: [2026-01-05 14:30:00] INFO: Executing say command
 #         [2026-01-05 14:30:00] INFO: Message: hello
 #         hello
@@ -326,14 +326,14 @@ butler-cli --say "hello" --verbose
 **With quiet flag:**
 
 ```bash
-butler-cli --say "hello" --quiet
+rhino-cli --say "hello" --quiet
 # Output: hello
 ```
 
 **With verbose flag:**
 
 ```bash
-butler-cli say "hello" --verbose
+rhino-cli say "hello" --verbose
 # Output: [2025-01-05 12:00:00] INFO: Executing say command
 #         [2025-01-05 12:00:00] INFO: Message: hello
 #         hello
@@ -342,14 +342,14 @@ butler-cli say "hello" --verbose
 **With quiet flag:**
 
 ```bash
-butler-cli say "hello" --quiet
+rhino-cli say "hello" --quiet
 # Output: hello
 ```
 
 **Error case:**
 
 ```bash
-butler-cli say
+rhino-cli say
 # Output: Error: requires at least 1 arg(s), only received 0
 ```
 
