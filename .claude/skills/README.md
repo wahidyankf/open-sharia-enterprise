@@ -64,23 +64,64 @@ Links to related conventions, principles, other skills
 
 **Progressive Disclosure**: Skills provide ~100 token metadata (frontmatter + Purpose) for quick context, then detailed guidance <5k tokens for comprehensive understanding.
 
+## Skill Modes: Inline vs Fork
+
+Skills operate in two distinct modes:
+
+### Inline Skills (Knowledge Delivery)
+
+**Default behavior** when `context` field is omitted or set to `inline`:
+
+- **Progressive disclosure** - Name/description at startup, full content on-demand
+- **Knowledge injection** - Add standards and guidance to current conversation
+- **Convention packaging** - Bundle governance knowledge for efficient consumption
+- **Composition** - Multiple skills work together seamlessly
+
+**Example use cases**: Style guides, coding conventions, domain knowledge, quality standards
+
+### Fork Skills (Task Delegation)
+
+**Delegation behavior** when `context: fork` is set with `agent` field:
+
+- **Spawn isolated subagent contexts** - Create separate execution environments
+- **Delegate specialized tasks** - Agent field specifies which agent type to use
+- **Lightweight orchestration** - Skills invoke agents for focused work
+- **Return results** - Subagent output returns to main conversation
+
+**Configuration syntax**:
+
+```yaml
+---
+name: deep-research
+context: fork
+agent: Explore # Built-in or custom agent
+---
+Research $ARGUMENTS thoroughly...
+```
+
+**Example use cases**: Deep research, focused analysis, specialized exploration
+
+**Key difference**: Inline skills inject knowledge, fork skills delegate tasks.
+
 ## Skills vs Conventions
 
 **Skills** (`.claude/skills/`):
 
-- Delivery infrastructure for agents
-- Progressive knowledge format
+- Delivery infrastructure serving agents
+- Progressive knowledge format (inline) or task delegation (fork)
 - Optimized for agent consumption
 - References conventions as source of truth
+- Service relationship with agents (not governance)
 
 **Conventions** (`governance/conventions/`):
 
-- Permanent governance rules
+- Permanent governance rules (Layer 2)
 - Comprehensive reference documentation
 - Human and agent readable
 - Single source of truth
+- Govern agents and practices
 
-Skills package conventions for efficient agent access.
+Skills package conventions for efficient agent access and can orchestrate agents for specialized tasks, but don't govern them.
 
 ## Dual-Mode Operation
 

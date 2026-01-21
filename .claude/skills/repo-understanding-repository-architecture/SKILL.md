@@ -265,26 +265,61 @@ Maker-Checker-Fixer Workflow:
 
 **IMPORTANT**: Skills are **delivery infrastructure**, NOT a governance layer.
 
-Skills sit alongside AGENTS.md and direct references as delivery mechanisms:
+Skills sit alongside CLAUDE.md, AGENTS.md and direct references as delivery mechanisms, operating in two distinct modes:
+
+### Inline Skills (Knowledge Delivery)
+
+**Default behavior** - Progressive knowledge injection:
 
 ```
-Knowledge Flow:
-L2: Conventions ──┬── AGENTS.md (navigation) ──> L4: Agents
-                  ├── Skills (progressive) ────> L4: Agents
-                  └── Direct refs (specific) ──> L4: Agents
+Knowledge Flow (Inline):
+L2: Conventions ──┬── CLAUDE.md/AGENTS.md (startup) ──> Claude/OpenCode
+                  ├── Skills inline (on-demand) ────> Current conversation
+                  └── Direct refs (explicit) ───────> L4: Agents
 
-L3: Development ──┬── AGENTS.md (navigation) ──> L4: Agents
-                  ├── Skills (progressive) ────> L4: Agents
-                  └── Direct refs (specific) ──> L4: Agents
+L3: Development ──┬── CLAUDE.md/AGENTS.md (startup) ──> Claude/OpenCode
+                  ├── Skills inline (on-demand) ────> Current conversation
+                  └── Direct refs (explicit) ───────> L4: Agents
 ```
 
-**Key insight**: Skills DELIVER knowledge from L2/L3 to L4. They don't GOVERN agents.
+**Characteristics**:
+
+- Progressive disclosure (name/description → full content on-demand)
+- Inject convention/development knowledge into current conversation
+- Enable knowledge composition (multiple skills work together)
+- Serve agents but don't govern them
+
+### Fork Skills (Task Delegation)
+
+**Delegation behavior** with `context: fork`:
+
+```
+Delegation Flow (Fork):
+Skills (context: fork) ──delegates to──> Isolated Agent Context
+                         ──returns──> Summarized Results
+                         ──to──> Main Conversation
+```
+
+**Characteristics**:
+
+- Spawn isolated subagent contexts for focused work
+- Delegate specialized tasks (research, analysis, exploration)
+- Act as lightweight orchestrators
+- Return results to main conversation
+- Still service relationship (not governance)
+
+**Key insight**: Skills SERVE agents through two modes:
+
+- **Inline skills** - Deliver knowledge from L2/L3 to current conversation
+- **Fork skills** - Delegate tasks to agents in isolated contexts
+- Neither mode governs agents (service relationship, not governance)
 
 **Governance test**:
 
 - Conventions → Agents: Yes (agents MUST follow conventions)
 - Development → Agents: Yes (agents MUST follow practices)
-- Skills → Agents: **No** (Skills SERVE agents with knowledge)
+- Skills (inline) → Agents: **No** (inject knowledge, serve agents)
+- Skills (fork) → Agents: **No** (delegate tasks, serve agents)
 
 ## Best Practices
 
