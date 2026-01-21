@@ -828,10 +828,10 @@ PENDING --> PROCESSING : start / initiate_processing()
 
 This document demonstrates several core principles:
 
-- [Explicit Over Implicit](../../../../governance/principles/software-engineering/explicit-over-implicit.md): Explicit guard conditions rather than implicit boolean checks
-- [Pure Functions Over Side Effects](../../../../governance/principles/software-engineering/pure-functions.md): Guards as pure functions with no side effects
-- [Immutability Over Mutability](../../../../governance/principles/software-engineering/immutability.md): Immutable context and state transitions
-- [Simplicity Over Complexity](../../../../governance/principles/general/simplicity-over-complexity.md): Avoiding unnecessary action chains
+- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md): Explicit guard conditions rather than implicit boolean checks
+- [Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md): Guards as pure functions with no side effects
+- [Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md): Immutable context and state transitions
+- [Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md): Avoiding unnecessary action chains
 
 ## Next Steps
 

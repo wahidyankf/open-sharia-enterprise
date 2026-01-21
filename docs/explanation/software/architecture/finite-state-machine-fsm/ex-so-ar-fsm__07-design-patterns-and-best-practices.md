@@ -837,10 +837,10 @@ stateDiagram-v2
 
 This document demonstrates several core principles:
 
-- [Simplicity Over Complexity](../../../../governance/principles/general/simplicity-over-complexity.md): Decomposing god state machines
-- [Explicit Over Implicit](../../../../governance/principles/software-engineering/explicit-over-implicit.md): Explicit states over boolean flags
-- [Immutability Over Mutability](../../../../governance/principles/software-engineering/immutability.md): Immutable state transitions
-- [Pure Functions Over Side Effects](../../../../governance/principles/software-engineering/pure-functions.md): Testable state transitions with no hidden dependencies
+- [Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md): Decomposing god state machines
+- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md): Explicit states over boolean flags
+- [Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md): Immutable state transitions
+- [Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md): Testable state transitions with no hidden dependencies
 
 ## Next Steps
 

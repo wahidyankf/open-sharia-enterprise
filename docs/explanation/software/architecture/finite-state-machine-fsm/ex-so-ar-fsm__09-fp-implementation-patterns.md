@@ -826,9 +826,9 @@ function createPayableState(
 
 ## Related Principles
 
-- [Immutability Over Mutability](../../../../governance/principles/software-engineering/immutability.md): Immutable state transitions
-- [Pure Functions Over Side Effects](../../../../governance/principles/software-engineering/pure-functions.md): Pure transition functions
-- [Explicit Over Implicit](../../../../governance/principles/software-engineering/explicit-over-implicit.md): Explicit effects and side effects
+- [Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md): Immutable state transitions
+- [Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md): Pure transition functions
+- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md): Explicit effects and side effects
 
 ## Next Steps
 
