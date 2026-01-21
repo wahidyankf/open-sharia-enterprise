@@ -41,10 +41,10 @@ tools: Read, Edit, Glob, Grep, Write, Bash
 
 This agent leverages Skills from `.claude/skills/`:
 
-2. **`readme-writing-readme-files`** - Progressive knowledge delivery
-3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
-4. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
-5. **`repo-generating-validation-reports`** - Progressive knowledge delivery
+1. **`readme-writing-readme-files`** - Progressive knowledge delivery
+2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+3. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
+4. **`repo-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 

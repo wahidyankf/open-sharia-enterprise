@@ -49,9 +49,9 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 This agent leverages Skills from `.claude/skills/`:
 
-2. **`apps-ose-platform-web-developing-content`** - Progressive knowledge delivery
-3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
-4. **`repo-generating-validation-reports`** - Progressive knowledge delivery
+1. **`apps-ose-platform-web-developing-content`** - Progressive knowledge delivery
+2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+3. **`repo-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 

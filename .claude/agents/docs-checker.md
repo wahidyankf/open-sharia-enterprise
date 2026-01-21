@@ -25,10 +25,10 @@ tools: Read, Glob, Grep, Write, Bash, WebFetch, WebSearch
 
 This agent leverages Skills from `.claude/skills/`:
 
-2. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
-3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
-4. **`docs-applying-content-quality`** - Progressive knowledge delivery
-5. **`docs-validating-factual-accuracy`** - Progressive knowledge delivery
+1. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
+2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+3. **`docs-applying-content-quality`** - Progressive knowledge delivery
+4. **`docs-validating-factual-accuracy`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
