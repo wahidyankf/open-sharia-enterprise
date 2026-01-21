@@ -40,7 +40,7 @@ This repository maintains **dual compatibility** with both Claude Code and OpenC
 
 ## Agent Organization
 
-**46 specialized agents** organized into **7 families**:
+**45 specialized agents** organized into **7 families**:
 
 1. **Documentation** (8 agents): `docs-maker`, `docs-checker`, `docs-fixer`, `docs-tutorial-maker`, `docs-tutorial-checker`, `docs-tutorial-fixer`, `docs-link-general-checker`, `docs-file-manager`
 2. **README** (3 agents): `readme-maker`, `readme-checker`, `readme-fixer`
@@ -91,13 +91,30 @@ Three-stage quality workflow:
 
 ## Skills Integration
 
-**23 skill packages** provide progressive knowledge delivery:
+**23 skill packages** serve agents through two modes:
+
+**Inline Skills** (default) - Knowledge injection:
+
+- Progressive disclosure of conventions and standards
+- Injected into current conversation context
+- Examples: `docs-applying-content-quality`, `docs-applying-diataxis-framework`, `docs-creating-accessible-diagrams`
+
+**Fork Skills** (`context: fork`) - Task delegation:
+
+- Spawn isolated agent contexts for focused work
+- Delegate specialized tasks (research, analysis, exploration)
+- Return summarized results to main conversation
+- Act as lightweight orchestrators
+
+**Categories**:
 
 - **Documentation**: `docs-applying-content-quality`, `docs-applying-diataxis-framework`, `docs-creating-accessible-diagrams`
 - **Planning**: `plan-creating-project-plans`, `plan-writing-gherkin-criteria`
 - **Agent Development**: `agent-developing-agents`, `agent-selecting-models`, `agent-documenting-references`
 - **Repository Patterns**: `repo-applying-maker-checker-fixer`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 - **Application-Specific**: `apps-ayokoding-web-developing-content`, `apps-ose-platform-web-developing-content`
+
+**Service Relationship**: Skills serve agents with knowledge and execution but don't govern them (service infrastructure, not governance layer).
 
 **Full skills catalog**: See [`.opencode/skill/README.md`](./.opencode/skill/README.md)
 
@@ -128,6 +145,6 @@ All agents follow 10 foundational principles:
 
 ---
 
-**Total Agents**: 46
+**Total Agents**: 45
 **Total Skills**: 23
 **Last Updated**: 2026-01-16

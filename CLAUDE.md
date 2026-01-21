@@ -48,7 +48,7 @@ open-sharia-enterprise/
 │   ├── backlog/             # Future plans
 │   └── done/                # Completed plans
 ├── .claude/                 # Claude Code configuration
-│   ├── agents/              # 46 specialized AI agents
+│   ├── agents/              # 45 specialized AI agents
 │   └── skills/              # 23 skill packages
 ├── .husky/                  # Git hooks
 ├── nx.json                  # Nx workspace config
@@ -250,7 +250,7 @@ Volta for Node.js/npm pinning, package-lock.json, .env.example
 
 **See**: [governance/development/workflow/reproducible-environments.md](./governance/development/workflow/reproducible-environments.md)
 
-## AI Agents (46 Specialized Agents)
+## AI Agents (45 Specialized Agents)
 
 **Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, apps\_\_ayokoding-web\_\_general-maker, apps\_\_ayokoding-web\_\_by-example-maker, apps\_\_ose-platform-web\_\_content-maker
 
@@ -267,6 +267,13 @@ Volta for Node.js/npm pinning, package-lock.json, .env.example
 **Meta**: agent-maker, wow\_\_rules-maker, wow\_\_rules-checker, wow\_\_rules-fixer
 
 **Maker-Checker-Fixer Pattern**: Three-stage workflow with criticality levels (CRITICAL/HIGH/MEDIUM/LOW), confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE)
+
+**Skills Infrastructure**: Agents leverage 23 skills providing two modes:
+
+- **Inline skills** (default) - Inject knowledge into current conversation
+- **Fork skills** (`context: fork`) - Delegate tasks to specialized agents in isolated contexts
+
+Skills serve agents with knowledge and execution services but don't govern them (service relationship, not governance).
 
 ### Working with .claude/ Directory
 
@@ -321,10 +328,14 @@ Six-layer governance hierarchy:
 - **Layer 1: Principles** - WHY we value approaches (10 core principles)
 - **Layer 2: Conventions** - WHAT documentation rules (24 standards)
 - **Layer 3: Development** - HOW we develop (15 practices)
-- **Layer 4: AI Agents** - WHO enforces rules (46 specialized agents)
+- **Layer 4: AI Agents** - WHO enforces rules (45 specialized agents)
 - **Layer 5: Workflows** - WHEN we run processes (orchestrated sequences)
 
-**Skills**: Delivery infrastructure supporting agents (23 skills)
+**Skills**: Delivery infrastructure serving agents (23 skills, two modes):
+
+- **Inline skills** - Knowledge injection into current conversation
+- **Fork skills** (`context: fork`) - Task delegation to agents in isolated contexts
+- Service relationship: Skills serve agents but don't govern them
 
 **See**: [governance/repository-governance-architecture.md](./governance/repository-governance-architecture.md)
 
