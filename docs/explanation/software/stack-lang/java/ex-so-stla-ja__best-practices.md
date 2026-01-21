@@ -22,7 +22,7 @@ This document provides comprehensive best practices for Java development in the 
 
 Best practices are proven approaches that improve code quality, reduce bugs, and enhance team productivity. For the OSE platform, which handles sensitive finance operations like Tax calculations, Loan contracts, and Donation management, adherence to these practices is crucial for building trustworthy, reliable systems.
 
-**Companion Document**: Before reading this document, familiarize yourself with common [Java Antipatterns](./ex-so-stla-ja__antipatterns.md) to understand what practices to avoid.
+**Companion Document**: Before reading this document, familiarize yourself with common [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) to understand what practices to avoid.
 
 ## Core Principles
 
@@ -2758,7 +2758,7 @@ Use this checklist during code reviews and before committing code:
 ## Related Documentation
 
 - [Java Idioms](./ex-so-stla-ja__idioms.md) - Common Java patterns and idiomatic constructs
-- [Java Antipatterns](./ex-so-stla-ja__antipatterns.md) - Common mistakes and what to avoid
+- [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Common mistakes and what to avoid
 - [Tech Stack Languages Index](../README.md) - Overview of all supported languages
 
 ## Sources
