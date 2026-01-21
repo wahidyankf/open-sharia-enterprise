@@ -76,8 +76,11 @@ Skills operate in two distinct modes:
 - **Knowledge injection** - Add standards and guidance to current conversation
 - **Convention packaging** - Bundle governance knowledge for efficient consumption
 - **Composition** - Multiple skills work together seamlessly
+- **Universal compatibility** - Work in both main conversation and subagent contexts
 
 **Example use cases**: Style guides, coding conventions, domain knowledge, quality standards
+
+**REPOSITORY STANDARD**: All skills in `.claude/skills/` MUST use inline context. See [Skill Context Architecture](../../governance/development/agents/skill-context-architecture.md) for rationale.
 
 ### Fork Skills (Task Delegation)
 
@@ -87,6 +90,7 @@ Skills operate in two distinct modes:
 - **Delegate specialized tasks** - Agent field specifies which agent type to use
 - **Lightweight orchestration** - Skills invoke agents for focused work
 - **Return results** - Subagent output returns to main conversation
+- **Main conversation only** - Subagents cannot spawn other subagents (architectural constraint)
 
 **Configuration syntax**:
 
@@ -101,7 +105,9 @@ Research $ARGUMENTS thoroughly...
 
 **Example use cases**: Deep research, focused analysis, specialized exploration
 
-**Key difference**: Inline skills inject knowledge, fork skills delegate tasks.
+**Key difference**: Inline skills inject knowledge (work everywhere), fork skills delegate tasks (main conversation only).
+
+**Important**: Fork skills CANNOT be placed in `.claude/skills/` directory. Place them in project-specific directories and document as "main conversation only". See [Skill Context Architecture](../../governance/development/agents/skill-context-architecture.md).
 
 ## Skills vs Conventions
 
@@ -177,4 +183,4 @@ All skills follow governance principles:
 **Total Skills**: 23
 **Format**: SKILL.md with YAML frontmatter
 **Token Target**: Metadata ~100 tokens, Full content <5k tokens
-**Last Updated**: 2026-01-16
+**Last Updated**: 2026-01-22
