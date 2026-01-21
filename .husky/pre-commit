@@ -8,4 +8,4 @@ git add apps/ayokoding-web/content/ 2>/dev/null || true
 npx lint-staged
 
 # Validate markdown links in staged files
-python3 scripts/validate-links.py --staged-only || exit 1
+CGO_ENABLED=0 go run -C apps/butler-cli main.go validate-links --staged-only || exit 1

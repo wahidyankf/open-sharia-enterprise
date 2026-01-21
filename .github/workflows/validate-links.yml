@@ -17,10 +17,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Setup Go
+        uses: actions/setup-go@v5
         with:
-          python-version: "3.12"
+          go-version: "1.24.2"
 
       - name: Run link validation
-        run: python3 scripts/validate-links.py
+        run: CGO_ENABLED=0 go run -C apps/butler-cli main.go validate-links
