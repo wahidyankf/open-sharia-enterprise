@@ -135,6 +135,44 @@ public record TaxCalculation(
 }
 ```
 
+**Records vs Traditional Classes:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    Start[TaxCalculation Class]:::blue
+
+    Start --> Trad[Traditional Class<br/>99 lines]:::orange
+    Start --> Rec[Record<br/>19 lines]:::teal
+
+    Trad --> TB1[Constructor boilerplate]:::orange
+    Trad --> TB2[Getter methods]:::orange
+    Trad --> TB3[equals#40;#41; method]:::orange
+    Trad --> TB4[hashCode#40;#41; method]:::orange
+    Trad --> TB5[toString#40;#41; method]:::orange
+
+    Rec --> RA1[Compact constructor<br/>validation only]:::teal
+    Rec --> RA2[Auto-generated:<br/>getters, equals, hashCode, toString]:::teal
+    Rec --> RA3[Business methods<br/>isTaxDue, effectiveRate]:::teal
+
+    TB1 -.->|Replaced by| RA1
+    TB2 -.->|Auto-generated| RA2
+    TB3 -.->|Auto-generated| RA2
+    TB4 -.->|Auto-generated| RA2
+    TB5 -.->|Auto-generated| RA2
+
+    Result[80% less code<br/>Immutable by default]:::blue
+
+    Rec --> Result
+    Trad -.->|Replaced by| Result
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 **Key Benefits**:
 
 - 80% less boilerplate code
@@ -200,6 +238,38 @@ record TaxPayment(BigDecimal amount, int year, String payee)
     implements Transaction {}
 record DonationTransaction(BigDecimal amount, String purpose, boolean isRevocable)
     implements Transaction {}
+```
+
+**Pattern Matching Switch Flow:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    Input[transaction input]:::blue --> Switch{switch#40;transaction#41;}:::orange
+
+    Switch --> Case1[case LoanAgreement<br/>cost, interest, term]:::teal
+    Switch --> Case2[case TaxPayment<br/>amount, year, payee]:::teal
+    Switch --> Case3[case DonationTransaction<br/>amount, purpose, isRevocable]:::teal
+    Switch --> Case4[case null]:::orange
+
+    Case1 --> Format1[Format loan details]:::teal
+    Case2 --> Format2[Format tax details]:::teal
+    Case3 --> Format3[Format donation details]:::teal
+    Case4 --> Format4[Return error message]:::orange
+
+    Format1 --> Return[String result]:::blue
+    Format2 --> Return
+    Format3 --> Return
+    Format4 --> Return
+
+    Note1[Sealed interface<br/>ensures exhaustiveness]:::blue
+    Note2[No default case needed<br/>Compiler verifies all cases]:::blue
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 **Key Benefits**:
@@ -297,6 +367,43 @@ public class LoanService {
 }
 ```
 
+**Optional Transformation Chain:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    Start[findById#40;contractId#41;]:::blue --> Check1{Value<br/>present?}:::orange
+
+    Check1 -->|Yes| Map1[map#40;LoanAgreement::cost#41;]:::teal
+    Check1 -->|No| Empty1[Optional.empty]:::orange
+
+    Map1 --> Check2{Value<br/>present?}:::orange
+    Check2 -->|Yes| FlatMap[flatMap#40;cost -> ...#41;]:::teal
+    Check2 -->|No| Empty2[Optional.empty]:::orange
+
+    FlatMap --> Check3{Value<br/>present?}:::orange
+    Check3 -->|Yes| Map2[map#40;rate -> cost.multiply#40;rate#41;#41;]:::teal
+    Check3 -->|No| Empty3[Optional.empty]:::orange
+
+    Map2 --> Terminal{Terminal<br/>operation}:::orange
+
+    Empty1 --> Terminal
+    Empty2 --> Terminal
+    Empty3 --> Terminal
+
+    Terminal --> OrElse[orElse#40;BigDecimal.ZERO#41;]:::teal
+    Terminal --> OrThrow[orElseThrow#40;exception#41;]:::orange
+
+    OrElse --> Result1[BigDecimal value]:::blue
+    OrThrow --> Result2[Throw exception or value]:::blue
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 **Key Benefits**:
 
 - Explicit handling of missing values
@@ -376,6 +483,39 @@ public class TaxDistributionService {
             ));
     }
 }
+```
+
+**Stream API Pipeline Flow:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    Source[Source:<br/>List#60;TaxPayment#62;]:::blue --> Stream[stream#40;#41;]:::blue
+
+    Stream --> Filter[filter#40;eligible#41;<br/>Intermediate]:::orange
+    Filter --> Map[map#40;transform#41;<br/>Intermediate]:::orange
+    Map --> Sorted[sorted#40;comparator#41;<br/>Intermediate]:::orange
+
+    Sorted --> Terminal{Terminal<br/>Operation?}:::teal
+
+    Terminal --> Collect[collect#40;toList#41;]:::teal
+    Terminal --> Reduce[reduce#40;accumulator#41;]:::teal
+    Terminal --> GroupBy[groupingBy#40;classifier#41;]:::teal
+
+    Collect --> Result1[List#60;Result#62;]:::blue
+    Reduce --> Result2[Single Value]:::blue
+    GroupBy --> Result3[Map#60;K, V#62;]:::blue
+
+    Note1[Lazy Evaluation:<br/>Nothing happens until<br/>terminal operation]:::brown
+    Note2[Intermediate ops<br/>return Stream]:::orange
+    Note3[Terminal ops<br/>produce result]:::teal
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px
 ```
 
 **Key Benefits**:
@@ -477,6 +617,58 @@ public class DonationReportGenerator {
 }
 ```
 
+**Virtual Thread Architecture:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+sequenceDiagram
+    participant App as Application
+    participant VTPool as Virtual Thread Pool
+    participant VT1 as Virtual Thread 1
+    participant VT2 as Virtual Thread 2
+    participant Carrier as Carrier Thread #40;OS#41;
+
+    App->>VTPool: newVirtualThreadPerTaskExecutor#40;#41;
+    activate VTPool
+
+    App->>VTPool: submit#40;task1#41;
+    VTPool->>VT1: Create virtual thread
+    activate VT1
+
+    App->>VTPool: submit#40;task2#41;
+    VTPool->>VT2: Create virtual thread
+    activate VT2
+
+    VT1->>Carrier: Mount on carrier thread
+    activate Carrier
+    Note over VT1,Carrier: Execute CPU-bound work
+
+    VT1->>VT1: I/O operation starts
+    VT1->>Carrier: Unmount from carrier
+    deactivate Carrier
+    Note over VT1: Waiting for I/O
+
+    VT2->>Carrier: Mount on carrier thread
+    activate Carrier
+    Note over VT2,Carrier: Different virtual thread<br/>uses same carrier
+
+    VT1->>VT1: I/O complete
+    VT1->>Carrier: Mount again
+    Note over Carrier: VT2 yields or blocks
+
+    VT1->>Carrier: Complete task
+    deactivate VT1
+    deactivate Carrier
+
+    VT2->>VT2: Task complete
+    deactivate VT2
+
+    Note over VTPool: Millions of virtual threads<br/>Few carrier threads #40;=CPUs#41;
+    deactivate VTPool
+```
+
 **Key Benefits**:
 
 - Millions of threads without resource exhaustion
@@ -555,6 +747,86 @@ public class LoanAgreementRepository {
         return line;
     }
 }
+```
+
+**Try-With-Resources Lifecycle:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+stateDiagram-v2
+    [*] --> Opening: try#40;resource#41;
+
+    state Opening {
+        note right of Opening
+            Create AutoCloseable resource
+            BufferedReader, FileWriter, etc.
+        end note
+    }
+
+    Opening --> Opened: Resource acquired
+
+    state Opened {
+        note right of Opened
+            Execute try block
+            Use resource normally
+        end note
+    }
+
+    Opened --> Success: No exception
+    Opened --> Exception: Exception thrown
+
+    state Success {
+        [*] --> Closing
+        state Closing {
+            note right of Closing
+                Automatic close#40;#41; called
+                Reverse order for multiple resources
+            end note
+        }
+    }
+
+    state Exception {
+        [*] --> SaveException
+        state SaveException {
+            note right of SaveException
+                Save original exception
+            end note
+        }
+        SaveException --> CloseWithException
+        state CloseWithException {
+            note right of CloseWithException
+                Still calls close#40;#41;<br/>If close throws: suppressed exception
+            end note
+        }
+        CloseWithException --> RethrowOriginal
+        state RethrowOriginal {
+            note right of RethrowOriginal
+                Original exception propagated
+                Suppressed exceptions attached
+            end note
+        }
+    }
+
+    Success --> [*]: Resources cleaned up
+    Exception --> [*]: Exception thrown<br/>Resources cleaned up
+
+    note left of Opening
+        GUARANTEED CLEANUP
+        Even if exception occurs
+        Even if close#40;#41; throws
+    end note
+
+classDef openState fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+classDef processState fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+classDef successState fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+classDef errorState fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+
+class Opening openState
+class Opened processState
+class Success successState
+class Exception errorState
 ```
 
 **Key Benefits**:
@@ -782,6 +1054,33 @@ public class ProductAnalyzer {
         };
     }
 }
+```
+
+**Sealed Class Hierarchy:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    Interface[sealed interface<br/>InvestmentProduct]:::blue
+
+    Interface -->|permits| Loan[final class Loan]:::orange
+    Interface -->|permits| Partnership[final class Partnership]:::orange
+    Interface -->|permits| Lease[final class Lease]:::orange
+    Interface -->|permits| Bond[final class Bond]:::orange
+
+    Loan --> Methods1[calculateReturn#40;#41;<br/>isCompliant#40;#41;]:::orange
+    Partnership --> Methods2[calculateReturn#40;#41;<br/>isCompliant#40;#41;]:::orange
+    Lease --> Methods3[calculateReturn#40;#41;<br/>isCompliant#40;#41;]:::orange
+    Bond --> Methods4[calculateReturn#40;#41;<br/>isCompliant#40;#41;]:::orange
+
+    Note1[Closed hierarchy:<br/>No other classes can implement]:::blue
+    Note2[Exhaustive pattern matching:<br/>No default case needed]:::blue
+    Note3[Compiler verifies all cases handled]:::blue
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
 ```
 
 **Key Benefits**:

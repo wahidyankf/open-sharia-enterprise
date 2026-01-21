@@ -166,30 +166,29 @@ Tactical DDD patterns provide building blocks for implementing domain models.
 
 ### Pattern Hierarchy
 
-```
-┌──────────────────────────────────────────────┐
-│           Bounded Context                    │
-│  ┌────────────────────────────────────────┐  │
-│  │         Aggregates                     │  │
-│  │  ┌──────────────────────────────────┐  │  │
-│  │  │  Aggregate Root (Entity)         │  │  │
-│  │  │  - Enforces invariants           │  │  │
-│  │  │  - Publishes domain events       │  │  │
-│  │  │  ┌────────────────────────────┐  │  │  │
-│  │  │  │  Child Entities            │  │  │  │
-│  │  │  └────────────────────────────┘  │  │  │
-│  │  │  ┌────────────────────────────┐  │  │  │
-│  │  │  │  Value Objects             │  │  │  │
-│  │  │  │  (Money, Email, etc.)      │  │  │  │
-│  │  │  └────────────────────────────┘  │  │  │
-│  │  └──────────────────────────────────┘  │  │
-│  └────────────────────────────────────────┘  │
-│                                               │
-│  Domain Services (cross-aggregate logic)      │
-│  Repositories (persistence abstraction)       │
-│  Factories (complex creation logic)           │
-│  Domain Events (significant occurrences)      │
-└──────────────────────────────────────────────┘
+```mermaid
+%% Color Palette: Blue #0173B2, Teal #029E73, Orange #DE8F05
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    BC[Bounded Context]:::blue
+
+    BC --> AGG[Aggregates]:::teal
+    BC --> DS[Domain Services]:::orange
+    BC --> REPO[Repositories]:::orange
+    BC --> FACT[Factories]:::orange
+    BC --> DE[Domain Events]:::orange
+
+    AGG --> AR[Aggregate Root<br/>Entity]:::teal
+    AR --> CE[Child Entities]:::teal
+    AR --> VO[Value Objects<br/>Money, Email, etc.]:::orange
+
+    AR -.->|Enforces| INV[Invariants]:::blue
+    AR -.->|Publishes| DE
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
 ```
 
 ### Core Building Blocks
@@ -753,6 +752,40 @@ class ZakatPayment {
 }
 ```
 
+**Aggregate Boundary Pattern:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Teal #029E73, Orange #DE8F05, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    External[External Access<br/>Service / Controller]:::orange
+
+    External -->|Only through| Root[ZakatAccount<br/>Aggregate Root]:::blue
+
+    Root --> Valid[Validate<br/>Invariants]:::brown
+    Valid --> CE1[Child Entity:<br/>ZakatPayment]:::teal
+    Valid --> CE2[Child Entity:<br/>ZakatPayment]:::teal
+    Valid --> VO1[Value Object:<br/>Money]:::orange
+    Valid --> VO2[Value Object:<br/>NisabThreshold]:::orange
+
+    Root -.->|Direct access| CE1
+    Root -.->|Direct access| CE2
+    Root -.->|Controls| VO1
+    Root -.->|Controls| VO2
+
+    Note1[No direct access to children]:::brown
+    Note2[All changes through root]:::brown
+
+    External -.->|X BLOCKED| CE1
+    External -.->|X BLOCKED| CE2
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ### Aggregate Design Rules
 
 **Rule 1: Model True Invariants in Consistency Boundaries**
@@ -1025,6 +1058,49 @@ public class DonationApplicationService {
         donation.clearDomainEvents();
     }
 }
+```
+
+**Domain Event Flow:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+sequenceDiagram
+    participant Service as Application Service
+    participant Aggregate as Donation Aggregate
+    participant Repo as Repository
+    participant Publisher as Event Publisher
+    participant Handler as Event Handler
+
+    Service->>Aggregate: process#40;#41;
+
+    activate Aggregate
+    Note over Aggregate: Business logic<br/>executes
+    Aggregate->>Aggregate: recordEvent#40;DonationProcessed#41;
+    deactivate Aggregate
+
+    Service->>Repo: save#40;donation#41;
+    activate Repo
+    Repo-->>Service: Saved
+    deactivate Repo
+
+    Service->>Aggregate: getDomainEvents#40;#41;
+    activate Aggregate
+    Aggregate-->>Service: List of events
+    deactivate Aggregate
+
+    Service->>Publisher: publishAll#40;events#41;
+    activate Publisher
+    Publisher->>Handler: onDonationProcessed#40;event#41;
+    activate Handler
+    Note over Handler: Update donor<br/>Send email
+    Handler-->>Publisher: Handled
+    deactivate Handler
+    Publisher-->>Service: Published
+    deactivate Publisher
+
+    Service->>Aggregate: clearDomainEvents#40;#41;
 ```
 
 ### Event Handlers
@@ -1542,6 +1618,68 @@ public class DonationQueryHandler {
 // Queries
 public record FindDonationsByDonorQuery(DonorId donorId) {}
 public record FindDonationByIdQuery(DonationId donationId) {}
+```
+
+**Axon Framework CQRS Flow:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+sequenceDiagram
+    participant Client as Client / API
+    participant CmdGateway as Command Gateway
+    participant Aggregate as Aggregate
+    participant EventStore as Event Store
+    participant EventBus as Event Bus
+    participant QueryHandler as Query Handler
+    participant QueryModel as Query Model DB
+
+    Note over Client,QueryModel: Command Side #40;Write#41;
+
+    Client->>CmdGateway: CreateDonationCommand
+    activate CmdGateway
+
+    CmdGateway->>Aggregate: @CommandHandler
+    activate Aggregate
+    Note over Aggregate: Validate<br/>Business logic
+
+    Aggregate->>Aggregate: apply#40;DonationCreatedEvent#41;
+    Aggregate->>EventStore: Store event
+    activate EventStore
+    EventStore-->>Aggregate: Persisted
+    deactivate EventStore
+
+    Aggregate-->>CmdGateway: Success
+    deactivate Aggregate
+    CmdGateway-->>Client: DonationId
+    deactivate CmdGateway
+
+    Note over Client,QueryModel: Event Side #40;Eventual Consistency#41;
+
+    EventStore->>EventBus: Publish DonationCreatedEvent
+    activate EventBus
+
+    EventBus->>QueryHandler: @EventHandler
+    activate QueryHandler
+    QueryHandler->>QueryModel: Update read model
+    activate QueryModel
+    QueryModel-->>QueryHandler: Updated
+    deactivate QueryModel
+    QueryHandler-->>EventBus: Handled
+    deactivate QueryHandler
+    deactivate EventBus
+
+    Note over Client,QueryModel: Query Side #40;Read#41;
+
+    Client->>QueryHandler: FindDonationByIdQuery
+    activate QueryHandler
+    QueryHandler->>QueryModel: SELECT
+    activate QueryModel
+    QueryModel-->>QueryHandler: DonationQueryModel
+    deactivate QueryModel
+    QueryHandler-->>Client: Query result
+    deactivate QueryHandler
 ```
 
 ## Spring Boot Integration
