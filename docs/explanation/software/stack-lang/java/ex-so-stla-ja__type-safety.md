@@ -224,6 +224,40 @@ public String formatResult(TransactionResult result) {
 }
 ```
 
+**Sealed Type Exhaustiveness:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    Input[TransactionResult input]:::blue --> Sealed{Sealed interface?}:::orange
+
+    Sealed -->|Yes| Compiler[Compiler knows<br/>all permitted types]:::teal
+    Sealed -->|No| NoCheck[No exhaustiveness<br/>checking]:::purple
+
+    Compiler --> Case1[case Success]:::teal
+    Compiler --> Case2[case InsufficientFunds]:::teal
+    Compiler --> Case3[case InvalidAccount]:::teal
+    Compiler --> Case4[case SystemError]:::teal
+
+    Case1 --> Check{All cases<br/>handled?}:::orange
+    Case2 --> Check
+    Case3 --> Check
+    Case4 --> Check
+
+    Check -->|Yes| Success[Compilation SUCCESS<br/>No default needed]:::teal
+    Check -->|No| Error[COMPILE ERROR<br/>Missing case]:::purple
+
+    NoCheck --> Default[Must provide<br/>default case]:::orange
+    Default --> Runtime[Runtime errors possible]:::purple
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ### 5. Eliminate Null with Optional and Sealed Types
 
 Null is the "billion-dollar mistake" - use explicit optional types instead.
@@ -258,6 +292,39 @@ String email = switch (donorOpt) {
     case Optional.of(Donor donor) -> donor.getEmail();
     case Optional.empty() -> "no-email@example.com";
 };
+```
+
+**Optional vs Null Comparison:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    subgraph Optional_Flow [" Optional Flow Type-Safe "]
+        OptStart[findDonorById]:::blue --> OptReturn[Returns Optional#60;Donor#62;]:::teal
+        OptReturn --> OptCheck{Optional.isPresent?}:::orange
+        OptCheck -->|Yes| OptMap[map#40;Donor::getEmail#41;]:::teal
+        OptCheck -->|No| OptDefault[orElse#40;default#41;]:::teal
+        OptMap --> OptResult[Email string]:::blue
+        OptDefault --> OptResult
+        Note1[Compiler forces<br/>null handling]:::teal
+    end
+
+    subgraph Null_Flow [" Null Flow Error-Prone "]
+        NullStart[findDonorById]:::blue --> NullReturn[Returns Donor or null]:::orange
+        NullReturn --> NullCheck{null check?}:::purple
+        NullCheck -->|Forgotten| NPE[NullPointerException<br/>RUNTIME ERROR]:::purple
+        NullCheck -->|Remembered| NullSafe[donor.getEmail#40;#41;]:::orange
+        NullSafe --> NullResult[Email or null]:::orange
+        NPE --> Crash[Application crash]:::purple
+        Note2[Easy to forget<br/>null check]:::purple
+    end
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ## Modern Java Type Safety Features
@@ -713,6 +780,54 @@ public class ZakatCalculator {
 }
 ```
 
+**NullAway Static Analysis Flow:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    Source[Java Source Code]:::blue --> Package{Package has<br/>@NullMarked?}:::orange
+
+    Package -->|Yes| AllNonNull[All types non-null<br/>by default]:::teal
+    Package -->|No| Skip[Skip NullAway<br/>analysis]:::brown
+
+    AllNonNull --> Analysis[NullAway Analysis<br/>at compile-time]:::teal
+
+    Analysis --> Check1{Dereference<br/>@Nullable?}:::orange
+    Analysis --> Check2{Return null from<br/>@NonNull method?}:::orange
+    Analysis --> Check3{Uninitialized<br/>@NonNull field?}:::orange
+    Analysis --> Check4{Pass null to<br/>@NonNull param?}:::orange
+
+    Check1 -->|Yes| Error1[COMPILE ERROR:<br/>dereferenced @Nullable]:::purple
+    Check1 -->|No + null check| Safe1[Safe dereferencing]:::teal
+
+    Check2 -->|Yes| Error2[COMPILE ERROR:<br/>returning @Nullable]:::purple
+    Check2 -->|No| Safe2[Return verified]:::teal
+
+    Check3 -->|Yes| Error3[COMPILE ERROR:<br/>field not initialized]:::purple
+    Check3 -->|No| Safe3[Field initialized]:::teal
+
+    Check4 -->|Yes| Error4[COMPILE ERROR:<br/>null argument]:::purple
+    Check4 -->|No| Safe4[Parameter verified]:::teal
+
+    Safe1 --> Success[Compilation SUCCESS<br/>Null safety guaranteed]:::teal
+    Safe2 --> Success
+    Safe3 --> Success
+    Safe4 --> Success
+
+    Error1 --> Fail[Compilation FAILED<br/>Fix null safety issues]:::purple
+    Error2 --> Fail
+    Error3 --> Fail
+    Error4 --> Fail
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ### Best Practices with JSpecify/NullAway
 
 **1. Use @NullMarked at Package Level**
@@ -1039,6 +1154,68 @@ Donation donation = donationService.processDonation(validatedRequest);
 
 // COMPILE ERROR: Cannot pass unvalidated request
 // donationService.processDonation(rawRequest);
+```
+
+**Phantom Type Validation State:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Brown #CA9161, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+stateDiagram-v2
+    [*] --> Unvalidated: create#40;#41;
+
+    state Unvalidated {
+        note right of Unvalidated
+            DonationRequest#60;Unvalidated#62;
+            Cannot pass to service
+        end note
+    }
+
+    Unvalidated --> Validating: validate#40;#41;
+
+    state Validating {
+        note right of Validating
+            Check donorId not blank
+            Check amount #62; 0
+            Check currency code valid
+        end note
+    }
+
+    Validating --> Validated: Validation SUCCESS
+    Validating --> Error: Validation FAILED
+
+    state Validated {
+        note right of Validated
+            DonationRequest#60;Validated#62;
+            Type changed at compile-time
+            Can pass to service
+        end note
+    }
+
+    state Error {
+        note right of Error
+            ValidationException thrown
+            Cannot create validated instance
+        end note
+    }
+
+    Validated --> [*]: processDonation#40;#41;
+
+    note left of Unvalidated
+        COMPILE ERROR if passed to:
+        processDonation#40;DonationRequest#60;Unvalidated#62;#41;
+    end note
+
+classDef validatedState fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+classDef transitionState fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+classDef validationState fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px
+classDef errorState fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+
+class Validated validatedState
+class Unvalidated transitionState
+class Validating validationState
+class Error errorState
 ```
 
 ### 2. Builder Pattern with Compile-Time Completeness

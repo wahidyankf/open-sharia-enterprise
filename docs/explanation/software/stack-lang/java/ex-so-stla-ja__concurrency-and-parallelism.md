@@ -138,6 +138,52 @@ public class VirtualThreadExample {
 }
 ```
 
+**Virtual Thread Lifecycle:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+stateDiagram-v2
+    [*] --> Created: Thread.ofVirtual#40;#41;.start#40;#41;
+
+    Created --> Mounted: Schedule on carrier
+
+    Mounted --> Running: Execute task
+    Running --> Unmounted: I/O operation
+    Unmounted --> Mounted: I/O complete
+
+    Running --> Pinned: synchronized block
+    Pinned --> Running: Exit synchronized
+
+    Running --> [*]: Task complete
+
+    note right of Mounted
+        Consumes carrier thread
+        CPU-bound work
+    end note
+
+    note right of Unmounted
+        Frees carrier thread
+        Waiting for I/O
+    end note
+
+    note right of Pinned
+        PROBLEM: Blocks carrier
+        Use ReentrantLock instead
+    end note
+
+classDef activeState fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+classDef processingState fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+classDef completedState fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+classDef problemState fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+
+class Mounted,Running activeState
+class Unmounted processingState
+class Created completedState
+class Pinned problemState
+```
+
 ### Virtual Threads for Financial Operations
 
 **Concurrent Donation Processing:**
@@ -271,6 +317,42 @@ public class TransactionCounterPinning {
      * - Virtual thread advantage lost!
      */
 }
+```
+
+**Thread Pinning Visualization:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Gray #808080, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+sequenceDiagram
+    participant VT1 as Virtual Thread 1
+    participant VT2 as Virtual Thread 2
+    participant CT1 as Carrier Thread 1
+    participant CT2 as Carrier Thread 2
+
+    Note over VT1,CT2: Scenario: synchronized block with I/O
+
+    VT1->>CT1: Mount on carrier
+    activate CT1
+    Note over VT1,CT1: Enter synchronized block
+    Note over CT1: PINNED - Cannot unmount
+
+    VT2->>CT2: Mount on carrier
+    activate CT2
+
+    VT1->>CT1: I/O operation #40;50ms#41;
+    Note over CT1: Carrier BLOCKED<br/>Cannot serve other virtual threads
+
+    VT2->>CT2: Processing continues
+    deactivate CT2
+
+    Note over CT1: Wasted carrier thread!
+    VT1->>CT1: I/O complete
+    Note over VT1,CT1: Exit synchronized block
+    deactivate CT1
+
+    Note over VT1,VT2: Solution: Use ReentrantLock<br/>Allows unmounting during I/O
 ```
 
 **Solution: ReentrantLock:**
@@ -417,6 +499,42 @@ public class ZakatCalculationService {
      * - Thread dump shows task hierarchy
      */
 }
+```
+
+**Structured Concurrency Flow:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    Start[Main Task Starts]:::blue --> Scope[Create StructuredTaskScope]:::blue
+
+    Scope --> Fork1[Fork Task 1:<br/>Fetch Gold Price]:::orange
+    Scope --> Fork2[Fork Task 2:<br/>Fetch Balance]:::orange
+    Scope --> Fork3[Fork Task 3:<br/>Fetch Haul Date]:::orange
+
+    Fork1 --> Exec1[Execute<br/>Parallel]:::teal
+    Fork2 --> Exec2[Execute<br/>Parallel]:::teal
+    Fork3 --> Exec3[Execute<br/>Parallel]:::teal
+
+    Exec1 --> Check{All Tasks<br/>Succeeded?}:::orange
+    Exec2 --> Check
+    Exec3 --> Check
+
+    Check -->|Yes| Join[scope.join#40;#41;<br/>All Complete]:::teal
+    Check -->|No| Cancel[scope.join#40;#41;<br/>Cancel Remaining]:::purple
+
+    Join --> Combine[Combine Results<br/>Calculate Zakat]:::teal
+    Cancel --> Throw[throwIfFailed#40;#41;<br/>Propagate Error]:::purple
+
+    Combine --> End[Return Result]:::teal
+    Throw --> End
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Error Handling with Structured Concurrency
@@ -1218,6 +1336,61 @@ public class ParallelStreamBenchmark {
 }
 ```
 
+**Parallel Streams Execution Model:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Gray #808080
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    Data[Data Source:<br/>100,000 elements]:::blue
+
+    subgraph Sequential [" Sequential Stream "]
+        SeqThread[Single Thread]:::orange
+        SeqTask1[Process 1-25000]:::orange
+        SeqTask2[Process 25001-50000]:::orange
+        SeqTask3[Process 50001-75000]:::orange
+        SeqTask4[Process 75001-100000]:::orange
+
+        SeqThread --> SeqTask1
+        SeqTask1 --> SeqTask2
+        SeqTask2 --> SeqTask3
+        SeqTask3 --> SeqTask4
+        SeqTask4 --> SeqResult[Result: 45ms]:::orange
+    end
+
+    subgraph Parallel [" Parallel Stream #40;8 cores#41; "]
+        FJPool[ForkJoinPool.commonPool#40;#41;]:::teal
+        Core1[Core 1:<br/>12,500 elements]:::teal
+        Core2[Core 2:<br/>12,500 elements]:::teal
+        Core3[Core 3:<br/>12,500 elements]:::teal
+        Core4[Core 4:<br/>12,500 elements]:::teal
+        Core5[Core 5-8:<br/>50,000 elements]:::teal
+
+        FJPool --> Core1
+        FJPool --> Core2
+        FJPool --> Core3
+        FJPool --> Core4
+        FJPool --> Core5
+
+        Core1 --> Merge[Merge Results]:::teal
+        Core2 --> Merge
+        Core3 --> Merge
+        Core4 --> Merge
+        Core5 --> Merge
+
+        Merge --> ParResult[Result: 12ms<br/>3.75x faster]:::teal
+    end
+
+    Data --> Sequential
+    Data --> Parallel
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ---
 
 ## Fork/Join Framework
@@ -1301,6 +1474,48 @@ public class ParallelZakatCalculator extends RecursiveTask<BigDecimal> {
 }
 ```
 
+**Fork/Join Work-Stealing Algorithm:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+sequenceDiagram
+    participant Thread1 as Worker Thread 1<br/>BUSY
+    participant Queue1 as Deque 1<br/>#91;T5, T6, T7#93;
+    participant Thread2 as Worker Thread 2<br/>IDLE
+    participant Queue2 as Deque 2<br/>#91;empty#93;
+
+    Note over Thread1,Queue2: Worker 1 has many tasks, Worker 2 is idle
+
+    Thread1->>Queue1: fork#40;T5#41; - push to head
+    activate Thread1
+    Note over Thread1: Processing T1-T4
+
+    Thread2->>Queue2: No local tasks
+    activate Thread2
+    Note over Thread2: Looking for work
+
+    Thread2->>Queue1: STEAL from tail
+    Queue1-->>Thread2: Give T7 #40;oldest task#41;
+
+    Thread2->>Thread2: Execute T7
+    Note over Thread2: Now productive
+
+    Thread1->>Queue1: pop from head #40;T5#41;
+    Thread1->>Thread1: Execute T5
+    deactivate Thread1
+
+    Thread2->>Queue1: STEAL T6
+    Queue1-->>Thread2: Give T6
+    Thread2->>Thread2: Execute T6
+    deactivate Thread2
+
+    Note over Thread1,Thread2: Load Balanced!<br/>Both threads productive
+
+    Note over Queue1: Work-stealing:<br/>- Owner pops from HEAD #40;LIFO#41;<br/>- Thieves steal from TAIL #40;FIFO#41;<br/>- Minimizes contention
+```
+
 ---
 
 ## Common Concurrency Problems
@@ -1327,6 +1542,39 @@ public class DonationCounterRacy {
      * Expected: 2, Actual: 1 (lost update!)
      */
 }
+```
+
+**Race Condition Visualization:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+sequenceDiagram
+    participant ThreadA as Thread A
+    participant Memory as Shared count
+    participant ThreadB as Thread B
+
+    Note over ThreadA,ThreadB: Initial count = 0
+
+    ThreadA->>Memory: Read count #40;0#41;
+    activate ThreadA
+
+    ThreadB->>Memory: Read count #40;0#41;
+    activate ThreadB
+
+    Note over ThreadA: Increment to 1
+    Note over ThreadB: Increment to 1
+
+    ThreadA->>Memory: Write count #40;1#41;
+    deactivate ThreadA
+
+    ThreadB->>Memory: Write count #40;1#41;
+    deactivate ThreadB
+
+    Note over Memory: Final count = 1<br/>LOST UPDATE!<br/>Expected: 2
+
+    Note over ThreadA,ThreadB: Solution: AtomicInteger or synchronized
 ```
 
 **Solution:**
@@ -1364,6 +1612,39 @@ public class TransferServiceDeadlock {
      * Both threads wait forever!
      */
 }
+```
+
+**Deadlock Visualization:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+sequenceDiagram
+    participant Thread1 as Thread 1
+    participant LockA as Lock A
+    participant LockB as Lock B
+    participant Thread2 as Thread 2
+
+    Note over Thread1,Thread2: transfer#40;A, B, $100#41; vs transfer#40;B, A, $50#41;
+
+    Thread1->>LockA: Acquire Lock A
+    activate LockA
+    Note over LockA: Locked by Thread 1
+
+    Thread2->>LockB: Acquire Lock B
+    activate LockB
+    Note over LockB: Locked by Thread 2
+
+    Thread1->>LockB: Try Acquire Lock B
+    Note over Thread1,LockB: BLOCKED<br/>Waiting for Thread 2
+
+    Thread2->>LockA: Try Acquire Lock A
+    Note over Thread2,LockA: BLOCKED<br/>Waiting for Thread 1
+
+    Note over Thread1,Thread2: DEADLOCK!<br/>Circular wait<br/>Both threads stuck forever
+
+    Note over Thread1,Thread2: Solution: Consistent lock ordering<br/>Always lock by ID#40;smaller first#41;
 ```
 
 **Solution: Lock Ordering:**
@@ -1516,6 +1797,41 @@ public class DonationWorkflowService {
      * - Clean error handling
      */
 }
+```
+
+**CompletableFuture Pipeline Flow:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    Start[Donation Input]:::blue --> Stage1[supplyAsync<br/>Validate Donor]:::orange
+
+    Stage1 --> Check1{Valid?}:::orange
+    Check1 -->|Yes| Stage2[thenApplyAsync<br/>Check Fraud]:::orange
+    Check1 -->|No| Error1[ValidationException]:::purple
+
+    Stage2 --> Check2{Fraud Free?}:::orange
+    Check2 -->|Yes| Stage3[thenApplyAsync<br/>Save Donation]:::orange
+    Check2 -->|No| Error2[FraudException]:::purple
+
+    Stage3 --> Check3{Saved?}:::orange
+    Check3 -->|Yes| Stage4[thenApplyAsync<br/>Send Email]:::teal
+    Check3 -->|No| Error3[DatabaseException]:::purple
+
+    Stage4 --> Success[Return SUCCESS<br/>DonationResult]:::teal
+
+    Error1 --> Handler[exceptionally<br/>Error Handler]:::purple
+    Error2 --> Handler
+    Error3 --> Handler
+
+    Handler --> Failure[Return FAILED<br/>DonationResult]:::purple
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ---
