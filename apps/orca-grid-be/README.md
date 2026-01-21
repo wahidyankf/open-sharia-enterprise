@@ -1,10 +1,10 @@
-# Dolphin Backend (dolphin-be)
+# Orca Grid Backend (orca-grid-be)
 
-Learning Management System (LMS) backend built with Spring Boot and Java 25.
+Knowledge Management System backend built with Spring Boot and Java 25.
 
 ## Overview
 
-Dolphin Backend provides backend services for the Learning Management System platform, including user management, course management, and progress tracking. The name "dolphin" was chosen because dolphins are known for their intelligence and love of learning, symbolizing the LMS's purpose of facilitating education and knowledge growth.
+Orca Grid Backend provides backend services for the Knowledge Management System platform, including content management, knowledge organization, and information retrieval. The name "orca-grid" symbolizes the systematic organization of knowledge, like an intelligent network connecting information nodes for efficient knowledge management.
 
 ## Prerequisites
 
@@ -46,13 +46,13 @@ Maven dependencies will be downloaded automatically on first build.
 Using Nx:
 
 ```bash
-nx run dolphin-be:serve
+nx run orca-grid-be:serve
 ```
 
 Using Maven directly:
 
 ```bash
-cd apps/dolphin-be
+cd apps/orca-grid-be
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
@@ -95,23 +95,23 @@ curl http://localhost:8080/actuator/info
 Build the application and create JAR file:
 
 ```bash
-nx run dolphin-be:build
+nx run orca-grid-be:build
 ```
 
-Output: `apps/dolphin-be/target/dolphin-be-1.0.0.jar`
+Output: `apps/orca-grid-be/target/orca-grid-be-1.0.0.jar`
 
 ### Test
 
 Run all tests:
 
 ```bash
-nx run dolphin-be:test
+nx run orca-grid-be:test
 ```
 
 Using Maven directly:
 
 ```bash
-cd apps/dolphin-be
+cd apps/orca-grid-be
 mvn test
 ```
 
@@ -120,7 +120,7 @@ mvn test
 Run code style checks:
 
 ```bash
-nx run dolphin-be:lint
+nx run orca-grid-be:lint
 ```
 
 ## Testing
@@ -130,7 +130,7 @@ nx run dolphin-be:lint
 Run unit tests:
 
 ```bash
-nx run dolphin-be:test
+nx run orca-grid-be:test
 ```
 
 ### Integration Tests
@@ -143,7 +143,7 @@ Start the application and test health check endpoint:
 
 ```bash
 # Terminal 1: Start application
-nx run dolphin-be:serve
+nx run orca-grid-be:serve
 
 # Terminal 2: Test health check
 curl http://localhost:8080/actuator/health
@@ -156,14 +156,14 @@ Expected output: `{"status":"UP"}`
 ### Build for Production
 
 ```bash
-nx run dolphin-be:build
+nx run orca-grid-be:build
 ```
 
 ### Run Production Build
 
 ```bash
-cd apps/dolphin-be
-java -jar target/dolphin-be-1.0.0.jar --spring.profiles.active=prod
+cd apps/orca-grid-be
+java -jar target/orca-grid-be-1.0.0.jar --spring.profiles.active=prod
 ```
 
 ### Environment Variables
@@ -178,26 +178,26 @@ Example:
 ```bash
 export PORT=9000
 export SPRING_PROFILES_ACTIVE=prod
-java -jar target/dolphin-be-1.0.0.jar
+java -jar target/orca-grid-be-1.0.0.jar
 ```
 
 ### Docker Deployment (Future)
 
 ```dockerfile
 FROM eclipse-temurin:25-jre-alpine
-COPY target/dolphin-be-1.0.0.jar app.jar
+COPY target/orca-grid-be-1.0.0.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
 ```
 
 ## Project Structure
 
 ```
-apps/dolphin-be/
+apps/orca-grid-be/
 ├── src/
 │   ├── main/
 │   │   ├── java/
-│   │   │   └── com/opencode/dolphin/
-│   │   │       └── DolphinApplication.java    # Main application class
+│   │   │   └── com/opencode/orcagrid/
+│   │   │       └── OrcaGridApplication.java    # Main application class
 │   │   └── resources/
 │   │       ├── application.yml                # Main configuration
 │   │       ├── application-dev.yml            # Development profile
@@ -205,8 +205,8 @@ apps/dolphin-be/
 │   │       └── logback-spring.xml             # Logging configuration
 │   └── test/
 │       └── java/
-│           └── com/opencode/dolphin/
-│               └── DolphinApplicationTests.java
+│           └── com/opencode/orcagrid/
+│               └── OrcaGridApplicationTests.java
 ├── target/                                     # Build output (gitignored)
 ├── pom.xml                                     # Maven configuration
 ├── project.json                                # Nx integration
@@ -230,7 +230,7 @@ Activate profile:
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 # Production
-java -jar target/dolphin-be-1.0.0.jar --spring.profiles.active=prod
+java -jar target/orca-grid-be-1.0.0.jar --spring.profiles.active=prod
 ```
 
 ### Logging
@@ -238,7 +238,7 @@ java -jar target/dolphin-be-1.0.0.jar --spring.profiles.active=prod
 Development logging (text format):
 
 ```
-2026-01-16 09:21:15.123 DEBUG 12345 --- [main] c.o.d.DolphinApplication : Starting...
+2026-01-16 09:21:15.123 DEBUG 12345 --- [main] c.o.o.OrcaGridApplication : Starting...
 ```
 
 Production logging (JSON format):
@@ -248,7 +248,7 @@ Production logging (JSON format):
   "timestamp": "2026-01-16T09:21:15.123Z",
   "level": "INFO",
   "thread": "main",
-  "logger": "com.opencode.dolphin.DolphinApplication",
+  "logger": "com.opencode.orcagrid.OrcaGridApplication",
   "message": "Starting..."
 }
 ```
@@ -267,7 +267,7 @@ java --version
 Check Maven can resolve dependencies:
 
 ```bash
-cd apps/dolphin-be
+cd apps/orca-grid-be
 mvn dependency:resolve
 ```
 
@@ -284,8 +284,8 @@ PORT=9000 mvn spring-boot:run
 Clean and rebuild:
 
 ```bash
-nx run dolphin-be:build
-nx run dolphin-be:test
+nx run orca-grid-be:build
+nx run orca-grid-be:test
 ```
 
 ### Maven dependencies not resolving

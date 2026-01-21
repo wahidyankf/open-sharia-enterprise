@@ -1,5 +1,7 @@
 # Delivery Plan for LMS Initialization
 
+> **Historical Note**: This plan was executed for the initial `dolphin-be` application, which was later renamed to `orca-grid-be` and repurposed from a Learning Management System to a Knowledge Management System.
+
 ## Milestones
 
 ### Milestone 1: Project Setup

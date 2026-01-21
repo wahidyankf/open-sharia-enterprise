@@ -1,6 +1,6 @@
 logging:
   level:
-    com.opencode.dolphin: INFO
+    com.opencode.orcagrid: INFO
     org.springframework.web: WARN
 
 management:
