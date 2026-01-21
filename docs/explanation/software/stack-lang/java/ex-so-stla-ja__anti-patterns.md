@@ -30,6 +30,38 @@ This document catalogs common Java antipatterns, explains why they're problemati
 
 **Companion Document**: For recommended practices, see [Java Best Practices](./ex-so-stla-ja__best-practices.md).
 
+## Quick Reference
+
+**Jump to:**
+
+- [Overview](#overview) - Introduction and context
+- [Concurrency Antipatterns](#concurrency-antipatterns) - Thread leakage, race conditions, deadlocks
+- [Resource Management Antipatterns](#resource-management-antipatterns) - Resource leaks, connection exhaustion
+- [Design Antipatterns](#design-antipatterns) - God Class, primitive obsession, shotgun surgery
+- [Performance Antipatterns](#performance-antipatterns) - N+1 queries, excessive object creation
+- [Security Antipatterns](#security-antipatterns) - Hardcoded credentials, SQL injection
+- [Financial Calculation Anti-Patterns](#financial-calculation-anti-patterns) - Float misuse, rounding errors
+- [Recognition and Prevention](#recognition-and-prevention) - Detection strategies
+- [Antipatterns Checklist](#antipatterns-checklist) - Quality verification
+- [Related Documentation](#related-documentation) - Cross-references
+
+**Related Documentation:**
+
+- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Recommended approaches
+- [Java Error Handling](./ex-so-stla-ja__error-handling.md) - Proper exception management
+- [Java Security](./ex-so-stla-ja__security.md) - Security best practices
+- [Java Performance](./ex-so-stla-ja__performance.md) - Performance optimization
+- [Java Type Safety](./ex-so-stla-ja__type-safety.md) - Type-safe design patterns
+- [Java Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md) - Proper concurrent programming
+
+Antipatterns represent **violations** of [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
+
+1. **Thread Leakage** violates [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md) - Manual thread management instead of ExecutorService
+2. **God Class** violates [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md) - Unclear responsibilities
+3. **Mutable Static State** violates [Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md) - Shared mutable state
+4. **Side Effects in Calculations** violates [Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md) - Unpredictable behavior
+5. **Non-Deterministic Tests** violates [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md) - Flaky test results
+
 ## Concurrency Antipatterns
 
 ### 1. Thread Leakage
@@ -3749,6 +3781,78 @@ void handlesAccountingAmounts() {
 Validate money amounts in constructors, enforce non-negative for value objects, use explicit types for signed amounts in accounting contexts.
 
 ## Recognition and Prevention
+
+### Principle Violation Matrix
+
+Each anti-pattern violates one or more software engineering principles. Understanding these violations helps identify and prevent anti-patterns:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    subgraph AntiPatterns["🚫 Anti-Patterns"]
+        ThreadLeak[Thread Leakage]:::purple
+        GodClass[God Class]:::purple
+        MutableStatic[Mutable Static State]:::purple
+        ExceptionSwallow[Exception Swallowing]:::purple
+        PrimitiveObsession[Primitive Obsession]:::purple
+        FloatMoney[Float for Money]:::purple
+    end
+
+    subgraph Principles["✅ Principles Violated"]
+        Automation[Automation<br/>Over Manual]:::orange
+        Explicit[Explicit<br/>Over Implicit]:::orange
+        Immutability[Immutability]:::teal
+        PureFunctions[Pure Functions]:::teal
+        Reproducibility[Reproducibility]:::blue
+    end
+
+    ThreadLeak -->|Violates| Automation
+    ThreadLeak -->|Violates| Reproducibility
+    GodClass -->|Violates| Explicit
+    GodClass -->|Violates| PureFunctions
+    MutableStatic -->|Violates| Immutability
+    MutableStatic -->|Violates| Reproducibility
+    ExceptionSwallow -->|Violates| Explicit
+    ExceptionSwallow -->|Violates| Reproducibility
+    PrimitiveObsession -->|Violates| Explicit
+    FloatMoney -->|Violates| Reproducibility
+    FloatMoney -->|Violates| Explicit
+
+    note1[Thread Leakage:<br/>Manual thread management,<br/>non-deterministic cleanup]:::purple
+    note2[God Class:<br/>Unclear responsibilities,<br/>side effects everywhere]:::purple
+    note3[Mutable Static:<br/>Shared mutable state,<br/>unpredictable tests]:::purple
+
+    note1 -.-> ThreadLeak
+    note2 -.-> GodClass
+    note3 -.-> MutableStatic
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+**Key Violations:**
+
+| Anti-Pattern             | Automation | Explicit | Immutability | Pure Functions | Reproducibility |
+| ------------------------ | ---------- | -------- | ------------ | -------------- | --------------- |
+| Thread Leakage           | ❌         | -        | -            | -              | ❌              |
+| God Class                | -          | ❌       | -            | ❌             | -               |
+| Mutable Static State     | -          | -        | ❌           | -              | ❌              |
+| Exception Swallowing     | -          | ❌       | -            | -              | ❌              |
+| Primitive Obsession      | -          | ❌       | -            | -              | -               |
+| Float for Money          | -          | ❌       | -            | -              | ❌              |
+| N+1 Query Problem        | ❌         | -        | -            | -              | -               |
+| Premature Optimization   | -          | -        | -            | ❌             | -               |
+| Hardcoded Credentials    | -          | ❌       | -            | -              | ❌              |
+| Shared Mutable Singleton | -          | -        | ❌           | ❌             | ❌              |
+
+**Legend:**
+
+- ❌ Principle violated
+- `-` Not directly violated
 
 ### Recognizing Antipatterns in Code Reviews
 

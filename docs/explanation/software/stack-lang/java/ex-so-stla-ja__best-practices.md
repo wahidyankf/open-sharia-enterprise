@@ -24,6 +24,39 @@ Best practices are proven approaches that improve code quality, reduce bugs, and
 
 **Companion Document**: Before reading this document, familiarize yourself with common [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) to understand what practices to avoid.
 
+## Quick Reference
+
+**Jump to:**
+
+- [Overview](#overview) - Introduction and context
+- [Core Principles](#core-principles) - Code clarity, SRP, fail fast
+- [Automation Over Manual](#automation-over-manual) - Build automation, testing, CI/CD
+- [Reproducibility First](#reproducibility-first) - Deterministic builds, version management
+- [Prerequisites](#prerequisites) - Tools and environment setup
+- [Setup](#setup) - Build configuration
+- [Code Organization](#code-organization) - Package structure, naming conventions
+- [Business Finance Code Examples](#business-finance-code-examples) - Real-world implementations
+- [Best Practices Checklist](#best-practices-checklist) - Quality verification
+- [Related Documentation](#related-documentation) - Cross-references
+
+**Related Documentation:**
+
+- [Java Error Handling](./ex-so-stla-ja__error-handling.md) - Early validation and exception handling
+- [Java Type Safety](./ex-so-stla-ja__type-safety.md) - Immutable types and sealed classes
+- [Java Idioms](./ex-so-stla-ja__idioms.md) - Modern Java patterns
+- [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Common mistakes to avoid
+- [Java Test-Driven Development](./ex-so-stla-ja__test-driven-development.md) - Testing best practices
+- [Java Security](./ex-so-stla-ja__security.md) - Secure coding practices
+- [Java Performance](./ex-so-stla-ja__performance.md) - Performance optimization
+
+This document implements the following [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
+
+1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Build automation, automated testing, CI/CD pipelines
+2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Clear code, explicit validation, typed contracts
+3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Immutable value objects, final fields
+4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Testable, predictable business logic
+5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Deterministic builds, version control
+
 ## Core Principles
 
 ### 1. Code Clarity Over Cleverness
@@ -372,6 +405,36 @@ public class DonationService {
 - No manual code review needed for these issues
 
 ### Testing Automation
+
+**Test Pyramid Strategy:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TB
+    subgraph Pyramid[" "]
+        E2E["🌐 E2E Tests<br/>Few, Slow, Expensive<br/>Full system integration"]:::purple
+        Integration["🔗 Integration Tests<br/>Moderate quantity<br/>Component interactions"]:::orange
+        Unit["⚡ Unit Tests<br/>Many, Fast, Cheap<br/>Individual functions"]:::teal
+    end
+
+    E2E --> Integration
+    Integration --> Unit
+
+    note1[70-80% Unit Tests<br/>Fast feedback,<br/>isolated failures]:::teal
+    note2[15-20% Integration Tests<br/>Verify component<br/>interactions]:::orange
+    note3[5-10% E2E Tests<br/>Critical user<br/>journeys only]:::purple
+
+    note1 -.-> Unit
+    note2 -.-> Integration
+    note3 -.-> E2E
+
+    style Pyramid fill:none,stroke:none
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 **JUnit 5 Parameterized Tests** (Automate multiple test cases):
 

@@ -29,6 +29,36 @@ Java 17 represents a significant milestone, delivering **14 JDK Enhancement Prop
 - **Previous LTS**: Java 11 (September 2018)
 - **Next LTS**: Java 21 (September 2023)
 
+## Quick Reference
+
+**Jump to:**
+
+- [Overview](#overview) - Java 17 LTS introduction
+- [Major Language Features](#major-language-features) - Sealed classes, pattern matching
+- [Core Library Enhancements](#core-library-enhancements) - Stream, Optional, Collections improvements
+- [Platform and Performance](#platform-and-performance) - JVM improvements, macOS M1 support
+- [Incubator and Preview Features](#incubator-and-preview-features) - Foreign Function & Memory API, Vector API
+- [Deprecations and Removals](#deprecations-and-removals) - Removed Security Manager, deprecated features
+- [Performance and Runtime Improvements](#performance-and-runtime-improvements) - GC enhancements, JIT optimizations
+- [Migration from Java 11 to Java 17](#migration-from-java-11-to-java-17) - Upgrade guide
+- [Why Upgrade to Java 17?](#why-upgrade-to-java-17) - Benefits summary
+- [Migration Paths from Java 17](#migration-paths-from-java-17) - Next steps
+- [Related Documentation](#related-documentation) - Cross-references
+
+**Related Documentation:**
+
+- [Java 21 Release](./ex-so-stla-ja__release-21.md) - Next LTS release features
+- [Java 25 Release](./ex-so-stla-ja__release-25.md) - Latest LTS release features
+- [Java Idioms](./ex-so-stla-ja__idioms.md) - Sealed classes and pattern matching patterns
+- [Java Type Safety](./ex-so-stla-ja__type-safety.md) - Sealed types for exhaustive handling
+- [Java Error Handling](./ex-so-stla-ja__error-handling.md) - Pattern matching in error handling
+
+This release implements the following [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
+
+1. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Sealed classes make type hierarchies explicit, pattern matching makes case handling explicit
+2. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Compiler exhaustiveness checking for sealed types
+3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Records encourage immutable data structures (finalized in Java 16, enhanced in 17)
+
 ## Major Language Features
 
 ### 1. Sealed Classes (Finalized)
@@ -982,22 +1012,44 @@ This table shows how key features evolved across Java LTS releases:
 
 ### Migration Decision Tree
 
-```
-Are you on Java 17 today?
-├─ YES
-│  ├─ Building new I/O-bound services?
-│  │  ├─ YES → Migrate to Java 21 NOW (virtual threads critical)
-│  │  └─ NO  → Can wait, but plan for Java 21 in 2025
-│  │
-│  └─ Need cutting-edge performance?
-│     ├─ YES → Migrate to Java 21, then evaluate Java 25
-│     └─ NO  → Stay on Java 17 until Java 21 EOL (2028)
-│
-└─ NO (starting new project)
-   └─ Start with Java 21
-      ├─ Ecosystem mature
-      ├─ Virtual threads essential
-      └─ Migration path to Java 25 clear
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+flowchart TD
+    Start{Are you on<br/>Java 17 today?}:::purple
+
+    OnJ17[YES - On Java 17]:::blue
+    NewProject[NO - Starting<br/>new project]:::blue
+
+    IOBound{Building new<br/>I/O-bound services?}:::orange
+    Performance{Need cutting-edge<br/>performance?}:::orange
+
+    MigrateNow[Migrate to Java 21 NOW<br/>Virtual threads critical]:::teal
+    CanWait[Can wait, but plan<br/>for Java 21 in 2025]:::teal
+    MigrateThenEval[Migrate to Java 21,<br/>then evaluate Java 25]:::teal
+    StayJ17[Stay on Java 17 until<br/>Java 21 EOL 2028]:::teal
+
+    StartJ21[Start with Java 21<br/>✓ Ecosystem mature<br/>✓ Virtual threads essential<br/>✓ Migration path to Java 25 clear]:::teal
+
+    Start -->|YES| OnJ17
+    Start -->|NO| NewProject
+
+    OnJ17 --> IOBound
+    OnJ17 --> Performance
+
+    IOBound -->|YES| MigrateNow
+    IOBound -->|NO| CanWait
+
+    Performance -->|YES| MigrateThenEval
+    Performance -->|NO| StayJ17
+
+    NewProject --> StartJ21
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
 ```
 
 **Key Insight**: Java 21's virtual threads are the most impactful feature since Java 8 streams. Organizations should prioritize Java 21 adoption.

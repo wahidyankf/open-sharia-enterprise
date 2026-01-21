@@ -31,6 +31,36 @@ Java 25 introduces **18 JEPs (JDK Enhancement Proposals)**, with a strong focus 
 - **Focus Areas**: Performance, Runtime optimization, Developer experience
 - **Major Theme**: Enterprise-ready features with significant performance gains
 
+## Quick Reference
+
+**Jump to:**
+
+- [Overview](#overview) - Java 25 LTS introduction
+- [Major Language Features (Finalized)](#major-language-features-finalized) - Stream Gatherers, Scoped Values, Flexible Constructor Bodies
+- [Performance and Runtime Improvements (Finalized)](#performance-and-runtime-improvements-finalized) - Class-File API, Generational Shenandoah
+- [Preview Features](#preview-features) - Primitive types in patterns, module import
+- [Incubator and Experimental Features](#incubator-and-experimental-features) - Vector API, Class-File API
+- [Migration from Java 21 to Java 25](#migration-from-java-21-to-java-25) - Upgrade guide
+- [Performance Improvements Summary](#performance-improvements-summary) - Benchmarks and optimizations
+- [Why Upgrade to Java 25?](#why-upgrade-to-java-25) - Benefits summary
+- [Enterprise Readiness](#enterprise-readiness) - Production-ready features
+- [Related Documentation](#related-documentation) - Cross-references
+
+**Related Documentation:**
+
+- [Java 17 Release](./ex-so-stla-ja__release-17.md) - Earlier LTS release features
+- [Java 21 Release](./ex-so-stla-ja__release-21.md) - Previous LTS release features
+- [Java Performance](./ex-so-stla-ja__performance.md) - Performance optimization techniques
+- [Java Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md) - Scoped Values and virtual threads
+- [Java Idioms](./ex-so-stla-ja__idioms.md) - Modern Java patterns
+
+This release implements the following [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
+
+1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Stream Gatherers automate complex data processing, Scoped Values automate context propagation
+2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Flexible Constructor Bodies make validation explicit, Module Import declarations explicit
+3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Scoped Values are immutable by design
+4. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Class-File API enables deterministic bytecode generation
+
 ## Major Language Features (Finalized)
 
 ### 1. Compact Source Files and Instance Main Methods
@@ -294,7 +324,470 @@ public class RequestContext {
 
 **When to Adopt**: Finalized in Java 25 - safe for production. Replace ThreadLocal with Scoped Values for better performance and clearer semantics, especially with virtual threads.
 
-### 5. Key Derivation Function API
+### 5. Stream Gatherers (Finalized)
+
+**JEP 473**: Stream Gatherers (Finalized)
+
+Stream Gatherers introduce a powerful new intermediate operation for Java Streams, enabling custom, stateful, and short-circuiting transformations that were previously difficult or impossible with standard collectors.
+
+**Key Benefits**:
+
+- Custom intermediate operations (not just terminal operations like Collectors)
+- Built-in stateful transformations (windowing, scanning, folding)
+- Short-circuiting support for performance optimization
+- Cleaner, more expressive stream pipelines
+- Better composability than traditional Stream operations
+
+**Feature Evolution**:
+
+| Version     | Status           | Details                                                                   |
+| ----------- | ---------------- | ------------------------------------------------------------------------- |
+| **Java 24** | 🔬 **Preview**   | First preview introducing Gatherer API with 5 built-in gatherers          |
+| **Java 25** | ✅ **Finalized** | Production-ready, optimized implementation, additional built-in gatherers |
+
+#### Built-in Gatherers
+
+Java 25 provides **5 essential built-in gatherers** that cover common streaming patterns:
+
+**1. fold() - Stateful Aggregation**
+
+```java
+import java.util.stream.Gatherers;
+import java.math.BigDecimal;
+
+public class DonationProcessor {
+
+    public record Donation(String donor, BigDecimal amount, String category) {}
+
+    public record DonationSummary(BigDecimal total, int count, BigDecimal average) {}
+
+    public DonationSummary summarizeDonations(List<Donation> donations) {
+        // Use fold to accumulate donation statistics
+        return donations.stream()
+            .gather(Gatherers.fold(
+                // Initial state
+                () -> new DonationSummary(BigDecimal.ZERO, 0, BigDecimal.ZERO),
+                // Accumulator function
+                (summary, donation) -> {
+                    BigDecimal newTotal = summary.total().add(donation.amount());
+                    int newCount = summary.count() + 1;
+                    BigDecimal newAverage = newTotal.divide(
+                        BigDecimal.valueOf(newCount),
+                        2,
+                        RoundingMode.HALF_UP
+                    );
+                    return new DonationSummary(newTotal, newCount, newAverage);
+                }
+            ))
+            .findFirst()
+            .orElse(new DonationSummary(BigDecimal.ZERO, 0, BigDecimal.ZERO));
+    }
+}
+```
+
+**2. scan() - Running Totals**
+
+```java
+public class TransactionLedger {
+
+    public record Transaction(LocalDate date, BigDecimal amount, String type) {}
+
+    public List<BigDecimal> calculateRunningBalance(
+        List<Transaction> transactions,
+        BigDecimal initialBalance
+    ) {
+        // scan() produces intermediate results (running balance)
+        return transactions.stream()
+            .map(Transaction::amount)
+            .gather(Gatherers.scan(
+                () -> initialBalance,  // Initial balance
+                (balance, amount) -> balance.add(amount)  // Running total
+            ))
+            .toList();
+    }
+
+    public void printLedger(List<Transaction> transactions, BigDecimal initial) {
+        List<BigDecimal> balances = calculateRunningBalance(transactions, initial);
+
+        System.out.println("Date       | Amount    | Balance");
+        System.out.println("-----------|-----------|----------");
+        for (int i = 0; i < transactions.size(); i++) {
+            Transaction tx = transactions.get(i);
+            System.out.printf("%s | %9s | %9s%n",
+                tx.date(),
+                tx.amount(),
+                balances.get(i)
+            );
+        }
+    }
+}
+```
+
+**3. windowFixed() - Fixed-Size Batching**
+
+```java
+public class BatchProcessor {
+
+    public record Payment(String id, BigDecimal amount, String recipient) {}
+
+    public void processBatchedPayments(List<Payment> payments) {
+        // Process payments in batches of 10
+        payments.stream()
+            .gather(Gatherers.windowFixed(10))  // Fixed window of 10
+            .forEach(batch -> {
+                System.out.println("Processing batch of " + batch.size() + " payments");
+                BigDecimal batchTotal = batch.stream()
+                    .map(Payment::amount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                System.out.println("Batch total: $" + batchTotal);
+                // Send batch to payment gateway
+                submitBatch(batch);
+            });
+    }
+
+    private void submitBatch(List<Payment> batch) {
+        // Implementation
+    }
+}
+```
+
+**4. windowSliding() - Moving Window Analysis**
+
+```java
+public class MovingAverageCalculator {
+
+    public record PricePoint(LocalDateTime timestamp, BigDecimal price) {}
+
+    public List<BigDecimal> calculateMovingAverage(
+        List<PricePoint> prices,
+        int windowSize
+    ) {
+        // Calculate moving average with sliding window
+        return prices.stream()
+            .gather(Gatherers.windowSliding(windowSize))
+            .map(window -> {
+                BigDecimal sum = window.stream()
+                    .map(PricePoint::price)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                return sum.divide(
+                    BigDecimal.valueOf(window.size()),
+                    2,
+                    RoundingMode.HALF_UP
+                );
+            })
+            .toList();
+    }
+
+    public void detectPriceTrends(List<PricePoint> prices) {
+        // 7-period moving average for trend detection
+        List<BigDecimal> movingAverages = calculateMovingAverage(prices, 7);
+
+        System.out.println("Price Trend Analysis (7-period MA):");
+        for (int i = 0; i < movingAverages.size(); i++) {
+            BigDecimal current = prices.get(i + 6).price();
+            BigDecimal ma = movingAverages.get(i);
+            String trend = current.compareTo(ma) > 0 ? "ABOVE" : "BELOW";
+            System.out.printf("%s: $%s (MA: $%s) - %s trend%n",
+                prices.get(i + 6).timestamp(),
+                current,
+                ma,
+                trend
+            );
+        }
+    }
+}
+```
+
+**5. mapConcurrent() - Concurrent Transformation**
+
+```java
+public class ConcurrentDataEnricher {
+
+    public record Customer(String id, String name) {}
+    public record EnrichedCustomer(String id, String name, BigDecimal balance, List<String> transactions) {}
+
+    public List<EnrichedCustomer> enrichCustomers(List<Customer> customers) {
+        // Process customers concurrently with virtual threads
+        return customers.stream()
+            .gather(Gatherers.mapConcurrent(
+                10,  // Max concurrency
+                customer -> {
+                    // Expensive I/O operations
+                    BigDecimal balance = fetchBalance(customer.id());
+                    List<String> transactions = fetchRecentTransactions(customer.id());
+                    return new EnrichedCustomer(
+                        customer.id(),
+                        customer.name(),
+                        balance,
+                        transactions
+                    );
+                }
+            ))
+            .toList();
+    }
+
+    private BigDecimal fetchBalance(String customerId) {
+        // Simulated database/API call
+        return BigDecimal.ZERO;
+    }
+
+    private List<String> fetchRecentTransactions(String customerId) {
+        // Simulated database/API call
+        return List.of();
+    }
+}
+```
+
+#### Custom Gatherers
+
+Beyond built-in gatherers, you can create **custom gatherers** for domain-specific transformations:
+
+**Zakat Calculation Gatherer**:
+
+```java
+import java.util.stream.Gatherer;
+import java.util.function.Supplier;
+import java.util.function.BiConsumer;
+
+public class ZakatGatherer {
+
+    public record Asset(String type, BigDecimal value) {}
+    public record ZakatBracket(BigDecimal threshold, BigDecimal rate) {}
+    public record ZakatResult(BigDecimal totalAssets, BigDecimal zakatDue) {}
+
+    public static Gatherer<Asset, ?, ZakatResult> calculateZakat(
+        BigDecimal nisabThreshold
+    ) {
+        // Custom gatherer for Zakat calculation
+        return Gatherer.of(
+            // Initializer: create mutable state
+            () -> new ZakatState(nisabThreshold),
+
+            // Integrator: process each asset
+            (state, asset, downstream) -> {
+                state.addAsset(asset);
+                // Short-circuit if threshold not met
+                if (!state.meetsNisab()) {
+                    return false;  // Stop processing
+                }
+                // Continue processing
+                return true;
+            },
+
+            // Finisher: produce final result
+            (state, downstream) -> {
+                if (state.meetsNisab()) {
+                    downstream.push(state.calculateZakat());
+                }
+            }
+        );
+    }
+
+    private static class ZakatState {
+        private final BigDecimal nisabThreshold;
+        private BigDecimal totalAssets = BigDecimal.ZERO;
+        private static final BigDecimal ZAKAT_RATE = new BigDecimal("0.025"); // 2.5%
+
+        ZakatState(BigDecimal nisabThreshold) {
+            this.nisabThreshold = nisabThreshold;
+        }
+
+        void addAsset(Asset asset) {
+            totalAssets = totalAssets.add(asset.value());
+        }
+
+        boolean meetsNisab() {
+            return totalAssets.compareTo(nisabThreshold) >= 0;
+        }
+
+        ZakatResult calculateZakat() {
+            BigDecimal zakatDue = totalAssets.multiply(ZAKAT_RATE);
+            return new ZakatResult(totalAssets, zakatDue);
+        }
+    }
+
+    // Usage example
+    public void processZakat(List<Asset> assets, BigDecimal nisabThreshold) {
+        ZakatResult result = assets.stream()
+            .gather(calculateZakat(nisabThreshold))
+            .findFirst()
+            .orElse(new ZakatResult(BigDecimal.ZERO, BigDecimal.ZERO));
+
+        if (result.zakatDue().compareTo(BigDecimal.ZERO) > 0) {
+            System.out.println("Total Assets: $" + result.totalAssets());
+            System.out.println("Zakat Due: $" + result.zakatDue());
+        } else {
+            System.out.println("Assets below nisab threshold - no Zakat due");
+        }
+    }
+}
+```
+
+**Donation Categorization Gatherer**:
+
+```java
+public class DonationCategorizer {
+
+    public record Donation(String donor, BigDecimal amount, LocalDate date) {}
+    public record CategoryStats(String category, int count, BigDecimal total) {}
+
+    public static Gatherer<Donation, ?, List<CategoryStats>> categorizeByAmount() {
+        return Gatherer.of(
+            // State: category -> (count, total)
+            HashMap<String, CategoryState>::new,
+
+            // Integrator: categorize each donation
+            (categories, donation, downstream) -> {
+                String category = categorize(donation.amount());
+                categories.computeIfAbsent(category, k -> new CategoryState())
+                          .add(donation.amount());
+                return true;
+            },
+
+            // Finisher: convert to results
+            (categories, downstream) -> {
+                categories.forEach((category, state) -> {
+                    downstream.push(new CategoryStats(
+                        category,
+                        state.count,
+                        state.total
+                    ));
+                });
+            }
+        );
+    }
+
+    private static String categorize(BigDecimal amount) {
+        if (amount.compareTo(new BigDecimal("1000")) >= 0) {
+            return "Major Donor";
+        } else if (amount.compareTo(new BigDecimal("100")) >= 0) {
+            return "Regular Donor";
+        } else {
+            return "Small Donor";
+        }
+    }
+
+    private static class CategoryState {
+        int count = 0;
+        BigDecimal total = BigDecimal.ZERO;
+
+        void add(BigDecimal amount) {
+            count++;
+            total = total.add(amount);
+        }
+    }
+}
+```
+
+#### Performance Characteristics
+
+**Stream Gatherers vs Traditional Collectors**:
+
+```java
+public class PerformanceComparison {
+
+    public record Transaction(String id, BigDecimal amount) {}
+
+    // Traditional approach - two passes
+    public Map<String, BigDecimal> traditionalBatching(List<Transaction> transactions) {
+        // First pass: collect into groups
+        Map<Integer, List<Transaction>> batches = IntStream.range(0, transactions.size())
+            .boxed()
+            .collect(Collectors.groupingBy(
+                i -> i / 100,  // Batch of 100
+                Collectors.mapping(
+                    transactions::get,
+                    Collectors.toList()
+                )
+            ));
+
+        // Second pass: sum each batch
+        return batches.entrySet().stream()
+            .collect(Collectors.toMap(
+                e -> "Batch-" + e.getKey(),
+                e -> e.getValue().stream()
+                    .map(Transaction::amount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add)
+            ));
+    }
+
+    // Stream Gatherers - single pass
+    public Map<String, BigDecimal> gathererBatching(List<Transaction> transactions) {
+        AtomicInteger batchId = new AtomicInteger(0);
+
+        return transactions.stream()
+            .gather(Gatherers.windowFixed(100))  // Single pass
+            .collect(Collectors.toMap(
+                batch -> "Batch-" + batchId.getAndIncrement(),
+                batch -> batch.stream()
+                    .map(Transaction::amount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add)
+            ));
+    }
+}
+```
+
+**Benefits of Stream Gatherers**:
+
+- **Single-Pass Processing**: Gatherers process data in one pass vs multiple passes with traditional collectors
+- **Lazy Evaluation**: Short-circuiting support enables early termination
+- **Memory Efficiency**: Stateful transformations without materializing intermediate collections
+- **Composability**: Chain multiple gatherers for complex pipelines
+
+#### Migration Guide
+
+**Before Java 25 (Traditional Collectors)**:
+
+```java
+public class BeforeGatherers {
+
+    public List<BigDecimal> calculateMovingAverage(List<BigDecimal> prices, int window) {
+        List<BigDecimal> result = new ArrayList<>();
+        for (int i = 0; i <= prices.size() - window; i++) {
+            BigDecimal sum = BigDecimal.ZERO;
+            for (int j = i; j < i + window; j++) {
+                sum = sum.add(prices.get(j));
+            }
+            result.add(sum.divide(BigDecimal.valueOf(window), 2, RoundingMode.HALF_UP));
+        }
+        return result;
+    }
+}
+```
+
+**After Java 25 (Stream Gatherers)**:
+
+```java
+public class AfterGatherers {
+
+    public List<BigDecimal> calculateMovingAverage(List<BigDecimal> prices, int window) {
+        return prices.stream()
+            .gather(Gatherers.windowSliding(window))
+            .map(w -> w.stream()
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .divide(BigDecimal.valueOf(window), 2, RoundingMode.HALF_UP))
+            .toList();
+    }
+}
+```
+
+**When to Use Stream Gatherers**:
+
+- ✅ **Stateful intermediate operations** (running totals, windowing, rate limiting)
+- ✅ **Custom transformations** that don't fit map/filter/reduce
+- ✅ **Performance-critical pipelines** (single-pass processing, short-circuiting)
+- ✅ **Complex aggregations** with intermediate state
+- ✅ **Batch processing** with fixed or sliding windows
+
+**When to Use Traditional Collectors**:
+
+- ✅ **Terminal operations** (grouping, partitioning, joining)
+- ✅ **Simple transformations** (map, filter, flatMap suffice)
+- ✅ **Standard aggregations** (count, sum, average)
+
+**When to Adopt**: Finalized in Java 25 - safe for production. Use Stream Gatherers for stateful intermediate operations and complex streaming pipelines where traditional collectors fall short.
+
+### 6. Key Derivation Function API
 
 **JEP 510**: Key Derivation Function API (Finalized)
 

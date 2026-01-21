@@ -45,6 +45,60 @@ Security is not an afterthought—it's a fundamental requirement in enterprise J
 4. **Fail Securely**: Handle errors without exposing sensitive information
 5. **Never Trust Input**: Validate and sanitize all data from external sources
 
+**Defense in Depth Architecture:**
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TB
+    subgraph Layer1["🌐 Layer 1: Perimeter Defense"]
+        Firewall[Firewall/WAF]:::orange
+        RateLimit[Rate Limiting]:::orange
+    end
+
+    subgraph Layer2["🔐 Layer 2: Authentication & Authorization"]
+        Auth[Authentication JWT]:::blue
+        AuthZ[Authorization RBAC]:::blue
+    end
+
+    subgraph Layer3["✅ Layer 3: Input Validation"]
+        Validate[Input Validation]:::teal
+        Sanitize[Data Sanitization]:::teal
+    end
+
+    subgraph Layer4["🛡️ Layer 4: Application Security"]
+        Encrypt[Encryption at Rest]:::purple
+        Secure[Secure Coding]:::purple
+        ParamQuery[Parameterized Queries]:::purple
+    end
+
+    subgraph Layer5["📊 Layer 5: Monitoring & Logging"]
+        Audit[Audit Logging]:::orange
+        Monitor[Security Monitoring]:::orange
+        Alert[Intrusion Detection]:::orange
+    end
+
+    Firewall --> Auth
+    RateLimit --> Auth
+    Auth --> Validate
+    AuthZ --> Sanitize
+    Validate --> Encrypt
+    Sanitize --> Secure
+    Encrypt --> Audit
+    Secure --> Monitor
+    ParamQuery --> Alert
+
+    note1[Multiple layers ensure<br/>that if one fails,<br/>others still protect]:::teal
+
+    note1 -.-> Layer3
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ---
 
 ## Input Validation
@@ -2080,6 +2134,35 @@ public void logEventAsync(AuditEntry entry) {
 - **Low-frequency events**: Synchronous acceptable
 - **High-frequency events**: Asynchronous with bounded queue
 - **Critical events**: Synchronous to guarantee persistence
+
+## Related Principles
+
+This document implements the following [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
+
+1. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Input validation with explicit allowlists, explicit authorization checks, explicit cryptographic algorithm selection
+2. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Automated security scanning (SAST/DAST), dependency vulnerability checking, automated certificate rotation
+3. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Consistent security policies across environments, reproducible builds, deterministic cryptographic operations
+
+### Principle-to-Feature Mapping
+
+| Security Feature                  | Automation | Explicit     | Immutability | Pure Functions | Reproducibility |
+| --------------------------------- | ---------- | ------------ | ------------ | -------------- | --------------- |
+| Input Validation (Allowlist)      | -          | ✅ Primary   | -            | -              | -               |
+| Parameterized Queries             | -          | ✅ Primary   | -            | -              | -               |
+| JWT Token Validation              | -          | ✅ Primary   | -            | -              | ✅ Secondary    |
+| Cryptographic Algorithm Selection | -          | ✅ Primary   | -            | -              | ✅ Primary      |
+| Security Scanning (SAST/DAST)     | ✅ Primary | -            | -            | -              | -               |
+| Dependency Vulnerability Checking | ✅ Primary | -            | -            | -              | ✅ Secondary    |
+| Automated Secret Rotation         | ✅ Primary | -            | -            | -              | ✅ Secondary    |
+| Audit Logging                     | ✅ Primary | ✅ Secondary | -            | -              | ✅ Primary      |
+| Rate Limiting (Resilience4j)      | ✅ Primary | -            | -            | -              | ✅ Secondary    |
+| Reproducible Security Policies    | -          | ✅ Secondary | -            | -              | ✅ Primary      |
+
+**Legend:**
+
+- ✅ Primary: Core demonstration of principle
+- ✅ Secondary: Supporting demonstration
+- `-`: Not directly related
 
 ---
 

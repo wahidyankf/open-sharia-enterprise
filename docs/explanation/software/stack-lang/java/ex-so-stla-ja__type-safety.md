@@ -114,32 +114,26 @@ Immutable objects can't be corrupted after creation.
 **Example: Money Value Object**
 
 ```java
-// Immutable record with validation
-public record Money(BigDecimal amount, Currency currency) {
-    public Money {
-        if (amount == null) {
-            throw new IllegalArgumentException("Amount cannot be null");
+// Minimal example: Type-safe validated record
+public record AccountId(String value) {
+    public AccountId {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException("Account ID cannot be blank");
         }
-        if (amount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Amount cannot be negative");
+        if (!value.matches("ACC-\\d{10}")) {
+            throw new IllegalArgumentException("Invalid account ID format");
         }
-        if (currency == null) {
-            throw new IllegalArgumentException("Currency cannot be null");
-        }
-    }
-
-    // Type-safe operations return new instances
-    public Money add(Money other) {
-        if (!this.currency.equals(other.currency)) {
-            throw new IllegalArgumentException(
-                "Cannot add different currencies: " +
-                this.currency + " and " + other.currency
-            );
-        }
-        return new Money(this.amount.add(other.amount), this.currency);
     }
 }
+
+// Usage: Compile-time type safety
+public void processPayment(AccountId fromAccount, AccountId toAccount, Money amount) {
+    // Type system prevents passing wrong parameters
+    // Cannot pass Money as AccountId, or vice versa
+}
 ```
+
+**For comprehensive Money value object with type-safe operations**, see [Domain-Driven Design - Value Objects](./ex-so-stla-ja__domain-driven-design.md#example-money-value-object).
 
 ### 3. Prefer Compile-Time Errors Over Runtime Errors
 
@@ -191,40 +185,29 @@ public record ZakatAccount(Money balance, Money nisab, LocalDate haulStartDate) 
 
 Sealed types enable the compiler to verify all cases are handled.
 
-**Example: Transaction Result**
+**Example: Sealed Type Exhaustiveness**
 
 ```java
-public sealed interface TransactionResult
-    permits Success, InsufficientFunds, InvalidAccount, SystemError {
+// Minimal example: Simple sealed hierarchy
+public sealed interface Status permits Active, Inactive, Suspended {
 }
 
-public record Success(String transactionId, Money amount)
-    implements TransactionResult {}
-
-public record InsufficientFunds(Money required, Money available)
-    implements TransactionResult {}
-
-public record InvalidAccount(String accountId, String reason)
-    implements TransactionResult {}
-
-public record SystemError(String errorCode, String message)
-    implements TransactionResult {}
+public record Active() implements Status {}
+public record Inactive(String reason) implements Status {}
+public record Suspended(LocalDate until) implements Status {}
 
 // Compiler enforces exhaustive pattern matching
-public String formatResult(TransactionResult result) {
-    return switch (result) {
-        case Success(var id, var amount) ->
-            "Transaction " + id + " succeeded: " + amount;
-        case InsufficientFunds(var req, var avail) ->
-            "Insufficient funds: need " + req + ", have " + avail;
-        case InvalidAccount(var id, var reason) ->
-            "Invalid account " + id + ": " + reason;
-        case SystemError(var code, var msg) ->
-            "System error [" + code + "]: " + msg;
+public String describe(Status status) {
+    return switch (status) {
+        case Active() -> "Currently active";
+        case Inactive(var reason) -> "Inactive: " + reason;
+        case Suspended(var until) -> "Suspended until " + until;
         // No default needed - compiler knows all cases covered!
     };
 }
 ```
+
+**For comprehensive TransactionResult sealed interface with financial examples**, see [Error Handling - Sealed Types](./ex-so-stla-ja__error-handling.md#sealed-types-for-exhaustive-error-handling).
 
 **Sealed Type Exhaustiveness:**
 
