@@ -8,6 +8,13 @@ Legacy code—code without tests—presents a unique challenge. You can't safely
 
 This document covers techniques for testing legacy code: characterization tests, the seam model for breaking dependencies, dependency-breaking techniques (sprout method/class, wrap method/class), and the Strangler Fig pattern for gradual migration.
 
+## Core Principles
+
+Legacy code testing aligns with software engineering principles:
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Characterization tests capture current behavior to ensure refactoring produces identical results. This reproducibility enables safe modernization of untested code.
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Automated characterization tests replace manual verification during legacy code refactoring. Once behavior is locked down with tests, you can refactor confidently without manual regression testing.
+
 ## The Legacy Code Challenge
 
 ### Definition of Legacy Code
@@ -613,3 +620,8 @@ Legacy code is manageable with the right techniques. Start small, add tests incr
 - **[14. Refactoring with Tests](./ex-so-de-tedrdeve__14-refactoring-with-tests.md)** - Safe refactoring patterns
 - **[18. Best Practices](./ex-so-de-tedrdeve__18-best-practices.md)** - TDD best practices
 - **[19. Antipatterns](./ex-so-de-tedrdeve__19-antipatterns.md)** - Avoiding testability pitfalls
+
+## Related Principles
+
+- [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)
+- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)

@@ -24,13 +24,25 @@ This document explores the Three Amigos practice in depth: who participates, how
 
 ### Why "Three" Amigos?
 
-Each role provides a distinct perspective:
+Each role provides a distinct perspective, implementing **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** through minimal viable collaboration:
 
 - **Business**: "What problem are we solving? What value does this deliver?"
 - **Development**: "How feasible is this? Are there technical constraints? What are the implications?"
 - **Testing**: "What could go wrong? What edge cases exist? How do we verify correctness?"
 
-**Together**, these perspectives create more complete requirements than any single person could produce.
+**Together**, these perspectives create more complete requirements than any single person could produce—without the complexity of 10+ stakeholder meetings.
+
+## Core Principles
+
+The Three Amigos practice embodies fundamental software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Collaborative conversation makes implicit assumptions explicit. Three perspectives surface hidden requirements that a single person would miss. Business rules, technical constraints, and edge cases are explicitly discussed and documented as concrete scenarios.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Three Amigos provides just enough perspectives without bloated stakeholder meetings. Three roles (not ten) keep conversations focused and productive. Time-boxed sessions (typically 30-60 minutes) prevent over-analysis and design paralysis.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Scenarios discovered through Three Amigos become automated tests. The conversation produces executable specifications, not static documentation that requires manual verification.
+
+This collaborative pattern prevents requirements defects early—during discovery, not during implementation or testing.
 
 ### Origins and Evolution
 
@@ -666,6 +678,18 @@ The Three Amigos practice brings together Business, Development, and Testing per
 Three Amigos embodies BDD's core philosophy: **conversation is more valuable than documentation**. The automation that follows is useful, but the shared understanding built through conversation is where the real value lies.
 
 The next technique—Example Mapping—provides a structured approach for facilitating Three Amigos conversations through visual discovery.
+
+## Related Principles
+
+The Three Amigos practice demonstrates alignment with core software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Collaborative conversation surfaces implicit assumptions. Three perspectives (business, development, testing) make hidden requirements, constraints, and edge cases explicit through structured discussion.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Three roles provide just enough perspectives without bloated meetings. Time-boxed sessions (30-60 minutes) prevent over-analysis. Minimal viable collaboration—not exhaustive stakeholder inclusion.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Scenarios from Three Amigos conversations become automated tests. Shared understanding translates to executable specifications, not static documentation requiring manual verification.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation of foundational principles guiding BDD practices.
 
 ## Document Metadata
 

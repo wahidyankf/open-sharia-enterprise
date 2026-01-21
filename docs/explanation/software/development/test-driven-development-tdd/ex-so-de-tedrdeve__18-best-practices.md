@@ -21,6 +21,18 @@ This guide presents proven best practices that maximize TDD's value. Understandi
 - **Faster Debugging**: Failures pinpoint exact problem locations
 - **Team Velocity**: Initial investment pays dividends through reduced debugging time
 
+## Core Principles
+
+TDD best practices embody foundational principles from this repository's [software engineering principles](../../../../../governance/principles/software-engineering/):
+
+**[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**: TDD automates verification through comprehensive test suites. Best practices ensure tests run automatically (CI/CD integration), catch errors early (pre-commit hooks), and provide fast feedback loops. Automation eliminates manual verification and enables continuous quality assurance.
+
+**[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**: Well-written tests make behavior explicit. Descriptive test names, clear assertions, and focused tests document exactly what code should do. Tests serve as executable specifications that never go stale—explicit requirements enforced by automation.
+
+**[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)**: Best practices favor simple, focused tests over complex, multi-purpose ones. One behavior per test, minimal setup, straightforward assertions. Start simple (Red-Green), add complexity only when needed (Refactor).
+
+These principles guide TDD practices toward maintainable, reliable test suites that support long-term development velocity.
+
 ## Best Practices
 
 ### 1. Follow the Red-Green-Refactor Cycle Strictly
@@ -33,7 +45,7 @@ This guide presents proven best practices that maximize TDD's value. Understandi
 
 **Refactor Phase**: Improve code structure while keeping tests green. Both production code and test code should be refactored.
 
-**Why It Matters**: This cycle ensures tests genuinely verify new functionality rather than existing code. Skipping the red phase risks writing tests that always pass.
+**Why It Matters**: This cycle ensures tests genuinely verify new functionality rather than existing code. Skipping the red phase risks writing tests that always pass. This embodies **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**—seeing the test fail first verifies that your automated check actually detects the missing functionality.
 
 **Example: Tax Calculation**
 
@@ -917,7 +929,7 @@ describe("TaxCalculator (with builder)", () => {
 
 **Practice**: Test names should read like specifications. Use full sentences that describe the expected behavior and conditions.
 
-**Why It Matters**: Good names serve as documentation and produce readable test reports. When tests fail, clear names immediately communicate what broke.
+**Why It Matters**: Good names serve as documentation and produce readable test reports. When tests fail, clear names immediately communicate what broke. This aligns with **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**—test names explicitly state what behavior is being verified, requiring no insider knowledge to understand.
 
 **Example: Naming Conventions**
 
@@ -1163,6 +1175,20 @@ Use this framework to evaluate your TDD practices:
 - [ ] Block merges when tests fail
 - [ ] Fix or delete failing tests immediately
 - [ ] Monitor test suite health metrics
+
+## Related Principles
+
+**Software Engineering Principles**:
+
+- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md) - TDD automates verification and enables CI/CD integration
+- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md) - Tests make behavior explicit through descriptive names and assertions
+- [Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md) - Start simple, add complexity only when needed
+
+**Related Practices**:
+
+- [Implementation Workflow](../../../../../governance/development/workflow/implementation.md) - Make it work → Make it right → Make it fast
+- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Pure functions for testability
+- [Code Quality](../../../../../governance/development/quality/code.md) - Automated quality gates
 
 ## Quick Reference
 

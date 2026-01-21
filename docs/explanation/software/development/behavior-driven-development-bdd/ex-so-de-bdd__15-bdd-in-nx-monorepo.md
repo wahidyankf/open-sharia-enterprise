@@ -10,6 +10,13 @@ For Islamic finance platforms with multiple apps (ose-backend-api, ose-frontend-
 
 This document covers Nx configuration for BDD tests, affected command strategies, project graph integration, organizing features in monorepo structure, caching strategies, and CI/CD patterns for Nx + BDD workflows.
 
+## Core Principles
+
+Nx with BDD aligns with software engineering principles:
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Nx automates affected test detection and execution through computational caching.
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Co-locating features with code maintains simple, predictable organization.
+
 ## Nx Project Configuration for BDD
 
 ### Basic Nx Project Setup
@@ -764,6 +771,15 @@ Nx provides powerful monorepo tooling that enhances BDD workflows through intell
 - Distributed caching speeds up Compliance compliance verification
 
 Use Nx's affected commands, caching, and project graph to maintain fast BDD feedback loops even as your Islamic finance monorepo grows to dozens of projects and hundreds of scenarios.
+
+## Related Principles
+
+Nx with BDD demonstrates alignment with:
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Automated affected test detection and caching.
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Clear project structure with co-located features.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Document Metadata
 

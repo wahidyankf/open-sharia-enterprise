@@ -34,6 +34,16 @@ Behavior-Driven Development (BDD) succeeds when teams focus on collaboration, sh
 - Enables confident refactoring with comprehensive scenario coverage
 - Shortens feedback loops and accelerates delivery
 
+## Core Principles
+
+BDD best practices align with fundamental software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Concrete examples make requirements explicit, eliminating ambiguity from abstract descriptions. Instead of "calculate Tax correctly," scenarios explicitly state "Given 100 grams gold, Then Tax is 2.5 grams."
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - CI/CD integration automates scenario execution, documentation generation, and regression detection, replacing error-prone manual testing processes.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Short, focused scenarios testing single behaviors are simpler to understand and maintain than complex multi-assertion tests. User-perspective scenarios remain stable when implementation changes.
+
 ## Best Practices
 
 ### 1. Prioritize Discovery and Collaboration
@@ -162,10 +172,10 @@ Scenario: Reject Tax payment if below minimum threshold
 - Helps domain experts validate business rules
 - Documents actual system behavior
 
-**How to Implement**:
+**How to Implement** (applies **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**):
 
 ```gherkin
-# GOOD: Concrete, specific
+# GOOD: Concrete, specific, explicit
 Scenario: Calculate Tax on gold at threshold threshold
   Given I own 85 grams of gold (exactly threshold)
   And gold price is $60 per gram
@@ -173,7 +183,7 @@ Scenario: Calculate Tax on gold at threshold threshold
   Then I owe 2.125 grams of gold (85 * 2.5%)
   And cash equivalent is $127.50
 
-# BAD: Abstract, vague (see antipatterns doc)
+# BAD: Abstract, vague, implicit (see antipatterns doc)
 # Scenario: Calculate Tax on sufficient wealth
 #   Given user has enough assets
 #   And assets exceed threshold
@@ -222,12 +232,12 @@ Scenario: Tax on silver above threshold
 
 ### 6. Integrate Scenarios into CI/CD Pipeline
 
-**Practice**: Run BDD scenarios automatically on every commit and deployment.
+**Practice**: Run BDD scenarios automatically on every commit and deployment (implements **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**).
 
 **Why It Works**:
 
-- Shortens feedback loops
-- Catches regressions immediately
+- Shortens feedback loops through automated execution
+- Catches regressions immediately without manual testing
 - Ensures living documentation stays synchronized with code
 - Validates business requirements continuously
 
@@ -389,6 +399,16 @@ Scenario: Test currency conversion utility
 **Living Documentation**: Scenarios serve as always-up-to-date documentation
 
 **Ubiquitous Language**: Domain terminology used consistently in scenarios and code
+
+## Related Principles
+
+BDD best practices demonstrate alignment with core software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Concrete examples in scenarios make requirements explicit, removing ambiguity from abstract descriptions and ensuring all stakeholders understand expected behavior identically.
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - CI/CD integration automates scenario execution, living documentation generation, and regression detection, eliminating manual testing overhead.
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Short, focused scenarios testing single behaviors remain simple to understand, maintain, and debug compared to complex multi-behavior tests.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Related Documentation
 

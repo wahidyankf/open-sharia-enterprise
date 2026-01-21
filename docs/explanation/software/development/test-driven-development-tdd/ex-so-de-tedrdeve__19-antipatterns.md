@@ -18,6 +18,13 @@ Test-Driven Development (TDD) antipatterns are common mistakes that undermine th
 - **Reduced Coverage**: Giant tests miss edge cases and boundary conditions
 - **Design Degradation**: Implementation-coupled tests prevent refactoring
 
+## Core Principles
+
+Understanding TDD antipatterns helps maintain alignment with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Antipatterns often arise from implicit assumptions: missing assertions (The Liar), unclear test intent (The Giant), hidden implementation coupling. Explicit assertions, clear test names, and behavior-focused tests prevent these pitfalls.
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Many antipatterns introduce unnecessary complexity: excessive setup, flaky timing, over-mocking. Simple, focused tests that verify one behavior each avoid these problems.
+
 ## Antipattern 1: The Liar
 
 **Antipattern**: A test that passes but doesn't actually verify the claimed behavior. The test may have incorrect assertions, missing validations, or test the wrong thing entirely.
@@ -1163,6 +1170,11 @@ Use this framework to evaluate your TDD practices when reviewing test code.
 - [Code Quality Standards](../../../../../governance/development/quality/code.md) - Quality automation
 - [Testing Conventions](../../../../../governance/development/pattern/functional-programming.md) - Testing standards
 - [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - FP principles
+
+## Related Principles
+
+- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
+- [Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)
 
 ## Sources
 

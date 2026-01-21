@@ -7,6 +7,13 @@
 - **Use Case**: Implement executable step definitions
 - **Complexity**: Intermediate
 
+## Core Principles
+
+Step definitions align with software engineering principles:
+
+- **[Pure Functions Over Side Effects](../../../../../../governance/principles/software-engineering/pure-functions.md)** - Minimize side effects in step implementations.
+- **[Immutability](../../../../../../governance/principles/software-engineering/immutability.md)** - Use immutable test data and value objects.
+
 ## Template Structure
 
 ```typescript

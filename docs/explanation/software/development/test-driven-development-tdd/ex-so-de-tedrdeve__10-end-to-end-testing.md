@@ -8,6 +8,12 @@ E2E tests sit at the top of the testing pyramid. They provide maximum confidence
 
 This document covers when E2E tests are appropriate, how to structure them using Playwright, the Page Object Model pattern, testing strategies for Hugo static sites, and anti-patterns that lead to slow, brittle test suites.
 
+## Core Principles
+
+End-to-end testing aligns with software engineering principles:
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - E2E tests automate critical user journeys that would otherwise require manual testing before each release. Playwright enables fast, reliable browser automation that catches integration bugs across the full system stack.
+
 ## E2E vs Integration vs Unit Tests
 
 ### Test Type Comparison
@@ -751,3 +757,7 @@ E2E tests provide maximum confidence but maximum cost. Use them strategically fo
 - **[18. Best Practices](./ex-so-de-tedrdeve__18-best-practices.md)** - TDD best practices
 - **[19. Antipatterns](./ex-so-de-tedrdeve__19-antipatterns.md)** - E2E anti-patterns
 - **[15. Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md)** - When to write E2E vs other test types
+
+## Related Principles
+
+- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)

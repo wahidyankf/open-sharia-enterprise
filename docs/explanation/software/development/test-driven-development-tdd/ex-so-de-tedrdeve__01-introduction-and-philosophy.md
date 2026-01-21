@@ -49,6 +49,16 @@ TDD now integrates with Domain-Driven Design (testing aggregates, domain events)
 - **2015+**: Mutation testing tools (Stryker, PITest) validate test suite quality
 - **2020+**: Test observability and AI-assisted test generation emerge
 
+## Core Principles
+
+TDD embodies several foundational principles from this repository's [software engineering principles](../../../../../governance/principles/software-engineering/):
+
+**[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**: TDD automates verification through tests. Instead of manually verifying behavior after each change, tests automatically validate correctness on every run. The test-first approach ensures automated verification exists before code is written.
+
+**[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**: Tests make requirements explicit. Rather than implicit assumptions about behavior, tests document exact expectations. Each test explicitly states what the code should do, creating executable specifications.
+
+These principles make TDD a natural fit for building reliable, maintainable systems. Tests automate verification while making behavior explicit and verifiable.
+
 ## Core Philosophy
 
 TDD embodies several core philosophical principles that distinguish it from traditional test-after development.
@@ -180,7 +190,7 @@ class Money {
 
 ### 3. Test-First Ensures Testability by Construction
 
-Writing tests after code often reveals design problems too late. Tight coupling, hidden dependencies, and god objects make testing difficult. TDD prevents these issues by ensuring every piece of code is testable from inception.
+Writing tests after code often reveals design problems too late. Tight coupling, hidden dependencies, and god objects make testing difficult. TDD prevents these issues by ensuring every piece of code is testable from inception. This aligns with **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**—writing tests first forces explicit dependency declaration and clear interfaces rather than hidden coupling.
 
 **Example: Testing Reveals Design Problem**
 
@@ -978,6 +988,20 @@ TDD fits naturally with Nx:
 - Fast feedback loops during development
 
 See [TDD in Nx Monorepo](./ex-so-de-tedrdeve__16-tdd-in-nx-monorepo.md).
+
+## Related Principles
+
+**Software Engineering Principles**:
+
+- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md) - TDD automates verification through test-first development
+- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md) - Tests make requirements and behavior explicit
+- [Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md) - Red-Green-Refactor cycle starts simple, adds complexity only when needed
+
+**Related Practices**:
+
+- [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Pure functions are naturally testable
+- [Implementation Workflow](../../../../../governance/development/workflow/implementation.md) - Make it work → Make it right → Make it fast aligns with TDD
+- [Code Quality](../../../../../governance/development/quality/code.md) - Automated testing supports quality automation
 
 ## Summary
 

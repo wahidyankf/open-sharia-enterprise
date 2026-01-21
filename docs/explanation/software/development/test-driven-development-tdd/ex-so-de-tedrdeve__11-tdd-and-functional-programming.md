@@ -8,11 +8,29 @@ This document explores how TDD complements functional programming: testing pure 
 
 Mastering TDD in a functional style results in code that is easier to reason about, easier to test, and easier to refactor. The combination is powerful: tests drive toward pure, composable functions, and pure functions make tests trivial to write.
 
+## Core Principles
+
+Functional programming with TDD embodies multiple software engineering principles:
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Pure functions are inherently testable. No mocks, no setup, no teardown—just input and expected output. Tests verify the function contract without infrastructure dependencies. Same input always produces same output, eliminating flaky tests.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Deterministic pure functions (same inputs → same outputs) enable reproducible test execution. No flaky tests, no race conditions, no environment-specific failures. Tests pass consistently across all environments and time.
+
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Immutable data structures eliminate entire categories of test complexity. No defensive copying, no temporal coupling, no shared mutable state between tests. Value objects and immutable collections prevent state-related bugs.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Property-based testing automates generation of hundreds of test cases. Automated invariant checking replaces manual example enumeration. QuickCheck-style testing verifies properties hold for entire input domains.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Pure functions are simple: input → output. No hidden state, no temporal coupling, no complex setup. Functional core/imperative shell pattern isolates complexity at system boundaries.
+
+Functional programming amplifies TDD benefits through strict principle adherence.
+
 ## Why Functional Programming Simplifies Testing
 
 ### Pure Functions: The Testing Sweet Spot
 
 **Pure function**: Same input → same output, no side effects.
+
+This is the textbook implementation of **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)**. Pure functions are the testing sweet spot—no mocks, no infrastructure, just input and expected output. The function contract is verifiable in isolation.
 
 ```typescript
 // PURE: Easy to test ✅
@@ -69,6 +87,8 @@ describe("TaxService", () => {
 ### Determinism and Repeatability
 
 Pure functions are **deterministic**: same input always produces same output.
+
+This embodies **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**. Deterministic functions enable reproducible test execution—no flaky tests, no environment-specific failures. Tests pass consistently across all environments and time.
 
 ```typescript
 // GOOD: Pure, deterministic
@@ -672,6 +692,24 @@ Functional programming and TDD are natural partners:
 5. Refactoring is safer (properties still hold)
 
 Functional programming pushes side effects to system edges, leaving a pure, testable core. Property-based testing verifies invariants hold universally. Together, they create robust, maintainable systems.
+
+## Related Principles
+
+Functional programming with TDD demonstrates alignment with all core software engineering principles:
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Pure functions are inherently testable—no mocks, no setup, no teardown. Tests verify function contracts in complete isolation. Same inputs always produce same outputs, eliminating non-deterministic failures.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Deterministic pure functions enable reproducible test execution across all environments and time. Property-based tests verify invariants hold reproducibly for entire input domains. No flaky tests, no race conditions.
+
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Immutable data structures eliminate temporal coupling and defensive copying. Value objects and immutable collections prevent state-related bugs. Tests verify operations create new instances without mutating originals.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Property-based testing automates generation of hundreds of test cases, replacing manual example enumeration. fast-check automatically finds edge cases humans miss. Automated invariant verification across entire input domains.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Pure functions are simple: input → output. Functional core/imperative shell pattern isolates complexity at system boundaries. No hidden state, no temporal coupling, no complex setup in tests.
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Function signatures explicitly declare inputs and outputs through types. Pure functions make dependencies explicit through parameters, not hidden global state. Type systems make contracts explicit.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation of foundational principles.
 
 ## Related Documentation
 

@@ -16,6 +16,13 @@
 
 This template provides a standardized structure for writing integration tests that verify how multiple components work together with real infrastructure dependencies like databases, message queues, and external services. Integration tests are slower than unit tests but provide higher confidence in system behavior.
 
+## Core Principles
+
+Integration testing aligns with software engineering principles:
+
+- **[Reproducibility First](../../../../../../governance/principles/software-engineering/reproducibility.md)** - Integration tests use test containers and isolated environments to ensure reproducible test execution across different systems.
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Tests explicitly verify component interactions and infrastructure behavior with real dependencies.
+
 ## When to Use Integration Tests
 
 **Use Integration Tests When**:
@@ -938,6 +945,14 @@ beforeAll(async () => {
 - [Unit Test Template](./ex-so-de-tedrdeve-te__unit-test-template.md) - Testing isolated units
 - [Test Data Builder Template](./ex-so-de-tedrdeve-te__test-data-builder-template.md) - Creating test data
 - [CI/CD Pipeline Template](./ex-so-de-tedrdeve-te__ci-cd-pipeline-template.md) - Running tests in pipeline
+
+## Related Principles
+
+Integration testing demonstrates alignment with:
+
+- **[Reproducibility First](../../../../../../governance/principles/software-engineering/reproducibility.md)** - Test containers ensure identical infrastructure across all test environments.
+
+See [Software Engineering Principles](../../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Summary
 

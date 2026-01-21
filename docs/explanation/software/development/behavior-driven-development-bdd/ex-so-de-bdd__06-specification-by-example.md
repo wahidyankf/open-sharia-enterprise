@@ -8,6 +8,14 @@ The power of Specification by Example lies in its simplicity: instead of writing
 
 This document explores Specification by Example as both a philosophy and a practice, covering why examples are more effective than abstractions, how to collaborate on specifications, the lifecycle of examples from discovery to automation, and practical applications in Islamic finance domains where precision and compliance are paramount.
 
+## Core Principles
+
+Specification by Example embodies fundamental software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Concrete examples make requirements explicit rather than relying on implicit understanding. When a specification states "Tax is 2.5% of wealth above threshold," developers must interpret what "threshold" means and when it applies. But when the specification provides "Given individual owns 100 grams of gold, and threshold is 85 grams, then Tax is 2.5 grams," there's no room for misinterpretation. This explicitness prevents the hidden assumptions that cause implementation bugs.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Concrete examples are simpler to understand than abstract rules. Instead of documenting complex conditions in prose ("Tax applies when wealth exceeds threshold and hawl is complete unless certain exemptions apply"), examples show specific cases that anyone can verify. This simplicity makes specifications accessible to all stakeholders, from Compliance scholars to developers to QA engineers.
+
 ## What is Specification by Example?
 
 ### Definition
@@ -148,7 +156,7 @@ Now "transparent" has concrete meaning.
 
 ### Precision in Complex Domains
 
-Islamic finance involves intricate jurisprudence where precision is critical for religious compliance. Examples provide the specificity required.
+Islamic finance involves intricate jurisprudence where precision is critical for religious compliance. Examples provide the specificity required. This precision directly supports the **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** principle—in domains where correctness is mandatory (regulatory compliance, financial calculations, religious obligations), implicit understanding is insufficient.
 
 **Abstract**: "Interest (interest) is prohibited; Loan uses fixed profit markup instead"
 
@@ -770,6 +778,15 @@ Specification by Example is the foundational principle of BDD: using concrete ex
 Specification by Example transforms requirements from documents that go stale into living examples that are validated continuously. When business rules change, examples change first, tests fail, and code must be updated—automatic synchronization between specification and implementation.
 
 The next topic—Discovery and Formulation—explores the two-phase process of first discovering requirements through conversation, then formulating them into executable specifications.
+
+## Related Principles
+
+Specification by Example demonstrates alignment with core software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Concrete examples eliminate ambiguity by explicitly stating inputs, conditions, and expected outcomes instead of relying on implicit understanding.
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Real-world examples are simpler to understand than abstract descriptions, making specifications accessible to all stakeholders regardless of technical background.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Document Metadata
 

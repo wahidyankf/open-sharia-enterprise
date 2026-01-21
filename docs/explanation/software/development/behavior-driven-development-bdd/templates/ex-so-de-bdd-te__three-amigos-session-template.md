@@ -7,6 +7,12 @@
 - **Use Case**: Structure collaborative requirement discovery
 - **Complexity**: Beginner
 
+## Core Principles
+
+Three Amigos sessions align with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Collaborative discovery makes implicit assumptions explicit through concrete examples.
+
 ## Template Structure
 
 ```markdown

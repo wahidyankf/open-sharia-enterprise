@@ -8,6 +8,13 @@ At its core, Gherkin uses simple keywords (Feature, Scenario, Given, When, Then)
 
 This document covers Gherkin's complete syntax, from basic scenarios to advanced features like Scenario Outlines, data tables, and Background blocks. Understanding Gherkin is essential for writing clear, maintainable BDD specifications that serve both as requirements documentation and automated tests.
 
+## Core Principles
+
+Gherkin syntax aligns with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Given-When-Then makes preconditions, actions, and outcomes explicit rather than assuming context.
+- **[Documentation First](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Gherkin scenarios serve as executable specifications that document behavior before implementation.
+
 ## Gherkin Fundamentals
 
 ### What is Gherkin?
@@ -1057,6 +1064,15 @@ Gherkin provides a structured natural language syntax for writing executable spe
 Gherkin specifications become **living documentation** that never goes stale because they must pass for the system to work. When business rules change, scenarios are updated first, ensuring implementation stays aligned with requirements.
 
 The next step is understanding the **Given-When-Then pattern** in depth, exploring how to structure scenarios to clearly separate context, action, and outcome.
+
+## Related Principles
+
+Gherkin demonstrates alignment with:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Given-When-Then pattern makes preconditions, actions, and expectations explicit.
+- **[Documentation First](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Feature files document behavior before code is written.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Document Metadata
 

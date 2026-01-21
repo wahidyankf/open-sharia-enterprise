@@ -15,6 +15,13 @@
 
 This template provides a standardized structure for writing unit tests using the AAA (Arrange-Act-Assert) pattern. Unit tests should be fast, isolated, and focused on testing a single unit of behavior.
 
+## Core Principles
+
+Unit testing aligns with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Tests explicitly document expected behavior through clear assertions, making system contracts visible and verifiable.
+- **[Pure Functions Over Side Effects](../../../../../../governance/principles/software-engineering/pure-functions.md)** - Unit tests verify pure function behavior by testing deterministic inputs and outputs without external dependencies.
+
 ## Template Structure
 
 ```typescript
@@ -728,6 +735,14 @@ describe("Money", () => {
 - [Integration Test Template](./ex-so-de-tedrdeve-te__integration-test-template.md) - Testing with real dependencies
 - [Test Data Builder Template](./ex-so-de-tedrdeve-te__test-data-builder-template.md) - Creating test data
 - [Property-Based Test Template](./ex-so-de-tedrdeve-te__property-based-test-template.md) - Testing with generated data
+
+## Related Principles
+
+Unit testing demonstrates alignment with:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Tests serve as explicit documentation of behavior contracts.
+
+See [Software Engineering Principles](../../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Summary
 

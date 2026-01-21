@@ -10,6 +10,13 @@ For Islamic finance platforms, BDD+DDD integration is particularly powerful. DDD
 
 This document explores how BDD and DDD complement each other, practical integration patterns (features per bounded context, ubiquitous language in scenarios, testing aggregates and domain events), organizing BDD tests by domain architecture, and strategies for teams adopting both practices.
 
+## Core Principles
+
+BDD and DDD integration aligns with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Ubiquitous language makes domain concepts explicit in both code and scenarios.
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Organizing features by bounded context creates clear, maintainable structure.
+
 ## Ubiquitous Language in BDD Scenarios
 
 ### DDD Ubiquitous Language Principle
@@ -951,6 +958,15 @@ BDD and DDD are highly complementary practices that strengthen each other throug
 
 Use BDD and DDD together to create domain-aligned, stakeholder-verified, well-tested software that accurately models complex business domains while remaining accessible to domain experts.
 
+## Related Principles
+
+BDD and DDD demonstrate alignment with:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Ubiquitous language makes domain terms explicit everywhere.
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Bounded context organization avoids tangled dependencies.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
+
 ## Document Metadata
 
 - **Category**: Explanation
@@ -958,7 +974,7 @@ Use BDD and DDD together to create domain-aligned, stakeholder-verified, well-te
 - **Tags**: BDD, DDD, Domain-Driven Design, Ubiquitous Language, Bounded Context, Aggregates, Domain Events, Value Objects, Islamic Finance, Tax, Permitted, Loan
 - **Related Files**:
   - [README](./README.md) - BDD documentation overview
-  - [DDD Introduction](../architecture/domain-driven-design-ddd/README.md) - Domain-Driven Design overview
+  - [DDD Introduction](../../architecture/domain-driven-design-ddd/README.md) - Domain-Driven Design overview
   - [08. Feature Files and Organization](./ex-so-de-bdd__08-feature-files-and-organization.md) - Organizing by bounded context
   - [13. BDD and TDD](./ex-so-de-bdd__13-bdd-and-tdd.md) - TDD integration
 - **Prerequisites**: Understanding of DDD concepts (bounded contexts, aggregates, domain events), BDD scenarios (Gherkin)

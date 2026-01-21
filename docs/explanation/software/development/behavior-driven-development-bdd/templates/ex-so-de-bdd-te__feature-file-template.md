@@ -15,6 +15,13 @@
 
 This template provides structure for organizing BDD scenarios into feature files. Feature files group related scenarios by business capability, domain concept, or user workflow. Each feature includes description, background (shared setup), and multiple scenarios covering happy path, edge cases, and error handling.
 
+## Core Principles
+
+Feature file organization aligns with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Feature descriptions and scenarios make requirements explicit.
+- **[Simplicity Over Complexity](../../../../../../governance/principles/general/simplicity-over-complexity.md)** - Organizing by bounded context maintains simplicity.
+
 ## Template Structure
 
 ```gherkin

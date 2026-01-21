@@ -18,6 +18,12 @@ Example Mapping is a structured workshop technique for discovering requirements 
 
 This template guides facilitation of Example Mapping sessions, helping teams decide if stories are ready for development, need more research, or are too large.
 
+## Core Principles
+
+Example Mapping sessions align with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Makes implicit business rules and edge cases explicit through concrete examples.
+
 ## Template Structure
 
 ```markdown

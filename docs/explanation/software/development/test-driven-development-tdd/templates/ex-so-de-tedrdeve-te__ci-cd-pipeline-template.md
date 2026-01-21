@@ -16,6 +16,13 @@
 
 This template provides CI/CD pipeline configurations for running automated tests on every commit, pull request, and deployment. It includes examples for GitHub Actions, GitLab CI, and Nx-specific optimizations.
 
+## Core Principles
+
+CI/CD pipeline testing aligns with software engineering principles:
+
+- **[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Automated test execution on every commit provides immediate feedback and prevents manual testing overhead.
+- **[Reproducibility First](../../../../../../governance/principles/software-engineering/reproducibility.md)** - CI pipelines ensure tests run in consistent, reproducible environments with identical dependencies across all executions.
+
 ## GitHub Actions Template for Nx Monorepo
 
 ### Complete Workflow File
@@ -765,6 +772,14 @@ e2e-tests:
 - [ ] Pre-commit hooks prevent broken code
 - [ ] Matrix testing for multiple environments (optional)
 - [ ] Proper secrets management (API keys, tokens)
+
+## Related Principles
+
+CI/CD pipeline testing demonstrates alignment with:
+
+- **[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Pipelines automate test execution, removing manual intervention and human error.
+
+See [Software Engineering Principles](../../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Summary
 

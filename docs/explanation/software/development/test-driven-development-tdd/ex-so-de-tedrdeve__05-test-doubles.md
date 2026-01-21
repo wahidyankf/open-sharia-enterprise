@@ -8,6 +8,13 @@ The term "test double" comes from the film industry's "stunt double"—just as a
 
 Mastering test doubles is essential for effective TDD. They enable the "Fast" and "Independent" principles of good unit tests, prevent test fragility, and provide surgical precision when verifying interactions between components.
 
+## Core Principles
+
+Test doubles align with software engineering principles:
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Test doubles isolate side effects (I/O, time, randomness) from pure business logic, enabling fast deterministic tests. By mocking external dependencies while keeping domain logic pure, you verify correctness without slow integration tests.
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Each test double type has explicit semantics: stubs return canned data, mocks verify interactions, fakes provide working implementations. This explicitness makes test intent immediately clear.
+
 ## Types of Test Doubles
 
 Gerard Meszaros's "xUnit Test Patterns" (2007) cataloged five types of test doubles, each serving different purposes. Understanding when to use each type is critical for writing maintainable tests.
@@ -931,6 +938,11 @@ it("should calculate tax faster on second call (cached)", async () => {
 - **[09. Integration Testing](./ex-so-de-tedrdeve__09-integration-testing.md)** - When to use real dependencies vs test doubles
 - **[18. Best Practices](./ex-so-de-tedrdeve__18-best-practices.md)** - TDD best practices
 - **[19. Antipatterns](./ex-so-de-tedrdeve__19-antipatterns.md)** - Common mistakes with test doubles
+
+## Related Principles
+
+- [Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)
+- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
 
 ## Summary
 

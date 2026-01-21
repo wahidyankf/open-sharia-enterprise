@@ -10,6 +10,13 @@ For Islamic finance platforms, this complementary relationship provides layered 
 
 This document explores how BDD and TDD complement each other, the outside-in development workflow (double loop pattern), when to apply each practice, practical integration patterns for TypeScript/Node.js projects, and strategies for teams adopting both approaches simultaneously.
 
+## Core Principles
+
+BDD and TDD both align with software engineering principles:
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - TDD drives pure function design; BDD verifies side-effect-free business rules.
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Both automate quality verification through executable tests.
+
 ## BDD vs TDD: Complementary, Not Competing
 
 ### Key Differences
@@ -784,6 +791,15 @@ BDD and TDD are complementary practices that work together to ensure both extern
 - **Together**: Layered quality assurance (compliance + correctness)
 
 Use BDD and TDD together in outside-in development to create well-designed, well-tested, stakeholder-verified software that meets both business requirements and technical quality standards.
+
+## Related Principles
+
+BDD and TDD demonstrate alignment with:
+
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - TDD drives pure function design through unit tests.
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Both practices automate quality verification.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Document Metadata
 

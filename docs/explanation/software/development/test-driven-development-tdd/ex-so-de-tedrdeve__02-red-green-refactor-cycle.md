@@ -8,11 +8,27 @@ Each cycle is intentionally small, typically taking just a few minutes. The disc
 
 Understanding this cycle deeply is essential to practicing TDD effectively. Each phase has specific goals, techniques, and common pitfalls. Mastering the Red-Green-Refactor rhythm transforms how you approach software development.
 
+## Core Principles
+
+The Red-Green-Refactor cycle embodies fundamental software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Red phase makes requirements explicit through failing tests before writing code. No hidden assumptions about what "done" means—the test defines it explicitly. Test names explicitly describe expected behavior in plain language.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Green phase enforces minimal implementation: write the simplest code to pass. Refactor phase improves design structure without changing behavior, keeping complexity minimal. Each cycle takes minutes, not hours—simplicity through incremental progress.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - The entire cycle automates verification. Each cycle provides immediate automated feedback—no manual testing, no delayed QA phase. Tests run continuously, automatically verifying every change.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Tests establish reproducible specifications. Same test always produces same result. Refactoring preserves behavior reproducibly—tests pass before and after, guaranteeing no regression.
+
+This three-phase rhythm creates a sustainable development pace while maintaining high code quality through principle-driven practices.
+
 ## The Three Phases
 
 ### Red Phase: Write a Failing Test
 
 **Goal**: Specify **one** desired behavior through a failing test.
+
+This phase embodies **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**—the failing test explicitly declares what "done" means before implementation begins. No implicit requirements, no hidden assumptions. The test is the explicit specification.
 
 **Key Principles**:
 
@@ -154,6 +170,8 @@ it("should calculate tax", () => {
 ### Green Phase: Make it Pass (Simplest Implementation)
 
 **Goal**: Write **just enough** code to make the failing test pass.
+
+This phase embodies **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)**—write the simplest code to pass, resisting over-engineering and gold-plating. "Fake it till you make it" and "no premature optimization" are direct applications of choosing simplicity over complexity.
 
 **Key Principles**:
 
@@ -327,6 +345,8 @@ function calculateTax(wealth: Money, threshold: Money, rate: TaxRate): Money {
 ### Refactor Phase: Improve Design While Keeping Tests Green
 
 **Goal**: Improve code design and remove duplication **without changing behavior**.
+
+This phase embodies **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** and **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**. Refactoring improves design structure while keeping behavior stable (reproducible). Small incremental steps maintain simplicity—no big-bang rewrites. Tests provide reproducible safety net, passing before and after refactoring.
 
 **Key Principles**:
 
@@ -1135,6 +1155,20 @@ This rhythm produces code that is:
 - **Safe to change** (comprehensive test suite)
 
 Master this cycle, and you've mastered TDD.
+
+## Related Principles
+
+The Red-Green-Refactor cycle demonstrates alignment with core software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Red phase explicitly declares requirements through failing tests. No hidden assumptions about what "done" means. Test names explicitly describe expected behavior.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Green phase enforces simplest code to pass. Refactor phase improves structure incrementally through small steps. Each cycle takes minutes—simplicity through tiny verified steps.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Entire cycle automates verification. Tests run constantly (every 1-2 minutes), providing immediate automated feedback. No manual testing, no delayed QA phase.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Tests establish reproducible specifications. Refactoring preserves behavior reproducibly—tests pass before and after, guaranteeing no regression. Same test always produces same result.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation of foundational principles guiding TDD practices.
 
 ## Document Metadata
 

@@ -8,6 +8,12 @@ Integration tests sit in the middle of the testing pyramid. They're slower than 
 
 This document covers when to write integration tests, how to structure them, testing with real dependencies (databases, APIs), test containers, contract testing for bounded contexts, and best practices for maintaining a healthy integration test suite.
 
+## Core Principles
+
+Integration testing aligns with software engineering principles:
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Integration tests verify that components work correctly together across different environments. Test containers and database migrations ensure tests run identically locally and in CI, catching environment-specific bugs early.
+
 ## Integration Tests vs Unit Tests
 
 ### Key Differences
@@ -846,3 +852,7 @@ Integration tests catch bugs that unit tests miss while remaining faster and mor
 - **[07. Test Data Builders](./ex-so-de-tedrdeve__07-test-data-builders.md)** - Building complex test data
 - **[10. End-to-End Testing](./ex-so-de-tedrdeve__10-end-to-end-testing.md)** - Next level up in pyramid
 - **[12. TDD and DDD](./ex-so-de-tedrdeve__12-tdd-and-ddd.md)** - Testing repositories and bounded contexts
+
+## Related Principles
+
+- [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)

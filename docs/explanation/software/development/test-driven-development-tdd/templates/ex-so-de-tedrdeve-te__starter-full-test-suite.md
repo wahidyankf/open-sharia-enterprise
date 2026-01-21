@@ -17,6 +17,13 @@
 
 This template provides a complete, working test suite that includes unit tests, integration tests, property-based tests, test data builders, and test utilities. Use this as a starting point for testing a new feature or module.
 
+## Core Principles
+
+Comprehensive test suites align with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Complete test suites explicitly document all system behaviors, edge cases, and error conditions through executable specifications.
+- **[Reproducibility First](../../../../../../governance/principles/software-engineering/reproducibility.md)** - Test suites with builders, fixtures, and consistent test environments ensure reproducible verification of system behavior.
+
 ## Example: Permitted Certification System
 
 We'll build a complete test suite for a Permitted certification system that validates products, issues certifications, and manages expiry dates.
@@ -918,6 +925,14 @@ npm test -- --coverage
 # Watch mode
 npm test -- --watch
 ```
+
+## Related Principles
+
+Comprehensive test suites demonstrate alignment with:
+
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Tests serve as executable documentation that explicitly describes all system behaviors.
+
+See [Software Engineering Principles](../../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Summary
 

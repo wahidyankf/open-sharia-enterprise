@@ -149,7 +149,7 @@ Feature: Tax Calculation for Gold Wealth
 
 **Philosophy**: Concrete examples are more effective than abstract descriptions.
 
-Human brains understand **examples** better than abstract rules. BDD leverages this by specifying requirements through concrete scenarios that illustrate exactly how the system should behave.
+This philosophy embodies **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**. Abstract descriptions allow multiple interpretations; concrete examples eliminate ambiguity by showing exact behavior. Human brains understand **examples** better than abstract rules. BDD leverages this by specifying requirements through concrete scenarios that illustrate explicitly how the system should behave.
 
 **Abstract Description (Ambiguous)**:
 
@@ -222,7 +222,7 @@ Outside-in development ensures **business value drives implementation**, not tec
 
 **Philosophy**: Documentation should be executable and always up-to-date.
 
-Traditional documentation goes stale. Code comments lie. But BDD scenarios are **executable specifications**—they must pass for the system to work. This creates "living documentation" that never drifts from reality.
+This philosophy implements **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** and **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**. Traditional documentation goes stale because manual synchronization fails. Code comments lie. But BDD scenarios are **executable specifications**—they must pass for the system to work, automatically enforcing correctness. This creates "living documentation" that reproducibly verifies behavior on every execution.
 
 **Traditional Documentation (Goes Stale)**:
 
@@ -322,6 +322,36 @@ Scenario: Hijri calendar leap year handling
 ```
 
 These scenarios emerged from **conversation**, not from a requirements document.
+
+## Software Engineering Principles
+
+BDD naturally aligns with fundamental software engineering principles:
+
+### 1. Explicit Over Implicit
+
+**[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - BDD's "specification by example" makes requirements explicit through concrete scenarios rather than abstract descriptions. The Given-When-Then structure forces explicit declaration of preconditions, actions, and expectations. Domain terminology appears identically in conversations, documentation, and code through ubiquitous language. No hidden assumptions—every stakeholder sees the same explicit specification.
+
+**Example**: Instead of "system shall validate Tax eligibility" (implicit rules), BDD provides explicit scenarios showing exact wealth thresholds (85g gold), time requirements (lunar year), and specific calculations (2.5% rate).
+
+### 2. Simplicity Over Complexity
+
+**[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Example Mapping's 25-minute time-box enforces simplicity by preventing over-analysis. The Three Amigos brings just enough perspectives (business, development, testing) without bloated stakeholder meetings. BDD avoids complex testing frameworks in favor of readable Gherkin syntax that non-programmers understand.
+
+**Example**: Three Amigos (3 perspectives) is simpler than traditional requirements meetings with 10+ stakeholders. Example Mapping's hard time limit prevents architectural over-design before implementation starts.
+
+### 3. Automation Over Manual
+
+**[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Living documentation automates specification verification. Feature files execute automatically in CI/CD, eliminating manual regression testing. Gherkin scenarios become automated acceptance tests, not manual test scripts. Every commit verifies that behavior remains correct through automated scenario execution.
+
+**Example**: Tax calculation scenarios run automatically on every commit. If business rules change without updating scenarios, CI/CD fails immediately—no manual verification needed.
+
+### 4. Reproducibility First
+
+**[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Gherkin scenarios stored in version control ensure reproducible specifications. Same scenario executes identically across environments (dev, staging, prod) and across time. Deterministic Given sections establish repeatable preconditions. No flaky tests—if a scenario passes once, it passes consistently.
+
+**Example**: Tax scenarios with explicit preconditions (85g gold, lunar year complete) produce identical results whether run today or next year, whether run locally or in CI/CD. Version control preserves entire specification history.
+
+BDD best practices stem directly from these principles. See [Best Practices](./ex-so-de-bdd__17-best-practices.md) for principle applications.
 
 ## Benefits of Behavior-Driven Development
 
@@ -722,7 +752,7 @@ BDD integrates deeply with other practices in this repository:
 
 ### Implementation Workflow: Make It Work → Make It Right → Make It Fast
 
-**[Implementation Workflow](../../../../governance/development/workflow/implementation.md)**
+**[Implementation Workflow](../../../../../governance/development/workflow/implementation.md)**
 
 BDD aligns naturally with this philosophy:
 
@@ -732,7 +762,7 @@ BDD aligns naturally with this philosophy:
 
 ### Domain-Driven Design: Ubiquitous Language
 
-**[Domain-Driven Design](../architecture/domain-driven-design-ddd/README.md)**
+**[Domain-Driven Design](../../architecture/domain-driven-design-ddd/README.md)**
 
 BDD scenarios use DDD's ubiquitous language:
 
@@ -787,6 +817,20 @@ BDD is not:
 - Slower than traditional development (it prevents expensive rework)
 
 The next sections explore BDD's collaborative practices (Three Amigos, Example Mapping), technical implementation (Gherkin, step definitions, frameworks), and integration with other methodologies (TDD, DDD).
+
+## Related Principles
+
+BDD philosophy and practices demonstrate alignment with core software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Specification by Example makes requirements explicit through concrete scenarios. Given-When-Then structure explicitly declares preconditions, actions, expectations. Ubiquitous language ensures terminology is explicit and consistent across all communication.
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Three Amigos (3 roles) avoids bloated meetings. Example Mapping's 25-minute time-box prevents over-analysis. Gherkin syntax prioritizes readability over complex testing frameworks.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Living documentation automates specification verification through executable scenarios. CI/CD integration automates regression testing, replacing manual test execution.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Version-controlled Gherkin scenarios enable reproducible specifications. Deterministic preconditions (Given steps) ensure repeatable test execution across all environments.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation of foundational principles guiding BDD.
 
 ## Document Metadata
 

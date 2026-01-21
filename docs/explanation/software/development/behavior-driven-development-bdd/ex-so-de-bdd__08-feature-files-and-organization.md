@@ -10,6 +10,13 @@ For Islamic finance platforms, feature file organization directly mirrors domain
 
 This document covers feature file anatomy, naming conventions, directory structure by bounded context, organizational patterns for Nx monorepos, and best practices for keeping feature files maintainable as your system grows.
 
+## Core Principles
+
+Feature file organization aligns with software engineering principles:
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Organize by bounded context with clear hierarchies rather than complex nested structures.
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Feature files explicitly document capabilities through Gherkin scenarios.
+
 ## Feature File Anatomy
 
 ### Basic Structure
@@ -1056,6 +1063,15 @@ Feature files bridge business requirements and executable specifications in Beha
 - Quarterly domain expert reviews (Compliance scholars)
 
 Proper feature file organization creates living documentation that is accessible to both technical teams and domain experts, ensuring specifications remain aligned with business requirements as the system evolves.
+
+## Related Principles
+
+Feature organization demonstrates alignment with:
+
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Flat directory structure per bounded context avoids unnecessary nesting.
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Clear naming conventions and file headers make ownership explicit.
+
+See [Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md) for comprehensive documentation.
 
 ## Document Metadata
 

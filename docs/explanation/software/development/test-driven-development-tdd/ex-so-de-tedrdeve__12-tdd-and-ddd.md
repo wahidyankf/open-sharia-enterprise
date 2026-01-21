@@ -8,6 +8,13 @@ This document explores how to test DDD building blocks: aggregates (with invaria
 
 Mastering TDD with DDD results in domain models that are expressive, testable, and resilient to change. Tests become living documentation of business rules.
 
+## Core Principles
+
+TDD with DDD aligns with software engineering principles:
+
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - DDD tactical patterns (aggregates, value objects, entities) make domain boundaries and business rules explicit. Tests verify these explicit contracts, ensuring invariants are enforced and domain logic is correct.
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Value objects and domain entities encapsulate pure business logic without I/O side effects. This separation enables fast unit tests for domain rules while isolating persistence concerns to repositories.
+
 ## Testing Aggregates
 
 ### What Are Aggregates?
@@ -851,3 +858,8 @@ DDD tactical patterns create clear testing boundaries. Each pattern has specific
 - **[09. Integration Testing](./ex-so-de-tedrdeve__09-integration-testing.md)** - Repository persistence testing
 - **[11. TDD and Functional Programming](./ex-so-de-tedrdeve__11-tdd-and-functional-programming.md)** - Value objects as pure data
 - **[14. Refactoring with Tests](./ex-so-de-tedrdeve__14-refactoring-with-tests.md)** - Refactoring domain models safely
+
+## Related Principles
+
+- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
+- [Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)
