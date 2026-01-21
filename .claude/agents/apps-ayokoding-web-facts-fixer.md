@@ -41,11 +41,11 @@ tools: Read, Edit, Write, Glob, Grep, Bash, WebFetch, WebSearch
 
 This agent leverages Skills from `.claude/skills/`:
 
-2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
-3. **`docs-validating-factual-accuracy`** - Progressive knowledge delivery
-4. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
-5. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
-6. **`repo-generating-validation-reports`** - Progressive knowledge delivery
+1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
+2. **`docs-validating-factual-accuracy`** - Progressive knowledge delivery
+3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
+4. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
+5. **`repo-generating-validation-reports`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
