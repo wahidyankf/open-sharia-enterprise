@@ -1909,6 +1909,6 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 
 ---
 
-**Last Updated**: 2026-01-21
-**Java Version**: 17+ (sealed classes, records), 21+ (pattern matching finalized), 25 (primitive patterns preview)
-**Blessed Libraries**: JSpecify 1.0.0, NullAway 0.12.4, Checker Framework 3.48.2, Error Prone 2.36.0
+- **Last Updated**: 2026-01-21
+- **Java Version**: 17+ (sealed classes, records), 21+ (pattern matching finalized), 25 (primitive patterns preview)
+- **Blessed Libraries**: JSpecify 1.0.0, NullAway 0.12.4, Checker Framework 3.48.2, Error Prone 2.36.0

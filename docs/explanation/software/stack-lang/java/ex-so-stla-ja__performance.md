@@ -1655,6 +1655,6 @@ This documentation is based on authoritative sources and up-to-date (2026) perfo
 
 ---
 
-**Last Updated**: 2026-01-21
-**Java Versions**: 17 LTS, 21 LTS, 25 LTS
-**Tools**: JFR, async-profiler, JMH, Gatling, Micrometer, Prometheus
+- **Last Updated**: 2026-01-21
+- **Java Versions**: 17 LTS, 21 LTS, 25 LTS
+- **Tools**: JFR, async-profiler, JMH, Gatling, Micrometer, Prometheus
