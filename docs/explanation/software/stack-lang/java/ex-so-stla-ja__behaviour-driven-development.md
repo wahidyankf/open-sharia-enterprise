@@ -105,35 +105,27 @@ Feature: Zakat Calculation
 
 BDD is a three-phase collaborative process.
 
-```
-┌──────────────────────────────────────────────────────┐
-│                   BDD CYCLE                          │
-│                                                       │
-│  ┌──────────────┐                                    │
-│  │  DISCOVERY   │ ──────────────┐                    │
-│  │  Collaborate │               │                    │
-│  │  on examples │               │                    │
-│  └──────────────┘               │                    │
-│         │                       │                    │
-│         │                       │                    │
-│         v                       │                    │
-│  ┌──────────────┐               │                    │
-│  │ FORMULATION  │ <─────────────┘                    │
-│  │ Document     │                                    │
-│  │ in Gherkin   │                                    │
-│  └──────────────┘                                    │
-│         │                                             │
-│         │                                             │
-│         v                                             │
-│  ┌──────────────┐                                    │
-│  │  AUTOMATION  │                                    │
-│  │  Implement   │                                    │
-│  │  step defs   │                                    │
-│  └──────────────┘                                    │
-│         │                                             │
-│         │                                             │
-│         └────> Living Documentation                  │
-└──────────────────────────────────────────────────────┘
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+flowchart TD
+    Start([BDD CYCLE]):::purple
+    Discovery[DISCOVERY<br/>Collaborate<br/>on examples]:::blue
+    Formulation[FORMULATION<br/>Document<br/>in Gherkin]:::orange
+    Automation[AUTOMATION<br/>Implement<br/>step defs]:::teal
+    Living[Living Documentation]:::purple
+
+    Start --> Discovery
+    Discovery --> Formulation
+    Formulation --> Automation
+    Automation --> Living
+    Formulation -.feedback loop.-> Discovery
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
 ```
 
 ### Phase 1: Discovery
@@ -307,6 +299,77 @@ Feature: Donation Allocation
     ...
 ```
 
+**Background for Authentication Context**:
+
+```gherkin
+Feature: Loan Application Processing
+
+  Background:
+    Given a user with the following credentials:
+      | Username | Email               | Role        | Status  |
+      | john.doe | john@example.com    | Applicant   | Active  |
+    And the user is authenticated with token "Bearer abc123xyz"
+    And the session expires at "2026-01-21T18:00:00Z"
+    And the following security policies are active:
+      | Policy       | Value           |
+      | MFA Required | true            |
+      | Max Attempts | 3               |
+      | Lockout Time | 30 minutes      |
+
+  Scenario: Submit loan application with valid authentication
+    # User context from Background is available
+    When the user submits a loan application for "50,000 USD"
+    Then the application should be created with status "Pending Review"
+```
+
+**Background for Multi-Currency Testing**:
+
+```gherkin
+Feature: Currency Exchange in Donations
+
+  Background:
+    Given the following exchange rates are configured:
+      | From | To  | Rate   | Last Updated        |
+      | USD  | EUR | 0.85   | 2026-01-21T09:00:00 |
+      | USD  | GBP | 0.73   | 2026-01-21T09:00:00 |
+      | USD  | SAR | 3.75   | 2026-01-21T09:00:00 |
+    And the base currency is "USD"
+    And exchange rate tolerance is "0.5%"
+    And rate refresh interval is "1 hour"
+
+  Scenario: Donate in foreign currency
+    When a donor contributes "100 EUR"
+    Then the system should convert to "117.65 USD"
+    And the exchange rate used should be "0.85"
+    And the conversion timestamp should be recorded
+```
+
+**Background for Regulatory Compliance**:
+
+```gherkin
+Feature: KYC and AML Compliance
+
+  Background:
+    Given the following regulatory thresholds are configured:
+      | Regulation | Threshold  | Authority | Effective Date |
+      | KYC Tier 1 | 1,000 USD  | FinCEN    | 2025-01-01     |
+      | KYC Tier 2 | 10,000 USD | FinCEN    | 2025-01-01     |
+      | AML Alert  | 5,000 USD  | FinCEN    | 2025-01-01     |
+    And the following verification documents are accepted:
+      | Document Type     | Valid For | Issuer      |
+      | Passport          | 10 years  | Government  |
+      | Driver License    | 5 years   | DMV         |
+      | National ID       | 10 years  | Government  |
+    And suspicious activity monitoring is enabled
+    And the compliance officer is "compliance@example.com"
+
+  Scenario: Large donation triggers KYC verification
+    When a donor contributes "15,000 USD"
+    Then KYC Tier 2 verification should be required
+    And the compliance officer should be notified
+    And the donation status should be "Pending KYC"
+```
+
 ### Scenario Outline
 
 Data-driven scenarios with examples table.
@@ -326,6 +389,91 @@ Scenario Outline: Zakat calculation for different balances
     | 10,000 USD    | 125.00 USD     |
     | 5,000 USD     | 0.00 USD       |
     | 4,999 USD     | 0.00 USD       |
+```
+
+**Loan Eligibility with Multiple Criteria**:
+
+```gherkin
+Scenario Outline: Loan eligibility based on income and credit score
+  Given an applicant with monthly income "<income>"
+  And a credit score of "<credit_score>"
+  And employment status "<employment>"
+  When I check loan eligibility for amount "<loan_amount>"
+  Then the application should be "<status>"
+  And the reason should be "<reason>"
+
+  Examples:
+    | income    | credit_score | employment | loan_amount | status   | reason                           |
+    | 5,000 USD | 750          | Full-time  | 50,000 USD  | Approved | Meets all criteria               |
+    | 5,000 USD | 650          | Full-time  | 50,000 USD  | Pending  | Credit score review required     |
+    | 5,000 USD | 550          | Full-time  | 50,000 USD  | Rejected | Credit score below minimum       |
+    | 3,000 USD | 750          | Full-time  | 50,000 USD  | Rejected | Income insufficient for amount   |
+    | 5,000 USD | 750          | Part-time  | 50,000 USD  | Pending  | Employment verification required |
+    | 10,000    | 800          | Full-time  | 100,000 USD | Approved | Premium applicant                |
+```
+
+**Donation Fee Calculation Tiers**:
+
+```gherkin
+Scenario Outline: Processing fees based on donation amount
+  Given a donation platform with tiered fee structure
+  When a donor contributes "<amount>"
+  Then the processing fee should be "<fee>"
+  And the net amount to charity should be "<net_amount>"
+  And the fee percentage should be "<fee_pct>"
+
+  Examples:
+    | amount      | fee      | net_amount | fee_pct |
+    | 10 USD      | 0.50 USD | 9.50 USD   | 5.0%    |
+    | 50 USD      | 2.00 USD | 48.00 USD  | 4.0%    |
+    | 100 USD     | 3.00 USD | 97.00 USD  | 3.0%    |
+    | 500 USD     | 10.00    | 490.00 USD | 2.0%    |
+    | 1,000 USD   | 10.00    | 990.00 USD | 1.0%    |
+    | 10,000 USD  | 50.00    | 9,950 USD  | 0.5%    |
+```
+
+**Zakat Asset Type Variations**:
+
+```gherkin
+Scenario Outline: Zakat calculation for different asset types
+  Given a Muslim with zakatable assets
+  And the asset type is "<asset_type>"
+  And the asset value is "<value>"
+  And the applicable nisab threshold is "<nisab>"
+  And the haul period is complete
+  When Zakat is calculated
+  Then the Zakat rate should be "<rate>"
+  And the Zakat amount should be "<zakat_due>"
+
+  Examples:
+    | asset_type          | value        | nisab      | rate  | zakat_due    |
+    | Cash                | 100,000 USD  | 5,000 USD  | 2.5%  | 2,500.00 USD |
+    | Gold                | 200 grams    | 85 grams   | 2.5%  | 5.00 grams   |
+    | Silver              | 1,000 grams  | 595 grams  | 2.5%  | 25.00 grams  |
+    | Trade Goods         | 50,000 USD   | 5,000 USD  | 2.5%  | 1,250.00 USD |
+    | Livestock (Camels)  | 40 camels    | 5 camels   | *     | 1 camel      |
+    | Agricultural        | 10,000 kg    | 653 kg     | 5-10% | 500-1000 kg  |
+```
+
+**Account Transaction Fee Scenarios**:
+
+```gherkin
+Scenario Outline: Transaction fees for different account types
+  Given a customer with account type "<account_type>"
+  And the account tier is "<tier>"
+  When a transaction of "<amount>" is made
+  And the transaction type is "<tx_type>"
+  Then the transaction fee should be "<fee>"
+  And the fee waiver status should be "<waived>"
+
+  Examples:
+    | account_type | tier     | amount     | tx_type  | fee      | waived |
+    | Basic        | Standard | 1,000 USD  | Transfer | 5.00 USD | No     |
+    | Premium      | Gold     | 1,000 USD  | Transfer | 0.00 USD | Yes    |
+    | Basic        | Standard | 100 USD    | ATM      | 2.00 USD | No     |
+    | Premium      | Gold     | 100 USD    | ATM      | 0.00 USD | Yes     |
+    | Business     | Standard | 10,000 USD | Wire     | 25.00    | No     |
+    | Business     | Platinum | 10,000 USD | Wire     | 0.00 USD | Yes    |
 ```
 
 ### Data Tables
@@ -631,6 +779,471 @@ public class Hooks {
 }
 ```
 
+### Page Object Pattern
+
+Encapsulate UI interactions in reusable page objects for maintainable step definitions.
+
+```java
+// Page Object for Donation Form
+public class DonationPage {
+    private final WebDriver driver;
+
+    public DonationPage(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    public void enterAmount(BigDecimal amount) {
+        driver.findElement(By.id("donation-amount")).sendKeys(amount.toString());
+    }
+
+    public void selectCurrency(String currency) {
+        new Select(driver.findElement(By.id("currency"))).selectByValue(currency);
+    }
+
+    public void enterDonorId(String donorId) {
+        driver.findElement(By.id("donor-id")).sendKeys(donorId);
+    }
+
+    public void clickSubmit() {
+        driver.findElement(By.id("submit-donation")).click();
+    }
+
+    public String getConfirmationMessage() {
+        return driver.findElement(By.id("confirmation")).getText();
+    }
+
+    public boolean isErrorDisplayed() {
+        return driver.findElement(By.className("error-message")).isDisplayed();
+    }
+}
+
+// Step Definitions using Page Object
+public class DonationSteps {
+    private final DonationPage donationPage;
+    private final ScenarioContext context;
+
+    public DonationSteps(DonationPage donationPage, ScenarioContext context) {
+        this.donationPage = donationPage;
+        this.context = context;
+    }
+
+    @When("the donor enters donation amount {bigdecimal} {string}")
+    public void enterDonationAmount(BigDecimal amount, String currency) {
+        donationPage.enterAmount(amount);
+        donationPage.selectCurrency(currency);
+    }
+
+    @When("the donor submits the donation form")
+    public void submitDonation() {
+        donationPage.clickSubmit();
+    }
+
+    @Then("the donation should be confirmed")
+    public void verifyDonationConfirmed() {
+        String message = donationPage.getConfirmationMessage();
+        assertThat(message).contains("Donation successful");
+    }
+}
+```
+
+### Scenario Context (World Object)
+
+Share state between step definitions within a scenario.
+
+```java
+@ScenarioScoped
+public class ScenarioContext {
+    private final Map<String, Object> context = new HashMap<>();
+    private Throwable lastException;
+
+    public void set(String key, Object value) {
+        context.put(key, value);
+    }
+
+    public <T> T get(String key, Class<T> type) {
+        return type.cast(context.get(key));
+    }
+
+    public Optional<Throwable> getLastException() {
+        return Optional.ofNullable(lastException);
+    }
+
+    public void setLastException(Throwable exception) {
+        this.lastException = exception;
+    }
+
+    public void clear() {
+        context.clear();
+        lastException = null;
+    }
+}
+
+// Usage in step definitions
+public class LoanApplicationSteps {
+    private final ScenarioContext context;
+    private final LoanService loanService;
+
+    public LoanApplicationSteps(ScenarioContext context, LoanService loanService) {
+        this.context = context;
+        this.loanService = loanService;
+    }
+
+    @Given("an applicant with income {bigdecimal}")
+    public void createApplicant(BigDecimal income) {
+        Applicant applicant = new Applicant(income);
+        context.set("applicant", applicant);
+    }
+
+    @When("the applicant requests a loan of {bigdecimal}")
+    public void requestLoan(BigDecimal amount) {
+        Applicant applicant = context.get("applicant", Applicant.class);
+        LoanApplication application = loanService.apply(applicant, amount);
+        context.set("application", application);
+    }
+
+    @Then("the application status should be {string}")
+    public void verifyStatus(String expectedStatus) {
+        LoanApplication application = context.get("application", LoanApplication.class);
+        assertThat(application.getStatus().toString()).isEqualTo(expectedStatus);
+    }
+}
+```
+
+### Data Table Transformations
+
+Transform data tables into domain objects automatically.
+
+```java
+// Domain object
+public record Applicant(
+    String name,
+    BigDecimal monthlyIncome,
+    int creditScore,
+    String employment
+) {}
+
+// Data table transformer
+public class DataTableTransformers {
+    @DataTableType
+    public Applicant applicantEntry(Map<String, String> entry) {
+        return new Applicant(
+            entry.get("Name"),
+            new BigDecimal(entry.get("Monthly Income")),
+            Integer.parseInt(entry.get("Credit Score")),
+            entry.get("Employment")
+        );
+    }
+
+    @DataTableType
+    public ZakatAccount zakatAccountEntry(Map<String, String> entry) {
+        return new ZakatAccount(
+            entry.get("Account ID"),
+            Money.parse(entry.get("Balance")),
+            Money.parse(entry.get("Nisab Threshold")),
+            LocalDate.parse(entry.get("Haul Start Date"))
+        );
+    }
+}
+
+// Usage in step definitions
+@Given("the following applicants:")
+public void createApplicants(List<Applicant> applicants) {
+    // Cucumber automatically transforms data table to List<Applicant>
+    applicants.forEach(applicantRepository::save);
+}
+
+@Given("a Zakat account with the following details:")
+public void createZakatAccount(ZakatAccount account) {
+    // Cucumber automatically transforms single row to ZakatAccount
+    context.set("zakatAccount", account);
+}
+```
+
+### Custom Assertions
+
+Domain-specific assertions for clearer test failures.
+
+```java
+public class DonationAssertions {
+    public static DonationAssert assertThat(Donation actual) {
+        return new DonationAssert(actual);
+    }
+
+    public static class DonationAssert extends AbstractAssert<DonationAssert, Donation> {
+        public DonationAssert(Donation actual) {
+            super(actual, DonationAssert.class);
+        }
+
+        public DonationAssert hasStatus(DonationStatus expected) {
+            isNotNull();
+            if (!actual.getStatus().equals(expected)) {
+                failWithMessage(
+                    "Expected donation status to be <%s> but was <%s>",
+                    expected,
+                    actual.getStatus()
+                );
+            }
+            return this;
+        }
+
+        public DonationAssert hasAmountBetween(BigDecimal min, BigDecimal max) {
+            isNotNull();
+            BigDecimal actualAmount = actual.getAmount().value();
+            if (actualAmount.compareTo(min) < 0 || actualAmount.compareTo(max) > 0) {
+                failWithMessage(
+                    "Expected donation amount to be between <%s> and <%s> but was <%s>",
+                    min,
+                    max,
+                    actualAmount
+                );
+            }
+            return this;
+        }
+
+        public DonationAssert wasAllocatedToFund(String fundId) {
+            isNotNull();
+            boolean allocated = actual.getAllocations().stream()
+                .anyMatch(a -> a.getFundId().equals(fundId));
+            if (!allocated) {
+                failWithMessage(
+                    "Expected donation to be allocated to fund <%s> but allocations were <%s>",
+                    fundId,
+                    actual.getAllocations()
+                );
+            }
+            return this;
+        }
+    }
+}
+
+// Usage in step definitions
+@Then("the donation should be allocated correctly")
+public void verifyDonationAllocation() {
+    Donation donation = context.get("donation", Donation.class);
+    assertThat(donation)
+        .hasStatus(DonationStatus.PROCESSED)
+        .hasAmountBetween(new BigDecimal("100"), new BigDecimal("10000"))
+        .wasAllocatedToFund("F-001");
+}
+```
+
+### Test Data Builders
+
+Fluent builders for complex test data setup.
+
+```java
+public class LoanApplicationBuilder {
+    private BigDecimal amount = new BigDecimal("10000");
+    private Applicant applicant = new ApplicantBuilder().build();
+    private LocalDate applicationDate = LocalDate.now();
+    private List<Document> documents = new ArrayList<>();
+    private LoanStatus status = LoanStatus.PENDING;
+
+    public LoanApplicationBuilder withAmount(BigDecimal amount) {
+        this.amount = amount;
+        return this;
+    }
+
+    public LoanApplicationBuilder withApplicant(Applicant applicant) {
+        this.applicant = applicant;
+        return this;
+    }
+
+    public LoanApplicationBuilder withDocument(Document document) {
+        this.documents.add(document);
+        return this;
+    }
+
+    public LoanApplicationBuilder approved() {
+        this.status = LoanStatus.APPROVED;
+        return this;
+    }
+
+    public LoanApplication build() {
+        return new LoanApplication(
+            UUID.randomUUID().toString(),
+            amount,
+            applicant,
+            applicationDate,
+            documents,
+            status
+        );
+    }
+}
+
+// Usage in step definitions
+@Given("an approved loan application for {bigdecimal}")
+public void createApprovedLoan(BigDecimal amount) {
+    LoanApplication loan = new LoanApplicationBuilder()
+        .withAmount(amount)
+        .withApplicant(new ApplicantBuilder()
+            .withIncome(new BigDecimal("5000"))
+            .withCreditScore(750)
+            .build())
+        .withDocument(new DocumentBuilder().passport().build())
+        .approved()
+        .build();
+
+    context.set("loanApplication", loan);
+}
+```
+
+### Step Definition Composition
+
+Reuse step definitions to reduce duplication.
+
+```java
+public class CompositeSteps {
+    private final DonorSteps donorSteps;
+    private final DonationSteps donationSteps;
+    private final PaymentSteps paymentSteps;
+
+    public CompositeSteps(
+        DonorSteps donorSteps,
+        DonationSteps donationSteps,
+        PaymentSteps paymentSteps
+    ) {
+        this.donorSteps = donorSteps;
+        this.donationSteps = donationSteps;
+        this.paymentSteps = paymentSteps;
+    }
+
+    @Given("a verified donor with valid payment method")
+    public void setupVerifiedDonorWithPayment() {
+        // Compose multiple steps
+        donorSteps.createDonor("D-001");
+        donorSteps.verifyDonor("D-001");
+        paymentSteps.addPaymentMethod("D-001", "Visa *1234");
+    }
+
+    @When("the donor makes a successful donation of {bigdecimal}")
+    public void makeSuccessfulDonation(BigDecimal amount) {
+        donationSteps.createDonation(amount);
+        paymentSteps.processPayment();
+        donationSteps.verifyDonationProcessed();
+    }
+}
+```
+
+### Error Handling in Steps
+
+Proper error handling and meaningful failure messages.
+
+```java
+public class RobustSteps {
+    private final LoanService loanService;
+    private final ScenarioContext context;
+
+    @When("the loan application is submitted")
+    public void submitLoanApplication() {
+        try {
+            LoanApplication application = context.get("application", LoanApplication.class);
+            LoanApplicationResult result = loanService.submit(application);
+            context.set("result", result);
+        } catch (InsufficientDocumentationException e) {
+            context.setLastException(e);
+            // Don't fail here - let the Then step assert the error
+        } catch (Exception e) {
+            throw new RuntimeException(
+                "Unexpected error during loan submission: " + e.getMessage(),
+                e
+            );
+        }
+    }
+
+    @Then("the submission should fail with {string}")
+    public void verifySubmissionFailure(String expectedError) {
+        Optional<Throwable> exception = context.getLastException();
+        assertThat(exception)
+            .as("Expected an exception to be thrown")
+            .isPresent();
+
+        assertThat(exception.get().getMessage())
+            .as("Error message should contain expected text")
+            .contains(expectedError);
+    }
+
+    @Then("the submission should succeed")
+    public void verifySubmissionSuccess() {
+        Optional<Throwable> exception = context.getLastException();
+        assertThat(exception)
+            .as("Expected no exception but got: " +
+                exception.map(Throwable::getMessage).orElse("none"))
+            .isEmpty();
+
+        LoanApplicationResult result = context.get("result", LoanApplicationResult.class);
+        assertThat(result.isSuccess())
+            .as("Loan application should be successful")
+            .isTrue();
+    }
+}
+```
+
+### Advanced Hooks with Conditional Execution
+
+```java
+public class AdvancedHooks {
+    private final DatabaseManager databaseManager;
+    private final EmailService emailService;
+    private final TestReporter reporter;
+
+    @Before(order = 1)
+    public void globalSetup(Scenario scenario) {
+        reporter.startScenario(scenario.getName());
+        reporter.log("Starting scenario: " + scenario.getName());
+    }
+
+    @Before(value = "@database", order = 10)
+    public void setupDatabase(Scenario scenario) {
+        reporter.log("Initializing database for: " + scenario.getName());
+        databaseManager.createTestSchema();
+        databaseManager.loadTestData();
+    }
+
+    @Before("@email")
+    public void setupEmailMocking() {
+        reporter.log("Setting up email mocking");
+        emailService.enableTestMode();
+    }
+
+    @After(order = 100)
+    public void globalTeardown(Scenario scenario) {
+        if (scenario.isFailed()) {
+            reporter.logFailure(scenario.getName(), scenario.getStatus());
+            // Capture additional diagnostic information
+            reporter.captureSystemState();
+        }
+        reporter.endScenario(scenario.getName());
+    }
+
+    @After(value = "@database", order = 50)
+    public void cleanupDatabase(Scenario scenario) {
+        reporter.log("Cleaning database after: " + scenario.getName());
+        databaseManager.dropTestSchema();
+    }
+
+    @AfterStep
+    public void afterEachStep(Scenario scenario) {
+        if (scenario.isFailed()) {
+            reporter.log("Step failed: " + scenario.getStatus());
+            reporter.captureScreenshot();
+        }
+    }
+
+    @BeforeAll
+    public static void beforeAllScenarios() {
+        // Runs once before all scenarios
+        System.out.println("BDD Test Suite Starting");
+    }
+
+    @AfterAll
+    public static void afterAllScenarios() {
+        // Runs once after all scenarios
+        System.out.println("BDD Test Suite Complete");
+    }
+}
+```
+
 ## BDD Patterns
 
 ### Pattern: One Scenario, One Behavior
@@ -737,6 +1350,226 @@ Scenario Outline: Donation fee calculation for different amounts
     | 1,000 USD    | 30 USD       | 970 USD      |
     | 5,000 USD    | 150 USD      | 4,850 USD    |
     | 10,000 USD   | 300 USD      | 9,700 USD    |
+```
+
+### Pattern: Complex Multi-Step Workflows
+
+For complex business processes spanning multiple steps and decision points:
+
+**Multi-Step Loan Approval Process**:
+
+```gherkin
+Feature: Comprehensive Loan Approval Workflow
+
+  Background:
+    Given the following approval thresholds:
+      | Role             | Max Amount  | Required Documents          |
+      | Loan Officer     | 10,000 USD  | ID, Income Proof            |
+      | Senior Officer   | 50,000 USD  | ID, Income, Credit Report   |
+      | Loan Committee   | 200,000 USD | Full Documentation Package  |
+
+  Scenario: Small loan automatic approval path
+    Given an applicant with verified income of "5,000 USD/month"
+    And a credit score of "750"
+    And all required documents submitted
+    When the applicant requests a loan of "8,000 USD"
+    Then the application should proceed to "Loan Officer Review"
+    And the loan officer should approve the application within "2 business days"
+    And the applicant should receive approval notification
+    And the loan agreement should be generated
+    And the loan should be disbursed upon agreement signature
+
+  Scenario: Medium loan with conditional approval
+    Given an applicant with verified income of "4,000 USD/month"
+    And a credit score of "680"
+    And employment history of "2 years"
+    When the applicant requests a loan of "35,000 USD"
+    Then the application should proceed to "Senior Officer Review"
+    And additional documentation should be requested:
+      | Document Type        | Reason                    |
+      | Bank Statements      | Verify savings            |
+      | Employment Letter    | Confirm income stability  |
+    When the applicant submits the additional documents
+    And the senior officer reviews the complete application
+    Then the application should be conditionally approved
+    And the conditions should include:
+      """
+      1. Co-signer with minimum credit score 700
+      2. Down payment of 10% (3,500 USD)
+      3. Proof of insurance
+      """
+    When all conditions are met
+    Then the loan should be finalized and disbursed
+
+  Scenario: Large loan committee escalation
+    Given an applicant with verified income of "15,000 USD/month"
+    And a credit score of "800"
+    And business ownership documentation
+    When the applicant requests a loan of "180,000 USD"
+    Then the application should proceed to "Loan Committee"
+    And the committee should schedule a review meeting within "5 business days"
+    And the applicant should be invited to present their case
+    When the committee meeting is held
+    And 3 out of 5 committee members approve
+    Then the loan should be approved with special terms:
+      | Term                | Value              |
+      | Interest Rate       | 5.5% (negotiated)  |
+      | Repayment Period    | 10 years           |
+      | Collateral Required | Business assets    |
+    And a senior officer should be assigned as relationship manager
+```
+
+**Multi-Asset Zakat Calculation Workflow**:
+
+```gherkin
+Feature: Comprehensive Zakat Assessment
+
+  Background:
+    Given today is "2026-03-15"
+    And the gold price is "65 USD per gram"
+    And the silver price is "0.85 USD per gram"
+    And the cash nisab threshold is "5,525 USD" (85g gold equivalent)
+
+  Scenario: Zakat calculation with mixed asset types
+    Given a Muslim with the following assets:
+      | Asset Type    | Value/Quantity  | Acquisition Date | Zakatable |
+      | Cash          | 50,000 USD      | Various          | Yes       |
+      | Gold Jewelry  | 200 grams       | 2020-01-01       | Partial   |
+      | Stocks        | 30,000 USD      | 2024-06-01       | Yes       |
+      | Real Estate   | 200,000 USD     | 2023-01-01       | No        |
+      | Business Inv. | 75,000 USD      | 2023-03-01       | Yes       |
+    And the gold jewelry is:
+      | Type          | Weight  | Personal Use |
+      | Wedding Set   | 150g    | Yes          |
+      | Investment    | 50g     | No           |
+    When the Zakat assessment is performed
+    Then the system should calculate zakatable assets:
+      """
+      Cash: 50,000 USD (100% zakatable)
+      Gold (investment only): 50g × 65 = 3,250 USD
+      Stocks: 30,000 USD (100% zakatable)
+      Real Estate: 0 USD (personal residence, not zakatable)
+      Business Inventory: 75,000 USD (100% zakatable)
+
+      Total Zakatable: 158,250 USD
+      """
+    And verify haul completion for each asset
+    And apply 2.5% Zakat rate
+    Then the total Zakat due should be "3,956.25 USD"
+    And generate detailed breakdown report
+    And provide payment options:
+      | Method          | Recipient                | Tax Deductible |
+      | Direct Transfer | Registered Charity       | Yes            |
+      | Cash            | Local Distribution       | No             |
+      | In-Kind         | Food/Goods to Poor       | Partial        |
+```
+
+**End-to-End Donation Lifecycle**:
+
+```gherkin
+Feature: Complete Donation Journey from Intent to Impact
+
+  Scenario: Recurring donation with allocation changes
+    Given a donor "Alice" with account "D-001"
+    And verified payment method on file
+    When Alice sets up a recurring donation:
+      | Amount        | Frequency | Start Date  | End Date   |
+      | 500 USD       | Monthly   | 2026-01-01  | 2026-12-31 |
+    And selects initial allocation:
+      | Fund              | Percentage |
+      | Emergency Relief  | 60%        |
+      | Education         | 40%        |
+    Then the first donation should be processed on "2026-01-01"
+    And Alice should receive monthly receipts
+
+    # Month 3: Donor changes allocation
+    When on "2026-03-15" Alice updates allocation to:
+      | Fund              | Percentage |
+      | Emergency Relief  | 40%        |
+      | Education         | 30%        |
+      | Healthcare        | 30%        |
+    Then the March donation should use old allocation
+    And future donations (April+) should use new allocation
+
+    # Month 6: Emergency campaign
+    When on "2026-06-01" an emergency campaign is launched
+    And the system notifies all recurring donors
+    And Alice opts to make a one-time additional donation of "1,000 USD"
+    Specifically for "Emergency Relief"
+    Then the regular recurring donation should continue unchanged
+    And the additional donation should be processed separately
+    And Alice should receive impact report for emergency donation
+
+    # Year end: Reporting
+    When the year ends on "2026-12-31"
+    Then Alice should receive annual summary:
+      """
+      Total Donated: 7,000 USD
+      - Recurring: 6,000 USD (12 months × 500)
+      - One-time: 1,000 USD
+      Fund Distribution:
+      - Emergency Relief: 3,800 USD
+      - Education: 2,100 USD
+      - Healthcare: 900 USD
+      - Emergency Campaign: 1,000 USD
+      Tax-Deductible Amount: 7,000 USD
+      Impact: Helped 28 families, 15 students, 5 patients
+      """
+    And tax receipt should be generated
+    And option to renew recurring donation for 2027
+```
+
+**Loan Default and Recovery Workflow**:
+
+```gherkin
+Feature: Loan Default Prevention and Recovery
+
+  Background:
+    Given a borrower "Bob" with active loan:
+      | Loan ID     | Amount      | Monthly Payment | Due Date     | Status     |
+      | L-12345     | 50,000 USD  | 1,000 USD       | 15th of month| Current    |
+    And payment history:
+      | Date       | Amount      | Status  |
+      | 2025-11-15 | 1,000 USD   | Paid    |
+      | 2025-12-15 | 1,000 USD   | Paid    |
+      | 2026-01-15 | 1,000 USD   | Paid    |
+
+  Scenario: Progressive escalation for missed payments
+    # First missed payment
+    When the payment due on "2026-02-15" is not received
+    Then on "2026-02-16" (1 day late):
+      | Action                    | Details                          |
+      | Status Update             | Current → 1-15 Days Late         |
+      | Automated Reminder        | Email + SMS sent                 |
+      | Late Fee                  | 25 USD assessed                  |
+
+    # Second missed payment
+    When the payment due on "2026-03-15" is also not received
+    Then on "2026-03-16" (payment 1: 30 days late, payment 2: 1 day late):
+      | Action                    | Details                          |
+      | Status Update             | 15-30 Days Late                  |
+      | Personal Outreach         | Loan officer calls borrower      |
+      | Hardship Assessment       | Financial review offered         |
+      | Additional Late Fee       | 25 USD assessed                  |
+
+    # Hardship program enrollment
+    When Bob requests financial hardship assistance
+    And submits documentation of temporary unemployment
+    Then the loan should be eligible for:
+      """
+      Temporary Relief Options:
+      1. Payment Deferment: 3 months (interest accrues)
+      2. Reduced Payment: 500 USD/month for 6 months
+      3. Loan Restructuring: Extend term by 12 months
+      """
+    When Bob selects "Reduced Payment" option
+    Then the loan terms should be modified:
+      | Original Monthly | Temporary Monthly | Duration | Extension |
+      | 1,000 USD        | 500 USD           | 6 months | 12 months |
+    And Bob should make reduced payments from April to September
+    And resume normal payments in October
+    And loan should return to "Current" status
+    And credit report should note "Temporary Hardship Program"
 ```
 
 ### Anti-Pattern: Coupling to Implementation
@@ -1019,6 +1852,35 @@ public void iCalculateZakat() {
 - [ ] Failed scenarios are fixed immediately
 - [ ] Obsolete scenarios are removed
 - [ ] Living documentation is accessible to team
+
+## Related Principles
+
+This document implements the following [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
+
+1. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Gherkin scenarios make business requirements explicit, step definitions map explicitly to implementation
+2. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Executable specifications, automated acceptance testing, living documentation generation
+3. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Deterministic scenario execution, reproducible acceptance tests across environments
+
+### Principle-to-Feature Mapping
+
+| BDD Feature/Pattern                     | Automation   | Explicit     | Immutability | Pure Functions | Reproducibility |
+| --------------------------------------- | ------------ | ------------ | ------------ | -------------- | --------------- |
+| Gherkin Scenarios (Given-When-Then)     | -            | ✅ Primary   | -            | -              | -               |
+| Ubiquitous Language                     | -            | ✅ Primary   | -            | -              | -               |
+| Step Definitions                        | ✅ Secondary | ✅ Primary   | -            | -              | -               |
+| Executable Specifications               | ✅ Primary   | ✅ Secondary | -            | -              | ✅ Primary      |
+| Automated Acceptance Testing            | ✅ Primary   | -            | -            | -              | ✅ Primary      |
+| Living Documentation (Cucumber Reports) | ✅ Primary   | ✅ Secondary | -            | -              | -               |
+| Scenario Outlines (Data Tables)         | ✅ Secondary | ✅ Primary   | -            | -              | ✅ Secondary    |
+| Background Blocks                       | -            | ✅ Secondary | -            | -              | ✅ Secondary    |
+| Three Amigos Collaboration              | -            | ✅ Primary   | -            | -              | -               |
+| Deterministic Scenario Execution        | -            | -            | -            | -              | ✅ Primary      |
+
+**Legend:**
+
+- ✅ Primary: Core demonstration of principle
+- ✅ Secondary: Supporting demonstration
+- `-`: Not directly related
 
 ## Sources
 

@@ -92,29 +92,42 @@ public static Money calculate(Money balance, Money nisab) {
 
 TDD follows a simple three-step cycle:
 
-```
-┌─────────────────────────────────────────────┐
-│              RED-GREEN-REFACTOR             │
-│                                              │
-│  ┌──────────┐       ┌──────────┐            │
-│  │   RED    │ ----> │  GREEN   │ ----┐      │
-│  │ Write    │       │ Make it  │     │      │
-│  │ failing  │       │  pass    │     │      │
-│  │  test    │       │          │     │      │
-│  └──────────┘       └──────────┘     │      │
-│                                       │      │
-│                           ┌───────────┘      │
-│                           │                  │
-│                           v                  │
-│                    ┌──────────┐              │
-│                    │ REFACTOR │              │
-│                    │ Improve  │              │
-│                    │   code   │              │
-│                    └──────────┘              │
-│                           │                  │
-│                           │                  │
-│                           └──> Repeat        │
-└─────────────────────────────────────────────┘
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+stateDiagram-v2
+    [*] --> Red: Write test
+
+    Red --> Green: Test fails
+    Green --> Refactor: Test passes
+    Refactor --> Red: Tests still pass,<br/>next feature
+
+    note right of Red
+        🔴 RED
+        Write failing test
+        Specify desired behavior
+    end note
+
+    note right of Green
+        🟢 GREEN
+        Write minimum code
+        Make test pass
+    end note
+
+    note right of Refactor
+        ♻️ REFACTOR
+        Improve code quality
+        Keep tests passing
+    end note
+
+    classDef redState fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:3px
+    classDef greenState fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:3px
+    classDef refactorState fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:3px
+
+    class Red redState
+    class Green greenState
+    class Refactor refactorState
 ```
 
 ### Step 1: RED - Write Failing Test
@@ -1602,6 +1615,36 @@ Use JaCoCo for coverage reports.
 - **Application services**: 80-90%
 - **Infrastructure**: 60-80%
 - **Overall project**: > 80%
+
+## Related Principles
+
+This document implements the following [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
+
+1. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Pure functions are inherently testable, predictable, and enable isolated unit tests
+2. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Automated test execution, CI/CD integration, test coverage measurement
+3. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Deterministic tests that always produce the same result, reproducible test environments
+4. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Explicit test names, AAA pattern makes test structure explicit, clear assertions
+
+### Principle-to-Feature Mapping
+
+| TDD Feature/Pattern              | Automation | Explicit     | Immutability | Pure Functions | Reproducibility |
+| -------------------------------- | ---------- | ------------ | ------------ | -------------- | --------------- |
+| Red-Green-Refactor Cycle         | -          | ✅ Secondary | -            | -              | ✅ Primary      |
+| AAA Pattern (Arrange-Act-Assert) | -          | ✅ Primary   | -            | -              | -               |
+| Test Isolation                   | -          | -            | -            | ✅ Primary     | ✅ Primary      |
+| Pure Function Testing            | -          | -            | ✅ Secondary | ✅ Primary     | ✅ Primary      |
+| Automated Test Execution         | ✅ Primary | -            | -            | -              | ✅ Secondary    |
+| Test Coverage Measurement        | ✅ Primary | ✅ Secondary | -            | -              | -               |
+| Mutation Testing (PIT)           | ✅ Primary | -            | -            | -              | ✅ Secondary    |
+| CI/CD Test Integration           | ✅ Primary | -            | -            | -              | ✅ Primary      |
+| Deterministic Test Data          | -          | ✅ Secondary | ✅ Primary   | -              | ✅ Primary      |
+| Test Doubles (Mocks/Stubs)       | -          | ✅ Primary   | -            | ✅ Secondary   | ✅ Secondary    |
+
+**Legend:**
+
+- ✅ Primary: Core demonstration of principle
+- ✅ Secondary: Supporting demonstration
+- `-`: Not directly related
 
 ## Sources
 

@@ -269,41 +269,29 @@ Donation processed = processDonationPipeline.apply(rawDonation);
 
 Data that cannot be modified after creation.
 
-**Example: Immutable Money**
+**Example: Immutable Data**
 
 ```java
-// Immutable Money record
-public record Money(BigDecimal amount, Currency currency) {
-    // Compact constructor validates
-    public Money {
-        if (amount == null || currency == null) {
-            throw new IllegalArgumentException("Amount and currency required");
-        }
-    }
-
+// Minimal example: Immutable point in 2D space
+public record Point(int x, int y) {
     // Operations return new instances
-    public Money add(Money other) {
-        if (!this.currency.equals(other.currency)) {
-            throw new IllegalArgumentException("Currency mismatch");
-        }
-        return new Money(this.amount.add(other.amount), this.currency);
+    public Point moveRight(int distance) {
+        return new Point(x + distance, y);
     }
 
-    public Money multiply(BigDecimal factor) {
-        return new Money(this.amount.multiply(factor), this.currency);
-    }
-
-    public boolean isNegative() {
-        return amount.compareTo(BigDecimal.ZERO) < 0;
+    public Point moveUp(int distance) {
+        return new Point(x, y + distance);
     }
 }
 
 // Usage - original never changes
-Money donation = Money.of(1000, "USD");
-Money doubled = donation.multiply(new BigDecimal("2"));
-// donation is still 1000 USD
-// doubled is 2000 USD
+Point start = new Point(0, 0);
+Point moved = start.moveRight(5).moveUp(3);
+// start is still (0, 0)
+// moved is (5, 3)
 ```
+
+**For comprehensive immutable Money value object**, see [Domain-Driven Design - Value Objects](./ex-so-stla-ja__domain-driven-design.md#example-money-value-object).
 
 ## Pure Functions
 
@@ -996,29 +984,20 @@ import io.vavr.API.*;
 import io.vavr.Predicates.*;
 import static io.vavr.API.$;
 
-public sealed interface TransactionResult
-    permits Success, Failure, Pending {}
-
-public record Success(String txId, Money amount) implements TransactionResult {}
-public record Failure(String reason) implements TransactionResult {}
-public record Pending(String txId, LocalDateTime since) implements TransactionResult {}
-
-public String formatTransactionResult(TransactionResult result) {
-    return Match(result).of(
-        Case($(instanceOf(Success.class)), success ->
-            "Success: " + success.txId() + " - " + success.amount()),
-        Case($(instanceOf(Failure.class)), failure ->
-            "Failed: " + failure.reason()),
-        Case($(instanceOf(Pending.class)), pending ->
-            "Pending since: " + pending.since())
+// Minimal example: Pattern matching with predicates
+public boolean requiresReview(BigDecimal amount) {
+    return Match(amount).of(
+        Case($(amt -> amt.compareTo(new BigDecimal("10000")) > 0), true),
+        Case($(), false)
     );
 }
 
-// Pattern matching with predicates
-public boolean requiresReview(Transaction transaction) {
-    return Match(transaction.getAmount()).of(
-        Case($(amount -> amount.compareTo(Money.of(10000, "USD")) > 0), true),
-        Case($(), false)
+// Pattern matching with type checks
+public String categorize(Object value) {
+    return Match(value).of(
+        Case($(instanceOf(String.class)), str -> "Text: " + str),
+        Case($(instanceOf(Integer.class)), num -> "Number: " + num),
+        Case($(), obj -> "Unknown: " + obj.getClass().getSimpleName())
     );
 }
 ```
@@ -1121,24 +1100,45 @@ This architecture pattern separates pure logic from side effects.
 
 ### Pattern Structure
 
-```
-┌─────────────────────────────────────┐
-│     Imperative Shell (I/O)          │
-│  ┌───────────────────────────────┐  │
-│  │   Functional Core (Pure)      │  │
-│  │                                │  │
-│  │  - Domain logic                │  │
-│  │  - Calculations                │  │
-│  │  - Validation                  │  │
-│  │  - Transformations             │  │
-│  │                                │  │
-│  └───────────────────────────────┘  │
-│                                      │
-│  - Database I/O                      │
-│  - HTTP requests                     │
-│  - Logging                           │
-│  - File system                       │
-└─────────────────────────────────────┘
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TB
+    subgraph ImperativeShell["⚙️ IMPERATIVE SHELL (Side Effects)"]
+        DB[(Database)]:::orange
+        HTTP[HTTP/API Calls]:::orange
+        FS[File System]:::orange
+        Log[Logging]:::orange
+    end
+
+    subgraph FunctionalCore["💎 FUNCTIONAL CORE (Pure Logic)"]
+        Domain[Domain Logic]:::blue
+        Calc[Calculations]:::blue
+        Valid[Validation]:::blue
+        Transform[Transformations]:::blue
+    end
+
+    DB --> FunctionalCore
+    HTTP --> FunctionalCore
+    FS --> FunctionalCore
+    FunctionalCore --> Domain
+    FunctionalCore --> Calc
+    FunctionalCore --> Valid
+    FunctionalCore --> Transform
+    Domain --> Log
+    Calc --> Log
+
+    note1[Pure Functions:<br/>Same input = Same output<br/>No side effects<br/>Easy to test]:::teal
+    note2[Side Effects:<br/>I/O operations<br/>External state<br/>Unpredictable]:::purple
+
+    note1 -.-> FunctionalCore
+    note2 -.-> ImperativeShell
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Example: Zakat Service

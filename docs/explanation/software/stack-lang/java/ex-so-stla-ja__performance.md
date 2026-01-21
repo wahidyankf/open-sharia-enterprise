@@ -55,32 +55,31 @@ Understanding JVM internals is essential for effective performance tuning.
 
 ### JVM Memory Structure
 
-```
-┌─────────────────────────────────────────────────────┐
-│                   JVM Process                       │
-├─────────────────────────────────────────────────────┤
-│  Heap (Garbage Collected)                           │
-│  ┌─────────────────┬─────────────────────────────┐  │
-│  │  Young Gen      │  Old Gen (Tenured)          │  │
-│  │  ┌────┬──────┐  │                             │  │
-│  │  │Eden│Surviv│  │  Long-lived objects         │  │
-│  │  │    │ or   │  │  (promoted from young)      │  │
-│  │  └────┴──────┘  │                             │  │
-│  └─────────────────┴─────────────────────────────┘  │
-├─────────────────────────────────────────────────────┤
-│  Metaspace (Native Memory)                          │
-│  - Class metadata                                   │
-│  - Method metadata                                  │
-│  - Constant pools                                   │
-├─────────────────────────────────────────────────────┤
-│  Thread Stacks (Native Memory)                      │
-│  - Per-thread call stacks                           │
-│  - Local variables                                  │
-├─────────────────────────────────────────────────────┤
-│  Direct Memory (Off-Heap)                           │
-│  - NIO buffers                                      │
-│  - Native libraries                                 │
-└─────────────────────────────────────────────────────┘
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TB
+    subgraph JVM["🔷 JVM Process"]
+        subgraph Heap["💾 Heap (Garbage Collected)"]
+            subgraph Young["Young Generation"]
+                Eden["Eden Space"]:::blue
+                Survivor["Survivor Space"]:::blue
+            end
+            OldGen["Old Gen (Tenured)<br/>Long-lived objects<br/>promoted from young"]:::orange
+        end
+
+        subgraph Native["⚙️ Native Memory"]
+            Metaspace["Metaspace<br/>• Class metadata<br/>• Method metadata<br/>• Constant pools"]:::teal
+            Stacks["Thread Stacks<br/>• Per-thread call stacks<br/>• Local variables"]:::teal
+            DirectMem["Direct Memory (Off-Heap)<br/>• NIO buffers<br/>• Native libraries"]:::purple
+        end
+    end
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
 ```
 
 **Key Memory Areas:**
@@ -966,57 +965,20 @@ spring:
 
 ### Async I/O with Virtual Threads (Java 21+)
 
-Use virtual threads for concurrent I/O operations.
+**Performance Benefits**: Virtual threads excel at I/O-bound operations.
 
 ```java
-@Service
-public class DonationProcessorAsync {
-    private final ExecutorService executor =
-        Executors.newVirtualThreadPerTaskExecutor();
+// Performance characteristics
+// Sequential processing: 1,000 tasks × 300ms = 300 seconds
+// Virtual threads:        1,000 tasks concurrent = ~3 seconds (100x faster!)
 
-    // Process donations concurrently
-    public CompletableFuture<List<ProcessingResult>> processDonations(
-            List<Donation> donations) {
-
-        List<CompletableFuture<ProcessingResult>> futures = donations.stream()
-            .map(donation -> CompletableFuture.supplyAsync(
-                () -> processSingleDonation(donation),
-                executor
-            ))
-            .toList();
-
-        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-            .thenApply(v -> futures.stream()
-                .map(CompletableFuture::join)
-                .toList());
-    }
-
-    private ProcessingResult processSingleDonation(Donation donation) {
-        // I/O-bound operations:
-        // 1. Validate with fraud detection API (100ms)
-        // 2. Save to database (50ms)
-        // 3. Send confirmation email (150ms)
-        // Total sequential: 300ms
-
-        FraudCheckResult fraud = fraudApi.check(donation);      // 100ms
-        donationRepository.save(donation);                      // 50ms
-        emailService.sendConfirmation(donation.donorEmail());   // 150ms
-
-        return new ProcessingResult(donation.id(), "SUCCESS");
-    }
-
-    /**
-     * Performance comparison (1,000 donations):
-     *
-     * Sequential processing:
-     * - Time: 1,000 × 300ms = 300 seconds (5 minutes)
-     *
-     * Virtual threads (concurrent):
-     * - Time: ~3 seconds (100x faster!)
-     * - Virtual threads: 1,000 (concurrent I/O operations)
-     */
+try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+    tasks.forEach(task -> executor.submit(() -> processTask(task)));
+    // Handles millions of concurrent I/O operations efficiently
 }
 ```
+
+**For comprehensive virtual threads performance analysis** (benchmarks, structured concurrency, financial examples), see [Concurrency and Parallelism - Virtual Threads](./ex-so-stla-ja__concurrency-and-parallelism.md#virtual-threads).
 
 ---
 
@@ -1630,6 +1592,35 @@ class DonationLoadTest extends Simulation {
 - [ ] Metrics exported (Micrometer/Prometheus)
 - [ ] Dashboards configured (Grafana)
 - [ ] Alerting on performance degradation
+
+## Related Principles
+
+This document implements the following [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
+
+1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Automated JVM tuning, automated profiling, automated performance testing
+2. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Reproducible benchmarks (JMH), deterministic performance testing, consistent JVM settings
+3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Immutable objects enable aggressive caching, thread-safe sharing without synchronization
+
+### Principle-to-Feature Mapping
+
+| Performance Feature                | Automation | Explicit     | Immutability | Pure Functions | Reproducibility |
+| ---------------------------------- | ---------- | ------------ | ------------ | -------------- | --------------- |
+| JVM Garbage Collection Tuning      | ✅ Primary | -            | -            | -              | ✅ Secondary    |
+| JIT Compilation Optimization       | ✅ Primary | -            | -            | -              | ✅ Secondary    |
+| Automated Profiling (JFR)          | ✅ Primary | -            | -            | -              | -               |
+| Connection Pooling                 | ✅ Primary | ✅ Secondary | -            | -              | ✅ Secondary    |
+| Caching (Caffeine)                 | ✅ Primary | -            | ✅ Primary   | -              | ✅ Secondary    |
+| Immutable Caching Keys             | -          | -            | ✅ Primary   | -              | -               |
+| JMH Benchmarks                     | ✅ Primary | -            | -            | -              | ✅ Primary      |
+| Performance Testing (Gatling)      | ✅ Primary | -            | -            | -              | ✅ Primary      |
+| Monitoring (Micrometer/Prometheus) | ✅ Primary | ✅ Secondary | -            | -              | ✅ Secondary    |
+| Stream Pipeline Optimization       | -          | -            | ✅ Secondary | ✅ Secondary   | -               |
+
+**Legend:**
+
+- ✅ Primary: Core demonstration of principle
+- ✅ Secondary: Supporting demonstration
+- `-`: Not directly related
 
 ---
 

@@ -42,6 +42,43 @@ Java development in this platform follows the five software engineering principl
 
 **See Also**: [Functional Programming](./ex-so-stla-ja__functional-programming.md) for pure functions and immutability patterns, [Best Practices](./ex-so-stla-ja__best-practices.md) for explicit coding standards.
 
+## Quick Reference
+
+**Jump to:**
+
+- [Overview](#overview) - Java in the platform
+- [Software Engineering Principles](#software-engineering-principles) - Five core principles
+- [Java Version Strategy](#java-version-strategy) - Java 17/21/25 LTS releases
+- [Documentation Structure](#documentation-structure) - Guide to documentation files
+- [Java in the Platform](#java-in-the-platform) - Platform integration
+- [Learning Path](#learning-path) - Recommended reading order
+- [Code Examples from Platform](#code-examples-from-platform) - Real implementations
+- [Integration with Other Documentation](#integration-with-other-documentation) - Cross-references
+- [Tools and Ecosystem](#tools-and-ecosystem) - Build tools, frameworks
+- [Resources and References](#resources-and-references) - External resources
+- [Related Documentation](#related-documentation) - Cross-references
+
+**Core Documentation:**
+
+- [Best Practices](./ex-so-stla-ja__best-practices.md) - Modern Java coding standards
+- [Idioms](./ex-so-stla-ja__idioms.md) - Modern Java patterns (records, sealed classes, pattern matching)
+- [Error Handling](./ex-so-stla-ja__error-handling.md) - Exception handling and resilience
+- [Type Safety](./ex-so-stla-ja__type-safety.md) - Sealed types and compile-time safety
+- [Functional Programming](./ex-so-stla-ja__functional-programming.md) - Pure functions and immutability
+- [Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md) - Virtual threads and structured concurrency
+- [Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md) - DDD patterns in Java
+- [Security](./ex-so-stla-ja__security.md) - Secure coding practices
+- [Performance](./ex-so-stla-ja__performance.md) - Optimization techniques
+- [Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Common mistakes to avoid
+- [Test-Driven Development](./ex-so-stla-ja__test-driven-development.md) - TDD with JUnit 5
+- [Behaviour-Driven Development](./ex-so-stla-ja__behaviour-driven-development.md) - BDD with Cucumber
+
+**Release Documentation:**
+
+- [Java 17 LTS](./ex-so-stla-ja__release-17.md) - Sealed classes, pattern matching
+- [Java 21 LTS](./ex-so-stla-ja__release-21.md) - Virtual threads, structured concurrency
+- [Java 25 LTS](./ex-so-stla-ja__release-25.md) - Stream Gatherers, Scoped Values
+
 ## Java Version Strategy
 
 ### Current Baseline: Java 17+ (LTS)
@@ -409,22 +446,12 @@ Read complementary documentation:
 ### Domain Model Example
 
 ```java
-// Using records for immutable value objects
-public record Money(BigDecimal amount, Currency currency) {
-    public Money {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Amount must be non-negative");
+// Using records for immutable value objects (see Domain-Driven Design for full Money example)
+public record TaxId(String value) {
+    public TaxId {
+        if (value == null || !value.matches("TX-\\d{10}")) {
+            throw new IllegalArgumentException("Invalid tax ID format");
         }
-        if (currency == null) {
-            throw new IllegalArgumentException("Currency is required");
-        }
-    }
-
-    public Money add(Money other) {
-        if (!this.currency.equals(other.currency)) {
-            throw new IllegalArgumentException("Cannot add different currencies");
-        }
-        return new Money(this.amount.add(other.amount), this.currency);
     }
 }
 

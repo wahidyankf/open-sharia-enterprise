@@ -31,6 +31,34 @@ Java 21 delivers **15 JDK Enhancement Proposals (JEPs)**, including several grou
 - **Next LTS**: Java 25 (September 2025)
 - **LTS Cadence**: 2 years (reduced from 3 years)
 
+## Quick Reference
+
+**Jump to:**
+
+- [Overview](#overview) - Java 21 LTS introduction
+- [Major Language Features](#major-language-features) - Virtual threads, pattern matching enhancements
+- [Preview Features](#preview-features) - String templates, unnamed patterns
+- [Core Library Enhancements](#core-library-enhancements) - Collections, Stream, Optional improvements
+- [Performance and Optimization](#performance-and-optimization) - Generational ZGC, JIT improvements
+- [Migration from Java 17 to Java 21](#migration-from-java-17-to-java-21) - Upgrade guide
+- [Why Upgrade to Java 21?](#why-upgrade-to-java-21) - Benefits summary
+- [Related Documentation](#related-documentation) - Cross-references
+
+**Related Documentation:**
+
+- [Java 17 Release](./ex-so-stla-ja__release-17.md) - Previous LTS release features
+- [Java 25 Release](./ex-so-stla-ja__release-25.md) - Latest LTS release features
+- [Java Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md) - Virtual threads and structured concurrency
+- [Java Idioms](./ex-so-stla-ja__idioms.md) - Pattern matching and modern patterns
+- [Java Performance](./ex-so-stla-ja__performance.md) - Performance optimization with virtual threads
+
+This release implements the following [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
+
+1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Virtual threads automate lightweight concurrency management, eliminating manual thread pool tuning
+2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Pattern matching for switch makes exhaustiveness explicit
+3. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Structured concurrency enforces proper resource cleanup
+4. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Structured concurrency ensures deterministic lifecycle management
+
 ## Major Language Features
 
 ### 1. Virtual Threads (Finalized) 🚀
@@ -49,125 +77,22 @@ Virtual threads are **lightweight, JVM-managed threads** that enable writing hig
 
 **Important**: Virtual threads excel when handling many concurrent tasks that spend time waiting (I/O, network, database), not for CPU-intensive operations.
 
-**Creating Virtual Threads**:
+**Quick Example**:
 
 ```java
-// Method 1: Start virtual thread directly
+// Simple virtual thread creation
 Thread.startVirtualThread(() -> {
     System.out.println("Running in virtual thread");
 });
 
-// Method 2: Thread.ofVirtual() builder
-Thread virtualThread = Thread.ofVirtual().start(() -> {
-    System.out.println("Virtual thread started");
-});
-
-// Method 3: ExecutorService for virtual threads
-ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
-executor.submit(() -> {
-    System.out.println("Task in virtual thread");
-});
-executor.close();
-```
-
-**Real-World Example - Payment Processing**:
-
-```java
-public class PaymentGatewayService {
-
-    // Old approach: Limited by platform thread pool
-    public void processPaymentsOld(List<PaymentRequest> payments) {
-        ExecutorService executor = Executors.newFixedThreadPool(100);
-
-        try {
-            for (PaymentRequest payment : payments) {
-                executor.submit(() -> {
-                    processPayment(payment);
-                });
-            }
-        } finally {
-            executor.shutdown();
-        }
-    }
-
-    // New approach: Virtual threads - handle millions of requests
-    public void processPaymentsNew(List<PaymentRequest> payments) {
-        try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            for (PaymentRequest payment : payments) {
-                executor.submit(() -> {
-                    processPayment(payment);
-                });
-            }
-            // executor.close() called automatically
-        }
-    }
-
-    private void processPayment(PaymentRequest payment) {
-        // I/O-bound operation - perfect for virtual threads
-        // Call external payment gateway
-        // Wait for response
-        // Update database
-    }
-
-    private static class PaymentRequest {}
+// Recommended: ExecutorService for task management
+try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+    tasks.forEach(task -> executor.submit(() -> processTask(task)));
+    // Handles millions of concurrent I/O operations
 }
 ```
 
-**Structured Concurrency Pattern**:
-
-```java
-public class DonationService {
-
-    // Launch multiple concurrent operations and wait for all
-    public DonationReport generateReport(String donationId) throws Exception {
-        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
-
-            // Fork multiple virtual threads
-            Future<DonationDetails> detailsFuture =
-                scope.fork(() -> fetchDonationDetails(donationId));
-
-            Future<List<Beneficiary>> beneficiariesFuture =
-                scope.fork(() -> fetchBeneficiaries(donationId));
-
-            Future<BigDecimal> totalFuture =
-                scope.fork(() -> calculateTotal(donationId));
-
-            // Wait for all to complete
-            scope.join();
-
-            // Propagate errors if any failed
-            scope.throwIfFailed(e -> new RuntimeException("Report generation failed", e));
-
-            // All succeeded - collect results
-            return new DonationReport(
-                detailsFuture.resultNow(),
-                beneficiariesFuture.resultNow(),
-                totalFuture.resultNow()
-            );
-        }
-    }
-
-    private DonationDetails fetchDonationDetails(String id) {
-        return new DonationDetails();
-    }
-
-    private List<Beneficiary> fetchBeneficiaries(String id) {
-        return List.of();
-    }
-
-    private BigDecimal calculateTotal(String id) {
-        return BigDecimal.ZERO;
-    }
-
-    private static class DonationDetails {}
-    private static class Beneficiary {}
-    private static class DonationReport {
-        public DonationReport(DonationDetails details,
-                            List<Beneficiary> beneficiaries,
-                            BigDecimal total) {}
-    }
-}
-```
+**For comprehensive virtual threads documentation** (lifecycle diagrams, structured concurrency, financial examples, performance analysis), see [Concurrency and Parallelism - Virtual Threads](./ex-so-stla-ja__concurrency-and-parallelism.md#virtual-threads).
 
 **Feature Evolution Across Java Versions:**
 

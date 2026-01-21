@@ -537,152 +537,25 @@ graph TD
 
 **Pattern**: Use virtual threads for lightweight, scalable concurrent operations.
 
-**Before (Platform Threads)**:
-
 ```java
-public class DonationReportGenerator {
-    private final ExecutorService executor =
-        Executors.newFixedThreadPool(10); // Limited threads
-
-    public List<DonationReport> generateReports(List<String> donationIds)
-            throws InterruptedException, ExecutionException {
-
-        List<Future<DonationReport>> futures = donationIds.stream()
-            .map(id -> executor.submit(() -> generateReport(id)))
-            .toList();
-
-        List<DonationReport> reports = new ArrayList<>();
-        for (Future<DonationReport> future : futures) {
-            reports.add(future.get()); // Blocking
-        }
-        return reports;
-    }
-
-    private DonationReport generateReport(String donationId) {
-        // Long-running I/O operation
-        return fetchFundData(donationId);
-    }
-}
-```
-
-**After (Virtual Threads - Java 21+)**:
-
-```java
-public class DonationReportGenerator {
-    public List<DonationReport> generateReports(List<String> donationIds)
-            throws InterruptedException {
-
+// Simple virtual thread usage
+public class TaskProcessor {
+    public void processTasksConcurrently(List<Task> tasks) {
         try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            var futures = donationIds.stream()
-                .map(id -> executor.submit(() -> generateReport(id)))
-                .toList();
-
-            return futures.stream()
-                .map(future -> {
-                    try {
-                        return future.get();
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .toList();
-        }
+            tasks.forEach(task ->
+                executor.submit(() -> processTask(task))
+            );
+        } // Auto-shutdown and cleanup
     }
 
-    // Alternative: Direct virtual thread creation
-    public DonationReport generateReportAsync(String donationId)
-            throws InterruptedException {
-
-        var thread = Thread.ofVirtual().start(() -> {
-            return generateReport(donationId);
-        });
-
-        return thread.join(); // Wait for completion
-    }
-
-    // Structured concurrency (Preview)
-    public List<DonationReport> generateReportsStructured(List<String> donationIds)
-            throws InterruptedException {
-
-        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
-            var subtasks = donationIds.stream()
-                .map(id -> scope.fork(() -> generateReport(id)))
-                .toList();
-
-            scope.join();           // Wait for all
-            scope.throwIfFailed();  // Propagate errors
-
-            return subtasks.stream()
-                .map(StructuredTaskScope.Subtask::get)
-                .toList();
-        }
-    }
-
-    private DonationReport generateReport(String donationId) {
-        // Can now handle millions of concurrent operations
-        return fetchFundData(donationId);
+    private void processTask(Task task) {
+        // I/O-bound work benefits from virtual threads
+        // Can handle millions of concurrent tasks
     }
 }
 ```
 
-**Virtual Thread Architecture:**
-
-```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Gray #808080
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-
-sequenceDiagram
-    participant App as Application
-    participant VTPool as Virtual Thread Pool
-    participant VT1 as Virtual Thread 1
-    participant VT2 as Virtual Thread 2
-    participant Carrier as Carrier Thread #40;OS#41;
-
-    App->>VTPool: newVirtualThreadPerTaskExecutor#40;#41;
-    activate VTPool
-
-    App->>VTPool: submit#40;task1#41;
-    VTPool->>VT1: Create virtual thread
-    activate VT1
-
-    App->>VTPool: submit#40;task2#41;
-    VTPool->>VT2: Create virtual thread
-    activate VT2
-
-    VT1->>Carrier: Mount on carrier thread
-    activate Carrier
-    Note over VT1,Carrier: Execute CPU-bound work
-
-    VT1->>VT1: I/O operation starts
-    VT1->>Carrier: Unmount from carrier
-    deactivate Carrier
-    Note over VT1: Waiting for I/O
-
-    VT2->>Carrier: Mount on carrier thread
-    activate Carrier
-    Note over VT2,Carrier: Different virtual thread<br/>uses same carrier
-
-    VT1->>VT1: I/O complete
-    VT1->>Carrier: Mount again
-    Note over Carrier: VT2 yields or blocks
-
-    VT1->>Carrier: Complete task
-    deactivate VT1
-    deactivate Carrier
-
-    VT2->>VT2: Task complete
-    deactivate VT2
-
-    Note over VTPool: Millions of virtual threads<br/>Few carrier threads #40;=CPUs#41;
-    deactivate VTPool
-```
-
-**Key Benefits**:
-
-- Millions of threads without resource exhaustion
-- Natural blocking code style (no reactive complexity)
-- Better observability and debugging
-- Ideal for I/O-bound operations
+**For comprehensive virtual threads documentation** (lifecycle, structured concurrency, financial examples, diagrams), see [Concurrency and Parallelism - Virtual Threads](./ex-so-stla-ja__concurrency-and-parallelism.md#virtual-threads).
 
 ### 7. Try-With-Resources for Resource Management
 
@@ -1393,95 +1266,29 @@ public class TaxCategories {
 **Pattern**: Make fields final by default for thread safety and clarity.
 
 ```java
-// Domain model with immutable value objects
-public final class Money {
-    private final BigDecimal amount;
-    private final Currency currency;
+// Minimal example: Immutable configuration object
+public final class AppConfig {
+    private final String apiKey;
+    private final int maxRetries;
+    private final Duration timeout;
 
-    public Money(BigDecimal amount, Currency currency) {
-        this.amount = Objects.requireNonNull(amount, "Amount required");
-        this.currency = Objects.requireNonNull(currency, "Currency required");
+    public AppConfig(String apiKey, int maxRetries, Duration timeout) {
+        this.apiKey = Objects.requireNonNull(apiKey, "API key required");
+        this.maxRetries = maxRetries;
+        this.timeout = Objects.requireNonNull(timeout, "Timeout required");
 
-        if (amount.scale() > currency.getDefaultFractionDigits()) {
-            throw new IllegalArgumentException(
-                "Amount scale exceeds currency precision");
+        if (maxRetries < 0) {
+            throw new IllegalArgumentException("Max retries must be non-negative");
         }
     }
 
-    public Money add(Money other) {
-        if (!this.currency.equals(other.currency)) {
-            throw new IllegalArgumentException("Currency mismatch");
-        }
-        return new Money(this.amount.add(other.amount), this.currency);
-    }
-
-    public Money subtract(Money other) {
-        if (!this.currency.equals(other.currency)) {
-            throw new IllegalArgumentException("Currency mismatch");
-        }
-        return new Money(this.amount.subtract(other.amount), this.currency);
-    }
-
-    public Money multiply(BigDecimal multiplier) {
-        return new Money(
-            this.amount.multiply(multiplier),
-            this.currency
-        );
-    }
-
-    public boolean isPositive() {
-        return amount.compareTo(BigDecimal.ZERO) > 0;
-    }
-
-    public boolean isNegative() {
-        return amount.compareTo(BigDecimal.ZERO) < 0;
-    }
-
-    public BigDecimal amount() { return amount; }
-    public Currency currency() { return currency; }
-}
-
-// Service with immutable configuration
-public final class TaxCalculationService {
-    private final ThresholdProvider thresholdProvider;
-    private final TaxRateRepository rateRepository;
-    private final AuditLogger auditLogger;
-
-    public TaxCalculationService(
-            ThresholdProvider thresholdProvider,
-            TaxRateRepository rateRepository,
-            AuditLogger auditLogger) {
-        this.thresholdProvider = thresholdProvider;
-        this.rateRepository = rateRepository;
-        this.auditLogger = auditLogger;
-    }
-
-    public TaxCalculation calculate(Money income, IncomeType assetType) {
-        var threshold = thresholdProvider.getThreshold(assetType);
-        var rate = rateRepository.getRate(assetType);
-
-        if (income.amount().compareTo(threshold) < 0) {
-            auditLogger.log("Wealth below threshold", income);
-            return new TaxCalculation(
-                income.amount(),
-                threshold,
-                BigDecimal.ZERO,
-                LocalDate.now()
-            );
-        }
-
-        var taxAmount = income.amount().multiply(rate);
-        auditLogger.log("Tax calculated", taxAmount);
-
-        return new TaxCalculation(
-            income.amount(),
-            threshold,
-            taxAmount,
-            LocalDate.now()
-        );
-    }
+    public String apiKey() { return apiKey; }
+    public int maxRetries() { return maxRetries; }
+    public Duration timeout() { return timeout; }
 }
 ```
+
+**For comprehensive Money value object implementation**, see [Domain-Driven Design - Value Objects](./ex-so-stla-ja__domain-driven-design.md#example-money-value-object).
 
 **Key Benefits**:
 
