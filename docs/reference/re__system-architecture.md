@@ -13,7 +13,7 @@ Open Sharia Enterprise is a monorepo-based platform built with Nx, containing mu
 - **Monorepo Architecture**: Nx workspace with multiple independent applications
 - **Trunk-Based Development**: All development on `main` branch
 - **Automated Quality Gates**: Git hooks + GitHub Actions + Nx caching
-- **Multi-Platform Deployment**: Vercel for static sites, Kubernetes cluster for Dolphin suite
+- **Multi-Platform Deployment**: Vercel for static sites, Kubernetes cluster for Orca Grid suite
 - **Build Optimization**: Nx affected builds ensure only changed code is rebuilt
 
 ## C4 Model Architecture
@@ -76,11 +76,11 @@ graph TB
 
 - **Developers & Authors**: Interact with GitHub (source of truth) to build applications and create content
 - **Learners**: Access educational content via Vercel-hosted Hugo sites (ayokoding-web, ose-platform-web)
-- **Enterprise Users**: Access business applications via Kubernetes-hosted Dolphin suite
+- **Enterprise Users**: Access business applications via Kubernetes-hosted Orca Grid suite
 - **Production Team**: Approves staging deployments and monitors production environment
 - **GitHub**: Central hub for CI/CD automation and quality gates
 - **Vercel**: Automated deployment platform for static Hugo sites
-- **Kubernetes**: Container orchestration for Dolphin suite (multi-environment)
+- **Kubernetes**: Container orchestration for Orca Grid suite (multi-environment)
 
 ## Applications Inventory
 
@@ -137,44 +137,44 @@ The platform consists of 8 applications across 5 technology stacks:
 
 ### Frontend Applications (Next.js)
 
-#### dolphin-fe
+#### orca-grid-fe
 
-- **Purpose**: Web frontend for Dolphin enterprise application
+- **Purpose**: Web frontend for Orca Grid enterprise application
 - **Technology**: Next.js (React framework)
-- **Build Command**: `nx build dolphin-fe`
-- **Dev Command**: `nx dev dolphin-fe`
-- **Test Command**: `nx test dolphin-fe`
-- **Location**: `apps/dolphin-fe/`
+- **Build Command**: `nx build orca-grid-fe`
+- **Dev Command**: `nx dev orca-grid-fe`
+- **Test Command**: `nx test orca-grid-fe`
+- **Location**: `apps/orca-grid-fe/`
 - **Status**: Planned
 - **Deployment**: Multi-environment (local, dev K8s, staging K8s, prod K8s)
-- **Backend Integration**: Connects to dolphin-be REST API
+- **Backend Integration**: Connects to orca-grid-be REST API
 - **Feature Flags**: Supports per-environment feature flag configuration
 
 ### Backend Applications (Java)
 
-#### dolphin-be
+#### orca-grid-be
 
-- **Purpose**: Backend services for enterprise applications
+- **Purpose**: Knowledge Management System backend
 - **Language**: Java (Spring Boot)
-- **Build Command**: `nx build dolphin-be`
-- **Test Command**: `nx test dolphin-be`
-- **Serve Command**: `nx serve dolphin-be`
-- **Location**: `apps/dolphin-be/`
+- **Build Command**: `nx build orca-grid-be`
+- **Test Command**: `nx test orca-grid-be`
+- **Serve Command**: `nx serve orca-grid-be`
+- **Location**: `apps/orca-grid-be/`
 - **Status**: Initial setup (Phase 0)
 - **Deployment**: Multi-environment (local, dev K8s, staging K8s, prod K8s)
-- **API Consumers**: dolphin-fe, dolphin-be-e2e
+- **API Consumers**: orca-grid-fe, orca-grid-be-e2e
 - **Feature Flags**: Supports per-environment feature flag configuration
 
 ### E2E Testing Applications (Playwright)
 
-#### dolphin-be-e2e
+#### orca-grid-be-e2e
 
-- **Purpose**: API and E2E testing for dolphin-be backend
+- **Purpose**: API and E2E testing for orca-grid-be backend
 - **Technology**: Playwright (API testing mode)
-- **Test Command**: `nx e2e dolphin-be-e2e`
-- **Location**: `apps/dolphin-be-e2e/`
+- **Test Command**: `nx e2e orca-grid-be-e2e`
+- **Location**: `apps/orca-grid-be-e2e/`
 - **Status**: Planned
-- **Test Target**: dolphin-be REST API endpoints
+- **Test Target**: orca-grid-be REST API endpoints
 - **Test Environments**: local, dev, staging (NOT prod)
 - **Test Types**:
   - API contract tests
@@ -182,14 +182,14 @@ The platform consists of 8 applications across 5 technology stacks:
   - End-to-end backend flows
 - **Configuration**: Environment-specific endpoints and test data
 
-#### dolphin-fe-e2e
+#### orca-grid-fe-e2e
 
-- **Purpose**: E2E testing for dolphin-fe web application
+- **Purpose**: E2E testing for orca-grid-fe web application
 - **Technology**: Playwright (browser automation)
-- **Test Command**: `nx e2e dolphin-fe-e2e`
-- **Location**: `apps/dolphin-fe-e2e/`
+- **Test Command**: `nx e2e orca-grid-fe-e2e`
+- **Location**: `apps/orca-grid-fe-e2e/`
 - **Status**: Planned
-- **Test Target**: dolphin-fe UI and user flows
+- **Test Target**: orca-grid-fe UI and user flows
 - **Test Environments**: local, dev, staging (NOT prod)
 - **Test Types**:
   - UI component tests
@@ -208,11 +208,11 @@ graph TB
         AYO[ayokoding-web<br/>Hugo Static Site]
     end
 
-    subgraph "Dolphin Application Suite"
-        DOLPHIN_FE[dolphin-fe<br/>Next.js]
-        DOLPHIN_BE[dolphin-be<br/>Spring Boot]
-        DOLPHIN_FE_E2E[dolphin-fe-e2e<br/>Playwright]
-        DOLPHIN_BE_E2E[dolphin-be-e2e<br/>Playwright]
+    subgraph "Orca Grid Application Suite"
+        ORCA_GRID_FE[orca-grid-fe<br/>Next.js]
+        ORCA_GRID_BE[orca-grid-be<br/>Spring Boot]
+        ORCA_GRID_FE_E2E[orca-grid-fe-e2e<br/>Playwright]
+        ORCA_GRID_BE_E2E[orca-grid-be-e2e<br/>Playwright]
     end
 
     subgraph "CLI Tools"
@@ -228,30 +228,30 @@ graph TB
     AYOCLI -->|Updates content| AYO
     BUTLER -->|Repository automation| NX
 
-    DOLPHIN_FE -->|REST API calls| DOLPHIN_BE
-    DOLPHIN_FE_E2E -->|Tests UI| DOLPHIN_FE
-    DOLPHIN_BE_E2E -->|Tests API| DOLPHIN_BE
+    ORCA_GRID_FE -->|REST API calls| ORCA_GRID_BE
+    ORCA_GRID_FE_E2E -->|Tests UI| ORCA_GRID_FE
+    ORCA_GRID_BE_E2E -->|Tests API| ORCA_GRID_BE
 
     NX -.->|Manages| OSE
     NX -.->|Manages| AYO
     NX -.->|Manages| AYOCLI
     NX -.->|Manages| BUTLER
-    NX -.->|Manages| DOLPHIN_FE
-    NX -.->|Manages| DOLPHIN_BE
-    NX -.->|Manages| DOLPHIN_FE_E2E
-    NX -.->|Manages| DOLPHIN_BE_E2E
+    NX -.->|Manages| ORCA_GRID_FE
+    NX -.->|Manages| ORCA_GRID_BE
+    NX -.->|Manages| ORCA_GRID_FE_E2E
+    NX -.->|Manages| ORCA_GRID_BE_E2E
 
     OSE -.->|May import| LIBS
     AYO -.->|May import| LIBS
-    DOLPHIN_FE -.->|May import| LIBS
-    DOLPHIN_BE -.->|May import| LIBS
+    ORCA_GRID_FE -.->|May import| LIBS
+    ORCA_GRID_BE -.->|May import| LIBS
 
     style OSE fill:#0077b6,stroke:#03045e,color:#ffffff
     style AYO fill:#0077b6,stroke:#03045e,color:#ffffff
-    style DOLPHIN_FE fill:#0077b6,stroke:#03045e,color:#ffffff
-    style DOLPHIN_BE fill:#e76f51,stroke:#9d0208,color:#ffffff
-    style DOLPHIN_FE_E2E fill:#f4a261,stroke:#e76f51,color:#ffffff
-    style DOLPHIN_BE_E2E fill:#f4a261,stroke:#e76f51,color:#ffffff
+    style ORCA_GRID_FE fill:#0077b6,stroke:#03045e,color:#ffffff
+    style ORCA_GRID_BE fill:#e76f51,stroke:#9d0208,color:#ffffff
+    style ORCA_GRID_FE_E2E fill:#f4a261,stroke:#e76f51,color:#ffffff
+    style ORCA_GRID_BE_E2E fill:#f4a261,stroke:#e76f51,color:#ffffff
     style AYOCLI fill:#2a9d8f,stroke:#264653,color:#ffffff
     style BUTLER fill:#2a9d8f,stroke:#264653,color:#ffffff
     style NX fill:#6a4c93,stroke:#22223b,color:#ffffff
@@ -267,18 +267,18 @@ Marketing & Education Sites:
 - ose-platform-web: Fully independent static site
 - ayokoding-web: Fully independent static site (with CLI automation)
 
-Dolphin Application Suite:
+Orca Grid Application Suite:
 
-- dolphin-fe: Frontend application consuming dolphin-be REST API
-- dolphin-be: Backend services exposing REST API
-- dolphin-fe-e2e: Tests dolphin-fe UI and user flows
-- dolphin-be-e2e: Tests dolphin-be API endpoints
+- orca-grid-fe: Frontend application consuming orca-grid-be REST API
+- orca-grid-be: Backend services exposing REST API
+- orca-grid-fe-e2e: Tests orca-grid-fe UI and user flows
+- orca-grid-be-e2e: Tests orca-grid-be API endpoints
 
 **Runtime Dependencies:**
 
-- dolphin-fe → dolphin-be (HTTP REST API calls)
-- dolphin-fe-e2e → dolphin-fe (browser automation)
-- dolphin-be-e2e → dolphin-be (API testing)
+- orca-grid-fe → orca-grid-be (HTTP REST API calls)
+- orca-grid-fe-e2e → orca-grid-fe (browser automation)
+- orca-grid-be-e2e → orca-grid-be (API testing)
 
 **Build-Time Dependencies:**
 
@@ -311,7 +311,7 @@ sequenceDiagram
 
 Shows the internal components within each container. Components are groupings of related functionality behind a well-defined interface.
 
-#### dolphin-be Components (Spring Boot Backend)
+#### orca-grid-be Components (Spring Boot Backend)
 
 ```mermaid
 flowchart TB
@@ -396,7 +396,7 @@ flowchart TB
 - **Exception Handler**: Centralized error handling, error response formatting
 - **Health Checks**: Application health monitoring for Kubernetes probes
 
-#### dolphin-fe Components (Next.js Frontend)
+#### orca-grid-fe Components (Next.js Frontend)
 
 ```mermaid
 graph TB
@@ -447,7 +447,7 @@ graph TB
         ANALYTICS[Analytics<br/>User tracking]
     end
 
-    DOLPHIN_BE_API[dolphin-be REST API]
+    ORCA_GRID_BE_API[orca-grid-be REST API]
 
     PAGES --> LAYOUTS
     PAGES --> UI_COMP
@@ -462,7 +462,7 @@ graph TB
     API_CLIENT --> API_ENDPOINTS
     API_CLIENT --> AUTH_INTERCEPTOR
     API_CLIENT --> ERROR_HANDLER
-    API_CLIENT --> DOLPHIN_BE_API
+    API_CLIENT --> ORCA_GRID_BE_API
     AUTH_CONTEXT --> TOKEN_MANAGER
     LOGIN_FLOW --> AUTH_CONTEXT
     LOGIN_FLOW --> API_CLIENT
@@ -480,7 +480,7 @@ graph TB
     style API_CLIENT fill:#e76f51,stroke:#9d0208,color:#ffffff
     style AUTH_CONTEXT fill:#6a4c93,stroke:#22223b,color:#ffffff
     style SERVER_STATE fill:#457b9d,stroke:#1d3557,color:#ffffff
-    style DOLPHIN_BE_API fill:#9d0208,stroke:#6a040f,color:#ffffff
+    style ORCA_GRID_BE_API fill:#9d0208,stroke:#6a040f,color:#ffffff
 ```
 
 **Component Responsibilities:**
@@ -770,7 +770,7 @@ graph TB
 
 Shows implementation details for critical components. Focus on database schemas, class structures, and key implementation patterns.
 
-#### dolphin-be Database Schema (Entity-Relationship Diagram)
+#### orca-grid-be Database Schema (Entity-Relationship Diagram)
 
 ```mermaid
 erDiagram
@@ -869,7 +869,7 @@ erDiagram
 - **Soft Deletes**: `is_active` flags instead of hard deletes for audit purposes
 - **Timestamps**: Created/updated timestamps on all mutable entities
 
-#### dolphin-be Class Structure (Spring Boot Layered Architecture)
+#### orca-grid-be Class Structure (Spring Boot Layered Architecture)
 
 ```mermaid
 classDiagram
@@ -983,7 +983,7 @@ classDiagram
 - **Domain Events**: Event-driven architecture for async operations
 - **Validation**: Built-in validation via @Valid and custom validators
 
-#### dolphin-fe Component Hierarchy (React/Next.js)
+#### orca-grid-fe Component Hierarchy (React/Next.js)
 
 ```mermaid
 classDiagram
@@ -1225,13 +1225,13 @@ classDiagram
 
 #### Key Sequence Diagrams
 
-**User Authentication Flow (dolphin-be + dolphin-fe):**
+**User Authentication Flow (orca-grid-be + orca-grid-fe):**
 
 ```mermaid
 sequenceDiagram
     actor User
-    participant FE as dolphin-fe<br/>(Next.js)
-    participant AuthAPI as dolphin-be<br/>/api/auth/login
+    participant FE as orca-grid-fe<br/>(Next.js)
+    participant AuthAPI as orca-grid-be<br/>/api/auth/login
     participant AuthFilter as Authentication<br/>Filter
     participant AuthService as Authentication<br/>Service
     participant UserRepo as User<br/>Repository
@@ -1261,7 +1261,7 @@ sequenceDiagram
     end
 ```
 
-**Transaction Creation with Sharia Compliance (dolphin-be):**
+**Transaction Creation with Sharia Compliance (orca-grid-be):**
 
 ```mermaid
 sequenceDiagram
@@ -1356,7 +1356,7 @@ graph TB
     subgraph "Build System"
         NX_BUILD[Nx Build System<br/>Affected Detection]
         HUGO_BUILD[Hugo Build<br/>v0.152.2 Extended]
-        NEXTJS_BUILD[Next.js Build<br/>dolphin-fe]
+        NEXTJS_BUILD[Next.js Build<br/>orca-grid-fe]
         GO_BUILD[Go Build<br/>CLI Tools]
         MAVEN_BUILD[Maven Build<br/>Spring Boot]
         PLAYWRIGHT_BUILD[Playwright Build<br/>E2E Tests]
@@ -1365,7 +1365,7 @@ graph TB
     subgraph "Deployment Targets"
         VERCEL_OSE[Vercel<br/>oseplatform.com]
         VERCEL_AYO[Vercel<br/>ayokoding.com]
-        K8S_CLUSTER[Kubernetes Cluster<br/>dolphin-fe + dolphin-be]
+        K8S_CLUSTER[Kubernetes Cluster<br/>orca-grid-fe + orca-grid-be]
         LOCAL[Local Binary<br/>CLI Tools]
         CI_E2E[CI Environment<br/>E2E Tests]
     end
@@ -1420,12 +1420,12 @@ graph TB
 - **Output Directory**: `public/`
 - **Hugo Version**: 0.152.2 (configured via environment variable)
 
-**Next.js Application** (dolphin-fe, planned):
+**Next.js Application** (orca-grid-fe, planned):
 
 - **Deployment Target**: Kubernetes cluster
 - **Containerization**: Docker container
 - **Build Output**: Next.js standalone build
-- **Environment Variables**: API endpoint configuration for dolphin-be
+- **Environment Variables**: API endpoint configuration for orca-grid-be
 
 **Security Headers (All Vercel Sites):**
 
@@ -1442,37 +1442,37 @@ graph TB
 
 #### Kubernetes Cluster Deployment (Planned)
 
-**Dolphin Suite** (dolphin-fe + dolphin-be):
+**Orca Grid Suite** (orca-grid-fe + orca-grid-be):
 
 - **Platform**: Kubernetes cluster (multi-environment)
 - **Containerization**: Docker containers for both applications
-- **dolphin-be**: Spring Boot application with REST API
-- **dolphin-fe**: Next.js application (standalone build)
+- **orca-grid-be**: Spring Boot application with REST API
+- **orca-grid-fe**: Next.js application (standalone build)
 - **Database**: Sharia-compliant data storage (deployed in cluster or external)
-- **Service Communication**: Internal cluster DNS for dolphin-fe → dolphin-be
-- **Ingress**: External access to dolphin-fe, internal-only access to dolphin-be API
+- **Service Communication**: Internal cluster DNS for orca-grid-fe → orca-grid-be
+- **Ingress**: External access to orca-grid-fe, internal-only access to orca-grid-be API
 - **Configuration**: ConfigMaps and Secrets for environment-specific variables
 
 **Deployment Environments:**
 
 1. **local** (Local Machine):
-   - **Applications**: dolphin-fe, dolphin-be
-   - **E2E Tests**: dolphin-fe-e2e, dolphin-be-e2e
+   - **Applications**: orca-grid-fe, orca-grid-be
+   - **E2E Tests**: orca-grid-fe-e2e, orca-grid-be-e2e
    - **Platform**: Docker Compose or local processes
    - **Purpose**: Local development and testing
    - **Feature Flags**: Local environment feature flag configuration
 
 2. **dev** (Kubernetes):
-   - **Applications**: dolphin-fe, dolphin-be
-   - **E2E Tests**: dolphin-fe-e2e, dolphin-be-e2e
+   - **Applications**: orca-grid-fe, orca-grid-be
+   - **E2E Tests**: orca-grid-fe-e2e, orca-grid-be-e2e
    - **Platform**: Kubernetes cluster (dev namespace)
    - **Purpose**: Development integration testing
    - **Feature Flags**: Dev environment feature flag configuration
    - **Deployment Trigger**: Merge to main branch
 
 3. **staging** (Kubernetes):
-   - **Applications**: dolphin-fe, dolphin-be
-   - **E2E Tests**: dolphin-fe-e2e, dolphin-be-e2e
+   - **Applications**: orca-grid-fe, orca-grid-be
+   - **E2E Tests**: orca-grid-fe-e2e, orca-grid-be-e2e
    - **Platform**: Kubernetes cluster (staging namespace)
    - **Purpose**: Final testing and production team handover/acceptance testing
    - **Feature Flags**: Staging environment feature flag configuration
@@ -1480,7 +1480,7 @@ graph TB
    - **Environment**: Production-like configuration for realistic testing
 
 4. **prod** (Kubernetes):
-   - **Applications**: dolphin-fe, dolphin-be
+   - **Applications**: orca-grid-fe, orca-grid-be
    - **E2E Tests**: NOT run in production
    - **Platform**: Kubernetes cluster (prod namespace)
    - **Purpose**: Production workloads
@@ -1539,14 +1539,14 @@ graph TB
 
 **E2E Test Execution:**
 
-- **Test Applications**: dolphin-be-e2e, dolphin-fe-e2e
+- **Test Applications**: orca-grid-be-e2e, orca-grid-fe-e2e
 - **Supported Environments**:
-  - **local**: Run against local dolphin-fe/be instances (Docker Compose or local processes)
+  - **local**: Run against local orca-grid-fe/be instances (Docker Compose or local processes)
   - **dev**: Run in GitHub Actions CI against dev Kubernetes deployment
   - **staging**: Run in GitHub Actions CI against staging Kubernetes deployment before prod promotion
   - **prod**: E2E tests are NOT run in production environment
 - **Execution Triggers**:
-  - **local**: Manual execution during development (`nx e2e dolphin-fe-e2e`, `nx e2e dolphin-be-e2e`)
+  - **local**: Manual execution during development (`nx e2e orca-grid-fe-e2e`, `nx e2e orca-grid-be-e2e`)
   - **dev**: Automated on merge to main, PR workflows, scheduled runs
   - **staging**: Automated after dev deployment, before prod promotion
 - **Test Data**: Isolated test database per environment
@@ -1556,7 +1556,7 @@ graph TB
 
 - **Purpose**: Deployment triggers only
 - **Branches**: `prod-ose-platform-web`, `prod-ayokoding-web`
-- **Future Branches**: `prod-dolphin-fe` (when dolphin-fe is ready)
+- **Future Branches**: `prod-orca-grid-fe` (when orca-grid-fe is ready)
 - **Policy**: NEVER commit directly to these branches
 - **Workflow**: Merge from `main` when ready to deploy
 
@@ -1731,26 +1731,26 @@ graph TB
 
 **Purpose**: Prevent merging PRs with broken markdown links
 
-#### Planned Workflows for Dolphin Suite
+#### Planned Workflows for Orca Grid Suite
 
-**Dolphin Dev Deploy Workflow** (planned):
+**Orca Grid Dev Deploy Workflow** (planned):
 
-- **File**: `.github/workflows/dolphin-deploy-dev.yml`
+- **File**: `.github/workflows/orca-grid-deploy-dev.yml`
 - **Trigger**: Push to main branch
 - **Steps**:
   1. Checkout code
-  2. Build Docker images for dolphin-fe and dolphin-be
+  2. Build Docker images for orca-grid-fe and orca-grid-be
   3. Tag images with commit SHA and `dev-latest`
   4. Push images to container registry
   5. Deploy to Kubernetes dev namespace
   6. Apply dev environment feature flag configuration
-  7. Run dolphin-be-e2e against dev environment
-  8. Run dolphin-fe-e2e against dev environment
+  7. Run orca-grid-be-e2e against dev environment
+  8. Run orca-grid-fe-e2e against dev environment
   9. Report deployment and test results
 
-**Dolphin Staging Deploy Workflow** (planned):
+**Orca Grid Staging Deploy Workflow** (planned):
 
-- **File**: `.github/workflows/dolphin-deploy-staging.yml`
+- **File**: `.github/workflows/orca-grid-deploy-staging.yml`
 - **Trigger**: Manual workflow dispatch or automated on dev success
 - **Steps**:
   1. Verify dev environment tests passed
@@ -1758,15 +1758,15 @@ graph TB
   3. Tag images with `staging-latest`
   4. Deploy to Kubernetes staging namespace
   5. Apply staging environment feature flag configuration
-  6. Run dolphin-be-e2e against staging environment
-  7. Run dolphin-fe-e2e against staging environment
+  6. Run orca-grid-be-e2e against staging environment
+  7. Run orca-grid-fe-e2e against staging environment
   8. Notify production team for acceptance testing
   9. Monitor metrics and error rates
   10. Report staging validation results
 
-**Dolphin Prod Deploy Workflow** (planned):
+**Orca Grid Prod Deploy Workflow** (planned):
 
-- **File**: `.github/workflows/dolphin-deploy-prod.yml`
+- **File**: `.github/workflows/orca-grid-deploy-prod.yml`
 - **Trigger**: Manual workflow dispatch (requires approval)
 - **Steps**:
   1. Verify staging environment tests passed
@@ -1779,18 +1779,18 @@ graph TB
   8. Notify deployment status
   9. Automatic rollback on critical errors
 
-**Dolphin E2E Test Workflow** (planned):
+**Orca Grid E2E Test Workflow** (planned):
 
-- **File**: `.github/workflows/dolphin-e2e.yml`
+- **File**: `.github/workflows/orca-grid-e2e.yml`
 - **Trigger**: Pull request, scheduled runs
 - **Steps**:
   1. Checkout code
   2. Setup Node.js and Java
-  3. Build dolphin-be and dolphin-fe
+  3. Build orca-grid-be and orca-grid-fe
   4. Start services in CI environment (Docker Compose)
   5. Apply local environment feature flag configuration
-  6. Run dolphin-be-e2e (Playwright API tests)
-  7. Run dolphin-fe-e2e (Playwright UI tests)
+  6. Run orca-grid-be-e2e (Playwright API tests)
+  7. Run orca-grid-fe-e2e (Playwright UI tests)
   8. Upload test results and screenshots
 
 ### Nx Build System
@@ -1880,7 +1880,7 @@ graph TB
 
    - Vercel automatically builds and deploys
 
-### Dolphin Suite Deployment Flow (Planned)
+### Orca Grid Suite Deployment Flow (Planned)
 
 **Local Development:**
 
@@ -1891,15 +1891,15 @@ graph TB
    docker-compose up -d
 
    # Option 2: Direct execution
-   nx serve dolphin-be
-   nx dev dolphin-fe
+   nx serve orca-grid-be
+   nx dev orca-grid-fe
    ```
 
 2. **Run E2E Tests Locally**:
 
    ```bash
-   nx e2e dolphin-be-e2e --configuration=local
-   nx e2e dolphin-fe-e2e --configuration=local
+   nx e2e orca-grid-be-e2e --configuration=local
+   nx e2e orca-grid-fe-e2e --configuration=local
    ```
 
 **Dev Environment Deployment:**
@@ -1927,7 +1927,7 @@ graph TB
 
    ```bash
    # Manual workflow dispatch via GitHub UI or CLI
-   gh workflow run dolphin-deploy-staging.yml
+   gh workflow run orca-grid-deploy-staging.yml
    ```
 
 3. **GitHub Actions automatically**:
@@ -1955,7 +1955,7 @@ graph TB
 
    ```bash
    # Manual workflow dispatch with approval
-   gh workflow run dolphin-deploy-prod.yml
+   gh workflow run orca-grid-deploy-prod.yml
    ```
 
 3. **GitHub Actions automatically**:
@@ -2056,15 +2056,15 @@ graph TB
 
 - **Framework**: Next.js (React)
 - **Deployment**: Kubernetes cluster (planned)
-- **Applications**: dolphin-fe
+- **Applications**: orca-grid-fe
 - **Status**: Planned
 
 ### Backend
 
-- **Java**: Spring Boot (dolphin-be)
+- **Java**: Spring Boot (orca-grid-be)
 - **Build**: Maven
 - **Deployment**: Kubernetes cluster (planned)
-- **API**: REST API for dolphin-fe consumption
+- **API**: REST API for orca-grid-fe consumption
 
 ### CLI Tools
 
@@ -2076,9 +2076,9 @@ graph TB
 ### E2E Testing
 
 - **Framework**: Playwright
-- **Test Types**: API testing (dolphin-be-e2e), UI testing (dolphin-fe-e2e)
+- **Test Types**: API testing (orca-grid-be-e2e), UI testing (orca-grid-fe-e2e)
 - **Execution**: GitHub Actions CI, local development
-- **Applications**: dolphin-be-e2e, dolphin-fe-e2e
+- **Applications**: orca-grid-be-e2e, orca-grid-fe-e2e
 - **Status**: Planned
 
 ### Infrastructure
@@ -2088,7 +2088,7 @@ graph TB
 - **Package Manager**: npm 11.6.3
 - **Git Workflow**: Trunk-Based Development
 - **CI**: GitHub Actions
-- **CD**: Vercel (Hugo sites), Kubernetes cluster (Dolphin suite)
+- **CD**: Vercel (Hugo sites), Kubernetes cluster (Orca Grid suite)
 - **Container Orchestration**: Kubernetes (planned)
 - **Deployment Environments**: local, dev (K8s), staging (K8s), prod (K8s)
 - **Feature Flags**: Per-environment configuration for progressive rollout
@@ -2104,11 +2104,11 @@ graph TB
 
 ## Future Architecture Considerations
 
-### Immediate Next Steps (Dolphin Suite Completion)
+### Immediate Next Steps (Orca Grid Suite Completion)
 
-- **dolphin-fe**: Next.js frontend application with REST API integration
-- **dolphin-be-e2e**: Playwright API testing for backend endpoints
-- **dolphin-fe-e2e**: Playwright UI testing for frontend flows
+- **orca-grid-fe**: Next.js frontend application with REST API integration
+- **orca-grid-be-e2e**: Playwright API testing for backend endpoints
+- **orca-grid-fe-e2e**: Playwright UI testing for frontend flows
 - **Multi-Environment Kubernetes Deployment**:
   - Four environments: local, dev, staging, prod
   - Namespace-based isolation in Kubernetes cluster
@@ -2154,7 +2154,7 @@ graph TB
 
 - **Nx Cloud**: Distributed task execution and caching
 - **Kubernetes Scaling Features**:
-  - Horizontal Pod Autoscaling (HPA) for dolphin-fe and dolphin-be
+  - Horizontal Pod Autoscaling (HPA) for orca-grid-fe and orca-grid-be
   - Resource limits and requests for optimal resource allocation
   - Rolling updates for zero-downtime deployments
   - Multi-replica deployments for high availability
