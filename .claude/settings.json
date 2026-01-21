@@ -1,4 +1,19 @@
 {
+  "permissions": {
+    "allow": [
+      "Read(.claude/**)",
+      "Write(.claude/**)",
+      "Edit(.claude/**)",
+      "Read(.opencode/**)",
+      "Write(.opencode/**)",
+      "Edit(.opencode/**)",
+      "Bash(cat > .claude:*)",
+      "Bash(cat > .opencode:*)",
+      "Bash(sed:*)",
+      "Bash(awk:*)",
+      "Bash(npm run sync\\:claude-to-opencode:*)"
+    ]
+  },
   "hooks": {
     "PostToolUse": [
       {
