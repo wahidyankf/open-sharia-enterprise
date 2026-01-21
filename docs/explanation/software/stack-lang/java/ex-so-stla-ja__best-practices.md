@@ -316,7 +316,10 @@ public LoanContract generate(LoanRequest request) {
     Money totalCost = request.getCostPrice().add(request.getProfitMargin()).add(request.getAdministrativeFees());
 
     List<Payment> payments = new ArrayList<>();
-    Money installmentAmount = totalCost.divide(request.getTermInMonths());
+    Money installmentAmount = totalCost.divide(
+        BigDecimal.valueOf(request.getTermInMonths()),
+        RoundingMode.HALF_UP
+    );
     LocalDate paymentDate = LocalDate.now();
 
     for (int i = 0; i < request.getTermInMonths(); i++) {
@@ -660,7 +663,10 @@ public class DonationDistributionService {
             throw new IllegalArgumentException("Beneficiary list cannot be empty");
         }
 
-        Money amountPerBeneficiary = totalIncome.divide(beneficiaries.size());
+        Money amountPerBeneficiary = totalIncome.divide(
+            BigDecimal.valueOf(beneficiaries.size()),
+            RoundingMode.HALF_UP
+        );
 
         return beneficiaries.stream()
             .map(beneficiary -> new Distribution(
@@ -697,7 +703,10 @@ public Distribution[] distributeDonationIncome(
         throw new IllegalArgumentException("Beneficiary array cannot be empty");
     }
 
-    Money amountPerBeneficiary = totalIncome.divide(beneficiaries.length);
+    Money amountPerBeneficiary = totalIncome.divide(
+        BigDecimal.valueOf(beneficiaries.length),
+        RoundingMode.HALF_UP
+    );
     Distribution[] distributions = new Distribution[beneficiaries.length];
 
     for (int i = 0; i < beneficiaries.length; i++) {
@@ -834,7 +843,7 @@ public class DecliningBalanceStrategy implements ProfitCalculationStrategy {
         long months = term.toDays() / 30;
         return principal.multiply(annualRate)
             .multiply(new BigDecimal(months))
-            .divide(new BigDecimal("12"));
+            .divide(new BigDecimal("12"), RoundingMode.HALF_UP);
     }
 }
 
@@ -2460,9 +2469,8 @@ public class LoanContractGenerator {
                 String.format("Term cannot exceed %d months", maxTerm));
         }
 
-        BigDecimal interestPercentage = request.getProfitMargin()
-            .divide(request.getCostPrice())
-            .getAmount();
+        BigDecimal interestPercentage = request.getProfitMargin().getAmount()
+            .divide(request.getCostPrice().getAmount(), 4, RoundingMode.HALF_UP);
 
         BigDecimal maxProfitMargin = properties.getLoan().getMaxProfitMargin();
         if (interestPercentage.compareTo(maxProfitMargin) > 0) {
@@ -2575,7 +2583,10 @@ public class DonationDistributionService {
             Money totalIncome,
             List<Beneficiary> beneficiaries) {
 
-        Money amountPerBeneficiary = totalIncome.divide(beneficiaries.size());
+        Money amountPerBeneficiary = totalIncome.divide(
+            BigDecimal.valueOf(beneficiaries.size()),
+            RoundingMode.HALF_UP
+        );
         LocalDate distributionDate = LocalDate.now();
 
         return beneficiaries.stream()

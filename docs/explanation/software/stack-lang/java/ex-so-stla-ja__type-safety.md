@@ -376,9 +376,9 @@ public Money calculateExpectedReturn(LoanAgreement agreement) {
         case Murabaha m ->
             m.getPrincipal().add(m.cost());
         case Musharaka ms ->
-            m.getPrincipal().multiply(ms.partnershipRatio());
+            ms.getPrincipal().multiply(ms.partnershipRatio());
         case Mudaraba md ->
-            m.getPrincipal().multiply(md.profitSharingRatio());
+            md.getPrincipal().multiply(md.profitSharingRatio());
         // No default needed - compiler verifies all cases!
     };
 }
