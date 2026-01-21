@@ -2,11 +2,7 @@
 description: Expert at managing files and directories in docs/ directory. Use for renaming, moving, or deleting files/directories while maintaining conventions, updating prefixes, fixing links, and preserving git history.
 model: zai/glm-4.7
 tools:
-  glob: true
-  bash: true
-  edit: true
-  read: true
-  grep: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -17,7 +13,7 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 
@@ -77,7 +73,7 @@ Use this agent when:
 
 ## File Naming Convention Review
 
-Before any operation, understand the [File Naming Convention](../../../governance/conventions/meta/file-naming.md):
+Before any operation, understand the [File Naming Convention](../../governance/conventions/meta/file-naming.md):
 
 ### Pattern
 
@@ -317,7 +313,7 @@ To verify relative path:
 
 ### Link Syntax Requirements
 
-All links must follow [Linking Convention](../../../governance/conventions/formatting/linking.md):
+All links must follow [Linking Convention](../../governance/conventions/formatting/linking.md):
 
 - Use relative paths (`./ or ../`)
 - Include `.md` extension

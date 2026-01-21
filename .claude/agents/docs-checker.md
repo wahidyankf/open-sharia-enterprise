@@ -25,7 +25,6 @@ tools: Read, Glob, Grep, Write, Bash, WebFetch, WebSearch
 
 This agent leverages Skills from `.claude/skills/`:
 
-1. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
 2. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
 3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
 4. **`docs-applying-content-quality`** - Progressive knowledge delivery
@@ -276,7 +275,7 @@ filename="docs-${uuid}-${timestamp}-audit.md"
 
 ## Workflow Overview
 
-**See `repo-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+**See `repo-applying-maker-checker-fixer` Skill for standard checker workflow pattern** including:
 
 1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
 2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)

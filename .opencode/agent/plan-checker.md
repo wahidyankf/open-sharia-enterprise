@@ -2,11 +2,7 @@
 description: Validates project plan quality including requirements completeness, technical documentation clarity, and delivery checklist executability. Use when reviewing plans before execution.
 model: zai/glm-4.7
 tools:
-  grep: true
-  bash: true
-  glob: true
-  read: true
-  write: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -27,9 +23,8 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
-1. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
 2. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
 4. **`repo-generating-validation-reports`** - Progressive knowledge delivery
@@ -68,7 +63,7 @@ The `repo-generating-validation-reports` Skill provides UUID generation, timesta
 
 ## Core Responsibility
 
-Validate project plans against standards defined in [Plans Organization Convention](../../../governance/conventions/project/plans-organization.md).
+Validate project plans against standards defined in [Plans Organization Convention](../../governance/conventions/project/plans-organization.md).
 
 ## Validation Scope
 
@@ -115,7 +110,7 @@ Validate project plans against standards defined in [Plans Organization Conventi
 
 ## Workflow Overview
 
-**See `repo-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+**See `repo-applying-maker-checker-fixer` Skill for standard checker workflow pattern** including:
 
 1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
 2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
@@ -169,9 +164,9 @@ Update status to "Complete", add summary statistics and prioritized recommendati
 
 **Project Guidance:**
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../../governance/conventions/project/plans-organization.md) - Plan standards
-- [Trunk Based Development Convention](../../../governance/development/workflow/trunk-based-development.md) - Git workflow standards
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [Plans Organization Convention](../../governance/conventions/project/plans-organization.md) - Plan standards
+- [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) - Git workflow standards
 
 **Related Agents:**
 

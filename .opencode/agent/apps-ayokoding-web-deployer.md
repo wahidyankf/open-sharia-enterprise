@@ -2,8 +2,7 @@
 description: Deploys ayokoding-web to production environment branch (prod-ayokoding-web) after validation. Vercel listens to production branch for automatic builds.
 model: zai/glm-4.5-air
 tools:
-  grep: true
-  bash: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -14,7 +13,7 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 2. **`repo-practicing-trunk-based-development`** - Progressive knowledge delivery
@@ -149,9 +148,9 @@ git pull origin main
 
 **Project Guidance**:
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
-- [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md)
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
+- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
 
 **Related Agents**:
 
@@ -160,8 +159,8 @@ git pull origin main
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
-- [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
+- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
 
 **Skills**:
 

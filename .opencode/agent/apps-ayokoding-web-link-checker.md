@@ -2,13 +2,7 @@
 description: Validates links in ayokoding-web content following absolute path convention (/docs/path without .md). Checks internal and external links.
 model: zai/glm-4.5-air
 tools:
-  grep: true
-  write: true
-  websearch: true
-  glob: true
-  read: true
-  webfetch: true
-  bash: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -53,9 +47,8 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
-1. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
 2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 3. **`docs-validating-links`** - Progressive knowledge delivery
 4. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
@@ -103,7 +96,7 @@ The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specifi
 
 ## Workflow Overview
 
-**See `repo-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+**See `repo-applying-maker-checker-fixer` Skill for standard checker workflow pattern** including:
 
 1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
 2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
@@ -127,8 +120,8 @@ Update status, add summary.
 
 ## Reference Documentation
 
-- [AGENTS.md](../../../CLAUDE.md)
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md)
+- [AGENTS.md](../../CLAUDE.md)
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 
 **Skills:**
 

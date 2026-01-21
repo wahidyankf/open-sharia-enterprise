@@ -41,7 +41,6 @@ tools: Read, Edit, Write, Glob, Grep, Bash
 
 This agent leverages Skills from `.claude/skills/`:
 
-1. **`repo-applying-fixer-workflow`** - Progressive knowledge delivery
 2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 3. **`docs-creating-by-example-tutorials`** - Progressive knowledge delivery
 4. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
@@ -91,7 +90,7 @@ The `repo-applying-maker-checker-fixer` Skill provides complete mode parameter l
 
 ## How This Agent Works
 
-**See `repo-applying-fixer-workflow` Skill for complete workflow details** including:
+**See `repo-applying-maker-checker-fixer` Skill for complete workflow details** including:
 
 1. **Report Discovery**: Auto-detect latest audit report with manual override support
 2. **Validation Strategy**: Re-validate each finding to assess HIGH/MEDIUM/FALSE_POSITIVE confidence

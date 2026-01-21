@@ -2,11 +2,7 @@
 description: Validates completed plan implementation by verifying all requirements met, code quality standards followed, and acceptance criteria satisfied. Final quality gate before marking plan complete.
 model: zai/glm-4.7
 tools:
-  grep: true
-  write: true
-  glob: true
-  read: true
-  bash: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -51,9 +47,8 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
-1. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
 2. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
 4. **`repo-generating-validation-reports`** - Progressive knowledge delivery
@@ -141,7 +136,7 @@ Validate that completed plan implementation:
 
 ## Workflow Overview
 
-**See `repo-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+**See `repo-applying-maker-checker-fixer` Skill for standard checker workflow pattern** including:
 
 1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
 2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
@@ -195,9 +190,9 @@ Update status to "Complete", add summary and recommendation (approve/revise).
 
 **Project Guidance:**
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../../governance/conventions/project/plans-organization.md) - Plan standards
-- [Code Quality Convention](../../../governance/development/quality/code.md) - Quality standards
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [Plans Organization Convention](../../governance/conventions/project/plans-organization.md) - Plan standards
+- [Code Quality Convention](../../governance/development/quality/code.md) - Quality standards
 
 **Related Agents:**
 

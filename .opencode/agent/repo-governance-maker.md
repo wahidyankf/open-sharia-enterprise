@@ -2,11 +2,7 @@
 description: Creates repository rules and conventions in docs/explanation/ directories. Documents standards, patterns, and quality requirements.
 model: zai/glm-4.7
 tools:
-  edit: true
-  grep: true
-  write: true
-  read: true
-  glob: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -17,7 +13,7 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 2. **`docs-applying-content-quality`** - Progressive knowledge delivery
@@ -48,7 +44,7 @@ Create repository rules and conventions.
 
 ## Reference
 
-- [Convention Writing Convention](../../../governance/conventions/content/convention-writing.md)
+- [Convention Writing Convention](../../governance/conventions/content/convention-writing.md)
 - Skills: `docs-applying-diataxis-framework`, `docs-applying-content-quality`
 
 ## Workflow
@@ -59,8 +55,8 @@ Document standards following convention structure (Purpose, Standards, Examples,
 
 **Project Guidance**:
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [Repository Governance Architecture](../../../governance/repository-governance-architecture.md)
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [Repository Governance Architecture](../../governance/repository-governance-architecture.md)
 
 **Related Agents**:
 
@@ -69,8 +65,8 @@ Document standards following convention structure (Purpose, Standards, Examples,
 
 **Related Conventions**:
 
-- [Convention Writing Convention](../../../governance/conventions/content/convention-writing.md)
-- [AI Agents Convention](../../../governance/development/agents/ai-agents.md)
+- [Convention Writing Convention](../../governance/conventions/content/convention-writing.md)
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
 
 **Skills**:
 

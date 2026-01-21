@@ -2,11 +2,7 @@
 description: Creates workflow documentation in governance/workflows/ following workflow pattern convention.
 model: zai/glm-4.7
 tools:
-  edit: true
-  grep: true
-  write: true
-  read: true
-  glob: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -17,7 +13,7 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 2. **`docs-applying-content-quality`** - Progressive knowledge delivery
@@ -48,7 +44,7 @@ Create workflow documentation following workflow pattern convention.
 
 ## Reference
 
-- [Workflow Pattern Convention](../../../governance/workflows/meta/workflow-identifier.md)
+- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
 - Skills: `docs-applying-diataxis-framework`, `docs-applying-content-quality`
 
 ## Workflow
@@ -59,8 +55,8 @@ Create workflow documentation following workflow pattern convention.
 
 **Project Guidance**:
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [Workflow Pattern Convention](../../../governance/workflows/meta/workflow-identifier.md)
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
 
 **Related Agents**:
 
@@ -69,8 +65,8 @@ Create workflow documentation following workflow pattern convention.
 
 **Related Conventions**:
 
-- [Workflow Pattern Convention](../../../governance/workflows/meta/workflow-identifier.md)
-- [Execution Modes Convention](../../../governance/workflows/meta/execution-modes.md)
+- [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
+- [Execution Modes Convention](../../governance/workflows/meta/execution-modes.md)
 
 **Skills**:
 

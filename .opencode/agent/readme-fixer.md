@@ -2,12 +2,7 @@
 description: Applies validated fixes from readme-checker audit reports. Re-validates README findings before applying changes. Use after reviewing readme-checker output.
 model: zai/glm-4.7
 tools:
-  glob: true
-  bash: true
-  write: true
-  edit: true
-  read: true
-  grep: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -44,9 +39,8 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
-1. **`repo-applying-fixer-workflow`** - Progressive knowledge delivery
 2. **`readme-writing-readme-files`** - Progressive knowledge delivery
 3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
 4. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
@@ -107,7 +101,7 @@ See Skill for implementation details and reporting templates.
 
 ## How This Agent Works
 
-**See `repo-applying-fixer-workflow` Skill for complete workflow details** including:
+**See `repo-applying-maker-checker-fixer` Skill for complete workflow details** including:
 
 1. **Report Discovery**: Auto-detect latest audit report with manual override support
 2. **Validation Strategy**: Re-validate each finding to assess HIGH/MEDIUM/FALSE_POSITIVE confidence
@@ -279,7 +273,7 @@ grep -E "(is|are|was|were|be|been) (controlled|managed|handled|processed|utilize
 
 ## Validation Re-implementation Guide
 
-**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../../governance/development/quality/repository-validation.md) and [README Quality Convention](../../../governance/conventions/content/readme-quality.md).
+**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../governance/development/quality/repository-validation.md) and [README Quality Convention](../../governance/conventions/content/readme-quality.md).
 
 **Key points:**
 
@@ -323,11 +317,11 @@ Always provide:
 
 **Project Guidance:**
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance for all agents
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance for all agents
 
 **Agent Conventions:**
 
-- [AI Agents Convention](../../../governance/development/agents/ai-agents.md) - AI agents convention
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md) - AI agents convention
 
 **Related Agents:**
 
@@ -337,11 +331,11 @@ Always provide:
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../../governance/development/quality/fixer-confidence-levels.md) - Universal confidence assessment system
-- [Maker-Checker-Fixer Pattern Convention](../../../governance/development/pattern/maker-checker-fixer.md) - Three-stage quality workflow
-- [README Quality Convention](../../../governance/conventions/content/readme-quality.md) - Complete README standards (primary reference)
-- [Repository Validation Methodology Convention](../../../governance/development/quality/repository-validation.md) - Standard validation patterns
-- [Temporary Files Convention](../../../governance/development/infra/temporary-files.md) - Where to store fix reports
+- [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md) - Universal confidence assessment system
+- [Maker-Checker-Fixer Pattern Convention](../../governance/development/pattern/maker-checker-fixer.md) - Three-stage quality workflow
+- [README Quality Convention](../../governance/conventions/content/readme-quality.md) - Complete README standards (primary reference)
+- [Repository Validation Methodology Convention](../../governance/development/quality/repository-validation.md) - Standard validation patterns
+- [Temporary Files Convention](../../governance/development/infra/temporary-files.md) - Where to store fix reports
 
 **Skills:**
 

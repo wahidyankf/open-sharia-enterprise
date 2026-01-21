@@ -2,11 +2,7 @@
 description: Validates By Example tutorial quality including annotation density (1-2.25 ratio per example), five-part structure, example count (75-90), and ayokoding-web compliance. Use when reviewing By Example content.
 model: zai/glm-4.7
 tools:
-  grep: true
-  bash: true
-  glob: true
-  read: true
-  write: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -21,39 +17,14 @@ tools:
 **Before**: Maker creates content
 **After**: User reviews → Fixer applies validated fixes
 
-### Progressive Report Writing (MANDATORY)
+See `repo-generating-validation-reports` Skill for progressive report writing, UUID chain generation, and timestamp formatting.
 
-1. **Initialize**: `generated-reports/{agent}__{uuid}__{YYYY-MM-DD--HH-MM}__audit.md`
-2. **Write findings IMMEDIATELY** (not buffered)
-3. **Update continuously** throughout execution
-4. **Finalize** with statistics
-
-### UUID Chain Generation
-
-```bash
-# Root UUID (6-char hex)
-uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
-
-# Child UUID (if spawned by another agent)
-# Format: {parent}.{new-uuid}
-```
-
-**Purpose**: Prevents parallel execution collisions
-
-### Criticality Levels
-
-- 🔴 **CRITICAL**: Breaks functionality, must fix before publication
-- 🟠 **HIGH**: Significant quality degradation
-- 🟡 **MEDIUM**: Minor issues, can defer
-- 🟢 **LOW**: Suggestions, nice-to-have
-
-**Execution Order**: CRITICAL → HIGH → MEDIUM → LOW
+See `repo-assessing-criticality-confidence` Skill for criticality level definitions and assessment criteria.
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
-1. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
 2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
 3. **`docs-creating-by-example-tutorials`** - Progressive knowledge delivery
 4. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
@@ -95,9 +66,9 @@ The `repo-generating-validation-reports` Skill provides UUID generation, timesta
 
 **CRITICAL - Read these first**:
 
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md) - Hextra theme standards
-- [By Example Content Standard](../../../governance/conventions/tutorial/programming-language-content.md) - Annotation requirements
-- [Tutorial Naming Convention](../../../governance/conventions/tutorial/naming.md) - By Example definition
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Hextra theme standards
+- [By Example Content Standard](../../governance/conventions/tutorial/programming-language-content.md) - Annotation requirements
+- [Tutorial Naming Convention](../../governance/conventions/tutorial/naming.md) - By Example definition
 
 ## Validation Scope
 
@@ -145,7 +116,7 @@ The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specifi
 
 ## Workflow Overview
 
-**See `repo-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+**See `repo-applying-maker-checker-fixer` Skill for standard checker workflow pattern** including:
 
 1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
 2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
@@ -190,9 +161,9 @@ Update status, add summary, prioritize findings.
 
 **Project Guidance:**
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../../governance/conventions/hugo/ayokoding.md) - Complete standards
-- [By Example Content Standard](../../../governance/conventions/tutorial/programming-language-content.md) - Annotation requirements
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Complete standards
+- [By Example Content Standard](../../governance/conventions/tutorial/programming-language-content.md) - Annotation requirements
 
 **Related Agents:**
 

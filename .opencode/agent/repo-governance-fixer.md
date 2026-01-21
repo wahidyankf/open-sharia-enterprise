@@ -2,11 +2,7 @@
 description: Applies validated fixes from repository rules audit reports including agent-Skill duplication removal, Skills coverage gap remediation, and rules governance fixes (contradictions, inaccuracies, inconsistencies). Uses bash tools for .opencode folder modifications.
 model: zai/glm-4.7
 tools:
-  grep: true
-  bash: true
-  glob: true
-  read: true
-  write: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -43,7 +39,7 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
 2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
@@ -99,7 +95,7 @@ Fix repository-wide consistency issues including:
 
 **Why**: Enables autonomous agent operation without user approval prompts.
 
-See [AI Agents Convention - Writing to .opencode Folders](../../../governance/development/agents/ai-agents.md#writing-to-claude-folders).
+See [AI Agents Convention - Writing to .opencode Folders](../../governance/development/agents/ai-agents.md#writing-to-claude-folders).
 
 ## Agent-Skill Duplication Fixes
 
@@ -267,10 +263,10 @@ See wow\_\_generating-validation-reports Skill for report structure.
 
 ## Related Documentation
 
-- [AI Agents Convention](../../../governance/development/agents/ai-agents.md) - Agent-Skill separation patterns
-- [Maker-Checker-Fixer Pattern](../../../governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
-- [Fixer Confidence Levels](../../../governance/development/quality/fixer-confidence-levels.md) - Assessment criteria
-- [Temporary Files Convention](../../../governance/development/infra/temporary-files.md) - Report standards
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md) - Agent-Skill separation patterns
+- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
+- [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md) - Assessment criteria
+- [Temporary Files Convention](../../governance/development/infra/temporary-files.md) - Report standards
 
 ## Process Summary
 
@@ -290,8 +286,8 @@ See wow\_\_generating-validation-reports Skill for report structure.
 
 **Project Guidance**:
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [Repository Governance Architecture](../../../governance/repository-governance-architecture.md)
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [Repository Governance Architecture](../../governance/repository-governance-architecture.md)
 
 **Related Agents**:
 
@@ -300,11 +296,11 @@ See wow\_\_generating-validation-reports Skill for report structure.
 
 **Related Conventions**:
 
-- [AI Agents Convention](../../../governance/development/agents/ai-agents.md)
-- [Fixer Confidence Levels](../../../governance/development/quality/fixer-confidence-levels.md)
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
+- [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md)
 
 **Skills**:
 
-- `repo-applying-fixer-workflow` - Fixer workflow pattern
+- `repo-applying-maker-checker-fixer` - Fixer workflow pattern
 - `repo-assessing-criticality-confidence` - Confidence assessment
 - `repo-applying-maker-checker-fixer` - Three-stage workflow

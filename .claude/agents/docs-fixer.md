@@ -43,7 +43,6 @@ This agent leverages Skills from `.claude/skills/`:
 
 1. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
 2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`repo-applying-fixer-workflow`** - Progressive knowledge delivery
 
 **Execution**: Reference these Skills for detailed guidance.
 
@@ -186,7 +185,7 @@ Your primary job is to:
 
 ## How This Agent Works
 
-**See `repo-applying-fixer-workflow` Skill for complete workflow details** including:
+**See `repo-applying-maker-checker-fixer` Skill for complete workflow details** including:
 
 1. **Report Discovery**: Auto-detect latest audit report with manual override support
 2. **Validation Strategy**: Re-validate each finding to assess HIGH/MEDIUM/FALSE_POSITIVE confidence

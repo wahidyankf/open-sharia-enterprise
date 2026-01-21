@@ -248,12 +248,12 @@ Before publishing workflow:
 
 ## References
 
-**Primary Convention**: [Workflow Pattern Convention](../../../../governance/workflows/meta/workflow-identifier.md)
+**Primary Convention**: [Workflow Pattern Convention](../../../governance/workflows/meta/workflow-identifier.md)
 
 **Related Conventions**:
 
-- [Maker-Checker-Fixer Pattern](../../../../governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow pattern
-- [Acceptance Criteria Convention](../../../../governance/development/infra/acceptance-criteria.md) - Gherkin format
+- [Maker-Checker-Fixer Pattern](../../../governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow pattern
+- [Acceptance Criteria Convention](../../../governance/development/infra/acceptance-criteria.md) - Gherkin format
 
 **Related Skills**:
 

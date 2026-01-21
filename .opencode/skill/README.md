@@ -76,6 +76,6 @@ Skills are direct copies from `.claude/skills/`. For complete documentation, see
 
 ---
 
-**Total Skills**: 23
+**Total Skills**: 21
 **Format**: SKILL.md (identical for both Claude Code and OpenCode)
 **Last Updated**: 2026-01-16

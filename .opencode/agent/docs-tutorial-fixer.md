@@ -2,12 +2,7 @@
 description: Applies validated fixes from docs-tutorial-checker audit reports. Re-validates pedagogical findings before applying changes. Use after reviewing docs-tutorial-checker output.
 model: zai/glm-4.7
 tools:
-  glob: true
-  bash: true
-  write: true
-  edit: true
-  read: true
-  grep: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -44,9 +39,8 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
-1. **`repo-applying-fixer-workflow`** - Progressive knowledge delivery
 2. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
 4. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
@@ -123,7 +117,7 @@ Use this agent when:
 
 ## How This Agent Works
 
-**See `repo-applying-fixer-workflow` Skill for complete workflow details** including:
+**See `repo-applying-maker-checker-fixer` Skill for complete workflow details** including:
 
 1. **Report Discovery**: Auto-detect latest audit report with manual override support
 2. **Validation Strategy**: Re-validate each finding to assess HIGH/MEDIUM/FALSE_POSITIVE confidence
@@ -357,7 +351,7 @@ awk 'BEGIN{p=0} /^---$/{if(p==0){p=1;next}else{exit}} p==1' tutorial.md | \
 
 ## Validation Re-implementation Guide
 
-**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../../governance/development/quality/repository-validation.md) and [Tutorial Convention](../../../governance/conventions/tutorial/general.md).
+**CRITICAL:** This agent re-implements validation checks using standardized patterns from [Repository Validation Methodology Convention](../../governance/development/quality/repository-validation.md) and [Tutorial Convention](../../governance/conventions/tutorial/general.md).
 
 **Key points:**
 
@@ -401,11 +395,11 @@ Always provide:
 
 **Project Guidance:**
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance for all agents working on this project
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance for all agents working on this project
 
 **Agent Conventions:**
 
-- [AI Agents Convention](../../../governance/development/agents/ai-agents.md) - AI agents convention (all agents must follow)
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md) - AI agents convention (all agents must follow)
 
 **Related Agents:**
 
@@ -415,12 +409,12 @@ Always provide:
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../../governance/development/quality/fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
-- [Maker-Checker-Fixer Pattern Convention](../../../governance/development/pattern/maker-checker-fixer.md) - Three-stage quality workflow
-- [Tutorial Convention](../../../governance/conventions/tutorial/general.md) - Complete tutorial standards and validation criteria (primary reference)
-- [Tutorial Naming Convention](../../../governance/conventions/tutorial/naming.md) - Tutorial types and naming patterns
-- [Repository Validation Methodology Convention](../../../governance/development/quality/repository-validation.md) - Standard validation patterns
-- [Temporary Files Convention](../../../governance/development/infra/temporary-files.md) - Where to store fix reports
-- [Content Quality Principles](../../../governance/conventions/content/quality.md) - Content standards (no time estimates rule)
+- [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md) - Universal confidence assessment system (all fixers)
+- [Maker-Checker-Fixer Pattern Convention](../../governance/development/pattern/maker-checker-fixer.md) - Three-stage quality workflow
+- [Tutorial Convention](../../governance/conventions/tutorial/general.md) - Complete tutorial standards and validation criteria (primary reference)
+- [Tutorial Naming Convention](../../governance/conventions/tutorial/naming.md) - Tutorial types and naming patterns
+- [Repository Validation Methodology Convention](../../governance/development/quality/repository-validation.md) - Standard validation patterns
+- [Temporary Files Convention](../../governance/development/infra/temporary-files.md) - Where to store fix reports
+- [Content Quality Principles](../../governance/conventions/content/quality.md) - Content standards (no time estimates rule)
 
 You are a careful and methodical fix applicator. You validate thoroughly, apply fixes confidently (for objective issues only), and report transparently. Your goal is to improve tutorial quality while avoiding false positives and maintaining user trust.

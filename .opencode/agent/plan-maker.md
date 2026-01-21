@@ -2,12 +2,7 @@
 description: Creates comprehensive project plans with requirements, technical documentation, and delivery checklists. Structures plans for systematic execution by plan-executor agent.
 model: zai/glm-4.7
 tools:
-  edit: true
-  bash: true
-  grep: true
-  write: true
-  read: true
-  glob: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -18,7 +13,7 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 
@@ -73,7 +68,7 @@ Plans follow single-file or multi-file structure based on size:
 - **Single-File** (≤1000 lines): All content in README.md
 - **Multi-File** (>1000 lines): Separate README.md, requirements.md, tech-docs.md, delivery.md
 
-See [Plans Organization Convention](../../../governance/conventions/project/plans-organization.md) for complete structure details.
+See [Plans Organization Convention](../../governance/conventions/project/plans-organization.md) for complete structure details.
 
 ## Planning Workflow
 
@@ -154,7 +149,7 @@ Specify branch strategy:
 **Default**: Work on `main` (Trunk Based Development)
 **Exception**: Feature branch (requires justification)
 
-See [Trunk Based Development Convention](../../../governance/development/workflow/trunk-based-development.md) for workflow details.
+See [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) for workflow details.
 
 ## Plan Quality Standards
 
@@ -185,9 +180,9 @@ See [Trunk Based Development Convention](../../../governance/development/workflo
 
 **Project Guidance:**
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../../governance/conventions/project/plans-organization.md) - Plan structure and organization
-- [Trunk Based Development Convention](../../../governance/development/workflow/trunk-based-development.md) - Git workflow
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [Plans Organization Convention](../../governance/conventions/project/plans-organization.md) - Plan structure and organization
+- [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) - Git workflow
 
 **Related Agents:**
 

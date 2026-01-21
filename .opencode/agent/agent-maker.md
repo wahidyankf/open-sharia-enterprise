@@ -2,11 +2,7 @@
 description: Creates new AI agent files in .opencode/agent/ following AI Agents Convention. Ensures proper structure, skills integration, and documentation.
 model: zai/glm-4.7
 tools:
-  glob: true
-  bash: true
-  write: true
-  read: true
-  grep: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -17,7 +13,7 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 
@@ -47,7 +43,7 @@ Create new AI agent files following AI Agents Convention.
 
 ## Reference
 
-- [AI Agents Convention](../../../governance/development/agents/ai-agents.md)
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
 - Skill: `docs-applying-diataxis-framework`
 
 ## Workflow
@@ -63,8 +59,8 @@ Create new AI agent files following AI Agents Convention.
 
 **Project Guidance**:
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [AI Agents Convention](../../../governance/development/agents/ai-agents.md)
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
 
 **Related Agents**:
 
@@ -73,8 +69,8 @@ Create new AI agent files following AI Agents Convention.
 
 **Related Conventions**:
 
-- [AI Agents Convention](../../../governance/development/agents/ai-agents.md)
-- [Maker-Checker-Fixer Pattern](../../../governance/development/pattern/maker-checker-fixer.md)
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md)
+- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md)
 
 **Skills**:
 

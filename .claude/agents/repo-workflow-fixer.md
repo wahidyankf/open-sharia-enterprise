@@ -99,6 +99,6 @@ Skills: `docs-applying-diataxis-framework`, `repo-assessing-criticality-confiden
 
 **Skills**:
 
-- `repo-applying-fixer-workflow` - Fixer workflow pattern
+- `repo-applying-maker-checker-fixer` - Fixer workflow pattern
 - `repo-defining-workflows` - Workflow structure
 - `repo-assessing-criticality-confidence` - Confidence assessment

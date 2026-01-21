@@ -2,12 +2,7 @@
 description: Applies validated fixes from plan-checker audit reports. Re-validates plan findings before applying changes. Use after reviewing plan-checker output.
 model: zai/glm-4.7
 tools:
-  write: true
-  bash: true
-  grep: true
-  edit: true
-  read: true
-  glob: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -44,7 +39,7 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
@@ -145,8 +140,8 @@ The `repo-assessing-criticality-confidence` Skill provides complete confidence l
 
 **Project Guidance:**
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../../governance/conventions/project/plans-organization.md) - Plan standards
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [Plans Organization Convention](../../governance/conventions/project/plans-organization.md) - Plan standards
 
 **Related Agents:**
 
@@ -157,8 +152,8 @@ The `repo-assessing-criticality-confidence` Skill provides complete confidence l
 
 **Related Conventions:**
 
-- [Fixer Confidence Levels Convention](../../../governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
-- [Maker-Checker-Fixer Pattern Convention](../../../governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
+- [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
+- [Maker-Checker-Fixer Pattern Convention](../../governance/development/pattern/maker-checker-fixer.md) - Three-stage workflow
 
 **Skills:**
 

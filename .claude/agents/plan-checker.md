@@ -25,7 +25,6 @@ tools: Read, Glob, Grep, Write, Bash
 
 This agent leverages Skills from `.claude/skills/`:
 
-1. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
 2. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 3. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
 4. **`repo-generating-validation-reports`** - Progressive knowledge delivery
@@ -111,7 +110,7 @@ Validate project plans against standards defined in [Plans Organization Conventi
 
 ## Workflow Overview
 
-**See `repo-executing-checker-workflow` Skill for standard checker workflow pattern** including:
+**See `repo-applying-maker-checker-fixer` Skill for standard checker workflow pattern** including:
 
 1. **Step 0: Initialize Report**: Generate UUID, create audit file with progressive writing
 2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)

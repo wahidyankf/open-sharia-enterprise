@@ -82,6 +82,6 @@ Skill: `repo-generating-validation-reports`
 
 **Skills**:
 
-- `repo-executing-checker-workflow` - Checker workflow pattern
+- `repo-applying-maker-checker-fixer` - Checker workflow pattern
 - `repo-defining-workflows` - Workflow structure and patterns
 - `repo-assessing-criticality-confidence` - Criticality assessment

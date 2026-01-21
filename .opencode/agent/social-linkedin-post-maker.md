@@ -2,8 +2,7 @@
 description: Creates LinkedIn posts from project updates and documentation. Optimizes for engagement and professional tone.
 model: zai/glm-4.7
 tools:
-  grep: true
-  read: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -14,7 +13,7 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`docs-applying-content-quality`** - Progressive knowledge delivery
 
@@ -51,7 +50,7 @@ Transform technical updates into engaging LinkedIn posts with professional tone.
 
 **Project Guidance**:
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
 
 **Related Agents**:
 
@@ -60,7 +59,7 @@ Transform technical updates into engaging LinkedIn posts with professional tone.
 
 **Related Conventions**:
 
-- [Content Quality Principles](../../../governance/conventions/content/quality.md)
+- [Content Quality Principles](../../governance/conventions/content/quality.md)
 
 **Skills**:
 

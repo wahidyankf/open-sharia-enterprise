@@ -2,8 +2,7 @@
 description: Deploys ose-platform-web to production environment branch (prod-ose-platform-web) after validation. Vercel listens to production branch for automatic builds.
 model: zai/glm-4.5-air
 tools:
-  grep: true
-  bash: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -14,7 +13,7 @@ tools:
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`apps-ose-platform-web-developing-content`** - Progressive knowledge delivery
 2. **`repo-practicing-trunk-based-development`** - Progressive knowledge delivery
@@ -121,9 +120,9 @@ echo "Vercel will automatically build from prod-ose-platform-web branch"
 
 **Project Guidance**:
 
-- [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [ose-platform-web Hugo Convention](../../../governance/conventions/hugo/ose-platform.md)
-- [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md)
+- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
 
 **Related Agents**:
 
@@ -131,8 +130,8 @@ echo "Vercel will automatically build from prod-ose-platform-web branch"
 
 **Related Conventions**:
 
-- [ose-platform-web Hugo Convention](../../../governance/conventions/hugo/ose-platform.md)
-- [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md)
+- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
 
 **Skills**:
 

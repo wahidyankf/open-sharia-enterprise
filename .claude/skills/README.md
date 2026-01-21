@@ -1,6 +1,6 @@
 # Claude Code Skills
 
-This directory contains 23 skill packages that provide progressive knowledge delivery to agents. Skills bundle domain-specific conventions, standards, and best practices.
+This directory contains 21 skill packages that provide progressive knowledge delivery to agents. Skills bundle domain-specific conventions, standards, and best practices.
 
 ## Skill Organization
 
@@ -31,10 +31,8 @@ This directory contains 23 skill packages that provide progressive knowledge del
 ### 🏗️ Repository Pattern Skills
 
 - **repo-applying-maker-checker-fixer** - Three-stage quality workflow pattern
-- **repo-applying-fixer-workflow** - Fixer agent execution workflow
 - **repo-assessing-criticality-confidence** - Criticality and confidence assessment system
 - **repo-generating-validation-reports** - Progressive report writing with UUID chains
-- **repo-executing-checker-workflow** - Standard checker workflow pattern
 
 ### 🌐 Application-Specific Skills
 
@@ -180,7 +178,7 @@ All skills follow governance principles:
 
 ---
 
-**Total Skills**: 23
+**Total Skills**: 21
 **Format**: SKILL.md with YAML frontmatter
 **Token Target**: Metadata ~100 tokens, Full content <5k tokens
 **Last Updated**: 2026-01-22

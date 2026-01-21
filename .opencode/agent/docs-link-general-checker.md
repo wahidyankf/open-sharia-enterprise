@@ -2,14 +2,7 @@
 description: Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links in docs/metadata/external-links-status.yaml (the ONLY cache file) with automatic pruning and mandatory lastFullScan updates on every run. HARD REQUIREMENT - cache file usage is mandatory regardless of how this agent is invoked (spawned by other agents, processes, or direct invocation). Outputs results in conversation only (no separate report files). Use when checking for dead links, verifying URL accessibility, validating internal references, or auditing documentation link health.
 model: zai/glm-4.5-air
 tools:
-  grep: true
-  bash: true
-  write: true
-  websearch: true
-  glob: true
-  read: true
-  webfetch: true
-  edit: true
+  read: false
 ---
 
 ## Agent Metadata
@@ -54,7 +47,7 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`docs-validating-links`** - Progressive knowledge delivery
 2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
@@ -189,7 +182,7 @@ The `docs-validating-links` Skill provides complete validation criteria:
 - Wikipedia links use correct article names (check for redirects)
 - Official documentation links point to current versions (not outdated)
 - GitHub links point to existing repositories/files
-- Internal links follow the [Linking Convention](../../../governance/conventions/formatting/linking.md)
+- Internal links follow the [Linking Convention](../../governance/conventions/formatting/linking.md)
 
 ## Cache Management
 
@@ -275,7 +268,7 @@ The `docs-validating-links` Skill provides:
 1. **Save updated cache** to `docs/metadata/external-links-status.yaml`
 2. **Update `lastFullScan`** timestamp to current time (UTC+7 format)
    - Command: `TZ='Asia/Jakarta' date +"%Y-%m-%dT%H:%M:%S+07:00"`
-   - See [Timestamp Format Convention](../../../governance/conventions/formatting/timestamp.md)
+   - See [Timestamp Format Convention](../../governance/conventions/formatting/timestamp.md)
 3. **Include usedIn data** (file paths only) for all links
 4. **Sort links by URL** for consistent git diffs
 5. **Use 2-space YAML indentation**
@@ -410,9 +403,9 @@ When you find broken internal links:
 
 Before starting work, familiarize yourself with:
 
-- [AGENTS.md](../../../CLAUDE.md) - Project guidance and documentation standards
-- [AI Agents Convention](../../../governance/development/agents/ai-agents.md) - Agent design standards
-- [Linking Convention](../../../governance/conventions/formatting/linking.md) - How links should be formatted
-- [Timestamp Format Convention](../../../governance/conventions/formatting/timestamp.md) - UTC+7 timestamp format
+- [AGENTS.md](../../CLAUDE.md) - Project guidance and documentation standards
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md) - Agent design standards
+- [Linking Convention](../../governance/conventions/formatting/linking.md) - How links should be formatted
+- [Timestamp Format Convention](../../governance/conventions/formatting/timestamp.md) - UTC+7 timestamp format
 
 **Last Updated**: 2026-01-03
