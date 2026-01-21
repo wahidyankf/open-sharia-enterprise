@@ -13,7 +13,7 @@ tools: Read, Write, Edit, Glob, Grep
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`apps-ose-platform-web-developing-content`** - Progressive knowledge delivery
 2. **`docs-creating-accessible-diagrams`** - Progressive knowledge delivery

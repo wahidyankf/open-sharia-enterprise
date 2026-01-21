@@ -17,37 +17,13 @@ tools: Read, Glob, Grep, Write, Bash
 **Before**: Maker creates content
 **After**: User reviews → Fixer applies validated fixes
 
-### Progressive Report Writing (MANDATORY)
+See `repo-generating-validation-reports` Skill for progressive report writing, UUID chain generation, and timestamp formatting.
 
-1. **Initialize**: `generated-reports/{agent}__{uuid}__{YYYY-MM-DD--HH-MM}__audit.md`
-2. **Write findings IMMEDIATELY** (not buffered)
-3. **Update continuously** throughout execution
-4. **Finalize** with statistics
-
-### UUID Chain Generation
-
-```bash
-# Root UUID (6-char hex)
-uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
-
-# Child UUID (if spawned by another agent)
-# Format: {parent}.{new-uuid}
-```
-
-**Purpose**: Prevents parallel execution collisions
-
-### Criticality Levels
-
-- 🔴 **CRITICAL**: Breaks functionality, must fix before publication
-- 🟠 **HIGH**: Significant quality degradation
-- 🟡 **MEDIUM**: Minor issues, can defer
-- 🟢 **LOW**: Suggestions, nice-to-have
-
-**Execution Order**: CRITICAL → HIGH → MEDIUM → LOW
+See `repo-assessing-criticality-confidence` Skill for criticality level definitions and assessment criteria.
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
 2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
@@ -176,7 +152,7 @@ Skill: `repo-generating-validation-reports` (progressive streaming)
 **Validation Method**:
 
 1. **Identify Patterns**: Extract common patterns from agent content (50+ lines)
-2. **Cross-Reference Skills**: Compare patterns against all Skills in `.opencode/skill/`
+2. **Cross-Reference Skills**: Compare patterns against all Skills in `.claude/skills/`
 3. **Detect Duplication Types**:
    - **Verbatim** (CRITICAL): Exact text matches (30-40% of duplicates)
    - **Paraphrased** (HIGH): Same knowledge, different wording (40-50% of duplicates)
@@ -313,7 +289,7 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 
 1. Read agent content
 2. Extract content blocks (paragraphs, code blocks, lists)
-3. For each Skill in `.opencode/skill/`:
+3. For each Skill in `.claude/skills/`:
    - Read Skill content
    - Compare agent blocks against Skill content
    - Detect duplication (verbatim, paraphrased, conceptual)

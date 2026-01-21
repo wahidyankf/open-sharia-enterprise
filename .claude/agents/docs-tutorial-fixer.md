@@ -39,7 +39,7 @@ tools: Read, Edit, Glob, Grep, Write, Bash
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`repo-applying-fixer-workflow`** - Progressive knowledge delivery
 2. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery

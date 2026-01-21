@@ -17,37 +17,13 @@ tools: Read, Glob, Grep, Write, Bash
 **Before**: Maker creates content
 **After**: User reviews → Fixer applies validated fixes
 
-### Progressive Report Writing (MANDATORY)
+See `repo-generating-validation-reports` Skill for progressive report writing, UUID chain generation, and timestamp formatting.
 
-1. **Initialize**: `generated-reports/{agent}__{uuid}__{YYYY-MM-DD--HH-MM}__audit.md`
-2. **Write findings IMMEDIATELY** (not buffered)
-3. **Update continuously** throughout execution
-4. **Finalize** with statistics
-
-### UUID Chain Generation
-
-```bash
-# Root UUID (6-char hex)
-uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
-
-# Child UUID (if spawned by another agent)
-# Format: {parent}.{new-uuid}
-```
-
-**Purpose**: Prevents parallel execution collisions
-
-### Criticality Levels
-
-- 🔴 **CRITICAL**: Breaks functionality, must fix before publication
-- 🟠 **HIGH**: Significant quality degradation
-- 🟡 **MEDIUM**: Minor issues, can defer
-- 🟢 **LOW**: Suggestions, nice-to-have
-
-**Execution Order**: CRITICAL → HIGH → MEDIUM → LOW
+See `repo-assessing-criticality-confidence` Skill for criticality level definitions and assessment criteria.
 
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.opencode/skill/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`repo-executing-checker-workflow`** - Progressive knowledge delivery
 2. **`apps-ayokoding-web-developing-content`** - Progressive knowledge delivery
