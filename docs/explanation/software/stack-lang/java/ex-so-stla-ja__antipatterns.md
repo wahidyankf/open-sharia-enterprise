@@ -2,7 +2,7 @@
 title: "Java Antipatterns"
 description: Common mistakes and pitfalls to avoid in Java development
 category: explanation
-subcategory: tech-stack-lang
+subcategory: stack-lang
 tags:
   - java
   - antipatterns
@@ -28,7 +28,7 @@ Understanding antipatterns is crucial because:
 
 This document catalogs common Java antipatterns, explains why they're problematic, and demonstrates how to fix them. Each antipattern includes real-world examples from finance domains to illustrate problems in practical contexts.
 
-**Companion Document**: For recommended practices, see [Java Best Practices](./ex-so-testla-ja__best-practices.md).
+**Companion Document**: For recommended practices, see [Java Best Practices](./ex-so-stla-ja__best-practices.md).
 
 ## Concurrency Antipatterns
 
@@ -2661,8 +2661,8 @@ Use this checklist during development and code review:
 
 ## Related Documentation
 
-- [Java Idioms](./ex-so-testla-ja__idioms.md) - Recommended coding patterns and practices
-- [Java Best Practices](./ex-so-testla-ja__best-practices.md) - Comprehensive guide to Java best practices
+- [Java Idioms](./ex-so-stla-ja__idioms.md) - Recommended coding patterns and practices
+- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Comprehensive guide to Java best practices
 - [Tech Stack Languages Index](../README.md) - Overview of all programming language guides
 
 ## Sources

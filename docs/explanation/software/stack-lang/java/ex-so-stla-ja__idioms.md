@@ -2,7 +2,7 @@
 title: "Java Idioms"
 description: Modern Java patterns and idiomatic code (Java 17+)
 category: explanation
-subcategory: tech-stack-lang
+subcategory: stack-lang
 tags:
   - java
   - idioms
@@ -2103,8 +2103,8 @@ Use this checklist when adopting modern Java idioms:
 
 ## Related Documentation
 
-- [Java Best Practices](./ex-so-testla-ja__best-practices.md) - Recommended coding standards
-- [Java Antipatterns](./ex-so-testla-ja__antipatterns.md) - Common mistakes to avoid
+- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Recommended coding standards
+- [Java Antipatterns](./ex-so-stla-ja__antipatterns.md) - Common mistakes to avoid
 - [Functional Programming Patterns](../../../../../governance/development/pattern/functional-programming.md) - OSE functional programming conventions
 - [Code Quality Standards](../../../../../governance/development/quality/code.md)
 

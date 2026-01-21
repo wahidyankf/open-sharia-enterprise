@@ -2,7 +2,7 @@
 title: Programming Languages
 description: Language-specific idioms, best practices, and antipatterns
 category: explanation
-subcategory: tech-stack-lang
+subcategory: stack-lang
 tags:
   - programming-languages
   - idioms
@@ -44,9 +44,9 @@ Each language directory contains:
 ```
 [language-name]/
 ├── README.md                           # Language overview and version info
-├── ex-so-testla-[la]__idioms.md    # Language-specific idioms
-├── ex-so-testla-[la]__best-practices.md  # Best practices
-└── ex-so-testla-[la]__antipatterns.md    # Common antipatterns
+├── ex-so-stla-[la]__idioms.md    # Language-specific idioms
+├── ex-so-stla-[la]__best-practices.md  # Best practices
+└── ex-so-stla-[la]__antipatterns.md    # Common antipatterns
 ```
 
 ### Document Categories
@@ -86,9 +86,9 @@ Java is a primary language for backend services, particularly for domain-driven 
 
 **Key Documentation:**
 
-- [Java Idioms](./java/ex-so-testla-ja__idioms.md) - Records, pattern matching, Optional, Stream API
-- [Java Best Practices](./java/ex-so-testla-ja__best-practices.md) - Modern Java standards (2025-2026)
-- [Java Antipatterns](./java/ex-so-testla-ja__antipatterns.md) - Common mistakes to avoid
+- [Java Idioms](./java/ex-so-stla-ja__idioms.md) - Records, pattern matching, Optional, Stream API
+- [Java Best Practices](./java/ex-so-stla-ja__best-practices.md) - Modern Java standards (2025-2026)
+- [Java Antipatterns](./java/ex-so-stla-ja__antipatterns.md) - Common mistakes to avoid
 
 **Use Java when you need:**
 
@@ -138,9 +138,9 @@ Languages in this documentation are chosen based on:
 
 ### For Backend Developers
 
-1. **Start with Java fundamentals** - Read [Java Idioms](./java/ex-so-testla-ja__idioms.md)
-2. **Apply modern practices** - Read [Java Best Practices](./java/ex-so-testla-ja__best-practices.md)
-3. **Avoid common pitfalls** - Read [Java Antipatterns](./java/ex-so-testla-ja__antipatterns.md)
+1. **Start with Java fundamentals** - Read [Java Idioms](./java/ex-so-stla-ja__idioms.md)
+2. **Apply modern practices** - Read [Java Best Practices](./java/ex-so-stla-ja__best-practices.md)
+3. **Avoid common pitfalls** - Read [Java Antipatterns](./java/ex-so-stla-ja__antipatterns.md)
 4. **Integrate with DDD** - Read [DDD and Java](../architecture/domain-driven-design-ddd/README.md)
 
 ### For Full-Stack Developers
@@ -201,12 +201,12 @@ All language documentation follows the repository's core principles:
 
 To document a new language:
 
-1. Create directory: `docs/explanation/software/tech-stack-lang/[language-name]/`
+1. Create directory: `docs/explanation/software/stack-lang/[language-name]/`
 2. Create README.md with language overview
 3. Create three core documents:
-   - `ex-so-teslag-[abbr]__idioms.md`
-   - `ex-so-teslag-[abbr]__best-practices.md`
-   - `ex-so-teslag-[abbr]__antipatterns.md`
+   - `ex-so-stlag-[abbr]__idioms.md`
+   - `ex-so-stlag-[abbr]__best-practices.md`
+   - `ex-so-stlag-[abbr]__antipatterns.md`
 4. Update this README.md with language section
 5. Cross-reference with relevant documentation
 
