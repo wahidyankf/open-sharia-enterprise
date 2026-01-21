@@ -854,13 +854,13 @@ class DocumentVerificationState extends LoanApplicationState {
 - [Design Patterns and Best Practices](./ex-so-ar-fsm__07-design-patterns-and-best-practices.md): State Pattern details
 - [FP Implementation Patterns](./ex-so-ar-fsm__09-fp-implementation-patterns.md): Functional programming alternative
 - [Testing FSM Implementations](./ex-so-ar-fsm__12-testing-fsm-implementations.md): Testing OOP FSMs
-- [DDD Aggregates](../../domain-driven-design-ddd/ex-so-ar-dodrdedd__09-aggregates.md): FSM in DDD entities
+- [DDD Aggregates](../domain-driven-design-ddd/ex-so-ar-dodrdedd__09-aggregates.md): FSM in DDD entities
 
 ## Related Principles
 
-- [Explicit Over Implicit](../../../../governance/principles/software-engineering/explicit-over-implicit.md): Explicit state transitions and behavior
-- [Automation Over Manual](../../../../governance/principles/software-engineering/automation-over-manual.md): Builder pattern automates FSM construction
-- [Reproducibility First](../../../../governance/principles/software-engineering/reproducibility.md): Consistent state machine behavior across environments
+- [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md): Explicit state transitions and behavior
+- [Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md): Builder pattern automates FSM construction
+- [Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md): Consistent state machine behavior across environments
 
 ## Next Steps
 

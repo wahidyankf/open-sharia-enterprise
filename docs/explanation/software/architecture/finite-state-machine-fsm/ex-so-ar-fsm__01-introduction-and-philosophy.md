@@ -639,8 +639,6 @@ In DDD terms, state is often a **Value Object** or part of an **Entity's identit
 ### Architecture Documentation
 
 - [DDD Aggregates](../domain-driven-design-ddd/ex-so-ar-dodrdedd__09-aggregates.md) - FSMs model aggregate lifecycle
-- [DDD Domain Events](../domain-driven-design-ddd/ex-so-ar-dodrdedd__10-domain-events.md) - FSM transitions emit events
-- [C4 Component Diagrams](../c4-architecture-model/ex-so-ar-c4armo__03-component-diagrams.md) - FSM components in architecture
 
 ### Related FSM Topics
 

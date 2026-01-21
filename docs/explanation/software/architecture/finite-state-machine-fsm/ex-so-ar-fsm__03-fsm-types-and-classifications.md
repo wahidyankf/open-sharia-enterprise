@@ -824,7 +824,6 @@ flowchart TD
 ### Architecture Documentation
 
 - [DDD Aggregates](../domain-driven-design-ddd/ex-so-ar-dodrdedd__09-aggregates.md) - FSMs model aggregate state
-- [C4 Component Diagrams](../c4-architecture-model/ex-so-ar-c4armo__03-component-diagrams.md) - FSMs as components
 
 ### Templates
 

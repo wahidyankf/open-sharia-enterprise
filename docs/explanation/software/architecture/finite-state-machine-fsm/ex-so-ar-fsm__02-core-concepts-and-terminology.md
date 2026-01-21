@@ -873,7 +873,6 @@ flowchart TD
 ### Architecture Documentation
 
 - [DDD Value Objects](../domain-driven-design-ddd/ex-so-ar-dodrdedd__08-value-objects.md) - Context as value objects
-- [DDD Domain Events](../domain-driven-design-ddd/ex-so-ar-dodrdedd__10-domain-events.md) - FSM transitions emit events
 
 ### Templates
 

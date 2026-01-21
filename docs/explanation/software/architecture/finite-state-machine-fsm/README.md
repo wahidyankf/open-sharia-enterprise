@@ -350,7 +350,6 @@ For architects and senior developers designing complex FSMs:
 1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
 2. **[Integration with DDD and Architecture](./ex-so-ar-fsm__18-integration-with-ddd-and-architecture.md)**
 3. **[DDD Aggregates](../domain-driven-design-ddd/ex-so-ar-dodrdedd__09-aggregates.md)** - FSMs in aggregates
-4. **[DDD Domain Events](../domain-driven-design-ddd/ex-so-ar-dodrdedd__10-domain-events.md)** - FSM transitions emit events
 
 #### Microservices
 
@@ -484,26 +483,23 @@ The `templates/` directory contains production-ready templates for FSM design an
 
 FSM concepts directly align with OSE software engineering principles:
 
-- **[Explicit Over Implicit](../../../../governance/principles/software-engineering/explicit-over-implicit.md)**: FSMs make state explicit, not implicit in boolean flags
-- **[Simplicity Over Complexity](../../../../governance/principles/general/simplicity-over-complexity.md)**: Start with flat FSM, add complexity only when needed
-- **[Pure Functions Over Side Effects](../../../../governance/principles/software-engineering/pure-functions.md)**: Guards as pure functions with deterministic results
-- **[Immutability Over Mutability](../../../../governance/principles/software-engineering/immutability.md)**: Immutable context in FP approaches
-- **[Automation Over Manual](../../../../governance/principles/software-engineering/automation-over-manual.md)**: FSMs enable automated validation and audit trails
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**: FSMs make state explicit, not implicit in boolean flags
+- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)**: Start with flat FSM, add complexity only when needed
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)**: Guards as pure functions with deterministic results
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)**: Immutable context in FP approaches
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**: FSMs enable automated validation and audit trails
 
 ### Architecture Documentation
 
 FSMs integrate with other architectural patterns:
 
 - **[DDD Aggregates](../domain-driven-design-ddd/ex-so-ar-dodrdedd__09-aggregates.md)**: FSMs model aggregate entity lifecycle
-- **[DDD Domain Events](../domain-driven-design-ddd/ex-so-ar-dodrdedd__10-domain-events.md)**: FSM transitions emit domain events
-- **[DDD Bounded Contexts](../domain-driven-design-ddd/ex-so-ar-dodrdedd__12-bounded-contexts.md)**: FSMs within bounded context boundaries
-- **[C4 Component Diagrams](../c4-architecture-model/ex-so-ar-c4armo__03-component-diagrams.md)**: FSMs as architectural components
-- **[C4 Event-Driven Systems](../c4-architecture-model/ex-so-ar-c4armo__06-dynamic-diagrams.md)**: FSMs in event-driven architectures
+- **DDD Domain Events**: FSM transitions emit domain events (future documentation)
+- **DDD Bounded Contexts**: FSMs within bounded context boundaries (future documentation)
 
 ### Development Practices
 
-- **[BDD Patterns](../../testing/bdd/)**: FSM state transitions map to Given-When-Then scenarios
-- **[TDD Patterns](../../testing/tdd/)**: State/transition coverage drives test design
+FSM concepts complement testing and development practices (documentation in progress).
 
 ### Language-Specific Implementation
 

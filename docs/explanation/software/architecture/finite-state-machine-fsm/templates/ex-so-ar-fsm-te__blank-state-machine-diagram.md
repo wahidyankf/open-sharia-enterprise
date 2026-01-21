@@ -530,10 +530,10 @@ This diagram uses the OSE-standard color palette:
 
 ## Related Documentation
 
-- **Zakat calculation rules**: [Islamic Jurisprudence Reference](../../../../../docs/explanation/islamic-finance/zakat/)
-- **Implementation**: `apps/ose-platform/src/domain/zakat/assessment-fsm.ts`
-- **Test cases**: `apps/ose-platform/tests/zakat/assessment-fsm.test.ts`
-- **API endpoints**: `POST /api/v1/zakat/assessments`, `PATCH /api/v1/zakat/assessments/:id/state`
+- **Zakat calculation rules**: Islamic jurisprudence standards for 2.5% wealth tax on qualifying assets
+- **Implementation example**: `apps/ose-platform/src/domain/zakat/assessment-fsm.ts`
+- **Test cases example**: `apps/ose-platform/tests/zakat/assessment-fsm.test.ts`
+- **API endpoints example**: `POST /api/v1/zakat/assessments`, `PATCH /api/v1/zakat/assessments/:id/state`
 
 ## Notes and Assumptions
 
