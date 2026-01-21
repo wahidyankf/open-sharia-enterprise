@@ -401,7 +401,7 @@ dependencies {
     testImplementation 'io.cucumber:cucumber-java:7.21.0'
     testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.21.0'
     testImplementation 'org.junit.platform:junit-platform-suite:1.11.4'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.14.2'
 }
 
 test {
@@ -1073,4 +1073,4 @@ public void iCalculateZakat() {
 
 **Last Updated**: 2026-01-21
 **Java Version**: 8+ (Cucumber requires Java 8+)
-**Blessed Frameworks**: Cucumber JVM 7.21.0, JUnit Platform 1.11.4
+**Blessed Frameworks**: Cucumber JVM 7.21.0, JUnit Platform 1.11.4, JUnit Jupiter 5.14.2

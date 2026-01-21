@@ -394,7 +394,8 @@ public class ZakatCalculationService {
             // Calculate Zakat if eligible
             if (balance.compareTo(nisab) >= 0
                 && haulStart.isBefore(LocalDate.now().minusYears(1))) {
-                BigDecimal zakat = balance.multiply(new BigDecimal("0.025"));
+                BigDecimal zakat = balance.subtract(nisab)
+                    .multiply(new BigDecimal("0.025"));
                 return new ZakatResult(true, zakat);
             }
 
@@ -1145,7 +1146,8 @@ public class ZakatBatchCalculator {
         BigDecimal balance = account.minimumYearlyBalance();
 
         if (balance.compareTo(nisab) >= 0) {
-            BigDecimal zakat = balance.multiply(new BigDecimal("0.025"));
+            BigDecimal zakat = balance.subtract(nisab)
+                .multiply(new BigDecimal("0.025"));
             return new ZakatResult(account.id(), zakat);
         }
 

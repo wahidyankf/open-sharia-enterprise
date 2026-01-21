@@ -279,7 +279,7 @@ JUnit 5 is the modern testing framework for Java.
 
 ```gradle
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.14.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -294,7 +294,7 @@ test {
 <dependency>
     <groupId>org.junit.jupiter</groupId>
     <artifactId>junit-jupiter</artifactId>
-    <version>5.11.4</version>
+    <version>5.14.2</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -537,7 +537,7 @@ AssertJ provides fluent, readable assertions.
 
 ```gradle
 dependencies {
-    testImplementation 'org.assertj:assertj-core:3.27.3'
+    testImplementation 'org.assertj:assertj-core:3.27.6'
 }
 ```
 
@@ -547,7 +547,7 @@ dependencies {
 <dependency>
     <groupId>org.assertj</groupId>
     <artifactId>assertj-core</artifactId>
-    <version>3.27.3</version>
+    <version>3.27.6</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -1662,4 +1662,4 @@ jacocoTestReport {
 
 **Last Updated**: 2026-01-21
 **Java Version**: 8+ (JUnit 5 requires Java 8+)
-**Blessed Frameworks**: JUnit 5.11.4, Mockito 5.15.2, AssertJ 3.27.3, TestContainers 1.20.4
+**Blessed Frameworks**: JUnit 5.14.2, Mockito 5.15.2, AssertJ 3.27.6, TestContainers 1.20.4
