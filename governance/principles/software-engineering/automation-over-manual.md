@@ -150,7 +150,7 @@ npx commitlint --edit $1
 
 **Context**: Checking documentation quality and consistency.
 
-**Automation**: `docs__checker.md` agent
+**Automation**: `docs-checker.md` agent
 
 **What it automates**:
 
@@ -408,7 +408,7 @@ The project enforces code quality through automated git hooks:
 
 **Agents**:
 
-- `docs__checker.md` - Validate documentation
+- `docs-checker.md` - Validate documentation
 - `docs__link-general-checker.md` - Verify links with cache
 - `repo-governance-checker.md` - Check repository consistency
 - `plan__checker.md` - Validate project plans
