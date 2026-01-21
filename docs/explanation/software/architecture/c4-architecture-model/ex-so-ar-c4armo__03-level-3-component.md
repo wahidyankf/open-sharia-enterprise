@@ -40,7 +40,7 @@
 - How do components interact?
 - Where are the architectural boundaries?
 
-**Example Elements** (from dolphin-be Spring Boot backend):
+**Example Elements** (from orca-grid-be Spring Boot backend):
 
 - **API Layer**: REST Controllers, API Documentation, Request Validation
 - **Security Layer**: Authentication Filter, Authorization Service, Security Config

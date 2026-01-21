@@ -10,7 +10,7 @@
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
         </root>
-        <logger name="com.opencode.dolphin" level="DEBUG"/>
+        <logger name="com.opencode.orcagrid" level="DEBUG"/>
         <logger name="org.springframework.web" level="INFO"/>
     </springProfile>
 
@@ -25,7 +25,7 @@
         <root level="INFO">
             <appender-ref ref="JSON"/>
         </root>
-        <logger name="com.opencode.dolphin" level="INFO"/>
+        <logger name="com.opencode.orcagrid" level="INFO"/>
         <logger name="org.springframework.web" level="WARN"/>
     </springProfile>
 </configuration>

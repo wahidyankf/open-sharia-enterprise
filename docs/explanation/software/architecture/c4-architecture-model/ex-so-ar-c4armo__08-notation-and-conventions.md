@@ -70,7 +70,7 @@ Each element should show:
 Example:
 
 ```
-dolphin-be
+orca-grid-be
 [Container: Spring Boot]
 Backend services for enterprise applications
 ```

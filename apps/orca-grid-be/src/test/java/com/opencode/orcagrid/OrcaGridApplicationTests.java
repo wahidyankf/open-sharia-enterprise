@@ -1,4 +1,4 @@
-package com.opencode.dolphin;
+package com.opencode.orcagrid;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Integration tests for Dolphin Application.
+ * Integration tests for Orca Grid Application.
  *
  * Tests verify that the Spring Boot application context loads successfully
  * and that actuator endpoints are accessible.
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestRestTemplate
 @ActiveProfiles("dev")
-class DolphinApplicationTests {
+class OrcaGridApplicationTests {
 
     @LocalServerPort
     private int port;

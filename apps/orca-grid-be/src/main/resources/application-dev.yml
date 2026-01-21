@@ -1,4 +1,4 @@
 logging:
   level:
-    com.opencode.dolphin: DEBUG
+    com.opencode.orcagrid: DEBUG
     org.springframework.web: INFO
