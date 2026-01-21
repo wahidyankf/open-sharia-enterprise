@@ -121,6 +121,7 @@ Development practices in this directory fall into several categories:
 ### Agent Standards Documentation
 
 - [AI Agents Convention](./agents/ai-agents.md) - Standards for creating and managing AI agents in the `.opencode/agent/` directory. Covers agent naming, file structure, frontmatter requirements, tool access patterns, model selection, and size limits
+- [Skill Context Architecture](./agents/skill-context-architecture.md) - Architectural constraint requiring all repository skills to use inline context for universal subagent compatibility. Documents subagent spawning limitation and fork skill alternatives
 
 ### Infrastructure Documentation
 
@@ -140,4 +141,4 @@ Development practices in this directory fall into several categories:
 
 ---
 
-**Last Updated**: 2025-12-24
+**Last Updated**: 2026-01-22
