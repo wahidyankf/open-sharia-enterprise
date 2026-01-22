@@ -812,11 +812,15 @@ When marking steps complete, add the following metadata:
   - **Date**: 2026-01-22
   - **Status**: Completed
   - **Files Changed**: docs/explanation/software/stack-lang/golang/ex-so-stla-go\_\_memory-management.md
-- [ ] **Step 2.15**: Create Linting and Formatting Documentation
-  - [ ] File: `ex-so-stla-go__linting-and-formatting.md`
-  - [ ] Content: gofmt, golangci-lint, staticcheck, custom linters
-  - [ ] Examples: Configuration files, CI integration
-  - [ ] Target: 2000-2500 lines
+- [x] **Step 2.15**: Create Linting and Formatting Documentation
+  - [x] File: `ex-so-stla-go__linting-and-formatting.md`
+  - [x] Content: gofmt, golangci-lint, staticcheck, custom linters
+  - [x] Examples: Configuration files, CI integration
+  - [x] Target: 2000-2500 lines (achieved: 2400+ lines)
+  - **Implementation Notes**: Created comprehensive Linting and Formatting documentation covering code formatting (gofmt official formatter for standardized indentation/brace style/struct alignment, goimports enhanced formatter automatically adding/removing/organizing imports, format on save in IDEs VS Code/GoLand/Vim), linting tools (go vet official linter detecting suspicious constructs like printf argument mismatch/unreachable code/shadowed variables/struct tag issues, staticcheck advanced linter for unused variables/ineffectual assignments/unchecked errors/deprecated API usage, golangci-lint linter aggregator running multiple linters in parallel with v2.8.0), golangci-lint configuration (basic .golangci.yml with errcheck/gosimple/govet/ineffassign/staticcheck/unused/gofmt/goimports/misspell/revive enabled, comprehensive production configuration with timeout/tests/build-tags/skip-dirs/output format, linter settings for errcheck/govet/gofmt/goimports/gci/revive/gocyclo/gocognit/goconst/dupl/gocritic/gosec, issue exclusion rules for test files/generated files/unused parameters), common linters (error handling linters errcheck for unchecked errors and goerr113 for error wrapping Go 1.13+, code quality linters gocyclo for cyclomatic complexity/goconst for repeated constants/dupl for duplicate code, style linters revive for exported function comments/consistent receiver names, performance linters prealloc for slice preallocation/bodyclose for HTTP response body close, security linters gosec for SQL injection/weak random number generators), IDE integration (VS Code with Go extension and settings.json for lintTool/lintOnSave/formatOnSave, GoLand with File Watchers and External Tools, Vim with vim-go plugin for metalinter/autosave/auto-import), CI/CD integration (GitHub Actions with golangci-lint-action v4, GitLab CI with golangci/golangci-lint:v2.8.0 image, pre-commit hooks with Husky or git hooks directly, Makefile integration with fmt/lint/lint-fix/test/check/ci targets), custom linters (writing custom linters using go/analysis framework, example hardcoded credentials linter checking for password/secret/apikey variables with non-empty string literals, using custom linters with golangci-lint plugins), best practices (when to disable linters using //nolint sparingly with justification for intentional shadowing/performance-critical code, configuration guidelines starting conservative with enable-all then relaxing for practicality, team standards documenting required linters/disabled linters/exceptions for test files and generated code), and common issues and fixes (unchecked errors with error return value checking, shadowed variables avoiding shadowing declaration, ineffectual assignment removing unused intermediate assignments, exported without comment adding documentation to exported types/functions, cyclomatic complexity extracting functions to reduce complexity). All examples demonstrate practical linting configurations and fixes with real-world scenarios.
+  - **Date**: 2026-01-22
+  - **Status**: Completed
+  - **Files Changed**: docs/explanation/software/stack-lang/golang/ex-so-stla-go\_\_linting-and-formatting.md
 - [ ] **Step 2.16**: Create Modules and Dependencies Documentation
   - [ ] File: `ex-so-stla-go__modules-and-dependencies.md`
   - [ ] Content: Go modules, go.mod/go.sum, vendoring, private modules
