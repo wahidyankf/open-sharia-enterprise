@@ -1,4 +1,5 @@
 ---
+name: repo-defining-workflows
 description: Workflow pattern standards for creating multi-agent orchestrations including YAML frontmatter (name, description, tags, status, agents, parameters), execution phases (sequential/parallel/conditional), agent coordination patterns, and Gherkin success criteria. Essential for defining reusable, validated workflow processes.
 ---
 

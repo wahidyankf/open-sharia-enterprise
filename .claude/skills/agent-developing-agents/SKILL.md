@@ -1,4 +1,5 @@
 ---
+name: agent-developing-agents
 description: AI agent development standards including frontmatter structure, naming conventions, tool access patterns, model selection, and Bash-only file operations for .opencode/ folders
 ---
 
