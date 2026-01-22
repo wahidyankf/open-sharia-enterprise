@@ -20,27 +20,27 @@ func TestValidateClaude_AllValid(t *testing.T) {
 	}
 
 	// Create 2 skills
-	createSkill(t, skillsDir, "skill-1")
-	createSkill(t, skillsDir, "skill-2")
+	createValidSkill(t, skillsDir, "skill-1")
+	createValidSkill(t, skillsDir, "skill-2")
 
 	// Create 2 agents referencing the skills
 	agent1Content := `---
-name:agent-1
-description:Test agent 1
-tools:Read, Write
-model:sonnet
-color:blue
+name: agent-1
+description: Test agent 1
+tools: Read, Write
+model: sonnet
+color: blue
 skills:
   - skill-1
 ---
 Agent 1 body`
 
 	agent2Content := `---
-name:agent-2
-description:Test agent 2
-tools:Read, Write, Edit
-model:haiku
-color:green
+name: agent-2
+description: Test agent 2
+tools: Read, Write, Edit
+model: haiku
+color: green
 skills:
   - skill-2
 ---
@@ -61,13 +61,13 @@ Agent 2 body`
 		t.Fatalf("ValidateClaude returned error: %v", err)
 	}
 
-	// 2 skills × 3 checks + 2 agents × 10 checks = 6 + 20 = 26 checks
-	if result.TotalChecks != 26 {
-		t.Errorf("Expected 26 total checks, got %d", result.TotalChecks)
+	// 2 skills × 7 checks + 2 agents × 11 checks = 14 + 22 = 36 checks
+	if result.TotalChecks != 36 {
+		t.Errorf("Expected 36 total checks, got %d", result.TotalChecks)
 	}
 
-	if result.PassedChecks != 26 {
-		t.Errorf("Expected 26 passed checks, got %d", result.PassedChecks)
+	if result.PassedChecks != 36 {
+		t.Errorf("Expected 36 passed checks, got %d", result.PassedChecks)
 	}
 
 	if result.FailedChecks != 0 {
@@ -92,7 +92,7 @@ func TestValidateClaude_AgentsOnly(t *testing.T) {
 	}
 
 	// Create 1 skill
-	createSkill(t, skillsDir, "skill-1")
+	createValidSkill(t, skillsDir, "skill-1")
 
 	// Create 1 agent
 	createValidAgent(t, agentsDir, "test-agent")
@@ -106,13 +106,13 @@ func TestValidateClaude_AgentsOnly(t *testing.T) {
 		t.Fatalf("ValidateClaude returned error: %v", err)
 	}
 
-	// Should have only agent checks (10 checks)
-	if result.TotalChecks != 10 {
-		t.Errorf("Expected 10 checks (agents only), got %d", result.TotalChecks)
+	// Should have only agent checks (11 checks)
+	if result.TotalChecks != 11 {
+		t.Errorf("Expected 11 checks (agents only), got %d", result.TotalChecks)
 	}
 
-	if result.PassedChecks != 10 {
-		t.Errorf("Expected 10 passed checks, got %d", result.PassedChecks)
+	if result.PassedChecks != 11 {
+		t.Errorf("Expected 11 passed checks, got %d", result.PassedChecks)
 	}
 }
 
@@ -129,8 +129,8 @@ func TestValidateClaude_SkillsOnly(t *testing.T) {
 	}
 
 	// Create 2 skills
-	createSkill(t, skillsDir, "skill-1")
-	createSkill(t, skillsDir, "skill-2")
+	createValidSkill(t, skillsDir, "skill-1")
+	createValidSkill(t, skillsDir, "skill-2")
 
 	// Create 1 agent (should be ignored)
 	createValidAgent(t, agentsDir, "test-agent")
@@ -144,13 +144,13 @@ func TestValidateClaude_SkillsOnly(t *testing.T) {
 		t.Fatalf("ValidateClaude returned error: %v", err)
 	}
 
-	// Should have only skill checks (2 skills × 3 checks = 6)
-	if result.TotalChecks != 6 {
-		t.Errorf("Expected 6 checks (skills only), got %d", result.TotalChecks)
+	// Should have only skill checks (2 skills × 7 checks = 14)
+	if result.TotalChecks != 14 {
+		t.Errorf("Expected 14 checks (skills only), got %d", result.TotalChecks)
 	}
 
-	if result.PassedChecks != 6 {
-		t.Errorf("Expected 6 passed checks, got %d", result.PassedChecks)
+	if result.PassedChecks != 14 {
+		t.Errorf("Expected 14 passed checks, got %d", result.PassedChecks)
 	}
 }
 
@@ -243,11 +243,11 @@ func TestValidateClaude_AgentReferencesNonExistentSkill(t *testing.T) {
 
 	// Create agent referencing non-existent skill
 	agentContent := `---
-name:test-agent
-description:Test agent
-tools:Read, Write
-model:sonnet
-color:blue
+name: test-agent
+description: Test agent
+tools: Read, Write
+model: sonnet
+color: blue
 skills:
   - non-existent-skill
 ---
@@ -332,7 +332,7 @@ func TestValidateClaude_MultipleAgentsAndSkills(t *testing.T) {
 	// Create 5 skills
 	for i := 1; i <= 5; i++ {
 		skillName := "skill-" + string(rune('0'+i))
-		createSkill(t, skillsDir, skillName)
+		createValidSkill(t, skillsDir, skillName)
 	}
 
 	// Create 10 agents
@@ -383,7 +383,7 @@ func TestValidateClaude_ChecksStructure(t *testing.T) {
 		t.Fatalf("Failed to create skills dir: %v", err)
 	}
 
-	createSkill(t, skillsDir, "test-skill")
+	createValidSkill(t, skillsDir, "test-skill")
 	createValidAgent(t, agentsDir, "test-agent")
 
 	result, err := ValidateClaude(ValidateClaudeOptions{

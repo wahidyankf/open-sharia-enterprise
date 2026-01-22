@@ -10,11 +10,11 @@ import (
 func createValidAgent(t *testing.T, dir, name string) {
 	t.Helper()
 	content := `---
-name:` + name + `
-description:Test agent description
-tools:Read, Write
-model:sonnet
-color:blue
+name: ` + name + `
+description: Test agent description
+tools: Read, Write
+model: sonnet
+color: blue
 skills:
 ---
 Test agent body`
@@ -25,7 +25,7 @@ Test agent body`
 }
 
 // Helper function to create a skill directory
-func createSkill(t *testing.T, dir, name string) {
+func createValidSkill(t *testing.T, dir, name string) {
 	t.Helper()
 	skillDir := filepath.Join(dir, name)
 	if err := os.MkdirAll(skillDir, 0755); err != nil {
@@ -33,7 +33,8 @@ func createSkill(t *testing.T, dir, name string) {
 	}
 
 	content := `---
-description:Test skill description
+name: ` + name + `
+description: Test skill description
 ---
 Skill content`
 
@@ -68,8 +69,8 @@ func TestValidateAgent_ValidAgent(t *testing.T) {
 	)
 
 	// Should have 10 checks for a valid agent (no generated-reports check)
-	if len(checks) != 10 {
-		t.Errorf("Expected 10 checks, got %d", len(checks))
+	if len(checks) != 11 {
+		t.Errorf("Expected 11 checks, got %d", len(checks))
 	}
 
 	for _, check := range checks {
@@ -447,9 +448,9 @@ func TestValidateAllAgents_MultipleAgents(t *testing.T) {
 
 	checks := validateAllAgents(tmpDir, skillNames)
 
-	// 3 agents × 10 checks each = 30 checks
-	if len(checks) != 30 {
-		t.Errorf("Expected 30 checks (3 agents × 10), got %d", len(checks))
+	// 3 agents × 11 checks each = 33 checks
+	if len(checks) != 33 {
+		t.Errorf("Expected 33 checks (3 agents × 11), got %d", len(checks))
 	}
 
 	passedCount := 0
@@ -459,8 +460,8 @@ func TestValidateAllAgents_MultipleAgents(t *testing.T) {
 		}
 	}
 
-	if passedCount != 30 {
-		t.Errorf("Expected all 30 checks to pass, got %d passed", passedCount)
+	if passedCount != 33 {
+		t.Errorf("Expected all 33 checks to pass, got %d passed", passedCount)
 	}
 }
 

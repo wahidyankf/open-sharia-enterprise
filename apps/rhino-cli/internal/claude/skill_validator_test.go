@@ -15,7 +15,8 @@ func TestValidateSkill_ValidSkill(t *testing.T) {
 	}
 
 	content := `---
-description:Test skill description
+name: test-skill
+description: Test skill description
 ---
 Skill content here`
 
@@ -25,9 +26,12 @@ Skill content here`
 
 	checks := validateSkill(skillDir, "test-skill")
 
-	// Should have 3 checks: file exists, YAML syntax, required fields
-	if len(checks) != 3 {
-		t.Errorf("Expected 3 checks, got %d", len(checks))
+	// Should have 7 checks: YAML formatting, file exists, YAML syntax, description required, name required, name format, name match
+	if len(checks) != 7 {
+		t.Errorf("Expected 7 checks, got %d", len(checks))
+		for i, check := range checks {
+			t.Logf("Check %d: %s - %s", i+1, check.Name, check.Status)
+		}
 	}
 
 	for _, check := range checks {
@@ -73,7 +77,8 @@ func TestValidateSkill_InvalidYAML(t *testing.T) {
 
 	// Invalid YAML (no closing ---)
 	content := `---
-description:Test skill
+name: test-skill
+description: Test skill
 This is invalid`
 
 	if err := os.WriteFile(filepath.Join(skillDir, "SKILL.md"), []byte(content), 0644); err != nil {
@@ -82,7 +87,7 @@ This is invalid`
 
 	checks := validateSkill(skillDir, "test-skill")
 
-	// Should have file exists (passed), YAML syntax (failed)
+	// Should have file exists (passed), YAML formatting (failed due to no closing ---)
 	if len(checks) < 2 {
 		t.Errorf("Expected at least 2 checks, got %d", len(checks))
 	}
@@ -100,6 +105,217 @@ This is invalid`
 	}
 }
 
+func TestValidateSkill_YAMLFormattingError_MissingSpace(t *testing.T) {
+	tmpDir := t.TempDir()
+	skillDir := filepath.Join(tmpDir, "test-skill")
+
+	if err := os.MkdirAll(skillDir, 0755); err != nil {
+		t.Fatalf("Failed to create skill dir: %v", err)
+	}
+
+	// Missing space after colon
+	content := `---
+name:test-skill
+description: Test skill description
+---
+Skill content here`
+
+	if err := os.WriteFile(filepath.Join(skillDir, "SKILL.md"), []byte(content), 0644); err != nil {
+		t.Fatalf("Failed to create SKILL.md: %v", err)
+	}
+
+	checks := validateSkill(skillDir, "test-skill")
+
+	// Should fail on YAML formatting check
+	foundYAMLFormattingError := false
+	for _, check := range checks {
+		if check.Status == "failed" && check.Name == "Skill: test-skill - YAML Formatting" {
+			foundYAMLFormattingError = true
+			if check.Expected != "Space after colon in YAML key-value pairs (e.g., 'name: value')" {
+				t.Errorf("Expected YAML formatting error message, got '%s'", check.Expected)
+			}
+			break
+		}
+	}
+
+	if !foundYAMLFormattingError {
+		t.Error("Expected YAML formatting error for missing space after colon")
+	}
+}
+
+func TestValidateSkill_MissingName(t *testing.T) {
+	tmpDir := t.TempDir()
+	skillDir := filepath.Join(tmpDir, "test-skill")
+
+	if err := os.MkdirAll(skillDir, 0755); err != nil {
+		t.Fatalf("Failed to create skill dir: %v", err)
+	}
+
+	// Missing name field
+	content := `---
+description: Test skill description
+---
+Skill content here`
+
+	if err := os.WriteFile(filepath.Join(skillDir, "SKILL.md"), []byte(content), 0644); err != nil {
+		t.Fatalf("Failed to create SKILL.md: %v", err)
+	}
+
+	checks := validateSkill(skillDir, "test-skill")
+
+	foundMissingName := false
+	for _, check := range checks {
+		if check.Status == "failed" && check.Expected == "name field present" {
+			foundMissingName = true
+			break
+		}
+	}
+
+	if !foundMissingName {
+		t.Error("Expected check for missing name field")
+	}
+}
+
+func TestValidateSkill_InvalidNameFormat_Uppercase(t *testing.T) {
+	tmpDir := t.TempDir()
+	skillDir := filepath.Join(tmpDir, "test-skill")
+
+	if err := os.MkdirAll(skillDir, 0755); err != nil {
+		t.Fatalf("Failed to create skill dir: %v", err)
+	}
+
+	// Name with uppercase letters
+	content := `---
+name: Test-Skill
+description: Test skill description
+---
+Skill content here`
+
+	if err := os.WriteFile(filepath.Join(skillDir, "SKILL.md"), []byte(content), 0644); err != nil {
+		t.Fatalf("Failed to create SKILL.md: %v", err)
+	}
+
+	checks := validateSkill(skillDir, "test-skill")
+
+	foundInvalidFormat := false
+	for _, check := range checks {
+		if check.Status == "failed" && check.Expected == "Lowercase letters/numbers/hyphens only, max 64 chars" {
+			foundInvalidFormat = true
+			break
+		}
+	}
+
+	if !foundInvalidFormat {
+		t.Error("Expected check for invalid name format (uppercase)")
+	}
+}
+
+func TestValidateSkill_InvalidNameFormat_Underscore(t *testing.T) {
+	tmpDir := t.TempDir()
+	skillDir := filepath.Join(tmpDir, "test-skill")
+
+	if err := os.MkdirAll(skillDir, 0755); err != nil {
+		t.Fatalf("Failed to create skill dir: %v", err)
+	}
+
+	// Name with underscores
+	content := `---
+name: test_skill
+description: Test skill description
+---
+Skill content here`
+
+	if err := os.WriteFile(filepath.Join(skillDir, "SKILL.md"), []byte(content), 0644); err != nil {
+		t.Fatalf("Failed to create SKILL.md: %v", err)
+	}
+
+	checks := validateSkill(skillDir, "test-skill")
+
+	foundInvalidFormat := false
+	for _, check := range checks {
+		if check.Status == "failed" && check.Expected == "Lowercase letters/numbers/hyphens only, max 64 chars" {
+			foundInvalidFormat = true
+			break
+		}
+	}
+
+	if !foundInvalidFormat {
+		t.Error("Expected check for invalid name format (underscore)")
+	}
+}
+
+func TestValidateSkill_InvalidNameFormat_TooLong(t *testing.T) {
+	tmpDir := t.TempDir()
+	skillDir := filepath.Join(tmpDir, "test-skill")
+
+	if err := os.MkdirAll(skillDir, 0755); err != nil {
+		t.Fatalf("Failed to create skill dir: %v", err)
+	}
+
+	// Name exceeding 64 characters
+	longName := "this-is-a-very-long-skill-name-that-exceeds-the-maximum-allowed-length-of-sixty-four-characters"
+	content := `---
+name: ` + longName + `
+description: Test skill description
+---
+Skill content here`
+
+	if err := os.WriteFile(filepath.Join(skillDir, "SKILL.md"), []byte(content), 0644); err != nil {
+		t.Fatalf("Failed to create SKILL.md: %v", err)
+	}
+
+	checks := validateSkill(skillDir, "test-skill")
+
+	foundInvalidFormat := false
+	for _, check := range checks {
+		if check.Status == "failed" && check.Expected == "Lowercase letters/numbers/hyphens only, max 64 chars" {
+			foundInvalidFormat = true
+			break
+		}
+	}
+
+	if !foundInvalidFormat {
+		t.Error("Expected check for invalid name format (too long)")
+	}
+}
+
+func TestValidateSkill_NameMismatchDirectory(t *testing.T) {
+	tmpDir := t.TempDir()
+	skillDir := filepath.Join(tmpDir, "test-skill")
+
+	if err := os.MkdirAll(skillDir, 0755); err != nil {
+		t.Fatalf("Failed to create skill dir: %v", err)
+	}
+
+	// Name doesn't match directory
+	content := `---
+name: different-name
+description: Test skill description
+---
+Skill content here`
+
+	if err := os.WriteFile(filepath.Join(skillDir, "SKILL.md"), []byte(content), 0644); err != nil {
+		t.Fatalf("Failed to create SKILL.md: %v", err)
+	}
+
+	checks := validateSkill(skillDir, "test-skill")
+
+	foundNameMismatch := false
+	for _, check := range checks {
+		if check.Status == "failed" && check.Expected == "name field matches directory: test-skill" {
+			foundNameMismatch = true
+			if check.Actual != "name field: different-name" {
+				t.Errorf("Expected actual value 'name field: different-name', got '%s'", check.Actual)
+			}
+			break
+		}
+	}
+
+	if !foundNameMismatch {
+		t.Error("Expected check for name mismatch with directory")
+	}
+}
+
 func TestValidateSkill_MissingDescription(t *testing.T) {
 	tmpDir := t.TempDir()
 	skillDir := filepath.Join(tmpDir, "test-skill")
@@ -110,6 +326,7 @@ func TestValidateSkill_MissingDescription(t *testing.T) {
 
 	// Missing description field
 	content := `---
+name: test-skill
 ---
 Skill content here`
 
@@ -118,11 +335,6 @@ Skill content here`
 	}
 
 	checks := validateSkill(skillDir, "test-skill")
-
-	// Should have 4 checks: exists (pass), YAML syntax (pass), parse (pass), required fields (fail)
-	if len(checks) < 3 {
-		t.Errorf("Expected at least 3 checks, got %d", len(checks))
-	}
 
 	foundMissingDescription := false
 	for _, check := range checks {
@@ -147,6 +359,7 @@ func TestValidateSkill_EmptyDescription(t *testing.T) {
 
 	// Empty description
 	content := `---
+name: test-skill
 description:
 ---
 Skill content here`
@@ -184,7 +397,8 @@ func TestValidateSkill_LongDescription(t *testing.T) {
 	longDesc += "The description can be as long as needed to fully explain the skill."
 
 	content := `---
-description:` + longDesc + `
+name: test-skill
+description: ` + longDesc + `
 ---
 Skill content here`
 
@@ -231,14 +445,17 @@ func TestValidateAllSkills_MultipleSkills(t *testing.T) {
 	// Create 3 valid skills
 	for i := 1; i <= 3; i++ {
 		skillName := "skill-" + string(rune('0'+i))
-		createSkill(t, skillsDir, skillName)
+		createValidSkill(t, skillsDir, skillName)
 	}
 
 	checks, skillNames := validateAllSkills(tmpDir)
 
-	// 3 skills × 3 checks each = 9 checks
-	if len(checks) != 9 {
-		t.Errorf("Expected 9 checks (3 skills × 3), got %d", len(checks))
+	// 3 skills × 7 checks each = 21 checks
+	if len(checks) != 21 {
+		t.Errorf("Expected 21 checks (3 skills × 7), got %d", len(checks))
+		for i, check := range checks {
+			t.Logf("Check %d: %s - %s", i+1, check.Name, check.Status)
+		}
 	}
 
 	if len(skillNames) != 3 {
@@ -260,8 +477,8 @@ func TestValidateAllSkills_MultipleSkills(t *testing.T) {
 		}
 	}
 
-	if passedCount != 9 {
-		t.Errorf("Expected all 9 checks to pass, got %d passed", passedCount)
+	if passedCount != 21 {
+		t.Errorf("Expected all 21 checks to pass, got %d passed", passedCount)
 	}
 }
 
@@ -274,7 +491,7 @@ func TestValidateAllSkills_MixedValidInvalid(t *testing.T) {
 	}
 
 	// Create 1 valid skill
-	createSkill(t, skillsDir, "valid-skill")
+	createValidSkill(t, skillsDir, "valid-skill")
 
 	// Create 1 invalid skill (missing SKILL.md)
 	invalidSkillDir := filepath.Join(skillsDir, "invalid-skill")
@@ -284,9 +501,9 @@ func TestValidateAllSkills_MixedValidInvalid(t *testing.T) {
 
 	checks, skillNames := validateAllSkills(tmpDir)
 
-	// Should have checks for both skills
-	if len(checks) < 4 {
-		t.Errorf("Expected at least 4 checks, got %d", len(checks))
+	// Should have 7 checks for valid skill + 1 check for invalid skill (file exists failed)
+	if len(checks) < 8 {
+		t.Errorf("Expected at least 8 checks, got %d", len(checks))
 	}
 
 	// Only valid skill should be registered
@@ -312,7 +529,7 @@ func TestValidateAllSkills_IgnoresDotDirectories(t *testing.T) {
 	}
 
 	// Create a valid skill
-	createSkill(t, skillsDir, "valid-skill")
+	createValidSkill(t, skillsDir, "valid-skill")
 
 	// Create a .hidden directory (should be ignored)
 	hiddenDir := filepath.Join(skillsDir, ".hidden")
@@ -322,9 +539,12 @@ func TestValidateAllSkills_IgnoresDotDirectories(t *testing.T) {
 
 	checks, skillNames := validateAllSkills(tmpDir)
 
-	// Should only have checks for valid-skill (3 checks)
-	if len(checks) != 3 {
-		t.Errorf("Expected 3 checks (hidden dir ignored), got %d", len(checks))
+	// Should only have checks for valid-skill (7 checks)
+	if len(checks) != 7 {
+		t.Errorf("Expected 7 checks (hidden dir ignored), got %d", len(checks))
+		for i, check := range checks {
+			t.Logf("Check %d: %s - %s", i+1, check.Name, check.Status)
+		}
 	}
 
 	if len(skillNames) != 1 {
@@ -360,7 +580,7 @@ func TestValidateAllSkills_IgnoresFiles(t *testing.T) {
 	}
 
 	// Create a valid skill
-	createSkill(t, skillsDir, "valid-skill")
+	createValidSkill(t, skillsDir, "valid-skill")
 
 	// Create a file in skills dir (should be ignored)
 	if err := os.WriteFile(filepath.Join(skillsDir, "README.md"), []byte("readme"), 0644); err != nil {
@@ -369,9 +589,12 @@ func TestValidateAllSkills_IgnoresFiles(t *testing.T) {
 
 	checks, skillNames := validateAllSkills(tmpDir)
 
-	// Should only have checks for valid-skill (3 checks)
-	if len(checks) != 3 {
-		t.Errorf("Expected 3 checks (file ignored), got %d", len(checks))
+	// Should only have checks for valid-skill (7 checks)
+	if len(checks) != 7 {
+		t.Errorf("Expected 7 checks (file ignored), got %d", len(checks))
+		for i, check := range checks {
+			t.Logf("Check %d: %s - %s", i+1, check.Name, check.Status)
+		}
 	}
 
 	if len(skillNames) != 1 {
