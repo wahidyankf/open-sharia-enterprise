@@ -1,9 +1,9 @@
 ---
-name:docs-link-general-checker
-description:Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links in docs/metadata/external-links-status.yaml (the ONLY cache file) with automatic pruning and mandatory lastFullScan updates on every run. HARD REQUIREMENT - cache file usage is mandatory regardless of how this agent is invoked (spawned by other agents, processes, or direct invocation). Outputs results in conversation only (no separate report files). Use when checking for dead links, verifying URL accessibility, validating internal references, or auditing documentation link health.
-tools:Read, Glob, Grep, WebFetch, WebSearch, Write, Edit, Bash
-model:haiku
-color:green
+name: docs-link-general-checker
+description: Validates both external and internal links in documentation files to ensure they are not broken. Maintains a cache of verified external links in docs/metadata/external-links-status.yaml (the ONLY cache file) with automatic pruning and mandatory lastFullScan updates on every run. HARD REQUIREMENT - cache file usage is mandatory regardless of how this agent is invoked (spawned by other agents, processes, or direct invocation). Outputs results in conversation only (no separate report files). Use when checking for dead links, verifying URL accessibility, validating internal references, or auditing documentation link health.
+tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Edit, Bash
+model: haiku
+color: green
 skills:
   - docs-applying-content-quality
   - docs-validating-links

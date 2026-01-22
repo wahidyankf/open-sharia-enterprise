@@ -1,9 +1,9 @@
 ---
-name:apps-ayokoding-web-structure-checker
-description:Validates ayokoding-web content structure including folder organization, level-based weights, navigation depth, and bilingual completeness.
-tools:Read, Glob, Grep, Write, Bash
-model:sonnet
-color:green
+name: apps-ayokoding-web-structure-checker
+description: Validates ayokoding-web content structure including folder organization, level-based weights, navigation depth, and bilingual completeness.
+tools: Read, Glob, Grep, Write, Bash
+model: sonnet
+color: green
 skills:
   - docs-applying-content-quality
   - apps-ayokoding-web-developing-content

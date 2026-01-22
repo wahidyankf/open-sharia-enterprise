@@ -1,9 +1,9 @@
 ---
-name:apps-ose-platform-web-content-fixer
-description:Applies validated fixes from content-checker audit reports. Re-validates before applying changes.
-tools:Read, Edit, Write, Glob, Grep, Bash
-model:sonnet
-color:yellow
+name: apps-ose-platform-web-content-fixer
+description: Applies validated fixes from content-checker audit reports. Re-validates before applying changes.
+tools: Read, Edit, Write, Glob, Grep, Bash
+model: sonnet
+color: yellow
 skills:
   - docs-applying-content-quality
   - apps-ose-platform-web-developing-content

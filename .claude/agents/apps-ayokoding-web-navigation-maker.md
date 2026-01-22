@@ -1,9 +1,9 @@
 ---
-name:apps-ayokoding-web-navigation-maker
-description:Updates prev/next navigation links in ayokoding-web content frontmatter.
-tools:Read, Edit, Glob, Grep
-model:haiku
-color:blue
+name: apps-ayokoding-web-navigation-maker
+description: Updates prev/next navigation links in ayokoding-web content frontmatter.
+tools: Read, Edit, Glob, Grep
+model: haiku
+color: blue
 skills:
   - docs-applying-content-quality
   - apps-ayokoding-web-developing-content

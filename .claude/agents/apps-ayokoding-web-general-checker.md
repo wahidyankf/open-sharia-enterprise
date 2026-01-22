@@ -1,9 +1,9 @@
 ---
-name:apps-ayokoding-web-general-checker
-description:Validates general ayokoding-web content quality including structure, bilingual completeness, weights, navigation, and content quality.
-tools:Read, Glob, Grep, Write, Bash
-model:sonnet
-color:green
+name: apps-ayokoding-web-general-checker
+description: Validates general ayokoding-web content quality including structure, bilingual completeness, weights, navigation, and content quality.
+tools: Read, Glob, Grep, Write, Bash
+model: sonnet
+color: green
 skills:
   - docs-applying-content-quality
   - apps-ayokoding-web-developing-content
