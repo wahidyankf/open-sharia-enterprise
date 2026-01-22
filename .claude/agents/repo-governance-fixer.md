@@ -294,9 +294,3 @@ See wow\_\_generating-validation-reports Skill for report structure.
 
 - [AI Agents Convention](../../governance/development/agents/ai-agents.md)
 - [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md)
-
-**Skills**:
-
-- `repo-applying-maker-checker-fixer` - Fixer workflow pattern
-- `repo-assessing-criticality-confidence` - Confidence assessment
-- `repo-applying-maker-checker-fixer` - Three-stage workflow

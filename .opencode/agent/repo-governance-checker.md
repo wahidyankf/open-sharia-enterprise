@@ -272,8 +272,6 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 
 **Development Practices**: All practices in `governance/development/`
 
-**Skills**: `docs-applying-diataxis-framework`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
-
 **Related Documentation**:
 
 - [AI Agents Convention](../../governance/development/agents/ai-agents.md) - Agent-Skill separation patterns
@@ -719,9 +717,3 @@ Update report status to "Complete", add summary statistics by category:
 
 - [AI Agents Convention](../../governance/development/agents/ai-agents.md)
 - [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md)
-
-**Skills**:
-
-- `repo-applying-maker-checker-fixer` - Checker workflow pattern
-- `repo-assessing-criticality-confidence` - Criticality assessment
-- `repo-generating-validation-reports` - Report generation

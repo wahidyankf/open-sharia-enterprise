@@ -156,8 +156,3 @@ git pull origin main
 
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
-
-**Skills**:
-
-- `apps-ayokoding-web-developing-content` - Site requirements and structure
-- `repo-practicing-trunk-based-development` - Git workflow and branching strategy

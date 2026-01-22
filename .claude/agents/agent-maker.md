@@ -69,9 +69,3 @@ Create new AI agent files following AI Agents Convention.
 
 - [AI Agents Convention](../../governance/development/agents/ai-agents.md)
 - [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md)
-
-**Skills**:
-
-- `agent-developing-agents` - Agent development standards
-- `agent-selecting-models` - Model selection guidance
-- `agent-documenting-references` - Reference section structure

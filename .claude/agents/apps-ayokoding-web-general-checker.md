@@ -88,9 +88,3 @@ Skill: `repo-generating-validation-reports`
 
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - [Content Quality Principles](../../governance/conventions/content/quality.md)
-
-**Skills**:
-
-- `repo-applying-maker-checker-fixer` - Checker workflow pattern
-- `apps-ayokoding-web-developing-content` - ayokoding-web content standards
-- `repo-assessing-criticality-confidence` - Criticality assessment

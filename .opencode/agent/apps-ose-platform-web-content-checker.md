@@ -103,9 +103,3 @@ Skill: `repo-generating-validation-reports`
 
 - [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 - [Content Quality Principles](../../governance/conventions/content/quality.md)
-
-**Skills**:
-
-- `repo-applying-maker-checker-fixer` - Checker workflow pattern
-- `apps-ose-platform-web-developing-content` - ose-platform-web standards
-- `repo-assessing-criticality-confidence` - Criticality assessment

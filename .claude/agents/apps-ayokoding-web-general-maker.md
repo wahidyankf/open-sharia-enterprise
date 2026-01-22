@@ -70,8 +70,3 @@ Create by-concept tutorials and general content for ayokoding-web.
 
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - [Programming Language Content](../../governance/conventions/tutorial/programming-language-content.md)
-
-**Skills**:
-
-- `apps-ayokoding-web-developing-content` - ayokoding-web content standards
-- `docs-applying-content-quality` - Content quality principles
