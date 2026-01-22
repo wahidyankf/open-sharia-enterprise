@@ -1,4 +1,5 @@
 ---
+name: repo-practicing-trunk-based-development
 description: Trunk Based Development workflow - all development on main branch with small frequent commits, minimal branching, and continuous integration. Covers when branches are justified (exceptional cases only), commit patterns, feature flag usage for incomplete work, environment branch rules (deployment only), and AI agent default behavior (assume main). Essential for understanding repository git workflow and preventing unnecessary branch proliferation
 ---
 

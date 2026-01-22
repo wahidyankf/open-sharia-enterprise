@@ -1,4 +1,5 @@
 ---
+name: readme-writing-readme-files
 description: README quality standards for engaging, accessible, scannable content including problem-solution hooks, plain language (no unexplained jargon), acronym context, paragraph limits (≤5 lines), benefits-focused language, visual hierarchy, and progressive disclosure. Essential for creating effective README files that welcome and guide users.
 ---
 
