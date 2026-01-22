@@ -731,11 +731,15 @@ When marking steps complete, add the following metadata:
   - **Date**: 2026-01-22
   - **Status**: Completed
   - **Files Changed**: docs/explanation/software/stack-lang/golang/ex-so-stla-go\_\_best-practices.md
-- [ ] **Step 2.6**: Create Anti-Patterns Documentation
-  - [ ] File: `ex-so-stla-go__anti-patterns.md`
-  - [ ] Content: Common mistakes, goroutine leaks, nil pointer dereferences
-  - [ ] Examples: What to avoid and why
-  - [ ] Target: 3000-4000 lines
+- [x] **Step 2.6**: Create Anti-Patterns Documentation
+  - [x] File: `ex-so-stla-go__anti-patterns.md`
+  - [x] Content: Common mistakes, goroutine leaks, nil pointer dereferences
+  - [x] Examples: What to avoid and why
+  - [x] Target: 3000-4000 lines (achieved: 3600+ lines)
+  - **Implementation Notes**: Created comprehensive Go anti-patterns documentation covering error handling anti-patterns (ignoring errors, using panic for expected errors, losing error context, logging and returning), goroutine leaks (blocking forever on channel, no context cancellation, forgetting to wait), nil pointer dereferences (not checking for nil, returning nil interface, nil map or slice), race conditions (concurrent map access, shared variable without synchronization, loop variable capture pre-Go 1.22), resource leaks (not closing resources, defer in loop, HTTP response body not closed), concurrency anti-patterns (starting too many goroutines, mixing synchronous and asynchronous, using goroutines for everything), API design anti-patterns (returning interfaces, large interfaces, context as struct field), performance anti-patterns (string concatenation in loop, growing slice dynamically, unnecessary byte conversions), testing anti-patterns (not using table-driven tests, testing implementation instead of behavior, global state), security anti-patterns (SQL injection, using math/rand for security, hardcoded secrets), and code organization anti-patterns (god object, util package, circular dependencies).
+  - **Date**: 2026-01-22
+  - **Status**: Completed
+  - **Files Changed**: docs/explanation/software/stack-lang/golang/ex-so-stla-go\_\_anti-patterns.md
 - [ ] **Step 2.7**: Create Type Safety Documentation
   - [ ] File: `ex-so-stla-go__type-safety.md`
   - [ ] Content: Type system, interfaces, generics, type assertions
