@@ -1,6 +1,7 @@
 package claude
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -10,7 +11,80 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// validateSkill performs all 3 validation rules for a single skill
+// validateSkillYAMLFormatting checks YAML has proper formatting
+func validateSkillYAMLFormatting(skillName string, content []byte) sync.ValidationCheck {
+	// Extract raw frontmatter
+	lines := bytes.Split(content, []byte("\n"))
+
+	if len(lines) < 3 {
+		return sync.ValidationCheck{
+			Name:    fmt.Sprintf("Skill: %s - YAML Formatting", skillName),
+			Status:  "passed",
+			Message: "File too short to check formatting",
+		}
+	}
+
+	// Find frontmatter boundaries
+	if !bytes.Equal(bytes.TrimSpace(lines[0]), []byte("---")) {
+		return sync.ValidationCheck{
+			Name:    fmt.Sprintf("Skill: %s - YAML Formatting", skillName),
+			Status:  "failed",
+			Message: "Frontmatter does not start with ---",
+		}
+	}
+
+	endIndex := -1
+	for i := 1; i < len(lines); i++ {
+		if bytes.Equal(bytes.TrimSpace(lines[i]), []byte("---")) {
+			endIndex = i
+			break
+		}
+	}
+
+	if endIndex == -1 {
+		return sync.ValidationCheck{
+			Name:    fmt.Sprintf("Skill: %s - YAML Formatting", skillName),
+			Status:  "failed",
+			Message: "Frontmatter closing --- not found",
+		}
+	}
+
+	// Check for missing spaces after colons
+	var issues []string
+	for i := 1; i < endIndex; i++ {
+		line := lines[i]
+		trimmed := bytes.TrimSpace(line)
+
+		if len(trimmed) == 0 || bytes.HasPrefix(trimmed, []byte("-")) || bytes.HasPrefix(trimmed, []byte("#")) {
+			continue
+		}
+
+		if bytes.Contains(trimmed, []byte(":")) {
+			parts := bytes.SplitN(trimmed, []byte(":"), 2)
+			if len(parts) == 2 && len(parts[1]) > 0 && parts[1][0] != ' ' {
+				issues = append(issues, fmt.Sprintf("Line %d: '%s' (missing space after colon)", i+1, string(trimmed)))
+			}
+		}
+	}
+
+	if len(issues) > 0 {
+		return sync.ValidationCheck{
+			Name:     fmt.Sprintf("Skill: %s - YAML Formatting", skillName),
+			Status:   "failed",
+			Expected: "Space after colon in YAML key-value pairs (e.g., 'name: value')",
+			Actual:   fmt.Sprintf("Found %d formatting issues", len(issues)),
+			Message:  fmt.Sprintf("YAML formatting errors:\n  %s", strings.Join(issues, "\n  ")),
+		}
+	}
+
+	return sync.ValidationCheck{
+		Name:    fmt.Sprintf("Skill: %s - YAML Formatting", skillName),
+		Status:  "passed",
+		Message: "YAML formatting correct (spaces after colons)",
+	}
+}
+
+// validateSkill performs all 7 validation rules for a single skill
 func validateSkill(skillPath string, skillName string) []sync.ValidationCheck {
 	var checks []sync.ValidationCheck
 
@@ -40,6 +114,13 @@ func validateSkill(skillPath string, skillName string) []sync.ValidationCheck {
 			Status:  "failed",
 			Message: fmt.Sprintf("Failed to read SKILL.md: %v", err),
 		})
+		return checks
+	}
+
+	// Rule 0: YAML formatting (check BEFORE normalization)
+	formattingCheck := validateSkillYAMLFormatting(skillName, content)
+	checks = append(checks, formattingCheck)
+	if formattingCheck.Status == "failed" {
 		return checks
 	}
 
@@ -73,7 +154,7 @@ func validateSkill(skillPath string, skillName string) []sync.ValidationCheck {
 	// Rule 2: Required frontmatter field: description
 	if skill.Description == "" {
 		checks = append(checks, sync.ValidationCheck{
-			Name:     fmt.Sprintf("Skill: %s - Required Fields", skillName),
+			Name:     fmt.Sprintf("Skill: %s - Description Field Required", skillName),
 			Status:   "failed",
 			Expected: "description field present",
 			Actual:   "description field missing or empty",
@@ -82,9 +163,60 @@ func validateSkill(skillPath string, skillName string) []sync.ValidationCheck {
 		return checks
 	}
 	checks = append(checks, sync.ValidationCheck{
-		Name:    fmt.Sprintf("Skill: %s - Required Fields", skillName),
+		Name:    fmt.Sprintf("Skill: %s - Description Field Required", skillName),
 		Status:  "passed",
 		Message: "Required description field present",
+	})
+
+	// Rule 4: Required frontmatter field: name
+	if skill.Name == "" {
+		checks = append(checks, sync.ValidationCheck{
+			Name:     fmt.Sprintf("Skill: %s - Name Field Required", skillName),
+			Status:   "failed",
+			Expected: "name field present",
+			Actual:   "name field missing or empty",
+			Message:  "Required name field missing",
+		})
+		return checks
+	}
+	checks = append(checks, sync.ValidationCheck{
+		Name:    fmt.Sprintf("Skill: %s - Name Field Required", skillName),
+		Status:  "passed",
+		Message: "Required name field present",
+	})
+
+	// Rule 5: Name format (lowercase, hyphens, max 64 chars)
+	if !ValidSkillNamePattern.MatchString(skill.Name) {
+		checks = append(checks, sync.ValidationCheck{
+			Name:     fmt.Sprintf("Skill: %s - Name Format", skillName),
+			Status:   "failed",
+			Expected: "Lowercase letters/numbers/hyphens only, max 64 chars",
+			Actual:   fmt.Sprintf("Name: %s", skill.Name),
+			Message:  "Invalid skill name format",
+		})
+		return checks
+	}
+	checks = append(checks, sync.ValidationCheck{
+		Name:    fmt.Sprintf("Skill: %s - Name Format", skillName),
+		Status:  "passed",
+		Message: "Name format valid",
+	})
+
+	// Rule 6: Name matches directory name
+	if skill.Name != skillName {
+		checks = append(checks, sync.ValidationCheck{
+			Name:     fmt.Sprintf("Skill: %s - Name Match", skillName),
+			Status:   "failed",
+			Expected: fmt.Sprintf("name field matches directory: %s", skillName),
+			Actual:   fmt.Sprintf("name field: %s", skill.Name),
+			Message:  "Skill name must match directory name",
+		})
+		return checks
+	}
+	checks = append(checks, sync.ValidationCheck{
+		Name:    fmt.Sprintf("Skill: %s - Name Match", skillName),
+		Status:  "passed",
+		Message: "Name matches directory name",
 	})
 
 	return checks
