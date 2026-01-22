@@ -1,4 +1,5 @@
 ---
+name: docs-validating-links
 description: Link validation standards for markdown links including format requirements, path validation, broken link detection, and external link verification
 ---
 
