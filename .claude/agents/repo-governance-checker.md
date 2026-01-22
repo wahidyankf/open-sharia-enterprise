@@ -28,16 +28,6 @@ See `repo-generating-validation-reports` Skill for progressive report writing, U
 
 See `repo-assessing-criticality-confidence` Skill for criticality level definitions and assessment criteria.
 
-## Knowledge Dependencies (Skills)
-
-This agent leverages Skills from `.claude/skills/`:
-
-1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
-2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`repo-generating-validation-reports`** - Progressive knowledge delivery
-
-**Execution**: Reference these Skills for detailed guidance.
-
 ## Tool Usage
 
 **Required Tools**: read, glob, grep, write, bash

@@ -330,6 +330,49 @@ When this agent is invoked, all three Skills auto-load if the task description m
 4. **Keep updated**: Add/remove Skills as agent evolves
 5. **Validate references**: Ensure referenced Skills exist in `.opencode/skill/`
 
+#### Skills Documentation: Frontmatter Only (DRY Principle)
+
+**CRITICAL**: Skills MUST only be declared in frontmatter. Do NOT create documentation sections listing skills in the agent body.
+
+**Why Frontmatter Only:**
+
+- ✅ **Single source of truth**: Frontmatter is canonical and machine-readable
+- ✅ **Eliminates duplication**: Each Skill already has its own description in SKILL.md
+- ✅ **Reduces maintenance**: No risk of frontmatter and body getting out of sync
+- ✅ **Keeps agents lean**: Avoids unnecessary documentation bulk
+- ✅ **Follows DRY**: Don't Repeat Yourself - reference, don't restate
+
+**FORBIDDEN Pattern** (violates DRY):
+
+```markdown
+## Knowledge Dependencies (Skills)
+
+This agent leverages Skills from `.claude/skills/`:
+
+1. **`skill-name`** - what it does
+2. **`other-skill`** - what it does
+```
+
+**CORRECT Pattern** (frontmatter only):
+
+```yaml
+---
+skills:
+  - skill-name
+  - other-skill
+---
+```
+
+**Contextual Inline References** (allowed when adding context):
+
+```markdown
+**See `repo-generating-validation-reports` Skill** for UUID chain generation and progressive writing methodology.
+```
+
+This is acceptable because it provides contextual guidance pointing to specific Skill knowledge at relevant points in the agent documentation.
+
+**Summary**: Declare skills in frontmatter, optionally reference them inline for context, but NEVER create a dedicated section listing skills with descriptions.
+
 #### Skills vs. Direct Convention References
 
 Agents can use both Skills AND direct links to convention documents:

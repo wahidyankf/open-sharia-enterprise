@@ -34,17 +34,6 @@ skills:
 
 **See `repo-assessing-criticality-confidence` Skill** for criticality level definitions, confidence assessment, and priority matrix.
 
-## Knowledge Dependencies (Skills)
-
-This agent leverages Skills from `.claude/skills/`:
-
-1. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
-2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`docs-applying-content-quality`** - Progressive knowledge delivery
-4. **`docs-validating-factual-accuracy`** - Progressive knowledge delivery
-
-**Execution**: Reference these Skills for detailed guidance.
-
 ## Tool Usage
 
 **Required Tools**: read, glob, grep, write, bash, webfetch, websearch
