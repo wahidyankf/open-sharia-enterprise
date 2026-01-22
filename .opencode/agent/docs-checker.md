@@ -2,20 +2,20 @@
 description: Expert at validating factual correctness and content consistency of documentation using web verification. Checks technical accuracy, detects contradictions, validates examples and commands, and identifies outdated information. Use when verifying technical claims, checking command syntax, detecting contradictions, or auditing documentation accuracy.
 model: zai/glm-4.7
 tools:
-    bash: true
-    glob: true
-    grep: true
-    read: true
-    webfetch: true
-    websearch: true
-    write: true
+  bash: true
+  glob: true
+  grep: true
+  read: true
+  webfetch: true
+  websearch: true
+  write: true
 skills:
-    - docs-applying-content-quality
-    - docs-applying-diataxis-framework
-    - docs-validating-factual-accuracy
-    - repo-generating-validation-reports
-    - repo-assessing-criticality-confidence
-    - repo-applying-maker-checker-fixer
+  - docs-applying-content-quality
+  - docs-applying-diataxis-framework
+  - docs-validating-factual-accuracy
+  - repo-generating-validation-reports
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

@@ -2,17 +2,17 @@
 description: Applies validated fixes from workflow-checker audit reports. Re-validates before applying changes.
 model: zai/glm-4.7
 tools:
-    bash: true
-    edit: true
-    glob: true
-    grep: true
-    read: true
-    write: true
+  bash: true
+  edit: true
+  glob: true
+  grep: true
+  read: true
+  write: true
 skills:
-    - docs-applying-content-quality
-    - repo-defining-workflows
-    - repo-assessing-criticality-confidence
-    - repo-applying-maker-checker-fixer
+  - docs-applying-content-quality
+  - repo-defining-workflows
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

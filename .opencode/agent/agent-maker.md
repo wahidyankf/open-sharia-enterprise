@@ -2,16 +2,16 @@
 description: Creates new AI agent files in .opencode/agent/ following AI Agents Convention. Ensures proper structure, skills integration, and documentation.
 model: zai/glm-4.7
 tools:
-    bash: true
-    glob: true
-    grep: true
-    read: true
-    write: true
+  bash: true
+  glob: true
+  grep: true
+  read: true
+  write: true
 skills:
-    - docs-applying-content-quality
-    - agent-selecting-models
-    - agent-documenting-references
-    - agent-developing-agents
+  - docs-applying-content-quality
+  - agent-selecting-models
+  - agent-documenting-references
+  - agent-developing-agents
 ---
 
 ## Agent Metadata
