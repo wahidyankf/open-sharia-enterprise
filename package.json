@@ -25,7 +25,10 @@
     "sync:agents": "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli sync-agents --agents-only",
     "sync:skills": "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli sync-agents --skills-only",
     "sync:dry-run": "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli sync-agents --dry-run",
-    "validate:sync": "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli validate-sync"
+    "validate:sync": "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli validate-sync",
+    "validate:claude": "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli validate-claude",
+    "validate:opencode": "npm run validate:sync",
+    "validate:config": "npm run validate:claude && npm run sync:claude-to-opencode && npm run validate:opencode"
   },
   "keywords": [],
   "author": "",
