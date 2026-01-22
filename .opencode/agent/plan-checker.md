@@ -2,18 +2,18 @@
 description: Validates project plan quality including requirements completeness, technical documentation clarity, and delivery checklist executability. Use when reviewing plans before execution.
 model: zai/glm-4.7
 tools:
-  bash: true
-  glob: true
-  grep: true
-  read: true
-  write: true
+    bash: true
+    glob: true
+    grep: true
+    read: true
+    write: true
 skills:
-  - docs-applying-content-quality
-  - plan-writing-gherkin-criteria
-  - plan-creating-project-plans
-  - repo-generating-validation-reports
-  - repo-assessing-criticality-confidence
-  - repo-applying-maker-checker-fixer
+    - docs-applying-content-quality
+    - plan-writing-gherkin-criteria
+    - plan-creating-project-plans
+    - repo-generating-validation-reports
+    - repo-assessing-criticality-confidence
+    - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

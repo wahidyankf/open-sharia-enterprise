@@ -2,14 +2,14 @@
 description: Creates content for ose-platform-web landing page using PaperMod theme. English-only with date-based organization.
 model: zai/glm-4.7
 tools:
-  edit: true
-  glob: true
-  grep: true
-  read: true
-  write: true
+    edit: true
+    glob: true
+    grep: true
+    read: true
+    write: true
 skills:
-  - docs-applying-content-quality
-  - apps-ose-platform-web-developing-content
+    - docs-applying-content-quality
+    - apps-ose-platform-web-developing-content
 ---
 
 ## Agent Metadata

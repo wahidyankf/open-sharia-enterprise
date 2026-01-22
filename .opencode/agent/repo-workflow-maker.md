@@ -2,15 +2,15 @@
 description: Creates workflow documentation in governance/workflows/ following workflow pattern convention.
 model: zai/glm-4.7
 tools:
-  edit: true
-  glob: true
-  grep: true
-  read: true
-  write: true
+    edit: true
+    glob: true
+    grep: true
+    read: true
+    write: true
 skills:
-  - docs-applying-content-quality
-  - plan-writing-gherkin-criteria
-  - repo-defining-workflows
+    - docs-applying-content-quality
+    - plan-writing-gherkin-criteria
+    - repo-defining-workflows
 ---
 
 ## Agent Metadata

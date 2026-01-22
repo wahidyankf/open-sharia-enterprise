@@ -2,20 +2,20 @@
 description: Validates factual accuracy of ayokoding-web content using WebSearch/WebFetch. Verifies command syntax, versions, code examples, external references with confidence classification.
 model: zai/glm-4.7
 tools:
-  bash: true
-  glob: true
-  grep: true
-  read: true
-  webfetch: true
-  websearch: true
-  write: true
+    bash: true
+    glob: true
+    grep: true
+    read: true
+    webfetch: true
+    websearch: true
+    write: true
 skills:
-  - docs-applying-content-quality
-  - docs-validating-factual-accuracy
-  - apps-ayokoding-web-developing-content
-  - repo-generating-validation-reports
-  - repo-assessing-criticality-confidence
-  - repo-applying-maker-checker-fixer
+    - docs-applying-content-quality
+    - docs-validating-factual-accuracy
+    - apps-ayokoding-web-developing-content
+    - repo-generating-validation-reports
+    - repo-assessing-criticality-confidence
+    - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

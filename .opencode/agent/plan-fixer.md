@@ -2,18 +2,18 @@
 description: Applies validated fixes from plan-checker audit reports. Re-validates plan findings before applying changes. Use after reviewing plan-checker output.
 model: zai/glm-4.7
 tools:
-  bash: true
-  edit: true
-  glob: true
-  grep: true
-  read: true
-  write: true
+    bash: true
+    edit: true
+    glob: true
+    grep: true
+    read: true
+    write: true
 skills:
-  - docs-applying-content-quality
-  - plan-writing-gherkin-criteria
-  - plan-creating-project-plans
-  - repo-assessing-criticality-confidence
-  - repo-applying-maker-checker-fixer
+    - docs-applying-content-quality
+    - plan-writing-gherkin-criteria
+    - plan-creating-project-plans
+    - repo-assessing-criticality-confidence
+    - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

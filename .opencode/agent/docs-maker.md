@@ -2,15 +2,15 @@
 description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.
 model: inherit
 tools:
-  edit: true
-  glob: true
-  grep: true
-  read: true
-  write: true
+    edit: true
+    glob: true
+    grep: true
+    read: true
+    write: true
 skills:
-  - docs-creating-accessible-diagrams
-  - docs-applying-content-quality
-  - docs-applying-diataxis-framework
+    - docs-creating-accessible-diagrams
+    - docs-applying-content-quality
+    - docs-applying-diataxis-framework
 ---
 
 ## Agent Metadata

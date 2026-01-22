@@ -2,16 +2,16 @@
 description: Creates general ayokoding-web content (by-concept tutorials, guides, references). Ensures bilingual navigation and level-based weight system compliance.
 model: zai/glm-4.7
 tools:
-  bash: true
-  edit: true
-  glob: true
-  grep: true
-  read: true
-  write: true
+    bash: true
+    edit: true
+    glob: true
+    grep: true
+    read: true
+    write: true
 skills:
-  - docs-applying-content-quality
-  - docs-applying-diataxis-framework
-  - apps-ayokoding-web-developing-content
+    - docs-applying-content-quality
+    - docs-applying-diataxis-framework
+    - apps-ayokoding-web-developing-content
 ---
 
 ## Agent Metadata

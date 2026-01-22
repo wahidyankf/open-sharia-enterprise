@@ -2,17 +2,17 @@
 description: Validates workflow documentation quality and compliance with workflow pattern convention.
 model: zai/glm-4.7
 tools:
-  bash: true
-  glob: true
-  grep: true
-  read: true
-  write: true
+    bash: true
+    glob: true
+    grep: true
+    read: true
+    write: true
 skills:
-  - docs-applying-content-quality
-  - repo-defining-workflows
-  - repo-generating-validation-reports
-  - repo-assessing-criticality-confidence
-  - repo-applying-maker-checker-fixer
+    - docs-applying-content-quality
+    - repo-defining-workflows
+    - repo-generating-validation-reports
+    - repo-assessing-criticality-confidence
+    - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

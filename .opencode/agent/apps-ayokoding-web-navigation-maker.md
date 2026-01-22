@@ -2,13 +2,13 @@
 description: Updates prev/next navigation links in ayokoding-web content frontmatter.
 model: zai/glm-4.5-air
 tools:
-  edit: true
-  glob: true
-  grep: true
-  read: true
+    edit: true
+    glob: true
+    grep: true
+    read: true
 skills:
-  - docs-applying-content-quality
-  - apps-ayokoding-web-developing-content
+    - docs-applying-content-quality
+    - apps-ayokoding-web-developing-content
 ---
 
 ## Agent Metadata
