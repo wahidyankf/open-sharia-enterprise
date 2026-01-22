@@ -2,9 +2,9 @@
 description: Validates project plan quality including requirements completeness, technical documentation clarity, and delivery checklist executability. Use when reviewing plans before execution.
 model: zai/glm-4.7
 tools:
-  grep: true
   bash: true
   glob: true
+  grep: true
   read: true
   write: true
 skills:

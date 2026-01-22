@@ -2,9 +2,9 @@
 description: Validates ayokoding-web content structure including folder organization, level-based weights, navigation depth, and bilingual completeness.
 model: zai/glm-4.7
 tools:
-  grep: true
   bash: true
   glob: true
+  grep: true
   read: true
   write: true
 skills:

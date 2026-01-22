@@ -101,10 +101,12 @@ Three-stage quality workflow:
 **Making Changes**:
 
 1. Edit agents in `.claude/agents/` directory
-2. Run: `npm run sync:claude-to-opencode`
+2. Run: `npm run sync:claude-to-opencode` (powered by `rhino-cli` for fast syncing)
 3. Both systems stay synchronized
 
-**See**: [CLAUDE.md](../../CLAUDE.md) for complete guidance, [AGENTS.md](../../AGENTS.md) for OpenCode documentation
+**Implementation**: Sync powered by `rhino-cli sync-agents` (~121ms, 25-60x faster than bash)
+
+**See**: [CLAUDE.md](../../CLAUDE.md) for complete guidance, [AGENTS.md](../../AGENTS.md) for OpenCode documentation, [apps/rhino-cli/README.md](../../apps/rhino-cli/README.md) for rhino-cli details
 
 ## Skills Integration
 

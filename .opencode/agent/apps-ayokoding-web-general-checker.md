@@ -2,9 +2,9 @@
 description: Validates general ayokoding-web content quality including structure, bilingual completeness, weights, navigation, and content quality.
 model: zai/glm-4.7
 tools:
-  grep: true
   bash: true
   glob: true
+  grep: true
   read: true
   write: true
 skills:

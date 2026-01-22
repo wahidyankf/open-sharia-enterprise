@@ -3,10 +3,10 @@ description: Creates content for ose-platform-web landing page using PaperMod th
 model: zai/glm-4.7
 tools:
   edit: true
-  grep: true
-  write: true
-  read: true
   glob: true
+  grep: true
+  read: true
+  write: true
 skills:
   - docs-applying-content-quality
   - apps-ose-platform-web-developing-content

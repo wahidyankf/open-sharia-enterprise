@@ -2,11 +2,11 @@
 description: Validates completed plan implementation by verifying all requirements met, code quality standards followed, and acceptance criteria satisfied. Final quality gate before marking plan complete.
 model: zai/glm-4.7
 tools:
-  grep: true
-  write: true
-  glob: true
-  read: true
   bash: true
+  glob: true
+  grep: true
+  read: true
+  write: true
 skills:
   - plan-writing-gherkin-criteria
   - plan-creating-project-plans

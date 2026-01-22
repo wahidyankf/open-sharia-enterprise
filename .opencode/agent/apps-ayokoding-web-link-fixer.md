@@ -2,14 +2,14 @@
 description: Applies validated fixes from link-checker audit reports. Re-validates link findings before applying changes.
 model: zai/glm-4.7
 tools:
-  write: true
-  websearch: true
   bash: true
-  grep: true
   edit: true
-  read: true
   glob: true
+  grep: true
+  read: true
   webfetch: true
+  websearch: true
+  write: true
 skills:
   - docs-applying-content-quality
   - docs-validating-links
