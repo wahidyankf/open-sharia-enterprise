@@ -1,4 +1,5 @@
 ---
+name: repo-multi-file-template
 description: Clear, action-oriented description for auto-loading. CRITICAL - must be specific enough to trigger when relevant tasks are described, unique across all Skills.
 ---
 
