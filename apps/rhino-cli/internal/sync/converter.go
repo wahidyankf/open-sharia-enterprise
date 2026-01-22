@@ -175,11 +175,17 @@ func ConvertAgent(inputPath, outputPath string, dryRun bool) error {
 		Skills:      skills,
 	}
 
-	// 7. Marshal to YAML
-	newFrontmatter, err := yaml.Marshal(opencodeAgent)
-	if err != nil {
+	// 7. Marshal to YAML with 2-space indentation (Prettier standard)
+	var buf bytes.Buffer
+	encoder := yaml.NewEncoder(&buf)
+	encoder.SetIndent(2)
+	if err := encoder.Encode(opencodeAgent); err != nil {
 		return fmt.Errorf("failed to marshal YAML: %w", err)
 	}
+	if err := encoder.Close(); err != nil {
+		return fmt.Errorf("failed to close YAML encoder: %w", err)
+	}
+	newFrontmatter := buf.Bytes()
 
 	// 8. Reconstruct markdown
 	var output bytes.Buffer
