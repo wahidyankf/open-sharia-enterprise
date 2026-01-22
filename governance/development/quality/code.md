@@ -187,31 +187,71 @@ $ git commit -m "added new feature"
 
 1. You run `git push`
 2. Pre-push hook triggers
-3. Nx detects affected projects since last push
-4. `test:quick` target runs for each affected project
-5. Push proceeds if all tests pass
+3. **Configuration Validation** (if `.claude/` or `.opencode/` changed):
+   - Validates `.claude/` source format (YAML, tools, model, skills)
+   - Syncs `.claude/` → `.opencode/` (auto-sync)
+   - Validates `.opencode/` output (semantic equivalence)
+   - Skipped if no config changes detected (work avoidance)
+4. Nx detects affected projects since last push
+5. `test:quick` target runs for each affected project
+6. Markdown linting runs
+7. Push proceeds if all checks pass
 
 **What It Validates**:
+
+**Configuration Validation** (Added 2026-01-22):
+
+Before running tests, pre-push validates `.claude/` and `.opencode/` consistency:
+
+1. Detects if `.claude/` or `.opencode/` changed (git diff against origin/main)
+2. If changed:
+   - Validates `.claude/` source format (YAML, tools, model, skills)
+   - Syncs `.claude/` → `.opencode/` (auto-sync)
+   - Validates `.opencode/` output (semantic equivalence)
+3. If unchanged: Skips validation (performance)
+
+**Benefits:**
+
+- Prevents broken configs from reaching remote
+- Ensures `.claude/` and `.opencode/` stay in sync
+- Auto-syncs on pre-push (no manual step)
+- Only runs when config files change (~260ms when needed)
+
+**Tests:**
 
 - Runs unit tests for all projects affected by changes
 - Uses Nx affected detection to test only changed code
 - Ensures broken code doesn't reach the remote repository
 
+**Markdown:**
+
+- Validates all markdown files meet linting standards
+- Ensures consistent markdown formatting
+
 **What Happens on Failure**:
 
 - Push is blocked
-- Error message shows which tests failed
-- Fix the failing tests and try again
+- Error message shows which check failed (config, tests, or markdown)
+- Fix the issue and try again
 
 **Example**:
 
 ```bash
 $ git push origin main
+🔍 Validating .claude/ and .opencode/ configuration...
+Validation Complete (513 checks passed)
+Sync Complete (45 agents, 21 skills)
+Validation Complete (68 checks passed)
+✅ Configuration validation passed
+
 > nx affected -t test:quick
 
  Running target test:quick for affected projects...
    ayokoding-cli
  All tests passed
+
+> npm run lint:md
+ All markdown files valid
 
 Enumerating objects: 5, done.
 [main abc1234] Successfully pushed
@@ -219,7 +259,8 @@ Enumerating objects: 5, done.
 
 **Benefits**:
 
-- Prevents broken code from reaching remote repository
+- Prevents broken code and configs from reaching remote repository
+- Automatically syncs `.claude/` to `.opencode/` on push
 - Only tests affected projects (faster than testing everything)
 - Catches issues before CI/CD pipeline runs
 - Maintains repository quality for all team members
@@ -285,6 +326,39 @@ Bypassing hooks regularly defeats the purpose of automated quality checks.
 3. Fix failing tests
 4. Commit fixes and push again
 5. If tests pass locally but fail in hook, ensure all changes are committed
+
+### Config Validation Fails on Pre-push
+
+**Symptom**: Pre-push hook fails with config validation errors
+
+**Solutions**:
+
+1. Identify which step failed:
+   - `.claude/` validation: Fix source files in `.claude/agents/` or `.claude/skills/`
+   - Sync: Check rhino-cli output, may be a bug
+   - `.opencode/` validation: Re-run `npm run sync:claude-to-opencode`
+
+2. Run validation manually to debug:
+
+   ```bash
+   npm run validate:claude      # Check .claude/ format
+   npm run sync:claude-to-opencode  # Sync to .opencode/
+   npm run validate:opencode    # Check .opencode/ output
+   ```
+
+3. Common validation errors:
+   - Invalid tool name: Must be Read, Write, Edit, Glob, Grep, Bash, TodoWrite, WebFetch, WebSearch
+   - Missing description: All agents/skills need description field
+   - Invalid model: Must be empty, "sonnet", "opus", or "haiku"
+   - Skill not found: Ensure skill exists in `.claude/skills/`
+
+4. Bypass hook temporarily (emergency only):
+
+   ```bash
+   git push --no-verify
+   ```
+
+   Note: Fix validation errors before merging to main.
 
 ## Adding New File Types
 
