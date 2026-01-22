@@ -2,11 +2,11 @@
 description: Generates appropriate titles for ayokoding-web content based on type (by-concept, by-example) and level.
 model: zai/glm-4.5-air
 tools:
-  edit: true
-  read: true
+    edit: true
+    read: true
 skills:
-  - docs-applying-content-quality
-  - apps-ayokoding-web-developing-content
+    - docs-applying-content-quality
+    - apps-ayokoding-web-developing-content
 ---
 
 ## Agent Metadata

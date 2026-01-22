@@ -2,20 +2,20 @@
 description: Applies validated fixes from link-checker audit reports. Re-validates link findings before applying changes.
 model: zai/glm-4.7
 tools:
-  bash: true
-  edit: true
-  glob: true
-  grep: true
-  read: true
-  webfetch: true
-  websearch: true
-  write: true
+    bash: true
+    edit: true
+    glob: true
+    grep: true
+    read: true
+    webfetch: true
+    websearch: true
+    write: true
 skills:
-  - docs-applying-content-quality
-  - docs-validating-links
-  - apps-ayokoding-web-developing-content
-  - repo-assessing-criticality-confidence
-  - repo-applying-maker-checker-fixer
+    - docs-applying-content-quality
+    - docs-validating-links
+    - apps-ayokoding-web-developing-content
+    - repo-assessing-criticality-confidence
+    - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata
