@@ -830,11 +830,15 @@ When marking steps complete, add the following metadata:
   - **Date**: 2026-01-22
   - **Status**: Completed
   - **Files Changed**: docs/explanation/software/stack-lang/golang/ex-so-stla-go\_\_modules-and-dependencies.md
-- [ ] **Step 2.17**: Create Web Services Documentation
-  - [ ] File: `ex-so-stla-go__web-services.md`
-  - [ ] Content: net/http, HTTP servers, REST APIs, gRPC, middleware
-  - [ ] Examples: HTTP handlers, gRPC services
-  - [ ] Target: 2500-3500 lines
+- [x] **Step 2.17**: Create Web Services Documentation
+  - [x] File: `ex-so-stla-go__web-services.md`
+  - [x] Content: net/http, HTTP servers, REST APIs, gRPC, middleware
+  - [x] Examples: HTTP handlers, gRPC services
+  - [x] Target: 2500-3500 lines (achieved: 2700+ lines)
+  - **Implementation Notes**: Created comprehensive Web Services documentation covering net/http package (HTTP server basics with simple server example, Handler interface with ServeHTTP method, HandlerFunc adapter converting functions to handlers, Request and Response reading method/URL/headers/body and writing status/headers/JSON), HTTP servers (creating servers with timeouts, custom ServeMux for routing, enhanced routing in Go 1.22+ with method-specific handlers GET/POST/PUT/DELETE and PathValue for extracting path parameters, middleware for logging/authentication chaining, context for request-scoped values and cancellation), REST APIs (REST principles using HTTP methods semantically GET/POST/PUT/PATCH/DELETE, JSON encoding struct to JSON with json.Encoder and decoding JSON to struct with json.Decoder, error handling with structured ErrorResponse, JWT authentication with generateToken and verifyToken using golang-jwt/jwt/v5), HTTP client (making GET requests with http.Get, POST requests with JSON payload, custom requests with http.NewRequest setting headers, client configuration with custom timeouts and connection pooling, retries with exponential backoff), web frameworks (Gin framework with gin.Default including Logger and Recovery middleware, REST API with Gin using c.Param and c.ShouldBindJSON, Gin middleware with c.Abort and c.Next, Echo framework with echo.New and echo.NewHTTPError, REST API with Echo using c.Bind and c.Validate, Fiber framework with fiber.New and fiber.Map, REST API with Fiber using c.Params and c.BodyParser), gRPC (Protocol Buffers defining service with .proto file using syntax proto3, generating Go code with protoc --go_out and --go-grpc_out, gRPC server implementing UnimplementedUserServiceServer with GetUser and ListUsers methods, gRPC client with grpc.Dial and NewUserServiceClient, streaming with server streaming StreamUsers and client streaming CreateUsers), WebSockets (gorilla/websocket with upgrader.Upgrade converting HTTP to WebSocket, WebSocket server reading and writing messages with conn.ReadMessage and conn.WriteMessage, WebSocket client with websocket.DefaultDialer.Dial), middleware patterns (logging middleware capturing status code with responseWriter wrapper, CORS middleware setting Access-Control headers handling OPTIONS preflight, rate limiting middleware using golang.org/x/time/rate.Limiter with Allow method), testing (httptest package with httptest.NewRequest and httptest.NewRecorder for testing handlers, testing JSON APIs decoding response body with json.NewDecoder, integration tests with httptest.NewServer creating test server), best practices (performance with connection pooling configuring MaxIdleConns/MaxIdleConnsPerHost/IdleConnTimeout and response streaming using http.Flusher for text/event-stream, security with TLS configuration setting MinVersion TLS 1.3 and CurvePreferences, graceful shutdown with server.Shutdown and context timeout handling SIGINT/SIGTERM signals). All examples demonstrate practical web service patterns with real-world HTTP/REST/gRPC/WebSocket scenarios.
+  - **Date**: 2026-01-22
+  - **Status**: Completed
+  - **Files Changed**: docs/explanation/software/stack-lang/golang/ex-so-stla-go\_\_web-services.md
 
 **Validation Checklist**:
 
