@@ -1,5 +1,7 @@
 package claude
 
+import "regexp"
+
 // ClaudeAgentFull represents a complete Claude Code agent with all required fields
 type ClaudeAgentFull struct {
 	Name        string   `yaml:"name"`
@@ -12,6 +14,7 @@ type ClaudeAgentFull struct {
 
 // ClaudeSkill represents a Claude Code skill configuration
 type ClaudeSkill struct {
+	Name        string `yaml:"name"`
 	Description string `yaml:"description"`
 }
 
@@ -53,6 +56,10 @@ var ValidColors = map[string]bool{
 	"yellow": true,
 	"purple": true,
 }
+
+// ValidSkillNamePattern validates skill name format
+// Lowercase letters, numbers, hyphens only, max 64 characters
+var ValidSkillNamePattern = regexp.MustCompile(`^[a-z0-9-]{1,64}$`)
 
 // Required field order for agent frontmatter
 var RequiredFieldOrder = []string{

@@ -35,9 +35,12 @@ Agents (.claude/agents/):
 - Special rules (e.g., generated-reports/ tools)
 
 Skills (.claude/skills/):
+- YAML formatting (space after colons required)
 - SKILL.md file exists
-- Required field: description
-- YAML syntax validity`,
+- YAML syntax validity
+- Required fields: name, description
+- Name format (lowercase, hyphens, numbers only, max 64 chars)
+- Name matches directory name`,
 	Example: `  # Validate all agents and skills
   rhino-cli validate-claude
 
