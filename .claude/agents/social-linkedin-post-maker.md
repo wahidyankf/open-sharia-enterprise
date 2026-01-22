@@ -14,14 +14,6 @@ skills:
 - **Created**: 2025-12-20
 - **Last Updated**: 2026-01-03
 
-## Knowledge Dependencies (Skills)
-
-This agent leverages Skills from `.claude/skills/`:
-
-1. **`docs-applying-content-quality`** - Progressive knowledge delivery
-
-**Execution**: Reference these Skills for detailed guidance.
-
 ## Tool Usage
 
 **Required Tools**: read, grep

@@ -18,15 +18,6 @@ skills:
 - **Created**: 2025-12-15
 - **Last Updated**: 2026-01-03
 
-## Knowledge Dependencies (Skills)
-
-This agent leverages Skills from `.claude/skills/`:
-
-1. **`readme-writing-readme-files`** - Progressive knowledge delivery
-2. **`docs-applying-content-quality`** - Progressive knowledge delivery
-
-**Execution**: Reference these Skills for detailed guidance.
-
 ## Tool Usage
 
 **Required Tools**: read, write, edit, glob, grep

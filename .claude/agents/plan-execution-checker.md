@@ -52,16 +52,6 @@ uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
 
 **Execution Order**: CRITICAL → HIGH → MEDIUM → LOW
 
-## Knowledge Dependencies (Skills)
-
-This agent leverages Skills from `.claude/skills/`:
-
-1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
-2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
-3. **`repo-generating-validation-reports`** - Progressive knowledge delivery
-
-**Execution**: Reference these Skills for detailed guidance.
-
 ## Tool Usage
 
 **Required Tools**: read, glob, grep, bash, write

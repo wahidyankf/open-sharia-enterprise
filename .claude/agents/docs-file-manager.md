@@ -17,14 +17,6 @@ skills:
 - **Created**: 2025-11-30
 - **Last Updated**: 2026-01-03
 
-## Knowledge Dependencies (Skills)
-
-This agent leverages Skills from `.claude/skills/`:
-
-1. **`docs-applying-diataxis-framework`** - Progressive knowledge delivery
-
-**Execution**: Reference these Skills for detailed guidance.
-
 ## Tool Usage
 
 **Required Tools**: read, edit, glob, grep, bash

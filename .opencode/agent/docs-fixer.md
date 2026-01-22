@@ -48,15 +48,6 @@ skills:
 
 **Execution Order**: P0 → P1 → P2 → P3 → P4
 
-## Knowledge Dependencies (Skills)
-
-This agent leverages Skills from `.claude/skills/`:
-
-1. **`repo-applying-maker-checker-fixer`** - Progressive knowledge delivery
-2. **`repo-assessing-criticality-confidence`** - Progressive knowledge delivery
-
-**Execution**: Reference these Skills for detailed guidance.
-
 ## Tool Usage
 
 **Required Tools**: read, edit, glob, grep, write, bash
