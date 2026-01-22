@@ -89,7 +89,3 @@ The `repo-applying-maker-checker-fixer` Skill provides mode logic.
 
 - [AGENTS.md](../../CLAUDE.md)
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
-
-**Skills:**
-
-- `apps-ayokoding-web-developing-content`, `repo-assessing-criticality-confidence`, `repo-applying-maker-checker-fixer`, `repo-generating-validation-reports`

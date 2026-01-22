@@ -122,7 +122,3 @@ Update status, add summary.
 
 - [AGENTS.md](../../CLAUDE.md)
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
-
-**Skills:**
-
-- `apps-ayokoding-web-developing-content`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`

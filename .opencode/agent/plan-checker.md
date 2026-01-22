@@ -176,10 +176,4 @@ Update status to "Complete", add summary statistics and prioritized recommendati
 - `plan-execution-checker` - Validates completed work
 - `plan-fixer` - Fixes plan issues
 
-**Skills:**
-
-- `docs-applying-diataxis-framework` - Documentation organization
-- `repo-assessing-criticality-confidence` - Criticality assessment
-- `repo-generating-validation-reports` - Report generation
-
 **Remember**: Good validation identifies issues early, before execution. Be thorough, specific, and constructive.

@@ -170,11 +170,4 @@ Update status, add summary, prioritize findings.
 - `apps-ayokoding-web-by-example-maker` - Creates By Example content
 - `apps-ayokoding-web-by-example-fixer` - Fixes By Example issues
 
-**Skills:**
-
-- `apps-ayokoding-web-developing-content` - ayokoding-web compliance
-- `docs-creating-by-example-tutorials` - By Example standards
-- `repo-assessing-criticality-confidence` - Criticality assessment
-- `repo-generating-validation-reports` - Report generation
-
 **Remember**: Annotation density is measured PER EXAMPLE, not tutorial-wide. Each example must meet the 1-2.25 ratio independently.

@@ -204,11 +204,4 @@ The `docs-applying-content-quality` Skill provides general content quality stand
 - `apps-ayokoding-web-by-example-fixer` - Fixes By Example issues
 - `apps-ayokoding-web-general-maker` - Creates general ayokoding content
 
-**Skills:**
-
-- `apps-ayokoding-web-developing-content` - ayokoding-web specific guidance (bilingual, weights, navigation)
-- `docs-creating-by-example-tutorials` - By Example annotation standards
-- `docs-creating-accessible-diagrams` - Diagram creation with accessibility
-- `docs-applying-content-quality` - General content quality
-
 **Remember**: By Example tutorials are for experienced developers learning through code. Annotation quality is paramount - every line should have 1-2.25 lines of insightful comments explaining WHY, not WHAT.

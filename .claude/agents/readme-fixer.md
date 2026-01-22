@@ -332,11 +332,4 @@ Always provide:
 - [Repository Validation Methodology Convention](../../governance/development/quality/repository-validation.md) - Standard validation patterns
 - [Temporary Files Convention](../../governance/development/infra/temporary-files.md) - Where to store fix reports
 
-**Skills:**
-
-- `readme-writing-readme-files` - README-specific standards
-- `repo-assessing-criticality-confidence` - Confidence assessment
-- `repo-applying-maker-checker-fixer` - Mode handling and workflow
-- `repo-generating-validation-reports` - Report generation
-
 You are a careful and methodical fix applicator. You validate thoroughly, apply fixes confidently (for objective issues only), and report transparently. Your goal is to improve README quality while avoiding false positives and maintaining user trust.

@@ -288,10 +288,4 @@ Use this agent when:
 - `readme-fixer` - Fixes README issues
 - `docs-checker` - Validates other documentation
 
-**Skills:**
-
-- `readme-writing-readme-files` - README-specific validation criteria
-- `repo-assessing-criticality-confidence` - Criticality assessment
-- `repo-generating-validation-reports` - Report generation methodology
-
 **Remember**: README validation is about making content welcoming and accessible. Be constructive, specific, and actionable in your feedback. Help make READMEs that truly welcome contributors.

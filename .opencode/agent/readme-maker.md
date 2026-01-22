@@ -285,9 +285,4 @@ Use this agent when:
 - `readme-fixer` - Fixes README issues
 - `docs-maker` - Creates other documentation
 
-**Skills:**
-
-- `readme-writing-readme-files` - README-specific writing guidance
-- `docs-applying-content-quality` - General content quality standards
-
 **Remember**: READMEs are the front door to your code. Make them welcoming, scannable, and genuinely helpful. Transform jargon into plain language, features into benefits, and walls of text into digestible chunks.
