@@ -713,11 +713,15 @@ When marking steps complete, add the following metadata:
   - **Date**: 2026-01-22
   - **Status**: Completed
   - **Files Changed**: docs/explanation/software/stack-lang/golang/ex-so-stla-go\_\_error-handling.md
-- [ ] **Step 2.4**: Create Idioms Documentation
-  - [ ] File: `ex-so-stla-go__idioms.md`
-  - [ ] Content: Go-specific patterns, defer/panic/recover, struct tags
-  - [ ] Examples: Functional options, builder pattern
-  - [ ] Target: 3000-4000 lines
+- [x] **Step 2.4**: Create Idioms Documentation
+  - [x] File: `ex-so-stla-go__idioms.md`
+  - [x] Content: Go-specific patterns, defer/panic/recover, struct tags
+  - [x] Examples: Functional options, builder pattern
+  - [x] Target: 3000-4000 lines (achieved: 3800+ lines)
+  - **Implementation Notes**: Created comprehensive Go idioms documentation covering defer/panic/recover (cleanup patterns, defer gotchas, panic best practices, recovery patterns), zero values (designing for zero values, useful zero value patterns), comma-ok idiom (map access, type assertions, channel receives), blank identifier (ignoring values, import side effects, interface checks), struct tags (JSON, XML, validation, database, custom tags), functional options pattern (basic pattern, validation, option groups, generics), builder pattern (basic builder, validation, vs functional options), slice idioms (creating, appending, pre-allocating, filtering, removing, reversing, copying, deduplication), map idioms (creating, safe access, deletion, iteration, map of slices, map as set, merging, inverting, concurrent access), string idioms (string building, string vs []byte, formatting, checks, manipulation, iteration, comparison), interface idioms (accept interfaces return structs, small interfaces, composition, type switches), init() functions (execution order, common uses, best practices), package organization (naming, internal packages, structure), testing idioms (table-driven tests, helpers, setup/teardown, mocking), and performance idioms (avoiding allocations, struct layout, benchmarking).
+  - **Date**: 2026-01-22
+  - **Status**: Completed
+  - **Files Changed**: docs/explanation/software/stack-lang/golang/ex-so-stla-go\_\_idioms.md
 - [ ] **Step 2.5**: Create Best Practices Documentation
   - [ ] File: `ex-so-stla-go__best-practices.md`
   - [ ] Content: Code organization, naming, testing, performance
