@@ -11,6 +11,12 @@ A Go-based CLI tool that provides utilities for repository management and automa
 ## Quick Start
 
 ```bash
+# Sync Claude Code → OpenCode configurations
+rhino-cli sync-agents
+
+# Validate sync is correct
+rhino-cli validate-sync
+
 # Validate markdown links in the repository
 rhino-cli validate-links
 
@@ -177,6 +183,125 @@ rhino-cli validate-links -q
 
 This command replaces the Python script at `scripts/validate-links.py` with a faster, more maintainable Go implementation.
 
+### sync-agents
+
+Sync Claude Code agents and skills to OpenCode format. Converts `.claude/` configuration to `.opencode/` format with proper YAML frontmatter transformation.
+
+```bash
+# Sync all agents and skills
+rhino-cli sync-agents
+
+# Preview changes without modifying files
+rhino-cli sync-agents --dry-run
+
+# Sync only agents (skip skills)
+rhino-cli sync-agents --agents-only
+
+# Sync only skills (skip agents)
+rhino-cli sync-agents --skills-only
+
+# Output as JSON
+rhino-cli sync-agents -o json
+
+# Verbose mode
+rhino-cli sync-agents -v
+```
+
+**What it does:**
+
+**Agents (`.claude/agents/` → `.opencode/agent/`):**
+
+- Converts tools array to boolean map (`Read, Write` → `read: true, write: true`)
+- Maps models (`sonnet`/`opus` → `zai/glm-4.7`, `haiku` → `zai/glm-4.5-air`, empty → `inherit`)
+- Removes Claude-specific fields (`name`, `color`)
+- Preserves description, skills, and body content
+- Normalizes YAML formatting (adds spaces after colons)
+
+**Skills (`.claude/skills/` → `.opencode/skill/`):**
+
+- Direct byte-for-byte copy (formats are identical)
+- Converts `SKILL.md` → `{skill-name}.md`
+
+**Performance:** ~25-60x faster than bash scripts (121ms vs 3-5 seconds)
+
+**Flags:**
+
+- `--dry-run` - Preview changes without modifying files
+- `--agents-only` - Sync only agents (skip skills)
+- `--skills-only` - Sync only skills (skip agents)
+- `-o, --output` - Output format: text, json, markdown (default: text)
+- `-v, --verbose` - Verbose output with timestamps
+- `-q, --quiet` - Quiet mode (errors only)
+
+**Exit codes:**
+
+- `0` - All conversions successful
+- `1` - One or more conversions failed
+
+**Replaces:**
+
+This command replaces the bash scripts `scripts/sync-claude-to-opencode.sh` and `scripts/validate-sync.sh` with a faster, more robust Go implementation.
+
+### validate-sync
+
+Validate that `.claude/` and `.opencode/` configurations are semantically equivalent.
+
+```bash
+# Validate sync
+rhino-cli validate-sync
+
+# Output as JSON
+rhino-cli validate-sync -o json
+
+# Verbose mode (show all checks)
+rhino-cli validate-sync -v
+
+# Quiet mode (show only summary)
+rhino-cli validate-sync -q
+```
+
+**What it does:**
+
+**Agent Validation:**
+
+- Count check: Ensures equal number of agents in both directories
+- Equivalence check for each agent:
+  - Description matches exactly
+  - Model correctly converted (empty/sonnet/opus → inherit/zai/glm-4.7)
+  - Tools correctly mapped (array → boolean map, lowercase)
+  - Skills array matches exactly
+  - Body content identical
+
+**Skill Validation:**
+
+- Count check: Ensures equal number of skills in both directories
+- Identity check: Validates skills are byte-for-byte identical
+
+**Flags:**
+
+- `-o, --output` - Output format: text, json, markdown (default: text)
+- `-v, --verbose` - Show all checks (default: show only failures)
+- `-q, --quiet` - Quiet mode (show only summary)
+
+**Exit codes:**
+
+- `0` - All validation checks passed
+- `1` - One or more validation checks failed
+
+**Example output (text):**
+
+```
+Validation Complete
+==================================================
+
+Total Checks: 68
+Passed: 68
+Failed: 0
+Duration: 60ms
+
+Status: ✓ VALIDATION PASSED
+```
+
 ## Help Commands
 
 ```bash
@@ -199,21 +324,35 @@ apps/rhino-cli/
 │   ├── root.go               # Cobra root command, global flags
 │   ├── root_test.go          # Tests for root command
 │   ├── validate_links.go     # Link validation command
-│   └── validate_links_test.go # Integration tests
+│   ├── validate_links_test.go # Integration tests
+│   ├── sync_agents.go        # Agent/skill sync command
+│   └── validate_sync.go      # Sync validation command
 ├── internal/
-│   └── links/                # Link validation logic
-│       ├── types.go          # Core type definitions
-│       ├── scanner.go        # Link extraction from markdown
-│       ├── scanner_test.go
-│       ├── validator.go      # Link validation logic
+│   ├── links/                # Link validation logic
+│   │   ├── types.go          # Core type definitions
+│   │   ├── scanner.go        # Link extraction from markdown
+│   │   ├── scanner_test.go
+│   │   ├── validator.go      # Link validation logic
+│   │   ├── validator_test.go
+│   │   ├── categorizer.go    # Link categorization
+│   │   ├── categorizer_test.go
+│   │   ├── reporter.go       # Output formatting
+│   │   └── reporter_test.go
+│   └── sync/                 # Agent/skill sync logic
+│       ├── types.go          # Data structures (ClaudeAgent, OpenCodeAgent, etc.)
+│       ├── types_test.go
+│       ├── converter.go      # Claude → OpenCode conversion
+│       ├── converter_test.go
+│       ├── copier.go         # Skills copying
+│       ├── copier_test.go
+│       ├── validator.go      # Semantic validation
 │       ├── validator_test.go
-│       ├── categorizer.go    # Link categorization
-│       ├── categorizer_test.go
 │       ├── reporter.go       # Output formatting
-│       └── reporter_test.go
+│       ├── sync.go           # Orchestration
+│       └── testdata/         # Test fixtures
 ├── dist/                     # Built binary (gitignored)
 ├── main.go                   # CLI entry point
-├── go.mod                    # Go module definition
+├── go.mod                    # Go module definition (includes gopkg.in/yaml.v3)
 ├── go.sum                    # Go module checksums
 ├── project.json              # Nx project configuration
 └── README.md                 # Documentation
@@ -244,6 +383,7 @@ go test ./... -v
 
 - `cmd`: Root command tests, validate-links integration tests
 - `internal/links`: 85%+ coverage (scanner, validator, categorizer, reporter)
+- `internal/sync`: 85%+ coverage (converter, copier, validator, reporter)
 
 ### Run without building
 
@@ -356,6 +496,16 @@ rhino-cli say
 ```
 
 ## Version History
+
+### v0.3.0 (2026-01-22)
+
+- Added `sync-agents` command for syncing Claude Code → OpenCode formats
+- Added `validate-sync` command for validating semantic equivalence
+- YAML frontmatter conversion (tools, model mapping, normalization)
+- 25-60x performance improvement over bash scripts (121ms vs 3-5s)
+- Comprehensive test suite (85%+ coverage for sync logic)
+- Replaces `scripts/sync-claude-to-opencode.sh` and `scripts/validate-sync.sh`
+- Added dependency: gopkg.in/yaml.v3
 
 ### v0.2.0 (2026-01-21)
 

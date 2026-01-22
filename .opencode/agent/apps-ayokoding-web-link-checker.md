@@ -2,13 +2,13 @@
 description: Validates links in ayokoding-web content following absolute path convention (/docs/path without .md). Checks internal and external links.
 model: zai/glm-4.5-air
 tools:
-  grep: true
-  write: true
-  websearch: true
+  bash: true
   glob: true
+  grep: true
   read: true
   webfetch: true
-  bash: true
+  websearch: true
+  write: true
 skills:
   - docs-applying-content-quality
   - docs-validating-links

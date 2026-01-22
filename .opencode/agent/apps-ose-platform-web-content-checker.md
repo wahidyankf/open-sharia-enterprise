@@ -2,9 +2,9 @@
 description: Validates ose-platform-web content quality including PaperMod theme compliance and landing page standards.
 model: zai/glm-4.7
 tools:
-  grep: true
   bash: true
   glob: true
+  grep: true
   read: true
   write: true
 skills:

@@ -2,13 +2,13 @@
 description: Validates tutorial quality focusing on pedagogical structure, narrative flow, visual completeness, hands-on elements, and tutorial type compliance. Complements docs-checker (accuracy) and docs-link-general-checker (links).
 model: zai/glm-4.7
 tools:
-  grep: true
-  write: true
-  websearch: true
+  bash: true
   glob: true
+  grep: true
   read: true
   webfetch: true
-  bash: true
+  websearch: true
+  write: true
 skills:
   - docs-applying-content-quality
   - docs-applying-diataxis-framework

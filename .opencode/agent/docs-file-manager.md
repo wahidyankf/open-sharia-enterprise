@@ -2,11 +2,11 @@
 description: Expert at managing files and directories in docs/ directory. Use for renaming, moving, or deleting files/directories while maintaining conventions, updating prefixes, fixing links, and preserving git history.
 model: zai/glm-4.7
 tools:
-  glob: true
   bash: true
   edit: true
-  read: true
+  glob: true
   grep: true
+  read: true
 skills:
   - repo-practicing-trunk-based-development
   - docs-validating-links

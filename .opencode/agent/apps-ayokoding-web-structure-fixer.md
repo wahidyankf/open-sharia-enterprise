@@ -2,12 +2,12 @@
 description: Applies validated fixes from structure-checker audit reports. Re-validates structure findings before applying changes.
 model: zai/glm-4.7
 tools:
-  write: true
   bash: true
-  grep: true
   edit: true
-  read: true
   glob: true
+  grep: true
+  read: true
+  write: true
 skills:
   - docs-applying-content-quality
   - apps-ayokoding-web-developing-content

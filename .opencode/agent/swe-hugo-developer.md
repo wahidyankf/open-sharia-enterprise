@@ -2,12 +2,12 @@
 description: Develops Hugo sites (ayokoding-web, ose-platform-web) including theme customization, template development, and build optimization.
 model: zai/glm-4.7
 tools:
-  edit: true
   bash: true
-  grep: true
-  write: true
-  read: true
+  edit: true
   glob: true
+  grep: true
+  read: true
+  write: true
 skills:
   - docs-applying-content-quality
   - apps-ose-platform-web-developing-content

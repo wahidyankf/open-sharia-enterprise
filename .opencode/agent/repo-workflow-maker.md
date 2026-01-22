@@ -3,10 +3,10 @@ description: Creates workflow documentation in governance/workflows/ following w
 model: zai/glm-4.7
 tools:
   edit: true
-  grep: true
-  write: true
-  read: true
   glob: true
+  grep: true
+  read: true
+  write: true
 skills:
   - docs-applying-content-quality
   - plan-writing-gherkin-criteria

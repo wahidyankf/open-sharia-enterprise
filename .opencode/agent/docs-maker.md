@@ -3,10 +3,10 @@ description: Expert documentation writer specializing in Obsidian-optimized mark
 model: inherit
 tools:
   edit: true
-  grep: true
-  write: true
-  read: true
   glob: true
+  grep: true
+  read: true
+  write: true
 skills:
   - docs-creating-accessible-diagrams
   - docs-applying-content-quality

@@ -137,10 +137,12 @@ Skills package conventions for efficient agent access and can orchestrate agents
 **Making Changes**:
 
 1. Edit skills in `.claude/skills/` directory
-2. Run: `npm run sync:claude-to-opencode`
+2. Run: `npm run sync:claude-to-opencode` (powered by `rhino-cli` for fast syncing)
 3. Both systems stay synchronized (direct copy, no format conversion needed)
 
-**See**: [CLAUDE.md](../../CLAUDE.md) for complete guidance
+**Implementation**: Sync powered by `rhino-cli sync-agents` (~121ms total, 25-60x faster than bash)
+
+**See**: [CLAUDE.md](../../CLAUDE.md) for complete guidance, [apps/rhino-cli/README.md](../../apps/rhino-cli/README.md) for rhino-cli details
 
 ## Best Practices
 

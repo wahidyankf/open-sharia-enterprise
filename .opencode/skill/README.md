@@ -8,7 +8,7 @@
 > 2. Run: `npm run sync:claude-to-opencode`
 > 3. Changes will be copied here automatically (direct copy, no conversion)
 >
-> **See [.claude/skills/README.md](../../.claude/skills/README.md) for primary skills documentation**.
+> **See [.claude/skil../../.opencode/README.md](../../.claude/skil../../.opencode/README.md) for primary skills documentation**.
 
 ---
 
@@ -61,7 +61,7 @@ Links to conventions, related skills
 
 ## All 23 Skills
 
-Skills are direct copies from `.claude/skills/`. For complete documentation, see [.claude/skills/README.md](../../.claude/skills/README.md).
+Skills are direct copies from `.claude/skills/`. For complete documentation, see [.claude/skil../../.opencode/README.md](../../.claude/skil../../.opencode/README.md).
 
 ### Skill Categories
 

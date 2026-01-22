@@ -2,9 +2,9 @@
 description: Validates README.md for engagement, accessibility, and quality standards. Checks for jargon, scannability, proper structure, and consistency with documentation. Use when reviewing README changes or auditing README quality.
 model: zai/glm-4.7
 tools:
-  grep: true
   bash: true
   glob: true
+  grep: true
   read: true
   write: true
 skills:

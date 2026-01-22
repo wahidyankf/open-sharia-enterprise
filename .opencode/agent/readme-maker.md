@@ -3,10 +3,10 @@ description: Creates and updates README.md content while maintaining engagement,
 model: zai/glm-4.7
 tools:
   edit: true
-  grep: true
-  write: true
-  read: true
   glob: true
+  grep: true
+  read: true
+  write: true
 skills:
   - docs-applying-content-quality
   - readme-writing-readme-files

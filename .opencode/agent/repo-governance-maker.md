@@ -3,10 +3,10 @@ description: Creates repository rules and conventions in docs/explanation/ direc
 model: zai/glm-4.7
 tools:
   edit: true
-  grep: true
-  write: true
-  read: true
   glob: true
+  grep: true
+  read: true
+  write: true
 skills:
   - docs-applying-content-quality
   - repo-understanding-repository-architecture

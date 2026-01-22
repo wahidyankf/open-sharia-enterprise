@@ -2,12 +2,12 @@
 description: Applies validated fixes from content-checker audit reports. Re-validates before applying changes.
 model: zai/glm-4.7
 tools:
-  write: true
   bash: true
-  grep: true
   edit: true
-  read: true
   glob: true
+  grep: true
+  read: true
+  write: true
 skills:
   - docs-applying-content-quality
   - apps-ose-platform-web-developing-content
