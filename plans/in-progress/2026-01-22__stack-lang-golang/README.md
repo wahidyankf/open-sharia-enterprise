@@ -776,11 +776,15 @@ When marking steps complete, add the following metadata:
   - **Date**: 2026-01-22
   - **Status**: Completed
   - **Files Changed**: docs/explanation/software/stack-lang/golang/ex-so-stla-go\_\_test-driven-development.md
-- [ ] **Step 2.11**: Create BDD Documentation
-  - [ ] File: `ex-so-stla-go__behaviour-driven-development.md`
-  - [ ] Content: Godog, Gherkin in Go, step definitions
-  - [ ] Examples: BDD scenarios for Go services
-  - [ ] Target: 2000-3000 lines
+- [x] **Step 2.11**: Create BDD Documentation
+  - [x] File: `ex-so-stla-go__behaviour-driven-development.md`
+  - [x] Content: Godog, Gherkin in Go, step definitions
+  - [x] Examples: BDD scenarios for Go services
+  - [x] Target: 2000-3000 lines (achieved: 2400+ lines)
+  - **Implementation Notes**: Created Behaviour-Driven Development documentation covering BDD fundamentals, Gherkin syntax, Godog framework, step definitions, feature files, scenario outlines, background, tags, hooks, data tables, best practices, and common pitfalls
+  - **Date**: 2026-01-22
+  - **Status**: Completed
+  - **Files Changed**: docs/explanation/software/stack-lang/golang/ex-so-stla-go\_\_behaviour-driven-development.md
 - [ ] **Step 2.12**: Create DDD Documentation
   - [ ] File: `ex-so-stla-go__domain-driven-design.md`
   - [ ] Content: Value objects, entities, aggregates in Go
