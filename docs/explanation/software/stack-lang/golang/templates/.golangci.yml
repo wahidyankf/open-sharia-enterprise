@@ -1,0 +1,245 @@
+# golangci-lint configuration for Go projects
+# Version: golangci-lint v2.8.0
+# Last Updated: 2026-01-22
+
+# Run configuration
+run:
+  timeout: 5m
+  issues-exit-code: 1
+  tests: true
+  skip-dirs:
+    - vendor
+    - third_party
+    - testdata
+  skip-files:
+    - ".*\\.pb\\.go$"
+    - ".*\\.gen\\.go$"
+  modules-download-mode: readonly
+  allow-parallel-runners: true
+
+# Output configuration
+output:
+  formats:
+    - format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+  uniq-by-line: true
+  sort-results: true
+
+# Linters configuration
+linters:
+  enable:
+    # Enabled by default
+    - errcheck # Check for unchecked errors
+    - gosimple # Simplify code
+    - govet # Vet examines Go source code
+    - ineffassign # Detect ineffectual assignments
+    - staticcheck # Advanced static analysis
+    - unused # Check for unused constants, variables, functions
+
+    # Additional recommended linters
+    - gofmt # Check code formatting
+    - goimports # Check import formatting
+    - revive # Fast, configurable, extensible Go linter
+    - misspell # Finds commonly misspelled words
+    - unconvert # Remove unnecessary type conversions
+    - unparam # Find unused function parameters
+    - gosec # Security checker
+    - bodyclose # Check HTTP response body closed
+    - noctx # Find HTTP requests without context
+    - rowserrcheck # Check sql.Rows.Err usage
+    - sqlclosecheck # Check sql.Rows and sql.Stmt closed
+    - exportloopref # Check for loop variable reference issues
+    - gocyclo # Cyclomatic complexity
+    - gocognit # Cognitive complexity
+    - nestif # Nested if statements
+    - goconst # Find repeated strings
+    - gocritic # The most opinionated Go linter
+    - gochecknoinits # Check for init functions
+    - godot # Check comment sentences end with period
+    - err113 # Check error wrapping (Go 1.13+)
+    - nilerr # Find code returning nil even if err != nil
+    - nilnil # Check returning nil even if err != nil
+    - tenv # Detect using os.Setenv instead of t.Setenv
+    - tparallel # Detect inappropriate usage of t.Parallel()
+    - wrapcheck # Check error wrapping
+    - exhaustive # Check exhaustiveness of enum switch statements
+    - forbidigo # Forbid specific identifiers
+    - whitespace # Check for unnecessary whitespace
+
+  disable:
+    - deadcode # [deprecated] Finds unused code (use unused instead)
+    - varcheck # [deprecated] Finds unused global variables (use unused instead)
+    - structcheck # [deprecated] Finds unused struct fields (use unused instead)
+    - depguard # Too opinionated for general use
+    - gci # Import formatting (conflicts with goimports)
+    - gofumpt # Stricter gofmt (conflicts with gofmt)
+    - lll # Line length (too restrictive)
+    - funlen # Function length (too restrictive)
+    - gochecknoglobals # No global variables (too restrictive)
+    - gomnd # Magic numbers (too noisy)
+    - testpackage # Force _test package (too opinionated)
+    - paralleltest # Force t.Parallel() (too restrictive)
+    - wsl # Whitespace linter (too opinionated)
+
+# Linters settings
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+    exclude-functions:
+      - (*database/sql.Rows).Close
+      - (*database/sql.Stmt).Close
+
+  govet:
+    enable-all: true
+    disable:
+      - shadow # Variable shadowing (too noisy)
+
+  staticcheck:
+    checks:
+      - "all"
+      - "-SA1019" # Disable deprecation warnings (too noisy during upgrades)
+
+  gosec:
+    excludes:
+      - G104 # Audit errors not checked (covered by errcheck)
+    severity: medium
+    confidence: medium
+
+  revive:
+    rules:
+      - name: blank-imports
+      - name: context-as-argument
+      - name: context-keys-type
+      - name: dot-imports
+      - name: error-return
+      - name: error-strings
+      - name: error-naming
+      - name: exported
+      - name: if-return
+      - name: increment-decrement
+      - name: var-naming
+      - name: var-declaration
+      - name: package-comments
+      - name: range
+      - name: receiver-naming
+      - name: time-naming
+      - name: unexported-return
+      - name: indent-error-flow
+      - name: errorf
+      - name: empty-block
+      - name: superfluous-else
+      - name: unused-parameter
+      - name: unreachable-code
+      - name: redefines-builtin-id
+
+  gocyclo:
+    min-complexity: 15
+
+  gocognit:
+    min-complexity: 20
+
+  nestif:
+    min-complexity: 5
+
+  goconst:
+    min-len: 3
+    min-occurrences: 3
+    ignore-tests: true
+
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+    disabled-checks:
+      - dupImport
+      - ifElseChain
+      - octalLiteral
+      - whyNoLint
+      - wrapperFunc
+
+  misspell:
+    locale: US
+    ignore-words:
+      - cancelled
+
+  unparam:
+    check-exported: false
+
+  exhaustive:
+    default-signifies-exhaustive: true
+
+  wrapcheck:
+    ignoreSigs:
+      - .Errorf(
+      - errors.New(
+      - errors.Unwrap(
+      - .Wrap(
+      - .Wrapf(
+    ignorePackageGlobs:
+      - encoding/*
+      - github.com/pkg/*
+
+  forbidigo:
+    forbid:
+      - ^print.*$ # Don't use print, use logger
+      - ^panic$ # Don't use panic in production code
+      - ^fmt\.Print.*$ # Don't use fmt.Print*, use logger
+
+# Issues configuration
+issues:
+  max-issues-per-linter: 50
+  max-same-issues: 3
+  new: false
+  exclude-rules:
+    # Exclude some linters from running on tests
+    - path: _test\.go
+      linters:
+        - errcheck
+        - gosec
+        - goconst
+        - gocyclo
+        - gocognit
+        - wrapcheck
+        - err113
+
+    # Exclude some linters from running on generated files
+    - path: ".*\\.pb\\.go$"
+      linters:
+        - all
+
+    # Exclude specific rules
+    - text: "should have a package comment"
+      linters:
+        - revive
+
+    - text: "G104: Errors unhandled"
+      linters:
+        - gosec
+
+    # Allow embedding in tests
+    - path: _test\.go
+      text: "should not use dot imports"
+      linters:
+        - revive
+
+  # Independently from option `exclude` we use default exclude patterns,
+  # it can be disabled by this option.
+  exclude-use-default: true
+
+# Severity configuration
+severity:
+  default-severity: error
+  rules:
+    - linters:
+        - govet
+        - errcheck
+        - staticcheck
+      severity: error
+    - linters:
+        - gosec
+      severity: warning
