@@ -125,21 +125,61 @@ npx prettier --write [file-path]
 
 1. You run `git commit`
 2. Pre-commit hook triggers
-3. `lint-staged` selects staged files
-4. Prettier formats matching files
-5. Formatted files are automatically staged
-6. Commit proceeds if no errors
+3. **Configuration Validation** (if `.claude/` or `.opencode/` staged):
+   - Validates `.claude/` source format (YAML, tools, model, skills)
+   - Syncs `.claude/` → `.opencode/` (auto-sync)
+   - Validates `.opencode/` output (semantic equivalence)
+   - Skipped if no config changes in staged files (work avoidance)
+4. Runs ayokoding-web pre-commit scripts if affected (title updates + navigation)
+5. Stages any changes made by scripts
+6. `lint-staged` selects staged files
+7. Prettier formats matching files
+8. Formatted files are automatically staged
+9. Validates markdown links in staged files
+10. Validates all markdown files (markdownlint)
+11. Commit proceeds if no errors
+
+**What It Validates**:
+
+**Configuration Validation** (Added 2026-01-22):
+
+Validates `.claude/` and `.opencode/` consistency before commit:
+
+1. Detects if `.claude/` or `.opencode/` in staged files
+2. If changed:
+   - Validates `.claude/` source format (YAML, tools, model, skills)
+   - Syncs `.claude/` → `.opencode/` (auto-sync)
+   - Validates `.opencode/` output (semantic equivalence)
+3. If unchanged: Skips validation (performance)
+
+**Benefits:**
+
+- Catches config errors before commit (earliest possible)
+- Prevents invalid commits from being created locally
+- Ensures `.claude/` and `.opencode/` stay in sync
+- Auto-syncs on commit (no manual step)
+- Only runs when config files in staged files (~260ms when needed)
+
+**Markdown:**
+
+- Validates markdown links in staged files only (fast, targeted)
+- Validates all markdown files meet linting standards (comprehensive)
 
 **What Happens on Failure**:
 
 - Commit is blocked
-- Error message shows which file failed
+- Error message shows which check failed (config, formatting, or markdown)
 - Fix the issue and try again
 
 **Example**:
 
 ```bash
 $ git commit -m "feat: add new feature"
+🔍 Validating .claude/ and .opencode/ configuration...
+Validation Complete (513 checks passed)
+Sync Complete (45 agents, 21 skills)
+Validation Complete (68 checks passed)
+✅ Configuration validation passed
  Preparing lint-staged...
  Running tasks for staged files...
  Applying modifications from tasks...
@@ -187,35 +227,11 @@ $ git commit -m "added new feature"
 
 1. You run `git push`
 2. Pre-push hook triggers
-3. **Configuration Validation** (if `.claude/` or `.opencode/` changed):
-   - Validates `.claude/` source format (YAML, tools, model, skills)
-   - Syncs `.claude/` → `.opencode/` (auto-sync)
-   - Validates `.opencode/` output (semantic equivalence)
-   - Skipped if no config changes detected (work avoidance)
-4. Nx detects affected projects since last push
-5. `test:quick` target runs for each affected project
-6. Markdown linting runs
-7. Push proceeds if all checks pass
+3. Nx detects affected projects since last push
+4. `test:quick` target runs for each affected project
+5. Push proceeds if all tests pass
 
 **What It Validates**:
-
-**Configuration Validation** (Added 2026-01-22):
-
-Before running tests, pre-push validates `.claude/` and `.opencode/` consistency:
-
-1. Detects if `.claude/` or `.opencode/` changed (git diff against origin/main)
-2. If changed:
-   - Validates `.claude/` source format (YAML, tools, model, skills)
-   - Syncs `.claude/` → `.opencode/` (auto-sync)
-   - Validates `.opencode/` output (semantic equivalence)
-3. If unchanged: Skips validation (performance)
-
-**Benefits:**
-
-- Prevents broken configs from reaching remote
-- Ensures `.claude/` and `.opencode/` stay in sync
-- Auto-syncs on pre-push (no manual step)
-- Only runs when config files change (~260ms when needed)
 
 **Tests:**
 
@@ -223,35 +239,23 @@ Before running tests, pre-push validates `.claude/` and `.opencode/` consistency
 - Uses Nx affected detection to test only changed code
 - Ensures broken code doesn't reach the remote repository
 
-**Markdown:**
-
-- Validates all markdown files meet linting standards
-- Ensures consistent markdown formatting
-
 **What Happens on Failure**:
 
 - Push is blocked
-- Error message shows which check failed (config, tests, or markdown)
+- Error message shows which tests failed
 - Fix the issue and try again
 
 **Example**:
 
 ```bash
 $ git push origin main
-🔍 Validating .claude/ and .opencode/ configuration...
-Validation Complete (513 checks passed)
-Sync Complete (45 agents, 21 skills)
-Validation Complete (68 checks passed)
-✅ Configuration validation passed
 
 > nx affected -t test:quick
 
  Running target test:quick for affected projects...
+   rhino-cli
    ayokoding-cli
  All tests passed
-
-> npm run lint:md
- All markdown files valid
 
 Enumerating objects: 5, done.
 [main abc1234] Successfully pushed
@@ -259,8 +263,7 @@ Enumerating objects: 5, done.
 
 **Benefits**:
 
-- Prevents broken code and configs from reaching remote repository
-- Automatically syncs `.claude/` to `.opencode/` on push
+- Prevents broken code from reaching remote repository
 - Only tests affected projects (faster than testing everything)
 - Catches issues before CI/CD pipeline runs
 - Maintains repository quality for all team members
@@ -327,9 +330,9 @@ Bypassing hooks regularly defeats the purpose of automated quality checks.
 4. Commit fixes and push again
 5. If tests pass locally but fail in hook, ensure all changes are committed
 
-### Config Validation Fails on Pre-push
+### Config Validation Fails on Pre-commit
 
-**Symptom**: Pre-push hook fails with config validation errors
+**Symptom**: Pre-commit hook fails with config validation errors
 
 **Solutions**:
 

@@ -146,17 +146,17 @@ nx graph                # Visualize dependencies
 Husky + lint-staged enforce quality:
 
 - **Pre-commit**:
-  - Formats staged files with Prettier
-  - When ayokoding-web content changes: rebuilds CLI, updates titles, regenerates navigation
-  - Auto-stages changes
-- **Commit-msg**: Validates Conventional Commits format (Commitlint)
-- **Pre-push**:
-  - Validates `.claude/` and `.opencode/` configuration (if changed)
+  - Validates `.claude/` and `.opencode/` configuration (if changed in staged files)
     - Validates `.claude/` source format (YAML, tools, model, skills)
     - Auto-syncs `.claude/` → `.opencode/`
     - Validates `.opencode/` output (semantic equivalence)
-    - Only runs when config files changed (git diff detection)
-  - Runs `test:quick` for affected projects
+  - When ayokoding-web content changes: rebuilds CLI, updates titles, regenerates navigation
+  - Formats staged files with Prettier
+  - Validates markdown links in staged files
+  - Validates all markdown files (markdownlint)
+  - Auto-stages changes
+- **Commit-msg**: Validates Conventional Commits format (Commitlint)
+- **Pre-push**: Runs `test:quick` for affected projects
   - Runs markdown linting
 
 **See**: [governance/development/quality/code.md](./governance/development/quality/code.md)

@@ -1,11 +1,26 @@
-# Run ayokoding-web pre-commit scripts if affected (titles update + nav regen)
+# 1. Validate .claude/ and .opencode/ config (if affected)
+if git diff --cached --name-only | grep -qE '^\.claude/|^\.opencode/'; then
+  echo "🔍 Validating .claude/ and .opencode/ configuration..."
+  npm run validate:config || {
+    echo "❌ Configuration validation failed. Fix errors above before committing."
+    exit 1
+  }
+  echo "✅ Configuration validation passed"
+else
+  echo "⏭️  Skipping config validation (no .claude/ or .opencode/ changes in staged files)"
+fi
+
+# 2. Run ayokoding-web pre-commit scripts if affected (titles update + nav regen)
 nx affected -t run-pre-commit --skip-nx-cache 2>/dev/null || echo "⚠️  Skipping run-pre-commit (not affected or binary missing)"
 
-# Stage any changes made by the scripts
+# 3. Stage any changes made by the scripts
 git add apps/ayokoding-web/content/ 2>/dev/null || true
 
-# Run lint-staged for formatting
+# 4. Run lint-staged for formatting
 npx lint-staged
 
-# Validate markdown links in staged files
+# 5. Validate markdown links in staged files
 CGO_ENABLED=0 go run -C apps/rhino-cli main.go validate-links --staged-only || exit 1
+
+# 6. Validate all markdown files
+npm run lint:md || exit 1

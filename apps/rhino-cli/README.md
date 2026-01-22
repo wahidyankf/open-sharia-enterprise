@@ -581,9 +581,9 @@ rhino-cli say
 
 - Added `validate-claude` command for Claude Code format validation
 - YAML frontmatter validation (11 rules for agents, 3 for skills)
-- Integrated into pre-push git hook with work avoidance
+- Integrated into pre-commit git hook with work avoidance
 - Performance: ~49ms for 45 agents + 21 skills (meets <50ms target)
-- Auto-sync .claude/ to .opencode/ on pre-push
+- Auto-sync .claude/ to .opencode/ on pre-commit
 - Comprehensive test suite with 92.6% coverage
 
 ### v0.3.0 (2026-01-22)
