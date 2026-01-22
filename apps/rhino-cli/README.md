@@ -463,7 +463,7 @@ go test ./... -v
 - `cmd`: Root command tests, validate-links integration tests
 - `internal/links`: 85%+ coverage (scanner, validator, categorizer, reporter)
 - `internal/sync`: 85%+ coverage (converter, copier, validator, reporter)
-- `internal/claude`: Manual testing only (unit tests pending)
+- `internal/claude`: 92.6% coverage (validator, agent_validator, skill_validator)
 
 ### Run without building
 
@@ -584,6 +584,7 @@ rhino-cli say
 - Integrated into pre-push git hook with work avoidance
 - Performance: ~49ms for 45 agents + 21 skills (meets <50ms target)
 - Auto-sync .claude/ to .opencode/ on pre-push
+- Comprehensive test suite with 92.6% coverage
 
 ### v0.3.0 (2026-01-22)
 
