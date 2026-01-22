@@ -196,14 +196,14 @@ npm install
 
 ## References
 
-**Primary Convention**: [Content Quality Principles](../../governance/conventions/content/quality.md)
+**Primary Convention**: [Content Quality Principles](../../../governance/conventions/content/quality.md)
 
 **Related Conventions**:
 
-- [Accessibility First Principle](../../governance/principles/content/accessibility-first.md) - Foundational accessibility principle
-- [No Time Estimates Principle](../../governance/principles/content/no-time-estimates.md) - Rationale for avoiding time framing
-- [README Quality Convention](../../governance/conventions/content/readme-quality.md) - README-specific quality standards
-- [Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md) - WCAG color contrast requirements
+- [Accessibility First Principle](../../../governance/principles/content/accessibility-first.md) - Foundational accessibility principle
+- [No Time Estimates Principle](../../../governance/principles/content/no-time-estimates.md) - Rationale for avoiding time framing
+- [README Quality Convention](../../../governance/conventions/content/readme-quality.md) - README-specific quality standards
+- [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md) - WCAG color contrast requirements
 
 **Related Skills**:
 

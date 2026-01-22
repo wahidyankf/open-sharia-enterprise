@@ -769,19 +769,19 @@ Fixers typically need:
 
 The pattern integrates with:
 
-- **[Criticality Levels Convention](../../governance/development/quality/criticality-levels.md)** - Checkers categorize by criticality, fixers use for priority
-- **[Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md)** - Fixers assess confidence, combine with criticality
-- **[Temporary Files Convention](../../governance/development/infra/temporary-files.md)** - Checker/fixer reports stored in `generated-reports/`
-- **[Repository Validation Methodology](../../governance/development/quality/repository-validation.md)** - Standard validation patterns
-- **[AI Agents Convention](../../governance/development/agents/ai-agents.md)** - Agent structure, tool permissions, color coding
+- **[Criticality Levels Convention](../../../governance/development/quality/criticality-levels.md)** - Checkers categorize by criticality, fixers use for priority
+- **[Fixer Confidence Levels Convention](../../../governance/development/quality/fixer-confidence-levels.md)** - Fixers assess confidence, combine with criticality
+- **[Temporary Files Convention](../../../governance/development/infra/temporary-files.md)** - Checker/fixer reports stored in `generated-reports/`
+- **[Repository Validation Methodology](../../../governance/development/quality/repository-validation.md)** - Standard validation patterns
+- **[AI Agents Convention](../../../governance/development/agents/ai-agents.md)** - Agent structure, tool permissions, color coding
 
 ## References
 
-- **[Maker-Checker-Fixer Pattern Convention](../../governance/development/pattern/maker-checker-fixer.md)** - Complete pattern documentation
-- **[Criticality Levels Convention](../../governance/development/quality/criticality-levels.md)** - Severity classification
-- **[Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md)** - Confidence assessment
-- **[Temporary Files Convention](../../governance/development/infra/temporary-files.md)** - Report file organization and naming
-- **[Repository Validation Methodology](../../governance/development/quality/repository-validation.md)** - Validation patterns
+- **[Maker-Checker-Fixer Pattern Convention](../../../governance/development/pattern/maker-checker-fixer.md)** - Complete pattern documentation
+- **[Criticality Levels Convention](../../../governance/development/quality/criticality-levels.md)** - Severity classification
+- **[Fixer Confidence Levels Convention](../../../governance/development/quality/fixer-confidence-levels.md)** - Confidence assessment
+- **[Temporary Files Convention](../../../governance/development/infra/temporary-files.md)** - Report file organization and naming
+- **[Repository Validation Methodology](../../../governance/development/quality/repository-validation.md)** - Validation patterns
 
 ## Related Skills
 

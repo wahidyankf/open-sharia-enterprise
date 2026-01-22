@@ -246,9 +246,9 @@ fill: #de8f05; /* CORRECT */
 
 This Skill integrates with:
 
-- **[Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md)** - Complete color accessibility standards
-- **[Diagrams Convention](../../governance/conventions/formatting/diagrams.md)** - Mermaid diagram standards, comment syntax, special character escaping
-- **[Content Quality Principles](../../governance/conventions/content/quality.md)** - Quality standards for all content including diagrams
+- **[Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)** - Complete color accessibility standards
+- **[Diagrams Convention](../../../governance/conventions/formatting/diagrams.md)** - Mermaid diagram standards, comment syntax, special character escaping
+- **[Content Quality Principles](../../../governance/conventions/content/quality.md)** - Quality standards for all content including diagrams
 
 ## Quick Reference
 
@@ -299,9 +299,9 @@ See `examples.md` in this Skill directory for complete working examples:
 
 ## References
 
-- **[Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md)** - Complete standards, research citations, WCAG compliance
-- **[Diagrams Convention](../../governance/conventions/formatting/diagrams.md)** - Mermaid syntax, comment rules, special character escaping
-- **[Accessibility First Principle](../../governance/principles/content/accessibility-first.md)** - Foundational accessibility principle
+- **[Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)** - Complete standards, research citations, WCAG compliance
+- **[Diagrams Convention](../../../governance/conventions/formatting/diagrams.md)** - Mermaid syntax, comment rules, special character escaping
+- **[Accessibility First Principle](../../../governance/principles/content/accessibility-first.md)** - Foundational accessibility principle
 
 ## Related Skills
 
