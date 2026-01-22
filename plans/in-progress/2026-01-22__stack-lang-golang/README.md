@@ -767,11 +767,15 @@ When marking steps complete, add the following metadata:
   - **Date**: 2026-01-22
   - **Status**: Completed
   - **Files Changed**: docs/explanation/software/stack-lang/golang/ex-so-stla-go\_\_security.md
-- [ ] **Step 2.10**: Create TDD Documentation
-  - [ ] File: `ex-so-stla-go__test-driven-development.md`
-  - [ ] Content: testing package, testify, table-driven tests, mocking
-  - [ ] Examples: TDD workflow in Go
-  - [ ] Target: 2000-3000 lines
+- [x] **Step 2.10**: Create TDD Documentation
+  - [x] File: `ex-so-stla-go__test-driven-development.md`
+  - [x] Content: testing package, testify, table-driven tests, mocking
+  - [x] Examples: TDD workflow in Go
+  - [x] Target: 2000-3000 lines (achieved: 2800+ lines)
+  - **Implementation Notes**: Created comprehensive Test-Driven Development documentation covering TDD fundamentals (three laws of TDD, benefits of test-first approach), TDD cycle Red-Green-Refactor (red phase with failing test, green phase with minimal implementation, refactor phase with improvement while tests pass), Go testing package (basic test structure with testing.T, test helpers with t.Helper(), test cleanup with t.Cleanup()), table-driven tests (basic pattern with struct slices, complex table tests with multiple inputs/outputs, test naming with t.Run()), test organization (file structure with \_test.go suffix, test naming conventions, coverage measurement with go test -cover), test coverage (measuring coverage with -coverprofile, coverage reports with go tool cover, writing tests for branch coverage), mocking and stubbing (manual mocks with interface implementations, testify/mock for expectations, function stubs for time.Now and external dependencies), testing with interfaces (interface-based design for testability, mock implementations of interfaces, type-safe dependency injection), dependency injection (constructor injection pattern, injecting mockable dependencies, testing with injected mocks), testing HTTP handlers (using httptest package with NewRequest and NewRecorder, testing GET and POST handlers, verifying status codes and response bodies), testing database code (using test database with sqlite3 in-memory, database transactions for test isolation with rollback), test fixtures (using testdata directory for loading test files, golden files pattern with -update flag), parallel tests (using t.Parallel() for concurrent execution, parallel subtests with range variable capture), subtests (hierarchical test organization with t.Run(), running specific subtests with -run flag), testing best practices (Arrange-Act-Assert pattern, test independence without global state, descriptive test names explaining behavior, testing one thing per test), and common testing pitfalls (testing implementation details vs public behavior, brittle tests with exact string matching, slow tests with time.Sleep, ignoring test failures with commented tests). All examples demonstrate practical TDD workflow with red-green-refactor cycles and real-world testing scenarios.
+  - **Date**: 2026-01-22
+  - **Status**: Completed
+  - **Files Changed**: docs/explanation/software/stack-lang/golang/ex-so-stla-go\_\_test-driven-development.md
 - [ ] **Step 2.11**: Create BDD Documentation
   - [ ] File: `ex-so-stla-go__behaviour-driven-development.md`
   - [ ] Content: Godog, Gherkin in Go, step definitions
