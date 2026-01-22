@@ -1,9 +1,9 @@
 ---
-name: apps-ayokoding-web-structure-fixer
-description: Applies validated fixes from structure-checker audit reports. Re-validates structure findings before applying changes.
-model: sonnet
-tools: Read, Edit, Write, Glob, Grep, Bash
-color: yellow
+name:apps-ayokoding-web-structure-fixer
+description:Applies validated fixes from structure-checker audit reports. Re-validates structure findings before applying changes.
+tools:Read, Edit, Write, Glob, Grep, Bash
+model:sonnet
+color:yellow
 skills:
   - docs-applying-content-quality
   - apps-ayokoding-web-developing-content

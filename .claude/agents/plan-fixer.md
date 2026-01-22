@@ -1,9 +1,9 @@
 ---
-name: plan-fixer
-description: Applies validated fixes from plan-checker audit reports. Re-validates plan findings before applying changes. Use after reviewing plan-checker output.
-model: sonnet
-tools: Read, Edit, Write, Glob, Grep, Bash
-color: yellow
+name:plan-fixer
+description:Applies validated fixes from plan-checker audit reports. Re-validates plan findings before applying changes. Use after reviewing plan-checker output.
+tools:Read, Edit, Write, Glob, Grep, Bash
+model:sonnet
+color:yellow
 skills:
   - docs-applying-content-quality
   - plan-writing-gherkin-criteria

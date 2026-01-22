@@ -1,9 +1,9 @@
 ---
-name: docs-fixer
-description: Applies validated fixes from docs-checker audit reports. Re-validates factual accuracy findings before applying changes. Use after reviewing docs-checker output.
-model: sonnet
-tools: Read, Edit, Glob, Grep, Write, Bash
-color: yellow
+name:docs-fixer
+description:Applies validated fixes from docs-checker audit reports. Re-validates factual accuracy findings before applying changes. Use after reviewing docs-checker output.
+tools:Read, Edit, Glob, Grep, Write, Bash
+model:sonnet
+color:yellow
 skills:
   - docs-applying-content-quality
   - docs-applying-diataxis-framework
