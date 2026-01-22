@@ -94,7 +94,3 @@ The `repo-assessing-criticality-confidence` Skill provides definitions.
 
 - [AGENTS.md](../../CLAUDE.md)
 - [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md)
-
-**Skills:**
-
-- `apps-ayokoding-web-developing-content`, `docs-validating-factual-accuracy`, `repo-assessing-criticality-confidence`, `repo-applying-maker-checker-fixer`, `repo-generating-validation-reports`

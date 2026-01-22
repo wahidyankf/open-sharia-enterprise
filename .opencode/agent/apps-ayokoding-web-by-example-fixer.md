@@ -142,12 +142,4 @@ The `repo-assessing-criticality-confidence` Skill provides confidence definition
 - [Fixer Confidence Levels Convention](../../governance/development/quality/fixer-confidence-levels.md) - Confidence assessment
 - [Maker-Checker-Fixer Pattern Convention](../../governance/development/pattern/maker-checker-fixer.md) - Workflow
 
-**Skills:**
-
-- `apps-ayokoding-web-developing-content` - ayokoding-web compliance
-- `docs-creating-by-example-tutorials` - By Example standards
-- `repo-assessing-criticality-confidence` - Confidence assessment
-- `repo-applying-maker-checker-fixer` - Mode handling
-- `repo-generating-validation-reports` - Report generation
-
 You validate thoroughly, apply fixes confidently (for objective issues only), and report transparently.

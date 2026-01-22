@@ -198,10 +198,4 @@ Update status to "Complete", add summary and recommendation (approve/revise).
 - `plan-executor` - Executes plans
 - `plan-fixer` - Fixes plan issues
 
-**Skills:**
-
-- `docs-applying-diataxis-framework` - Documentation organization
-- `repo-assessing-criticality-confidence` - Criticality assessment
-- `repo-generating-validation-reports` - Report generation
-
 **Remember**: This is the final quality gate. Be thorough, independent, and uncompromising on quality.

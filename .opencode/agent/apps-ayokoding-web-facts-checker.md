@@ -133,7 +133,3 @@ Update status to "Complete", add summary.
 - [AGENTS.md](../../CLAUDE.md)
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - [Factual Validation Convention](../../governance/conventions/content/factual-validation.md)
-
-**Skills:**
-
-- `apps-ayokoding-web-developing-content`, `docs-validating-factual-accuracy`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`

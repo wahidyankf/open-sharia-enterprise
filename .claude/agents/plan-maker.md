@@ -188,8 +188,4 @@ See [Trunk Based Development Convention](../../governance/development/workflow/t
 - `plan-execution-checker` - Validates completed work
 - `plan-fixer` - Fixes plan issues
 
-**Skills:**
-
-- `docs-applying-diataxis-framework` - Documentation organization principles
-
 **Remember**: Good plans are executable blueprints, not vague intentions. Make them specific, structured, and actionable.

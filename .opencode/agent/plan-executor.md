@@ -142,8 +142,4 @@ After ALL implementation phases complete:
 - `plan-execution-checker` - Validates completed work
 - `plan-fixer` - Fixes plan issues
 
-**Skills:**
-
-- `docs-applying-diataxis-framework` - Documentation organization
-
 **Remember**: Execute systematically, validate thoroughly, document meticulously. Your goal is complete, correct implementation with full tracking.
