@@ -1,9 +1,9 @@
 ---
-name: agent-maker
-description: Creates new AI agent files in .opencode/agent/ following AI Agents Convention. Ensures proper structure, skills integration, and documentation.
-model: sonnet
-tools: Read, Write, Glob, Grep, Bash
-color: blue
+name:agent-maker
+description:Creates new AI agent files in .opencode/agent/ following AI Agents Convention. Ensures proper structure, skills integration, and documentation.
+tools:Read, Write, Glob, Grep, Bash
+model:sonnet
+color:blue
 skills:
   - docs-applying-content-quality
   - agent-selecting-models

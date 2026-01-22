@@ -1,9 +1,9 @@
 ---
-name: apps-ayokoding-web-link-checker
-description: Validates links in ayokoding-web content following absolute path convention (/docs/path without .md). Checks internal and external links.
-model: haiku
-tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
-color: green
+name:apps-ayokoding-web-link-checker
+description:Validates links in ayokoding-web content following absolute path convention (/docs/path without .md). Checks internal and external links.
+tools:Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
+model:haiku
+color:green
 skills:
   - docs-applying-content-quality
   - docs-validating-links
