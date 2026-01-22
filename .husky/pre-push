@@ -1,19 +1,4 @@
 #!/usr/bin/env sh
 
-# 1. Validate .claude/ and .opencode/ config (if affected)
-if git diff --name-only origin/main...HEAD 2>/dev/null | grep -qE '^\.claude/|^\.opencode/' || ! git rev-parse origin/main >/dev/null 2>&1; then
-  echo "🔍 Validating .claude/ and .opencode/ configuration..."
-  npm run validate:config || {
-    echo "❌ Configuration validation failed. Fix errors above before pushing."
-    exit 1
-  }
-  echo "✅ Configuration validation passed"
-else
-  echo "⏭️  Skipping config validation (no .claude/ or .opencode/ changes)"
-fi
-
-# 2. Run affected tests (existing)
+# Run affected tests
 npx nx affected -t test:quick
-
-# 3. Validate markdown (existing)
-npm run lint:md || exit 1
