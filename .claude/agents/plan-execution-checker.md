@@ -1,9 +1,9 @@
 ---
-name:plan-execution-checker
-description:Validates completed plan implementation by verifying all requirements met, code quality standards followed, and acceptance criteria satisfied. Final quality gate before marking plan complete.
-tools:Read, Glob, Grep, Bash, Write
-model:sonnet
-color:green
+name: plan-execution-checker
+description: Validates completed plan implementation by verifying all requirements met, code quality standards followed, and acceptance criteria satisfied. Final quality gate before marking plan complete.
+tools: Read, Glob, Grep, Bash, Write
+model: sonnet
+color: green
 skills:
   - plan-writing-gherkin-criteria
   - plan-creating-project-plans

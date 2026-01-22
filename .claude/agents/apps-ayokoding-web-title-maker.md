@@ -1,9 +1,9 @@
 ---
-name:apps-ayokoding-web-title-maker
-description:Generates appropriate titles for ayokoding-web content based on type (by-concept, by-example) and level.
-tools:Read, Edit
-model:haiku
-color:blue
+name: apps-ayokoding-web-title-maker
+description: Generates appropriate titles for ayokoding-web content based on type (by-concept, by-example) and level.
+tools: Read, Edit
+model: haiku
+color: blue
 skills:
   - docs-applying-content-quality
   - apps-ayokoding-web-developing-content

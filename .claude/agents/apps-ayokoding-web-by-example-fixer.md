@@ -1,9 +1,9 @@
 ---
-name:apps-ayokoding-web-by-example-fixer
-description:Applies validated fixes from apps-ayokoding-web-by-example-checker audit reports. Re-validates By Example findings before applying changes. Use after reviewing checker output.
-tools:Read, Edit, Write, Glob, Grep, Bash
-model:sonnet
-color:yellow
+name: apps-ayokoding-web-by-example-fixer
+description: Applies validated fixes from apps-ayokoding-web-by-example-checker audit reports. Re-validates By Example findings before applying changes. Use after reviewing checker output.
+tools: Read, Edit, Write, Glob, Grep, Bash
+model: sonnet
+color: yellow
 skills:
   - docs-applying-content-quality
   - docs-creating-by-example-tutorials

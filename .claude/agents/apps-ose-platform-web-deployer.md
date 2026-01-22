@@ -1,9 +1,9 @@
 ---
-name:apps-ose-platform-web-deployer
-description:Deploys ose-platform-web to production environment branch (prod-ose-platform-web) after validation. Vercel listens to production branch for automatic builds.
-tools:Bash, Grep
-model:haiku
-color:purple
+name: apps-ose-platform-web-deployer
+description: Deploys ose-platform-web to production environment branch (prod-ose-platform-web) after validation. Vercel listens to production branch for automatic builds.
+tools: Bash, Grep
+model: haiku
+color: purple
 skills:
   - repo-practicing-trunk-based-development
   - apps-ose-platform-web-developing-content

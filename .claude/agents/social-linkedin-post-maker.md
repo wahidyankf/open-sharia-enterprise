@@ -1,9 +1,9 @@
 ---
-name:social-linkedin-post-maker
-description:Creates LinkedIn posts from project updates and documentation. Optimizes for engagement and professional tone.
-tools:Read, Grep
-model:sonnet
-color:blue
+name: social-linkedin-post-maker
+description: Creates LinkedIn posts from project updates and documentation. Optimizes for engagement and professional tone.
+tools: Read, Grep
+model: sonnet
+color: blue
 skills:
   - docs-applying-content-quality
 ---
