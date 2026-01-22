@@ -204,8 +204,8 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 **Project Guidance**:
 
 - [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [Content Quality Principles](../../governance/conventions/content/quality.md)
-- [Diátaxis Framework](../../governance/conventions/meta/diataxis-framework.md)
+- [Content Quality Principles](../../../governance/conventions/content/quality.md)
+- [Diátaxis Framework](../../../governance/conventions/meta/diataxis-framework.md)
 
 **Related Agents**:
 
@@ -216,9 +216,9 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 
 **Related Conventions**:
 
-- [Content Quality Principles](../../governance/conventions/content/quality.md)
-- [Factual Validation Convention](../../governance/conventions/content/factual-validation.md)
-- [Linking Convention](../../governance/conventions/formatting/linking.md)
+- [Content Quality Principles](../../../governance/conventions/content/quality.md)
+- [Factual Validation Convention](../../../governance/conventions/content/factual-validation.md)
+- [Linking Convention](../../../governance/conventions/formatting/linking.md)
 
 **Skills**:
 
@@ -236,7 +236,7 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 **Project Guidance**:
 
 - [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [README Quality Convention](../../governance/conventions/content/readme-quality.md)
+- [README Quality Convention](../../../governance/conventions/content/readme-quality.md)
 
 **Related Agents**:
 
@@ -247,8 +247,8 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 
 **Related Conventions**:
 
-- [README Quality Convention](../../governance/conventions/content/readme-quality.md)
-- [Content Quality Principles](../../governance/conventions/content/quality.md)
+- [README Quality Convention](../../../governance/conventions/content/readme-quality.md)
+- [Content Quality Principles](../../../governance/conventions/content/quality.md)
 
 **Skills**:
 
@@ -265,7 +265,7 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 **Project Guidance**:
 
 - [AGENTS.md](../../../CLAUDE.md) - Primary guidance
-- [Plans Organization Convention](../../governance/conventions/project/plans-organization.md)
+- [Plans Organization Convention](../../../governance/conventions/project/plans-organization.md)
 
 **Related Agents**:
 
@@ -277,8 +277,8 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 
 **Related Conventions**:
 
-- [Plans Organization Convention](../../governance/conventions/project/plans-organization.md)
-- [Gherkin Acceptance Criteria](../../governance/development/infra/acceptance-criteria.md)
+- [Plans Organization Convention](../../../governance/conventions/project/plans-organization.md)
+- [Gherkin Acceptance Criteria](../../../governance/development/infra/acceptance-criteria.md)
 
 **Skills**:
 
