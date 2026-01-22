@@ -524,11 +524,4 @@ When updating tutorials:
 - `.opencode/agent/docs-tutorial-fixer.md` - Fixes tutorial issues
 - `.opencode/agent/docs-maker.md` - Creates non-tutorial documentation
 
-**Skills**:
-
-- `docs-applying-diataxis-framework` - Diátaxis principles and organization
-- `docs-applying-content-quality` - Content quality standards and implementation
-- `docs-creating-accessible-diagrams` - Diagram creation with accessibility
-- `docs-creating-by-example-tutorials` - By Example annotation standards
-
 **Remember**: Tutorials are learning-oriented. Focus on helping users achieve clear outcomes through step-by-step guidance. Explain WHY things work, not just HOW. Make learning accessible and progressive.

@@ -106,9 +106,3 @@ Skills: `apps-ayokoding-web-developing-content`, `repo-assessing-criticality-con
 
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md)
-
-**Skills**:
-
-- `repo-applying-maker-checker-fixer` - Fixer workflow pattern
-- `apps-ayokoding-web-developing-content` - ayokoding-web standards
-- `repo-assessing-criticality-confidence` - Confidence assessment

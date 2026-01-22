@@ -60,7 +60,3 @@ Create titles following conventions for tutorial types and levels.
 
 - [Tutorial Naming Convention](../../governance/conventions/tutorial/naming.md)
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
-
-**Skills**:
-
-- `apps-ayokoding-web-developing-content` - Title generation patterns

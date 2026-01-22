@@ -70,7 +70,3 @@ Create folder structure and \_index.md files for ayokoding-web.
 
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - [Tutorial Folder Arrangement](../../governance/conventions/tutorial/programming-language-structure.md)
-
-**Skills**:
-
-- `apps-ayokoding-web-developing-content` - ayokoding-web structure standards

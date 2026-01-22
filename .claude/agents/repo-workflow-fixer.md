@@ -91,9 +91,3 @@ Skills: `docs-applying-diataxis-framework`, `repo-assessing-criticality-confiden
 
 - [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
 - [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md)
-
-**Skills**:
-
-- `repo-applying-maker-checker-fixer` - Fixer workflow pattern
-- `repo-defining-workflows` - Workflow structure
-- `repo-assessing-criticality-confidence` - Confidence assessment

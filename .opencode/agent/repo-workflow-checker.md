@@ -79,9 +79,3 @@ Skill: `repo-generating-validation-reports`
 
 - [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
 - [Execution Modes Convention](../../governance/workflows/meta/execution-modes.md)
-
-**Skills**:
-
-- `repo-applying-maker-checker-fixer` - Checker workflow pattern
-- `repo-defining-workflows` - Workflow structure and patterns
-- `repo-assessing-criticality-confidence` - Criticality assessment

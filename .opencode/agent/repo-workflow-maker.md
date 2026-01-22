@@ -66,8 +66,3 @@ Create workflow documentation following workflow pattern convention.
 
 - [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
 - [Execution Modes Convention](../../governance/workflows/meta/execution-modes.md)
-
-**Skills**:
-
-- `repo-defining-workflows` - Workflow structure and patterns
-- `docs-applying-content-quality` - Content quality standards

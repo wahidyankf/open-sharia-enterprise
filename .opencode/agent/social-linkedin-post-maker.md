@@ -55,7 +55,3 @@ Transform technical updates into engaging LinkedIn posts with professional tone.
 **Related Conventions**:
 
 - [Content Quality Principles](../../governance/conventions/content/quality.md)
-
-**Skills**:
-
-- `docs-applying-content-quality` - Content quality standards

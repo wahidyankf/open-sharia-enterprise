@@ -127,8 +127,3 @@ echo "Vercel will automatically build from prod-ose-platform-web branch"
 
 - [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 - [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
-
-**Skills**:
-
-- `apps-ose-platform-web-developing-content` - Site requirements and PaperMod theme
-- `repo-practicing-trunk-based-development` - Git workflow and branching strategy

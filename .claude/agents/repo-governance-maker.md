@@ -62,8 +62,3 @@ Document standards following convention structure (Purpose, Standards, Examples,
 
 - [Convention Writing Convention](../../governance/conventions/content/convention-writing.md)
 - [AI Agents Convention](../../governance/development/agents/ai-agents.md)
-
-**Skills**:
-
-- `repo-applying-maker-checker-fixer` - Three-stage workflow
-- `docs-applying-content-quality` - Content quality standards

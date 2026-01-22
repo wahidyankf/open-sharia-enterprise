@@ -67,8 +67,3 @@ Theme customization, template development, build optimization, deployment config
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 - [Code Quality Convention](../../governance/development/quality/code.md)
-
-**Skills**:
-
-- `apps-ayokoding-web-developing-content` - ayokoding-web development
-- `apps-ose-platform-web-developing-content` - ose-platform-web development
