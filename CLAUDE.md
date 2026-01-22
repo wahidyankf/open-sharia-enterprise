@@ -150,7 +150,14 @@ Husky + lint-staged enforce quality:
   - When ayokoding-web content changes: rebuilds CLI, updates titles, regenerates navigation
   - Auto-stages changes
 - **Commit-msg**: Validates Conventional Commits format (Commitlint)
-- **Pre-push**: Runs `test:quick` for affected projects
+- **Pre-push**:
+  - Validates `.claude/` and `.opencode/` configuration (if changed)
+    - Validates `.claude/` source format (YAML, tools, model, skills)
+    - Auto-syncs `.claude/` → `.opencode/`
+    - Validates `.opencode/` output (semantic equivalence)
+    - Only runs when config files changed (git diff detection)
+  - Runs `test:quick` for affected projects
+  - Runs markdown linting
 
 **See**: [governance/development/quality/code.md](./governance/development/quality/code.md)
 

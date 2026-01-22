@@ -11,6 +11,9 @@ A Go-based CLI tool that provides utilities for repository management and automa
 ## Quick Start
 
 ```bash
+# Validate Claude Code format
+rhino-cli validate-claude
+
 # Sync Claude Code → OpenCode configurations
 rhino-cli sync-agents
 
@@ -302,6 +305,76 @@ Duration: 60ms
 Status: ✓ VALIDATION PASSED
 ```
 
+### validate-claude
+
+Validate Claude Code agent and skill format in `.claude/` directory.
+
+```bash
+# Validate all agents and skills
+rhino-cli validate-claude
+
+# Output as JSON
+rhino-cli validate-claude -o json
+
+# Verbose mode (show all checks)
+rhino-cli validate-claude -v
+
+# Validate only agents
+rhino-cli validate-claude --agents-only
+
+# Validate only skills
+rhino-cli validate-claude --skills-only
+```
+
+**What it validates:**
+
+**Agents (.claude/agents/):**
+
+- YAML frontmatter syntax
+- Required fields: name, description, tools, model, color, skills
+- Field order (exact sequence required)
+- Valid tool names (Read, Write, Edit, Glob, Grep, Bash, TodoWrite, WebFetch, WebSearch)
+- Valid model names (empty, sonnet, opus, haiku)
+- Valid colors (blue, green, yellow, purple)
+- Filename matches name field
+- Agent name uniqueness
+- Skills references exist
+- No YAML comments
+- Special rules (e.g., generated-reports/ tools)
+
+**Skills (.claude/skills/):**
+
+- SKILL.md file exists
+- Required field: description
+- YAML syntax validity
+
+**Flags:**
+
+- `--agents-only` - Validate only agents (skip skills)
+- `--skills-only` - Validate only skills (skip agents)
+- `-o, --output` - Format: text, json, markdown
+- `-v, --verbose` - Show all checks
+- `-q, --quiet` - Summary only
+
+**Exit codes:**
+
+- `0` - All valid
+- `1` - One or more invalid
+
+**Example output (text):**
+
+```
+Validation Complete
+==================================================
+
+Total Checks: 513
+Passed: 513
+Failed: 0
+Duration: 49ms
+
+Status: ✓ VALIDATION PASSED
+```
+
 ## Help Commands
 
 ```bash
@@ -326,7 +399,8 @@ apps/rhino-cli/
 │   ├── validate_links.go     # Link validation command
 │   ├── validate_links_test.go # Integration tests
 │   ├── sync_agents.go        # Agent/skill sync command
-│   └── validate_sync.go      # Sync validation command
+│   ├── validate_sync.go      # Sync validation command
+│   └── validate_claude.go    # Claude Code format validation command
 ├── internal/
 │   ├── links/                # Link validation logic
 │   │   ├── types.go          # Core type definitions
@@ -338,6 +412,11 @@ apps/rhino-cli/
 │   │   ├── categorizer_test.go
 │   │   ├── reporter.go       # Output formatting
 │   │   └── reporter_test.go
+│   ├── claude/               # Claude Code format validation
+│   │   ├── types.go          # Data structures (ClaudeAgentFull, ClaudeSkill, constants)
+│   │   ├── validator.go      # Main validation orchestration
+│   │   ├── agent_validator.go # Agent validation (11 rules)
+│   │   └── skill_validator.go # Skill validation (3 rules)
 │   └── sync/                 # Agent/skill sync logic
 │       ├── types.go          # Data structures (ClaudeAgent, OpenCodeAgent, etc.)
 │       ├── types_test.go
@@ -384,6 +463,7 @@ go test ./... -v
 - `cmd`: Root command tests, validate-links integration tests
 - `internal/links`: 85%+ coverage (scanner, validator, categorizer, reporter)
 - `internal/sync`: 85%+ coverage (converter, copier, validator, reporter)
+- `internal/claude`: Manual testing only (unit tests pending)
 
 ### Run without building
 
@@ -496,6 +576,14 @@ rhino-cli say
 ```
 
 ## Version History
+
+### v0.4.0 (2026-01-22)
+
+- Added `validate-claude` command for Claude Code format validation
+- YAML frontmatter validation (11 rules for agents, 3 for skills)
+- Integrated into pre-push git hook with work avoidance
+- Performance: ~49ms for 45 agents + 21 skills (meets <50ms target)
+- Auto-sync .claude/ to .opencode/ on pre-push
 
 ### v0.3.0 (2026-01-22)
 
