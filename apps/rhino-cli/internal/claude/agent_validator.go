@@ -11,7 +11,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// validateAgent performs all 11 validation rules for a single agent
+// validateAgent performs all 12 validation rules for a single agent
 func validateAgent(
 	agentPath string,
 	filename string,
@@ -29,6 +29,13 @@ func validateAgent(
 			Status:  "failed",
 			Message: fmt.Sprintf("Failed to read file: %v", err),
 		})
+		return checks
+	}
+
+	// Rule 0: YAML formatting (check BEFORE normalization)
+	formattingCheck := validateYAMLFormatting(filename, content)
+	checks = append(checks, formattingCheck)
+	if formattingCheck.Status == "failed" {
 		return checks
 	}
 
@@ -365,6 +372,86 @@ func validateNoComments(filename string, frontmatter []byte) sync.ValidationChec
 		Name:    fmt.Sprintf("Agent: %s - No Comments", filename),
 		Status:  "passed",
 		Message: "No YAML comments",
+	}
+}
+
+// validateYAMLFormatting checks that YAML has proper formatting (space after colons)
+// This check runs BEFORE normalization to catch formatting issues
+func validateYAMLFormatting(filename string, content []byte) sync.ValidationCheck {
+	// Extract raw frontmatter without normalization
+	lines := bytes.Split(content, []byte("\n"))
+
+	if len(lines) < 3 {
+		return sync.ValidationCheck{
+			Name:    fmt.Sprintf("Agent: %s - YAML Formatting", filename),
+			Status:  "passed",
+			Message: "File too short to check formatting",
+		}
+	}
+
+	// Find frontmatter boundaries
+	if !bytes.Equal(bytes.TrimSpace(lines[0]), []byte("---")) {
+		return sync.ValidationCheck{
+			Name:    fmt.Sprintf("Agent: %s - YAML Formatting", filename),
+			Status:  "failed",
+			Message: "Frontmatter does not start with ---",
+		}
+	}
+
+	endIndex := -1
+	for i := 1; i < len(lines); i++ {
+		if bytes.Equal(bytes.TrimSpace(lines[i]), []byte("---")) {
+			endIndex = i
+			break
+		}
+	}
+
+	if endIndex == -1 {
+		return sync.ValidationCheck{
+			Name:    fmt.Sprintf("Agent: %s - YAML Formatting", filename),
+			Status:  "failed",
+			Message: "Frontmatter closing --- not found",
+		}
+	}
+
+	// Check each line in frontmatter for missing spaces after colons
+	var issues []string
+	for i := 1; i < endIndex; i++ {
+		line := lines[i]
+		trimmed := bytes.TrimSpace(line)
+
+		// Skip empty lines, list items, and comments
+		if len(trimmed) == 0 || bytes.HasPrefix(trimmed, []byte("-")) || bytes.HasPrefix(trimmed, []byte("#")) {
+			continue
+		}
+
+		// Check if line is a key-value pair without space after colon
+		// Pattern: "key:value" where there's no space after the colon
+		if bytes.Contains(trimmed, []byte(":")) {
+			parts := bytes.SplitN(trimmed, []byte(":"), 2)
+			if len(parts) == 2 {
+				// Check if the value part doesn't start with a space (and is not empty)
+				if len(parts[1]) > 0 && parts[1][0] != ' ' {
+					issues = append(issues, fmt.Sprintf("Line %d: '%s' (missing space after colon)", i+1, string(trimmed)))
+				}
+			}
+		}
+	}
+
+	if len(issues) > 0 {
+		return sync.ValidationCheck{
+			Name:     fmt.Sprintf("Agent: %s - YAML Formatting", filename),
+			Status:   "failed",
+			Expected: "Space after colon in YAML key-value pairs (e.g., 'name: value')",
+			Actual:   fmt.Sprintf("Found %d formatting issues", len(issues)),
+			Message:  fmt.Sprintf("YAML formatting errors:\n  %s", strings.Join(issues, "\n  ")),
+		}
+	}
+
+	return sync.ValidationCheck{
+		Name:    fmt.Sprintf("Agent: %s - YAML Formatting", filename),
+		Status:  "passed",
+		Message: "YAML formatting correct (spaces after colons)",
 	}
 }
 

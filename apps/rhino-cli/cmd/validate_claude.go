@@ -21,6 +21,7 @@ var validateClaudeCmd = &cobra.Command{
 This command performs the following validations:
 
 Agents (.claude/agents/):
+- YAML formatting (space after colons required)
 - YAML frontmatter syntax
 - Required fields: name, description, tools, model, color, skills
 - Field order (exact sequence required)
