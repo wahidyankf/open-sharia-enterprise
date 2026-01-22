@@ -67,12 +67,13 @@ Go development in this platform follows the five software engineering principles
 
 - [Best Practices](./ex-so-stla-go__best-practices.md) - Modern Go coding standards (2025-2026)
 - [Idioms](./ex-so-stla-go__idioms.md) - Go-specific patterns (interfaces, embedding, error handling)
-- [Anti-Patterns](./ex-so-stla-go__anti-patterns.md) - Common mistakes to avoid
+- [Anti-Patterns](./ex-so-stla-go__anti-patterns.md) - Common mistakes to avoid (expanded with financial domain patterns)
 - [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md) - Goroutines, channels, sync package
 - [Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md) - Interface design, composition over inheritance
 - [Error Handling](./ex-so-stla-go__error-handling.md) - Error patterns, wrapping, custom errors
 - [Type Safety](./ex-so-stla-go__type-safety.md) - Type system, interfaces, generics
 - [Functional Programming](./ex-so-stla-go__functional-programming.md) - FP patterns in Go
+- [Finite State Machine](./ex-so-stla-go__finite-state-machine.md) - FSM patterns for enterprise state management
 - [Domain-Driven Design](./ex-so-stla-go__domain-driven-design.md) - DDD patterns in Go
 - [Performance](./ex-so-stla-go__performance.md) - Profiling, optimization, memory management
 - [Security](./ex-so-stla-go__security.md) - Secure coding practices
@@ -83,14 +84,9 @@ Go development in this platform follows the five software engineering principles
 - [Test-Driven Development](./ex-so-stla-go__test-driven-development.md) - TDD with testing package, testify
 - [Behaviour-Driven Development](./ex-so-stla-go__behaviour-driven-development.md) - BDD with Godog (Gherkin for Go)
 
-**Release Documentation:**
+**DDD Templates:**
 
-- [Go 1.18](./ex-so-stla-go__release-1-18.md) - Generics, fuzzing, workspaces
-- [Go 1.21](./ex-so-stla-go__release-1-21.md) - PGO production-ready, min/max/clear
-- [Go 1.22](./ex-so-stla-go__release-1-22.md) - Loop variable fix, range over integers
-- [Go 1.23](./ex-so-stla-go__release-1-23.md) - Iterators, unique package
-- [Go 1.24](./ex-so-stla-go__release-1-24.md) - Swiss Tables, runtime.AddCleanup
-- [Go 1.25](./ex-so-stla-go__release-1-25.md) - Green Tea GC, encoding/json/v2
+- [Templates](./templates/README.md) - DDD templates (Entity, Value Object, Aggregate, Domain Event, Repository, Service Layer, Build Configuration)
 
 ## Go Version Strategy
 
@@ -211,7 +207,7 @@ Common mistakes, pitfalls, and problematic patterns to avoid in Go development.
 
 Comprehensive guides to major Go releases since generics, documenting important features and changes:
 
-#### [Go 1.18 Release](./ex-so-stla-go__release-1-18.md)
+#### Go 1.18 Release
 
 Released March 15, 2022. Minimum required version for the platform.
 
@@ -222,7 +218,7 @@ Released March 15, 2022. Minimum required version for the platform.
 - Workspace mode for multi-module development
 - Performance improvements (comparable generic code)
 
-#### [Go 1.21 Release](./ex-so-stla-go__release-1-21.md)
+#### Go 1.21 Release
 
 Released August 8, 2023. Recommended target version.
 
@@ -234,7 +230,7 @@ Released August 8, 2023. Recommended target version.
 - Go toolchain management
 - Performance: 2-7% improvement with PGO
 
-#### [Go 1.22 Release](./ex-so-stla-go__release-1-22.md)
+#### Go 1.22 Release
 
 Released February 6, 2024. Important language fix.
 
@@ -246,7 +242,7 @@ Released February 6, 2024. Important language fix.
 - math/rand/v2 package
 - 6% build speed improvement
 
-#### [Go 1.23 Release](./ex-so-stla-go__release-1-23.md)
+#### Go 1.23 Release
 
 Released August 13, 2024. New iteration paradigm.
 
@@ -258,7 +254,7 @@ Released August 13, 2024. New iteration paradigm.
 - Timer behavior changes (unbuffered channels, GC-eligible)
 - Generic type aliases preview
 
-#### [Go 1.24 Release](./ex-so-stla-go__release-1-24.md)
+#### Go 1.24 Release
 
 Released February 11, 2025. Performance improvements.
 
@@ -270,7 +266,7 @@ Released February 11, 2025. Performance improvements.
 - Generic type aliases finalized
 - Runtime-internal mutex improvements
 
-#### [Go 1.25 Release](./ex-so-stla-go__release-1-25.md)
+#### Go 1.25 Release
 
 Released August 12, 2025. Current stable version (1.25.6 as of January 15, 2026).
 
@@ -495,6 +491,38 @@ Comprehensive guide to functional programming patterns in Go.
 - Map/Filter/Reduce patterns
 - Limitations compared to pure FP languages
 - Functional core, imperative shell
+
+#### [Go Finite State Machine](./ex-so-stla-go__finite-state-machine.md)
+
+Comprehensive guide to FSM patterns for enterprise state management in Go.
+
+**Covers**:
+
+- FSM fundamentals (states, transitions, events)
+- Type-based FSM pattern (type aliases + const)
+- State interface pattern (Go's state design pattern)
+- Type switch pattern (approximates sealed classes)
+- Concurrency-safe FSMs (mutex-based, channel-based actor model)
+- Testing FSMs (table-driven, concurrent safety)
+- Patterns and anti-patterns (entry/exit actions, guards)
+- Real-world examples (Zakat payment processing, Murabaha loans, Waqf contracts)
+- Financial domain: Payment workflows, loan lifecycle management, compliance state tracking
+
+### DDD Templates
+
+Production-ready templates for Domain-Driven Design patterns in Go:
+
+**See**: [Templates README](./templates/README.md) for complete documentation
+
+**Available Templates**:
+
+- **[Entity Template](./templates/entity-template.md)** - Identity-based objects with lifecycle management
+- **[Value Object Template](./templates/value-object-template.md)** - Immutable value types with validation
+- **[Aggregate Template](./templates/aggregate-template.md)** - Consistency boundaries with domain events
+- **[Domain Event Template](./templates/domain-event-template.md)** - Event sourcing and event-driven patterns
+- **[Repository Template](./templates/repository-template.md)** - Persistence abstraction with business queries
+- **[Service Layer Template](./templates/service-layer-template.md)** - Application services orchestrating domain logic
+- **[Build Configuration Template](./templates/build-configuration-template.md)** - Makefile, go.mod, golangci-lint, Docker, CI/CD
 
 ## Go in the Platform
 
@@ -984,21 +1012,13 @@ Essential Go philosophy from Rob Pike:
 - **[Go Best Practices](./ex-so-stla-go__best-practices.md)** - Clean code guidelines
 - **[Go Anti-Patterns](./ex-so-stla-go__anti-patterns.md)** - Common mistakes to avoid
 
-### Go Release Documentation
-
-- **[Go 1.18 Release](./ex-so-stla-go__release-1-18.md)** - Baseline version features (generics, fuzzing)
-- **[Go 1.21 Release](./ex-so-stla-go__release-1-21.md)** - Recommended version features (PGO)
-- **[Go 1.22 Release](./ex-so-stla-go__release-1-22.md)** - Loop fix, HTTP routing
-- **[Go 1.23 Release](./ex-so-stla-go__release-1-23.md)** - Iterators, unique package
-- **[Go 1.24 Release](./ex-so-stla-go__release-1-24.md)** - Swiss Tables, AddCleanup
-- **[Go 1.25 Release](./ex-so-stla-go__release-1-25.md)** - Current stable (Green Tea GC, json/v2)
-
 ### Specialized Topics
 
 - **[Go Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md)** - Goroutines, channels, sync
 - **[Go Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md)** - Interface design, embedding
 - **[Go Error Handling](./ex-so-stla-go__error-handling.md)** - Error patterns, wrapping, custom errors
 - **[Go Type Safety](./ex-so-stla-go__type-safety.md)** - Type system, generics, type assertions
+- **[Go Finite State Machine](./ex-so-stla-go__finite-state-machine.md)** - FSM patterns, concurrent state machines, financial workflows
 - **[Go Performance](./ex-so-stla-go__performance.md)** - Profiling, optimization, GC tuning
 - **[Go Security](./ex-so-stla-go__security.md)** - Secure coding, cryptography, OWASP
 - **[Go Memory Management](./ex-so-stla-go__memory-management.md)** - GC, pointers, escape analysis
@@ -1009,6 +1029,17 @@ Essential Go philosophy from Rob Pike:
 - **[Go Domain-Driven Design](./ex-so-stla-go__domain-driven-design.md)** - DDD without classes
 - **[Go Test-Driven Development](./ex-so-stla-go__test-driven-development.md)** - TDD with testing package
 - **[Go Behaviour-Driven Development](./ex-so-stla-go__behaviour-driven-development.md)** - BDD with Godog
+
+### DDD Templates
+
+- **[Templates README](./templates/README.md)** - Complete DDD templates guide
+- **[Entity Template](./templates/entity-template.md)** - Identity-based objects
+- **[Value Object Template](./templates/value-object-template.md)** - Immutable values
+- **[Aggregate Template](./templates/aggregate-template.md)** - Consistency boundaries
+- **[Domain Event Template](./templates/domain-event-template.md)** - Event sourcing patterns
+- **[Repository Template](./templates/repository-template.md)** - Persistence abstraction
+- **[Service Layer Template](./templates/service-layer-template.md)** - Application orchestration
+- **[Build Configuration Template](./templates/build-configuration-template.md)** - Complete build setup
 
 ### Platform Documentation
 

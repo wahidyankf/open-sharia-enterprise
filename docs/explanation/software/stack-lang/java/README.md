@@ -66,6 +66,10 @@ Java development in this platform follows the five software engineering principl
 - [Type Safety](./ex-so-stla-ja__type-safety.md) - Sealed types and compile-time safety
 - [Functional Programming](./ex-so-stla-ja__functional-programming.md) - Pure functions and immutability
 - [Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md) - Virtual threads and structured concurrency
+- [Interfaces and Polymorphism](./ex-so-stla-ja__interfaces-and-polymorphism.md) - Interface design and explicit polymorphism
+- [Memory Management](./ex-so-stla-ja__memory-management.md) - JVM internals and GC tuning
+- [Modules and Dependencies](./ex-so-stla-ja__modules-and-dependencies.md) - JPMS and Maven/Gradle
+- [Web Services](./ex-so-stla-ja__web-services.md) - REST, GraphQL, gRPC, and API security
 - [Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md) - DDD patterns in Java
 - [Security](./ex-so-stla-ja__security.md) - Secure coding practices
 - [Performance](./ex-so-stla-ja__performance.md) - Optimization techniques
@@ -355,6 +359,71 @@ Comprehensive guide to BDD with Cucumber, Gherkin, and collaborative testing.
 - BDD patterns and anti-patterns
 - Three Amigos and Example Mapping collaboration
 - BDD vs TDD complementary practices
+
+#### [Java Interfaces and Polymorphism](./ex-so-stla-ja__interfaces-and-polymorphism.md)
+
+Comprehensive guide to Java's explicit interface system and polymorphism patterns.
+
+**Covers**:
+
+- Interface design principles (ISP, focused interfaces)
+- Modern interface features (default methods, static methods, private helpers)
+- Sealed interfaces for exhaustive pattern matching (Java 17+)
+- Polymorphism patterns (Strategy, DI, functional interfaces)
+- Composition over inheritance with interfaces
+- Marker interfaces and modern alternatives
+- Testing with interfaces (Mockito, contract testing)
+- Performance considerations (interface dispatch, sealed optimizations)
+- Financial examples: PaymentProcessor, ZakatCalculator, TaxStrategy
+
+#### [Java Memory Management and JVM Internals](./ex-so-stla-ja__memory-management.md)
+
+Comprehensive guide to JVM memory architecture, garbage collection, and optimization.
+
+**Covers**:
+
+- JVM memory regions (heap, stack, metaspace, direct buffers)
+- Object allocation (TLAB, Eden space, promotion, escape analysis)
+- GC algorithms (G1GC, ZGC, Shenandoah, Generational ZGC)
+- GC tuning for financial workloads
+- Memory leak detection and prevention
+- Memory optimization (object pooling, compact headers Java 25)
+- Profiling tools (JFR, jmap, VisualVM, async-profiler)
+- Best practices for hot path optimization
+- Financial examples: Zakat calculation batches, transaction processing
+
+#### [Java Modules and Dependency Management](./ex-so-stla-ja__modules-and-dependencies.md)
+
+Comprehensive guide to Java Platform Module System (JPMS) and dependency management.
+
+**Covers**:
+
+- JPMS module system (module-info.java, exports/requires)
+- Maven dependency management (POM, scopes, BOMs, version conflicts)
+- Gradle alternative (build.gradle, version catalogs)
+- Reproducible builds (Maven Wrapper, Enforcer Plugin, .sdkmanrc)
+- Multi-module projects (parent POM, reactor order)
+- Private repositories (Nexus, Artifactory)
+- Security scanning (OWASP Dependency-Check, Snyk, Dependabot)
+- Best practices (minimal dependency trees, avoid version ranges)
+- Financial examples: Tax calculation modules, payment gateway dependencies
+
+#### [Java Web Services and APIs](./ex-so-stla-ja__web-services.md)
+
+Comprehensive guide to building web services and APIs with Java's rich ecosystem.
+
+**Covers**:
+
+- RESTful APIs with Spring Boot (@RestController, validation, exception handling)
+- JAX-RS with Jakarta EE (@Path, CDI integration)
+- GraphQL services (schema, resolvers, DataLoader, N+1 prevention)
+- gRPC services (Protobuf, streaming types)
+- API security (JWT, OAuth2, RBAC, CORS, rate limiting, OWASP API Top 10)
+- API documentation (OpenAPI/Swagger, SpringDoc)
+- API versioning strategies (URI, header, content negotiation)
+- Testing web services (MockMvc, RestAssured, Pact, JMeter)
+- Best practices (RESTful design, idempotency, pagination, HATEOAS)
+- Financial examples: Donation APIs, ZakatPayment endpoints, MurabahaLoan services
 
 ## Java in the Platform
 
@@ -692,6 +761,10 @@ RUN ./mvnw clean install
 - **[Java Security](./ex-so-stla-ja__security.md)** - Secure application development
 - **[Java Performance](./ex-so-stla-ja__performance.md)** - JVM tuning and optimization
 - **[Java Concurrency and Parallelism](./ex-so-stla-ja__concurrency-and-parallelism.md)** - Concurrent programming
+- **[Java Interfaces and Polymorphism](./ex-so-stla-ja__interfaces-and-polymorphism.md)** - Interface design, sealed interfaces, polymorphism patterns
+- **[Java Memory Management](./ex-so-stla-ja__memory-management.md)** - JVM internals, GC algorithms, memory optimization
+- **[Java Modules and Dependencies](./ex-so-stla-ja__modules-and-dependencies.md)** - JPMS, Maven, Gradle, reproducible builds
+- **[Java Web Services](./ex-so-stla-ja__web-services.md)** - REST, GraphQL, gRPC, API security
 - **[Java Type Safety](./ex-so-stla-ja__type-safety.md)** - Null safety, static analysis, compile-time guarantees
 - **[Java Functional Programming](./ex-so-stla-ja__functional-programming.md)** - Pure functions, immutability, Vavr, monads
 - **[Java Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md)** - DDD tactical patterns, Axon, Spring Boot
