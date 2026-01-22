@@ -2,18 +2,18 @@
 description: Validates By Example tutorial quality including annotation density (1-2.25 ratio per example), five-part structure, example count (75-90), and ayokoding-web compliance. Use when reviewing By Example content.
 model: zai/glm-4.7
 tools:
-    bash: true
-    glob: true
-    grep: true
-    read: true
-    write: true
+  bash: true
+  glob: true
+  grep: true
+  read: true
+  write: true
 skills:
-    - docs-applying-content-quality
-    - docs-creating-by-example-tutorials
-    - apps-ayokoding-web-developing-content
-    - repo-generating-validation-reports
-    - repo-assessing-criticality-confidence
-    - repo-applying-maker-checker-fixer
+  - docs-applying-content-quality
+  - docs-creating-by-example-tutorials
+  - apps-ayokoding-web-developing-content
+  - repo-generating-validation-reports
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata

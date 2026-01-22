@@ -2,17 +2,17 @@
 description: Validates general ayokoding-web content quality including structure, bilingual completeness, weights, navigation, and content quality.
 model: zai/glm-4.7
 tools:
-    bash: true
-    glob: true
-    grep: true
-    read: true
-    write: true
+  bash: true
+  glob: true
+  grep: true
+  read: true
+  write: true
 skills:
-    - docs-applying-content-quality
-    - apps-ayokoding-web-developing-content
-    - repo-generating-validation-reports
-    - repo-assessing-criticality-confidence
-    - repo-applying-maker-checker-fixer
+  - docs-applying-content-quality
+  - apps-ayokoding-web-developing-content
+  - repo-generating-validation-reports
+  - repo-assessing-criticality-confidence
+  - repo-applying-maker-checker-fixer
 ---
 
 ## Agent Metadata
