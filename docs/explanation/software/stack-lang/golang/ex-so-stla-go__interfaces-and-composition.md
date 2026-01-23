@@ -9,12 +9,11 @@ tags:
   - composition
   - embedding
   - polymorphism
-created: 2026-01-22
-updated: 2026-01-22
 ---
 
 # Go Interfaces and Composition
 
+**Quick Reference**: [Overview](#overview) | [Interfaces Fundamentals](#interfaces-fundamentals) | [Interface Design](#interface-design) | [Struct Embedding](#struct-embedding) | [Composition Patterns](#composition-patterns) | [Interface vs Concrete Types](#interface-vs-concrete-types) | [Empty Interface](#empty-interface) | [Type Assertions](#type-assertions) | [Type Switches](#type-switches) | [Common Interfaces](#common-interfaces) | [Interface Best Practices](#interface-best-practices) | [Related Documentation](#related-documentation)
 **Understanding-oriented documentation** for Go's interface-based polymorphism and struct composition.
 
 ## Overview
@@ -29,20 +28,6 @@ Go uses interfaces and composition instead of class-based inheritance. This guid
 - **Duck typing**: "If it walks like a duck and quacks like a duck, it's a duck"
 
 **Philosophy**: "Composition over inheritance", "Accept interfaces, return structs"
-
-## Table of Contents
-
-- [Interfaces Fundamentals](#interfaces-fundamentals)
-- [Interface Design](#interface-design)
-- [Struct Embedding](#struct-embedding)
-- [Composition Patterns](#composition-patterns)
-- [Interface vs Concrete Types](#interface-vs-concrete-types)
-- [Empty Interface](#empty-interface)
-- [Type Assertions](#type-assertions)
-- [Type Switches](#type-switches)
-- [Common Interfaces](#common-interfaces)
-- [Interface Best Practices](#interface-best-practices)
-- [Related Documentation](#related-documentation)
 
 ## Interfaces Fundamentals
 
@@ -161,27 +146,27 @@ Define interfaces per use case, not per implementation:
 ```go
 // Define interfaces where they're used (consumer side)
 
-// package user
+// package beneficiary
 type UserStore interface {
-    FindByID(id string) (*User, error)
-    Save(u *User) error
+    FindByID(id string) (*Beneficiary, error)
+    Save(u *Beneficiary) error
 }
 
 // package admin
 type AdminStore interface {
-    FindByID(id string) (*User, error)
-    Save(u *User) error
+    FindByID(id string) (*Beneficiary, error)
+    Save(u *Beneficiary) error
     Delete(id string) error
-    List() ([]*User, error)
+    List() ([]*Beneficiary, error)
 }
 
 // package database implements both
 type PostgresDB struct{}
 
-func (db *PostgresDB) FindByID(id string) (*User, error) { return nil, nil }
-func (db *PostgresDB) Save(u *User) error                { return nil }
+func (db *PostgresDB) FindByID(id string) (*Beneficiary, error) { return nil, nil }
+func (db *PostgresDB) Save(u *Beneficiary) error                { return nil }
 func (db *PostgresDB) Delete(id string) error            { return nil }
-func (db *PostgresDB) List() ([]*User, error)            { return nil, nil }
+func (db *PostgresDB) List() ([]*Beneficiary, error)            { return nil, nil }
 ```
 
 **Benefits**:
@@ -613,8 +598,8 @@ func main() {
 
 ```go
 // Good: Interface for abstraction
-func SaveUser(store UserStore, user *User) error {
-    return store.Save(user)
+func SaveUser(store UserStore, beneficiary *Beneficiary) error {
+    return store.Save(beneficiary)
 }
 
 // Good: Interface for testing
@@ -632,7 +617,7 @@ func Notify(notifier Notifier, message string) {
 
 ```go
 // Good: Concrete type for data
-type User struct {
+type Beneficiary struct {
     ID    string
     Email string
     Name  string
@@ -655,14 +640,14 @@ func FormatDate(t time.Time) string {
 ```go
 // Bad: Unnecessary interface
 type UserGetter interface {
-    GetUser(id string) (*User, error)
+    GetUser(id string) (*Beneficiary, error)
 }
 
 type UserService struct{}
 
-func (s *UserService) GetUser(id string) (*User, error) {
+func (s *UserService) GetUser(id string) (*Beneficiary, error) {
     // Implementation
-    return &User{}, nil
+    return &Beneficiary{}, nil
 }
 
 // If there's only one implementation and no need for mocking,
@@ -671,8 +656,8 @@ func (s *UserService) GetUser(id string) (*User, error) {
 // Good: Use concrete type directly
 type UserService struct{}
 
-func (s *UserService) GetUser(id string) (*User, error) {
-    return &User{}, nil
+func (s *UserService) GetUser(id string) (*Beneficiary, error) {
+    return &Beneficiary{}, nil
 }
 ```
 
@@ -1003,15 +988,15 @@ type Repository interface {
 ### 2. Define Interfaces at Use Site
 
 ```go
-// package user (consumer)
+// package beneficiary (consumer)
 type UserStore interface {
-    FindByID(id string) (*User, error)
+    FindByID(id string) (*Beneficiary, error)
 }
 
 // package postgres (implementation)
 type DB struct{}
 
-func (db *DB) FindByID(id string) (*User, error) {
+func (db *DB) FindByID(id string) (*Beneficiary, error) {
     // Implementation
     return nil, nil
 }
@@ -1097,5 +1082,5 @@ type ReadCloser interface {
 
 ---
 
-**Last Updated**: 2026-01-22
-**Go Version**: 1.18+ (generics and any alias)
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

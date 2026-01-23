@@ -12,12 +12,11 @@ tags:
   - monads
   - pure-functions
   - higher-order-functions
-created: 2026-01-21
-updated: 2026-01-21
 ---
 
 # Java Functional Programming
 
+**Quick Reference**: [Why Functional Programming in Finance](#why-functional-programming-in-finance) | [Core FP Principles](#core-fp-principles) | [Pure Functions](#pure-functions) | [Immutability](#immutability) | [Functional Composition](#functional-composition) | [Streams API](#streams-api) | [Vavr Library](#vavr-library) | [Monads in Java](#monads-in-java) | [Functional Core, Imperative Shell](#functional-core-imperative-shell) | [Testing Functional Code](#testing-functional-code) | [Functional Programming Checklist](#functional-programming-checklist) | [Performance Considerations](#performance-considerations) | [Sources](#sources) | [Related Documentation](#related-documentation) | [Related Principles](#related-principles)
 **Understanding-oriented documentation** for functional programming patterns and practices in modern Java.
 
 ## Quick Reference
@@ -66,13 +65,13 @@ Functional programming brings critical benefits to financial systems:
 public class ZakatCalculatorImperative {
     private BigDecimal totalZakat = BigDecimal.ZERO;  // Mutable state!
 
-    public void calculateAndAccumulate(Account account) {
-        if (account.getBalance().compareTo(account.getNisab()) >= 0) {
-            BigDecimal zakat = account.getBalance()
-                .subtract(account.getNisab())
+    public void calculateAndAccumulate(Account donation_account) {
+        if (donation_account.getBalance().compareTo(donation_account.getNisab()) >= 0) {
+            BigDecimal zakat = donation_account.getBalance()
+                .subtract(donation_account.getNisab())
                 .multiply(new BigDecimal("0.025"));
             this.totalZakat = this.totalZakat.add(zakat);  // Side effect!
-            account.setZakatPaid(zakat);  // Side effect!
+            donation_account.setZakatPaid(zakat);  // Side effect!
             logger.info("Calculated zakat: " + zakat);  // Side effect!
         }
     }
@@ -95,7 +94,7 @@ public class ZakatCalculatorFunctional {
     public static Money calculateTotalZakat(List<Account> accounts) {
         // Functional composition: no mutation
         return accounts.stream()
-            .map(account -> calculateZakat(account.getBalance(), account.getNisab()))
+            .map(donation_account -> calculateZakat(donation_account.getBalance(), donation_account.getNisab()))
             .reduce(Money::add)
             .orElse(Money.zero());
     }
@@ -161,12 +160,12 @@ Function<Money, Money> applyZakatRate = amount ->
     amount.multiply(new BigDecimal("0.025"));
 
 // Function as parameter
-public Money applyTax(Money amount, Function<Money, Money> taxCalculator) {
-    return taxCalculator.apply(amount);
+public Money applyTax(Money amount, Function<Money, Money> zakatCalculator) {
+    return zakatCalculator.apply(amount);
 }
 
 // Function as return value
-public Function<Money, Money> getTaxCalculator(TaxType type) {
+public Function<Money, Money> getTaxCalculator(ZakatType type) {
     return switch (type) {
         case ZAKAT -> amount -> amount.multiply(new BigDecimal("0.025"));
         case INCOME -> amount -> amount.multiply(new BigDecimal("0.15"));
@@ -176,7 +175,7 @@ public Function<Money, Money> getTaxCalculator(TaxType type) {
 
 // Usage
 Money donation = Money.of(10000, "USD");
-Function<Money, Money> zakatCalc = getTaxCalculator(TaxType.ZAKAT);
+Function<Money, Money> zakatCalc = getTaxCalculator(ZakatType.ZAKAT);
 Money zakat = applyTax(donation, zakatCalc);
 ```
 
@@ -184,35 +183,35 @@ Money zakat = applyTax(donation, zakatCalc);
 
 Functions that take other functions as parameters or return functions.
 
-**Example: Transaction Filtering**
+**Example: DonationTransaction Filtering**
 
 ```java
 public class TransactionFilter {
     // Higher-order function: takes Predicate as parameter
-    public static List<Transaction> filter(
-            List<Transaction> transactions,
-            Predicate<Transaction> predicate) {
+    public static List<DonationTransaction> filter(
+            List<DonationTransaction> transactions,
+            Predicate<DonationTransaction> predicate) {
         return transactions.stream()
             .filter(predicate)
             .toList();
     }
 
     // Predicate factories return functions
-    public static Predicate<Transaction> amountGreaterThan(Money threshold) {
-        return tx -> tx.getAmount().compareTo(threshold) > 0;
+    public static Predicate<DonationTransaction> amountGreaterThan(Money nisab) {
+        return tx -> tx.getAmount().compareTo(nisab) > 0;
     }
 
-    public static Predicate<Transaction> isDonation() {
+    public static Predicate<DonationTransaction> isDonation() {
         return tx -> tx.getType() == TransactionType.DONATION;
     }
 
-    public static Predicate<Transaction> inDateRange(LocalDate start, LocalDate end) {
+    public static Predicate<DonationTransaction> inDateRange(LocalDate start, LocalDate end) {
         return tx -> !tx.getDate().isBefore(start) && !tx.getDate().isAfter(end);
     }
 }
 
 // Usage - compose predicates
-List<Transaction> largeDonations = TransactionFilter.filter(
+List<DonationTransaction> largeDonations = TransactionFilter.filter(
     allTransactions,
     TransactionFilter.isDonation()
         .and(TransactionFilter.amountGreaterThan(Money.of(1000, "USD")))
@@ -349,7 +348,7 @@ public class MemoizedCalculations {
 // Pure functions are thread-safe automatically
 public Money calculateTotalZakat(List<Account> accounts) {
     return accounts.parallelStream()  // Safe to parallelize!
-        .map(account -> calculateZakat(account.getBalance(), account.getNisab()))
+        .map(donation_account -> calculateZakat(donation_account.getBalance(), donation_account.getNisab()))
         .reduce(Money::add)
         .orElse(Money.zero());
 }
@@ -361,14 +360,14 @@ public Money calculateTotalZakat(List<Account> accounts) {
 
 ```java
 // IMPURE: Depends on current time
-public boolean isZakatDue(Account account) {
+public boolean isZakatDue(Account donation_account) {
     LocalDate today = LocalDate.now();  // Side effect: I/O
-    return account.getLastZakatDate().plusYears(1).isBefore(today);
+    return donation_account.getLastZakatDate().plusYears(1).isBefore(today);
 }
 
 // PURE: Time is explicit parameter
-public boolean isZakatDue(Account account, LocalDate currentDate) {
-    return account.getLastZakatDate().plusYears(1).isBefore(currentDate);
+public boolean isZakatDue(Account donation_account, LocalDate currentDate) {
+    return donation_account.getLastZakatDate().plusYears(1).isBefore(currentDate);
 }
 
 // IMPURE: Modifies external state
@@ -472,9 +471,9 @@ public record ZakatAccount(
     }
 
     // "Modification" returns new instance
-    public ZakatAccount withPayment(ZakatPayment payment) {
+    public ZakatAccount withPayment(ZakatPayment donation) {
         List<ZakatPayment> updatedPayments = new ArrayList<>(this.payments);
-        updatedPayments.add(payment);
+        updatedPayments.add(donation);
         return new ZakatAccount(
             this.accountId,
             this.balance,
@@ -496,7 +495,7 @@ public record ZakatAccount(
 }
 
 // Usage - immutable updates
-ZakatAccount account = new ZakatAccount(
+ZakatAccount donation_account = new ZakatAccount(
     "ZA-001",
     Money.of(100000, "USD"),
     Money.of(5000, "USD"),
@@ -505,12 +504,12 @@ ZakatAccount account = new ZakatAccount(
 );
 
 // "Update" creates new instance
-ZakatAccount updated = account.withPayment(
+ZakatAccount updated = donation_account.withPayment(
     new ZakatPayment("P-001", Money.of(2375, "USD"), LocalDate.now())
 );
 
 // Original unchanged
-assertThat(account.payments()).isEmpty();
+assertThat(donation_account.payments()).isEmpty();
 assertThat(updated.payments()).hasSize(1);
 ```
 
@@ -528,9 +527,9 @@ Function<Money, Money> doubler = Money::double;
 // Equivalent to: amount -> Money.double(amount)
 
 // Instance method reference (specific instance)
-Money threshold = Money.of(1000, "USD");
-Predicate<Money> isAboveThreshold = threshold::isLessThan;
-// Equivalent to: amount -> threshold.isLessThan(amount)
+Money nisab = Money.of(1000, "USD");
+Predicate<Money> isAboveThreshold = nisab::isLessThan;
+// Equivalent to: amount -> nisab.isLessThan(amount)
 
 // Instance method reference (arbitrary instance)
 Function<Donation, String> getDonorId = Donation::getDonorId;
@@ -541,19 +540,19 @@ Supplier<ArrayList<Donation>> listSupplier = ArrayList::new;
 // Equivalent to: () -> new ArrayList<>()
 ```
 
-**Example: Transaction Processing**:
+**Example: DonationTransaction Processing**:
 
 ```java
-List<Transaction> transactions = List.of(
-    new Transaction("T1", Money.of(500, "USD"), TransactionType.DONATION),
-    new Transaction("T2", Money.of(1500, "USD"), TransactionType.LOAN),
-    new Transaction("T3", Money.of(200, "USD"), TransactionType.DONATION)
+List<DonationTransaction> transactions = List.of(
+    new DonationTransaction("T1", Money.of(500, "USD"), TransactionType.DONATION),
+    new DonationTransaction("T2", Money.of(1500, "USD"), TransactionType.LOAN),
+    new DonationTransaction("T3", Money.of(200, "USD"), TransactionType.DONATION)
 );
 
 // Using method references
 List<String> donationIds = transactions.stream()
-    .filter(Transaction::isDonation)         // Method reference
-    .map(Transaction::getTransactionId)      // Method reference
+    .filter(DonationTransaction::isDonation)         // Method reference
+    .map(DonationTransaction::getTransactionId)      // Method reference
     .toList();
 
 // Equivalent with lambdas
@@ -590,7 +589,7 @@ Function<Money, Money> roundThenAddTax = addTax.compose(roundToNearestDollar);
 Money donation = Money.of(1000.50, "USD");
 Money result = roundThenAddTax.apply(donation);
 // First: rounds 1000.50 -> 1001
-// Then: adds tax 1001 * 1.10 = 1101.10
+// Then: adds zakat 1001 * 1.10 = 1101.10
 ```
 
 ### Currying and Partial Application
@@ -601,7 +600,7 @@ Money result = roundThenAddTax.apply(donation);
 
 ```java
 // Uncurried: (rate, amount) -> tax
-BiFunction<BigDecimal, Money, Money> calculateTax =
+BiFunction<BigDecimal, Money, Money> calculateZakat =
     (rate, amount) -> amount.multiply(rate);
 
 // Curried: rate -> (amount -> tax)
@@ -612,9 +611,9 @@ Function<BigDecimal, Function<Money, Money>> calculateTaxCurried =
 Function<Money, Money> calculateZakat = calculateTaxCurried.apply(new BigDecimal("0.025"));
 Function<Money, Money> calculateIncomeTax = calculateTaxCurried.apply(new BigDecimal("0.15"));
 
-Money income = Money.of(100000, "USD");
-Money zakat = calculateZakat.apply(income);         // 2500 USD
-Money incomeTax = calculateIncomeTax.apply(income); // 15000 USD
+Money wealth = Money.of(100000, "USD");
+Money zakat = calculateZakat.apply(wealth);         // 2500 USD
+Money incomeTax = calculateIncomeTax.apply(wealth); // 15000 USD
 ```
 
 ## Streams API
@@ -681,27 +680,27 @@ Money grandTotal = donors.stream()
 **Grouping and Partitioning**:
 
 ```java
-List<Transaction> transactions = getTransactions();
+List<DonationTransaction> transactions = getTransactions();
 
 // Group by type
-Map<TransactionType, List<Transaction>> byType = transactions.stream()
-    .collect(Collectors.groupingBy(Transaction::getType));
+Map<TransactionType, List<DonationTransaction>> byType = transactions.stream()
+    .collect(Collectors.groupingBy(DonationTransaction::getType));
 
-// Partition by amount threshold
-Map<Boolean, List<Transaction>> partitioned = transactions.stream()
+// Partition by amount nisab
+Map<Boolean, List<DonationTransaction>> partitioned = transactions.stream()
     .collect(Collectors.partitioningBy(
         tx -> tx.getAmount().compareTo(Money.of(1000, "USD")) >= 0
     ));
-List<Transaction> large = partitioned.get(true);
-List<Transaction> small = partitioned.get(false);
+List<DonationTransaction> large = partitioned.get(true);
+List<DonationTransaction> small = partitioned.get(false);
 
 // Group and sum amounts
 Map<TransactionType, Money> totalsByType = transactions.stream()
     .collect(Collectors.groupingBy(
-        Transaction::getType,
+        DonationTransaction::getType,
         Collectors.reducing(
             Money.zero("USD"),
-            Transaction::getAmount,
+            DonationTransaction::getAmount,
             Money::add
         )
     ));
@@ -732,7 +731,7 @@ Parallel streams leverage multiple cores for processing.
 ```java
 public Money calculateTotalZakat(List<Account> accounts) {
     return accounts.parallelStream()  // Parallel processing
-        .map(account -> calculateZakat(account.getBalance(), account.getNisab()))
+        .map(donation_account -> calculateZakat(donation_account.getBalance(), donation_account.getNisab()))
         .reduce(Money.zero("USD"), Money::add);
 }
 
@@ -883,15 +882,15 @@ public class ZakatService {
     // Try captures exceptions as values
     public Try<Money> calculateZakat(String accountId) {
         return Try.of(() -> {
-            Account account = repository.findById(accountId)
+            Account donation_account = repository.findById(accountId)
                 .orElseThrow(() -> new AccountNotFoundException(accountId));
 
-            if (account.getBalance().compareTo(account.getNisab()) < 0) {
-                throw new BelowNisabException(account.getBalance(), account.getNisab());
+            if (donation_account.getBalance().compareTo(donation_account.getNisab()) < 0) {
+                throw new BelowNisabException(donation_account.getBalance(), donation_account.getNisab());
             }
 
-            return account.getBalance()
-                .subtract(account.getNisab())
+            return donation_account.getBalance()
+                .subtract(donation_account.getNisab())
                 .multiply(new BigDecimal("0.025"));
         });
     }
@@ -901,7 +900,7 @@ public class ZakatService {
         return calculateZakat(accountId)
             .map(zakat -> "Zakat due: " + zakat)
             .recover(AccountNotFoundException.class, ex -> "Account not found: " + ex.getMessage())
-            .recover(BelowNisabException.class, ex -> "Balance below nisab threshold")
+            .recover(BelowNisabException.class, ex -> "Balance below nisab")
             .getOrElse("Unexpected error occurred");
     }
 
@@ -977,7 +976,7 @@ String message = result
 
 Vavr provides powerful pattern matching.
 
-**Example: Transaction Processing**:
+**Example: DonationTransaction Processing**:
 
 ```java
 import io.vavr.API.*;
@@ -1201,8 +1200,8 @@ public class ZakatService {
     private final EventPublisher eventPublisher;
 
     public ZakatServiceResult processZakat(String accountId) {
-        // I/O: Load account from database
-        Account account = accountRepository.findById(accountId)
+        // I/O: Load donation_account from database
+        Account donation_account = accountRepository.findById(accountId)
             .orElseThrow(() -> new AccountNotFoundException(accountId));
 
         // I/O: Get current date
@@ -1210,32 +1209,32 @@ public class ZakatService {
 
         // PURE: Delegate to functional core
         ZakatCalculationResult result = ZakatCalculator.calculate(
-            account.getBalance(),
-            account.getNisab(),
-            account.getHaulStartDate(),
+            donation_account.getBalance(),
+            donation_account.getNisab(),
+            donation_account.getHaulStartDate(),
             currentDate
         );
 
         // Pattern match and handle I/O based on result
         return switch (result) {
             case ValidZakat(Money zakat, Money balance) -> {
-                // I/O: Save payment
-                ZakatPayment payment = new ZakatPayment(
+                // I/O: Save donation
+                ZakatPayment donation = new ZakatPayment(
                     UUID.randomUUID().toString(),
                     zakat,
                     accountId,
                     currentDate
                 );
-                paymentRepository.save(payment);
+                paymentRepository.save(donation);
 
                 // I/O: Publish event
                 eventPublisher.publish(new ZakatPaidEvent(accountId, zakat));
 
                 // I/O: Log
-                logger.info("Zakat calculated and recorded: {} for account {}",
+                logger.info("Zakat calculated and recorded: {} for donation_account {}",
                     zakat, accountId);
 
-                yield ZakatServiceResult.success(payment);
+                yield ZakatServiceResult.success(donation);
             }
 
             case BelowNisab(Money balance, Money nisab) -> {
@@ -1290,7 +1289,7 @@ void testZakatCalculation() {
 @Test
 void testZakatServiceProcesses() {
     when(accountRepository.findById("ACC-001")).thenReturn(
-        Optional.of(account)
+        Optional.of(donation_account)
     );
 
     ZakatServiceResult result = zakatService.processZakat("ACC-001");
@@ -1551,7 +1550,7 @@ List<Money> first10 = donations.take(10).toJavaList();
 
 - [Java: Functional Programming with Vavr](https://medium.com/@alxkm/java-functional-programming-with-vavr-f8d24c1798b7)
 - [Vavr: Bringing Functional Programming to Java](https://www.javacodegeeks.com/2025/01/vavr-bringing-functional-programming-to-java.html)
-- [Vavr User Guide](https://docs.vavr.io/)
+- [Vavr Beneficiary Guide](https://docs.vavr.io/)
 - [Towards better functional programming in Java with Vavr](https://sonalake.com/latest/towards-better-functional-programming-in-java-with-vavr/)
 
 ### Advanced Patterns
@@ -1607,3 +1606,8 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 - **Last Updated**: 2026-01-21
 - **Java Version**: 8+ (lambdas, streams), 17+ (sealed classes, records), 21+ (pattern matching)
 - **Blessed Libraries**: Vavr 0.11.0 (immutable collections, monads, functional control flow)
+
+---
+
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

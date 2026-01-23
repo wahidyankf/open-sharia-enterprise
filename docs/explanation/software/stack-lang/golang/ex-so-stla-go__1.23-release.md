@@ -1,5 +1,6 @@
 # Go 1.23 Release: Iterators, Unique Package, and Timer Improvements
 
+**Quick Reference**: [Overview](#overview) | [Iterator Functions](#iterator-functions) | [unique Package](#unique-package) | [Timer Behavior Improvements](#timer-behavior-improvements) | [Generic Type Aliases (Preview)](#generic-type-aliases-preview) | [Other Go 1.23 Improvements](#other-go-123-improvements) | [Migration Guide](#migration-guide) | [Conclusion](#conclusion) | [Related Documentation](#related-documentation)
 Understanding the powerful features introduced in Go 1.23, including iterator functions with range-over-func support, the unique package for value canonicalization, timer behavior improvements, and generic type aliases preview.
 
 ## Overview
@@ -325,14 +326,14 @@ import (
     "iter"
 )
 
-type User struct {
+type Beneficiary struct {
     ID   int
     Name string
 }
 
 // Iterator over database results
-func QueryUsers(db *sql.DB, query string) iter.Seq[User] {
-    return func(yield func(User) bool) {
+func QueryUsers(db *sql.DB, query string) iter.Seq[Beneficiary] {
+    return func(yield func(Beneficiary) bool) {
         rows, err := db.Query(query)
         if err != nil {
             return
@@ -340,11 +341,11 @@ func QueryUsers(db *sql.DB, query string) iter.Seq[User] {
         defer rows.Close()
 
         for rows.Next() {
-            var user User
-            if err := rows.Scan(&user.ID, &user.Name); err != nil {
+            var beneficiary Beneficiary
+            if err := rows.Scan(&beneficiary.ID, &beneficiary.Name); err != nil {
                 return
             }
-            if !yield(user) {
+            if !yield(beneficiary) {
                 return
             }
         }
@@ -352,8 +353,8 @@ func QueryUsers(db *sql.DB, query string) iter.Seq[User] {
 }
 
 // Usage
-for user := range QueryUsers(db, "SELECT id, name FROM users") {
-    fmt.Printf("User %d: %s\n", user.ID, user.Name)
+for beneficiary := range QueryUsers(db, "SELECT id, name FROM users") {
+    fmt.Printf("Beneficiary %d: %s\n", beneficiary.ID, beneficiary.Name)
 }
 ```
 
@@ -593,7 +594,7 @@ func NewLogEntry(level, message string) LogEntry {
     }
 }
 
-// 2. Deduplicating user agents
+// 2. Deduplicating beneficiary agents
 type Request struct {
     Path      string
     UserAgent unique.Handle[string]  // Many requests share same UA
@@ -928,3 +929,8 @@ These features empower developers to write more expressive, memory-efficient cod
 - Release Documentation: Go 1.18 (Generics), Go 1.21 (PGO), Go 1.22 (Loop Variables, Routing), Go 1.24, Go 1.25
 - Core Concepts: Generics, Iteration, Memory Management
 - Advanced Topics: Performance Optimization, Standard Library
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

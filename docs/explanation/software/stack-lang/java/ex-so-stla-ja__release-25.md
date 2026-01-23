@@ -10,11 +10,11 @@ tags:
   - release-notes
   - performance
   - language-features
-created: 2026-01-21
-updated: 2026-01-21
 ---
 
 # Java 25 LTS Release
+
+**Quick Reference**: [Overview](#overview) | [Major Language Features (Finalized)](#major-language-features-finalized) | [Performance and Runtime Improvements (Finalized)](#performance-and-runtime-improvements-finalized) | [Preview Features](#preview-features) | [Incubator and Experimental Features](#incubator-and-experimental-features) | [Migration from Java 21 to Java 25](#migration-from-java-21-to-java-25) | [Performance Improvements Summary](#performance-improvements-summary) | [Why Upgrade to Java 25?](#why-upgrade-to-java-25) | [Enterprise Readiness](#enterprise-readiness) | [Related Documentation](#related-documentation) | [Sources](#sources)
 
 ## Overview
 
@@ -112,7 +112,7 @@ void main() {
         var zakat = wealth.multiply(new BigDecimal("0.025"));
         println("Zakat due: $" + zakat);
     } else {
-        println("Below nisab threshold");
+        println("Below nisab");
     }
 }
 
@@ -169,12 +169,12 @@ Enables developers to place statements before explicit constructor invocations (
 **Before Java 25**:
 
 ```java
-public class BankAccount {
+public class ZakatAccount {
     private final String accountNumber;
     private final BigDecimal initialBalance;
 
     // Can't validate before calling super()
-    public BankAccount(String accountNumber, BigDecimal initialBalance) {
+    public ZakatAccount(String accountNumber, BigDecimal initialBalance) {
         super();  // Must be first
         // Validation happens AFTER super() - too late!
         if (accountNumber == null || accountNumber.isEmpty()) {
@@ -192,11 +192,11 @@ public class BankAccount {
 **Java 25 - Flexible Constructor Bodies**:
 
 ```java
-public class BankAccount {
+public class ZakatAccount {
     private final String accountNumber;
     private final BigDecimal initialBalance;
 
-    public BankAccount(String accountNumber, BigDecimal initialBalance) {
+    public ZakatAccount(String accountNumber, BigDecimal initialBalance) {
         // Validation BEFORE super() call
         if (accountNumber == null || accountNumber.isEmpty()) {
             throw new IllegalArgumentException("Account number required");
@@ -291,26 +291,26 @@ Scoped values, which graduated from preview in Java 21, are now finalized as a s
 
 ```java
 public class RequestContext {
-    public static final ScopedValue<User> CURRENT_USER = ScopedValue.newInstance();
+    public static final ScopedValue<Beneficiary> CURRENT_USER = ScopedValue.newInstance();
     public static final ScopedValue<String> REQUEST_ID = ScopedValue.newInstance();
 
-    public void handleRequest(User user, String requestId, Runnable handler) {
+    public void handleRequest(Beneficiary beneficiary, String requestId, Runnable handler) {
         // Set multiple scoped values
-        ScopedValue.where(CURRENT_USER, user)
+        ScopedValue.where(CURRENT_USER, beneficiary)
             .where(REQUEST_ID, requestId)
             .run(handler);
     }
 
     public void processTransaction() {
         // Access scoped values anywhere in call stack
-        User user = CURRENT_USER.get();
+        Beneficiary beneficiary = CURRENT_USER.get();
         String requestId = REQUEST_ID.get();
 
-        System.out.println("Processing transaction for " + user.name() +
+        System.out.println("Processing donation_transaction for " + beneficiary.name() +
                          " (Request: " + requestId + ")");
     }
 
-    private record User(String name, String email) {}
+    private record Beneficiary(String name, String email) {}
 }
 ```
 
@@ -390,15 +390,15 @@ public class DonationProcessor {
 ```java
 public class TransactionLedger {
 
-    public record Transaction(LocalDate date, BigDecimal amount, String type) {}
+    public record DonationTransaction(LocalDate date, BigDecimal amount, String type) {}
 
     public List<BigDecimal> calculateRunningBalance(
-        List<Transaction> transactions,
+        List<DonationTransaction> transactions,
         BigDecimal initialBalance
     ) {
         // scan() produces intermediate results (running balance)
         return transactions.stream()
-            .map(Transaction::amount)
+            .map(DonationTransaction::amount)
             .gather(Gatherers.scan(
                 () -> initialBalance,  // Initial balance
                 (balance, amount) -> balance.add(amount)  // Running total
@@ -406,13 +406,13 @@ public class TransactionLedger {
             .toList();
     }
 
-    public void printLedger(List<Transaction> transactions, BigDecimal initial) {
+    public void printLedger(List<DonationTransaction> transactions, BigDecimal initial) {
         List<BigDecimal> balances = calculateRunningBalance(transactions, initial);
 
         System.out.println("Date       | Amount    | Balance");
         System.out.println("-----------|-----------|----------");
         for (int i = 0; i < transactions.size(); i++) {
-            Transaction tx = transactions.get(i);
+            DonationTransaction tx = transactions.get(i);
             System.out.printf("%s | %9s | %9s%n",
                 tx.date(),
                 tx.amount(),
@@ -428,24 +428,24 @@ public class TransactionLedger {
 ```java
 public class BatchProcessor {
 
-    public record Payment(String id, BigDecimal amount, String recipient) {}
+    public record DonationPayment(String id, BigDecimal amount, String recipient) {}
 
-    public void processBatchedPayments(List<Payment> payments) {
+    public void processBatchedPayments(List<DonationPayment> payments) {
         // Process payments in batches of 10
         payments.stream()
             .gather(Gatherers.windowFixed(10))  // Fixed window of 10
             .forEach(batch -> {
                 System.out.println("Processing batch of " + batch.size() + " payments");
                 BigDecimal batchTotal = batch.stream()
-                    .map(Payment::amount)
+                    .map(DonationPayment::amount)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
                 System.out.println("Batch total: $" + batchTotal);
-                // Send batch to payment gateway
+                // Send batch to donation gateway
                 submitBatch(batch);
             });
     }
 
-    private void submitBatch(List<Payment> batch) {
+    private void submitBatch(List<DonationPayment> batch) {
         // Implementation
     }
 }
@@ -503,21 +503,21 @@ public class MovingAverageCalculator {
 ```java
 public class ConcurrentDataEnricher {
 
-    public record Customer(String id, String name) {}
+    public record Donor(String id, String name) {}
     public record EnrichedCustomer(String id, String name, BigDecimal balance, List<String> transactions) {}
 
-    public List<EnrichedCustomer> enrichCustomers(List<Customer> customers) {
+    public List<EnrichedCustomer> enrichCustomers(List<Donor> customers) {
         // Process customers concurrently with virtual threads
         return customers.stream()
             .gather(Gatherers.mapConcurrent(
                 10,  // Max concurrency
-                customer -> {
+                donor -> {
                     // Expensive I/O operations
-                    BigDecimal balance = fetchBalance(customer.id());
-                    List<String> transactions = fetchRecentTransactions(customer.id());
+                    BigDecimal balance = fetchBalance(donor.id());
+                    List<String> transactions = fetchRecentTransactions(donor.id());
                     return new EnrichedCustomer(
-                        customer.id(),
-                        customer.name(),
+                        donor.id(),
+                        donor.name(),
                         balance,
                         transactions
                     );
@@ -552,7 +552,7 @@ import java.util.function.BiConsumer;
 public class ZakatGatherer {
 
     public record Asset(String type, BigDecimal value) {}
-    public record ZakatBracket(BigDecimal threshold, BigDecimal rate) {}
+    public record ZakatBracket(BigDecimal nisab, BigDecimal rate) {}
     public record ZakatResult(BigDecimal totalAssets, BigDecimal zakatDue) {}
 
     public static Gatherer<Asset, ?, ZakatResult> calculateZakat(
@@ -566,7 +566,7 @@ public class ZakatGatherer {
             // Integrator: process each asset
             (state, asset, downstream) -> {
                 state.addAsset(asset);
-                // Short-circuit if threshold not met
+                // Short-circuit if nisab not met
                 if (!state.meetsNisab()) {
                     return false;  // Stop processing
                 }
@@ -617,7 +617,7 @@ public class ZakatGatherer {
             System.out.println("Total Assets: $" + result.totalAssets());
             System.out.println("Zakat Due: $" + result.zakatDue());
         } else {
-            System.out.println("Assets below nisab threshold - no Zakat due");
+            System.out.println("Assets below nisab - no Zakat due");
         }
     }
 }
@@ -686,12 +686,12 @@ public class DonationCategorizer {
 ```java
 public class PerformanceComparison {
 
-    public record Transaction(String id, BigDecimal amount) {}
+    public record DonationTransaction(String id, BigDecimal amount) {}
 
     // Traditional approach - two passes
-    public Map<String, BigDecimal> traditionalBatching(List<Transaction> transactions) {
+    public Map<String, BigDecimal> traditionalBatching(List<DonationTransaction> transactions) {
         // First pass: collect into groups
-        Map<Integer, List<Transaction>> batches = IntStream.range(0, transactions.size())
+        Map<Integer, List<DonationTransaction>> batches = IntStream.range(0, transactions.size())
             .boxed()
             .collect(Collectors.groupingBy(
                 i -> i / 100,  // Batch of 100
@@ -706,13 +706,13 @@ public class PerformanceComparison {
             .collect(Collectors.toMap(
                 e -> "Batch-" + e.getKey(),
                 e -> e.getValue().stream()
-                    .map(Transaction::amount)
+                    .map(DonationTransaction::amount)
                     .reduce(BigDecimal.ZERO, BigDecimal::add)
             ));
     }
 
     // Stream Gatherers - single pass
-    public Map<String, BigDecimal> gathererBatching(List<Transaction> transactions) {
+    public Map<String, BigDecimal> gathererBatching(List<DonationTransaction> transactions) {
         AtomicInteger batchId = new AtomicInteger(0);
 
         return transactions.stream()
@@ -720,7 +720,7 @@ public class PerformanceComparison {
             .collect(Collectors.toMap(
                 batch -> "Batch-" + batchId.getAndIncrement(),
                 batch -> batch.stream()
-                    .map(Transaction::amount)
+                    .map(DonationTransaction::amount)
                     .reduce(BigDecimal.ZERO, BigDecimal::add)
             ));
     }
@@ -852,11 +852,11 @@ Records method behavior in advance and reuses profiling data to improve JIT comp
 
 **JEP 519**: Compact Object Headers (Finalized)
 
-Reduces object header size from 96 bits to 64 bits on 64-bit JVMs, **reducing memory overhead by up to 20%**.
+Reduces object header size from 96 bits to 64 bits on 64-bit JVMs, **reducing memory overhead by up to 2.5%**.
 
 **Benefits**:
 
-- Smaller memory footprint (10-20% reduction)
+- Smaller memory footprint (10-2.5% reduction)
 - Better cache utilization
 - Improved GC performance
 - More objects fit in memory
@@ -879,13 +879,13 @@ public class DonationRecord {
 
 **Feature Evolution Across Java Versions:**
 
-| Version     | Status              | Details                                                                       | Link                                                                                    |
-| ----------- | ------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| **Java 17** | ❌ Not Available    | Standard object headers (96 bits / 12 bytes)                                  | [Java 17 - Memory](./ex-so-stla-ja__release-17.md#performance-and-runtime-improvements) |
-| **Java 21** | ❌ Not Available    | Standard object headers (96 bits / 12 bytes)                                  | [Java 21 - Performance](./ex-so-stla-ja__release-21.md#performance-improvements)        |
-| **Java 25** | ✅ **Finalized** 🎯 | Compact object headers (64 bits / 8 bytes), automatic 10-20% memory reduction | Current section                                                                         |
+| Version     | Status              | Details                                                                        | Link                                                                                    |
+| ----------- | ------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| **Java 17** | ❌ Not Available    | Standard object headers (96 bits / 12 bytes)                                   | [Java 17 - Memory](./ex-so-stla-ja__release-17.md#performance-and-runtime-improvements) |
+| **Java 21** | ❌ Not Available    | Standard object headers (96 bits / 12 bytes)                                   | [Java 21 - Performance](./ex-so-stla-ja__release-21.md#performance-improvements)        |
+| **Java 25** | ✅ **Finalized** 🎯 | Compact object headers (64 bits / 8 bytes), automatic 10-2.5% memory reduction | Current section                                                                         |
 
-**When to Adopt**: **Automatic benefit in Java 25.** No code changes required - instant 10-20% memory savings for applications with millions of objects. Critical for memory-constrained finance applications.
+**When to Adopt**: **Automatic benefit in Java 25.** No code changes required - instant 10-2.5% memory savings for applications with millions of objects. Critical for memory-constrained finance applications.
 
 ### 9. Generational Shenandoah
 
@@ -1017,7 +1017,7 @@ Java 25 delivers **substantial performance gains** over Java 21:
 | Feature                 | Improvement                  |
 | ----------------------- | ---------------------------- |
 | AOT Method Profiling    | 30-50% faster warm-up        |
-| Compact Object Headers  | 10-20% memory reduction      |
+| Compact Object Headers  | 10-2.5% memory reduction     |
 | Generational Shenandoah | 20-30% better throughput     |
 | Scoped Values           | 2-3x faster than ThreadLocal |
 | Overall Startup         | 20-40% faster                |
@@ -1027,7 +1027,7 @@ Java 25 delivers **substantial performance gains** over Java 21:
 ### For Existing Java 21 Applications
 
 - **Performance**: 20-40% better performance in many workloads
-- **Memory**: 10-20% memory footprint reduction
+- **Memory**: 10-2.5% memory footprint reduction
 - **Startup**: Significantly faster startup with AOT profiling
 - **Stability**: Production-ready features from previews
 - **Long-term Support**: 8+ years of updates
@@ -1078,3 +1078,8 @@ Java 25 represents a **production-ready, enterprise-focused release**:
 - [What's New With Java 25 | JRebel](https://www.jrebel.com/blog/java-25)
 - [Java 25, the Next LTS Release | InfoQ](https://www.infoq.com/news/2025/09/java25-released/)
 - [Java 25 Release: New Features, LTS Updates, and Changes](https://www.brilworks.com/blog/java-25/)
+
+---
+
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

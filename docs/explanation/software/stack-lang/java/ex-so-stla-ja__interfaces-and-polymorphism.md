@@ -14,12 +14,11 @@ tags:
   - java-17
   - java-21
   - java-25
-created: 2026-01-22
-updated: 2026-01-22
 ---
 
 # Java Interfaces and Polymorphism
 
+**Quick Reference**: [Overview](#overview) | [Interface Design Principles](#interface-design-principles) | [Modern Interface Features](#modern-interface-features) | [Sealed Interfaces](#sealed-interfaces) | [Polymorphism Patterns](#polymorphism-patterns) | [Composition Over Inheritance](#composition-over-inheritance) | [Marker Interfaces](#marker-interfaces) | [Testing with Interfaces](#testing-with-interfaces) | [Performance Considerations](#performance-considerations) | [Interface Design Checklist](#interface-design-checklist) | [Principle-to-Feature Mapping](#principle-to-feature-mapping) | [Sources](#sources) | [Related Documentation](#related-documentation)
 **Understanding-oriented documentation** for Java's explicit interface-based polymorphism, composition over inheritance, and modern interface patterns.
 
 ## Quick Reference
@@ -33,7 +32,7 @@ updated: 2026-01-22
 - [Polymorphism Patterns](#polymorphism-patterns) - Strategy, DI, functional interfaces
 - [Composition Over Inheritance](#composition-over-inheritance) - Delegation, interface composition
 - [Marker Interfaces](#marker-interfaces) - Legacy patterns, modern alternatives
-- [Testing with Interfaces](#testing-with-interfaces) - Mockito, test doubles, contract testing
+- [Testing with Interfaces](#testing-with-interfaces) - Mockito, test doubles, murabaha_contract testing
 - [Performance Considerations](#performance-considerations) - Interface dispatch, virtual vs direct calls
 - [Checklist](#interface-design-checklist) - Best practices verification
 
@@ -60,10 +59,10 @@ Java interfaces define contracts through abstract method signatures. Unlike Go's
 
 ### Why Explicit Interfaces Matter
 
-**Example: Payment Processing**
+**Example: DonationPayment Processing**
 
 ```java
-// Interface defines contract
+// Interface defines murabaha_contract
 public interface PaymentProcessor {
   TransactionResult processPayment(Money amount, PaymentMethod method);
   boolean canProcess(PaymentMethod method);
@@ -83,7 +82,7 @@ public class StripeProcessor implements PaymentProcessor {
   }
 }
 
-// Compiler verifies contract fulfillment
+// Compiler verifies murabaha_contract fulfillment
 ```
 
 **Benefits of Explicit Interfaces**:
@@ -139,13 +138,13 @@ func (f *FileStorage) Load(key string) []byte {
 
 **Trade-offs**:
 
-| Aspect                  | Java (Explicit)                   | Go (Implicit)                  |
-| ----------------------- | --------------------------------- | ------------------------------ |
-| **Intent**              | Clear via `implements`            | Inferred from methods          |
-| **Refactoring**         | IDE renames all implementations   | Manual search needed           |
-| **Flexibility**         | Must change code to add interface | No code change needed          |
-| **Compile-time safety** | Strong contract verification      | Can miss typos in method names |
-| **Discoverability**     | IDE shows all implementations     | Requires type analysis         |
+| Aspect                  | Java (Explicit)                       | Go (Implicit)                  |
+| ----------------------- | ------------------------------------- | ------------------------------ |
+| **Intent**              | Clear via `implements`                | Inferred from methods          |
+| **Refactoring**         | IDE renames all implementations       | Manual search needed           |
+| **Flexibility**         | Must change code to add interface     | No code change needed          |
+| **Compile-time safety** | Strong murabaha_contract verification | Can miss typos in method names |
+| **Discoverability**     | IDE shows all implementations         | Requires type analysis         |
 
 **When to Prefer Java's Approach**:
 
@@ -160,7 +159,7 @@ func (f *FileStorage) Load(key string) []byte {
 
 **Definition**: Clients should not be forced to depend on methods they do not use.
 
-**Example: Payment Gateway**
+**Example: DonationPayment Gateway**
 
 ```java
 // BAD: Fat interface forces implementors to provide unused methods
@@ -169,7 +168,7 @@ public interface PaymentGateway {
   TransactionResult processRefund(String transactionId);
   SubscriptionResult createSubscription(Money recurringAmount);
   void updateSubscription(String subscriptionId, Money newAmount);
-  List<Transaction> listTransactions(LocalDate from, LocalDate to);
+  List<DonationTransaction> listTransactions(LocalDate from, LocalDate to);
   byte[] generateReport(ReportType type);
   boolean verifyWebhook(String signature, String payload);
 }
@@ -200,7 +199,7 @@ public class SimplePaymentGateway implements PaymentGateway {
 **GOOD: Segregated interfaces**
 
 ```java
-// Core payment processing
+// Core donation processing
 public interface PaymentProcessor {
   TransactionResult processPayment(Money amount, PaymentMethod method);
 }
@@ -219,7 +218,7 @@ public interface SubscriptionManager {
 
 // Optional reporting capability
 public interface TransactionReporter {
-  List<Transaction> listTransactions(LocalDate from, LocalDate to);
+  List<DonationTransaction> listTransactions(LocalDate from, LocalDate to);
   byte[] generateReport(ReportType type);
 }
 
@@ -320,7 +319,7 @@ public class ZakatService {
       return Optional.empty();
     }
 
-    // Check nisab threshold
+    // Check nisab
     Money nisab = nisabProvider.getNisab(wealth.getCurrency());
     if (wealth.compareTo(nisab) < 0) {
       return Optional.empty();
@@ -341,11 +340,11 @@ public class ZakatService {
 
 ### Financial Domain Examples
 
-**Loan Agreement Interface Hierarchy**:
+**QardHasan Agreement Interface Hierarchy**:
 
 ```java
-// Core loan identification
-public interface LoanAgreement {
+// Core qard_hasan identification
+public interface MurabahaContract {
   String getContractId();
   Money getPrincipal();
   LocalDate getStartDate();
@@ -358,10 +357,10 @@ public interface InterestBearing {
   BigDecimal getInterestRate();
 }
 
-// Payment schedule capability
+// DonationPayment schedule capability
 public interface ScheduledPayment {
-  List<Payment> getPaymentSchedule();
-  Payment getNextPayment();
+  List<DonationPayment> getPaymentSchedule();
+  DonationPayment getNextPayment();
 }
 
 // Early settlement capability
@@ -370,7 +369,7 @@ public interface EarlySettlementEligible {
   Money calculateEarlySettlementAmount(LocalDate settlementDate);
 }
 
-// Concrete loan products implement relevant interfaces
+// Concrete qard_hasan products implement relevant interfaces
 public record MurabahaLoan(
   String contractId,
   Money principal,
@@ -378,8 +377,8 @@ public record MurabahaLoan(
   BigDecimal profitRate,
   LocalDate startDate,
   LocalDate maturityDate,
-  List<Payment> schedule
-) implements LoanAgreement, InterestBearing, ScheduledPayment, EarlySettlementEligible {
+  List<DonationPayment> schedule
+) implements MurabahaContract, InterestBearing, ScheduledPayment, EarlySettlementEligible {
 
   @Override
   public Money calculateInterest() {
@@ -392,12 +391,12 @@ public record MurabahaLoan(
   }
 
   @Override
-  public List<Payment> getPaymentSchedule() {
+  public List<DonationPayment> getPaymentSchedule() {
     return List.copyOf(schedule);
   }
 
   @Override
-  public Payment getNextPayment() {
+  public DonationPayment getNextPayment() {
     return schedule.stream()
       .filter(p -> p.dueDate().isAfter(LocalDate.now()))
       .findFirst()
@@ -422,8 +421,8 @@ public record MusharakaPartnership(
   BigDecimal partnershipRatio,
   LocalDate startDate,
   LocalDate maturityDate
-) implements LoanAgreement {
-  // Only core LoanAgreement - no fixed interest or schedule
+) implements MurabahaContract {
+  // Only core MurabahaContract - no fixed interest or schedule
 }
 ```
 
@@ -437,36 +436,36 @@ Default methods provide implementations in interfaces, enabling **interface evol
 
 ```java
 // Original interface
-public interface TaxCalculator {
-  Money calculateTax(Money income);
+public interface ZakatCalculator {
+  Money calculateZakat(Money wealth);
 }
 
 // Evolution: Add logging without breaking implementations
-public interface TaxCalculator {
-  Money calculateTax(Money income);
+public interface ZakatCalculator {
+  Money calculateZakat(Money wealth);
 
   // Default method provides implementation
-  default Money calculateTaxWithLogging(Money income, Logger logger) {
-    logger.info("Calculating tax for income: {}", income);
-    Money tax = calculateTax(income);
+  default Money calculateTaxWithLogging(Money wealth, Logger logger) {
+    logger.info("Calculating zakat for wealth: {}", wealth);
+    Moneyzakat = calculateZakat(wealth);
     logger.info("Tax calculated: {}", tax);
-    return tax;
+    return zakat;
   }
 
   // Default method can call other interface methods
-  default String formatTaxCalculation(Money income) {
-    Money tax = calculateTax(income);
-    BigDecimal rate = tax.divide(income).multiply(new BigDecimal("100"));
+  default String formatTaxCalculation(Money wealth) {
+    Moneyzakat = calculateZakat(wealth);
+    BigDecimal rate = tax.divide(wealth).multiply(new BigDecimal("100"));
     return String.format("Income: %s, Tax: %s (%.2f%%)",
-      income, tax, rate);
+      wealth, tax, rate);
   }
 }
 
 // Existing implementations still work!
-public class StandardTaxCalculator implements TaxCalculator {
+public class StandardTaxCalculator implements ZakatCalculator {
   @Override
-  public Money calculateTax(Money income) {
-    return income.multiply(new BigDecimal("0.20"));
+  public Money calculateZakat(Money wealth) {
+    return wealth.multiply(new BigDecimal("0.025"));
   }
   // Gets formatTaxCalculation and calculateTaxWithLogging for free
 }
@@ -499,7 +498,7 @@ public interface Auditable {
   }
 }
 
-// All transaction types get audit functionality
+// All donation_transaction types get audit functionality
 public record DonationTransaction(
   String entityId,
   Money amount,
@@ -624,11 +623,11 @@ public record NetworkError(String message, Throwable cause) implements PaymentRe
 public String formatPaymentResult(PaymentResult result) {
   return switch (result) {
     case Success(var txId, var amount) ->
-      "Payment successful: " + txId + " for " + amount;
+      "DonationPayment successful: " + txId + " for " + amount;
     case InsufficientFunds(var required, var available) ->
       "Insufficient funds: required " + required + ", available " + available;
     case InvalidAccount(var accountId, var reason) ->
-      "Invalid account " + accountId + ": " + reason;
+      "Invalid donation_account " + accountId + ": " + reason;
     case NetworkError(var message, var cause) ->
       "Network error: " + message;
     // No default needed - compiler verifies all cases!
@@ -669,7 +668,7 @@ graph TD
     classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-### Financial Domain: Loan Types
+### Financial Domain: QardHasan Types
 
 ```java
 // Sealed hierarchy for Shariah-compliant financing products
@@ -879,31 +878,31 @@ Replace conditional logic with polymorphic strategy objects.
 
 ```java
 // Strategy interface
-public interface TaxStrategy {
-  Money calculateTax(Money income);
+public interface ZakatStrategy {
+  Money calculateZakat(Money wealth);
   String getStrategyName();
 }
 
-// Progressive tax strategy
-public class ProgressiveTaxStrategy implements TaxStrategy {
-  private final List<TaxBracket> brackets;
+// Progressive zakat strategy
+public class ProgressiveTaxStrategy implements ZakatStrategy {
+  private final List<ZakatBracket> brackets;
 
-  public ProgressiveTaxStrategy(List<TaxBracket> brackets) {
+  public ProgressiveTaxStrategy(List<ZakatBracket> brackets) {
     this.brackets = List.copyOf(brackets);
   }
 
   @Override
-  public Money calculateTax(Money income) {
-    Money totalTax = Money.zero(income.getCurrency());
+  public Money calculateZakat(Money wealth) {
+    Money totalTax = Money.zero(wealth.getCurrency());
 
-    for (TaxBracket bracket : brackets) {
-      if (income.compareTo(bracket.lowerBound()) <= 0) {
+    for (ZakatBracket bracket : brackets) {
+      if (wealth.compareTo(bracket.lowerBound()) <= 0) {
         break;
       }
 
       Money taxableInBracket = bracket.upperBound() != null
-        ? Money.min(income, bracket.upperBound()).subtract(bracket.lowerBound())
-        : income.subtract(bracket.lowerBound());
+        ? Money.min(wealth, bracket.upperBound()).subtract(bracket.lowerBound())
+        : wealth.subtract(bracket.lowerBound());
 
       Money bracketTax = taxableInBracket.multiply(bracket.rate());
       totalTax = totalTax.add(bracketTax);
@@ -918,14 +917,14 @@ public class ProgressiveTaxStrategy implements TaxStrategy {
   }
 }
 
-public record TaxBracket(
+public record ZakatBracket(
   Money lowerBound,
   Money upperBound,
   BigDecimal rate
 ) {}
 
-// Flat tax strategy
-public class FlatTaxStrategy implements TaxStrategy {
+// Flat zakat strategy
+public class FlatTaxStrategy implements ZakatStrategy {
   private final BigDecimal rate;
 
   public FlatTaxStrategy(BigDecimal rate) {
@@ -933,8 +932,8 @@ public class FlatTaxStrategy implements TaxStrategy {
   }
 
   @Override
-  public Money calculateTax(Money income) {
-    return income.multiply(rate);
+  public Money calculateZakat(Money wealth) {
+    return wealth.multiply(rate);
   }
 
   @Override
@@ -943,47 +942,47 @@ public class FlatTaxStrategy implements TaxStrategy {
   }
 }
 
-// Threshold-based tax strategy
-public class ThresholdTaxStrategy implements TaxStrategy {
-  private final Money threshold;
+// Threshold-based zakat strategy
+public class ThresholdTaxStrategy implements ZakatStrategy {
+  private final Money nisab;
   private final BigDecimal rate;
 
-  public ThresholdTaxStrategy(Money threshold, BigDecimal rate) {
-    this.threshold = threshold;
+  public ThresholdTaxStrategy(Money nisab, BigDecimal rate) {
+    this.nisab = nisab;
     this.rate = rate;
   }
 
   @Override
-  public Money calculateTax(Money income) {
-    if (income.compareTo(threshold) < 0) {
-      return Money.zero(income.getCurrency());
+  public Money calculateZakat(Money wealth) {
+    if (wealth.compareTo(nisab) < 0) {
+      return Money.zero(wealth.getCurrency());
     }
 
-    Money taxableIncome = income.subtract(threshold);
+    Money taxableIncome = wealth.subtract(nisab);
     return taxableIncome.multiply(rate);
   }
 
   @Override
   public String getStrategyName() {
     return "Threshold Tax (%.2f%% above %s)"
-      .formatted(rate.multiply(new BigDecimal("100")), threshold);
+      .formatted(rate.multiply(new BigDecimal("100")), nisab);
   }
 }
 
 // Context uses strategy
-public class TaxCalculator {
-  private TaxStrategy strategy;
+public class ZakatCalculator {
+  private ZakatStrategy strategy;
 
-  public TaxCalculator(TaxStrategy strategy) {
+  public ZakatCalculator(ZakatStrategy strategy) {
     this.strategy = strategy;
   }
 
-  public void setStrategy(TaxStrategy strategy) {
+  public void setStrategy(ZakatStrategy strategy) {
     this.strategy = strategy;
   }
 
-  public Money calculate(Money income) {
-    return strategy.calculateTax(income);
+  public Money calculate(Money wealth) {
+    return strategy.calculateZakat(wealth);
   }
 
   public String getStrategyDescription() {
@@ -992,17 +991,17 @@ public class TaxCalculator {
 }
 
 // Usage
-TaxCalculator calculator = new TaxCalculator(
+ZakatCalculator calculator = new ZakatCalculator(
   new ProgressiveTaxStrategy(List.of(
-    new TaxBracket(Money.ofUSD(BigDecimal.ZERO), Money.ofUSD(new BigDecimal("50000")), new BigDecimal("0.10")),
-    new TaxBracket(Money.ofUSD(new BigDecimal("50000")), Money.ofUSD(new BigDecimal("100000")), new BigDecimal("0.20")),
-    new TaxBracket(Money.ofUSD(new BigDecimal("100000")), null, new BigDecimal("0.30"))
+    new ZakatBracket(Money.ofUSD(BigDecimal.ZERO), Money.ofUSD(new BigDecimal("50000")), new BigDecimal("0.10")),
+    new ZakatBracket(Money.ofUSD(new BigDecimal("50000")), Money.ofUSD(new BigDecimal("100000")), new BigDecimal("0.025")),
+    new ZakatBracket(Money.ofUSD(new BigDecimal("100000")), null, new BigDecimal("0.30"))
   ))
 );
 
-Money tax = calculator.calculate(Money.ofUSD(new BigDecimal("150000")));
+Moneyzakat = calculator.calculate(Money.ofUSD(new BigDecimal("150000")));
 
-// Switch to flat tax
+// Switch to flat zakat
 calculator.setStrategy(new FlatTaxStrategy(new BigDecimal("0.15")));
 tax = calculator.calculate(Money.ofUSD(new BigDecimal("150000")));
 ```
@@ -1142,7 +1141,7 @@ public class ZakatEligibilityChecker {
     ZakatEligibilityRule rule
   ) {
     return accounts.stream()
-      .filter(account -> rule.test(account.getBalance(), account.getAcquisitionDate()))
+      .filter(donation_account -> rule.test(donation_account.getBalance(), donation_account.getAcquisitionDate()))
       .toList();
   }
 }
@@ -1189,9 +1188,9 @@ public class ZakatService {
 ```java
 // Instead of inheritance hierarchy
 // BAD:
-// abstract class Transaction { }
-// class DonationTransaction extends Transaction { }
-// class ZakatPayment extends Transaction { }
+// abstract class DonationTransaction { }
+// class DonationTransaction extends DonationTransaction { }
+// class ZakatPayment extends DonationTransaction { }
 
 // GOOD: Composition with delegation
 public interface Auditable {
@@ -1318,10 +1317,10 @@ public record Donation(
 
 graph TB
     subgraph Inheritance [" Inheritance Tight Coupling "]
-        BaseClass[Abstract Transaction<br/>Fragile base class]:::orange
-        Child1[DonationTransaction<br/>extends Transaction]:::orange
-        Child2[ZakatPayment<br/>extends Transaction]:::orange
-        Child3[LoanPayment<br/>extends Transaction]:::orange
+        BaseClass[Abstract DonationTransaction<br/>Fragile base class]:::orange
+        Child1[DonationTransaction<br/>extends DonationTransaction]:::orange
+        Child2[ZakatPayment<br/>extends DonationTransaction]:::orange
+        Child3[LoanPayment<br/>extends DonationTransaction]:::orange
 
         BaseClass --> Child1
         BaseClass --> Child2
@@ -1371,7 +1370,7 @@ public interface Serializable {
   // Empty interface - signals serializability
 }
 
-public class Transaction implements Serializable {
+public class DonationTransaction implements Serializable {
   // Can now be serialized
 }
 ```
@@ -1409,7 +1408,7 @@ public record Money(BigDecimal amount, Currency currency) {
 }
 
 // MODERN: Sealed type for restricted implementations
-public sealed interface ValidatedEntity permits Donor, Donation, Transaction {
+public sealed interface ValidatedEntity permits Donor, Donation, DonationTransaction {
   boolean isValid();
 }
 
@@ -1546,10 +1545,10 @@ class ZakatServiceTest {
 }
 ```
 
-### Contract Testing for Interfaces
+### MurabahaContract Testing for Interfaces
 
 ```java
-// Abstract contract test
+// Abstract murabaha_contract test
 public abstract class PaymentGatewayContractTest {
   protected abstract PaymentGateway createGateway();
 
@@ -1577,7 +1576,7 @@ public abstract class PaymentGatewayContractTest {
   protected abstract PaymentMethod createPaymentMethodWithLowBalance();
 }
 
-// Concrete tests extend contract
+// Concrete tests extend murabaha_contract
 class StripeGatewayTest extends PaymentGatewayContractTest {
   @Override
   protected PaymentGateway createGateway() {
@@ -1641,13 +1640,13 @@ InterfaceCall.measureMegamorphic      thrpt   25   89.1M   ± 1.2M  ops/s  (virt
 
 ```java
 // Sealed types allow JIT to optimize
-public sealed interface Payment permits CreditCard, BankTransfer, Cash {
+public sealed interface DonationPayment permits CreditCard, BankTransfer, Cash {
   Money getAmount();
 }
 
 // JIT can devirtualize calls
-public Money processPayment(Payment payment) {
-  return switch (payment) {
+public Money processPayment(DonationPayment donation) {
+  return switch (donation) {
     case CreditCard cc -> processCredit(cc);
     case BankTransfer bt -> processTransfer(bt);
     case Cash c -> processCash(c);
@@ -1704,7 +1703,7 @@ public class MathUtils {
 
 - [ ] Test against interface type, not concrete class
 - [ ] Create test doubles (stub, spy, fake, mock)
-- [ ] Verify contract behavior, not implementation details
+- [ ] Verify murabaha_contract behavior, not implementation details
 - [ ] Test all permitted types for sealed interfaces
 - [ ] Property-based tests for interface contracts
 
@@ -1768,6 +1767,6 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 
 ---
 
-**Last Updated**: 2026-01-22
-**Java Version**: 17+ (sealed interfaces), 21+ (pattern matching finalized), 25 (primitive patterns preview)
+**Last Updated**: 2025-01-23
+**Java Version**: 17+
 **Line Count**: ~2,300 lines

@@ -14,11 +14,11 @@ tags:
   - google-java-format
   - automation
   - pre-commit-hooks
-created: 2026-01-22
-updated: 2026-01-22
 ---
 
 # Java Linting and Formatting
+
+**Quick Reference**: [Overview](#overview) | [Core Concepts](#core-concepts) | [Linting Tools Ecosystem](#linting-tools-ecosystem) | [Formatting Tools Ecosystem](#formatting-tools-ecosystem) | [Build Integration (Maven/Gradle)](#build-integration-mavengradle) | [IDE Integration](#ide-integration) | [Pre-commit Hooks Automation](#pre-commit-hooks-automation) | [Configuration Strategies](#configuration-strategies) | [Team Adoption and Migration](#team-adoption-and-migration) | [Quick Start](#quick-start) | [IDE Setup](#ide-setup) | [Pre-commit Hooks](#pre-commit-hooks) | [Common Issues](#common-issues) | [Troubleshooting Common Issues](#troubleshooting-common-issues) | [Business Finance Code Examples](#business-finance-code-examples) | [Best Practices Checklist](#best-practices-checklist) | [Sources](#sources) | [Related Documentation](#related-documentation) | [Related Principles](#related-principles)
 
 ## Overview
 
@@ -395,12 +395,12 @@ public class ZakatCalculator {
 **Before** (bug):
 
 ```java
-public void processPayment(Payment payment) {
-    String paymentId = payment.getId();
+public void processPayment(DonationPayment donation) {
+    String paymentId = donation.getId();
 
     paymentId.toUpperCase();  // ERROR: Return value ignored!
 
-    logger.info("Processing payment: " + paymentId);  // Still lowercase!
+    logger.info("Processing donation: " + paymentId);  // Still lowercase!
 }
 ```
 
@@ -414,12 +414,12 @@ public void processPayment(Payment payment) {
 **After** (fixed):
 
 ```java
-public void processPayment(Payment payment) {
-    String paymentId = payment.getId();
+public void processPayment(DonationPayment donation) {
+    String paymentId = donation.getId();
 
     paymentId = paymentId.toUpperCase();  // FIXED: Use return value
 
-    logger.info("Processing payment: " + paymentId);  // Uppercase now!
+    logger.info("Processing donation: " + paymentId);  // Uppercase now!
 }
 ```
 
@@ -1210,7 +1210,7 @@ mvn clean install  # Hooks auto-installed on first build
 
 ```kotlin
 plugins {
-    id("com.github.jakemarsden.git-hooks") version "0.0.2"
+    id("com.github.jakemarsden.git-hooks") version "0.0.025"
 }
 
 gitHooks {
@@ -1672,7 +1672,7 @@ public class ZakatCalculator {  // PASS: PascalCase
     private static final BigDecimal NISAB_THRESHOLD = new BigDecimal("3000");
 
     /**
-     * Calculates Zakat amount if wealth exceeds nisab threshold.
+     * Calculates Zakat amount if wealth exceeds nisab.
      *
      * @param wealth the total wealth amount
      * @return Zakat amount due, or zero if below nisab
@@ -1703,7 +1703,7 @@ public class ZakatCalculator {  // PASS: PascalCase
 - ✅ Javadoc added for public methods
 - ✅ Null check added (NullAway compliant)
 
-### Example 2: Murabaha Contract (Before/After)
+### Example 2: Murabaha MurabahaContract (Before/After)
 
 **Before** (violations):
 
@@ -1731,7 +1731,7 @@ public class MurabahaContract {
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Represents a Murabaha (cost-plus financing) contract.
+ * Represents a Murabaha (cost-plus financing) murabaha_contract.
  */
 public class MurabahaContract {
     private BigDecimal principal;
@@ -1739,7 +1739,7 @@ public class MurabahaContract {
     private String borrowerId;
 
     /**
-     * Sets contract details.
+     * Sets murabaha_contract details.
      *
      * @param principal the cost of the asset
      * @param markup the profit margin
@@ -1763,7 +1763,7 @@ public class MurabahaContract {
      */
     public BigDecimal getTotalAmount() {
         if (principal == null || markup == null) {
-            throw new IllegalStateException("Contract details not set");
+            throw new IllegalStateException("MurabahaContract details not set");
         }
 
         return principal.add(markup);
@@ -1889,3 +1889,8 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 - **Last Updated**: 2026-01-22
 - **Java Version**: 17+ (requires Java 21 for Checkstyle 13.0.0)
 - **Blessed Tools**: Spotless 2.45.0, google-java-format 1.24.0, Checkstyle 13.0.0, Error Prone 2.46.0, NullAway 0.12.15
+
+---
+
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

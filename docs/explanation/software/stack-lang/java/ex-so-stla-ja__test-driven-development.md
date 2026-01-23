@@ -12,12 +12,11 @@ tags:
   - assertj
   - testing
   - red-green-refactor
-created: 2026-01-21
-updated: 2026-01-21
 ---
 
 # Java Test-Driven Development
 
+**Quick Reference**: [Why TDD in Finance](#why-tdd-in-finance) | [Red-Green-Refactor Cycle](#red-green-refactor-cycle) | [JUnit 5 Fundamentals](#junit-5-fundamentals) | [Assertions with AssertJ](#assertions-with-assertj) | [Mocking with Mockito](#mocking-with-mockito) | [Testing Strategies](#testing-strategies) | [Testing Domain Models](#testing-domain-models) | [Testing Patterns](#testing-patterns) | [TDD Best Practices](#tdd-best-practices) | [TDD Checklist](#tdd-checklist) | [Performance and Coverage](#performance-and-coverage) | [Related Principles](#related-principles) | [Sources](#sources) | [Related Documentation](#related-documentation)
 **Understanding-oriented documentation** for test-driven development practices with Java, JUnit 5, Mockito, and AssertJ.
 
 ## Quick Reference
@@ -1259,7 +1258,7 @@ BDD-style structure (similar to AAA).
 ```java
 @Test
 void shouldCalculateZakatWhenBalanceAboveNisab() {
-    // GIVEN a Zakat account with balance above nisab
+    // GIVEN a Zakat donation_account with balance above nisab
     Money balance = Money.of(100000, "USD");
     Money nisab = Money.of(5000, "USD");
 
@@ -1690,3 +1689,8 @@ This document implements the following [software engineering principles](../../.
 - **Last Updated**: 2026-01-21
 - **Java Version**: 8+ (JUnit 5 requires Java 8+)
 - **Blessed Frameworks**: JUnit 5.14.2, Mockito 5.15.2, AssertJ 3.27.6, TestContainers 1.20.4
+
+---
+
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

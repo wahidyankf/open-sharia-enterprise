@@ -19,8 +19,6 @@ principles:
   - reproducibility
   - automation-over-manual
   - explicit-over-implicit
-created: 2026-01-22
-updated: 2026-01-22
 ---
 
 # Go Build Configuration Template
@@ -1987,3 +1985,8 @@ cp .env.example .env
 ---
 
 **Principles Applied**: Reproducibility, Automation Over Manual, Explicit Over Implicit
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

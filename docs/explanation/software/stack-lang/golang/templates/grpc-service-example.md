@@ -732,5 +732,5 @@ func TestUserService_GetUser(t *testing.T) {
 
 ---
 
-**Last Updated**: 2026-01-22
-**Go Version**: 1.25.6
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

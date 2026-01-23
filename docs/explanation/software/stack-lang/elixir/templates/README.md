@@ -1,7 +1,7 @@
 # Domain-Driven Design Templates for Elixir
 
 **Category**: DDD Templates
-**Elixir Version**: 1.17+
+**Elixir Version**: 1.18.0+
 **Related**: [Domain-Driven Design](../ex-so-stla-el__domain-driven-design.md)
 
 ## Overview
@@ -623,5 +623,5 @@ end
 ---
 
 **Last Updated**: 2025-01-23
-**Elixir Version**: 1.17+
+**Elixir Version**: 1.18.0+
 **Template Count**: 7 templates + this README

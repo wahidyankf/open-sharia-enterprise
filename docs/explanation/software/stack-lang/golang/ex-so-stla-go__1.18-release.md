@@ -1,5 +1,6 @@
 # Go 1.18 Release: Generics, Fuzzing, and Workspace Mode
 
+**Quick Reference**: [Overview](#overview) | [Generics (Type Parameters)](#generics-type-parameters) | [Fuzzing Support](#fuzzing-support) | [Workspace Mode](#workspace-mode) | [Other Go 1.18 Features](#other-go-118-features) | [Migration Guide](#migration-guide) | [Setup](#setup) | [Building](#building) | [Conclusion](#conclusion) | [Related Documentation](#related-documentation)
 Understanding the groundbreaking features introduced in Go 1.18, including generics (type parameters), native fuzzing support, and workspace mode for multi-module development.
 
 ## Overview
@@ -578,9 +579,9 @@ func FindUser(id int) Option[string] {
     return None[string]()
 }
 
-user := FindUser(1)
-if user.IsSome() {
-    fmt.Println(user.Unwrap())  // "Alice"
+beneficiary := FindUser(1)
+if beneficiary.IsSome() {
+    fmt.Println(beneficiary.Unwrap())  // "Alice"
 }
 
 user2 := FindUser(999)
@@ -807,7 +808,7 @@ Traditional unit tests check specific inputs and expected outputs. Fuzzing compl
 Fuzz tests follow a specific pattern:
 
 ```go
-package example
+package zakat
 
 import "testing"
 
@@ -1638,3 +1639,8 @@ These features work together to make Go more productive, safer, and easier to us
 - Core Concepts: Language Fundamentals, Type System
 - Advanced Topics: Concurrency, Testing, Performance
 - Release Documentation: Go 1.21, Go 1.22 (enhanced routing), Go 1.23, Go 1.24, Go 1.25
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

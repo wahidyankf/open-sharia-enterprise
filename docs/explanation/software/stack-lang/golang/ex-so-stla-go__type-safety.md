@@ -1,5 +1,7 @@
 # Type Safety in Go
 
+**Quick Reference**: [Overview](#overview) | [Type System Fundamentals](#type-system-fundamentals) | [Basic Types](#basic-types) | [Composite Types](#composite-types) | [Type Declarations](#type-declarations) | [Interface Types](#interface-types) | [Type Assertions](#type-assertions) | [Type Switches](#type-switches) | [Type Conversions](#type-conversions) | [Generics (Go 1.18+)](#generics-go-118) | [Type Constraints](#type-constraints) | [Type Parameters](#type-parameters) | [Type Inference](#type-inference) | [Zero Values](#zero-values) | [Type Safety Patterns](#type-safety-patterns) | [Type Safety Best Practices](#type-safety-best-practices) | [Common Type Safety Pitfalls](#common-type-safety-pitfalls) | [Conclusion](#conclusion)
+
 ## Overview
 
 Go is a statically typed language with a strong emphasis on type safety. The type system is designed to catch errors at compile time while maintaining simplicity and ease of use. This document explores Go's type system, from basic types to advanced features like generics, and demonstrates how to leverage type safety effectively.
@@ -13,25 +15,6 @@ Go is a statically typed language with a strong emphasis on type safety. The typ
 - [Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md)
 - [Error Handling](./ex-so-stla-go__error-handling.md)
 - [Best Practices](./ex-so-stla-go__best-practices.md)
-
-## Table of Contents
-
-1. [Type System Fundamentals](#type-system-fundamentals)
-2. [Basic Types](#basic-types)
-3. [Composite Types](#composite-types)
-4. [Type Declarations](#type-declarations)
-5. [Interface Types](#interface-types)
-6. [Type Assertions](#type-assertions)
-7. [Type Switches](#type-switches)
-8. [Type Conversions](#type-conversions)
-9. [Generics (Go 1.18+)](#generics-go-118)
-10. [Type Constraints](#type-constraints)
-11. [Type Parameters](#type-parameters)
-12. [Type Inference](#type-inference)
-13. [Zero Values](#zero-values)
-14. [Type Safety Patterns](#type-safety-patterns)
-15. [Type Safety Best Practices](#type-safety-best-practices)
-16. [Common Type Safety Pitfalls](#common-type-safety-pitfalls)
 
 ## Type System Fundamentals
 
@@ -489,7 +472,7 @@ type Email string
 
 // Types with different names are distinct
 func GetUser(id UserID) {
-    fmt.Printf("Getting user %d\n", id)
+    fmt.Printf("Getting beneficiary %d\n", id)
 }
 
 func main() {
@@ -2215,7 +2198,7 @@ type UserID int
 type OrderID int
 type ProductID int
 
-type User struct {
+type Beneficiary struct {
     ID    UserID
     Name  string
 }
@@ -2226,9 +2209,9 @@ type Order struct {
 }
 
 // Type-safe functions
-func GetUser(id UserID) (*User, error) {
+func GetUser(id UserID) (*Beneficiary, error) {
     // Implementation
-    return &User{ID: id, Name: "Alice"}, nil
+    return &Beneficiary{ID: id, Name: "Alice"}, nil
 }
 
 func GetOrder(id OrderID) (*Order, error) {
@@ -2241,14 +2224,14 @@ func main() {
     var orderID OrderID = 456
 
     // Type-safe calls
-    user, _ := GetUser(userID)
+    beneficiary, _ := GetUser(userID)
     order, _ := GetOrder(orderID)
 
     // Won't compile: type mismatch
     // GetUser(orderID)  // cannot use orderID (variable of type OrderID) as UserID
     // GetOrder(userID)  // cannot use userID (variable of type UserID) as OrderID
 
-    fmt.Println(user, order)
+    fmt.Println(beneficiary, order)
 }
 ```
 
@@ -2458,7 +2441,7 @@ func SendEmail(to Email, subject, body string) error {
 
 func main() {
     // Validate at boundary
-    email, err := NewEmail("user@example.com")
+    email, err := NewEmail("beneficiary@example.com")
     if err != nil {
         fmt.Println("Invalid email:", err)
         return
@@ -2722,3 +2705,8 @@ Type safety makes code more maintainable, refactorable, and less prone to bugs. 
 - Read [Best Practices](./ex-so-stla-go__best-practices.md)
 - Explore [Error Handling](./ex-so-stla-go__error-handling.md)
 - Study [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md)
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

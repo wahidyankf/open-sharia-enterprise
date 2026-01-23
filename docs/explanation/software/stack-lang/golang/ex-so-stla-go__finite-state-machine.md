@@ -17,11 +17,11 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
-created: 2026-01-22
-updated: 2026-01-22
 ---
 
 # Go Finite State Machines
+
+**Quick Reference**: [Overview](#overview) | [FSM Fundamentals](#fsm-fundamentals) | [Type-Based FSM Pattern](#type-based-fsm-pattern) | [State Interface Pattern](#state-interface-pattern) | [Type Switch Pattern](#type-switch-pattern) | [Concurrency-Safe FSMs](#concurrency-safe-fsms) | [Testing State Machines](#testing-state-machines) | [Business Domain Examples](#business-domain-examples) | [Patterns and Anti-Patterns](#patterns-and-anti-patterns) | [Checklist: FSM Implementation](#checklist-fsm-implementation) | [Related Documentation](#related-documentation) | [Sources and Further Reading](#sources-and-further-reading)
 
 ## Overview
 
@@ -31,9 +31,9 @@ Finite State Machines (FSMs) are fundamental design patterns for managing comple
 
 Financial applications involve complex workflows with strict state transition rules:
 
-- **Zakat Payment Processing**: Donation transactions move through well-defined states (pending → verification → approved → distributed)
-- **Murabaha Loan Lifecycle**: Islamic financing contracts follow specific approval and disbursement workflows
-- **Waqf Contract Management**: Endowment contracts transition through draft → review → active → archived states
+- **Zakat DonationPayment Processing**: Donation transactions move through well-defined states (pending → verification → approved → distributed)
+- **Murabaha QardHasan Lifecycle**: Islamic financing contracts follow specific approval and disbursement workflows
+- **Waqf MurabahaContract Management**: Endowment contracts transition through draft → review → active → archived states
 - **Compliance Workflows**: Shariah compliance checks require deterministic, auditable state tracking
 
 ### Key Benefits
@@ -77,7 +77,7 @@ This guide targets Go developers building enterprise financial systems. It assum
 - [Type Switch Pattern](#type-switch-pattern) - Modern approach inspired by sealed classes
 - [Concurrency-Safe FSMs](#concurrency-safe-fsms) - Goroutine-safe implementations
 - [Testing Strategies](#testing-state-machines) - Comprehensive testing approaches
-- [Business Examples](#business-domain-examples) - Payment, Loan, Waqf implementations
+- [Business Examples](#business-domain-examples) - DonationPayment, QardHasan, Waqf implementations
 
 **Related Documentation:**
 
@@ -110,7 +110,7 @@ A finite state machine consists of:
 
 **Deterministic FSM**: Given current state and input, next state is always the same
 
-- **Use case**: Payment processing (consistent behavior required)
+- **Use case**: DonationPayment processing (consistent behavior required)
 - **Example**: `PENDING` + `Approve()` → `APPROVED` (always)
 
 **Non-Deterministic FSM**: Multiple possible next states for same input
@@ -139,9 +139,9 @@ graph TD
 
 **Invariants** are conditions that must always be true in a given state:
 
-- **PENDING payment**: Amount > 0, payee exists
-- **APPROVED loan**: All documents uploaded, risk score within limits
-- **ACTIVE contract**: Start date ≤ today ≤ end date
+- **PENDING donation**: Amount > 0, recipient exists
+- **APPROVED qard_hasan**: All documents uploaded, risk score within limits
+- **ACTIVE murabaha_contract**: Start date ≤ today ≤ end date
 
 FSMs enforce invariants through:
 
@@ -162,12 +162,12 @@ Type-based FSMs use Go's type alias + const pattern to create enum-like states w
 - **Centralized transitions**: Logic in one place
 - **Go idiom**: Natural fit for Go's type system
 
-### Example: Payment Processing FSM
+### Example: DonationPayment Processing FSM
 
 **Before (No FSM - Scattered Logic)**:
 
 ```go
-package payment
+package donation
 
 import (
  "errors"
@@ -175,7 +175,7 @@ import (
 )
 
 // Bad: String-based state (no compile-time safety)
-type Payment struct {
+type DonationPayment struct {
  ID              string
  Amount          int64  // cents
  PayeeID         string
@@ -185,17 +185,17 @@ type Payment struct {
 }
 
 // No validation of current state
-func (p *Payment) Approve() {
+func (p *DonationPayment) Approve() {
  p.Status = "APPROVED"  // Could approve from any state (bug!)
  p.LastTransitionAt = time.Now()
 }
 
-func (p *Payment) Process() {
+func (p *DonationPayment) Process() {
  p.Status = "COMPLETED"  // Could process from any state (bug!)
  p.LastTransitionAt = time.Now()
 }
 
-func (p *Payment) Fail(reason string) {
+func (p *DonationPayment) Fail(reason string) {
  p.Status = "FAILED"
  p.FailureReason = reason
  p.LastTransitionAt = time.Now()
@@ -207,40 +207,40 @@ type Service struct {
 }
 
 func (s *Service) ApprovePayment(id string) error {
- payment, err := s.repo.Get(id)
+ donation, err := s.repo.Get(id)
  if err != nil {
   return err
  }
 
  // Manual state validation (error-prone, scattered)
- if payment.Status != "PENDING" {
+ if donation.Status != "PENDING" {
   return errors.New("can only approve pending payments")
  }
 
- payment.Approve()
- return s.repo.Save(payment)
+ donation.Approve()
+ return s.repo.Save(donation)
 }
 
 func (s *Service) ProcessPayment(id string) error {
- payment, err := s.repo.Get(id)
+ donation, err := s.repo.Get(id)
  if err != nil {
   return err
  }
 
  // More scattered validation
- if payment.Status != "APPROVED" {
+ if donation.Status != "APPROVED" {
   return errors.New("can only process approved payments")
  }
 
- payment.Process()
- return s.repo.Save(payment)
+ donation.Process()
+ return s.repo.Save(donation)
 }
 ```
 
 **After (Type-Based FSM)**:
 
 ```go
-package payment
+package donation
 
 import (
  "errors"
@@ -302,8 +302,8 @@ func (s PaymentState) CanTransitionTo(target PaymentState) bool {
  return false
 }
 
-// Payment entity uses type-safe state
-type Payment struct {
+// DonationPayment entity uses type-safe state
+type DonationPayment struct {
  ID              string
  Amount          int64  // cents
  PayeeID         string
@@ -312,8 +312,8 @@ type Payment struct {
  LastTransitionAt time.Time
 }
 
-// NewPayment creates payment in initial state
-func NewPayment(id string, amount int64, payeeID string) (*Payment, error) {
+// NewPayment creates donation in initial state
+func NewPayment(id string, amount int64, payeeID string) (*DonationPayment, error) {
  if amount <= 0 {
   return nil, errors.New("amount must be positive")
  }
@@ -321,7 +321,7 @@ func NewPayment(id string, amount int64, payeeID string) (*Payment, error) {
   return nil, errors.New("payeeID cannot be empty")
  }
 
- return &Payment{
+ return &DonationPayment{
   ID:              id,
   Amount:          amount,
   PayeeID:         payeeID,
@@ -331,7 +331,7 @@ func NewPayment(id string, amount int64, payeeID string) (*Payment, error) {
 }
 
 // Transition attempts state transition
-func (p *Payment) Transition(target PaymentState) error {
+func (p *DonationPayment) Transition(target PaymentState) error {
  if !p.State.CanTransitionTo(target) {
   return fmt.Errorf("invalid transition from %s to %s", p.State, target)
  }
@@ -342,12 +342,12 @@ func (p *Payment) Transition(target PaymentState) error {
 }
 
 // Approve transitions to APPROVED state
-func (p *Payment) Approve() error {
+func (p *DonationPayment) Approve() error {
  return p.Transition(StateApproved)
 }
 
 // Reject transitions to REJECTED state
-func (p *Payment) Reject(reason string) error {
+func (p *DonationPayment) Reject(reason string) error {
  if err := p.Transition(StateRejected); err != nil {
   return err
  }
@@ -356,17 +356,17 @@ func (p *Payment) Reject(reason string) error {
 }
 
 // Process transitions to PROCESSING state
-func (p *Payment) Process() error {
+func (p *DonationPayment) Process() error {
  return p.Transition(StateProcessing)
 }
 
 // Complete transitions to COMPLETED state
-func (p *Payment) Complete() error {
+func (p *DonationPayment) Complete() error {
  return p.Transition(StateCompleted)
 }
 
 // Fail transitions to FAILED state
-func (p *Payment) Fail(reason string) error {
+func (p *DonationPayment) Fail(reason string) error {
  if err := p.Transition(StateFailed); err != nil {
   return err
  }
@@ -375,7 +375,7 @@ func (p *Payment) Fail(reason string) error {
 }
 
 // Cancel transitions to CANCELLED state
-func (p *Payment) Cancel(reason string) error {
+func (p *DonationPayment) Cancel(reason string) error {
  if err := p.Transition(StateCancelled); err != nil {
   return err
  }
@@ -397,12 +397,12 @@ func (p *Payment) Cancel(reason string) error {
 
 ```go
 // String-based (BAD) - typos compile but fail at runtime
-if payment.Status == "APROVED" {  // Typo! Runtime bug
+if donation.Status == "APROVED" {  // Typo! Runtime bug
  // ...
 }
 
 // Type-based (GOOD) - typos caught at compile time
-if payment.State == StateApproved {  // Compiler validates
+if donation.State == StateApproved {  // Compiler validates
  // ...
 }
 ```
@@ -458,12 +458,12 @@ graph TD
     classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-### Example: Murabaha Loan Lifecycle FSM
+### Example: Murabaha QardHasan Lifecycle FSM
 
-**Murabaha** is an Islamic financing structure where the bank purchases an asset and sells it to the customer at a marked-up price, payable in installments. The loan lifecycle has complex state-specific validation rules.
+**Murabaha** is an Islamic financing structure where the bank purchases an asset and sells it to the donor at a marked-up price, payable in installments. The qard_hasan lifecycle has complex state-specific validation rules.
 
 ```go
-package loan
+package qard_hasan
 
 import (
  "errors"
@@ -489,11 +489,11 @@ type LoanState interface {
  CanDisburse() bool
 
  // State-specific validation (enforces invariants)
- ValidateInvariants(loan *Loan) error
+ ValidateInvariants(qard_hasan *QardHasan) error
 }
 
-// Loan entity holds mutable state
-type Loan struct {
+// QardHasan entity holds mutable state
+type QardHasan struct {
  ID              string
  CustomerID      string
  AssetPrice      int64  // cents
@@ -507,10 +507,10 @@ type Loan struct {
  DefaultReason   string
 }
 
-// NewLoan creates loan in draft state
-func NewLoan(id, customerID string, assetPrice int64, markupRate float64) *Loan {
+// NewLoan creates qard_hasan in draft state
+func NewLoan(id, customerID string, assetPrice int64, markupRate float64) *QardHasan {
  markup := float64(assetPrice) * markupRate
- return &Loan{
+ return &QardHasan{
   ID:          id,
   CustomerID:  customerID,
   AssetPrice:  assetPrice,
@@ -521,7 +521,7 @@ func NewLoan(id, customerID string, assetPrice int64, markupRate float64) *Loan 
 }
 
 // Transition executes state transition with validation
-func (l *Loan) Transition(action func(LoanState) (LoanState, error)) error {
+func (l *QardHasan) Transition(action func(LoanState) (LoanState, error)) error {
  newState, err := action(l.State)
  if err != nil {
   return err
@@ -537,7 +537,7 @@ func (l *Loan) Transition(action func(LoanState) (LoanState, error)) error {
 }
 
 // Submit delegates to current state
-func (l *Loan) Submit() error {
+func (l *QardHasan) Submit() error {
  return l.Transition(func(s LoanState) (LoanState, error) {
   now := time.Now()
   l.SubmittedAt = &now
@@ -545,7 +545,7 @@ func (l *Loan) Submit() error {
  })
 }
 
-func (l *Loan) Approve() error {
+func (l *QardHasan) Approve() error {
  return l.Transition(func(s LoanState) (LoanState, error) {
   now := time.Now()
   l.ApprovedAt = &now
@@ -553,14 +553,14 @@ func (l *Loan) Approve() error {
  })
 }
 
-func (l *Loan) Reject(reason string) error {
+func (l *QardHasan) Reject(reason string) error {
  return l.Transition(func(s LoanState) (LoanState, error) {
   l.RejectionReason = reason
   return s.Reject(reason)
  })
 }
 
-func (l *Loan) Disburse() error {
+func (l *QardHasan) Disburse() error {
  return l.Transition(func(s LoanState) (LoanState, error) {
   now := time.Now()
   l.DisbursedAt = &now
@@ -568,13 +568,13 @@ func (l *Loan) Disburse() error {
  })
 }
 
-func (l *Loan) Close() error {
+func (l *QardHasan) Close() error {
  return l.Transition(func(s LoanState) (LoanState, error) {
   return s.Close()
  })
 }
 
-func (l *Loan) Default(reason string) error {
+func (l *QardHasan) Default(reason string) error {
  return l.Transition(func(s LoanState) (LoanState, error) {
   l.DefaultReason = reason
   return s.Default(reason)
@@ -623,11 +623,11 @@ func (d *DraftState) Submit() (LoanState, error) {
  return &SubmittedState{}, nil
 }
 
-func (d *DraftState) ValidateInvariants(loan *Loan) error {
- if loan.AssetPrice <= 0 {
+func (d *DraftState) ValidateInvariants(qard_hasan *QardHasan) error {
+ if qard_hasan.AssetPrice <= 0 {
   return errors.New("asset price must be positive")
  }
- if loan.MarkupRate < 0 || loan.MarkupRate > 1 {
+ if qard_hasan.MarkupRate < 0 || qard_hasan.MarkupRate > 1 {
   return errors.New("markup rate must be between 0 and 1")
  }
  return nil
@@ -652,9 +652,9 @@ func (s *SubmittedState) Reject(reason string) (LoanState, error) {
  return &RejectedState{}, nil
 }
 
-func (s *SubmittedState) ValidateInvariants(loan *Loan) error {
- if loan.SubmittedAt == nil {
-  return errors.New("submitted loan must have submission timestamp")
+func (s *SubmittedState) ValidateInvariants(qard_hasan *QardHasan) error {
+ if qard_hasan.SubmittedAt == nil {
+  return errors.New("submitted qard_hasan must have submission timestamp")
  }
  return nil
 }
@@ -674,14 +674,14 @@ func (a *ApprovedState) Disburse() (LoanState, error) {
  return &ActiveState{}, nil
 }
 
-func (a *ApprovedState) ValidateInvariants(loan *Loan) error {
- if loan.ApprovedAt == nil {
-  return errors.New("approved loan must have approval timestamp")
+func (a *ApprovedState) ValidateInvariants(qard_hasan *QardHasan) error {
+ if qard_hasan.ApprovedAt == nil {
+  return errors.New("approved qard_hasan must have approval timestamp")
  }
  return nil
 }
 
-// ActiveState - Loan disbursed, payments ongoing
+// ActiveState - QardHasan disbursed, payments ongoing
 type ActiveState struct {
  baseState
 }
@@ -700,9 +700,9 @@ func (a *ActiveState) Default(reason string) (LoanState, error) {
  return &DefaultedState{}, nil
 }
 
-func (a *ActiveState) ValidateInvariants(loan *Loan) error {
- if loan.DisbursedAt == nil {
-  return errors.New("active loan must have disbursement timestamp")
+func (a *ActiveState) ValidateInvariants(qard_hasan *QardHasan) error {
+ if qard_hasan.DisbursedAt == nil {
+  return errors.New("active qard_hasan must have disbursement timestamp")
  }
  return nil
 }
@@ -717,7 +717,7 @@ func (c *ClosedState) IsTerminal() bool { return true }
 func (c *ClosedState) CanSubmit() bool { return false }
 func (c *ClosedState) CanApprove() bool { return false }
 func (c *ClosedState) CanDisburse() bool { return false }
-func (c *ClosedState) ValidateInvariants(loan *Loan) error { return nil }
+func (c *ClosedState) ValidateInvariants(qard_hasan *QardHasan) error { return nil }
 
 type RejectedState struct {
  baseState
@@ -729,9 +729,9 @@ func (r *RejectedState) CanSubmit() bool { return false }
 func (r *RejectedState) CanApprove() bool { return false }
 func (r *RejectedState) CanDisburse() bool { return false }
 
-func (r *RejectedState) ValidateInvariants(loan *Loan) error {
- if loan.RejectionReason == "" {
-  return errors.New("rejected loan must have rejection reason")
+func (r *RejectedState) ValidateInvariants(qard_hasan *QardHasan) error {
+ if qard_hasan.RejectionReason == "" {
+  return errors.New("rejected qard_hasan must have rejection reason")
  }
  return nil
 }
@@ -746,9 +746,9 @@ func (d *DefaultedState) CanSubmit() bool { return false }
 func (d *DefaultedState) CanApprove() bool { return false }
 func (d *DefaultedState) CanDisburse() bool { return false }
 
-func (d *DefaultedState) ValidateInvariants(loan *Loan) error {
- if loan.DefaultReason == "" {
-  return errors.New("defaulted loan must have default reason")
+func (d *DefaultedState) ValidateInvariants(qard_hasan *QardHasan) error {
+ if qard_hasan.DefaultReason == "" {
+  return errors.New("defaulted qard_hasan must have default reason")
  }
  return nil
 }
@@ -758,33 +758,33 @@ func (d *DefaultedState) ValidateInvariants(loan *Loan) error {
 
 ```go
 func Example_LoanLifecycle() {
- // Create loan in DRAFT state
- loan := NewLoan("L001", "C123", 100000_00, 0.15)
- fmt.Println("Initial state:", loan.State.Name())
+ // Create qard_hasan in DRAFT state
+ qard_hasan := NewLoan("L001", "C123", 100000_00, 0.15)
+ fmt.Println("Initial state:", qard_hasan.State.Name())
 
  // Submit for approval
- if err := loan.Submit(); err != nil {
+ if err := qard_hasan.Submit(); err != nil {
   fmt.Println("Submit failed:", err)
   return
  }
- fmt.Println("After submit:", loan.State.Name())
+ fmt.Println("After submit:", qard_hasan.State.Name())
 
- // Approve loan
- if err := loan.Approve(); err != nil {
+ // Approve qard_hasan
+ if err := qard_hasan.Approve(); err != nil {
   fmt.Println("Approve failed:", err)
   return
  }
- fmt.Println("After approve:", loan.State.Name())
+ fmt.Println("After approve:", qard_hasan.State.Name())
 
  // Disburse funds
- if err := loan.Disburse(); err != nil {
+ if err := qard_hasan.Disburse(); err != nil {
   fmt.Println("Disburse failed:", err)
   return
  }
- fmt.Println("After disburse:", loan.State.Name())
+ fmt.Println("After disburse:", qard_hasan.State.Name())
 
  // Try invalid transition
- if err := loan.Submit(); err != nil {
+ if err := qard_hasan.Submit(); err != nil {
   fmt.Println("Invalid transition:", err)
  }
 
@@ -842,7 +842,7 @@ The Type Switch Pattern uses Go's type switch with interfaces to achieve exhaust
 - **Compile-time safety**: Type system prevents invalid state assignments
 - **Modern Go idiom**: Uses generics when beneficial
 
-### Example: Waqf Contract State Management
+### Example: Waqf MurabahaContract State Management
 
 **Waqf** (وقف) is an Islamic endowment where assets are donated for charitable purposes. Contracts transition through creation, review, activation, and archival phases.
 
@@ -881,7 +881,7 @@ func (u UnderReviewState) isContractState() {}
 func (u UnderReviewState) Name() string { return "UNDER_REVIEW" }
 func (u UnderReviewState) IsTerminal() bool { return false }
 
-// Active state - Contract is active
+// Active state - MurabahaContract is active
 type ActiveState struct {
  ApprovedAt    time.Time
  ActivatedAt   time.Time
@@ -922,8 +922,8 @@ func (r RejectedState) isContractState() {}
 func (r RejectedState) Name() string { return "REJECTED" }
 func (r RejectedState) IsTerminal() bool { return true }
 
-// Contract entity
-type Contract struct {
+// MurabahaContract entity
+type MurabahaContract struct {
  ID             string
  DonorID        string
  AssetValue     int64
@@ -931,9 +931,9 @@ type Contract struct {
  State          ContractState
 }
 
-// NewContract creates contract in DRAFT state
-func NewContract(id, donorID string, assetValue int64) *Contract {
- return &Contract{
+// NewContract creates murabaha_contract in DRAFT state
+func NewContract(id, donorID string, assetValue int64) *MurabahaContract {
+ return &MurabahaContract{
   ID:         id,
   DonorID:    donorID,
   AssetValue: assetValue,
@@ -942,7 +942,7 @@ func NewContract(id, donorID string, assetValue int64) *Contract {
 }
 
 // SubmitForReview transitions from DRAFT to UNDER_REVIEW
-func (c *Contract) SubmitForReview(reviewerID string) error {
+func (c *MurabahaContract) SubmitForReview(reviewerID string) error {
  switch state := c.State.(type) {
  case DraftState:
   c.State = UnderReviewState{
@@ -952,19 +952,19 @@ func (c *Contract) SubmitForReview(reviewerID string) error {
   return nil
 
  case UnderReviewState:
-  return errors.New("contract already under review")
+  return errors.New("murabaha_contract already under review")
 
  case ActiveState:
-  return errors.New("cannot submit active contract for review")
+  return errors.New("cannot submit active murabaha_contract for review")
 
  case SuspendedState:
-  return errors.New("cannot submit suspended contract for review")
+  return errors.New("cannot submit suspended murabaha_contract for review")
 
  case ArchivedState:
-  return errors.New("cannot submit archived contract for review")
+  return errors.New("cannot submit archived murabaha_contract for review")
 
  case RejectedState:
-  return errors.New("cannot submit rejected contract for review")
+  return errors.New("cannot submit rejected murabaha_contract for review")
 
  default:
   // This case should never happen if all states are handled
@@ -973,7 +973,7 @@ func (c *Contract) SubmitForReview(reviewerID string) error {
 }
 
 // Approve transitions from UNDER_REVIEW to ACTIVE
-func (c *Contract) Approve(beneficiaryID string) error {
+func (c *MurabahaContract) Approve(beneficiaryID string) error {
  switch state := c.State.(type) {
  case DraftState:
   return errors.New("must submit for review before approval")
@@ -988,16 +988,16 @@ func (c *Contract) Approve(beneficiaryID string) error {
   return nil
 
  case ActiveState:
-  return errors.New("contract already active")
+  return errors.New("murabaha_contract already active")
 
  case SuspendedState:
-  return errors.New("cannot approve suspended contract")
+  return errors.New("cannot approve suspended murabaha_contract")
 
  case ArchivedState:
-  return errors.New("cannot approve archived contract")
+  return errors.New("cannot approve archived murabaha_contract")
 
  case RejectedState:
-  return errors.New("cannot approve rejected contract")
+  return errors.New("cannot approve rejected murabaha_contract")
 
  default:
   return fmt.Errorf("unknown state type: %T", state)
@@ -1005,7 +1005,7 @@ func (c *Contract) Approve(beneficiaryID string) error {
 }
 
 // Reject transitions from UNDER_REVIEW to REJECTED
-func (c *Contract) Reject(reason string) error {
+func (c *MurabahaContract) Reject(reason string) error {
  switch state := c.State.(type) {
  case DraftState:
   return errors.New("must submit for review before rejection")
@@ -1018,16 +1018,16 @@ func (c *Contract) Reject(reason string) error {
   return nil
 
  case ActiveState:
-  return errors.New("cannot reject active contract")
+  return errors.New("cannot reject active murabaha_contract")
 
  case SuspendedState:
-  return errors.New("cannot reject suspended contract")
+  return errors.New("cannot reject suspended murabaha_contract")
 
  case ArchivedState:
-  return errors.New("cannot reject archived contract")
+  return errors.New("cannot reject archived murabaha_contract")
 
  case RejectedState:
-  return errors.New("contract already rejected")
+  return errors.New("murabaha_contract already rejected")
 
  default:
   return fmt.Errorf("unknown state type: %T", state)
@@ -1035,13 +1035,13 @@ func (c *Contract) Reject(reason string) error {
 }
 
 // Suspend transitions from ACTIVE to SUSPENDED
-func (c *Contract) Suspend(reason string) error {
+func (c *MurabahaContract) Suspend(reason string) error {
  switch state := c.State.(type) {
  case DraftState:
-  return errors.New("cannot suspend draft contract")
+  return errors.New("cannot suspend draft murabaha_contract")
 
  case UnderReviewState:
-  return errors.New("cannot suspend contract under review")
+  return errors.New("cannot suspend murabaha_contract under review")
 
  case ActiveState:
   c.State = SuspendedState{
@@ -1051,13 +1051,13 @@ func (c *Contract) Suspend(reason string) error {
   return nil
 
  case SuspendedState:
-  return errors.New("contract already suspended")
+  return errors.New("murabaha_contract already suspended")
 
  case ArchivedState:
-  return errors.New("cannot suspend archived contract")
+  return errors.New("cannot suspend archived murabaha_contract")
 
  case RejectedState:
-  return errors.New("cannot suspend rejected contract")
+  return errors.New("cannot suspend rejected murabaha_contract")
 
  default:
   return fmt.Errorf("unknown state type: %T", state)
@@ -1065,16 +1065,16 @@ func (c *Contract) Suspend(reason string) error {
 }
 
 // Resume transitions from SUSPENDED to ACTIVE
-func (c *Contract) Resume() error {
+func (c *MurabahaContract) Resume() error {
  switch state := c.State.(type) {
  case DraftState:
-  return errors.New("cannot resume draft contract")
+  return errors.New("cannot resume draft murabaha_contract")
 
  case UnderReviewState:
-  return errors.New("cannot resume contract under review")
+  return errors.New("cannot resume murabaha_contract under review")
 
  case ActiveState:
-  return errors.New("contract already active")
+  return errors.New("murabaha_contract already active")
 
  case SuspendedState:
   // Restore previous active state data (would need to be preserved)
@@ -1086,10 +1086,10 @@ func (c *Contract) Resume() error {
   return nil
 
  case ArchivedState:
-  return errors.New("cannot resume archived contract")
+  return errors.New("cannot resume archived murabaha_contract")
 
  case RejectedState:
-  return errors.New("cannot resume rejected contract")
+  return errors.New("cannot resume rejected murabaha_contract")
 
  default:
   return fmt.Errorf("unknown state type: %T", state)
@@ -1097,13 +1097,13 @@ func (c *Contract) Resume() error {
 }
 
 // Archive transitions from ACTIVE or SUSPENDED to ARCHIVED
-func (c *Contract) Archive() error {
+func (c *MurabahaContract) Archive() error {
  switch state := c.State.(type) {
  case DraftState:
-  return errors.New("cannot archive draft contract")
+  return errors.New("cannot archive draft murabaha_contract")
 
  case UnderReviewState:
-  return errors.New("cannot archive contract under review")
+  return errors.New("cannot archive murabaha_contract under review")
 
  case ActiveState:
   c.State = ArchivedState{
@@ -1120,10 +1120,10 @@ func (c *Contract) Archive() error {
   return nil
 
  case ArchivedState:
-  return errors.New("contract already archived")
+  return errors.New("murabaha_contract already archived")
 
  case RejectedState:
-  return errors.New("cannot archive rejected contract")
+  return errors.New("cannot archive rejected murabaha_contract")
 
  default:
   return fmt.Errorf("unknown state type: %T", state)
@@ -1131,7 +1131,7 @@ func (c *Contract) Archive() error {
 }
 
 // GetStateData extracts state-specific data
-func (c *Contract) GetStateData() interface{} {
+func (c *MurabahaContract) GetStateData() interface{} {
  switch state := c.State.(type) {
  case DraftState:
   return map[string]interface{}{
@@ -1179,48 +1179,48 @@ func (c *Contract) GetStateData() interface{} {
 
 ```go
 func Example_WaqfContractLifecycle() {
- // Create contract
- contract := NewContract("W001", "D123", 500000_00)
- fmt.Println("Initial state:", contract.State.Name())
+ // Create murabaha_contract
+ murabaha_contract := NewContract("W001", "D123", 500000_00)
+ fmt.Println("Initial state:", murabaha_contract.State.Name())
 
  // Submit for review
- if err := contract.SubmitForReview("R456"); err != nil {
+ if err := murabaha_contract.SubmitForReview("R456"); err != nil {
   fmt.Println("Submit error:", err)
   return
  }
- fmt.Println("After submit:", contract.State.Name())
+ fmt.Println("After submit:", murabaha_contract.State.Name())
 
  // Get state-specific data
- data := contract.GetStateData()
+ data := murabaha_contract.GetStateData()
  fmt.Printf("Review data: %+v\n", data)
 
- // Approve contract
- if err := contract.Approve("B789"); err != nil {
+ // Approve murabaha_contract
+ if err := murabaha_contract.Approve("B789"); err != nil {
   fmt.Println("Approve error:", err)
   return
  }
- fmt.Println("After approve:", contract.State.Name())
+ fmt.Println("After approve:", murabaha_contract.State.Name())
 
  // Suspend temporarily
- if err := contract.Suspend("Annual maintenance"); err != nil {
+ if err := murabaha_contract.Suspend("Annual maintenance"); err != nil {
   fmt.Println("Suspend error:", err)
   return
  }
- fmt.Println("After suspend:", contract.State.Name())
+ fmt.Println("After suspend:", murabaha_contract.State.Name())
 
  // Resume
- if err := contract.Resume(); err != nil {
+ if err := murabaha_contract.Resume(); err != nil {
   fmt.Println("Resume error:", err)
   return
  }
- fmt.Println("After resume:", contract.State.Name())
+ fmt.Println("After resume:", murabaha_contract.State.Name())
 
  // Archive
- if err := contract.Archive(); err != nil {
+ if err := murabaha_contract.Archive(); err != nil {
   fmt.Println("Archive error:", err)
   return
  }
- fmt.Println("After archive:", contract.State.Name())
+ fmt.Println("After archive:", murabaha_contract.State.Name())
 
  // Output:
  // Initial state: DRAFT
@@ -1301,11 +1301,11 @@ Go's goroutines make concurrency natural, but FSMs require synchronization to pr
 
 ```go
 // UNSAFE: Race condition
-type Payment struct {
+type DonationPayment struct {
  state PaymentState
 }
 
-func (p *Payment) Approve() error {
+func (p *DonationPayment) Approve() error {
  // Two goroutines could both read PENDING, both write APPROVED
  if p.state != StatePending {
   return errors.New("can only approve pending payments")
@@ -1318,7 +1318,7 @@ func (p *Payment) Approve() error {
 ### Pattern 1: Mutex-Based FSM
 
 ```go
-package payment
+package donation
 
 import (
  "errors"
@@ -1326,7 +1326,7 @@ import (
  "time"
 )
 
-// Thread-safe payment FSM
+// Thread-safe donation FSM
 type SafePayment struct {
  mu              sync.RWMutex
  id              string
@@ -1397,7 +1397,7 @@ func (p *SafePayment) Complete() error {
 ### Pattern 2: Channel-Based FSM (Actor Model)
 
 ```go
-package payment
+package donation
 
 import (
  "context"
@@ -1435,7 +1435,7 @@ type GetStateEvent struct {
 
 func (GetStateEvent) isPaymentEvent() {}
 
-// Actor-based payment FSM
+// Actor-based donation FSM
 type ActorPayment struct {
  id       string
  amount   int64
@@ -1595,7 +1595,7 @@ func Example_ConcurrentPaymentProcessing() {
  ctx := context.Background()
 
  // Mutex-based version
- payment := NewSafePayment("P001", 100_00)
+ donation := NewSafePayment("P001", 100_00)
 
  // Multiple goroutines can safely interact
  var wg sync.WaitGroup
@@ -1603,7 +1603,7 @@ func Example_ConcurrentPaymentProcessing() {
 
  go func() {
   defer wg.Done()
-  if err := payment.Approve(); err != nil {
+  if err := donation.Approve(); err != nil {
    fmt.Println("Approve error:", err)
   }
  }()
@@ -1611,7 +1611,7 @@ func Example_ConcurrentPaymentProcessing() {
  go func() {
   defer wg.Done()
   time.Sleep(10 * time.Millisecond)
-  if err := payment.Process(); err != nil {
+  if err := donation.Process(); err != nil {
    fmt.Println("Process error:", err)
   }
  }()
@@ -1690,52 +1690,52 @@ package payment_test
 import (
  "testing"
 
- "yourapp/payment"
+ "yourapp/donation"
 )
 
 func TestPayment_StateTransitions(t *testing.T) {
  tests := []struct {
   name          string
-  initialState  payment.PaymentState
-  transition    func(*payment.Payment) error
-  expectedState payment.PaymentState
+  initialState  donation.PaymentState
+  transition    func(*donation.DonationPayment) error
+  expectedState donation.PaymentState
   expectError   bool
  }{
   {
    name:          "pending to approved",
-   initialState:  payment.StatePending,
-   transition:    func(p *payment.Payment) error { return p.Approve() },
-   expectedState: payment.StateApproved,
+   initialState:  donation.StatePending,
+   transition:    func(p *donation.DonationPayment) error { return p.Approve() },
+   expectedState: donation.StateApproved,
    expectError:   false,
   },
   {
    name:         "pending to processing (invalid)",
-   initialState: payment.StatePending,
-   transition:   func(p *payment.Payment) error { return p.Process() },
+   initialState: donation.StatePending,
+   transition:   func(p *donation.DonationPayment) error { return p.Process() },
    expectError:  true,
   },
   {
    name:          "approved to processing",
-   initialState:  payment.StateApproved,
-   transition:    func(p *payment.Payment) error { return p.Process() },
-   expectedState: payment.StateProcessing,
+   initialState:  donation.StateApproved,
+   transition:    func(p *donation.DonationPayment) error { return p.Process() },
+   expectedState: donation.StateProcessing,
    expectError:   false,
   },
   {
    name:          "processing to completed",
-   initialState:  payment.StateProcessing,
-   transition:    func(p *payment.Payment) error { return p.Complete() },
-   expectedState: payment.StateCompleted,
+   initialState:  donation.StateProcessing,
+   transition:    func(p *donation.DonationPayment) error { return p.Complete() },
+   expectedState: donation.StateCompleted,
    expectError:   false,
   },
  }
 
  for _, tt := range tests {
   t.Run(tt.name, func(t *testing.T) {
-   // Setup payment in initial state
-   p, err := payment.NewPayment("P001", 100_00, "payee123")
+   // Setup donation in initial state
+   p, err := donation.NewPayment("P001", 100_00, "payee123")
    if err != nil {
-    t.Fatalf("Failed to create payment: %v", err)
+    t.Fatalf("Failed to create donation: %v", err)
    }
 
    // Force initial state (test helper)
@@ -1765,14 +1765,14 @@ func TestPayment_StateTransitions(t *testing.T) {
 
 ```go
 func TestPayment_SuccessfulWorkflow(t *testing.T) {
- // Create payment
- p, err := payment.NewPayment("P001", 100_00, "payee123")
+ // Create donation
+ p, err := donation.NewPayment("P001", 100_00, "payee123")
  if err != nil {
-  t.Fatalf("Failed to create payment: %v", err)
+  t.Fatalf("Failed to create donation: %v", err)
  }
 
  // Verify initial state
- if p.State != payment.StatePending {
+ if p.State != donation.StatePending {
   t.Errorf("Expected initial state PENDING, got %v", p.State)
  }
 
@@ -1780,7 +1780,7 @@ func TestPayment_SuccessfulWorkflow(t *testing.T) {
  if err := p.Approve(); err != nil {
   t.Fatalf("Approve failed: %v", err)
  }
- if p.State != payment.StateApproved {
+ if p.State != donation.StateApproved {
   t.Errorf("Expected APPROVED after approval, got %v", p.State)
  }
 
@@ -1788,7 +1788,7 @@ func TestPayment_SuccessfulWorkflow(t *testing.T) {
  if err := p.Process(); err != nil {
   t.Fatalf("Process failed: %v", err)
  }
- if p.State != payment.StateProcessing {
+ if p.State != donation.StateProcessing {
   t.Errorf("Expected PROCESSING after process, got %v", p.State)
  }
 
@@ -1796,7 +1796,7 @@ func TestPayment_SuccessfulWorkflow(t *testing.T) {
  if err := p.Complete(); err != nil {
   t.Fatalf("Complete failed: %v", err)
  }
- if p.State != payment.StateCompleted {
+ if p.State != donation.StateCompleted {
   t.Errorf("Expected COMPLETED after complete, got %v", p.State)
  }
 
@@ -1807,9 +1807,9 @@ func TestPayment_SuccessfulWorkflow(t *testing.T) {
 }
 
 func TestPayment_FailureWorkflow(t *testing.T) {
- p, err := payment.NewPayment("P002", 200_00, "payee456")
+ p, err := donation.NewPayment("P002", 200_00, "payee456")
  if err != nil {
-  t.Fatalf("Failed to create payment: %v", err)
+  t.Fatalf("Failed to create donation: %v", err)
  }
 
  // Approve
@@ -1823,15 +1823,15 @@ func TestPayment_FailureWorkflow(t *testing.T) {
  }
 
  // Fail
- if err := p.Fail("Payment gateway timeout"); err != nil {
+ if err := p.Fail("DonationPayment gateway timeout"); err != nil {
   t.Fatalf("Fail transition failed: %v", err)
  }
 
- if p.State != payment.StateFailed {
+ if p.State != donation.StateFailed {
   t.Errorf("Expected FAILED state, got %v", p.State)
  }
 
- if p.FailureReason != "Payment gateway timeout" {
+ if p.FailureReason != "DonationPayment gateway timeout" {
   t.Errorf("Expected failure reason to be set")
  }
 }
@@ -1841,7 +1841,7 @@ func TestPayment_FailureWorkflow(t *testing.T) {
 
 ```go
 func TestSafePayment_ConcurrentTransitions(t *testing.T) {
- payment := payment.NewSafePayment("P003", 300_00)
+ donation := donation.NewSafePayment("P003", 300_00)
 
  // Launch 100 concurrent approvals
  var wg sync.WaitGroup
@@ -1851,7 +1851,7 @@ func TestSafePayment_ConcurrentTransitions(t *testing.T) {
   wg.Add(1)
   go func() {
    defer wg.Done()
-   if err := payment.Approve(); err == nil {
+   if err := donation.Approve(); err == nil {
     successCount.Add(1)
    }
   }()
@@ -1865,8 +1865,8 @@ func TestSafePayment_ConcurrentTransitions(t *testing.T) {
  }
 
  // Final state should be APPROVED
- if payment.GetState() != payment.StateApproved {
-  t.Errorf("Expected final state APPROVED, got %v", payment.GetState())
+ if donation.GetState() != donation.StateApproved {
+  t.Errorf("Expected final state APPROVED, got %v", donation.GetState())
  }
 }
 ```
@@ -1888,12 +1888,12 @@ func TestPayment_PropertyInvariants(t *testing.T) {
 
  // Property: Terminal states cannot transition
  properties.Property("terminal states never transition", prop.ForAll(
-  func(initialState payment.PaymentState) bool {
+  func(initialState donation.PaymentState) bool {
    if !initialState.IsTerminal() {
     return true  // Property doesn't apply
    }
 
-   p := &payment.Payment{State: initialState}
+   p := &donation.DonationPayment{State: initialState}
 
    // Try all transitions
    transitions := []func() error{
@@ -1912,17 +1912,17 @@ func TestPayment_PropertyInvariants(t *testing.T) {
    return true
   },
   gen.OneConstOf(
-   payment.StateCompleted,
-   payment.StateFailed,
-   payment.StateRejected,
-   payment.StateCancelled,
+   donation.StateCompleted,
+   donation.StateFailed,
+   donation.StateRejected,
+   donation.StateCancelled,
   ),
  ))
 
  // Property: Amount is always positive
  properties.Property("amount always positive", prop.ForAll(
   func(amount int64) bool {
-   _, err := payment.NewPayment("P001", amount, "payee")
+   _, err := donation.NewPayment("P001", amount, "recipient")
    if amount <= 0 {
     return err != nil  // Should fail for non-positive
    }
@@ -1937,7 +1937,7 @@ func TestPayment_PropertyInvariants(t *testing.T) {
 
 ## Business Domain Examples
 
-### Example 1: Zakat Payment Processing
+### Example 1: Zakat DonationPayment Processing
 
 **Zakat** is mandatory charitable giving in Islam (2.5% of wealth annually). Payments go through verification, approval, and distribution phases.
 
@@ -2010,7 +2010,7 @@ func (z *ZakatPayment) StartVerification() error {
 
 func (z *ZakatPayment) CompleteVerification(verifierID string) error {
  if z.State != StateVerifying {
-  return errors.New("payment not in verification")
+  return errors.New("donation not in verification")
  }
 
  now := time.Now()
@@ -2042,7 +2042,7 @@ func (z *ZakatPayment) StartDistribution() error {
 
 func (z *ZakatPayment) CompleteDistribution(beneficiaryIDs []string) error {
  if z.State != StateDistributing {
-  return errors.New("payment not in distribution")
+  return errors.New("donation not in distribution")
  }
 
  if len(beneficiaryIDs) == 0 {
@@ -2097,25 +2097,25 @@ graph TD
 
 ```go
 // Entry action: Execute logic when entering state
-func (p *Payment) enterProcessingState() {
+func (p *DonationPayment) enterProcessingState() {
  // Start background job
  go p.sendToGateway()
 
  // Log event
- log.Info("Payment entered PROCESSING state", "payment_id", p.ID)
+ log.Info("DonationPayment entered PROCESSING state", "payment_id", p.ID)
 }
 
 // Exit action: Cleanup when leaving state
-func (p *Payment) exitProcessingState() {
+func (p *DonationPayment) exitProcessingState() {
  // Cancel background job
  p.cancelGatewayRequest()
 
  // Log event
- log.Info("Payment exited PROCESSING state", "payment_id", p.ID)
+ log.Info("DonationPayment exited PROCESSING state", "payment_id", p.ID)
 }
 
 // Integrate into transition
-func (p *Payment) Process() error {
+func (p *DonationPayment) Process() error {
  if err := p.Transition(StateProcessing); err != nil {
   return err
  }
@@ -2129,21 +2129,21 @@ func (p *Payment) Process() error {
 
 ```go
 // Guard: Precondition that must be true
-func (p *Payment) canApprove() error {
+func (p *DonationPayment) canApprove() error {
  if p.Amount <= 0 {
   return errors.New("amount must be positive")
  }
  if p.PayeeID == "" {
-  return errors.New("payee must be set")
+  return errors.New("recipient must be set")
  }
  // Shariah compliance check
  if !p.isShariahCompliant() {
-  return errors.New("payment does not meet Shariah requirements")
+  return errors.New("donation does not meet Shariah requirements")
  }
  return nil
 }
 
-func (p *Payment) Approve() error {
+func (p *DonationPayment) Approve() error {
  // Check guard before transition
  if err := p.canApprove(); err != nil {
   return fmt.Errorf("cannot approve: %w", err)
@@ -2157,7 +2157,7 @@ func (p *Payment) Approve() error {
 
 ```go
 type PaymentEvent interface {
- Apply(*Payment) error
+ Apply(*DonationPayment) error
 }
 
 type ApprovedEvent struct {
@@ -2165,7 +2165,7 @@ type ApprovedEvent struct {
  Timestamp  time.Time
 }
 
-func (e ApprovedEvent) Apply(p *Payment) error {
+func (e ApprovedEvent) Apply(p *DonationPayment) error {
  return p.Approve()
 }
 
@@ -2174,14 +2174,14 @@ type ProcessedEvent struct {
  Timestamp  time.Time
 }
 
-func (e ProcessedEvent) Apply(p *Payment) error {
+func (e ProcessedEvent) Apply(p *DonationPayment) error {
  return p.Process()
 }
 
 // Event sourcing: Rebuild state from events
-func ReplayEvents(payment *Payment, events []PaymentEvent) error {
+func ReplayEvents(donation *DonationPayment, events []PaymentEvent) error {
  for _, event := range events {
-  if err := event.Apply(payment); err != nil {
+  if err := event.Apply(donation); err != nil {
    return err
   }
  }
@@ -2195,11 +2195,11 @@ func ReplayEvents(payment *Payment, events []PaymentEvent) error {
 
 ```go
 // Bad: Magic strings
-type Payment struct {
+type DonationPayment struct {
  Status string  // "pending", "approved", "COMPLETED" - typo city!
 }
 
-if payment.Status == "APROVED" {  // Typo! Runtime bug
+if donation.Status == "APROVED" {  // Typo! Runtime bug
  // ...
 }
 ```
@@ -2216,7 +2216,7 @@ const (
  StateCompleted
 )
 
-if payment.State == StateApproved {  // Compiler validates
+if donation.State == StateApproved {  // Compiler validates
  // ...
 }
 ```
@@ -2228,12 +2228,12 @@ if payment.State == StateApproved {  // Compiler validates
 ```go
 // Bad: Validation in service layer
 func (s *Service) ApprovePayment(id string) error {
- payment := s.repo.Get(id)
- if payment.Status != "pending" {  // Scattered logic
+ donation := s.repo.Get(id)
+ if donation.Status != "pending" {  // Scattered logic
   return errors.New("invalid state")
  }
- payment.Status = "approved"
- return s.repo.Save(payment)
+ donation.Status = "approved"
+ return s.repo.Save(donation)
 }
 ```
 
@@ -2241,7 +2241,7 @@ func (s *Service) ApprovePayment(id string) error {
 
 ```go
 // Good: Validation in entity
-func (p *Payment) Approve() error {
+func (p *DonationPayment) Approve() error {
  if !p.State.CanTransitionTo(StateApproved) {
   return errors.New("invalid transition")
  }
@@ -2325,10 +2325,10 @@ func (p *Payment) Approve() error {
 **Islamic Finance Context**:
 
 1. **AAOIFI Standards**: Accounting and Auditing Organization for Islamic Financial Institutions (2023)
-2. **Murabaha Contract Requirements**: Islamic Development Bank Guidelines (2022)
+2. **Murabaha MurabahaContract Requirements**: Islamic Development Bank Guidelines (2022)
 
 ---
 
-**Last Updated**: 2026-01-22
-**Go Version**: 1.18-1.25
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+
 **Lines**: 2,100+ (comprehensive FSM guide)

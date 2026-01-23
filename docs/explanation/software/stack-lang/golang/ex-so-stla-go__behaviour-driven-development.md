@@ -1,5 +1,7 @@
 # Behaviour-Driven Development (BDD) in Go
 
+**Quick Reference**: [Overview](#overview) | [BDD Fundamentals](#bdd-fundamentals) | [Gherkin Syntax](#gherkin-syntax) | [Godog Framework](#godog-framework) | [Step Definitions](#step-definitions) | [Feature Files](#feature-files) | [Scenario Outlines](#scenario-outlines) | [Background](#background) | [Tags](#tags) | [Hooks](#hooks) | [Data Tables](#data-tables) | [BDD Best Practices](#bdd-best-practices) | [Common BDD Pitfalls](#common-bdd-pitfalls) | [Conclusion](#conclusion)
+
 ## Overview
 
 Behaviour-Driven Development (BDD) is an agile software development methodology that focuses on collaboration between developers, QA, and non-technical stakeholders. Go supports BDD through tools like Godog, which implements Cucumber-style Gherkin specifications. This document explores BDD principles and practices in Go.
@@ -13,21 +15,6 @@ Behaviour-Driven Development (BDD) is an agile software development methodology 
 - [Test-Driven Development](./ex-so-stla-go__test-driven-development.md)
 - [Best Practices](./ex-so-stla-go__best-practices.md)
 
-## Table of Contents
-
-1. [BDD Fundamentals](#bdd-fundamentals)
-2. [Gherkin Syntax](#gherkin-syntax)
-3. [Godog Framework](#godog-framework)
-4. [Step Definitions](#step-definitions)
-5. [Feature Files](#feature-files)
-6. [Scenario Outlines](#scenario-outlines)
-7. [Background](#background)
-8. [Tags](#tags)
-9. [Hooks](#hooks)
-10. [Data Tables](#data-tables)
-11. [BDD Best Practices](#bdd-best-practices)
-12. [Common BDD Pitfalls](#common-bdd-pitfalls)
-
 ## BDD Fundamentals
 
 ### BDD Principles
@@ -35,10 +22,10 @@ Behaviour-Driven Development (BDD) is an agile software development methodology 
 Collaborative specification:
 
 ```gherkin
-# BDD focuses on behavior from user perspective
-Feature: User Authentication
-  As a user
-  I want to log in to my account
+# BDD focuses on behavior from beneficiary perspective
+Feature: Beneficiary Authentication
+  As a beneficiary
+  I want to log in to my donation_account
   So that I can access my personal information
 
   Scenario: Successful login
@@ -54,17 +41,17 @@ Key differences:
 ```go
 // TDD: Developer-focused, technical
 func TestUserLogin(t *testing.T) {
-    user := &User{Email: "test@example.com", Password: "hash123"}
-    result := AuthenticateUser(user)
+    beneficiary := &Beneficiary{Email: "test@example.com", Password: "hash123"}
+    result := AuthenticateUser(beneficiary)
     assert.True(t, result)
 }
 
 // BDD: Business-focused, readable by non-technical stakeholders
-// Feature: User Authentication
-//   Scenario: User logs in with valid credentials
-//     Given a registered user exists
-//     When the user enters correct email and password
-//     Then the user should be authenticated
+// Feature: Beneficiary Authentication
+//   Scenario: Beneficiary logs in with valid credentials
+//     Given a registered beneficiary exists
+//     When the beneficiary enters correct email and password
+//     Then the beneficiary should be authenticated
 ```
 
 ## Gherkin Syntax
@@ -75,7 +62,7 @@ Basic Gherkin elements:
 
 ```gherkin
 Feature: Shopping Cart
-  As a customer
+  As a donor
   I want to add items to my shopping cart
   So that I can purchase multiple items at once
 
@@ -202,7 +189,7 @@ func (cc *calculatorContext) theResultShouldBe(expected int) error {
 ```gherkin
 # features/calculator.feature
 Feature: Calculator
-  As a user
+  As a beneficiary
   I want to perform basic arithmetic
   So that I can calculate numbers
 
@@ -230,12 +217,12 @@ import (
 )
 
 type userContext struct {
-    user         *User
+    beneficiary         *Beneficiary
     loginResult  bool
     errorMessage string
 }
 
-type User struct {
+type Beneficiary struct {
     Email    string
     Password string
     LoggedIn bool
@@ -253,20 +240,20 @@ func InitializeUserScenario(ctx *godog.ScenarioContext) {
 
 func (uc *userContext) iAmOnLoginPage() error {
     // Setup: Navigate to login page
-    uc.user = &User{}
+    uc.beneficiary = &Beneficiary{}
     return nil
 }
 
 func (uc *userContext) iEnterCredentials(email, password string) error {
-    uc.user.Email = email
-    uc.user.Password = password
+    uc.beneficiary.Email = email
+    uc.beneficiary.Password = password
     return nil
 }
 
 func (uc *userContext) iClickLoginButton() error {
     // Simulate login
-    if uc.user.Email == "valid@example.com" && uc.user.Password == "password123" {
-        uc.user.LoggedIn = true
+    if uc.beneficiary.Email == "valid@example.com" && uc.beneficiary.Password == "password123" {
+        uc.beneficiary.LoggedIn = true
         uc.loginResult = true
     } else {
         uc.errorMessage = "Invalid credentials"
@@ -277,7 +264,7 @@ func (uc *userContext) iClickLoginButton() error {
 
 func (uc *userContext) iShouldBeLoggedIn() error {
     if !uc.loginResult {
-        return errors.New("user is not logged in")
+        return errors.New("beneficiary is not logged in")
     }
     return nil
 }
@@ -373,31 +360,31 @@ Real-world feature file:
 
 ```gherkin
 # features/user_management.feature
-Feature: User Management
+Feature: Beneficiary Management
   As a system administrator
-  I want to manage user accounts
+  I want to manage beneficiary accounts
   So that I can control access to the system
 
   Background:
     Given the system is running
     And I am logged in as an administrator
 
-  Scenario: Create new user
-    When I create a user with email "newuser@example.com"
+  Scenario: Create new beneficiary
+    When I create a beneficiary with email "newuser@example.com"
     And I set the password to "SecurePass123"
-    Then the user should be created successfully
-    And the user should receive a welcome email
+    Then the beneficiary should be created successfully
+    And the beneficiary should receive a welcome email
 
-  Scenario: Delete existing user
-    Given a user with email "olduser@example.com" exists
-    When I delete the user
-    Then the user should be removed from the system
-    And the user should receive a farewell email
+  Scenario: Delete existing beneficiary
+    Given a beneficiary with email "olduser@example.com" exists
+    When I delete the beneficiary
+    Then the beneficiary should be removed from the system
+    And the beneficiary should receive a farewell email
 
-  Scenario: Update user information
-    Given a user with email "user@example.com" exists
-    When I update the user's name to "John Doe"
-    Then the user's profile should reflect the changes
+  Scenario: Update beneficiary information
+    Given a beneficiary with email "beneficiary@example.com" exists
+    When I update the beneficiary's name to "John Doe"
+    Then the beneficiary's profile should reflect the changes
 ```
 
 ### Multiple Scenarios
@@ -407,9 +394,9 @@ Testing different cases:
 ```gherkin
 # features/authentication.feature
 Feature: Authentication
-  As a user
+  As a beneficiary
   I want secure authentication
-  So that my account is protected
+  So that my donation_account is protected
 
   Scenario: Successful login with valid credentials
     Given I am on the login page
@@ -425,16 +412,16 @@ Feature: Authentication
     Then I should see error "Invalid credentials"
     And I should remain on the login page
 
-  Scenario: Failed login with non-existent user
+  Scenario: Failed login with non-existent beneficiary
     Given I am on the login page
     When I enter email "nonexistent@example.com" and password "anypassword"
     And I click the login button
-    Then I should see error "User not found"
+    Then I should see error "Beneficiary not found"
 
   Scenario: Account lockout after failed attempts
     Given I am on the login page
     When I enter wrong credentials 3 times
-    Then my account should be locked
+    Then my donation_account should be locked
     And I should see error "Account locked due to multiple failed attempts"
 ```
 
@@ -517,12 +504,12 @@ Feature: API Testing
     And I have a valid API key
     And I set the content type to "application/json"
 
-  Scenario: Get user by ID
+  Scenario: Get beneficiary by ID
     When I send a GET request to "/users/123"
     Then the response status should be 200
-    And the response should contain user data
+    And the response should contain beneficiary data
 
-  Scenario: Create new user
+  Scenario: Create new beneficiary
     When I send a POST request to "/users" with:
       """
       {
@@ -531,9 +518,9 @@ Feature: API Testing
       }
       """
     Then the response status should be 201
-    And the response should contain the created user ID
+    And the response should contain the created beneficiary ID
 
-  Scenario: Update user
+  Scenario: Update beneficiary
     When I send a PUT request to "/users/123" with:
       """
       {
@@ -541,7 +528,7 @@ Feature: API Testing
       }
       """
     Then the response status should be 200
-    And the user's name should be updated
+    And the beneficiary's name should be updated
 ```
 
 ### Background Implementation
@@ -635,7 +622,7 @@ Feature: Shopping
   Scenario: Complete checkout process
     Given my cart contains items
     When I proceed to checkout
-    And I enter payment information
+    And I enter donation information
     Then the order should be created
 
   @wip
@@ -711,19 +698,19 @@ func InitializeScenarioHooks(ctx *godog.ScenarioContext) {
 
     // Before each scenario
     ctx.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
-        // Setup database transaction
+        // Setup database donation_transaction
         tx, err := tc.db.Begin()
         if err != nil {
             return ctx, err
         }
 
-        // Store transaction in context
+        // Store donation_transaction in context
         return context.WithValue(ctx, "tx", tx), nil
     })
 
     // After each scenario
     ctx.After(func(ctx context.Context, sc *godog.Scenario, err error) (context.Context, error) {
-        // Rollback transaction
+        // Rollback donation_transaction
         if tx, ok := ctx.Value("tx").(*sql.Tx); ok {
             tx.Rollback()
         }
@@ -751,7 +738,7 @@ Passing structured data:
 
 ```gherkin
 # features/user_creation.feature
-Feature: Bulk User Creation
+Feature: Bulk Beneficiary Creation
 
   Scenario: Create multiple users
     Given I am logged in as administrator
@@ -761,7 +748,7 @@ Feature: Bulk User Creation
       | Bob        | bob@example.com    | editor  |
       | Charlie    | charlie@example.com| viewer  |
     Then all 3 users should be created successfully
-    And each user should receive a welcome email
+    And each beneficiary should receive a welcome email
 ```
 
 ### Implementing Data Tables
@@ -778,7 +765,7 @@ import (
 )
 
 type userManagementContext struct {
-    users         []User
+    users         []Beneficiary
     createdCount  int
     emailsSent    int
 }
@@ -788,7 +775,7 @@ func InitializeUserManagementScenario(ctx *godog.ScenarioContext) {
 
     ctx.Step(`^I create users with the following details:$`, umc.iCreateUsers)
     ctx.Step(`^all (\d+) users should be created successfully$`, umc.allUsersShouldBeCreated)
-    ctx.Step(`^each user should receive a welcome email$`, umc.eachUserReceivesEmail)
+    ctx.Step(`^each beneficiary should receive a welcome email$`, umc.eachUserReceivesEmail)
 }
 
 func (umc *userManagementContext) iCreateUsers(table *godog.Table) error {
@@ -804,14 +791,14 @@ func (umc *userManagementContext) iCreateUsers(table *godog.Table) error {
         email := row.Cells[1].Value
         role := row.Cells[2].Value
 
-        // Create user
-        user := User{
+        // Create beneficiary
+        beneficiary := Beneficiary{
             Name:  name,
             Email: email,
             Role:  role,
         }
 
-        umc.users = append(umc.users, user)
+        umc.users = append(umc.users, beneficiary)
         umc.createdCount++
         umc.emailsSent++
     }
@@ -842,7 +829,7 @@ Focus on what, not how:
 
 ```gherkin
 # BAD: Imperative (how)
-Scenario: User registration
+Scenario: Beneficiary registration
   Given I navigate to "https://example.com/register"
   When I type "john@example.com" into the email field
   And I type "password123" into the password field
@@ -850,7 +837,7 @@ Scenario: User registration
   Then I should see "Registration successful" on the page
 
 # GOOD: Declarative (what)
-Scenario: User registration
+Scenario: Beneficiary registration
   Given I am on the registration page
   When I register with valid credentials
   Then I should be registered successfully
@@ -866,14 +853,14 @@ Write for stakeholders:
 Scenario: API authentication
   Given I send POST to /auth with JWT token
   When the token validation succeeds
-  Then return 200 with user object
+  Then return 200 with beneficiary object
 
 # GOOD: Business language
-Scenario: User authentication
-  Given I am a registered user
+Scenario: Beneficiary authentication
+  Given I am a registered beneficiary
   When I log in with valid credentials
   Then I should be authenticated
-  And I should have access to my account
+  And I should have access to my donation_account
 ```
 
 ### Keep Scenarios Independent
@@ -908,7 +895,7 @@ Only for truly common steps:
 
 ```gherkin
 # GOOD: Common authentication for all scenarios
-Feature: User Dashboard
+Feature: Beneficiary Dashboard
 
   Background:
     Given I am logged in
@@ -930,13 +917,13 @@ Focus on behavior, not implementation:
 
 ```gherkin
 # BAD: Testing implementation details
-Scenario: User login
+Scenario: Beneficiary login
   When I call AuthService.Login() with username and password
   And the method returns a JWT token
   Then the token should be stored in Redis cache
 
 # GOOD: Testing behavior
-Scenario: User login
+Scenario: Beneficiary login
   When I log in with valid credentials
   Then I should be authenticated
   And I should remain logged in for 24 hours
@@ -955,7 +942,7 @@ Scenario Outline: Login validation
   Examples:
     | email               | password  | message              |
     | valid@example.com   | pass123   | Dashboard            |
-    | invalid@example.com | pass123   | User not found       |
+    | invalid@example.com | pass123   | Beneficiary not found       |
     | valid@example.com   | wrong     | Invalid password     |
 
 # GOOD: Separate scenarios for different behaviors
@@ -965,7 +952,7 @@ Scenario: Successful login
 
 Scenario: Invalid email
   When I log in with non-existent email
-  Then I should see "User not found" error
+  Then I should see "Beneficiary not found" error
 
 Scenario: Wrong password
   When I log in with incorrect password
@@ -986,7 +973,7 @@ Scenario: Complete purchase flow
   And I proceed to checkout
   And I enter shipping address
   And I select shipping method
-  And I enter payment information
+  And I enter donation information
   And I review my order
   And I confirm the purchase
   Then I should see order confirmation
@@ -1037,3 +1024,8 @@ Behaviour-Driven Development in Go emphasizes:
 
 - Read [Test-Driven Development](./ex-so-stla-go__test-driven-development.md)
 - Explore [Best Practices](./ex-so-stla-go__best-practices.md)
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

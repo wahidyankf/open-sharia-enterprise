@@ -13,11 +13,11 @@ tags:
   - java-17
   - java-21
   - spring-state-machine
-created: 2026-01-22
-updated: 2026-01-22
 ---
 
 # Java Finite State Machines
+
+**Quick Reference**: [Overview](#overview) | [FSM Fundamentals](#fsm-fundamentals) | [Implementation Pattern 1: Enum-Based FSM](#implementation-pattern-1-enum-based-fsm) | [Implementation Pattern 2: State Design Pattern](#implementation-pattern-2-state-design-pattern) | [Implementation Pattern 3: Sealed Classes + Records](#implementation-pattern-3-sealed-classes--records) | [Spring State Machine Framework](#spring-state-machine-framework) | [Testing State Machines](#testing-state-machines) | [Common FSM Patterns](#common-fsm-patterns) | [Common Pitfalls and Anti-Patterns](#common-pitfalls-and-anti-patterns) | [Business Domain Examples](#business-domain-examples) | [Best Practices Checklist](#best-practices-checklist) | [Sources](#sources) | [Related Documentation](#related-documentation) | [Related Principles](#related-principles)
 
 ## Overview
 
@@ -27,9 +27,9 @@ Finite State Machines (FSMs) are fundamental design patterns for managing comple
 
 Financial applications involve complex workflows with strict state transition rules:
 
-- **Payment Processing**: Transactions move through well-defined states (pending → processing → completed/failed)
-- **Murabaha Loan Lifecycle**: Islamic financing contracts follow specific approval and disbursement workflows
-- **Waqf Contract Management**: Endowment contracts transition through draft → review → active → archived states
+- **DonationPayment Processing**: Transactions move through well-defined states (pending → processing → completed/failed)
+- **Murabaha QardHasan Lifecycle**: Islamic financing contracts follow specific approval and disbursement workflows
+- **Waqf MurabahaContract Management**: Endowment contracts transition through draft → review → active → archived states
 - **Shariah Compliance Workflows**: Compliance checks require deterministic state tracking
 
 ### Key Benefits
@@ -54,7 +54,7 @@ This guide targets Java developers building enterprise financial systems. It ass
 - [Sealed Classes + Records](#implementation-pattern-3-sealed-classes--records) - Modern Java 17+ approach
 - [Spring State Machine](#spring-state-machine-framework) - Enterprise framework for complex workflows
 - [Testing Strategies](#testing-state-machines) - Comprehensive testing approaches
-- [Business Examples](#business-domain-examples) - Payment, Loan, Waqf implementations
+- [Business Examples](#business-domain-examples) - DonationPayment, QardHasan, Waqf implementations
 
 **Related Documentation:**
 
@@ -85,7 +85,7 @@ A finite state machine consists of:
 
 **Deterministic FSM**: Given current state and input, next state is always the same
 
-- **Use case**: Payment processing (consistent behavior required)
+- **Use case**: DonationPayment processing (consistent behavior required)
 - **Example**: PENDING + approve() → APPROVED (always)
 
 **Non-Deterministic FSM**: Multiple possible next states for same input
@@ -114,9 +114,9 @@ graph TD
 
 **Invariants** are conditions that must always be true in a given state:
 
-- **PENDING payment**: Amount > 0, payee exists
-- **APPROVED loan**: All documents uploaded, risk score within limits
-- **ACTIVE contract**: Start date ≤ today ≤ end date
+- **PENDING donation**: Amount > 0, recipient exists
+- **APPROVED qard_hasan**: All documents uploaded, risk score within limits
+- **ACTIVE murabaha_contract**: Start date ≤ today ≤ end date
 
 FSMs enforce invariants by:
 
@@ -137,12 +137,12 @@ Enum-based FSMs use Java enums to represent states with transition logic embedde
 - **Centralized transitions**: Logic in one place
 - **Limited complexity**: Not ideal for rich state behavior
 
-### Example: Payment Processing FSM
+### Example: DonationPayment Processing FSM
 
 **Before (No FSM - Scattered Logic)**:
 
 ```java
-public class Payment {
+public class DonationPayment {
     private String id;
     private BigDecimal amount;
     private String status;  // Just a string!
@@ -165,18 +165,18 @@ public class Payment {
 // Service layer - validation logic scattered
 @Service
 public class PaymentService {
-    public void approvePayment(Payment payment) {
-        if (!"PENDING".equals(payment.getStatus())) {
+    public void approvePayment(DonationPayment donation) {
+        if (!"PENDING".equals(donation.getStatus())) {
             throw new IllegalStateException("Can only approve pending payments");
         }
-        payment.approve();
+        donation.approve();
     }
 
-    public void processPayment(Payment payment) {
-        if (!"APPROVED".equals(payment.getStatus())) {
+    public void processPayment(DonationPayment donation) {
+        if (!"APPROVED".equals(donation.getStatus())) {
             throw new IllegalStateException("Can only process approved payments");
         }
-        payment.process();
+        donation.process();
     }
 }
 ```
@@ -226,37 +226,37 @@ public enum PaymentState {
     // Default implementations throw exception for invalid transitions
     public PaymentState approve() {
         throw new IllegalStateException(
-            "Cannot approve payment in " + this + " state"
+            "Cannot approve donation in " + this + " state"
         );
     }
 
     public PaymentState reject(String reason) {
         throw new IllegalStateException(
-            "Cannot reject payment in " + this + " state"
+            "Cannot reject donation in " + this + " state"
         );
     }
 
     public PaymentState process() {
         throw new IllegalStateException(
-            "Cannot process payment in " + this + " state"
+            "Cannot process donation in " + this + " state"
         );
     }
 
     public PaymentState complete() {
         throw new IllegalStateException(
-            "Cannot complete payment in " + this + " state"
+            "Cannot complete donation in " + this + " state"
         );
     }
 
     public PaymentState fail(String reason) {
         throw new IllegalStateException(
-            "Cannot fail payment in " + this + " state"
+            "Cannot fail donation in " + this + " state"
         );
     }
 
     public PaymentState cancel(String reason) {
         throw new IllegalStateException(
-            "Cannot cancel payment in " + this + " state"
+            "Cannot cancel donation in " + this + " state"
         );
     }
 
@@ -275,8 +275,8 @@ public enum PaymentState {
     }
 }
 
-// Payment entity uses enum state
-public class Payment {
+// DonationPayment entity uses enum state
+public class DonationPayment {
     private final String id;
     private final BigDecimal amount;
     private final String payeeId;
@@ -284,7 +284,7 @@ public class Payment {
     private String failureReason;
     private LocalDateTime lastTransitionAt;
 
-    public Payment(String id, BigDecimal amount, String payeeId) {
+    public DonationPayment(String id, BigDecimal amount, String payeeId) {
         this.id = id;
         this.amount = amount;
         this.payeeId = payeeId;
@@ -331,7 +331,7 @@ public class Payment {
 }
 ```
 
-### Payment State Diagram
+### DonationPayment State Diagram
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -360,7 +360,7 @@ stateDiagram-v2
     end note
 
     note right of PROCESSING
-        Payment in flight
+        DonationPayment in flight
         Cannot be cancelled
     end note
 
@@ -397,9 +397,9 @@ The State Design Pattern uses OOP principles to represent states as separate cla
 - **Testable**: State classes can be unit tested independently
 - **More boilerplate**: Requires interface + multiple classes
 
-### Example: Murabaha Loan Lifecycle
+### Example: Murabaha QardHasan Lifecycle
 
-Murabaha is an Islamic financing structure where the bank purchases an asset and sells it to the customer at a markup, allowing payment over time.
+Murabaha is an Islamic financing structure where the bank purchases an asset and sells it to the donor at a markup, allowing donation over time.
 
 ```java
 // State interface
@@ -617,7 +617,7 @@ public class DefaultedState extends AbstractLoanState {
     public String getReason() { return reason; }
 }
 
-// Loan entity uses state pattern
+// QardHasan entity uses state pattern
 public class MurabahaLoan {
     private final String id;
     private final String borrowerId;
@@ -683,7 +683,7 @@ public class MurabahaLoan {
 }
 ```
 
-### Loan Lifecycle Diagram
+### QardHasan Lifecycle Diagram
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
@@ -710,7 +710,7 @@ stateDiagram-v2
     DEFAULTED --> [*]
 
     note right of APPLICATION
-        Customer submits loan request
+        Donor submits qard_hasan request
     end note
 
     note right of APPROVED
@@ -718,7 +718,7 @@ stateDiagram-v2
     end note
 
     note right of REPAYING
-        Customer making payments
+        Donor making payments
     end note
 ```
 
@@ -749,12 +749,12 @@ Modern Java (17+) provides sealed classes and pattern matching, enabling type-sa
 - **Type-safe**: Sealed hierarchy prevents unexpected states
 - **Pattern matching**: Concise state-based logic
 
-### Example: Waqf Contract State Machine
+### Example: Waqf MurabahaContract State Machine
 
 Waqf is an Islamic endowment where assets are donated for perpetual charitable purposes.
 
 ```java
-// Sealed interface for contract states
+// Sealed interface for murabaha_contract states
 public sealed interface WaqfContractState
     permits Draft, UnderReview, Active, Suspended, Archived {
 
@@ -829,7 +829,7 @@ public record Archived(
     public boolean isTerminal() { return true; }
 }
 
-// Waqf contract entity
+// Waqf murabaha_contract entity
 public class WaqfContract {
     private final String id;
     private final String donorId;
@@ -911,7 +911,7 @@ public class WaqfContract {
 
         if (!suspended.canReactivate()) {
             throw new IllegalStateException(
-                "This contract cannot be reactivated: " + suspended.reason()
+                "This murabaha_contract cannot be reactivated: " + suspended.reason()
             );
         }
 
@@ -937,7 +937,7 @@ public class WaqfContract {
     public String getStateDescription() {
         return switch (state) {
             case Draft(var createdAt) ->
-                "Contract draft created at " + createdAt;
+                "MurabahaContract draft created at " + createdAt;
 
             case UnderReview(var reviewerId, var startedAt) ->
                 "Under review by %s since %s"
@@ -984,7 +984,7 @@ public class WaqfContract {
 }
 ```
 
-### Waqf Contract State Hierarchy
+### Waqf MurabahaContract State Hierarchy
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
@@ -1033,7 +1033,7 @@ Spring State Machine is an enterprise-grade framework for building complex, even
 - **Persistence required**: Save/restore state machine state to database
 - **Distributed systems**: State machines across multiple services
 - **Event-driven**: React to domain events and trigger transitions
-- **Enterprise features**: Transaction support, security, monitoring
+- **Enterprise features**: DonationTransaction support, security, monitoring
 
 ### Installation
 
@@ -1053,7 +1053,7 @@ Spring State Machine is an enterprise-grade framework for building complex, even
 </dependencies>
 ```
 
-### Example: Payment Approval Workflow
+### Example: DonationPayment Approval Workflow
 
 ```java
 // Define states and events
@@ -1125,9 +1125,9 @@ public class PaymentStateMachineConfig
     @Bean
     public Action<PaymentStates, PaymentEvents> level1ApprovalAction() {
         return context -> {
-            Payment payment = context.getExtendedState()
-                .get("payment", Payment.class);
-            logger.info("Level 1 approval for payment {}", payment.getId());
+            DonationPayment donation = context.getExtendedState()
+                .get("donation", DonationPayment.class);
+            logger.info("Level 1 approval for donation {}", donation.getId());
             // Audit log, send notification, etc.
         };
     }
@@ -1135,28 +1135,28 @@ public class PaymentStateMachineConfig
     @Bean
     public Action<PaymentStates, PaymentEvents> level2ApprovalAction() {
         return context -> {
-            Payment payment = context.getExtendedState()
-                .get("payment", Payment.class);
-            logger.info("Level 2 approval for payment {}", payment.getId());
+            DonationPayment donation = context.getExtendedState()
+                .get("donation", DonationPayment.class);
+            logger.info("Level 2 approval for donation {}", donation.getId());
         };
     }
 
     @Bean
     public Action<PaymentStates, PaymentEvents> finalApprovalAction() {
         return context -> {
-            Payment payment = context.getExtendedState()
-                .get("payment", Payment.class);
-            logger.info("Final approval for payment {}", payment.getId());
-            paymentService.processPayment(payment);
+            DonationPayment donation = context.getExtendedState()
+                .get("donation", DonationPayment.class);
+            logger.info("Final approval for donation {}", donation.getId());
+            paymentService.processPayment(donation);
         };
     }
 
     @Bean
     public Action<PaymentStates, PaymentEvents> rejectionAction() {
         return context -> {
-            Payment payment = context.getExtendedState()
-                .get("payment", Payment.class);
-            logger.info("Payment {} rejected", payment.getId());
+            DonationPayment donation = context.getExtendedState()
+                .get("donation", DonationPayment.class);
+            logger.info("DonationPayment {} rejected", donation.getId());
         };
     }
 
@@ -1164,9 +1164,9 @@ public class PaymentStateMachineConfig
     @Bean
     public Guard<PaymentStates, PaymentEvents> amountGuard() {
         return context -> {
-            Payment payment = context.getExtendedState()
-                .get("payment", Payment.class);
-            return payment.getAmount().compareTo(new BigDecimal("10000")) > 0;
+            DonationPayment donation = context.getExtendedState()
+                .get("donation", DonationPayment.class);
+            return donation.getAmount().compareTo(new BigDecimal("10000")) > 0;
         };
     }
 }
@@ -1182,23 +1182,23 @@ public class PaymentWorkflowService {
         this.stateMachine = stateMachine;
     }
 
-    public void approveLevel1(Payment payment) {
-        stateMachine.getExtendedState().getVariables().put("payment", payment);
+    public void approveLevel1(DonationPayment donation) {
+        stateMachine.getExtendedState().getVariables().put("donation", donation);
         stateMachine.sendEvent(PaymentEvents.APPROVE_LEVEL1);
     }
 
-    public void approveLevel2(Payment payment) {
-        stateMachine.getExtendedState().getVariables().put("payment", payment);
+    public void approveLevel2(DonationPayment donation) {
+        stateMachine.getExtendedState().getVariables().put("donation", donation);
         stateMachine.sendEvent(PaymentEvents.APPROVE_LEVEL2);
     }
 
-    public void finalApprove(Payment payment) {
-        stateMachine.getExtendedState().getVariables().put("payment", payment);
+    public void finalApprove(DonationPayment donation) {
+        stateMachine.getExtendedState().getVariables().put("donation", donation);
         stateMachine.sendEvent(PaymentEvents.FINAL_APPROVE);
     }
 
-    public void reject(Payment payment) {
-        stateMachine.getExtendedState().getVariables().put("payment", payment);
+    public void reject(DonationPayment donation) {
+        stateMachine.getExtendedState().getVariables().put("donation", donation);
         stateMachine.sendEvent(PaymentEvents.REJECT);
     }
 }
@@ -1230,7 +1230,7 @@ stateDiagram-v2
 
     note right of FINAL_APPROVED
         Terminal state
-        Triggers payment processing
+        Triggers donation processing
     end note
 ```
 
@@ -1300,7 +1300,7 @@ void testTerminalStateRejectsAllTransitions() {
 ```java
 @Test
 void testLoanApplicationToApproval() {
-    MurabahaLoan loan = new MurabahaLoan(
+    MurabahaLoan qard_hasan = new MurabahaLoan(
         "LOAN-001",
         "BORROWER-123",
         new BigDecimal("100000"),
@@ -1308,38 +1308,38 @@ void testLoanApplicationToApproval() {
     );
 
     // Initial state: APPLICATION
-    assertThat(loan.getStateName()).isEqualTo("APPLICATION");
+    assertThat(qard_hasan.getStateName()).isEqualTo("APPLICATION");
 
     // Submit application
-    loan.submitApplication();
-    assertThat(loan.getStateName()).isEqualTo("UNDER_REVIEW");
+    qard_hasan.submitApplication();
+    assertThat(qard_hasan.getStateName()).isEqualTo("UNDER_REVIEW");
 
     // Approve
-    loan.approve("APPROVER-456");
-    assertThat(loan.getStateName()).isEqualTo("APPROVED");
-    assertThat(loan.getState().canDisburse()).isTrue();
+    qard_hasan.approve("APPROVER-456");
+    assertThat(qard_hasan.getStateName()).isEqualTo("APPROVED");
+    assertThat(qard_hasan.getState().canDisburse()).isTrue();
 }
 
 @Test
 void testLoanRejection() {
-    MurabahaLoan loan = createTestLoan();
+    MurabahaLoan qard_hasan = createTestLoan();
 
-    loan.submitApplication();
-    loan.reject("Insufficient collateral");
+    qard_hasan.submitApplication();
+    qard_hasan.reject("Insufficient collateral");
 
-    assertThat(loan.getStateName()).isEqualTo("REJECTED");
-    assertThat(loan.getState().isTerminal()).isTrue();
+    assertThat(qard_hasan.getStateName()).isEqualTo("REJECTED");
+    assertThat(qard_hasan.getState().isTerminal()).isTrue();
 }
 
 @Test
 void testCannotDisburseBeforeApproval() {
-    MurabahaLoan loan = createTestLoan();
+    MurabahaLoan qard_hasan = createTestLoan();
 
-    loan.submitApplication();  // State: UNDER_REVIEW
+    qard_hasan.submitApplication();  // State: UNDER_REVIEW
 
     // Cannot disburse from UNDER_REVIEW
     assertThrows(IllegalStateException.class, () -> {
-        loan.disburse(new BigDecimal("100000"));
+        qard_hasan.disburse(new BigDecimal("100000"));
     });
 }
 ```
@@ -1349,28 +1349,28 @@ void testCannotDisburseBeforeApproval() {
 ```java
 @Test
 void testWaqfContractWorkflow() {
-    WaqfContract contract = new WaqfContract(
+    WaqfContract murabaha_contract = new WaqfContract(
         "WAQF-001",
         "DONOR-789",
         "Commercial property at 123 Main St"
     );
 
     // Initial state: Draft
-    assertThat(contract.getState()).isInstanceOf(Draft.class);
+    assertThat(murabaha_contract.getState()).isInstanceOf(Draft.class);
 
     // Submit for review
-    contract.submitForReview("REVIEWER-001");
-    assertThat(contract.getState()).isInstanceOf(UnderReview.class);
+    murabaha_contract.submitForReview("REVIEWER-001");
+    assertThat(murabaha_contract.getState()).isInstanceOf(UnderReview.class);
 
     // Activate
-    contract.activate(
+    murabaha_contract.activate(
         new BigDecimal("500000"),
         "Education"
     );
-    assertThat(contract.getState()).isInstanceOf(Active.class);
+    assertThat(murabaha_contract.getState()).isInstanceOf(Active.class);
 
     // Verify state data
-    Active activeState = (Active) contract.getState();
+    Active activeState = (Active) murabaha_contract.getState();
     assertThat(activeState.endowmentValue())
         .isEqualByComparingTo(new BigDecimal("500000"));
     assertThat(activeState.beneficiaryCategory()).isEqualTo("Education");
@@ -1378,23 +1378,23 @@ void testWaqfContractWorkflow() {
 
 @Test
 void testPatternMatchingBehavior() {
-    WaqfContract contract = createTestContract();
+    WaqfContract murabaha_contract = createTestContract();
 
-    contract.submitForReview("REVIEWER-001");
+    murabaha_contract.submitForReview("REVIEWER-001");
 
-    String description = contract.getStateDescription();
+    String description = murabaha_contract.getStateDescription();
     assertThat(description).contains("Under review by REVIEWER-001");
 }
 
 @Test
 void testSuspensionAndReactivation() {
-    WaqfContract contract = createActiveContract();
+    WaqfContract murabaha_contract = createActiveContract();
 
     // Suspend
-    contract.suspend("Annual compliance check", true);
-    assertThat(contract.getState()).isInstanceOf(Suspended.class);
+    murabaha_contract.suspend("Annual compliance check", true);
+    assertThat(murabaha_contract.getState()).isInstanceOf(Suspended.class);
 
-    Suspended suspended = (Suspended) contract.getState();
+    Suspended suspended = (Suspended) murabaha_contract.getState();
     assertThat(suspended.canReactivate()).isTrue();
 }
 ```
@@ -1405,7 +1405,7 @@ Real-world state machine test suite (71 tests):
 
 ```java
 @Nested
-@DisplayName("Payment State Transitions")
+@DisplayName("DonationPayment State Transitions")
 class PaymentStateTransitionsTest {
     // Test all valid transitions (8 tests)
     @Test void testPendingToApproved() { /* ... */ }
@@ -1468,27 +1468,27 @@ Execute code when entering or leaving a state:
 public enum PaymentState {
     PENDING {
         @Override
-        public void onEntry(Payment payment) {
-            logger.info("Payment {} entered PENDING state", payment.getId());
-            notificationService.notifySubmitter(payment);
+        public void onEntry(DonationPayment donation) {
+            logger.info("DonationPayment {} entered PENDING state", donation.getId());
+            notificationService.notifySubmitter(donation);
         }
 
         @Override
-        public void onExit(Payment payment) {
-            logger.info("Payment {} exiting PENDING state", payment.getId());
+        public void onExit(DonationPayment donation) {
+            logger.info("DonationPayment {} exiting PENDING state", donation.getId());
         }
     },
     APPROVED {
         @Override
-        public void onEntry(Payment payment) {
-            auditService.logApproval(payment);
-            emailService.sendApprovalEmail(payment);
+        public void onEntry(DonationPayment donation) {
+            auditService.logApproval(donation);
+            emailService.sendApprovalEmail(donation);
         }
     };
 
     // Default no-op implementations
-    public void onEntry(Payment payment) {}
-    public void onExit(Payment payment) {}
+    public void onEntry(DonationPayment donation) {}
+    public void onExit(DonationPayment donation) {}
 }
 ```
 
@@ -1558,10 +1558,10 @@ public enum ActiveSubstate {
 }
 
 // Usage
-if (loan.getState() == LoanState.ACTIVE) {
-    ActiveSubstate substate = loan.getActiveSubstate();
+if (qard_hasan.getState() == LoanState.ACTIVE) {
+    ActiveSubstate substate = qard_hasan.getActiveSubstate();
     if (substate == ActiveSubstate.LATE_PAYMENTS) {
-        sendLateFeeNotification(loan);
+        sendLateFeeNotification(qard_hasan);
     }
 }
 ```
@@ -1652,7 +1652,7 @@ public record PaymentState(
 **Example** (FAIL: BAD):
 
 ```java
-public class Payment {
+public class DonationPayment {
     private boolean approved;
     private boolean processing;
     private boolean completed;
@@ -1674,7 +1674,7 @@ public class Payment {
 Use explicit enum or sealed class:
 
 ```java
-public class Payment {
+public class DonationPayment {
     private PaymentState state;  // Explicit state
 
     public boolean isPending() {
@@ -1751,83 +1751,83 @@ public void approve() {
 
 ## Business Domain Examples
 
-### Example 1: Payment Processing FSM (Complete Implementation)
+### Example 1: DonationPayment Processing FSM (Complete Implementation)
 
-**Payment State Machine with Guard Conditions and Actions**:
+**DonationPayment State Machine with Guard Conditions and Actions**:
 
 ```java
 public enum PaymentState {
     PENDING {
         @Override
-        public PaymentState approve(Payment payment) {
-            // Guard: Validate payment amount
-            if (payment.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-                throw new BusinessRuleException("Payment amount must be positive");
+        public PaymentState approve(DonationPayment donation) {
+            // Guard: Validate donation amount
+            if (donation.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+                throw new BusinessRuleException("DonationPayment amount must be positive");
             }
 
-            // Guard: Validate payee exists
-            if (payment.getPayeeId() == null || payment.getPayeeId().isBlank()) {
-                throw new BusinessRuleException("Payee is required");
+            // Guard: Validate recipient exists
+            if (donation.getPayeeId() == null || donation.getPayeeId().isBlank()) {
+                throw new BusinessRuleException("Recipient is required");
             }
 
             // Entry action: Log approval
-            auditLog.log("Payment " + payment.getId() + " approved");
+            auditLog.log("DonationPayment " + donation.getId() + " approved");
 
             return APPROVED;
         }
 
         @Override
-        public PaymentState reject(Payment payment, String reason) {
+        public PaymentState reject(DonationPayment donation, String reason) {
             // Entry action: Send rejection notification
-            notificationService.notifyRejection(payment, reason);
+            notificationService.notifyRejection(donation, reason);
             return REJECTED;
         }
     },
     APPROVED {
         @Override
-        public PaymentState process(Payment payment) {
-            // Guard: Check account balance
-            if (!hassufficientBalance(payment)) {
+        public PaymentState process(DonationPayment donation) {
+            // Guard: Check donation_account balance
+            if (!hassufficientBalance(donation)) {
                 throw new BusinessRuleException("Insufficient funds");
             }
 
             // Entry action: Reserve funds
-            accountService.reserveFunds(payment);
+            accountService.reserveFunds(donation);
 
             return PROCESSING;
         }
 
         @Override
-        public PaymentState cancel(Payment payment, String reason) {
+        public PaymentState cancel(DonationPayment donation, String reason) {
             // Entry action: Log cancellation
-            auditLog.log("Payment " + payment.getId() + " cancelled: " + reason);
+            auditLog.log("DonationPayment " + donation.getId() + " cancelled: " + reason);
             return CANCELLED;
         }
 
-        private boolean hasSufficientBalance(Payment payment) {
-            Account account = accountService.getAccount(payment.getAccountId());
-            return account.getBalance().compareTo(payment.getAmount()) >= 0;
+        private boolean hasSufficientBalance(DonationPayment donation) {
+            Account donation_account = accountService.getAccount(donation.getAccountId());
+            return donation_account.getBalance().compareTo(donation.getAmount()) >= 0;
         }
     },
     PROCESSING {
         @Override
-        public PaymentState complete(Payment payment) {
-            // Entry action: Execute payment
-            paymentGateway.executePayment(payment);
+        public PaymentState complete(DonationPayment donation) {
+            // Entry action: Execute donation
+            paymentGateway.executePayment(donation);
 
             // Entry action: Send confirmation
-            notificationService.notifyCompletion(payment);
+            notificationService.notifyCompletion(donation);
 
             return COMPLETED;
         }
 
         @Override
-        public PaymentState fail(Payment payment, String reason) {
+        public PaymentState fail(DonationPayment donation, String reason) {
             // Entry action: Release reserved funds
-            accountService.releaseFunds(payment);
+            accountService.releaseFunds(donation);
 
             // Entry action: Log failure
-            auditLog.log("Payment " + payment.getId() + " failed: " + reason);
+            auditLog.log("DonationPayment " + donation.getId() + " failed: " + reason);
 
             return FAILED;
         }
@@ -1838,27 +1838,27 @@ public enum PaymentState {
     CANCELLED;
 
     // Default implementations throw exception
-    public PaymentState approve(Payment payment) {
+    public PaymentState approve(DonationPayment donation) {
         throw new IllegalStateException("Cannot approve from " + this);
     }
 
-    public PaymentState reject(Payment payment, String reason) {
+    public PaymentState reject(DonationPayment donation, String reason) {
         throw new IllegalStateException("Cannot reject from " + this);
     }
 
-    public PaymentState process(Payment payment) {
+    public PaymentState process(DonationPayment donation) {
         throw new IllegalStateException("Cannot process from " + this);
     }
 
-    public PaymentState complete(Payment payment) {
+    public PaymentState complete(DonationPayment donation) {
         throw new IllegalStateException("Cannot complete from " + this);
     }
 
-    public PaymentState fail(Payment payment, String reason) {
+    public PaymentState fail(DonationPayment donation, String reason) {
         throw new IllegalStateException("Cannot fail from " + this);
     }
 
-    public PaymentState cancel(Payment payment, String reason) {
+    public PaymentState cancel(DonationPayment donation, String reason) {
         throw new IllegalStateException("Cannot cancel from " + this);
     }
 
@@ -1868,8 +1868,8 @@ public enum PaymentState {
     }
 }
 
-// Payment entity
-public class Payment {
+// DonationPayment entity
+public class DonationPayment {
     private final String id;
     private final String accountId;
     private final BigDecimal amount;
@@ -1878,7 +1878,7 @@ public class Payment {
     private String failureReason;
     private LocalDateTime lastTransitionAt;
 
-    public Payment(String id, String accountId,
+    public DonationPayment(String id, String accountId,
                    BigDecimal amount, String payeeId) {
         this.id = id;
         this.accountId = accountId;
@@ -1929,7 +1929,7 @@ public class Payment {
 }
 ```
 
-**Payment State Diagram**:
+**DonationPayment State Diagram**:
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -1938,7 +1938,7 @@ public class Payment {
 stateDiagram-v2
     [*] --> PENDING
 
-    PENDING --> APPROVED: approve<br/>amount > 0, payee exists
+    PENDING --> APPROVED: approve<br/>amount > 0, recipient exists
     PENDING --> REJECTED: reject
 
     APPROVED --> PROCESSING: process<br/>sufficient balance
@@ -1953,7 +1953,7 @@ stateDiagram-v2
     CANCELLED --> [*]
 
     note right of PENDING
-        Guards: amount > 0, payee exists
+        Guards: amount > 0, recipient exists
         Actions: Log submission
     end note
 
@@ -1963,7 +1963,7 @@ stateDiagram-v2
     end note
 
     note right of PROCESSING
-        Actions: Execute payment
+        Actions: Execute donation
         Release funds on failure
     end note
 
@@ -1973,7 +1973,7 @@ stateDiagram-v2
     end note
 ```
 
-### Example 2: Murabaha Loan Lifecycle
+### Example 2: Murabaha QardHasan Lifecycle
 
 **Complete Implementation with State Pattern**:
 
@@ -2017,16 +2017,16 @@ stateDiagram-v2
 
     note right of REPAYING
         Monthly payments tracked
-        Late payment penalties
+        Late donation penalties
     end note
 
     note right of COMPLETED
         All payments made
-        Contract fulfilled
+        MurabahaContract fulfilled
     end note
 ```
 
-### Example 3: Waqf Contract States
+### Example 3: Waqf MurabahaContract States
 
 **Complete Implementation with Sealed Classes**:
 
@@ -2056,7 +2056,7 @@ stateDiagram-v2
     ARCHIVED --> [*]
 
     note right of DRAFT
-        Contract being prepared
+        MurabahaContract being prepared
         Can be edited
     end note
 
@@ -2187,3 +2187,8 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 - **Last Updated**: 2026-01-22
 - **Java Version**: 17+ (sealed classes, pattern matching, records)
 - **Blessed Frameworks**: Spring State Machine 3.2.0 (enterprise workflows)
+
+---
+
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

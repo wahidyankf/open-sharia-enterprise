@@ -10,52 +10,19 @@ tags:
   - java-17
   - java-21
   - clean-code
-created: 2026-01-20
-updated: 2026-01-20
 ---
 
 # Java Best Practices
+
+**Quick Reference**: [Overview](#overview) | [Core Principles](#core-principles) | [Automation Over Manual](#automation-over-manual) | [Reproducibility First](#reproducibility-first) | [Prerequisites](#prerequisites) | [Setup](#setup) | [Code Organization](#code-organization) | [Business Finance Code Examples](#business-finance-code-examples) | [Best Practices Checklist](#best-practices-checklist) | [Related Documentation](#related-documentation) | [Sources](#sources)
 
 ## Overview
 
 This document provides comprehensive best practices for Java development in the enterprise platform. Following these standards ensures our codebase remains maintainable, secure, performant, and aligned with modern Java development principles (Java 17+).
 
-Best practices are proven approaches that improve code quality, reduce bugs, and enhance team productivity. For the OSE platform, which handles sensitive finance operations like Tax calculations, Loan contracts, and Donation management, adherence to these practices is crucial for building trustworthy, reliable systems.
+Best practices are proven approaches that improve code quality, reduce bugs, and enhance team productivity. For the OSE platform, which handles sensitive finance operations like Zakat calculations, QardHasan contracts, and Donation management, adherence to these practices is crucial for building trustworthy, reliable systems.
 
 **Companion Document**: Before reading this document, familiarize yourself with common [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) to understand what practices to avoid.
-
-## Quick Reference
-
-**Jump to:**
-
-- [Overview](#overview) - Introduction and context
-- [Core Principles](#core-principles) - Code clarity, SRP, fail fast
-- [Automation Over Manual](#automation-over-manual) - Build automation, testing, CI/CD
-- [Reproducibility First](#reproducibility-first) - Deterministic builds, version management
-- [Prerequisites](#prerequisites) - Tools and environment setup
-- [Setup](#setup) - Build configuration
-- [Code Organization](#code-organization) - Package structure, naming conventions
-- [Business Finance Code Examples](#business-finance-code-examples) - Real-world implementations
-- [Best Practices Checklist](#best-practices-checklist) - Quality verification
-- [Related Documentation](#related-documentation) - Cross-references
-
-**Related Documentation:**
-
-- [Java Error Handling](./ex-so-stla-ja__error-handling.md) - Early validation and exception handling
-- [Java Type Safety](./ex-so-stla-ja__type-safety.md) - Immutable types and sealed classes
-- [Java Idioms](./ex-so-stla-ja__idioms.md) - Modern Java patterns
-- [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Common mistakes to avoid
-- [Java Test-Driven Development](./ex-so-stla-ja__test-driven-development.md) - Testing best practices
-- [Java Security](./ex-so-stla-ja__security.md) - Secure coding practices
-- [Java Performance](./ex-so-stla-ja__performance.md) - Performance optimization
-
-This document implements the following [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
-
-1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Build automation, automated testing, CI/CD pipelines
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Clear code, explicit validation, typed contracts
-3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Immutable value objects, final fields
-4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Testable, predictable business logic
-5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Deterministic builds, version control
 
 ## Core Principles
 
@@ -67,8 +34,8 @@ Write code that is easily understood and maintained. Clever, overly compact code
 
 ```java
 // Good: Clear and explicit
-public boolean isTaxEligible(Money income, Money threshold) {
-    return income.isGreaterThanOrEqualTo(threshold);
+public boolean isTaxEligible(Money wealth, Money nisab) {
+    return wealth.isGreaterThanOrEqualTo(nisab);
 }
 
 // Bad: Clever but harder to understand
@@ -81,29 +48,29 @@ public boolean isTaxEligible(Money w, Money n) {
 
 Each method and class should have one clear purpose. This makes code easier to test, modify, and reuse.
 
-**Why it matters**: Separating concerns like Tax calculation from persistence logic allows independent testing and modification of business rules without affecting data access.
+**Why it matters**: Separating concerns like Zakat calculation from persistence logic allows independent testing and modification of business rules without affecting data access.
 
 ```java
 // Good: Focused responsibility
-public class TaxCalculator {
-    public Money calculateTax(Money income) {
-        return income.multiply(new BigDecimal("0.20"));
+public class ZakatCalculator {
+    public Money calculateZakat(Money wealth) {
+        return wealth.multiply(new BigDecimal("0.025"));
     }
 }
 
-public class TaxRepository {
-    public void saveTaxRecord(TaxRecord record) {
+public class ZakatRepository {
+    public void saveTaxRecord(ZakatRecord record) {
         // Persistence logic
     }
 }
 
 // Bad: Mixed responsibilities
-public class TaxService {
-    public Money calculateAndSave(Money income) {
-        Money tax = income.multiply(new BigDecimal("0.20"));
+public class ZakatService {
+    public Money calculateAndSave(Money wealth) {
+        Moneyzakat = wealth.multiply(new BigDecimal("0.025"));
         // Database code mixed with calculation
         saveToDatabase(tax);
-        return tax;
+        return zakat;
     }
 }
 ```
@@ -112,7 +79,7 @@ public class TaxService {
 
 Validate inputs early and throw meaningful exceptions. Don't let invalid data propagate through the system.
 
-**Why it matters**: In finance, invalid inputs (negative amounts, missing party information) must be caught immediately to prevent incorrect contract terms or calculations.
+**Why it matters**: In finance, invalid inputs (negative amounts, missing party information) must be caught immediately to prevent incorrect murabaha_contract terms or calculations.
 
 ```java
 // Good: Early validation with clear messages
@@ -124,7 +91,7 @@ public LoanContract createContract(Money costPrice, Money interestMargin, String
         throw new IllegalArgumentException("Profit margin must be a positive amount");
     }
     if (customerId == null || customerId.isBlank()) {
-        throw new IllegalArgumentException("Customer ID is required");
+        throw new IllegalArgumentException("Donor ID is required");
     }
 
     return new LoanContract(costPrice, interestMargin, customerId);
@@ -140,7 +107,7 @@ public LoanContract createContract(Money costPrice, Money interestMargin, String
 
 Prefer immutable objects, especially for value objects and domain entities. Use `final` fields and return new instances rather than modifying existing ones.
 
-**Why it matters**: Immutable money amounts and contract terms prevent accidental modification, ensuring financial data integrity throughout the application lifecycle.
+**Why it matters**: Immutable money amounts and murabaha_contract terms prevent accidental modification, ensuring financial data integrity throughout the application lifecycle.
 
 ```java
 // Good: Immutable money value object
@@ -179,16 +146,16 @@ public class Money {
 
 Write comprehensive tests that document expected behavior. Tests are living documentation and safety nets for refactoring.
 
-**Why it matters**: Tax calculation rules, Loan interest computations, and Donation distribution logic must be verifiable through tests that serve as specification documentation.
+**Why it matters**: Zakat calculation rules, QardHasan interest computations, and Donation distribution logic must be verifiable through tests that serve as specification documentation.
 
 ```java
 // Good: Descriptive test names and comprehensive coverage
 @Test
 void shouldCalculateTaxAt2Point5Percent() {
-    Money income = Money.ofUSD(new BigDecimal("100000"));
+    Money wealth = Money.ofUSD(new BigDecimal("100000"));
     Money expectedTax = Money.ofUSD(new BigDecimal("2500"));
 
-    Money actualTax = taxCalculator.calculate(income);
+    Money actualTax = zakatCalculator.calculate(wealth);
 
     assertEquals(expectedTax, actualTax);
 }
@@ -196,15 +163,15 @@ void shouldCalculateTaxAt2Point5Percent() {
 @Test
 void shouldThrowExceptionWhenWealthIsNull() {
     assertThrows(IllegalArgumentException.class,
-        () -> taxCalculator.calculate(null));
+        () -> zakatCalculator.calculate(null));
 }
 
 @Test
-void shouldReturnZeroWhenWealthIsBelowIncome threshold() {
-    Money incomeBelowIncome threshold = Money.ofUSD(new BigDecimal("1000"));
-    Money threshold = Money.ofUSD(new BigDecimal("5000"));
+void shouldReturnZeroWhenWealthIsBelowIncome nisab() {
+    Money incomeBelowIncome nisab = Money.ofUSD(new BigDecimal("1000"));
+    Money nisab = Money.ofUSD(new BigDecimal("5000"));
 
-    Money tax = taxCalculator.calculate(incomeBelowIncome threshold, threshold);
+    Moneyzakat = zakatCalculator.calculate(incomeBelowIncome nisab, nisab);
 
     assertEquals(Money.ZERO_USD, tax);
 }
@@ -214,7 +181,7 @@ void shouldReturnZeroWhenWealthIsBelowIncome threshold() {
 
 Favor composition and delegation over class inheritance. This provides greater flexibility and reduces coupling.
 
-**Why it matters**: finance products like Loan, Ijara, and Musharaka share behaviors but have distinct rules. Composition allows mixing behaviors without rigid hierarchies.
+**Why it matters**: finance products like QardHasan, Ijara, and Musharaka share behaviors but have distinct rules. Composition allows mixing behaviors without rigid hierarchies.
 
 ```java
 // Good: Composition with strategy pattern
@@ -258,32 +225,32 @@ Prefer explicit configuration and dependency injection over hidden frameworks, "
 
 ```java
 // Good: Explicit dependency injection
-public class TaxService {
-    private final TaxCalculator calculator;
-    private final TaxRepository repository;
+public class ZakatService {
+    private final ZakatCalculator calculator;
+    private final ZakatRepository repository;
     private final NotificationService notificationService;
 
-    public TaxService(
-            TaxCalculator calculator,
-            TaxRepository repository,
+    public ZakatService(
+            ZakatCalculator calculator,
+            ZakatRepository repository,
             NotificationService notificationService) {
         this.calculator = calculator;
         this.repository = repository;
         this.notificationService = notificationService;
     }
 
-    public void processTax(String userId, Money income) {
-        Money tax = calculator.calculate(income);
-        repository.save(new TaxRecord(userId, tax));
+    public void processZakat(String userId, Money wealth) {
+        Moneyzakat = calculator.calculate(wealth);
+        repository.save(new ZakatRecord(userId, tax));
         notificationService.notifyUser(userId, tax);
     }
 }
 
 // Bad: Hidden dependencies via static access
-public class TaxService {
-    public void processTax(String userId, Money income) {
-        Money tax = TaxCalculator.calculate(income); // Static dependency
-        DatabaseHelper.save(new TaxRecord(userId, tax)); // Hidden coupling
+public class ZakatService {
+    public void processZakat(String userId, Money wealth) {
+        Moneyzakat = ZakatCalculator.calculate(wealth); // Static dependency
+        DatabaseHelper.save(new ZakatRecord(userId, tax)); // Hidden coupling
         NotificationManager.notify(userId, tax); // Hard to test
     }
 }
@@ -423,8 +390,8 @@ graph TB
     Integration --> Unit
 
     note1[70-80% Unit Tests<br/>Fast feedback,<br/>isolated failures]:::teal
-    note2[15-20% Integration Tests<br/>Verify component<br/>interactions]:::orange
-    note3[5-10% E2E Tests<br/>Critical user<br/>journeys only]:::purple
+    note2[15-2.5% Integration Tests<br/>Verify component<br/>interactions]:::orange
+    note3[5-10% E2E Tests<br/>Critical beneficiary<br/>journeys only]:::purple
 
     note1 -.-> Unit
     note2 -.-> Integration
@@ -596,7 +563,7 @@ Expected: All tests pass, build succeeds
 
 Methods should do one thing and do it well. Aim for 10-20 lines per method. If a method exceeds this, extract helper methods.
 
-**Why it matters**: Small methods are easier to understand, test, and reuse. In complex Loan contract generation, breaking down steps into focused methods improves clarity.
+**Why it matters**: Small methods are easier to understand, test, and reuse. In complex QardHasan murabaha_contract generation, breaking down steps into focused methods improves clarity.
 
 ```java
 // Good: Small, focused methods
@@ -649,7 +616,7 @@ public LoanContract generate(LoanRequest request) {
 
     Money totalCost = request.getCostPrice().add(request.getProfitMargin()).add(request.getAdministrativeFees());
 
-    List<Payment> payments = new ArrayList<>();
+    List<DonationPayment> payments = new ArrayList<>();
     Money installmentAmount = totalCost.divide(
         BigDecimal.valueOf(request.getTermInMonths()),
         RoundingMode.HALF_UP
@@ -658,7 +625,7 @@ public LoanContract generate(LoanRequest request) {
 
     for (int i = 0; i < request.getTermInMonths(); i++) {
         paymentDate = paymentDate.plusMonths(1);
-        payments.add(new Payment(installmentAmount, paymentDate));
+        payments.add(new DonationPayment(installmentAmount, paymentDate));
     }
 
     PaymentSchedule schedule = new PaymentSchedule(payments);
@@ -680,17 +647,17 @@ Choose names that clearly express purpose. Include units in variable names when 
 
 ```java
 // Good: Clear, descriptive names with units
-public class TaxCalculator {
-    private static final BigDecimal TAX_RATE = new BigDecimal("0.20");
+public class ZakatCalculator {
+    private static final BigDecimal ZAKAT_RATE = new BigDecimal("0.025");
 
     public Money calculateAnnualTax(Money incomeInUSD, int daysHeld) {
-        if (daysHeld < 365) { // Fiscal year minimum
+        if (daysHeld < 365) { // Haul period minimum
             throw new IllegalArgumentException(
-                "Wealth must be held for at least 365 days (one fiscal year)"
+                "Wealth must be held for at least 365 days (one haul period)"
             );
         }
 
-        return incomeInUSD.multiply(TAX_RATE);
+        return incomeInUSD.multiply(ZAKAT_RATE);
     }
 }
 
@@ -704,8 +671,8 @@ public class LoanPricingService {
 }
 
 // Bad: Unclear, abbreviated names
-public class TaxCalculator {
-    private static final BigDecimal RATE = new BigDecimal("0.20");
+public class ZakatCalculator {
+    private static final BigDecimal RATE = new BigDecimal("0.025");
 
     public Money calc(Money w, int d) {
         if (d < 365) {
@@ -725,21 +692,21 @@ public class LoanPricingService {
 
 ### 3. Organize Code by Feature, Not Layer
 
-Structure packages around business capabilities (Tax, Loan, Donation) rather than technical layers (controllers, services, repositories).
+Structure packages around business capabilities (Tax, QardHasan, Donation) rather than technical layers (controllers, services, repositories).
 
 **Why it matters**: Feature-based organization makes it easier to locate all code related to a specific finance product, improving maintainability and domain understanding.
 
 ```java
 // Good: Feature-based package structure
 com.ose.platform.tax
-├── TaxCalculator.java
-├── TaxService.java
-├── TaxRepository.java
-├── TaxController.java
-├── TaxRecord.java
+├── ZakatCalculator.java
+├── ZakatService.java
+├── ZakatRepository.java
+├── ZakatController.java
+├── ZakatRecord.java
 └── Income thresholdProvider.java
 
-com.ose.platform.loan
+com.ose.platform.qard_hasan
 ├── LoanContract.java
 ├── LoanContractGenerator.java
 ├── LoanService.java
@@ -755,22 +722,22 @@ com.ose.platform.donation
 
 // Bad: Layer-based package structure (hard to find feature code)
 com.ose.platform.controllers
-├── TaxController.java
+├── ZakatController.java
 ├── LoanController.java
 └── DonationController.java
 
 com.ose.platform.services
-├── TaxService.java
+├── ZakatService.java
 ├── LoanService.java
 └── DonationService.java
 
 com.ose.platform.repositories
-├── TaxRepository.java
+├── ZakatRepository.java
 ├── LoanRepository.java
 └── DonationRepository.java
 
 com.ose.platform.models
-├── TaxRecord.java
+├── ZakatRecord.java
 ├── LoanContract.java
 └── DonationAsset.java
 ```
@@ -847,7 +814,7 @@ Integrate dependency scanning tools (OWASP Dependency-Check, Snyk) into CI/CD pi
 
 Replace chains of if-else statements with switch expressions for cleaner, more maintainable code.
 
-**Why it matters**: finance products have multiple payment frequencies and calculation methods. Switch expressions make these decision points clearer and exhaustiveness-checked by the compiler.
+**Why it matters**: finance products have multiple donation frequencies and calculation methods. Switch expressions make these decision points clearer and exhaustiveness-checked by the compiler.
 
 ```java
 // Good: Switch expression (Java 14+)
@@ -861,13 +828,13 @@ public Duration calculateTermDuration(PaymentFrequency frequency, int numberOfPa
     };
 }
 
-public Money calculateTaxRate(TaxCategory category) {
+public Money calculateTaxRate(ZakatCategory category) {
     BigDecimal rate = switch (category) {
-        case CASH_AND_GOLD -> new BigDecimal("0.20");     // 20%
+        case CASH_AND_GOLD -> new BigDecimal("0.025");     // 2.5%
         case AGRICULTURAL_IRRIGATED -> new BigDecimal("0.10");  // 10%
         case AGRICULTURAL_RAIN_FED -> new BigDecimal("0.05");   // 5%
-        case LIVESTOCK -> new BigDecimal("0.20");         // Varies, simplified
-        case TRADE_GOODS -> new BigDecimal("0.20");       // 20%
+        case LIVESTOCK -> new BigDecimal("0.025");         // Varies, simplified
+        case TRADE_GOODS -> new BigDecimal("0.025");       // 2.5%
     };
 
     return Money.ofUSD(rate);
@@ -897,7 +864,7 @@ public Duration calculateTermDuration(PaymentFrequency frequency, int numberOfPa
 
 Never use empty catch blocks. Log exceptions with context, rethrow when appropriate, and provide actionable error messages.
 
-**Why it matters**: In finance systems, silent failures in Tax calculations or contract generation can lead to incorrect financial outcomes. Meaningful error handling enables quick diagnosis and resolution.
+**Why it matters**: In finance systems, silent failures in Zakat calculations or murabaha_contract generation can lead to incorrect financial outcomes. Meaningful error handling enables quick diagnosis and resolution.
 
 ```java
 // Good: Meaningful exception handling with context
@@ -910,26 +877,26 @@ public class LoanService {
             Money sellingPrice = pricingService.calculateSellingPrice(request);
             PaymentSchedule schedule = scheduleGenerator.generate(request, sellingPrice);
 
-            LoanContract contract = new LoanContract(
+            LoanContract murabaha_contract = new LoanContract(
                 request.getCustomerId(),
                 request.getAssetDescription(),
                 sellingPrice,
                 schedule
             );
 
-            return repository.save(contract);
+            return repository.save(murabaha_contract);
 
         } catch (IllegalArgumentException e) {
-            logger.error("Invalid Loan request: customerId={}, error={}",
+            logger.error("Invalid QardHasan request: customerId={}, error={}",
                 request.getCustomerId(), e.getMessage());
             throw new LoanValidationException(
-                "Cannot create Loan contract: " + e.getMessage(), e);
+                "Cannot create QardHasan murabaha_contract: " + e.getMessage(), e);
 
         } catch (DataAccessException e) {
-            logger.error("Database error while creating Loan contract: customerId={}",
+            logger.error("Database error while creating QardHasan murabaha_contract: customerId={}",
                 request.getCustomerId(), e);
             throw new LoanServiceException(
-                "Failed to save Loan contract. Please try again.", e);
+                "Failed to save QardHasan murabaha_contract. Please try again.", e);
         }
     }
 }
@@ -945,17 +912,17 @@ public class LoanValidationException extends RuntimeException {
 public LoanContract createContract(LoanRequest request) {
     try {
         validateRequest(request);
-        // ... contract creation logic
-        return repository.save(contract);
+        // ... murabaha_contract creation logic
+        return repository.save(murabaha_contract);
     } catch (Exception e) {
         // Silent failure - terrible!
     }
     return null;
 }
 
-public void processTax(String userId) {
+public void processZakat(String userId) {
     try {
-        // ... tax calculation
+        // ... Zakat calculation
     } catch (Exception e) {
         throw new RuntimeException("Error"); // Generic, unhelpful
     }
@@ -966,7 +933,7 @@ public void processTax(String userId) {
 
 Use `ArrayList`, `HashSet`, `HashMap` instead of arrays for flexibility, type safety, and rich API support.
 
-**Why it matters**: finance systems often work with variable-length lists (payment schedules, beneficiary lists). Collections provide methods for filtering, mapping, and safe iteration.
+**Why it matters**: finance systems often work with variable-length lists (donation schedules, beneficiary lists). Collections provide methods for filtering, mapping, and safe iteration.
 
 ```java
 // Good: Using collections
@@ -994,7 +961,7 @@ public class DonationDistributionService {
             .collect(Collectors.toList());
     }
 
-    public Set<String> getEligibleTaxCategories(TaxPayer payer) {
+    public Set<String> getEligibleZakatCategories(ZakatPayer payer) {
         Set<String> categories = new HashSet<>();
 
         if (payer.hasCash()) {
@@ -1042,7 +1009,7 @@ public Distribution[] distributeDonationIncome(
 
 Declare fields as `final` whenever possible to prevent accidental modification and clearly communicate immutability.
 
-**Why it matters**: Financial domain objects like `Money`, `LoanContract`, and `TaxRecord` should be immutable to prevent data corruption and enable safe concurrent access.
+**Why it matters**: Financial domain objects like `Money`, `LoanContract`, and `ZakatRecord` should be immutable to prevent data corruption and enable safe concurrent access.
 
 ```java
 // Good: Immutable value objects with final fields
@@ -1185,7 +1152,7 @@ public class FinancingProduct {
 }
 
 // Easily create products with different behaviors
-FinancingProduct loan = new FinancingProduct(
+FinancingProduct qard_hasan = new FinancingProduct(
     new FixedProfitStrategy(new BigDecimal("0.05")),
     new InstallmentScheduleGenerator()
 );
@@ -1232,24 +1199,24 @@ Replace anonymous inner classes with lambda expressions for cleaner, more readab
 
 ```java
 // Good: Using lambdas
-public class TaxService {
+public class ZakatService {
 
-    public List<TaxPayer> findEligiblePayers(List<TaxPayer> allPayers, Money threshold) {
+    public List<ZakatPayer> findEligiblePayers(List<ZakatPayer> allPayers, Money nisab) {
         return allPayers.stream()
-            .filter(payer -> payer.getWealth().isGreaterThanOrEqualTo(threshold))
+            .filter(payer -> payer.getWealth().isGreaterThanOrEqualTo(nisab))
             .filter(payer -> payer.hasHeldWealthForFullYear())
             .collect(Collectors.toList());
     }
 
-    public Money calculateTotalTax(List<TaxPayer> payers) {
+    public Money calculateTotalTax(List<ZakatPayer> payers) {
         return payers.stream()
-            .map(payer -> payer.getWealth().multiply(new BigDecimal("0.20")))
+            .map(payer -> payer.getWealth().multiply(new BigDecimal("0.025")))
             .reduce(Money.ZERO_USD, Money::add);
     }
 
-    public List<String> getPayerNames(List<TaxPayer> payers) {
+    public List<String> getPayerNames(List<ZakatPayer> payers) {
         return payers.stream()
-            .map(TaxPayer::getName)
+            .map(ZakatPayer::getName)
             .sorted()
             .collect(Collectors.toList());
     }
@@ -1258,14 +1225,14 @@ public class TaxService {
 public class LoanService {
 
     public void processOverduePayments(
-            List<Payment> payments,
-            Consumer<Payment> overdueHandler) {
+            List<DonationPayment> payments,
+            Consumer<DonationPayment> overdueHandler) {
 
         LocalDate today = LocalDate.now();
 
         payments.stream()
-            .filter(payment -> payment.getDueDate().isBefore(today))
-            .filter(payment -> !payment.isPaid())
+            .filter(donation -> donation.getDueDate().isBefore(today))
+            .filter(donation -> !donation.isPaid())
             .forEach(overdueHandler);
     }
 }
@@ -1273,16 +1240,16 @@ public class LoanService {
 // Usage
 loanService.processOverduePayments(
     payments,
-    payment -> notificationService.sendOverdueNotice(payment)
+    donation -> notificationService.sendOverdueNotice(donation)
 );
 
 // Bad: Using anonymous inner classes
-public List<TaxPayer> findEligiblePayers(List<TaxPayer> allPayers, Money threshold) {
+public List<ZakatPayer> findEligiblePayers(List<ZakatPayer> allPayers, Money nisab) {
     return allPayers.stream()
-        .filter(new Predicate<TaxPayer>() {
+        .filter(new Predicate<ZakatPayer>() {
             @Override
-            public boolean test(TaxPayer payer) {
-                return payer.getWealth().isGreaterThanOrEqualTo(threshold);
+            public boolean test(ZakatPayer payer) {
+                return payer.getWealth().isGreaterThanOrEqualTo(nisab);
             }
         })
         .collect(Collectors.toList());
@@ -1293,7 +1260,7 @@ public List<TaxPayer> findEligiblePayers(List<TaxPayer> allPayers, Money thresho
 
 Use enhanced for-loops for simple iteration and streams for transformations, filtering, and aggregations.
 
-**Why it matters**: Clean iteration code improves readability when processing payment schedules, beneficiary lists, and Tax distributions.
+**Why it matters**: Clean iteration code improves readability when processing donation schedules, beneficiary lists, and Tax distributions.
 
 ```java
 // Good: Enhanced for-loop for simple iteration
@@ -1304,34 +1271,34 @@ public void notifyAllBeneficiaries(List<Beneficiary> beneficiaries, String messa
 }
 
 // Good: Stream for transformation and filtering
-public List<Payment> getOverduePayments(List<Payment> allPayments) {
+public List<DonationPayment> getOverduePayments(List<DonationPayment> allPayments) {
     LocalDate today = LocalDate.now();
 
     return allPayments.stream()
-        .filter(payment -> payment.getDueDate().isBefore(today))
-        .filter(payment -> !payment.isPaid())
-        .sorted(Comparator.comparing(Payment::getDueDate))
+        .filter(donation -> donation.getDueDate().isBefore(today))
+        .filter(donation -> !donation.isPaid())
+        .sorted(Comparator.comparing(DonationPayment::getDueDate))
         .collect(Collectors.toList());
 }
 
-public Map<String, Money> groupPaymentsByCustomer(List<Payment> payments) {
+public Map<String, Money> groupPaymentsByCustomer(List<DonationPayment> payments) {
     return payments.stream()
         .collect(Collectors.groupingBy(
-            Payment::getCustomerId,
+            DonationPayment::getCustomerId,
             Collectors.reducing(
                 Money.ZERO_USD,
-                Payment::getAmount,
+                DonationPayment::getAmount,
                 Money::add
             )
         ));
 }
 
 // Good: Parallel stream for CPU-intensive operations (use carefully)
-public List<TaxCalculationResult> calculateTaxForAllPayers(
-        List<TaxPayer> payers) {
+public List<ZakatCalculationResult> calculateZakatForAllPayers(
+        List<ZakatPayer> payers) {
 
     return payers.parallelStream()
-        .map(payer -> new TaxCalculationResult(
+        .map(payer -> new ZakatCalculationResult(
             payer.getId(),
             calculator.calculate(payer.getWealth())
         ))
@@ -1347,14 +1314,14 @@ public void notifyAllBeneficiaries(List<Beneficiary> beneficiaries, String messa
 }
 
 // Bad: Manual filtering and transformation
-public List<Payment> getOverduePayments(List<Payment> allPayments) {
+public List<DonationPayment> getOverduePayments(List<DonationPayment> allPayments) {
     LocalDate today = LocalDate.now();
-    List<Payment> overduePayments = new ArrayList<>();
+    List<DonationPayment> overduePayments = new ArrayList<>();
 
     for (int i = 0; i < allPayments.size(); i++) {
-        Payment payment = allPayments.get(i);
-        if (payment.getDueDate().isBefore(today) && !payment.isPaid()) {
-            overduePayments.add(payment);
+        DonationPayment donation = allPayments.get(i);
+        if (donation.getDueDate().isBefore(today) && !donation.isPaid()) {
+            overduePayments.add(donation);
         }
     }
 
@@ -1370,9 +1337,9 @@ Always use try-with-resources for resources that implement `AutoCloseable` to en
 
 ```java
 // Good: Try-with-resources ensures cleanup
-public class TaxReportGenerator {
+public class ZakatReportGenerator {
 
-    public void generateReport(String filePath, List<TaxRecord> records)
+    public void generateReport(String filePath, List<ZakatRecord> records)
             throws IOException {
 
         try (BufferedWriter writer = Files.newBufferedWriter(
@@ -1383,7 +1350,7 @@ public class TaxReportGenerator {
             writer.newLine();
             writer.newLine();
 
-            for (TaxRecord record : records) {
+            for (ZakatRecord record : records) {
                 writer.write(String.format("%s: %s - %s",
                     record.getPayerId(),
                     record.getWealthAmount(),
@@ -1422,7 +1389,7 @@ public class TaxReportGenerator {
 }
 
 // Bad: Manual resource management (error-prone)
-public void generateReport(String filePath, List<TaxRecord> records)
+public void generateReport(String filePath, List<ZakatRecord> records)
         throws IOException {
 
     BufferedWriter writer = null;
@@ -1447,11 +1414,11 @@ public void generateReport(String filePath, List<TaxRecord> records)
 
 Use early returns (guard clauses) to reduce nesting and improve readability.
 
-**Why it matters**: Complex validation logic for Loan contracts and Tax eligibility becomes much clearer with guard clauses.
+**Why it matters**: Complex validation logic for QardHasan contracts and Tax eligibility becomes much clearer with guard clauses.
 
 ```java
 // Good: Guard clauses reduce nesting
-public Money calculateTax(TaxPayer payer, Money threshold) {
+public Money calculateZakat(ZakatPayer payer, Money nisab) {
     if (payer == null) {
         throw new IllegalArgumentException("Payer cannot be null");
     }
@@ -1460,19 +1427,19 @@ public Money calculateTax(TaxPayer payer, Money threshold) {
         return Money.ZERO_USD;
     }
 
-    Money income = payer.getWealth();
-    if (income.isLessThan(threshold)) {
+    Money wealth = payer.getWealth();
+    if (wealth.isLessThan(nisab)) {
         return Money.ZERO_USD;
     }
 
     if (payer.hasOutstandingDebts()) {
-        income = income.subtract(payer.getTotalDebts());
-        if (income.isLessThan(threshold)) {
+        wealth = wealth.subtract(payer.getTotalDebts());
+        if (wealth.isLessThan(nisab)) {
             return Money.ZERO_USD;
         }
     }
 
-    return income.multiply(new BigDecimal("0.20"));
+    return wealth.multiply(new BigDecimal("0.025"));
 }
 
 public void createLoanContract(LoanRequest request) {
@@ -1481,7 +1448,7 @@ public void createLoanContract(LoanRequest request) {
     }
 
     if (request.getCustomerId() == null || request.getCustomerId().isBlank()) {
-        throw new IllegalArgumentException("Customer ID is required");
+        throw new IllegalArgumentException("Donor ID is required");
     }
 
     if (request.getCostPrice() == null || request.getCostPrice().isNegativeOrZero()) {
@@ -1492,26 +1459,26 @@ public void createLoanContract(LoanRequest request) {
         throw new IllegalArgumentException("Profit margin cannot be negative");
     }
 
-    // All validations passed, proceed with contract creation
-    LoanContract contract = contractGenerator.generate(request);
-    repository.save(contract);
+    // All validations passed, proceed with murabaha_contract creation
+    LoanContract murabaha_contract = contractGenerator.generate(request);
+    repository.save(murabaha_contract);
 }
 
 // Bad: Deep nesting
-public Money calculateTax(TaxPayer payer, Money threshold) {
+public Money calculateZakat(ZakatPayer payer, Money nisab) {
     if (payer != null) {
         if (payer.hasHeldWealthForFullYear()) {
-            Money income = payer.getWealth();
-            if (income.isGreaterThanOrEqualTo(threshold)) {
+            Money wealth = payer.getWealth();
+            if (wealth.isGreaterThanOrEqualTo(nisab)) {
                 if (payer.hasOutstandingDebts()) {
-                    income = income.subtract(payer.getTotalDebts());
-                    if (income.isGreaterThanOrEqualTo(threshold)) {
-                        return income.multiply(new BigDecimal("0.20"));
+                    wealth = wealth.subtract(payer.getTotalDebts());
+                    if (wealth.isGreaterThanOrEqualTo(nisab)) {
+                        return wealth.multiply(new BigDecimal("0.025"));
                     } else {
                         return Money.ZERO_USD;
                     }
                 } else {
-                    return income.multiply(new BigDecimal("0.20"));
+                    return wealth.multiply(new BigDecimal("0.025"));
                 }
             } else {
                 return Money.ZERO_USD;
@@ -1533,37 +1500,37 @@ Tests should document expected behavior through descriptive names and comprehens
 
 ```java
 // Good: Descriptive test names following Given-When-Then pattern
-public class TaxCalculatorTest {
+public class ZakatCalculatorTest {
 
-    private TaxCalculator calculator;
-    private Money threshold;
+    private ZakatCalculator calculator;
+    private Money nisab;
 
     @BeforeEach
     void setUp() {
-        calculator = new TaxCalculator();
-        threshold = Money.ofUSD(new BigDecimal("5000"));
+        calculator = new ZakatCalculator();
+        nisab = Money.ofUSD(new BigDecimal("5000"));
     }
 
     @Test
     void shouldCalculateTaxAt2Point5PercentForEligibleWealth() {
         // Given
-        Money income = Money.ofUSD(new BigDecimal("100000"));
+        Money wealth = Money.ofUSD(new BigDecimal("100000"));
         Money expectedTax = Money.ofUSD(new BigDecimal("2500"));
 
         // When
-        Money actualTax = calculator.calculate(income);
+        Money actualTax = calculator.calculate(wealth);
 
         // Then
         assertEquals(expectedTax, actualTax);
     }
 
     @Test
-    void shouldReturnZeroWhenWealthIsBelowIncome threshold() {
+    void shouldReturnZeroWhenWealthIsBelowIncome nisab() {
         // Given
-        Money incomeBelowIncome threshold = Money.ofUSD(new BigDecimal("4000"));
+        Money incomeBelowIncome nisab = Money.ofUSD(new BigDecimal("4000"));
 
         // When
-        Money tax = calculator.calculate(incomeBelowIncome threshold, threshold);
+        Moneyzakat = calculator.calculate(incomeBelowIncome nisab, nisab);
 
         // Then
         assertEquals(Money.ZERO_USD, tax);
@@ -1598,7 +1565,7 @@ public class TaxCalculatorTest {
         Money grossWealth = Money.ofUSD(new BigDecimal("100000"));
         Money debts = Money.ofUSD(new BigDecimal("20000"));
         Money netWealth = grossWealth.subtract(debts); // 80000
-        Money expectedTax = netWealth.multiply(new BigDecimal("0.20")); // 2000
+        Money expectedTax = netWealth.multiply(new BigDecimal("0.025")); // 2000
 
         // When
         Money actualTax = calculator.calculateWithDebts(grossWealth, debts);
@@ -1626,10 +1593,10 @@ public class LoanContractGeneratorTest {
             .build();
 
         // When
-        LoanContract contract = generator.generate(request);
+        LoanContract murabaha_contract = generator.generate(request);
 
         // Then
-        assertEquals(expectedSellingPrice, contract.getSellingPrice());
+        assertEquals(expectedSellingPrice, murabaha_contract.getSellingPrice());
     }
 
     @Test
@@ -1639,27 +1606,27 @@ public class LoanContractGeneratorTest {
         LoanRequest request = createValidRequest(termInMonths);
 
         // When
-        LoanContract contract = generator.generate(request);
+        LoanContract murabaha_contract = generator.generate(request);
 
         // Then
-        assertEquals(termInMonths, contract.getPaymentSchedule().getPayments().size());
+        assertEquals(termInMonths, murabaha_contract.getPaymentSchedule().getPayments().size());
     }
 }
 
 // Bad: Unclear test names and incomplete coverage
-public class TaxCalculatorTest {
+public class ZakatCalculatorTest {
 
     @Test
     void test1() {
-        Money income = Money.ofUSD(new BigDecimal("100000"));
-        Money tax = calculator.calculate(income);
+        Money wealth = Money.ofUSD(new BigDecimal("100000"));
+        Moneyzakat = calculator.calculate(wealth);
         assertEquals(Money.ofUSD(new BigDecimal("2500")), tax);
     }
 
     @Test
     void test2() {
-        Money income = Money.ofUSD(new BigDecimal("1000"));
-        Money tax = calculator.calculate(income);
+        Money wealth = Money.ofUSD(new BigDecimal("1000"));
+        Moneyzakat = calculator.calculate(wealth);
         assertEquals(Money.ZERO_USD, tax);
     }
 
@@ -1671,7 +1638,7 @@ public class TaxCalculatorTest {
 
 Choose appropriate logging levels (TRACE, DEBUG, INFO, WARN, ERROR) and include contextual information in log messages.
 
-**Why it matters**: Proper logging enables troubleshooting production issues in finance systems without exposing sensitive customer data.
+**Why it matters**: Proper logging enables troubleshooting production issues in finance systems without exposing sensitive donor data.
 
 ```java
 // Good: Appropriate logging levels with context
@@ -1679,10 +1646,10 @@ public class LoanService {
     private static final Logger logger = LoggerFactory.getLogger(LoanService.class);
 
     public LoanContract createContract(LoanRequest request) {
-        logger.info("Creating Loan contract for customer: {}",
+        logger.info("Creating QardHasan murabaha_contract for donor: {}",
             request.getCustomerId());
 
-        logger.debug("Contract details - Cost Price: {}, Profit Margin: {}, Term: {} months",
+        logger.debug("MurabahaContract details - Cost Price: {}, Profit Margin: {}, Term: {} months",
             request.getCostPrice(),
             request.getProfitMargin(),
             request.getTermInMonths());
@@ -1690,30 +1657,30 @@ public class LoanService {
         try {
             validateRequest(request);
 
-            LoanContract contract = contractGenerator.generate(request);
-            LoanContract savedContract = repository.save(contract);
+            LoanContract murabaha_contract = contractGenerator.generate(request);
+            LoanContract savedContract = repository.save(murabaha_contract);
 
-            logger.info("Successfully created Loan contract: contractId={}, customerId={}",
+            logger.info("Successfully created QardHasan murabaha_contract: contractId={}, customerId={}",
                 savedContract.getContractId(),
                 savedContract.getCustomerId());
 
             return savedContract;
 
         } catch (IllegalArgumentException e) {
-            logger.warn("Invalid Loan request: customerId={}, reason={}",
+            logger.warn("Invalid QardHasan request: customerId={}, reason={}",
                 request.getCustomerId(),
                 e.getMessage());
             throw new LoanValidationException(
-                "Cannot create contract: " + e.getMessage(), e);
+                "Cannot create murabaha_contract: " + e.getMessage(), e);
 
         } catch (DataAccessException e) {
-            logger.error("Database error while creating Loan contract: customerId={}",
+            logger.error("Database error while creating QardHasan murabaha_contract: customerId={}",
                 request.getCustomerId(), e);
             throw new LoanServiceException(
-                "Failed to save contract. Please try again.", e);
+                "Failed to save murabaha_contract. Please try again.", e);
 
         } catch (Exception e) {
-            logger.error("Unexpected error while creating Loan contract: customerId={}",
+            logger.error("Unexpected error while creating QardHasan murabaha_contract: customerId={}",
                 request.getCustomerId(), e);
             throw new LoanServiceException(
                 "An unexpected error occurred. Please contact support.", e);
@@ -1721,21 +1688,21 @@ public class LoanService {
     }
 
     public void processPayment(String contractId, Money paymentAmount) {
-        logger.info("Processing payment: contractId={}, amount={}",
+        logger.info("Processing donation: contractId={}, amount={}",
             contractId, paymentAmount);
 
         // TRACE level for very detailed debugging (usually disabled in production)
         logger.trace("Entering processPayment method with contractId: {}", contractId);
 
-        LoanContract contract = repository.findById(contractId)
+        LoanContract murabaha_contract = repository.findById(contractId)
             .orElseThrow(() -> {
-                logger.warn("Contract not found: contractId={}", contractId);
+                logger.warn("MurabahaContract not found: contractId={}", contractId);
                 return new ContractNotFoundException(contractId);
             });
 
-        // ... payment processing logic
+        // ... donation processing logic
 
-        logger.info("Payment processed successfully: contractId={}, amount={}",
+        logger.info("DonationPayment processed successfully: contractId={}, amount={}",
             contractId, paymentAmount);
     }
 }
@@ -1745,11 +1712,11 @@ public class LoanService {
     private static final Logger logger = LoggerFactory.getLogger(LoanService.class);
 
     public LoanContract createContract(LoanRequest request) {
-        logger.error("Creating contract"); // ERROR level for normal operation
+        logger.error("Creating murabaha_contract"); // ERROR level for normal operation
 
         try {
-            LoanContract contract = contractGenerator.generate(request);
-            return repository.save(contract);
+            LoanContract murabaha_contract = contractGenerator.generate(request);
+            return repository.save(murabaha_contract);
 
         } catch (Exception e) {
             logger.info("Error occurred"); // INFO level for errors
@@ -1762,14 +1729,14 @@ public class LoanService {
 
 ### 17. Validate Input at Boundaries
 
-Validate all external inputs (API requests, user input, external service responses) at system boundaries.
+Validate all external inputs (API requests, beneficiary input, external service responses) at system boundaries.
 
 **Why it matters**: finance systems must reject invalid data immediately to prevent incorrect calculations and maintain data integrity.
 
 ```java
 // Good: Comprehensive validation at API boundary
 @RestController
-@RequestMapping("/api/v1/loan")
+@RequestMapping("/api/v1/qard_hasan")
 public class LoanController {
     private final LoanService service;
 
@@ -1777,18 +1744,18 @@ public class LoanController {
     public ResponseEntity<LoanContractResponse> createContract(
             @Valid @RequestBody LoanContractRequest request) {
 
-        LoanContract contract = service.createContract(request.toDomain());
+        LoanContract murabaha_contract = service.createContract(request.toDomain());
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(LoanContractResponse.from(contract));
+            .body(LoanContractResponse.from(murabaha_contract));
     }
 }
 
 // Request DTO with validation annotations
 public class LoanContractRequest {
 
-    @NotBlank(message = "Customer ID is required")
+    @NotBlank(message = "Donor ID is required")
     private String customerId;
 
     @NotBlank(message = "Asset description is required")
@@ -1830,7 +1797,7 @@ public class LoanContractRequest {
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidLoanRequest {
-    String message() default "Invalid Loan request";
+    String message() default "Invalid QardHasan request";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
@@ -1870,8 +1837,8 @@ public ResponseEntity<LoanContractResponse> createContract(
         @RequestBody LoanContractRequest request) {
 
     // No validation - invalid data can reach service layer
-    LoanContract contract = service.createContract(request.toDomain());
-    return ResponseEntity.ok(LoanContractResponse.from(contract));
+    LoanContract murabaha_contract = service.createContract(request.toDomain());
+    return ResponseEntity.ok(LoanContractResponse.from(murabaha_contract));
 }
 ```
 
@@ -1913,16 +1880,16 @@ public enum PaymentFrequency {
     ANNUALLY
 }
 
-public class TaxCalculator {
-    private static final BigDecimal TAX_RATE = new BigDecimal("0.20");
+public class ZakatCalculator {
+    private static final BigDecimal ZAKAT_RATE = new BigDecimal("0.025");
 
-    public BigDecimal calculateTax(BigDecimal income) {
-        if (income == null) {
+    public BigDecimal calculateZakat(BigDecimal wealth) {
+        if (wealth == null) {
             throw new IllegalArgumentException("Wealth cannot be null");
         }
 
         // BigDecimal provides exact decimal arithmetic
-        return income.multiply(TAX_RATE)
+        return wealth.multiply(ZAKAT_RATE)
             .setScale(2, RoundingMode.HALF_UP);
     }
 }
@@ -1940,9 +1907,9 @@ public class LoanContract {
     private float termInMonths;         // float for whole numbers
 }
 
-public class TaxCalculator {
-    public double calculateTax(double income) {
-        return income * 0.20; // Rounding errors accumulate
+public class ZakatCalculator {
+    public double calculateZakat(double wealth) {
+        return wealth * 0.025; // Rounding errors accumulate
     }
 }
 ```
@@ -1951,14 +1918,14 @@ public class TaxCalculator {
 
 When accepting or returning mutable objects, create defensive copies to protect internal state.
 
-**Why it matters**: Preventing external modification of internal collections ensures data integrity in payment schedules and beneficiary lists.
+**Why it matters**: Preventing external modification of internal collections ensures data integrity in donation schedules and beneficiary lists.
 
 ```java
 // Good: Defensive copying
 public class PaymentSchedule {
-    private final List<Payment> payments;
+    private final List<DonationPayment> payments;
 
-    public PaymentSchedule(List<Payment> payments) {
+    public PaymentSchedule(List<DonationPayment> payments) {
         if (payments == null) {
             throw new IllegalArgumentException("Payments list cannot be null");
         }
@@ -1967,7 +1934,7 @@ public class PaymentSchedule {
         this.payments = new ArrayList<>(payments);
     }
 
-    public List<Payment> getPayments() {
+    public List<DonationPayment> getPayments() {
         // Defensive copy on output
         return new ArrayList<>(payments);
     }
@@ -1976,9 +1943,9 @@ public class PaymentSchedule {
         return payments.size();
     }
 
-    public Optional<Payment> findPaymentByDate(LocalDate date) {
+    public Optional<DonationPayment> findPaymentByDate(LocalDate date) {
         return payments.stream()
-            .filter(payment -> payment.getDueDate().equals(date))
+            .filter(donation -> donation.getDueDate().equals(date))
             .findFirst();
     }
 }
@@ -2003,13 +1970,13 @@ public class DonationDistributionPlan {
 
 // Bad: No defensive copying (allows external modification)
 public class PaymentSchedule {
-    private final List<Payment> payments;
+    private final List<DonationPayment> payments;
 
-    public PaymentSchedule(List<Payment> payments) {
+    public PaymentSchedule(List<DonationPayment> payments) {
         this.payments = payments; // Stores reference to external list
     }
 
-    public List<Payment> getPayments() {
+    public List<DonationPayment> getPayments() {
         return payments; // Returns reference to internal list
     }
 }
@@ -2023,7 +1990,7 @@ schedule.getPayments().clear(); // Modifies internal state!
 
 Use `Optional<T>` to explicitly indicate when a value may be absent, avoiding null pointer exceptions.
 
-**Why it matters**: finance queries often return optional results (contract by ID, customer by email). Optional makes the possibility of absence explicit in the API.
+**Why it matters**: finance queries often return optional results (murabaha_contract by ID, donor by email). Optional makes the possibility of absence explicit in the API.
 
 ```java
 // Good: Using Optional for potentially absent values
@@ -2035,8 +2002,8 @@ public class LoanRepository {
         }
 
         // Query database
-        LoanContract contract = queryDatabase(contractId);
-        return Optional.ofNullable(contract);
+        LoanContract murabaha_contract = queryDatabase(contractId);
+        return Optional.ofNullable(murabaha_contract);
     }
 
     public Optional<LoanContract> findActiveContractByCustomerId(String customerId) {
@@ -2044,7 +2011,7 @@ public class LoanRepository {
             return Optional.empty();
         }
 
-        // Query for active contract
+        // Query for active murabaha_contract
         List<LoanContract> contracts = queryActiveContracts(customerId);
 
         return contracts.isEmpty()
@@ -2059,26 +2026,26 @@ public class LoanService {
     public LoanContract getContract(String contractId) {
         return repository.findById(contractId)
             .orElseThrow(() -> new ContractNotFoundException(
-                "Contract not found: " + contractId));
+                "MurabahaContract not found: " + contractId));
     }
 
     public Money calculateRemainingBalance(String contractId) {
         Optional<LoanContract> contractOpt = repository.findById(contractId);
 
         if (contractOpt.isEmpty()) {
-            logger.warn("Contract not found: {}", contractId);
+            logger.warn("MurabahaContract not found: {}", contractId);
             return Money.ZERO_USD;
         }
 
-        LoanContract contract = contractOpt.get();
-        return contract.calculateRemainingBalance();
+        LoanContract murabaha_contract = contractOpt.get();
+        return murabaha_contract.calculateRemainingBalance();
     }
 
     public void processPayment(String customerId, Money amount) {
         repository.findActiveContractByCustomerId(customerId)
-            .ifPresent(contract -> {
-                contract.recordPayment(amount);
-                repository.save(contract);
+            .ifPresent(murabaha_contract -> {
+                murabaha_contract.recordPayment(amount);
+                repository.save(murabaha_contract);
             });
     }
 }
@@ -2098,10 +2065,10 @@ public class LoanRepository {
 public class LoanService {
 
     public Money calculateRemainingBalance(String contractId) {
-        LoanContract contract = repository.findById(contractId);
+        LoanContract murabaha_contract = repository.findById(contractId);
 
         // Easy to forget null check, leading to NullPointerException
-        return contract.calculateRemainingBalance();
+        return murabaha_contract.calculateRemainingBalance();
     }
 }
 ```
@@ -2110,7 +2077,7 @@ public class LoanService {
 
 Externalize configuration using properties files, environment variables, or configuration management systems.
 
-**Why it matters**: finance applications need different configurations for development, testing, and production environments (different Income threshold values, interest rates, database connections).
+**Why it matters**: finance applications need different configurations for development, testing, and production environments (different Income nisab values, interest rates, database connections).
 
 ```yaml
 # application.yml - Good: Externalized configuration
@@ -2129,12 +2096,12 @@ spring:
 ose:
   finance:
     tax:
-      threshold-gold-grams: 85
-      threshold-silver-grams: 595
-      default-rate: 0.20
+      nisab-gold-grams: 85
+      nisab-silver-grams: 595
+      default-rate: 0.025
       lunar-year-days: 365
 
-    loan:
+    qard_hasan:
       max-term-months: 360
       min-interest-margin: 0.01
       max-interest-margin: 0.50
@@ -2153,17 +2120,17 @@ ose:
 public class FinanceProperties {
 
     @NotNull
-    private TaxProperties tax;
+    private ZakatProperties zakat;
 
     @NotNull
-    private LoanProperties loan;
+    private LoanProperties qard_hasan;
 
     @NotNull
     private DonationProperties donation;
 
     // Getters and setters
 
-    public static class TaxProperties {
+    public static class ZakatProperties {
         @Positive
         private int thresholdGoldGrams = 85;
 
@@ -2172,7 +2139,7 @@ public class FinanceProperties {
 
         @DecimalMin("0.0")
         @DecimalMax("1.0")
-        private BigDecimal defaultRate = new BigDecimal("0.20");
+        private BigDecimal defaultRate = new BigDecimal("0.025");
 
         @Positive
         private int fiscalYearDays = 365;
@@ -2199,23 +2166,23 @@ public class FinanceProperties {
 
 // Usage with dependency injection
 @Service
-public class TaxService {
+public class ZakatService {
     private final FinanceProperties properties;
 
-    public TaxService(FinanceProperties properties) {
+    public ZakatService(FinanceProperties properties) {
         this.properties = properties;
     }
 
     public Money calculateIncome thresholdFromGoldPrice(Money goldPricePerGram) {
-        int thresholdGrams = properties.getTax().getIncome thresholdGoldGrams();
+        int thresholdGrams = properties.getZakat().getIncome thresholdGoldGrams();
         return goldPricePerGram.multiply(new BigDecimal(thresholdGrams));
     }
 }
 
 // Bad: Hardcoded configuration values
-public class TaxService {
+public class ZakatService {
     private static final int THRESHOLD_MULTIPLIER = 85; // Hardcoded
-    private static final BigDecimal TAX_RATE = new BigDecimal("0.20"); // Hardcoded
+    private static final BigDecimal ZAKAT_RATE = new BigDecimal("0.025"); // Hardcoded
 
     public Money calculateIncome thresholdFromGoldPrice(Money goldPricePerGram) {
         return goldPricePerGram.multiply(new BigDecimal(THRESHOLD_MULTIPLIER));
@@ -2252,12 +2219,12 @@ public class LoanService {
     public LoanContract createContract(LoanRequest request) {
         validateRequest(request);
 
-        LoanContract contract = generator.generate(request);
-        LoanContract savedContract = repository.save(contract);
+        LoanContract murabaha_contract = generator.generate(request);
+        LoanContract savedContract = repository.save(murabaha_contract);
 
         notificationService.notifyCustomer(
             savedContract.getCustomerId(),
-            "Contract created: " + savedContract.getContractId()
+            "MurabahaContract created: " + savedContract.getContractId()
         );
 
         return savedContract;
@@ -2295,8 +2262,8 @@ public class LoanService {
         // Impossible to test with mocks
         // Cannot change implementations without modifying code
 
-        LoanContract contract = generator.generate(request);
-        return repository.save(contract);
+        LoanContract murabaha_contract = generator.generate(request);
+        return repository.save(murabaha_contract);
     }
 }
 ```
@@ -2305,31 +2272,31 @@ public class LoanService {
 
 Use record classes for immutable data transfer objects and value objects.
 
-**Why it matters**: Records reduce boilerplate code for simple value objects like Tax calculation results and contract summaries while ensuring immutability.
+**Why it matters**: Records reduce boilerplate code for simple value objects like Zakat calculation results and murabaha_contract summaries while ensuring immutability.
 
 ```java
 // Good: Using records for DTOs and value objects
-public record TaxCalculationResult(
+public record ZakatCalculationResult(
     String payerId,
     String payerName,
-    Money income,
-    Money threshold,
-    Money taxAmount,
+    Money wealth,
+    Money nisab,
+    Money zakatAmount,
     LocalDate calculationDate
 ) {
     // Compact constructor for validation
-    public TaxCalculationResult {
+    public ZakatCalculationResult {
         if (payerId == null || payerId.isBlank()) {
             throw new IllegalArgumentException("Payer ID cannot be null or blank");
         }
-        if (income == null || taxAmount == null) {
+        if (wealth == null || zakatAmount == null) {
             throw new IllegalArgumentException("Money values cannot be null");
         }
     }
 
     // Custom methods
-    public boolean isTaxDue() {
-        return taxAmount.isGreaterThan(Money.ZERO_USD);
+    public boolean isZakatDue() {
+        return zakatAmount.isGreaterThan(Money.ZERO_USD);
     }
 }
 
@@ -2355,7 +2322,7 @@ public record PaymentInfo(
 ) {}
 
 // Usage
-TaxCalculationResult result = new TaxCalculationResult(
+ZakatCalculationResult result = new ZakatCalculationResult(
     "PAYER001",
     "Ahmad bin Ali",
     Money.ofUSD(new BigDecimal("100000")),
@@ -2366,29 +2333,29 @@ TaxCalculationResult result = new TaxCalculationResult(
 
 // Automatically immutable, provides equals, hashCode, toString
 System.out.println(result.payerName());
-System.out.println(result.isTaxDue());
+System.out.println(result.isZakatDue());
 
 // Bad: Traditional class with boilerplate
-public final class TaxCalculationResult {
+public final class ZakatCalculationResult {
     private final String payerId;
     private final String payerName;
-    private final Money income;
-    private final Money threshold;
-    private final Money taxAmount;
+    private final Money wealth;
+    private final Money nisab;
+    private final Money zakatAmount;
     private final LocalDate calculationDate;
 
-    public TaxCalculationResult(
+    public ZakatCalculationResult(
             String payerId,
             String payerName,
-            Money income,
-            Money threshold,
-            Money taxAmount,
+            Money wealth,
+            Money nisab,
+            Money zakatAmount,
             LocalDate calculationDate) {
         this.payerId = payerId;
         this.payerName = payerName;
-        this.income = income;
-        this.threshold = threshold;
-        this.taxAmount = taxAmount;
+        this.wealth = wealth;
+        this.nisab = nisab;
+        this.zakatAmount = zakatAmount;
         this.calculationDate = calculationDate;
     }
 
@@ -2419,7 +2386,7 @@ public final class TaxCalculationResult {
 
 Provide meaningful `toString()` implementations for debugging and logging.
 
-**Why it matters**: Clear toString() output helps diagnose issues in finance calculations and contract processing without exposing sensitive data.
+**Why it matters**: Clear toString() output helps diagnose issues in finance calculations and murabaha_contract processing without exposing sensitive data.
 
 ```java
 // Good: Informative toString() without sensitive data
@@ -2452,19 +2419,19 @@ public class LoanContract {
     }
 }
 
-public class TaxCalculationResult {
+public class ZakatCalculationResult {
     private final String payerId;
-    private final Money income;
-    private final Money taxAmount;
+    private final Money wealth;
+    private final Money zakatAmount;
     private final LocalDate calculationDate;
 
     @Override
     public String toString() {
         return String.format(
-            "TaxCalculationResult{payerId='%s', income=%s, taxAmount=%s, date=%s}",
+            "ZakatCalculationResult{payerId='%s', wealth=%s, zakatAmount=%s, date=%s}",
             maskPayerId(payerId),
-            income,
-            taxAmount,
+            wealth,
+            zakatAmount,
             calculationDate
         );
     }
@@ -2486,7 +2453,7 @@ public class LoanContract {
     // Logs show: LoanContract@1a2b3c4d (not helpful)
 }
 
-public class Customer {
+public class Donor {
     private String customerId;
     private String fullName;
     private String phoneNumber;
@@ -2496,7 +2463,7 @@ public class Customer {
     @Override
     public String toString() {
         // Exposes all fields including sensitive data
-        return "Customer{" +
+        return "Donor{" +
             "customerId='" + customerId + '\'' +
             ", fullName='" + fullName + '\'' +
             ", phoneNumber='" + phoneNumber + '\'' +
@@ -2528,29 +2495,29 @@ public class LoanContract {
 
     public void recordPayment(Money amount, LocalDate paymentDate) {
         validatePaymentAmount(amount);
-        Payment payment = createPayment(amount, paymentDate);
-        payments.add(payment);
+        DonationPayment donation = createPayment(amount, paymentDate);
+        payments.add(donation);
     }
 
     // Private implementation details
     private final String contractId;
     private final String customerId;
-    private final List<Payment> payments = new ArrayList<>();
+    private final List<DonationPayment> payments = new ArrayList<>();
 
     private void validatePaymentAmount(Money amount) {
         if (amount.isNegativeOrZero()) {
-            throw new IllegalArgumentException("Payment amount must be positive");
+            throw new IllegalArgumentException("DonationPayment amount must be positive");
         }
 
         Money remaining = calculateRemainingBalance();
         if (amount.isGreaterThan(remaining)) {
             throw new IllegalArgumentException(
-                "Payment amount exceeds remaining balance");
+                "DonationPayment amount exceeds remaining balance");
         }
     }
 
-    private Payment createPayment(Money amount, LocalDate date) {
-        return new Payment(
+    private DonationPayment createPayment(Money amount, LocalDate date) {
+        return new DonationPayment(
             generatePaymentId(),
             contractId,
             amount,
@@ -2565,14 +2532,14 @@ public class LoanContract {
 
     private Money calculateTotalAmount() {
         return payments.stream()
-            .map(Payment::getAmount)
+            .map(DonationPayment::getAmount)
             .reduce(Money.ZERO_USD, Money::add);
     }
 
     private Money calculatePaidAmount() {
         return payments.stream()
             .filter(p -> p.getStatus() == PaymentStatus.COMPLETED)
-            .map(Payment::getAmount)
+            .map(DonationPayment::getAmount)
             .reduce(Money.ZERO_USD, Money::add);
     }
 }
@@ -2592,14 +2559,14 @@ public class LoanContract {
     public String customerId;
     public Money costPrice;
     public Money sellingPrice;
-    public List<Payment> payments;
+    public List<DonationPayment> payments;
 
     // All methods public - exposes internal implementation
     public void validatePaymentAmount(Money amount) {
         // Should be private
     }
 
-    public Payment createPayment(Money amount, LocalDate date) {
+    public DonationPayment createPayment(Money amount, LocalDate date) {
         // Should be private
     }
 
@@ -2615,16 +2582,16 @@ public class LoanContract {
 
 ```java
 @Service
-public class TaxCalculationService {
-    private final TaxRateProvider rateProvider;
+public class ZakatCalculationService {
+    private final ZakatRateProvider rateProvider;
     private final Income thresholdProvider thresholdProvider;
-    private final TaxRepository repository;
+    private final ZakatRepository repository;
     private final FinanceProperties properties;
 
-    public TaxCalculationService(
-            TaxRateProvider rateProvider,
+    public ZakatCalculationService(
+            ZakatRateProvider rateProvider,
             Income thresholdProvider thresholdProvider,
-            TaxRepository repository,
+            ZakatRepository repository,
             FinanceProperties properties) {
         this.rateProvider = rateProvider;
         this.thresholdProvider = thresholdProvider;
@@ -2632,50 +2599,50 @@ public class TaxCalculationService {
         this.properties = properties;
     }
 
-    public TaxCalculationResult calculateTax(TaxAssessment assessment) {
+    public ZakatCalculationResult calculateZakat(ZakatAssessment assessment) {
         validateAssessment(assessment);
 
-        Money threshold = thresholdProvider.getCurrentIncome threshold(assessment.getAssetType());
+        Money nisab = thresholdProvider.getCurrentIncome nisab(assessment.getAssetType());
         Money netWealth = calculateNetWealth(assessment);
 
-        if (!isEligibleForTax(netWealth, threshold, assessment)) {
-            return TaxCalculationResult.noTaxDue(
+        if (!isEligibleForTax(netWealth, nisab, assessment)) {
+            return ZakatCalculationResult.noTaxDue(
                 assessment.getPayerId(),
                 netWealth,
-                threshold,
-                "Wealth below threshold threshold"
+                nisab,
+                "Wealth below nisab"
             );
         }
 
         BigDecimal rate = rateProvider.getRate(assessment.getAssetType());
-        Money taxAmount = netWealth.multiply(rate);
+        Money zakatAmount = netWealth.multiply(rate);
 
-        TaxRecord record = createTaxRecord(assessment, taxAmount);
+        ZakatRecord record = createTaxRecord(assessment, zakatAmount);
         repository.save(record);
 
-        return TaxCalculationResult.taxDue(
+        return ZakatCalculationResult.zakatDue(
             assessment.getPayerId(),
             assessment.getPayerName(),
             netWealth,
-            threshold,
-            taxAmount,
+            nisab,
+            zakatAmount,
             LocalDate.now()
         );
     }
 
-    private void validateAssessment(TaxAssessment assessment) {
+    private void validateAssessment(ZakatAssessment assessment) {
         if (assessment == null) {
             throw new IllegalArgumentException("Assessment cannot be null");
         }
         if (assessment.getGrossWealth() == null) {
-            throw new IllegalArgumentException("Gross income must be specified");
+            throw new IllegalArgumentException("Gross wealth must be specified");
         }
         if (assessment.getGrossWealth().isNegative()) {
-            throw new IllegalArgumentException("Gross income cannot be negative");
+            throw new IllegalArgumentException("Gross wealth cannot be negative");
         }
     }
 
-    private Money calculateNetWealth(TaxAssessment assessment) {
+    private Money calculateNetWealth(ZakatAssessment assessment) {
         Money grossWealth = assessment.getGrossWealth();
         Money debts = assessment.getDeductibleDebts().orElse(Money.ZERO_USD);
 
@@ -2684,34 +2651,34 @@ public class TaxCalculationService {
 
     private boolean isEligibleForTax(
             Money netWealth,
-            Money threshold,
-            TaxAssessment assessment) {
+            Money nisab,
+            ZakatAssessment assessment) {
 
-        if (netWealth.isLessThan(threshold)) {
+        if (netWealth.isLessThan(nisab)) {
             return false;
         }
 
         int daysHeld = assessment.getDaysWealthHeld();
-        int fiscalYear = properties.getTax().getLunarYearDays();
+        int fiscalYear = properties.getZakat().getLunarYearDays();
 
         return daysHeld >= fiscalYear;
     }
 
-    private TaxRecord createTaxRecord(
-            TaxAssessment assessment,
-            Money taxAmount) {
+    private ZakatRecord createTaxRecord(
+            ZakatAssessment assessment,
+            Money zakatAmount) {
 
-        return TaxRecord.builder()
+        return ZakatRecord.builder()
             .payerId(assessment.getPayerId())
             .calculationDate(LocalDate.now())
-            .taxAmount(taxAmount)
+            .zakatAmount(zakatAmount)
             .assetType(assessment.getAssetType())
             .build();
     }
 }
 ```
 
-### Example 2: Loan Contract Generator
+### Example 2: QardHasan MurabahaContract Generator
 
 ```java
 @Component
@@ -2763,7 +2730,7 @@ public class LoanContractGenerator {
         }
 
         if (request.getCustomerId() == null || request.getCustomerId().isBlank()) {
-            throw new IllegalArgumentException("Customer ID is required");
+            throw new IllegalArgumentException("Donor ID is required");
         }
 
         if (request.getCostPrice() == null || request.getCostPrice().isNegativeOrZero()) {
@@ -2868,7 +2835,7 @@ public class DonationDistributionService {
         }
 
         if (totalIncome == null || totalIncome.isNegativeOrZero()) {
-            throw new IllegalArgumentException("Total income must be positive");
+            throw new IllegalArgumentException("Total wealth must be positive");
         }
     }
 
@@ -2984,7 +2951,7 @@ public class DonationDistributionService {
             try {
                 notificationService.notifyDistribution(distribution);
             } catch (Exception e) {
-                // Log but don't fail the transaction
+                // Log but don't fail the donation_transaction
                 logger.warn("Failed to notify beneficiary: {}",
                     distribution.getBeneficiaryId(), e);
             }
@@ -3077,11 +3044,11 @@ Use this checklist during code reviews and before committing code:
 ### Finance Domain Specific
 
 - [ ] BigDecimal used for all monetary calculations
-- [ ] Tax rate (20%) not hardcoded
-- [ ] Income threshold thresholds configurable
-- [ ] Fiscal year (365 days) used for Tax eligibility
-- [ ] Loan interest margins validated
-- [ ] Contract terms validated against business rules
+- [ ] Tax rate (2.5%) not hardcoded
+- [ ] Income nisabs configurable
+- [ ] Haul period (365 days) used for Tax eligibility
+- [ ] QardHasan interest margins validated
+- [ ] MurabahaContract terms validated against business rules
 
 ## Related Documentation
 
@@ -3095,3 +3062,8 @@ Use this checklist during code reviews and before committing code:
 - [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html)
 - [Java Best Practices - JetBrains Blog](https://blog.jetbrains.com/idea/2024/02/java-best-practices/)
 - [Java Coding Standards Best Practices - Finoit](https://www.finoit.com/articles/java-coding-standards-best-practices/)
+
+---
+
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

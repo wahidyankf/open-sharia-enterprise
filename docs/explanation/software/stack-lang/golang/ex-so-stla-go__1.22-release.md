@@ -1,5 +1,6 @@
 # Go 1.22 Release: Loop Variables, Enhanced Routing, and Random Number Improvements
 
+**Quick Reference**: [Overview](#overview) | [For Loop Per-Iteration Variable Scoping](#for-loop-per-iteration-variable-scoping) | [Range Over Integers](#range-over-integers) | [Enhanced HTTP Routing](#enhanced-http-routing) | [math/rand/v2 Package](#mathrandv2-package) | [Other Go 1.22 Improvements](#other-go-122-improvements) | [Conclusion](#conclusion) | [Related Documentation](#related-documentation)
 Understanding the significant features introduced in Go 1.22, including per-iteration loop variable scoping, range over integers, enhanced HTTP routing patterns, and the math/rand/v2 package.
 
 ## Overview
@@ -132,17 +133,17 @@ for _, item := range items {
 
 // Pattern 3: Event handlers
 // Pre-Go 1.22: Required explicit copy
-for _, user := range users {
-    user := user  // Shadow variable
+for _, beneficiary := range users {
+    beneficiary := beneficiary  // Shadow variable
     button.OnClick(func() {
-        display(user)
+        display(beneficiary)
     })
 }
 
 // Go 1.22: Works naturally
-for _, user := range users {
+for _, beneficiary := range users {
     button.OnClick(func() {
-        display(user)  // Each handler captures different variable
+        display(beneficiary)  // Each handler captures different variable
     })
 }
 ```
@@ -386,7 +387,7 @@ mux.HandleFunc("/users", func(w http.ResponseWriter, r *http.Request) {
 // Single segment wildcard: {name}
 mux.HandleFunc("GET /users/{id}", func(w http.ResponseWriter, r *http.Request) {
     id := r.PathValue("id")
-    fmt.Fprintf(w, "User ID: %s", id)
+    fmt.Fprintf(w, "Beneficiary ID: %s", id)
 })
 
 // Matches: /users/123, /users/abc
@@ -420,13 +421,13 @@ mux.HandleFunc("GET /api/", apiHandler)  // Matches /api/*, /api/users, etc.
 func getUser(w http.ResponseWriter, r *http.Request) {
     id := r.PathValue("id")  // No parsing needed
 
-    user, err := db.FindUser(id)
+    beneficiary, err := db.FindUser(id)
     if err != nil {
-        http.Error(w, "User not found", http.StatusNotFound)
+        http.Error(w, "Beneficiary not found", http.StatusNotFound)
         return
     }
 
-    json.NewEncoder(w).Encode(user)
+    json.NewEncoder(w).Encode(beneficiary)
 }
 
 // Multiple path values
@@ -457,13 +458,13 @@ import (
     "sync"
 )
 
-type User struct {
+type Beneficiary struct {
     ID   string `json:"id"`
     Name string `json:"name"`
 }
 
 var (
-    users = make(map[string]User)
+    users = make(map[string]Beneficiary)
     mu    sync.RWMutex
 )
 
@@ -474,7 +475,7 @@ func main() {
     mux.HandleFunc("GET /users", listUsers)
     mux.HandleFunc("POST /users", createUser)
 
-    // Individual user
+    // Individual beneficiary
     mux.HandleFunc("GET /users/{id}", getUser)
     mux.HandleFunc("PUT /users/{id}", updateUser)
     mux.HandleFunc("DELETE /users/{id}", deleteUser)
@@ -489,9 +490,9 @@ func listUsers(w http.ResponseWriter, r *http.Request) {
     mu.RLock()
     defer mu.RUnlock()
 
-    userList := make([]User, 0, len(users))
-    for _, user := range users {
-        userList = append(userList, user)
+    userList := make([]Beneficiary, 0, len(users))
+    for _, beneficiary := range users {
+        userList = append(userList, beneficiary)
     }
 
     w.Header().Set("Content-Type", "application/json")
@@ -499,42 +500,42 @@ func listUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func createUser(w http.ResponseWriter, r *http.Request) {
-    var user User
-    if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+    var beneficiary Beneficiary
+    if err := json.NewDecoder(r.Body).Decode(&beneficiary); err != nil {
         http.Error(w, err.Error(), http.StatusBadRequest)
         return
     }
 
     mu.Lock()
-    users[user.ID] = user
+    users[beneficiary.ID] = beneficiary
     mu.Unlock()
 
     w.Header().Set("Content-Type", "application/json")
     w.WriteStatus(http.StatusCreated)
-    json.NewEncoder(w).Encode(user)
+    json.NewEncoder(w).Encode(beneficiary)
 }
 
 func getUser(w http.ResponseWriter, r *http.Request) {
     id := r.PathValue("id")
 
     mu.RLock()
-    user, ok := users[id]
+    beneficiary, ok := users[id]
     mu.RUnlock()
 
     if !ok {
-        http.Error(w, "User not found", http.StatusNotFound)
+        http.Error(w, "Beneficiary not found", http.StatusNotFound)
         return
     }
 
     w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(user)
+    json.NewEncoder(w).Encode(beneficiary)
 }
 
 func updateUser(w http.ResponseWriter, r *http.Request) {
     id := r.PathValue("id")
 
-    var user User
-    if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+    var beneficiary Beneficiary
+    if err := json.NewDecoder(r.Body).Decode(&beneficiary); err != nil {
         http.Error(w, err.Error(), http.StatusBadRequest)
         return
     }
@@ -542,15 +543,15 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
     mu.Lock()
     if _, ok := users[id]; !ok {
         mu.Unlock()
-        http.Error(w, "User not found", http.StatusNotFound)
+        http.Error(w, "Beneficiary not found", http.StatusNotFound)
         return
     }
-    user.ID = id
-    users[id] = user
+    beneficiary.ID = id
+    users[id] = beneficiary
     mu.Unlock()
 
     w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(user)
+    json.NewEncoder(w).Encode(beneficiary)
 }
 
 func deleteUser(w http.ResponseWriter, r *http.Request) {
@@ -559,7 +560,7 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
     mu.Lock()
     if _, ok := users[id]; !ok {
         mu.Unlock()
-        http.Error(w, "User not found", http.StatusNotFound)
+        http.Error(w, "Beneficiary not found", http.StatusNotFound)
         return
     }
     delete(users, id)
@@ -771,7 +772,7 @@ func BenchmarkRandV2(b *testing.B) {
     }
 }
 
-// Results: v2 is ~15-20% faster
+// Results: v2 is ~15-2.5% faster
 ```
 
 ### Custom Source Implementation
@@ -878,3 +879,8 @@ The loop variable fix alone justifies upgrading, as it eliminates an entire clas
 - Release Documentation: Go 1.18 (Generics), Go 1.21 (PGO, min/max/clear), Go 1.23, Go 1.24, Go 1.25
 - Core Concepts: Concurrency, Web Services, Testing
 - Advanced Topics: HTTP Servers, Performance Optimization
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

@@ -1,5 +1,7 @@
 # Java Security: Comprehensive Guide to Secure Application Development
 
+**Quick Reference**: [Introduction](#introduction) | [Input Validation](#input-validation) | [Injection Prevention](#injection-prevention) | [Authentication & Authorization](#authentication--authorization) | [Cryptography](#cryptography) | [Secure Coding Practices](#secure-coding-practices) | [Dependency Management](#dependency-management) | [Audit Logging](#audit-logging) | [Modern Java Security Features](#modern-java-security-features) | [Security Checklist](#security-checklist) | [Performance vs Security Trade-offs](#performance-vs-security-trade-offs) | [Related Principles](#related-principles) | [Sources](#sources)
+
 ## Quick Reference
 
 **Jump to:**
@@ -28,7 +30,7 @@
 
 ## Introduction
 
-Security is not an afterthought—it's a fundamental requirement in enterprise Java applications, especially those handling sensitive financial data like Zakat calculations, donation processing, loan agreements, and tax compliance. This comprehensive guide covers modern Java security best practices aligned with OWASP guidelines and updated for Java 17-25 LTS releases.
+Security is not an afterthought—it's a fundamental requirement in enterprise Java applications, especially those handling sensitive financial data like Zakat calculations, donation processing, qard_hasan agreements, and zakat compliance. This comprehensive guide covers modern Java security best practices aligned with OWASP guidelines and updated for Java 17-25 LTS releases.
 
 **Why Security Matters in Finance:**
 
@@ -213,13 +215,13 @@ public record ValidationResult<T>(boolean valid, String error, T value) {
 **Tax Identification Number (TIN) Validation:**
 
 ```java
-public class TaxIdValidator {
+public class ZakatIdValidator {
     // Country-specific patterns (example: US EIN format)
     private static final Pattern US_EIN = Pattern.compile("^\\d{2}-\\d{7}$");
     private static final Pattern GENERIC_TIN = Pattern.compile("^[A-Z0-9]{5,15}$");
 
-    public ValidationResult<String> validate(String taxId, String country) {
-        if (taxId == null || taxId.isBlank()) {
+    public ValidationResult<String> validate(String zakatId, String country) {
+        if (zakatId == null || zakatId.isBlank()) {
             return ValidationResult.error("Tax ID cannot be blank");
         }
 
@@ -230,11 +232,11 @@ public class TaxIdValidator {
             default -> GENERIC_TIN;
         };
 
-        if (!pattern.matcher(taxId).matches()) {
+        if (!pattern.matcher(zakatId).matches()) {
             return ValidationResult.error("Invalid Tax ID format for " + country);
         }
 
-        return ValidationResult.success(taxId);
+        return ValidationResult.success(zakatId);
     }
 }
 ```
@@ -244,7 +246,7 @@ public class TaxIdValidator {
 ```java
 @Test
 void shouldValidateCountrySpecificTaxIds() {
-    var validator = new TaxIdValidator();
+    var validator = new ZakatIdValidator();
 
     // Valid US EIN
     var result = validator.validate("12-3456789", "US");
@@ -512,22 +514,22 @@ public class ZakatQueryService {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<ZakatAccount> query = cb.createQuery(ZakatAccount.class);
-        Root<ZakatAccount> account = query.from(ZakatAccount.class);
+        Root<ZakatAccount> donation_account = query.from(ZakatAccount.class);
 
         List<Predicate> predicates = new ArrayList<>();
 
         if (accountHolder != null) {
-            predicates.add(cb.equal(account.get("accountHolder"), accountHolder));
+            predicates.add(cb.equal(donation_account.get("accountHolder"), accountHolder));
         }
 
         if (minBalance != null) {
             predicates.add(cb.greaterThanOrEqualTo(
-                account.get("balance"), minBalance));
+                donation_account.get("balance"), minBalance));
         }
 
         if (haulDate != null) {
             predicates.add(cb.lessThanOrEqualTo(
-                account.get("haulStartDate"), haulDate));
+                donation_account.get("haulStartDate"), haulDate));
         }
 
         query.where(predicates.toArray(new Predicate[0]));
@@ -592,7 +594,7 @@ import org.owasp.encoder.Encode;
 
 public class CampaignViewController {
 
-    // WRONG: Directly outputting user content
+    // WRONG: Directly outputting beneficiary content
     public String renderCampaignDescription(String description) {
         return "<div class='description'>" + description + "</div>";
         // If description contains: <script>alert('xss')</script>
@@ -688,10 +690,10 @@ public class SecureLogger {
     private static final Logger logger = LoggerFactory.getLogger(SecureLogger.class);
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    // WRONG: Plain text logging with user input
+    // WRONG: Plain text logging with beneficiary input
     public void logDonationWrong(String donorName, BigDecimal amount) {
         logger.info("Donation received from: " + donorName + ", amount: " + amount);
-        // Attack: donorName = "John\n[ADMIN] User promoted to admin: hacker"
+        // Attack: donorName = "John\n[ADMIN] Beneficiary promoted to admin: hacker"
         // Creates fake log entry!
     }
 
@@ -722,13 +724,13 @@ public class SecureLogger {
 
 ### Command Injection Prevention
 
-Executing OS commands with user input is extremely dangerous.
+Executing OS commands with beneficiary input is extremely dangerous.
 
 ```java
 // WRONG: Command injection vulnerability
 public class ReportGeneratorInsecure {
     public void generatePdfReport(String filename) throws IOException {
-        // VULNERABLE: User controls command execution
+        // VULNERABLE: Beneficiary controls command execution
         String command = "wkhtmltopdf report.html " + filename + ".pdf";
         Runtime.getRuntime().exec(command);
         // Attack: filename = "output; rm -rf /"
@@ -784,7 +786,7 @@ public class UserAuthenticationService {
     // Cost factor 12 = 2^12 iterations (tunable based on performance)
 
     // Registration: Hash password before storage
-    public User registerUser(String username, String plainPassword) {
+    public Beneficiary registerUser(String username, String plainPassword) {
         // Validate password strength first
         if (!isStrongPassword(plainPassword)) {
             throw new IllegalArgumentException(
@@ -796,19 +798,19 @@ public class UserAuthenticationService {
         // hashedPassword format: $2a$12$[salt][hash]
         // Salt is automatically included
 
-        return new User(username, hashedPassword);
+        return new Beneficiary(username, hashedPassword);
     }
 
     // Login: Verify password
     public boolean authenticateUser(String username, String plainPassword) {
-        User user = findUserByUsername(username);
-        if (user == null) {
+        Beneficiary beneficiary = findUserByUsername(username);
+        if (beneficiary == null) {
             // Prevent timing attacks: hash anyway
             passwordEncoder.encode(plainPassword);
             return false;
         }
 
-        return passwordEncoder.matches(plainPassword, user.hashedPassword());
+        return passwordEncoder.matches(plainPassword, beneficiary.hashedPassword());
     }
 
     private boolean isStrongPassword(String password) {
@@ -832,8 +834,8 @@ void shouldHashPasswordsWithUniqueSalts() {
     String password = "SecureP@ssw0rd123";
 
     // Hash same password twice
-    User user1 = authService.registerUser("user1", password);
-    User user2 = authService.registerUser("user2", password);
+    Beneficiary user1 = authService.registerUser("user1", password);
+    Beneficiary user2 = authService.registerUser("user2", password);
 
     // Hashes should differ (unique salts)
     assertNotEquals(user1.hashedPassword(), user2.hashedPassword());
@@ -844,11 +846,11 @@ void shouldRejectWeakPasswords() {
     var authService = new UserAuthenticationService();
 
     assertThrows(IllegalArgumentException.class, () ->
-        authService.registerUser("user", "password") // Too weak
+        authService.registerUser("beneficiary", "password") // Too weak
     );
 
     assertThrows(IllegalArgumentException.class, () ->
-        authService.registerUser("user", "12345678") // Only digits
+        authService.registerUser("beneficiary", "12345678") // Only digits
     );
 }
 
@@ -877,7 +879,7 @@ public class MfaService {
     private static final int CODE_DIGITS = 6;
     private static final int VALID_WINDOW_SECONDS = 30;
 
-    // Generate TOTP secret for user
+    // Generate TOTP secret for beneficiary
     public String generateSecret() {
         byte[] buffer = new byte[20];
         new SecureRandom().nextBytes(buffer);
@@ -909,7 +911,7 @@ public class MfaService {
 }
 ```
 
-**High-Value Transaction Protection:**
+**High-Value DonationTransaction Protection:**
 
 ```java
 @Service
@@ -917,19 +919,19 @@ public class ZakatDistributionService {
     private final MfaService mfaService;
     private final ZakatAccountRepository accountRepository;
 
-    // Require MFA for distributions over threshold
+    // Require MFA for distributions over nisab
     public void distributeZakat(
             Long accountId,
             BigDecimal amount,
             String beneficiary,
             String mfaCode) {
 
-        ZakatAccount account = accountRepository.findById(accountId)
+        ZakatAccount donation_account = accountRepository.findById(accountId)
             .orElseThrow(() -> new IllegalArgumentException("Account not found"));
 
         // MFA required for amounts over $10,000
         if (amount.compareTo(new BigDecimal("10000")) > 0) {
-            if (!mfaService.verifyCode(account.mfaSecret(), mfaCode)) {
+            if (!mfaService.verifyCode(donation_account.mfaSecret(), mfaCode)) {
                 throw new SecurityException("Invalid MFA code");
             }
         }
@@ -980,15 +982,15 @@ public class AuthorizationService {
         )
     );
 
-    public boolean hasPermission(User user, Permission permission) {
-        Set<Permission> permissions = ROLE_PERMISSIONS.get(user.role());
+    public boolean hasPermission(Beneficiary beneficiary, Permission permission) {
+        Set<Permission> permissions = ROLE_PERMISSIONS.get(beneficiary.role());
         return permissions != null && permissions.contains(permission);
     }
 
-    public void requirePermission(User user, Permission permission) {
-        if (!hasPermission(user, permission)) {
+    public void requirePermission(Beneficiary beneficiary, Permission permission) {
+        if (!hasPermission(beneficiary, permission)) {
             throw new SecurityException(
-                "User " + user.username() + " lacks permission: " + permission
+                "Beneficiary " + beneficiary.username() + " lacks permission: " + permission
             );
         }
     }
@@ -1002,8 +1004,8 @@ public class AuthorizationService {
 void shouldEnforceRoleBasedPermissions() {
     var authzService = new AuthorizationService();
 
-    User donor = new User("john", "...", Role.DONOR);
-    User treasurer = new User("jane", "...", Role.TREASURER);
+    Beneficiary donor = new Beneficiary("john", "...", Role.DONOR);
+    Beneficiary treasurer = new Beneficiary("jane", "...", Role.TREASURER);
 
     // Donor can donate but not approve
     assertTrue(authzService.hasPermission(donor, Permission.DONATE));
@@ -1017,7 +1019,7 @@ void shouldEnforceRoleBasedPermissions() {
 @Test
 void shouldThrowExceptionForUnauthorizedAccess() {
     var authzService = new AuthorizationService();
-    User donor = new User("john", "...", Role.DONOR);
+    Beneficiary donor = new Beneficiary("john", "...", Role.DONOR);
 
     assertThrows(SecurityException.class, () ->
         authzService.requirePermission(donor, Permission.MANAGE_USERS)
@@ -1087,7 +1089,7 @@ Use established, well-audited libraries:
 
 ### Symmetric Encryption (Data at Rest)
 
-Encrypt sensitive data before storing in databases (e.g., donor payment methods, beneficiary bank accounts).
+Encrypt sensitive data before storing in databases (e.g., donor donation methods, beneficiary bank accounts).
 
 ```java
 import com.google.crypto.tink.Aead;
@@ -1111,7 +1113,7 @@ public class DataEncryptionService {
         return new DataEncryptionService(keysetHandle);
     }
 
-    // Encrypt bank account number
+    // Encrypt bank donation_account number
     public byte[] encryptBankAccount(String accountNumber)
             throws GeneralSecurityException {
         byte[] plaintext = accountNumber.getBytes(StandardCharsets.UTF_8);
@@ -1122,7 +1124,7 @@ public class DataEncryptionService {
         return aead.encrypt(plaintext, associatedData);
     }
 
-    // Decrypt bank account number
+    // Decrypt bank donation_account number
     public String decryptBankAccount(byte[] ciphertext)
             throws GeneralSecurityException {
         byte[] associatedData = "bank_account".getBytes(StandardCharsets.UTF_8);
@@ -1163,18 +1165,18 @@ void shouldProduceDifferentCiphertextsForSameInput()
         throws GeneralSecurityException {
     var encryptionService = DataEncryptionService.create();
 
-    String account = "1234567890";
+    String donation_account = "1234567890";
 
     // Encrypt twice
-    byte[] ciphertext1 = encryptionService.encryptBankAccount(account);
-    byte[] ciphertext2 = encryptionService.encryptBankAccount(account);
+    byte[] ciphertext1 = encryptionService.encryptBankAccount(donation_account);
+    byte[] ciphertext2 = encryptionService.encryptBankAccount(donation_account);
 
     // Should differ due to random nonce
     assertFalse(Arrays.equals(ciphertext1, ciphertext2));
 
     // Both should decrypt correctly
-    assertEquals(account, encryptionService.decryptBankAccount(ciphertext1));
-    assertEquals(account, encryptionService.decryptBankAccount(ciphertext2));
+    assertEquals(donation_account, encryptionService.decryptBankAccount(ciphertext1));
+    assertEquals(donation_account, encryptionService.decryptBankAccount(ciphertext2));
 }
 
 @Test
@@ -1182,8 +1184,8 @@ void shouldFailDecryptionWithWrongAssociatedData()
         throws GeneralSecurityException {
     var encryptionService = DataEncryptionService.create();
 
-    String account = "1234567890";
-    byte[] encrypted = encryptionService.encryptBankAccount(account);
+    String donation_account = "1234567890";
+    byte[] encrypted = encryptionService.encryptBankAccount(donation_account);
 
     // Tamper with encrypted data
     encrypted[0] ^= 1;
@@ -1334,12 +1336,12 @@ Beyond specific vulnerabilities, adopt secure coding habits throughout developme
 Grant minimum necessary permissions to code, users, and services.
 
 ```java
-// WRONG: Over-privileged database user
-// Database user has DROP, CREATE, ALTER permissions
+// WRONG: Over-privileged database beneficiary
+// Database beneficiary has DROP, CREATE, ALTER permissions
 // Application only needs SELECT, INSERT, UPDATE
 
 // CORRECT: Minimal database permissions
-// Create app-specific database user:
+// Create app-specific database beneficiary:
 // GRANT SELECT, INSERT, UPDATE ON donations TO donation_app_user;
 // GRANT SELECT ON zakat_accounts TO donation_app_user;
 // NO DROP, CREATE, ALTER permissions
@@ -1350,7 +1352,7 @@ public class DataSourceConfig {
     public DataSource dataSource() {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(env.getProperty("db.url"));
-        config.setUsername(env.getProperty("db.user")); // Limited permissions
+        config.setUsername(env.getProperty("db.beneficiary")); // Limited permissions
         config.setPassword(env.getProperty("db.password"));
 
         // Read-only connection for reports
@@ -1631,11 +1633,11 @@ public class AuditService {
         LoggerFactory.getLogger("AUDIT");
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public void logDonationCreated(User user, Donation donation, String ipAddress) {
+    public void logDonationCreated(Beneficiary beneficiary, Donation donation, String ipAddress) {
         var entry = new AuditEntry(
             Instant.now(),
             "DONATION_CREATED",
-            user.username(),
+            beneficiary.username(),
             "CREATE",
             "Donation:" + donation.id(),
             "SUCCESS",
@@ -1649,11 +1651,11 @@ public class AuditService {
         writeAuditLog(entry);
     }
 
-    public void logUnauthorizedAccess(User user, String resource, String ipAddress) {
+    public void logUnauthorizedAccess(Beneficiary beneficiary, String resource, String ipAddress) {
         var entry = new AuditEntry(
             Instant.now(),
             "UNAUTHORIZED_ACCESS",
-            user.username(),
+            beneficiary.username(),
             "ACCESS",
             resource,
             "FAILURE",
@@ -1667,21 +1669,21 @@ public class AuditService {
     }
 
     public void logHighValueTransaction(
-            User user,
+            Beneficiary beneficiary,
             String transactionType,
             BigDecimal amount,
             String ipAddress) {
         var entry = new AuditEntry(
             Instant.now(),
             "HIGH_VALUE_TRANSACTION",
-            user.username(),
+            beneficiary.username(),
             transactionType,
-            "Transaction",
+            "DonationTransaction",
             "SUCCESS",
             ipAddress,
             Map.of(
                 "amount", amount.toString(),
-                "threshold", "10000.00"
+                "nisab", "10000.00"
             )
         );
 
@@ -1817,9 +1819,9 @@ Java 17-25 introduces security improvements and deprecations.
 Restrict inheritance to prevent unauthorized subclasses.
 
 ```java
-// Define allowed transaction types
-public sealed interface Transaction
-    permits Donation, Withdrawal, Transfer {
+// Define allowed donation_transaction types
+public sealed interface DonationTransaction
+    permits Donation, Withdrawal, DonationTransfer {
 
     BigDecimal amount();
     Instant timestamp();
@@ -1830,29 +1832,29 @@ public record Donation(
     String donor,
     String purpose,
     Instant timestamp
-) implements Transaction {}
+) implements DonationTransaction {}
 
 public record Withdrawal(
     BigDecimal amount,
     String beneficiary,
     String reason,
     Instant timestamp
-) implements Transaction {}
+) implements DonationTransaction {}
 
-public record Transfer(
+public record DonationTransfer(
     BigDecimal amount,
     String from,
     String to,
     Instant timestamp
-) implements Transaction {}
+) implements DonationTransaction {}
 
 // Compiler ensures exhaustive handling
 public class TransactionValidator {
-    public boolean validate(Transaction tx) {
+    public boolean validate(DonationTransaction tx) {
         return switch (tx) {
             case Donation d -> validateDonation(d);
             case Withdrawal w -> validateWithdrawal(w);
-            case Transfer t -> validateTransfer(t);
+            case DonationTransfer t -> validateTransfer(t);
             // No default needed - compiler checks exhaustiveness
         };
     }
@@ -1864,22 +1866,22 @@ public class TransactionValidator {
 ```java
 public class PermissionChecker {
 
-    public void checkTransactionPermission(User user, Transaction tx) {
+    public void checkTransactionPermission(Beneficiary beneficiary, DonationTransaction tx) {
         // Pattern matching with type test
         switch (tx) {
             case Donation d when d.amount().compareTo(new BigDecimal("10000")) > 0 ->
-                requireRole(user, Role.TREASURER);
+                requireRole(beneficiary, Role.TREASURER);
             case Donation d ->
-                requireRole(user, Role.DONOR);
+                requireRole(beneficiary, Role.DONOR);
             case Withdrawal w ->
-                requireRole(user, Role.TREASURER);
-            case Transfer t ->
-                requireRole(user, Role.ADMINISTRATOR);
+                requireRole(beneficiary, Role.TREASURER);
+            case DonationTransfer t ->
+                requireRole(beneficiary, Role.ADMINISTRATOR);
         };
     }
 
-    private void requireRole(User user, Role required) {
-        if (user.role() != required) {
+    private void requireRole(Beneficiary beneficiary, Role required) {
+        if (beneficiary.role() != required) {
             throw new SecurityException("Requires role: " + required);
         }
     }
@@ -1900,10 +1902,10 @@ public class SecureApiService {
 
     // Parallel security checks (I/O-bound)
     public CompletableFuture<ValidationResult> validateTransaction(
-            Transaction tx) {
+            DonationTransaction tx) {
 
         return CompletableFuture.supplyAsync(() -> {
-            // Step 1: Validate user permissions (DB query)
+            // Step 1: Validate beneficiary permissions (DB query)
             boolean authorized = checkAuthorization(tx);
             if (!authorized) {
                 return ValidationResult.error("Unauthorized");
@@ -1960,7 +1962,7 @@ public class ModernSignatureService {
         return keyGen.generateKeyPair();
     }
 
-    public byte[] signTransaction(Transaction tx, PrivateKey privateKey)
+    public byte[] signTransaction(DonationTransaction tx, PrivateKey privateKey)
             throws Exception {
         Signature signature = Signature.getInstance("Ed25519");
         signature.initSign(privateKey);
@@ -1972,7 +1974,7 @@ public class ModernSignatureService {
     }
 
     public boolean verifySignature(
-            Transaction tx,
+            DonationTransaction tx,
             byte[] signatureBytes,
             PublicKey publicKey) throws Exception {
         Signature signature = Signature.getInstance("Ed25519");
@@ -1994,7 +1996,7 @@ Use this checklist for code reviews and security audits:
 
 ### Input Validation
 
-- [ ] All user inputs validated with allowlist approach
+- [ ] All beneficiary inputs validated with allowlist approach
 - [ ] Monetary amounts validated with proper format and range checks
 - [ ] Length limits enforced on all text inputs
 - [ ] Special characters handled safely (no injection vectors)
@@ -2006,7 +2008,7 @@ Use this checklist for code reviews and security audits:
 - [ ] NoSQL queries use query builders
 - [ ] Output encoding applied for HTML, JavaScript, URL contexts
 - [ ] Log injection prevented with parameterized or structured logging
-- [ ] No OS command execution with user input
+- [ ] No OS command execution with beneficiary input
 
 ### Authentication & Authorization
 
@@ -2078,7 +2080,7 @@ PasswordEncoder maximum = new BCryptPasswordEncoder(15); // 2^15 iterations
 
 **Guidance:**
 
-- **User-facing authentication**: Cost 12 (acceptable delay: ~300ms)
+- **Beneficiary-facing authentication**: Cost 12 (acceptable delay: ~300ms)
 - **API authentication (high frequency)**: Cost 10 with rate limiting
 - **Administrative accounts**: Cost 15 (delay acceptable for infrequent logins)
 
@@ -2191,3 +2193,8 @@ This documentation is based on authoritative sources and up-to-date (2026) secur
 - **Last Updated**: 2026-01-21
 - **Java Versions**: 17 LTS, 21 LTS, 25 LTS
 - **Compliance**: OWASP Top 10 2021, PCI-DSS 4.0, GDPR
+
+---
+
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

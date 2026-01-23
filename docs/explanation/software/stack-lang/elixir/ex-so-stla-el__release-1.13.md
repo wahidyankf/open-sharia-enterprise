@@ -676,5 +676,5 @@ end
 ---
 
 **Last Updated**: 2025-01-23
-**Elixir Version**: 1.13.0 - 1.13.4
+**Elixir Version**: 1.18.0+
 **Status**: Superseded by 1.14+

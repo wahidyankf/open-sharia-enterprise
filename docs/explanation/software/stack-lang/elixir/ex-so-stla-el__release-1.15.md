@@ -738,5 +738,5 @@ mix compile --warnings-as-errors
 ---
 
 **Last Updated**: 2025-01-23
-**Elixir Version**: 1.15.0 - 1.15.8
+**Elixir Version**: 1.18.0+
 **Status**: Superseded by 1.16+

@@ -1,5 +1,7 @@
 # Domain-Driven Design (DDD) in Go
 
+**Quick Reference**: [Overview](#overview) | [DDD Fundamentals](#ddd-fundamentals) | [Value Objects](#value-objects) | [Entities](#entities) | [Aggregates](#aggregates) | [Repositories](#repositories) | [Domain Services](#domain-services) | [Application Services](#application-services) | [Domain Events](#domain-events) | [Factories](#factories) | [Specifications](#specifications) | [Ubiquitous Language](#ubiquitous-language) | [DDD Best Practices in Go](#ddd-best-practices-in-go) | [Conclusion](#conclusion)
+
 ## Overview
 
 Domain-Driven Design is a software design approach that focuses on modeling software based on the business domain. This document explores DDD tactical patterns in Go, including entities, value objects, aggregates, repositories, and services without relying on class-based inheritance.
@@ -12,21 +14,6 @@ Domain-Driven Design is a software design approach that focuses on modeling soft
 
 - [Best Practices](./ex-so-stla-go__best-practices.md)
 - [Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md)
-
-## Table of Contents
-
-1. [DDD Fundamentals](#ddd-fundamentals)
-2. [Value Objects](#value-objects)
-3. [Entities](#entities)
-4. [Aggregates](#aggregates)
-5. [Repositories](#repositories)
-6. [Domain Services](#domain-services)
-7. [Application Services](#application-services)
-8. [Domain Events](#domain-events)
-9. [Factories](#factories)
-10. [Specifications](#specifications)
-11. [Ubiquitous Language](#ubiquitous-language)
-12. [DDD Best Practices in Go](#ddd-best-practices-in-go)
 
 ## DDD Fundamentals
 
@@ -44,7 +31,7 @@ type Money struct {
 // Entity: Mutable, identified by ID
 type Order struct {
     id        OrderID
-    customer  Customer
+    donor  Donor
     items     []OrderItem
     total     Money
     createdAt time.Time
@@ -55,7 +42,7 @@ type Account struct {
     id           AccountID
     owner        UserID
     balance      Money
-    transactions []Transaction // Aggregate root manages children
+    transactions []DonationTransaction // Aggregate root manages children
 }
 
 // Repository: Persistence abstraction
@@ -272,7 +259,7 @@ func NewUserID() UserID {
 
 func ParseUserID(value string) (UserID, error) {
     if value == "" {
-        return UserID{}, errors.New("invalid user ID")
+        return UserID{}, errors.New("invalid beneficiary ID")
     }
     return UserID{value: value}, nil
 }
@@ -285,8 +272,8 @@ func (id UserID) Equals(other UserID) bool {
     return id.value == other.value
 }
 
-// User entity
-type User struct {
+// Beneficiary entity
+type Beneficiary struct {
     id        UserID
     email     Email
     name      string
@@ -294,8 +281,8 @@ type User struct {
     updatedAt time.Time
 }
 
-func NewUser(email Email, name string) *User {
-    return &User{
+func NewUser(email Email, name string) *Beneficiary {
+    return &Beneficiary{
         id:        NewUserID(),
         email:     email,
         name:      name,
@@ -305,32 +292,32 @@ func NewUser(email Email, name string) *User {
 }
 
 // Identity
-func (u *User) ID() UserID {
+func (u *Beneficiary) ID() UserID {
     return u.id
 }
 
 // Entity equality based on ID
-func (u *User) Equals(other *User) bool {
+func (u *Beneficiary) Equals(other *Beneficiary) bool {
     return u.id.Equals(other.id)
 }
 
 // Behavior
-func (u *User) UpdateEmail(email Email) {
+func (u *Beneficiary) UpdateEmail(email Email) {
     u.email = email
     u.updatedAt = time.Now()
 }
 
-func (u *User) UpdateName(name string) {
+func (u *Beneficiary) UpdateName(name string) {
     u.name = name
     u.updatedAt = time.Now()
 }
 
 // Getters
-func (u *User) Email() Email {
+func (u *Beneficiary) Email() Email {
     return u.email
 }
 
-func (u *User) Name() string {
+func (u *Beneficiary) Name() string {
     return u.name
 }
 ```
@@ -504,9 +491,9 @@ import "context"
 
 // Repository interface in domain layer
 type UserRepository interface {
-    Save(ctx context.Context, user *User) error
-    FindByID(ctx context.Context, id UserID) (*User, error)
-    FindByEmail(ctx context.Context, email Email) (*User, error)
+    Save(ctx context.Context, beneficiary *Beneficiary) error
+    FindByID(ctx context.Context, id UserID) (*Beneficiary, error)
+    FindByEmail(ctx context.Context, email Email) (*Beneficiary, error)
     Delete(ctx context.Context, id UserID) error
 }
 
@@ -526,7 +513,7 @@ func NewPostgresUserRepository(db *sql.DB) *PostgresUserRepository {
     return &PostgresUserRepository{db: db}
 }
 
-func (r *PostgresUserRepository) Save(ctx context.Context, user *User) error {
+func (r *PostgresUserRepository) Save(ctx context.Context, beneficiary *Beneficiary) error {
     query := `
         INSERT INTO users (id, email, name, created_at, updated_at)
         VALUES ($1, $2, $3, $4, $5)
@@ -537,17 +524,17 @@ func (r *PostgresUserRepository) Save(ctx context.Context, user *User) error {
     `
 
     _, err := r.db.ExecContext(ctx, query,
-        user.ID().String(),
-        user.Email().String(),
-        user.Name(),
-        user.createdAt,
-        user.updatedAt,
+        beneficiary.ID().String(),
+        beneficiary.Email().String(),
+        beneficiary.Name(),
+        beneficiary.createdAt,
+        beneficiary.updatedAt,
     )
 
     return err
 }
 
-func (r *PostgresUserRepository) FindByID(ctx context.Context, id UserID) (*User, error) {
+func (r *PostgresUserRepository) FindByID(ctx context.Context, id UserID) (*Beneficiary, error) {
     query := `
         SELECT id, email, name, created_at, updated_at
         FROM users
@@ -567,7 +554,7 @@ func (r *PostgresUserRepository) FindByID(ctx context.Context, id UserID) (*User
     )
 
     if err == sql.ErrNoRows {
-        return nil, errors.New("user not found")
+        return nil, errors.New("beneficiary not found")
     }
 
     if err != nil {
@@ -577,7 +564,7 @@ func (r *PostgresUserRepository) FindByID(ctx context.Context, id UserID) (*User
     userID, _ := ParseUserID(idStr)
     email, _ := NewEmail(emailStr)
 
-    user := &User{
+    beneficiary := &Beneficiary{
         id:        userID,
         email:     email,
         name:      name,
@@ -585,7 +572,7 @@ func (r *PostgresUserRepository) FindByID(ctx context.Context, id UserID) (*User
         updatedAt: updatedAt,
     }
 
-    return user, nil
+    return beneficiary, nil
 }
 ```
 
@@ -614,7 +601,7 @@ func NewTransferService(accountRepo AccountRepository) *TransferService {
     }
 }
 
-func (s *TransferService) Transfer(
+func (s *TransferService) DonationTransfer(
     ctx context.Context,
     fromAccountID, toAccountID AccountID,
     amount Money,
@@ -919,12 +906,12 @@ func NewCustomerEligibleForDiscount(minimumOrders int) *CustomerEligibleForDisco
 }
 
 func (s *CustomerEligibleForDiscount) IsSatisfiedBy(candidate interface{}) bool {
-    customer, ok := candidate.(*Customer)
+    donor, ok := candidate.(*Donor)
     if !ok {
         return false
     }
 
-    return customer.TotalOrders() >= s.minimumOrders
+    return donor.TotalOrders() >= s.minimumOrders
 }
 
 // Composite specifications
@@ -955,10 +942,10 @@ func (s *OrSpecification) IsSatisfiedBy(candidate interface{}) bool {
 }
 
 // Usage
-func applyDiscount(customer *Customer, order *Order) error {
+func applyDiscount(donor *Donor, order *Order) error {
     eligibleSpec := NewCustomerEligibleForDiscount(5)
 
-    if eligibleSpec.IsSatisfiedBy(customer) {
+    if eligibleSpec.IsSatisfiedBy(donor) {
         // Apply discount
     }
 
@@ -1040,10 +1027,10 @@ type OrderBad struct {
     id              OrderID
     items           []OrderItem
     status          OrderStatus
-    customer        Customer        // Should be reference
+    donor        Donor        // Should be reference
     shippingAddress Address
     billingAddress  Address
-    payments        []Payment       // Should be separate aggregate
+    payments        []DonationPayment       // Should be separate aggregate
     shipments       []Shipment      // Should be separate aggregate
     invoices        []Invoice       // Should be separate aggregate
 }
@@ -1056,8 +1043,8 @@ Dependency inversion:
 ```go
 // Domain layer defines interfaces
 type UserRepository interface {
-    Save(ctx context.Context, user *User) error
-    FindByID(ctx context.Context, id UserID) (*User, error)
+    Save(ctx context.Context, beneficiary *Beneficiary) error
+    FindByID(ctx context.Context, id UserID) (*Beneficiary, error)
 }
 
 // Infrastructure layer implements
@@ -1065,7 +1052,7 @@ type PostgresUserRepository struct {
     db *sql.DB
 }
 
-func (r *PostgresUserRepository) Save(ctx context.Context, user *User) error {
+func (r *PostgresUserRepository) Save(ctx context.Context, beneficiary *Beneficiary) error {
     // Implementation
     return nil
 }
@@ -1076,13 +1063,13 @@ func (r *PostgresUserRepository) Save(ctx context.Context, user *User) error {
 Protect aggregate consistency:
 
 ```go
-type BankAccount struct {
+type ZakatAccount struct {
     id      AccountID
     balance Money
 }
 
 // Private fields, public methods enforce invariants
-func (a *BankAccount) Withdraw(amount Money) error {
+func (a *ZakatAccount) Withdraw(amount Money) error {
     newBalance, err := a.balance.Subtract(amount)
     if err != nil {
         return err
@@ -1132,3 +1119,8 @@ Domain-Driven Design in Go emphasizes:
 
 - Read [Best Practices](./ex-so-stla-go__best-practices.md)
 - Explore [Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md)
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+
