@@ -3699,5 +3699,6 @@ Before committing:
 
 ---
 
-**Last Updated**: 2025-01-23
-**Go Version**: 1.18+
+**Last Updated**: 2026-01-23
+**Go Version**: 1.21+ (baseline), 1.22+ (recommended), 1.23 (latest)
+**Maintainers**: Platform Documentation Team
