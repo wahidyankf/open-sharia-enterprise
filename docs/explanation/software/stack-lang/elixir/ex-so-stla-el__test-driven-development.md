@@ -1,3 +1,27 @@
+---
+title: "Test-Driven Development in Elixir"
+description: TDD in Elixir using ExUnit, Mox, StreamData, and ExMachina following Red-Green-Refactor cycle for code correctness
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - test-driven-development
+  - tdd
+  - exunit
+  - mox
+  - streamdata
+  - property-based-testing
+  - test-factories
+related:
+  - ./ex-so-stla-el__best-practices.md
+  - ./ex-so-stla-el__behaviour-driven-development.md
+  - ./ex-so-stla-el__anti-patterns.md
+principles:
+  - documentation-first
+  - reproducibility
+last_updated: 2026-01-23
+---
+
 # Test-Driven Development
 
 Test-Driven Development (TDD) in Elixir uses **ExUnit** for unit and integration testing, **Mox** for mocking, **StreamData** for property-based testing, and **ExMachina** for test data factories. The TDD cycle (Red-Green-Refactor) ensures code correctness, especially critical for financial applications handling donations and payments.
@@ -1370,6 +1394,6 @@ end
 
 ---
 
-**Last Updated**: 2025-01-23
-
-**Next Steps**: Explore [Behaviour-Driven Development](ex-so-stla-el__behaviour-driven-development.md) for BDD with Gherkin scenarios, or see [Best Practices](ex-so-stla-el__best-practices.md) for additional testing guidance.
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

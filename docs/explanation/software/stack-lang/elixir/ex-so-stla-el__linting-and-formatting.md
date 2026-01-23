@@ -1,3 +1,27 @@
+---
+title: "Elixir Linting and Formatting"
+description: Code quality tools including mix format for formatting, Credo for linting, and Dialyzer for static analysis
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - linting
+  - formatting
+  - mix-format
+  - credo
+  - dialyzer
+  - static-analysis
+  - code-quality
+related:
+  - ./ex-so-stla-el__best-practices.md
+  - ./ex-so-stla-el__type-safety.md
+  - ./ex-so-stla-el__anti-patterns.md
+principles:
+  - automation-over-manual
+  - reproducibility
+last_updated: 2026-01-23
+---
+
 # Linting and Formatting
 
 Elixir provides excellent tooling for **code formatting** (`mix format`), **linting** (Credo), and **static analysis** (Dialyzer). These tools ensure consistent code style, catch common mistakes, and find type errors at compile time, essential for maintaining high-quality financial applications.
@@ -934,6 +958,6 @@ end
 
 ---
 
-**Last Updated**: 2025-01-23
-
-**Next Steps**: Explore [Testing](ex-so-stla-el__test-driven-development.md) for comprehensive testing strategies, or see [Best Practices](ex-so-stla-el__best-practices.md) for additional code quality guidance.
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

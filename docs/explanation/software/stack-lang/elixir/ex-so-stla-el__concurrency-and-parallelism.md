@@ -1,3 +1,29 @@
+---
+title: "Elixir Concurrency and Parallelism"
+description: Fundamental concurrency and parallelism in Elixir using the BEAM VM's actor model with lightweight processes and message passing
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - concurrency
+  - parallelism
+  - processes
+  - message-passing
+  - task
+  - genserver
+  - actor-model
+  - beam-vm
+related:
+  - ./ex-so-stla-el__error-handling.md
+  - ./ex-so-stla-el__otp-genserver.md
+  - ./ex-so-stla-el__otp-supervisor.md
+  - ./ex-so-stla-el__performance.md
+principles:
+  - simplicity-over-complexity
+  - explicit-over-implicit
+last_updated: 2026-01-23
+---
+
 # Elixir Concurrency and Parallelism
 
 **Quick Reference**: [Overview](#overview) | [Processes](#processes) | [Message Passing](#message-passing) | [Task Module](#task-module) | [GenServer](#genserver-for-state) | [Concurrent Patterns](#concurrent-patterns) | [Financial Examples](#financial-domain-integration)
@@ -1319,5 +1345,6 @@ end
 
 ---
 
-**Last Updated**: 2025-01-23
-**Elixir Version**: 1.18.0+
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

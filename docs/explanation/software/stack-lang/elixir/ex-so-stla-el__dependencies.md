@@ -1,3 +1,25 @@
+---
+title: "Elixir Dependency Management"
+description: Managing dependencies with Mix and Hex for maintainable applications including umbrella apps and microservices architectures
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - dependencies
+  - mix
+  - hex
+  - package-management
+  - umbrella-projects
+  - version-constraints
+related:
+  - ./ex-so-stla-el__best-practices.md
+  - ./ex-so-stla-el__otp-application.md
+principles:
+  - explicit-over-implicit
+  - reproducibility
+last_updated: 2026-01-23
+---
+
 # Dependencies
 
 Elixir uses **Mix** (build tool) and **Hex** (package manager) for dependency management. Understanding how to manage dependencies effectively is crucial for building maintainable applications, especially in large projects using umbrella apps and microservices architectures.
@@ -1164,6 +1186,6 @@ jobs:
 
 ---
 
-**Last Updated**: 2025-01-23
-
-**Next Steps**: Explore [Domain-Driven Design](ex-so-stla-el__domain-driven-design.md) for organizing large Elixir applications with umbrella projects, or see [Web Services](ex-so-stla-el__web-services.md) for Phoenix framework dependencies.
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

@@ -1,8 +1,30 @@
-# OTP Application Patterns
+---
+title: "OTP Application Patterns"
+description: Applications as the fundamental unit of code organization in Elixir/OTP, grouping modules, managing dependencies, and starting supervision trees
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - otp
+  - application
+  - supervision
+  - lifecycle
+  - configuration
+  - umbrella-projects
+  - genstage
+  - broadway
+related:
+  - ./ex-so-stla-el__otp-genserver.md
+  - ./ex-so-stla-el__otp-supervisor.md
+  - ./ex-so-stla-el__concurrency-and-parallelism.md
+principles:
+  - modularity
+  - explicit-over-implicit
+  - automation-over-manual
+last_updated: 2026-01-23
+---
 
-**Category**: OTP Patterns
-**Elixir Version**: 1.18.0+
-**Related**: [GenServer Patterns](ex-so-stla-el__otp-genserver.md), [Supervisor Patterns](ex-so-stla-el__otp-supervisor.md)
+# OTP Application Patterns
 
 ## Overview
 
@@ -210,6 +232,52 @@ financial/
 
 ## Starting Applications
 
+### Application Startup Sequence
+
+The following diagram shows the complete boot process from Mix to running application:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+sequenceDiagram
+    participant Mix
+    participant Config
+    participant App as Application Module
+    participant Sup as Supervisor
+    participant Repo as Financial.Repo
+    participant PubSub as Phoenix.PubSub
+    participant Workers as Business Workers
+    participant Endpoint as Web Endpoint
+
+    Mix->>Config: Load config files
+    Config-->>Mix: config.exs, runtime.exs loaded
+    Mix->>App: Application.start(:financial, :permanent)
+    App->>App: start/2 callback invoked
+    App->>Sup: Supervisor.start_link(children, opts)
+
+    Sup->>Repo: start_link([])
+    Repo-->>Sup: {:ok, repo_pid}
+    Note over Repo: Database connection pool ready
+
+    Sup->>PubSub: start_link([name: Financial.PubSub])
+    PubSub-->>Sup: {:ok, pubsub_pid}
+    Note over PubSub: Message bus ready
+
+    Sup->>Workers: start_link([])
+    Workers-->>Sup: {:ok, workers_pid}
+    Note over Workers: Campaign/Donation/Payment workers ready
+
+    Sup->>Endpoint: start_link([])
+    Endpoint-->>Sup: {:ok, endpoint_pid}
+    Note over Endpoint: HTTP server listening on port 4000
+
+    Sup-->>App: {:ok, supervisor_pid}
+    App-->>Mix: {:ok, supervisor_pid}
+    Note over Mix,Endpoint: Application fully started and operational
+```
+
+### Application Lifecycle States
+
 The following diagram shows the application lifecycle states:
 
 ```mermaid
@@ -398,9 +466,116 @@ end
 # 4. :financial (this app)
 ```
 
+### Configuration Loading
+
+The following diagram shows how configuration is loaded at different stages:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+flowchart TD
+    START[Mix Project Start] --> COMPILE{Compile Time}
+
+    COMPILE -->|config.exs| BASE[Base Configuration<br/>Common settings]
+    COMPILE -->|dev.exs/test.exs/prod.exs| ENV[Environment-Specific<br/>Config merged into base]
+
+    BASE --> MERGED[Merged Compile-Time Config]
+    ENV --> MERGED
+
+    MERGED --> BUILD[Application Built<br/>Config baked into .beam files]
+
+    BUILD --> RUNTIME{Runtime}
+
+    RUNTIME -->|runtime.exs| RUNTIME_CONFIG[Runtime Configuration<br/>System.get_env]
+    RUNTIME -->|Application.put_env| DYNAMIC[Dynamic Configuration<br/>At application start]
+
+    RUNTIME_CONFIG --> FINAL[Final Configuration]
+    DYNAMIC --> FINAL
+
+    FINAL --> ACCESS[Application.get_env<br/>Application.fetch_env!]
+
+    ACCESS --> APP[Running Application<br/>Uses configuration]
+
+    Note1[Compile-Time:<br/>- Static values<br/>- Development defaults<br/>- Cannot change without recompile]
+    Note2[Runtime:<br/>- Environment variables<br/>- Secrets from vault<br/>- Can change between deployments]
+
+    COMPILE -.-> Note1
+    RUNTIME -.-> Note2
+
+    style START fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style COMPILE fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style BASE fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style ENV fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style MERGED fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style BUILD fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style RUNTIME fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style RUNTIME_CONFIG fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style DYNAMIC fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style FINAL fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style ACCESS fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style APP fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Note1 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Note2 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Umbrella Projects
 
 ### Structure
+
+The following diagram shows the relationships between umbrella applications:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+graph TD
+    ROOT[Financial Umbrella<br/>Root Project]
+
+    CORE[financial_core<br/>Business Logic & Domain]
+    WEB[financial_web<br/>Phoenix Web Interface]
+    API[financial_api<br/>REST API Service]
+    WORKER[financial_worker<br/>Background Jobs - Oban]
+    ANALYTICS[financial_analytics<br/>Broadway Pipelines]
+
+    ROOT --> CORE
+    ROOT --> WEB
+    ROOT --> API
+    ROOT --> WORKER
+    ROOT --> ANALYTICS
+
+    WEB -->|depends on| CORE
+    API -->|depends on| CORE
+    WORKER -->|depends on| CORE
+    ANALYTICS -->|depends on| CORE
+
+    CORE_MODULES[Campaigns<br/>Donations<br/>Payments<br/>Zakat<br/>Repo]
+    WEB_MODULES[Controllers<br/>LiveViews<br/>Templates<br/>Endpoint]
+    API_MODULES[REST Controllers<br/>JSON Views<br/>Auth Plugs]
+    WORKER_MODULES[Campaign Jobs<br/>Payment Jobs<br/>Report Jobs]
+    ANALYTICS_MODULES[Donation Pipeline<br/>Payment Processor<br/>Event Aggregator]
+
+    CORE -.-> CORE_MODULES
+    WEB -.-> WEB_MODULES
+    API -.-> API_MODULES
+    WORKER -.-> WORKER_MODULES
+    ANALYTICS -.-> ANALYTICS_MODULES
+
+    Note1[Dependency Rule:<br/>Core has NO dependencies on other apps<br/>All other apps depend on Core<br/>Web/API/Worker/Analytics are independent]
+
+    ROOT -.-> Note1
+
+    style ROOT fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style CORE fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style WEB fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style API fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style WORKER fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style ANALYTICS fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style CORE_MODULES fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style WEB_MODULES fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style API_MODULES fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style WORKER_MODULES fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style ANALYTICS_MODULES fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Note1 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ```
 financial_umbrella/
@@ -1298,6 +1473,7 @@ end
 
 ---
 
-**Last Updated**: 2025-01-23
-**Elixir Version**: 1.18.0+
-**OTP Version**: 24+
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**OTP Version**: 24+ (baseline), 26+ (recommended), 27 (latest)
+**Maintainers**: Platform Documentation Team

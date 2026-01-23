@@ -1,4 +1,18 @@
-# Elixir 1.15 Release
+---
+title: "Elixir 1.15 Release"
+description: Release notes for Elixir 1.15 highlighting new features, improvements, and breaking changes
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - release-notes
+  - elixir-1.15
+related:
+  - ./README.md
+principles:
+  - documentation-first
+last_updated: 2026-01-23
+---
 
 **Status**: Stable (Released June 19, 2023)
 **OTP Compatibility**: Erlang/OTP 24+ (OTP 26 recommended)
@@ -737,6 +751,6 @@ mix compile --warnings-as-errors
 
 ---
 
-**Last Updated**: 2025-01-23
-**Elixir Version**: 1.18.0+
-**Status**: Superseded by 1.16+
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

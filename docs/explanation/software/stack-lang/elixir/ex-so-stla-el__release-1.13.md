@@ -1,4 +1,18 @@
-# Elixir 1.13 Release
+---
+title: "Elixir 1.13 Release"
+description: Release notes for Elixir 1.13 highlighting new features, improvements, and breaking changes
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - release-notes
+  - elixir-1.13
+related:
+  - ./README.md
+principles:
+  - documentation-first
+last_updated: 2026-01-23
+---
 
 **Status**: Stable (Released December 3, 2021)
 **OTP Compatibility**: Erlang/OTP 22+
@@ -675,6 +689,6 @@ end
 
 ---
 
-**Last Updated**: 2025-01-23
-**Elixir Version**: 1.18.0+
-**Status**: Superseded by 1.14+
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

@@ -1,3 +1,24 @@
+---
+title: "Elixir 1.18 Release"
+description: Milestone release with type checking of function calls, LSP improvements, built-in JSON support, and enhanced testing capabilities
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - release-notes
+  - elixir-1.18
+  - type-checking
+  - lsp
+  - json
+  - testing
+related:
+  - ./ex-so-stla-el__release-1.17.md
+  - ./ex-so-stla-el__type-safety.md
+principles:
+  - documentation-first
+last_updated: 2026-01-23
+---
+
 # Elixir 1.18 Release
 
 **Status**: Current Stable (Released December 19, 2024)
@@ -855,6 +876,6 @@ Negligible for most applications
 
 ---
 
-**Last Updated**: 2025-01-23
-**Elixir Version**: 1.18.0+
-**Status**: Current Stable Release
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

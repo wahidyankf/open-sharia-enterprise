@@ -1,3 +1,26 @@
+---
+title: "Elixir Memory Management"
+description: BEAM VM's per-process garbage collection model enabling efficient memory management for millions of concurrent processes
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - memory-management
+  - garbage-collection
+  - beam-vm
+  - process-heap
+  - binary-heap
+  - ets-tables
+  - profiling
+related:
+  - ./ex-so-stla-el__performance.md
+  - ./ex-so-stla-el__concurrency-and-parallelism.md
+  - ./ex-so-stla-el__anti-patterns.md
+principles:
+  - simplicity-over-complexity
+last_updated: 2026-01-23
+---
+
 # Memory Management
 
 Elixir's memory management is fundamentally different from most languages due to the **BEAM VM's** per-process garbage collection model. Understanding how memory works in Elixir is crucial for building high-performance, scalable applications that can handle millions of concurrent processes efficiently.
@@ -1365,6 +1388,6 @@ end
 
 ---
 
-**Last Updated**: 2025-01-23
-
-**Next Steps**: Explore [Dependencies](ex-so-stla-el__dependencies.md) for managing project dependencies with Mix and Hex, or see [Performance](ex-so-stla-el__performance.md) for optimization techniques beyond memory management.
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

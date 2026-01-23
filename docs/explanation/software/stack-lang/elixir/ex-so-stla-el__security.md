@@ -1,3 +1,28 @@
+---
+title: "Elixir Security"
+description: Defense-in-depth security for Elixir applications including input validation, authentication, authorization, secure communication, and data protection
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - security
+  - input-validation
+  - authentication
+  - authorization
+  - xss-prevention
+  - sql-injection-prevention
+  - csrf-protection
+  - data-encryption
+related:
+  - ./ex-so-stla-el__best-practices.md
+  - ./ex-so-stla-el__web-services.md
+  - ./ex-so-stla-el__anti-patterns.md
+principles:
+  - security-first
+  - explicit-over-implicit
+last_updated: 2026-01-23
+---
+
 # Security
 
 Security in Elixir applications requires defense-in-depth: **input validation**, **authentication**, **authorization**, **secure communication**, and **data protection**. This is especially critical for financial applications handling sensitive donation and payment data.
@@ -1387,6 +1412,6 @@ end
 
 ---
 
-**Last Updated**: 2025-01-23
-
-**Next Steps**: Explore [Performance](ex-so-stla-el__performance.md) for optimizing secure applications, or see [Web Services](ex-so-stla-el__web-services.md) for implementing secure Phoenix applications.
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

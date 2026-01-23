@@ -1,3 +1,29 @@
+---
+title: "Elixir Functional Programming"
+description: Functional programming in Elixir using immutable data structures, pure functions, recursion, and composition patterns
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - functional-programming
+  - immutability
+  - pure-functions
+  - recursion
+  - higher-order-functions
+  - enum
+  - stream
+  - pipe-operator
+related:
+  - ./ex-so-stla-el__best-practices.md
+  - ./ex-so-stla-el__idioms.md
+  - ./ex-so-stla-el__performance.md
+principles:
+  - immutability
+  - pure-functions
+  - simplicity-over-complexity
+last_updated: 2026-01-23
+---
+
 # Elixir Functional Programming
 
 **Quick Reference**: [Overview](#overview) | [Immutability](#immutability) | [Pure Functions](#pure-functions) | [Recursion](#recursion-and-tail-call-optimization) | [Higher-Order Functions](#higher-order-functions) | [Enum & Stream](#enum-and-stream) | [Pipe Operator](#pipe-operator-composition) | [Financial Examples](#financial-domain-integration)
@@ -505,7 +531,7 @@ end
 The following diagram shows how higher-order functions compose together, passing functions as values and creating specialized calculators:
 
 ```mermaid
-graph LR
+graph TB
     %% Input
     Input["Input: $100"]
 
@@ -850,5 +876,6 @@ end
 
 ---
 
-**Last Updated**: 2025-01-23
-**Elixir Version**: 1.18.0+
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

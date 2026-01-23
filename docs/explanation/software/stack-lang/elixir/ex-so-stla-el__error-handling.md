@@ -1,3 +1,28 @@
+---
+title: "Elixir Error Handling"
+description: Elixir's distinctive approach to error handling using "let it crash" philosophy, supervision trees, and pattern matching for building resilient systems
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - error-handling
+  - let-it-crash
+  - supervision-trees
+  - pattern-matching
+  - with-construct
+  - otp
+related:
+  - ./ex-so-stla-el__concurrency-and-parallelism.md
+  - ./ex-so-stla-el__otp-supervisor.md
+  - ./ex-so-stla-el__best-practices.md
+  - ./ex-so-stla-el__anti-patterns.md
+principles:
+  - simplicity-over-complexity
+  - explicit-over-implicit
+  - immutability
+last_updated: 2026-01-23
+---
+
 # Elixir Error Handling
 
 **Quick Reference**: [Overview](#overview) | [Let It Crash](#let-it-crash-philosophy) | [Supervision Trees](#supervision-trees) | [Pattern Matching](#pattern-matching-for-errors) | [with Construct](#with-construct) | [try/rescue](#tryrescue) | [Financial Examples](#financial-domain-integration)
@@ -170,17 +195,20 @@ graph TD
 The following diagram shows the error handling decision tree:
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 graph TD
     Start[Error Occurred]
     Question{Expected<br/>Business Error?}
-    Expected[Return Tagged Tuple<br/>{:ok, result}<br/>{:error, reason}]
+    Expected["Return Tagged Tuple<br/>ok: result<br/>error: reason"]
     Unexpected{Recoverable?}
-    LetCrash[Let It Crash ❌<br/>Supervisor Restarts]
-    Handle[Handle with try/rescue<br/>Log & Report]
+    LetCrash["Let It Crash ❌<br/>Supervisor Restarts"]
+    Handle["Handle with try/rescue<br/>Log & Report"]
 
-    Examples1[Examples:<br/>• Invalid amount<br/>• Campaign closed<br/>• Duplicate donation]
-    Examples2[Examples:<br/>• Database connection lost<br/>• External API timeout<br/>• Memory exhausted]
-    Examples3[Examples:<br/>• File I/O errors<br/>• Parsing external data<br/>• Third-party API calls]
+    Examples1["Examples:<br/>• Invalid amount<br/>• Campaign closed<br/>• Duplicate donation"]
+    Examples2["Examples:<br/>• Database connection lost<br/>• External API timeout<br/>• Memory exhausted"]
+    Examples3["Examples:<br/>• File I/O errors<br/>• Parsing external data<br/>• Third-party API calls"]
 
     Start --> Question
     Question -->|Yes| Expected
@@ -192,8 +220,8 @@ graph TD
     LetCrash -.-> Examples2
     Handle -.-> Examples3
 
-    style Start fill:#CA9161,stroke:#7D5A3D,color:#FFF
-    style Question fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Start fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Question fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style Expected fill:#029E73,stroke:#01593F,color:#FFF
     style Unexpected fill:#DE8F05,stroke:#8A5903,color:#FFF
     style LetCrash fill:#CC78BC,stroke:#8E5484,color:#FFF
@@ -204,6 +232,55 @@ graph TD
 ```
 
 ## Supervision Trees
+
+### Error Propagation in Supervision Tree
+
+The following diagram shows how errors propagate through a supervision tree:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+graph TD
+    ROOT[Root Supervisor<br/>Financial.Application]
+
+    DONATION_SUP[Donation Supervisor]
+    PAYMENT_SUP[Payment Supervisor]
+    CAMPAIGN_SUP[Campaign Supervisor]
+
+    DON_VALIDATOR[Donation Validator<br/>Worker]
+    DON_PROCESSOR[Donation Processor<br/>Worker]
+    PAY_GATEWAY[Payment Gateway<br/>Worker - CRASHES ❌]
+
+    ROOT --> DONATION_SUP
+    ROOT --> PAYMENT_SUP
+    ROOT --> CAMPAIGN_SUP
+
+    DONATION_SUP --> DON_VALIDATOR
+    DONATION_SUP --> DON_PROCESSOR
+    PAYMENT_SUP --> PAY_GATEWAY
+
+    PAY_GATEWAY -.->|1. EXIT signal| PAYMENT_SUP
+    PAYMENT_SUP -.->|2. Detect crash| PAYMENT_SUP
+    PAYMENT_SUP -.->|3. Restart worker| PAY_NEW[Payment Gateway<br/>New Process ✅]
+
+    Note1[Isolation:<br/>- Donation workers unaffected<br/>- Campaign workers unaffected<br/>- Only payment worker restarts<br/>- No cascading failures]
+
+    Note2[Strategy: :one_for_one<br/>Only crashed child restarts<br/>Other children continue running]
+
+    ROOT -.-> Note1
+    PAYMENT_SUP -.-> Note2
+
+    style ROOT fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style DONATION_SUP fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style PAYMENT_SUP fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style CAMPAIGN_SUP fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style DON_VALIDATOR fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style DON_PROCESSOR fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style PAY_GATEWAY fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style PAY_NEW fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Note1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Note2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ### Basic Supervisor
 
@@ -244,6 +321,9 @@ end
 The following diagram shows the supervision recovery flow:
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 sequenceDiagram
     participant C as Caller
     participant W as Worker Process
@@ -269,10 +349,6 @@ sequenceDiagram
     C->>W: Retry: process_payment(donation)
     W->>W: Process successfully
     W-->>C: {:ok, result} ✅
-
-    style C fill:#0173B2,stroke:#023B5A,color:#FFF
-    style W fill:#CC78BC,stroke:#8E5484,color:#FFF
-    style S fill:#DE8F05,stroke:#8A5903,color:#FFF
 ```
 
 ```elixir
@@ -490,6 +566,69 @@ defmodule FinancialDomain.PaymentGateway do
 end
 ```
 
+### Process Linking and Monitoring
+
+The following diagram shows the differences between process linking and monitoring:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+graph LR
+    subgraph spawn["spawn/1 - No Connection"]
+        S1[Parent Process] --> S2[spawn child]
+        S2 --> S3[Child Process<br/>Independent]
+        S3 --> S4[Child Crashes ❌]
+        S4 --> S5[Parent Unaware<br/>No signal received]
+        S1 -.->|no link| S3
+    end
+
+    subgraph spawn_link["spawn_link/1 - Bidirectional Link"]
+        L1[Parent Process] --> L2[spawn_link child]
+        L2 --> L3[Child Process<br/>Linked]
+        L3 --> L4[Child Crashes ❌]
+        L4 -->|EXIT signal| L5[Parent Receives EXIT]
+        L5 --> L6[Parent Also Crashes ❌<br/>Unless trapping exits]
+        L1 <-->|bidirectional link| L3
+    end
+
+    subgraph spawn_monitor["spawn_monitor/1 - Unidirectional Monitor"]
+        M1[Parent Process] --> M2[spawn_monitor child]
+        M2 --> M3[Child Process<br/>Monitored]
+        M3 --> M4[Child Crashes ❌]
+        M4 -->|:DOWN message| M5[Parent Receives :DOWN]
+        M5 --> M6[Parent Continues ✅<br/>Handles notification]
+        M1 -.->|one-way monitor| M3
+    end
+
+    Note1[spawn/1: No failure notification<br/>spawn_link/1: Crash propagates both ways<br/>spawn_monitor/1: Notification without crash]
+
+    spawn -.-> Note1
+    spawn_link -.-> Note1
+    spawn_monitor -.-> Note1
+
+    style S1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style S2 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style S3 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style S4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style S5 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+
+    style L1 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style L2 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style L3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style L4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style L5 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style L6 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+
+    style M1 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style M2 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style M3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style M4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style M5 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style M6 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+
+    style Note1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Pattern Matching for Errors
 
 ### Tagged Tuple Convention
@@ -631,6 +770,68 @@ end
 ```
 
 ## with Construct
+
+### with Construct Flow
+
+The following diagram shows how the `with` construct handles sequential pattern matching with short-circuit on first error:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+flowchart TD
+    START[with construct begins] --> STEP1{Step 1:<br/>validate_params}
+
+    STEP1 -->|{:ok, params}| STEP2{Step 2:<br/>get_or_create_donor}
+    STEP1 -->|{:error, reason}| ELSE[else block]
+
+    STEP2 -->|{:ok, donor}| STEP3{Step 3:<br/>fetch_active_campaign}
+    STEP2 -->|{:error, reason}| ELSE
+
+    STEP3 -->|{:ok, campaign}| STEP4{Step 4:<br/>insert_donation}
+    STEP3 -->|{:error, reason}| ELSE
+
+    STEP4 -->|{:ok, donation}| STEP5{Step 5:<br/>process_payment}
+    STEP4 -->|{:error, reason}| ELSE
+
+    STEP5 -->|{:ok, result}| STEP6{Step 6:<br/>send_confirmation}
+    STEP5 -->|{:error, reason}| ELSE
+
+    STEP6 -->|:ok| SUCCESS[do block:<br/>Return {:ok, donation}]
+    STEP6 -->|{:error, reason}| ELSE
+
+    ELSE --> MATCH{Pattern match<br/>error reason}
+    MATCH -->|:invalid_amount| E1[Return custom error:<br/>'Amount must be positive']
+    MATCH -->|:invalid_email| E2[Return custom error:<br/>'Invalid email address']
+    MATCH -->|:campaign_closed| E3[Return custom error:<br/>'Campaign closed']
+    MATCH -->|other| E4[Return generic error]
+
+    SUCCESS --> END[Final result]
+    E1 --> END
+    E2 --> END
+    E3 --> END
+    E4 --> END
+
+    Note1[Short-circuit:<br/>First error stops pipeline<br/>Jumps directly to else block<br/>No partial execution]
+
+    START -.-> Note1
+
+    style START fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style STEP1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style STEP2 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style STEP3 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style STEP4 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style STEP5 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style STEP6 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style SUCCESS fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style ELSE fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style MATCH fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style E1 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style E2 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style E3 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style E4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style END fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Note1 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ### Basic with Usage
 
@@ -1100,5 +1301,6 @@ end
 
 ---
 
-**Last Updated**: 2025-01-23
-**Elixir Version**: 1.18.0+
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team
