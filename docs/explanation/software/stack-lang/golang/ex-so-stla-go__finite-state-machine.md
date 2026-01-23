@@ -2329,6 +2329,6 @@ func (p *DonationPayment) Approve() error {
 
 ---
 
-**Last Updated**: 2025-01-23
-**Go Version**: 1.18+
-**Lines**: 2,100+ (comprehensive FSM guide)
+**Last Updated**: 2026-01-23
+**Go Version**: 1.21+ (baseline), 1.22+ (recommended), 1.23 (latest)
+**Maintainers**: Platform Documentation Team

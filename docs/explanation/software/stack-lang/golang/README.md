@@ -1048,5 +1048,6 @@ Essential Go philosophy from Rob Pike:
 
 ---
 
-**Last Updated**: 2026-01-22
-**Go Version**: 1.18+ (baseline), 1.21+ (recommended), 1.25.6 (current stable)
+**Last Updated**: 2026-01-23
+**Go Version**: 1.21+ (baseline), 1.22+ (recommended), 1.23 (latest)
+**Maintainers**: Platform Documentation Team
