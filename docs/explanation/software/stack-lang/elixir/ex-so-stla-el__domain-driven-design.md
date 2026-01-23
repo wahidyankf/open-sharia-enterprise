@@ -1303,15 +1303,16 @@ end
 
 Complete DDD example:
 
-````elixir
+```elixir
 # See examples in previous sections, including:
 # - Campaign aggregate with donations
 # - Money value object
 # - Zakat calculation service
 # - Donation event handling
 # - Context boundaries with ACL
+```
 
-# Additional: Command and Query segregation (CQRS)
+### Command and Query Segregation (CQRS)
 
 The following diagram illustrates the CQRS (Command Query Responsibility Segregation) pattern:
 
@@ -1356,8 +1357,11 @@ graph LR
     style Events fill:#CC78BC,stroke:#8E5484,color:#FFF
     style Note1 fill:#0173B2,stroke:#023B5A,color:#FFF
     style Note2 fill:#DE8F05,stroke:#8A5903,color:#FFF
-````
+```
 
+**Implementation Example**:
+
+```elixir
 defmodule DonationContext.Commands do
 @moduledoc """
 Write operations (commands) for donation context
@@ -1411,7 +1415,7 @@ average: avg(d.amount)
 end
 end
 
-````
+```
 
 ## DDD Best Practices
 
@@ -1453,7 +1457,7 @@ defmodule Donation do
     {:error, "Cannot approve donation with status #{status}"}
   end
 end
-````
+```
 
 ### 2. Leaky Abstractions
 
