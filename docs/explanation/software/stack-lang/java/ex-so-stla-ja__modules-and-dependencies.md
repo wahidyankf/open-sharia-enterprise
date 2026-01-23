@@ -13,11 +13,11 @@ tags:
   - java-17
   - java-21
   - reproducibility
-created: 2026-01-22
-updated: 2026-01-22
 ---
 
 # Java Modules and Dependency Management
+
+**Quick Reference**: [Overview](#overview) | [Principles Implemented](#principles-implemented) | [Java Platform Module System (JPMS)](#java-platform-module-system-jpms) | [Maven Dependency Management](#maven-dependency-management) | [Gradle Alternative](#gradle-alternative) | [Reproducible Builds](#reproducible-builds) | [Multi-Module Projects](#multi-module-projects) | [Private Repositories](#private-repositories) | [Security Scanning](#security-scanning) | [Best Practices](#best-practices) | [Verification Checklist](#verification-checklist) | [Related Documentation](#related-documentation) | [Sources](#sources)
 
 ## Overview
 
@@ -36,11 +36,11 @@ This document explains:
 
 **Why This Matters for Finance Applications:**
 
-In Islamic finance systems handling Tax calculations, Loan contracts, and Donation distributions, proper module and dependency management ensures:
+In Islamic finance systems handling Zakat calculations, QardHasan contracts, and Donation distributions, proper module and dependency management ensures:
 
 - **Security**: Scoped module access prevents unauthorized access to sensitive financial data
-- **Maintainability**: Clear module boundaries separate Tax calculation logic from Loan processing
-- **Reproducibility**: Deterministic builds ensure identical Tax calculations across all environments
+- **Maintainability**: Clear module boundaries separate Zakat calculation logic from QardHasan processing
+- **Reproducibility**: Deterministic builds ensure identical Zakat calculations across all environments
 - **Auditability**: Explicit dependencies document all third-party code used in financial computations
 
 **Comparison with Go:**
@@ -112,7 +112,7 @@ The Java Platform Module System (JPMS), introduced in Java 9, provides a higher 
 **Why Modules Matter:**
 
 1. **Security**: Restrict access to internal financial calculation logic
-2. **Maintainability**: Clear boundaries between Tax, Loan, and Donation modules
+2. **Maintainability**: Clear boundaries between Tax, QardHasan, and Donation modules
 3. **Reliability**: Compile-time verification of dependencies
 4. **Performance**: JVM optimizations based on module graph
 
@@ -142,9 +142,9 @@ module com.oseplatform.tax {
 ```java
 // src/main/java/module-info.java
 module com.oseplatform.tax {
-  // Public API for Tax calculation
-  exports com.oseplatform.tax.api;           // TaxCalculator interface
-  exports com.oseplatform.tax.model;         // TaxRecord, TaxRate classes
+  // Public API for Zakat calculation
+  exports com.oseplatform.tax.api;           // ZakatCalculator interface
+  exports com.oseplatform.tax.model;         // ZakatRecord, ZakatRate classes
 
   // Dependencies
   requires com.oseplatform.money;            // Money value object
@@ -160,24 +160,24 @@ module com.oseplatform.tax {
 **Usage from Another Module:**
 
 ```java
-// src/main/java/module-info.java (loan module)
-module com.oseplatform.loan {
+// src/main/java/module-info.java (qard_hasan module)
+module com.oseplatform.qard_hasan {
   requires com.oseplatform.tax;        // Can access exported packages only
   requires com.oseplatform.money;
 }
 
-// src/main/java/com/oseplatform/loan/LoanService.java
-package com.oseplatform.loan;
+// src/main/java/com/oseplatform/qard_hasan/LoanService.java
+package com.oseplatform.qard_hasan;
 
-import com.oseplatform.tax.api.TaxCalculator;           // PASS: exported
-import com.oseplatform.tax.model.TaxRecord;             // PASS: exported
-// import com.oseplatform.tax.internal.TaxEngine;       // FAIL: not exported
+import com.oseplatform.tax.api.ZakatCalculator;           // PASS: exported
+import com.oseplatform.tax.model.ZakatRecord;             // PASS: exported
+// import com.oseplatform.tax.internal.ZakatEngine;       // FAIL: not exported
 
 public class LoanService {
-  private final TaxCalculator taxCalculator;
+  private final ZakatCalculator zakatCalculator;
 
   public void calculateLoanTax(Money loanAmount) {
-    TaxRecord tax = taxCalculator.calculate(loanAmount);
+    ZakatRecordzakat = zakatCalculator.calculate(loanAmount);
   }
 }
 ```
@@ -199,7 +199,7 @@ module com.oseplatform.donation {
 **requires** - Declares module dependencies.
 
 ```java
-module com.oseplatform.loan {
+module com.oseplatform.qard_hasan {
   requires com.oseplatform.money;                 // Direct dependency
   requires com.oseplatform.tax;                   // Direct dependency
   requires transitive com.oseplatform.common;     // Transitive (consumers get access)
@@ -213,10 +213,10 @@ When a module exports types from another module, use `requires transitive`:
 
 ```java
 module com.oseplatform.tax.api {
-  // TaxResult class uses Money in public API
+  // ZakatResult class uses Money in public API
   exports com.oseplatform.tax.api;
 
-  // Consumers of tax.api need Money types
+  // Consumers of zakat.api need Money types
   requires transitive com.oseplatform.money;      // Transitive: consumers get Money
 }
 
@@ -246,14 +246,14 @@ module com.oseplatform.tax {
 tax-calculator.jar
 ├── com/oseplatform/tax/
 │   ├── api/
-│   │   └── TaxCalculator.java          (public)
+│   │   └── ZakatCalculator.java          (public)
 │   ├── model/
-│   │   └── TaxRecord.java              (public)
+│   │   └── ZakatRecord.java              (public)
 │   └── internal/
-│       └── TaxEngine.java              (public - unintentionally!)
+│       └── ZakatEngine.java              (public - unintentionally!)
 ```
 
-**Problem**: All classes are public. Internal implementation (`TaxEngine`) can be accessed by consumers.
+**Problem**: All classes are public. Internal implementation (`ZakatEngine`) can be accessed by consumers.
 
 **After: Modularized (Java 9+)**
 
@@ -267,14 +267,14 @@ tax-calculator-api.jar
 │   }
 ├── com/oseplatform/tax/
 │   ├── api/
-│   │   └── TaxCalculator.java          (exported)
+│   │   └── ZakatCalculator.java          (exported)
 │   ├── model/
-│   │   └── TaxRecord.java              (exported)
+│   │   └── ZakatRecord.java              (exported)
 │   └── internal/
-│       └── TaxEngine.java              (encapsulated - not accessible)
+│       └── ZakatEngine.java              (encapsulated - not accessible)
 ```
 
-**Benefit**: `TaxEngine` is truly internal. Compile-time enforcement prevents accidental usage.
+**Benefit**: `ZakatEngine` is truly internal. Compile-time enforcement prevents accidental usage.
 
 ### Financial Domain Example: Tax System Modules
 
@@ -285,8 +285,8 @@ tax-calculator-api.jar
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 graph TD
-    A[tax-api<br/>TaxCalculator interface]:::blue
-    B[tax-impl<br/>Tax calculation logic]:::teal
+    A[tax-api<br/>ZakatCalculator interface]:::blue
+    B[tax-impl<br/>Zakat calculation logic]:::teal
     C[tax-persistence<br/>Tax record storage]:::orange
     D[money<br/>Money value object]:::purple
     E[common<br/>Shared utilities]:::purple
@@ -340,7 +340,7 @@ module com.oseplatform.tax.impl {
   requires com.oseplatform.common;
 
   // Provide service implementation
-  provides com.oseplatform.tax.api.TaxCalculator
+  provides com.oseplatform.tax.api.ZakatCalculator
     with com.oseplatform.tax.impl.DefaultTaxCalculator;
 }
 ```
@@ -377,13 +377,13 @@ Modules can define service providers and consumers:
 module com.oseplatform.tax.api {
   exports com.oseplatform.tax.api;
 
-  uses com.oseplatform.tax.api.TaxCalculator;  // Service consumer
+  uses com.oseplatform.tax.api.ZakatCalculator;  // Service consumer
 }
 
 // Service interface
 package com.oseplatform.tax.api;
-public interface TaxCalculator {
-  TaxRecord calculate(Money income);
+public interface ZakatCalculator {
+  ZakatRecord calculate(Money wealth);
 }
 ```
 
@@ -394,15 +394,15 @@ public interface TaxCalculator {
 module com.oseplatform.tax.impl {
   requires com.oseplatform.tax.api;
 
-  provides com.oseplatform.tax.api.TaxCalculator
+  provides com.oseplatform.tax.api.ZakatCalculator
     with com.oseplatform.tax.impl.DefaultTaxCalculator;  // Service provider
 }
 
 // Service implementation
 package com.oseplatform.tax.impl;
-public class DefaultTaxCalculator implements TaxCalculator {
+public class DefaultTaxCalculator implements ZakatCalculator {
   @Override
-  public TaxRecord calculate(Money income) {
+  public ZakatRecord calculate(Money wealth) {
     // Implementation
   }
 }
@@ -412,15 +412,15 @@ public class DefaultTaxCalculator implements TaxCalculator {
 
 ```java
 import java.util.ServiceLoader;
-import com.oseplatform.tax.api.TaxCalculator;
+import com.oseplatform.tax.api.ZakatCalculator;
 
-public class TaxService {
-  public void processTax() {
-    ServiceLoader<TaxCalculator> loader = ServiceLoader.load(TaxCalculator.class);
-    TaxCalculator calculator = loader.findFirst()
-      .orElseThrow(() -> new IllegalStateException("No TaxCalculator implementation found"));
+public class ZakatService {
+  public void processZakat() {
+    ServiceLoader<ZakatCalculator> loader = ServiceLoader.load(ZakatCalculator.class);
+    ZakatCalculator calculator = loader.findFirst()
+      .orElseThrow(() -> new IllegalStateException("No ZakatCalculator implementation found"));
 
-    TaxRecord tax = calculator.calculate(income);
+    ZakatRecordzakat = calculator.calculate(wealth);
   }
 }
 ```
@@ -567,7 +567,7 @@ Maven chooses the version closest to the root in the dependency tree:
 
 ```xml
 <dependency>
-  <groupId>com.example</groupId>
+  <groupId>com.sharia.finance</groupId>
   <artifactId>library-a</artifactId>
   <version>1.0.0</version>
   <exclusions>
@@ -694,7 +694,7 @@ A BOM provides centralized version management for related dependencies.
 
       <dependency>
         <groupId>com.oseplatform</groupId>
-        <artifactId>loan-api</artifactId>
+        <artifactId>qard_hasan-api</artifactId>
         <version>1.0.0</version>
       </dependency>
 
@@ -1067,7 +1067,7 @@ ose-platform/
 │   └── pom.xml                (module)
 ├── tax-impl/
 │   └── pom.xml                (module)
-└── loan-api/
+└── qard_hasan-api/
     └── pom.xml                (module)
 ```
 
@@ -1088,7 +1088,7 @@ ose-platform/
     <module>money</module>
     <module>tax-api</module>
     <module>tax-impl</module>
-    <module>loan-api</module>
+    <module>qard_hasan-api</module>
   </modules>
 
   <!-- Shared properties -->
@@ -1187,7 +1187,7 @@ graph TD
     A[1. money]:::blue
     B[2. tax-api]:::teal
     C[3. tax-impl]:::orange
-    D[4. loan-api]:::teal
+    D[4. qard_hasan-api]:::teal
 
     A --> B
     A --> D
@@ -1208,7 +1208,7 @@ graph TD
 **Build Specific Module and Dependencies:**
 
 ```bash
-./mvnw clean install -pl tax-impl -am
+./mvnw clean install -pl zakat-impl -am
 # -pl: project list (tax-impl)
 # -am: also make (build dependencies)
 ```
@@ -1233,11 +1233,11 @@ ose-platform/
 │   │   └── pom.xml                  (Tax implementation)
 │   └── tax-persistence/
 │       └── pom.xml                  (Tax data access)
-├── loan/
-│   ├── loan-api/
-│   │   └── pom.xml                  (Loan API)
-│   └── loan-impl/
-│       └── pom.xml                  (Loan implementation)
+├── qard_hasan/
+│   ├── qard_hasan-api/
+│   │   └── pom.xml                  (QardHasan API)
+│   └── qard_hasan-impl/
+│       └── pom.xml                  (QardHasan implementation)
 └── donation/
     ├── donation-api/
     │   └── pom.xml                  (Donation API)
@@ -1255,8 +1255,8 @@ ose-platform/
   <module>tax/tax-api</module>
   <module>tax/tax-impl</module>
   <module>tax/tax-persistence</module>
-  <module>loan/loan-api</module>
-  <module>loan/loan-impl</module>
+  <module>qard_hasan/qard_hasan-api</module>
+  <module>qard_hasan/qard_hasan-impl</module>
   <module>donation/donation-api</module>
   <module>donation/donation-impl</module>
 </modules>
@@ -1264,7 +1264,7 @@ ose-platform/
 
 **Benefits:**
 
-- **Separation of Concerns**: Tax, Loan, Donation are independent
+- **Separation of Concerns**: Tax, QardHasan, Donation are independent
 - **Reusability**: `money` module used by all financial modules
 - **API Stability**: `-api` modules define contracts, `-impl` can change
 - **Parallel Development**: Teams can work on different modules independently
@@ -1565,7 +1565,7 @@ Total: 3 (CRITICAL: 1, HIGH: 2)
 
 ```xml
 <dependency>
-  <groupId>com.example</groupId>
+  <groupId>com.sharia.finance</groupId>
   <artifactId>library</artifactId>
   <version>[1.0,2.0)</version>  <!-- FAIL: Non-deterministic -->
 </dependency>
@@ -1575,7 +1575,7 @@ Total: 3 (CRITICAL: 1, HIGH: 2)
 
 ```xml
 <dependency>
-  <groupId>com.example</groupId>
+  <groupId>com.sharia.finance</groupId>
   <artifactId>library</artifactId>
   <version>1.5.0</version>  <!-- PASS: Deterministic -->
 </dependency>
@@ -1635,7 +1635,7 @@ Total: 3 (CRITICAL: 1, HIGH: 2)
 
 ```xml
 <dependencies>
-  <!-- Tax calculation precision -->
+  <!-- Zakat calculation precision -->
   <dependency>
     <groupId>org.javamoney</groupId>
     <artifactId>moneta</artifactId>
@@ -1690,7 +1690,7 @@ Total: 3 (CRITICAL: 1, HIGH: 2)
 
 ```xml
 <dependency>
-  <groupId>com.example</groupId>
+  <groupId>com.sharia.finance</groupId>
   <artifactId>library</artifactId>
   <version>1.0.0</version>
   <exclusions>
@@ -1822,7 +1822,7 @@ Before releasing Java modules:
 
 **Gradle:**
 
-- [Gradle User Manual](https://docs.gradle.org/current/userguide/userguide.html) - Build configuration, dependency management
+- [Gradle Beneficiary Manual](https://docs.gradle.org/current/userguide/userguide.html) - Build configuration, dependency management
 - [Gradle Version Catalogs](https://docs.gradle.org/current/userguide/platforms.html) - Centralized version management
 
 **Reproducible Builds:**
@@ -1838,4 +1838,4 @@ Before releasing Java modules:
 
 ---
 
-**Last Updated**: 2026-01-22
+**Last Updated**: 2025-01-23

@@ -1,5 +1,7 @@
 # Performance Optimization in Go
 
+**Quick Reference**: [Overview](#overview) | [Performance Fundamentals](#performance-fundamentals) | [Benchmarking](#benchmarking) | [Profiling with pprof](#profiling-with-pprof) | [CPU Profiling](#cpu-profiling) | [Memory Profiling](#memory-profiling) | [Goroutine Profiling](#goroutine-profiling) | [Blocking Profiling](#blocking-profiling) | [Mutex Profiling](#mutex-profiling) | [Memory Optimization](#memory-optimization) | [Allocation Reduction](#allocation-reduction) | [Garbage Collection Tuning](#garbage-collection-tuning) | [Compiler Optimizations](#compiler-optimizations) | [Concurrency Performance](#concurrency-performance) | [Data Structure Performance](#data-structure-performance) | [String Operations](#string-operations) | [Performance Best Practices](#performance-best-practices) | [Common Performance Pitfalls](#common-performance-pitfalls) | [Conclusion](#conclusion)
+
 ## Overview
 
 Go is designed for performance, offering excellent runtime efficiency while maintaining developer productivity. This document explores performance optimization techniques in Go, from profiling and benchmarking to memory management and garbage collection tuning.
@@ -13,26 +15,6 @@ Go is designed for performance, offering excellent runtime efficiency while main
 - [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md)
 - [Best Practices](./ex-so-stla-go__best-practices.md)
 - [Memory Management](./ex-so-stla-go__memory-management.md)
-
-## Table of Contents
-
-1. [Performance Fundamentals](#performance-fundamentals)
-2. [Benchmarking](#benchmarking)
-3. [Profiling with pprof](#profiling-with-pprof)
-4. [CPU Profiling](#cpu-profiling)
-5. [Memory Profiling](#memory-profiling)
-6. [Goroutine Profiling](#goroutine-profiling)
-7. [Blocking Profiling](#blocking-profiling)
-8. [Mutex Profiling](#mutex-profiling)
-9. [Memory Optimization](#memory-optimization)
-10. [Allocation Reduction](#allocation-reduction)
-11. [Garbage Collection Tuning](#garbage-collection-tuning)
-12. [Compiler Optimizations](#compiler-optimizations)
-13. [Concurrency Performance](#concurrency-performance)
-14. [Data Structure Performance](#data-structure-performance)
-15. [String Operations](#string-operations)
-16. [Performance Best Practices](#performance-best-practices)
-17. [Common Performance Pitfalls](#common-performance-pitfalls)
 
 ## Performance Fundamentals
 
@@ -832,17 +814,17 @@ func sumConcrete(items []int) int {
 }
 
 // BEFORE: Escape to heap
-func createUser(name string) *User {
-    u := User{Name: name}  // Escapes to heap
+func createUser(name string) *Beneficiary {
+    u := Beneficiary{Name: name}  // Escapes to heap
     return &u
 }
 
 // AFTER: Return value (stack allocation when possible)
-func createUserValue(name string) User {
-    return User{Name: name}  // Stack allocation
+func createUserValue(name string) Beneficiary {
+    return Beneficiary{Name: name}  // Stack allocation
 }
 
-type User struct {
+type Beneficiary struct {
     Name string
 }
 
@@ -2481,3 +2463,8 @@ Key principles:
 - Read [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md)
 - Explore [Memory Management](./ex-so-stla-go__memory-management.md)
 - Study [Best Practices](./ex-so-stla-go__best-practices.md)
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

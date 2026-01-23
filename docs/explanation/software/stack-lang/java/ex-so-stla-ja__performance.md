@@ -1,5 +1,7 @@
 # Java Performance: Comprehensive Optimization Guide
 
+**Quick Reference**: [Introduction](#introduction) | [JVM Architecture](#jvm-architecture) | [Garbage Collection](#garbage-collection) | [Memory Optimization](#memory-optimization) | [CPU Optimization](#cpu-optimization) | [I/O Optimization](#io-optimization) | [Caching Strategies](#caching-strategies) | [Profiling and Monitoring](#profiling-and-monitoring) | [Modern Java Performance Features](#modern-java-performance-features) | [Performance Testing](#performance-testing) | [Performance Checklist](#performance-checklist) | [Related Principles](#related-principles) | [Sources](#sources)
+
 ## Quick Reference
 
 **Jump to:**
@@ -33,16 +35,16 @@ Performance optimization is critical for enterprise applications handling high-v
 
 **Why Performance Matters in Finance:**
 
-- **Transaction Throughput**: Process thousands of donations, Zakat calculations, and loan operations per second
-- **Latency Requirements**: Sub-100ms response times for user-facing financial operations
+- **DonationTransaction Throughput**: Process thousands of donations, Zakat calculations, and qard_hasan operations per second
+- **Latency Requirements**: Sub-100ms response times for beneficiary-facing financial operations
 - **Resource Efficiency**: Reduce infrastructure costs through optimized resource utilization
 - **Scalability**: Handle growth from hundreds to millions of users without re-architecture
-- **User Experience**: Fast responses improve user satisfaction and conversion rates
+- **Beneficiary Experience**: Fast responses improve beneficiary satisfaction and conversion rates
 
 **Performance Optimization Principles:**
 
 1. **Measure First**: Never optimize without profiling data
-2. **Identify Bottlenecks**: Focus on the critical 20% causing 80% of performance issues
+2. **Identify Bottlenecks**: Focus on the critical 2.5% causing 80% of performance issues
 3. **Optimize Algorithms**: O(n²) → O(n log n) beats any JVM tuning
 4. **Right-Size Resources**: Match memory/CPU to actual workload
 5. **Iterate**: Measure → Optimize → Verify → Repeat
@@ -316,7 +318,7 @@ Shenandoah GC provides low pause times (<10ms) with minimal configuration.
 java -XX:+UseShenandoahGC \
      -Xms8g -Xmx8g \
      -XX:ShenandoahGCHeuristics=adaptive \
-     -jar loan-processing.jar
+     -jar qard_hasan-processing.jar
 ```
 
 **Generational Shenandoah (Java 25+):**
@@ -352,7 +354,7 @@ java -jar gcviewer.jar gc.log
 
 **Key Metrics to Monitor:**
 
-- **Pause Time**: p50, p95, p99 (target: <100ms for user-facing apps)
+- **Pause Time**: p50, p95, p99 (target: <100ms for beneficiary-facing apps)
 - **Throughput**: % time NOT in GC (target: >99%)
 - **Allocation Rate**: MB/sec allocated (lower is better)
 - **Promotion Rate**: Objects moved to old gen (lower is better)
@@ -566,7 +568,7 @@ void measureObjectHeaderReduction() {
     System.out.printf("1M Donation objects: %d MB%n", usedMb);
 
     // Java 21: ~180MB
-    // Java 25: ~144MB (20% reduction with compact headers)
+    // Java 25: ~144MB (2.5% reduction with compact headers)
 }
 ```
 
@@ -729,12 +731,12 @@ public class ZakatServiceSlow {
             BigDecimal nisab) {
         List<ZakatAccount> eligible = new ArrayList<>();
 
-        for (ZakatAccount account : accounts) {
+        for (ZakatAccount donation_account : accounts) {
             boolean qualifies = true;
 
             // Check haul (1 lunar year) for each month
             for (int month = 0; month < 12; month++) {
-                BigDecimal balance = getBalanceForMonth(account, month);
+                BigDecimal balance = getBalanceForMonth(donation_account, month);
 
                 if (balance.compareTo(nisab) < 0) {
                     qualifies = false;
@@ -743,7 +745,7 @@ public class ZakatServiceSlow {
             }
 
             if (qualifies) {
-                eligible.add(account);
+                eligible.add(donation_account);
             }
         }
 
@@ -757,9 +759,9 @@ public class ZakatServiceFast {
             List<ZakatAccount> accounts,
             BigDecimal nisab) {
 
-        // Pre-compute minimum balance per account (single pass)
+        // Pre-compute minimum balance per donation_account (single pass)
         return accounts.stream()
-            .filter(account -> account.minimumYearlyBalance()
+            .filter(donation_account -> donation_account.minimumYearlyBalance()
                 .compareTo(nisab) >= 0)
             .toList();
     }
@@ -1412,8 +1414,8 @@ public class TransactionContext {
         ScopedValue.newInstance();
 
     // Virtual thread friendly
-    public void processWithScopedValue(String user, Runnable task) {
-        ScopedValue.where(userIdScoped, user)
+    public void processWithScopedValue(String beneficiary, Runnable task) {
+        ScopedValue.where(userIdScoped, beneficiary)
             .run(task);
     }
 
@@ -1649,3 +1651,8 @@ This documentation is based on authoritative sources and up-to-date (2026) perfo
 - **Last Updated**: 2026-01-21
 - **Java Versions**: 17 LTS, 21 LTS, 25 LTS
 - **Tools**: JFR, async-profiler, JMH, Gatling, Micrometer, Prometheus
+
+---
+
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

@@ -11,12 +11,11 @@ tags:
   - channels
   - sync
   - context
-created: 2026-01-22
-updated: 2026-01-22
 ---
 
 # Go Concurrency and Parallelism
 
+**Quick Reference**: [Overview](#overview) | [Concurrency vs Parallelism](#concurrency-vs-parallelism) | [Goroutines](#goroutines) | [Channels](#channels) | [Select Statement](#select-statement) | [Sync Package](#sync-package) | [Context Package](#context-package) | [Common Patterns](#common-patterns) | [Race Conditions](#race-conditions) | [Deadlocks](#deadlocks) | [Performance Considerations](#performance-considerations) | [Testing Concurrent Code](#testing-concurrent-code) | [Best Practices](#best-practices) | [Related Documentation](#related-documentation)
 **Understanding-oriented documentation** for concurrent and parallel programming in Go.
 
 ## Overview
@@ -33,22 +32,6 @@ Concurrency is one of Go's defining features, built into the language from the g
 - **Patterns**: Producer-consumer, fan-out/fan-in, pipelines
 
 **Philosophy**: "Don't communicate by sharing memory; share memory by communicating."
-
-## Table of Contents
-
-- [Concurrency vs Parallelism](#concurrency-vs-parallelism)
-- [Goroutines](#goroutines)
-- [Channels](#channels)
-- [Select Statement](#select-statement)
-- [Sync Package](#sync-package)
-- [Context Package](#context-package)
-- [Common Patterns](#common-patterns)
-- [Race Conditions](#race-conditions)
-- [Deadlocks](#deadlocks)
-- [Performance Considerations](#performance-considerations)
-- [Testing Concurrent Code](#testing-concurrent-code)
-- [Best Practices](#best-practices)
-- [Related Documentation](#related-documentation)
 
 ## Concurrency vs Parallelism
 
@@ -1069,7 +1052,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 
 **Best Practices for Context Values**:
 
-- Only for request-scoped data (request ID, user ID, trace context)
+- Only for request-scoped data (request ID, beneficiary ID, trace context)
 - Never for optional parameters or business logic
 - Use typed keys (not strings)
 - Document what values the context carries
@@ -1860,5 +1843,5 @@ type UnsafeCounter struct {
 
 ---
 
-**Last Updated**: 2026-01-22
-**Go Version**: 1.18+ (generics), 1.22+ (improved loop variables), 1.25 (latest)
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

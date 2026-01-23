@@ -1,5 +1,7 @@
 # Security in Go
 
+**Quick Reference**: [Overview](#overview) | [Security Fundamentals](#security-fundamentals) | [Input Validation](#input-validation) | [SQL Injection Prevention](#sql-injection-prevention) | [Cross-Site Scripting (XSS)](#cross-site-scripting-xss) | [Cross-Site Request Forgery (CSRF)](#cross-site-request-forgery-csrf) | [Authentication](#authentication) | [Authorization](#authorization) | [Cryptography](#cryptography) | [Password Hashing](#password-hashing) | [TLS/HTTPS](#tlshttps) | [JWT Security](#jwt-security) | [Session Management](#session-management) | [Rate Limiting](#rate-limiting) | [File Upload Security](#file-upload-security) | [Command Injection](#command-injection) | [XML External Entity (XXE)](#xml-external-entity-xxe) | [Security Headers](#security-headers) | [Logging and Monitoring](#logging-and-monitoring) | [Dependency Security](#dependency-security) | [Common Security Pitfalls](#common-security-pitfalls) | [Conclusion](#conclusion)
+
 ## Overview
 
 Security is paramount in modern application development. Go provides robust tools and practices for building secure applications. This document explores security best practices in Go, from input validation and cryptography to preventing common vulnerabilities like SQL injection and XSS.
@@ -13,29 +15,6 @@ Security is paramount in modern application development. Go provides robust tool
 - [Best Practices](./ex-so-stla-go__best-practices.md)
 - [Error Handling](./ex-so-stla-go__error-handling.md)
 - [Web Services](./ex-so-stla-go__web-services.md)
-
-## Table of Contents
-
-1. [Security Fundamentals](#security-fundamentals)
-2. [Input Validation](#input-validation)
-3. [SQL Injection Prevention](#sql-injection-prevention)
-4. [Cross-Site Scripting (XSS)](#cross-site-scripting-xss)
-5. [Cross-Site Request Forgery (CSRF)](#cross-site-request-forgery-csrf)
-6. [Authentication](#authentication)
-7. [Authorization](#authorization)
-8. [Cryptography](#cryptography)
-9. [Password Hashing](#password-hashing)
-10. [TLS/HTTPS](#tlshttps)
-11. [JWT Security](#jwt-security)
-12. [Session Management](#session-management)
-13. [Rate Limiting](#rate-limiting)
-14. [File Upload Security](#file-upload-security)
-15. [Command Injection](#command-injection)
-16. [XML External Entity (XXE)](#xml-external-entity-xxe)
-17. [Security Headers](#security-headers)
-18. [Logging and Monitoring](#logging-and-monitoring)
-19. [Dependency Security](#dependency-security)
-20. [Common Security Pitfalls](#common-security-pitfalls)
 
 ## Security Fundamentals
 
@@ -63,14 +42,14 @@ import (
 
 func secureHandler(w http.ResponseWriter, r *http.Request) {
     // Layer 3: Authentication
-    user, err := authenticateRequest(r)
+    beneficiary, err := authenticateRequest(r)
     if err != nil {
         http.Error(w, "Unauthorized", http.StatusUnauthorized)
         return
     }
 
     // Layer 4: Authorization
-    if !authorizeAction(user, "read") {
+    if !authorizeAction(beneficiary, "read") {
         http.Error(w, "Forbidden", http.StatusForbidden)
         return
     }
@@ -86,17 +65,17 @@ func secureHandler(w http.ResponseWriter, r *http.Request) {
     safeOutput := escapeHTML(input)
 
     // Layer 8: Logging
-    logSecurityEvent("data_access", user, input)
+    logSecurityEvent("data_access", beneficiary, input)
 
     fmt.Fprintf(w, "Safe output: %s", safeOutput)
 }
 
 func authenticateRequest(r *http.Request) (string, error) {
     // Implementation
-    return "user", nil
+    return "beneficiary", nil
 }
 
-func authorizeAction(user, action string) bool {
+func authorizeAction(beneficiary, action string) bool {
     // Implementation
     return true
 }
@@ -111,7 +90,7 @@ func escapeHTML(s string) string {
     return s
 }
 
-func logSecurityEvent(event, user, data string) {
+func logSecurityEvent(event, beneficiary, data string) {
     // Implementation
 }
 ```
@@ -128,24 +107,24 @@ import (
     "errors"
 )
 
-// BAD: Application uses database admin account
+// BAD: Application uses database admin donation_account
 func connectBad() (*sql.DB, error) {
     return sql.Open("postgres",
-        "host=localhost user=admin password=secret dbname=mydb sslmode=disable")
+        "host=localhost beneficiary=admin password=secret dbname=mydb sslmode=disable")
 }
 
-// GOOD: Application uses restricted account
+// GOOD: Application uses restricted donation_account
 func connectGood() (*sql.DB, error) {
     // Account has only SELECT, INSERT, UPDATE permissions
     // No CREATE, DROP, ALTER permissions
     return sql.Open("postgres",
-        "host=localhost user=app_user password=secret dbname=mydb sslmode=require")
+        "host=localhost beneficiary=app_user password=secret dbname=mydb sslmode=require")
 }
 
-// GOOD: Read-only operations use read-only account
+// GOOD: Read-only operations use read-only donation_account
 func connectReadOnly() (*sql.DB, error) {
     return sql.Open("postgres",
-        "host=localhost user=reader password=secret dbname=mydb sslmode=require")
+        "host=localhost beneficiary=reader password=secret dbname=mydb sslmode=require")
 }
 ```
 
@@ -162,8 +141,8 @@ import (
 )
 
 // BAD: Fails open (allows access on error)
-func checkPermissionBad(user, resource string) bool {
-    allowed, err := queryPermissionDB(user, resource)
+func checkPermissionBad(beneficiary, resource string) bool {
+    allowed, err := queryPermissionDB(beneficiary, resource)
     if err != nil {
         log.Printf("Error checking permission: %v", err)
         return true  // DANGEROUS: Grants access on error
@@ -172,8 +151,8 @@ func checkPermissionBad(user, resource string) bool {
 }
 
 // GOOD: Fails closed (denies access on error)
-func checkPermissionGood(user, resource string) bool {
-    allowed, err := queryPermissionDB(user, resource)
+func checkPermissionGood(beneficiary, resource string) bool {
+    allowed, err := queryPermissionDB(beneficiary, resource)
     if err != nil {
         log.Printf("Error checking permission: %v", err)
         return false  // SAFE: Denies access on error
@@ -181,7 +160,7 @@ func checkPermissionGood(user, resource string) bool {
     return allowed
 }
 
-func queryPermissionDB(user, resource string) (bool, error) {
+func queryPermissionDB(beneficiary, resource string) (bool, error) {
     // Simulate permission check
     return false, errors.New("database error")
 }
@@ -304,7 +283,7 @@ func sendEmail(to Email, subject, body string) error {
 // Usage
 func main() {
     // Validation happens at construction
-    email, err := NewEmail("user@example.com")
+    email, err := NewEmail("beneficiary@example.com")
     if err != nil {
         fmt.Printf("Error: %v\n", err)
         return
@@ -337,14 +316,14 @@ import (
     "fmt"
 )
 
-type User struct {
+type Beneficiary struct {
     Username string
     Email    string
     Age      int
 }
 
 // Validation method
-func (u *User) Validate() error {
+func (u *Beneficiary) Validate() error {
     var errs []error
 
     if len(u.Username) < 3 || len(u.Username) > 20 {
@@ -380,17 +359,17 @@ func combineErrors(errs []error) error {
 
 // Usage
 func createUser(username, email string, age int) error {
-    user := &User{
+    beneficiary := &Beneficiary{
         Username: username,
         Email:    email,
         Age:      age,
     }
 
-    if err := user.Validate(); err != nil {
+    if err := beneficiary.Validate(); err != nil {
         return fmt.Errorf("validation failed: %w", err)
     }
 
-    // Save user
+    // Save beneficiary
     return nil
 }
 ```
@@ -411,34 +390,34 @@ import (
 )
 
 // BAD: String concatenation (SQL injection vulnerable)
-func getUserByNameBad(db *sql.DB, name string) (*User, error) {
+func getUserByNameBad(db *sql.DB, name string) (*Beneficiary, error) {
     query := "SELECT id, name, email FROM users WHERE name = '" + name + "'"
     // Vulnerable to: name = "admin' OR '1'='1"
     row := db.QueryRow(query)
 
-    var user User
-    err := row.Scan(&user.ID, &user.Name, &user.Email)
-    return &user, err
+    var beneficiary Beneficiary
+    err := row.Scan(&beneficiary.ID, &beneficiary.Name, &beneficiary.Email)
+    return &beneficiary, err
 }
 
 // GOOD: Parameterized query (safe)
-func getUserByNameGood(db *sql.DB, name string) (*User, error) {
+func getUserByNameGood(db *sql.DB, name string) (*Beneficiary, error) {
     query := "SELECT id, name, email FROM users WHERE name = $1"
     row := db.QueryRow(query, name)  // Parameter binding
 
-    var user User
-    err := row.Scan(&user.ID, &user.Name, &user.Email)
-    return &user, err
+    var beneficiary Beneficiary
+    err := row.Scan(&beneficiary.ID, &beneficiary.Name, &beneficiary.Email)
+    return &beneficiary, err
 }
 
-type User struct {
+type Beneficiary struct {
     ID    int64
     Name  string
     Email string
 }
 
 // Complex query with multiple parameters
-func searchUsers(db *sql.DB, name, email string, minAge int) ([]User, error) {
+func searchUsers(db *sql.DB, name, email string, minAge int) ([]Beneficiary, error) {
     query := `
         SELECT id, name, email, age
         FROM users
@@ -457,9 +436,9 @@ func searchUsers(db *sql.DB, name, email string, minAge int) ([]User, error) {
     }
     defer rows.Close()
 
-    var users []User
+    var users []Beneficiary
     for rows.Next() {
-        var u User
+        var u Beneficiary
         var age int
         if err := rows.Scan(&u.ID, &u.Name, &u.Email, &age); err != nil {
             return nil, err
@@ -573,7 +552,7 @@ func isValidColumnName(column string) bool {
 }
 
 // Usage
-func searchWithBuilder(db *sql.DB, name string, minAge int) ([]User, error) {
+func searchWithBuilder(db *sql.DB, name string, minAge int) ([]Beneficiary, error) {
     qb := NewQueryBuilder("users").
         Select("id", "name", "email").
         Where("name", name).
@@ -588,9 +567,9 @@ func searchWithBuilder(db *sql.DB, name string, minAge int) ([]User, error) {
     }
     defer rows.Close()
 
-    var users []User
+    var users []Beneficiary
     for rows.Next() {
-        var u User
+        var u Beneficiary
         if err := rows.Scan(&u.ID, &u.Name, &u.Email); err != nil {
             return nil, err
         }
@@ -613,18 +592,18 @@ import (
 )
 
 // GORM automatically uses parameterized queries
-func getUserWithGORM(db *gorm.DB, name string) (*User, error) {
-    var user User
+func getUserWithGORM(db *gorm.DB, name string) (*Beneficiary, error) {
+    var beneficiary Beneficiary
     // Safe: GORM uses parameterized queries
-    result := db.Where("name = ?", name).First(&user)
-    return &user, result.Error
+    result := db.Where("name = ?", name).First(&beneficiary)
+    return &beneficiary, result.Error
 }
 
 // Complex query with GORM
-func searchUsersWithGORM(db *gorm.DB, filters map[string]interface{}) ([]User, error) {
-    var users []User
+func searchUsersWithGORM(db *gorm.DB, filters map[string]interface{}) ([]Beneficiary, error) {
+    var users []Beneficiary
 
-    query := db.Model(&User{})
+    query := db.Model(&Beneficiary{})
 
     // Safe: parameterized
     if name, ok := filters["name"].(string); ok {
@@ -667,8 +646,8 @@ func renderTemplate(w http.ResponseWriter, r *http.Request) {
         <body>
             <h1>{{.Title}}</h1>
             <p>{{.Content}}</p>
-            <!-- User input is automatically escaped -->
-            <p>User input: {{.UserInput}}</p>
+            <!-- Beneficiary input is automatically escaped -->
+            <p>Beneficiary input: {{.UserInput}}</p>
         </body>
         </html>
     `))
@@ -969,7 +948,7 @@ import (
     "golang.org/x/crypto/bcrypt"
 )
 
-// Register new user
+// Register new beneficiary
 func registerUser(db *sql.DB, username, password string) error {
     // Validate password strength
     if len(password) < 8 {
@@ -991,7 +970,7 @@ func registerUser(db *sql.DB, username, password string) error {
     return err
 }
 
-// Authenticate user
+// Authenticate beneficiary
 func authenticateUser(db *sql.DB, username, password string) (bool, error) {
     var hashedPassword string
     err := db.QueryRow(
@@ -1000,7 +979,7 @@ func authenticateUser(db *sql.DB, username, password string) (bool, error) {
     ).Scan(&hashedPassword)
 
     if err == sql.ErrNoRows {
-        // User not found - use timing-safe comparison
+        // Beneficiary not found - use timing-safe comparison
         // Hash dummy password to prevent timing attacks
         bcrypt.CompareHashAndPassword(
             []byte("$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"),
@@ -1042,7 +1021,7 @@ func generateAPIKey() (string, string, error) {
         return "", "", err
     }
 
-    // API key (given to user)
+    // API key (given to beneficiary)
     apiKey := base64.URLEncoding.EncodeToString(key)
 
     // Hash for storage (never store plain key)
@@ -1125,16 +1104,16 @@ func handleCallback(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Get user info
+    // Get beneficiary info
     client := oauth2Config.Client(context.Background(), token)
     resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
     if err != nil {
-        http.Error(w, "Failed to get user info", http.StatusInternalServerError)
+        http.Error(w, "Failed to get beneficiary info", http.StatusInternalServerError)
         return
     }
     defer resp.Body.Close()
 
-    // Process user info and create session
+    // Process beneficiary info and create session
 }
 
 func generateState() string {
@@ -1190,14 +1169,14 @@ var rolePermissions = map[Role][]Permission{
     RoleViewer: {PermissionRead},
 }
 
-type User struct {
+type Beneficiary struct {
     ID    int64
     Name  string
     Roles []Role
 }
 
-// Check if user has permission
-func (u *User) HasPermission(perm Permission) bool {
+// Check if beneficiary has permission
+func (u *Beneficiary) HasPermission(perm Permission) bool {
     for _, role := range u.Roles {
         perms, ok := rolePermissions[role]
         if !ok {
@@ -1217,13 +1196,13 @@ func (u *User) HasPermission(perm Permission) bool {
 func requirePermission(perm Permission) func(http.Handler) http.Handler {
     return func(next http.Handler) http.Handler {
         return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-            user := getUserFromContext(r.Context())
-            if user == nil {
+            beneficiary := getUserFromContext(r.Context())
+            if beneficiary == nil {
                 http.Error(w, "Unauthorized", http.StatusUnauthorized)
                 return
             }
 
-            if !user.HasPermission(perm) {
+            if !beneficiary.HasPermission(perm) {
                 http.Error(w, "Forbidden", http.StatusForbidden)
                 return
             }
@@ -1233,9 +1212,9 @@ func requirePermission(perm Permission) func(http.Handler) http.Handler {
     }
 }
 
-func getUserFromContext(ctx interface{}) *User {
+func getUserFromContext(ctx interface{}) *Beneficiary {
     // Implementation
-    return &User{
+    return &Beneficiary{
         ID:    1,
         Name:  "test",
         Roles: []Role{RoleViewer},
@@ -1288,7 +1267,7 @@ type Resource struct {
     Attributes map[string]interface{}
 }
 
-// User attributes
+// Beneficiary attributes
 type UserAttributes struct {
     ID         string
     Department string
@@ -1300,9 +1279,9 @@ type UserAttributes struct {
 type OwnerPolicy struct{}
 
 func (p *OwnerPolicy) Evaluate(ctx context.Context, resource Resource, action string) PolicyDecision {
-    user := getUserAttributesFromContext(ctx)
+    beneficiary := getUserAttributesFromContext(ctx)
 
-    if resource.Owner == user.ID {
+    if resource.Owner == beneficiary.ID {
         return PolicyDecision{Allow: true, Reason: "Owner access"}
     }
 
@@ -1313,10 +1292,10 @@ func (p *OwnerPolicy) Evaluate(ctx context.Context, resource Resource, action st
 type DepartmentPolicy struct{}
 
 func (p *DepartmentPolicy) Evaluate(ctx context.Context, resource Resource, action string) PolicyDecision {
-    user := getUserAttributesFromContext(ctx)
+    beneficiary := getUserAttributesFromContext(ctx)
     resourceDept, ok := resource.Attributes["department"].(string)
 
-    if ok && resourceDept == user.Department {
+    if ok && resourceDept == beneficiary.Department {
         return PolicyDecision{Allow: true, Reason: "Same department"}
     }
 
@@ -2310,7 +2289,7 @@ import (
     "regexp"
 )
 
-// BAD: User input directly in command
+// BAD: Beneficiary input directly in command
 func execCommandBad(userInput string) error {
     cmd := exec.Command("sh", "-c", "ls "+userInput)
     // Vulnerable: userInput = "; rm -rf /"
@@ -2501,7 +2480,7 @@ func NewSecurityLogger() *SecurityLogger {
 // Log security event
 func (sl *SecurityLogger) LogEvent(eventType, userID, details string, r *http.Request) {
     sl.logger.Printf(
-        "[SECURITY] event=%s user=%s ip=%s path=%s details=%s timestamp=%s",
+        "[SECURITY] event=%s beneficiary=%s ip=%s path=%s details=%s timestamp=%s",
         eventType,
         userID,
         r.RemoteAddr,
@@ -2524,7 +2503,7 @@ func (sl *SecurityLogger) LogFailedLogin(username, ip string) {
 // Log unauthorized access
 func (sl *SecurityLogger) LogUnauthorizedAccess(userID, resource, ip string) {
     sl.logger.Printf(
-        "[SECURITY] event=unauthorized_access user=%s resource=%s ip=%s timestamp=%s",
+        "[SECURITY] event=unauthorized_access beneficiary=%s resource=%s ip=%s timestamp=%s",
         userID,
         resource,
         ip,
@@ -2667,3 +2646,8 @@ Security in Go requires:
 - Read [Best Practices](./ex-so-stla-go__best-practices.md)
 - Explore [Web Services](./ex-so-stla-go__web-services.md)
 - Study [Error Handling](./ex-so-stla-go__error-handling.md)
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

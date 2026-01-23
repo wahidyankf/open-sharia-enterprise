@@ -286,3 +286,8 @@ When creating new templates:
 
 **License**: MIT
 **Maintained By**: Open Sharia Enterprise Platform Team
+
+---
+
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

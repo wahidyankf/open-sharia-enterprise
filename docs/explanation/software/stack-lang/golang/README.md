@@ -17,8 +17,6 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
-created: 2026-01-22
-updated: 2026-01-22
 ---
 
 # Golang

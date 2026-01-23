@@ -13,12 +13,11 @@ tags:
   - nullaway
   - checker-framework
   - error-prone
-created: 2026-01-21
-updated: 2026-01-21
 ---
 
 # Java Type Safety
 
+**Quick Reference**: [Why Type Safety Matters in Finance](#why-type-safety-matters-in-finance) | [Core Type Safety Principles](#core-type-safety-principles) | [Modern Java Type Safety Features](#modern-java-type-safety-features) | [Null Safety with JSpecify and NullAway](#null-safety-with-jspecify-and-nullaway) | [Static Analysis with Checker Framework](#static-analysis-with-checker-framework) | [Error-Prone for Bug Prevention](#error-prone-for-bug-prevention) | [Type Safety Patterns](#type-safety-patterns) | [Testing Type Safety](#testing-type-safety) | [Type Safety Checklist](#type-safety-checklist) | [Common Type Safety Pitfalls](#common-type-safety-pitfalls) | [Performance Considerations](#performance-considerations) | [Tools and IDE Support](#tools-and-ide-support) | [Sources](#sources) | [Related Documentation](#related-documentation) | [Related Principles](#related-principles)
 **Understanding-oriented documentation** for achieving type safety and minimizing runtime errors in Java applications.
 
 ## Quick Reference
@@ -57,18 +56,18 @@ Type safety prevents runtime errors by catching type mismatches at compile time,
 
 ```java
 // TYPE UNSAFE: Runtime disaster
-public BigDecimal calculateZakat(Object income) {
-    // What if income is null? String? Wrong currency?
-    return ((BigDecimal) income).multiply(new BigDecimal("0.025")); // BOOM!
+public BigDecimal calculateZakat(Object wealth) {
+    // What if wealth is null? String? Wrong currency?
+    return ((BigDecimal) wealth).multiply(new BigDecimal("0.025")); // BOOM!
 }
 
 // TYPE SAFE: Compile-time guarantees
-public Money calculateZakat(Money income) {
+public Money calculateZakat(Money wealth) {
     // Type system guarantees:
-    // 1. income is never null (use Optional<Money> if needed)
-    // 2. income is Money, not String or Integer
+    // 1. wealth is never null (use Optional<Money> if needed)
+    // 2. wealth is Money, not String or Integer
     // 3. Currency is preserved in the result
-    return income.multiply(ZakatRate.STANDARD); // 2.5%
+    return wealth.multiply(ZakatRate.STANDARD); // 2.5%
 }
 ```
 
@@ -121,7 +120,7 @@ public record AccountId(String value) {
             throw new IllegalArgumentException("Account ID cannot be blank");
         }
         if (!value.matches("ACC-\\d{10}")) {
-            throw new IllegalArgumentException("Invalid account ID format");
+            throw new IllegalArgumentException("Invalid donation_account ID format");
         }
     }
 }
@@ -143,9 +142,9 @@ Use static types and analysis to catch errors before deployment.
 
 ```java
 // Runtime error waiting to happen
-public BigDecimal calculateZakat(Map<String, Object> account) {
-    Object balance = account.get("balance");
-    Object nisab = account.get("nisab");
+public BigDecimal calculateZakat(Map<String, Object> donation_account) {
+    Object balance = donation_account.get("balance");
+    Object nisab = donation_account.get("nisab");
 
     // What are these types? When will this fail?
     return ((BigDecimal) balance).subtract((BigDecimal) nisab)
@@ -153,10 +152,10 @@ public BigDecimal calculateZakat(Map<String, Object> account) {
 }
 
 // Compile-time type safety
-public Money calculateZakat(ZakatAccount account) {
+public Money calculateZakat(ZakatAccount donation_account) {
     // Compiler guarantees these methods exist and return correct types
-    Money balance = account.getBalance();
-    Money nisab = account.getNisab();
+    Money balance = donation_account.getBalance();
+    Money nisab = donation_account.getNisab();
 
     if (balance.compareTo(nisab) < 0) {
         return Money.zero(balance.getCurrency());
@@ -318,7 +317,7 @@ graph TD
 
 Records provide automatic immutability with compile-time guarantees.
 
-**Example: Zakat Payment Record**
+**Example: Zakat DonationPayment Record**
 
 ```java
 public record ZakatPayment(
@@ -331,7 +330,7 @@ public record ZakatPayment(
     // Compact constructor validates invariants
     public ZakatPayment {
         if (paymentId == null || paymentId.isBlank()) {
-            throw new IllegalArgumentException("Payment ID required");
+            throw new IllegalArgumentException("DonationPayment ID required");
         }
         if (amount == null || amount.isNegative()) {
             throw new IllegalArgumentException("Amount must be positive");
@@ -340,7 +339,7 @@ public record ZakatPayment(
             throw new IllegalArgumentException("Donor ID required");
         }
         if (paymentDate == null || paymentDate.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("Payment date cannot be in future");
+            throw new IllegalArgumentException("DonationPayment date cannot be in future");
         }
         if (category == null) {
             throw new IllegalArgumentException("Zakat category required");
@@ -352,7 +351,7 @@ public record ZakatPayment(
 }
 
 // Usage - type-safe and immutable:
-ZakatPayment payment = new ZakatPayment(
+ZakatPayment donation = new ZakatPayment(
     "ZP-2026-001",
     Money.of(new BigDecimal("2500.00"), Currency.getInstance("USD")),
     "D12345",
@@ -361,17 +360,17 @@ ZakatPayment payment = new ZakatPayment(
 );
 
 // Mutation impossible:
-// payment.amount = newAmount; // COMPILE ERROR: final field
+// donation.amount = newAmount; // COMPILE ERROR: final field
 ```
 
 ### Sealed Classes for Domain Modeling (Java 17+)
 
 Sealed types restrict inheritance for exhaustive handling.
 
-**Example: Loan Agreement Types**
+**Example: QardHasan Agreement Types**
 
 ```java
-public sealed interface LoanAgreement
+public sealed interface MurabahaContract
     permits Murabaha, Musharaka, Mudaraba {
 
     Money getPrincipal();
@@ -385,7 +384,7 @@ public final record Murabaha(
     BigDecimal profitRate,
     LocalDate startDate,
     LocalDate maturityDate
-) implements LoanAgreement {
+) implements MurabahaContract {
     // Validation in compact constructor
     public Murabaha {
         if (profitRate.compareTo(BigDecimal.ZERO) < 0) {
@@ -399,7 +398,7 @@ public final record Musharaka(
     BigDecimal partnershipRatio,
     LocalDate startDate,
     LocalDate maturityDate
-) implements LoanAgreement {
+) implements MurabahaContract {
     public Musharaka {
         if (partnershipRatio.compareTo(BigDecimal.ZERO) <= 0 ||
             partnershipRatio.compareTo(BigDecimal.ONE) > 0) {
@@ -413,7 +412,7 @@ public final record Mudaraba(
     BigDecimal profitSharingRatio,
     LocalDate startDate,
     LocalDate maturityDate
-) implements LoanAgreement {
+) implements MurabahaContract {
     public Mudaraba {
         if (profitSharingRatio.compareTo(BigDecimal.ZERO) < 0 ||
             profitSharingRatio.compareTo(BigDecimal.ONE) > 0) {
@@ -423,7 +422,7 @@ public final record Mudaraba(
 }
 
 // Type-safe exhaustive handling
-public Money calculateExpectedReturn(LoanAgreement agreement) {
+public Money calculateExpectedReturn(MurabahaContract agreement) {
     return switch (agreement) {
         case Murabaha m ->
             m.getPrincipal().add(m.cost());
@@ -597,7 +596,7 @@ NullAway is a fast, practical null-checking tool from Uber that:
     <configuration>
         <compilerArgs>
             <arg>-Xplugin:ErrorProne -Xep:NullAway:ERROR
-                 -XepOpt:NullAway:AnnotatedPackages=com.example.finance</arg>
+                 -XepOpt:NullAway:AnnotatedPackages=com.sharia.finance.finance</arg>
         </compilerArgs>
         <annotationProcessorPaths>
             <path>
@@ -622,7 +621,7 @@ NullAway is a fast, practical null-checking tool from Uber that:
 ```java
 // src/main/java/com/example/finance/zakat/package-info.java
 @NullMarked  // All types non-null by default
-package com.example.finance.zakat;
+package com.sharia.finance.finance.zakat;
 
 import org.jspecify.annotations.NullMarked;
 ```
@@ -630,7 +629,7 @@ import org.jspecify.annotations.NullMarked;
 **Explicit Nullable Fields**:
 
 ```java
-package com.example.finance.zakat;
+package com.sharia.finance.finance.zakat;
 
 import org.jspecify.annotations.Nullable;
 
@@ -672,7 +671,7 @@ public class ZakatAccount {
 **Example 1: Dereferencing Nullable Without Check**
 
 ```java
-package com.example.finance.donation;
+package com.sharia.finance.finance.donation;
 
 import org.jspecify.annotations.Nullable;
 
@@ -694,7 +693,7 @@ public class DonationProcessor {
 **Example 2: Returning Null for Non-Null Type**
 
 ```java
-package com.example.finance.donor;
+package com.sharia.finance.finance.donor;
 
 public class DonorService {
     // Return type is non-null by default (from @NullMarked)
@@ -725,7 +724,7 @@ public class DonorService {
 **Example 3: Field Initialization**
 
 ```java
-package com.example.finance.zakat;
+package com.sharia.finance.finance.zakat;
 
 public class ZakatCalculator {
     // COMPILE ERROR from NullAway:
@@ -797,7 +796,7 @@ graph TD
 ```java
 // package-info.java for each package
 @NullMarked
-package com.example.finance.zakat;
+package com.sharia.finance.finance.zakat;
 
 import org.jspecify.annotations.NullMarked;
 ```
@@ -838,7 +837,7 @@ public record ZakatPayment(
     public ZakatPayment {
         // NullAway verifies non-null fields
         if (paymentId == null || paymentId.isBlank()) {
-            throw new IllegalArgumentException("Payment ID required");
+            throw new IllegalArgumentException("DonationPayment ID required");
         }
         // receiptNumber can be null
     }
@@ -1287,7 +1286,7 @@ public class ZakatAccount {
 }
 
 // Usage - compiler enforces all required fields
-ZakatAccount account = ZakatAccount.builder()
+ZakatAccount donation_account = ZakatAccount.builder()
     .accountId("ZA-12345")           // Step 1: Must provide accountId
     .balance(Money.of(100000, "USD")) // Step 2: Must provide balance
     .nisab(Money.of(85, "XAU"))       // Step 3: Must provide nisab
@@ -1324,28 +1323,28 @@ public record InvalidAccount(String accountId, String reason)
 
 // Service returns explicit result type instead of throwing
 public class ZakatService {
-    public ZakatCalculationResult calculateZakat(ZakatAccount account) {
+    public ZakatCalculationResult calculateZakat(ZakatAccount donation_account) {
         // Validation 1: Account exists
-        if (account == null || account.getAccountId() == null) {
+        if (donation_account == null || donation_account.getAccountId() == null) {
             return new InvalidAccount("", "Account not found");
         }
 
         // Validation 2: Haul (lunar year) completed
         LocalDate today = LocalDate.now();
-        LocalDate haulEndDate = account.getHaulStartDate().plusYears(1);
+        LocalDate haulEndDate = donation_account.getHaulStartDate().plusYears(1);
         if (today.isBefore(haulEndDate)) {
             long daysRemaining = ChronoUnit.DAYS.between(today, haulEndDate);
-            return new IncompleteHaul(account.getHaulStartDate(), today, daysRemaining);
+            return new IncompleteHaul(donation_account.getHaulStartDate(), today, daysRemaining);
         }
 
         // Validation 3: Balance above nisab
-        if (account.getBalance().compareTo(account.getNisab()) < 0) {
-            return new BelowNisab(account.getBalance(), account.getNisab());
+        if (donation_account.getBalance().compareTo(donation_account.getNisab()) < 0) {
+            return new BelowNisab(donation_account.getBalance(), donation_account.getNisab());
         }
 
         // All validations passed - calculate zakat
-        Money zakatAmount = account.getBalance().multiply(ZakatRate.STANDARD);
-        return new ValidZakat(zakatAmount, account.getBalance());
+        Money zakatAmount = donation_account.getBalance().multiply(ZakatRate.STANDARD);
+        return new ValidZakat(zakatAmount, donation_account.getBalance());
     }
 }
 
@@ -1357,7 +1356,7 @@ public String formatZakatResult(ZakatCalculationResult result) {
                 zakat, ZakatRate.STANDARD.movePointRight(2), balance);
 
         case BelowNisab(Money balance, Money nisab) ->
-            String.format("Balance %s is below nisab threshold %s - no zakat due",
+            String.format("Balance %s is below nisab %s - no zakat due",
                 balance, nisab);
 
         case IncompleteHaul(LocalDate start, LocalDate today, long daysRemaining) ->
@@ -1365,7 +1364,7 @@ public String formatZakatResult(ZakatCalculationResult result) {
                 start, daysRemaining);
 
         case InvalidAccount(String id, String reason) ->
-            String.format("Invalid account %s: %s", id, reason);
+            String.format("Invalid donation_account %s: %s", id, reason);
     };
     // Compiler guarantees all cases handled!
 }
@@ -1510,15 +1509,15 @@ void testOptionalHandling() {
 @Test
 void testBuilderEnforcesRequiredFields() {
     // Compiler enforces all required fields at compile-time
-    ZakatAccount account = ZakatAccount.builder()
+    ZakatAccount donation_account = ZakatAccount.builder()
         .accountId("ZA-12345")
         .balance(Money.of(100000, "USD"))
         .nisab(Money.of(85, "XAU"))
         .haulStartDate(LocalDate.of(2025, 1, 1))
         .build();
 
-    assertThat(account.getAccountId()).isEqualTo("ZA-12345");
-    assertThat(account.getBalance().getAmount()).isEqualByComparingTo("100000");
+    assertThat(donation_account.getAccountId()).isEqualTo("ZA-12345");
+    assertThat(donation_account.getBalance().getAmount()).isEqualByComparingTo("100000");
 
     // Cannot compile if fields are missing:
     // ZakatAccount incomplete = ZakatAccount.builder()
@@ -1734,7 +1733,7 @@ public String format(TransactionResult result) {
     return switch (result) {
         case Success s -> "Success: " + s.transactionId();
         case InsufficientFunds i -> "Insufficient funds";
-        case InvalidAccount a -> "Invalid account";
+        case InvalidAccount a -> "Invalid donation_account";
         case SystemError e -> "System error";
         // Compiler verifies all cases!
     };
@@ -1785,7 +1784,7 @@ JIT compiler can devirtualize sealed type calls.
 
 ```java
 // Sealed type switch is optimized to jump table
-public Money calculate(LoanAgreement agreement) {
+public Money calculate(MurabahaContract agreement) {
     return switch (agreement) {
         case Murabaha m -> calculateMurabaha(m);
         case Musharaka ms -> calculateMusharaka(ms);
@@ -1895,3 +1894,8 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 - **Last Updated**: 2026-01-21
 - **Java Version**: 17+ (sealed classes, records), 21+ (pattern matching finalized), 25 (primitive patterns preview)
 - **Blessed Libraries**: JSpecify 1.0.0, NullAway 0.12.4, Checker Framework 3.48.2, Error Prone 2.36.0
+
+---
+
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

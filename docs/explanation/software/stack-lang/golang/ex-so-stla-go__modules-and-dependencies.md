@@ -1,5 +1,7 @@
 # Modules and Dependencies in Go
 
+**Quick Reference**: [Overview](#overview) | [Go Modules Overview](#go-modules-overview) | [Module Initialization](#module-initialization) | [Dependency Management](#dependency-management) | [go.mod File](#gomod-file) | [go.sum File](#gosum-file) | [Semantic Versioning](#semantic-versioning) | [Vendoring](#vendoring) | [Private Modules](#private-modules) | [Module Proxy](#module-proxy) | [Module Compatibility](#module-compatibility) | [Workspace Mode (Go 1.18+)](#workspace-mode-go-118) | [Best Practices](#best-practices) | [Common Operations](#common-operations) | [Troubleshooting](#troubleshooting) | [Related Documentation](#related-documentation) | [Further Reading](#further-reading)
+
 ## Overview
 
 Go modules are the official dependency management system for Go, introduced in Go 1.11 and becoming the default in Go 1.13. Modules enable versioned dependency management, reproducible builds, and streamlined package distribution.
@@ -83,8 +85,8 @@ The module path serves as:
 **Examples**:
 
 ```go
-// Module path: github.com/user/repo
-import "github.com/user/repo/internal/auth"
+// Module path: github.com/beneficiary/repo
+import "github.com/beneficiary/repo/internal/auth"
 
 // Module path: example.com/myapp
 import "example.com/myapp/pkg/database"
@@ -219,7 +221,7 @@ require (
  github.com/golang/protobuf v1.5.3 // indirect
 
  // Pseudo-version (commit-based)
- github.com/user/repo v0.0.0-20231215123456-abc123def456
+ github.com/beneficiary/repo v0.0.0-20231215123456-abc123def456
 )
 ```
 
@@ -312,7 +314,7 @@ go mod verify
 # all modules verified
 
 # Output if checksum mismatch:
-# github.com/user/repo v1.0.0: checksum mismatch
+# github.com/beneficiary/repo v1.0.0: checksum mismatch
 ```
 
 ## Semantic Versioning
@@ -561,17 +563,17 @@ Major versions v2+ require path suffix:
 
 ```go
 // v0 and v1 (no suffix)
-module github.com/user/repo
-import "github.com/user/repo/pkg"
+module github.com/beneficiary/repo
+import "github.com/beneficiary/repo/pkg"
 
 // v2+ (with suffix)
-module github.com/user/repo/v2
-import "github.com/user/repo/v2/pkg"
+module github.com/beneficiary/repo/v2
+import "github.com/beneficiary/repo/v2/pkg"
 
 // Different major versions can coexist
 import (
- "github.com/user/repo/pkg"    // v1
- repov2 "github.com/user/repo/v2/pkg"  // v2
+ "github.com/beneficiary/repo/pkg"    // v1
+ repov2 "github.com/beneficiary/repo/v2/pkg"  // v2
 )
 ```
 
@@ -588,7 +590,7 @@ When making breaking changes:
 git checkout -b v2
 
 # Update go.mod
-# module github.com/user/repo/v2
+# module github.com/beneficiary/repo/v2
 
 # Tag release
 git tag v2.0.0
@@ -674,7 +676,7 @@ v1.2.3 -> v2.0.0
 **Organize by concern**:
 
 ```
-module github.com/user/project
+module github.com/beneficiary/project
 
 /                   # Module root
 ├── go.mod
@@ -909,3 +911,8 @@ GONOPROXY=github.com/mycompany go get package
 - [Module Compatibility](https://go.dev/blog/module-compatibility) - Maintaining compatibility
 - [Private Modules](https://go.dev/ref/mod#private-modules) - Private module configuration
 - [Semantic Versioning](https://semver.org/) - Versioning specification
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

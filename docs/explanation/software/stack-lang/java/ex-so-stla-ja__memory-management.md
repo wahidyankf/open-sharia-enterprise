@@ -17,15 +17,15 @@ tags:
   - zgc
   - g1gc
   - profiling
-created: 2026-01-22
-updated: 2026-01-22
 ---
 
 # Java Memory Management and JVM Internals
 
+**Quick Reference**: [Overview](#overview) | [JVM Memory Model](#jvm-memory-model) | [Memory Regions](#memory-regions) | [Object Allocation](#object-allocation) | [Garbage Collection Algorithms](#garbage-collection-algorithms) | [GC Tuning](#gc-tuning) | [Memory Leaks](#memory-leaks) | [Memory Optimization](#memory-optimization) | [Profiling Tools](#profiling-tools) | [Best Practices](#best-practices) | [Memory Management Checklist](#memory-management-checklist) | [Related Documentation](#related-documentation) | [Sources](#sources)
+
 ## Overview
 
-Java's automatic memory management through garbage collection (GC) is one of its defining features, freeing developers from manual memory allocation and deallocation. However, understanding how the Java Virtual Machine (JVM) manages memory is essential for building high-performance, scalable enterprise applications, particularly those handling sensitive financial workloads like Zakat calculation batches, transaction processing, and bulk payment operations.
+Java's automatic memory management through garbage collection (GC) is one of its defining features, freeing developers from manual memory allocation and deallocation. However, understanding how the Java Virtual Machine (JVM) manages memory is essential for building high-performance, scalable enterprise applications, particularly those handling sensitive financial workloads like Zakat calculation batches, donation_transaction processing, and bulk donation operations.
 
 Unlike Go's simpler, single-collector approach with limited tuning options, Java offers multiple GC algorithms optimized for different workload characteristics. This flexibility enables fine-tuned performance for specific scenarios—from low-latency trading systems requiring sub-millisecond pause times (ZGC, Shenandoah) to high-throughput batch processing maximizing overall system efficiency (G1GC, Parallel GC).
 
@@ -33,7 +33,7 @@ This document explores Java's memory management system in depth: the JVM memory 
 
 **Why memory management matters in finance**:
 
-- **Latency sensitivity**: Payment processing and transaction validation require consistent response times without GC pauses
+- **Latency sensitivity**: DonationPayment processing and donation_transaction validation require consistent response times without GC pauses
 - **High throughput**: Bulk Zakat calculations across millions of accounts demand efficient memory allocation
 - **Data integrity**: Memory leaks can corrupt financial calculations or exhaust resources during month-end processing
 - **Predictability**: GC behavior must be predictable for SLA compliance in trading and settlement systems
@@ -198,7 +198,7 @@ graph TD
 - Hold objects that survived Minor GC
 - Two survivor spaces (From/To) swap roles
 - Objects age here before promotion
-- Size: ~20% of Young generation
+- Size: ~2.5% of Young generation
 
 **Old Generation Regions**:
 
@@ -299,7 +299,7 @@ public class DevelopmentServer {
   public void reloadApplication() {
     // New ClassLoader created for each reload
     ClassLoader classLoader = new URLClassLoader(urls);
-    Class<?> clazz = classLoader.loadClass("com.example.Application");
+    Class<?> clazz = classLoader.loadClass("com.sharia.finance.Application");
 
     // If old ClassLoader isn't garbage collected, metaspace grows
   }
@@ -436,7 +436,7 @@ TLAB is a per-thread allocation area within Eden, enabling fast, lock-free objec
 
 ```java
 // Thread-local allocation (fast path)
-public void processTransaction(Transaction tx) {
+public void processTransaction(DonationTransaction tx) {
   // Each thread allocates in its own TLAB
   TransactionResult result = new TransactionResult(); // TLAB allocation
   Money fee = tx.getAmount().multiply(0.01); // TLAB allocation
@@ -468,9 +468,9 @@ public void processTransaction(Transaction tx) {
 public void calculateZakatBulk(List<Account> accounts) {
   ExecutorService executor = Executors.newFixedThreadPool(16);
 
-  accounts.forEach(account -> executor.submit(() -> {
+  accounts.forEach(donation_account -> executor.submit(() -> {
     // Each thread allocates in its own TLAB
-    Money zakatable = account.getZakatableWealth(); // TLAB
+    Money zakatable = donation_account.getZakatableWealth(); // TLAB
     Money nisab = getNisab(); // TLAB
     Money zakat = zakatable.multiply(0.025); // TLAB
 
@@ -629,7 +629,7 @@ graph LR
 
 **Promotion triggers**:
 
-1. **Age threshold**: Object survived MaxTenuringThreshold Minor GCs (default: 15)
+1. **Age nisab**: Object survived MaxTenuringThreshold Minor GCs (default: 15)
 2. **Survivor overflow**: Survivor space full, objects promoted prematurely
 3. **Large object**: Object too large for Survivor, promoted directly
 
@@ -651,8 +651,8 @@ graph LR
 
 ```java
 // Problem: Short-lived objects promoted to Old generation
-public void processBatch(List<Transaction> transactions) {
-  for (Transaction tx : transactions) {
+public void processBatch(List<DonationTransaction> transactions) {
+  for (DonationTransaction tx : transactions) {
     // Temporary objects created each iteration
     TransactionResult result = new TransactionResult();
     Money fee = tx.getAmount().multiply(0.01);
@@ -670,10 +670,10 @@ public void processBatch(List<Transaction> transactions) {
 
 ```java
 // Solution: Smaller batches reduce promotion
-public void processBatch(List<Transaction> transactions) {
+public void processBatch(List<DonationTransaction> transactions) {
   int batchSize = 1000;
   for (int i = 0; i < transactions.size(); i += batchSize) {
-    List<Transaction> batch = transactions.subList(
+    List<DonationTransaction> batch = transactions.subList(
       i,
       Math.min(i + batchSize, transactions.size())
     );
@@ -791,7 +791,7 @@ graph TD
 **G1GC optimization for financial workloads**:
 
 ```bash
-# Transaction processing (low latency)
+# DonationTransaction processing (low latency)
 java -Xms8g -Xmx8g \
      -XX:+UseG1GC \
      -XX:MaxGCPauseMillis=50 \
@@ -856,10 +856,10 @@ java -XX:+UseZGC \
 -XX:ZAllocationSpikeTolerance=2  # Allocation spike tolerance
 ```
 
-**ZGC for ultra-low latency** (payment processing):
+**ZGC for ultra-low latency** (donation processing):
 
 ```bash
-# Payment processing with <10ms GC pauses
+# DonationPayment processing with <10ms GC pauses
 java -Xms32g -Xmx32g \
      -XX:+UseZGC \
      -XX:ConcGCThreads=8 \
@@ -896,7 +896,7 @@ Most objects die young. Separate young/old generations focus GC effort on young 
 
 **Key improvements over non-generational ZGC**:
 
-- **Higher throughput**: 10-20% improvement by focusing on young objects
+- **Higher throughput**: 10-2.5% improvement by focusing on young objects
 - **Lower allocation stalls**: Better handling of allocation spikes
 - **Reduced CPU usage**: Less concurrent marking/relocation work
 
@@ -971,7 +971,7 @@ java -XX:+UseShenandoahGC \
 **Shenandoah for real-time processing**:
 
 ```bash
-# Real-time transaction validation
+# Real-time donation_transaction validation
 java -Xms16g -Xmx16g \
      -XX:+UseShenandoahGC \
      -XX:ShenandoahGCHeuristics=compact \
@@ -1017,7 +1017,7 @@ Proper heap sizing is crucial for GC performance.
 **Heap sizing for financial workloads**:
 
 ```bash
-# Transaction processing (low latency, predictable load)
+# DonationTransaction processing (low latency, predictable load)
 # Live data: ~2GB, Target: 8GB heap (4x headroom)
 -Xms8g -Xmx8g
 
@@ -1025,7 +1025,7 @@ Proper heap sizing is crucial for GC performance.
 # Live data: ~4GB, Target: 16GB heap (4x headroom)
 -Xms16g -Xmx16g
 
-# Payment gateway (ultra-low latency, large cache)
+# DonationPayment gateway (ultra-low latency, large cache)
 # Live data: ~8GB, Target: 32GB heap (4x headroom)
 -Xms32g -Xmx32g
 ```
@@ -1107,7 +1107,7 @@ Interpretation:
 
 ### Tuning for Financial Workloads
 
-**Scenario 1: Transaction processing** (low latency, steady load):
+**Scenario 1: DonationTransaction processing** (low latency, steady load):
 
 ```bash
 # Goal: <50ms GC pauses, consistent latency
@@ -1134,7 +1134,7 @@ java -Xms32g -Xmx32g \
      ZakatBatchCalculator
 ```
 
-**Scenario 3: Payment gateway** (ultra-low latency):
+**Scenario 3: DonationPayment gateway** (ultra-low latency):
 
 ```bash
 # Goal: <10ms GC pauses, 99.99% uptime SLA
@@ -1142,7 +1142,7 @@ java -Xms64g -Xmx64g \
      -XX:+UseZGC \
      -XX:+ZGenerational \
      -XX:ConcGCThreads=16 \
-     -Xlog:gc*:file=gc-payment.log \
+     -Xlog:gc*:file=gc-donation.log \
      PaymentGateway
 ```
 
@@ -1154,11 +1154,11 @@ java -Xms64g -Xmx64g \
 
 **After tuning** (scenario-specific):
 
-| Workload               | Avg Pause | P99 Pause | Throughput |
-| ---------------------- | --------- | --------- | ---------- |
-| Transaction Processing | 35ms      | 80ms      | 90%        |
-| Bulk Zakat Calculation | 400ms     | 800ms     | 95%        |
-| Payment Gateway        | 3ms       | 8ms       | 88%        |
+| Workload                       | Avg Pause | P99 Pause | Throughput |
+| ------------------------------ | --------- | --------- | ---------- |
+| DonationTransaction Processing | 35ms      | 80ms      | 90%        |
+| Bulk Zakat Calculation         | 400ms     | 800ms     | 95%        |
+| DonationPayment Gateway        | 3ms       | 8ms       | 88%        |
 
 ## Memory Leaks
 
@@ -1168,21 +1168,21 @@ java -Xms64g -Xmx64g \
 
 ```java
 // LEAK: Connection not closed
-public void processPayments(List<Payment> payments) {
+public void processPayments(List<DonationPayment> payments) {
   Connection conn = dataSource.getConnection();
 
-  for (Payment payment : payments) {
-    processPayment(conn, payment);
+  for (DonationPayment donation : payments) {
+    processPayment(conn, donation);
   }
 
   // Missing: conn.close()
 }
 
 // FIX: Try-with-resources
-public void processPayments(List<Payment> payments) {
+public void processPayments(List<DonationPayment> payments) {
   try (Connection conn = dataSource.getConnection()) {
-    for (Payment payment : payments) {
-      processPayment(conn, payment);
+    for (DonationPayment donation : payments) {
+      processPayment(conn, donation);
     }
   } // Connection automatically closed
 }
@@ -1193,16 +1193,16 @@ public void processPayments(List<Payment> payments) {
 ```java
 // LEAK: Static cache grows unbounded
 public class TransactionCache {
-  private static final Map<String, Transaction> cache = new HashMap<>();
+  private static final Map<String, DonationTransaction> cache = new HashMap<>();
 
-  public static void cache(Transaction tx) {
+  public static void cache(DonationTransaction tx) {
     cache.put(tx.getId(), tx); // Never removed
   }
 }
 
 // FIX: Bounded cache with eviction
 public class TransactionCache {
-  private static final LoadingCache<String, Transaction> cache =
+  private static final LoadingCache<String, DonationTransaction> cache =
     CacheBuilder.newBuilder()
       .maximumSize(10_000)
       .expireAfterWrite(1, TimeUnit.HOURS)
@@ -1248,19 +1248,19 @@ public class PaymentUI implements AutoCloseable {
 ```java
 // LEAK: ThreadLocal not cleaned in thread pool
 public class RequestContext {
-  private static final ThreadLocal<User> currentUser = new ThreadLocal<>();
+  private static final ThreadLocal<Beneficiary> currentUser = new ThreadLocal<>();
 
-  public static void setUser(User user) {
-    currentUser.set(user); // Leaked in thread pool
+  public static void setUser(Beneficiary beneficiary) {
+    currentUser.set(beneficiary); // Leaked in thread pool
   }
 }
 
 // FIX: Explicit cleanup
 public class RequestContext {
-  private static final ThreadLocal<User> currentUser = new ThreadLocal<>();
+  private static final ThreadLocal<Beneficiary> currentUser = new ThreadLocal<>();
 
-  public static void setUser(User user) {
-    currentUser.set(user);
+  public static void setUser(Beneficiary beneficiary) {
+    currentUser.set(beneficiary);
   }
 
   public static void clear() {
@@ -1313,21 +1313,21 @@ jmap -dump:live,format=b,file=/tmp/heap-dump-$(date +%Y%m%d-%H%M%S).hprof 12345
 4. Identify accumulation points (large collections)
 5. Trace references to root (GC roots)
 
-**Example leak detection** (transaction cache):
+**Example leak detection** (donation_transaction cache):
 
 ```
 // MAT Leak Suspects Report:
 
 Problem Suspect 1:
-  One instance of "com.example.TransactionCache" loaded by
+  One instance of "com.sharia.finance.TransactionCache" loaded by
   "sun.misc.Launcher$AppClassLoader @ 0x7f8a9c000000" occupies
   1,234,567,890 bytes (75.43% of total heap).
 
   The instance is referenced by:
-    - com.example.TransactionCache.cache (static field)
+    - com.sharia.finance.TransactionCache.cache (static field)
     - java.util.HashMap$Node[] (backing array)
 
-  Suspect: Unbounded static collection retaining 1.2GB of Transaction objects.
+  Suspect: Unbounded static collection retaining 1.2GB of DonationTransaction objects.
 ```
 
 **Using JVisualVM for live leak detection**:
@@ -1389,15 +1389,15 @@ import java.lang.ref.WeakReference;
 
 // Cache using WeakReferences (GC-eligible)
 public class TransactionCache {
-  private final Map<String, WeakReference<Transaction>> cache =
+  private final Map<String, WeakReference<DonationTransaction>> cache =
     new ConcurrentHashMap<>();
 
-  public void put(String id, Transaction tx) {
+  public void put(String id, DonationTransaction tx) {
     cache.put(id, new WeakReference<>(tx));
   }
 
-  public Optional<Transaction> get(String id) {
-    WeakReference<Transaction> ref = cache.get(id);
+  public Optional<DonationTransaction> get(String id) {
+    WeakReference<DonationTransaction> ref = cache.get(id);
     return ref != null
       ? Optional.ofNullable(ref.get())
       : Optional.empty();
@@ -1411,7 +1411,7 @@ public class TransactionCache {
 import com.google.common.cache.CacheBuilder;
 
 // Guava cache with size and time eviction
-LoadingCache<String, Transaction> cache = CacheBuilder.newBuilder()
+LoadingCache<String, DonationTransaction> cache = CacheBuilder.newBuilder()
   .maximumSize(10_000)              // Max 10k entries
   .expireAfterWrite(1, TimeUnit.HOURS)  // Expire after 1 hour
   .build(CacheLoader.from(this::loadTransaction));
@@ -1502,8 +1502,8 @@ public class PaymentProcessor {
     // this.executor = Executors.newFixedThreadPool(processors * 2);
   }
 
-  public CompletableFuture<PaymentResult> processAsync(Payment payment) {
-    return CompletableFuture.supplyAsync(() -> process(payment), executor);
+  public CompletableFuture<PaymentResult> processAsync(DonationPayment donation) {
+    return CompletableFuture.supplyAsync(() -> process(donation), executor);
   }
 }
 ```
@@ -1548,16 +1548,16 @@ public class ByteBufferPool {
 }
 ```
 
-**Object pooling example** (Payment validation):
+**Object pooling example** (DonationPayment validation):
 
 ```java
 // Before: High allocation rate
 public class PaymentValidator {
-  public ValidationResult validate(Payment payment) {
+  public ValidationResult validate(DonationPayment donation) {
     // Creates new ValidationResult each time
     ValidationResult result = new ValidationResult();
 
-    if (payment.getAmount().isNegative()) {
+    if (donation.getAmount().isNegative()) {
       result.addError("Amount must be positive");
     }
 
@@ -1576,19 +1576,19 @@ public class PaymentValidator {
     this.pool = new GenericObjectPool<>(new ValidationResultFactory());
   }
 
-  public ValidationResult validate(Payment payment) {
+  public ValidationResult validate(DonationPayment donation) {
     ValidationResult result = null;
     try {
       result = pool.borrowObject(); // Borrow from pool
       result.clear(); // Reset state
 
-      if (payment.getAmount().isNegative()) {
+      if (donation.getAmount().isNegative()) {
         result.addError("Amount must be positive");
       }
 
       return result;
     } catch (Exception e) {
-      throw new RuntimeException("Failed to validate payment", e);
+      throw new RuntimeException("Failed to validate donation", e);
     } finally {
       if (result != null) {
         pool.returnObject(result); // Return to pool
@@ -1601,7 +1601,7 @@ public class PaymentValidator {
 **Before pooling**:
 
 - Allocation rate: 5 million ValidationResult/sec
-- GC overhead: 20% CPU time
+- GC overhead: 2.5% CPU time
 - Throughput: 50,000 payments/sec
 
 **After pooling**:
@@ -1808,8 +1808,8 @@ jfr print --events jdk.GarbageCollection recording.jfr
 
 ```
 Top Allocation Sites:
-1. com.example.TransactionCache.cache(Transaction) - 1.2GB
-2. com.example.Money.<init>(BigDecimal, Currency) - 500MB
+1. com.sharia.finance.TransactionCache.cache(DonationTransaction) - 1.2GB
+2. com.sharia.finance.Money.<init>(BigDecimal, Currency) - 500MB
 3. java.util.HashMap.resize() - 200MB
 ```
 
@@ -1830,7 +1830,7 @@ jmap -histo <pid>
 # num     #instances         #bytes  class name
 # 1:        123456        9876543  [C (char arrays)
 # 2:         98765        6543210  java.lang.String
-# 3:         45678        3210987  com.example.Transaction
+# 3:         45678        3210987  com.sharia.finance.DonationTransaction
 ```
 
 **Heap dump**:
@@ -1946,7 +1946,7 @@ $JAVA_HOME/bin/jvisualvm
 
 ```javascript
 // Find all Money objects with amount > 1000
-select m from com.example.Money m where m.amount.doubleValue() > 1000
+select m from com.sharia.finance.Money m where m.amount.doubleValue() > 1000
 
 // Find all HashMap with size > 10000
 select h from java.util.HashMap h where h.size > 10000
@@ -2002,9 +2002,9 @@ tar xzf async-profiler-2.9-linux-x64.tar.gz
 
 ```
 Top allocation sites (widest bars):
-1. com.example.TransactionCache.put() → HashMap.resize()
-2. com.example.Money.multiply() → BigDecimal.<init>()
-3. com.example.PaymentProcessor.validate() → ValidationResult.<init>()
+1. com.sharia.finance.TransactionCache.put() → HashMap.resize()
+2. com.sharia.finance.Money.multiply() → BigDecimal.<init>()
+3. com.sharia.finance.PaymentProcessor.validate() → ValidationResult.<init>()
 ```
 
 **Optimization targets**: Focus on widest bars for maximum impact.
@@ -2073,16 +2073,16 @@ Reuse immutable objects instead of creating duplicates.
 
 ```java
 // Before: Duplicate strings
-public void processTransactions(List<Transaction> txs) {
-  for (Transaction tx : txs) {
+public void processTransactions(List<DonationTransaction> txs) {
+  for (DonationTransaction tx : txs) {
     String currency = tx.getCurrency(); // "USD" duplicated
     // ...
   }
 }
 
 // After: String interning (JVM automatically interns string literals)
-public void processTransactions(List<Transaction> txs) {
-  for (Transaction tx : txs) {
+public void processTransactions(List<DonationTransaction> txs) {
+  for (DonationTransaction tx : txs) {
     String currency = tx.getCurrency().intern(); // Reuses canonical "USD"
     // ...
   }
@@ -2129,18 +2129,18 @@ Use StringBuilder for concatenating multiple strings.
 
 ```java
 // Before: Creates new String each iteration
-public String formatTransactions(List<Transaction> txs) {
+public String formatTransactions(List<DonationTransaction> txs) {
   String result = "";
-  for (Transaction tx : txs) {
+  for (DonationTransaction tx : txs) {
     result += tx.getId() + ": " + tx.getAmount() + "\n"; // Inefficient
   }
   return result;
 }
 
 // After: StringBuilder (single allocation)
-public String formatTransactions(List<Transaction> txs) {
+public String formatTransactions(List<DonationTransaction> txs) {
   StringBuilder sb = new StringBuilder(txs.size() * 50); // Pre-size
-  for (Transaction tx : txs) {
+  for (DonationTransaction tx : txs) {
     sb.append(tx.getId()).append(": ").append(tx.getAmount()).append("\n");
   }
   return sb.toString();
@@ -2170,7 +2170,7 @@ Defer object creation until needed.
 public class TransactionValidator {
   private final List<ValidationRule> rules = loadRules(); // Always loaded
 
-  public ValidationResult validate(Transaction tx) {
+  public ValidationResult validate(DonationTransaction tx) {
     // Rules may not be needed for simple validations
     if (tx.getAmount().isNegative()) {
       return ValidationResult.error("Amount must be positive");
@@ -2185,7 +2185,7 @@ public class TransactionValidator {
 public class TransactionValidator {
   private volatile List<ValidationRule> rules; // Loaded on demand
 
-  public ValidationResult validate(Transaction tx) {
+  public ValidationResult validate(DonationTransaction tx) {
     // Fast path: Simple validation without rules
     if (tx.getAmount().isNegative()) {
       return ValidationResult.error("Amount must be positive");
@@ -2420,3 +2420,8 @@ Use this checklist when developing Java applications:
 3. **ZGC Documentation** - [The Z Garbage Collector](https://wiki.openjdk.org/display/zgc/Main) - OpenJDK ZGC wiki with implementation details (2024)
 4. **JEP 450** - [Compact Object Headers](https://openjdk.org/jeps/450) - Java 25 compact object headers specification (2024)
 5. **Project Valhalla** - [Value Objects and Primitive Classes](https://openjdk.org/projects/valhalla/) - OpenJDK Project Valhalla documentation (2024)
+
+---
+
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

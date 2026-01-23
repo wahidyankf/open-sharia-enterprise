@@ -1,5 +1,6 @@
 # Go 1.21 Release: Profile-Guided Optimization and Built-in Enhancements
 
+**Quick Reference**: [Overview](#overview) | [Profile-Guided Optimization (PGO)](#profile-guided-optimization-pgo) | [New Built-in Functions](#new-built-in-functions) | [Improved Type Inference](#improved-type-inference) | [Go Toolchain Management](#go-toolchain-management) | [Other Go 1.21 Improvements](#other-go-121-improvements) | [Migration Guide](#migration-guide) | [Conclusion](#conclusion) | [Related Documentation](#related-documentation)
 Understanding the key features introduced in Go 1.21, including production-ready profile-guided optimization (PGO), new built-in functions (min, max, clear), improved type inference, and Go toolchain management.
 
 ## Overview
@@ -923,11 +924,11 @@ import "log/slog"  // Structured logging package
 
 // slog provides structured logging
 logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-logger.Info("user login",
-    "user", "alice",
+logger.Info("beneficiary login",
+    "beneficiary", "alice",
     "ip", "192.168.1.1",
     "success", true)
-// Output: {"time":"...","level":"INFO","msg":"user login","user":"alice",...}
+// Output: {"time":"...","level":"INFO","msg":"beneficiary login","beneficiary":"alice",...}
 
 // cmp package for comparisons (moved from x/exp)
 import "cmp"
@@ -1064,3 +1065,8 @@ These features combine to make Go 1.21 a compelling upgrade for production syste
 - Release Documentation: Go 1.18 (Generics, Fuzzing), Go 1.22 (Enhanced Routing), Go 1.23, Go 1.24, Go 1.25
 - Core Concepts: Generics, Testing, Performance Optimization
 - Advanced Topics: Profiling and Optimization, Build and Deployment
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

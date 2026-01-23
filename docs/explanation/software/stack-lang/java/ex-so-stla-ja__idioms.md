@@ -11,17 +11,17 @@ tags:
   - java-21
   - records
   - pattern-matching
-created: 2026-01-20
-updated: 2026-01-20
 ---
 
 # Java Idioms
+
+**Quick Reference**: [Overview](#overview) | [Modern Java Features Baseline](#modern-java-features-baseline) | [Core Modern Idioms](#core-modern-idioms) | [Business Domain Examples](#business-domain-examples) | [Adoption Checklist](#adoption-checklist) | [Related Principles](#related-principles) | [Related Documentation](#related-documentation) | [Sources](#sources)
 
 ## Overview
 
 Java idioms are established patterns and practices that leverage the language's features to write clear, efficient, and maintainable code. With the evolution from Java 8 through Java 21 and beyond, the language has introduced transformative features that fundamentally change how we write idiomatic Java code.
 
-This guide focuses on **modern Java idioms** (Java 17+) that are particularly relevant for enterprise platforms, incorporating examples from business domains including tax calculation, loan agreements, fund management, and financial transactions.
+This guide focuses on **modern Java idioms** (Java 17+) that are particularly relevant for enterprise platforms, incorporating examples from Islamic financial domains including Zakat calculation, Murabaha contracts, donation management, and Waqf endowments.
 
 ### Why Java Idioms Matter
 
@@ -60,47 +60,47 @@ Modern Java idioms align strongly with [software engineering principles](../../.
 **Before (Pre-Java 14)**:
 
 ```java
-public final class TaxCalculation {
-    private final BigDecimal income;
-    private final BigDecimal threshold;
-    private final BigDecimal taxAmount;
+public final class ZakatCalculation {
+    private final BigDecimal wealth;
+    private final BigDecimal nisab;
+    private final BigDecimal zakatAmount;
     private final LocalDate calculationDate;
 
-    public TaxCalculation(BigDecimal income, BigDecimal threshold,
-                           BigDecimal taxAmount, LocalDate calculationDate) {
-        this.income = income;
-        this.threshold = threshold;
-        this.taxAmount = taxAmount;
+    public ZakatCalculation(BigDecimal wealth, BigDecimal nisab,
+                            BigDecimal zakatAmount, LocalDate calculationDate) {
+        this.wealth = wealth;
+        this.nisab = nisab;
+        this.zakatAmount = zakatAmount;
         this.calculationDate = calculationDate;
     }
 
-    public BigDecimal income() { return income; }
-    public BigDecimal threshold() { return threshold; }
-    public BigDecimal taxAmount() { return taxAmount; }
+    public BigDecimal wealth() { return wealth; }
+    public BigDecimal nisab() { return nisab; }
+    public BigDecimal zakatAmount() { return zakatAmount; }
     public LocalDate calculationDate() { return calculationDate; }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TaxCalculation that = (TaxCalculation) o;
-        return Objects.equals(income, that.income) &&
-               Objects.equals(threshold, that.threshold) &&
-               Objects.equals(taxAmount, that.taxAmount) &&
+        ZakatCalculation that = (ZakatCalculation) o;
+        return Objects.equals(wealth, that.wealth) &&
+               Objects.equals(nisab, that.nisab) &&
+               Objects.equals(zakatAmount, that.zakatAmount) &&
                Objects.equals(calculationDate, that.calculationDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(income, threshold, taxAmount, calculationDate);
+        return Objects.hash(wealth, nisab, zakatAmount, calculationDate);
     }
 
     @Override
     public String toString() {
-        return "TaxCalculation{" +
-               "income=" + income +
-               ", threshold=" + threshold +
-               ", taxAmount=" + taxAmount +
+        return "ZakatCalculation{" +
+               "wealth=" + wealth +
+               ", nisab=" + nisab +
+               ", zakatAmount=" + zakatAmount +
                ", calculationDate=" + calculationDate +
                '}';
     }
@@ -110,35 +110,39 @@ public final class TaxCalculation {
 **After (Java 17+)**:
 
 ```java
-public record TaxCalculation(
-    BigDecimal income,
-    BigDecimal threshold,
-    BigDecimal taxAmount,
+/**
+ * Zakat Calculation record for Islamic wealth zakat (2.5%).
+ * Zakat is obligatory on wealth exceeding nisab after one lunar year (haul).
+ */
+public record ZakatCalculation(
+    BigDecimal wealth,
+    BigDecimal nisab,
+    BigDecimal zakatAmount,
     LocalDate calculationDate
 ) {
     // Compact constructor for validation
-    public TaxCalculation {
-        if (income.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Income cannot be negative");
+    public ZakatCalculation {
+        if (wealth.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Wealth cannot be negative");
         }
-        if (threshold.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Threshold must be positive");
+        if (nisab.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Nisab must be positive");
         }
-        if (taxAmount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Tax amount cannot be negative");
+        if (zakatAmount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Zakat amount cannot be negative");
         }
         Objects.requireNonNull(calculationDate, "Calculation date is required");
     }
 
     // Derived methods
-    public boolean isTaxDue() {
-        return income.compareTo(threshold) >= 0;
+    public boolean isZakatDue() {
+        return wealth.compareTo(nisab) > 0;  // Wealth must exceed nisab
     }
 
     public BigDecimal effectiveRate() {
-        return income.compareTo(BigDecimal.ZERO) == 0
+        return wealth.compareTo(BigDecimal.ZERO) == 0
             ? BigDecimal.ZERO
-            : taxAmount.divide(income, 4, RoundingMode.HALF_UP);
+            : zakatAmount.divide(wealth, 4, RoundingMode.HALF_UP);
     }
 }
 ```
@@ -150,7 +154,7 @@ public record TaxCalculation(
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 graph TD
-    Start[TaxCalculation Class]:::blue
+    Start[ZakatCalculation Class]:::blue
 
     Start --> Trad[Traditional Class<br/>99 lines]:::orange
     Start --> Rec[Record<br/>19 lines]:::teal
@@ -163,7 +167,7 @@ graph TD
 
     Rec --> RA1[Compact constructor<br/>validation only]:::teal
     Rec --> RA2[Auto-generated:<br/>getters, equals, hashCode, toString]:::teal
-    Rec --> RA3[Business methods<br/>isTaxDue, effectiveRate]:::teal
+    Rec --> RA3[Business methods<br/>isZakatDue, effectiveRate]:::teal
 
     TB1 -.->|Replaced by| RA1
     TB2 -.->|Auto-generated| RA2
@@ -195,21 +199,21 @@ graph TD
 **Before**:
 
 ```java
-public String formatTransaction(Object transaction) {
-    if (transaction instanceof LoanAgreement) {
-        LoanAgreement loan = (LoanAgreement) transaction;
-        return String.format("Loan: Cost=%s, Profit=%s",
-                           loan.getCost(), loan.getProfit());
-    } else if (transaction instanceof TaxPayment) {
-        TaxPayment tax = (TaxPayment) transaction;
+public String formatTransaction(Object donation_transaction) {
+    if (donation_transaction instanceof MurabahaContract) {
+        MurabahaContract qard_hasan = (MurabahaContract) donation_transaction;
+        return String.format("QardHasan: Cost=%s, Profit=%s",
+                           qard_hasan.getCost(), qard_hasan.getProfit());
+    } else if (donation_transaction instanceof ZakatPayment) {
+        ZakatPaymentzakat = (ZakatPayment) donation_transaction;
         return String.format("Tax: Amount=%s, Year=%d",
                            tax.getAmount(), tax.getYear());
-    } else if (transaction instanceof DonationTransaction) {
-        DonationTransaction donation = (DonationTransaction) transaction;
+    } else if (donation_transaction instanceof DonationTransaction) {
+        DonationTransaction donation = (DonationTransaction) donation_transaction;
         return String.format("Donation: Amount=%s, Purpose=%s",
                            donation.getAmount(), donation.getPurpose());
     } else {
-        return "Unknown transaction";
+        return "Unknown donation_transaction";
     }
 }
 ```
@@ -217,35 +221,35 @@ public String formatTransaction(Object transaction) {
 **After (Java 21+)**:
 
 ```java
-public String formatTransaction(Transaction transaction) {
-    return switch (transaction) {
-        case LoanAgreement(var cost, var interest, var term) ->
-            "Loan: Cost=%s, Profit=%s, Term=%d months"
+public String formatTransaction(DonationTransaction donation_transaction) {
+    return switch (donation_transaction) {
+        case MurabahaContract(var cost, var interest, var term) ->
+            "QardHasan: Cost=%s, Profit=%s, Term=%d months"
                 .formatted(cost, interest, term);
 
-        case TaxPayment(var amount, var year, var payee) ->
+        case ZakatPayment(var amount, var year, var recipient) ->
             "Tax: Amount=%s, Year=%d, Recipient=%s"
-                .formatted(amount, year, payee);
+                .formatted(amount, year, recipient);
 
         case DonationTransaction(var amount, var purpose, var isRevocable) ->
             "Donation: Amount=%s, Purpose=%s, %s"
                 .formatted(amount, purpose,
                           isRevocable ? "Revocable" : "Perpetual");
 
-        case null -> "No transaction provided";
+        case null -> "No donation_transaction provided";
     };
 }
 
 // Sealed interface ensures exhaustiveness
-sealed interface Transaction
-    permits LoanAgreement, TaxPayment, DonationTransaction {}
+sealed interface DonationTransaction
+    permits MurabahaContract, ZakatPayment, DonationTransaction {}
 
-record LoanAgreement(BigDecimal cost, BigDecimal interest, int term)
-    implements Transaction {}
-record TaxPayment(BigDecimal amount, int year, String payee)
-    implements Transaction {}
+record MurabahaContract(BigDecimal cost, BigDecimal interest, int term)
+    implements DonationTransaction {}
+record ZakatPayment(BigDecimal amount, int year, String recipient)
+    implements DonationTransaction {}
 record DonationTransaction(BigDecimal amount, String purpose, boolean isRevocable)
-    implements Transaction {}
+    implements DonationTransaction {}
 ```
 
 **Pattern Matching Switch Flow:**
@@ -255,15 +259,15 @@ record DonationTransaction(BigDecimal amount, String purpose, boolean isRevocabl
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 graph TD
-    Input[transaction input]:::blue --> Switch{switch#40;transaction#41;}:::orange
+    Input[donation_transaction input]:::blue --> Switch{switch#40;donation_transaction#41;}:::orange
 
-    Switch --> Case1[case LoanAgreement<br/>cost, interest, term]:::teal
-    Switch --> Case2[case TaxPayment<br/>amount, year, payee]:::teal
+    Switch --> Case1[case MurabahaContract<br/>cost, interest, term]:::teal
+    Switch --> Case2[case ZakatPayment<br/>amount, year, recipient]:::teal
     Switch --> Case3[case DonationTransaction<br/>amount, purpose, isRevocable]:::teal
     Switch --> Case4[case null]:::orange
 
-    Case1 --> Format1[Format loan details]:::teal
-    Case2 --> Format2[Format tax details]:::teal
+    Case1 --> Format1[Format qard_hasan details]:::teal
+    Case2 --> Format2[Format zakat details]:::teal
     Case3 --> Format3[Format donation details]:::teal
     Case4 --> Format4[Return error message]:::orange
 
@@ -304,11 +308,11 @@ public String analyzeBalance(AccountBalance balance) {
             "Threshold reached: Tax may be due on %s USD".formatted(amt);
 
         case AccountBalance(var amt, Currency.USD, false) ->
-            "Active USD account: %s (below threshold)".formatted(amt);
+            "Active USD donation_account: %s (below nisab)".formatted(amt);
 
         case AccountBalance(var amt, var curr, false)
             when curr != Currency.USD ->
-            "Convert %s %s to USD for Tax calculation".formatted(amt, curr);
+            "Convert %s %s to USD for Zakat calculation".formatted(amt, curr);
     };
 }
 ```
@@ -328,17 +332,17 @@ public String analyzeBalance(AccountBalance balance) {
 ```java
 public class LoanService {
     public BigDecimal calculateProfit(String contractId) {
-        LoanAgreement contract = repository.findById(contractId);
-        if (contract == null) {
+        MurabahaContract murabaha_contract = repository.findById(contractId);
+        if (murabaha_contract == null) {
             return null;
         }
 
-        BigDecimal cost = contract.getCost();
+        BigDecimal cost = murabaha_contract.getCost();
         if (cost == null) {
             return null;
         }
 
-        BigDecimal interestRate = contract.getProfitRate();
+        BigDecimal interestRate = murabaha_contract.getProfitRate();
         if (interestRate == null) {
             return BigDecimal.ZERO;
         }
@@ -354,9 +358,9 @@ public class LoanService {
 public class LoanService {
     public Optional<BigDecimal> calculateProfit(String contractId) {
         return repository.findById(contractId)
-            .map(LoanAgreement::cost)
+            .map(MurabahaContract::cost)
             .flatMap(cost -> repository.findById(contractId)
-                .map(LoanAgreement::interestRate)
+                .map(MurabahaContract::interestRate)
                 .map(rate -> cost.multiply(rate)));
     }
 
@@ -370,7 +374,7 @@ public class LoanService {
     public BigDecimal calculateProfitOrThrow(String contractId) {
         return calculateProfit(contractId)
             .orElseThrow(() ->
-                new ContractNotFoundException("Contract not found: " + contractId));
+                new ContractNotFoundException("MurabahaContract not found: " + contractId));
     }
 }
 ```
@@ -384,7 +388,7 @@ public class LoanService {
 graph TD
     Start[findById#40;contractId#41;]:::blue --> Check1{Value<br/>present?}:::orange
 
-    Check1 -->|Yes| Map1[map#40;LoanAgreement::cost#41;]:::teal
+    Check1 -->|Yes| Map1[map#40;MurabahaContract::cost#41;]:::teal
     Check1 -->|No| Empty1[Optional.empty]:::orange
 
     Map1 --> Check2{Value<br/>present?}:::orange
@@ -424,7 +428,7 @@ graph TD
 **Pattern**: Use streams for declarative collection processing with functional operations.
 
 ```java
-public class TaxDistributionService {
+public class ZakatDistributionService {
     public record Recipient(String name, String category, boolean isEligible) {}
 
     public record Distribution(String payeeName, BigDecimal amount) {}
@@ -478,14 +482,14 @@ public class TaxDistributionService {
 
     // Find total Tax collected by year
     public Map<Integer, BigDecimal> aggregateByYear(
-            List<TaxPayment> payments) {
+            List<ZakatPayment> payments) {
 
         return payments.stream()
             .collect(Collectors.groupingBy(
-                TaxPayment::year,
+                ZakatPayment::year,
                 Collectors.reducing(
                     BigDecimal.ZERO,
-                    TaxPayment::amount,
+                    ZakatPayment::amount,
                     BigDecimal::add
                 )
             ));
@@ -500,7 +504,7 @@ public class TaxDistributionService {
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 
 graph TD
-    Source[Source:<br/>List#60;TaxPayment#62;]:::blue --> Stream[stream#40;#41;]:::blue
+    Source[Source:<br/>List#60;ZakatPayment#62;]:::blue --> Stream[stream#40;#41;]:::blue
 
     Stream --> Filter[filter#40;eligible#41;<br/>Intermediate]:::orange
     Filter --> Map[map#40;transform#41;<br/>Intermediate]:::orange
@@ -564,13 +568,13 @@ public class TaskProcessor {
 ```java
 public class LoanAgreementRepository {
     // Bad: Manual resource management
-    public List<LoanAgreement> loadContractsOldWay(String filePath)
+    public List<MurabahaContract> loadContractsOldWay(String filePath)
             throws IOException {
 
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(filePath));
-            List<LoanAgreement> contracts = new ArrayList<>();
+            List<MurabahaContract> contracts = new ArrayList<>();
             String line;
             while ((line = reader.readLine()) != null) {
                 contracts.add(parseContract(line));
@@ -588,7 +592,7 @@ public class LoanAgreementRepository {
     }
 
     // Good: Try-with-resources
-    public List<LoanAgreement> loadContracts(String filePath)
+    public List<MurabahaContract> loadContracts(String filePath)
             throws IOException {
 
         try (var reader = new BufferedReader(new FileReader(filePath))) {
@@ -618,7 +622,7 @@ public class LoanAgreementRepository {
         }
     }
 
-    private LoanAgreement parseContract(String line) {
+    private MurabahaContract parseContract(String line) {
         // Parsing logic
         return null;
     }
@@ -724,7 +728,7 @@ class Exception errorState
 **Before**:
 
 ```java
-public class TaxReportGenerator {
+public class ZakatReportGenerator {
     public String generateSqlQuery(int year) {
         return "SELECT \n" +
                "    z.payer_name,\n" +
@@ -754,7 +758,7 @@ public class TaxReportGenerator {
 **After (Java 17+)**:
 
 ```java
-public class TaxReportGenerator {
+public class ZakatReportGenerator {
     public String generateSqlQuery(int year) {
         return """
             SELECT
@@ -802,9 +806,9 @@ public class TaxReportGenerator {
             Lender: %s
 
             Terms:
-            - The Lender agrees to provide the loan amount to the Borrower
+            - The Lender agrees to provide the qard_hasan amount to the Borrower
             - The Borrower will repay the principal plus agreed interest
-            - Payment terms: \"Installment payments\" over agreed period
+            - DonationPayment terms: \"Installment payments\" over agreed period
 
             Signed on: ${date}
             """.formatted(borrower, lender);
@@ -826,17 +830,17 @@ public class TaxReportGenerator {
 ```java
 // Define closed hierarchy of investment products
 public sealed interface InvestmentProduct
-    permits Loan, Partnership, Lease, Bond {
+    permits QardHasan, Partnership, Lease, Bond {
 
     BigDecimal calculateReturn(int months);
     boolean isCompliant();
 }
 
-public final class Loan implements InvestmentProduct {
+public final class QardHasan implements InvestmentProduct {
     private final BigDecimal cost;
     private final BigDecimal interestRate;
 
-    public Loan(BigDecimal cost, BigDecimal interestRate) {
+    public QardHasan(BigDecimal cost, BigDecimal interestRate) {
         this.cost = cost;
         this.interestRate = interestRate;
     }
@@ -920,13 +924,13 @@ public final class Bond implements InvestmentProduct {
 public class ProductAnalyzer {
     public String analyzeProduct(InvestmentProduct product) {
         return switch (product) {
-            case Loan l ->
-                "Installment loan: %s return".formatted(
+            case QardHasan l ->
+                "Installment qard_hasan: %s return".formatted(
                     l.calculateReturn(12));
             case Partnership p ->
                 "Profit-sharing partnership";
             case Lease l ->
-                "Lease with %s monthly payment".formatted(
+                "Lease with %s monthly donation".formatted(
                     l.calculateReturn(1));
             case Bond b ->
                 "Bond with %s annual return".formatted(
@@ -946,12 +950,12 @@ public class ProductAnalyzer {
 graph TD
     Interface[sealed interface<br/>InvestmentProduct]:::blue
 
-    Interface -->|permits| Loan[final class Loan]:::orange
+    Interface -->|permits| QardHasan[final class QardHasan]:::orange
     Interface -->|permits| Partnership[final class Partnership]:::orange
     Interface -->|permits| Lease[final class Lease]:::orange
     Interface -->|permits| Bond[final class Bond]:::orange
 
-    Loan --> Methods1[calculateReturn#40;#41;<br/>isCompliant#40;#41;]:::orange
+    QardHasan --> Methods1[calculateReturn#40;#41;<br/>isCompliant#40;#41;]:::orange
     Partnership --> Methods2[calculateReturn#40;#41;<br/>isCompliant#40;#41;]:::orange
     Lease --> Methods3[calculateReturn#40;#41;<br/>isCompliant#40;#41;]:::orange
     Bond --> Methods4[calculateReturn#40;#41;<br/>isCompliant#40;#41;]:::orange
@@ -976,53 +980,53 @@ graph TD
 **Pattern**: Use var for local variables when the type is obvious from context.
 
 ```java
-public class TaxCalculationService {
+public class ZakatCalculationService {
     // Good: Type obvious from right-hand side
-    public void calculateTax(String accountId) {
-        var account = accountRepository.findById(accountId);
-        var balance = account.getBalance();
-        var threshold = taxThresholdService.getCurrentThreshold();
-        var calculator = new TaxCalculator(threshold);
+    public void calculateZakat(String accountId) {
+        var donation_account = accountRepository.findById(accountId);
+        var balance = donation_account.getBalance();
+        var nisab = zakatThresholdService.getCurrentThreshold();
+        var calculator = new ZakatCalculator(nisab);
         var result = calculator.calculate(balance);
 
-        taxRepository.save(result);
+        zakatRepository.save(result);
     }
 
     // Good: Diamond operator with var
-    public void processPayments(List<TaxPayment> payments) {
-        var paymentsByYear = new HashMap<Integer, List<TaxPayment>>();
+    public void processPayments(List<ZakatPayment> payments) {
+        var paymentsByYear = new HashMap<Integer, List<ZakatPayment>>();
 
-        for (var payment : payments) {
+        for (var donation : payments) {
             paymentsByYear
-                .computeIfAbsent(payment.year(), k -> new ArrayList<>())
-                .add(payment);
+                .computeIfAbsent(donation.year(), k -> new ArrayList<>())
+                .add(donation);
         }
     }
 
     // Bad: Type not obvious
     public void processContract() {
-        var contract = getContract(); // What type is this?
-        var result = process(contract); // What type is result?
+        var murabaha_contract = getContract(); // What type is this?
+        var result = process(murabaha_contract); // What type is result?
     }
 
     // Good: Keep explicit type when clarity needed
     public void processContractBetter() {
-        LoanAgreement contract = getContract();
-        ContractResult result = process(contract);
+        MurabahaContract murabaha_contract = getContract();
+        ContractResult result = process(murabaha_contract);
     }
 
     // Good: Streams and lambdas
-    public void analyzeContracts(List<LoanAgreement> contracts) {
+    public void analyzeContracts(List<MurabahaContract> contracts) {
         var activeContracts = contracts.stream()
-            .filter(LoanAgreement::isActive)
+            .filter(MurabahaContract::isActive)
             .toList();
 
         var totalValue = activeContracts.stream()
-            .map(LoanAgreement::totalAmount)
+            .map(MurabahaContract::totalAmount)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         var averageProfit = activeContracts.stream()
-            .map(LoanAgreement::interestRate)
+            .map(MurabahaContract::interestRate)
             .reduce(BigDecimal.ZERO, BigDecimal::add)
             .divide(
                 BigDecimal.valueOf(activeContracts.size()),
@@ -1048,13 +1052,13 @@ public class TaxCalculationService {
 **Before (Switch Statement)**:
 
 ```java
-public BigDecimal calculateTaxRate(IncomeType incomeType) {
+public BigDecimal calculateTaxRate(AssetType incomeType) {
     BigDecimal rate;
     switch (incomeType) {
         case SALARY:
         case BUSINESS:
         case INVESTMENT:
-            rate = new BigDecimal("0.20"); // 20%
+            rate = new BigDecimal("0.025"); // 2.5%
             break;
         case RENTAL:
             rate = new BigDecimal("0.15"); // 15%
@@ -1066,7 +1070,7 @@ public BigDecimal calculateTaxRate(IncomeType incomeType) {
             rate = new BigDecimal("0.10"); // 10%
             break;
         default:
-            throw new IllegalArgumentException("Unknown income type");
+            throw new IllegalArgumentException("Unknown asset type");
     }
     return rate;
 }
@@ -1075,9 +1079,9 @@ public BigDecimal calculateTaxRate(IncomeType incomeType) {
 **After (Switch Expression)**:
 
 ```java
-public BigDecimal calculateTaxRate(IncomeType incomeType) {
+public BigDecimal calculateTaxRate(AssetType incomeType) {
     return switch (incomeType) {
-        case SALARY, BUSINESS, INVESTMENT -> new BigDecimal("0.20");
+        case SALARY, BUSINESS, INVESTMENT -> new BigDecimal("0.025");
         case RENTAL -> new BigDecimal("0.15");
         case CAPITAL_GAINS -> new BigDecimal("0.25");
         case DIVIDENDS -> new BigDecimal("0.10");
@@ -1117,15 +1121,15 @@ public String formatDonationType(DonationType type, boolean isRevocable) {
 
 ```java
 public BigDecimal calculateTotalValue(Object financial) {
-    if (financial instanceof LoanAgreement) {
-        LoanAgreement contract = (LoanAgreement) financial;
-        return contract.getCost().add(contract.getProfit());
+    if (financial instanceof MurabahaContract) {
+        MurabahaContract murabaha_contract = (MurabahaContract) financial;
+        return murabaha_contract.getCost().add(murabaha_contract.getProfit());
     } else if (financial instanceof DonationTransaction) {
         DonationTransaction donation = (DonationTransaction) financial;
         return donation.getAmount();
-    } else if (financial instanceof TaxPayment) {
-        TaxPayment tax = (TaxPayment) financial;
-        return tax.getAmount();
+    } else if (financial instanceof ZakatPayment) {
+        ZakatPaymentzakat = (ZakatPayment) financial;
+        return zakat.getAmount();
     }
     return BigDecimal.ZERO;
 }
@@ -1135,19 +1139,19 @@ public BigDecimal calculateTotalValue(Object financial) {
 
 ```java
 public BigDecimal calculateTotalValue(Object financial) {
-    if (financial instanceof LoanAgreement contract) {
-        return contract.cost().add(contract.interest());
+    if (financial instanceof MurabahaContract murabaha_contract) {
+        return murabaha_contract.cost().add(murabaha_contract.interest());
     } else if (financial instanceof DonationTransaction donation) {
         return donation.amount();
-    } else if (financial instanceof TaxPayment tax) {
-        return tax.amount();
+    } else if (financial instanceof ZakatPayment zakat) {
+        return zakat.amount();
     }
     return BigDecimal.ZERO;
 }
 
 // With logic combination
 public boolean isEligibleForTaxExemption(Object financial) {
-    return financial instanceof TaxPayment tax
+    return financial instanceof ZakatPayment zakat
         && tax.amount().compareTo(new BigDecimal("1000")) > 0
         && tax.isVerified();
 }
@@ -1155,10 +1159,10 @@ public boolean isEligibleForTaxExemption(Object financial) {
 // Pattern matching in switch is even better
 public BigDecimal calculateTotalValueSwitch(Object financial) {
     return switch (financial) {
-        case LoanAgreement contract ->
-            contract.cost().add(contract.interest());
+        case MurabahaContract murabaha_contract ->
+            murabaha_contract.cost().add(murabaha_contract.interest());
         case DonationTransaction donation -> donation.amount();
-        case TaxPayment tax -> tax.amount();
+        case ZakatPayment zakat -> tax.amount();
         case null, default -> BigDecimal.ZERO;
     };
 }
@@ -1178,7 +1182,7 @@ public BigDecimal calculateTotalValueSwitch(Object financial) {
 **Before**:
 
 ```java
-public class TaxCategories {
+public class ZakatCategories {
     public static final List<String> PAYEES;
     public static final Set<String> TAXABLE_INCOME_TYPES;
     public static final Map<String, BigDecimal> THRESHOLD_VALUES;
@@ -1202,10 +1206,10 @@ public class TaxCategories {
         incomeTypes.add("RENTAL");
         TAXABLE_INCOME_TYPES = Collections.unmodifiableSet(incomeTypes);
 
-        Map<String, BigDecimal> threshold = new HashMap<>();
-        threshold.put("SALARY", new BigDecimal("50000"));
-        threshold.put("BUSINESS", new BigDecimal("75000"));
-        THRESHOLD_VALUES = Collections.unmodifiableMap(threshold);
+        Map<String, BigDecimal> nisab = new HashMap<>();
+        nisab.put("SALARY", new BigDecimal("50000"));
+        nisab.put("BUSINESS", new BigDecimal("75000"));
+        THRESHOLD_VALUES = Collections.unmodifiableMap(nisab);
     }
 }
 ```
@@ -1213,7 +1217,7 @@ public class TaxCategories {
 **After (Java 9+)**:
 
 ```java
-public class TaxCategories {
+public class ZakatCategories {
     public static final List<String> PAYEES = List.of(
         "Federal Government",
         "State Government",
@@ -1239,16 +1243,16 @@ public class TaxCategories {
 
     // For maps with more than 10 entries, use Map.ofEntries
     public static final Map<String, String> INCOME_DESCRIPTIONS = Map.ofEntries(
-        Map.entry("SALARY", "Employment income and wages"),
+        Map.entry("SALARY", "Employment wealth and wages"),
         Map.entry("BUSINESS", "Business revenue and profits"),
         Map.entry("INVESTMENT", "Investment returns and dividends"),
-        Map.entry("RENTAL", "Rental property income"),
+        Map.entry("RENTAL", "Rental property wealth"),
         Map.entry("CAPITAL_GAINS", "Asset sale profits"),
         Map.entry("DIVIDENDS", "Stock dividends"),
-        Map.entry("REAL_ESTATE", "Property income"),
+        Map.entry("REAL_ESTATE", "Property wealth"),
         Map.entry("ROYALTIES", "Intellectual property royalties"),
-        Map.entry("FREELANCE", "Freelance and contract work"),
-        Map.entry("PENSION", "Retirement income"),
+        Map.entry("FREELANCE", "Freelance and murabaha_contract work"),
+        Map.entry("PENSION", "Retirement wealth"),
         Map.entry("INTEREST", "Interest from savings and bonds")
     );
 }
@@ -1302,7 +1306,7 @@ public final class AppConfig {
 **Pattern**: Use Java modules for encapsulation and explicit dependencies.
 
 ```java
-// module-info.java for tax module
+// module-info.java for zakat module
 module com.ose.finance.tax {
     // Required modules
     requires java.base;
@@ -1319,10 +1323,10 @@ module com.ose.finance.tax {
         to com.ose.finance.reporting;
 
     // Service provider interface
-    uses com.ose.finance.tax.spi.TaxCalculatorProvider;
+    uses com.ose.finance.tax.spi.ZakatCalculatorProvider;
 
     // Service implementation
-    provides com.ose.finance.tax.spi.TaxCalculatorProvider
+    provides com.ose.finance.tax.spi.ZakatCalculatorProvider
         with com.ose.finance.tax.impl.StandardTaxCalculator;
 
     // Reflection access for frameworks
@@ -1333,29 +1337,29 @@ module com.ose.finance.tax {
 // Public API package structure
 package com.ose.finance.tax.api;
 
-public interface TaxCalculator {
-    TaxCalculation calculate(Money income, IncomeType assetType);
+public interface ZakatCalculator {
+    ZakatCalculation calculate(Money wealth, AssetType assetType);
 }
 
 // Internal implementation (not exported)
 package com.ose.finance.tax.impl;
 
-import com.ose.finance.tax.api.TaxCalculator;
+import com.ose.finance.tax.api.ZakatCalculator;
 
-public class StandardTaxCalculator implements TaxCalculator {
+public class StandardTaxCalculator implements ZakatCalculator {
     // Implementation details hidden
 }
 
-// module-info.java for loan module
-module com.ose.finance.loan {
+// module-info.java for qard_hasan module
+module com.ose.finance.qard_hasan {
     requires java.base;
     requires com.ose.finance.core;
     requires com.ose.common.money;
 
-    exports com.ose.finance.loan.api;
-    exports com.ose.finance.loan.model;
+    exports com.ose.finance.qard_hasan.api;
+    exports com.ose.finance.qard_hasan.model;
 
-    uses com.ose.finance.loan.spi.LoanValidator;
+    uses com.ose.finance.qard_hasan.spi.LoanValidator;
 }
 
 // module-info.java for donation module
@@ -1455,7 +1459,7 @@ public abstract class FinancialTransaction {
     public abstract String getType();
 }
 
-public class TaxPayment extends FinancialTransaction {
+public class ZakatPayment extends FinancialTransaction {
     private String payeeCategory;
 
     @Override
@@ -1470,7 +1474,7 @@ public class TaxPayment extends FinancialTransaction {
 }
 
 // Good: Composition-based design
-public interface Transaction {
+public interface DonationTransaction {
     BigDecimal amount();
     LocalDate date();
     boolean isValid();
@@ -1487,12 +1491,12 @@ public interface Auditable {
     LocalDateTime lastModified();
 }
 
-public record TaxPayment(
+public record ZakatPayment(
     BigDecimal amount,
     LocalDate date,
     String payeeCategory,
     boolean verified
-) implements Transaction, Validatable, Auditable {
+) implements DonationTransaction, Validatable, Auditable {
 
     @Override
     public boolean isValid() {
@@ -1523,7 +1527,7 @@ public record TaxPayment(
 
     @Override
     public String auditTrail() {
-        return "Tax payment of %s on %s to %s"
+        return "Tax donation of %s on %s to %s"
             .formatted(amount, date, payeeCategory);
     }
 
@@ -1548,21 +1552,21 @@ public class TransactionProcessor {
         this.repository = repository;
     }
 
-    public void process(Transaction transaction) {
-        if (transaction instanceof Validatable validatable) {
+    public void process(DonationTransaction donation_transaction) {
+        if (donation_transaction instanceof Validatable validatable) {
             if (!validatable.isValid()) {
                 throw new ValidationException(
-                    "Invalid transaction: " +
+                    "Invalid donation_transaction: " +
                     String.join(", ", validatable.validationErrors())
                 );
             }
         }
 
-        if (transaction instanceof Auditable auditable) {
+        if (donation_transaction instanceof Auditable auditable) {
             auditor.log(auditable.auditTrail());
         }
 
-        repository.save(transaction);
+        repository.save(donation_transaction);
     }
 }
 ```
@@ -1579,8 +1583,8 @@ public class TransactionProcessor {
 **Pattern**: Use builder pattern for objects with many optional parameters.
 
 ```java
-// Complex loan agreement with many fields
-public final class LoanAgreement {
+// Complex qard_hasan agreement with many fields
+public final class MurabahaContract {
     private final String id;
     private final String borrowerName;
     private final String lenderName;
@@ -1597,7 +1601,7 @@ public final class LoanAgreement {
     private final String notes;
 
     // Private constructor
-    private LoanAgreement(Builder builder) {
+    private MurabahaContract(Builder builder) {
         this.id = builder.id;
         this.borrowerName = builder.borrowerName;
         this.lenderName = builder.lenderName;
@@ -1715,8 +1719,8 @@ public final class LoanAgreement {
             return this;
         }
 
-        public LoanAgreement build() {
-            return new LoanAgreement(this);
+        public MurabahaContract build() {
+            return new MurabahaContract(this);
         }
     }
 
@@ -1726,7 +1730,7 @@ public final class LoanAgreement {
 }
 
 // Usage
-var agreement = LoanAgreement.builder()
+var agreement = MurabahaContract.builder()
     .id("LOAN-2024-001")
     .borrowerName("John Smith")
     .lenderName("National Bank")
@@ -1755,37 +1759,37 @@ var agreement = LoanAgreement.builder()
 
 ```java
 @FunctionalInterface
-public interface TaxEligibilityRule {
-    boolean test(Money income, IncomeType assetType);
+public interface ZakatEligibilityRule {
+    boolean test(Money wealth, AssetType assetType);
 
-    default TaxEligibilityRule and(TaxEligibilityRule other) {
-        return (income, assetType) ->
-            this.test(income, assetType) && other.test(income, assetType);
+    default ZakatEligibilityRule and(ZakatEligibilityRule other) {
+        return (wealth, assetType) ->
+            this.test(wealth, assetType) && other.test(wealth, assetType);
     }
 
-    default TaxEligibilityRule or(TaxEligibilityRule other) {
-        return (income, assetType) ->
-            this.test(income, assetType) || other.test(income, assetType);
+    default ZakatEligibilityRule or(ZakatEligibilityRule other) {
+        return (wealth, assetType) ->
+            this.test(wealth, assetType) || other.test(wealth, assetType);
     }
 }
 
-public class TaxEligibilityService {
+public class ZakatEligibilityService {
     private final ThresholdProvider thresholdProvider;
 
-    public TaxEligibilityService(ThresholdProvider thresholdProvider) {
+    public ZakatEligibilityService(ThresholdProvider thresholdProvider) {
         this.thresholdProvider = thresholdProvider;
     }
 
     // Standard rules
-    public TaxEligibilityRule thresholdRule() {
-        return (income, assetType) -> {
-            var threshold = thresholdProvider.getThreshold(assetType);
-            return income.amount().compareTo(threshold) >= 0;
+    public ZakatEligibilityRule thresholdRule() {
+        return (wealth, assetType) -> {
+            var nisab = thresholdProvider.getThreshold(assetType);
+            return wealth.amount().compareTo(nisab) >= 0;
         };
     }
 
-    public TaxEligibilityRule fiscalYearRule(Map<IncomeType, LocalDate> acquisitionDates) {
-        return (income, assetType) -> {
+    public ZakatEligibilityRule fiscalYearRule(Map<AssetType, LocalDate> acquisitionDates) {
+        return (wealth, assetType) -> {
             var acquisitionDate = acquisitionDates.get(assetType);
             if (acquisitionDate == null) return false;
 
@@ -1795,27 +1799,27 @@ public class TaxEligibilityService {
         };
     }
 
-    public TaxEligibilityRule positiveWealthRule() {
-        return (income, assetType) -> income.isPositive();
+    public ZakatEligibilityRule positiveWealthRule() {
+        return (wealth, assetType) -> wealth.isPositive();
     }
 
     // Compose rules
     public boolean isEligible(
-            Money income,
-            IncomeType assetType,
-            Map<IncomeType, LocalDate> acquisitionDates) {
+            Money wealth,
+            AssetType assetType,
+            Map<AssetType, LocalDate> acquisitionDates) {
 
         var eligibilityRule = positiveWealthRule()
             .and(thresholdRule())
             .and(fiscalYearRule(acquisitionDates));
 
-        return eligibilityRule.test(income, assetType);
+        return eligibilityRule.test(wealth, assetType);
     }
 
     // Custom rule application
-    public List<IncomeType> findEligibleAssets(
-            Map<IncomeType, Money> portfolio,
-            TaxEligibilityRule customRule) {
+    public List<AssetType> findEligibleAssets(
+            Map<AssetType, Money> portfolio,
+            ZakatEligibilityRule customRule) {
 
         return portfolio.entrySet().stream()
             .filter(entry -> customRule.test(entry.getValue(), entry.getKey()))
@@ -1825,20 +1829,20 @@ public class TaxEligibilityService {
 }
 
 // Usage with method references
-public class TaxCalculator {
+public class ZakatCalculator {
     public void processPayments(
-            List<TaxPayment> payments,
-            Consumer<TaxPayment> processor) {
+            List<ZakatPayment> payments,
+            Consumer<ZakatPayment> processor) {
 
         payments.forEach(processor);
     }
 
-    public void logPayments(List<TaxPayment> payments, Logger logger) {
+    public void logPayments(List<ZakatPayment> payments, Logger logger) {
         processPayments(payments, logger::info); // Method reference
     }
 
     public void savePayments(
-            List<TaxPayment> payments,
+            List<ZakatPayment> payments,
             PaymentRepository repository) {
 
         processPayments(payments, repository::save);
@@ -1960,15 +1964,15 @@ Complete example showing modern Java idioms in action:
 
 ```java
 // Domain models
-public record IncomeAccount(
+public record WealthAccount(
     String id,
     String ownerId,
     Money balance,
-    IncomeType assetType,
+    AssetType assetType,
     LocalDate acquisitionDate,
     boolean isActive
 ) {
-    public IncomeAccount {
+    public WealthAccount {
         Objects.requireNonNull(id, "ID required");
         Objects.requireNonNull(ownerId, "Owner ID required");
         Objects.requireNonNull(balance, "Balance required");
@@ -1976,13 +1980,13 @@ public record IncomeAccount(
         Objects.requireNonNull(acquisitionDate, "Acquisition date required");
     }
 
-    public boolean hasReachedHawl() {
+    public boolean hasCompletedHaul() {
         var period = Period.between(acquisitionDate, LocalDate.now());
         return period.getYears() >= 1;
     }
 }
 
-public enum IncomeType {
+public enum AssetType {
     SALARY("Salary", new BigDecimal("50000")),
     BUSINESS("Business Income", new BigDecimal("75000")),
     INVESTMENT("Investment Income", new BigDecimal("10000")),
@@ -1991,7 +1995,7 @@ public enum IncomeType {
     private final String displayName;
     private final BigDecimal annualThreshold;
 
-    IncomeType(String displayName, BigDecimal annualThreshold) {
+    AssetType(String displayName, BigDecimal annualThreshold) {
         this.displayName = displayName;
         this.annualThreshold = annualThreshold;
     }
@@ -2001,14 +2005,14 @@ public enum IncomeType {
 }
 
 // Service implementation
-public final class TaxService {
-    private static final BigDecimal TAX_RATE = new BigDecimal("0.025");
+public final class ZakatService {
+    private static final BigDecimal ZAKAT_RATE = new BigDecimal("0.025");
 
     private final IncomeAccountRepository accountRepository;
     private final ThresholdProvider thresholdProvider;
     private final AuditLogger auditLogger;
 
-    public TaxService(
+    public ZakatService(
             IncomeAccountRepository accountRepository,
             ThresholdProvider thresholdProvider,
             AuditLogger auditLogger) {
@@ -2017,30 +2021,30 @@ public final class TaxService {
         this.auditLogger = Objects.requireNonNull(auditLogger);
     }
 
-    public Optional<TaxCalculation> calculateTax(String accountId) {
+    public Optional<ZakatCalculation> calculateZakat(String accountId) {
         return accountRepository.findById(accountId)
-            .filter(IncomeAccount::isActive)
-            .filter(IncomeAccount::hasReachedHawl)
+            .filter(WealthAccount::isActive)
+            .filter(WealthAccount::hasCompletedHaul)
             .flatMap(this::performCalculation);
     }
 
-    private Optional<TaxCalculation> performCalculation(IncomeAccount account) {
-        var threshold = thresholdProvider.getThreshold(account.assetType());
+    private Optional<ZakatCalculation> performCalculation(WealthAccount donation_account) {
+        var nisab = thresholdProvider.getThreshold(donation_account.assetType());
 
-        if (account.balance().amount().compareTo(threshold) < 0) {
-            auditLogger.log("Below tax threshold", account);
+        if (donation_account.balance().amount().compareTo(nisab) < 0) {
+            auditLogger.log("Below nisab threshold", donation_account);
             return Optional.empty();
         }
 
-        var taxAmount = account.balance()
+        var zakatAmount = donation_account.balance()
             .amount()
-            .multiply(TAX_RATE)
+            .multiply(ZAKAT_RATE)
             .setScale(2, RoundingMode.HALF_UP);
 
-        var calculation = new TaxCalculation(
-            account.balance().amount(),
-            threshold,
-            taxAmount,
+        var calculation = new ZakatCalculation(
+            donation_account.balance().amount(),
+            nisab,
+            zakatAmount,
             LocalDate.now()
         );
 
@@ -2048,19 +2052,19 @@ public final class TaxService {
         return Optional.of(calculation);
     }
 
-    public Map<String, TaxCalculation> calculateForAllAccounts(String ownerId) {
+    public Map<String, ZakatCalculation> calculateForAllAccounts(String ownerId) {
         return accountRepository.findByOwnerId(ownerId)
             .stream()
             .collect(Collectors.toMap(
-                IncomeAccount::id,
-                account -> calculateTax(account.id())
-                    .orElse(TaxCalculation.zero())
+                WealthAccount::id,
+                donation_account -> calculateZakat(donation_account.id())
+                    .orElse(ZakatCalculation.zero())
             ));
     }
 }
 ```
 
-### Loan Agreement Management
+### QardHasan Agreement Management
 
 ```java
 public sealed interface ContractState
@@ -2136,43 +2140,43 @@ public record Cancelled(String reason, LocalDateTime cancelledAt)
     }
 }
 
-// Contract state machine
+// MurabahaContract state machine
 public final class LoanAgreementStateMachine {
     public String describeState(ContractState state) {
         return switch (state) {
             case Draft() ->
-                "Contract is in draft and can be edited";
+                "MurabahaContract is in draft and can be edited";
             case UnderReview(var reviewerId) ->
-                "Contract is under review by " + reviewerId;
+                "MurabahaContract is under review by " + reviewerId;
             case Approved(var approvedBy, var approvalDate) ->
-                "Contract approved by %s on %s"
+                "MurabahaContract approved by %s on %s"
                     .formatted(approvedBy, approvalDate);
             case Active(var startDate) ->
-                "Contract active since " + startDate;
+                "MurabahaContract active since " + startDate;
             case Completed(var completionDate) ->
-                "Contract completed on " + completionDate;
+                "MurabahaContract completed on " + completionDate;
             case Cancelled(var reason, var cancelledAt) ->
-                "Contract cancelled: %s at %s"
+                "MurabahaContract cancelled: %s at %s"
                     .formatted(reason, cancelledAt);
         };
     }
 
     public void transitionTo(
-            LoanAgreement contract,
+            MurabahaContract murabaha_contract,
             ContractState newState) {
 
-        if (!contract.state().canTransitionTo(newState)) {
+        if (!murabaha_contract.state().canTransitionTo(newState)) {
             throw new IllegalStateException(
                 "Cannot transition from %s to %s"
                     .formatted(
-                        contract.state().statusName(),
+                        murabaha_contract.state().statusName(),
                         newState.statusName()
                     )
             );
         }
 
         // Perform state transition
-        contract.setState(newState);
+        murabaha_contract.setState(newState);
     }
 }
 ```
@@ -2243,3 +2247,8 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 - [Effective Java (3rd Edition) by Joshua Bloch](https://www.oreilly.com/library/view/effective-java-3rd/9780134686097/)
 - [Modern Java in Action by Raoul-Gabriel Urma, Mario Fusco, Alan Mycroft](https://www.manning.com/books/modern-java-in-action)
 - [Java Language Specification](https://docs.oracle.com/javase/specs/)
+
+---
+
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

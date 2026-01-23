@@ -20,8 +20,6 @@ related:
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
-created: 2026-01-22
-updated: 2026-01-22
 ---
 
 # Go Value Object Template
@@ -1340,3 +1338,8 @@ func contains(s, substr string) bool {
 ---
 
 **Principles Applied**: Simplicity Over Complexity, Explicit Over Implicit
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

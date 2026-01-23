@@ -1,5 +1,7 @@
 # Functional Programming in Go
 
+**Quick Reference**: [Overview](#overview) | [Why Functional Programming in Go?](#why-functional-programming-in-go) | [Functional Programming Fundamentals](#functional-programming-fundamentals) | [Closures](#closures) | [Higher-Order Functions](#higher-order-functions) | [Function Composition](#function-composition) | [Functional Options Pattern](#functional-options-pattern) | [Currying and Partial Application](#currying-and-partial-application) | [Monadic Patterns (Limited)](#monadic-patterns-limited) | [Recursion](#recursion) | [Lazy Evaluation](#lazy-evaluation) | [Functional Programming with Generics](#functional-programming-with-generics) | [Best Practices](#best-practices) | [Common Pitfalls](#common-pitfalls) | [Related Documentation](#related-documentation) | [Further Reading](#further-reading)
+
 ## Overview
 
 Functional Programming (FP) is a programming paradigm that treats computation as the evaluation of mathematical functions and avoids changing state and mutable data. While Go is primarily an imperative language with object-oriented features, it supports several functional programming concepts through first-class functions, closures, and higher-order functions.
@@ -44,15 +46,15 @@ func CalculateDiscount(price float64, percentage float64) float64 {
 }
 
 // Impure function - depends on external state
-var taxRate = 0.08 // global state
+var zakatRate = 0.08 // global state
 
 func CalculateTotalImpure(price float64) float64 {
-    return price * (1 + taxRate) // depends on global variable
+    return price * (1 + zakatRate) // depends on global variable
 }
 
 // Pure version - tax rate passed as parameter
-func CalculateTotal(price float64, taxRate float64) float64 {
-    return price * (1 + taxRate)
+func CalculateTotal(price float64, zakatRate float64) float64 {
+    return price * (1 + zakatRate)
 }
 
 // Impure function - has side effects
@@ -194,9 +196,9 @@ func ProcessFile(filename string) error {
 }
 
 // Closure for filtering
-func MakePredicate(threshold int) func(int) bool {
+func MakePredicate(nisab int) func(int) bool {
     return func(value int) bool {
-        return value > threshold
+        return value > nisab
     }
 }
 
@@ -1323,3 +1325,8 @@ func SumIterative(nums []int) int {
 - [Go Proverbs](https://go-proverbs.github.io/) - Rob Pike's Go philosophy
 - [Functional Options Pattern](https://dave.cheney.net/2014/10/17/functional-options-for-friendly-apis) - Dave Cheney
 - [Go Generics Proposal](https://go.dev/blog/generics-proposal) - Type parameters design
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

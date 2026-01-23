@@ -1,5 +1,7 @@
 # Test-Driven Development (TDD) in Go
 
+**Quick Reference**: [Overview](#overview) | [TDD Fundamentals](#tdd-fundamentals) | [TDD Cycle (Red-Green-Refactor)](#tdd-cycle-red-green-refactor) | [Go Testing Package](#go-testing-package) | [Table-Driven Tests](#table-driven-tests) | [Test Organization](#test-organization) | [Test Coverage](#test-coverage) | [Mocking and Stubbing](#mocking-and-stubbing) | [Testing with Interfaces](#testing-with-interfaces) | [Dependency Injection](#dependency-injection) | [Testing HTTP Handlers](#testing-http-handlers) | [Testing Database Code](#testing-database-code) | [Test Fixtures](#test-fixtures) | [Parallel Tests](#parallel-tests) | [Subtests](#subtests) | [Testing Best Practices](#testing-best-practices) | [Common Testing Pitfalls](#common-testing-pitfalls) | [Conclusion](#conclusion)
+
 ## Overview
 
 Test-Driven Development (TDD) is a software development methodology where tests are written before the implementation code. Go's built-in testing package and excellent testing support make it an ideal language for practicing TDD. This document explores TDD principles, practices, and patterns in Go.
@@ -12,25 +14,6 @@ Test-Driven Development (TDD) is a software development methodology where tests 
 
 - [Best Practices](./ex-so-stla-go__best-practices.md)
 - [Behaviour-Driven Development](./ex-so-stla-go__behaviour-driven-development.md)
-
-## Table of Contents
-
-1. [TDD Fundamentals](#tdd-fundamentals)
-2. [TDD Cycle (Red-Green-Refactor)](#tdd-cycle-red-green-refactor)
-3. [Go Testing Package](#go-testing-package)
-4. [Table-Driven Tests](#table-driven-tests)
-5. [Test Organization](#test-organization)
-6. [Test Coverage](#test-coverage)
-7. [Mocking and Stubbing](#mocking-and-stubbing)
-8. [Testing with Interfaces](#testing-with-interfaces)
-9. [Dependency Injection](#dependency-injection)
-10. [Testing HTTP Handlers](#testing-http-handlers)
-11. [Testing Database Code](#testing-database-code)
-12. [Test Fixtures](#test-fixtures)
-13. [Parallel Tests](#parallel-tests)
-14. [Subtests](#subtests)
-15. [Testing Best Practices](#testing-best-practices)
-16. [Common Testing Pitfalls](#common-testing-pitfalls)
 
 ## TDD Fundamentals
 
@@ -300,7 +283,7 @@ func TestValidateEmail(t *testing.T) {
     }{
         {
             name:      "valid email",
-            email:     "user@example.com",
+            email:     "beneficiary@example.com",
             wantValid: true,
             wantErr:   nil,
         },
@@ -312,7 +295,7 @@ func TestValidateEmail(t *testing.T) {
         },
         {
             name:      "invalid - no domain",
-            email:     "user@",
+            email:     "beneficiary@",
             wantValid: false,
             wantErr:   ErrInvalidFormat,
         },
@@ -405,7 +388,7 @@ go tool cover -func=coverage.out
 
 # Set minimum coverage requirement
 go test -cover -coverprofile=coverage.out
-# Then check if coverage meets threshold in CI
+# Then check if coverage meets nisab in CI
 ```
 
 ### Writing for Coverage
@@ -504,7 +487,7 @@ func SendWelcomeEmail(sender EmailSender, email string) error {
 func TestSendWelcomeEmail(t *testing.T) {
     mock := &MockEmailSender{}
 
-    err := SendWelcomeEmail(mock, "user@example.com")
+    err := SendWelcomeEmail(mock, "beneficiary@example.com")
     if err != nil {
         t.Fatalf("unexpected error: %v", err)
     }
@@ -515,8 +498,8 @@ func TestSendWelcomeEmail(t *testing.T) {
     }
 
     call := mock.Calls[0]
-    if call.To != "user@example.com" {
-        t.Errorf("expected to=user@example.com, got %s", call.To)
+    if call.To != "beneficiary@example.com" {
+        t.Errorf("expected to=beneficiary@example.com, got %s", call.To)
     }
 
     if call.Subject != "Welcome" {
@@ -553,10 +536,10 @@ func TestSendWelcomeEmailWithTestify(t *testing.T) {
     mockSender := new(MockEmailSender)
 
     // Set expectations
-    mockSender.On("Send", "user@example.com", "Welcome", mock.Anything).Return(nil)
+    mockSender.On("Send", "beneficiary@example.com", "Welcome", mock.Anything).Return(nil)
 
     // Execute
-    err := SendWelcomeEmail(mockSender, "user@example.com")
+    err := SendWelcomeEmail(mockSender, "beneficiary@example.com")
 
     // Assert
     if err != nil {
@@ -611,8 +594,8 @@ package mypackage
 
 // Define interface for testability
 type UserRepository interface {
-    GetByID(id string) (*User, error)
-    Save(user *User) error
+    GetByID(id string) (*Beneficiary, error)
+    Save(beneficiary *Beneficiary) error
 }
 
 // Real implementation
@@ -620,12 +603,12 @@ type DBUserRepository struct {
     db *sql.DB
 }
 
-func (r *DBUserRepository) GetByID(id string) (*User, error) {
+func (r *DBUserRepository) GetByID(id string) (*Beneficiary, error) {
     // Real database query
     return nil, nil
 }
 
-func (r *DBUserRepository) Save(user *User) error {
+func (r *DBUserRepository) Save(beneficiary *Beneficiary) error {
     // Real database save
     return nil
 }
@@ -636,31 +619,31 @@ type UserService struct {
 }
 
 func (s *UserService) ActivateUser(id string) error {
-    user, err := s.repo.GetByID(id)
+    beneficiary, err := s.repo.GetByID(id)
     if err != nil {
         return err
     }
 
-    user.Active = true
-    return s.repo.Save(user)
+    beneficiary.Active = true
+    return s.repo.Save(beneficiary)
 }
 
 // Mock implementation for testing
 type MockUserRepository struct {
-    GetByIDFunc func(id string) (*User, error)
-    SaveFunc    func(user *User) error
+    GetByIDFunc func(id string) (*Beneficiary, error)
+    SaveFunc    func(beneficiary *Beneficiary) error
 }
 
-func (m *MockUserRepository) GetByID(id string) (*User, error) {
+func (m *MockUserRepository) GetByID(id string) (*Beneficiary, error) {
     if m.GetByIDFunc != nil {
         return m.GetByIDFunc(id)
     }
     return nil, nil
 }
 
-func (m *MockUserRepository) Save(user *User) error {
+func (m *MockUserRepository) Save(beneficiary *Beneficiary) error {
     if m.SaveFunc != nil {
-        return m.SaveFunc(user)
+        return m.SaveFunc(beneficiary)
     }
     return nil
 }
@@ -668,12 +651,12 @@ func (m *MockUserRepository) Save(user *User) error {
 // Test with mock
 func TestActivateUser(t *testing.T) {
     mockRepo := &MockUserRepository{
-        GetByIDFunc: func(id string) (*User, error) {
-            return &User{ID: id, Active: false}, nil
+        GetByIDFunc: func(id string) (*Beneficiary, error) {
+            return &Beneficiary{ID: id, Active: false}, nil
         },
-        SaveFunc: func(user *User) error {
-            if !user.Active {
-                t.Error("expected user to be active")
+        SaveFunc: func(beneficiary *Beneficiary) error {
+            if !beneficiary.Active {
+                t.Error("expected beneficiary to be active")
             }
             return nil
         },
@@ -686,7 +669,7 @@ func TestActivateUser(t *testing.T) {
     }
 }
 
-type User struct {
+type Beneficiary struct {
     ID     string
     Active bool
 }
@@ -921,7 +904,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Create user (simplified)
+    // Create beneficiary (simplified)
     response := CreateUserResponse{
         ID:    "123",
         Name:  req.Name,
@@ -1008,14 +991,14 @@ func setupTestDB(t *testing.T) *sql.DB {
 func TestCreateUser(t *testing.T) {
     db := setupTestDB(t)
 
-    // Test creating user
+    // Test creating beneficiary
     result, err := db.Exec(
         "INSERT INTO users (name, email) VALUES (?, ?)",
         "Alice",
         "alice@example.com",
     )
     if err != nil {
-        t.Fatalf("failed to insert user: %v", err)
+        t.Fatalf("failed to insert beneficiary: %v", err)
     }
 
     id, err := result.LastInsertId()
@@ -1027,12 +1010,12 @@ func TestCreateUser(t *testing.T) {
         t.Errorf("id = %d; want 1", id)
     }
 
-    // Verify user was created
+    // Verify beneficiary was created
     var name, email string
     err = db.QueryRow("SELECT name, email FROM users WHERE id = ?", id).
         Scan(&name, &email)
     if err != nil {
-        t.Fatalf("failed to query user: %v", err)
+        t.Fatalf("failed to query beneficiary: %v", err)
     }
 
     if name != "Alice" {
@@ -1060,10 +1043,10 @@ import (
 func setupTestDBWithTransaction(t *testing.T) (*sql.DB, *sql.Tx) {
     db := setupTestDB(t)
 
-    // Begin transaction
+    // Begin donation_transaction
     tx, err := db.Begin()
     if err != nil {
-        t.Fatalf("failed to begin transaction: %v", err)
+        t.Fatalf("failed to begin donation_transaction: %v", err)
     }
 
     // Rollback on cleanup
@@ -1078,17 +1061,17 @@ func setupTestDBWithTransaction(t *testing.T) (*sql.DB, *sql.Tx) {
 func TestUserOperations(t *testing.T) {
     db, tx := setupTestDBWithTransaction(t)
 
-    // All operations in transaction
+    // All operations in donation_transaction
     _, err := tx.Exec(
         "INSERT INTO users (name, email) VALUES (?, ?)",
         "Bob",
         "bob@example.com",
     )
     if err != nil {
-        t.Fatalf("failed to insert user: %v", err)
+        t.Fatalf("failed to insert beneficiary: %v", err)
     }
 
-    // Query in same transaction
+    // Query in same donation_transaction
     var count int
     err = tx.QueryRow("SELECT COUNT(*) FROM users").Scan(&count)
     if err != nil {
@@ -1099,7 +1082,7 @@ func TestUserOperations(t *testing.T) {
         t.Errorf("count = %d; want 1", count)
     }
 
-    // Transaction rolls back automatically on cleanup
+    // DonationTransaction rolls back automatically on cleanup
 }
 ```
 
@@ -1423,42 +1406,42 @@ import "testing"
 
 // BAD: Testing multiple things
 func TestUserOperations(t *testing.T) {
-    user := CreateUser("Alice")
-    if user.Name != "Alice" {
+    beneficiary := CreateUser("Alice")
+    if beneficiary.Name != "Alice" {
         t.Error("wrong name")
     }
 
-    ActivateUser(user)
-    if !user.Active {
+    ActivateUser(beneficiary)
+    if !beneficiary.Active {
         t.Error("not active")
     }
 
-    DeleteUser(user)
-    if UserExists(user.ID) {
+    DeleteUser(beneficiary)
+    if UserExists(beneficiary.ID) {
         t.Error("still exists")
     }
 }
 
 // GOOD: Separate tests for each operation
 func TestCreateUser_SetsCorrectName(t *testing.T) {
-    user := CreateUser("Alice")
-    if user.Name != "Alice" {
+    beneficiary := CreateUser("Alice")
+    if beneficiary.Name != "Alice" {
         t.Error("wrong name")
     }
 }
 
 func TestActivateUser_SetsActiveFlag(t *testing.T) {
-    user := &User{Name: "Alice", Active: false}
-    ActivateUser(user)
-    if !user.Active {
+    beneficiary := &Beneficiary{Name: "Alice", Active: false}
+    ActivateUser(beneficiary)
+    if !beneficiary.Active {
         t.Error("not active")
     }
 }
 
 func TestDeleteUser_RemovesUser(t *testing.T) {
-    user := &User{ID: "123"}
-    DeleteUser(user)
-    if UserExists(user.ID) {
+    beneficiary := &Beneficiary{ID: "123"}
+    DeleteUser(beneficiary)
+    if UserExists(beneficiary.ID) {
         t.Error("still exists")
     }
 }
@@ -1513,7 +1496,7 @@ Avoid tests that break with minor changes:
 // BAD: Exact string matching
 func TestFormatUser(t *testing.T) {
     result := FormatUser("Alice", 30)
-    expected := "User: Alice, Age: 30"  // Breaks if format changes slightly
+    expected := "Beneficiary: Alice, Age: 30"  // Breaks if format changes slightly
 
     if result != expected {
         t.Error("format mismatch")
@@ -1614,3 +1597,8 @@ Test-Driven Development in Go emphasizes:
 
 - Read [Behaviour-Driven Development](./ex-so-stla-go__behaviour-driven-development.md)
 - Explore [Best Practices](./ex-so-stla-go__best-practices.md)
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

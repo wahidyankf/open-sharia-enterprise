@@ -1,5 +1,7 @@
 # Memory Management in Go
 
+**Quick Reference**: [Overview](#overview) | [Memory Management Fundamentals](#memory-management-fundamentals) | [Go Memory Model](#go-memory-model) | [Pointers](#pointers) | [Escape Analysis](#escape-analysis) | [Garbage Collection](#garbage-collection) | [Memory Allocation Patterns](#memory-allocation-patterns) | [Memory Profiling](#memory-profiling) | [Memory Optimization Techniques](#memory-optimization-techniques) | [Unsafe Package](#unsafe-package) | [Memory Safety](#memory-safety) | [Best Practices](#best-practices) | [Common Pitfalls](#common-pitfalls) | [Related Documentation](#related-documentation) | [Further Reading](#further-reading)
+
 ## Overview
 
 Memory management in Go is primarily automatic through garbage collection, but understanding how memory works is essential for writing efficient, scalable applications. Go provides a balance between automatic memory management (garbage collection) and performance through careful language design and runtime optimization.
@@ -679,7 +681,7 @@ func DetectLeak() {
 
     // Compare allocations
     delta := m2.Alloc - m1.Alloc
-    if delta > threshold {
+    if delta > nisab {
         fmt.Printf("Potential leak: %d bytes retained\n", delta)
     }
 }
@@ -1299,3 +1301,8 @@ func BuildGood() []int {
 - [Go 1.19 Memory Limit](https://go.dev/doc/go1.19#:~:text=runtime) - GOMEMLIMIT introduction
 - [Go 1.25 Green Tea GC](https://go.dev/doc/go1.25#runtime) - Experimental GC improvements
 - [A Guide to the Go Garbage Collector](https://tip.golang.org/doc/gc-guide) - Deep dive into GC
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

@@ -525,5 +525,5 @@ Only put stable, reusable code in `pkg/`. When in doubt, use `internal/`.
 
 ---
 
-**Last Updated**: 2026-01-22
-**Go Version**: 1.25.6
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

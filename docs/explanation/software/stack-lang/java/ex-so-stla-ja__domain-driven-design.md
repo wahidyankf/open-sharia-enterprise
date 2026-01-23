@@ -14,12 +14,11 @@ tags:
   - domain-events
   - axon-framework
   - spring-boot
-created: 2026-01-21
-updated: 2026-01-21
 ---
 
 # Java Domain-Driven Design
 
+**Quick Reference**: [Why DDD in Finance](#why-ddd-in-finance) | [Tactical DDD Patterns](#tactical-ddd-patterns) | [Value Objects](#value-objects) | [Entities](#entities) | [Aggregates](#aggregates) | [Domain Events](#domain-events) | [Repositories](#repositories) | [Domain Services](#domain-services) | [Axon Framework](#axon-framework) | [Spring Boot Integration](#spring-boot-integration) | [Testing DDD Code](#testing-ddd-code) | [DDD Checklist](#ddd-checklist) | [Sources](#sources) | [Related Documentation](#related-documentation) | [Related Principles](#related-principles)
 **Understanding-oriented documentation** for implementing domain-driven design tactical patterns in Java applications.
 
 ## Quick Reference
@@ -56,7 +55,7 @@ DDD tactical patterns in Java align with [software engineering principles](../..
 
 Domain-Driven Design is essential for financial systems because it:
 
-- **Models complex business rules**: Zakat calculation, loan contracts, donation allocation
+- **Models complex business rules**: Zakat calculation, qard_hasan contracts, donation allocation
 - **Ensures data consistency**: Aggregates maintain invariants
 - **Provides clear audit trails**: Domain events capture all state changes
 - **Enables regulatory compliance**: Explicit domain model matches legal requirements
@@ -201,7 +200,7 @@ graph TD
 ### Core Building Blocks
 
 1. **Value Objects**: Immutable objects defined by their attributes (Money, Email, Address)
-2. **Entities**: Objects with unique identity (Donor, Account, Transaction)
+2. **Entities**: Objects with unique identity (Donor, Account, DonationTransaction)
 3. **Aggregates**: Clusters of entities/value objects treated as a unit
 4. **Aggregate Root**: Entry point to aggregate, enforces invariants
 5. **Domain Events**: Immutable records of significant domain occurrences
@@ -360,7 +359,7 @@ public record NisabThreshold(Money amount, NisabType type) {
         }
     }
 
-    // Well-known nisab thresholds
+    // Well-known nisabs
     public static final NisabThreshold GOLD_85_GRAMS =
         new NisabThreshold(Money.of(new BigDecimal("85"), "XAU"), NisabType.GOLD);
 
@@ -635,7 +634,7 @@ public class ZakatAccount {  // Aggregate Root
         LocalDate haulStart = LocalDate.now();
         ZakatAccountId id = ZakatAccountId.generate();
 
-        ZakatAccount account = new ZakatAccount(
+        ZakatAccount donation_account = new ZakatAccount(
             id,
             donorId,
             initialBalance,
@@ -643,14 +642,14 @@ public class ZakatAccount {  // Aggregate Root
             haulStart
         );
 
-        account.recordEvent(new ZakatAccountOpened(
+        donation_account.recordEvent(new ZakatAccountOpened(
             id,
             donorId,
             initialBalance,
             haulStart
         ));
 
-        return account;
+        return donation_account;
     }
 
     // Business methods maintain invariants
@@ -679,7 +678,7 @@ public class ZakatAccount {  // Aggregate Root
             return new HaulIncomplete(haulStartDate, currentDate, daysRemaining);
         }
 
-        // Check nisab threshold
+        // Check nisab
         if (!nisab.isMetBy(balance)) {
             return new BelowNisab(balance, nisab.amount());
         }
@@ -690,24 +689,24 @@ public class ZakatAccount {  // Aggregate Root
     }
 
     public void payZakat(Money amount, LocalDate paymentDate) {
-        // Validate payment
+        // Validate donation
         if (amount.isNegativeOrZero()) {
-            throw new IllegalArgumentException("Payment amount must be positive");
+            throw new IllegalArgumentException("DonationPayment amount must be positive");
         }
 
         if (amount.isGreaterThan(balance)) {
             throw new InsufficientBalanceException(balance, amount);
         }
 
-        // Create payment (child entity)
-        ZakatPayment payment = new ZakatPayment(
+        // Create donation (child entity)
+        ZakatPayment donation = new ZakatPayment(
             ZakatPaymentId.generate(),
             amount,
             paymentDate
         );
 
         // Update aggregate state
-        this.payments.add(payment);
+        this.payments.add(donation);
         this.balance = this.balance.subtract(amount);
 
         // Record domain event
@@ -798,7 +797,7 @@ graph TD
 **Rule 1: Model True Invariants in Consistency Boundaries**
 
 ```java
-// GOOD: Zakat account maintains consistency
+// GOOD: Zakat donation_account maintains consistency
 public class ZakatAccount {
     public void payZakat(Money amount) {
         // Invariant: balance >= amount
@@ -806,7 +805,7 @@ public class ZakatAccount {
             throw new InsufficientBalanceException(balance, amount);
         }
         this.balance = this.balance.subtract(amount);
-        // Consistency maintained within transaction
+        // Consistency maintained within donation_transaction
     }
 }
 
@@ -818,12 +817,12 @@ public class ZakatAccountBad {
 public class ZakatPaymentServiceBad {
     @Transactional
     public void payZakat(ZakatAccountId accountId, Money amount) {
-        ZakatAccountBad account = repository.findById(accountId);
+        ZakatAccountBad donation_account = repository.findById(accountId);
         // Race condition! Another thread might withdraw between these lines
-        if (amount.isGreaterThan(account.getBalance())) {
+        if (amount.isGreaterThan(donation_account.getBalance())) {
             throw new InsufficientBalanceException();
         }
-        account.setBalance(account.getBalance().subtract(amount));
+        donation_account.setBalance(donation_account.getBalance().subtract(amount));
         // Invariant could be violated!
     }
 }
@@ -847,7 +846,7 @@ public class DonationBad {
     private final DonationId id;
     private Donor donor;  // Entire donor object!
     private Fund fund;    // Entire fund object!
-    private List<Transaction> relatedTransactions;  // Unbounded!
+    private List<DonationTransaction> relatedTransactions;  // Unbounded!
     private List<AuditLog> auditLogs;  // Unbounded!
     // Too much data, performance problems
 }
@@ -872,7 +871,7 @@ public class DonationService {
         Fund fund = fundRepository.findById(fundId)
             .orElseThrow();
 
-        // Each aggregate in separate transaction if needed
+        // Each aggregate in separate donation_transaction if needed
         donation.allocateTo(fundId);
         fund.receiveAllocation(donation.getAmount());
 
@@ -889,7 +888,7 @@ public class DonationBad {
 }
 ```
 
-**Rule 4: Update One Aggregate Per Transaction**
+**Rule 4: Update One Aggregate Per DonationTransaction**
 
 ```java
 // GOOD: Update one aggregate
@@ -1140,7 +1139,7 @@ public class DonationEventHandler {
     @EventListener
     public void onZakatPaid(ZakatPaid event) {
         // Update read model, send notifications, etc.
-        logger.info("Zakat paid: {} for account {}",
+        logger.info("Zakat paid: {} for donation_account {}",
             event.amount(), event.accountId());
     }
 }
@@ -1687,8 +1686,8 @@ sequenceDiagram
 
 ```java
 @Configuration
-@EnableJpaRepositories(basePackages = "com.example.finance.infrastructure.persistence")
-@EntityScan(basePackages = "com.example.finance.infrastructure.persistence")
+@EnableJpaRepositories(basePackages = "com.sharia.finance.finance.infrastructure.persistence")
+@EntityScan(basePackages = "com.sharia.finance.finance.infrastructure.persistence")
 public class PersistenceConfiguration {
     // JPA configuration
 }
@@ -1991,4 +1990,9 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 
 - **Last Updated**: 2026-01-21
 - **Java Version**: 17+ (records for value objects, sealed classes for aggregates)
-- **Blessed Frameworks**: Axon Framework 4.10.3 (CQRS, Event Sourcing), Spring Boot 4 (DI, transaction management, event publishing)
+- **Blessed Frameworks**: Axon Framework 4.10.3 (CQRS, Event Sourcing), Spring Boot 4 (DI, donation_transaction management, event publishing)
+
+---
+
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

@@ -1,7 +1,7 @@
 # OTP Supervisor Patterns
 
 **Category**: OTP Patterns
-**Elixir Version**: 1.12+
+**Elixir Version**: 1.18.0+
 **Related**: [GenServer Patterns](ex-so-stla-el__otp-genserver.md), [Application Patterns](ex-so-stla-el__otp-application.md)
 
 ## Overview
@@ -1042,5 +1042,5 @@ end
 ---
 
 **Last Updated**: 2025-01-23
-**Elixir Version**: 1.12+
+**Elixir Version**: 1.18.0+
 **OTP Version**: 24+

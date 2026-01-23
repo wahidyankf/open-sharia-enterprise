@@ -18,33 +18,12 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
-created: 2026-01-22
-updated: 2026-01-22
 ---
 
 # Go Best Practices
 
+**Quick Reference**: [Overview](#overview) | [Code Organization](#code-organization) | [Naming Conventions](#naming-conventions) | [Code Style](#code-style) | [Package Design](#package-design) | [Error Handling](#error-handling) | [Testing](#testing) | [Performance](#performance) | [Concurrency](#concurrency) | [Security](#security) | [Dependency Management](#dependency-management) | [Build and Deployment](#build-and-deployment) | [Documentation](#documentation) | [Installation](#installation) | [Usage](#usage) | [Features](#features) | [Documentation](#documentation) | [Contributing](#contributing) | [License](#license) | [Code Review](#code-review) | [Refactoring](#refactoring) | [Summary](#summary) | [Additional Resources](#additional-resources)
 **Understanding-oriented guide** to Go best practices - proven patterns and conventions for writing maintainable, performant, and idiomatic Go code.
-
-## Table of Contents
-
-1. [Overview](#overview)
-2. [Code Organization](#code-organization)
-3. [Naming Conventions](#naming-conventions)
-4. [Code Style](#code-style)
-5. [Package Design](#package-design)
-6. [Error Handling](#error-handling)
-7. [Testing](#testing)
-8. [Performance](#performance)
-9. [Concurrency](#concurrency)
-10. [Security](#security)
-11. [Dependency Management](#dependency-management)
-12. [Build and Deployment](#build-and-deployment)
-13. [Documentation](#documentation)
-14. [Code Review](#code-review)
-15. [Refactoring](#refactoring)
-16. [Summary](#summary)
-17. [Additional Resources](#additional-resources)
 
 ## Overview
 
@@ -54,21 +33,21 @@ Go best practices are established patterns that help you write clear, maintainab
 
 ```go
 // Following best practices
-func (s *UserService) GetUser(ctx context.Context, id int) (*User, error) {
+func (s *UserService) GetUser(ctx context.Context, id int) (*Beneficiary, error) {
     if id <= 0 {
         return nil, ErrInvalidUserID
     }
 
-    user, err := s.repo.FindByID(ctx, id)
+    beneficiary, err := s.repo.FindByID(ctx, id)
     if err != nil {
-        return nil, fmt.Errorf("find user: %w", err)
+        return nil, fmt.Errorf("find beneficiary: %w", err)
     }
 
-    return user, nil
+    return beneficiary, nil
 }
 
 // Ignoring best practices
-func get_user(ID int) *User {
+func get_user(ID int) *Beneficiary {
     u := getUserFromDb(ID) // No context, no error handling
     return u
 }
@@ -106,7 +85,7 @@ myapp/
 │       └── main.go
 ├── internal/              # Private code
 │   ├── auth/
-│   ├── user/
+│   ├── beneficiary/
 │   └── order/
 ├── pkg/                   # Public libraries
 │   └── api/
@@ -124,22 +103,22 @@ myapp/
 ### File Organization
 
 ```go
-// user/user.go - Core types and interfaces
-package user
+// beneficiary/beneficiary.go - Core types and interfaces
+package beneficiary
 
-type User struct {
+type Beneficiary struct {
     ID    int
     Name  string
     Email string
 }
 
 type Repository interface {
-    FindByID(ctx context.Context, id int) (*User, error)
-    Save(ctx context.Context, user *User) error
+    FindByID(ctx context.Context, id int) (*Beneficiary, error)
+    Save(ctx context.Context, beneficiary *Beneficiary) error
 }
 
-// user/service.go - Business logic
-package user
+// beneficiary/service.go - Business logic
+package beneficiary
 
 type Service struct {
     repo Repository
@@ -149,12 +128,12 @@ func NewService(repo Repository) *Service {
     return &Service{repo: repo}
 }
 
-func (s *Service) GetUser(ctx context.Context, id int) (*User, error) {
+func (s *Service) GetUser(ctx context.Context, id int) (*Beneficiary, error) {
     // Implementation
 }
 
-// user/repository.go - Data access
-package user
+// beneficiary/repository.go - Data access
+package beneficiary
 
 type PostgresRepository struct {
     db *sql.DB
@@ -164,12 +143,12 @@ func NewPostgresRepository(db *sql.DB) *PostgresRepository {
     return &PostgresRepository{db: db}
 }
 
-// user/user_test.go - Tests
+// beneficiary/user_test.go - Tests
 package user_test
 
 import (
     "testing"
-    "myapp/internal/user"
+    "myapp/internal/beneficiary"
 )
 
 func TestService_GetUser(t *testing.T) {
@@ -182,9 +161,9 @@ func TestService_GetUser(t *testing.T) {
 ```go
 // CORRECT: Organize by domain/feature
 myapp/
-├── user/       # User domain
+├── beneficiary/       # Beneficiary domain
 ├── order/      # Order domain
-├── payment/    # Payment domain
+├── donation/    # DonationPayment domain
 └── shipping/   # Shipping domain
 
 // INCORRECT: Organize by layer (creates coupling)
@@ -197,7 +176,7 @@ myapp/
 // CORRECT: Flat package structure
 myapp/
 ├── auth/
-├── user/
+├── beneficiary/
 └── order/
 
 // INCORRECT: Deep nesting
@@ -205,7 +184,7 @@ myapp/
 ├── internal/
 │   └── app/
 │       └── domain/
-│           └── user/
+│           └── beneficiary/
 │               └── service/
 │                   └── user_service.go  // Too deep!
 ```
@@ -264,7 +243,7 @@ for i := range users {
 }
 
 // Descriptive names for package-level variables
-var ErrUserNotFound = errors.New("user not found")
+var ErrUserNotFound = errors.New("beneficiary not found")
 var DefaultTimeout = 30 * time.Second
 ```
 
@@ -272,7 +251,7 @@ var DefaultTimeout = 30 * time.Second
 
 ```go
 // CORRECT: Short, clear names
-user := FetchUser()
+beneficiary := FetchUser()
 config := LoadConfig()
 ctx := context.Background()
 
@@ -293,7 +272,7 @@ for i := 0; i < len(items); i++ {
 userInformationFromDatabase := FetchUser()
 
 // INCORRECT: Abbreviations (unless standard)
-usr := FetchUser()  // Use user
+usr := FetchUser()  // Use beneficiary
 cfg := LoadConfig() // Use config (or cfg if very common in codebase)
 ```
 
@@ -301,7 +280,7 @@ cfg := LoadConfig() // Use config (or cfg if very common in codebase)
 
 ```go
 // CORRECT: Verb or verb phrase
-func GetUser() *User
+func GetUser() *Beneficiary
 func UpdateUserEmail() error
 func isValid() bool
 
@@ -312,27 +291,27 @@ func (s *Service) Close() error    // Cleanup
 func (s *Service) String() string  // Stringer interface
 
 // CORRECT: Getters don't use "Get" prefix
-type User struct {
+type Beneficiary struct {
     name string
 }
 
-func (u *User) Name() string { return u.name }  // Not GetName()
+func (u *Beneficiary) Name() string { return u.name }  // Not GetName()
 
 // CORRECT: Setters use "Set" prefix
-func (u *User) SetName(name string) { u.name = name }
+func (u *Beneficiary) SetName(name string) { u.name = name }
 
 // INCORRECT: Noun for function name
-func User() *User  // Confusing, use NewUser or GetUser
+func Beneficiary() *Beneficiary  // Confusing, use NewUser or GetUser
 
 // INCORRECT: Redundant package name
-func UserGetUser() *User  // Just GetUser()
+func UserGetUser() *Beneficiary  // Just GetUser()
 ```
 
 ### Types
 
 ```go
 // CORRECT: Noun or noun phrase
-type User struct{}
+type Beneficiary struct{}
 type UserService struct{}
 type HTTPHandler struct{}
 
@@ -343,17 +322,17 @@ type Closer interface{}
 type UserRepository interface{}
 
 // INCORRECT: "I" prefix (not idiomatic in Go)
-type IUser interface{}  // Just User
+type IUser interface{}  // Just Beneficiary
 
 // CORRECT: Avoid stutter with package name
-package user
+package beneficiary
 
-type User struct{}       // user.User (good)
-type Service struct{}    // user.Service (good)
+type Beneficiary struct{}       // beneficiary.Beneficiary (good)
+type Service struct{}    // beneficiary.Service (good)
 
 // INCORRECT: Stutter
-type UserUser struct{}   // user.UserUser (bad!)
-type UserService struct{} // Could be just Service if in user package
+type UserUser struct{}   // beneficiary.UserUser (bad!)
+type UserService struct{} // Could be just Service if in beneficiary package
 ```
 
 ### Constants
@@ -391,7 +370,7 @@ const MAX_RETRIES = 3
 
 ```go
 // CORRECT: Short, lowercase, single word
-package user
+package beneficiary
 package auth
 package http
 
@@ -405,7 +384,7 @@ package user_service  // Use userservice or split into separate packages
 package http-handler
 
 // INCORRECT: Plural
-package users  // Use user
+package users  // Use beneficiary
 
 // INCORRECT: Generic names
 package util
@@ -454,15 +433,15 @@ func Process() {
 
 ```go
 // CORRECT: Package documentation
-// Package user provides user management functionality.
+// Package beneficiary provides beneficiary management functionality.
 //
-// It handles user creation, authentication, and authorization.
-package user
+// It handles beneficiary creation, authentication, and authorization.
+package beneficiary
 
 // CORRECT: Exported function documentation
-// GetUser retrieves a user by ID.
-// It returns ErrNotFound if the user doesn't exist.
-func GetUser(id int) (*User, error) {
+// GetUser retrieves a beneficiary by ID.
+// It returns ErrNotFound if the beneficiary doesn't exist.
+func GetUser(id int) (*Beneficiary, error) {
     // Implementation
 }
 
@@ -490,11 +469,11 @@ result := a + b
 
 ```go
 // CORRECT: Short, focused functions
-func ValidateUser(user *User) error {
-    if user == nil {
+func ValidateUser(beneficiary *Beneficiary) error {
+    if beneficiary == nil {
         return ErrNilUser
     }
-    if user.Email == "" {
+    if beneficiary.Email == "" {
         return ErrEmptyEmail
     }
     return nil
@@ -524,7 +503,7 @@ func ProcessOrderMonolithic(order *Order) error {
 
 ```go
 // CORRECT: Short declaration when possible
-user := GetUser()
+beneficiary := GetUser()
 count := len(items)
 
 // CORRECT: var for zero values
@@ -541,7 +520,7 @@ var (
 )
 
 // INCORRECT: Unnecessary type specification
-var user *User = GetUser()  // Just user := GetUser()
+var beneficiary *Beneficiary = GetUser()  // Just beneficiary := GetUser()
 ```
 
 ### Control Flow
@@ -635,7 +614,7 @@ type DataAccess interface {
 
 ```go
 // CORRECT
-func SaveUser(w io.Writer, user *User) error {
+func SaveUser(w io.Writer, beneficiary *Beneficiary) error {
     // Accepts interface (flexible)
 }
 
@@ -644,7 +623,7 @@ func GetConfig() *Config {
 }
 
 // INCORRECT
-func SaveUser(w *os.File, user *User) error {
+func SaveUser(w *os.File, beneficiary *Beneficiary) error {
     // Too specific, hard to test
 }
 
@@ -671,13 +650,13 @@ func NewService(repo UserRepository, log Logger) *Service {
 
 // CORRECT: Interface dependencies
 type UserRepository interface {
-    FindByID(ctx context.Context, id int) (*User, error)
+    FindByID(ctx context.Context, id int) (*Beneficiary, error)
 }
 
 // INCORRECT: Global dependencies
 var globalDB *sql.DB  // Hard to test
 
-func GetUser(id int) (*User, error) {
+func GetUser(id int) (*Beneficiary, error) {
     return globalDB.Query(id)
 }
 ```
@@ -726,7 +705,7 @@ if err != nil {
 
 // Wrap errors with context
 if err != nil {
-    return fmt.Errorf("failed to process user %d: %w", userID, err)
+    return fmt.Errorf("failed to process beneficiary %d: %w", userID, err)
 }
 
 // Use sentinel errors for expected conditions
@@ -760,12 +739,12 @@ _ = file.Close()  // Document why if intentional
 
 ```go
 // Test file naming: _test.go suffix
-// user.go -> user_test.go
+// beneficiary.go -> user_test.go
 
 // Package naming
 package user_test  // Black box testing (preferred for exported API)
 // or
-package user       // White box testing (for internals)
+package beneficiary       // White box testing (for internals)
 
 // Test function naming
 func TestGetUser(t *testing.T)              // Basic test
@@ -846,15 +825,15 @@ go tool cover -func=coverage.out
 ```go
 // Interface-based mocking
 type UserRepository interface {
-    GetUser(id int) (*User, error)
+    GetUser(id int) (*Beneficiary, error)
 }
 
 // Mock implementation
 type MockUserRepository struct {
-    GetUserFunc func(id int) (*User, error)
+    GetUserFunc func(id int) (*Beneficiary, error)
 }
 
-func (m *MockUserRepository) GetUser(id int) (*User, error) {
+func (m *MockUserRepository) GetUser(id int) (*Beneficiary, error) {
     if m.GetUserFunc != nil {
         return m.GetUserFunc(id)
     }
@@ -864,8 +843,8 @@ func (m *MockUserRepository) GetUser(id int) (*User, error) {
 // Usage in tests
 func TestService(t *testing.T) {
     repo := &MockUserRepository{
-        GetUserFunc: func(id int) (*User, error) {
-            return &User{ID: id, Name: "Test"}, nil
+        GetUserFunc: func(id int) (*Beneficiary, error) {
+            return &Beneficiary{ID: id, Name: "Test"}, nil
         },
     }
 
@@ -884,7 +863,7 @@ func TestGetUser_NotFound_ReturnsNotFoundError(t *testing.T)
 
 // CORRECT: Use t.Run for subtests
 func TestGetUser(t *testing.T) {
-    t.Run("valid ID returns user", func(t *testing.T) {
+    t.Run("valid ID returns beneficiary", func(t *testing.T) {
         // Test
     })
 
@@ -1109,7 +1088,7 @@ func ProcessAll(items []Item) error {
 
 ```go
 // Validate all inputs
-func GetUser(id int) (*User, error) {
+func GetUser(id int) (*Beneficiary, error) {
     if id <= 0 {
         return nil, ErrInvalidID
     }
@@ -1140,10 +1119,10 @@ db.Query(query)  // SQL injection risk!
 
 ```go
 // Don't log sensitive data
-log.Printf("User password: %s", password)  // Never!
+log.Printf("Beneficiary password: %s", password)  // Never!
 
 // Redact in logs
-type User struct {
+type Beneficiary struct {
     Name     string
     Password string `json:"-"`  // Never serialize
 }
@@ -1180,7 +1159,7 @@ err = bcrypt.CompareHashAndPassword(hash, []byte(password))
 
 ```bash
 # Initialize module
-go mod init github.com/user/repo
+go mod init github.com/beneficiary/repo
 
 # Add dependency
 go get github.com/pkg/errors
@@ -1328,37 +1307,37 @@ install-tools:
 ### Package Documentation
 
 ```go
-// Package user provides user management functionality.
+// Package beneficiary provides beneficiary management functionality.
 //
-// It handles user authentication, authorization, and profile management.
+// It handles beneficiary authentication, authorization, and profile management.
 // Users can be created, retrieved, updated, and deleted through the
 // Service interface.
 //
 // Example usage:
 //
-// service := user.NewService(repo)
-// user, err := service.GetUser(ctx, 123)
+// service := beneficiary.NewService(repo)
+// beneficiary, err := service.GetUser(ctx, 123)
 // if err != nil {
 //     log.Fatal(err)
 // }
-package user
+package beneficiary
 ```
 
 ### Function Documentation
 
 ```go
-// GetUser retrieves a user by ID.
+// GetUser retrieves a beneficiary by ID.
 //
-// It returns the user if found, or an error if the user doesn't exist
+// It returns the beneficiary if found, or an error if the beneficiary doesn't exist
 // or if there's a database error.
 //
 // Example:
 //
-// user, err := service.GetUser(ctx, 123)
+// beneficiary, err := service.GetUser(ctx, 123)
 // if errors.Is(err, ErrNotFound) {
 //     // Handle not found
 // }
-func (s *Service) GetUser(ctx context.Context, id int) (*User, error) {
+func (s *Service) GetUser(ctx context.Context, id int) (*Beneficiary, error) {
     // Implementation
 }
 ```
@@ -1369,11 +1348,11 @@ func (s *Service) GetUser(ctx context.Context, id int) (*User, error) {
 // Example function (shows up in godoc)
 func ExampleGetUser() {
     service := NewService(repo)
-    user, err := service.GetUser(context.Background(), 123)
+    beneficiary, err := service.GetUser(context.Background(), 123)
     if err != nil {
         log.Fatal(err)
     }
-    fmt.Println(user.Name)
+    fmt.Println(beneficiary.Name)
     // Output: John Doe
 }
 ```
@@ -1388,7 +1367,7 @@ Brief description of the project.
 ## Installation
 
 \`\`\`bash
-go get github.com/user/project
+go get github.com/beneficiary/project
 \`\`\`
 
 ## Usage
@@ -1396,7 +1375,7 @@ go get github.com/user/project
 \`\`\`go
 package main
 
-import "github.com/user/project"
+import "github.com/beneficiary/project"
 
 func main() {
 // Example usage
@@ -1410,7 +1389,7 @@ func main() {
 
 ## Documentation
 
-See [godoc](https://pkg.go.dev/github.com/user/project).
+See [godoc](https://pkg.go.dev/github.com/beneficiary/project).
 
 ## Contributing
 
@@ -1513,7 +1492,7 @@ func (s *Service) GetOrder() {}
 return err
 
 // AFTER
-return fmt.Errorf("fetch user %d: %w", id, err)
+return fmt.Errorf("fetch beneficiary %d: %w", id, err)
 
 // "Pre-allocate slice"
 // BEFORE
@@ -1582,7 +1561,7 @@ type Service struct {
 }
 
 type Repository interface {
-    GetUser(id int) (*User, error)
+    GetUser(id int) (*Beneficiary, error)
 }
 
 // Introduce parameter object
@@ -1722,3 +1701,8 @@ Before committing code:
 - [Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md)
 
 **Navigation**: [← Back to Golang Overview](./README.md)
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

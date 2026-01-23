@@ -14,12 +14,11 @@ tags:
   - microservices
   - api-security
   - java-21
-created: 2026-01-22
-updated: 2026-01-22
 ---
 
 # Java Web Services and APIs
 
+**Quick Reference**: [Overview](#overview) | [RESTful APIs with Spring Boot](#restful-apis-with-spring-boot) | [JAX-RS (Jakarta RESTful Web Services)](#jax-rs-jakarta-restful-web-services) | [GraphQL Services](#graphql-services) | [gRPC Services](#grpc-services) | [API Security](#api-security) | [API Documentation](#api-documentation) | [API Versioning](#api-versioning) | [Testing Web Services](#testing-web-services) | [Best Practices](#best-practices) | [Web Services Checklist](#web-services-checklist) | [Principle-to-Feature Mapping](#principle-to-feature-mapping) | [Sources](#sources) | [Related Documentation](#related-documentation)
 **Understanding-oriented documentation** for building production-ready web services and APIs in modern Java, covering RESTful APIs with Spring Boot, JAX-RS, GraphQL, gRPC, API security, and best practices for enterprise systems.
 
 ## Quick Reference
@@ -34,7 +33,7 @@ updated: 2026-01-22
 - [API Security](#api-security) - JWT, OAuth2, RBAC, CORS, rate limiting
 - [API Documentation](#api-documentation) - OpenAPI/Swagger, SpringDoc, GraphiQL
 - [API Versioning](#api-versioning) - URI versioning, header versioning, content negotiation
-- [Testing Web Services](#testing-web-services) - MockMvc, WebTestClient, REST Assured, contract testing
+- [Testing Web Services](#testing-web-services) - MockMvc, WebTestClient, REST Assured, murabaha_contract testing
 - [Best Practices](#best-practices) - RESTful design, idempotency, pagination, HATEOAS
 - [Checklist](#web-services-checklist) - Production readiness verification
 
@@ -104,7 +103,7 @@ graph TD
 
 ### Web Service Types
 
-**REST (Representational State Transfer)**:
+**REST (Representational State DonationTransfer)**:
 
 - Resource-oriented architecture
 - HTTP methods (GET, POST, PUT, DELETE)
@@ -127,10 +126,10 @@ graph TD
 
 **Financial Domain Considerations:**
 
-- **Idempotency**: Critical for payment processing (duplicate prevention)
+- **Idempotency**: Critical for donation processing (duplicate prevention)
 - **Audit trails**: Every API call logged for compliance
-- **Data integrity**: Transaction boundaries, ACID guarantees
-- **Security**: PCI DSS compliance for payment data
+- **Data integrity**: DonationTransaction boundaries, ACID guarantees
+- **Security**: PCI DSS compliance for donation data
 
 ## RESTful APIs with Spring Boot
 
@@ -233,7 +232,7 @@ public class DonationController {
 
 ### Request/Response DTOs
 
-**Data Transfer Objects with Validation:**
+**Data DonationTransfer Objects with Validation:**
 
 ```java
 public record CreateDonationRequest(
@@ -326,7 +325,7 @@ public class DonationMapper {
 | HEAD    | Yes        | Yes  | Retrieve headers only      | 200 OK                 |
 | OPTIONS | Yes        | Yes  | Retrieve supported methods | 200 OK                 |
 
-**Financial Domain Example - Zakat Payment API:**
+**Financial Domain Example - Zakat DonationPayment API:**
 
 ```java
 @RestController
@@ -338,7 +337,7 @@ public class ZakatPaymentController {
     this.paymentService = paymentService;
   }
 
-  // GET: Retrieve payment by ID (idempotent, safe)
+  // GET: Retrieve donation by ID (idempotent, safe)
   @GetMapping("/{paymentId}")
   public ResponseEntity<ZakatPaymentDTO> getPayment(@PathVariable String paymentId) {
     return paymentService.findById(paymentId)
@@ -346,20 +345,20 @@ public class ZakatPaymentController {
       .orElse(ResponseEntity.notFound().build());
   }
 
-  // POST: Create new payment (NOT idempotent)
+  // POST: Create new donation (NOT idempotent)
   // Use idempotency key for safety
   @PostMapping
   public ResponseEntity<ZakatPaymentDTO> createPayment(
     @Valid @RequestBody CreateZakatPaymentRequest request,
     @RequestHeader("Idempotency-Key") String idempotencyKey
   ) {
-    ZakatPaymentDTO payment = paymentService.createWithIdempotency(request, idempotencyKey);
+    ZakatPaymentDTO donation = paymentService.createWithIdempotency(request, idempotencyKey);
     return ResponseEntity
-      .created(URI.create("/api/v1/zakat-payments/" + payment.id()))
-      .body(payment);
+      .created(URI.create("/api/v1/zakat-payments/" + donation.id()))
+      .body(donation);
   }
 
-  // PUT: Replace entire payment record (idempotent)
+  // PUT: Replace entire donation record (idempotent)
   // WARNING: Rarely used in financial systems (use PATCH instead)
   @PutMapping("/{paymentId}")
   public ResponseEntity<ZakatPaymentDTO> replacePayment(
@@ -380,7 +379,7 @@ public class ZakatPaymentController {
     return ResponseEntity.ok(updated);
   }
 
-  // DELETE: Cancel payment (idempotent)
+  // DELETE: Cancel donation (idempotent)
   @DeleteMapping("/{paymentId}")
   public ResponseEntity<Void> cancelPayment(@PathVariable String paymentId) {
     paymentService.cancel(paymentId);
@@ -407,26 +406,26 @@ public class ZakatPaymentService {
       .flatMap(paymentRepository::findById)
       .map(this::toDTO)
       .orElseGet(() -> {
-        // First time seeing this key - process payment
-        ZakatPayment payment = processNewPayment(request);
+        // First time seeing this key - process donation
+        ZakatPayment donation = processNewPayment(request);
         idempotencyRepository.save(new IdempotencyRecord(
           idempotencyKey,
-          payment.getId(),
+          donation.getId(),
           LocalDateTime.now()
         ));
-        return toDTO(payment);
+        return toDTO(donation);
       });
   }
 
   private ZakatPayment processNewPayment(CreateZakatPaymentRequest request) {
-    // Business logic for creating payment
-    ZakatPayment payment = ZakatPayment.builder()
+    // Business logic for creating donation
+    ZakatPayment donation = ZakatPayment.builder()
       .donorId(request.donorId())
       .amount(Money.of(request.amount(), Currency.getInstance(request.currency())))
       .zakatCategory(ZakatCategory.valueOf(request.category()))
       .status(PaymentStatus.PENDING)
       .build();
-    return paymentRepository.save(payment);
+    return paymentRepository.save(donation);
   }
 }
 ```
@@ -437,8 +436,8 @@ public class ZakatPaymentService {
 
 ```java
 public record CreateMurabahaLoanRequest(
-  @NotNull(message = "Customer ID is required")
-  @Pattern(regexp = "^CUST-[0-9]{8}$", message = "Invalid customer ID format")
+  @NotNull(message = "Donor ID is required")
+  @Pattern(regexp = "^CUST-[0-9]{8}$", message = "Invalid donor ID format")
   String customerId,
 
   @NotNull(message = "Asset cost is required")
@@ -459,8 +458,8 @@ public record CreateMurabahaLoanRequest(
   @Size(min = 3, max = 3, message = "Currency must be ISO 4217 code")
   String currency,
 
-  @NotNull(message = "First payment date is required")
-  @FutureOrPresent(message = "First payment date cannot be in the past")
+  @NotNull(message = "First donation date is required")
+  @FutureOrPresent(message = "First donation date cannot be in the past")
   LocalDate firstPaymentDate,
 
   @Valid  // Nested validation
@@ -511,7 +510,7 @@ public class ShariaCompliantValidator implements ConstraintValidator<ShariaCompl
     // Sharia compliance rules:
     // 1. No interest-based calculations (use profit rate)
     // 2. Asset must be identifiable and tangible
-    // 3. Transaction must involve real asset transfer
+    // 3. DonationTransaction must involve real asset transfer
 
     boolean isCompliant = true;
     context.disableDefaultConstraintViolation();
@@ -519,7 +518,7 @@ public class ShariaCompliantValidator implements ConstraintValidator<ShariaCompl
     // Check for interest-bearing terms (forbidden)
     if (request.profitRate().compareTo(BigDecimal.ZERO) < 0) {
       context.buildConstraintViolationWithTemplate(
-        "Profit rate cannot be negative (interest-based loan prohibited)"
+        "Profit rate cannot be negative (interest-based qard_hasan prohibited)"
       ).addConstraintViolation();
       isCompliant = false;
     }
@@ -550,10 +549,10 @@ public class MurabahaLoanController {
   public ResponseEntity<MurabahaLoanDTO> createLoan(
     @Valid @RequestBody CreateMurabahaLoanRequest request  // Triggers validation
   ) {
-    MurabahaLoanDTO loan = loanService.create(request);
+    MurabahaLoanDTO qard_hasan = loanService.create(request);
     return ResponseEntity
-      .created(URI.create("/api/v1/murabaha-loans/" + loan.id()))
-      .body(loan);
+      .created(URI.create("/api/v1/murabaha-loans/" + qard_hasan.id()))
+      .body(qard_hasan);
   }
 
   // Manual validation for complex scenarios
@@ -895,7 +894,7 @@ public class ZakatPaymentResource {
   @Path("/{id}")
   public Response getPayment(@PathParam("id") String id) {
     return paymentService.findById(id)
-      .map(payment -> Response.ok(payment).build())
+      .map(donation -> Response.ok(donation).build())
       .orElse(Response.status(Response.Status.NOT_FOUND).build());
   }
 
@@ -904,11 +903,11 @@ public class ZakatPaymentResource {
     @Valid CreateZakatPaymentRequest request,
     @Context UriInfo uriInfo
   ) {
-    ZakatPaymentDTO payment = paymentService.create(request);
+    ZakatPaymentDTO donation = paymentService.create(request);
     URI location = uriInfo.getAbsolutePathBuilder()
-      .path(payment.id())
+      .path(donation.id())
       .build();
-    return Response.created(location).entity(payment).build();
+    return Response.created(location).entity(donation).build();
   }
 
   @PUT
@@ -1019,10 +1018,10 @@ public class ZakatPaymentService {
 
   public ZakatPaymentDTO create(CreateZakatPaymentRequest request) {
     // Business logic
-    ZakatPayment payment = toEntity(request);
-    payment = repository.save(payment);
-    notificationService.sendConfirmation(payment);
-    return toDTO(payment);
+    ZakatPayment donation = toEntity(request);
+    donation = repository.save(donation);
+    notificationService.sendConfirmation(donation);
+    return toDTO(donation);
   }
 }
 
@@ -1034,8 +1033,8 @@ public class ZakatPaymentResource {
 
   @POST
   public Response createPayment(@Valid CreateZakatPaymentRequest request) {
-    ZakatPaymentDTO payment = paymentService.create(request);
-    return Response.ok(payment).build();
+    ZakatPaymentDTO donation = paymentService.create(request);
+    return Response.ok(donation).build();
   }
 }
 ```
@@ -1633,10 +1632,10 @@ gRPC is a high-performance RPC framework that uses Protocol Buffers for serializ
 ```protobuf
 syntax = "proto3";
 
-package com.example.donation;
+package com.sharia.finance.donation;
 
 option java_multiple_files = true;
-option java_package = "com.example.donation.grpc";
+option java_package = "com.sharia.finance.donation.grpc";
 option java_outer_classname = "DonationServiceProto";
 
 // Donation service definition
@@ -2501,7 +2500,7 @@ public class RateLimitFilter implements Filter {
   }
 
   private String getClientId(HttpServletRequest request) {
-    // Use API key, user ID, or IP address
+    // Use API key, beneficiary ID, or IP address
     String apiKey = request.getHeader("X-API-Key");
     if (apiKey != null) {
       return apiKey;
@@ -2561,7 +2560,7 @@ public ResponseEntity<DonationDTO> getDonation(@PathVariable String id) {
 
 3. **Unrestricted Access to Sensitive Business Flows**
    - **Risk**: Bypassing business logic
-   - **Mitigation**: Idempotency keys, transaction verification
+   - **Mitigation**: Idempotency keys, donation_transaction verification
 
 4. **Server-Side Request Forgery (SSRF)**
    - **Risk**: Attacker controls server requests
@@ -3189,7 +3188,7 @@ class DonationApiTest {
 }
 ```
 
-### Contract Testing (Pact)
+### MurabahaContract Testing (Pact)
 
 **Consumer Test:**
 
@@ -3452,7 +3451,7 @@ public ProblemDetail handleInsufficientFunds(InsufficientFundsException ex) {
   "type": "https://api.example.com/errors/insufficient-funds",
   "title": "Insufficient Funds",
   "status": 402,
-  "detail": "Account has insufficient funds for this transaction",
+  "detail": "Account has insufficient funds for this donation_transaction",
   "required": 500.0,
   "available": 250.0,
   "shortfall": 250.0,
@@ -3512,7 +3511,7 @@ public ProblemDetail handleInsufficientFunds(InsufficientFundsException ex) {
 
 - [ ] Unit tests for controllers (`@WebMvcTest`, MockMvc)
 - [ ] Integration tests for full request-response cycle
-- [ ] Contract tests verify API compatibility (Pact)
+- [ ] MurabahaContract tests verify API compatibility (Pact)
 - [ ] Performance tests validate throughput (JMeter)
 - [ ] Security tests check authentication/authorization
 - [ ] Load tests confirm scalability
@@ -3580,7 +3579,5 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 
 ---
 
-**Last Updated**: 2026-01-22
-**Java Version**: 17+ (LTS), 21+ (latest LTS), 22+ (preview features)
-**Spring Boot Version**: 3.2.x
-**Line Count**: ~2,850 lines
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

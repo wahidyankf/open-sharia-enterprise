@@ -18,33 +18,12 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
-created: 2026-01-22
-updated: 2026-01-22
 ---
 
 # Go Anti-Patterns
 
+**Quick Reference**: [Overview](#overview) | [Error Handling Anti-Patterns](#error-handling-anti-patterns) | [Financial Calculation Anti-Patterns](#financial-calculation-anti-patterns) | [Goroutine Leaks](#goroutine-leaks) | [Nil Pointer Dereferences](#nil-pointer-dereferences) | [Race Conditions](#race-conditions) | [Resource Leaks](#resource-leaks) | [Database Anti-Patterns](#database-anti-patterns) | [Interface Pollution Anti-Patterns](#interface-pollution-anti-patterns) | [Concurrency Anti-Patterns](#concurrency-anti-patterns) | [API Design Anti-Patterns](#api-design-anti-patterns) | [Performance Anti-Patterns](#performance-anti-patterns) | [Testing Anti-Patterns](#testing-anti-patterns) | [Security Anti-Patterns](#security-anti-patterns) | [Code Organization Anti-Patterns](#code-organization-anti-patterns) | [Summary](#summary) | [Additional Resources](#additional-resources)
 **Understanding-oriented guide** to Go anti-patterns - common mistakes, bad practices, and patterns to avoid.
-
-## Table of Contents
-
-1. [Overview](#overview)
-2. [Error Handling Anti-Patterns](#error-handling-anti-patterns)
-3. [Financial Calculation Anti-Patterns](#financial-calculation-anti-patterns)
-4. [Goroutine Leaks](#goroutine-leaks)
-5. [Nil Pointer Dereferences](#nil-pointer-dereferences)
-6. [Race Conditions](#race-conditions)
-7. [Resource Leaks](#resource-leaks)
-8. [Database Anti-Patterns](#database-anti-patterns)
-9. [Interface Pollution Anti-Patterns](#interface-pollution-anti-patterns)
-10. [Concurrency Anti-Patterns](#concurrency-anti-patterns)
-11. [API Design Anti-Patterns](#api-design-anti-patterns)
-12. [Performance Anti-Patterns](#performance-anti-patterns)
-13. [Testing Anti-Patterns](#testing-anti-patterns)
-14. [Security Anti-Patterns](#security-anti-patterns)
-15. [Code Organization Anti-Patterns](#code-organization-anti-patterns)
-16. [Summary](#summary)
-17. [Additional Resources](#additional-resources)
 
 ## Overview
 
@@ -54,19 +33,19 @@ Anti-patterns are common solutions to recurring problems that are ineffective, c
 
 ```go
 // ANTI-PATTERN: Many issues
-func GetUser(id int) *User {
-    var user *User
-    user = db.QueryUser(id)  // What if this fails?
-    return user               // Might return nil without indication
+func GetUser(id int) *Beneficiary {
+    var beneficiary *Beneficiary
+    beneficiary = db.QueryUser(id)  // What if this fails?
+    return beneficiary               // Might return nil without indication
 }
 
 // CORRECT: Clear error handling
-func GetUser(id int) (*User, error) {
-    user, err := db.QueryUser(id)
+func GetUser(id int) (*Beneficiary, error) {
+    beneficiary, err := db.QueryUser(id)
     if err != nil {
-        return nil, fmt.Errorf("query user: %w", err)
+        return nil, fmt.Errorf("query beneficiary: %w", err)
     }
-    return user, nil
+    return beneficiary, nil
 }
 ```
 
@@ -169,30 +148,30 @@ func ReadConfig(path string) (*Config, error) {
 
 ```go
 // ANTI-PATTERN: Losing context
-func GetUser(id int) (*User, error) {
-    user, err := db.Query(id)
+func GetUser(id int) (*Beneficiary, error) {
+    beneficiary, err := db.Query(id)
     if err != nil {
         return nil, errors.New("failed")  // What failed? Where?
     }
-    return user, nil
+    return beneficiary, nil
 }
 
 // ANTI-PATTERN: Breaking error chain
-func GetUser(id int) (*User, error) {
-    user, err := db.Query(id)
+func GetUser(id int) (*Beneficiary, error) {
+    beneficiary, err := db.Query(id)
     if err != nil {
         return nil, fmt.Errorf("database error: %v", err)  // %v breaks chain!
     }
-    return user, nil
+    return beneficiary, nil
 }
 
 // CORRECT: Preserve context and chain
-func GetUser(id int) (*User, error) {
-    user, err := db.Query(id)
+func GetUser(id int) (*Beneficiary, error) {
+    beneficiary, err := db.Query(id)
     if err != nil {
-        return nil, fmt.Errorf("query user %d: %w", id, err)  // %w preserves chain
+        return nil, fmt.Errorf("query beneficiary %d: %w", id, err)  // %w preserves chain
     }
-    return user, nil
+    return beneficiary, nil
 }
 ```
 
@@ -237,7 +216,7 @@ func main() {
 func ProcessPayment(amount int64) error {
   err := validatePayment(amount)
   if err != nil && err.Error() == "insufficient balance" {  // Fragile!
-    return errors.New("payment failed")
+    return errors.New("donation failed")
   }
   return err
 }
@@ -248,7 +227,7 @@ var ErrInsufficientBalance = errors.New("insufficient balance")
 func ProcessPayment(amount int64) error {
   err := validatePayment(amount)
   if errors.Is(err, ErrInsufficientBalance) {  // Robust
-    return fmt.Errorf("payment failed: %w", err)
+    return fmt.Errorf("donation failed: %w", err)
   }
   return err
 }
@@ -277,7 +256,7 @@ func HandleError(err error) {
 // Define error types for Zakat validation
 var (
   ErrNegativeAmount = errors.New("zakat amount cannot be negative")
-  ErrBelowNisab    = errors.New("wealth below nisab threshold")
+  ErrBelowNisab    = errors.New("wealth below nisab")
 )
 
 type ValidationError struct {
@@ -292,7 +271,7 @@ func (e *ValidationError) Error() string {
 // ANTI-PATTERN: String comparison
 func ValidateZakat(wealth int64) error {
   err := checkNisab(wealth)
-  if err != nil && err.Error() == "wealth below nisab threshold" {
+  if err != nil && err.Error() == "wealth below nisab" {
     return errors.New("cannot calculate zakat")  // Lost context!
   }
   return err
@@ -344,18 +323,18 @@ func ProcessTransaction(tx *sql.Tx) (err error) {
   }()
 
   if err = updateAccount(); err != nil {
-    return fmt.Errorf("update account: %w", err)
+    return fmt.Errorf("update donation_account: %w", err)
   }
 
   if err = tx.Commit(); err != nil {
-    return fmt.Errorf("commit transaction: %w", err)
+    return fmt.Errorf("commit donation_transaction: %w", err)
   }
 
   return nil
 }
 ```
 
-**Why it's bad**: Rollback might fail (database connection lost), leaving transaction in inconsistent state. You won't know why.
+**Why it's bad**: Rollback might fail (database connection lost), leaving donation_transaction in inconsistent state. You won't know why.
 
 **Financial example - Donation processing**:
 
@@ -379,7 +358,7 @@ func ProcessDonation(donorID, amount int64) error {
 func ProcessDonation(donorID, amount int64) (err error) {
   tx, err := db.Begin()
   if err != nil {
-    return fmt.Errorf("begin transaction: %w", err)
+    return fmt.Errorf("begin donation_transaction: %w", err)
   }
 
   defer func() {
@@ -414,7 +393,7 @@ func ProcessDonation(donorID, amount int64) (err error) {
 // ANTI-PATTERN: Useless error messages
 func TransferFunds(from, to int64, amount int64) error {
   if err := debitAccount(from, amount); err != nil {
-    return errors.New("error")  // What error? Which account?
+    return errors.New("error")  // What error? Which donation_account?
   }
 
   if err := creditAccount(to, amount); err != nil {
@@ -427,11 +406,11 @@ func TransferFunds(from, to int64, amount int64) error {
 // CORRECT: Specific, contextual errors
 func TransferFunds(from, to int64, amount int64) error {
   if err := debitAccount(from, amount); err != nil {
-    return fmt.Errorf("debit account %d (amount=%d): %w", from, amount, err)
+    return fmt.Errorf("debit donation_account %d (amount=%d): %w", from, amount, err)
   }
 
   if err := creditAccount(to, amount); err != nil {
-    return fmt.Errorf("credit account %d (amount=%d): %w", to, amount, err)
+    return fmt.Errorf("credit donation_account %d (amount=%d): %w", to, amount, err)
   }
 
   return nil
@@ -463,7 +442,7 @@ func main() {
   fmt.Printf("Zakat: $%.2f\n", zakat)  // Prints: $250.01 (should be $250.00825)
 
   // Compounding error
-  total := 0.1 + 0.2
+  total := 0.1 + 0.025
   fmt.Println(total == 0.3)  // false! (0.30000000000000004)
 }
 
@@ -506,7 +485,7 @@ func main() {
 }
 ```
 
-**Why it's bad**: Floating-point arithmetic is inherently imprecise due to binary representation. `0.1 + 0.2 != 0.3` in binary floating-point. Financial calculations accumulate these errors, leading to incorrect balances.
+**Why it's bad**: Floating-point arithmetic is inherently imprecise due to binary representation. `0.1 + 0.025 != 0.3` in binary floating-point. Financial calculations accumulate these errors, leading to incorrect balances.
 
 **Real-world impact**:
 
@@ -550,7 +529,7 @@ func main() {
   // Example: $85,000.00 wealth
   wealth := Money{cents: 8500000}
 
-  // Nisab threshold: $5,000 (gold value)
+  // Nisab: $5,000 (gold value)
   nisab := Money{cents: 500000}
 
   if wealth.cents >= nisab.cents {
@@ -592,11 +571,11 @@ func (m Money) MultiplyBankersRound(numerator, denominator int64) Money {
 
 ```go
 // ANTI-PATTERN: No currency tracking
-type Payment struct {
+type DonationPayment struct {
   amount float64  // USD? SAR? IDR?
 }
 
-func ProcessPayment(p Payment) {
+func ProcessPayment(p DonationPayment) {
   // Is this USD to SAR conversion correct?
   sarAmount := p.amount * 3.75  // Exchange rate hard-coded!
 }
@@ -733,14 +712,14 @@ func main() {
 
 ```go
 // ANTI-PATTERN: Using local time for financial records
-type Transaction struct {
+type DonationTransaction struct {
   id        int64
   amount    Money
   timestamp time.Time  // Local time? UTC? Unclear!
 }
 
-func RecordTransaction(amount Money) Transaction {
-  return Transaction{
+func RecordTransaction(amount Money) DonationTransaction {
+  return DonationTransaction{
     amount:    amount,
     timestamp: time.Now(),  // Uses local time zone!
   }
@@ -753,27 +732,27 @@ func RecordTransaction(amount Money) Transaction {
 // 4. Sorting transactions by time fails across time zones
 
 // CORRECT: Always use UTC for financial records
-type Transaction struct {
+type DonationTransaction struct {
   id        int64
   amount    Money
   timestamp time.Time  // Stored as UTC
 }
 
-func RecordTransaction(amount Money) Transaction {
-  return Transaction{
+func RecordTransaction(amount Money) DonationTransaction {
+  return DonationTransaction{
     amount:    amount,
     timestamp: time.Now().UTC(),  // Explicit UTC
   }
 }
 
-func (t Transaction) TimestampInZone(loc *time.Location) time.Time {
+func (t DonationTransaction) TimestampInZone(loc *time.Location) time.Time {
   return t.timestamp.In(loc)
 }
 
 func main() {
-  // Record transaction in UTC
+  // Record donation_transaction in UTC
   tx := RecordTransaction(NewMoney(100, 0, USD))
-  fmt.Printf("Transaction at: %s (UTC)\n", tx.timestamp.Format(time.RFC3339))
+  fmt.Printf("DonationTransaction at: %s (UTC)\n", tx.timestamp.Format(time.RFC3339))
 
   // Display in local time zones
   jakarta, _ := time.LoadLocation("Asia/Jakarta")
@@ -784,7 +763,7 @@ func main() {
 }
 
 // Financial reporting: End of day cutoff
-func GetDailyTransactions(date time.Time) []Transaction {
+func GetDailyTransactions(date time.Time) []DonationTransaction {
   // ANTI-PATTERN: Using local midnight
   start := time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.Local)
   end := start.Add(24 * time.Hour)
@@ -825,7 +804,7 @@ func CalculateYearlyZakat(startDate time.Time) Money {
 
 - Zakat calculation requires tracking wealth over lunar year (354 days, not 365)
 - Salat (prayer) times depend on solar position, not local time zones
-- Multi-country operations need consistent transaction timestamps
+- Multi-country operations need consistent donation_transaction timestamps
 - DST transitions can cause ambiguous prayer times
 
 ### Complete Money Value Object Example
@@ -949,10 +928,10 @@ func (m Money) GreaterThan(other Money) (bool, error) {
 
 // Example usage in financial domain
 func ExampleZakatPayment() {
-  // User has $85,000 in wealth
+  // Beneficiary has $85,000 in wealth
   wealth := New(85000, 0, USD)
 
-  // Nisab threshold (minimum wealth for Zakat obligation)
+  // Nisab (minimum wealth for Zakat obligation)
   nisab := New(5000, 0, USD)
 
   // Check if Zakat is obligatory
@@ -967,7 +946,7 @@ func ExampleZakatPayment() {
   fmt.Printf("Wealth: %s\n", wealth)  // USD85000.00
   fmt.Printf("Zakat: %s\n", zakat)    // USD2125.00
 
-  // Record payment
+  // Record donation
   remaining, _ := wealth.Subtract(zakat)
   fmt.Printf("Remaining wealth: %s\n", remaining)  // USD82875.00
 }
@@ -1107,7 +1086,7 @@ func PaymentHandler(w http.ResponseWriter, r *http.Request) {
   ch := make(chan PaymentResult)
 
   go func() {
-    // Long-running payment processing
+    // Long-running donation processing
     result := processPayment(r)
     ch <- result  // Blocks forever if handler times out!
   }()
@@ -1174,10 +1153,10 @@ func (s *PaymentService) Process(ctx context.Context, req PaymentRequest) (*Paym
 - Server shuts down
 - Each leak wastes memory until program restarts
 
-**Financial example - Payment processing**:
+**Financial example - DonationPayment processing**:
 
 ```go
-// Production-ready payment handler
+// Production-ready donation handler
 type PaymentHandler struct {
   processor *PaymentProcessor
   timeout   time.Duration
@@ -1200,7 +1179,7 @@ func (h *PaymentHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
       return
     }
     if errors.Is(err, context.DeadlineExceeded) {
-      http.Error(w, "payment timeout", http.StatusGatewayTimeout)
+      http.Error(w, "donation timeout", http.StatusGatewayTimeout)
       return
     }
     http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -1211,13 +1190,13 @@ func (h *PaymentHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
   json.NewEncoder(w).Encode(result)
 }
 
-// Payment processor respects context
+// DonationPayment processor respects context
 type PaymentProcessor struct {
   gateway PaymentGateway
 }
 
 func (p *PaymentProcessor) ProcessPayment(ctx context.Context, req PaymentRequest) (*PaymentResult, error) {
-  // Validate payment
+  // Validate donation
   if err := req.Validate(); err != nil {
     return nil, fmt.Errorf("validation: %w", err)
   }
@@ -1241,7 +1220,7 @@ func (p *PaymentProcessor) ProcessPayment(ctx context.Context, req PaymentReques
   case err := <-errCh:
     return nil, err
   case <-ctx.Done():
-    return nil, fmt.Errorf("payment cancelled: %w", ctx.Err())
+    return nil, fmt.Errorf("donation cancelled: %w", ctx.Err())
   }
 }
 ```
@@ -1408,14 +1387,14 @@ func ProcessDonations(donations []Donation) []Receipt {
 
 ```go
 // ANTI-PATTERN: WaitGroup counter goes negative
-func ProcessPayments(payments []Payment) {
+func ProcessPayments(payments []DonationPayment) {
   var wg sync.WaitGroup
 
   for _, p := range payments {
     wg.Done()  // WRONG! Counter goes negative
-    go func(payment Payment) {
+    go func(donation DonationPayment) {
       defer wg.Done()
-      process(payment)
+      process(donation)
     }(p)
   }
 
@@ -1423,14 +1402,14 @@ func ProcessPayments(payments []Payment) {
 }
 
 // ANTI-PATTERN: Done() called before Add()
-func ProcessPayments(payments []Payment) {
+func ProcessPayments(payments []DonationPayment) {
   var wg sync.WaitGroup
 
   for _, p := range payments {
-    go func(payment Payment) {
+    go func(donation DonationPayment) {
       wg.Add(1)   // Race! Add after goroutine started
       defer wg.Done()
-      process(payment)
+      process(donation)
     }(p)
   }
 
@@ -1438,14 +1417,14 @@ func ProcessPayments(payments []Payment) {
 }
 
 // CORRECT: Add() before starting goroutine
-func ProcessPayments(payments []Payment) {
+func ProcessPayments(payments []DonationPayment) {
   var wg sync.WaitGroup
 
   for _, p := range payments {
     wg.Add(1)  // Before goroutine starts
-    go func(payment Payment) {
+    go func(donation DonationPayment) {
       defer wg.Done()
-      process(payment)
+      process(donation)
     }(p)
   }
 
@@ -1453,18 +1432,18 @@ func ProcessPayments(payments []Payment) {
 }
 
 // ANTI-PATTERN: Forgetting Done() on error path
-func ProcessPayments(payments []Payment) {
+func ProcessPayments(payments []DonationPayment) {
   var wg sync.WaitGroup
 
   for _, p := range payments {
     wg.Add(1)
-    go func(payment Payment) {
-      if err := validate(payment); err != nil {
+    go func(donation DonationPayment) {
+      if err := validate(donation); err != nil {
         log.Println(err)
         return  // FORGOT wg.Done()! Leak!
       }
       defer wg.Done()  // Only called on success path
-      process(payment)
+      process(donation)
     }(p)
   }
 
@@ -1472,20 +1451,20 @@ func ProcessPayments(payments []Payment) {
 }
 
 // CORRECT: Always call Done() with defer
-func ProcessPayments(payments []Payment) {
+func ProcessPayments(payments []DonationPayment) {
   var wg sync.WaitGroup
 
   for _, p := range payments {
     wg.Add(1)
-    go func(payment Payment) {
+    go func(donation DonationPayment) {
       defer wg.Done()  // First thing in goroutine!
 
-      if err := validate(payment); err != nil {
+      if err := validate(donation); err != nil {
         log.Println(err)
         return
       }
 
-      process(payment)
+      process(donation)
     }(p)
   }
 
@@ -1499,15 +1478,15 @@ func ProcessPayments(payments []Payment) {
 - Hangs (missing Done())
 - Race conditions (Add() after goroutine starts)
 
-**Financial example - Batch payment processing**:
+**Financial example - Batch donation processing**:
 
 ```go
 type PaymentBatch struct {
-  payments []Payment
+  payments []DonationPayment
 }
 
 type PaymentResult struct {
-  payment Payment
+  donation DonationPayment
   err     error
 }
 
@@ -1516,24 +1495,24 @@ func (b *PaymentBatch) Process(ctx context.Context) ([]PaymentResult, error) {
   results := make([]PaymentResult, len(b.payments))
   var wg sync.WaitGroup
 
-  for i, payment := range b.payments {
+  for i, donation := range b.payments {
     wg.Add(1)  // Before goroutine!
 
-    go func(idx int, p Payment) {
+    go func(idx int, p DonationPayment) {
       defer wg.Done()  // First thing!
 
       // Check context before processing
       select {
       case <-ctx.Done():
-        results[idx] = PaymentResult{payment: p, err: ctx.Err()}
+        results[idx] = PaymentResult{donation: p, err: ctx.Err()}
         return
       default:
       }
 
-      // Process payment
+      // Process donation
       err := processPayment(ctx, p)
-      results[idx] = PaymentResult{payment: p, err: err}
-    }(i, payment)
+      results[idx] = PaymentResult{donation: p, err: err}
+    }(i, donation)
   }
 
   // Wait with context timeout
@@ -1606,7 +1585,7 @@ func FetchUserData(ctx context.Context, userID int64) (*UserData, error) {
 - Goroutines leak
 - Can't cancel long-running operations
 
-**Financial example - Payment verification with timeout**:
+**Financial example - DonationPayment verification with timeout**:
 
 ```go
 type PaymentVerifier struct {
@@ -1694,22 +1673,22 @@ func (v *PaymentVerifier) verifyWithContext(ctx context.Context, paymentID strin
 
 ```go
 // ANTI-PATTERN: Assuming non-nil
-func ProcessUser(user *User) {
-    fmt.Println(user.Name)  // Panic if user is nil!
+func ProcessUser(beneficiary *Beneficiary) {
+    fmt.Println(beneficiary.Name)  // Panic if beneficiary is nil!
 }
 
 // CORRECT: Check for nil
-func ProcessUser(user *User) error {
-    if user == nil {
-        return errors.New("user is nil")
+func ProcessUser(beneficiary *Beneficiary) error {
+    if beneficiary == nil {
+        return errors.New("beneficiary is nil")
     }
-    fmt.Println(user.Name)
+    fmt.Println(beneficiary.Name)
     return nil
 }
 
 // BETTER: Use value type if possible
-func ProcessUser(user User) {
-    fmt.Println(user.Name)  // Can't be nil
+func ProcessUser(beneficiary Beneficiary) {
+    fmt.Println(beneficiary.Name)  // Can't be nil
 }
 ```
 
@@ -2285,17 +2264,17 @@ func GetDataDynamic(tableName, columnName string) error {
 **Why it's bad**: SQL injection allows attackers to:
 
 - Read sensitive data (donor credit cards, addresses)
-- Modify financial records (change payment amounts)
+- Modify financial records (change donation amounts)
 - Delete entire tables
 - Execute administrative commands
 
 **Real-world impact**:
 
-- 2008: Heartland Payment Systems breach (130 million credit cards)
+- 2008: Heartland DonationPayment Systems breach (130 million credit cards)
 - 2013: Target breach (40 million credit cards) - started with SQL injection
 - 2017: Equifax breach (147 million people) - SQL injection vulnerability
 
-### Transaction Leaks
+### DonationTransaction Leaks
 
 ```go
 // ANTI-PATTERN: Not committing or rolling back
@@ -2304,14 +2283,14 @@ func TransferFunds(fromAccount, toAccount int64, amount Money) error {
   if err != nil {
     return err
   }
-  // Missing defer! Transaction leaks if function returns early
+  // Missing defer! DonationTransaction leaks if function returns early
 
   if err := debitAccount(tx, fromAccount, amount); err != nil {
-    return err  // Transaction not rolled back! Lock held!
+    return err  // DonationTransaction not rolled back! Lock held!
   }
 
   if err := creditAccount(tx, toAccount, amount); err != nil {
-    return err  // Transaction not rolled back!
+    return err  // DonationTransaction not rolled back!
   }
 
   return tx.Commit()  // Only committed on success path
@@ -2321,7 +2300,7 @@ func TransferFunds(fromAccount, toAccount int64, amount Money) error {
 func TransferFunds(fromAccount, toAccount int64, amount Money) (err error) {
   tx, err := db.Begin()
   if err != nil {
-    return fmt.Errorf("begin transaction: %w", err)
+    return fmt.Errorf("begin donation_transaction: %w", err)
   }
 
   defer func() {
@@ -2331,25 +2310,25 @@ func TransferFunds(fromAccount, toAccount int64, amount Money) (err error) {
   }()
 
   if err = debitAccount(tx, fromAccount, amount); err != nil {
-    return fmt.Errorf("debit account: %w", err)
+    return fmt.Errorf("debit donation_account: %w", err)
   }
 
   if err = creditAccount(tx, toAccount, amount); err != nil {
-    return fmt.Errorf("credit account: %w", err)
+    return fmt.Errorf("credit donation_account: %w", err)
   }
 
   if err = tx.Commit(); err != nil {
-    return fmt.Errorf("commit transaction: %w", err)
+    return fmt.Errorf("commit donation_transaction: %w", err)
   }
 
   return nil
 }
 
-// Production-ready transaction wrapper
+// Production-ready donation_transaction wrapper
 func WithTransaction(db *sql.DB, fn func(*sql.Tx) error) error {
   tx, err := db.Begin()
   if err != nil {
-    return fmt.Errorf("begin transaction: %w", err)
+    return fmt.Errorf("begin donation_transaction: %w", err)
   }
 
   defer func() {
@@ -2368,7 +2347,7 @@ func WithTransaction(db *sql.DB, fn func(*sql.Tx) error) error {
   }
 
   if err := tx.Commit(); err != nil {
-    return fmt.Errorf("commit transaction: %w", err)
+    return fmt.Errorf("commit donation_transaction: %w", err)
   }
 
   return nil
@@ -2429,11 +2408,11 @@ func RecordDonations(donations []Donation) error {
   return nil
 }
 
-// Even better: Batch insert with transaction
+// Even better: Batch insert with donation_transaction
 func RecordDonations(donations []Donation) error {
   tx, err := db.Begin()
   if err != nil {
-    return fmt.Errorf("begin transaction: %w", err)
+    return fmt.Errorf("begin donation_transaction: %w", err)
   }
   defer tx.Rollback()
 
@@ -2451,7 +2430,7 @@ func RecordDonations(donations []Donation) error {
   }
 
   if err := tx.Commit(); err != nil {
-    return fmt.Errorf("commit transaction: %w", err)
+    return fmt.Errorf("commit donation_transaction: %w", err)
   }
 
   return nil
@@ -2469,7 +2448,7 @@ func RecordDonations(donations []Donation) error {
 
 - Without prepare: ~500ms (0.5ms per insert)
 - With prepare: ~350ms (0.35ms per insert) - 30% faster
-- With prepare + transaction: ~50ms (0.05ms per insert) - 10x faster!
+- With prepare + donation_transaction: ~50ms (0.05ms per insert) - 10x faster!
 
 ### Scanning Errors
 
@@ -2527,8 +2506,8 @@ func GetDonation(id int64) (*Donation, error) {
 }
 
 // ANTI-PATTERN: Not checking for NULL values
-func GetUser(id int64) (*User, error) {
-  var u User
+func GetUser(id int64) (*Beneficiary, error) {
+  var u Beneficiary
   err := db.QueryRow("SELECT id, name, email FROM users WHERE id = ?", id).
     Scan(&u.ID, &u.Name, &u.Email)
   // Panic if email is NULL!
@@ -2537,8 +2516,8 @@ func GetUser(id int64) (*User, error) {
 }
 
 // CORRECT: Use sql.NullString for nullable columns
-func GetUser(id int64) (*User, error) {
-  var u User
+func GetUser(id int64) (*Beneficiary, error) {
+  var u Beneficiary
   var email sql.NullString
 
   err := db.QueryRow("SELECT id, name, email FROM users WHERE id = ?", id).
@@ -2556,14 +2535,14 @@ func GetUser(id int64) (*User, error) {
 }
 
 // Better: Use pointer for optional fields
-type User struct {
+type Beneficiary struct {
   ID    int64
   Name  string
   Email *string  // nil if not set
 }
 
-func GetUser(id int64) (*User, error) {
-  var u User
+func GetUser(id int64) (*Beneficiary, error) {
+  var u Beneficiary
   var email sql.NullString
 
   err := db.QueryRow("SELECT id, name, email FROM users WHERE id = ?", id).
@@ -2621,10 +2600,10 @@ func GetZakatAccount(id int64) (*ZakatAccount, error) {
   )
 
   if err == sql.ErrNoRows {
-    return nil, fmt.Errorf("zakat account %d not found", id)
+    return nil, fmt.Errorf("zakat donation_account %d not found", id)
   }
   if err != nil {
-    return nil, fmt.Errorf("query zakat account: %w", err)
+    return nil, fmt.Errorf("query zakat donation_account: %w", err)
   }
 
   // Handle nullable fields
@@ -2648,15 +2627,15 @@ Creating too many small interfaces or over-abstracting leads to harder-to-unders
 ```go
 // ANTI-PATTERN: One-method interface for everything
 type UserGetter interface {
-  GetUser(id int64) (*User, error)
+  GetUser(id int64) (*Beneficiary, error)
 }
 
 type UserCreator interface {
-  CreateUser(user *User) error
+  CreateUser(beneficiary *Beneficiary) error
 }
 
 type UserUpdater interface {
-  UpdateUser(user *User) error
+  UpdateUser(beneficiary *Beneficiary) error
 }
 
 type UserDeleter interface {
@@ -2668,9 +2647,9 @@ type UserDeleter interface {
 
 // CORRECT: Cohesive interface when needed
 type UserRepository interface {
-  Get(id int64) (*User, error)
-  Create(user *User) error
-  Update(user *User) error
+  Get(id int64) (*Beneficiary, error)
+  Create(beneficiary *Beneficiary) error
+  Update(beneficiary *Beneficiary) error
   Delete(id int64) error
 }
 
@@ -2679,9 +2658,9 @@ type UserRepository struct {
   db *sql.DB
 }
 
-func (r *UserRepository) Get(id int64) (*User, error) { /* ... */ }
-func (r *UserRepository) Create(user *User) error { /* ... */ }
-func (r *UserRepository) Update(user *User) error { /* ... */ }
+func (r *UserRepository) Get(id int64) (*Beneficiary, error) { /* ... */ }
+func (r *UserRepository) Create(beneficiary *Beneficiary) error { /* ... */ }
+func (r *UserRepository) Update(beneficiary *Beneficiary) error { /* ... */ }
 func (r *UserRepository) Delete(id int64) error { /* ... */ }
 
 // Only create interface when you have multiple implementations
@@ -2699,7 +2678,7 @@ func (r *UserRepository) Delete(id int64) error { /* ... */ }
 
 1. **Multiple implementations exist** (database, in-memory, mock)
 2. **Standard library patterns** (io.Reader, io.Writer, fmt.Stringer)
-3. **Clear abstraction boundary** (payment gateways, notification providers)
+3. **Clear abstraction boundary** (donation gateways, notification providers)
 
 ### Over-Abstraction for Simple Operations
 
@@ -2763,7 +2742,7 @@ type PaymentGateway interface {
 
 ```go
 // ANTI-PATTERN: Define interface before any use
-package payment
+package donation
 
 // Defined but never used!
 type PaymentValidator interface {
@@ -2780,7 +2759,7 @@ type PaymentProcessor struct {
 // Interface never referenced anywhere!
 
 // CORRECT: Define interface at point of use (consumer-driven)
-package payment
+package donation
 
 // No interface, just concrete implementation
 type CardValidator struct {
@@ -2790,7 +2769,7 @@ type CardValidator struct {
 func (v *CardValidator) ValidateCard(card Card) error { /* ... */ }
 func (v *CardValidator) ValidateAmount(amount Money) error { /* ... */ }
 
-// Later, when testing payment processor...
+// Later, when testing donation processor...
 package payment_test
 
 // NOW define interface (consumer-driven)
@@ -2821,7 +2800,7 @@ func TestPaymentProcessor(t *testing.T) {
 
 - Creates unused abstractions
 - Guesses future needs (often wrong)
-- Makes refactoring harder (interface becomes API contract)
+- Makes refactoring harder (interface becomes API murabaha_contract)
 
 **Go idiom**: Interfaces are defined by consumer, not provider. Provider exposes concrete type with methods. Consumer defines interface with only methods it needs.
 
@@ -2963,7 +2942,7 @@ type NotificationProvider interface {
 ### Financial Example: PaymentProcessor Interface Design
 
 ```go
-// ANTI-PATTERN: Overly abstract payment processor
+// ANTI-PATTERN: Overly abstract donation processor
 type PaymentProcessor interface {
   ValidateCard(card Card) error
   ValidateAmount(amount Money) error
@@ -2972,8 +2951,8 @@ type PaymentProcessor interface {
   DecryptCardData(data []byte) (*Card, error)
   Charge(ctx context.Context, amount Money, card Card) (*ChargeResult, error)
   Refund(ctx context.Context, transactionID string) error
-  GetTransaction(id string) (*Transaction, error)
-  ListTransactions(merchantID string) ([]Transaction, error)
+  GetTransaction(id string) (*DonationTransaction, error)
+  ListTransactions(merchantID string) ([]DonationTransaction, error)
   GenerateReport(start, end time.Time) (*Report, error)
   SendReceipt(email, transactionID string) error
   // 20 more methods...
@@ -2989,8 +2968,8 @@ type PaymentGateway interface {
 }
 
 type TransactionRepository interface {
-  Get(id string) (*Transaction, error)
-  List(merchantID string, limit int) ([]Transaction, error)
+  Get(id string) (*DonationTransaction, error)
+  List(merchantID string, limit int) ([]DonationTransaction, error)
 }
 
 type PaymentValidator interface {
@@ -3029,8 +3008,8 @@ func (s *PaymentService) ProcessPayment(ctx context.Context, req PaymentRequest)
     return nil, fmt.Errorf("charge failed: %w", err)
   }
 
-  // Store transaction
-  tx := &Transaction{
+  // Store donation_transaction
+  tx := &DonationTransaction{
     ID:            chargeResult.TransactionID,
     Amount:        req.Amount,
     EncryptedCard: encryptedCard,
@@ -3040,8 +3019,8 @@ func (s *PaymentService) ProcessPayment(ctx context.Context, req PaymentRequest)
 
   if err := s.txRepo.Save(tx); err != nil {
     // Charge succeeded but storage failed - log for reconciliation
-    s.logger.Printf("CRITICAL: Transaction %s not saved: %v", tx.ID, err)
-    // Don't return error - payment succeeded
+    s.logger.Printf("CRITICAL: DonationTransaction %s not saved: %v", tx.ID, err)
+    // Don't return error - donation succeeded
   }
 
   return &PaymentResult{
@@ -3071,9 +3050,9 @@ func (m *mockValidator) ValidateAmount(amount Money) error  { return nil }
 
 type mockTxRepo struct{}
 
-func (m *mockTxRepo) Get(id string) (*Transaction, error)                  { return nil, nil }
-func (m *mockTxRepo) List(merchantID string, limit int) ([]Transaction, error) { return nil, nil }
-func (m *mockTxRepo) Save(tx *Transaction) error                           { return nil }
+func (m *mockTxRepo) Get(id string) (*DonationTransaction, error)                  { return nil, nil }
+func (m *mockTxRepo) List(merchantID string, limit int) ([]DonationTransaction, error) { return nil, nil }
+func (m *mockTxRepo) Save(tx *DonationTransaction) error                           { return nil }
 
 func TestPaymentService(t *testing.T) {
   service := &PaymentService{
@@ -3103,7 +3082,7 @@ func TestPaymentService(t *testing.T) {
 
 1. **Focused interfaces**: Each interface has clear, cohesive responsibility
 2. **Easy testing**: Mock only what varies (gateway, repository, validator)
-3. **Flexible**: Easy to swap payment gateways (Stripe → PayPal)
+3. **Flexible**: Easy to swap donation gateways (Stripe → PayPal)
 4. **Maintainable**: Changes to one interface don't affect others
 
 ## Concurrency Anti-Patterns
@@ -3392,13 +3371,13 @@ func TestGetUser(t *testing.T) {
 func TestGetUser(t *testing.T) {
     service := NewService(repo)
 
-    user, err := service.GetUser(1)
+    beneficiary, err := service.GetUser(1)
     if err != nil {
         t.Fatal(err)
     }
 
-    if user.ID != 1 {
-        t.Errorf("got user %d, want 1", user.ID)
+    if beneficiary.ID != 1 {
+        t.Errorf("got beneficiary %d, want 1", beneficiary.ID)
     }
 }
 ```
@@ -3594,7 +3573,7 @@ import "b"
 1. **N+1 queries**: Use joins or batch loading with IN clause
 2. **No connection pooling**: Configure MaxOpenConns, MaxIdleConns, timeouts
 3. **SQL injection**: Use parameterized queries, whitelist dynamic identifiers
-4. **Transaction leaks**: Always commit or rollback with defer
+4. **DonationTransaction leaks**: Always commit or rollback with defer
 5. **Not using prepared statements**: Prepare once, execute many times
 6. **Scanning errors**: Match scan targets to columns, handle NULLs
 
@@ -3626,10 +3605,10 @@ For Sharia-compliant financial systems:
 - [ ] All timestamps in UTC
 - [ ] Zakat calculations use exact 2.5% (25/1000)
 - [ ] Lunar year (354 days) for Zakat calculation period
-- [ ] Transaction logs immutable and auditable
+- [ ] DonationTransaction logs immutable and auditable
 - [ ] No interest calculations (Riba forbidden)
 - [ ] Donation processing idempotent
-- [ ] Payment verification with fraud detection
+- [ ] DonationPayment verification with fraud detection
 - [ ] Database transactions for multi-step operations
 
 ### How to Avoid Anti-Patterns
@@ -3717,3 +3696,8 @@ Before committing:
 ---
 
 **Navigation**: [← Back to Golang Overview](./README.md)
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

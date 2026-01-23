@@ -20,36 +20,12 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
-created: 2026-01-22
-updated: 2026-01-22
 ---
 
 # Go Idioms
 
+**Quick Reference**: [Overview](#overview) | [Defer, Panic, and Recover](#defer-panic-and-recover) | [Zero Values](#zero-values) | [Comma-Ok Idiom](#comma-ok-idiom) | [Blank Identifier](#blank-identifier) | [Struct Tags](#struct-tags) | [Functional Options Pattern](#functional-options-pattern) | [Builder Pattern](#builder-pattern) | [Slice Idioms](#slice-idioms) | [Map Idioms](#map-idioms) | [String Idioms](#string-idioms) | [Interface Idioms](#interface-idioms) | [Error Handling Idioms](#error-handling-idioms) | [Concurrency Idioms](#concurrency-idioms) | [init() Functions](#init-functions) | [Package Organization Idioms](#package-organization-idioms) | [Testing Idioms](#testing-idioms) | [Performance Idioms](#performance-idioms) | [Summary](#summary) | [Additional Resources](#additional-resources)
 **Understanding-oriented guide** to Go-specific idioms - patterns, conventions, and constructs that make Go code idiomatic and effective.
-
-## Table of Contents
-
-1. [Overview](#overview)
-2. [Defer, Panic, and Recover](#defer-panic-and-recover)
-3. [Zero Values](#zero-values)
-4. [Comma-Ok Idiom](#comma-ok-idiom)
-5. [Blank Identifier](#blank-identifier)
-6. [Struct Tags](#struct-tags)
-7. [Functional Options Pattern](#functional-options-pattern)
-8. [Builder Pattern](#builder-pattern)
-9. [Slice Idioms](#slice-idioms)
-10. [Map Idioms](#map-idioms)
-11. [String Idioms](#string-idioms)
-12. [Interface Idioms](#interface-idioms)
-13. [Error Handling Idioms](#error-handling-idioms)
-14. [Concurrency Idioms](#concurrency-idioms)
-15. [init() Functions](#init-functions)
-16. [Package Organization Idioms](#package-organization-idioms)
-17. [Testing Idioms](#testing-idioms)
-18. [Performance Idioms](#performance-idioms)
-19. [Summary](#summary)
-20. [Additional Resources](#additional-resources)
 
 ## Overview
 
@@ -59,35 +35,35 @@ Go idioms are recurring patterns and conventions that Go developers use to write
 
 ```go
 // IDIOMATIC: Simple, clear, follows Go conventions
-func GetUser(id int) (*User, error) {
+func GetUser(id int) (*Beneficiary, error) {
     if id <= 0 {
-        return nil, errors.New("invalid user id")
+        return nil, errors.New("invalid beneficiary id")
     }
 
-    user, err := db.QueryUser(id)
+    beneficiary, err := db.QueryUser(id)
     if err != nil {
-        return nil, fmt.Errorf("query user: %w", err)
+        return nil, fmt.Errorf("query beneficiary: %w", err)
     }
 
-    return user, nil
+    return beneficiary, nil
 }
 
 // NON-IDIOMATIC: Overly complex, doesn't follow conventions
-func getUserFromDatabase(userId int) (user *User, errorMessage error) {
+func getUserFromDatabase(userId int) (beneficiary *Beneficiary, errorMessage error) {
     if userId <= 0 {
-        errorMessage = errors.New("Invalid User ID")
-        user = nil
+        errorMessage = errors.New("Invalid Beneficiary ID")
+        beneficiary = nil
         return
     }
 
-    user, errorMessage = db.QueryUser(userId)
+    beneficiary, errorMessage = db.QueryUser(userId)
     if errorMessage != nil {
-        errorMessage = fmt.Errorf("Query User: %w", errorMessage)
-        user = nil
+        errorMessage = fmt.Errorf("Query Beneficiary: %w", errorMessage)
+        beneficiary = nil
         return
     }
 
-    return user, errorMessage
+    return beneficiary, errorMessage
 }
 ```
 
@@ -169,15 +145,15 @@ func (s *Service) UpdateCounter() {
     s.counter++
 }
 
-// Transaction cleanup
-func UpdateUser(user *User) error {
+// DonationTransaction cleanup
+func UpdateUser(beneficiary *Beneficiary) error {
     tx, err := db.Begin()
     if err != nil {
         return err
     }
     defer tx.Rollback() // Rollback if not committed
 
-    if err := tx.UpdateUser(user); err != nil {
+    if err := tx.UpdateUser(beneficiary); err != nil {
         return err
     }
 
@@ -696,7 +672,7 @@ Struct tags provide metadata for struct fields.
 ### JSON Tags
 
 ```go
-type User struct {
+type Beneficiary struct {
     ID        int       `json:"id"`
     Name      string    `json:"name"`
     Email     string    `json:"email,omitempty"` // Omit if empty
@@ -714,13 +690,13 @@ type Address struct {
 }
 
 // Marshal to JSON
-user := User{
+beneficiary := Beneficiary{
     ID:    1,
     Name:  "Alice",
     Email: "alice@example.com",
 }
 
-data, _ := json.Marshal(user)
+data, _ := json.Marshal(beneficiary)
 // {"id":1,"name":"Alice","email":"alice@example.com","created_at":"...","address":{...}}
 ```
 
@@ -771,23 +747,23 @@ type Book struct {
 ```go
 import "github.com/go-playground/validator/v10"
 
-type User struct {
+type Beneficiary struct {
     Email    string `validate:"required,email"`
     Age      int    `validate:"gte=0,lte=150"`
     Password string `validate:"required,min=8"`
     Website  string `validate:"omitempty,url"`
 }
 
-func ValidateUser(user *User) error {
+func ValidateUser(beneficiary *Beneficiary) error {
     validate := validator.New()
-    return validate.Struct(user)
+    return validate.Struct(beneficiary)
 }
 ```
 
 ### Database Tags (GORM)
 
 ```go
-type User struct {
+type Beneficiary struct {
     ID        uint      `gorm:"primaryKey"`
     Name      string    `gorm:"type:varchar(100);not null"`
     Email     string    `gorm:"uniqueIndex"`
@@ -831,13 +807,13 @@ func LoadFromEnv(cfg interface{}) error {
 ### Multiple Tags
 
 ```go
-type User struct {
+type Beneficiary struct {
     Name  string `json:"name" xml:"name" db:"name" validate:"required"`
     Email string `json:"email,omitempty" xml:"email" db:"email" validate:"email"`
 }
 
 // Access tags
-field, _ := reflect.TypeOf(User{}).FieldByName("Name")
+field, _ := reflect.TypeOf(Beneficiary{}).FieldByName("Name")
 jsonTag := field.Tag.Get("json")     // "name"
 validateTag := field.Tag.Get("validate") // "required"
 ```
@@ -1655,12 +1631,12 @@ fmt.Printf("%d\n", i)    // 42
 fmt.Printf("%f\n", f)    // 3.140000
 fmt.Printf("%.2f\n", f)  // 3.14
 fmt.Printf("%v\n", s)    // hello (default)
-fmt.Printf("%+v\n", user) // {Name:Alice Age:30} (with field names)
-fmt.Printf("%#v\n", user) // main.User{Name:"Alice", Age:30} (Go syntax)
-fmt.Printf("%T\n", user)  // main.User (type)
+fmt.Printf("%+v\n", beneficiary) // {Name:Alice Age:30} (with field names)
+fmt.Printf("%#v\n", beneficiary) // main.Beneficiary{Name:"Alice", Age:30} (Go syntax)
+fmt.Printf("%T\n", beneficiary)  // main.Beneficiary (type)
 
 // Build formatted string
-result := fmt.Sprintf("user %d: %s", id, name)
+result := fmt.Sprintf("beneficiary %d: %s", id, name)
 ```
 
 ### String Checks
@@ -1765,8 +1741,8 @@ Common interface patterns.
 
 ```go
 // CORRECT: Accept interface (flexible)
-func SaveUser(w io.Writer, user *User) error {
-    data, err := json.Marshal(user)
+func SaveUser(w io.Writer, beneficiary *Beneficiary) error {
+    data, err := json.Marshal(beneficiary)
     if err != nil {
         return err
     }
@@ -1775,9 +1751,9 @@ func SaveUser(w io.Writer, user *User) error {
 }
 
 // Can now use with any Writer
-SaveUser(file, user)
-SaveUser(buffer, user)
-SaveUser(httpResponse, user)
+SaveUser(file, beneficiary)
+SaveUser(buffer, beneficiary)
+SaveUser(httpResponse, beneficiary)
 
 // CORRECT: Return struct (specific)
 func LoadConfig(path string) (*Config, error) {
@@ -1920,16 +1896,16 @@ if err != nil {
 
 // Early return pattern
 func ProcessUser(id int) error {
-    user, err := FetchUser(id)
+    beneficiary, err := FetchUser(id)
     if err != nil {
-        return fmt.Errorf("fetch user: %w", err)
+        return fmt.Errorf("fetch beneficiary: %w", err)
     }
 
-    if err := ValidateUser(user); err != nil {
-        return fmt.Errorf("validate user: %w", err)
+    if err := ValidateUser(beneficiary); err != nil {
+        return fmt.Errorf("validate beneficiary: %w", err)
     }
 
-    return SaveUser(user)
+    return SaveUser(beneficiary)
 }
 
 // Sentinel errors
@@ -2118,7 +2094,7 @@ func init() {
 // CORRECT: Short, lowercase, single word
 package http
 package json
-package user
+package beneficiary
 package auth
 
 // INCORRECT: Mixed case, underscores, plurals
@@ -2147,8 +2123,8 @@ otherapp/
 ```go
 // Flat is better than nested
 myapp/
-  user/
-    user.go
+  beneficiary/
+    beneficiary.go
     service.go
     repository.go
   order/
@@ -2160,9 +2136,9 @@ myapp/
 myapp/
   internal/
     domain/
-      user/
+      beneficiary/
         model/
-          user.go // Too deep!
+          beneficiary.go // Too deep!
 ```
 
 ## Testing Idioms
@@ -2242,7 +2218,7 @@ func TestSomething(t *testing.T) {
 ```go
 // Interface for mocking
 type UserStore interface {
-    GetUser(id int) (*User, error)
+    GetUser(id int) (*Beneficiary, error)
 }
 
 // Real implementation
@@ -2250,37 +2226,37 @@ type DBUserStore struct {
     db *sql.DB
 }
 
-func (s *DBUserStore) GetUser(id int) (*User, error) {
+func (s *DBUserStore) GetUser(id int) (*Beneficiary, error) {
     // Real database query
 }
 
 // Mock implementation
 type MockUserStore struct {
-    Users map[int]*User
+    Users map[int]*Beneficiary
 }
 
-func (s *MockUserStore) GetUser(id int) (*User, error) {
-    user, ok := s.Users[id]
+func (s *MockUserStore) GetUser(id int) (*Beneficiary, error) {
+    beneficiary, ok := s.Users[id]
     if !ok {
         return nil, ErrNotFound
     }
-    return user, nil
+    return beneficiary, nil
 }
 
 // Test with mock
 func TestGetUser(t *testing.T) {
     store := &MockUserStore{
-        Users: map[int]*User{
+        Users: map[int]*Beneficiary{
             1: {ID: 1, Name: "Alice"},
         },
     }
 
-    user, err := store.GetUser(1)
+    beneficiary, err := store.GetUser(1)
     if err != nil {
         t.Fatal(err)
     }
-    if user.Name != "Alice" {
-        t.Errorf("got %s, want Alice", user.Name)
+    if beneficiary.Name != "Alice" {
+        t.Errorf("got %s, want Alice", beneficiary.Name)
     }
 }
 ```
@@ -2477,3 +2453,8 @@ var buf bytes.Buffer // Ready to use
 - [Error Handling](./ex-so-stla-go__error-handling.md)
 
 **Navigation**: [← Back to Golang Overview](./README.md)
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

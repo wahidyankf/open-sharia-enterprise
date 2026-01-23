@@ -856,5 +856,5 @@ Negligible for most applications
 ---
 
 **Last Updated**: 2025-01-23
-**Elixir Version**: 1.18.0 - 1.18.1
+**Elixir Version**: 1.18.0+
 **Status**: Current Stable Release

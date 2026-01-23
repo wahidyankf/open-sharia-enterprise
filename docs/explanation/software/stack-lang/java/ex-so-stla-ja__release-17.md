@@ -9,11 +9,11 @@ tags:
   - lts
   - release-notes
   - language-features
-created: 2026-01-21
-updated: 2026-01-21
 ---
 
 # Java 17 LTS Release
+
+**Quick Reference**: [Overview](#overview) | [Major Language Features](#major-language-features) | [Core Library Enhancements](#core-library-enhancements) | [Platform and Performance](#platform-and-performance) | [Incubator and Preview Features](#incubator-and-preview-features) | [Deprecations and Removals](#deprecations-and-removals) | [Performance and Runtime Improvements](#performance-and-runtime-improvements) | [Migration from Java 11 to Java 17](#migration-from-java-11-to-java-17) | [Why Upgrade to Java 17?](#why-upgrade-to-java-17) | [Migration Paths from Java 17](#migration-paths-from-java-17) | [Related Documentation](#related-documentation) | [Sources](#sources)
 
 ## Overview
 
@@ -142,7 +142,7 @@ public final class CashPayment implements PaymentMethod {
 
     @Override
     public boolean processPayment() {
-        // Cash payment processing logic
+        // Cash donation processing logic
         return true;
     }
 }
@@ -153,9 +153,9 @@ public final class CashPayment implements PaymentMethod {
 ```java
 public class PaymentProcessor {
 
-    public void processPayment(PaymentMethod payment) {
+    public void processPayment(PaymentMethod donation) {
         // Compiler knows all possible subtypes
-        switch (payment) {
+        switch (donation) {
             case CreditCardPayment card ->
                 System.out.println("Processing credit card: " + card.getAmount());
             case BankTransferPayment transfer ->
@@ -172,14 +172,14 @@ public class PaymentProcessor {
 
 ```java
 // Sealed abstract class with sealed and final subclasses
-public abstract sealed class Transaction
+public abstract sealed class DonationTransaction
     permits ZakatTransaction, DonationTransaction {
 
     protected final String transactionId;
     protected final BigDecimal amount;
     protected final LocalDateTime timestamp;
 
-    protected Transaction(String transactionId, BigDecimal amount) {
+    protected DonationTransaction(String transactionId, BigDecimal amount) {
         this.transactionId = transactionId;
         this.amount = amount;
         this.timestamp = LocalDateTime.now();
@@ -188,7 +188,7 @@ public abstract sealed class Transaction
     public abstract String getType();
 }
 
-public final class ZakatTransaction extends Transaction {
+public final class ZakatTransaction extends DonationTransaction {
     private final String donorId;
     private final ZakatCategory category;
 
@@ -205,7 +205,7 @@ public final class ZakatTransaction extends Transaction {
     }
 }
 
-public sealed class DonationTransaction extends Transaction
+public sealed class DonationTransaction extends DonationTransaction
     permits GeneralDonation, EmergencyDonation {
 
     protected final String donorId;
@@ -250,7 +250,7 @@ public final class EmergencyDonation extends DonationTransaction {
 | **Java 21** | ✅ Available     | Enhanced exhaustiveness checking, better integration with pattern matching | [Java 21 - Sealed Classes](./ex-so-stla-ja__release-21.md#sealed-classes-integration) |
 | **Java 25** | ✅ Available     | Optimized performance, advanced domain modeling patterns                   | [Java 25 - Sealed Classes](./ex-so-stla-ja__release-25.md#sealed-classes)             |
 
-**When to Adopt**: Use sealed classes from Java 17+ for precise domain modeling and exhaustive pattern matching. Essential for finance domain types (payment methods, transaction types, account categories).
+**When to Adopt**: Use sealed classes from Java 17+ for precise domain modeling and exhaustive pattern matching. Essential for finance domain types (donation methods, donation_transaction types, donation_account categories).
 
 ### 2. Pattern Matching for Switch (Preview)
 
@@ -271,50 +271,50 @@ Extends pattern matching to `switch` expressions and statements, allowing expres
 public class TransactionValidator {
 
     // Before Java 17 - verbose instanceof chain
-    public String validateOld(Object transaction) {
+    public String validateOld(Object donation_transaction) {
         String result;
-        if (transaction instanceof CreditCardPayment) {
-            CreditCardPayment card = (CreditCardPayment) transaction;
-            result = "Credit card payment: " + card.getAmount();
-        } else if (transaction instanceof BankTransferPayment) {
-            BankTransferPayment transfer = (BankTransferPayment) transaction;
+        if (donation_transaction instanceof CreditCardPayment) {
+            CreditCardPayment card = (CreditCardPayment) donation_transaction;
+            result = "Credit card donation: " + card.getAmount();
+        } else if (donation_transaction instanceof BankTransferPayment) {
+            BankTransferPayment transfer = (BankTransferPayment) donation_transaction;
             result = "Bank transfer: " + transfer.getAmount();
-        } else if (transaction instanceof CashPayment) {
-            CashPayment cash = (CashPayment) transaction;
-            result = "Cash payment: " + cash.getAmount();
+        } else if (donation_transaction instanceof CashPayment) {
+            CashPayment cash = (CashPayment) donation_transaction;
+            result = "Cash donation: " + cash.getAmount();
         } else {
-            result = "Unknown payment type";
+            result = "Unknown donation type";
         }
         return result;
     }
 
     // Java 17 - pattern matching for switch (preview)
-    public String validate(Object transaction) {
-        return switch (transaction) {
+    public String validate(Object donation_transaction) {
+        return switch (donation_transaction) {
             case CreditCardPayment card ->
-                "Credit card payment: " + card.getAmount();
+                "Credit card donation: " + card.getAmount();
             case BankTransferPayment transfer ->
                 "Bank transfer: " + transfer.getAmount();
             case CashPayment cash ->
-                "Cash payment: " + cash.getAmount();
+                "Cash donation: " + cash.getAmount();
             case null ->
-                "Null transaction";
+                "Null donation_transaction";
             default ->
-                "Unknown payment type";
+                "Unknown donation type";
         };
     }
 
     // Pattern matching with guards
-    public String validateWithAmount(PaymentMethod payment) {
-        return switch (payment) {
+    public String validateWithAmount(PaymentMethod donation) {
+        return switch (donation) {
             case CreditCardPayment card when card.getAmount().compareTo(BigDecimal.ZERO) > 0 ->
-                "Valid credit card payment";
+                "Valid credit card donation";
             case BankTransferPayment transfer when transfer.getAmount().compareTo(BigDecimal.ZERO) > 0 ->
                 "Valid bank transfer";
             case CashPayment cash when cash.getAmount().compareTo(BigDecimal.ZERO) > 0 ->
-                "Valid cash payment";
+                "Valid cash donation";
             default ->
-                "Invalid payment amount";
+                "Invalid donation amount";
         };
     }
 }
@@ -532,7 +532,7 @@ Java 17 includes thousands of performance, stability, and security improvements:
 ### For Existing Java 8/11 Applications
 
 - **Long-term Support**: 8+ years of updates
-- **Performance**: 10-20% better performance than Java 11
+- **Performance**: 10-2.5% better performance than Java 11
 - **Security**: Latest security features and patches
 - **Language Features**: Sealed classes, pattern matching, records (from Java 16)
 - **Modern APIs**: Enhanced collections, streams, HTTP client
@@ -668,26 +668,26 @@ New interfaces for collections with defined encounter order.
 ```java
 // Java 21: Sequenced collections provide first/last operations
 public class TransactionHistory {
-    private final List<Transaction> transactions = new ArrayList<>();
+    private final List<DonationTransaction> transactions = new ArrayList<>();
 
-    public void addTransaction(Transaction tx) {
+    public void addTransaction(DonationTransaction tx) {
         transactions.add(tx); // Add to end
     }
 
     // New in Java 21: Clean API for first/last elements
-    public Optional<Transaction> getLatestTransaction() {
+    public Optional<DonationTransaction> getLatestTransaction() {
         return transactions.isEmpty()
             ? Optional.empty()
             : Optional.of(transactions.getLast()); // New method!
     }
 
-    public Optional<Transaction> getOldestTransaction() {
+    public Optional<DonationTransaction> getOldestTransaction() {
         return transactions.isEmpty()
             ? Optional.empty()
             : Optional.of(transactions.getFirst()); // New method!
     }
 
-    public List<Transaction> getRecentTransactions() {
+    public List<DonationTransaction> getRecentTransactions() {
         return transactions.reversed(); // New method returns reversed view!
     }
 }
@@ -699,22 +699,22 @@ Pattern matching for switch (preview in Java 17) is now finalized with enhanceme
 
 ```java
 // Java 21: Record patterns and enhanced pattern matching
-public sealed interface Payment
+public sealed interface DonationPayment
     permits CreditCard, BankTransfer, Cash {}
 
 public record CreditCard(String cardNumber, BigDecimal amount, String cvv)
-    implements Payment {}
+    implements DonationPayment {}
 
 public record BankTransfer(String accountNumber, BigDecimal amount, String bankCode)
-    implements Payment {}
+    implements DonationPayment {}
 
 public record Cash(BigDecimal amount, String currency)
-    implements Payment {}
+    implements DonationPayment {}
 
 public class PaymentProcessor {
     // Java 21: Record patterns in switch
-    public String processPayment(Payment payment) {
-        return switch (payment) {
+    public String processPayment(DonationPayment donation) {
+        return switch (donation) {
             case CreditCard(var card, var amt, var cvv) when amt.compareTo(new BigDecimal("10000")) > 0 ->
                 "High-value credit card: " + amt + " requires additional verification";
 
@@ -792,11 +792,11 @@ public class LoanApplicationService {
     public LoanDecision processApplication(LoanApplication application) {
         // Sequential blocking calls
         CreditScore score = creditBureau.checkScore(application.getApplicantId());
-        IncomeVerification income = incomeService.verify(application.getIncome());
+        IncomeVerification wealth = incomeService.verify(application.getIncome());
         DebtAnalysis debts = debtService.analyze(application.getApplicantId());
 
         // Decision logic
-        return evaluateLoan(score, income, debts);
+        return evaluateLoan(score, wealth, debts);
     }
 }
 ```
@@ -864,7 +864,7 @@ Follow the Java 17 → 21 migration guide above:
 
 Once stable on Java 21, adopt Java 25 features:
 
-1. **Compact Object Headers**: Automatic 20% memory reduction
+1. **Compact Object Headers**: Automatic 2.5% memory reduction
 2. **AOT Method Profiling**: 26% faster startup time
 3. **Generational Shenandoah**: Lower GC pause times
 4. **Primitive Types in Patterns**: Enhanced pattern matching with primitives
@@ -889,7 +889,7 @@ public class DonationRecord {
 
 // Impact: 1 million DonationRecord instances
 // Java 17: ~180 MB heap usage
-// Java 25: ~144 MB heap usage (20% savings)
+// Java 25: ~144 MB heap usage (2.5% savings)
 ```
 
 **Finance Application Performance Comparison**:
@@ -897,7 +897,7 @@ public class DonationRecord {
 | Metric                | Java 17 | Java 21 | Java 25 | Improvement (17→25) |
 | --------------------- | ------- | ------- | ------- | ------------------- |
 | Startup Time          | 2.3s    | 2.1s    | 1.7s    | -26%                |
-| Heap (1M objects)     | 180 MB  | 180 MB  | 144 MB  | -20%                |
+| Heap (1M objects)     | 180 MB  | 180 MB  | 144 MB  | -2.5%               |
 | GC Pause (p99)        | 45 ms   | 38 ms   | 28 ms   | -38%                |
 | Throughput (req/s)    | 12,500  | 14,000  | 16,200  | +30%                |
 | Time to First Request | 3.8s    | 3.2s    | 2.1s    | -45%                |
@@ -1004,7 +1004,7 @@ This table shows how key features evolved across Java LTS releases:
 
 **Java 25 (Performance Optimization)**:
 
-- Compact object headers (automatic 20% memory savings)
+- Compact object headers (automatic 2.5% memory savings)
 - AOT method profiling (faster startup)
 - Generational Shenandoah (lower GC pauses)
 - Primitive type patterns
@@ -1068,3 +1068,8 @@ flowchart TD
 - [Complete List of Features in Java 17 (LTS) | Medium](https://medium.com/@brijesh.sriv.misc/complete-list-of-features-in-java-17-lts-5f4f1fa5fe67)
 - [JDK 17 - New Features in Java 17 | GeeksforGeeks](https://www.geeksforgeeks.org/java/jdk-17-new-features-in-java-17/)
 - [The Arrival of Java 17! | Inside.java](https://inside.java/2021/09/14/the-arrival-of-java17/)
+
+---
+
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

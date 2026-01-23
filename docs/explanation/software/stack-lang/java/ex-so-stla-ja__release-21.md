@@ -10,11 +10,11 @@ tags:
   - release-notes
   - virtual-threads
   - pattern-matching
-created: 2026-01-21
-updated: 2026-01-21
 ---
 
 # Java 21 LTS Release
+
+**Quick Reference**: [Overview](#overview) | [Major Language Features](#major-language-features) | [Preview Features](#preview-features) | [Core Library Enhancements](#core-library-enhancements) | [Performance and Optimization](#performance-and-optimization) | [Migration from Java 17 to Java 21](#migration-from-java-17-to-java-21) | [Why Upgrade to Java 21?](#why-upgrade-to-java-21) | [Related Documentation](#related-documentation) | [Sources](#sources)
 
 ## Overview
 
@@ -214,14 +214,14 @@ Certain operations "pin" virtual threads to their carrier platform threads, defe
 
 **Problem**: Pinned virtual thread blocks carrier thread, preventing other virtual threads from running on it.
 
-**Example - Synchronized Block for Transaction Counter**:
+**Example - Synchronized Block for DonationTransaction Counter**:
 
 ```java
 // WRONG: synchronized with virtual threads
 public class TransactionCounter {
     private int count = 0;
 
-    public void processTransaction(Transaction tx) {
+    public void processTransaction(DonationTransaction tx) {
         // This synchronized block PINS the virtual thread to carrier!
         synchronized (this) {
             count++;
@@ -230,7 +230,7 @@ public class TransactionCounter {
         }
     }
 
-    private void processTransactionLogic(Transaction tx) {
+    private void processTransactionLogic(DonationTransaction tx) {
         // Business logic here
     }
 }
@@ -240,7 +240,7 @@ public class TransactionCounterCorrect {
     private final Lock lock = new ReentrantLock();
     private int count = 0;
 
-    public void processTransaction(Transaction tx) {
+    public void processTransaction(DonationTransaction tx) {
         // ReentrantLock does NOT pin virtual threads
         lock.lock();
         try {
@@ -251,7 +251,7 @@ public class TransactionCounterCorrect {
         }
     }
 
-    private void processTransactionLogic(Transaction tx) {
+    private void processTransactionLogic(DonationTransaction tx) {
         // Business logic here
     }
 }
@@ -551,10 +551,10 @@ Pattern matching for `switch` graduates to a finalized feature, allowing pattern
 ```java
 public class TransactionProcessor {
 
-    public String processTransaction(Object transaction) {
-        return switch (transaction) {
+    public String processTransaction(Object donation_transaction) {
+        return switch (donation_transaction) {
             case null ->
-                "Null transaction";
+                "Null donation_transaction";
 
             case ZakatTransaction z when z.getAmount().compareTo(BigDecimal.ZERO) > 0 ->
                 "Processing valid Zakat: " + z.getAmount();
@@ -569,16 +569,16 @@ public class TransactionProcessor {
                 "Regular donation: " + d.getAmount();
 
             case String s ->
-                "String transaction ID: " + s;
+                "String donation_transaction ID: " + s;
 
             default ->
-                "Unknown transaction type";
+                "Unknown donation_transaction type";
         };
     }
 
     // Exhaustive switch with sealed types
-    public BigDecimal calculateFee(PaymentMethod payment) {
-        return switch (payment) {
+    public BigDecimal calculateFee(PaymentMethod donation) {
+        return switch (donation) {
             case CreditCardPayment card ->
                 card.getAmount().multiply(new BigDecimal("0.029")); // 2.9% fee
 
@@ -788,15 +788,15 @@ public class TransactionHandler {
     }
 
     // Ignore record components
-    public void processTransaction(Transaction transaction) {
-        switch (transaction) {
-            case Transaction(String id, _, _, BigDecimal amount) ->
+    public void processTransaction(DonationTransaction donation_transaction) {
+        switch (donation_transaction) {
+            case DonationTransaction(String id, _, _, BigDecimal amount) ->
                 // Only care about id and amount, ignore timestamp and status
-                System.out.println("Transaction " + id + ": $" + amount);
+                System.out.println("DonationTransaction " + id + ": $" + amount);
         }
     }
 
-    private record Transaction(String id, LocalDateTime timestamp,
+    private record DonationTransaction(String id, LocalDateTime timestamp,
                                String status, BigDecimal amount) {}
 }
 ```
@@ -848,31 +848,31 @@ Scoped values provide a modern alternative to thread-local variables, enabling s
 public class UserContextService {
 
     // Define scoped value
-    public static final ScopedValue<User> CURRENT_USER = ScopedValue.newInstance();
+    public static final ScopedValue<Beneficiary> CURRENT_USER = ScopedValue.newInstance();
 
     // Set value for scope
-    public void executeAsUser(User user, Runnable action) {
-        ScopedValue.where(CURRENT_USER, user)
+    public void executeAsUser(Beneficiary beneficiary, Runnable action) {
+        ScopedValue.where(CURRENT_USER, beneficiary)
             .run(action);
     }
 
     // Access scoped value
     public void processTransaction() {
-        User currentUser = CURRENT_USER.get();
-        System.out.println("Processing transaction for: " + currentUser.name());
+        Beneficiary currentUser = CURRENT_USER.get();
+        System.out.println("Processing donation_transaction for: " + currentUser.name());
     }
 
     // Works with virtual threads
-    public void handleRequest(User user) {
+    public void handleRequest(Beneficiary beneficiary) {
         Thread.startVirtualThread(() -> {
-            ScopedValue.where(CURRENT_USER, user).run(() -> {
+            ScopedValue.where(CURRENT_USER, beneficiary).run(() -> {
                 processTransaction();
                 // currentUser is accessible throughout the scope
             });
         });
     }
 
-    private record User(String name, String email) {}
+    private record Beneficiary(String name, String email) {}
 }
 ```
 
@@ -983,3 +983,8 @@ Java 21 includes numerous performance improvements:
 - [JDK 21 Release Notes | Oracle](https://www.oracle.com/java/technologies/javase/21-relnote-issues.html)
 - [Uncover New Features in Java 21 | JRebel](https://www.jrebel.com/blog/java-21)
 - [Java 21 released! All new features explained](https://bulldogjob.com/readme/java-21-all-new-features-explained)
+
+---
+
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

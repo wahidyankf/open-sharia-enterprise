@@ -19,32 +19,12 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
-created: 2026-01-22
-updated: 2026-01-22
 ---
 
 # Error Handling
 
+**Quick Reference**: [Overview](#overview) | [Error Interface and Error Returns](#error-interface-and-error-returns) | [Error Creation](#error-creation) | [Error Wrapping (Go 1.13+)](#error-wrapping-go-113) | [Error Inspection](#error-inspection) | [Sentinel Errors](#sentinel-errors) | [Custom Error Types](#custom-error-types) | [Error Handling Patterns](#error-handling-patterns) | [Panic and Recover](#panic-and-recover) | [Error Handling in Goroutines](#error-handling-in-goroutines) | [Error Context and Debugging](#error-context-and-debugging) | [Best Practices](#best-practices) | [Anti-Patterns](#anti-patterns) | [Testing Error Conditions](#testing-error-conditions) | [Summary](#summary) | [Additional Resources](#additional-resources)
 **Understanding-oriented guide** to error handling in Go - from basic error returns to advanced error wrapping, custom error types, and panic/recover patterns.
-
-## Table of Contents
-
-1. [Overview](#overview)
-2. [Error Interface and Error Returns](#error-interface-and-error-returns)
-3. [Error Creation](#error-creation)
-4. [Error Wrapping (Go 1.13+)](#error-wrapping-go-113)
-5. [Error Inspection](#error-inspection)
-6. [Sentinel Errors](#sentinel-errors)
-7. [Custom Error Types](#custom-error-types)
-8. [Error Handling Patterns](#error-handling-patterns)
-9. [Panic and Recover](#panic-and-recover)
-10. [Error Handling in Goroutines](#error-handling-in-goroutines)
-11. [Error Context and Debugging](#error-context-and-debugging)
-12. [Best Practices](#best-practices)
-13. [Anti-Patterns](#anti-patterns)
-14. [Testing Error Conditions](#testing-error-conditions)
-15. [Summary](#summary)
-16. [Additional Resources](#additional-resources)
 
 ## Overview
 
@@ -120,18 +100,18 @@ func ReadFile(filename string) ([]byte, error) {
 }
 
 // Multiple return values + error
-func ParseUser(data []byte) (User, int, error) {
-    var user User
+func ParseUser(data []byte) (Beneficiary, int, error) {
+    var beneficiary Beneficiary
     if len(data) == 0 {
-        return User{}, 0, errors.New("empty data")
+        return Beneficiary{}, 0, errors.New("empty data")
     }
 
-    err := json.Unmarshal(data, &user)
+    err := json.Unmarshal(data, &beneficiary)
     if err != nil {
-        return User{}, 0, err
+        return Beneficiary{}, 0, err
     }
 
-    return user, len(data), nil
+    return beneficiary, len(data), nil
 }
 ```
 
@@ -165,38 +145,38 @@ Keep the happy path unindented by returning early on errors:
 
 ```go
 // CORRECT: Early returns, happy path unindented
-func ProcessUser(id int) (*User, error) {
-    user, err := FetchUser(id)
+func ProcessUser(id int) (*Beneficiary, error) {
+    beneficiary, err := FetchUser(id)
     if err != nil {
-        return nil, fmt.Errorf("fetch user: %w", err)
+        return nil, fmt.Errorf("fetch beneficiary: %w", err)
     }
 
-    if err := ValidateUser(user); err != nil {
-        return nil, fmt.Errorf("validate user: %w", err)
+    if err := ValidateUser(beneficiary); err != nil {
+        return nil, fmt.Errorf("validate beneficiary: %w", err)
     }
 
-    if err := SaveUser(user); err != nil {
-        return nil, fmt.Errorf("save user: %w", err)
+    if err := SaveUser(beneficiary); err != nil {
+        return nil, fmt.Errorf("save beneficiary: %w", err)
     }
 
-    return user, nil // Happy path at end, unindented
+    return beneficiary, nil // Happy path at end, unindented
 }
 
 // INCORRECT: Nested if-else, happy path deeply indented
-func ProcessUser(id int) (*User, error) {
-    user, err := FetchUser(id)
+func ProcessUser(id int) (*Beneficiary, error) {
+    beneficiary, err := FetchUser(id)
     if err != nil {
         return nil, err
     } else {
-        err = ValidateUser(user)
+        err = ValidateUser(beneficiary)
         if err != nil {
             return nil, err
         } else {
-            err = SaveUser(user)
+            err = SaveUser(beneficiary)
             if err != nil {
                 return nil, err
             } else {
-                return user, nil // Happy path deeply nested
+                return beneficiary, nil // Happy path deeply nested
             }
         }
     }
@@ -298,13 +278,13 @@ Good error messages are:
 1. **Descriptive**: Explain what went wrong
 2. **Lowercase**: Start with lowercase (Go convention)
 3. **Contextual**: Include relevant values
-4. **Actionable**: Help user understand how to fix
+4. **Actionable**: Help beneficiary understand how to fix
 
 ```go
 // CORRECT: Descriptive, lowercase, contextual
 return fmt.Errorf("failed to open file %s: %w", path, err)
 return fmt.Errorf("invalid port number: %d (must be 1-65535)", port)
-return fmt.Errorf("user %s not found in database", username)
+return fmt.Errorf("beneficiary %s not found in database", username)
 
 // INCORRECT: Too generic
 return errors.New("error") // What error?
@@ -326,25 +306,25 @@ Go 1.13 introduced error wrapping to preserve the error chain while adding conte
 Use `%w` verb in `fmt.Errorf` to wrap errors:
 
 ```go
-func ReadUserFile(path string) (*User, error) {
+func ReadUserFile(path string) (*Beneficiary, error) {
     data, err := os.ReadFile(path)
     if err != nil {
         // Wrap error with %w to preserve original error
-        return nil, fmt.Errorf("read user file: %w", err)
+        return nil, fmt.Errorf("read beneficiary file: %w", err)
     }
 
-    var user User
-    if err := json.Unmarshal(data, &user); err != nil {
+    var beneficiary Beneficiary
+    if err := json.Unmarshal(data, &beneficiary); err != nil {
         // Add context while preserving error chain
-        return nil, fmt.Errorf("parse user data from %s: %w", path, err)
+        return nil, fmt.Errorf("parse beneficiary data from %s: %w", path, err)
     }
 
-    return &user, nil
+    return &beneficiary, nil
 }
 
 // Error chain example:
 // Original: "open /path/to/file: no such file or directory"
-// Wrapped: "parse user data from /path/to/file: read user file: open /path/to/file: no such file or directory"
+// Wrapped: "parse beneficiary data from /path/to/file: read beneficiary file: open /path/to/file: no such file or directory"
 ```
 
 ### %w vs %v
@@ -379,40 +359,40 @@ Build error context across call stack:
 
 ```go
 // Low-level database function
-func (db *DB) QueryUser(id int) (*User, error) {
+func (db *DB) QueryUser(id int) (*Beneficiary, error) {
     row := db.conn.QueryRow("SELECT * FROM users WHERE id = ?", id)
-    var user User
-    err := row.Scan(&user.ID, &user.Name, &user.Email)
+    var beneficiary Beneficiary
+    err := row.Scan(&beneficiary.ID, &beneficiary.Name, &beneficiary.Email)
     if err != nil {
         if err == sql.ErrNoRows {
-            return nil, fmt.Errorf("user %d: %w", id, ErrNotFound)
+            return nil, fmt.Errorf("beneficiary %d: %w", id, ErrNotFound)
         }
-        return nil, fmt.Errorf("scan user row: %w", err)
+        return nil, fmt.Errorf("scan beneficiary row: %w", err)
     }
-    return &user, nil
+    return &beneficiary, nil
 }
 
 // Mid-level service function
-func (s *UserService) GetUser(id int) (*User, error) {
-    user, err := s.db.QueryUser(id)
+func (s *UserService) GetUser(id int) (*Beneficiary, error) {
+    beneficiary, err := s.db.QueryUser(id)
     if err != nil {
-        return nil, fmt.Errorf("get user from database: %w", err)
+        return nil, fmt.Errorf("get beneficiary from database: %w", err)
     }
-    return user, nil
+    return beneficiary, nil
 }
 
 // High-level handler function
 func (h *Handler) UserHandler(w http.ResponseWriter, r *http.Request) {
     id := extractID(r)
-    user, err := h.service.GetUser(id)
+    beneficiary, err := h.service.GetUser(id)
     if err != nil {
         // Full error chain available:
-        // "get user from database: user 123: not found"
-        log.Printf("failed to get user: %v", err)
+        // "get beneficiary from database: beneficiary 123: not found"
+        log.Printf("failed to get beneficiary: %v", err)
 
         // Can still check for specific errors
         if errors.Is(err, ErrNotFound) {
-            http.Error(w, "User not found", http.StatusNotFound)
+            http.Error(w, "Beneficiary not found", http.StatusNotFound)
             return
         }
 
@@ -420,7 +400,7 @@ func (h *Handler) UserHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    json.NewEncoder(w).Encode(user)
+    json.NewEncoder(w).Encode(beneficiary)
 }
 ```
 
@@ -470,20 +450,20 @@ var (
     ErrPermissionDenied = errors.New("permission denied")
 )
 
-func GetUser(id int) (*User, error) {
-    user, err := db.Query(id)
+func GetUser(id int) (*Beneficiary, error) {
+    beneficiary, err := db.Query(id)
     if err != nil {
-        return nil, fmt.Errorf("query user %d: %w", id, ErrNotFound)
+        return nil, fmt.Errorf("query beneficiary %d: %w", id, ErrNotFound)
     }
-    return user, nil
+    return beneficiary, nil
 }
 
 func main() {
-    user, err := GetUser(123)
+    beneficiary, err := GetUser(123)
     if err != nil {
         // errors.Is unwraps the error chain
         if errors.Is(err, ErrNotFound) {
-            fmt.Println("User not found")
+            fmt.Println("Beneficiary not found")
             return
         }
 
@@ -527,27 +507,27 @@ func (e *ValidationError) Unwrap() error {
     return e.Err
 }
 
-func ValidateUser(user *User) error {
-    if user.Age < 0 {
+func ValidateUser(beneficiary *Beneficiary) error {
+    if beneficiary.Age < 0 {
         return &ValidationError{
             Field: "age",
-            Value: user.Age,
+            Value: beneficiary.Age,
             Err:   errors.New("must be non-negative"),
         }
     }
     return nil
 }
 
-func ProcessUser(user *User) error {
-    if err := ValidateUser(user); err != nil {
-        return fmt.Errorf("user validation: %w", err)
+func ProcessUser(beneficiary *Beneficiary) error {
+    if err := ValidateUser(beneficiary); err != nil {
+        return fmt.Errorf("beneficiary validation: %w", err)
     }
     return nil
 }
 
 func main() {
-    user := &User{Age: -5}
-    err := ProcessUser(user)
+    beneficiary := &Beneficiary{Age: -5}
+    err := ProcessUser(beneficiary)
 
     if err != nil {
         // errors.As extracts ValidationError from chain
@@ -626,35 +606,35 @@ var (
 ### Using Sentinel Errors
 
 ```go
-func GetUser(id int) (*User, error) {
-    user := db.Find(id)
-    if user == nil {
+func GetUser(id int) (*Beneficiary, error) {
+    beneficiary := db.Find(id)
+    if beneficiary == nil {
         return nil, ErrNotFound
     }
-    return user, nil
+    return beneficiary, nil
 }
 
-func CreateUser(user *User) error {
-    existing := db.Find(user.ID)
+func CreateUser(beneficiary *Beneficiary) error {
+    existing := db.Find(beneficiary.ID)
     if existing != nil {
         return ErrAlreadyExists
     }
-    db.Save(user)
+    db.Save(beneficiary)
     return nil
 }
 
 func main() {
-    user, err := GetUser(123)
+    beneficiary, err := GetUser(123)
     if err != nil {
         if errors.Is(err, ErrNotFound) {
-            fmt.Println("User not found")
+            fmt.Println("Beneficiary not found")
             return
         }
         fmt.Printf("Error: %v\n", err)
         return
     }
 
-    fmt.Printf("Found user: %v\n", user)
+    fmt.Printf("Found beneficiary: %v\n", beneficiary)
 }
 ```
 
@@ -724,22 +704,22 @@ if err == ErrNotFound { // Won't work if error is wrapped
 }
 
 // CORRECT: Wrap sentinel errors to add context
-func GetUser(id int) (*User, error) {
-    user, err := db.Query(id)
+func GetUser(id int) (*Beneficiary, error) {
+    beneficiary, err := db.Query(id)
     if err != nil {
-        return nil, fmt.Errorf("query user %d: %w", id, ErrNotFound)
+        return nil, fmt.Errorf("query beneficiary %d: %w", id, ErrNotFound)
     }
-    return user, nil
+    return beneficiary, nil
 }
 
 // INCORRECT: Returning wrapped error makes it hard to identify
-func GetUser(id int) (*User, error) {
-    user, err := db.Query(id)
+func GetUser(id int) (*Beneficiary, error) {
+    beneficiary, err := db.Query(id)
     if err != nil {
         // Don't create new error, wrap sentinel instead
         return nil, errors.New("not found") // Creates different error!
     }
-    return user, nil
+    return beneficiary, nil
 }
 ```
 
@@ -858,25 +838,25 @@ func WrapAppError(code ErrorCode, message string, err error) *AppError {
 }
 
 // Usage
-func GetUser(id int) (*User, error) {
-    user, err := db.Query(id)
+func GetUser(id int) (*Beneficiary, error) {
+    beneficiary, err := db.Query(id)
     if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
-            return nil, NewAppError(ErrCodeNotFound, fmt.Sprintf("user %d not found", id))
+            return nil, NewAppError(ErrCodeNotFound, fmt.Sprintf("beneficiary %d not found", id))
         }
         return nil, WrapAppError(ErrCodeInternal, "database query failed", err)
     }
-    return user, nil
+    return beneficiary, nil
 }
 
 func main() {
-    user, err := GetUser(123)
+    beneficiary, err := GetUser(123)
     if err != nil {
         var appErr *AppError
         if errors.As(err, &appErr) {
             switch appErr.Code {
             case ErrCodeNotFound:
-                fmt.Println("User not found")
+                fmt.Println("Beneficiary not found")
             case ErrCodeInternal:
                 fmt.Printf("Internal error: %v\n", appErr.Err)
             }
@@ -935,7 +915,7 @@ var (
 // Usage in HTTP handler
 func UserHandler(w http.ResponseWriter, r *http.Request) {
     id := extractID(r)
-    user, err := GetUser(id)
+    beneficiary, err := GetUser(id)
 
     if err != nil {
         var httpErr *HTTPError
@@ -946,7 +926,7 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 
         // Convert domain errors to HTTP errors
         if errors.Is(err, ErrNotFound) {
-            http.Error(w, "User not found", http.StatusNotFound)
+            http.Error(w, "Beneficiary not found", http.StatusNotFound)
             return
         }
 
@@ -954,7 +934,7 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    json.NewEncoder(w).Encode(user)
+    json.NewEncoder(w).Encode(beneficiary)
 }
 ```
 
@@ -980,26 +960,26 @@ func (v ValidationErrors) HasErrors() bool {
 }
 
 // Usage
-func ValidateUser(user *User) error {
+func ValidateUser(beneficiary *Beneficiary) error {
     errs := make(ValidationErrors)
 
-    if user.Name == "" {
+    if beneficiary.Name == "" {
         errs.Add("name", "required")
     }
 
-    if len(user.Name) > 100 {
+    if len(beneficiary.Name) > 100 {
         errs.Add("name", "must be at most 100 characters")
     }
 
-    if user.Age < 0 {
+    if beneficiary.Age < 0 {
         errs.Add("age", "must be non-negative")
     }
 
-    if user.Age > 150 {
+    if beneficiary.Age > 150 {
         errs.Add("age", "must be at most 150")
     }
 
-    if !strings.Contains(user.Email, "@") {
+    if !strings.Contains(beneficiary.Email, "@") {
         errs.Add("email", "invalid format")
     }
 
@@ -1011,13 +991,13 @@ func ValidateUser(user *User) error {
 }
 
 func main() {
-    user := &User{
+    beneficiary := &Beneficiary{
         Name:  "",
         Age:   -5,
         Email: "invalid",
     }
 
-    err := ValidateUser(user)
+    err := ValidateUser(beneficiary)
     if err != nil {
         var validationErrs ValidationErrors
         if errors.As(err, &validationErrs) {
@@ -1052,7 +1032,7 @@ func ProcessOrder(order *Order) error {
     }
 
     if err := ProcessPayment(order); err != nil {
-        return fmt.Errorf("process payment: %w", err)
+        return fmt.Errorf("process donation: %w", err)
     }
 
     if err := ShipOrder(order); err != nil {
@@ -1067,13 +1047,13 @@ func ProcessOrder(order *Order) error {
 
 ```go
 // Store error in variable when needed later
-func UpdateUser(user *User) error {
+func UpdateUser(beneficiary *Beneficiary) error {
     var err error
 
-    // Start transaction
+    // Start donation_transaction
     tx, err := db.Begin()
     if err != nil {
-        return fmt.Errorf("begin transaction: %w", err)
+        return fmt.Errorf("begin donation_transaction: %w", err)
     }
 
     // Defer commit/rollback
@@ -1086,12 +1066,12 @@ func UpdateUser(user *User) error {
     }()
 
     // Do updates
-    err = tx.UpdateUser(user)
+    err = tx.UpdateUser(beneficiary)
     if err != nil {
-        return fmt.Errorf("update user: %w", err)
+        return fmt.Errorf("update beneficiary: %w", err)
     }
 
-    err = tx.UpdateAuditLog(user)
+    err = tx.UpdateAuditLog(beneficiary)
     if err != nil {
         return fmt.Errorf("update audit log: %w", err)
     }
@@ -1638,7 +1618,7 @@ func NewContextError(err error, context map[string]interface{}) *ContextError {
 
 // Usage
 func ProcessUser(userID int, action string) error {
-    user, err := GetUser(userID)
+    beneficiary, err := GetUser(userID)
     if err != nil {
         return NewContextError(err, map[string]interface{}{
             "user_id": userID,
@@ -1658,7 +1638,7 @@ func ProcessUser(userID int, action string) error {
 // CORRECT: Lowercase, descriptive, includes context
 return fmt.Errorf("failed to open file %s: %w", path, err)
 return fmt.Errorf("invalid port: %d (must be 1-65535)", port)
-return fmt.Errorf("user %s not found", username)
+return fmt.Errorf("beneficiary %s not found", username)
 
 // INCORRECT: Uppercase, generic, missing context
 return errors.New("Error") // Too generic
@@ -1676,12 +1656,12 @@ return fmt.Errorf("parse config: %w", err)
 return fmt.Errorf("parse config: %v", err) // Can't use errors.Is/As!
 
 // CORRECT: Add context at each layer
-func (s *Service) GetUser(id int) (*User, error) {
-    user, err := s.repo.FindUser(id)
+func (s *Service) GetUser(id int) (*Beneficiary, error) {
+    beneficiary, err := s.repo.FindUser(id)
     if err != nil {
-        return nil, fmt.Errorf("get user from repository: %w", err)
+        return nil, fmt.Errorf("get beneficiary from repository: %w", err)
     }
-    return user, nil
+    return beneficiary, nil
 }
 ```
 
@@ -1720,7 +1700,7 @@ func processInternal() error {
 
 ```go
 // CORRECT: Log errors with context
-log.Printf("failed to process user %d: %v", userID, err)
+log.Printf("failed to process beneficiary %d: %v", userID, err)
 
 // INCORRECT: Logging without context
 log.Printf("error: %v", err) // What operation failed?
@@ -1733,12 +1713,12 @@ log.Printf("error: %+v", err) // Use %+v for detailed error chain
 
 ```go
 // CORRECT: Error as last return value
-func GetUser(id int) (*User, error)
+func GetUser(id int) (*Beneficiary, error)
 func ProcessData(data []byte) (int, error)
 func ReadFile(path string) ([]byte, error)
 
 // INCORRECT: Error not last
-func GetUser(id int) (error, *User) // Wrong order!
+func GetUser(id int) (error, *Beneficiary) // Wrong order!
 ```
 
 ### Defer Error Handling
@@ -1860,10 +1840,10 @@ func main() {
 
 ```go
 // INCORRECT: Creating error from string
-return errors.New(fmt.Sprintf("user %d not found", id))
+return errors.New(fmt.Sprintf("beneficiary %d not found", id))
 
 // CORRECT: Use fmt.Errorf directly
-return fmt.Errorf("user %d not found", id)
+return fmt.Errorf("beneficiary %d not found", id)
 ```
 
 ### Don't Check Error Type with Type Assertion
@@ -1885,21 +1865,21 @@ if errors.As(err, &myErr) {
 
 ```go
 // INCORRECT: Generic error without context
-func GetUser(id int) (*User, error) {
-    user, err := db.Query(id)
+func GetUser(id int) (*Beneficiary, error) {
+    beneficiary, err := db.Query(id)
     if err != nil {
         return nil, errors.New("error") // Too generic!
     }
-    return user, nil
+    return beneficiary, nil
 }
 
 // CORRECT: Specific error with context
-func GetUser(id int) (*User, error) {
-    user, err := db.Query(id)
+func GetUser(id int) (*Beneficiary, error) {
+    beneficiary, err := db.Query(id)
     if err != nil {
-        return nil, fmt.Errorf("query user %d: %w", id, err)
+        return nil, fmt.Errorf("query beneficiary %d: %w", id, err)
     }
-    return user, nil
+    return beneficiary, nil
 }
 ```
 
@@ -1911,16 +1891,16 @@ func GetUser(id int) (*User, error) {
 func TestGetUser_NotFound(t *testing.T) {
     db := setupTestDB(t)
 
-    user, err := GetUser(db, 999)
+    beneficiary, err := GetUser(db, 999)
 
     // Check that error occurred
     if err == nil {
         t.Fatal("expected error, got nil")
     }
 
-    // Check that user is nil
-    if user != nil {
-        t.Errorf("expected nil user, got %+v", user)
+    // Check that beneficiary is nil
+    if beneficiary != nil {
+        t.Errorf("expected nil beneficiary, got %+v", beneficiary)
     }
 
     // Check specific error using errors.Is
@@ -1934,9 +1914,9 @@ func TestGetUser_NotFound(t *testing.T) {
 
 ```go
 func TestValidateUser_ValidationError(t *testing.T) {
-    user := &User{Age: -5}
+    beneficiary := &Beneficiary{Age: -5}
 
-    err := ValidateUser(user)
+    err := ValidateUser(beneficiary)
 
     // Check error occurred
     if err == nil {
@@ -1969,7 +1949,7 @@ func TestGetUser_ErrorMessage(t *testing.T) {
     }
 
     // Check error message contains expected text
-    expected := "user 999"
+    expected := "beneficiary 999"
     if !strings.Contains(err.Error(), expected) {
         t.Errorf("error message %q doesn't contain %q", err.Error(), expected)
     }
@@ -2029,18 +2009,18 @@ type MockDB struct {
     ReturnError error
 }
 
-func (m *MockDB) Query(id int) (*User, error) {
+func (m *MockDB) Query(id int) (*Beneficiary, error) {
     if m.ReturnError != nil {
         return nil, m.ReturnError
     }
-    return &User{ID: id}, nil
+    return &Beneficiary{ID: id}, nil
 }
 
 func TestGetUser_DBError(t *testing.T) {
     mockErr := errors.New("database connection failed")
     db := &MockDB{ReturnError: mockErr}
 
-    user, err := GetUser(db, 123)
+    beneficiary, err := GetUser(db, 123)
 
     if err == nil {
         t.Fatal("expected error, got nil")
@@ -2051,8 +2031,8 @@ func TestGetUser_DBError(t *testing.T) {
         t.Errorf("expected error chain to contain mock error")
     }
 
-    if user != nil {
-        t.Errorf("expected nil user, got %+v", user)
+    if beneficiary != nil {
+        t.Errorf("expected nil beneficiary, got %+v", beneficiary)
     }
 }
 ```
@@ -2145,3 +2125,8 @@ errors.Join(errs...)
 - [Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md)
 
 **Navigation**: [← Back to Golang Overview](./README.md)
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

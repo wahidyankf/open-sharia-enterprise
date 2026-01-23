@@ -27,8 +27,6 @@ related:
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
-created: 2026-01-22
-updated: 2026-01-22
 ---
 
 # Go Service Layer Template
@@ -2349,4 +2347,4 @@ func TestZakatCalculationService_Integration(t *testing.T) {
 
 **Template Version**: 1.0
 **Go Compatibility**: 1.18+, 1.21+, 1.22+, 1.23+, 1.24+, 1.25+
-**Last Updated**: 2026-01-22
+**Last Updated**: 2025-01-23

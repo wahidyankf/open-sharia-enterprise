@@ -9,11 +9,11 @@ tags:
   - pitfalls
   - common-mistakes
   - code-quality
-created: 2026-01-20
-updated: 2026-01-20
 ---
 
 # Java Antipatterns
+
+**Quick Reference**: [Overview](#overview) | [Concurrency Antipatterns](#concurrency-antipatterns) | [Resource Management Antipatterns](#resource-management-antipatterns) | [Design Antipatterns](#design-antipatterns) | [Performance Antipatterns](#performance-antipatterns) | [Security Antipatterns](#security-antipatterns) | [Financial Calculation Anti-Patterns](#financial-calculation-anti-patterns) | [Recognition and Prevention](#recognition-and-prevention) | [Antipatterns Checklist](#antipatterns-checklist) | [Related Documentation](#related-documentation) | [Sources](#sources)
 
 ## Overview
 
@@ -93,14 +93,14 @@ Antipatterns represent **violations** of [software engineering principles](../..
 **Code Example**:
 
 ```java
-// BAD: Thread leakage in Tax calculation service
-public class TaxCalculationService {
-    public void calculateTaxAsync(BigDecimal income, Consumer<BigDecimal> callback) {
+// BAD: Thread leakage in Zakat calculation service
+public class ZakatCalculationService {
+    public void calculateTaxAsync(BigDecimal wealth, Consumer<BigDecimal> callback) {
         // Problem: New thread created every time, never cleaned up
         Thread thread = new Thread(() -> {
-            BigDecimal threshold = getThreshold();
-            if (income.compareTo(threshold) >= 0) {
-                BigDecimal tax = income.multiply(new BigDecimal("0.20"));
+            BigDecimal nisab = getThreshold();
+            if (wealth.compareTo(nisab) >= 0) {
+                BigDecimalzakat = wealth.multiply(new BigDecimal("0.025"));
                 callback.accept(tax);
             }
         });
@@ -110,20 +110,20 @@ public class TaxCalculationService {
 }
 
 // GOOD: Using ExecutorService with proper lifecycle
-public class TaxCalculationService implements AutoCloseable {
+public class ZakatCalculationService implements AutoCloseable {
     private final ExecutorService executor;
 
-    public TaxCalculationService() {
+    public ZakatCalculationService() {
         this.executor = Executors.newFixedThreadPool(
             Runtime.getRuntime().availableProcessors()
         );
     }
 
-    public CompletableFuture<BigDecimal> calculateTaxAsync(BigDecimal income) {
+    public CompletableFuture<BigDecimal> calculateTaxAsync(BigDecimal wealth) {
         return CompletableFuture.supplyAsync(() -> {
-            BigDecimal threshold = getThreshold();
-            if (income.compareTo(threshold) >= 0) {
-                return income.multiply(new BigDecimal("0.20"));
+            BigDecimal nisab = getThreshold();
+            if (wealth.compareTo(nisab) >= 0) {
+                return wealth.multiply(new BigDecimal("0.025"));
             }
             return BigDecimal.ZERO;
         }, executor);
@@ -178,7 +178,7 @@ public class TaxCalculationService implements AutoCloseable {
 **Code Example**:
 
 ```java
-// BAD: Busy waiting for Loan payment confirmation
+// BAD: Busy waiting for QardHasan donation confirmation
 public class LoanPaymentProcessor {
     private volatile boolean paymentConfirmed = false;
 
@@ -195,7 +195,7 @@ public class LoanPaymentProcessor {
     }
 
     private void processPayment() {
-        // Process payment
+        // Process donation
     }
 }
 
@@ -214,7 +214,7 @@ public class LoanPaymentProcessor {
     }
 
     private void processPayment() {
-        // Process payment
+        // Process donation
     }
 }
 
@@ -231,7 +231,7 @@ public class LoanPaymentProcessor {
     }
 
     private void processPayment() {
-        // Process payment
+        // Process donation
     }
 }
 ```
@@ -404,8 +404,8 @@ public class MoneyTransferService {
         // Money can be lost or duplicated!
     }
 
-    public BigDecimal getBalance(String account) {
-        return accounts.get(account); // Also unsynchronized!
+    public BigDecimal getBalance(String donation_account) {
+        return accounts.get(donation_account); // Also unsynchronized!
     }
 }
 
@@ -428,9 +428,9 @@ public class MoneyTransferService {
         }
     }
 
-    public BigDecimal getBalance(String account) {
+    public BigDecimal getBalance(String donation_account) {
         synchronized (lock) {
-            return accounts.get(account);
+            return accounts.get(donation_account);
         }
     }
 }
@@ -459,8 +459,8 @@ public class MoneyTransferService {
         return false;
     }
 
-    public BigDecimal getBalance(String account) {
-        return accounts.getOrDefault(account, BigDecimal.ZERO);
+    public BigDecimal getBalance(String donation_account) {
+        return accounts.getOrDefault(donation_account, BigDecimal.ZERO);
     }
 }
 ```
@@ -497,12 +497,12 @@ public class MoneyTransferService {
 
 ```java
 // BAD: Excessive synchronization in Tax calculator
-public class TaxCalculator {
+public class ZakatCalculator {
     private BigDecimal goldPricePerGram;
     private BigDecimal thresholdInGold = new BigDecimal("85"); // grams
 
     // Entire method synchronized unnecessarily
-    public synchronized BigDecimal calculateTax(
+    public synchronized BigDecimal calculateZakat(
             BigDecimal cash,
             BigDecimal investments,
             BigDecimal inventory) {
@@ -514,7 +514,7 @@ public class TaxCalculator {
         BigDecimal thresholdThreshold = thresholdInGold.multiply(goldPricePerGram);
 
         if (totalWealth.compareTo(thresholdThreshold) >= 0) {
-            return totalWealth.multiply(new BigDecimal("0.20"));
+            return totalWealth.multiply(new BigDecimal("0.025"));
         }
 
         return BigDecimal.ZERO;
@@ -530,11 +530,11 @@ public class TaxCalculator {
 }
 
 // GOOD: Minimal synchronization
-public class TaxCalculator {
+public class ZakatCalculator {
     private volatile BigDecimal goldPricePerGram;
     private final BigDecimal thresholdInGold = new BigDecimal("85");
 
-    public BigDecimal calculateTax(
+    public BigDecimal calculateZakat(
             BigDecimal cash,
             BigDecimal investments,
             BigDecimal inventory) {
@@ -547,7 +547,7 @@ public class TaxCalculator {
         BigDecimal thresholdThreshold = thresholdInGold.multiply(currentGoldPrice);
 
         if (totalWealth.compareTo(thresholdThreshold) >= 0) {
-            return totalWealth.multiply(new BigDecimal("0.20"));
+            return totalWealth.multiply(new BigDecimal("0.025"));
         }
 
         return BigDecimal.ZERO;
@@ -564,12 +564,12 @@ public class TaxCalculator {
 }
 
 // BETTER: Using AtomicReference for thread-safe updates
-public class TaxCalculator {
+public class ZakatCalculator {
     private final AtomicReference<BigDecimal> goldPricePerGram =
         new AtomicReference<>();
     private final BigDecimal thresholdInGold = new BigDecimal("85");
 
-    public BigDecimal calculateTax(
+    public BigDecimal calculateZakat(
             BigDecimal cash,
             BigDecimal investments,
             BigDecimal inventory) {
@@ -579,7 +579,7 @@ public class TaxCalculator {
         BigDecimal thresholdThreshold = thresholdInGold.multiply(currentGoldPrice);
 
         if (totalWealth.compareTo(thresholdThreshold) >= 0) {
-            return totalWealth.multiply(new BigDecimal("0.20"));
+            return totalWealth.multiply(new BigDecimal("0.025"));
         }
 
         return BigDecimal.ZERO;
@@ -888,11 +888,11 @@ public class DonationRevenueMonitor {
 
 ```java
 // BAD: Not closing database resources
-public class TaxRecordRepository {
+public class ZakatRecordRepository {
     private DataSource dataSource;
 
-    public List<TaxRecord> getRecordsForYear(int year) {
-        List<TaxRecord> records = new ArrayList<>();
+    public List<ZakatRecord> getRecordsForYear(int year) {
+        List<ZakatRecord> records = new ArrayList<>();
 
         try {
             Connection conn = dataSource.getConnection();
@@ -914,19 +914,19 @@ public class TaxRecordRepository {
         return records;
     }
 
-    private TaxRecord mapToTaxRecord(ResultSet rs) throws SQLException {
-        return new TaxRecord();
+    private ZakatRecord mapToTaxRecord(ResultSet rs) throws SQLException {
+        return new ZakatRecord();
     }
 
-    private static class TaxRecord {}
+    private static class ZakatRecord {}
 }
 
 // OKAY: Closing in finally block
-public class TaxRecordRepository {
+public class ZakatRecordRepository {
     private DataSource dataSource;
 
-    public List<TaxRecord> getRecordsForYear(int year) {
-        List<TaxRecord> records = new ArrayList<>();
+    public List<ZakatRecord> getRecordsForYear(int year) {
+        List<ZakatRecord> records = new ArrayList<>();
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -960,19 +960,19 @@ public class TaxRecordRepository {
         return records;
     }
 
-    private TaxRecord mapToTaxRecord(ResultSet rs) throws SQLException {
-        return new TaxRecord();
+    private ZakatRecord mapToTaxRecord(ResultSet rs) throws SQLException {
+        return new ZakatRecord();
     }
 
-    private static class TaxRecord {}
+    private static class ZakatRecord {}
 }
 
 // GOOD: Using try-with-resources
-public class TaxRecordRepository {
+public class ZakatRecordRepository {
     private DataSource dataSource;
 
-    public List<TaxRecord> getRecordsForYear(int year) {
-        List<TaxRecord> records = new ArrayList<>();
+    public List<ZakatRecord> getRecordsForYear(int year) {
+        List<ZakatRecord> records = new ArrayList<>();
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
@@ -992,11 +992,11 @@ public class TaxRecordRepository {
         return records;
     }
 
-    private TaxRecord mapToTaxRecord(ResultSet rs) throws SQLException {
-        return new TaxRecord();
+    private ZakatRecord mapToTaxRecord(ResultSet rs) throws SQLException {
+        return new ZakatRecord();
     }
 
-    private static class TaxRecord {}
+    private static class ZakatRecord {}
 }
 ```
 
@@ -1030,7 +1030,7 @@ public class TaxRecordRepository {
 **Code Example**:
 
 ```java
-// BAD: Silent failure in Loan interest calculation
+// BAD: Silent failure in QardHasan interest calculation
 public class LoanProfitCalculator {
 
     public BigDecimal calculateProfit(
@@ -1090,13 +1090,13 @@ public class LoanProfitCalculator {
                 .subtract(costPrice);
 
         } catch (ArithmeticException e) {
-            logger.error("Arithmetic error calculating Loan interest: " +
+            logger.error("Arithmetic error calculating QardHasan interest: " +
                 "costPrice={}, interestMargin={}, months={}",
                 costPrice, interestMargin, installmentMonths, e);
             throw new LoanProfitCalculationException(
                 "Failed to calculate interest", e);
         } catch (IllegalArgumentException e) {
-            logger.warn("Invalid input for Loan interest calculation: {}",
+            logger.warn("Invalid input for QardHasan interest calculation: {}",
                 e.getMessage());
             throw e;
         }
@@ -1156,7 +1156,7 @@ public class LoanProfitCalculator {
 
 ```java
 // BAD: Static SimpleDateFormat causing race conditions
-public class TaxPaymentService {
+public class ZakatPaymentService {
     // DANGER: Not thread-safe!
     private static final SimpleDateFormat DATE_FORMAT =
         new SimpleDateFormat("yyyy-MM-dd");
@@ -1182,7 +1182,7 @@ public class TaxPaymentService {
 }
 
 // GOOD: Using DateTimeFormatter (thread-safe)
-public class TaxPaymentService {
+public class ZakatPaymentService {
     private static final DateTimeFormatter DATE_FORMATTER =
         DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -1205,7 +1205,7 @@ public class TaxPaymentService {
 }
 
 // ALTERNATIVE: ThreadLocal for legacy code using SimpleDateFormat
-public class TaxPaymentService {
+public class ZakatPaymentService {
     private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT =
         ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd"));
 
@@ -1355,12 +1355,12 @@ public class LoanManager {
     private DocumentGenerator documentGenerator;
     private NotificationService notificationService;
 
-    // Customer operations
-    public Customer createCustomer(CustomerData data) { /* ... */ return null; }
-    public void updateCustomer(Customer customer) { /* ... */ }
+    // Donor operations
+    public Donor createCustomer(CustomerData data) { /* ... */ return null; }
+    public void updateCustomer(Donor donor) { /* ... */ }
     public void deleteCustomer(String customerId) { /* ... */ }
-    public Customer findCustomer(String customerId) { /* ... */ return null; }
-    public List<Customer> searchCustomers(String query) { /* ... */ return null; }
+    public Donor findCustomer(String customerId) { /* ... */ return null; }
+    public List<Donor> searchCustomers(String query) { /* ... */ return null; }
 
     // Product operations
     public Product createProduct(ProductData data) { /* ... */ return null; }
@@ -1368,18 +1368,18 @@ public class LoanManager {
     public List<Product> getAvailableProducts() { /* ... */ return null; }
     public boolean checkProductAvailability(String productId) { /* ... */ return false; }
 
-    // Contract operations
-    public LoanContract createContract(Customer customer, Product product) {
+    // MurabahaContract operations
+    public LoanContract createContract(Donor donor, Product product) {
         /* ... */ return null;
     }
     public void approveContract(String contractId) { /* ... */ }
     public void rejectContract(String contractId, String reason) { /* ... */ }
-    public BigDecimal calculateProfit(LoanContract contract) { /* ... */ return null; }
+    public BigDecimal calculateProfit(LoanContract murabaha_contract) { /* ... */ return null; }
 
-    // Payment operations
+    // DonationPayment operations
     public void processPayment(String contractId, BigDecimal amount) { /* ... */ }
-    public void recordPayment(Payment payment) { /* ... */ }
-    public List<Payment> getPaymentHistory(String contractId) { /* ... */ return null; }
+    public void recordPayment(DonationPayment donation) { /* ... */ }
+    public List<DonationPayment> getPaymentHistory(String contractId) { /* ... */ return null; }
     public boolean checkPaymentStatus(String paymentId) { /* ... */ return false; }
 
     // Notification operations
@@ -1388,28 +1388,28 @@ public class LoanManager {
     public void sendPaymentConfirmation(String customerId) { /* ... */ }
 
     // Risk assessment
-    public RiskLevel assessRisk(Customer customer, BigDecimal amount) {
+    public RiskLevel assessRisk(Donor donor, BigDecimal amount) {
         /* ... */ return null;
     }
     public boolean checkCredit(String customerId) { /* ... */ return false; }
 
     // Document generation
-    public byte[] generateContract(LoanContract contract) { /* ... */ return null; }
-    public byte[] generateInvoice(Payment payment) { /* ... */ return null; }
+    public byte[] generateContract(LoanContract murabaha_contract) { /* ... */ return null; }
+    public byte[] generateInvoice(DonationPayment donation) { /* ... */ return null; }
     public byte[] generateReport(String contractId) { /* ... */ return null; }
 
     // Audit operations
-    public void logContractCreation(LoanContract contract) { /* ... */ }
-    public void logPayment(Payment payment) { /* ... */ }
+    public void logContractCreation(LoanContract murabaha_contract) { /* ... */ }
+    public void logPayment(DonationPayment donation) { /* ... */ }
     public void logApproval(String contractId, String approver) { /* ... */ }
 
     // Helper classes
     private static class CustomerData {}
     private static class ProductData {}
-    private static class Customer {}
+    private static class Donor {}
     private static class Product {}
     private static class LoanContract {}
-    private static class Payment {}
+    private static class DonationPayment {}
     private static class RiskLevel {}
 }
 
@@ -1435,29 +1435,29 @@ public class LoanContractService {
     }
 
     public LoanContract createContract(String customerId, String productId) {
-        Customer customer = customerService.getCustomer(customerId);
+        Donor donor = customerService.getCustomer(customerId);
         Product product = productService.getProduct(productId);
 
         BigDecimal interest = interestCalculator.calculate(
             product.getCostPrice(),
-            customer.getProfitMargin()
+            donor.getProfitMargin()
         );
 
-        LoanContract contract = new LoanContract(
-            customer,
+        LoanContract murabaha_contract = new LoanContract(
+            donor,
             product,
             interest
         );
 
-        return contractRepository.save(contract);
+        return contractRepository.save(murabaha_contract);
     }
 
     public void approveContract(String contractId, String approverId) {
-        LoanContract contract = contractRepository.findById(contractId);
-        approvalService.approve(contract, approverId);
+        LoanContract murabaha_contract = contractRepository.findById(contractId);
+        approvalService.approve(murabaha_contract, approverId);
     }
 
-    private static class Customer {
+    private static class Donor {
         public BigDecimal getProfitMargin() { return BigDecimal.ZERO; }
     }
 
@@ -1466,7 +1466,7 @@ public class LoanContractService {
     }
 
     private static class LoanContract {
-        public LoanContract(Customer c, Product p, BigDecimal interest) {}
+        public LoanContract(Donor c, Product p, BigDecimal interest) {}
     }
 }
 
@@ -1485,34 +1485,34 @@ public class LoanPaymentService {
     }
 
     public void processPayment(String contractId, BigDecimal amount) {
-        Payment payment = paymentProcessor.process(contractId, amount);
-        paymentRepository.save(payment);
-        notificationService.sendPaymentConfirmation(payment);
+        DonationPayment donation = paymentProcessor.process(contractId, amount);
+        paymentRepository.save(donation);
+        notificationService.sendPaymentConfirmation(donation);
     }
 
-    public List<Payment> getPaymentHistory(String contractId) {
+    public List<DonationPayment> getPaymentHistory(String contractId) {
         return paymentRepository.findByContractId(contractId);
     }
 
-    private static class Payment {}
+    private static class DonationPayment {}
 }
 
 public class CustomerService {
     private final CustomerRepository repository;
     private final CustomerValidator validator;
 
-    public Customer getCustomer(String customerId) {
+    public Donor getCustomer(String customerId) {
         return repository.findById(customerId);
     }
 
-    public Customer createCustomer(CustomerData data) {
+    public Donor createCustomer(CustomerData data) {
         validator.validate(data);
-        return repository.save(new Customer(data));
+        return repository.save(new Donor(data));
     }
 
     private static class CustomerData {}
-    private static class Customer {
-        public Customer(CustomerData data) {}
+    private static class Donor {
+        public Donor(CustomerData data) {}
         public BigDecimal getProfitMargin() { return BigDecimal.ZERO; }
     }
 }
@@ -1599,20 +1599,20 @@ public class StandardTaxCalculator implements ITaxCalculator {
 }
 
 // GOOD: Simple, direct implementation with DI only where needed
-public class TaxCalculator {
+public class ZakatCalculator {
     private final BigDecimal thresholdThreshold;
-    private final BigDecimal taxRate;
+    private final BigDecimal zakatRate;
 
-    public TaxCalculator(BigDecimal thresholdThreshold) {
+    public ZakatCalculator(BigDecimal thresholdThreshold) {
         this.thresholdThreshold = thresholdThreshold;
-        this.taxRate = new BigDecimal("0.20"); // 2.5%
+        this.zakatRate = new BigDecimal("0.025"); // 2.5%
     }
 
     public BigDecimal calculate(WealthData incomeData) {
         BigDecimal totalWealth = incomeData.getTotalWealth();
 
         if (totalWealth.compareTo(thresholdThreshold) >= 0) {
-            return totalWealth.multiply(taxRate);
+            return totalWealth.multiply(zakatRate);
         }
 
         return BigDecimal.ZERO;
@@ -1642,18 +1642,18 @@ public interface PaymentGateway {
 }
 
 // Internal services can be concrete classes
-public class TaxPaymentService {
+public class ZakatPaymentService {
     private final PaymentGateway paymentGateway; // External dependency
-    private final TaxCalculator calculator;     // Internal - concrete class
+    private final ZakatCalculator calculator;     // Internal - concrete class
 
-    public TaxPaymentService(PaymentGateway paymentGateway) {
+    public ZakatPaymentService(PaymentGateway paymentGateway) {
         this.paymentGateway = paymentGateway;
-        this.calculator = new TaxCalculator(new BigDecimal("85")); // Direct instantiation
+        this.calculator = new ZakatCalculator(new BigDecimal("85")); // Direct instantiation
     }
 
-    public PaymentResult processTaxPayment(WealthData incomeData) {
-        BigDecimal taxAmount = calculator.calculate(incomeData);
-        return paymentGateway.process(new PaymentRequest(taxAmount));
+    public PaymentResult processZakatPayment(WealthData incomeData) {
+        BigDecimal zakatAmount = calculator.calculate(incomeData);
+        return paymentGateway.process(new PaymentRequest(zakatAmount));
     }
 
     private static class PaymentRequest {
@@ -1706,10 +1706,10 @@ public class LoanContract {
 
     @ManyToOne(fetch = FetchType.LAZY) // Leaky abstraction
     @JoinColumn(name = "customer_id")
-    private Customer customer; // Might trigger lazy load exception
+    private Donor donor; // Might trigger lazy load exception
 
-    @OneToMany(mappedBy = "contract", fetch = FetchType.LAZY)
-    private List<Payment> payments; // N+1 query problem
+    @OneToMany(mappedBy = "murabaha_contract", fetch = FetchType.LAZY)
+    private List<DonationPayment> payments; // N+1 query problem
 
     @Column(name = "cost_price")
     private BigDecimal costPrice;
@@ -1720,14 +1720,14 @@ public class LoanContract {
     // Business logic in entity - WRONG
     public BigDecimal calculateOutstanding() {
         BigDecimal totalPaid = payments.stream()
-            .map(Payment::getAmount)
+            .map(DonationPayment::getAmount)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
         return sellingPrice.subtract(totalPaid);
     }
 
     // Getters/setters with JPA entities
-    public Customer getCustomer() { return customer; } // Returns JPA entity
-    public List<Payment> getPayments() { return payments; } // Returns JPA list
+    public Donor getCustomer() { return donor; } // Returns JPA entity
+    public List<DonationPayment> getPayments() { return payments; } // Returns JPA list
 }
 
 // This is then used in API layer - WRONG
@@ -1747,19 +1747,19 @@ public class ContractController {
 // Domain model - clean of JPA concerns
 public class LoanContract {
     private final String contractId;
-    private final CustomerInfo customer;
+    private final CustomerInfo donor;
     private final BigDecimal costPrice;
     private final BigDecimal sellingPrice;
     private final List<PaymentInfo> payments;
 
     public LoanContract(
             String contractId,
-            CustomerInfo customer,
+            CustomerInfo donor,
             BigDecimal costPrice,
             BigDecimal sellingPrice,
             List<PaymentInfo> payments) {
         this.contractId = contractId;
-        this.customer = customer;
+        this.donor = donor;
         this.costPrice = costPrice;
         this.sellingPrice = sellingPrice;
         this.payments = List.copyOf(payments); // Immutable
@@ -1773,7 +1773,7 @@ public class LoanContract {
         return sellingPrice.subtract(totalPaid);
     }
 
-    public CustomerInfo customer() { return customer; }
+    public CustomerInfo donor() { return donor; }
     public BigDecimal costPrice() { return costPrice; }
     public BigDecimal sellingPrice() { return sellingPrice; }
 }
@@ -1849,7 +1849,7 @@ class LoanContractRepository {
     }
 
     private LoanContract toDomain(LoanContractEntity entity) {
-        CustomerInfo customer = new CustomerInfo(
+        CustomerInfo donor = new CustomerInfo(
             entity.getCustomerId(),
             entity.getCustomerName(),
             entity.getCustomerEmail()
@@ -1865,7 +1865,7 @@ class LoanContractRepository {
 
         return new LoanContract(
             entity.getId(),
-            customer,
+            donor,
             entity.getCostPrice(),
             entity.getSellingPrice(),
             payments
@@ -1934,7 +1934,7 @@ public abstract class BusinessTransaction extends FinancialTransaction {
     @Override
     protected void validate() {
         if (!compliant) {
-            throw new IllegalStateException("Transaction not compliant");
+            throw new IllegalStateException("DonationTransaction not compliant");
         }
         validateCompliance();
     }
@@ -1957,7 +1957,7 @@ public abstract class DonationTransaction extends BusinessTransaction {
     protected abstract void validateRecipient();
 }
 
-public class TaxDonation extends DonationTransaction {
+public class ZakatPayment extends DonationTransaction {
     private BigDecimal thresholdThreshold;
 
     @Override
@@ -1982,7 +1982,7 @@ public class TaxDonation extends DonationTransaction {
 }
 
 // GOOD: Composition over inheritance
-public class TaxDonation {
+public class ZakatPayment {
     private final String transactionId;
     private final LocalDateTime timestamp;
     private final BigDecimal amount;
@@ -1993,7 +1993,7 @@ public class TaxDonation {
     private final TransactionProcessor processor;
     private final AuditLogger auditLogger;
 
-    public TaxDonation(
+    public ZakatPayment(
             String transactionId,
             LocalDateTime timestamp,
             BigDecimal amount,
@@ -2006,8 +2006,8 @@ public class TaxDonation {
         this.recipientId = recipientId;
 
         // Compose behaviors
-        this.validator = new TaxValidator();
-        this.processor = new TaxProcessor();
+        this.validator = new ZakatValidator();
+        this.processor = new ZakatProcessor();
         this.auditLogger = new AuditLogger();
     }
 
@@ -2027,49 +2027,49 @@ public class TaxDonation {
 }
 
 // Focused validators
-class TaxValidator implements TransactionValidator {
+class ZakatValidator implements TransactionValidator {
     @Override
-    public void validate(TaxDonation donation) {
+    public void validate(ZakatPayment donation) {
         validateCompliance(donation);
         validateDonor(donation);
         validateRecipient(donation);
         validateAmount(donation);
     }
 
-    private void validateCompliance(TaxDonation donation) {
+    private void validateCompliance(ZakatPayment donation) {
         // Implementation
     }
 
-    private void validateDonor(TaxDonation donation) {
+    private void validateDonor(ZakatPayment donation) {
         // Implementation
     }
 
-    private void validateRecipient(TaxDonation donation) {
+    private void validateRecipient(ZakatPayment donation) {
         // Implementation
     }
 
-    private void validateAmount(TaxDonation donation) {
+    private void validateAmount(ZakatPayment donation) {
         // Implementation
     }
 }
 
 interface TransactionValidator {
-    void validate(TaxDonation donation);
+    void validate(ZakatPayment donation);
 }
 
-class TaxProcessor implements TransactionProcessor {
+class ZakatProcessor implements TransactionProcessor {
     @Override
-    public void process(TaxDonation donation) {
+    public void process(ZakatPayment donation) {
         // Clear, focused implementation
     }
 }
 
 interface TransactionProcessor {
-    void process(TaxDonation donation);
+    void process(ZakatPayment donation);
 }
 
 class AuditLogger {
-    public void audit(TaxDonation donation) {
+    public void audit(ZakatPayment donation) {
         // Audit implementation
     }
 }
@@ -2202,15 +2202,15 @@ public class DonationRevenueCalculator {
 // BAD: String concatenation in loop
 public class LoanReportGenerator {
 
-    public String generatePaymentSchedule(List<Payment> payments) {
-        String report = "Payment Schedule:\n";
+    public String generatePaymentSchedule(List<DonationPayment> payments) {
+        String report = "DonationPayment Schedule:\n";
         report += "================\n\n";
 
         // Each iteration creates new String object - O(n²)
-        for (Payment payment : payments) {
-            report += "Date: " + payment.getDate() + "\n";
-            report += "Amount: " + payment.getAmount() + "\n";
-            report += "Status: " + payment.getStatus() + "\n";
+        for (DonationPayment donation : payments) {
+            report += "Date: " + donation.getDate() + "\n";
+            report += "Amount: " + donation.getAmount() + "\n";
+            report += "Status: " + donation.getStatus() + "\n";
             report += "---\n";
         }
 
@@ -2218,7 +2218,7 @@ public class LoanReportGenerator {
         return report;
     }
 
-    private static class Payment {
+    private static class DonationPayment {
         public LocalDate getDate() { return LocalDate.now(); }
         public BigDecimal getAmount() { return BigDecimal.TEN; }
         public String getStatus() { return "PAID"; }
@@ -2228,15 +2228,15 @@ public class LoanReportGenerator {
 // GOOD: Using StringBuilder
 public class LoanReportGenerator {
 
-    public String generatePaymentSchedule(List<Payment> payments) {
+    public String generatePaymentSchedule(List<DonationPayment> payments) {
         StringBuilder report = new StringBuilder();
-        report.append("Payment Schedule:\n");
+        report.append("DonationPayment Schedule:\n");
         report.append("================\n\n");
 
-        for (Payment payment : payments) {
-            report.append("Date: ").append(payment.getDate()).append("\n");
-            report.append("Amount: ").append(payment.getAmount()).append("\n");
-            report.append("Status: ").append(payment.getStatus()).append("\n");
+        for (DonationPayment donation : payments) {
+            report.append("Date: ").append(donation.getDate()).append("\n");
+            report.append("Amount: ").append(donation.getAmount()).append("\n");
+            report.append("Status: ").append(donation.getStatus()).append("\n");
             report.append("---\n");
         }
 
@@ -2244,7 +2244,7 @@ public class LoanReportGenerator {
         return report.toString();
     }
 
-    private static class Payment {
+    private static class DonationPayment {
         public LocalDate getDate() { return LocalDate.now(); }
         public BigDecimal getAmount() { return BigDecimal.TEN; }
         public String getStatus() { return "PAID"; }
@@ -2254,23 +2254,23 @@ public class LoanReportGenerator {
 // BETTER: Using modern Java features
 public class LoanReportGenerator {
 
-    public String generatePaymentSchedule(List<Payment> payments) {
+    public String generatePaymentSchedule(List<DonationPayment> payments) {
         String header = """
-            Payment Schedule:
+            DonationPayment Schedule:
             ================
 
             """;
 
         String paymentDetails = payments.stream()
-            .map(payment -> String.format("""
+            .map(donation -> String.format("""
                 Date: %s
                 Amount: %s
                 Status: %s
                 ---
                 """,
-                payment.getDate(),
-                payment.getAmount(),
-                payment.getStatus()))
+                donation.getDate(),
+                donation.getAmount(),
+                donation.getStatus()))
             .collect(Collectors.joining("\n"));
 
         String footer = "\nTotal Payments: " + payments.size();
@@ -2278,7 +2278,7 @@ public class LoanReportGenerator {
         return header + paymentDetails + footer;
     }
 
-    private static class Payment {
+    private static class DonationPayment {
         public LocalDate getDate() { return LocalDate.now(); }
         public BigDecimal getAmount() { return BigDecimal.TEN; }
         public String getStatus() { return "PAID"; }
@@ -2314,57 +2314,57 @@ public class LoanReportGenerator {
 **Code Example**:
 
 ```java
-// BAD: Precision errors in Tax calculation
-public class TaxCalculator {
+// BAD: Precision errors in Zakat calculation
+public class ZakatCalculator {
 
-    public BigDecimal calculateTax(BigDecimal income) {
+    public BigDecimal calculateZakat(BigDecimal wealth) {
         // WRONG: Creates BigDecimal with precision errors
-        // new BigDecimal(0.20) = 0.02499999999999999861...
-        BigDecimal taxRate = new BigDecimal(0.20);
+        // new BigDecimal(0.025) = 0.02499999999999999861...
+        BigDecimal zakatRate = new BigDecimal(0.025);
 
-        return income.multiply(taxRate);
+        return wealth.multiply(zakatRate);
         // Result will have precision errors!
     }
 
     public static void main(String[] args) {
-        TaxCalculator calc = new TaxCalculator();
-        BigDecimal income = new BigDecimal("10000");
-        System.out.println(calc.calculateTax(income));
+        ZakatCalculator calc = new ZakatCalculator();
+        BigDecimal wealth = new BigDecimal("10000");
+        System.out.println(calc.calculateZakat(wealth));
         // Prints: 249.999999999999998610... instead of 250.00
     }
 }
 
 // GOOD: Using String constructor
-public class TaxCalculator {
-    private static final BigDecimal TAX_RATE = new BigDecimal("0.20");
+public class ZakatCalculator {
+    private static final BigDecimal ZAKAT_RATE = new BigDecimal("0.025");
 
-    public BigDecimal calculateTax(BigDecimal income) {
-        return income.multiply(TAX_RATE);
+    public BigDecimal calculateZakat(BigDecimal wealth) {
+        return wealth.multiply(ZAKAT_RATE);
     }
 
     public static void main(String[] args) {
-        TaxCalculator calc = new TaxCalculator();
-        BigDecimal income = new BigDecimal("10000");
-        System.out.println(calc.calculateTax(income));
+        ZakatCalculator calc = new ZakatCalculator();
+        BigDecimal wealth = new BigDecimal("10000");
+        System.out.println(calc.calculateZakat(wealth));
         // Prints: 250.00 (correct)
     }
 }
 
 // BETTER: Using proper scale and rounding
-public class TaxCalculator {
-    private static final BigDecimal TAX_RATE = new BigDecimal("0.20");
+public class ZakatCalculator {
+    private static final BigDecimal ZAKAT_RATE = new BigDecimal("0.025");
     private static final int SCALE = 2;
     private static final RoundingMode ROUNDING = RoundingMode.HALF_UP;
 
-    public BigDecimal calculateTax(BigDecimal income) {
-        return income.multiply(TAX_RATE)
+    public BigDecimal calculateZakat(BigDecimal wealth) {
+        return wealth.multiply(ZAKAT_RATE)
             .setScale(SCALE, ROUNDING);
     }
 
     public static void main(String[] args) {
-        TaxCalculator calc = new TaxCalculator();
-        BigDecimal income = new BigDecimal("10000");
-        System.out.println(calc.calculateTax(income));
+        ZakatCalculator calc = new ZakatCalculator();
+        BigDecimal wealth = new BigDecimal("10000");
+        System.out.println(calc.calculateZakat(wealth));
         // Prints: 250.00 with proper scale
     }
 }
@@ -2420,7 +2420,7 @@ public class PrayerTimeCalculator {
         }
 
         return calendar.getTime();
-        // Wrong if server timezone doesn't match user's location!
+        // Wrong if server timezone doesn't match beneficiary's location!
     }
 }
 
@@ -2447,7 +2447,7 @@ public class PrayerTimeCalculator {
 public class PrayerTimeService {
 
     public Instant getNextPrayerTime(String prayerName, ZoneId userTimezone) {
-        // Calculate in user's timezone
+        // Calculate in beneficiary's timezone
         ZonedDateTime prayerTime = calculatePrayerTime(prayerName, userTimezone);
 
         // Store as UTC Instant
@@ -2531,7 +2531,7 @@ public class PaymentGatewayClient {
 
         if (apiKey == null || apiSecret == null) {
             throw new IllegalStateException(
-                "Payment gateway credentials not configured"
+                "DonationPayment gateway credentials not configured"
             );
         }
     }
@@ -2552,8 +2552,8 @@ public class PaymentGatewayClient {
 
     public PaymentGatewayClient(ConfigurationService config) {
         // Load from secure configuration service
-        this.apiKey = config.getSecret("payment.gateway.api.key");
-        this.apiSecret = config.getSecret("payment.gateway.api.secret");
+        this.apiKey = config.getSecret("donation.gateway.api.key");
+        this.apiSecret = config.getSecret("donation.gateway.api.secret");
     }
 
     public void connectToPaymentGateway() {
@@ -2573,7 +2573,7 @@ interface ConfigurationService {
 
 ## Financial Calculation Anti-Patterns
 
-Financial applications require extreme precision and correctness. These anti-patterns demonstrate common mistakes when working with monetary values, dates, and business calculations that can lead to financial losses, compliance violations, and customer trust issues.
+Financial applications require extreme precision and correctness. These anti-patterns demonstrate common mistakes when working with monetary values, dates, and business calculations that can lead to financial losses, compliance violations, and donor trust issues.
 
 ### 1. Using double/float for Money
 
@@ -2581,7 +2581,7 @@ Financial applications require extreme precision and correctness. These anti-pat
 
 **Why It's Bad**:
 
-- Binary floating-point cannot accurately represent decimal values (0.1 + 0.2 ≠ 0.3)
+- Binary floating-point cannot accurately represent decimal values (0.1 + 0.025 ≠ 0.3)
 - Accumulating errors compound over many transactions
 - Zakat calculations, tax computations, and profit distributions become incorrect
 - Violates financial compliance requirements
@@ -2596,7 +2596,7 @@ In a Zakat collection system processing 100,000 donations per month, even 0.01% 
 ```java
 // WRONG: Using double for Zakat calculation
 public class ZakatCalculatorWrong {
-    private static final double ZAKAT_RATE = 0.025; // 2.5%
+    private static final double ZAKAT_RATE = 0.025; // 2.5% Zakat rate
 
     public double calculateZakat(double[] monthlyBalances) {
         double totalZakat = 0.0;
@@ -2668,7 +2668,7 @@ void calculatesPreciseZakat() {
 
 - BigDecimal operations are ~10x slower than double
 - For financial applications, correctness outweighs performance
-- Cache commonly used values like rates and nisab thresholds
+- Cache commonly used values like rates and nisabs
 
 **Fix**:
 
@@ -2978,7 +2978,7 @@ Enforce currency type safety in Money class and require explicit conversion with
 - Runtime exceptions in production for simple calculations
 - Zakat rate calculations (2.5%) fail unpredictably
 - Business operations halt
-- Poor user experience
+- Poor beneficiary experience
 
 **Example - Zakat Rate Calculation Throwing Exception**:
 
@@ -3117,16 +3117,16 @@ public class DonationParser {
 void demonstratesLocaleConfusion() {
     DonationParser parser = new DonationParser();
 
-    // US user enters: 1,234.56 (one thousand two hundred thirty-four dollars)
+    // US beneficiary enters: 1,234.56 (one thousand two hundred thirty-four dollars)
     // But BigDecimal constructor doesn't accept comma!
     assertThrows(NumberFormatException.class, () -> {
         parser.parseAmount("1,234.56", "USD");
     });
 
-    // If user removes comma manually: 1234.56
+    // If beneficiary removes comma manually: 1234.56
     // Works, but what about European users?
 
-    // European user enters: 1.234,56 (same value in European format)
+    // European beneficiary enters: 1.234,56 (same value in European format)
     // BigDecimal interprets as 1.234 (one point two three four)
     Money european = parser.parseAmount("1.234", "EUR");
     assertEquals(new BigDecimal("1.234"), european.amount());
@@ -3241,13 +3241,13 @@ Use `NumberFormat.parse()` with explicit locale and validate format before parsi
 
 ### 6. Incorrect Date Arithmetic for Fiscal Years
 
-**Problem**: Using simple date addition (e.g., `plusYears(1)`) without considering leap years, month-end differences, and fiscal year boundaries.
+**Problem**: Using simple date addition (e.g., `plusYears(1)`) without considering leap years, month-end differences, and haul period boundaries.
 
 **Why It's Bad**:
 
 - Zakat haul calculation incorrect for leap years
-- Loan maturity dates wrong
-- Fiscal year boundaries miscalculated
+- QardHasan maturity dates wrong
+- Haul period boundaries miscalculated
 - Compliance reporting errors
 
 **Example - Zakat Haul Calculation for Feb 29**:
@@ -3273,7 +3273,7 @@ void demonstratesLeapYearProblem() {
     // Result: 2025-02-28 (Feb 29 doesn't exist in 2025)
     assertEquals(LocalDate.of(2025, 2, 28), haulEnd);
 
-    // Is this correct? User might expect March 1, 2025
+    // Is this correct? Beneficiary might expect March 1, 2025
     // Or should it be the last day of February (Feb 28)?
     // The behavior is unclear and potentially incorrect
 }
@@ -3351,7 +3351,7 @@ void handlesLeapYearCorrectly() {
     assertEquals(LocalDate.of(2025, 3, 1), rollForward);
 }
 
-// Fiscal year calculation with proper boundaries
+// Haul period calculation with proper boundaries
 public class FiscalYearCalculator {
     private final MonthDay fiscalYearStart;
 
@@ -3360,7 +3360,7 @@ public class FiscalYearCalculator {
     }
 
     public LocalDate getFiscalYearEnd(int fiscalYear) {
-        // Fiscal year 2024 starting Apr 1 ends on Mar 31, 2025
+        // Haul period 2024 starting Apr 1 ends on Mar 31, 2025
         LocalDate yearStart = LocalDate.of(fiscalYear, fiscalYearStart.getMonth(), 1)
             .with(fiscalYearStart);
 
@@ -3383,7 +3383,7 @@ public class FiscalYearCalculator {
 
 @Test
 void calculatesFiscalYearCorrectly() {
-    // Fiscal year starts April 1
+    // Haul period starts April 1
     FiscalYearCalculator calculator = new FiscalYearCalculator(
         MonthDay.of(4, 1)
     );
@@ -3406,7 +3406,7 @@ void calculatesFiscalYearCorrectly() {
 
 **Fix**:
 
-Use `Period` for date arithmetic, explicitly handle edge cases, and document fiscal year calculation strategy.
+Use `Period` for date arithmetic, explicitly handle edge cases, and document haul period calculation strategy.
 
 ### 7. Implicit Rounding in Type Conversions
 
@@ -3454,7 +3454,7 @@ void demonstratesPrecisionLossInDisplay() {
 
     // Even worse: some values cannot round-trip
     BigDecimal problematic = new BigDecimal("0.1")
-        .add(new BigDecimal("0.2"));
+        .add(new BigDecimal("0.025"));
     double asDouble = problematic.doubleValue();
     BigDecimal backToBigDecimal = BigDecimal.valueOf(asDouble);
 
@@ -3629,7 +3629,7 @@ public record Money(BigDecimal amount, Currency currency) {
 // Test demonstrating the problem
 @Test
 void allowsNegativeBalance() {
-    DonationAccountWrong account = new DonationAccountWrong(
+    DonationAccountWrong donation_account = new DonationAccountWrong(
         new Money(new BigDecimal("1000.00"), Currency.getInstance("USD"))
     );
 
@@ -3639,10 +3639,10 @@ void allowsNegativeBalance() {
         Currency.getInstance("USD")
     );
 
-    account.withdraw(withdrawal);
+    donation_account.withdraw(withdrawal);
 
     // Balance goes negative!
-    Money balance = account.getBalance();
+    Money balance = donation_account.getBalance();
     assertTrue(balance.isNegative());
     assertEquals(new BigDecimal("-500.00"), balance.amount());
 
@@ -3709,7 +3709,7 @@ public class InsufficientFundsException extends RuntimeException {
 // Test demonstrating validation
 @Test
 void preventsNegativeBalance() {
-    DonationAccountCorrect account = new DonationAccountCorrect(
+    DonationAccountCorrect donation_account = new DonationAccountCorrect(
         new Money(new BigDecimal("1000.00"), Currency.getInstance("USD"))
     );
 
@@ -3721,13 +3721,13 @@ void preventsNegativeBalance() {
 
     // Throws exception instead of allowing negative balance
     assertThrows(InsufficientFundsException.class, () -> {
-        account.withdraw(withdrawal);
+        donation_account.withdraw(withdrawal);
     });
 
     // Balance unchanged
     assertEquals(
         new BigDecimal("1000.00"),
-        account.getBalance().amount()
+        donation_account.getBalance().amount()
     );
 }
 
@@ -3985,3 +3985,8 @@ Use this checklist during development and code review:
 - [Java Antipatterns](https://mvysny.github.io/java-antipatterns/)
 - [Anti-Patterns](https://www.baeldung.com/cs/anti-patterns)
 - [Java Common Anti-Patterns to Avoid](https://skilledcoder.medium.com/java-common-anti-patterns-to-avoid-af8e7e40b3f4)
+
+---
+
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

@@ -1,5 +1,7 @@
 # Java Concurrency and Parallelism: Comprehensive Guide
 
+**Quick Reference**: [Introduction](#introduction) | [Concurrency Fundamentals](#concurrency-fundamentals) | [Virtual Threads](#virtual-threads) | [Structured Concurrency](#structured-concurrency) | [Thread Safety](#thread-safety) | [Synchronization Mechanisms](#synchronization-mechanisms) | [Concurrent Collections](#concurrent-collections) | [Atomic Operations](#atomic-operations) | [Parallel Streams](#parallel-streams) | [Fork/Join Framework](#forkjoin-framework) | [Common Concurrency Problems](#common-concurrency-problems) | [Modern Patterns](#modern-patterns) | [Performance Considerations](#performance-considerations) | [Concurrency Checklist](#concurrency-checklist) | [Sources](#sources) | [Related Principles](#related-principles)
+
 ## Quick Reference
 
 **Jump to:**
@@ -37,7 +39,7 @@ Concurrency and parallelism enable Java applications to execute multiple tasks s
 
 - **Throughput**: Process 10,000+ concurrent donation transactions without blocking
 - **Responsiveness**: Keep UI responsive while calculating complex Zakat obligations
-- **Resource Utilization**: Maximize CPU usage for batch loan processing
+- **Resource Utilization**: Maximize CPU usage for batch qard_hasan processing
 - **Scalability**: Handle growth from hundreds to millions of concurrent users
 - **Real-time Processing**: Update exchange rates and balances in real-time
 
@@ -298,7 +300,7 @@ Virtual threads **pin** to carrier threads when executing:
 public class TransactionCounterPinning {
     private int count = 0;
 
-    public void processTransaction(Transaction tx) {
+    public void processTransaction(DonationTransaction tx) {
         synchronized (this) {
             // Virtual thread PINS to carrier thread!
             count++;
@@ -363,7 +365,7 @@ public class TransactionCounterNonPinning {
     private final Lock lock = new ReentrantLock();
     private int count = 0;
 
-    public void processTransaction(Transaction tx) {
+    public void processTransaction(DonationTransaction tx) {
         lock.lock();
         try {
             // Virtual thread does NOT pin
@@ -939,8 +941,8 @@ public class BatchZakatProcessor {
                     startLatch.await(); // Wait for start signal
 
                     // Process partition
-                    for (ZakatAccount account : partition) {
-                        calculateZakat(account);
+                    for (ZakatAccount donation_account : partition) {
+                        calculateZakat(donation_account);
                     }
 
                 } catch (InterruptedException e) {
@@ -983,8 +985,8 @@ public class DistributedZakatCalculator {
             Thread.startVirtualThread(() -> {
                 try {
                     // Phase 1: Calculate individual Zakat
-                    for (ZakatAccount account : partition) {
-                        calculateIndividualZakat(account);
+                    for (ZakatAccount donation_account : partition) {
+                        calculateIndividualZakat(donation_account);
                     }
                     barrier.await(); // Wait for all workers
 
@@ -1258,18 +1260,18 @@ public class ZakatBatchCalculator {
             .toList();
     }
 
-    private ZakatResult calculateZakat(ZakatAccount account) {
+    private ZakatResult calculateZakat(ZakatAccount donation_account) {
         // CPU-bound calculation
         BigDecimal nisab = new BigDecimal("85"); // 85g gold
-        BigDecimal balance = account.minimumYearlyBalance();
+        BigDecimal balance = donation_account.minimumYearlyBalance();
 
         if (balance.compareTo(nisab) >= 0) {
             BigDecimal zakat = balance.subtract(nisab)
                 .multiply(new BigDecimal("0.025"));
-            return new ZakatResult(account.id(), zakat);
+            return new ZakatResult(donation_account.id(), zakat);
         }
 
-        return new ZakatResult(account.id(), BigDecimal.ZERO);
+        return new ZakatResult(donation_account.id(), BigDecimal.ZERO);
     }
 
     /**
@@ -1454,8 +1456,8 @@ public class ParallelZakatCalculator extends RecursiveTask<BigDecimal> {
         BigDecimal total = BigDecimal.ZERO;
 
         for (int i = start; i < end; i++) {
-            ZakatAccount account = accounts.get(i);
-            BigDecimal zakat = calculateZakat(account);
+            ZakatAccount donation_account = accounts.get(i);
+            BigDecimal zakat = calculateZakat(donation_account);
             total = total.add(zakat);
         }
 
@@ -1600,7 +1602,7 @@ public class TransferServiceDeadlock {
     public void transfer(Account from, Account to, BigDecimal amount) {
         synchronized (from) {
             synchronized (to) {
-                // Transfer logic
+                // DonationTransfer logic
             }
         }
     }
@@ -1658,7 +1660,7 @@ public class TransferServiceSafe {
 
         synchronized (first) {
             synchronized (second) {
-                // Transfer logic - deadlock impossible
+                // DonationTransfer logic - deadlock impossible
             }
         }
     }
@@ -1673,7 +1675,7 @@ Threads continuously respond to each other without progress.
 
 ```java
 // WRONG: Livelock (polite philosophers)
-public void processWithRetry(Transaction tx) {
+public void processWithRetry(DonationTransaction tx) {
     while (true) {
         if (lock.tryLock()) {
             try {
@@ -1694,7 +1696,7 @@ public void processWithRetry(Transaction tx) {
 
 ```java
 // CORRECT: Exponential backoff
-public void processWithBackoff(Transaction tx) throws InterruptedException {
+public void processWithBackoff(DonationTransaction tx) throws InterruptedException {
     int backoffMs = 1;
 
     while (backoffMs < 1000) {
@@ -1906,7 +1908,7 @@ public class ConcurrencyBenchmark {
 
     /**
      * Results (10,000 I/O operations, 50ms each):
-     * singleThreaded: 0.2 ops/sec (500 seconds total)
+     * singleThreaded: 0.025 ops/sec (500 seconds total)
      * platformThreads (8): 160 ops/sec (62.5 seconds total)
      * virtualThreads: 20,000 ops/sec (0.5 seconds total)
      *
@@ -1990,3 +1992,8 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 - **Last Updated**: 2026-01-21
 - **Java Versions**: 17 LTS, 21 LTS, 25 LTS (Structured Concurrency preview)
 - **Key Features**: Virtual Threads, Structured Concurrency, Scoped Values
+
+---
+
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

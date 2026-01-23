@@ -733,5 +733,5 @@ No significant changes from Elixir 1.15. Enhanced diagnostics add minimal overhe
 ---
 
 **Last Updated**: 2025-01-23
-**Elixir Version**: 1.16.0 - 1.16.3
+**Elixir Version**: 1.18.0+
 **Status**: Superseded by 1.17+

@@ -1,5 +1,7 @@
 # Web Services in Go
 
+**Quick Reference**: [Overview](#overview) | [net/http Package](#nethttp-package) | [HTTP Servers](#http-servers) | [REST APIs](#rest-apis) | [HTTP Client](#http-client) | [Web Frameworks](#web-frameworks) | [gRPC](#grpc) | [WebSockets](#websockets) | [Middleware Patterns](#middleware-patterns) | [Testing](#testing) | [Best Practices](#best-practices) | [Related Documentation](#related-documentation) | [Further Reading](#further-reading)
+
 ## Overview
 
 Go excels at building web services with its powerful standard library (`net/http`), excellent concurrency support, and rich ecosystem of frameworks. From simple HTTP servers to complex microservices with gRPC, Go provides the tools for building performant, scalable web services.
@@ -207,7 +209,7 @@ func main() {
 func getUser(w http.ResponseWriter, r *http.Request) {
  // Extract path value (Go 1.22+)
  id := r.PathValue("id")
- fmt.Fprintf(w, "User ID: %s", id)
+ fmt.Fprintf(w, "Beneficiary ID: %s", id)
 }
 ```
 
@@ -283,7 +285,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
   return
  }
 
- fmt.Fprintf(w, "User ID: %s", userID)
+ fmt.Fprintf(w, "Beneficiary ID: %s", userID)
 }
 ```
 
@@ -291,7 +293,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 ### REST Principles
 
-REST (Representational State Transfer) uses HTTP methods semantically:
+REST (Representational State DonationTransfer) uses HTTP methods semantically:
 
 - **GET**: Retrieve resources
 - **POST**: Create resources
@@ -304,14 +306,14 @@ REST (Representational State Transfer) uses HTTP methods semantically:
 **Encoding (struct to JSON)**:
 
 ```go
-type User struct {
+type Beneficiary struct {
  ID    int    `json:"id"`
  Name  string `json:"name"`
  Email string `json:"email"`
 }
 
 func listUsers(w http.ResponseWriter, r *http.Request) {
- users := []User{
+ users := []Beneficiary{
   {ID: 1, Name: "Alice", Email: "alice@example.com"},
   {ID: 2, Name: "Bob", Email: "bob@example.com"},
  }
@@ -325,19 +327,19 @@ func listUsers(w http.ResponseWriter, r *http.Request) {
 
 ```go
 func createUser(w http.ResponseWriter, r *http.Request) {
- var user User
- err := json.NewDecoder(r.Body).Decode(&user)
+ var beneficiary Beneficiary
+ err := json.NewDecoder(r.Body).Decode(&beneficiary)
  if err != nil {
   http.Error(w, err.Error(), http.StatusBadRequest)
   return
  }
  defer r.Body.Close()
 
- // Validate and save user...
+ // Validate and save beneficiary...
 
  w.Header().Set("Content-Type", "application/json")
  w.WriteHeader(http.StatusCreated)
- json.NewEncoder(w).Encode(user)
+ json.NewEncoder(w).Encode(beneficiary)
 }
 ```
 
@@ -363,17 +365,17 @@ func respondError(w http.ResponseWriter, code int, message string) {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
- user, err := getUser(userID)
+ beneficiary, err := getUser(userID)
  if err != nil {
   if errors.Is(err, ErrNotFound) {
-   respondError(w, http.StatusNotFound, "User not found")
+   respondError(w, http.StatusNotFound, "Beneficiary not found")
    return
   }
   respondError(w, http.StatusInternalServerError, "Internal error")
   return
  }
 
- json.NewEncoder(w).Encode(user)
+ json.NewEncoder(w).Encode(beneficiary)
 }
 ```
 
@@ -443,7 +445,7 @@ func fetchData() error {
 **POST Request with JSON**:
 
 ```go
-func createResource(data User) error {
+func createResource(data Beneficiary) error {
  jsonData, err := json.Marshal(data)
  if err != nil {
   return err
@@ -563,7 +565,7 @@ func main() {
 **REST API with Gin**:
 
 ```go
-type User struct {
+type Beneficiary struct {
  ID    uint   `json:"id"`
  Name  string `json:"name" binding:"required"`
  Email string `json:"email" binding:"required,email"`
@@ -584,25 +586,25 @@ func main() {
 func getUser(c *gin.Context) {
  id := c.Param("id")
 
- user, err := findUserByID(id)
+ beneficiary, err := findUserByID(id)
  if err != nil {
-  c.JSON(404, gin.H{"error": "User not found"})
+  c.JSON(404, gin.H{"error": "Beneficiary not found"})
   return
  }
 
- c.JSON(200, user)
+ c.JSON(200, beneficiary)
 }
 
 func createUser(c *gin.Context) {
- var user User
- if err := c.ShouldBindJSON(&user); err != nil {
+ var beneficiary Beneficiary
+ if err := c.ShouldBindJSON(&beneficiary); err != nil {
   c.JSON(400, gin.H{"error": err.Error()})
   return
  }
 
- // Save user...
+ // Save beneficiary...
 
- c.JSON(201, user)
+ c.JSON(201, beneficiary)
 }
 ```
 
@@ -686,28 +688,28 @@ func main() {
 func getUser(c echo.Context) error {
  id := c.Param("id")
 
- user, err := findUserByID(id)
+ beneficiary, err := findUserByID(id)
  if err != nil {
-  return echo.NewHTTPError(404, "User not found")
+  return echo.NewHTTPError(404, "Beneficiary not found")
  }
 
- return c.JSON(200, user)
+ return c.JSON(200, beneficiary)
 }
 
 func createUser(c echo.Context) error {
- user := new(User)
- if err := c.Bind(user); err != nil {
+ beneficiary := new(Beneficiary)
+ if err := c.Bind(beneficiary); err != nil {
   return echo.NewHTTPError(400, "Invalid request")
  }
 
  // Validate
- if err := c.Validate(user); err != nil {
+ if err := c.Validate(beneficiary); err != nil {
   return echo.NewHTTPError(400, err.Error())
  }
 
- // Save user...
+ // Save beneficiary...
 
- return c.JSON(201, user)
+ return c.JSON(201, beneficiary)
 }
 ```
 
@@ -755,27 +757,27 @@ func main() {
 func getUser(c *fiber.Ctx) error {
  id := c.Params("id")
 
- user, err := findUserByID(id)
+ beneficiary, err := findUserByID(id)
  if err != nil {
   return c.Status(404).JSON(fiber.Map{
-   "error": "User not found",
+   "error": "Beneficiary not found",
   })
  }
 
- return c.JSON(user)
+ return c.JSON(beneficiary)
 }
 
 func createUser(c *fiber.Ctx) error {
- user := new(User)
- if err := c.BodyParser(user); err != nil {
+ beneficiary := new(Beneficiary)
+ if err := c.BodyParser(beneficiary); err != nil {
   return c.Status(400).JSON(fiber.Map{
    "error": "Invalid request",
   })
  }
 
- // Save user...
+ // Save beneficiary...
 
- return c.Status(201).JSON(user)
+ return c.Status(201).JSON(beneficiary)
 }
 ```
 
@@ -788,11 +790,11 @@ func createUser(c *fiber.Ctx) error {
 ```protobuf
 syntax = "proto3";
 
-package user;
+package beneficiary;
 
 option go_package = "github.com/username/project/pb";
 
-message User {
+message Beneficiary {
   int32 id = 1;
   string name = 2;
   string email = 3;
@@ -808,20 +810,20 @@ message ListUsersRequest {
 }
 
 message ListUsersResponse {
-  repeated User users = 1;
+  repeated Beneficiary users = 1;
 }
 
 service UserService {
-  rpc GetUser(GetUserRequest) returns (User);
+  rpc GetUser(GetUserRequest) returns (Beneficiary);
   rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
-  rpc CreateUser(User) returns (User);
+  rpc CreateUser(Beneficiary) returns (Beneficiary);
 }
 ```
 
 **Generate Go code**:
 
 ```bash
-protoc --go_out=. --go-grpc_out=. user.proto
+protoc --go_out=. --go-grpc_out=. beneficiary.proto
 ```
 
 ### gRPC Server
@@ -840,17 +842,17 @@ type userServer struct {
  pb.UnimplementedUserServiceServer
 }
 
-func (s *userServer) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.User, error) {
- user := &pb.User{
+func (s *userServer) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.Beneficiary, error) {
+ beneficiary := &pb.Beneficiary{
   Id:    req.Id,
   Name:  "Alice",
   Email: "alice@example.com",
  }
- return user, nil
+ return beneficiary, nil
 }
 
 func (s *userServer) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (*pb.ListUsersResponse, error) {
- users := []*pb.User{
+ users := []*pb.Beneficiary{
   {Id: 1, Name: "Alice", Email: "alice@example.com"},
   {Id: 2, Name: "Bob", Email: "bob@example.com"},
  }
@@ -886,11 +888,11 @@ func main() {
  client := pb.NewUserServiceClient(conn)
 
  // GetUser
- user, err := client.GetUser(context.Background(), &pb.GetUserRequest{Id: 1})
+ beneficiary, err := client.GetUser(context.Background(), &pb.GetUserRequest{Id: 1})
  if err != nil {
-  log.Fatalf("could not get user: %v", err)
+  log.Fatalf("could not get beneficiary: %v", err)
  }
- fmt.Printf("User: %v\n", user)
+ fmt.Printf("Beneficiary: %v\n", beneficiary)
 
  // ListUsers
  users, err := client.ListUsers(context.Background(), &pb.ListUsersRequest{
@@ -910,15 +912,15 @@ func main() {
 
 ```protobuf
 service UserService {
-  rpc StreamUsers(ListUsersRequest) returns (stream User);
+  rpc StreamUsers(ListUsersRequest) returns (stream Beneficiary);
 }
 ```
 
 ```go
 func (s *userServer) StreamUsers(req *pb.ListUsersRequest, stream pb.UserService_StreamUsersServer) error {
  users := getUsers()
- for _, user := range users {
-  if err := stream.Send(user); err != nil {
+ for _, beneficiary := range users {
+  if err := stream.Send(beneficiary); err != nil {
    return err
   }
  }
@@ -930,7 +932,7 @@ func (s *userServer) StreamUsers(req *pb.ListUsersRequest, stream pb.UserService
 
 ```protobuf
 service UserService {
-  rpc CreateUsers(stream User) returns (CreateUsersResponse);
+  rpc CreateUsers(stream Beneficiary) returns (CreateUsersResponse);
 }
 ```
 
@@ -938,7 +940,7 @@ service UserService {
 func (s *userServer) CreateUsers(stream pb.UserService_CreateUsersServer) error {
  count := 0
  for {
-  user, err := stream.Recv()
+  beneficiary, err := stream.Recv()
   if err == io.EOF {
    return stream.SendAndClose(&pb.CreateUsersResponse{
     Count: int32(count),
@@ -948,7 +950,7 @@ func (s *userServer) CreateUsers(stream pb.UserService_CreateUsersServer) error 
    return err
   }
 
-  // Save user...
+  // Save beneficiary...
   count++
  }
 }
@@ -1155,8 +1157,8 @@ func TestHelloHandler(t *testing.T) {
 
 ```go
 func TestCreateUserHandler(t *testing.T) {
- user := User{Name: "Alice", Email: "alice@example.com"}
- jsonData, _ := json.Marshal(user)
+ beneficiary := Beneficiary{Name: "Alice", Email: "alice@example.com"}
+ jsonData, _ := json.Marshal(beneficiary)
 
  req := httptest.NewRequest("POST", "/users", bytes.NewBuffer(jsonData))
  req.Header.Set("Content-Type", "application/json")
@@ -1169,15 +1171,15 @@ func TestCreateUserHandler(t *testing.T) {
    status, http.StatusCreated)
  }
 
- var responseUser User
+ var responseUser Beneficiary
  err := json.NewDecoder(rr.Body).Decode(&responseUser)
  if err != nil {
   t.Fatalf("could not decode response: %v", err)
  }
 
- if responseUser.Name != user.Name {
+ if responseUser.Name != beneficiary.Name {
   t.Errorf("unexpected name: got %v want %v",
-   responseUser.Name, user.Name)
+   responseUser.Name, beneficiary.Name)
  }
 }
 ```
@@ -1317,3 +1319,8 @@ func main() {
 - [Echo Documentation](https://echo.labstack.com/guide/) - Echo framework guide
 - [gRPC Go Tutorial](https://grpc.io/docs/languages/go/) - gRPC in Go
 - [WebSocket](https://github.com/gorilla/websocket) - WebSocket library
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

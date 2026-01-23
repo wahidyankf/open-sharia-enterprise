@@ -12,8 +12,6 @@ tags:
   - java-17
   - java-21
   - java-25
-created: 2026-01-20
-updated: 2026-01-20
 ---
 
 # Java

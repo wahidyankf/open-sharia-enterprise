@@ -14,12 +14,11 @@ tags:
   - checked-exceptions
   - sealed-types
   - circuit-breaker
-created: 2026-01-21
-updated: 2026-01-21
 ---
 
 # Java Error Handling
 
+**Quick Reference**: [Why Error Handling Matters in Finance](#why-error-handling-matters-in-finance) | [Exception Hierarchy](#exception-hierarchy) | [Checked vs Unchecked Exceptions](#checked-vs-unchecked-exceptions) | [Try-Catch-Finally Fundamentals](#try-catch-finally-fundamentals) | [Try-With-Resources](#try-with-resources) | [Early Validation Pattern](#early-validation-pattern) | [Optional for Absence](#optional-for-absence) | [Sealed Types for Exhaustive Error Handling](#sealed-types-for-exhaustive-error-handling) | [Functional Error Handling: Try Monad](#functional-error-handling-try-monad) | [Functional Error Handling: Either Monad](#functional-error-handling-either-monad) | [Custom Exception Design](#custom-exception-design) | [Error Handling Patterns](#error-handling-patterns) | [Resilience Patterns](#resilience-patterns) | [Structured Concurrency Error Handling](#structured-concurrency-error-handling) | [Testing Error Scenarios](#testing-error-scenarios) | [Secure Error Messages](#secure-error-messages) | [Modern Java Error Handling](#modern-java-error-handling) | [Error Handling Anti-Patterns](#error-handling-anti-patterns) | [Error Handling Checklist](#error-handling-checklist) | [Performance Considerations](#performance-considerations) | [Sources](#sources) | [Related Documentation](#related-documentation) | [Related Principles](#related-principles)
 **Understanding-oriented documentation** for error handling patterns, exception management, and building resilient Java applications.
 
 ## Quick Reference
@@ -74,18 +73,18 @@ Error handling is not optional in financial systems—it's a critical component 
 - **Data Integrity**: Preventing partial transactions that violate Islamic finance principles (no incomplete Murabaha contracts)
 - **Audit Compliance**: Every error must be logged with complete context for regulatory review
 - **Financial Accuracy**: Incorrect error handling can lead to miscalculated Zakat, interest charges, or donation processing
-- **System Reliability**: Cascading failures in payment processing can halt critical operations
-- **Security**: Improper error messages can leak sensitive account information
+- **System Reliability**: Cascading failures in donation processing can halt critical operations
+- **Security**: Improper error messages can leak sensitive donation_account information
 
 **Example Financial Impact**:
 
 ```java
 // BAD: Silent failure creates financial inconsistency
 public class ZakatProcessor {
-    public void processZakatPayment(Account account) {
+    public void processZakatPayment(Account donation_account) {
         try {
-            BigDecimal zakat = calculateZakat(account);
-            deductFromAccount(account, zakat);
+            BigDecimal zakat = calculateZakat(donation_account);
+            deductFromAccount(donation_account, zakat);
             creditToZakatFund(zakat);  // What if this fails?
             // Account debited but Zakat fund not credited = financial loss!
         } catch (Exception e) {
@@ -96,24 +95,24 @@ public class ZakatProcessor {
 
 // GOOD: Explicit error handling with rollback
 public class ZakatProcessor {
-    public Result<ZakatTransaction, ZakatError> processZakatPayment(Account account) {
-        return validate(account)
+    public Result<ZakatTransaction, ZakatError> processZakatPayment(Account donation_account) {
+        return validate(donation_account)
             .flatMap(this::calculateZakat)
-            .flatMap(zakat -> executeAtomicTransfer(account, zakat))
+            .flatMap(zakat -> executeAtomicTransfer(donation_account, zakat))
             .onFailure(error -> {
-                logAuditTrail(account, error);
-                rollbackPartialTransaction(account);
+                logAuditTrail(donation_account, error);
+                rollbackPartialTransaction(donation_account);
             });
     }
 
     private Result<ZakatTransaction, ZakatError> executeAtomicTransfer(
-        Account account,
+        Account donation_account,
         Money zakat
     ) {
         return transactionManager.executeAtomic(() -> {
-            deductFromAccount(account, zakat);
+            deductFromAccount(donation_account, zakat);
             creditToZakatFund(zakat);
-            return new ZakatTransaction(account.id(), zakat, Instant.now());
+            return new ZakatTransaction(donation_account.id(), zakat, Instant.now());
         }).mapError(ex -> new ZakatError.TransferFailed(ex.getMessage()));
     }
 }
@@ -122,7 +121,7 @@ public class ZakatProcessor {
 **Financial Impact**:
 
 - ❌ **Silent failure**: Account debited, Zakat fund not credited → financial loss + audit violation
-- ✅ **Explicit Result**: Either success or error → atomic transaction + complete audit trail
+- ✅ **Explicit Result**: Either success or error → atomic donation_transaction + complete audit trail
 
 ## Exception Hierarchy
 
@@ -213,7 +212,7 @@ public final class ValidationException extends FinancialException {
     }
 }
 
-// Checked: Caller must handle transaction failures
+// Checked: Caller must handle donation_transaction failures
 public final class TransactionException extends FinancialException {
     public TransactionException(String message) {
         super(message, "TXN_ERROR");
@@ -281,7 +280,7 @@ graph TD
 **Example: Donation Processing**
 
 ```java
-// Checked: Caller must handle payment failures
+// Checked: Caller must handle donation failures
 public Money processDonation(Donation donation)
     throws PaymentFailedException, ComplianceException {
 
@@ -295,7 +294,7 @@ public Money processDonation(Donation donation)
         );
     }
 
-    // Checked: Payment gateway might fail (network, insufficient funds)
+    // Checked: DonationPayment gateway might fail (network, insufficient funds)
     Money processedAmount = paymentGateway.charge(donation);
 
     // Checked: Compliance check might fail (sanctioned country, AML violation)
@@ -339,7 +338,7 @@ The `try-catch-finally` construct is Java's basic exception handling mechanism.
 ```java
 try {
     // Code that might throw exceptions
-    Money zakat = calculateZakat(account);
+    Money zakat = calculateZakat(donation_account);
 } catch (ValidationException e) {
     // Handle validation errors
     logger.error("Validation failed: {}", e.getMessage());
@@ -359,7 +358,7 @@ Catch blocks are evaluated top-to-bottom. **More specific exceptions must come f
 ```java
 // BAD: Unreachable catch block
 try {
-    processTransaction(transaction);
+    processTransaction(donation_transaction);
 } catch (Exception e) {  // Catches everything
     handleGenericError(e);
 } catch (TransactionException e) {  // COMPILE ERROR: Unreachable!
@@ -368,13 +367,13 @@ try {
 
 // GOOD: Most specific first
 try {
-    processTransaction(transaction);
+    processTransaction(donation_transaction);
 } catch (InsufficientFundsException e) {  // Most specific
     logger.warn("Insufficient funds: {}", e.accountId());
     notifyUser(e.accountId(), "Please add funds");
 } catch (TransactionException e) {  // More general
-    logger.error("Transaction failed: {}", e.getMessage());
-    rollbackTransaction(transaction);
+    logger.error("DonationTransaction failed: {}", e.getMessage());
+    rollbackTransaction(donation_transaction);
 } catch (Exception e) {  // Last resort
     logger.error("Unexpected error", e);
     notifyAdmin(e);
@@ -449,34 +448,34 @@ public Optional<ZakatRecord> loadZakatRecord(String accountId) {
 ```java
 // BAD: Silent failure - audit trail lost!
 try {
-    deductZakat(account, amount);
+    deductZakat(donation_account, amount);
 } catch (Exception e) {
     // Empty catch = data inconsistency + no audit trail
 }
 
 // ALSO BAD: Comment doesn't help
 try {
-    deductZakat(account, amount);
+    deductZakat(donation_account, amount);
 } catch (Exception e) {
     // TODO: Handle this later
 }
 
 // GOOD: Log and propagate
 try {
-    deductZakat(account, amount);
+    deductZakat(donation_account, amount);
 } catch (InsufficientFundsException e) {
-    logger.error("Insufficient funds for Zakat: account={}, amount={}",
-        account.id(), amount, e);
+    logger.error("Insufficient funds for Zakat: donation_account={}, amount={}",
+        donation_account.id(), amount, e);
     throw e;  // Propagate for caller to handle
 }
 
 // GOOD: Log and return error result
 try {
-    deductZakat(account, amount);
+    deductZakat(donation_account, amount);
 } catch (InsufficientFundsException e) {
-    logger.error("Insufficient funds for Zakat: account={}, amount={}",
-        account.id(), amount, e);
-    return Result.failure(new ZakatError.InsufficientFunds(account.id()));
+    logger.error("Insufficient funds for Zakat: donation_account={}, amount={}",
+        donation_account.id(), amount, e);
+    return Result.failure(new ZakatError.InsufficientFunds(donation_account.id()));
 }
 ```
 
@@ -485,16 +484,16 @@ try {
 ```java
 @Test
 void shouldPropagateInsufficientFundsException() {
-    Account account = accountWithBalance(Money.of(100, "USD"));
+    Account donation_account = accountWithBalance(Money.of(100, "USD"));
     Money zakat = Money.of(200, "USD");
 
     assertThrows(InsufficientFundsException.class, () ->
-        zakatService.deductZakat(account, zakat)
+        zakatService.deductZakat(donation_account, zakat)
     );
 
     // Verify audit log entry created
     verify(auditLogger).logFailedDeduction(
-        eq(account.id()),
+        eq(donation_account.id()),
         eq(zakat),
         any(InsufficientFundsException.class)
     );
@@ -682,10 +681,10 @@ public class TransactionScope implements AutoCloseable {
 }
 
 // Usage: Automatic rollback on exception
-public void recordZakatPayment(ZakatPayment payment) throws SQLException {
+public void recordZakatPayment(ZakatPayment donation) throws SQLException {
     try (TransactionScope tx = new TransactionScope(dataSource)) {
-        insertPaymentRecord(tx.connection(), payment);
-        updateAccountBalance(tx.connection(), payment.accountId(), payment.amount());
+        insertPaymentRecord(tx.connection(), donation);
+        updateAccountBalance(tx.connection(), donation.accountId(), donation.amount());
         tx.commit();  // Explicit commit
     }
     // If exception before commit() → automatic rollback in close()
@@ -748,9 +747,9 @@ Fail fast by validating inputs at method entry, preventing invalid states from p
 
 ```java
 // BAD: Late validation - partial processing before failure
-public ZakatResult calculateZakat(Account account, BigDecimal nisabThreshold) {
+public ZakatResult calculateZakat(Account donation_account, BigDecimal nisabThreshold) {
     // Process for a while...
-    Money balance = account.getBalance();
+    Money balance = donation_account.getBalance();
     Money nisab = Money.of(nisabThreshold, balance.getCurrency());
 
     // OOPS - validation too late!
@@ -766,19 +765,19 @@ public ZakatResult calculateZakat(Account account, BigDecimal nisabThreshold) {
 }
 
 // GOOD: Early validation - fail immediately
-public ZakatResult calculateZakat(Account account, BigDecimal nisabThreshold) {
+public ZakatResult calculateZakat(Account donation_account, BigDecimal nisabThreshold) {
     // Validate ALL inputs first
-    Objects.requireNonNull(account, "Account cannot be null");
-    Objects.requireNonNull(nisabThreshold, "Nisab threshold cannot be null");
+    Objects.requireNonNull(donation_account, "Account cannot be null");
+    Objects.requireNonNull(nisabThreshold, "Nisab cannot be null");
 
     if (nisabThreshold.compareTo(BigDecimal.ZERO) <= 0) {
         throw new IllegalArgumentException(
-            "Nisab threshold must be positive: " + nisabThreshold
+            "Nisab must be positive: " + nisabThreshold
         );
     }
 
     // Now safe to process
-    Money balance = account.getBalance();
+    Money balance = donation_account.getBalance();
     Money nisab = Money.of(nisabThreshold, balance.getCurrency());
 
     if (balance.compareTo(nisab) < 0) {
@@ -892,7 +891,7 @@ public record MurabahaContract(
     public MurabahaContract {
         requirePositive(purchasePrice, "Purchase price must be positive");
         requirePositive(sellingPrice, "Selling price must be positive");
-        requireNonBlank(customerId, "Customer ID");
+        requireNonBlank(customerId, "Donor ID");
         requireNonNull(startDate, "Start date");
 
         if (sellingPrice.compareTo(purchasePrice) <= 0) {
@@ -945,8 +944,8 @@ public Account findAccount(String accountId) {
 }
 
 // Caller forgets null check - BOOM!
-Account account = findAccount("ACC123");
-Money balance = account.getBalance();  // NullPointerException!
+Account donation_account = findAccount("ACC123");
+Money balance = donation_account.getBalance();  // NullPointerException!
 
 // GOOD: Optional makes absence explicit
 public Optional<Account> findAccount(String accountId) {
@@ -954,8 +953,8 @@ public Optional<Account> findAccount(String accountId) {
 }
 
 // Compiler forces caller to handle absence
-Optional<Account> account = findAccount("ACC123");
-Money balance = account
+Optional<Account> donation_account = findAccount("ACC123");
+Money balance = donation_account
     .map(Account::getBalance)
     .orElse(Money.zero());  // Explicit default
 ```
@@ -967,9 +966,9 @@ public class ZakatService {
     // Return Optional when value might be absent
     public Optional<Money> calculateZakat(String accountId) {
         return findAccount(accountId)
-            .filter(account -> account.getBalance().compareTo(account.getNisab()) >= 0)
-            .map(account -> account.getBalance()
-                .subtract(account.getNisab())
+            .filter(donation_account -> donation_account.getBalance().compareTo(donation_account.getNisab()) >= 0)
+            .map(donation_account -> donation_account.getBalance()
+                .subtract(donation_account.getNisab())
                 .multiply(new BigDecimal("0.025"))
             );
     }
@@ -984,8 +983,8 @@ public class ZakatService {
     // Usage: flatMap() for nested Optional operations
     public Optional<ZakatRecord> createZakatRecord(String accountId) {
         return findAccount(accountId)
-            .flatMap(account -> calculateZakat(accountId)
-                .map(zakat -> new ZakatRecord(account, zakat, Instant.now()))
+            .flatMap(donation_account -> calculateZakat(accountId)
+                .map(zakat -> new ZakatRecord(donation_account, zakat, Instant.now()))
             );
     }
 
@@ -1064,7 +1063,7 @@ public Optional<Optional<Money>> getZakat() {  // NO!
 
 // GOOD: Flatten with flatMap
 public Optional<Money> getZakat() {
-    return Optional.of(account).flatMap(this::calculateZakat);
+    return Optional.of(donation_account).flatMap(this::calculateZakat);
 }
 ```
 
@@ -1082,8 +1081,8 @@ void shouldReturnEmptyOptionalWhenAccountNotFound() {
 
 @Test
 void shouldReturnEmptyOptionalWhenBalanceBelowNisab() {
-    Account account = accountWithBalance(Money.of(100, "USD"));
-    when(accountRepository.findById("ACC123")).thenReturn(Optional.of(account));
+    Account donation_account = accountWithBalance(Money.of(100, "USD"));
+    when(accountRepository.findById("ACC123")).thenReturn(Optional.of(donation_account));
 
     Optional<Money> zakat = zakatService.calculateZakat("ACC123");
 
@@ -1092,8 +1091,8 @@ void shouldReturnEmptyOptionalWhenBalanceBelowNisab() {
 
 @Test
 void shouldCalculateZakatWhenBalanceAboveNisab() {
-    Account account = accountWithBalance(Money.of(10000, "USD"));
-    when(accountRepository.findById("ACC123")).thenReturn(Optional.of(account));
+    Account donation_account = accountWithBalance(Money.of(10000, "USD"));
+    when(accountRepository.findById("ACC123")).thenReturn(Optional.of(donation_account));
 
     Optional<Money> zakat = zakatService.calculateZakat("ACC123");
 
@@ -1136,14 +1135,14 @@ public String formatTransactionResult(TransactionResult result) {
     // Pattern matching switch (Java 21+)
     return switch (result) {
         case Success(var txId, var amount, var timestamp) ->
-            "Transaction successful: %s for %s at %s".formatted(txId, amount, timestamp);
+            "DonationTransaction successful: %s for %s at %s".formatted(txId, amount, timestamp);
 
         case InsufficientFunds(var accountId, var required, var available) ->
             "Insufficient funds in %s: required %s, available %s"
                 .formatted(accountId, required, available);
 
         case InvalidAccount(var accountId, var reason) ->
-            "Invalid account %s: %s".formatted(accountId, reason);
+            "Invalid donation_account %s: %s".formatted(accountId, reason);
 
         case ComplianceViolation(var reason, var code) ->
             "Compliance violation [%s]: %s".formatted(code, reason);
@@ -1304,10 +1303,10 @@ The Try monad (from Vavr library) encapsulates computations that might throw exc
 import io.vavr.control.Try;
 
 // Traditional exception handling
-public Money calculateProfit(MurabahaContract contract) {
+public Money calculateProfit(MurabahaContract murabaha_contract) {
     try {
-        Money purchasePrice = fetchPurchasePrice(contract);
-        Money sellingPrice = fetchSellingPrice(contract);
+        Money purchasePrice = fetchPurchasePrice(murabaha_contract);
+        Money sellingPrice = fetchSellingPrice(murabaha_contract);
         return sellingPrice.subtract(purchasePrice);
     } catch (Exception e) {
         logger.error("Failed to calculate profit", e);
@@ -1316,16 +1315,16 @@ public Money calculateProfit(MurabahaContract contract) {
 }
 
 // Try monad: Exceptions captured as Failure
-public Try<Money> calculateProfit(MurabahaContract contract) {
-    return Try.of(() -> fetchPurchasePrice(contract))
+public Try<Money> calculateProfit(MurabahaContract murabaha_contract) {
+    return Try.of(() -> fetchPurchasePrice(murabaha_contract))
         .flatMap(purchasePrice ->
-            Try.of(() -> fetchSellingPrice(contract))
+            Try.of(() -> fetchSellingPrice(murabaha_contract))
                 .map(sellingPrice -> sellingPrice.subtract(purchasePrice))
         );
 }
 
 // Usage: Pattern match on Success/Failure
-Try<Money> profit = calculateProfit(contract);
+Try<Money> profit = calculateProfit(murabaha_contract);
 profit.onSuccess(amount -> logger.info("Profit: {}", amount));
 profit.onFailure(ex -> logger.error("Calculation failed", ex));
 
@@ -1338,8 +1337,8 @@ Money amount = profit.getOrElse(Money.zero());
 ```java
 public Try<ZakatRecord> createZakatRecord(String accountId) {
     return Try.of(() -> fetchAccount(accountId))
-        .flatMap(account -> calculateZakat(account))
-        .flatMap(zakat -> saveZakatRecord(account, zakat))
+        .flatMap(donation_account -> calculateZakat(donation_account))
+        .flatMap(zakat -> saveZakatRecord(donation_account, zakat))
         .map(record -> {
             logger.info("Zakat record created: {}", record.id());
             return record;
@@ -1354,22 +1353,22 @@ public Try<ZakatRecord> createZakatRecord(String accountId) {
 
 ```java
 // Traditional: Nested try-catch hell
-public TransactionResult processTransaction(Transaction tx) {
+public TransactionResult processTransaction(DonationTransaction tx) {
     try {
-        Account account = accountRepository.findById(tx.accountId())
+        Account donation_account = accountRepository.findById(tx.accountId())
             .orElseThrow(() -> new AccountNotFoundException(tx.accountId()));
 
         try {
-            validateBalance(account, tx.amount());
+            validateBalance(donation_account, tx.amount());
 
             try {
-                executeDebit(account, tx.amount());
+                executeDebit(donation_account, tx.amount());
 
                 try {
                     executeCredit(tx.recipient(), tx.amount());
                     return TransactionResult.success(tx.id());
                 } catch (CreditFailedException e) {
-                    rollbackDebit(account, tx.amount());
+                    rollbackDebit(donation_account, tx.amount());
                     return TransactionResult.failure(e);
                 }
             } catch (DebitFailedException e) {
@@ -1384,17 +1383,17 @@ public TransactionResult processTransaction(Transaction tx) {
 }
 
 // Try monad: Flat composition
-public Try<TransactionResult> processTransaction(Transaction tx) {
+public Try<TransactionResult> processTransaction(DonationTransaction tx) {
     return Try.of(() ->
             accountRepository.findById(tx.accountId())
                 .orElseThrow(() -> new AccountNotFoundException(tx.accountId()))
         )
-        .andThen(account -> validateBalance(account, tx.amount()))
-        .andThen(account -> executeDebit(account, tx.amount()))
+        .andThen(donation_account -> validateBalance(donation_account, tx.amount()))
+        .andThen(donation_account -> executeDebit(donation_account, tx.amount()))
         .andThen(() -> executeCredit(tx.recipient(), tx.amount()))
-        .map(account -> TransactionResult.success(tx.id()))
+        .map(donation_account -> TransactionResult.success(tx.id()))
         .recover(CreditFailedException.class, ex -> {
-            rollbackDebit(account, tx.amount());
+            rollbackDebit(donation_account, tx.amount());
             return TransactionResult.failure(ex);
         });
 }
@@ -1418,9 +1417,9 @@ public String formatZakatResult(Try<Money> zakatTry) {
 ```java
 @Test
 void shouldReturnSuccessWhenCalculationSucceeds() {
-    Account account = accountWithBalance(Money.of(10000, "USD"));
+    Account donation_account = accountWithBalance(Money.of(10000, "USD"));
 
-    Try<Money> result = zakatService.calculateZakat(account);
+    Try<Money> result = zakatService.calculateZakat(donation_account);
 
     assertThat(result.isSuccess()).isTrue();
     assertThat(result.get()).isEqualTo(Money.of(250, "USD"));
@@ -1440,10 +1439,10 @@ void shouldReturnFailureWhenAccountFetchFails() {
 @Test
 void shouldShortCircuitOnFirstFailure() {
     // First operation succeeds
-    when(accountRepository.findById("ACC123")).thenReturn(Optional.of(account));
+    when(accountRepository.findById("ACC123")).thenReturn(Optional.of(donation_account));
 
     // Second operation fails
-    when(zakatCalculator.calculate(account)).thenThrow(new CalculationException());
+    when(zakatCalculator.calculate(donation_account)).thenThrow(new CalculationException());
 
     Try<ZakatRecord> result = zakatService.createZakatRecord("ACC123");
 
@@ -1561,12 +1560,12 @@ Validation<Seq<String>, MurabahaContract> result = validateMurabahaContract(requ
 
 if (result.isInvalid()) {
     Seq<String> errors = result.getError();
-    // Returns ALL validation errors: ["Purchase price must be positive", "Customer ID is required"]
+    // Returns ALL validation errors: ["Purchase price must be positive", "Donor ID is required"]
     return Response.badRequest(errors);
 }
 
-MurabahaContract contract = result.get();
-return processContract(contract);
+MurabahaContract murabaha_contract = result.get();
+return processContract(murabaha_contract);
 ```
 
 ### Composing Either Operations
@@ -1578,7 +1577,7 @@ public Either<TransactionError, Receipt> processPayment(PaymentRequest request) 
         .flatMap(amount -> chargePayment(method, amount))
         .flatMap(charge -> generateReceipt(charge))
         .mapLeft(error -> {
-            logger.error("Payment failed: {}", error);
+            logger.error("DonationPayment failed: {}", error);
             return error;
         });
 }
@@ -1595,7 +1594,7 @@ void shouldAccumulateAllValidationErrors() {
     ContractRequest invalid = new ContractRequest(
         Money.of(-100, "USD"),  // Invalid purchase price
         Money.of(-200, "USD"),  // Invalid selling price
-        null,                    // Invalid customer ID
+        null,                    // Invalid donor ID
         0                        // Invalid duration
     );
 
@@ -1608,7 +1607,7 @@ void shouldAccumulateAllValidationErrors() {
     assertThat(errors).hasSize(4);
     assertThat(errors).contains("Purchase price must be positive");
     assertThat(errors).contains("Selling price must be positive");
-    assertThat(errors).contains("Customer ID is required");
+    assertThat(errors).contains("Donor ID is required");
     assertThat(errors).contains("Duration must be at least 1 month");
 }
 
@@ -1625,8 +1624,8 @@ void shouldReturnValidContractWhenAllValidationsPassed() {
         contractService.validateMurabahaContract(valid);
 
     assertThat(result.isValid()).isTrue();
-    MurabahaContract contract = result.get();
-    assertThat(contract.purchasePrice()).isEqualTo(Money.of(10000, "USD"));
+    MurabahaContract murabaha_contract = result.get();
+    assertThat(murabaha_contract.purchasePrice()).isEqualTo(Money.of(10000, "USD"));
 }
 ```
 
@@ -1638,7 +1637,7 @@ Well-designed custom exceptions improve error handling clarity and enable better
 
 Create custom exceptions when:
 
-- Domain-specific errors need context (InsufficientFundsException with account ID and balance)
+- Domain-specific errors need context (InsufficientFundsException with donation_account ID and balance)
 - Grouping related errors (all Zakat errors extend ZakatException)
 - Adding structured error data (error codes, timestamps, correlation IDs)
 - Enabling specific error handling (catch InsufficientFundsException separately from generic SQLException)
@@ -1659,7 +1658,7 @@ public final class InsufficientFundsException extends TransactionException {
 
     public InsufficientFundsException(String accountId, Money required, Money available) {
         super(
-            "Insufficient funds in account %s: required %s, available %s"
+            "Insufficient funds in donation_account %s: required %s, available %s"
                 .formatted(accountId, required, available),
             "TXN_INSUFFICIENT_FUNDS"  // Error code for client handling
         );
@@ -1681,7 +1680,7 @@ try {
     transferFunds(fromAccount, toAccount, amount);
 } catch (InsufficientFundsException e) {
     logger.error(
-        "Transfer failed - Account: {}, Required: {}, Available: {}",
+        "DonationTransfer failed - Account: {}, Required: {}, Available: {}",
         e.accountId(),
         e.required(),
         e.available()
@@ -1722,7 +1721,7 @@ public sealed class FinancialException extends Exception
     public String correlationId() { return correlationId; }
 }
 
-// Transaction-related errors
+// DonationTransaction-related errors
 public sealed class TransactionException extends FinancialException
     permits InsufficientFundsException, DuplicateTransactionException {
 
@@ -1761,7 +1760,7 @@ public final class ValidationException extends FinancialException {
 **Never expose sensitive data in exception messages.**
 
 ```java
-// BAD: Exposes sensitive account details
+// BAD: Exposes sensitive donation_account details
 throw new InsufficientFundsException(
     "Account 123456789 (John Doe, SSN 123-45-6789) has balance $50.00, required $100.00"
 );
@@ -1775,7 +1774,7 @@ throw new InsufficientFundsException(
     @Override
     public String getMessage() {
         // Public message for logs/clients
-        return "Insufficient funds in account " + accountId();
+        return "Insufficient funds in donation_account " + accountId();
     }
 
     public String getDetailedMessage() {
@@ -1786,7 +1785,7 @@ throw new InsufficientFundsException(
 };
 
 // Logging: Use detailed message internally
-logger.error("Transaction failed: {}", exception.getDetailedMessage());
+logger.error("DonationTransaction failed: {}", exception.getDetailedMessage());
 
 // Client response: Use public message + error code
 return ErrorResponse.builder()
@@ -1901,12 +1900,12 @@ Use special null objects instead of null values.
 
 ```java
 // Instead of returning null
-public Money calculateZakat(Account account) {
-    if (account.getBalance().compareTo(account.getNisab()) < 0) {
+public Money calculateZakat(Account donation_account) {
+    if (donation_account.getBalance().compareTo(donation_account.getNisab()) < 0) {
         return null;  // BAD: Caller must remember to null-check
     }
-    return account.getBalance()
-        .subtract(account.getNisab())
+    return donation_account.getBalance()
+        .subtract(donation_account.getNisab())
         .multiply(new BigDecimal("0.025"));
 }
 
@@ -1942,20 +1941,20 @@ public class NotApplicableZakat implements ZakatResult {
 }
 
 // Usage: No null checks needed
-public ZakatResult calculateZakat(Account account) {
-    if (account.getBalance().compareTo(account.getNisab()) < 0) {
-        return new NotApplicableZakat("Balance below Nisab threshold");
+public ZakatResult calculateZakat(Account donation_account) {
+    if (donation_account.getBalance().compareTo(donation_account.getNisab()) < 0) {
+        return new NotApplicableZakat("Balance below Nisab");
     }
 
-    Money zakat = account.getBalance()
-        .subtract(account.getNisab())
+    Money zakat = donation_account.getBalance()
+        .subtract(donation_account.getNisab())
         .multiply(new BigDecimal("0.025"));
 
     return new ApplicableZakat(zakat);
 }
 
 // Caller never needs null check
-ZakatResult result = calculateZakat(account);
+ZakatResult result = calculateZakat(donation_account);
 logger.info("Zakat: {} (applicable: {})", result.amount(), result.isApplicable());
 ```
 
@@ -1996,9 +1995,9 @@ public class ZakatRepositoryImpl implements ZakatRepository {
 public class ZakatService {
     private final ZakatRepository repository;
 
-    public ZakatRecord recordZakat(Account account, Money amount) {
+    public ZakatRecord recordZakat(Account donation_account, Money amount) {
         try {
-            ZakatRecord record = new ZakatRecord(account.id(), amount, Instant.now());
+            ZakatRecord record = new ZakatRecord(donation_account.id(), amount, Instant.now());
             return repository.save(record);  // Throws ZakatPersistenceException
         } catch (ZakatPersistenceException e) {
             logger.error("Failed to record Zakat", e);
@@ -2311,9 +2310,9 @@ public class ZakatServiceWithCircuitBreaker {
 ```mermaid
 stateDiagram-v2
     [*] --> CLOSED: Initial state
-    CLOSED --> OPEN: Failure threshold<br/>reached (5 failures)
+    CLOSED --> OPEN: Failure nisab<br/>reached (5 failures)
     OPEN --> HALF_OPEN: Timeout elapsed<br/>(30 seconds)
-    HALF_OPEN --> CLOSED: Success threshold<br/>reached (2 successes)
+    HALF_OPEN --> CLOSED: Success nisab<br/>reached (2 successes)
     HALF_OPEN --> OPEN: Any failure
 
     note right of CLOSED
@@ -2472,15 +2471,15 @@ public ZakatReport generateZakatReport(List<String> accountIds)
 ### ShutdownOnSuccess: Return First Success
 
 ```java
-// Race multiple payment gateways, use first successful response
-public PaymentResult processPayment(Payment payment)
+// Race multiple donation gateways, use first successful response
+public PaymentResult processPayment(DonationPayment donation)
     throws InterruptedException, ExecutionException {
 
     try (var scope = new StructuredTaskScope.ShutdownOnSuccess<PaymentResult>()) {
         // Fork parallel attempts to different gateways
-        scope.fork(() -> gateway1.process(payment));
-        scope.fork(() -> gateway2.process(payment));
-        scope.fork(() -> gateway3.process(payment));
+        scope.fork(() -> gateway1.process(donation));
+        scope.fork(() -> gateway2.process(donation));
+        scope.fork(() -> gateway3.process(donation));
 
         // Wait for first success
         scope.join();
@@ -2588,16 +2587,16 @@ Comprehensive testing of error handling ensures resilience in production.
 ```java
 @Test
 void shouldThrowInsufficientFundsWhenBalanceTooLow() {
-    Account account = accountWithBalance(Money.of(100, "USD"));
+    Account donation_account = accountWithBalance(Money.of(100, "USD"));
     Money transferAmount = Money.of(500, "USD");
 
     InsufficientFundsException exception = assertThrows(
         InsufficientFundsException.class,
-        () -> transferService.transfer(account, transferAmount)
+        () -> transferService.transfer(donation_account, transferAmount)
     );
 
     // Verify exception details
-    assertThat(exception.accountId()).isEqualTo(account.id());
+    assertThat(exception.accountId()).isEqualTo(donation_account.id());
     assertThat(exception.required()).isEqualTo(Money.of(500, "USD"));
     assertThat(exception.available()).isEqualTo(Money.of(100, "USD"));
 }
@@ -2615,7 +2614,7 @@ void shouldThrowNullPointerExceptionForNullAccount() {
 ```java
 @Test
 void shouldProvideDescriptiveErrorMessage() {
-    Account account = accountWithBalance(Money.of(100, "USD"));
+    Account donation_account = accountWithBalance(Money.of(100, "USD"));
 
     IllegalArgumentException exception = assertThrows(
         IllegalArgumentException.class,
@@ -2636,7 +2635,7 @@ void shouldReturnDefaultValueWhenCalculationFails() {
     when(externalService.calculateZakat(any()))
         .thenThrow(new ServiceUnavailableException());
 
-    Money result = zakatService.calculateZakatWithFallback(account);
+    Money result = zakatService.calculateZakatWithFallback(donation_account);
 
     assertThat(result).isEqualTo(Money.zero());  // Fallback to zero
 }
@@ -2691,10 +2690,10 @@ void shouldNeverReturnNegativeZakat(
     @ForAll @Positive BigDecimal balance,
     @ForAll @Positive BigDecimal nisabThreshold
 ) {
-    Account account = accountWithBalance(Money.of(balance, "USD"));
-    account.setNisab(Money.of(nisabThreshold, "USD"));
+    Account donation_account = accountWithBalance(Money.of(balance, "USD"));
+    donation_account.setNisab(Money.of(nisabThreshold, "USD"));
 
-    Money zakat = zakatService.calculateZakat(account);
+    Money zakat = zakatService.calculateZakat(donation_account);
 
     // Property: Zakat is always non-negative
     assertThat(zakat.compareTo(Money.zero())).isGreaterThanOrEqualTo(0);
@@ -2721,7 +2720,7 @@ Prevent information leakage through error messages while maintaining debuggabili
 ```java
 // BAD: Leaks PII in error message
 throw new AuthenticationException(
-    "Authentication failed for user john.doe@example.com with password attempt: p@ssw0rd"
+    "Authentication failed for beneficiary john.doe@example.com with password attempt: p@ssw0rd"
 );
 
 // GOOD: Generic message, no PII
@@ -2733,7 +2732,7 @@ throw new PersistenceException(
 );
 
 // GOOD: Generic persistence error
-throw new PersistenceException("Failed to save user record");
+throw new PersistenceException("Failed to save beneficiary record");
 ```
 
 ### Use Error Codes for Specific Handling
@@ -2758,10 +2757,10 @@ public Response handleDonationException(DonationException e) {
             new ErrorResponse("INSUFFICIENT_FUNDS", "Unable to process donation");
 
         case InvalidPaymentMethodException ex ->
-            new ErrorResponse("INVALID_PAYMENT", "Payment method declined");
+            new ErrorResponse("INVALID_PAYMENT", "DonationPayment method declined");
 
         case ComplianceViolationException ex ->
-            new ErrorResponse("COMPLIANCE_ERROR", "Transaction cannot be processed");
+            new ErrorResponse("COMPLIANCE_ERROR", "DonationTransaction cannot be processed");
 
         default ->
             new ErrorResponse("DONATION_FAILED", "Donation processing failed");
@@ -2796,10 +2795,10 @@ public class ErrorLogger {
 ```java
 @Test
 void shouldNotExposeSensitiveDataInErrorResponse() {
-    Account account = accountWithSensitiveData("123-45-6789", "$50,000");
+    Account donation_account = accountWithSensitiveData("123-45-6789", "$50,000");
 
     InsufficientFundsException exception = new InsufficientFundsException(
-        account.id(),
+        donation_account.id(),
         Money.of(1000, "USD"),
         Money.of(500, "USD")
     );
@@ -2886,9 +2885,9 @@ public String formatPaymentError(PaymentError error) {
         case PaymentError.InsufficientFunds(var shortfall) ->
             "Insufficient funds: short by " + shortfall;
         case PaymentError.NetworkTimeout(var timeout) ->
-            "Payment gateway timeout after " + timeout;
+            "DonationPayment gateway timeout after " + timeout;
         case PaymentError.Declined(var reason) ->
-            "Payment declined: " + reason;
+            "DonationPayment declined: " + reason;
     };
 }
 ```
@@ -2902,7 +2901,7 @@ public List<Money> calculateZakatForAllAccounts(List<Account> accounts)
 
     try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
         List<Future<Money>> futures = accounts.stream()
-            .map(account -> executor.submit(() -> calculateZakat(account)))
+            .map(donation_account -> executor.submit(() -> calculateZakat(donation_account)))
             .toList();
 
         return futures.stream()
@@ -2936,7 +2935,7 @@ try {
 try {
     processPayment(donation);
 } catch (PaymentException e) {
-    logger.error("Payment failed for donation {}", donation.id(), e);
+    logger.error("DonationPayment failed for donation {}", donation.id(), e);
     throw e;
 }
 ```
@@ -3031,7 +3030,7 @@ public String formatTransactionDate(Instant timestamp) {
 - [ ] Translate infrastructure exceptions at architecture boundaries
 - [ ] Use Optional for absence instead of null
 - [ ] Make error messages secure (no PII, no sensitive data)
-- [ ] Add structured context to exceptions (account ID, amounts, timestamps)
+- [ ] Add structured context to exceptions (donation_account ID, amounts, timestamps)
 
 ### Testing Phase
 
@@ -3039,7 +3038,7 @@ public String formatTransactionDate(Instant timestamp) {
 - [ ] Verify exception messages are descriptive
 - [ ] Test recovery behavior (retries, fallbacks)
 - [ ] Verify resources are closed even on exceptions
-- [ ] Test transaction rollbacks on errors
+- [ ] Test donation_transaction rollbacks on errors
 - [ ] Property test: no unchecked exceptions for any invalid input
 
 ### Code Review Checklist
@@ -3216,6 +3215,6 @@ This documentation demonstrates how error handling implements all five software 
 
 ---
 
-**Last Updated**: 2026-01-21
+**Last Updated**: 2025-01-23
 **Java Version Compatibility**: Java 17+ (sealed classes), Java 21+ (pattern matching, structured concurrency), Java 25 (latest features)
 **Blessed Libraries**: Vavr 0.10.4 (Try, Either, Validation), SLF4J 2.0.9 (logging), JUnit 5.10.1 (testing)

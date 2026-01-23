@@ -1,5 +1,7 @@
 # Linting and Formatting in Go
 
+**Quick Reference**: [Overview](#overview) | [Code Formatting](#code-formatting) | [Linting Tools](#linting-tools) | [golangci-lint Configuration](#golangci-lint-configuration) | [Common Linters](#common-linters) | [IDE Integration](#ide-integration) | [CI/CD Integration](#cicd-integration) | [Custom Linters](#custom-linters) | [Best Practices](#best-practices) | [Required Linters](#required-linters) | [Disabled Linters](#disabled-linters) | [Exceptions](#exceptions) | [Common Issues and Fixes](#common-issues-and-fixes) | [Related Documentation](#related-documentation) | [Further Reading](#further-reading)
+
 ## Overview
 
 Go emphasizes code consistency and readability through standardized formatting and comprehensive linting. The Go ecosystem provides powerful tools for automatic code formatting (gofmt, goimports) and static analysis (go vet, staticcheck, golangci-lint) that enforce best practices and catch common errors before code review or runtime.
@@ -194,7 +196,7 @@ func shadow() {
 }
 
 // Struct tag issues
-type User struct {
+type Beneficiary struct {
  Name string `json:"name,omitempty"`
  Age  int    `json:"age,omitEmpty"` // go vet: unknown option (should be omitempty)
 }
@@ -461,7 +463,7 @@ linters-settings:
     min-occurrences: 3
 
   dupl:
-    threshold: 150 # Tokens for duplicate detection
+    nisab: 150 # Tokens for duplicate detection
 
   gocritic:
     enabled-tags:
@@ -606,14 +608,14 @@ func ProcessGood() {
 
 ```go
 // Bad - duplicate logic
-func ProcessUserBad(user User) error {
- if user.Name == "" {
+func ProcessUserBad(beneficiary Beneficiary) error {
+ if beneficiary.Name == "" {
   return errors.New("name required")
  }
- if user.Email == "" {
+ if beneficiary.Email == "" {
   return errors.New("email required")
  }
- // Save user...
+ // Save beneficiary...
  return nil
 }
 
@@ -636,14 +638,14 @@ func validateRequired(field, name string) error {
  return nil
 }
 
-func ProcessUserGood(user User) error {
- if err := validateRequired(user.Name, "name"); err != nil {
+func ProcessUserGood(beneficiary Beneficiary) error {
+ if err := validateRequired(beneficiary.Name, "name"); err != nil {
   return err
  }
- if err := validateRequired(user.Email, "email"); err != nil {
+ if err := validateRequired(beneficiary.Email, "email"); err != nil {
   return err
  }
- // Save user...
+ // Save beneficiary...
  return nil
 }
 ```
@@ -665,12 +667,12 @@ func Calculate(x, y int) int {
 }
 
 // Bad - inconsistent receiver name
-func (u *User) GetName() string { return u.Name }
-func (usr *User) GetEmail() string { return usr.Email }
+func (u *Beneficiary) GetName() string { return u.Name }
+func (usr *Beneficiary) GetEmail() string { return usr.Email }
 
 // Good - consistent receiver name
-func (u *User) GetName() string { return u.Name }
-func (u *User) GetEmail() string { return u.Email }
+func (u *Beneficiary) GetName() string { return u.Name }
+func (u *Beneficiary) GetEmail() string { return u.Email }
 ```
 
 ### Performance Linters
@@ -1204,7 +1206,7 @@ func process() int {
 **Issue**:
 
 ```go
-type User struct { // revive: exported type should have comment
+type Beneficiary struct { // revive: exported type should have comment
  Name string
 }
 ```
@@ -1212,8 +1214,8 @@ type User struct { // revive: exported type should have comment
 **Fix**:
 
 ```go
-// User represents a system user with name and credentials.
-type User struct {
+// Beneficiary represents a system beneficiary with name and credentials.
+type Beneficiary struct {
  Name string
 }
 ```
@@ -1264,3 +1266,8 @@ func handleNegative(x int) int {
 - [Go Code Review Comments](https://go.dev/wiki/CodeReviewComments) - Code review guidelines
 - [staticcheck Documentation](https://staticcheck.io/docs/) - staticcheck checks reference
 - [go/analysis Package](https://pkg.go.dev/golang.org/x/tools/go/analysis) - Custom linter framework
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

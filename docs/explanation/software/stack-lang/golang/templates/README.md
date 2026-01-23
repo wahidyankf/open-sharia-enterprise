@@ -629,3 +629,8 @@ When creating new templates:
 **License**: MIT
 **Maintained By**: Open Sharia Enterprise Platform Team
 **Go Version**: 1.25.6 (current), 1.22+ (minimum for HTTP routing)
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+

@@ -11,12 +11,11 @@ tags:
   - gherkin
   - acceptance-testing
   - collaboration
-created: 2026-01-21
-updated: 2026-01-21
 ---
 
 # Java Behavior-Driven Development
 
+**Quick Reference**: [Why BDD in Finance](#why-bdd-in-finance) | [BDD Core Concepts](#bdd-core-concepts) | [Gherkin Syntax](#gherkin-syntax) | [Cucumber JVM](#cucumber-jvm) | [Step Definitions](#step-definitions) | [BDD Patterns](#bdd-patterns) | [Collaboration](#collaboration) | [BDD vs TDD](#bdd-vs-tdd) | [BDD Checklist](#bdd-checklist) | [Related Principles](#related-principles) | [Sources](#sources) | [Related Documentation](#related-documentation)
 **Understanding-oriented documentation** for behavior-driven development practices with Cucumber, Gherkin, and collaborative testing.
 
 ## Quick Reference
@@ -56,7 +55,7 @@ Behavior-Driven Development is essential for financial systems because it:
 # "The system shall calculate Zakat at 2.5% of the zakatable wealth"
 # Questions:
 # - What is zakatable wealth?
-# - What about nisab threshold?
+# - What about nisab?
 # - What about the haul (lunar year)?
 
 # BDD SCENARIO (concrete):
@@ -70,10 +69,10 @@ Feature: Zakat Calculation
     Given today is "2026-03-15"
 
   Scenario: Zakat calculation for wealth above nisab after complete haul
-    Given a Zakat account with the following details:
+    Given a Zakat donation_account with the following details:
       | Account ID  | Balance      | Nisab Threshold | Haul Start Date |
       | ZA-001      | 100,000 USD  | 5,000 USD       | 2025-03-01      |
-    When I calculate Zakat for the account
+    When I calculate Zakat for the donation_account
     Then the Zakat amount should be "2,375.00 USD"
     And the calculation should show:
       """
@@ -83,18 +82,18 @@ Feature: Zakat Calculation
       """
 
   Scenario: No Zakat due when balance is below nisab
-    Given a Zakat account with the following details:
+    Given a Zakat donation_account with the following details:
       | Account ID  | Balance      | Nisab Threshold | Haul Start Date |
       | ZA-002      | 4,000 USD    | 5,000 USD       | 2025-03-01      |
-    When I calculate Zakat for the account
+    When I calculate Zakat for the donation_account
     Then the Zakat amount should be "0.00 USD"
-    And the reason should be "Balance below nisab threshold"
+    And the reason should be "Balance below nisab"
 
   Scenario: No Zakat due when haul is incomplete
-    Given a Zakat account with the following details:
+    Given a Zakat donation_account with the following details:
       | Account ID  | Balance      | Nisab Threshold | Haul Start Date |
       | ZA-003      | 100,000 USD  | 5,000 USD       | 2026-01-01      |
-    When I calculate Zakat for the account
+    When I calculate Zakat for the donation_account
     Then the Zakat amount should be "0.00 USD"
     And the reason should be "Haul incomplete: 73 days remaining"
 ```
@@ -177,7 +176,7 @@ Document examples as Gherkin scenarios.
 **Example**:
 
 ```gherkin
-Scenario: Donation requires manual approval above threshold
+Scenario: Donation requires manual approval above nisab
   Given a donor with ID "D-001"
   When the donor attempts to make a donation of "15,000 USD"
   Then the donation should be created with status "PENDING_APPROVAL"
@@ -257,15 +256,15 @@ Feature: Donation Processing
 **Given**: Establishes context (preconditions)
 
 ```gherkin
-Given a Zakat account with balance "100,000 USD"
-And the nisab threshold is "5,000 USD"
+Given a Zakat donation_account with balance "100,000 USD"
+And the nisab is "5,000 USD"
 And the haul started on "2025-03-01"
 ```
 
 **When**: Describes the action (event)
 
 ```gherkin
-When I calculate Zakat for the account on "2026-03-15"
+When I calculate Zakat for the donation_account on "2026-03-15"
 ```
 
 **Then**: Asserts expected outcome (postconditions)
@@ -302,13 +301,13 @@ Feature: Donation Allocation
 **Background for Authentication Context**:
 
 ```gherkin
-Feature: Loan Application Processing
+Feature: QardHasan Application Processing
 
   Background:
-    Given a user with the following credentials:
+    Given a beneficiary with the following credentials:
       | Username | Email               | Role        | Status  |
       | john.doe | john@example.com    | Applicant   | Active  |
-    And the user is authenticated with token "Bearer abc123xyz"
+    And the beneficiary is authenticated with token "Bearer abc123xyz"
     And the session expires at "2026-01-21T18:00:00Z"
     And the following security policies are active:
       | Policy       | Value           |
@@ -316,9 +315,9 @@ Feature: Loan Application Processing
       | Max Attempts | 3               |
       | Lockout Time | 30 minutes      |
 
-  Scenario: Submit loan application with valid authentication
-    # User context from Background is available
-    When the user submits a loan application for "50,000 USD"
+  Scenario: Submit qard_hasan application with valid authentication
+    # Beneficiary context from Background is available
+    When the beneficiary submits a qard_hasan application for "50,000 USD"
     Then the application should be created with status "Pending Review"
 ```
 
@@ -376,8 +375,8 @@ Data-driven scenarios with examples table.
 
 ```gherkin
 Scenario Outline: Zakat calculation for different balances
-  Given a Zakat account with balance "<balance>"
-  And the nisab threshold is "5,000 USD"
+  Given a Zakat donation_account with balance "<balance>"
+  And the nisab is "5,000 USD"
   And the haul is complete
   When I calculate Zakat
   Then the Zakat amount should be "<expected_zakat>"
@@ -391,19 +390,19 @@ Scenario Outline: Zakat calculation for different balances
     | 4,999 USD     | 0.00 USD       |
 ```
 
-**Loan Eligibility with Multiple Criteria**:
+**QardHasan Eligibility with Multiple Criteria**:
 
 ```gherkin
-Scenario Outline: Loan eligibility based on income and credit score
-  Given an applicant with monthly income "<income>"
+Scenario Outline: QardHasan eligibility based on wealth and credit score
+  Given an applicant with monthly wealth "<wealth>"
   And a credit score of "<credit_score>"
   And employment status "<employment>"
-  When I check loan eligibility for amount "<loan_amount>"
+  When I check qard_hasan eligibility for amount "<loan_amount>"
   Then the application should be "<status>"
   And the reason should be "<reason>"
 
   Examples:
-    | income    | credit_score | employment | loan_amount | status   | reason                           |
+    | wealth    | credit_score | employment | loan_amount | status   | reason                           |
     | 5,000 USD | 750          | Full-time  | 50,000 USD  | Approved | Meets all criteria               |
     | 5,000 USD | 650          | Full-time  | 50,000 USD  | Pending  | Credit score review required     |
     | 5,000 USD | 550          | Full-time  | 50,000 USD  | Rejected | Credit score below minimum       |
@@ -439,7 +438,7 @@ Scenario Outline: Zakat calculation for different asset types
   Given a Muslim with zakatable assets
   And the asset type is "<asset_type>"
   And the asset value is "<value>"
-  And the applicable nisab threshold is "<nisab>"
+  And the applicable nisab is "<nisab>"
   And the haul period is complete
   When Zakat is calculated
   Then the Zakat rate should be "<rate>"
@@ -455,21 +454,21 @@ Scenario Outline: Zakat calculation for different asset types
     | Agricultural        | 10,000 kg    | 653 kg     | 5-10% | 500-1000 kg  |
 ```
 
-**Account Transaction Fee Scenarios**:
+**Account DonationTransaction Fee Scenarios**:
 
 ```gherkin
-Scenario Outline: Transaction fees for different account types
-  Given a customer with account type "<account_type>"
-  And the account tier is "<tier>"
-  When a transaction of "<amount>" is made
-  And the transaction type is "<tx_type>"
-  Then the transaction fee should be "<fee>"
+Scenario Outline: DonationTransaction fees for different donation_account types
+  Given a donor with donation_account type "<account_type>"
+  And the donation_account tier is "<tier>"
+  When a donation_transaction of "<amount>" is made
+  And the donation_transaction type is "<tx_type>"
+  Then the donation_transaction fee should be "<fee>"
   And the fee waiver status should be "<waived>"
 
   Examples:
     | account_type | tier     | amount     | tx_type  | fee      | waived |
-    | Basic        | Standard | 1,000 USD  | Transfer | 5.00 USD | No     |
-    | Premium      | Gold     | 1,000 USD  | Transfer | 0.00 USD | Yes    |
+    | Basic        | Standard | 1,000 USD  | DonationTransfer | 5.00 USD | No     |
+    | Premium      | Gold     | 1,000 USD  | DonationTransfer | 0.00 USD | Yes    |
     | Basic        | Standard | 100 USD    | ATM      | 2.00 USD | No     |
     | Premium      | Gold     | 100 USD    | ATM      | 0.00 USD | Yes     |
     | Business     | Standard | 10,000 USD | Wire     | 25.00    | No     |
@@ -497,14 +496,14 @@ Multi-line text.
 
 ```gherkin
 Scenario: Generate Zakat receipt
-  Given a Zakat payment of "2,375 USD" for account "ZA-001"
+  Given a Zakat donation of "2,375 USD" for donation_account "ZA-001"
   When I generate the receipt
   Then the receipt should contain:
     """
     Zakat Receipt
 
     Account: ZA-001
-    Payment Date: 2026-03-15
+    DonationPayment Date: 2026-03-15
     Amount: $2,375.00 USD
 
     Calculation:
@@ -585,7 +584,7 @@ src/
             │   └── donation-allocation.feature
             └── zakat/
                 ├── zakat-calculation.feature
-                └── zakat-payment.feature
+                └── zakat-donation.feature
 ```
 
 ### Test Runner
@@ -597,7 +596,7 @@ import org.junit.platform.suite.api.*;
 @IncludeEngines("cucumber")
 @SelectClasspathResource("features")
 @ConfigurationParameter(key = "cucumber.plugin", value = "pretty, html:target/cucumber-reports.html")
-@ConfigurationParameter(key = "cucumber.glue", value = "com.example.finance.bdd.steps")
+@ConfigurationParameter(key = "cucumber.glue", value = "com.sharia.finance.finance.bdd.steps")
 public class CucumberTestRunner {
 }
 ```
@@ -888,13 +887,13 @@ public class LoanApplicationSteps {
         this.loanService = loanService;
     }
 
-    @Given("an applicant with income {bigdecimal}")
-    public void createApplicant(BigDecimal income) {
-        Applicant applicant = new Applicant(income);
+    @Given("an applicant with wealth {bigdecimal}")
+    public void createApplicant(BigDecimal wealth) {
+        Applicant applicant = new Applicant(wealth);
         context.set("applicant", applicant);
     }
 
-    @When("the applicant requests a loan of {bigdecimal}")
+    @When("the applicant requests a qard_hasan of {bigdecimal}")
     public void requestLoan(BigDecimal amount) {
         Applicant applicant = context.get("applicant", Applicant.class);
         LoanApplication application = loanService.apply(applicant, amount);
@@ -952,10 +951,10 @@ public void createApplicants(List<Applicant> applicants) {
     applicants.forEach(applicantRepository::save);
 }
 
-@Given("a Zakat account with the following details:")
-public void createZakatAccount(ZakatAccount account) {
+@Given("a Zakat donation_account with the following details:")
+public void createZakatAccount(ZakatAccount donation_account) {
     // Cucumber automatically transforms single row to ZakatAccount
-    context.set("zakatAccount", account);
+    context.set("zakatAccount", donation_account);
 }
 ```
 
@@ -1072,9 +1071,9 @@ public class LoanApplicationBuilder {
 }
 
 // Usage in step definitions
-@Given("an approved loan application for {bigdecimal}")
+@Given("an approved qard_hasan application for {bigdecimal}")
 public void createApprovedLoan(BigDecimal amount) {
-    LoanApplication loan = new LoanApplicationBuilder()
+    LoanApplication qard_hasan = new LoanApplicationBuilder()
         .withAmount(amount)
         .withApplicant(new ApplicantBuilder()
             .withIncome(new BigDecimal("5000"))
@@ -1084,7 +1083,7 @@ public void createApprovedLoan(BigDecimal amount) {
         .approved()
         .build();
 
-    context.set("loanApplication", loan);
+    context.set("loanApplication", qard_hasan);
 }
 ```
 
@@ -1108,7 +1107,7 @@ public class CompositeSteps {
         this.paymentSteps = paymentSteps;
     }
 
-    @Given("a verified donor with valid payment method")
+    @Given("a verified donor with valid donation method")
     public void setupVerifiedDonorWithPayment() {
         // Compose multiple steps
         donorSteps.createDonor("D-001");
@@ -1134,7 +1133,7 @@ public class RobustSteps {
     private final LoanService loanService;
     private final ScenarioContext context;
 
-    @When("the loan application is submitted")
+    @When("the qard_hasan application is submitted")
     public void submitLoanApplication() {
         try {
             LoanApplication application = context.get("application", LoanApplication.class);
@@ -1145,7 +1144,7 @@ public class RobustSteps {
             // Don't fail here - let the Then step assert the error
         } catch (Exception e) {
             throw new RuntimeException(
-                "Unexpected error during loan submission: " + e.getMessage(),
+                "Unexpected error during qard_hasan submission: " + e.getMessage(),
                 e
             );
         }
@@ -1173,7 +1172,7 @@ public class RobustSteps {
 
         LoanApplicationResult result = context.get("result", LoanApplicationResult.class);
         assertThat(result.isSuccess())
-            .as("Loan application should be successful")
+            .as("QardHasan application should be successful")
             .isTrue();
     }
 }
@@ -1306,32 +1305,32 @@ Scenario: Donor makes a donation
 
 ```gherkin
 # BAD: Duplicated setup
-Scenario: Calculate Zakat for account A
-  Given the nisab threshold is "5,000 USD"
+Scenario: Calculate Zakat for donation_account A
+  Given the nisab is "5,000 USD"
   And the haul period is 1 lunar year
-  And a Zakat account with balance "100,000 USD"
+  And a Zakat donation_account with balance "100,000 USD"
   When I calculate Zakat
   Then the Zakat should be "2,375 USD"
 
-Scenario: Calculate Zakat for account B
-  Given the nisab threshold is "5,000 USD"
+Scenario: Calculate Zakat for donation_account B
+  Given the nisab is "5,000 USD"
   And the haul period is 1 lunar year
-  And a Zakat account with balance "50,000 USD"
+  And a Zakat donation_account with balance "50,000 USD"
   When I calculate Zakat
   Then the Zakat should be "1,125 USD"
 
 # GOOD: Background for shared context
 Background:
-  Given the nisab threshold is "5,000 USD"
+  Given the nisab is "5,000 USD"
   And the haul period is 1 lunar year
 
 Scenario: Calculate Zakat for wealth above nisab
-  Given a Zakat account with balance "100,000 USD"
+  Given a Zakat donation_account with balance "100,000 USD"
   When I calculate Zakat
   Then the Zakat should be "2,375 USD"
 
 Scenario: Calculate Zakat for moderate wealth
-  Given a Zakat account with balance "50,000 USD"
+  Given a Zakat donation_account with balance "50,000 USD"
   When I calculate Zakat
   Then the Zakat should be "1,125 USD"
 ```
@@ -1356,62 +1355,62 @@ Scenario Outline: Donation fee calculation for different amounts
 
 For complex business processes spanning multiple steps and decision points:
 
-**Multi-Step Loan Approval Process**:
+**Multi-Step QardHasan Approval Process**:
 
 ```gherkin
-Feature: Comprehensive Loan Approval Workflow
+Feature: Comprehensive QardHasan Approval Workflow
 
   Background:
     Given the following approval thresholds:
       | Role             | Max Amount  | Required Documents          |
-      | Loan Officer     | 10,000 USD  | ID, Income Proof            |
+      | QardHasan Officer     | 10,000 USD  | ID, Income Proof            |
       | Senior Officer   | 50,000 USD  | ID, Income, Credit Report   |
-      | Loan Committee   | 200,000 USD | Full Documentation Package  |
+      | QardHasan Committee   | 200,000 USD | Full Documentation Package  |
 
-  Scenario: Small loan automatic approval path
-    Given an applicant with verified income of "5,000 USD/month"
+  Scenario: Small qard_hasan automatic approval path
+    Given an applicant with verified wealth of "5,000 USD/month"
     And a credit score of "750"
     And all required documents submitted
-    When the applicant requests a loan of "8,000 USD"
-    Then the application should proceed to "Loan Officer Review"
-    And the loan officer should approve the application within "2 business days"
+    When the applicant requests a qard_hasan of "8,000 USD"
+    Then the application should proceed to "QardHasan Officer Review"
+    And the qard_hasan officer should approve the application within "2 business days"
     And the applicant should receive approval notification
-    And the loan agreement should be generated
-    And the loan should be disbursed upon agreement signature
+    And the qard_hasan agreement should be generated
+    And the qard_hasan should be disbursed upon agreement signature
 
-  Scenario: Medium loan with conditional approval
-    Given an applicant with verified income of "4,000 USD/month"
+  Scenario: Medium qard_hasan with conditional approval
+    Given an applicant with verified wealth of "4,000 USD/month"
     And a credit score of "680"
     And employment history of "2 years"
-    When the applicant requests a loan of "35,000 USD"
+    When the applicant requests a qard_hasan of "35,000 USD"
     Then the application should proceed to "Senior Officer Review"
     And additional documentation should be requested:
       | Document Type        | Reason                    |
       | Bank Statements      | Verify savings            |
-      | Employment Letter    | Confirm income stability  |
+      | Employment Letter    | Confirm wealth stability  |
     When the applicant submits the additional documents
     And the senior officer reviews the complete application
     Then the application should be conditionally approved
     And the conditions should include:
       """
       1. Co-signer with minimum credit score 700
-      2. Down payment of 10% (3,500 USD)
+      2. Down donation of 10% (3,500 USD)
       3. Proof of insurance
       """
     When all conditions are met
-    Then the loan should be finalized and disbursed
+    Then the qard_hasan should be finalized and disbursed
 
-  Scenario: Large loan committee escalation
-    Given an applicant with verified income of "15,000 USD/month"
+  Scenario: Large qard_hasan committee escalation
+    Given an applicant with verified wealth of "15,000 USD/month"
     And a credit score of "800"
     And business ownership documentation
-    When the applicant requests a loan of "180,000 USD"
-    Then the application should proceed to "Loan Committee"
+    When the applicant requests a qard_hasan of "180,000 USD"
+    Then the application should proceed to "QardHasan Committee"
     And the committee should schedule a review meeting within "5 business days"
     And the applicant should be invited to present their case
     When the committee meeting is held
     And 3 out of 5 committee members approve
-    Then the loan should be approved with special terms:
+    Then the qard_hasan should be approved with special terms:
       | Term                | Value              |
       | Interest Rate       | 5.5% (negotiated)  |
       | Repayment Period    | 10 years           |
@@ -1428,7 +1427,7 @@ Feature: Comprehensive Zakat Assessment
     Given today is "2026-03-15"
     And the gold price is "65 USD per gram"
     And the silver price is "0.85 USD per gram"
-    And the cash nisab threshold is "5,525 USD" (85g gold equivalent)
+    And the cash nisab is "5,525 USD" (85g gold equivalent)
 
   Scenario: Zakat calculation with mixed asset types
     Given a Muslim with the following assets:
@@ -1457,9 +1456,9 @@ Feature: Comprehensive Zakat Assessment
     And apply 2.5% Zakat rate
     Then the total Zakat due should be "3,956.25 USD"
     And generate detailed breakdown report
-    And provide payment options:
+    And provide donation options:
       | Method          | Recipient                | Tax Deductible |
-      | Direct Transfer | Registered Charity       | Yes            |
+      | Direct DonationTransfer | Registered Charity       | Yes            |
       | Cash            | Local Distribution       | No             |
       | In-Kind         | Food/Goods to Poor       | Partial        |
 ```
@@ -1470,8 +1469,8 @@ Feature: Comprehensive Zakat Assessment
 Feature: Complete Donation Journey from Intent to Impact
 
   Scenario: Recurring donation with allocation changes
-    Given a donor "Alice" with account "D-001"
-    And verified payment method on file
+    Given a donor "Alice" with donation_account "D-001"
+    And verified donation method on file
     When Alice sets up a recurring donation:
       | Amount        | Frequency | Start Date  | End Date   |
       | 500 USD       | Monthly   | 2026-01-01  | 2026-12-31 |
@@ -1515,60 +1514,60 @@ Feature: Complete Donation Journey from Intent to Impact
       Tax-Deductible Amount: 7,000 USD
       Impact: Helped 28 families, 15 students, 5 patients
       """
-    And tax receipt should be generated
+    And zakat receipt should be generated
     And option to renew recurring donation for 2027
 ```
 
-**Loan Default and Recovery Workflow**:
+**QardHasan Default and Recovery Workflow**:
 
 ```gherkin
-Feature: Loan Default Prevention and Recovery
+Feature: QardHasan Default Prevention and Recovery
 
   Background:
-    Given a borrower "Bob" with active loan:
-      | Loan ID     | Amount      | Monthly Payment | Due Date     | Status     |
+    Given a borrower "Bob" with active qard_hasan:
+      | QardHasan ID     | Amount      | Monthly DonationPayment | Due Date     | Status     |
       | L-12345     | 50,000 USD  | 1,000 USD       | 15th of month| Current    |
-    And payment history:
+    And donation history:
       | Date       | Amount      | Status  |
       | 2025-11-15 | 1,000 USD   | Paid    |
       | 2025-12-15 | 1,000 USD   | Paid    |
       | 2026-01-15 | 1,000 USD   | Paid    |
 
   Scenario: Progressive escalation for missed payments
-    # First missed payment
-    When the payment due on "2026-02-15" is not received
+    # First missed donation
+    When the donation due on "2026-02-15" is not received
     Then on "2026-02-16" (1 day late):
       | Action                    | Details                          |
       | Status Update             | Current → 1-15 Days Late         |
       | Automated Reminder        | Email + SMS sent                 |
       | Late Fee                  | 25 USD assessed                  |
 
-    # Second missed payment
-    When the payment due on "2026-03-15" is also not received
-    Then on "2026-03-16" (payment 1: 30 days late, payment 2: 1 day late):
+    # Second missed donation
+    When the donation due on "2026-03-15" is also not received
+    Then on "2026-03-16" (donation 1: 30 days late, donation 2: 1 day late):
       | Action                    | Details                          |
       | Status Update             | 15-30 Days Late                  |
-      | Personal Outreach         | Loan officer calls borrower      |
+      | Personal Outreach         | QardHasan officer calls borrower      |
       | Hardship Assessment       | Financial review offered         |
       | Additional Late Fee       | 25 USD assessed                  |
 
     # Hardship program enrollment
     When Bob requests financial hardship assistance
     And submits documentation of temporary unemployment
-    Then the loan should be eligible for:
+    Then the qard_hasan should be eligible for:
       """
       Temporary Relief Options:
-      1. Payment Deferment: 3 months (interest accrues)
-      2. Reduced Payment: 500 USD/month for 6 months
-      3. Loan Restructuring: Extend term by 12 months
+      1. DonationPayment Deferment: 3 months (interest accrues)
+      2. Reduced DonationPayment: 500 USD/month for 6 months
+      3. QardHasan Restructuring: Extend term by 12 months
       """
-    When Bob selects "Reduced Payment" option
-    Then the loan terms should be modified:
+    When Bob selects "Reduced DonationPayment" option
+    Then the qard_hasan terms should be modified:
       | Original Monthly | Temporary Monthly | Duration | Extension |
       | 1,000 USD        | 500 USD           | 6 months | 12 months |
     And Bob should make reduced payments from April to September
     And resume normal payments in October
-    And loan should return to "Current" status
+    And qard_hasan should return to "Current" status
     And credit report should note "Temporary Hardship Program"
 ```
 
@@ -1632,7 +1631,7 @@ A structured workshop for exploring scenarios.
 
 **Structure**:
 
-1. **User Story Card** (blue): What feature are we building?
+1. **Beneficiary Story Card** (blue): What feature are we building?
 2. **Rules** (yellow): Business rules for the feature
 3. **Examples** (green): Concrete scenarios
 4. **Questions** (red): Uncertainties to resolve
@@ -1641,7 +1640,7 @@ A structured workshop for exploring scenarios.
 
 ```
 ┌────────────────────────────────────────────┐
-│  User Story (BLUE)                         │
+│  Beneficiary Story (BLUE)                         │
 │  As a donor, I want to make a donation     │
 │  so that I can support charitable causes   │
 └────────────────────────────────────────────┘
@@ -1679,7 +1678,7 @@ Regular meetings between Product Owner, Developer, and Tester.
 
 **Agenda**:
 
-1. **Review User Story**: Understand what feature is needed
+1. **Review Beneficiary Story**: Understand what feature is needed
 2. **Discuss Examples**: Generate scenarios through conversation
 3. **Identify Edge Cases**: Tester highlights unusual situations
 4. **Clarify Ambiguities**: Developer asks technical questions
@@ -1692,7 +1691,7 @@ PO: "We need to support Zakat calculation."
 
 Dev: "What's the formula?"
 
-PO: "2.5% of wealth above the nisab threshold, after one lunar year."
+PO: "2.5% of wealth above the nisab, after one lunar year."
 
 Tester: "What if the lunar year isn't complete?"
 
@@ -1709,8 +1708,8 @@ PO: "No Zakat. It must be a full lunar year."
 [This becomes a scenario!]
 
 Scenario: No Zakat due when haul is incomplete
-  Given a Zakat account with balance "100,000 USD"
-  And the nisab threshold is "5,000 USD"
+  Given a Zakat donation_account with balance "100,000 USD"
+  And the nisab is "5,000 USD"
   And the haul started "11 months ago"
   When I calculate Zakat
   Then the Zakat amount should be "0 USD"
@@ -1721,14 +1720,14 @@ Scenario: No Zakat due when haul is incomplete
 
 BDD and TDD are complementary, not competing practices.
 
-| Aspect          | TDD                           | BDD                              |
-| --------------- | ----------------------------- | -------------------------------- |
-| **Focus**       | Technical correctness         | Business behavior                |
-| **Language**    | Code (JUnit tests)            | Gherkin (business-readable)      |
-| **Audience**    | Developers                    | Business + Developers            |
-| **Granularity** | Unit level (classes, methods) | Feature level (user stories)     |
-| **Feedback**    | Red-Green-Refactor            | Discovery-Formulation-Automation |
-| **When**        | Before writing code           | Before writing user stories      |
+| Aspect          | TDD                           | BDD                                 |
+| --------------- | ----------------------------- | ----------------------------------- |
+| **Focus**       | Technical correctness         | Business behavior                   |
+| **Language**    | Code (JUnit tests)            | Gherkin (business-readable)         |
+| **Audience**    | Developers                    | Business + Developers               |
+| **Granularity** | Unit level (classes, methods) | Feature level (beneficiary stories) |
+| **Feedback**    | Red-Green-Refactor            | Discovery-Formulation-Automation    |
+| **When**        | Before writing code           | Before writing beneficiary stories  |
 
 **How They Work Together**:
 
@@ -1921,3 +1920,8 @@ This document implements the following [software engineering principles](../../.
 - **Last Updated**: 2026-01-21
 - **Java Version**: 8+ (Cucumber requires Java 8+)
 - **Blessed Frameworks**: Cucumber JVM 7.21.0, JUnit Platform 1.11.4, JUnit Jupiter 5.14.2
+
+---
+
+**Last Updated**: 2025-01-23
+**Java Version**: 17+

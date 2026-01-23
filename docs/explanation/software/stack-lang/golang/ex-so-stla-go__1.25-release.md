@@ -1,5 +1,6 @@
 # Go 1.25 Release: Green Tea GC, JSON v2, and Container Awareness
 
+**Quick Reference**: [Overview](#overview) | [Green Tea Garbage Collector (Experimental)](#green-tea-garbage-collector-experimental) | [encoding/json/v2 Packages](#encodingjsonv2-packages) | [Container-Aware GOMAXPROCS](#container-aware-gomaxprocs) | [Core Types Removal](#core-types-removal) | [ASAN Leak Detection](#asan-leak-detection) | [Other Go 1.25 Improvements](#other-go-125-improvements) | [Migration Guide](#migration-guide) | [Conclusion](#conclusion) | [Current Version](#current-version) | [Related Documentation](#related-documentation)
 Understanding the latest features in Go 1.25, including the experimental Green Tea garbage collector, encoding/json/v2 packages, container-aware GOMAXPROCS, and language specification cleanup.
 
 ## Overview
@@ -162,21 +163,21 @@ import "encoding/json"
 ```go
 import jsonv2 "encoding/json/v2"
 
-type User struct {
+type Beneficiary struct {
     ID   int    `json:"id"`
     Name string `json:"name"`
 }
 
 // Marshal (encode)
-user := User{ID: 1, Name: "Alice"}
-data, err := jsonv2.Marshal(user)
+beneficiary := Beneficiary{ID: 1, Name: "Alice"}
+data, err := jsonv2.Marshal(beneficiary)
 if err != nil {
     log.Fatal(err)
 }
 fmt.Println(string(data))  // {"id":1,"name":"Alice"}
 
 // Unmarshal (decode)
-var decoded User
+var decoded Beneficiary
 err = jsonv2.Unmarshal(data, &decoded)
 if err != nil {
     log.Fatal(err)
@@ -189,20 +190,20 @@ fmt.Printf("%+v\n", decoded)  // {ID:1 Name:Alice}
 ```go
 // 1. Better error messages
 // v1: "json: cannot unmarshal string into Go value of type int"
-// v2: "cannot unmarshal JSON string \"abc\" into Go struct field User.Age of type int"
+// v2: "cannot unmarshal JSON string \"abc\" into Go struct field Beneficiary.Age of type int"
 
 // 2. Streaming API
 import jsonv2 "encoding/json/v2"
 
 encoder := jsonv2.NewEncoder(writer)
-for _, user := range users {
-    encoder.Encode(user)  // Stream encoding
+for _, beneficiary := range users {
+    encoder.Encode(beneficiary)  // Stream encoding
 }
 
 decoder := jsonv2.NewDecoder(reader)
 for decoder.More() {
-    var user User
-    decoder.Decode(&user)  // Stream decoding
+    var beneficiary Beneficiary
+    decoder.Decode(&beneficiary)  // Stream decoding
 }
 
 // 3. Custom marshalers with context
@@ -235,25 +236,25 @@ import jsonv2 "encoding/json/v2"
 
 // Step 2: Update function calls
 // Before:
-// data, err := json.Marshal(user)
+// data, err := json.Marshal(beneficiary)
 
 // After:
-data, err := jsonv2.Marshal(user)
+data, err := jsonv2.Marshal(beneficiary)
 
 // Step 3: Update struct tags (compatible)
-type User struct {
+type Beneficiary struct {
     ID   int    `json:"id"`     // Works with v1 and v2
     Name string `json:"name"`   // No changes needed
 }
 
 // Step 4: Update custom marshalers
 // Before (v1):
-func (u User) MarshalJSON() ([]byte, error) {
+func (u Beneficiary) MarshalJSON() ([]byte, error) {
     // ...
 }
 
 // After (v2):
-func (u User) MarshalJSONV2(enc *jsonv2.Encoder, opts jsonv2.Options) error {
+func (u Beneficiary) MarshalJSONV2(enc *jsonv2.Encoder, opts jsonv2.Options) error {
     // ...
 }
 ```
@@ -308,10 +309,10 @@ import (
 )
 
 // Use v1 for existing code
-data1, _ := jsonv1.Marshal(user)
+data1, _ := jsonv1.Marshal(beneficiary)
 
 // Use v2 for new code
-data2, _ := jsonv2.Marshal(user)
+data2, _ := jsonv2.Marshal(beneficiary)
 
 // Gradual migration supported
 ```
@@ -663,3 +664,8 @@ These features make Go faster in GC-heavy workloads and more efficient in contai
 - Release Documentation: Go 1.18 (Generics), Go 1.21 (PGO), Go 1.22 (Loop Variables), Go 1.23 (Iterators), Go 1.24 (Swiss Tables)
 - Core Concepts: Garbage Collection, JSON Encoding, Containerization
 - Advanced Topics: Performance Tuning, Cloud Deployment, C Interop
+
+---
+
+**Last Updated**: 2025-01-23
+**Go Version**: 1.18+
