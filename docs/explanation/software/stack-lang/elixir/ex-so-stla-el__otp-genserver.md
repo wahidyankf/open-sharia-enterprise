@@ -112,6 +112,60 @@ end
 
 ### Callbacks Overview
 
+The following diagram illustrates the complete GenServer lifecycle:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Unstarted
+    Unstarted --> Init: start_link()
+    Init --> Running: {:ok, state}
+    Init --> Stopped: {:stop, reason}
+    Init --> Ignored: :ignore
+    Ignored --> [*]
+
+    Running --> HandleCall: GenServer.call()
+    HandleCall --> Running: {:reply, ...}
+    HandleCall --> Stopped: {:stop, ...}
+
+    Running --> HandleCast: GenServer.cast()
+    HandleCast --> Running: {:noreply, ...}
+    HandleCast --> Stopped: {:stop, ...}
+
+    Running --> HandleInfo: Other messages
+    HandleInfo --> Running: {:noreply, ...}
+    HandleInfo --> Stopped: {:stop, ...}
+
+    Running --> HandleContinue: {:continue, ...}
+    HandleContinue --> Running: {:noreply, ...}
+
+    Running --> Terminate: Crash/Shutdown
+    Stopped --> Terminate
+    Terminate --> [*]
+
+    note right of Running
+        Processing messages
+        Maintaining state
+        Responding to calls
+    end note
+
+    note right of Terminate
+        Cleanup resources
+        Close connections
+        Flush queues
+    end note
+
+    style Unstarted fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Init fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Running fill:#029E73,stroke:#01593F,color:#FFF
+    style HandleCall fill:#0173B2,stroke:#023B5A,color:#FFF
+    style HandleCast fill:#0173B2,stroke:#023B5A,color:#FFF
+    style HandleInfo fill:#0173B2,stroke:#023B5A,color:#FFF
+    style HandleContinue fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Stopped fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style Terminate fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Ignored fill:#CA9161,stroke:#7D5A3D,color:#FFF
+```
+
 ```elixir
 # init/1 - Initialize state
 @impl true
@@ -149,6 +203,57 @@ def handle_info(msg, state) do
   # or {:noreply, new_state, timeout}
   # or {:stop, reason, new_state}
 end
+```
+
+The following diagram illustrates how GenServer processes messages from its mailbox:
+
+```mermaid
+graph LR
+    Senders[Message Senders<br/>Multiple Clients]
+    Mailbox[Process Mailbox<br/>FIFO Queue]
+    GS[GenServer Process]
+
+    Msg1[call: {:get, id}]
+    Msg2[cast: {:update, data}]
+    Msg3[info: :timeout]
+    Msg4[cast: {:log, entry}]
+
+    HC[handle_call]
+    HCast[handle_cast]
+    HInfo[handle_info]
+
+    Senders --> Msg1
+    Senders --> Msg2
+    Senders --> Msg3
+    Senders --> Msg4
+
+    Msg1 --> Mailbox
+    Msg2 --> Mailbox
+    Msg3 --> Mailbox
+    Msg4 --> Mailbox
+
+    Mailbox --> GS
+    GS --> HC
+    GS --> HCast
+    GS --> HInfo
+
+    Note1[Messages processed<br/>one at a time<br/>in FIFO order]
+    Mailbox -.-> Note1
+
+    style Senders fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Mailbox fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style GS fill:#0173B2,stroke:#023B5A,color:#FFF
+    style HC fill:#029E73,stroke:#01593F,color:#FFF
+    style HCast fill:#029E73,stroke:#01593F,color:#FFF
+    style HInfo fill:#029E73,stroke:#01593F,color:#FFF
+    style Msg1 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Msg2 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Msg3 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Msg4 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Note1 fill:#0173B2,stroke:#023B5A,color:#FFF
+```
+
+```elixir
 
 # terminate/2 - Cleanup
 @impl true
@@ -165,6 +270,29 @@ end
 ```
 
 ## State Management
+
+The following diagram shows the immutable state update pattern in GenServer:
+
+```mermaid
+graph TD
+    OldState[Old State<br/>donation_count: 5<br/>total: 100,000 IDR]
+    HandleCall[handle_call<br/>{:add_donation, 20,000}]
+    NewState[New State<br/>donation_count: 6<br/>total: 120,000 IDR]
+    Reply[{:reply, :ok, new_state}]
+
+    OldState --> HandleCall
+    HandleCall --> NewState
+    NewState --> Reply
+
+    Note1[Immutable Update:<br/>Old state preserved<br/>New state created]
+    HandleCall -.-> Note1
+
+    style OldState fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style HandleCall fill:#0173B2,stroke:#023B5A,color:#FFF
+    style NewState fill:#029E73,stroke:#01593F,color:#FFF
+    style Reply fill:#029E73,stroke:#01593F,color:#FFF
+    style Note1 fill:#DE8F05,stroke:#8A5903,color:#FFF
+```
 
 ### State Structure
 
@@ -281,6 +409,33 @@ end
 ## Synchronous vs Asynchronous
 
 ### call vs cast
+
+The following diagram shows the difference between synchronous call and asynchronous cast:
+
+```mermaid
+sequenceDiagram
+    participant C1 as Client (call)
+    participant GS1 as GenServer
+    Note over C1,GS1: Synchronous Call (blocking)
+    C1->>GS1: GenServer.call({:process, amount})
+    Note over C1: Client WAITS ⏳
+    GS1->>GS1: handle_call(...)<br/>Process payment
+    GS1-->>C1: {:reply, {:ok, tx_id}, state}
+    Note over C1: Client receives result ✅
+
+    participant C2 as Client (cast)
+    participant GS2 as GenServer
+    Note over C2,GS2: Asynchronous Cast (non-blocking)
+    C2->>GS2: GenServer.cast({:log, transaction})
+    Note over C2: Client continues immediately ✅
+    GS2->>GS2: handle_cast(...)<br/>Log transaction
+    Note over GS2: No reply sent
+
+    style C1 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style GS1 fill:#029E73,stroke:#01593F,color:#FFF
+    style C2 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style GS2 fill:#029E73,stroke:#01593F,color:#FFF
+```
 
 ```elixir
 defmodule PaymentGateway do
@@ -407,6 +562,32 @@ end
 ```
 
 ### handle_continue/2 - Deferred Initialization
+
+The following diagram shows how handle_continue enables fast startup with deferred expensive operations:
+
+```mermaid
+sequenceDiagram
+    participant Sup as Supervisor
+    participant GS as GenServer
+    participant DB as Database
+
+    Sup->>GS: start_link(campaign_id)
+    GS->>GS: init(campaign_id)
+    Note over GS: Quick initialization<br/>state = %{status: :initializing}
+    GS-->>Sup: {:ok, state, {:continue, :build_index}}
+    Note over Sup: Startup completes quickly ✅
+    Note over GS: Now handle deferred work
+    GS->>GS: handle_continue(:build_index, state)
+    GS->>DB: fetch_all_donations()
+    DB-->>GS: [1000s of donations]
+    GS->>GS: build_search_index()
+    Note over GS: Expensive work complete<br/>state = %{status: :ready}
+    GS-->>GS: {:noreply, new_state}
+
+    style Sup fill:#0173B2,stroke:#023B5A,color:#FFF
+    style GS fill:#029E73,stroke:#01593F,color:#FFF
+    style DB fill:#CA9161,stroke:#7D5A3D,color:#FFF
+```
 
 ```elixir
 defmodule DonationIndexer do

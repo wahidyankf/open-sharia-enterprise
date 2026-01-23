@@ -205,6 +205,64 @@ mix test --failed
 mix test.watch
 ```
 
+The following diagram illustrates the ExUnit test execution phases, including setup, test execution, and teardown:
+
+```mermaid
+graph LR
+    %% Test Start
+    Start["Test Suite Starts"]
+
+    %% Setup Phase
+    SetupAll["setup_all/1<br/>(Once per module)"]
+    Setup["setup/1 or setup/2<br/>(Before each test)"]
+
+    %% Test Execution
+    Test["Test Execution<br/>assert/refute"]
+
+    %% Teardown Phase
+    OnExit["on_exit/2<br/>(Cleanup callbacks)"]
+    TeardownAll["teardown_all/1<br/>(Once per module)"]
+
+    %% End
+    End["Test Suite Ends"]
+
+    %% Flow
+    Start --> SetupAll
+    SetupAll --> Setup
+    Setup --> Test
+    Test --> OnExit
+    OnExit --> Setup
+    Setup -.->|"All tests done"| TeardownAll
+    TeardownAll --> End
+
+    %% Context
+    Context["Context Map<br/>%{campaign: ..., user: ...}<br/>Passed between phases"]
+    Setup -.->|"Returns context"| Context
+    Context -.-> Test
+
+    %% Example
+    Example["Example:<br/>1. setup_all: Start DB<br/>2. setup: Insert campaign<br/>3. test: Verify behavior<br/>4. on_exit: Cleanup<br/>5. teardown_all: Stop DB"]
+
+    TeardownAll -.-> Example
+
+    %% Async Note
+    Async["async: true<br/>✅ Tests run in parallel<br/>✅ Faster execution<br/>⚠️ Shared state conflicts"]
+
+    Start -.-> Async
+
+    %% Styling
+    style Start fill:#0173B2,stroke:#023B5A,color:#FFF
+    style SetupAll fill:#CA9161,stroke:#7A5739,color:#FFF
+    style Setup fill:#029E73,stroke:#01593F,color:#FFF
+    style Test fill:#0173B2,stroke:#023B5A,color:#FFF
+    style OnExit fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style TeardownAll fill:#CA9161,stroke:#7A5739,color:#FFF
+    style End fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Context fill:#029E73,stroke:#01593F,color:#FFF
+    style Example fill:#DE8F05,stroke:#8A5903,color:#000
+    style Async fill:#029E73,stroke:#01593F,color:#FFF
+```
+
 ## TDD Cycle
 
 ### Red Phase
@@ -524,6 +582,82 @@ defmodule FinancialPlatform.DonationsTest do
 end
 ```
 
+The following diagram compares different mocking strategies in Elixir testing, showing Mox-based mocking versus test-specific implementations:
+
+```mermaid
+graph TD
+    %% Decision
+    Decision{"External<br/>Dependency?"}
+
+    %% Mox Path
+    MoxPath["Use Mox<br/>(Behaviour-based mocking)"]
+    DefBehaviour["1. Define @callback<br/>in behaviour module"]
+    DefMock["2. Mox.defmock()<br/>in test_helper.exs"]
+    UseMock["3. expect() in tests<br/>Set expectations"]
+    Verify["4. verify_on_exit!<br/>Ensure all calls made"]
+
+    Decision -->|"Yes<br/>(API, payment gateway,<br/>email service)"| MoxPath
+    MoxPath --> DefBehaviour
+    DefBehaviour --> DefMock
+    DefMock --> UseMock
+    UseMock --> Verify
+
+    %% Test-Specific Path
+    TestImpl["Test-Specific<br/>Implementation"]
+    InMemory["In-memory implementation<br/>(e.g., InMemoryRepo)"]
+    StubModule["Stub module with<br/>fixed responses"]
+
+    Decision -->|"No<br/>(Internal modules,<br/>simple functions)"| TestImpl
+    TestImpl --> InMemory
+    TestImpl --> StubModule
+
+    %% Mox Benefits
+    MoxBenefits["Mox Benefits:<br/>✅ Compile-time safety<br/>✅ Explicit contracts<br/>✅ Concurrent tests<br/>✅ Catches missing calls<br/>✅ No global state"]
+
+    Verify -.-> MoxBenefits
+
+    %% Test-Impl Benefits
+    TestBenefits["Test-Specific Benefits:<br/>✅ Simpler setup<br/>✅ Reusable across tests<br/>✅ Full implementation<br/>⚠️ More maintenance"]
+
+    StubModule -.-> TestBenefits
+
+    %% Example: Mox
+    ExMox["Example: Payment Gateway<br/>• Behaviour: @callback process_payment<br/>• Mock: PaymentGatewayMock<br/>• Test: expect(..., fn -> {:ok, %{}} end)"]
+
+    UseMock -.-> ExMox
+
+    %% Example: Test-Specific
+    ExImpl["Example: Repository<br/>• InMemoryRepo with Agent<br/>• Same interface as Ecto.Repo<br/>• No database needed"]
+
+    InMemory -.-> ExImpl
+
+    %% Anti-pattern
+    AntiPattern["❌ Avoid:<br/>• Global mutable state<br/>• Meck (deprecated)<br/>• Process dictionary<br/>• Stubbing without behaviours"]
+
+    Decision -.-> AntiPattern
+
+    %% Styling
+    style Decision fill:#CA9161,stroke:#7A5739,color:#FFF
+
+    style MoxPath fill:#029E73,stroke:#01593F,color:#FFF
+    style DefBehaviour fill:#029E73,stroke:#01593F,color:#FFF
+    style DefMock fill:#029E73,stroke:#01593F,color:#FFF
+    style UseMock fill:#029E73,stroke:#01593F,color:#FFF
+    style Verify fill:#029E73,stroke:#01593F,color:#FFF
+
+    style TestImpl fill:#0173B2,stroke:#023B5A,color:#FFF
+    style InMemory fill:#0173B2,stroke:#023B5A,color:#FFF
+    style StubModule fill:#0173B2,stroke:#023B5A,color:#FFF
+
+    style MoxBenefits fill:#029E73,stroke:#01593F,color:#FFF
+    style TestBenefits fill:#0173B2,stroke:#023B5A,color:#FFF
+
+    style ExMox fill:#029E73,stroke:#01593F,color:#FFF
+    style ExImpl fill:#0173B2,stroke:#023B5A,color:#FFF
+
+    style AntiPattern fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+```
+
 ## Property-Based Testing
 
 ### StreamData Basics
@@ -664,6 +798,99 @@ defmodule FinancialPlatform.DonationPropertyTest do
     end
   end
 end
+```
+
+The following diagram illustrates how property-based testing works with StreamData, including input generation, property verification, and shrinking on failure:
+
+```mermaid
+graph TD
+    %% Start
+    Start["Property Test Starts"]
+
+    %% Generator
+    Generator["Input Generator<br/>check all amount <- positive_integer(),<br/>currency <- member_of([:IDR, :USD])"]
+
+    %% Generate Inputs
+    Generate["Generate Random Inputs<br/>(Default: 100 test cases)"]
+
+    %% Execute Property
+    Property["Execute Property<br/>test_property(generated_input)"]
+
+    %% Check Result
+    Check{"Property<br/>Holds?"}
+
+    %% Success Path
+    NextInput["Generate Next Input"]
+    AllDone{"All Cases<br/>Tested?"}
+    Success["✅ Property Verified<br/>(100/100 passed)"]
+
+    %% Failure Path
+    Failure["❌ Property Failed<br/>Counterexample found"]
+
+    %% Shrinking
+    Shrink["Shrinking Phase<br/>Find minimal failing input"]
+    ShrinkSmaller["Generate smaller inputs<br/>(reduce complexity)"]
+    TestShrunken["Test shrunken input"]
+    StillFails{"Still<br/>Fails?"}
+
+    MinimalExample["Minimal Counterexample<br/>(Simplest failing case)"]
+
+    %% Flow
+    Start --> Generator
+    Generator --> Generate
+    Generate --> Property
+    Property --> Check
+
+    Check -->|"Pass"| NextInput
+    NextInput --> AllDone
+    AllDone -->|"More tests"| Generate
+    AllDone -->|"All passed"| Success
+
+    Check -->|"Fail"| Failure
+    Failure --> Shrink
+    Shrink --> ShrinkSmaller
+    ShrinkSmaller --> TestShrunken
+    TestShrunken --> StillFails
+
+    StillFails -->|"Yes, still fails"| ShrinkSmaller
+    StillFails -->|"No longer fails"| MinimalExample
+
+    %% Example
+    Example["Example: Money Addition<br/>• Generate: amount=500000, currency=:IDR<br/>• Property: add(m, zero) == m<br/>• Verify: 100 random cases<br/>• If fails: Shrink to simplest"]
+
+    Generator -.-> Example
+
+    %% Shrinking Example
+    ShrinkEx["Shrinking Example:<br/>Failed: amount=94837262, currency=:IDR<br/>↓ Shrink<br/>Failed: amount=1000, currency=:IDR<br/>↓ Shrink<br/>Failed: amount=1, currency=:IDR<br/>✓ Minimal failing case"]
+
+    MinimalExample -.-> ShrinkEx
+
+    %% Benefits
+    Benefits["Benefits:<br/>✅ Tests many scenarios<br/>✅ Finds edge cases<br/>✅ Minimal counterexamples<br/>✅ Higher confidence<br/>⚠️ Slower than unit tests"]
+
+    Success -.-> Benefits
+
+    %% Styling
+    style Start fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Generator fill:#CA9161,stroke:#7A5739,color:#FFF
+    style Generate fill:#029E73,stroke:#01593F,color:#FFF
+    style Property fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Check fill:#CA9161,stroke:#7A5739,color:#FFF
+
+    style NextInput fill:#029E73,stroke:#01593F,color:#FFF
+    style AllDone fill:#CA9161,stroke:#7A5739,color:#FFF
+    style Success fill:#029E73,stroke:#01593F,color:#FFF
+
+    style Failure fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style Shrink fill:#DE8F05,stroke:#8A5903,color:#000
+    style ShrinkSmaller fill:#DE8F05,stroke:#8A5903,color:#000
+    style TestShrunken fill:#DE8F05,stroke:#8A5903,color:#000
+    style StillFails fill:#CA9161,stroke:#7A5739,color:#FFF
+    style MinimalExample fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+
+    style Example fill:#0173B2,stroke:#023B5A,color:#FFF
+    style ShrinkEx fill:#DE8F05,stroke:#8A5903,color:#000
+    style Benefits fill:#029E73,stroke:#01593F,color:#FFF
 ```
 
 ## Test Data with ExMachina

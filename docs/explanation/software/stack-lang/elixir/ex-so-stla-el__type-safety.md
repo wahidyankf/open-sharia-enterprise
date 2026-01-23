@@ -229,6 +229,96 @@ defmodule FinancialDomain.Donations.Types do
 end
 ```
 
+### Type Hierarchy
+
+The following diagram illustrates how Elixir types are organized hierarchically, from basic built-in types to domain-specific custom types:
+
+```mermaid
+graph TD
+    %% Basic Types Layer
+    BT[Basic Types]
+    NUM[number<br/>integer, float]
+    STR[String.t<br/>binary]
+    ATOM[atom]
+    BOOL[boolean<br/>true, false]
+    LIST[list]
+    MAP[map]
+    TUPLE[tuple]
+
+    BT --> NUM
+    BT --> STR
+    BT --> ATOM
+    BT --> BOOL
+    BT --> LIST
+    BT --> MAP
+    BT --> TUPLE
+
+    %% Compound Types Layer
+    CT[Compound Types]
+    STRUCT[struct]
+    UNION[Union Types<br/>type1 | type2]
+    COMPLEX[Complex Maps<br/>%{key: type}]
+
+    MAP --> STRUCT
+    ATOM --> UNION
+    MAP --> COMPLEX
+
+    %% User-Defined Types Layer
+    UT[User-Defined Types]
+    MONEY[@type Money.t<br/>%Money{amount, currency}]
+    CURRENCY[@type currency<br/>:USD | :EUR | :SAR]
+    DONATION[@type donation<br/>%{id, amount, status}]
+    RESULT[@type result<br/>{:ok, t} | {:error, reason}]
+
+    STRUCT --> MONEY
+    UNION --> CURRENCY
+    COMPLEX --> DONATION
+    TUPLE --> RESULT
+
+    %% Domain Types Layer
+    DT[Domain Types]
+    WEALTH[@type wealth<br/>alias for Money.t]
+    NISAB[@type nisab<br/>alias for Money.t]
+    ZAKAT_RESULT[@type zakat_result<br/>{:ok, Money.t} | {:error, atom}]
+
+    MONEY --> WEALTH
+    MONEY --> NISAB
+    RESULT --> ZAKAT_RESULT
+
+    %% Styling (WCAG AA compliant)
+    style BT fill:#0173B2,stroke:#023B5A,color:#FFF
+    style NUM fill:#029E73,stroke:#01593F,color:#FFF
+    style STR fill:#029E73,stroke:#01593F,color:#FFF
+    style ATOM fill:#029E73,stroke:#01593F,color:#FFF
+    style BOOL fill:#029E73,stroke:#01593F,color:#FFF
+    style LIST fill:#029E73,stroke:#01593F,color:#FFF
+    style MAP fill:#029E73,stroke:#01593F,color:#FFF
+    style TUPLE fill:#029E73,stroke:#01593F,color:#FFF
+
+    style CT fill:#0173B2,stroke:#023B5A,color:#FFF
+    style STRUCT fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style UNION fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style COMPLEX fill:#DE8F05,stroke:#8A5903,color:#FFF
+
+    style UT fill:#0173B2,stroke:#023B5A,color:#FFF
+    style MONEY fill:#CC78BC,stroke:#7A4871,color:#FFF
+    style CURRENCY fill:#CC78BC,stroke:#7A4871,color:#FFF
+    style DONATION fill:#CC78BC,stroke:#7A4871,color:#FFF
+    style RESULT fill:#CC78BC,stroke:#7A4871,color:#FFF
+
+    style DT fill:#0173B2,stroke:#023B5A,color:#FFF
+    style WEALTH fill:#CA9161,stroke:#7A5739,color:#FFF
+    style NISAB fill:#CA9161,stroke:#7A5739,color:#FFF
+    style ZAKAT_RESULT fill:#CA9161,stroke:#7A5739,color:#FFF
+```
+
+This hierarchy shows how types build from simple primitives to domain-specific types in financial applications:
+
+1. **Basic Types** (green) - Elixir built-in types
+2. **Compound Types** (orange) - Combinations of basic types
+3. **User-Defined Types** (purple) - Custom types for domain concepts
+4. **Domain Types** (brown) - Type aliases for specific business contexts
+
 ## Dialyzer
 
 ### Setting Up Dialyzer
@@ -295,6 +385,66 @@ mix dialyzer
 # and the contract is:
 # (t(), number() | %Decimal{}) :: t()
 ```
+
+### Dialyzer Analysis Workflow
+
+The following diagram illustrates how Dialyzer performs static analysis on Elixir code to detect type inconsistencies:
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant Mix as mix dialyzer
+    participant PLT as PLT File<br/>(Persistent Lookup Table)
+    participant Compiler as BEAM Compiler
+    participant Dialyzer as Dialyzer Engine
+    participant Output as Terminal Output
+
+    Dev->>Mix: mix dialyzer
+
+    alt First Run (No PLT)
+        Mix->>PLT: Check for PLT file
+        PLT-->>Mix: Not found
+        Mix->>Compiler: Compile dependencies to BEAM
+        Compiler-->>Mix: BEAM bytecode
+        Mix->>Dialyzer: Analyze dependency types
+        Dialyzer->>PLT: Store success typings
+        PLT-->>Dialyzer: PLT created
+    else Subsequent Runs (PLT exists)
+        Mix->>PLT: Load existing PLT
+        PLT-->>Mix: Success typings loaded
+    end
+
+    Mix->>Compiler: Compile project to BEAM
+    Compiler-->>Mix: BEAM bytecode + @spec annotations
+
+    Mix->>Dialyzer: Analyze project with PLT
+
+    Note over Dialyzer: Success Typing Analysis:<br/>1. Infer actual function behavior<br/>2. Compare with @spec<br/>3. Check caller-callee compatibility
+
+    alt Type Inconsistencies Found
+        Dialyzer->>Dialyzer: Detect contradictions
+        Dialyzer->>Output: ⚠️ Type warnings<br/>File:Line:Issue
+        Output-->>Dev: Warning details
+    else No Issues
+        Dialyzer->>Output: ✅ Passed successfully
+        Output-->>Dev: All types consistent
+    end
+
+    %% Styling (WCAG AA compliant)
+    participant Dev as Developer
+    participant Mix as mix dialyzer
+    participant PLT as PLT File
+    participant Compiler as BEAM Compiler
+    participant Dialyzer as Dialyzer Engine
+    participant Output as Terminal Output
+```
+
+**Key Concepts**:
+
+- **PLT (Persistent Lookup Table)**: Cached type information for dependencies (speeds up analysis)
+- **Success Typing**: Dialyzer infers the most permissive types that won't cause runtime errors
+- **BEAM Bytecode**: Dialyzer analyzes compiled bytecode, not source code
+- **@spec Annotations**: Dialyzer compares specs against inferred behavior
 
 ### Common Dialyzer Patterns
 

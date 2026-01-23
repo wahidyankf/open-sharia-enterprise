@@ -23,6 +23,32 @@ All examples use financial domain context (Zakat calculation, donation processin
 
 ## Processes
 
+Elixir follows the Actor Model for concurrency. The following diagram illustrates how processes communicate via message passing:
+
+```mermaid
+sequenceDiagram
+    participant A as Process A<br/>Zakat Calculator
+    participant B as Process B<br/>Donation Processor
+    participant C as Process C<br/>Receipt Generator
+
+    Note over A,C: Actor Model: Isolated processes<br/>communicate via messages
+
+    A->>B: send({:calculate_zakat, 100_000, 85_000})
+    Note over B: Receive & process message
+    B->>B: Calculate zakat = 2,500
+    B->>C: send({:generate_receipt, 2_500})
+    Note over C: Receive & process message
+    C->>C: Generate receipt PDF
+    C->>A: send({:receipt_ready, "receipt.pdf"})
+    Note over A: Receive result
+
+    Note over A,C: Each process has isolated state<br/>No shared memory
+
+    style A fill:#0173B2,stroke:#023B5A,color:#FFF
+    style B fill:#029E73,stroke:#01593F,color:#FFF
+    style C fill:#DE8F05,stroke:#8A5903,color:#FFF
+```
+
 ### Creating Processes
 
 Processes are created with `spawn/1`, `spawn_link/1`, or higher-level abstractions.
@@ -87,6 +113,110 @@ defmodule FinancialDomain.Examples.BasicProcesses do
 
   defp calculate_zakat(_, _), do: 0
 end
+```
+
+The following diagram compares different process spawning patterns:
+
+```mermaid
+graph TD
+    subgraph spawn["spawn/1 - Independent Process"]
+        P1[Parent Process]
+        C1[Child Process]
+        P1 -.->|spawns| C1
+        Note1[Child crash doesn't<br/>affect parent ✅]
+        C1 -.-> Note1
+    end
+
+    subgraph spawn_link["spawn_link/1 - Linked Process"]
+        P2[Parent Process]
+        C2[Child Process]
+        P2 ===|bidirectional link| C2
+        Note2[Either crash<br/>affects both ❌]
+        C2 -.-> Note2
+    end
+
+    subgraph spawn_monitor["spawn_monitor/1 - Monitored Process"]
+        P3[Parent Process]
+        C3[Child Process]
+        P3 -.->|monitors| C3
+        C3 -.->|DOWN message on exit| P3
+        Note3[Parent receives<br/>notification ℹ️]
+        C3 -.-> Note3
+    end
+
+    style P1 fill:#029E73,stroke:#01593F,color:#FFF
+    style C1 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style P2 fill:#029E73,stroke:#01593F,color:#FFF
+    style C2 fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style P3 fill:#029E73,stroke:#01593F,color:#FFF
+    style C3 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Note1 fill:#029E73,stroke:#01593F,color:#FFF
+    style Note2 fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style Note3 fill:#DE8F05,stroke:#8A5903,color:#FFF
+```
+
+The following diagram shows the BEAM scheduler architecture that enables millions of concurrent processes:
+
+```mermaid
+graph TD
+    BEAM[BEAM VM]
+
+    S1[Scheduler 1<br/>CPU Core 1]
+    S2[Scheduler 2<br/>CPU Core 2]
+    S3[Scheduler 3<br/>CPU Core 3]
+    S4[Scheduler 4<br/>CPU Core 4]
+
+    RQ1[Run Queue 1]
+    RQ2[Run Queue 2]
+    RQ3[Run Queue 3]
+    RQ4[Run Queue 4]
+
+    P1[Process 1]
+    P2[Process 2]
+    P3[Process 3]
+    P4[Process 4]
+    P5[Process 5]
+    P6[Process N...]
+    P7[Millions of<br/>Processes]
+
+    BEAM --> S1
+    BEAM --> S2
+    BEAM --> S3
+    BEAM --> S4
+
+    S1 --> RQ1
+    S2 --> RQ2
+    S3 --> RQ3
+    S4 --> RQ4
+
+    RQ1 -.-> P1
+    RQ1 -.-> P2
+    RQ2 -.-> P3
+    RQ3 -.-> P4
+    RQ3 -.-> P5
+    RQ4 -.-> P6
+    RQ4 -.-> P7
+
+    Note1[1 Scheduler per CPU Core<br/>Preemptive scheduling<br/>Work stealing between queues]
+    BEAM -.-> Note1
+
+    style BEAM fill:#0173B2,stroke:#023B5A,color:#FFF
+    style S1 fill:#029E73,stroke:#01593F,color:#FFF
+    style S2 fill:#029E73,stroke:#01593F,color:#FFF
+    style S3 fill:#029E73,stroke:#01593F,color:#FFF
+    style S4 fill:#029E73,stroke:#01593F,color:#FFF
+    style RQ1 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style RQ2 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style RQ3 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style RQ4 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style P1 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style P2 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style P3 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style P4 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style P5 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style P6 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style P7 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Note1 fill:#0173B2,stroke:#023B5A,color:#FFF
 ```
 
 ### Process Lifecycle
@@ -192,6 +322,69 @@ end
 ```
 
 ## Message Passing
+
+The following diagram illustrates common message passing patterns in Elixir:
+
+```mermaid
+graph TD
+    subgraph RequestReply["Request-Reply Pattern"]
+        Client1[Client]
+        Server1[Server]
+        Client1 -->|1. send request| Server1
+        Server1 -->|2. send reply| Client1
+    end
+
+    subgraph PubSub["Publish-Subscribe Pattern"]
+        Publisher[Publisher]
+        Broker[PubSub Broker]
+        Sub1[Subscriber 1]
+        Sub2[Subscriber 2]
+        Sub3[Subscriber 3]
+        Publisher -->|publish event| Broker
+        Broker -.->|broadcast| Sub1
+        Broker -.->|broadcast| Sub2
+        Broker -.->|broadcast| Sub3
+    end
+
+    subgraph ProducerConsumer["Producer-Consumer Pattern"]
+        Producer[Producer]
+        Queue[Work Queue]
+        Cons1[Consumer 1]
+        Cons2[Consumer 2]
+        Producer -->|enqueue work| Queue
+        Queue -.->|dequeue| Cons1
+        Queue -.->|dequeue| Cons2
+    end
+
+    subgraph WorkerPool["Worker Pool Pattern"]
+        Dispatcher[Dispatcher]
+        W1[Worker 1]
+        W2[Worker 2]
+        W3[Worker 3]
+        W4[Worker N...]
+        Dispatcher -.->|assign task| W1
+        Dispatcher -.->|assign task| W2
+        Dispatcher -.->|assign task| W3
+        Dispatcher -.->|assign task| W4
+    end
+
+    style Client1 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Server1 fill:#029E73,stroke:#01593F,color:#FFF
+    style Publisher fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Broker fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Sub1 fill:#029E73,stroke:#01593F,color:#FFF
+    style Sub2 fill:#029E73,stroke:#01593F,color:#FFF
+    style Sub3 fill:#029E73,stroke:#01593F,color:#FFF
+    style Producer fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Queue fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Cons1 fill:#029E73,stroke:#01593F,color:#FFF
+    style Cons2 fill:#029E73,stroke:#01593F,color:#FFF
+    style Dispatcher fill:#0173B2,stroke:#023B5A,color:#FFF
+    style W1 fill:#029E73,stroke:#01593F,color:#FFF
+    style W2 fill:#029E73,stroke:#01593F,color:#FFF
+    style W3 fill:#029E73,stroke:#01593F,color:#FFF
+    style W4 fill:#029E73,stroke:#01593F,color:#FFF
+```
 
 ### Basic Message Passing
 
@@ -426,6 +619,86 @@ end
 ```
 
 ## Task Module
+
+The following diagram shows how Task.async enables concurrent execution for Zakat calculations:
+
+```mermaid
+sequenceDiagram
+    participant Main as Main Process
+    participant T1 as Task 1<br/>Calculate Zakat A
+    participant T2 as Task 2<br/>Calculate Zakat B
+    participant T3 as Task 3<br/>Calculate Zakat C
+    participant T4 as Task 4<br/>Calculate Zakat D
+
+    Note over Main: Start all tasks concurrently
+    Main->>T1: Task.async(fn -> calculate_zakat_a() end)
+    Main->>T2: Task.async(fn -> calculate_zakat_b() end)
+    Main->>T3: Task.async(fn -> calculate_zakat_c() end)
+    Main->>T4: Task.async(fn -> calculate_zakat_d() end)
+
+    Note over T1,T4: All tasks execute in parallel
+
+    par Execute Concurrently
+        T1->>T1: Calculate<br/>(2s)
+    and
+        T2->>T2: Calculate<br/>(2s)
+    and
+        T3->>T3: Calculate<br/>(2s)
+    and
+        T4->>T4: Calculate<br/>(2s)
+    end
+
+    T1-->>Main: Task.await() → result_a
+    T2-->>Main: Task.await() → result_b
+    T3-->>Main: Task.await() → result_c
+    T4-->>Main: Task.await() → result_d
+
+    Note over Main: Total time: ~2s<br/>(vs 8s sequential)
+
+    style Main fill:#0173B2,stroke:#023B5A,color:#FFF
+    style T1 fill:#029E73,stroke:#01593F,color:#FFF
+    style T2 fill:#029E73,stroke:#01593F,color:#FFF
+    style T3 fill:#029E73,stroke:#01593F,color:#FFF
+    style T4 fill:#029E73,stroke:#01593F,color:#FFF
+```
+
+The following diagram compares parallel vs sequential execution performance:
+
+```mermaid
+graph LR
+    subgraph Sequential["Sequential Execution"]
+        S1[Zakat A<br/>2s] --> S2[Zakat B<br/>2s]
+        S2 --> S3[Zakat C<br/>2s]
+        S3 --> S4[Zakat D<br/>2s]
+        S4 --> STotal[Total: 8s ⏱️]
+    end
+
+    subgraph Parallel["Parallel Execution (4 cores)"]
+        P1[Zakat A<br/>2s]
+        P2[Zakat B<br/>2s]
+        P3[Zakat C<br/>2s]
+        P4[Zakat D<br/>2s]
+        P1 --> PTotal[Total: 2s ⚡]
+        P2 --> PTotal
+        P3 --> PTotal
+        P4 --> PTotal
+    end
+
+    Sequential -.->|4x slower| Comparison[Performance Gain:<br/>4x speedup with 4 cores]
+    Parallel -.->|4x faster| Comparison
+
+    style S1 fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style S2 fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style S3 fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style S4 fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style STotal fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style P1 fill:#029E73,stroke:#01593F,color:#FFF
+    style P2 fill:#029E73,stroke:#01593F,color:#FFF
+    style P3 fill:#029E73,stroke:#01593F,color:#FFF
+    style P4 fill:#029E73,stroke:#01593F,color:#FFF
+    style PTotal fill:#029E73,stroke:#01593F,color:#FFF
+    style Comparison fill:#DE8F05,stroke:#8A5903,color:#FFF
+```
 
 ### One-off Async Work
 

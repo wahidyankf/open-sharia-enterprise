@@ -80,6 +80,68 @@ Feature: Donation Processing
 
 **Use both**: BDD defines what to build, TDD ensures it works correctly.
 
+The following diagram illustrates the complete BDD workflow, from feature definition through implementation to automated testing:
+
+```mermaid
+graph LR
+    %% Collaboration Phase
+    Collab["1. Collaboration<br/>Business + Dev + QA"]
+    Feature["2. Write Feature<br/>(Gherkin)<br/>donation.feature"]
+
+    %% Scenario Phase
+    Scenario["3. Define Scenarios<br/>Given-When-Then<br/>Business language"]
+
+    %% Implementation Phase
+    StepDef["4. Step Definitions<br/>(Elixir)<br/>donation_context.exs"]
+    Impl["5. Implementation<br/>(Application code)<br/>Donations context"]
+
+    %% Testing Phase
+    Run["6. Run Features<br/>mix white_bread.run"]
+
+    %% Results
+    Pass{"All scenarios<br/>pass?"}
+    Success["✅ Feature Complete<br/>Living documentation"]
+    Refine["❌ Refine & Fix<br/>Update code or feature"]
+
+    %% Flow
+    Collab --> Feature
+    Feature --> Scenario
+    Scenario --> StepDef
+    StepDef --> Impl
+    Impl --> Run
+    Run --> Pass
+
+    Pass -->|"Yes"| Success
+    Pass -->|"No"| Refine
+    Refine --> Impl
+
+    %% Loop back
+    Success -.->|"New requirement"| Collab
+
+    %% Example
+    Example["Example Flow:<br/>1. 'As donor, create donation'<br/>2. Write donation.feature<br/>3. Given campaign exists...<br/>4. Define step 'Given a campaign...'<br/>5. Implement Donations.create_donation/1<br/>6. Run tests → verify behavior"]
+
+    Scenario -.-> Example
+
+    %% Benefits
+    Benefits["BDD Benefits:<br/>✅ Shared understanding<br/>✅ Executable specifications<br/>✅ Regression protection<br/>✅ Living documentation<br/>✅ Outside-in development"]
+
+    Success -.-> Benefits
+
+    %% Styling
+    style Collab fill:#029E73,stroke:#01593F,color:#FFF
+    style Feature fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Scenario fill:#CA9161,stroke:#7A5739,color:#FFF
+    style StepDef fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style Impl fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Run fill:#CA9161,stroke:#7A5739,color:#FFF
+    style Pass fill:#CA9161,stroke:#7A5739,color:#FFF
+    style Success fill:#029E73,stroke:#01593F,color:#FFF
+    style Refine fill:#DE8F05,stroke:#8A5903,color:#000
+    style Example fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Benefits fill:#029E73,stroke:#01593F,color:#FFF
+```
+
 ## White Bread Setup
 
 ### Installation
@@ -152,6 +214,64 @@ test/
         ├── donation_context.exs
         ├── campaign_context.exs
         └── zakat_context.exs
+```
+
+The following diagram shows how White Bread executes Gherkin features by matching steps to Elixir implementations:
+
+```mermaid
+sequenceDiagram
+    participant WB as White Bread<br/>(Test Runner)
+    participant Feature as Feature File<br/>(donation.feature)
+    participant Context as Step Context<br/>(donation_context.exs)
+    participant App as Application<br/>(Donations module)
+    participant DB as Database
+
+    Note over WB,Feature: 1. Load Feature
+
+    WB->>Feature: Parse feature file
+    Feature->>WB: Feature with scenarios
+
+    Note over WB,Context: 2. Execute Scenario
+
+    WB->>Context: Given "a campaign exists"
+    Context->>App: Campaigns.create_campaign(attrs)
+    App->>DB: INSERT INTO campaigns
+    DB->>App: {:ok, campaign}
+    App->>Context: {:ok, campaign}
+    Context->>Context: Store campaign in state
+    Context->>WB: :ok
+
+    WB->>Context: When "I donate 10000 IDR"
+    Context->>App: Donations.create_donation(attrs)
+    App->>DB: INSERT INTO donations
+    DB->>App: {:ok, donation}
+    App->>Context: {:ok, donation}
+    Context->>Context: Store donation in state
+    Context->>WB: :ok
+
+    WB->>Context: Then "donation should be recorded"
+    Context->>Context: Retrieve donation from state
+    Context->>App: Donations.get_donation(id)
+    App->>DB: SELECT * FROM donations
+    DB->>App: donation record
+    App->>Context: {:ok, donation}
+    Context->>Context: Assert donation.status == :pending
+    Context->>WB: :ok (assertion passed)
+
+    Note over WB,DB: 3. Cleanup
+
+    WB->>DB: Rollback transaction<br/>(Test isolation)
+
+    Note over WB: 4. Report Results
+
+    WB->>WB: ✅ Scenario passed
+
+    %% Error path
+    Context-->>WB: :error (assertion failed)
+    WB-->>WB: ❌ Scenario failed<br/>Show diff and trace
+
+    %% Benefits
+    Note over WB,DB: Benefits:<br/>• Natural language specs<br/>• Step reusability<br/>• Test isolation<br/>• Clear failure messages
 ```
 
 ### Scenarios

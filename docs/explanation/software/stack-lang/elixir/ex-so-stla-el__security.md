@@ -115,6 +115,78 @@ defmodule FinancialPlatform.Donations.Donation do
 end
 ```
 
+The following diagram illustrates the defense-in-depth approach to input validation in Elixir financial applications:
+
+```mermaid
+graph TD
+    %% Input Source
+    CLIENT[Client Request<br/>amount: -100<br/>currency: XYZ]
+
+    %% Layer 1: Controller
+    CONTROLLER[Controller Layer<br/>Parameter Whitelist]
+    WHITELIST{Allowed<br/>keys?}
+    SANITIZE[String Sanitization<br/>trim, length limit]
+
+    %% Layer 2: Changeset
+    CHANGESET[Ecto Changeset<br/>Business Rules]
+    CAST[cast/3<br/>Type coercion]
+    VALIDATE_REQ[validate_required/2<br/>Mandatory fields]
+    VALIDATE_BIZ[Custom Validations<br/>validate_amount<br/>validate_currency<br/>validate_email]
+
+    %% Layer 3: Database
+    DATABASE[(Database<br/>Constraints)]
+    DB_CONSTRAINTS[Check Constraints<br/>amount > 0<br/>NOT NULL<br/>UNIQUE email]
+
+    %% Success/Error Paths
+    REJECT_PARAM[❌ Reject<br/>400 Bad Request<br/>Invalid parameters]
+    REJECT_BIZ[❌ Reject<br/>422 Unprocessable<br/>Validation errors]
+    REJECT_DB[❌ Reject<br/>Database constraint<br/>violation]
+    SUCCESS[✅ Success<br/>Donation created<br/>Audit logged]
+
+    %% Flow
+    CLIENT --> CONTROLLER
+    CONTROLLER --> WHITELIST
+
+    WHITELIST -->|No| REJECT_PARAM
+    WHITELIST -->|Yes| SANITIZE
+
+    SANITIZE --> CHANGESET
+    CHANGESET --> CAST
+    CAST --> VALIDATE_REQ
+    VALIDATE_REQ --> VALIDATE_BIZ
+
+    VALIDATE_BIZ -->|Invalid| REJECT_BIZ
+    VALIDATE_BIZ -->|Valid| DATABASE
+
+    DATABASE --> DB_CONSTRAINTS
+    DB_CONSTRAINTS -->|Violation| REJECT_DB
+    DB_CONSTRAINTS -->|Pass| SUCCESS
+
+    %% Styling (WCAG AA compliant)
+    style CLIENT fill:#0173B2,stroke:#023B5A,color:#FFF
+    style CONTROLLER fill:#029E73,stroke:#01593F,color:#FFF
+    style WHITELIST fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style SANITIZE fill:#029E73,stroke:#01593F,color:#FFF
+    style CHANGESET fill:#CC78BC,stroke:#7A4871,color:#FFF
+    style CAST fill:#CC78BC,stroke:#7A4871,color:#FFF
+    style VALIDATE_REQ fill:#CC78BC,stroke:#7A4871,color:#FFF
+    style VALIDATE_BIZ fill:#CC78BC,stroke:#7A4871,color:#FFF
+    style DATABASE fill:#CA9161,stroke:#7A5739,color:#FFF
+    style DB_CONSTRAINTS fill:#CA9161,stroke:#7A5739,color:#FFF
+    style REJECT_PARAM fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style REJECT_BIZ fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style REJECT_DB fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style SUCCESS fill:#029E73,stroke:#01593F,color:#FFF
+```
+
+**Defense-in-Depth Layers**:
+
+1. **Controller Layer** (green): Whitelist allowed parameters, sanitize strings
+2. **Changeset Layer** (purple): Type validation, business rules, format checks
+3. **Database Layer** (brown): Constraints as final safety net
+
+This multi-layer approach ensures malicious or invalid input is caught at the earliest possible stage.
+
 ### Parameter Validation
 
 Validate controller parameters:
@@ -561,6 +633,88 @@ defmodule FinancialWeb.AuthController do
   end
 end
 ```
+
+The following diagram illustrates the complete JWT authentication flow using Guardian in a financial application:
+
+```mermaid
+sequenceDiagram
+    participant Client as Client<br/>(Browser/Mobile)
+    participant Auth as AuthController<br/>login/refresh
+    participant Accounts as Accounts Context<br/>authenticate
+    participant Bcrypt as Bcrypt<br/>password verify
+    participant Guardian as Guardian<br/>JWT encoding
+    participant Protected as Protected Route<br/>DonationController
+    participant Pipeline as AuthPipeline<br/>VerifyHeader
+    participant DB as Database
+
+    %% Login Flow
+    Client->>Auth: POST /api/auth/login<br/>{email, password}
+    Auth->>Accounts: authenticate(email, password)
+    Accounts->>DB: Get user by email
+    DB-->>Accounts: User record with password_hash
+
+    Accounts->>Bcrypt: verify_pass(password, hash)
+    Bcrypt-->>Accounts: true/false
+
+    alt Invalid Credentials
+        Bcrypt->>Bcrypt: no_user_verify()<br/>(prevent timing attack)
+        Accounts-->>Auth: {:error, :invalid_credentials}
+        Auth-->>Client: 401 Unauthorized<br/>Invalid credentials
+    else Valid Credentials
+        Accounts-->>Auth: {:ok, user}
+        Auth->>Guardian: encode_and_sign(user, ttl: 1h)
+        Guardian->>Guardian: Generate JWT<br/>sub: user.id<br/>exp: timestamp
+        Guardian-->>Auth: {:ok, token, claims}
+        Auth-->>Client: 200 OK<br/>{token: "eyJ...", user: {...}}
+    end
+
+    %% Protected Route Access
+    Client->>Protected: GET /api/donations<br/>Header: "Bearer eyJ..."
+    Protected->>Pipeline: Verify token
+    Pipeline->>Guardian: VerifyHeader (scheme: Bearer)
+    Guardian->>Guardian: Decode JWT<br/>Verify signature<br/>Check expiration
+
+    alt Invalid/Expired Token
+        Guardian-->>Pipeline: {:error, reason}
+        Pipeline-->>Client: 401 Unauthorized<br/>Invalid token
+    else Valid Token
+        Guardian-->>Pipeline: {:ok, claims}
+        Pipeline->>Guardian: resource_from_claims(claims)
+        Guardian->>DB: Get user by sub (user_id)
+        DB-->>Guardian: User record
+        Guardian-->>Pipeline: {:ok, user}
+        Pipeline->>Protected: conn.assigns.current_user = user
+        Protected->>Protected: Process request<br/>(user authorized)
+        Protected-->>Client: 200 OK<br/>{donations: [...]}
+    end
+
+    %% Token Refresh
+    Client->>Auth: POST /api/auth/refresh<br/>Header: "Bearer eyJ..."
+    Auth->>Guardian: current_resource(conn)
+    Guardian-->>Auth: user
+    Auth->>Guardian: encode_and_sign(user, ttl: 1h)
+    Guardian-->>Auth: {:ok, new_token, claims}
+    Auth-->>Client: 200 OK<br/>{token: "eyJ..."}
+
+    %% Styling (WCAG AA compliant)
+    participant Client as Client
+    participant Auth as AuthController
+    participant Accounts as Accounts Context
+    participant Bcrypt as Bcrypt
+    participant Guardian as Guardian
+    participant Protected as Protected Route
+    participant Pipeline as AuthPipeline
+    participant DB as Database
+```
+
+**Key Security Features**:
+
+- **Password Hashing**: Bcrypt with salt rounds prevents password leaks
+- **Timing Attack Prevention**: `no_user_verify()` runs even when user not found
+- **JWT Expiration**: Tokens expire after 1 hour (configurable)
+- **Stateless Auth**: JWT contains claims, no server-side session storage
+- **Token Refresh**: Clients can refresh tokens before expiration
+- **Authorization Header**: Bearer token in `Authorization: Bearer <token>` header
 
 ### Session Management
 

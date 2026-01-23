@@ -43,6 +43,48 @@ x = 1
 
 ### Function Clause Pattern Matching
 
+Pattern matching in function definitions enables elegant control flow.
+
+The following diagram shows function clause pattern matching decision tree:
+
+```mermaid
+graph TD
+    Start[calculate wealth, nisab]
+
+    Check1{amount < 0?}
+    Check2{currency mismatch?}
+    Check3{wealth <= nisab?}
+    Check4{wealth > nisab?}
+
+    Error1[Return<br/>{:error, "Wealth cannot be negative"}]
+    Error2[Return<br/>{:error, "Currency mismatch"}]
+    NoZakat[Return<br/>{:ok, Money.new 0}]
+    CalcZakat[Calculate 2.5% Zakat<br/>Return {:ok, zakat_amount}]
+
+    Start --> Check1
+    Check1 -->|Yes| Error1
+    Check1 -->|No| Check2
+    Check2 -->|Yes| Error2
+    Check2 -->|No| Check3
+    Check3 -->|Yes| NoZakat
+    Check3 -->|No| Check4
+    Check4 -->|Yes| CalcZakat
+
+    Note1[Pattern matching<br/>selects correct<br/>function clause]
+    Start -.-> Note1
+
+    style Start fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Check1 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Check2 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Check3 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Check4 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Error1 fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style Error2 fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style NoZakat fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style CalcZakat fill:#029E73,stroke:#01593F,color:#FFF
+    style Note1 fill:#0173B2,stroke:#023B5A,color:#FFF
+```
+
 Pattern matching in function definitions enables elegant control flow:
 
 ```elixir
@@ -121,6 +163,64 @@ end
 
 ### Pattern Matching in with Construct
 
+The `with` construct combines pattern matching with early returns.
+
+The following diagram illustrates with construct flow:
+
+```mermaid
+sequenceDiagram
+    participant Code as with Statement
+    participant Step1 as fetch_application
+    participant Step2 as fetch_applicant
+    participant Step3 as check_credit_score
+    participant Step4 as calculate_approval
+    participant Step5 as generate_terms
+    participant Step6 as create_contract
+    participant Success as Success Block
+    participant Else as else Block
+
+    Code->>Step1: fetch_application(id)
+    alt {:ok, application}
+        Step1-->>Code: {:ok, application}
+        Code->>Step2: fetch_applicant(id)
+        alt {:ok, applicant}
+            Step2-->>Code: {:ok, applicant}
+            Code->>Step3: check_credit_score()
+            alt {:ok, score}
+                Step3-->>Code: {:ok, score}
+                Code->>Step4: calculate_approval()
+                alt {:ok, amount}
+                    Step4-->>Code: {:ok, amount}
+                    Code->>Step5: generate_terms()
+                    alt {:ok, terms}
+                        Step5-->>Code: {:ok, terms}
+                        Code->>Step6: create_contract()
+                        Step6-->>Code: {:ok, contract}
+                        Code->>Success: Execute success block
+                        Success-->>Code: {:ok, contract}
+                    else {:error, _}
+                        Step5-->>Else: Short-circuit
+                    end
+                else {:error, _}
+                    Step4-->>Else: Short-circuit
+                end
+            else {:error, _}
+                Step3-->>Else: Short-circuit
+            end
+        else {:error, _}
+            Step2-->>Else: Short-circuit
+        end
+    else {:error, _}
+        Step1-->>Else: Short-circuit to else
+    end
+
+    Note over Code,Else: with stops at first error<br/>Else block handles any error
+
+    style Code fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Success fill:#029E73,stroke:#01593F,color:#FFF
+    style Else fill:#CC78BC,stroke:#8E5484,color:#FFF
+```
+
 The `with` construct combines pattern matching with early returns:
 
 ```elixir
@@ -156,6 +256,44 @@ end
 ## Pipe Operator
 
 The pipe operator `|>` takes the result of an expression and passes it as the first argument to the next function. This creates readable, left-to-right data transformations.
+
+The following diagram illustrates pipe operator data flow:
+
+```mermaid
+graph LR
+    Input[Input Data<br/>year: 2024]
+    Step1[fetch_zakat_payments<br/>Query DB]
+    Step2[filter_by_currency<br/>Filter USD]
+    Step3[group_by_month<br/>Group Data]
+    Step4[calculate_monthly_totals<br/>Sum Amounts]
+    Step5[calculate_running_totals<br/>Running Sum]
+    Step6[add_statistics<br/>Compute Stats]
+    Step7[format_as_report<br/>Format Output]
+    Output[Final Report<br/>Structured Data]
+
+    Input -->|pipe| Step1
+    Step1 -->|pipe| Step2
+    Step2 -->|pipe| Step3
+    Step3 -->|pipe| Step4
+    Step4 -->|pipe| Step5
+    Step5 -->|pipe| Step6
+    Step6 -->|pipe| Step7
+    Step7 --> Output
+
+    Note1[Each function receives<br/>result of previous step<br/>as first argument]
+    Step3 -.-> Note1
+
+    style Input fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Step1 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Step2 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Step3 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Step4 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Step5 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Step6 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Step7 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Output fill:#029E73,stroke:#01593F,color:#FFF
+    style Note1 fill:#DE8F05,stroke:#8A5903,color:#FFF
+```
 
 ### Basic Piping
 
@@ -1043,6 +1181,60 @@ defmodule FinancialDomain.Donations.Complete do
   defp categorize_donation(amount) when is_large_donation(amount), do: :large
   defp categorize_donation(_), do: :regular
 end
+```
+
+## Enum vs Stream
+
+The following diagram compares eager Enum processing vs lazy Stream processing:
+
+```mermaid
+graph TD
+    subgraph Enum["Enum (Eager Evaluation)"]
+        E1[1..1_000_000<br/>Range]
+        E2[Enum.map +1<br/>All 1M processed ⏱️]
+        E3[Enum.filter even<br/>All 500K processed ⏱️]
+        E4[Enum.take 10<br/>10 items selected]
+        E5[Result: 10 items<br/>Total: 1.5M operations ❌]
+
+        E1 --> E2
+        E2 --> E3
+        E3 --> E4
+        E4 --> E5
+    end
+
+    subgraph Stream["Stream (Lazy Evaluation)"]
+        S1[1..1_000_000<br/>Range]
+        S2[Stream.map +1<br/>No execution yet 💤]
+        S3[Stream.filter even<br/>No execution yet 💤]
+        S4[Enum.take 10<br/>Process only until 10 found]
+        S5[Result: 10 items<br/>Total: ~20 operations ✅]
+
+        S1 --> S2
+        S2 --> S3
+        S3 --> S4
+        S4 --> S5
+    end
+
+    Note1[Enum:<br/>• Eager evaluation<br/>• Each step processes all data<br/>• High memory for large datasets]
+    Note2[Stream:<br/>• Lazy evaluation<br/>• Process only what's needed<br/>• Efficient for large datasets]
+
+    Enum -.-> Note1
+    Stream -.-> Note2
+
+    style E1 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style E2 fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style E3 fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style E4 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style E5 fill:#CC78BC,stroke:#8E5484,color:#FFF
+
+    style S1 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style S2 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style S3 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style S4 fill:#029E73,stroke:#01593F,color:#FFF
+    style S5 fill:#029E73,stroke:#01593F,color:#FFF
+
+    style Note1 fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style Note2 fill:#029E73,stroke:#01593F,color:#FFF
 ```
 
 ## Best Practices

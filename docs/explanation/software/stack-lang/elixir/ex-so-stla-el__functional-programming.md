@@ -71,6 +71,43 @@ defmodule FinancialDomain.Examples.Immutability do
 end
 ```
 
+The following diagram illustrates how immutability works in Elixir - transformations create new data structures while preserving the original:
+
+```mermaid
+graph TD
+    %% Original Data
+    Original["Original Account<br/>balance: $1000<br/>currency: USD"]
+
+    %% Transformation Function
+    Transform["Transformation:<br/>deposit($500)"]
+
+    %% New Data
+    New["New Account<br/>balance: $1500<br/>currency: USD"]
+
+    %% Both Exist
+    OriginalStill["Original Unchanged<br/>balance: $1000<br/>currency: USD"]
+
+    %% Flow
+    Original --> Transform
+    Transform --> New
+    Original -.->|"Still exists"| OriginalStill
+
+    %% Annotations
+    Note1["Memory efficient:<br/>structural sharing"]
+    Note2["Safe for concurrent<br/>access - no locks needed"]
+
+    New -.-> Note1
+    OriginalStill -.-> Note2
+
+    %% Styling
+    style Original fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Transform fill:#CA9161,stroke:#7A5739,color:#FFF
+    style New fill:#029E73,stroke:#01593F,color:#FFF
+    style OriginalStill fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Note1 fill:#DE8F05,stroke:#8A5903,color:#000
+    style Note2 fill:#DE8F05,stroke:#8A5903,color:#000
+```
+
 ### Benefits of Immutability
 
 ```elixir
@@ -305,6 +342,64 @@ defmodule FinancialDomain.Processing.TailOptimized do
 end
 ```
 
+The following diagram compares head recursion (builds stack) versus tail recursion (constant stack space):
+
+```mermaid
+graph TD
+    subgraph HeadRecursion["Head Recursion (Non-Optimized)"]
+        H1["sum([100, 200, 300])"]
+        H2["100 + sum([200, 300])"]
+        H3["100 + (200 + sum([300]))"]
+        H4["100 + (200 + (300 + sum([])))"]
+        H5["100 + (200 + (300 + 0))"]
+        H6["100 + (200 + 300)"]
+        H7["100 + 500"]
+        H8["600"]
+
+        H1 --> H2
+        H2 --> H3
+        H3 --> H4
+        H4 --> H5
+        H5 --> H6
+        H6 --> H7
+        H7 --> H8
+
+        StackH["Stack grows:<br/>O(n) memory"]
+        H4 -.-> StackH
+    end
+
+    subgraph TailRecursion["Tail Recursion (Optimized)"]
+        T1["sum_tail([100, 200, 300], 0)"]
+        T2["sum_tail([200, 300], 100)"]
+        T3["sum_tail([300], 300)"]
+        T4["sum_tail([], 600)"]
+        T5["600"]
+
+        T1 --> T2
+        T2 --> T3
+        T3 --> T4
+        T4 --> T5
+
+        StackT["Constant stack:<br/>O(1) memory<br/>Frame reused"]
+        T3 -.-> StackT
+    end
+
+    %% Comparison
+    Comparison["Tail call optimization:<br/>Last operation is recursive call<br/>Stack frame can be reused"]
+    TailRecursion -.-> Comparison
+
+    %% Styling
+    style H1 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style H8 fill:#029E73,stroke:#01593F,color:#FFF
+    style StackH fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+
+    style T1 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style T5 fill:#029E73,stroke:#01593F,color:#FFF
+    style StackT fill:#029E73,stroke:#01593F,color:#FFF
+
+    style Comparison fill:#DE8F05,stroke:#8A5903,color:#000
+```
+
 ## Higher-Order Functions
 
 ### Functions as Parameters
@@ -405,6 +500,50 @@ defmodule FinancialDomain.Calculators.Factory do
     {small_donation_fee, large_donation_fee, discounted, final_amount}
   end
 end
+```
+
+The following diagram shows how higher-order functions compose together, passing functions as values and creating specialized calculators:
+
+```mermaid
+graph LR
+    %% Input
+    Input["Input: $100"]
+
+    %% Function Factory
+    Factory1["fee_calculator(0.02)"]
+    Factory2["discount_calculator(10)"]
+
+    %% Created Functions
+    Fee["small_fee function<br/>(amount) -> amount * 0.02"]
+    Discount["vip_discount function<br/>(amount) -> amount * 0.9"]
+
+    %% Composition
+    Compose["compose(small_fee, vip_discount)<br/>Creates: (x) -> small_fee(vip_discount(x))"]
+
+    %% Execution Flow
+    Input --> Discount
+    Discount -->|"$90"| Fee
+    Fee -->|"$1.80"| Result["Result: $91.80"]
+
+    %% Factory flow
+    Factory1 -.->|"Returns"| Fee
+    Factory2 -.->|"Returns"| Discount
+    Fee -.-> Compose
+    Discount -.-> Compose
+
+    %% Benefits
+    Benefits["Benefits:<br/>• Reusable calculators<br/>• Function composition<br/>• Type-safe transformations"]
+    Compose -.-> Benefits
+
+    %% Styling
+    style Input fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Factory1 fill:#CA9161,stroke:#7A5739,color:#FFF
+    style Factory2 fill:#CA9161,stroke:#7A5739,color:#FFF
+    style Fee fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style Discount fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style Compose fill:#DE8F05,stroke:#8A5903,color:#000
+    style Result fill:#029E73,stroke:#01593F,color:#FFF
+    style Benefits fill:#DE8F05,stroke:#8A5903,color:#000
 ```
 
 ## Enum and Stream

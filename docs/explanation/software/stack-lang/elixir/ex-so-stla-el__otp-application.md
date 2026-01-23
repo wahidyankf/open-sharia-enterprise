@@ -66,6 +66,63 @@ end
 
 ### Application Callback
 
+The following diagram shows the complete application supervision tree:
+
+```mermaid
+graph TD
+    App[Financial.Application<br/>Root Supervisor]
+
+    Repo[Financial.Repo<br/>Database Connection]
+    PubSub[Phoenix.PubSub<br/>Message Bus]
+    Registry[Registry<br/>Process Registry]
+
+    CampSup[CampaignSupervisor]
+    PaySup[PaymentSupervisor]
+    DonSup[DonationSupervisor]
+
+    CampW1[Campaign Workers]
+    CampW2[Campaign Cache]
+    PayW1[Payment Gateway]
+    PayW2[Payment Processors]
+    DonW1[Donation Validators]
+    DonW2[Donation Processors]
+
+    Oban[Oban<br/>Background Jobs]
+    Endpoint[FinancialWeb.Endpoint<br/>Phoenix HTTP Server]
+
+    App --> Repo
+    App --> PubSub
+    App --> Registry
+    App --> CampSup
+    App --> PaySup
+    App --> DonSup
+    App --> Oban
+    App --> Endpoint
+
+    CampSup -.-> CampW1
+    CampSup -.-> CampW2
+    PaySup -.-> PayW1
+    PaySup -.-> PayW2
+    DonSup -.-> DonW1
+    DonSup -.-> DonW2
+
+    style App fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Repo fill:#029E73,stroke:#01593F,color:#FFF
+    style PubSub fill:#029E73,stroke:#01593F,color:#FFF
+    style Registry fill:#029E73,stroke:#01593F,color:#FFF
+    style CampSup fill:#0173B2,stroke:#023B5A,color:#FFF
+    style PaySup fill:#0173B2,stroke:#023B5A,color:#FFF
+    style DonSup fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Oban fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Endpoint fill:#029E73,stroke:#01593F,color:#FFF
+    style CampW1 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style CampW2 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style PayW1 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style PayW2 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style DonW1 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style DonW2 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+```
+
 ```elixir
 # lib/financial/application.ex
 defmodule Financial.Application do
@@ -153,6 +210,52 @@ financial/
 
 ## Starting Applications
 
+The following diagram shows the application lifecycle states:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Loaded: Application.load()
+    Loaded --> Starting: Application.start()
+    Starting --> Started: start/2 returns {:ok, pid}
+    Started --> Stopping: Application.stop()
+    Stopping --> Stopped: stop/1 called
+    Stopped --> [*]
+
+    Started --> Crashed: Supervisor crashes
+    Crashed --> [*]
+
+    note right of Loaded
+        Application module loaded
+        Config available
+        Not running yet
+    end note
+
+    note right of Starting
+        start/2 callback executing
+        Starting supervision tree
+        Initializing resources
+    end note
+
+    note right of Started
+        Supervision tree running
+        All children started
+        Application functional
+    end note
+
+    note right of Stopping
+        Graceful shutdown
+        Stopping children
+        Cleaning up resources
+    end note
+
+    style Loaded fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Starting fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Started fill:#029E73,stroke:#01593F,color:#FFF
+    style Stopping fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Stopped fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Crashed fill:#CC78BC,stroke:#8E5484,color:#FFF
+```
+
 ### Application Start Types
 
 ```elixir
@@ -212,6 +315,67 @@ end
 ```
 
 ### Application Dependencies
+
+The following diagram shows application dependency order:
+
+```mermaid
+graph TD
+    subgraph Standard["Standard Applications (OTP)"]
+        Kernel[kernel]
+        Stdlib[stdlib]
+    end
+
+    subgraph Extra["Extra Applications"]
+        Logger[logger<br/>Logging]
+        Runtime[runtime_tools<br/>Observer, Debugger]
+        Crypto[crypto<br/>Cryptography]
+    end
+
+    subgraph Dependencies["Library Dependencies"]
+        Phoenix[phoenix]
+        Ecto[ecto_sql]
+        Postgrex[postgrex]
+        Money[money]
+    end
+
+    subgraph Application["Financial Application"]
+        Financial[financial<br/>Main Application]
+    end
+
+    Kernel --> Logger
+    Stdlib --> Logger
+    Kernel --> Runtime
+    Kernel --> Crypto
+
+    Logger --> Phoenix
+    Logger --> Ecto
+    Crypto --> Ecto
+    Crypto --> Postgrex
+
+    Phoenix --> Financial
+    Ecto --> Financial
+    Postgrex --> Financial
+    Money --> Financial
+    Logger --> Financial
+    Runtime --> Financial
+    Crypto --> Financial
+
+    Note1[Start Order:<br/>1. kernel, stdlib<br/>2. logger, crypto, runtime_tools<br/>3. phoenix, ecto, postgrex<br/>4. financial]
+
+    Financial -.-> Note1
+
+    style Kernel fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Stdlib fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Logger fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Runtime fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Crypto fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Phoenix fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Ecto fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Postgrex fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Money fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Financial fill:#029E73,stroke:#01593F,color:#FFF
+    style Note1 fill:#0173B2,stroke:#023B5A,color:#FFF
+```
 
 ```elixir
 # mix.exs
