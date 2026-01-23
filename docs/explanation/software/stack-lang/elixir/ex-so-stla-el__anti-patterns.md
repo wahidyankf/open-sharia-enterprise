@@ -1,3 +1,30 @@
+---
+title: "Elixir Anti-Patterns and Common Mistakes"
+description: Common solutions to recurring problems that appear beneficial but ultimately lead to negative consequences in Elixir applications
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - anti-patterns
+  - common-mistakes
+  - code-quality
+  - otp
+  - genserver
+  - supervision
+  - performance
+related:
+  - ./ex-so-stla-el__best-practices.md
+  - ./ex-so-stla-el__otp-genserver.md
+  - ./ex-so-stla-el__otp-supervisor.md
+  - ./ex-so-stla-el__performance.md
+  - ./ex-so-stla-el__test-driven-development.md
+principles:
+  - simplicity-over-complexity
+  - explicit-over-implicit
+  - automation-over-manual
+last_updated: 2026-01-23
+---
+
 # Elixir Anti-Patterns and Common Mistakes
 
 **Quick Reference**: [Overview](#overview) | [Process Anti-Patterns](#process-anti-patterns) | [GenServer Misuse](#genserver-misuse) | [Supervision Errors](#supervision-errors) | [Performance Pitfalls](#performance-pitfalls) | [Ecto Mistakes](#ecto-common-mistakes) | [Testing Anti-Patterns](#testing-anti-patterns)
@@ -74,6 +101,44 @@ end
 
 **Solution**: Always use supervised processes (Task.Supervisor, DynamicSupervisor, Registry).
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+flowchart TD
+    A[Spawn Process for Donation] --> B{Supervised?}
+    B -->|No - spawn/1| C[Unsupervised Process]
+    B -->|Yes - Task.Supervisor| D[Supervised Process]
+    C --> E[Process Crashes]
+    C --> F[Process Hangs]
+    E --> G[No Detection]
+    F --> H[Memory Leak]
+    G --> I[Silent Failure]
+    H --> I
+    I --> J[System Crash]
+    D --> K[Process Monitored]
+    K --> L{Crash Detected?}
+    L -->|Yes| M[Supervisor Restarts]
+    L -->|No| N[Completes Successfully]
+    M --> O[System Self-Heals]
+    N --> O
+
+    style A fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style B fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style C fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style D fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style E fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style F fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style G fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style H fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style I fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style J fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style K fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style L fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style M fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style N fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style O fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ### Blocking GenServer Calls
 
 **Problem**: Synchronous GenServer calls that block for long periods.
@@ -145,6 +210,33 @@ end
 - Doesn't leverage BEAM's concurrency
 
 **Solution**: Use `cast` with Task.Supervisor for slow operations, or use dedicated worker processes.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+sequenceDiagram
+    participant Caller
+    participant GenServer
+    participant Task
+
+    Note over Caller,GenServer: ❌ Bad: Blocking Call
+    Caller->>GenServer: call(:calculate_annual_zakat)
+    Note over GenServer: Fetches wealth data (5s)
+    Note over GenServer: Calculates zakat (10s)
+    Note over GenServer: Generates report (5s)
+    Note over Caller: Blocked 20 seconds!
+    GenServer-->>Caller: {:ok, report}
+
+    Note over Caller,Task: ✅ Good: Async Pattern
+    Caller->>GenServer: cast(:calculate_annual_zakat_async)
+    GenServer-->>Caller: :ok (immediate)
+    GenServer->>Task: spawn supervised task
+    Note over Task: Fetches wealth data (5s)
+    Note over Task: Calculates zakat (10s)
+    Note over Task: Generates report (5s)
+    Task-->>Caller: send {:zakat_calculation_complete, report}
+    Note over Caller: Free to do other work during 20s
+```
 
 ### Message Inbox Overflow
 
@@ -219,6 +311,41 @@ end
 - Difficult to recover once overwhelmed
 
 **Solution**: Implement backpressure with call timeouts, queue size limits, or use GenStage/Broadway.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+graph TD
+    subgraph Bad["❌ No Backpressure"]
+        P1[Producer: 1000 receipts/sec] --> Q1[GenServer Mailbox]
+        Q1 --> C1[Consumer: 10 emails/sec]
+        Q1 --> M1[Mailbox grows unbounded]
+        M1 --> OOM1[Out of Memory]
+        OOM1 --> CRASH1[System Crash]
+    end
+
+    subgraph Good["✅ With Backpressure"]
+        P2[Producer: 1000 receipts/sec] --> L2{Queue Full?}
+        L2 -->|Yes| BP[Backpressure: Caller waits]
+        L2 -->|No| Q2[GenServer Queue: Max 100]
+        Q2 --> C2[Consumer: 10 emails/sec]
+        BP -.->|Queue drains| L2
+        C2 --> S2[Stable Memory Usage]
+    end
+
+    style P1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Q1 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style C1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style M1 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style OOM1 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style CRASH1 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style P2 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style L2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style BP fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Q2 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style C2 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style S2 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ## GenServer Misuse
 
@@ -557,6 +684,37 @@ end
 - **:one_for_all**: Dependent children that share state
 - **:rest_for_one**: Sequential dependencies (A depends on B, B on C)
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+flowchart TD
+    START[Choose Supervision Strategy] --> Q1{Are children<br/>dependent on<br/>each other?}
+    Q1 -->|No - Independent| ONE_FOR_ONE[:one_for_one]
+    Q1 -->|Yes| Q2{Do all children<br/>share state?}
+    Q2 -->|Yes - Shared State| ONE_FOR_ALL[:one_for_all]
+    Q2 -->|No| Q3{Sequential<br/>dependencies?}
+    Q3 -->|Yes - A→B→C| REST_FOR_ONE[:rest_for_one]
+    Q3 -->|No - Complex| NESTED[Use Nested Supervisors]
+
+    ONE_FOR_ONE --> E1[Example: Campaign Workers<br/>Campaign 1, 2, 3 independent<br/>If 1 fails, only 1 restarts]
+    ONE_FOR_ALL --> E2[Example: Payment Pipeline<br/>Validator, Executor, Recorder<br/>If any fails, restart all]
+    REST_FOR_ONE --> E3[Example: Init Sequence<br/>Database → Cache → API<br/>If Cache fails, restart Cache and API]
+    NESTED --> E4[Example: Multiple Domains<br/>Donations Supervisor<br/>Campaigns Supervisor<br/>Zakat Supervisor]
+
+    style START fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Q1 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Q2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style Q3 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style ONE_FOR_ONE fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style ONE_FOR_ALL fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style REST_FOR_ONE fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style NESTED fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style E1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style E2 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style E3 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style E4 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ### Excessive Restart Frequency
 
 **Problem**: Fast-failing process causing supervisor to give up.
@@ -688,6 +846,33 @@ end
 
 **Solution**: Use Ecto preloads, joins, or aggregations.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+sequenceDiagram
+    participant App
+    participant DB
+
+    Note over App,DB: ❌ Bad: N+1 Queries (101 total for 100 campaigns)
+    App->>DB: SELECT * FROM campaigns
+    DB-->>App: [Campaign1, Campaign2, ..., Campaign100]
+    App->>DB: SELECT * FROM donations WHERE campaign_id = 1
+    DB-->>App: [Donation1, Donation2, ...]
+    App->>DB: SELECT * FROM donations WHERE campaign_id = 2
+    DB-->>App: [Donation3, Donation4, ...]
+    Note over App: ... 98 more queries ...
+    App->>DB: SELECT * FROM donations WHERE campaign_id = 100
+    DB-->>App: [Donation199, Donation200]
+    Note over App: Total: 1 + 100 = 101 queries!
+
+    Note over App,DB: ✅ Good: Preload (2 queries total)
+    App->>DB: SELECT * FROM campaigns
+    DB-->>App: [Campaign1, Campaign2, ..., Campaign100]
+    App->>DB: SELECT * FROM donations WHERE campaign_id IN (1,2,...,100)
+    DB-->>App: All donations for all campaigns
+    Note over App: Total: 2 queries only!
+```
+
 ### Unnecessary Process Spawning
 
 **Problem**: Creating processes for operations that don't need concurrency.
@@ -807,6 +992,36 @@ end
 - Poor performance for large datasets
 
 **Solution**: Use IOLists, `Enum.map_join/3`, or `IO.iodata_to_binary/1`.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+graph LR
+    subgraph Bad["❌ String Concatenation: O(n²)"]
+        B1["Iteration 1:<br/>'' + 'Donation 1'<br/>Copy: 11 chars"] --> B2["Iteration 2:<br/>'Donation 1' + 'Donation 2'<br/>Copy: 11 + 11 = 22 chars"]
+        B2 --> B3["Iteration 3:<br/>'Donation 1..2' + 'Donation 3'<br/>Copy: 22 + 11 = 33 chars"]
+        B3 --> B4["Iteration N:<br/>Copy all previous + new<br/>Total: n*(n+1)/2 operations"]
+        B4 --> B5["10,000 donations:<br/>~50 million operations!"]
+    end
+
+    subgraph Good["✅ IOList: O(n)"]
+        G1["Iteration 1:<br/>['Donation 1']<br/>No copy"] --> G2["Iteration 2:<br/>['Donation 1', 'Donation 2']<br/>No copy"]
+        G2 --> G3["Iteration 3:<br/>['Donation 1', 'Donation 2', 'Donation 3']<br/>No copy"]
+        G3 --> G4["Iteration N:<br/>Append to list only<br/>Total: n operations"]
+        G4 --> G5["10,000 donations:<br/>10,000 operations!<br/>5,000x faster"]
+    end
+
+    style B1 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style B2 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style B3 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style B4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style B5 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style G1 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style G2 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style G3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style G4 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    style G5 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ## Ecto Common Mistakes
 
@@ -1208,5 +1423,6 @@ end
 
 ---
 
-**Last Updated**: 2025-01-23
-**Elixir Version**: 1.18.0+
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

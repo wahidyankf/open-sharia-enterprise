@@ -1,3 +1,27 @@
+---
+title: "Domain-Driven Design in Elixir"
+description: DDD in Elixir using functional programming, data transformation pipelines, bounded contexts through umbrella apps, and processes for domain events
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - domain-driven-design
+  - ddd
+  - bounded-contexts
+  - aggregates
+  - value-objects
+  - domain-events
+  - functional-programming
+related:
+  - ./ex-so-stla-el__best-practices.md
+  - ./ex-so-stla-el__otp-application.md
+  - ./ex-so-stla-el__functional-programming.md
+principles:
+  - explicit-over-implicit
+  - simplicity-over-complexity
+last_updated: 2026-01-23
+---
+
 # Domain-Driven Design
 
 Domain-Driven Design (DDD) in Elixir leverages functional programming and OTP to create maintainable, scalable systems aligned with business domains. Unlike object-oriented DDD, Elixir uses **data transformation pipelines**, **bounded contexts through umbrella apps**, and **processes for domain events** to implement DDD tactical and strategic patterns.
@@ -1537,6 +1561,6 @@ end
 
 ---
 
-**Last Updated**: 2025-01-23
-
-**Next Steps**: Explore [Web Services](ex-so-stla-el__web-services.md) to see how Phoenix Contexts implement DDD bounded contexts, or see [Testing](ex-so-stla-el__test-driven-development.md) for testing DDD applications.
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

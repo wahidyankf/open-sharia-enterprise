@@ -1,3 +1,26 @@
+---
+title: "Protocols and Behaviours"
+description: Two mechanisms for polymorphism in Elixir - protocols for ad-hoc polymorphism and behaviours for compile-time contracts
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - protocols
+  - behaviours
+  - polymorphism
+  - ad-hoc-polymorphism
+  - compile-time-contracts
+  - design-patterns
+related:
+  - ./ex-so-stla-el__idioms.md
+  - ./ex-so-stla-el__best-practices.md
+  - ./ex-so-stla-el__type-safety.md
+principles:
+  - explicit-over-implicit
+  - simplicity-over-complexity
+last_updated: 2026-01-23
+---
+
 # Protocols and Behaviours
 
 Elixir provides two mechanisms for polymorphism: **protocols** for ad-hoc polymorphism (extending types after definition) and **behaviours** for compile-time polymorphism (defining contracts for modules). Understanding when and how to use each is essential for building extensible, maintainable systems.
@@ -1481,6 +1504,6 @@ Benchee.run(%{
 
 ---
 
-**Last Updated**: 2025-01-23
-
-**Next Steps**: Explore [Memory Management](ex-so-stla-el__memory-management.md) to understand how protocols and behaviours interact with BEAM's memory model, or see [Domain-Driven Design](ex-so-stla-el__domain-driven-design.md) for using behaviours in DDD contexts.
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

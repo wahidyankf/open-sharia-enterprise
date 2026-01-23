@@ -1,34 +1,60 @@
+---
+title: "Behaviour-Driven Development in Elixir"
+description: BDD in Elixir using White Bread and Gherkin for executable specifications focusing on business behavior and stakeholder collaboration
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - behaviour-driven-development
+  - bdd
+  - white-bread
+  - gherkin
+  - given-when-then
+  - executable-specifications
+related:
+  - ./ex-so-stla-el__test-driven-development.md
+  - ./ex-so-stla-el__best-practices.md
+principles:
+  - documentation-first
+  - explicit-over-implicit
+last_updated: 2026-01-23
+---
+
 # Behaviour-Driven Development
 
 Behaviour-Driven Development (BDD) in Elixir uses **White Bread** to write executable specifications in **Gherkin** (Given-When-Then). BDD complements TDD by focusing on business behavior and collaboration between developers, testers, and stakeholders, especially valuable for financial applications where requirements must be precisely defined.
 
 **Quick Reference**:
 
-- [BDD Fundamentals](#bdd-fundamentals)
-  - [What is BDD](#what-is-bdd)
-  - [Gherkin Syntax](#gherkin-syntax)
-  - [BDD vs TDD](#bdd-vs-tdd)
-- [White Bread Setup](#white-bread-setup)
-  - [Installation](#installation)
-  - [Configuration](#configuration)
-- [Writing Features](#writing-features)
-  - [Feature Structure](#feature-structure)
-  - [Scenarios](#scenarios)
-  - [Scenario Outlines](#scenario-outlines)
-- [Step Definitions](#step-definitions)
-  - [Given Steps](#given-steps)
-  - [When Steps](#when-steps)
-  - [Then Steps](#then-steps)
-  - [Pattern Matching](#pattern-matching)
-- [Data Tables](#data-tables)
-- [Background Steps](#background-steps)
-- [Tags and Organization](#tags-and-organization)
-- [Financial Domain Examples](#financial-domain-examples)
-- [BDD Best Practices](#bdd-best-practices)
-- [BDD Anti-patterns](#bdd-anti-patterns)
-- [Integration with TDD](#integration-with-tdd)
-- [Related Topics](#related-topics)
-- [Sources](#sources)
+- [Behaviour-Driven Development](#behaviour-driven-development)
+  - [BDD Fundamentals](#bdd-fundamentals)
+    - [What is BDD](#what-is-bdd)
+    - [Gherkin Syntax](#gherkin-syntax)
+    - [BDD vs TDD](#bdd-vs-tdd)
+  - [White Bread Setup](#white-bread-setup)
+    - [Installation](#installation)
+    - [Configuration](#configuration)
+  - [Writing Features](#writing-features)
+    - [Feature Structure](#feature-structure)
+    - [Scenarios](#scenarios)
+    - [Scenario Outlines](#scenario-outlines)
+  - [Step Definitions](#step-definitions)
+    - [Given Steps](#given-steps)
+    - [When Steps](#when-steps)
+    - [Then Steps](#then-steps)
+    - [Pattern Matching](#pattern-matching)
+  - [Data Tables](#data-tables)
+  - [Background Steps](#background-steps)
+  - [Tags and Organization](#tags-and-organization)
+  - [Financial Domain Examples](#financial-domain-examples)
+  - [BDD Best Practices](#bdd-best-practices)
+  - [BDD Anti-patterns](#bdd-anti-patterns)
+    - [1. Implementation Leakage](#1-implementation-leakage)
+    - [2. Overly Technical Language](#2-overly-technical-language)
+    - [3. Too Many Steps](#3-too-many-steps)
+  - [Integration with TDD](#integration-with-tdd)
+  - [Related Topics](#related-topics)
+  - [Sources](#sources)
 
 ## BDD Fundamentals
 
@@ -83,7 +109,7 @@ Feature: Donation Processing
 The following diagram illustrates the complete BDD workflow, from feature definition through implementation to automated testing:
 
 ```mermaid
-graph LR
+graph TB
     %% Collaboration Phase
     Collab["1. Collaboration<br/>Business + Dev + QA"]
     Feature["2. Write Feature<br/>(Gherkin)<br/>donation.feature"]
@@ -1061,6 +1087,6 @@ end
 
 ---
 
-**Last Updated**: 2025-01-23
-
-**Next Steps**: Review [Test-Driven Development](ex-so-stla-el__test-driven-development.md) for complementary TDD practices, or explore [Domain-Driven Design](ex-so-stla-el__domain-driven-design.md) for aligning BDD with domain models.
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

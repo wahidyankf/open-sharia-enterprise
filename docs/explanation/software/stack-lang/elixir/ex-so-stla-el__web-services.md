@@ -1,3 +1,27 @@
+---
+title: "Elixir Web Services with Phoenix"
+description: Building high-performance web applications with Phoenix Framework including REST APIs, LiveView, GraphQL, and comprehensive tooling
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - web-services
+  - phoenix-framework
+  - rest-api
+  - liveview
+  - graphql
+  - real-time
+  - channels
+related:
+  - ./ex-so-stla-el__best-practices.md
+  - ./ex-so-stla-el__security.md
+  - ./ex-so-stla-el__concurrency-and-parallelism.md
+principles:
+  - simplicity-over-complexity
+  - security-first
+last_updated: 2026-01-23
+---
+
 # Web Services
 
 **Phoenix Framework** is Elixir's premier web framework for building high-performance, scalable web applications. It provides traditional **REST APIs**, modern **LiveView** for real-time interactivity, **GraphQL** integration, and comprehensive tooling for authentication, authorization, and deployment.
@@ -1630,6 +1654,6 @@ All previous examples demonstrate financial domain patterns.
 
 ---
 
-**Last Updated**: 2025-01-23
-
-**Next Steps**: Explore [Testing](ex-so-stla-el__test-driven-development.md) for comprehensive Phoenix testing strategies, or see [Performance](ex-so-stla-el__performance.md) for optimizing Phoenix applications.
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

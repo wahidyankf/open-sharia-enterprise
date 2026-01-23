@@ -1,8 +1,28 @@
-# OTP GenServer Patterns
+---
+title: "OTP GenServer Patterns"
+description: GenServer behavior module for implementing client-server relationships with standardized state management, synchronous/asynchronous calls, and process lifecycle
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - otp
+  - genserver
+  - state-management
+  - callbacks
+  - client-server
+  - processes
+related:
+  - ./ex-so-stla-el__otp-supervisor.md
+  - ./ex-so-stla-el__otp-application.md
+  - ./ex-so-stla-el__concurrency-and-parallelism.md
+  - ./ex-so-stla-el__best-practices.md
+principles:
+  - explicit-over-implicit
+  - simplicity-over-complexity
+last_updated: 2026-01-23
+---
 
-**Category**: OTP Patterns
-**Elixir Version**: 1.18.0+
-**Related**: [Supervisor Patterns](ex-so-stla-el__otp-supervisor.md), [Application Patterns](ex-so-stla-el__otp-application.md)
+# OTP GenServer Patterns
 
 ## Overview
 
@@ -1339,6 +1359,6 @@ end
 
 ---
 
-**Last Updated**: 2025-01-23
-**Elixir Version**: 1.18.0+
-**OTP Version**: 24+
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

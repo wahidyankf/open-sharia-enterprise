@@ -1,3 +1,27 @@
+---
+title: "Elixir Type Safety"
+description: Optional static analysis in Elixir through typespecs, Dialyzer, and pattern matching for documentation and type checking
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - type-safety
+  - typespecs
+  - dialyzer
+  - pattern-matching
+  - guards
+  - dynamic-typing
+  - static-analysis
+related:
+  - ./ex-so-stla-el__idioms.md
+  - ./ex-so-stla-el__best-practices.md
+  - ./ex-so-stla-el__protocols-and-behaviours.md
+principles:
+  - explicit-over-implicit
+  - documentation-first
+last_updated: 2026-01-23
+---
+
 # Elixir Type Safety
 
 **Quick Reference**: [Overview](#overview) | [Typespecs](#typespecs) | [Dialyzer](#dialyzer) | [Pattern Matching](#pattern-matching-as-type-guard) | [Compile-Time Checks](#compile-time-type-checking) | [Financial Examples](#financial-domain-integration)
@@ -916,5 +940,6 @@ end
 
 ---
 
-**Last Updated**: 2025-01-23
-**Elixir Version**: 1.18.0+
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

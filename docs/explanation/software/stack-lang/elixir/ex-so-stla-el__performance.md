@@ -1,3 +1,27 @@
+---
+title: "Elixir Performance"
+description: High-performance Elixir applications through BEAM VM's process-based concurrency, efficient memory management, and optimization techniques
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - performance
+  - optimization
+  - profiling
+  - beam-vm
+  - concurrency
+  - memory-management
+  - tail-call-optimization
+  - ets
+related:
+  - ./ex-so-stla-el__concurrency-and-parallelism.md
+  - ./ex-so-stla-el__memory-management.md
+  - ./ex-so-stla-el__best-practices.md
+principles:
+  - simplicity-over-complexity
+last_updated: 2026-01-23
+---
+
 # Performance
 
 Elixir applications achieve high performance through the BEAM VM's **process-based concurrency**, **efficient memory management**, and **lightweight processes**. Understanding performance characteristics and optimization techniques is crucial for building scalable financial systems that handle high transaction volumes.
@@ -1301,6 +1325,6 @@ end
 
 ---
 
-**Last Updated**: 2025-01-23
-
-**Next Steps**: Explore [Web Services](ex-so-stla-el__web-services.md) for Phoenix-specific performance optimizations, or see [Memory Management](ex-so-stla-el__memory-management.md) for memory optimization techniques.
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

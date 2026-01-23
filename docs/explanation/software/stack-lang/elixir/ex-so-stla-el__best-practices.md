@@ -1,3 +1,30 @@
+---
+title: "Elixir Best Practices"
+description: Collective wisdom of the Elixir community for building maintainable, testable, and idiomatic production systems
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - best-practices
+  - naming-conventions
+  - otp-patterns
+  - supervision
+  - context-modules
+  - ecto
+  - testing
+  - code-organization
+related:
+  - ./ex-so-stla-el__anti-patterns.md
+  - ./ex-so-stla-el__otp-genserver.md
+  - ./ex-so-stla-el__otp-supervisor.md
+  - ./ex-so-stla-el__test-driven-development.md
+principles:
+  - simplicity-over-complexity
+  - explicit-over-implicit
+  - documentation-first
+last_updated: 2026-01-23
+---
+
 # Elixir Best Practices
 
 **Quick Reference**: [Overview](#overview) | [Naming Conventions](#naming-conventions) | [OTP Patterns](#otp-patterns) | [Supervision](#supervision-tree-design) | [Context Modules](#context-modules) | [Ecto Changesets](#ecto-changeset-patterns) | [Testing](#testing-best-practices) | [Code Organization](#code-organization)
@@ -1314,5 +1341,6 @@ end
 
 ---
 
-**Last Updated**: 2025-01-23
-**Elixir Version**: 1.18.0+
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team

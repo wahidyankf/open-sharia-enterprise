@@ -1,3 +1,32 @@
+---
+title: "Elixir Programming Language Documentation"
+description: Dynamic functional programming language for scalable, fault-tolerant applications built on the Erlang VM with massive concurrency and real-time capabilities
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - functional-programming
+  - beam-vm
+  - concurrency
+  - fault-tolerance
+  - phoenix-framework
+  - otp
+  - documentation-index
+related:
+  - ./ex-so-stla-el__best-practices.md
+  - ./ex-so-stla-el__functional-programming.md
+  - ./ex-so-stla-el__concurrency-and-parallelism.md
+  - ./ex-so-stla-el__otp-application.md
+  - ./ex-so-stla-el__release-1.18.md
+principles:
+  - documentation-first
+  - immutability
+  - automation-over-manual
+  - reproducibility
+  - simplicity-over-complexity
+last_updated: 2026-01-23
+---
+
 # Elixir Programming Language Documentation
 
 **Quick Reference**: [Overview](#overview) | [Principles](#software-engineering-principles) | [Documentation Structure](#documentation-structure) | [Version Strategy](#elixir-version-strategy) | [Learning Path](#learning-path) | [Tools & Ecosystem](#tools-and-ecosystem) | [Resources](#resources-and-references)
@@ -598,6 +627,6 @@ Compare Elixir approaches with other platform languages:
 
 ---
 
-**Last Updated**: 2025-01-23
-**Elixir Version**: 1.18.0+
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
 **Maintainers**: Platform Documentation Team

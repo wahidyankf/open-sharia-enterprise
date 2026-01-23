@@ -1,3 +1,28 @@
+---
+title: "Elixir Idioms and Patterns"
+description: Distinctive Elixir patterns using pattern matching, pipe operators, protocols, and guards for readable, maintainable, and idiomatic code
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - idioms
+  - patterns
+  - pattern-matching
+  - pipe-operator
+  - anonymous-functions
+  - guards
+  - protocols
+  - with-construct
+related:
+  - ./ex-so-stla-el__functional-programming.md
+  - ./ex-so-stla-el__best-practices.md
+  - ./ex-so-stla-el__protocols-and-behaviours.md
+principles:
+  - simplicity-over-complexity
+  - explicit-over-implicit
+last_updated: 2026-01-23
+---
+
 # Elixir Idioms and Patterns
 
 **Quick Reference**: [Overview](#overview) | [Pattern Matching](#pattern-matching) | [Pipe Operator](#pipe-operator) | [Anonymous Functions](#anonymous-functions) | [Guards](#guards) | [Protocols](#protocols) | [with Construct](#with-construct-for-complex-pipelines) | [Financial Examples](#financial-domain-integration)
@@ -48,6 +73,9 @@ Pattern matching in function definitions enables elegant control flow.
 The following diagram shows function clause pattern matching decision tree:
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 graph TD
     Start[calculate wealth, nisab]
 
@@ -56,10 +84,10 @@ graph TD
     Check3{wealth <= nisab?}
     Check4{wealth > nisab?}
 
-    Error1[Return<br/>{:error, "Wealth cannot be negative"}]
-    Error2[Return<br/>{:error, "Currency mismatch"}]
-    NoZakat[Return<br/>{:ok, Money.new 0}]
-    CalcZakat[Calculate 2.5% Zakat<br/>Return {:ok, zakat_amount}]
+    Error1["Return<br/>error: Wealth cannot be negative"]
+    Error2["Return<br/>error: Currency mismatch"]
+    NoZakat["Return<br/>ok: Money.new 0"]
+    CalcZakat["Calculate 2.5% Zakat<br/>Return ok: zakat_amount"]
 
     Start --> Check1
     Check1 -->|Yes| Error1
@@ -1272,5 +1300,6 @@ graph TD
 
 ---
 
-**Last Updated**: 2025-01-23
-**Elixir Version**: 1.18.0+
+**Last Updated**: 2026-01-23
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Maintainers**: Platform Documentation Team
