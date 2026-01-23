@@ -3215,6 +3215,6 @@ This documentation demonstrates how error handling implements all five software 
 
 ---
 
-**Last Updated**: 2025-01-23
-**Java Version Compatibility**: Java 17+ (sealed classes), Java 21+ (pattern matching, structured concurrency), Java 25 (latest features)
-**Blessed Libraries**: Vavr 0.10.4 (Try, Either, Validation), SLF4J 2.0.9 (logging), JUnit 5.10.1 (testing)
+**Last Updated**: 2026-01-23
+**Java Version**: 17+ (baseline), 21+ (recommended), 23 (latest)
+**Maintainers**: Platform Documentation Team

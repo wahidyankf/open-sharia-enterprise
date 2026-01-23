@@ -778,5 +778,6 @@ RUN ./mvnw clean install
 
 ---
 
-**Last Updated**: 2026-01-21
-**Java Version**: 17+ (baseline), 21+ (recommended), 25 (latest LTS)
+**Last Updated**: 2026-01-23
+**Java Version**: 17+ (baseline), 21+ (recommended), 23 (latest)
+**Maintainers**: Platform Documentation Team

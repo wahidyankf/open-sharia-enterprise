@@ -2423,5 +2423,6 @@ Use this checklist when developing Java applications:
 
 ---
 
-**Last Updated**: 2025-01-23
-**Java Version**: 17+
+**Last Updated**: 2026-01-23
+**Java Version**: 17+ (baseline), 21+ (recommended), 23 (latest)
+**Maintainers**: Platform Documentation Team
