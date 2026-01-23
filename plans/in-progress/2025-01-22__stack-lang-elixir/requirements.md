@@ -92,7 +92,7 @@ Scenario: Review Elixir 1.17 features
   And documentation should show code examples with platform conventions
   And documentation should note breaking changes
   And documentation should reference official Elixir release notes
-  And Last Updated date should be current (2026-01-22 or later)
+  And Last Updated date should be current (2025-01-22 or later)
 ```
 
 ### Story 5: Developer Implementing Phoenix Web Services
@@ -336,7 +336,7 @@ Scenario: All 17 core topic files created
   And each file should be >15KB (comprehensive content)
   And each file should have Quick Reference section
   And each file should have financial domain examples
-  And each file should have Last Updated date of 2026-01-22 or later
+  And each file should have Last Updated date of 2025-01-22 or later
 ```
 
 ### Phase 2: Release Documentation Complete
@@ -415,7 +415,7 @@ Scenario: All files meet quality standards
 Scenario: Elixir documentation achieves parity with Java/Golang
   Given all phases are complete
   When I compare Elixir documentation to Java and Golang
-  Then Elixir should have equal or greater number of core topics (17 vs Java 15, Golang 20)
+  Then Elixir should have equal or greater number of core+OTP topics (20 vs Java 18, Golang 18)
   And Elixir should have comprehensive release documentation (5-7 files)
   And Elixir should have OTP-specific patterns (3 files, unique to Elixir)
   And Elixir should have DDD templates (7 files, matching Golang count)

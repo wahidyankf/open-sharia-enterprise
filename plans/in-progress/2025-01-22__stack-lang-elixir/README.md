@@ -106,8 +106,8 @@ This plan uses **multi-file structure** due to size (>1000 lines):
 
 **Context**:
 
-- Java documentation established pattern with 15 core topics + 3 releases + 11 DDD templates
-- Golang documentation expanded pattern with 20 core topics + 6 releases + 7 DDD templates
+- Java documentation established pattern with 18 core topics + 3 releases + 11 DDD templates
+- Golang documentation expanded pattern with 18 core topics + 6 releases + 11 templates (7 core DDD + 4 additional including README)
 - Elixir documentation will follow Golang's expanded pattern adapted for functional/OTP paradigm
 
 ---

@@ -105,7 +105,7 @@ graph TD
 
 **Trade-offs**:
 
-- More files than Java/Golang (20 total vs Java 18, Golang 24)
+- More topic files than Java/Golang (20 core+OTP vs Java 18 core, Golang 18 core)
 - OTP learning curve requires dedicated documentation
 - Financial domain examples need to demonstrate process-based architecture
 
@@ -179,22 +179,22 @@ graph TD
 Research current Elixir ecosystem state:
 
 1. **Elixir Version**:
-   - Query: "Elixir current stable version January 2026"
+   - Query: "Elixir current stable version January 2025"
    - Verify: Is 1.17 released? Is 1.18 released and stable?
    - Source: <https://elixir-lang.org/>, <https://github.com/elixir-lang/elixir/releases>
 
 2. **BEAM VM**:
-   - Query: "Erlang/OTP current version January 2026"
+   - Query: "Erlang/OTP current version January 2025"
    - Verify: OTP 26, OTP 27 features
    - Source: <https://www.erlang.org/>
 
 3. **Phoenix Framework**:
-   - Query: "Phoenix framework current version 2026"
+   - Query: "Phoenix framework current version 2025"
    - Verify: Phoenix 1.7+ features (verified HTML, LiveView updates)
    - Source: <https://phoenixframework.org/>
 
 4. **Ecto**:
-   - Query: "Ecto current version 2026"
+   - Query: "Ecto current version 2025"
    - Verify: Ecto 3.11+ features
    - Source: <https://hexdocs.pm/ecto/>
 
@@ -271,7 +271,7 @@ References to official docs, community resources.
 
 ---
 
-**Last Updated**: 2026-01-22
+**Last Updated**: 2025-01-22
 
 ````
 
