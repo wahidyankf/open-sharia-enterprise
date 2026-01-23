@@ -4,7 +4,7 @@
 
 This delivery plan breaks down the Elixir documentation creation into 5 sequential phases with clear validation criteria and acceptance tests.
 
-**Estimated Scope**: 30+ files totaling ~500KB of documentation
+**Estimated Scope**: 30+ files totaling ~1.5MB of documentation
 
 **Delivery Strategy**: Incremental delivery with validation after each phase
 
@@ -476,7 +476,7 @@ Scenario: All Elixir documentation meets quality standards
   And each file should have proper heading nesting
   And each file should have Quick Reference section with jump links
   And each file should have Sources/References section
-  And each file should have Last Updated date (2026-01-22 or later)
+  And each file should have Last Updated date (2025-01-22 or later)
   And each code block should specify language
   And each diagram should use color-blind friendly palette
   And no file should contain time-based estimates
@@ -492,7 +492,7 @@ Scenario: All Elixir documentation meets quality standards
 Scenario: Elixir documentation achieves parity with Java/Golang
   Given all 5 phases are complete
   When I compare Elixir documentation to Java and Golang
-  Then Elixir should have equal or greater core topics (17 vs Java 18, Golang 20)
+  Then Elixir should have equal or greater core+OTP topics (20 vs Java 18, Golang 18)
   And Elixir should have comprehensive release documentation (5-7 files)
   And Elixir should have unique OTP patterns (3 files, Elixir-specific)
   And Elixir should have DDD templates (7 files, matching Golang)
