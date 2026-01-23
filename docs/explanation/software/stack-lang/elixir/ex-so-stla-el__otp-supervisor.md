@@ -64,6 +64,29 @@ end
 - Most common strategy
 - Default choice for most applications
 
+The following diagram illustrates how the one_for_one strategy restarts only the crashed process:
+
+```mermaid
+sequenceDiagram
+    participant S as Supervisor
+    participant A as CampaignServer
+    participant B as DonationServer
+    participant C as PaymentServer
+
+    Note over A,C: All processes running normally
+    C->>C: Crashes ❌
+    C->>S: EXIT signal
+    S->>S: Detect crash
+    S->>C: Restart PaymentServer
+    Note over A,B: CampaignServer & DonationServer<br/>keep running ✅
+    Note over C: PaymentServer restarted ✅
+
+    style C fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style A fill:#029E73,stroke:#01593F,color:#FFF
+    style B fill:#029E73,stroke:#01593F,color:#FFF
+    style S fill:#0173B2,stroke:#023B5A,color:#FFF
+```
+
 ### one_for_all
 
 When any child crashes, all children are terminated and restarted.
@@ -134,6 +157,36 @@ end
 - Later children depend on earlier ones
 - Example: Loader → Validator → Processor → Exporter
 
+The following diagram illustrates rest_for_one pipeline restart behavior:
+
+```mermaid
+sequenceDiagram
+    participant Sup as Supervisor
+    participant L as DataLoader
+    participant V as DataValidator
+    participant P as DataProcessor
+    participant E as DataExporter
+
+    Note over L,E: All processes running normally
+    V->>V: Crashes ❌
+    V->>Sup: EXIT signal
+    Sup->>Sup: Detect Validator crash
+    Sup->>V: Terminate Validator
+    Sup->>P: Terminate Processor (downstream)
+    Sup->>E: Terminate Exporter (downstream)
+    Note over L: Loader keeps running ✅
+    Sup->>V: Restart Validator
+    Sup->>P: Restart Processor
+    Sup->>E: Restart Exporter
+    Note over L,E: Pipeline restored
+
+    style Sup fill:#0173B2,stroke:#023B5A,color:#FFF
+    style L fill:#029E73,stroke:#01593F,color:#FFF
+    style V fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style P fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style E fill:#DE8F05,stroke:#8A5903,color:#FFF
+```
+
 ### Strategy Comparison
 
 ```elixir
@@ -150,6 +203,47 @@ end
 # rest_for_one:
 # Before: [A, B, C, D]
 # After:  [A, B, C', D']  (C and everything after)
+```
+
+The diagram below shows how each supervision strategy behaves when Worker C crashes:
+
+```mermaid
+graph TD
+    subgraph one_for_one["one_for_one Strategy"]
+        A1[Worker A ✅]
+        B1[Worker B ✅]
+        C1[Worker C ❌ → C' ✅]
+        D1[Worker D ✅]
+    end
+
+    subgraph one_for_all["one_for_all Strategy"]
+        A2[Worker A ❌ → A' ✅]
+        B2[Worker B ❌ → B' ✅]
+        C2[Worker C ❌ → C' ✅]
+        D2[Worker D ❌ → D' ✅]
+    end
+
+    subgraph rest_for_one["rest_for_one Strategy"]
+        A3[Worker A ✅]
+        B3[Worker B ✅]
+        C3[Worker C ❌ → C' ✅]
+        D3[Worker D ❌ → D' ✅]
+    end
+
+    style C1 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style A1 fill:#029E73,stroke:#01593F,color:#FFF
+    style B1 fill:#029E73,stroke:#01593F,color:#FFF
+    style D1 fill:#029E73,stroke:#01593F,color:#FFF
+
+    style A2 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style B2 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style C2 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style D2 fill:#DE8F05,stroke:#8A5903,color:#FFF
+
+    style A3 fill:#029E73,stroke:#01593F,color:#FFF
+    style B3 fill:#029E73,stroke:#01593F,color:#FFF
+    style C3 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style D3 fill:#DE8F05,stroke:#8A5903,color:#FFF
 ```
 
 ## Supervision Tree Design
@@ -221,6 +315,61 @@ Financial.Application (Supervisor)
 │   ├── PaymentProcessorSupervisor (DynamicSupervisor)
 │   └── PaymentGateway (GenServer)
 └── FinancialWeb.Endpoint (Phoenix)
+```
+
+The following diagram illustrates the hierarchical supervision tree architecture:
+
+```mermaid
+graph TD
+    App[Financial.Application<br/>Supervisor]
+    Repo[Financial.Repo<br/>Database]
+    CampSup[CampaignSupervisor<br/>Supervisor]
+    PaySup[PaymentSupervisor<br/>Supervisor]
+    Web[FinancialWeb.Endpoint<br/>Phoenix]
+
+    CampReg[CampaignRegistry<br/>Registry]
+    CampDyn[CampaignWorkerSupervisor<br/>DynamicSupervisor]
+    CampMgr[CampaignManager<br/>GenServer]
+
+    CampW1[CampaignWorker-1<br/>GenServer]
+    CampW2[CampaignWorker-2<br/>GenServer]
+    CampWN[CampaignWorker-N<br/>GenServer]
+
+    PayReg[PaymentRegistry<br/>Registry]
+    PayDyn[PaymentProcessorSupervisor<br/>DynamicSupervisor]
+    PayGw[PaymentGateway<br/>GenServer]
+
+    App --> Repo
+    App --> CampSup
+    App --> PaySup
+    App --> Web
+
+    CampSup --> CampReg
+    CampSup --> CampDyn
+    CampSup --> CampMgr
+
+    CampDyn -.-> CampW1
+    CampDyn -.-> CampW2
+    CampDyn -.-> CampWN
+
+    PaySup --> PayReg
+    PaySup --> PayDyn
+    PaySup --> PayGw
+
+    style App fill:#0173B2,stroke:#023B5A,color:#FFF
+    style CampSup fill:#0173B2,stroke:#023B5A,color:#FFF
+    style PaySup fill:#0173B2,stroke:#023B5A,color:#FFF
+    style CampDyn fill:#0173B2,stroke:#023B5A,color:#FFF
+    style PayDyn fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Repo fill:#029E73,stroke:#01593F,color:#FFF
+    style Web fill:#029E73,stroke:#01593F,color:#FFF
+    style CampReg fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style PayReg fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style CampMgr fill:#029E73,stroke:#01593F,color:#FFF
+    style PayGw fill:#029E73,stroke:#01593F,color:#FFF
+    style CampW1 fill:#029E73,stroke:#01593F,color:#FFF
+    style CampW2 fill:#029E73,stroke:#01593F,color:#FFF
+    style CampWN fill:#029E73,stroke:#01593F,color:#FFF
 ```
 
 ### Nested Supervisors Example
@@ -310,6 +459,35 @@ end
 :ok = CampaignWorkerSupervisor.stop_campaign_worker(pid)
 ```
 
+The diagram below illustrates the dynamic child addition flow:
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant DynSup as DynamicSupervisor
+    participant Worker as CampaignWorker
+
+    Client->>DynSup: start_child(child_spec)
+    DynSup->>DynSup: Validate child_spec
+    DynSup->>Worker: spawn process
+    DynSup->>Worker: link to supervisor
+    Worker->>Worker: init(campaign_id)
+    Worker-->>DynSup: {:ok, state}
+    DynSup-->>Client: {:ok, pid}
+    Note over Worker: Worker running ✅
+
+    Client->>DynSup: terminate_child(pid)
+    DynSup->>Worker: shutdown signal
+    Worker->>Worker: terminate(:shutdown)
+    Worker-->>DynSup: :ok
+    DynSup-->>Client: :ok
+    Note over Worker: Worker terminated
+
+    style DynSup fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Worker fill:#029E73,stroke:#01593F,color:#FFF
+    style Client fill:#CA9161,stroke:#7D5A3D,color:#FFF
+```
+
 ### Partition Supervisor
 
 ```elixir
@@ -394,6 +572,48 @@ defmodule Financial.ResilientSupervisor do
 end
 ```
 
+The following diagram illustrates how restart intensity limits work:
+
+```mermaid
+graph LR
+    subgraph Normal["Normal Operation (Within Limits)"]
+        T1[0s: Crash 1 ✅] --> T2[20s: Crash 2 ✅]
+        T2 --> T3[40s: Crash 3 ✅]
+        T3 --> T4[50s: Crash 4 ✅]
+        T4 --> T5[55s: Crash 5 ✅]
+    end
+
+    subgraph Exceeded["Exceeded Limits (Supervisor Crashes)"]
+        R1[0s: Crash 1 ✅] --> R2[8s: Crash 2 ✅]
+        R2 --> R3[15s: Crash 3 ✅]
+        R3 --> R4[22s: Crash 4 ✅]
+        R4 --> R5[30s: Crash 5 ✅]
+        R5 --> R6[35s: Crash 6 ❌<br/>SUPERVISOR TERMINATES]
+    end
+
+    Note1[5 restarts in 60s<br/>Supervisor continues]
+    Note2[6 restarts in 60s<br/>max_restarts exceeded<br/>Supervisor crashes]
+
+    T5 -.-> Note1
+    R6 -.-> Note2
+
+    style T1 fill:#029E73,stroke:#01593F,color:#FFF
+    style T2 fill:#029E73,stroke:#01593F,color:#FFF
+    style T3 fill:#029E73,stroke:#01593F,color:#FFF
+    style T4 fill:#029E73,stroke:#01593F,color:#FFF
+    style T5 fill:#029E73,stroke:#01593F,color:#FFF
+
+    style R1 fill:#029E73,stroke:#01593F,color:#FFF
+    style R2 fill:#029E73,stroke:#01593F,color:#FFF
+    style R3 fill:#029E73,stroke:#01593F,color:#FFF
+    style R4 fill:#029E73,stroke:#01593F,color:#FFF
+    style R5 fill:#029E73,stroke:#01593F,color:#FFF
+    style R6 fill:#CC78BC,stroke:#8E5484,color:#FFF
+
+    style Note1 fill:#029E73,stroke:#01593F,color:#FFF
+    style Note2 fill:#CC78BC,stroke:#8E5484,color:#FFF
+```
+
 ### Child Specification
 
 ```elixir
@@ -430,6 +650,49 @@ end
 
 # Infinite timeout (use with caution)
 {CriticalWorker, [], shutdown: :infinity}
+```
+
+### Supervisor Lifecycle
+
+The diagram below shows the lifecycle states of a supervisor:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Starting: start_link()
+    Starting --> Initializing: spawn supervisor
+    Initializing --> StartingChildren: init() returns
+    StartingChildren --> Running: all children started
+    Running --> Restarting: child crashes
+    Restarting --> Running: child restarted
+    Running --> ShuttingDown: shutdown signal
+    ShuttingDown --> TerminatingChildren: stop children
+    TerminatingChildren --> Terminated: all children stopped
+    Terminated --> [*]
+
+    Running --> Crashed: max_restarts exceeded
+    Crashed --> [*]
+
+    note right of Running
+        Monitoring children
+        Handling restarts
+        Processing messages
+    end note
+
+    note right of ShuttingDown
+        Graceful shutdown
+        Wait for children
+        Clean up resources
+    end note
+
+    style Starting fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Initializing fill:#0173B2,stroke:#023B5A,color:#FFF
+    style StartingChildren fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Running fill:#029E73,stroke:#01593F,color:#FFF
+    style Restarting fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style ShuttingDown fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style TerminatingChildren fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Terminated fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Crashed fill:#CC78BC,stroke:#8E5484,color:#FFF
 ```
 
 ## Monitoring and Debugging
@@ -501,6 +764,63 @@ end
 # Navigate to Applications tab to see supervision tree
 # Navigate to Processes tab to see all processes
 # Click on supervisor to see restart statistics
+```
+
+The following diagram shows key health metrics for monitoring supervision trees:
+
+```mermaid
+graph TD
+    Observer[Observer/Monitoring<br/>System]
+
+    Metrics[Health Metrics]
+    ProcCount[Process Count]
+    RestartRate[Restart Rate]
+    MemUsage[Memory Usage]
+    MsgQueue[Message Queue Length]
+
+    Indicators[Health Indicators]
+    Healthy[Healthy ✅<br/>Stable counts<br/>Low restart rate<br/>Normal memory]
+    Warning[Warning ⚠️<br/>Rising restarts<br/>Growing queues<br/>Memory increase]
+    Critical[Critical ❌<br/>Restart storms<br/>Queue overflow<br/>Memory exhaustion]
+
+    Actions[Actions]
+    Monitor[Continue Monitoring]
+    Investigate[Investigate Issues]
+    Intervene[Immediate Intervention]
+
+    Observer --> Metrics
+    Metrics --> ProcCount
+    Metrics --> RestartRate
+    Metrics --> MemUsage
+    Metrics --> MsgQueue
+
+    ProcCount --> Indicators
+    RestartRate --> Indicators
+    MemUsage --> Indicators
+    MsgQueue --> Indicators
+
+    Indicators --> Healthy
+    Indicators --> Warning
+    Indicators --> Critical
+
+    Healthy --> Monitor
+    Warning --> Investigate
+    Critical --> Intervene
+
+    style Observer fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Metrics fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style ProcCount fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style RestartRate fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style MemUsage fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style MsgQueue fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Indicators fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Healthy fill:#029E73,stroke:#01593F,color:#FFF
+    style Warning fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Critical fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style Actions fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Monitor fill:#029E73,stroke:#01593F,color:#FFF
+    style Investigate fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Intervene fill:#CC78BC,stroke:#8E5484,color:#FFF
 ```
 
 ## Financial Domain Examples

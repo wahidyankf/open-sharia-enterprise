@@ -135,6 +135,74 @@ end
 - **Debugging**: Crash reports show exact failure point
 - **Self-Healing**: Supervision automatically recovers from failures
 
+The following diagram illustrates the "Let It Crash" philosophy:
+
+```mermaid
+graph TD
+    Process[Worker Process<br/>Processing Donation]
+    Crash[Unexpected Error<br/>Database Connection Lost ❌]
+    Exit[Process Crashes]
+    Sup[Supervisor Detects]
+    Restart[Restart Process]
+    Clean[New Process<br/>Clean State ✅]
+    Resume[Resume Operations]
+
+    Process --> Crash
+    Crash --> Exit
+    Exit -->|EXIT signal| Sup
+    Sup --> Restart
+    Restart --> Clean
+    Clean --> Resume
+
+    Note1[No defensive code<br/>No corrupted state<br/>Automatic recovery]
+    Sup -.-> Note1
+
+    style Process fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Crash fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style Exit fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style Sup fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Restart fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Clean fill:#029E73,stroke:#01593F,color:#FFF
+    style Resume fill:#029E73,stroke:#01593F,color:#FFF
+    style Note1 fill:#0173B2,stroke:#023B5A,color:#FFF
+```
+
+The following diagram shows the error handling decision tree:
+
+```mermaid
+graph TD
+    Start[Error Occurred]
+    Question{Expected<br/>Business Error?}
+    Expected[Return Tagged Tuple<br/>{:ok, result}<br/>{:error, reason}]
+    Unexpected{Recoverable?}
+    LetCrash[Let It Crash ❌<br/>Supervisor Restarts]
+    Handle[Handle with try/rescue<br/>Log & Report]
+
+    Examples1[Examples:<br/>• Invalid amount<br/>• Campaign closed<br/>• Duplicate donation]
+    Examples2[Examples:<br/>• Database connection lost<br/>• External API timeout<br/>• Memory exhausted]
+    Examples3[Examples:<br/>• File I/O errors<br/>• Parsing external data<br/>• Third-party API calls]
+
+    Start --> Question
+    Question -->|Yes| Expected
+    Question -->|No| Unexpected
+    Unexpected -->|No| LetCrash
+    Unexpected -->|Maybe| Handle
+
+    Expected -.-> Examples1
+    LetCrash -.-> Examples2
+    Handle -.-> Examples3
+
+    style Start fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Question fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Expected fill:#029E73,stroke:#01593F,color:#FFF
+    style Unexpected fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style LetCrash fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style Handle fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Examples1 fill:#029E73,stroke:#01593F,color:#FFF
+    style Examples2 fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style Examples3 fill:#0173B2,stroke:#023B5A,color:#FFF
+```
+
 ## Supervision Trees
 
 ### Basic Supervisor
@@ -172,6 +240,40 @@ end
 ```
 
 ### Handling Worker Crashes
+
+The following diagram shows the supervision recovery flow:
+
+```mermaid
+sequenceDiagram
+    participant C as Caller
+    participant W as Worker Process
+    participant S as Supervisor
+
+    Note over W: Worker processing<br/>donation payment
+
+    C->>W: process_payment(donation)
+    W->>W: Call external API
+    W->>W: Crashes ❌<br/>(API timeout)
+    W->>S: EXIT signal
+    Note over W: Worker terminated
+
+    S->>S: Detect crash<br/>Check restart strategy
+    S->>S: Determine:<br/>:permanent restart
+    S->>W: start_link()
+    W->>W: init(:ok)<br/>Clean state ✅
+    W-->>S: {:ok, pid}
+
+    Note over W: New worker ready
+
+    C->>C: Receive error<br/>{:error, :process_crashed}
+    C->>W: Retry: process_payment(donation)
+    W->>W: Process successfully
+    W-->>C: {:ok, result} ✅
+
+    style C fill:#0173B2,stroke:#023B5A,color:#FFF
+    style W fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style S fill:#DE8F05,stroke:#8A5903,color:#FFF
+```
 
 ```elixir
 defmodule FinancialDomain.Donations.PaymentProcessor do
@@ -231,6 +333,40 @@ end
 ```
 
 ### Circuit Breaker Pattern
+
+The following diagram shows the circuit breaker state machine:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Closed
+
+    Closed --> Open: Failures exceed threshold<br/>(5 failures)
+    Open --> HalfOpen: Timeout elapsed<br/>(60 seconds)
+    HalfOpen --> Closed: Success ✅<br/>(Service recovered)
+    HalfOpen --> Open: Failure ❌<br/>(Service still down)
+
+    note right of Closed
+        State: Healthy
+        Requests: Pass through
+        Failures: 0-4
+    end note
+
+    note right of Open
+        State: Failing
+        Requests: Rejected immediately
+        Prevents: Cascading failures
+    end note
+
+    note right of HalfOpen
+        State: Testing
+        Requests: Allow one test request
+        Decision: Close or reopen
+    end note
+
+    style Closed fill:#029E73,stroke:#01593F,color:#FFF
+    style Open fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style HalfOpen fill:#DE8F05,stroke:#8A5903,color:#FFF
+```
 
 ```elixir
 defmodule FinancialDomain.ExternalServices.CircuitBreaker do

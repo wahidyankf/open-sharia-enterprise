@@ -31,6 +31,66 @@ Elixir provides two mechanisms for polymorphism: **protocols** for ad-hoc polymo
 
 Protocols enable **ad-hoc polymorphism** by allowing you to extend existing types with new functionality without modifying their original definitions. This is similar to interfaces in other languages but more flexible.
 
+The following diagram illustrates how protocol dispatch works at runtime:
+
+```mermaid
+graph TD
+    Call[Protocol Call<br/>Auditable.audit_trail entity]
+    TypeDetect[Runtime Type Detection]
+
+    Donation[Donation Implementation<br/>defimpl Auditable, for: Donation]
+    Zakat[ZakatPayment Implementation<br/>defimpl Auditable, for: ZakatPayment]
+    Campaign[Campaign Implementation<br/>defimpl Auditable, for: Campaign]
+    Fallback[Fallback: Any<br/>defimpl Auditable, for: Any]
+
+    Result[Execute Implementation<br/>Return Result]
+
+    Call --> TypeDetect
+    TypeDetect -->|%Donation{}| Donation
+    TypeDetect -->|%ZakatPayment{}| Zakat
+    TypeDetect -->|%Campaign{}| Campaign
+    TypeDetect -->|Other types| Fallback
+
+    Donation --> Result
+    Zakat --> Result
+    Campaign --> Result
+    Fallback --> Result
+
+    style Call fill:#0173B2,stroke:#023B5A,color:#FFF
+    style TypeDetect fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Donation fill:#029E73,stroke:#01593F,color:#FFF
+    style Zakat fill:#029E73,stroke:#01593F,color:#FFF
+    style Campaign fill:#029E73,stroke:#01593F,color:#FFF
+    style Fallback fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Result fill:#0173B2,stroke:#023B5A,color:#FFF
+```
+
+The following sequence diagram shows the complete protocol implementation flow:
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Protocol as Auditable Protocol
+    participant TypeCheck as Type Detection
+    participant Impl as Donation Implementation
+
+    Client->>Protocol: audit_trail(donation)
+    Protocol->>TypeCheck: Determine type
+    TypeCheck->>TypeCheck: Check struct type<br/>%Donation{}
+    TypeCheck->>Impl: Route to Donation impl
+    Impl->>Impl: Execute audit_trail/1
+    Impl->>Impl: Access struct fields<br/>format audit string
+    Impl-->>Protocol: Return audit trail string
+    Protocol-->>Client: Return result
+
+    Note over Protocol,Impl: Polymorphic dispatch based<br/>on runtime type
+
+    style Client fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Protocol fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style TypeCheck fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Impl fill:#029E73,stroke:#01593F,color:#FFF
+```
+
 ### Defining Protocols
 
 A protocol defines a contract of functions that can be implemented for different data types:
@@ -309,6 +369,61 @@ FinancialDomain.Auditable.__protocol__(:consolidated?)  # => false
 ## Behaviours
 
 Behaviours define **compile-time contracts** that modules must implement. They're similar to interfaces or abstract classes in object-oriented languages.
+
+The following diagram shows the behaviour callback structure:
+
+```mermaid
+graph TD
+    Behaviour[PaymentGateway Behaviour<br/>@callback Definitions]
+
+    CB1[@callback init_payment<br/>amount, metadata<br/>→ {:ok, tx_id} or {:error, reason}]
+    CB2[@callback process_payment<br/>transaction_id<br/>→ {:ok, result} or {:error, reason}]
+    CB3[@callback refund_payment<br/>transaction_id, amount<br/>→ {:ok, refund_id} or {:error, reason}]
+    CB4[@callback get_status<br/>transaction_id<br/>→ {:ok, status} or {:error, reason}]
+    CB5[@callback validate_credentials<br/>credentials<br/>→ :ok or {:error, reason}]
+
+    Impl1[Stripe Implementation<br/>@behaviour PaymentGateway<br/>@impl true]
+    Impl2[Midtrans Implementation<br/>@behaviour PaymentGateway<br/>@impl true]
+    Impl3[Custom Gateway<br/>@behaviour PaymentGateway<br/>@impl true]
+
+    Behaviour --> CB1
+    Behaviour --> CB2
+    Behaviour --> CB3
+    Behaviour --> CB4
+    Behaviour --> CB5
+
+    CB1 -.->|must implement| Impl1
+    CB2 -.->|must implement| Impl1
+    CB3 -.->|must implement| Impl1
+    CB4 -.->|must implement| Impl1
+    CB5 -.->|must implement| Impl1
+
+    CB1 -.->|must implement| Impl2
+    CB2 -.->|must implement| Impl2
+    CB3 -.->|must implement| Impl2
+    CB4 -.->|must implement| Impl2
+    CB5 -.->|must implement| Impl2
+
+    CB1 -.->|must implement| Impl3
+    CB2 -.->|must implement| Impl3
+    CB3 -.->|must implement| Impl3
+    CB4 -.->|must implement| Impl3
+    CB5 -.->|must implement| Impl3
+
+    Note1[Compile-time verification:<br/>Missing callbacks = error ❌]
+    Behaviour -.-> Note1
+
+    style Behaviour fill:#0173B2,stroke:#023B5A,color:#FFF
+    style CB1 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style CB2 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style CB3 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style CB4 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style CB5 fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Impl1 fill:#029E73,stroke:#01593F,color:#FFF
+    style Impl2 fill:#029E73,stroke:#01593F,color:#FFF
+    style Impl3 fill:#029E73,stroke:#01593F,color:#FFF
+    style Note1 fill:#CC78BC,stroke:#8E5484,color:#FFF
+```
 
 ### Defining Behaviours
 

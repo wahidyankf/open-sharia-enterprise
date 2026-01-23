@@ -71,6 +71,66 @@ end
 # Total: ~2.7GB for 1 million processes
 ```
 
+The following diagram illustrates how BEAM's preemptive scheduler ensures fair process execution using reduction counting:
+
+```mermaid
+graph LR
+    %% Scheduler
+    Scheduler["BEAM Scheduler<br/>(1 per CPU core)"]
+
+    %% Run Queue
+    RunQueue["Run Queue<br/>(Processes waiting)"]
+
+    %% Active Process
+    Active["Active Process<br/>Reductions: 0/2000"]
+
+    %% Execution phases
+    Exec1["Execute instructions<br/>Reductions: 500"]
+    Exec2["Execute more<br/>Reductions: 1000"]
+    Exec3["Execute more<br/>Reductions: 1500"]
+    Exec4["Execute more<br/>Reductions: 2000"]
+
+    %% Preemption
+    Preempt["Reductions = 2000<br/>⚠️ Time slice exhausted"]
+
+    %% Back to queue
+    BackToQueue["Process → Back of queue<br/>Reductions reset to 0"]
+
+    %% Next process
+    NextProcess["Next process gets CPU<br/>Fair scheduling"]
+
+    %% Flow
+    RunQueue --> Scheduler
+    Scheduler -->|"Dequeue<br/>next process"| Active
+    Active --> Exec1
+    Exec1 --> Exec2
+    Exec2 --> Exec3
+    Exec3 --> Exec4
+    Exec4 --> Preempt
+    Preempt --> BackToQueue
+    BackToQueue --> RunQueue
+
+    Scheduler -.->|"Select next"| NextProcess
+    NextProcess -.-> RunQueue
+
+    %% Benefits
+    Benefits["✅ No starvation<br/>✅ Fair CPU sharing<br/>✅ Responsive system<br/>⚠️ Context switch every ~2000 reductions"]
+    Preempt -.-> Benefits
+
+    %% Styling
+    style Scheduler fill:#0173B2,stroke:#023B5A,color:#FFF
+    style RunQueue fill:#CA9161,stroke:#7A5739,color:#FFF
+    style Active fill:#029E73,stroke:#01593F,color:#FFF
+    style Exec1 fill:#029E73,stroke:#01593F,color:#FFF
+    style Exec2 fill:#029E73,stroke:#01593F,color:#FFF
+    style Exec3 fill:#029E73,stroke:#01593F,color:#FFF
+    style Exec4 fill:#DE8F05,stroke:#8A5903,color:#000
+    style Preempt fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style BackToQueue fill:#CA9161,stroke:#7A5739,color:#FFF
+    style NextProcess fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Benefits fill:#029E73,stroke:#01593F,color:#FFF
+```
+
 ### Performance Trade-offs
 
 BEAM VM trade-offs:
@@ -192,6 +252,121 @@ mix run -e "FinancialPlatform.Benchmarks.compare_money_operations()"
 # Float multiplication      100.00 M     0.0100 μs   ±100.00%
 # Decimal multiplication      5.00 M     0.2000 μs    ±50.00%
 # Money library               2.50 M     0.4000 μs    ±40.00%
+```
+
+The following diagram shows the workflow for identifying and fixing performance bottlenecks using BEAM's profiling tools:
+
+```mermaid
+graph TD
+    %% Symptoms
+    Symptoms["Performance Symptoms"]
+    SlowResponse["Slow response times"]
+    HighMemory["High memory usage"]
+    HighCPU["High CPU usage"]
+    MessageQueue["Large message queues"]
+
+    Symptoms --> SlowResponse
+    Symptoms --> HighMemory
+    Symptoms --> HighCPU
+    Symptoms --> MessageQueue
+
+    %% Tool Selection
+    ToolSelect{"Select Profiling Tool"}
+
+    SlowResponse --> ToolSelect
+    HighCPU --> ToolSelect
+
+    %% Profiling Tools
+    Observer["Observer<br/>Real-time monitoring<br/>• System overview<br/>• Process inspector<br/>• Memory allocators"]
+    Fprof["fprof<br/>Detailed profiling<br/>• Per-function time<br/>• Call tree analysis<br/>⚠️ High overhead"]
+    Eprof["eprof<br/>Time profiling<br/>• Time per function<br/>• Less overhead<br/>✅ Production-safe"]
+    Benchee["Benchee<br/>Microbenchmarks<br/>• Compare alternatives<br/>• Statistical analysis<br/>• Memory profiling"]
+
+    ToolSelect -->|"System overview"| Observer
+    ToolSelect -->|"Detailed analysis"| Fprof
+    ToolSelect -->|"Production use"| Eprof
+    ToolSelect -->|"Compare options"| Benchee
+
+    HighMemory --> Observer
+    MessageQueue --> Observer
+
+    %% Analysis
+    Analysis["Analysis Phase"]
+    Observer --> Analysis
+    Fprof --> Analysis
+    Eprof --> Analysis
+    Benchee --> Analysis
+
+    %% Findings
+    Findings["Common Findings"]
+    HotSpot["Hot spot function<br/>consuming 80% CPU"]
+    N1Query["N+1 query pattern<br/>in database access"]
+    MemLeak["Process leak<br/>unbounded spawning"]
+    IneffBinary["Inefficient binary<br/>concatenation"]
+
+    Analysis --> Findings
+    Findings --> HotSpot
+    Findings --> N1Query
+    Findings --> MemLeak
+    Findings --> IneffBinary
+
+    %% Solutions
+    Solutions["Apply Optimizations"]
+    OptimizeAlgo["Optimize algorithm<br/>use better data structure"]
+    PreloadDB["Preload associations<br/>avoid N+1 queries"]
+    BoundConcurrency["Bound concurrency<br/>Task.async_stream"]
+    UseIOList["Use iolists<br/>avoid intermediate binaries"]
+
+    HotSpot --> OptimizeAlgo
+    N1Query --> PreloadDB
+    MemLeak --> BoundConcurrency
+    IneffBinary --> UseIOList
+
+    %% Verify
+    Verify["Verify Improvement<br/>Re-benchmark"]
+    OptimizeAlgo --> Verify
+    PreloadDB --> Verify
+    BoundConcurrency --> Verify
+    UseIOList --> Verify
+
+    Success["✅ Performance Fixed<br/>Document findings"]
+    NotFixed["Still slow?<br/>Profile again"]
+
+    Verify --> Success
+    Verify --> NotFixed
+    NotFixed -.-> ToolSelect
+
+    %% Styling
+    style Symptoms fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style SlowResponse fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style HighMemory fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style HighCPU fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style MessageQueue fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+
+    style ToolSelect fill:#CA9161,stroke:#7A5739,color:#FFF
+
+    style Observer fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Fprof fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Eprof fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Benchee fill:#0173B2,stroke:#023B5A,color:#FFF
+
+    style Analysis fill:#CA9161,stroke:#7A5739,color:#FFF
+    style Findings fill:#DE8F05,stroke:#8A5903,color:#000
+
+    style HotSpot fill:#DE8F05,stroke:#8A5903,color:#000
+    style N1Query fill:#DE8F05,stroke:#8A5903,color:#000
+    style MemLeak fill:#DE8F05,stroke:#8A5903,color:#000
+    style IneffBinary fill:#DE8F05,stroke:#8A5903,color:#000
+
+    style Solutions fill:#029E73,stroke:#01593F,color:#FFF
+    style OptimizeAlgo fill:#029E73,stroke:#01593F,color:#FFF
+    style PreloadDB fill:#029E73,stroke:#01593F,color:#FFF
+    style BoundConcurrency fill:#029E73,stroke:#01593F,color:#FFF
+    style UseIOList fill:#029E73,stroke:#01593F,color:#FFF
+
+    style Verify fill:#CA9161,stroke:#7A5739,color:#FFF
+    style Success fill:#029E73,stroke:#01593F,color:#FFF
+    style NotFixed fill:#CC78BC,stroke:#8B5A8A,color:#FFF
 ```
 
 ## Common Optimizations
@@ -321,6 +496,67 @@ Benchee.run(%{
 # ETS lookup:      1,000,000 ops/sec (~1 μs)
 # Database query:       1,000 ops/sec (~1 ms)
 # 1000x faster!
+```
+
+The following diagram compares performance characteristics of ETS versus GenServer for different access patterns:
+
+```mermaid
+graph TD
+    subgraph Scenario["Access Pattern Comparison"]
+        ReadHeavy["Read-Heavy Workload<br/>90% reads, 10% writes"]
+        WriteHeavy["Write-Heavy Workload<br/>10% reads, 90% writes"]
+        Balanced["Balanced Workload<br/>50% reads, 50% writes"]
+    end
+
+    subgraph ETS["ETS Table<br/>(read_concurrency: true)"]
+        ETSRead["Concurrent Reads<br/>✅ 1M ops/sec<br/>✅ No bottleneck<br/>✅ All cores used"]
+        ETSWrite["Concurrent Writes<br/>✅ 100K ops/sec<br/>⚠️ Lock contention<br/>⚠️ Some serialization"]
+        ETSChar["Characteristics:<br/>• Direct memory access<br/>• Lock-free reads<br/>• Write locks per table"]
+    end
+
+    subgraph GenServer["GenServer Cache<br/>(Single process)"]
+        GSRead["Sequential Reads<br/>⚠️ 50K ops/sec<br/>❌ Single bottleneck<br/>❌ One core only"]
+        GSWrite["Sequential Writes<br/>⚠️ 50K ops/sec<br/>✅ Serialized access<br/>✅ Consistency guaranteed"]
+        GSChar["Characteristics:<br/>• Message passing<br/>• Sequential execution<br/>• Strong consistency"]
+    end
+
+    %% Recommendations
+    ReadHeavy -->|"Best choice"| ETS
+    WriteHeavy -->|"Consider"| GenServer
+    Balanced -->|"Best choice"| ETS
+
+    ETS --> ETSRead
+    ETS --> ETSWrite
+    ETS -.-> ETSChar
+
+    GenServer --> GSRead
+    GenServer --> GSWrite
+    GenServer -.-> GSChar
+
+    %% Use cases
+    UseCase1["Use ETS when:<br/>• High read volume<br/>• Multiple readers<br/>• Performance critical<br/>• Can handle eventual consistency"]
+    UseCase2["Use GenServer when:<br/>• Complex state logic<br/>• Strong consistency needed<br/>• Moderate load<br/>• State transformations"]
+
+    ETS -.-> UseCase1
+    GenServer -.-> UseCase2
+
+    %% Styling
+    style ReadHeavy fill:#029E73,stroke:#01593F,color:#FFF
+    style WriteHeavy fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style Balanced fill:#CA9161,stroke:#7A5739,color:#FFF
+
+    style ETS fill:#029E73,stroke:#01593F,color:#FFF
+    style ETSRead fill:#029E73,stroke:#01593F,color:#FFF
+    style ETSWrite fill:#DE8F05,stroke:#8A5903,color:#000
+    style ETSChar fill:#029E73,stroke:#01593F,color:#FFF
+
+    style GenServer fill:#0173B2,stroke:#023B5A,color:#FFF
+    style GSRead fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style GSWrite fill:#0173B2,stroke:#023B5A,color:#FFF
+    style GSChar fill:#0173B2,stroke:#023B5A,color:#FFF
+
+    style UseCase1 fill:#029E73,stroke:#01593F,color:#FFF
+    style UseCase2 fill:#0173B2,stroke:#023B5A,color:#FFF
 ```
 
 ### Process Pooling

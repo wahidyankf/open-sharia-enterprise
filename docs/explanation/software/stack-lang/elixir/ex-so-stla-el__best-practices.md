@@ -660,6 +660,62 @@ defmodule FinancialDomain.Zakat.Bad do
 end
 ```
 
+The following diagram illustrates the error kernel pattern, which separates pure business logic (core) from error handling and side effects (boundary):
+
+```mermaid
+graph TD
+    %% External Layer
+    External["External World<br/>(Controllers, LiveViews, APIs)"]
+
+    %% Boundary Layer (Error Handling)
+    Boundary["Boundary Layer<br/>(Context Modules)<br/>• Handle errors<br/>• Coordinate workflows<br/>• Manage transactions<br/>• Return tagged tuples"]
+
+    %% Core Layer (Pure Business Logic)
+    Core["Error Kernel (Core)<br/>(Pure Functions)<br/>• Business logic<br/>• Calculations<br/>• Validations<br/>• No side effects"]
+
+    %% Data Layer
+    Data["Data Layer<br/>(Ecto Schemas, Repo)<br/>• Database operations<br/>• Data persistence<br/>• Queries"]
+
+    %% Flow for Success Path
+    External -->|"Request"| Boundary
+    Boundary -->|"Validate & delegate"| Core
+    Core -->|"Pure result"| Boundary
+    Boundary -->|"Persist if needed"| Data
+    Data -->|"Success"| Boundary
+    Boundary -->|"{:ok, result}"| External
+
+    %% Flow for Error Path
+    CoreError["Validation fails<br/>(returns error)"]
+    DataError["DB constraint fails<br/>(raises error)"]
+
+    Core -.->|"Invalid data"| CoreError
+    Data -.->|"Exception"| DataError
+
+    CoreError -.->|"Propagate error"| Boundary
+    DataError -.->|"Catch & convert"| Boundary
+    Boundary -.->|"{:error, reason}"| External
+
+    %% Example annotations
+    Ex1["Example: Zakat Calculator<br/>• Core: calculate_zakat/2 (pure)<br/>• Boundary: Zakat context<br/>• External: ZakatController"]
+
+    Ex2["Benefits:<br/>✅ Easy to test (core is pure)<br/>✅ Clear error boundaries<br/>✅ Composable functions<br/>✅ Predictable error handling"]
+
+    Core -.-> Ex1
+    Boundary -.-> Ex2
+
+    %% Styling
+    style External fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Boundary fill:#029E73,stroke:#01593F,color:#FFF
+    style Core fill:#CA9161,stroke:#7A5739,color:#FFF
+    style Data fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+
+    style CoreError fill:#DE8F05,stroke:#8A5903,color:#000
+    style DataError fill:#DE8F05,stroke:#8A5903,color:#000
+
+    style Ex1 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Ex2 fill:#029E73,stroke:#01593F,color:#FFF
+```
+
 ## Ecto Changeset Patterns
 
 ### Basic Changeset
@@ -1121,6 +1177,68 @@ financial_domain/
 │   └── prod.exs
 │
 └── mix.exs
+```
+
+The following diagram illustrates the layered architecture pattern used in well-organized Elixir applications:
+
+```mermaid
+graph TD
+    %% Layers
+    Web["Web Layer<br/>(Phoenix)<br/>Controllers, LiveViews, Channels<br/>• HTTP request handling<br/>• Parameter parsing<br/>• Response formatting<br/>• No business logic"]
+
+    Context["Context Layer<br/>(Phoenix Contexts)<br/>Donations, Zakat, Accounts<br/>• Public API boundary<br/>• Workflow coordination<br/>• Transaction management<br/>• Cross-domain operations"]
+
+    Domain["Domain Layer<br/>(Business Logic)<br/>Calculators, Validators, Services<br/>• Pure business logic<br/>• Domain rules<br/>• Calculations<br/>• Algorithms"]
+
+    Data["Data Layer<br/>(Ecto)<br/>Schemas, Repo, Migrations<br/>• Data persistence<br/>• Database queries<br/>• Schema definitions<br/>• Validations (changesets)"]
+
+    %% Flow
+    Web -->|"Calls context API"| Context
+    Context -->|"Uses domain logic"| Domain
+    Context -->|"Persists data"| Data
+    Domain -->|"Returns results"| Context
+    Data -->|"Returns records"| Context
+    Context -->|"Returns tuples"| Web
+
+    %% Rules
+    Rules["Architecture Rules:<br/>❌ Web cannot call Data directly<br/>❌ Domain cannot depend on Web<br/>❌ Context is the only public API<br/>✅ Dependencies flow downward<br/>✅ Each layer has single responsibility"]
+
+    Context -.-> Rules
+
+    %% Example flow
+    ExampleFlow["Example: Create Donation Flow"]
+    Step1["1. DonationController.create/2<br/>(Web Layer)"]
+    Step2["2. Donations.create_donation/1<br/>(Context Layer)"]
+    Step3["3. Donation.changeset/2<br/>(Data Layer)"]
+    Step4["4. ValidationRules.validate_amount/1<br/>(Domain Layer)"]
+    Step5["5. Repo.insert/1<br/>(Data Layer)"]
+
+    ExampleFlow --> Step1
+    Step1 --> Step2
+    Step2 --> Step3
+    Step3 --> Step4
+    Step4 --> Step5
+
+    %% Benefits
+    Benefits["Benefits:<br/>✅ Clear separation of concerns<br/>✅ Testable layers independently<br/>✅ Easy to locate code<br/>✅ Supports domain-driven design<br/>✅ Scales with team size"]
+
+    ExampleFlow -.-> Benefits
+
+    %% Styling
+    style Web fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Context fill:#029E73,stroke:#01593F,color:#FFF
+    style Domain fill:#CA9161,stroke:#7A5739,color:#FFF
+    style Data fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+
+    style Rules fill:#DE8F05,stroke:#8A5903,color:#000
+    style Benefits fill:#029E73,stroke:#01593F,color:#FFF
+
+    style ExampleFlow fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Step1 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Step2 fill:#029E73,stroke:#01593F,color:#FFF
+    style Step3 fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style Step4 fill:#CA9161,stroke:#7A5739,color:#FFF
+    style Step5 fill:#CC78BC,stroke:#8B5A8A,color:#FFF
 ```
 
 ### Public API Facade

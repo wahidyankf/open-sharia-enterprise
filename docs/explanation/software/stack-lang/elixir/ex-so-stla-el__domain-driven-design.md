@@ -153,9 +153,128 @@ financial_platform/
 └── mix.exs
 ```
 
+The following diagram illustrates the bounded context architecture:
+
+```mermaid
+graph TD
+    App[Financial Platform<br/>Umbrella Application]
+
+    subgraph DonationBC["Donation Bounded Context"]
+        DonD[Donation Domain]
+        DonE[Donation Entity]
+        DonR[Donation Repository]
+        DonS[Donation Service]
+    end
+
+    subgraph ZakatBC["Zakat Bounded Context"]
+        ZakD[Zakat Domain]
+        ZakC[Calculation Entity]
+        ZakN[Nisab Value Object]
+        ZakS[Zakat Service]
+    end
+
+    subgraph PaymentBC["Payment Bounded Context"]
+        PayD[Payment Domain]
+        PayT[Transaction Entity]
+        PayG[Gateway Service]
+        PayR[Payment Repository]
+    end
+
+    subgraph WebLayer["Application Layer (Phoenix)"]
+        WebC[Controllers]
+        WebV[Views]
+        WebL[LiveViews]
+    end
+
+    App --> DonationBC
+    App --> ZakatBC
+    App --> PaymentBC
+    App --> WebLayer
+
+    WebLayer -.->|uses API| DonD
+    WebLayer -.->|uses API| ZakD
+    WebLayer -.->|uses API| PayD
+
+    DonD --> DonE
+    DonD --> DonR
+    DonD --> DonS
+
+    ZakD --> ZakC
+    ZakD --> ZakN
+    ZakD --> ZakS
+
+    PayD --> PayT
+    PayD --> PayG
+    PayD --> PayR
+
+    Note1[Each context:<br/>• Own database tables<br/>• Own domain logic<br/>• Clear API boundaries]
+
+    App -.-> Note1
+
+    style App fill:#0173B2,stroke:#023B5A,color:#FFF
+    style DonD fill:#029E73,stroke:#01593F,color:#FFF
+    style ZakD fill:#029E73,stroke:#01593F,color:#FFF
+    style PayD fill:#029E73,stroke:#01593F,color:#FFF
+    style WebLayer fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Note1 fill:#0173B2,stroke:#023B5A,color:#FFF
+```
+
 ### Context Mapping
 
-Define relationships between bounded contexts:
+Define relationships between bounded contexts.
+
+The following diagram shows common context mapping patterns:
+
+```mermaid
+graph TD
+    subgraph SharedKernel["Shared Kernel Pattern"]
+        SK1[Donation Context]
+        SK2[Zakat Context]
+        SKTypes[Shared Types:<br/>Money, DonorId]
+        SK1 -.->|shares| SKTypes
+        SK2 -.->|shares| SKTypes
+    end
+
+    subgraph ACL["Anti-Corruption Layer (ACL)"]
+        ACL1[Donation Context]
+        ACLLayer[Translation Layer<br/>PaymentACL]
+        ACL2[Payment Context<br/>External]
+        ACL1 -->|translates via| ACLLayer
+        ACLLayer -->|protects from| ACL2
+    end
+
+    subgraph PublishedLang["Published Language"]
+        PL1[Donation Context]
+        PLEvents[Domain Events<br/>JSON API]
+        PL2[Analytics Context]
+        PL3[Notification Context]
+        PL1 -->|publishes| PLEvents
+        PLEvents -.->|consumes| PL2
+        PLEvents -.->|consumes| PL3
+    end
+
+    subgraph CustomerSupplier["Customer-Supplier"]
+        CS1[Campaign Context<br/>Upstream]
+        CSAPI[Well-defined API]
+        CS2[Donation Context<br/>Downstream]
+        CS1 -->|provides| CSAPI
+        CSAPI -->|serves| CS2
+    end
+
+    style SK1 fill:#029E73,stroke:#01593F,color:#FFF
+    style SK2 fill:#029E73,stroke:#01593F,color:#FFF
+    style SKTypes fill:#0173B2,stroke:#023B5A,color:#FFF
+    style ACL1 fill:#029E73,stroke:#01593F,color:#FFF
+    style ACLLayer fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style ACL2 fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style PL1 fill:#029E73,stroke:#01593F,color:#FFF
+    style PLEvents fill:#0173B2,stroke:#023B5A,color:#FFF
+    style PL2 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style PL3 fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style CS1 fill:#029E73,stroke:#01593F,color:#FFF
+    style CSAPI fill:#0173B2,stroke:#023B5A,color:#FFF
+    style CS2 fill:#029E73,stroke:#01593F,color:#FFF
+```
 
 ```elixir
 # Shared Kernel - types shared between contexts
@@ -407,6 +526,48 @@ end
 ```
 
 ### Aggregates with Ecto
+
+Aggregates are consistency boundaries with an aggregate root.
+
+The following diagram shows the aggregate lifecycle with Ecto:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Draft: create_campaign()
+    Draft --> Active: activate()
+    Active --> Paused: pause()
+    Paused --> Active: resume()
+    Active --> Completed: reach_goal() or end_date
+    Draft --> Cancelled: cancel()
+    Active --> Cancelled: cancel()
+    Paused --> Cancelled: cancel()
+    Completed --> [*]
+    Cancelled --> [*]
+
+    note right of Draft
+        Campaign Aggregate Root
+        Controls all donations
+        Maintains invariants
+    end note
+
+    note right of Active
+        Accepts donations
+        Tracks progress
+        Publishes events
+    end note
+
+    note right of Completed
+        Goal reached or ended
+        No more donations
+        Generate reports
+    end note
+
+    style Draft fill:#CA9161,stroke:#7D5A3D,color:#FFF
+    style Active fill:#029E73,stroke:#01593F,color:#FFF
+    style Paused fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Completed fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Cancelled fill:#CC78BC,stroke:#8E5484,color:#FFF
+```
 
 Aggregates are consistency boundaries with an aggregate root:
 
@@ -684,6 +845,46 @@ end
 ```
 
 ## Domain Events
+
+The following diagram illustrates event-driven communication between bounded contexts:
+
+```mermaid
+sequenceDiagram
+    participant Don as Donation Context
+    participant PubSub as Event Bus<br/>(Phoenix.PubSub)
+    participant Not as Notification Context
+    participant Ana as Analytics Context
+    participant Camp as Campaign Context
+
+    Don->>Don: process_donation(donation)
+    Don->>Don: validate & persist
+    Don->>PubSub: publish(DonationReceived event)
+
+    Note over PubSub: Broadcast to subscribers
+
+    PubSub-->>Not: DonationReceived
+    PubSub-->>Ana: DonationReceived
+    PubSub-->>Camp: DonationReceived
+
+    par Process in parallel
+        Not->>Not: send_receipt(donor)
+        Not->>Not: send_thank_you_email
+    and
+        Ana->>Ana: record_metric(donation)
+        Ana->>Ana: update_dashboard
+    and
+        Camp->>Camp: update_campaign_total
+        Camp->>Camp: check_goal_reached
+    end
+
+    Note over Don,Camp: Loose coupling via events<br/>Each context reacts independently
+
+    style Don fill:#029E73,stroke:#01593F,color:#FFF
+    style PubSub fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Not fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Ana fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Camp fill:#DE8F05,stroke:#8A5903,color:#FFF
+```
 
 ### Event Publishing
 
@@ -1102,7 +1303,7 @@ end
 
 Complete DDD example:
 
-```elixir
+````elixir
 # See examples in previous sections, including:
 # - Campaign aggregate with donations
 # - Money value object
@@ -1111,59 +1312,106 @@ Complete DDD example:
 # - Context boundaries with ACL
 
 # Additional: Command and Query segregation (CQRS)
-defmodule DonationContext.Commands do
-  @moduledoc """
-  Write operations (commands) for donation context
-  """
 
-  alias DonationContext.{Donation, DonationRepository}
+The following diagram illustrates the CQRS (Command Query Responsibility Segregation) pattern:
 
-  defmodule CreateDonation do
-    @enforce_keys [:campaign_id, :amount, :donor_email]
-    defstruct [:campaign_id, :amount, :donor_email, :donor_name, :payment_method]
-  end
+```mermaid
+graph LR
+    subgraph CommandSide["Command Side (Write Model)"]
+        UI1[User Interface]
+        Cmd[Commands<br/>CreateDonation<br/>UpdateCampaign]
+        Domain[Domain Model<br/>Business Logic]
+        WriteDB[(Write DB<br/>PostgreSQL)]
 
-  def handle(%CreateDonation{} = command) do
-    with :ok <- validate_command(command),
-         {:ok, donation} <- build_donation(command),
-         {:ok, saved} <- DonationRepository.save(donation) do
-      publish_event(:donation_created, saved)
-      {:ok, saved}
+        UI1 -->|create/update| Cmd
+        Cmd -->|validate & execute| Domain
+        Domain -->|persist| WriteDB
     end
-  end
 
-  defp validate_command(_command), do: :ok
-  defp build_donation(_command), do: {:ok, %Donation{}}
-  defp publish_event(_type, _data), do: :ok
+    subgraph QuerySide["Query Side (Read Model)"]
+        UI2[User Interface]
+        Query[Queries<br/>List Donations<br/>Statistics]
+        ReadDB[(Read DB<br/>Optimized Views)]
+
+        UI2 -->|fetch data| Query
+        Query -->|fast reads| ReadDB
+    end
+
+    Events[Domain Events<br/>DonationCreated<br/>CampaignUpdated]
+
+    Domain -.->|publishes| Events
+    Events -.->|updates| ReadDB
+
+    Note1[Write Model:<br/>• Enforces business rules<br/>• Validates invariants<br/>• Normalized data]
+    Note2[Read Model:<br/>• Denormalized for speed<br/>• Pre-computed aggregates<br/>• Multiple projections]
+
+    CommandSide -.-> Note1
+    QuerySide -.-> Note2
+
+    style Cmd fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Domain fill:#029E73,stroke:#01593F,color:#FFF
+    style WriteDB fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Query fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style ReadDB fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style Events fill:#CC78BC,stroke:#8E5484,color:#FFF
+    style Note1 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Note2 fill:#DE8F05,stroke:#8A5903,color:#FFF
+````
+
+defmodule DonationContext.Commands do
+@moduledoc """
+Write operations (commands) for donation context
+"""
+
+alias DonationContext.{Donation, DonationRepository}
+
+defmodule CreateDonation do
+@enforce_keys [:campaign_id, :amount, :donor_email]
+defstruct [:campaign_id, :amount, :donor_email, :donor_name, :payment_method]
+end
+
+def handle(%CreateDonation{} = command) do
+with :ok <- validate_command(command),
+{:ok, donation} <- build_donation(command),
+{:ok, saved} <- DonationRepository.save(donation) do
+publish_event(:donation_created, saved)
+{:ok, saved}
+end
+end
+
+defp validate_command(\_command), do: :ok
+defp build_donation(\_command), do: {:ok, %Donation{}}
+defp publish_event(\_type, \_data), do: :ok
 end
 
 defmodule DonationContext.Queries do
-  @moduledoc """
-  Read operations (queries) for donation context
-  """
+@moduledoc """
+Read operations (queries) for donation context
+"""
 
-  import Ecto.Query
-  alias DonationContext.{Donation, Repo}
+import Ecto.Query
+alias DonationContext.{Donation, Repo}
 
-  def list_campaign_donations(campaign_id) do
-    Donation
-    |> where([d], d.campaign_id == ^campaign_id)
-    |> order_by([d], desc: d.inserted_at)
-    |> Repo.all()
-  end
-
-  def donation_statistics(campaign_id) do
-    Donation
-    |> where([d], d.campaign_id == ^campaign_id and d.status == :completed)
-    |> select([d], %{
-      total: sum(d.amount),
-      count: count(d.id),
-      average: avg(d.amount)
-    })
-    |> Repo.one()
-  end
+def list_campaign_donations(campaign_id) do
+Donation
+|> where([d], d.campaign_id == ^campaign_id)
+|> order_by([d], desc: d.inserted_at)
+|> Repo.all()
 end
-```
+
+def donation_statistics(campaign_id) do
+Donation
+|> where([d], d.campaign_id == ^campaign_id and d.status == :completed)
+|> select([d], %{
+total: sum(d.amount),
+count: count(d.id),
+average: avg(d.amount)
+})
+|> Repo.one()
+end
+end
+
+````
 
 ## DDD Best Practices
 
@@ -1205,7 +1453,7 @@ defmodule Donation do
     {:error, "Cannot approve donation with status #{status}"}
   end
 end
-```
+````
 
 ### 2. Leaky Abstractions
 

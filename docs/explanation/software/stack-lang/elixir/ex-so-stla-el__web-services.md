@@ -111,24 +111,58 @@ financial_platform/
 
 ### Request Lifecycle
 
-Phoenix request flow:
+The following diagram illustrates the complete Phoenix request lifecycle, from client request to server response:
 
-```
-Client Request
-    ↓
-Endpoint (Plug pipeline)
-    ↓
-Router (route matching)
-    ↓
-Pipeline (plugs for auth, CSRF, etc.)
-    ↓
-Controller (business logic)
-    ↓
-View (rendering)
-    ↓
-Template/JSON
-    ↓
-Response
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Endpoint as Endpoint<br/>(Plug Pipeline)
+    participant Router
+    participant Pipeline as Pipeline Plugs<br/>(Auth, CSRF, etc.)
+    participant Controller
+    participant Context as Context Layer<br/>(Business Logic)
+    participant View as View/JSON
+    participant Template
+
+    Client->>Endpoint: HTTP Request<br/>(GET /api/donations)
+
+    Note over Endpoint: 1. Parse request<br/>2. Logging<br/>3. Static assets<br/>4. Session handling
+
+    Endpoint->>Router: Parsed request
+
+    Note over Router: Match route:<br/>/api/donations → DonationController.index
+
+    Router->>Pipeline: Execute pipeline
+
+    Note over Pipeline: :api pipeline:<br/>• accepts(["json"])<br/>• fetch_session<br/>• protect_from_forgery
+
+    Pipeline->>Controller: Authenticated request
+
+    Note over Controller: DonationController.index/2
+
+    Controller->>Context: Call context<br/>Donations.list_donations()
+
+    Note over Context: Business logic:<br/>• Fetch from DB<br/>• Apply filters<br/>• Transform data
+
+    Context->>Controller: {:ok, donations}
+
+    Controller->>View: Render donations<br/>render("index.json", donations)
+
+    Note over View: DonationJSON.index/1<br/>Format data structure
+
+    View->>Template: JSON response structure
+
+    Template->>Controller: Formatted response
+
+    Controller->>Endpoint: {:ok, conn}
+
+    Endpoint->>Client: HTTP Response<br/>200 OK + JSON body
+
+    %% Error path
+    Context-->>Controller: {:error, reason}
+    Controller-->>View: Fallback controller
+    View-->>Endpoint: Error response
+    Endpoint-->>Client: 4xx/5xx Error
 ```
 
 ## REST APIs
@@ -369,6 +403,90 @@ defmodule FinancialWeb.DonationController do
 end
 ```
 
+The following diagram shows how Plug pipelines process requests sequentially, with each plug transforming the connection:
+
+```mermaid
+graph LR
+    %% Initial request
+    Request["HTTP Request"]
+
+    %% Endpoint plugs
+    Logger["Plug: Logger<br/>Log request details"]
+    Static["Plug: Static<br/>Serve static assets"]
+    Session["Plug: Session<br/>Load session data"]
+    Parser["Plug: RequestID<br/>Add request ID"]
+
+    %% Router
+    Router["Router<br/>Match route"]
+
+    %% Pipeline plugs
+    Accepts["Plug: Accepts<br/>Content negotiation<br/>['json']"]
+    FetchSession["Plug: FetchSession<br/>Read session from cookie"]
+    CSRF["Plug: CSRF<br/>Validate token"]
+    Auth["Plug: RequireAuth<br/>Verify authentication"]
+
+    %% Controller
+    Controller["Controller Action<br/>Business logic"]
+
+    %% Response
+    Response["HTTP Response"]
+
+    %% Flow
+    Request --> Logger
+    Logger --> Static
+    Static --> Session
+    Session --> Parser
+    Parser --> Router
+
+    Router -->|":api pipeline"| Accepts
+    Accepts --> FetchSession
+    FetchSession --> CSRF
+    CSRF --> Auth
+
+    Auth -->|"Authorized"| Controller
+    Controller --> Response
+
+    %% Halt conditions
+    StaticHalt["Static file found<br/>→ halt()"]
+    AuthHalt["Not authenticated<br/>→ halt()"]
+
+    Static -.->|"Asset found"| StaticHalt
+    Auth -.->|"No user"| AuthHalt
+
+    StaticHalt -.-> Response
+    AuthHalt -.-> Response
+
+    %% Notes
+    Note1["Each plug receives conn<br/>and returns conn"]
+    Note2["halt() stops pipeline<br/>and returns response"]
+
+    Controller -.-> Note1
+    AuthHalt -.-> Note2
+
+    %% Styling
+    style Request fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Logger fill:#CA9161,stroke:#7A5739,color:#FFF
+    style Static fill:#CA9161,stroke:#7A5739,color:#FFF
+    style Session fill:#CA9161,stroke:#7A5739,color:#FFF
+    style Parser fill:#CA9161,stroke:#7A5739,color:#FFF
+
+    style Router fill:#029E73,stroke:#01593F,color:#FFF
+
+    style Accepts fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style FetchSession fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style CSRF fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style Auth fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+
+    style Controller fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Response fill:#029E73,stroke:#01593F,color:#FFF
+
+    style StaticHalt fill:#DE8F05,stroke:#8A5903,color:#000
+    style AuthHalt fill:#DE8F05,stroke:#8A5903,color:#000
+
+    style Note1 fill:#029E73,stroke:#01593F,color:#FFF
+    style Note2 fill:#DE8F05,stroke:#8A5903,color:#000
+```
+
 ## Phoenix LiveView
 
 ### Real-Time Interactivity
@@ -537,6 +655,67 @@ defmodule FinancialWeb.DonationLive.Show do
     Money.to_string(Money.new(amount, currency))
   end
 end
+```
+
+The following diagram illustrates how LiveView maintains state synchronization between client and server over WebSocket:
+
+```mermaid
+sequenceDiagram
+    participant Browser
+    participant LiveView as LiveView Process
+    participant Context as Context/Business Logic
+    participant PubSub as Phoenix.PubSub
+
+    Note over Browser,LiveView: 1. Initial Mount (Static HTML)
+
+    Browser->>LiveView: GET /donations<br/>(HTTP request)
+    LiveView->>LiveView: mount/3 (disconnected)
+    LiveView->>Browser: Static HTML<br/>(loading: true)
+
+    Note over Browser,LiveView: 2. WebSocket Connection
+
+    Browser->>LiveView: Connect WebSocket
+    LiveView->>LiveView: mount/3 (connected)
+    LiveView->>LiveView: handle_params/3
+
+    LiveView->>Context: Donations.get_donation(id)
+    Context->>LiveView: {:ok, donation}
+
+    LiveView->>PubSub: Subscribe("donation:#{id}")
+    LiveView->>Browser: State update (diff)<br/>{donation: data, loading: false}
+
+    Note over Browser: Render updated UI
+
+    Note over Browser,LiveView: 3. User Interaction
+
+    Browser->>LiveView: Event: "approve"<br/>(phx-click)
+    LiveView->>LiveView: handle_event("approve", ...)
+
+    LiveView->>Context: Donations.approve_donation(id)
+    Context->>Context: Update database
+    Context->>PubSub: Broadcast({:donation_updated, donation})
+    Context->>LiveView: {:ok, updated_donation}
+
+    LiveView->>Browser: State diff<br/>{donation: {status: "approved"}}
+
+    Note over Browser: Update button UI
+
+    Note over Browser,LiveView: 4. External Update (Another User)
+
+    PubSub->>LiveView: {:donation_updated, donation}
+    LiveView->>LiveView: handle_info({:donation_updated, ...})
+    LiveView->>Browser: State diff<br/>(real-time update)
+
+    Note over Browser: UI updates automatically
+
+    Note over Browser,LiveView: 5. Cleanup
+
+    Browser->>LiveView: Disconnect
+    LiveView->>LiveView: terminate/2
+    LiveView->>PubSub: Unsubscribe
+
+    %% Benefits
+    Note over Browser,LiveView: Benefits:<br/>• Only diffs sent (minimal bandwidth)<br/>• Real-time updates via PubSub<br/>• Stateful server process<br/>• No manual WebSocket code
 ```
 
 ### Forms and Events
@@ -1078,6 +1257,96 @@ function renderOnlineUsers(presences) {
   })
   console.log("Online users:", users)
 }
+```
+
+The following diagram shows how Phoenix Channels use PubSub for real-time messaging across multiple clients and nodes:
+
+```mermaid
+graph TD
+    %% Clients
+    Client1["Client 1<br/>(Browser/Mobile)"]
+    Client2["Client 2<br/>(Browser/Mobile)"]
+    Client3["Client 3<br/>(Browser/Mobile)"]
+
+    %% WebSocket Connections
+    WS1["WebSocket<br/>Connection"]
+    WS2["WebSocket<br/>Connection"]
+    WS3["WebSocket<br/>Connection"]
+
+    %% Channel Processes
+    Channel1["CampaignChannel<br/>Process (Client 1)"]
+    Channel2["CampaignChannel<br/>Process (Client 2)"]
+    Channel3["DonationChannel<br/>Process (Client 3)"]
+
+    %% PubSub
+    PubSub["Phoenix.PubSub<br/>(Message Bus)<br/>Topic: 'campaign:123'<br/>Topic: 'donations'"]
+
+    %% Business Logic
+    Context["Business Logic<br/>(Context Layer)"]
+    DB[(Database)]
+
+    %% Client connections
+    Client1 <-->|"channel.push()<br/>channel.on()"| WS1
+    Client2 <-->|"channel.push()<br/>channel.on()"| WS2
+    Client3 <-->|"channel.push()<br/>channel.on()"| WS3
+
+    WS1 <--> Channel1
+    WS2 <--> Channel2
+    WS3 <--> Channel3
+
+    %% Subscribe to topics
+    Channel1 -.->|"Subscribe<br/>'campaign:123'"| PubSub
+    Channel2 -.->|"Subscribe<br/>'campaign:123'"| PubSub
+    Channel3 -.->|"Subscribe<br/>'donations'"| PubSub
+
+    %% Message flow
+    Channel1 -->|"handle_in()<br/>Process donation"| Context
+    Context --> DB
+    Context -->|"Broadcast<br/>{:donation_received, data}"| PubSub
+
+    %% PubSub delivers to subscribers
+    PubSub -->|"Send message"| Channel1
+    PubSub -->|"Send message"| Channel2
+    PubSub -.->|"Different topic"| Channel3
+
+    Channel1 -->|"push()<br/>'donation_received'"| WS1
+    Channel2 -->|"push()<br/>'donation_received'"| WS2
+
+    WS1 --> Client1
+    WS2 --> Client2
+
+    %% Multi-node scenario
+    Node2["Server Node 2<br/>(Distributed)"]
+    Channel4["Channel Process<br/>(Node 2)"]
+
+    PubSub <-.->|"Distributed<br/>via pg2/pg"| Node2
+    Node2 <--> Channel4
+
+    %% Features
+    Features["Key Features:<br/>✅ Real-time bidirectional<br/>✅ Pub/Sub messaging<br/>✅ Topic-based routing<br/>✅ Distributed across nodes<br/>✅ Process isolation<br/>✅ Fault tolerance"]
+
+    PubSub -.-> Features
+
+    %% Styling
+    style Client1 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Client2 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Client3 fill:#0173B2,stroke:#023B5A,color:#FFF
+
+    style WS1 fill:#CA9161,stroke:#7A5739,color:#FFF
+    style WS2 fill:#CA9161,stroke:#7A5739,color:#FFF
+    style WS3 fill:#CA9161,stroke:#7A5739,color:#FFF
+
+    style Channel1 fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style Channel2 fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style Channel3 fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style Channel4 fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+
+    style PubSub fill:#029E73,stroke:#01593F,color:#FFF
+    style Context fill:#DE8F05,stroke:#8A5903,color:#000
+    style DB fill:#0173B2,stroke:#023B5A,color:#FFF
+
+    style Node2 fill:#029E73,stroke:#01593F,color:#FFF
+    style Features fill:#029E73,stroke:#01593F,color:#FFF
 ```
 
 ## Authentication and Authorization

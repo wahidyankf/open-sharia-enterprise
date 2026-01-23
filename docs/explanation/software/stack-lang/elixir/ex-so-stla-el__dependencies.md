@@ -272,6 +272,84 @@ mix deps.update --all
 mix deps.get  # Fetches new_package, keeps others locked
 ```
 
+The following diagram illustrates how Mix resolves and manages dependencies through its lifecycle:
+
+```mermaid
+graph TD
+    %% Input
+    DEV[Developer edits<br/>mix.exs]
+
+    %% First Time Setup
+    FIRST{mix.lock<br/>exists?}
+    FETCH[mix deps.get]
+
+    %% Dependency Resolution
+    READ_SPEC[Read mix.exs<br/>dependency specs]
+    RESOLVE[Resolve versions<br/>satisfy all constraints]
+    DOWNLOAD[Download from Hex<br/>or Git or Path]
+    CREATE_LOCK[Create/Update<br/>mix.lock]
+
+    %% Locked State
+    LOCK[mix.lock<br/>version: 1.7.11<br/>checksum: abc123]
+    INSTALL[Install to deps/]
+
+    %% Compilation
+    COMPILE[mix deps.compile]
+    BUILD[Compile to _build/]
+
+    %% Updates
+    UPDATE{Update needed?}
+    CHECK_OUT[mix hex.outdated]
+    UPDATE_CMD[mix deps.update]
+
+    %% Flows
+    DEV --> FETCH
+    FETCH --> FIRST
+
+    FIRST -->|No| READ_SPEC
+    FIRST -->|Yes| LOCK
+
+    READ_SPEC --> RESOLVE
+    RESOLVE --> DOWNLOAD
+    DOWNLOAD --> CREATE_LOCK
+    CREATE_LOCK --> INSTALL
+
+    LOCK --> INSTALL
+    INSTALL --> COMPILE
+    COMPILE --> BUILD
+
+    BUILD --> UPDATE
+    UPDATE -->|Yes| CHECK_OUT
+    CHECK_OUT --> UPDATE_CMD
+    UPDATE_CMD --> READ_SPEC
+
+    Update -->|No| END[✓ Ready]
+
+    %% Styling (WCAG AA compliant)
+    style DEV fill:#0173B2,stroke:#023B5A,color:#FFF
+    style FIRST fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style READ_SPEC fill:#029E73,stroke:#01593F,color:#FFF
+    style RESOLVE fill:#029E73,stroke:#01593F,color:#FFF
+    style DOWNLOAD fill:#029E73,stroke:#01593F,color:#FFF
+    style CREATE_LOCK fill:#CC78BC,stroke:#7A4871,color:#FFF
+    style LOCK fill:#CC78BC,stroke:#7A4871,color:#FFF
+    style INSTALL fill:#029E73,stroke:#01593F,color:#FFF
+    style COMPILE fill:#0173B2,stroke:#023B5A,color:#FFF
+    style BUILD fill:#0173B2,stroke:#023B5A,color:#FFF
+    style UPDATE fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style CHECK_OUT fill:#CA9161,stroke:#7A5739,color:#FFF
+    style UPDATE_CMD fill:#CA9161,stroke:#7A5739,color:#FFF
+    style FETCH fill:#0173B2,stroke:#023B5A,color:#FFF
+    style END fill:#029E73,stroke:#01593F,color:#FFF
+```
+
+**Key Points**:
+
+- **First Run**: Mix reads specs, resolves versions, and creates `mix.lock`
+- **Subsequent Runs**: Mix uses locked versions for reproducibility
+- **Updates**: Explicit `mix deps.update` triggers re-resolution
+- **Lock File**: Ensures all developers use identical dependency versions
+
 ### Lock File
 
 `mix.lock` ensures reproducible builds:
@@ -468,6 +546,78 @@ defmodule FinancialWeb.MixProject do
   end
 end
 ```
+
+The following diagram illustrates dependency relationships in a financial platform umbrella project:
+
+```mermaid
+graph TD
+    %% Umbrella Root
+    UMBRELLA[financial_platform<br/>Umbrella Root<br/>mix.lock shared]
+
+    %% Child Apps
+    CORE[financial_core<br/>Domain Logic<br/>Donation, Zakat modules]
+    WEB[financial_web<br/>Phoenix Web UI<br/>Controllers, Views]
+    API[financial_api<br/>REST API<br/>JSON endpoints]
+    WORKER[financial_worker<br/>Background Jobs<br/>Oban workers]
+
+    %% External Dependencies
+    PHOENIX[phoenix ~> 1.7.0<br/>Web Framework]
+    ECTO[ecto_sql ~> 3.12<br/>Database]
+    MONEY[money ~> 1.12<br/>Currency handling]
+    OBAN[oban ~> 2.17<br/>Job processing]
+    GUARDIAN[guardian ~> 2.3<br/>Authentication]
+
+    %% Internal Dependencies (in_umbrella: true)
+    UMBRELLA --> CORE
+    UMBRELLA --> WEB
+    UMBRELLA --> API
+    UMBRELLA --> WORKER
+
+    WEB -->|in_umbrella: true| CORE
+    API -->|in_umbrella: true| CORE
+    WORKER -->|in_umbrella: true| CORE
+
+    %% External Dependencies
+    CORE --> ECTO
+    CORE --> MONEY
+
+    WEB --> PHOENIX
+    WEB --> GUARDIAN
+    WEB --> ECTO
+
+    API --> PHOENIX
+    API --> GUARDIAN
+
+    WORKER --> OBAN
+    WORKER --> ECTO
+
+    %% Styling (WCAG AA compliant)
+    style UMBRELLA fill:#0173B2,stroke:#023B5A,color:#FFF
+    style CORE fill:#029E73,stroke:#01593F,color:#FFF
+    style WEB fill:#CC78BC,stroke:#7A4871,color:#FFF
+    style API fill:#CC78BC,stroke:#7A4871,color:#FFF
+    style WORKER fill:#CC78BC,stroke:#7A4871,color:#FFF
+    style PHOENIX fill:#CA9161,stroke:#7A5739,color:#FFF
+    style ECTO fill:#CA9161,stroke:#7A5739,color:#FFF
+    style MONEY fill:#CA9161,stroke:#7A5739,color:#FFF
+    style OBAN fill:#CA9161,stroke:#7A5739,color:#FFF
+    style GUARDIAN fill:#CA9161,stroke:#7A5739,color:#FFF
+```
+
+**Dependency Patterns**:
+
+- **Core App** (green): Domain logic with minimal external dependencies (Ecto, Money)
+- **UI Apps** (purple): Web and API apps depend on core (`in_umbrella: true`)
+- **Worker App** (purple): Background jobs depend on core
+- **Shared Lock**: All apps use single `mix.lock` at umbrella root
+- **Compilation Order**: Mix compiles `financial_core` first, then dependent apps
+
+This architecture ensures:
+
+1. **Clear boundaries**: Domain logic isolated in core
+2. **Reusability**: Multiple interfaces (web, API) share core logic
+3. **Testing**: Core can be tested independently
+4. **Deployment**: Apps can be deployed separately or together
 
 ### Benefits and Trade-offs
 

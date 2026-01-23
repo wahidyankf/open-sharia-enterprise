@@ -36,7 +36,56 @@ Elixir's memory management is fundamentally different from most languages due to
 
 ## BEAM Memory Model
 
-The BEAM VM uses a unique memory architecture designed for massive concurrency:
+The BEAM VM uses a unique memory architecture designed for massive concurrency. The following diagram illustrates the different memory regions and their characteristics:
+
+```mermaid
+graph TD
+    subgraph BEAM["BEAM VM Memory Architecture"]
+        subgraph ProcessHeaps["Process Heaps (Isolated)"]
+            P1["Process 1 Heap<br/>Private, Fast Alloc<br/>GC'd Independently"]
+            P2["Process 2 Heap<br/>Private, Fast Alloc<br/>GC'd Independently"]
+            P3["Process N Heap<br/>Private, Fast Alloc<br/>GC'd Independently"]
+        end
+
+        subgraph SharedMemory["Shared Memory (Reference-Counted)"]
+            BinaryHeap["Binary Heap<br/>Large binaries (≥64 bytes)<br/>Reference-counted<br/>Shared across processes"]
+
+            ETS["ETS Tables<br/>Shared state<br/>Outside process heaps<br/>Configurable concurrency"]
+        end
+
+        subgraph GlobalMemory["Global Memory (Never GC'd)"]
+            AtomTable["Atom Table<br/>~1M atom limit<br/>⚠️ Never freed<br/>⚠️ No dynamic creation"]
+        end
+
+        %% Process relationships
+        P1 -.->|"References (8 bytes)"| BinaryHeap
+        P2 -.->|"References (8 bytes)"| BinaryHeap
+        P3 -.->|"Reads/Writes"| ETS
+
+        %% Characteristics
+        Char1["✅ Fast allocation<br/>✅ Fast deallocation<br/>✅ No fragmentation"]
+        Char2["✅ Memory efficient<br/>✅ No copying<br/>⚠️ Ref counting overhead"]
+        Char3["✅ High concurrency<br/>⚠️ Not GC'd<br/>⚠️ Manual cleanup"]
+        Char4["⚠️ Fixed limit<br/>⚠️ Permanent<br/>❌ No GC"]
+
+        ProcessHeaps -.-> Char1
+        BinaryHeap -.-> Char2
+        ETS -.-> Char3
+        AtomTable -.-> Char4
+    end
+
+    %% Styling
+    style P1 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style P2 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style P3 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style BinaryHeap fill:#029E73,stroke:#01593F,color:#FFF
+    style ETS fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style AtomTable fill:#DE8F05,stroke:#8A5903,color:#000
+    style Char1 fill:#029E73,stroke:#01593F,color:#FFF
+    style Char2 fill:#029E73,stroke:#01593F,color:#FFF
+    style Char3 fill:#DE8F05,stroke:#8A5903,color:#000
+    style Char4 fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+```
 
 ### Process Heap
 
@@ -235,6 +284,60 @@ Benefits:
 - **Short GC pauses**: Small heaps = fast GC (microseconds)
 - **Predictable latency**: No global GC spikes
 - **Scales with cores**: More cores = more parallel GC
+
+The following diagram shows how BEAM's generational garbage collection works per-process, with young and old heaps:
+
+```mermaid
+sequenceDiagram
+    participant Process as Elixir Process
+    participant Young as Young Heap<br/>(New Objects)
+    participant Old as Old Heap<br/>(Survivors)
+    participant GC as Garbage Collector
+
+    %% Initial allocation
+    Process->>Young: Allocate objects<br/>(donations list)
+    Note over Young: Objects: [obj1, obj2, obj3, ...]
+
+    %% Minor GC #1
+    Young->>GC: Heap fills up
+    GC->>Young: Minor GC (young only)
+    Note over GC: Scan young heap<br/>Mark live objects<br/>~1-5 microseconds
+
+    GC->>Old: Promote survivors<br/>(obj1 used in loop)
+    GC->>GC: Reclaim dead objects<br/>(obj2, obj3 temporary)
+
+    Note over Old: obj1 promoted<br/>(survived GC)
+
+    %% More allocations
+    Process->>Young: More allocations<br/>(temp calculations)
+    Young->>GC: Heap fills again
+
+    %% Minor GC #2
+    GC->>Young: Minor GC (young only)
+    GC->>Old: Promote more survivors
+    Note over Old: Growing old heap
+
+    %% Major GC
+    Old->>GC: Old heap threshold reached
+    GC->>Old: Major GC (both heaps)
+    Note over GC: Full collection<br/>Compact old heap<br/>~10-100 microseconds
+
+    GC->>GC: Reclaim unused<br/>old objects
+
+    %% Result
+    Note over Young,Old: Clean heaps<br/>Process continues<br/>Other processes unaffected
+
+    %% Styling
+    box rgba(1, 115, 178, 0.1) Process Memory
+        participant Process
+        participant Young
+        participant Old
+    end
+
+    box rgba(2, 158, 115, 0.1) GC System
+        participant GC
+    end
+```
 
 ### GC Triggers
 
@@ -492,6 +595,78 @@ defmodule BinaryMemory do
     # Total memory: ~80 bytes (data) + 8KB (references)
   end
 end
+```
+
+The following diagram illustrates how Elixir handles small versus large binaries, and the memory implications:
+
+```mermaid
+graph TD
+    %% Input
+    Input["Binary Data"]
+
+    %% Decision
+    Decision{"Size check"}
+
+    %% Small binary path
+    SmallBinary["Small Binary<br/>(< 64 bytes)"]
+    ProcessHeap1["Process 1 Heap<br/>COPY of binary<br/>12 bytes"]
+    ProcessHeap2["Process 2 Heap<br/>COPY of binary<br/>12 bytes"]
+    ProcessHeap3["Process N Heap<br/>COPY of binary<br/>12 bytes"]
+
+    SmallNote["❌ Each process has copy<br/>✅ Fast access<br/>❌ Higher total memory<br/>for many processes"]
+
+    %% Large binary path
+    LargeBinary["Large Binary<br/>(≥ 64 bytes)"]
+    SharedHeap["Shared Binary Heap<br/>SINGLE copy<br/>ref_count: 3<br/>1500 bytes"]
+    Ref1["Process 1<br/>Reference (8 bytes)"]
+    Ref2["Process 2<br/>Reference (8 bytes)"]
+    Ref3["Process N<br/>Reference (8 bytes)"]
+
+    LargeNote["✅ Single copy shared<br/>✅ Memory efficient<br/>✅ Reference-counted<br/>⚠️ GC when ref_count = 0"]
+
+    %% Flow
+    Input --> Decision
+    Decision -->|"< 64 bytes"| SmallBinary
+    Decision -->|"≥ 64 bytes"| LargeBinary
+
+    SmallBinary --> ProcessHeap1
+    SmallBinary --> ProcessHeap2
+    SmallBinary --> ProcessHeap3
+
+    ProcessHeap1 -.-> SmallNote
+    ProcessHeap2 -.-> SmallNote
+    ProcessHeap3 -.-> SmallNote
+
+    LargeBinary --> SharedHeap
+    SharedHeap -.->|"Reference only"| Ref1
+    SharedHeap -.->|"Reference only"| Ref2
+    SharedHeap -.->|"Reference only"| Ref3
+
+    SharedHeap -.-> LargeNote
+
+    %% Example calculation
+    ExampleSmall["Example: 'Short text' (10 bytes)<br/>1000 processes = ~10KB total"]
+    ExampleLarge["Example: CSV report (1500 bytes)<br/>1000 processes = 1.5KB + 8KB refs = 9.5KB"]
+
+    SmallNote -.-> ExampleSmall
+    LargeNote -.-> ExampleLarge
+
+    %% Styling
+    style Input fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Decision fill:#CA9161,stroke:#7A5739,color:#FFF
+    style SmallBinary fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style ProcessHeap1 fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style ProcessHeap2 fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style ProcessHeap3 fill:#CC78BC,stroke:#8B5A8A,color:#FFF
+    style LargeBinary fill:#029E73,stroke:#01593F,color:#FFF
+    style SharedHeap fill:#029E73,stroke:#01593F,color:#FFF
+    style Ref1 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Ref2 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style Ref3 fill:#0173B2,stroke:#023B5A,color:#FFF
+    style SmallNote fill:#DE8F05,stroke:#8A5903,color:#000
+    style LargeNote fill:#029E73,stroke:#01593F,color:#FFF
+    style ExampleSmall fill:#DE8F05,stroke:#8A5903,color:#000
+    style ExampleLarge fill:#029E73,stroke:#01593F,color:#FFF
 ```
 
 ### Reference-Counted Binaries
