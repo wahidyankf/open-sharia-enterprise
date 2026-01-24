@@ -313,6 +313,28 @@ campaign.transition("pause"); // active -> paused
 
 ## XState Library
 
+### XState Machine Configuration
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+    Config["Machine Config"]:::blue --> States["States"]:::orange
+    Config --> Initial["Initial State"]:::orange
+    Config --> Context["Context Data"]:::orange
+
+    States --> S1["State 1<br/>(entry, exit)"]:::teal
+    States --> S2["State 2<br/>(entry, exit)"]:::teal
+
+    S1 --> T1["Transitions"]:::purple
+    T1 --> Guards["Guards"]
+    T1 --> Actions["Actions"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
 ### Basic XState Machine
 
 ```typescript
@@ -362,6 +384,26 @@ const service = interpret(donationMachine)
 // Send events
 service.send({ type: "SUBMIT" });
 service.send({ type: "APPROVE" });
+```
+
+### Guard and Action Execution Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+sequenceDiagram
+    participant Event
+    participant Guard
+    participant Transition
+    participant Action
+
+    Event->>Guard: Evaluate guard condition
+    alt Guard passes
+        Guard->>Transition: Allow transition
+        Transition->>Action: Execute entry actions
+        Action->>Transition: Complete
+    else Guard fails
+        Guard-->>Event: Block transition
+    end
 ```
 
 ### XState with Guards and Actions
@@ -437,6 +479,28 @@ const donationMachine = createMachine<DonationContext, DonationEvent>({
 });
 ```
 
+### Nested State Hierarchy
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+stateDiagram-v2
+    [*] --> processing
+
+    state processing {
+        [*] --> validating
+        validating --> approved
+        approved --> disbursing
+    }
+
+    processing --> completed
+    processing --> failed
+
+    note right of processing
+        Nested states share
+        parent state context
+    end note
+```
+
 ### Nested States
 
 ```typescript
@@ -476,6 +540,31 @@ const campaignMachine = createMachine({
     },
   },
 });
+```
+
+### Parallel State Regions
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+stateDiagram-v2
+    [*] --> parallel_processing
+
+    state parallel_processing {
+        [*] --> validation
+        [*] --> fraud_check
+
+        state validation {
+            [*] --> validating
+            validating --> validated
+        }
+
+        state fraud_check {
+            [*] --> checking
+            checking --> cleared
+        }
+    }
+
+    parallel_processing --> completed: both complete
 ```
 
 ### Parallel States
@@ -664,6 +753,22 @@ payment.transition({ type: "PROCESS" });
 
 // Later...
 payment.transition({ type: "REFUND" });
+```
+
+### Campaign State Transitions
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+stateDiagram-v2
+    [*] --> draft
+    draft --> active: publish
+    active --> paused: pause
+    paused --> active: resume
+    active --> completed: reach_goal
+    active --> cancelled: cancel
+    paused --> cancelled: cancel
+    completed --> [*]
+    cancelled --> [*]
 ```
 
 ### Campaign Lifecycle FSM

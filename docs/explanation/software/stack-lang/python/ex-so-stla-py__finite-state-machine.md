@@ -63,6 +63,50 @@ stateDiagram-v2
 
 Manual FSM implementation using state pattern.
 
+### QardHasan Loan State Transitions
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+stateDiagram-v2
+    [*] --> DRAFT: Create loan
+
+    DRAFT --> SUBMITTED: submit()
+    DRAFT --> CANCELLED: cancel()
+
+    SUBMITTED --> APPROVED: approve()
+    SUBMITTED --> CANCELLED: cancel()
+
+    APPROVED --> ACTIVE: disburse()
+    APPROVED --> CANCELLED: cancel()
+
+    ACTIVE --> FULLY_REPAID: record_payment()<br/>(full repayment)
+    ACTIVE --> DEFAULTED: mark_defaulted()
+
+    FULLY_REPAID --> [*]
+    DEFAULTED --> [*]
+    CANCELLED --> [*]
+
+    note right of DRAFT
+        Initial state
+        Loan being prepared
+    end note
+
+    note right of ACTIVE
+        Loan disbursed
+        Accepting repayments
+    end note
+```
+
+**Key States**:
+
+- DRAFT: Loan being prepared
+- SUBMITTED: Awaiting approval
+- APPROVED: Approved, awaiting disbursement
+- ACTIVE: Funds disbursed, accepting repayments
+- FULLY_REPAID: All payments complete (terminal)
+- DEFAULTED: Borrower defaulted (terminal)
+- CANCELLED: Loan cancelled (terminal)
+
 ### Basic State Pattern
 
 ```python
@@ -422,6 +466,27 @@ except ValueError as e:
 
 transitions library provides declarative FSM with less boilerplate.
 
+### Donation Campaign State Machine
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+stateDiagram-v2
+    [*] --> DRAFT
+
+    DRAFT --> ACTIVE: activate()
+    DRAFT --> CANCELLED: cancel()
+
+    ACTIVE --> PAUSED: pause()
+    ACTIVE --> COMPLETED: complete()
+    ACTIVE --> CANCELLED: cancel()
+
+    PAUSED --> ACTIVE: resume()
+    PAUSED --> CANCELLED: cancel()
+
+    COMPLETED --> [*]
+    CANCELLED --> [*]
+```
+
 ### Installing transitions
 
 ```bash
@@ -530,6 +595,41 @@ assert campaign.status == CampaignStatus.ACTIVE.value
 ## Event-Driven FSM
 
 FSMs respond to events with callbacks.
+
+### FSM Callback Execution Order
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+sequenceDiagram
+    participant T as Trigger (activate)
+    participant FSM as State Machine
+    participant From as DRAFT State
+    participant To as ACTIVE State
+
+    T->>FSM: trigger: activate()
+    activate FSM
+
+    FSM->>FSM: before_transition()
+    FSM->>From: on_exit_draft()
+    From->>From: Cleanup draft state
+
+    FSM->>FSM: State change: DRAFT → ACTIVE
+
+    FSM->>To: on_enter_active()
+    To->>To: Initialize active state
+    FSM->>FSM: after_transition()
+
+    FSM-->>T: Transition complete
+    deactivate FSM
+```
+
+**Callback Execution Order**:
+
+1. `before_transition()` - Before state change
+2. `on_exit_<source>()` - Exiting source state
+3. **State change occurs**
+4. `on_enter_<dest>()` - Entering destination state
+5. `after_transition()` - After state change
 
 ### FSM with Callbacks
 
@@ -646,6 +746,38 @@ print(f"State changes: {len(campaign.state_changes)}")  # 2
 ## Guards and Conditions
 
 Guards prevent invalid transitions based on business rules.
+
+### Guard Evaluation Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+    A["Trigger Event<br/>(activate)"]:::blue --> B{"Guard Function<br/>can_activate()"}:::orange
+
+    B -->|"Returns True"| C["✅ Transition Allowed"]:::teal
+    B -->|"Returns False"| D["❌ Transition Blocked"]:::purple
+
+    C --> E["Execute Callbacks"]:::teal
+    E --> F["Change State"]:::teal
+    F --> G["ACTIVE State"]:::teal
+
+    D --> H["Raise MachineError"]:::purple
+    H --> I["State Unchanged<br/>(remains DRAFT)"]:::purple
+
+    Note1["Guards check:<br/>- Business rules<br/>- Data validation<br/>- Preconditions"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Guard Function Rules**:
+
+- Return `True` to allow transition
+- Return `False` to block transition
+- Evaluated before state change
+- Can access current state and model data
 
 ### Conditional Transitions
 
@@ -766,6 +898,53 @@ assert campaign.status == "completed"
 ## Callbacks and Hooks
 
 Callbacks execute code during transitions.
+
+### Callback Types and Timing
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+    subgraph "Before Transition"
+        A1["before_<trigger>()"]:::blue
+        A2["before_state_change"]:::blue
+        A3["on_exit_<source>()"]:::blue
+    end
+
+    subgraph "During Transition"
+        B1["State Change"]:::orange
+        B2["<source> → <dest>"]:::orange
+    end
+
+    subgraph "After Transition"
+        C1["on_enter_<dest>()"]:::teal
+        C2["on_<trigger>()"]:::teal
+        C3["after_<trigger>()"]:::teal
+        C4["after_state_change"]:::teal
+    end
+
+    A1 --> A2
+    A2 --> A3
+    A3 --> B1
+    B1 --> B2
+    B2 --> C1
+    C1 --> C2
+    C2 --> C3
+    C3 --> C4
+
+    Note1["Specific Callbacks:<br/>- before_activate()<br/>- on_activate()<br/>- after_activate()"]
+    Note2["Generic Callbacks:<br/>- before_state_change<br/>- after_state_change"]
+    Note3["State Callbacks:<br/>- on_exit_draft()<br/>- on_enter_active()"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+```
+
+**Callback Categories**:
+
+- **Trigger-specific**: `before_activate()`, `on_activate()`, `after_activate()`
+- **Generic**: `before_state_change`, `after_state_change`
+- **State-specific**: `on_exit_<state>()`, `on_enter_<state>()`
 
 ### Transition Callbacks
 
@@ -1008,6 +1187,50 @@ stateDiagram-v2
 Real-world financial FSMs.
 
 ### Zakat Payment Workflow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+stateDiagram-v2
+    [*] --> pending
+
+    pending --> pending_validation: submit()<br/>[can_validate]
+    pending --> failed: submit()<br/>[guard fails]
+
+    pending_validation --> validated: validate()
+
+    validated --> processing: process()<br/>[can_process]
+    validated --> failed: process()<br/>[guard fails]
+
+    processing --> completed: complete()
+    processing --> failed: fail()
+
+    completed --> [*]
+    failed --> [*]
+
+    note right of pending_validation
+        Validate Zakat calculation
+        Check payment method
+    end note
+
+    note right of processing
+        Process via payment gateway
+        Card/Bank/Cash
+    end note
+
+    note right of completed
+        Generate receipt
+        Notify payer
+    end note
+```
+
+**Zakat Payment States**:
+
+- **pending**: Initial state, awaiting submission
+- **pending_validation**: Validating Zakat amount and method
+- **validated**: Validation passed, ready to process
+- **processing**: Payment gateway processing
+- **completed**: Payment successful, receipt generated
+- **failed**: Validation or processing failed
 
 ```python
 # GOOD: Zakat payment workflow FSM

@@ -963,6 +963,87 @@ end
 
 ## GenServer for State
 
+### GenServer Lifecycle and Message Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+sequenceDiagram
+    participant Client as Client Process
+    participant GS as GenServer Process
+    participant State as Internal State
+
+    Client->>GS: GenServer.start_link(module, args)
+    activate GS
+    GS->>GS: init(args)
+    GS->>State: Initialize state
+    State-->>GS: Initial state
+    GS-->>Client: {:ok, pid}
+
+    Note over Client,State: Asynchronous Call (cast)
+
+    Client->>GS: GenServer.cast(pid, msg)
+    GS->>GS: handle_cast(msg, state)
+    activate State
+    GS->>State: Update state
+    State-->>GS: New state
+    deactivate State
+    Note over GS: Returns {:noreply, new_state}
+    Client->>Client: Continue (non-blocking)
+
+    Note over Client,State: Synchronous Call (call)
+
+    Client->>GS: GenServer.call(pid, request)
+    activate Client
+    GS->>GS: handle_call(request, from, state)
+    activate State
+    GS->>State: Read/update state
+    State-->>GS: New state
+    deactivate State
+    GS-->>Client: Reply
+    deactivate Client
+    Note over GS: Returns {:reply, response, new_state}
+
+    Client->>GS: GenServer.stop(pid)
+    GS->>GS: terminate(reason, state)
+    deactivate GS
+    GS-->>Client: :ok
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **`init/1`**: Initialize state when GenServer starts
+- **`handle_cast/2`**: Asynchronous, non-blocking updates
+  - Returns `{:noreply, new_state}`
+  - Client continues immediately
+- **`handle_call/3`**: Synchronous, blocking requests
+  - Returns `{:reply, response, new_state}`
+  - Client waits for response
+- **`terminate/2`**: Cleanup when GenServer stops
+- **State Management**: Immutable state, updated functionally
+
+**When to Use**:
+
+- **cast**: Fire-and-forget operations (logging, metrics, async updates)
+- **call**: Request-response operations (queries, critical updates)
+
+**Islamic Finance Example**:
+
+```elixir
+# Async: Record donation (fire-and-forget)
+GenServer.cast(StatsAggregator, {:donation, "CAMP-001", Decimal.new("100.00")})
+
+# Sync: Get current stats (wait for response)
+stats = GenServer.call(StatsAggregator, {:get_stats, "CAMP-001"})
+# Returns: %{count: 15, total: Decimal.new("1500.00")}
+```
+
 ### Stateful Concurrent Process
 
 ```elixir
@@ -1039,6 +1120,79 @@ end
 ## Concurrent Patterns
 
 ### Producer-Consumer
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    Producer["Producer Process<br/>(Generates Work)"]:::blue --> Queue["Message Queue<br/>(Mailbox)"]:::orange
+
+    Queue --> C1["Consumer 1"]:::teal
+    Queue --> C2["Consumer 2"]:::teal
+    Queue --> C3["Consumer 3"]:::teal
+    Queue --> C4["Consumer N"]:::teal
+
+    C1 --> Work1["Process<br/>Donation 1"]:::purple
+    C2 --> Work2["Process<br/>Donation 2"]:::purple
+    C3 --> Work3["Process<br/>Donation 3"]:::purple
+    C4 --> WorkN["Process<br/>Donation N"]:::purple
+
+    Work1 --> Results["Results"]:::teal
+    Work2 --> Results
+    Work3 --> Results
+    WorkN --> Results
+
+    Note1["Producer:<br/>- Generates work items<br/>- Sends to consumers<br/>- Rate limiting"]
+    Note2["Consumers:<br/>- Process work items<br/>- Run concurrently<br/>- Scale horizontally"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Producer**: Single process generating work items
+  - Sends messages to consumer processes
+  - Can implement rate limiting
+  - Decoupled from processing logic
+
+- **Consumers**: Multiple processes handling work
+  - Process items concurrently
+  - Each has own mailbox (queue)
+  - Scale by adding more consumers
+
+- **Benefits**:
+  - Separation of concerns (generation vs processing)
+  - Load balancing across consumers
+  - Back-pressure via message queues
+  - Fault isolation (one consumer crash doesn't affect others)
+
+**Islamic Finance Example**:
+
+```elixir
+# Producer generates Zakat calculation tasks
+producer_pid = spawn(fn ->
+  Enum.each(1..1000, fn account_id ->
+    consumer_pid = get_next_consumer() # Round-robin
+    send(consumer_pid, {:calculate_zakat, account_id})
+  end)
+end)
+
+# Multiple consumers process calculations concurrently
+consumers = Enum.map(1..10, fn _ ->
+  spawn(fn ->
+    consumer_loop(fn account_id ->
+      calculate_zakat_for_account(account_id)
+    end)
+  end)
+end)
+
+# 1000 accounts processed by 10 consumers concurrently
+# ~100x faster than sequential processing
+```
 
 ```elixir
 defmodule FinancialDomain.Processing.ProducerConsumer do

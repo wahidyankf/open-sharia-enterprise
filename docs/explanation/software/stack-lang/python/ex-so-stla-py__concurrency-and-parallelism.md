@@ -191,6 +191,71 @@ sequenceDiagram
 
 Threading enables concurrent execution with shared memory (GIL-limited).
 
+### Thread Lifecycle and GIL Interaction
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+stateDiagram-v2
+    [*] --> New: threading.Thread()
+
+    New --> Runnable: thread.start()
+
+    Runnable --> Running: Acquire GIL
+    Running --> Runnable: Release GIL<br/>(I/O wait)
+
+    Running --> Blocked: Lock/Semaphore<br/>unavailable
+    Blocked --> Runnable: Lock acquired
+
+    Running --> Waiting: sleep()<br/>join()
+    Waiting --> Runnable: Wake up
+
+    Running --> [*]: Thread complete
+
+    note right of Running
+        Only one thread executes
+        Python bytecode at a time
+        (GIL constraint)
+    end note
+
+    note right of Runnable
+        Thread ready but waiting
+        for GIL or scheduler
+    end note
+
+    note right of Blocked
+        Waiting for resource
+        (Lock, Semaphore, etc.)
+    end note
+```
+
+**Key Principles**:
+
+- **New**: Thread object created but not started
+- **Runnable**: Ready to run, waiting for GIL
+- **Running**: Actively executing Python bytecode (holds GIL)
+- **Blocked**: Waiting for lock/semaphore (still holds GIL unless I/O)
+- **Waiting**: sleep() or join() (releases GIL during I/O)
+- **GIL Impact**: Only one thread runs Python bytecode at a time
+
+**Islamic Finance Example**:
+
+```python
+import threading
+from decimal import Decimal
+from typing import List
+
+# Multiple threads processing Zakat calculations
+# Thread 1: Processes gold holdings
+# Thread 2: Processes cash holdings
+# Thread 3: Processes investment holdings
+
+# GIL ensures thread-safe execution but limits CPU parallelism
+# Good for I/O-bound tasks (API calls, DB queries)
+# Not ideal for CPU-bound calculations (use multiprocessing)
+```
+
 ### Basic Threading
 
 ```python
@@ -242,6 +307,62 @@ print(f"Total Zakat: ${sum(results)}")
 ## multiprocessing Module
 
 Multiprocessing bypasses GIL with separate processes.
+
+### Process Architecture and True Parallelism
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    Main["Main Process"]:::blue --> Pool["Process Pool"]:::orange
+
+    Pool --> P1["Process 1<br/>(Separate GIL)"]:::teal
+    Pool --> P2["Process 2<br/>(Separate GIL)"]:::teal
+    Pool --> P3["Process 3<br/>(Separate GIL)"]:::teal
+    Pool --> P4["Process 4<br/>(Separate GIL)"]:::teal
+
+    P1 --> CPU1["CPU Core 1"]:::purple
+    P2 --> CPU2["CPU Core 2"]:::purple
+    P3 --> CPU3["CPU Core 3"]:::purple
+    P4 --> CPU4["CPU Core 4"]:::purple
+
+    CPU1 --> Calc1["Zakat Calc 1"]:::blue
+    CPU2 --> Calc2["Zakat Calc 2"]:::blue
+    CPU3 --> Calc3["Zakat Calc 3"]:::blue
+    CPU4 --> Calc4["Zakat Calc 4"]:::blue
+
+    Calc1 --> Results["Combined Results"]:::teal
+    Calc2 --> Results
+    Calc3 --> Results
+    Calc4 --> Results
+
+    Results --> Main
+
+    Note1["No GIL Contention:<br/>Each process has<br/>independent GIL<br/>and memory space"]
+    Note2["True Parallelism:<br/>4 CPU cores execute<br/>Python bytecode<br/>simultaneously"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Separate Memory**: Each process has independent memory space
+- **No GIL Contention**: Each process has its own GIL
+- **True Parallelism**: Multiple CPU cores execute simultaneously
+- **Communication Overhead**: Inter-process communication via pickling
+- **Higher Memory**: Each process loads full Python interpreter
+
+**When to Use multiprocessing**:
+
+- ✅ CPU-bound tasks (complex calculations, data processing)
+- ✅ Need to bypass GIL limitations
+- ✅ Have multiple CPU cores available
+- ❌ I/O-bound tasks (use asyncio or threading instead)
+- ❌ Tight memory constraints (use threading instead)
 
 ### Basic Multiprocessing
 
@@ -350,6 +471,68 @@ graph TD
 
 High-level interface for threading and multiprocessing.
 
+### Executor Selection Guide
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Need Concurrent<br/>Execution?"]:::blue --> B{"Workload<br/>Type?"}:::orange
+
+    B -->|"I/O-Bound"| C["✅ ThreadPoolExecutor<br/>(API calls, DB queries)"]:::teal
+    B -->|"CPU-Bound"| D["✅ ProcessPoolExecutor<br/>(Calculations, parsing)"]:::teal
+
+    C --> E["Thread Pool Features"]:::purple
+    D --> F["Process Pool Features"]:::purple
+
+    E --> E1["Shared memory"]
+    E --> E2["Lightweight"]
+    E --> E3["GIL-limited"]
+
+    F --> F1["Separate memory"]
+    F --> F2["True parallelism"]
+    F --> F3["No GIL"]
+
+    C --> Ex1["Example:<br/>Fetch 100 donation<br/>receipts from API"]:::blue
+    D --> Ex2["Example:<br/>Calculate Zakat for<br/>10,000 accounts"]:::blue
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **ThreadPoolExecutor**: Use for I/O-bound tasks (network, disk, database)
+  - Lightweight, shared memory, automatic thread management
+  - Limited by GIL for CPU operations
+  - Lower memory overhead than processes
+
+- **ProcessPoolExecutor**: Use for CPU-bound tasks (calculations, parsing, encoding)
+  - True parallelism, bypasses GIL, independent memory
+  - Higher memory overhead, slower startup
+  - Communication via pickling (serialization cost)
+
+**Islamic Finance Examples**:
+
+```python
+# I/O-Bound: Use ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
+
+# Fetch 100 donation receipts concurrently
+with ThreadPoolExecutor(max_workers=10) as executor:
+    receipts = executor.map(fetch_receipt_from_api, donation_ids)
+
+# CPU-Bound: Use ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
+
+# Calculate Zakat for 10,000 accounts in parallel
+with ProcessPoolExecutor(max_workers=4) as executor:
+    zakat_amounts = executor.map(calculate_zakat_complex, account_data)
+```
+
 ### ThreadPoolExecutor
 
 ```python
@@ -410,6 +593,87 @@ print(f"Processed {len(results)} items")
 
 Async context managers support async setup/teardown.
 
+### Async Resource Lifecycle
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+sequenceDiagram
+    participant Code as Application Code
+    participant ACM as Async Context Manager
+    participant Res as Resource<br/>(DB, File, Connection)
+
+    Code->>ACM: async with get_resource() as res
+    activate ACM
+
+    ACM->>Res: await __aenter__()
+    activate Res
+    Res-->>Res: Async setup<br/>(connect, open)
+    Res-->>ACM: Return resource
+    ACM-->>Code: Yield resource
+    deactivate ACM
+
+    Note over Code,Res: Code uses resource asynchronously
+
+    Code->>Code: await res.execute()
+    Code->>Code: await res.query()
+
+    alt Normal Completion
+        Code->>ACM: Exit context
+        activate ACM
+        ACM->>Res: await __aexit__(None, None, None)
+        Res-->>Res: Async cleanup<br/>(disconnect, close)
+        deactivate Res
+        Res-->>ACM: Cleanup complete
+        ACM-->>Code: Context exited
+        deactivate ACM
+    else Exception Raised
+        Code->>ACM: Exit context with exception
+        activate ACM
+        ACM->>Res: await __aexit__(exc_type, exc_val, tb)
+        Res-->>Res: Async cleanup<br/>(even on error)
+        deactivate Res
+        Res-->>ACM: Cleanup complete
+        ACM-->>Code: Exception propagated
+        deactivate ACM
+    end
+```
+
+**Key Principles**:
+
+- **`__aenter__`**: Async setup method (connect, open, allocate)
+- **`__aexit__`**: Async cleanup method (disconnect, close, release)
+- **Guaranteed Cleanup**: `__aexit__` called even if exception raised
+- **Exception Handling**: Can suppress or re-raise exceptions
+- **Use `async with`**: Automatically calls `__aenter__` and `__aexit__`
+
+**Islamic Finance Example**:
+
+```python
+import asyncio
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def zakat_calculation_session():
+    """Manage Zakat calculation session resources."""
+    # Setup: Connect to gold price API, database
+    print("Opening Zakat calculation session...")
+    await asyncio.sleep(0.1)  # Async setup
+
+    try:
+        yield "session_handle"  # Provide resource to caller
+    finally:
+        # Cleanup: Close connections (runs even on exception)
+        print("Closing Zakat calculation session...")
+        await asyncio.sleep(0.1)  # Async cleanup
+
+# Usage: Guaranteed cleanup
+async with zakat_calculation_session() as session:
+    # Use session for calculations
+    await calculate_zakat_async()
+```
+
 ### Defining Async Context Managers
 
 ```python
@@ -464,6 +728,87 @@ records = asyncio.run(fetch_zakat_records())
 ## Error Handling in Async
 
 Handle exceptions in async code properly.
+
+### Async Error Propagation Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["asyncio.gather(*tasks)"]:::blue --> B{"return_exceptions<br/>Parameter?"}:::orange
+
+    B -->|"False (default)"| C["Task Execution"]:::teal
+    B -->|"True"| D["Task Execution"]:::teal
+
+    C --> C1["Task 1: Success"]:::teal
+    C --> C2["Task 2: Exception!"]:::purple
+    C --> C3["Task 3: Not Started"]:::orange
+
+    C2 --> Fail["First Exception<br/>Propagates Immediately"]:::purple
+    Fail --> Cancel["Remaining Tasks<br/>Cancelled"]:::purple
+    Cancel --> Raise["Exception Raised<br/>to Caller"]:::purple
+
+    D --> D1["Task 1: Success"]:::teal
+    D --> D2["Task 2: Exception!"]:::purple
+    D --> D3["Task 3: Continues"]:::teal
+
+    D1 --> Results["All Results<br/>Collected"]:::teal
+    D2 --> Results
+    D3 --> Results
+
+    Results --> Check{"Check Each<br/>Result Type"}:::orange
+    Check -->|"Success"| Process["Process Value"]:::teal
+    Check -->|"Exception"| Handle["Handle Error"]:::purple
+
+    Note1["Without return_exceptions:<br/>Fail-fast behavior<br/>One error stops all"]
+    Note2["With return_exceptions:<br/>Resilient behavior<br/>All tasks complete"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Default behavior (`return_exceptions=False`)**: Fail-fast
+  - First exception immediately propagates to caller
+  - Remaining tasks cancelled
+  - Caller must handle exception with try/except
+
+- **Resilient behavior (`return_exceptions=True`)**: Continue execution
+  - All tasks run to completion
+  - Exceptions returned as results (not raised)
+  - Caller checks each result type (value or exception)
+
+**Islamic Finance Example**:
+
+```python
+import asyncio
+from decimal import Decimal
+
+# Fail-fast: One error stops all
+results = await asyncio.gather(
+    calculate_gold_zakat(accounts[0]),
+    calculate_silver_zakat(accounts[1]),  # Raises exception
+    calculate_cash_zakat(accounts[2]),    # Not started
+)
+# Exception propagated, accounts[2] not processed
+
+# Resilient: All complete, handle errors individually
+results = await asyncio.gather(
+    calculate_gold_zakat(accounts[0]),
+    calculate_silver_zakat(accounts[1]),  # Returns exception
+    calculate_cash_zakat(accounts[2]),    # Completes successfully
+    return_exceptions=True
+)
+for i, result in enumerate(results):
+    if isinstance(result, Exception):
+        log_error(f"Account {i} failed: {result}")
+    else:
+        process_zakat(result)
+```
 
 ### Async Exception Handling
 
