@@ -34,7 +34,87 @@ Automated linting and formatting ensure code quality and consistency. ESLint cat
 - **Catch Errors Early**: ESLint finds bugs before runtime
 - **TypeScript Strict**: Strict mode catches more errors
 
+### ESLint → Prettier → TypeScript Pipeline
+
+Understanding the tool integration workflow helps optimize your development setup.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Code["Source Code<br/>#40;TypeScript#41;"]:::blue
+    ESLint["ESLint<br/>Code Quality Rules"]:::orange
+    ESLintErrors{"Lint errors<br/>found?"}:::orange
+    AutoFix["Auto-fix Issues<br/>--fix flag"]:::teal
+    ManualFix["Manual Fixes Required"]:::purple
+
+    Prettier["Prettier<br/>Code Formatting"]:::brown
+    PrettierFormat["Format Code<br/>Consistent Style"]:::teal
+
+    TSC["TypeScript Compiler<br/>tsc --noEmit"]:::blue
+    TypeErrors{"Type errors<br/>found?"}:::orange
+    Success["Code Ready to Commit"]:::teal
+    Fail["Commit Blocked"]:::purple
+
+    Code --> ESLint
+    ESLint --> ESLintErrors
+    ESLintErrors -->|Yes #40;Auto-fixable#41;| AutoFix
+    ESLintErrors -->|Yes #40;Manual#41;| ManualFix
+    ESLintErrors -->|No| Prettier
+    AutoFix --> Prettier
+    ManualFix --> Code
+
+    Prettier --> PrettierFormat
+    PrettierFormat --> TSC
+    TSC --> TypeErrors
+    TypeErrors -->|Yes| Fail
+    TypeErrors -->|No| Success
+
+    Note1["Pre-commit hook<br/>runs all three tools"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## ESLint 9.x/10.x
+
+### ESLint Configuration Hierarchy
+
+ESLint resolves configuration files following a specific hierarchy. Understanding this helps debug config issues.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Start["eslint src/file.ts"]:::blue
+    FileDir["Check src/<br/>for config"]:::orange
+    ParentDir["Check parent directories"]:::orange
+    RootConfig["Find eslint.config.js<br/>at project root"]:::teal
+    UserConfig["Check ~/.eslintrc"]:::brown
+    DefaultConfig["Use ESLint defaults"]:::purple
+
+    Merge["Merge Configurations<br/>#40;closer = higher priority#41;"]:::teal
+    ApplyRules["Apply Rules to File"]:::blue
+    Result["Lint Results"]:::teal
+
+    Start --> FileDir
+    FileDir --> ParentDir
+    ParentDir --> RootConfig
+    RootConfig --> UserConfig
+    UserConfig --> DefaultConfig
+    DefaultConfig --> Merge
+    Merge --> ApplyRules
+    ApplyRules --> Result
+
+    Note1["Priority #40;high to low#41;:<br/>1. Inline comments<br/>2. File-level config<br/>3. Project config<br/>4. User config<br/>5. Defaults"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ### Flat Config Setup (9.x)
 
@@ -113,7 +193,68 @@ export default [
 ];
 ```
 
+### Auto-fix vs Manual Fix Decision
+
+When should you use `eslint --fix` vs manual fixes? This decision tree helps optimize your workflow.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Start["ESLint Error Found"]:::blue
+    SafeRule{"Safe to<br/>auto-fix?"}:::orange
+    StyleOnly{"Style-only<br/>change?"}:::orange
+    UseAutoFix["Use --fix Flag<br/>Auto-apply fixes"]:::teal
+    ReviewChange["Review Change<br/>Then --fix"]:::brown
+    ManualFix["Manual Fix Required<br/>Logic change needed"]:::purple
+
+    Start --> SafeRule
+    SafeRule -->|Yes| StyleOnly
+    SafeRule -->|No| ManualFix
+    StyleOnly -->|Yes| UseAutoFix
+    StyleOnly -->|No| ReviewChange
+
+    Examples["Auto-fixable:<br/>- Missing semicolons<br/>- Unused imports<br/>- Spacing issues<br/><br/>Manual fixes:<br/>- Type errors<br/>- Logic errors<br/>- Security issues"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Prettier 3.x
+
+### Import Sorting Strategies
+
+Different strategies for organizing imports affect readability and maintainability.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    Imports["Import Statements"]:::blue
+
+    ByType["By Type<br/>#40;Built-in, External, Internal#41;"]:::orange
+    ByAlpha["Alphabetical<br/>#40;A-Z#41;"]:::teal
+    ByUsage["By Usage Frequency<br/>#40;Most used first#41;"]:::purple
+    ByLayer["By Architecture Layer<br/>#40;Domain, App, Infra#41;"]:::brown
+
+    Imports --> ByType
+    Imports --> ByAlpha
+    Imports --> ByUsage
+    Imports --> ByLayer
+
+    TypeExample["1. Built-in: fs, path<br/>2. External: express, zod<br/>3. Internal: @domain/*"]
+    AlphaExample["import { a } from 'a'<br/>import { b } from 'b'<br/>import { z } from 'z'"]
+    LayerExample["1. Domain entities<br/>2. Application services<br/>3. Infrastructure"]
+
+    Note1["ESLint plugin:<br/>eslint-plugin-import<br/>or<br/>@trivago/prettier-plugin-sort-imports"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ### Configuration
 

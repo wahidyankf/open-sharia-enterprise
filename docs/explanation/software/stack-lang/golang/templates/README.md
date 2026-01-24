@@ -600,9 +600,9 @@ All templates enforce these quality standards:
 
 ### Go Release Documentation
 
-- [Go 1.18 Release](../ex-so-stla-go__1.18-release.md) - Generics introduction
-- [Go 1.22 Release](../ex-so-stla-go__1.22-release.md) - Enhanced HTTP routing
-- [Go 1.25 Release](../ex-so-stla-go__1.25-release.md) - Latest features
+- [Go 1.18 Release](../ex-so-stla-go__release-1.18.md) - Generics introduction
+- [Go 1.22 Release](../ex-so-stla-go__release-1.22.md) - Enhanced HTTP routing
+- [Go 1.25 Release](../ex-so-stla-go__release-1.25.md) - Latest features
 
 ## Contributing
 

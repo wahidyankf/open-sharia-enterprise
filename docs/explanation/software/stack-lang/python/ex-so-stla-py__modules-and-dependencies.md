@@ -70,6 +70,36 @@ ruff==0.8.0
 
 **Why this matters**: requirements.txt locks exact versions. Reproducible environments across deployments. Separate dev dependencies from production.
 
+### 📊 Dependency Resolution Flow
+
+This diagram shows how pip resolves and installs dependencies from requirements.txt:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+  A[pip install -r requirements.txt]:::blue
+  B{Parse requirements.txt}:::orange
+  C[Resolve dependencies]:::blue
+  D{Check compatibility?}:::orange
+  E[Download packages]:::teal
+  F[Install packages]:::teal
+  G[Dependency conflict!]:::purple
+  H[Installation complete]:::teal
+
+  A --> B
+  B --> C
+  C --> D
+  D -->|Compatible| E
+  D -->|Conflict| G
+  E --> F
+  F --> H
+
+  classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Poetry
 
 Poetry provides modern dependency management with lock files.
@@ -122,6 +152,30 @@ poetry export -f requirements.txt --output requirements.txt
 ```
 
 **Why this matters**: Poetry manages dependencies and virtual environments. Lock file ensures exact versions. Separate dependency groups (dev, test, docs).
+
+### 📊 Package Manager Comparison
+
+This diagram compares different Python package management tools:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+  A[pip - Standard Installer]:::blue
+  B[Poetry - Dependency Manager]:::orange
+  C[uv - Fast Installer]:::teal
+  D[pipenv - Virtual Env Manager]:::brown
+
+  A -->|Mature, widely used| E[Project Needs]:::purple
+  B -->|Lock files, dependency groups| E
+  C -->|10-100x faster, Rust-based| E
+  D -->|Deprecated, use Poetry| E
+
+  classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ## uv (Fast Installer)
 
@@ -248,6 +302,36 @@ if not in_venv:
 
 **Why this matters**: Virtual environments prevent dependency conflicts. Project isolation. Reproducible development environments.
 
+### 📊 Virtual Environment Activation Sequence
+
+This sequence diagram shows the virtual environment creation and activation process:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+sequenceDiagram
+  participant Dev as Developer
+  participant Shell as Shell
+  participant Venv as Virtual Environment
+  participant Python as Python Interpreter
+
+  Dev->>Shell: python -m venv .venv
+  Shell->>Venv: Create isolated environment
+  Venv-->>Shell: .venv/ directory created
+
+  Dev->>Shell: source .venv/bin/activate
+  Shell->>Venv: Activate environment
+  Venv->>Shell: Modify PATH and VIRTUAL_ENV
+  Shell-->>Dev: Prompt shows #40;venv#41;
+
+  Dev->>Shell: pip install -r requirements.txt
+  Shell->>Venv: Install to .venv/lib/
+  Venv-->>Dev: Dependencies installed locally
+
+  Dev->>Shell: python main.py
+  Shell->>Python: Use .venv Python interpreter
+  Python-->>Dev: Script runs with isolated deps
+```
+
 ## Dependency Locking
 
 Lock files ensure exact dependency versions.
@@ -328,6 +412,48 @@ __all__ = ["ZakatCalculation", "StandardZakatCalculator"]
 
 **Why this matters**: src layout prevents import issues. **init**.py defines public API. Clear separation of concerns (domain/application/infrastructure).
 
+### 📊 Package Structure Comparison
+
+This diagram compares flat layout vs src layout for Python packages:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+  subgraph Flat["Flat Layout #40;Not Recommended#41;"]
+    A1[project/]:::purple
+    A2[package/]:::purple
+    A3[tests/]:::purple
+    A4[pyproject.toml]:::purple
+    A1 --> A2
+    A1 --> A3
+    A1 --> A4
+  end
+
+  subgraph Src["src Layout #40;Recommended#41;"]
+    B1[project/]:::teal
+    B2[src/]:::teal
+    B3[package/]:::teal
+    B4[tests/]:::teal
+    B5[pyproject.toml]:::teal
+    B1 --> B2
+    B2 --> B3
+    B1 --> B4
+    B1 --> B5
+  end
+
+  C[Prevents accidental imports]:::blue
+  D[Enforces proper installation]:::blue
+  E[Cleaner test isolation]:::blue
+
+  Src --> C
+  Src --> D
+  Src --> E
+
+  classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Import System
 
 Python's import system with absolute and relative imports.
@@ -366,6 +492,41 @@ class ZakatService:
 ```
 
 **Why this matters**: Absolute imports clearer for external usage. Relative imports useful within packages. Avoid circular imports.
+
+### 📊 Import Resolution Order
+
+This diagram shows Python's sys.path lookup order for module imports:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+  A[import package]:::blue
+  B{Check sys.path}:::orange
+  C[1. Current directory]:::blue
+  D[2. PYTHONPATH directories]:::blue
+  E[3. Standard library]:::blue
+  F[4. site-packages]:::blue
+  G{Module found?}:::orange
+  H[Import successful]:::teal
+  I[ModuleNotFoundError]:::purple
+
+  A --> B
+  B --> C
+  C --> G
+  G -->|Not found| D
+  D --> G
+  G -->|Not found| E
+  E --> G
+  G -->|Not found| F
+  F --> G
+  G -->|Found| H
+  G -->|Not found in any| I
+
+  classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ## References
 

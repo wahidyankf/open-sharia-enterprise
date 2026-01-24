@@ -654,7 +654,7 @@ mux.HandleFunc("GET /health{$}", healthCheck) // Matches /health but not /health
 
 - [Go Web Services](../ex-so-stla-go__web-services.md) - Complete web services guide
 - [Go Best Practices](../ex-so-stla-go__best-practices.md) - HTTP best practices
-- [Go Release 1.22](../ex-so-stla-go__1.22-release.md) - Enhanced HTTP routing details
+- [Go Release 1.22](../ex-so-stla-go__release-1.22.md) - Enhanced HTTP routing details
 
 ---
 

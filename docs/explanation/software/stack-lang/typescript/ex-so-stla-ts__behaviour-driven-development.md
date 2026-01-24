@@ -327,6 +327,56 @@ test("donation form on mobile", async ({ page }) => {
 });
 ```
 
+## BDD Checklist
+
+### Feature File Quality
+
+- [ ] Scenarios written in plain language (non-technical stakeholders can read)
+- [ ] Given-When-Then structure followed consistently
+- [ ] Scenarios focus on behavior, not implementation details
+- [ ] Scenario Outlines with Examples used for multiple inputs
+- [ ] Background section for common setup steps
+
+### Scenario Structure
+
+- [ ] Given: Context/preconditions clear and complete
+- [ ] When: Single action described (not multiple actions)
+- [ ] Then: Expected outcome specified clearly
+- [ ] And: Used appropriately for additional steps
+- [ ] Scenario names describe business value (not UI details)
+
+### Step Definitions
+
+- [ ] Step definitions are reusable across scenarios
+- [ ] No business logic in steps (delegate to service/domain layer)
+- [ ] Steps follow TypeScript idioms (async/await, type safety)
+- [ ] Error messages are descriptive and helpful
+- [ ] Context variables typed correctly
+
+### Collaboration
+
+- [ ] Scenarios reviewed by business stakeholders
+- [ ] Ubiquitous language used consistently (domain terminology)
+- [ ] Scenarios executable and automated (Cucumber/Playwright)
+- [ ] Living documentation kept up to date
+- [ ] Three Amigos conversation: BA, Dev, Tester
+
+### Cucumber/Playwright Best Practices
+
+- [ ] Feature files organized by domain (features/donations/, features/campaigns/)
+- [ ] Step definitions modular and maintainable (features/step-definitions/)
+- [ ] Tags used for organizing scenarios (@smoke, @critical, @e2e)
+- [ ] Background steps minimized (only truly shared setup)
+- [ ] Page Object Model used for E2E tests (Playwright)
+
+### Financial Domain BDD
+
+- [ ] Shariah compliance scenarios included (halal/haram validation)
+- [ ] Zakat calculation scenarios with examples (nisab, rates, exemptions)
+- [ ] Murabaha contract scenarios with Given-When-Then (profit validation)
+- [ ] Audit trail scenarios verified (who, what, when)
+- [ ] Currency scenarios tested (USD, SAR, EUR conversions with Money type)
+
 ## Related Documentation
 
 - **[TypeScript TDD](./ex-so-stla-ts__test-driven-development.md)** - TDD patterns

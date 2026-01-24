@@ -1376,6 +1376,56 @@ setup do
 end
 ```
 
+## TDD Checklist
+
+### Red Phase (Write Failing Test)
+
+- [ ] Test written before implementation
+- [ ] Test fails for the right reason (expected error)
+- [ ] Test is focused and tests one behavior
+- [ ] Test has clear, descriptive name using describe/test blocks
+- [ ] Assertions use pattern matching where appropriate
+
+### Green Phase (Make Test Pass)
+
+- [ ] Simplest implementation that makes test pass
+- [ ] No premature optimization
+- [ ] All tests still passing (mix test)
+- [ ] Code follows Elixir idioms (immutability, pattern matching)
+- [ ] Type specs added (@spec) where appropriate
+
+### Refactor Phase
+
+- [ ] Code is clean and maintainable
+- [ ] No duplication (DRY principle)
+- [ ] All tests still passing after refactoring
+- [ ] Test coverage maintained or improved
+- [ ] Module documentation (@moduledoc) added
+
+### Test Quality
+
+- [ ] Tests are independent (no shared mutable state)
+- [ ] Tests are repeatable (deterministic, no randomness)
+- [ ] Tests are fast (async: true for independent tests)
+- [ ] Test setup/teardown properly managed (setup/on_exit)
+- [ ] Mock/stub dependencies using Mox (behavior-based)
+
+### ExUnit Best Practices
+
+- [ ] Using ExUnit.Case with async: true when possible
+- [ ] describe blocks group related tests logically
+- [ ] Fixtures defined in setup callbacks
+- [ ] Tags used for organizing tests (@tag :integration, @tag :slow)
+- [ ] Pattern matching in assertions (assert {:ok, result} = function())
+
+### Financial Domain Testing
+
+- [ ] Zakat calculations tested with edge cases (nisab threshold, exact boundary)
+- [ ] Decimal precision tested (Money.t() type, no float errors)
+- [ ] Murabaha contract validation tested (profit margins, down payments)
+- [ ] Audit trail creation verified in tests
+- [ ] Currency handling tested (Money.new with currency matching)
+
 ## Related Topics
 
 - [Behaviour-Driven Development](ex-so-stla-el__behaviour-driven-development.md) - BDD with Gherkin

@@ -29,7 +29,27 @@ last_updated: 2026-01-24
 
 # Elixir Best Practices
 
-**Quick Reference**: [Overview](#overview) | [Alignment with Principles](#alignment-with-software-engineering-principles) | [Naming Conventions](#naming-conventions) | [OTP Patterns](#otp-patterns) | [Supervision](#supervision-tree-design) | [Context Modules](#context-modules) | [Ecto Changesets](#ecto-changeset-patterns) | [Testing](#testing-best-practices) | [Code Organization](#code-organization)
+## Quick Reference
+
+**Software Engineering Principles**:
+
+- [Alignment with Software Engineering Principles](#alignment-with-software-engineering-principles)
+
+**Major Topics**:
+
+- [Naming Conventions](#naming-conventions)
+- [OTP Patterns](#otp-patterns)
+- [Supervision Tree Design](#supervision-tree-design)
+- [Context Modules](#context-modules)
+- [Ecto Changeset Patterns](#ecto-changeset-patterns)
+- [Testing Best Practices](#testing-best-practices)
+- [Code Organization](#code-organization)
+
+**Additional Resources**:
+
+- [Best Practices Summary](#best-practices-summary)
+- [Related Topics](#related-topics)
+- [Sources](#sources)
 
 ## Overview
 
@@ -152,7 +172,1108 @@ end
 
 **See Also**: [Elixir Linting and Formatting](./ex-so-stla-el__linting-and-formatting.md)
 
-(Continue with remaining principles following the same pattern...)
+### 2. Explicit Over Implicit
+
+**Principle**: Choose explicit composition and configuration over magic, convenience, and hidden behavior.
+
+**How Elixir Implements**:
+
+- Explicit pattern matching in function heads (no hidden control flow)
+- No default function arguments (all parameters visible at call site)
+- Function clause guards make conditions explicit (`when is_integer(x)`)
+- Ecto changeset validations are explicit (no hidden validation rules)
+- Explicit `:ok`/`:error` tuples instead of exceptions for business logic
+- Named processes via `name:` option (explicit registration)
+- Pipe operator makes data flow visible
+
+**PASS Example** (Explicit Murabaha Contract):
+
+```elixir
+# Explicit Murabaha contract with visible validation and business rules
+defmodule FinancialDomain.Islamic.MurabahaContract do
+  @moduledoc """
+  Murabaha (cost-plus financing) contract with explicit terms.
+
+  All terms are explicit - no hidden defaults or implicit calculations.
+  Islamic scholars can verify Shariah compliance by reading the code.
+  """
+
+  use Ecto.Schema
+  import Ecto.Changeset
+  alias FinancialDomain.Money
+
+  @type t :: %__MODULE__{
+    contract_id: String.t(),
+    customer_id: String.t(),
+    cost_price: Money.t(),
+    profit_margin: Money.t(),
+    total_price: Money.t(),
+    installment_count: pos_integer(),
+    installment_amount: Money.t(),
+    contract_date: Date.t()
+  }
+
+  schema "murabaha_contracts" do
+    field :contract_id, :string
+    field :customer_id, :string
+    field :cost_price, :decimal
+    field :profit_margin, :decimal
+    field :total_price, :decimal
+    field :installment_count, :integer
+    field :installment_amount, :decimal
+    field :contract_date, :date
+
+    timestamps()
+  end
+
+  @doc """
+  Creates a Murabaha contract with explicit validation.
+
+  All parameters required - no defaults that could hide Shariah violations.
+  """
+  def create_contract(
+        customer_id,
+        cost_price,
+        profit_margin,
+        installment_count,
+        contract_date
+      ) when is_binary(customer_id) and
+             is_integer(installment_count) and installment_count > 0 do
+    # Explicit calculation - no hidden formulas
+    total_price = Money.add(cost_price, profit_margin)
+    installment_amount = Money.divide(total_price, installment_count)
+
+    attrs = %{
+      contract_id: generate_contract_id(),
+      customer_id: customer_id,
+      cost_price: Money.to_decimal(cost_price),
+      profit_margin: Money.to_decimal(profit_margin),
+      total_price: Money.to_decimal(total_price),
+      installment_count: installment_count,
+      installment_amount: Money.to_decimal(installment_amount),
+      contract_date: contract_date
+    }
+
+    %__MODULE__{}
+    |> changeset(attrs)
+    |> case do
+      %Ecto.Changeset{valid?: true} = changeset ->
+        {:ok, changeset}
+
+      %Ecto.Changeset{valid?: false} = changeset ->
+        {:error, changeset}
+    end
+  end
+
+  # Pattern match makes requirements explicit
+  def changeset(contract, attrs) do
+    contract
+    |> cast(attrs, [
+      :contract_id,
+      :customer_id,
+      :cost_price,
+      :profit_margin,
+      :total_price,
+      :installment_count,
+      :installment_amount,
+      :contract_date
+    ])
+    # Explicit validation - all rules visible
+    |> validate_required([
+      :contract_id,
+      :customer_id,
+      :cost_price,
+      :profit_margin,
+      :total_price,
+      :installment_count,
+      :installment_amount,
+      :contract_date
+    ])
+    |> validate_number(:cost_price, greater_than: 0)
+    |> validate_number(:profit_margin, greater_than_or_equal_to: 0)
+    |> validate_number(:total_price, greater_than: 0)
+    |> validate_number(:installment_count, greater_than: 0)
+    |> validate_number(:installment_amount, greater_than: 0)
+    |> validate_total_price_calculation()
+    |> validate_installment_calculation()
+    |> unique_constraint(:contract_id)
+  end
+
+  # Explicit validation function - verifies Shariah compliance
+  defp validate_total_price_calculation(changeset) do
+    cost = get_field(changeset, :cost_price)
+    margin = get_field(changeset, :profit_margin)
+    total = get_field(changeset, :total_price)
+
+    if cost && margin && total do
+      expected_total = Decimal.add(cost, margin)
+
+      if Decimal.equal?(total, expected_total) do
+        changeset
+      else
+        add_error(
+          changeset,
+          :total_price,
+          "Total price must equal cost price + profit margin (explicit calculation)"
+        )
+      end
+    else
+      changeset
+    end
+  end
+
+  defp validate_installment_calculation(changeset) do
+    total = get_field(changeset, :total_price)
+    count = get_field(changeset, :installment_count)
+    installment = get_field(changeset, :installment_amount)
+
+    if total && count && installment do
+      expected_installment = Decimal.div(total, Decimal.new(count))
+
+      if Decimal.equal?(installment, expected_installment) do
+        changeset
+      else
+        add_error(
+          changeset,
+          :installment_amount,
+          "Installment amount must equal total price / installment count"
+        )
+      end
+    else
+      changeset
+    end
+  end
+
+  defp generate_contract_id do
+    "MUR-#{:crypto.strong_rand_bytes(8) |> Base.encode16()}"
+  end
+end
+```
+
+**FAIL Example** (Implicit Configuration):
+
+```elixir
+# Anti-pattern: Hidden defaults and implicit behavior
+defmodule FinancialDomain.Islamic.MurabahaContract.Bad do
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  schema "murabaha_contracts" do
+    field :customer_id, :string
+    field :cost_price, :decimal
+    field :profit_margin, :decimal
+    # Missing explicit fields - calculated implicitly!
+
+    timestamps()
+  end
+
+  # BAD: Default argument hides business rule
+  def create_contract(customer_id, cost_price, profit_margin, installment_count \\ 12) do
+    # Magic number 12 - where did it come from? Shariah compliant?
+
+    # BAD: Implicit calculation - not visible in function signature
+    total = calculate_total(cost_price, profit_margin)
+
+    # BAD: Uses Process dictionary for configuration (mutable global state)
+    markup_rate = Process.get(:default_markup_rate, Decimal.new("0.15"))
+
+    attrs = %{
+      customer_id: customer_id,
+      cost_price: cost_price,
+      profit_margin: profit_margin
+      # Where's the total_price field? Hidden!
+      # Where's installment_amount? Hidden!
+    }
+
+    %__MODULE__{}
+    |> changeset(attrs)
+  end
+
+  # BAD: No explicit validation
+  def changeset(contract, attrs) do
+    # Just casts without validation - accepts anything!
+    cast(contract, attrs, [:customer_id, :cost_price, :profit_margin])
+  end
+
+  # BAD: Private calculation - not testable, not verifiable
+  defp calculate_total(cost, margin) do
+    # Hidden formula - Islamic scholars can't verify
+    Decimal.add(cost, margin)
+  end
+end
+```
+
+**Islamic Finance Application**: Explicit Murabaha contract terms ensure no hidden fees (riba) or implicit interest calculations. All profit margins, installment calculations, and contract terms are visible in code. When Islamic scholars audit the system, they can verify every calculation follows Shariah law - no magic, no implicit defaults that could violate compliance.
+
+**See Also**: [Explicit Over Implicit Principle](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
+
+### 3. Immutability Over Mutability
+
+**Principle**: Prefer immutable data structures over mutable state for safer, more predictable code.
+
+**How Elixir Implements**:
+
+- Everything immutable by default (no variable reassignment in Elixir)
+- Data transformations return new copies (original untouched)
+- Pattern matching creates new bindings, doesn't mutate
+- ETS tables for shared state (explicit concurrency primitive, not mutation)
+- Processes hold state via recursion or GenServer (explicit state changes)
+- No object-oriented mutation (no `user.balance = new_value`)
+- Pipe operator encourages functional transformations
+
+**PASS Example** (Immutable Zakat Transaction):
+
+```elixir
+# Immutable transaction record - tamper-proof audit trail
+defmodule FinancialDomain.Zakat.Transaction do
+  @moduledoc """
+  Immutable Zakat transaction for audit trail.
+
+  Once created, transaction cannot be modified. Corrections create
+  new transactions, preserving complete audit history.
+  """
+
+  @enforce_keys [:transaction_id, :payer_id, :wealth, :zakat_amount, :paid_at, :audit_hash]
+  defstruct [:transaction_id, :payer_id, :wealth, :zakat_amount, :paid_at, :audit_hash]
+
+  alias FinancialDomain.Money
+
+  @type t :: %__MODULE__{
+    transaction_id: String.t(),
+    payer_id: String.t(),
+    wealth: Money.t(),
+    zakat_amount: Money.t(),
+    paid_at: DateTime.t(),
+    audit_hash: String.t()
+  }
+
+  @doc """
+  Creates immutable transaction with audit hash.
+
+  Returns new struct - cannot be modified after creation.
+  """
+  def create(payer_id, wealth, zakat_amount) do
+    transaction_id = generate_transaction_id()
+    paid_at = DateTime.utc_now()
+
+    # Build transaction data
+    transaction_data = %{
+      transaction_id: transaction_id,
+      payer_id: payer_id,
+      wealth: wealth,
+      zakat_amount: zakat_amount,
+      paid_at: paid_at
+    }
+
+    # Calculate audit hash from immutable data
+    audit_hash = calculate_audit_hash(transaction_data)
+
+    # Return immutable struct
+    %__MODULE__{
+      transaction_id: transaction_id,
+      payer_id: payer_id,
+      wealth: wealth,
+      zakat_amount: zakat_amount,
+      paid_at: paid_at,
+      audit_hash: audit_hash
+    }
+  end
+
+  @doc """
+  Creates correction transaction - original remains unchanged.
+
+  Does NOT modify existing transaction. Returns new transaction
+  with corrected amount, preserving audit trail.
+  """
+  def correct(original, corrected_amount) do
+    # Original transaction remains unchanged (immutability)
+    create(original.payer_id, original.wealth, corrected_amount)
+  end
+
+  @doc """
+  Transforms transaction to different currency - returns NEW transaction.
+
+  Original preserved, new transaction created with converted amounts.
+  """
+  def convert_currency(transaction, target_currency, exchange_rate) do
+    # Transform creates new Money values
+    new_wealth = Money.convert(transaction.wealth, target_currency, exchange_rate)
+    new_zakat = Money.convert(transaction.zakat_amount, target_currency, exchange_rate)
+
+    # Return new transaction, original unchanged
+    create(transaction.payer_id, new_wealth, new_zakat)
+  end
+
+  @doc """
+  Verifies transaction integrity via audit hash.
+
+  Immutability guarantees hash remains valid - tampering impossible.
+  """
+  def verify_integrity(%__MODULE__{} = transaction) do
+    transaction_data = %{
+      transaction_id: transaction.transaction_id,
+      payer_id: transaction.payer_id,
+      wealth: transaction.wealth,
+      zakat_amount: transaction.zakat_amount,
+      paid_at: transaction.paid_at
+    }
+
+    expected_hash = calculate_audit_hash(transaction_data)
+
+    if transaction.audit_hash == expected_hash do
+      {:ok, :verified}
+    else
+      {:error, :tampered}
+    end
+  end
+
+  # Audit trail: immutable list of transactions
+  defmodule AuditLog do
+    @moduledoc """
+    Maintains immutable audit trail of all transactions.
+
+    Each operation returns NEW log, never modifies existing.
+    """
+
+    @type t :: [Transaction.t()]
+
+    @doc """
+    Appends transaction to log - returns NEW log.
+
+    Original log unchanged.
+    """
+    def append(log, transaction) do
+      # Prepend to list (efficient), returns new list
+      [transaction | log]
+    end
+
+    @doc """
+    Retrieves transaction by ID - returns copy.
+
+    Log remains unchanged.
+    """
+    def get_transaction(log, transaction_id) do
+      Enum.find(log, fn tx -> tx.transaction_id == transaction_id end)
+    end
+
+    @doc """
+    Filters transactions by payer - returns NEW list.
+
+    Original log unchanged.
+    """
+    def filter_by_payer(log, payer_id) do
+      Enum.filter(log, fn tx -> tx.payer_id == payer_id end)
+    end
+
+    @doc """
+    Calculates total zakat from log - pure function.
+
+    Log unchanged, returns computed value.
+    """
+    def total_zakat(log) do
+      log
+      |> Enum.map(& &1.zakat_amount)
+      |> Enum.reduce(Money.new(0, :SAR), &Money.add/2)
+    end
+  end
+
+  # Private helpers
+
+  defp generate_transaction_id do
+    "ZKT-#{:crypto.strong_rand_bytes(8) |> Base.encode16()}"
+  end
+
+  defp calculate_audit_hash(data) do
+    data
+    |> :erlang.term_to_binary()
+    |> then(&:crypto.hash(:sha256, &1))
+    |> Base.encode16()
+  end
+end
+```
+
+**FAIL Example** (Mutable State with Agent):
+
+```elixir
+# Anti-pattern: Using Agent for mutable state (wrong approach)
+defmodule FinancialDomain.Zakat.Transaction.Bad do
+  @moduledoc """
+  BAD: Mutable transaction using Agent - violates audit trail.
+  """
+
+  use Agent
+
+  # BAD: Transaction can be mutated after creation
+  def start_link(payer_id, wealth, zakat_amount) do
+    transaction = %{
+      transaction_id: generate_id(),
+      payer_id: payer_id,
+      wealth: wealth,
+      zakat_amount: zakat_amount,
+      paid_at: DateTime.utc_now()
+    }
+
+    Agent.start_link(fn -> transaction end, name: via_tuple(transaction.transaction_id))
+  end
+
+  # BAD: Allows mutation - violates immutability and audit trail
+  def update_amount(transaction_id, new_amount) do
+    Agent.update(via_tuple(transaction_id), fn transaction ->
+      # DANGER: Mutates transaction, loses audit trail
+      # Can't verify if this was the original amount
+      %{transaction | zakat_amount: new_amount}
+    end)
+  end
+
+  # BAD: Can change payer after creation - Shariah violation!
+  def change_payer(transaction_id, new_payer_id) do
+    Agent.update(via_tuple(transaction_id), fn transaction ->
+      # DANGER: Allows fraudulent transaction modification
+      %{transaction | payer_id: new_payer_id}
+    end)
+  end
+
+  # BAD: Can backdate transaction
+  def change_date(transaction_id, new_date) do
+    Agent.update(via_tuple(transaction_id), fn transaction ->
+      # DANGER: Falsifies payment timestamp - fraud!
+      %{transaction | paid_at: new_date}
+    end)
+  end
+
+  defp via_tuple(transaction_id) do
+    {:via, Registry, {FinancialDomain.Registry, transaction_id}}
+  end
+
+  defp generate_id do
+    "ZKT-#{:crypto.strong_rand_bytes(8) |> Base.encode16()}"
+  end
+end
+
+# BAD: Global mutable state with Process dictionary
+defmodule FinancialDomain.Zakat.BadGlobal do
+  # ANTI-PATTERN: Process dictionary for "global" config
+  def set_nisab_threshold(amount) do
+    Process.put(:nisab_threshold, amount)
+  end
+
+  def calculate_zakat(wealth) do
+    # BAD: Depends on mutable global state
+    nisab = Process.get(:nisab_threshold)
+    # Calculation depends on invisible mutable state
+  end
+end
+```
+
+**Islamic Finance Application**: Immutable Zakat transaction records create tamper-proof audit trails required for Shariah compliance verification. Once a payment is recorded, it cannot be retroactively modified - ensuring transparency and accountability (Amanah). Islamic scholars can verify that no transaction has been altered, deleted, or backdated. Every correction creates a new transaction, preserving complete financial history for compliance audits.
+
+**See Also**: [Immutability Principle](../../../../../governance/principles/software-engineering/immutability.md)
+
+### 4. Pure Functions Over Side Effects
+
+**Principle**: Prefer pure functions that are deterministic and side-effect-free for predictable, testable code.
+
+**How Elixir Implements**:
+
+- Pure functions in modules (no side effects in calculations)
+- Side effects isolated in GenServers, Tasks, and OTP processes
+- Functional core, imperative shell pattern (pure logic, I/O at edges)
+- Pipe operator encourages pure transformations
+- Pattern matching enables pure control flow
+- ExUnit makes testing pure functions trivial
+- with statements compose pure operations
+
+**PASS Example** (Pure Zakat Calculator):
+
+```elixir
+# Pure Zakat calculation module - no side effects
+defmodule FinancialDomain.Zakat.Calculator do
+  @moduledoc """
+  Pure Zakat calculation functions.
+
+  All functions deterministic - same inputs always produce same output.
+  No database queries, no logging, no network calls.
+  Islamic scholars can verify calculations by inspection.
+  """
+
+  alias FinancialDomain.Money
+
+  @zakat_rate Decimal.new("0.025")  # 2.5% - Shariah mandated rate
+
+  @type calculation_result ::
+    {:ok, Money.t()} | {:error, :wealth_below_nisab} | {:error, :invalid_amount}
+
+  @doc """
+  Calculates Zakat (2.5%) on wealth above nisab threshold.
+
+  Pure function - deterministic, no side effects, easily testable.
+
+  ## Examples
+
+      iex> wealth = Money.new(100_000, :SAR)
+      iex> nisab = Money.new(5_000, :SAR)
+      iex> Calculator.calculate(wealth, nisab)
+      {:ok, %Money{amount: Decimal.new("2500.00"), currency: :SAR}}
+
+      iex> wealth = Money.new(3_000, :SAR)
+      iex> nisab = Money.new(5_000, :SAR)
+      iex> Calculator.calculate(wealth, nisab)
+      {:error, :wealth_below_nisab}
+  """
+  @spec calculate(Money.t(), Money.t()) :: calculation_result()
+  def calculate(wealth, nisab) do
+    # Pure validation - no side effects
+    with :ok <- validate_positive_amount(wealth),
+         :ok <- validate_positive_amount(nisab),
+         :ok <- validate_same_currency(wealth, nisab),
+         :ok <- validate_wealth_above_nisab(wealth, nisab) do
+      # Pure calculation - deterministic
+      zakat_amount = Money.multiply(wealth, @zakat_rate)
+      {:ok, zakat_amount}
+    end
+  end
+
+  @doc """
+  Determines if wealth qualifies for Zakat (must exceed nisab).
+
+  Pure boolean function - no side effects.
+  """
+  @spec eligible?(Money.t(), Money.t()) :: boolean()
+  def eligible?(wealth, nisab) do
+    Money.greater_than?(wealth, nisab)
+  end
+
+  @doc """
+  Calculates nisab threshold from current gold price.
+
+  Pure calculation - 85 grams of gold (Shariah standard).
+  """
+  @spec calculate_nisab_from_gold(Money.t()) :: Money.t()
+  def calculate_nisab_from_gold(gold_price_per_gram) do
+    nisab_gold_grams = 85
+    Money.multiply(gold_price_per_gram, Decimal.new(nisab_gold_grams))
+  end
+
+  @doc """
+  Calculates total Zakat for multiple wealth categories.
+
+  Pure function - composes pure operations.
+  """
+  @spec calculate_total([Money.t()], Money.t()) :: {:ok, Money.t()} | {:error, atom()}
+  def calculate_total(wealth_items, nisab) do
+    # Pure aggregation
+    total_wealth = Enum.reduce(wealth_items, Money.new(0, nisab.currency), &Money.add/2)
+
+    # Pure calculation
+    calculate(total_wealth, nisab)
+  end
+
+  # Private pure helper functions
+
+  defp validate_positive_amount(%Money{amount: amount}) do
+    if Decimal.positive?(amount) or Decimal.eq?(amount, Decimal.new(0)) do
+      :ok
+    else
+      {:error, :invalid_amount}
+    end
+  end
+
+  defp validate_same_currency(%Money{currency: c1}, %Money{currency: c2}) do
+    if c1 == c2 do
+      :ok
+    else
+      {:error, :currency_mismatch}
+    end
+  end
+
+  defp validate_wealth_above_nisab(wealth, nisab) do
+    if Money.greater_than?(wealth, nisab) do
+      :ok
+    else
+      {:error, :wealth_below_nisab}
+    end
+  end
+end
+
+# Functional core - pure business logic
+defmodule FinancialDomain.Zakat.Core do
+  @moduledoc """
+  Pure Zakat business logic - functional core.
+
+  All functions pure - easy to test, compose, and verify.
+  """
+
+  alias FinancialDomain.Money
+  alias FinancialDomain.Zakat.Calculator
+
+  @doc """
+  Builds Zakat payment plan - pure calculation.
+
+  Returns plan structure, doesn't persist or execute.
+  """
+  def build_payment_plan(wealth, nisab, payer_id) do
+    case Calculator.calculate(wealth, nisab) do
+      {:ok, zakat_amount} ->
+        plan = %{
+          payer_id: payer_id,
+          wealth: wealth,
+          nisab: nisab,
+          zakat_amount: zakat_amount,
+          calculated_at: DateTime.utc_now()
+        }
+
+        {:ok, plan}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  @doc """
+  Validates Zakat payment against calculation - pure validation.
+  """
+  def validate_payment(wealth, nisab, claimed_zakat) do
+    with {:ok, calculated_zakat} <- Calculator.calculate(wealth, nisab) do
+      if Money.equal?(calculated_zakat, claimed_zakat) do
+        {:ok, :valid}
+      else
+        {:error, :incorrect_amount, calculated_zakat}
+      end
+    end
+  end
+end
+
+# Imperative shell - handles side effects
+defmodule FinancialDomain.Zakat.Service do
+  @moduledoc """
+  Zakat service - imperative shell around pure core.
+
+  Handles I/O, database, logging. Delegates business logic to pure functions.
+  """
+
+  alias FinancialDomain.Repo
+  alias FinancialDomain.Zakat.{Calculator, Core, Transaction}
+
+  require Logger
+
+  @doc """
+  Processes Zakat payment with side effects.
+
+  Pure calculation in Core, side effects here (DB, logging).
+  """
+  def process_payment(payer_id, wealth, nisab) do
+    # Pure calculation
+    with {:ok, plan} <- Core.build_payment_plan(wealth, nisab, payer_id) do
+      # Side effect: Create transaction record
+      transaction = Transaction.create(payer_id, wealth, plan.zakat_amount)
+
+      # Side effect: Persist to database
+      case Repo.insert(transaction_to_ecto(transaction)) do
+        {:ok, saved} ->
+          # Side effect: Log success
+          Logger.info("Zakat payment processed for payer #{payer_id}: #{plan.zakat_amount}")
+
+          # Side effect: Send notification
+          notify_payment_success(payer_id, plan.zakat_amount)
+
+          {:ok, saved}
+
+        {:error, changeset} ->
+          # Side effect: Log error
+          Logger.error("Failed to save Zakat payment: #{inspect(changeset)}")
+          {:error, :persistence_failed}
+      end
+    end
+  end
+
+  # Side effect functions isolated at boundary
+  defp notify_payment_success(payer_id, amount) do
+    # Network I/O
+    FinancialDomain.Notifications.send(payer_id, "Zakat payment of #{amount} processed")
+  end
+
+  defp transaction_to_ecto(transaction) do
+    # Transform pure struct to Ecto schema
+    %FinancialDomain.Zakat.TransactionSchema{
+      transaction_id: transaction.transaction_id,
+      payer_id: transaction.payer_id,
+      wealth: Money.to_decimal(transaction.wealth),
+      zakat_amount: Money.to_decimal(transaction.zakat_amount),
+      paid_at: transaction.paid_at
+    }
+  end
+end
+```
+
+**FAIL Example** (Impure with Side Effects):
+
+```elixir
+# Anti-pattern: Business logic mixed with side effects
+defmodule FinancialDomain.Zakat.BadCalculator do
+  @moduledoc """
+  BAD: Calculation mixed with database queries and logging.
+  Hard to test, non-deterministic, violates single responsibility.
+  """
+
+  alias FinancialDomain.Repo
+  alias FinancialDomain.Money
+
+  require Logger
+
+  # BAD: Impure function - side effects everywhere
+  def calculate(payer_id, wealth) do
+    # Side effect: Logging in calculation
+    Logger.info("Calculating Zakat for payer #{payer_id}, wealth #{inspect(wealth)}")
+
+    # Side effect: Database query during calculation
+    nisab_record = Repo.get_by(NisabThreshold, currency: wealth.currency, is_current: true)
+
+    unless nisab_record do
+      # Side effect: External API call
+      nisab = fetch_nisab_from_api(wealth.currency)
+      # Side effect: Database write during calculation
+      Repo.insert!(%NisabThreshold{currency: wealth.currency, amount: nisab, is_current: true})
+    end
+
+    nisab = Money.new(nisab_record.amount, wealth.currency)
+
+    # Side effect: Random adjustment (non-deterministic!)
+    adjustment = :rand.uniform() * 0.001
+
+    # Calculation mixed with I/O
+    zakat_base = if Money.greater_than?(wealth, nisab) do
+      Money.multiply(wealth, Decimal.new("0.025"))
+    else
+      Money.new(0, wealth.currency)
+    end
+
+    # Non-deterministic result
+    zakat_adjusted = Money.multiply(zakat_base, Decimal.new(1 + adjustment))
+
+    # Side effect: Audit log during calculation
+    log_calculation(payer_id, wealth, zakat_adjusted)
+
+    # Side effect: Notification
+    send_notification(payer_id, "Zakat calculated: #{zakat_adjusted}")
+
+    # Side effect: Cache update
+    cache_result(payer_id, zakat_adjusted)
+
+    zakat_adjusted
+  end
+
+  # More side effects
+  defp fetch_nisab_from_api(currency) do
+    # Network call - non-deterministic, can fail
+    HTTPoison.get!("https://api.gold-price.com/nisab/#{currency}")
+    |> Map.get(:body)
+    |> Jason.decode!()
+    |> Map.get("amount")
+  end
+
+  defp log_calculation(payer_id, wealth, zakat) do
+    # Database write
+    Repo.insert!(%CalculationLog{
+      payer_id: payer_id,
+      wealth: Money.to_decimal(wealth),
+      zakat: Money.to_decimal(zakat)
+    })
+  end
+
+  defp send_notification(payer_id, message) do
+    # External service call
+    NotificationService.send(payer_id, message)
+  end
+
+  defp cache_result(payer_id, zakat) do
+    # Global state mutation via ETS
+    :ets.insert(:zakat_cache, {payer_id, zakat, :os.system_time(:second)})
+  end
+end
+```
+
+**Islamic Finance Application**: Pure Zakat calculation functions ensure deterministic, verifiable results that Islamic scholars can independently audit. Calculate Zakat on 100,000 SAR wealth with 5,000 SAR nisab threshold - always get exactly 2,500 SAR (2.5%), every time, on every machine. No hidden database queries, no external API calls, no random adjustments that could manipulate calculations. Functional core (pure logic) + imperative shell (I/O at edges) pattern ensures business rules remain pure and testable while side effects are isolated and explicit.
+
+**See Also**: [Pure Functions Principle](../../../../../governance/principles/software-engineering/pure-functions.md)
+
+### 5. Reproducibility First
+
+**Principle**: Development environments and builds should be reproducible from the start.
+
+**How Elixir Implements**:
+
+- `mix.lock` for exact dependency versions (committed to git)
+- Exact version specifications in `mix.exs` (no loose ranges)
+- `.tool-versions` file for asdf version manager (Elixir + Erlang/OTP)
+- Docker with pinned Elixir and OTP versions
+- Hex package manager with deterministic resolution
+- `MIX_ENV` for consistent build environments
+- Release configuration for reproducible deployments
+
+**PASS Example** (Reproducible Elixir Environment):
+
+```elixir
+# mix.exs - Exact dependency versions for reproducibility
+defmodule FinancialDomain.MixProject do
+  use Mix.Project
+
+  def project do
+    [
+      app: :financial_domain,
+      version: "1.0.0",
+      # Exact Elixir version requirement
+      elixir: "~> 1.18.1",
+      # Exact OTP version requirement
+      erlang: "~> 27.0",
+      start_permanent: Mix.env() == :prod,
+      deps: deps(),
+      releases: releases()
+    ]
+  end
+
+  def application do
+    [
+      mod: {FinancialDomain.Application, []},
+      extra_applications: [:logger, :runtime_tools]
+    ]
+  end
+
+  # Exact dependency versions - reproducible builds
+  defp deps do
+    [
+      # Database
+      {:ecto, "~> 3.12.5"},
+      {:ecto_sql, "~> 3.12.1"},
+      {:postgrex, "~> 0.19.3"},
+
+      # Financial calculations
+      {:decimal, "~> 2.3.1"},
+      {:money, "~> 1.13.0"},
+
+      # Web framework (if needed)
+      {:phoenix, "~> 1.7.18"},
+      {:phoenix_ecto, "~> 4.6.3"},
+
+      # Code quality
+      {:credo, "~> 1.7.11", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4.5", only: [:dev, :test], runtime: false},
+
+      # Testing
+      {:excoveralls, "~> 0.18.3", only: :test}
+    ]
+  end
+
+  defp releases do
+    [
+      financial_domain: [
+        include_executables_for: [:unix],
+        applications: [runtime_tools: :permanent],
+        steps: [:assemble, :tar]
+      ]
+    ]
+  end
+end
+
+# mix.lock - Exact resolved versions (auto-generated, commit to git)
+# %{
+#   "decimal": {:hex, :decimal, "2.3.1", "...", [:mix], [], "hexpm", "..."},
+#   "ecto": {:hex, :ecto, "3.12.5", "...", [:mix], [...], "hexpm", "..."},
+#   ...
+# }
+```
+
+```bash
+# .tool-versions - asdf version manager (exact Elixir and Erlang/OTP)
+# Commit this file to git for reproducible environments
+elixir 1.18.1-otp-27
+erlang 27.0
+```
+
+```dockerfile
+# Dockerfile - Reproducible build container
+# Pin exact Elixir and OTP versions
+
+# Build stage
+FROM hexpm/elixir:1.18.1-erlang-27.0.1-alpine-3.21.2 AS build
+
+# Install build dependencies
+RUN apk add --no-cache build-base git
+
+WORKDIR /app
+
+# Install hex and rebar (exact versions)
+RUN mix local.hex --force && \
+    mix local.rebar --force
+
+# Copy dependency manifests
+COPY mix.exs mix.lock ./
+
+# Install dependencies from lockfile (exact versions)
+ENV MIX_ENV=prod
+RUN mix deps.get --only prod
+RUN mix deps.compile
+
+# Copy source code
+COPY . .
+
+# Compile application
+RUN mix compile
+
+# Build release
+RUN mix release
+
+# Runtime stage
+FROM alpine:3.21.2 AS runtime
+
+# Install runtime dependencies (exact versions)
+RUN apk add --no-cache \
+    ncurses-libs \
+    openssl \
+    libstdc++ \
+    libgcc
+
+WORKDIR /app
+
+# Copy release from build stage
+COPY --from=build /app/_build/prod/rel/financial_domain ./
+
+# Set environment
+ENV MIX_ENV=prod
+
+# Expose ports
+EXPOSE 4000
+
+# Start application
+CMD ["bin/financial_domain", "start"]
+```
+
+```elixir
+# config/runtime.exs - Environment-specific configuration
+import Config
+
+# Reproducible configuration across environments
+config :financial_domain, FinancialDomain.Repo,
+  # Database configuration from environment
+  url: System.get_env("DATABASE_URL"),
+  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+  # SSL configuration
+  ssl: true,
+  ssl_opts: [
+    verify: :verify_peer,
+    cacertfile: System.get_env("DB_SSL_CA_CERT_PATH")
+  ]
+
+# Reproducible Zakat constants
+config :financial_domain, :zakat_config,
+  # Exact rate - never changes (Shariah mandate)
+  zakat_rate: Decimal.new("0.025"),
+  # Nisab in grams of gold (Shariah standard)
+  nisab_gold_grams: 85,
+  nisab_silver_grams: 595,
+  # Lunar year days
+  lunar_year_days: 354
+```
+
+```bash
+# scripts/setup.sh - Reproducible development setup
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "==> Installing exact Elixir and Erlang versions via asdf"
+asdf install elixir 1.18.1-otp-27
+asdf install erlang 27.0
+
+echo "==> Setting local versions"
+asdf local elixir 1.18.1-otp-27
+asdf local erlang 27.0
+
+echo "==> Installing hex and rebar"
+mix local.hex --force
+mix local.rebar --force
+
+echo "==> Installing dependencies from lockfile"
+mix deps.get
+
+echo "==> Compiling dependencies"
+mix deps.compile
+
+echo "==> Setup database"
+mix ecto.create
+mix ecto.migrate
+
+echo "==> Setup complete! Reproducible environment ready."
+```
+
+**FAIL Example** (Non-Reproducible):
+
+```elixir
+# mix.exs - BAD: Loose version ranges
+defmodule FinancialDomain.BadMixProject do
+  use Mix.Project
+
+  def project do
+    [
+      app: :financial_domain,
+      version: "1.0.0",
+      # BAD: Wide Elixir range - could be 1.14, 1.15, 1.16, 1.17, 1.18
+      elixir: "~> 1.14",
+      # BAD: No OTP version specified
+      deps: deps()
+    ]
+  end
+
+  # BAD: Loose dependency versions
+  defp deps do
+    [
+      # BAD: Any 3.x version - could be 3.10, 3.11, 3.12, etc.
+      {:ecto, "~> 3.0"},
+
+      # BAD: Major version range - breaking changes possible
+      {:decimal, ">= 2.0.0"},
+
+      # BAD: No upper bound - could install ANY future version
+      {:phoenix, ">= 1.7.0"},
+
+      # BAD: Using latest (non-deterministic)
+      {:credo, "~> 1.0", only: [:dev, :test]}
+    ]
+  end
+end
+
+# BAD: No .tool-versions file
+# BAD: No mix.lock committed to git
+# BAD: No Dockerfile or Docker version pinning
+
+# Result: Different developers get different versions
+# CI/CD builds differ from local builds
+# Production deployment different from staging
+# Zakat calculations could produce different results!
+```
+
+```bash
+# BAD: Non-reproducible setup script
+#!/usr/bin/env bash
+
+# BAD: Installs whatever is "latest"
+asdf install elixir latest
+asdf install erlang latest
+
+# BAD: Could install different versions of hex/rebar
+mix local.hex --force
+mix local.rebar --force
+
+# BAD: Installs dependencies without lockfile verification
+mix deps.get
+mix deps.update --all  # DANGER: Updates to latest!
+
+# Result: Every developer has different environment
+```
+
+**Islamic Finance Application**: Reproducible Murabaha markup calculations ensure profit-sharing ratios remain identical across all deployment environments (development, staging, production). When Islamic scholars audit the system in 2026, they must see the exact same calculations that ran in 2024 - reproducibility ensures Shariah compliance verification across time. `mix.lock` guarantees that decimal calculations, Ecto validations, and Phoenix controller behavior remain identical. Every build produces the same binary with identical behavior - no drift, no surprises, no compliance violations.
+
+**See Also**: [Reproducibility Principle](../../../../../governance/principles/software-engineering/reproducibility.md)
+
+---
 
 This document covers essential best practices for Elixir development with focus on:
 
@@ -1442,6 +2563,93 @@ end
 - ❌ Don't mix business logic into controllers or views
 - ❌ Don't use exceptions for control flow
 - ❌ Don't forget to document public APIs
+
+## Best Practices Checklist
+
+Use this checklist to ensure your Elixir code follows best practices:
+
+### Code Quality
+
+- [ ] All public functions have `@doc` annotations
+- [ ] Code formatted with `mix format`
+- [ ] Module names use PascalCase (`FinancialDomain.Zakat.Calculator`)
+- [ ] Function names use snake_case (`calculate_zakat/2`)
+- [ ] Pattern matching used instead of conditionals where possible
+- [ ] Pipe operator (`|>`) used for data transformations
+
+### Software Engineering Principles
+
+- [ ] **Automation**: `mix test` runs on every commit
+- [ ] **Automation**: Credo and Dialyzer integrated in CI pipeline
+- [ ] **Automation**: ExCoveralls enforces minimum test coverage (80%)
+- [ ] **Explicit**: No default function arguments (all parameters visible)
+- [ ] **Explicit**: Ecto changeset validations are explicit and documented
+- [ ] **Explicit**: `:ok`/`:error` tuples used instead of exceptions for business logic
+- [ ] **Immutability**: Data transformations return new copies (no mutation)
+- [ ] **Immutability**: Processes hold state via recursion or GenServer
+- [ ] **Pure Functions**: Business logic separated from side effects (I/O at edges)
+- [ ] **Pure Functions**: Pure calculation functions in modules, side effects in GenServers
+- [ ] **Reproducibility**: `mix.lock` committed to version control
+- [ ] **Reproducibility**: Exact Elixir and Erlang/OTP versions in `.tool-versions`
+- [ ] **Reproducibility**: Docker images pin Elixir and OTP versions
+
+### OTP Patterns
+
+- [ ] GenServer used for stateful processes (not stateless operations)
+- [ ] Supervision trees designed with appropriate restart strategies
+- [ ] Named processes use `:via` tuple or `name:` option
+- [ ] `handle_call` returns `{:reply, response, state}`
+- [ ] `handle_cast` returns `{:noreply, state}`
+- [ ] Process cleanup implemented with `terminate/2` callback
+- [ ] No process leaks (all spawned processes supervised)
+
+### Testing
+
+- [ ] Unit tests cover critical business logic
+- [ ] ExUnit tests use `async: true` where possible
+- [ ] Doctests demonstrate correct API usage
+- [ ] Test coverage meets project standards (>80%)
+- [ ] Tests are deterministic and repeatable
+- [ ] Mocks use behaviors/protocols (not runtime dependencies)
+
+### Error Handling
+
+- [ ] Functions return `{:ok, result}` or `{:error, reason}` tuples
+- [ ] Error tuples include descriptive atoms (`:not_found`, `:invalid_amount`)
+- [ ] `with` statements compose error-returning operations
+- [ ] Exceptions used only for programmer errors (not business logic)
+- [ ] Custom exception modules defined for domain errors
+
+### Context Modules (Phoenix Contexts)
+
+- [ ] Contexts provide public API boundary
+- [ ] Internal Ecto schemas not exposed directly
+- [ ] Contexts coordinate workflows and transactions
+- [ ] No cross-context direct database access (use public APIs)
+- [ ] Context functions broadcast domain events via PubSub
+
+### Documentation
+
+- [ ] Module docstrings explain purpose and usage
+- [ ] Public functions have `@doc` with examples
+- [ ] Complex algorithms documented with inline comments
+- [ ] README updated for new features
+- [ ] Typespecs added to public function signatures
+
+### Financial Domain (Islamic Finance)
+
+- [ ] Zakat calculations use `Decimal`, not `float`
+- [ ] Murabaha contracts have explicit cost + profit terms
+- [ ] All financial transactions logged for audit trails
+- [ ] Shariah compliance verified for new features
+- [ ] Money value object prevents currency mixing errors
+
+### Version Control
+
+- [ ] Commits follow Conventional Commits format
+- [ ] Changes reviewed before merging to `main`
+- [ ] No sensitive data in repository (credentials, API keys)
+- [ ] `.env` files excluded from version control
 
 ## Related Topics
 

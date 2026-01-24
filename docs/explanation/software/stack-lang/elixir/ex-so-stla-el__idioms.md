@@ -25,7 +25,34 @@ last_updated: 2026-01-23
 
 # Elixir Idioms and Patterns
 
-**Quick Reference**: [Overview](#overview) | [Pattern Matching](#pattern-matching) | [Pipe Operator](#pipe-operator) | [Anonymous Functions](#anonymous-functions) | [Guards](#guards) | [Protocols](#protocols) | [with Construct](#with-construct-for-complex-pipelines) | [Financial Examples](#financial-domain-integration)
+## Quick Reference
+
+### Core Idioms
+
+- [Pattern Matching](#pattern-matching) - Destructure data and control program flow
+- [Pipe Operator](#pipe-operator) - Chain function calls for readable data transformations
+- [Anonymous Functions](#anonymous-functions) - Create inline functions and use capture syntax
+- [Guards](#guards) - Add constraints to function clauses and case expressions
+- [Protocols](#protocols) - Achieve polymorphism without inheritance
+- [with Construct](#with-construct-for-complex-pipelines) - Handle complex pipelines with early returns
+
+### Pattern Categories
+
+- **Data Transformation**: Pipe operator, comprehensions, pattern matching
+- **Control Flow**: Case expressions, with construct, guards
+- **Polymorphism**: Protocols, behaviours
+- **Concurrency**: Enum vs Stream, lazy evaluation
+
+### Financial Domain
+
+- [Complete Zakat Calculation](#complete-zakat-calculation-module) - All idioms in one module
+- [Donation Processing](#donation-processing-with-all-idioms) - Full pipeline example
+
+### Additional Resources
+
+- [Best Practices](./ex-so-stla-el__best-practices.md)
+- [Functional Programming](./ex-so-stla-el__functional-programming.md)
+- [Protocols and Behaviours](./ex-so-stla-el__protocols-and-behaviours.md)
 
 ## Overview
 

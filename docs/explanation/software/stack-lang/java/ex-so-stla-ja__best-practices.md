@@ -21,7 +21,27 @@ last_updated: 2026-01-24
 
 # Java Best Practices
 
-**Quick Reference**: [Overview](#overview) | [Alignment with Principles](#alignment-with-software-engineering-principles) | [Core Principles](#core-principles) | [Automation Over Manual](#automation-over-manual) | [Reproducibility First](#reproducibility-first) | [Prerequisites](#prerequisites) | [Setup](#setup) | [Code Organization](#code-organization) | [Business Finance Code Examples](#business-finance-code-examples) | [Best Practices Checklist](#best-practices-checklist) | [Related Documentation](#related-documentation) | [Sources](#sources)
+## Quick Reference
+
+**Software Engineering Principles**:
+
+- [Alignment with Software Engineering Principles](#alignment-with-software-engineering-principles)
+
+**Major Topics**:
+
+- [Core Principles](#core-principles)
+- [Automation Over Manual](#automation-over-manual)
+- [Reproducibility First](#reproducibility-first)
+- [Prerequisites](#prerequisites)
+- [Setup](#setup)
+- [Code Organization](#code-organization)
+- [Business Finance Code Examples](#business-finance-code-examples)
+
+**Checklist & Resources**:
+
+- [Best Practices Checklist](#best-practices-checklist)
+- [Related Documentation](#related-documentation)
+- [Sources](#sources)
 
 ## Overview
 
@@ -135,7 +155,946 @@ public class ZakatCalculator {
 
 **See Also**: [Java Linting and Formatting](./ex-so-stla-ja__linting-and-formatting.md)
 
-(Continue with remaining principles following the same pattern as TypeScript/Python examples...)
+### 2. Explicit Over Implicit
+
+**Principle**: Choose explicit composition and configuration over magic, convenience, and hidden behavior.
+
+**How Java Implements**:
+
+- No optional parameters (use method overloading or Builder pattern)
+- Explicit constructors with all dependencies
+- Builder pattern via Lombok `@Builder`
+- No magic strings or constants (use enums/configuration classes)
+- Explicit dependency injection (Spring constructor injection)
+- Explicit type declarations (no `var` in public APIs)
+- Configuration classes with `@ConfigurationProperties`
+
+**PASS Example** (Explicit Murabaha Contract Builder):
+
+```java
+// Explicit type definitions
+public record MurabahaContract(
+  String contractId,
+  String customerId,
+  Money costPrice,
+  Money profitMargin,
+  Money totalPrice,
+  int installmentCount,
+  Currency currency
+) {
+  // Validation in compact constructor
+  public MurabahaContract {
+    if (costPrice == null || costPrice.isNegativeOrZero()) {
+      throw new IllegalArgumentException("Cost price must be positive");
+    }
+    if (profitMargin == null || profitMargin.isNegativeOrZero()) {
+      throw new IllegalArgumentException("Profit margin must be positive");
+    }
+    if (installmentCount <= 0) {
+      throw new IllegalArgumentException("Installment count must be positive");
+    }
+  }
+}
+
+// Explicit configuration - no hidden defaults
+@ConfigurationProperties(prefix = "murabaha")
+public class MurabahaConfig {
+  private Money minCostPrice;
+  private BigDecimal maxProfitMarginRate;
+  private int minInstallmentCount;
+  private int maxInstallmentCount;
+
+  // Explicit getters/setters
+  public Money getMinCostPrice() { return minCostPrice; }
+  public void setMinCostPrice(Money minCostPrice) { this.minCostPrice = minCostPrice; }
+
+  public BigDecimal getMaxProfitMarginRate() { return maxProfitMarginRate; }
+  public void setMaxProfitMarginRate(BigDecimal maxProfitMarginRate) {
+    this.maxProfitMarginRate = maxProfitMarginRate;
+  }
+
+  public int getMinInstallmentCount() { return minInstallmentCount; }
+  public void setMinInstallmentCount(int minInstallmentCount) {
+    this.minInstallmentCount = minInstallmentCount;
+  }
+
+  public int getMaxInstallmentCount() { return maxInstallmentCount; }
+  public void setMaxInstallmentCount(int maxInstallmentCount) {
+    this.maxInstallmentCount = maxInstallmentCount;
+  }
+}
+
+// Explicit function signature - all parameters required
+@Service
+public class MurabahaContractService {
+
+  private final MurabahaConfig config;
+
+  // Explicit constructor injection
+  public MurabahaContractService(MurabahaConfig config) {
+    this.config = config;
+  }
+
+  // All parameters explicitly passed, no hidden defaults
+  public MurabahaContract createContract(
+    String customerId,
+    Money costPrice,
+    Money profitMargin,
+    int installmentCount
+  ) {
+    // Explicit validation against config
+    if (costPrice.isLessThan(config.getMinCostPrice())) {
+      throw new IllegalArgumentException(
+        String.format("Cost price must be at least %s", config.getMinCostPrice())
+      );
+    }
+
+    if (installmentCount < config.getMinInstallmentCount()
+        || installmentCount > config.getMaxInstallmentCount()) {
+      throw new IllegalArgumentException(
+        String.format(
+          "Installment count must be between %d and %d",
+          config.getMinInstallmentCount(),
+          config.getMaxInstallmentCount()
+        )
+      );
+    }
+
+    // Explicit calculation
+    Money totalPrice = costPrice.add(profitMargin);
+
+    return new MurabahaContract(
+      UUID.randomUUID().toString(),
+      customerId,
+      costPrice,
+      profitMargin,
+      totalPrice,
+      installmentCount,
+      costPrice.getCurrency()
+    );
+  }
+}
+```
+
+**FAIL Example** (Implicit Defaults and Hidden Behavior):
+
+```java
+// Hidden defaults - not transparent
+@Service
+public class MurabahaContractService {
+
+  // Overloaded methods with hidden defaults
+  public MurabahaContract createContract(String customerId, Money costPrice) {
+    // Hidden 15% markup - WHERE IS THIS DOCUMENTED?
+    return createContract(customerId, costPrice, null, 0);
+  }
+
+  public MurabahaContract createContract(
+    String customerId,
+    Money costPrice,
+    Money profitMargin,
+    int installmentCount
+  ) {
+    // Hidden markup calculation - not transparent
+    Money margin = (profitMargin != null)
+      ? profitMargin
+      : costPrice.multiply(new BigDecimal("0.15")); // 15% default - magic number!
+
+    // Magic number for installments
+    int installments = (installmentCount > 0) ? installmentCount : 12; // Why 12?
+
+    Money totalPrice = costPrice.add(margin);
+
+    return new MurabahaContract(
+      UUID.randomUUID().toString(),
+      customerId,
+      costPrice,
+      margin,
+      totalPrice,
+      installments,
+      costPrice.getCurrency()
+    );
+  }
+}
+
+// Usage obscures actual terms
+MurabahaContract contract = service.createContract(
+  "CUST-123",
+  Money.of(100000, "SAR")
+);
+// What's the profit margin? 15,000 SAR (15% * 100,000)
+// What's the installment count? 12
+// How would an auditor know these defaults exist?
+```
+
+**Islamic Finance Application**: Explicit Murabaha terms ensure no hidden fees or implicit interest (riba), maintaining transparency required by Shariah law. All profit margins must be disclosed upfront with explicit parameters. When a Shariah scholar audits the code, they can verify no implicit interest calculations exist. Islamic finance prohibits deception - explicit configuration embodies this principle.
+
+**See Also**: [Explicit Over Implicit Principle](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
+
+### 3. Immutability Over Mutability
+
+**Principle**: Prefer immutable data structures over mutable state for safer, more predictable code.
+
+**How Java Implements**:
+
+- `final` fields in classes
+- Java Records (Java 17+) - immutable by default
+- `Collections.unmodifiableList()` / `List.copyOf()`
+- Immutable value objects pattern
+- `@Value` from Lombok for immutable DTOs
+- No setters on domain objects
+- Defensive copying in constructors
+
+**PASS Example** (Immutable Zakat Transaction Record):
+
+```java
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.Objects;
+
+// Immutable record - cannot be modified after creation
+public record ZakatTransaction(
+  String transactionId,
+  String payerId,
+  Money wealth,
+  Money zakatAmount,
+  Instant paidAt,
+  String auditHash
+) {
+  // Compact constructor for validation
+  public ZakatTransaction {
+    Objects.requireNonNull(transactionId, "Transaction ID required");
+    Objects.requireNonNull(payerId, "Payer ID required");
+    Objects.requireNonNull(wealth, "Wealth amount required");
+    Objects.requireNonNull(zakatAmount, "Zakat amount required");
+    Objects.requireNonNull(paidAt, "Payment timestamp required");
+    Objects.requireNonNull(auditHash, "Audit hash required");
+
+    // Validate zakat calculation (2.5% of wealth)
+    Money expectedZakat = wealth.multiply(new BigDecimal("0.025"));
+    if (!zakatAmount.equals(expectedZakat)) {
+      throw new IllegalArgumentException(
+        String.format(
+          "Zakat amount %s does not match expected %s (2.5%% of %s)",
+          zakatAmount, expectedZakat, wealth
+        )
+      );
+    }
+  }
+}
+
+// Factory service creates immutable instances
+@Service
+public class ZakatTransactionService {
+
+  private final AuditHashCalculator hashCalculator;
+
+  public ZakatTransactionService(AuditHashCalculator hashCalculator) {
+    this.hashCalculator = hashCalculator;
+  }
+
+  // Creates new immutable transaction
+  public ZakatTransaction createTransaction(String payerId, Money wealth) {
+    // Calculate zakat (2.5%)
+    Money zakatAmount = wealth.multiply(new BigDecimal("0.025"));
+
+    // Create temporary data for hashing
+    var tempData = new TransactionData(
+      UUID.randomUUID().toString(),
+      payerId,
+      wealth,
+      zakatAmount,
+      Instant.now()
+    );
+
+    // Calculate audit hash from immutable data
+    String auditHash = hashCalculator.calculateHash(
+      tempData.transactionId(),
+      tempData.payerId(),
+      tempData.wealth().toString(),
+      tempData.zakatAmount().toString(),
+      tempData.paidAt().toString()
+    );
+
+    // Return frozen record - completely immutable
+    return new ZakatTransaction(
+      tempData.transactionId(),
+      tempData.payerId(),
+      tempData.wealth(),
+      tempData.zakatAmount(),
+      tempData.paidAt(),
+      auditHash
+    );
+  }
+
+  // Correction creates NEW transaction, doesn't modify old one
+  public ZakatTransaction correctTransaction(
+    ZakatTransaction original,
+    Money correctedWealth
+  ) {
+    // Original remains unchanged - audit trail preserved
+    return createTransaction(original.payerId(), correctedWealth);
+  }
+
+  // Query returns unmodifiable list
+  public List<ZakatTransaction> getTransactionHistory(String payerId) {
+    List<ZakatTransaction> transactions = fetchFromDatabase(payerId);
+    return Collections.unmodifiableList(transactions);
+  }
+
+  private List<ZakatTransaction> fetchFromDatabase(String payerId) {
+    // Database fetch implementation
+    return new ArrayList<>();
+  }
+}
+
+// Helper record for intermediate data
+record TransactionData(
+  String transactionId,
+  String payerId,
+  Money wealth,
+  Money zakatAmount,
+  Instant paidAt
+) {}
+```
+
+**FAIL Example** (Mutable Transaction with Setters):
+
+```java
+// Mutable transaction - can be altered after creation
+@Entity
+@Table(name = "zakat_transactions")
+public class ZakatTransaction {
+
+  @Id
+  private String transactionId;
+  private String payerId;
+  private BigDecimal wealth;
+  private BigDecimal zakatAmount;
+  private Instant paidAt;
+  private String auditHash;
+
+  // Default constructor for JPA
+  public ZakatTransaction() {}
+
+  public ZakatTransaction(
+    String payerId,
+    BigDecimal wealth,
+    BigDecimal zakatAmount
+  ) {
+    this.transactionId = UUID.randomUUID().toString();
+    this.payerId = payerId;
+    this.wealth = wealth;
+    this.zakatAmount = zakatAmount;
+    this.paidAt = Instant.now();
+  }
+
+  // DANGER: Setters allow modification after creation
+  public void setZakatAmount(BigDecimal zakatAmount) {
+    this.zakatAmount = zakatAmount; // Violates audit trail!
+  }
+
+  public void setPaidAt(Instant paidAt) {
+    this.paidAt = paidAt; // Falsifies payment timestamp!
+  }
+
+  public void setAuditHash(String auditHash) {
+    this.auditHash = auditHash; // Can manipulate audit trail!
+  }
+
+  // Method that mutates internal state
+  public void updateAmount(BigDecimal newAmount) {
+    this.zakatAmount = newAmount; // Modifies existing record
+    this.paidAt = Instant.now(); // Falsifies timestamp
+    // No new audit hash - corruption!
+  }
+
+  // Getters
+  public String getTransactionId() { return transactionId; }
+  public String getPayerId() { return payerId; }
+  public BigDecimal getWealth() { return wealth; }
+  public BigDecimal getZakatAmount() { return zakatAmount; }
+  public Instant getPaidAt() { return paidAt; }
+  public String getAuditHash() { return auditHash; }
+}
+
+// Service that mutates transactions
+@Service
+public class ZakatTransactionService {
+
+  // BAD: Retrieves mutable object
+  public ZakatTransaction getTransaction(String transactionId) {
+    ZakatTransaction tx = repository.findById(transactionId);
+    // Caller can mutate this!
+    return tx;
+  }
+
+  // BAD: Allows direct mutation
+  public void correctAmount(String transactionId, BigDecimal newAmount) {
+    ZakatTransaction tx = repository.findById(transactionId);
+    tx.updateAmount(newAmount); // Destroys audit trail
+    repository.save(tx);
+  }
+}
+```
+
+**Islamic Finance Application**: Immutable transaction records provide tamper-proof audit trails required for Shariah compliance verification. Once a Zakat payment of 2,500 SAR is recorded on 2024-01-15, it cannot be altered - ensuring transparency and accountability (Amanah). Scholars auditing the system can verify that no transaction has been retroactively modified. Waqf (endowment) distributions, Murabaha installment payments, and Qard Hasan (benevolent loans) all require immutable records to prevent fraud and maintain trust.
+
+**See Also**: [Immutability Principle](../../../../../governance/principles/software-engineering/immutability.md)
+
+### 4. Pure Functions Over Side Effects
+
+**Principle**: Prefer pure functions (deterministic, no side effects) for predictable, testable code.
+
+**How Java Implements**:
+
+- Static utility methods for calculations
+- No instance state in business logic classes
+- Functional interfaces (`Function<T, R>`, `BiFunction<T, U, R>`)
+- Stream API for transformations
+- Separate pure core from imperative shell (I/O at boundaries)
+- `@Pure` annotation (Checker Framework) for documentation
+- Deterministic outputs for same inputs
+
+**PASS Example** (Pure Zakat Calculation):
+
+```java
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+/**
+ * Pure Zakat calculation utilities.
+ * All methods are deterministic with no side effects.
+ */
+public final class ZakatCalculator {
+
+  // Private constructor - utility class
+  private ZakatCalculator() {
+    throw new UnsupportedOperationException("Utility class");
+  }
+
+  // Pure function - same inputs always return same output
+  public static Money calculateZakat(Money wealth, Money nisab) {
+    // No external dependencies
+    // No side effects (no logging, database, network)
+    // Deterministic - verifiable by anyone
+
+    if (wealth == null || nisab == null) {
+      throw new IllegalArgumentException("Wealth and nisab required");
+    }
+
+    if (wealth.isLessThan(nisab)) {
+      return Money.zero(wealth.getCurrency());
+    }
+
+    // 2.5% calculation - simple, pure, auditable
+    return wealth.multiply(new BigDecimal("0.025"));
+  }
+
+  // Pure helper function
+  public static boolean isZakatEligible(Money wealth, Money nisab) {
+    if (wealth == null || nisab == null) {
+      return false;
+    }
+    return wealth.isGreaterThanOrEqualTo(nisab);
+  }
+
+  // Pure function for nisab calculation
+  public static Money calculateNisabFromGoldPrice(Money goldPricePerGram) {
+    if (goldPricePerGram == null) {
+      throw new IllegalArgumentException("Gold price required");
+    }
+
+    // 85 grams of gold = nisab threshold
+    BigDecimal nisabGoldGrams = new BigDecimal("85");
+    return goldPricePerGram.multiply(nisabGoldGrams);
+  }
+
+  // Pure function for annual wealth growth
+  public static Money calculateWealthAfterYear(
+    Money initialWealth,
+    BigDecimal growthRate
+  ) {
+    if (initialWealth == null || growthRate == null) {
+      throw new IllegalArgumentException("Wealth and growth rate required");
+    }
+
+    return initialWealth.multiply(BigDecimal.ONE.add(growthRate));
+  }
+}
+
+// Pure value object
+public record ZakatCalculationResult(
+  Money wealth,
+  Money nisab,
+  boolean eligible,
+  Money zakatAmount
+) {
+  // Factory method using pure functions
+  public static ZakatCalculationResult calculate(Money wealth, Money nisab) {
+    boolean eligible = ZakatCalculator.isZakatEligible(wealth, nisab);
+    Money zakatAmount = ZakatCalculator.calculateZakat(wealth, nisab);
+
+    return new ZakatCalculationResult(wealth, nisab, eligible, zakatAmount);
+  }
+}
+
+// Testing pure functions is trivial - no mocking needed
+class ZakatCalculatorTest {
+
+  @Test
+  void testCalculateZakatReturnsExact2Point5Percent() {
+    Money wealth = Money.of(new BigDecimal("100000"), "SAR");
+    Money nisab = Money.of(new BigDecimal("5000"), "SAR");
+
+    Money zakat = ZakatCalculator.calculateZakat(wealth, nisab);
+
+    // Deterministic result - always 2,500 SAR
+    Money expected = Money.of(new BigDecimal("2500"), "SAR");
+    assertEquals(expected, zakat);
+  }
+
+  @Test
+  void testCalculateZakatBelowNisabReturnsZero() {
+    Money wealth = Money.of(new BigDecimal("4000"), "SAR");
+    Money nisab = Money.of(new BigDecimal("5000"), "SAR");
+
+    Money zakat = ZakatCalculator.calculateZakat(wealth, nisab);
+
+    assertEquals(Money.zero("SAR"), zakat);
+  }
+
+  @Test
+  void testNisabCalculationFrom85GramsGold() {
+    Money goldPrice = Money.of(new BigDecimal("250"), "SAR");
+
+    Money nisab = ZakatCalculator.calculateNisabFromGoldPrice(goldPrice);
+
+    // 85 grams × 250 SAR = 21,250 SAR
+    Money expected = Money.of(new BigDecimal("21250"), "SAR");
+    assertEquals(expected, nisab);
+  }
+}
+```
+
+**FAIL Example** (Impure Functions with Side Effects):
+
+```java
+// Impure class mixing business logic with I/O
+@Service
+public class ZakatCalculatorService {
+
+  private final ZakatRepository repository;
+  private final Logger logger;
+  private final NotificationService notificationService;
+  private final GoldPriceApiClient goldPriceApi;
+
+  @Autowired
+  public ZakatCalculatorService(
+    ZakatRepository repository,
+    Logger logger,
+    NotificationService notificationService,
+    GoldPriceApiClient goldPriceApi
+  ) {
+    this.repository = repository;
+    this.logger = logger;
+    this.notificationService = notificationService;
+    this.goldPriceApi = goldPriceApi;
+  }
+
+  // Impure function - behavior unpredictable
+  public Money calculate(Money wealth, Money nisab) {
+    // Side effect: logging during calculation
+    logger.info("Calculating Zakat for wealth: " + wealth);
+
+    // Side effect: database query during business logic
+    BigDecimal historicalRate = repository
+      .findCurrentZakatRate()
+      .orElse(new BigDecimal("0.025"));
+
+    // Side effect: external API call mixed into calculation
+    Money currentGoldPrice = goldPriceApi.fetchCurrentPrice();
+    Money calculatedNisab = currentGoldPrice.multiply(new BigDecimal("85"));
+
+    // Business logic mixed with I/O - impossible to test in isolation
+    Money zakat = wealth.multiply(historicalRate);
+
+    // Side effect: notification during calculation
+    notificationService.sendEmail(
+      "admin@example.com",
+      "Zakat calculated: " + zakat
+    );
+
+    // Side effect: database write during calculation
+    repository.save(new ZakatCalculation(wealth, zakat, Instant.now()));
+
+    // Side effect: audit log
+    logger.info("Zakat calculation completed: " + zakat);
+
+    return zakat;
+  }
+
+  // Testing requires mocking 4 dependencies!
+  // Network failures make calculations fail
+  // Database state affects results
+  // Non-deterministic - same inputs can produce different outputs
+}
+
+// Test shows complexity of testing impure functions
+class ZakatCalculatorServiceTest {
+
+  @Test
+  void testCalculate() {
+    // Mock database
+    ZakatRepository mockRepo = mock(ZakatRepository.class);
+    when(mockRepo.findCurrentZakatRate())
+      .thenReturn(Optional.of(new BigDecimal("0.025")));
+
+    // Mock logger
+    Logger mockLogger = mock(Logger.class);
+
+    // Mock notification service
+    NotificationService mockNotificationService = mock(NotificationService.class);
+
+    // Mock API client
+    GoldPriceApiClient mockApiClient = mock(GoldPriceApiClient.class);
+    when(mockApiClient.fetchCurrentPrice())
+      .thenReturn(Money.of(new BigDecimal("250"), "SAR"));
+
+    // Create service with 4 mocks
+    ZakatCalculatorService service = new ZakatCalculatorService(
+      mockRepo,
+      mockLogger,
+      mockNotificationService,
+      mockApiClient
+    );
+
+    Money wealth = Money.of(new BigDecimal("100000"), "SAR");
+    Money nisab = Money.of(new BigDecimal("5000"), "SAR");
+
+    Money zakat = service.calculate(wealth, nisab);
+
+    // Verify side effects
+    verify(mockLogger, times(2)).info(anyString());
+    verify(mockNotificationService).sendEmail(anyString(), anyString());
+    verify(mockRepo).save(any());
+
+    // Complex test for simple calculation!
+  }
+}
+```
+
+**Islamic Finance Application**: Pure Zakat calculation functions ensure deterministic, verifiable results. Calculate Zakat on 100,000 SAR wealth with 5,000 SAR nisab - always get 2,500 SAR (2.5%). Shariah scholars and users can independently verify calculations match Islamic requirements without needing database access or API keys. No hidden side effects that could manipulate results. When scholars audit the code, they see simple arithmetic matching 1,400 years of Islamic jurisprudence - no modern "innovations" that could introduce riba (interest) or gharar (uncertainty).
+
+**See Also**: [Pure Functions Principle](../../../../../governance/principles/software-engineering/pure-functions.md)
+
+### 5. Reproducibility First
+
+**Principle**: Development environments and builds should be reproducible from the start.
+
+**How Java Implements**:
+
+- Maven dependency management with exact versions
+- Maven parent POM for version inheritance
+- Maven wrapper (`mvnw`) for consistent Maven version
+- `dependencyManagement` section for transitive dependency control
+- Docker multi-stage builds with pinned Java version
+- SDKMAN for Java version management
+- Explicit Java version in `pom.xml`
+- Lockfile equivalents via dependency:tree validation
+
+**PASS Example** (Reproducible Maven Build):
+
+```xml
+<!-- pom.xml - Exact version pinning -->
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.openshariaenterprise</groupId>
+  <artifactId>ose-zakat-service</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+
+  <name>OSE Zakat Service</name>
+  <description>Shariah-compliant Zakat calculation service</description>
+
+  <!-- Explicit Java version -->
+  <properties>
+    <java.version>25</java.version>
+    <maven.compiler.source>25</maven.compiler.source>
+    <maven.compiler.target>25</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Exact dependency versions - NO ranges -->
+    <spring-boot.version>4.0.18</spring-boot.version>
+    <lombok.version>1.18.36</lombok.version>
+    <joda-money.version>1.0.4</joda-money.version>
+    <junit-jupiter.version>5.11.4</junit-jupiter.version>
+    <mockito.version>5.15.2</mockito.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Spring Boot BOM for consistent versions -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- Exact versions, no ranges -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <!-- Version from BOM -->
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.joda</groupId>
+      <artifactId>joda-money</artifactId>
+      <version>${joda-money.version}</version>
+    </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit-jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Exact Maven plugin versions -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring-boot.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.6.0</version>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+```
+
+```dockerfile
+# Dockerfile - Multi-stage build with pinned versions
+# Build stage with exact Java version
+FROM eclipse-temurin:25.0.1_11-jdk-alpine AS builder
+
+WORKDIR /app
+
+# Copy Maven wrapper for reproducible Maven version
+COPY .mvn/ .mvn/
+COPY mvnw pom.xml ./
+
+# Download dependencies (cached layer)
+RUN ./mvnw dependency:go-offline
+
+# Copy source code
+COPY src/ ./src/
+
+# Build with exact dependencies from pom.xml
+RUN ./mvnw clean package -DskipTests
+
+# Runtime stage with exact Java version
+FROM eclipse-temurin:25.0.1_11-jre-alpine
+
+WORKDIR /app
+
+# Copy built JAR from builder stage
+COPY --from=builder /app/target/ose-zakat-service-1.0.0.jar app.jar
+
+# Run application
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+```bash
+#!/bin/bash
+# .mvn/wrapper/maven-wrapper.properties - Pinned Maven version
+distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.9/apache-maven-3.9.9-bin.zip
+wrapperUrl=https://repo.maven.apache.org/maven2/org/apache/maven/wrapper/maven-wrapper/3.3.2/maven-wrapper-3.3.2.jar
+```
+
+```bash
+#!/bin/bash
+# .sdkmanrc - Pin Java version for SDKMAN users
+java=25.0.1-tem
+```
+
+```yaml
+# .github/workflows/build.yml - CI with exact versions
+name: Build and Test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Use same Java version as Dockerfile
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: "25.0.1"
+          distribution: "temurin"
+
+      # Maven wrapper ensures consistent Maven version
+      - name: Build with Maven
+        run: ./mvnw clean verify
+
+      # Same Dockerfile builds in CI and production
+      - name: Build Docker image
+        run: docker build -t ose-zakat-service:${{ github.sha }} .
+```
+
+**FAIL Example** (Non-Reproducible Maven Build):
+
+```xml
+<!-- pom.xml - Loose version ranges -->
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.openshariaenterprise</groupId>
+  <artifactId>ose-zakat-service</artifactId>
+  <version>1.0.0</version>
+
+  <!-- No Java version specified -->
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- No compiler source/target specified -->
+  </properties>
+
+  <dependencies>
+    <!-- Version ranges - different builds get different versions -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <version>[3.0.0,4.0.0)</version> <!-- Could be 3.0.0 or 3.9.9! -->
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.+</version> <!-- LATEST patch version -->
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.joda</groupId>
+      <artifactId>joda-money</artifactId>
+      <version>LATEST</version> <!-- DANGEROUS! -->
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- No plugin versions specified -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <!-- Uses whatever version Maven finds -->
+      </plugin>
+    </plugins>
+  </build>
+</project>
+```
+
+```dockerfile
+# Dockerfile - Non-reproducible
+# No specific Java version - could be any LTS
+FROM eclipse-temurin:jdk-alpine
+
+WORKDIR /app
+
+# No Maven wrapper - uses system Maven (version varies)
+COPY pom.xml ./
+RUN mvn dependency:go-offline
+
+COPY src/ ./src/
+RUN mvn clean package -DskipTests
+
+# No specific runtime version
+FROM eclipse-temurin:jre-alpine
+
+WORKDIR /app
+COPY --from=0 /app/target/*.jar app.jar
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+**Problems with non-reproducible build**:
+
+```bash
+# Developer A (2024-01-15)
+# Builds with Spring Boot 3.2.1, Lombok 1.18.30, Java 21
+mvn clean package
+
+# Developer B (2024-06-20)
+# Builds with Spring Boot 3.3.5, Lombok 1.18.34, Java 21
+mvn clean package
+
+# CI Server (2024-12-10)
+# Builds with Spring Boot 3.4.2, Lombok 1.18.36, Java 23
+mvn clean package
+
+# Production (2025-03-01)
+# Builds with Spring Boot 4.0.1, Lombok 1.18.38, Java 25
+docker build .
+
+# FOUR DIFFERENT BUILDS FROM SAME SOURCE CODE!
+# Zakat calculations might differ due to dependency changes
+# Impossible to reproduce bugs
+# Shariah compliance verification becomes impossible
+```
+
+**Islamic Finance Application**: Reproducible Murabaha markup calculations ensure that profit-sharing ratios remain consistent across all deployment environments. When Islamic scholars audit the system in 2026, they must see the same calculations that ran in 2024 - reproducibility ensures Shariah compliance across time. Every build of the Zakat service on any developer's laptop produces identical bytecode with identical behavior. When a Shariah board certifies the system as halal in January 2025, that certification remains valid because builds in December 2025 use the exact same dependency versions. No "it worked last month" mysteries that could hide riba calculations.
+
+**See Also**: [Reproducibility Principle](../../../../../governance/principles/software-engineering/reproducibility.md)
+
+---
 
 Best practices are proven approaches that improve code quality, reduce bugs, and enhance team productivity. For the OSE platform, which handles sensitive finance operations like Zakat calculations, QardHasan contracts, and Donation management, adherence to these practices is crucial for building trustworthy, reliable systems.
 

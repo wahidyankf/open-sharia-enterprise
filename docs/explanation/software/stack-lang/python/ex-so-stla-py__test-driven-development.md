@@ -467,6 +467,56 @@ class TestMurabahaContract:
 
 **Why this matters**: TDD ensures Murabaha calculations correct. Tests document Islamic finance rules. Validation prevents invalid contracts.
 
+## TDD Checklist
+
+### Red Phase (Write Failing Test)
+
+- [ ] Test written before implementation
+- [ ] Test fails for the right reason (expected error message)
+- [ ] Test is focused and tests one behavior
+- [ ] Test has clear, descriptive name
+- [ ] Assertions are specific and meaningful
+
+### Green Phase (Make Test Pass)
+
+- [ ] Simplest implementation that makes test pass
+- [ ] No premature optimization
+- [ ] All tests still passing
+- [ ] Code follows Python idioms (PEP 8)
+- [ ] Type hints added where appropriate
+
+### Refactor Phase
+
+- [ ] Code is clean and maintainable
+- [ ] No duplication (DRY principle)
+- [ ] All tests still passing after refactoring
+- [ ] Test coverage maintained or improved
+- [ ] Docstrings added for public functions
+
+### Test Quality
+
+- [ ] Tests are independent (no shared state)
+- [ ] Tests are repeatable (deterministic, no randomness)
+- [ ] Tests are fast (< 100ms for unit tests)
+- [ ] Test setup/teardown properly managed (pytest fixtures)
+- [ ] Mock/stub external dependencies appropriately
+
+### pytest Best Practices
+
+- [ ] Using pytest fixtures for reusable test data
+- [ ] Parameterized tests for multiple input scenarios
+- [ ] Appropriate use of pytest.raises for exception testing
+- [ ] Using conftest.py for shared fixtures
+- [ ] Clear assertion failure messages
+
+### Financial Domain Testing
+
+- [ ] Zakat calculations tested with edge cases (nisab threshold, exact boundary)
+- [ ] Decimal precision tested (no floating point errors, using Decimal type)
+- [ ] Murabaha contract validation tested (profit margins, down payments)
+- [ ] Audit trail creation verified in tests
+- [ ] Currency handling tested (no mixing currencies without conversion)
+
 ## References
 
 ### Official Documentation

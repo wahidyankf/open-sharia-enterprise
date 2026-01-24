@@ -414,6 +414,56 @@ Feature: Zakat Distribution
       | Wealthy  | 200,000| ineligible |
 ```
 
+## BDD Checklist
+
+### Feature File Quality
+
+- [ ] Scenarios written in plain language (non-technical stakeholders can read)
+- [ ] Given-When-Then structure followed consistently
+- [ ] Scenarios focus on behavior, not implementation details
+- [ ] Examples table used for scenario outlines (multiple inputs)
+- [ ] Background section for common setup steps
+
+### Scenario Structure
+
+- [ ] Given: Context/preconditions clear and complete
+- [ ] When: Single action described (not multiple actions)
+- [ ] Then: Expected outcome specified clearly
+- [ ] And: Used appropriately for additional steps
+- [ ] Scenario names describe business value
+
+### Step Definitions
+
+- [ ] Step definitions are reusable across scenarios
+- [ ] No business logic in steps (delegate to domain layer)
+- [ ] Steps follow Python idioms (behave/pytest-bdd conventions)
+- [ ] Error messages are descriptive and helpful
+- [ ] Context object used to share state within scenario
+
+### Collaboration
+
+- [ ] Scenarios reviewed by business stakeholders
+- [ ] Ubiquitous language used consistently (domain terminology)
+- [ ] Scenarios executable and automated (not just documentation)
+- [ ] Living documentation kept up to date
+- [ ] Three Amigos conversation: BA, Dev, Tester
+
+### behave/pytest-bdd Best Practices
+
+- [ ] Feature files organized by domain
+- [ ] Step definitions modular and maintainable
+- [ ] Tags used for organizing scenarios (@smoke, @critical, @wip)
+- [ ] Background steps minimized (only truly shared setup)
+- [ ] Data tables used appropriately for structured data
+
+### Financial Domain BDD
+
+- [ ] Shariah compliance scenarios included (halal/haram validation)
+- [ ] Zakat calculation scenarios with examples (nisab, rates, exemptions)
+- [ ] Murabaha contract scenarios with Given-When-Then
+- [ ] Audit trail scenarios verified (who, what, when)
+- [ ] Currency scenarios tested (USD, SAR, EUR conversions)
+
 ## References
 
 ### Official Documentation

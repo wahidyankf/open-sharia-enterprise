@@ -15,7 +15,69 @@ tags:
 
 # Java Idioms
 
-**Quick Reference**: [Overview](#overview) | [Modern Java Features Baseline](#modern-java-features-baseline) | [Core Modern Idioms](#core-modern-idioms) | [Business Domain Examples](#business-domain-examples) | [Adoption Checklist](#adoption-checklist) | [Related Principles](#related-principles) | [Related Documentation](#related-documentation) | [Sources](#sources)
+## Quick Reference
+
+### Core Modern Idioms
+
+**Data Modeling** (Java 17+):
+
+- [Records](#records-for-immutable-data) - Immutable data carriers
+- [Sealed Classes](#sealed-classes-for-closed-hierarchies) - Restricted inheritance
+- [Pattern Matching](#pattern-matching-for-switch-java-21) - Structural patterns
+
+**Type Safety**:
+
+- [Optional](#optional-for-null-safety) - Null safety
+- [Type Guards](#enhanced-instanceof) - Enhanced instanceof
+- [Branded Types](#immutability-with-final-fields) - Final fields
+
+**Functional Patterns**:
+
+- [Streams](#stream-api-for-collection-processing) - Collection processing
+- [Lambdas](#functional-interface-and-lambda-usage) - Function references
+- [Composition](#prefer-composition-over-inheritance) - Over inheritance
+
+**Modern Features**:
+
+- [Virtual Threads](#virtual-threads-for-concurrency-java-21) - Lightweight concurrency (Java 21+)
+- [Text Blocks](#text-blocks-for-multi-line-strings) - Multi-line strings (Java 17+)
+- [Switch Expressions](#switch-expressions) - Expression-based switch
+- [var](#local-variable-type-inference-var) - Type inference
+
+**Resource Management**:
+
+- [Try-with-resources](#try-with-resources-for-resource-management) - Automatic cleanup
+- [Module System](#module-system-best-practices) - Encapsulation
+
+**Design Patterns**:
+
+- [Builder Pattern](#builder-pattern-for-complex-objects) - Complex objects
+- [Immutability](#immutability-with-final-fields) - Thread safety
+
+### Java Version Context
+
+- **Java 17 LTS** (baseline): Records, sealed classes, pattern matching
+- **Java 21 LTS** (recommended): Virtual threads, sequenced collections
+- **Java 23** (latest): Stream gatherers, scoped values
+
+### Adoption Checklist
+
+**Critical Steps**:
+
+- [ ] Migrate to Java 17+ minimum
+- [ ] Replace POJOs with records
+- [ ] Convert if-instanceof to pattern matching
+- [ ] Use switch expressions over statements
+- [ ] Adopt Optional for null safety
+- [ ] Convert to streams for collections
+- [ ] Apply try-with-resources everywhere
+
+### Related Documentation
+
+- [Best Practices](./ex-so-stla-ja__best-practices.md)
+- [Anti-Patterns](./ex-so-stla-ja__anti-patterns.md)
+- [Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md)
+- [Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md)
 
 ## Overview
 

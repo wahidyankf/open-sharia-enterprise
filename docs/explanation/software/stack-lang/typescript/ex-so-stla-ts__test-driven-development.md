@@ -612,6 +612,56 @@ export default defineConfig({
 });
 ```
 
+## TDD Checklist
+
+### Red Phase (Write Failing Test)
+
+- [ ] Test written before implementation
+- [ ] Test fails for the right reason (expected error message)
+- [ ] Test is focused and tests one behavior
+- [ ] Test has clear, descriptive name (describe/it blocks)
+- [ ] Assertions use appropriate matchers (toBe, toEqual, toThrow)
+
+### Green Phase (Make Test Pass)
+
+- [ ] Simplest implementation that makes test pass
+- [ ] No premature optimization
+- [ ] All tests still passing (npm test)
+- [ ] Code follows TypeScript idioms (type safety, readonly)
+- [ ] Type definitions complete and accurate
+
+### Refactor Phase
+
+- [ ] Code is clean and maintainable
+- [ ] No duplication (DRY principle)
+- [ ] All tests still passing after refactoring
+- [ ] Test coverage maintained or improved (--coverage)
+- [ ] JSDoc comments added for public APIs
+
+### Test Quality
+
+- [ ] Tests are independent (no shared mutable state)
+- [ ] Tests are repeatable (deterministic, no randomness)
+- [ ] Tests are fast (< 100ms for unit tests)
+- [ ] Test setup/teardown properly managed (beforeEach/afterEach)
+- [ ] Mock/stub dependencies using jest.fn() or vitest mocks
+
+### Jest/Vitest Best Practices
+
+- [ ] describe blocks group related tests logically
+- [ ] beforeEach used for test setup
+- [ ] Async tests use async/await (not callbacks)
+- [ ] Proper matchers for async code (resolves, rejects)
+- [ ] Snapshot tests only for appropriate use cases
+
+### Financial Domain Testing
+
+- [ ] Zakat calculations tested with edge cases (nisab threshold, exact boundary)
+- [ ] Decimal precision tested (no floating point errors, use Money type)
+- [ ] Murabaha contract validation tested (profit margins, down payments)
+- [ ] Audit trail creation verified in tests
+- [ ] Currency handling tested (Money.create with currency validation)
+
 ## Related Documentation
 
 - **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards

@@ -1634,6 +1634,56 @@ func TestUnstableFeature(t *testing.T) {
 }
 ```
 
+## TDD Checklist
+
+### Red Phase (Write Failing Test)
+
+- [ ] Test written before implementation
+- [ ] Test fails for the right reason (expected error message)
+- [ ] Test is focused and tests one behavior
+- [ ] Test has clear, descriptive name (Test<Function>\_<Case>)
+- [ ] Assertions use meaningful error messages (t.Errorf with context)
+
+### Green Phase (Make Test Pass)
+
+- [ ] Simplest implementation that makes test pass
+- [ ] No premature optimization
+- [ ] All tests still passing (go test ./...)
+- [ ] Code follows Go idioms (gofmt, golint)
+- [ ] Exported functions have godoc comments
+
+### Refactor Phase
+
+- [ ] Code is clean and maintainable
+- [ ] No duplication (DRY principle)
+- [ ] All tests still passing after refactoring
+- [ ] Test coverage maintained or improved (go test -cover)
+- [ ] Error handling follows Go conventions (error returns)
+
+### Test Quality
+
+- [ ] Tests are independent (no shared state between tests)
+- [ ] Tests are repeatable (deterministic, no randomness)
+- [ ] Tests are fast (< 100ms for unit tests)
+- [ ] Test setup/teardown properly managed (t.Cleanup)
+- [ ] Mock/stub dependencies using interfaces
+
+### Go Testing Best Practices
+
+- [ ] Table-driven tests for multiple input scenarios
+- [ ] t.Helper() used for test helper functions
+- [ ] Subtests (t.Run) for logical grouping
+- [ ] t.Parallel() for independent tests
+- [ ] httptest package for HTTP handler testing
+
+### Financial Domain Testing
+
+- [ ] Zakat calculations tested with edge cases (nisab threshold, exact boundary)
+- [ ] Decimal precision tested (no floating point errors, use decimal package)
+- [ ] Murabaha contract validation tested (profit margins, down payments)
+- [ ] Audit trail creation verified in tests
+- [ ] Currency handling tested (beneficiary/donor ID validation patterns)
+
 ## Conclusion
 
 Test-Driven Development in Go emphasizes:
