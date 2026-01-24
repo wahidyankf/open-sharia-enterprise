@@ -1116,7 +1116,7 @@ All three frameworks are excellent in their domains. The choice depends on workf
 - **FSM Fundamentals**: `ex-so-ar-fsm__01-fundamentals-and-theory.md`
 - **Event-Driven FSMs**: `ex-so-ar-fsm__11-event-driven-and-reactive-fsm.md`
 - **Framework Comparison Part 1**: `ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md`
-- **Best Practices**: `ex-so-ar-fsm__17-best-practices-and-common-mistakes.md`
+- **Best Practices**: `ex-so-ar-fsm__17-best-practices.md`
 
 ## Principles Applied
 

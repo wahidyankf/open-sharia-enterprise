@@ -840,4 +840,4 @@ After understanding events, guards, and actions:
 1. **Learn design patterns**: [Design Patterns and Best Practices](./ex-so-ar-fsm__07-design-patterns-and-best-practices.md)
 2. **Implement in your paradigm**: [OOP Implementation](./ex-so-ar-fsm__08-oop-implementation-patterns.md) or [FP Implementation](./ex-so-ar-fsm__09-fp-implementation-patterns.md)
 3. **Test your FSM**: [Testing FSM Implementations](./ex-so-ar-fsm__12-testing-fsm-implementations.md)
-4. **Integrate with architecture**: [Integration with DDD and Architecture](./ex-so-ar-fsm__18-integration-with-ddd-and-architecture.md)
+4. **Integrate with architecture**: [Integration with DDD and Architecture](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)

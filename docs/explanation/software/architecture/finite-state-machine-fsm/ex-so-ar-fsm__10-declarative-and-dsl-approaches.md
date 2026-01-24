@@ -1773,7 +1773,7 @@ states: [planning, fundraising, distribution, reporting]
 - **Implementation Patterns**: `ex-so-ar-fsm__04-implementation-patterns-approaches.md`
 - **Framework Comparison**: `ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md`
 - **Testing FSMs**: `ex-so-ar-fsm__12-testing-fsm-implementations.md`
-- **DDD Integration**: `ex-so-ar-fsm__18-integration-with-ddd-and-architecture.md`
+- **DDD Integration**: `ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md`
 
 ## Summary
 

@@ -943,7 +943,7 @@ ZakatApplication historicalState = ZakatApplication.fromEvents(eventsUpTo);
 - **FSM Fundamentals**: `ex-so-ar-fsm__01-fundamentals-and-theory.md`
 - **Implementation Patterns**: `ex-so-ar-fsm__04-implementation-patterns-approaches.md`
 - **Framework Comparisons**: `ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md`
-- **Best Practices**: `ex-so-ar-fsm__17-best-practices-and-common-mistakes.md`
+- **Best Practices**: `ex-so-ar-fsm__17-best-practices.md`
 - **Decision Guidelines**: `ex-so-ar-fsm__16-decision-trees-and-guidelines.md`
 
 ## Summary

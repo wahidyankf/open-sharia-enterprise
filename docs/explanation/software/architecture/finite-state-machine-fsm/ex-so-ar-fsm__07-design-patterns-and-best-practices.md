@@ -831,7 +831,7 @@ stateDiagram-v2
 - [OOP Implementation Patterns](./ex-so-ar-fsm__08-oop-implementation-patterns.md): State Pattern implementation
 - [Event-Driven and Reactive FSM](./ex-so-ar-fsm__11-event-driven-and-reactive-fsm.md): Saga pattern details
 - [Testing FSM Implementations](./ex-so-ar-fsm__12-testing-fsm-implementations.md): State and transition coverage
-- [Best Practices and Common Mistakes](./ex-so-ar-fsm__17-best-practices-and-common-mistakes.md): Comprehensive anti-patterns
+- [Best Practices and Common Mistakes](./ex-so-ar-fsm__17-best-practices.md): Comprehensive anti-patterns
 
 ## Related Principles
 
@@ -848,5 +848,5 @@ After understanding design patterns:
 
 1. **Implement in your paradigm**: [OOP Implementation](./ex-so-ar-fsm__08-oop-implementation-patterns.md) or [FP Implementation](./ex-so-ar-fsm__09-fp-implementation-patterns.md)
 2. **Learn testing strategies**: [Testing FSM Implementations](./ex-so-ar-fsm__12-testing-fsm-implementations.md)
-3. **Integrate with architecture**: [Integration with DDD and Architecture](./ex-so-ar-fsm__18-integration-with-ddd-and-architecture.md)
+3. **Integrate with architecture**: [Integration with DDD and Architecture](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)
 4. **Choose a framework**: [Spring State Machine & XState](./ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md)

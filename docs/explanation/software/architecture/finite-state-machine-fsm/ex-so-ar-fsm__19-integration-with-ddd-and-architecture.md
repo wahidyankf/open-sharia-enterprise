@@ -894,7 +894,7 @@ void testContractApprovalProcess() {
 - **FSM Fundamentals**: `ex-so-ar-fsm__01-fundamentals-and-theory.md`
 - **Implementation Patterns**: `ex-so-ar-fsm__04-implementation-patterns-approaches.md`
 - **Event-Driven FSMs**: `ex-so-ar-fsm__11-event-driven-and-reactive-fsm.md`
-- **Best Practices**: `ex-so-ar-fsm__17-best-practices-and-common-mistakes.md`
+- **Best Practices**: `ex-so-ar-fsm__17-best-practices.md`
 
 ## Summary
 

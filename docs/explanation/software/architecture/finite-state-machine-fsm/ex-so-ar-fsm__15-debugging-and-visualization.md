@@ -893,7 +893,7 @@ fs.writeFileSync("loan-application-fsm.mmd", mermaidDiagram);
 - **FSM Fundamentals**: `ex-so-ar-fsm__01-fundamentals-and-theory.md`
 - **Implementation Patterns**: `ex-so-ar-fsm__04-implementation-patterns-approaches.md`
 - **Testing FSMs**: `ex-so-ar-fsm__12-testing-fsm-implementations.md`
-- **Best Practices**: `ex-so-ar-fsm__17-best-practices-and-common-mistakes.md`
+- **Best Practices**: `ex-so-ar-fsm__17-best-practices.md`
 
 ## Summary
 
