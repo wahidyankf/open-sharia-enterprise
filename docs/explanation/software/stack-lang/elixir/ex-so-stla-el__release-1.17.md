@@ -17,7 +17,7 @@ last_updated: 2026-01-23
 **Status**: Stable (Released June 12, 2024)
 **OTP Compatibility**: Erlang/OTP 25+ (OTP 27 recommended, OTP 24 dropped)
 **Previous Version**: [Elixir 1.16](ex-so-stla-el__release-1.16.md)
-**Next Version**: [Elixir 1.18](ex-so-stla-el__release-1.18.md)
+**Next Version**: [Elixir 1.19](ex-so-stla-el__release-1.19.md)
 
 ## Overview
 
@@ -764,11 +764,11 @@ Runtime performance: No change
 
 - [Back to Elixir README](README.md)
 - [Previous: Elixir 1.16 Release](ex-so-stla-el__release-1.16.md)
-- [Next: Elixir 1.18 Release](ex-so-stla-el__release-1.18.md)
+- [Next: Elixir 1.19 Release](ex-so-stla-el__release-1.19.md)
 - [Type Safety](ex-so-stla-el__type-safety.md)
 
 ---
 
 **Last Updated**: 2026-01-23
-**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.19.0 (latest)
 **Maintainers**: Platform Documentation Team

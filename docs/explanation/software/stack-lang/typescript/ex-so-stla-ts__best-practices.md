@@ -8,7 +8,7 @@ tags:
   - best-practices
   - coding-standards
   - typescript-5.0
-  - typescript-5.7
+  - typescript-5.9
   - clean-code
   - type-safety
 related:
@@ -432,7 +432,7 @@ class ZakatCalculator {
     "npm": "11.6.3"
   },
   "dependencies": {
-    "typescript": "5.7.3",
+    "typescript": "5.9.3",
     "decimal.js": "10.4.3"
   },
   "devDependencies": {
@@ -450,7 +450,7 @@ class ZakatCalculator {
     "": {
       "dependencies": {
         "decimal.js": "10.4.3",
-        "typescript": "5.7.3"
+        "typescript": "5.9.3"
       }
     },
     "node_modules/decimal.js": {
@@ -483,7 +483,7 @@ CMD ["npm", "start"]
 {
   "name": "ose-zakat-service",
   "dependencies": {
-    "typescript": "^5.0.0", // Could install 5.0.2 or 5.7.3 - different builds!
+    "typescript": "^5.0.0", // Could install 5.0.2 or 5.9.3 - different builds!
     "decimal.js": "~10.4.0" // Could install 10.4.0 or 10.4.9 - different results!
   }
 }
@@ -986,7 +986,7 @@ Lock dependencies with `package-lock.json` (npm), `pnpm-lock.yaml` (pnpm), or `b
 ```json
 {
   "dependencies": {
-    "typescript": "5.7.3",
+    "typescript": "5.9.3",
     "express": "5.2.1"
   },
   "devDependencies": {
@@ -1037,7 +1037,7 @@ Before following these best practices, ensure you have:
 
 - Node.js 24.11.1+ (LTS)
 - npm 11.6.3+ or pnpm 10.28.1+ or bun 1.3.6+
-- TypeScript 5.0+ (5.7.3 recommended)
+- TypeScript 5.0+ (5.9.3 recommended)
 - ESLint 9.39.2+ (10.0.0 in beta/rc)
 - Prettier 3.8.1+
 - VS Code with TypeScript extension (or WebStorm/Neovim with tsserver)
@@ -2348,5 +2348,5 @@ class DonationDistributionService {
 ---
 
 **Last Updated**: 2025-01-23
-**TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.7.3+ (latest stable)
+**TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.9.3+ (latest stable)
 **Maintainers**: OSE Documentation Team

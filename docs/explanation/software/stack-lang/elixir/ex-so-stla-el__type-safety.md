@@ -356,7 +356,7 @@ defmodule FinancialDomain.MixProject do
     [
       app: :financial_domain,
       version: "0.1.0",
-      elixir: "~> 1.18",
+      elixir: "~> 1.19",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       dialyzer: dialyzer()
@@ -941,5 +941,5 @@ end
 ---
 
 **Last Updated**: 2026-01-23
-**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.19.0 (latest)
 **Maintainers**: Platform Documentation Team

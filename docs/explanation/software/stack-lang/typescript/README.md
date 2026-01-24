@@ -74,13 +74,13 @@ timeline
             : Iterator Helper Methods
             : Improved Nullish Checks
             : Disallowed Truthy Checks
-    2024-11 : TypeScript 5.7 ✅
+    2024-11 : TypeScript 5.9 ✅
             : Path Rewriting
             : Relative Type Checking
             : Never-Initializing Checks
 ```
 
-**Platform Strategy**: TypeScript 5.0+ (baseline) → TypeScript 5.4+ (milestone) → TypeScript 5.6+ (stable) → TypeScript 5.7.3+ (latest)
+**Platform Strategy**: TypeScript 5.0+ (baseline) → TypeScript 5.4+ (milestone) → TypeScript 5.6+ (stable) → TypeScript 5.9.3+ (latest)
 
 ### Current Baseline: TypeScript 5.0+ (Decorators Era)
 
@@ -111,9 +111,9 @@ timeline
 - Disallowed nonsensical comparisons
 - Region-priority resolution in Intl APIs
 
-### Latest Release: TypeScript 5.7 (Monorepo Optimization)
+### Latest Release: TypeScript 5.9 (Monorepo Optimization)
 
-**Released**: November 2024 (version 5.7.3 as of January 24, 2026)
+**Released**: November 2024 (version 5.9.3 as of January 24, 2026)
 
 **Major Features**:
 
@@ -170,7 +170,7 @@ timeline
 | [TypeScript 5.0](./ex-so-stla-ts__release-5.0.md) | Baseline version  | Decorators, const type parameters  |
 | [TypeScript 5.4](./ex-so-stla-ts__release-5.4.md) | Milestone version | NoInfer utility, Closure narrowing |
 | [TypeScript 5.6](./ex-so-stla-ts__release-5.6.md) | Stable version    | Iterator helpers, Strict checks    |
-| [TypeScript 5.7](./ex-so-stla-ts__release-5.7.md) | Latest version    | Path rewriting, Relative checks    |
+| [TypeScript 5.9](./ex-so-stla-ts__release-5.9.md) | Latest version    | Path rewriting, Relative checks    |
 
 ### DDD Templates
 
@@ -765,8 +765,8 @@ volta pin npm@11.6.3
   "requires": true,
   "packages": {
     "node_modules/typescript": {
-      "version": "5.7.3",
-      "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.7.3.tgz",
+      "version": "5.9.3",
+      "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
       "integrity": "sha512-..."
     }
   }
@@ -1371,7 +1371,7 @@ Master-level TypeScript development:
 1. [Security](./ex-so-stla-ts__security.md) - Security hardening
 2. [Memory Management](./ex-so-stla-ts__memory-management.md) - V8 internals
 3. [Finite State Machines](./ex-so-stla-ts__finite-state-machine.md) - Complex state
-4. Version-specific docs (5.0, 5.4, 5.6, 5.7) - Latest features
+4. Version-specific docs (5.0, 5.4, 5.6, 5.9) - Latest features
 5. Templates - Production patterns
 
 ## Code Examples from Platform
@@ -1422,7 +1422,7 @@ async function processDonation(data: DonationInput): Promise<Result<Donation, Er
 
 ### Core Tools (Latest Versions)
 
-- **TypeScript**: 5.7.3 (latest stable)
+- **TypeScript**: 5.9.3 (latest stable)
 - **Node.js**: 24.11.1 LTS (Volta managed)
 - **npm**: 11.6.3
 
@@ -1485,6 +1485,6 @@ async function processDonation(data: DonationInput): Promise<Result<Donation, Er
 ---
 
 **Last Updated**: 2026-01-24
-**TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.7.3+ (latest stable)
+**TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.9.3+ (latest stable)
 **Total Documentation Files**: 23 core files + 4 version files + 11 templates = 38 files
 **Maintainers**: OSE Documentation Team

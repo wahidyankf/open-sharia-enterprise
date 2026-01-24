@@ -670,6 +670,6 @@ export default defineConfig({
 ---
 
 **Last Updated**: 2025-01-23
-**TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.7.3+ (latest stable)
+**TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.9.3+ (latest stable)
 **Testing Frameworks**: Jest 30.2.0, Vitest 4.0.18, fast-check 3.x
 **Maintainers**: OSE Documentation Team

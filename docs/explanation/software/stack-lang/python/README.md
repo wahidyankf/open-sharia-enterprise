@@ -87,7 +87,7 @@ timeline
             : PEP 698 @override
             : PEP 709 comprehensions
             : Per-interpreter GIL
-    2024-10 : Python 3.13 ✅
+    2024-10 : Python 3.14 ✅
             : Free-threaded mode #40;PEP 703#41;
             : Improved REPL
             : Dead battery removal
@@ -98,7 +98,7 @@ timeline
 
 - **Python 3.11+** (Baseline): Minimum supported version with performance improvements
 - **Python 3.12+** (Stable Maintenance): Recommended for production deployments
-- **Python 3.13.x** (Latest Stable): Current stable release with experimental no-GIL mode
+- **Python 3.14.x** (Latest Stable): Current stable release with experimental no-GIL mode
 
 ### Version Selection Guidelines
 
@@ -115,7 +115,7 @@ timeline
 - Using @override decorator for explicit method overriding
 - Needing per-interpreter GIL for subinterpreter isolation
 
-**Use Python 3.13** when:
+**Use Python 3.14** when:
 
 - Experimenting with free-threaded mode (no-GIL) for CPU-bound parallelism
 - Benefiting from improved REPL for interactive development
@@ -785,7 +785,7 @@ This documentation comprises 35 files organized into core topics and reusable te
 
 - `ex-so-stla-py__web-services.md` - FastAPI, Django, Flask, httpx
 - `ex-so-stla-py__finite-state-machine.md` - FSM patterns with transitions library
-- `ex-so-stla-py__release-3.13.md` - Latest Python 3.13 features
+- `ex-so-stla-py__release-3.14.md` - Latest Python 3.14 features
 
 **Version Documentation** (2 files):
 
@@ -865,9 +865,9 @@ Understand Python evolution and feature adoption:
 
 1. **Baseline Features**: `ex-so-stla-py__release-3.11.md` - Python 3.11 improvements
 2. **Stable Features**: `ex-so-stla-py__release-3.12.md` - Python 3.12 enhancements
-3. **Latest Features**: `ex-so-stla-py__release-3.13.md` - Python 3.13 innovations
+3. **Latest Features**: `ex-so-stla-py__release-3.14.md` - Python 3.14 innovations
 
-**Stay Current**: Version documentation explains when and why to adopt new features. Baseline features (3.11) provide performance improvements. Stable features (3.12) enhance developer experience. Latest features (3.13) unlock new capabilities like free-threaded mode.
+**Stay Current**: Version documentation explains when and why to adopt new features. Baseline features (3.11) provide performance improvements. Stable features (3.12) enhance developer experience. Latest features (3.14) unlock new capabilities like free-threaded mode.
 
 ## Code Examples
 
@@ -1227,14 +1227,14 @@ ruff format .      # Formatting (Black-compatible)
 # Install pyenv
 curl https://pyenv.run | bash
 
-# Install Python 3.13.1
-pyenv install 3.13.1
+# Install Python 3.14.1
+pyenv install 3.14.1
 
 # Set local Python version for project
-pyenv local 3.13.1
+pyenv local 3.14.1
 
 # Verify
-python --version  # Python 3.13.1
+python --version  # Python 3.14.1
 ```
 
 **Virtual Environments**:
@@ -1325,15 +1325,15 @@ strict = true
 - [PEP 484](https://peps.python.org/pep-0484/) - Type Hints
 - [PEP 544](https://peps.python.org/pep-0544/) - Protocols (Structural Subtyping)
 - [PEP 557](https://peps.python.org/pep-0557/) - Data Classes
-- [PEP 705](https://peps.python.org/pep-0705/) - TypedDict Read-Only Items (3.13)
-- [PEP 742](https://peps.python.org/pep-0742/) - TypeIs (3.13)
+- [PEP 705](https://peps.python.org/pep-0705/) - TypedDict Read-Only Items (3.14)
+- [PEP 742](https://peps.python.org/pep-0742/) - TypeIs (3.14)
 
 **Recent Features**:
 
 - [PEP 654](https://peps.python.org/pep-0654/) - Exception Groups (3.11)
 - [PEP 698](https://peps.python.org/pep-0698/) - Override Decorator (3.12)
 - [PEP 701](https://peps.python.org/pep-0701/) - F-String Improvements (3.12)
-- [PEP 703](https://peps.python.org/pep-0703/) - No-GIL Experiment (3.13)
+- [PEP 703](https://peps.python.org/pep-0703/) - No-GIL Experiment (3.14)
 - [PEP 709](https://peps.python.org/pep-0709/) - Comprehension Inlining (3.12)
 
 **Packaging**:
@@ -1382,6 +1382,6 @@ strict = true
 ---
 
 **Last Updated**: 2026-01-24
-**Python Versions**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.13.x (latest stable)
+**Python Versions**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.14.x (latest stable)
 **Total Documentation Files**: 23 core files + 3 version files + 1 templates index + 12 templates = 39 files
 **Maintainers**: OSE Platform Documentation Team

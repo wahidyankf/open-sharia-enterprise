@@ -712,7 +712,7 @@ jobs:
 
     strategy:
       matrix:
-        elixir: ["1.17.3", "1.18.0"]
+        elixir: ["1.17.3", "1.19.0"]
         otp: ["27.2"]
 
     services:
@@ -789,7 +789,7 @@ GitLab CI configuration:
 
 ```yaml
 # .gitlab-ci.yml
-image: elixir:1.18.0
+image: elixir:1.19.0
 
 variables:
   MIX_ENV: test
@@ -959,5 +959,5 @@ end
 ---
 
 **Last Updated**: 2026-01-23
-**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.19.0 (latest)
 **Maintainers**: Platform Documentation Team

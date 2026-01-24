@@ -17,7 +17,7 @@ related:
   - ./ex-so-stla-el__functional-programming.md
   - ./ex-so-stla-el__concurrency-and-parallelism.md
   - ./ex-so-stla-el__otp-application.md
-  - ./ex-so-stla-el__release-1.18.md
+  - ./ex-so-stla-el__release-1.19.md
 principles:
   - documentation-first
   - immutability
@@ -45,7 +45,7 @@ Elixir is a dynamic, functional programming language designed for building scala
 
 **Current Ecosystem Status (as of January 2025)**:
 
-- **Elixir**: 1.18.0+ (type checking of calls, built-in JSON, ExUnit improvements)
+- **Elixir**: 1.19.0+ (type checking of calls, built-in JSON, ExUnit improvements)
 - **Erlang/OTP**: 27.2+ (json module, process labels, performance improvements)
 - **Phoenix**: 1.7.x (verified routes, Tailwind support, LiveView streams)
 - **Ecto**: 3.12.x (database toolkit with query composition)
@@ -170,7 +170,7 @@ Version-specific features and migration guides:
 - [Elixir 1.15](./ex-so-stla-el__release-1.15.md) - Compiler diagnostics, Duration type, documentation improvements
 - [Elixir 1.16](./ex-so-stla-el__release-1.16.md) - JSON support in standard library, process sleep improvements
 - [Elixir 1.17](./ex-so-stla-el__release-1.17.md) - Set-theoretic types, calendar durations, OTP 27 support
-- [Elixir 1.18](./ex-so-stla-el__release-1.18.md) - Type checking of calls, LSP listeners, built-in JSON module
+- [Elixir 1.19](./ex-so-stla-el__release-1.19.md) - Type checking of calls, LSP listeners, built-in JSON module
 
 ### OTP Patterns (3 files)
 
@@ -224,13 +224,13 @@ timeline
             : Set-theoretic types
             : Calendar durations
             : OTP 27 support
-    2024-12 : Elixir 1.18 🚀
+    2024-12 : Elixir 1.19 🚀
             : Type checking calls
             : LSP listeners
             : Built-in JSON module
 ```
 
-**Platform Strategy**: Elixir 1.12+ (baseline) → Elixir 1.17+ (recommended) → Elixir 1.18 (latest)
+**Platform Strategy**: Elixir 1.12+ (baseline) → Elixir 1.17+ (recommended) → Elixir 1.19 (latest)
 
 ### Current Baseline: Elixir 1.12+ (Minimum Required)
 
@@ -252,7 +252,7 @@ timeline
 - Enhanced Dialyzer integration
 - Erlang/OTP 27 features (JSON module, process labels)
 
-### Current Stable: Elixir 1.18 (Latest)
+### Current Stable: Elixir 1.19 (Latest)
 
 **Released**: December 2024 as the latest stable version
 
@@ -267,9 +267,9 @@ timeline
 
 - **Platform services**: Use Elixir 1.17+ for production applications
 - **Libraries**: Support Elixir 1.12+ for broader compatibility
-- **Experiments**: Use Elixir 1.18+ to explore latest features
+- **Experiments**: Use Elixir 1.19+ to explore latest features
 
-**Compatibility Note**: Elixir maintains excellent backward compatibility. Code written for Elixir 1.12 runs on 1.18 without modifications in most cases.
+**Compatibility Note**: Elixir maintains excellent backward compatibility. Code written for Elixir 1.12 runs on 1.19 without modifications in most cases.
 
 ## Learning Path
 
@@ -1118,18 +1118,18 @@ asdf plugin add elixir
 
 # Install versions
 asdf install erlang 27.2
-asdf install elixir 1.18.0-otp-27
+asdf install elixir 1.19.0-otp-27
 
 # Set local versions for project
 asdf local erlang 27.2
-asdf local elixir 1.18.0-otp-27
+asdf local elixir 1.19.0-otp-27
 ```
 
 **`.tool-versions` file** (committed to repository):
 
 ```
 erlang 27.2
-elixir 1.18.0-otp-27
+elixir 1.19.0-otp-27
 ```
 
 **Benefits**:
@@ -1378,5 +1378,5 @@ end
 ---
 
 **Last Updated**: 2026-01-24
-**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.19.0 (latest)
 **Maintainers**: Platform Documentation Team
