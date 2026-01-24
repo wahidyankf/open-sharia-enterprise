@@ -225,10 +225,14 @@ timeline
             : Set-theoretic types
             : Calendar durations
             : OTP 27 support
-    2024-12 : Elixir 1.19 🚀
+    2024-12 : Elixir 1.18
             : Type checking calls
             : LSP listeners
             : Built-in JSON module
+    2025-10 : Elixir 1.19 🚀
+            : Enhanced type checking
+            : Protocols & anonymous functions
+            : 4x faster compilation
 ```
 
 **Platform Strategy**: Elixir 1.12+ (baseline) → Elixir 1.17+ (recommended) → Elixir 1.19 (latest)
@@ -255,14 +259,14 @@ timeline
 
 ### Current Stable: Elixir 1.19 (Latest)
 
-**Released**: December 2024 as the latest stable version
+**Released**: October 16, 2025 (latest version 1.19.5 as of January 9, 2026)
 
 **Major Features**:
 
-- Type checking of function calls
-- Language Server Protocol (LSP) improvements
-- Built-in JSON encoding/decoding
-- ExUnit parameterized test modules
+- Type checking of protocols and anonymous functions
+- Broader type inference capabilities
+- Enhanced compile times (up to 4x faster for large projects)
+- Function capture type propagation
 
 **Version Selection Guide**:
 

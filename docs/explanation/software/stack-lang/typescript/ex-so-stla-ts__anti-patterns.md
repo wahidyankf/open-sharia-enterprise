@@ -961,6 +961,46 @@ interface DonationFilters {
 
 ## Error Handling Anti-Patterns
 
+### Error Handling Decision Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Error Occurs"]:::blue --> B{"Can You<br/>Recover?"}:::orange
+
+    B -->|"Yes"| C["Handle Gracefully<br/>(retry, default value)"]:::teal
+    B -->|"No"| D{"Need to Add<br/>Context?"}:::orange
+
+    D -->|"Yes"| E["Wrap Error<br/>(custom error class)"]:::purple
+    D -->|"No"| F["Propagate<br/>(throw/return error)"]:::brown
+
+    C --> G{"Log?"}:::orange
+    E --> G
+    F --> G
+
+    G -->|"Yes"| H["Log with Context<br/>(userId, timestamp)"]:::teal
+    G -->|"No"| I["Return to Caller"]:::teal
+
+    H --> I
+
+    Note["❌ NEVER:<br/>Silent failures,<br/>Generic messages,<br/>Excessive try-catch"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+    classDef brown fill:#CA9161,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Never swallow errors**: Always log or propagate
+- **Add context when wrapping**: Create custom error classes with details
+- **Use Result types**: Explicit `Result<T, E>` better than throw/catch
+- **Log at boundaries**: Not every function needs try-catch
+
 ### Silent Failures
 
 ```typescript

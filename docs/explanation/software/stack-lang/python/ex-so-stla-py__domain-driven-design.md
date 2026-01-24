@@ -466,6 +466,59 @@ Application services orchestrate domain objects and repositories.
 
 ### Defining Services
 
+#### Service Layer Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    subgraph Presentation["Presentation Layer"]
+        API["API Endpoint<br/>(FastAPI/Flask)"]:::orange
+    end
+
+    subgraph Application["Application Layer"]
+        Service["Application Service<br/>(DonationService)"]:::blue
+    end
+
+    subgraph Domain["Domain Layer"]
+        Agg["Aggregate<br/>(DonationCampaign)"]:::teal
+        Event["Domain Events<br/>(DonationReceived)"]:::teal
+    end
+
+    subgraph Infrastructure["Infrastructure Layer"]
+        Repo["Repository<br/>(CampaignRepository)"]:::purple
+        DB[("Database")]:::purple
+    end
+
+    API -->|"1. HTTP Request"| Service
+    Service -->|"2. Load"| Repo
+    Repo -->|"3. Fetch"| DB
+    DB -->|"4. Return Data"| Repo
+    Repo -->|"5. Domain Model"| Service
+    Service -->|"6. Execute"| Agg
+    Agg -->|"7. Emit Events"| Event
+    Service -->|"8. Save"| Repo
+    Repo -->|"9. Persist"| DB
+    Service -->|"10. Events"| API
+    API -->|"11. HTTP Response"| Client["Client"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Flow Steps**:
+
+1. **API receives request**: Presentation layer validates input
+2. **Service orchestrates**: Coordinates domain objects and repositories
+3. **Load aggregate**: Repository fetches from database
+4. **Execute domain logic**: Aggregate enforces business rules
+5. **Emit domain events**: Aggregate records facts about state changes
+6. **Save aggregate**: Repository persists changes
+7. **Return events**: Service returns events for further processing
+
 ```python
 # GOOD: Application service coordinating use cases
 from dataclasses import dataclass

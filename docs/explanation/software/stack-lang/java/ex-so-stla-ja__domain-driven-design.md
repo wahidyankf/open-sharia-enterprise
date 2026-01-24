@@ -1156,6 +1156,49 @@ Repositories abstract persistence and retrieval of aggregates.
 - **Persistence agnostic**: Domain doesn't know about database
 - **Atomic operations**: Save/load entire aggregate
 
+### Repository Pattern Architecture
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    subgraph Domain["Domain Layer"]
+        AR["Aggregate Root<br/>(Donation)"]:::blue
+        RI["Repository Interface<br/>(DonationRepository)"]:::blue
+    end
+
+    subgraph Application["Application Layer"]
+        UC["Use Case<br/>(CreateDonation)"]:::orange
+    end
+
+    subgraph Infrastructure["Infrastructure Layer"]
+        Impl["Repository Implementation<br/>(JpaDonationRepository)"]:::teal
+        Mapper["Entity Mapper<br/>(DonationMapper)"]:::teal
+        Entity["JPA Entity<br/>(DonationEntity)"]:::purple
+        DB[("Database")]:::purple
+    end
+
+    UC -->|"Uses"| RI
+    UC -->|"Works with"| AR
+    RI -.->|"Implemented by"| Impl
+    Impl -->|"Maps"| Mapper
+    Mapper -->|"To/From"| Entity
+    Entity -->|"Persisted to"| DB
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Points**:
+
+- **Domain Layer**: Defines repository interface and aggregate - knows nothing about persistence
+- **Infrastructure Layer**: Implements repository with JPA/JDBC - handles technical details
+- **Dependency Inversion**: Domain doesn't depend on infrastructure
+- **Mapper**: Converts between domain aggregates and persistence entities
+
 ### Example: Repository Interface
 
 ```java
