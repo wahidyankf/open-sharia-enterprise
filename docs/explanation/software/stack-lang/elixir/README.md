@@ -155,7 +155,8 @@ This directory contains comprehensive Elixir documentation organized by topic:
 
 **Development & Testing**:
 
-- [Dependencies](./ex-so-stla-el__dependencies.md) - Mix project management, Hex packages, umbrella projects
+- [Modules and Dependencies](./ex-so-stla-el__modules-and-dependencies.md) - Mix project management, Hex packages, umbrella projects
+- [Finite State Machines](./ex-so-stla-el__finite-state-machine.md) - GenServer FSM, gen_statem, functional FSMs, OTP supervision patterns
 - [Web Services](./ex-so-stla-el__web-services.md) - Phoenix framework, REST APIs, GraphQL, LiveView
 - [Test-Driven Development](./ex-so-stla-el__test-driven-development.md) - ExUnit, doctests, property-based testing
 - [Behaviour-Driven Development](./ex-so-stla-el__behaviour-driven-development.md) - White Bread for Gherkin, acceptance testing
@@ -1378,5 +1379,5 @@ end
 ---
 
 **Last Updated**: 2026-01-24
-**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.19.0 (latest)
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.19.5 (latest)
 **Maintainers**: Platform Documentation Team

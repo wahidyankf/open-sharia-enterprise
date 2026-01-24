@@ -1382,6 +1382,6 @@ strict = true
 ---
 
 **Last Updated**: 2026-01-24
-**Python Versions**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.14.x (latest stable)
+**Python Versions**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.14.2 (latest stable)
 **Total Documentation Files**: 23 core files + 3 version files + 1 templates index + 12 templates = 39 files
 **Maintainers**: OSE Platform Documentation Team
