@@ -1385,3 +1385,25 @@ strict = true
 **Python Versions**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.14.2 (latest stable)
 **Total Documentation Files**: 23 core files + 3 version files + 1 templates index + 12 templates = 39 files
 **Maintainers**: OSE Platform Documentation Team
+
+## Python Ecosystem
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Python Ecosystem] --> B[Web Frameworks<br/>FastAPI Django Flask]
+    A --> C[Data Science<br/>NumPy Pandas]
+    A --> D[Machine Learning<br/>PyTorch TensorFlow]
+    A --> E[DevOps<br/>Ansible Fabric]
+
+    B --> F[REST APIs<br/>GraphQL]
+    C --> G[Analysis<br/>Visualization]
+    D --> H[Deep Learning<br/>NLP Computer Vision]
+    E --> I[Automation<br/>Infrastructure]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+```

@@ -398,3 +398,22 @@ git commit -m "feat: add donation validation"
 **TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.9.3+ (latest stable)
 **Tools**: ESLint 9.39.0/10.0.0, Prettier 3.8.0, Husky 9.x, lint-staged 15.x
 **Maintainers**: OSE Documentation Team
+
+## TypeScript Quality Tools
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[TS Quality] --> B[ESLint<br/>Linting]
+    A --> C[Prettier<br/>Formatting]
+    A --> D[TypeScript<br/>Type Checking]
+
+    B --> E[@typescript-eslint<br/>TS Rules]
+    C --> F[Opinionated<br/>No Config Needed]
+    D --> G[strict: true<br/>Maximum Safety]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+```

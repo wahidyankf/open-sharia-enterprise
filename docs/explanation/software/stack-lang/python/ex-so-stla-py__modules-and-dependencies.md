@@ -548,3 +548,22 @@ graph TD
 **Last Updated**: 2025-01-23
 **Python Version**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.14.x (latest stable)
 **Maintainers**: OSE Platform Documentation Team
+
+## Python Package Management
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Python Packaging] --> B[uv<br/>Fast Package Manager]
+    A --> C[pip<br/>Standard Tool]
+    A --> D[poetry<br/>Modern Dependency]
+
+    B --> E[10-100x Faster<br/>Rust-based]
+    C --> F[requirements.txt<br/>Simple]
+    D --> G[pyproject.toml<br/>Complete]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+```

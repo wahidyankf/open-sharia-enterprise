@@ -654,3 +654,24 @@ async function processAllDonations() {
 **Last Updated**: 2025-01-23
 **TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.9.3+ (latest stable)
 **Maintainers**: OSE Documentation Team
+
+## TypeScript Memory Management
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[V8 Memory] --> B[Heap Memory<br/>Objects/Arrays]
+    A --> C[Stack Memory<br/>Primitives/References]
+    A --> D[Garbage Collection<br/>Mark & Sweep]
+
+    B --> E[Young Generation<br/>Short-lived]
+    B --> F[Old Generation<br/>Long-lived]
+
+    D --> G[Minor GC<br/>Scavenge]
+    D --> H[Major GC<br/>Mark-Compact]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+```

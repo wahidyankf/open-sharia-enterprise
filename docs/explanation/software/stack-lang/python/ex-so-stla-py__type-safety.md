@@ -940,3 +940,22 @@ zakat3 = calculate_category_zakat("invalid", Decimal("1000.00"))  # Type error
 **Last Updated**: 2025-01-23
 **Python Version**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.14.x (latest stable)
 **Maintainers**: OSE Platform Documentation Team
+
+## Python Type System
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Python Types] --> B[Type Hints<br/>PEP 484]
+    A --> C[mypy<br/>Static Checker]
+    A --> D[Pydantic<br/>Runtime Validation]
+
+    B --> E[Annotations<br/>def func() -> int]
+    C --> F[Gradual Typing<br/>Optional]
+    D --> G[Data Validation<br/>Models]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+```

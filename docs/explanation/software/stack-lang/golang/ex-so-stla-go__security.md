@@ -2835,3 +2835,22 @@ sequenceDiagram
         Handler-->>C: 200 OK (Sanitized)
     end
 ```
+
+## Go Security Tools
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Go Security] --> B[gosec<br/>Security Scanner]
+    A --> C[go-safe<br/>SQL Injection]
+    A --> D[nancy<br/>Dependency Check]
+
+    B --> E[Vulnerability Scan<br/>OWASP Top 10]
+    C --> F[Prepared Statements<br/>sqlx]
+    D --> G[CVE Database<br/>Known Issues]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+```
