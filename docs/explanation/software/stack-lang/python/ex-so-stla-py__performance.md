@@ -94,6 +94,38 @@ python -m pstats profile.stats
 
 **Why this matters**: cProfile identifies actual bottlenecks. Cumulative time shows where program spends time. Avoid premature optimization.
 
+### Profiling Workflow with cProfile
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph LR
+  A[Python Code] --> B[Run with cProfile]
+  B --> C[Profile Data<br/>.stats file]
+  C --> D[Analyze with pstats]
+
+  D --> E[Identify Bottlenecks<br/>Top functions by cumtime]
+  E --> F{Optimization<br/>Needed?}
+
+  F -->|Yes| G[Optimize Hot Path]
+  F -->|No| H[Done]
+
+  G --> I[Re-profile]
+  I --> E
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style D fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style E fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style F fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Profiling workflow**:
+
+1. **Profile**: Run code with cProfile
+2. **Analyze**: Sort by cumulative time #40;cumtime#41;
+3. **Optimize**: Focus on top 10 functions
+4. **Verify**: Re-profile to confirm improvement
+
 ## Benchmarking
 
 Measure performance with timeit.
@@ -176,6 +208,40 @@ def find_duplicates_fast(wealth_items: List[Decimal]) -> List[Decimal]:
 ```
 
 **Why this matters**: Algorithm complexity dominates. O(n) vs O(n²) creates massive differences. Choose efficient algorithms first.
+
+### Performance Optimization Strategy
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+  A[Performance Issue] --> B[Profile First]
+  B --> C{Root Cause?}
+
+  C -->|Algorithm Complexity| D[Optimize Algorithm<br/>O#40;n²#41; → O#40;n#41;]
+  C -->|Data Structure| E[Choose Better Structure<br/>List → Set/Dict]
+  C -->|Python Overhead| F[Use Cython or PyPy]
+
+  D --> G[100x+ improvement]
+  E --> H[10-100x improvement]
+  F --> I[2-10x improvement]
+
+  G --> J[Re-profile & Verify]
+  H --> J
+  I --> J
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style C fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style D fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style E fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style F fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Optimization priority**:
+
+1. **Algorithm**: Biggest impact #40;O#40;n²#41; → O#40;n#41; = 100x+#41;
+2. **Data structure**: Significant impact #40;list → set = 10-100x#41;
+3. **Implementation**: Moderate impact #40;Cython/PyPy = 2-10x#41;
 
 ## Data Structure Selection
 
@@ -273,6 +339,32 @@ pypy3 zakat_calculator.py
 ```
 
 **Why this matters**: PyPy 3-10x faster for pure Python code. No code changes required. Best for long-running processes (JIT warmup).
+
+### Just-In-Time Compilation with PyPy
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+sequenceDiagram
+  participant Code as Python Code
+  participant PyPy as PyPy JIT
+  participant Compile as Compiler
+  participant Exe as Machine Code
+
+  Code->>PyPy: Start execution
+  Note over PyPy: Interpret initially
+
+  PyPy->>PyPy: Detect hot path<br/>#40;frequently called#41;
+
+  PyPy->>Compile: Compile hot path
+  Compile->>Exe: Generate machine code
+  Exe-->>PyPy: Optimized code ready
+
+  Code->>PyPy: Next call to hot path
+  PyPy->>Exe: Execute compiled code
+  Exe-->>Code: Fast execution<br/>#40;3-10x speedup#41;
+```
+
+**Why this matters**: PyPy identifies frequently-called code #40;hot paths#41; and compiles to machine code. Warmup period before speedup. Best for long-running processes with repeated computations.
 
 ## Financial Calculation Performance
 

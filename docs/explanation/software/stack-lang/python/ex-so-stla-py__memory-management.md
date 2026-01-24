@@ -56,6 +56,37 @@ del wealth  # Object freed immediately
 
 **Why this matters**: Reference counting provides deterministic cleanup. Objects freed when last reference deleted. Predictable resource management.
 
+### Python Memory Management Architecture
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+  A[Object Created] --> B[Reference Counting]
+  B --> C{Refcount = 0?}
+
+  C -->|Yes| D[Immediate Deallocation]
+  C -->|No| E[Object Remains]
+
+  E --> F{Circular Reference?}
+  F -->|Yes| G[Garbage Collector<br/>Generational GC]
+  F -->|No| B
+
+  G --> H[Detect Cycles]
+  H --> I[Break References]
+  I --> J[Free Memory]
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style C fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style G fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style D fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Two-layer memory management**:
+
+1. **Reference counting**: Immediate cleanup when refcount reaches zero
+2. **Garbage collection**: Handles circular references that reference counting can't
+
 ## Garbage Collection
 
 GC handles circular references that reference counting can't.
@@ -101,6 +132,39 @@ print(gc.get_stats())
 ```
 
 **Why this matters**: GC breaks circular references. Runs periodically (generation-based). Can disable for performance-critical sections (rarely needed).
+
+### Garbage Collection Generations
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+  A[New Object] --> B[Generation 0<br/>Young objects]
+
+  B --> C{Survives GC?}
+  C -->|Yes| D[Promoted to Generation 1<br/>Mature objects]
+  C -->|No| E[Deallocated]
+
+  D --> F{Survives GC?}
+  F -->|Yes| G[Promoted to Generation 2<br/>Long-lived objects]
+  F -->|No| E
+
+  G --> H{Survives GC?}
+  H -->|Yes| I[Remains in Generation 2<br/>Rarely collected]
+  H -->|No| E
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style D fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style G fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Generational GC strategy**:
+
+- **Generation 0**: Young objects #40;most frequent collection#41;
+- **Generation 1**: Mature objects #40;less frequent collection#41;
+- **Generation 2**: Long-lived objects #40;rare collection#41;
+
+**Why this matters**: Generational GC optimizes for object lifetimes. Most objects die young #40;temporary variables#41;. Long-lived objects rarely collected.
 
 ## Weak References
 
@@ -261,6 +325,40 @@ def get_zakat_cached(payer_id: str) -> Decimal:
 ```
 
 **Why this matters**: Unbounded caches leak memory. Circular references prevent collection. Use weak references or bounded caches.
+
+### Memory Leak Detection Workflow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph LR
+  A[Run Application] --> B[tracemalloc.start#40;#41;]
+  B --> C[Execute Operations]
+  C --> D[Take Snapshot]
+
+  D --> E[Compare Snapshots<br/>Before vs After]
+  E --> F{Memory Growth?}
+
+  F -->|Yes| G[Analyze Top Allocations<br/>statistics#40;'lineno'#41;]
+  F -->|No| H[No Leak Detected]
+
+  G --> I[Identify Leak Source<br/>File & Line Number]
+  I --> J[Fix Leak<br/>Bounded cache/Weak refs]
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style D fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style F fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style I fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Leak detection process**:
+
+1. **Start tracemalloc**: Enable memory tracing
+2. **Snapshot before**: Capture baseline memory
+3. **Execute operations**: Run suspected leak code
+4. **Snapshot after**: Capture final memory
+5. **Compare**: Identify unexpected growth
+6. **Fix**: Use bounded caches or weak references
 
 ## **slots** Attribute
 

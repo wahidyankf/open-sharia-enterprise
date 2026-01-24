@@ -109,6 +109,55 @@ app.post("/api/donations", async (req: Request<{}, {}, DonationCreateRequest>, r
 });
 ```
 
+### HTTP Request/Response Cycle with Middleware
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant Client
+    participant M1 as Middleware 1<br/>#40;Logger#41;
+    participant M2 as Middleware 2<br/>#40;Auth#41;
+    participant M3 as Middleware 3<br/>#40;Validator#41;
+    participant Handler as Route Handler
+    participant DB as Database
+
+    Client->>M1: HTTP Request
+    activate M1
+    M1->>M1: Log request
+    M1->>M2: next#40;#41;
+    deactivate M1
+
+    activate M2
+    M2->>M2: Check auth token
+    alt Not authenticated
+        M2-->>Client: 401 Unauthorized
+    else Authenticated
+        M2->>M3: next#40;#41;
+    end
+    deactivate M2
+
+    activate M3
+    M3->>M3: Validate body
+    alt Invalid
+        M3-->>Client: 400 Bad Request
+    else Valid
+        M3->>Handler: next#40;#41;
+    end
+    deactivate M3
+
+    activate Handler
+    Handler->>DB: Query data
+    activate DB
+    DB-->>Handler: Data
+    deactivate DB
+    Handler-->>Client: 200 OK + JSON
+    deactivate Handler
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ### Middleware Pattern
 
 ```typescript
@@ -145,6 +194,38 @@ app.post("/api/donations", validateDonation, async (req, res) => {
 });
 
 app.use(errorHandler);
+```
+
+### Middleware Chain Execution
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Request["Incoming Request"]:::blue
+    Logger["Logger Middleware<br/>Log request details"]:::orange
+    Auth["Auth Middleware<br/>Verify JWT token"]:::orange
+    Validator["Validator Middleware<br/>Check request body"]:::orange
+    Handler["Route Handler<br/>Process business logic"]:::teal
+    Response["Send Response"]:::blue
+    Error["Error Handler<br/>Handle exceptions"]:::purple
+
+    Request --> Logger
+    Logger -->|next#40;#41;| Auth
+    Auth -->|next#40;#41;| Validator
+    Validator -->|next#40;#41;| Handler
+    Handler --> Response
+
+    Auth -.->|Unauthorized| Error
+    Validator -.->|Invalid| Error
+    Handler -.->|Exception| Error
+    Error -.-> Response
+
+    Note1["Middleware chain:<br/>Functions called<br/>sequentially via<br/>next#40;#41; function"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Express Router
@@ -493,6 +574,48 @@ export class DonationController {
 ## tRPC 11.x
 
 tRPC provides end-to-end type safety between TypeScript client and server.
+
+### tRPC Procedure Call Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant C as Client
+    participant tC as tRPC Client
+    participant tS as tRPC Server
+    participant H as Handler
+    participant DB as Database
+
+    C->>tC: client.getDonation.query#40;{id}#41;
+    activate tC
+    Note over tC: TypeScript types<br/>known at compile time
+
+    tC->>tS: HTTP POST /trpc/getDonation
+    activate tS
+    tS->>tS: Validate input<br/>with Zod schema
+    alt Invalid input
+        tS-->>tC: Validation error
+    else Valid
+        tS->>H: Execute procedure
+        activate H
+        H->>DB: Query donation
+        activate DB
+        DB-->>H: Donation data
+        deactivate DB
+        H-->>tS: Return typed result
+        deactivate H
+        tS-->>tC: Typed response
+    end
+    deactivate tS
+
+    tC-->>C: Fully typed donation
+    deactivate tC
+    Note over C: IntelliSense<br/>auto-complete
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ### Basic Setup
 

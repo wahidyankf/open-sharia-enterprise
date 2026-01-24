@@ -23,22 +23,498 @@ principles:
   - immutability
   - pure-functions
   - reproducibility
-last_updated: 2025-01-23
+last_updated: 2026-01-24
 ---
 
 # TypeScript Best Practices
 
-**Quick Reference**: [Overview](#overview) | [Core Principles](#core-principles) | [Automation Over Manual](#automation-over-manual) | [Reproducibility First](#reproducibility-first) | [Prerequisites](#prerequisites) | [Setup](#setup) | [Code Organization](#code-organization) | [Business Finance Code Examples](#business-finance-code-examples) | [Best Practices Checklist](#best-practices-checklist) | [Related Documentation](#related-documentation)
+**Quick Reference**: [Overview](#overview) | [Alignment with Principles](#alignment-with-software-engineering-principles) | [Core Principles](#core-principles) | [Automation Over Manual](#automation-over-manual) | [Reproducibility First](#reproducibility-first) | [Prerequisites](#prerequisites) | [Setup](#setup) | [Code Organization](#code-organization) | [Business Finance Code Examples](#business-finance-code-examples) | [Best Practices Checklist](#best-practices-checklist) | [Related Documentation](#related-documentation)
 
 ## Overview
 
 This document provides comprehensive best practices for TypeScript development in the enterprise platform. Following these standards ensures our codebase remains maintainable, secure, performant, and aligned with modern TypeScript development principles (TypeScript 5.0+).
+
+## Alignment with Software Engineering Principles
+
+TypeScript development follows the five software engineering principles from `governance/principles/software-engineering/`:
+
+### 1. Automation Over Manual
+
+**Principle**: Automate repetitive tasks with tools, scripts, and CI/CD to reduce human error and increase consistency.
+
+**How TypeScript Implements**:
+
+- ESLint + TypeScript-ESLint for automated code quality checks
+- Prettier for consistent code formatting
+- tsc (TypeScript compiler) for type checking
+- Vitest/Jest for automated testing
+- Husky pre-commit hooks for validation
+- GitHub Actions CI/CD pipelines
+
+**PASS Example** (Automated Zakat Calculation Validation):
+
+```typescript
+// vitest.config.ts - Automated test configuration
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: "node",
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json", "html"],
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 80,
+        statements: 80,
+      },
+    },
+  },
+});
+
+// zakat-calculator.test.ts - Automated Zakat validation
+describe("ZakatCalculator", () => {
+  it("should calculate 2.5 percent of wealth when above nisab", () => {
+    const wealth = createMoney(100000, "USD");
+    const nisab = createMoney(5000, "USD");
+    const expectedZakat = createMoney(2500, "USD");
+
+    const actualZakat = zakatCalculator.calculate(wealth, nisab);
+
+    expect(actualZakat).toEqual(expectedZakat);
+  });
+
+  it("should return zero when wealth is below nisab", () => {
+    const wealthBelowNisab = createMoney(1000, "USD");
+    const nisab = createMoney(5000, "USD");
+
+    const zakat = zakatCalculator.calculate(wealthBelowNisab, nisab);
+
+    expect(zakat).toEqual(createMoney(0, "USD"));
+  });
+});
+
+// .husky/pre-commit - Pre-commit automation
+#!/bin/bash
+npm run type-check
+npm run lint
+npm run test
+```
+
+**FAIL Example** (Manual Testing):
+
+```typescript
+// Manual testing - prone to human error, not reproducible
+class ZakatCalculator {
+  calculate(wealth: Money, nisab: Money): Money {
+    // No automated tests
+    return wealth.multiply(0.025);
+  }
+}
+
+// Manual test process:
+// 1. Developer manually runs calculations
+// 2. Checks results visually
+// 3. No regression detection
+// 4. Human errors slip through
+```
+
+**Islamic Finance Application**: Automated Zakat calculation verification ensures consistent nisab threshold checking across all transactions, preventing manual miscalculations that could lead to underpayment (haram). Every code commit triggers automated tests verifying 2.5% calculation accuracy.
+
+**See Also**: [TypeScript Linting and Formatting](./ex-so-stla-ts__linting-and-formatting.md)
+
+### 2. Explicit Over Implicit
+
+**Principle**: Make behavior, configuration, and dependencies explicit rather than relying on hidden defaults or magic.
+
+**How TypeScript Implements**:
+
+- Explicit type annotations (no `any`)
+- Explicit dependency injection
+- Strict TypeScript compiler options
+- No magic numbers or hidden configuration
+- Clear function signatures with return types
+
+**PASS Example** (Explicit Murabaha Terms):
+
+```typescript
+// Explicit type definitions
+interface MurabahaContract {
+  readonly contractId: string;
+  readonly customerId: string;
+  readonly costPrice: Money;
+  readonly profitMargin: Money;
+  readonly totalPrice: Money;
+  readonly installmentCount: number;
+}
+
+// Explicit configuration - no hidden defaults
+interface MurabahaConfig {
+  readonly minCostPrice: Money;
+  readonly maxProfitMarginRate: number;
+  readonly minInstallmentCount: number;
+  readonly maxInstallmentCount: number;
+}
+
+// Explicit function signature with all parameters
+function createMurabahaContract(
+  customerId: string,
+  costPrice: Money,
+  profitMargin: Money,
+  installmentCount: number,
+  config: MurabahaConfig,
+): MurabahaContract {
+  // All parameters explicitly passed, no hidden defaults
+  if (costPrice.isLessThan(config.minCostPrice)) {
+    throw new Error(`Cost price must be at least ${config.minCostPrice}`);
+  }
+
+  const totalPrice = costPrice.add(profitMargin);
+
+  return {
+    contractId: crypto.randomUUID(),
+    customerId,
+    costPrice,
+    profitMargin,
+    totalPrice,
+    installmentCount,
+  };
+}
+```
+
+**FAIL Example** (Implicit Defaults):
+
+```typescript
+// Hidden defaults - not transparent
+function createMurabahaContract(
+  customerId: string,
+  costPrice: Money,
+  profitMargin?: Money, // Optional with hidden default
+): MurabahaContract {
+  // Hidden markup calculation - not transparent
+  const margin = profitMargin ?? costPrice.multiply(0.15); // 15% default - WHERE IS THIS DOCUMENTED?
+
+  return {
+    contractId: crypto.randomUUID(),
+    customerId,
+    costPrice,
+    profitMargin: margin,
+    totalPrice: costPrice.add(margin),
+    installmentCount: 12, // Magic number - no explanation
+  };
+}
+```
+
+**Islamic Finance Application**: Explicit Murabaha terms ensure no hidden fees (riba), maintaining transparency required by Shariah law. All profit margins must be disclosed upfront with explicit parameters. When a scholar audits the code, they can verify no implicit interest calculations exist.
+
+**See Also**: [TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)
+
+### 3. Immutability Over Mutability
+
+**Principle**: Prefer immutable data structures to prevent unintended state changes and enable safer concurrent code.
+
+**How TypeScript Implements**:
+
+- `readonly` properties on interfaces/types
+- `as const` assertions for literal types
+- Immutable value objects
+- Functional transformations (map/filter/reduce)
+- No mutation of function parameters
+
+**PASS Example** (Immutable Transaction Record):
+
+```typescript
+// Immutable transaction record - cannot be modified after creation
+interface ZakatTransaction {
+  readonly transactionId: string;
+  readonly payerId: string;
+  readonly wealth: Money;
+  readonly zakatAmount: Money;
+  readonly paidAt: Date;
+  readonly auditHash: string; // SHA-256 of transaction data
+}
+
+// Factory function creates new instances
+function createZakatTransaction(payerId: string, wealth: Money, zakatAmount: Money): ZakatTransaction {
+  const transaction = {
+    transactionId: crypto.randomUUID(),
+    payerId,
+    wealth,
+    zakatAmount,
+    paidAt: new Date(),
+    auditHash: "", // Placeholder
+  };
+
+  // Calculate audit hash from immutable data
+  const auditHash = calculateHash(transaction);
+
+  // Return frozen object - completely immutable
+  return Object.freeze({
+    ...transaction,
+    auditHash,
+  });
+}
+
+// Correction creates NEW transaction, doesn't modify old one
+function correctZakatTransaction(original: ZakatTransaction, correctedAmount: Money): ZakatTransaction {
+  // Original remains unchanged - audit trail preserved
+  return createZakatTransaction(original.payerId, original.wealth, correctedAmount);
+}
+```
+
+**FAIL Example** (Mutable State):
+
+```typescript
+// Mutable transaction - can be altered after creation
+class ZakatTransaction {
+  transactionId: string;
+  payerId: string;
+  wealth: Money;
+  zakatAmount: Money;
+  paidAt: Date;
+
+  constructor(payerId: string, wealth: Money, zakatAmount: Money) {
+    this.transactionId = crypto.randomUUID();
+    this.payerId = payerId;
+    this.wealth = wealth;
+    this.zakatAmount = zakatAmount;
+    this.paidAt = new Date();
+  }
+
+  // DANGER: Can modify amount after creation
+  updateAmount(newAmount: Money): void {
+    this.zakatAmount = newAmount; // Violates audit trail!
+    this.paidAt = new Date(); // Falsifies payment timestamp!
+  }
+}
+```
+
+**Islamic Finance Application**: Immutable transaction records provide tamper-proof audit trails required for Shariah compliance verification. Once a Murabaha payment is recorded, it cannot be altered - ensuring transparency and accountability (Amanah). Scholars can verify that no transaction has been retroactively modified.
+
+**See Also**: [TypeScript Functional Programming](./ex-so-stla-ts__functional-programming.md)
+
+### 4. Pure Functions Over Side Effects
+
+**Principle**: Prefer pure functions that are deterministic and side-effect-free for predictable, testable code.
+
+**How TypeScript Implements**:
+
+- Pure business logic functions
+- Functional core, imperative shell pattern
+- No external dependencies in calculations
+- Side effects isolated at boundaries (I/O, database)
+- Deterministic outputs for same inputs
+
+**PASS Example** (Pure Zakat Calculation):
+
+```typescript
+// Pure function - same inputs always return same output
+function calculateZakat(wealth: Money, nisab: Money): Money {
+  // No external dependencies
+  // No side effects (logging, database, network)
+  // Deterministic - verifiable by anyone
+
+  if (wealth.isLessThan(nisab)) {
+    return createMoney(0, wealth.currency);
+  }
+
+  // 2.5% calculation - simple, pure, auditable
+  return wealth.multiply(0.025);
+}
+
+// Pure helper functions
+function isZakatEligible(wealth: Money, nisab: Money): boolean {
+  return wealth.isGreaterThanOrEqualTo(nisab);
+}
+
+function calculateNisabFromGoldPrice(goldPricePerGram: Money): Money {
+  const nisabGoldGrams = 85;
+  return goldPricePerGram.multiply(nisabGoldGrams);
+}
+
+// Testing pure functions is trivial
+describe("calculateZakat", () => {
+  it("returns exact 2.5% for wealth above nisab", () => {
+    const wealth = createMoney(100000, "SAR");
+    const nisab = createMoney(5000, "SAR");
+
+    const zakat = calculateZakat(wealth, nisab);
+
+    expect(zakat).toEqual(createMoney(2500, "SAR"));
+  });
+});
+```
+
+**FAIL Example** (Impure with Side Effects):
+
+```typescript
+// Impure function - behavior unpredictable
+class ZakatCalculator {
+  private database: Database;
+  private logger: Logger;
+  private notificationService: NotificationService;
+
+  calculate(wealth: Money, nisab: Money): Money {
+    // Side effect: logging
+    this.logger.info(`Calculating Zakat for wealth: ${wealth}`);
+
+    // Side effect: database query during calculation
+    const historicalRate = this.database.query("SELECT rate FROM zakat_rates WHERE is_current = true");
+
+    // Side effect: external API call
+    const goldPrice = this.fetchCurrentGoldPrice();
+
+    // Calculation mixed with I/O - hard to test
+    const zakat = wealth.multiply(historicalRate ?? 0.025);
+
+    // Side effect: notification
+    this.notificationService.send(`Zakat calculated: ${zakat}`);
+
+    // Side effect: database write
+    this.database.insert("zakat_calculations", { wealth, zakat });
+
+    return zakat;
+  }
+
+  private fetchCurrentGoldPrice(): number {
+    // Network call - non-deterministic
+    return fetch("https://api.gold-price.com/current").then((r) => r.json());
+  }
+}
+```
+
+**Islamic Finance Application**: Pure Zakat calculation functions ensure deterministic, verifiable results. Calculate Zakat on 10,000 SAR wealth with 5,000 SAR nisab - always get 250 SAR (2.5%). Scholars and users can independently verify calculations match Shariah requirements. No hidden side effects that could manipulate results.
+
+**See Also**: [Pure Functions Principle](../../../../../governance/principles/software-engineering/pure-functions.md)
+
+### 5. Reproducibility First
+
+**Principle**: Ensure builds, tests, and deployments are reproducible across environments and time.
+
+**How TypeScript Implements**:
+
+- `package.json` + `package-lock.json` for exact dependencies
+- Volta for Node.js/npm version pinning
+- Lockfile commitment to version control
+- Docker containers for environment consistency
+- Deterministic builds with exact versions
+
+**PASS Example** (Reproducible Environment):
+
+```json
+// package.json - Volta pins exact Node.js and npm versions
+{
+  "name": "ose-zakat-service",
+  "version": "1.0.0",
+  "volta": {
+    "node": "24.11.1",
+    "npm": "11.6.3"
+  },
+  "dependencies": {
+    "typescript": "5.7.3",
+    "decimal.js": "10.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.11.1",
+    "vitest": "4.0.18"
+  }
+}
+
+// package-lock.json - Exact dependency versions (committed to git)
+{
+  "name": "ose-zakat-service",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "dependencies": {
+        "decimal.js": "10.4.3",
+        "typescript": "5.7.3"
+      }
+    },
+    "node_modules/decimal.js": {
+      "version": "10.4.3",
+      "resolved": "https://registry.npmjs.org/decimal.js/-/decimal.js-10.4.3.tgz",
+      "integrity": "sha512-VBBaLc1MgL5XpzgIP7ny5Z6Nx3UrRkIViUkPUdtl9aya5amy3De1gsUUSB1g3+3sExYNjCAsAznmukyxCb1GRA=="
+    }
+  }
+}
+
+// Dockerfile - Reproducible build environment
+FROM node:24.11.1-alpine
+
+WORKDIR /app
+
+# Install exact versions from lockfile
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+CMD ["npm", "start"]
+```
+
+**FAIL Example** (Non-Reproducible):
+
+```json
+// package.json - Loose version ranges
+{
+  "name": "ose-zakat-service",
+  "dependencies": {
+    "typescript": "^5.0.0", // Could install 5.0.2 or 5.7.3 - different builds!
+    "decimal.js": "~10.4.0" // Could install 10.4.0 or 10.4.9 - different results!
+  }
+}
+
+// No package-lock.json committed
+// No Volta configuration
+// No Docker container
+
+// Result: Different developers get different dependency versions
+// CI/CD produces different builds at different times
+// Behavior changes unpredictably
+```
+
+**Islamic Finance Application**: Reproducible Murabaha markup calculations ensure that profit-sharing ratios remain consistent across all deployment environments. When Islamic scholars audit the system in 2026, they must see the same calculations that ran in 2024 - reproducibility ensures Shariah compliance across time. Every build produces identical binaries with identical behavior.
+
+**See Also**: [Reproducibility Principle](../../../../../governance/principles/software-engineering/reproducibility.md)
+
+---
 
 Best practices are proven approaches that improve code quality, reduce bugs, and enhance team productivity. For the OSE platform, which handles sensitive financial operations like Zakat calculations, Murabaha contracts, and Donation management, adherence to these practices is crucial for building trustworthy, reliable systems.
 
 **Companion Document**: Before reading this document, familiarize yourself with common [TypeScript Anti-Patterns](./ex-so-stla-ts__anti-patterns.md) to understand what practices to avoid.
 
 ## Core Principles
+
+### Code Quality Pyramid
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Types["Type Safety<br/>#40;TypeScript strict mode#41;"]:::blue
+    Tests["Tests<br/>#40;Unit, Integration#41;"]:::orange
+    Linting["Linting<br/>#40;ESLint, Prettier#41;"]:::teal
+    Docs["Documentation<br/>#40;Comments, README#41;"]:::purple
+    Code["Clean Code<br/>#40;Readable, Maintainable#41;"]:::brown
+
+    Types --> Tests
+    Tests --> Linting
+    Linting --> Docs
+    Docs --> Code
+
+    Note1["Foundation:<br/>Type safety catches<br/>bugs at compile time"]
+    Note2["Top:<br/>Clean code is<br/>easy to understand"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ### 1. Code Clarity Over Cleverness
 
@@ -191,6 +667,33 @@ Favor composition and delegation over class inheritance. This provides greater f
 
 **Why it matters**: Financial products like Qard Hasan, Ijara, and Musharaka share behaviors but have distinct rules. Composition allows mixing behaviors without rigid hierarchies.
 
+### Error Handling Strategies
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Operation["Operation Executes"]:::blue
+    Success{"Success?"}:::orange
+    ThrowPattern["Try-Catch Pattern<br/>throw Error"]:::purple
+    ResultPattern["Result Pattern<br/>ok: false, error: E"]:::teal
+    Caller1["Caller must catch<br/>or app crashes"]:::brown
+    Caller2["Caller must check ok<br/>Compiler enforces"]:::teal
+
+    Operation --> Success
+    Success -->|Failure| ThrowPattern
+    Success -->|Failure| ResultPattern
+    ThrowPattern --> Caller1
+    ResultPattern --> Caller2
+
+    Note1["Result Pattern preferred<br/>for business logic<br/>Exceptions for<br/>programmer errors"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ```typescript
 // Good: Composition with strategy pattern
 interface ProfitCalculationStrategy {
@@ -232,6 +735,36 @@ class MurabahaProduct extends FinancingProduct {
 Prefer explicit configuration and dependencies over implicit conventions or "magic" behavior.
 
 **Why it matters**: Financial calculations must be transparent and auditable. Explicit configuration makes it clear what rules are being applied.
+
+### Dependency Injection Pattern
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    Interface1["Interface:<br/>DonationRepository"]:::blue
+    Interface2["Interface:<br/>Logger"]:::blue
+    Interface3["Interface:<br/>EventPublisher"]:::blue
+
+    Service["DonationService<br/>#40;Business Logic#41;"]:::orange
+
+    Impl1["PostgresRepository"]:::teal
+    Impl2["WinstonLogger"]:::teal
+    Impl3["KafkaPublisher"]:::teal
+
+    Interface1 -.-> Service
+    Interface2 -.-> Service
+    Interface3 -.-> Service
+
+    Impl1 -->|implements| Interface1
+    Impl2 -->|implements| Interface2
+    Impl3 -->|implements| Interface3
+
+    Note1["Service depends on<br/>interfaces, not<br/>concrete implementations"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ```typescript
 // Good: Explicit configuration

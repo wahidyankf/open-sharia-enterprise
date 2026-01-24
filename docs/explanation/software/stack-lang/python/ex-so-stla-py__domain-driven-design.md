@@ -244,6 +244,41 @@ campaign.close_campaign()
 
 **Why this matters**: Aggregates enforce invariants. Single entry point (root) controls modifications. Consistency boundary clear. Transactional unit defined.
 
+### DDD Layers with Python Frameworks
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+  A[Presentation Layer<br/>FastAPI/Django] --> B[Application Layer<br/>Use Case Services]
+  B --> C[Domain Layer<br/>Aggregates, Entities, Value Objects]
+  C --> D[Infrastructure Layer<br/>Repositories, DB, External APIs]
+
+  E[HTTP Request] --> A
+  A --> F[Pydantic Model<br/>Request Validation]
+  F --> B
+
+  B --> G[DonationService<br/>process_donation#40;#41;]
+  G --> C
+
+  C --> H[DonationCampaignAggregate<br/>add_donation#40;#41;]
+  H --> I[Business Rules<br/>Invariant Enforcement]
+
+  I --> D
+  D --> J[Repository.save#40;#41;<br/>SQLAlchemy/Django ORM]
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style C fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style D fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Layer responsibilities**:
+
+- **Presentation**: HTTP endpoints, request/response models #40;FastAPI/Django#41;
+- **Application**: Use case orchestration #40;services#41;
+- **Domain**: Business logic and rules #40;aggregates, entities#41;
+- **Infrastructure**: Persistence and external systems #40;repositories, APIs#41;
+
 ## Domain Events
 
 Domain events represent significant occurrences in the domain.
@@ -322,6 +357,43 @@ class DonationCampaignWithEvents(DonationCampaignAggregate):
 ```
 
 **Why this matters**: Events represent domain facts. Decouple aggregates from side effects. Enable event sourcing and CQRS patterns.
+
+### Aggregate with Validation and Domain Events
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+  A[External Request<br/>Add Donation] --> B[DonationCampaignAggregate]
+
+  B --> C{Validate<br/>Campaign Active?}
+  C -->|No| D[Raise ValueError<br/>Campaign Inactive]
+  C -->|Yes| E{Validate<br/>Currency Match?}
+
+  E -->|No| F[Raise ValueError<br/>Currency Mismatch]
+  E -->|Yes| G[Add Donation<br/>Update State]
+
+  G --> H[Emit DomainEvent<br/>DonationReceived]
+  H --> I{Target Met?}
+
+  I -->|Yes| J[Emit DomainEvent<br/>CampaignTargetMet]
+  I -->|No| K[Return Success]
+
+  J --> K
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style C fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style E fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style G fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style H fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style J fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Aggregate responsibilities**:
+
+1. **Validate invariants** before state changes
+2. **Update state** atomically
+3. **Emit domain events** for significant occurrences
+4. **Enforce business rules** within consistency boundary
 
 ## Repositories
 
@@ -453,6 +525,44 @@ for event in events:
 ```
 
 **Why this matters**: Services orchestrate use cases. Domain logic stays in aggregates. Thin application layer coordinates components.
+
+### Repository Pattern with SQLAlchemy
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+sequenceDiagram
+  participant Svc as DonationService
+  participant Repo as CampaignRepository
+  participant Agg as DonationCampaignAggregate
+  participant DB as SQLAlchemy Session
+
+  Svc->>Repo: find_by_id#40;campaign_id#41;
+  Repo->>DB: query#40;CampaignModel#41;.get#40;campaign_id#41;
+  DB-->>Repo: Database row
+  Repo->>Repo: Map DB row → Aggregate
+  Repo-->>Svc: DonationCampaignAggregate
+
+  Svc->>Agg: add_donation#40;donor_id, amount#41;
+  Agg->>Agg: Validate invariants
+  Agg->>Agg: Update state
+  Agg-->>Svc: Success
+
+  Svc->>Repo: save#40;campaign#41;
+  Repo->>Repo: Map Aggregate → DB row
+  Repo->>DB: session.add#40;campaign_model#41;
+  Repo->>DB: session.commit#40;#41;
+  DB-->>Repo: Transaction committed
+  Repo-->>Svc: Saved
+
+  Svc-->>Svc: Collect domain events
+```
+
+**Repository pattern benefits**:
+
+- **Abstraction**: Domain layer independent of persistence technology
+- **Testability**: Mock repositories for unit tests
+- **Consistency**: Aggregates persist as atomic units
+- **Mapping**: Translate between domain models and database schemas
 
 ## Bounded Contexts
 

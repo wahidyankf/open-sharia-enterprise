@@ -357,6 +357,33 @@ func ProcessData(id int) error {
 
 Build error context across call stack:
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% Error wrapping propagation chain
+
+graph TD
+    A["Handler Layer<br/>HTTP Request"]:::blue
+    B["Service Layer<br/>GetUser#40;id#41;"]:::teal
+    C["Repository Layer<br/>QueryUser#40;id#41;"]:::purple
+    D{"Database<br/>Query"}:::orange
+    E["Error: Not Found"]:::orange
+    F["Wrapped: get user from database"]:::teal
+    G["Wrapped: failed to get user"]:::blue
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> A
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ```go
 // Low-level database function
 func (db *DB) QueryUser(id int) (*Beneficiary, error) {
@@ -1320,6 +1347,39 @@ func PublicAPI() {
 
 Errors in goroutines require special handling since they run independently.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% Error handling pattern for concurrent zakat calculations
+
+graph TD
+    A["Main Goroutine<br/>ProcessDonations"]:::blue
+    B["Error Channel<br/>errCh"]:::orange
+    C1["Goroutine 1<br/>Calculate Zakat"]:::teal
+    C2["Goroutine 2<br/>Calculate Zakat"]:::teal
+    C3["Goroutine 3<br/>Calculate Zakat"]:::teal
+    D["Collect Errors<br/>errors.Join"]:::purple
+    E{"All<br/>Success?"}:::orange
+    F["Return nil"]:::teal
+    G["Return Errors"]:::orange
+
+    A --> B
+    A --> C1
+    A --> C2
+    A --> C3
+    C1 -->|"error or nil"| B
+    C2 -->|"error or nil"| B
+    C3 -->|"error or nil"| B
+    B --> D
+    D --> E
+    E -->|"Yes"| F
+    E -->|"No"| G
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ### Error Channel Pattern
 
 ```go
@@ -2038,6 +2098,36 @@ func TestGetUser_DBError(t *testing.T) {
 ```
 
 ## Summary
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% Error handling decision flow for donation processing
+
+graph TD
+    A["Function Called<br/>ProcessDonation"]:::blue
+    B{"Error<br/>Occurred?"}:::orange
+    C["Check Error Type<br/>errors.Is / errors.As"]:::teal
+    D["Wrap Error<br/>fmt.Errorf with %w"]:::purple
+    E["Return Error Chain"]:::orange
+    F["Continue Processing"]:::teal
+    G{"Recoverable?"}:::orange
+    H["Log and Continue"]:::teal
+    I["Return Error"]:::orange
+
+    A --> B
+    B -->|"Yes"| C
+    B -->|"No"| F
+    C --> G
+    G -->|"Yes"| H
+    G -->|"No"| D
+    D --> E
+    H --> F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 ### Key Takeaways
 

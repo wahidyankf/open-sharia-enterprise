@@ -35,6 +35,33 @@ Performance is critical for financial applications processing donations, calcula
 - **Caching**: Store expensive computations
 - **Batch Operations**: Process in bulk when possible
 
+### Optimization Pipeline
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    Measure["Measure<br/>#40;Profile, Benchmark#41;"]:::blue
+    Identify["Identify Bottlenecks<br/>#40;Hot paths#41;"]:::orange
+    Optimize["Optimize<br/>#40;Improve code#41;"]:::teal
+    Verify["Verify Improvement<br/>#40;Re-measure#41;"]:::purple
+    Done{"Performance<br/>Goal Met?"}:::brown
+
+    Measure --> Identify
+    Identify --> Optimize
+    Optimize --> Verify
+    Verify --> Done
+    Done -->|No| Measure
+    Done -->|Yes| End["Complete"]:::teal
+
+    Note1["Always measure<br/>before and after<br/>optimization"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Profiling
 
 ### Node.js Profiler
@@ -222,6 +249,33 @@ class DonationStats {
 
 ## Data Structures
 
+### Memory Management Strategies
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Strategy["Memory Strategy"]:::blue
+    Pool["Object Pooling<br/>#40;Reuse objects#41;"]:::orange
+    Cache["Caching<br/>#40;Store results#41;"]:::teal
+    Immutable["Immutability<br/>#40;Prevent mutations#41;"]:::purple
+    GC["Garbage Collection<br/>#40;Automatic cleanup#41;"]:::brown
+
+    Strategy --> Pool
+    Strategy --> Cache
+    Strategy --> Immutable
+    Pool --> GC
+    Cache --> GC
+    Immutable --> GC
+
+    Note1["Object pooling:<br/>Reduces GC pressure<br/>for frequently created<br/>objects"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ### Array vs Set vs Map
 
 ```typescript
@@ -301,6 +355,38 @@ function calculateTotal(amounts: Float64Array): number {
 ```
 
 ## Caching
+
+### Lazy Loading Pattern
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant App
+    participant Loader
+    participant Module
+
+    App->>Loader: Request heavy module
+    activate Loader
+    Note over Loader: Check if loaded
+
+    alt Already loaded
+        Loader-->>App: Return cached module
+    else Not loaded
+        Loader->>Module: import#40;'./heavy'#41;
+        activate Module
+        Module-->>Loader: Module loaded
+        deactivate Module
+        Loader->>Loader: Cache module
+        Loader-->>App: Return module
+    end
+    deactivate Loader
+
+    Note over App: Only load when needed<br/>Cache after first load
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ### Memoization
 

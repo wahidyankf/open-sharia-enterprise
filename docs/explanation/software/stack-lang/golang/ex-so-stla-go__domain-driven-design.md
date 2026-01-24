@@ -21,6 +21,29 @@ Domain-Driven Design is a software design approach that focuses on modeling soft
 
 DDD building blocks in Go:
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% DDD layers for zakat donation system
+
+graph TD
+    A["Presentation Layer<br/>HTTP Handlers"]:::blue
+    B["Application Layer<br/>Use Cases & Services"]:::teal
+    C["Domain Layer<br/>Entities & Value Objects"]:::orange
+    D["Infrastructure Layer<br/>Repositories & Database"]:::purple
+    E["External Services<br/>Payment Gateway"]:::purple
+
+    A -->|"Commands"| B
+    B -->|"Domain Logic"| C
+    C -->|"Persist"| D
+    B -->|"Integrate"| E
+    D -.->|"Read Models"| C
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ```go
 // Value Object: Immutable, identified by attributes
 type Money struct {
@@ -327,6 +350,30 @@ func (u *Beneficiary) Name() string {
 ### Aggregate Root
 
 Maintaining consistency boundary:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% Aggregate pattern for donation order
+
+graph TD
+    A["Order Aggregate Root"]:::blue
+    B["OrderItem 1<br/>Product, Quantity"]:::teal
+    C["OrderItem 2<br/>Product, Quantity"]:::teal
+    D["OrderItem 3<br/>Product, Quantity"]:::teal
+    E["Money Value Object<br/>Total Amount"]:::purple
+    F["Status Value Object<br/>Pending/Confirmed"]:::purple
+
+    A -->|"owns"| B
+    A -->|"owns"| C
+    A -->|"owns"| D
+    A -->|"manages"| E
+    A -->|"manages"| F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 ```go
 package domain
@@ -758,6 +805,30 @@ func (uc *CreateOrderUseCase) Execute(
 ### Event-Driven Design
 
 Publishing domain events:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% Domain event flow for zakat donation
+
+graph LR
+    A["Aggregate<br/>Donation"]:::blue
+    B["Domain Event<br/>DonationConfirmed"]:::orange
+    C["Event Publisher"]:::teal
+    D["Handler 1<br/>Send Receipt"]:::purple
+    E["Handler 2<br/>Update Analytics"]:::purple
+    F["Handler 3<br/>Notify Admins"]:::purple
+
+    A -->|"raises"| B
+    B --> C
+    C -->|"dispatch"| D
+    C -->|"dispatch"| E
+    C -->|"dispatch"| F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 ```go
 package domain

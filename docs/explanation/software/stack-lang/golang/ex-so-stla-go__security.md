@@ -22,6 +22,36 @@ Security is paramount in modern application development. Go provides robust tool
 
 Multiple layers of security:
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% Security layers for zakat donation system
+
+graph TD
+    A["HTTP Request<br/>Donation Submission"]:::blue
+    B["TLS Encryption<br/>HTTPS"]:::teal
+    C["Authentication<br/>Verify JWT"]:::orange
+    D["Authorization<br/>Check Permissions"]:::orange
+    E["Input Validation<br/>Sanitize Data"]:::purple
+    F["Business Logic<br/>Calculate Zakat"]:::teal
+    G["Output Encoding<br/>Escape HTML"]:::purple
+    H["Logging<br/>Audit Trail"]:::teal
+    I["Response"]:::blue
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    H --> I
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ```go
 package main
 
@@ -935,6 +965,40 @@ func setSameSiteModes(w http.ResponseWriter) {
 
 ## Authentication
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% JWT authentication flow for zakat platform
+
+graph TD
+    A["User Login<br/>POST /login"]:::blue
+    B["Validate Credentials<br/>Check Password Hash"]:::orange
+    C{"Valid?"}:::orange
+    D["Generate JWT<br/>Sign with Secret"]:::teal
+    E["Return JWT<br/>200 OK"]:::teal
+    F["Return Error<br/>401 Unauthorized"]:::orange
+    G["Subsequent Request<br/>Header: Authorization"]:::blue
+    H["Verify JWT<br/>Check Signature"]:::purple
+    I{"Valid JWT?"}:::orange
+    J["Process Request"]:::teal
+    K["Return 401"]:::orange
+
+    A --> B
+    B --> C
+    C -->|"Yes"| D
+    C -->|"No"| F
+    D --> E
+    E --> G
+    G --> H
+    H --> I
+    I -->|"Yes"| J
+    I -->|"No"| K
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ### Password Authentication
 
 Secure password handling:
@@ -1136,6 +1200,36 @@ func validateState(state string) bool {
 ### Role-Based Access Control
 
 RBAC implementation:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% Role-based access control for zakat management
+
+graph TD
+    A["User Request<br/>Manage Donation"]:::blue
+    B["Extract User<br/>From JWT"]:::teal
+    C["Check Role<br/>Admin/Editor/Viewer"]:::orange
+    D{"Has Role?"}:::orange
+    E["Check Permission<br/>read/write/delete"]:::purple
+    F{"Has Permission?"}:::orange
+    G["Allow Access<br/>Process Request"]:::teal
+    H["Deny Access<br/>403 Forbidden"]:::orange
+    I["Deny Access<br/>401 Unauthorized"]:::orange
+
+    A --> B
+    B --> C
+    C --> D
+    D -->|"Yes"| E
+    D -->|"No"| I
+    E --> F
+    F -->|"Yes"| G
+    F -->|"No"| H
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 ```go
 package main

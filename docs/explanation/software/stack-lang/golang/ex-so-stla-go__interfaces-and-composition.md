@@ -33,6 +33,30 @@ Go uses interfaces and composition instead of class-based inheritance. This guid
 
 ### What is an Interface?
 
+#### Interface Implementation Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Define Interface<br/>#40;Method Signatures#41;"]:::blue --> B["Implement Methods<br/>#40;on Concrete Type#41;"]:::orange
+    B --> C{All Methods<br/>Implemented?}:::purple
+    C -->|Yes| D["Type Satisfies<br/>Interface<br/>#40;Implicit#41;"]:::teal
+    C -->|No| E["Compile Error"]:::orange
+
+    F["Zakat Calculator"]:::blue --> G["Payment Interface"]:::purple
+    G --> H["ProcessPayment#40;#41;"]:::teal
+    G --> I["ValidateAmount#40;#41;"]:::teal
+    F --> H
+    F --> I
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 An interface is a set of method signatures. A type implements an interface by implementing all its methods:
 
 - **Implicit implementation**: No "implements" keyword
@@ -206,6 +230,29 @@ func NewDatabase() Database {
 
 ### Single-Method Interfaces
 
+#### Interface Composition Pattern
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Reader<br/>#40;Read#40;#41;#41;"]:::blue --> D["ReadCloser"]:::purple
+    B["Writer<br/>#40;Write#40;#41;#41;"]:::blue --> E["WriteCloser"]:::purple
+    C["Closer<br/>#40;Close#40;#41;#41;"]:::orange --> D
+    C --> E
+    A --> F["ReadWriteCloser"]:::teal
+    B --> F
+    C --> F
+
+    G["File"]:::orange -.implements.-> F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 Many Go interfaces have single methods:
 
 ```go
@@ -242,6 +289,29 @@ type ReadWriteCloser interface {
 ## Struct Embedding
 
 ### What is Embedding?
+
+#### Struct Embedding Promotion
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Embedded Type<br/>#40;Engine#41;"]:::blue --> B["Fields<br/>#40;Power#41;"]:::orange
+    A --> C["Methods<br/>#40;Start#40;#41;#41;"]:::orange
+
+    D["Outer Type<br/>#40;Car#41;"]:::teal --> E["Own Fields<br/>#40;Brand#41;"]:::purple
+    D --> F["Promoted Fields<br/>#40;car.Power#41;"]:::purple
+    D --> G["Promoted Methods<br/>#40;car.Start#40;#41;#41;"]:::purple
+
+    B -.promotes to.-> F
+    C -.promotes to.-> G
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 Embedding promotes methods from embedded type to outer type:
 

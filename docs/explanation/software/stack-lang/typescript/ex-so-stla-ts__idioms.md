@@ -42,6 +42,45 @@ Idiomatic TypeScript code:
 4. **Enables tooling** - IDE autocomplete and refactoring work perfectly
 5. **Prevents bugs** - Makes invalid states unrepresentable
 
+### Common TypeScript Patterns Catalog
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Patterns["TypeScript Idioms"]:::blue
+    Type["Type Patterns"]:::orange
+    Narrowing["Narrowing Patterns"]:::teal
+    Functional["Functional Patterns"]:::purple
+    Structural["Structural Patterns"]:::brown
+
+    Patterns --> Type
+    Patterns --> Narrowing
+    Patterns --> Functional
+    Patterns --> Structural
+
+    Type --> BrandedTypes["Branded Types"]
+    Type --> DiscUnions["Discriminated Unions"]
+    Type --> ResultType["Result Type"]
+
+    Narrowing --> TypeGuards["Type Guards"]
+    Narrowing --> Predicates["Type Predicates"]
+    Narrowing --> ConstAssert["Const Assertions"]
+
+    Functional --> Composition["Function Composition"]
+    Functional --> Currying["Currying"]
+    Functional --> HigherOrder["Higher-Order Functions"]
+
+    Structural --> Builder["Builder Pattern"]
+    Structural --> Repository["Repository Pattern"]
+    Structural --> Factory["Factory Pattern"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ### TypeScript Version Context
 
 This document assumes TypeScript 5.0+ as the baseline. Version-specific features are marked:
@@ -486,6 +525,31 @@ type PaymentMethodArrays = ToArray<PaymentMethod>;
 // "cash"[] | "card"[] | "bank_transfer"[]
 ```
 
+### Builder Pattern Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    Start["new Builder#40;#41;"]:::blue
+    Step1["setDonorId#40;id#41;"]:::orange
+    Step2["setAmount#40;money#41;"]:::orange
+    Step3["setCategory#40;cat#41;"]:::orange
+    Build["build#40;#41;"]:::teal
+    Result["Donation Object"]:::blue
+
+    Start --> Step1
+    Step1 --> Step2
+    Step2 --> Step3
+    Step3 --> Build
+    Build --> Result
+
+    Note1["Builder Pattern:<br/>Fluent API for<br/>complex object<br/>construction"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ### infer Keyword
 
 Use `infer` to extract types from conditional types.
@@ -779,6 +843,29 @@ function filterDonations(values: unknown[]): Donation[] {
 ## Discriminated Unions
 
 Discriminated unions (tagged unions) provide type-safe state modeling.
+
+### Decorator Pattern Structure
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Interface["Component<br/>Interface"]:::blue
+    Concrete["ConcreteComponent<br/>#40;Base#41;"]:::orange
+    Decorator["Decorator<br/>#40;Wraps component#41;"]:::teal
+    Enhanced["Enhanced behavior"]:::purple
+
+    Interface -.->|implements| Concrete
+    Interface -.->|implements| Decorator
+    Decorator -->|wraps| Concrete
+    Decorator --> Enhanced
+
+    Note1["Decorator adds<br/>behavior dynamically<br/>without modifying<br/>original class"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ### Basic Discriminated Unions
 

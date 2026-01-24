@@ -217,6 +217,30 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 
 Middleware wraps handlers to add functionality:
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% HTTP middleware chain for zakat API
+
+graph LR
+    A["HTTP Request"]:::blue
+    B["Logging Middleware<br/>Log request"]:::teal
+    C["Auth Middleware<br/>Verify JWT"]:::orange
+    D["CORS Middleware<br/>Set headers"]:::purple
+    E["Handler<br/>ProcessZakat"]:::teal
+    F["HTTP Response"]:::blue
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ```go
 // Logging middleware
 func loggingMiddleware(next http.Handler) http.Handler {
@@ -300,6 +324,35 @@ REST (Representational State DonationTransfer) uses HTTP methods semantically:
 - **PUT**: Update/replace resources
 - **PATCH**: Partial update
 - **DELETE**: Remove resources
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% REST API request lifecycle for zakat management
+
+graph TD
+    A["HTTP Client<br/>Mobile App"]:::blue
+    B["Router<br/>Match Route"]:::orange
+    C["Middleware<br/>Auth & Logging"]:::teal
+    D["Handler<br/>ProcessZakat"]:::purple
+    E["Service Layer<br/>Business Logic"]:::teal
+    F["Repository<br/>Database"]:::purple
+    G["JSON Response"]:::orange
+
+    A -->|"POST /zakat"| B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F -->|"Success"| E
+    E --> D
+    D --> G
+    G -->|"201 Created"| A
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 ### JSON Encoding/Decoding
 
@@ -907,6 +960,31 @@ func main() {
 ```
 
 ### Streaming
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% gRPC communication flow for donation processing
+
+graph LR
+    A["gRPC Client<br/>Donation App"]:::blue
+    B["Protobuf<br/>Serialize"]:::purple
+    C["HTTP/2<br/>Transport"]:::orange
+    D["gRPC Server<br/>Zakat Service"]:::teal
+    E["Response<br/>DonationReceipt"]:::teal
+    F["Protobuf<br/>Deserialize"]:::purple
+
+    A -->|"Request"| B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F -->|"Response"| A
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 **Server Streaming**:
 

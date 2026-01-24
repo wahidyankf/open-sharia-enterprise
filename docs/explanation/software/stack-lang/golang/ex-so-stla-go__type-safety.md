@@ -18,6 +18,40 @@ Go is a statically typed language with a strong emphasis on type safety. The typ
 
 ## Type System Fundamentals
 
+### Type Hierarchy in Go
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Go Type System"]:::blue --> B["Basic Types"]:::orange
+    A --> C["Composite Types"]:::orange
+    A --> D["Interface Types"]:::orange
+    A --> E["Custom Types"]:::orange
+
+    B --> B1["Numeric<br/>#40;int, float64#41;"]:::teal
+    B --> B2["String"]:::teal
+    B --> B3["Boolean"]:::teal
+
+    C --> C1["Array<br/>#40;Fixed Size#41;"]:::teal
+    C --> C2["Slice<br/>#40;Dynamic#41;"]:::teal
+    C --> C3["Map"]:::teal
+    C --> C4["Struct"]:::teal
+    C --> C5["Pointer"]:::teal
+
+    D --> D1["Empty Interface<br/>#40;any#41;"]:::purple
+    D --> D2["Custom Interface"]:::purple
+
+    E --> E1["Type Alias"]:::purple
+    E --> E2["Named Type"]:::purple
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ### Static Typing
 
 Go uses static typing, meaning types are checked at compile time:
@@ -755,6 +789,32 @@ func main() {
 
 ## Type Assertions
 
+### Type Assertion Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Interface Value<br/>#40;any#41;"]:::blue --> B{Type Assertion}:::purple
+    B -->|"v.#40;TargetType#41;"| C{Panic-based}:::orange
+    B -->|"v, ok := v.#40;TargetType#41;"| D{Safe#40;comma-ok#41;}:::teal
+
+    C -->|Success| E["Value<br/>#40;TargetType#41;"]:::teal
+    C -->|Failure| F["Panic"]:::orange
+
+    D -->|Success| G["value, true"]:::teal
+    D -->|Failure| H["zero value, false"]:::teal
+
+    I["Zakat Amount<br/>#40;interface&#123;&#125;#41;"]:::blue --> J{Assert to<br/>float64}:::purple
+    J --> K["amount.#40;float64#41;<br/>Calculate"]:::teal
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ### Basic Type Assertions
 
 Extract concrete type from interface:
@@ -878,6 +938,32 @@ func main() {
 ```
 
 ## Type Switches
+
+### Type Switch Pattern Matching
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Interface Value"]:::blue --> B["switch v := i.#40;type#41;"]:::purple
+    B --> C["case int"]:::orange
+    B --> D["case string"]:::orange
+    B --> E["case float64"]:::orange
+    B --> F["case PaymentProcessor"]:::teal
+    B --> G["default"]:::orange
+
+    C --> H["Handle int<br/>v is int"]:::teal
+    D --> I["Handle string<br/>v is string"]:::teal
+    E --> J["Handle float64<br/>v is float64"]:::teal
+    F --> K["Call ProcessPayment#40;#41;<br/>#40;Interface method#41;"]:::teal
+    G --> L["Unknown type<br/>v is interface&#123;&#125;"]:::teal
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 ### Basic Type Switch
 

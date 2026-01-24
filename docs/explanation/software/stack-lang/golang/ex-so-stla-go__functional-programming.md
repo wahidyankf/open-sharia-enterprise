@@ -381,6 +381,28 @@ func Example() {
 
 Function composition combines simple functions to build more complex ones.
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% Function composition pipeline for zakat calculation
+
+graph LR
+    A["Input<br/>Donation Amount"]:::blue
+    B["Filter<br/>Remove Invalid"]:::orange
+    C["Map<br/>Apply Nisab"]:::teal
+    D["Reduce<br/>Calculate Total"]:::purple
+    E["Output<br/>Zakat Amount"]:::blue
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ### Basic Composition
 
 ```go
@@ -438,6 +460,28 @@ func Example() {
 ```
 
 ### Middleware Pattern
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% Middleware composition chain
+
+graph LR
+    A["Handler"]:::blue
+    B["LoggingMiddleware"]:::teal
+    C["AuthMiddleware"]:::orange
+    D["RateLimitMiddleware"]:::purple
+    E["Final Handler"]:::blue
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 ```go
 type Handler func(http.ResponseWriter, *http.Request)
@@ -673,6 +717,32 @@ func Example_Generic() {
 ## Monadic Patterns (Limited)
 
 Go doesn't have monads in the Haskell sense, but we can implement similar patterns.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% Option/Result pattern for safe donation processing
+
+graph TD
+    A["Operation<br/>ProcessDonation"]:::blue
+    B{"Success?"}:::orange
+    C["Ok#60;Result#62;<br/>Contains Value"]:::teal
+    D["Err#60;Error#62;<br/>Contains Error"]:::orange
+    E["Map<br/>Transform Value"]:::purple
+    F["Unwrap<br/>Extract Value"]:::teal
+    G["Handle Error<br/>Default or Retry"]:::orange
+
+    A --> B
+    B -->|"Yes"| C
+    B -->|"No"| D
+    C --> E
+    E --> F
+    D --> G
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 ### Option/Maybe Pattern
 

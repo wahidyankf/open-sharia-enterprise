@@ -291,6 +291,35 @@ def save_zakat_calculation(calculation: dict, filepath: Path) -> None:
 
 **Why this matters**: `with` statement guarantees resource cleanup. Reduces boilerplate `try/finally` blocks. Prevents resource leaks.
 
+### Common Python Patterns and Idioms
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+  A[Python Idioms] --> B[Context Managers<br/>with statement]
+  A --> C[Decorators<br/>@decorator syntax]
+  A --> D[Generators<br/>yield keyword]
+  A --> E[Comprehensions<br/>List/Dict/Set]
+
+  B --> F[Resource Management<br/>Files, DB, Locks]
+  C --> G[Cross-Cutting Concerns<br/>Logging, Caching, Validation]
+  D --> H[Lazy Iteration<br/>Memory Efficiency]
+  E --> I[Data Transformation<br/>Concise Syntax]
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style C fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style D fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style E fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Pythonic patterns**:
+
+- **Context managers**: Guarantee cleanup #40;files, locks, transactions#41;
+- **Decorators**: Modify function behavior #40;caching, logging, validation#41;
+- **Generators**: Lazy iteration for memory efficiency
+- **Comprehensions**: Concise data transformations
+
 ### Database Transactions
 
 ```python
@@ -569,6 +598,46 @@ campaign_totals = aggregate_by_campaign(valid_donations)
 
 **Why this matters**: Generator pipelines compose naturally. Each stage processes items lazily. Memory-efficient for large datasets.
 
+### Descriptor Protocol for Properties
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph LR
+  A[Attribute Access<br/>obj.attr] --> B[Descriptor Protocol]
+
+  B --> C{Has __get__?}
+  C -->|Yes| D[Call __get__#40;obj, type#41;]
+  C -->|No| E[Return Value Directly]
+
+  B --> F{Attribute Assignment<br/>obj.attr = value?}
+  F -->|Yes| G{Has __set__?}
+  F -->|No| E
+
+  G -->|Yes| H[Call __set__#40;obj, value#41;]
+  G -->|No| I[Set Value Directly]
+
+  B --> J{Attribute Deletion<br/>del obj.attr?}
+  J -->|Yes| K{Has __delete__?}
+  J -->|No| E
+
+  K -->|Yes| L[Call __delete__#40;obj#41;]
+  K -->|No| M[Delete Attribute]
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style D fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style H fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style L fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Descriptor methods**:
+
+- **`__get__(self, obj, type)`**: Called on attribute access
+- **`__set__(self, obj, value)`**: Called on attribute assignment
+- **`__delete__(self, obj)`**: Called on attribute deletion
+
+**Why this matters**: Descriptors power Python's `@property` decorator. Understanding descriptors enables custom attribute behavior.
+
 ## Duck Typing
 
 Python uses duck typing: "If it walks like a duck and quacks like a duck, it's a duck."
@@ -796,6 +865,37 @@ sorted_donations = sorted(donations)  # Sorted by amount
 ```
 
 **Why this matters**: `@total_ordering` generates all comparison operators from `__eq__` and `__lt__`. Enables sorting and comparison. Reduces boilerplate code.
+
+### Metaclass vs Decorator Decision
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+  A[Need to Customize<br/>Class Behavior?] --> B{Customization Type?}
+
+  B -->|Modify Class Creation<br/>Class-level behavior| C[Use Metaclass<br/>class Meta#40;type#41;]
+  B -->|Modify Class After Creation<br/>Add attributes/methods| D[Use Class Decorator<br/>@decorator]
+
+  C --> E[Examples:<br/>Singleton Pattern<br/>ORM Models<br/>Automatic Registration]
+  D --> F[Examples:<br/>Add Methods<br/>Modify Attributes<br/>Validation]
+
+  E --> G[Complex<br/>Harder to Debug]
+  F --> H[Simple<br/>Easy to Understand]
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style C fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style D fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style G fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style H fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Decision criteria**:
+
+- **Metaclass**: Class creation customization, complex scenarios #40;ORM, singleton#41;
+- **Decorator**: Class modification after creation, simpler and more Pythonic
+
+**General rule**: Prefer class decorators unless you specifically need metaclass behavior.
 
 ## References
 

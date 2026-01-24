@@ -48,6 +48,29 @@ Concurrency and parallelism enable Python applications to handle multiple operat
 
 asyncio provides asynchronous I/O using async/await syntax.
 
+### GIL Behavior and Concurrency Models
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+  A[Python Thread Executes] -->|GIL Acquired| B{Task Type?}
+  B -->|I/O-Bound| C[Release GIL During I/O]
+  B -->|CPU-Bound| D[Hold GIL, Block Other Threads]
+
+  C -->|I/O Complete| E[Re-acquire GIL]
+  E --> F[Continue Execution]
+
+  D --> G[Only One Thread Executes Python Bytecode]
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style C fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style D fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style G fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Why this matters**: The GIL #40;Global Interpreter Lock#41; allows only one thread to execute Python bytecode at a time. Threading benefits I/O-bound tasks #40;GIL released during I/O#41; but not CPU-bound tasks.
+
 ### Basic async/await
 
 ```python
@@ -125,6 +148,44 @@ print(result)
 ```
 
 **Why this matters**: `asyncio.gather()` runs multiple coroutines concurrently. Single thread, non-blocking. Dramatically faster than sequential execution for I/O.
+
+### asyncio Event Loop Execution
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+sequenceDiagram
+  participant EL as Event Loop
+  participant C1 as Coroutine 1<br/>#40;Fetch Gold Price#41;
+  participant C2 as Coroutine 2<br/>#40;Fetch Silver Price#41;
+  participant C3 as Coroutine 3<br/>#40;Fetch Exchange Rate#41;
+  participant IO as I/O Operations
+
+  EL->>C1: Start execution
+  C1->>IO: Await network request
+  Note over C1,IO: Coroutine 1 suspended
+
+  EL->>C2: Start execution
+  C2->>IO: Await network request
+  Note over C2,IO: Coroutine 2 suspended
+
+  EL->>C3: Start execution
+  C3->>IO: Await network request
+  Note over C3,IO: Coroutine 3 suspended
+
+  IO-->>C1: Response ready
+  EL->>C1: Resume execution
+  C1-->>EL: Return gold price
+
+  IO-->>C2: Response ready
+  EL->>C2: Resume execution
+  C2-->>EL: Return silver price
+
+  IO-->>C3: Response ready
+  EL->>C3: Resume execution
+  C3-->>EL: Return exchange rate
+```
+
+**Why this matters**: asyncio event loop switches between coroutines during I/O wait. Single-threaded cooperative multitasking. All three API calls execute concurrently without threads.
 
 ## threading Module
 
@@ -250,6 +311,40 @@ def io_intensive_zakat(wealth: Decimal) -> Decimal:
 ```
 
 **Python 3.13+ Free-Threaded Mode**: Experimental no-GIL mode via `--disable-gil` flag (PEP 703). Enables true parallel threading for CPU-bound tasks.
+
+### Concurrency Model Decision Tree
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+  A[Task to Execute] --> B{Task Type?}
+  B -->|I/O-Bound<br/>#40;API calls, DB queries#41;| C{Single Thread Sufficient?}
+  B -->|CPU-Bound<br/>#40;Complex calculations#41;| D{Need True Parallelism?}
+
+  C -->|Yes, modern async| E[asyncio<br/>async/await]
+  C -->|No, need threads| F[threading<br/>ThreadPoolExecutor]
+
+  D -->|Yes, bypass GIL| G[multiprocessing<br/>ProcessPoolExecutor]
+  D -->|No, I/O dominates| H[asyncio with<br/>CPU-bound tasks]
+
+  E --> I[Zakat API calls<br/>concurrent async]
+  F --> J[Donation processing<br/>with shared memory]
+  G --> K[Complex Murabaha<br/>profit calculations]
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style C fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style D fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style E fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style F fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style G fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Decision guide**:
+
+- **asyncio**: I/O-bound tasks, modern async APIs, highest concurrency
+- **threading**: I/O-bound tasks needing shared memory, compatibility with sync libraries
+- **multiprocessing**: CPU-bound tasks requiring true parallelism, bypasses GIL
 
 ## concurrent.futures
 

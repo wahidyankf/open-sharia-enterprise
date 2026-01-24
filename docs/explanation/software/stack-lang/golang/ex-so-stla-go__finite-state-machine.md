@@ -164,6 +164,42 @@ Type-based FSMs use Go's type alias + const pattern to create enum-like states w
 
 ### Example: DonationPayment Processing FSM
 
+#### Payment State Transition Diagram
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+stateDiagram-v2
+    [*] --> PENDING: Create Payment
+    PENDING --> APPROVED: Approve#40;#41;
+    PENDING --> REJECTED: Reject#40;reason#41;
+    APPROVED --> PROCESSING: Process#40;#41;
+    APPROVED --> CANCELLED: Cancel#40;reason#41;
+    PROCESSING --> COMPLETED: Complete#40;#41;
+    PROCESSING --> FAILED: Fail#40;reason#41;
+    REJECTED --> [*]
+    COMPLETED --> [*]
+    FAILED --> [*]
+    CANCELLED --> [*]
+
+    note right of PENDING
+        Initial State
+        Amount > 0
+        Recipient exists
+    end note
+
+    note right of APPROVED
+        Shariah Compliant
+        Ready for disbursement
+    end note
+
+    note right of COMPLETED
+        Zakat distributed
+        Terminal state
+    end note
+```
+
 **Before (No FSM - Scattered Logic)**:
 
 ```go
@@ -844,6 +880,42 @@ The Type Switch Pattern uses Go's type switch with interfaces to achieve exhaust
 
 ### Example: Waqf MurabahaContract State Management
 
+#### Waqf Contract State Transition Diagram
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+stateDiagram-v2
+    [*] --> DRAFT: NewContract#40;#41;
+    DRAFT --> UNDER_REVIEW: SubmitForReview#40;reviewerID#41;
+    UNDER_REVIEW --> ACTIVE: Approve#40;beneficiaryID#41;
+    UNDER_REVIEW --> REJECTED: Reject#40;reason#41;
+    ACTIVE --> SUSPENDED: Suspend#40;reason#41;
+    SUSPENDED --> ACTIVE: Reactivate#40;#41;
+    ACTIVE --> ARCHIVED: Archive#40;#41;
+    SUSPENDED --> ARCHIVED: Archive#40;#41;
+    REJECTED --> [*]
+    ARCHIVED --> [*]
+
+    note right of DRAFT
+        Initial state
+        Contract being drafted
+        Not yet submitted
+    end note
+
+    note right of UNDER_REVIEW
+        Shariah board review
+        Compliance validation
+    end note
+
+    note right of ACTIVE
+        Waqf active
+        Beneficiaries receiving
+        funds
+    end note
+```
+
 **Waqf** (وقف) is an Islamic endowment where assets are donated for charitable purposes. Contracts transition through creation, review, activation, and archival phases.
 
 ```go
@@ -1292,6 +1364,32 @@ func processState(state ContractState) {
 - ❌ Need strict exhaustiveness checking (Go doesn't provide this)
 
 ## Concurrency-Safe FSMs
+
+### Concurrency Patterns for FSMs
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Concurrent Request<br/>#40;Approve, Process#41;"]:::blue --> B{FSM Pattern}:::purple
+    B -->|Mutex-Based| C["RWMutex Lock"]:::orange
+    B -->|Channel-Based| D["Event Queue<br/>#40;Actor Model#41;"]:::teal
+
+    C --> E["Read/Write State<br/>#40;Protected#41;"]:::orange
+    E --> F["Unlock"]:::orange
+
+    D --> G["Single Goroutine<br/>#40;State Handler#41;"]:::teal
+    G --> H["Process Events<br/>Sequentially"]:::teal
+
+    F --> I["No Race Condition"]:::blue
+    H --> I
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 ### Overview
 

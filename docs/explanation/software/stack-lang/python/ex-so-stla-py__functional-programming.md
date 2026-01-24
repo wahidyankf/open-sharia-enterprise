@@ -373,6 +373,31 @@ def filter_qualifying_wealth(
 
 **Why this matters**: Comprehensions more readable for simple filters. `filter` useful with existing predicates.
 
+### Data Transformation Pipeline with map/filter/reduce
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph LR
+  A[Input List<br/>Wealth Amounts] --> B[filter<br/>amount >= nisab]
+  B --> C[map<br/>amount * 0.025]
+  C --> D[reduce<br/>sum all values]
+  D --> E[Output<br/>Total Zakat]
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style C fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style D fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style E fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Pipeline stages**:
+
+1. **filter**: Select qualifying wealth #40;>= nisab#41;
+2. **map**: Transform to Zakat amounts #40;2.5%#41;
+3. **reduce**: Aggregate to total obligation
+
+**Why this matters**: Functional pipeline separates concerns. Each stage does one thing. Composable and testable.
+
 ### Reduce for Aggregation
 
 ```python
@@ -518,6 +543,31 @@ gold_zakat = calculate_zakat_gold(Decimal("6000"))
 
 **Why this matters**: Partial application binds common parameters. Creates domain-specific functions from general ones.
 
+### Decorator Pattern with functools.wraps
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+  A[Original Function<br/>calculate_zakat] --> B[Decorator<br/>@lru_cache]
+  B --> C[Wrapper Function<br/>with caching logic]
+
+  C --> D{Cache Hit?}
+  D -->|Yes| E[Return Cached Result]
+  D -->|No| F[Call Original Function]
+
+  F --> G[Store Result in Cache]
+  G --> H[Return Result]
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style C fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style D fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style E fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style F fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Why this matters**: `functools.wraps` preserves original function metadata. Decorator adds behavior without modifying function. Separation of concerns for cross-cutting features.
+
 ## Function Composition
 
 Combine small functions into complex workflows.
@@ -602,6 +652,37 @@ total_zakat = sum_results(
 ```
 
 **Why this matters**: Generator-based pipeline processes data lazily. Memory-efficient for large datasets. Clear data flow.
+
+### Iterator Protocol Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph LR
+  A[Iterable Object] --> B[__iter__#40;#41;<br/>Returns iterator]
+  B --> C[Iterator Object]
+
+  C --> D[__next__#40;#41;<br/>Returns next item]
+  D --> E{More items?}
+
+  E -->|Yes| F[Return Item]
+  E -->|No| G[Raise StopIteration]
+
+  F --> D
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style C fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style D fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style E fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Iterator protocol**:
+
+- **`__iter__()`**: Returns iterator object #40;often self#41;
+- **`__next__()`**: Returns next item or raises StopIteration
+- **for loop**: Calls `__iter__()` once, then `__next__()` until StopIteration
+
+**Why this matters**: Understanding iterator protocol enables custom iterators. Generators implement this protocol automatically.
 
 ## References
 

@@ -121,6 +121,38 @@ def parse_zakat_amount(amount_str: str) -> Decimal:
 
 **Why this matters**: Specific exceptions document expected failures. Bare `except:` catches system exceptions (KeyboardInterrupt, SystemExit). Exception chaining (`from e`) preserves debugging context.
 
+### Exception Hierarchy for Custom Exceptions
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+  A[BaseException] --> B[Exception<br/>User-catchable exceptions]
+  A --> C[SystemExit]
+  A --> D[KeyboardInterrupt]
+
+  B --> E[ZakatCalculationError<br/>Domain base]
+  B --> F[ValueError<br/>Built-in]
+  B --> G[TypeError<br/>Built-in]
+
+  E --> H[InvalidWealthAmount<br/>Business rule violation]
+  E --> I[NisabThresholdError<br/>Configuration error]
+  E --> J[InsufficientWealthError<br/>Informational]
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style E fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style H fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style I fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style J fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Exception hierarchy design**:
+
+- **BaseException**: Catch-all #40;rarely used, includes system exceptions#41;
+- **Exception**: User-catchable base for application exceptions
+- **ZakatCalculationError**: Domain-specific base for Zakat errors
+- **Specific errors**: Concrete exception types for precise error handling
+
 ## try/except/else/finally
 
 Python's exception handling provides four clauses for different scenarios.
@@ -202,6 +234,34 @@ def record_donation_payment(donor_id, amount, campaigns):
 ```
 
 **Why this matters**: `else` clause runs only if no exception occurred. Separates error-prone code from success-only logic. Prevents catching unintended exceptions.
+
+### try/except/else/finally Control Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph LR
+  A[try block] --> B{Exception<br/>raised?}
+  B -->|No| C[else block]
+  B -->|Yes| D[except block]
+
+  C --> E[finally block]
+  D --> E
+
+  E --> F[Continue execution]
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style C fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style D fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style E fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Flow explanation**:
+
+- **try**: Code that might raise exceptions
+- **except**: Handles specific exceptions
+- **else**: Executes only if no exception occurred #40;success path#41;
+- **finally**: Always executes for cleanup #40;even if exception occurred#41;
 
 ### try/except/finally
 
@@ -343,6 +403,37 @@ def transfer_zakat_funds(
 ```
 
 **Why this matters**: Context managers make transactions atomic. Automatic rollback on exceptions prevents partial state. Clean separation of business logic and transaction control.
+
+### Context Manager Error Handling Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+sequenceDiagram
+  participant Code as Application Code
+  participant CM as Context Manager
+  participant Res as Resource<br/>#40;DB, File, Lock#41;
+
+  Code->>CM: __enter__#40;#41;
+  CM->>Res: Acquire resource
+  Res-->>CM: Resource ready
+  CM-->>Code: Resource handle
+
+  alt Success Path
+    Code->>Code: Execute operations
+    Code->>CM: __exit__#40;None, None, None#41;
+    CM->>Res: Commit & release
+    Res-->>CM: Success
+    CM-->>Code: Normal exit
+  else Exception Path
+    Code->>Code: Exception raised
+    Code->>CM: __exit__#40;exc_type, exc_val, traceback#41;
+    CM->>Res: Rollback & release
+    Res-->>CM: Rollback complete
+    CM-->>Code: Re-raise exception
+  end
+```
+
+**Why this matters**: Context managers guarantee cleanup via `__exit__`. Automatic rollback on exceptions. Transaction-safe by design.
 
 ### Custom Context Managers
 
