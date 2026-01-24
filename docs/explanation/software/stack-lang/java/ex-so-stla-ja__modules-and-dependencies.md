@@ -1847,3 +1847,64 @@ Before releasing Java modules:
 **Last Updated**: 2026-01-23
 **Java Version**: 17+ (baseline), 21+ (recommended), 23 (latest)
 **Maintainers**: Platform Documentation Team
+
+## Module Dependency Graph
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+graph TD
+    A[app.main] --> B[app.zakat.service]
+    A --> C[app.donation.service]
+    A --> D[app.auth.service]
+
+    B --> E[app.zakat.domain]
+    C --> F[app.donation.domain]
+    D --> G[app.auth.domain]
+
+    E --> H[app.common.utils]
+    F --> H
+    G --> H
+
+    B --> I[app.persistence]
+    C --> I
+    D --> I
+
+    I --> J[java.sql]
+    H --> K[java.base]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#DE8F05,color:#fff
+    style D fill:#DE8F05,color:#fff
+    style I fill:#029E73,color:#fff
+    style H fill:#CC78BC,color:#fff
+```
+
+## Build and Dependency Resolution
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[pom.xml/build.gradle] --> B[Dependency Resolution]
+    B --> C{Scope Check}
+
+    C -->|compile| D[Include in Build]
+    C -->|test| E[Test Classpath Only]
+    C -->|provided| F[Runtime Environment]
+
+    D --> G[Transitive Dependencies]
+    G --> H{Conflict?}
+
+    H -->|Yes| I[Version Mediation]
+    H -->|No| J[Download Artifacts]
+
+    I --> J
+    J --> K[Local Repository]
+    K --> L[Build Classpath]
+    L --> M[Compile & Package]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+    style I fill:#CC78BC,color:#fff
+```

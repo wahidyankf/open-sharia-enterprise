@@ -1382,3 +1382,58 @@ func handleNegative(x int) int {
 **Last Updated**: 2026-01-23
 **Go Version**: 1.21+ (baseline), 1.22+ (recommended), 1.23 (latest)
 **Maintainers**: Platform Documentation Team
+
+## Go Code Quality Tools
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Go Code Quality] --> B[Format<br/>gofmt/goimports]
+    A --> C[Lint<br/>golangci-lint]
+    A --> D[Vet<br/>go vet]
+    A --> E[Static Analysis<br/>staticcheck]
+
+    B --> B1[Standard Format<br/>Consistent Style]
+    B --> B2[Import Ordering<br/>Auto Organize]
+
+    C --> C1[Multiple Linters<br/>golint/errcheck]
+    C --> C2[Custom Rules<br/>Team Standards]
+
+    D --> D1[Suspicious Code<br/>Compiler Warnings]
+    D --> D2[Common Mistakes<br/>Printf Errors]
+
+    E --> E1[Dead Code<br/>Unused Variables]
+    E --> E2[Performance<br/>Inefficient Patterns]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+```
+
+## CI/CD Quality Pipeline
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart LR
+    A[Code Push] --> B[gofmt Check]
+    B --> C[goimports Check]
+    C --> D[go vet]
+    D --> E[golangci-lint]
+    E --> F[Unit Tests]
+    F --> G[Integration Tests]
+    G --> H{All Pass?}
+
+    H -->|Yes| I[Build]
+    H -->|No| J[Fail CI]
+
+    I --> K[Docker Image]
+    K --> L[Deploy]
+
+    style A fill:#0173B2,color:#fff
+    style E fill:#DE8F05,color:#fff
+    style F fill:#029E73,color:#fff
+    style H fill:#CC78BC,color:#fff
+    style L fill:#0173B2,color:#fff
+```

@@ -2346,3 +2346,69 @@ principles:
 **Last Updated**: 2026-01-23
 **Go Version**: 1.21+ (baseline), 1.22+ (recommended), 1.23 (latest)
 **Maintainers**: Platform Documentation Team
+
+## Concurrency Patterns
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Go Concurrency Patterns] --> B[Worker Pool<br/>Limited Goroutines]
+    A --> C[Pipeline<br/>Stage Processing]
+    A --> D[Fan-Out Fan-In<br/>Parallel + Merge]
+    A --> E[Semaphore<br/>Resource Limit]
+
+    B --> B1[Task Queue<br/>Channel Buffer]
+    B --> B2[Worker Goroutines<br/>Fixed Count]
+
+    C --> C1[Stage Functions<br/>Transform Data]
+    C --> C2[Channel Chain<br/>Data Flow]
+
+    D --> D1[Multiple Workers<br/>Parallel Process]
+    D --> D2[Result Merge<br/>Single Channel]
+
+    E --> E1[Buffered Channel<br/>Capacity Limit]
+    E --> E2[Acquire Release<br/>Controlled Access]
+
+    B1 --> F[Zakat Batch<br/>Worker Pool]
+    D1 --> G[Parallel Calculation<br/>Fan-Out]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#CC78BC,color:#fff
+```
+
+## Error Handling in Goroutines
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+sequenceDiagram
+    participant Main
+    participant G1 as Goroutine 1
+    participant G2 as Goroutine 2
+    participant EC as Error Channel
+    participant RC as Result Channel
+
+    Main->>G1: Launch (tasks)
+    Main->>G2: Launch (tasks)
+
+    G1->>G1: Process Task
+    alt Success
+        G1->>RC: Send Result
+    else Error
+        G1->>EC: Send Error
+    end
+
+    G2->>G2: Process Task
+    alt Success
+        G2->>RC: Send Result
+    else Error
+        G2->>EC: Send Error
+    end
+
+    Main->>Main: Select on RC/EC
+    Main-->>Main: Handle Results/Errors
+```

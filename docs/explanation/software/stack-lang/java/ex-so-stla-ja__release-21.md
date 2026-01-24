@@ -31,6 +31,60 @@ Java 21 delivers **15 JDK Enhancement Proposals (JEPs)**, including several grou
 - **Next LTS**: Java 25 (September 2025)
 - **LTS Cadence**: 2 years (reduced from 3 years)
 
+### Feature Timeline
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Java 17 LTS<br/>Previous LTS"]:::blue
+    B["Virtual Threads<br/>Project Loom"]:::teal
+    C["Sequenced Collections<br/>Ordered Access"]:::teal
+    D["Pattern Matching<br/>Finalized"]:::teal
+    E["Record Patterns<br/>Destructuring"]:::teal
+    F["Generational ZGC<br/>Performance"]:::teal
+    G["Java 21 LTS<br/>Released September 2023"]:::orange
+
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+    A --> F
+    B --> G
+    C --> G
+    D --> G
+    E --> G
+    F --> G
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Virtual Threads Architecture
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+flowchart TD
+    A["Platform Threads<br/>Java 17"]:::blue
+    B["Limited Concurrency<br/>~200 threads"]:::orange
+    C["Virtual Threads<br/>Java 21"]:::teal
+    D["Massive Concurrency<br/>Millions of threads"]:::purple
+    E["I/O-Bound Services<br/>Better Performance"]:::purple
+
+    A --> B
+    C --> D
+    D --> E
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ## Quick Reference
 
 **Jump to:**
@@ -989,3 +1043,37 @@ Java 21 includes numerous performance improvements:
 **Last Updated**: 2026-01-23
 **Java Version**: 17+ (baseline), 21+ (recommended), 23 (latest)
 **Maintainers**: Platform Documentation Team
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Java 21 LTS<br/>September 2023] --> B[Virtual Threads<br/>Lightweight Concurrency]
+    A --> C[Sequenced Collections<br/>Ordered APIs]
+    A --> D[Pattern Matching<br/>Record Patterns]
+    A --> E[String Templates<br/>Preview]
+
+    B --> B1[Project Loom<br/>Million Threads]
+    B --> B2[Structured Concurrency<br/>Task Scopes]
+
+    C --> C1[First Last<br/>Reverse Iteration]
+    C --> C2[SequencedSet<br/>SequencedMap]
+
+    D --> D1[Nested Patterns<br/>Record Components]
+    D --> D2[Exhaustiveness<br/>Compiler Checks]
+
+    E --> E1[Interpolation<br/>Type Safe]
+    E --> E2[No Injection<br/>Compile Validation]
+
+    B1 --> F[High Concurrency<br/>Donation API]
+    C1 --> G[Ordered Zakat<br/>Time Sequence]
+    D1 --> H[Pattern Switch<br/>Type Safety]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#CC78BC,color:#fff
+```

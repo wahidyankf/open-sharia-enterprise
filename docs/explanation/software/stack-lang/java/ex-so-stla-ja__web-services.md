@@ -3587,3 +3587,58 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 **Last Updated**: 2026-01-23
 **Java Version**: 17+ (baseline), 21+ (recommended), 23 (latest)
 **Maintainers**: Platform Documentation Team
+
+## RESTful API Architecture
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart LR
+    A[Client] -->|HTTP/REST| B[Load Balancer]
+    B --> C[API Gateway]
+    C --> D[Authentication]
+    D --> E{Route}
+
+    E -->|/zakat| F[Zakat Service]
+    E -->|/donations| G[Donation Service]
+    E -->|/beneficiary| H[Beneficiary Service]
+
+    F --> I[Database]
+    G --> I
+    H --> I
+
+    F --> J[Cache]
+    G --> J
+    H --> J
+
+    style A fill:#0173B2,color:#fff
+    style C fill:#DE8F05,color:#fff
+    style D fill:#029E73,color:#fff
+    style F fill:#CC78BC,color:#fff
+    style G fill:#CC78BC,color:#fff
+    style H fill:#CC78BC,color:#fff
+```
+
+## Microservices Communication Pattern
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+sequenceDiagram
+    participant C as Client
+    participant AG as API Gateway
+    participant ZS as Zakat Service
+    participant DS as Donation Service
+    participant MQ as Message Queue
+    participant DB as Database
+
+    C->>AG: POST /calculate-zakat
+    AG->>ZS: Forward Request
+    ZS->>DB: Fetch User Assets
+    DB-->>ZS: Asset Data
+    ZS->>ZS: Calculate Zakat Amount
+    ZS->>MQ: Publish Zakat Calculated Event
+    MQ-->>DS: Subscribe to Event
+    DS->>DS: Create Donation Record
+    DS->>DB: Store Donation
+    ZS-->>AG: Zakat Calculation Result
+    AG-->>C: 200 OK + Amount
+```

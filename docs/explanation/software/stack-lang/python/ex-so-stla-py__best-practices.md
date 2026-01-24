@@ -2672,3 +2672,67 @@ Use this checklist to ensure your Python code follows best practices:
 **Last Updated**: 2026-01-24
 **Python Version**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.14.x (latest stable)
 **Maintainers**: OSE Platform Documentation Team
+
+## Python Code Organization
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Python Project] --> B[src/<br/>Source Code]
+    A --> C[tests/<br/>Test Files]
+    A --> D[docs/<br/>Documentation]
+    A --> E[config/<br/>Configuration]
+
+    B --> B1[domain/<br/>Business Logic]
+    B --> B2[infrastructure/<br/>External]
+    B --> B3[application/<br/>Use Cases]
+
+    C --> C1[unit/<br/>pytest]
+    C --> C2[integration/<br/>fixtures]
+    C --> C3[e2e/<br/>selenium]
+
+    D --> D1[Sphinx<br/>API Docs]
+    D --> D2[Markdown<br/>README]
+
+    E --> E1[pyproject.toml<br/>Modern Config]
+    E --> E2[.env<br/>Secrets]
+
+    B1 --> F[zakat_service.py]
+    B1 --> G[donation_service.py]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+```
+
+## Code Quality Pipeline
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart LR
+    A[Code] --> B[black<br/>Formatting]
+    B --> C[isort<br/>Import Sort]
+    C --> D[mypy<br/>Type Check]
+    D --> E[pylint<br/>Linting]
+    E --> F[pytest<br/>Testing]
+    F --> G{Pass?}
+
+    G -->|Yes| H[Coverage Check]
+    G -->|No| I[Fix Issues]
+
+    H --> J{>80%?}
+    J -->|Yes| K[Build]
+    J -->|No| I
+
+    K --> L[Deploy]
+
+    style A fill:#0173B2,color:#fff
+    style D fill:#DE8F05,color:#fff
+    style F fill:#029E73,color:#fff
+    style H fill:#CC78BC,color:#fff
+    style L fill:#0173B2,color:#fff
+```

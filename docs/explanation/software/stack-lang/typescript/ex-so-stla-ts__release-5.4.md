@@ -1299,3 +1299,48 @@ function process(value: string | null) {
 **TypeScript Version**: 5.4
 **Release Date**: March 2024
 **Maintainers**: OSE Documentation Team
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[TypeScript 5.4<br/>March 2024] --> B[NoInfer Utility<br/>Inference Control]
+    A --> C[Preserved Narrowing<br/>Closure Context]
+    A --> D[Import Attributes<br/>JSON Modules]
+    A --> E[Performance Boost<br/>5% Faster]
+
+    B --> B1[Block Inference<br/>Explicit Types]
+    B --> B2[Generic Control<br/>Better APIs]
+
+    C --> C1[Closure Types<br/>Maintained Narrowing]
+    C --> C2[Array Methods<br/>Better Inference]
+
+    D --> D1[JSON Imports<br/>Type-Safe]
+    D --> D2[Module Attributes<br/>assert/with]
+
+    E --> E1[Faster Builds<br/>Compiler Speed]
+    E --> E2[Memory Efficiency<br/>Lower Usage]
+
+    B1 --> F[Zakat Rules<br/>Fixed Type Params]
+    C1 --> G[Filter Functions<br/>Type Narrowing]
+    D1 --> H[Config Files<br/>JSON Imports]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#CC78BC,color:#fff
+```
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','noteTextColor':'#000','noteBkgColor':'#DE8F05','textColor':'#000','fontSize':'16px'}}}%%
+timeline
+    title TypeScript 5.4 Development Timeline
+    2023-Q4 : NoInfer Design : Narrowing Improvements : Import Attributes
+    2024-02 : Beta Testing : Inference Validation : Performance Benchmarks
+    2024-03 : TS 5.4 Released : NoInfer Utility : Preserved Narrowing : JSON Modules
+    2024-Q2 : Library Updates : Framework Adoption : Developer Feedback
+    2024-Q3 : Production Usage : Type Safety Gains : Build Performance
+```

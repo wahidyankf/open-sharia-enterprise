@@ -2350,3 +2350,76 @@ class DonationDistributionService {
 **Last Updated**: 2025-01-23
 **TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.9.3+ (latest stable)
 **Maintainers**: OSE Documentation Team
+
+## TypeScript Code Organization
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[TS Project Structure] --> B[src/<br/>Source Code]
+    A --> C[tests/<br/>Test Files]
+    A --> D[types/<br/>Type Definitions]
+    A --> E[dist/<br/>Compiled Output]
+
+    B --> B1[domain/<br/>Business Logic]
+    B --> B2[infrastructure/<br/>External Services]
+    B --> B3[application/<br/>Use Cases]
+
+    C --> C1[unit/<br/>Unit Tests]
+    C --> C2[integration/<br/>Integration Tests]
+    C --> C3[e2e/<br/>End-to-End]
+
+    D --> D1[interfaces.ts<br/>Contracts]
+    D --> D2[types.ts<br/>Shared Types]
+    D --> D3[enums.ts<br/>Constants]
+
+    E --> E1[esm/<br/>ES Modules]
+    E --> E2[cjs/<br/>CommonJS]
+
+    B1 --> F[Zakat Module]
+    B1 --> G[Donation Module]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+```
+
+## Type Safety Best Practices
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Type Safety] --> B[Strict Mode<br/>Enable All Checks]
+    A --> C[Type Guards<br/>Runtime Checks]
+    A --> D[Generics<br/>Type Parameters]
+    A --> E[Branded Types<br/>Nominal Typing]
+
+    B --> B1[strictNullChecks]
+    B --> B2[noImplicitAny]
+    B --> B3[strictFunctionTypes]
+
+    C --> C1[typeof Checks]
+    C --> C2[instanceof Checks]
+    C --> C3[Custom Predicates]
+
+    D --> D1[Type Constraints]
+    D --> D2[Type Inference]
+    D --> D3[Conditional Types]
+
+    E --> E1[Unique Symbols]
+    E --> E2[Brand Property]
+    E --> E3[Type Distinction]
+
+    E1 --> F[ZakatAmount Type<br/>Branded number]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+```

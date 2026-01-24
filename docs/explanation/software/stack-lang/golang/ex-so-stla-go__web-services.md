@@ -1410,6 +1410,921 @@ func main() {
 }
 ```
 
+## Gin Framework Deep Dive
+
+Production-grade Gin patterns for Islamic finance platform.
+
+### Complete Gin Application Structure
+
+```go
+// Project structure for Gin application
+/*
+financial-platform/
+├── cmd/
+│   └── api/
+│       └── main.go
+├── internal/
+│   ├── config/
+│   │   └── config.go
+│   ├── middleware/
+│   │   ├── auth.go
+│   │   ├── logging.go
+│   │   └── recovery.go
+│   ├── handler/
+│   │   ├── zakat.go
+│   │   ├── donation.go
+│   │   └── campaign.go
+│   ├── service/
+│   │   ├── zakat_service.go
+│   │   └── donation_service.go
+│   ├── repository/
+│   │   ├── zakat_repo.go
+│   │   └── donation_repo.go
+│   └── model/
+│       ├── zakat.go
+│       └── donation.go
+├── pkg/
+│   └── validator/
+│       └── custom_validators.go
+└── go.mod
+*/
+
+// cmd/api/main.go
+package main
+
+import (
+    "context"
+    "log"
+    "net/http"
+    "os"
+    "os/signal"
+    "syscall"
+    "time"
+
+    "github.com/gin-gonic/gin"
+    "financial-platform/internal/config"
+    "financial-platform/internal/handler"
+    "financial-platform/internal/middleware"
+    "financial-platform/internal/service"
+    "financial-platform/internal/repository"
+)
+
+func main() {
+    // Load configuration
+    cfg := config.LoadConfig()
+
+    // Setup router
+    router := setupRouter(cfg)
+
+    // Create server
+    srv := &http.Server{
+        Addr:           ":" + cfg.Port,
+        Handler:        router,
+        ReadTimeout:    15 * time.Second,
+        WriteTimeout:   15 * time.Second,
+        IdleTimeout:    60 * time.Second,
+        MaxHeaderBytes: 1 << 20, // 1 MB
+    }
+
+    // Start server in goroutine
+    go func() {
+        log.Printf("Server starting on port %s", cfg.Port)
+        if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+            log.Fatalf("Server failed to start: %v", err)
+        }
+    }()
+
+    // Graceful shutdown
+    quit := make(chan os.Signal, 1)
+    signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+    <-quit
+
+    log.Println("Shutting down server...")
+
+    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    defer cancel()
+
+    if err := srv.Shutdown(ctx); err != nil {
+        log.Fatal("Server forced to shutdown:", err)
+    }
+
+    log.Println("Server exited")
+}
+
+func setupRouter(cfg *config.Config) *gin.Engine {
+    // Set Gin mode
+    if cfg.Environment == "production" {
+        gin.SetMode(gin.ReleaseMode)
+    }
+
+    router := gin.New()
+
+    // Global middleware
+    router.Use(middleware.Logger())
+    router.Use(middleware.Recovery())
+    router.Use(middleware.CORS())
+    router.Use(middleware.RequestID())
+
+    // Health check
+    router.GET("/health", func(c *gin.Context) {
+        c.JSON(http.StatusOK, gin.H{"status": "healthy"})
+    })
+
+    // API v1 routes
+    v1 := router.Group("/api/v1")
+    {
+        // Public routes
+        auth := v1.Group("/auth")
+        {
+            auth.POST("/register", handler.Register)
+            auth.POST("/login", handler.Login)
+        }
+
+        campaigns := v1.Group("/campaigns")
+        {
+            campaigns.GET("", handler.ListCampaigns)
+            campaigns.GET("/:id", handler.GetCampaign)
+        }
+
+        // Protected routes
+        protected := v1.Group("")
+        protected.Use(middleware.AuthRequired())
+        {
+            protected.POST("/auth/logout", handler.Logout)
+            protected.GET("/auth/me", handler.GetCurrentUser)
+
+            // Zakat endpoints
+            zakat := protected.Group("/zakat")
+            {
+                zakat.POST("/calculate", handler.CalculateZakat)
+                zakat.GET("/records", handler.ListZakatRecords)
+                zakat.GET("/records/:id", handler.GetZakatRecord)
+            }
+
+            // Donation endpoints
+            donations := protected.Group("/donations")
+            {
+                donations.POST("", handler.CreateDonation)
+                donations.GET("", handler.ListDonations)
+                donations.GET("/:id", handler.GetDonation)
+            }
+
+            // Admin only
+            admin := protected.Group("/admin")
+            admin.Use(middleware.RequireAdmin())
+            {
+                admin.POST("/campaigns", handler.CreateCampaign)
+                admin.PUT("/campaigns/:id", handler.UpdateCampaign)
+                admin.DELETE("/campaigns/:id", handler.DeleteCampaign)
+            }
+        }
+    }
+
+    return router
+}
+```
+
+### Gin Middleware Implementations
+
+```go
+// internal/middleware/logging.go
+package middleware
+
+import (
+    "time"
+
+    "github.com/gin-gonic/gin"
+    "github.com/sirupsen/logrus"
+)
+
+var logger = logrus.New()
+
+func Logger() gin.HandlerFunc {
+    return func(c *gin.Context) {
+        start := time.Now()
+        path := c.Request.URL.Path
+        raw := c.Request.URL.RawQuery
+
+        // Process request
+        c.Next()
+
+        // Calculate latency
+        latency := time.Since(start)
+
+        // Get status code
+        statusCode := c.Writer.Status()
+
+        // Build query string
+        if raw != "" {
+            path = path + "?" + raw
+        }
+
+        // Log entry
+        entry := logger.WithFields(logrus.Fields{
+            "status_code":  statusCode,
+            "latency_ms":   latency.Milliseconds(),
+            "client_ip":    c.ClientIP(),
+            "method":       c.Request.Method,
+            "path":         path,
+            "request_id":   c.GetString("request_id"),
+            "user_agent":   c.Request.UserAgent(),
+        })
+
+        if statusCode >= 500 {
+            entry.Error("Request failed")
+        } else if statusCode >= 400 {
+            entry.Warn("Client error")
+        } else {
+            entry.Info("Request completed")
+        }
+    }
+}
+
+// internal/middleware/auth.go
+package middleware
+
+import (
+    "net/http"
+    "strings"
+
+    "github.com/gin-gonic/gin"
+    "github.com/golang-jwt/jwt/v5"
+)
+
+const SecretKey = "your-secret-key" // Move to config
+
+func AuthRequired() gin.HandlerFunc {
+    return func(c *gin.Context) {
+        authHeader := c.GetHeader("Authorization")
+        if authHeader == "" {
+            c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header required"})
+            c.Abort()
+            return
+        }
+
+        // Extract token
+        parts := strings.Split(authHeader, " ")
+        if len(parts) != 2 || parts[0] != "Bearer" {
+            c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid authorization header format"})
+            c.Abort()
+            return
+        }
+
+        tokenString := parts[1]
+
+        // Parse token
+        token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+            return []byte(SecretKey), nil
+        })
+
+        if err != nil || !token.Valid {
+            c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+            c.Abort()
+            return
+        }
+
+        // Extract claims
+        claims, ok := token.Claims.(jwt.MapClaims)
+        if !ok {
+            c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+            c.Abort()
+            return
+        }
+
+        // Set user ID in context
+        c.Set("user_id", claims["user_id"])
+        c.Set("is_admin", claims["is_admin"])
+
+        c.Next()
+    }
+}
+
+func RequireAdmin() gin.HandlerFunc {
+    return func(c *gin.Context) {
+        isAdmin, exists := c.Get("is_admin")
+        if !exists || !isAdmin.(bool) {
+            c.JSON(http.StatusForbidden, gin.H{"error": "Admin access required"})
+            c.Abort()
+            return
+        }
+        c.Next()
+    }
+}
+
+// internal/middleware/request_id.go
+package middleware
+
+import (
+    "github.com/gin-gonic/gin"
+    "github.com/google/uuid"
+)
+
+func RequestID() gin.HandlerFunc {
+    return func(c *gin.Context) {
+        requestID := c.GetHeader("X-Request-ID")
+        if requestID == "" {
+            requestID = uuid.New().String()
+        }
+
+        c.Set("request_id", requestID)
+        c.Writer.Header().Set("X-Request-ID", requestID)
+
+        c.Next()
+    }
+}
+
+// internal/middleware/cors.go
+package middleware
+
+import (
+    "github.com/gin-contrib/cors"
+    "github.com/gin-gonic/gin"
+    "time"
+)
+
+func CORS() gin.HandlerFunc {
+    return cors.New(cors.Config{
+        AllowOrigins:     []string{"https://oseplatform.com"},
+        AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+        AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "X-Request-ID"},
+        ExposeHeaders:    []string{"X-Request-ID", "X-RateLimit-Remaining"},
+        AllowCredentials: true,
+        MaxAge:           12 * time.Hour,
+    })
+}
+
+// internal/middleware/recovery.go
+package middleware
+
+import (
+    "net/http"
+
+    "github.com/gin-gonic/gin"
+)
+
+func Recovery() gin.HandlerFunc {
+    return gin.CustomRecovery(func(c *gin.Context, recovered interface{}) {
+        requestID := c.GetString("request_id")
+
+        logger.WithFields(logrus.Fields{
+            "request_id": requestID,
+            "panic":      recovered,
+        }).Error("Panic recovered")
+
+        c.JSON(http.StatusInternalServerError, gin.H{
+            "error":      "Internal server error",
+            "request_id": requestID,
+        })
+    })
+}
+```
+
+### Gin Handler with Service Layer
+
+```go
+// internal/handler/zakat.go
+package handler
+
+import (
+    "net/http"
+
+    "github.com/gin-gonic/gin"
+    "github.com/shopspring/decimal"
+    "financial-platform/internal/service"
+    "financial-platform/internal/model"
+)
+
+type ZakatHandler struct {
+    zakatService *service.ZakatService
+}
+
+func NewZakatHandler(zakatService *service.ZakatService) *ZakatHandler {
+    return &ZakatHandler{zakatService: zakatService}
+}
+
+type CalculateZakatRequest struct {
+    WealthAmount    decimal.Decimal `json:"wealth_amount" binding:"required,gt=0"`
+    NisabThreshold  decimal.Decimal `json:"nisab_threshold" binding:"required,gt=0"`
+}
+
+type CalculateZakatResponse struct {
+    WealthAmount   decimal.Decimal `json:"wealth_amount"`
+    NisabThreshold decimal.Decimal `json:"nisab_threshold"`
+    ZakatAmount    decimal.Decimal `json:"zakat_amount"`
+    IsObligated    bool            `json:"is_obligated"`
+    CalculatedAt   string          `json:"calculated_at"`
+}
+
+func (h *ZakatHandler) CalculateZakat(c *gin.Context) {
+    var req CalculateZakatRequest
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+
+    // Get user ID from context
+    userID := c.GetString("user_id")
+
+    // Calculate Zakat
+    result, err := h.zakatService.CalculateZakat(c.Request.Context(), userID, req.WealthAmount, req.NisabThreshold)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to calculate Zakat"})
+        return
+    }
+
+    c.JSON(http.StatusOK, CalculateZakatResponse{
+        WealthAmount:   result.WealthAmount,
+        NisabThreshold: result.NisabThreshold,
+        ZakatAmount:    result.ZakatAmount,
+        IsObligated:    result.IsObligated,
+        CalculatedAt:   result.CalculatedAt.Format(time.RFC3339),
+    })
+}
+
+func (h *ZakatHandler) ListZakatRecords(c *gin.Context) {
+    userID := c.GetString("user_id")
+
+    // Parse pagination
+    page := 1
+    pageSize := 20
+    if p := c.Query("page"); p != "" {
+        if parsed, err := strconv.Atoi(p); err == nil && parsed > 0 {
+            page = parsed
+        }
+    }
+    if ps := c.Query("page_size"); ps != "" {
+        if parsed, err := strconv.Atoi(ps); err == nil && parsed > 0 && parsed <= 100 {
+            pageSize = parsed
+        }
+    }
+
+    records, total, err := h.zakatService.ListRecords(c.Request.Context(), userID, page, pageSize)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch records"})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{
+        "data": records,
+        "pagination": gin.H{
+            "page":       page,
+            "page_size":  pageSize,
+            "total":      total,
+            "total_pages": (total + pageSize - 1) / pageSize,
+        },
+    })
+}
+
+// internal/service/zakat_service.go
+package service
+
+import (
+    "context"
+    "time"
+
+    "github.com/shopspring/decimal"
+    "financial-platform/internal/model"
+    "financial-platform/internal/repository"
+)
+
+type ZakatService struct {
+    zakatRepo *repository.ZakatRepository
+}
+
+func NewZakatService(zakatRepo *repository.ZakatRepository) *ZakatService {
+    return &ZakatService{zakatRepo: zakatRepo}
+}
+
+func (s *ZakatService) CalculateZakat(
+    ctx context.Context,
+    userID string,
+    wealthAmount decimal.Decimal,
+    nisabThreshold decimal.Decimal,
+) (*model.ZakatCalculation, error) {
+    var zakatAmount decimal.Decimal
+    var isObligated bool
+
+    if wealthAmount.GreaterThanOrEqual(nisabThreshold) {
+        isObligated = true
+        zakatAmount = wealthAmount.Mul(decimal.NewFromFloat(0.025))
+    } else {
+        isObligated = false
+        zakatAmount = decimal.Zero
+    }
+
+    calculation := &model.ZakatCalculation{
+        UserID:         userID,
+        WealthAmount:   wealthAmount,
+        NisabThreshold: nisabThreshold,
+        ZakatAmount:    zakatAmount,
+        IsObligated:    isObligated,
+        CalculatedAt:   time.Now(),
+    }
+
+    // Save to database
+    if err := s.zakatRepo.Save(ctx, calculation); err != nil {
+        return nil, err
+    }
+
+    return calculation, nil
+}
+
+func (s *ZakatService) ListRecords(
+    ctx context.Context,
+    userID string,
+    page int,
+    pageSize int,
+) ([]*model.ZakatCalculation, int, error) {
+    offset := (page - 1) * pageSize
+    return s.zakatRepo.FindByUserID(ctx, userID, offset, pageSize)
+}
+```
+
+### Gin Custom Validators
+
+```go
+// pkg/validator/custom_validators.go
+package validator
+
+import (
+    "regexp"
+
+    "github.com/go-playground/validator/v10"
+    "github.com/shopspring/decimal"
+)
+
+// Register custom validators
+func RegisterCustomValidators(v *validator.Validate) {
+    v.RegisterValidation("decimal_gt_zero", DecimalGreaterThanZero)
+    v.RegisterValidation("islamic_name", IslamicName)
+    v.RegisterValidation("hijri_date", HijriDate)
+}
+
+func DecimalGreaterThanZero(fl validator.FieldLevel) bool {
+    value, ok := fl.Field().Interface().(decimal.Decimal)
+    if !ok {
+        return false
+    }
+    return value.GreaterThan(decimal.Zero)
+}
+
+func IslamicName(fl validator.FieldLevel) bool {
+    // Allow Arabic, English letters, spaces, and common Islamic name characters
+    name := fl.Field().String()
+    matched, _ := regexp.MatchString(`^[\p{L}\p{M}\s'-]+$`, name)
+    return matched && len(name) >= 2
+}
+
+func HijriDate(fl validator.FieldLevel) bool {
+    // Validate Hijri date format: YYYY-MM-DD
+    dateStr := fl.Field().String()
+    matched, _ := regexp.MatchString(`^\d{4}-\d{2}-\d{2}$`, dateStr)
+    return matched
+}
+```
+
+## Echo Framework Deep Dive
+
+Production patterns for Echo framework.
+
+### Complete Echo Application
+
+```go
+package main
+
+import (
+    "context"
+    "net/http"
+    "os"
+    "os/signal"
+    "time"
+
+    "github.com/labstack/echo/v5"
+    "github.com/labstack/echo/v5/middleware"
+    "financial-platform/internal/handler"
+)
+
+func main() {
+    e := echo.New()
+
+    // Configure Echo
+    e.Debug = false
+    e.HideBanner = true
+    e.HidePort = false
+
+    // Custom error handler
+    e.HTTPErrorHandler = customHTTPErrorHandler
+
+    // Global middleware
+    e.Use(middleware.Logger())
+    e.Use(middleware.Recover())
+    e.Use(middleware.RequestID())
+    e.Use(middleware.CORS())
+
+    // Rate limiting
+    e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(100)))
+
+    // Setup routes
+    setupRoutes(e)
+
+    // Start server
+    go func() {
+        if err := e.Start(":8080"); err != nil && err != http.ErrServerClosed {
+            e.Logger.Fatal("Shutting down the server")
+        }
+    }()
+
+    // Graceful shutdown
+    quit := make(chan os.Signal, 1)
+    signal.Notify(quit, os.Interrupt)
+    <-quit
+
+    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    defer cancel()
+
+    if err := e.Shutdown(ctx); err != nil {
+        e.Logger.Fatal(err)
+    }
+}
+
+func setupRoutes(e *echo.Echo) {
+    // Health check
+    e.GET("/health", func(c echo.Context) error {
+        return c.JSON(http.StatusOK, map[string]string{"status": "healthy"})
+    })
+
+    // API v1
+    v1 := e.Group("/api/v1")
+
+    // Public routes
+    v1.POST("/auth/register", handler.Register)
+    v1.POST("/auth/login", handler.Login)
+    v1.GET("/campaigns", handler.ListCampaigns)
+
+    // Protected routes
+    protected := v1.Group("")
+    protected.Use(authMiddleware)
+
+    protected.POST("/zakat/calculate", handler.CalculateZakat)
+    protected.GET("/zakat/records", handler.ListZakatRecords)
+    protected.POST("/donations", handler.CreateDonation)
+
+    // Admin routes
+    admin := protected.Group("/admin")
+    admin.Use(requireAdminMiddleware)
+
+    admin.POST("/campaigns", handler.CreateCampaign)
+    admin.PUT("/campaigns/:id", handler.UpdateCampaign)
+}
+
+func customHTTPErrorHandler(err error, c echo.Context) {
+    code := http.StatusInternalServerError
+    message := "Internal Server Error"
+
+    if he, ok := err.(*echo.HTTPError); ok {
+        code = he.Code
+        message = he.Message.(string)
+    }
+
+    requestID := c.Response().Header().Get(echo.HeaderXRequestID)
+
+    if !c.Response().Committed {
+        c.JSON(code, map[string]interface{}{
+            "error":      message,
+            "request_id": requestID,
+        })
+    }
+}
+
+func authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+    return func(c echo.Context) error {
+        token := c.Request().Header.Get("Authorization")
+        if token == "" {
+            return echo.NewHTTPError(http.StatusUnauthorized, "Missing authentication token")
+        }
+
+        // Verify token (simplified)
+        userID := verifyToken(token)
+        if userID == "" {
+            return echo.NewHTTPError(http.StatusUnauthorized, "Invalid token")
+        }
+
+        c.Set("user_id", userID)
+        return next(c)
+    }
+}
+
+func requireAdminMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+    return func(c echo.Context) error {
+        // Check if user is admin (simplified)
+        isAdmin := checkAdmin(c.Get("user_id").(string))
+        if !isAdmin {
+            return echo.NewHTTPError(http.StatusForbidden, "Admin access required")
+        }
+
+        return next(c)
+    }
+}
+```
+
+### Echo Request Validation
+
+```go
+// Custom validator for Echo
+type CustomValidator struct {
+    validator *validator.Validate
+}
+
+func (cv *CustomValidator) Validate(i interface{}) error {
+    if err := cv.validator.Struct(i); err != nil {
+        return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+    }
+    return nil
+}
+
+// Register in main
+e.Validator = &CustomValidator{validator: validator.New()}
+
+// Handler using validation
+func (h *DonationHandler) CreateDonation(c echo.Context) error {
+    var req CreateDonationRequest
+
+    if err := c.Bind(&req); err != nil {
+        return echo.NewHTTPError(http.StatusBadRequest, "Invalid request body")
+    }
+
+    if err := c.Validate(&req); err != nil {
+        return err
+    }
+
+    // Process donation...
+    return c.JSON(http.StatusCreated, donation)
+}
+```
+
+## Fiber Framework Deep Dive
+
+High-performance Fiber patterns.
+
+### Complete Fiber Application
+
+```go
+package main
+
+import (
+    "log"
+    "os"
+    "os/signal"
+    "syscall"
+
+    "github.com/gofiber/fiber/v2"
+    "github.com/gofiber/fiber/v2/middleware/cors"
+    "github.com/gofiber/fiber/v2/middleware/logger"
+    "github.com/gofiber/fiber/v2/middleware/recover"
+    "github.com/gofiber/fiber/v2/middleware/requestid"
+)
+
+func main() {
+    app := fiber.New(fiber.Config{
+        ErrorHandler: customErrorHandler,
+        BodyLimit:    10 * 1024 * 1024, // 10 MB
+    })
+
+    // Global middleware
+    app.Use(requestid.New())
+    app.Use(logger.New())
+    app.Use(recover.New())
+    app.Use(cors.New(cors.Config{
+        AllowOrigins: "https://oseplatform.com",
+        AllowHeaders: "Origin, Content-Type, Accept, Authorization",
+    }))
+
+    // Setup routes
+    setupFiberRoutes(app)
+
+    // Graceful shutdown
+    c := make(chan os.Signal, 1)
+    signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+
+    go func() {
+        <-c
+        log.Println("Gracefully shutting down...")
+        app.Shutdown()
+    }()
+
+    if err := app.Listen(":8080"); err != nil {
+        log.Panic(err)
+    }
+
+    log.Println("Running cleanup tasks...")
+}
+
+func setupFiberRoutes(app *fiber.App) {
+    // Health check
+    app.Get("/health", func(c *fiber.Ctx) error {
+        return c.JSON(fiber.Map{"status": "healthy"})
+    })
+
+    api := app.Group("/api/v1")
+
+    // Public routes
+    api.Post("/auth/register", registerHandler)
+    api.Post("/auth/login", loginHandler)
+
+    // Protected routes
+    protected := api.Group("")
+    protected.Use(jwtMiddleware())
+
+    protected.Post("/zakat/calculate", calculateZakatHandler)
+    protected.Get("/zakat/records", listZakatRecordsHandler)
+    protected.Post("/donations", createDonationHandler)
+
+    // Admin routes
+    admin := protected.Group("/admin")
+    admin.Use(requireAdminMiddleware())
+
+    admin.Post("/campaigns", createCampaignHandler)
+    admin.Put("/campaigns/:id", updateCampaignHandler)
+}
+
+func customErrorHandler(c *fiber.Ctx, err error) error {
+    code := fiber.StatusInternalServerError
+
+    if e, ok := err.(*fiber.Error); ok {
+        code = e.Code
+    }
+
+    return c.Status(code).JSON(fiber.Map{
+        "error":      err.Error(),
+        "request_id": c.Locals("requestid"),
+    })
+}
+
+func jwtMiddleware() fiber.Handler {
+    return func(c *fiber.Ctx) error {
+        token := c.Get("Authorization")
+        if token == "" {
+            return fiber.NewError(fiber.StatusUnauthorized, "Missing token")
+        }
+
+        // Verify token
+        userID := verifyJWT(token)
+        if userID == "" {
+            return fiber.NewError(fiber.StatusUnauthorized, "Invalid token")
+        }
+
+        c.Locals("user_id", userID)
+        return c.Next()
+    }
+}
+
+func requireAdminMiddleware() fiber.Handler {
+    return func(c *fiber.Ctx) error {
+        userID := c.Locals("user_id").(string)
+
+        if !isAdmin(userID) {
+            return fiber.NewError(fiber.StatusForbidden, "Admin access required")
+        }
+
+        return c.Next()
+    }
+}
+```
+
+### Fiber Performance Optimizations
+
+```go
+// Fiber with optimizations
+app := fiber.New(fiber.Config{
+    Prefork:               false, // Set true for multi-core systems
+    CaseSensitive:         true,
+    StrictRouting:         false,
+    DisableStartupMessage: false,
+    ServerHeader:          "OSE Platform",
+    AppName:               "Financial Platform v1.0.0",
+    BodyLimit:             10 * 1024 * 1024,
+    ReadBufferSize:        8192,
+    WriteBufferSize:       8192,
+    CompressedFileSuffix:  ".gz",
+    EnablePrintRoutes:     false,
+})
+
+// Connection pooling for database
+db := setupDatabasePool()
+
+// Caching middleware
+app.Use(func(c *fiber.Ctx) error {
+    if c.Method() == "GET" {
+        // Check cache
+        cached := checkCache(c.Path())
+        if cached != nil {
+            return c.JSON(cached)
+        }
+    }
+    return c.Next()
+})
+```
+
 ## Related Documentation
 
 - [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md) - Handling concurrent requests
@@ -1430,3 +2345,60 @@ func main() {
 **Last Updated**: 2026-01-23
 **Go Version**: 1.21+ (baseline), 1.22+ (recommended), 1.23 (latest)
 **Maintainers**: Platform Documentation Team
+
+## HTTP Service Architecture
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[HTTP Server] --> B[Router<br/>chi/mux/gin]
+    B --> C[Middleware Chain]
+    C --> D{Route Matching}
+
+    D -->|/api/zakat| E[Zakat Handler]
+    D -->|/api/donations| F[Donation Handler]
+    D -->|/health| G[Health Check]
+
+    E --> H[Service Layer]
+    F --> H
+
+    H --> I[Repository Layer]
+    I --> J[Database<br/>PostgreSQL]
+
+    C --> K[Logging]
+    C --> L[Auth]
+    C --> M[Rate Limit]
+    C --> N[CORS]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style H fill:#029E73,color:#fff
+    style I fill:#CC78BC,color:#fff
+```
+
+## Request Lifecycle
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+sequenceDiagram
+    participant C as Client
+    participant R as Router
+    participant M as Middleware
+    participant H as Handler
+    participant S as Service
+    participant DB
+
+    C->>R: POST /api/calculate-zakat
+    R->>M: Route Matched
+    M->>M: Auth Check
+    M->>M: Rate Limit
+    M->>M: Logging
+    M->>H: Request Context
+    H->>H: Parse & Validate
+    H->>S: Business Logic
+    S->>DB: Query Data
+    DB-->>S: Results
+    S->>S: Calculate Zakat
+    S-->>H: Amount
+    H-->>C: JSON Response 200
+```

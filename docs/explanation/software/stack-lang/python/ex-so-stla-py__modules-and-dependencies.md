@@ -17,8 +17,8 @@ related:
 principles:
   - explicit-over-implicit
   - automation-over-manual
-  - reproducible-environments
-last_updated: 2025-01-23
+  - reproducibility
+last_updated: 2026-01-24
 ---
 
 # Python Modules and Dependencies

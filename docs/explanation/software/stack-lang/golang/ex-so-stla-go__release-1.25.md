@@ -684,3 +684,48 @@ These features make Go faster in GC-heavy workloads and more efficient in contai
 **Last Updated**: 2026-01-23
 **Go Version**: 1.21+ (baseline), 1.22+ (recommended), 1.23 (latest)
 **Maintainers**: Platform Documentation Team
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Go 1.25 Release<br/>August 2025] --> B[Telemetry Integration<br/>Opt-in Metrics]
+    A --> C[Concurrency Updates<br/>Context Improvements]
+    A --> D[Build Enhancements<br/>Faster Compilation]
+    A --> E[Security Features<br/>Enhanced Safety]
+
+    B --> B1[Usage Analytics<br/>Anonymous Data]
+    B --> B2[Performance Metrics<br/>Ecosystem Insights]
+
+    C --> C1[Better Cancellation<br/>Context Handling]
+    C --> C2[Goroutine Tracing<br/>Debug Tools]
+
+    D --> D1[Parallel Builds<br/>CPU Optimization]
+    D --> D2[Cache Improvements<br/>Faster Rebuilds]
+
+    E --> E1[Memory Safety<br/>Buffer Checks]
+    E --> E2[Crypto Updates<br/>Modern Algorithms]
+
+    B1 --> F[Zakat Platform<br/>Usage Insights]
+    C1 --> G[Concurrent Donations<br/>Better Control]
+    E1 --> H[Secure Processing<br/>Enhanced Safety]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#0173B2,color:#fff
+```
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','noteTextColor':'#000','noteBkgColor':'#DE8F05','textColor':'#000','fontSize':'16px'}}}%%
+timeline
+    title Go 1.25 Development and Release
+    2025-Q2 : Feature Planning : Telemetry Design : Concurrency Updates
+    2025-07 : Beta Testing : Privacy Review : Performance Validation
+    2025-08 : Go 1.25 Released : Telemetry System : Context Improvements : Security Enhancements
+    2025-Q3 : Early Adoption : Metric Collection : Community Feedback
+    2025-Q4 : Widespread Usage : Performance Data : Ecosystem Growth
+```

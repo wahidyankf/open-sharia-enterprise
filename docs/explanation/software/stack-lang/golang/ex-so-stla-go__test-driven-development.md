@@ -1752,3 +1752,34 @@ Test-Driven Development in Go emphasizes:
 **Last Updated**: 2026-01-23
 **Go Version**: 1.21+ (baseline), 1.22+ (recommended), 1.23 (latest)
 **Maintainers**: Platform Documentation Team
+
+## TDD Workflow in Go
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart LR
+    A[Write Test] --> B[Run Test]
+    B --> C{Pass?}
+
+    C -->|No RED| D[Write Code]
+    C -->|Yes| G[Refactor]
+
+    D --> E[Run Test Again]
+    E --> F{Pass?}
+
+    F -->|No| D
+    F -->|Yes GREEN| G
+
+    G --> H[Run All Tests]
+    H --> I{All Pass?}
+
+    I -->|Yes| J[Commit]
+    I -->|No| G
+
+    J --> A
+
+    style A fill:#CC78BC,color:#fff
+    style D fill:#0173B2,color:#fff
+    style G fill:#029E73,color:#fff
+    style J fill:#DE8F05,color:#fff
+```

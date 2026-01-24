@@ -1488,3 +1488,73 @@ async function processDonation(data: DonationInput): Promise<Result<Donation, Er
 **TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.9.3+ (latest stable)
 **Total Documentation Files**: 23 core files + 4 version files + 11 templates = 38 files
 **Maintainers**: OSE Documentation Team
+
+## TypeScript Type System
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[TypeScript Types] --> B[Primitive Types]
+    A --> C[Object Types]
+    A --> D[Advanced Types]
+    A --> E[Utility Types]
+
+    B --> B1[string number<br/>boolean]
+    B --> B2[null undefined]
+    B --> B3[symbol bigint]
+
+    C --> C1[interface<br/>type alias]
+    C --> C2[class<br/>constructor]
+    C --> C3[array tuple]
+
+    D --> D1[Union<br/>Type | Type]
+    D --> D2[Intersection<br/>Type & Type]
+    D --> D3[Conditional<br/>T extends U]
+    D --> D4[Mapped Types<br/>Keyof In]
+
+    E --> E1[Partial Required]
+    E --> E2[Pick Omit]
+    E --> E3[Record Exclude]
+
+    C1 --> F[Zakat Interface]
+    D1 --> G[Amount Union]
+    E1 --> H[Optional Fields]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#029E73,color:#fff
+```
+
+## Compilation Process
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart LR
+    A[.ts Files] --> B[TypeScript Compiler<br/>tsc]
+    B --> C[Type Checking]
+    C --> D{Types Valid?}
+
+    D -->|No| E[Compilation Error]
+    D -->|Yes| F[Type Erasure]
+
+    F --> G[JavaScript Generation]
+    G --> H{Target}
+
+    H -->|ES5| I[ES5 JavaScript]
+    H -->|ES2020| J[ES2020 JavaScript]
+    H -->|ESNext| K[ESNext JavaScript]
+
+    I --> L[.js Files]
+    J --> L
+    K --> L
+
+    L --> M[Runtime Execution]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style G fill:#CC78BC,color:#fff
+```

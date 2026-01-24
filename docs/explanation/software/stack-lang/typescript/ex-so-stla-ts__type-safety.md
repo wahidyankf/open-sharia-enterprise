@@ -847,3 +847,40 @@ const handleUSD: USDHandler = handleMoney; // ✓ OK
 **Last Updated**: 2025-01-23
 **TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.9.3+ (latest stable)
 **Maintainers**: OSE Documentation Team
+
+## Type Safety Mechanisms
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Type Safety in TS] --> B[Static Analysis<br/>Compile-Time]
+    A --> C[Runtime Guards<br/>Type Predicates]
+    A --> D[Branded Types<br/>Nominal Typing]
+    A --> E[Schema Validation<br/>Zod/Yup]
+
+    B --> B1[Type Inference<br/>Automatic]
+    B --> B2[Type Checking<br/>Explicit]
+    B --> B3[Exhaustiveness<br/>Never Type]
+
+    C --> C1[Type Predicates<br/>is Keyword]
+    C --> C2[Assertion Functions<br/>asserts]
+
+    D --> D1[Unique Symbol<br/>Brand Property]
+    D --> D2[Type Distinction<br/>Prevent Mix]
+
+    E --> E1[Parse & Validate<br/>Runtime]
+    E --> E2[Type Inference<br/>z.infer<Schema>]
+
+    B3 --> F[Switch Exhaustive<br/>All Cases]
+    D1 --> G[ZakatAmount<br/>Branded]
+    E1 --> H[Donation Input<br/>Validated]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#0173B2,color:#fff
+```

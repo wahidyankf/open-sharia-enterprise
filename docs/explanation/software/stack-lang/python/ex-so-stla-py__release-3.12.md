@@ -794,3 +794,48 @@ else:
 **Last Updated**: 2025-01-23
 **Python Version**: 3.12.8 (stable maintenance for OSE Platform)
 **Maintainers**: OSE Platform Documentation Team
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Python 3.12<br/>October 2023] --> B[Type Parameter Syntax<br/>Simplified Generics]
+    A --> C[f-strings<br/>Enhanced Format]
+    A --> D[Performance<br/>5% Faster]
+    A --> E[asyncio<br/>Better Async]
+
+    B --> B1[def func[T]<br/>Native Generics]
+    B --> B2[class Box[T]<br/>Type Parameters]
+
+    C --> C1[Nested f-strings<br/>Unlimited Depth]
+    C --> C2[Multi-line Expressions<br/>Better Formatting]
+
+    D --> D1[Comprehensions<br/>Faster Execution]
+    D --> D2[PEP 669<br/>Low-Impact Monitoring]
+
+    E --> E1[TaskGroup<br/>Structured Concurrency]
+    E --> E2[Better Cancellation<br/>Clean Shutdown]
+
+    B1 --> F[Zakat Types<br/>Generic Classes]
+    C1 --> G[Log Messages<br/>Complex Formatting]
+    E1 --> H[Concurrent Donations<br/>Task Groups]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#0173B2,color:#fff
+```
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','noteTextColor':'#000','noteBkgColor':'#DE8F05','textColor':'#000','fontSize':'16px'}}}%%
+timeline
+    title Python 3.12 Release Timeline
+    2022-Q4 : Type Parameters : f-string Updates : asyncio Improvements
+    2023-Q2 : Beta Testing : Performance Tuning : Community Feedback
+    2023-10 : Python 3.12 Released : Native Generics : Enhanced f-strings : TaskGroup
+    2023-Q4 : Library Updates : Framework Support : Production Testing
+    2024-Q1 : Widespread Adoption : Type Checking : Async Patterns
+```

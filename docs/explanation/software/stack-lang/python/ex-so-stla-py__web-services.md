@@ -1259,6 +1259,722 @@ async def get_loan(loan_id: str, user_id: CurrentUser) -> QardHasanLoanResponse:
 
 **Why this matters**: Financial domain APIs require precise validation. Decimal for money (never float). Status enums for type safety. Authorization checks for sensitive data.
 
+## FastAPI Deep Dive: Production Patterns
+
+### FastAPI Advanced Dependency Injection
+
+Complex dependency patterns for production systems.
+
+```python
+# GOOD: Layered dependency injection architecture
+from fastapi import Depends, HTTPException, status
+from typing import Annotated, AsyncGenerator
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from decimal import Decimal
+import logging
+
+logger = logging.getLogger(__name__)
+
+# Database connection
+DATABASE_URL = "postgresql+asyncpg://user:pass@localhost/db"
+engine = create_async_engine(DATABASE_URL, echo=True)
+AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
+
+
+# Dependency: Database session
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    """Provide database session with automatic cleanup."""
+    async with AsyncSessionLocal() as session:
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()
+
+
+DbSession = Annotated[AsyncSession, Depends(get_db)]
+
+
+# Dependency: Current authenticated user
+async def get_current_user(
+    token: str = Header(..., description="Bearer token"),
+    db: DbSession
+) -> User:
+    """Extract and validate current user from token."""
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: str = payload.get("sub")
+
+        if user_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication credentials"
+            )
+
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials"
+        )
+
+    # Fetch user from database
+    user = await db.get(User, user_id)
+
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found"
+        )
+
+    return user
+
+
+CurrentUser = Annotated[User, Depends(get_current_user)]
+
+
+# Dependency: Admin user verification
+async def get_current_admin(current_user: CurrentUser) -> User:
+    """Verify current user has admin privileges."""
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin privileges required"
+        )
+    return current_user
+
+
+AdminUser = Annotated[User, Depends(get_current_admin)]
+
+
+# Dependency: Pagination parameters
+class PaginationParams:
+    """Reusable pagination parameters."""
+
+    def __init__(
+        self,
+        skip: int = Query(0, ge=0, description="Number of items to skip"),
+        limit: int = Query(20, ge=1, le=100, description="Number of items to return")
+    ):
+        self.skip = skip
+        self.limit = limit
+
+
+Pagination = Annotated[PaginationParams, Depends()]
+
+
+# Service layer with dependency injection
+class ZakatService:
+    """Zakat calculation service with database access."""
+
+    def __init__(self, db: AsyncSession):
+        self.db = db
+
+    async def calculate_zakat(self, wealth: Decimal, nisab: Decimal) -> Decimal:
+        """Calculate Zakat amount."""
+        if wealth >= nisab:
+            return wealth * Decimal("0.025")
+        return Decimal("0")
+
+    async def save_zakat_record(
+        self,
+        user_id: str,
+        wealth: Decimal,
+        zakat_amount: Decimal
+    ) -> ZakatRecord:
+        """Save Zakat calculation to database."""
+        record = ZakatRecord(
+            user_id=user_id,
+            wealth_amount=wealth,
+            zakat_amount=zakat_amount,
+            calculation_date=datetime.utcnow()
+        )
+
+        self.db.add(record)
+        await self.db.flush()
+        await self.db.refresh(record)
+
+        return record
+
+
+# Dependency: Service factory
+async def get_zakat_service(db: DbSession) -> ZakatService:
+    """Create ZakatService with database session."""
+    return ZakatService(db)
+
+
+ZakatServiceDep = Annotated[ZakatService, Depends(get_zakat_service)]
+
+
+# Using layered dependencies in endpoint
+@app.post("/api/v1/zakat/calculate")
+async def calculate_user_zakat(
+    request: ZakatCalculationRequest,
+    current_user: CurrentUser,
+    zakat_service: ZakatServiceDep
+) -> ZakatCalculationResponse:
+    """Calculate and save Zakat for authenticated user."""
+    # Calculate Zakat
+    zakat_amount = await zakat_service.calculate_zakat(
+        wealth=request.wealth_amount,
+        nisab=request.nisab_threshold
+    )
+
+    # Save to database
+    record = await zakat_service.save_zakat_record(
+        user_id=current_user.id,
+        wealth=request.wealth_amount,
+        zakat_amount=zakat_amount
+    )
+
+    return ZakatCalculationResponse(
+        payer_id=current_user.id,
+        wealth_amount=record.wealth_amount,
+        nisab_threshold=request.nisab_threshold,
+        zakat_amount=record.zakat_amount,
+        calculation_date=record.calculation_date
+    )
+```
+
+**Why this matters**: Layered dependencies enable clean architecture. Service layer encapsulates business logic. Type annotations improve IDE support.
+
+### FastAPI Middleware Pipeline
+
+Production middleware for logging, error tracking, and monitoring.
+
+```python
+# GOOD: Comprehensive middleware stack
+from fastapi import FastAPI, Request, Response
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.gzip import GZipMiddleware
+import time
+import uuid
+import logging
+
+logger = logging.getLogger(__name__)
+
+app = FastAPI()
+
+
+# Request ID middleware
+class RequestIDMiddleware(BaseHTTPMiddleware):
+    """Add unique request ID to all requests."""
+
+    async def dispatch(self, request: Request, call_next):
+        request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
+        request.state.request_id = request_id
+
+        response = await call_next(request)
+        response.headers["X-Request-ID"] = request_id
+
+        return response
+
+
+# Logging middleware
+class LoggingMiddleware(BaseHTTPMiddleware):
+    """Log all requests and responses."""
+
+    async def dispatch(self, request: Request, call_next):
+        request_id = getattr(request.state, "request_id", "unknown")
+
+        logger.info(
+            f"Request started",
+            extra={
+                "request_id": request_id,
+                "method": request.method,
+                "url": str(request.url),
+                "client_host": request.client.host if request.client else None
+            }
+        )
+
+        start_time = time.time()
+
+        response = await call_next(request)
+
+        duration = time.time() - start_time
+
+        logger.info(
+            f"Request completed",
+            extra={
+                "request_id": request_id,
+                "method": request.method,
+                "url": str(request.url),
+                "status_code": response.status_code,
+                "duration_ms": round(duration * 1000, 2)
+            }
+        )
+
+        return response
+
+
+# Error tracking middleware
+class ErrorTrackingMiddleware(BaseHTTPMiddleware):
+    """Track and report errors to monitoring service."""
+
+    async def dispatch(self, request: Request, call_next):
+        try:
+            response = await call_next(request)
+
+            # Track 4xx and 5xx errors
+            if response.status_code >= 400:
+                request_id = getattr(request.state, "request_id", "unknown")
+                logger.error(
+                    f"HTTP error {response.status_code}",
+                    extra={
+                        "request_id": request_id,
+                        "method": request.method,
+                        "url": str(request.url),
+                        "status_code": response.status_code
+                    }
+                )
+
+            return response
+
+        except Exception as e:
+            request_id = getattr(request.state, "request_id", "unknown")
+            logger.exception(
+                f"Unhandled exception",
+                extra={
+                    "request_id": request_id,
+                    "method": request.method,
+                    "url": str(request.url),
+                    "exception_type": type(e).__name__
+                }
+            )
+
+            # Re-raise to let FastAPI handle it
+            raise
+
+
+# Performance monitoring middleware
+class PerformanceMiddleware(BaseHTTPMiddleware):
+    """Monitor endpoint performance."""
+
+    async def dispatch(self, request: Request, call_next):
+        start_time = time.time()
+
+        response = await call_next(request)
+
+        duration = time.time() - start_time
+
+        # Add performance header
+        response.headers["X-Process-Time"] = str(duration)
+
+        # Warn on slow requests
+        if duration > 1.0:  # 1 second threshold
+            request_id = getattr(request.state, "request_id", "unknown")
+            logger.warning(
+                f"Slow request detected",
+                extra={
+                    "request_id": request_id,
+                    "method": request.method,
+                    "url": str(request.url),
+                    "duration_ms": round(duration * 1000, 2)
+                }
+            )
+
+        return response
+
+
+# Add middleware to app (order matters - last added runs first)
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+app.add_middleware(PerformanceMiddleware)
+app.add_middleware(ErrorTrackingMiddleware)
+app.add_middleware(LoggingMiddleware)
+app.add_middleware(RequestIDMiddleware)
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://oseplatform.com"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
+
+**Why this matters**: Middleware pipeline provides cross-cutting concerns. Request IDs enable request tracing. Performance monitoring identifies bottlenecks.
+
+### FastAPI Testing Strategies
+
+Comprehensive testing with pytest and TestClient.
+
+```python
+# GOOD: FastAPI testing patterns
+import pytest
+from fastapi.testclient import TestClient
+from decimal import Decimal
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+# Test database setup
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+@pytest.fixture
+def client():
+    """Create test client with test database."""
+    # Override database dependency
+    def override_get_db():
+        try:
+            db = TestingSessionLocal()
+            yield db
+        finally:
+            db.close()
+
+    app.dependency_overrides[get_db] = override_get_db
+
+    with TestClient(app) as test_client:
+        yield test_client
+
+    # Clear overrides after test
+    app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def auth_headers(client):
+    """Create authenticated user and return auth headers."""
+    # Create test user
+    response = client.post(
+        "/api/v1/auth/register",
+        json={
+            "email": "test@example.com",
+            "password": "SecurePass123!",
+            "name": "Test User"
+        }
+    )
+    assert response.status_code == 201
+
+    # Login to get token
+    response = client.post(
+        "/api/v1/auth/login",
+        json={
+            "email": "test@example.com",
+            "password": "SecurePass123!"
+        }
+    )
+    assert response.status_code == 200
+
+    token = response.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"}
+
+
+class TestZakatAPI:
+    """Test Zakat calculation API."""
+
+    def test_calculate_zakat_above_nisab(self, client, auth_headers):
+        """Test Zakat calculation for wealth above nisab."""
+        response = client.post(
+            "/api/v1/zakat/calculate",
+            headers=auth_headers,
+            json={
+                "payer_id": "TEST-001",
+                "wealth_amount": "100000.00",
+                "nisab_threshold": "5000.00"
+            }
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+
+        assert data["payer_id"] == "TEST-001"
+        assert Decimal(data["zakat_amount"]) == Decimal("2500.00")
+        assert data["is_obligated"] is True
+
+    def test_calculate_zakat_below_nisab(self, client, auth_headers):
+        """Test Zakat calculation for wealth below nisab."""
+        response = client.post(
+            "/api/v1/zakat/calculate",
+            headers=auth_headers,
+            json={
+                "payer_id": "TEST-002",
+                "wealth_amount": "3000.00",
+                "nisab_threshold": "5000.00"
+            }
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+
+        assert data["payer_id"] == "TEST-002"
+        assert Decimal(data["zakat_amount"]) == Decimal("0.00")
+        assert data["is_obligated"] is False
+
+    def test_calculate_zakat_validation_error(self, client, auth_headers):
+        """Test validation error for negative wealth."""
+        response = client.post(
+            "/api/v1/zakat/calculate",
+            headers=auth_headers,
+            json={
+                "payer_id": "TEST-003",
+                "wealth_amount": "-1000.00",
+                "nisab_threshold": "5000.00"
+            }
+        )
+
+        assert response.status_code == 422
+        data = response.json()
+        assert "detail" in data
+
+    def test_calculate_zakat_unauthorized(self, client):
+        """Test unauthorized access without token."""
+        response = client.post(
+            "/api/v1/zakat/calculate",
+            json={
+                "payer_id": "TEST-004",
+                "wealth_amount": "100000.00",
+                "nisab_threshold": "5000.00"
+            }
+        )
+
+        assert response.status_code == 401
+
+
+class TestDonationCampaignAPI:
+    """Test donation campaign API."""
+
+    @pytest.fixture
+    def create_campaign(self, client, auth_headers):
+        """Create test campaign."""
+        response = client.post(
+            "/api/v1/campaigns",
+            headers=auth_headers,
+            json={
+                "name": "Test Campaign",
+                "description": "Test campaign description",
+                "target_amount": "50000.00",
+                "start_date": "2025-01-01",
+                "end_date": "2025-12-31"
+            }
+        )
+        assert response.status_code == 201
+        return response.json()
+
+    def test_list_campaigns(self, client):
+        """Test listing campaigns (public endpoint)."""
+        response = client.get("/api/v1/campaigns")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert isinstance(data, list)
+
+    def test_create_campaign(self, client, auth_headers):
+        """Test creating campaign (authenticated)."""
+        response = client.post(
+            "/api/v1/campaigns",
+            headers=auth_headers,
+            json={
+                "name": "Ramadan Campaign",
+                "description": "Support needy families during Ramadan",
+                "target_amount": "100000.00",
+                "start_date": "2025-03-01",
+                "end_date": "2025-04-30"
+            }
+        )
+
+        assert response.status_code == 201
+        data = response.json()
+
+        assert data["name"] == "Ramadan Campaign"
+        assert Decimal(data["target_amount"]) == Decimal("100000.00")
+        assert data["status"] == "DRAFT"
+
+    def test_create_donation(self, client, auth_headers, create_campaign):
+        """Test creating donation to campaign."""
+        campaign_id = create_campaign["id"]
+
+        response = client.post(
+            "/api/v1/donations",
+            headers=auth_headers,
+            json={
+                "campaign_id": campaign_id,
+                "donor_id": "DONOR-001",
+                "amount": "1000.00",
+                "message": "May Allah accept this donation"
+            }
+        )
+
+        assert response.status_code == 201
+        data = response.json()
+
+        assert data["campaign_id"] == campaign_id
+        assert Decimal(data["amount"]) == Decimal("1000.00")
+
+
+@pytest.mark.asyncio
+async def test_async_endpoint(client):
+    """Test async endpoint behavior."""
+    response = client.get("/api/v1/health")
+    assert response.status_code == 200
+
+
+@pytest.mark.parametrize("wealth,nisab,expected_zakat", [
+    ("10000", "5000", "250.00"),
+    ("5000", "5000", "125.00"),
+    ("4999", "5000", "0.00"),
+    ("100000", "5000", "2500.00"),
+])
+def test_zakat_calculation_parametrized(
+    client,
+    auth_headers,
+    wealth,
+    nisab,
+    expected_zakat
+):
+    """Parametrized test for various Zakat calculations."""
+    response = client.post(
+        "/api/v1/zakat/calculate",
+        headers=auth_headers,
+        json={
+            "payer_id": "TEST-PARAM",
+            "wealth_amount": wealth,
+            "nisab_threshold": nisab
+        }
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert Decimal(data["zakat_amount"]) == Decimal(expected_zakat)
+```
+
+**Why this matters**: TestClient enables comprehensive API testing. Fixtures provide test isolation. Parametrized tests cover edge cases efficiently.
+
+### FastAPI WebSocket Support
+
+Real-time communication for donation updates.
+
+```python
+# GOOD: WebSocket for real-time donation tracking
+from fastapi import WebSocket, WebSocketDisconnect
+from typing import List, Dict
+import json
+import asyncio
+
+
+class ConnectionManager:
+    """Manage WebSocket connections for donation campaigns."""
+
+    def __init__(self):
+        # Map campaign_id -> list of websockets
+        self.active_connections: Dict[str, List[WebSocket]] = {}
+
+    async def connect(self, websocket: WebSocket, campaign_id: str):
+        """Accept WebSocket connection and add to campaign room."""
+        await websocket.accept()
+
+        if campaign_id not in self.active_connections:
+            self.active_connections[campaign_id] = []
+
+        self.active_connections[campaign_id].append(websocket)
+
+    def disconnect(self, websocket: WebSocket, campaign_id: str):
+        """Remove WebSocket connection from campaign room."""
+        if campaign_id in self.active_connections:
+            self.active_connections[campaign_id].remove(websocket)
+
+            if not self.active_connections[campaign_id]:
+                del self.active_connections[campaign_id]
+
+    async def send_personal_message(self, message: str, websocket: WebSocket):
+        """Send message to specific websocket."""
+        await websocket.send_text(message)
+
+    async def broadcast_to_campaign(self, message: dict, campaign_id: str):
+        """Broadcast message to all connections in campaign room."""
+        if campaign_id in self.active_connections:
+            for connection in self.active_connections[campaign_id]:
+                await connection.send_json(message)
+
+
+manager = ConnectionManager()
+
+
+@app.websocket("/ws/campaigns/{campaign_id}")
+async def websocket_campaign_updates(
+    websocket: WebSocket,
+    campaign_id: str
+):
+    """WebSocket endpoint for real-time campaign updates."""
+    await manager.connect(websocket, campaign_id)
+
+    try:
+        # Send welcome message
+        await websocket.send_json({
+            "type": "connected",
+            "campaign_id": campaign_id,
+            "message": "Connected to campaign updates"
+        })
+
+        # Keep connection alive and handle messages
+        while True:
+            # Receive client messages (if any)
+            data = await websocket.receive_text()
+
+            # Echo back (or process as needed)
+            await websocket.send_json({
+                "type": "echo",
+                "data": data
+            })
+
+    except WebSocketDisconnect:
+        manager.disconnect(websocket, campaign_id)
+
+        # Notify other connections about disconnect
+        await manager.broadcast_to_campaign(
+            {
+                "type": "user_disconnected",
+                "campaign_id": campaign_id
+            },
+            campaign_id
+        )
+
+
+# Background task to broadcast donation updates
+async def broadcast_donation_update(campaign_id: str, donation: Dict):
+    """Broadcast new donation to all campaign subscribers."""
+    await manager.broadcast_to_campaign(
+        {
+            "type": "new_donation",
+            "campaign_id": campaign_id,
+            "donation": {
+                "amount": str(donation["amount"]),
+                "donor_name": donation.get("donor_name", "Anonymous"),
+                "message": donation.get("message", ""),
+                "timestamp": donation["created_at"].isoformat()
+            }
+        },
+        campaign_id
+    )
+
+
+# Modified donation creation endpoint to broadcast updates
+@app.post("/api/v1/donations", status_code=status.HTTP_201_CREATED)
+async def create_donation_with_broadcast(
+    donation: DonationCreateRequest,
+    current_user: CurrentUser,
+    background_tasks: BackgroundTasks
+) -> DonationResponse:
+    """Create donation and broadcast to WebSocket subscribers."""
+    # Process donation
+    donation_record = await process_donation(donation, user_id=current_user.id)
+
+    # Broadcast to WebSocket subscribers in background
+    background_tasks.add_task(
+        broadcast_donation_update,
+        donation.campaign_id,
+        donation_record
+    )
+
+    return donation_record
+```
+
+**Why this matters**: WebSockets enable real-time updates. Connection manager handles multiple clients. Background tasks decouple processing from broadcasting.
+
 ## References
 
 ### Official Documentation
@@ -1281,3 +1997,64 @@ async def get_loan(loan_id: str, user_id: CurrentUser) -> QardHasanLoanResponse:
 **Last Updated**: 2025-01-23
 **Python Version**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.14.x (latest stable)
 **Maintainers**: OSE Platform Documentation Team
+
+## FastAPI Architecture
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[FastAPI App] --> B[Dependency Injection<br/>DI Container]
+    A --> C[Routers<br/>APIRouter]
+    A --> D[Middleware<br/>CORS/Auth]
+
+    B --> B1[Database Session<br/>SQLAlchemy]
+    B --> B2[Auth Service<br/>JWT]
+    B --> B3[Config<br/>Settings]
+
+    C --> C1[/api/zakat<br/>Zakat Router]
+    C --> C2[/api/donations<br/>Donation Router]
+    C --> C3[/api/auth<br/>Auth Router]
+
+    C1 --> E[Endpoint Functions]
+    C2 --> E
+    C3 --> E
+
+    E --> F[Pydantic Models<br/>Validation]
+    F --> G[Business Logic<br/>Services]
+    G --> H[Repository Layer<br/>Database]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style E fill:#CC78BC,color:#fff
+    style F fill:#0173B2,color:#fff
+```
+
+## Request Lifecycle
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+sequenceDiagram
+    participant C as Client
+    participant M as Middleware
+    participant R as Router
+    participant P as Pydantic
+    participant S as Service
+    participant DB
+
+    C->>M: POST /api/calculate-zakat
+    M->>M: CORS Check
+    M->>M: Auth Verify
+    M->>R: Route Match
+    R->>P: Validate Request Body
+
+    alt Validation Error
+        P-->>C: 422 Unprocessable
+    else Valid
+        P->>S: Business Logic
+        S->>DB: Query Assets
+        DB-->>S: Asset Data
+        S->>S: Calculate Zakat
+        S-->>C: 200 OK + Result
+    end
+```

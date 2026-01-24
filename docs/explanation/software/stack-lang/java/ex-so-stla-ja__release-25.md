@@ -31,6 +31,67 @@ Java 25 introduces **18 JEPs (JDK Enhancement Proposals)**, with a strong focus 
 - **Focus Areas**: Performance, Runtime optimization, Developer experience
 - **Major Theme**: Enterprise-ready features with significant performance gains
 
+### Feature Timeline
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Java 21 LTS<br/>Previous LTS"]:::blue
+    B["Stream Gatherers<br/>Custom Operations"]:::teal
+    C["Scoped Values<br/>Finalized"]:::teal
+    D["Class-File API<br/>Finalized"]:::teal
+    E["Primitive Patterns<br/>Preview"]:::teal
+    F["Compact Headers<br/>Memory Savings"]:::teal
+    G["Generational Shenandoah<br/>Low Latency GC"]:::teal
+    H["Java 25 LTS<br/>Released September 2025"]:::orange
+
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+    A --> F
+    A --> G
+    B --> H
+    C --> H
+    D --> H
+    E --> H
+    F --> H
+    G --> H
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Performance Improvements Overview
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+flowchart TD
+    A["Java 25<br/>Performance Focus"]:::blue
+    B["Compact Object Headers<br/>20% Memory Reduction"]:::teal
+    C["Generational Shenandoah<br/>Lower GC Pauses"]:::teal
+    D["AOT Method Profiling<br/>Faster Startup"]:::teal
+    E["Enterprise Applications<br/>Better Performance"]:::orange
+    F["Financial Systems<br/>Lower Latency"]:::purple
+
+    A --> B
+    A --> C
+    A --> D
+    B --> E
+    C --> F
+    D --> E
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ## Quick Reference
 
 **Jump to:**

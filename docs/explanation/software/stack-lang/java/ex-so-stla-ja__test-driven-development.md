@@ -355,6 +355,35 @@ class ZakatCalculatorTest {
 
 ### Lifecycle Hooks
 
+JUnit 5 provides hooks for setup and teardown at different lifecycle stages.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    Start([Test Suite Start]) --> BeforeAll[@BeforeAll<br/>Setup resources]:::purple
+    BeforeAll --> Test1Start[Test 1]
+
+    Test1Start --> BeforeEach1[@BeforeEach<br/>Setup test data]:::blue
+    BeforeEach1 --> Execute1[@Test<br/>Execute test]:::teal
+    Execute1 --> AfterEach1[@AfterEach<br/>Cleanup test data]:::blue
+
+    AfterEach1 --> Test2Start[Test 2]
+    Test2Start --> BeforeEach2[@BeforeEach<br/>Setup test data]:::blue
+    BeforeEach2 --> Execute2[@Test<br/>Execute test]:::teal
+    Execute2 --> AfterEach2[@AfterEach<br/>Cleanup test data]:::blue
+
+    AfterEach2 --> AfterAll[@AfterAll<br/>Release resources]:::purple
+    AfterAll --> End([Test Suite End])
+
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+**Example:**
+
 ```java
 class DonationServiceTest {
     @BeforeAll
@@ -749,6 +778,31 @@ Mockito provides test doubles for isolating units under test.
 
 ### Creating Mocks
 
+Mockito creates test doubles that intercept method calls.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    Test[Test Code]:::blue --> ServiceCall[Call Service Method]:::teal
+    ServiceCall --> MockIntercept{Mock Intercepts Call}:::purple
+    MockIntercept -->|Stubbed| ReturnStub[Return Stubbed Value]:::orange
+    MockIntercept -->|Not Stubbed| ReturnDefault[Return Default Value]:::orange
+
+    ReturnStub --> Verify[Verify Interactions]:::blue
+    ReturnDefault --> Verify
+
+    Verify --> Assert[Assert Behavior]:::teal
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+**Example:**
+
 ```java
 import static org.mockito.Mockito.*;
 
@@ -899,6 +953,31 @@ void testSpy() {
 ```
 
 ## Testing Strategies
+
+The test pyramid guides how many tests to write at each level.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    E2E[E2E Tests<br/>Few, Slow<br/>Full system]:::orange
+    Integration[Integration Tests<br/>Moderate count<br/>Multiple components]:::teal
+    Unit[Unit Tests<br/>Many, Fast<br/>Isolated units]:::blue
+
+    E2E --> Integration
+    Integration --> Unit
+
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+**Testing Pyramid Strategy:**
+
+- **70% Unit Tests**: Fast, isolated, test business logic
+- **20% Integration Tests**: Test component interactions
+- **10% E2E Tests**: Test complete user workflows
 
 ### Unit Tests
 

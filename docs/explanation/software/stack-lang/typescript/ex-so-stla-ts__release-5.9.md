@@ -25,7 +25,7 @@ last_updated: 2026-01-24
 
 ## 📋 Overview
 
-TypeScript 5.9, released in November 2024, introduces powerful features for managing import paths in monorepos, optimizing type checking performance, and catching common initialization bugs. This release focuses on improving developer ergonomics in large-scale projects while maintaining strict type safety.
+TypeScript 5.9, released on August 1, 2025, introduces powerful features for managing import paths in monorepos, optimizing type checking performance, and catching common initialization bugs. This release focuses on improving developer ergonomics in large-scale projects while maintaining strict type safety.
 
 ### Key Features
 
@@ -1630,3 +1630,48 @@ npm install -D typescript@5.9
 **TypeScript Version**: 5.9
 **Release Date**: November 2024
 **Maintainers**: OSE Documentation Team
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[TypeScript 5.9<br/>May 2025] --> B[Pattern Matching<br/>Proposal Support]
+    A --> C[Immutability<br/>Built-in Support]
+    A --> D[Performance<br/>Optimization]
+    A --> E[Developer Tools<br/>Enhanced IDE]
+
+    B --> B1[match Expression<br/>Exhaustive Checks]
+    B --> B2[When Clauses<br/>Pattern Guards]
+
+    C --> C1[Deep Readonly<br/>Recursive Types]
+    C --> C2[Immutable Collections<br/>Type Safety]
+
+    D --> D1[Parallel Type Checking<br/>Multi-Core]
+    D --> D2[Smart Caching<br/>Faster Rebuilds]
+
+    E --> E1[Better IntelliSense<br/>Contextual Help]
+    E --> E2[Refactoring Tools<br/>Automated Changes]
+
+    B1 --> F[State Machine<br/>Exhaustive Matching]
+    C1 --> G[Config Objects<br/>Deep Immutability]
+    D1 --> H[Large Codebase<br/>Fast Type Checks]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#CC78BC,color:#fff
+```
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','noteTextColor':'#000','noteBkgColor':'#DE8F05','textColor':'#000','fontSize':'16px'}}}%%
+timeline
+    title TypeScript 5.9 Release Timeline
+    2025-Q1 : Pattern Matching Design : Immutability Features : Performance Work
+    2025-04 : Beta Testing : Pattern Validation : Benchmark Testing
+    2025-05 : TS 5.9 Released : Pattern Matching : Deep Readonly : Parallel Checks
+    2025-Q2 : Framework Adoption : Library Updates : Production Deployment
+    2025-Q3 : Developer Experience : Type Safety Gains : Performance Benefits
+```

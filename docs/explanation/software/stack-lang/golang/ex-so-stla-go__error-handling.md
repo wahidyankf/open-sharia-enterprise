@@ -2232,3 +2232,32 @@ principles:
 **Last Updated**: 2026-01-23
 **Go Version**: 1.21+ (baseline), 1.22+ (recommended), 1.23 (latest)
 **Maintainers**: Platform Documentation Team
+
+## Error Handling Patterns
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Error Types in Go] --> B[Sentinel Errors<br/>var ErrNotFound]
+    A --> C[Custom Errors<br/>struct types]
+    A --> D[Wrapped Errors<br/>fmt.Errorf %w]
+    A --> E[Error Values<br/>errors.New]
+
+    B --> B1[Comparison<br/>errors.Is]
+    B --> B2[Pre-defined<br/>Package Level]
+
+    C --> C1[Type Assertion<br/>errors.As]
+    C --> C2[Additional Context<br/>Fields]
+
+    D --> D1[Error Chain<br/>Unwrap]
+    D --> D2[Context Preservation<br/>Stack Trace]
+
+    E --> E1[Simple Messages<br/>String Only]
+    E --> E2[Dynamic Creation<br/>Runtime]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+```

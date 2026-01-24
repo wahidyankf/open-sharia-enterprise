@@ -1051,3 +1051,35 @@ Essential Go philosophy from Rob Pike:
 **Last Updated**: 2026-01-23
 **Go Version**: 1.21+ (baseline), 1.23+ (recommended), 1.25.6 (latest)
 **Maintainers**: Platform Documentation Team
+
+## Go Concurrency Model
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Concurrency in Go] --> B[Goroutines<br/>Lightweight Threads]
+    A --> C[Channels<br/>Communication]
+    A --> D[Select Statement<br/>Multiplexing]
+    A --> E[Sync Primitives<br/>Mutex WaitGroup]
+
+    B --> B1[go keyword<br/>Spawn Goroutine]
+    B --> B2[M:N Scheduling<br/>OS Threads]
+
+    C --> C1[Unbuffered<br/>Synchronous]
+    C --> C2[Buffered<br/>Asynchronous]
+    C --> C3[Directional<br/><-chan chan<-]
+
+    D --> D1[Multiple Channels<br/>Non-Blocking]
+    D --> D2[Timeout<br/>time.After]
+    D --> D3[Default Case<br/>Non-Blocking]
+
+    E --> E1[sync.Mutex<br/>Mutual Exclusion]
+    E --> E2[sync.WaitGroup<br/>Wait for Completion]
+    E --> E3[sync.Once<br/>One-Time Init]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+```

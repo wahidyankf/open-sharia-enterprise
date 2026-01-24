@@ -1074,3 +1074,37 @@ flowchart TD
 **Last Updated**: 2026-01-23
 **Java Version**: 17+ (baseline), 21+ (recommended), 23 (latest)
 **Maintainers**: Platform Documentation Team
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Java 17 LTS<br/>September 2021] --> B[Sealed Classes<br/>Type Hierarchy Control]
+    A --> C[Pattern Matching<br/>instanceof]
+    A --> D[Records<br/>Immutable Data]
+    A --> E[Strong Encapsulation<br/>JDK Internals]
+
+    B --> B1[Explicit Permits<br/>Controlled Extension]
+    B --> B2[Exhaustiveness<br/>Compiler Checks]
+
+    C --> C1[Type Patterns<br/>Simplified Casts]
+    C --> C2[Better Readability<br/>Less Boilerplate]
+
+    D --> D1[Compact Syntax<br/>Data Carriers]
+    D --> D2[Auto Methods<br/>equals hashCode]
+
+    E --> E1[Module Security<br/>Internal APIs]
+    E --> E2[Stronger Boundaries<br/>Reflection Limits]
+
+    B1 --> F[Zakat Type Hierarchy<br/>Sealed Hierarchy]
+    C1 --> G[Type Checking<br/>Pattern Match]
+    D1 --> H[Donation Record<br/>Immutable DTO]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#CC78BC,color:#fff
+```

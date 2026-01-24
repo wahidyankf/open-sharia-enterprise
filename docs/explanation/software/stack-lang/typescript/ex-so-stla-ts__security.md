@@ -1,435 +1,435 @@
 ---
-title: "TypeScript Security"
-description: Security best practices for TypeScript applications
+title: TypeScript Security
+description: Defense-in-depth security for TypeScript applications including input validation, authentication, authorization, secure communication, and data protection for financial applications
 category: explanation
 subcategory: stack-lang
 tags:
   - typescript
   - security
-  - xss
-  - sql-injection
-  - csrf
+  - input-validation
   - authentication
   - authorization
-  - owasp
+  - xss-prevention
+  - sql-injection-prevention
+  - csrf-protection
+  - jwt
+  - oauth2
+  - data-encryption
 related:
-  - ./ex-so-stla-ts__best-practices.md
   - ./ex-so-stla-ts__web-services.md
-  - ./ex-so-stla-ts__error-handling.md
+  - ./ex-so-stla-ts__best-practices.md
+  - ./ex-so-stla-ts__type-safety.md
 principles:
+  - security-first
   - explicit-over-implicit
-  - automation-over-manual
-last_updated: 2025-01-23
+last_updated: 2026-01-24
 ---
 
-# TypeScript Security
+# Security
 
-**Quick Reference**: [Overview](#overview) | [Input Validation](#input-validation) | [Injection Prevention](#injection-prevention) | [XSS Prevention](#cross-site-scripting-xss-prevention) | [Authentication](#authentication) | [Authorization](#authorization) | [Cryptography](#cryptography) | [CSRF Protection](#csrf-protection) | [Security Headers](#security-headers) | [OWASP Top 10](#owasp-top-10-in-typescript) | [Related Documentation](#related-documentation)
+Security in TypeScript applications requires defense-in-depth: **input validation**, **authentication**, **authorization**, **secure communication**, and **data protection**. This is especially critical for financial applications handling sensitive donation and payment data.
 
-## Overview
+**Quick Reference**:
 
-Security is critical for financial applications. This guide covers OWASP Top 10 vulnerabilities and how to prevent them in TypeScript applications handling donations, Zakat calculations, and financial transactions.
-
-### Security Principles
-
-- **Defense in Depth**: Multiple layers of security
-- **Least Privilege**: Minimal access rights
-- **Fail Securely**: Default deny, explicit allow
-- **Complete Mediation**: Check every access
-- **Input Validation**: Never trust user input
-- **Output Encoding**: Prevent injection attacks
-
-### Security Layers
-
-```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
-graph TD
-    A["User Input<br/>Untrusted Data"]:::orange
-    B["Input Validation<br/>Zod Schema"]:::purple
-    C["Sanitization<br/>DOMPurify"]:::purple
-    D["Authentication<br/>JWT/Session"]:::teal
-    E["Authorization<br/>RBAC/ABAC"]:::teal
-    F["Business Logic<br/>Validated Processing"]:::blue
-    G["Output Encoding<br/>XSS Prevention"]:::purple
-    H["Security Headers<br/>Helmet"]:::gray
-
-    A --> B
-    B --> C
-    C --> D
-    D --> E
-    E --> F
-    F --> G
-    G --> H
-
-    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
-```
-
-### Authentication Flow
-
-```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
-graph TD
-    A["Login Request<br/>Email + Password"]:::blue
-    B["Validate Credentials<br/>Check Database"]:::purple
-    C{"Valid?"}:::orange
-    D["Verify Password<br/>bcrypt.compare#40;#41;"]:::purple
-    E{"Match?"}:::orange
-    F["Generate JWT<br/>Sign Token"]:::teal
-    G["Store Session<br/>Redis Cache"]:::gray
-    H["Return Token<br/>Success Response"]:::teal
-    I["Reject Request<br/>401 Unauthorized"]:::orange
-
-    A --> B
-    B --> C
-    C -->|Yes| D
-    C -->|No| I
-    D --> E
-    E -->|Yes| F
-    E -->|No| I
-    F --> G
-    G --> H
-
-    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
-```
-
-### OWASP Top 10 Prevention
-
-```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
-graph TD
-    A["OWASP Top 10<br/>Vulnerability Categories"]:::blue
-    B["Broken Access<br/>RBAC Checks"]:::orange
-    C["Injection<br/>Parameterized Queries"]:::orange
-    D["XSS<br/>Output Encoding"]:::orange
-    E["Crypto Failures<br/>bcrypt, AES-256"]:::purple
-    F["Security Misconfig<br/>Helmet, CORS"]:::purple
-    G["Auth Failures<br/>JWT, MFA"]:::teal
-    H["Logging<br/>Winston Logger"]:::gray
-    I["SSRF<br/>URL Validation"]:::teal
-
-    A --> B
-    A --> C
-    A --> D
-    A --> E
-    A --> F
-    A --> G
-    A --> H
-    A --> I
-
-    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
-```
-
-### Financial Data Protection
-
-```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
-graph TD
-    A["Sensitive Data<br/>Donation Details"]:::blue
-    B["Encryption<br/>AES-256-GCM"]:::purple
-    C["Hashing<br/>HMAC-SHA256"]:::purple
-    D["Key Management<br/>Environment Variables"]:::gray
-    E["Secure Storage<br/>Encrypted Database"]:::teal
-    F["Audit Trail<br/>Compliance Log"]:::orange
-    G["Access Control<br/>ABAC Policy"]:::teal
-
-    A --> B
-    A --> C
-    B --> D
-    C --> D
-    D --> E
-    E --> F
-    E --> G
-
-    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
-```
+- [Input Validation](#input-validation)
+  - [Zod Schema Validation](#zod-schema-validation)
+  - [Class Validator](#class-validator)
+  - [Type Guards](#type-guards)
+- [XSS Prevention](#xss-prevention)
+  - [React Automatic Escaping](#react-automatic-escaping)
+  - [DOMPurify Sanitization](#dompurify-sanitization)
+  - [Content Security Policy](#content-security-policy)
+- [SQL Injection Prevention](#sql-injection-prevention)
+  - [Parameterized Queries](#parameterized-queries)
+  - [TypeORM Safety](#typeorm-safety)
+  - [Prisma Safety](#prisma-safety)
+- [Authentication](#authentication)
+  - [Password Hashing](#password-hashing)
+  - [JWT Authentication](#jwt-authentication)
+  - [Session Management](#session-management)
+  - [OAuth2 Integration](#oauth2-integration)
+- [Authorization](#authorization)
+  - [Role-Based Access Control](#role-based-access-control)
+  - [Policy-Based Authorization](#policy-based-authorization)
+  - [NestJS Guards](#nestjs-guards)
+- [CSRF Protection](#csrf-protection)
+- [Secure Communication](#secure-communication)
+  - [HTTPS/TLS](#httpstls)
+  - [Certificate Validation](#certificate-validation)
+- [Secret Management](#secret-management)
+  - [Environment Variables](#environment-variables)
+  - [Validated Configuration](#validated-configuration)
+- [Security Headers](#security-headers)
+- [Rate Limiting](#rate-limiting)
+- [Audit Logging](#audit-logging)
+- [Dependency Security](#dependency-security)
+- [Financial Domain Examples](#financial-domain-examples)
+- [Security Best Practices](#security-best-practices)
+- [Security Anti-patterns](#security-anti-patterns)
+- [Security Testing](#security-testing)
+- [Related Topics](#related-topics)
+- [Sources](#sources)
 
 ## Input Validation
 
-### Schema Validation with Zod
+### Zod Schema Validation
+
+Use Zod for runtime validation with TypeScript inference:
 
 ```typescript
 import { z } from "zod";
 
-// Donation input schema
-const donationInputSchema = z.object({
-  donorId: z.string().regex(/^DNR-\d{10}$/, "Invalid donor ID format"),
-  amount: z.number().positive("Amount must be positive").max(1000000, "Amount exceeds maximum limit"),
-  currency: z.enum(["USD", "EUR", "SAR"], {
-    errorMap: () => ({ message: "Invalid currency" }),
+// Define validation schema
+const DonationSchema = z.object({
+  amount: z.number().positive("Amount must be positive").max(1_000_000_000, "Amount exceeds maximum allowed"),
+  currency: z.enum(["IDR", "USD", "EUR"], {
+    errorMap: () => ({ message: "Currency must be IDR, USD, or EUR" }),
   }),
-  category: z.enum(["zakat", "sadaqah", "waqf"]),
-  message: z.string().max(500, "Message too long").optional(),
-  email: z.string().email("Invalid email format").optional(),
+  donorEmail: z.string().email("Invalid email address").max(160),
+  donorName: z.string().min(2).max(100),
+  paymentMethod: z.enum(["credit_card", "bank_transfer", "ewallet"]).optional(),
+  notes: z.string().max(500).optional(),
 });
 
-type DonationInput = z.infer<typeof donationInputSchema>;
+// Infer TypeScript type from schema
+type Donation = z.infer<typeof DonationSchema>;
 
 // Validate input
-function validateDonation(input: unknown): DonationInput {
-  return donationInputSchema.parse(input);
+function createDonation(input: unknown): Donation {
+  // Throws ZodError if validation fails
+  return DonationSchema.parse(input);
 }
 
-// Safe usage
-try {
-  const validatedInput = validateDonation(userInput);
-  // Process validatedInput safely
-} catch (error) {
-  if (error instanceof z.ZodError) {
-    console.error("Validation errors:", error.errors);
+// Safe parsing with error handling
+function createDonationSafe(input: unknown): { success: true; data: Donation } | { success: false; errors: string[] } {
+  const result = DonationSchema.safeParse(input);
+
+  if (result.success) {
+    return { success: true, data: result.data };
+  } else {
+    return {
+      success: false,
+      errors: result.error.errors.map((e) => `${e.path.join(".")}: ${e.message}`),
+    };
+  }
+}
+
+// Usage in API endpoint
+import { Request, Response } from "express";
+
+async function handleDonationCreate(req: Request, res: Response) {
+  const result = createDonationSafe(req.body);
+
+  if (!result.success) {
+    return res.status(400).json({
+      error: "Validation failed",
+      details: result.errors,
+    });
+  }
+
+  // Safe to use validated data
+  const donation = result.data;
+
+  try {
+    const created = await donationRepository.save(donation);
+    return res.status(201).json({ donation: created });
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to create donation" });
   }
 }
 ```
 
-### Sanitization
+The following diagram illustrates the defense-in-depth approach to input validation in TypeScript financial applications:
+
+```mermaid
+graph TD
+    %% Input Source
+    CLIENT[Client Request<br/>amount: -100<br/>currency: XYZ]
+
+    %% Layer 1: Controller
+    CONTROLLER[Controller Layer<br/>Parameter Extraction]
+    WHITELIST{Valid<br/>structure?}
+    SANITIZE[String Sanitization<br/>trim, length limit]
+
+    %% Layer 2: Schema Validation
+    ZOD[Zod Schema<br/>Runtime Validation]
+    TYPE_CHECK[Type Coercion<br/>string to number]
+    VALIDATE_REQ[Required Fields<br/>amount, currency, email]
+    VALIDATE_BIZ[Business Rules<br/>amount > 0<br/>valid currency<br/>email format]
+
+    %% Layer 3: Database
+    DATABASE[(Database<br/>Constraints)]
+    DB_CONSTRAINTS[Check Constraints<br/>amount > 0<br/>NOT NULL<br/>UNIQUE email]
+
+    %% Success/Error Paths
+    REJECT_PARAM[❌ Reject<br/>400 Bad Request<br/>Invalid parameters]
+    REJECT_BIZ[❌ Reject<br/>400 Bad Request<br/>Validation errors]
+    REJECT_DB[❌ Reject<br/>Database constraint<br/>violation]
+    SUCCESS[✅ Success<br/>Donation created<br/>Audit logged]
+
+    %% Flow
+    CLIENT --> CONTROLLER
+    CONTROLLER --> WHITELIST
+
+    WHITELIST -->|No| REJECT_PARAM
+    WHITELIST -->|Yes| SANITIZE
+
+    SANITIZE --> ZOD
+    ZOD --> TYPE_CHECK
+    TYPE_CHECK --> VALIDATE_REQ
+    VALIDATE_REQ --> VALIDATE_BIZ
+
+    VALIDATE_BIZ -->|Invalid| REJECT_BIZ
+    VALIDATE_BIZ -->|Valid| DATABASE
+
+    DATABASE --> DB_CONSTRAINTS
+    DB_CONSTRAINTS -->|Violation| REJECT_DB
+    DB_CONSTRAINTS -->|Pass| SUCCESS
+
+    %% Styling (WCAG AA compliant)
+    style CLIENT fill:#0173B2,stroke:#023B5A,color:#FFF
+    style CONTROLLER fill:#029E73,stroke:#01593F,color:#FFF
+    style WHITELIST fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style SANITIZE fill:#029E73,stroke:#01593F,color:#FFF
+    style ZOD fill:#CC78BC,stroke:#7A4871,color:#FFF
+    style TYPE_CHECK fill:#CC78BC,stroke:#7A4871,color:#FFF
+    style VALIDATE_REQ fill:#CC78BC,stroke:#7A4871,color:#FFF
+    style VALIDATE_BIZ fill:#CC78BC,stroke:#7A4871,color:#FFF
+    style DATABASE fill:#CA9161,stroke:#7A5739,color:#FFF
+    style DB_CONSTRAINTS fill:#CA9161,stroke:#7A5739,color:#FFF
+    style REJECT_PARAM fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style REJECT_BIZ fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style REJECT_DB fill:#DE8F05,stroke:#8A5903,color:#FFF
+    style SUCCESS fill:#029E73,stroke:#01593F,color:#FFF
+```
+
+**Defense-in-Depth Layers**:
+
+1. **Controller Layer** (green): Extract parameters, basic structure validation
+2. **Schema Layer** (purple): Zod runtime validation, type coercion, business rules
+3. **Database Layer** (brown): Constraints as final safety net
+
+This multi-layer approach ensures malicious or invalid input is caught at the earliest possible stage.
+
+### Class Validator
+
+Use class-validator with class-transformer for NestJS applications:
 
 ```typescript
-import DOMPurify from "isomorphic-dompurify";
-import validator from "validator";
+import { IsString, IsEmail, IsNumber, IsEnum, IsOptional, Min, Max, MaxLength, MinLength } from "class-validator";
+import { Type } from "class-transformer";
 
-// Sanitize HTML input
-function sanitizeHtml(input: string): string {
-  return DOMPurify.sanitize(input, {
-    ALLOWED_TAGS: ["b", "i", "em", "strong", "p"],
-    ALLOWED_ATTR: [],
+enum Currency {
+  IDR = "IDR",
+  USD = "USD",
+  EUR = "EUR",
+}
+
+enum PaymentMethod {
+  CREDIT_CARD = "credit_card",
+  BANK_TRANSFER = "bank_transfer",
+  EWALLET = "ewallet",
+}
+
+export class CreateDonationDto {
+  @IsNumber()
+  @Min(0.01, { message: "Amount must be greater than 0" })
+  @Max(1_000_000_000, { message: "Amount exceeds maximum allowed" })
+  @Type(() => Number)
+  amount!: number;
+
+  @IsEnum(Currency, { message: "Currency must be IDR, USD, or EUR" })
+  currency!: Currency;
+
+  @IsEmail({}, { message: "Invalid email address" })
+  @MaxLength(160)
+  donorEmail!: string;
+
+  @IsString()
+  @MinLength(2)
+  @MaxLength(100)
+  donorName!: string;
+
+  @IsEnum(PaymentMethod, { message: "Invalid payment method" })
+  @IsOptional()
+  paymentMethod?: PaymentMethod;
+
+  @IsString()
+  @MaxLength(500)
+  @IsOptional()
+  notes?: string;
+}
+
+// NestJS controller with automatic validation
+import { Controller, Post, Body, ValidationPipe, HttpStatus } from "@nestjs/common";
+
+@Controller("donations")
+export class DonationController {
+  constructor(private readonly donationService: DonationService) {}
+
+  @Post()
+  async create(@Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })) dto: CreateDonationDto) {
+    // dto is already validated by NestJS
+    const donation = await this.donationService.create(dto);
+    return { donation };
+  }
+}
+```
+
+### Type Guards
+
+Implement custom type guards for runtime type checking:
+
+```typescript
+import { Decimal } from "decimal.js";
+
+interface Money {
+  amount: Decimal;
+  currency: "IDR" | "USD" | "EUR";
+}
+
+// Type guard
+function isMoney(value: unknown): value is Money {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "amount" in value &&
+    value.amount instanceof Decimal &&
+    "currency" in value &&
+    typeof value.currency === "string" &&
+    ["IDR", "USD", "EUR"].includes(value.currency)
+  );
+}
+
+interface ZakatCalculationInput {
+  wealth: Money;
+  nisab: Money;
+}
+
+function isZakatCalculationInput(value: unknown): value is ZakatCalculationInput {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "wealth" in value &&
+    isMoney(value.wealth) &&
+    "nisab" in value &&
+    isMoney(value.nisab)
+  );
+}
+
+// Safe calculation with type guard
+function calculateZakat(input: unknown): { success: true; zakat: Money } | { success: false; error: string } {
+  if (!isZakatCalculationInput(input)) {
+    return { success: false, error: "Invalid input: expected ZakatCalculationInput" };
+  }
+
+  const { wealth, nisab } = input;
+
+  if (wealth.currency !== nisab.currency) {
+    return { success: false, error: "Currency mismatch between wealth and nisab" };
+  }
+
+  if (wealth.amount.lessThan(nisab.amount)) {
+    return { success: false, error: "Wealth is below nisab threshold" };
+  }
+
+  const zakatAmount = wealth.amount.times(0.025);
+  return {
+    success: true,
+    zakat: {
+      amount: zakatAmount,
+      currency: wealth.currency,
+    },
+  };
+}
+```
+
+## XSS Prevention
+
+### React Automatic Escaping
+
+React escapes content by default:
+
+```tsx
+import React from "react";
+
+interface CampaignProps {
+  name: string;
+  description: string;
+  userInput: string;
+}
+
+function Campaign({ name, description, userInput }: CampaignProps) {
+  // ✅ SAFE - React automatically escapes
+  return (
+    <div>
+      <h1>{name}</h1>
+      <p>{description}</p>
+      {/* Even if userInput contains <script>alert('xss')</script>, it's rendered as text */}
+      <div>{userInput}</div>
+    </div>
+  );
+}
+
+function DangerousComponent({ html }: { html: string }) {
+  // ❌ DANGEROUS - only for trusted content!
+  return <div dangerouslySetInnerHTML={{ __html: html }} />;
+}
+```
+
+### DOMPurify Sanitization
+
+Sanitize user HTML when needed:
+
+```typescript
+import DOMPurify from 'dompurify';
+
+// Sanitize user-provided HTML
+function sanitizeHtml(dirty: string): string {
+  return DOMPurify.sanitize(dirty, {
+    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br'],
+    ALLOWED_ATTR: ['href'],
   });
 }
 
-// Sanitize and validate email
-function sanitizeEmail(input: string): string | null {
-  const trimmed = validator.trim(input);
-  const normalized = validator.normalizeEmail(trimmed);
+// React component with sanitized HTML
+interface CampaignDescriptionProps {
+  htmlContent: string;
+}
 
-  if (!normalized || !validator.isEmail(normalized)) {
-    return null;
+function CampaignDescription({ htmlContent }: CampaignDescriptionProps) {
+  const sanitized = sanitizeHtml(htmlContent);
+
+  return (
+    <div
+      dangerouslySetInnerHTML={{
+        __html: sanitized,
+      }}
+    />
+  );
+}
+
+// NestJS service for campaign creation
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class CampaignService {
+  async createCampaign(dto: CreateCampaignDto) {
+    const sanitizedDescription = sanitizeHtml(dto.description);
+
+    const campaign = this.campaignRepository.create({
+      ...dto,
+      description: sanitizedDescription,
+    });
+
+    return this.campaignRepository.save(campaign);
   }
-
-  return normalized;
-}
-
-// Sanitize user message
-function sanitizeMessage(input: string): string {
-  // Remove control characters
-  let sanitized = input.replace(/[\x00-\x1F\x7F]/g, "");
-
-  // Trim whitespace
-  sanitized = validator.trim(sanitized);
-
-  // Escape HTML
-  sanitized = validator.escape(sanitized);
-
-  return sanitized;
-}
-
-// Example usage
-const userMessage = sanitizeMessage(req.body.message);
-const userEmail = sanitizeEmail(req.body.email);
-```
-
-### Type Guards for Runtime Validation
-
-```typescript
-// Type guard for DonorId
-function isDonorId(value: unknown): value is DonorId {
-  return typeof value === "string" && /^DNR-\d{10}$/.test(value);
-}
-
-// Type guard for positive number
-function isPositiveNumber(value: unknown): value is number {
-  return typeof value === "number" && value > 0 && isFinite(value);
-}
-
-// Type guard for valid currency
-const VALID_CURRENCIES = ["USD", "EUR", "SAR"] as const;
-type Currency = (typeof VALID_CURRENCIES)[number];
-
-function isCurrency(value: unknown): value is Currency {
-  return typeof value === "string" && VALID_CURRENCIES.includes(value as any);
-}
-
-// Safe processing with type guards
-function processDonation(input: unknown) {
-  if (typeof input !== "object" || input === null || !("amount" in input) || !("currency" in input)) {
-    throw new Error("Invalid donation input");
-  }
-
-  const { amount, currency } = input as any;
-
-  if (!isPositiveNumber(amount)) {
-    throw new Error("Invalid amount");
-  }
-
-  if (!isCurrency(currency)) {
-    throw new Error("Invalid currency");
-  }
-
-  // Safe to use amount and currency
-  return { amount, currency };
 }
 ```
 
-## Injection Prevention
+### Content Security Policy
 
-### SQL Injection Prevention
-
-```typescript
-import { Pool } from "pg";
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
-
-// ❌ UNSAFE: SQL injection vulnerability
-async function getDonationsUnsafe(donorId: string) {
-  const query = `SELECT * FROM donations WHERE donor_id = '${donorId}'`;
-  const result = await pool.query(query);
-  return result.rows;
-}
-
-// ✅ SAFE: Parameterized query
-async function getDonationsSafe(donorId: string) {
-  const query = "SELECT * FROM donations WHERE donor_id = $1";
-  const result = await pool.query(query, [donorId]);
-  return result.rows;
-}
-
-// ✅ SAFE: Using query builder (Prisma)
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
-async function getDonationsWithPrisma(donorId: string) {
-  return prisma.donation.findMany({
-    where: { donorId },
-  });
-}
-```
-
-### NoSQL Injection Prevention
-
-```typescript
-import { MongoClient, ObjectId } from "mongodb";
-
-// ❌ UNSAFE: NoSQL injection
-async function getDonorUnsafe(donorId: string) {
-  const query = { donorId: JSON.parse(donorId) };
-  return db.collection("donors").findOne(query);
-}
-
-// ✅ SAFE: Validate input type
-async function getDonorSafe(donorId: string) {
-  if (typeof donorId !== "string" || !isDonorId(donorId)) {
-    throw new Error("Invalid donor ID");
-  }
-
-  return db.collection("donors").findOne({ donorId });
-}
-
-// ✅ SAFE: Use ObjectId validation
-async function getDonorByObjectId(id: string) {
-  if (!ObjectId.isValid(id)) {
-    throw new Error("Invalid ObjectId");
-  }
-
-  return db.collection("donors").findOne({
-    _id: new ObjectId(id),
-  });
-}
-```
-
-### Command Injection Prevention
-
-```typescript
-import { exec } from "child_process";
-import { promisify } from "util";
-
-const execAsync = promisify(exec);
-
-// ❌ UNSAFE: Command injection
-async function generateReceiptUnsafe(donationId: string) {
-  const command = `pdftk donation-${donationId}.pdf output receipt.pdf`;
-  await execAsync(command);
-}
-
-// ✅ SAFE: Use libraries instead of shell commands
-import PDFDocument from "pdfkit";
-import fs from "fs";
-
-async function generateReceiptSafe(donationId: string) {
-  const doc = new PDFDocument();
-  const stream = fs.createWriteStream(`receipt-${donationId}.pdf`);
-
-  doc.pipe(stream);
-  doc.text(`Donation Receipt: ${donationId}`);
-  doc.end();
-
-  return new Promise((resolve, reject) => {
-    stream.on("finish", resolve);
-    stream.on("error", reject);
-  });
-}
-```
-
-## Cross-Site Scripting (XSS) Prevention
-
-### Output Encoding
-
-```typescript
-import he from "he";
-
-// HTML entity encoding
-function encodeHtml(text: string): string {
-  return he.encode(text, {
-    useNamedReferences: true,
-  });
-}
-
-// JavaScript encoding
-function encodeJavaScript(text: string): string {
-  return text
-    .replace(/\\/g, "\\\\")
-    .replace(/'/g, "\\'")
-    .replace(/"/g, '\\"')
-    .replace(/</g, "\\x3C")
-    .replace(/>/g, "\\x3E")
-    .replace(/\//g, "\\/")
-    .replace(/\n/g, "\\n")
-    .replace(/\r/g, "\\r");
-}
-
-// URL encoding
-function encodeUrl(text: string): string {
-  return encodeURIComponent(text);
-}
-
-// Example: Rendering donation message
-function renderDonationMessage(donation: { message: string; donorName: string }) {
-  const safeMessage = encodeHtml(donation.message);
-  const safeName = encodeHtml(donation.donorName);
-
-  return `<div class="donation-message">
-    <p><strong>${safeName}</strong> says:</p>
-    <p>${safeMessage}</p>
-  </div>`;
-}
-```
-
-### Content Security Policy (CSP)
+Configure CSP headers:
 
 ```typescript
 import helmet from "helmet";
@@ -437,77 +437,240 @@ import express from "express";
 
 const app = express();
 
+// Use Helmet for security headers
 app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'sha256-...'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'", "https://api.example.com"],
-      fontSrc: ["'self'"],
-      objectSrc: ["'none'"],
-      mediaSrc: ["'self'"],
-      frameSrc: ["'none'"],
-      upgradeInsecureRequests: [],
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "https:"],
+        fontSrc: ["'self'"],
+        connectSrc: ["'self'"],
+        frameAncestors: ["'none'"],
+      },
     },
   }),
 );
+
+// NestJS implementation
+import { NestFactory } from "@nestjs/core";
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'"],
+          styleSrc: ["'self'"],
+          imgSrc: ["'self'", "data:", "https:"],
+          connectSrc: ["'self'"],
+          frameAncestors: ["'none'"],
+        },
+      },
+    }),
+  );
+
+  await app.listen(3000);
+}
 ```
 
-### React XSS Prevention
+## SQL Injection Prevention
+
+### Parameterized Queries
+
+Always use parameterized queries:
 
 ```typescript
-import React from "react";
-import DOMPurify from "isomorphic-dompurify";
+import { Pool } from "pg";
 
-interface DonationMessageProps {
-  message: string;
-  donorName: string;
+const pool = new Pool({
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+});
+
+// ✅ SAFE - parameterized query
+async function searchDonationsByEmail(email: string) {
+  const result = await pool.query("SELECT * FROM donations WHERE donor_email = $1", [email]);
+  return result.rows;
 }
 
-// ✅ SAFE: React automatically escapes
-function DonationMessage({ message, donorName }: DonationMessageProps) {
-  return (
-    <div className="donation-message">
-      <p>
-        <strong>{donorName}</strong> says:
-      </p>
-      <p>{message}</p>
-    </div>
-  );
+// ❌ DANGEROUS - SQL injection vulnerable!
+async function searchDonationsUnsafe(email: string) {
+  const query = `SELECT * FROM donations WHERE donor_email = '${email}'`;
+  const result = await pool.query(query); // DON'T DO THIS!
+  return result.rows;
 }
 
-// If you must render HTML, sanitize first
-function DonationMessageWithHtml({ html }: { html: string }) {
-  const sanitized = DOMPurify.sanitize(html);
+// ✅ SAFE - parameterized query with multiple parameters
+async function searchByAmountRange(minAmount: number, maxAmount: number) {
+  const result = await pool.query("SELECT * FROM donations WHERE amount >= $1 AND amount <= $2", [
+    minAmount,
+    maxAmount,
+  ]);
+  return result.rows;
+}
 
-  return (
-    <div
-      className="donation-message"
-      dangerouslySetInnerHTML={{ __html: sanitized }}
-    />
-  );
+// ✅ SAFE - LIKE queries
+async function searchByNamePattern(pattern: string) {
+  const likePattern = `%${pattern}%`;
+  const result = await pool.query("SELECT * FROM donations WHERE donor_name ILIKE $1", [likePattern]);
+  return result.rows;
+}
+```
+
+### TypeORM Safety
+
+TypeORM query builder provides safe parameterization:
+
+```typescript
+import { Repository } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Donation } from "./entities/donation.entity";
+
+export class DonationRepository {
+  constructor(
+    @InjectRepository(Donation)
+    private readonly repository: Repository<Donation>,
+  ) {}
+
+  // ✅ SAFE - TypeORM query builder
+  async searchByEmail(email: string) {
+    return this.repository.createQueryBuilder("donation").where("donation.donor_email = :email", { email }).getMany();
+  }
+
+  // ✅ SAFE - TypeORM find methods
+  async searchByAmountRange(minAmount: number, maxAmount: number) {
+    return this.repository.find({
+      where: {
+        amount: Between(minAmount, maxAmount),
+      },
+    });
+  }
+
+  // ✅ SAFE - Complex queries with parameters
+  async getDonationReport(filters: {
+    campaignId?: string;
+    minAmount?: number;
+    dateRange?: { start: Date; end: Date };
+  }) {
+    const query = this.repository.createQueryBuilder("donation");
+
+    if (filters.campaignId) {
+      query.andWhere("donation.campaign_id = :campaignId", { campaignId: filters.campaignId });
+    }
+
+    if (filters.minAmount) {
+      query.andWhere("donation.amount >= :minAmount", { minAmount: filters.minAmount });
+    }
+
+    if (filters.dateRange) {
+      query.andWhere("donation.created_at BETWEEN :start AND :end", {
+        start: filters.dateRange.start,
+        end: filters.dateRange.end,
+      });
+    }
+
+    return query
+      .select("SUM(donation.amount)", "total")
+      .addSelect("COUNT(donation.id)", "count")
+      .addSelect("AVG(donation.amount)", "average")
+      .getRawOne();
+  }
+}
+```
+
+### Prisma Safety
+
+Prisma provides type-safe queries by default:
+
+```typescript
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+// ✅ SAFE - Prisma automatically parameterizes
+async function searchDonationsByEmail(email: string) {
+  return prisma.donation.findMany({
+    where: {
+      donorEmail: email,
+    },
+  });
+}
+
+// ✅ SAFE - Complex filters
+async function searchDonations(filters: {
+  campaignId?: string;
+  minAmount?: number;
+  maxAmount?: number;
+  dateRange?: { start: Date; end: Date };
+}) {
+  return prisma.donation.findMany({
+    where: {
+      campaignId: filters.campaignId,
+      amount: {
+        gte: filters.minAmount,
+        lte: filters.maxAmount,
+      },
+      createdAt: filters.dateRange
+        ? {
+            gte: filters.dateRange.start,
+            lte: filters.dateRange.end,
+          }
+        : undefined,
+    },
+  });
+}
+
+// ✅ SAFE - Aggregations
+async function getDonationStats(campaignId: string) {
+  return prisma.donation.aggregate({
+    where: {
+      campaignId,
+    },
+    _sum: {
+      amount: true,
+    },
+    _avg: {
+      amount: true,
+    },
+    _count: true,
+  });
 }
 ```
 
 ## Authentication
 
-### JWT Authentication
+### Password Hashing
+
+Use bcrypt for password hashing:
 
 ```typescript
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { z } from "zod";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 const SALT_ROUNDS = 12;
 
-interface TokenPayload {
-  userId: string;
-  role: "donor" | "admin" | "beneficiary";
-  iat: number;
-  exp: number;
-}
+// Password validation schema
+const PasswordSchema = z
+  .string()
+  .min(12, "Password must be at least 12 characters")
+  .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+  .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+  .regex(/[0-9]/, "Password must contain at least one number")
+  .regex(/[!@#$%^&*(),.?":{}|<>]/, "Password must contain at least one special character");
+
+const UserRegistrationSchema = z.object({
+  email: z.string().email(),
+  password: PasswordSchema,
+  confirmPassword: z.string(),
+});
 
 // Hash password
 async function hashPassword(password: string): Promise<string> {
@@ -519,63 +682,791 @@ async function verifyPassword(password: string, hash: string): Promise<boolean> 
   return bcrypt.compare(password, hash);
 }
 
-// Generate JWT
-function generateToken(userId: string, role: string): string {
-  const payload = {
-    userId,
-    role,
-  };
-
-  return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: "1h",
-    algorithm: "HS256",
-  });
+// User entity
+interface User {
+  id: string;
+  email: string;
+  passwordHash: string;
+  role: "donor" | "admin" | "finance_manager";
+  createdAt: Date;
 }
 
-// Verify JWT
-function verifyToken(token: string): TokenPayload {
-  try {
-    return jwt.verify(token, JWT_SECRET) as TokenPayload;
-  } catch (error) {
-    throw new Error("Invalid token");
-  }
-}
+// Registration service
+export class AuthService {
+  async registerUser(input: unknown): Promise<{ success: true; user: User } | { success: false; errors: string[] }> {
+    // Validate input
+    const validation = UserRegistrationSchema.safeParse(input);
 
-// Middleware
-import { Request, Response, NextFunction } from "express";
-
-declare global {
-  namespace Express {
-    interface Request {
-      user?: TokenPayload;
+    if (!validation.success) {
+      return {
+        success: false,
+        errors: validation.error.errors.map((e) => e.message),
+      };
     }
+
+    const { email, password, confirmPassword } = validation.data;
+
+    if (password !== confirmPassword) {
+      return {
+        success: false,
+        errors: ["Passwords do not match"],
+      };
+    }
+
+    // Check if user exists
+    const existingUser = await this.userRepository.findByEmail(email);
+    if (existingUser) {
+      return {
+        success: false,
+        errors: ["Email already registered"],
+      };
+    }
+
+    // Hash password
+    const passwordHash = await hashPassword(password);
+
+    // Create user
+    const user = await this.userRepository.create({
+      email,
+      passwordHash,
+      role: "donor",
+    });
+
+    return { success: true, user };
   }
-}
 
-function authenticateToken(req: Request, res: Response, next: NextFunction): void {
-  const authHeader = req.headers.authorization;
-  const token = authHeader?.split(" ")[1];
+  async authenticate(
+    email: string,
+    password: string,
+  ): Promise<{ success: true; user: User } | { success: false; error: string }> {
+    const user = await this.userRepository.findByEmail(email);
 
-  if (!token) {
-    res.status(401).json({ error: "No token provided" });
-    return;
-  }
+    if (!user) {
+      // Prevent timing attacks - always run hash verification
+      await bcrypt.hash(password, SALT_ROUNDS);
+      return { success: false, error: "Invalid credentials" };
+    }
 
-  try {
-    const user = verifyToken(token);
-    req.user = user;
-    next();
-  } catch (error) {
-    res.status(403).json({ error: "Invalid token" });
+    const isValid = await verifyPassword(password, user.passwordHash);
+
+    if (!isValid) {
+      return { success: false, error: "Invalid credentials" };
+    }
+
+    return { success: true, user };
   }
 }
 ```
 
-### Session-Based Authentication
+### JWT Authentication
+
+Implement JWT authentication:
+
+```typescript
+import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
+
+const JWT_SECRET = process.env.JWT_SECRET!;
+const JWT_EXPIRES_IN = "1h";
+
+interface JwtPayload {
+  userId: string;
+  email: string;
+  role: string;
+}
+
+// Generate JWT
+function generateToken(user: User): string {
+  const payload: JwtPayload = {
+    userId: user.id,
+    email: user.email,
+    role: user.role,
+  };
+
+  return jwt.sign(payload, JWT_SECRET, {
+    expiresIn: JWT_EXPIRES_IN,
+  });
+}
+
+// Verify JWT
+function verifyToken(token: string): JwtPayload | null {
+  try {
+    return jwt.verify(token, JWT_SECRET) as JwtPayload;
+  } catch (error) {
+    return null;
+  }
+}
+
+// Authentication middleware
+function authenticateToken(req: Request, res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
+
+  if (!token) {
+    return res.status(401).json({ error: "Authentication required" });
+  }
+
+  const payload = verifyToken(token);
+
+  if (!payload) {
+    return res.status(401).json({ error: "Invalid or expired token" });
+  }
+
+  // Attach user to request
+  req.user = payload;
+  next();
+}
+
+// Login endpoint
+export class AuthController {
+  async login(req: Request, res: Response) {
+    const { email, password } = req.body;
+
+    const result = await this.authService.authenticate(email, password);
+
+    if (!result.success) {
+      return res.status(401).json({ error: result.error });
+    }
+
+    const token = generateToken(result.user);
+
+    return res.json({
+      token,
+      user: {
+        id: result.user.id,
+        email: result.user.email,
+        role: result.user.role,
+      },
+    });
+  }
+
+  async refresh(req: Request, res: Response) {
+    const user = req.user!; // Set by authenticateToken middleware
+
+    const refreshedUser = await this.userRepository.findById(user.userId);
+
+    if (!refreshedUser) {
+      return res.status(401).json({ error: "User not found" });
+    }
+
+    const token = generateToken(refreshedUser);
+
+    return res.json({ token });
+  }
+}
+
+// Usage in routes
+import express from "express";
+
+const router = express.Router();
+
+router.post("/auth/login", (req, res) => authController.login(req, res));
+router.post("/auth/refresh", authenticateToken, (req, res) => authController.refresh(req, res));
+router.get("/donations", authenticateToken, (req, res) => donationController.list(req, res));
+```
+
+The following diagram illustrates the complete JWT authentication flow in a TypeScript financial application:
+
+```mermaid
+sequenceDiagram
+    participant Client as Client<br/>(Browser/Mobile)
+    participant Auth as AuthController<br/>login/refresh
+    participant Service as AuthService<br/>authenticate
+    participant Bcrypt as Bcrypt<br/>password verify
+    participant JWT as JWT Library<br/>sign/verify
+    participant Protected as Protected Route<br/>DonationController
+    participant Middleware as authenticateToken<br/>Middleware
+    participant DB as Database
+
+    %% Login Flow
+    Client->>Auth: POST /api/auth/login<br/>{email, password}
+    Auth->>Service: authenticate(email, password)
+    Service->>DB: Find user by email
+    DB-->>Service: User record with passwordHash
+
+    Service->>Bcrypt: compare(password, hash)
+    Bcrypt-->>Service: true/false
+
+    alt Invalid Credentials
+        Bcrypt->>Bcrypt: hash(password, SALT_ROUNDS)<br/>(prevent timing attack)
+        Service-->>Auth: {success: false, error}
+        Auth-->>Client: 401 Unauthorized<br/>Invalid credentials
+    else Valid Credentials
+        Service-->>Auth: {success: true, user}
+        Auth->>JWT: sign(payload, secret, {expiresIn: 1h})
+        JWT->>JWT: Generate JWT<br/>userId, email, role<br/>exp timestamp
+        JWT-->>Auth: token string
+        Auth-->>Client: 200 OK<br/>{token: "eyJ...", user: {...}}
+    end
+
+    %% Protected Route Access
+    Client->>Protected: GET /api/donations<br/>Authorization: "Bearer eyJ..."
+    Protected->>Middleware: authenticateToken()
+    Middleware->>Middleware: Extract token from header
+    Middleware->>JWT: verify(token, secret)
+    JWT->>JWT: Decode JWT<br/>Verify signature<br/>Check expiration
+
+    alt Invalid/Expired Token
+        JWT-->>Middleware: Error (invalid/expired)
+        Middleware-->>Client: 401 Unauthorized<br/>Invalid token
+    else Valid Token
+        JWT-->>Middleware: payload {userId, email, role}
+        Middleware->>Protected: req.user = payload
+        Protected->>Protected: Process request<br/>(user authorized)
+        Protected-->>Client: 200 OK<br/>{donations: [...]}
+    end
+
+    %% Token Refresh
+    Client->>Auth: POST /api/auth/refresh<br/>Authorization: "Bearer eyJ..."
+    Auth->>Middleware: authenticateToken()
+    Middleware->>JWT: verify(token, secret)
+    JWT-->>Middleware: payload
+    Middleware->>Auth: req.user = payload
+    Auth->>DB: Find user by userId
+    DB-->>Auth: User record
+    Auth->>JWT: sign(new payload, secret, {expiresIn: 1h})
+    JWT-->>Auth: new token
+    Auth-->>Client: 200 OK<br/>{token: "eyJ..."}
+```
+
+**Key Security Features**:
+
+- **Password Hashing**: Bcrypt with 12 salt rounds prevents password leaks
+- **Timing Attack Prevention**: Hash verification runs even when user not found
+- **JWT Expiration**: Tokens expire after 1 hour (configurable)
+- **Stateless Auth**: JWT contains claims, no server-side session storage
+- **Token Refresh**: Clients can refresh tokens before expiration
+- **Authorization Header**: Bearer token in `Authorization: Bearer <token>` header
+
+### Session Management
+
+Express session with secure configuration:
 
 ```typescript
 import session from "express-session";
 import RedisStore from "connect-redis";
+import { createClient } from "redis";
+
+// Redis client for session storage
+const redisClient = createClient({
+  url: process.env.REDIS_URL,
+});
+
+redisClient.connect();
+
+// Session configuration
+app.use(
+  session({
+    store: new RedisStore({ client: redisClient }),
+    secret: process.env.SESSION_SECRET!,
+    resave: false,
+    saveUninitialized: false,
+    name: "financial.sid", // Custom name
+    cookie: {
+      secure: process.env.NODE_ENV === "production", // HTTPS only in production
+      httpOnly: true, // Prevent JavaScript access
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      sameSite: "lax", // CSRF protection
+    },
+  }),
+);
+
+// Session controller
+export class SessionController {
+  async login(req: Request, res: Response) {
+    const { email, password } = req.body;
+
+    const result = await this.authService.authenticate(email, password);
+
+    if (!result.success) {
+      return res.status(401).json({ error: result.error });
+    }
+
+    // Store user in session
+    req.session.userId = result.user.id;
+    req.session.loginAt = Date.now();
+
+    // Regenerate session ID to prevent session fixation
+    req.session.regenerate((err) => {
+      if (err) {
+        return res.status(500).json({ error: "Session error" });
+      }
+
+      return res.json({
+        user: {
+          id: result.user.id,
+          email: result.user.email,
+          role: result.user.role,
+        },
+      });
+    });
+  }
+
+  async logout(req: Request, res: Response) {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ error: "Logout failed" });
+      }
+
+      res.clearCookie("financial.sid");
+      return res.json({ message: "Logged out successfully" });
+    });
+  }
+}
+```
+
+### OAuth2 Integration
+
+Implement OAuth2 with Passport.js:
+
+```typescript
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+
+// Configure Google OAuth2
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      callbackURL: "/auth/google/callback",
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        // Find or create user
+        let user = await userRepository.findByGoogleId(profile.id);
+
+        if (!user) {
+          user = await userRepository.create({
+            googleId: profile.id,
+            email: profile.emails?.[0]?.value,
+            name: profile.displayName,
+            role: "donor",
+          });
+        }
+
+        return done(null, user);
+      } catch (error) {
+        return done(error, undefined);
+      }
+    },
+  ),
+);
+
+// Serialize user
+passport.serializeUser((user: User, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id: string, done) => {
+  try {
+    const user = await userRepository.findById(id);
+    done(null, user);
+  } catch (error) {
+    done(error, null);
+  }
+});
+
+// OAuth routes
+app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+
+app.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/login" }), (req, res) => {
+  res.redirect("/dashboard");
+});
+```
+
+## Authorization
+
+### Role-Based Access Control
+
+Implement RBAC:
+
+```typescript
+enum Role {
+  DONOR = "donor",
+  ADMIN = "admin",
+  FINANCE_MANAGER = "finance_manager",
+}
+
+// Middleware to check roles
+function requireRole(...roles: Role[]) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user;
+
+    if (!user) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
+    if (!roles.includes(user.role as Role)) {
+      return res.status(403).json({ error: "Insufficient permissions" });
+    }
+
+    next();
+  };
+}
+
+// Usage in routes
+router.get("/admin/users", authenticateToken, requireRole(Role.ADMIN), (req, res) => {
+  // Only admins can access
+});
+
+router.get("/finance/reports", authenticateToken, requireRole(Role.ADMIN, Role.FINANCE_MANAGER), (req, res) => {
+  // Admins and finance managers can access
+});
+```
+
+### Policy-Based Authorization
+
+Define authorization policies:
+
+```typescript
+interface User {
+  id: string;
+  role: Role;
+}
+
+interface Donation {
+  id: string;
+  donorId: string;
+  amount: number;
+  status: "pending" | "approved" | "rejected";
+}
+
+class AuthorizationPolicy {
+  // Admins can do anything
+  canManageAll(user: User): boolean {
+    return user.role === Role.ADMIN;
+  }
+
+  // Donors can view their own donations
+  canViewDonation(user: User, donation: Donation): boolean {
+    return this.canManageAll(user) || user.id === donation.donorId;
+  }
+
+  // Finance managers can view all donations
+  canViewAllDonations(user: User): boolean {
+    return this.canManageAll(user) || user.role === Role.FINANCE_MANAGER;
+  }
+
+  // Finance managers can approve donations
+  canApproveDonation(user: User): boolean {
+    return this.canManageAll(user) || user.role === Role.FINANCE_MANAGER;
+  }
+
+  // Donors can create donations
+  canCreateDonation(user: User): boolean {
+    return user.role === Role.DONOR || this.canManageAll(user);
+  }
+}
+
+// Use in controllers
+export class DonationController {
+  constructor(private readonly policy: AuthorizationPolicy) {}
+
+  async show(req: Request, res: Response) {
+    const user = req.user!;
+    const donation = await this.donationRepository.findById(req.params.id);
+
+    if (!donation) {
+      return res.status(404).json({ error: "Donation not found" });
+    }
+
+    if (!this.policy.canViewDonation(user, donation)) {
+      return res.status(403).json({ error: "You do not have permission to view this donation" });
+    }
+
+    return res.json({ donation });
+  }
+
+  async approve(req: Request, res: Response) {
+    const user = req.user!;
+    const donation = await this.donationRepository.findById(req.params.id);
+
+    if (!donation) {
+      return res.status(404).json({ error: "Donation not found" });
+    }
+
+    if (!this.policy.canApproveDonation(user)) {
+      return res.status(403).json({ error: "You do not have permission to approve donations" });
+    }
+
+    donation.status = "approved";
+    const updated = await this.donationRepository.save(donation);
+
+    return res.json({ donation: updated });
+  }
+}
+```
+
+### NestJS Guards
+
+Implement authorization guards in NestJS:
+
+```typescript
+import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+
+// Role decorator
+export const Roles = (...roles: Role[]) => SetMetadata("roles", roles);
+
+// Role guard
+@Injectable()
+export class RolesGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
+
+  canActivate(context: ExecutionContext): boolean {
+    const requiredRoles = this.reflector.getAllAndOverride<Role[]>("roles", [context.getHandler(), context.getClass()]);
+
+    if (!requiredRoles) {
+      return true;
+    }
+
+    const { user } = context.switchToHttp().getRequest();
+    return requiredRoles.some((role) => user.role === role);
+  }
+}
+
+// Policy guard
+@Injectable()
+export class DonationPolicyGuard implements CanActivate {
+  constructor(private readonly policy: AuthorizationPolicy) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
+    const donationId = request.params.id;
+
+    const donation = await this.donationRepository.findById(donationId);
+
+    if (!donation) {
+      return false;
+    }
+
+    return this.policy.canViewDonation(user, donation);
+  }
+}
+
+// Usage in controllers
+@Controller("donations")
+export class DonationController {
+  @Get(":id")
+  @UseGuards(JwtAuthGuard, DonationPolicyGuard)
+  async findOne(@Param("id") id: string) {
+    return this.donationService.findOne(id);
+  }
+
+  @Post(":id/approve")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.FINANCE_MANAGER)
+  async approve(@Param("id") id: string) {
+    return this.donationService.approve(id);
+  }
+}
+```
+
+## CSRF Protection
+
+```typescript
+import csrf from "csurf";
+import cookieParser from "cookie-parser";
+
+// CSRF middleware
+app.use(cookieParser());
+app.use(csrf({ cookie: true }));
+
+// Add CSRF token to responses
+app.use((req, res, next) => {
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
+// Render form with CSRF token
+app.get("/donation/new", (req, res) => {
+  res.render("donation-form", {
+    csrfToken: req.csrfToken(),
+  });
+});
+
+// CSRF token in HTML form
+// <form method="POST" action="/donations">
+//   <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+//   <!-- Other fields -->
+// </form>
+
+// API routes should use token authentication instead
+app.use("/api", (req, res, next) => {
+  // Skip CSRF for API routes (use JWT instead)
+  next();
+});
+```
+
+## Secure Communication
+
+### HTTPS/TLS
+
+Force HTTPS in production:
+
+```typescript
+// Redirect HTTP to HTTPS
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV === "production" && !req.secure && req.get("x-forwarded-proto") !== "https") {
+    return res.redirect(301, `https://${req.get("host")}${req.url}`);
+  }
+  next();
+});
+
+// HSTS header
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV === "production") {
+    res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  }
+  next();
+});
+```
+
+### Certificate Validation
+
+Validate SSL certificates for external API calls:
+
+```typescript
+import axios from "axios";
+import https from "https";
+
+// Configure axios with certificate validation
+const api = axios.create({
+  baseURL: "https://api.paymentgateway.com",
+  httpsAgent: new https.Agent({
+    rejectUnauthorized: true, // Validate certificates
+    minVersion: "TLSv1.2", // Minimum TLS version
+  }),
+});
+
+// Payment gateway service
+export class PaymentGatewayService {
+  async createPayment(amount: number, currency: string) {
+    try {
+      const response = await api.post(
+        "/payments",
+        {
+          amount,
+          currency,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.PAYMENT_GATEWAY_API_KEY}`,
+          },
+        },
+      );
+
+      return response.data;
+    } catch (error) {
+      throw new Error("Payment creation failed");
+    }
+  }
+}
+```
+
+## Secret Management
+
+### Environment Variables
+
+Never commit secrets to version control:
+
+```typescript
+// .env (add to .gitignore)
+// DATABASE_URL=postgresql://user:pass@localhost/financial_prod
+// JWT_SECRET=very_long_secret_key_here
+// SESSION_SECRET=another_secret_key
+// PAYMENT_GATEWAY_API_KEY=payment_api_key
+// GOOGLE_CLIENT_ID=google_client_id
+// GOOGLE_CLIENT_SECRET=google_client_secret
+
+// Load environment variables
+import dotenv from "dotenv";
+dotenv.config();
+
+// Access secrets
+const jwtSecret = process.env.JWT_SECRET;
+const databaseUrl = process.env.DATABASE_URL;
+```
+
+### Validated Configuration
+
+Use Zod to validate environment variables:
+
+```typescript
+import { z } from "zod";
+
+const ConfigSchema = z.object({
+  NODE_ENV: z.enum(["development", "production", "test"]),
+  PORT: z.string().transform(Number),
+  DATABASE_URL: z.string().url(),
+  JWT_SECRET: z.string().min(32),
+  SESSION_SECRET: z.string().min(32),
+  PAYMENT_GATEWAY_API_KEY: z.string(),
+  REDIS_URL: z.string().url().optional(),
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+});
+
+type Config = z.infer<typeof ConfigSchema>;
+
+// Validate and export config
+export const config: Config = ConfigSchema.parse(process.env);
+
+// Usage
+import { config } from "./config";
+
+const app = express();
+app.listen(config.PORT, () => {
+  console.log(`Server running on port ${config.PORT}`);
+});
+```
+
+## Security Headers
+
+```typescript
+import helmet from "helmet";
+
+app.use(helmet());
+
+// Or configure individual headers
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'"],
+        imgSrc: ["'self'", "data:", "https:"],
+        connectSrc: ["'self'"],
+        fontSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        frameAncestors: ["'none'"],
+        baseUri: ["'self'"],
+        formAction: ["'self'"],
+      },
+    },
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+    },
+    frameguard: {
+      action: "deny",
+    },
+    referrerPolicy: {
+      policy: "strict-origin-when-cross-origin",
+    },
+  }),
+);
+```
+
+## Rate Limiting
+
+```typescript
+import rateLimit from "express-rate-limit";
+import RedisStore from "rate-limit-redis";
 import { createClient } from "redis";
 
 const redisClient = createClient({
@@ -584,711 +1475,535 @@ const redisClient = createClient({
 
 redisClient.connect();
 
-const sessionMiddleware = session({
-  store: new RedisStore({ client: redisClient }),
-  secret: process.env.SESSION_SECRET || "session-secret",
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24, // 24 hours
-    sameSite: "strict",
-  },
-});
-
-app.use(sessionMiddleware);
-
-// Login endpoint
-app.post("/api/auth/login", async (req, res) => {
-  const { email, password } = req.body;
-
-  // Find user
-  const user = await findUserByEmail(email);
-  if (!user) {
-    res.status(401).json({ error: "Invalid credentials" });
-    return;
-  }
-
-  // Verify password
-  const isValid = await verifyPassword(password, user.passwordHash);
-  if (!isValid) {
-    res.status(401).json({ error: "Invalid credentials" });
-    return;
-  }
-
-  // Create session
-  req.session.userId = user.id;
-  req.session.role = user.role;
-
-  res.json({ message: "Login successful" });
-});
-
-// Logout endpoint
-app.post("/api/auth/logout", (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      res.status(500).json({ error: "Logout failed" });
-      return;
-    }
-    res.json({ message: "Logout successful" });
-  });
-});
-```
-
-### OAuth 2.0 / OIDC
-
-```typescript
-import passport from "passport";
-import { Strategy as OAuth2Strategy } from "passport-oauth2";
-
-passport.use(
-  new OAuth2Strategy(
-    {
-      authorizationURL: "https://provider.com/oauth2/authorize",
-      tokenURL: "https://provider.com/oauth2/token",
-      clientID: process.env.OAUTH_CLIENT_ID!,
-      clientSecret: process.env.OAUTH_CLIENT_SECRET!,
-      callbackURL: "https://yourapp.com/auth/callback",
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        // Find or create user
-        const user = await findOrCreateUser(profile);
-        done(null, user);
-      } catch (error) {
-        done(error);
-      }
-    },
-  ),
-);
-
-app.get("/auth/oauth", passport.authenticate("oauth2"));
-
-app.get(
-  "/auth/callback",
-  passport.authenticate("oauth2", {
-    failureRedirect: "/login",
+// General rate limiter
+const limiter = rateLimit({
+  store: new RedisStore({
+    client: redisClient,
+    prefix: "rl:",
   }),
-  (req, res) => {
-    res.redirect("/dashboard");
-  },
-);
-```
-
-## Authorization
-
-### Role-Based Access Control (RBAC)
-
-```typescript
-type Role = "donor" | "admin" | "beneficiary";
-
-type Permission =
-  | "donation:create"
-  | "donation:view"
-  | "donation:delete"
-  | "campaign:create"
-  | "campaign:edit"
-  | "user:manage";
-
-const rolePermissions: Record<Role, Permission[]> = {
-  donor: ["donation:create", "donation:view"],
-  admin: ["donation:create", "donation:view", "donation:delete", "campaign:create", "campaign:edit", "user:manage"],
-  beneficiary: ["donation:view", "campaign:create"],
-};
-
-function hasPermission(role: Role, permission: Permission): boolean {
-  return rolePermissions[role].includes(permission);
-}
-
-// Middleware
-function requirePermission(permission: Permission) {
-  return (req: Request, res: Response, next: NextFunction): void => {
-    if (!req.user) {
-      res.status(401).json({ error: "Unauthorized" });
-      return;
-    }
-
-    if (!hasPermission(req.user.role as Role, permission)) {
-      res.status(403).json({ error: "Forbidden" });
-      return;
-    }
-
-    next();
-  };
-}
-
-// Usage
-app.delete("/api/donations/:id", authenticateToken, requirePermission("donation:delete"), async (req, res) => {
-  // Delete donation
-});
-```
-
-### Attribute-Based Access Control (ABAC)
-
-```typescript
-interface AccessContext {
-  user: {
-    id: string;
-    role: Role;
-    organizationId: string;
-  };
-  resource: {
-    type: "donation" | "campaign";
-    ownerId: string;
-    organizationId: string;
-  };
-  action: "create" | "read" | "update" | "delete";
-}
-
-function canAccess(context: AccessContext): boolean {
-  // Admin can do everything
-  if (context.user.role === "admin") {
-    return true;
-  }
-
-  // Users can only access resources in their organization
-  if (context.user.organizationId !== context.resource.organizationId) {
-    return false;
-  }
-
-  // Users can read any resource in their organization
-  if (context.action === "read") {
-    return true;
-  }
-
-  // Users can only modify their own resources
-  if (["update", "delete"].includes(context.action) && context.user.id === context.resource.ownerId) {
-    return true;
-  }
-
-  return false;
-}
-
-// Middleware
-async function checkAccess(req: Request, res: Response, next: NextFunction): Promise<void> {
-  const donationId = req.params.id;
-  const donation = await getDonationById(donationId);
-
-  if (!donation) {
-    res.status(404).json({ error: "Not found" });
-    return;
-  }
-
-  const context: AccessContext = {
-    user: {
-      id: req.user!.userId,
-      role: req.user!.role as Role,
-      organizationId: "ORG-001",
-    },
-    resource: {
-      type: "donation",
-      ownerId: donation.donorId,
-      organizationId: donation.organizationId,
-    },
-    action: "update",
-  };
-
-  if (!canAccess(context)) {
-    res.status(403).json({ error: "Forbidden" });
-    return;
-  }
-
-  next();
-}
-```
-
-## Cryptography
-
-### Hashing
-
-```typescript
-import crypto from "crypto";
-
-// SHA-256 hash
-function hash256(data: string): string {
-  return crypto.createHash("sha256").update(data).digest("hex");
-}
-
-// HMAC for message authentication
-function createHmac(message: string, secret: string): string {
-  return crypto.createHmac("sha256", secret).update(message).digest("hex");
-}
-
-function verifyHmac(message: string, signature: string, secret: string): boolean {
-  const expected = createHmac(message, secret);
-  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
-}
-
-// Generate secure random token
-function generateToken(length: number = 32): string {
-  return crypto.randomBytes(length).toString("hex");
-}
-```
-
-### Encryption
-
-```typescript
-import crypto from "crypto";
-
-const ALGORITHM = "aes-256-gcm";
-const KEY_LENGTH = 32;
-const IV_LENGTH = 12;
-const TAG_LENGTH = 16;
-
-// Derive encryption key from password
-function deriveKey(password: string, salt: Buffer): Buffer {
-  return crypto.pbkdf2Sync(password, salt, 100000, KEY_LENGTH, "sha256");
-}
-
-// Encrypt data
-function encrypt(plaintext: string, password: string): string {
-  const salt = crypto.randomBytes(16);
-  const key = deriveKey(password, salt);
-  const iv = crypto.randomBytes(IV_LENGTH);
-
-  const cipher = crypto.createCipheriv(ALGORITHM, key, iv, {
-    authTagLength: TAG_LENGTH,
-  });
-
-  let ciphertext = cipher.update(plaintext, "utf8", "hex");
-  ciphertext += cipher.final("hex");
-
-  const authTag = cipher.getAuthTag();
-
-  // Format: salt:iv:authTag:ciphertext
-  return [salt.toString("hex"), iv.toString("hex"), authTag.toString("hex"), ciphertext].join(":");
-}
-
-// Decrypt data
-function decrypt(encrypted: string, password: string): string {
-  const [saltHex, ivHex, authTagHex, ciphertext] = encrypted.split(":");
-
-  const salt = Buffer.from(saltHex, "hex");
-  const iv = Buffer.from(ivHex, "hex");
-  const authTag = Buffer.from(authTagHex, "hex");
-  const key = deriveKey(password, salt);
-
-  const decipher = crypto.createDecipheriv(ALGORITHM, key, iv, {
-    authTagLength: TAG_LENGTH,
-  });
-
-  decipher.setAuthTag(authTag);
-
-  let plaintext = decipher.update(ciphertext, "hex", "utf8");
-  plaintext += decipher.final("utf8");
-
-  return plaintext;
-}
-
-// Example: Encrypt sensitive donation data
-const sensitiveData = JSON.stringify({
-  donorName: "Ahmad Ibrahim",
-  amount: 10000,
-  bankAccount: "1234567890",
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again later",
 });
 
-const encryptionKey = process.env.ENCRYPTION_KEY!;
-const encrypted = encrypt(sensitiveData, encryptionKey);
-const decrypted = decrypt(encrypted, encryptionKey);
+app.use("/api/", limiter);
+
+// Stricter rate limit for authentication
+const authLimiter = rateLimit({
+  store: new RedisStore({
+    client: redisClient,
+    prefix: "rl:auth:",
+  }),
+  windowMs: 15 * 60 * 1000,
+  max: 5, // 5 login attempts per 15 minutes
+  skipSuccessfulRequests: true,
+});
+
+app.use("/api/auth/login", authLimiter);
 ```
 
-## CSRF Protection
-
-### CSRF Token Implementation
+## Audit Logging
 
 ```typescript
-import csrf from "csurf";
-import cookieParser from "cookie-parser";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from "typeorm";
 
-const csrfProtection = csrf({
-  cookie: {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-  },
-});
+@Entity("audit_logs")
+export class AuditLog {
+  @PrimaryGeneratedColumn("uuid")
+  id!: string;
 
-app.use(cookieParser());
+  @Column()
+  userId!: string;
 
-// Serve CSRF token
-app.get("/api/csrf-token", csrfProtection, (req, res) => {
-  res.json({ csrfToken: req.csrfToken() });
-});
+  @Column()
+  action!: string;
 
-// Protect state-changing endpoints
-app.post("/api/donations", csrfProtection, async (req, res) => {
-  // Create donation
-});
+  @Column()
+  resourceType!: string;
 
-// Client-side usage
-async function createDonation(data: any) {
-  // Get CSRF token
-  const tokenResponse = await fetch("/api/csrf-token");
-  const { csrfToken } = await tokenResponse.json();
+  @Column({ nullable: true })
+  resourceId?: string;
 
-  // Make request with token
-  const response = await fetch("/api/donations", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "CSRF-Token": csrfToken,
-    },
-    body: JSON.stringify(data),
-  });
+  @Column()
+  ipAddress!: string;
 
-  return response.json();
+  @Column({ nullable: true })
+  userAgent?: string;
+
+  @Column("jsonb", { nullable: true })
+  changes?: Record<string, any>;
+
+  @CreateDateColumn()
+  occurredAt!: Date;
 }
-```
 
-## Security Headers
+// Audit logging service
+export class AuditService {
+  constructor(private readonly auditRepository: Repository<AuditLog>) {}
 
-### Helmet Configuration
+  async log(params: {
+    user: User;
+    action: string;
+    resourceType: string;
+    resourceId?: string;
+    req: Request;
+    changes?: Record<string, any>;
+  }) {
+    const log = this.auditRepository.create({
+      userId: params.user.id,
+      action: params.action,
+      resourceType: params.resourceType,
+      resourceId: params.resourceId,
+      ipAddress: this.getIpAddress(params.req),
+      userAgent: params.req.get("user-agent"),
+      changes: params.changes,
+      occurredAt: new Date(),
+    });
 
-```typescript
-import helmet from "helmet";
+    await this.auditRepository.save(log);
+  }
 
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        scriptSrc: ["'self'"],
-        imgSrc: ["'self'", "data:", "https:"],
+  private getIpAddress(req: Request): string {
+    return (req.headers["x-forwarded-for"] as string)?.split(",")[0] || req.socket.remoteAddress || "unknown";
+  }
+}
+
+// Usage in controllers
+export class DonationController {
+  constructor(
+    private readonly donationService: DonationService,
+    private readonly auditService: AuditService,
+  ) {}
+
+  async approve(req: Request, res: Response) {
+    const user = req.user!;
+    const donationId = req.params.id;
+    const donation = await this.donationService.findOne(donationId);
+
+    const previousStatus = donation.status;
+    const approved = await this.donationService.approve(donationId);
+
+    // Log security-relevant action
+    await this.auditService.log({
+      user,
+      action: "approve_donation",
+      resourceType: "Donation",
+      resourceId: donationId,
+      req,
+      changes: {
+        previousStatus,
+        newStatus: approved.status,
       },
-    },
-    hsts: {
-      maxAge: 31536000,
-      includeSubDomains: true,
-      preload: true,
-    },
-    frameguard: {
-      action: "deny",
-    },
-    noSniff: true,
-    xssFilter: true,
-    referrerPolicy: {
-      policy: "strict-origin-when-cross-origin",
-    },
-  }),
-);
-```
+    });
 
-### CORS Configuration
-
-```typescript
-import cors from "cors";
-
-app.use(
-  cors({
-    origin: ["https://yourapp.com", "https://admin.yourapp.com"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-    maxAge: 86400,
-  }),
-);
-```
-
-## OWASP Top 10 in TypeScript
-
-### A01: Broken Access Control
-
-```typescript
-// ✅ SAFE: Check ownership before access
-app.get("/api/donations/:id", authenticateToken, async (req, res) => {
-  const donation = await getDonationById(req.params.id);
-
-  if (!donation) {
-    return res.status(404).json({ error: "Not found" });
+    return res.json({ donation: approved });
   }
-
-  // Verify user owns this donation
-  if (donation.donorId !== req.user!.userId && req.user!.role !== "admin") {
-    return res.status(403).json({ error: "Forbidden" });
-  }
-
-  res.json(donation);
-});
-```
-
-### A02: Cryptographic Failures
-
-```typescript
-// ✅ SAFE: Use strong encryption
-import crypto from "crypto";
-
-// Store passwords with bcrypt (12+ rounds)
-import bcrypt from "bcrypt";
-const hash = await bcrypt.hash(password, 12);
-
-// Use secure random for tokens
-const token = crypto.randomBytes(32).toString("hex");
-
-// Encrypt sensitive data
-const encryptedData = encrypt(sensitiveInfo, encryptionKey);
-```
-
-### A03: Injection
-
-```typescript
-// ✅ SAFE: Use parameterized queries
-const result = await pool.query("SELECT * FROM donations WHERE donor_id = $1", [donorId]);
-
-// ✅ SAFE: Validate input
-const validatedInput = donationSchema.parse(userInput);
-
-// ✅ SAFE: Use ORM
-const donations = await prisma.donation.findMany({
-  where: { donorId },
-});
-```
-
-### A04: Insecure Design
-
-```typescript
-// ✅ SAFE: Rate limiting for sensitive operations
-import rateLimit from "express-rate-limit";
-
-const passwordResetLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 3, // 3 requests per hour
-  message: "Too many password reset attempts",
-});
-
-app.post("/api/auth/reset-password", passwordResetLimiter, async (req, res) => {
-  // Handle password reset
-});
-
-// ✅ SAFE: Implement account lockout
-let failedAttempts = 0;
-const MAX_ATTEMPTS = 5;
-
-async function attemptLogin(email: string, password: string) {
-  if (failedAttempts >= MAX_ATTEMPTS) {
-    throw new Error("Account locked. Try again later.");
-  }
-
-  const user = await findUserByEmail(email);
-  const valid = await verifyPassword(password, user.passwordHash);
-
-  if (!valid) {
-    failedAttempts++;
-    throw new Error("Invalid credentials");
-  }
-
-  failedAttempts = 0;
-  return user;
 }
 ```
 
-### A05: Security Misconfiguration
+## Dependency Security
 
 ```typescript
-// ✅ SAFE: Environment-based configuration
-const config = {
-  port: process.env.PORT || 3000,
-  nodeEnv: process.env.NODE_ENV || "development",
-  database: {
-    url: process.env.DATABASE_URL,
-    ssl: process.env.NODE_ENV === "production",
-  },
-  jwt: {
-    secret: process.env.JWT_SECRET!,
-    expiresIn: "1h",
-  },
-  cors: {
-    origin: process.env.ALLOWED_ORIGINS?.split(",") || ["http://localhost:3000"],
-  },
-};
-
-// ✅ SAFE: Disable debug in production
-if (config.nodeEnv === "production") {
-  app.set("view cache", true);
-  app.set("trust proxy", 1);
-}
-
-// ✅ SAFE: Remove sensitive headers
-app.disable("x-powered-by");
-```
-
-### A06: Vulnerable Components
-
-```typescript
-// ✅ SAFE: Regular dependency updates
-// package.json
+// package.json scripts
 {
   "scripts": {
     "audit": "npm audit",
     "audit:fix": "npm audit fix",
-    "outdated": "npm outdated"
+    "audit:prod": "npm audit --omit=dev"
   }
 }
 
-// ✅ SAFE: Use npm audit in CI/CD
-// .github/workflows/security.yml
-// - run: npm audit --audit-level=moderate
+// Run security audits
+// npm audit
+// npm audit fix
+
+// Use Snyk for continuous monitoring
+// npm install -g snyk
+// snyk auth
+// snyk test
+// snyk monitor
+
+// Renovate or Dependabot for automated updates
+// .github/dependabot.yml
 ```
 
-### A07: Identification and Authentication Failures
+## Financial Domain Examples
+
+Complete security example for Zakat calculation API:
 
 ```typescript
-// ✅ SAFE: Strong password requirements
-import zxcvbn from "zxcvbn";
+import { z } from "zod";
+import Decimal from "decimal.js";
 
-function validatePasswordStrength(password: string): boolean {
-  const result = zxcvbn(password);
-
-  // Require score of 3 or higher (out of 4)
-  if (result.score < 3) {
-    throw new Error(`Weak password. ${result.feedback.warning}. ${result.feedback.suggestions.join(" ")}`);
-  }
-
-  return true;
-}
-
-// ✅ SAFE: Multi-factor authentication
-import speakeasy from "speakeasy";
-
-function generateTOTP() {
-  const secret = speakeasy.generateSecret({
-    name: "Donation Platform",
-  });
-
-  return {
-    secret: secret.base32,
-    qrCode: secret.otpauth_url,
-  };
-}
-
-function verifyTOTP(token: string, secret: string): boolean {
-  return speakeasy.totp.verify({
-    secret,
-    encoding: "base32",
-    token,
-    window: 2,
-  });
-}
-```
-
-### A08: Software and Data Integrity Failures
-
-```typescript
-// ✅ SAFE: Verify package integrity
-// package-lock.json contains integrity hashes
-
-// ✅ SAFE: Subresource Integrity (SRI)
-// <script src="https://cdn.example.com/lib.js"
-//         integrity="sha384-hash"
-//         crossorigin="anonymous"></script>
-
-// ✅ SAFE: Code signing
-// Sign deployments and verify signatures
-```
-
-### A09: Security Logging Failures
-
-```typescript
-import winston from "winston";
-
-const logger = winston.createLogger({
-  level: "info",
-  format: winston.format.json(),
-  transports: [
-    new winston.transports.File({ filename: "error.log", level: "error" }),
-    new winston.transports.File({ filename: "combined.log" }),
-  ],
+// Zakat calculation schema
+const ZakatCalculationSchema = z.object({
+  wealth: z.object({
+    amount: z.number().positive(),
+    currency: z.enum(["IDR", "USD", "EUR"]),
+  }),
+  nisab: z.object({
+    amount: z.number().positive(),
+    currency: z.enum(["IDR", "USD", "EUR"]),
+  }),
 });
 
-// Log security events
-function logSecurityEvent(event: string, details: any) {
-  logger.info({
-    type: "security",
-    event,
-    timestamp: new Date().toISOString(),
-    ...details,
-  });
+// Zakat service with security
+@Injectable()
+export class ZakatService {
+  constructor(
+    private readonly auditService: AuditService,
+    private readonly userRepository: UserRepository,
+  ) {}
+
+  async calculate(user: User, input: unknown, req: Request) {
+    // Validate input
+    const validation = ZakatCalculationSchema.safeParse(input);
+
+    if (!validation.success) {
+      throw new BadRequestException({
+        error: "Validation failed",
+        details: validation.error.errors,
+      });
+    }
+
+    const { wealth, nisab } = validation.data;
+
+    // Check currency match
+    if (wealth.currency !== nisab.currency) {
+      throw new BadRequestException("Currency mismatch between wealth and nisab");
+    }
+
+    // Calculate Zakat (2.5% if wealth >= nisab)
+    const wealthAmount = new Decimal(wealth.amount);
+    const nisabAmount = new Decimal(nisab.amount);
+
+    if (wealthAmount.lessThan(nisabAmount)) {
+      throw new BadRequestException("Wealth is below nisab threshold");
+    }
+
+    const zakatAmount = wealthAmount.times(0.025);
+
+    const result = {
+      wealth: {
+        amount: wealthAmount.toNumber(),
+        currency: wealth.currency,
+      },
+      nisab: {
+        amount: nisabAmount.toNumber(),
+        currency: nisab.currency,
+      },
+      zakat: {
+        amount: zakatAmount.toNumber(),
+        currency: wealth.currency,
+      },
+    };
+
+    // Audit log
+    await this.auditService.log({
+      user,
+      action: "calculate_zakat",
+      resourceType: "ZakatCalculation",
+      req,
+      changes: {
+        input: validation.data,
+        result,
+      },
+    });
+
+    return result;
+  }
 }
 
-// Examples
-app.post("/api/auth/login", async (req, res) => {
-  const { email, password } = req.body;
+// Controller with authentication and rate limiting
+@Controller("zakat")
+@UseGuards(JwtAuthGuard)
+export class ZakatController {
+  constructor(private readonly zakatService: ZakatService) {}
 
-  try {
-    const user = await attemptLogin(email, password);
-
-    logSecurityEvent("login_success", {
-      userId: user.id,
-      ip: req.ip,
-    });
-
-    res.json({ token: generateToken(user.id, user.role) });
-  } catch (error) {
-    logSecurityEvent("login_failure", {
-      email,
-      ip: req.ip,
-      reason: error.message,
-    });
-
-    res.status(401).json({ error: "Invalid credentials" });
+  @Post("calculate")
+  async calculate(@Request() req, @Body() body: unknown) {
+    return this.zakatService.calculate(req.user, body, req);
   }
+}
+```
+
+## Security Best Practices
+
+1. **Validate all input** - Use Zod or class-validator, never trust user input
+2. **Escape output** - React/frameworks do this automatically, use DOMPurify for HTML
+3. **Use parameterized queries** - TypeORM/Prisma prevent SQL injection
+4. **Hash passwords** - Use bcrypt with 12+ salt rounds
+5. **Implement authorization** - Check permissions before actions
+6. **Enable CSRF protection** - Use csurf for traditional apps, token auth for APIs
+7. **Force HTTPS** - Always use TLS in production
+8. **Set security headers** - Use Helmet.js
+9. **Rate limit APIs** - Prevent abuse with express-rate-limit
+10. **Audit sensitive actions** - Log security events
+11. **Keep dependencies updated** - Run `npm audit` and use Snyk
+12. **Use TypeScript strict mode** - Enable `strict: true` in tsconfig.json
+
+## Security Anti-patterns
+
+### 1. Trusting User Input
+
+```typescript
+// ❌ DANGEROUS - no validation
+async function updateDonation(id: string, data: any) {
+  return donationRepository.save({ id, ...data });
+}
+
+// ✅ SAFE - validated input
+async function updateDonation(id: string, data: unknown) {
+  const validated = UpdateDonationSchema.parse(data);
+  return donationRepository.save({ id, ...validated });
+}
+```
+
+### 2. Committing Secrets
+
+```typescript
+// ❌ DANGEROUS - secrets in code
+const API_KEY = "sk_live_123456789"; // NEVER DO THIS!
+
+// ✅ SAFE - environment variables
+const API_KEY = process.env.PAYMENT_GATEWAY_API_KEY!;
+```
+
+### 3. Weak Password Requirements
+
+```typescript
+// ❌ WEAK
+const password = z.string().min(6);
+
+// ✅ STRONG
+const password = z
+  .string()
+  .min(12)
+  .regex(/[A-Z]/)
+  .regex(/[a-z]/)
+  .regex(/[0-9]/)
+  .regex(/[!@#$%^&*]/);
+```
+
+### 4. SQL Injection
+
+```typescript
+// ❌ DANGEROUS - string interpolation
+const query = `SELECT * FROM users WHERE email = '${email}'`;
+
+// ✅ SAFE - parameterized query
+const query = "SELECT * FROM users WHERE email = $1";
+const result = await pool.query(query, [email]);
+```
+
+### 5. Missing Authorization
+
+```typescript
+// ❌ DANGEROUS - no authorization check
+async function deleteDonation(id: string) {
+  return donationRepository.delete(id);
+}
+
+// ✅ SAFE - authorization check
+async function deleteDonation(user: User, id: string) {
+  const donation = await donationRepository.findOne(id);
+
+  if (!policy.canDelete(user, donation)) {
+    throw new ForbiddenException();
+  }
+
+  return donationRepository.delete(id);
+}
+```
+
+## Security Testing
+
+```typescript
+import { Test } from "@nestjs/testing";
+import request from "supertest";
+
+describe("DonationController (security)", () => {
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    app = module.createNestApplication();
+    await app.init();
+  });
+
+  describe("Authorization", () => {
+    it("should reject unauthenticated requests", async () => {
+      const response = await request(app.getHttpServer()).post("/donations").send({
+        amount: 100,
+        currency: "IDR",
+      });
+
+      expect(response.status).toBe(401);
+    });
+
+    it("should reject donors from approving donations", async () => {
+      const token = await getAuthToken({ role: "donor" });
+
+      const response = await request(app.getHttpServer())
+        .post("/donations/123/approve")
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(response.status).toBe(403);
+    });
+
+    it("should allow finance managers to approve donations", async () => {
+      const token = await getAuthToken({ role: "finance_manager" });
+
+      const response = await request(app.getHttpServer())
+        .post("/donations/123/approve")
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+    });
+  });
+
+  describe("Input Validation", () => {
+    it("should reject donations with negative amount", async () => {
+      const token = await getAuthToken({ role: "donor" });
+
+      const response = await request(app.getHttpServer())
+        .post("/donations")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          amount: -100,
+          currency: "IDR",
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toContain("amount");
+    });
+
+    it("should reject donations with invalid currency", async () => {
+      const token = await getAuthToken({ role: "donor" });
+
+      const response = await request(app.getHttpServer())
+        .post("/donations")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          amount: 100,
+          currency: "INVALID",
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toContain("currency");
+    });
+
+    it("should reject XSS attempts", async () => {
+      const token = await getAuthToken({ role: "donor" });
+
+      const response = await request(app.getHttpServer())
+        .post("/donations")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          amount: 100,
+          currency: "IDR",
+          notes: '<script>alert("xss")</script>',
+        });
+
+      expect(response.status).toBe(201);
+      const donation = response.body.donation;
+      expect(donation.notes).not.toContain("<script>");
+    });
+  });
+
+  describe("SQL Injection", () => {
+    it("should prevent SQL injection in search", async () => {
+      const token = await getAuthToken({ role: "donor" });
+
+      const response = await request(app.getHttpServer())
+        .get("/donations?email=' OR '1'='1")
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.donations).toHaveLength(0);
+    });
+  });
+
+  describe("Rate Limiting", () => {
+    it("should rate limit login attempts", async () => {
+      const promises = Array.from({ length: 10 }, () =>
+        request(app.getHttpServer()).post("/auth/login").send({
+          email: "test@example.com",
+          password: "wrong",
+        }),
+      );
+
+      const responses = await Promise.all(promises);
+      const tooManyRequests = responses.filter((r) => r.status === 429);
+
+      expect(tooManyRequests.length).toBeGreaterThan(0);
+    });
+  });
 });
 ```
 
-### A10: Server-Side Request Forgery (SSRF)
+## Related Topics
 
-```typescript
-import validator from "validator";
+- [Web Services](ex-so-stla-ts__web-services.md) - NestJS security features
+- [Type Safety](ex-so-stla-ts__type-safety.md) - Compile-time safety
+- [Error Handling](ex-so-stla-ts__error-handling.md) - Secure error messages
+- [Best Practices](ex-so-stla-ts__best-practices.md) - Security best practices
 
-// ✅ SAFE: Validate and restrict URLs
-const ALLOWED_DOMAINS = ["api.example.com", "cdn.example.com"];
+## Sources
 
-function isAllowedUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url);
-
-    // Only allow HTTPS
-    if (parsed.protocol !== "https:") {
-      return false;
-    }
-
-    // Check domain whitelist
-    if (!ALLOWED_DOMAINS.includes(parsed.hostname)) {
-      return false;
-    }
-
-    // Block private IPs
-    const ip = parsed.hostname;
-    if (validator.isIP(ip) && (ip.startsWith("10.") || ip.startsWith("192.168.") || ip.startsWith("172."))) {
-      return false;
-    }
-
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-// Safe external request
-async function fetchDonationReceipt(receiptUrl: string) {
-  if (!isAllowedUrl(receiptUrl)) {
-    throw new Error("Invalid URL");
-  }
-
-  const response = await fetch(receiptUrl);
-  return response.blob();
-}
-```
-
-## Related Documentation
-
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
-- **[TypeScript Web Services](./ex-so-stla-ts__web-services.md)** - API development
-- **[TypeScript Error Handling](./ex-so-stla-ts__error-handling.md)** - Error patterns
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
+- [Node.js Security Best Practices](https://nodejs.org/en/docs/guides/security/)
+- [Express Security Best Practices](https://expressjs.com/en/advanced/best-practice-security.html)
+- [NestJS Security](https://docs.nestjs.com/security/authentication)
+- [Helmet.js Documentation](https://helmetjs.github.io/)
+- [Zod Documentation](https://zod.dev/)
+- [TypeScript Handbook - Type Guards](https://www.typescriptlang.org/docs/handbook/2/narrowing.html)
+- [bcrypt Documentation](https://github.com/kelektiv/node.bcrypt.js)
+- [jsonwebtoken Documentation](https://github.com/auth0/node-jsonwebtoken)
+- [Passport.js Documentation](https://www.passportjs.org/)
 
 ---
 
-**Last Updated**: 2025-01-23
-**TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.9.3+ (latest stable)
-**Maintainers**: OSE Documentation Team
+**Last Updated**: 2026-01-24
+**TypeScript Version**: 5.0+ (baseline), 5.7+ (stable maintenance), 5.9.x (latest stable)
+**Node.js Version**: 18+ (baseline), 20+ (LTS recommended)
+**Maintainers**: OSE Platform Documentation Team
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[TypeScript Security] --> B[Type Safety<br/>Compile-Time]
+    A --> C[Input Validation<br/>Runtime]
+    A --> D[Authentication<br/>JWT]
+    A --> E[Data Protection<br/>Encryption]
+
+    B --> B1[Strict Types<br/>No any]
+    B --> B2[Type Guards<br/>Validation]
+    B --> B3[Branded Types<br/>Nominal]
+
+    C --> C1[Zod Schema<br/>Validation]
+    C --> C2[Class Validator<br/>Decorators]
+    C --> C3[Joi<br/>Schema Validation]
+
+    D --> D1[jsonwebtoken<br/>Token Signing]
+    D --> D2[Passport.js<br/>Strategies]
+    D --> D3[OAuth 2.0<br/>Authorization]
+
+    E --> E1[crypto Module<br/>Node.js]
+    E --> E2[AES-256-GCM<br/>Encryption]
+    E --> E3[bcrypt<br/>Password Hash]
+
+    B1 --> F[Zakat Amount<br/>Type-Safe]
+    C1 --> G[Donation Input<br/>Schema Valid]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+```

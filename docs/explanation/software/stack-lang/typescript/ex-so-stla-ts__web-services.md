@@ -1294,3 +1294,74 @@ export class DonationModule {}
 **TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.9.3+ (latest stable)
 **Framework Versions**: Express 5.2.1/4.x, Fastify 5.x, NestJS 11.x, tRPC 11.x, Hono 4.x
 **Maintainers**: OSE Documentation Team
+
+## Express.js API Architecture
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Express Application] --> B[Middleware Stack]
+    A --> C[Router Layer]
+    A --> D[Error Handler]
+
+    B --> B1[Body Parser<br/>JSON]
+    B --> B2[CORS<br/>Cross-Origin]
+    B --> B3[Helmet<br/>Security Headers]
+    B --> B4[Morgan<br/>Logging]
+
+    C --> C1[/api/zakat<br/>Zakat Routes]
+    C --> C2[/api/donations<br/>Donation Routes]
+    C --> C3[/api/auth<br/>Auth Routes]
+
+    C1 --> E[Controller Layer]
+    C2 --> E
+    C3 --> E
+
+    E --> F[Service Layer]
+    F --> G[Repository Layer]
+    G --> H[Database<br/>TypeORM/Prisma]
+
+    D --> I[Global Error Handler]
+    I --> J[Error Response]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style E fill:#CC78BC,color:#fff
+    style F fill:#0173B2,color:#fff
+```
+
+## NestJS Module Architecture
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[App Module] --> B[Zakat Module]
+    A --> C[Donation Module]
+    A --> D[Auth Module]
+    A --> E[Database Module]
+
+    B --> B1[Zakat Controller]
+    B --> B2[Zakat Service]
+    B --> B3[Zakat Repository]
+
+    C --> C1[Donation Controller]
+    C --> C2[Donation Service]
+    C --> C3[Donation Repository]
+
+    D --> D1[Auth Controller]
+    D --> D2[Auth Service]
+    D --> D3[JWT Strategy]
+
+    E --> E1[TypeORM Config]
+    E --> E2[Entities]
+
+    B3 --> E2
+    C3 --> E2
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+```

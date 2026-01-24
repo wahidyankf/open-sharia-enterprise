@@ -2772,3 +2772,66 @@ Security in Go requires:
 **Last Updated**: 2026-01-23
 **Go Version**: 1.21+ (baseline), 1.22+ (recommended), 1.23 (latest)
 **Maintainers**: Platform Documentation Team
+
+## Security Defense Layers
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Zakat Platform Security] --> B[Input Validation]
+    A --> C[Authentication]
+    A --> D[Encryption]
+    A --> E[Audit Logging]
+
+    B --> B1[Struct Validation<br/>validator package]
+    B --> B2[Sanitization<br/>bluemonday]
+    B --> B3[Type Safety<br/>Compile-Time]
+
+    C --> C1[JWT Tokens<br/>dgrijalva/jwt-go]
+    C --> C2[OAuth 2.0<br/>golang.org/x/oauth2]
+    C --> C3[Password Hashing<br/>bcrypt]
+
+    D --> D1[TLS 1.3<br/>crypto/tls]
+    D --> D2[AES-GCM<br/>crypto/cipher]
+    D --> D3[Key Management<br/>Vault Integration]
+
+    E --> E1[Structured Logs<br/>zerolog/zap]
+    E --> E2[Audit Trail<br/>Immutable]
+    E --> E3[Compliance<br/>GDPR Ready]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+```
+
+## Secure Request Flow
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+sequenceDiagram
+    participant C as Client
+    participant MW as Middleware
+    participant Val as Validator
+    participant Auth
+    participant Handler
+    participant DB
+
+    C->>MW: HTTPS Request
+    MW->>MW: Rate Limit Check
+    MW->>Val: Validate Input
+    Val-->>MW: Valid/Invalid
+
+    alt Invalid Input
+        MW-->>C: 400 Bad Request
+    else Valid
+        MW->>Auth: Verify JWT
+        Auth-->>MW: User Context
+        MW->>Handler: Process Request
+        Handler->>DB: Encrypted Query
+        DB-->>Handler: Encrypted Data
+        Handler->>Handler: Decrypt & Process
+        Handler-->>C: 200 OK (Sanitized)
+    end
+```

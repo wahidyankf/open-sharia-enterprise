@@ -165,6 +165,35 @@ Garbage collection (GC) reclaims memory from unused objects. GC tuning is critic
 - **Java 8**: Parallel GC
 - **Java 9+**: G1GC
 
+### GC Selection Decision Tree
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+flowchart TD
+    A{Latency<br/>Requirements?}:::purple
+    B{Heap Size?}:::orange
+    C{Throughput<br/>Priority?}:::orange
+    D["ZGC<br/>Sub-millisecond GC<br/>Java 21+"]:::teal
+    E["Shenandoah<br/>Low Latency GC<br/>Java 25+"]:::teal
+    F["G1GC<br/>Balanced<br/>Default"]:::blue
+    G["Parallel GC<br/>High Throughput<br/>Batch Jobs"]:::blue
+
+    A -->|"< 10ms"| B
+    A -->|"> 100ms"| C
+    A -->|"10-100ms"| F
+    B -->|"< 1ms"| D
+    B -->|"1-10ms"| E
+    C -->|"Yes"| G
+    C -->|"No"| F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ### G1 Garbage Collector (Default)
 
 G1GC balances throughput and pause times for most enterprise workloads.
@@ -1280,6 +1309,26 @@ Query: jvm_gc_pause_seconds_sum / jvm_gc_pause_seconds_count
 ---
 
 ## Modern Java Performance Features
+
+### Performance Evolution Across Java Versions
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+flowchart LR
+    A["Java 17 LTS<br/>Sealed Classes<br/>Pattern Matching"]:::blue
+    B["Java 21 LTS<br/>Virtual Threads<br/>Generational ZGC"]:::orange
+    C["Java 25 LTS<br/>Compact Headers<br/>Generational Shenandoah"]:::teal
+    D["Performance Gains<br/>30-50% Improvement"]:::purple
+
+    A --> B --> C --> D
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 ### Java 17 Features
 

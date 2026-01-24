@@ -1085,3 +1085,48 @@ These features combine to make Go 1.21 a compelling upgrade for production syste
 **Last Updated**: 2026-01-23
 **Go Version**: 1.21+ (baseline), 1.22+ (recommended), 1.23 (latest)
 **Maintainers**: Platform Documentation Team
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Go 1.21 Release<br/>August 2023] --> B[Toolchain Management<br/>go install go@version]
+    A --> C[Built-in Functions<br/>min max clear]
+    A --> D[Package Initialization<br/>Order Improvements]
+    A --> E[PGO Enhancements<br/>Better Profiles]
+
+    B --> B1[Version Selection<br/>Per-Module Control]
+    B --> B2[Easy Upgrades<br/>Toolchain Switching]
+
+    C --> C1[min max Functions<br/>Generic Comparison]
+    C --> C2[clear Function<br/>Map Slice Clearing]
+
+    D --> D1[Deterministic Init<br/>Predictable Order]
+    D --> D2[Faster Startup<br/>Parallel Init]
+
+    E --> E1[Automatic Collection<br/>Profile Generation]
+    E --> E2[Better Optimization<br/>10-20% Gains]
+
+    B1 --> F[Zakat Platform<br/>Managed Toolchains]
+    C1 --> G[Donation Comparison<br/>min max Usage]
+    E1 --> H[High-Performance API<br/>PGO Optimized]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#0173B2,color:#fff
+```
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','noteTextColor':'#000','noteBkgColor':'#DE8F05','textColor':'#000','fontSize':'16px'}}}%%
+timeline
+    title Go 1.21 Development and Release Timeline
+    2023-Q2 : Feature Development : min max clear Added : Toolchain Management Design
+    2023-07 : Beta Testing : PGO Improvements : Package Init Optimization
+    2023-08 : Go 1.21 Released : Built-in Functions : Managed Toolchains : Enhanced PGO
+    2023-Q3 : Ecosystem Updates : Library Adoption : Performance Testing
+    2023-Q4 : Production Usage : Toolchain Management : Optimization Gains
+```

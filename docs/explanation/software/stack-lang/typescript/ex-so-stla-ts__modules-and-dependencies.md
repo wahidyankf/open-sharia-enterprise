@@ -350,3 +350,69 @@ packages:
 **Last Updated**: 2025-01-23
 **TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.9.3+ (latest stable)
 **Maintainers**: OSE Documentation Team
+
+## Module System
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[TS Module System] --> B[ES Modules<br/>import/export]
+    A --> C[CommonJS<br/>require/module.exports]
+    A --> D[AMD/UMD<br/>Legacy]
+    A --> E[Module Resolution<br/>Node/Classic]
+
+    B --> B1[Named Export<br/>export const]
+    B --> B2[Default Export<br/>export default]
+    B --> B3[Re-exports<br/>export * from]
+
+    C --> C1[Node.js Compat<br/>CJS Output]
+    C --> C2[Interop<br/>esModuleInterop]
+
+    D --> D1[Browser Compat<br/>RequireJS]
+    D --> D2[UMD Bundles<br/>Universal]
+
+    E --> E1[node_modules<br/>Package Lookup]
+    E --> E2[Path Mapping<br/>tsconfig paths]
+    E --> E3[Barrel Files<br/>index.ts]
+
+    B1 --> F[Zakat Module<br/>Named Exports]
+    E2 --> G[@app/zakat<br/>Path Alias]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#0173B2,color:#fff
+```
+
+## Dependency Management
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart LR
+    A[package.json] --> B[npm install]
+    B --> C[Resolve Dependencies]
+    C --> D{Conflicts?}
+
+    D -->|Yes| E[Version Resolution]
+    D -->|No| F[Download Packages]
+
+    E --> F
+    F --> G[node_modules]
+    G --> H[Type Definitions]
+
+    H -->|@types| I[DefinitelyTyped]
+    H -->|Built-in| J[Package Types]
+
+    I --> K[Type Checking]
+    J --> K
+
+    K --> L[Compilation]
+
+    style A fill:#0173B2,color:#fff
+    style C fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+    style K fill:#CC78BC,color:#fff
+```
