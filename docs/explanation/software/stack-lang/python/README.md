@@ -17,17 +17,17 @@ related:
   - ../golang/README.md
   - ../../../../governance/principles/README.md
 principles:
-  - documentation-first
-  - accessibility-first
-  - simplicity-over-complexity
-  - explicit-over-implicit
   - automation-over-manual
-last_updated: 2025-01-23
+  - explicit-over-implicit
+  - immutability
+  - pure-functions
+  - reproducibility
+last_updated: 2026-01-24
 ---
 
 # Python Programming Language Documentation
 
-**Quick Reference**: [Overview](#overview) | [Version Strategy](#python-version-strategy) | [Documentation Structure](#documentation-structure) | [Learning Paths](#learning-paths) | [Code Examples](#code-examples) | [Tools & Ecosystem](#tools-and-ecosystem) | [Resources](#resources-and-references)
+**Quick Reference**: [Overview](#overview) | [Software Engineering Principles](#software-engineering-principles) | [Version Strategy](#python-version-strategy) | [Python in the Platform](#python-in-the-platform) | [Pythonic Philosophy](#pythonic-philosophy) | [Documentation Structure](#documentation-structure) | [Learning Paths](#learning-paths) | [Code Examples](#code-examples) | [Tools & Ecosystem](#tools-and-ecosystem) | [Resources](#resources-and-references)
 
 ## Overview
 
@@ -57,52 +57,15 @@ The [Zen of Python (PEP 20)](https://peps.python.org/pep-0020/) guides Python de
 
 ## Software Engineering Principles
 
-Python documentation in the OSE platform aligns with five core principles:
+Python development in this platform follows the five software engineering principles from [governance/principles/software-engineering/](../../../../../governance/principles/software-engineering/README.md):
 
-### 1. Documentation First
+1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Python automates through pytest testing, black/ruff formatting, mypy type checking, and CI/CD pipelines
+2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Python enforces through explicit imports, type hints, explicit error handling, clear function signatures
+3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Python encourages immutable patterns through frozen dataclasses, tuples, functional programming, and immutable defaults
+4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Python supports through first-class functions, functional tools (map/filter/reduce), and functional core architecture
+5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Python enables through pyproject.toml, requirements.txt pinning, virtual environments, and deterministic builds
 
-Python code requires comprehensive documentation:
-
-- **Docstrings**: All public modules, classes, and functions have docstrings
-- **Type Hints**: All function signatures include type annotations
-- **README Files**: Each package includes purpose and usage documentation
-- **API Documentation**: Automatic generation from docstrings via Sphinx/MkDocs
-
-### 2. Accessibility First
-
-Python documentation meets WCAG AA standards:
-
-- **Color-Blind Friendly Diagrams**: Mermaid diagrams use accessible palette (#0173B2, #DE8F05, #029E73, #CC78BC)
-- **Screen Reader Compatible**: Proper semantic markup and alt text
-- **Clear Examples**: Code examples with explanatory comments
-- **Progressive Disclosure**: Beginner to advanced learning paths
-
-### 3. Simplicity Over Complexity
-
-Python embraces simplicity:
-
-- **Minimal Abstraction**: Build only what you need
-- **Standard Library First**: Use built-in modules before external dependencies
-- **Clear Over Clever**: Readable code beats concise tricks
-- **Composition Over Inheritance**: Favor composition for flexibility
-
-### 4. Explicit Over Implicit
-
-Python values explicitness:
-
-- **Type Hints**: Explicit type annotations with mypy validation
-- **Configuration**: Explicit settings over environment magic
-- **Error Handling**: Explicit exception handling over silent failures
-- **Dependencies**: Explicit import statements and dependency declarations
-
-### 5. Automation Over Manual
-
-Python excels at automation:
-
-- **Testing**: pytest for automated test suites
-- **Linting**: Ruff and Black for automated code quality
-- **Type Checking**: mypy for automated type validation
-- **CI/CD**: Automated pipelines for build, test, deploy
+**See Also**: [Functional Programming](./ex-so-stla-py__functional-programming.md) for pure functions patterns, [Best Practices](./ex-so-stla-py__best-practices.md) for explicit coding standards, [Type Safety](./ex-so-stla-py__type-safety.md) for immutable type patterns.
 
 ## Python Version Strategy
 
@@ -111,24 +74,24 @@ The platform targets modern Python versions for optimal performance and features
 ### Version Timeline
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#0173B2', 'primaryTextColor': '#000', 'primaryBorderColor': '#0173B2', 'lineColor': '#DE8F05', 'secondaryColor': '#029E73', 'tertiaryColor': '#CC78BC', 'background': '#fff', 'mainBkg': '#fff'}}}%%
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 timeline
-    title Python Version Strategy for OSE Platform
-    section Baseline
-        Python 3.11 (Oct 2022) : Performance boost (1.25x)
-                               : Exception groups (PEP 654)
-                               : tomllib stdlib
-                               : Type hint improvements
-    section Stable Maintenance
-        Python 3.12 (Oct 2023) : PEP 701 f-strings
-                               : PEP 698 @override
-                               : PEP 709 comprehensions
-                               : Per-interpreter GIL
-    section Latest Stable
-        Python 3.13 (Oct 2024) : Free-threaded mode (PEP 703)
-                               : Improved REPL
-                               : Dead battery removal
-                               : Type system enhancements
+    title Python Version Timeline (2022-2025)
+    2022-10 : Python 3.11 ⭐
+            : 1.25x performance boost
+            : Exception groups #40;PEP 654#41;
+            : tomllib stdlib
+            : Type hint improvements
+    2023-10 : Python 3.12
+            : PEP 701 f-strings
+            : PEP 698 @override
+            : PEP 709 comprehensions
+            : Per-interpreter GIL
+    2024-10 : Python 3.13 ✅
+            : Free-threaded mode #40;PEP 703#41;
+            : Improved REPL
+            : Dead battery removal
+            : Type system enhancements
 ```
 
 ### Supported Versions
@@ -158,6 +121,633 @@ timeline
 - Benefiting from improved REPL for interactive development
 - Adopting latest type system improvements (TypedDict read-only, TypeIs)
 - Building greenfield projects embracing cutting-edge features
+
+## Python in the Platform
+
+### Primary Use Cases
+
+**Data Processing and Analytics**:
+
+- Financial data analysis and reporting
+- Zakat calculation pipelines
+- Transaction processing and aggregation
+- Statistical analysis of Islamic finance metrics
+- Batch processing of large datasets
+
+**API Services**:
+
+- FastAPI for high-performance REST APIs
+- Django for comprehensive web applications
+- Flask for microservices and simple endpoints
+- GraphQL APIs with Strawberry or Ariadne
+
+**Machine Learning and AI**:
+
+- Fraud detection in Islamic banking
+- Recommendation systems for Halal investments
+- Natural language processing for Shariah compliance
+- Predictive analytics for Waqf (endowment) management
+
+**Automation and Scripting**:
+
+- Data migration scripts
+- Deployment automation
+- Report generation
+- ETL (Extract, Transform, Load) pipelines
+- Administrative task automation
+
+### Framework Stack
+
+**Web Frameworks**:
+
+**FastAPI** (Modern async-first):
+
+```python
+from fastapi import FastAPI
+from decimal import Decimal
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class ZakatRequest(BaseModel):
+    wealth: Decimal
+    nisab: Decimal
+
+@app.post("/api/zakat/calculate")
+async def calculate_zakat(request: ZakatRequest) -> dict:
+    if request.wealth >= request.nisab:
+        zakat = request.wealth * Decimal("0.025")
+        return {"wealth": request.wealth, "zakat": zakat, "eligible": True}
+    return {"wealth": request.wealth, "zakat": Decimal("0"), "eligible": False}
+```
+
+**Django** (Batteries-included framework):
+
+```python
+from django.db import models
+from decimal import Decimal
+
+class ZakatCalculation(models.Model):
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    wealth_amount = models.DecimalField(max_digits=19, decimal_places=2)
+    nisab_threshold = models.DecimalField(max_digits=19, decimal_places=2)
+    zakat_amount = models.DecimalField(max_digits=19, decimal_places=2)
+    calculation_date = models.DateTimeField(auto_now_add=True)
+
+    def calculate(self) -> Decimal:
+        """Calculate Zakat if wealth exceeds nisab."""
+        if self.wealth_amount >= self.nisab_threshold:
+            return self.wealth_amount * Decimal("0.025")
+        return Decimal("0")
+```
+
+**Flask** (Minimalist micro-framework):
+
+```python
+from flask import Flask, request, jsonify
+from decimal import Decimal
+
+app = Flask(__name__)
+
+@app.route("/api/zakat/calculate", methods=["POST"])
+def calculate_zakat():
+    data = request.get_json()
+    wealth = Decimal(str(data["wealth"]))
+    nisab = Decimal(str(data["nisab"]))
+
+    if wealth >= nisab:
+        zakat = wealth * Decimal("0.025")
+        return jsonify({"wealth": float(wealth), "zakat": float(zakat)})
+    return jsonify({"wealth": float(wealth), "zakat": 0})
+```
+
+**Testing Frameworks**:
+
+**pytest** (Industry standard):
+
+```python
+import pytest
+from decimal import Decimal
+from zakat import calculate_zakat
+
+def test_zakat_above_nisab():
+    """Test Zakat calculation for wealth above nisab threshold."""
+    result = calculate_zakat(Decimal("10000"), Decimal("5000"))
+    assert result == Decimal("250")
+
+def test_zakat_below_nisab():
+    """Test Zakat calculation for wealth below nisab threshold."""
+    result = calculate_zakat(Decimal("3000"), Decimal("5000"))
+    assert result == Decimal("0")
+
+@pytest.mark.parametrize(
+    "wealth,nisab,expected",
+    [
+        (Decimal("10000"), Decimal("5000"), Decimal("250")),
+        (Decimal("5000"), Decimal("5000"), Decimal("125")),
+        (Decimal("3000"), Decimal("5000"), Decimal("0")),
+    ],
+)
+def test_zakat_parametrized(wealth, nisab, expected):
+    """Parametrized test for various Zakat scenarios."""
+    assert calculate_zakat(wealth, nisab) == expected
+```
+
+**hypothesis** (Property-based testing):
+
+```python
+from hypothesis import given, strategies as st
+from decimal import Decimal
+from zakat import calculate_zakat
+
+@given(
+    wealth=st.decimals(min_value=0, max_value=1000000, places=2),
+    nisab=st.decimals(min_value=0, max_value=1000000, places=2),
+)
+def test_zakat_properties(wealth, nisab):
+    """Property-based test ensuring Zakat calculation invariants."""
+    result = calculate_zakat(wealth, nisab)
+
+    # Property 1: Result is always non-negative
+    assert result >= 0
+
+    # Property 2: Result is 0 if wealth < nisab
+    if wealth < nisab:
+        assert result == 0
+
+    # Property 3: Result is 2.5% if wealth >= nisab
+    if wealth >= nisab:
+        assert result == wealth * Decimal("0.025")
+```
+
+### Architectural Patterns
+
+**Hexagonal Architecture** (Ports and Adapters):
+
+```python
+from abc import ABC, abstractmethod
+from decimal import Decimal
+from typing import Protocol
+
+# Domain core - pure Python, no frameworks
+class ZakatPort(ABC):
+    """Port for Zakat calculation domain logic."""
+
+    @abstractmethod
+    def calculate(self, wealth: Decimal) -> Decimal:
+        """Calculate Zakat owed."""
+        pass
+
+class ZakatCalculator(ZakatPort):
+    """Core Zakat calculation logic."""
+
+    def __init__(self, nisab: Decimal, rate: Decimal = Decimal("0.025")):
+        self.nisab = nisab
+        self.rate = rate
+
+    def calculate(self, wealth: Decimal) -> Decimal:
+        if wealth >= self.nisab:
+            return wealth * self.rate
+        return Decimal("0")
+
+# Infrastructure adapter - HTTP
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class ZakatRequest(BaseModel):
+    wealth: Decimal
+    nisab: Decimal
+
+@app.post("/api/zakat")
+async def calculate_zakat_endpoint(request: ZakatRequest):
+    """HTTP adapter for Zakat calculation."""
+    calculator = ZakatCalculator(nisab=request.nisab)
+    zakat = calculator.calculate(request.wealth)
+    return {"wealth": request.wealth, "zakat": zakat}
+```
+
+**Functional Core, Imperative Shell**:
+
+```python
+from decimal import Decimal
+from typing import NamedTuple
+
+# Functional core - pure functions, no side effects
+class ZakatResult(NamedTuple):
+    """Immutable result of Zakat calculation."""
+    wealth: Decimal
+    nisab: Decimal
+    zakat_owed: Decimal
+    eligible: bool
+
+def calculate_zakat(wealth: Decimal, nisab: Decimal) -> ZakatResult:
+    """Pure function - deterministic Zakat calculation."""
+    eligible = wealth >= nisab
+    zakat_owed = wealth * Decimal("0.025") if eligible else Decimal("0")
+
+    return ZakatResult(
+        wealth=wealth,
+        nisab=nisab,
+        zakat_owed=zakat_owed,
+        eligible=eligible,
+    )
+
+def validate_zakat_input(wealth: Decimal, nisab: Decimal) -> tuple[bool, str]:
+    """Pure validation function."""
+    if wealth < 0:
+        return False, "Wealth cannot be negative"
+    if nisab < 0:
+        return False, "Nisab cannot be negative"
+    return True, ""
+
+# Imperative shell - side effects at boundaries
+import asyncio
+from datetime import datetime
+
+async def process_zakat_request(
+    user_id: str,
+    wealth: Decimal,
+    nisab: Decimal,
+    db_session,
+) -> ZakatResult:
+    """Imperative shell handling I/O and side effects."""
+    # Validation (pure)
+    is_valid, error_msg = validate_zakat_input(wealth, nisab)
+    if not is_valid:
+        raise ValueError(error_msg)
+
+    # Calculation (pure)
+    result = calculate_zakat(wealth, nisab)
+
+    # Side effects at boundary
+    await db_session.execute(
+        """
+        INSERT INTO zakat_calculations (user_id, wealth, nisab, zakat_owed, calculated_at)
+        VALUES ($1, $2, $3, $4, $5)
+        """,
+        user_id,
+        result.wealth,
+        result.nisab,
+        result.zakat_owed,
+        datetime.utcnow(),
+    )
+
+    return result
+```
+
+**Event-Driven Architecture**:
+
+```python
+from dataclasses import dataclass
+from datetime import datetime
+from decimal import Decimal
+from typing import Protocol
+from uuid import UUID, uuid4
+
+# Domain events
+@dataclass(frozen=True)
+class DomainEvent:
+    """Base class for domain events."""
+    event_id: UUID
+    occurred_at: datetime
+    event_type: str
+
+@dataclass(frozen=True)
+class ZakatCalculatedEvent(DomainEvent):
+    """Event emitted when Zakat is calculated."""
+    donor_id: str
+    wealth: Decimal
+    zakat_amount: Decimal
+
+    def __post_init__(self):
+        object.__setattr__(self, "event_type", "ZakatCalculated")
+
+# Event bus
+class EventHandler(Protocol):
+    """Protocol for event handlers."""
+    def handle(self, event: DomainEvent) -> None:
+        ...
+
+class EventBus:
+    """Simple event bus for domain events."""
+
+    def __init__(self):
+        self._handlers: dict[str, list[EventHandler]] = {}
+
+    def subscribe(self, event_type: str, handler: EventHandler) -> None:
+        """Subscribe handler to event type."""
+        if event_type not in self._handlers:
+            self._handlers[event_type] = []
+        self._handlers[event_type].append(handler)
+
+    def publish(self, event: DomainEvent) -> None:
+        """Publish event to all subscribers."""
+        handlers = self._handlers.get(event.event_type, [])
+        for handler in handlers:
+            handler.handle(event)
+
+# Usage
+class ZakatNotificationHandler:
+    """Handler for Zakat calculation notifications."""
+
+    def handle(self, event: DomainEvent) -> None:
+        if isinstance(event, ZakatCalculatedEvent):
+            print(f"Zakat calculated for donor {event.donor_id}: {event.zakat_amount}")
+            # Send notification, update analytics, etc.
+
+event_bus = EventBus()
+event_bus.subscribe("ZakatCalculated", ZakatNotificationHandler())
+
+# Emit event
+event = ZakatCalculatedEvent(
+    event_id=uuid4(),
+    occurred_at=datetime.utcnow(),
+    event_type="ZakatCalculated",
+    donor_id="donor-123",
+    wealth=Decimal("10000"),
+    zakat_amount=Decimal("250"),
+)
+event_bus.publish(event)
+```
+
+### Real-World OSE Platform Examples
+
+**Example 1: Murabaha Contract Validation**:
+
+```python
+from decimal import Decimal
+from dataclasses import dataclass
+from typing import Optional
+
+@dataclass(frozen=True)
+class MurabahaContract:
+    """Immutable Murabaha contract value object."""
+    contract_id: str
+    asset_cost: Decimal
+    profit_margin_rate: Decimal
+    down_payment: Decimal
+
+    def __post_init__(self):
+        """Validate contract invariants."""
+        if self.asset_cost <= 0:
+            raise ValueError("Asset cost must be positive")
+        if not (0 <= self.profit_margin_rate <= 1):
+            raise ValueError("Profit margin rate must be between 0 and 1")
+        if self.down_payment < 0:
+            raise ValueError("Down payment cannot be negative")
+        if self.down_payment > self.total_selling_price:
+            raise ValueError("Down payment exceeds total price")
+
+    @property
+    def profit_amount(self) -> Decimal:
+        """Calculate profit based on cost and margin."""
+        return self.asset_cost * self.profit_margin_rate
+
+    @property
+    def total_selling_price(self) -> Decimal:
+        """Calculate total price including profit."""
+        return self.asset_cost + self.profit_amount
+
+    @property
+    def financing_amount(self) -> Decimal:
+        """Calculate amount to be financed after down payment."""
+        return self.total_selling_price - self.down_payment
+
+# Usage with validation
+contract = MurabahaContract(
+    contract_id="MB-2026-001",
+    asset_cost=Decimal("200000.00"),
+    profit_margin_rate=Decimal("0.15"),  # 15% profit
+    down_payment=Decimal("50000.00"),
+)
+
+print(f"Profit: {contract.profit_amount}")  # 30000.00
+print(f"Total: {contract.total_selling_price}")  # 230000.00
+print(f"Financing: {contract.financing_amount}")  # 180000.00
+```
+
+**Example 2: Waqf (Endowment) Portfolio Management**:
+
+```python
+from decimal import Decimal
+from typing import List, Protocol
+from dataclasses import dataclass, field
+
+class Investment(Protocol):
+    """Protocol for Shariah-compliant investments."""
+    def calculate_return(self) -> Decimal:
+        ...
+
+    def is_shariah_compliant(self) -> bool:
+        ...
+
+@dataclass(frozen=True)
+class PropertyInvestment:
+    """Real estate investment for Waqf."""
+    property_id: str
+    purchase_price: Decimal
+    monthly_rental_income: Decimal
+    months_held: int
+
+    def calculate_return(self) -> Decimal:
+        """Calculate total rental income."""
+        return self.monthly_rental_income * self.months_held
+
+    def is_shariah_compliant(self) -> bool:
+        """Property investments are Shariah-compliant."""
+        return True
+
+@dataclass(frozen=True)
+class WaqfPortfolio:
+    """Immutable Waqf portfolio with multiple investments."""
+    waqf_id: str
+    investments: tuple[Investment, ...] = field(default_factory=tuple)
+
+    @property
+    def total_returns(self) -> Decimal:
+        """Calculate total returns from all investments."""
+        return sum(
+            inv.calculate_return() for inv in self.investments
+        )
+
+    @property
+    def all_shariah_compliant(self) -> bool:
+        """Verify all investments are Shariah-compliant."""
+        return all(inv.is_shariah_compliant() for inv in self.investments)
+
+# Usage
+property1 = PropertyInvestment(
+    property_id="PROP-001",
+    purchase_price=Decimal("500000"),
+    monthly_rental_income=Decimal("5000"),
+    months_held=12,
+)
+
+property2 = PropertyInvestment(
+    property_id="PROP-002",
+    purchase_price=Decimal("300000"),
+    monthly_rental_income=Decimal("3000"),
+    months_held=12,
+)
+
+portfolio = WaqfPortfolio(
+    waqf_id="WAQF-001",
+    investments=(property1, property2),
+)
+
+print(f"Total returns: {portfolio.total_returns}")  # 96000
+print(f"Shariah compliant: {portfolio.all_shariah_compliant}")  # True
+```
+
+## Pythonic Philosophy
+
+The Zen of Python provides philosophical guidance that aligns remarkably well with Islamic values and the needs of Shariah-compliant enterprise development.
+
+### Beautiful is better than ugly
+
+**Python Principle**: Code should be aesthetically pleasing and well-structured.
+
+**OSE Platform Interpretation**: Financial code represents Amanah (trustworthiness). Beautiful, well-organized code demonstrates respect for responsibility and professionalism expected in Islamic business.
+
+**Example**:
+
+```python
+# PASS: Beautiful - clear structure, readable
+@dataclass(frozen=True)
+class ZakatCalculation:
+    wealth: Decimal
+    nisab: Decimal
+
+    @property
+    def zakat_owed(self) -> Decimal:
+        return self.wealth * Decimal("0.025") if self.wealth >= self.nisab else Decimal("0")
+
+# FAIL: Ugly - cryptic, hard to verify
+def z(w, n):
+    return w * 0.025 if w >= n else 0  # What is w? What is n?
+```
+
+### Explicit is better than implicit
+
+**Python Principle**: Make behavior clear and obvious, avoid hidden magic.
+
+**OSE Platform Interpretation**: Transparency is fundamental to Shariah compliance. Explicit code enables scholars and auditors to verify Islamic finance logic without guessing hidden assumptions.
+
+**Example**:
+
+```python
+# PASS: Explicit - all parameters visible
+def calculate_murabaha_total(
+    cost: Decimal,
+    markup_rate: Decimal,
+    tax_rate: Decimal,
+) -> Decimal:
+    markup = cost * markup_rate
+    subtotal = cost + markup
+    tax = subtotal * tax_rate
+    return subtotal + tax
+
+# FAIL: Implicit - hidden global dependencies
+DEFAULT_TAX_RATE = Decimal("0.05")  # Hidden
+
+def calculate_murabaha_total(cost: Decimal, markup_rate: Decimal) -> Decimal:
+    return cost * (1 + markup_rate) * (1 + DEFAULT_TAX_RATE)  # Where does tax come from?
+```
+
+### Simple is better than complex
+
+**Python Principle**: Favor simplicity over unnecessary complexity.
+
+**OSE Platform Interpretation**: Simple code is easier to audit for Shariah compliance. Complex abstractions make it harder for Islamic scholars to verify calculations follow Islamic law.
+
+**Example**:
+
+```python
+# PASS: Simple - straightforward calculation
+def is_eligible_for_zakat(wealth: Decimal, nisab: Decimal) -> bool:
+    return wealth >= nisab
+
+# FAIL: Overly complex - unnecessary abstraction
+class ZakatEligibilityChecker:
+    def __init__(self, strategy: EligibilityStrategy):
+        self.strategy = strategy
+
+    def check(self, wealth: Decimal) -> bool:
+        return self.strategy.evaluate(wealth)
+```
+
+### Readability counts
+
+**Python Principle**: Code is read far more often than written.
+
+**OSE Platform Interpretation**: Readable code serves as documentation for Shariah compliance. Future auditors, scholars, and developers must understand Islamic finance logic years after it was written.
+
+**Example**:
+
+```python
+# PASS: Readable - self-documenting with descriptive names
+def distribute_mudharabah_profit(
+    total_profit: Decimal,
+    investor_share_ratio: Decimal,
+) -> tuple[Decimal, Decimal]:
+    """
+    Distribute profit in Mudharabah partnership.
+
+    Args:
+        total_profit: Total profit to be distributed
+        investor_share_ratio: Investor's share (e.g., 0.7 for 70%)
+
+    Returns:
+        Tuple of (investor_share, manager_share)
+    """
+    investor_share = total_profit * investor_share_ratio
+    manager_share = total_profit - investor_share
+    return investor_share, manager_share
+
+# FAIL: Cryptic - requires comments to understand
+def dp(p, r):  # distribute profit
+    i = p * r  # investor
+    m = p - i  # manager
+    return i, m
+```
+
+### There should be one obvious way to do it
+
+**Python Principle**: Prefer a single, obvious approach over multiple ways.
+
+**OSE Platform Interpretation**: Consistency in implementing Islamic finance rules prevents confusion. When calculating Zakat, there should be one standard, verified approach everyone uses.
+
+**Example**:
+
+```python
+# PASS: One obvious way - standard library Decimal
+from decimal import Decimal
+
+def calculate_zakat(wealth: Decimal, nisab: Decimal) -> Decimal:
+    """Standard approach using Decimal for precision."""
+    return wealth * Decimal("0.025") if wealth >= nisab else Decimal("0")
+
+# FAIL: Multiple inconsistent ways
+def calculate_zakat_v1(wealth: float, nisab: float) -> float:
+    return wealth * 0.025 if wealth >= nisab else 0  # Float precision issues
+
+def calculate_zakat_v2(wealth: int, nisab: int) -> int:
+    return wealth * 25 // 1000 if wealth >= nisab else 0  # Integer division
+
+# Which one is correct? Creates confusion and potential errors.
+```
+
+### Zen Principles Alignment Summary
+
+| Zen Principle                    | Islamic Value           | OSE Platform Benefit                      |
+| -------------------------------- | ----------------------- | ----------------------------------------- |
+| Beautiful is better than ugly    | Ihsan (excellence)      | Professional code reflects Islamic values |
+| Explicit is better than implicit | Transparency (Amanah)   | Auditable Shariah compliance              |
+| Simple is better than complex    | Wisdom (Hikmah)         | Accessible to scholars and developers     |
+| Readability counts               | Knowledge sharing (Ilm) | Long-term maintainability                 |
+| One obvious way                  | Consistency (Istiqamah) | Standard Islamic finance implementations  |
 
 ## Documentation Structure
 
@@ -438,28 +1028,57 @@ print(f"Financing: ${contract.financing_amount}")  # Output: Financing: $180000.
 **Package Management**:
 
 - **pip**: Standard Python package installer
-- **Poetry**: Dependency management with lock files
-- **uv**: Modern, fast Python package installer (Rust-based)
-- **pyproject.toml**: PEP 621 project metadata standard
+- **uv**: Modern, ultra-fast Python package installer (Rust-based, 10-100x faster than pip)
+- **Poetry**: Dependency management with lock files and virtual environment management
+- **Rye**: Fast Python package management and project tool (from Armin Ronacher, creator of Flask)
+- **pyproject.toml**: PEP 621 project metadata standard (modern replacement for setup.py)
+
+**Modern Package Managers Comparison**:
+
+| Tool   | Speed    | Key Features                        | Use Case                      |
+| ------ | -------- | ----------------------------------- | ----------------------------- |
+| pip    | Baseline | Standard, universal                 | Legacy projects, simple needs |
+| uv     | 10-100x  | Rust-based, drop-in pip replacement | Speed-critical, CI/CD         |
+| Poetry | 2-3x     | Dependency resolution, virtual envs | Complete project management   |
+| Rye    | 5-10x    | Toolchain management, workspaces    | Modern monorepo projects      |
 
 **Testing**:
 
-- **pytest**: Feature-rich testing framework
-- **hypothesis**: Property-based testing
-- **unittest**: Standard library testing framework
-- **pytest-bdd**: Behavior-driven development with Gherkin
+- **pytest**: Feature-rich testing framework (industry standard)
+- **hypothesis**: Property-based testing for robust test coverage
+- **unittest**: Standard library testing framework (legacy)
+- **pytest-bdd**: Behavior-driven development with Gherkin scenarios
+- **pytest-cov**: Code coverage reporting integration
+- **tox**: Testing across multiple Python versions
 
 **Code Quality**:
 
-- **Ruff**: Fast linter and formatter (Rust-based)
-- **Black**: Opinionated code formatter
-- **mypy**: Static type checker
-- **pylint**: Comprehensive linting
-- **isort**: Import sorting
+- **Ruff**: Extremely fast linter and formatter (Rust-based, 10-100x faster than alternatives, replaces Flake8, isort, and more)
+- **Black**: Opinionated code formatter (zero-configuration)
+- **mypy**: Static type checker for type hints
+- **pylint**: Comprehensive linting (slower but thorough)
+- **isort**: Import sorting (if not using Ruff)
+- **pre-commit**: Git hook framework for automated quality checks
+
+**Ruff vs Traditional Tools**:
+
+```bash
+# Traditional approach (multiple tools)
+flake8 .           # Linting
+isort .            # Import sorting
+black .            # Formatting
+pyupgrade .        # Syntax modernization
+
+# Modern approach (single tool, 10-100x faster)
+ruff check .       # Linting + pyupgrade + isort
+ruff format .      # Formatting (Black-compatible)
+```
 
 **Type Checking**:
 
-- **mypy**: Static type analysis
+- **mypy**: Most popular static type checker
+- **pyright**: Fast type checker from Microsoft (used in VS Code Pylance)
+- **pyre**: Facebook's type checker (performance-focused)
 - **Pydantic**: Runtime validation with type hints
 - **typing**: Standard library type hints
 - **typing_extensions**: Backported and experimental types
@@ -468,24 +1087,40 @@ print(f"Financing: ${contract.financing_amount}")  # Output: Financing: $180000.
 
 **FastAPI**: Async-first, OpenAPI-based, Pydantic-integrated
 
-- High performance ASGI framework
-- Automatic API documentation
+- High performance ASGI framework (comparable to Node.js/Go)
+- Automatic API documentation (Swagger UI, ReDoc)
 - Built-in validation with Pydantic
 - Native async/await support
+- Dependency injection system
+- WebSocket support
 
 **Django**: Batteries-included full-stack framework
 
-- ORM, admin interface, authentication included
-- Mature ecosystem and plugins
+- ORM with migrations
+- Admin interface out-of-the-box
+- Authentication and authorization
+- Form handling and validation
+- Template engine
 - Excellent documentation
 - Strong security defaults
+- Mature ecosystem (Django REST Framework, Celery, Channels)
 
 **Flask**: Minimalist, flexible micro-framework
 
 - Simple, easy to learn
 - Extensive extension ecosystem
 - Full control over components
-- Ideal for small services
+- Ideal for small services and APIs
+- Blueprints for modular applications
+- Jinja2 template engine
+
+**Framework Comparison for OSE Platform**:
+
+| Framework | Best For                               | Performance | Learning Curve |
+| --------- | -------------------------------------- | ----------- | -------------- |
+| FastAPI   | Modern APIs, high-performance services | Excellent   | Moderate       |
+| Django    | Full-stack apps, admin interfaces      | Good        | Steep          |
+| Flask     | Small services, prototypes             | Good        | Easy           |
 
 ### Async Libraries
 
@@ -495,6 +1130,7 @@ print(f"Financing: ${contract.financing_amount}")  # Output: Financing: $180000.
 - Event loop and coroutines
 - Async context managers
 - Task scheduling and coordination
+- Timeout and cancellation support
 
 **httpx**: Async HTTP client
 
@@ -502,6 +1138,7 @@ print(f"Financing: ${contract.financing_amount}")  # Output: Financing: $180000.
 - HTTP/1.1 and HTTP/2 support
 - Connection pooling
 - Async and sync modes
+- Excellent for testing async web services
 
 **aiohttp**: Async HTTP client/server
 
@@ -509,6 +1146,7 @@ print(f"Financing: ${contract.financing_amount}")  # Output: Financing: $180000.
 - WebSocket support
 - Streaming responses
 - Middleware support
+- Session management
 
 ### Domain-Driven Design Tools
 
@@ -516,22 +1154,155 @@ print(f"Financing: ${contract.financing_amount}")  # Output: Financing: $180000.
 
 - Runtime validation with type hints
 - Automatic JSON serialization
-- Settings management
+- Settings management from environment
 - FastAPI integration
+- V2 offers 5-50x performance improvement
 
 **transitions**: State machine library
 
 - Declarative state transitions
 - Callbacks and conditions
 - Nested and parallel states
-- State diagram generation
+- State diagram generation (Graphviz)
+- Ideal for workflow management (Murabaha contracts, Waqf administration)
 
 **injector**: Dependency injection framework
 
 - Type-safe dependency injection
-- Scoped lifetimes
+- Scoped lifetimes (singleton, request, etc.)
 - Module-based configuration
-- Testing support
+- Testing support with mock injection
+
+### Data Processing
+
+**pandas**: Data analysis library
+
+- DataFrame and Series data structures
+- CSV/Excel/SQL/JSON data I/O
+- Data cleaning and transformation
+- Statistical analysis
+- Time series analysis
+
+**polars**: Fast DataFrame library (Rust-based)
+
+- 5-10x faster than pandas
+- Lazy evaluation for optimization
+- Expression-based API
+- Better memory efficiency
+- Growing adoption for large-scale data
+
+**NumPy**: Numerical computing
+
+- N-dimensional arrays
+- Mathematical functions
+- Linear algebra
+- Random number generation
+- Foundation for pandas, SciPy, scikit-learn
+
+### Version Management
+
+**pyenv**: Python version management
+
+- Install and switch between multiple Python versions
+- Project-specific Python version pinning
+- Works on macOS and Linux
+
+**asdf**: Multi-language version manager
+
+- Single tool for Python, Node.js, Ruby, etc.
+- Plugin-based architecture
+- `.tool-versions` file for reproducibility
+
+**uv**: Built-in Python version management (modern approach)
+
+- Manages Python versions and packages in one tool
+- Extremely fast (Rust-based)
+- Drop-in replacement for pyenv + pip
+
+### Reproducible Python Development
+
+**Version Management with pyenv (Recommended)**:
+
+```bash
+# Install pyenv
+curl https://pyenv.run | bash
+
+# Install Python 3.13.1
+pyenv install 3.13.1
+
+# Set local Python version for project
+pyenv local 3.13.1
+
+# Verify
+python --version  # Python 3.13.1
+```
+
+**Virtual Environments**:
+
+```bash
+# Create virtual environment
+python -m venv .venv
+
+# Activate (Linux/macOS)
+source .venv/bin/activate
+
+# Activate (Windows)
+.venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+**Modern Dependency Management with uv**:
+
+```bash
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Create project with uv (includes virtual env)
+uv venv
+
+# Install dependencies (10-100x faster than pip)
+uv pip install -r requirements.txt
+
+# Add dependency
+uv pip install fastapi
+
+# Generate lockfile
+uv pip freeze > requirements.txt
+```
+
+**pyproject.toml (Modern Standard)**:
+
+```toml
+[project]
+name = "ose-zakat-service"
+version = "1.0.0"
+description = "Zakat calculation service for OSE Platform"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.0",
+    "pydantic>=2.10.0",
+    "uvicorn[standard]>=0.34.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+```
+
+**See**: [Reproducibility First principle](../../../../../governance/principles/software-engineering/reproducibility.md)
 
 ## Resources and References
 
@@ -574,6 +1345,7 @@ print(f"Financing: ${contract.financing_amount}")  # Output: Financing: $180000.
 - [Java Documentation](../java/README.md) - JVM-based patterns
 - [Elixir Documentation](../elixir/README.md) - Functional programming on BEAM
 - [Golang Documentation](../golang/README.md) - Systems programming patterns
+- [TypeScript Documentation](../typescript/README.md) - Type-safe JavaScript patterns
 
 ### Governance and Conventions
 
@@ -605,9 +1377,11 @@ print(f"Financing: ${contract.financing_amount}")  # Output: Financing: $180000.
 - [FastAPI Documentation](https://fastapi.tiangolo.com/) - Web framework
 - [Ruff Documentation](https://docs.astral.sh/ruff/) - Fast linter and formatter
 - [mypy Documentation](https://mypy.readthedocs.io/) - Static type checker
+- [uv Documentation](https://docs.astral.sh/uv/) - Modern package installer
 
 ---
 
-**Last Updated**: 2025-01-23
+**Last Updated**: 2026-01-24
 **Python Versions**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.13.x (latest stable)
+**Total Documentation Files**: 23 core files + 3 version files + 1 templates index + 12 templates = 39 files
 **Maintainers**: OSE Platform Documentation Team

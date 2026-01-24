@@ -12,6 +12,12 @@ tags:
   - java-17
   - java-21
   - java-25
+principles:
+  - automation-over-manual
+  - explicit-over-implicit
+  - immutability
+  - pure-functions
+  - reproducibility
 ---
 
 # Java
@@ -617,7 +623,676 @@ public class TaxService {
 - **[Commit Messages](../../../../../governance/development/workflow/commit-messages.md)** - Conventional Commits
 - **[Implementation Workflow](../../../../../governance/development/workflow/implementation.md)** - Development process
 
+## Java in the Platform
+
+### Primary Use Cases
+
+**Backend Services**:
+
+- RESTful APIs for business operations
+- GraphQL endpoints for complex queries
+- gRPC services for internal communication
+- Event-driven microservices
+
+**Domain-Driven Design**:
+
+- Aggregates for business domains
+- Value Objects for Money, thresholds
+- Domain Events for business process tracking
+- Repositories and specifications
+
+**Business Logic**:
+
+- Sharia-compliant calculation engines
+- Complex validation rules
+- Financial transaction processing
+- Compliance and audit trail
+
+### Spring Boot Ecosystem
+
+**Spring Boot 4** (Primary Framework):
+
+**Spring Web**:
+
+```java
+@RestController
+@RequestMapping("/api/zakat")
+public class ZakatController {
+    private final ZakatService zakatService;
+
+    public ZakatController(ZakatService zakatService) {
+        this.zakatService = zakatService;
+    }
+
+    @PostMapping("/calculate")
+    public ResponseEntity<ZakatResponse> calculate(@Valid @RequestBody ZakatRequest request) {
+        var result = zakatService.calculate(request);
+        return ResponseEntity.ok(result);
+    }
+}
+```
+
+**Spring Data JPA**:
+
+```java
+public interface ZakatRepository extends JpaRepository<ZakatCalculation, Long> {
+    List<ZakatCalculation> findByUserIdAndCalculationDateBetween(
+        String userId,
+        LocalDate startDate,
+        LocalDate endDate
+    );
+}
+```
+
+**Spring Security**:
+
+```java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers("/api/zakat/**").hasRole("USER")
+                .anyRequest().authenticated()
+            )
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+        return http.build();
+    }
+}
+```
+
+**Spring AI** (AI/ML Integration):
+
+```java
+@Service
+public class ZakatAdvisorService {
+    private final ChatClient chatClient;
+
+    public ZakatAdvisorService(ChatClient.Builder chatClientBuilder) {
+        this.chatClient = chatClientBuilder.build();
+    }
+
+    public String getZakatAdvice(ZakatCalculation calculation) {
+        return chatClient.prompt()
+            .user(String.format(
+                "Provide Sharia-compliant advice for Zakat calculation. Wealth: %s, Zakat: %s",
+                calculation.getWealth(),
+                calculation.getZakat()
+            ))
+            .call()
+            .content();
+    }
+}
+```
+
+### Micronaut for Microservices
+
+**Micronaut** (Cloud-Native Framework):
+
+```java
+@Controller("/api/zakat")
+public class ZakatController {
+    private final ZakatService zakatService;
+
+    public ZakatController(ZakatService zakatService) {
+        this.zakatService = zakatService;
+    }
+
+    @Post("/calculate")
+    public ZakatResponse calculate(@Valid @Body ZakatRequest request) {
+        return zakatService.calculate(request);
+    }
+}
+```
+
+**Benefits**:
+
+- Fast startup time (milliseconds vs seconds)
+- Low memory footprint
+- Ahead-of-time compilation with GraalVM
+- Reactive programming support
+
+### Quarkus for Cloud-Native
+
+**Quarkus** (Kubernetes-Native Framework):
+
+```java
+@Path("/api/zakat")
+public class ZakatResource {
+    @Inject
+    ZakatService zakatService;
+
+    @POST
+    @Path("/calculate")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public ZakatResponse calculate(@Valid ZakatRequest request) {
+        return zakatService.calculate(request);
+    }
+}
+```
+
+**Benefits**:
+
+- Optimized for containers
+- Native compilation with GraalVM
+- Hot reload during development
+- Unified imperative and reactive programming
+
+### Testing Frameworks
+
+**JUnit 5** (Jupiter):
+
+```java
+class ZakatServiceTest {
+    private ZakatService zakatService;
+
+    @BeforeEach
+    void setUp() {
+        zakatService = new ZakatService(new InMemoryZakatRepository());
+    }
+
+    @Test
+    void calculate_aboveNisab_returns2Point5Percent() {
+        // Given
+        var wealth = Money.of(10000, "USD");
+        var nisab = Money.of(5000, "USD");
+        var request = new ZakatRequest(wealth, nisab);
+
+        // When
+        var result = zakatService.calculate(request);
+
+        // Then
+        assertThat(result.zakat()).isEqualTo(Money.of(250, "USD"));
+        assertThat(result.eligible()).isTrue();
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "10000, 5000, 250",
+        "5000, 5000, 125",
+        "3000, 5000, 0"
+    })
+    void calculate_variousScenarios(BigDecimal wealth, BigDecimal nisab, BigDecimal expected) {
+        var request = new ZakatRequest(Money.of(wealth, "USD"), Money.of(nisab, "USD"));
+        var result = zakatService.calculate(request);
+        assertThat(result.zakat().getAmount()).isEqualByComparingTo(expected);
+    }
+}
+```
+
+**Mockito** (Mocking):
+
+```java
+@ExtendWith(MockitoExtension.class)
+class ZakatServiceTest {
+    @Mock
+    private ZakatRepository zakatRepository;
+
+    @InjectMocks
+    private ZakatService zakatService;
+
+    @Test
+    void calculate_savesToRepository() {
+        var request = new ZakatRequest(Money.of(10000, "USD"), Money.of(5000, "USD"));
+
+        zakatService.calculate(request);
+
+        verify(zakatRepository, times(1)).save(any(ZakatCalculation.class));
+    }
+}
+```
+
+**TestContainers** (Integration Testing):
+
+```java
+@Testcontainers
+class ZakatRepositoryTest {
+    @Container
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
+        .withDatabaseName("zakat_test")
+        .withUsername("test")
+        .withPassword("test");
+
+    @Test
+    void findByUserId_returnsCalculations() {
+        // Given
+        var userId = "user-123";
+        var calculation = new ZakatCalculation(userId, Money.of(10000, "USD"), Money.of(5000, "USD"));
+        repository.save(calculation);
+
+        // When
+        var results = repository.findByUserId(userId);
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).getUserId()).isEqualTo(userId);
+    }
+}
+```
+
+### Real-World OSE Platform Examples
+
+**Example 1: Murabaha Contract Service**:
+
+```java
+@Service
+@Transactional
+public class MurabahaContractService {
+    private final MurabahaRepository repository;
+    private final DomainEventPublisher eventPublisher;
+    private final Logger logger = LoggerFactory.getLogger(MurabahaContractService.class);
+
+    public MurabahaContractService(
+        MurabahaRepository repository,
+        DomainEventPublisher eventPublisher
+    ) {
+        this.repository = repository;
+        this.eventPublisher = eventPublisher;
+    }
+
+    public MurabahaContractResult createContract(CreateMurabahaRequest request) {
+        // Functional core: pure domain logic
+        var contract = MurabahaContract.create(
+            request.assetCost(),
+            request.profitMarginRate(),
+            request.downPayment(),
+            request.paymentSchedule()
+        );
+
+        // Validate business rules
+        var validation = contract.validate();
+        if (validation.hasErrors()) {
+            throw new ValidationException(validation.errors());
+        }
+
+        // Imperative shell: side effects
+        var savedContract = repository.save(contract);
+        eventPublisher.publish(new MurabahaContractCreatedEvent(savedContract.id()));
+
+        logger.info("Created Murabaha contract: {}", savedContract.id());
+
+        return MurabahaContractResult.from(savedContract);
+    }
+}
+```
+
+**Example 2: Waqf Property Management**:
+
+```java
+// Value Object with validation
+public record PropertyId(String value) {
+    public PropertyId {
+        if (value == null || !value.matches("PROP-\\d{6}")) {
+            throw new IllegalArgumentException("Invalid property ID format");
+        }
+    }
+}
+
+// Aggregate root
+public class WaqfProperty {
+    private final PropertyId id;
+    private final String name;
+    private final Money purchasePrice;
+    private final List<RentalIncome> rentalIncomes;
+
+    private WaqfProperty(
+        PropertyId id,
+        String name,
+        Money purchasePrice,
+        List<RentalIncome> rentalIncomes
+    ) {
+        this.id = id;
+        this.name = name;
+        this.purchasePrice = purchasePrice;
+        this.rentalIncomes = List.copyOf(rentalIncomes);
+    }
+
+    public static WaqfProperty create(PropertyId id, String name, Money purchasePrice) {
+        return new WaqfProperty(id, name, purchasePrice, List.of());
+    }
+
+    public Money calculateTotalIncome() {
+        return rentalIncomes.stream()
+            .map(RentalIncome::amount)
+            .reduce(Money.ZERO, Money::add);
+    }
+
+    public WaqfProperty addRentalIncome(RentalIncome income) {
+        var updatedIncomes = new ArrayList<>(this.rentalIncomes);
+        updatedIncomes.add(income);
+        return new WaqfProperty(this.id, this.name, this.purchasePrice, updatedIncomes);
+    }
+}
+```
+
+**Example 3: Zakat Calculation with Virtual Threads**:
+
+```java
+@Service
+public class ZakatBatchService {
+    private final ZakatService zakatService;
+    private final ExecutorService virtualExecutor;
+
+    public ZakatBatchService(ZakatService zakatService) {
+        this.zakatService = zakatService;
+        this.virtualExecutor = Executors.newVirtualThreadPerTaskExecutor();
+    }
+
+    public List<ZakatResult> calculateBatch(List<ZakatRequest> requests) throws InterruptedException {
+        var futures = requests.stream()
+            .map(request -> CompletableFuture.supplyAsync(
+                () -> zakatService.calculate(request),
+                virtualExecutor
+            ))
+            .toList();
+
+        return futures.stream()
+            .map(CompletableFuture::join)
+            .toList();
+    }
+}
+```
+
+## Java Proverbs
+
+Essential Java philosophy and best practices from "Effective Java" by Joshua Bloch, adapted for OSE Platform:
+
+### Favor Composition Over Inheritance
+
+**Java Principle**: Composition provides more flexibility than inheritance.
+
+**OSE Platform Interpretation**: In Islamic finance, composition models real-world relationships better than inheritance. A MurabahaContract "has a" PaymentSchedule, not "is a" PaymentSchedule.
+
+**Example**:
+
+```java
+// PASS: Composition - flexible and testable
+public class MurabahaContract {
+    private final PaymentSchedule schedule;
+    private final ProfitCalculator calculator;
+
+    public MurabahaContract(PaymentSchedule schedule, ProfitCalculator calculator) {
+        this.schedule = schedule;
+        this.calculator = calculator;
+    }
+
+    public Money calculateTotalProfit() {
+        return calculator.calculate(schedule.getTotalAmount());
+    }
+}
+
+// FAIL: Inheritance - rigid coupling
+public class MurabahaContract extends PaymentSchedule {
+    // Inherits payment schedule implementation
+    // Cannot easily swap or test independently
+}
+```
+
+### Use Builder Pattern for Complex Objects
+
+**Java Principle**: Builder pattern for objects with many parameters.
+
+**OSE Platform Interpretation**: Financial contracts have many optional parameters. Builders ensure immutability and validate invariants.
+
+**Example**:
+
+```java
+// PASS: Builder pattern for complex contracts
+public class MurabahaContract {
+    private final String contractId;
+    private final Money assetCost;
+    private final BigDecimal profitRate;
+    private final Money downPayment;
+    private final PaymentSchedule schedule;
+
+    private MurabahaContract(Builder builder) {
+        this.contractId = builder.contractId;
+        this.assetCost = builder.assetCost;
+        this.profitRate = builder.profitRate;
+        this.downPayment = builder.downPayment;
+        this.schedule = builder.schedule;
+    }
+
+    public static class Builder {
+        private String contractId;
+        private Money assetCost;
+        private BigDecimal profitRate;
+        private Money downPayment = Money.ZERO;
+        private PaymentSchedule schedule;
+
+        public Builder contractId(String contractId) {
+            this.contractId = contractId;
+            return this;
+        }
+
+        public Builder assetCost(Money assetCost) {
+            this.assetCost = assetCost;
+            return this;
+        }
+
+        public Builder profitRate(BigDecimal profitRate) {
+            this.profitRate = profitRate;
+            return this;
+        }
+
+        public Builder downPayment(Money downPayment) {
+            this.downPayment = downPayment;
+            return this;
+        }
+
+        public Builder schedule(PaymentSchedule schedule) {
+            this.schedule = schedule;
+            return this;
+        }
+
+        public MurabahaContract build() {
+            validateInvariants();
+            return new MurabahaContract(this);
+        }
+
+        private void validateInvariants() {
+            if (assetCost == null) throw new IllegalStateException("Asset cost required");
+            if (profitRate == null) throw new IllegalStateException("Profit rate required");
+            if (downPayment.isGreaterThan(assetCost)) {
+                throw new IllegalStateException("Down payment exceeds asset cost");
+            }
+        }
+    }
+}
+
+// Usage
+var contract = new MurabahaContract.Builder()
+    .contractId("MB-2026-001")
+    .assetCost(Money.of(200000, "USD"))
+    .profitRate(new BigDecimal("0.15"))
+    .downPayment(Money.of(50000, "USD"))
+    .build();
+```
+
+### Use Enums for Type Safety
+
+**Java Principle**: Enums are type-safe constants with behavior.
+
+**OSE Platform Interpretation**: Payment statuses, contract states, and calculation types benefit from enum safety.
+
+**Example**:
+
+```java
+// PASS: Type-safe enum with behavior
+public enum PaymentStatus {
+    PENDING {
+        @Override
+        public boolean canTransitionTo(PaymentStatus status) {
+            return status == PROCESSING || status == CANCELLED;
+        }
+    },
+    PROCESSING {
+        @Override
+        public boolean canTransitionTo(PaymentStatus status) {
+            return status == COMPLETED || status == FAILED;
+        }
+    },
+    COMPLETED {
+        @Override
+        public boolean canTransitionTo(PaymentStatus status) {
+            return false; // Terminal state
+        }
+    },
+    FAILED {
+        @Override
+        public boolean canTransitionTo(PaymentStatus status) {
+            return status == PENDING; // Can retry
+        }
+    },
+    CANCELLED {
+        @Override
+        public boolean canTransitionTo(PaymentStatus status) {
+            return false; // Terminal state
+        }
+    };
+
+    public abstract boolean canTransitionTo(PaymentStatus status);
+}
+
+// Usage with validation
+public void transitionStatus(PaymentStatus newStatus) {
+    if (!this.status.canTransitionTo(newStatus)) {
+        throw new IllegalStateException(
+            String.format("Cannot transition from %s to %s", this.status, newStatus)
+        );
+    }
+    this.status = newStatus;
+}
+
+// FAIL: String constants - no type safety
+public static final String STATUS_PENDING = "PENDING";
+public static final String STATUS_PROCESSING = "PROCESSING";
+// Prone to typos and invalid transitions
+```
+
+### Minimize Mutability
+
+**Java Principle**: Immutable classes are simpler, safer, and thread-safe.
+
+**OSE Platform Interpretation**: Financial calculations must be reproducible. Immutable value objects ensure calculations can be audited and verified.
+
+**Example**:
+
+```java
+// PASS: Immutable Money value object
+public final class Money {
+    private final BigDecimal amount;
+    private final String currency;
+
+    private Money(BigDecimal amount, String currency) {
+        this.amount = amount;
+        this.currency = currency;
+    }
+
+    public static Money of(BigDecimal amount, String currency) {
+        return new Money(amount, currency);
+    }
+
+    public Money add(Money other) {
+        if (!this.currency.equals(other.currency)) {
+            throw new IllegalArgumentException("Currency mismatch");
+        }
+        return new Money(this.amount.add(other.amount), this.currency);
+    }
+
+    public Money multiply(BigDecimal multiplier) {
+        return new Money(this.amount.multiply(multiplier), this.currency);
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+}
+
+// FAIL: Mutable Money - race conditions and audit issues
+public class MutableMoney {
+    private BigDecimal amount; // Can be changed
+    private String currency; // Can be changed
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount; // Breaks immutability
+    }
+}
+```
+
 ## Tools and Ecosystem
+
+### JDK Version Managers
+
+**SDKMAN!** (Recommended):
+
+```bash
+# Install SDKMAN!
+curl -s "https://get.sdkman.io" | bash
+
+# Install Java
+sdk install java 21.0.1-tem
+
+# Switch versions
+sdk use java 21.0.1-tem
+
+# Create .sdkmanrc for project
+echo "java=21.0.1-tem" > .sdkmanrc
+```
+
+**asdf**:
+
+```bash
+# Install asdf plugin
+asdf plugin add java
+
+# Install Java
+asdf install java temurin-21.0.1+12
+
+# Set local version
+asdf local java temurin-21.0.1+12
+```
+
+**jenv**:
+
+```bash
+# Install jenv
+brew install jenv
+
+# Add Java version
+jenv add /Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home
+
+# Set local version
+jenv local 21.0
+```
+
+### GraalVM Native Image
+
+**GraalVM** enables ahead-of-time compilation for fast startup and low memory:
+
+```bash
+# Install GraalVM with SDKMAN!
+sdk install java 21.0.1-graalce
+
+# Build native image
+./mvnw -Pnative native:compile
+
+# Result: Fast startup (milliseconds), low memory footprint
+```
+
+**Benefits for OSE Platform**:
+
+- Zakat calculation CLI tools with instant startup
+- Microservices with minimal container footprint
+- Serverless functions with sub-second cold start
 
 ### Build Tools
 
@@ -632,18 +1307,50 @@ public class TaxService {
 - Enhanced performance and build caching
 - Improved dependency resolution
 
-### Code Quality
+**Gradle 8.x** (Alternative):
+
+- Kotlin DSL for type-safe builds
+- Incremental compilation
+- Build caching and performance
+
+### Code Quality Tools
 
 **Checkstyle**: Validates coding standards
 **SpotBugs**: Static analysis for bug detection
 **JaCoCo**: Code coverage measurement
 **SonarQube**: Continuous code quality inspection
+**Error Prone**: Google's compile-time bug checker
+**NullAway**: Uber's null safety checker
+
+### Modern Java Tools
+
+**jbang**: Run Java code as scripts
+
+```bash
+# Create executable Java script
+///usr/bin/env jbang "$0" "$@" ; exit $?
+
+//DEPS com.google.guava:guava:32.1.3-jre
+public class ZakatCalculator {
+    public static void main(String[] args) {
+        var wealth = new BigDecimal(args[0]);
+        var nisab = new BigDecimal("5000");
+        var zakat = wealth.compareTo(nisab) >= 0
+            ? wealth.multiply(new BigDecimal("0.025"))
+            : BigDecimal.ZERO;
+        System.out.println("Zakat: " + zakat);
+    }
+}
+```
+
+**Benefits**: Rapid prototyping, scripting, education
 
 ### Development Environment
 
-**IntelliJ IDEA**: Primary IDE
-**Eclipse**: Alternative IDE
-**VS Code**: Lightweight option with Java extensions
+**IntelliJ IDEA**: Primary IDE with excellent Java support
+**Eclipse**: Alternative IDE with strong plugin ecosystem
+**VS Code**: Lightweight option with Java Extension Pack
+**NetBeans**: Apache-maintained IDE for Java development
 
 ### Reproducible Java Development
 
@@ -778,6 +1485,6 @@ RUN ./mvnw clean install
 
 ---
 
-**Last Updated**: 2026-01-23
-**Java Version**: 17+ (baseline), 21+ (recommended), 23 (latest)
+**Last Updated**: 2026-01-24
+**Java Version**: 17+ (baseline), 21+ (recommended), 25 (latest LTS)
 **Maintainers**: Platform Documentation Team

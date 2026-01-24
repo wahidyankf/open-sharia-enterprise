@@ -196,26 +196,67 @@ See [templates/README.md](./templates/README.md) for template overview and usage
 
 ## Elixir Version Strategy
 
-**Baseline Version**: Elixir 1.12+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+timeline
+    title Elixir Version Timeline #40;2021-2025#41;
+    2021-05 : Elixir 1.12
+            : Scripted Mix install
+            : Compilation improvements
+            : mix xref enhancements
+    2022-01 : Elixir 1.13
+            : Semantic recompilation
+            : Registry improvements
+            : Calendar additions
+    2022-08 : Elixir 1.14 ⭐
+            : dbg#40;#41; debugging helper
+            : Improved diagnostics
+            : PartitionSupervisor
+    2023-06 : Elixir 1.15
+            : Compiler diagnostics
+            : Duration type
+            : Doc improvements
+    2023-12 : Elixir 1.16
+            : JSON stdlib support
+            : Process sleep improvements
+            : Module attributes
+    2024-06 : Elixir 1.17 ✅
+            : Set-theoretic types
+            : Calendar durations
+            : OTP 27 support
+    2024-12 : Elixir 1.18 🚀
+            : Type checking calls
+            : LSP listeners
+            : Built-in JSON module
+```
 
-The platform requires Elixir 1.12 as the minimum version for:
+**Platform Strategy**: Elixir 1.12+ (baseline) → Elixir 1.17+ (recommended) → Elixir 1.18 (latest)
+
+### Current Baseline: Elixir 1.12+ (Minimum Required)
+
+**Platform Standard**: Elixir 1.12 is the minimum required version for all Elixir projects.
+
+**Rationale**:
 
 - Scripted Mix installation improvements
 - Enhanced compilation performance
 - Improved mix xref for dependency analysis
+- Foundation for modern Elixir patterns (2021-2026)
 
-**Recommended Version**: Elixir 1.17+
+### Recommended Version: Elixir 1.17+ (Production Target)
 
-For new projects, use Elixir 1.17 or later to benefit from:
+**Migration Path**: Projects are encouraged to use Elixir 1.17+ for enhanced features:
 
 - Set-theoretic types for additional compile-time warnings
 - Duration data type for calendar operations
 - Enhanced Dialyzer integration
 - Erlang/OTP 27 features (JSON module, process labels)
 
-**Current Stable**: Elixir 1.18+
+### Current Stable: Elixir 1.18 (Latest)
 
-As of January 2025, Elixir 1.18 is the current stable release offering:
+**Released**: December 2024 as the latest stable version
+
+**Major Features**:
 
 - Type checking of function calls
 - Language Server Protocol (LSP) improvements
@@ -438,6 +479,592 @@ defmodule FinancialDomain.Application do
 end
 ```
 
+## Elixir in the Platform
+
+### Primary Use Cases
+
+**Real-Time Web Applications**:
+
+- Phoenix LiveView for donation dashboards
+- WebSocket-based Zakat calculation services
+- Live campaign progress tracking
+- Real-time financial analytics
+
+**Concurrent Financial Processing**:
+
+- Parallel Zakat calculations for multiple donors
+- Distributed Murabaha contract processing
+- Event-driven Waqf property management
+- High-throughput payment processing
+
+**Fault-Tolerant Services**:
+
+- Resilient donation processing pipelines
+- Self-healing financial transaction systems
+- Supervised calculation workers
+- Automatic recovery from failures
+
+**Event Sourcing and CQRS**:
+
+- Audit trail for Islamic finance transactions
+- Event-driven Zakat payment workflows
+- CQRS for donation campaign management
+- Projections for financial reporting
+
+### Phoenix Framework Ecosystem
+
+**Phoenix Framework 1.7** (Web Framework):
+
+```elixir
+# Router
+defmodule FinancialWeb.Router do
+  use FinancialWeb, :router
+
+  pipeline :api do
+    plug :accepts, ["json"]
+  end
+
+  scope "/api", FinancialWeb do
+    pipe_through :api
+
+    post "/zakat/calculate", ZakatController, :calculate
+    resources "/campaigns", CampaignController, only: [:index, :show, :create]
+  end
+end
+
+# Controller
+defmodule FinancialWeb.ZakatController do
+  use FinancialWeb, :controller
+
+  alias Financial.Zakat
+
+  def calculate(conn, %{"wealth" => wealth, "nisab" => nisab}) do
+    case Zakat.calculate(Decimal.new(wealth), Decimal.new(nisab)) do
+      {:ok, result} ->
+        json(conn, %{
+          wealth: result.wealth,
+          nisab: result.nisab,
+          zakat: result.zakat,
+          eligible: result.eligible
+        })
+
+      {:error, reason} ->
+        conn
+        |> put_status(:bad_request)
+        |> json(%{error: reason})
+    end
+  end
+end
+```
+
+**Phoenix LiveView** (Real-Time UI):
+
+```elixir
+defmodule FinancialWeb.DonationLive do
+  use FinancialWeb, :live_view
+
+  alias Financial.Donations
+
+  def mount(_params, _session, socket) do
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(Financial.PubSub, "donations")
+    end
+
+    campaigns = Donations.list_active_campaigns()
+    {:ok, assign(socket, campaigns: campaigns, total_raised: calculate_total(campaigns))}
+  end
+
+  def handle_info({:donation_created, donation}, socket) do
+    campaigns = Donations.list_active_campaigns()
+    {:noreply, assign(socket, campaigns: campaigns, total_raised: calculate_total(campaigns))}
+  end
+
+  def render(assigns) do
+    ~H"""
+    <div>
+      <h1>Active Campaigns</h1>
+      <p>Total Raised: <%= @total_raised %></p>
+
+      <%= for campaign <- @campaigns do %>
+        <div>
+          <h2><%= campaign.name %></h2>
+          <p>Goal: <%= campaign.goal %></p>
+          <p>Progress: <%= campaign.current_amount %></p>
+        </div>
+      <% end %>
+    </div>
+    """
+  end
+
+  defp calculate_total(campaigns) do
+    Enum.reduce(campaigns, Decimal.new(0), fn campaign, acc ->
+      Decimal.add(acc, campaign.current_amount)
+    end)
+  end
+end
+```
+
+**Phoenix Channels** (WebSocket Communication):
+
+```elixir
+defmodule FinancialWeb.ZakatChannel do
+  use FinancialWeb, :channel
+
+  alias Financial.Zakat
+
+  def join("zakat:lobby", _payload, socket) do
+    {:ok, socket}
+  end
+
+  def handle_in("calculate", %{"wealth" => wealth, "nisab" => nisab}, socket) do
+    case Zakat.calculate(Decimal.new(wealth), Decimal.new(nisab)) do
+      {:ok, result} ->
+        {:reply, {:ok, %{zakat: result.zakat, eligible: result.eligible}}, socket}
+
+      {:error, reason} ->
+        {:reply, {:error, %{message: reason}}, socket}
+    end
+  end
+end
+```
+
+### Ecto Database Toolkit
+
+**Ecto Schemas** (Data Structures):
+
+```elixir
+defmodule Financial.Donations.Campaign do
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  schema "campaigns" do
+    field :name, :string
+    field :description, :string
+    field :goal, :decimal
+    field :current_amount, :decimal, default: Decimal.new(0)
+    field :start_date, :date
+    field :end_date, :date
+    field :status, Ecto.Enum, values: [:draft, :active, :completed, :cancelled]
+
+    has_many :donations, Financial.Donations.Donation
+
+    timestamps()
+  end
+
+  def changeset(campaign, attrs) do
+    campaign
+    |> cast(attrs, [:name, :description, :goal, :start_date, :end_date, :status])
+    |> validate_required([:name, :goal, :start_date, :status])
+    |> validate_number(:goal, greater_than: 0)
+    |> validate_dates()
+  end
+
+  defp validate_dates(changeset) do
+    start_date = get_field(changeset, :start_date)
+    end_date = get_field(changeset, :end_date)
+
+    if start_date && end_date && Date.compare(start_date, end_date) == :gt do
+      add_error(changeset, :end_date, "must be after start date")
+    else
+      changeset
+    end
+  end
+end
+```
+
+**Ecto Queries** (Database Queries):
+
+```elixir
+defmodule Financial.Donations do
+  import Ecto.Query
+  alias Financial.Repo
+  alias Financial.Donations.{Campaign, Donation}
+
+  def list_active_campaigns do
+    Campaign
+    |> where([c], c.status == :active)
+    |> where([c], c.start_date <= ^Date.utc_today())
+    |> where([c], c.end_date >= ^Date.utc_today())
+    |> preload(:donations)
+    |> Repo.all()
+  end
+
+  def create_donation(attrs) do
+    %Donation{}
+    |> Donation.changeset(attrs)
+    |> Repo.insert()
+    |> case do
+      {:ok, donation} ->
+        update_campaign_amount(donation.campaign_id, donation.amount)
+        broadcast_donation_created(donation)
+        {:ok, donation}
+
+      error ->
+        error
+    end
+  end
+
+  defp update_campaign_amount(campaign_id, amount) do
+    Campaign
+    |> where([c], c.id == ^campaign_id)
+    |> Repo.update_all(inc: [current_amount: amount])
+  end
+
+  defp broadcast_donation_created(donation) do
+    Phoenix.PubSub.broadcast(
+      Financial.PubSub,
+      "donations",
+      {:donation_created, donation}
+    )
+  end
+end
+```
+
+**Ecto Migrations** (Schema Versioning):
+
+```elixir
+defmodule Financial.Repo.Migrations.CreateCampaigns do
+  use Ecto.Migration
+
+  def change do
+    create table(:campaigns) do
+      add :name, :string, null: false
+      add :description, :text
+      add :goal, :decimal, precision: 19, scale: 2, null: false
+      add :current_amount, :decimal, precision: 19, scale: 2, default: 0
+      add :start_date, :date, null: false
+      add :end_date, :date
+      add :status, :string, null: false
+
+      timestamps()
+    end
+
+    create index(:campaigns, [:status])
+    create index(:campaigns, [:start_date, :end_date])
+  end
+end
+```
+
+### Real-World OSE Platform Examples
+
+**Example 1: Murabaha Contract GenServer**:
+
+```elixir
+defmodule Financial.Murabaha.ContractServer do
+  use GenServer
+  require Logger
+
+  alias Financial.Murabaha.Contract
+
+  # Client API
+  def start_link(contract_id) do
+    GenServer.start_link(__MODULE__, contract_id, name: via_tuple(contract_id))
+  end
+
+  def create_contract(contract_id, attrs) do
+    GenServer.call(via_tuple(contract_id), {:create, attrs})
+  end
+
+  def make_payment(contract_id, payment) do
+    GenServer.call(via_tuple(contract_id), {:payment, payment})
+  end
+
+  def get_contract(contract_id) do
+    GenServer.call(via_tuple(contract_id), :get)
+  end
+
+  # Server Callbacks
+  @impl true
+  def init(contract_id) do
+    Logger.info("Starting Murabaha contract server for #{contract_id}")
+    {:ok, %{contract_id: contract_id, contract: nil, payments: []}}
+  end
+
+  @impl true
+  def handle_call({:create, attrs}, _from, state) do
+    case Contract.create(attrs) do
+      {:ok, contract} ->
+        new_state = %{state | contract: contract}
+        {:reply, {:ok, contract}, new_state}
+
+      {:error, reason} ->
+        {:reply, {:error, reason}, state}
+    end
+  end
+
+  @impl true
+  def handle_call({:payment, payment}, _from, state) do
+    case Contract.apply_payment(state.contract, payment) do
+      {:ok, updated_contract} ->
+        new_state = %{
+          state |
+          contract: updated_contract,
+          payments: [payment | state.payments]
+        }
+        {:reply, {:ok, updated_contract}, new_state}
+
+      {:error, reason} ->
+        {:reply, {:error, reason}, state}
+    end
+  end
+
+  @impl true
+  def handle_call(:get, _from, state) do
+    {:reply, {:ok, state.contract}, state}
+  end
+
+  defp via_tuple(contract_id) do
+    {:via, Registry, {Financial.MurabahaRegistry, contract_id}}
+  end
+end
+```
+
+**Example 2: Waqf Property Supervision Tree**:
+
+```elixir
+defmodule Financial.Waqf.Application do
+  use Application
+
+  def start(_type, _args) do
+    children = [
+      # Ecto Repository
+      Financial.Repo,
+
+      # PubSub for real-time updates
+      {Phoenix.PubSub, name: Financial.PubSub},
+
+      # Registry for Waqf properties
+      {Registry, keys: :unique, name: Financial.WaqfRegistry},
+
+      # Dynamic Supervisor for Waqf property processes
+      {DynamicSupervisor, name: Financial.Waqf.PropertySupervisor, strategy: :one_for_one},
+
+      # Waqf Manager GenServer
+      Financial.Waqf.Manager,
+
+      # Web Endpoint
+      FinancialWeb.Endpoint
+    ]
+
+    opts = [strategy: :one_for_one, name: Financial.Supervisor]
+    Supervisor.start_link(children, opts)
+  end
+end
+```
+
+**Example 3: Concurrent Zakat Processing with Task.async_stream**:
+
+```elixir
+defmodule Financial.Zakat.BatchProcessor do
+  alias Financial.Zakat
+
+  def process_batch(zakat_requests) do
+    zakat_requests
+    |> Task.async_stream(
+      &calculate_zakat/1,
+      max_concurrency: System.schedulers_online(),
+      timeout: 10_000
+    )
+    |> Enum.reduce({[], []}, fn
+      {:ok, {:ok, result}}, {successes, failures} ->
+        {[result | successes], failures}
+
+      {:ok, {:error, reason}}, {successes, failures} ->
+        {successes, [reason | failures]}
+
+      {:exit, reason}, {successes, failures} ->
+        {successes, [{:timeout, reason} | failures]}
+    end)
+    |> then(fn {successes, failures} ->
+      %{
+        successful: Enum.reverse(successes),
+        failed: Enum.reverse(failures),
+        total: length(zakat_requests)
+      }
+    end)
+  end
+
+  defp calculate_zakat(%{user_id: user_id, wealth: wealth, nisab: nisab}) do
+    case Zakat.calculate(wealth, nisab) do
+      {:ok, result} ->
+        {:ok, Map.put(result, :user_id, user_id)}
+
+      error ->
+        error
+    end
+  end
+end
+```
+
+## OTP Philosophy
+
+The Open Telecom Platform (OTP) provides a set of libraries, design principles, and behaviors for building robust, fault-tolerant systems. Understanding OTP philosophy is critical for Elixir development in financial applications.
+
+### Let It Crash Philosophy
+
+**OTP Principle**: Don't write defensive code for every edge case. Let processes crash and supervisors restart them.
+
+**OSE Platform Interpretation**: In Islamic finance, incorrect calculations are worse than service interruptions. Let it crash enables fast failure detection and automatic recovery without persisting bad state.
+
+**Example**:
+
+```elixir
+# PASS: Let it crash - fail fast on invalid input
+defmodule Financial.Zakat.Calculator do
+  def calculate(wealth, nisab) when is_struct(wealth, Decimal) and is_struct(nisab, Decimal) do
+    if Decimal.compare(wealth, nisab) in [:gt, :eq] do
+      Decimal.mult(wealth, Decimal.new("0.025"))
+    else
+      Decimal.new(0)
+    end
+  end
+
+  # Pattern match failure causes crash -> supervisor restarts process
+end
+
+# FAIL: Defensive programming - hides errors
+defmodule Financial.Zakat.DefensiveCalculator do
+  def calculate(wealth, nisab) do
+    try do
+      # Complex defensive checks
+      if is_nil(wealth) or is_nil(nisab) do
+        {:error, "Missing arguments"}
+      else
+        # Calculation
+      end
+    rescue
+      e -> {:error, e}
+    end
+  end
+end
+```
+
+### Supervision Trees for Fault Tolerance
+
+**OTP Principle**: Structure applications as supervision trees where supervisors manage worker processes.
+
+**OSE Platform Interpretation**: Financial services must be resilient. Supervision trees ensure isolated failures don't crash the entire system.
+
+**Example**:
+
+```elixir
+# PASS: Supervision tree for Zakat service
+defmodule Financial.Zakat.Supervisor do
+  use Supervisor
+
+  def start_link(opts) do
+    Supervisor.start_link(__MODULE__, opts, name: __MODULE__)
+  end
+
+  @impl true
+  def init(_opts) do
+    children = [
+      # GenServer for Zakat calculations (restarts on crash)
+      {Financial.Zakat.CalculatorServer, nisab_threshold: Decimal.new("5000")},
+
+      # Task.Supervisor for concurrent batch processing
+      {Task.Supervisor, name: Financial.Zakat.TaskSupervisor},
+
+      # Registry for user-specific calculation processes
+      {Registry, keys: :unique, name: Financial.ZakatRegistry}
+    ]
+
+    Supervisor.init(children, strategy: :one_for_one)
+  end
+end
+
+# Worker crashes -> Supervisor restarts only the failed worker
+# Other workers continue processing donations
+```
+
+### GenServer Patterns for State Management
+
+**OTP Principle**: GenServer provides a generic server pattern for stateful processes.
+
+**OSE Platform Interpretation**: GenServer encapsulates Murabaha contract state, ensuring thread-safe operations and message-passing concurrency.
+
+**Example**:
+
+```elixir
+# PASS: GenServer for stateful Murabaha contract
+defmodule Financial.Murabaha.ContractServer do
+  use GenServer
+
+  # Client API
+  def start_link(contract_id) do
+    GenServer.start_link(__MODULE__, contract_id, name: via_tuple(contract_id))
+  end
+
+  def make_payment(contract_id, amount) do
+    GenServer.call(via_tuple(contract_id), {:payment, amount})
+  end
+
+  # Server Callbacks
+  @impl true
+  def init(contract_id) do
+    contract = load_contract_from_db(contract_id)
+    {:ok, %{contract: contract, remaining_balance: contract.financing_amount}}
+  end
+
+  @impl true
+  def handle_call({:payment, amount}, _from, state) do
+    new_balance = Decimal.sub(state.remaining_balance, amount)
+
+    if Decimal.compare(new_balance, Decimal.new(0)) in [:lt] do
+      {:reply, {:error, :overpayment}, state}
+    else
+      new_state = %{state | remaining_balance: new_balance}
+      persist_payment(state.contract.id, amount)
+      {:reply, {:ok, new_balance}, new_state}
+    end
+  end
+
+  defp via_tuple(contract_id) do
+    {:via, Registry, {Financial.MurabahaRegistry, contract_id}}
+  end
+
+  defp load_contract_from_db(contract_id), do: # Database query
+  defp persist_payment(contract_id, amount), do: # Database update
+end
+```
+
+### Process Isolation and Message Passing
+
+**OTP Principle**: Processes are isolated with separate memory. They communicate via message passing, not shared state.
+
+**OSE Platform Interpretation**: In financial calculations, process isolation prevents data corruption. Each Zakat calculation runs in isolation, ensuring one donor's calculation doesn't affect another's.
+
+**Example**:
+
+```elixir
+# PASS: Isolated concurrent calculations
+defmodule Financial.Zakat.ConcurrentCalculator do
+  def calculate_for_multiple_donors(donors) do
+    donors
+    |> Enum.map(fn donor ->
+      Task.async(fn ->
+        # Each calculation in isolated process
+        calculate_zakat_isolated(donor)
+      end)
+    end)
+    |> Enum.map(&Task.await/1)
+  end
+
+  defp calculate_zakat_isolated(donor) do
+    # No shared state -> thread-safe by design
+    Zakat.calculate(donor.wealth, donor.nisab)
+  end
+end
+
+# FAIL: Shared state with mutexes (not idiomatic Elixir)
+defmodule Financial.Zakat.SharedStateCalculator do
+  def calculate_with_shared_cache(donor) do
+    # Anti-pattern: shared mutable cache requiring locks
+    :ets.insert(:cache, {donor.id, result})
+  end
+end
+```
+
 ## Tools and Ecosystem
 
 ### Core Tools
@@ -476,6 +1103,41 @@ iex> h Enum.map                   # View documentation
 iex> recompile()                  # Recompile after changes
 iex> :observer.start()            # Launch process observer
 ```
+
+### asdf Version Manager (Recommended)
+
+**asdf** enables pinning Elixir and Erlang versions for reproducibility:
+
+```bash
+# Install asdf
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf
+
+# Install plugins
+asdf plugin add erlang
+asdf plugin add elixir
+
+# Install versions
+asdf install erlang 27.2
+asdf install elixir 1.18.0-otp-27
+
+# Set local versions for project
+asdf local erlang 27.2
+asdf local elixir 1.18.0-otp-27
+```
+
+**`.tool-versions` file** (committed to repository):
+
+```
+erlang 27.2
+elixir 1.18.0-otp-27
+```
+
+**Benefits**:
+
+- **Team Consistency**: All developers use same Erlang/Elixir versions
+- **Automatic Switching**: asdf switches versions when entering project directory
+- **CI/CD Alignment**: Use same versions in continuous integration
+- **Reproducible Builds**: Deterministic build environment
 
 ### Phoenix Framework
 
@@ -625,8 +1287,96 @@ Compare Elixir approaches with other platform languages:
 - [Java Documentation](../java/README.md) - JVM-based enterprise applications
 - [Golang Documentation](../golang/README.md) - Systems programming and microservices
 
+### Nx for Numerical Computing
+
+**Nx** provides numerical computing capabilities for Elixir:
+
+```elixir
+# Install Nx
+{:nx, "~> 0.9"}
+
+# Use for financial calculations
+defmodule Financial.Analytics.ZakatTrends do
+  import Nx.Defn
+
+  defn calculate_trends(wealth_history) do
+    # Tensor operations for trend analysis
+    moving_avg = Nx.window_mean(wealth_history, window_shape: {5})
+    growth_rate = Nx.diff(wealth_history) / wealth_history[0..-1//1]
+
+    {moving_avg, growth_rate}
+  end
+end
+```
+
+**Use cases for OSE Platform**:
+
+- Statistical analysis of Zakat payments over time
+- Predictive analytics for donation campaigns
+- Machine learning for fraud detection
+- Financial forecasting
+
+### Broadway for Data Pipelines
+
+**Broadway** provides concurrent data processing pipelines:
+
+```elixir
+# Install Broadway
+{:broadway, "~> 1.1"}
+
+defmodule Financial.Donations.Pipeline do
+  use Broadway
+
+  def start_link(_opts) do
+    Broadway.start_link(__MODULE__,
+      name: __MODULE__,
+      producer: [
+        module: {BroadwayRabbitMQ.Producer, queue: "donations"}
+      ],
+      processors: [
+        default: [concurrency: 10]
+      ],
+      batchers: [
+        database: [
+          concurrency: 5,
+          batch_size: 100,
+          batch_timeout: 1000
+        ]
+      ]
+    )
+  end
+
+  @impl true
+  def handle_message(_processor, message, _context) do
+    # Process individual donation
+    message
+    |> Message.update_data(&validate_donation/1)
+  end
+
+  @impl true
+  def handle_batch(:database, messages, _batch_info, _context) do
+    # Bulk insert validated donations
+    donations = Enum.map(messages, & &1.data)
+    Repo.insert_all(Donation, donations)
+    messages
+  end
+
+  defp validate_donation(donation) do
+    # Validation logic
+    donation
+  end
+end
+```
+
+**Use cases for OSE Platform**:
+
+- High-throughput donation processing
+- Real-time Zakat calculation queues
+- Event sourcing for financial transactions
+- Integration with message brokers (RabbitMQ, Kafka)
+
 ---
 
-**Last Updated**: 2026-01-23
+**Last Updated**: 2026-01-24
 **Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
 **Maintainers**: Platform Documentation Team
