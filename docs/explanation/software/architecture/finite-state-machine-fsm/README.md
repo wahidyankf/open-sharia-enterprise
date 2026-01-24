@@ -197,12 +197,12 @@ Debugging, decision-making, best practices, and architectural integration.
    - Library vs hand-rolled implementation
    - Migration strategies (refactoring to FSM)
 
-3. **[Best Practices and Common Mistakes](./ex-so-ar-fsm__17-best-practices-and-common-mistakes.md)**
+3. **[Best Practices and Common Mistakes](./ex-so-ar-fsm__17-best-practices.md)**
    - Best practices: Start simple, explicit state, pure guards, separate concerns, immutability, logging
    - Common mistakes: State explosion, business logic in FSM, mutable shared state, missing error states, over-complication
    - OSE examples: Well-designed contract FSM, bloated Zakat FSM anti-pattern
 
-4. **[Integration with DDD and Architecture](./ex-so-ar-fsm__18-integration-with-ddd-and-architecture.md)**
+4. **[Integration with DDD and Architecture](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)**
    - FSM in DDD Aggregates (entity lifecycle)
    - FSM as domain events source
    - FSM in bounded contexts
@@ -213,7 +213,7 @@ Debugging, decision-making, best practices, and architectural integration.
 
 ### Group 6: Meta Files
 
-1. **[FAQ](./ex-so-ar-fsm__19-faq.md)**
+1. **[FAQ](./ex-so-ar-fsm__20-faq.md)**
    - When should I use FSM vs switch statements?
    - How do I handle concurrent state machines?
    - Can FSMs model infinite states?
@@ -271,8 +271,8 @@ For architects and senior developers designing complex FSMs:
    - Read framework chapters ([Spring SSM & XState](./ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md), [Statecharts & Temporal](./ex-so-ar-fsm__14-framework-statecharts-temporal-cadence.md)) for framework selection
 4. **Best Practices**:
    - **[Testing FSM Implementations](./ex-so-ar-fsm__12-testing-fsm-implementations.md)**
-   - **[Best Practices and Common Mistakes](./ex-so-ar-fsm__17-best-practices-and-common-mistakes.md)**
-   - **[Integration with DDD and Architecture](./ex-so-ar-fsm__18-integration-with-ddd-and-architecture.md)**
+   - **[Best Practices and Common Mistakes](./ex-so-ar-fsm__17-best-practices.md)**
+   - **[Integration with DDD and Architecture](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)**
 
 **Outcome**: Can design, implement, and integrate complex FSMs in enterprise systems.
 
@@ -313,7 +313,7 @@ For architects and senior developers designing complex FSMs:
 1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
 2. **[Core Concepts and Terminology](./ex-so-ar-fsm__02-core-concepts-and-terminology.md)** - Focus on events and event sourcing
 3. **[Event-Driven and Reactive FSM](./ex-so-ar-fsm__11-event-driven-and-reactive-fsm.md)**
-4. **[Integration with DDD and Architecture](./ex-so-ar-fsm__18-integration-with-ddd-and-architecture.md)** - Event sourcing + CQRS
+4. **[Integration with DDD and Architecture](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)** - Event sourcing + CQRS
 5. **[Framework: Temporal/Cadence](./ex-so-ar-fsm__14-framework-statecharts-temporal-cadence.md)** - Saga patterns
 
 **OSE Examples**: Multi-step loan approval saga, Zakat collection with event sourcing
@@ -348,7 +348,7 @@ For architects and senior developers designing complex FSMs:
 #### DDD Integration
 
 1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
-2. **[Integration with DDD and Architecture](./ex-so-ar-fsm__18-integration-with-ddd-and-architecture.md)**
+2. **[Integration with DDD and Architecture](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)**
 3. **[DDD Aggregates](../domain-driven-design-ddd/ex-so-ar-dodrdedd__09-aggregates.md)** - FSMs in aggregates
 
 #### Microservices
@@ -356,13 +356,13 @@ For architects and senior developers designing complex FSMs:
 1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
 2. **[FSM Types and Classifications](./ex-so-ar-fsm__03-fsm-types-and-classifications.md)** - Concurrent regions
 3. **[Event-Driven and Reactive FSM](./ex-so-ar-fsm__11-event-driven-and-reactive-fsm.md)** - Distributed FSMs
-4. **[Integration with DDD and Architecture](./ex-so-ar-fsm__18-integration-with-ddd-and-architecture.md)** - Microservices section
+4. **[Integration with DDD and Architecture](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)** - Microservices section
 
 #### CQRS + Event Sourcing
 
 1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
 2. **[Event-Driven and Reactive FSM](./ex-so-ar-fsm__11-event-driven-and-reactive-fsm.md)** - Event sourcing with FSMs
-3. **[Integration with DDD and Architecture](./ex-so-ar-fsm__18-integration-with-ddd-and-architecture.md)** - CQRS + Event Sourcing
+3. **[Integration with DDD and Architecture](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)** - CQRS + Event Sourcing
 4. **[Event-Driven Saga Pattern Template](./templates/ex-so-ar-fsm-te__event-driven-saga-pattern.md)**
 
 ## OSE Domain Examples Index
@@ -385,7 +385,7 @@ All examples in this documentation use the Open Sharia Enterprise domain (Islami
 - **Contract Signing with Timeout**: `APPROVED` → `EXPIRED` if not signed within 30 days
 - **Long-Term Financing (Ijara)**: Multi-year workflow with periodic payments
 
-**Files**: 01, 02, 03, 04, 05, [OOP Implementation](./ex-so-ar-fsm__08-oop-implementation-patterns.md), [Spring SSM & XState](./ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md), [DDD Integration](./ex-so-ar-fsm__18-integration-with-ddd-and-architecture.md)
+**Files**: 01, 02, 03, 04, 05, [OOP Implementation](./ex-so-ar-fsm__08-oop-implementation-patterns.md), [Spring SSM & XState](./ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md), [DDD Integration](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)
 
 ### Donation Campaigns
 
@@ -584,4 +584,4 @@ This Finite State Machine documentation provides:
 
 **Next step**: Begin with **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)** or jump to your chosen learning path above.
 
-**Questions?**: See **[FAQ](./ex-so-ar-fsm__19-faq.md)** or review decision trees in **[Decision Trees and Guidelines](./ex-so-ar-fsm__16-decision-trees-and-guidelines.md)**.
+**Questions?**: See **[FAQ](./ex-so-ar-fsm__20-faq.md)** or review decision trees in **[Decision Trees and Guidelines](./ex-so-ar-fsm__16-decision-trees-and-guidelines.md)**.

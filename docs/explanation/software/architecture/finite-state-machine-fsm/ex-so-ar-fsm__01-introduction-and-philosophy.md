@@ -626,7 +626,7 @@ class StateTransitionLog {
 
 In DDD terms, state is often a **Value Object** or part of an **Entity's identity**. FSMs elevate state from an implementation detail to a **domain concept** with business meaning.
 
-**DDD Integration**: See [ex-so-ar-fsm\_\_18-integration-with-ddd-and-architecture.md](./ex-so-ar-fsm__18-integration-with-ddd-and-architecture.md)
+**DDD Integration**: See [ex-so-ar-fsm\_\_18-integration-with-ddd-and-architecture.md](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)
 
 ## Cross-References
 

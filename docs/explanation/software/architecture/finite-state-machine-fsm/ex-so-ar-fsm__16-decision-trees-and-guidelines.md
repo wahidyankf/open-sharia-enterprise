@@ -823,7 +823,7 @@ async function submitForm(formId: string) {
 - **FSM Fundamentals**: `ex-so-ar-fsm__01-fundamentals-and-theory.md`
 - **Implementation Patterns**: `ex-so-ar-fsm__04-implementation-patterns-approaches.md`
 - **Framework Comparisons**: `ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md`, `ex-so-ar-fsm__14-framework-statecharts-temporal-cadence.md`
-- **Best Practices**: `ex-so-ar-fsm__17-best-practices-and-common-mistakes.md`
+- **Best Practices**: `ex-so-ar-fsm__17-best-practices.md`
 
 ## Summary
 

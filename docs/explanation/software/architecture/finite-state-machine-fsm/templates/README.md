@@ -196,13 +196,13 @@ These templates complement the main FSM documentation:
 - **Design**: [State Explosion](../ex-so-ar-fsm__04-state-explosion-and-mitigation.md), [Design Patterns](../ex-so-ar-fsm__07-design-patterns-and-best-practices.md)
 - **Implementation**: [OOP Patterns](../ex-so-ar-fsm__08-oop-implementation-patterns.md), [FP Patterns](../ex-so-ar-fsm__09-fp-implementation-patterns.md)
 - **Frameworks**: [Spring SSM & XState](../ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md), [Temporal/Cadence](../ex-so-ar-fsm__14-framework-statecharts-temporal-cadence.md)
-- **Guidance**: [Decision Trees](../ex-so-ar-fsm__16-decision-trees-and-guidelines.md), [Best Practices](../ex-so-ar-fsm__17-best-practices-and-common-mistakes.md)
+- **Guidance**: [Decision Trees](../ex-so-ar-fsm__16-decision-trees-and-guidelines.md), [Best Practices](../ex-so-ar-fsm__17-best-practices.md)
 
 ## Getting Help
 
 - **Conceptual questions**: See main [FSM README](../README.md)
 - **Design decisions**: [Decision Trees](../ex-so-ar-fsm__16-decision-trees-and-guidelines.md)
-- **Common mistakes**: [Best Practices](../ex-so-ar-fsm__17-best-practices-and-common-mistakes.md)
+- **Common mistakes**: [Best Practices](../ex-so-ar-fsm__17-best-practices.md)
 - **Framework selection**: [Framework comparison](../ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md)
 
 ## Contributing

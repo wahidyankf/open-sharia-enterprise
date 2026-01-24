@@ -867,4 +867,4 @@ class DocumentVerificationState extends LoanApplicationState {
 1. **Compare with FP**: [FP Implementation Patterns](./ex-so-ar-fsm__09-fp-implementation-patterns.md)
 2. **Choose a framework**: [Spring State Machine & XState](./ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md)
 3. **Test your implementation**: [Testing FSM Implementations](./ex-so-ar-fsm__12-testing-fsm-implementations.md)
-4. **Integrate with DDD**: [Integration with DDD and Architecture](./ex-so-ar-fsm__18-integration-with-ddd-and-architecture.md)
+4. **Integrate with DDD**: [Integration with DDD and Architecture](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)
