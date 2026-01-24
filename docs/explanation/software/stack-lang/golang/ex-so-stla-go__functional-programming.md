@@ -1430,3 +1430,64 @@ func SumIterative(nums []int) int {
 **Last Updated**: 2026-01-23
 **Go Version**: 1.21+ (baseline), 1.22+ (recommended), 1.23 (latest)
 **Maintainers**: Platform Documentation Team
+
+## Functional Patterns in Go
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Functional Go] --> B[First-Class Functions<br/>func as Values]
+    A --> C[Higher-Order Functions<br/>func accepts/returns func]
+    A --> D[Closures<br/>Capture Variables]
+    A --> E[Immutability<br/>Value Semantics]
+
+    B --> B1[Function Variables<br/>var f func]
+    B --> B2[Function Fields<br/>struct methods]
+
+    C --> C1[Map Function<br/>Transform Slice]
+    C --> C2[Filter Function<br/>Predicate]
+    C --> C3[Reduce Function<br/>Accumulate]
+
+    D --> D1[Lexical Scope<br/>Outer Variables]
+    D --> D2[Factory Functions<br/>Return Closures]
+
+    E --> E1[Copy on Modify<br/>No Mutation]
+    E --> E2[Immutable Structs<br/>Read-Only]
+
+    C1 --> F[Donation Transform<br/>Map Amounts]
+    C2 --> G[Filter Eligible<br/>Zakat Rules]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#029E73,color:#fff
+    style G fill:#029E73,color:#fff
+```
+
+## Function Composition
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart LR
+    A[Input Data] --> B[Function 1<br/>Validate]
+    B --> C[Function 2<br/>Transform]
+    C --> D[Function 3<br/>Enrich]
+    D --> E[Function 4<br/>Persist]
+    E --> F[Output Result]
+
+    B -.->|Error| G[Error Handler]
+    C -.->|Error| G
+    D -.->|Error| G
+    E -.->|Error| G
+
+    G --> H[Logged Error]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#029E73,color:#fff
+```

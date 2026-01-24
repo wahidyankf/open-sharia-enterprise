@@ -28,7 +28,7 @@ last_updated: 2025-01-23
 
 ## Overview
 
-Python 3.14.0 was released on October 7, 2024, with the latest patch 3.14.1 released on December 3, 2024. This release introduces experimental free-threaded mode (no-GIL), significantly improved REPL, type system enhancements, and removes 19 deprecated modules ("dead batteries").
+Python 3.14.0 was released on October 7, 2025, with the latest patch 3.14.1 released on December 3, 2025. This release introduces experimental free-threaded mode (no-GIL), significantly improved REPL, type system enhancements, and removes 19 deprecated modules ("dead batteries").
 
 ### Key Features
 
@@ -44,9 +44,9 @@ Python 3.14.0 was released on October 7, 2024, with the latest patch 3.14.1 rele
 
 ### Version Status
 
-- **Release Date**: October 7, 2024
-- **Latest Patch**: 3.14.1 (December 3, 2024)
-- **Support Status**: Stable (bugfix releases until October 2025, security fixes until October 2029)
+- **Release Date**: October 7, 2025
+- **Latest Patch**: 3.14.1 (December 3, 2025)
+- **Support Status**: Stable (bugfix releases until October 2026, security fixes until October 2030)
 - **Recommended For**: New projects, greenfield development
 - **Migration**: Compatible with Python 3.12 code (minimal breaking changes)
 

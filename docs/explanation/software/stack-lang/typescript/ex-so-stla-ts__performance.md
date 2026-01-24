@@ -967,3 +967,39 @@ setInterval(() => {
 **Last Updated**: 2025-01-23
 **TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.9.3+ (latest stable)
 **Maintainers**: OSE Documentation Team
+
+## Performance Optimization
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[TS Performance] --> B[Compilation Speed]
+    A --> C[Runtime Performance]
+    A --> D[Bundle Size]
+    A --> E[Type Checking]
+
+    B --> B1[Project References<br/>Incremental]
+    B --> B2[Skip Lib Check<br/>Faster Build]
+
+    C --> C1[Avoid any<br/>Prevent Overhead]
+    C --> C2[const Enums<br/>Inlined Values]
+    C --> C3[Optimize Loops<br/>Reduce Allocations]
+
+    D --> D1[Tree Shaking<br/>Dead Code Elimination]
+    D --> D2[Code Splitting<br/>Dynamic Imports]
+    D --> D3[Minification<br/>Terser]
+
+    E --> E1[Incremental Mode<br/>Cache]
+    E --> E2[Composite Projects<br/>Parallel]
+
+    B1 --> F[Monorepo Build<br/>Fast Incremental]
+    D1 --> G[Small Bundle<br/>Production]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+```

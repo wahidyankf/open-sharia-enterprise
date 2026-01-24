@@ -895,3 +895,48 @@ These enhancements make Go faster and more secure, maintaining the language's co
 **Last Updated**: 2026-01-23
 **Go Version**: 1.21+ (baseline), 1.22+ (recommended), 1.23 (latest)
 **Maintainers**: Platform Documentation Team
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Go 1.24 Release<br/>February 2025] --> B[Generic Type Aliases<br/>type A = B[T]]
+    A --> C[Performance Boost<br/>Runtime Efficiency]
+    A --> D[Improved Diagnostics<br/>Better Errors]
+    A --> E[Standard Library<br/>New Functions]
+
+    B --> B1[Type Aliasing<br/>Generic Support]
+    B --> B2[Code Reuse<br/>Better Abstraction]
+
+    C --> C1[Faster GC<br/>Lower Pause Times]
+    C --> C2[Optimized Compiler<br/>Better Codegen]
+
+    D --> D1[Clear Messages<br/>Helpful Errors]
+    D --> D2[Stack Traces<br/>Better Debugging]
+
+    E --> E1[New APIs<br/>Enhanced Functions]
+    E --> E2[Deprecated Removed<br/>Cleaner Library]
+
+    B1 --> F[Zakat Types<br/>Generic Aliases]
+    C1 --> G[High-Throughput API<br/>Low Latency]
+    D1 --> H[Developer Experience<br/>Better Errors]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#CC78BC,color:#fff
+```
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','noteTextColor':'#000','noteBkgColor':'#DE8F05','textColor':'#000','fontSize':'16px'}}}%%
+timeline
+    title Go 1.24 Release Timeline
+    2024-Q4 : Feature Development : Generic Aliases : Performance Tuning
+    2025-01 : Beta Testing : Community Feedback : Benchmark Validation
+    2025-02 : Go 1.24 Released : Type Aliases : Runtime Improvements : Enhanced Diagnostics
+    2025-Q1 : Ecosystem Updates : Library Migration : Production Testing
+    2025-Q2 : Adoption Growth : Performance Gains : Developer Feedback
+```

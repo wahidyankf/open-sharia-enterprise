@@ -2568,3 +2568,67 @@ Key principles:
 **Last Updated**: 2026-01-23
 **Go Version**: 1.21+ (baseline), 1.22+ (recommended), 1.23 (latest)
 **Maintainers**: Platform Documentation Team
+
+## Performance Optimization Strategy
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Go Performance] --> B[CPU Optimization]
+    A --> C[Memory Management]
+    A --> D[Concurrency]
+    A --> E[I/O Optimization]
+
+    B --> B1[Profiling<br/>pprof]
+    B --> B2[Benchmarking<br/>testing.B]
+    B --> B3[Inlining<br/>Compiler Hints]
+
+    C --> C1[Escape Analysis<br/>Stack Allocation]
+    C --> C2[Pooling<br/>sync.Pool]
+    C --> C3[GC Tuning<br/>GOGC]
+
+    D --> D1[Goroutines<br/>Lightweight]
+    D --> D2[Channels<br/>Communication]
+    D --> D3[Worker Pools<br/>Limited Resources]
+
+    E --> E1[Buffered I/O<br/>bufio]
+    E --> E2[Connection Pooling<br/>Database]
+    E --> E3[Caching<br/>In-Memory]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+```
+
+## Profiling Workflow
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart LR
+    A[Application] --> B[Enable pprof]
+    B --> C{Profile Type}
+
+    C -->|CPU| D[CPU Profile]
+    C -->|Memory| E[Heap Profile]
+    C -->|Goroutines| F[Goroutine Profile]
+
+    D --> G[Collect Samples]
+    E --> G
+    F --> G
+
+    G --> H[Analyze with go tool pprof]
+    H --> I[Identify Hotspots]
+    I --> J[Optimize Code]
+    J --> K[Benchmark]
+    K --> L{Better?}
+
+    L -->|Yes| M[Deploy]
+    L -->|No| J
+
+    style A fill:#0173B2,color:#fff
+    style H fill:#DE8F05,color:#fff
+    style I fill:#029E73,color:#fff
+    style J fill:#CC78BC,color:#fff
+```

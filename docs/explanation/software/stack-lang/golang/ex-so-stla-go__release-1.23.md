@@ -949,3 +949,48 @@ These features empower developers to write more expressive, memory-efficient cod
 **Last Updated**: 2026-01-23
 **Go Version**: 1.21+ (baseline), 1.22+ (recommended), 1.23 (latest)
 **Maintainers**: Platform Documentation Team
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Go 1.23 Release<br/>August 2024] --> B[Iterator Support<br/>range over func]
+    A --> C[Timer Optimization<br/>Efficient Timers]
+    A --> D[Slice Operations<br/>Concat Insert Delete]
+    A --> E[Unique Package<br/>Value Deduplication]
+
+    B --> B1[Custom Iterators<br/>User-Defined Ranges]
+    B --> B2[Generator Functions<br/>Lazy Sequences]
+
+    C --> C1[Faster Timers<br/>Lower Overhead]
+    C --> C2[Better Cleanup<br/>Auto GC]
+
+    D --> D1[slices.Concat<br/>Multi-Slice Merge]
+    D --> D2[slices.Insert<br/>slices.Delete]
+
+    E --> E1[unique.Handle<br/>Canonical Values]
+    E --> E2[Memory Savings<br/>Shared Instances]
+
+    B1 --> F[Zakat Records<br/>Custom Iteration]
+    C1 --> G[Donation Timers<br/>Optimized Scheduling]
+    E1 --> H[String Interning<br/>Memory Efficiency]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#0173B2,color:#fff
+```
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','noteTextColor':'#000','noteBkgColor':'#DE8F05','textColor':'#000','fontSize':'16px'}}}%%
+timeline
+    title Go 1.23 Development and Release Timeline
+    2024-Q2 : Iterator Design : Timer Optimization : Slice Utilities
+    2024-07 : Beta Testing : Iterator Validation : Performance Benchmarks
+    2024-08 : Go 1.23 Released : range over func : Optimized Timers : unique Package
+    2024-Q3 : Ecosystem Adoption : Iterator Patterns : Library Updates
+    2024-Q4 : Production Usage : Performance Gains : Memory Optimization
+```

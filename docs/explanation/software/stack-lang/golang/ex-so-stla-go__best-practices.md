@@ -2635,3 +2635,36 @@ Use this checklist to ensure your Go code follows best practices:
 **Last Updated**: 2026-01-23
 **Go Version**: 1.21+ (baseline), 1.22+ (recommended), 1.23 (latest)
 **Maintainers**: Platform Documentation Team
+
+## Error Handling Best Practices
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Error Handling Strategy] --> B[Error Detection]
+    A --> C[Error Wrapping]
+    A --> D[Error Recovery]
+    A --> E[Error Logging]
+
+    B --> B1[Return Values<br/>error type]
+    B --> B2[Sentinel Errors<br/>var ErrNotFound]
+    B --> B3[Custom Types<br/>struct errors]
+
+    C --> C1[fmt.Errorf<br/>%w verb]
+    C --> C2[Context Addition<br/>Meaningful Messages]
+    C --> C3[Stack Traces<br/>Debug Info]
+
+    D --> D1[Defer Cleanup<br/>Resource Release]
+    D --> D2[Retry Logic<br/>Exponential Backoff]
+    D --> D3[Circuit Breaker<br/>Fail Fast]
+
+    E --> E1[Structured Logs<br/>JSON Format]
+    E --> E2[Error Codes<br/>Classification]
+    E --> E3[Alerting<br/>Critical Errors]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+```

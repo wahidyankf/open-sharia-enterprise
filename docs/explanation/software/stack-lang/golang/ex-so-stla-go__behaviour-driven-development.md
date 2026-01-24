@@ -1176,6 +1176,526 @@ Scenario: Complete checkout
 - [ ] Audit trail scenarios verified (who, what, when)
 - [ ] Currency scenarios tested (beneficiary ID validation, order ID patterns)
 
+## Financial Domain BDD Examples
+
+Complete BDD scenarios for Islamic finance use cases.
+
+### Zakat Calculation Feature
+
+```gherkin
+# features/zakat_calculation.feature
+Feature: Zakat Calculation
+  As a Muslim wealth holder
+  I want to calculate my Zakat obligation
+  So that I can fulfill my religious duty
+
+  Background:
+    Given the current gold price is $60 per gram
+    And the nisab threshold is 85 grams of gold
+
+  Scenario: Wealth above nisab threshold
+    Given I have total wealth of $10,000
+    When I calculate my Zakat obligation
+    Then I should be obligated to pay Zakat
+    And the Zakat amount should be $250
+
+  Scenario: Wealth below nisab threshold
+    Given I have total wealth of $4,000
+    When I calculate my Zakat obligation
+    Then I should not be obligated to pay Zakat
+    And the Zakat amount should be $0
+
+  Scenario: Wealth exactly at nisab threshold
+    Given I have total wealth of $5,100
+    When I calculate my Zakat obligation
+    Then I should be obligated to pay Zakat
+    And the Zakat amount should be $127.50
+
+  Scenario Outline: Zakat calculation for various wealth amounts
+    Given I have total wealth of $<wealth>
+    When I calculate my Zakat obligation
+    Then I should <obligation_status>
+    And the Zakat amount should be $<zakat_amount>
+
+    Examples:
+      | wealth  | obligation_status           | zakat_amount |
+      | 1000    | not be obligated to pay Zakat | 0            |
+      | 5100    | be obligated to pay Zakat     | 127.50       |
+      | 10000   | be obligated to pay Zakat     | 250.00       |
+      | 50000   | be obligated to pay Zakat     | 1250.00      |
+      | 100000  | be obligated to pay Zakat     | 2500.00      |
+
+  Scenario: Multiple asset types combined
+    Given I have the following assets:
+      | asset_type     | value  |
+      | Cash           | 2000   |
+      | Gold holdings  | 1500   |
+      | Stocks         | 3000   |
+      | Business value | 1000   |
+    When I calculate total wealth
+    Then my total wealth should be $7,500
+    When I calculate my Zakat obligation
+    Then I should be obligated to pay Zakat
+    And the Zakat amount should be $187.50
+```
+
+**Step Definitions for Zakat**:
+
+```go
+package steps
+
+import (
+    "context"
+    "fmt"
+
+    "github.com/cucumber/godog"
+    "github.com/shopspring/decimal"
+)
+
+type ZakatContext struct {
+    goldPricePerGram   decimal.Decimal
+    nisabGrams         decimal.Decimal
+    totalWealth        decimal.Decimal
+    zakatAmount        decimal.Decimal
+    isObligated        bool
+    assets             map[string]decimal.Decimal
+}
+
+func InitializeZakatScenario(ctx *godog.ScenarioContext) {
+    zc := &ZakatContext{
+        assets: make(map[string]decimal.Decimal),
+    }
+
+    ctx.Step(`^the current gold price is \$(\d+) per gram$`, zc.theCurrentGoldPriceIs)
+    ctx.Step(`^the nisab threshold is (\d+) grams of gold$`, zc.theNisabThresholdIs)
+    ctx.Step(`^I have total wealth of \$(\d+)$`, zc.iHaveTotalWealthOf)
+    ctx.Step(`^I calculate my Zakat obligation$`, zc.iCalculateMyZakatObligation)
+    ctx.Step(`^I should be obligated to pay Zakat$`, zc.iShouldBeObligatedToPayZakat)
+    ctx.Step(`^I should not be obligated to pay Zakat$`, zc.iShouldNotBeObligatedToPayZakat)
+    ctx.Step(`^the Zakat amount should be \$([0-9.]+)$`, zc.theZakatAmountShouldBe)
+    ctx.Step(`^I have the following assets:$`, zc.iHaveTheFollowingAssets)
+    ctx.Step(`^I calculate total wealth$`, zc.iCalculateTotalWealth)
+    ctx.Step(`^my total wealth should be \$([0-9.]+)$`, zc.myTotalWealthShouldBe)
+}
+
+func (zc *ZakatContext) theCurrentGoldPriceIs(price int) error {
+    zc.goldPricePerGram = decimal.NewFromInt(int64(price))
+    return nil
+}
+
+func (zc *ZakatContext) theNisabThresholdIs(grams int) error {
+    zc.nisabGrams = decimal.NewFromInt(int64(grams))
+    return nil
+}
+
+func (zc *ZakatContext) iHaveTotalWealthOf(wealth int) error {
+    zc.totalWealth = decimal.NewFromInt(int64(wealth))
+    return nil
+}
+
+func (zc *ZakatContext) iCalculateMyZakatObligation() error {
+    nisabThreshold := zc.goldPricePerGram.Mul(zc.nisabGrams)
+
+    if zc.totalWealth.GreaterThanOrEqual(nisabThreshold) {
+        zc.isObligated = true
+        // Zakat is 2.5% of wealth
+        zc.zakatAmount = zc.totalWealth.Mul(decimal.NewFromFloat(0.025))
+    } else {
+        zc.isObligated = false
+        zc.zakatAmount = decimal.Zero
+    }
+
+    return nil
+}
+
+func (zc *ZakatContext) iShouldBeObligatedToPayZakat() error {
+    if !zc.isObligated {
+        return fmt.Errorf("expected to be obligated, but was not")
+    }
+    return nil
+}
+
+func (zc *ZakatContext) iShouldNotBeObligatedToPayZakat() error {
+    if zc.isObligated {
+        return fmt.Errorf("expected not to be obligated, but was obligated")
+    }
+    return nil
+}
+
+func (zc *ZakatContext) theZakatAmountShouldBe(expected float64) error {
+    expectedAmount := decimal.NewFromFloat(expected)
+    if !zc.zakatAmount.Equal(expectedAmount) {
+        return fmt.Errorf("expected Zakat amount to be %s, got %s",
+            expectedAmount, zc.zakatAmount)
+    }
+    return nil
+}
+
+func (zc *ZakatContext) iHaveTheFollowingAssets(table *godog.Table) error {
+    for i, row := range table.Rows {
+        if i == 0 {
+            continue // Skip header
+        }
+
+        assetType := row.Cells[0].Value
+        valueStr := row.Cells[1].Value
+        value, err := decimal.NewFromString(valueStr)
+        if err != nil {
+            return fmt.Errorf("invalid asset value: %s", valueStr)
+        }
+
+        zc.assets[assetType] = value
+    }
+
+    return nil
+}
+
+func (zc *ZakatContext) iCalculateTotalWealth() error {
+    total := decimal.Zero
+    for _, value := range zc.assets {
+        total = total.Add(value)
+    }
+    zc.totalWealth = total
+    return nil
+}
+
+func (zc *ZakatContext) myTotalWealthShouldBe(expected float64) error {
+    expectedWealth := decimal.NewFromFloat(expected)
+    if !zc.totalWealth.Equal(expectedWealth) {
+        return fmt.Errorf("expected total wealth to be %s, got %s",
+            expectedWealth, zc.totalWealth)
+    }
+    return nil
+}
+```
+
+### Murabaha Contract Feature
+
+```gherkin
+# features/murabaha_contract.feature
+Feature: Murabaha Contract Processing
+  As an Islamic bank
+  I want to process Murabaha contracts
+  So that customers can finance purchases in a Shariah-compliant manner
+
+  Background:
+    Given the bank's profit margin is 15%
+    And the payment period is 12 months
+
+  Scenario: Create Murabaha contract for vehicle purchase
+    Given the customer requests financing for a vehicle worth $20,000
+    When I create a Murabaha contract
+    Then the total contract amount should be $23,000
+    And the monthly installment should be $1,916.67
+    And the profit amount should be $3,000
+
+  Scenario: Calculate Murabaha with different profit margins
+    Given the customer requests financing for $50,000
+    And the bank's profit margin is <margin>%
+    When I create a Murabaha contract
+    Then the total contract amount should be $<total>
+    And the profit amount should be $<profit>
+
+    Examples:
+      | margin | total   | profit  |
+      | 10     | 55000   | 5000    |
+      | 15     | 57500   | 7500    |
+      | 20     | 60000   | 10000   |
+
+  Scenario: Early settlement discount calculation
+    Given a Murabaha contract with principal $20,000
+    And profit amount of $3,000
+    And 6 months remaining out of 12 months
+    When the customer requests early settlement
+    Then the remaining principal should be $10,000
+    And the proportional profit should be $1,500
+    And the early settlement amount should be $11,500
+
+  Scenario: Late payment handling (no penalty interest)
+    Given a Murabaha contract with monthly installment $1,916.67
+    And the payment is 30 days overdue
+    When I calculate the late payment
+    Then no additional interest should be charged
+    But a late payment notification should be generated
+    And the outstanding amount should remain $1,916.67
+```
+
+**Step Definitions for Murabaha**:
+
+```go
+package steps
+
+import (
+    "fmt"
+
+    "github.com/cucumber/godog"
+    "github.com/shopspring/decimal"
+)
+
+type MurabahaContext struct {
+    principal          decimal.Decimal
+    profitMargin       decimal.Decimal
+    paymentMonths      int
+    totalAmount        decimal.Decimal
+    profitAmount       decimal.Decimal
+    monthlyInstallment decimal.Decimal
+    remainingMonths    int
+    totalMonths        int
+    overdaysDays       int
+    lateNotification   bool
+}
+
+func InitializeMurabahaScenario(ctx *godog.ScenarioContext) {
+    mc := &MurabahaContext{}
+
+    ctx.Step(`^the bank's profit margin is (\d+)%$`, mc.theBanksProfitMarginIs)
+    ctx.Step(`^the payment period is (\d+) months$`, mc.thePaymentPeriodIs)
+    ctx.Step(`^the customer requests financing for a vehicle worth \$([0-9,]+)$`, mc.theCustomerRequestsFinancingForVehicle)
+    ctx.Step(`^the customer requests financing for \$([0-9,]+)$`, mc.theCustomerRequestsFinancing)
+    ctx.Step(`^I create a Murabaha contract$`, mc.iCreateAMurabahaContract)
+    ctx.Step(`^the total contract amount should be \$([0-9,]+)$`, mc.theTotalContractAmountShouldBe)
+    ctx.Step(`^the monthly installment should be \$([0-9.]+)$`, mc.theMonthlyInstallmentShouldBe)
+    ctx.Step(`^the profit amount should be \$([0-9,]+)$`, mc.theProfitAmountShouldBe)
+    ctx.Step(`^a Murabaha contract with principal \$([0-9,]+)$`, mc.aMurabahaContractWithPrincipal)
+    ctx.Step(`^profit amount of \$([0-9,]+)$`, mc.profitAmountOf)
+    ctx.Step(`^(\d+) months remaining out of (\d+) months$`, mc.monthsRemainingOutOf)
+    ctx.Step(`^the customer requests early settlement$`, mc.theCustomerRequestsEarlySettlement)
+    ctx.Step(`^the remaining principal should be \$([0-9.]+)$`, mc.theRemainingPrincipalShouldBe)
+    ctx.Step(`^the proportional profit should be \$([0-9.]+)$`, mc.theProportionalProfitShouldBe)
+    ctx.Step(`^the early settlement amount should be \$([0-9.]+)$`, mc.theEarlySettlementAmountShouldBe)
+}
+
+func (mc *MurabahaContext) theBanksProfitMarginIs(margin int) error {
+    mc.profitMargin = decimal.NewFromInt(int64(margin)).Div(decimal.NewFromInt(100))
+    return nil
+}
+
+func (mc *MurabahaContext) thePaymentPeriodIs(months int) error {
+    mc.paymentMonths = months
+    return nil
+}
+
+func (mc *MurabahaContext) theCustomerRequestsFinancingForVehicle(amount string) error {
+    return mc.theCustomerRequestsFinancing(amount)
+}
+
+func (mc *MurabahaContext) theCustomerRequestsFinancing(amount string) error {
+    val, err := parseAmount(amount)
+    if err != nil {
+        return err
+    }
+    mc.principal = val
+    return nil
+}
+
+func (mc *MurabahaContext) iCreateAMurabahaContract() error {
+    mc.profitAmount = mc.principal.Mul(mc.profitMargin)
+    mc.totalAmount = mc.principal.Add(mc.profitAmount)
+    mc.monthlyInstallment = mc.totalAmount.Div(decimal.NewFromInt(int64(mc.paymentMonths)))
+    return nil
+}
+
+func (mc *MurabahaContext) theTotalContractAmountShouldBe(expected string) error {
+    expectedAmount, err := parseAmount(expected)
+    if err != nil {
+        return err
+    }
+
+    if !mc.totalAmount.Equal(expectedAmount) {
+        return fmt.Errorf("expected total amount %s, got %s", expectedAmount, mc.totalAmount)
+    }
+    return nil
+}
+
+func (mc *MurabahaContext) theMonthlyInstallmentShouldBe(expected string) error {
+    expectedAmount, err := parseAmount(expected)
+    if err != nil {
+        return err
+    }
+
+    if !mc.monthlyInstallment.Round(2).Equal(expectedAmount.Round(2)) {
+        return fmt.Errorf("expected installment %s, got %s",
+            expectedAmount.Round(2), mc.monthlyInstallment.Round(2))
+    }
+    return nil
+}
+
+func (mc *MurabahaContext) theProfitAmountShouldBe(expected string) error {
+    expectedAmount, err := parseAmount(expected)
+    if err != nil {
+        return err
+    }
+
+    if !mc.profitAmount.Equal(expectedAmount) {
+        return fmt.Errorf("expected profit %s, got %s", expectedAmount, mc.profitAmount)
+    }
+    return nil
+}
+
+func parseAmount(s string) (decimal.Decimal, error) {
+    // Remove commas from numbers like "20,000"
+    cleaned := ""
+    for _, r := range s {
+        if r != ',' {
+            cleaned += string(r)
+        }
+    }
+    return decimal.NewFromString(cleaned)
+}
+```
+
+### Waqf (Endowment) Management Feature
+
+```gherkin
+# features/waqf_management.feature
+Feature: Waqf (Endowment) Management
+  As a Waqf administrator
+  I want to manage Waqf properties and distributions
+  So that endowment benefits reach intended beneficiaries
+
+  Background:
+    Given a Waqf property with annual rental income of $120,000
+    And the property has maintenance costs of $20,000 per year
+
+  Scenario: Calculate distributable Waqf income
+    When I calculate the net distributable income
+    Then the net income should be $100,000
+    And the distribution should follow the Waqf deed allocation
+
+  Scenario: Distribute Waqf income to beneficiaries
+    Given the following beneficiary allocation:
+      | beneficiary_type | percentage |
+      | Education        | 40         |
+      | Healthcare       | 30         |
+      | Orphans          | 20         |
+      | General charity  | 10         |
+    When I distribute the net income of $100,000
+    Then the distributions should be:
+      | beneficiary_type | amount |
+      | Education        | 40000  |
+      | Healthcare       | 30000  |
+      | Orphans          | 20000  |
+      | General charity  | 10000  |
+
+  Scenario: Waqf property valuation update
+    Given the Waqf property was valued at $1,000,000
+    And a new appraisal values it at $1,200,000
+    When I update the property valuation
+    Then the valuation increase should be $200,000
+    And the increase should be recorded in the Waqf register
+    But the increase should not be distributed as income
+
+  Scenario: Emergency Waqf expenditure approval
+    Given an emergency repair cost of $15,000
+    And the Waqf reserve fund has $50,000
+    When the administrator requests emergency expenditure approval
+    Then the expenditure should be approved
+    And the reserve fund should be reduced to $35,000
+    And the transaction should be logged with justification
+```
+
+## Integration with CI/CD
+
+Automated BDD testing in continuous integration.
+
+### GitHub Actions Workflow
+
+```yaml
+# .github/workflows/bdd-tests.yml
+name: BDD Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  bdd-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.22"
+
+      - name: Install dependencies
+        run: |
+          go mod download
+          go install github.com/cucumber/godog/cmd/godog@latest
+
+      - name: Run BDD tests
+        run: |
+          godog --format pretty --format json:bdd-report.json features/
+
+      - name: Upload BDD report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: bdd-report
+          path: bdd-report.json
+
+      - name: Run BDD tests with tags
+        run: |
+          # Smoke tests
+          godog --tags=@smoke --format pretty features/
+
+          # Critical path tests
+          godog --tags=@critical --format pretty features/
+
+          # Integration tests (exclude WIP)
+          godog --tags="@integration && ~@wip" --format pretty features/
+```
+
+### GitLab CI Configuration
+
+```yaml
+# .gitlab-ci.yml
+stages:
+  - test
+  - report
+
+bdd-tests:
+  stage: test
+  image: golang:1.22
+  script:
+    - go mod download
+    - go install github.com/cucumber/godog/cmd/godog@latest
+    - godog --format pretty --format junit:bdd-report.xml features/
+  artifacts:
+    when: always
+    reports:
+      junit: bdd-report.xml
+    paths:
+      - bdd-report.xml
+  tags:
+    - docker
+
+bdd-smoke:
+  stage: test
+  image: golang:1.22
+  script:
+    - godog --tags=@smoke --format pretty features/
+  only:
+    - merge_requests
+  tags:
+    - docker
+
+bdd-critical:
+  stage: test
+  image: golang:1.22
+  script:
+    - godog --tags=@critical --format pretty features/
+  only:
+    - main
+    - develop
+  tags:
+    - docker
+```
+
 ## Conclusion
 
 Behaviour-Driven Development in Go emphasizes:

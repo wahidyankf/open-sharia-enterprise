@@ -2222,3 +2222,60 @@ This documentation is based on authoritative sources and up-to-date (2026) secur
 **Last Updated**: 2026-01-23
 **Java Version**: 17+ (baseline), 21+ (recommended), 23 (latest)
 **Maintainers**: Platform Documentation Team
+
+## Security Architecture Patterns
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Zakat Platform Security] --> B[Authentication Layer]
+    A --> C[Authorization Layer]
+    A --> D[Data Protection]
+    A --> E[Audit Trail]
+
+    B --> B1[JWT Tokens<br/>HMAC-SHA256]
+    B --> B2[OAuth 2.0<br/>PKCE Flow]
+    B --> B3[MFA Support<br/>TOTP]
+
+    C --> C1[RBAC Model<br/>Role-Based Access]
+    C --> C2[Permission Checks<br/>Fine-Grained]
+    C --> C3[Resource Policies<br/>Attribute-Based]
+
+    D --> D1[AES-256-GCM<br/>Data Encryption]
+    D --> D2[TLS 1.3<br/>Transport Security]
+    D --> D3[Key Rotation<br/>HSM Integration]
+
+    E --> E1[Tamper-Proof Logs<br/>Append-Only]
+    E --> E2[Compliance Reports<br/>Audit Trail]
+    E --> E3[Anomaly Detection<br/>ML-Based]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+```
+
+## Cryptographic Operations Flow
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+sequenceDiagram
+    participant Client
+    participant API as API Gateway
+    participant Auth as Auth Service
+    participant Crypto as Crypto Module
+    participant DB as Database
+
+    Client->>API: Donation Request (HTTPS)
+    API->>Auth: Validate JWT Token
+    Auth-->>API: Token Valid + Permissions
+    API->>Crypto: Encrypt Sensitive Data
+    Crypto->>Crypto: Generate DEK with KMS
+    Crypto->>Crypto: AES-256-GCM Encryption
+    Crypto-->>API: Encrypted Payload
+    API->>DB: Store Encrypted Data
+    DB-->>API: Confirmation + Hash
+    API->>Client: Success (Masked Response)
+    API->>Audit: Log Operation (Hashed PII)
+```

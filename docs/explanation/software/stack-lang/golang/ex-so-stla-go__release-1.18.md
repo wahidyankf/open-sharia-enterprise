@@ -27,6 +27,49 @@ Go 1.18, released in March 2022, represents one of the most significant releases
 
 This documentation explores each feature in depth, providing practical examples and best practices for leveraging Go 1.18's capabilities in real-world applications.
 
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','noteTextColor':'#000','noteBkgColor':'#DE8F05','textColor':'#000','fontSize':'16px'}}}%%
+timeline
+    title Go 1.18 Release Timeline and Key Features
+    2021-Q4 : Generics Proposal Finalized : Type Parameters Specification
+    2022-Q1 : Go 1.18 Beta Release : Community Testing Period
+    2022-03 : Go 1.18 Official Release : Generics Available : Fuzzing Built-in : Workspace Mode Added
+    2022-Q2 : Ecosystem Adoption : Library Updates : Generic Containers
+    2022-Q3 : Production Deployment : Performance Tuning : Best Practices Emerge
+```
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Go 1.18 Major Features] --> B[Generics<br/>Type Parameters]
+    A --> C[Fuzzing Support<br/>Native Testing]
+    A --> D[Workspace Mode<br/>Multi-Module Dev]
+
+    B --> B1[Type-Safe Code]
+    B --> B2[No Performance Cost]
+    B --> B3[Reusable Functions]
+
+    C --> C1[Automated Testing]
+    C --> C2[Security Validation]
+    C --> C3[Edge Case Discovery]
+
+    D --> D1[Local Development]
+    D --> D2[No Replace Directives]
+    D --> D3[Monorepo Support]
+
+    B1 --> E[Zakat Calculator<br/>Generic Amount Types]
+    C1 --> F[Sadaqah Input Validation<br/>Fuzz Testing]
+    D1 --> G[Islamic Finance Platform<br/>Multi-Module Workspace]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#029E73,color:#fff
+    style G fill:#CC78BC,color:#fff
+```
+
 ## Generics (Type Parameters)
 
 ### What Are Generics?

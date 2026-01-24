@@ -1278,3 +1278,48 @@ const app = config({ env: "production" });
 **Last Updated**: 2026-01-24
 **TypeScript Version**: 5.0
 **Maintainers**: OSE Documentation Team
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[TypeScript 5.0<br/>March 2023] --> B[Decorators<br/>Stage 3 Support]
+    A --> C[const Type Parameters<br/>Better Inference]
+    A --> D[Enum Improvements<br/>Union Enums]
+    A --> E[Speed & Size<br/>Build Performance]
+
+    B --> B1[Standard Decorators<br/>ECMAScript Proposal]
+    B --> B2[Class Metadata<br/>Runtime Reflection]
+
+    C --> C1[Type Inference<br/>Literal Types]
+    C --> C2[Generic Constraints<br/>Better Control]
+
+    D --> D1[Union from Enum<br/>Type Safety]
+    D --> D2[Const Enums<br/>No Runtime]
+
+    E --> E1[10-20% Faster<br/>Compiler Speed]
+    E --> E2[Smaller Output<br/>Bundle Size]
+
+    B1 --> F[Zakat Controller<br/>Decorator Metadata]
+    C1 --> G[Donation Amounts<br/>Literal Inference]
+    E1 --> H[Large Codebase<br/>Fast Builds]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#0173B2,color:#fff
+```
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','noteTextColor':'#000','noteBkgColor':'#DE8F05','textColor':'#000','fontSize':'16px'}}}%%
+timeline
+    title TypeScript 5.0 Release Timeline
+    2022-Q4 : Decorator Implementation : const Parameters : Performance Tuning
+    2023-02 : Beta Testing : Community Feedback : Migration Testing
+    2023-03 : TS 5.0 Released : Standard Decorators : const Type Params : Faster Builds
+    2023-Q2 : Framework Updates : Library Migration : Production Deployment
+    2023-Q3 : Ecosystem Adoption : Performance Gains : Best Practices
+```

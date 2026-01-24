@@ -683,3 +683,64 @@ async function calculateZakatWithContext(wealth: number, nisab: number): Promise
 **Last Updated**: 2025-01-23
 **TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.9.3+ (latest stable)
 **Maintainers**: OSE Documentation Team
+
+## Error Handling Patterns
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Error Handling] --> B[Try-Catch<br/>Exceptions]
+    A --> C[Result Type<br/>Success/Failure]
+    A --> D[Error Union<br/>Type | Error]
+    A --> E[Promise Rejection<br/>Async Errors]
+
+    B --> B1[Synchronous<br/>Immediate Catch]
+    B --> B2[Custom Errors<br/>Error Classes]
+
+    C --> C1[Ok Err<br/>Rust-like]
+    C --> C2[Type Safety<br/>Explicit Handling]
+
+    D --> D1[Discriminated Union<br/>Tagged Types]
+    D --> D2[Exhaustive Check<br/>Never Type]
+
+    E --> E1[try-catch async<br/>await Pattern]
+    E --> E2[.catch Handler<br/>Promise Chain]
+
+    B2 --> F[ZakatError<br/>Custom Class]
+    C1 --> G[Result<Amount><br/>Type-Safe]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+```
+
+## Async Error Flow
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+sequenceDiagram
+    participant C as Client Code
+    participant A as Async Function
+    participant DB as Database
+    participant EH as Error Handler
+
+    C->>A: await operation()
+    A->>DB: Query Data
+
+    alt Success
+        DB-->>A: Data
+        A-->>C: Result
+    else Database Error
+        DB-->>A: Error
+        A->>EH: Handle Error
+        EH->>EH: Log Error
+        EH->>EH: Transform Error
+        EH-->>C: Throw Custom Error
+    end
+
+    C->>C: try-catch
+```

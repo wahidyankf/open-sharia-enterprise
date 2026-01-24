@@ -2823,3 +2823,68 @@ Type safety makes code more maintainable, refactorable, and less prone to bugs. 
 **Last Updated**: 2026-01-23
 **Go Version**: 1.21+ (baseline), 1.22+ (recommended), 1.23 (latest)
 **Maintainers**: Platform Documentation Team
+
+## Type System Architecture
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Go Type System] --> B[Basic Types]
+    A --> C[Composite Types]
+    A --> D[Interface Types]
+    A --> E[Generic Types]
+
+    B --> B1[Numeric<br/>int float]
+    B --> B2[String<br/>UTF-8]
+    B --> B3[Boolean<br/>bool]
+
+    C --> C1[Array Slice<br/>Sequential]
+    C --> C2[Map<br/>Key-Value]
+    C --> C3[Struct<br/>Composite]
+
+    D --> D1[Methods<br/>Contracts]
+    D --> D2[Empty Interface<br/>any]
+    D --> D3[Type Assertion<br/>Runtime Check]
+
+    E --> E1[Type Parameters<br/>[T any]]
+    E --> E2[Constraints<br/>Interface Bounds]
+    E --> E3[Type Inference<br/>Auto Detection]
+
+    B1 --> F[Zakat Amount<br/>Decimal Types]
+    C3 --> G[Donation Struct<br/>Composite Data]
+    E1 --> H[Generic Collections<br/>Type Safe]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#0173B2,color:#fff
+```
+
+## Compile-Time Type Checking
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+sequenceDiagram
+    participant Code as Source Code
+    participant Parser
+    participant TypeChecker as Type Checker
+    participant Compiler
+    participant Binary
+
+    Code->>Parser: Parse .go Files
+    Parser->>TypeChecker: AST + Symbol Table
+    TypeChecker->>TypeChecker: Check Type Compatibility
+    TypeChecker->>TypeChecker: Verify Interface Satisfaction
+    TypeChecker->>TypeChecker: Validate Generic Constraints
+
+    alt Type Error
+        TypeChecker-->>Code: Compilation Error
+    else Type Valid
+        TypeChecker->>Compiler: Type-Checked AST
+        Compiler->>Binary: Generate Machine Code
+    end
+```

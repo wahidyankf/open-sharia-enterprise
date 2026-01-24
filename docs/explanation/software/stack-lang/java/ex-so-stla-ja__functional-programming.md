@@ -307,6 +307,32 @@ Pure functions have two properties:
 1. **Deterministic**: Same input always produces same output
 2. **No side effects**: Don't modify external state or perform I/O
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    Input[Input: balance, nisab]:::blue
+    Pure[Pure Function<br/>calculateZakat#40;#41;]:::teal
+    Output[Output: zakat amount]:::blue
+
+    Impure[Impure Function<br/>saveZakat#40;#41;]:::orange
+    SideEffect1[Side Effect:<br/>Database write]:::orange
+    SideEffect2[Side Effect:<br/>Log message]:::orange
+
+    Input --> Pure
+    Pure --> Output
+
+    Input --> Impure
+    Impure --> Output
+    Impure -.->|modifies| SideEffect1
+    Impure -.->|produces| SideEffect2
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ### Benefits of Pure Functions
 
 **Testability**:
@@ -399,6 +425,34 @@ logger.info("Saved donation");
 ```
 
 ## Immutability
+
+Immutable objects cannot be modified after creation, providing thread safety and predictability.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    Original[Original Money<br/>amount: 1000 USD]:::blue
+
+    MutableOp[Mutable Operation<br/>balance.setAmount#40;2000#41;]:::orange
+    MutableResult[Same Object<br/>amount: 2000 USD]:::orange
+
+    ImmutableOp[Immutable Operation<br/>balance.add#40;1000#41;]:::teal
+    ImmutableResult[New Object<br/>amount: 2000 USD]:::teal
+    OriginalUnchanged[Original Unchanged<br/>amount: 1000 USD]:::blue
+
+    Original -->|mutate| MutableOp
+    MutableOp --> MutableResult
+
+    Original -->|transform| ImmutableOp
+    ImmutableOp --> ImmutableResult
+    ImmutableOp -.->|preserves| OriginalUnchanged
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ### Immutable Collections
 
@@ -522,6 +576,30 @@ assertThat(updated.payments()).hasSize(1);
 ```
 
 ## Functional Composition
+
+Functional composition combines simple functions to create complex behavior.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    Input[Input:<br/>List of Accounts]:::blue
+    Filter[filter#40;#41;<br/>Balance > Nisab]:::orange
+    Map[map#40;#41;<br/>Calculate Zakat]:::teal
+    Reduce[reduce#40;#41;<br/>Sum Total]:::purple
+    Output[Output:<br/>Total Zakat]:::blue
+
+    Input --> Filter
+    Filter --> Map
+    Map --> Reduce
+    Reduce --> Output
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 ### Method References
 

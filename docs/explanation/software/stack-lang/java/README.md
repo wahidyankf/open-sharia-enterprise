@@ -194,6 +194,34 @@ Common mistakes, pitfalls, and problematic patterns to avoid in Java development
 - Misuse of frameworks and libraries
 - Legacy patterns that are now obsolete
 
+### Documentation Organization
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+flowchart TD
+    A["Java Documentation"]:::blue
+    B["Idioms & Patterns"]:::teal
+    C["Best Practices"]:::teal
+    D["Anti-Patterns"]:::teal
+    E["Release Notes"]:::orange
+    F["Advanced Topics"]:::purple
+    G["Domain Topics"]:::purple
+
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+    A --> F
+    A --> G
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ### Release Documentation
 
 Comprehensive guides to major Java LTS releases, documenting important features and changes:
@@ -1488,3 +1516,45 @@ RUN ./mvnw clean install
 **Last Updated**: 2026-01-24
 **Java Version**: 17+ (baseline), 21+ (recommended), 25 (latest LTS)
 **Maintainers**: Platform Documentation Team
+
+## Java Ecosystem Overview
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+mindmap
+  root((Java Ecosystem))
+    Language Features
+      Generics
+      Lambdas
+      Records
+      Pattern Matching
+      Virtual Threads
+    Build Tools
+      Maven
+      Gradle
+      Ant
+    Testing
+      JUnit 5
+      Mockito
+      TestContainers
+    Frameworks
+      Spring Boot
+      Quarkus
+      Micronaut
+    Data Access
+      JPA Hibernate
+      jOOQ
+      JDBC
+```
+
+## Java Version Evolution
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','noteTextColor':'#000','noteBkgColor':'#DE8F05','textColor':'#000','fontSize':'16px'}}}%%
+timeline
+    title Java LTS Releases and Key Features
+    2018-09 : Java 11 LTS : var keyword : HTTP Client : Flight Recorder
+    2021-09 : Java 17 LTS : Sealed Classes : Pattern Matching : Records
+    2023-09 : Java 21 LTS : Virtual Threads : Sequenced Collections : String Templates
+    2025-09 : Java 25 LTS (Projected) : Advanced Pattern Matching : Improved Performance : Enhanced Concurrency
+```

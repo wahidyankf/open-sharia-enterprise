@@ -732,3 +732,48 @@ else:
 **Last Updated**: 2025-01-23
 **Python Version**: 3.11.11 (baseline for OSE Platform)
 **Maintainers**: OSE Platform Documentation Team
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Python 3.11<br/>October 2022] --> B[Performance<br/>10-60% Faster]
+    A --> C[Error Messages<br/>Enhanced Tracebacks]
+    A --> D[Typing Updates<br/>Better Type Hints]
+    A --> E[Exception Groups<br/>Multiple Errors]
+
+    B --> B1[Faster CPython<br/>Adaptive Interpreter]
+    B --> B2[Optimized Functions<br/>Better Inlining]
+
+    C --> C1[Fine-Grained Errors<br/>Precise Locations]
+    C --> C2[Syntax Suggestions<br/>Helpful Hints]
+
+    D --> D1[Self Type<br/>Method Return Types]
+    D --> D2[Variadic Generics<br/>Type Parameters]
+
+    E --> E1[ExceptionGroup<br/>Multiple Exceptions]
+    E --> E2[except* Syntax<br/>Group Handling]
+
+    B1 --> F[Zakat Calculation<br/>Fast Processing]
+    C1 --> G[Error Debugging<br/>Clear Messages]
+    E1 --> H[Batch Processing<br/>Grouped Errors]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+    style H fill:#0173B2,color:#fff
+```
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#000','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','noteTextColor':'#000','noteBkgColor':'#DE8F05','textColor':'#000','fontSize':'16px'}}}%%
+timeline
+    title Python 3.11 Development Timeline
+    2021-Q4 : Performance Improvements : Faster CPython : Error Messages
+    2022-Q2 : Beta Testing : Exception Groups : Typing Updates
+    2022-10 : Python 3.11 Released : 10-60% Faster : Fine-Grained Errors : ExceptionGroup
+    2022-Q4 : Framework Updates : Library Migration : Benchmarking
+    2023-Q1 : Production Adoption : Performance Gains : Developer Experience
+```

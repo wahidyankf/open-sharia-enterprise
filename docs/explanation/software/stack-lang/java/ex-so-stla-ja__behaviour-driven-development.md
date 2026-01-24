@@ -259,6 +259,23 @@ Feature: Donation Processing
 
 ### Given-When-Then Structure
 
+The Given-When-Then pattern provides a clear structure for scenario steps.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    Start([Scenario Execution]) --> Given[GIVEN<br/>Setup Context<br/>Create test data]:::blue
+    Given --> When[WHEN<br/>Execute Action<br/>Trigger behavior]:::orange
+    When --> Then[THEN<br/>Assert Outcome<br/>Verify results]:::teal
+    Then --> End([Scenario Complete])
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 **Given**: Establishes context (preconditions)
 
 ```gherkin
@@ -609,7 +626,26 @@ public class CucumberTestRunner {
 
 ## Step Definitions
 
-Step definitions connect Gherkin steps to Java code.
+Step definitions connect Gherkin steps to Java code through pattern matching.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    Feature[Feature File<br/>Gherkin Steps]:::blue --> Parse[Cucumber Parser]:::purple
+    Parse --> Match{Step Match<br/>Found?}:::orange
+    Match -->|Yes| Execute[Execute Step Definition]:::teal
+    Match -->|No| Error[Undefined Step Error]:::orange
+    Execute --> NextStep{More Steps?}:::purple
+    NextStep -->|Yes| Parse
+    NextStep -->|No| Report[Generate Report]:::teal
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 ### Basic Step Definitions
 
@@ -1737,35 +1773,22 @@ BDD and TDD are complementary, not competing practices.
 
 **How They Work Together**:
 
-```
-BDD Scenario (Acceptance Test):
-┌────────────────────────────────────────┐
-│ Given a donor "D-001"                  │
-│ When the donor makes a donation        │
-│ Then the donation is processed         │
-└────────────────────────────────────────┘
-           │
-           │ Drives
-           │
-           v
-TDD Unit Tests:
-┌────────────────────────────────────────┐
-│ testDonationCreation()                 │
-│ testDonationValidation()               │
-│ testDonationProcessing()               │
-│ testDonationFeeCalculation()           │
-│ testDonationEventPublishing()          │
-└────────────────────────────────────────┘
-           │
-           │ Implement
-           │
-           v
-Production Code:
-┌────────────────────────────────────────┐
-│ class Donation { ... }                 │
-│ class DonationService { ... }          │
-│ class DonationRepository { ... }       │
-└────────────────────────────────────────┘
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    BDD[BDD Scenario<br/>Acceptance Test<br/>Given-When-Then]:::blue
+    TDD[TDD Unit Tests<br/>testDonationCreation#40;#41;<br/>testDonationProcessing#40;#41;<br/>testFeeCalculation#40;#41;]:::orange
+    Code[Production Code<br/>Donation class<br/>DonationService<br/>Repository]:::teal
+
+    BDD -->|Drives| TDD
+    TDD -->|Implements| Code
+    Code -->|Satisfies| BDD
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 **Typical Workflow**:
