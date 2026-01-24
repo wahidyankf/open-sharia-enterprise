@@ -84,6 +84,40 @@ def get_zakat_records_orm(payer_id: str) -> List[ZakatRecord]:
 
 **Why this matters**: SQL injection allows attackers to execute arbitrary SQL. Parameterized queries safely escape inputs. ORMs like SQLAlchemy provide additional protection.
 
+### 📊 Input Validation Pipeline
+
+This diagram shows the defense-in-depth validation pipeline using Pydantic:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+  A[User Input]:::blue
+  B{Pydantic Validation}:::orange
+  C[Type Checking]:::blue
+  D[Field Constraints]:::blue
+  E[Custom Validators]:::blue
+  F{All Valid?}:::orange
+  G[Business Logic]:::teal
+  H[Database Layer]:::teal
+  I[ValidationError]:::purple
+  J[Log and Return 422]:::purple
+
+  A --> B
+  B --> C
+  C --> D
+  D --> E
+  E --> F
+  F -->|Yes| G
+  F -->|No| I
+  G --> H
+  I --> J
+
+  classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## XSS Prevention
 
 Escape user input in web responses.
@@ -174,6 +208,46 @@ async def get_zakat_records(user_id: str = Depends(verify_token)):
 ```
 
 **Why this matters**: JWT provides stateless authentication. Token expiration limits risk window. Bearer token standard for API authentication.
+
+### 📊 JWT Authentication Flow
+
+This sequence diagram shows the complete JWT authentication workflow:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+sequenceDiagram
+  participant Client as Client
+  participant API as FastAPI Endpoint
+  participant Auth as Auth Service
+  participant DB as Database
+
+  Client->>API: POST /login #40;credentials#41;
+  API->>DB: Verify credentials
+  DB-->>API: User validated
+
+  API->>Auth: create_access_token#40;user_id#41;
+  activate Auth
+  Note over Auth: Generate JWT<br/>Set expiration<br/>Sign with SECRET_KEY
+  Auth-->>API: JWT token
+  deactivate Auth
+
+  API-->>Client: Return #123;token: "eyJ..."#125;
+
+  Note over Client: Store token<br/>in memory/storage
+
+  Client->>API: GET /zakat/records<br/>Authorization: Bearer eyJ...
+  API->>Auth: verify_token#40;credentials#41;
+  activate Auth
+  Auth->>Auth: Decode JWT
+  Auth->>Auth: Verify signature
+  Auth->>Auth: Check expiration
+  Auth-->>API: user_id extracted
+  deactivate Auth
+
+  API->>DB: get_records#40;user_id#41;
+  DB-->>API: Zakat records
+  API-->>Client: Return records
+```
 
 ## Secrets Management
 
@@ -291,6 +365,48 @@ class ZakatPaymentRequest(BaseModel):
 
 **Why this matters**: Pydantic validates types and constraints. Field patterns prevent injection. Custom validators enforce business rules.
 
+### 📊 Secure Session Lifecycle
+
+This state diagram shows the lifecycle of a secure session with proper expiration:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+stateDiagram-v2
+  [*] --> Created: User login successful
+  Created --> Active: Session token issued
+
+  Active --> Refreshed: Token refresh before expiration
+  Refreshed --> Active: New token issued
+
+  Active --> Expired: Timeout reached
+  Expired --> Destroyed: Token invalidated
+
+  Active --> LoggedOut: User logout
+  LoggedOut --> Destroyed: Session terminated
+
+  Active --> Compromised: Security breach detected
+  Compromised --> Destroyed: Force invalidation
+
+  Destroyed --> [*]: Session ended
+
+  note right of Created
+    JWT created with:
+    - user_id
+    - exp: 30 minutes
+    - iat: issued at
+  end note
+
+  note right of Expired
+    exp < current_time
+    401 Unauthorized
+  end note
+
+  note right of Destroyed
+    Token blacklisted
+    Refresh token revoked
+  end note
+```
+
 ## Cryptography
 
 Use cryptography library for encryption.
@@ -403,6 +519,47 @@ class ZakatCalculationResult:
 ```
 
 **Why this matters**: Immutability prevents tampering. Checksums detect modifications. Audit trail for compliance.
+
+### 📊 Defense in Depth Architecture
+
+This diagram shows the layered security architecture for financial applications:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+  A[Client Layer]:::blue
+  B[API Gateway]:::orange
+  C[Authentication]:::teal
+  D[Input Validation]:::teal
+  E[Business Logic]:::purple
+  F[Data Access]:::brown
+  G[Database]:::brown
+
+  A -->|HTTPS| B
+  B -->|JWT Token| C
+  C -->|Pydantic Models| D
+  D -->|Sanitized Input| E
+  E -->|Parameterized Queries| F
+  F -->|Encrypted Connection| G
+
+  H[Layer 1: TLS/SSL]:::blue
+  I[Layer 2: Authentication]:::orange
+  J[Layer 3: Validation]:::teal
+  K[Layer 4: Authorization]:::purple
+  L[Layer 5: Encryption at Rest]:::brown
+
+  A -.-> H
+  C -.-> I
+  D -.-> J
+  E -.-> K
+  G -.-> L
+
+  classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ## References
 

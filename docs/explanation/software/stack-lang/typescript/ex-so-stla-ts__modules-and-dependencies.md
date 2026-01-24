@@ -141,6 +141,47 @@ graph TD
 
 ## Package Managers
 
+### Tree-Shaking Optimization Flow
+
+Modern bundlers eliminate unused code through tree-shaking. Understanding this process helps optimize bundle sizes.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Source["Source Code<br/>#40;ES Modules#41;"]:::blue
+    Parse["Parse AST<br/>Dependency Graph"]:::orange
+    MarkUsed["Mark Used Exports"]:::teal
+    MarkUnused["Identify Unused Code"]:::brown
+    Eliminate["Remove Dead Code"]:::purple
+    Bundle["Optimized Bundle"]:::teal
+
+    Source --> Parse
+    Parse --> MarkUsed
+    MarkUsed --> MarkUnused
+    MarkUnused --> Eliminate
+    Eliminate --> Bundle
+
+    Note1["ESM static imports<br/>enable tree-shaking"]
+    Note2["Side effects prevent<br/>elimination"]
+
+    subgraph Example["Example: Lodash"]
+        Import["import { map } from 'lodash-es'"]
+        Used["map function"]
+        Unused["filter, reduce, etc."]
+        Result["Bundle includes<br/>only map"]
+
+        Import --> Used
+        Import -.-> Unused
+        Used --> Result
+    end
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ```json
 // package.json with Volta
 {
@@ -186,6 +227,75 @@ bun update          # Update dependencies
 ```
 
 ## Module Resolution
+
+### Circular Dependency Detection
+
+Circular dependencies create initialization issues and should be detected early.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Start["Build Module Graph"]:::blue
+    Analyze["Analyze Import Paths"]:::orange
+    DetectCycle{"Circular<br/>dependency?"}:::orange
+    NoCircular["Valid Dependency Tree"]:::teal
+    Circular["Circular Dependency Found"]:::purple
+
+    Strategy1["Strategy 1:<br/>Extract Shared Types"]:::brown
+    Strategy2["Strategy 2:<br/>Dependency Injection"]:::brown
+    Strategy3["Strategy 3:<br/>Event-Based Decoupling"]:::brown
+
+    Start --> Analyze
+    Analyze --> DetectCycle
+    DetectCycle -->|No| NoCircular
+    DetectCycle -->|Yes| Circular
+    Circular --> Strategy1
+    Circular --> Strategy2
+    Circular --> Strategy3
+
+    Example["Example Circular:<br/>A imports B<br/>B imports C<br/>C imports A"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Node.js Module Resolution Algorithm
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Import["import { X } from 'module'"]:::blue
+    Relative{"Relative path<br/>#40;./ or ../#41;?"}:::orange
+    Builtin{"Built-in<br/>module?"}:::orange
+    LocalFile["Resolve relative to<br/>current file"]:::teal
+    NodeModules["Search node_modules<br/>up directory tree"]:::purple
+    PackageJson["Read package.json<br/>exports/main field"]:::brown
+    IndexFile["Try index.js/ts"]:::brown
+    Success["Module Resolved"]:::teal
+    Error["Module Not Found Error"]:::purple
+
+    Import --> Relative
+    Relative -->|Yes| LocalFile
+    Relative -->|No| Builtin
+    Builtin -->|Yes| Success
+    Builtin -->|No| NodeModules
+    LocalFile --> Success
+    NodeModules --> PackageJson
+    PackageJson --> IndexFile
+    IndexFile --> Success
+    IndexFile -.->|Not Found| Error
+
+    Note1["Resolution order:<br/>1. Relative paths<br/>2. Built-in modules<br/>3. node_modules"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ```json
 // tsconfig.json

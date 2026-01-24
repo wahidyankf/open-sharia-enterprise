@@ -96,6 +96,34 @@ zakat_owed = calc.calculate_obligation()
 
 **Why this matters**: Type hints document expected types. `__repr__` aids debugging. Methods encapsulate business logic with data.
 
+### 📊 Object Creation Lifecycle: **new** vs **init**
+
+This sequence diagram shows the object creation process with `__new__` and `__init__`:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+sequenceDiagram
+  participant Code as Caller Code
+  participant New as __new__#40;#41;
+  participant Init as __init__#40;#41;
+  participant Instance as Object Instance
+
+  Code->>New: ZakatCalculation#40;args#41;
+  activate New
+  Note over New: Allocate memory<br/>Create instance
+  New->>Instance: Create empty instance
+  New-->>Init: Return instance
+  deactivate New
+
+  activate Init
+  Note over Init: Initialize attributes<br/>self.payer_id = ...<br/>self.wealth_amount = ...
+  Init->>Instance: Set attributes
+  Init-->>Code: Return initialized instance
+  deactivate Init
+
+  Note over Code,Instance: __new__ creates object<br/>__init__ initializes object
+```
+
 ## Dataclasses
 
 Dataclasses eliminate boilerplate for data-holding classes.
@@ -198,6 +226,36 @@ updated_loan = loan.record_payment(Decimal("20000.00"))
 ```
 
 **Why this matters**: `frozen=True` makes dataclass immutable. `__post_init__` validates invariants. New instances preserve history for audit trails.
+
+### 📊 Dataclass Frozen State Enforcement
+
+This state diagram shows how frozen dataclasses enforce immutability:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+stateDiagram-v2
+  [*] --> Created: @dataclass#40;frozen=True#41;
+  Created --> Initialized: __post_init__#40;#41; validates
+  Initialized --> Immutable: Instance ready
+
+  Immutable --> AttemptModify: Try to modify attribute
+  AttemptModify --> FrozenError: FrozenInstanceError raised
+  FrozenError --> Immutable: State preserved
+
+  Immutable --> CreateNew: record_payment#40;#41;
+  CreateNew --> NewInstance: New QardHasanLoan instance
+  NewInstance --> [*]: Original unchanged
+
+  note right of Immutable
+    loan.repaid_amount
+    cannot be changed
+  end note
+
+  note right of NewInstance
+    Functional update pattern:
+    updated_loan = loan.record_payment#40;#41;
+  end note
+```
 
 ## Pydantic Models
 
@@ -367,6 +425,50 @@ sadaqah_results = apply_calculator(sadaqah_calc, income_amounts)
 ```
 
 **Why this matters**: Protocols enable duck typing with type safety. No inheritance required. Loose coupling, strong typing.
+
+### 📊 Protocol vs ABC Comparison
+
+This diagram compares Protocol (structural typing) vs ABC (nominal typing):
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+  subgraph Protocol["Protocol #40;Structural Typing#41;"]
+    A1[Define Protocol]:::teal
+    A2[No inheritance needed]:::teal
+    A3[Duck typing + type safety]:::teal
+    A4[ZakatCalculator]:::teal
+    A5[SadaqahCalculator]:::teal
+
+    A1 --> A2
+    A2 --> A3
+    A3 --> A4
+    A3 --> A5
+  end
+
+  subgraph ABC["Abstract Base Class #40;Nominal Typing#41;"]
+    B1[Define ABC]:::blue
+    B2[Explicit inheritance required]:::blue
+    B3[Contract enforcement]:::blue
+    B4[StripePaymentProcessor]:::blue
+    B5[extends PaymentProcessor]:::blue
+
+    B1 --> B2
+    B2 --> B3
+    B3 --> B4
+    B4 --> B5
+  end
+
+  C[Use Protocol for flexibility]:::orange
+  D[Use ABC for strict interfaces]:::orange
+
+  Protocol --> C
+  ABC --> D
+
+  classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ## Abstract Base Classes
 
@@ -548,6 +650,40 @@ class ZakatCalculator(IslamicFinanceCalculator):  # BAD: Deep hierarchy
 ```
 
 **Why this matters**: Composition more flexible than inheritance. Easy to swap implementations. Clearer dependencies. Testability improved.
+
+### 📊 Method Resolution Order (MRO) Visualization
+
+This diagram shows Python's C3 linearization for multiple inheritance:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+  A[class D#40;B, C#41;]:::blue
+  B[class B#40;A#41;]:::orange
+  C[class C#40;A#41;]:::orange
+  D[class A]:::teal
+  E[object]:::brown
+
+  A --> B
+  A --> C
+  B --> D
+  C --> D
+  D --> E
+
+  F[MRO for D: D → B → C → A → object]:::purple
+
+  A -.-> F
+
+  note1[Method lookup order:<br/>1. D's methods<br/>2. B's methods<br/>3. C's methods<br/>4. A's methods<br/>5. object's methods]:::teal
+
+  F --> note1
+
+  classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+  classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ## References
 

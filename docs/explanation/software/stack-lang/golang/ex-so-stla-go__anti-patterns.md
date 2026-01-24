@@ -22,8 +22,38 @@ tags:
 
 # Go Anti-Patterns
 
-**Quick Reference**: [Overview](#overview) | [Error Handling Anti-Patterns](#error-handling-anti-patterns) | [Financial Calculation Anti-Patterns](#financial-calculation-anti-patterns) | [Goroutine Leaks](#goroutine-leaks) | [Nil Pointer Dereferences](#nil-pointer-dereferences) | [Race Conditions](#race-conditions) | [Resource Leaks](#resource-leaks) | [Database Anti-Patterns](#database-anti-patterns) | [Interface Pollution Anti-Patterns](#interface-pollution-anti-patterns) | [Concurrency Anti-Patterns](#concurrency-anti-patterns) | [API Design Anti-Patterns](#api-design-anti-patterns) | [Performance Anti-Patterns](#performance-anti-patterns) | [Testing Anti-Patterns](#testing-anti-patterns) | [Security Anti-Patterns](#security-anti-patterns) | [Code Organization Anti-Patterns](#code-organization-anti-patterns) | [Summary](#summary) | [Additional Resources](#additional-resources)
-**Understanding-oriented guide** to Go anti-patterns - common mistakes, bad practices, and patterns to avoid.
+## Quick Reference
+
+### Critical Anti-Patterns
+
+- [Error Handling Anti-Patterns](#error-handling-anti-patterns) - Ignoring errors, panic misuse, error wrapping
+- [Financial Calculation Anti-Patterns](#financial-calculation-anti-patterns) - Float64 for money, precision errors
+- [Goroutine Leaks](#goroutine-leaks) - Unbounded goroutines, blocking channels, missing contexts
+- [Nil Pointer Dereferences](#nil-pointer-dereferences) - Unchecked nil, nil receivers, nil interfaces
+
+### Concurrency & Resources
+
+- [Race Conditions](#race-conditions) - Data races, unsynchronized access, map races
+- [Resource Leaks](#resource-leaks) - Unclosed connections, defer misuse, context leaks
+- [Concurrency Anti-Patterns](#concurrency-anti-patterns) - WaitGroup errors, channel misuse, mutex mistakes
+
+### Design & Organization
+
+- [Database Anti-Patterns](#database-anti-patterns) - Connection pools, N+1 queries, transactions
+- [Interface Pollution Anti-Patterns](#interface-pollution-anti-patterns) - Over-abstraction, premature interfaces
+- [API Design Anti-Patterns](#api-design-anti-patterns) - Poor interfaces, inconsistent naming
+- [Code Organization Anti-Patterns](#code-organization-anti-patterns) - Package structure, circular imports
+
+### Performance & Security
+
+- [Performance Anti-Patterns](#performance-anti-patterns) - String concatenation, reflection abuse
+- [Security Anti-Patterns](#security-anti-patterns) - SQL injection, cryptographic mistakes
+- [Testing Anti-Patterns](#testing-anti-patterns) - Flaky tests, missing coverage, test dependencies
+
+### Navigation
+
+- [Summary](#summary) - Complete anti-patterns checklist
+- [Additional Resources](#additional-resources) - Further reading and tools
 
 ## Overview
 
@@ -966,6 +996,40 @@ func ExampleZakatPayment() {
 
 Goroutine leaks occur when goroutines don't terminate, consuming memory and resources.
 
+### 🔍 Goroutine Leak Detection Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Launch Goroutine"]:::blue --> B{"Has Exit<br/>Condition?"}:::orange
+    B -->|"Yes<br/>#40;context/channel#41;"| C["Monitor Exit<br/>Signal"]:::teal
+    B -->|"No"| D["🚨 LEAK RISK<br/>Goroutine Runs<br/>Forever"]:::brown
+
+    C --> E{"Exit Signal<br/>Received?"}:::orange
+    E -->|"Yes"| F["Cleanup<br/>Resources"]:::teal
+    E -->|"No"| G["Continue<br/>Working"]:::purple
+    G --> E
+    F --> H["✅ Goroutine<br/>Terminates"]:::teal
+
+    D --> I["Memory<br/>Accumulates"]:::brown
+    I --> J["💥 OOM Crash<br/>Eventually"]:::brown
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px
+```
+
+**Detection Techniques**:
+
+- **Runtime Profiling**: `runtime.NumGoroutine()` increasing over time
+- **pprof Goroutine Profile**: `go tool pprof http://localhost:6060/debug/pprof/goroutine`
+- **Leak Detection Tests**: Check goroutine count before/after operations
+- **Context Cancellation**: Always pass `context.Context` for cancellable operations
+
 ### Blocking Forever on Channel
 
 ```go
@@ -1226,6 +1290,64 @@ func (p *PaymentProcessor) ProcessPayment(ctx context.Context, req PaymentReques
 ```
 
 ### Channel Deadlocks
+
+#### 🔒 Channel Deadlock State Diagram
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+stateDiagram-v2
+    [*] --> UnbufferedChannel: Create ch = make#40;chan T#41;
+
+    state UnbufferedChannel {
+        [*] --> WaitingSender: Goroutine sends
+        [*] --> WaitingReceiver: Goroutine receives
+
+        WaitingSender --> Handshake: Receiver arrives
+        WaitingReceiver --> Handshake: Sender arrives
+
+        Handshake --> [*]: Data transferred
+
+        WaitingSender --> Deadlock: No receiver ever
+        WaitingReceiver --> Deadlock: No sender ever
+
+        Deadlock --> Deadlock: ⚠️ Blocked Forever
+    }
+
+    state BufferedChannel {
+        [*] --> BufferSpace: Create ch = make#40;chan T, N#41;
+
+        BufferSpace --> Sending: Send without blocking
+        Sending --> BufferSpace: Buffer not full
+
+        BufferSpace --> FullBuffer: Buffer fills up
+        FullBuffer --> WaitingSenderBuffered: Sender blocks
+
+        BufferSpace --> Receiving: Receive without blocking
+        Receiving --> BufferSpace: Buffer not empty
+
+        WaitingSenderBuffered --> Sending: Space available
+    }
+
+    UnbufferedChannel --> [*]: Close channel
+    BufferedChannel --> [*]: Close channel
+
+    note right of Deadlock
+        Detection: all goroutines<br/>asleep = runtime panic
+    end note
+
+    note right of BufferedChannel
+        Prevents some deadlocks<br/>but not goroutine leaks
+    end note
+```
+
+**Common Deadlock Patterns**:
+
+1. **Unbuffered channel, no receiver**: `ch <- value` blocks forever
+2. **Unbuffered channel, no sender**: `<-ch` blocks forever
+3. **Circular wait**: G1 waits for G2, G2 waits for G1
+4. **Forgotten close**: Range loop never exits
 
 ```go
 // ANTI-PATTERN: Unbuffered channel deadlock
@@ -1747,6 +1869,56 @@ s = append(s, 1)  // OK, allocates if needed
 **Why it's bad**: Nil maps panic on write. Nil slices panic on index access.
 
 ## Race Conditions
+
+### Race Condition Visualization
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+sequenceDiagram
+    participant G1 as Goroutine 1
+    participant M as Shared Memory<br/>#40;counter#41;
+    participant G2 as Goroutine 2
+
+    Note over G1,G2: Initial: counter = 0
+
+    G1->>M: Read counter #40;0#41;
+    G2->>M: Read counter #40;0#41;
+
+    Note over G1: Calculate: 0 + 1 = 1
+    Note over G2: Calculate: 0 + 1 = 1
+
+    G1->>M: Write counter = 1
+    G2->>M: Write counter = 1
+
+    Note over M: 🚨 Expected: 2<br/>❌ Actual: 1<br/>Lost Update!
+
+    rect rgb(222, 143, 5)
+        Note over G1,G2: SOLUTION: Use Mutex or Atomic
+    end
+
+    G1->>M: Lock mutex
+    G1->>M: Read counter #40;1#41;
+    Note over G1: Calculate: 1 + 1 = 2
+    G1->>M: Write counter = 2
+    G1->>M: Unlock mutex
+
+    G2->>M: Lock mutex #40;waits#41;
+    G2->>M: Read counter #40;2#41;
+    Note over G2: Calculate: 2 + 1 = 3
+    G2->>M: Write counter = 3
+    G2->>M: Unlock mutex
+
+    Note over M: ✅ Correct: 3
+```
+
+**Race Detection**: Always run tests with `-race` flag:
+
+```bash
+go test -race ./...
+go build -race
+```
 
 ### Concurrent Map Access
 
@@ -3248,6 +3420,75 @@ func (s *Server) Process(ctx context.Context, data []byte) error {
 ```
 
 **Why it's bad**: Context is per-request, not per-struct. Storing it leads to incorrect cancellation.
+
+### 🎯 Pointer vs Value Receiver Decision Tree
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Method on Type T"]:::blue --> B{"Does method<br/>modify receiver?"}:::orange
+
+    B -->|"Yes"| C["✅ Use Pointer<br/>Receiver<br/>func #40;t *T#41;"]:::teal
+    B -->|"No"| D{"Is T large<br/>#40;> 64 bytes#41;?"}:::orange
+
+    D -->|"Yes"| E["✅ Use Pointer<br/>Receiver<br/>#40;avoid copying#41;"]:::teal
+    D -->|"No"| F{"Does T contain<br/>pointer/slice/map?"}:::orange
+
+    F -->|"Yes"| G["⚠️ Prefer Pointer<br/>#40;consistency#41;"]:::purple
+    F -->|"No"| H{"Will T ever<br/>be modified?"}:::orange
+
+    H -->|"Yes"| I["✅ Use Pointer<br/>#40;consistency across<br/>all methods#41;"]:::teal
+    H -->|"No"| J["✅ Use Value<br/>Receiver<br/>func #40;t T#41;"]:::teal
+
+    G --> K{"Other methods<br/>use pointer?"}:::orange
+    K -->|"Yes"| L["✅ Use Pointer<br/>#40;consistency#41;"]:::teal
+    K -->|"No"| M["⚠️ Either OK<br/>#40;prefer value#41;"]:::brown
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px
+```
+
+**Decision Guidelines**:
+
+| **Scenario**                               | **Receiver Type** | **Reason**                          |
+| ------------------------------------------ | ----------------- | ----------------------------------- |
+| Method modifies receiver                   | Pointer `*T`      | Changes visible to caller           |
+| Type is large struct (`>64` bytes)         | Pointer `*T`      | Avoid expensive copying             |
+| Type implements `sync.Mutex` or interfaces | Pointer `*T`      | Mutexes must not be copied          |
+| Consistency with other methods             | Match others      | Mix of pointer/value confuses users |
+| Type is small value type (`int`, `bool`)   | Value `T`         | Efficient, immutable                |
+| Method is read-only, type is small         | Value `T`         | Clear intent: no modifications      |
+
+**Examples**:
+
+```go
+// Pointer receiver: Modifies state
+type Counter struct {
+  count int64
+}
+
+func (c *Counter) Increment() {  // Pointer: modifies
+  c.count++
+}
+
+func (c *Counter) Value() int64 {  // Pointer: consistency
+  return c.count
+}
+
+// Value receiver: Read-only, small type
+type Point struct {
+  X, Y int
+}
+
+func (p Point) Distance() float64 {  // Value: small, read-only
+  return math.Sqrt(float64(p.X*p.X + p.Y*p.Y))
+}
+```
 
 ## Performance Anti-Patterns
 

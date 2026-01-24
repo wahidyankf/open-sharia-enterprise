@@ -384,6 +384,67 @@ fmt.Println(<-buffered) // 1
 fmt.Println(<-buffered) // 2
 ```
 
+#### 🔄 Channel Buffering Behavior (State Diagram)
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+stateDiagram-v2
+    state "Unbuffered Channel (cap=0)" as Unbuffered {
+        [*] --> Empty_U: make(chan T)
+
+        Empty_U --> Blocked_Sender: Sender arrives first
+        Empty_U --> Blocked_Receiver: Receiver arrives first
+
+        Blocked_Sender --> Handshake_U: Receiver arrives
+        Blocked_Receiver --> Handshake_U: Sender arrives
+
+        Handshake_U --> Empty_U: Data transferred
+        Handshake_U --> Closed_U: close(ch)
+    }
+
+    state "Buffered Channel (cap=N)" as Buffered {
+        [*] --> Empty_B: make(chan T, N)
+
+        Empty_B --> Partial: Send (0 < len < cap)
+        Partial --> Partial: Send/Receive
+        Partial --> Empty_B: Receive (len=0)
+        Partial --> Full: Send (len=cap)
+
+        Full --> Blocked_Sender_B: Send blocks
+        Blocked_Sender_B --> Partial: Receive makes space
+
+        Empty_B --> Blocked_Receiver_B: Receive blocks
+        Blocked_Receiver_B --> Empty_B: Send adds data
+
+        Partial --> Closed_B: close(ch)
+        Full --> Closed_B: close(ch)
+        Empty_B --> Closed_B: close(ch)
+    }
+
+    Closed_U --> [*]: Drained
+    Closed_B --> [*]: Drained
+
+    note right of Unbuffered
+        Synchronous:<br/>Send/Receive must rendezvous
+    end note
+
+    note right of Buffered
+        Asynchronous:<br/>Send succeeds until full
+    end note
+```
+
+**Key Differences**:
+
+| **Aspect**          | **Unbuffered (cap=0)**        | **Buffered (cap>0)**       |
+| ------------------- | ----------------------------- | -------------------------- |
+| **Capacity**        | 0 (no buffer)                 | N (buffer size)            |
+| **Send Blocks**     | Always (until receiver ready) | Only when buffer full      |
+| **Receive Blocks**  | Always (until sender ready)   | Only when buffer empty     |
+| **Synchronization** | Guaranteed rendezvous         | Decoupled send/receive     |
+| **Use Case**        | Coordination, synchronization | Rate limiting, work queues |
+
 ### Channel Direction (Send/Receive Only)
 
 ```go
@@ -496,6 +557,90 @@ case <-ch: // Never executes if ch is nil
 - Chooses randomly if multiple cases ready
 - Default case executes immediately if no channel ready
 - Non-blocking when used with default
+
+### 🔀 Select Statement Execution Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Enter Select"]:::blue --> B["Evaluate All Cases"]:::orange
+
+    B --> C{"Any Case<br/>Ready?"}:::orange
+
+    C -->|"Multiple Ready"| D["🎲 Random<br/>Selection"]:::purple
+    C -->|"One Ready"| E["Execute<br/>That Case"]:::teal
+    C -->|"None Ready"| F{"Has Default<br/>Case?"}:::orange
+
+    D --> E
+
+    F -->|"Yes"| G["Execute<br/>Default"]:::brown
+    F -->|"No"| H["⏳ Block Until<br/>Case Ready"]:::purple
+
+    H --> I{"Case Becomes<br/>Ready"}:::orange
+    I -->|"Yes"| E
+    I -->|"Timeout/Cancel"| J["Context Done"]:::brown
+
+    E --> K["✅ Select<br/>Completes"]:::teal
+    G --> K
+    J --> K
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px
+```
+
+**Select Behavior**:
+
+| **Scenario**           | **Behavior**                                  |
+| ---------------------- | --------------------------------------------- |
+| No cases ready         | Blocks until at least one ready               |
+| One case ready         | Executes that case immediately                |
+| Multiple cases ready   | Randomly selects one (fair scheduling)        |
+| Has `default` clause   | Never blocks (executes default if none ready) |
+| Nil channel in case    | That case is disabled (never selected)        |
+| Closed channel receive | Always ready (returns zero value, ok=false)   |
+
+**Common Patterns**:
+
+```go
+// Pattern 1: Timeout
+select {
+case msg := <-ch:
+  // Process message
+case <-time.After(5 * time.Second):
+  // Handle timeout
+}
+
+// Pattern 2: Non-blocking
+select {
+case ch <- value:
+  // Sent successfully
+default:
+  // Channel full, skip
+}
+
+// Pattern 3: Cancellation
+select {
+case <-ctx.Done():
+  return ctx.Err()
+case result := <-workCh:
+  return result
+}
+
+// Pattern 4: Multiplex
+select {
+case msg1 := <-ch1:
+  process(msg1)
+case msg2 := <-ch2:
+  process(msg2)
+case msg3 := <-ch3:
+  process(msg3)
+}
+```
 
 ### Basic Select
 

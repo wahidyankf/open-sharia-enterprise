@@ -27,7 +27,21 @@ last_updated: 2026-01-23
 
 # Elixir Anti-Patterns and Common Mistakes
 
-**Quick Reference**: [Overview](#overview) | [Process Anti-Patterns](#process-anti-patterns) | [GenServer Misuse](#genserver-misuse) | [Supervision Errors](#supervision-errors) | [Performance Pitfalls](#performance-pitfalls) | [Ecto Mistakes](#ecto-common-mistakes) | [Testing Anti-Patterns](#testing-anti-patterns)
+## Quick Reference
+
+### Core Anti-Pattern Categories
+
+- [Process Anti-Patterns](#process-anti-patterns) - Process leaks, blocking calls, message overflow
+- [GenServer Misuse](#genserver-misuse) - Stateless GenServers, god objects, database queries
+- [Supervision Errors](#supervision-errors) - No supervision, wrong strategy, restart frequency
+- [Performance Pitfalls](#performance-pitfalls) - N+1 queries, unnecessary spawning, string concatenation
+- [Ecto Common Mistakes](#ecto-common-mistakes) - Missing transactions, loading tables, bypassing changesets
+- [Testing Anti-Patterns](#testing-anti-patterns) - Testing implementation, shared state, missing error cases
+
+### Navigation
+
+- [Anti-Patterns Summary](#anti-patterns-summary) - Complete checklist
+- [Related Topics](#related-topics) - Best practices and OTP guides
 
 ## Overview
 

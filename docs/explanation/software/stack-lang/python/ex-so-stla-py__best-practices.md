@@ -27,7 +27,31 @@ last_updated: 2026-01-24
 
 # Python Best Practices
 
-**Quick Reference**: [Overview](#overview) | [Alignment with Principles](#alignment-with-software-engineering-principles) | [PEP 8 Style](#pep-8-style-guide) | [PEP 20 Philosophy](#pep-20-zen-of-python) | [Type Hints](#type-hints-and-annotations) | [Code Organization](#code-organization) | [Error Handling](#error-handling-patterns) | [Testing](#testing-practices) | [Documentation](#documentation-standards) | [Security](#security-practices) | [Anti-Patterns](#anti-patterns) | [References](#references)
+## Quick Reference
+
+**Software Engineering Principles**:
+
+- [Alignment with Software Engineering Principles](#alignment-with-software-engineering-principles)
+
+**Major Topics**:
+
+- [PEP 8 Style Guide](#pep-8-style-guide)
+- [PEP 20 Zen of Python](#pep-20-zen-of-python)
+- [Type Hints and Annotations](#type-hints-and-annotations)
+- [Code Organization](#code-organization)
+- [Error Handling Patterns](#error-handling-patterns)
+- [Testing Practices](#testing-practices)
+- [Documentation Standards](#documentation-standards)
+- [Security Practices](#security-practices)
+- [Anti-Patterns](#anti-patterns)
+- [Async/Await Best Practices](#asyncawait-best-practices)
+- [Type Hints Advanced Patterns](#type-hints-advanced-patterns)
+- [Performance Optimization](#performance-optimization)
+- [Domain-Driven Design Patterns](#domain-driven-design-patterns)
+
+**Additional Resources**:
+
+- [References](#references)
 
 ## Overview
 
@@ -2436,6 +2460,125 @@ async def process_donation_payment(
 - [PEP 484 - Type Hints](https://peps.python.org/pep-0484/)
 - [PEP 544 - Protocols](https://peps.python.org/pep-0544/)
 - [Python Documentation](https://docs.python.org/3/)
+
+## Best Practices Checklist
+
+Use this checklist to ensure your Python code follows best practices:
+
+### Code Quality
+
+- [ ] All code formatted with `ruff format` or `black`
+- [ ] Module names are lowercase with underscores (`zakat_calculator.py`)
+- [ ] Class names use PascalCase (`ZakatCalculator`)
+- [ ] Function/variable names use snake_case (`calculate_zakat`)
+- [ ] Constants use UPPER_CASE (`ZAKAT_RATE`)
+- [ ] Type hints added to all function signatures
+- [ ] Imports organized: standard library → third-party → local
+
+### Software Engineering Principles
+
+- [ ] **Automation**: `pytest` runs on every commit
+- [ ] **Automation**: `ruff check` and `mypy` integrated in CI pipeline
+- [ ] **Automation**: Code coverage enforced (80% minimum with pytest-cov)
+- [ ] **Explicit**: Type hints on all public functions
+- [ ] **Explicit**: Pydantic models for validation at boundaries
+- [ ] **Explicit**: No mutable default arguments (`None` used instead)
+- [ ] **Explicit**: Configuration loaded explicitly (no magic defaults)
+- [ ] **Immutability**: `@dataclass(frozen=True)` for immutable data classes
+- [ ] **Immutability**: Tuples used instead of lists where data shouldn't change
+- [ ] **Immutability**: `frozenset` used instead of `set` for immutable collections
+- [ ] **Pure Functions**: Business logic functions have no side effects
+- [ ] **Pure Functions**: No global state in calculation modules
+- [ ] **Pure Functions**: Deterministic outputs for same inputs
+- [ ] **Reproducibility**: `requirements.txt` with exact versions committed
+- [ ] **Reproducibility**: Virtual environment used (`venv` or `virtualenv`)
+- [ ] **Reproducibility**: Docker images pin Python version (e.g., `python:3.11.11-slim`)
+
+### Type Safety (mypy)
+
+- [ ] All public functions have type hints (parameters and return types)
+- [ ] `mypy` runs in strict mode (`strict = true` in `pyproject.toml`)
+- [ ] Generic types used for collections (`list[str]`, not just `list`)
+- [ ] `Protocol` used for structural subtyping (duck typing with types)
+- [ ] `NewType` used for domain-specific types (e.g., `NisabAmount`)
+- [ ] Type guards used for runtime type narrowing
+- [ ] `TypeVar` used for generic functions and classes
+
+### Error Handling
+
+- [ ] Custom exception classes defined for domain errors
+- [ ] Exceptions documented in docstrings (`Raises:` section)
+- [ ] Exception chaining used (`raise ... from e`)
+- [ ] No bare `except:` clauses (catch specific exceptions)
+- [ ] Pydantic validation at system boundaries (API, database)
+- [ ] Input validation prevents injection attacks
+
+### Testing
+
+- [ ] Test classes organize related tests (`class TestZakatCalculator`)
+- [ ] Test functions named descriptively (`test_calculate_returns_2_5_percent`)
+- [ ] `@pytest.fixture` used for test setup/teardown
+- [ ] `@pytest.mark.parametrize` used for table-driven tests
+- [ ] Mocks created via dependency injection (not monkey patching)
+- [ ] Coverage reports generated: `pytest --cov=src --cov-report=html`
+
+### Async/Await
+
+- [ ] `async def` used for I/O-bound operations (API calls, database queries)
+- [ ] `await` used with all coroutines (no forgotten awaits)
+- [ ] `asyncio.gather()` used for concurrent operations
+- [ ] CPU-bound work offloaded to thread pool (`loop.run_in_executor()`)
+- [ ] Async context managers used for resource cleanup
+- [ ] No blocking calls in async functions (`time.sleep()` → `asyncio.sleep()`)
+
+### Performance
+
+- [ ] Profiling used before optimization (`cProfile`, `memory_profiler`)
+- [ ] List comprehensions used instead of explicit loops (when clearer)
+- [ ] Generator expressions used for large datasets (memory efficiency)
+- [ ] `@lru_cache` used for expensive repeated calculations
+- [ ] `Decimal` used for financial calculations (not `float`)
+
+### Documentation
+
+- [ ] Module docstrings explain purpose and usage
+- [ ] Public functions have docstrings with Google or NumPy style
+- [ ] Docstrings include `Args:`, `Returns:`, `Raises:`, `Examples:` sections
+- [ ] Complex algorithms explained with inline comments
+- [ ] README updated for new features
+
+### Security
+
+- [ ] Input validation with Pydantic at all boundaries
+- [ ] Regular expressions sanitize potentially dangerous input
+- [ ] Secrets loaded from environment variables (not hardcoded)
+- [ ] Parameterized database queries (no string concatenation)
+- [ ] Sensitive data never logged
+- [ ] `secrets` module used for cryptographic randomness (not `random`)
+
+### Domain-Driven Design
+
+- [ ] Value objects created with `@dataclass(frozen=True)`
+- [ ] Entities have unique identity and `__eq__` based on ID
+- [ ] Aggregates enforce consistency boundaries
+- [ ] Repository pattern abstracts persistence
+- [ ] Domain events emitted for important state changes
+
+### Financial Domain (Islamic Finance)
+
+- [ ] Zakat calculations use `Decimal`, not `float`
+- [ ] Murabaha contracts have explicit cost + profit fields
+- [ ] Money value object prevents currency mixing errors
+- [ ] All financial transactions logged for audit trails
+- [ ] Shariah compliance verified for new features
+
+### Version Control
+
+- [ ] Commits follow Conventional Commits format
+- [ ] Changes reviewed before merging to `main`
+- [ ] No sensitive data in repository (credentials, API keys)
+- [ ] `.env` files excluded from version control
+- [ ] Pre-commit hooks run `ruff`, `mypy`, and `pytest`
 
 ### Related Documentation
 

@@ -28,7 +28,26 @@ last_updated: 2026-01-24
 
 # TypeScript Best Practices
 
-**Quick Reference**: [Overview](#overview) | [Alignment with Principles](#alignment-with-software-engineering-principles) | [Core Principles](#core-principles) | [Automation Over Manual](#automation-over-manual) | [Reproducibility First](#reproducibility-first) | [Prerequisites](#prerequisites) | [Setup](#setup) | [Code Organization](#code-organization) | [Business Finance Code Examples](#business-finance-code-examples) | [Best Practices Checklist](#best-practices-checklist) | [Related Documentation](#related-documentation)
+## Quick Reference
+
+**Software Engineering Principles**:
+
+- [Alignment with Software Engineering Principles](#alignment-with-software-engineering-principles)
+
+**Major Topics**:
+
+- [Core Principles](#core-principles)
+- [Automation Over Manual](#automation-over-manual)
+- [Reproducibility First](#reproducibility-first)
+- [Prerequisites](#prerequisites)
+- [Setup](#setup)
+- [Code Organization](#code-organization)
+- [Business Finance Code Examples](#business-finance-code-examples)
+
+**Checklist & Resources**:
+
+- [Best Practices Checklist](#best-practices-checklist)
+- [Related Documentation](#related-documentation)
 
 ## Overview
 

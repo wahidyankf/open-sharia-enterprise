@@ -26,7 +26,101 @@ last_updated: 2025-01-23
 
 # TypeScript Idioms
 
-**Quick Reference**: [Overview](#overview) | [Type Guards](#type-guards-and-narrowing) | [Utility Types](#utility-types) | [Conditional Types](#conditional-types) | [Template Literals](#template-literal-types) | [Mapped Types](#mapped-types) | [Type Predicates](#type-predicates) | [Discriminated Unions](#discriminated-unions) | [Branded Types](#branded-types) | [Const Assertions](#const-assertions) | [Related Documentation](#related-documentation)
+## Quick Reference
+
+### Core Idioms by Category
+
+**Type Narrowing**:
+
+- [typeof Guards](#typeof-type-guard) - Primitive type checking
+- [instanceof Guards](#instanceof-type-guard) - Class instance checks
+- [in Guards](#in-type-guard) - Property existence
+- [Custom Guards](#custom-type-guards) - Complex validation
+- [Type Predicates](#type-predicates) - User-defined narrowing
+
+**Type Transformation**:
+
+- [Utility Types](#utility-types) - Built-in transformations
+- [Conditional Types](#conditional-types) - Type-level logic
+- [Mapped Types](#mapped-types) - Property transformations
+- [Template Literals](#template-literal-types) - String manipulation
+
+**Type Safety**:
+
+- [Discriminated Unions](#discriminated-unions) - Tagged unions
+- [Branded Types](#branded-types) - Nominal typing
+- [Const Assertions](#const-assertions) - Literal types
+- [Index Signatures](#index-signatures) - Dynamic properties
+
+**Pattern Matching**:
+
+- [Exhaustive Checks](#basic-discriminated-unions) - Complete case coverage
+- [Nested Unions](#nested-discriminated-unions) - Complex state
+
+### Essential Utility Types
+
+**Property Transformation**:
+
+- `Partial<T>` - Make all optional
+- `Required<T>` - Make all required
+- `Readonly<T>` - Make all readonly
+- `Pick<T, K>` - Select properties
+- `Omit<T, K>` - Exclude properties
+
+**Type Manipulation**:
+
+- `Record<K, T>` - Key-value mapping
+- `Exclude<T, U>` - Remove from union
+- `Extract<T, U>` - Select from union
+- `NonNullable<T>` - Remove null/undefined
+- `ReturnType<T>` - Extract return type
+- `Parameters<T>` - Extract parameters
+
+### Advanced Patterns
+
+**Branded Types**:
+
+```typescript
+type Brand<T, B> = T & { __brand: B };
+type UserId = Brand<string, "UserId">;
+```
+
+**Discriminated Unions**:
+
+```typescript
+type Result = { status: "success"; data: T } | { status: "error"; error: string };
+```
+
+**Const Assertions**:
+
+```typescript
+const RATES = { CASH: 0.025 } as const;
+type Rate = (typeof RATES)[keyof typeof RATES];
+```
+
+### TypeScript Version Context
+
+- 🟢 **TypeScript 5.0+** (baseline): Decorators, const parameters
+- 🔵 **TypeScript 5.4+** (milestone): NoInfer, closure narrowing
+- 🟡 **TypeScript 5.6+** (stable): Iterator helpers
+- 🔴 **TypeScript 5.7+** (latest): Path rewriting
+
+### Idiomatic TypeScript Checklist
+
+- [ ] Use type guards for runtime narrowing
+- [ ] Leverage utility types over manual definitions
+- [ ] Create discriminated unions for state modeling
+- [ ] Brand primitive types to prevent confusion
+- [ ] Use const assertions for literal types
+- [ ] Prefer type predicates for complex checks
+- [ ] Model impossible states as unrepresentable
+
+### Related Documentation
+
+- [Best Practices](./ex-so-stla-ts__best-practices.md)
+- [Type Safety](./ex-so-stla-ts__type-safety.md)
+- [Interfaces and Types](./ex-so-stla-ts__interfaces-and-types.md)
+- [Anti-Patterns](./ex-so-stla-ts__anti-patterns.md)
 
 ## Overview
 

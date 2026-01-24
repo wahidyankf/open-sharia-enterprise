@@ -29,7 +29,39 @@ last_updated: 2026-01-24
 
 # Go Best Practices
 
-**Quick Reference**: [Overview](#overview) | [Alignment with Principles](#alignment-with-software-engineering-principles) | [Code Organization](#code-organization) | [Naming Conventions](#naming-conventions) | [Code Style](#code-style) | [Package Design](#package-design) | [Error Handling](#error-handling) | [Testing](#testing) | [Performance](#performance) | [Concurrency](#concurrency) | [Security](#security) | [Dependency Management](#dependency-management) | [Build and Deployment](#build-and-deployment) | [Documentation](#documentation) | [Installation](#installation) | [Usage](#usage) | [Features](#features) | [Documentation](#documentation) | [Contributing](#contributing) | [License](#license) | [Code Review](#code-review) | [Refactoring](#refactoring) | [Summary](#summary) | [Additional Resources](#additional-resources)
+## Quick Reference
+
+**Software Engineering Principles**:
+
+- [Alignment with Software Engineering Principles](#alignment-with-software-engineering-principles)
+
+**Major Topics**:
+
+- [Code Organization](#code-organization)
+- [Naming Conventions](#naming-conventions)
+- [Code Style](#code-style)
+- [Package Design](#package-design)
+- [Error Handling](#error-handling)
+- [Testing](#testing)
+- [Performance](#performance)
+- [Concurrency](#concurrency)
+- [Security](#security)
+- [Dependency Management](#dependency-management)
+- [Build and Deployment](#build-and-deployment)
+- [Documentation](#documentation)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Features](#features)
+- [Contributing](#contributing)
+- [License](#license)
+- [Code Review](#code-review)
+- [Refactoring](#refactoring)
+
+**Additional Resources**:
+
+- [Summary](#summary)
+- [Additional Resources](#additional-resources)
+
 **Understanding-oriented guide** to Go best practices - proven patterns and conventions for writing maintainable, performant, and idiomatic Go code.
 
 ## Overview
@@ -133,7 +165,493 @@ func Calculate(wealth, nisab float64) float64 {
 
 **See Also**: [Go Linting and Formatting](./ex-so-stla-go__linting-and-formatting.md)
 
-(Continue with remaining principles following the same pattern...)
+### 2. Explicit Over Implicit
+
+**Principle**: Choose explicit composition and configuration over magic, convenience, and hidden behavior.
+
+**How Go Implements**:
+
+- Explicit error returns (no exceptions)
+- Zero values explicitly defined for all types
+- No default function parameters (all args explicit)
+- Explicit struct field tags for JSON/DB mapping
+- Explicit context.Context passing for cancellation
+- No hidden globals or magic imports
+
+**PASS Example** (Explicit Murabaha Contract):
+
+```go
+// Explicit type definitions with struct tags
+type MurabahaContract struct {
+ ContractID       string          `json:"contract_id" db:"contract_id"`
+ CustomerID       string          `json:"customer_id" db:"customer_id"`
+ CostPrice        decimal.Decimal `json:"cost_price" db:"cost_price"`
+ ProfitMargin     decimal.Decimal `json:"profit_margin" db:"profit_margin"`
+ TotalPrice       decimal.Decimal `json:"total_price" db:"total_price"`
+ InstallmentCount int             `json:"installment_count" db:"installment_count"`
+}
+
+// Explicit configuration - no hidden defaults
+type MurabahaConfig struct {
+ MinCostPrice         decimal.Decimal
+ MaxProfitMarginRate  decimal.Decimal
+ MinInstallmentCount  int
+ MaxInstallmentCount  int
+}
+
+// Explicit function signature - all parameters required
+func CreateMurabahaContract(
+ ctx context.Context,
+ customerID string,
+ costPrice decimal.Decimal,
+ profitMargin decimal.Decimal,
+ installmentCount int,
+ config MurabahaConfig,
+) (*MurabahaContract, error) {
+ // Explicit validation
+ if costPrice.LessThan(config.MinCostPrice) {
+  return nil, fmt.Errorf("cost price %s must be at least %s",
+   costPrice, config.MinCostPrice)
+ }
+
+ if installmentCount < config.MinInstallmentCount {
+  return nil, fmt.Errorf("installment count %d must be at least %d",
+   installmentCount, config.MinInstallmentCount)
+ }
+
+ // Explicit error handling
+ totalPrice := costPrice.Add(profitMargin)
+
+ return &MurabahaContract{
+  ContractID:       uuid.New().String(),
+  CustomerID:       customerID,
+  CostPrice:        costPrice,
+  ProfitMargin:     profitMargin,
+  TotalPrice:       totalPrice,
+  InstallmentCount: installmentCount,
+ }, nil
+}
+```
+
+**FAIL Example** (Implicit Defaults):
+
+```go
+// Hidden defaults - not transparent
+func CreateMurabahaContract(
+ customerID string,
+ costPrice decimal.Decimal,
+ profitMargin *decimal.Decimal, // Optional with hidden default
+) (*MurabahaContract, error) {
+ // Hidden markup calculation - WHERE IS THIS DOCUMENTED?
+ margin := profitMargin
+ if margin == nil {
+  fifteenPercent := decimal.NewFromFloat(0.15)
+  calculatedMargin := costPrice.Mul(fifteenPercent)
+  margin = &calculatedMargin
+ }
+
+ // Magic number - no explanation
+ installmentCount := 12
+
+ return &MurabahaContract{
+  ContractID:       uuid.New().String(),
+  CustomerID:       customerID,
+  CostPrice:        costPrice,
+  ProfitMargin:     *margin,
+  TotalPrice:       costPrice.Add(*margin),
+  InstallmentCount: installmentCount,
+ }, nil
+}
+```
+
+**Islamic Finance Application**: Explicit Murabaha terms ensure no hidden fees (riba), maintaining transparency required by Shariah law. All profit margins must be disclosed upfront with explicit parameters. When a scholar audits the code, they can verify no implicit interest calculations exist.
+
+**See Also**: [Explicit Over Implicit Principle](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)
+
+### 3. Immutability Over Mutability
+
+**Principle**: Prefer immutable data structures to prevent unintended state changes and enable safer concurrent code.
+
+**How Go Implements**:
+
+- Unexported struct fields with getter methods
+- Functional options pattern for constructors
+- Copy-on-write semantics (return new instances)
+- Value receivers for methods that don't modify
+- Returning new slices/maps instead of modifying
+- Note: Go lacks enforced immutability, relies on conventions
+
+**PASS Example** (Immutable Zakat Transaction):
+
+```go
+// Immutable transaction - unexported fields prevent external modification
+type ZakatTransaction struct {
+ transactionID string
+ payerID       string
+ wealth        decimal.Decimal
+ zakatAmount   decimal.Decimal
+ paidAt        time.Time
+ auditHash     string
+}
+
+// Getter methods for read access
+func (z *ZakatTransaction) TransactionID() string       { return z.transactionID }
+func (z *ZakatTransaction) PayerID() string             { return z.payerID }
+func (z *ZakatTransaction) Wealth() decimal.Decimal     { return z.wealth }
+func (z *ZakatTransaction) ZakatAmount() decimal.Decimal { return z.zakatAmount }
+func (z *ZakatTransaction) PaidAt() time.Time           { return z.paidAt }
+func (z *ZakatTransaction) AuditHash() string           { return z.auditHash }
+
+// Factory function creates new immutable instances
+func NewZakatTransaction(
+ payerID string,
+ wealth decimal.Decimal,
+ zakatAmount decimal.Decimal,
+) *ZakatTransaction {
+ paidAt := time.Now()
+ tx := &ZakatTransaction{
+  transactionID: uuid.New().String(),
+  payerID:       payerID,
+  wealth:        wealth,
+  zakatAmount:   zakatAmount,
+  paidAt:        paidAt,
+ }
+
+ // Calculate audit hash from immutable data
+ tx.auditHash = calculateHash(tx)
+
+ return tx
+}
+
+// Correction creates NEW transaction, doesn't modify old one
+func CorrectZakatTransaction(
+ original *ZakatTransaction,
+ correctedAmount decimal.Decimal,
+) *ZakatTransaction {
+ // Original remains unchanged - audit trail preserved
+ return NewZakatTransaction(
+  original.payerID,
+  original.wealth,
+  correctedAmount,
+ )
+}
+
+func calculateHash(tx *ZakatTransaction) string {
+ data := fmt.Sprintf("%s|%s|%s|%s|%v",
+  tx.transactionID, tx.payerID,
+  tx.wealth, tx.zakatAmount, tx.paidAt)
+ hash := sha256.Sum256([]byte(data))
+ return hex.EncodeToString(hash[:])
+}
+```
+
+**FAIL Example** (Mutable State):
+
+```go
+// Mutable transaction - exported fields allow external modification
+type ZakatTransaction struct {
+ TransactionID string          // Exported - can be changed!
+ PayerID       string          // Exported - can be changed!
+ Wealth        decimal.Decimal // Exported - can be changed!
+ ZakatAmount   decimal.Decimal // Exported - can be changed!
+ PaidAt        time.Time       // Exported - can be changed!
+}
+
+// Constructor
+func NewZakatTransaction(
+ payerID string,
+ wealth decimal.Decimal,
+ zakatAmount decimal.Decimal,
+) *ZakatTransaction {
+ return &ZakatTransaction{
+  TransactionID: uuid.New().String(),
+  PayerID:       payerID,
+  Wealth:        wealth,
+  ZakatAmount:   zakatAmount,
+  PaidAt:        time.Now(),
+ }
+}
+
+// DANGER: Can modify amount after creation
+func (z *ZakatTransaction) UpdateAmount(newAmount decimal.Decimal) {
+ z.ZakatAmount = newAmount // Violates audit trail!
+ z.PaidAt = time.Now()     // Falsifies payment timestamp!
+}
+
+// External code can also mutate:
+// tx.ZakatAmount = decimal.NewFromInt(999) // Tampering!
+```
+
+**Islamic Finance Application**: Immutable transaction records provide tamper-proof audit trails required for Shariah compliance verification. Once a Murabaha payment is recorded, it cannot be altered - ensuring transparency and accountability (Amanah). Scholars can verify that no transaction has been retroactively modified.
+
+**See Also**: [Immutability Principle](../../../../../governance/principles/software-engineering/immutability.md)
+
+### 4. Pure Functions Over Side Effects
+
+**Principle**: Prefer pure functions that are deterministic and side-effect-free for predictable, testable code.
+
+**How Go Implements**:
+
+- Functions without receivers (package-level functions)
+- Explicit dependencies as function parameters
+- Table-driven tests for deterministic verification
+- Pure domain logic separated from I/O
+- No package-level mutable state in calculations
+- Error returns instead of panics (predictable)
+
+**PASS Example** (Pure Zakat Calculation):
+
+```go
+// Pure function - same inputs always return same output
+func CalculateZakat(wealth, nisab decimal.Decimal) decimal.Decimal {
+ // No external dependencies
+ // No side effects (logging, database, network)
+ // Deterministic - verifiable by anyone
+
+ if wealth.LessThan(nisab) {
+  return decimal.Zero
+ }
+
+ // 2.5% calculation - simple, pure, auditable
+ zakatRate := decimal.NewFromFloat(0.025)
+ return wealth.Mul(zakatRate)
+}
+
+// Pure helper functions
+func IsZakatEligible(wealth, nisab decimal.Decimal) bool {
+ return wealth.GreaterThanOrEqual(nisab)
+}
+
+func CalculateNisabFromGoldPrice(goldPricePerGram decimal.Decimal) decimal.Decimal {
+ nisabGoldGrams := decimal.NewFromInt(85)
+ return goldPricePerGram.Mul(nisabGoldGrams)
+}
+
+// Testing pure functions is trivial
+func TestCalculateZakat(t *testing.T) {
+ tests := []struct {
+  name   string
+  wealth decimal.Decimal
+  nisab  decimal.Decimal
+  want   decimal.Decimal
+ }{
+  {
+   name:   "wealth above nisab returns 2.5%",
+   wealth: decimal.NewFromInt(100000),
+   nisab:  decimal.NewFromInt(5000),
+   want:   decimal.NewFromInt(2500),
+  },
+  {
+   name:   "wealth below nisab returns zero",
+   wealth: decimal.NewFromInt(3000),
+   nisab:  decimal.NewFromInt(5000),
+   want:   decimal.Zero,
+  },
+ }
+
+ for _, tt := range tests {
+  t.Run(tt.name, func(t *testing.T) {
+   got := CalculateZakat(tt.wealth, tt.nisab)
+   if !got.Equal(tt.want) {
+    t.Errorf("CalculateZakat() = %v, want %v", got, tt.want)
+   }
+  })
+ }
+}
+```
+
+**FAIL Example** (Impure with Side Effects):
+
+```go
+// Impure function - behavior unpredictable
+type ZakatCalculator struct {
+ db                    *sql.DB
+ logger                *log.Logger
+ notificationService   NotificationService
+}
+
+func (z *ZakatCalculator) Calculate(
+ wealth, nisab decimal.Decimal,
+) (decimal.Decimal, error) {
+ // Side effect: logging
+ z.logger.Printf("Calculating Zakat for wealth: %s", wealth)
+
+ // Side effect: database query during calculation
+ var historicalRate float64
+ err := z.db.QueryRow(
+  "SELECT rate FROM zakat_rates WHERE is_current = true",
+ ).Scan(&historicalRate)
+ if err != nil {
+  historicalRate = 0.025
+ }
+
+ // Side effect: external API call
+ goldPrice, err := z.fetchCurrentGoldPrice()
+ if err != nil {
+  return decimal.Zero, err
+ }
+
+ // Calculation mixed with I/O - hard to test
+ rate := decimal.NewFromFloat(historicalRate)
+ zakat := wealth.Mul(rate)
+
+ // Side effect: notification
+ z.notificationService.Send(fmt.Sprintf("Zakat calculated: %s", zakat))
+
+ // Side effect: database write
+ _, err = z.db.Exec(
+  "INSERT INTO zakat_calculations (wealth, zakat) VALUES (?, ?)",
+  wealth, zakat,
+ )
+
+ return zakat, err
+}
+
+func (z *ZakatCalculator) fetchCurrentGoldPrice() (decimal.Decimal, error) {
+ // Network call - non-deterministic
+ resp, err := http.Get("https://api.gold-price.com/current")
+ if err != nil {
+  return decimal.Zero, err
+ }
+ defer resp.Body.Close()
+ // Parse response...
+ return decimal.Zero, nil
+}
+```
+
+**Islamic Finance Application**: Pure Zakat calculation functions ensure deterministic, verifiable results. Calculate Zakat on 100,000 SAR wealth with 5,000 SAR nisab - always get 2,500 SAR (2.5%). Scholars and users can independently verify calculations match Shariah requirements. No hidden side effects that could manipulate results.
+
+**See Also**: [Pure Functions Principle](../../../../../governance/principles/software-engineering/pure-functions.md)
+
+### 5. Reproducibility First
+
+**Principle**: Ensure builds, tests, and deployments are reproducible across environments and time.
+
+**How Go Implements**:
+
+- `go.mod` with exact dependency versions
+- `go.sum` lockfile with cryptographic checksums
+- Docker multi-stage builds with pinned Go version
+- Go version specified in `go.mod`
+- Vendoring option for hermetic builds
+- Deterministic compilation (same input = same binary)
+
+**PASS Example** (Reproducible Environment):
+
+```go
+// go.mod - Exact dependency versions
+module github.com/open-sharia-enterprise/zakat-service
+
+go 1.25.0
+
+require (
+ github.com/google/uuid v1.6.0
+ github.com/shopspring/decimal v1.3.1
+ github.com/stretchr/testify v1.8.4
+)
+
+// go.sum - Cryptographic checksums (committed to git)
+github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/shopspring/decimal v1.3.1 h1:2Usl1nmF/WZucqkFZhnfFYxxxu8LG21F6nPQBE5gKV8=
+github.com/shopspring/decimal v1.3.1/go.mod h1:DKyhrW/HYNuLGql+MJL6WCR6knT2jwCFRcu2hWCYk4o=
+```
+
+```dockerfile
+# Dockerfile - Reproducible build environment
+FROM golang:1.25.0-alpine AS builder
+
+WORKDIR /app
+
+# Install dependencies with exact versions from go.sum
+COPY go.mod go.sum ./
+RUN go mod download
+RUN go mod verify
+
+COPY . .
+
+# Build with reproducible flags
+RUN CGO_ENABLED=0 GOOS=linux go build \
+ -ldflags="-w -s -X main.Version=1.0.0" \
+ -o zakat-service \
+ ./cmd/server
+
+# Final stage - minimal image
+FROM alpine:3.19
+
+RUN apk --no-cache add ca-certificates
+
+WORKDIR /root/
+
+COPY --from=builder /app/zakat-service .
+
+EXPOSE 8080
+
+CMD ["./zakat-service"]
+```
+
+```makefile
+# Makefile - Reproducible build commands
+.PHONY: build test verify
+
+build:
+ @echo "Building with Go 1.25.0"
+ go build -o bin/zakat-service ./cmd/server
+
+test:
+ go test -v -race -coverprofile=coverage.out ./...
+ go tool cover -func=coverage.out
+
+verify:
+ go mod verify
+ go mod tidy
+ git diff --exit-code go.mod go.sum
+
+docker-build:
+ docker build -t zakat-service:latest .
+
+ci: verify test build
+```
+
+**FAIL Example** (Non-Reproducible):
+
+```go
+// go.mod - Loose version constraints
+module github.com/open-sharia-enterprise/zakat-service
+
+go 1.25 // No patch version
+
+require (
+ github.com/google/uuid v1.6      // No patch version
+ github.com/shopspring/decimal latest // WRONG: "latest" not valid
+)
+
+// No go.sum committed to git
+// No version specified in Dockerfile
+```
+
+```dockerfile
+# Dockerfile - Non-reproducible
+FROM golang:latest  # WRONG: "latest" changes over time
+
+WORKDIR /app
+
+COPY . .
+
+# No go.sum verification
+RUN go mod download
+
+# No reproducible build flags
+RUN go build -o zakat-service ./cmd/server
+
+# Result: Different builds at different times
+# Go version changes, dependencies change
+# Behavior changes unpredictably
+```
+
+**Islamic Finance Application**: Reproducible Murabaha markup calculations ensure that profit-sharing ratios remain consistent across all deployment environments. When Islamic scholars audit the system in 2026, they must see the same calculations that ran in 2024 - reproducibility ensures Shariah compliance across time. Every build produces identical binaries with identical behavior.
+
+**See Also**: [Reproducibility Principle](../../../../../governance/principles/software-engineering/reproducibility.md)
 
 ### Why Best Practices Matter
 
@@ -180,7 +698,56 @@ This guide covers Go 1.18-1.25 with emphasis on:
 
 ## Code Organization
 
-### Project Structure
+### 📁 Project Structure Recommendation
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    A["Repository Root"]:::blue --> B["cmd/<br/>#40;Executables#41;"]:::orange
+    A --> C["internal/<br/>#40;Private Code#41;"]:::teal
+    A --> D["pkg/<br/>#40;Public Libraries#41;"]:::purple
+    A --> E["api/<br/>#40;Definitions#41;"]:::teal
+
+    B --> B1["server/main.go"]
+    B --> B2["worker/main.go"]
+    B --> B3["cli/main.go"]
+
+    C --> C1["auth/<br/>#40;domain#41;"]
+    C --> C2["payment/<br/>#40;domain#41;"]
+    C --> C3["database/"]
+
+    C1 --> C1A["service.go"]
+    C1 --> C1B["repository.go"]
+    C1 --> C1C["types.go"]
+
+    D --> D1["api/<br/>#40;importable#41;"]
+    D --> D2["utils/<br/>#40;helpers#41;"]
+
+    E --> E1["proto/"]
+    E --> E2["openapi/"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
+**Directory Guidelines**:
+
+| Directory   | Purpose                                  | Visibility |
+| ----------- | ---------------------------------------- | ---------- |
+| `cmd/`      | Application entry points (main packages) | Public     |
+| `internal/` | Private implementation (not importable)  | Private    |
+| `pkg/`      | Public reusable libraries                | Public     |
+| `api/`      | API contracts (protobuf, OpenAPI)        | Public     |
+| `web/`      | Web assets (templates, static files)     | N/A        |
+| `scripts/`  | Build/deployment scripts                 | N/A        |
+| `test/`     | Additional test fixtures                 | N/A        |
+| `vendor/`   | Vendored dependencies (if used)          | N/A        |
+
+**Standard Layout**:
 
 ```
 myapp/
@@ -800,6 +1367,75 @@ var (
 
 See [Error Handling Documentation](./ex-so-stla-go__error-handling.md) for comprehensive coverage.
 
+### ⚠️ Error Handling Patterns
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Function Call<br/>Returns Error"]:::blue --> B{"Error<br/>Occurred?"}:::orange
+
+    B -->|"No #40;err == nil#41;"| C["✅ Continue<br/>Execution"]:::teal
+    B -->|"Yes #40;err != nil#41;"| D{"Need to<br/>Add Context?"}:::orange
+
+    D -->|"Yes"| E["Wrap with<br/>fmt.Errorf<br/>#40;%w verb#41;"]:::purple
+    D -->|"No"| F["Return<br/>Unwrapped"]:::purple
+
+    E --> G{"Known Error<br/>Type?"}:::orange
+    F --> G
+
+    G -->|"Sentinel Error"| H["Use errors.Is#40;#41;<br/>for Comparison"]:::teal
+    G -->|"Custom Type"| I["Use errors.As#40;#41;<br/>for Type Check"]:::teal
+    G -->|"Generic"| J["Check err != nil"]:::teal
+
+    H --> K["Handle<br/>Specifically"]:::teal
+    I --> K
+    J --> K
+
+    K --> L["Log Once<br/>at Top Level"]:::purple
+    L --> M["✅ Error<br/>Handled"]:::teal
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
+**Three Error Patterns**:
+
+1. **Sentinel Errors** (predefined constants):
+
+   ```go
+   var ErrNotFound = errors.New("not found")
+
+   if errors.Is(err, ErrNotFound) {
+     // Handle not found
+   }
+   ```
+
+2. **Custom Error Types** (rich information):
+
+   ```go
+   type ValidationError struct {
+     Field string
+     Err   error
+   }
+
+   var validationErr *ValidationError
+   if errors.As(err, &validationErr) {
+     fmt.Println(validationErr.Field)
+   }
+   ```
+
+3. **Error Wrapping** (preserve chain):
+
+   ```go
+   if err != nil {
+     return fmt.Errorf("query user %d: %w", id, err)  // %w preserves chain
+   }
+   ```
+
 ### Key Practices
 
 ```go
@@ -862,6 +1498,85 @@ func BenchmarkGetUser(b *testing.B)
 ```
 
 ### Table-Driven Tests
+
+#### 🧪 Table-Driven Test Organization
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Test Function<br/>TestAdd#40;t *testing.T#41;"]:::blue --> B["Define Test Cases<br/>[]struct"]:::orange
+
+    B --> C["Test Case 1<br/>name, input, want"]:::teal
+    B --> D["Test Case 2<br/>name, input, want"]:::teal
+    B --> E["Test Case N<br/>name, input, want"]:::teal
+
+    C --> F["Loop: range tests"]:::purple
+    D --> F
+    E --> F
+
+    F --> G["t.Run#40;tt.name#41;"]:::orange
+    G --> H["Execute<br/>Function Under Test"]:::purple
+    H --> I{"got == want?"}:::orange
+
+    I -->|"Yes"| J["✅ Pass"]:::teal
+    I -->|"No"| K["❌ t.Errorf<br/>#40;descriptive message#41;"]:::brown
+
+    J --> L{"More Cases?"}:::orange
+    K --> L
+
+    L -->|"Yes"| F
+    L -->|"No"| M["✅ Test Complete"]:::teal
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#000000,stroke-width:2px
+```
+
+**Table-Driven Test Structure**:
+
+```go
+func TestAdd(t *testing.T) {
+  // 1. Define test cases table
+  tests := []struct {
+    name string    // Descriptive test name
+    a, b int       // Input parameters
+    want int       // Expected output
+  }{
+    {"positive numbers", 2, 3, 5},
+    {"negative numbers", -1, -2, -3},
+    {"zero", 0, 0, 0},
+    {"mixed signs", -5, 10, 5},
+  }
+
+  // 2. Loop through test cases
+  for _, tt := range tests {
+    // 3. Run each as subtest
+    t.Run(tt.name, func(t *testing.T) {
+      // 4. Execute function
+      got := Add(tt.a, tt.b)
+
+      // 5. Assert result
+      if got != tt.want {
+        t.Errorf("Add(%d, %d) = %d, want %d",
+          tt.a, tt.b, got, tt.want)
+      }
+    })
+  }
+}
+```
+
+**Benefits**:
+
+- Easy to add new test cases (just add row)
+- Clear test names show what's being tested
+- DRY: Test logic written once
+- Parallel execution: `t.Parallel()` in subtest
+
+**Example with Table**:
 
 ```go
 func TestAdd(t *testing.T) {
@@ -1798,6 +2513,113 @@ Before committing code:
 - [Gophers Slack](https://gophers.slack.com/)
 
 ---
+
+## Best Practices Checklist
+
+Use this checklist to ensure your Go code follows best practices:
+
+### Code Quality
+
+- [ ] All code formatted with `gofmt` or `goimports`
+- [ ] Package names are lowercase, single word (e.g., `zakat`, not `zakat_calculator`)
+- [ ] Function names use camelCase (unexported) or PascalCase (exported)
+- [ ] Exported types and functions have godoc comments
+- [ ] Error messages start with lowercase, no trailing punctuation
+- [ ] Imports organized: standard library → third-party → local
+
+### Software Engineering Principles
+
+- [ ] **Automation**: `go test` runs on every commit
+- [ ] **Automation**: `golangci-lint` integrated in CI pipeline
+- [ ] **Automation**: Code coverage enforced (80% minimum)
+- [ ] **Explicit**: No default function parameters (all args explicit)
+- [ ] **Explicit**: Struct field tags for JSON/DB mapping declared
+- [ ] **Explicit**: `context.Context` passed explicitly for cancellation
+- [ ] **Explicit**: Error returns are explicit (no exceptions)
+- [ ] **Immutability**: Unexported struct fields with getter methods
+- [ ] **Immutability**: Value receivers for methods that don't modify state
+- [ ] **Immutability**: Copy-on-write semantics (return new instances)
+- [ ] **Pure Functions**: Business logic functions have no side effects
+- [ ] **Pure Functions**: Explicit dependencies as function parameters
+- [ ] **Pure Functions**: Table-driven tests verify deterministic behavior
+- [ ] **Reproducibility**: `go.mod` and `go.sum` committed to version control
+- [ ] **Reproducibility**: Docker images pin Go version
+- [ ] **Reproducibility**: Exact dependency versions in `go.mod`
+
+### Error Handling
+
+- [ ] Errors checked immediately after function calls
+- [ ] Errors wrapped with context using `fmt.Errorf("context: %w", err)`
+- [ ] Sentinel errors defined as package-level `var` (e.g., `var ErrNotFound`)
+- [ ] Custom error types implement `Error() string` method
+- [ ] `errors.Is()` used to check sentinel errors
+- [ ] `errors.As()` used to extract custom error types
+
+### Testing
+
+- [ ] Table-driven tests used for multiple test cases
+- [ ] Test functions named `TestFunctionName_Scenario`
+- [ ] Subtests use `t.Run()` for organization
+- [ ] Test helpers call `t.Helper()` to improve error reporting
+- [ ] Tests use `t.Cleanup()` for teardown instead of defer
+- [ ] Mocks created via interfaces (not concrete dependencies)
+- [ ] Coverage reports generated: `go test -coverprofile=coverage.out`
+
+### Concurrency
+
+- [ ] Goroutines have clear termination conditions
+- [ ] Channels closed by sender, not receiver
+- [ ] `select` statements handle `<-ctx.Done()` for cancellation
+- [ ] `errgroup` used for coordinated error handling
+- [ ] No goroutine leaks (all goroutines complete or cancelled)
+- [ ] Race detector run: `go test -race`
+
+### Package Design
+
+- [ ] Interfaces defined in consumer package (not producer)
+- [ ] Functions accept interfaces, return structs
+- [ ] Small, focused interfaces (1-3 methods)
+- [ ] No package-level mutable state (use structs instead)
+- [ ] Dependency injection via constructors (`NewService()`)
+
+### Performance
+
+- [ ] Slices pre-allocated when size known: `make([]T, 0, capacity)`
+- [ ] Maps pre-allocated with capacity hint: `make(map[K]V, capacity)`
+- [ ] `strings.Builder` used for string concatenation
+- [ ] Profiling used before optimization (`pprof`)
+- [ ] Benchmarks written for performance-critical code
+
+### Documentation
+
+- [ ] Package godoc comments start with package name
+- [ ] Public functions have godoc comments starting with function name
+- [ ] Examples in `example_test.go` for common usage
+- [ ] README includes installation, usage, and examples
+- [ ] Complex algorithms explained with inline comments
+
+### Security
+
+- [ ] Input validation for all external inputs
+- [ ] Parameterized queries (no SQL string concatenation)
+- [ ] Secrets loaded from environment or secrets manager
+- [ ] `crypto/rand` used for cryptographic randomness (not `math/rand`)
+- [ ] Passwords hashed with bcrypt
+
+### Financial Domain (Islamic Finance)
+
+- [ ] Zakat calculations use `decimal.Decimal`, not `float64`
+- [ ] Murabaha contracts have explicit cost + profit fields
+- [ ] All financial transactions logged for audit trails
+- [ ] Shariah compliance verified for new features
+- [ ] Money value objects prevent currency mixing errors
+
+### Version Control
+
+- [ ] Commits follow Conventional Commits format
+- [ ] Changes reviewed before merging to `main`
+- [ ] No sensitive data in repository (credentials, API keys)
+- [ ] `.env` files excluded from version control
 
 **Related Documentation**:
 

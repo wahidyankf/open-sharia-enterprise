@@ -35,6 +35,42 @@ Understanding memory management is critical for Node.js applications handling la
 
 ## V8 Heap Structure
 
+### V8 Memory Spaces Architecture
+
+V8 organizes memory into different spaces optimized for different object lifespans and sizes.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    Heap["V8 Heap"]:::blue
+
+    NewSpace["New Space<br/>#40;Young Generation#41;<br/>1-8 MB"]:::orange
+    OldSpace["Old Space<br/>#40;Old Generation#41;<br/>Variable size"]:::teal
+    LargeSpace["Large Object Space<br/>#40;#62; 1 MB objects#41;"]:::purple
+    CodeSpace["Code Space<br/>#40;JIT compiled code#41;"]:::brown
+
+    Heap --> NewSpace
+    Heap --> OldSpace
+    Heap --> LargeSpace
+    Heap --> CodeSpace
+
+    NewDesc["Short-lived objects<br/>Fast allocation<br/>Scavenge GC #40;minor#41;"]
+    OldDesc["Long-lived objects<br/>Promoted from new space<br/>Mark-Sweep GC #40;major#41;"]
+    LargeDesc["Arrays, buffers<br/>Allocated directly<br/>No copying"]
+    CodeDesc["Compiled JavaScript<br/>Read-only after compilation"]
+
+    NewSpace -.-> NewDesc
+    OldSpace -.-> OldDesc
+    LargeSpace -.-> LargeDesc
+    CodeSpace -.-> CodeDesc
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ### Heap Regions
 
 ```typescript
@@ -71,6 +107,49 @@ takeHeapSnapshot("after.heapsnapshot");
 ```
 
 ## Garbage Collection
+
+### Garbage Collection Cycle (Mark-Sweep)
+
+V8 uses mark-sweep algorithm for old generation garbage collection. Understanding the phases helps optimize memory usage.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Start["GC Triggered<br/>#40;Memory pressure#41;"]:::blue
+
+    Mark["Mark Phase<br/>Traverse object graph"]:::orange
+    MarkRoots["Identify GC Roots<br/>#40;Global, Stack, Closures#41;"]:::orange
+    MarkReachable["Mark all reachable<br/>objects as alive"]:::orange
+
+    Sweep["Sweep Phase<br/>Reclaim memory"]:::teal
+    IdentifyDead["Identify unmarked<br/>#40;dead#41; objects"]:::teal
+    Reclaim["Add to free list<br/>for allocation"]:::teal
+
+    Compact["Compact Phase<br/>#40;Optional#41;"]:::purple
+    Defragment["Move live objects<br/>together"]:::purple
+    UpdatePointers["Update references<br/>to moved objects"]:::purple
+
+    Complete["GC Complete<br/>Memory available"]:::brown
+
+    Start --> Mark
+    Mark --> MarkRoots
+    MarkRoots --> MarkReachable
+    MarkReachable --> Sweep
+    Sweep --> IdentifyDead
+    IdentifyDead --> Reclaim
+    Reclaim --> Compact
+    Compact --> Defragment
+    Defragment --> UpdatePointers
+    UpdatePointers --> Complete
+
+    Note1["Major GC pause time:<br/>10-100ms depending<br/>on heap size"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ### GC Types
 
@@ -219,6 +298,45 @@ class DonationMonitor {
 
 ### WeakMap and WeakRef
 
+#### WeakMap/WeakSet Lifecycle
+
+Weak references allow garbage collection of referenced objects, preventing memory leaks in caching scenarios.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+stateDiagram-v2
+    [*] --> Referenced: Object created
+    Referenced --> WeakReferenced: Add to WeakMap/WeakSet
+    Referenced --> StrongReferenced: Add to Map/Set
+
+    WeakReferenced --> Referenced: Object still in use
+    WeakReferenced --> GCEligible: No strong references
+
+    StrongReferenced --> Referenced: Object kept alive
+    StrongReferenced --> StrongReferenced: Collection prevents GC
+
+    GCEligible --> Collected: GC runs
+    Collected --> [*]: Memory reclaimed
+
+    note right of WeakReferenced
+        Weak reference allows
+        garbage collection when
+        no other references exist
+    end note
+
+    note right of StrongReferenced
+        Strong reference prevents
+        garbage collection
+        causing memory leaks
+    end note
+
+    note right of GCEligible
+        WeakMap/WeakSet entries
+        automatically removed
+        when key is collected
+    end note
+```
+
 ```typescript
 // ✅ GOOD: WeakMap for metadata
 const donationMetadata = new WeakMap<Donation, { processed: boolean }>();
@@ -253,6 +371,47 @@ class DonationCache {
 ```
 
 ## Memory Monitoring
+
+### Memory Leak Detection Workflow
+
+Systematically detecting and fixing memory leaks using Chrome DevTools and heap snapshots.
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant Dev as Developer
+    participant App as Node App
+    participant Heap as Heap Snapshot
+    participant DevTools as Chrome DevTools
+
+    Note over Dev,DevTools: Step 1: Establish Baseline
+    Dev->>App: Start app with --inspect
+    App->>Heap: Take snapshot #40;before.heapsnapshot#41;
+    Heap-->>DevTools: Load baseline
+
+    Note over Dev,DevTools: Step 2: Execute Operations
+    Dev->>App: Run suspected leak operation
+    Dev->>App: Trigger manual GC
+    App->>Heap: Take snapshot #40;after.heapsnapshot#41;
+    Heap-->>DevTools: Load comparison
+
+    Note over Dev,DevTools: Step 3: Compare Snapshots
+    DevTools->>DevTools: Calculate delta
+    DevTools->>Dev: Show retained objects
+    DevTools->>Dev: Highlight detached DOM
+    DevTools->>Dev: Display closure scope
+
+    Note over Dev,DevTools: Step 4: Identify Root Cause
+    Dev->>DevTools: Find retaining path
+    DevTools-->>Dev: Show references chain
+    Dev->>Dev: Locate leak source
+
+    Note over Dev,DevTools: Step 5: Fix and Verify
+    Dev->>App: Apply fix #40;remove listener#41;
+    App->>Heap: Take verification snapshot
+    Heap-->>DevTools: Confirm leak fixed
+    DevTools-->>Dev: Memory stable
+```
 
 ### Process Memory Usage
 

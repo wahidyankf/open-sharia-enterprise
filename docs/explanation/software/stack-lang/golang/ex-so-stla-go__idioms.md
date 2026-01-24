@@ -24,8 +24,66 @@ tags:
 
 # Go Idioms
 
-**Quick Reference**: [Overview](#overview) | [Defer, Panic, and Recover](#defer-panic-and-recover) | [Zero Values](#zero-values) | [Comma-Ok Idiom](#comma-ok-idiom) | [Blank Identifier](#blank-identifier) | [Struct Tags](#struct-tags) | [Functional Options Pattern](#functional-options-pattern) | [Builder Pattern](#builder-pattern) | [Slice Idioms](#slice-idioms) | [Map Idioms](#map-idioms) | [String Idioms](#string-idioms) | [Interface Idioms](#interface-idioms) | [Error Handling Idioms](#error-handling-idioms) | [Concurrency Idioms](#concurrency-idioms) | [init() Functions](#init-functions) | [Package Organization Idioms](#package-organization-idioms) | [Testing Idioms](#testing-idioms) | [Performance Idioms](#performance-idioms) | [Summary](#summary) | [Additional Resources](#additional-resources)
-**Understanding-oriented guide** to Go-specific idioms - patterns, conventions, and constructs that make Go code idiomatic and effective.
+## Quick Reference
+
+### Core Idioms by Category
+
+**Control Flow**:
+
+- [Defer](#defer-statement) - Cleanup with guaranteed execution
+- [Panic and Recover](#panic) - Handle exceptional conditions
+- [Error Handling](#error-handling-idioms) - Explicit error checks
+
+**Data Structures**:
+
+- [Zero Values](#zero-values) - Design for useful defaults
+- [Slices](#slice-idioms) - Dynamic arrays and operations
+- [Maps](#map-idioms) - Key-value data structures
+- [Strings](#string-idioms) - Efficient string operations
+
+**Patterns**:
+
+- [Comma-Ok Idiom](#comma-ok-idiom) - Safe operations
+- [Functional Options](#functional-options-pattern) - Flexible configuration
+- [Builder Pattern](#builder-pattern) - Complex object construction
+- [Interfaces](#interface-idioms) - Accept interfaces, return structs
+
+**Concurrency**:
+
+- [Goroutines and Channels](#concurrency-idioms) - Concurrent programming
+- [Select Statement](#concurrency-idioms) - Channel multiplexing
+- [sync Package](#map-idioms) - Thread-safe data structures
+
+**Organization**:
+
+- [Package Structure](#package-organization-idioms) - Code organization
+- [init() Functions](#init-functions) - Package initialization
+- [Testing](#testing-idioms) - Table-driven tests
+
+### Version-Specific Features
+
+- **Go 1.21+**: `min/max/clear` built-ins
+- **Go 1.22+**: Enhanced routing, loop variable scoping
+- **Go 1.23+**: Iterator patterns, range over func
+- **Go 1.24+**: Swiss Tables maps, runtime.AddCleanup
+
+### Idiomatic Go Checklist
+
+- [ ] Use defer for cleanup
+- [ ] Check errors explicitly
+- [ ] Return early on errors
+- [ ] Leverage zero values
+- [ ] Use comma-ok for safety
+- [ ] Accept interfaces, return structs
+- [ ] Keep interfaces small
+- [ ] Pre-allocate when size known
+- [ ] Use strings.Builder for concatenation
+
+### Additional Resources
+
+- [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md)
+- [Error Handling](./ex-so-stla-go__error-handling.md)
+- [Best Practices](./ex-so-stla-go__best-practices.md)
 
 ## Overview
 

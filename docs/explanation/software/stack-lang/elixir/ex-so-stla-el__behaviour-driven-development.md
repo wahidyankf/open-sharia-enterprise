@@ -1070,6 +1070,56 @@ end
 3. Implement code
 4. BDD and TDD tests both pass
 
+## BDD Checklist
+
+### Feature File Quality
+
+- [ ] Scenarios written in plain language (non-technical stakeholders can read)
+- [ ] Given-When-Then structure followed consistently
+- [ ] Scenarios focus on behavior, not implementation details
+- [ ] Scenario Outlines with Examples used for multiple inputs
+- [ ] Background section for common setup steps
+
+### Scenario Structure
+
+- [ ] Given: Context/preconditions clear and complete
+- [ ] When: Single action described (not multiple actions)
+- [ ] Then: Expected outcome specified clearly
+- [ ] And: Used appropriately for additional steps
+- [ ] Scenario names describe business value
+
+### Step Definitions
+
+- [ ] Step definitions are reusable across scenarios
+- [ ] No business logic in steps (delegate to context modules)
+- [ ] Steps follow Elixir idioms (pattern matching, pipelines)
+- [ ] Error messages are descriptive and helpful
+- [ ] Context struct used to share state within scenario
+
+### Collaboration
+
+- [ ] Scenarios reviewed by business stakeholders
+- [ ] Ubiquitous language used consistently (domain terminology)
+- [ ] Scenarios executable and automated (mix white_bread.run)
+- [ ] Living documentation kept up to date
+- [ ] Three Amigos conversation: BA, Dev, Tester
+
+### White Bread Best Practices
+
+- [ ] Feature files organized by domain (features/donations/, features/campaigns/)
+- [ ] Step contexts modular and maintainable (features/contexts/)
+- [ ] Tags used for organizing scenarios (@wip, @critical, @integration)
+- [ ] Background steps minimized (only truly shared setup)
+- [ ] Data tables parsed correctly in step definitions
+
+### Financial Domain BDD
+
+- [ ] Shariah compliance scenarios included (halal/haram validation)
+- [ ] Zakat calculation scenarios with examples (nisab, rates, exemptions)
+- [ ] QardHasan loan scenarios with Given-When-Then (interest-free validation)
+- [ ] Audit trail scenarios verified (who, what, when)
+- [ ] Currency scenarios tested (Money.t() with IDR, USD, EUR)
+
 ## Related Topics
 
 - [Test-Driven Development](ex-so-stla-el__test-driven-development.md) - TDD with ExUnit

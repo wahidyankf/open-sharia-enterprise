@@ -990,6 +990,56 @@ Scenario: Complete checkout
   Then my order should be confirmed
 ```
 
+## BDD Checklist
+
+### Feature File Quality
+
+- [ ] Scenarios written in plain language (non-technical stakeholders can read)
+- [ ] Given-When-Then structure followed consistently
+- [ ] Scenarios focus on behavior, not implementation details
+- [ ] Scenario Outlines with Examples used for multiple inputs
+- [ ] Background section for common setup steps
+
+### Scenario Structure
+
+- [ ] Given: Context/preconditions clear and complete
+- [ ] When: Single action described (not multiple actions)
+- [ ] Then: Expected outcome specified clearly
+- [ ] And: Used appropriately for additional steps
+- [ ] Scenario names describe business value (not technical details)
+
+### Step Definitions
+
+- [ ] Step definitions are reusable across scenarios
+- [ ] No business logic in steps (delegate to domain layer)
+- [ ] Steps follow Go idioms (error handling, interfaces)
+- [ ] Error messages are descriptive and helpful
+- [ ] Context struct used to share state within scenario
+
+### Collaboration
+
+- [ ] Scenarios reviewed by business stakeholders
+- [ ] Ubiquitous language used consistently (domain terminology)
+- [ ] Scenarios executable and automated (godog)
+- [ ] Living documentation kept up to date
+- [ ] Three Amigos conversation: BA, Dev, Tester
+
+### Godog Best Practices
+
+- [ ] Feature files organized by domain (features/donations/, features/campaigns/)
+- [ ] Step definitions modular and maintainable (features/steps/)
+- [ ] Tags used for organizing scenarios (@smoke, @critical, @wip, @slow)
+- [ ] Background steps minimized (only truly shared setup)
+- [ ] Data tables parsed correctly using godog.Table
+
+### Financial Domain BDD
+
+- [ ] Shariah compliance scenarios included (halal/haram validation)
+- [ ] Zakat calculation scenarios with examples (nisab, rates, exemptions)
+- [ ] Murabaha contract scenarios with Given-When-Then (profit validation)
+- [ ] Audit trail scenarios verified (who, what, when)
+- [ ] Currency scenarios tested (beneficiary ID validation, order ID patterns)
+
 ## Conclusion
 
 Behaviour-Driven Development in Go emphasizes:
