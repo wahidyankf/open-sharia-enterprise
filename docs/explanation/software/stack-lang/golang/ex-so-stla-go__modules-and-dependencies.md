@@ -1,3 +1,29 @@
+---
+title: Go Modules and Dependencies
+description: Go modules system for dependency management including go.mod, go.sum, versioning, and workspace mode
+category: explanation
+subcategory: stack-lang
+tags:
+  - golang
+  - modules
+  - dependencies
+  - go-mod
+  - versioning
+  - workspace
+  - go-1.18
+  - go-1.21
+  - go-1.22
+  - go-1.23
+  - go-1.24
+  - go-1.25
+related:
+  - ./ex-so-stla-go__best-practices.md
+principles:
+  - reproducibility
+  - explicit-over-implicit
+last_updated: 2026-01-24
+---
+
 # Modules and Dependencies in Go
 
 **Quick Reference**: [Overview](#overview) | [Go Modules Overview](#go-modules-overview) | [Module Initialization](#module-initialization) | [Dependency Management](#dependency-management) | [go.mod File](#gomod-file) | [go.sum File](#gosum-file) | [Semantic Versioning](#semantic-versioning) | [Vendoring](#vendoring) | [Private Modules](#private-modules) | [Module Proxy](#module-proxy) | [Module Compatibility](#module-compatibility) | [Workspace Mode (Go 1.18+)](#workspace-mode-go-118) | [Best Practices](#best-practices) | [Common Operations](#common-operations) | [Troubleshooting](#troubleshooting) | [Related Documentation](#related-documentation) | [Further Reading](#further-reading)

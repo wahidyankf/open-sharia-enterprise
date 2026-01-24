@@ -1,24 +1,27 @@
----
 title: Error Handling
 description: Comprehensive guide to Go error handling patterns, error wrapping, custom errors, and best practices
 category: explanation
 subcategory: stack-lang
 tags:
-  - golang
-  - error-handling
-  - errors
-  - error-wrapping
-  - panic
-  - recover
-  - sentinel-errors
-  - custom-errors
-  - go-1.13
-  - go-1.18
-  - go-1.21
-  - go-1.22
-  - go-1.23
-  - go-1.24
-  - go-1.25
+
+- golang
+- error-handling
+- errors
+- error-wrapping
+- panic
+- recover
+- sentinel-errors
+- custom-errors
+- go-1.13
+- go-1.18
+- go-1.21
+- go-1.22
+- go-1.23
+- go-1.24
+- go-1.25
+  principles:
+- explicit-over-implicit
+
 ---
 
 # Error Handling
@@ -2207,6 +2210,10 @@ errors.Join(errs...)
 - [Go Code Review Comments - Errors](https://github.com/golang/go/wiki/CodeReviewComments#error-strings)
 - [Uber Go Style Guide - Errors](https://github.com/uber-go/guide/blob/master/style.md#errors)
 
+principles:
+
+- explicit-over-implicit
+
 ---
 
 **Related Documentation**:
@@ -2215,6 +2222,10 @@ errors.Join(errs...)
 - [Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md)
 
 **Navigation**: [← Back to Golang Overview](./README.md)
+
+principles:
+
+- explicit-over-implicit
 
 ---
 

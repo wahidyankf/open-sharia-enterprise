@@ -1,3 +1,26 @@
+---
+title: Java Security Best Practices
+description: Security practices in Java including cryptography, authentication, input validation, and vulnerability management
+category: explanation
+subcategory: stack-lang
+tags:
+  - java
+  - security
+  - cryptography
+  - authentication
+  - input-validation
+  - vulnerabilities
+  - java-17
+  - java-21
+  - java-25
+related:
+  - ./ex-so-stla-ja__best-practices.md
+principles:
+  - explicit-over-implicit
+  - simplicity-over-complexity
+last_updated: 2026-01-24
+---
+
 # Java Security: Comprehensive Guide to Secure Application Development
 
 **Quick Reference**: [Introduction](#introduction) | [Input Validation](#input-validation) | [Injection Prevention](#injection-prevention) | [Authentication & Authorization](#authentication--authorization) | [Cryptography](#cryptography) | [Secure Coding Practices](#secure-coding-practices) | [Dependency Management](#dependency-management) | [Audit Logging](#audit-logging) | [Modern Java Security Features](#modern-java-security-features) | [Security Checklist](#security-checklist) | [Performance vs Security Trade-offs](#performance-vs-security-trade-offs) | [Related Principles](#related-principles) | [Sources](#sources)

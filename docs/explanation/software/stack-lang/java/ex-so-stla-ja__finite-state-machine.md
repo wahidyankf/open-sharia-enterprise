@@ -13,6 +13,12 @@ tags:
   - java-17
   - java-21
   - spring-state-machine
+related:
+  - ./ex-so-stla-ja__best-practices.md
+principles:
+  - explicit-over-implicit
+  - immutability
+last_updated: 2026-01-24
 ---
 
 # Java Finite State Machines

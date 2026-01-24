@@ -1,3 +1,28 @@
+---
+title: Java Performance Optimization
+description: Performance optimization in Java including JVM tuning, profiling, memory management, and benchmarking
+category: explanation
+subcategory: stack-lang
+tags:
+  - java
+  - performance
+  - optimization
+  - jvm-tuning
+  - profiling
+  - benchmarking
+  - java-17
+  - java-21
+  - java-25
+related:
+  - ./ex-so-stla-ja__memory-management.md
+  - ./ex-so-stla-ja__concurrency-and-parallelism.md
+  - ./ex-so-stla-ja__best-practices.md
+principles:
+  - explicit-over-implicit
+  - simplicity-over-complexity
+last_updated: 2026-01-24
+---
+
 # Java Performance: Comprehensive Optimization Guide
 
 **Quick Reference**: [Introduction](#introduction) | [JVM Architecture](#jvm-architecture) | [Garbage Collection](#garbage-collection) | [Memory Optimization](#memory-optimization) | [CPU Optimization](#cpu-optimization) | [I/O Optimization](#io-optimization) | [Caching Strategies](#caching-strategies) | [Profiling and Monitoring](#profiling-and-monitoring) | [Modern Java Performance Features](#modern-java-performance-features) | [Performance Testing](#performance-testing) | [Performance Checklist](#performance-checklist) | [Related Principles](#related-principles) | [Sources](#sources)

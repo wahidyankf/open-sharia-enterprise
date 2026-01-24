@@ -1,3 +1,31 @@
+---
+title: Go Performance Optimization
+description: Performance optimization techniques in Go including profiling, benchmarking, memory optimization, and concurrency patterns
+category: explanation
+subcategory: stack-lang
+tags:
+  - golang
+  - performance
+  - profiling
+  - benchmarking
+  - optimization
+  - pprof
+  - go-1.18
+  - go-1.21
+  - go-1.22
+  - go-1.23
+  - go-1.24
+  - go-1.25
+related:
+  - ./ex-so-stla-go__memory-management.md
+  - ./ex-so-stla-go__concurrency-and-parallelism.md
+  - ./ex-so-stla-go__best-practices.md
+principles:
+  - explicit-over-implicit
+  - simplicity-over-complexity
+last_updated: 2026-01-24
+---
+
 # Performance Optimization in Go
 
 **Quick Reference**: [Overview](#overview) | [Performance Fundamentals](#performance-fundamentals) | [Benchmarking](#benchmarking) | [Profiling with pprof](#profiling-with-pprof) | [CPU Profiling](#cpu-profiling) | [Memory Profiling](#memory-profiling) | [Goroutine Profiling](#goroutine-profiling) | [Blocking Profiling](#blocking-profiling) | [Mutex Profiling](#mutex-profiling) | [Memory Optimization](#memory-optimization) | [Allocation Reduction](#allocation-reduction) | [Garbage Collection Tuning](#garbage-collection-tuning) | [Compiler Optimizations](#compiler-optimizations) | [Concurrency Performance](#concurrency-performance) | [Data Structure Performance](#data-structure-performance) | [String Operations](#string-operations) | [Performance Best Practices](#performance-best-practices) | [Common Performance Pitfalls](#common-performance-pitfalls) | [Conclusion](#conclusion)

@@ -1,3 +1,30 @@
+---
+title: Go Behaviour-Driven Development
+description: BDD practices in Go using Ginkgo, Gomega, and Cucumber for executable specifications
+category: explanation
+subcategory: stack-lang
+tags:
+  - golang
+  - bdd
+  - ginkgo
+  - gomega
+  - cucumber
+  - testing
+  - go-1.18
+  - go-1.21
+  - go-1.22
+  - go-1.23
+  - go-1.24
+  - go-1.25
+related:
+  - ./ex-so-stla-go__test-driven-development.md
+  - ./ex-so-stla-go__best-practices.md
+principles:
+  - automation-over-manual
+  - explicit-over-implicit
+last_updated: 2026-01-24
+---
+
 # Behaviour-Driven Development (BDD) in Go
 
 **Quick Reference**: [Overview](#overview) | [BDD Fundamentals](#bdd-fundamentals) | [Gherkin Syntax](#gherkin-syntax) | [Godog Framework](#godog-framework) | [Step Definitions](#step-definitions) | [Feature Files](#feature-files) | [Scenario Outlines](#scenario-outlines) | [Background](#background) | [Tags](#tags) | [Hooks](#hooks) | [Data Tables](#data-tables) | [BDD Best Practices](#bdd-best-practices) | [Common BDD Pitfalls](#common-bdd-pitfalls) | [Conclusion](#conclusion)

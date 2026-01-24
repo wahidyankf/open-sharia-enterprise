@@ -1,3 +1,17 @@
+---
+title: Go 1.25 Release Notes
+description: New features and improvements in Go 1.25
+category: explanation
+subcategory: stack-lang
+tags:
+  - golang
+  - release-notes
+  - go-1.25
+related:
+  - ./ex-so-stla-go__best-practices.md
+last_updated: 2026-01-24
+---
+
 # Go 1.25 Release: Green Tea GC, JSON v2, and Container Awareness
 
 **Quick Reference**: [Overview](#overview) | [Green Tea Garbage Collector (Experimental)](#green-tea-garbage-collector-experimental) | [encoding/json/v2 Packages](#encodingjsonv2-packages) | [Container-Aware GOMAXPROCS](#container-aware-gomaxprocs) | [Core Types Removal](#core-types-removal) | [ASAN Leak Detection](#asan-leak-detection) | [Other Go 1.25 Improvements](#other-go-125-improvements) | [Migration Guide](#migration-guide) | [Conclusion](#conclusion) | [Current Version](#current-version) | [Related Documentation](#related-documentation)

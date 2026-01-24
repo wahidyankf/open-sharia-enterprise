@@ -1,3 +1,29 @@
+---
+title: Go Type Safety
+description: Type safety in Go including generics, type assertions, interfaces, and type-safe patterns
+category: explanation
+subcategory: stack-lang
+tags:
+  - golang
+  - type-safety
+  - generics
+  - interfaces
+  - type-assertions
+  - go-1.18
+  - go-1.21
+  - go-1.22
+  - go-1.23
+  - go-1.24
+  - go-1.25
+related:
+  - ./ex-so-stla-go__best-practices.md
+  - ./ex-so-stla-go__idioms.md
+principles:
+  - explicit-over-implicit
+  - simplicity-over-complexity
+last_updated: 2026-01-24
+---
+
 # Type Safety in Go
 
 **Quick Reference**: [Overview](#overview) | [Type System Fundamentals](#type-system-fundamentals) | [Basic Types](#basic-types) | [Composite Types](#composite-types) | [Type Declarations](#type-declarations) | [Interface Types](#interface-types) | [Type Assertions](#type-assertions) | [Type Switches](#type-switches) | [Type Conversions](#type-conversions) | [Generics (Go 1.18+)](#generics-go-118) | [Type Constraints](#type-constraints) | [Type Parameters](#type-parameters) | [Type Inference](#type-inference) | [Zero Values](#zero-values) | [Type Safety Patterns](#type-safety-patterns) | [Type Safety Best Practices](#type-safety-best-practices) | [Common Type Safety Pitfalls](#common-type-safety-pitfalls) | [Conclusion](#conclusion)

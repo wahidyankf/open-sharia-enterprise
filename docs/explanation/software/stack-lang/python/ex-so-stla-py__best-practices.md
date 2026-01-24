@@ -18,10 +18,11 @@ related:
   - ./ex-so-stla-py__linting-and-formatting.md
   - ./ex-so-stla-py__test-driven-development.md
 principles:
-  - simplicity-over-complexity
+  - automation-over-manual
   - explicit-over-implicit
-  - documentation-first
-  - accessibility-first
+  - immutability
+  - pure-functions
+  - reproducibility
 last_updated: 2026-01-24
 ---
 

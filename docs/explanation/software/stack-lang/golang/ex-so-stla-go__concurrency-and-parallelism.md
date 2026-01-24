@@ -1,16 +1,20 @@
----
 title: Go Concurrency and Parallelism
 description: Comprehensive guide to concurrent programming with goroutines, channels, and the sync package
 category: explanation
 subcategory: stack-lang-golang
 tags:
-  - golang
-  - concurrency
-  - parallelism
-  - goroutines
-  - channels
-  - sync
-  - context
+
+- golang
+- concurrency
+- parallelism
+- goroutines
+- channels
+- sync
+- context
+  principles:
+- immutability
+- explicit-over-implicit
+
 ---
 
 # Go Concurrency and Parallelism
@@ -2331,6 +2335,11 @@ type UnsafeCounter struct {
 - [Go Testing](./ex-so-stla-go__test-driven-development.md) - Testing concurrent code
 - [Context Package Documentation](https://pkg.go.dev/context)
 - [Sync Package Documentation](https://pkg.go.dev/sync)
+
+principles:
+
+- immutability
+- explicit-over-implicit
 
 ---
 

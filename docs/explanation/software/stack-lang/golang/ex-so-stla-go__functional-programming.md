@@ -1,3 +1,32 @@
+---
+title: Go Functional Programming
+description: Functional programming patterns in Go including pure functions, immutability, higher-order functions, closures, and composition
+category: explanation
+subcategory: stack-lang
+tags:
+  - golang
+  - functional-programming
+  - pure-functions
+  - immutability
+  - higher-order-functions
+  - closures
+  - composition
+  - go-1.18
+  - go-1.21
+  - go-1.22
+  - go-1.23
+  - go-1.24
+  - go-1.25
+related:
+  - ./ex-so-stla-go__best-practices.md
+  - ./ex-so-stla-go__idioms.md
+  - ../../../../../governance/development/pattern/functional-programming.md
+principles:
+  - immutability
+  - pure-functions
+last_updated: 2026-01-24
+---
+
 # Functional Programming in Go
 
 **Quick Reference**: [Overview](#overview) | [Why Functional Programming in Go?](#why-functional-programming-in-go) | [Functional Programming Fundamentals](#functional-programming-fundamentals) | [Closures](#closures) | [Higher-Order Functions](#higher-order-functions) | [Function Composition](#function-composition) | [Functional Options Pattern](#functional-options-pattern) | [Currying and Partial Application](#currying-and-partial-application) | [Monadic Patterns (Limited)](#monadic-patterns-limited) | [Recursion](#recursion) | [Lazy Evaluation](#lazy-evaluation) | [Functional Programming with Generics](#functional-programming-with-generics) | [Best Practices](#best-practices) | [Common Pitfalls](#common-pitfalls) | [Related Documentation](#related-documentation) | [Further Reading](#further-reading)

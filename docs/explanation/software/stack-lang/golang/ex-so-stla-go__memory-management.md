@@ -1,3 +1,30 @@
+---
+title: Go Memory Management
+description: Memory management in Go including garbage collection, escape analysis, memory profiling, and optimization
+category: explanation
+subcategory: stack-lang
+tags:
+  - golang
+  - memory-management
+  - garbage-collection
+  - escape-analysis
+  - profiling
+  - optimization
+  - go-1.18
+  - go-1.21
+  - go-1.22
+  - go-1.23
+  - go-1.24
+  - go-1.25
+related:
+  - ./ex-so-stla-go__performance.md
+  - ./ex-so-stla-go__best-practices.md
+principles:
+  - explicit-over-implicit
+  - simplicity-over-complexity
+last_updated: 2026-01-24
+---
+
 # Memory Management in Go
 
 **Quick Reference**: [Overview](#overview) | [Memory Management Fundamentals](#memory-management-fundamentals) | [Go Memory Model](#go-memory-model) | [Pointers](#pointers) | [Escape Analysis](#escape-analysis) | [Garbage Collection](#garbage-collection) | [Memory Allocation Patterns](#memory-allocation-patterns) | [Memory Profiling](#memory-profiling) | [Memory Optimization Techniques](#memory-optimization-techniques) | [Unsafe Package](#unsafe-package) | [Memory Safety](#memory-safety) | [Best Practices](#best-practices) | [Common Pitfalls](#common-pitfalls) | [Related Documentation](#related-documentation) | [Further Reading](#further-reading)

@@ -1,22 +1,26 @@
----
 title: "Go Finite State Machines"
 description: State machine patterns for managing state transitions in Go 1.18-1.25 using type safety, interfaces, and concurrency
 category: explanation
 subcategory: stack-lang
 tags:
-  - golang
-  - finite-state-machine
-  - fsm
-  - state-pattern
-  - type-safety
-  - interfaces
-  - concurrency
-  - go-1.18
-  - go-1.21
-  - go-1.22
-  - go-1.23
-  - go-1.24
-  - go-1.25
+
+- golang
+- finite-state-machine
+- fsm
+- state-pattern
+- type-safety
+- interfaces
+- concurrency
+- go-1.18
+- go-1.21
+- go-1.22
+- go-1.23
+- go-1.24
+- go-1.25
+  principles:
+- explicit-over-implicit
+- immutability
+
 ---
 
 # Go Finite State Machines
@@ -2450,7 +2454,7 @@ func (p *DonationPayment) Approve() error {
 
 **Cross-Language**:
 
-- [Java Finite State Machines](../java/ex-so-stla-ja__finite-state-machine-fsm.md) - Comparison with Java approach
+- [Java Finite State Machines](../java/ex-so-stla-ja__finite-state-machine.md) - Comparison with Java approach
 
 **Principles**:
 
@@ -2474,6 +2478,11 @@ func (p *DonationPayment) Approve() error {
 
 1. **AAOIFI Standards**: Accounting and Auditing Organization for Islamic Financial Institutions (2023)
 2. **Murabaha MurabahaContract Requirements**: Islamic Development Bank Guidelines (2022)
+
+principles:
+
+- explicit-over-implicit
+- immutability
 
 ---
 

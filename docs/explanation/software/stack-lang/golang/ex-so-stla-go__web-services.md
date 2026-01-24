@@ -1,3 +1,30 @@
+---
+title: Go Web Services
+description: Building web services in Go using net/http, routing, middleware, REST APIs, and gRPC
+category: explanation
+subcategory: stack-lang
+tags:
+  - golang
+  - web-services
+  - http
+  - rest-api
+  - grpc
+  - middleware
+  - go-1.18
+  - go-1.21
+  - go-1.22
+  - go-1.23
+  - go-1.24
+  - go-1.25
+related:
+  - ./ex-so-stla-go__best-practices.md
+  - ./ex-so-stla-go__security.md
+principles:
+  - explicit-over-implicit
+  - simplicity-over-complexity
+last_updated: 2026-01-24
+---
+
 # Web Services in Go
 
 **Quick Reference**: [Overview](#overview) | [net/http Package](#nethttp-package) | [HTTP Servers](#http-servers) | [REST APIs](#rest-apis) | [HTTP Client](#http-client) | [Web Frameworks](#web-frameworks) | [gRPC](#grpc) | [WebSockets](#websockets) | [Middleware Patterns](#middleware-patterns) | [Testing](#testing) | [Best Practices](#best-practices) | [Related Documentation](#related-documentation) | [Further Reading](#further-reading)

@@ -1,23 +1,26 @@
----
 title: Go Anti-Patterns
 description: Common mistakes and anti-patterns in Go - what to avoid and why
 category: explanation
 subcategory: stack-lang
 tags:
-  - golang
-  - anti-patterns
-  - common-mistakes
-  - goroutine-leaks
-  - nil-pointers
-  - race-conditions
-  - resource-leaks
-  - bad-practices
-  - go-1.18
-  - go-1.21
-  - go-1.22
-  - go-1.23
-  - go-1.24
-  - go-1.25
+
+- golang
+- anti-patterns
+- common-mistakes
+- goroutine-leaks
+- nil-pointers
+- race-conditions
+- resource-leaks
+- bad-practices
+- go-1.18
+- go-1.21
+- go-1.22
+- go-1.23
+- go-1.24
+- go-1.25
+  principles:
+- explicit-over-implicit
+
 ---
 
 # Go Anti-Patterns
@@ -4016,9 +4019,17 @@ Before committing:
 - [Error Handling](./ex-so-stla-go__error-handling.md) - Error patterns
 - [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md) - Concurrency patterns
 
+principles:
+
+- explicit-over-implicit
+
 ---
 
 **Navigation**: [← Back to Golang Overview](./README.md)
+
+principles:
+
+- explicit-over-implicit
 
 ---
 

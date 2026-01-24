@@ -16,9 +16,9 @@ related:
   - ./ex-so-stla-py__best-practices.md
   - ./ex-so-stla-py__classes-and-protocols.md
 principles:
-  - simplicity-over-complexity
-  - explicit-over-implicit
-last_updated: 2025-01-23
+  - immutability
+  - pure-functions
+last_updated: 2026-01-24
 ---
 
 # Python Functional Programming

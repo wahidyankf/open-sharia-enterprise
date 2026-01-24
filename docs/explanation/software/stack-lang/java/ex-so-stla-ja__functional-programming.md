@@ -12,6 +12,14 @@ tags:
   - monads
   - pure-functions
   - higher-order-functions
+related:
+  - ./ex-so-stla-ja__best-practices.md
+  - ./ex-so-stla-ja__idioms.md
+  - ../../../../../governance/development/pattern/functional-programming.md
+principles:
+  - immutability
+  - pure-functions
+last_updated: 2026-01-24
 ---
 
 # Java Functional Programming

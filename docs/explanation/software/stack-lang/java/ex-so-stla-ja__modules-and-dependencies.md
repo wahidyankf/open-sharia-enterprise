@@ -13,6 +13,12 @@ tags:
   - java-17
   - java-21
   - reproducibility
+related:
+  - ./ex-so-stla-ja__best-practices.md
+principles:
+  - reproducibility
+  - explicit-over-implicit
+last_updated: 2026-01-24
 ---
 
 # Java Modules and Dependency Management

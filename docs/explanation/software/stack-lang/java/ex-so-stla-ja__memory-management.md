@@ -17,6 +17,11 @@ tags:
   - zgc
   - g1gc
   - profiling
+related:
+  - ./ex-so-stla-ja__best-practices.md
+principles:
+  - explicit-over-implicit
+last_updated: 2026-01-24
 ---
 
 # Java Memory Management and JVM Internals
