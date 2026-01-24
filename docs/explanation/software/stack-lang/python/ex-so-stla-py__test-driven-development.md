@@ -46,6 +46,114 @@ Test-Driven Development (TDD) writes tests before implementation, ensuring code 
 
 Red-Green-Refactor cycle.
 
+### TDD Red-Green-Refactor
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Red Phase<br/>Write Failing Test"]:::orange
+    B["Test Fails<br/>Expected Behavior"]:::gray
+    C["Green Phase<br/>Write Minimal Code"]:::teal
+    D["Test Passes<br/>Feature Works"]:::teal
+    E["Refactor Phase<br/>Improve Design"]:::purple
+    F{"Tests Still<br/>Pass?"}:::orange
+    G["Commit Changes<br/>CI/CD Pipeline"]:::blue
+    H["Fix Refactoring<br/>Restore Green"]:::orange
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F -->|Yes| G
+    F -->|No| H
+    H --> E
+    G --> A
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Test Pyramid
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TB
+    A["E2E Tests<br/>Full User Flows<br/>Slow, Few"]:::orange
+    B["Integration Tests<br/>API + Database<br/>Medium Speed"]:::purple
+    C["Unit Tests<br/>Functions + Classes<br/>Fast, Many"]:::teal
+
+    A --> B
+    B --> C
+
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### pytest Execution Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["pytest Command<br/>Test Discovery"]:::blue
+    B["Collect Tests<br/>test_*.py files"]:::purple
+    C["Setup Fixtures<br/>@pytest.fixture"]:::teal
+    D["Run Test Function<br/>Execute Assertions"]:::orange
+    E{"Assertion<br/>Pass?"}:::orange
+    F["Teardown Fixtures<br/>Cleanup Resources"]:::gray
+    G["Report Success"]:::teal
+    H["Report Failure"]:::orange
+    I["Coverage Analysis<br/>--cov flag"]:::purple
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E -->|Yes| F
+    E -->|No| H
+    F --> G
+    G --> I
+    H --> I
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Financial Domain Testing
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Zakat Calculation<br/>Business Logic"]:::blue
+    B["Unit Test<br/>calculate_zakat#40;#41;"]:::teal
+    C["Edge Cases<br/>Nisab Boundary"]:::purple
+    D["Property Test<br/>hypothesis"]:::purple
+    E["Integration Test<br/>Database Storage"]:::orange
+    F["Validation<br/>Decimal Precision"]:::teal
+    G["Compliance Check<br/>2.5% Rate"]:::teal
+
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+    B --> F
+    C --> F
+    D --> F
+    E --> G
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ### TDD Cycle
 
 ```python

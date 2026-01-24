@@ -29,6 +29,34 @@ Elixir v1.12 focuses on scripting improvements, tighter Erlang/OTP 24 integratio
 - ⚡ **OTP 24**: JIT compilation support for better performance
 - 📚 **Standard Library**: New functions in Enum, Integer, String
 
+### Feature Timeline
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Elixir 1.11<br/>Previous Release"]:::blue
+    B["Mix.install/2<br/>Script Dependencies"]:::teal
+    C["Stepped Ranges<br/>first..last//step"]:::teal
+    D["OTP 24 JIT<br/>30-50% Faster"]:::teal
+    E["Standard Library<br/>New Functions"]:::teal
+    F["Elixir 1.12<br/>Released May 2021"]:::orange
+
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+    B --> F
+    C --> F
+    D --> F
+    E --> F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Quick Reference
 
 **Jump to**:
@@ -310,6 +338,37 @@ DonorMatcher.potential_duplicate?("Muhammad Ali", "Mohammad Ali")
 
 ## Financial Domain Examples
 
+### Mix.install/2 Workflow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Run Script<br/>elixir donation_analyzer.exs"]:::blue
+    B{"Dependencies<br/>Cached?"}:::orange
+    C["Download Dependencies<br/>decimal, money, jason"]:::teal
+    D["Compile Dependencies<br/>Build .beam files"]:::teal
+    E["Cache for Reuse<br/>~/.mix/elixir/"]:::teal
+    F["Load Cached<br/>Dependencies"]:::purple
+    G["Execute Script<br/>Analyze Donations"]:::purple
+    H["Generate Report<br/>Campaign Metrics"]:::purple
+
+    A --> B
+    B -->|No| C
+    B -->|Yes| F
+    C --> D
+    D --> E
+    E --> G
+    F --> G
+    G --> H
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ### Scripted Campaign Analyzer
 
 ```elixir
@@ -506,6 +565,41 @@ DonorSearch.find_similar_names("Ahmad Hassan", donors, 3)
 
 **No breaking changes** - Elixir 1.12 is fully backward compatible with 1.11.
 
+### Migration Path Decision Tree
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Start Migration<br/>to Elixir 1.12"]:::blue
+    B{"Using<br/>Single-File<br/>Scripts?"}:::orange
+    C{"Need<br/>Stepped<br/>Ranges?"}:::orange
+    D{"Want OTP 24<br/>JIT Performance?"}:::orange
+    E["Adopt Mix.install/2<br/>Replace Custom Installers"]:::teal
+    F["Use first..last//step<br/>Replace Enum.take_every"]:::teal
+    G["Upgrade to OTP 24<br/>Get JIT Benefits"]:::teal
+    H["Adopt New Functions<br/>Enum.count_until, etc."]:::teal
+    I["Migration Complete<br/>Full Compatibility"]:::purple
+
+    A --> B
+    B -->|Yes| E
+    B -->|No| C
+    E --> C
+    C -->|Yes| F
+    C -->|No| D
+    F --> D
+    D -->|Yes| G
+    D -->|No| H
+    G --> H
+    H --> I
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 **New features to adopt**:
 
 1. **Replace custom installers with Mix.install/2**:
@@ -599,6 +693,30 @@ end
 # Results (1 million calculations):
 # OTP 23: 2.3 seconds
 # OTP 24: 1.5 seconds (35% faster)
+```
+
+### Performance Comparison: OTP 23 vs OTP 24
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    A["Zakat Calculation<br/>1M operations"]:::blue
+    B["OTP 23<br/>2.3 seconds"]:::orange
+    C["OTP 24 with JIT<br/>1.5 seconds<br/>#40;35% faster#41;"]:::teal
+    D["Donation Processing<br/>100K operations"]:::blue
+    E["OTP 23<br/>850ms"]:::orange
+    F["OTP 24 with JIT<br/>520ms<br/>#40;39% faster#41;"]:::teal
+
+    A --> B
+    A --> C
+    D --> E
+    D --> F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ## Resources

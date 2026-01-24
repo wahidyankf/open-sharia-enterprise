@@ -31,6 +31,34 @@ Elixir v1.14 focuses on developer experience with better debugging tools, enhanc
 - 📊 **Stepped Range Support**: More functions support stepped ranges
 - 🔍 **Inspect Improvements**: Better struct inspection
 
+### Feature Timeline
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Elixir 1.13<br/>Previous Release"]:::blue
+    B["Kernel.dbg/2<br/>Rich Debugging"]:::teal
+    C["Better Error Messages<br/>OTP 25 Integration"]:::teal
+    D["PartitionSupervisor<br/>Scalable Concurrency"]:::teal
+    E["Inspect Improvements<br/>Expression-Based"]:::teal
+    F["Elixir 1.14<br/>Released Sept 2022"]:::orange
+
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+    B --> F
+    C --> F
+    D --> F
+    E --> F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Quick Reference
 
 **Jump to**:
@@ -443,6 +471,37 @@ CampaignWorker.process_donation("edu_2025", %{
 # Latency p99: 8ms (5.6x faster)
 ```
 
+### PartitionSupervisor Architecture
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Incoming Donations<br/>campaign_id hash"]:::blue
+    B["Partition 0<br/>DonationWorker"]:::teal
+    C["Partition 1<br/>DonationWorker"]:::teal
+    D["Partition 2<br/>DonationWorker"]:::teal
+    E["Partition 3<br/>DonationWorker"]:::teal
+    F["Campaigns A-D<br/>Independent State"]:::purple
+    G["Campaigns E-H<br/>Independent State"]:::purple
+    H["Campaigns I-L<br/>Independent State"]:::purple
+    I["Campaigns M-P<br/>Independent State"]:::purple
+
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+    B --> F
+    C --> G
+    D --> H
+    E --> I
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Stepped Range Support
 
 ### New Functions
@@ -715,6 +774,41 @@ children = [
 
 **No breaking changes** - Elixir 1.14 is fully backward compatible.
 
+### Migration Path Decision Tree
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Start Migration<br/>to Elixir 1.14"]:::blue
+    B{"Need Better<br/>Debugging?"}:::orange
+    C{"Want OTP 25<br/>Error Messages?"}:::orange
+    D{"High-Throughput<br/>Workers?"}:::orange
+    E["Adopt dbg/2<br/>Replace IO.inspect"]:::teal
+    F["Upgrade to OTP 25<br/>Better Binary Errors"]:::teal
+    G["Use PartitionSupervisor<br/>Replace Worker Pools"]:::teal
+    H["Update inspect/2<br/>Expression-Based Output"]:::teal
+    I["Migration Complete<br/>Better DX"]:::purple
+
+    A --> B
+    B -->|Yes| E
+    B -->|No| C
+    E --> C
+    C -->|Yes| F
+    C -->|No| D
+    F --> D
+    D -->|Yes| G
+    D -->|No| H
+    G --> H
+    H --> I
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 **Recommended upgrades**:
 
 1. **Replace IO.inspect/2 with dbg/2** for debugging:
@@ -791,6 +885,26 @@ partition = :erlang.phash2(key, partition_count)
 # Cores: 8, Throughput: 64,000 ops/sec (7.53x)
 
 # Near-linear scaling up to core count
+```
+
+### PartitionSupervisor Scaling Chart
+
+```mermaid
+%% Color Palette: Blue #0173B2, Teal #029E73
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    A["1 Core<br/>8,500 ops/sec"]:::blue
+    B["2 Cores<br/>16,800 ops/sec<br/>#40;1.98x#41;"]:::teal
+    C["4 Cores<br/>33,200 ops/sec<br/>#40;3.91x#41;"]:::teal
+    D["8 Cores<br/>64,000 ops/sec<br/>#40;7.53x#41;"]:::teal
+
+    A --> B
+    B --> C
+    C --> D
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ## Resources

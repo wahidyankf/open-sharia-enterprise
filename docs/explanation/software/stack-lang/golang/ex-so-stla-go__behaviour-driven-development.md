@@ -44,6 +44,115 @@ Behaviour-Driven Development (BDD) is an agile software development methodology 
 
 ## BDD Fundamentals
 
+### BDD Workflow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Discover<br/>Three Amigos Meeting"]:::blue
+    B["Write Feature<br/>Gherkin Scenarios"]:::teal
+    C["Implement Steps<br/>Go Code"]:::purple
+    D["Run Tests<br/>Godog Framework"]:::orange
+    E{"All Scenarios<br/>Pass?"}:::orange
+    F["Refactor<br/>Clean Code"]:::teal
+    G["Living Documentation<br/>Executable Specs"]:::teal
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E -->|No| C
+    E -->|Yes| F
+    F --> G
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Given-When-Then Pattern
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Given<br/>Setup Context"]:::blue
+    B["Beneficiary Registered<br/>Database State"]:::teal
+    C["When<br/>Execute Action"]:::purple
+    D["Beneficiary Logs In<br/>Submit Credentials"]:::orange
+    E["Then<br/>Verify Outcome"]:::teal
+    F["Authentication Success<br/>Dashboard Displayed"]:::teal
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Financial Domain BDD Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Feature: Zakat Calculation<br/>Business Requirement"]:::blue
+    B["Scenario: Wealth Above Nisab<br/>Gherkin Specification"]:::purple
+    C["Step Definition<br/>Go Implementation"]:::teal
+    D["Domain Logic<br/>Calculate 2.5%"]:::orange
+    E["Validation<br/>Assert Result"]:::teal
+    F["Compliance Check<br/>Shariah Rules"]:::teal
+    G["Audit Trail<br/>Logged Event"]:::gray
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Godog Test Execution
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Feature Files<br/>features/*.feature"]:::blue
+    B["Godog Runner<br/>Test Execution"]:::orange
+    C["Step Matcher<br/>Regex Matching"]:::purple
+    D["Context Setup<br/>Test Data"]:::teal
+    E["Action Execution<br/>Business Logic"]:::orange
+    F["Assertion Check<br/>Expected vs Actual"]:::teal
+    G{"Pass?"}:::orange
+    H["Report Success"]:::teal
+    I["Report Failure"]:::gray
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G -->|Yes| H
+    G -->|No| I
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ### BDD Principles
 
 Collaborative specification:

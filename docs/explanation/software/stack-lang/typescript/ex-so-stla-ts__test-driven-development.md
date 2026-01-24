@@ -36,6 +36,114 @@ Test-Driven Development (TDD) follows Red-Green-Refactor cycle: write failing te
 - **Fast Feedback**: Tests run quickly
 - **High Coverage**: Aim for >80% code coverage
 
+### TDD Red-Green-Refactor
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Red Phase<br/>Write Failing Test"]:::orange
+    B["Test Fails<br/>Expected Error"]:::gray
+    C["Green Phase<br/>Minimal Implementation"]:::teal
+    D["Test Passes<br/>Feature Works"]:::teal
+    E["Refactor Phase<br/>Clean Code"]:::purple
+    F{"Tests<br/>Pass?"}:::orange
+    G["Commit<br/>CI/CD Pipeline"]:::blue
+    H["Fix Code<br/>Restore Green"]:::orange
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F -->|Yes| G
+    F -->|No| H
+    H --> E
+    G --> A
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Test Pyramid
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TB
+    A["E2E Tests<br/>Playwright, Full Flows<br/>Slow, Few"]:::orange
+    B["Integration Tests<br/>API + Database<br/>Medium Speed"]:::purple
+    C["Unit Tests<br/>Functions + Classes<br/>Fast, Many"]:::teal
+
+    A --> B
+    B --> C
+
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Jest Execution Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["jest Command<br/>Test Discovery"]:::blue
+    B["Collect Tests<br/>*.test.ts files"]:::purple
+    C["Setup beforeEach<br/>Test Fixtures"]:::gray
+    D["Run Test Cases<br/>Execute Assertions"]:::orange
+    E{"Assertions<br/>Pass?"}:::orange
+    F["Teardown afterEach<br/>Cleanup"]:::gray
+    G["Report Success"]:::teal
+    H["Report Failure"]:::orange
+    I["Coverage Report<br/>--coverage flag"]:::purple
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E -->|Yes| F
+    E -->|No| H
+    F --> G
+    G --> I
+    H --> I
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Financial Domain Testing
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Zakat Calculator<br/>Business Logic"]:::blue
+    B["Unit Test<br/>calculate#40;#41; method"]:::teal
+    C["Edge Cases<br/>Nisab Boundary"]:::purple
+    D["Property Test<br/>fast-check"]:::purple
+    E["Integration Test<br/>Database Persistence"]:::orange
+    F["Type Safety<br/>Money Type Validation"]:::teal
+    G["Compliance<br/>2.5% Rate Check"]:::teal
+
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+    B --> F
+    C --> F
+    D --> F
+    E --> G
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Jest 30.x
 
 ### Setup

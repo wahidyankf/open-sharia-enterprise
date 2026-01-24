@@ -39,6 +39,126 @@ Security is critical for financial applications. This guide covers OWASP Top 10 
 - **Input Validation**: Never trust user input
 - **Output Encoding**: Prevent injection attacks
 
+### Security Layers
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["User Input<br/>Untrusted Data"]:::orange
+    B["Input Validation<br/>Zod Schema"]:::purple
+    C["Sanitization<br/>DOMPurify"]:::purple
+    D["Authentication<br/>JWT/Session"]:::teal
+    E["Authorization<br/>RBAC/ABAC"]:::teal
+    F["Business Logic<br/>Validated Processing"]:::blue
+    G["Output Encoding<br/>XSS Prevention"]:::purple
+    H["Security Headers<br/>Helmet"]:::gray
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Authentication Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Login Request<br/>Email + Password"]:::blue
+    B["Validate Credentials<br/>Check Database"]:::purple
+    C{"Valid?"}:::orange
+    D["Verify Password<br/>bcrypt.compare#40;#41;"]:::purple
+    E{"Match?"}:::orange
+    F["Generate JWT<br/>Sign Token"]:::teal
+    G["Store Session<br/>Redis Cache"]:::gray
+    H["Return Token<br/>Success Response"]:::teal
+    I["Reject Request<br/>401 Unauthorized"]:::orange
+
+    A --> B
+    B --> C
+    C -->|Yes| D
+    C -->|No| I
+    D --> E
+    E -->|Yes| F
+    E -->|No| I
+    F --> G
+    G --> H
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### OWASP Top 10 Prevention
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["OWASP Top 10<br/>Vulnerability Categories"]:::blue
+    B["Broken Access<br/>RBAC Checks"]:::orange
+    C["Injection<br/>Parameterized Queries"]:::orange
+    D["XSS<br/>Output Encoding"]:::orange
+    E["Crypto Failures<br/>bcrypt, AES-256"]:::purple
+    F["Security Misconfig<br/>Helmet, CORS"]:::purple
+    G["Auth Failures<br/>JWT, MFA"]:::teal
+    H["Logging<br/>Winston Logger"]:::gray
+    I["SSRF<br/>URL Validation"]:::teal
+
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+    A --> F
+    A --> G
+    A --> H
+    A --> I
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Financial Data Protection
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Sensitive Data<br/>Donation Details"]:::blue
+    B["Encryption<br/>AES-256-GCM"]:::purple
+    C["Hashing<br/>HMAC-SHA256"]:::purple
+    D["Key Management<br/>Environment Variables"]:::gray
+    E["Secure Storage<br/>Encrypted Database"]:::teal
+    F["Audit Trail<br/>Compliance Log"]:::orange
+    G["Access Control<br/>ABAC Policy"]:::teal
+
+    A --> B
+    A --> C
+    B --> D
+    C --> D
+    D --> E
+    E --> F
+    E --> G
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Input Validation
 
 ### Schema Validation with Zod
