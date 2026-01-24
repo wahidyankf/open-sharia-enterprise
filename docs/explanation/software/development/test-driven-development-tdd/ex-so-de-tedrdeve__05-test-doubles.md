@@ -937,7 +937,7 @@ it("should calculate tax faster on second call (cached)", async () => {
 - **[06. Testing Patterns](./ex-so-de-tedrdeve__06-testing-patterns.md)** - AAA, Given-When-Then, table-driven tests
 - **[09. Integration Testing](./ex-so-de-tedrdeve__09-integration-testing.md)** - When to use real dependencies vs test doubles
 - **[18. Best Practices](./ex-so-de-tedrdeve__18-best-practices.md)** - TDD best practices
-- **[19. Antipatterns](./ex-so-de-tedrdeve__19-antipatterns.md)** - Common mistakes with test doubles
+- **[19. Antipatterns](./ex-so-de-tedrdeve__19-anti-patterns.md)** - Common mistakes with test doubles
 
 ## Related Principles
 

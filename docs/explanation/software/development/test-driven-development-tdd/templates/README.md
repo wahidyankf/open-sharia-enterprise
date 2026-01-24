@@ -408,7 +408,7 @@ All templates follow these TDD principles:
 - **Unit Testing**: [Unit Testing Fundamentals](../ex-so-de-tedrdeve__04-unit-testing-fundamentals.md)
 - **Test Types**: [Test Types and Pyramid](../ex-so-de-tedrdeve__03-test-types-and-pyramid.md)
 - **Best Practices**: [TDD Best Practices](../ex-so-de-tedrdeve__18-best-practices.md)
-- **Anti-patterns**: [TDD Antipatterns](../ex-so-de-tedrdeve__19-antipatterns.md)
+- **Anti-patterns**: [TDD Antipatterns](../ex-so-de-tedrdeve__19-anti-patterns.md)
 - **FAQ**: [Frequently Asked Questions](../ex-so-de-tedrdeve__17-faq.md)
 
 ## Contributing New Templates

@@ -331,7 +331,7 @@ All templates follow these principles:
 - **Three Amigos**: [Three Amigos Practice](../ex-so-de-bdd__04-three-amigos-practice.md)
 - **Example Mapping**: [Example Mapping](../ex-so-de-bdd__05-example-mapping.md)
 - **Best Practices**: [Best Practices](../ex-so-de-bdd__17-best-practices.md)
-- **Anti-patterns**: [Antipatterns](../ex-so-de-bdd__18-antipatterns.md)
+- **Anti-patterns**: [Antipatterns](../ex-so-de-bdd__18-anti-patterns.md)
 - **FAQ**: [Frequently Asked Questions](../ex-so-de-bdd__16-faq.md)
 
 ## Contributing New Templates

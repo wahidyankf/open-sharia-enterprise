@@ -1,6 +1,6 @@
 # Best Practices
 
-> **Companion Document**: For common mistakes to avoid, see [Antipatterns](./ex-so-ar-c4armo__15-antipatterns.md)
+> **Companion Document**: For common mistakes to avoid, see [Antipatterns](./ex-so-ar-c4armo__15-anti-patterns.md)
 
 ## Overview
 
@@ -618,7 +618,7 @@ Before finalizing a C4 diagram, verify:
 - System Context Diagrams: [ex-so-ar-c4armo\_\_02-system-context-diagrams.md](./ex-so-ar-c4armo__01-level-1-system-context.md)
 - Container Diagrams: [ex-so-ar-c4armo\_\_03-container-diagrams.md](./ex-so-ar-c4armo__02-level-2-container.md)
 - Component Diagrams: [ex-so-ar-c4armo\_\_04-component-diagrams.md](./ex-so-ar-c4armo__03-level-3-component.md)
-- Antipatterns: [ex-so-ar-c4armo\_\_15-antipatterns.md](./ex-so-ar-c4armo__15-antipatterns.md)
+- Antipatterns: [ex-so-ar-c4armo\_\_15-anti-patterns.md](./ex-so-ar-c4armo__15-anti-patterns.md)
 
 ## Related Principles
 

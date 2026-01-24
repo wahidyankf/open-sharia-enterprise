@@ -1163,7 +1163,7 @@ Use this framework to evaluate your TDD practices when reviewing test code.
 **Related Testing Approaches**:
 
 - [BDD Best Practices](../behavior-driven-development-bdd/ex-so-de-bdd__17-best-practices.md) - BDD best practices
-- [BDD Antipatterns](../behavior-driven-development-bdd/ex-so-de-bdd__18-antipatterns.md) - BDD antipatterns
+- [BDD Antipatterns](../behavior-driven-development-bdd/ex-so-de-bdd__18-anti-patterns.md) - BDD antipatterns
 
 **Repository Standards**:
 

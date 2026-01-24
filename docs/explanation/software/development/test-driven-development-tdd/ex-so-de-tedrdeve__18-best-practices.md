@@ -4,7 +4,7 @@
 **Updated**: 2026-01-20
 **Status**: Active
 
-> **Companion Document**: For common pitfalls to avoid, see [TDD Antipatterns](./ex-so-de-tedrdeve__19-antipatterns.md)
+> **Companion Document**: For common pitfalls to avoid, see [TDD Antipatterns](./ex-so-de-tedrdeve__19-anti-patterns.md)
 
 ## Overview
 
@@ -1247,12 +1247,12 @@ it("should [behavior] when [condition]", () => {
 
 **Antipatterns**:
 
-- [TDD Antipatterns](./ex-so-de-tedrdeve__19-antipatterns.md) - Common pitfalls and how to avoid them
+- [TDD Antipatterns](./ex-so-de-tedrdeve__19-anti-patterns.md) - Common pitfalls and how to avoid them
 
 **Related Testing Approaches**:
 
 - [BDD Best Practices](../behavior-driven-development-bdd/ex-so-de-bdd__17-best-practices.md) - BDD best practices
-- [BDD Antipatterns](../behavior-driven-development-bdd/ex-so-de-bdd__18-antipatterns.md) - BDD antipatterns
+- [BDD Antipatterns](../behavior-driven-development-bdd/ex-so-de-bdd__18-anti-patterns.md) - BDD antipatterns
 
 **Process Integration**:
 
