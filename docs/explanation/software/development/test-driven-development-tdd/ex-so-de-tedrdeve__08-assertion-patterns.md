@@ -879,7 +879,7 @@ Strong assertions make tests self-documenting, failures easy to diagnose, and mu
 - **[06. Testing Patterns](./ex-so-de-tedrdeve__06-testing-patterns.md)** - AAA pattern and test organization
 - **[11. TDD and Functional Programming](./ex-so-de-tedrdeve__11-tdd-and-functional-programming.md)** - Property-based testing assertions
 - **[18. Best Practices](./ex-so-de-tedrdeve__18-best-practices.md)** - TDD best practices
-- **[19. Antipatterns](./ex-so-de-tedrdeve__19-antipatterns.md)** - Common assertion mistakes
+- **[19. Antipatterns](./ex-so-de-tedrdeve__19-anti-patterns.md)** - Common assertion mistakes
 
 ## Related Principles
 

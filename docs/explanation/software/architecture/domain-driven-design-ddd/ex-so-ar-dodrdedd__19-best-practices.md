@@ -16,7 +16,7 @@ tags:
 
 # Best Practices in Domain-Driven Design
 
-> **Companion Document**: See [Antipatterns in Domain-Driven Design](./ex-so-ar-dodrdedd__20-antipatterns.md) for common mistakes to avoid.
+> **Companion Document**: See [Antipatterns in Domain-Driven Design](./ex-so-ar-dodrdedd__20-anti-patterns.md) for common mistakes to avoid.
 
 ## Overview
 
@@ -1594,4 +1594,4 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 - [ex-so-ar-dodrdedd\_\_01-introduction-and-philosophy.md](./ex-so-ar-dodrdedd__01-introduction-and-philosophy.md) - DDD introduction and core concepts
 - [ex-so-ar-dodrdedd\_\_03-bounded-contexts.md](./ex-so-ar-dodrdedd__03-bounded-contexts.md) - Strategic design patterns
 - [ex-so-ar-dodrdedd\_\_09-aggregates.md](./ex-so-ar-dodrdedd__09-aggregates.md) - Tactical design patterns
-- [ex-so-ar-dodrdedd\_\_20-antipatterns.md](./ex-so-ar-dodrdedd__20-antipatterns.md) - Common mistakes to avoid
+- [ex-so-ar-dodrdedd\_\_20-anti-patterns.md](./ex-so-ar-dodrdedd__20-anti-patterns.md) - Common mistakes to avoid

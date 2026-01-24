@@ -534,7 +534,7 @@ Refactoring under test coverage is safe and sustainable. Tests provide confidenc
 - **[02. Red-Green-Refactor Cycle](./ex-so-de-tedrdeve__02-red-green-refactor-cycle.md)** - TDD workflow with refactoring
 - **[13. Legacy Code and Characterization Tests](./ex-so-de-tedrdeve__13-legacy-code-and-characterization-tests.md)** - Refactoring legacy code
 - **[18. Best Practices](./ex-so-de-tedrdeve__18-best-practices.md)** - TDD best practices
-- **[19. Antipatterns](./ex-so-de-tedrdeve__19-antipatterns.md)** - Avoiding brittle tests
+- **[19. Antipatterns](./ex-so-de-tedrdeve__19-anti-patterns.md)** - Avoiding brittle tests
 - **[12. TDD and DDD](./ex-so-de-tedrdeve__12-tdd-and-ddd.md)** - Refactoring domain models
 
 ## Related Principles

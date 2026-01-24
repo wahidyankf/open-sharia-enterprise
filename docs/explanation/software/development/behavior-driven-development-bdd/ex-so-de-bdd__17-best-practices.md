@@ -17,7 +17,7 @@ updated: 2026-01-20
 
 Comprehensive guide to proven practices for successful BDD adoption. This document focuses on positive patterns and approaches that maximize BDD's value through collaboration, shared understanding, and business-readable specifications.
 
-**Companion Document**: See [BDD Antipatterns](./ex-so-de-bdd__18-antipatterns.md) for common pitfalls to avoid.
+**Companion Document**: See [BDD Antipatterns](./ex-so-de-bdd__18-anti-patterns.md) for common pitfalls to avoid.
 
 ## Overview
 
@@ -421,7 +421,7 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 
 **BDD in Practice**:
 
-- [BDD Antipatterns](./ex-so-de-bdd__18-antipatterns.md) - Common pitfalls to avoid
+- [BDD Antipatterns](./ex-so-de-bdd__18-anti-patterns.md) - Common pitfalls to avoid
 - [BDD Tools](./ex-so-de-bdd__11-bdd-frameworks.md) - Cucumber, SpecFlow, Behave
 - [BDD in Nx Monorepo](./ex-so-de-bdd__15-bdd-in-nx-monorepo.md) - Monorepo-specific practices
 
