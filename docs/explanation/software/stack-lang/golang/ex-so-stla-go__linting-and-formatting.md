@@ -1,3 +1,30 @@
+---
+title: Go Linting and Formatting
+description: Code quality tools in Go including gofmt, goimports, golangci-lint, and staticcheck
+category: explanation
+subcategory: stack-lang
+tags:
+  - golang
+  - linting
+  - formatting
+  - gofmt
+  - goimports
+  - golangci-lint
+  - staticcheck
+  - go-1.18
+  - go-1.21
+  - go-1.22
+  - go-1.23
+  - go-1.24
+  - go-1.25
+related:
+  - ./ex-so-stla-go__best-practices.md
+principles:
+  - automation-over-manual
+  - explicit-over-implicit
+last_updated: 2026-01-24
+---
+
 # Linting and Formatting in Go
 
 **Quick Reference**: [Overview](#overview) | [Code Formatting](#code-formatting) | [Linting Tools](#linting-tools) | [golangci-lint Configuration](#golangci-lint-configuration) | [Common Linters](#common-linters) | [IDE Integration](#ide-integration) | [CI/CD Integration](#cicd-integration) | [Custom Linters](#custom-linters) | [Best Practices](#best-practices) | [Required Linters](#required-linters) | [Disabled Linters](#disabled-linters) | [Exceptions](#exceptions) | [Common Issues and Fixes](#common-issues-and-fixes) | [Related Documentation](#related-documentation) | [Further Reading](#further-reading)

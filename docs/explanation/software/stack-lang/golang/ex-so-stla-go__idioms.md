@@ -1,25 +1,28 @@
----
 title: Go Idioms
 description: Comprehensive guide to Go-specific patterns, idiomatic constructs, and common programming conventions
 category: explanation
 subcategory: stack-lang
 tags:
-  - golang
-  - idioms
-  - patterns
-  - defer
-  - panic
-  - recover
-  - struct-tags
-  - functional-options
-  - zero-values
-  - comma-ok
-  - go-1.18
-  - go-1.21
-  - go-1.22
-  - go-1.23
-  - go-1.24
-  - go-1.25
+
+- golang
+- idioms
+- patterns
+- defer
+- panic
+- recover
+- struct-tags
+- functional-options
+- zero-values
+- comma-ok
+- go-1.18
+- go-1.21
+- go-1.22
+- go-1.23
+- go-1.24
+- go-1.25
+  principles:
+- explicit-over-implicit
+
 ---
 
 # Go Idioms
@@ -2696,6 +2699,10 @@ var buf bytes.Buffer // Ready to use
 - [Awesome Go](https://github.com/avelino/awesome-go)
 - [Go by Example](https://gobyexample.com/)
 
+principles:
+
+- explicit-over-implicit
+
 ---
 
 **Related Documentation**:
@@ -2705,6 +2712,10 @@ var buf bytes.Buffer // Ready to use
 - [Error Handling](./ex-so-stla-go__error-handling.md)
 
 **Navigation**: [← Back to Golang Overview](./README.md)
+
+principles:
+
+- explicit-over-implicit
 
 ---
 

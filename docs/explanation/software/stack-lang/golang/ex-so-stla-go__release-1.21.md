@@ -1,3 +1,17 @@
+---
+title: Go 1.21 Release Notes
+description: New features and improvements in Go 1.21
+category: explanation
+subcategory: stack-lang
+tags:
+  - golang
+  - release-notes
+  - go-1.21
+related:
+  - ./ex-so-stla-go__best-practices.md
+last_updated: 2026-01-24
+---
+
 # Go 1.21 Release: Profile-Guided Optimization and Built-in Enhancements
 
 **Quick Reference**: [Overview](#overview) | [Profile-Guided Optimization (PGO)](#profile-guided-optimization-pgo) | [New Built-in Functions](#new-built-in-functions) | [Improved Type Inference](#improved-type-inference) | [Go Toolchain Management](#go-toolchain-management) | [Other Go 1.21 Improvements](#other-go-121-improvements) | [Migration Guide](#migration-guide) | [Conclusion](#conclusion) | [Related Documentation](#related-documentation)

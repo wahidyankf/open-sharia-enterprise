@@ -1,3 +1,28 @@
+---
+title: Java Concurrency and Parallelism
+description: Concurrency patterns in Java including threads, executors, CompletableFuture, virtual threads, and structured concurrency
+category: explanation
+subcategory: stack-lang
+tags:
+  - java
+  - concurrency
+  - parallelism
+  - threads
+  - executors
+  - virtual-threads
+  - structured-concurrency
+  - java-17
+  - java-21
+  - java-25
+related:
+  - ./ex-so-stla-ja__best-practices.md
+  - ./ex-so-stla-ja__performance.md
+principles:
+  - explicit-over-implicit
+  - simplicity-over-complexity
+last_updated: 2026-01-24
+---
+
 # Java Concurrency and Parallelism: Comprehensive Guide
 
 **Quick Reference**: [Introduction](#introduction) | [Concurrency Fundamentals](#concurrency-fundamentals) | [Virtual Threads](#virtual-threads) | [Structured Concurrency](#structured-concurrency) | [Thread Safety](#thread-safety) | [Synchronization Mechanisms](#synchronization-mechanisms) | [Concurrent Collections](#concurrent-collections) | [Atomic Operations](#atomic-operations) | [Parallel Streams](#parallel-streams) | [Fork/Join Framework](#forkjoin-framework) | [Common Concurrency Problems](#common-concurrency-problems) | [Modern Patterns](#modern-patterns) | [Performance Considerations](#performance-considerations) | [Concurrency Checklist](#concurrency-checklist) | [Sources](#sources) | [Related Principles](#related-principles)

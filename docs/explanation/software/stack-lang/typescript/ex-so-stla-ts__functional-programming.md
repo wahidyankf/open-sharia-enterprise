@@ -14,9 +14,9 @@ related:
   - ./ex-so-stla-ts__idioms.md
   - ../../../../../governance/development/pattern/functional-programming.md
 principles:
-  - pure-functions
   - immutability
-last_updated: 2025-01-23
+  - pure-functions
+last_updated: 2026-01-24
 ---
 
 # TypeScript Functional Programming

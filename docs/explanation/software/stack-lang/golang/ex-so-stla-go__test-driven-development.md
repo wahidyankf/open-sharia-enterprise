@@ -1,3 +1,30 @@
+---
+title: Go Test-Driven Development
+description: TDD practices in Go using testing package, table-driven tests, mocking, and test coverage
+category: explanation
+subcategory: stack-lang
+tags:
+  - golang
+  - tdd
+  - testing
+  - test-driven-development
+  - mocking
+  - coverage
+  - go-1.18
+  - go-1.21
+  - go-1.22
+  - go-1.23
+  - go-1.24
+  - go-1.25
+related:
+  - ./ex-so-stla-go__behaviour-driven-development.md
+  - ./ex-so-stla-go__best-practices.md
+principles:
+  - automation-over-manual
+  - explicit-over-implicit
+last_updated: 2026-01-24
+---
+
 # Test-Driven Development (TDD) in Go
 
 **Quick Reference**: [Overview](#overview) | [TDD Fundamentals](#tdd-fundamentals) | [TDD Cycle (Red-Green-Refactor)](#tdd-cycle-red-green-refactor) | [Go Testing Package](#go-testing-package) | [Table-Driven Tests](#table-driven-tests) | [Test Organization](#test-organization) | [Test Coverage](#test-coverage) | [Mocking and Stubbing](#mocking-and-stubbing) | [Testing with Interfaces](#testing-with-interfaces) | [Dependency Injection](#dependency-injection) | [Testing HTTP Handlers](#testing-http-handlers) | [Testing Database Code](#testing-database-code) | [Test Fixtures](#test-fixtures) | [Parallel Tests](#parallel-tests) | [Subtests](#subtests) | [Testing Best Practices](#testing-best-practices) | [Common Testing Pitfalls](#common-testing-pitfalls) | [Conclusion](#conclusion)

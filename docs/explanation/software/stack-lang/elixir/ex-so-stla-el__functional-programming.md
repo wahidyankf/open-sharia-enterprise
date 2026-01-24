@@ -20,8 +20,7 @@ related:
 principles:
   - immutability
   - pure-functions
-  - simplicity-over-complexity
-last_updated: 2026-01-23
+last_updated: 2026-01-24
 ---
 
 # Elixir Functional Programming

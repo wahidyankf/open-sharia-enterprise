@@ -9,6 +9,12 @@ tags:
   - pitfalls
   - common-mistakes
   - code-quality
+related:
+  - ./ex-so-stla-ja__best-practices.md
+  - ./ex-so-stla-ja__idioms.md
+principles:
+  - explicit-over-implicit
+last_updated: 2026-01-24
 ---
 
 # Java Antipatterns

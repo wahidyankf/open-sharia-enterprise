@@ -1,3 +1,17 @@
+---
+title: Go 1.22 Release Notes
+description: New features and improvements in Go 1.22
+category: explanation
+subcategory: stack-lang
+tags:
+  - golang
+  - release-notes
+  - go-1.22
+related:
+  - ./ex-so-stla-go__best-practices.md
+last_updated: 2026-01-24
+---
+
 # Go 1.22 Release: Loop Variables, Enhanced Routing, and Random Number Improvements
 
 **Quick Reference**: [Overview](#overview) | [For Loop Per-Iteration Variable Scoping](#for-loop-per-iteration-variable-scoping) | [Range Over Integers](#range-over-integers) | [Enhanced HTTP Routing](#enhanced-http-routing) | [math/rand/v2 Package](#mathrandv2-package) | [Other Go 1.22 Improvements](#other-go-122-improvements) | [Conclusion](#conclusion) | [Related Documentation](#related-documentation)

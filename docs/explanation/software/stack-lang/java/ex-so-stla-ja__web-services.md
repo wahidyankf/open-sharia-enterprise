@@ -14,6 +14,11 @@ tags:
   - microservices
   - api-security
   - java-21
+related:
+  - ./ex-so-stla-ja__best-practices.md
+principles:
+  - explicit-over-implicit
+last_updated: 2026-01-24
 ---
 
 # Java Web Services and APIs

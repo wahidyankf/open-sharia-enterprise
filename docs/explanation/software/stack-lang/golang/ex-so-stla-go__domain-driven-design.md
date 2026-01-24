@@ -1,3 +1,31 @@
+---
+title: Go Domain-Driven Design
+description: Domain-Driven Design patterns in Go including entities, value objects, aggregates, repositories, and bounded contexts
+category: explanation
+subcategory: stack-lang
+tags:
+  - golang
+  - ddd
+  - domain-driven-design
+  - entities
+  - value-objects
+  - aggregates
+  - repositories
+  - go-1.18
+  - go-1.21
+  - go-1.22
+  - go-1.23
+  - go-1.24
+  - go-1.25
+related:
+  - ./ex-so-stla-go__best-practices.md
+  - ./ex-so-stla-go__idioms.md
+principles:
+  - explicit-over-implicit
+  - simplicity-over-complexity
+last_updated: 2026-01-24
+---
+
 # Domain-Driven Design (DDD) in Go
 
 **Quick Reference**: [Overview](#overview) | [DDD Fundamentals](#ddd-fundamentals) | [Value Objects](#value-objects) | [Entities](#entities) | [Aggregates](#aggregates) | [Repositories](#repositories) | [Domain Services](#domain-services) | [Application Services](#application-services) | [Domain Events](#domain-events) | [Factories](#factories) | [Specifications](#specifications) | [Ubiquitous Language](#ubiquitous-language) | [DDD Best Practices in Go](#ddd-best-practices-in-go) | [Conclusion](#conclusion)

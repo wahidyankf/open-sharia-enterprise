@@ -1,14 +1,17 @@
----
 title: Go Interfaces and Composition
 description: Interface design and composition over inheritance in Go
 category: explanation
 subcategory: stack-lang-golang
 tags:
-  - golang
-  - interfaces
-  - composition
-  - embedding
-  - polymorphism
+
+- golang
+- interfaces
+- composition
+- embedding
+- polymorphism
+  principles:
+- explicit-over-implicit
+
 ---
 
 # Go Interfaces and Composition
@@ -1149,6 +1152,10 @@ type ReadCloser interface {
 - [Go Type Safety](./ex-so-stla-go__type-safety.md) - Type system and interfaces
 - [Go Anti-Patterns](./ex-so-stla-go__anti-patterns.md) - Common interface mistakes
 - [Go Domain-Driven Design](./ex-so-stla-go__domain-driven-design.md) - Interfaces in DDD
+
+principles:
+
+- explicit-over-implicit
 
 ---
 

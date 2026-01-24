@@ -1,3 +1,17 @@
+---
+title: Go 1.18 Release Notes
+description: New features and improvements in Go 1.18
+category: explanation
+subcategory: stack-lang
+tags:
+  - golang
+  - release-notes
+  - go-1.18
+related:
+  - ./ex-so-stla-go__best-practices.md
+last_updated: 2026-01-24
+---
+
 # Go 1.18 Release: Generics, Fuzzing, and Workspace Mode
 
 **Quick Reference**: [Overview](#overview) | [Generics (Type Parameters)](#generics-type-parameters) | [Fuzzing Support](#fuzzing-support) | [Workspace Mode](#workspace-mode) | [Other Go 1.18 Features](#other-go-118-features) | [Migration Guide](#migration-guide) | [Setup](#setup) | [Building](#building) | [Conclusion](#conclusion) | [Related Documentation](#related-documentation)

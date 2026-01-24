@@ -1,3 +1,29 @@
+---
+title: Go Security Best Practices
+description: Security practices in Go including input validation, cryptography, authentication, and vulnerability management
+category: explanation
+subcategory: stack-lang
+tags:
+  - golang
+  - security
+  - cryptography
+  - authentication
+  - input-validation
+  - vulnerabilities
+  - go-1.18
+  - go-1.21
+  - go-1.22
+  - go-1.23
+  - go-1.24
+  - go-1.25
+related:
+  - ./ex-so-stla-go__best-practices.md
+principles:
+  - explicit-over-implicit
+  - simplicity-over-complexity
+last_updated: 2026-01-24
+---
+
 # Security in Go
 
 **Quick Reference**: [Overview](#overview) | [Security Fundamentals](#security-fundamentals) | [Input Validation](#input-validation) | [SQL Injection Prevention](#sql-injection-prevention) | [Cross-Site Scripting (XSS)](#cross-site-scripting-xss) | [Cross-Site Request Forgery (CSRF)](#cross-site-request-forgery-csrf) | [Authentication](#authentication) | [Authorization](#authorization) | [Cryptography](#cryptography) | [Password Hashing](#password-hashing) | [TLS/HTTPS](#tlshttps) | [JWT Security](#jwt-security) | [Session Management](#session-management) | [Rate Limiting](#rate-limiting) | [File Upload Security](#file-upload-security) | [Command Injection](#command-injection) | [XML External Entity (XXE)](#xml-external-entity-xxe) | [Security Headers](#security-headers) | [Logging and Monitoring](#logging-and-monitoring) | [Dependency Security](#dependency-security) | [Common Security Pitfalls](#common-security-pitfalls) | [Conclusion](#conclusion)

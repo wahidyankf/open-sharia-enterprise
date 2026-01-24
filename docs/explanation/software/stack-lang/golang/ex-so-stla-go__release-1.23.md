@@ -1,3 +1,17 @@
+---
+title: Go 1.23 Release Notes
+description: New features and improvements in Go 1.23
+category: explanation
+subcategory: stack-lang
+tags:
+  - golang
+  - release-notes
+  - go-1.23
+related:
+  - ./ex-so-stla-go__best-practices.md
+last_updated: 2026-01-24
+---
+
 # Go 1.23 Release: Iterators, Unique Package, and Timer Improvements
 
 **Quick Reference**: [Overview](#overview) | [Iterator Functions](#iterator-functions) | [unique Package](#unique-package) | [Timer Behavior Improvements](#timer-behavior-improvements) | [Generic Type Aliases (Preview)](#generic-type-aliases-preview) | [Other Go 1.23 Improvements](#other-go-123-improvements) | [Migration Guide](#migration-guide) | [Conclusion](#conclusion) | [Related Documentation](#related-documentation)

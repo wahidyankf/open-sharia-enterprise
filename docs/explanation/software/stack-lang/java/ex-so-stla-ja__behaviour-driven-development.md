@@ -11,6 +11,12 @@ tags:
   - gherkin
   - acceptance-testing
   - collaboration
+related:
+  - ./ex-so-stla-ja__best-practices.md
+principles:
+  - automation-over-manual
+  - explicit-over-implicit
+last_updated: 2026-01-24
 ---
 
 # Java Behavior-Driven Development

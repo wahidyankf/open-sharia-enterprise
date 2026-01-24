@@ -14,6 +14,11 @@ tags:
   - java-17
   - java-21
   - java-25
+related:
+  - ./ex-so-stla-ja__best-practices.md
+principles:
+  - explicit-over-implicit
+last_updated: 2026-01-24
 ---
 
 # Java Interfaces and Polymorphism

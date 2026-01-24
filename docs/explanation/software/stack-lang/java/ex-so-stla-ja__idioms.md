@@ -11,6 +11,11 @@ tags:
   - java-21
   - records
   - pattern-matching
+related:
+  - ./ex-so-stla-ja__best-practices.md
+principles:
+  - explicit-over-implicit
+last_updated: 2026-01-24
 ---
 
 # Java Idioms

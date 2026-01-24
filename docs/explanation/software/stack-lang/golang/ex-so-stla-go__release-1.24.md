@@ -1,3 +1,17 @@
+---
+title: Go 1.24 Release Notes
+description: New features and improvements in Go 1.24
+category: explanation
+subcategory: stack-lang
+tags:
+  - golang
+  - release-notes
+  - go-1.24
+related:
+  - ./ex-so-stla-go__best-practices.md
+last_updated: 2026-01-24
+---
+
 # Go 1.24 Release: Swiss Tables, AddCleanup, and os.Root
 
 **Quick Reference**: [Overview](#overview) | [Swiss Tables Map Implementation](#swiss-tables-map-implementation) | [runtime.AddCleanup](#runtimeaddcleanup) | [os.Root for Isolated Filesystem Operations](#osroot-for-isolated-filesystem-operations) | [Generic Type Aliases](#generic-type-aliases) | [Other Go 1.24 Improvements](#other-go-124-improvements) | [Migration Guide](#migration-guide) | [Conclusion](#conclusion) | [Related Documentation](#related-documentation)

@@ -1,20 +1,24 @@
----
 title: "Elixir Finite State Machines"
 description: State machine patterns using GenServer, gen_statem, and functional approaches for managing state transitions in Elixir 1.12-1.19 with OTP supervision
 category: explanation
 subcategory: stack-lang
 tags:
-  - elixir
-  - finite-state-machine
-  - fsm
-  - genserver
-  - gen_statem
-  - otp
-  - supervision
-  - pattern-matching
-  - elixir-1.12
-  - elixir-1.17
-  - elixir-1.19
+
+- elixir
+- finite-state-machine
+- fsm
+- genserver
+- gen_statem
+- otp
+- supervision
+- pattern-matching
+- elixir-1.12
+- elixir-1.17
+- elixir-1.19
+  principles:
+- explicit-over-implicit
+- immutability
+
 ---
 
 # Elixir Finite State Machines
@@ -1201,7 +1205,7 @@ end
 **Cross-Language**:
 
 - [Go Finite State Machines](../golang/ex-so-stla-go__finite-state-machine.md) - Comparison with Go
-- [Java Finite State Machines](../java/ex-so-stla-ja__finite-state-machine-fsm.md) - Comparison with Java
+- [Java Finite State Machines](../java/ex-so-stla-ja__finite-state-machine.md) - Comparison with Java
 
 **Principles**:
 
@@ -1226,6 +1230,11 @@ end
 
 1. **AAOIFI Standards**: Accounting and Auditing Organization for Islamic Financial Institutions (2023)
 2. **Qard Hasan Best Practices**: Islamic Development Bank Guidelines (2022)
+
+principles:
+
+- explicit-over-implicit
+- immutability
 
 ---
 
