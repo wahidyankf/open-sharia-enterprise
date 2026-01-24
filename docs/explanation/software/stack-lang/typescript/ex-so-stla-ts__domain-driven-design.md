@@ -773,6 +773,49 @@ interface CampaignGoalReachedEvent extends DomainEvent {
 type DomainEventUnion = DonationReceivedEvent | ZakatCalculatedEvent | CampaignGoalReachedEvent;
 ```
 
+### Domain Event Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    subgraph Aggregate["Aggregate"]
+        Agg["Donation<br/>Campaign"]:::blue
+        Events["Event List<br/>(private)"]:::blue
+    end
+
+    subgraph Service["Application Service"]
+        Svc["Campaign<br/>Service"]:::orange
+    end
+
+    subgraph EventBus["Event Bus"]
+        Bus["Event<br/>Publisher"]:::teal
+        H1["Handler 1<br/>(Send Email)"]:::purple
+        H2["Handler 2<br/>(Update Stats)"]:::purple
+        H3["Handler 3<br/>(Notify Admin)"]:::purple
+    end
+
+    Agg -->|"1. State Change"| Events
+    Events -->|"2. Collect Events"| Svc
+    Svc -->|"3. Publish"| Bus
+    Bus -->|"4. Dispatch"| H1
+    Bus -->|"4. Dispatch"| H2
+    Bus -->|"4. Dispatch"| H3
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Points**:
+
+- **Aggregate emits events**: State changes produce domain events
+- **Service collects events**: After saving aggregate, collect pending events
+- **Event bus publishes**: Dispatch events to registered handlers
+- **Handlers react independently**: Each handler processes events asynchronously
+
 ### Event Factory
 
 ```typescript
@@ -867,6 +910,47 @@ eventBus.subscribe<CampaignGoalReachedEvent>("CampaignGoalReached", async (event
 ## Repositories
 
 Repositories abstract persistence for aggregates.
+
+### Repository Pattern
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    subgraph Domain["Domain Layer"]
+        Agg["Aggregate Root<br/>(DonationCampaign)"]:::blue
+        RepIntf["Repository Interface<br/>(CampaignRepository)"]:::blue
+    end
+
+    subgraph Application["Application Service"]
+        Svc["Application<br/>Service"]:::orange
+    end
+
+    subgraph Infrastructure["Infrastructure Layer"]
+        RepImpl["Repository Implementation<br/>(TypeORMCampaignRepository)"]:::teal
+        ORM["TypeORM<br/>Entity"]:::teal
+        DB[("PostgreSQL<br/>Database")]:::purple
+    end
+
+    Svc -->|"Uses Interface"| RepIntf
+    Svc -->|"Works With"| Agg
+    RepIntf -.->|"Implemented By"| RepImpl
+    RepImpl -->|"Maps To/From"| ORM
+    ORM -->|"Persists"| DB
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Interface in domain layer**: Domain defines repository contract
+- **Implementation in infrastructure**: Technical details isolated
+- **Aggregate-oriented**: One repository per aggregate root
+- **Domain model independence**: Aggregate knows nothing about persistence
 
 ### Repository Interface
 

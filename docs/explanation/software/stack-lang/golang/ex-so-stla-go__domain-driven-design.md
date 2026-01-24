@@ -529,6 +529,47 @@ func (o *Order) Items() []OrderItem {
 
 ### Repository Interface
 
+#### Repository Pattern Architecture
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    subgraph Domain["Domain Layer (domain/)"]
+        Agg["Aggregate Root<br/>(User, Order)"]:::blue
+        RepIntf["Repository Interface<br/>(UserRepository)"]:::blue
+    end
+
+    subgraph Application["Application Layer (application/)"]
+        Svc["Application<br/>Service"]:::orange
+    end
+
+    subgraph Infrastructure["Infrastructure Layer (infrastructure/)"]
+        RepImpl["Repository Implementation<br/>(PostgresUserRepository)"]:::teal
+        DB[("PostgreSQL<br/>Database")]:::purple
+    end
+
+    Svc -->|"Depends On"| RepIntf
+    Svc -->|"Works With"| Agg
+    RepIntf -.->|"Implemented By"| RepImpl
+    RepImpl -->|"Queries/Saves"| DB
+
+    Note["Dependency Inversion:<br/>Domain defines interface,<br/>Infrastructure implements"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Points**:
+
+- **Interface in domain**: Domain layer defines repository contract
+- **Implementation in infrastructure**: Persistence details isolated
+- **Dependency inversion**: High-level (domain) doesn't depend on low-level (database)
+- **One repository per aggregate**: UserRepository, OrderRepository
+
 Persistence abstraction:
 
 ```go
@@ -721,6 +762,60 @@ func (s *PricingService) CalculatePrice(order *Order) (Money, error) {
 ## Application Services
 
 ### Use Case Implementation
+
+#### Application Service Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    subgraph Presentation["Presentation Layer"]
+        Handler["HTTP Handler<br/>(Gin/Echo/net/http)"]:::orange
+    end
+
+    subgraph Application["Application Layer"]
+        Service["Application Service<br/>(OrderService)"]:::blue
+    end
+
+    subgraph Domain["Domain Layer"]
+        Agg1["Aggregate 1<br/>(Order)"]:::teal
+        Agg2["Aggregate 2<br/>(Customer)"]:::teal
+        DomSvc["Domain Service<br/>(PricingService)"]:::teal
+    end
+
+    subgraph Infrastructure["Infrastructure"]
+        Repo1["Repository<br/>(OrderRepository)"]:::purple
+        Repo2["Repository<br/>(CustomerRepository)"]:::purple
+        DB[("Database")]:::purple
+    end
+
+    Handler -->|"1. HTTP Request"| Service
+    Service -->|"2. Load"| Repo1
+    Service -->|"3. Load"| Repo2
+    Repo1 & Repo2 -->|"4. Query"| DB
+    DB -->|"5. Return"| Repo1 & Repo2
+    Repo1 & Repo2 -->|"6. Domain Models"| Service
+    Service -->|"7. Execute Logic"| Agg1
+    Service -->|"8. Apply Rules"| DomSvc
+    Service -->|"9. Save"| Repo1
+    Repo1 -->|"10. Persist"| DB
+    Service -->|"11. Response"| Handler
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Flow Steps**:
+
+1. **HTTP handler receives request**: Presentation layer validates input
+2. **Service loads aggregates**: Repository fetches from database
+3. **Execute domain logic**: Aggregates enforce invariants
+4. **Apply domain services**: Complex calculations isolated
+5. **Save changes**: Repository persists state
+6. **Return response**: Handler formats HTTP response
 
 Orchestrating domain logic:
 

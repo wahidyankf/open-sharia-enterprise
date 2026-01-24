@@ -93,6 +93,46 @@ This guide covers Go 1.18-1.25, highlighting version-specific anti-patterns.
 
 ## Error Handling Anti-Patterns
 
+### Error Handling Decision Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Function Returns<br/>(value, error)"]:::blue --> B{"err != nil?"}:::orange
+
+    B -->|"No"| C["✅ Use Value<br/>Continue"]:::teal
+    B -->|"Yes"| D{"Can<br/>Recover?"}:::orange
+
+    D -->|"Yes"| E["Handle Error<br/>(retry, default)"]:::purple
+    D -->|"No"| F{"Need<br/>Context?"}:::orange
+
+    F -->|"Yes"| G["Wrap Error<br/>fmt.Errorf(%w)"]:::purple
+    F -->|"No"| H["Return Error<br/>to Caller"]:::brown
+
+    G --> I{"Log?"}:::orange
+    H --> I
+
+    I -->|"Yes"| J["Log with Context<br/>(level, details)"]:::teal
+    I -->|"No"| K["Propagate"]:::teal
+
+    Note["❌ NEVER:<br/>Ignore errors (_)<br/>panic for expected errors<br/>Generic error messages"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+    classDef brown fill:#CA9161,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Always check**: `if err != nil` - no exceptions
+- **Wrap with context**: Use `fmt.Errorf("operation: %w", err)` to add context
+- **Never panic**: Return errors, don't panic (except init/startup failures)
+- **errors.Is/As**: Use for sentinel and type checking
+
 ### Ignoring Errors
 
 ```go
@@ -452,6 +492,48 @@ func TransferFunds(from, to int64, amount int64) error {
 ## Financial Calculation Anti-Patterns
 
 Financial calculations require absolute precision. Floating-point arithmetic introduces rounding errors that compound over time, leading to incorrect results. This section demonstrates why `float64` is unsuitable for money and shows correct approaches using integer arithmetic.
+
+### Money Type Decision Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Need to Store<br/>Money?"]:::blue --> B{"Financial<br/>Calculations?"}:::orange
+
+    B -->|"Yes"| C["✅ Use int64<br/>(smallest unit)"]:::teal
+    B -->|"No"| D{"Display<br/>Only?"}:::orange
+
+    D -->|"Yes"| E["Store as int64<br/>Format for display"]:::teal
+    D -->|"No"| C
+
+    C --> F["Money Best Practices"]:::teal
+    F --> F1["• Store cents/smallest unit"]
+    F --> F2["• Use custom Money type"]
+    F --> F3["• Method receivers for ops"]
+    F --> F4["• Rounding with big.Int"]
+
+    G["❌ NEVER use float64"]:::brown
+    H["Examples:<br/>float64 = imprecise<br/>string = no arithmetic<br/>Decimal pkg = slow"]:::purple
+
+    Note["Golden Rule:<br/>If it's money,<br/>use int64 cents"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+    classDef brown fill:#CA9161,stroke:#000,color:#000
+```
+
+**Type Guidelines**:
+
+- **int64 cents**: All money values (USD: pennies, EUR: cents, JPY: yen)
+- **big.Int**: For very large amounts or intermediate calculations
+- **Never float64**: Precision errors accumulate
+- **Never string**: Cannot perform arithmetic
+
+**Example**: $100.25 → store as `int64(10025)` (cents)
 
 ### Using float64 for Money
 

@@ -1689,6 +1689,44 @@ Type hints should clarify intent and catch errors early. Poor type hint practice
 - **TypeVar constraints**: Violating type variable rules
 - **Islamic Finance Impact**: Incorrect money types could allow `float` usage (precision errors), missing Decimal validation, or allowing invalid Zakat calculation types
 
+### 📊 Type Hint Decision Tree
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Need Type Hint?"]:::blue --> B{"Type<br/>Known?"}:::orange
+
+    B -->|"Yes"| C["Use Specific Type<br/>(Decimal, str, int)"]:::teal
+    B -->|"No"| D{"Multiple<br/>Possible Types?"}:::orange
+
+    D -->|"Yes"| E["Use Union<br/>(str | int | None)"]:::purple
+    D -->|"No"| F{"Generic<br/>Container?"}:::orange
+
+    F -->|"Yes"| G["Use Generic<br/>(List[str], Dict[str, int])"]:::teal
+    F -->|"No"| H{"Protocol-based?"}:::orange
+
+    H -->|"Yes"| I["Use Protocol<br/>(Hashable, Sized)"]:::purple
+    H -->|"No"| J["❌ Last Resort:<br/>Use Any<br/>(document why!)"]:::brown
+
+    Note["Prefer:<br/>Specific > Union > Generic > Protocol > Any"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+    classDef brown fill:#CA9161,stroke:#000,color:#000
+```
+
+**Hierarchy of Type Hints** (from best to worst):
+
+1. **Specific types**: `Decimal`, `str`, `int` - clearest intent
+2. **Union types**: `str | int | None` - explicit alternatives
+3. **Generics**: `List[Decimal]`, `Dict[str, Money]` - typed containers
+4. **Protocols**: `Hashable`, `Sized` - structural typing
+5. **Any**: Last resort - document justification
+
 ### Anti-Pattern 1: Overusing `Any` (FAIL ❌)
 
 ```python
@@ -2301,6 +2339,48 @@ Python's `float` type uses binary floating-point arithmetic (IEEE 754), which ca
 - **Regulatory violations**: Cannot demonstrate precision compliance
 - **Islamic Finance Impact**: Incorrect Zakat underpayment (haram), Murabaha profit miscalculation (potential Riba), Waqf donation attribution errors
 - **CRITICAL**: For Zakat, even 1 halalah (0.01 SAR) error multiplied by millions of users equals massive underpayment
+
+### 📊 Financial Precision Type Decision
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Need to Store<br/>Money/Currency?"]:::blue --> B{"Financial<br/>Calculations?"}:::orange
+
+    B -->|"Yes"| C["✅ Use Decimal<br/>(required for finance)"]:::teal
+    B -->|"No"| D{"Display<br/>Only?"}:::orange
+
+    D -->|"Yes"| E["✅ Store as Decimal<br/>Format for display"]:::teal
+    D -->|"No"| F{"Scientific/Engineering<br/>Calculations?"}:::orange
+
+    F -->|"Yes"| G["✅ Use float<br/>(physics, stats)"]:::purple
+    F -->|"No"| C
+
+    C --> H["Decimal Best Practices"]:::teal
+    H --> H1["• Set context precision"]
+    H --> H2["• Define rounding mode"]
+    H --> H3["• Validate inputs"]
+    H --> H4["• Never mix with float"]
+
+    Note["❌ NEVER:<br/>float for money<br/>int for cents (loses precision)<br/>string arithmetic"]:::brown
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+    classDef brown fill:#CA9161,stroke:#000,color:#000
+```
+
+**Golden Rule**: If it represents money, use `Decimal`. No exceptions.
+
+**Type Guidelines**:
+
+- **Decimal**: Financial calculations, currency, percentages in finance (e.g., Zakat 2.5%)
+- **int**: Counts, IDs, whole numbers (e.g., number of beneficiaries)
+- **float**: Only for non-financial scientific/engineering calculations
+- **str**: Never for arithmetic - only for display after formatting
 
 ### Anti-Pattern 1: Using Float for Money (FAIL ❌)
 

@@ -1635,6 +1635,45 @@ Expected: All tests pass, build succeeds
 
 ## Code Organization
 
+### Project Structure
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    A["Project Root"]:::blue --> B["src/main/java<br/>(Source Code)"]:::orange
+    A --> C["src/test/java<br/>(Test Code)"]:::teal
+    A --> D["src/main/resources<br/>(Config Files)"]:::purple
+
+    B --> B1["com.ose.domain<br/>(Business Logic)"]:::orange
+    B --> B2["com.ose.application<br/>(Use Cases)"]:::orange
+    B --> B3["com.ose.infrastructure<br/>(Technical Details)"]:::orange
+
+    B1 --> B1A["zakat/"]
+    B1 --> B1B["donation/"]
+    B1 --> B1C["qard_hasan/"]
+
+    B1A --> B1A1["Calculator.java"]
+    B1A --> B1A2["ZakatAggregate.java"]
+    B1A --> B1A3["NisabThreshold.java"]
+
+    C --> C1["com.ose.domain<br/>(Domain Tests)"]:::teal
+    C --> C2["com.ose.application<br/>(Integration Tests)"]:::teal
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Separate source and test code**: `src/main/java` vs `src/test/java`
+- **Package by feature**: Group related classes (zakat, donation, qard_hasan)
+- **Layer architecture**: Domain → Application → Infrastructure
+- **Parallel test structure**: Mirror production package structure in tests
+
 ### 1. Keep Methods Small and Focused (10-20 Lines)
 
 Methods should do one thing and do it well. Aim for 10-20 lines per method. If a method exceeds this, extract helper methods.
@@ -1941,6 +1980,48 @@ public Duration calculateTermDuration(PaymentFrequency frequency, int numberOfPa
 Never use empty catch blocks. Log exceptions with context, rethrow when appropriate, and provide actionable error messages.
 
 **Why it matters**: In finance systems, silent failures in Zakat calculations or murabaha_contract generation can lead to incorrect financial outcomes. Meaningful error handling enables quick diagnosis and resolution.
+
+#### Exception Handling Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Execute<br/>Business Logic"]:::blue --> B{"Exception<br/>Thrown?"}:::orange
+
+    B -->|"No"| C["✅ Return<br/>Success Result"]:::teal
+    B -->|"Yes"| D{"Known<br/>Exception Type?"}:::orange
+
+    D -->|"Validation Error"| E["Catch Specific<br/>IllegalArgumentException"]:::purple
+    D -->|"Data Access Error"| F["Catch Specific<br/>DataAccessException"]:::purple
+    D -->|"Unknown"| G["Propagate Up<br/>Call Stack"]:::brown
+
+    E --> H["Log with Context<br/>(userId, details)"]:::teal
+    F --> H
+
+    H --> I{"Recoverable?"}:::orange
+
+    I -->|"No"| J["Wrap in Custom<br/>Domain Exception"]:::purple
+    I -->|"Yes"| K["Handle Gracefully<br/>Return Default"]:::teal
+
+    J --> L["Throw to<br/>Caller"]:::brown
+
+    G --> L
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+    classDef brown fill:#CA9161,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Catch specific exceptions**: Never use `catch (Exception e)` - catch specific types
+- **Log with context**: Include user IDs, request details, timestamps
+- **Wrap in domain exceptions**: Convert technical exceptions to business exceptions
+- **Never silent**: Always log or rethrow - never swallow exceptions
 
 ```java
 // Good: Meaningful exception handling with context

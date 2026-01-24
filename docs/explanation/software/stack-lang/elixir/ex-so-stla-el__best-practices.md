@@ -1581,6 +1581,61 @@ end
 
 ## Supervision Tree Design
 
+### Supervision Strategies Overview
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    subgraph OneForOne["Strategy: :one_for_one"]
+        S1["Supervisor"]:::blue
+        S1 --> C1["Worker 1"]:::teal
+        S1 --> C2["Worker 2"]:::teal
+        S1 --> C3["Worker 3"]:::teal
+
+        C2X["Worker 2<br/>❌ Crashes"]:::orange
+        C2R["Worker 2<br/>🔄 Restarted"]:::purple
+
+        Note1["Only crashed<br/>worker restarts"]:::teal
+    end
+
+    subgraph OneForAll["Strategy: :one_for_all"]
+        S2["Supervisor"]:::blue
+        S2 --> W1["Worker 1"]:::teal
+        S2 --> W2["Worker 2"]:::teal
+        S2 --> W3["Worker 3"]:::teal
+
+        W2X["Worker 2<br/>❌ Crashes"]:::orange
+        AllR["All Workers<br/>🔄 Restarted"]:::purple
+
+        Note2["All workers<br/>restart together"]:::orange
+    end
+
+    subgraph RestForOne["Strategy: :rest_for_one"]
+        S3["Supervisor"]:::blue
+        S3 --> R1["Worker 1"]:::teal
+        S3 --> R2["Worker 2"]:::teal
+        S3 --> R3["Worker 3"]:::teal
+
+        R2X["Worker 2<br/>❌ Crashes"]:::orange
+        R2R["Workers 2 & 3<br/>🔄 Restarted"]:::purple
+
+        Note3["Crashed worker<br/>& later siblings<br/>restart"]:::purple
+    end
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Choosing the Right Strategy**:
+
+- **`:one_for_one`**: Independent workers (database connection, cache, metrics) - most common
+- **`:one_for_all`**: Interdependent workers (workflow steps that must stay synchronized)
+- **`:rest_for_one`**: Sequential dependencies (worker 3 depends on worker 2, worker 2 on worker 1)
+
 ### Basic Supervision Strategy
 
 ```elixir

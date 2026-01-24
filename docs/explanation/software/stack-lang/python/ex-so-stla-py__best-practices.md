@@ -1205,6 +1205,40 @@ def calculate_zakat_obligation(wealth_amount, nisab):
 
 **Why this matters**: Explicit exceptions document failure modes. Custom exceptions provide context. Chaining exceptions (`from e`) preserves stack traces. Silent failures hide bugs.
 
+#### Error Handling Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Function Call<br/>with try/except"]:::blue --> B{" Raises<br/>Exception?"}:::orange
+
+    B -->|"No"| C["✅ Return<br/>Success Value"]:::teal
+    B -->|"Yes"| D{"Specific<br/>Exception?"}:::orange
+
+    D -->|"Known Type"| E["Handle with<br/>except Type"]:::purple
+    D -->|"Unknown"| F["Propagate Up<br/>Call Stack"]:::brown
+
+    E --> G{"Need More<br/>Context?"}:::orange
+
+    G -->|"Yes"| H["Chain Exception<br/>raise NewError from e"]:::purple
+    G -->|"No"| I["Handle<br/>Gracefully"]:::teal
+
+    H --> J["Log Error<br/>with Context"]:::teal
+    I --> J
+
+    J --> K["Return Error<br/>or Raise"]:::brown
+
+    F --> L["Caught by<br/>Higher Level"]:::brown
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+    classDef brown fill:#CA9161,stroke:#000,color:#000
+```
+
 ### Validation at Boundaries
 
 ```python
@@ -1257,6 +1291,42 @@ async def calculate_zakat(payer_id: str, wealth_amount: float):  # BAD: No valid
 **Why this matters**: Validate at boundaries (API, database, external services). Internal code trusts validated data. Pydantic centralizes validation. Reduces defensive programming clutter.
 
 ## Testing Practices
+
+### Test Pyramid Strategy
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TB
+    subgraph Pyramid[" "]
+        E2E["🌐 End-to-End Tests<br/>Few, Slow, Expensive<br/>Full system integration"]:::purple
+        Integration["🔗 Integration Tests<br/>Moderate quantity<br/>Component interactions"]:::orange
+        Unit["⚡ Unit Tests<br/>Many, Fast, Cheap<br/>Individual functions"]:::teal
+    end
+
+    E2E --> Integration
+    Integration --> Unit
+
+    note1["70-80% Unit Tests<br/>Fast feedback,<br/>isolated failures"]:::teal
+    note2["15-25% Integration Tests<br/>Verify component<br/>interactions"]:::orange
+    note3["5-10% E2E Tests<br/>Critical user<br/>journeys"]:::purple
+
+    Unit -.-> note1
+    Integration -.-> note2
+    E2E -.-> note3
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Unit Tests (Base)**: Test individual functions and methods in isolation. Fast, deterministic, easy to debug.
+- **Integration Tests (Middle)**: Test component interactions (database, API calls, message queues).
+- **E2E Tests (Top)**: Test complete user workflows through the entire system. Slow but catch integration issues.
 
 ### Test Organization
 

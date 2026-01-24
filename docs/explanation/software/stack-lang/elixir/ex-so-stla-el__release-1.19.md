@@ -1,6 +1,6 @@
 ---
 title: "Elixir 1.19 Release"
-description: Milestone release with type checking of function calls, LSP improvements, built-in JSON support, and enhanced testing capabilities
+description: Major release with enhanced type checking of protocols and anonymous functions, broader type inference, and up to 4x faster compilation for large projects
 category: explanation
 subcategory: stack-lang
 tags:
@@ -8,51 +8,52 @@ tags:
   - release-notes
   - elixir-1.19
   - type-checking
-  - lsp
-  - json
-  - testing
+  - compilation
+  - performance
+  - protocols
 related:
-  - ./ex-so-stla-el__release-1.17.md
+  - ./ex-so-stla-el__release-1.18.md
   - ./ex-so-stla-el__type-safety.md
+  - ./ex-so-stla-el__performance.md
 principles:
   - documentation-first
-last_updated: 2026-01-23
+last_updated: 2026-01-24
 ---
 
 # Elixir 1.19 Release
 
-**Status**: Current Stable (Released December 19, 2024)
-**OTP Compatibility**: Erlang/OTP 25+
-**Previous Version**: [Elixir 1.17](ex-so-stla-el__release-1.17.md)
+**Status**: Current Stable (Released October 16, 2025, latest 1.19.5 as of January 9, 2026)
+**OTP Compatibility**: Erlang/OTP 27.2+
+**Previous Version**: [Elixir 1.18](ex-so-stla-el__release-1.18.md)
 
 ## Overview
 
-Elixir v1.18 represents a milestone release with type checking of function calls, Language Server Protocol (LSP) improvements, built-in JSON support, and enhanced testing capabilities. This release significantly improves developer experience and type safety.
+Elixir v1.19 delivers enhanced type checking capabilities and significant compilation performance improvements. This release builds upon v1.18's type system foundation with protocol type checking, anonymous function inference, and compiler optimizations that can achieve up to 4x faster builds in large codebases.
 
 **Key Highlights**:
 
-- 🎯 **Type Checking**: Function call validation with gradual inference
-- 🔧 **LSP Listeners**: Better editor integration with compilation synchronization
-- 📦 **Built-in JSON**: Native JSON.encode!/1 and JSON.decode!/1
-- 🧪 **Parameterized Tests**: Run same test module with different parameters
-- 🚀 **Mix Migrate**: Automatic code modernization
+- 🎯 **Enhanced Type Checking**: Protocol and anonymous function type validation
+- 📈 **Broader Type Inference**: Function captures and expanded inference capabilities
+- ⚡ **4x Faster Compilation**: Performance improvements scaling with codebase size and CPU cores
+- 🔧 **Improved Compiler**: Addressing common limitations in large projects
+- 🧪 **Function Capture Types**: Type propagation for captured functions
 
 ## Quick Reference
 
 **Jump to**:
 
-- [Type Checking of Function Calls](#type-checking-of-function-calls)
-- [LSP Listeners](#lsp-listeners)
-- [Built-in JSON Support](#built-in-json-support)
-- [Parameterized Tests](#parameterized-tests)
-- [Mix Migrate](#mix-migrate)
+- [Type Checking of Protocols](#type-checking-of-protocols)
+- [Anonymous Function Type Inference](#anonymous-function-type-inference)
+- [Compilation Performance](#compilation-performance)
+- [Function Capture Type Propagation](#function-capture-type-propagation)
+- [Breaking Changes](#breaking-changes)
 - [Financial Domain Examples](#financial-domain-examples)
 
-## Type Checking of Function Calls
+## Type Checking of Protocols
 
 ### Overview
 
-Elixir 1.19 validates function calls against typespecs at compile time, catching type errors before runtime.
+Elixir 1.19 extends type checking to protocol implementations, validating that protocol functions match their specifications at compile time.
 
 ### Basic Type Checking
 
