@@ -757,6 +757,124 @@ func fanIn(ch1, ch2 <-chan int) <-chan int {
 
 The `sync` package provides synchronization primitives for coordinating goroutines.
 
+### Synchronization Primitive Selection
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Need Goroutine<br/>Coordination?"]:::blue --> B{"What Type of<br/>Synchronization?"}:::orange
+
+    B -->|"Shared State"| C{"Read/Write<br/>Pattern?"}:::orange
+    B -->|"Wait for Completion"| D["✅ sync.WaitGroup"]:::teal
+    B -->|"One-time Initialization"| E["✅ sync.Once"]:::teal
+    B -->|"Resource Pool"| F["✅ sync.Pool"]:::purple
+
+    C -->|"Exclusive Access"| G["✅ sync.Mutex<br/>(mutual exclusion)"]:::teal
+    C -->|"Many Reads,<br/>Few Writes"| H["✅ sync.RWMutex<br/>(read-write lock)"]:::teal
+
+    G --> G1["One goroutine<br/>at a time"]
+    H --> H1["Multiple readers<br/>OR single writer"]
+    D --> D1["Wait for N<br/>goroutines to finish"]
+    E --> E1["Execute code<br/>exactly once"]
+    F --> F1["Reuse temporary<br/>objects"]
+
+    Ex1["Example:<br/>Protect donation<br/>counter"]:::blue --> G
+    Ex2["Example:<br/>Cache with frequent<br/>reads"]:::blue --> H
+    Ex3["Example:<br/>Wait for batch<br/>processing"]:::blue --> D
+    Ex4["Example:<br/>Initialize DB<br/>connection once"]:::blue --> E
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **sync.Mutex**: Mutual exclusion for shared state
+  - Only one goroutine can hold the lock
+  - Use for write-heavy or mixed access patterns
+
+- **sync.RWMutex**: Read-write lock optimization
+  - Multiple readers can hold RLock simultaneously
+  - Writers get exclusive Lock
+  - Use when reads >> writes (10:1 or higher)
+
+- **sync.WaitGroup**: Wait for goroutines to complete
+  - `Add(n)` before spawning goroutines
+  - `Done()` in each goroutine when finished
+  - `Wait()` blocks until count reaches zero
+
+- **sync.Once**: Execute exactly once
+  - Thread-safe initialization
+  - Lazy loading patterns
+  - Singleton creation
+
+- **sync.Pool**: Reusable object pool
+  - Reduce GC pressure
+  - Temporary objects
+  - Not for long-lived connections
+
+**Islamic Finance Examples**:
+
+```go
+// Mutex: Protect donation counter
+type DonationCounter struct {
+    mu    sync.Mutex
+    total decimal.Decimal
+}
+
+func (dc *DonationCounter) Add(amount decimal.Decimal) {
+    dc.mu.Lock()
+    defer dc.mu.Unlock()
+    dc.total = dc.total.Add(amount)
+}
+
+// RWMutex: Cache with frequent reads
+type ZakatRateCache struct {
+    mu    sync.RWMutex
+    rates map[string]decimal.Decimal
+}
+
+func (zrc *ZakatRateCache) Get(currency string) decimal.Decimal {
+    zrc.mu.RLock() // Many readers can acquire RLock
+    defer zrc.mu.RUnlock()
+    return zrc.rates[currency]
+}
+
+func (zrc *ZakatRateCache) Update(currency string, rate decimal.Decimal) {
+    zrc.mu.Lock() // Exclusive lock for writing
+    defer zrc.mu.Unlock()
+    zrc.rates[currency] = rate
+}
+
+// WaitGroup: Process batch of donations
+var wg sync.WaitGroup
+for _, donation := range donations {
+    wg.Add(1)
+    go func(d Donation) {
+        defer wg.Done()
+        processDonation(d)
+    }(donation)
+}
+wg.Wait() // Wait for all to complete
+
+// Once: Initialize database connection once
+var (
+    db   *sql.DB
+    once sync.Once
+)
+
+func GetDB() *sql.DB {
+    once.Do(func() {
+        db, _ = sql.Open("postgres", connString)
+    })
+    return db
+}
+```
+
 ### sync.Mutex (Mutual Exclusion Lock)
 
 Protects shared state from concurrent access:
@@ -1050,6 +1168,175 @@ cache.Range(func(key, value interface{}) bool {
 ## Context Package
 
 The `context` package provides a standard way to carry deadlines, cancellation signals, and request-scoped values.
+
+### Context Cancellation Propagation
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+sequenceDiagram
+    participant Main as Main Goroutine
+    participant Parent as Parent Context
+    participant Child1 as Child Context 1
+    participant Child2 as Child Context 2
+    participant G1 as Goroutine 1
+    participant G2 as Goroutine 2
+
+    Main->>Parent: ctx, cancel := context.WithCancel()
+    activate Parent
+
+    Main->>Child1: childCtx1 := context.WithValue(ctx, ...)
+    activate Child1
+
+    Main->>Child2: childCtx2, _ := context.WithTimeout(ctx, 5s)
+    activate Child2
+
+    Main->>G1: go worker(childCtx1)
+    activate G1
+    G1->>G1: select { case <-ctx.Done(): ... }
+
+    Main->>G2: go worker(childCtx2)
+    activate G2
+    G2->>G2: select { case <-ctx.Done(): ... }
+
+    alt Explicit Cancellation
+        Main->>Parent: cancel()
+        Parent->>Child1: Propagate cancellation
+        Parent->>Child2: Propagate cancellation
+        deactivate Parent
+
+        Child1->>G1: ctx.Done() closed
+        deactivate Child1
+        G1-->>Main: Return early
+        deactivate G1
+
+        Child2->>G2: ctx.Done() closed
+        deactivate Child2
+        G2-->>Main: Return early
+        deactivate G2
+    else Timeout Exceeded
+        Child2->>Child2: Timeout after 5s
+        deactivate Child2
+        Child2->>G2: ctx.Done() closed
+        G2-->>Main: Return with DeadlineExceeded
+        deactivate G2
+    end
+
+    Note over Main,G2: All child contexts canceled<br/>when parent canceled
+    Note over Child2,G2: Timeout contexts auto-cancel
+```
+
+**Key Principles**:
+
+- **Context Tree**: Contexts form a tree structure
+  - Parent context cancellation propagates to all children
+  - Child cancellation does NOT affect parent
+
+- **Cancellation Propagation**:
+  - Manual: Call `cancel()` function
+  - Timeout: Automatic after duration
+  - Deadline: Automatic at specific time
+
+- **Context Values**:
+  - Immutable chain of key-value pairs
+  - Inherited by child contexts
+  - Use sparingly (request-scoped data only)
+
+- **Best Practices**:
+  - Always call `cancel()` (use `defer`)
+  - Pass context as first parameter
+  - Don't store contexts in structs
+
+**Islamic Finance Example**:
+
+```go
+// Process donation batch with timeout
+func processDonationBatch(donations []Donation) error {
+    // Parent context with 30-second timeout
+    ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+    defer cancel() // ALWAYS defer cancel
+
+    // Process donations concurrently
+    errChan := make(chan error, len(donations))
+
+    for _, donation := range donations {
+        go func(d Donation) {
+            // Each goroutine checks context
+            select {
+            case <-ctx.Done():
+                errChan <- ctx.Err() // Timeout or cancellation
+                return
+            default:
+                // Process donation
+                if err := validateDonation(ctx, d); err != nil {
+                    errChan <- err
+                    return
+                }
+
+                if err := saveDonation(ctx, d); err != nil {
+                    errChan <- err
+                    return
+                }
+
+                errChan <- nil
+            }
+        }(donation)
+    }
+
+    // Collect results
+    for i := 0; i < len(donations); i++ {
+        if err := <-errChan; err != nil {
+            cancel() // Cancel remaining work
+            return err
+        }
+    }
+
+    return nil
+}
+
+// HTTP handler with request context
+func handleDonationRequest(w http.ResponseWriter, r *http.Request) {
+    // Request context automatically canceled when client disconnects
+    ctx := r.Context()
+
+    // Add request-scoped values
+    ctx = context.WithValue(ctx, "requestID", generateID())
+
+    // Pass context to downstream operations
+    donation, err := fetchDonation(ctx, r.URL.Query().Get("id"))
+    if err != nil {
+        if err == context.Canceled {
+            // Client disconnected
+            return
+        }
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    json.NewEncoder(w).Encode(donation)
+}
+
+// Context-aware database query
+func validateDonation(ctx context.Context, d Donation) error {
+    // Query respects context cancellation
+    row := db.QueryRowContext(ctx, "SELECT valid FROM donations WHERE id = $1", d.ID)
+
+    var valid bool
+    if err := row.Scan(&valid); err != nil {
+        if err == context.DeadlineExceeded {
+            return fmt.Errorf("validation timeout")
+        }
+        return err
+    }
+
+    if !valid {
+        return fmt.Errorf("invalid donation")
+    }
+
+    return nil
+}
+```
 
 ### Context Purposes
 

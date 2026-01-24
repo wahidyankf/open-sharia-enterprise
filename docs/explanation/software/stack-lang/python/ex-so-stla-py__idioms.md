@@ -143,6 +143,51 @@ From PEP 20 (The Zen of Python):
 
 Comprehensions provide concise syntax for creating collections from iterables.
 
+### Comprehension Type Selection
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Transform<br/>Collection?"]:::blue --> B{"Output<br/>Type?"}:::orange
+
+    B -->|"List"| C["✅ List Comprehension<br/>[x*2 for x in items]"]:::teal
+    B -->|"Dict"| D["✅ Dict Comprehension<br/>{k: v for k, v in pairs}"]:::teal
+    B -->|"Set"| E["✅ Set Comprehension<br/>{x for x in items}"]:::teal
+    B -->|"Generator"| F["✅ Generator Expression<br/>(x*2 for x in items)"]:::teal
+
+    C --> G{"Need<br/>Filtering?"}:::orange
+    D --> G
+    E --> G
+    F --> G
+
+    G -->|"Yes"| H["Add if clause<br/>if condition"]:::purple
+    G -->|"No"| I["Simple transformation"]:::purple
+
+    H --> J["Comprehension Benefits"]:::teal
+    I --> J
+
+    J --> J1["• Faster than loops"]
+    J --> J2["• More readable"]
+    J --> J3["• Single expression"]
+    J --> J4["• Optimized in C"]
+
+    Note["Use generator<br/>for large datasets<br/>(lazy evaluation)"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **List comprehension**: Building new list `[...]`
+- **Dict comprehension**: Building dictionary `{k: v ...}`
+- **Set comprehension**: Building set (unique values) `{...}`
+- **Generator expression**: Lazy evaluation `(...)`
+
 ### List Comprehensions
 
 ```python
@@ -487,6 +532,42 @@ with timing_context("Zakat calculation"):
 
 Decorators modify or enhance functions and methods without changing their implementation.
 
+### Decorator Application Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    A["Original Function<br/>def calculate()"]:::blue --> B["Apply Decorator<br/>@cache"]:::orange
+
+    B --> C["Wrapped Function<br/>(enhanced)"]:::purple
+
+    C --> D["Function Call<br/>calculate(args)"]:::orange
+
+    D --> E{"Cache<br/>Hit?"}:::orange
+
+    E -->|"Yes"| F["✅ Return<br/>Cached Result"]:::teal
+    E -->|"No"| G["Execute<br/>Original Function"]:::purple
+
+    G --> H["Cache<br/>Result"]:::purple
+    H --> I["✅ Return<br/>Result"]:::teal
+
+    Note["Common Decorators:<br/>• @lru_cache (memoization)<br/>• @property (getter)<br/>• @staticmethod<br/>• @classmethod"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Wrapper pattern**: Decorator wraps original function
+- **Transparent**: Same interface, enhanced behavior
+- **Composable**: Stack multiple decorators `@cache @validate`
+- **Reusable**: Define once, apply many times
+
 ### Function Decorators
 
 ```python
@@ -596,6 +677,47 @@ print(contract.total_selling_price)  # Computed on access: Decimal('230000')
 ## Generators and Iterators
 
 Generators provide memory-efficient iteration over sequences.
+
+### Generator vs List Decision Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Process<br/>Collection?"]:::blue --> B{"Dataset<br/>Size?"}:::orange
+
+    B -->|"Large (>10K items)"| C["✅ Use Generator<br/>(yield values)"]:::teal
+    B -->|"Small (<10K items)"| D{"Multiple<br/>Passes Needed?"}:::orange
+
+    D -->|"Yes"| E["Use List<br/>(materialize)"]:::purple
+    D -->|"No"| C
+
+    C --> F["Generator Benefits"]:::teal
+    F --> F1["• Constant memory"]
+    F --> F2["• Lazy evaluation"]
+    F --> F3["• Stream processing"]
+    F --> F4["• Composable pipelines"]
+
+    E --> G["List Benefits"]:::purple
+    G --> G1["• Random access"]
+    G --> G2["• Multiple iterations"]
+    G --> G3["• Known length"]
+
+    Note["Use generator for:<br/>• File processing<br/>• Database cursors<br/>• Infinite sequences<br/>• Memory-constrained"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Generator (yield)**: Lazy, memory-efficient, one-pass
+- **List (return)**: Eager, memory-intensive, multi-pass
+- **Pipeline**: Chain generators `read() | filter() | transform()`
+- **Materialize when needed**: `list(generator)` converts
 
 ### Generator Functions
 

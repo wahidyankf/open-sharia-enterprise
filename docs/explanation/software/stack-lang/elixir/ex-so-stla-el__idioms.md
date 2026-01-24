@@ -641,6 +641,48 @@ end
 
 Guards are expressions that provide additional constraints on function clauses and case expressions. They enable compile-time optimizations and make business rules explicit.
 
+### Guard Usage Decision Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Need to Constrain<br/>Function Clause?"]:::blue --> B{"Type Check<br/>Sufficient?"}:::orange
+
+    B -->|"Yes"| C["✅ Use Built-in Guard<br/>(is_number, is_atom)"]:::teal
+    B -->|"No"| D{"Simple<br/>Comparison?"}:::orange
+
+    D -->|"Yes"| E["✅ Use Comparison<br/>(>, <, ==, in)"]:::teal
+    D -->|"No"| F{"Custom<br/>Business Logic?"}:::orange
+
+    F -->|"Yes"| G["✅ Use defguard<br/>(custom guard)"]:::purple
+    F -->|"No"| H["Use Function Body<br/>(pattern match + logic)"]:::purple
+
+    C --> I["Guard Best Practices"]:::teal
+    E --> I
+    G --> I
+
+    I --> I1["• Compile-time optimization"]
+    I --> I2["• Explicit constraints"]
+    I --> I3["• Multiple clauses"]
+    I --> I4["• Pure functions only"]
+
+    Note["Guards must be pure:<br/>No side effects<br/>Limited functions<br/>Compile-time safe"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Built-in guards**: Type checks, comparisons (fast, optimized)
+- **defguard**: Custom business logic guards
+- **Pure functions**: Guards cannot have side effects
+- **Multiple clauses**: Guards enable elegant clause selection
+
 ### Built-in Guards
 
 ```elixir
@@ -782,6 +824,46 @@ end
 ## Protocols
 
 Protocols enable polymorphism in Elixir without inheritance. They define a set of functions that can be implemented for any data type.
+
+### Protocol Implementation Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Need Polymorphic<br/>Behavior?"]:::blue --> B{"Multiple<br/>Data Types?"}:::orange
+
+    B -->|"Yes"| C["✅ Define Protocol<br/>(defprotocol)"]:::teal
+    B -->|"No"| D["Use Regular<br/>Functions"]:::purple
+
+    C --> E["Protocol Definition"]:::teal
+    E --> E1["Protocol: Printable<br/>Function: to_string(data)"]
+
+    E1 --> F["Implementations"]:::purple
+
+    F --> F1["✅ defimpl for Money"]
+    F --> F2["✅ defimpl for Donation"]
+    F --> F3["✅ defimpl for Transaction"]
+
+    F1 & F2 & F3 --> G["Runtime Dispatch<br/>(type-based)"]:::orange
+
+    G --> H["✅ Correct Implementation<br/>Called"]:::teal
+
+    Note["Built-in Protocols:<br/>• String.Chars (to_string)<br/>• Enumerable (for)<br/>• Inspect (inspect)"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Define once, implement many**: Protocol defines interface
+- **Type-based dispatch**: Runtime selects correct implementation
+- **No inheritance**: Protocols work with any data type
+- **Extensible**: Add implementations for new types later
 
 ### String.Chars Protocol for Money
 

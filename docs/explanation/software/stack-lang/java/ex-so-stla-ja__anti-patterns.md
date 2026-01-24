@@ -90,6 +90,46 @@ Antipatterns represent **violations** of [software engineering principles](../..
 - Set daemon status appropriately
 - Implement proper thread pool sizing
 
+#### Thread Management Decision Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Need Async<br/>Processing?"]:::blue --> B{"Known<br/>Thread Count?"}:::orange
+
+    B -->|"Yes, Fixed"| C["✅ Use<br/>Executors.newFixedThreadPool(n)"]:::teal
+    B -->|"No, Variable"| D{"Bounded or<br/>Unbounded?"}:::orange
+
+    D -->|"Bounded"| E["✅ Use<br/>Executors.newCachedThreadPool()"]:::teal
+    D -->|"Unbounded"| F["✅ Use Custom<br/>ThreadPoolExecutor"]:::purple
+
+    C --> G["Lifecycle Management"]:::teal
+    E --> G
+    F --> G
+
+    G --> G1["• try-with-resources"]
+    G --> G2["• shutdown() on close"]
+    G --> G3["• awaitTermination()"]
+    G --> G4["• shutdownNow() if timeout"]
+
+    Note["❌ NEVER:<br/>new Thread() directly<br/>No shutdown<br/>Unbounded pools"]:::brown
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+    classDef brown fill:#CA9161,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Fixed pool**: Known concurrency needs (e.g., CPU-bound tasks)
+- **Cached pool**: Variable load with short-lived tasks
+- **Custom pool**: Fine-grained control over queue, rejection policy
+- **Always shutdown**: Use try-with-resources or explicit lifecycle management
+
 **Code Example**:
 
 ```java
@@ -877,6 +917,55 @@ public class DonationRevenueMonitor {
 - No finally blocks for cleanup
 - Not using try-with-resources
 
+#### Resource Management Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Open Resource<br/>(File, Connection, Stream)"]:::blue --> B{"Resource<br/>AutoCloseable?"}:::orange
+
+    B -->|"Yes (Java 7+)"| C["✅ Use<br/>try-with-resources"]:::teal
+    B -->|"No (Legacy)"| D["Use try-finally<br/>with null check"]:::purple
+
+    C --> E["Automatic Close<br/>on Block Exit"]:::teal
+    D --> F["Manual Close<br/>in finally{}"]:::purple
+
+    E --> G{"Exception<br/>During Use?"}:::orange
+    F --> G
+
+    G -->|"No"| H["✅ Resource<br/>Closed Successfully"]:::teal
+    G -->|"Yes"| I["Resource Still<br/>Closed (guaranteed)"]:::teal
+
+    Note["❌ NEVER:<br/>Close in try block<br/>No finally<br/>Ignore exceptions"]:::brown
+
+    J["Multiple Resources:<br/>Nest try-with-resources<br/>or use ; separator"]:::purple
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+    classDef brown fill:#CA9161,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Always use try-with-resources**: For AutoCloseable resources (Java 7+)
+- **Multiple resources**: Nest or separate with semicolon
+- **Guaranteed cleanup**: Resources closed even if exception occurs
+- **Legacy code**: Use try-finally with null checks if pre-Java 7
+
+**Example**:
+
+```java
+// GOOD: try-with-resources
+try (Connection conn = dataSource.getConnection();
+     PreparedStatement stmt = conn.prepareStatement(sql)) {
+    // Resources automatically closed
+}
+```
+
 **How to Fix**:
 
 - Always use try-with-resources for AutoCloseable resources
@@ -1338,6 +1427,49 @@ public class DonationReportGenerator {
 - Use composition over inheritance
 - Extract cohesive components
 - Create clear interfaces
+
+#### God Object Decomposition Strategy
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["God Object<br/>(LoanManager)"]:::brown --> B{"Identify<br/>Responsibilities"}:::orange
+
+    B --> C["Customer<br/>Management"]:::blue
+    B --> D["Product<br/>Management"]:::blue
+    B --> E["Payment<br/>Processing"]:::blue
+    B --> F["Notification<br/>Management"]:::blue
+
+    C --> C1["✅ CustomerService"]:::teal
+    D --> D1["✅ ProductService"]:::teal
+    E --> E1["✅ PaymentService"]:::teal
+    F --> F1["✅ NotificationService"]:::teal
+
+    C1 --> G["Use Case<br/>Coordinator"]:::purple
+    D1 --> G
+    E1 --> G
+    F1 --> G
+
+    G --> H["✅ LoanApplicationService<br/>(orchestrates use cases)"]:::teal
+
+    Note["Each service:<br/>• Single responsibility<br/>• Focused interface<br/>• Testable in isolation"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+    classDef brown fill:#CA9161,stroke:#000,color:#000
+```
+
+**Decomposition Steps**:
+
+1. **Identify responsibilities**: List all distinct concerns (customer, product, payment, etc.)
+2. **Create focused services**: One service per responsibility
+3. **Define clear interfaces**: Each service has well-defined contract
+4. **Coordinate with orchestrator**: Application service coordinates multiple domain services
+5. **Use dependency injection**: Wire services together
 
 **Code Example**:
 
@@ -2372,6 +2504,47 @@ public class ZakatCalculator {
 
 ## Security Antipatterns
 
+### Input Validation Decision Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Input Received<br/>(User, API, File)"]:::blue --> B{"Trusted<br/>Source?"}:::orange
+
+    B -->|"No (external)"| C["✅ Validate<br/>at Boundary"]:::teal
+    B -->|"Yes (internal)"| D{"Type Safe?"}:::orange
+
+    C --> E["Whitelist<br/>Validation"]:::purple
+    D -->|"No"| E
+    D -->|"Yes"| F["✅ Use Typed<br/>Objects"]:::teal
+
+    E --> G{"Valid?"}:::orange
+
+    G -->|"Yes"| H["✅ Process<br/>Request"]:::teal
+    G -->|"No"| I["❌ Reject<br/>(400/422)"]:::brown
+
+    H --> J["Sanitize for<br/>Output Context"]:::purple
+    J --> K["✅ Safe Output"]:::teal
+
+    Note["Always:<br/>• Validate input<br/>• Sanitize output<br/>• Use whitelists<br/>• Fail securely"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+    classDef brown fill:#CA9161,stroke:#000,color:#000
+```
+
+**Security Principles**:
+
+- **Validate at boundaries**: All external input (HTTP, file, database)
+- **Whitelist over blacklist**: Define allowed values, reject everything else
+- **Type safety**: Convert to domain objects early
+- **Sanitize output**: Context-specific escaping (HTML, SQL, JSON)
+- **Fail securely**: Reject invalid input, log security events
+
 ### 19. Not Setting TimeZone on Calendar
 
 **Problem**: Using `Calendar` without explicitly setting timezone, causing server-side timezone to affect results.
@@ -2590,6 +2763,48 @@ Financial applications require extreme precision and correctness. These anti-pat
 **Real-World Impact**:
 
 In a Zakat collection system processing 100,000 donations per month, even 0.01% precision error can result in thousands in miscalculated obligations.
+
+#### Financial Type Decision Tree
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Need to Store<br/>Financial Value?"]:::blue --> B{"Money/Currency?"}:::orange
+
+    B -->|"Yes"| C["✅ Use BigDecimal<br/>(REQUIRED)"]:::teal
+    B -->|"No"| D{"Percentage/Rate?"}:::orange
+
+    D -->|"Yes"| E["✅ Use BigDecimal<br/>(e.g., 0.025 for 2.5%)"]:::teal
+    D -->|"No"| F{"Count/Quantity?"}:::orange
+
+    F -->|"Yes"| G["✅ Use int/long<br/>(whole numbers)"]:::teal
+    F -->|"No"| H["❌ NEVER<br/>double/float"]:::brown
+
+    C --> I["BigDecimal Best Practices"]:::teal
+    E --> I
+
+    I --> I1["• Use String constructor"]
+    I --> I2["• Set MathContext"]
+    I --> I3["• Define RoundingMode"]
+    I --> I4["• Validate precision"]
+
+    Note["Golden Rule:<br/>If it's money,<br/>use BigDecimal"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+    classDef brown fill:#CA9161,stroke:#000,color:#000
+```
+
+**Type Guidelines**:
+
+- **BigDecimal**: All monetary values, percentages in finance (Zakat 2.5%, profit margins)
+- **int/long**: Counts, quantities, IDs (number of donors, transaction count)
+- **NEVER double/float**: Precision errors accumulate
+- **String constructor**: `new BigDecimal("123.45")` not `new BigDecimal(123.45)`
 
 **Example - Zakat Calculation with Accumulating Errors**:
 

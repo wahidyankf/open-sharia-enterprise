@@ -1780,6 +1780,27 @@ func Example_ConcurrentPaymentProcessing() {
 
 ## Testing State Machines
 
+### FSM Test Coverage Strategy
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+    Tests["FSM Tests"]:::blue --> Valid["Valid Transitions"]:::orange
+    Tests --> Invalid["Invalid Transitions"]:::teal
+    Tests --> Concurrent["Concurrent Access"]:::purple
+
+    Valid --> V1["All allowed paths"]
+    Invalid --> I1["Blocked transitions"]
+    Invalid --> I2["Error handling"]
+    Concurrent --> C1["Race conditions"]
+    Concurrent --> C2["Mutex correctness"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
 ### Unit Testing Individual Transitions
 
 ```go
@@ -2034,6 +2055,35 @@ func TestPayment_PropertyInvariants(t *testing.T) {
 ```
 
 ## Business Domain Examples
+
+### Qard Hasan Loan Workflow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+stateDiagram-v2
+    [*] --> Draft: Create
+    Draft --> Submitted: Submit
+    Draft --> Cancelled: Cancel
+
+    Submitted --> UnderReview: Review
+    UnderReview --> Approved: Approve
+    UnderReview --> Rejected: Reject
+
+    Approved --> Active: Disburse
+    Active --> Repaying: First Payment
+    Repaying --> Completed: Full Repayment
+    Repaying --> Defaulted: Default
+
+    Completed --> [*]
+    Rejected --> [*]
+    Cancelled --> [*]
+    Defaulted --> [*]
+
+    note right of Active
+        Interest-free loan
+        Sharia-compliant
+    end note
+```
 
 ### Example 1: Zakat DonationPayment Processing
 

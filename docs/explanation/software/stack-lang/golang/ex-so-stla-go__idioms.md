@@ -957,6 +957,42 @@ validateTag := field.Tag.Get("validate") // "required"
 
 The functional options pattern provides flexible configuration for constructors.
 
+### Functional Options Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    A["Constructor<br/>NewServer(opts...)"]:::blue --> B["Default<br/>Configuration"]:::teal
+
+    B --> C["Apply Options<br/>(loop)"]:::orange
+
+    C --> D1["WithHost('api.example.com')"]:::purple
+    C --> D2["WithPort(9090)"]:::purple
+    C --> D3["WithTimeout(60s)"]:::purple
+
+    D1 --> E["Modify<br/>Server Struct"]:::orange
+    D2 --> E
+    D3 --> E
+
+    E --> F["✅ Configured<br/>Server Instance"]:::teal
+
+    Note["Benefits:<br/>• Optional parameters<br/>• Backward compatible<br/>• Self-documenting<br/>• Type-safe"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Variadic options**: `func New(opts ...Option)` accepts any number
+- **Default values**: Constructor sets sensible defaults
+- **Option functions**: Each option modifies one aspect
+- **Composable**: Combine options freely
+
 ### Basic Pattern
 
 ```go
@@ -1237,6 +1273,47 @@ server := NewServer(
 ## Slice Idioms
 
 Common patterns for working with slices.
+
+### Slice Operations Decision Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Need Slice<br/>Operation?"]:::blue --> B{"Size<br/>Known?"}:::orange
+
+    B -->|"Yes, Fixed"| C["Use make([]T, size)<br/>(preallocate)"]:::teal
+    B -->|"No, Growing"| D["Use make([]T, 0, capacity)<br/>or append()"]:::teal
+
+    D --> E{"Appending<br/>Many Items?"}:::orange
+
+    E -->|"Yes"| F["Preallocate<br/>make([]T, 0, estimate)"]:::purple
+    E -->|"No"| G["Use append()<br/>(auto-grow)"]:::purple
+
+    C --> H["Common Operations"]:::teal
+    F --> H
+    G --> H
+
+    H --> H1["• append(s, item)"]
+    H --> H2["• s[:n] (slice)"]
+    H --> H3["• copy(dst, src)"]
+    H --> H4["• len(s), cap(s)"]
+
+    Note["Avoid:<br/>• Index out of bounds<br/>• Modifying while iterating<br/>• Unnecessary copies"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Preallocate when possible**: `make([]T, 0, capacity)` avoids reallocations
+- **Use append correctly**: `s = append(s, item)` reassigns
+- **Understand len vs cap**: Length is current, capacity is allocated
+- **Slice vs copy**: Slicing shares backing array, copy creates new
 
 ### Creating Slices
 
@@ -1871,6 +1948,46 @@ if s1 < s2 {
 ## Interface Idioms
 
 Common interface patterns.
+
+### Interface Design Decision Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Design API<br/>Function/Method"]:::blue --> B{"Parameter<br/>or Return?"}:::orange
+
+    B -->|"Parameter"| C{"Need<br/>Flexibility?"}:::orange
+    B -->|"Return"| D["✅ Return<br/>Concrete Struct"]:::teal
+
+    C -->|"Yes"| E["✅ Accept<br/>Interface"]:::teal
+    C -->|"No"| F["Accept<br/>Concrete Type"]:::purple
+
+    E --> G["Interface Guidelines"]:::teal
+    G --> G1["• Small (1-3 methods)"]
+    G --> G2["• Focused behavior"]
+    G --> G3["• Compose when needed"]
+
+    D --> H["Struct Benefits"]:::teal
+    H --> H1["• Caller knows exact type"]
+    H --> H2["• Easy to add methods"]
+    H --> H3["• No interface pollution"]
+
+    Note["Go Proverb:<br/>'Accept interfaces,<br/>return structs'"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Accept interfaces**: Flexible parameters (io.Writer, not \*os.File)
+- **Return structs**: Concrete return types (easy to evolve)
+- **Small interfaces**: 1-3 methods max (easy to implement)
+- **Compose interfaces**: Build larger from smaller
 
 ### Accept Interfaces, Return Structs
 

@@ -153,6 +153,31 @@ FSMs enforce invariants through:
 
 ## GenServer FSM Pattern
 
+### GenServer FSM State Management
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+sequenceDiagram
+    participant Client
+    participant GenServer
+    participant State
+
+    Client->>GenServer: call({:transition, event})
+    activate GenServer
+    GenServer->>State: Read current state
+    State-->>GenServer: Current state atom
+    GenServer->>GenServer: handle_call({:transition, event}, state)
+    GenServer->>GenServer: Validate transition
+    alt Valid Transition
+        GenServer->>State: Update state
+        State-->>GenServer: New state atom
+        GenServer-->>Client: {:reply, :ok, new_state}
+    else Invalid Transition
+        GenServer-->>Client: {:reply, {:error, reason}, state}
+    end
+    deactivate GenServer
+```
+
 ### Overview
 
 GenServer is the standard OTP behavior for implementing state machines in Elixir. It provides a process-based FSM where each instance runs in an isolated process with its own state.
@@ -395,6 +420,28 @@ state = Payment.get_state("PAY-001")
 
 ## gen_statem Pattern
 
+### gen_statem State Function Callbacks
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+    Event["Event Received"]:::blue --> Current["Current State<br/>Function"]:::orange
+
+    Current --> Handler["State Callback<br/>state_name(event, data)"]:::teal
+
+    Handler --> Actions["Actions"]:::purple
+    Actions --> A1["Reply"]
+    Actions --> A2["Next State"]
+    Actions --> A3["State Timeout"]
+
+    A2 --> Next["Next State Function"]:::teal
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
 ### Overview
 
 `:gen_statem` is OTP's dedicated state machine behavior, providing more structured FSM support than GenServer. It explicitly models states and transitions.
@@ -543,6 +590,19 @@ end
 - ❌ **More complex**: Steeper learning curve
 
 ## Functional FSM Pattern
+
+### Functional FSM Data Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph LR
+    Input["Event + State"]:::blue --> FSM["transition(event, state)"]:::orange
+    FSM --> Output["{:ok, new_state} | {:error, reason}"]:::teal
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+```
 
 ### Overview
 
@@ -693,6 +753,25 @@ true = FunctionalPayment.terminal?(payment)
 
 ## Supervision and Fault Tolerance
 
+### FSM Supervision Tree
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+    Supervisor["Supervisor"]:::blue --> FSM1["FSM Instance 1"]:::teal
+    Supervisor --> FSM2["FSM Instance 2"]:::teal
+    Supervisor --> FSM3["FSM Instance N"]:::teal
+
+    FSM1 -.->|Crash| Restart1["Restart Strategy"]:::orange
+    Restart1 --> FSM1
+
+    Note["Supervisor monitors FSMs<br/>Automatically restarts on crash<br/>Maintains system availability"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+```
+
 ### Supervising FSMs
 
 ```elixir
@@ -738,6 +817,27 @@ end
 
 ## Testing State Machines
 
+### FSM Testing Strategy
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+    Tests["FSM Tests"]:::blue --> Unit["Unit Tests"]:::orange
+    Tests --> Integration["Integration Tests"]:::teal
+
+    Unit --> U1["Valid transitions"]
+    Unit --> U2["Invalid transitions"]
+    Unit --> U3["State callbacks"]
+
+    Integration --> I1["Full workflows"]
+    Integration --> I2["Error scenarios"]
+    Integration --> I3["Concurrent access"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+```
+
 ### Unit Testing Transitions
 
 ```elixir
@@ -779,6 +879,31 @@ end
 ```
 
 ## Business Domain Examples
+
+### Donation Campaign Lifecycle
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+stateDiagram-v2
+    [*] --> draft: create_campaign
+    draft --> active: activate
+    draft --> cancelled: cancel
+
+    active --> paused: pause
+    active --> completed: reach_target
+    active --> cancelled: cancel
+
+    paused --> active: resume
+    paused --> cancelled: cancel
+
+    completed --> [*]
+    cancelled --> [*]
+
+    note right of active
+        Accepting donations
+        Updating progress
+    end note
+```
 
 ### Zakat Payment Processing
 

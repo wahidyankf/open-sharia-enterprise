@@ -188,6 +188,46 @@ This document assumes TypeScript 5.0+ as the baseline. Version-specific features
 
 Type guards allow TypeScript to narrow types at runtime, providing type safety for dynamic data.
 
+### Type Guard Selection Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Need Runtime<br/>Type Check?"]:::blue --> B{"Type of<br/>Value?"}:::orange
+
+    B -->|"Primitive"| C["✅ Use typeof<br/>(string, number, boolean)"]:::teal
+    B -->|"Class Instance"| D["✅ Use instanceof<br/>(Money, Date, Error)"]:::teal
+    B -->|"Object Shape"| E{"Has Discriminant<br/>Property?"}:::orange
+
+    E -->|"Yes"| F["✅ Check Discriminant<br/>(obj.kind === 'success')"]:::purple
+    E -->|"No"| G["✅ Use 'in' operator<br/>('amount' in obj)"]:::purple
+
+    C --> H["Type Narrowing"]:::teal
+    D --> H
+    F --> H
+    G --> H
+
+    H --> H1["TypeScript narrows type"]
+    H --> H2["Autocomplete works"]
+    H --> H3["Type-safe operations"]
+
+    Note["Custom Guards:<br/>Function returning<br/>'value is Type'"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **typeof**: Primitives (string, number, boolean, symbol, undefined)
+- **instanceof**: Class instances (Money, Error, custom classes)
+- **Discriminated unions**: Tagged objects (`{ kind: 'success', value: T }`)
+- **in operator**: Property existence checks
+
 ### typeof Type Guard
 
 Use `typeof` for primitive type checking.
@@ -353,6 +393,51 @@ function processPayment(payment: Payment): void {
 ## Utility Types
 
 TypeScript provides built-in utility types for common transformations.
+
+### Utility Type Selection Guide
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Transform<br/>Type?"]:::blue --> B{"What<br/>Change?"}:::orange
+
+    B -->|"Make optional"| C["✅ Partial<T><br/>(all props optional)"]:::teal
+    B -->|"Make required"| D["✅ Required<T><br/>(remove optional)"]:::teal
+    B -->|"Make readonly"| E["✅ Readonly<T><br/>(immutable)"]:::teal
+    B -->|"Extract properties"| F["✅ Pick<T, K><br/>(select fields)"]:::purple
+    B -->|"Remove properties"| G["✅ Omit<T, K><br/>(exclude fields)"]:::purple
+    B -->|"Extract type"| H["✅ Extract<T, U><br/>(filter union)"]:::purple
+
+    C --> I["Common Uses"]:::teal
+    D --> I
+    E --> I
+    F --> I
+    G --> I
+    H --> I
+
+    I --> I1["• API updates (Partial)"]
+    I --> I2["• Immutability (Readonly)"]
+    I --> I3["• Subset types (Pick/Omit)"]
+    I --> I4["• Union filtering (Extract)"]
+
+    Note["Combine utilities:<br/>Partial<Pick<T, K>>"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Common Utility Types**:
+
+- **Partial<T>**: All properties optional (updates, patches)
+- **Required<T>**: All properties required (validation)
+- **Readonly<T>**: All properties readonly (immutability)
+- **Pick<T, K>**: Select specific properties (projection)
+- **Omit<T, K>**: Exclude properties (filtering)
+- **Extract<T, U>**: Extract from union (type narrowing)
 
 ### Partial<T>
 
@@ -743,6 +828,81 @@ type ZakatType = TransactionType<"ZAK-002">; // "ZAK"
 ## Mapped Types
 
 Mapped types transform all properties of an object type.
+
+### Mapped Type Selection Guide
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Need to Transform<br/>Object Type?"]:::blue --> B{"What<br/>Transformation?"}:::orange
+
+    B -->|"Property Modifiers"| C{"Add or Remove<br/>Modifiers?"}:::orange
+    B -->|"Key Changes"| D{"Rename or<br/>Filter Keys?"}:::orange
+
+    C -->|"Make Optional"| E["✅ Partial<T><br/>or [P in keyof T]?"]:::teal
+    C -->|"Make Required"| F["✅ Required<T><br/>or [P in keyof T]-?"]:::teal
+    C -->|"Make Readonly"| G["✅ Readonly<T><br/>or readonly [P in keyof T]"]:::teal
+    C -->|"Remove Readonly"| H["✅ -readonly [P in keyof T]"]:::purple
+
+    D -->|"Rename Keys"| I["✅ Key Remapping<br/>[P as NewKey]"]:::purple
+    D -->|"Filter Keys"| J["✅ Conditional Mapping<br/>[P as Condition ? P : never]"]:::purple
+
+    E --> K["Transformed Type"]:::teal
+    F --> K
+    G --> K
+    H --> K
+    I --> K
+    J --> K
+
+    K --> K1["All properties affected"]
+    K --> K2["Type-safe transformation"]
+    K --> K3["Compiler enforced"]
+
+    Note["Built-in Utilities:<br/>Partial, Required,<br/>Readonly, Pick, Omit<br/>cover common cases"]
+
+    classDef blue fill:#0173B2,stroke:#000,color:#fff
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#fff
+    classDef purple fill:#CC78BC,stroke:#000,color:#000
+```
+
+**Key Principles**:
+
+- **Built-in utilities first**: Use `Partial<T>`, `Required<T>`, `Readonly<T>` for common cases
+- **Mapping modifiers**: Use `+` and `-` to explicitly add/remove `?` and `readonly`
+- **Key remapping**: Use `as` clause to rename or transform keys (TypeScript 4.1+)
+- **Conditional mapping**: Filter properties by type or other conditions
+
+**Common Patterns**:
+
+```typescript
+// Islamic Finance Example: Contract transformation
+interface MurbahaContract {
+  readonly contractId: string;
+  amount?: Money;
+  installments?: number;
+}
+
+// Make all required and mutable for internal processing
+type MutableContract = {
+  -readonly [P in keyof MurbahaContract]-?: MurbahaContract[P];
+};
+// Result: { contractId: string; amount: Money; installments: number; }
+
+// Add getter prefix to all keys
+type ContractGetters = {
+  [P in keyof MurbahaContract as `get${Capitalize<string & P>}`]: () => MurbahaContract[P];
+};
+// Result: { getContractId: () => string; getAmount: () => Money | undefined; ... }
+
+// Filter only Money properties
+type MoneyProperties = {
+  [P in keyof MurbahaContract as MurbahaContract[P] extends Money ? P : never]: MurbahaContract[P];
+};
+// Result: { amount?: Money; }
+```
 
 ### Basic Mapped Types
 
