@@ -35,6 +35,117 @@ Behaviour-Driven Development (BDD) uses natural language to describe system beha
 - **Executable Specifications**: Gherkin scenarios are automated
 - **Outside-In**: Start from user perspective
 
+### BDD Workflow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Discover<br/>Collaborate on Features"]:::blue
+    B["Write Gherkin<br/>Feature Scenarios"]:::purple
+    C["Implement Steps<br/>TypeScript Code"]:::teal
+    D["Run Cucumber<br/>Execute Tests"]:::orange
+    E{"Scenarios<br/>Pass?"}:::orange
+    F["Deliver<br/>Living Docs"]:::teal
+    G["Refine Steps<br/>Iterate"]:::purple
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E -->|Yes| F
+    E -->|No| G
+    G --> C
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Cucumber Execution
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Feature Files<br/>donation.feature"]:::blue
+    B["Cucumber Runner<br/>Parse Gherkin"]:::orange
+    C["Step Definitions<br/>TypeScript Functions"]:::purple
+    D["Context State<br/>Test Data"]:::gray
+    E["Execute Actions<br/>Service Calls"]:::teal
+    F{"Assertions<br/>Pass?"}:::orange
+    G["Scenario Success"]:::teal
+    H["Scenario Failure"]:::orange
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F -->|Yes| G
+    F -->|No| H
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Playwright E2E Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Test Scenario<br/>User Flow"]:::blue
+    B["Launch Browser<br/>Chromium/Firefox"]:::purple
+    C["Navigate to Page<br/>page.goto#40;#41;"]:::teal
+    D["Interact with UI<br/>Fill Forms, Click"]:::orange
+    E["Assert Outcomes<br/>Verify Elements"]:::teal
+    F{"Test<br/>Pass?"}:::orange
+    G["Screenshot Success<br/>Visual Regression"]:::teal
+    H["Screenshot Failure<br/>Debug Artifacts"]:::orange
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F -->|Yes| G
+    F -->|No| H
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Financial BDD Testing
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Donation Feature<br/>Business Rules"]:::blue
+    B["Gherkin Scenarios<br/>Zakat Validation"]:::purple
+    C["Step Definitions<br/>TypeScript Implementation"]:::teal
+    D["DonationService<br/>Business Logic"]:::orange
+    E["Type Safety<br/>Money Type"]:::teal
+    F["Currency Validation<br/>USD/SAR/EUR"]:::orange
+    G["Audit Trail<br/>Compliance Log"]:::gray
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Gherkin Syntax
 
 ### Basic Structure

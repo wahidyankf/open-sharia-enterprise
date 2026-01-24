@@ -30,6 +30,34 @@ Elixir v1.16 enhances developer experience with code snippets in error messages,
 - 🔧 **Mix Improvements**: Stripped escripts, multiple test locations
 - 🚀 **Performance**: Better compilation and runtime optimizations
 
+### Feature Timeline
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Elixir 1.15<br/>Previous Release"]:::blue
+    B["Enhanced Diagnostics<br/>Code Snippets in Errors"]:::teal
+    C["Anti-Patterns Guide<br/>Best Practices Docs"]:::teal
+    D["Mix Improvements<br/>Stripped Escripts"]:::teal
+    E["Performance<br/>Optimization"]:::teal
+    F["Elixir 1.16<br/>Released Dec 2023"]:::orange
+
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+    B --> F
+    C --> F
+    D --> F
+    E --> F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Quick Reference
 
 **Jump to**:

@@ -29,6 +29,121 @@ last_updated: 2025-01-23
 
 Automated linting and formatting ensure consistent code quality. For OSE Platform financial applications, these tools prevent bugs, enforce standards, and maintain professional code.
 
+### Quality Tool Stack
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Python Code"]:::blue
+    B["Ruff<br/>Fast Linter"]:::teal
+    C["Black<br/>Formatter"]:::purple
+    D["mypy<br/>Type Checker"]:::orange
+    E["isort<br/>Import Sorter"]:::gray
+    F["Quality Report<br/>CI/CD Pipeline"]:::teal
+
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+    B --> F
+    C --> F
+    D --> F
+    E --> F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Pre-commit Automation
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["git commit<br/>Developer Action"]:::blue
+    B["Pre-commit Hook<br/>Trigger Checks"]:::orange
+    C["Black Format<br/>Auto-fix Style"]:::purple
+    D["Ruff Lint<br/>Code Quality"]:::teal
+    E["mypy Check<br/>Type Safety"]:::orange
+    F{"All Checks<br/>Pass?"}:::orange
+    G["Commit Allowed<br/>Push to Remote"]:::teal
+    H["Fix Issues<br/>Developer Action"]:::gray
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F -->|Yes| G
+    F -->|No| H
+    H --> A
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### CI/CD Quality Pipeline
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Push to GitHub<br/>Trigger CI"]:::blue
+    B["Install Dependencies<br/>pip install"]:::gray
+    C["Run Ruff<br/>ruff check ."]:::teal
+    D["Run Black<br/>black --check ."]:::purple
+    E["Run mypy<br/>mypy src/"]:::orange
+    F["Run Tests<br/>pytest --cov"]:::teal
+    G{"All Gates<br/>Pass?"}:::orange
+    H["Merge Allowed<br/>Deploy Ready"]:::teal
+    I["Build Fails<br/>Fix Required"]:::orange
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G -->|Yes| H
+    G -->|No| I
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Type Safety Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Function Definition<br/>Type Hints"]:::blue
+    B["mypy Analysis<br/>Static Type Check"]:::orange
+    C{"Type<br/>Errors?"}:::orange
+    D["Runtime Safe<br/>No Type Issues"]:::teal
+    E["Type Mismatch<br/>Error Report"]:::gray
+    F["Fix Type Hints<br/>Developer Action"]:::purple
+
+    A --> B
+    B --> C
+    C -->|No| D
+    C -->|Yes| E
+    E --> F
+    F --> A
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Ruff (Fast Linter)
 
 Ruff is an extremely fast Python linter written in Rust (10-100x faster than alternatives).

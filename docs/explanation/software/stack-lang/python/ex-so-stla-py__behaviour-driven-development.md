@@ -47,6 +47,114 @@ Three Amigos conversation: Business Analyst, Developer, Tester.
 
 ### BDD Cycle
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Discover<br/>Three Amigos Meeting"]:::blue
+    B["Write Gherkin<br/>Feature Scenarios"]:::purple
+    C["Implement Steps<br/>Python Code"]:::teal
+    D["Run behave<br/>Execute Scenarios"]:::orange
+    E{"All Scenarios<br/>Pass?"}:::orange
+    F["Deliver<br/>Living Documentation"]:::teal
+    G["Refine Scenarios<br/>Iterate"]:::purple
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E -->|Yes| F
+    E -->|No| G
+    G --> C
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Given-When-Then Structure
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Given<br/>Context Setup"]:::blue
+    B["Zakat Rate 2.5%<br/>Nisab Threshold Set"]:::teal
+    C["When<br/>Action Triggered"]:::purple
+    D["Calculate Zakat<br/>Business Logic"]:::orange
+    E["Then<br/>Verify Outcome"]:::teal
+    F["Zakat Amount Correct<br/>Assertion Pass"]:::teal
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### behave Execution Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Feature Files<br/>*.feature"]:::blue
+    B["behave Runner<br/>Parse Gherkin"]:::orange
+    C["Step Definitions<br/>Python Functions"]:::purple
+    D["Context Object<br/>Shared State"]:::gray
+    E["Execute Steps<br/>Given-When-Then"]:::teal
+    F{"Assertions<br/>Pass?"}:::orange
+    G["Scenario Success<br/>Continue"]:::teal
+    H["Scenario Failure<br/>Report Error"]:::orange
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F -->|Yes| G
+    F -->|No| H
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Financial Domain BDD
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Shariah Compliance<br/>Business Rules"]:::blue
+    B["Gherkin Scenarios<br/>Halal Validation"]:::purple
+    C["Step Implementations<br/>Python Validators"]:::teal
+    D["Zakat Calculation<br/>Decimal Precision"]:::orange
+    E["Murabaha Contract<br/>Profit Margin Check"]:::orange
+    F["Audit Trail<br/>Compliance Log"]:::gray
+    G["Stakeholder Review<br/>Acceptance"]:::teal
+
+    A --> B
+    B --> C
+    C --> D
+    C --> E
+    D --> F
+    E --> F
+    F --> G
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### BDD Cycle (Implementation)
+
 ```gherkin
 # 1. DISCOVER: Write scenarios with stakeholders
 Feature: Zakat Calculation

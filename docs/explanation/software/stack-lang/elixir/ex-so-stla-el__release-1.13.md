@@ -30,6 +30,34 @@ Elixir v1.13 focuses on tooling improvements, particularly code formatting, refl
 - 🎨 **Mix Format Plugins**: Extensible formatter for custom sigils and files
 - 📊 **Registry Improvements**: Faster distributed key-value storage
 
+### Feature Timeline
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Elixir 1.12<br/>Previous Release"]:::blue
+    B["Semantic Recompilation<br/>Smart Dependency Tracking"]:::teal
+    C["Code.Fragment<br/>Editor Integration"]:::teal
+    D["Mix Format Plugins<br/>Custom Formatters"]:::teal
+    E["Registry Improvements<br/>62% Faster Lookups"]:::teal
+    F["Elixir 1.13<br/>Released Dec 2021"]:::orange
+
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+    B --> F
+    C --> F
+    D --> F
+    E --> F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Quick Reference
 
 **Jump to**:
@@ -98,6 +126,36 @@ end
 # Elixir 1.12: Recompiles calculator, formatter, validator, converter (4 files)
 # Elixir 1.13: Recompiles ONLY converter (1 file - uses the new function)
 # Result: 75% reduction in recompilation time
+```
+
+### Semantic Recompilation Workflow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Change FinancialTypes<br/>Add Comment"]:::blue
+    B{"Elixir<br/>Version?"}:::orange
+    C["Elixir 1.12<br/>File Modified"]:::orange
+    D["Elixir 1.13<br/>Semantic Analysis"]:::teal
+    E["Recompile All<br/>Dependent Files"]:::orange
+    F{"Type Definitions<br/>Changed?"}:::teal
+    G["Recompile Files<br/>Using Changed Types"]:::teal
+    H["No Recompilation<br/>Comment-Only Change"]:::purple
+
+    A --> B
+    B -->|1.12| C
+    B -->|1.13| D
+    C --> E
+    D --> F
+    F -->|Yes| G
+    F -->|No| H
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Configuration
@@ -574,6 +632,41 @@ CampaignSystem.get_campaign("edu_2025")
 
 **No breaking changes** - Elixir 1.13 is fully backward compatible with 1.12.
 
+### Migration Path Decision Tree
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Start Migration<br/>to Elixir 1.13"]:::blue
+    B{"Large Codebase<br/>#40;200+ modules#41;?"}:::orange
+    C{"Need Editor<br/>Integration?"}:::orange
+    D{"Custom File<br/>Formats?"}:::orange
+    E["Enable Semantic<br/>Recompilation"]:::teal
+    F["Use Code.Fragment<br/>for Autocompletion"]:::teal
+    G["Create Mix Format<br/>Plugins"]:::teal
+    H["Optimize Registry<br/>Usage"]:::teal
+    I["Migration Complete<br/>Improved Tooling"]:::purple
+
+    A --> B
+    B -->|Yes| E
+    B -->|No| C
+    E --> C
+    C -->|Yes| F
+    C -->|No| D
+    F --> D
+    D -->|Yes| G
+    D -->|No| H
+    G --> H
+    H --> I
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 **Recommended upgrades**:
 
 1. **Enable semantic recompilation**:
@@ -647,6 +740,30 @@ end
 # - Time: 2.1 seconds
 
 # Improvement: 82% faster, 83% fewer recompilations
+```
+
+### Performance Comparison Chart
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    A["Recompilation<br/>Type Change"]:::blue
+    B["Elixir 1.12<br/>12.3s, 45 files"]:::orange
+    C["Elixir 1.13<br/>2.1s, 8 files<br/>#40;82% faster#41;"]:::teal
+    D["Registry Lookups<br/>1M operations"]:::blue
+    E["Elixir 1.12<br/>6.2 seconds"]:::orange
+    F["Elixir 1.13<br/>2.1 seconds<br/>#40;66% faster#41;"]:::teal
+
+    A --> B
+    A --> C
+    D --> E
+    D --> F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Registry Throughput

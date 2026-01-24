@@ -605,6 +605,118 @@ def map_donations(donations, fun) do
 end
 ```
 
+## Linting Pipeline
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Code Changes<br/>Developer Edits"]:::blue
+    B["Editor Linting<br/>Real-time Feedback"]:::teal
+    C{"Pre-commit<br/>Check"}:::orange
+    D["Format Check<br/>mix format"]:::teal
+    E["Credo Linting<br/>Code Quality"]:::teal
+    F["Commit Allowed"]:::teal
+    G["Fix Issues<br/>Developer Action"]:::orange
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E -->|Pass| F
+    E -->|Fail| G
+    G --> A
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+## Tool Integration Workflow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Source Code"]:::blue
+    B["mix format<br/>Formatter"]:::teal
+    C["Credo<br/>Linter"]:::purple
+    D["Dialyzer<br/>Type Checker"]:::purple
+    E["Formatted Code"]:::teal
+    F["Quality Report"]:::teal
+    G["Type Analysis"]:::teal
+    H["CI/CD Pipeline"]:::orange
+
+    A --> B
+    A --> C
+    A --> D
+    B --> E
+    C --> F
+    D --> G
+    E --> H
+    F --> H
+    G --> H
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+## Quality Automation Stack
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Developer Workflow"]:::blue
+    B["Editor Integration<br/>VS Code, Vim, Emacs"]:::purple
+    C["Pre-commit Hooks<br/>Husky"]:::orange
+    D["CI Pipeline<br/>GitHub Actions"]:::orange
+    E["Format on Save<br/>mix format"]:::teal
+    F["Lint on Commit<br/>Credo"]:::teal
+    G["Type Check<br/>Dialyzer"]:::teal
+    H["Test Suite<br/>ExUnit"]:::teal
+    I["Deployment Gate<br/>Quality Passed"]:::teal
+
+    A --> B
+    A --> C
+    A --> D
+    B --> E
+    C --> F
+    D --> G
+    D --> H
+    G --> I
+    H --> I
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+## Financial Domain Validation
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
+graph TD
+    A["Zakat Calculation<br/>Float Detection"]:::blue
+    B{"Credo Custom Check<br/>UnsafeMoneyOperation"}:::orange
+    C["Float Arithmetic<br/>wealth * 0.025"]:::gray
+    D["Decimal Library<br/>Decimal.mult#40;#41;"]:::teal
+    E["Error: Precision Loss"]:::orange
+    F["Valid: Precise Calculation"]:::teal
+
+    A --> B
+    B -->|Detects Float| C
+    B -->|Uses Decimal| D
+    C --> E
+    D --> F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef gray fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Pre-commit Hooks
 
 ### Git Hooks with Husky
@@ -946,7 +1058,7 @@ end
 - [Best Practices](ex-so-stla-el__best-practices.md) - Elixir best practices
 - [Testing](ex-so-stla-el__test-driven-development.md) - Testing quality
 - [Type Safety](ex-so-stla-el__type-safety.md) - Typespecs and Dialyzer
-- [Dependencies](ex-so-stla-el__dependencies.md) - Dependency management
+- [Dependencies](ex-so-stla-el__modules-and-dependencies.md) - Dependency management
 
 ## Sources
 

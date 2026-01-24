@@ -31,6 +31,34 @@ Elixir v1.15 focuses on compilation and boot time performance, completing the in
 - 🔧 **Code.with_diagnostics/2**: Better editor integration
 - 🎯 **Behaviour Improvements**: No compile-time dependencies
 
+### Feature Timeline
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Elixir 1.14<br/>Previous Release"]:::blue
+    B["Boot Time<br/>5-30% Faster"]:::teal
+    C["Compilation<br/>Behaviour Optimization"]:::teal
+    D["Logger<br/>File Rotation"]:::teal
+    E["Code.with_diagnostics/2<br/>Editor Integration"]:::teal
+    F["Elixir 1.15<br/>Released June 2023"]:::orange
+
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+    B --> F
+    C --> F
+    D --> F
+    E --> F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Quick Reference
 
 **Jump to**:
@@ -60,6 +88,30 @@ Elixir v1.15 focuses on compilation and boot time performance, completing the in
 # App2 ├─> All start in parallel (total: 0.8s)
 # App3 ├─>
 # App4 ┘
+```
+
+### Boot Time Comparison
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    A["Small App<br/>#40;10 deps#41;"]:::blue
+    B["Elixir 1.14<br/>420ms"]:::orange
+    C["Elixir 1.15<br/>380ms<br/>#40;10% faster#41;"]:::teal
+    D["Medium App<br/>#40;50 deps#41;"]:::blue
+    E["Elixir 1.14<br/>2.8 seconds"]:::orange
+    F["Elixir 1.15<br/>2.0 seconds<br/>#40;29% faster#41;"]:::teal
+
+    A --> B
+    A --> C
+    D --> E
+    D --> F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Pruned Code Paths
@@ -251,6 +303,38 @@ config :logger, :default_handler,
 # Logs automatically rotate when reaching 10MB
 # Old logs compressed: financial_platform.log.1.gz
 # Oldest logs deleted when exceeding 5 files
+```
+
+### Logger File Rotation Workflow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Write Log<br/>financial_platform.log"]:::blue
+    B{"File Size<br/>> 10MB?"}:::orange
+    C["Continue Writing<br/>Same File"]:::teal
+    D["Rotate Files<br/>Rename to .1"]:::orange
+    E["Compress Old Log<br/>.1 to .1.gz"]:::teal
+    F{"Max Files<br/>Exceeded?"}:::orange
+    G["Delete Oldest<br/>.5.gz"]:::purple
+    H["Create New<br/>financial_platform.log"]:::teal
+
+    A --> B
+    B -->|No| C
+    B -->|Yes| D
+    D --> E
+    E --> F
+    F -->|Yes| G
+    F -->|No| H
+    G --> H
+    H --> C
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Global Logger Metadata
@@ -644,6 +728,41 @@ end
 ### From Elixir 1.14
 
 **No breaking changes** - Elixir 1.15 is fully backward compatible.
+
+### Migration Path Decision Tree
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Start Migration<br/>to Elixir 1.15"]:::blue
+    B{"Want Faster<br/>Boot Time?"}:::orange
+    C{"Need Production<br/>Logging?"}:::orange
+    D{"Building<br/>Editor Tools?"}:::orange
+    E["Upgrade to OTP 26<br/>Concurrent App Start"]:::teal
+    F["Enable File Logging<br/>with Rotation"]:::teal
+    G["Use Code.with_diagnostics/2<br/>Collect All Errors"]:::teal
+    H["Optimize Behaviours<br/>No Compile Dependencies"]:::teal
+    I["Migration Complete<br/>Better Performance"]:::purple
+
+    A --> B
+    B -->|Yes| E
+    B -->|No| C
+    E --> C
+    C -->|Yes| F
+    C -->|No| D
+    F --> D
+    D -->|Yes| G
+    D -->|No| H
+    G --> H
+    H --> I
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 **Recommended upgrades**:
 
