@@ -32,7 +32,76 @@ Finite State Machines (FSMs) model systems with distinct states and transitions.
 - **Deterministic**: Same input always produces same output
 - **Single State**: System is in exactly one state at a time
 
+### State Transition Rules
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Start["Current State"]:::blue
+    Event["Event Received"]:::orange
+    Valid{"Valid<br/>Transition?"}:::purple
+    Execute["Execute Transition<br/>Update State"]:::teal
+    Reject["Reject Invalid<br/>Transition"]:::brown
+    End["New State"]:::blue
+
+    Start --> Event
+    Event --> Valid
+    Valid -->|Yes| Execute
+    Valid -->|No| Reject
+    Execute --> End
+    Reject --> Start
+
+    Note1["Transition Table:<br/>State + Event -> Next State"]
+    Note2["Guards:<br/>Additional conditions<br/>for transitions"]
+    Note3["Actions:<br/>Side effects during<br/>transition"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Basic FSM Implementation
+
+### Payment State Machine Visualization
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+stateDiagram-v2
+    [*] --> Pending: Create payment
+    Pending --> Processing: submit
+    Processing --> Completed: approve
+    Processing --> Failed: reject
+    Failed --> Pending: retry
+    Completed --> [*]
+    Failed --> [*]: max retries
+
+    Pending: Pending<br/>Awaiting submission
+    Processing: Processing<br/>Payment being processed
+    Completed: Completed<br/>Success
+    Failed: Failed<br/>Error occurred
+
+    note right of Pending
+      Initial state<br/>
+      Payment created
+    end note
+
+    note right of Processing
+      Payment gateway<br/>
+      processing transaction
+    end note
+
+    note right of Completed
+      Terminal state<br/>
+      Transaction successful
+    end note
+
+    note right of Failed
+      Can retry up to<br/>
+      max retry limit
+    end note
+```
 
 ### Simple State Machine
 
@@ -151,6 +220,41 @@ function processDonation(state: DonationState): string {
       return _exhaustive;
   }
 }
+```
+
+### Donation Campaign State Machine
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+stateDiagram-v2
+    [*] --> Draft: Create campaign
+    Draft --> Active: activate
+    Active --> Paused: pause
+    Paused --> Active: resume
+    Active --> Completed: complete
+    Draft --> Cancelled: cancel
+    Active --> Cancelled: cancel
+    Paused --> Cancelled: cancel
+    Completed --> [*]
+    Cancelled --> [*]
+
+    Draft: Draft<br/>Being configured
+    Active: Active<br/>Accepting donations
+    Paused: Paused<br/>Temporarily stopped
+    Completed: Completed<br/>Goal reached
+    Cancelled: Cancelled<br/>Terminated
+
+    note right of Active
+      Nested states:<br/>
+      - Running<br/>
+      - Paused
+    end note
+
+    note right of Completed
+      Final state<br/>
+      Goal reached or<br/>
+      end date passed
+    end note
 ```
 
 ### Builder Pattern FSM

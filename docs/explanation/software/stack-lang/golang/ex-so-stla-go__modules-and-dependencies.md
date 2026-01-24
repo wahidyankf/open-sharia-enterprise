@@ -10,6 +10,32 @@ This document covers Go modules, dependency management workflows, semantic versi
 
 ## Go Modules Overview
 
+### Module System Architecture
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Your Module<br/>#40;go.mod#41;"]:::blue --> B["Direct Dependencies<br/>#40;require#41;"]:::orange
+    B --> C["Dependency A<br/>v1.2.3"]:::teal
+    B --> D["Dependency B<br/>v2.0.0"]:::teal
+    C --> E["Transitive Deps<br/>#40;indirect#41;"]:::purple
+    D --> E
+
+    F["go.sum<br/>#40;Checksums#41;"]:::orange --> G["Verify Integrity"]:::teal
+    A --> F
+
+    H["Module Proxy<br/>#40;proxy.golang.org#41;"]:::purple --> C
+    H --> D
+    H --> E
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ### What are Go Modules?
 
 A **module** is a collection of related Go packages versioned together as a single unit. Modules provide:
@@ -95,6 +121,28 @@ import "example.com/myapp/pkg/database"
 ## Dependency Management
 
 ### Adding Dependencies
+
+#### Dependency Resolution Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    A["go get<br/>package"]:::blue --> B["Resolve Version<br/>#40;MVS Algorithm#41;"]:::purple
+    B --> C{In go.sum?}:::orange
+    C -->|Yes| D["Use Cached"]:::teal
+    C -->|No| E["Download from<br/>Proxy"]:::orange
+    E --> F["Verify Checksum"]:::purple
+    F --> G["Update go.mod<br/>+ go.sum"]:::teal
+    D --> H["Build Success"]:::blue
+    G --> H
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 Dependencies are added automatically when you import and build:
 
@@ -318,6 +366,29 @@ go mod verify
 ```
 
 ## Semantic Versioning
+
+### Semantic Versioning Decision Tree
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["New Release"]:::blue --> B{Breaking<br/>Changes?}:::purple
+    B -->|Yes| C["Increment MAJOR<br/>#40;v2.0.0#41;"]:::orange
+    B -->|No| D{New<br/>Features?}:::purple
+    D -->|Yes| E["Increment MINOR<br/>#40;v1.2.0#41;"]:::teal
+    D -->|No| F["Increment PATCH<br/>#40;v1.1.1#41;"]:::teal
+
+    C --> G["Update import paths<br/>#40;github.com/pkg/v2#41;"]:::orange
+    E --> H["Backward Compatible"]:::teal
+    F --> H
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 Go modules use semantic versioning (semver): `vMAJOR.MINOR.PATCH`
 

@@ -22,16 +22,537 @@ principles:
   - explicit-over-implicit
   - documentation-first
   - accessibility-first
-last_updated: 2025-01-23
+last_updated: 2026-01-24
 ---
 
 # Python Best Practices
 
-**Quick Reference**: [Overview](#overview) | [PEP 8 Style](#pep-8-style-guide) | [PEP 20 Philosophy](#pep-20-zen-of-python) | [Type Hints](#type-hints-and-annotations) | [Code Organization](#code-organization) | [Error Handling](#error-handling-patterns) | [Testing](#testing-practices) | [Documentation](#documentation-standards) | [Security](#security-practices) | [Anti-Patterns](#anti-patterns) | [References](#references)
+**Quick Reference**: [Overview](#overview) | [Alignment with Principles](#alignment-with-software-engineering-principles) | [PEP 8 Style](#pep-8-style-guide) | [PEP 20 Philosophy](#pep-20-zen-of-python) | [Type Hints](#type-hints-and-annotations) | [Code Organization](#code-organization) | [Error Handling](#error-handling-patterns) | [Testing](#testing-practices) | [Documentation](#documentation-standards) | [Security](#security-practices) | [Anti-Patterns](#anti-patterns) | [References](#references)
 
 ## Overview
 
 Python best practices establish coding standards ensuring consistency, maintainability, and production quality across the Open Sharia Enterprise platform. These practices build on Python Enhancement Proposals (PEPs), community conventions, and platform-specific requirements for financial domain applications.
+
+## Alignment with Software Engineering Principles
+
+Python development follows the five software engineering principles from `governance/principles/software-engineering/`:
+
+### 1. Automation Over Manual
+
+**Principle**: Automate repetitive tasks with tools, scripts, and CI/CD to reduce human error and increase consistency.
+
+**How Python Implements**:
+
+- Ruff for automated linting and formatting (replaces Flake8, Black, isort)
+- mypy for static type checking
+- pytest for automated testing with coverage
+- pre-commit hooks for validation
+- GitHub Actions CI/CD pipelines
+- tox for testing across Python versions
+
+**PASS Example** (Automated Zakat Calculation Validation):
+
+```python
+# pyproject.toml - Automated tool configuration
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "--cov=src --cov-report=term-missing --cov-fail-under=80"
+
+# tests/test_zakat_calculator.py - Automated Zakat validation
+from decimal import Decimal
+
+import pytest
+from ose_platform.domain.zakat import ZakatCalculator
+
+
+class TestZakatCalculator:
+    """Automated tests for Zakat calculation logic."""
+
+    def test_calculate_returns_2_5_percent_of_wealth(self) -> None:
+        """Verify Zakat is exactly 2.5% of wealth amount."""
+        calculator = ZakatCalculator()
+        wealth = Decimal("100000.00")
+        nisab = Decimal("5000.00")
+        expected_zakat = Decimal("2500.00")
+
+        result = calculator.calculate(wealth, nisab)
+
+        assert result == expected_zakat
+
+    def test_calculate_with_wealth_below_nisab_returns_zero(self) -> None:
+        """Verify zero wealth below nisab threshold."""
+        calculator = ZakatCalculator()
+        wealth = Decimal("1000.00")
+        nisab = Decimal("5000.00")
+
+        result = calculator.calculate(wealth, nisab)
+
+        assert result == Decimal("0")
+
+# .github/workflows/ci.yml - CI/CD automation
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: mypy src/
+      - run: pytest
+```
+
+**FAIL Example** (Manual Testing):
+
+```python
+# Manual testing - prone to human error, not reproducible
+class ZakatCalculator:
+    """No automated tests, manual verification only."""
+
+    def calculate(self, wealth: float, nisab: float) -> float:
+        # Developer manually tests by running:
+        # >>> calc = ZakatCalculator()
+        # >>> calc.calculate(100000, 5000)
+        # 2500.0  # Looks right visually - but no regression tests!
+        return wealth * 0.025
+
+# Problems with manual testing:
+# 1. Human error - typos, wrong values
+# 2. No regression detection when code changes
+# 3. No documentation of test cases
+# 4. Time-consuming and error-prone
+```
+
+**Islamic Finance Application**: Automated Zakat calculation verification ensures consistent nisab threshold checking across all transactions, preventing manual miscalculations that could lead to underpayment (haram). Every code commit triggers pytest with 80% coverage requirement.
+
+**See Also**: [Python Linting and Formatting](./ex-so-stla-py__linting-and-formatting.md)
+
+### 2. Explicit Over Implicit
+
+**Principle**: Make behavior, configuration, and dependencies explicit rather than relying on hidden defaults or magic.
+
+**How Python Implements**:
+
+- Explicit type hints (PEP 484)
+- No mutable default arguments
+- Explicit dependency injection
+- Clear configuration files (no magic)
+- Pydantic for explicit validation
+
+**PASS Example** (Explicit Murabaha Terms):
+
+```python
+from dataclasses import dataclass
+from decimal import Decimal
+
+from pydantic import BaseModel, Field
+
+
+class MurabahaConfig(BaseModel):
+    """Explicit Murabaha configuration with no hidden defaults."""
+
+    min_cost_price: Decimal = Field(gt=0, description="Minimum asset cost")
+    max_profit_margin_rate: Decimal = Field(ge=0, le=1, description="Maximum profit rate")
+    min_installments: int = Field(ge=1, description="Minimum installment count")
+    max_installments: int = Field(le=360, description="Maximum installment count")
+
+
+@dataclass(frozen=True)
+class MurabahaContract:
+    """Immutable Murabaha contract with explicit terms."""
+
+    contract_id: str
+    customer_id: str
+    cost_price: Decimal
+    profit_margin: Decimal
+    total_price: Decimal
+    installment_count: int
+
+
+def create_murabaha_contract(
+    customer_id: str,
+    cost_price: Decimal,
+    profit_margin: Decimal,
+    installment_count: int,
+    config: MurabahaConfig,
+) -> MurabahaContract:
+    """
+    Create Murabaha contract with explicit parameters.
+
+    All terms are explicitly passed - no hidden defaults.
+    Every parameter has clear meaning and validation.
+    """
+    # Explicit validation against configuration
+    if cost_price < config.min_cost_price:
+        raise ValueError(f"Cost price must be at least {config.min_cost_price}")
+
+    profit_rate = profit_margin / cost_price
+    if profit_rate > config.max_profit_margin_rate:
+        raise ValueError(f"Profit rate {profit_rate} exceeds maximum {config.max_profit_margin_rate}")
+
+    if not (config.min_installments <= installment_count <= config.max_installments):
+        raise ValueError(f"Installments must be between {config.min_installments} and {config.max_installments}")
+
+    # All calculations explicit - no hidden fees
+    total_price = cost_price + profit_margin
+
+    return MurabahaContract(
+        contract_id=generate_contract_id(),
+        customer_id=customer_id,
+        cost_price=cost_price,
+        profit_margin=profit_margin,
+        total_price=total_price,
+        installment_count=installment_count,
+    )
+```
+
+**FAIL Example** (Implicit Defaults):
+
+```python
+def create_murabaha_contract(
+    customer_id: str,
+    cost_price: Decimal,
+    profit_margin: Decimal | None = None,  # Hidden default!
+) -> dict:
+    """BAD: Hidden defaults violate Shariah transparency."""
+    # Where is 15% documented? What if it changes?
+    margin = profit_margin or (cost_price * Decimal("0.15"))  # HIDDEN MARKUP!
+
+    # Magic number - not explicit
+    installments = 12  # Why 12? Where is this requirement?
+
+    return {
+        "contract_id": generate_contract_id(),
+        "customer_id": customer_id,
+        "cost_price": cost_price,
+        "profit_margin": margin,
+        "total_price": cost_price + margin,
+        "installments": installments,
+    }
+```
+
+**Islamic Finance Application**: Explicit Murabaha terms ensure no hidden fees (riba), maintaining transparency required by Shariah law. All profit margins must be disclosed upfront with explicit parameters. Pydantic validation catches invalid configurations before contracts are created.
+
+**See Also**: [Python Best Practices](./ex-so-stla-py__best-practices.md)
+
+### 3. Immutability Over Mutability
+
+**Principle**: Prefer immutable data structures to prevent unintended state changes and enable safer concurrent code.
+
+**How Python Implements**:
+
+- `@dataclass(frozen=True)` for immutable data classes
+- `NamedTuple` for lightweight immutable types
+- Tuples instead of lists where possible
+- `frozenset` instead of `set` for immutable collections
+- Copy-on-write semantics
+
+**PASS Example** (Immutable Transaction Record):
+
+```python
+from dataclasses import dataclass
+from datetime import datetime
+from decimal import Decimal
+
+
+@dataclass(frozen=True)
+class ZakatTransaction:
+    """
+    Immutable Zakat transaction record.
+
+    Once created, cannot be modified - ensuring audit trail integrity.
+    """
+
+    transaction_id: str
+    payer_id: str
+    wealth_amount: Decimal
+    zakat_amount: Decimal
+    paid_at: datetime
+    audit_hash: str
+
+
+def create_zakat_transaction(
+    payer_id: str, wealth_amount: Decimal, zakat_amount: Decimal
+) -> ZakatTransaction:
+    """Create immutable Zakat transaction."""
+    paid_at = datetime.utcnow()
+
+    # Create transaction (frozen=True prevents modification)
+    transaction = ZakatTransaction(
+        transaction_id=generate_transaction_id(),
+        payer_id=payer_id,
+        wealth_amount=wealth_amount,
+        zakat_amount=zakat_amount,
+        paid_at=paid_at,
+        audit_hash=calculate_audit_hash(payer_id, wealth_amount, zakat_amount, paid_at),
+    )
+
+    return transaction
+
+
+def correct_zakat_transaction(original: ZakatTransaction, corrected_amount: Decimal) -> ZakatTransaction:
+    """
+    Create correction transaction.
+
+    Original transaction remains unchanged - audit trail preserved.
+    """
+    # Cannot modify original - must create new transaction
+    return create_zakat_transaction(
+        payer_id=original.payer_id, wealth_amount=original.wealth_amount, zakat_amount=corrected_amount
+    )
+
+
+# Attempting to modify raises FrozenInstanceError
+# transaction.zakat_amount = Decimal("500")  # ERROR: dataclass is frozen
+```
+
+**FAIL Example** (Mutable State):
+
+```python
+class ZakatTransaction:
+    """BAD: Mutable transaction allows tampering."""
+
+    def __init__(
+        self, payer_id: str, wealth_amount: Decimal, zakat_amount: Decimal
+    ):
+        self.transaction_id = generate_transaction_id()
+        self.payer_id = payer_id
+        self.wealth_amount = wealth_amount
+        self.zakat_amount = zakat_amount
+        self.paid_at = datetime.utcnow()
+
+    def update_amount(self, new_amount: Decimal) -> None:
+        """DANGER: Allows modification after creation!"""
+        self.zakat_amount = new_amount  # Violates audit trail
+        self.paid_at = datetime.utcnow()  # Falsifies timestamp!
+```
+
+**Islamic Finance Application**: Immutable transaction records provide tamper-proof audit trails required for Shariah compliance verification. Once a Murabaha payment is recorded, it cannot be altered - ensuring transparency and accountability (Amanah). Corrections create new transactions with references to originals.
+
+**See Also**: [Python Functional Programming](./ex-so-stla-py__functional-programming.md)
+
+### 4. Pure Functions Over Side Effects
+
+**Principle**: Prefer pure functions that are deterministic and side-effect-free for predictable, testable code.
+
+**How Python Implements**:
+
+- Pure calculation functions
+- Functional programming patterns (map, filter, reduce)
+- Side effects isolated at boundaries
+- No global state in business logic
+- Deterministic outputs for same inputs
+
+**PASS Example** (Pure Zakat Calculation):
+
+```python
+from decimal import Decimal
+
+
+def calculate_zakat(wealth: Decimal, nisab: Decimal) -> Decimal:
+    """
+    Calculate Zakat obligation (pure function).
+
+    Pure because:
+    - No external dependencies
+    - No side effects (no I/O, no state changes)
+    - Deterministic (same inputs = same output)
+    - Easy to test and verify
+
+    Args:
+        wealth: Total qualifying wealth
+        nisab: Minimum threshold for Zakat
+
+    Returns:
+        Zakat amount (2.5% of wealth if above nisab, else 0)
+    """
+    if wealth < nisab:
+        return Decimal("0")
+
+    zakat_rate = Decimal("0.025")  # 2.5%
+    return wealth * zakat_rate
+
+
+def is_zakat_eligible(wealth: Decimal, nisab: Decimal) -> bool:
+    """Check if wealth qualifies for Zakat (pure predicate)."""
+    return wealth >= nisab
+
+
+def calculate_nisab_from_gold_price(gold_price_per_gram: Decimal) -> Decimal:
+    """Calculate nisab threshold from current gold price (pure)."""
+    nisab_gold_grams = Decimal("85")
+    return gold_price_per_gram * nisab_gold_grams
+
+
+# Testing pure functions is trivial - no setup required
+def test_calculate_zakat():
+    """Test pure Zakat calculation."""
+    wealth = Decimal("100000.00")
+    nisab = Decimal("5000.00")
+
+    zakat = calculate_zakat(wealth, nisab)
+
+    assert zakat == Decimal("2500.00")
+```
+
+**FAIL Example** (Impure with Side Effects):
+
+```python
+import logging
+from decimal import Decimal
+
+import requests
+
+
+class ZakatCalculator:
+    """BAD: Impure calculator with side effects."""
+
+    def __init__(self, database, notification_service):
+        self.database = database
+        self.notification_service = notification_service
+        self.logger = logging.getLogger(__name__)
+
+    def calculate(self, wealth: Decimal, nisab: Decimal) -> Decimal:
+        """
+        BAD: Side effects make this unpredictable.
+
+        Problems:
+        - Logging (side effect)
+        - Database queries during calculation
+        - External API calls
+        - Notifications
+        - Non-deterministic behavior
+        """
+        # Side effect: logging
+        self.logger.info(f"Calculating Zakat for wealth: {wealth}")
+
+        # Side effect: database query
+        rate = self.database.query("SELECT rate FROM zakat_rates WHERE is_current = TRUE")
+
+        # Side effect: external API call (network I/O)
+        gold_price = self._fetch_gold_price()
+
+        # Calculation mixed with I/O
+        zakat = wealth * (rate or Decimal("0.025"))
+
+        # Side effect: notification
+        self.notification_service.send(f"Zakat calculated: {zakat}")
+
+        # Side effect: database write
+        self.database.insert("zakat_calculations", {"wealth": wealth, "zakat": zakat})
+
+        return zakat
+
+    def _fetch_gold_price(self) -> Decimal:
+        """Non-deterministic external call."""
+        response = requests.get("https://api.gold-price.com/current")
+        return Decimal(response.json()["price"])
+```
+
+**Islamic Finance Application**: Pure Zakat calculation functions ensure deterministic, verifiable results. Calculate Zakat on 10,000 SAR wealth with 5,000 SAR nisab - always get 250 SAR (2.5%). Scholars and users can independently verify calculations match Shariah requirements without database access or API keys.
+
+**See Also**: [Pure Functions Principle](../../../../../governance/principles/software-engineering/pure-functions.md)
+
+### 5. Reproducibility First
+
+**Principle**: Ensure builds, tests, and deployments are reproducible across environments and time.
+
+**How Python Implements**:
+
+- `requirements.txt` with exact versions (pinned dependencies)
+- `pyproject.toml` with version constraints
+- Virtual environments (venv, virtualenv)
+- Docker containers for environment consistency
+- Deterministic builds with locked dependencies
+
+**PASS Example** (Reproducible Environment):
+
+```txt
+# requirements.txt - Exact versions pinned
+decimal==1.0.1
+pydantic==2.10.6
+pytest==8.3.4
+ruff==0.9.1
+mypy==1.14.1
+
+# requirements-dev.txt - Development dependencies
+-r requirements.txt
+pytest-cov==6.0.0
+pre-commit==4.0.1
+
+# pyproject.toml - Project configuration
+[project]
+name = "ose-zakat-service"
+version = "1.0.0"
+requires-python = ">=3.11"
+dependencies = [
+    "decimal>=1.0.1",
+    "pydantic>=2.10.0,<3.0.0",
+]
+
+[build-system]
+requires = ["setuptools>=75.0.0"]
+build-backend = "setuptools.build_meta"
+
+# Dockerfile - Reproducible container
+FROM python:3.11.11-slim
+
+WORKDIR /app
+
+# Install exact versions from requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+RUN pip install .
+
+CMD ["python", "-m", "ose_zakat_service"]
+```
+
+**FAIL Example** (Non-Reproducible):
+
+```txt
+# requirements.txt - Unpinned versions
+decimal  # Could be any version!
+pydantic>=2.0  # Could be 2.0.0 or 2.10.6
+pytest  # Latest version changes over time
+
+# No virtual environment
+# No Docker container
+# No version locking
+
+# Result:
+# - Different developers get different versions
+# - CI/CD produces different builds at different times
+# - Behavior changes unpredictably
+# - "Works on my machine" syndrome
+```
+
+**Islamic Finance Application**: Reproducible Murabaha markup calculations ensure that profit-sharing ratios remain consistent across all deployment environments. When Islamic scholars audit the system in 2026, they must see the same calculations that ran in 2024 - reproducibility ensures Shariah compliance across time. Exact dependency pinning prevents silent behavior changes.
+
+**See Also**: [Reproducibility Principle](../../../../../governance/principles/software-engineering/reproducibility.md)
+
+---
 
 ### Why Best Practices Matter
 

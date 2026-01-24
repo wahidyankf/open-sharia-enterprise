@@ -400,6 +400,30 @@ func BenchmarkWithRunParallel(b *testing.B) {
 
 ## Profiling with pprof
 
+### Performance Profiling Workflow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Identify<br/>Performance Issue"]:::blue --> B["Write Benchmarks<br/>#40;go test -bench#41;"]:::orange
+    B --> C["Profile Application<br/>#40;CPU/Memory#41;"]:::purple
+    C --> D{Bottleneck<br/>Found?}:::teal
+    D -->|Yes| E["Optimize Code"]:::orange
+    D -->|No| F["Check Algorithm"]:::purple
+    E --> G["Re-run Benchmarks"]:::blue
+    F --> G
+    G --> H{Performance<br/>Improved?}:::teal
+    H -->|Yes| I["Done"]:::teal
+    H -->|No| C
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ### Enabling Profiling
 
 Setting up pprof in your application:
@@ -514,6 +538,32 @@ func fibonacci(n int) int {
 
 ### Analyzing Profiles
 
+#### Profile Types and Tools
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["pprof Tool"]:::blue --> B["CPU Profile<br/>#40;Hotspot Analysis#41;"]:::orange
+    A --> C["Memory Profile<br/>#40;Heap/Alloc#41;"]:::orange
+    A --> D["Goroutine Profile<br/>#40;Leak Detection#41;"]:::orange
+    A --> E["Mutex Profile<br/>#40;Contention#41;"]:::orange
+
+    B --> F["Optimization<br/>Targets"]:::teal
+    C --> F
+    D --> F
+    E --> F
+
+    F --> G["Zakat Calculator<br/>Performance"]:::purple
+    F --> H["Murabaha<br/>Processing"]:::purple
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 Using pprof tool:
 
 ```bash
@@ -601,6 +651,27 @@ func expensiveCalculation(n int) int {
 ```
 
 ### Optimizing Based on CPU Profile
+
+#### Optimization Decision Tree
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["CPU Profile Result"]:::blue --> B{Allocation<br/>Heavy?}:::purple
+    B -->|Yes| C["Use sync.Pool<br/>Pre-allocate"]:::orange
+    B -->|No| D{Algorithm<br/>Inefficient?}:::purple
+    D -->|Yes| E["Improve Big O<br/>Better Data Structure"]:::orange
+    D -->|No| F{Lock<br/>Contention?}:::purple
+    F -->|Yes| G["Reduce Critical Section<br/>Use RWMutex"]:::orange
+    F -->|No| H["Profile Deeper<br/>Check I/O"]:::teal
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 Before and after optimization:
 

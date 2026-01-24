@@ -293,6 +293,35 @@ golangci-lint run --fix
 
 ## golangci-lint Configuration
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% Code quality pipeline with linting
+
+graph LR
+    A["Write Code"]:::blue
+    B["gofmt<br/>Format"]:::teal
+    C["goimports<br/>Organize Imports"]:::teal
+    D["golangci-lint<br/>Static Analysis"]:::orange
+    E{"Linting<br/>Passes?"}:::orange
+    F["Run Tests"]:::purple
+    G["Commit"]:::blue
+    H["Fix Issues"]:::orange
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E -->|"Yes"| F
+    E -->|"No"| H
+    H --> A
+    F --> G
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ### Basic .golangci.yml
 
 ```yaml
@@ -509,6 +538,30 @@ issues:
 ```
 
 ## Common Linters
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% Linter categories for comprehensive code quality
+
+graph TD
+    A["golangci-lint"]:::blue
+    B["Error Handling<br/>errcheck, goerr113"]:::orange
+    C["Code Quality<br/>gocyclo, dupl"]:::teal
+    D["Style<br/>revive, gofmt"]:::purple
+    E["Performance<br/>prealloc, bodyclose"]:::teal
+    F["Security<br/>gosec"]:::orange
+
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+    A --> F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 ### Error Handling Linters
 
@@ -840,6 +893,36 @@ let g:go_highlight_function_calls = 1
 ```
 
 ## CI/CD Integration
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% CI/CD quality gates for zakat platform
+
+graph TD
+    A["Git Push"]:::blue
+    B["Pre-commit Hook<br/>gofmt, goimports"]:::teal
+    C["CI Pipeline<br/>GitHub Actions"]:::orange
+    D["golangci-lint<br/>Run All Linters"]:::purple
+    E{"Linting<br/>Passes?"}:::orange
+    F["Run Tests"]:::teal
+    G["Build"]:::teal
+    H["Deploy"]:::blue
+    I["Block Push<br/>Fix Issues"]:::orange
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E -->|"Yes"| F
+    E -->|"No"| I
+    F --> G
+    G --> H
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 ### GitHub Actions
 

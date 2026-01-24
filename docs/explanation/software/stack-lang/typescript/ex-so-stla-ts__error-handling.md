@@ -42,6 +42,33 @@ Error handling is critical in financial systems where correctness and auditabili
 
 The Result pattern makes errors explicit in the type system.
 
+### Error Propagation Through Layers
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Presentation["Presentation Layer<br/>#40;API Endpoint#41;"]:::blue
+    Application["Application Layer<br/>#40;Use Case#41;"]:::orange
+    Domain["Domain Layer<br/>#40;Business Logic#41;"]:::teal
+    Infrastructure["Infrastructure Layer<br/>#40;Database#41;"]:::purple
+
+    Presentation -->|Request| Application
+    Application -->|Command| Domain
+    Domain -->|Query| Infrastructure
+
+    Infrastructure -.->|Error| Domain
+    Domain -.->|Error| Application
+    Application -.->|Error| Presentation
+
+    Note1["Errors flow upward<br/>Each layer transforms<br/>error into appropriate<br/>domain error"]
+    Note2["Result type carries<br/>success or failure<br/>explicitly"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ### Basic Result Type
 
 ```typescript
@@ -77,6 +104,35 @@ if (result.ok) {
 } else {
   console.error("Error:", result.error);
 }
+```
+
+### Result Type Pattern Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    Operation["Operation<br/>Executes"]:::blue
+    Check{"Success?"}:::orange
+    OkResult["ok: true<br/>value: T"]:::teal
+    ErrResult["ok: false<br/>error: E"]:::purple
+    Consumer["Consumer<br/>Checks ok field"]:::brown
+
+    Operation --> Check
+    Check -->|Success| OkResult
+    Check -->|Failure| ErrResult
+    OkResult --> Consumer
+    ErrResult --> Consumer
+
+    Consumer -->|ok === true| Success["Access value"]:::teal
+    Consumer -->|ok === false| Failure["Handle error"]:::purple
+
+    Note1["No exceptions thrown<br/>Errors are values<br/>Compiler enforces<br/>error handling"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ### Result Combinators
@@ -326,6 +382,44 @@ try {
 ## Async Error Handling
 
 Handle errors in asynchronous operations safely.
+
+### Try-Catch vs Result Pattern
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant C1 as Caller #40;Try-Catch#41;
+    participant F1 as Function
+    participant C2 as Caller #40;Result#41;
+    participant F2 as Function
+
+    Note over C1,F1: Try-Catch Pattern
+    C1->>F1: call function#40;#41;
+    activate F1
+    alt Success
+        F1-->>C1: return value
+    else Failure
+        F1--xC1: throw Error
+        Note over C1: Must catch<br/>or app crashes
+    end
+    deactivate F1
+
+    Note over C2,F2: Result Pattern
+    C2->>F2: call function#40;#41;
+    activate F2
+    alt Success
+        F2-->>C2: ok: true, value: T
+    else Failure
+        F2-->>C2: ok: false, error: E
+    end
+    deactivate F2
+    Note over C2: Compiler forces<br/>error check
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ### Try-Catch with Async/Await
 

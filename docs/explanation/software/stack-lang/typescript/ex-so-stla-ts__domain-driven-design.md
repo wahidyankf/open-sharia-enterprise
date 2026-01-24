@@ -42,6 +42,30 @@ Domain-Driven Design (DDD) is a strategic approach to software development that 
 - **Domain Services**: Stateless operations on domain objects
 - **Application Services**: Orchestration layer for use cases
 
+### DDD Layers Hierarchy
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Presentation["Presentation Layer<br/>#40;Controllers, UI#41;"]:::blue
+    Application["Application Layer<br/>#40;Use Cases, Services#41;"]:::orange
+    Domain["Domain Layer<br/>#40;Entities, Value Objects,<br/>Aggregates#41;"]:::teal
+    Infrastructure["Infrastructure Layer<br/>#40;Database, External APIs#41;"]:::purple
+
+    Presentation --> Application
+    Application --> Domain
+    Application --> Infrastructure
+    Infrastructure -.-> Domain
+
+    Note1["Dependency Rule:<br/>Inner layers know<br/>nothing about<br/>outer layers"]
+    Note2["Domain Layer:<br/>Pure business logic<br/>No dependencies"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Value Objects
 
 Value objects are immutable, have no identity, and are defined by their attributes.
@@ -374,6 +398,35 @@ class Donation {
 ## Aggregates
 
 Aggregates are clusters of entities with consistency boundaries. Only the aggregate root can be accessed from outside.
+
+### Aggregate Boundary with Entities and Value Objects
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Outside["External Access"]:::brown
+    Root["ZakatCalculation<br/>#40;Aggregate Root#41;"]:::blue
+    Entity1["WealthItem<br/>#40;Entity#41;"]:::orange
+    Entity2["WealthItem<br/>#40;Entity#41;"]:::orange
+    VO1["Money<br/>#40;Value Object#41;"]:::teal
+    VO2["NisabThreshold<br/>#40;Value Object#41;"]:::teal
+
+    Outside --> Root
+    Root --> Entity1
+    Root --> Entity2
+    Root --> VO2
+    Entity1 --> VO1
+    Entity2 --> VO1
+
+    Note1["Aggregate Root:<br/>Only entry point<br/>Enforces invariants<br/>Guards consistency"]
+    Note2["Entities:<br/>Inside aggregate<br/>Not accessed directly<br/>from outside"]
+    Note3["Value Objects:<br/>Shared across<br/>aggregate boundary<br/>Immutable"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ### ZakatCalculation Aggregate
 
@@ -1030,6 +1083,55 @@ if (donationResult.ok) {
 ## Application Services
 
 Application services orchestrate use cases by coordinating domain objects.
+
+### Use Case Execution Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant C as Controller
+    participant UC as Use Case
+    participant R as Repository
+    participant E as Entity/Aggregate
+    participant DS as Domain Service
+    participant EB as Event Bus
+
+    C->>UC: execute#40;command#41;
+    activate UC
+
+    UC->>R: findById#40;id#41;
+    activate R
+    R-->>UC: Entity
+    deactivate R
+
+    UC->>E: performOperation#40;#41;
+    activate E
+    E->>DS: calculateBusinessRule#40;#41;
+    activate DS
+    DS-->>E: Result
+    deactivate DS
+    E-->>UC: Updated state
+    deactivate E
+
+    UC->>R: save#40;entity#41;
+    activate R
+    R-->>UC: Saved
+    deactivate R
+
+    UC->>EB: publish#40;event#41;
+    activate EB
+    EB-->>UC: Published
+    deactivate EB
+
+    UC-->>C: Success result
+    deactivate UC
+
+    Note over UC: Use Case orchestrates<br/>domain objects but<br/>contains no business logic
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ### RegisterDonorUseCase
 

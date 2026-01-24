@@ -92,6 +92,29 @@ Defer, panic, and recover are Go's unique control flow mechanisms.
 
 ### Defer Statement
 
+#### Defer Execution Flow (LIFO)
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Function Start"]:::blue --> B["defer Close#40;#41;"]:::orange
+    B --> C["defer Unlock#40;#41;"]:::orange
+    C --> D["defer Rollback#40;#41;"]:::orange
+    D --> E["Function Body<br/>#40;Zakat Processing#41;"]:::purple
+    E --> F{Return or<br/>Panic?}:::teal
+    F --> G["Execute Rollback#40;#41;<br/>#40;LIFO: Last In#41;"]:::orange
+    G --> H["Execute Unlock#40;#41;"]:::orange
+    H --> I["Execute Close#40;#41;<br/>#40;First Out#41;"]:::orange
+    I --> J["Function Exit"]:::blue
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 Defer schedules a function call to run after the surrounding function returns:
 
 ```go
@@ -251,6 +274,32 @@ func PrintNumbers() {
 ```
 
 ### Panic
+
+#### Panic and Recover Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Normal Execution"]:::blue --> B{Panic<br/>Occurs?}:::purple
+    B -->|No| C["Return Normally"]:::teal
+    B -->|Yes| D["Unwind Stack"]:::orange
+    D --> E["Execute Defers<br/>#40;LIFO#41;"]:::orange
+    E --> F{Recover<br/>Called?}:::purple
+    F -->|Yes| G["Handle Panic<br/>#40;Convert to Error#41;"]:::teal
+    F -->|No| H["Program Crash"]:::orange
+    G --> I["Resume Execution<br/>#40;After defer#41;"]:::teal
+
+    J["Example: SafeHandler"]:::blue --> K["defer recover#40;#41;"]:::orange
+    K --> L["http.Handler<br/>#40;May panic#41;"]:::purple
+    L --> M["Recover catches<br/>Return 500"]:::teal
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 Use panic sparingly, only for unrecoverable errors:
 
@@ -460,6 +509,34 @@ func Process(items []string, config map[string]string) {
 ```
 
 ## Comma-Ok Idiom
+
+### Comma-Ok Pattern Usage
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Operation"]:::blue --> B{Comma-Ok<br/>Pattern}:::purple
+
+    B --> C["Map Access<br/>value, ok := m#91;key#93;"]:::orange
+    B --> D["Type Assertion<br/>v, ok := i.#40;Type#41;"]:::orange
+    B --> E["Channel Receive<br/>v, ok := <-ch"]:::orange
+    B --> F["Context Deadline<br/>d, ok := ctx.Deadline#40;#41;"]:::orange
+
+    C --> G{ok == true?}:::teal
+    D --> G
+    E --> G
+    F --> G
+
+    G -->|Yes| H["Use value<br/>#40;Valid#41;"]:::teal
+    G -->|No| I["Handle failure<br/>#40;Missing/Closed/None#41;"]:::orange
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 The comma-ok idiom tests success of operations that can fail.
 

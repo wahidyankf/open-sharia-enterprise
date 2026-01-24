@@ -74,6 +74,29 @@ const agricultureZakat = createZakatCalculator(0.1);
 
 ## Function Composition
 
+### Data Transformation Pipeline
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    Input["Input Data<br/>Donations Array"]:::blue
+    Map["map#40;#41;<br/>Transform each"]:::orange
+    Filter["filter#40;#41;<br/>Select subset"]:::orange
+    Reduce["reduce#40;#41;<br/>Aggregate result"]:::teal
+    Output["Output<br/>Total amount"]:::blue
+
+    Input --> Map
+    Map --> Filter
+    Filter --> Reduce
+    Reduce --> Output
+
+    Note1["map: donations -> amounts<br/>filter: amounts >= 1000<br/>reduce: sum all amounts"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ```typescript
 // Compose functions right-to-left
 function compose<A, B, C>(f: (b: B) => C, g: (a: A) => B): (a: A) => C {
@@ -96,6 +119,56 @@ const applyFee = (amount: number): number => amount * 0.97;
 const calculateNet = (amount: number): number => amount - 100;
 
 const processDonation = pipe(validateAmount, applyFee, calculateNet);
+```
+
+### Functional Core / Imperative Shell
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Shell1["Imperative Shell<br/>#40;HTTP Handler#41;"]:::orange
+    Core["Functional Core<br/>#40;Pure Business Logic#41;"]:::teal
+    Shell2["Imperative Shell<br/>#40;Database Access#41;"]:::orange
+
+    Shell1 -->|Raw input| Validation["Validate &<br/>Parse"]:::blue
+    Validation -->|Clean data| Core
+    Core -->|Business result| Transform["Transform<br/>for output"]:::blue
+    Transform -->|Persist| Shell2
+
+    Note1["Functional Core:<br/>- Pure functions<br/>- No side effects<br/>- Easy to test"]
+    Note2["Imperative Shell:<br/>- I/O operations<br/>- Side effects<br/>- Thin layer"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+### Compose and Pipe Functions
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    subgraph Compose ["compose#40;f, g#41; - Right to Left"]
+        Input1["Input x"]:::blue
+        G["g#40;x#41;"]:::orange
+        F["f#40;g#40;x#41;#41;"]:::teal
+        Output1["Result"]:::blue
+        Input1 --> G --> F --> Output1
+    end
+
+    subgraph Pipe ["pipe#40;f, g#41; - Left to Right"]
+        Input2["Input x"]:::blue
+        F2["f#40;x#41;"]:::orange
+        G2["g#40;f#40;x#41;#41;"]:::teal
+        Output2["Result"]:::blue
+        Input2 --> F2 --> G2 --> Output2
+    end
+
+    Note1["compose: mathematical notation<br/>pipe: data flow intuition"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ## Currying and Partial Application

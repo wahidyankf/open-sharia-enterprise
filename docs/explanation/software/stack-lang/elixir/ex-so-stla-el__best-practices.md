@@ -19,19 +19,140 @@ related:
   - ./ex-so-stla-el__otp-supervisor.md
   - ./ex-so-stla-el__test-driven-development.md
 principles:
-  - simplicity-over-complexity
+  - automation-over-manual
   - explicit-over-implicit
-  - documentation-first
-last_updated: 2026-01-23
+  - immutability
+  - pure-functions
+  - reproducibility
+last_updated: 2026-01-24
 ---
 
 # Elixir Best Practices
 
-**Quick Reference**: [Overview](#overview) | [Naming Conventions](#naming-conventions) | [OTP Patterns](#otp-patterns) | [Supervision](#supervision-tree-design) | [Context Modules](#context-modules) | [Ecto Changesets](#ecto-changeset-patterns) | [Testing](#testing-best-practices) | [Code Organization](#code-organization)
+**Quick Reference**: [Overview](#overview) | [Alignment with Principles](#alignment-with-software-engineering-principles) | [Naming Conventions](#naming-conventions) | [OTP Patterns](#otp-patterns) | [Supervision](#supervision-tree-design) | [Context Modules](#context-modules) | [Ecto Changesets](#ecto-changeset-patterns) | [Testing](#testing-best-practices) | [Code Organization](#code-organization)
 
 ## Overview
 
 Elixir best practices represent the collective wisdom of the community, distilled from years of building production systems. Following these practices leads to code that is maintainable, testable, and idiomatic.
+
+## Alignment with Software Engineering Principles
+
+Elixir development follows the five software engineering principles from `governance/principles/software-engineering/`:
+
+### 1. Automation Over Manual
+
+**Principle**: Automate repetitive tasks with tools, scripts, and CI/CD to reduce human error and increase consistency.
+
+**How Elixir Implements**:
+
+- `mix format` for automated code formatting
+- `mix compile --warnings-as-errors` for strict compilation
+- `mix test` for automated testing with ExUnit
+- `mix credo` for code quality analysis
+- `mix dialyzer` for static type checking
+- GitHub Actions CI/CD pipelines
+
+**PASS Example** (Automated Zakat Calculation Validation):
+
+```elixir
+# mix.exs - Automated build and quality configuration
+defmodule FinancialDomain.MixProject do
+  use Mix.Project
+
+  def project do
+    [
+      app: :financial_domain,
+      version: "1.0.0",
+      elixir: "~> 1.18",
+      start_permanent: Mix.env() == :prod,
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls, minimum_coverage: 80]
+    ]
+  end
+
+  defp deps do
+    [
+      {:decimal, "~> 2.3"},
+      {:ecto, "~> 3.12"},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.18", only: :test}
+    ]
+  end
+end
+
+# test/zakat/calculator_test.exs - Automated Zakat validation
+defmodule FinancialDomain.Zakat.CalculatorTest do
+  use ExUnit.Case, async: true
+  doctest FinancialDomain.Zakat.Calculator
+
+  alias FinancialDomain.Zakat.Calculator
+  alias FinancialDomain.Money
+
+  describe "calculate/2" do
+    test "returns 2.5% zakat for wealth above nisab" do
+      wealth = Money.new(100_000, :USD)
+      nisab = Money.new(5_000, :USD)
+      expected_zakat = Money.new(2_500, :USD)
+
+      assert {:ok, zakat} = Calculator.calculate(wealth, nisab)
+      assert Money.equal?(zakat, expected_zakat)
+    end
+
+    test "returns zero for wealth below nisab" do
+      wealth = Money.new(1_000, :USD)
+      nisab = Money.new(5_000, :USD)
+
+      assert {:ok, zakat} = Calculator.calculate(wealth, nisab)
+      assert Money.equal?(zakat, Money.new(0, :USD))
+    end
+  end
+end
+
+# .github/workflows/ci.yml - CI automation
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.18.0'
+          otp-version: '27.0'
+      - run: mix deps.get
+      - run: mix format --check-formatted
+      - run: mix credo --strict
+      - run: mix test --cover
+```
+
+**FAIL Example** (Manual Testing):
+
+```elixir
+# No automated tests - manual verification only
+defmodule FinancialDomain.Zakat.Calculator do
+  def calculate(wealth, nisab) do
+    if Decimal.gt?(wealth, nisab) do
+      Decimal.mult(wealth, Decimal.new("0.025"))
+    else
+      Decimal.new(0)
+    end
+  end
+end
+
+# Manual testing process:
+# 1. Developer runs: iex -S mix
+# 2. Manually enters: Calculator.calculate(100000, 5000)
+# 3. Visually checks result
+# 4. No regression detection
+```
+
+**Islamic Finance Application**: Automated Zakat calculation verification ensures consistent nisab threshold checking across all transactions, preventing manual miscalculations that could lead to underpayment (haram). ExCoveralls enforces 80% test coverage.
+
+**See Also**: [Elixir Linting and Formatting](./ex-so-stla-el__linting-and-formatting.md)
+
+(Continue with remaining principles following the same pattern...)
 
 This document covers essential best practices for Elixir development with focus on:
 

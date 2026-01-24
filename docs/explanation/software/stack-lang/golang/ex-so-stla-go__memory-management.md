@@ -12,6 +12,29 @@ This document explores Go's memory management system, including the garbage coll
 
 ### Stack vs Heap
 
+#### Memory Allocation Decision Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Variable Allocation<br/>#40;Zakat Record#41;"]:::blue --> B{Escapes<br/>Function?}:::purple
+    B -->|No| C["Stack Allocation<br/>#40;Fast, No GC#41;"]:::teal
+    B -->|Yes| D{Size > 32KB?}:::purple
+    D -->|No| E["Small Heap<br/>#40;mcache#41;"]:::orange
+    D -->|Yes| F["Large Heap<br/>#40;mheap#41;"]:::orange
+
+    C --> G["Automatic Cleanup<br/>#40;Function Return#41;"]:::teal
+    E --> H["GC Managed"]:::orange
+    F --> H
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 Go manages memory in two primary areas:
 
 **Stack**:
@@ -204,6 +227,31 @@ ptr = new(int)
 
 ## Escape Analysis
 
+#### Escape Analysis Decision Tree
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Variable Created"]:::blue --> B{Returned as<br/>Pointer?}:::purple
+    B -->|Yes| C["Heap"]:::orange
+    B -->|No| D{Stored in<br/>Global?}:::purple
+    D -->|Yes| C
+    D -->|No| E{Sent on<br/>Channel?}:::purple
+    E -->|Yes| C
+    E -->|No| F{Interface<br/>Conversion?}:::purple
+    F -->|Yes| C
+    F -->|No| G{Captured by<br/>Closure?}:::purple
+    G -->|Yes| C
+    G -->|No| H["Stack<br/>#40;Fast Path#41;"]:::teal
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 Escape analysis determines whether a variable can be allocated on the stack or must be allocated on the heap.
 
 ### What is Escape Analysis?
@@ -331,31 +379,31 @@ Go uses a concurrent, tri-color mark-and-sweep garbage collector.
 
 ### GC Algorithm
 
+#### GC Cycle Phases
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A["Mark Setup<br/>#40;STW ~0.5ms#41;"]:::orange --> B["Concurrent Marking<br/>#40;Tri-color Algorithm#41;"]:::blue
+    B --> C["Mark Termination<br/>#40;STW ~0.5ms#41;"]:::orange
+    C --> D["Concurrent Sweeping<br/>#40;Background#41;"]:::teal
+    D --> E["Application Running<br/>#40;Murabaha Processing#41;"]:::purple
+    E -->|GOGC Target| A
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 **Phases**:
 
 1. **Mark Setup** (Stop-The-World): Prepare for marking
 2. **Marking** (Concurrent): Mark reachable objects
 3. **Mark Termination** (Stop-The-World): Finalize marking
 4. **Sweeping** (Concurrent): Reclaim unreachable objects
-
-```
-GC Cycle:
-┌────────────┐
-│ Mark Setup │ (STW, ~0.5ms)
-└─────┬──────┘
-      │
-┌─────▼──────┐
-│  Marking   │ (Concurrent, most work done here)
-└─────┬──────┘
-      │
-┌─────▼──────────────┐
-│ Mark Termination   │ (STW, ~0.5ms)
-└─────┬──────────────┘
-      │
-┌─────▼──────┐
-│  Sweeping  │ (Concurrent, background)
-└────────────┘
-```
 
 ### GC Tuning
 

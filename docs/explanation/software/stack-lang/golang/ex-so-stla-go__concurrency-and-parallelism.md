@@ -89,14 +89,22 @@ func processArrayParallel(data []int) []int {
 Go uses M:N scheduling where **M goroutines** run on **N OS threads**:
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 graph TD
-    A[Goroutines G1, G2, ..., Gn] --> B[Go Runtime Scheduler]
-    B --> C[OS Thread M1]
-    B --> D[OS Thread M2]
-    B --> E[OS Thread MN]
-    C --> F[CPU Core 1]
-    D --> G[CPU Core 2]
-    E --> H[CPU Core N]
+    A["Goroutines<br/>G1, G2, ..., Gn"]:::purple --> B["Go Runtime<br/>Scheduler"]:::blue
+    B --> C["OS Thread M1"]:::orange
+    B --> D["OS Thread M2"]:::orange
+    B --> E["OS Thread MN"]:::orange
+    C --> F["CPU Core 1"]:::teal
+    D --> G["CPU Core 2"]:::teal
+    E --> H["CPU Core N"]:::teal
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
 ```
 
 **Scheduler Characteristics**:
@@ -327,6 +335,35 @@ fmt.Printf("Length: %d, Capacity: %d\n", len(ch), cap(ch))
 ```
 
 ### Buffered vs Unbuffered Channels
+
+#### Channel Communication Patterns
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    subgraph Unbuffered["Unbuffered Channel #40;Synchronous#41;"]
+        U1["Sender<br/>#40;Murabaha Request#41;"]:::blue
+        U2["Channel<br/>#40;cap=0#41;"]:::purple
+        U3["Receiver<br/>#40;Processor#41;"]:::teal
+        U1 -->|"Blocks until<br/>receiver ready"| U2
+        U2 -->|"Handshake"| U3
+    end
+
+    subgraph Buffered["Buffered Channel #40;Asynchronous#41;"]
+        B1["Sender<br/>#40;Zakat Batch#41;"]:::blue
+        B2["Buffer<br/>#40;cap=5#41;"]:::orange
+        B3["Receiver<br/>#40;Calculator#41;"]:::teal
+        B1 -->|"Non-blocking<br/>until full"| B2
+        B2 -->|"Queued"| B3
+    end
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 ```go
 // Unbuffered: Synchronous communication
@@ -1060,6 +1097,28 @@ func loggingMiddleware(next http.Handler) http.Handler {
 ## Common Patterns
 
 ### Pattern 1: Worker Pool
+
+#### Worker Pool Communication Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph LR
+    A["Job Producer<br/>#40;Zakat Calculations#41;"]:::blue --> B["Jobs Channel<br/>#40;buffered#41;"]:::purple
+    B --> C["Worker 1"]:::orange
+    B --> D["Worker 2"]:::orange
+    B --> E["Worker N"]:::orange
+    C --> F["Results Channel<br/>#40;buffered#41;"]:::purple
+    D --> F
+    E --> F
+    F --> G["Consumer<br/>#40;Aggregator#41;"]:::teal
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#000000,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 ```go
 func workerPool(jobs <-chan int, results chan<- int, numWorkers int) {

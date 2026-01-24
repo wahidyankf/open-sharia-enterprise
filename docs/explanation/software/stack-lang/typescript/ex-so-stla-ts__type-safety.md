@@ -39,9 +39,69 @@ Type safety is TypeScript's core strength. A properly type-safe codebase prevent
 - **Enable fearless refactoring**: Breaking changes caught immediately
 - **Runtime safety**: Combine with runtime validation for defense-in-depth
 
+### Type Narrowing Decision Tree
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Unknown["unknown value"]:::blue
+    TypeOf{"typeof"}:::orange
+    InstanceOf{"instanceof"}:::orange
+    In{"'property' in obj"}:::orange
+    Custom{"Custom type guard"}:::purple
+
+    Narrowed1["Narrowed to primitive<br/>#40;string, number, etc#41;"]:::teal
+    Narrowed2["Narrowed to class<br/>#40;Money, Donation#41;"]:::teal
+    Narrowed3["Narrowed to interface<br/>with property"]:::teal
+    Narrowed4["Narrowed to<br/>custom type"]:::teal
+
+    Unknown --> TypeOf
+    Unknown --> InstanceOf
+    Unknown --> In
+    Unknown --> Custom
+
+    TypeOf -->|string, number,<br/>boolean, etc| Narrowed1
+    InstanceOf -->|Class instance| Narrowed2
+    In -->|Has property| Narrowed3
+    Custom -->|Type predicate| Narrowed4
+
+    Note1["Type guards narrow<br/>union types to<br/>specific types"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Branded Types
 
 Branded types (nominal typing) create distinct types from primitives, preventing type confusion.
+
+### Branded Types Pattern
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Primitive["Primitive Type<br/>#40;string#41;"]:::blue
+    Brand["Brand Helper<br/>type Brand#60;T, B#62;"]:::orange
+    Branded["Branded Type<br/>#40;DonationId#41;"]:::teal
+    Constructor["Smart Constructor<br/>createDonationId#40;#41;"]:::purple
+    Function["Type-Safe Function<br/>getDonation#40;id: DonationId#41;"]:::brown
+
+    Primitive --> Brand
+    Brand --> Branded
+    Branded --> Constructor
+    Constructor --> Function
+
+    Note1["Prevents mixing<br/>DonationId with DonorId<br/>at compile time"]
+    Note2["Smart constructor<br/>validates format<br/>before branding"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ### Basic Branding
 
@@ -190,6 +250,32 @@ function calculateZakat(wealth: Money, nisab: Money): Money {
 ## Discriminated Unions
 
 Discriminated unions (tagged unions) model mutually exclusive states safely.
+
+### Discriminated Union Narrowing
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph LR
+    Union["Payment Union<br/>Pending | Processing |<br/>Completed | Failed"]:::blue
+    Check{"Check status<br/>discriminant"}:::orange
+    Pending["status === 'pending'<br/>Access submittedAt"]:::teal
+    Processing["status === 'processing'<br/>Access processedBy"]:::teal
+    Completed["status === 'completed'<br/>Access transactionId"]:::teal
+    Failed["status === 'failed'<br/>Access error"]:::purple
+
+    Union --> Check
+    Check -->|"pending"| Pending
+    Check -->|"processing"| Processing
+    Check -->|"completed"| Completed
+    Check -->|"failed"| Failed
+
+    Note1["Discriminant field<br/>#40;status#41; narrows<br/>union to specific type"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ### Payment State Machine
 

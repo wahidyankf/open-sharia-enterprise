@@ -25,7 +25,64 @@ last_updated: 2025-01-23
 
 TypeScript/JavaScript uses a single-threaded event loop with asynchronous operations. Understanding promises, async/await, and Web Workers is essential for responsive applications.
 
+### Event Loop Phases
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Start["Start Event Loop"]:::blue --> Timers["Timers<br/>#40;setTimeout, setInterval#41;"]:::orange
+    Timers --> Pending["Pending Callbacks<br/>#40;I/O callbacks#41;"]:::orange
+    Pending --> Idle["Idle, Prepare<br/>#40;internal use#41;"]:::brown
+    Idle --> Poll["Poll<br/>#40;retrieve I/O events#41;"]:::teal
+    Poll --> Check["Check<br/>#40;setImmediate#41;"]:::orange
+    Check --> Close["Close Callbacks<br/>#40;socket.on#40;'close'#41;#41;"]:::orange
+    Close --> NextTick["process.nextTick#40;#41;"]:::purple
+    NextTick --> Microtasks["Microtasks<br/>#40;Promises#41;"]:::teal
+    Microtasks --> Timers
+
+    Note1["Timers: Execute callbacks<br/>scheduled by setTimeout<br/>and setInterval"]
+    Note2["Poll: Wait for I/O events,<br/>execute I/O callbacks"]
+    Note3["Microtasks: Execute before<br/>next phase #40;Promise.then#41;"]
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ## Async/Await Patterns
+
+### Async/Await Flow Visualization
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant C as Caller
+    participant F as fetchDonation
+    participant API as API Server
+    participant DB as Database
+
+    C->>F: await fetchDonation#40;id#41;
+    activate F
+    F->>API: fetch#40;/api/donations/id#41;
+    activate API
+    API->>DB: SELECT * FROM donations
+    activate DB
+    DB-->>API: Donation data
+    deactivate DB
+    API-->>F: HTTP 200 + JSON
+    deactivate API
+    F-->>C: Donation object
+    deactivate F
+
+    Note over C,DB: Sequential async/await execution
+    Note over F: Pauses until promise resolves
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ```typescript
 // Basic async function
@@ -94,6 +151,41 @@ async function fetchFromMultipleSources(sources: string[]): Promise<Donation> {
 ```
 
 ## Web Workers
+
+### Web Worker Communication Pattern
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+sequenceDiagram
+    participant M as Main Thread
+    participant W as Worker Thread
+
+    M->>M: Create Worker
+    Note over M: new Worker#40;"worker.js"#41;
+
+    M->>W: postMessage#40;data#41;
+    activate W
+    Note over W: Process data<br/>#40;CPU intensive#41;
+    W->>W: expensiveCalculation#40;data#41;
+    W-->>M: postMessage#40;result#41;
+    deactivate W
+
+    M->>M: onmessage handler
+    Note over M: UI remains responsive
+
+    M->>W: postMessage#40;more data#41;
+    activate W
+    W->>W: Process again
+    W-->>M: postMessage#40;result#41;
+    deactivate W
+
+    M->>W: terminate#40;#41;
+    Note over W: Worker destroyed
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 ```typescript
 // worker.ts

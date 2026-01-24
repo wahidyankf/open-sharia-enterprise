@@ -63,6 +63,34 @@ package main
 
 ## TDD Cycle (Red-Green-Refactor)
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% TDD Red-Green-Refactor cycle
+
+graph LR
+    A["Write Test<br/>RED"]:::orange
+    B["Run Test<br/>Fails"]:::orange
+    C["Write Code<br/>GREEN"]:::teal
+    D["Run Test<br/>Passes"]:::teal
+    E["Refactor<br/>REFACTOR"]:::purple
+    F{"Tests<br/>Pass?"}:::orange
+    G["Commit"]:::blue
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F -->|"No"| C
+    F -->|"Yes"| G
+    G -.->|"Next Feature"| A
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ### Red Phase
 
 Write a failing test:
@@ -438,6 +466,24 @@ func TestClassify(t *testing.T) {
 
 Creating mock implementations:
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% Test pyramid for zakat donation system
+
+graph TD
+    A["Unit Tests<br/>70% Coverage<br/>Fast, Isolated"]:::teal
+    B["Integration Tests<br/>20% Coverage<br/>Components Together"]:::orange
+    C["E2E Tests<br/>10% Coverage<br/>Full System"]:::purple
+
+    C --> B
+    B --> A
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
+
 ```go
 package mypackage
 
@@ -680,6 +726,32 @@ type Beneficiary struct {
 ### Constructor Injection
 
 Injecting dependencies:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% Dependency injection for testable zakat service
+
+graph TD
+    A["Test Suite"]:::blue
+    B["Mock Repository"]:::orange
+    C["Mock Email Service"]:::orange
+    D["Mock Logger"]:::orange
+    E["ZakatService<br/>Constructor Injection"]:::teal
+    F["Run Tests<br/>Isolated"]:::purple
+
+    A --> B
+    A --> C
+    A --> D
+    B --> E
+    C --> E
+    D --> E
+    E --> F
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#000000,stroke-width:2px
+```
 
 ```go
 package mypackage

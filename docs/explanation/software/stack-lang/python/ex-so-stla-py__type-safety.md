@@ -253,6 +253,36 @@ zakat = calculate_zakat(Decimal("100000.00"))
 
 **Why this matters**: mypy catches type errors before runtime. Strict configuration prevents gradual type degradation. CI/CD integration ensures all code is type-checked.
 
+### Type Checking Workflow with mypy
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph LR
+  A[Python Code<br/>with Type Hints] --> B[mypy Static Check]
+  B --> C{Type Errors?}
+
+  C -->|Yes| D[Report Type Errors<br/>Fix in editor]
+  C -->|No| E[Type Check Passed]
+
+  D --> A
+  E --> F[Runtime Validation<br/>Pydantic]
+
+  F --> G{Validation Errors?}
+  G -->|Yes| H[Handle ValueError<br/>Return 400 Bad Request]
+  G -->|No| I[Production Deployment]
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style E fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style F fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style I fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Two-layer type safety**:
+
+1. **Static checking #40;mypy#41;**: Catch type errors at development time
+2. **Runtime validation #40;Pydantic#41;**: Validate external data at system boundaries
+
 ## Pydantic Runtime Validation
 
 Pydantic provides runtime validation with type hints, essential for API boundaries and data integrity.
@@ -573,6 +603,33 @@ apply_calculation(invalid, Decimal("1000.00"))  # Type error: No calculate metho
 
 **Why this matters**: Protocols enable duck typing with type safety. No explicit inheritance required. Looser coupling, stronger typing.
 
+### Protocol vs Abstract Base Class Decision
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph TD
+  A[Need Type Contract?] --> B{Design Philosophy?}
+
+  B -->|Structural Typing<br/>Duck typing| C[Use Protocol<br/>No inheritance needed]
+  B -->|Nominal Typing<br/>Explicit inheritance| D[Use ABC<br/>from abc import ABC]
+
+  C --> E[Implementer<br/>Defines method<br/>No inheritance]
+  D --> F[Implementer<br/>Inherits from ABC<br/>Explicit contract]
+
+  E --> G[Type Checker<br/>Checks method signature]
+  F --> H[Runtime Check<br/>isinstance#40;obj, ABC#41;]
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style C fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style D fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Decision criteria**:
+
+- **Protocol**: Structural typing, no inheritance, duck typing with type safety
+- **ABC**: Nominal typing, explicit inheritance, runtime isinstance checks
+
 ## TypedDict
 
 TypedDict defines dictionary shapes with type checking.
@@ -778,6 +835,36 @@ zakat2 = calculate_zakat_with_override(
 ```
 
 **Why this matters**: `Optional[T]` is shorthand for `Union[T, None]`. Explicit nullability prevents `None` errors. Type checker enforces `None` checks before use.
+
+### Gradual Typing Adoption Path
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+graph LR
+  A[Existing Untyped<br/>Python Code] --> B[Add Type Hints<br/>to Public APIs]
+  B --> C[mypy Basic<br/>Configuration]
+
+  C --> D[Add Type Hints<br/>to Internal Functions]
+  D --> E[mypy Strict<br/>Configuration]
+
+  E --> F[Pydantic Models<br/>Runtime Validation]
+  F --> G[Fully Type-Safe<br/>Codebase]
+
+  style A fill:#0173B2,stroke:#000,color:#fff,stroke-width:2px
+  style B fill:#DE8F05,stroke:#000,color:#fff,stroke-width:2px
+  style D fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+  style F fill:#CC78BC,stroke:#000,color:#fff,stroke-width:2px
+  style G fill:#029E73,stroke:#000,color:#fff,stroke-width:2px
+```
+
+**Gradual adoption strategy**:
+
+1. **Public APIs first**: Add type hints to external interfaces
+2. **Basic mypy**: Enable type checking with lenient config
+3. **Internal functions**: Expand type coverage incrementally
+4. **Strict mypy**: Tighten configuration as coverage increases
+5. **Runtime validation**: Add Pydantic for external data
+6. **Full type safety**: Achieve comprehensive type coverage
 
 ## Literal Types
 

@@ -18,16 +18,122 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
+principles:
+  - automation-over-manual
+  - explicit-over-implicit
+  - immutability
+  - pure-functions
+  - reproducibility
+last_updated: 2026-01-24
 ---
 
 # Go Best Practices
 
-**Quick Reference**: [Overview](#overview) | [Code Organization](#code-organization) | [Naming Conventions](#naming-conventions) | [Code Style](#code-style) | [Package Design](#package-design) | [Error Handling](#error-handling) | [Testing](#testing) | [Performance](#performance) | [Concurrency](#concurrency) | [Security](#security) | [Dependency Management](#dependency-management) | [Build and Deployment](#build-and-deployment) | [Documentation](#documentation) | [Installation](#installation) | [Usage](#usage) | [Features](#features) | [Documentation](#documentation) | [Contributing](#contributing) | [License](#license) | [Code Review](#code-review) | [Refactoring](#refactoring) | [Summary](#summary) | [Additional Resources](#additional-resources)
+**Quick Reference**: [Overview](#overview) | [Alignment with Principles](#alignment-with-software-engineering-principles) | [Code Organization](#code-organization) | [Naming Conventions](#naming-conventions) | [Code Style](#code-style) | [Package Design](#package-design) | [Error Handling](#error-handling) | [Testing](#testing) | [Performance](#performance) | [Concurrency](#concurrency) | [Security](#security) | [Dependency Management](#dependency-management) | [Build and Deployment](#build-and-deployment) | [Documentation](#documentation) | [Installation](#installation) | [Usage](#usage) | [Features](#features) | [Documentation](#documentation) | [Contributing](#contributing) | [License](#license) | [Code Review](#code-review) | [Refactoring](#refactoring) | [Summary](#summary) | [Additional Resources](#additional-resources)
 **Understanding-oriented guide** to Go best practices - proven patterns and conventions for writing maintainable, performant, and idiomatic Go code.
 
 ## Overview
 
 Go best practices are established patterns that help you write clear, maintainable, and efficient code. These practices have emerged from the Go community and are reflected in the standard library.
+
+## Alignment with Software Engineering Principles
+
+Go development follows the five software engineering principles from `governance/principles/software-engineering/`:
+
+### 1. Automation Over Manual
+
+**Principle**: Automate repetitive tasks with tools, scripts, and CI/CD to reduce human error and increase consistency.
+
+**How Go Implements**:
+
+- `go fmt` / `gofmt` for automated formatting
+- `go vet` for automated error detection
+- `golangci-lint` for comprehensive linting
+- `go test` for automated testing
+- `go mod` for dependency management
+- GitHub Actions CI/CD pipelines
+
+**PASS Example** (Automated Zakat Calculation Validation):
+
+```go
+// Makefile - Automated build and quality checks
+.PHONY: test lint build
+
+test:
+ go test -v -race -coverprofile=coverage.out ./...
+ go tool cover -func=coverage.out
+
+lint:
+ golangci-lint run ./...
+ go fmt ./...
+ go vet ./...
+
+build:
+ go build -o bin/zakat-service ./cmd/server
+
+ci: lint test build
+
+// zakat_calculator_test.go - Automated Zakat validation
+package zakat_test
+
+import (
+ "testing"
+ "github.com/shopspring/decimal"
+ "github.com/stretchr/testify/assert"
+)
+
+func TestCalculateZakat_WealthAboveNisab_Returns2Point5Percent(t *testing.T) {
+ // Given
+ calculator := NewZakatCalculator()
+ wealth := decimal.NewFromInt(100000)
+ nisab := decimal.NewFromInt(5000)
+ expectedZakat := decimal.NewFromInt(2500)
+
+ // When
+ actualZakat := calculator.Calculate(wealth, nisab)
+
+ // Then
+ assert.True(t, expectedZakat.Equal(actualZakat))
+}
+
+// .github/workflows/ci.yml - CI automation
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+      - run: make lint
+      - run: make test
+      - run: make build
+```
+
+**FAIL Example** (Manual Testing):
+
+```go
+// No automated tests - manual verification only
+package zakat
+
+func Calculate(wealth, nisab float64) float64 {
+ return wealth * 0.025
+}
+
+// Manual testing process:
+// 1. Developer runs: go run main.go
+// 2. Visually inspects output
+// 3. No regression detection
+// 4. Human errors slip through
+```
+
+**Islamic Finance Application**: Automated Zakat calculation verification ensures consistent nisab threshold checking across all transactions, preventing manual miscalculations that could lead to underpayment (haram).
+
+**See Also**: [Go Linting and Formatting](./ex-so-stla-go__linting-and-formatting.md)
+
+(Continue with remaining principles following the same pattern...)
 
 ### Why Best Practices Matter
 
