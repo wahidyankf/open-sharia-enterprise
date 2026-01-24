@@ -1901,3 +1901,25 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 **Last Updated**: 2026-01-23
 **Java Version**: 17+ (baseline), 21+ (recommended), 23 (latest)
 **Maintainers**: Platform Documentation Team
+
+## Java Code Quality Tools
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Java Quality] --> B[Checkstyle<br/>Code Style]
+    A --> C[PMD<br/>Code Analysis]
+    A --> D[SpotBugs<br/>Bug Detection]
+    A --> E[SonarQube<br/>Quality Gate]
+
+    B --> F[Google Style<br/>Sun Style]
+    C --> G[Best Practices<br/>Anti-Patterns]
+    D --> H[Null Checks<br/>Resource Leaks]
+    E --> I[Coverage<br/>Duplication]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+    style E fill:#0173B2,color:#fff
+```

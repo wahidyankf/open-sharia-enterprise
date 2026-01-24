@@ -666,3 +666,27 @@ graph TD
 **Last Updated**: 2025-01-23
 **Python Version**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.14.x (latest stable)
 **Maintainers**: OSE Platform Documentation Team
+
+## Python DDD Architecture
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[DDD in Python] --> B[Domain Layer<br/>Business Logic]
+    A --> C[Application Layer<br/>Use Cases]
+    A --> D[Infrastructure Layer<br/>External Services]
+
+    B --> E[Entities<br/>Aggregates]
+    B --> F[Value Objects<br/>Immutable]
+
+    C --> G[Commands<br/>Queries]
+    C --> H[Event Handlers<br/>Domain Events]
+
+    D --> I[Repositories<br/>Database]
+    D --> J[External APIs<br/>Third-party]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+```

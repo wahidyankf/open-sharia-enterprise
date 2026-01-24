@@ -586,3 +586,22 @@ jobs:
 **Last Updated**: 2025-01-23
 **Python Version**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.14.x (latest stable)
 **Maintainers**: OSE Platform Documentation Team
+
+## Python Quality Tools
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Python Quality] --> B[black<br/>Formatting]
+    A --> C[ruff<br/>Linting]
+    A --> D[mypy<br/>Type Checking]
+
+    B --> E[Opinionated<br/>No Config]
+    C --> F[10-100x Faster<br/>Rust-based]
+    D --> G[Static Analysis<br/>Type Safety]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+```

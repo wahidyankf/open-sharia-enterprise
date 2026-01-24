@@ -1437,3 +1437,22 @@ flowchart LR
     style H fill:#CC78BC,color:#fff
     style L fill:#0173B2,color:#fff
 ```
+
+## Go Quality Tools
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#0173B2','lineColor':'#DE8F05','secondaryColor':'#029E73','tertiaryColor':'#CC78BC','fontSize':'16px'}}}%%
+flowchart TD
+    A[Go Quality] --> B[gofmt<br/>Formatting]
+    A --> C[golangci-lint<br/>Linting]
+    A --> D[go vet<br/>Static Analysis]
+
+    B --> E[Standard Format<br/>No Config]
+    C --> F[50+ Linters<br/>Aggregated]
+    D --> G[Compiler Checks<br/>Built-in]
+
+    style A fill:#0173B2,color:#fff
+    style B fill:#DE8F05,color:#fff
+    style C fill:#029E73,color:#fff
+    style D fill:#CC78BC,color:#fff
+```
