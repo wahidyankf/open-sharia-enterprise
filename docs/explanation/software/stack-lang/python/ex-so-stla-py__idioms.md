@@ -2504,5 +2504,5 @@ total_zakat = calculate_total_zakat(assets)  # Type-safe duck typing
 ---
 
 **Last Updated**: 2025-01-24
-**Python Version**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.13.x (latest stable)
+**Python Version**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.14.x (latest stable)
 **Maintainers**: OSE Platform Documentation Team

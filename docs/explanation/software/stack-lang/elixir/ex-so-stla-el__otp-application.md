@@ -1474,6 +1474,6 @@ end
 ---
 
 **Last Updated**: 2026-01-23
-**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.19.0 (latest)
 **OTP Version**: 24+ (baseline), 26+ (recommended), 27 (latest)
 **Maintainers**: Platform Documentation Team

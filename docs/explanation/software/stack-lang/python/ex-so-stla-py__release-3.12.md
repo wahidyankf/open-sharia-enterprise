@@ -14,7 +14,7 @@ tags:
   - release-notes
 related:
   - ./ex-so-stla-py__release-3.11.md
-  - ./ex-so-stla-py__release-3.13.md
+  - ./ex-so-stla-py__release-3.14.md
   - ./ex-so-stla-py__type-safety.md
 principles:
   - explicit-over-implicit
@@ -40,7 +40,7 @@ Python 3.12.0 was released on October 2, 2023, with the latest patch 3.12.8 rele
 
 **Better Error Messages**: More precise syntax error reporting with suggestions.
 
-**Per-Interpreter GIL**: Experimental subinterpreter improvements (precursor to 3.13 no-GIL).
+**Per-Interpreter GIL**: Experimental subinterpreter improvements (precursor to 3.14 no-GIL).
 
 **Type System**: TypedDict \*\*kwargs unpacking (PEP 692), type parameter syntax (PEP 695).
 
@@ -415,7 +415,7 @@ interpreters.run_string(interp, code)
 # Enables true parallel execution
 ```
 
-**Why this matters**: Per-interpreter GIL enables parallelism. Precursor to Python 3.13 free-threaded mode. Experimental but promising.
+**Why this matters**: Per-interpreter GIL enables parallelism. Precursor to Python 3.14 free-threaded mode. Experimental but promising.
 
 ## Type System Updates
 
@@ -779,7 +779,7 @@ else:
 ### Related Documentation
 
 - [Python 3.11 Release](./ex-so-stla-py__release-3.11.md) - Baseline version
-- [Python 3.13 Release](./ex-so-stla-py__release-3.13.md) - Latest stable version
+- [Python 3.14 Release](./ex-so-stla-py__release-3.14.md) - Latest stable version
 - [Type Safety](./ex-so-stla-py__type-safety.md) - Type hints and validation
 
 ### Release Timeline

@@ -83,7 +83,7 @@ defmodule FinancialDomain.MixProject do
     [
       app: :financial_domain,
       version: "1.0.0",
-      elixir: "~> 1.18",
+      elixir: "~> 1.19",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls, minimum_coverage: 80]
@@ -139,7 +139,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
         with:
-          elixir-version: '1.18.0'
+          elixir-version: '1.19.0'
           otp-version: '27.0'
       - run: mix deps.get
       - run: mix format --check-formatted
@@ -1022,7 +1022,7 @@ defmodule FinancialDomain.MixProject do
       app: :financial_domain,
       version: "1.0.0",
       # Exact Elixir version requirement
-      elixir: "~> 1.18.1",
+      elixir: "~> 1.19.1",
       # Exact OTP version requirement
       erlang: "~> 27.0",
       start_permanent: Mix.env() == :prod,
@@ -1085,7 +1085,7 @@ end
 ```bash
 # .tool-versions - asdf version manager (exact Elixir and Erlang/OTP)
 # Commit this file to git for reproducible environments
-elixir 1.18.1-otp-27
+elixir 1.19.1-otp-27
 erlang 27.0
 ```
 
@@ -1094,7 +1094,7 @@ erlang 27.0
 # Pin exact Elixir and OTP versions
 
 # Build stage
-FROM hexpm/elixir:1.18.1-erlang-27.0.1-alpine-3.21.2 AS build
+FROM hexpm/elixir:1.19.1-erlang-27.0.1-alpine-3.21.2 AS build
 
 # Install build dependencies
 RUN apk add --no-cache build-base git
@@ -1180,11 +1180,11 @@ config :financial_domain, :zakat_config,
 set -euo pipefail
 
 echo "==> Installing exact Elixir and Erlang versions via asdf"
-asdf install elixir 1.18.1-otp-27
+asdf install elixir 1.19.1-otp-27
 asdf install erlang 27.0
 
 echo "==> Setting local versions"
-asdf local elixir 1.18.1-otp-27
+asdf local elixir 1.19.1-otp-27
 asdf local erlang 27.0
 
 echo "==> Installing hex and rebar"
@@ -1215,7 +1215,7 @@ defmodule FinancialDomain.BadMixProject do
     [
       app: :financial_domain,
       version: "1.0.0",
-      # BAD: Wide Elixir range - could be 1.14, 1.15, 1.16, 1.17, 1.18
+      # BAD: Wide Elixir range - could be 1.14, 1.15, 1.16, 1.17, 1.19
       elixir: "~> 1.14",
       # BAD: No OTP version specified
       deps: deps()
@@ -2671,5 +2671,5 @@ Use this checklist to ensure your Elixir code follows best practices:
 ---
 
 **Last Updated**: 2026-01-23
-**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.18.0 (latest)
+**Elixir Version**: 1.12+ (baseline), 1.17+ (recommended), 1.19.0 (latest)
 **Maintainers**: Platform Documentation Team

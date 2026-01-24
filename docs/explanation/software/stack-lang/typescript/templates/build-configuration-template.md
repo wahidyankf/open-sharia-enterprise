@@ -19,7 +19,7 @@ tags:
   - ts-5.4
   - ts-5.5
   - ts-5.6
-  - ts-5.7
+  - ts-5.9
 related:
   - ex-so-stla-ts__modules-and-dependencies.md
   - ex-so-stla-ts__best-practices.md
@@ -679,7 +679,7 @@ export default defineConfig({
     "prettier": "^3.1.1",
     "ts-jest": "^29.1.1",
     "tsx": "^4.7.0",
-    "typescript": "^5.7.2",
+    "typescript": "^5.9.2",
     "typescript-eslint": "^8.16.0",
     "vitest": "^1.1.0"
   },
@@ -1093,7 +1093,7 @@ donation-service/
     "prettier": "^3.1.1",
     "ts-jest": "^29.1.1",
     "tsx": "^4.7.0",
-    "typescript": "^5.7.2",
+    "typescript": "^5.9.2",
     "typescript-eslint": "^8.16.0"
   },
   "lint-staged": {
@@ -1260,7 +1260,7 @@ Set realistic coverage thresholds:
 ---
 
 **Last Updated**: 2026-01-24
-**TypeScript Version**: 5.7+
+**TypeScript Version**: 5.9+
 **ESLint Version**: 9.x
 **Jest Version**: 29.x
 **Node.js Version**: 18+

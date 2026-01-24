@@ -14,7 +14,7 @@ tags:
   - release-notes
 related:
   - ./ex-so-stla-py__release-3.12.md
-  - ./ex-so-stla-py__release-3.13.md
+  - ./ex-so-stla-py__release-3.14.md
   - ./ex-so-stla-py__performance.md
 principles:
   - measure-first-optimize-later
@@ -717,7 +717,7 @@ else:
 ### Related Documentation
 
 - [Python 3.12 Release](./ex-so-stla-py__release-3.12.md) - Stable maintenance version
-- [Python 3.13 Release](./ex-so-stla-py__release-3.13.md) - Latest stable version
+- [Python 3.14 Release](./ex-so-stla-py__release-3.14.md) - Latest stable version
 - [Performance](./ex-so-stla-py__performance.md) - Performance optimization
 
 ### Release Timeline

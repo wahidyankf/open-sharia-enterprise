@@ -310,7 +310,7 @@ def io_intensive_zakat(wealth: Decimal) -> Decimal:
 # (threads wait concurrently, not sequentially)
 ```
 
-**Python 3.13+ Free-Threaded Mode**: Experimental no-GIL mode via `--disable-gil` flag (PEP 703). Enables true parallel threading for CPU-bound tasks.
+**Python 3.14+ Free-Threaded Mode**: Experimental no-GIL mode via `--disable-gil` flag (PEP 703). Enables true parallel threading for CPU-bound tasks.
 
 ### Concurrency Model Decision Tree
 
@@ -519,5 +519,5 @@ asyncio.run(process_with_error_handling())
 ---
 
 **Last Updated**: 2025-01-23
-**Python Version**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.13.x (latest stable with free-threaded mode)
+**Python Version**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.14.x (latest stable with free-threaded mode)
 **Maintainers**: OSE Platform Documentation Team

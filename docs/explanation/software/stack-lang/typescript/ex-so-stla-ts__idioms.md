@@ -103,7 +103,7 @@ type Rate = (typeof RATES)[keyof typeof RATES];
 - 🟢 **TypeScript 5.0+** (baseline): Decorators, const parameters
 - 🔵 **TypeScript 5.4+** (milestone): NoInfer, closure narrowing
 - 🟡 **TypeScript 5.6+** (stable): Iterator helpers
-- 🔴 **TypeScript 5.7+** (latest): Path rewriting
+- 🔴 **TypeScript 5.9+** (latest): Path rewriting
 
 ### Idiomatic TypeScript Checklist
 
@@ -182,7 +182,7 @@ This document assumes TypeScript 5.0+ as the baseline. Version-specific features
 - 🟢 **TypeScript 5.0+** (baseline): Decorators, const type parameters
 - 🔵 **TypeScript 5.4+** (milestone): NoInfer utility type, closure narrowing
 - 🟡 **TypeScript 5.6+** (stable): Iterator helpers, strict checks
-- 🔴 **TypeScript 5.7+** (latest): Path rewriting, relative type checks
+- 🔴 **TypeScript 5.9+** (latest): Path rewriting, relative type checks
 
 ## Type Guards and Narrowing
 
@@ -1329,5 +1329,5 @@ function handlePayment(payment: Payment): void {
 ---
 
 **Last Updated**: 2025-01-23
-**TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.7.3+ (latest stable)
+**TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.9.3+ (latest stable)
 **Maintainers**: OSE Documentation Team
