@@ -5,7 +5,7 @@ Platform: LinkedIn
 
 OPEN SHARIA ENTERPRISE
 
-Week 8, Phase 0 Update
+Week 0008, Phase 0 Update
 
 ---
 
