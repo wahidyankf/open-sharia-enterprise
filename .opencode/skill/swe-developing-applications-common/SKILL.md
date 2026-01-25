@@ -295,16 +295,16 @@ All language developers follow this pattern:
 Each language has authoritative coding standards in:
 
 ```
-docs/explanation/software/stack-lang/[language]/README.md
+docs/explanation/software/prog-lang/[language]/README.md
 ```
 
 **Examples**:
 
-- TypeScript: `docs/explanation/software/stack-lang/typescript/README.md`
-- Java: `docs/explanation/software/stack-lang/java/README.md`
-- Python: `docs/explanation/software/stack-lang/python/README.md`
-- Elixir: `docs/explanation/software/stack-lang/elixir/README.md`
-- Go: `docs/explanation/software/stack-lang/golang/README.md`
+- TypeScript: `docs/explanation/software/prog-lang/typescript/README.md`
+- Java: `docs/explanation/software/prog-lang/java/README.md`
+- Python: `docs/explanation/software/prog-lang/python/README.md`
+- Elixir: `docs/explanation/software/prog-lang/elixir/README.md`
+- Go: `docs/explanation/software/prog-lang/golang/README.md`
 
 **Each language README covers**:
 
