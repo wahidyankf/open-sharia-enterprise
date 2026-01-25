@@ -9,8 +9,8 @@ tags:
   - event-sourcing
   - immutability
 related:
-  - ex-so-stla-ja-te__aggregate-template.md
-  - ex-so-stla-ja-te__entity-template.md
+  - ex-so-prla-ja-te__aggregate-template.md
+  - ex-so-prla-ja-te__entity-template.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -691,9 +691,9 @@ public class DomainEventPublisher {
 
 ## Related Templates
 
-- [Aggregate Template](./ex-so-stla-ja-te__aggregate-template.md)
-- [Entity Template](./ex-so-stla-ja-te__entity-template.md)
-- [Value Object Template](./ex-so-stla-ja-te__value-object-template.md)
+- [Aggregate Template](./ex-so-prla-ja-te__aggregate-template.md)
+- [Entity Template](./ex-so-prla-ja-te__entity-template.md)
+- [Value Object Template](./ex-so-prla-ja-te__value-object-template.md)
 
 ## See Also
 

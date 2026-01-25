@@ -2,7 +2,7 @@
 title: "React Version Migration"
 description: Upgrading React versions and migration strategies
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - migration
@@ -23,8 +23,8 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Hooks](./ex-so-stli-tsre__hooks.md) - Modern hook patterns
-- [Best Practices](./ex-so-stli-tsre__best-practices.md) - Current standards
+- [Hooks](./ex-so-plwe-tsre__hooks.md) - Modern hook patterns
+- [Best Practices](./ex-so-plwe-tsre__best-practices.md) - Current standards
 
 ## Overview
 
@@ -261,8 +261,8 @@ const Timer: React.FC = () => {
 
 ## Related Documentation
 
-- **[Hooks](./ex-so-stli-tsre__hooks.md)** - Modern hook patterns
-- **[Best Practices](./ex-so-stli-tsre__best-practices.md)** - Current standards
+- **[Hooks](./ex-so-plwe-tsre__hooks.md)** - Modern hook patterns
+- **[Best Practices](./ex-so-plwe-tsre__best-practices.md)** - Current standards
 
 ---
 

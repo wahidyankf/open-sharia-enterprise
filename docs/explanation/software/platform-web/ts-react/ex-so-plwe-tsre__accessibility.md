@@ -2,7 +2,7 @@
 title: "React Accessibility"
 description: Accessibility standards and patterns for inclusive React applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - accessibility
@@ -10,7 +10,7 @@ tags:
   - aria
   - wcag
 related:
-  - ./ex-so-stli-tsre__best-practices.md
+  - ./ex-so-plwe-tsre__best-practices.md
 principles:
   - explicit-over-implicit
 last_updated: 2026-01-25
@@ -24,8 +24,8 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Best Practices](./ex-so-stli-tsre__best-practices.md) - Accessibility standards
-- [Styling](./ex-so-stli-tsre__styling.md) - Accessible styling
+- [Best Practices](./ex-so-plwe-tsre__best-practices.md) - Accessibility standards
+- [Styling](./ex-so-plwe-tsre__styling.md) - Accessible styling
 
 ## Overview
 
@@ -319,9 +319,9 @@ export const DonationProgress: React.FC<{ raised: number; goal: number }> = ({
 
 ## Related Documentation
 
-- **[Best Practices](./ex-so-stli-tsre__best-practices.md)** - Accessibility standards
-- **[Styling](./ex-so-stli-tsre__styling.md)** - Accessible styling
-- **[Forms](./ex-so-stli-tsre__forms.md)** - Accessible forms
+- **[Best Practices](./ex-so-plwe-tsre__best-practices.md)** - Accessibility standards
+- **[Styling](./ex-so-plwe-tsre__styling.md)** - Accessible styling
+- **[Forms](./ex-so-plwe-tsre__forms.md)** - Accessible forms
 
 ---
 

@@ -2,7 +2,7 @@
 title: "TypeScript Type Safety"
 description: Leveraging TypeScript's type system for safer financial code
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - type-safety
@@ -11,10 +11,10 @@ tags:
   - type-guards
   - typescript-5.0
 related:
-  - ./ex-so-stla-ts__idioms.md
-  - ./ex-so-stla-ts__interfaces-and-types.md
-  - ./ex-so-stla-ts__best-practices.md
-  - ./ex-so-stla-ts__anti-patterns.md
+  - ./ex-so-prla-ts__idioms.md
+  - ./ex-so-prla-ts__interfaces-and-types.md
+  - ./ex-so-prla-ts__best-practices.md
+  - ./ex-so-prla-ts__anti-patterns.md
   - ../../../../../governance/principles/software-engineering/explicit-over-implicit.md
 principles:
   - explicit-over-implicit
@@ -832,10 +832,10 @@ const handleUSD: USDHandler = handleMoney; // ✓ OK
 
 ### TypeScript Core
 
-- **[TypeScript Idioms](./ex-so-stla-ts__idioms.md)** - TypeScript patterns
-- **[TypeScript Interfaces and Types](./ex-so-stla-ts__interfaces-and-types.md)** - Type definitions
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
-- **[TypeScript Anti-Patterns](./ex-so-stla-ts__anti-patterns.md)** - Mistakes to avoid
+- **[TypeScript Idioms](./ex-so-prla-ts__idioms.md)** - TypeScript patterns
+- **[TypeScript Interfaces and Types](./ex-so-prla-ts__interfaces-and-types.md)** - Type definitions
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards
+- **[TypeScript Anti-Patterns](./ex-so-prla-ts__anti-patterns.md)** - Mistakes to avoid
 
 ### Development Practices
 

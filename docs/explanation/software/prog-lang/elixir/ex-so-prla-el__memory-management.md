@@ -2,7 +2,7 @@
 title: "Elixir Memory Management"
 description: BEAM VM's per-process garbage collection model enabling efficient memory management for millions of concurrent processes
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - memory-management
@@ -13,9 +13,9 @@ tags:
   - ets-tables
   - profiling
 related:
-  - ./ex-so-stla-el__performance.md
-  - ./ex-so-stla-el__concurrency-and-parallelism.md
-  - ./ex-so-stla-el__anti-patterns.md
+  - ./ex-so-prla-el__performance.md
+  - ./ex-so-prla-el__concurrency-and-parallelism.md
+  - ./ex-so-prla-el__anti-patterns.md
 principles:
   - simplicity-over-complexity
 last_updated: 2026-01-23
@@ -1370,11 +1370,11 @@ end
 
 ## Related Topics
 
-- [Concurrency and Parallelism](ex-so-stla-el__concurrency-and-parallelism.md) - Process-based concurrency
-- [Performance](ex-so-stla-el__performance.md) - Performance optimization techniques
-- [Error Handling](ex-so-stla-el__error-handling.md) - Supervision and fault tolerance
-- [OTP: GenServer](ex-so-stla-el__otp-genserver.md) - Process memory patterns
-- [Best Practices](ex-so-stla-el__best-practices.md) - Memory-efficient patterns
+- [Concurrency and Parallelism](ex-so-prla-el__concurrency-and-parallelism.md) - Process-based concurrency
+- [Performance](ex-so-prla-el__performance.md) - Performance optimization techniques
+- [Error Handling](ex-so-prla-el__error-handling.md) - Supervision and fault tolerance
+- [OTP: GenServer](ex-so-prla-el__otp-genserver.md) - Process memory patterns
+- [Best Practices](ex-so-prla-el__best-practices.md) - Memory-efficient patterns
 
 ## Sources
 

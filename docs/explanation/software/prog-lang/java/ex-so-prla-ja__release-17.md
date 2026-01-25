@@ -2,7 +2,7 @@
 title: "Java 17 LTS Release"
 description: Important features and changes in Java 17 Long-Term Support release
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - java-17
@@ -47,11 +47,11 @@ Java 17 represents a significant milestone, delivering **14 JDK Enhancement Prop
 
 **Related Documentation:**
 
-- [Java 21 Release](./ex-so-stla-ja__release-21.md) - Next LTS release features
-- [Java 25 Release](./ex-so-stla-ja__release-25.md) - Latest LTS release features
-- [Java Idioms](./ex-so-stla-ja__idioms.md) - Sealed classes and pattern matching patterns
-- [Java Type Safety](./ex-so-stla-ja__type-safety.md) - Sealed types for exhaustive handling
-- [Java Error Handling](./ex-so-stla-ja__error-handling.md) - Pattern matching in error handling
+- [Java 21 Release](./ex-so-prla-ja__release-21.md) - Next LTS release features
+- [Java 25 Release](./ex-so-prla-ja__release-25.md) - Latest LTS release features
+- [Java Idioms](./ex-so-prla-ja__idioms.md) - Sealed classes and pattern matching patterns
+- [Java Type Safety](./ex-so-prla-ja__type-safety.md) - Sealed types for exhaustive handling
+- [Java Error Handling](./ex-so-prla-ja__error-handling.md) - Pattern matching in error handling
 
 This release implements the following [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
 
@@ -247,8 +247,8 @@ public final class EmergencyDonation extends DonationTransaction {
 | Version     | Status           | Details                                                                    | Link                                                                                  |
 | ----------- | ---------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | **Java 17** | ✅ **Finalized** | Production-ready with `sealed`, `permits`, `final/non-sealed` keywords     | Current section                                                                       |
-| **Java 21** | ✅ Available     | Enhanced exhaustiveness checking, better integration with pattern matching | [Java 21 - Sealed Classes](./ex-so-stla-ja__release-21.md#sealed-classes-integration) |
-| **Java 25** | ✅ Available     | Optimized performance, advanced domain modeling patterns                   | [Java 25 - Sealed Classes](./ex-so-stla-ja__release-25.md#sealed-classes)             |
+| **Java 21** | ✅ Available     | Enhanced exhaustiveness checking, better integration with pattern matching | [Java 21 - Sealed Classes](./ex-so-prla-ja__release-21.md#sealed-classes-integration) |
+| **Java 25** | ✅ Available     | Optimized performance, advanced domain modeling patterns                   | [Java 25 - Sealed Classes](./ex-so-prla-ja__release-25.md#sealed-classes)             |
 
 **When to Adopt**: Use sealed classes from Java 17+ for precise domain modeling and exhaustive pattern matching. Essential for finance domain types (donation methods, donation_transaction types, donation_account categories).
 
@@ -325,8 +325,8 @@ public class TransactionValidator {
 | Version     | Status           | Details                                                                      | Link                                                                                    |
 | ----------- | ---------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | **Java 17** | 🔬 **Preview**   | First preview with basic type patterns, guards, and null handling            | Current section                                                                         |
-| **Java 21** | ✅ **Finalized** | Production-ready with record patterns, enhanced guards, and when clauses     | [Java 21 - Pattern Matching](./ex-so-stla-ja__release-21.md#pattern-matching-finalized) |
-| **Java 25** | ✅ **Enhanced**  | Primitive type patterns, improved performance, advanced pattern combinations | [Java 25 - Pattern Matching](./ex-so-stla-ja__release-25.md#primitive-pattern-matching) |
+| **Java 21** | ✅ **Finalized** | Production-ready with record patterns, enhanced guards, and when clauses     | [Java 21 - Pattern Matching](./ex-so-prla-ja__release-21.md#pattern-matching-finalized) |
+| **Java 25** | ✅ **Enhanced**  | Primitive type patterns, improved performance, advanced pattern combinations | [Java 25 - Pattern Matching](./ex-so-prla-ja__release-25.md#primitive-pattern-matching) |
 
 **When to Adopt**: Preview in Java 17 (requires `--enable-preview`). For production use, wait for Java 21 finalization. Essential for clean, type-safe conditional logic in finance applications.
 
@@ -1056,10 +1056,10 @@ flowchart TD
 
 ## Related Documentation
 
-- [Java 21 LTS Release](./ex-so-stla-ja__release-21.md) - Next LTS release features
-- [Java 25 LTS Release](./ex-so-stla-ja__release-25.md) - Latest LTS release features
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Modern Java development practices
-- [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Common mistakes to avoid
+- [Java 21 LTS Release](./ex-so-prla-ja__release-21.md) - Next LTS release features
+- [Java 25 LTS Release](./ex-so-prla-ja__release-25.md) - Latest LTS release features
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - Modern Java development practices
+- [Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) - Common mistakes to avoid
 
 ## Sources
 

@@ -2,7 +2,7 @@
 title: "Java Antipatterns"
 description: Common mistakes and pitfalls to avoid in Java development
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - antipatterns
@@ -10,8 +10,8 @@ tags:
   - common-mistakes
   - code-quality
 related:
-  - ./ex-so-stla-ja__best-practices.md
-  - ./ex-so-stla-ja__idioms.md
+  - ./ex-so-prla-ja__best-practices.md
+  - ./ex-so-prla-ja__idioms.md
 principles:
   - explicit-over-implicit
 last_updated: 2026-01-24
@@ -34,7 +34,7 @@ Understanding antipatterns is crucial because:
 
 This document catalogs common Java antipatterns, explains why they're problematic, and demonstrates how to fix them. Each antipattern includes real-world examples from finance domains to illustrate problems in practical contexts.
 
-**Companion Document**: For recommended practices, see [Java Best Practices](./ex-so-stla-ja__best-practices.md).
+**Companion Document**: For recommended practices, see [Java Best Practices](./ex-so-prla-ja__best-practices.md).
 
 ## Quick Reference
 
@@ -53,12 +53,12 @@ This document catalogs common Java antipatterns, explains why they're problemati
 
 **Related Documentation:**
 
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Recommended approaches
-- [Java Error Handling](./ex-so-stla-ja__error-handling.md) - Proper exception management
-- [Java Security](./ex-so-stla-ja__security.md) - Security best practices
-- [Java Performance](./ex-so-stla-ja__performance.md) - Performance optimization
-- [Java Type Safety](./ex-so-stla-ja__type-safety.md) - Type-safe design patterns
-- [Java Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md) - Proper concurrent programming
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - Recommended approaches
+- [Java Error Handling](./ex-so-prla-ja__error-handling.md) - Proper exception management
+- [Java Security](./ex-so-prla-ja__security.md) - Security best practices
+- [Java Performance](./ex-so-prla-ja__performance.md) - Performance optimization
+- [Java Type Safety](./ex-so-prla-ja__type-safety.md) - Type-safe design patterns
+- [Java Concurrency](./ex-so-prla-ja__concurrency-and-parallelism.md) - Proper concurrent programming
 
 Antipatterns represent **violations** of [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
 
@@ -4195,8 +4195,8 @@ Use this checklist during development and code review:
 
 ## Related Documentation
 
-- [Java Idioms](./ex-so-stla-ja__idioms.md) - Recommended coding patterns and practices
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Comprehensive guide to Java best practices
+- [Java Idioms](./ex-so-prla-ja__idioms.md) - Recommended coding patterns and practices
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - Comprehensive guide to Java best practices
 - [Tech Stack Languages Index](../README.md) - Overview of all programming language guides
 
 ## Sources

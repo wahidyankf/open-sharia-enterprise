@@ -2,7 +2,7 @@
 title: Python Security
 description: Secure coding practices in Python including SQL injection prevention, XSS defense, authentication patterns, secrets management, and dependency scanning for financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - security
@@ -11,8 +11,8 @@ tags:
   - cryptography
   - secrets-management
 related:
-  - ./ex-so-stla-py__web-services.md
-  - ./ex-so-stla-py__best-practices.md
+  - ./ex-so-prla-py__web-services.md
+  - ./ex-so-prla-py__best-practices.md
 principles:
   - security-first
   - explicit-over-implicit
@@ -571,8 +571,8 @@ graph LR
 
 ### Related Documentation
 
-- [Web Services](./ex-so-stla-py__web-services.md) - FastAPI security
-- [Best Practices](./ex-so-stla-py__best-practices.md) - Secure coding
+- [Web Services](./ex-so-prla-py__web-services.md) - FastAPI security
+- [Best Practices](./ex-so-prla-py__best-practices.md) - Secure coding
 
 ---
 

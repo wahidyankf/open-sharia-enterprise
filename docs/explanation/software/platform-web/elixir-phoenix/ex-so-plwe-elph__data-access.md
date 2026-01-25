@@ -2,7 +2,7 @@
 title: Phoenix Data Access Guide
 description: Comprehensive guide to Ecto schemas, changesets, queries, associations, transactions, and migrations for Phoenix applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - elixir
@@ -13,10 +13,10 @@ tags:
   - queries
   - migrations
 related:
-  - ex-so-stli-elph__contexts.md
-  - ex-so-stli-elph__performance.md
-  - ex-so-stli-elph__testing.md
-  - ex-so-stli-elph__best-practices.md
+  - ex-so-plwe-elph__contexts.md
+  - ex-so-plwe-elph__performance.md
+  - ex-so-plwe-elph__testing.md
+  - ex-so-plwe-elph__best-practices.md
 last_updated: 2026-01-25
 ---
 
@@ -28,10 +28,10 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Contexts](./ex-so-stli-elph__contexts.md) - Organizing business logic
-- [Performance](./ex-so-stli-elph__performance.md) - Query optimization
-- [Testing](./ex-so-stli-elph__testing.md) - Database testing
-- [Best Practices](./ex-so-stli-elph__best-practices.md) - General patterns
+- [Contexts](./ex-so-plwe-elph__contexts.md) - Organizing business logic
+- [Performance](./ex-so-plwe-elph__performance.md) - Query optimization
+- [Testing](./ex-so-plwe-elph__testing.md) - Database testing
+- [Best Practices](./ex-so-plwe-elph__best-practices.md) - General patterns
 
 ## Overview
 
@@ -1081,9 +1081,9 @@ end
 
 ## Related Documentation
 
-- **[Contexts Guide](./ex-so-stli-elph__contexts.md)** - Organizing data access
-- **[Performance Guide](./ex-so-stli-elph__performance.md)** - Query optimization
-- **[Testing Guide](./ex-so-stli-elph__testing.md)** - Database testing
-- **[Best Practices](./ex-so-stli-elph__best-practices.md)** - General patterns
+- **[Contexts Guide](./ex-so-plwe-elph__contexts.md)** - Organizing data access
+- **[Performance Guide](./ex-so-plwe-elph__performance.md)** - Query optimization
+- **[Testing Guide](./ex-so-plwe-elph__testing.md)** - Database testing
+- **[Best Practices](./ex-so-plwe-elph__best-practices.md)** - General patterns
 - **[Ecto Documentation](https://hexdocs.pm/ecto)** - Official reference
-- **[Schema Template](./templates/ex-so-stli-elph-te__schema-template.md)** - Schema starter
+- **[Schema Template](./templates/ex-so-plwe-elph-te__schema-template.md)** - Schema starter

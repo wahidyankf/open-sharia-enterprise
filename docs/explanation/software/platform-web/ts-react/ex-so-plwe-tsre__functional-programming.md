@@ -2,7 +2,7 @@
 title: "React Functional Programming"
 description: Functional programming patterns and principles in React
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - functional-programming
@@ -10,8 +10,8 @@ tags:
   - pure-functions
   - typescript
 related:
-  - ./ex-so-stli-tsre__idioms.md
-  - ./ex-so-stli-tsre__best-practices.md
+  - ./ex-so-plwe-tsre__idioms.md
+  - ./ex-so-plwe-tsre__best-practices.md
 principles:
   - immutability
   - pure-functions
@@ -26,9 +26,9 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Idioms](./ex-so-stli-tsre__idioms.md) - Functional patterns
-- [Hooks](./ex-so-stli-tsre__hooks.md) - Hooks as FP abstractions
-- [Component Architecture](./ex-so-stli-tsre__component-architecture.md) - Component patterns
+- [Idioms](./ex-so-plwe-tsre__idioms.md) - Functional patterns
+- [Hooks](./ex-so-plwe-tsre__hooks.md) - Hooks as FP abstractions
+- [Component Architecture](./ex-so-plwe-tsre__component-architecture.md) - Component patterns
 
 ## Overview
 
@@ -249,10 +249,10 @@ const EnhancedDashboard = enhance(Dashboard);
 
 ## Related Documentation
 
-- **[Idioms](./ex-so-stli-tsre__idioms.md)** - Functional patterns
-- **[Hooks](./ex-so-stli-tsre__hooks.md)** - Hooks as FP abstractions
-- **[Component Architecture](./ex-so-stli-tsre__component-architecture.md)** - Component patterns
-- **[State Management](./ex-so-stli-tsre__state-management.md)** - Immutable state
+- **[Idioms](./ex-so-plwe-tsre__idioms.md)** - Functional patterns
+- **[Hooks](./ex-so-plwe-tsre__hooks.md)** - Hooks as FP abstractions
+- **[Component Architecture](./ex-so-plwe-tsre__component-architecture.md)** - Component patterns
+- **[State Management](./ex-so-plwe-tsre__state-management.md)** - Immutable state
 
 ---
 

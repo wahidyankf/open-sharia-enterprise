@@ -2,7 +2,7 @@
 title: Spring Boot Code Templates
 description: Reusable code templates for Spring Boot applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - spring-boot
   - templates
@@ -17,11 +17,11 @@ Production-ready code templates for Spring Boot applications in the open-sharia-
 
 ## Available Templates
 
-- [REST Controller Template](./ex-so-stli-jvsb-te__rest-controller-template.md)
-- [Service Layer Template](./ex-so-stli-jvsb-te__service-template.md)
-- [Repository Template](./ex-so-stli-jvsb-te__repository-template.md)
-- [Configuration Properties Template](./ex-so-stli-jvsb-te__config-properties-template.md)
-- [Exception Handler Template](./ex-so-stli-jvsb-te__exception-handler-template.md)
+- [REST Controller Template](./ex-so-plwe-jvsb-te__rest-controller-template.md)
+- [Service Layer Template](./ex-so-plwe-jvsb-te__service-template.md)
+- [Repository Template](./ex-so-plwe-jvsb-te__repository-template.md)
+- [Configuration Properties Template](./ex-so-plwe-jvsb-te__config-properties-template.md)
+- [Exception Handler Template](./ex-so-plwe-jvsb-te__exception-handler-template.md)
 
 ## Usage
 

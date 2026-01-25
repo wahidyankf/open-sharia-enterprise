@@ -2,7 +2,7 @@
 title: Python Error Handling
 description: Comprehensive guide to Python exception handling, context managers, custom exceptions, Result types, error wrapping, and logging patterns for Sharia-compliant financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - error-handling
@@ -11,10 +11,10 @@ tags:
   - logging
   - financial-domain
 related:
-  - ./ex-so-stla-py__best-practices.md
-  - ./ex-so-stla-py__idioms.md
-  - ./ex-so-stla-py__type-safety.md
-  - ./ex-so-stla-py__security.md
+  - ./ex-so-prla-py__best-practices.md
+  - ./ex-so-prla-py__idioms.md
+  - ./ex-so-prla-py__type-safety.md
+  - ./ex-so-prla-py__security.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -910,10 +910,10 @@ def calculate_zakat_safe(
 
 ### Related Documentation
 
-- [Best Practices](./ex-so-stla-py__best-practices.md) - Python coding standards
-- [Idioms](./ex-so-stla-py__idioms.md) - Pythonic patterns
-- [Type Safety](./ex-so-stla-py__type-safety.md) - Type hints and validation
-- [Security](./ex-so-stla-py__security.md) - Secure coding practices
+- [Best Practices](./ex-so-prla-py__best-practices.md) - Python coding standards
+- [Idioms](./ex-so-prla-py__idioms.md) - Pythonic patterns
+- [Type Safety](./ex-so-prla-py__type-safety.md) - Type hints and validation
+- [Security](./ex-so-prla-py__security.md) - Secure coding practices
 
 ### Books
 

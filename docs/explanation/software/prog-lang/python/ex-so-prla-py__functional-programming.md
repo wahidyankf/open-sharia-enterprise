@@ -2,7 +2,7 @@
 title: Python Functional Programming
 description: Functional programming patterns in Python including pure functions, immutability, itertools, functools, higher-order functions, and function composition for Sharia-compliant financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - functional-programming
@@ -12,9 +12,9 @@ tags:
   - functools
   - higher-order-functions
 related:
-  - ./ex-so-stla-py__idioms.md
-  - ./ex-so-stla-py__best-practices.md
-  - ./ex-so-stla-py__classes-and-protocols.md
+  - ./ex-so-prla-py__idioms.md
+  - ./ex-so-prla-py__best-practices.md
+  - ./ex-so-prla-py__classes-and-protocols.md
 principles:
   - immutability
   - pure-functions
@@ -694,9 +694,9 @@ graph LR
 
 ### Related Documentation
 
-- [Idioms](./ex-so-stla-py__idioms.md) - Pythonic patterns
-- [Best Practices](./ex-so-stla-py__best-practices.md) - Coding standards
-- [Classes and Protocols](./ex-so-stla-py__classes-and-protocols.md) - OOP patterns
+- [Idioms](./ex-so-prla-py__idioms.md) - Pythonic patterns
+- [Best Practices](./ex-so-prla-py__best-practices.md) - Coding standards
+- [Classes and Protocols](./ex-so-prla-py__classes-and-protocols.md) - OOP patterns
 
 ### Books
 

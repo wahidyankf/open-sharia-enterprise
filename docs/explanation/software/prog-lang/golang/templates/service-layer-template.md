@@ -22,8 +22,8 @@ related:
   - repository-template.md
   - domain-event-template.md
   - aggregate-template.md
-  - ex-so-stla-go__domain-driven-design.md
-  - ex-so-stla-go__best-practices.md
+  - ex-so-prla-go__domain-driven-design.md
+  - ex-so-prla-go__best-practices.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -2328,15 +2328,15 @@ func TestZakatCalculationService_Integration(t *testing.T) {
 
 ### Golang Best Practices
 
-- [Go Best Practices](../ex-so-stla-go__best-practices.md) - Go coding standards
-- [Go Idioms](../ex-so-stla-go__idioms.md) - Idiomatic Go patterns
-- [Go Error Handling](../ex-so-stla-go__error-handling.md) - Error handling strategies
-- [Go Interfaces](../ex-so-stla-go__interfaces-and-composition.md) - Interface design
-- [Go Concurrency and Parallelism](../ex-so-stla-go__concurrency-and-parallelism.md) - Goroutines and channels
+- [Go Best Practices](../ex-so-prla-go__best-practices.md) - Go coding standards
+- [Go Idioms](../ex-so-prla-go__idioms.md) - Idiomatic Go patterns
+- [Go Error Handling](../ex-so-prla-go__error-handling.md) - Error handling strategies
+- [Go Interfaces](../ex-so-prla-go__interfaces-and-composition.md) - Interface design
+- [Go Concurrency and Parallelism](../ex-so-prla-go__concurrency-and-parallelism.md) - Goroutines and channels
 
 ### Domain-Driven Design
 
-- [DDD in Go](../ex-so-stla-go__domain-driven-design.md) - Complete DDD patterns in Go
+- [DDD in Go](../ex-so-prla-go__domain-driven-design.md) - Complete DDD patterns in Go
 
 ### Conventions & Principles
 

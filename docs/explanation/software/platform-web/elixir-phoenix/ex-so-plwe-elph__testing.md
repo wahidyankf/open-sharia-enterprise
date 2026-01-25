@@ -2,7 +2,7 @@
 title: Phoenix Testing Guide
 description: Comprehensive guide to testing Phoenix applications including unit tests, integration tests, channel tests, LiveView tests, and TDD workflows
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - elixir
@@ -12,10 +12,10 @@ tags:
   - mocking
   - integration
 related:
-  - ex-so-stli-elph__channels.md
-  - ex-so-stli-elph__liveview.md
-  - ex-so-stli-elph__data-access.md
-  - ex-so-stli-elph__best-practices.md
+  - ex-so-plwe-elph__channels.md
+  - ex-so-plwe-elph__liveview.md
+  - ex-so-plwe-elph__data-access.md
+  - ex-so-plwe-elph__best-practices.md
 last_updated: 2026-01-25
 ---
 
@@ -27,10 +27,10 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Channels](./ex-so-stli-elph__channels.md) - Channel testing
-- [LiveView](./ex-so-stli-elph__liveview.md) - LiveView testing
-- [Data Access](./ex-so-stli-elph__data-access.md) - Database testing
-- [Best Practices](./ex-so-stli-elph__best-practices.md) - Testing patterns
+- [Channels](./ex-so-plwe-elph__channels.md) - Channel testing
+- [LiveView](./ex-so-plwe-elph__liveview.md) - LiveView testing
+- [Data Access](./ex-so-plwe-elph__data-access.md) - Database testing
+- [Best Practices](./ex-so-plwe-elph__best-practices.md) - Testing patterns
 
 ## Overview
 
@@ -899,9 +899,9 @@ end
 
 ## Related Documentation
 
-- **[Channels Guide](./ex-so-stli-elph__channels.md)** - Channel implementation
-- **[LiveView Guide](./ex-so-stli-elph__liveview.md)** - LiveView patterns
-- **[Data Access Guide](./ex-so-stli-elph__data-access.md)** - Database operations
-- **[Best Practices](./ex-so-stli-elph__best-practices.md)** - Testing patterns
+- **[Channels Guide](./ex-so-plwe-elph__channels.md)** - Channel implementation
+- **[LiveView Guide](./ex-so-plwe-elph__liveview.md)** - LiveView patterns
+- **[Data Access Guide](./ex-so-plwe-elph__data-access.md)** - Database operations
+- **[Best Practices](./ex-so-plwe-elph__best-practices.md)** - Testing patterns
 - **[ExUnit Documentation](https://hexdocs.pm/ex_unit)** - Official testing framework
-- **[Test Templates](./templates/ex-so-stli-elph-te__test-template.md)** - Test starters
+- **[Test Templates](./templates/ex-so-plwe-elph-te__test-template.md)** - Test starters

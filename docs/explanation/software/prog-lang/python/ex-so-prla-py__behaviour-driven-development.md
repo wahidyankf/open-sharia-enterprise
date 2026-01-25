@@ -2,7 +2,7 @@
 title: Behaviour-Driven Development in Python
 description: BDD methodology in Python using behave and pytest-bdd with Gherkin syntax for executable specifications of Sharia-compliant financial domain requirements
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - bdd
@@ -12,8 +12,8 @@ tags:
   - testing
   - specifications
 related:
-  - ./ex-so-stla-py__test-driven-development.md
-  - ./ex-so-stla-py__domain-driven-design.md
+  - ./ex-so-prla-py__test-driven-development.md
+  - ./ex-so-prla-py__domain-driven-design.md
 principles:
   - documentation-first
   - explicit-over-implicit
@@ -582,8 +582,8 @@ Feature: Zakat Distribution
 
 ### Related Documentation
 
-- [Test-Driven Development](./ex-so-stla-py__test-driven-development.md) - TDD methodology
-- [Domain-Driven Design](./ex-so-stla-py__domain-driven-design.md) - Ubiquitous language
+- [Test-Driven Development](./ex-so-prla-py__test-driven-development.md) - TDD methodology
+- [Domain-Driven Design](./ex-so-prla-py__domain-driven-design.md) - Ubiquitous language
 
 ### Books
 

@@ -2,7 +2,7 @@
 title: "TypeScript Interfaces and Types"
 description: Deep dive into TypeScript's interface and type system
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - interfaces
@@ -11,9 +11,9 @@ tags:
   - mapped-types
   - typescript-5.0
 related:
-  - ./ex-so-stla-ts__idioms.md
-  - ./ex-so-stla-ts__type-safety.md
-  - ./ex-so-stla-ts__best-practices.md
+  - ./ex-so-prla-ts__idioms.md
+  - ./ex-so-prla-ts__type-safety.md
+  - ./ex-so-prla-ts__best-practices.md
 principles:
   - explicit-over-implicit
 last_updated: 2025-01-23
@@ -368,9 +368,9 @@ type Currency = ExtractCurrency<Money>; // string
 
 ## Related Documentation
 
-- **[TypeScript Idioms](./ex-so-stla-ts__idioms.md)** - TypeScript patterns
-- **[TypeScript Type Safety](./ex-so-stla-ts__type-safety.md)** - Advanced types
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
+- **[TypeScript Idioms](./ex-so-prla-ts__idioms.md)** - TypeScript patterns
+- **[TypeScript Type Safety](./ex-so-prla-ts__type-safety.md)** - Advanced types
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards
 
 ---
 

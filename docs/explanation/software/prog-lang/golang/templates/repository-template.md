@@ -20,8 +20,8 @@ tags:
 related:
   - aggregate-template.md
   - entity-template.md
-  - ex-so-stla-go__domain-driven-design.md
-  - ex-so-stla-go__best-practices.md
+  - ex-so-prla-go__domain-driven-design.md
+  - ex-so-prla-go__best-practices.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -2089,11 +2089,11 @@ func TestSQLUserRepository_OptimisticLocking(t *testing.T) {
 
 **Go Language Documentation**:
 
-- [Best Practices](../ex-so-stla-go__best-practices.md) - Go coding standards
-- [Idioms](../ex-so-stla-go__idioms.md) - Go-specific patterns
-- [Error Handling](../ex-so-stla-go__error-handling.md) - Error handling patterns
-- [Interfaces and Composition](../ex-so-stla-go__interfaces-and-composition.md) - Interface design
-- [Domain-Driven Design](../ex-so-stla-go__domain-driven-design.md) - DDD in Go
+- [Best Practices](../ex-so-prla-go__best-practices.md) - Go coding standards
+- [Idioms](../ex-so-prla-go__idioms.md) - Go-specific patterns
+- [Error Handling](../ex-so-prla-go__error-handling.md) - Error handling patterns
+- [Interfaces and Composition](../ex-so-prla-go__interfaces-and-composition.md) - Interface design
+- [Domain-Driven Design](../ex-so-prla-go__domain-driven-design.md) - DDD in Go
 
 **Template Documentation**:
 

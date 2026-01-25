@@ -2,7 +2,7 @@
 title: Exception Handler Template
 description: Template for global exception handling with @RestControllerAdvice
 category: explanation
-subcategory: stack-libs-templates
+subcategory: platform-web-templates
 tags:
   - spring-boot
   - template

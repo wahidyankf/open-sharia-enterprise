@@ -2,7 +2,7 @@
 title: REST Controller Template
 description: Template for Spring Boot REST controllers
 category: explanation
-subcategory: stack-libs-templates
+subcategory: platform-web-templates
 tags:
   - spring-boot
   - template

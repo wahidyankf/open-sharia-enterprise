@@ -2,7 +2,7 @@
 title: "Elixir Idioms and Patterns"
 description: Distinctive Elixir patterns using pattern matching, pipe operators, protocols, and guards for readable, maintainable, and idiomatic code
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - idioms
@@ -14,9 +14,9 @@ tags:
   - protocols
   - with-construct
 related:
-  - ./ex-so-stla-el__functional-programming.md
-  - ./ex-so-stla-el__best-practices.md
-  - ./ex-so-stla-el__protocols-and-behaviours.md
+  - ./ex-so-prla-el__functional-programming.md
+  - ./ex-so-prla-el__best-practices.md
+  - ./ex-so-prla-el__protocols-and-behaviours.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -50,9 +50,9 @@ last_updated: 2026-01-23
 
 ### Additional Resources
 
-- [Best Practices](./ex-so-stla-el__best-practices.md)
-- [Functional Programming](./ex-so-stla-el__functional-programming.md)
-- [Protocols and Behaviours](./ex-so-stla-el__protocols-and-behaviours.md)
+- [Best Practices](./ex-so-prla-el__best-practices.md)
+- [Functional Programming](./ex-so-prla-el__functional-programming.md)
+- [Protocols and Behaviours](./ex-so-prla-el__protocols-and-behaviours.md)
 
 ## Overview
 
@@ -1394,10 +1394,10 @@ graph TD
 
 ## Related Topics
 
-- [Functional Programming](./ex-so-stla-el__functional-programming.md) - Pure functions and immutability
-- [Error Handling](./ex-so-stla-el__error-handling.md) - Error handling patterns
-- [Best Practices](./ex-so-stla-el__best-practices.md) - Elixir coding standards
-- [Protocols and Behaviours](./ex-so-stla-el__protocols-and-behaviours.md) - Deep dive into protocols
+- [Functional Programming](./ex-so-prla-el__functional-programming.md) - Pure functions and immutability
+- [Error Handling](./ex-so-prla-el__error-handling.md) - Error handling patterns
+- [Best Practices](./ex-so-prla-el__best-practices.md) - Elixir coding standards
+- [Protocols and Behaviours](./ex-so-prla-el__protocols-and-behaviours.md) - Deep dive into protocols
 
 ## Sources
 

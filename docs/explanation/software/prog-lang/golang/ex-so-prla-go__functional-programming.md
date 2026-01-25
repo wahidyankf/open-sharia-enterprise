@@ -2,7 +2,7 @@
 title: Go Functional Programming
 description: Functional programming patterns in Go including pure functions, immutability, higher-order functions, closures, and composition
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - golang
   - functional-programming
@@ -18,8 +18,8 @@ tags:
   - go-1.24
   - go-1.25
 related:
-  - ./ex-so-stla-go__best-practices.md
-  - ./ex-so-stla-go__idioms.md
+  - ./ex-so-prla-go__best-practices.md
+  - ./ex-so-prla-go__idioms.md
   - ../../../../../governance/development/pattern/functional-programming.md
 principles:
   - immutability
@@ -1413,10 +1413,10 @@ func SumIterative(nums []int) int {
 
 ## Related Documentation
 
-- [Idioms](./ex-so-stla-go__idioms.md) - Go-specific patterns including functional options
-- [Type Safety](./ex-so-stla-go__type-safety.md) - Generics enabling functional patterns
-- [Best Practices](./ex-so-stla-go__best-practices.md) - When to use functional programming
-- [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md) - Closures with goroutines
+- [Idioms](./ex-so-prla-go__idioms.md) - Go-specific patterns including functional options
+- [Type Safety](./ex-so-prla-go__type-safety.md) - Generics enabling functional patterns
+- [Best Practices](./ex-so-prla-go__best-practices.md) - When to use functional programming
+- [Concurrency and Parallelism](./ex-so-prla-go__concurrency-and-parallelism.md) - Closures with goroutines
 
 ## Further Reading
 

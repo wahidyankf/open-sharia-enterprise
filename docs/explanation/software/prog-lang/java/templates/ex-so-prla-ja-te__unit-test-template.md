@@ -11,7 +11,7 @@ tags:
   - mockito
   - assertj
 related:
-  - ex-so-stla-ja__test-driven-development.md
+  - ex-so-prla-ja__test-driven-development.md
   - ex-so-de-tedrdeve-te__unit-test-template.md
 principles:
   - simplicity-over-complexity
@@ -685,13 +685,13 @@ class ZakatCalculatorTest {
 
 ## Related Templates
 
-- [Integration Test Template](./ex-so-stla-ja-te__integration-test-template.md)
-- [BDD Step Definition Template](./ex-so-stla-ja-te__bdd-step-definition-template.md)
+- [Integration Test Template](./ex-so-prla-ja-te__integration-test-template.md)
+- [BDD Step Definition Template](./ex-so-prla-ja-te__bdd-step-definition-template.md)
 
 ## See Also
 
-- [Test-Driven Development](../ex-so-stla-ja__test-driven-development.md)
-- [Behaviour-Driven Development](../ex-so-stla-ja__behaviour-driven-development.md)
+- [Test-Driven Development](../ex-so-prla-ja__test-driven-development.md)
+- [Behaviour-Driven Development](../ex-so-prla-ja__behaviour-driven-development.md)
 
 ---
 

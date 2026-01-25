@@ -2,13 +2,13 @@
 title: Go 1.22 Release Notes
 description: New features and improvements in Go 1.22
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - golang
   - release-notes
   - go-1.22
 related:
-  - ./ex-so-stla-go__best-practices.md
+  - ./ex-so-prla-go__best-practices.md
 last_updated: 2026-01-24
 ---
 

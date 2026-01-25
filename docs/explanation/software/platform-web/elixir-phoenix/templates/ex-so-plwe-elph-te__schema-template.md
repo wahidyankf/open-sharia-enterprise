@@ -2,7 +2,7 @@
 title: Phoenix Schema Template
 description: Production-ready template for Ecto schemas and changesets
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - elixir
@@ -10,7 +10,7 @@ tags:
   - schema
   - ecto
 related:
-  - ../ex-so-stli-elph__data-access.md
+  - ../ex-so-plwe-elph__data-access.md
 last_updated: 2026-01-25
 ---
 

@@ -2,7 +2,7 @@
 title: "Java Linting and Formatting"
 description: Code quality automation through linting and formatting tools for Java 17-25
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - code-quality
@@ -15,7 +15,7 @@ tags:
   - automation
   - pre-commit-hooks
 related:
-  - ./ex-so-stla-ja__best-practices.md
+  - ./ex-so-prla-ja__best-practices.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -66,9 +66,9 @@ This guide targets Java development teams building enterprise financial systems.
 
 **Related Documentation:**
 
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Code quality standards
-- [Java Idioms](./ex-so-stla-ja__idioms.md) - Modern Java patterns
-- [Type Safety](./ex-so-stla-ja__type-safety.md) - Compile-time safety
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - Code quality standards
+- [Java Idioms](./ex-so-prla-ja__idioms.md) - Modern Java patterns
+- [Type Safety](./ex-so-prla-ja__type-safety.md) - Compile-time safety
 
 Linting and formatting align with [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
 
@@ -1863,15 +1863,15 @@ public class MurabahaContract {
 
 ### Core Java Documentation
 
-- **[Java Best Practices](./ex-so-stla-ja__best-practices.md)** - Recommended coding standards
-- **[Java Idioms](./ex-so-stla-ja__idioms.md)** - Modern Java patterns
-- **[Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md)** - Common mistakes to avoid
+- **[Java Best Practices](./ex-so-prla-ja__best-practices.md)** - Recommended coding standards
+- **[Java Idioms](./ex-so-prla-ja__idioms.md)** - Modern Java patterns
+- **[Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md)** - Common mistakes to avoid
 
 ### Specialized Topics
 
-- **[Type Safety](./ex-so-stla-ja__type-safety.md)** - Compile-time safety with NullAway
-- **[Test-Driven Development](./ex-so-stla-ja__test-driven-development.md)** - Testing code quality
-- **[Security](./ex-so-stla-ja__security.md)** - Security-focused linting
+- **[Type Safety](./ex-so-prla-ja__type-safety.md)** - Compile-time safety with NullAway
+- **[Test-Driven Development](./ex-so-prla-ja__test-driven-development.md)** - Testing code quality
+- **[Security](./ex-so-prla-ja__security.md)** - Security-focused linting
 
 ### Platform Documentation
 

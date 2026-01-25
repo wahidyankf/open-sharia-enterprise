@@ -2,7 +2,7 @@
 title: TypeScript Security
 description: Defense-in-depth security for TypeScript applications including input validation, authentication, authorization, secure communication, and data protection for financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - security
@@ -16,9 +16,9 @@ tags:
   - oauth2
   - data-encryption
 related:
-  - ./ex-so-stla-ts__web-services.md
-  - ./ex-so-stla-ts__best-practices.md
-  - ./ex-so-stla-ts__type-safety.md
+  - ./ex-so-prla-ts__web-services.md
+  - ./ex-so-prla-ts__best-practices.md
+  - ./ex-so-prla-ts__type-safety.md
 principles:
   - security-first
   - explicit-over-implicit
@@ -1947,10 +1947,10 @@ describe("DonationController (security)", () => {
 
 ## Related Topics
 
-- [Web Services](ex-so-stla-ts__web-services.md) - NestJS security features
-- [Type Safety](ex-so-stla-ts__type-safety.md) - Compile-time safety
-- [Error Handling](ex-so-stla-ts__error-handling.md) - Secure error messages
-- [Best Practices](ex-so-stla-ts__best-practices.md) - Security best practices
+- [Web Services](ex-so-prla-ts__web-services.md) - NestJS security features
+- [Type Safety](ex-so-prla-ts__type-safety.md) - Compile-time safety
+- [Error Handling](ex-so-prla-ts__error-handling.md) - Secure error messages
+- [Best Practices](ex-so-prla-ts__best-practices.md) - Security best practices
 
 ## Sources
 

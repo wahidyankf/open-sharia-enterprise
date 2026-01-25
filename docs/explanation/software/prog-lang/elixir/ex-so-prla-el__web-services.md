@@ -2,7 +2,7 @@
 title: "Elixir Web Services with Phoenix"
 description: Building high-performance web applications with Phoenix Framework including REST APIs, LiveView, GraphQL, and comprehensive tooling
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - web-services
@@ -13,9 +13,9 @@ tags:
   - real-time
   - channels
 related:
-  - ./ex-so-stla-el__best-practices.md
-  - ./ex-so-stla-el__security.md
-  - ./ex-so-stla-el__concurrency-and-parallelism.md
+  - ./ex-so-prla-el__best-practices.md
+  - ./ex-so-prla-el__security.md
+  - ./ex-so-prla-el__concurrency-and-parallelism.md
 principles:
   - simplicity-over-complexity
   - security-first
@@ -1638,10 +1638,10 @@ All previous examples demonstrate financial domain patterns.
 
 ## Related Topics
 
-- [Security](ex-so-stla-el__security.md) - Authentication, authorization
-- [Testing](ex-so-stla-el__test-driven-development.md) - Testing Phoenix apps
-- [Performance](ex-so-stla-el__performance.md) - Phoenix performance
-- [Domain-Driven Design](ex-so-stla-el__domain-driven-design.md) - Phoenix contexts
+- [Security](ex-so-prla-el__security.md) - Authentication, authorization
+- [Testing](ex-so-prla-el__test-driven-development.md) - Testing Phoenix apps
+- [Performance](ex-so-prla-el__performance.md) - Phoenix performance
+- [Domain-Driven Design](ex-so-prla-el__domain-driven-design.md) - Phoenix contexts
 
 ## Sources
 

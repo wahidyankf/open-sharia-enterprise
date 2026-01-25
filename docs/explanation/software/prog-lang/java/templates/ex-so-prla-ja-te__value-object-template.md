@@ -9,7 +9,7 @@ tags:
   - value-object
   - immutability
 related:
-  - ex-so-stla-ja-te__entity-template.md
+  - ex-so-prla-ja-te__entity-template.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -613,12 +613,12 @@ public final class Money {
 
 ## Related Templates
 
-- [Entity Template](./ex-so-stla-ja-te__entity-template.md)
-- [Aggregate Template](./ex-so-stla-ja-te__aggregate-template.md)
+- [Entity Template](./ex-so-prla-ja-te__entity-template.md)
+- [Aggregate Template](./ex-so-prla-ja-te__aggregate-template.md)
 
 ## See Also
 
-- [Immutability Best Practices](../ex-so-stla-ja__functional-programming.md)
+- [Immutability Best Practices](../ex-so-prla-ja__functional-programming.md)
 
 ---
 

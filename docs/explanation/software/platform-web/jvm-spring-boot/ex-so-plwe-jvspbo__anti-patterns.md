@@ -2,7 +2,7 @@
 title: "Spring Boot Anti-Patterns"
 description: Common Spring Boot mistakes and problematic patterns to avoid
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - spring-boot
   - anti-patterns
@@ -10,8 +10,8 @@ tags:
   - mistakes
   - avoid
 related:
-  - ./ex-so-stli-jvspbo__idioms.md
-  - ./ex-so-stli-jvspbo__best-practices.md
+  - ./ex-so-plwe-jvspbo__idioms.md
+  - ./ex-so-plwe-jvspbo__best-practices.md
 last_updated: 2026-01-25
 ---
 
@@ -1139,10 +1139,10 @@ class ZakatCalculationIntegrationTest {
 
 ## Related Documentation
 
-- **[Spring Boot Idioms](./ex-so-stli-jvspbo__idioms.md)** - Correct patterns
-- **[Spring Boot Best Practices](./ex-so-stli-jvspbo__best-practices.md)** - Production standards
-- **[Java Anti-Patterns](../../stack-lang/java/ex-so-stla-ja__anti-patterns.md)** - Java mistakes
-- **[Testing](./ex-so-stli-jvspbo__testing.md)** - Testing strategies
+- **[Spring Boot Idioms](./ex-so-plwe-jvspbo__idioms.md)** - Correct patterns
+- **[Spring Boot Best Practices](./ex-so-plwe-jvspbo__best-practices.md)** - Production standards
+- **[Java Anti-Patterns](../../prog-lang/java/ex-so-prla-ja__anti-patterns.md)** - Java mistakes
+- **[Testing](./ex-so-plwe-jvspbo__testing.md)** - Testing strategies
 
 ---
 

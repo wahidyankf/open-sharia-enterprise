@@ -2,7 +2,7 @@
 title: "TypeScript Idioms"
 description: TypeScript-specific patterns and conventions for writing idiomatic code
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - idioms
@@ -12,10 +12,10 @@ tags:
   - typescript-5.0
   - type-safety
 related:
-  - ./ex-so-stla-ts__best-practices.md
-  - ./ex-so-stla-ts__type-safety.md
-  - ./ex-so-stla-ts__interfaces-and-types.md
-  - ./ex-so-stla-ts__anti-patterns.md
+  - ./ex-so-prla-ts__best-practices.md
+  - ./ex-so-prla-ts__type-safety.md
+  - ./ex-so-prla-ts__interfaces-and-types.md
+  - ./ex-so-prla-ts__anti-patterns.md
   - ../../../../../governance/development/pattern/functional-programming.md
 principles:
   - explicit-over-implicit
@@ -117,10 +117,10 @@ type Rate = (typeof RATES)[keyof typeof RATES];
 
 ### Related Documentation
 
-- [Best Practices](./ex-so-stla-ts__best-practices.md)
-- [Type Safety](./ex-so-stla-ts__type-safety.md)
-- [Interfaces and Types](./ex-so-stla-ts__interfaces-and-types.md)
-- [Anti-Patterns](./ex-so-stla-ts__anti-patterns.md)
+- [Best Practices](./ex-so-prla-ts__best-practices.md)
+- [Type Safety](./ex-so-prla-ts__type-safety.md)
+- [Interfaces and Types](./ex-so-prla-ts__interfaces-and-types.md)
+- [Anti-Patterns](./ex-so-prla-ts__anti-patterns.md)
 
 ## Overview
 
@@ -1476,10 +1476,10 @@ function handlePayment(payment: Payment): void {
 
 ### TypeScript Core
 
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
-- **[TypeScript Type Safety](./ex-so-stla-ts__type-safety.md)** - Advanced type system
-- **[TypeScript Interfaces and Types](./ex-so-stla-ts__interfaces-and-types.md)** - Type definitions
-- **[TypeScript Anti-Patterns](./ex-so-stla-ts__anti-patterns.md)** - Mistakes to avoid
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards
+- **[TypeScript Type Safety](./ex-so-prla-ts__type-safety.md)** - Advanced type system
+- **[TypeScript Interfaces and Types](./ex-so-prla-ts__interfaces-and-types.md)** - Type definitions
+- **[TypeScript Anti-Patterns](./ex-so-prla-ts__anti-patterns.md)** - Mistakes to avoid
 
 ### Development Practices
 

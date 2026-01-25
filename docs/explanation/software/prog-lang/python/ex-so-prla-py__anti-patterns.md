@@ -2,7 +2,7 @@
 title: Python Anti-Patterns
 description: Comprehensive Python anti-patterns including mutable defaults, database sessions, async/await, type hints, financial precision, class design, performance, and Islamic finance-specific pitfalls
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - anti-patterns
@@ -15,9 +15,9 @@ tags:
   - financial
   - performance
 related:
-  - ./ex-so-stla-py__best-practices.md
-  - ./ex-so-stla-py__idioms.md
-  - ./ex-so-stla-py__error-handling.md
+  - ./ex-so-prla-py__best-practices.md
+  - ./ex-so-prla-py__idioms.md
+  - ./ex-so-prla-py__error-handling.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -3814,9 +3814,9 @@ py-spy top --pid <PID>
 
 ### Related Documentation
 
-- [Best Practices](./ex-so-stla-py__best-practices.md) - Coding standards
-- [Idioms](./ex-so-stla-py__idioms.md) - Pythonic patterns
-- [Error Handling](./ex-so-stla-py__error-handling.md) - Exception patterns
+- [Best Practices](./ex-so-prla-py__best-practices.md) - Coding standards
+- [Idioms](./ex-so-prla-py__idioms.md) - Pythonic patterns
+- [Error Handling](./ex-so-prla-py__error-handling.md) - Exception patterns
 
 ### Books
 

@@ -2,7 +2,7 @@
 title: Java Security Best Practices
 description: Security practices in Java including cryptography, authentication, input validation, and vulnerability management
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - security
@@ -14,7 +14,7 @@ tags:
   - java-21
   - java-25
 related:
-  - ./ex-so-stla-ja__best-practices.md
+  - ./ex-so-prla-ja__best-practices.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -40,14 +40,14 @@ last_updated: 2026-01-24
 
 **Related Documentation:**
 
-- [Java Idioms](./ex-so-stla-ja__idioms.md) - Secure coding patterns
-- [Best Practices](./ex-so-stla-ja__best-practices.md) - General development guidelines
-- [Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Security anti-patterns
-- [Performance](./ex-so-stla-ja__performance.md) - Security vs performance trade-offs
+- [Java Idioms](./ex-so-prla-ja__idioms.md) - Secure coding patterns
+- [Best Practices](./ex-so-prla-ja__best-practices.md) - General development guidelines
+- [Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) - Security anti-patterns
+- [Performance](./ex-so-prla-ja__performance.md) - Security vs performance trade-offs
 
 **Version Navigation:**
 
-← [Java 17](./ex-so-stla-ja__release-17.md) | [Java 21](./ex-so-stla-ja__release-21.md) | [Java 25](./ex-so-stla-ja__release-25.md) →
+← [Java 17](./ex-so-prla-ja__release-17.md) | [Java 21](./ex-so-prla-ja__release-21.md) | [Java 25](./ex-so-prla-ja__release-25.md) →
 
 ---
 

@@ -2,7 +2,7 @@
 title: Python 3.12 Release Features
 description: Python 3.12 stable maintenance features including f-string improvements (PEP 701), override decorator (PEP 698), comprehension inlining (PEP 709), per-interpreter GIL, type system updates, and enhanced error messages for financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - python-3.12
@@ -13,9 +13,9 @@ tags:
   - error-messages
   - release-notes
 related:
-  - ./ex-so-stla-py__release-3.11.md
-  - ./ex-so-stla-py__release-3.14.md
-  - ./ex-so-stla-py__type-safety.md
+  - ./ex-so-prla-py__release-3.11.md
+  - ./ex-so-prla-py__release-3.14.md
+  - ./ex-so-prla-py__type-safety.md
 principles:
   - explicit-over-implicit
   - measure-first-optimize-later
@@ -778,9 +778,9 @@ else:
 
 ### Related Documentation
 
-- [Python 3.11 Release](./ex-so-stla-py__release-3.11.md) - Baseline version
-- [Python 3.14 Release](./ex-so-stla-py__release-3.14.md) - Latest stable version
-- [Type Safety](./ex-so-stla-py__type-safety.md) - Type hints and validation
+- [Python 3.11 Release](./ex-so-prla-py__release-3.11.md) - Baseline version
+- [Python 3.14 Release](./ex-so-prla-py__release-3.14.md) - Latest stable version
+- [Type Safety](./ex-so-prla-py__type-safety.md) - Type hints and validation
 
 ### Release Timeline
 

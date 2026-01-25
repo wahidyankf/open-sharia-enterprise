@@ -2,7 +2,7 @@
 title: Python 3.14 Release Features
 description: Python 3.14 new features including experimental free-threaded mode (no-GIL), improved REPL with multiline editing, type system enhancements (PEP 705, PEP 742), performance improvements, and dead battery removal for financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - python-3.14
@@ -13,9 +13,9 @@ tags:
   - performance
   - release-notes
 related:
-  - ./ex-so-stla-py__concurrency-and-parallelism.md
-  - ./ex-so-stla-py__type-safety.md
-  - ./ex-so-stla-py__performance.md
+  - ./ex-so-prla-py__concurrency-and-parallelism.md
+  - ./ex-so-prla-py__type-safety.md
+  - ./ex-so-prla-py__performance.md
 principles:
   - measure-first-optimize-later
   - explicit-over-implicit
@@ -681,9 +681,9 @@ else:
 
 ### Related Documentation
 
-- [Concurrency and Parallelism](./ex-so-stla-py__concurrency-and-parallelism.md) - Threading and GIL
-- [Type Safety](./ex-so-stla-py__type-safety.md) - Type hints and mypy
-- [Performance](./ex-so-stla-py__performance.md) - Performance optimization
+- [Concurrency and Parallelism](./ex-so-prla-py__concurrency-and-parallelism.md) - Threading and GIL
+- [Type Safety](./ex-so-prla-py__type-safety.md) - Type hints and mypy
+- [Performance](./ex-so-prla-py__performance.md) - Performance optimization
 
 ### Release Timeline
 

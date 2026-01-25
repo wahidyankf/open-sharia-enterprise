@@ -20,8 +20,8 @@ tags:
 related:
   - aggregate-template.md
   - entity-template.md
-  - ex-so-stla-go__domain-driven-design.md
-  - ex-so-stla-go__concurrency.md
+  - ex-so-prla-go__domain-driven-design.md
+  - ex-so-prla-go__concurrency.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -2075,13 +2075,13 @@ func TestEventReplay_Idempotency(t *testing.T) {
 
 ### Golang Best Practices
 
-- [Go Best Practices](../ex-so-stla-go__best-practices.md) - Go-specific coding standards
-- [Go Idioms](../ex-so-stla-go__idioms.md) - Idiomatic Go patterns
-- [Go Concurrency and Parallelism](../ex-so-stla-go__concurrency-and-parallelism.md) - Goroutines and channels for async event processing
+- [Go Best Practices](../ex-so-prla-go__best-practices.md) - Go-specific coding standards
+- [Go Idioms](../ex-so-prla-go__idioms.md) - Idiomatic Go patterns
+- [Go Concurrency and Parallelism](../ex-so-prla-go__concurrency-and-parallelism.md) - Goroutines and channels for async event processing
 
 ### Domain-Driven Design
 
-- [DDD in Go](../ex-so-stla-go__domain-driven-design.md) - Complete DDD patterns in Go
+- [DDD in Go](../ex-so-prla-go__domain-driven-design.md) - Complete DDD patterns in Go
 
 ### Related Concepts
 

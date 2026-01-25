@@ -2,7 +2,7 @@
 title: Python Linting and Formatting
 description: Python code quality tools including Ruff fast linter, Black formatter, mypy type checker, and CI/CD integration for automated quality enforcement
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - linting
@@ -13,8 +13,8 @@ tags:
   - mypy
   - pylint
 related:
-  - ./ex-so-stla-py__best-practices.md
-  - ./ex-so-stla-py__type-safety.md
+  - ./ex-so-prla-py__best-practices.md
+  - ./ex-so-prla-py__type-safety.md
 principles:
   - automation-over-manual
   - quality-first
@@ -578,8 +578,8 @@ jobs:
 
 ### Related Documentation
 
-- [Best Practices](./ex-so-stla-py__best-practices.md) - Coding standards
-- [Type Safety](./ex-so-stla-py__type-safety.md) - Type hints
+- [Best Practices](./ex-so-prla-py__best-practices.md) - Coding standards
+- [Type Safety](./ex-so-prla-py__type-safety.md) - Type hints
 
 ---
 

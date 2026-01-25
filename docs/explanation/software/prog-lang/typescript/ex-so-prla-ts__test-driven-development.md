@@ -2,7 +2,7 @@
 title: "TypeScript Test-Driven Development"
 description: TDD practices and testing frameworks for TypeScript
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - tdd
@@ -12,8 +12,8 @@ tags:
   - unit-testing
   - integration-testing
 related:
-  - ./ex-so-stla-ts__best-practices.md
-  - ./ex-so-stla-ts__behaviour-driven-development.md
+  - ./ex-so-prla-ts__best-practices.md
+  - ./ex-so-prla-ts__behaviour-driven-development.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -772,8 +772,8 @@ export default defineConfig({
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
-- **[TypeScript BDD](./ex-so-stla-ts__behaviour-driven-development.md)** - BDD patterns
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards
+- **[TypeScript BDD](./ex-so-prla-ts__behaviour-driven-development.md)** - BDD patterns
 
 ---
 

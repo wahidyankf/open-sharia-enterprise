@@ -2,7 +2,7 @@
 title: "Elixir Security"
 description: Defense-in-depth security for Elixir applications including input validation, authentication, authorization, secure communication, and data protection
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - security
@@ -14,9 +14,9 @@ tags:
   - csrf-protection
   - data-encryption
 related:
-  - ./ex-so-stla-el__best-practices.md
-  - ./ex-so-stla-el__web-services.md
-  - ./ex-so-stla-el__anti-patterns.md
+  - ./ex-so-prla-el__best-practices.md
+  - ./ex-so-prla-el__web-services.md
+  - ./ex-so-prla-el__anti-patterns.md
 principles:
   - security-first
   - explicit-over-implicit
@@ -1396,10 +1396,10 @@ end
 
 ## Related Topics
 
-- [Web Services](ex-so-stla-el__web-services.md) - Phoenix security features
-- [Error Handling](ex-so-stla-el__error-handling.md) - Secure error messages
-- [Testing](ex-so-stla-el__test-driven-development.md) - Security testing
-- [Dependencies](ex-so-stla-el__dependencies.md) - Dependency security
+- [Web Services](ex-so-prla-el__web-services.md) - Phoenix security features
+- [Error Handling](ex-so-prla-el__error-handling.md) - Secure error messages
+- [Testing](ex-so-prla-el__test-driven-development.md) - Security testing
+- [Dependencies](ex-so-prla-el__modules-and-dependencies.md) - Dependency security
 
 ## Sources
 

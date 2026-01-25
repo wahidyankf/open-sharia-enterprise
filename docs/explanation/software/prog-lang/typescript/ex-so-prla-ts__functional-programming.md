@@ -2,7 +2,7 @@
 title: "TypeScript Functional Programming"
 description: Functional programming patterns and practices in TypeScript
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - functional-programming
@@ -10,8 +10,8 @@ tags:
   - immutability
   - composition
 related:
-  - ./ex-so-stla-ts__best-practices.md
-  - ./ex-so-stla-ts__idioms.md
+  - ./ex-so-prla-ts__best-practices.md
+  - ./ex-so-prla-ts__idioms.md
   - ../../../../../governance/development/pattern/functional-programming.md
 principles:
   - immutability
@@ -229,7 +229,7 @@ function mapEither<L, R, S>(either: Either<L, R>, fn: (value: R) => S): Either<L
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards
 - **[Functional Programming Principle](../../../../../governance/development/pattern/functional-programming.md)** - FP principles
 
 ---

@@ -2,7 +2,7 @@
 title: "Elixir Best Practices"
 description: Collective wisdom of the Elixir community for building maintainable, testable, and idiomatic production systems
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - best-practices
@@ -14,10 +14,10 @@ tags:
   - testing
   - code-organization
 related:
-  - ./ex-so-stla-el__anti-patterns.md
-  - ./ex-so-stla-el__otp-genserver.md
-  - ./ex-so-stla-el__otp-supervisor.md
-  - ./ex-so-stla-el__test-driven-development.md
+  - ./ex-so-prla-el__anti-patterns.md
+  - ./ex-so-prla-el__otp-genserver.md
+  - ./ex-so-prla-el__otp-supervisor.md
+  - ./ex-so-prla-el__test-driven-development.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -170,7 +170,7 @@ end
 
 **Islamic Finance Application**: Automated Zakat calculation verification ensures consistent nisab threshold checking across all transactions, preventing manual miscalculations that could lead to underpayment (haram). ExCoveralls enforces 80% test coverage.
 
-**See Also**: [Elixir Linting and Formatting](./ex-so-stla-el__linting-and-formatting.md)
+**See Also**: [Elixir Linting and Formatting](./ex-so-prla-el__linting-and-formatting.md)
 
 ### 2. Explicit Over Implicit
 
@@ -2708,12 +2708,12 @@ Use this checklist to ensure your Elixir code follows best practices:
 
 ## Related Topics
 
-- [Idioms](./ex-so-stla-el__idioms.md) - Elixir patterns and idioms
-- [Anti-Patterns](./ex-so-stla-el__anti-patterns.md) - Common mistakes to avoid
-- [OTP GenServer](./ex-so-stla-el__otp-genserver.md) - Deep dive into GenServer
-- [OTP Supervisor](./ex-so-stla-el__otp-supervisor.md) - Supervision tree patterns
-- [Domain-Driven Design](./ex-so-stla-el__domain-driven-design.md) - DDD in Elixir
-- [Test-Driven Development](./ex-so-stla-el__test-driven-development.md) - Testing strategies
+- [Idioms](./ex-so-prla-el__idioms.md) - Elixir patterns and idioms
+- [Anti-Patterns](./ex-so-prla-el__anti-patterns.md) - Common mistakes to avoid
+- [OTP GenServer](./ex-so-prla-el__otp-genserver.md) - Deep dive into GenServer
+- [OTP Supervisor](./ex-so-prla-el__otp-supervisor.md) - Supervision tree patterns
+- [Domain-Driven Design](./ex-so-prla-el__domain-driven-design.md) - DDD in Elixir
+- [Test-Driven Development](./ex-so-prla-el__test-driven-development.md) - Testing strategies
 
 ## Sources
 

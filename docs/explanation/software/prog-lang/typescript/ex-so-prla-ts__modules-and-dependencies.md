@@ -2,7 +2,7 @@
 title: "TypeScript Modules and Dependencies"
 description: Module systems and dependency management in TypeScript
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - modules
@@ -11,7 +11,7 @@ tags:
   - pnpm
   - bun
 related:
-  - ./ex-so-stla-ts__best-practices.md
+  - ./ex-so-prla-ts__best-practices.md
   - ../../../../../governance/principles/software-engineering/reproducibility.md
 principles:
   - reproducibility
@@ -342,7 +342,7 @@ packages:
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards
 - **[Reproducibility Principle](../../../../../governance/principles/software-engineering/reproducibility.md)** - Reproducible builds
 
 ---

@@ -2,7 +2,7 @@
 title: Go Domain-Driven Design
 description: Domain-Driven Design patterns in Go including entities, value objects, aggregates, repositories, and bounded contexts
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - golang
   - ddd
@@ -18,8 +18,8 @@ tags:
   - go-1.24
   - go-1.25
 related:
-  - ./ex-so-stla-go__best-practices.md
-  - ./ex-so-stla-go__idioms.md
+  - ./ex-so-prla-go__best-practices.md
+  - ./ex-so-prla-go__idioms.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -40,8 +40,8 @@ Domain-Driven Design is a software design approach that focuses on modeling soft
 
 **Related Documentation**:
 
-- [Best Practices](./ex-so-stla-go__best-practices.md)
-- [Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md)
+- [Best Practices](./ex-so-prla-go__best-practices.md)
+- [Interfaces and Composition](./ex-so-prla-go__interfaces-and-composition.md)
 
 ## DDD Fundamentals
 
@@ -1311,8 +1311,8 @@ Domain-Driven Design in Go emphasizes:
 
 **Related Documentation**:
 
-- Read [Best Practices](./ex-so-stla-go__best-practices.md)
-- Explore [Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md)
+- Read [Best Practices](./ex-so-prla-go__best-practices.md)
+- Explore [Interfaces and Composition](./ex-so-prla-go__interfaces-and-composition.md)
 
 ---
 

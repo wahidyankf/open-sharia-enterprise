@@ -2,7 +2,7 @@
 title: Elixir DDD Templates
 description: Production-ready Domain-Driven Design templates adapted for Elixir's functional programming model
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - templates
@@ -17,7 +17,7 @@ updated: 2026-01-25
 
 **Category**: DDD Templates
 **Elixir Version**: 1.19.0+
-**Related**: [Domain-Driven Design](../ex-so-stla-el__domain-driven-design.md)
+**Related**: [Domain-Driven Design](../ex-so-prla-el__domain-driven-design.md)
 
 ## Overview
 
@@ -624,7 +624,7 @@ end
 ### Related Documentation
 
 - [Back to Elixir README](../README.md)
-- [Domain-Driven Design](../ex-so-stla-el__domain-driven-design.md)
+- [Domain-Driven Design](../ex-so-prla-el__domain-driven-design.md)
 - [Ecto Schema](https://hexdocs.pm/ecto/Ecto.Schema.html)
 - [Phoenix Contexts](https://hexdocs.pm/phoenix/contexts.html)
 

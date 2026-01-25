@@ -2,7 +2,7 @@
 title: Repository Template
 description: Copy-paste ready Python repository template with async database access, SQLAlchemy ORM, and persistence patterns for domain-driven design in Sharia-compliant financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - template
@@ -11,7 +11,7 @@ tags:
   - sqlalchemy
   - async
 related:
-  - ../ex-so-stla-py__domain-driven-design.md
+  - ../ex-so-prla-py__domain-driven-design.md
   - ./entity-template.md
   - ./aggregate-template.md
 principles:
@@ -211,7 +211,7 @@ class ZakatRecordModel(Base):  # ORM
 
 ## References
 
-- [Domain-Driven Design](../ex-so-stla-py__domain-driven-design.md)
+- [Domain-Driven Design](../ex-so-prla-py__domain-driven-design.md)
 
 ---
 

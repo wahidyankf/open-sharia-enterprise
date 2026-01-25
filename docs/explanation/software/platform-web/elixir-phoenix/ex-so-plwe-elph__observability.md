@@ -2,7 +2,7 @@
 title: Phoenix Observability Guide
 description: Comprehensive guide to logging, metrics, telemetry, tracing, health checks, and monitoring for Phoenix applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - elixir
@@ -13,9 +13,9 @@ tags:
   - tracing
   - monitoring
 related:
-  - ex-so-stli-elph__performance.md
-  - ex-so-stli-elph__deployment.md
-  - ex-so-stli-elph__channels.md
+  - ex-so-plwe-elph__performance.md
+  - ex-so-plwe-elph__deployment.md
+  - ex-so-plwe-elph__channels.md
 last_updated: 2026-01-25
 ---
 
@@ -1463,7 +1463,7 @@ end
 
 ## Related Documentation
 
-- **[Performance](./ex-so-stli-elph__performance.md)** - Performance optimization and monitoring
-- **[Deployment](./ex-so-stli-elph__deployment.md)** - Production deployment with health checks
-- **[Security](./ex-so-stli-elph__security.md)** - Security monitoring and audit logging
-- **[Testing](./ex-so-stli-elph__testing.md)** - Testing observability instrumentation
+- **[Performance](./ex-so-plwe-elph__performance.md)** - Performance optimization and monitoring
+- **[Deployment](./ex-so-plwe-elph__deployment.md)** - Production deployment with health checks
+- **[Security](./ex-so-plwe-elph__security.md)** - Security monitoring and audit logging
+- **[Testing](./ex-so-plwe-elph__testing.md)** - Testing observability instrumentation

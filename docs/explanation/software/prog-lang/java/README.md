@@ -2,7 +2,7 @@
 title: Java
 description: Modern Java idioms, best practices, and antipatterns (Java 17+)
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - programming-languages
@@ -42,19 +42,19 @@ Java is a primary language for backend services, domain-driven design implementa
 
 All Java code MUST follow the standards documented here:
 
-1. **[Idioms](./ex-so-stla-ja__idioms.md)** - Java-specific patterns and conventions
-2. **[Best Practices](./ex-so-stla-ja__best-practices.md)** - Clean code standards
-3. **[Anti-Patterns](./ex-so-stla-ja__anti-patterns.md)** - Common mistakes to avoid
+1. **[Idioms](./ex-so-prla-ja__idioms.md)** - Java-specific patterns and conventions
+2. **[Best Practices](./ex-so-prla-ja__best-practices.md)** - Clean code standards
+3. **[Anti-Patterns](./ex-so-prla-ja__anti-patterns.md)** - Common mistakes to avoid
 
 **For Agents**: Reference this documentation when writing Java code. The `swe-programming-java` skill provides quick access to these standards.
 
 ### Quick Standards Reference
 
-- **Naming Conventions**: See [Best Practices - Code Organization](./ex-so-stla-ja__best-practices.md#code-organization)
-- **Error Handling**: See [Error Handling](./ex-so-stla-ja__error-handling.md)
-- **Type Safety**: See [Type Safety](./ex-so-stla-ja__type-safety.md)
-- **Testing Standards**: See [Test-Driven Development](./ex-so-stla-ja__test-driven-development.md)
-- **Security Practices**: See [Security](./ex-so-stla-ja__security.md)
+- **Naming Conventions**: See [Best Practices - Code Organization](./ex-so-prla-ja__best-practices.md#code-organization)
+- **Error Handling**: See [Error Handling](./ex-so-prla-ja__error-handling.md)
+- **Type Safety**: See [Type Safety](./ex-so-prla-ja__type-safety.md)
+- **Testing Standards**: See [Test-Driven Development](./ex-so-prla-ja__test-driven-development.md)
+- **Security Practices**: See [Security](./ex-so-prla-ja__security.md)
 
 **Related**: [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
 
@@ -68,7 +68,7 @@ Java development in this platform follows the five software engineering principl
 4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Java supports through functional interfaces, streams, and functional core architecture
 5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Java enables through version pinning, Maven wrapper, dependency management
 
-**See Also**: [Functional Programming](./ex-so-stla-ja__functional-programming.md) for pure functions and immutability patterns, [Best Practices](./ex-so-stla-ja__best-practices.md) for explicit coding standards.
+**See Also**: [Functional Programming](./ex-so-prla-ja__functional-programming.md) for pure functions and immutability patterns, [Best Practices](./ex-so-prla-ja__best-practices.md) for explicit coding standards.
 
 ## Quick Reference
 
@@ -88,28 +88,28 @@ Java development in this platform follows the five software engineering principl
 
 **Core Documentation:**
 
-- [Best Practices](./ex-so-stla-ja__best-practices.md) - Modern Java coding standards
-- [Idioms](./ex-so-stla-ja__idioms.md) - Modern Java patterns (records, sealed classes, pattern matching)
-- [Error Handling](./ex-so-stla-ja__error-handling.md) - Exception handling and resilience
-- [Type Safety](./ex-so-stla-ja__type-safety.md) - Sealed types and compile-time safety
-- [Functional Programming](./ex-so-stla-ja__functional-programming.md) - Pure functions and immutability
-- [Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md) - Virtual threads and structured concurrency
-- [Interfaces and Polymorphism](./ex-so-stla-ja__interfaces-and-polymorphism.md) - Interface design and explicit polymorphism
-- [Memory Management](./ex-so-stla-ja__memory-management.md) - JVM internals and GC tuning
-- [Modules and Dependencies](./ex-so-stla-ja__modules-and-dependencies.md) - JPMS and Maven/Gradle
-- [Web Services](./ex-so-stla-ja__web-services.md) - REST, GraphQL, gRPC, and API security
-- [Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md) - DDD patterns in Java
-- [Security](./ex-so-stla-ja__security.md) - Secure coding practices
-- [Performance](./ex-so-stla-ja__performance.md) - Optimization techniques
-- [Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Common mistakes to avoid
-- [Test-Driven Development](./ex-so-stla-ja__test-driven-development.md) - TDD with JUnit 5
-- [Behaviour-Driven Development](./ex-so-stla-ja__behaviour-driven-development.md) - BDD with Cucumber
+- [Best Practices](./ex-so-prla-ja__best-practices.md) - Modern Java coding standards
+- [Idioms](./ex-so-prla-ja__idioms.md) - Modern Java patterns (records, sealed classes, pattern matching)
+- [Error Handling](./ex-so-prla-ja__error-handling.md) - Exception handling and resilience
+- [Type Safety](./ex-so-prla-ja__type-safety.md) - Sealed types and compile-time safety
+- [Functional Programming](./ex-so-prla-ja__functional-programming.md) - Pure functions and immutability
+- [Concurrency](./ex-so-prla-ja__concurrency-and-parallelism.md) - Virtual threads and structured concurrency
+- [Interfaces and Polymorphism](./ex-so-prla-ja__interfaces-and-polymorphism.md) - Interface design and explicit polymorphism
+- [Memory Management](./ex-so-prla-ja__memory-management.md) - JVM internals and GC tuning
+- [Modules and Dependencies](./ex-so-prla-ja__modules-and-dependencies.md) - JPMS and Maven/Gradle
+- [Web Services](./ex-so-prla-ja__web-services.md) - REST, GraphQL, gRPC, and API security
+- [Domain-Driven Design](./ex-so-prla-ja__domain-driven-design.md) - DDD patterns in Java
+- [Security](./ex-so-prla-ja__security.md) - Secure coding practices
+- [Performance](./ex-so-prla-ja__performance.md) - Optimization techniques
+- [Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) - Common mistakes to avoid
+- [Test-Driven Development](./ex-so-prla-ja__test-driven-development.md) - TDD with JUnit 5
+- [Behaviour-Driven Development](./ex-so-prla-ja__behaviour-driven-development.md) - BDD with Cucumber
 
 **Release Documentation:**
 
-- [Java 17 LTS](./ex-so-stla-ja__release-17.md) - Sealed classes, pattern matching
-- [Java 21 LTS](./ex-so-stla-ja__release-21.md) - Virtual threads, structured concurrency
-- [Java 25 LTS](./ex-so-stla-ja__release-25.md) - Stream Gatherers, Scoped Values
+- [Java 17 LTS](./ex-so-prla-ja__release-17.md) - Sealed classes, pattern matching
+- [Java 21 LTS](./ex-so-prla-ja__release-21.md) - Virtual threads, structured concurrency
+- [Java 25 LTS](./ex-so-prla-ja__release-25.md) - Stream Gatherers, Scoped Values
 
 ## Java Version Strategy
 
@@ -174,7 +174,7 @@ timeline
 
 ## Documentation Structure
 
-### [Java Idioms](./ex-so-stla-ja__idioms.md)
+### [Java Idioms](./ex-so-prla-ja__idioms.md)
 
 Language-specific patterns and conventions for writing idiomatic Java code.
 
@@ -189,7 +189,7 @@ Language-specific patterns and conventions for writing idiomatic Java code.
 - Text blocks for multi-line strings
 - Sealed classes for domain modeling
 
-### [Java Best Practices](./ex-so-stla-ja__best-practices.md)
+### [Java Best Practices](./ex-so-prla-ja__best-practices.md)
 
 Proven approaches for writing clean, maintainable Java code based on 2025-2026 standards.
 
@@ -204,7 +204,7 @@ Proven approaches for writing clean, maintainable Java code based on 2025-2026 s
 - Security practices
 - Modern framework usage
 
-### [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md)
+### [Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md)
 
 Common mistakes, pitfalls, and problematic patterns to avoid in Java development.
 
@@ -250,7 +250,7 @@ flowchart TD
 
 Comprehensive guides to major Java LTS releases, documenting important features and changes:
 
-#### [Java 17 LTS Release](./ex-so-stla-ja__release-17.md)
+#### [Java 17 LTS Release](./ex-so-prla-ja__release-17.md)
 
 Released September 2021. Minimum required version for the platform.
 
@@ -262,7 +262,7 @@ Released September 2021. Minimum required version for the platform.
 - Enhanced pseudo-random number generators
 - macOS/AArch64 support (Apple Silicon)
 
-#### [Java 21 LTS Release](./ex-so-stla-ja__release-21.md)
+#### [Java 21 LTS Release](./ex-so-prla-ja__release-21.md)
 
 Released September 2023. Recommended target version.
 
@@ -276,7 +276,7 @@ Released September 2023. Recommended target version.
 - Scoped values (preview)
 - Structured concurrency (preview)
 
-#### [Java 25 LTS Release](./ex-so-stla-ja__release-25.md)
+#### [Java 25 LTS Release](./ex-so-prla-ja__release-25.md)
 
 Released September 2025. Latest LTS version with focus on performance.
 
@@ -295,7 +295,7 @@ Released September 2025. Latest LTS version with focus on performance.
 
 Deep-dive documentation on critical Java development areas:
 
-#### [Java Security](./ex-so-stla-ja__security.md)
+#### [Java Security](./ex-so-prla-ja__security.md)
 
 Comprehensive guide to building secure Java applications aligned with OWASP guidelines.
 
@@ -310,7 +310,7 @@ Comprehensive guide to building secure Java applications aligned with OWASP guid
 - Audit logging (financial compliance)
 - Modern Java security features (sealed classes, pattern matching)
 
-#### [Java Performance](./ex-so-stla-ja__performance.md)
+#### [Java Performance](./ex-so-prla-ja__performance.md)
 
 Comprehensive guide to JVM tuning, optimization, and performance engineering.
 
@@ -325,7 +325,7 @@ Comprehensive guide to JVM tuning, optimization, and performance engineering.
 - Profiling tools (JFR, async-profiler, JMH)
 - Modern Java performance features (virtual threads impact, generational GC)
 
-#### [Java Concurrency and Parallelism](./ex-so-stla-ja__concurrency-and-parallelism.md)
+#### [Java Concurrency and Parallelism](./ex-so-prla-ja__concurrency-and-parallelism.md)
 
 Comprehensive guide to concurrent and parallel programming in modern Java.
 
@@ -341,7 +341,7 @@ Comprehensive guide to concurrent and parallel programming in modern Java.
 - Common concurrency problems (deadlocks, race conditions)
 - Modern patterns (Scoped Values, CompletableFuture)
 
-#### [Java Type Safety](./ex-so-stla-ja__type-safety.md)
+#### [Java Type Safety](./ex-so-prla-ja__type-safety.md)
 
 Comprehensive guide to achieving type safety and minimizing runtime errors in Java.
 
@@ -356,7 +356,7 @@ Comprehensive guide to achieving type safety and minimizing runtime errors in Ja
 - Records and immutability for compile-time guarantees
 - Phantom types and type-safe builders
 
-#### [Java Functional Programming](./ex-so-stla-ja__functional-programming.md)
+#### [Java Functional Programming](./ex-so-prla-ja__functional-programming.md)
 
 Comprehensive guide to functional programming patterns and practices in Java.
 
@@ -371,7 +371,7 @@ Comprehensive guide to functional programming patterns and practices in Java.
 - Functional core, imperative shell architecture
 - Property-based testing for functional code
 
-#### [Java Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md)
+#### [Java Domain-Driven Design](./ex-so-prla-ja__domain-driven-design.md)
 
 Comprehensive guide to implementing DDD tactical patterns with Java frameworks.
 
@@ -386,7 +386,7 @@ Comprehensive guide to implementing DDD tactical patterns with Java frameworks.
 - Axon Framework for CQRS and event sourcing
 - Spring Boot integration for DDD applications
 
-#### [Java Test-Driven Development](./ex-so-stla-ja__test-driven-development.md)
+#### [Java Test-Driven Development](./ex-so-prla-ja__test-driven-development.md)
 
 Comprehensive guide to TDD practices with JUnit 5, Mockito, and AssertJ.
 
@@ -401,7 +401,7 @@ Comprehensive guide to TDD practices with JUnit 5, Mockito, and AssertJ.
 - Testing domain models (value objects, entities, aggregates)
 - TDD best practices and patterns
 
-#### [Java Behavior-Driven Development](./ex-so-stla-ja__behaviour-driven-development.md)
+#### [Java Behavior-Driven Development](./ex-so-prla-ja__behaviour-driven-development.md)
 
 Comprehensive guide to BDD with Cucumber, Gherkin, and collaborative testing.
 
@@ -416,7 +416,7 @@ Comprehensive guide to BDD with Cucumber, Gherkin, and collaborative testing.
 - Three Amigos and Example Mapping collaboration
 - BDD vs TDD complementary practices
 
-#### [Java Interfaces and Polymorphism](./ex-so-stla-ja__interfaces-and-polymorphism.md)
+#### [Java Interfaces and Polymorphism](./ex-so-prla-ja__interfaces-and-polymorphism.md)
 
 Comprehensive guide to Java's explicit interface system and polymorphism patterns.
 
@@ -432,7 +432,7 @@ Comprehensive guide to Java's explicit interface system and polymorphism pattern
 - Performance considerations (interface dispatch, sealed optimizations)
 - Financial examples: PaymentProcessor, ZakatCalculator, TaxStrategy
 
-#### [Java Memory Management and JVM Internals](./ex-so-stla-ja__memory-management.md)
+#### [Java Memory Management and JVM Internals](./ex-so-prla-ja__memory-management.md)
 
 Comprehensive guide to JVM memory architecture, garbage collection, and optimization.
 
@@ -448,7 +448,7 @@ Comprehensive guide to JVM memory architecture, garbage collection, and optimiza
 - Best practices for hot path optimization
 - Financial examples: Zakat calculation batches, transaction processing
 
-#### [Java Modules and Dependency Management](./ex-so-stla-ja__modules-and-dependencies.md)
+#### [Java Modules and Dependency Management](./ex-so-prla-ja__modules-and-dependencies.md)
 
 Comprehensive guide to Java Platform Module System (JPMS) and dependency management.
 
@@ -464,7 +464,7 @@ Comprehensive guide to Java Platform Module System (JPMS) and dependency managem
 - Best practices (minimal dependency trees, avoid version ranges)
 - Financial examples: Tax calculation modules, payment gateway dependencies
 
-#### [Java Web Services and APIs](./ex-so-stla-ja__web-services.md)
+#### [Java Web Services and APIs](./ex-so-prla-ja__web-services.md)
 
 Comprehensive guide to building web services and APIs with Java's rich ecosystem.
 
@@ -555,7 +555,7 @@ Comprehensive guide to building web services and APIs with Java's rich ecosystem
 
 ### 1. Start with Idioms
 
-Read [Java Idioms](./ex-so-stla-ja__idioms.md) to understand modern Java patterns:
+Read [Java Idioms](./ex-so-prla-ja__idioms.md) to understand modern Java patterns:
 
 - Records for data classes
 - Pattern matching for type checks
@@ -564,7 +564,7 @@ Read [Java Idioms](./ex-so-stla-ja__idioms.md) to understand modern Java pattern
 
 ### 2. Apply Best Practices
 
-Read [Java Best Practices](./ex-so-stla-ja__best-practices.md) to write clean code:
+Read [Java Best Practices](./ex-so-prla-ja__best-practices.md) to write clean code:
 
 - Keep methods and classes focused (10-20 lines per method)
 - Name with intention and clarity
@@ -573,7 +573,7 @@ Read [Java Best Practices](./ex-so-stla-ja__best-practices.md) to write clean co
 
 ### 3. Avoid Anti-Patterns
 
-Read [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) to prevent common mistakes:
+Read [Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) to prevent common mistakes:
 
 - Thread safety issues (SimpleDateFormat, shared state)
 - Resource leaks (unclosed streams, connections)
@@ -1503,30 +1503,30 @@ RUN ./mvnw clean install
 
 ### Core Java Documentation
 
-- **[Java Idioms](./ex-so-stla-ja__idioms.md)** - Modern Java patterns and conventions
-- **[Java Best Practices](./ex-so-stla-ja__best-practices.md)** - Clean code guidelines
-- **[Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md)** - Common mistakes to avoid
+- **[Java Idioms](./ex-so-prla-ja__idioms.md)** - Modern Java patterns and conventions
+- **[Java Best Practices](./ex-so-prla-ja__best-practices.md)** - Clean code guidelines
+- **[Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md)** - Common mistakes to avoid
 
 ### Java Release Documentation
 
-- **[Java 17 LTS Release](./ex-so-stla-ja__release-17.md)** - Baseline version features
-- **[Java 21 LTS Release](./ex-so-stla-ja__release-21.md)** - Recommended version features
-- **[Java 25 LTS Release](./ex-so-stla-ja__release-25.md)** - Latest LTS features
+- **[Java 17 LTS Release](./ex-so-prla-ja__release-17.md)** - Baseline version features
+- **[Java 21 LTS Release](./ex-so-prla-ja__release-21.md)** - Recommended version features
+- **[Java 25 LTS Release](./ex-so-prla-ja__release-25.md)** - Latest LTS features
 
 ### Specialized Topics
 
-- **[Java Security](./ex-so-stla-ja__security.md)** - Secure application development
-- **[Java Performance](./ex-so-stla-ja__performance.md)** - JVM tuning and optimization
-- **[Java Concurrency and Parallelism](./ex-so-stla-ja__concurrency-and-parallelism.md)** - Concurrent programming
-- **[Java Interfaces and Polymorphism](./ex-so-stla-ja__interfaces-and-polymorphism.md)** - Interface design, sealed interfaces, polymorphism patterns
-- **[Java Memory Management](./ex-so-stla-ja__memory-management.md)** - JVM internals, GC algorithms, memory optimization
-- **[Java Modules and Dependencies](./ex-so-stla-ja__modules-and-dependencies.md)** - JPMS, Maven, Gradle, reproducible builds
-- **[Java Web Services](./ex-so-stla-ja__web-services.md)** - REST, GraphQL, gRPC, API security
-- **[Java Type Safety](./ex-so-stla-ja__type-safety.md)** - Null safety, static analysis, compile-time guarantees
-- **[Java Functional Programming](./ex-so-stla-ja__functional-programming.md)** - Pure functions, immutability, Vavr, monads
-- **[Java Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md)** - DDD tactical patterns, Axon, Spring Boot
-- **[Java Test-Driven Development](./ex-so-stla-ja__test-driven-development.md)** - TDD with JUnit 5, Mockito, AssertJ
-- **[Java Behavior-Driven Development](./ex-so-stla-ja__behaviour-driven-development.md)** - BDD with Cucumber, Gherkin
+- **[Java Security](./ex-so-prla-ja__security.md)** - Secure application development
+- **[Java Performance](./ex-so-prla-ja__performance.md)** - JVM tuning and optimization
+- **[Java Concurrency and Parallelism](./ex-so-prla-ja__concurrency-and-parallelism.md)** - Concurrent programming
+- **[Java Interfaces and Polymorphism](./ex-so-prla-ja__interfaces-and-polymorphism.md)** - Interface design, sealed interfaces, polymorphism patterns
+- **[Java Memory Management](./ex-so-prla-ja__memory-management.md)** - JVM internals, GC algorithms, memory optimization
+- **[Java Modules and Dependencies](./ex-so-prla-ja__modules-and-dependencies.md)** - JPMS, Maven, Gradle, reproducible builds
+- **[Java Web Services](./ex-so-prla-ja__web-services.md)** - REST, GraphQL, gRPC, API security
+- **[Java Type Safety](./ex-so-prla-ja__type-safety.md)** - Null safety, static analysis, compile-time guarantees
+- **[Java Functional Programming](./ex-so-prla-ja__functional-programming.md)** - Pure functions, immutability, Vavr, monads
+- **[Java Domain-Driven Design](./ex-so-prla-ja__domain-driven-design.md)** - DDD tactical patterns, Axon, Spring Boot
+- **[Java Test-Driven Development](./ex-so-prla-ja__test-driven-development.md)** - TDD with JUnit 5, Mockito, AssertJ
+- **[Java Behavior-Driven Development](./ex-so-prla-ja__behaviour-driven-development.md)** - BDD with Cucumber, Gherkin
 
 ### Platform Documentation
 

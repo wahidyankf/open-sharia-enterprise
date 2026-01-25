@@ -2,7 +2,7 @@
 title: Go Security Best Practices
 description: Security practices in Go including input validation, cryptography, authentication, and vulnerability management
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - golang
   - security
@@ -17,7 +17,7 @@ tags:
   - go-1.24
   - go-1.25
 related:
-  - ./ex-so-stla-go__best-practices.md
+  - ./ex-so-prla-go__best-practices.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -38,9 +38,9 @@ Security is paramount in modern application development. Go provides robust tool
 
 **Related Documentation**:
 
-- [Best Practices](./ex-so-stla-go__best-practices.md)
-- [Error Handling](./ex-so-stla-go__error-handling.md)
-- [Web Services](./ex-so-stla-go__web-services.md)
+- [Best Practices](./ex-so-prla-go__best-practices.md)
+- [Error Handling](./ex-so-prla-go__error-handling.md)
+- [Web Services](./ex-so-prla-go__web-services.md)
 
 ## Security Fundamentals
 
@@ -2763,9 +2763,9 @@ Security in Go requires:
 
 **Next Steps**:
 
-- Read [Best Practices](./ex-so-stla-go__best-practices.md)
-- Explore [Web Services](./ex-so-stla-go__web-services.md)
-- Study [Error Handling](./ex-so-stla-go__error-handling.md)
+- Read [Best Practices](./ex-so-prla-go__best-practices.md)
+- Explore [Web Services](./ex-so-prla-go__web-services.md)
+- Study [Error Handling](./ex-so-prla-go__error-handling.md)
 
 ---
 

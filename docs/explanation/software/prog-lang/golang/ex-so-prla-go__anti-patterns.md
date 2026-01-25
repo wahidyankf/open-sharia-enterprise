@@ -1,7 +1,7 @@
 title: Go Anti-Patterns
 description: Common mistakes and anti-patterns in Go - what to avoid and why
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
 
 - golang
@@ -4014,10 +4014,10 @@ Before committing:
 
 ### Related Documentation
 
-- [Best Practices](./ex-so-stla-go__best-practices.md) - What to do
-- [Go Idioms](./ex-so-stla-go__idioms.md) - Idiomatic patterns
-- [Error Handling](./ex-so-stla-go__error-handling.md) - Error patterns
-- [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md) - Concurrency patterns
+- [Best Practices](./ex-so-prla-go__best-practices.md) - What to do
+- [Go Idioms](./ex-so-prla-go__idioms.md) - Idiomatic patterns
+- [Error Handling](./ex-so-prla-go__error-handling.md) - Error patterns
+- [Concurrency and Parallelism](./ex-so-prla-go__concurrency-and-parallelism.md) - Concurrency patterns
 
 principles:
 

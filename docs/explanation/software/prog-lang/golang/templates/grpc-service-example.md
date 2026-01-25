@@ -726,9 +726,9 @@ func TestUserService_GetUser(t *testing.T) {
 
 ## Related Documentation
 
-- [Go Web Services](../ex-so-stla-go__web-services.md) - Complete gRPC guide
-- [Go Best Practices](../ex-so-stla-go__best-practices.md) - gRPC best practices
-- [Go Concurrency](../ex-so-stla-go__concurrency-and-parallelism.md) - Streaming patterns
+- [Go Web Services](../ex-so-prla-go__web-services.md) - Complete gRPC guide
+- [Go Best Practices](../ex-so-prla-go__best-practices.md) - gRPC best practices
+- [Go Concurrency](../ex-so-prla-go__concurrency-and-parallelism.md) - Streaming patterns
 
 ---
 

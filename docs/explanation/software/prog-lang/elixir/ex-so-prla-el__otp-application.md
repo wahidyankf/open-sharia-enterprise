@@ -2,7 +2,7 @@
 title: "OTP Application Patterns"
 description: Applications as the fundamental unit of code organization in Elixir/OTP, grouping modules, managing dependencies, and starting supervision trees
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - otp
@@ -14,9 +14,9 @@ tags:
   - genstage
   - broadway
 related:
-  - ./ex-so-stla-el__otp-genserver.md
-  - ./ex-so-stla-el__otp-supervisor.md
-  - ./ex-so-stla-el__concurrency-and-parallelism.md
+  - ./ex-so-prla-el__otp-genserver.md
+  - ./ex-so-prla-el__otp-supervisor.md
+  - ./ex-so-prla-el__concurrency-and-parallelism.md
 principles:
   - modularity
   - explicit-over-implicit
@@ -1467,9 +1467,9 @@ end
 ### Related Documentation
 
 - [Back to Elixir README](README.md)
-- [GenServer Patterns](ex-so-stla-el__otp-genserver.md)
-- [Supervisor Patterns](ex-so-stla-el__otp-supervisor.md)
-- [Concurrency and Parallelism](ex-so-stla-el__concurrency-and-parallelism.md)
+- [GenServer Patterns](ex-so-prla-el__otp-genserver.md)
+- [Supervisor Patterns](ex-so-prla-el__otp-supervisor.md)
+- [Concurrency and Parallelism](ex-so-prla-el__concurrency-and-parallelism.md)
 
 ---
 

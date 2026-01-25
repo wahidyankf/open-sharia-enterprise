@@ -2,7 +2,7 @@
 title: "Elixir 1.19 Release"
 description: Major release with enhanced type checking of protocols and anonymous functions, broader type inference, and up to 4x faster compilation for large projects
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - release-notes
@@ -12,9 +12,9 @@ tags:
   - performance
   - protocols
 related:
-  - ./ex-so-stla-el__release-1.18.md
-  - ./ex-so-stla-el__type-safety.md
-  - ./ex-so-stla-el__performance.md
+  - ./ex-so-prla-el__release-1.18.md
+  - ./ex-so-prla-el__type-safety.md
+  - ./ex-so-prla-el__performance.md
 principles:
   - documentation-first
 last_updated: 2026-01-24
@@ -24,7 +24,7 @@ last_updated: 2026-01-24
 
 **Status**: Current Stable (Released October 16, 2025, latest 1.19.5 as of January 9, 2026)
 **OTP Compatibility**: Erlang/OTP 27.2+
-**Previous Version**: [Elixir 1.18](ex-so-stla-el__release-1.18.md)
+**Previous Version**: [Elixir 1.18](ex-so-prla-el__release-1.18.md)
 
 ## Overview
 
@@ -871,9 +871,9 @@ Negligible for most applications
 ### Related Documentation
 
 - [Back to Elixir README](README.md)
-- [Previous: Elixir 1.17 Release](ex-so-stla-el__release-1.17.md)
-- [Type Safety](ex-so-stla-el__type-safety.md)
-- [Testing](ex-so-stla-el__test-driven-development.md)
+- [Previous: Elixir 1.17 Release](ex-so-prla-el__release-1.17.md)
+- [Type Safety](ex-so-prla-el__type-safety.md)
+- [Testing](ex-so-prla-el__test-driven-development.md)
 
 ---
 

@@ -2,7 +2,7 @@
 title: "Phoenix Idioms"
 description: Phoenix-specific patterns and idiomatic framework usage
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - idioms
@@ -11,8 +11,8 @@ tags:
   - liveview
   - channels
 related:
-  - ./ex-so-stli-elph__best-practices.md
-  - ./ex-so-stli-elph__anti-patterns.md
+  - ./ex-so-plwe-elph__best-practices.md
+  - ./ex-so-plwe-elph__anti-patterns.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -52,11 +52,11 @@ last_updated: 2026-01-25
 
 ### Related Documentation
 
-- [Best Practices](./ex-so-stli-elph__best-practices.md)
-- [Anti-Patterns](./ex-so-stli-elph__anti-patterns.md)
-- [Contexts](./ex-so-stli-elph__contexts.md)
-- [LiveView](./ex-so-stli-elph__liveview.md)
-- [Channels](./ex-so-stli-elph__channels.md)
+- [Best Practices](./ex-so-plwe-elph__best-practices.md)
+- [Anti-Patterns](./ex-so-plwe-elph__anti-patterns.md)
+- [Contexts](./ex-so-plwe-elph__contexts.md)
+- [LiveView](./ex-so-plwe-elph__liveview.md)
+- [Channels](./ex-so-plwe-elph__channels.md)
 
 ## Overview
 
@@ -1120,13 +1120,13 @@ end
 
 ## Related Documentation
 
-- **[Phoenix Best Practices](./ex-so-stli-elph__best-practices.md)** - Production standards
-- **[Phoenix Anti-Patterns](./ex-so-stli-elph__anti-patterns.md)** - Common mistakes
-- **[Contexts](./ex-so-stli-elph__contexts.md)** - Context design patterns
-- **[LiveView](./ex-so-stli-elph__liveview.md)** - LiveView patterns
-- **[Channels](./ex-so-stli-elph__channels.md)** - Real-time communication
-- **[Elixir Idioms](../../stack-lang/elixir/ex-so-stla-el__idioms.md)** - Elixir patterns
-- **[Functional Programming](../../stack-lang/elixir/ex-so-stla-el__functional-programming.md)** - FP patterns in Elixir
+- **[Phoenix Best Practices](./ex-so-plwe-elph__best-practices.md)** - Production standards
+- **[Phoenix Anti-Patterns](./ex-so-plwe-elph__anti-patterns.md)** - Common mistakes
+- **[Contexts](./ex-so-plwe-elph__contexts.md)** - Context design patterns
+- **[LiveView](./ex-so-plwe-elph__liveview.md)** - LiveView patterns
+- **[Channels](./ex-so-plwe-elph__channels.md)** - Real-time communication
+- **[Elixir Idioms](../../prog-lang/elixir/ex-so-prla-el__idioms.md)** - Elixir patterns
+- **[Functional Programming](../../prog-lang/elixir/ex-so-prla-el__functional-programming.md)** - FP patterns in Elixir
 
 ---
 

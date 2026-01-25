@@ -2,7 +2,7 @@
 title: "React Component Architecture"
 description: Component design patterns and architectural approaches for scalable React applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - component-architecture
@@ -10,8 +10,8 @@ tags:
   - composition
   - typescript
 related:
-  - ./ex-so-stli-tsre__idioms.md
-  - ./ex-so-stli-tsre__best-practices.md
+  - ./ex-so-plwe-tsre__idioms.md
+  - ./ex-so-plwe-tsre__best-practices.md
 principles:
   - explicit-over-implicit
   - immutability
@@ -26,10 +26,10 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Idioms](./ex-so-stli-tsre__idioms.md) - React coding patterns
-- [Best Practices](./ex-so-stli-tsre__best-practices.md) - Production standards
-- [State Management](./ex-so-stli-tsre__state-management.md) - State patterns
-- [TypeScript](./ex-so-stli-tsre__typescript.md) - Type safety patterns
+- [Idioms](./ex-so-plwe-tsre__idioms.md) - React coding patterns
+- [Best Practices](./ex-so-plwe-tsre__best-practices.md) - Production standards
+- [State Management](./ex-so-plwe-tsre__state-management.md) - State patterns
+- [TypeScript](./ex-so-plwe-tsre__typescript.md) - Type safety patterns
 
 ## Overview
 
@@ -1020,12 +1020,12 @@ export const DashboardPage: React.FC = () => (
 
 ## Related Documentation
 
-- **[Idioms](./ex-so-stli-tsre__idioms.md)** - React coding patterns
-- **[Best Practices](./ex-so-stli-tsre__best-practices.md)** - Production standards
-- **[State Management](./ex-so-stli-tsre__state-management.md)** - State patterns
-- **[Hooks](./ex-so-stli-tsre__hooks.md)** - React Hooks guide
-- **[Performance](./ex-so-stli-tsre__performance.md)** - Optimization techniques
-- **[Testing](./ex-so-stli-tsre__testing.md)** - Component testing strategies
+- **[Idioms](./ex-so-plwe-tsre__idioms.md)** - React coding patterns
+- **[Best Practices](./ex-so-plwe-tsre__best-practices.md)** - Production standards
+- **[State Management](./ex-so-plwe-tsre__state-management.md)** - State patterns
+- **[Hooks](./ex-so-plwe-tsre__hooks.md)** - React Hooks guide
+- **[Performance](./ex-so-plwe-tsre__performance.md)** - Optimization techniques
+- **[Testing](./ex-so-plwe-tsre__testing.md)** - Component testing strategies
 
 ---
 

@@ -2,7 +2,7 @@
 title: "TypeScript Performance"
 description: Performance optimization and profiling for TypeScript applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - performance
@@ -10,9 +10,9 @@ tags:
   - profiling
   - benchmarking
 related:
-  - ./ex-so-stla-ts__best-practices.md
-  - ./ex-so-stla-ts__memory-management.md
-  - ./ex-so-stla-ts__concurrency-and-parallelism.md
+  - ./ex-so-prla-ts__best-practices.md
+  - ./ex-so-prla-ts__memory-management.md
+  - ./ex-so-prla-ts__concurrency-and-parallelism.md
 principles:
   - automation-over-manual
 last_updated: 2025-01-23
@@ -958,9 +958,9 @@ setInterval(() => {
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
-- **[TypeScript Memory Management](./ex-so-stla-ts__memory-management.md)** - Memory optimization
-- **[TypeScript Concurrency](./ex-so-stla-ts__concurrency-and-parallelism.md)** - Async patterns
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards
+- **[TypeScript Memory Management](./ex-so-prla-ts__memory-management.md)** - Memory optimization
+- **[TypeScript Concurrency](./ex-so-prla-ts__concurrency-and-parallelism.md)** - Async patterns
 
 ---
 

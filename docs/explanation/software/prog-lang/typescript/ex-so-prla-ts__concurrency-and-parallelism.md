@@ -2,7 +2,7 @@
 title: "TypeScript Concurrency and Parallelism"
 description: Asynchronous and concurrent programming patterns in TypeScript
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - async
@@ -10,8 +10,8 @@ tags:
   - concurrency
   - web-workers
 related:
-  - ./ex-so-stla-ts__best-practices.md
-  - ./ex-so-stla-ts__error-handling.md
+  - ./ex-so-prla-ts__best-practices.md
+  - ./ex-so-prla-ts__error-handling.md
 principles:
   - automation-over-manual
 last_updated: 2025-01-23
@@ -650,8 +650,8 @@ const zakatResults = await processBatchesWithDelay(
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
-- **[TypeScript Error Handling](./ex-so-stla-ts__error-handling.md)** - Async error patterns
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards
+- **[TypeScript Error Handling](./ex-so-prla-ts__error-handling.md)** - Async error patterns
 
 ---
 

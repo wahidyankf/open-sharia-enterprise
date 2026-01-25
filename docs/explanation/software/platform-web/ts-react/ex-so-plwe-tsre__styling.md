@@ -2,7 +2,7 @@
 title: "React Styling"
 description: Styling approaches and patterns for React applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - styling
@@ -10,7 +10,7 @@ tags:
   - tailwind
   - css-modules
 related:
-  - ./ex-so-stli-tsre__best-practices.md
+  - ./ex-so-plwe-tsre__best-practices.md
 principles:
   - explicit-over-implicit
 last_updated: 2026-01-25
@@ -24,8 +24,8 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Best Practices](./ex-so-stli-tsre__best-practices.md) - Styling standards
-- [Accessibility](./ex-so-stli-tsre__accessibility.md) - Accessible styling
+- [Best Practices](./ex-so-plwe-tsre__best-practices.md) - Styling standards
+- [Accessibility](./ex-so-plwe-tsre__accessibility.md) - Accessible styling
 
 ## Overview
 
@@ -205,8 +205,8 @@ export const ThemeToggle: React.FC = () => {
 
 ## Related Documentation
 
-- **[Best Practices](./ex-so-stli-tsre__best-practices.md)** - Styling standards
-- **[Accessibility](./ex-so-stli-tsre__accessibility.md)** - Accessible styling
+- **[Best Practices](./ex-so-plwe-tsre__best-practices.md)** - Styling standards
+- **[Accessibility](./ex-so-plwe-tsre__accessibility.md)** - Accessible styling
 
 ---
 

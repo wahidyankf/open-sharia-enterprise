@@ -2,7 +2,7 @@
 title: "TypeScript 5.0 Release"
 description: Comprehensive guide to TypeScript 5.0 features including ECMAScript decorators, const type parameters, and major performance improvements
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - typescript-5.0
@@ -11,7 +11,7 @@ tags:
   - type-parameters
   - migration
 related:
-  - ./ex-so-stla-ts__best-practices.md
+  - ./ex-so-prla-ts__best-practices.md
   - ./README.md
 principles:
   - explicit-over-implicit
@@ -1258,9 +1258,9 @@ const app = config({ env: "production" });
 
 **TypeScript Documentation**:
 
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards
 - **[TypeScript Documentation](./README.md)** - Complete guide
-- **[TypeScript 5.4 Release](./ex-so-stla-ts__release-5.4.md)** - Next version features
+- **[TypeScript 5.4 Release](./ex-so-prla-ts__release-5.4.md)** - Next version features
 
 **Official Resources**:
 

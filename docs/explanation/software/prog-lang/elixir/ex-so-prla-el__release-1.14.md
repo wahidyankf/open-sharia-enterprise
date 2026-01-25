@@ -2,7 +2,7 @@
 title: "Elixir 1.14 Release"
 description: Release notes for Elixir 1.14 highlighting new features, improvements, and breaking changes
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - release-notes
@@ -16,8 +16,8 @@ last_updated: 2026-01-23
 
 **Status**: Stable (Released September 1, 2022)
 **OTP Compatibility**: Erlang/OTP 23+ (last version supporting OTP 23)
-**Previous Version**: [Elixir 1.13](ex-so-stla-el__release-1.13.md)
-**Next Version**: [Elixir 1.15](ex-so-stla-el__release-1.15.md)
+**Previous Version**: [Elixir 1.13](ex-so-prla-el__release-1.13.md)
+**Next Version**: [Elixir 1.15](ex-so-prla-el__release-1.15.md)
 
 ## Overview
 
@@ -923,10 +923,10 @@ graph LR
 ### Related Documentation
 
 - [Back to Elixir README](README.md)
-- [Previous: Elixir 1.13 Release](ex-so-stla-el__release-1.13.md)
-- [Next: Elixir 1.15 Release](ex-so-stla-el__release-1.15.md)
-- [Debugging Techniques](ex-so-stla-el__best-practices.md#debugging)
-- [Concurrency Patterns](ex-so-stla-el__concurrency-and-parallelism.md)
+- [Previous: Elixir 1.13 Release](ex-so-prla-el__release-1.13.md)
+- [Next: Elixir 1.15 Release](ex-so-prla-el__release-1.15.md)
+- [Debugging Techniques](ex-so-prla-el__best-practices.md#debugging)
+- [Concurrency Patterns](ex-so-prla-el__concurrency-and-parallelism.md)
 
 ---
 

@@ -2,7 +2,7 @@
 title: "Java 25 LTS Release"
 description: Important features and changes in Java 25 Long-Term Support release
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - java-25
@@ -109,11 +109,11 @@ flowchart TD
 
 **Related Documentation:**
 
-- [Java 17 Release](./ex-so-stla-ja__release-17.md) - Earlier LTS release features
-- [Java 21 Release](./ex-so-stla-ja__release-21.md) - Previous LTS release features
-- [Java Performance](./ex-so-stla-ja__performance.md) - Performance optimization techniques
-- [Java Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md) - Scoped Values and virtual threads
-- [Java Idioms](./ex-so-stla-ja__idioms.md) - Modern Java patterns
+- [Java 17 Release](./ex-so-prla-ja__release-17.md) - Earlier LTS release features
+- [Java 21 Release](./ex-so-prla-ja__release-21.md) - Previous LTS release features
+- [Java Performance](./ex-so-prla-ja__performance.md) - Performance optimization techniques
+- [Java Concurrency](./ex-so-prla-ja__concurrency-and-parallelism.md) - Scoped Values and virtual threads
+- [Java Idioms](./ex-so-prla-ja__idioms.md) - Modern Java patterns
 
 This release implements the following [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
 
@@ -379,8 +379,8 @@ public class RequestContext {
 
 | Version     | Status           | Details                                                                                       | Link                                                                                           |
 | ----------- | ---------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| **Java 17** | ❌ Not Available | ThreadLocal used for context propagation (memory overhead, lifecycle complexity)              | [Java 17 - Threading](./ex-so-stla-ja__release-17.md#enhanced-pseudo-random-number-generators) |
-| **Java 21** | 🔬 **Preview**   | First preview introducing immutable, thread-safe context values (requires `--enable-preview`) | [Java 21 - Scoped Values](./ex-so-stla-ja__release-21.md#8-scoped-values-preview)              |
+| **Java 17** | ❌ Not Available | ThreadLocal used for context propagation (memory overhead, lifecycle complexity)              | [Java 17 - Threading](./ex-so-prla-ja__release-17.md#enhanced-pseudo-random-number-generators) |
+| **Java 21** | 🔬 **Preview**   | First preview introducing immutable, thread-safe context values (requires `--enable-preview`) | [Java 21 - Scoped Values](./ex-so-prla-ja__release-21.md#8-scoped-values-preview)              |
 | **Java 25** | ✅ **Finalized** | Production-ready, optimized for virtual threads, superior performance vs ThreadLocal          | Current section                                                                                |
 
 **When to Adopt**: Finalized in Java 25 - safe for production. Replace ThreadLocal with Scoped Values for better performance and clearer semantics, especially with virtual threads.
@@ -942,8 +942,8 @@ public class DonationRecord {
 
 | Version     | Status              | Details                                                                        | Link                                                                                    |
 | ----------- | ------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
-| **Java 17** | ❌ Not Available    | Standard object headers (96 bits / 12 bytes)                                   | [Java 17 - Memory](./ex-so-stla-ja__release-17.md#performance-and-runtime-improvements) |
-| **Java 21** | ❌ Not Available    | Standard object headers (96 bits / 12 bytes)                                   | [Java 21 - Performance](./ex-so-stla-ja__release-21.md#performance-improvements)        |
+| **Java 17** | ❌ Not Available    | Standard object headers (96 bits / 12 bytes)                                   | [Java 17 - Memory](./ex-so-prla-ja__release-17.md#performance-and-runtime-improvements) |
+| **Java 21** | ❌ Not Available    | Standard object headers (96 bits / 12 bytes)                                   | [Java 21 - Performance](./ex-so-prla-ja__release-21.md#performance-improvements)        |
 | **Java 25** | ✅ **Finalized** 🎯 | Compact object headers (64 bits / 8 bytes), automatic 10-2.5% memory reduction | Current section                                                                         |
 
 **When to Adopt**: **Automatic benefit in Java 25.** No code changes required - instant 10-2.5% memory savings for applications with millions of objects. Critical for memory-constrained finance applications.
@@ -1125,10 +1125,10 @@ Java 25 represents a **production-ready, enterprise-focused release**:
 
 ## Related Documentation
 
-- [Java 17 LTS Release](./ex-so-stla-ja__release-17.md) - Java 17 LTS features
-- [Java 21 LTS Release](./ex-so-stla-ja__release-21.md) - Java 21 LTS features
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Modern Java development practices
-- [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Common mistakes to avoid
+- [Java 17 LTS Release](./ex-so-prla-ja__release-17.md) - Java 17 LTS features
+- [Java 21 LTS Release](./ex-so-prla-ja__release-21.md) - Java 21 LTS features
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - Modern Java development practices
+- [Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) - Common mistakes to avoid
 
 ## Sources
 

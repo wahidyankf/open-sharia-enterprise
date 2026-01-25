@@ -2,7 +2,7 @@
 title: "React Data Fetching"
 description: Data fetching patterns and strategies for React applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - data-fetching
@@ -11,8 +11,8 @@ tags:
   - swr
   - typescript
 related:
-  - ./ex-so-stli-tsre__idioms.md
-  - ./ex-so-stli-tsre__hooks.md
+  - ./ex-so-plwe-tsre__idioms.md
+  - ./ex-so-plwe-tsre__hooks.md
 principles:
   - explicit-over-implicit
 last_updated: 2026-01-25
@@ -26,9 +26,9 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Idioms](./ex-so-stli-tsre__idioms.md) - useEffect patterns
-- [Hooks](./ex-so-stli-tsre__hooks.md) - Data fetching hooks
-- [State Management](./ex-so-stli-tsre__state-management.md) - Server state
+- [Idioms](./ex-so-plwe-tsre__idioms.md) - useEffect patterns
+- [Hooks](./ex-so-plwe-tsre__hooks.md) - Data fetching hooks
+- [State Management](./ex-so-plwe-tsre__state-management.md) - Server state
 
 ## Overview
 
@@ -258,9 +258,9 @@ export const PaginatedDonations: React.FC = () => {
 
 ## Related Documentation
 
-- **[Idioms](./ex-so-stli-tsre__idioms.md)** - useEffect patterns
-- **[Hooks](./ex-so-stli-tsre__hooks.md)** - Data fetching hooks
-- **[State Management](./ex-so-stli-tsre__state-management.md)** - Server state management
+- **[Idioms](./ex-so-plwe-tsre__idioms.md)** - useEffect patterns
+- **[Hooks](./ex-so-plwe-tsre__hooks.md)** - Data fetching hooks
+- **[State Management](./ex-so-plwe-tsre__state-management.md)** - Server state management
 
 ---
 

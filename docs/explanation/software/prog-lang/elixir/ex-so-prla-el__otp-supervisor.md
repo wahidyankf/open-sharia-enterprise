@@ -2,7 +2,7 @@
 title: "OTP Supervisor Patterns"
 description: Supervisors monitor and restart processes to provide fault tolerance and self-healing capabilities through hierarchical supervision trees
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - otp
@@ -13,10 +13,10 @@ tags:
   - restart-strategies
   - let-it-crash
 related:
-  - ./ex-so-stla-el__otp-genserver.md
-  - ./ex-so-stla-el__otp-application.md
-  - ./ex-so-stla-el__error-handling.md
-  - ./ex-so-stla-el__best-practices.md
+  - ./ex-so-prla-el__otp-genserver.md
+  - ./ex-so-prla-el__otp-application.md
+  - ./ex-so-prla-el__error-handling.md
+  - ./ex-so-prla-el__best-practices.md
 principles:
   - automation-over-manual
   - simplicity-over-complexity
@@ -1376,9 +1376,9 @@ end
 ### Related Documentation
 
 - [Back to Elixir README](README.md)
-- [GenServer Patterns](ex-so-stla-el__otp-genserver.md)
-- [Application Patterns](ex-so-stla-el__otp-application.md)
-- [Error Handling](ex-so-stla-el__error-handling.md)
+- [GenServer Patterns](ex-so-prla-el__otp-genserver.md)
+- [Application Patterns](ex-so-prla-el__otp-application.md)
+- [Error Handling](ex-so-prla-el__error-handling.md)
 
 ---
 

@@ -2,7 +2,7 @@
 title: Finite State Machines in Python
 description: Finite state machine patterns in Python using transitions library, state pattern implementation, event-driven state transitions, and FSM applications for financial domain workflows
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - finite-state-machine
@@ -12,9 +12,9 @@ tags:
   - workflow
   - event-driven
 related:
-  - ./ex-so-stla-py__classes-and-protocols.md
-  - ./ex-so-stla-py__domain-driven-design.md
-  - ./ex-so-stla-py__best-practices.md
+  - ./ex-so-prla-py__classes-and-protocols.md
+  - ./ex-so-prla-py__domain-driven-design.md
+  - ./ex-so-prla-py__best-practices.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -1584,9 +1584,9 @@ machine = Machine(
 
 ### Related Documentation
 
-- [Classes and Protocols](./ex-so-stla-py__classes-and-protocols.md) - State pattern implementation
-- [Domain-Driven Design](./ex-so-stla-py__domain-driven-design.md) - Domain events and aggregates
-- [Best Practices](./ex-so-stla-py__best-practices.md) - Python coding standards
+- [Classes and Protocols](./ex-so-prla-py__classes-and-protocols.md) - State pattern implementation
+- [Domain-Driven Design](./ex-so-prla-py__domain-driven-design.md) - Domain events and aggregates
+- [Best Practices](./ex-so-prla-py__best-practices.md) - Python coding standards
 
 ### Books
 

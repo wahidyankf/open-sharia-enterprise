@@ -2,7 +2,7 @@
 title: "TypeScript 5.4 Release"
 description: Comprehensive guide to TypeScript 5.4 features including NoInfer utility type, preserved narrowing in closures, Object.groupBy/Map.groupBy, and improved control flow analysis
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - typescript-5.4
@@ -12,8 +12,8 @@ tags:
   - control-flow
   - migration
 related:
-  - ./ex-so-stla-ts__best-practices.md
-  - ./ex-so-stla-ts__release-5.0.md
+  - ./ex-so-prla-ts__best-practices.md
+  - ./ex-so-prla-ts__release-5.0.md
   - ./README.md
 principles:
   - explicit-over-implicit
@@ -1278,8 +1278,8 @@ function process(value: string | null) {
 
 **TypeScript Documentation**:
 
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards and patterns
-- **[TypeScript 5.0 Release](./ex-so-stla-ts__release-5.0.md)** - Previous major release (decorators, const type parameters)
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards and patterns
+- **[TypeScript 5.0 Release](./ex-so-prla-ts__release-5.0.md)** - Previous major release (decorators, const type parameters)
 - **[TypeScript Documentation](./README.md)** - Complete TypeScript guide
 
 **Official Resources**:

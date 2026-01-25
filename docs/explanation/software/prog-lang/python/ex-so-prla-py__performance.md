@@ -2,7 +2,7 @@
 title: Python Performance
 description: Performance optimization in Python including profiling with cProfile, benchmarking, algorithm optimization, data structure selection, Cython, and PyPy for financial calculations
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - performance
@@ -12,8 +12,8 @@ tags:
   - cython
   - pypy
 related:
-  - ./ex-so-stla-py__concurrency-and-parallelism.md
-  - ./ex-so-stla-py__memory-management.md
+  - ./ex-so-prla-py__concurrency-and-parallelism.md
+  - ./ex-so-prla-py__memory-management.md
 principles:
   - measure-first-optimize-later
   - simplicity-over-complexity
@@ -424,8 +424,8 @@ def calculate_zakat_generator(wealth_items: List[Decimal]):
 
 ### Related Documentation
 
-- [Concurrency and Parallelism](./ex-so-stla-py__concurrency-and-parallelism.md) - Parallel execution
-- [Memory Management](./ex-so-stla-py__memory-management.md) - Memory optimization
+- [Concurrency and Parallelism](./ex-so-prla-py__concurrency-and-parallelism.md) - Parallel execution
+- [Memory Management](./ex-so-prla-py__memory-management.md) - Memory optimization
 
 ---
 

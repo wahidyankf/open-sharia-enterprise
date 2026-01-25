@@ -2,7 +2,7 @@
 title: "Domain-Driven Design in Elixir"
 description: DDD in Elixir using functional programming, data transformation pipelines, bounded contexts through umbrella apps, and processes for domain events
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - domain-driven-design
@@ -13,9 +13,9 @@ tags:
   - domain-events
   - functional-programming
 related:
-  - ./ex-so-stla-el__best-practices.md
-  - ./ex-so-stla-el__otp-application.md
-  - ./ex-so-stla-el__functional-programming.md
+  - ./ex-so-prla-el__best-practices.md
+  - ./ex-so-prla-el__otp-application.md
+  - ./ex-so-prla-el__functional-programming.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -1545,11 +1545,11 @@ end
 
 ## Related Topics
 
-- [Protocols and Behaviours](ex-so-stla-el__protocols-and-behaviours.md) - Polymorphism in DDD
-- [Functional Programming](ex-so-stla-el__functional-programming.md) - FP approach to DDD
-- [Web Services](ex-so-stla-el__web-services.md) - Phoenix contexts for DDD
-- [Dependencies](ex-so-stla-el__dependencies.md) - Umbrella apps for bounded contexts
-- [Testing](ex-so-stla-el__test-driven-development.md) - Testing DDD applications
+- [Protocols and Behaviours](ex-so-prla-el__protocols-and-behaviours.md) - Polymorphism in DDD
+- [Functional Programming](ex-so-prla-el__functional-programming.md) - FP approach to DDD
+- [Web Services](ex-so-prla-el__web-services.md) - Phoenix contexts for DDD
+- [Dependencies](ex-so-prla-el__modules-and-dependencies.md) - Umbrella apps for bounded contexts
+- [Testing](ex-so-prla-el__test-driven-development.md) - Testing DDD applications
 
 ## Sources
 

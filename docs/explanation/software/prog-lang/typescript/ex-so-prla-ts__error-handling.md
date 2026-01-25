@@ -2,7 +2,7 @@
 title: "TypeScript Error Handling"
 description: Error handling patterns for robust TypeScript applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - error-handling
@@ -11,10 +11,10 @@ tags:
   - exceptions
   - type-safety
 related:
-  - ./ex-so-stla-ts__best-practices.md
-  - ./ex-so-stla-ts__type-safety.md
-  - ./ex-so-stla-ts__functional-programming.md
-  - ./ex-so-stla-ts__anti-patterns.md
+  - ./ex-so-prla-ts__best-practices.md
+  - ./ex-so-prla-ts__type-safety.md
+  - ./ex-so-prla-ts__functional-programming.md
+  - ./ex-so-prla-ts__anti-patterns.md
   - ../../../../../governance/principles/software-engineering/explicit-over-implicit.md
 principles:
   - explicit-over-implicit
@@ -669,10 +669,10 @@ async function calculateZakatWithContext(wealth: number, nisab: number): Promise
 
 ### TypeScript Core
 
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
-- **[TypeScript Type Safety](./ex-so-stla-ts__type-safety.md)** - Type system features
-- **[TypeScript Functional Programming](./ex-so-stla-ts__functional-programming.md)** - FP patterns
-- **[TypeScript Anti-Patterns](./ex-so-stla-ts__anti-patterns.md)** - Mistakes to avoid
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards
+- **[TypeScript Type Safety](./ex-so-prla-ts__type-safety.md)** - Type system features
+- **[TypeScript Functional Programming](./ex-so-prla-ts__functional-programming.md)** - FP patterns
+- **[TypeScript Anti-Patterns](./ex-so-prla-ts__anti-patterns.md)** - Mistakes to avoid
 
 ### Development Practices
 

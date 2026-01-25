@@ -2,7 +2,7 @@
 title: Go Performance Optimization
 description: Performance optimization techniques in Go including profiling, benchmarking, memory optimization, and concurrency patterns
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - golang
   - performance
@@ -17,9 +17,9 @@ tags:
   - go-1.24
   - go-1.25
 related:
-  - ./ex-so-stla-go__memory-management.md
-  - ./ex-so-stla-go__concurrency-and-parallelism.md
-  - ./ex-so-stla-go__best-practices.md
+  - ./ex-so-prla-go__memory-management.md
+  - ./ex-so-prla-go__concurrency-and-parallelism.md
+  - ./ex-so-prla-go__best-practices.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -40,9 +40,9 @@ Go is designed for performance, offering excellent runtime efficiency while main
 
 **Related Documentation**:
 
-- [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md)
-- [Best Practices](./ex-so-stla-go__best-practices.md)
-- [Memory Management](./ex-so-stla-go__memory-management.md)
+- [Concurrency and Parallelism](./ex-so-prla-go__concurrency-and-parallelism.md)
+- [Best Practices](./ex-so-prla-go__best-practices.md)
+- [Memory Management](./ex-so-prla-go__memory-management.md)
 
 ## Performance Fundamentals
 
@@ -2559,9 +2559,9 @@ Key principles:
 
 **Next Steps**:
 
-- Read [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md)
-- Explore [Memory Management](./ex-so-stla-go__memory-management.md)
-- Study [Best Practices](./ex-so-stla-go__best-practices.md)
+- Read [Concurrency and Parallelism](./ex-so-prla-go__concurrency-and-parallelism.md)
+- Explore [Memory Management](./ex-so-prla-go__memory-management.md)
+- Study [Best Practices](./ex-so-prla-go__best-practices.md)
 
 ---
 

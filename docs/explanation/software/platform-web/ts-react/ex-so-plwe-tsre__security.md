@@ -2,7 +2,7 @@
 title: "React Security"
 description: Security best practices and patterns for React applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - security
@@ -10,8 +10,8 @@ tags:
   - authentication
   - authorization
 related:
-  - ./ex-so-stli-tsre__best-practices.md
-  - ./ex-so-stli-tsre__anti-patterns.md
+  - ./ex-so-plwe-tsre__best-practices.md
+  - ./ex-so-plwe-tsre__anti-patterns.md
 principles:
   - explicit-over-implicit
 last_updated: 2026-01-25
@@ -25,8 +25,8 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Best Practices](./ex-so-stli-tsre__best-practices.md) - Security standards
-- [Anti-Patterns](./ex-so-stli-tsre__anti-patterns.md) - Security mistakes
+- [Best Practices](./ex-so-plwe-tsre__best-practices.md) - Security standards
+- [Anti-Patterns](./ex-so-plwe-tsre__anti-patterns.md) - Security mistakes
 
 ## Overview
 
@@ -250,8 +250,8 @@ async function apiPost(url: string, data: any) {
 
 ## Related Documentation
 
-- **[Best Practices](./ex-so-stli-tsre__best-practices.md)** - Security standards
-- **[Anti-Patterns](./ex-so-stli-tsre__anti-patterns.md)** - Security mistakes
+- **[Best Practices](./ex-so-plwe-tsre__best-practices.md)** - Security standards
+- **[Anti-Patterns](./ex-so-plwe-tsre__anti-patterns.md)** - Security mistakes
 
 ---
 

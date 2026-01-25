@@ -10,7 +10,7 @@ tags:
   - gherkin
   - step-definitions
 related:
-  - ex-so-stla-ja__behaviour-driven-development.md
+  - ex-so-prla-ja__behaviour-driven-development.md
   - ex-so-de-bdd-te__step-definition-template.md
 principles:
   - simplicity-over-complexity
@@ -673,12 +673,12 @@ Feature: Zakat Calculation
 
 ## Related Templates
 
-- [Unit Test Template](./ex-so-stla-ja-te__unit-test-template.md)
-- [Integration Test Template](./ex-so-stla-ja-te__integration-test-template.md)
+- [Unit Test Template](./ex-so-prla-ja-te__unit-test-template.md)
+- [Integration Test Template](./ex-so-prla-ja-te__integration-test-template.md)
 
 ## See Also
 
-- [Behaviour-Driven Development](../ex-so-stla-ja__behaviour-driven-development.md)
+- [Behaviour-Driven Development](../ex-so-prla-ja__behaviour-driven-development.md)
 - [Cucumber Documentation](https://cucumber.io/docs/cucumber/)
 - [Gherkin Reference](https://cucumber.io/docs/gherkin/reference/)
 

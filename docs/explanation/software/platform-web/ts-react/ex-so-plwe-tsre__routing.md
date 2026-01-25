@@ -2,7 +2,7 @@
 title: "React Routing"
 description: Client-side routing patterns with React Router
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - routing
@@ -10,7 +10,7 @@ tags:
   - navigation
   - typescript
 related:
-  - ./ex-so-stli-tsre__best-practices.md
+  - ./ex-so-plwe-tsre__best-practices.md
 principles:
   - explicit-over-implicit
 last_updated: 2026-01-25
@@ -24,8 +24,8 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Best Practices](./ex-so-stli-tsre__best-practices.md) - Routing standards
-- [Component Architecture](./ex-so-stli-tsre__component-architecture.md) - Component patterns
+- [Best Practices](./ex-so-plwe-tsre__best-practices.md) - Routing standards
+- [Component Architecture](./ex-so-plwe-tsre__component-architecture.md) - Component patterns
 
 ## Overview
 
@@ -326,8 +326,8 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({ allowedRoles, children }) 
 
 ## Related Documentation
 
-- **[Best Practices](./ex-so-stli-tsre__best-practices.md)** - Routing standards
-- **[Component Architecture](./ex-so-stli-tsre__component-architecture.md)** - Component patterns
+- **[Best Practices](./ex-so-plwe-tsre__best-practices.md)** - Routing standards
+- **[Component Architecture](./ex-so-plwe-tsre__component-architecture.md)** - Component patterns
 
 ---
 

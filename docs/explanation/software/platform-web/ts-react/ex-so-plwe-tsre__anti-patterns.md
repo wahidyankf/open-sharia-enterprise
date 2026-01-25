@@ -2,7 +2,7 @@
 title: "React Anti-Patterns"
 description: Common mistakes and problematic patterns to avoid in React development
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - anti-patterns
@@ -10,9 +10,9 @@ tags:
   - typescript
   - code-quality
 related:
-  - ./ex-so-stli-tsre__idioms.md
-  - ./ex-so-stli-tsre__best-practices.md
-  - ./ex-so-stli-tsre__performance.md
+  - ./ex-so-plwe-tsre__idioms.md
+  - ./ex-so-plwe-tsre__best-practices.md
+  - ./ex-so-plwe-tsre__performance.md
 principles:
   - explicit-over-implicit
   - immutability
@@ -54,10 +54,10 @@ last_updated: 2026-01-25
 
 ### Related Documentation
 
-- [Idioms](./ex-so-stli-tsre__idioms.md)
-- [Best Practices](./ex-so-stli-tsre__best-practices.md)
-- [Performance](./ex-so-stli-tsre__performance.md)
-- [Hooks](./ex-so-stli-tsre__hooks.md)
+- [Idioms](./ex-so-plwe-tsre__idioms.md)
+- [Best Practices](./ex-so-plwe-tsre__best-practices.md)
+- [Performance](./ex-so-plwe-tsre__performance.md)
+- [Hooks](./ex-so-plwe-tsre__hooks.md)
 
 ## Overview
 
@@ -997,12 +997,12 @@ const GoodComponent: React.FC = () => {
 
 ## Related Documentation
 
-- **[React Idioms](./ex-so-stli-tsre__idioms.md)** - Framework patterns
-- **[React Best Practices](./ex-so-stli-tsre__best-practices.md)** - Production standards
-- **[Performance](./ex-so-stli-tsre__performance.md)** - Optimization strategies
-- **[Hooks](./ex-so-stli-tsre__hooks.md)** - Hooks documentation
-- **[TypeScript](./ex-so-stli-tsre__typescript.md)** - TypeScript integration
-- **[Security](./ex-so-stli-tsre__security.md)** - Security best practices
+- **[React Idioms](./ex-so-plwe-tsre__idioms.md)** - Framework patterns
+- **[React Best Practices](./ex-so-plwe-tsre__best-practices.md)** - Production standards
+- **[Performance](./ex-so-plwe-tsre__performance.md)** - Optimization strategies
+- **[Hooks](./ex-so-plwe-tsre__hooks.md)** - Hooks documentation
+- **[TypeScript](./ex-so-plwe-tsre__typescript.md)** - TypeScript integration
+- **[Security](./ex-so-plwe-tsre__security.md)** - Security best practices
 
 ---
 

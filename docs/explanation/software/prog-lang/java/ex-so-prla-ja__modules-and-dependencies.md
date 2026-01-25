@@ -2,7 +2,7 @@
 title: "Java Modules and Dependency Management"
 description: Understanding JPMS, Maven/Gradle dependency management, reproducible builds, and multi-module projects for Java 9+ applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - modules
@@ -14,7 +14,7 @@ tags:
   - java-21
   - reproducibility
 related:
-  - ./ex-so-stla-ja__best-practices.md
+  - ./ex-so-prla-ja__best-practices.md
 principles:
   - reproducibility
   - explicit-over-implicit
@@ -76,10 +76,10 @@ Both systems aim for reproducibility, but Java's approach offers more control at
 
 **Related Documentation:**
 
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Code organization, build automation, reproducibility
-- [Java Security](./ex-so-stla-ja__security.md) - Secure dependency management
-- [Java Type Safety](./ex-so-stla-ja__type-safety.md) - Module boundary enforcement
-- [Golang Modules and Dependencies](../golang/ex-so-stla-go__modules-and-dependencies.md) - Simpler approach for comparison
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - Code organization, build automation, reproducibility
+- [Java Security](./ex-so-prla-ja__security.md) - Secure dependency management
+- [Java Type Safety](./ex-so-prla-ja__type-safety.md) - Module boundary enforcement
+- [Golang Modules and Dependencies](../golang/ex-so-prla-go__modules-and-dependencies.md) - Simpler approach for comparison
 
 ## Principles Implemented
 
@@ -1805,11 +1805,11 @@ Before releasing Java modules:
 
 ## Related Documentation
 
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Build automation, reproducibility, code organization
-- [Java Security](./ex-so-stla-ja__security.md) - Secure dependency management
-- [Java Type Safety](./ex-so-stla-ja__type-safety.md) - Module boundary enforcement
-- [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Dependency anti-patterns to avoid
-- [Golang Modules and Dependencies](../golang/ex-so-stla-go__modules-and-dependencies.md) - Simpler approach for comparison
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - Build automation, reproducibility, code organization
+- [Java Security](./ex-so-prla-ja__security.md) - Secure dependency management
+- [Java Type Safety](./ex-so-prla-ja__type-safety.md) - Module boundary enforcement
+- [Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) - Dependency anti-patterns to avoid
+- [Golang Modules and Dependencies](../golang/ex-so-prla-go__modules-and-dependencies.md) - Simpler approach for comparison
 - [Reproducibility First Principle](../../../../../governance/principles/software-engineering/reproducibility.md) - Foundational reproducibility principle
 
 ## Sources

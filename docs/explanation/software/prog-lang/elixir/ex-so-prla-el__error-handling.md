@@ -2,7 +2,7 @@
 title: "Elixir Error Handling"
 description: Elixir's distinctive approach to error handling using "let it crash" philosophy, supervision trees, and pattern matching for building resilient systems
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - error-handling
@@ -12,10 +12,10 @@ tags:
   - with-construct
   - otp
 related:
-  - ./ex-so-stla-el__concurrency-and-parallelism.md
-  - ./ex-so-stla-el__otp-supervisor.md
-  - ./ex-so-stla-el__best-practices.md
-  - ./ex-so-stla-el__anti-patterns.md
+  - ./ex-so-prla-el__concurrency-and-parallelism.md
+  - ./ex-so-prla-el__otp-supervisor.md
+  - ./ex-so-prla-el__best-practices.md
+  - ./ex-so-prla-el__anti-patterns.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -1287,10 +1287,10 @@ end
 
 ## Related Topics
 
-- [Concurrency and Parallelism](./ex-so-stla-el__concurrency-and-parallelism.md) - Process-based concurrency
-- [OTP Supervisor](./ex-so-stla-el__otp-supervisor.md) - Supervision patterns
-- [Best Practices](./ex-so-stla-el__best-practices.md) - Error handling conventions
-- [Anti-Patterns](./ex-so-stla-el__anti-patterns.md) - Common error handling mistakes
+- [Concurrency and Parallelism](./ex-so-prla-el__concurrency-and-parallelism.md) - Process-based concurrency
+- [OTP Supervisor](./ex-so-prla-el__otp-supervisor.md) - Supervision patterns
+- [Best Practices](./ex-so-prla-el__best-practices.md) - Error handling conventions
+- [Anti-Patterns](./ex-so-prla-el__anti-patterns.md) - Common error handling mistakes
 
 ## Sources
 

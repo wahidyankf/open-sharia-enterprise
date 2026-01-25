@@ -2,7 +2,7 @@
 title: Go Type Safety
 description: Type safety in Go including generics, type assertions, interfaces, and type-safe patterns
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - golang
   - type-safety
@@ -16,8 +16,8 @@ tags:
   - go-1.24
   - go-1.25
 related:
-  - ./ex-so-stla-go__best-practices.md
-  - ./ex-so-stla-go__idioms.md
+  - ./ex-so-prla-go__best-practices.md
+  - ./ex-so-prla-go__idioms.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -38,9 +38,9 @@ Go is a statically typed language with a strong emphasis on type safety. The typ
 
 **Related Documentation**:
 
-- [Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md)
-- [Error Handling](./ex-so-stla-go__error-handling.md)
-- [Best Practices](./ex-so-stla-go__best-practices.md)
+- [Interfaces and Composition](./ex-so-prla-go__interfaces-and-composition.md)
+- [Error Handling](./ex-so-prla-go__error-handling.md)
+- [Best Practices](./ex-so-prla-go__best-practices.md)
 
 ## Type System Fundamentals
 
@@ -2814,9 +2814,9 @@ Type safety makes code more maintainable, refactorable, and less prone to bugs. 
 
 **Next Steps**:
 
-- Read [Best Practices](./ex-so-stla-go__best-practices.md)
-- Explore [Error Handling](./ex-so-stla-go__error-handling.md)
-- Study [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md)
+- Read [Best Practices](./ex-so-prla-go__best-practices.md)
+- Explore [Error Handling](./ex-so-prla-go__error-handling.md)
+- Study [Concurrency and Parallelism](./ex-so-prla-go__concurrency-and-parallelism.md)
 
 ---
 

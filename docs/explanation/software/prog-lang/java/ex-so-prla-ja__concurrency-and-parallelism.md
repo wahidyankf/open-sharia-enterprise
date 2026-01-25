@@ -2,7 +2,7 @@
 title: Java Concurrency and Parallelism
 description: Concurrency patterns in Java including threads, executors, CompletableFuture, virtual threads, and structured concurrency
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - concurrency
@@ -15,8 +15,8 @@ tags:
   - java-21
   - java-25
 related:
-  - ./ex-so-stla-ja__best-practices.md
-  - ./ex-so-stla-ja__performance.md
+  - ./ex-so-prla-ja__best-practices.md
+  - ./ex-so-prla-ja__performance.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -45,14 +45,14 @@ last_updated: 2026-01-24
 
 **Related Documentation:**
 
-- [Performance](./ex-so-stla-ja__performance.md) - Performance implications of concurrency
-- [Security](./ex-so-stla-ja__security.md) - Thread-safe security patterns
-- [Best Practices](./ex-so-stla-ja__best-practices.md) - General concurrency practices
-- [Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Concurrency anti-patterns
+- [Performance](./ex-so-prla-ja__performance.md) - Performance implications of concurrency
+- [Security](./ex-so-prla-ja__security.md) - Thread-safe security patterns
+- [Best Practices](./ex-so-prla-ja__best-practices.md) - General concurrency practices
+- [Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) - Concurrency anti-patterns
 
 **Version Navigation:**
 
-← [Java 17](./ex-so-stla-ja__release-17.md) | [Java 21](./ex-so-stla-ja__release-21.md) | [Java 25](./ex-so-stla-ja__release-25.md) →
+← [Java 17](./ex-so-prla-ja__release-17.md) | [Java 21](./ex-so-prla-ja__release-21.md) | [Java 25](./ex-so-prla-ja__release-25.md) →
 
 ---
 
@@ -453,7 +453,7 @@ Virtual threads are **not** a silver bullet. Avoid them for:
 2. **Very Short-Lived Tasks** (<1ms) (overhead not worth it)
 3. **Thread Pooling Requirements** (resource limits)
 
-See [Java 21 Release Documentation](./ex-so-stla-ja__release-21.md#when-not-to-use-virtual-threads) for detailed guidance.
+See [Java 21 Release Documentation](./ex-so-prla-ja__release-21.md#when-not-to-use-virtual-threads) for detailed guidance.
 
 ---
 

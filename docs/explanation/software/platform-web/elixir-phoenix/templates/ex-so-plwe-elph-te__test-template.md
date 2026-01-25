@@ -2,14 +2,14 @@
 title: Phoenix Test Template
 description: Production-ready templates for Phoenix tests
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - elixir
   - template
   - testing
 related:
-  - ../ex-so-stli-elph__testing.md
+  - ../ex-so-plwe-elph__testing.md
 last_updated: 2026-01-25
 ---
 

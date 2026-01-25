@@ -2,7 +2,7 @@
 title: "Protocols and Behaviours"
 description: Two mechanisms for polymorphism in Elixir - protocols for ad-hoc polymorphism and behaviours for compile-time contracts
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - protocols
@@ -12,9 +12,9 @@ tags:
   - compile-time-contracts
   - design-patterns
 related:
-  - ./ex-so-stla-el__idioms.md
-  - ./ex-so-stla-el__best-practices.md
-  - ./ex-so-stla-el__type-safety.md
+  - ./ex-so-prla-el__idioms.md
+  - ./ex-so-prla-el__best-practices.md
+  - ./ex-so-prla-el__type-safety.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -1488,10 +1488,10 @@ Benchee.run(%{
 
 ## Related Topics
 
-- [Functional Programming](ex-so-stla-el__functional-programming.md) - Functional approach to polymorphism
-- [Testing](ex-so-stla-el__test-driven-development.md) - Testing protocols and behaviours
-- [OTP: GenServer](ex-so-stla-el__otp-genserver.md) - GenServer behaviour implementation
-- [Type Safety](ex-so-stla-el__type-safety.md) - Typespecs for callbacks
+- [Functional Programming](ex-so-prla-el__functional-programming.md) - Functional approach to polymorphism
+- [Testing](ex-so-prla-el__test-driven-development.md) - Testing protocols and behaviours
+- [OTP: GenServer](ex-so-prla-el__otp-genserver.md) - GenServer behaviour implementation
+- [Type Safety](ex-so-prla-el__type-safety.md) - Typespecs for callbacks
 
 ## Sources
 

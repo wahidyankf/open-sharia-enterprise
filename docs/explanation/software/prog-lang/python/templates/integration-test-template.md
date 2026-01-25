@@ -2,7 +2,7 @@
 title: Integration Test Template
 description: Copy-paste ready pytest integration test template with database fixtures, async tests, and API testing for Python applications in Sharia-compliant financial services
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - template
@@ -11,7 +11,7 @@ tags:
   - testing
   - database
 related:
-  - ../ex-so-stla-py__test-driven-development.md
+  - ../ex-so-prla-py__test-driven-development.md
   - ./unit-test-template.md
 principles:
   - test-first
@@ -196,7 +196,7 @@ async def db_engine():
 
 ## References
 
-- [Test-Driven Development](../ex-so-stla-py__test-driven-development.md)
+- [Test-Driven Development](../ex-so-prla-py__test-driven-development.md)
 
 ---
 

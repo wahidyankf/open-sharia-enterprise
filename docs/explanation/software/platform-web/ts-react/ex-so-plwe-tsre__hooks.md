@@ -2,7 +2,7 @@
 title: "React Hooks"
 description: Comprehensive guide to React hooks including built-in and custom hooks
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - hooks
@@ -11,8 +11,8 @@ tags:
   - custom-hooks
   - typescript
 related:
-  - ./ex-so-stli-tsre__idioms.md
-  - ./ex-so-stli-tsre__best-practices.md
+  - ./ex-so-plwe-tsre__idioms.md
+  - ./ex-so-plwe-tsre__best-practices.md
 principles:
   - explicit-over-implicit
   - pure-functions
@@ -27,10 +27,10 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Idioms](./ex-so-stli-tsre__idioms.md) - Hook usage patterns
-- [State Management](./ex-so-stli-tsre__state-management.md) - Managing state
-- [Performance](./ex-so-stli-tsre__performance.md) - Hook optimization
-- [Best Practices](./ex-so-stli-tsre__best-practices.md) - Production standards
+- [Idioms](./ex-so-plwe-tsre__idioms.md) - Hook usage patterns
+- [State Management](./ex-so-plwe-tsre__state-management.md) - Managing state
+- [Performance](./ex-so-plwe-tsre__performance.md) - Hook optimization
+- [Best Practices](./ex-so-plwe-tsre__best-practices.md) - Production standards
 
 ## Overview
 
@@ -1177,11 +1177,11 @@ function ItemComponent({ item }) {
 
 ## Related Documentation
 
-- **[Idioms](./ex-so-stli-tsre__idioms.md)** - Hook usage patterns
-- **[State Management](./ex-so-stli-tsre__state-management.md)** - Managing state
-- **[Performance](./ex-so-stli-tsre__performance.md)** - Hook optimization
-- **[Component Architecture](./ex-so-stli-tsre__component-architecture.md)** - Component patterns
-- **[Best Practices](./ex-so-stli-tsre__best-practices.md)** - Production standards
+- **[Idioms](./ex-so-plwe-tsre__idioms.md)** - Hook usage patterns
+- **[State Management](./ex-so-plwe-tsre__state-management.md)** - Managing state
+- **[Performance](./ex-so-plwe-tsre__performance.md)** - Hook optimization
+- **[Component Architecture](./ex-so-plwe-tsre__component-architecture.md)** - Component patterns
+- **[Best Practices](./ex-so-plwe-tsre__best-practices.md)** - Production standards
 
 ---
 

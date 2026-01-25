@@ -2,7 +2,7 @@
 title: FastAPI Endpoint Template
 description: Copy-paste ready FastAPI endpoint template with Pydantic validation, dependency injection, authentication, and error handling for Sharia-compliant financial APIs
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - template
@@ -11,8 +11,8 @@ tags:
   - rest
   - pydantic
 related:
-  - ../ex-so-stla-py__web-services.md
-  - ../ex-so-stla-py__type-safety.md
+  - ../ex-so-prla-py__web-services.md
+  - ../ex-so-prla-py__type-safety.md
 principles:
   - explicit-over-implicit
 last_updated: 2025-01-23
@@ -238,7 +238,7 @@ async def calculate_zakat(
 
 ## References
 
-- [Web Services](../ex-so-stla-py__web-services.md)
+- [Web Services](../ex-so-prla-py__web-services.md)
 
 ---
 

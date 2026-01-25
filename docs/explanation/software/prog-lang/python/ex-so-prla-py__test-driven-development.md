@@ -2,7 +2,7 @@
 title: Test-Driven Development in Python
 description: TDD methodology in Python using pytest, unittest, hypothesis for property-based testing, fixtures, mocking, and test organization for financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - tdd
@@ -12,9 +12,9 @@ tags:
   - hypothesis
   - mocking
 related:
-  - ./ex-so-stla-py__behaviour-driven-development.md
-  - ./ex-so-stla-py__best-practices.md
-  - ./ex-so-stla-py__domain-driven-design.md
+  - ./ex-so-prla-py__behaviour-driven-development.md
+  - ./ex-so-prla-py__best-practices.md
+  - ./ex-so-prla-py__domain-driven-design.md
 principles:
   - quality-first
   - automation-over-manual
@@ -636,9 +636,9 @@ class TestMurabahaContract:
 
 ### Related Documentation
 
-- [Behaviour-Driven Development](./ex-so-stla-py__behaviour-driven-development.md) - BDD with Gherkin
-- [Best Practices](./ex-so-stla-py__best-practices.md) - Testing standards
-- [Domain-Driven Design](./ex-so-stla-py__domain-driven-design.md) - Testing aggregates
+- [Behaviour-Driven Development](./ex-so-prla-py__behaviour-driven-development.md) - BDD with Gherkin
+- [Best Practices](./ex-so-prla-py__best-practices.md) - Testing standards
+- [Domain-Driven Design](./ex-so-prla-py__domain-driven-design.md) - Testing aggregates
 
 ### Books
 

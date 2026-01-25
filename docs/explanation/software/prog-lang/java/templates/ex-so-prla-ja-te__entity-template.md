@@ -756,9 +756,9 @@ enum ZakatAccountStatus {
 
 ## Related Templates
 
-- [Value Object Template](./ex-so-stla-ja-te__value-object-template.md)
-- [Aggregate Template](./ex-so-stla-ja-te__aggregate-template.md)
-- [Domain Event Template](./ex-so-stla-ja-te__domain-event-template.md)
+- [Value Object Template](./ex-so-prla-ja-te__value-object-template.md)
+- [Aggregate Template](./ex-so-prla-ja-te__aggregate-template.md)
+- [Domain Event Template](./ex-so-prla-ja-te__domain-event-template.md)
 
 ## See Also
 

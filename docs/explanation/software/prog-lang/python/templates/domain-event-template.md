@@ -2,7 +2,7 @@
 title: Domain Event Template
 description: Copy-paste ready Python domain event template with immutability, type safety, and event handling for event-driven architecture in Sharia-compliant financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - template
@@ -10,7 +10,7 @@ tags:
   - event-driven
   - ddd
 related:
-  - ../ex-so-stla-py__domain-driven-design.md
+  - ../ex-so-prla-py__domain-driven-design.md
   - ./aggregate-template.md
 principles:
   - explicit-over-implicit
@@ -189,7 +189,7 @@ class DonationReceived(DomainEvent): ...
 
 ## References
 
-- [Domain-Driven Design](../ex-so-stla-py__domain-driven-design.md)
+- [Domain-Driven Design](../ex-so-prla-py__domain-driven-design.md)
 
 ---
 

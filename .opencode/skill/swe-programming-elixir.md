@@ -9,7 +9,7 @@ description: Elixir coding standards from authoritative docs/explanation/softwar
 
 Progressive disclosure of Elixir coding standards for agents writing Elixir code.
 
-**Authoritative Source**: [docs/explanation/software/prog-lang/elixir/README.md](../../docs/explanation/software/prog-lang/elixir/README.md)
+**Authoritative Source**: [docs/explanation/software/prog-lang/elixir/README.md](../../../docs/explanation/software/prog-lang/elixir/README.md)
 
 **Usage**: Auto-loaded for agents when writing Elixir code. Provides quick reference to idioms, best practices, and antipatterns.
 
@@ -188,9 +188,9 @@ config :my_app, api_key: System.get_env("API_KEY")
 
 For detailed guidance, refer to:
 
-- **[Idioms](../../docs/explanation/software/prog-lang/elixir/ex-so-prla-ex__idioms.md)** - Elixir-specific patterns
-- **[Best Practices](../../docs/explanation/software/prog-lang/elixir/ex-so-prla-ex__best-practices.md)** - Clean code standards
-- **[Anti-Patterns](../../docs/explanation/software/prog-lang/elixir/ex-so-prla-ex__anti-patterns.md)** - Common mistakes
+- **[Idioms](../../../docs/explanation/software/prog-lang/elixir/ex-so-prla-ex__idioms.md)** - Elixir-specific patterns
+- **[Best Practices](../../../docs/explanation/software/prog-lang/elixir/ex-so-prla-ex__best-practices.md)** - Clean code standards
+- **[Anti-Patterns](../../../docs/explanation/software/prog-lang/elixir/ex-so-prla-ex__anti-patterns.md)** - Common mistakes
 
 ## Related Skills
 
@@ -199,5 +199,5 @@ For detailed guidance, refer to:
 
 ## References
 
-- [Elixir README](../../docs/explanation/software/prog-lang/elixir/README.md)
-- [Functional Programming](../../governance/development/pattern/functional-programming.md)
+- [Elixir README](../../../docs/explanation/software/prog-lang/elixir/README.md)
+- [Functional Programming](../../../governance/development/pattern/functional-programming.md)

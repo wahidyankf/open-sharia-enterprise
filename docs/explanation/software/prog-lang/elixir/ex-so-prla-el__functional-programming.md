@@ -2,7 +2,7 @@
 title: "Elixir Functional Programming"
 description: Functional programming in Elixir using immutable data structures, pure functions, recursion, and composition patterns
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - functional-programming
@@ -14,9 +14,9 @@ tags:
   - stream
   - pipe-operator
 related:
-  - ./ex-so-stla-el__best-practices.md
-  - ./ex-so-stla-el__idioms.md
-  - ./ex-so-stla-el__performance.md
+  - ./ex-so-prla-el__best-practices.md
+  - ./ex-so-prla-el__idioms.md
+  - ./ex-so-prla-el__performance.md
 principles:
   - immutability
   - pure-functions
@@ -861,10 +861,10 @@ end
 
 ## Related Topics
 
-- [Idioms](./ex-so-stla-el__idioms.md) - Pipe operator, pattern matching
-- [Best Practices](./ex-so-stla-el__best-practices.md) - Functional conventions
-- [Performance](./ex-so-stla-el__performance.md) - Optimization techniques
-- [Type Safety](./ex-so-stla-el__type-safety.md) - Function specifications
+- [Idioms](./ex-so-prla-el__idioms.md) - Pipe operator, pattern matching
+- [Best Practices](./ex-so-prla-el__best-practices.md) - Functional conventions
+- [Performance](./ex-so-prla-el__performance.md) - Optimization techniques
+- [Type Safety](./ex-so-prla-el__type-safety.md) - Function specifications
 
 ## Sources
 

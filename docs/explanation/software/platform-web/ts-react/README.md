@@ -2,7 +2,7 @@
 title: React Framework
 description: Modern library for building component-based user interfaces with TypeScript for scalable, maintainable frontend applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - typescript
@@ -38,23 +38,23 @@ This documentation covers React 18+ with TypeScript 5+, focusing on functional c
 
 All React applications MUST follow the patterns and practices documented here:
 
-1. **[Idioms](./ex-so-stli-tsre__idioms.md)** - React-specific patterns
-2. **[Best Practices](./ex-so-stli-tsre__best-practices.md)** - Framework standards
-3. **[Anti-Patterns](./ex-so-stli-tsre__anti-patterns.md)** - Common mistakes
-4. **[Component Architecture](./ex-so-stli-tsre__component-architecture.md)** - Component design
-5. **[State Management](./ex-so-stli-tsre__state-management.md)** - State patterns
+1. **[Idioms](./ex-so-plwe-tsre__idioms.md)** - React-specific patterns
+2. **[Best Practices](./ex-so-plwe-tsre__best-practices.md)** - Framework standards
+3. **[Anti-Patterns](./ex-so-plwe-tsre__anti-patterns.md)** - Common mistakes
+4. **[Component Architecture](./ex-so-plwe-tsre__component-architecture.md)** - Component design
+5. **[State Management](./ex-so-plwe-tsre__state-management.md)** - State patterns
 
 **For Agents**: Reference this documentation when building React applications.
 
-**Language Standards**: Also follow [TypeScript](../../stack-lang/typescript/README.md) language standards.
+**Language Standards**: Also follow [TypeScript](../../prog-lang/typescript/README.md) language standards.
 
 ### Quick Standards Reference
 
 - **Project Structure**: See [Architecture Integration](#architecture-integration)
-- **Component Patterns**: See [Component Architecture](./ex-so-stli-tsre__component-architecture.md)
-- **State Management**: See [State Management](./ex-so-stli-tsre__state-management.md)
-- **Testing**: See [Testing](./ex-so-stli-tsre__testing.md)
-- **Performance**: See [Performance](./ex-so-stli-tsre__performance.md)
+- **Component Patterns**: See [Component Architecture](./ex-so-plwe-tsre__component-architecture.md)
+- **State Management**: See [State Management](./ex-so-plwe-tsre__state-management.md)
+- **Testing**: See [Testing](./ex-so-plwe-tsre__testing.md)
+- **Performance**: See [Performance](./ex-so-plwe-tsre__performance.md)
 
 ## Software Engineering Principles
 
@@ -66,7 +66,7 @@ React usage in this platform follows the five software engineering principles fr
 4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - React encourages pure rendering logic, effects isolation in useEffect, functional components
 5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - React enables through Volta pinning, package-lock.json, deterministic builds, snapshot testing
 
-**See Also**: [Functional Programming](./ex-so-stli-tsre__functional-programming.md) for FP patterns with React.
+**See Also**: [Functional Programming](./ex-so-plwe-tsre__functional-programming.md) for FP patterns with React.
 
 ## Quick Reference
 
@@ -90,25 +90,25 @@ React usage in this platform follows the five software engineering principles fr
 
 **Core Documentation:**
 
-- [Idioms](./ex-so-stli-tsre__idioms.md) - React patterns (functional components, hooks, composition)
-- [Best Practices](./ex-so-stli-tsre__best-practices.md) - Framework coding standards
-- [Anti-Patterns](./ex-so-stli-tsre__anti-patterns.md) - Common React mistakes
-- [Component Architecture](./ex-so-stli-tsre__component-architecture.md) - Component design patterns
-- [State Management](./ex-so-stli-tsre__state-management.md) - State patterns and tools
-- [Hooks](./ex-so-stli-tsre__hooks.md) - useState, useEffect, custom hooks
-- [TypeScript](./ex-so-stli-tsre__typescript.md) - TypeScript integration
-- [Testing](./ex-so-stli-tsre__testing.md) - React Testing Library, Jest
-- [Performance](./ex-so-stli-tsre__performance.md) - Optimization strategies
-- [Routing](./ex-so-stli-tsre__routing.md) - React Router patterns
-- [Forms](./ex-so-stli-tsre__forms.md) - Form handling and validation
-- [Data Fetching](./ex-so-stli-tsre__data-fetching.md) - API integration
-- [Styling](./ex-so-stli-tsre__styling.md) - CSS strategies
-- [Accessibility](./ex-so-stli-tsre__accessibility.md) - WCAG compliance
-- [Security](./ex-so-stli-tsre__security.md) - Security best practices
-- [Build & Deployment](./ex-so-stli-tsre__build-deployment.md) - Build tools and deployment
-- [Version Migration](./ex-so-stli-tsre__version-migration.md) - Upgrading React versions
-- [Domain-Driven Design](./ex-so-stli-tsre__domain-driven-design.md) - DDD with React
-- [Functional Programming](./ex-so-stli-tsre__functional-programming.md) - FP patterns with React
+- [Idioms](./ex-so-plwe-tsre__idioms.md) - React patterns (functional components, hooks, composition)
+- [Best Practices](./ex-so-plwe-tsre__best-practices.md) - Framework coding standards
+- [Anti-Patterns](./ex-so-plwe-tsre__anti-patterns.md) - Common React mistakes
+- [Component Architecture](./ex-so-plwe-tsre__component-architecture.md) - Component design patterns
+- [State Management](./ex-so-plwe-tsre__state-management.md) - State patterns and tools
+- [Hooks](./ex-so-plwe-tsre__hooks.md) - useState, useEffect, custom hooks
+- [TypeScript](./ex-so-plwe-tsre__typescript.md) - TypeScript integration
+- [Testing](./ex-so-plwe-tsre__testing.md) - React Testing Library, Jest
+- [Performance](./ex-so-plwe-tsre__performance.md) - Optimization strategies
+- [Routing](./ex-so-plwe-tsre__routing.md) - React Router patterns
+- [Forms](./ex-so-plwe-tsre__forms.md) - Form handling and validation
+- [Data Fetching](./ex-so-plwe-tsre__data-fetching.md) - API integration
+- [Styling](./ex-so-plwe-tsre__styling.md) - CSS strategies
+- [Accessibility](./ex-so-plwe-tsre__accessibility.md) - WCAG compliance
+- [Security](./ex-so-plwe-tsre__security.md) - Security best practices
+- [Build & Deployment](./ex-so-plwe-tsre__build-deployment.md) - Build tools and deployment
+- [Version Migration](./ex-so-plwe-tsre__version-migration.md) - Upgrading React versions
+- [Domain-Driven Design](./ex-so-plwe-tsre__domain-driven-design.md) - DDD with React
+- [Functional Programming](./ex-so-plwe-tsre__functional-programming.md) - FP patterns with React
 
 ## React Version Strategy
 
@@ -177,7 +177,7 @@ Projects will migrate to React 19 when:
 
 ## Documentation Structure
 
-### [React Idioms](./ex-so-stli-tsre__idioms.md)
+### [React Idioms](./ex-so-plwe-tsre__idioms.md)
 
 Framework-specific patterns for writing idiomatic React applications.
 
@@ -194,7 +194,7 @@ Framework-specific patterns for writing idiomatic React applications.
 - Event handling in React
 - Controlled vs uncontrolled components
 
-### [React Best Practices](./ex-so-stli-tsre__best-practices.md)
+### [React Best Practices](./ex-so-plwe-tsre__best-practices.md)
 
 Proven approaches for building production-ready React applications.
 
@@ -211,7 +211,7 @@ Proven approaches for building production-ready React applications.
 - Code splitting and lazy loading
 - Security best practices
 
-### [React Anti-Patterns](./ex-so-stli-tsre__anti-patterns.md)
+### [React Anti-Patterns](./ex-so-plwe-tsre__anti-patterns.md)
 
 Common mistakes and problematic patterns to avoid.
 
@@ -282,7 +282,7 @@ flowchart TD
 
 Deep-dive documentation on critical React areas:
 
-#### [React Component Architecture](./ex-so-stli-tsre__component-architecture.md)
+#### [React Component Architecture](./ex-so-plwe-tsre__component-architecture.md)
 
 Comprehensive guide to component design patterns.
 
@@ -299,7 +299,7 @@ Comprehensive guide to component design patterns.
 - Atomic design methodology
 - Component testing strategies
 
-#### [React State Management](./ex-so-stli-tsre__state-management.md)
+#### [React State Management](./ex-so-plwe-tsre__state-management.md)
 
 Comprehensive guide to state management patterns.
 
@@ -316,7 +316,7 @@ Comprehensive guide to state management patterns.
 - Optimistic updates
 - State testing strategies
 
-#### [React Hooks](./ex-so-stli-tsre__hooks.md)
+#### [React Hooks](./ex-so-plwe-tsre__hooks.md)
 
 Comprehensive guide to React hooks.
 
@@ -335,7 +335,7 @@ Comprehensive guide to React hooks.
 - Hooks rules and best practices
 - Hooks testing strategies
 
-#### [React TypeScript Integration](./ex-so-stli-tsre__typescript.md)
+#### [React TypeScript Integration](./ex-so-plwe-tsre__typescript.md)
 
 Comprehensive guide to TypeScript with React.
 
@@ -354,7 +354,7 @@ Comprehensive guide to TypeScript with React.
 - Discriminated unions in props
 - TypeScript best practices
 
-#### [React Testing](./ex-so-stli-tsre__testing.md)
+#### [React Testing](./ex-so-plwe-tsre__testing.md)
 
 Comprehensive guide to testing React applications.
 
@@ -373,7 +373,7 @@ Comprehensive guide to testing React applications.
 - E2E testing with Playwright/Cypress
 - TDD workflow with React
 
-#### [React Performance](./ex-so-stli-tsre__performance.md)
+#### [React Performance](./ex-so-plwe-tsre__performance.md)
 
 Comprehensive guide to React performance optimization.
 
@@ -392,7 +392,7 @@ Comprehensive guide to React performance optimization.
 - Avoiding unnecessary re-renders
 - Optimization strategies and trade-offs
 
-#### [React Routing](./ex-so-stli-tsre__routing.md)
+#### [React Routing](./ex-so-plwe-tsre__routing.md)
 
 Comprehensive guide to routing with React Router.
 
@@ -410,7 +410,7 @@ Comprehensive guide to routing with React Router.
 - TypeScript with React Router
 - Testing routes
 
-#### [React Forms](./ex-so-stli-tsre__forms.md)
+#### [React Forms](./ex-so-plwe-tsre__forms.md)
 
 Comprehensive guide to form handling in React.
 
@@ -429,7 +429,7 @@ Comprehensive guide to form handling in React.
 - Accessibility in forms
 - Testing forms
 
-#### [React Data Fetching](./ex-so-stli-tsre__data-fetching.md)
+#### [React Data Fetching](./ex-so-plwe-tsre__data-fetching.md)
 
 Comprehensive guide to data fetching patterns.
 
@@ -448,7 +448,7 @@ Comprehensive guide to data fetching patterns.
 - WebSocket integration
 - TypeScript with data fetching
 
-#### [React Styling](./ex-so-stli-tsre__styling.md)
+#### [React Styling](./ex-so-plwe-tsre__styling.md)
 
 Comprehensive guide to styling React applications.
 
@@ -467,7 +467,7 @@ Comprehensive guide to styling React applications.
 - Styling best practices
 - Performance considerations
 
-#### [React Accessibility](./ex-so-stli-tsre__accessibility.md)
+#### [React Accessibility](./ex-so-plwe-tsre__accessibility.md)
 
 Comprehensive guide to accessibility in React.
 
@@ -486,7 +486,7 @@ Comprehensive guide to accessibility in React.
 - Accessibility in component libraries
 - Accessibility best practices
 
-#### [React Security](./ex-so-stli-tsre__security.md)
+#### [React Security](./ex-so-plwe-tsre__security.md)
 
 Comprehensive guide to security in React applications.
 
@@ -505,7 +505,7 @@ Comprehensive guide to security in React applications.
 - OWASP Top 10 for frontend
 - Security testing
 
-#### [React Build & Deployment](./ex-so-stli-tsre__build-deployment.md)
+#### [React Build & Deployment](./ex-so-plwe-tsre__build-deployment.md)
 
 Comprehensive guide to building and deploying React applications.
 
@@ -523,7 +523,7 @@ Comprehensive guide to building and deploying React applications.
 - Monitoring and error tracking (Sentry)
 - Performance monitoring
 
-#### [React Version Migration](./ex-so-stli-tsre__version-migration.md)
+#### [React Version Migration](./ex-so-plwe-tsre__version-migration.md)
 
 Comprehensive guide to upgrading React versions.
 
@@ -540,7 +540,7 @@ Comprehensive guide to upgrading React versions.
 - Testing during migration
 - Third-party library compatibility
 
-#### [React Domain-Driven Design](./ex-so-stli-tsre__domain-driven-design.md)
+#### [React Domain-Driven Design](./ex-so-plwe-tsre__domain-driven-design.md)
 
 Comprehensive guide to DDD patterns in React.
 
@@ -557,7 +557,7 @@ Comprehensive guide to DDD patterns in React.
 - Hexagonal architecture for React apps
 - Financial examples: Zakat, Murabaha, Waqf UIs
 
-#### [React Functional Programming](./ex-so-stli-tsre__functional-programming.md)
+#### [React Functional Programming](./ex-so-plwe-tsre__functional-programming.md)
 
 Comprehensive guide to FP patterns in React.
 
@@ -1159,7 +1159,7 @@ describe('App Integration', () => {
 
 ### 1. Start with Idioms
 
-Read [React Idioms](./ex-so-stli-tsre__idioms.md) to understand framework patterns:
+Read [React Idioms](./ex-so-plwe-tsre__idioms.md) to understand framework patterns:
 
 - Functional components
 - Hooks basics (useState, useEffect, useContext)
@@ -1169,7 +1169,7 @@ Read [React Idioms](./ex-so-stli-tsre__idioms.md) to understand framework patter
 
 ### 2. Apply Best Practices
 
-Read [React Best Practices](./ex-so-stli-tsre__best-practices.md) for production standards:
+Read [React Best Practices](./ex-so-plwe-tsre__best-practices.md) for production standards:
 
 - Project structure
 - Component design
@@ -1180,7 +1180,7 @@ Read [React Best Practices](./ex-so-stli-tsre__best-practices.md) for production
 
 ### 3. Avoid Anti-Patterns
 
-Read [React Anti-Patterns](./ex-so-stli-tsre__anti-patterns.md) to prevent common mistakes:
+Read [React Anti-Patterns](./ex-so-plwe-tsre__anti-patterns.md) to prevent common mistakes:
 
 - Prop drilling
 - Unnecessary re-renders
@@ -1192,19 +1192,19 @@ Read [React Anti-Patterns](./ex-so-stli-tsre__anti-patterns.md) to prevent commo
 
 Read specialized documentation:
 
-- [Component Architecture](./ex-so-stli-tsre__component-architecture.md)
-- [State Management](./ex-so-stli-tsre__state-management.md)
-- [Hooks](./ex-so-stli-tsre__hooks.md)
-- [TypeScript](./ex-so-stli-tsre__typescript.md)
-- [Performance](./ex-so-stli-tsre__performance.md)
+- [Component Architecture](./ex-so-plwe-tsre__component-architecture.md)
+- [State Management](./ex-so-plwe-tsre__state-management.md)
+- [Hooks](./ex-so-plwe-tsre__hooks.md)
+- [TypeScript](./ex-so-plwe-tsre__typescript.md)
+- [Performance](./ex-so-plwe-tsre__performance.md)
 
 ### 5. Integrate with DDD
 
 Read complementary documentation:
 
-- [Domain-Driven Design](./ex-so-stli-tsre__domain-driven-design.md)
-- [TypeScript DDD Patterns](../../stack-lang/typescript/ex-so-stla-ts__domain-driven-design.md)
-- [Functional Programming](./ex-so-stli-tsre__functional-programming.md)
+- [Domain-Driven Design](./ex-so-plwe-tsre__domain-driven-design.md)
+- [TypeScript DDD Patterns](../../prog-lang/typescript/ex-so-prla-ts__domain-driven-design.md)
+- [Functional Programming](./ex-so-plwe-tsre__functional-programming.md)
 
 ## Code Examples from Platform
 
@@ -1438,11 +1438,11 @@ export const Button: React.FC<ButtonProps> = ({
 
 ### TypeScript Language Standards
 
-- **[TypeScript](../../stack-lang/typescript/README.md)** - Core TypeScript documentation
-- **[TypeScript Idioms](../../stack-lang/typescript/ex-so-stla-ts__idioms.md)** - Modern TypeScript patterns
-- **[TypeScript Best Practices](../../stack-lang/typescript/ex-so-stla-ts__best-practices.md)** - TypeScript coding standards
-- **[TypeScript Security](../../stack-lang/typescript/ex-so-stla-ts__security.md)** - Secure TypeScript coding
-- **[TypeScript Performance](../../stack-lang/typescript/ex-so-stla-ts__performance.md)** - Performance optimization
+- **[TypeScript](../../prog-lang/typescript/README.md)** - Core TypeScript documentation
+- **[TypeScript Idioms](../../prog-lang/typescript/ex-so-prla-ts__idioms.md)** - Modern TypeScript patterns
+- **[TypeScript Best Practices](../../prog-lang/typescript/ex-so-prla-ts__best-practices.md)** - TypeScript coding standards
+- **[TypeScript Security](../../prog-lang/typescript/ex-so-prla-ts__security.md)** - Secure TypeScript coding
+- **[TypeScript Performance](../../prog-lang/typescript/ex-so-prla-ts__performance.md)** - Performance optimization
 
 ### Architecture Patterns
 
@@ -1724,34 +1724,34 @@ CMD ["npm", "run", "dev"]
 
 ### Core React Documentation
 
-- **[React Idioms](./ex-so-stli-tsre__idioms.md)** - Framework patterns
-- **[React Best Practices](./ex-so-stli-tsre__best-practices.md)** - Production standards
-- **[React Anti-Patterns](./ex-so-stli-tsre__anti-patterns.md)** - Common mistakes
+- **[React Idioms](./ex-so-plwe-tsre__idioms.md)** - Framework patterns
+- **[React Best Practices](./ex-so-plwe-tsre__best-practices.md)** - Production standards
+- **[React Anti-Patterns](./ex-so-plwe-tsre__anti-patterns.md)** - Common mistakes
 
 ### Application Layer Documentation
 
-- **[Component Architecture](./ex-so-stli-tsre__component-architecture.md)** - Component design
-- **[State Management](./ex-so-stli-tsre__state-management.md)** - State patterns
-- **[Hooks](./ex-so-stli-tsre__hooks.md)** - React hooks
-- **[TypeScript](./ex-so-stli-tsre__typescript.md)** - TypeScript integration
+- **[Component Architecture](./ex-so-plwe-tsre__component-architecture.md)** - Component design
+- **[State Management](./ex-so-plwe-tsre__state-management.md)** - State patterns
+- **[Hooks](./ex-so-plwe-tsre__hooks.md)** - React hooks
+- **[TypeScript](./ex-so-plwe-tsre__typescript.md)** - TypeScript integration
 
 ### Advanced Topics
 
-- **[Performance](./ex-so-stli-tsre__performance.md)** - Optimization
-- **[Testing](./ex-so-stli-tsre__testing.md)** - Testing strategies
-- **[Accessibility](./ex-so-stli-tsre__accessibility.md)** - WCAG compliance
-- **[Security](./ex-so-stli-tsre__security.md)** - Security best practices
+- **[Performance](./ex-so-plwe-tsre__performance.md)** - Optimization
+- **[Testing](./ex-so-plwe-tsre__testing.md)** - Testing strategies
+- **[Accessibility](./ex-so-plwe-tsre__accessibility.md)** - WCAG compliance
+- **[Security](./ex-so-plwe-tsre__security.md)** - Security best practices
 
 ### Integration Documentation
 
-- **[Domain-Driven Design](./ex-so-stli-tsre__domain-driven-design.md)** - DDD with React
-- **[Functional Programming](./ex-so-stli-tsre__functional-programming.md)** - FP patterns
-- **[Version Migration](./ex-so-stli-tsre__version-migration.md)** - Upgrading versions
+- **[Domain-Driven Design](./ex-so-plwe-tsre__domain-driven-design.md)** - DDD with React
+- **[Functional Programming](./ex-so-plwe-tsre__functional-programming.md)** - FP patterns
+- **[Version Migration](./ex-so-plwe-tsre__version-migration.md)** - Upgrading versions
 
 ### Platform Documentation
 
 - **[Libraries and Frameworks Index](../README.md)** - Parent frameworks documentation
-- **[TypeScript Programming Language](../../stack-lang/typescript/README.md)** - TypeScript standards
+- **[TypeScript Programming Language](../../prog-lang/typescript/README.md)** - TypeScript standards
 - **[Software Design Index](../../README.md)** - Software documentation root
 - **[Monorepo Structure](../../../../reference/re__monorepo-structure.md)** - Nx workspace organization
 

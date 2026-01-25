@@ -2,7 +2,7 @@
 title: "Phoenix Contexts"
 description: Context design, boundaries, API design, and business logic organization
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - contexts
@@ -11,10 +11,10 @@ tags:
   - business-logic
   - api-design
 related:
-  - ./ex-so-stli-elph__idioms.md
-  - ./ex-so-stli-elph__best-practices.md
-  - ./ex-so-stli-elph__anti-patterns.md
-  - ./ex-so-stli-elph__data-access.md
+  - ./ex-so-plwe-elph__idioms.md
+  - ./ex-so-plwe-elph__best-practices.md
+  - ./ex-so-plwe-elph__anti-patterns.md
+  - ./ex-so-plwe-elph__data-access.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -1602,11 +1602,11 @@ end
 
 ## Related Documentation
 
-- **[Phoenix Idioms](./ex-so-stli-elph__idioms.md)** - Idiomatic Phoenix patterns
-- **[Phoenix Best Practices](./ex-so-stli-elph__best-practices.md)** - Production standards
-- **[Phoenix Anti-Patterns](./ex-so-stli-elph__anti-patterns.md)** - Common mistakes
-- **[Data Access](./ex-so-stli-elph__data-access.md)** - Ecto schemas and queries
-- **[Testing](./ex-so-stli-elph__testing.md)** - Testing strategies
+- **[Phoenix Idioms](./ex-so-plwe-elph__idioms.md)** - Idiomatic Phoenix patterns
+- **[Phoenix Best Practices](./ex-so-plwe-elph__best-practices.md)** - Production standards
+- **[Phoenix Anti-Patterns](./ex-so-plwe-elph__anti-patterns.md)** - Common mistakes
+- **[Data Access](./ex-so-plwe-elph__data-access.md)** - Ecto schemas and queries
+- **[Testing](./ex-so-plwe-elph__testing.md)** - Testing strategies
 
 ---
 

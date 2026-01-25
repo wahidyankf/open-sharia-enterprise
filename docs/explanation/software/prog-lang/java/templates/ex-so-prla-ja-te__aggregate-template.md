@@ -10,7 +10,7 @@ tags:
   - aggregate-root
   - consistency
 related:
-  - ex-so-stla-ja-te__entity-template.md
+  - ex-so-prla-ja-te__entity-template.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -985,9 +985,9 @@ enum CampaignStatus {
 
 ## Related Templates
 
-- [Entity Template](./ex-so-stla-ja-te__entity-template.md)
-- [Value Object Template](./ex-so-stla-ja-te__value-object-template.md)
-- [Domain Event Template](./ex-so-stla-ja-te__domain-event-template.md)
+- [Entity Template](./ex-so-prla-ja-te__entity-template.md)
+- [Value Object Template](./ex-so-prla-ja-te__value-object-template.md)
+- [Domain Event Template](./ex-so-prla-ja-te__domain-event-template.md)
 
 ## See Also
 

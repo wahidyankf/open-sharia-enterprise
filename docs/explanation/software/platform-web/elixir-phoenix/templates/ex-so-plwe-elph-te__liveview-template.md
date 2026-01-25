@@ -2,14 +2,14 @@
 title: Phoenix LiveView Template
 description: Production-ready template for Phoenix LiveView
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - elixir
   - template
   - liveview
 related:
-  - ../ex-so-stli-elph__liveview.md
+  - ../ex-so-plwe-elph__liveview.md
 last_updated: 2026-01-25
 ---
 

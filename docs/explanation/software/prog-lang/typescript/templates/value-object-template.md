@@ -20,8 +20,8 @@ tags:
 related:
   - entity-template.md
   - aggregate-template.md
-  - ex-so-stla-ts__best-practices.md
-  - ex-so-stla-ts__type-safety.md
+  - ex-so-prla-ts__best-practices.md
+  - ex-so-prla-ts__type-safety.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -1707,9 +1707,9 @@ describe("Email Value Object", () => {
 
 **TypeScript Language Documentation**:
 
-- [TypeScript Best Practices](../ex-so-stla-ts__best-practices.md) - TypeScript coding standards
-- [Type Safety in TypeScript](../ex-so-stla-ts__type-safety.md) - Advanced type patterns
-- [Error Handling with Result](../ex-so-stla-ts__error-handling.md) - Result monad pattern
+- [TypeScript Best Practices](../ex-so-prla-ts__best-practices.md) - TypeScript coding standards
+- [Type Safety in TypeScript](../ex-so-prla-ts__type-safety.md) - Advanced type patterns
+- [Error Handling with Result](../ex-so-prla-ts__error-handling.md) - Result monad pattern
 
 **Template Documentation**:
 

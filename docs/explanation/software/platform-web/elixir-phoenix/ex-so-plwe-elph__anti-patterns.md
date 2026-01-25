@@ -2,7 +2,7 @@
 title: "Phoenix Anti-Patterns"
 description: Common Phoenix mistakes and problematic patterns to avoid
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - elixir
@@ -11,10 +11,10 @@ tags:
   - mistakes
   - avoid
 related:
-  - ./ex-so-stli-elph__idioms.md
-  - ./ex-so-stli-elph__best-practices.md
-  - ./ex-so-stli-elph__contexts.md
-  - ./ex-so-stli-elph__liveview.md
+  - ./ex-so-plwe-elph__idioms.md
+  - ./ex-so-plwe-elph__best-practices.md
+  - ./ex-so-plwe-elph__contexts.md
+  - ./ex-so-plwe-elph__liveview.md
 principles:
   - explicit-over-implicit
   - immutability
@@ -2199,12 +2199,12 @@ end
 
 ## Related Documentation
 
-- **[Phoenix Idioms](./ex-so-stli-elph__idioms.md)** - Idiomatic patterns
-- **[Phoenix Best Practices](./ex-so-stli-elph__best-practices.md)** - Production standards
-- **[Contexts](./ex-so-stli-elph__contexts.md)** - Context design patterns
-- **[LiveView](./ex-so-stli-elph__liveview.md)** - LiveView best practices
-- **[Testing](./ex-so-stli-elph__testing.md)** - Testing strategies
-- **[Elixir Anti-Patterns](../../stack-lang/elixir/ex-so-stla-el__anti-patterns.md)** - Elixir language anti-patterns
+- **[Phoenix Idioms](./ex-so-plwe-elph__idioms.md)** - Idiomatic patterns
+- **[Phoenix Best Practices](./ex-so-plwe-elph__best-practices.md)** - Production standards
+- **[Contexts](./ex-so-plwe-elph__contexts.md)** - Context design patterns
+- **[LiveView](./ex-so-plwe-elph__liveview.md)** - LiveView best practices
+- **[Testing](./ex-so-plwe-elph__testing.md)** - Testing strategies
+- **[Elixir Anti-Patterns](../../prog-lang/elixir/ex-so-prla-el__anti-patterns.md)** - Elixir language anti-patterns
 
 ---
 

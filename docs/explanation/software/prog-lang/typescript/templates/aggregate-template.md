@@ -23,8 +23,8 @@ related:
   - entity-template.md
   - value-object-template.md
   - domain-event-template.md
-  - ex-so-stla-ts__best-practices.md
-  - ex-so-stla-ts__type-safety.md
+  - ex-so-prla-ts__best-practices.md
+  - ex-so-prla-ts__type-safety.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -2034,8 +2034,8 @@ describe("DonationCampaign Integration", () => {
 - **[Domain Event Template](./domain-event-template.md)** - Domain events for communication
 - **[Repository Template](./repository-template.md)** - Persisting aggregates
 - **[Service Layer Template](./service-layer-template.md)** - Orchestrating aggregates
-- **[TypeScript Best Practices](../ex-so-stla-ts__best-practices.md)** - TypeScript coding standards
-- **[TypeScript Type Safety](../ex-so-stla-ts__type-safety.md)** - Leveraging TypeScript's type system
+- **[TypeScript Best Practices](../ex-so-prla-ts__best-practices.md)** - TypeScript coding standards
+- **[TypeScript Type Safety](../ex-so-prla-ts__type-safety.md)** - Leveraging TypeScript's type system
 
 ---
 

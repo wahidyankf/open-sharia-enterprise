@@ -2,7 +2,7 @@
 title: Phoenix Configuration Guide
 description: Comprehensive guide to Phoenix configuration including config files, runtime configuration, environment variables, and secrets management
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - elixir
@@ -11,9 +11,9 @@ tags:
   - secrets
   - runtime
 related:
-  - ex-so-stli-elph__deployment.md
-  - ex-so-stli-elph__security.md
-  - ex-so-stli-elph__best-practices.md
+  - ex-so-plwe-elph__deployment.md
+  - ex-so-plwe-elph__security.md
+  - ex-so-plwe-elph__best-practices.md
 last_updated: 2026-01-25
 ---
 
@@ -40,9 +40,9 @@ last_updated: 2026-01-25
 
 ### Related Documentation
 
-- **[Deployment](./ex-so-stli-elph__deployment.md)** - Production configuration
-- **[Security](./ex-so-stli-elph__security.md)** - Secrets security
-- **[Best Practices](./ex-so-stli-elph__best-practices.md)** - Configuration patterns
+- **[Deployment](./ex-so-plwe-elph__deployment.md)** - Production configuration
+- **[Security](./ex-so-plwe-elph__security.md)** - Secrets security
+- **[Best Practices](./ex-so-plwe-elph__best-practices.md)** - Configuration patterns
 
 ## Overview
 
@@ -797,10 +797,10 @@ config :ose_platform, OsePlatform.Repo,
 
 ## Related Documentation
 
-- **[Deployment](./ex-so-stli-elph__deployment.md)** - Production configuration and releases
-- **[Security](./ex-so-stli-elph__security.md)** - Secrets security and encryption
-- **[Best Practices](./ex-so-stli-elph__best-practices.md)** - Configuration patterns and conventions
-- **[Testing](./ex-so-stli-elph__testing.md)** - Test configuration and setup
+- **[Deployment](./ex-so-plwe-elph__deployment.md)** - Production configuration and releases
+- **[Security](./ex-so-plwe-elph__security.md)** - Secrets security and encryption
+- **[Best Practices](./ex-so-plwe-elph__best-practices.md)** - Configuration patterns and conventions
+- **[Testing](./ex-so-plwe-elph__testing.md)** - Test configuration and setup
 
 ---
 

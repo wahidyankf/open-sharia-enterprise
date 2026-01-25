@@ -12,9 +12,9 @@ tags:
   - linting
   - testing
 related:
-  - ex-so-stla-go__modules-and-dependencies.md
-  - ex-so-stla-go__best-practices.md
-  - ex-so-stla-go__linting-and-formatting.md
+  - ex-so-prla-go__modules-and-dependencies.md
+  - ex-so-prla-go__best-practices.md
+  - ex-so-prla-go__linting-and-formatting.md
 principles:
   - reproducibility
   - automation-over-manual
@@ -1954,9 +1954,9 @@ cp .env.example .env
 
 ## 🔗 Related Documentation
 
-- [Modules and Dependencies](../ex-so-stla-go__modules-and-dependencies.md) - Dependency management details
-- [Best Practices](../ex-so-stla-go__best-practices.md) - Go coding standards
-- [Linting and Formatting](../ex-so-stla-go__linting-and-formatting.md) - Code quality tools
+- [Modules and Dependencies](../ex-so-prla-go__modules-and-dependencies.md) - Dependency management details
+- [Best Practices](../ex-so-prla-go__best-practices.md) - Go coding standards
+- [Linting and Formatting](../ex-so-prla-go__linting-and-formatting.md) - Code quality tools
 
 ## 🌐 External Resources
 

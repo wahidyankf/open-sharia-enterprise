@@ -9,7 +9,7 @@ description: Python coding standards from authoritative docs/explanation/softwar
 
 Progressive disclosure of Python coding standards for agents writing Python code.
 
-**Authoritative Source**: [docs/explanation/software/prog-lang/python/README.md](../../docs/explanation/software/prog-lang/python/README.md)
+**Authoritative Source**: [docs/explanation/software/prog-lang/python/README.md](../../../docs/explanation/software/prog-lang/python/README.md)
 
 **Usage**: Auto-loaded for agents when writing Python code. Provides quick reference to idioms, best practices, and antipatterns.
 
@@ -160,9 +160,9 @@ api_key = os.getenv('API_KEY')
 
 For detailed guidance, refer to:
 
-- **[Idioms](../../docs/explanation/software/prog-lang/python/ex-so-prla-py__idioms.md)** - Python-specific patterns
-- **[Best Practices](../../docs/explanation/software/prog-lang/python/ex-so-prla-py__best-practices.md)** - Clean code standards
-- **[Anti-Patterns](../../docs/explanation/software/prog-lang/python/ex-so-prla-py__anti-patterns.md)** - Common mistakes
+- **[Idioms](../../../docs/explanation/software/prog-lang/python/ex-so-prla-py__idioms.md)** - Python-specific patterns
+- **[Best Practices](../../../docs/explanation/software/prog-lang/python/ex-so-prla-py__best-practices.md)** - Clean code standards
+- **[Anti-Patterns](../../../docs/explanation/software/prog-lang/python/ex-so-prla-py__anti-patterns.md)** - Common mistakes
 
 ## Related Skills
 
@@ -171,5 +171,5 @@ For detailed guidance, refer to:
 
 ## References
 
-- [Python README](../../docs/explanation/software/prog-lang/python/README.md)
-- [Functional Programming](../../governance/development/pattern/functional-programming.md)
+- [Python README](../../../docs/explanation/software/prog-lang/python/README.md)
+- [Functional Programming](../../../governance/development/pattern/functional-programming.md)

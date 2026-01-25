@@ -1,7 +1,7 @@
 title: Go Interfaces and Composition
 description: Interface design and composition over inheritance in Go
 category: explanation
-subcategory: stack-lang-golang
+subcategory: prog-lang-golang
 tags:
 
 - golang
@@ -1147,11 +1147,11 @@ type ReadCloser interface {
 
 ## Related Documentation
 
-- [Go Best Practices](./ex-so-stla-go__best-practices.md) - Interface design best practices
-- [Go Idioms](./ex-so-stla-go__idioms.md) - Interface usage patterns
-- [Go Type Safety](./ex-so-stla-go__type-safety.md) - Type system and interfaces
-- [Go Anti-Patterns](./ex-so-stla-go__anti-patterns.md) - Common interface mistakes
-- [Go Domain-Driven Design](./ex-so-stla-go__domain-driven-design.md) - Interfaces in DDD
+- [Go Best Practices](./ex-so-prla-go__best-practices.md) - Interface design best practices
+- [Go Idioms](./ex-so-prla-go__idioms.md) - Interface usage patterns
+- [Go Type Safety](./ex-so-prla-go__type-safety.md) - Type system and interfaces
+- [Go Anti-Patterns](./ex-so-prla-go__anti-patterns.md) - Common interface mistakes
+- [Go Domain-Driven Design](./ex-so-prla-go__domain-driven-design.md) - Interfaces in DDD
 
 principles:
 

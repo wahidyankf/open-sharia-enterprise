@@ -23,8 +23,8 @@ related:
   - aggregate-template.md
   - entity-template.md
   - value-object-template.md
-  - ex-so-stla-ts__domain-driven-design.md
-  - ex-so-stla-ts__concurrency-and-parallelism.md
+  - ex-so-prla-ts__domain-driven-design.md
+  - ex-so-prla-ts__concurrency-and-parallelism.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -1382,8 +1382,8 @@ describe("ZakatCalculatedHandler", () => {
 - **[Entity Template](./entity-template.md)** - Entities within aggregates
 - **[Value Object Template](./value-object-template.md)** - Immutable value objects in events
 - **[Service Layer Template](./service-layer-template.md)** - Publishing events from services
-- **[TypeScript Best Practices](../ex-so-stla-ts__best-practices.md)** - TypeScript coding standards
-- **[TypeScript Concurrency and Parallelism](../ex-so-stla-ts__concurrency-and-parallelism.md)** - Async/await patterns for event handlers
+- **[TypeScript Best Practices](../ex-so-prla-ts__best-practices.md)** - TypeScript coding standards
+- **[TypeScript Concurrency and Parallelism](../ex-so-prla-ts__concurrency-and-parallelism.md)** - Async/await patterns for event handlers
 
 ---
 

@@ -2,7 +2,7 @@
 title: Java Web Services and APIs
 description: Building RESTful APIs, GraphQL, gRPC services with Spring Boot, Jakarta EE, and modern Java frameworks
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - web-services
@@ -15,7 +15,7 @@ tags:
   - api-security
   - java-21
 related:
-  - ./ex-so-stla-ja__best-practices.md
+  - ./ex-so-prla-ja__best-practices.md
 principles:
   - explicit-over-implicit
 last_updated: 2026-01-24
@@ -44,12 +44,12 @@ last_updated: 2026-01-24
 
 **Related Documentation:**
 
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Clean code, composition over inheritance
-- [Java Security](./ex-so-stla-ja__security.md) - Secure coding, authentication, authorization
-- [Java Performance](./ex-so-stla-ja__performance.md) - API performance optimization
-- [Java Test-Driven Development](./ex-so-stla-ja__test-driven-development.md) - Testing strategies
-- [Java Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md) - DDD patterns for APIs
-- [Go Web Services](../golang/ex-so-stla-go__web-services.md) - Go web services comparison
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - Clean code, composition over inheritance
+- [Java Security](./ex-so-prla-ja__security.md) - Secure coding, authentication, authorization
+- [Java Performance](./ex-so-prla-ja__performance.md) - API performance optimization
+- [Java Test-Driven Development](./ex-so-prla-ja__test-driven-development.md) - Testing strategies
+- [Java Domain-Driven Design](./ex-so-prla-ja__domain-driven-design.md) - DDD patterns for APIs
+- [Go Web Services](../golang/ex-so-prla-go__web-services.md) - Go web services comparison
 
 This document demonstrates how Java's rich web ecosystem embodies the [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md) principle through declarative annotations, explicit configuration, and compile-time verification of API contracts.
 
@@ -3561,20 +3561,20 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 
 **Core Java Documentation**:
 
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Clean code, composition over inheritance
-- [Java Security](./ex-so-stla-ja__security.md) - Authentication, authorization, secure coding
-- [Java Performance](./ex-so-stla-ja__performance.md) - API performance optimization
-- [Java Error Handling](./ex-so-stla-ja__error-handling.md) - Exception handling patterns
-- [Java Interfaces and Polymorphism](./ex-so-stla-ja__interfaces-and-polymorphism.md) - Service interfaces
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - Clean code, composition over inheritance
+- [Java Security](./ex-so-prla-ja__security.md) - Authentication, authorization, secure coding
+- [Java Performance](./ex-so-prla-ja__performance.md) - API performance optimization
+- [Java Error Handling](./ex-so-prla-ja__error-handling.md) - Exception handling patterns
+- [Java Interfaces and Polymorphism](./ex-so-prla-ja__interfaces-and-polymorphism.md) - Service interfaces
 
 **Specialized Topics**:
 
-- [Java Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md) - DDD patterns for APIs
-- [Java Test-Driven Development](./ex-so-stla-ja__test-driven-development.md) - Testing web services
+- [Java Domain-Driven Design](./ex-so-prla-ja__domain-driven-design.md) - DDD patterns for APIs
+- [Java Test-Driven Development](./ex-so-prla-ja__test-driven-development.md) - Testing web services
 
 **Comparison with Other Languages**:
 
-- [Go Web Services](../golang/ex-so-stla-go__web-services.md) - Go's net/http, Gin, gRPC comparison
+- [Go Web Services](../golang/ex-so-prla-go__web-services.md) - Go's net/http, Gin, gRPC comparison
 
 **Platform Documentation**:
 

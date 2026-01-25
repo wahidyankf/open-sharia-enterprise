@@ -2,7 +2,7 @@
 title: Python Idioms
 description: Pythonic patterns and idioms including comprehensions, EAFP, context managers, decorators, generators, duck typing, and special methods for Sharia-compliant applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - idioms
@@ -20,10 +20,10 @@ tags:
   - type-hints
   - protocols
 related:
-  - ./ex-so-stla-py__best-practices.md
-  - ./ex-so-stla-py__functional-programming.md
-  - ./ex-so-stla-py__classes-and-protocols.md
-  - ./ex-so-stla-py__error-handling.md
+  - ./ex-so-prla-py__best-practices.md
+  - ./ex-so-prla-py__functional-programming.md
+  - ./ex-so-prla-py__classes-and-protocols.md
+  - ./ex-so-prla-py__error-handling.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -109,10 +109,10 @@ with timing_context("op"):     # Custom
 
 ### Related Documentation
 
-- [Best Practices](./ex-so-stla-py__best-practices.md)
-- [Functional Programming](./ex-so-stla-py__functional-programming.md)
-- [Classes and Protocols](./ex-so-stla-py__classes-and-protocols.md)
-- [Error Handling](./ex-so-stla-py__error-handling.md)
+- [Best Practices](./ex-so-prla-py__best-practices.md)
+- [Functional Programming](./ex-so-prla-py__functional-programming.md)
+- [Classes and Protocols](./ex-so-prla-py__classes-and-protocols.md)
+- [Error Handling](./ex-so-prla-py__error-handling.md)
 
 ## Overview
 
@@ -2612,10 +2612,10 @@ total_zakat = calculate_total_zakat(assets)  # Type-safe duck typing
 
 ### Related Documentation
 
-- [Best Practices](./ex-so-stla-py__best-practices.md) - Python coding standards
-- [Functional Programming](./ex-so-stla-py__functional-programming.md) - Functional patterns
-- [Classes and Protocols](./ex-so-stla-py__classes-and-protocols.md) - Object-oriented design
-- [Error Handling](./ex-so-stla-py__error-handling.md) - Exception patterns
+- [Best Practices](./ex-so-prla-py__best-practices.md) - Python coding standards
+- [Functional Programming](./ex-so-prla-py__functional-programming.md) - Functional patterns
+- [Classes and Protocols](./ex-so-prla-py__classes-and-protocols.md) - Object-oriented design
+- [Error Handling](./ex-so-prla-py__error-handling.md) - Exception patterns
 
 ### Books
 

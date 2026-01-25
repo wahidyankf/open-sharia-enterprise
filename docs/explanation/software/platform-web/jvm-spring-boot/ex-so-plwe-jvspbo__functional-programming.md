@@ -2,14 +2,14 @@
 title: "Spring Boot Functional Programming"
 description: Functional programming patterns with Spring Boot
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - spring-boot
   - functional-programming
   - immutability
   - pure-functions
 related:
-  - ./ex-so-stli-jvspbo__idioms.md
+  - ./ex-so-plwe-jvspbo__idioms.md
 principles:
   - immutability
   - pure-functions

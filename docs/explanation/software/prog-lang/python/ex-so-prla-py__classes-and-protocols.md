@@ -2,7 +2,7 @@
 title: Python Classes and Protocols
 description: Object-oriented programming in Python covering classes, dataclasses, Pydantic models, protocols, abstract base classes, properties, and composition patterns for Islamic finance domain modeling
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - classes
@@ -12,9 +12,9 @@ tags:
   - oop
   - composition
 related:
-  - ./ex-so-stla-py__domain-driven-design.md
-  - ./ex-so-stla-py__type-safety.md
-  - ./ex-so-stla-py__best-practices.md
+  - ./ex-so-prla-py__domain-driven-design.md
+  - ./ex-so-prla-py__type-safety.md
+  - ./ex-so-prla-py__best-practices.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -696,9 +696,9 @@ graph TD
 
 ### Related Documentation
 
-- [Domain-Driven Design](./ex-so-stla-py__domain-driven-design.md) - DDD patterns
-- [Type Safety](./ex-so-stla-py__type-safety.md) - Type hints
-- [Best Practices](./ex-so-stla-py__best-practices.md) - Coding standards
+- [Domain-Driven Design](./ex-so-prla-py__domain-driven-design.md) - DDD patterns
+- [Type Safety](./ex-so-prla-py__type-safety.md) - Type hints
+- [Best Practices](./ex-so-prla-py__best-practices.md) - Coding standards
 
 ---
 

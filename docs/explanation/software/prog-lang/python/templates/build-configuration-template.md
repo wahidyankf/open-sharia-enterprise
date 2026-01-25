@@ -2,7 +2,7 @@
 title: Build Configuration Template
 description: Copy-paste ready Python build configuration template with pyproject.toml, Docker, CI/CD, and development tools for Sharia-compliant financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - template
@@ -11,8 +11,8 @@ tags:
   - docker
   - ci-cd
 related:
-  - ../ex-so-stla-py__best-practices.md
-  - ../ex-so-stla-py__linting-and-formatting.md
+  - ../ex-so-prla-py__best-practices.md
+  - ../ex-so-prla-py__linting-and-formatting.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -399,8 +399,8 @@ dev = [
 
 ## References
 
-- [Best Practices](../ex-so-stla-py__best-practices.md)
-- [Linting and Formatting](../ex-so-stla-py__linting-and-formatting.md)
+- [Best Practices](../ex-so-prla-py__best-practices.md)
+- [Linting and Formatting](../ex-so-prla-py__linting-and-formatting.md)
 
 ---
 

@@ -2,7 +2,7 @@
 title: "TypeScript Web Services"
 description: Building web services and APIs with TypeScript frameworks
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - web-services
@@ -14,10 +14,10 @@ tags:
   - rest-api
   - graphql
 related:
-  - ./ex-so-stla-ts__best-practices.md
-  - ./ex-so-stla-ts__error-handling.md
-  - ./ex-so-stla-ts__security.md
-  - ./ex-so-stla-ts__domain-driven-design.md
+  - ./ex-so-prla-ts__best-practices.md
+  - ./ex-so-prla-ts__error-handling.md
+  - ./ex-so-prla-ts__security.md
+  - ./ex-so-prla-ts__domain-driven-design.md
 principles:
   - explicit-over-implicit
   - automation-over-manual
@@ -1283,10 +1283,10 @@ export class DonationModule {}
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
-- **[TypeScript Error Handling](./ex-so-stla-ts__error-handling.md)** - Error patterns
-- **[TypeScript Security](./ex-so-stla-ts__security.md)** - Security best practices
-- **[TypeScript DDD](./ex-so-stla-ts__domain-driven-design.md)** - Domain patterns
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards
+- **[TypeScript Error Handling](./ex-so-prla-ts__error-handling.md)** - Error patterns
+- **[TypeScript Security](./ex-so-prla-ts__security.md)** - Security best practices
+- **[TypeScript DDD](./ex-so-prla-ts__domain-driven-design.md)** - Domain patterns
 
 ---
 

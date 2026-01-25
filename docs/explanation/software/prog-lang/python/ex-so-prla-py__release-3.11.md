@@ -2,7 +2,7 @@
 title: Python 3.11 Release Features
 description: Python 3.11 baseline features including 1.25x performance improvements, exception groups (PEP 654), TOML support (tomllib), type hinting improvements (TypeVarTuple, TypedDict required/not_required), and enhanced error messages for financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - python-3.11
@@ -13,9 +13,9 @@ tags:
   - error-messages
   - release-notes
 related:
-  - ./ex-so-stla-py__release-3.12.md
-  - ./ex-so-stla-py__release-3.14.md
-  - ./ex-so-stla-py__performance.md
+  - ./ex-so-prla-py__release-3.12.md
+  - ./ex-so-prla-py__release-3.14.md
+  - ./ex-so-prla-py__performance.md
 principles:
   - measure-first-optimize-later
   - explicit-over-implicit
@@ -716,9 +716,9 @@ else:
 
 ### Related Documentation
 
-- [Python 3.12 Release](./ex-so-stla-py__release-3.12.md) - Stable maintenance version
-- [Python 3.14 Release](./ex-so-stla-py__release-3.14.md) - Latest stable version
-- [Performance](./ex-so-stla-py__performance.md) - Performance optimization
+- [Python 3.12 Release](./ex-so-prla-py__release-3.12.md) - Stable maintenance version
+- [Python 3.14 Release](./ex-so-prla-py__release-3.14.md) - Latest stable version
+- [Performance](./ex-so-prla-py__performance.md) - Performance optimization
 
 ### Release Timeline
 

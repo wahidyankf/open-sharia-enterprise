@@ -1,7 +1,7 @@
 title: Go Idioms
 description: Comprehensive guide to Go-specific patterns, idiomatic constructs, and common programming conventions
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
 
 - golang
@@ -84,9 +84,9 @@ tags:
 
 ### Additional Resources
 
-- [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md)
-- [Error Handling](./ex-so-stla-go__error-handling.md)
-- [Best Practices](./ex-so-stla-go__best-practices.md)
+- [Concurrency and Parallelism](./ex-so-prla-go__concurrency-and-parallelism.md)
+- [Error Handling](./ex-so-prla-go__error-handling.md)
+- [Best Practices](./ex-so-prla-go__best-practices.md)
 
 ## Overview
 
@@ -2138,7 +2138,7 @@ func (m *MyReader) Read(p []byte) (int, error) {
 
 ## Error Handling Idioms
 
-See [Error Handling Documentation](./ex-so-stla-go__error-handling.md) for comprehensive error handling patterns.
+See [Error Handling Documentation](./ex-so-prla-go__error-handling.md) for comprehensive error handling patterns.
 
 ### Quick Reference
 
@@ -2180,7 +2180,7 @@ if errors.As(err, &validationErr) {
 
 ## Concurrency Idioms
 
-See [Concurrency and Parallelism Documentation](./ex-so-stla-go__concurrency-and-parallelism.md) for comprehensive concurrency patterns.
+See [Concurrency and Parallelism Documentation](./ex-so-prla-go__concurrency-and-parallelism.md) for comprehensive concurrency patterns.
 
 ### Quick Reference
 
@@ -2707,9 +2707,9 @@ principles:
 
 **Related Documentation**:
 
-- [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md)
-- [Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md)
-- [Error Handling](./ex-so-stla-go__error-handling.md)
+- [Concurrency and Parallelism](./ex-so-prla-go__concurrency-and-parallelism.md)
+- [Interfaces and Composition](./ex-so-prla-go__interfaces-and-composition.md)
+- [Error Handling](./ex-so-prla-go__error-handling.md)
 
 **Navigation**: [← Back to Golang Overview](./README.md)
 

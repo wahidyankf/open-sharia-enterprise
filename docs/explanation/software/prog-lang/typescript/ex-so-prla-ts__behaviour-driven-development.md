@@ -2,7 +2,7 @@
 title: "TypeScript Behaviour-Driven Development"
 description: BDD practices with Cucumber and Playwright for TypeScript
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - bdd
@@ -12,8 +12,8 @@ tags:
   - playwright
   - e2e-testing
 related:
-  - ./ex-so-stla-ts__test-driven-development.md
-  - ./ex-so-stla-ts__best-practices.md
+  - ./ex-so-prla-ts__test-driven-development.md
+  - ./ex-so-prla-ts__best-practices.md
 principles:
   - explicit-over-implicit
   - automation-over-manual
@@ -490,8 +490,8 @@ test("donation form on mobile", async ({ page }) => {
 
 ## Related Documentation
 
-- **[TypeScript TDD](./ex-so-stla-ts__test-driven-development.md)** - TDD patterns
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
+- **[TypeScript TDD](./ex-so-prla-ts__test-driven-development.md)** - TDD patterns
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards
 
 ---
 

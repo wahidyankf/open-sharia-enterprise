@@ -2,7 +2,7 @@
 title: Python Best Practices
 description: Comprehensive guide to Python coding standards including PEP 8 style, PEP 20 philosophy, type hints, code organization, and Sharia-compliant financial domain patterns
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - best-practices
@@ -12,11 +12,11 @@ tags:
   - type-hints
   - documentation
 related:
-  - ./ex-so-stla-py__idioms.md
-  - ./ex-so-stla-py__type-safety.md
-  - ./ex-so-stla-py__error-handling.md
-  - ./ex-so-stla-py__linting-and-formatting.md
-  - ./ex-so-stla-py__test-driven-development.md
+  - ./ex-so-prla-py__idioms.md
+  - ./ex-so-prla-py__type-safety.md
+  - ./ex-so-prla-py__error-handling.md
+  - ./ex-so-prla-py__linting-and-formatting.md
+  - ./ex-so-prla-py__test-driven-development.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -170,7 +170,7 @@ class ZakatCalculator:
 
 **Islamic Finance Application**: Automated Zakat calculation verification ensures consistent nisab threshold checking across all transactions, preventing manual miscalculations that could lead to underpayment (haram). Every code commit triggers pytest with 80% coverage requirement.
 
-**See Also**: [Python Linting and Formatting](./ex-so-stla-py__linting-and-formatting.md)
+**See Also**: [Python Linting and Formatting](./ex-so-prla-py__linting-and-formatting.md)
 
 ### 2. Explicit Over Implicit
 
@@ -278,7 +278,7 @@ def create_murabaha_contract(
 
 **Islamic Finance Application**: Explicit Murabaha terms ensure no hidden fees (riba), maintaining transparency required by Shariah law. All profit margins must be disclosed upfront with explicit parameters. Pydantic validation catches invalid configurations before contracts are created.
 
-**See Also**: [Python Best Practices](./ex-so-stla-py__best-practices.md)
+**See Also**: [Python Best Practices](./ex-so-prla-py__best-practices.md)
 
 ### 3. Immutability Over Mutability
 
@@ -374,7 +374,7 @@ class ZakatTransaction:
 
 **Islamic Finance Application**: Immutable transaction records provide tamper-proof audit trails required for Shariah compliance verification. Once a Murabaha payment is recorded, it cannot be altered - ensuring transparency and accountability (Amanah). Corrections create new transactions with references to originals.
 
-**See Also**: [Python Functional Programming](./ex-so-stla-py__functional-programming.md)
+**See Also**: [Python Functional Programming](./ex-so-prla-py__functional-programming.md)
 
 ### 4. Pure Functions Over Side Effects
 
@@ -2653,11 +2653,11 @@ Use this checklist to ensure your Python code follows best practices:
 
 ### Related Documentation
 
-- [Python Idioms](./ex-so-stla-py__idioms.md) - Pythonic patterns
-- [Type Safety](./ex-so-stla-py__type-safety.md) - Type hints and mypy
-- [Error Handling](./ex-so-stla-py__error-handling.md) - Exception patterns
-- [Linting and Formatting](./ex-so-stla-py__linting-and-formatting.md) - Automated tools
-- [Test-Driven Development](./ex-so-stla-py__test-driven-development.md) - Testing practices
+- [Python Idioms](./ex-so-prla-py__idioms.md) - Pythonic patterns
+- [Type Safety](./ex-so-prla-py__type-safety.md) - Type hints and mypy
+- [Error Handling](./ex-so-prla-py__error-handling.md) - Exception patterns
+- [Linting and Formatting](./ex-so-prla-py__linting-and-formatting.md) - Automated tools
+- [Test-Driven Development](./ex-so-prla-py__test-driven-development.md) - Testing practices
 
 ### Tools
 
