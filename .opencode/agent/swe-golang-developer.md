@@ -63,7 +63,7 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 ## Coding Standards
 
-**Authoritative Reference**: `docs/explanation/software/stack-lang/golang/README.md`
+**Authoritative Reference**: `docs/explanation/software/prog-lang/golang/README.md`
 
 All Go code MUST follow the platform coding standards:
 
@@ -92,10 +92,10 @@ All Go code MUST follow the platform coding standards:
 
 **Coding Standards** (Authoritative):
 
-- [docs/explanation/software/stack-lang/golang/README.md](../../docs/explanation/software/stack-lang/golang/README.md)
-- [docs/explanation/software/stack-lang/golang/ex-so-stla-go__idioms.md](../../docs/explanation/software/stack-lang/golang/ex-so-stla-go__idioms.md)
-- [docs/explanation/software/stack-lang/golang/ex-so-stla-go__best-practices.md](../../docs/explanation/software/stack-lang/golang/ex-so-stla-go__best-practices.md)
-- [docs/explanation/software/stack-lang/golang/ex-so-stla-go__anti-patterns.md](../../docs/explanation/software/stack-lang/golang/ex-so-stla-go__anti-patterns.md)
+- [docs/explanation/software/prog-lang/golang/README.md](../../docs/explanation/software/prog-lang/golang/README.md)
+- [docs/explanation/software/prog-lang/golang/ex-so-prla-go\_\_idioms.md](../../docs/explanation/software/prog-lang/golang/ex-so-prla-go__idioms.md)
+- [docs/explanation/software/prog-lang/golang/ex-so-prla-go\_\_best-practices.md](../../docs/explanation/software/prog-lang/golang/ex-so-prla-go__best-practices.md)
+- [docs/explanation/software/prog-lang/golang/ex-so-prla-go\_\_anti-patterns.md](../../docs/explanation/software/prog-lang/golang/ex-so-prla-go__anti-patterns.md)
 
 **Development Practices**:
 
