@@ -114,11 +114,11 @@ When writing code or making architectural decisions:
 
 Skills available for quick reference:
 
-- `programming-java` - Java coding standards
-- `programming-typescript` - TypeScript coding standards
-- `programming-golang` - Go coding standards
-- `programming-python` - Python coding standards
-- `programming-elixir` - Elixir coding standards
+- `swe-programming-java` - Java coding standards
+- `swe-programming-typescript` - TypeScript coding standards
+- `swe-programming-golang` - Go coding standards
+- `swe-programming-python` - Python coding standards
+- `swe-programming-elixir` - Elixir coding standards
 
 ## Validation
 

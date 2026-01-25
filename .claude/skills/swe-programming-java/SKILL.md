@@ -1,5 +1,5 @@
 ---
-name: programming-java
+name: swe-programming-java
 description: Java coding standards from authoritative docs/explanation/software/stack-lang/java/ documentation
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: programming-typescript
+name: swe-programming-typescript
 description: TypeScript coding standards from authoritative docs/explanation/software/stack-lang/typescript/ documentation
 ---
 

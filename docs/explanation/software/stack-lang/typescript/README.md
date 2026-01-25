@@ -55,7 +55,7 @@ All TypeScript code MUST follow the standards documented here:
 2. **[Best Practices](./ex-so-stla-ts__best-practices.md)** - Clean code standards
 3. **[Anti-Patterns](./ex-so-stla-ts__anti-patterns.md)** - Common mistakes to avoid
 
-**For Agents**: Reference this documentation when writing TypeScript code. The `programming-typescript` skill provides quick access to these standards.
+**For Agents**: Reference this documentation when writing TypeScript code. The `swe-programming-typescript` skill provides quick access to these standards.
 
 ### Quick Standards Reference
 
