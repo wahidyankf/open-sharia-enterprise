@@ -514,7 +514,7 @@ flowchart TD
 title: Java 17 LTS Features
 description: New features and improvements in Java 17 Long-Term Support release
 category: software
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - version

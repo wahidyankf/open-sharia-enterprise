@@ -106,8 +106,8 @@ Frameworks covered:
 
 When writing code or making architectural decisions:
 
-1. **Follow language-specific standards** from docs/explanation/software/stack-lang/[language]/
-2. **Apply framework patterns** from docs/explanation/software/stack-libs/[framework]/
+1. **Follow language-specific standards** from docs/explanation/software/prog-lang/[language]/
+2. **Apply framework patterns** from docs/explanation/software/platform-web/[framework]/
 3. **Use architecture models** from docs/explanation/software/architecture/
 4. **Apply development practices** from docs/explanation/software/development/
 5. **Comply with repository conventions** from governance/conventions/
