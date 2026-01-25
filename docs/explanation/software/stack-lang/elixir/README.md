@@ -50,6 +50,28 @@ Elixir is a dynamic, functional programming language designed for building scala
 - **Phoenix**: 1.7.x (verified routes, Tailwind support, LiveView streams)
 - **Ecto**: 3.12.x (database toolkit with query composition)
 
+## Coding Standards
+
+**This documentation is the authoritative reference** for Elixir coding standards in the open-sharia-enterprise platform.
+
+All Elixir code MUST follow the standards documented here:
+
+1. **[Idioms](./ex-so-stla-ex__idioms.md)** - Elixir-specific patterns and conventions
+2. **[Best Practices](./ex-so-stla-ex__best-practices.md)** - Clean code standards
+3. **[Anti-Patterns](./ex-so-stla-ex__anti-patterns.md)** - Common mistakes to avoid
+
+**For Agents**: Reference this documentation when writing Elixir code. The `repo-coding-elixir` skill provides quick access to these standards.
+
+### Quick Standards Reference
+
+- **Naming Conventions**: See [Best Practices - Code Organization](./ex-so-stla-ex__best-practices.md#code-organization)
+- **Error Handling**: See [Error Handling](./ex-so-stla-ex__error-handling.md)
+- **Type Safety**: See [Type Safety](./ex-so-stla-ex__type-safety.md)
+- **Testing Standards**: See [Test-Driven Development](./ex-so-stla-ex__test-driven-development.md)
+- **Security Practices**: See [Security](./ex-so-stla-ex__security.md)
+
+**Related**: [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
+
 ## Software Engineering Principles
 
 The Open Sharia Enterprise platform follows five core software engineering principles. Elixir's design naturally supports these principles:

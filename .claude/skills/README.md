@@ -1,6 +1,6 @@
 # Claude Code Skills
 
-This directory contains 21 skill packages that provide progressive knowledge delivery to agents. Skills bundle domain-specific conventions, standards, and best practices.
+This directory contains 26 skill packages that provide progressive knowledge delivery to agents. Skills bundle domain-specific conventions, standards, and best practices.
 
 ## Skill Organization
 
@@ -33,6 +33,14 @@ This directory contains 21 skill packages that provide progressive knowledge del
 - **repo-applying-maker-checker-fixer** - Three-stage quality workflow pattern
 - **repo-assessing-criticality-confidence** - Criticality and confidence assessment system
 - **repo-generating-validation-reports** - Progressive report writing with UUID chains
+
+### 💻 Programming Language Skills
+
+- **repo-coding-java** - Java coding standards quick reference
+- **repo-coding-typescript** - TypeScript coding standards quick reference
+- **repo-coding-golang** - Go coding standards quick reference
+- **repo-coding-python** - Python coding standards quick reference
+- **repo-coding-elixir** - Elixir coding standards quick reference
 
 ### 🌐 Application-Specific Skills
 

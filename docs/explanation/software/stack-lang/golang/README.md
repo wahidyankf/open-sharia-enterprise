@@ -33,6 +33,28 @@ Go is used for high-performance services, CLI tools, and concurrent systems in t
 - Error handling patterns with explicit error returns
 - Web services with standard library and modern frameworks
 
+## Coding Standards
+
+**This documentation is the authoritative reference** for Go coding standards in the open-sharia-enterprise platform.
+
+All Go code MUST follow the standards documented here:
+
+1. **[Idioms](./ex-so-stla-go__idioms.md)** - Go-specific patterns and conventions
+2. **[Best Practices](./ex-so-stla-go__best-practices.md)** - Clean code standards
+3. **[Anti-Patterns](./ex-so-stla-go__anti-patterns.md)** - Common mistakes to avoid
+
+**For Agents**: Reference this documentation when writing Go code. The `repo-coding-golang` skill provides quick access to these standards.
+
+### Quick Standards Reference
+
+- **Naming Conventions**: See [Best Practices - Code Organization](./ex-so-stla-go__best-practices.md#code-organization)
+- **Error Handling**: See [Error Handling](./ex-so-stla-go__error-handling.md)
+- **Type Safety**: See [Type Safety](./ex-so-stla-go__type-safety.md)
+- **Testing Standards**: See [Test-Driven Development](./ex-so-stla-go__test-driven-development.md)
+- **Security Practices**: See [Security](./ex-so-stla-go__security.md)
+
+**Related**: [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
+
 ## Software Engineering Principles
 
 Go development in this platform follows the five software engineering principles from [governance/principles/software-engineering/](../../../../../governance/principles/software-engineering/README.md):

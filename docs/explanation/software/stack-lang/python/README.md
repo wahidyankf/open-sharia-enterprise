@@ -55,6 +55,28 @@ The [Zen of Python (PEP 20)](https://peps.python.org/pep-0020/) guides Python de
 - **Readability counts** - Code is read more than written
 - **There should be one obvious way to do it** - Pythonic idioms over multiple approaches
 
+## Coding Standards
+
+**This documentation is the authoritative reference** for Python coding standards in the open-sharia-enterprise platform.
+
+All Python code MUST follow the standards documented here:
+
+1. **[Idioms](./ex-so-stla-py__idioms.md)** - Python-specific patterns and conventions
+2. **[Best Practices](./ex-so-stla-py__best-practices.md)** - Clean code standards
+3. **[Anti-Patterns](./ex-so-stla-py__anti-patterns.md)** - Common mistakes to avoid
+
+**For Agents**: Reference this documentation when writing Python code. The `repo-coding-python` skill provides quick access to these standards.
+
+### Quick Standards Reference
+
+- **Naming Conventions**: See [Best Practices - Code Organization](./ex-so-stla-py__best-practices.md#code-organization)
+- **Error Handling**: See [Error Handling](./ex-so-stla-py__error-handling.md)
+- **Type Safety**: See [Type Safety](./ex-so-stla-py__type-safety.md)
+- **Testing Standards**: See [Test-Driven Development](./ex-so-stla-py__test-driven-development.md)
+- **Security Practices**: See [Security](./ex-so-stla-py__security.md)
+
+**Related**: [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
+
 ## Software Engineering Principles
 
 Python development in this platform follows the five software engineering principles from [governance/principles/software-engineering/](../../../../../governance/principles/software-engineering/README.md):

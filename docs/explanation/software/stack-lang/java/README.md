@@ -34,6 +34,28 @@ Java is a primary language for backend services, domain-driven design implementa
 - Immutability and type safety
 - Modern frameworks (Spring Boot 4, Jakarta EE 11)
 
+## Coding Standards
+
+**This documentation is the authoritative reference** for Java coding standards in the open-sharia-enterprise platform.
+
+All Java code MUST follow the standards documented here:
+
+1. **[Idioms](./ex-so-stla-ja__idioms.md)** - Java-specific patterns and conventions
+2. **[Best Practices](./ex-so-stla-ja__best-practices.md)** - Clean code standards
+3. **[Anti-Patterns](./ex-so-stla-ja__anti-patterns.md)** - Common mistakes to avoid
+
+**For Agents**: Reference this documentation when writing Java code. The `repo-coding-java` skill provides quick access to these standards.
+
+### Quick Standards Reference
+
+- **Naming Conventions**: See [Best Practices - Code Organization](./ex-so-stla-ja__best-practices.md#code-organization)
+- **Error Handling**: See [Error Handling](./ex-so-stla-ja__error-handling.md)
+- **Type Safety**: See [Type Safety](./ex-so-stla-ja__type-safety.md)
+- **Testing Standards**: See [Test-Driven Development](./ex-so-stla-ja__test-driven-development.md)
+- **Security Practices**: See [Security](./ex-so-stla-ja__security.md)
+
+**Related**: [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
+
 ## Software Engineering Principles
 
 Java development in this platform follows the five software engineering principles from [governance/principles/software-engineering/](../../../../../governance/principles/software-engineering/README.md):
