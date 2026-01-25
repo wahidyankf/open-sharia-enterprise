@@ -12,7 +12,7 @@ updated: 2025-12-28
 
 # Conventions
 
-Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, and linked. Contains 24 conventions covering all aspects of documentation writing and formatting.
+Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, and linked. Contains 25 conventions covering all aspects of documentation writing and formatting.
 
 **Governance**: All conventions in this directory serve the [Vision](../vision/open-sharia-enterprise.md) (Layer 0) and implement the [Core Principles](../principles/README.md) (Layer 1) as part of the six-layer architecture. Each convention MUST include a "Principles Implemented/Respected" section that explicitly traces back to foundational principles. See [Repository Governance Architecture](../repository-governance-architecture.md) for complete governance model and [Convention Writing Convention](./content/convention-writing.md) for structure requirements.
 
@@ -67,12 +67,13 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 
 ## 📋 Directory Structure
 
-Conventions are organized into 6 semantic categories:
+Conventions are organized into 7 semantic categories:
 
 - **[formatting/](#-formatting-8-conventions)** - Markdown formatting, syntax, visual elements (8 conventions)
 - **[content/](#-content-5-conventions)** - Content quality, validation, writing standards (5 conventions)
 - **[tutorial/](#-tutorial-5-conventions)** - Tutorial creation, structure, naming (5 conventions)
 - **[hugo/](#-hugo-3-conventions)** - Hugo site content conventions (3 conventions)
+- **[programming/](#-programming-1-convention)** - Software design and coding standards cross-references (1 convention)
 - **[meta/](#-meta-2-conventions)** - Documentation organization and frameworks (2 conventions)
 - **[project/](#-project-1-convention)** - Project-level documentation organization (1 convention)
 
@@ -119,6 +120,12 @@ Hugo site-specific content conventions.
 - [Hugo Content - OSE Platform](./hugo/ose-platform.md) - Site-specific conventions for ose-platform-web (PaperMod theme). Covers PaperMod features, English-only requirements, simple update patterns, cover image standards, and flat content structure. Use with shared convention
 - [Hugo Content - Shared](./hugo/shared.md) - Common Hugo content conventions applying to all Hugo sites in this repository. Covers inherited conventions (Mathematical Notation, Color Accessibility, Diagrams, Emoji, Timestamp, Tutorial standards), adapted conventions (Indentation, Linking, File Naming, Frontmatter, Date Format), and Hugo-specific basics (Archetypes, Shortcodes, Taxonomy, Asset Organization). Foundation for all Hugo content work
 
+## 💻 Programming (1 convention)
+
+Software design and coding standards cross-references.
+
+- [Software Design Reference](./programming/software-design-reference.md) - Cross-reference to authoritative software design and coding standards documentation in docs/explanation/software/. Establishes separation between repository-wide documentation conventions (governance/conventions/) and language-specific technical guidance (docs/explanation/software/). Covers architecture patterns (C4, DDD, FSM), development practices (TDD, BDD), language-specific coding standards (Java, TypeScript, Go, Python, Elixir), and framework-specific standards (Spring Boot, Phoenix, React). Validated by repo-governance-checker agent
+
 ## 🗂️ Meta (2 conventions)
 
 Documentation organization frameworks and foundational concepts.
@@ -140,4 +147,4 @@ Project-level documentation and planning organization.
 
 ---
 
-**Last Updated**: 2026-01-01
+**Last Updated**: 2026-01-25

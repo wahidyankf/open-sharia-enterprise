@@ -59,6 +59,30 @@ Understanding language-specific idioms and patterns helps developers:
 - Maintain consistency across the codebase
 - Onboard new team members efficiently
 
+## Authoritative Status
+
+**This documentation is the authoritative reference** for language-specific coding standards in the open-sharia-enterprise platform.
+
+All code written in the languages documented here MUST follow the standards, patterns, and practices defined in this directory.
+
+**For AI Agents**: Reference these documents as the source of truth for:
+
+- Language idioms and conventions
+- Coding best practices
+- Common antipatterns to avoid
+- Framework integration patterns
+- Testing approaches
+
+**Skills Available**:
+
+- `repo-coding-java` - Java standards quick reference
+- `repo-coding-typescript` - TypeScript standards quick reference
+- `repo-coding-golang` - Go standards quick reference
+- `repo-coding-python` - Python standards quick reference
+- `repo-coding-elixir` - Elixir standards quick reference
+
+**Governance**: See [Software Design Reference](../../../../governance/conventions/programming/software-design-reference.md) for the relationship between this documentation and repository governance.
+
 ## Documentation Structure
 
 ### Language Coverage

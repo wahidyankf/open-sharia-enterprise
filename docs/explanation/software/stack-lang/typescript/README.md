@@ -45,6 +45,28 @@ TypeScript is the primary language for OSE Platform development. It provides sta
 - **Ecosystem**: Vast npm ecosystem with TypeScript support for frameworks and libraries
 - **Developer Experience**: IntelliSense, type inference, and compile-time validation accelerate development
 
+## Coding Standards
+
+**This documentation is the authoritative reference** for TypeScript coding standards in the open-sharia-enterprise platform.
+
+All TypeScript code MUST follow the standards documented here:
+
+1. **[Idioms](./ex-so-stla-ts__idioms.md)** - TypeScript-specific patterns and conventions
+2. **[Best Practices](./ex-so-stla-ts__best-practices.md)** - Clean code standards
+3. **[Anti-Patterns](./ex-so-stla-ts__anti-patterns.md)** - Common mistakes to avoid
+
+**For Agents**: Reference this documentation when writing TypeScript code. The `repo-coding-typescript` skill provides quick access to these standards.
+
+### Quick Standards Reference
+
+- **Naming Conventions**: See [Best Practices - Code Organization](./ex-so-stla-ts__best-practices.md#code-organization)
+- **Error Handling**: See [Error Handling](./ex-so-stla-ts__error-handling.md)
+- **Type Safety**: See [Type Safety](./ex-so-stla-ts__type-safety.md)
+- **Testing Standards**: See [Test-Driven Development](./ex-so-stla-ts__test-driven-development.md)
+- **Security Practices**: See [Security](./ex-so-stla-ts__security.md)
+
+**Related**: [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
+
 ## Software Engineering Principles
 
 TypeScript development in this platform follows the five software engineering principles from [governance/principles/software-engineering/](../../../../../governance/principles/software-engineering/README.md):

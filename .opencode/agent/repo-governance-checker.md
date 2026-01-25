@@ -668,7 +668,438 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 
 7. **Write findings progressively** using report format above
 
-### Step 8: Finalize Report
+### Step 8: Software Documentation Validation
+
+**Scope**: `docs/explanation/software/` (343 files, 345k lines)
+
+**Purpose**: Validate comprehensive software design and coding standards documentation as authoritative reference.
+
+#### 8.1 Governance Principle Alignment
+
+**Validate that software documentation correctly references governance principles**:
+
+1. **Extract Principle References**:
+   - Read frontmatter `principles:` field from each software doc
+   - Identify documents that should cite specific principles:
+     - Security docs → security-by-design
+     - Architecture docs → simplicity-over-complexity, explicit-over-implicit
+     - Development practice docs → automation-over-manual
+     - Testing docs → quality-first
+
+2. **Assess Appropriateness**:
+   - Check if document topic aligns with cited principles
+   - Flag missing critical principle citations
+   - Identify inappropriate or irrelevant citations
+
+3. **Criticality Levels**:
+   - **CRITICAL**: Broken principle reference (file doesn't exist)
+   - **HIGH**: Missing critical principle (security doc without security-by-design)
+   - **MEDIUM**: Missing recommended principle (could strengthen doc)
+   - **LOW**: Enhancement suggestion only
+
+**Report Format**:
+
+````markdown
+### Finding: Governance Principle Alignment
+
+**Category**: Principle Alignment
+**File**: docs/explanation/software/stack-lang/java/ex-so-stla-ja\_\_security.md
+**Criticality**: HIGH
+
+**Issue**: Security documentation missing security-by-design principle reference
+
+**Evidence**:
+Current frontmatter:
+
+```yaml
+principles:
+  - automation-over-manual
+  - explicit-over-implicit
+```
+````
+
+Expected: Should include security-by-design given document focuses on security practices
+
+**Recommendation**: Add security-by-design to principles frontmatter
+
+````
+
+#### 8.2 Cross-Reference Completeness
+
+**Validate links between software docs and governance documentation**:
+
+1. **Extract Cross-References**:
+   - Find all links from software docs to `governance/`
+   - Find all links from governance docs to `docs/explanation/software/`
+   - Build bidirectional reference map
+
+2. **Validate Targets**:
+   - Check all referenced files exist
+   - Verify links use correct GitHub markdown format (`.md` extension)
+   - Check for broken anchors (if link includes `#heading`)
+
+3. **Check Bidirectional References**:
+   - When software doc references governance, check if governance should reference back
+   - Example: If `ex-so-stla-ja__functional-programming.md` references `governance/development/pattern/functional-programming.md`, the governance doc should list Java in "Language Support" section
+
+4. **Criticality Levels**:
+   - **CRITICAL**: Broken link (404, target doesn't exist)
+   - **HIGH**: One-way reference when bidirectional expected
+   - **MEDIUM**: Missing internal cross-reference within software docs
+   - **LOW**: Optional enhancement (could add helpful link)
+
+**Report Format**:
+
+```markdown
+### Finding: Cross-Reference Completeness
+
+**Category**: Cross-Reference
+**Files**: docs/explanation/software/stack-lang/java/ex-so-stla-ja__functional-programming.md → governance/development/pattern/functional-programming.md
+**Criticality**: HIGH
+
+**Issue**: One-way cross-reference (should be bidirectional)
+
+**Evidence**:
+- Java doc references governance FP document ✓
+- Governance FP document doesn't list Java in language support ✗
+
+**Recommendation**: Add Java to "Language-Specific Implementations" section in governance/development/pattern/functional-programming.md
+````
+
+#### 8.3 File Naming Convention Adherence
+
+**Validate software documentation follows established naming patterns**:
+
+1. **Pattern Validation**:
+   - **Stack Language**: `ex-so-stla-[abbrev]__[topic].md`
+     - Abbreviations: `ja` (Java), `ts` (TypeScript), `go` (Go), `py` (Python), `ex` (Elixir)
+   - **Stack Libraries**: `ex-so-stli-[framework-abbrev]__[topic].md`
+     - Examples: `jvsp` (JVM Spring Boot), `expr` (Elixir Phoenix), `tsre` (TS React)
+   - **Architecture**: `ex-so-arch-[pattern]__[topic].md`
+   - **Development**: `ex-so-devp-[practice]__[topic].md`
+   - **Exception**: `README.md` for index files
+   - **Exception**: `templates/` directory files: `ex-so-stla-[lang]-te__[name].md`
+
+2. **Abbreviation Consistency**:
+   - Check all files in same directory use same abbreviation
+   - Example: All Java files should use `ja`, not mix `java` and `ja`
+
+3. **Location Validation**:
+   - Verify files are in correct directory based on prefix
+   - Example: `ex-so-stla-ja__*` should be in `stack-lang/java/`
+
+4. **Criticality Levels**:
+   - **CRITICAL**: File in wrong directory (organizational integrity)
+   - **HIGH**: Missing required prefix (breaks convention severely)
+   - **MEDIUM**: Inconsistent abbreviation usage
+   - **LOW**: Minor variation (e.g., `test-driven-development` vs `tdd`)
+
+**Report Format**:
+
+```markdown
+### Finding: File Naming Convention
+
+**Category**: File Naming
+**File**: docs/explanation/software/stack-lang/java/security-practices.md
+**Criticality**: HIGH
+
+**Issue**: Missing required prefix pattern
+
+**Evidence**:
+Current: `security-practices.md`
+Expected: `ex-so-stla-ja__security-practices.md`
+
+**Recommendation**: Rename file to follow convention (use `git mv` to preserve history)
+```
+
+#### 8.4 Document Structure Pattern Consistency
+
+**Validate that language/framework documentation follows standard structure**:
+
+1. **Core Documents Check**:
+   - For each language (Java, TypeScript, Go, Python, Elixir):
+     - **Required**: `idioms.md` - Language-specific patterns
+     - **Required**: `best-practices.md` - Clean code standards
+     - **Required**: `anti-patterns.md` - Common mistakes
+     - **Required**: `README.md` - Overview and index
+   - For each framework (Spring Boot, Phoenix, React):
+     - **Required**: README.md with architecture integration section
+
+2. **Frontmatter Structure**:
+   - Validate all docs have required frontmatter fields:
+     - `title:` (required)
+     - `description:` (required)
+     - `category:` (required, should be "software")
+     - `subcategory:` (required, e.g., "stack-lang", "stack-libs")
+     - `tags:` (required, non-empty list)
+     - `principles:` (recommended for most docs)
+   - Check frontmatter follows YAML syntax
+
+3. **Heading Hierarchy**:
+   - Validate single H1 (title)
+   - Check proper nesting (H2 → H3, never H2 → H4)
+   - Verify headings are descriptive and follow active voice
+
+4. **Criticality Levels**:
+   - **CRITICAL**: Missing core document (idioms/best-practices/anti-patterns)
+   - **HIGH**: Invalid/missing required frontmatter field
+   - **MEDIUM**: Heading hierarchy violation
+   - **LOW**: Missing optional frontmatter field
+
+**Report Format**:
+
+```markdown
+### Finding: Document Structure Pattern
+
+**Category**: Structure Pattern
+**Language**: Elixir
+**Criticality**: CRITICAL
+
+**Issue**: Missing required anti-patterns document
+
+**Evidence**:
+Found:
+
+- ex-so-stla-ex\_\_idioms.md ✓
+- ex-so-stla-ex\_\_best-practices.md ✓
+- ex-so-stla-ex\_\_anti-patterns.md ✗ (missing)
+
+**Recommendation**: Create ex-so-stla-ex\_\_anti-patterns.md from template
+```
+
+#### 8.5 Template Completeness
+
+**Validate template availability for documented patterns**:
+
+1. **Templates Directory Check**:
+   - For each language, verify `templates/` subdirectory exists
+   - Example: `docs/explanation/software/stack-lang/java/templates/`
+
+2. **Template Naming Validation**:
+   - Pattern: `ex-so-stla-[lang]-te__[pattern-name].md`
+   - Example: `ex-so-stla-ja-te__spring-boot-rest-controller.md`
+
+3. **Cross-Reference with Documentation**:
+   - When documentation describes a pattern, check if template exists
+   - Example: If best-practices.md describes "Service Layer Pattern", template should exist
+
+4. **Criticality Levels**:
+   - **CRITICAL**: `templates/` directory missing entirely
+   - **HIGH**: Core template missing (REST controller, entity, repository)
+   - **MEDIUM**: Referenced template missing (mentioned in docs but absent)
+   - **LOW**: Enhancement suggestion (could add template for common pattern)
+
+**Report Format**:
+
+```markdown
+### Finding: Template Completeness
+
+**Category**: Templates
+**Language**: Java
+**Criticality**: HIGH
+
+**Issue**: Core template missing for documented pattern
+
+**Evidence**:
+
+- Documentation references "Repository Pattern" in best-practices.md
+- Template `ex-so-stla-ja-te__jpa-repository.md` not found
+
+**Recommendation**: Create template from similar pattern or copy from existing codebase examples
+```
+
+#### 8.6 Diagram Consistency
+
+**Validate Mermaid diagrams follow accessibility standards**:
+
+1. **Extract Mermaid Blocks**:
+   - Find all \`\`\`mermaid code blocks
+   - Parse diagram type (flowchart, classDiagram, etc.)
+
+2. **Color Palette Validation**:
+   - Check for explicit color definitions
+   - Verify use of WCAG AA compliant palette:
+     - Blue: `#0173B2`
+     - Orange: `#DE8F05`
+     - Green: `#029E73`
+     - Purple: `#CC78BC`
+     - Brown: `#CA9161`
+   - Flag diagrams using non-standard colors
+
+3. **Accessibility Check**:
+   - Verify `classDef` declarations use accessible colors
+   - Check for missing alt text descriptions (should have description before or after diagram)
+
+4. **Criticality Levels**:
+   - **CRITICAL**: WCAG AA violation (contrast ratio < 4.5:1)
+   - **HIGH**: Missing color definitions (using defaults)
+   - **MEDIUM**: Using non-standard palette (should use verified colors)
+   - **LOW**: Missing alt text description
+
+**Report Format**:
+
+````markdown
+### Finding: Diagram Accessibility
+
+**Category**: Diagrams
+**File**: docs/explanation/software/architecture/c4-architecture-model/ex-so-arch-c4\_\_system-context.md
+**Criticality**: HIGH
+
+**Issue**: Mermaid diagram missing explicit color definitions
+
+**Evidence**:
+Diagram uses default colors without `classDef` declarations
+
+**Recommendation**: Add WCAG AA color palette definitions:
+
+```mermaid
+classDef blueBox fill:#0173B2,stroke:#0173B2,color:#fff
+classDef orangeBox fill:#DE8F05,stroke:#DE8F05,color:#fff
+```
+````
+
+````
+
+#### 8.7 README Index Accuracy
+
+**Validate README files accurately list directory contents**:
+
+1. **Extract Listed Files**:
+   - Parse README.md in each software subdirectory
+   - Extract file listings from structured sections
+   - Build expected file set from README
+
+2. **Compare with Actual Contents**:
+   - List actual files in directory (exclude README.md, templates/)
+   - Find orphaned files (exist but not listed in README)
+   - Find ghost references (listed in README but don't exist)
+
+3. **Description Validation**:
+   - Check if README descriptions match actual file content
+   - Verify file purpose aligns with listed description
+
+4. **Criticality Levels**:
+   - **CRITICAL**: README lists non-existent files (broken references)
+   - **HIGH**: Files exist but not listed in README (discoverability issue)
+   - **MEDIUM**: Description mismatch (listed purpose != actual content)
+   - **LOW**: Could be more comprehensive (README could mention more details)
+
+**Report Format**:
+
+```markdown
+### Finding: README Index Accuracy
+
+**Category**: README Index
+**File**: docs/explanation/software/stack-lang/typescript/README.md
+**Criticality**: HIGH
+
+**Issue**: Orphaned files not listed in README
+
+**Evidence**:
+Files in directory but not in README:
+- ex-so-stla-ts__type-narrowing.md
+- ex-so-stla-ts__advanced-types.md
+
+**Recommendation**: Add missing files to README index with brief descriptions
+````
+
+#### 8.8 Version Documentation Consistency
+
+**Validate version-specific documentation coverage**:
+
+1. **Version Pattern Check**:
+   - Pattern: `ex-so-stla-[lang]__release-[version].md`
+   - Example: `ex-so-stla-ja__release-21.md` (Java 21 LTS)
+
+2. **README Mentions Validation**:
+   - Check if README mentions version support
+   - Verify mentioned versions have corresponding documentation
+
+3. **LTS Coverage**:
+   - **Java**: Validate coverage for LTS versions (17, 21, 25)
+   - **Python**: Validate coverage for active versions (3.11+)
+   - **TypeScript**: Validate coverage for recent major versions
+   - **Go**: Validate coverage for supported versions
+   - **Elixir**: Validate coverage for recent releases
+
+4. **Criticality Levels**:
+   - **CRITICAL**: README mentions version without corresponding doc
+   - **HIGH**: Missing LTS version documentation
+   - **MEDIUM**: Missing non-LTS but recent version
+   - **LOW**: Could document additional versions for completeness
+
+**Report Format**:
+
+```markdown
+### Finding: Version Documentation
+
+**Category**: Version Documentation
+**Language**: Java
+**Criticality**: HIGH
+
+**Issue**: Missing LTS version documentation
+
+**Evidence**:
+
+- README mentions Java 17, 21, 25 support
+- Found: ex-so-stla-ja\_\_release-21.md ✓
+- Missing: ex-so-stla-ja\_\_release-17.md ✗
+- Missing: ex-so-stla-ja\_\_release-25.md ✗
+
+**Recommendation**: Create version documentation for Java 17 and 25 LTS releases
+```
+
+#### Performance Optimization
+
+**Strategy for handling 343 files (345k lines)**:
+
+1. **Cache Governance Files**:
+   - Read principles list once
+   - Cache naming convention rules
+   - Store principle → topic mappings
+
+2. **Parallel Reads (Where Safe)**:
+   - Group files by directory
+   - Read multiple files per directory in single operation
+   - Use Glob to get directory listings efficiently
+
+3. **Progressive Writing**:
+   - Write each finding immediately as discovered
+   - No buffering of findings
+   - Prevents memory issues with large validation sets
+
+4. **Efficient Pattern Matching**:
+   - Use regex for file name validation (fast)
+   - Use Grep for cross-reference extraction (faster than reading all files)
+   - Only deep-parse files when validation requires it
+
+**Estimated Duration**: ~35-40 seconds for Step 8 (343 files, 8 validation categories)
+
+#### Summary Format
+
+**After completing all 8 validation categories, add summary**:
+
+```markdown
+## Step 8 Summary: Software Documentation Validation
+
+**Files Analyzed**: 343
+**Lines Analyzed**: ~345,000
+
+**Findings by Category**:
+
+- Principle Alignment: X findings (C:N, H:N, M:N, L:N)
+- Cross-References: X findings (C:N, H:N, M:N, L:N)
+- File Naming: X findings (C:N, H:N, M:N, L:N)
+- Structure Patterns: X findings (C:N, H:N, M:N, L:N)
+- Templates: X findings (C:N, H:N, M:N, L:N)
+- Diagrams: X findings (C:N, H:N, M:N, L:N)
+- README Indices: X findings (C:N, H:N, M:N, L:N)
+- Version Docs: X findings (C:N, H:N, M:N, L:N)
+
+**Total Software Doc Findings**: X (CRITICAL: N, HIGH: N, MEDIUM: N, LOW: N)
+```
+
+### Step 9: Finalize Report
 
 Update report status to "Complete", add summary statistics by category:
 
@@ -679,6 +1110,7 @@ Update report status to "Complete", add summary statistics by category:
 - Skills coverage gap findings
 - AGENTS.md size findings
 - Rules governance findings (contradictions, inaccuracies, inconsistencies, traceability, layer coherence)
+- Software documentation findings (principle alignment, cross-references, file naming, structure patterns, templates, diagrams, README indices, version docs)
 
 ## Important Notes
 
