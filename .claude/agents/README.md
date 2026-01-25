@@ -1,6 +1,6 @@
 # Claude Code Agents
 
-This directory contains 45 specialized AI agents for the open-sharia-enterprise project. These agents are organized by role and follow the Maker-Checker-Fixer pattern where applicable.
+This directory contains 50 specialized AI agents for the open-sharia-enterprise project. These agents are organized by role and follow the Maker-Checker-Fixer pattern where applicable.
 
 ## Agent Organization
 
@@ -62,7 +62,12 @@ This directory contains 45 specialized AI agents for the open-sharia-enterprise 
 
 ### 💻 Development
 
+- **swe-elixir-developer** - Elixir application development
+- **swe-golang-developer** - Go application development
 - **swe-hugo-developer** - Hugo site development
+- **swe-java-developer** - Java application development
+- **swe-python-developer** - Python application development
+- **swe-typescript-developer** - TypeScript application development
 
 ## Agent Format (Claude Code)
 
