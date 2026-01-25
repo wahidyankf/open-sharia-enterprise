@@ -1,13 +1,16 @@
 ---
 title: Java Templates
 description: Collection of code templates for Java development including testing, domain models, and build configurations
+category: explanation
+subcategory: stack-lang
 tags:
   - java
   - templates
   - ddd
   - testing
   - build
-last_updated: 2026-01-21
+created: 2026-01-21
+updated: 2026-01-25
 ---
 
 # Java Templates

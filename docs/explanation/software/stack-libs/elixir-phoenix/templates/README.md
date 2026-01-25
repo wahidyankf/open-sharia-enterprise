@@ -13,7 +13,8 @@ related:
   - ../ex-so-stli-elph__contexts.md
   - ../ex-so-stli-elph__liveview.md
   - ../ex-so-stli-elph__channels.md
-last_updated: 2026-01-25
+created: 2026-01-25
+updated: 2026-01-25
 ---
 
 # Phoenix Templates Overview

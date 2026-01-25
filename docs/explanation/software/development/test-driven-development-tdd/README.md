@@ -1,3 +1,24 @@
+---
+title: Test-Driven Development (TDD)
+description: TDD methodology with red-green-refactor cycle for designing testable code through test-first development
+category: explanation
+subcategory: development
+tags:
+  - tdd
+  - test-driven-development
+  - testing
+  - red-green-refactor
+  - unit-testing
+  - design
+  - index
+principles:
+  - automation-over-manual
+  - explicit-over-implicit
+  - simplicity-over-complexity
+created: 2026-01-25
+updated: 2026-01-25
+---
+
 # Test-Driven Development (TDD) Documentation
 
 Comprehensive documentation on Test-Driven Development patterns, principles, and practices for building robust, well-tested software systems. This documentation covers the Red-Green-Refactor cycle, testing strategies, and TDD application in various contexts including business systems, functional programming, and domain-driven design.

@@ -1,3 +1,18 @@
+---
+title: Go Templates
+description: Standardized code templates and examples for Go development emphasizing composition, interfaces, and simplicity
+category: explanation
+subcategory: stack-lang
+tags:
+  - golang
+  - templates
+  - code-examples
+  - composition
+  - interfaces
+created: 2026-01-25
+updated: 2026-01-25
+---
+
 # Go Templates
 
 This directory contains standardized code templates and examples for Go development, designed to accelerate development while maintaining consistency and quality across the Open Sharia Enterprise platform.

@@ -1,3 +1,26 @@
+---
+title: Domain-Driven Design (DDD)
+description: Comprehensive documentation on Domain-Driven Design patterns, principles, and practices for building complex business software systems
+category: explanation
+subcategory: architecture
+tags:
+  - ddd
+  - domain-driven-design
+  - architecture
+  - bounded-context
+  - aggregates
+  - ubiquitous-language
+  - strategic-design
+  - tactical-design
+  - index
+principles:
+  - explicit-over-implicit
+  - simplicity-over-complexity
+  - documentation-first
+created: 2026-01-25
+updated: 2026-01-25
+---
+
 # Domain-Driven Design (DDD) Documentation
 
 Comprehensive documentation on Domain-Driven Design patterns, principles, and practices for building complex business software systems. This documentation emphasizes both strategic patterns (Bounded Contexts, Context Mapping) and tactical patterns (Aggregates, Value Objects, Entities), with examples drawn from generic business domains including finance, e-commerce, and regulatory compliance.

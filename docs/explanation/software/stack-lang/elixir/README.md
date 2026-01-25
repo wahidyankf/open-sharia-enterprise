@@ -24,7 +24,8 @@ principles:
   - automation-over-manual
   - reproducibility
   - simplicity-over-complexity
-last_updated: 2026-01-23
+created: 2026-01-23
+updated: 2026-01-25
 ---
 
 # Elixir Programming Language Documentation

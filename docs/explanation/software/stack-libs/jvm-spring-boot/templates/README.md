@@ -7,7 +7,8 @@ tags:
   - spring-boot
   - templates
   - code-examples
-last_updated: 2026-01-25
+created: 2026-01-25
+updated: 2026-01-25
 ---
 
 # Spring Boot Code Templates

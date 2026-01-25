@@ -11,7 +11,8 @@ tags:
 principles:
   - documentation-first
   - explicit-over-implicit
-last_updated: 2026-01-24
+created: 2026-01-24
+updated: 2026-01-25
 ---
 
 # TypeScript Documentation

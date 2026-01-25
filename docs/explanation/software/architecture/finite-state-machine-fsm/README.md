@@ -1,16 +1,23 @@
 ---
-title: "Finite State Machine (FSM) Documentation"
+title: Finite State Machine (FSM)
 description: Comprehensive guide to Finite State Machines covering theory, design patterns, paradigm-specific implementations, frameworks, and integration with DDD and enterprise architecture
+category: explanation
+subcategory: architecture
 tags:
-  - explanation
-  - software
-  - architecture
-  - finite-state-machine
   - fsm
-  - readme
-  - index
+  - finite-state-machine
+  - state-pattern
+  - architecture
+  - domain-modeling
+  - behavioral-patterns
   - islamic-finance
-last_updated: 2026-01-21
+  - index
+principles:
+  - explicit-over-implicit
+  - simplicity-over-complexity
+  - immutability
+created: 2026-01-21
+updated: 2026-01-25
 ---
 
 # Finite State Machine (FSM) Documentation

@@ -18,6 +18,8 @@ related:
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
+created: 2026-01-25
+updated: 2026-01-25
 last_updated: 2025-01-23
 ---
 
