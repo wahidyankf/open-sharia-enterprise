@@ -114,11 +114,11 @@ When writing code or making architectural decisions:
 
 Skills available for quick reference:
 
-- `repo-coding-java` - Java coding standards
-- `repo-coding-typescript` - TypeScript coding standards
-- `repo-coding-golang` - Go coding standards
-- `repo-coding-python` - Python coding standards
-- `repo-coding-elixir` - Elixir coding standards
+- `programming-java` - Java coding standards
+- `programming-typescript` - TypeScript coding standards
+- `programming-golang` - Go coding standards
+- `programming-python` - Python coding standards
+- `programming-elixir` - Elixir coding standards
 
 ## Validation
 

@@ -1,5 +1,5 @@
 ---
-name: repo-coding-python
+name: programming-python
 description: Python coding standards from authoritative docs/explanation/software/stack-lang/python/ documentation
 ---
 

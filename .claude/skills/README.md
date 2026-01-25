@@ -36,11 +36,11 @@ This directory contains 26 skill packages that provide progressive knowledge del
 
 ### 💻 Programming Language Skills
 
-- **repo-coding-java** - Java coding standards quick reference
-- **repo-coding-typescript** - TypeScript coding standards quick reference
-- **repo-coding-golang** - Go coding standards quick reference
-- **repo-coding-python** - Python coding standards quick reference
-- **repo-coding-elixir** - Elixir coding standards quick reference
+- **programming-elixir** - Elixir coding standards quick reference
+- **programming-golang** - Go coding standards quick reference
+- **programming-java** - Java coding standards quick reference
+- **programming-python** - Python coding standards quick reference
+- **programming-typescript** - TypeScript coding standards quick reference
 
 ### 🌐 Application-Specific Skills
 

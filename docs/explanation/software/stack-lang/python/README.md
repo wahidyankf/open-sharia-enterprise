@@ -65,7 +65,7 @@ All Python code MUST follow the standards documented here:
 2. **[Best Practices](./ex-so-stla-py__best-practices.md)** - Clean code standards
 3. **[Anti-Patterns](./ex-so-stla-py__anti-patterns.md)** - Common mistakes to avoid
 
-**For Agents**: Reference this documentation when writing Python code. The `repo-coding-python` skill provides quick access to these standards.
+**For Agents**: Reference this documentation when writing Python code. The `programming-python` skill provides quick access to these standards.
 
 ### Quick Standards Reference
 

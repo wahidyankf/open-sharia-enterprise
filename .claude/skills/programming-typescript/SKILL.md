@@ -1,5 +1,5 @@
 ---
-name: repo-coding-typescript
+name: programming-typescript
 description: TypeScript coding standards from authoritative docs/explanation/software/stack-lang/typescript/ documentation
 ---
 

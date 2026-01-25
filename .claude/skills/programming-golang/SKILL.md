@@ -1,5 +1,5 @@
 ---
-name: repo-coding-golang
+name: programming-golang
 description: Go coding standards from authoritative docs/explanation/software/stack-lang/golang/ documentation
 ---
 
