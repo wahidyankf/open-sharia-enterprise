@@ -60,7 +60,7 @@ All Elixir code MUST follow the standards documented here:
 2. **[Best Practices](./ex-so-stla-ex__best-practices.md)** - Clean code standards
 3. **[Anti-Patterns](./ex-so-stla-ex__anti-patterns.md)** - Common mistakes to avoid
 
-**For Agents**: Reference this documentation when writing Elixir code. The `repo-coding-elixir` skill provides quick access to these standards.
+**For Agents**: Reference this documentation when writing Elixir code. The `programming-elixir` skill provides quick access to these standards.
 
 ### Quick Standards Reference
 

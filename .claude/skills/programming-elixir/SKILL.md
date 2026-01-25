@@ -1,5 +1,5 @@
 ---
-name: repo-coding-elixir
+name: programming-elixir
 description: Elixir coding standards from authoritative docs/explanation/software/stack-lang/elixir/ documentation
 ---
 

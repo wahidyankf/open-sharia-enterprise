@@ -44,7 +44,7 @@ All Java code MUST follow the standards documented here:
 2. **[Best Practices](./ex-so-stla-ja__best-practices.md)** - Clean code standards
 3. **[Anti-Patterns](./ex-so-stla-ja__anti-patterns.md)** - Common mistakes to avoid
 
-**For Agents**: Reference this documentation when writing Java code. The `repo-coding-java` skill provides quick access to these standards.
+**For Agents**: Reference this documentation when writing Java code. The `programming-java` skill provides quick access to these standards.
 
 ### Quick Standards Reference
 
