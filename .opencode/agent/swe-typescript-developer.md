@@ -1,9 +1,13 @@
 ---
-name: swe-typescript-developer
 description: Develops TypeScript applications following type safety principles, modern patterns, and platform coding standards. Use when implementing TypeScript code for OSE Platform.
-tools: Read, Write, Edit, Glob, Grep, Bash
-model: sonnet
-color: purple
+model: zai/glm-4.7
+tools:
+  bash: true
+  edit: true
+  glob: true
+  grep: true
+  read: true
+  write: true
 skills:
   - swe-programming-typescript
   - swe-developing-applications-common

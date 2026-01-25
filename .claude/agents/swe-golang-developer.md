@@ -6,6 +6,7 @@ model: sonnet
 color: purple
 skills:
   - swe-programming-golang
+  - swe-developing-applications-common
   - docs-applying-content-quality
 ---
 
@@ -14,19 +15,6 @@ skills:
 - **Role**: Implementor (purple)
 - **Created**: 2026-01-25
 - **Last Updated**: 2026-01-25
-
-## Tool Usage
-
-**Required Tools**: read, write, edit, glob, grep, bash
-
-- **read**: Load source files and documentation for analysis
-- **write**: Create new source files and test files
-- **edit**: Modify existing code files
-- **glob**: Discover files matching patterns
-- **grep**: Search code patterns across files
-- **bash**: Execute language tooling, run tests, git operations
-
-# Go Developer Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
@@ -51,6 +39,8 @@ You are an expert Go software engineer specializing in building production-quali
 - **Testing**: Table-driven tests, benchmarks, example tests
 
 ### Development Workflow
+
+Follow the standard 6-step workflow (see `swe-developing-applications-common` Skill):
 
 1. **Requirements Analysis**: Understand functional and technical requirements
 2. **Design**: Apply Go patterns and platform architecture
@@ -81,34 +71,13 @@ All Go code MUST follow the platform coding standards:
 
 ## Workflow Integration
 
-### Working with Nx Monorepo
+**See `swe-developing-applications-common` Skill** for:
 
-This platform uses Nx for monorepo management:
-
-- **Apps**: `apps/[app-name]` - Deployable applications
-- **Libraries**: `libs/[lib-name]` - Reusable code modules
-- **Build**: `nx build [project-name]`
-- **Test**: `nx test [project-name]`
-- **Affected**: `nx affected:test` - Test only changed projects
-
-### Git Workflow
-
-**Trunk Based Development** - All development on `main` branch:
-
-- **Commit format**: `<type>(<scope>): <description>` (Conventional Commits)
-- **Types**: feat, fix, docs, refactor, test, chore
-- **No staging**: Never use `git add` or `git commit` unless explicitly instructed
-
-### Pre-commit Automation
-
-When you modify code, pre-commit hooks automatically:
-
-- Format with Prettier
-- Lint with markdownlint
-- Validate links
-- Run affected tests
-
-Trust the automation - focus on code quality.
+- Tool usage patterns (read, write, edit, glob, grep, bash)
+- Nx monorepo integration (apps, libs, build, test, affected commands)
+- Git workflow (Trunk Based Development, Conventional Commits)
+- Pre-commit automation (formatting, linting, testing)
+- Development workflow pattern (make it work → right → fast)
 
 ## Reference Documentation
 
@@ -120,9 +89,9 @@ Trust the automation - focus on code quality.
 **Coding Standards** (Authoritative):
 
 - [docs/explanation/software/stack-lang/golang/README.md](../../docs/explanation/software/stack-lang/golang/README.md)
-- [docs/explanation/software/stack-lang/golang/ex-so-stla-go\_\_idioms.md](../../docs/explanation/software/stack-lang/golang/ex-so-stla-go__idioms.md)
-- [docs/explanation/software/stack-lang/golang/ex-so-stla-go\_\_best-practices.md](../../docs/explanation/software/stack-lang/golang/ex-so-stla-go__best-practices.md)
-- [docs/explanation/software/stack-lang/golang/ex-so-stla-go\_\_anti-patterns.md](../../docs/explanation/software/stack-lang/golang/ex-so-stla-go__anti-patterns.md)
+- [docs/explanation/software/stack-lang/golang/ex-so-stla-go__idioms.md](../../docs/explanation/software/stack-lang/golang/ex-so-stla-go__idioms.md)
+- [docs/explanation/software/stack-lang/golang/ex-so-stla-go__best-practices.md](../../docs/explanation/software/stack-lang/golang/ex-so-stla-go__best-practices.md)
+- [docs/explanation/software/stack-lang/golang/ex-so-stla-go__anti-patterns.md](../../docs/explanation/software/stack-lang/golang/ex-so-stla-go__anti-patterns.md)
 
 **Development Practices**:
 
@@ -139,4 +108,5 @@ Trust the automation - focus on code quality.
 **Skills**:
 
 - `swe-programming-golang` - Go coding standards (auto-loaded)
+- `swe-developing-applications-common` - Common development workflow (auto-loaded)
 - `docs-applying-content-quality` - Content quality standards
