@@ -5,7 +5,7 @@
 
 ---
 
-Week: 5
+Week: 0005
 Phase: 0
 
 Following last week's Phase 0 progress update, I continued building foundation—new automation tools, repository cleanup, and navigation system overhaul.
