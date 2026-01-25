@@ -46,7 +46,7 @@ This convention establishes the separation between:
 
 ### Language-Specific Coding Standards
 
-**Location**: [docs/explanation/software/stack-lang/](../../../docs/explanation/software/stack-lang/README.md)
+**Location**: [docs/explanation/software/prog-lang/](../../../docs/explanation/software/prog-lang/README.md)
 
 Each language directory contains:
 
@@ -56,21 +56,21 @@ Each language directory contains:
 
 Languages covered:
 
-- **[Java](../../../docs/explanation/software/stack-lang/java/README.md)** - Modern Java (17+)
-- **[TypeScript](../../../docs/explanation/software/stack-lang/typescript/README.md)** - Frontend and Node.js
-- **[Go](../../../docs/explanation/software/stack-lang/golang/README.md)** - CLI tools and infrastructure
-- **[Python](../../../docs/explanation/software/stack-lang/python/README.md)** - Data processing and AI/ML
-- **[Elixir](../../../docs/explanation/software/stack-lang/elixir/README.md)** - Real-time systems
+- **[Java](../../../docs/explanation/software/prog-lang/java/README.md)** - Modern Java (17+)
+- **[TypeScript](../../../docs/explanation/software/prog-lang/typescript/README.md)** - Frontend and Node.js
+- **[Go](../../../docs/explanation/software/prog-lang/golang/README.md)** - CLI tools and infrastructure
+- **[Python](../../../docs/explanation/software/prog-lang/python/README.md)** - Data processing and AI/ML
+- **[Elixir](../../../docs/explanation/software/prog-lang/elixir/README.md)** - Real-time systems
 
 ### Framework-Specific Standards
 
-**Location**: [docs/explanation/software/stack-libs/](../../../docs/explanation/software/stack-libs/README.md)
+**Location**: [docs/explanation/software/platform-web/](../../../docs/explanation/software/platform-web/README.md)
 
 Frameworks covered:
 
-- **[Spring Boot (JVM)](../../../docs/explanation/software/stack-libs/jvm-spring-boot/README.md)** - REST APIs and microservices
-- **[Phoenix (Elixir)](../../../docs/explanation/software/stack-libs/elixir-phoenix/README.md)** - Real-time applications
-- **[React (TypeScript)](../../../docs/explanation/software/stack-libs/ts-react/README.md)** - Interactive UIs
+- **[Spring Boot (JVM)](../../../docs/explanation/software/platform-web/jvm-spring-boot/README.md)** - REST APIs and microservices
+- **[Phoenix (Elixir)](../../../docs/explanation/software/platform-web/elixir-phoenix/README.md)** - Real-time applications
+- **[React (TypeScript)](../../../docs/explanation/software/platform-web/ts-react/README.md)** - Interactive UIs
 
 ## Separation of Concerns
 
@@ -131,7 +131,7 @@ The `repo-governance-checker` agent validates:
 
 ## Related Documentation
 
-- **[Programming Languages Overview](../../../docs/explanation/software/stack-lang/README.md)** - Language comparison and selection
+- **[Programming Languages Overview](../../../docs/explanation/software/prog-lang/README.md)** - Language comparison and selection
 - **[Architecture Overview](../../../docs/explanation/software/architecture/README.md)** - Architecture patterns
 - **[Functional Programming Principles](../../development/pattern/functional-programming.md)** - Cross-language FP guidance
 
