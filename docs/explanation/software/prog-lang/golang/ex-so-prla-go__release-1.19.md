@@ -2,7 +2,7 @@
 title: "Go 1.19 Release"
 description: Release notes for Go 1.19 highlighting new features, performance improvements, and breaking changes
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - golang
   - release-notes

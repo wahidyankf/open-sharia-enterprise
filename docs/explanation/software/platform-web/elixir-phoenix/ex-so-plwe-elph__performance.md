@@ -2,7 +2,7 @@
 title: Phoenix Performance Guide
 description: Comprehensive guide to query optimization, caching strategies, connection pooling, profiling, load testing, and scaling Phoenix applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - elixir
@@ -13,9 +13,9 @@ tags:
   - profiling
   - scaling
 related:
-  - ex-so-stli-elph__data-access.md
-  - ex-so-stli-elph__deployment.md
-  - ex-so-stli-elph__observability.md
+  - ex-so-plwe-elph__data-access.md
+  - ex-so-plwe-elph__deployment.md
+  - ex-so-plwe-elph__observability.md
 last_updated: 2026-01-25
 ---
 
@@ -1161,10 +1161,10 @@ end
 
 ## Related Documentation
 
-- **[Data Access](./ex-so-stli-elph__data-access.md)** - Ecto query patterns and optimizations
-- **[Deployment](./ex-so-stli-elph__deployment.md)** - Scaling and deployment strategies
-- **[Observability](./ex-so-stli-elph__observability.md)** - Monitoring and metrics
-- **[Configuration](./ex-so-stli-elph__configuration.md)** - Performance-related configuration
+- **[Data Access](./ex-so-plwe-elph__data-access.md)** - Ecto query patterns and optimizations
+- **[Deployment](./ex-so-plwe-elph__deployment.md)** - Scaling and deployment strategies
+- **[Observability](./ex-so-plwe-elph__observability.md)** - Monitoring and metrics
+- **[Configuration](./ex-so-plwe-elph__configuration.md)** - Performance-related configuration
 
 ---
 

@@ -2,7 +2,7 @@
 title: "Spring Boot Data Access"
 description: Data persistence with Spring Data JPA and repositories
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - spring-boot
   - spring-data-jpa
@@ -10,7 +10,7 @@ tags:
   - transactions
   - database
 related:
-  - ./ex-so-stli-jvspbo__best-practices.md
+  - ./ex-so-plwe-jvspbo__best-practices.md
 last_updated: 2026-01-25
 ---
 
@@ -20,7 +20,7 @@ last_updated: 2026-01-25
 
 Comprehensive guide to data persistence using Spring Data JPA, covering repositories, transactions, query methods, and database migrations.
 
-See [Best Practices - Data Access](./ex-so-stli-jvspbo__best-practices.md#data-access-patterns) for detailed patterns.
+See [Best Practices - Data Access](./ex-so-plwe-jvspbo__best-practices.md#data-access-patterns) for detailed patterns.
 
 ## Key Topics
 

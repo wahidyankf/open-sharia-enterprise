@@ -560,7 +560,7 @@ end
 
 - [Back to Templates README](README.md)
 - [Phoenix PubSub](https://hexdocs.pm/phoenix_pubsub)
-- [GenServer Patterns](../ex-so-stla-el__otp-genserver.md)
+- [GenServer Patterns](../ex-so-prla-el__otp-genserver.md)
 - [Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html)
 
 ---

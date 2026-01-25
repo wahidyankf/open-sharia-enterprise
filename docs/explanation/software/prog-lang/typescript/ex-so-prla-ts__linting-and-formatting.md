@@ -2,7 +2,7 @@
 title: "TypeScript Linting and Formatting"
 description: Code quality with ESLint and Prettier for TypeScript
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - eslint
@@ -11,8 +11,8 @@ tags:
   - formatting
   - linting
 related:
-  - ./ex-so-stla-ts__best-practices.md
-  - ./ex-so-stla-ts__test-driven-development.md
+  - ./ex-so-prla-ts__best-practices.md
+  - ./ex-so-prla-ts__test-driven-development.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -389,8 +389,8 @@ git commit -m "feat: add donation validation"
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
-- **[TypeScript TDD](./ex-so-stla-ts__test-driven-development.md)** - Testing practices
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards
+- **[TypeScript TDD](./ex-so-prla-ts__test-driven-development.md)** - Testing practices
 
 ---
 

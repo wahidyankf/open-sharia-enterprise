@@ -2,7 +2,7 @@
 title: "React Build & Deployment"
 description: Build configuration and deployment strategies for React applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - build
@@ -10,7 +10,7 @@ tags:
   - vite
   - production
 related:
-  - ./ex-so-stli-tsre__best-practices.md
+  - ./ex-so-plwe-tsre__best-practices.md
 principles:
   - automation-over-manual
   - reproducibility
@@ -25,8 +25,8 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Best Practices](./ex-so-stli-tsre__best-practices.md) - Production standards
-- [Performance](./ex-so-stli-tsre__performance.md) - Build optimization
+- [Best Practices](./ex-so-plwe-tsre__best-practices.md) - Production standards
+- [Performance](./ex-so-plwe-tsre__performance.md) - Build optimization
 
 ## Overview
 
@@ -256,8 +256,8 @@ server {
 
 ## Related Documentation
 
-- **[Best Practices](./ex-so-stli-tsre__best-practices.md)** - Production standards
-- **[Performance](./ex-so-stli-tsre__performance.md)** - Build optimization
+- **[Best Practices](./ex-so-plwe-tsre__best-practices.md)** - Production standards
+- **[Performance](./ex-so-plwe-tsre__performance.md)** - Build optimization
 
 ---
 

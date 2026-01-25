@@ -2,7 +2,7 @@
 title: "Spring Boot Best Practices"
 description: Production-ready Spring Boot development standards and proven approaches
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - spring-boot
   - best-practices
@@ -10,8 +10,8 @@ tags:
   - code-quality
   - standards
 related:
-  - ./ex-so-stli-jvspbo__idioms.md
-  - ./ex-so-stli-jvspbo__anti-patterns.md
+  - ./ex-so-plwe-jvspbo__idioms.md
+  - ./ex-so-plwe-jvspbo__anti-patterns.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -1339,14 +1339,14 @@ public class NisabRateService {
 
 ## Related Documentation
 
-- **[Spring Boot Idioms](./ex-so-stli-jvspbo__idioms.md)** - Framework patterns
-- **[Spring Boot Anti-Patterns](./ex-so-stli-jvspbo__anti-patterns.md)** - Common mistakes
-- **[Configuration](./ex-so-stli-jvspbo__configuration.md)** - Configuration management
-- **[REST APIs](./ex-so-stli-jvspbo__rest-apis.md)** - RESTful services
-- **[Data Access](./ex-so-stli-jvspbo__data-access.md)** - Spring Data JPA
-- **[Security](./ex-so-stli-jvspbo__security.md)** - Spring Security
-- **[Testing](./ex-so-stli-jvspbo__testing.md)** - Testing strategies
-- **[Java Best Practices](../../stack-lang/java/ex-so-stla-ja__best-practices.md)** - Java standards
+- **[Spring Boot Idioms](./ex-so-plwe-jvspbo__idioms.md)** - Framework patterns
+- **[Spring Boot Anti-Patterns](./ex-so-plwe-jvspbo__anti-patterns.md)** - Common mistakes
+- **[Configuration](./ex-so-plwe-jvspbo__configuration.md)** - Configuration management
+- **[REST APIs](./ex-so-plwe-jvspbo__rest-apis.md)** - RESTful services
+- **[Data Access](./ex-so-plwe-jvspbo__data-access.md)** - Spring Data JPA
+- **[Security](./ex-so-plwe-jvspbo__security.md)** - Spring Security
+- **[Testing](./ex-so-plwe-jvspbo__testing.md)** - Testing strategies
+- **[Java Best Practices](../../prog-lang/java/ex-so-prla-ja__best-practices.md)** - Java standards
 
 ---
 

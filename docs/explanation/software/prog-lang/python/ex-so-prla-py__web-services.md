@@ -2,7 +2,7 @@
 title: Python Web Services
 description: Web service development in Python using FastAPI async framework, Django batteries-included framework, Flask minimalist framework, httpx client, REST API design, JWT authentication, and OpenAPI documentation for financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - web-services
@@ -14,9 +14,9 @@ tags:
   - authentication
   - openapi
 related:
-  - ./ex-so-stla-py__security.md
-  - ./ex-so-stla-py__concurrency-and-parallelism.md
-  - ./ex-so-stla-py__type-safety.md
+  - ./ex-so-prla-py__security.md
+  - ./ex-so-prla-py__concurrency-and-parallelism.md
+  - ./ex-so-prla-py__type-safety.md
 principles:
   - explicit-over-implicit
   - security-first
@@ -1988,9 +1988,9 @@ async def create_donation_with_broadcast(
 
 ### Related Documentation
 
-- [Security](./ex-so-stla-py__security.md) - Authentication and security
-- [Concurrency and Parallelism](./ex-so-stla-py__concurrency-and-parallelism.md) - Async patterns
-- [Type Safety](./ex-so-stla-py__type-safety.md) - Type hints and validation
+- [Security](./ex-so-prla-py__security.md) - Authentication and security
+- [Concurrency and Parallelism](./ex-so-prla-py__concurrency-and-parallelism.md) - Async patterns
+- [Type Safety](./ex-so-prla-py__type-safety.md) - Type hints and validation
 
 ---
 

@@ -2,7 +2,7 @@
 title: "Spring Boot Idioms"
 description: Spring Boot-specific patterns and idiomatic framework usage
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - spring-boot
   - idioms
@@ -11,8 +11,8 @@ tags:
   - dependency-injection
   - framework
 related:
-  - ./ex-so-stli-jvspbo__best-practices.md
-  - ./ex-so-stli-jvspbo__anti-patterns.md
+  - ./ex-so-plwe-jvspbo__best-practices.md
+  - ./ex-so-plwe-jvspbo__anti-patterns.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -51,11 +51,11 @@ last_updated: 2026-01-25
 
 ### Related Documentation
 
-- [Best Practices](./ex-so-stli-jvspbo__best-practices.md)
-- [Anti-Patterns](./ex-so-stli-jvspbo__anti-patterns.md)
-- [Configuration](./ex-so-stli-jvspbo__configuration.md)
-- [Dependency Injection](./ex-so-stli-jvspbo__dependency-injection.md)
-- [REST APIs](./ex-so-stli-jvspbo__rest-apis.md)
+- [Best Practices](./ex-so-plwe-jvspbo__best-practices.md)
+- [Anti-Patterns](./ex-so-plwe-jvspbo__anti-patterns.md)
+- [Configuration](./ex-so-plwe-jvspbo__configuration.md)
+- [Dependency Injection](./ex-so-plwe-jvspbo__dependency-injection.md)
+- [REST APIs](./ex-so-plwe-jvspbo__rest-apis.md)
 
 ## Overview
 
@@ -1056,12 +1056,12 @@ public class DevToolsConfig {
 
 ## Related Documentation
 
-- **[Spring Boot Best Practices](./ex-so-stli-jvspbo__best-practices.md)** - Production standards
-- **[Spring Boot Anti-Patterns](./ex-so-stli-jvspbo__anti-patterns.md)** - Common mistakes
-- **[Configuration](./ex-so-stli-jvspbo__configuration.md)** - Configuration management
-- **[Dependency Injection](./ex-so-stli-jvspbo__dependency-injection.md)** - DI patterns
-- **[Java Idioms](../../stack-lang/java/ex-so-stla-ja__idioms.md)** - Modern Java patterns
-- **[Functional Programming](./ex-so-stli-jvspbo__functional-programming.md)** - FP with Spring Boot
+- **[Spring Boot Best Practices](./ex-so-plwe-jvspbo__best-practices.md)** - Production standards
+- **[Spring Boot Anti-Patterns](./ex-so-plwe-jvspbo__anti-patterns.md)** - Common mistakes
+- **[Configuration](./ex-so-plwe-jvspbo__configuration.md)** - Configuration management
+- **[Dependency Injection](./ex-so-plwe-jvspbo__dependency-injection.md)** - DI patterns
+- **[Java Idioms](../../prog-lang/java/ex-so-prla-ja__idioms.md)** - Modern Java patterns
+- **[Functional Programming](./ex-so-plwe-jvspbo__functional-programming.md)** - FP with Spring Boot
 
 ---
 

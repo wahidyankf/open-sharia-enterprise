@@ -2,7 +2,7 @@
 title: Service Layer Template
 description: Copy-paste ready Python service layer template with transaction management, orchestration, and application logic for domain-driven design in Sharia-compliant financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - template
@@ -10,7 +10,7 @@ tags:
   - application-service
   - orchestration
 related:
-  - ../ex-so-stla-py__domain-driven-design.md
+  - ../ex-so-prla-py__domain-driven-design.md
   - ./repository-template.md
 principles:
   - explicit-over-implicit
@@ -172,7 +172,7 @@ async def calculate_zakat(self, request):
 
 ## References
 
-- [Domain-Driven Design](../ex-so-stla-py__domain-driven-design.md)
+- [Domain-Driven Design](../ex-so-prla-py__domain-driven-design.md)
 
 ---
 

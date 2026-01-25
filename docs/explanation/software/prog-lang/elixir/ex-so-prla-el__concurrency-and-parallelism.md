@@ -2,7 +2,7 @@
 title: "Elixir Concurrency and Parallelism"
 description: Fundamental concurrency and parallelism in Elixir using the BEAM VM's actor model with lightweight processes and message passing
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - concurrency
@@ -14,10 +14,10 @@ tags:
   - actor-model
   - beam-vm
 related:
-  - ./ex-so-stla-el__error-handling.md
-  - ./ex-so-stla-el__otp-genserver.md
-  - ./ex-so-stla-el__otp-supervisor.md
-  - ./ex-so-stla-el__performance.md
+  - ./ex-so-prla-el__error-handling.md
+  - ./ex-so-prla-el__otp-genserver.md
+  - ./ex-so-prla-el__otp-supervisor.md
+  - ./ex-so-prla-el__performance.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -1484,11 +1484,11 @@ end
 
 ## Related Topics
 
-- [Error Handling](./ex-so-stla-el__error-handling.md) - "Let it crash" philosophy
-- [OTP GenServer](./ex-so-stla-el__otp-genserver.md) - Stateful concurrent processes
-- [OTP Supervisor](./ex-so-stla-el__otp-supervisor.md) - Process supervision
-- [Anti-Patterns](./ex-so-stla-el__anti-patterns.md) - Common concurrency mistakes
-- [Performance](./ex-so-stla-el__performance.md) - Optimizing concurrent systems
+- [Error Handling](./ex-so-prla-el__error-handling.md) - "Let it crash" philosophy
+- [OTP GenServer](./ex-so-prla-el__otp-genserver.md) - Stateful concurrent processes
+- [OTP Supervisor](./ex-so-prla-el__otp-supervisor.md) - Process supervision
+- [Anti-Patterns](./ex-so-prla-el__anti-patterns.md) - Common concurrency mistakes
+- [Performance](./ex-so-prla-el__performance.md) - Optimizing concurrent systems
 
 ## Sources
 

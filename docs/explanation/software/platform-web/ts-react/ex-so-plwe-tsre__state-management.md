@@ -2,7 +2,7 @@
 title: "React State Management"
 description: State management patterns and strategies for React applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - state-management
@@ -10,8 +10,8 @@ tags:
   - zustand
   - typescript
 related:
-  - ./ex-so-stli-tsre__idioms.md
-  - ./ex-so-stli-tsre__hooks.md
+  - ./ex-so-plwe-tsre__idioms.md
+  - ./ex-so-plwe-tsre__hooks.md
 principles:
   - explicit-over-implicit
   - immutability
@@ -26,10 +26,10 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Idioms](./ex-so-stli-tsre__idioms.md) - useState and useReducer patterns
-- [Hooks](./ex-so-stli-tsre__hooks.md) - React Hooks guide
-- [Component Architecture](./ex-so-stli-tsre__component-architecture.md) - Component patterns
-- [Performance](./ex-so-stli-tsre__performance.md) - State optimization
+- [Idioms](./ex-so-plwe-tsre__idioms.md) - useState and useReducer patterns
+- [Hooks](./ex-so-plwe-tsre__hooks.md) - React Hooks guide
+- [Component Architecture](./ex-so-plwe-tsre__component-architecture.md) - Component patterns
+- [Performance](./ex-so-plwe-tsre__performance.md) - State optimization
 
 ## Overview
 
@@ -1137,11 +1137,11 @@ graph TD
 
 ## Related Documentation
 
-- **[Idioms](./ex-so-stli-tsre__idioms.md)** - useState and useReducer patterns
-- **[Hooks](./ex-so-stli-tsre__hooks.md)** - React Hooks guide
-- **[Component Architecture](./ex-so-stli-tsre__component-architecture.md)** - Component patterns
-- **[Performance](./ex-so-stli-tsre__performance.md)** - State optimization
-- **[Data Fetching](./ex-so-stli-tsre__data-fetching.md)** - API integration patterns
+- **[Idioms](./ex-so-plwe-tsre__idioms.md)** - useState and useReducer patterns
+- **[Hooks](./ex-so-plwe-tsre__hooks.md)** - React Hooks guide
+- **[Component Architecture](./ex-so-plwe-tsre__component-architecture.md)** - Component patterns
+- **[Performance](./ex-so-plwe-tsre__performance.md)** - State optimization
+- **[Data Fetching](./ex-so-plwe-tsre__data-fetching.md)** - API integration patterns
 
 ---
 

@@ -518,10 +518,10 @@ Only put stable, reusable code in `pkg/`. When in doubt, use `internal/`.
 
 ## Related Documentation
 
-- [Go Best Practices](../ex-so-stla-go__best-practices.md) - Coding standards
-- [Go Idioms](../ex-so-stla-go__idioms.md) - Go-specific patterns
-- [Go Domain-Driven Design](../ex-so-stla-go__domain-driven-design.md) - DDD structure
-- [Go Test-Driven Development](../ex-so-stla-go__test-driven-development.md) - Testing patterns
+- [Go Best Practices](../ex-so-prla-go__best-practices.md) - Coding standards
+- [Go Idioms](../ex-so-prla-go__idioms.md) - Go-specific patterns
+- [Go Domain-Driven Design](../ex-so-prla-go__domain-driven-design.md) - DDD structure
+- [Go Test-Driven Development](../ex-so-prla-go__test-driven-development.md) - Testing patterns
 
 ---
 

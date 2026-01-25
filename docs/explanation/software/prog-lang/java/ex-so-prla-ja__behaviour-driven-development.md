@@ -2,7 +2,7 @@
 title: Java Behavior-Driven Development
 description: Behavior-driven development with Cucumber, Gherkin, and collaboration patterns for Java
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - behavior-driven-development
@@ -12,7 +12,7 @@ tags:
   - acceptance-testing
   - collaboration
 related:
-  - ./ex-so-stla-ja__best-practices.md
+  - ./ex-so-prla-ja__best-practices.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -39,9 +39,9 @@ last_updated: 2026-01-24
 
 **Related Documentation:**
 
-- [Test-Driven Development](./ex-so-stla-ja__test-driven-development.md) - TDD complements BDD
-- [Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md) - Ubiquitous language in BDD
-- [Java Idioms](./ex-so-stla-ja__idioms.md) - Modern Java for step definitions
+- [Test-Driven Development](./ex-so-prla-ja__test-driven-development.md) - TDD complements BDD
+- [Domain-Driven Design](./ex-so-prla-ja__domain-driven-design.md) - Ubiquitous language in BDD
+- [Java Idioms](./ex-so-prla-ja__idioms.md) - Modern Java for step definitions
 - [Acceptance Criteria Convention](../../../../../governance/development/infra/acceptance-criteria.md) - Gherkin standards
 
 ## Why BDD in Finance
@@ -1934,9 +1934,9 @@ This document implements the following [software engineering principles](../../.
 
 ### Core Java Documentation
 
-- **[Test-Driven Development](./ex-so-stla-ja__test-driven-development.md)** - TDD complements BDD
-- **[Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md)** - Ubiquitous language for scenarios
-- **[Java Idioms](./ex-so-stla-ja__idioms.md)** - Modern Java for step definitions
+- **[Test-Driven Development](./ex-so-prla-ja__test-driven-development.md)** - TDD complements BDD
+- **[Domain-Driven Design](./ex-so-prla-ja__domain-driven-design.md)** - Ubiquitous language for scenarios
+- **[Java Idioms](./ex-so-prla-ja__idioms.md)** - Modern Java for step definitions
 
 ### Platform Documentation
 

@@ -21,9 +21,9 @@ tags:
   - ts-5.6
   - ts-5.9
 related:
-  - ex-so-stla-ts__modules-and-dependencies.md
-  - ex-so-stla-ts__best-practices.md
-  - ex-so-stla-ts__linting-and-formatting.md
+  - ex-so-prla-ts__modules-and-dependencies.md
+  - ex-so-prla-ts__best-practices.md
+  - ex-so-prla-ts__linting-and-formatting.md
 principles:
   - reproducibility
   - automation-over-manual
@@ -1251,9 +1251,9 @@ Set realistic coverage thresholds:
 
 ## Related Documentation
 
-- [TypeScript Modules and Dependencies](../ex-so-stla-ts__modules-and-dependencies.md) - Module system
-- [TypeScript Best Practices](../ex-so-stla-ts__best-practices.md) - Coding standards
-- [TypeScript Linting and Formatting](../ex-so-stla-ts__linting-and-formatting.md) - ESLint/Prettier setup
+- [TypeScript Modules and Dependencies](../ex-so-prla-ts__modules-and-dependencies.md) - Module system
+- [TypeScript Best Practices](../ex-so-prla-ts__best-practices.md) - Coding standards
+- [TypeScript Linting and Formatting](../ex-so-prla-ts__linting-and-formatting.md) - ESLint/Prettier setup
 - [Repository Template](./repository-template.md) - Repository pattern
 - [Service Layer Template](./service-layer-template.md) - Application services
 

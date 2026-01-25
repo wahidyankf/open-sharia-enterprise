@@ -2,7 +2,7 @@
 title: Python Memory Management
 description: Python memory management including reference counting, garbage collection, weak references, memory profiling, and optimization techniques for efficient resource usage
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - memory-management
@@ -11,8 +11,8 @@ tags:
   - memory-profiling
   - optimization
 related:
-  - ./ex-so-stla-py__performance.md
-  - ./ex-so-stla-py__concurrency-and-parallelism.md
+  - ./ex-so-prla-py__performance.md
+  - ./ex-so-prla-py__concurrency-and-parallelism.md
 principles:
   - efficiency
   - resource-management
@@ -451,8 +451,8 @@ for zakat in gen_result:
 
 ### Related Documentation
 
-- [Performance](./ex-so-stla-py__performance.md) - Performance optimization
-- [Concurrency and Parallelism](./ex-so-stla-py__concurrency-and-parallelism.md) - Parallel processing
+- [Performance](./ex-so-prla-py__performance.md) - Performance optimization
+- [Concurrency and Parallelism](./ex-so-prla-py__concurrency-and-parallelism.md) - Parallel processing
 
 ---
 

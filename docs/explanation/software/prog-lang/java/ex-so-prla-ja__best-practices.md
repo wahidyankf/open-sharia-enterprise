@@ -2,7 +2,7 @@
 title: "Java Best Practices"
 description: Modern Java coding standards and proven approaches (Java 17+)
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - best-practices
@@ -153,7 +153,7 @@ public class ZakatCalculator {
 
 **Islamic Finance Application**: Automated Zakat calculation verification ensures consistent nisab threshold checking across all transactions, preventing manual miscalculations that could lead to underpayment (haram). Maven enforces 80% test coverage.
 
-**See Also**: [Java Linting and Formatting](./ex-so-stla-ja__linting-and-formatting.md)
+**See Also**: [Java Linting and Formatting](./ex-so-prla-ja__linting-and-formatting.md)
 
 ### 2. Explicit Over Implicit
 
@@ -1098,7 +1098,7 @@ docker build .
 
 Best practices are proven approaches that improve code quality, reduce bugs, and enhance team productivity. For the OSE platform, which handles sensitive finance operations like Zakat calculations, QardHasan contracts, and Donation management, adherence to these practices is crucial for building trustworthy, reliable systems.
 
-**Companion Document**: Before reading this document, familiarize yourself with common [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) to understand what practices to avoid.
+**Companion Document**: Before reading this document, familiarize yourself with common [Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) to understand what practices to avoid.
 
 ## Core Principles
 
@@ -1510,8 +1510,8 @@ class DonationRepositoryTest {
 **See**:
 
 - [Automation Over Manual Principle](../../../../../governance/principles/software-engineering/automation-over-manual.md)
-- [Java Idioms - Records](./ex-so-stla-ja__idioms.md#1-records-for-immutable-data)
-- [Java Type Safety - Static Analysis](./ex-so-stla-ja__type-safety.md#static-analysis-with-checker-framework)
+- [Java Idioms - Records](./ex-so-prla-ja__idioms.md#1-records-for-immutable-data)
+- [Java Type Safety - Static Analysis](./ex-so-prla-ja__type-safety.md#static-analysis-with-checker-framework)
 
 ## Reproducibility First
 
@@ -4209,8 +4209,8 @@ Use this checklist during code reviews and before committing code:
 
 ## Related Documentation
 
-- [Java Idioms](./ex-so-stla-ja__idioms.md) - Common Java patterns and idiomatic constructs
-- [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Common mistakes and what to avoid
+- [Java Idioms](./ex-so-prla-ja__idioms.md) - Common Java patterns and idiomatic constructs
+- [Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) - Common mistakes and what to avoid
 - [Tech Stack Languages Index](../README.md) - Overview of all supported languages
 
 ## Sources

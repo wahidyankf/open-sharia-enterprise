@@ -2,7 +2,7 @@
 title: Go Test-Driven Development
 description: TDD practices in Go using testing package, table-driven tests, mocking, and test coverage
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - golang
   - tdd
@@ -17,8 +17,8 @@ tags:
   - go-1.24
   - go-1.25
 related:
-  - ./ex-so-stla-go__behaviour-driven-development.md
-  - ./ex-so-stla-go__best-practices.md
+  - ./ex-so-prla-go__behaviour-driven-development.md
+  - ./ex-so-prla-go__best-practices.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -39,8 +39,8 @@ Test-Driven Development (TDD) is a software development methodology where tests 
 
 **Related Documentation**:
 
-- [Best Practices](./ex-so-stla-go__best-practices.md)
-- [Behaviour-Driven Development](./ex-so-stla-go__behaviour-driven-development.md)
+- [Best Practices](./ex-so-prla-go__best-practices.md)
+- [Behaviour-Driven Development](./ex-so-prla-go__behaviour-driven-development.md)
 
 ## TDD Fundamentals
 
@@ -1744,8 +1744,8 @@ Test-Driven Development in Go emphasizes:
 
 **Related Documentation**:
 
-- Read [Behaviour-Driven Development](./ex-so-stla-go__behaviour-driven-development.md)
-- Explore [Best Practices](./ex-so-stla-go__best-practices.md)
+- Read [Behaviour-Driven Development](./ex-so-prla-go__behaviour-driven-development.md)
+- Explore [Best Practices](./ex-so-prla-go__best-practices.md)
 
 ---
 

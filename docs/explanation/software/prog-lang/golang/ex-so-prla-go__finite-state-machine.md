@@ -1,7 +1,7 @@
 title: "Go Finite State Machines"
 description: State machine patterns for managing state transitions in Go 1.18-1.25 using type safety, interfaces, and concurrency
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
 
 - golang
@@ -85,10 +85,10 @@ This guide targets Go developers building enterprise financial systems. It assum
 
 **Related Documentation:**
 
-- [Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md) - Interface patterns
-- [Type Safety](./ex-so-stla-go__type-safety.md) - Type system guarantees
-- [Best Practices](./ex-so-stla-go__best-practices.md) - Code quality standards
-- [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md) - Goroutine safety
+- [Interfaces and Composition](./ex-so-prla-go__interfaces-and-composition.md) - Interface patterns
+- [Type Safety](./ex-so-prla-go__type-safety.md) - Type system guarantees
+- [Best Practices](./ex-so-prla-go__best-practices.md) - Code quality standards
+- [Concurrency and Parallelism](./ex-so-prla-go__concurrency-and-parallelism.md) - Goroutine safety
 
 FSM patterns align with [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
 
@@ -2446,15 +2446,15 @@ func (p *DonationPayment) Approve() error {
 
 **Go-Specific**:
 
-- [Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md) - Interface design patterns
-- [Type Safety](./ex-so-stla-go__type-safety.md) - Type system guarantees
-- [Best Practices](./ex-so-stla-go__best-practices.md) - Code quality standards
-- [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md) - Goroutine-safe design
-- [Error Handling](./ex-so-stla-go__error-handling.md) - Explicit error patterns
+- [Interfaces and Composition](./ex-so-prla-go__interfaces-and-composition.md) - Interface design patterns
+- [Type Safety](./ex-so-prla-go__type-safety.md) - Type system guarantees
+- [Best Practices](./ex-so-prla-go__best-practices.md) - Code quality standards
+- [Concurrency and Parallelism](./ex-so-prla-go__concurrency-and-parallelism.md) - Goroutine-safe design
+- [Error Handling](./ex-so-prla-go__error-handling.md) - Explicit error patterns
 
 **Cross-Language**:
 
-- [Java Finite State Machines](../java/ex-so-stla-ja__finite-state-machine.md) - Comparison with Java approach
+- [Java Finite State Machines](../java/ex-so-prla-ja__finite-state-machine.md) - Comparison with Java approach
 
 **Principles**:
 

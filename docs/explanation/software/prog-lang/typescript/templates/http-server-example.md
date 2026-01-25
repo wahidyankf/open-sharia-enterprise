@@ -22,7 +22,7 @@ tags:
 related:
   - service-layer-template.md
   - project-structure.md
-  - ex-so-stla-ts__best-practices.md
+  - ex-so-prla-ts__best-practices.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -707,7 +707,7 @@ describe("Donation API Integration", () => {
 
 - [Service Layer Template](./service-layer-template.md) - Application services
 - [Project Structure](./project-structure.md) - Hexagonal architecture
-- [TypeScript Best Practices](../ex-so-stla-ts__best-practices.md) - Coding standards
+- [TypeScript Best Practices](../ex-so-prla-ts__best-practices.md) - Coding standards
 
 ---
 

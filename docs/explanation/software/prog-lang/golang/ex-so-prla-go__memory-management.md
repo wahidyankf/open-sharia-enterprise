@@ -2,7 +2,7 @@
 title: Go Memory Management
 description: Memory management in Go including garbage collection, escape analysis, memory profiling, and optimization
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - golang
   - memory-management
@@ -17,8 +17,8 @@ tags:
   - go-1.24
   - go-1.25
 related:
-  - ./ex-so-stla-go__performance.md
-  - ./ex-so-stla-go__best-practices.md
+  - ./ex-so-prla-go__performance.md
+  - ./ex-so-prla-go__best-practices.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -1364,10 +1364,10 @@ func BuildGood() []int {
 
 ## Related Documentation
 
-- [Performance](./ex-so-stla-go__performance.md) - Performance optimization including memory profiling
-- [Best Practices](./ex-so-stla-go__best-practices.md) - General best practices including memory efficiency
-- [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md) - Goroutine memory considerations
-- [Anti-Patterns](./ex-so-stla-go__anti-patterns.md) - Common memory-related mistakes
+- [Performance](./ex-so-prla-go__performance.md) - Performance optimization including memory profiling
+- [Best Practices](./ex-so-prla-go__best-practices.md) - General best practices including memory efficiency
+- [Concurrency and Parallelism](./ex-so-prla-go__concurrency-and-parallelism.md) - Goroutine memory considerations
+- [Anti-Patterns](./ex-so-prla-go__anti-patterns.md) - Common memory-related mistakes
 
 ## Further Reading
 

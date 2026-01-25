@@ -2,7 +2,7 @@
 title: "Elixir Linting and Formatting"
 description: Code quality tools including mix format for formatting, Credo for linting, and Dialyzer for static analysis
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - linting
@@ -13,9 +13,9 @@ tags:
   - static-analysis
   - code-quality
 related:
-  - ./ex-so-stla-el__best-practices.md
-  - ./ex-so-stla-el__type-safety.md
-  - ./ex-so-stla-el__anti-patterns.md
+  - ./ex-so-prla-el__best-practices.md
+  - ./ex-so-prla-el__type-safety.md
+  - ./ex-so-prla-el__anti-patterns.md
 principles:
   - automation-over-manual
   - reproducibility
@@ -1055,10 +1055,10 @@ end
 
 ## Related Topics
 
-- [Best Practices](ex-so-stla-el__best-practices.md) - Elixir best practices
-- [Testing](ex-so-stla-el__test-driven-development.md) - Testing quality
-- [Type Safety](ex-so-stla-el__type-safety.md) - Typespecs and Dialyzer
-- [Dependencies](ex-so-stla-el__modules-and-dependencies.md) - Dependency management
+- [Best Practices](ex-so-prla-el__best-practices.md) - Elixir best practices
+- [Testing](ex-so-prla-el__test-driven-development.md) - Testing quality
+- [Type Safety](ex-so-prla-el__type-safety.md) - Typespecs and Dialyzer
+- [Dependencies](ex-so-prla-el__modules-and-dependencies.md) - Dependency management
 
 ## Sources
 

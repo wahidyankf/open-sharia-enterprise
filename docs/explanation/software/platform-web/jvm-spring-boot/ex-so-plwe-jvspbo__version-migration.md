@@ -2,7 +2,7 @@
 title: "Spring Boot Version Migration"
 description: Guide to upgrading Spring Boot versions
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - spring-boot
   - migration

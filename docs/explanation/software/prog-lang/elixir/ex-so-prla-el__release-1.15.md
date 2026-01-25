@@ -2,7 +2,7 @@
 title: "Elixir 1.15 Release"
 description: Release notes for Elixir 1.15 highlighting new features, improvements, and breaking changes
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - release-notes
@@ -16,8 +16,8 @@ last_updated: 2026-01-23
 
 **Status**: Stable (Released June 19, 2023)
 **OTP Compatibility**: Erlang/OTP 24+ (OTP 26 recommended)
-**Previous Version**: [Elixir 1.14](ex-so-stla-el__release-1.14.md)
-**Next Version**: [Elixir 1.16](ex-so-stla-el__release-1.16.md)
+**Previous Version**: [Elixir 1.14](ex-so-prla-el__release-1.14.md)
+**Next Version**: [Elixir 1.16](ex-so-prla-el__release-1.16.md)
 
 ## Overview
 
@@ -863,10 +863,10 @@ mix compile --warnings-as-errors
 ### Related Documentation
 
 - [Back to Elixir README](README.md)
-- [Previous: Elixir 1.14 Release](ex-so-stla-el__release-1.14.md)
-- [Next: Elixir 1.16 Release](ex-so-stla-el__release-1.16.md)
-- [Logging Best Practices](ex-so-stla-el__best-practices.md#logging)
-- [Performance Optimization](ex-so-stla-el__performance.md)
+- [Previous: Elixir 1.14 Release](ex-so-prla-el__release-1.14.md)
+- [Next: Elixir 1.16 Release](ex-so-prla-el__release-1.16.md)
+- [Logging Best Practices](ex-so-prla-el__best-practices.md#logging)
+- [Performance Optimization](ex-so-prla-el__performance.md)
 
 ---
 

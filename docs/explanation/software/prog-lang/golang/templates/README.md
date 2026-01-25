@@ -2,7 +2,7 @@
 title: Go Templates
 description: Standardized code templates and examples for Go development emphasizing composition, interfaces, and simplicity
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - golang
   - templates
@@ -482,7 +482,7 @@ func TestUserRepository_Integration(t *testing.T) {
 
 ### Template Naming Convention
 
-Template files follow the repository pattern: `{descriptive-name}.md` (no ex-so-stla-go prefix in templates/ directory)
+Template files follow the repository pattern: `{descriptive-name}.md` (no ex-so-prla-go prefix in templates/ directory)
 
 ### Common Patterns Across Templates
 
@@ -606,18 +606,18 @@ All templates enforce these quality standards:
 
 ### Core Go Documentation
 
-- [Go Best Practices](../ex-so-stla-go__best-practices.md) - Coding standards and idiomatic patterns
-- [Go Idioms](../ex-so-stla-go__idioms.md) - Go-specific patterns and conventions
-- [Domain-Driven Design](../ex-so-stla-go__domain-driven-design.md) - DDD structure in Go
-- [Test-Driven Development](../ex-so-stla-go__test-driven-development.md) - Testing patterns and table-driven tests
-- [Interfaces and Composition](../ex-so-stla-go__interfaces-and-composition.md) - Interface design and struct embedding
-- [Error Handling](../ex-so-stla-go__error-handling.md) - Error wrapping and sentinel errors
+- [Go Best Practices](../ex-so-prla-go__best-practices.md) - Coding standards and idiomatic patterns
+- [Go Idioms](../ex-so-prla-go__idioms.md) - Go-specific patterns and conventions
+- [Domain-Driven Design](../ex-so-prla-go__domain-driven-design.md) - DDD structure in Go
+- [Test-Driven Development](../ex-so-prla-go__test-driven-development.md) - Testing patterns and table-driven tests
+- [Interfaces and Composition](../ex-so-prla-go__interfaces-and-composition.md) - Interface design and struct embedding
+- [Error Handling](../ex-so-prla-go__error-handling.md) - Error wrapping and sentinel errors
 
 ### Go Release Documentation
 
-- [Go 1.18 Release](../ex-so-stla-go__release-1.18.md) - Generics introduction
-- [Go 1.22 Release](../ex-so-stla-go__release-1.22.md) - Enhanced HTTP routing
-- [Go 1.25 Release](../ex-so-stla-go__release-1.25.md) - Latest features
+- [Go 1.18 Release](../ex-so-prla-go__release-1.18.md) - Generics introduction
+- [Go 1.22 Release](../ex-so-prla-go__release-1.22.md) - Enhanced HTTP routing
+- [Go 1.25 Release](../ex-so-prla-go__release-1.25.md) - Latest features
 
 ## Contributing
 

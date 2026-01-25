@@ -2,7 +2,7 @@
 title: "React Performance"
 description: Performance optimization strategies for React applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - performance
@@ -10,8 +10,8 @@ tags:
   - memoization
   - code-splitting
 related:
-  - ./ex-so-stli-tsre__idioms.md
-  - ./ex-so-stli-tsre__best-practices.md
+  - ./ex-so-plwe-tsre__idioms.md
+  - ./ex-so-plwe-tsre__best-practices.md
 principles:
   - automation-over-manual
 last_updated: 2026-01-25
@@ -25,10 +25,10 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Best Practices](./ex-so-stli-tsre__best-practices.md) - Performance standards
-- [Idioms](./ex-so-stli-tsre__idioms.md) - useMemo/useCallback patterns
-- [Hooks](./ex-so-stli-tsre__hooks.md) - Hook optimization
-- [Component Architecture](./ex-so-stli-tsre__component-architecture.md) - Component patterns
+- [Best Practices](./ex-so-plwe-tsre__best-practices.md) - Performance standards
+- [Idioms](./ex-so-plwe-tsre__idioms.md) - useMemo/useCallback patterns
+- [Hooks](./ex-so-plwe-tsre__hooks.md) - Hook optimization
+- [Component Architecture](./ex-so-plwe-tsre__component-architecture.md) - Component patterns
 
 ## Overview
 
@@ -873,11 +873,11 @@ export const DonationCard = React.memo<DonationCardProps>(
 
 ## Related Documentation
 
-- **[Best Practices](./ex-so-stli-tsre__best-practices.md)** - Performance standards
-- **[Idioms](./ex-so-stli-tsre__idioms.md)** - useMemo/useCallback patterns
-- **[Hooks](./ex-so-stli-tsre__hooks.md)** - Hook optimization
-- **[Component Architecture](./ex-so-stli-tsre__component-architecture.md)** - Component patterns
-- **[Build & Deployment](./ex-so-stli-tsre__build-deployment.md)** - Production optimization
+- **[Best Practices](./ex-so-plwe-tsre__best-practices.md)** - Performance standards
+- **[Idioms](./ex-so-plwe-tsre__idioms.md)** - useMemo/useCallback patterns
+- **[Hooks](./ex-so-plwe-tsre__hooks.md)** - Hook optimization
+- **[Component Architecture](./ex-so-plwe-tsre__component-architecture.md)** - Component patterns
+- **[Build & Deployment](./ex-so-plwe-tsre__build-deployment.md)** - Production optimization
 
 ---
 

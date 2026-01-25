@@ -2,7 +2,7 @@
 title: "TypeScript Domain-Driven Design"
 description: Domain-Driven Design patterns and practices in TypeScript
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - ddd
@@ -13,9 +13,9 @@ tags:
   - domain-events
   - repositories
 related:
-  - ./ex-so-stla-ts__best-practices.md
-  - ./ex-so-stla-ts__type-safety.md
-  - ./ex-so-stla-ts__functional-programming.md
+  - ./ex-so-prla-ts__best-practices.md
+  - ./ex-so-prla-ts__type-safety.md
+  - ./ex-so-prla-ts__functional-programming.md
   - ../../../../../governance/development/pattern/functional-programming.md
 principles:
   - explicit-over-implicit
@@ -1692,8 +1692,8 @@ runZakatDistributionExample().catch(console.error);
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
-- **[TypeScript Type Safety](./ex-so-stla-ts__type-safety.md)** - Advanced type patterns
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards
+- **[TypeScript Type Safety](./ex-so-prla-ts__type-safety.md)** - Advanced type patterns
 - **[Functional Programming Principle](../../../../../governance/development/pattern/functional-programming.md)** - FP principles
 
 ---

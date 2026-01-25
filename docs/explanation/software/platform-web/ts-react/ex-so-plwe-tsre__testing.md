@@ -2,7 +2,7 @@
 title: "React Testing"
 description: Testing strategies for React applications with React Testing Library and Jest
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - testing
@@ -10,7 +10,7 @@ tags:
   - jest
   - typescript
 related:
-  - ./ex-so-stli-tsre__best-practices.md
+  - ./ex-so-plwe-tsre__best-practices.md
 principles:
   - automation-over-manual
 last_updated: 2026-01-25
@@ -24,9 +24,9 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Best Practices](./ex-so-stli-tsre__best-practices.md) - Testing standards
-- [Hooks](./ex-so-stli-tsre__hooks.md) - Hook patterns
-- [Component Architecture](./ex-so-stli-tsre__component-architecture.md) - Component patterns
+- [Best Practices](./ex-so-plwe-tsre__best-practices.md) - Testing standards
+- [Hooks](./ex-so-plwe-tsre__hooks.md) - Hook patterns
+- [Component Architecture](./ex-so-plwe-tsre__component-architecture.md) - Component patterns
 
 ## Overview
 
@@ -1197,10 +1197,10 @@ test('dashboard shows user info', () => {
 
 ## Related Documentation
 
-- **[Best Practices](./ex-so-stli-tsre__best-practices.md)** - Testing standards
-- **[Hooks](./ex-so-stli-tsre__hooks.md)** - Hook patterns
-- **[Component Architecture](./ex-so-stli-tsre__component-architecture.md)** - Component patterns
-- **[Accessibility](./ex-so-stli-tsre__accessibility.md)** - Accessibility testing
+- **[Best Practices](./ex-so-plwe-tsre__best-practices.md)** - Testing standards
+- **[Hooks](./ex-so-plwe-tsre__hooks.md)** - Hook patterns
+- **[Component Architecture](./ex-so-plwe-tsre__component-architecture.md)** - Component patterns
+- **[Accessibility](./ex-so-plwe-tsre__accessibility.md)** - Accessibility testing
 
 ---
 

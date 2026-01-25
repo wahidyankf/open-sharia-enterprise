@@ -2,7 +2,7 @@
 title: Java Error Handling
 description: Comprehensive guide to exception handling, error patterns, and resilience in modern Java applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - error-handling
@@ -15,7 +15,7 @@ tags:
   - sealed-types
   - circuit-breaker
 related:
-  - ./ex-so-stla-ja__best-practices.md
+  - ./ex-so-prla-ja__best-practices.md
 principles:
   - explicit-over-implicit
 last_updated: 2026-01-24
@@ -53,13 +53,13 @@ last_updated: 2026-01-24
 
 **Related Documentation:**
 
-- [Java Idioms](./ex-so-stla-ja__idioms.md) - Modern Java patterns including try-with-resources
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Early validation and testing
-- [Java Type Safety](./ex-so-stla-ja__type-safety.md) - Sealed types and Optional
-- [Java Functional Programming](./ex-so-stla-ja__functional-programming.md) - Try and Either monads
-- [Java Security](./ex-so-stla-ja__security.md) - Secure error handling practices
-- [Java Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md) - Structured concurrency
-- [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Exception handling mistakes
+- [Java Idioms](./ex-so-prla-ja__idioms.md) - Modern Java patterns including try-with-resources
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - Early validation and testing
+- [Java Type Safety](./ex-so-prla-ja__type-safety.md) - Sealed types and Optional
+- [Java Functional Programming](./ex-so-prla-ja__functional-programming.md) - Try and Either monads
+- [Java Security](./ex-so-prla-ja__security.md) - Secure error handling practices
+- [Java Concurrency](./ex-so-prla-ja__concurrency-and-parallelism.md) - Structured concurrency
+- [Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) - Exception handling mistakes
 
 Error handling in Java directly implements multiple [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
 
@@ -3179,14 +3179,14 @@ This documentation draws from:
 
 ### Core Java Documentation
 
-- [Java Idioms](./ex-so-stla-ja__idioms.md) - Try-with-resources, pattern matching, records
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Early validation, testing strategies
-- [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Exception handling mistakes to avoid
-- [Java Type Safety](./ex-so-stla-ja__type-safety.md) - Sealed types, Optional, null safety
-- [Java Functional Programming](./ex-so-stla-ja__functional-programming.md) - Try monad, Either monad, pure functions
-- [Java Security](./ex-so-stla-ja__security.md) - Secure error messages, audit logging
-- [Java Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md) - Structured concurrency, virtual threads
-- [Java TDD](./ex-so-stla-ja__test-driven-development.md) - Testing error scenarios
+- [Java Idioms](./ex-so-prla-ja__idioms.md) - Try-with-resources, pattern matching, records
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - Early validation, testing strategies
+- [Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) - Exception handling mistakes to avoid
+- [Java Type Safety](./ex-so-prla-ja__type-safety.md) - Sealed types, Optional, null safety
+- [Java Functional Programming](./ex-so-prla-ja__functional-programming.md) - Try monad, Either monad, pure functions
+- [Java Security](./ex-so-prla-ja__security.md) - Secure error messages, audit logging
+- [Java Concurrency](./ex-so-prla-ja__concurrency-and-parallelism.md) - Structured concurrency, virtual threads
+- [Java TDD](./ex-so-prla-ja__test-driven-development.md) - Testing error scenarios
 
 ### Software Engineering Principles
 

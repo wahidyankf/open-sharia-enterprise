@@ -2,7 +2,7 @@
 title: Phoenix LiveView Guide
 description: Comprehensive guide to Phoenix LiveView for building real-time, interactive applications without JavaScript using server-rendered HTML
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - elixir
@@ -13,10 +13,10 @@ tags:
   - uploads
   - streams
 related:
-  - ex-so-stli-elph__channels.md
-  - ex-so-stli-elph__testing.md
-  - ex-so-stli-elph__security.md
-  - ex-so-stli-elph__performance.md
+  - ex-so-plwe-elph__channels.md
+  - ex-so-plwe-elph__testing.md
+  - ex-so-plwe-elph__security.md
+  - ex-so-plwe-elph__performance.md
 last_updated: 2026-01-25
 ---
 
@@ -28,10 +28,10 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Channels](./ex-so-stli-elph__channels.md) - Traditional real-time communication
-- [Testing](./ex-so-stli-elph__testing.md) - LiveView testing strategies
-- [Security](./ex-so-stli-elph__security.md) - Authentication and authorization
-- [Performance](./ex-so-stli-elph__performance.md) - Optimization techniques
+- [Channels](./ex-so-plwe-elph__channels.md) - Traditional real-time communication
+- [Testing](./ex-so-plwe-elph__testing.md) - LiveView testing strategies
+- [Security](./ex-so-plwe-elph__security.md) - Authentication and authorization
+- [Performance](./ex-so-plwe-elph__performance.md) - Optimization techniques
 
 ## Overview
 
@@ -1320,9 +1320,9 @@ end
 
 ## Related Documentation
 
-- **[Channels Guide](./ex-so-stli-elph__channels.md)** - Traditional real-time with WebSockets
-- **[Testing Guide](./ex-so-stli-elph__testing.md)** - Comprehensive testing strategies
-- **[Security Guide](./ex-so-stli-elph__security.md)** - Authentication and authorization
-- **[Performance Guide](./ex-so-stli-elph__performance.md)** - Optimization techniques
+- **[Channels Guide](./ex-so-plwe-elph__channels.md)** - Traditional real-time with WebSockets
+- **[Testing Guide](./ex-so-plwe-elph__testing.md)** - Comprehensive testing strategies
+- **[Security Guide](./ex-so-plwe-elph__security.md)** - Authentication and authorization
+- **[Performance Guide](./ex-so-plwe-elph__performance.md)** - Optimization techniques
 - **[Phoenix LiveView Documentation](https://hexdocs.pm/phoenix_live_view)** - Official reference
-- **[LiveView Templates](./templates/ex-so-stli-elph-te__liveview-template.md)** - Starter templates
+- **[LiveView Templates](./templates/ex-so-plwe-elph-te__liveview-template.md)** - Starter templates

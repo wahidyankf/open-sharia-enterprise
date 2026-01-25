@@ -2,7 +2,7 @@
 title: "Elixir Type Safety"
 description: Optional static analysis in Elixir through typespecs, Dialyzer, and pattern matching for documentation and type checking
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - type-safety
@@ -13,9 +13,9 @@ tags:
   - dynamic-typing
   - static-analysis
 related:
-  - ./ex-so-stla-el__idioms.md
-  - ./ex-so-stla-el__best-practices.md
-  - ./ex-so-stla-el__protocols-and-behaviours.md
+  - ./ex-so-prla-el__idioms.md
+  - ./ex-so-prla-el__best-practices.md
+  - ./ex-so-prla-el__protocols-and-behaviours.md
 principles:
   - explicit-over-implicit
   - documentation-first
@@ -926,10 +926,10 @@ end
 
 ## Related Topics
 
-- [Idioms](./ex-so-stla-el__idioms.md) - Pattern matching and guards
-- [Best Practices](./ex-so-stla-el__best-practices.md) - Elixir conventions
-- [Functional Programming](./ex-so-stla-el__functional-programming.md) - Pure functions
-- [Protocols and Behaviours](./ex-so-stla-el__protocols-and-behaviours.md) - Polymorphism
+- [Idioms](./ex-so-prla-el__idioms.md) - Pattern matching and guards
+- [Best Practices](./ex-so-prla-el__best-practices.md) - Elixir conventions
+- [Functional Programming](./ex-so-prla-el__functional-programming.md) - Pure functions
+- [Protocols and Behaviours](./ex-so-prla-el__protocols-and-behaviours.md) - Polymorphism
 
 ## Sources
 

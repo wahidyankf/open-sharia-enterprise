@@ -2,7 +2,7 @@
 title: Golang
 description: Modern Go idioms, concurrency patterns, and best practices (Go 1.18+)
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - golang
   - go
@@ -47,19 +47,19 @@ Go is used for high-performance services, CLI tools, and concurrent systems in t
 
 All Go code MUST follow the standards documented here:
 
-1. **[Idioms](./ex-so-stla-go__idioms.md)** - Go-specific patterns and conventions
-2. **[Best Practices](./ex-so-stla-go__best-practices.md)** - Clean code standards
-3. **[Anti-Patterns](./ex-so-stla-go__anti-patterns.md)** - Common mistakes to avoid
+1. **[Idioms](./ex-so-prla-go__idioms.md)** - Go-specific patterns and conventions
+2. **[Best Practices](./ex-so-prla-go__best-practices.md)** - Clean code standards
+3. **[Anti-Patterns](./ex-so-prla-go__anti-patterns.md)** - Common mistakes to avoid
 
 **For Agents**: Reference this documentation when writing Go code. The `swe-programming-golang` skill provides quick access to these standards.
 
 ### Quick Standards Reference
 
-- **Naming Conventions**: See [Best Practices - Code Organization](./ex-so-stla-go__best-practices.md#code-organization)
-- **Error Handling**: See [Error Handling](./ex-so-stla-go__error-handling.md)
-- **Type Safety**: See [Type Safety](./ex-so-stla-go__type-safety.md)
-- **Testing Standards**: See [Test-Driven Development](./ex-so-stla-go__test-driven-development.md)
-- **Security Practices**: See [Security](./ex-so-stla-go__security.md)
+- **Naming Conventions**: See [Best Practices - Code Organization](./ex-so-prla-go__best-practices.md#code-organization)
+- **Error Handling**: See [Error Handling](./ex-so-prla-go__error-handling.md)
+- **Type Safety**: See [Type Safety](./ex-so-prla-go__type-safety.md)
+- **Testing Standards**: See [Test-Driven Development](./ex-so-prla-go__test-driven-development.md)
+- **Security Practices**: See [Security](./ex-so-prla-go__security.md)
 
 **Related**: [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
 
@@ -73,7 +73,7 @@ Go development in this platform follows the five software engineering principles
 4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Go supports through first-class functions, closures, and functional core architecture
 5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Go enables through go.mod versioning, module checksums (go.sum), and reproducible builds
 
-**See Also**: [Functional Programming](./ex-so-stla-go__functional-programming.md) for pure functions patterns, [Best Practices](./ex-so-stla-go__best-practices.md) for explicit coding standards.
+**See Also**: [Functional Programming](./ex-so-prla-go__functional-programming.md) for pure functions patterns, [Best Practices](./ex-so-prla-go__best-practices.md) for explicit coding standards.
 
 ## Quick Reference
 
@@ -93,24 +93,24 @@ Go development in this platform follows the five software engineering principles
 
 **Core Documentation:**
 
-- [Best Practices](./ex-so-stla-go__best-practices.md) - Modern Go coding standards (2025-2026)
-- [Idioms](./ex-so-stla-go__idioms.md) - Go-specific patterns (interfaces, embedding, error handling)
-- [Anti-Patterns](./ex-so-stla-go__anti-patterns.md) - Common mistakes to avoid (expanded with financial domain patterns)
-- [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md) - Goroutines, channels, sync package
-- [Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md) - Interface design, composition over inheritance
-- [Error Handling](./ex-so-stla-go__error-handling.md) - Error patterns, wrapping, custom errors
-- [Type Safety](./ex-so-stla-go__type-safety.md) - Type system, interfaces, generics
-- [Functional Programming](./ex-so-stla-go__functional-programming.md) - FP patterns in Go
-- [Finite State Machine](./ex-so-stla-go__finite-state-machine.md) - FSM patterns for enterprise state management
-- [Domain-Driven Design](./ex-so-stla-go__domain-driven-design.md) - DDD patterns in Go
-- [Performance](./ex-so-stla-go__performance.md) - Profiling, optimization, memory management
-- [Security](./ex-so-stla-go__security.md) - Secure coding practices
-- [Memory Management](./ex-so-stla-go__memory-management.md) - GC, pointers, escape analysis
-- [Modules and Dependencies](./ex-so-stla-go__modules-and-dependencies.md) - Go modules, dependency management
-- [Web Services](./ex-so-stla-go__web-services.md) - HTTP servers, REST APIs, gRPC
-- [Linting and Formatting](./ex-so-stla-go__linting-and-formatting.md) - golangci-lint, gofmt, staticcheck
-- [Test-Driven Development](./ex-so-stla-go__test-driven-development.md) - TDD with testing package, testify
-- [Behaviour-Driven Development](./ex-so-stla-go__behaviour-driven-development.md) - BDD with Godog (Gherkin for Go)
+- [Best Practices](./ex-so-prla-go__best-practices.md) - Modern Go coding standards (2025-2026)
+- [Idioms](./ex-so-prla-go__idioms.md) - Go-specific patterns (interfaces, embedding, error handling)
+- [Anti-Patterns](./ex-so-prla-go__anti-patterns.md) - Common mistakes to avoid (expanded with financial domain patterns)
+- [Concurrency and Parallelism](./ex-so-prla-go__concurrency-and-parallelism.md) - Goroutines, channels, sync package
+- [Interfaces and Composition](./ex-so-prla-go__interfaces-and-composition.md) - Interface design, composition over inheritance
+- [Error Handling](./ex-so-prla-go__error-handling.md) - Error patterns, wrapping, custom errors
+- [Type Safety](./ex-so-prla-go__type-safety.md) - Type system, interfaces, generics
+- [Functional Programming](./ex-so-prla-go__functional-programming.md) - FP patterns in Go
+- [Finite State Machine](./ex-so-prla-go__finite-state-machine.md) - FSM patterns for enterprise state management
+- [Domain-Driven Design](./ex-so-prla-go__domain-driven-design.md) - DDD patterns in Go
+- [Performance](./ex-so-prla-go__performance.md) - Profiling, optimization, memory management
+- [Security](./ex-so-prla-go__security.md) - Secure coding practices
+- [Memory Management](./ex-so-prla-go__memory-management.md) - GC, pointers, escape analysis
+- [Modules and Dependencies](./ex-so-prla-go__modules-and-dependencies.md) - Go modules, dependency management
+- [Web Services](./ex-so-prla-go__web-services.md) - HTTP servers, REST APIs, gRPC
+- [Linting and Formatting](./ex-so-prla-go__linting-and-formatting.md) - golangci-lint, gofmt, staticcheck
+- [Test-Driven Development](./ex-so-prla-go__test-driven-development.md) - TDD with testing package, testify
+- [Behaviour-Driven Development](./ex-so-prla-go__behaviour-driven-development.md) - BDD with Godog (Gherkin for Go)
 
 **DDD Templates:**
 
@@ -187,7 +187,7 @@ timeline
 
 ## Documentation Structure
 
-### [Go Idioms](./ex-so-stla-go__idioms.md)
+### [Go Idioms](./ex-so-prla-go__idioms.md)
 
 Language-specific patterns and conventions for writing idiomatic Go code.
 
@@ -202,7 +202,7 @@ Language-specific patterns and conventions for writing idiomatic Go code.
 - Functional options pattern
 - Type switches and assertions
 
-### [Go Best Practices](./ex-so-stla-go__best-practices.md)
+### [Go Best Practices](./ex-so-prla-go__best-practices.md)
 
 Proven approaches for writing clean, maintainable Go code based on 2025-2026 standards.
 
@@ -217,7 +217,7 @@ Proven approaches for writing clean, maintainable Go code based on 2025-2026 sta
 - Security practices
 - Modern framework usage (Gin, Echo, Fiber)
 
-### [Go Anti-Patterns](./ex-so-stla-go__anti-patterns.md)
+### [Go Anti-Patterns](./ex-so-prla-go__anti-patterns.md)
 
 Common mistakes, pitfalls, and problematic patterns to avoid in Go development.
 
@@ -310,7 +310,7 @@ Released August 12, 2025. Current stable version (1.25.6 as of January 15, 2026)
 
 Deep-dive documentation on critical Go development areas:
 
-#### [Go Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md)
+#### [Go Concurrency and Parallelism](./ex-so-prla-go__concurrency-and-parallelism.md)
 
 Comprehensive guide to concurrent programming with goroutines and channels.
 
@@ -325,7 +325,7 @@ Comprehensive guide to concurrent programming with goroutines and channels.
 - Deadlock prevention
 - Structured concurrency patterns
 
-#### [Go Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md)
+#### [Go Interfaces and Composition](./ex-so-prla-go__interfaces-and-composition.md)
 
 Comprehensive guide to interface design and composition patterns in Go.
 
@@ -340,7 +340,7 @@ Comprehensive guide to interface design and composition patterns in Go.
 - Testing with interfaces and mocks
 - Best practices for interface design
 
-#### [Go Error Handling](./ex-so-stla-go__error-handling.md)
+#### [Go Error Handling](./ex-so-prla-go__error-handling.md)
 
 Comprehensive guide to error handling patterns in Go.
 
@@ -355,7 +355,7 @@ Comprehensive guide to error handling patterns in Go.
 - Best practices for error messages
 - Domain-specific error types
 
-#### [Go Type Safety](./ex-so-stla-go__type-safety.md)
+#### [Go Type Safety](./ex-so-prla-go__type-safety.md)
 
 Comprehensive guide to achieving type safety with Go's type system and generics.
 
@@ -370,7 +370,7 @@ Comprehensive guide to achieving type safety with Go's type system and generics.
 - Type-safe builders and phantom types
 - Static analysis with staticcheck
 
-#### [Go Performance](./ex-so-stla-go__performance.md)
+#### [Go Performance](./ex-so-prla-go__performance.md)
 
 Comprehensive guide to profiling, optimization, and memory management in Go.
 
@@ -385,7 +385,7 @@ Comprehensive guide to profiling, optimization, and memory management in Go.
 - Caching strategies
 - Profile-guided optimization (PGO)
 
-#### [Go Security](./ex-so-stla-go__security.md)
+#### [Go Security](./ex-so-prla-go__security.md)
 
 Comprehensive guide to building secure Go applications aligned with OWASP guidelines.
 
@@ -400,7 +400,7 @@ Comprehensive guide to building secure Go applications aligned with OWASP guidel
 - Audit logging for compliance
 - Common security pitfalls in Go
 
-#### [Go Memory Management](./ex-so-stla-go__memory-management.md)
+#### [Go Memory Management](./ex-so-prla-go__memory-management.md)
 
 Comprehensive guide to memory management, garbage collection, and pointers in Go.
 
@@ -415,7 +415,7 @@ Comprehensive guide to memory management, garbage collection, and pointers in Go
 - GC tuning parameters
 - Memory leaks and detection
 
-#### [Go Modules and Dependencies](./ex-so-stla-go__modules-and-dependencies.md)
+#### [Go Modules and Dependencies](./ex-so-prla-go__modules-and-dependencies.md)
 
 Comprehensive guide to Go modules and dependency management.
 
@@ -430,7 +430,7 @@ Comprehensive guide to Go modules and dependency management.
 - Module proxies and checksums
 - Workspace mode for multi-module projects
 
-#### [Go Web Services](./ex-so-stla-go__web-services.md)
+#### [Go Web Services](./ex-so-prla-go__web-services.md)
 
 Comprehensive guide to building HTTP services, REST APIs, and gRPC services in Go.
 
@@ -445,7 +445,7 @@ Comprehensive guide to building HTTP services, REST APIs, and gRPC services in G
 - Authentication and authorization
 - Testing HTTP services
 
-#### [Go Linting and Formatting](./ex-so-stla-go__linting-and-formatting.md)
+#### [Go Linting and Formatting](./ex-so-prla-go__linting-and-formatting.md)
 
 Comprehensive guide to code quality tools and automation in Go.
 
@@ -460,7 +460,7 @@ Comprehensive guide to code quality tools and automation in Go.
 - Pre-commit hooks
 - IDE integration
 
-#### [Go Test-Driven Development](./ex-so-stla-go__test-driven-development.md)
+#### [Go Test-Driven Development](./ex-so-prla-go__test-driven-development.md)
 
 Comprehensive guide to TDD practices with Go's testing package and testify.
 
@@ -475,7 +475,7 @@ Comprehensive guide to TDD practices with Go's testing package and testify.
 - Fuzzing (Go 1.18+)
 - Integration testing with TestContainers
 
-#### [Go Behaviour-Driven Development](./ex-so-stla-go__behaviour-driven-development.md)
+#### [Go Behaviour-Driven Development](./ex-so-prla-go__behaviour-driven-development.md)
 
 Comprehensive guide to BDD with Godog and Gherkin scenarios.
 
@@ -490,7 +490,7 @@ Comprehensive guide to BDD with Godog and Gherkin scenarios.
 - Collaboration with Three Amigos
 - BDD vs TDD in Go
 
-#### [Go Domain-Driven Design](./ex-so-stla-go__domain-driven-design.md)
+#### [Go Domain-Driven Design](./ex-so-prla-go__domain-driven-design.md)
 
 Comprehensive guide to implementing DDD tactical patterns without classes.
 
@@ -505,7 +505,7 @@ Comprehensive guide to implementing DDD tactical patterns without classes.
 - Functional domain models
 - DDD without inheritance
 
-#### [Go Functional Programming](./ex-so-stla-go__functional-programming.md)
+#### [Go Functional Programming](./ex-so-prla-go__functional-programming.md)
 
 Comprehensive guide to functional programming patterns in Go.
 
@@ -520,7 +520,7 @@ Comprehensive guide to functional programming patterns in Go.
 - Limitations compared to pure FP languages
 - Functional core, imperative shell
 
-#### [Go Finite State Machine](./ex-so-stla-go__finite-state-machine.md)
+#### [Go Finite State Machine](./ex-so-prla-go__finite-state-machine.md)
 
 Comprehensive guide to FSM patterns for enterprise state management in Go.
 
@@ -634,7 +634,7 @@ Production-ready templates for Domain-Driven Design patterns in Go:
 
 ### 1. Start with Idioms
 
-Read [Go Idioms](./ex-so-stla-go__idioms.md) to understand Go-specific patterns:
+Read [Go Idioms](./ex-so-prla-go__idioms.md) to understand Go-specific patterns:
 
 - Interfaces and implicit implementation
 - Error handling with explicit returns
@@ -643,7 +643,7 @@ Read [Go Idioms](./ex-so-stla-go__idioms.md) to understand Go-specific patterns:
 
 ### 2. Master Concurrency
 
-Read [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md) for concurrent programming:
+Read [Concurrency and Parallelism](./ex-so-prla-go__concurrency-and-parallelism.md) for concurrent programming:
 
 - Goroutines vs threads
 - Channels for communication
@@ -652,7 +652,7 @@ Read [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.
 
 ### 3. Apply Best Practices
 
-Read [Go Best Practices](./ex-so-stla-go__best-practices.md) to write clean code:
+Read [Go Best Practices](./ex-so-prla-go__best-practices.md) to write clean code:
 
 - Effective Go conventions
 - Package organization
@@ -661,7 +661,7 @@ Read [Go Best Practices](./ex-so-stla-go__best-practices.md) to write clean code
 
 ### 4. Avoid Anti-Patterns
 
-Read [Go Anti-Patterns](./ex-so-stla-go__anti-patterns.md) to prevent common mistakes:
+Read [Go Anti-Patterns](./ex-so-prla-go__anti-patterns.md) to prevent common mistakes:
 
 - Goroutine leaks
 - Race conditions
@@ -1036,27 +1036,27 @@ Essential Go philosophy from Rob Pike:
 
 ### Core Go Documentation
 
-- **[Go Idioms](./ex-so-stla-go__idioms.md)** - Go-specific patterns and conventions
-- **[Go Best Practices](./ex-so-stla-go__best-practices.md)** - Clean code guidelines
-- **[Go Anti-Patterns](./ex-so-stla-go__anti-patterns.md)** - Common mistakes to avoid
+- **[Go Idioms](./ex-so-prla-go__idioms.md)** - Go-specific patterns and conventions
+- **[Go Best Practices](./ex-so-prla-go__best-practices.md)** - Clean code guidelines
+- **[Go Anti-Patterns](./ex-so-prla-go__anti-patterns.md)** - Common mistakes to avoid
 
 ### Specialized Topics
 
-- **[Go Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md)** - Goroutines, channels, sync
-- **[Go Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md)** - Interface design, embedding
-- **[Go Error Handling](./ex-so-stla-go__error-handling.md)** - Error patterns, wrapping, custom errors
-- **[Go Type Safety](./ex-so-stla-go__type-safety.md)** - Type system, generics, type assertions
-- **[Go Finite State Machine](./ex-so-stla-go__finite-state-machine.md)** - FSM patterns, concurrent state machines, financial workflows
-- **[Go Performance](./ex-so-stla-go__performance.md)** - Profiling, optimization, GC tuning
-- **[Go Security](./ex-so-stla-go__security.md)** - Secure coding, cryptography, OWASP
-- **[Go Memory Management](./ex-so-stla-go__memory-management.md)** - GC, pointers, escape analysis
-- **[Go Modules and Dependencies](./ex-so-stla-go__modules-and-dependencies.md)** - Module management
-- **[Go Web Services](./ex-so-stla-go__web-services.md)** - HTTP, REST, gRPC
-- **[Go Linting and Formatting](./ex-so-stla-go__linting-and-formatting.md)** - golangci-lint, gofmt
-- **[Go Functional Programming](./ex-so-stla-go__functional-programming.md)** - FP patterns in Go
-- **[Go Domain-Driven Design](./ex-so-stla-go__domain-driven-design.md)** - DDD without classes
-- **[Go Test-Driven Development](./ex-so-stla-go__test-driven-development.md)** - TDD with testing package
-- **[Go Behaviour-Driven Development](./ex-so-stla-go__behaviour-driven-development.md)** - BDD with Godog
+- **[Go Concurrency and Parallelism](./ex-so-prla-go__concurrency-and-parallelism.md)** - Goroutines, channels, sync
+- **[Go Interfaces and Composition](./ex-so-prla-go__interfaces-and-composition.md)** - Interface design, embedding
+- **[Go Error Handling](./ex-so-prla-go__error-handling.md)** - Error patterns, wrapping, custom errors
+- **[Go Type Safety](./ex-so-prla-go__type-safety.md)** - Type system, generics, type assertions
+- **[Go Finite State Machine](./ex-so-prla-go__finite-state-machine.md)** - FSM patterns, concurrent state machines, financial workflows
+- **[Go Performance](./ex-so-prla-go__performance.md)** - Profiling, optimization, GC tuning
+- **[Go Security](./ex-so-prla-go__security.md)** - Secure coding, cryptography, OWASP
+- **[Go Memory Management](./ex-so-prla-go__memory-management.md)** - GC, pointers, escape analysis
+- **[Go Modules and Dependencies](./ex-so-prla-go__modules-and-dependencies.md)** - Module management
+- **[Go Web Services](./ex-so-prla-go__web-services.md)** - HTTP, REST, gRPC
+- **[Go Linting and Formatting](./ex-so-prla-go__linting-and-formatting.md)** - golangci-lint, gofmt
+- **[Go Functional Programming](./ex-so-prla-go__functional-programming.md)** - FP patterns in Go
+- **[Go Domain-Driven Design](./ex-so-prla-go__domain-driven-design.md)** - DDD without classes
+- **[Go Test-Driven Development](./ex-so-prla-go__test-driven-development.md)** - TDD with testing package
+- **[Go Behaviour-Driven Development](./ex-so-prla-go__behaviour-driven-development.md)** - BDD with Godog
 
 ### DDD Templates
 

@@ -2,7 +2,7 @@
 title: Java Test-Driven Development
 description: Test-driven development practices, JUnit 5, Mockito, AssertJ, and testing strategies for Java
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - test-driven-development
@@ -13,7 +13,7 @@ tags:
   - testing
   - red-green-refactor
 related:
-  - ./ex-so-stla-ja__best-practices.md
+  - ./ex-so-prla-ja__best-practices.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -40,10 +40,10 @@ last_updated: 2026-01-24
 
 **Related Documentation:**
 
-- [Java Idioms](./ex-so-stla-ja__idioms.md) - Modern Java patterns for testable code
-- [Java Functional Programming](./ex-so-stla-ja__functional-programming.md) - Pure functions are easy to test
-- [Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md) - Testing aggregates and value objects
-- [Behavior-Driven Development](./ex-so-stla-ja__behaviour-driven-development.md) - BDD complements TDD
+- [Java Idioms](./ex-so-prla-ja__idioms.md) - Modern Java patterns for testable code
+- [Java Functional Programming](./ex-so-prla-ja__functional-programming.md) - Pure functions are easy to test
+- [Domain-Driven Design](./ex-so-prla-ja__domain-driven-design.md) - Testing aggregates and value objects
+- [Behavior-Driven Development](./ex-so-prla-ja__behaviour-driven-development.md) - BDD complements TDD
 
 ## Why TDD in Finance
 
@@ -1753,15 +1753,15 @@ This document implements the following [software engineering principles](../../.
 
 ### Core Java Documentation
 
-- **[Java Idioms](./ex-so-stla-ja__idioms.md)** - Modern patterns for testable code
-- **[Java Functional Programming](./ex-so-stla-ja__functional-programming.md)** - Pure functions are easy to test
-- **[Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md)** - Testing domain models
+- **[Java Idioms](./ex-so-prla-ja__idioms.md)** - Modern patterns for testable code
+- **[Java Functional Programming](./ex-so-prla-ja__functional-programming.md)** - Pure functions are easy to test
+- **[Domain-Driven Design](./ex-so-prla-ja__domain-driven-design.md)** - Testing domain models
 
 ### Specialized Topics
 
-- **[Behavior-Driven Development](./ex-so-stla-ja__behaviour-driven-development.md)** - BDD complements TDD
-- **[Java Type Safety](./ex-so-stla-ja__type-safety.md)** - Type-safe tests
-- **[Java Best Practices](./ex-so-stla-ja__best-practices.md)** - Testing best practices
+- **[Behavior-Driven Development](./ex-so-prla-ja__behaviour-driven-development.md)** - BDD complements TDD
+- **[Java Type Safety](./ex-so-prla-ja__type-safety.md)** - Type-safe tests
+- **[Java Best Practices](./ex-so-prla-ja__best-practices.md)** - Testing best practices
 
 ### Platform Documentation
 

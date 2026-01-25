@@ -2,7 +2,7 @@
 title: "Elixir Performance"
 description: High-performance Elixir applications through BEAM VM's process-based concurrency, efficient memory management, and optimization techniques
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - performance
@@ -14,9 +14,9 @@ tags:
   - tail-call-optimization
   - ets
 related:
-  - ./ex-so-stla-el__concurrency-and-parallelism.md
-  - ./ex-so-stla-el__memory-management.md
-  - ./ex-so-stla-el__best-practices.md
+  - ./ex-so-prla-el__concurrency-and-parallelism.md
+  - ./ex-so-prla-el__memory-management.md
+  - ./ex-so-prla-el__best-practices.md
 principles:
   - simplicity-over-complexity
 last_updated: 2026-01-23
@@ -1309,10 +1309,10 @@ end
 
 ## Related Topics
 
-- [Memory Management](ex-so-stla-el__memory-management.md) - Memory optimization
-- [Concurrency and Parallelism](ex-so-stla-el__concurrency-and-parallelism.md) - Concurrent patterns
-- [Web Services](ex-so-stla-el__web-services.md) - Phoenix performance
-- [Testing](ex-so-stla-el__test-driven-development.md) - Performance testing
+- [Memory Management](ex-so-prla-el__memory-management.md) - Memory optimization
+- [Concurrency and Parallelism](ex-so-prla-el__concurrency-and-parallelism.md) - Concurrent patterns
+- [Web Services](ex-so-prla-el__web-services.md) - Phoenix performance
+- [Testing](ex-so-prla-el__test-driven-development.md) - Performance testing
 
 ## Sources
 

@@ -2,7 +2,7 @@
 title: "React Idioms"
 description: React-specific patterns and idiomatic framework usage
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - idioms
@@ -11,9 +11,9 @@ tags:
   - components
   - typescript
 related:
-  - ./ex-so-stli-tsre__best-practices.md
-  - ./ex-so-stli-tsre__anti-patterns.md
-  - ./ex-so-stli-tsre__component-architecture.md
+  - ./ex-so-plwe-tsre__best-practices.md
+  - ./ex-so-plwe-tsre__anti-patterns.md
+  - ./ex-so-plwe-tsre__component-architecture.md
 principles:
   - explicit-over-implicit
   - immutability
@@ -54,11 +54,11 @@ last_updated: 2026-01-25
 
 ### Related Documentation
 
-- [Best Practices](./ex-so-stli-tsre__best-practices.md)
-- [Anti-Patterns](./ex-so-stli-tsre__anti-patterns.md)
-- [Component Architecture](./ex-so-stli-tsre__component-architecture.md)
-- [Hooks](./ex-so-stli-tsre__hooks.md)
-- [TypeScript](./ex-so-stli-tsre__typescript.md)
+- [Best Practices](./ex-so-plwe-tsre__best-practices.md)
+- [Anti-Patterns](./ex-so-plwe-tsre__anti-patterns.md)
+- [Component Architecture](./ex-so-plwe-tsre__component-architecture.md)
+- [Hooks](./ex-so-plwe-tsre__hooks.md)
+- [TypeScript](./ex-so-plwe-tsre__typescript.md)
 
 ## Overview
 
@@ -1642,13 +1642,13 @@ export const EmailInput: React.FC = () => {
 
 ## Related Documentation
 
-- **[React Best Practices](./ex-so-stli-tsre__best-practices.md)** - Production standards
-- **[React Anti-Patterns](./ex-so-stli-tsre__anti-patterns.md)** - Common mistakes
-- **[Component Architecture](./ex-so-stli-tsre__component-architecture.md)** - Component design
-- **[Hooks](./ex-so-stli-tsre__hooks.md)** - Deep dive into React hooks
-- **[TypeScript](./ex-so-stli-tsre__typescript.md)** - TypeScript integration
-- **[State Management](./ex-so-stli-tsre__state-management.md)** - State patterns
-- **[Testing](./ex-so-stli-tsre__testing.md)** - Testing strategies
+- **[React Best Practices](./ex-so-plwe-tsre__best-practices.md)** - Production standards
+- **[React Anti-Patterns](./ex-so-plwe-tsre__anti-patterns.md)** - Common mistakes
+- **[Component Architecture](./ex-so-plwe-tsre__component-architecture.md)** - Component design
+- **[Hooks](./ex-so-plwe-tsre__hooks.md)** - Deep dive into React hooks
+- **[TypeScript](./ex-so-plwe-tsre__typescript.md)** - TypeScript integration
+- **[State Management](./ex-so-plwe-tsre__state-management.md)** - State patterns
+- **[Testing](./ex-so-plwe-tsre__testing.md)** - Testing strategies
 
 ---
 

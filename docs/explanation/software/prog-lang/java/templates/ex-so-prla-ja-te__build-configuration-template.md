@@ -10,7 +10,7 @@ tags:
   - dependencies
   - plugins
 related:
-  - ex-so-stla-ja__test-driven-development.md
+  - ex-so-prla-ja__test-driven-development.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -730,8 +730,8 @@ tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
 
 ## Related Templates
 
-- [Unit Test Template](./ex-so-stla-ja-te__unit-test-template.md)
-- [Integration Test Template](./ex-so-stla-ja-te__integration-test-template.md)
+- [Unit Test Template](./ex-so-prla-ja-te__unit-test-template.md)
+- [Integration Test Template](./ex-so-prla-ja-te__integration-test-template.md)
 
 ## See Also
 

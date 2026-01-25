@@ -2,7 +2,7 @@
 title: "TypeScript 5.6 Release"
 description: Comprehensive guide to TypeScript 5.6 features including iterator helper methods, improved truthiness narrowing, disallowed nullish checks, and region-priority resolution in Intl APIs
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - typescript-5.6
@@ -11,8 +11,8 @@ tags:
   - type-narrowing
   - migration
 related:
-  - ./ex-so-stla-ts__best-practices.md
-  - ./ex-so-stla-ts__release-5.0.md
+  - ./ex-so-prla-ts__best-practices.md
+  - ./ex-so-prla-ts__release-5.0.md
   - ./README.md
 principles:
   - explicit-over-implicit
@@ -1410,8 +1410,8 @@ Focus on:
 
 **TypeScript Documentation**:
 
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
-- **[TypeScript 5.0 Release](./ex-so-stla-ts__release-5.0.md)** - Previous major release features
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards
+- **[TypeScript 5.0 Release](./ex-so-prla-ts__release-5.0.md)** - Previous major release features
 - **[TypeScript Documentation](./README.md)** - Complete guide
 
 **Official Resources**:

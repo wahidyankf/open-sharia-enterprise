@@ -575,7 +575,7 @@ Money.equal?(m1, m2)  # true (same value)
 ## Resources
 
 - [Back to Templates README](README.md)
-- [Domain-Driven Design](../ex-so-stla-el__domain-driven-design.md)
+- [Domain-Driven Design](../ex-so-prla-el__domain-driven-design.md)
 - [Elixir Structs](https://hexdocs.pm/elixir/Kernel.html#defstruct/1)
 - [Protocols](https://hexdocs.pm/elixir/Protocol.html)
 

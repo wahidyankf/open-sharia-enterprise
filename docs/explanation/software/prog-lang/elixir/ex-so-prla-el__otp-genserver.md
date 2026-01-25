@@ -2,7 +2,7 @@
 title: "OTP GenServer Patterns"
 description: GenServer behavior module for implementing client-server relationships with standardized state management, synchronous/asynchronous calls, and process lifecycle
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - otp
@@ -12,10 +12,10 @@ tags:
   - client-server
   - processes
 related:
-  - ./ex-so-stla-el__otp-supervisor.md
-  - ./ex-so-stla-el__otp-application.md
-  - ./ex-so-stla-el__concurrency-and-parallelism.md
-  - ./ex-so-stla-el__best-practices.md
+  - ./ex-so-prla-el__otp-supervisor.md
+  - ./ex-so-prla-el__otp-application.md
+  - ./ex-so-prla-el__concurrency-and-parallelism.md
+  - ./ex-so-prla-el__best-practices.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -1353,9 +1353,9 @@ end
 ### Related Documentation
 
 - [Back to Elixir README](README.md)
-- [Supervisor Patterns](ex-so-stla-el__otp-supervisor.md)
-- [Application Patterns](ex-so-stla-el__otp-application.md)
-- [Concurrency and Parallelism](ex-so-stla-el__concurrency-and-parallelism.md)
+- [Supervisor Patterns](ex-so-prla-el__otp-supervisor.md)
+- [Application Patterns](ex-so-prla-el__otp-application.md)
+- [Concurrency and Parallelism](ex-so-prla-el__concurrency-and-parallelism.md)
 
 ---
 

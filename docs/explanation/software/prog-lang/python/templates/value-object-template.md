@@ -2,7 +2,7 @@
 title: Value Object Template
 description: Copy-paste ready Python value object template with immutability, equality by value, type hints, and validation for domain-driven design in Sharia-compliant financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - template
@@ -11,8 +11,8 @@ tags:
   - domain-driven-design
   - immutability
 related:
-  - ../ex-so-stla-py__domain-driven-design.md
-  - ../ex-so-stla-py__type-safety.md
+  - ../ex-so-prla-py__domain-driven-design.md
+  - ../ex-so-prla-py__type-safety.md
   - ./entity-template.md
 principles:
   - explicit-over-implicit
@@ -345,8 +345,8 @@ amount: Decimal = Decimal("2500.00")
 
 ## References
 
-- [Domain-Driven Design](../ex-so-stla-py__domain-driven-design.md)
-- [Type Safety](../ex-so-stla-py__type-safety.md)
+- [Domain-Driven Design](../ex-so-prla-py__domain-driven-design.md)
+- [Type Safety](../ex-so-prla-py__type-safety.md)
 
 ---
 

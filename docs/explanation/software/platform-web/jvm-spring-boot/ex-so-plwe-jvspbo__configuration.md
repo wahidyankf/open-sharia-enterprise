@@ -2,7 +2,7 @@
 title: "Spring Boot Configuration"
 description: Configuration management and externalized settings in Spring Boot
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - spring-boot
   - configuration
@@ -10,8 +10,8 @@ tags:
   - profiles
   - externalized-config
 related:
-  - ./ex-so-stli-jvspbo__idioms.md
-  - ./ex-so-stli-jvspbo__best-practices.md
+  - ./ex-so-plwe-jvspbo__idioms.md
+  - ./ex-so-plwe-jvspbo__best-practices.md
 principles:
   - explicit-over-implicit
   - reproducibility
@@ -31,8 +31,8 @@ last_updated: 2026-01-25
 
 ### Related Documentation
 
-- [Best Practices](./ex-so-stli-jvspbo__best-practices.md#configuration-management)
-- [Idioms](./ex-so-stli-jvspbo__idioms.md#externalized-configuration)
+- [Best Practices](./ex-so-plwe-jvspbo__best-practices.md#configuration-management)
+- [Idioms](./ex-so-plwe-jvspbo__idioms.md#externalized-configuration)
 
 ## Overview
 
@@ -311,9 +311,9 @@ Spring Boot loads configuration in this order (later sources override earlier):
 
 ## Related Documentation
 
-- **[Idioms](./ex-so-stli-jvspbo__idioms.md)** - Configuration patterns
-- **[Best Practices](./ex-so-stli-jvspbo__best-practices.md)** - Configuration management
-- **[Anti-Patterns](./ex-so-stli-jvspbo__anti-patterns.md)** - Configuration mistakes
+- **[Idioms](./ex-so-plwe-jvspbo__idioms.md)** - Configuration patterns
+- **[Best Practices](./ex-so-plwe-jvspbo__best-practices.md)** - Configuration management
+- **[Anti-Patterns](./ex-so-plwe-jvspbo__anti-patterns.md)** - Configuration mistakes
 
 ---
 

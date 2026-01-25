@@ -2,7 +2,7 @@
 title: Service Layer Template
 description: Template for Spring Boot application services
 category: explanation
-subcategory: stack-libs-templates
+subcategory: platform-web-templates
 tags:
   - spring-boot
   - template

@@ -2,7 +2,7 @@
 title: "Elixir 1.16 Release"
 description: Release notes for Elixir 1.16 highlighting new features, improvements, and breaking changes
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - release-notes
@@ -16,8 +16,8 @@ last_updated: 2026-01-23
 
 **Status**: Stable (Released December 22, 2023)
 **OTP Compatibility**: Erlang/OTP 24+
-**Previous Version**: [Elixir 1.15](ex-so-stla-el__release-1.15.md)
-**Next Version**: [Elixir 1.17](ex-so-stla-el__release-1.17.md)
+**Previous Version**: [Elixir 1.15](ex-so-prla-el__release-1.15.md)
+**Next Version**: [Elixir 1.17](ex-so-prla-el__release-1.17.md)
 
 ## Overview
 
@@ -767,10 +767,10 @@ No significant changes from Elixir 1.15. Enhanced diagnostics add minimal overhe
 ### Related Documentation
 
 - [Back to Elixir README](README.md)
-- [Previous: Elixir 1.15 Release](ex-so-stla-el__release-1.15.md)
-- [Next: Elixir 1.17 Release](ex-so-stla-el__release-1.17.md)
-- [Best Practices](ex-so-stla-el__best-practices.md)
-- [Anti-Patterns](ex-so-stla-el__anti-patterns.md)
+- [Previous: Elixir 1.15 Release](ex-so-prla-el__release-1.15.md)
+- [Next: Elixir 1.17 Release](ex-so-prla-el__release-1.17.md)
+- [Best Practices](ex-so-prla-el__best-practices.md)
+- [Anti-Patterns](ex-so-prla-el__anti-patterns.md)
 
 ---
 

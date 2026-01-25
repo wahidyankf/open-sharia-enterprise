@@ -2,7 +2,7 @@
 title: Domain-Driven Design in Python
 description: Domain-driven design patterns in Python including value objects, entities, aggregates, domain events, repositories, and service layers for Sharia-compliant financial domain modeling
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - ddd
@@ -13,8 +13,8 @@ tags:
   - repositories
   - domain-events
 related:
-  - ./ex-so-stla-py__classes-and-protocols.md
-  - ./ex-so-stla-py__type-safety.md
+  - ./ex-so-prla-py__classes-and-protocols.md
+  - ./ex-so-prla-py__type-safety.md
   - ./templates/
 principles:
   - explicit-over-implicit
@@ -657,8 +657,8 @@ graph TD
 
 ### Related Documentation
 
-- [Classes and Protocols](./ex-so-stla-py__classes-and-protocols.md) - OOP patterns
-- [Type Safety](./ex-so-stla-py__type-safety.md) - Pydantic validation
+- [Classes and Protocols](./ex-so-prla-py__classes-and-protocols.md) - OOP patterns
+- [Type Safety](./ex-so-prla-py__type-safety.md) - Pydantic validation
 - [Templates](./templates/) - DDD code templates
 
 ---

@@ -2,7 +2,7 @@
 title: Go Linting and Formatting
 description: Code quality tools in Go including gofmt, goimports, golangci-lint, and staticcheck
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - golang
   - linting
@@ -18,7 +18,7 @@ tags:
   - go-1.24
   - go-1.25
 related:
-  - ./ex-so-stla-go__best-practices.md
+  - ./ex-so-prla-go__best-practices.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -1365,9 +1365,9 @@ func handleNegative(x int) int {
 
 ## Related Documentation
 
-- [Best Practices](./ex-so-stla-go__best-practices.md) - Code quality and style guidelines
-- [Idioms](./ex-so-stla-go__idioms.md) - Idiomatic Go patterns
-- [Anti-Patterns](./ex-so-stla-go__anti-patterns.md) - Common mistakes to avoid
+- [Best Practices](./ex-so-prla-go__best-practices.md) - Code quality and style guidelines
+- [Idioms](./ex-so-prla-go__idioms.md) - Idiomatic Go patterns
+- [Anti-Patterns](./ex-so-prla-go__anti-patterns.md) - Common mistakes to avoid
 
 ## Further Reading
 

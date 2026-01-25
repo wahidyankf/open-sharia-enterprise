@@ -2,7 +2,7 @@
 title: Java Domain-Driven Design
 description: Implementing domain-driven design tactical patterns with Java, Spring Boot, and Axon Framework
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - domain-driven-design
@@ -15,7 +15,7 @@ tags:
   - axon-framework
   - spring-boot
 related:
-  - ./ex-so-stla-ja__best-practices.md
+  - ./ex-so-prla-ja__best-practices.md
 principles:
   - explicit-over-implicit
 last_updated: 2026-01-24
@@ -43,10 +43,10 @@ last_updated: 2026-01-24
 
 **Related Documentation:**
 
-- [Java Idioms](./ex-so-stla-ja__idioms.md) - Records for value objects, sealed classes for aggregates
-- [Java Type Safety](./ex-so-stla-ja__type-safety.md) - Type-safe domain models
-- [Java Functional Programming](./ex-so-stla-ja__functional-programming.md) - Immutable domain models
-- [Test-Driven Development](./ex-so-stla-ja__test-driven-development.md) - Testing domain models
+- [Java Idioms](./ex-so-prla-ja__idioms.md) - Records for value objects, sealed classes for aggregates
+- [Java Type Safety](./ex-so-prla-ja__type-safety.md) - Type-safe domain models
+- [Java Functional Programming](./ex-so-prla-ja__functional-programming.md) - Immutable domain models
+- [Test-Driven Development](./ex-so-prla-ja__test-driven-development.md) - Testing domain models
 - [Platform DDD Overview](../../architecture/domain-driven-design-ddd/README.md) - Strategic DDD
 
 DDD tactical patterns in Java align with [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
@@ -2007,15 +2007,15 @@ void testZakatCalculationBelowNisab() {
 
 ### Core Java Documentation
 
-- **[Java Idioms](./ex-so-stla-ja__idioms.md)** - Records for value objects, sealed classes for aggregates
-- **[Java Type Safety](./ex-so-stla-ja__type-safety.md)** - Type-safe domain models
-- **[Java Functional Programming](./ex-so-stla-ja__functional-programming.md)** - Immutable domain models
+- **[Java Idioms](./ex-so-prla-ja__idioms.md)** - Records for value objects, sealed classes for aggregates
+- **[Java Type Safety](./ex-so-prla-ja__type-safety.md)** - Type-safe domain models
+- **[Java Functional Programming](./ex-so-prla-ja__functional-programming.md)** - Immutable domain models
 
 ### Specialized Topics
 
-- **[Test-Driven Development](./ex-so-stla-ja__test-driven-development.md)** - TDD for domain models
-- **[Java Security](./ex-so-stla-ja__security.md)** - Secure domain models
-- **[Java Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md)** - Thread-safe aggregates
+- **[Test-Driven Development](./ex-so-prla-ja__test-driven-development.md)** - TDD for domain models
+- **[Java Security](./ex-so-prla-ja__security.md)** - Secure domain models
+- **[Java Concurrency](./ex-so-prla-ja__concurrency-and-parallelism.md)** - Thread-safe aggregates
 
 ### Platform Documentation
 

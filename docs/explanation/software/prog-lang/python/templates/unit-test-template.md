@@ -2,7 +2,7 @@
 title: Unit Test Template
 description: Copy-paste ready pytest unit test template with fixtures, parameterization, and mocking for testing Python domain logic in Sharia-compliant financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - template
@@ -10,7 +10,7 @@ tags:
   - pytest
   - testing
 related:
-  - ../ex-so-stla-py__test-driven-development.md
+  - ../ex-so-prla-py__test-driven-development.md
   - ./integration-test-template.md
 principles:
   - test-first
@@ -196,7 +196,7 @@ def test_calculate_zakat():
 
 ## References
 
-- [Test-Driven Development](../ex-so-stla-py__test-driven-development.md)
+- [Test-Driven Development](../ex-so-prla-py__test-driven-development.md)
 
 ---
 

@@ -2,7 +2,7 @@
 title: "Java Idioms"
 description: Modern Java patterns and idiomatic code (Java 17+)
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - idioms
@@ -12,7 +12,7 @@ tags:
   - records
   - pattern-matching
 related:
-  - ./ex-so-stla-ja__best-practices.md
+  - ./ex-so-prla-ja__best-practices.md
 principles:
   - explicit-over-implicit
 last_updated: 2026-01-24
@@ -79,10 +79,10 @@ last_updated: 2026-01-24
 
 ### Related Documentation
 
-- [Best Practices](./ex-so-stla-ja__best-practices.md)
-- [Anti-Patterns](./ex-so-stla-ja__anti-patterns.md)
-- [Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md)
-- [Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md)
+- [Best Practices](./ex-so-prla-ja__best-practices.md)
+- [Anti-Patterns](./ex-so-prla-ja__anti-patterns.md)
+- [Domain-Driven Design](./ex-so-prla-ja__domain-driven-design.md)
+- [Concurrency](./ex-so-prla-ja__concurrency-and-parallelism.md)
 
 ## Overview
 
@@ -626,7 +626,7 @@ public class TaskProcessor {
 }
 ```
 
-**For comprehensive virtual threads documentation** (lifecycle, structured concurrency, financial examples, diagrams), see [Concurrency and Parallelism - Virtual Threads](./ex-so-stla-ja__concurrency-and-parallelism.md#virtual-threads).
+**For comprehensive virtual threads documentation** (lifecycle, structured concurrency, financial examples, diagrams), see [Concurrency and Parallelism - Virtual Threads](./ex-so-prla-ja__concurrency-and-parallelism.md#virtual-threads).
 
 ### 7. Try-With-Resources for Resource Management
 
@@ -1359,7 +1359,7 @@ public final class AppConfig {
 }
 ```
 
-**For comprehensive Money value object implementation**, see [Domain-Driven Design - Value Objects](./ex-so-stla-ja__domain-driven-design.md#example-money-value-object).
+**For comprehensive Money value object implementation**, see [Domain-Driven Design - Value Objects](./ex-so-prla-ja__domain-driven-design.md#example-money-value-object).
 
 **Key Benefits**:
 
@@ -2299,8 +2299,8 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 
 ## Related Documentation
 
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Recommended coding standards
-- [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Common mistakes to avoid
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - Recommended coding standards
+- [Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) - Common mistakes to avoid
 - [Functional Programming Patterns](../../../../../governance/development/pattern/functional-programming.md) - OSE functional programming conventions
 - [Code Quality Standards](../../../../../governance/development/quality/code.md)
 

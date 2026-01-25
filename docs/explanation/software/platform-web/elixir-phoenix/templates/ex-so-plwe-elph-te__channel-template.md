@@ -2,7 +2,7 @@
 title: Phoenix Channel Template
 description: Production-ready template for Phoenix channels
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - elixir
@@ -10,7 +10,7 @@ tags:
   - channel
   - websocket
 related:
-  - ../ex-so-stli-elph__channels.md
+  - ../ex-so-plwe-elph__channels.md
 last_updated: 2026-01-25
 ---
 

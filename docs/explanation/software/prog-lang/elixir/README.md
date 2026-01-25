@@ -2,7 +2,7 @@
 title: "Elixir Programming Language Documentation"
 description: Dynamic functional programming language for scalable, fault-tolerant applications built on the Erlang VM with massive concurrency and real-time capabilities
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - functional-programming
@@ -13,11 +13,11 @@ tags:
   - otp
   - documentation-index
 related:
-  - ./ex-so-stla-el__best-practices.md
-  - ./ex-so-stla-el__functional-programming.md
-  - ./ex-so-stla-el__concurrency-and-parallelism.md
-  - ./ex-so-stla-el__otp-application.md
-  - ./ex-so-stla-el__release-1.19.md
+  - ./ex-so-prla-el__best-practices.md
+  - ./ex-so-prla-el__functional-programming.md
+  - ./ex-so-prla-el__concurrency-and-parallelism.md
+  - ./ex-so-prla-el__otp-application.md
+  - ./ex-so-prla-el__release-1.19.md
 principles:
   - documentation-first
   - immutability
@@ -57,19 +57,19 @@ Elixir is a dynamic, functional programming language designed for building scala
 
 All Elixir code MUST follow the standards documented here:
 
-1. **[Idioms](./ex-so-stla-ex__idioms.md)** - Elixir-specific patterns and conventions
-2. **[Best Practices](./ex-so-stla-ex__best-practices.md)** - Clean code standards
-3. **[Anti-Patterns](./ex-so-stla-ex__anti-patterns.md)** - Common mistakes to avoid
+1. **[Idioms](./ex-so-prla-ex__idioms.md)** - Elixir-specific patterns and conventions
+2. **[Best Practices](./ex-so-prla-ex__best-practices.md)** - Clean code standards
+3. **[Anti-Patterns](./ex-so-prla-ex__anti-patterns.md)** - Common mistakes to avoid
 
 **For Agents**: Reference this documentation when writing Elixir code. The `swe-programming-elixir` skill provides quick access to these standards.
 
 ### Quick Standards Reference
 
-- **Naming Conventions**: See [Best Practices - Code Organization](./ex-so-stla-ex__best-practices.md#code-organization)
-- **Error Handling**: See [Error Handling](./ex-so-stla-ex__error-handling.md)
-- **Type Safety**: See [Type Safety](./ex-so-stla-ex__type-safety.md)
-- **Testing Standards**: See [Test-Driven Development](./ex-so-stla-ex__test-driven-development.md)
-- **Security Practices**: See [Security](./ex-so-stla-ex__security.md)
+- **Naming Conventions**: See [Best Practices - Code Organization](./ex-so-prla-ex__best-practices.md#code-organization)
+- **Error Handling**: See [Error Handling](./ex-so-prla-ex__error-handling.md)
+- **Type Safety**: See [Type Safety](./ex-so-prla-ex__type-safety.md)
+- **Testing Standards**: See [Test-Driven Development](./ex-so-prla-ex__test-driven-development.md)
+- **Security Practices**: See [Security](./ex-so-prla-ex__security.md)
 
 **Related**: [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
 
@@ -150,59 +150,59 @@ This directory contains comprehensive Elixir documentation organized by topic:
 
 **Fundamentals**:
 
-- [Idioms](./ex-so-stla-el__idioms.md) - Pattern matching, pipe operator, guards, protocols
-- [Best Practices](./ex-so-stla-el__best-practices.md) - Naming conventions, OTP patterns, supervision design
-- [Anti-Patterns](./ex-so-stla-el__anti-patterns.md) - Common mistakes, process leaks, misuse of macros
+- [Idioms](./ex-so-prla-el__idioms.md) - Pattern matching, pipe operator, guards, protocols
+- [Best Practices](./ex-so-prla-el__best-practices.md) - Naming conventions, OTP patterns, supervision design
+- [Anti-Patterns](./ex-so-prla-el__anti-patterns.md) - Common mistakes, process leaks, misuse of macros
 
 **Concurrency & Error Handling**:
 
-- [Concurrency and Parallelism](./ex-so-stla-el__concurrency-and-parallelism.md) - Processes, message passing, Task module
-- [Error Handling](./ex-so-stla-el__error-handling.md) - Let it crash philosophy, supervision trees
+- [Concurrency and Parallelism](./ex-so-prla-el__concurrency-and-parallelism.md) - Processes, message passing, Task module
+- [Error Handling](./ex-so-prla-el__error-handling.md) - Let it crash philosophy, supervision trees
 
 **Type System & Functional Programming**:
 
-- [Type Safety](./ex-so-stla-el__type-safety.md) - Typespecs, Dialyzer, pattern matching as type guard
-- [Functional Programming](./ex-so-stla-el__functional-programming.md) - Immutability, pure functions, recursion, Enum/Stream
-- [Protocols and Behaviours](./ex-so-stla-el__protocols-and-behaviours.md) - Polymorphism, protocol implementation, behaviour contracts
+- [Type Safety](./ex-so-prla-el__type-safety.md) - Typespecs, Dialyzer, pattern matching as type guard
+- [Functional Programming](./ex-so-prla-el__functional-programming.md) - Immutability, pure functions, recursion, Enum/Stream
+- [Protocols and Behaviours](./ex-so-prla-el__protocols-and-behaviours.md) - Polymorphism, protocol implementation, behaviour contracts
 
 **Domain-Driven Design**:
 
-- [Domain-Driven Design](./ex-so-stla-el__domain-driven-design.md) - DDD without classes, Ecto schemas as aggregates, bounded contexts
+- [Domain-Driven Design](./ex-so-prla-el__domain-driven-design.md) - DDD without classes, Ecto schemas as aggregates, bounded contexts
 
 **Quality & Performance**:
 
-- [Security](./ex-so-stla-el__security.md) - Input validation, XSS prevention, SQL injection protection
-- [Performance](./ex-so-stla-el__performance.md) - BEAM VM optimization, profiling, benchmarking, ETS tables
-- [Memory Management](./ex-so-stla-el__memory-management.md) - BEAM VM garbage collection, process heaps, memory profiling
-- [Linting and Formatting](./ex-so-stla-el__linting-and-formatting.md) - mix format, Credo, Dialyzer integration
+- [Security](./ex-so-prla-el__security.md) - Input validation, XSS prevention, SQL injection protection
+- [Performance](./ex-so-prla-el__performance.md) - BEAM VM optimization, profiling, benchmarking, ETS tables
+- [Memory Management](./ex-so-prla-el__memory-management.md) - BEAM VM garbage collection, process heaps, memory profiling
+- [Linting and Formatting](./ex-so-prla-el__linting-and-formatting.md) - mix format, Credo, Dialyzer integration
 
 **Development & Testing**:
 
-- [Modules and Dependencies](./ex-so-stla-el__modules-and-dependencies.md) - Mix project management, Hex packages, umbrella projects
-- [Finite State Machines](./ex-so-stla-el__finite-state-machine.md) - GenServer FSM, gen_statem, functional FSMs, OTP supervision patterns
-- [Web Services](./ex-so-stla-el__web-services.md) - Phoenix framework, REST APIs, GraphQL, LiveView
-- [Test-Driven Development](./ex-so-stla-el__test-driven-development.md) - ExUnit, doctests, property-based testing
-- [Behaviour-Driven Development](./ex-so-stla-el__behaviour-driven-development.md) - White Bread for Gherkin, acceptance testing
+- [Modules and Dependencies](./ex-so-prla-el__modules-and-dependencies.md) - Mix project management, Hex packages, umbrella projects
+- [Finite State Machines](./ex-so-prla-el__finite-state-machine.md) - GenServer FSM, gen_statem, functional FSMs, OTP supervision patterns
+- [Web Services](./ex-so-prla-el__web-services.md) - Phoenix framework, REST APIs, GraphQL, LiveView
+- [Test-Driven Development](./ex-so-prla-el__test-driven-development.md) - ExUnit, doctests, property-based testing
+- [Behaviour-Driven Development](./ex-so-prla-el__behaviour-driven-development.md) - White Bread for Gherkin, acceptance testing
 
 ### Release Documentation (5-7 files)
 
 Version-specific features and migration guides:
 
-- [Elixir 1.12](./ex-so-stla-el__release-1.12.md) - Scripted mix install, improved mix xref, compilation improvements
-- [Elixir 1.13](./ex-so-stla-el__release-1.13.md) - Semantic recompilation, Registry improvements, Calendar additions
-- [Elixir 1.14](./ex-so-stla-el__release-1.14.md) - dbg/2 debugging helper, improved diagnostics, PartitionSupervisor
-- [Elixir 1.15](./ex-so-stla-el__release-1.15.md) - Compiler diagnostics, Duration type, documentation improvements
-- [Elixir 1.16](./ex-so-stla-el__release-1.16.md) - JSON support in standard library, process sleep improvements
-- [Elixir 1.17](./ex-so-stla-el__release-1.17.md) - Set-theoretic types, calendar durations, OTP 27 support
-- [Elixir 1.19](./ex-so-stla-el__release-1.19.md) - Type checking of calls, LSP listeners, built-in JSON module
+- [Elixir 1.12](./ex-so-prla-el__release-1.12.md) - Scripted mix install, improved mix xref, compilation improvements
+- [Elixir 1.13](./ex-so-prla-el__release-1.13.md) - Semantic recompilation, Registry improvements, Calendar additions
+- [Elixir 1.14](./ex-so-prla-el__release-1.14.md) - dbg/2 debugging helper, improved diagnostics, PartitionSupervisor
+- [Elixir 1.15](./ex-so-prla-el__release-1.15.md) - Compiler diagnostics, Duration type, documentation improvements
+- [Elixir 1.16](./ex-so-prla-el__release-1.16.md) - JSON support in standard library, process sleep improvements
+- [Elixir 1.17](./ex-so-prla-el__release-1.17.md) - Set-theoretic types, calendar durations, OTP 27 support
+- [Elixir 1.19](./ex-so-prla-el__release-1.19.md) - Type checking of calls, LSP listeners, built-in JSON module
 
 ### OTP Patterns (3 files)
 
 Elixir-specific OTP design patterns:
 
-- [OTP GenServer](./ex-so-stla-el__otp-genserver.md) - State management patterns, handle_call/cast/info, lifecycle
-- [OTP Supervisor](./ex-so-stla-el__otp-supervisor.md) - Supervision strategies, restart policies, fault tolerance
-- [OTP Application](./ex-so-stla-el__otp-application.md) - Application structure, supervision trees, umbrella projects
+- [OTP GenServer](./ex-so-prla-el__otp-genserver.md) - State management patterns, handle_call/cast/info, lifecycle
+- [OTP Supervisor](./ex-so-prla-el__otp-supervisor.md) - Supervision strategies, restart policies, fault tolerance
+- [OTP Application](./ex-so-prla-el__otp-application.md) - Application structure, supervision trees, umbrella projects
 
 ### DDD Templates (7 templates)
 
@@ -305,22 +305,22 @@ timeline
 
 **For Developers New to Elixir** (start here):
 
-1. [Idioms](./ex-so-stla-el__idioms.md) - Learn Elixir's distinctive patterns
-2. [Functional Programming](./ex-so-stla-el__functional-programming.md) - Understand the functional paradigm
-3. [Best Practices](./ex-so-stla-el__best-practices.md) - Follow community conventions
-4. [Error Handling](./ex-so-stla-el__error-handling.md) - Embrace "let it crash" philosophy
-5. [Concurrency and Parallelism](./ex-so-stla-el__concurrency-and-parallelism.md) - Understand process-based concurrency
+1. [Idioms](./ex-so-prla-el__idioms.md) - Learn Elixir's distinctive patterns
+2. [Functional Programming](./ex-so-prla-el__functional-programming.md) - Understand the functional paradigm
+3. [Best Practices](./ex-so-prla-el__best-practices.md) - Follow community conventions
+4. [Error Handling](./ex-so-prla-el__error-handling.md) - Embrace "let it crash" philosophy
+5. [Concurrency and Parallelism](./ex-so-prla-el__concurrency-and-parallelism.md) - Understand process-based concurrency
 
 **For Developers Building OTP Applications**:
 
-1. [OTP GenServer](./ex-so-stla-el__otp-genserver.md) - Master stateful processes
-2. [OTP Supervisor](./ex-so-stla-el__otp-supervisor.md) - Design supervision trees
-3. [OTP Application](./ex-so-stla-el__otp-application.md) - Structure complete applications
-4. [Memory Management](./ex-so-stla-el__memory-management.md) - Optimize BEAM VM usage
+1. [OTP GenServer](./ex-so-prla-el__otp-genserver.md) - Master stateful processes
+2. [OTP Supervisor](./ex-so-prla-el__otp-supervisor.md) - Design supervision trees
+3. [OTP Application](./ex-so-prla-el__otp-application.md) - Structure complete applications
+4. [Memory Management](./ex-so-prla-el__memory-management.md) - Optimize BEAM VM usage
 
 **For Developers Applying Domain-Driven Design**:
 
-1. [Domain-Driven Design](./ex-so-stla-el__domain-driven-design.md) - Adapt DDD to functional paradigm
+1. [Domain-Driven Design](./ex-so-prla-el__domain-driven-design.md) - Adapt DDD to functional paradigm
 2. [Entity Template](./templates/entity-template.md) - Model entities with Ecto
 3. [Value Object Template](./templates/value-object-template.md) - Create immutable value objects
 4. [Aggregate Template](./templates/aggregate-template.md) - Define consistency boundaries
@@ -329,17 +329,17 @@ timeline
 
 **For Developers Building Web Services**:
 
-1. [Web Services](./ex-so-stla-el__web-services.md) - Phoenix framework overview
-2. [Security](./ex-so-stla-el__security.md) - Secure Phoenix applications
-3. [Performance](./ex-so-stla-el__performance.md) - Optimize web applications
-4. [Domain-Driven Design](./ex-so-stla-el__domain-driven-design.md) - Structure business logic
+1. [Web Services](./ex-so-prla-el__web-services.md) - Phoenix framework overview
+2. [Security](./ex-so-prla-el__security.md) - Secure Phoenix applications
+3. [Performance](./ex-so-prla-el__performance.md) - Optimize web applications
+4. [Domain-Driven Design](./ex-so-prla-el__domain-driven-design.md) - Structure business logic
 
 **For Developers Ensuring Quality**:
 
-1. [Test-Driven Development](./ex-so-stla-el__test-driven-development.md) - Write tests first
-2. [Behaviour-Driven Development](./ex-so-stla-el__behaviour-driven-development.md) - Acceptance testing
-3. [Type Safety](./ex-so-stla-el__type-safety.md) - Add typespecs and run Dialyzer
-4. [Linting and Formatting](./ex-so-stla-el__linting-and-formatting.md) - Enforce code quality
+1. [Test-Driven Development](./ex-so-prla-el__test-driven-development.md) - Write tests first
+2. [Behaviour-Driven Development](./ex-so-prla-el__behaviour-driven-development.md) - Acceptance testing
+3. [Type Safety](./ex-so-prla-el__type-safety.md) - Add typespecs and run Dialyzer
+4. [Linting and Formatting](./ex-so-prla-el__linting-and-formatting.md) - Enforce code quality
 
 ### Learning by Example
 

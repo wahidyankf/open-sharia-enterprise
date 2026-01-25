@@ -2,7 +2,7 @@
 title: Phoenix Controller Template
 description: Production-ready template for Phoenix REST controllers
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - elixir
@@ -10,7 +10,7 @@ tags:
   - controller
   - rest
 related:
-  - ../ex-so-stli-elph__rest-apis.md
+  - ../ex-so-plwe-elph__rest-apis.md
 last_updated: 2026-01-25
 ---
 

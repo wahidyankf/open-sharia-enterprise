@@ -2,7 +2,7 @@
 title: "TypeScript 5.9 Release"
 description: Comprehensive guide to TypeScript 5.9 features including path rewriting for relative imports, relative type checking mode, never-initializing function checks, and improved developer tooling
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - typescript-5.9
@@ -11,8 +11,8 @@ tags:
   - type-checking
   - migration
 related:
-  - ./ex-so-stla-ts__best-practices.md
-  - ./ex-so-stla-ts__release-5.6.md
+  - ./ex-so-prla-ts__best-practices.md
+  - ./ex-so-prla-ts__release-5.6.md
   - ./README.md
 principles:
   - explicit-over-implicit
@@ -1609,8 +1609,8 @@ npm install -D typescript@5.9
 
 **TypeScript Documentation**:
 
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
-- **[TypeScript 5.6 Release](./ex-so-stla-ts__release-5.6.md)** - Previous release features
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards
+- **[TypeScript 5.6 Release](./ex-so-prla-ts__release-5.6.md)** - Previous release features
 - **[TypeScript Documentation](./README.md)** - Complete guide
 
 **Official Resources**:

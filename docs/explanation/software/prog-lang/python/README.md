@@ -2,7 +2,7 @@
 title: Python Programming Language Documentation
 description: Comprehensive Python documentation for Open Sharia Enterprise platform covering modern patterns, best practices, and Sharia-compliant financial domain integration
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - programming-language
@@ -62,19 +62,19 @@ The [Zen of Python (PEP 20)](https://peps.python.org/pep-0020/) guides Python de
 
 All Python code MUST follow the standards documented here:
 
-1. **[Idioms](./ex-so-stla-py__idioms.md)** - Python-specific patterns and conventions
-2. **[Best Practices](./ex-so-stla-py__best-practices.md)** - Clean code standards
-3. **[Anti-Patterns](./ex-so-stla-py__anti-patterns.md)** - Common mistakes to avoid
+1. **[Idioms](./ex-so-prla-py__idioms.md)** - Python-specific patterns and conventions
+2. **[Best Practices](./ex-so-prla-py__best-practices.md)** - Clean code standards
+3. **[Anti-Patterns](./ex-so-prla-py__anti-patterns.md)** - Common mistakes to avoid
 
 **For Agents**: Reference this documentation when writing Python code. The `swe-programming-python` skill provides quick access to these standards.
 
 ### Quick Standards Reference
 
-- **Naming Conventions**: See [Best Practices - Code Organization](./ex-so-stla-py__best-practices.md#code-organization)
-- **Error Handling**: See [Error Handling](./ex-so-stla-py__error-handling.md)
-- **Type Safety**: See [Type Safety](./ex-so-stla-py__type-safety.md)
-- **Testing Standards**: See [Test-Driven Development](./ex-so-stla-py__test-driven-development.md)
-- **Security Practices**: See [Security](./ex-so-stla-py__security.md)
+- **Naming Conventions**: See [Best Practices - Code Organization](./ex-so-prla-py__best-practices.md#code-organization)
+- **Error Handling**: See [Error Handling](./ex-so-prla-py__error-handling.md)
+- **Type Safety**: See [Type Safety](./ex-so-prla-py__type-safety.md)
+- **Testing Standards**: See [Test-Driven Development](./ex-so-prla-py__test-driven-development.md)
+- **Security Practices**: See [Security](./ex-so-prla-py__security.md)
 
 **Related**: [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
 
@@ -88,7 +88,7 @@ Python development in this platform follows the five software engineering princi
 4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Python supports through first-class functions, functional tools (map/filter/reduce), and functional core architecture
 5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Python enables through pyproject.toml, requirements.txt pinning, virtual environments, and deterministic builds
 
-**See Also**: [Functional Programming](./ex-so-stla-py__functional-programming.md) for pure functions patterns, [Best Practices](./ex-so-stla-py__best-practices.md) for explicit coding standards, [Type Safety](./ex-so-stla-py__type-safety.md) for immutable type patterns.
+**See Also**: [Functional Programming](./ex-so-prla-py__functional-programming.md) for pure functions patterns, [Best Practices](./ex-so-prla-py__best-practices.md) for explicit coding standards, [Type Safety](./ex-so-prla-py__type-safety.md) for immutable type patterns.
 
 ## Python Version Strategy
 
@@ -781,39 +781,39 @@ This documentation comprises 35 files organized into core topics and reusable te
 **Foundation** (5 files):
 
 - `README.md` (this file) - Overview and learning paths
-- `ex-so-stla-py__best-practices.md` - PEP 8, PEP 20, modern patterns
-- `ex-so-stla-py__idioms.md` - Pythonic patterns and EAFP
-- `ex-so-stla-py__type-safety.md` - Type hints, mypy, Pydantic
-- `ex-so-stla-py__error-handling.md` - Exceptions and context managers
+- `ex-so-prla-py__best-practices.md` - PEP 8, PEP 20, modern patterns
+- `ex-so-prla-py__idioms.md` - Pythonic patterns and EAFP
+- `ex-so-prla-py__type-safety.md` - Type hints, mypy, Pydantic
+- `ex-so-prla-py__error-handling.md` - Exceptions and context managers
 
 **Core Patterns** (6 files):
 
-- `ex-so-stla-py__functional-programming.md` - Pure functions, itertools, functools
-- `ex-so-stla-py__classes-and-protocols.md` - Classes, protocols, dataclasses, Pydantic
-- `ex-so-stla-py__domain-driven-design.md` - DDD with Python patterns
-- `ex-so-stla-py__concurrency-and-parallelism.md` - asyncio, threading, multiprocessing, GIL
-- `ex-so-stla-py__modules-and-dependencies.md` - pip, Poetry, pyproject.toml
-- `ex-so-stla-py__anti-patterns.md` - Common mistakes to avoid
+- `ex-so-prla-py__functional-programming.md` - Pure functions, itertools, functools
+- `ex-so-prla-py__classes-and-protocols.md` - Classes, protocols, dataclasses, Pydantic
+- `ex-so-prla-py__domain-driven-design.md` - DDD with Python patterns
+- `ex-so-prla-py__concurrency-and-parallelism.md` - asyncio, threading, multiprocessing, GIL
+- `ex-so-prla-py__modules-and-dependencies.md` - pip, Poetry, pyproject.toml
+- `ex-so-prla-py__anti-patterns.md` - Common mistakes to avoid
 
 **Development Practices** (6 files):
 
-- `ex-so-stla-py__test-driven-development.md` - pytest, unittest, hypothesis
-- `ex-so-stla-py__behaviour-driven-development.md` - behave, pytest-bdd, Gherkin
-- `ex-so-stla-py__linting-and-formatting.md` - Ruff, Black, mypy, pylint
-- `ex-so-stla-py__security.md` - Injection prevention, auth, secrets management
-- `ex-so-stla-py__performance.md` - Profiling, optimization, Cython, PyPy
-- `ex-so-stla-py__memory-management.md` - Reference counting, garbage collection
+- `ex-so-prla-py__test-driven-development.md` - pytest, unittest, hypothesis
+- `ex-so-prla-py__behaviour-driven-development.md` - behave, pytest-bdd, Gherkin
+- `ex-so-prla-py__linting-and-formatting.md` - Ruff, Black, mypy, pylint
+- `ex-so-prla-py__security.md` - Injection prevention, auth, secrets management
+- `ex-so-prla-py__performance.md` - Profiling, optimization, Cython, PyPy
+- `ex-so-prla-py__memory-management.md` - Reference counting, garbage collection
 
 **Advanced Topics** (3 files):
 
-- `ex-so-stla-py__web-services.md` - FastAPI, Django, Flask, httpx
-- `ex-so-stla-py__finite-state-machine.md` - FSM patterns with transitions library
-- `ex-so-stla-py__release-3.14.md` - Latest Python 3.14 features
+- `ex-so-prla-py__web-services.md` - FastAPI, Django, Flask, httpx
+- `ex-so-prla-py__finite-state-machine.md` - FSM patterns with transitions library
+- `ex-so-prla-py__release-3.14.md` - Latest Python 3.14 features
 
 **Version Documentation** (2 files):
 
-- `ex-so-stla-py__release-3.11.md` - Baseline Python 3.11 features
-- `ex-so-stla-py__release-3.12.md` - Stable Python 3.12 features
+- `ex-so-prla-py__release-3.11.md` - Baseline Python 3.11 features
+- `ex-so-prla-py__release-3.12.md` - Stable Python 3.12 features
 
 **Templates Directory** (1 file):
 
@@ -850,11 +850,11 @@ This documentation comprises 35 files organized into core topics and reusable te
 
 Learn Python fundamentals and platform conventions:
 
-1. **Start Here**: `ex-so-stla-py__best-practices.md` - Python style and conventions
-2. **Pythonic Code**: `ex-so-stla-py__idioms.md` - Write idiomatic Python
-3. **Type Safety**: `ex-so-stla-py__type-safety.md` - Type hints and validation
-4. **Error Handling**: `ex-so-stla-py__error-handling.md` - Robust error management
-5. **Testing Basics**: `ex-so-stla-py__test-driven-development.md` - Write testable code
+1. **Start Here**: `ex-so-prla-py__best-practices.md` - Python style and conventions
+2. **Pythonic Code**: `ex-so-prla-py__idioms.md` - Write idiomatic Python
+3. **Type Safety**: `ex-so-prla-py__type-safety.md` - Type hints and validation
+4. **Error Handling**: `ex-so-prla-py__error-handling.md` - Robust error management
+5. **Testing Basics**: `ex-so-prla-py__test-driven-development.md` - Write testable code
 
 **Estimated Learning**: Begin with best practices and idioms to establish solid foundations. Type safety and error handling are essential for production code. Testing practices ensure code quality from the start.
 
@@ -862,11 +862,11 @@ Learn Python fundamentals and platform conventions:
 
 Master Python patterns and domain modeling:
 
-1. **Functional Patterns**: `ex-so-stla-py__functional-programming.md` - Functional Python
-2. **Object-Oriented Design**: `ex-so-stla-py__classes-and-protocols.md` - Classes and protocols
-3. **Domain Modeling**: `ex-so-stla-py__domain-driven-design.md` - DDD with Pydantic
-4. **Concurrency**: `ex-so-stla-py__concurrency-and-parallelism.md` - Async and parallel patterns
-5. **Code Quality**: `ex-so-stla-py__linting-and-formatting.md` - Automated quality tools
+1. **Functional Patterns**: `ex-so-prla-py__functional-programming.md` - Functional Python
+2. **Object-Oriented Design**: `ex-so-prla-py__classes-and-protocols.md` - Classes and protocols
+3. **Domain Modeling**: `ex-so-prla-py__domain-driven-design.md` - DDD with Pydantic
+4. **Concurrency**: `ex-so-prla-py__concurrency-and-parallelism.md` - Async and parallel patterns
+5. **Code Quality**: `ex-so-prla-py__linting-and-formatting.md` - Automated quality tools
 
 **Build Skills**: Combine functional and object-oriented paradigms effectively. Domain-driven design provides structure for complex business logic. Concurrency patterns enable scalable applications. Automated tooling maintains consistent code quality.
 
@@ -874,11 +874,11 @@ Master Python patterns and domain modeling:
 
 Build production systems and optimize performance:
 
-1. **Web Services**: `ex-so-stla-py__web-services.md` - FastAPI, Django, Flask patterns
-2. **State Machines**: `ex-so-stla-py__finite-state-machine.md` - Complex workflow modeling
-3. **Security**: `ex-so-stla-py__security.md` - Secure coding practices
-4. **Performance**: `ex-so-stla-py__performance.md` - Profiling and optimization
-5. **Memory Management**: `ex-so-stla-py__memory-management.md` - Understanding Python's memory model
+1. **Web Services**: `ex-so-prla-py__web-services.md` - FastAPI, Django, Flask patterns
+2. **State Machines**: `ex-so-prla-py__finite-state-machine.md` - Complex workflow modeling
+3. **Security**: `ex-so-prla-py__security.md` - Secure coding practices
+4. **Performance**: `ex-so-prla-py__performance.md` - Profiling and optimization
+5. **Memory Management**: `ex-so-prla-py__memory-management.md` - Understanding Python's memory model
 
 **Production Excellence**: Web service patterns enable robust APIs. State machines model complex business processes. Security practices protect sensitive financial data. Performance optimization ensures responsive systems. Memory management prevents resource leaks.
 
@@ -886,9 +886,9 @@ Build production systems and optimize performance:
 
 Understand Python evolution and feature adoption:
 
-1. **Baseline Features**: `ex-so-stla-py__release-3.11.md` - Python 3.11 improvements
-2. **Stable Features**: `ex-so-stla-py__release-3.12.md` - Python 3.12 enhancements
-3. **Latest Features**: `ex-so-stla-py__release-3.14.md` - Python 3.14 innovations
+1. **Baseline Features**: `ex-so-prla-py__release-3.11.md` - Python 3.11 improvements
+2. **Stable Features**: `ex-so-prla-py__release-3.12.md` - Python 3.12 enhancements
+3. **Latest Features**: `ex-so-prla-py__release-3.14.md` - Python 3.14 innovations
 
 **Stay Current**: Version documentation explains when and why to adopt new features. Baseline features (3.11) provide performance improvements. Stable features (3.12) enhance developer experience. Latest features (3.14) unlock new capabilities like free-threaded mode.
 

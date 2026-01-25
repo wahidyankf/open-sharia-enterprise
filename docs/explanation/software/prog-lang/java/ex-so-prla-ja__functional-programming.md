@@ -2,7 +2,7 @@
 title: Java Functional Programming
 description: Functional programming patterns, immutability, and pure functions in Java
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - functional-programming
@@ -13,8 +13,8 @@ tags:
   - pure-functions
   - higher-order-functions
 related:
-  - ./ex-so-stla-ja__best-practices.md
-  - ./ex-so-stla-ja__idioms.md
+  - ./ex-so-prla-ja__best-practices.md
+  - ./ex-so-prla-ja__idioms.md
   - ../../../../../governance/development/pattern/functional-programming.md
 principles:
   - immutability
@@ -43,11 +43,11 @@ last_updated: 2026-01-24
 
 **Related Documentation:**
 
-- [Java Idioms](./ex-so-stla-ja__idioms.md) - Modern Java patterns including streams and lambdas
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Clean code with functional style
-- [Java Type Safety](./ex-so-stla-ja__type-safety.md) - Type-safe functional code
-- [Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md) - Functional domain models
-- [Java Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md) - Immutability for thread safety
+- [Java Idioms](./ex-so-prla-ja__idioms.md) - Modern Java patterns including streams and lambdas
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - Clean code with functional style
+- [Java Type Safety](./ex-so-prla-ja__type-safety.md) - Type-safe functional code
+- [Domain-Driven Design](./ex-so-prla-ja__domain-driven-design.md) - Functional domain models
+- [Java Concurrency](./ex-so-prla-ja__concurrency-and-parallelism.md) - Immutability for thread safety
 
 Functional programming in Java directly implements two core [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
 
@@ -298,7 +298,7 @@ Point moved = start.moveRight(5).moveUp(3);
 // moved is (5, 3)
 ```
 
-**For comprehensive immutable Money value object**, see [Domain-Driven Design - Value Objects](./ex-so-stla-ja__domain-driven-design.md#example-money-value-object).
+**For comprehensive immutable Money value object**, see [Domain-Driven Design - Value Objects](./ex-so-prla-ja__domain-driven-design.md#example-money-value-object).
 
 ## Pure Functions
 
@@ -1654,21 +1654,21 @@ List<Money> first10 = donations.take(10).toJavaList();
 
 ### Core Java Documentation
 
-- **[Java Idioms](./ex-so-stla-ja__idioms.md)** - Streams, Optional, method references, lambdas
-- **[Java Best Practices](./ex-so-stla-ja__best-practices.md)** - Immutability and functional style
-- **[Java Type Safety](./ex-so-stla-ja__type-safety.md)** - Type-safe functional programming
+- **[Java Idioms](./ex-so-prla-ja__idioms.md)** - Streams, Optional, method references, lambdas
+- **[Java Best Practices](./ex-so-prla-ja__best-practices.md)** - Immutability and functional style
+- **[Java Type Safety](./ex-so-prla-ja__type-safety.md)** - Type-safe functional programming
 
 ### Specialized Topics
 
-- **[Java Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md)** - Immutability for thread safety
-- **[Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md)** - Functional domain models
-- **[Test-Driven Development](./ex-so-stla-ja__test-driven-development.md)** - Testing pure functions
+- **[Java Concurrency](./ex-so-prla-ja__concurrency-and-parallelism.md)** - Immutability for thread safety
+- **[Domain-Driven Design](./ex-so-prla-ja__domain-driven-design.md)** - Functional domain models
+- **[Test-Driven Development](./ex-so-prla-ja__test-driven-development.md)** - Testing pure functions
 
 ### Release Documentation
 
-- **[Java 17 LTS](./ex-so-stla-ja__release-17.md)** - Sealed classes for functional patterns
-- **[Java 21 LTS](./ex-so-stla-ja__release-21.md)** - Record patterns for functional decomposition
-- **[Java 25 LTS](./ex-so-stla-ja__release-25.md)** - Primitive patterns in functional code
+- **[Java 17 LTS](./ex-so-prla-ja__release-17.md)** - Sealed classes for functional patterns
+- **[Java 21 LTS](./ex-so-prla-ja__release-21.md)** - Record patterns for functional decomposition
+- **[Java 25 LTS](./ex-so-prla-ja__release-25.md)** - Primitive patterns in functional code
 
 ### Platform Documentation
 

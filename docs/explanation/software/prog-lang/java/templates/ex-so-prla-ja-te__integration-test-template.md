@@ -11,7 +11,7 @@ tags:
   - rest-assured
   - database
 related:
-  - ex-so-stla-ja__test-driven-development.md
+  - ex-so-prla-ja__test-driven-development.md
   - ex-so-de-tedrdeve-te__integration-test-template.md
 principles:
   - simplicity-over-complexity
@@ -777,12 +777,12 @@ class ZakatPaymentIntegrationTest {
 
 ## Related Templates
 
-- [Unit Test Template](./ex-so-stla-ja-te__unit-test-template.md)
-- [BDD Step Definition Template](./ex-so-stla-ja-te__bdd-step-definition-template.md)
+- [Unit Test Template](./ex-so-prla-ja-te__unit-test-template.md)
+- [BDD Step Definition Template](./ex-so-prla-ja-te__bdd-step-definition-template.md)
 
 ## See Also
 
-- [Test-Driven Development](../ex-so-stla-ja__test-driven-development.md)
+- [Test-Driven Development](../ex-so-prla-ja__test-driven-development.md)
 - [TestContainers Documentation](https://testcontainers.com/)
 - [REST Assured Documentation](https://rest-assured.io/)
 

@@ -2,7 +2,7 @@
 title: Python Type Safety
 description: Comprehensive guide to Python type hints, mypy static analysis, Pydantic runtime validation, and type-driven development for Sharia-compliant financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - type-hints
@@ -12,10 +12,10 @@ tags:
   - static-analysis
   - runtime-validation
 related:
-  - ./ex-so-stla-py__best-practices.md
-  - ./ex-so-stla-py__idioms.md
-  - ./ex-so-stla-py__classes-and-protocols.md
-  - ./ex-so-stla-py__domain-driven-design.md
+  - ./ex-so-prla-py__best-practices.md
+  - ./ex-so-prla-py__idioms.md
+  - ./ex-so-prla-py__classes-and-protocols.md
+  - ./ex-so-prla-py__domain-driven-design.md
 principles:
   - explicit-over-implicit
   - documentation-first
@@ -923,10 +923,10 @@ zakat3 = calculate_category_zakat("invalid", Decimal("1000.00"))  # Type error
 
 ### Related Documentation
 
-- [Best Practices](./ex-so-stla-py__best-practices.md) - Python coding standards
-- [Idioms](./ex-so-stla-py__idioms.md) - Pythonic patterns
-- [Classes and Protocols](./ex-so-stla-py__classes-and-protocols.md) - Object-oriented design
-- [Domain-Driven Design](./ex-so-stla-py__domain-driven-design.md) - DDD with Pydantic
+- [Best Practices](./ex-so-prla-py__best-practices.md) - Python coding standards
+- [Idioms](./ex-so-prla-py__idioms.md) - Pythonic patterns
+- [Classes and Protocols](./ex-so-prla-py__classes-and-protocols.md) - Object-oriented design
+- [Domain-Driven Design](./ex-so-prla-py__domain-driven-design.md) - DDD with Pydantic
 
 ### Tools
 

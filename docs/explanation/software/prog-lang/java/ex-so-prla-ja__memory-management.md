@@ -2,7 +2,7 @@
 title: "Java Memory Management and JVM Internals"
 description: Comprehensive guide to Java's automatic memory management, garbage collection algorithms, JVM memory model, and optimization techniques for enterprise applications (Java 17-25)
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - memory-management
@@ -18,7 +18,7 @@ tags:
   - g1gc
   - profiling
 related:
-  - ./ex-so-stla-ja__best-practices.md
+  - ./ex-so-prla-ja__best-practices.md
 principles:
   - explicit-over-implicit
 last_updated: 2026-01-24
@@ -70,11 +70,11 @@ This document explores Java's memory management system in depth: the JVM memory 
 
 **Related Documentation:**
 
-- [Java Performance](./ex-so-stla-ja__performance.md) - Performance optimization including memory profiling
-- [Java Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md) - Thread memory considerations
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - General best practices including memory efficiency
-- [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Common memory-related mistakes
-- [Go Memory Management](../golang/ex-so-stla-go__memory-management.md) - Comparison with Go's simpler GC
+- [Java Performance](./ex-so-prla-ja__performance.md) - Performance optimization including memory profiling
+- [Java Concurrency](./ex-so-prla-ja__concurrency-and-parallelism.md) - Thread memory considerations
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - General best practices including memory efficiency
+- [Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) - Common memory-related mistakes
+- [Go Memory Management](../golang/ex-so-prla-go__memory-management.md) - Comparison with Go's simpler GC
 
 This document implements the following [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
 
@@ -2412,11 +2412,11 @@ Use this checklist when developing Java applications:
 
 ## Related Documentation
 
-- [Java Performance](./ex-so-stla-ja__performance.md) - Performance optimization including CPU profiling, JIT compilation
-- [Java Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md) - Thread memory, concurrent collections, memory visibility
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - General coding standards including memory efficiency
-- [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Memory leak patterns, resource management mistakes
-- [Go Memory Management](../golang/ex-so-stla-go__memory-management.md) - Comparison with Go's simpler GC approach
+- [Java Performance](./ex-so-prla-ja__performance.md) - Performance optimization including CPU profiling, JIT compilation
+- [Java Concurrency](./ex-so-prla-ja__concurrency-and-parallelism.md) - Thread memory, concurrent collections, memory visibility
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - General coding standards including memory efficiency
+- [Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) - Memory leak patterns, resource management mistakes
+- [Go Memory Management](../golang/ex-so-prla-go__memory-management.md) - Comparison with Go's simpler GC approach
 
 ## Sources
 

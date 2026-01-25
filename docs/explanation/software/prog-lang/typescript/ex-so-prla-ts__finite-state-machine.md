@@ -2,7 +2,7 @@
 title: "TypeScript Finite State Machines"
 description: Implementing finite state machines in TypeScript
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - state-machine
@@ -10,8 +10,8 @@ tags:
   - xstate
   - state-management
 related:
-  - ./ex-so-stla-ts__best-practices.md
-  - ./ex-so-stla-ts__type-safety.md
+  - ./ex-so-prla-ts__best-practices.md
+  - ./ex-so-prla-ts__type-safety.md
 principles:
   - explicit-over-implicit
 last_updated: 2025-01-23
@@ -841,8 +841,8 @@ const campaignFSM = createMachine<CampaignContext>({
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
-- **[TypeScript Type Safety](./ex-so-stla-ts__type-safety.md)** - Type patterns
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards
+- **[TypeScript Type Safety](./ex-so-prla-ts__type-safety.md)** - Type patterns
 
 ---
 

@@ -2,7 +2,7 @@
 title: Libraries and Frameworks
 description: Documentation on libraries and frameworks for building scalable applications across different technology stacks
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - libraries
   - frameworks
@@ -52,7 +52,7 @@ All applications using the frameworks documented here MUST follow the patterns a
 
 **Governance**: See [Software Design Reference](../../../../governance/conventions/programming/software-design-reference.md) for the relationship between this documentation and repository governance.
 
-**Language Standards**: Also follow language-specific standards from [stack-lang](../stack-lang/README.md).
+**Language Standards**: Also follow language-specific standards from [prog-lang](../prog-lang/README.md).
 
 ## Documentation Structure
 
@@ -61,7 +61,7 @@ All applications using the frameworks documented here MUST follow the patterns a
 Each stack directory contains documentation for frameworks and libraries specific to that ecosystem:
 
 ```
-stack-libs/
+platform-web/
 ├── jvm-spring-boot/     # Spring Boot framework (Java/Kotlin)
 ├── elixir-phoenix/      # Phoenix framework (Elixir)
 └── ts-react/            # React library (TypeScript)
@@ -98,20 +98,20 @@ Spring Boot is the primary backend framework for building REST APIs, domain serv
 **Comprehensive Documentation Coverage**:
 
 - **[Framework Overview](./jvm-spring-boot/README.md)** - Version strategy, architecture integration, getting started
-- **[Idioms](./jvm-spring-boot/ex-so-stli-jvspbo__idioms.md)** - Framework-specific patterns (auto-configuration, DI, profiles)
-- **[Best Practices](./jvm-spring-boot/ex-so-stli-jvspbo__best-practices.md)** - Production standards (project structure, error handling, testing)
-- **[Anti-Patterns](./jvm-spring-boot/ex-so-stli-jvspbo__anti-patterns.md)** - Common mistakes to avoid
-- **[Configuration](./jvm-spring-boot/ex-so-stli-jvspbo__configuration.md)** - Environment management, properties, profiles
-- **[Dependency Injection](./jvm-spring-boot/ex-so-stli-jvspbo__dependency-injection.md)** - IoC container, bean scopes, lifecycle
-- **[REST APIs](./jvm-spring-boot/ex-so-stli-jvspbo__rest-apis.md)** - RESTful services, validation, exception handling
-- **[Data Access](./jvm-spring-boot/ex-so-stli-jvspbo__data-access.md)** - Spring Data JPA, repositories, transactions
-- **[Security](./jvm-spring-boot/ex-so-stli-jvspbo__security.md)** - Spring Security, OAuth2, JWT, method security
-- **[Testing](./jvm-spring-boot/ex-so-stli-jvspbo__testing.md)** - Unit, integration, slice tests, TestContainers
-- **[Observability](./jvm-spring-boot/ex-so-stli-jvspbo__observability.md)** - Actuator, metrics, health checks, tracing
-- **[Performance](./jvm-spring-boot/ex-so-stli-jvspbo__performance.md)** - Optimization, caching, async processing
-- **[Domain-Driven Design](./jvm-spring-boot/ex-so-stli-jvspbo__domain-driven-design.md)** - DDD tactical patterns with Spring
-- **[Functional Programming](./jvm-spring-boot/ex-so-stli-jvspbo__functional-programming.md)** - FP patterns, immutability
-- **[Version Migration](./jvm-spring-boot/ex-so-stli-jvspbo__version-migration.md)** - Spring Boot 2.x to 3.x upgrade guide
+- **[Idioms](./jvm-spring-boot/ex-so-plwe-jvspbo__idioms.md)** - Framework-specific patterns (auto-configuration, DI, profiles)
+- **[Best Practices](./jvm-spring-boot/ex-so-plwe-jvspbo__best-practices.md)** - Production standards (project structure, error handling, testing)
+- **[Anti-Patterns](./jvm-spring-boot/ex-so-plwe-jvspbo__anti-patterns.md)** - Common mistakes to avoid
+- **[Configuration](./jvm-spring-boot/ex-so-plwe-jvspbo__configuration.md)** - Environment management, properties, profiles
+- **[Dependency Injection](./jvm-spring-boot/ex-so-plwe-jvspbo__dependency-injection.md)** - IoC container, bean scopes, lifecycle
+- **[REST APIs](./jvm-spring-boot/ex-so-plwe-jvspbo__rest-apis.md)** - RESTful services, validation, exception handling
+- **[Data Access](./jvm-spring-boot/ex-so-plwe-jvspbo__data-access.md)** - Spring Data JPA, repositories, transactions
+- **[Security](./jvm-spring-boot/ex-so-plwe-jvspbo__security.md)** - Spring Security, OAuth2, JWT, method security
+- **[Testing](./jvm-spring-boot/ex-so-plwe-jvspbo__testing.md)** - Unit, integration, slice tests, TestContainers
+- **[Observability](./jvm-spring-boot/ex-so-plwe-jvspbo__observability.md)** - Actuator, metrics, health checks, tracing
+- **[Performance](./jvm-spring-boot/ex-so-plwe-jvspbo__performance.md)** - Optimization, caching, async processing
+- **[Domain-Driven Design](./jvm-spring-boot/ex-so-plwe-jvspbo__domain-driven-design.md)** - DDD tactical patterns with Spring
+- **[Functional Programming](./jvm-spring-boot/ex-so-plwe-jvspbo__functional-programming.md)** - FP patterns, immutability
+- **[Version Migration](./jvm-spring-boot/ex-so-plwe-jvspbo__version-migration.md)** - Spring Boot 2.x to 3.x upgrade guide
 - **[Code Templates](./jvm-spring-boot/templates/README.md)** - Production-ready templates (REST controllers, services, repositories, configuration)
 
 **Key Features**:
@@ -129,10 +129,10 @@ Spring Boot applications in the platform follow Domain-Driven Design principles 
 **Quick Start**:
 
 1. Review [Spring Boot README](./jvm-spring-boot/README.md) for version strategy and architecture
-2. Study [Idioms](./jvm-spring-boot/ex-so-stli-jvspbo__idioms.md) for framework patterns
-3. Follow [Best Practices](./jvm-spring-boot/ex-so-stli-jvspbo__best-practices.md) for production standards
+2. Study [Idioms](./jvm-spring-boot/ex-so-plwe-jvspbo__idioms.md) for framework patterns
+3. Follow [Best Practices](./jvm-spring-boot/ex-so-plwe-jvspbo__best-practices.md) for production standards
 4. Use [Code Templates](./jvm-spring-boot/templates/README.md) for consistent implementation
-5. Apply [Java coding standards](../stack-lang/java/README.md) for language-specific idioms
+5. Apply [Java coding standards](../prog-lang/java/README.md) for language-specific idioms
 
 ### 🔥 [Phoenix (Elixir)](./elixir-phoenix/README.md)
 
@@ -207,7 +207,7 @@ Frameworks in this documentation are chosen based on:
    - Read [Spring Boot Overview](./jvm-spring-boot/README.md)
    - Study Spring Boot patterns and best practices
    - Integrate with DDD patterns from [Architecture docs](../architecture/README.md)
-   - Apply [Java idioms](../stack-lang/java/README.md)
+   - Apply [Java idioms](../prog-lang/java/README.md)
 
 2. **Elixir/Phoenix path**:
    - Read [Phoenix Overview](./elixir-phoenix/README.md)
@@ -220,7 +220,7 @@ Frameworks in this documentation are chosen based on:
 1. **React/TypeScript path**:
    - Read [React Overview](./ts-react/README.md)
    - Study React component patterns
-   - Apply [TypeScript idioms](../stack-lang/typescript/README.md) (when available)
+   - Apply [TypeScript idioms](../prog-lang/typescript/README.md) (when available)
    - Learn state management approaches
 
 ### For Full-Stack Developers
@@ -234,7 +234,7 @@ Frameworks in this documentation are chosen based on:
 
 This framework documentation connects with:
 
-- **[Programming Languages](../stack-lang/README.md)** - Language-specific idioms (Java, Elixir, TypeScript)
+- **[Programming Languages](../prog-lang/README.md)** - Language-specific idioms (Java, Elixir, TypeScript)
 - **[Architecture](../architecture/README.md)** - C4 model, DDD patterns
 - **[Development Practices](../development/README.md)** - TDD, BDD, testing strategies
 - **[Functional Programming](../../../../governance/development/pattern/functional-programming.md)** - FP principles
@@ -271,7 +271,7 @@ All framework documentation follows the repository's core principles:
 ## Related Documentation
 
 - **[Software Design Index](../README.md)** - Parent software design documentation
-- **[Programming Languages](../stack-lang/README.md)** - Language-specific documentation
+- **[Programming Languages](../prog-lang/README.md)** - Language-specific documentation
 - **[Architecture](../architecture/README.md)** - Architecture patterns and models
 - **[Development Practices](../development/README.md)** - Development methodologies
 - **[Monorepo Structure](../../../reference/re__monorepo-structure.md)** - Nx workspace organization

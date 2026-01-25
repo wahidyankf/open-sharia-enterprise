@@ -2,7 +2,7 @@
 title: "Elixir 1.12 Release"
 description: Release notes for Elixir 1.12 highlighting new features, improvements, and breaking changes
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - release-notes
@@ -16,7 +16,7 @@ last_updated: 2026-01-23
 
 **Status**: Stable (Released May 19, 2021)
 **OTP Compatibility**: Erlang/OTP 22+
-**Next Version**: [Elixir 1.13](ex-so-stla-el__release-1.13.md)
+**Next Version**: [Elixir 1.13](ex-so-prla-el__release-1.13.md)
 
 ## Overview
 
@@ -735,9 +735,9 @@ graph LR
 ### Related Documentation
 
 - [Back to Elixir README](README.md)
-- [Next: Elixir 1.13 Release](ex-so-stla-el__release-1.13.md)
-- [Scripting Best Practices](ex-so-stla-el__best-practices.md)
-- [Performance Optimization](ex-so-stla-el__performance.md)
+- [Next: Elixir 1.13 Release](ex-so-prla-el__release-1.13.md)
+- [Scripting Best Practices](ex-so-prla-el__best-practices.md)
+- [Performance Optimization](ex-so-prla-el__performance.md)
 
 ---
 

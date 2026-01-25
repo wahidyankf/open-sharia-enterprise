@@ -2,7 +2,7 @@
 title: TypeScript DDD Templates
 description: Reusable TypeScript templates for Domain-Driven Design patterns following OSE Platform conventions
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - templates

@@ -2,16 +2,16 @@
 title: "TypeScript Anti-Patterns"
 description: Common TypeScript mistakes and how to avoid them
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - anti-patterns
   - code-smell
   - best-practices
 related:
-  - ./ex-so-stla-ts__best-practices.md
-  - ./ex-so-stla-ts__type-safety.md
-  - ./ex-so-stla-ts__error-handling.md
+  - ./ex-so-prla-ts__best-practices.md
+  - ./ex-so-prla-ts__type-safety.md
+  - ./ex-so-prla-ts__error-handling.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -4251,9 +4251,9 @@ function createDonation(params: {
 
 ## Related Documentation
 
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Recommended patterns
-- **[TypeScript Type Safety](./ex-so-stla-ts__type-safety.md)** - Type patterns
-- **[TypeScript Error Handling](./ex-so-stla-ts__error-handling.md)** - Error patterns
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Recommended patterns
+- **[TypeScript Type Safety](./ex-so-prla-ts__type-safety.md)** - Type patterns
+- **[TypeScript Error Handling](./ex-so-prla-ts__error-handling.md)** - Error patterns
 
 ---
 

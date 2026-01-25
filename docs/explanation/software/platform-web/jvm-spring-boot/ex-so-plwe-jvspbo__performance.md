@@ -2,7 +2,7 @@
 title: "Spring Boot Performance"
 description: Performance optimization and tuning
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - spring-boot
   - performance
@@ -10,7 +10,7 @@ tags:
   - caching
   - async
 related:
-  - ./ex-so-stli-jvspbo__best-practices.md
+  - ./ex-so-plwe-jvspbo__best-practices.md
 last_updated: 2026-01-25
 ---
 
@@ -20,7 +20,7 @@ last_updated: 2026-01-25
 
 Performance optimization techniques for Spring Boot applications including caching, async processing, and database tuning.
 
-See [Best Practices - Performance](./ex-so-stli-jvspbo__best-practices.md#performance-optimization) for optimization strategies.
+See [Best Practices - Performance](./ex-so-plwe-jvspbo__best-practices.md#performance-optimization) for optimization strategies.
 
 ## Key Topics
 

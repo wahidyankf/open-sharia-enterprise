@@ -24,8 +24,8 @@ related:
   - aggregate-template.md
   - entity-template.md
   - service-layer-template.md
-  - ex-so-stla-ts__domain-driven-design.md
-  - ex-so-stla-ts__best-practices.md
+  - ex-so-prla-ts__domain-driven-design.md
+  - ex-so-prla-ts__best-practices.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -2037,8 +2037,8 @@ export class InMemoryDonationRepository implements DonationRepository {
 - [Entity Template](./entity-template.md) - Creating domain entities
 - [Aggregate Template](./aggregate-template.md) - Aggregate root patterns
 - [Service Layer Template](./service-layer-template.md) - Application services using repositories
-- [TypeScript Domain-Driven Design](../ex-so-stla-ts__domain-driven-design.md) - DDD principles
-- [TypeScript Best Practices](../ex-so-stla-ts__best-practices.md) - TypeScript coding standards
+- [TypeScript Domain-Driven Design](../ex-so-prla-ts__domain-driven-design.md) - DDD principles
+- [TypeScript Best Practices](../ex-so-prla-ts__best-practices.md) - TypeScript coding standards
 
 ---
 

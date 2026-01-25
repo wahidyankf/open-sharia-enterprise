@@ -2,7 +2,7 @@
 title: Go Behaviour-Driven Development
 description: BDD practices in Go using Ginkgo, Gomega, and Cucumber for executable specifications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - golang
   - bdd
@@ -17,8 +17,8 @@ tags:
   - go-1.24
   - go-1.25
 related:
-  - ./ex-so-stla-go__test-driven-development.md
-  - ./ex-so-stla-go__best-practices.md
+  - ./ex-so-prla-go__test-driven-development.md
+  - ./ex-so-prla-go__best-practices.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -39,8 +39,8 @@ Behaviour-Driven Development (BDD) is an agile software development methodology 
 
 **Related Documentation**:
 
-- [Test-Driven Development](./ex-so-stla-go__test-driven-development.md)
-- [Best Practices](./ex-so-stla-go__best-practices.md)
+- [Test-Driven Development](./ex-so-prla-go__test-driven-development.md)
+- [Best Practices](./ex-so-prla-go__best-practices.md)
 
 ## BDD Fundamentals
 
@@ -1728,8 +1728,8 @@ Behaviour-Driven Development in Go emphasizes:
 
 **Related Documentation**:
 
-- Read [Test-Driven Development](./ex-so-stla-go__test-driven-development.md)
-- Explore [Best Practices](./ex-so-stla-go__best-practices.md)
+- Read [Test-Driven Development](./ex-so-prla-go__test-driven-development.md)
+- Explore [Best Practices](./ex-so-prla-go__best-practices.md)
 
 ---
 

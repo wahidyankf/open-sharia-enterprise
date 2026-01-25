@@ -2,7 +2,7 @@
 title: Repository Template
 description: Template for Spring Data JPA repositories
 category: explanation
-subcategory: stack-libs-templates
+subcategory: platform-web-templates
 tags:
   - spring-boot
   - template

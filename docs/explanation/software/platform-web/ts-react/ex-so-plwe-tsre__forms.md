@@ -2,7 +2,7 @@
 title: "React Forms"
 description: Form handling patterns and validation strategies in React
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - forms
@@ -10,7 +10,7 @@ tags:
   - react-hook-form
   - typescript
 related:
-  - ./ex-so-stli-tsre__idioms.md
+  - ./ex-so-plwe-tsre__idioms.md
 principles:
   - explicit-over-implicit
 last_updated: 2026-01-25
@@ -24,9 +24,9 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Idioms](./ex-so-stli-tsre__idioms.md) - Controlled components pattern
-- [Hooks](./ex-so-stli-tsre__hooks.md) - Form hooks
-- [State Management](./ex-so-stli-tsre__state-management.md) - Form state patterns
+- [Idioms](./ex-so-plwe-tsre__idioms.md) - Controlled components pattern
+- [Hooks](./ex-so-plwe-tsre__hooks.md) - Form hooks
+- [State Management](./ex-so-plwe-tsre__state-management.md) - Form state patterns
 
 ## Overview
 
@@ -483,9 +483,9 @@ const Step1: React.FC<{ methods: UseFormReturn<DonationFormData> }> = ({ methods
 
 ## Related Documentation
 
-- **[Idioms](./ex-so-stli-tsre__idioms.md)** - Controlled components pattern
-- **[Hooks](./ex-so-stli-tsre__hooks.md)** - Form hooks
-- **[State Management](./ex-so-stli-tsre__state-management.md)** - Form state patterns
+- **[Idioms](./ex-so-plwe-tsre__idioms.md)** - Controlled components pattern
+- **[Hooks](./ex-so-plwe-tsre__hooks.md)** - Form hooks
+- **[State Management](./ex-so-plwe-tsre__state-management.md)** - Form state patterns
 
 ---
 

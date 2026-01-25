@@ -2,7 +2,7 @@
 title: "Behaviour-Driven Development in Elixir"
 description: BDD in Elixir using White Bread and Gherkin for executable specifications focusing on business behavior and stakeholder collaboration
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - behaviour-driven-development
@@ -12,8 +12,8 @@ tags:
   - given-when-then
   - executable-specifications
 related:
-  - ./ex-so-stla-el__test-driven-development.md
-  - ./ex-so-stla-el__best-practices.md
+  - ./ex-so-prla-el__test-driven-development.md
+  - ./ex-so-prla-el__best-practices.md
 principles:
   - documentation-first
   - explicit-over-implicit
@@ -1122,10 +1122,10 @@ end
 
 ## Related Topics
 
-- [Test-Driven Development](ex-so-stla-el__test-driven-development.md) - TDD with ExUnit
-- [Domain-Driven Design](ex-so-stla-el__domain-driven-design.md) - DDD and BDD
-- [Best Practices](ex-so-stla-el__best-practices.md) - Testing best practices
-- [Web Services](ex-so-stla-el__web-services.md) - Testing Phoenix apps
+- [Test-Driven Development](ex-so-prla-el__test-driven-development.md) - TDD with ExUnit
+- [Domain-Driven Design](ex-so-prla-el__domain-driven-design.md) - DDD and BDD
+- [Best Practices](ex-so-prla-el__best-practices.md) - Testing best practices
+- [Web Services](ex-so-prla-el__web-services.md) - Testing Phoenix apps
 
 ## Sources
 

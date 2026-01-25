@@ -2,7 +2,7 @@
 title: "TypeScript Memory Management"
 description: Memory management and garbage collection in TypeScript/Node.js
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - memory
@@ -10,8 +10,8 @@ tags:
   - v8
   - memory-leaks
 related:
-  - ./ex-so-stla-ts__performance.md
-  - ./ex-so-stla-ts__best-practices.md
+  - ./ex-so-prla-ts__performance.md
+  - ./ex-so-prla-ts__best-practices.md
 principles:
   - automation-over-manual
 last_updated: 2025-01-23
@@ -646,8 +646,8 @@ async function processAllDonations() {
 
 ## Related Documentation
 
-- **[TypeScript Performance](./ex-so-stla-ts__performance.md)** - Performance optimization
-- **[TypeScript Best Practices](./ex-so-stla-ts__best-practices.md)** - Coding standards
+- **[TypeScript Performance](./ex-so-prla-ts__performance.md)** - Performance optimization
+- **[TypeScript Best Practices](./ex-so-prla-ts__best-practices.md)** - Coding standards
 
 ---
 

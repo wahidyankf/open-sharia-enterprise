@@ -2,7 +2,7 @@
 title: Phoenix Security Guide
 description: Comprehensive guide to authentication, authorization, CSRF protection, XSS prevention, session management, and API security in Phoenix applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - elixir
@@ -13,10 +13,10 @@ tags:
   - xss
   - sessions
 related:
-  - ex-so-stli-elph__channels.md
-  - ex-so-stli-elph__liveview.md
-  - ex-so-stli-elph__rest-apis.md
-  - ex-so-stli-elph__best-practices.md
+  - ex-so-plwe-elph__channels.md
+  - ex-so-plwe-elph__liveview.md
+  - ex-so-plwe-elph__rest-apis.md
+  - ex-so-plwe-elph__best-practices.md
 last_updated: 2026-01-25
 ---
 
@@ -1319,11 +1319,11 @@ end
 
 ## Related Documentation
 
-- **[REST APIs](./ex-so-stli-elph__rest-apis.md)** - API authentication and authorization patterns
-- **[Channels](./ex-so-stli-elph__channels.md)** - WebSocket security and authentication
-- **[LiveView](./ex-so-stli-elph__liveview.md)** - LiveView security considerations
-- **[Best Practices](./ex-so-stli-elph__best-practices.md)** - Security best practices
-- **[Configuration](./ex-so-stli-elph__configuration.md)** - Secure configuration management
+- **[REST APIs](./ex-so-plwe-elph__rest-apis.md)** - API authentication and authorization patterns
+- **[Channels](./ex-so-plwe-elph__channels.md)** - WebSocket security and authentication
+- **[LiveView](./ex-so-plwe-elph__liveview.md)** - LiveView security considerations
+- **[Best Practices](./ex-so-plwe-elph__best-practices.md)** - Security best practices
+- **[Configuration](./ex-so-plwe-elph__configuration.md)** - Secure configuration management
 
 ---
 

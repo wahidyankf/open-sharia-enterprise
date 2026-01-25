@@ -2,7 +2,7 @@
 title: Phoenix Deployment Guide
 description: Comprehensive guide to deploying Phoenix applications including Mix releases, Docker, Kubernetes, clustering, migrations, zero-downtime deployment, and production best practices
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - elixir
@@ -12,9 +12,9 @@ tags:
   - docker
   - kubernetes
 related:
-  - ex-so-stli-elph__configuration.md
-  - ex-so-stli-elph__performance.md
-  - ex-so-stli-elph__observability.md
+  - ex-so-plwe-elph__configuration.md
+  - ex-so-plwe-elph__performance.md
+  - ex-so-plwe-elph__observability.md
 last_updated: 2026-01-25
 ---
 
@@ -1062,10 +1062,10 @@ echo "Deployment complete!"
 
 ## Related Documentation
 
-- **[Configuration](./ex-so-stli-elph__configuration.md)** - Production configuration
-- **[Performance](./ex-so-stli-elph__performance.md)** - Scaling and optimization
-- **[Observability](./ex-so-stli-elph__observability.md)** - Monitoring and logging
-- **[Security](./ex-so-stli-elph__security.md)** - Production security
+- **[Configuration](./ex-so-plwe-elph__configuration.md)** - Production configuration
+- **[Performance](./ex-so-plwe-elph__performance.md)** - Scaling and optimization
+- **[Observability](./ex-so-plwe-elph__observability.md)** - Monitoring and logging
+- **[Security](./ex-so-plwe-elph__security.md)** - Production security
 
 ---
 

@@ -21,8 +21,8 @@ related:
   - entity-template.md
   - repository-template.md
   - service-layer-template.md
-  - ex-so-stla-ts__best-practices.md
-  - ex-so-stla-ts__domain-driven-design.md
+  - ex-so-prla-ts__best-practices.md
+  - ex-so-prla-ts__domain-driven-design.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -569,8 +569,8 @@ src/models/
 - [Entity Template](./entity-template.md) - Creating domain entities
 - [Repository Template](./repository-template.md) - Repository pattern
 - [Service Layer Template](./service-layer-template.md) - Application services
-- [TypeScript Best Practices](../ex-so-stla-ts__best-practices.md) - Coding standards
-- [TypeScript Domain-Driven Design](../ex-so-stla-ts__domain-driven-design.md) - DDD principles
+- [TypeScript Best Practices](../ex-so-prla-ts__best-practices.md) - Coding standards
+- [TypeScript Domain-Driven Design](../ex-so-prla-ts__domain-driven-design.md) - DDD principles
 
 ---
 

@@ -25,8 +25,8 @@ related:
   - repository-template.md
   - domain-event-template.md
   - aggregate-template.md
-  - ex-so-stla-ts__domain-driven-design.md
-  - ex-so-stla-ts__best-practices.md
+  - ex-so-prla-ts__domain-driven-design.md
+  - ex-so-prla-ts__best-practices.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -1666,8 +1666,8 @@ describe("ProcessDonationService Integration", () => {
 - [Repository Template](./repository-template.md) - Repository pattern implementation
 - [Aggregate Template](./aggregate-template.md) - Domain aggregate patterns
 - [Domain Event Template](./domain-event-template.md) - Event publishing patterns
-- [TypeScript Domain-Driven Design](../ex-so-stla-ts__domain-driven-design.md) - DDD principles
-- [TypeScript Best Practices](../ex-so-stla-ts__best-practices.md) - TypeScript coding standards
+- [TypeScript Domain-Driven Design](../ex-so-prla-ts__domain-driven-design.md) - DDD principles
+- [TypeScript Best Practices](../ex-so-prla-ts__best-practices.md) - TypeScript coding standards
 
 ---
 

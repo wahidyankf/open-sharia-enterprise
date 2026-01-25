@@ -2,7 +2,7 @@
 title: Phoenix REST APIs Guide
 description: Comprehensive guide to building RESTful APIs with Phoenix including JSON API, versioning, pagination, filtering, authentication, and documentation
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - elixir
@@ -12,9 +12,9 @@ tags:
   - versioning
   - pagination
 related:
-  - ex-so-stli-elph__security.md
-  - ex-so-stli-elph__testing.md
-  - ex-so-stli-elph__best-practices.md
+  - ex-so-plwe-elph__security.md
+  - ex-so-plwe-elph__testing.md
+  - ex-so-plwe-elph__best-practices.md
 last_updated: 2026-01-25
 ---
 
@@ -1289,10 +1289,10 @@ end
 
 ## Related Documentation
 
-- **[Security](./ex-so-stli-elph__security.md)** - API authentication and authorization
-- **[Testing](./ex-so-stli-elph__testing.md)** - API testing strategies
-- **[Best Practices](./ex-so-stli-elph__best-practices.md)** - General Phoenix best practices
-- **[Performance](./ex-so-stli-elph__performance.md)** - API performance optimization
+- **[Security](./ex-so-plwe-elph__security.md)** - API authentication and authorization
+- **[Testing](./ex-so-plwe-elph__testing.md)** - API testing strategies
+- **[Best Practices](./ex-so-plwe-elph__best-practices.md)** - General Phoenix best practices
+- **[Performance](./ex-so-plwe-elph__performance.md)** - API performance optimization
 
 ---
 

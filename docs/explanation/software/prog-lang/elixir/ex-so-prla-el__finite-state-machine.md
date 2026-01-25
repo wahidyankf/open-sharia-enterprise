@@ -1,7 +1,7 @@
 title: "Elixir Finite State Machines"
 description: State machine patterns using GenServer, gen_statem, and functional approaches for managing state transitions in Elixir 1.12-1.19 with OTP supervision
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
 
 - elixir
@@ -87,10 +87,10 @@ This guide targets Elixir developers building enterprise financial systems. It a
 
 **Related Documentation:**
 
-- [OTP GenServer](./ex-so-stla-el__otp-genserver.md) - GenServer patterns
-- [OTP Supervisor](./ex-so-stla-el__otp-supervisor.md) - Supervision strategies
-- [Pattern Matching](./ex-so-stla-el__idioms.md) - Pattern matching idioms
-- [Best Practices](./ex-so-stla-el__best-practices.md) - Code quality standards
+- [OTP GenServer](./ex-so-prla-el__otp-genserver.md) - GenServer patterns
+- [OTP Supervisor](./ex-so-prla-el__otp-supervisor.md) - Supervision strategies
+- [Pattern Matching](./ex-so-prla-el__idioms.md) - Pattern matching idioms
+- [Best Practices](./ex-so-prla-el__best-practices.md) - Code quality standards
 
 FSM patterns align with [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
 
@@ -1197,15 +1197,15 @@ end
 
 **Elixir-Specific**:
 
-- [OTP GenServer](./ex-so-stla-el__otp-genserver.md) - GenServer patterns
-- [OTP Supervisor](./ex-so-stla-el__otp-supervisor.md) - Supervision strategies
-- [Pattern Matching](./ex-so-stla-el__idioms.md) - Pattern matching idioms
-- [Best Practices](./ex-so-stla-el__best-practices.md) - Code quality standards
+- [OTP GenServer](./ex-so-prla-el__otp-genserver.md) - GenServer patterns
+- [OTP Supervisor](./ex-so-prla-el__otp-supervisor.md) - Supervision strategies
+- [Pattern Matching](./ex-so-prla-el__idioms.md) - Pattern matching idioms
+- [Best Practices](./ex-so-prla-el__best-practices.md) - Code quality standards
 
 **Cross-Language**:
 
-- [Go Finite State Machines](../golang/ex-so-stla-go__finite-state-machine.md) - Comparison with Go
-- [Java Finite State Machines](../java/ex-so-stla-ja__finite-state-machine.md) - Comparison with Java
+- [Go Finite State Machines](../golang/ex-so-prla-go__finite-state-machine.md) - Comparison with Go
+- [Java Finite State Machines](../java/ex-so-prla-ja__finite-state-machine.md) - Comparison with Java
 
 **Principles**:
 

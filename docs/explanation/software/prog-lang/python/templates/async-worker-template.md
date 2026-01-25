@@ -2,7 +2,7 @@
 title: Async Worker Template
 description: Copy-paste ready async worker template with background task processing, retry logic, and error handling using asyncio for Python applications in Sharia-compliant financial services
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - template
@@ -10,7 +10,7 @@ tags:
   - background-tasks
   - asyncio
 related:
-  - ../ex-so-stla-py__concurrency-and-parallelism.md
+  - ../ex-so-prla-py__concurrency-and-parallelism.md
 principles:
   - explicit-over-implicit
 last_updated: 2025-01-23
@@ -204,7 +204,7 @@ logger.error(f"Task failed: {error}")
 
 ## References
 
-- [Concurrency and Parallelism](../ex-so-stla-py__concurrency-and-parallelism.md)
+- [Concurrency and Parallelism](../ex-so-prla-py__concurrency-and-parallelism.md)
 
 ---
 

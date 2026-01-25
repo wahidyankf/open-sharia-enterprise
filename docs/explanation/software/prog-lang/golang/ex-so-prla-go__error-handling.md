@@ -1,7 +1,7 @@
 title: Error Handling
 description: Comprehensive guide to Go error handling patterns, error wrapping, custom errors, and best practices
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
 
 - golang
@@ -2218,8 +2218,8 @@ principles:
 
 **Related Documentation**:
 
-- [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md)
-- [Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md)
+- [Concurrency and Parallelism](./ex-so-prla-go__concurrency-and-parallelism.md)
+- [Interfaces and Composition](./ex-so-prla-go__interfaces-and-composition.md)
 
 **Navigation**: [← Back to Golang Overview](./README.md)
 

@@ -2,7 +2,7 @@
 title: Python Code Templates
 description: Reusable Python code templates for domain-driven design patterns, testing patterns, API endpoints, async workers, and build configuration for Sharia-compliant financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - templates
@@ -12,9 +12,9 @@ tags:
   - fastapi
   - code-examples
 related:
-  - ../ex-so-stla-py__domain-driven-design.md
-  - ../ex-so-stla-py__test-driven-development.md
-  - ../ex-so-stla-py__web-services.md
+  - ../ex-so-prla-py__domain-driven-design.md
+  - ../ex-so-prla-py__test-driven-development.md
+  - ../ex-so-prla-py__web-services.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -511,11 +511,11 @@ graph TD
 
 ### Related Documentation
 
-- [Domain-Driven Design](../ex-so-stla-py__domain-driven-design.md) - DDD concepts and patterns
-- [Test-Driven Development](../ex-so-stla-py__test-driven-development.md) - TDD methodology
-- [Web Services](../ex-so-stla-py__web-services.md) - FastAPI patterns
-- [Type Safety](../ex-so-stla-py__type-safety.md) - Type hints and validation
-- [Best Practices](../ex-so-stla-py__best-practices.md) - Python coding standards
+- [Domain-Driven Design](../ex-so-prla-py__domain-driven-design.md) - DDD concepts and patterns
+- [Test-Driven Development](../ex-so-prla-py__test-driven-development.md) - TDD methodology
+- [Web Services](../ex-so-prla-py__web-services.md) - FastAPI patterns
+- [Type Safety](../ex-so-prla-py__type-safety.md) - Type hints and validation
+- [Best Practices](../ex-so-prla-py__best-practices.md) - Python coding standards
 
 ### Books
 

@@ -2,7 +2,7 @@
 title: Python Concurrency and Parallelism
 description: Concurrency patterns in Python including asyncio, threading, multiprocessing, GIL implications, async/await, and concurrent execution for scalable financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - concurrency
@@ -13,9 +13,9 @@ tags:
   - gil
   - async-await
 related:
-  - ./ex-so-stla-py__web-services.md
-  - ./ex-so-stla-py__performance.md
-  - ./ex-so-stla-py__error-handling.md
+  - ./ex-so-prla-py__web-services.md
+  - ./ex-so-prla-py__performance.md
+  - ./ex-so-prla-py__error-handling.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -1468,9 +1468,9 @@ print(f"Free-threaded execution: {elapsed:.4f}s")
 
 ### Related Documentation
 
-- [Web Services](./ex-so-stla-py__web-services.md) - FastAPI async patterns
-- [Performance](./ex-so-stla-py__performance.md) - Optimization strategies
-- [Error Handling](./ex-so-stla-py__error-handling.md) - Exception patterns
+- [Web Services](./ex-so-prla-py__web-services.md) - FastAPI async patterns
+- [Performance](./ex-so-prla-py__performance.md) - Optimization strategies
+- [Error Handling](./ex-so-prla-py__error-handling.md) - Exception patterns
 
 ---
 

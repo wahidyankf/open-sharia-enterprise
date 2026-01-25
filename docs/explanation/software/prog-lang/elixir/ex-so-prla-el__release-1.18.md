@@ -2,7 +2,7 @@
 title: "Elixir 1.18 Release"
 description: Milestone release with type checking of function calls, LSP improvements, built-in JSON support, and enhanced testing capabilities
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - release-notes
@@ -12,9 +12,9 @@ tags:
   - json
   - testing
 related:
-  - ./ex-so-stla-el__release-1.17.md
-  - ./ex-so-stla-el__release-1.19.md
-  - ./ex-so-stla-el__type-safety.md
+  - ./ex-so-prla-el__release-1.17.md
+  - ./ex-so-prla-el__release-1.19.md
+  - ./ex-so-prla-el__type-safety.md
 principles:
   - documentation-first
 last_updated: 2026-01-24
@@ -24,8 +24,8 @@ last_updated: 2026-01-24
 
 **Status**: Stable (Released December 19, 2024)
 **OTP Compatibility**: Erlang/OTP 25+
-**Previous Version**: [Elixir 1.17](ex-so-stla-el__release-1.17.md)
-**Next Version**: [Elixir 1.19](ex-so-stla-el__release-1.19.md)
+**Previous Version**: [Elixir 1.17](ex-so-prla-el__release-1.17.md)
+**Next Version**: [Elixir 1.19](ex-so-prla-el__release-1.19.md)
 
 ## Overview
 
@@ -872,9 +872,9 @@ Negligible for most applications
 ### Related Documentation
 
 - [Back to Elixir README](README.md)
-- [Previous: Elixir 1.17 Release](ex-so-stla-el__release-1.17.md)
-- [Type Safety](ex-so-stla-el__type-safety.md)
-- [Testing](ex-so-stla-el__test-driven-development.md)
+- [Previous: Elixir 1.17 Release](ex-so-prla-el__release-1.17.md)
+- [Type Safety](ex-so-prla-el__type-safety.md)
+- [Testing](ex-so-prla-el__test-driven-development.md)
 
 ---
 

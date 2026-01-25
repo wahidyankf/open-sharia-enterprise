@@ -2,7 +2,7 @@
 title: Java Interfaces and Polymorphism
 description: Explicit interface-based polymorphism and composition patterns in modern Java
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - interfaces
@@ -15,7 +15,7 @@ tags:
   - java-21
   - java-25
 related:
-  - ./ex-so-stla-ja__best-practices.md
+  - ./ex-so-prla-ja__best-practices.md
 principles:
   - explicit-over-implicit
 last_updated: 2026-01-24
@@ -43,11 +43,11 @@ last_updated: 2026-01-24
 
 **Related Documentation:**
 
-- [Java Idioms](./ex-so-stla-ja__idioms.md) - Modern Java patterns including sealed classes, pattern matching
-- [Java Type Safety](./ex-so-stla-ja__type-safety.md) - Type-safe interfaces with JSpecify, sealed types
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Clean code guidelines
-- [Java Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md) - DDD with type-safe domain models
-- [Go Interfaces and Composition](../golang/ex-so-stla-go__interfaces-and-composition.md) - Go's implicit interfaces (comparison)
+- [Java Idioms](./ex-so-prla-ja__idioms.md) - Modern Java patterns including sealed classes, pattern matching
+- [Java Type Safety](./ex-so-prla-ja__type-safety.md) - Type-safe interfaces with JSpecify, sealed types
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - Clean code guidelines
+- [Java Domain-Driven Design](./ex-so-prla-ja__domain-driven-design.md) - DDD with type-safe domain models
+- [Go Interfaces and Composition](../golang/ex-so-prla-go__interfaces-and-composition.md) - Go's implicit interfaces (comparison)
 
 This guide demonstrates how Java interfaces embody the [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md) principle through nominal typing, explicit `implements` declarations, and compile-time verification.
 
@@ -1749,20 +1749,20 @@ See [Software Engineering Principles](../../../../../governance/principles/softw
 
 **Core Java Documentation**:
 
-- [Java Idioms](./ex-so-stla-ja__idioms.md) - Modern patterns including sealed classes, records
-- [Java Type Safety](./ex-so-stla-ja__type-safety.md) - Type-safe interfaces with JSpecify
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Composition over inheritance
-- [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Fat interfaces, marker interfaces
+- [Java Idioms](./ex-so-prla-ja__idioms.md) - Modern patterns including sealed classes, records
+- [Java Type Safety](./ex-so-prla-ja__type-safety.md) - Type-safe interfaces with JSpecify
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - Composition over inheritance
+- [Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) - Fat interfaces, marker interfaces
 
 **Specialized Topics**:
 
-- [Java Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md) - Domain interfaces and bounded contexts
-- [Java Error Handling](./ex-so-stla-ja__error-handling.md) - Sealed result types for type-safe errors
-- [Java Test-Driven Development](./ex-so-stla-ja__test-driven-development.md) - Testing with interfaces
+- [Java Domain-Driven Design](./ex-so-prla-ja__domain-driven-design.md) - Domain interfaces and bounded contexts
+- [Java Error Handling](./ex-so-prla-ja__error-handling.md) - Sealed result types for type-safe errors
+- [Java Test-Driven Development](./ex-so-prla-ja__test-driven-development.md) - Testing with interfaces
 
 **Comparison with Other Languages**:
 
-- [Go Interfaces and Composition](../golang/ex-so-stla-go__interfaces-and-composition.md) - Implicit vs explicit interfaces
+- [Go Interfaces and Composition](../golang/ex-so-prla-go__interfaces-and-composition.md) - Implicit vs explicit interfaces
 
 **Platform Documentation**:
 

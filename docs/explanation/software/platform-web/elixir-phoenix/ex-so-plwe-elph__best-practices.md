@@ -2,7 +2,7 @@
 title: "Phoenix Best Practices"
 description: Production-ready Phoenix development standards and proven approaches
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - best-practices
@@ -10,8 +10,8 @@ tags:
   - code-quality
   - standards
 related:
-  - ./ex-so-stli-elph__idioms.md
-  - ./ex-so-stli-elph__anti-patterns.md
+  - ./ex-so-plwe-elph__idioms.md
+  - ./ex-so-plwe-elph__anti-patterns.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -1041,11 +1041,11 @@ end
 
 ## Related Documentation
 
-- **[Phoenix Idioms](./ex-so-stli-elph__idioms.md)** - Framework patterns
-- **[Phoenix Anti-Patterns](./ex-so-stli-elph__anti-patterns.md)** - Common mistakes
-- **[Elixir Best Practices](../../stack-lang/elixir/ex-so-stla-el__best-practices.md)** - Language standards
-- **[Data Access](./ex-so-stli-elph__data-access.md)** - Ecto patterns
-- **[Security](./ex-so-stli-elph__security.md)** - Security practices
+- **[Phoenix Idioms](./ex-so-plwe-elph__idioms.md)** - Framework patterns
+- **[Phoenix Anti-Patterns](./ex-so-plwe-elph__anti-patterns.md)** - Common mistakes
+- **[Elixir Best Practices](../../prog-lang/elixir/ex-so-prla-el__best-practices.md)** - Language standards
+- **[Data Access](./ex-so-plwe-elph__data-access.md)** - Ecto patterns
+- **[Security](./ex-so-plwe-elph__security.md)** - Security practices
 
 ---
 

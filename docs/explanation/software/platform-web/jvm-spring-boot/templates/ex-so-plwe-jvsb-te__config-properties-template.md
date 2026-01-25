@@ -2,7 +2,7 @@
 title: Configuration Properties Template
 description: Template for type-safe configuration properties
 category: explanation
-subcategory: stack-libs-templates
+subcategory: platform-web-templates
 tags:
   - spring-boot
   - template

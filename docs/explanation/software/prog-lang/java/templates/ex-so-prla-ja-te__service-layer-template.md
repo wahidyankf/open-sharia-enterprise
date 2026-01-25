@@ -9,8 +9,8 @@ tags:
   - transactions
   - orchestration
 related:
-  - ex-so-stla-ja-te__aggregate-template.md
-  - ex-so-stla-ja-te__repository-template.md
+  - ex-so-prla-ja-te__aggregate-template.md
+  - ex-so-prla-ja-te__repository-template.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -732,10 +732,10 @@ class ZakatCalculationServiceTest {
 
 ## Related Templates
 
-- [Aggregate Template](./ex-so-stla-ja-te__aggregate-template.md)
-- [Repository Template](./ex-so-stla-ja-te__repository-template.md)
-- [Domain Event Template](./ex-so-stla-ja-te__domain-event-template.md)
-- [Unit Test Template](./ex-so-stla-ja-te__unit-test-template.md)
+- [Aggregate Template](./ex-so-prla-ja-te__aggregate-template.md)
+- [Repository Template](./ex-so-prla-ja-te__repository-template.md)
+- [Domain Event Template](./ex-so-prla-ja-te__domain-event-template.md)
+- [Unit Test Template](./ex-so-prla-ja-te__unit-test-template.md)
 
 ## See Also
 

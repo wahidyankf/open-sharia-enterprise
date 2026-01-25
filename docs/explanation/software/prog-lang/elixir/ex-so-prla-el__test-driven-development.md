@@ -2,7 +2,7 @@
 title: "Test-Driven Development in Elixir"
 description: TDD in Elixir using ExUnit, Mox, StreamData, and ExMachina following Red-Green-Refactor cycle for code correctness
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - test-driven-development
@@ -13,9 +13,9 @@ tags:
   - property-based-testing
   - test-factories
 related:
-  - ./ex-so-stla-el__best-practices.md
-  - ./ex-so-stla-el__behaviour-driven-development.md
-  - ./ex-so-stla-el__anti-patterns.md
+  - ./ex-so-prla-el__best-practices.md
+  - ./ex-so-prla-el__behaviour-driven-development.md
+  - ./ex-so-prla-el__anti-patterns.md
 principles:
   - documentation-first
   - reproducibility
@@ -1428,10 +1428,10 @@ end
 
 ## Related Topics
 
-- [Behaviour-Driven Development](ex-so-stla-el__behaviour-driven-development.md) - BDD with Gherkin
-- [Linting and Formatting](ex-so-stla-el__linting-and-formatting.md) - Code quality
-- [Best Practices](ex-so-stla-el__best-practices.md) - Testing best practices
-- [Web Services](ex-so-stla-el__web-services.md) - Testing Phoenix apps
+- [Behaviour-Driven Development](ex-so-prla-el__behaviour-driven-development.md) - BDD with Gherkin
+- [Linting and Formatting](ex-so-prla-el__linting-and-formatting.md) - Code quality
+- [Best Practices](ex-so-prla-el__best-practices.md) - Testing best practices
+- [Web Services](ex-so-prla-el__web-services.md) - Testing Phoenix apps
 
 ## Sources
 

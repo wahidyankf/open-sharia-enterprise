@@ -2,7 +2,7 @@
 title: "Java 22 Release"
 description: Release notes for Java 22 highlighting new features, JVM improvements, and breaking changes
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - release-notes

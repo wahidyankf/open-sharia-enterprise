@@ -2,7 +2,7 @@
 title: Java Templates
 description: Collection of code templates for Java development including testing, domain models, and build configurations
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - templates
@@ -21,7 +21,7 @@ This directory contains standardized code templates for Java development, design
 
 ### Testing Templates
 
-#### [Unit Test Template](./ex-so-stla-ja-te__unit-test-template.md)
+#### [Unit Test Template](./ex-so-prla-ja-te__unit-test-template.md)
 
 Comprehensive template for JUnit 5 unit tests with AssertJ assertions and Mockito mocking.
 
@@ -35,7 +35,7 @@ Comprehensive template for JUnit 5 unit tests with AssertJ assertions and Mockit
 
 **Use When:** Testing individual classes in isolation
 
-#### [Integration Test Template](./ex-so-stla-ja-te__integration-test-template.md)
+#### [Integration Test Template](./ex-so-prla-ja-te__integration-test-template.md)
 
 Template for Spring Boot integration tests with TestContainers and REST Assured.
 
@@ -49,7 +49,7 @@ Template for Spring Boot integration tests with TestContainers and REST Assured.
 
 **Use When:** Testing complete workflows with real infrastructure dependencies
 
-#### [BDD Step Definition Template](./ex-so-stla-ja-te__bdd-step-definition-template.md)
+#### [BDD Step Definition Template](./ex-so-prla-ja-te__bdd-step-definition-template.md)
 
 Cucumber step definitions implementing Given-When-Then patterns for behavior-driven development.
 
@@ -65,7 +65,7 @@ Cucumber step definitions implementing Given-When-Then patterns for behavior-dri
 
 ### Domain Model Templates
 
-#### [Entity Template](./ex-so-stla-ja-te__entity-template.md)
+#### [Entity Template](./ex-so-prla-ja-te__entity-template.md)
 
 Domain-Driven Design entity template with identity, lifecycle, and business logic.
 
@@ -80,7 +80,7 @@ Domain-Driven Design entity template with identity, lifecycle, and business logi
 
 **Use When:** Creating entities with identity and mutable state
 
-#### [Value Object Template](./ex-so-stla-ja-te__value-object-template.md)
+#### [Value Object Template](./ex-so-prla-ja-te__value-object-template.md)
 
 Immutable value object template with value-based equality.
 
@@ -94,7 +94,7 @@ Immutable value object template with value-based equality.
 
 **Use When:** Modeling concepts without identity (amounts, dates, addresses)
 
-#### [Aggregate Template](./ex-so-stla-ja-te__aggregate-template.md)
+#### [Aggregate Template](./ex-so-prla-ja-te__aggregate-template.md)
 
 Aggregate root template enforcing transactional boundaries and consistency.
 
@@ -108,7 +108,7 @@ Aggregate root template enforcing transactional boundaries and consistency.
 
 **Use When:** Defining consistency boundaries in complex domain models
 
-#### [Domain Event Template](./ex-so-stla-ja-te__domain-event-template.md)
+#### [Domain Event Template](./ex-so-prla-ja-te__domain-event-template.md)
 
 Immutable domain event template for capturing significant business occurrences.
 
@@ -124,7 +124,7 @@ Immutable domain event template for capturing significant business occurrences.
 
 ### Infrastructure Templates
 
-#### [Repository Template](./ex-so-stla-ja-te__repository-template.md)
+#### [Repository Template](./ex-so-prla-ja-te__repository-template.md)
 
 DDD repository template with Spring Data JPA and custom query methods.
 
@@ -138,7 +138,7 @@ DDD repository template with Spring Data JPA and custom query methods.
 
 **Use When:** Persisting aggregates, querying by business criteria, implementing data access layer
 
-#### [Service Layer Template](./ex-so-stla-ja-te__service-layer-template.md)
+#### [Service Layer Template](./ex-so-prla-ja-te__service-layer-template.md)
 
 Application service template for orchestrating domain operations and managing transactions.
 
@@ -154,7 +154,7 @@ Application service template for orchestrating domain operations and managing tr
 
 ### Build & Configuration Templates
 
-#### [Build Configuration Template](./ex-so-stla-ja-te__build-configuration-template.md)
+#### [Build Configuration Template](./ex-so-prla-ja-te__build-configuration-template.md)
 
 Maven and Gradle build configurations with testing, code quality, and CI/CD integration.
 
@@ -179,7 +179,7 @@ Maven and Gradle build configurations with testing, code quality, and CI/CD inte
 
 ### Template Naming Convention
 
-Template files follow the pattern: `ex-so-stla-ja-te__{template-name}.md`
+Template files follow the pattern: `ex-so-prla-ja-te__{template-name}.md`
 
 - `ex` - Explanation (Diátaxis category)
 - `so` - Software
@@ -256,9 +256,9 @@ All templates enforce these quality standards:
 
 ### Core Java Documentation
 
-- [Test-Driven Development](../ex-so-stla-ja__test-driven-development.md) - TDD practices and patterns
-- [Behaviour-Driven Development](../ex-so-stla-ja__behaviour-driven-development.md) - BDD with Cucumber
-- [Security](../ex-so-stla-ja__security.md) - Security best practices
+- [Test-Driven Development](../ex-so-prla-ja__test-driven-development.md) - TDD practices and patterns
+- [Behaviour-Driven Development](../ex-so-prla-ja__behaviour-driven-development.md) - BDD with Cucumber
+- [Security](../ex-so-prla-ja__security.md) - Security best practices
 
 ## Contributing
 

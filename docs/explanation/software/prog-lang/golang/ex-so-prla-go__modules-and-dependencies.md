@@ -2,7 +2,7 @@
 title: Go Modules and Dependencies
 description: Go modules system for dependency management including go.mod, go.sum, versioning, and workspace mode
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - golang
   - modules
@@ -17,7 +17,7 @@ tags:
   - go-1.24
   - go-1.25
 related:
-  - ./ex-so-stla-go__best-practices.md
+  - ./ex-so-prla-go__best-practices.md
 principles:
   - reproducibility
   - explicit-over-implicit
@@ -997,9 +997,9 @@ GONOPROXY=github.com/mycompany go get package
 
 ## Related Documentation
 
-- [Best Practices](./ex-so-stla-go__best-practices.md) - Code organization and project structure
-- [Linting and Formatting](./ex-so-stla-go__linting-and-formatting.md) - CI/CD integration with modules
-- [Web Services](./ex-so-stla-go__web-services.md) - Framework dependencies
+- [Best Practices](./ex-so-prla-go__best-practices.md) - Code organization and project structure
+- [Linting and Formatting](./ex-so-prla-go__linting-and-formatting.md) - CI/CD integration with modules
+- [Web Services](./ex-so-prla-go__web-services.md) - Framework dependencies
 
 ## Further Reading
 

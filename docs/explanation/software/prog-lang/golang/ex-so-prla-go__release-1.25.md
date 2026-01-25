@@ -2,13 +2,13 @@
 title: Go 1.25 Release Notes
 description: New features and improvements in Go 1.25
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - golang
   - release-notes
   - go-1.25
 related:
-  - ./ex-so-stla-go__best-practices.md
+  - ./ex-so-prla-go__best-practices.md
 last_updated: 2026-01-24
 ---
 

@@ -2,7 +2,7 @@
 title: Java Performance Optimization
 description: Performance optimization in Java including JVM tuning, profiling, memory management, and benchmarking
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - performance
@@ -14,9 +14,9 @@ tags:
   - java-21
   - java-25
 related:
-  - ./ex-so-stla-ja__memory-management.md
-  - ./ex-so-stla-ja__concurrency-and-parallelism.md
-  - ./ex-so-stla-ja__best-practices.md
+  - ./ex-so-prla-ja__memory-management.md
+  - ./ex-so-prla-ja__concurrency-and-parallelism.md
+  - ./ex-so-prla-ja__best-practices.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -43,14 +43,14 @@ last_updated: 2026-01-24
 
 **Related Documentation:**
 
-- [Concurrency and Parallelism](./ex-so-stla-ja__concurrency-and-parallelism.md) - Thread performance
-- [Security](./ex-so-stla-ja__security.md) - Security vs performance trade-offs
-- [Best Practices](./ex-so-stla-ja__best-practices.md) - General optimization practices
-- [Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Performance anti-patterns
+- [Concurrency and Parallelism](./ex-so-prla-ja__concurrency-and-parallelism.md) - Thread performance
+- [Security](./ex-so-prla-ja__security.md) - Security vs performance trade-offs
+- [Best Practices](./ex-so-prla-ja__best-practices.md) - General optimization practices
+- [Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) - Performance anti-patterns
 
 **Version Navigation:**
 
-← [Java 17](./ex-so-stla-ja__release-17.md) | [Java 21](./ex-so-stla-ja__release-21.md) | [Java 25](./ex-so-stla-ja__release-25.md) →
+← [Java 17](./ex-so-prla-ja__release-17.md) | [Java 21](./ex-so-prla-ja__release-21.md) | [Java 25](./ex-so-prla-ja__release-25.md) →
 
 ---
 
@@ -1034,7 +1034,7 @@ try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
 }
 ```
 
-**For comprehensive virtual threads performance analysis** (benchmarks, structured concurrency, financial examples), see [Concurrency and Parallelism - Virtual Threads](./ex-so-stla-ja__concurrency-and-parallelism.md#virtual-threads).
+**For comprehensive virtual threads performance analysis** (benchmarks, structured concurrency, financial examples), see [Concurrency and Parallelism - Virtual Threads](./ex-so-prla-ja__concurrency-and-parallelism.md#virtual-threads).
 
 ---
 

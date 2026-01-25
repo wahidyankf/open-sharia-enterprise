@@ -1,7 +1,7 @@
 title: Go Concurrency and Parallelism
 description: Comprehensive guide to concurrent programming with goroutines, channels, and the sync package
 category: explanation
-subcategory: stack-lang-golang
+subcategory: prog-lang-golang
 tags:
 
 - golang
@@ -2328,11 +2328,11 @@ type UnsafeCounter struct {
 
 ## Related Documentation
 
-- [Go Best Practices](./ex-so-stla-go__best-practices.md) - Concurrency best practices
-- [Go Idioms](./ex-so-stla-go__idioms.md) - Concurrency patterns
-- [Go Anti-Patterns](./ex-so-stla-go__anti-patterns.md) - Common concurrency mistakes
-- [Go Performance](./ex-so-stla-go__performance.md) - Profiling concurrent code
-- [Go Testing](./ex-so-stla-go__test-driven-development.md) - Testing concurrent code
+- [Go Best Practices](./ex-so-prla-go__best-practices.md) - Concurrency best practices
+- [Go Idioms](./ex-so-prla-go__idioms.md) - Concurrency patterns
+- [Go Anti-Patterns](./ex-so-prla-go__anti-patterns.md) - Common concurrency mistakes
+- [Go Performance](./ex-so-prla-go__performance.md) - Profiling concurrent code
+- [Go Testing](./ex-so-prla-go__test-driven-development.md) - Testing concurrent code
 - [Context Package Documentation](https://pkg.go.dev/context)
 - [Sync Package Documentation](https://pkg.go.dev/sync)
 

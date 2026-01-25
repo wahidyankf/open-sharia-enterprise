@@ -2,7 +2,7 @@
 title: "React Domain-Driven Design"
 description: Implementing DDD patterns in React applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - ddd
@@ -10,8 +10,8 @@ tags:
   - architecture
   - typescript
 related:
-  - ./ex-so-stli-tsre__best-practices.md
-  - ./ex-so-stli-tsre__component-architecture.md
+  - ./ex-so-plwe-tsre__best-practices.md
+  - ./ex-so-plwe-tsre__component-architecture.md
 principles:
   - explicit-over-implicit
 last_updated: 2026-01-25
@@ -25,9 +25,9 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Component Architecture](./ex-so-stli-tsre__component-architecture.md) - Component patterns
-- [TypeScript](./ex-so-stli-tsre__typescript.md) - Domain modeling
-- [Best Practices](./ex-so-stli-tsre__best-practices.md) - Architecture standards
+- [Component Architecture](./ex-so-plwe-tsre__component-architecture.md) - Component patterns
+- [TypeScript](./ex-so-plwe-tsre__typescript.md) - Domain modeling
+- [Best Practices](./ex-so-plwe-tsre__best-practices.md) - Architecture standards
 
 ## Overview
 
@@ -274,9 +274,9 @@ export const App: React.FC = () => (
 
 ## Related Documentation
 
-- **[Component Architecture](./ex-so-stli-tsre__component-architecture.md)** - Component patterns
-- **[TypeScript](./ex-so-stli-tsre__typescript.md)** - Domain modeling
-- **[Best Practices](./ex-so-stli-tsre__best-practices.md)** - Architecture standards
+- **[Component Architecture](./ex-so-plwe-tsre__component-architecture.md)** - Component patterns
+- **[TypeScript](./ex-so-plwe-tsre__typescript.md)** - Domain modeling
+- **[Best Practices](./ex-so-plwe-tsre__best-practices.md)** - Architecture standards
 
 ---
 

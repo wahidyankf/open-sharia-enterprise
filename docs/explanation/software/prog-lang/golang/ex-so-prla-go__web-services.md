@@ -2,7 +2,7 @@
 title: Go Web Services
 description: Building web services in Go using net/http, routing, middleware, REST APIs, and gRPC
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - golang
   - web-services
@@ -17,8 +17,8 @@ tags:
   - go-1.24
   - go-1.25
 related:
-  - ./ex-so-stla-go__best-practices.md
-  - ./ex-so-stla-go__security.md
+  - ./ex-so-prla-go__best-practices.md
+  - ./ex-so-prla-go__security.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
@@ -2327,10 +2327,10 @@ app.Use(func(c *fiber.Ctx) error {
 
 ## Related Documentation
 
-- [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md) - Handling concurrent requests
-- [Error Handling](./ex-so-stla-go__error-handling.md) - Error handling in web services
-- [Security](./ex-so-stla-go__security.md) - Web service security
-- [Testing](./ex-so-stla-go__test-driven-development.md) - Testing web services
+- [Concurrency and Parallelism](./ex-so-prla-go__concurrency-and-parallelism.md) - Handling concurrent requests
+- [Error Handling](./ex-so-prla-go__error-handling.md) - Error handling in web services
+- [Security](./ex-so-prla-go__security.md) - Web service security
+- [Testing](./ex-so-prla-go__test-driven-development.md) - Testing web services
 
 ## Further Reading
 

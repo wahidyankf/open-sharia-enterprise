@@ -2,7 +2,7 @@
 title: "Spring Boot Testing"
 description: Testing strategies for Spring Boot applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - spring-boot
   - testing
@@ -10,7 +10,7 @@ tags:
   - mockito
   - testcontainers
 related:
-  - ./ex-so-stli-jvspbo__best-practices.md
+  - ./ex-so-plwe-jvspbo__best-practices.md
 last_updated: 2026-01-25
 ---
 
@@ -20,7 +20,7 @@ last_updated: 2026-01-25
 
 Comprehensive testing guide covering unit tests, integration tests, and test slices for Spring Boot applications.
 
-See [Best Practices - Testing](./ex-so-stli-jvspbo__best-practices.md#testing-strategy) for detailed testing approaches.
+See [Best Practices - Testing](./ex-so-plwe-jvspbo__best-practices.md#testing-strategy) for detailed testing approaches.
 
 ## Key Topics
 

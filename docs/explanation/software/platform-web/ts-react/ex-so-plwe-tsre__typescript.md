@@ -2,7 +2,7 @@
 title: "React TypeScript Integration"
 description: TypeScript patterns and best practices for React applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - typescript
@@ -10,8 +10,8 @@ tags:
   - generics
   - props
 related:
-  - ./ex-so-stli-tsre__idioms.md
-  - ./ex-so-stli-tsre__best-practices.md
+  - ./ex-so-plwe-tsre__idioms.md
+  - ./ex-so-plwe-tsre__best-practices.md
 principles:
   - explicit-over-implicit
 last_updated: 2026-01-25
@@ -25,10 +25,10 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [Idioms](./ex-so-stli-tsre__idioms.md) - React patterns
-- [Best Practices](./ex-so-stli-tsre__best-practices.md) - Type safety standards
-- [Component Architecture](./ex-so-stli-tsre__component-architecture.md) - Component patterns
-- [Hooks](./ex-so-stli-tsre__hooks.md) - Hook patterns
+- [Idioms](./ex-so-plwe-tsre__idioms.md) - React patterns
+- [Best Practices](./ex-so-plwe-tsre__best-practices.md) - Type safety standards
+- [Component Architecture](./ex-so-plwe-tsre__component-architecture.md) - Component patterns
+- [Hooks](./ex-so-plwe-tsre__hooks.md) - Hook patterns
 
 ## Overview
 
@@ -962,11 +962,11 @@ if (response.success) {
 
 ## Related Documentation
 
-- **[Idioms](./ex-so-stli-tsre__idioms.md)** - React patterns
-- **[Best Practices](./ex-so-stli-tsre__best-practices.md)** - Type safety standards
-- **[Component Architecture](./ex-so-stli-tsre__component-architecture.md)** - Component patterns
-- **[Hooks](./ex-so-stli-tsre__hooks.md)** - Hook patterns
-- **[TypeScript Language Guide](../../stack-lang/typescript/README.md)** - TypeScript fundamentals
+- **[Idioms](./ex-so-plwe-tsre__idioms.md)** - React patterns
+- **[Best Practices](./ex-so-plwe-tsre__best-practices.md)** - Type safety standards
+- **[Component Architecture](./ex-so-plwe-tsre__component-architecture.md)** - Component patterns
+- **[Hooks](./ex-so-plwe-tsre__hooks.md)** - Hook patterns
+- **[TypeScript Language Guide](../../prog-lang/typescript/README.md)** - TypeScript fundamentals
 
 ---
 

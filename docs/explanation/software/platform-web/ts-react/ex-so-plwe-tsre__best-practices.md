@@ -2,7 +2,7 @@
 title: "React Best Practices"
 description: Production-ready React development standards for building maintainable, performant applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - react
   - best-practices
@@ -10,9 +10,9 @@ tags:
   - typescript
   - production
 related:
-  - ./ex-so-stli-tsre__idioms.md
-  - ./ex-so-stli-tsre__anti-patterns.md
-  - ./ex-so-stli-tsre__typescript.md
+  - ./ex-so-plwe-tsre__idioms.md
+  - ./ex-so-plwe-tsre__anti-patterns.md
+  - ./ex-so-plwe-tsre__typescript.md
 principles:
   - explicit-over-implicit
   - immutability
@@ -49,11 +49,11 @@ last_updated: 2026-01-25
 
 ### Related Documentation
 
-- [Idioms](./ex-so-stli-tsre__idioms.md)
-- [Anti-Patterns](./ex-so-stli-tsre__anti-patterns.md)
-- [Component Architecture](./ex-so-stli-tsre__component-architecture.md)
-- [TypeScript](./ex-so-stli-tsre__typescript.md)
-- [Performance](./ex-so-stli-tsre__performance.md)
+- [Idioms](./ex-so-plwe-tsre__idioms.md)
+- [Anti-Patterns](./ex-so-plwe-tsre__anti-patterns.md)
+- [Component Architecture](./ex-so-plwe-tsre__component-architecture.md)
+- [TypeScript](./ex-so-plwe-tsre__typescript.md)
+- [Performance](./ex-so-plwe-tsre__performance.md)
 
 ## Overview
 
@@ -1048,14 +1048,14 @@ apiClient.interceptors.response.use(
 
 ## Related Documentation
 
-- **[React Idioms](./ex-so-stli-tsre__idioms.md)** - Framework patterns
-- **[React Anti-Patterns](./ex-so-stli-tsre__anti-patterns.md)** - Common mistakes
-- **[Component Architecture](./ex-so-stli-tsre__component-architecture.md)** - Component design
-- **[TypeScript](./ex-so-stli-tsre__typescript.md)** - TypeScript integration
-- **[Performance](./ex-so-stli-tsre__performance.md)** - Optimization strategies
-- **[Testing](./ex-so-stli-tsre__testing.md)** - Testing strategies
-- **[Accessibility](./ex-so-stli-tsre__accessibility.md)** - WCAG compliance
-- **[Security](./ex-so-stli-tsre__security.md)** - Security best practices
+- **[React Idioms](./ex-so-plwe-tsre__idioms.md)** - Framework patterns
+- **[React Anti-Patterns](./ex-so-plwe-tsre__anti-patterns.md)** - Common mistakes
+- **[Component Architecture](./ex-so-plwe-tsre__component-architecture.md)** - Component design
+- **[TypeScript](./ex-so-plwe-tsre__typescript.md)** - TypeScript integration
+- **[Performance](./ex-so-plwe-tsre__performance.md)** - Optimization strategies
+- **[Testing](./ex-so-plwe-tsre__testing.md)** - Testing strategies
+- **[Accessibility](./ex-so-plwe-tsre__accessibility.md)** - WCAG compliance
+- **[Security](./ex-so-plwe-tsre__security.md)** - Security best practices
 
 ---
 

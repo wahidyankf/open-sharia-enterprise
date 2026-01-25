@@ -2,7 +2,7 @@
 title: "Elixir Dependency Management"
 description: Managing dependencies with Mix and Hex for maintainable applications including umbrella apps and microservices architectures
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - dependencies
@@ -12,8 +12,8 @@ tags:
   - umbrella-projects
   - version-constraints
 related:
-  - ./ex-so-stla-el__best-practices.md
-  - ./ex-so-stla-el__otp-application.md
+  - ./ex-so-prla-el__best-practices.md
+  - ./ex-so-prla-el__otp-application.md
 principles:
   - explicit-over-implicit
   - reproducibility
@@ -1168,11 +1168,11 @@ jobs:
 
 ## Related Topics
 
-- [Best Practices](ex-so-stla-el__best-practices.md) - Elixir best practices
-- [Testing](ex-so-stla-el__test-driven-development.md) - Testing with dependencies
-- [Domain-Driven Design](ex-so-stla-el__domain-driven-design.md) - Umbrella apps for DDD
-- [Web Services](ex-so-stla-el__web-services.md) - Phoenix dependencies
-- [Security](ex-so-stla-el__security.md) - Dependency security
+- [Best Practices](ex-so-prla-el__best-practices.md) - Elixir best practices
+- [Testing](ex-so-prla-el__test-driven-development.md) - Testing with dependencies
+- [Domain-Driven Design](ex-so-prla-el__domain-driven-design.md) - Umbrella apps for DDD
+- [Web Services](ex-so-prla-el__web-services.md) - Phoenix dependencies
+- [Security](ex-so-prla-el__security.md) - Dependency security
 
 ## Sources
 

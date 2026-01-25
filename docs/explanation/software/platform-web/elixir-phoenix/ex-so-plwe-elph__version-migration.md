@@ -2,7 +2,7 @@
 title: Phoenix Version Migration Guide
 description: Guide for migrating Phoenix applications from 1.6 to 1.7+ including breaking changes and new features
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - elixir
@@ -10,8 +10,8 @@ tags:
   - upgrade
   - version
 related:
-  - ex-so-stli-elph__best-practices.md
-  - ex-so-stli-elph__liveview.md
+  - ex-so-plwe-elph__best-practices.md
+  - ex-so-plwe-elph__liveview.md
 last_updated: 2026-01-25
 ---
 
@@ -933,7 +933,7 @@ import Phoenix.HTML
 
 ## Related Documentation
 
-- **[Best Practices](./ex-so-stli-elph__best-practices.md)** - Modern Phoenix patterns
-- **[LiveView](./ex-so-stli-elph__liveview.md)** - Latest LiveView features
-- **[Components](./ex-so-stli-elph__best-practices.md#components)** - Component patterns
-- **[Testing](./ex-so-stli-elph__testing.md)** - Testing migrated code
+- **[Best Practices](./ex-so-plwe-elph__best-practices.md)** - Modern Phoenix patterns
+- **[LiveView](./ex-so-plwe-elph__liveview.md)** - Latest LiveView features
+- **[Components](./ex-so-plwe-elph__best-practices.md#components)** - Component patterns
+- **[Testing](./ex-so-plwe-elph__testing.md)** - Testing migrated code

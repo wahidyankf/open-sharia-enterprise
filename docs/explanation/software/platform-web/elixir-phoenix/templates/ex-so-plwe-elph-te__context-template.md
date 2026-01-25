@@ -2,7 +2,7 @@
 title: Phoenix Context Template
 description: Production-ready template for Phoenix contexts with Islamic finance examples
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - elixir
@@ -10,8 +10,8 @@ tags:
   - context
   - boilerplate
 related:
-  - ../ex-so-stli-elph__contexts.md
-  - ex-so-stli-elph-te__schema-template.md
+  - ../ex-so-plwe-elph__contexts.md
+  - ex-so-plwe-elph-te__schema-template.md
 last_updated: 2026-01-25
 ---
 
@@ -61,4 +61,4 @@ defmodule Ose.Donations do
 end
 ```
 
-See [Contexts Guide](../ex-so-stli-elph__contexts.md) for complete patterns.
+See [Contexts Guide](../ex-so-plwe-elph__contexts.md) for complete patterns.

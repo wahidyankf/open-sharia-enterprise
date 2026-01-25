@@ -2,7 +2,7 @@
 title: "Spring Boot Domain-Driven Design"
 description: Implementing DDD patterns with Spring Boot
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - spring-boot
   - ddd
@@ -10,7 +10,7 @@ tags:
   - aggregates
   - repositories
 related:
-  - ./ex-so-stli-jvspbo__idioms.md
+  - ./ex-so-plwe-jvspbo__idioms.md
 last_updated: 2026-01-25
 ---
 

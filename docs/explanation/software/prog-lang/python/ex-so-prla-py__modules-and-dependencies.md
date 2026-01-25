@@ -2,7 +2,7 @@
 title: Python Modules and Dependencies
 description: Python package management including pip, Poetry, uv, pyproject.toml, virtual environments, dependency locking, and package structure for maintainable projects
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - modules
@@ -12,8 +12,8 @@ tags:
   - pyproject-toml
   - packaging
 related:
-  - ./ex-so-stla-py__best-practices.md
-  - ./ex-so-stla-py__linting-and-formatting.md
+  - ./ex-so-prla-py__best-practices.md
+  - ./ex-so-prla-py__linting-and-formatting.md
 principles:
   - explicit-over-implicit
   - automation-over-manual
@@ -540,8 +540,8 @@ graph TD
 
 ### Related Documentation
 
-- [Best Practices](./ex-so-stla-py__best-practices.md) - Project organization
-- [Linting and Formatting](./ex-so-stla-py__linting-and-formatting.md) - Tool configuration
+- [Best Practices](./ex-so-prla-py__best-practices.md) - Project organization
+- [Linting and Formatting](./ex-so-prla-py__linting-and-formatting.md) - Tool configuration
 
 ---
 

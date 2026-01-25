@@ -2,7 +2,7 @@
 title: "Elixir Anti-Patterns and Common Mistakes"
 description: Common solutions to recurring problems that appear beneficial but ultimately lead to negative consequences in Elixir applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - elixir
   - anti-patterns
@@ -13,11 +13,11 @@ tags:
   - supervision
   - performance
 related:
-  - ./ex-so-stla-el__best-practices.md
-  - ./ex-so-stla-el__otp-genserver.md
-  - ./ex-so-stla-el__otp-supervisor.md
-  - ./ex-so-stla-el__performance.md
-  - ./ex-so-stla-el__test-driven-development.md
+  - ./ex-so-prla-el__best-practices.md
+  - ./ex-so-prla-el__otp-genserver.md
+  - ./ex-so-prla-el__otp-supervisor.md
+  - ./ex-so-prla-el__performance.md
+  - ./ex-so-prla-el__test-driven-development.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -1422,11 +1422,11 @@ end
 
 ## Related Topics
 
-- [Best Practices](./ex-so-stla-el__best-practices.md) - What to do instead
-- [OTP GenServer](./ex-so-stla-el__otp-genserver.md) - Proper GenServer patterns
-- [OTP Supervisor](./ex-so-stla-el__otp-supervisor.md) - Supervision strategies
-- [Performance](./ex-so-stla-el__performance.md) - Optimization techniques
-- [Test-Driven Development](./ex-so-stla-el__test-driven-development.md) - Testing best practices
+- [Best Practices](./ex-so-prla-el__best-practices.md) - What to do instead
+- [OTP GenServer](./ex-so-prla-el__otp-genserver.md) - Proper GenServer patterns
+- [OTP Supervisor](./ex-so-prla-el__otp-supervisor.md) - Supervision strategies
+- [Performance](./ex-so-prla-el__performance.md) - Optimization techniques
+- [Test-Driven Development](./ex-so-prla-el__test-driven-development.md) - Testing best practices
 
 ## Sources
 

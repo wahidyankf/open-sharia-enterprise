@@ -2,7 +2,7 @@
 title: Phoenix Channels Guide
 description: Comprehensive guide to Phoenix Channels for real-time communication, WebSockets, presence tracking, and broadcasting in Elixir applications
 category: explanation
-subcategory: stack-libs
+subcategory: platform-web
 tags:
   - phoenix
   - elixir
@@ -13,10 +13,10 @@ tags:
   - broadcasting
   - pubsub
 related:
-  - ex-so-stli-elph__liveview.md
-  - ex-so-stli-elph__security.md
-  - ex-so-stli-elph__testing.md
-  - ex-so-stli-elph__observability.md
+  - ex-so-plwe-elph__liveview.md
+  - ex-so-plwe-elph__security.md
+  - ex-so-plwe-elph__testing.md
+  - ex-so-plwe-elph__observability.md
 last_updated: 2026-01-25
 ---
 
@@ -28,10 +28,10 @@ last_updated: 2026-01-25
 
 **Related Guides**:
 
-- [LiveView](./ex-so-stli-elph__liveview.md) - Modern real-time alternative
-- [Security](./ex-so-stli-elph__security.md) - Channel authentication
-- [Testing](./ex-so-stli-elph__testing.md) - Channel testing patterns
-- [Observability](./ex-so-stli-elph__observability.md) - Monitoring channels
+- [LiveView](./ex-so-plwe-elph__liveview.md) - Modern real-time alternative
+- [Security](./ex-so-plwe-elph__security.md) - Channel authentication
+- [Testing](./ex-so-plwe-elph__testing.md) - Channel testing patterns
+- [Observability](./ex-so-plwe-elph__observability.md) - Monitoring channels
 
 ## Overview
 
@@ -1509,10 +1509,10 @@ end
 
 ## Related Documentation
 
-- **[LiveView Guide](./ex-so-stli-elph__liveview.md)** - Modern alternative to channels
-- **[Security Guide](./ex-so-stli-elph__security.md)** - Authentication and authorization
-- **[Testing Guide](./ex-so-stli-elph__testing.md)** - Channel testing strategies
-- **[Observability Guide](./ex-so-stli-elph__observability.md)** - Monitoring and logging
-- **[Performance Guide](./ex-so-stli-elph__performance.md)** - Optimization techniques
-- **[Deployment Guide](./ex-so-stli-elph__deployment.md)** - Production deployment
+- **[LiveView Guide](./ex-so-plwe-elph__liveview.md)** - Modern alternative to channels
+- **[Security Guide](./ex-so-plwe-elph__security.md)** - Authentication and authorization
+- **[Testing Guide](./ex-so-plwe-elph__testing.md)** - Channel testing strategies
+- **[Observability Guide](./ex-so-plwe-elph__observability.md)** - Monitoring and logging
+- **[Performance Guide](./ex-so-plwe-elph__performance.md)** - Optimization techniques
+- **[Deployment Guide](./ex-so-plwe-elph__deployment.md)** - Production deployment
 - **[Phoenix Documentation](https://hexdocs.pm/phoenix/channels.html)** - Official reference

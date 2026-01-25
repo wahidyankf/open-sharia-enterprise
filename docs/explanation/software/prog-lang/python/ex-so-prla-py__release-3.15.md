@@ -2,7 +2,7 @@
 title: "Python 3.15 Release"
 description: Release notes for Python 3.15 highlighting new features, improvements, and breaking changes
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - release-notes

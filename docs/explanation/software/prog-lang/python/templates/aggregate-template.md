@@ -2,7 +2,7 @@
 title: Aggregate Template
 description: Copy-paste ready Python aggregate template with root entity, consistency boundaries, invariants, and domain events for domain-driven design in Sharia-compliant financial applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - python
   - template
@@ -11,7 +11,7 @@ tags:
   - domain-driven-design
   - consistency
 related:
-  - ../ex-so-stla-py__domain-driven-design.md
+  - ../ex-so-prla-py__domain-driven-design.md
   - ./entity-template.md
   - ./domain-event-template.md
 principles:
@@ -401,7 +401,7 @@ campaign.add_donation(...)  # GOOD: Maintains invariants
 
 ## References
 
-- [Domain-Driven Design](../ex-so-stla-py__domain-driven-design.md)
+- [Domain-Driven Design](../ex-so-prla-py__domain-driven-design.md)
 
 ---
 

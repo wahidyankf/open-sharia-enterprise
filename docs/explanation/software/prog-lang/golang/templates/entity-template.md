@@ -18,8 +18,8 @@ tags:
   - go-1.25
 related:
   - value-object-template.md
-  - ex-so-stla-go__best-practices.md
-  - ex-so-stla-go__idioms.md
+  - ex-so-prla-go__best-practices.md
+  - ex-so-prla-go__idioms.md
 principles:
   - simplicity-over-complexity
   - explicit-over-implicit
@@ -2274,9 +2274,9 @@ func contains(s, substr string) bool {
 
 **Go Language Documentation**:
 
-- [Best Practices](../ex-so-stla-go__best-practices.md) - Go coding standards
-- [Idioms](../ex-so-stla-go__idioms.md) - Go-specific patterns
-- [Interfaces and Composition](../ex-so-stla-go__interfaces-and-composition.md) - Interface design
+- [Best Practices](../ex-so-prla-go__best-practices.md) - Go coding standards
+- [Idioms](../ex-so-prla-go__idioms.md) - Go-specific patterns
+- [Interfaces and Composition](../ex-so-prla-go__interfaces-and-composition.md) - Interface design
 
 **Template Documentation**:
 

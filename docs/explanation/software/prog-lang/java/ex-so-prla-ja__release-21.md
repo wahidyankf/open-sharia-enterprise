@@ -2,7 +2,7 @@
 title: "Java 21 LTS Release"
 description: Important features and changes in Java 21 Long-Term Support release
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - java-21
@@ -100,11 +100,11 @@ flowchart TD
 
 **Related Documentation:**
 
-- [Java 17 Release](./ex-so-stla-ja__release-17.md) - Previous LTS release features
-- [Java 25 Release](./ex-so-stla-ja__release-25.md) - Latest LTS release features
-- [Java Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md) - Virtual threads and structured concurrency
-- [Java Idioms](./ex-so-stla-ja__idioms.md) - Pattern matching and modern patterns
-- [Java Performance](./ex-so-stla-ja__performance.md) - Performance optimization with virtual threads
+- [Java 17 Release](./ex-so-prla-ja__release-17.md) - Previous LTS release features
+- [Java 25 Release](./ex-so-prla-ja__release-25.md) - Latest LTS release features
+- [Java Concurrency](./ex-so-prla-ja__concurrency-and-parallelism.md) - Virtual threads and structured concurrency
+- [Java Idioms](./ex-so-prla-ja__idioms.md) - Pattern matching and modern patterns
+- [Java Performance](./ex-so-prla-ja__performance.md) - Performance optimization with virtual threads
 
 This release implements the following [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
 
@@ -146,15 +146,15 @@ try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
 }
 ```
 
-**For comprehensive virtual threads documentation** (lifecycle diagrams, structured concurrency, financial examples, performance analysis), see [Concurrency and Parallelism - Virtual Threads](./ex-so-stla-ja__concurrency-and-parallelism.md#virtual-threads).
+**For comprehensive virtual threads documentation** (lifecycle diagrams, structured concurrency, financial examples, performance analysis), see [Concurrency and Parallelism - Virtual Threads](./ex-so-prla-ja__concurrency-and-parallelism.md#virtual-threads).
 
 **Feature Evolution Across Java Versions:**
 
 | Version     | Status              | Details                                                                                        | Link                                                                                         |
 | ----------- | ------------------- | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| **Java 17** | ❌ Not Available    | Traditional platform threads only, thread pools required                                       | [Java 17 - Concurrency](./ex-so-stla-ja__release-17.md#performance-and-runtime-improvements) |
+| **Java 17** | ❌ Not Available    | Traditional platform threads only, thread pools required                                       | [Java 17 - Concurrency](./ex-so-prla-ja__release-17.md#performance-and-runtime-improvements) |
 | **Java 21** | ✅ **Finalized** 🚀 | Production-ready virtual threads, millions of concurrent tasks, structured concurrency preview | Current section                                                                              |
-| **Java 25** | ✅ **Optimized**    | Performance improvements, better tooling integration, enhanced observability                   | [Java 25 - Virtual Threads](./ex-so-stla-ja__release-25.md#virtual-threads-optimizations)    |
+| **Java 25** | ✅ **Optimized**    | Performance improvements, better tooling integration, enhanced observability                   | [Java 25 - Virtual Threads](./ex-so-prla-ja__release-25.md#virtual-threads-optimizations)    |
 
 **When to Adopt**: **Essential feature for Java 21+ adoption.** Virtual threads are the most impactful concurrency innovation since Java 8 streams. Migrate I/O-bound applications immediately for 10-15% throughput gains and 10-100x concurrency scaling.
 
@@ -677,9 +677,9 @@ public class TransactionProcessor {
 
 | Version     | Status           | Details                                                                                | Link                                                                                               |
 | ----------- | ---------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| **Java 17** | 🔬 **Preview**   | First preview with basic patterns, guards, null handling (requires `--enable-preview`) | [Java 17 - Pattern Matching](./ex-so-stla-ja__release-17.md#2-pattern-matching-for-switch-preview) |
+| **Java 17** | 🔬 **Preview**   | First preview with basic patterns, guards, null handling (requires `--enable-preview`) | [Java 17 - Pattern Matching](./ex-so-prla-ja__release-17.md#2-pattern-matching-for-switch-preview) |
 | **Java 21** | ✅ **Finalized** | Production-ready with record patterns, guarded patterns, exhaustiveness checking       | Current section                                                                                    |
-| **Java 25** | ✅ **Enhanced**  | Primitive type patterns, improved compiler optimizations, better performance           | [Java 25 - Primitive Patterns](./ex-so-stla-ja__release-25.md#primitive-pattern-matching)          |
+| **Java 25** | ✅ **Enhanced**  | Primitive type patterns, improved compiler optimizations, better performance           | [Java 25 - Primitive Patterns](./ex-so-prla-ja__release-25.md#primitive-pattern-matching)          |
 
 **When to Adopt**: Finalized in Java 21 - safe for production use. Essential for type-safe conditional logic, especially with sealed types and records in finance domain models.
 
@@ -1024,10 +1024,10 @@ Java 21 includes numerous performance improvements:
 
 ## Related Documentation
 
-- [Java 17 LTS Release](./ex-so-stla-ja__release-17.md) - Previous LTS release features
-- [Java 25 LTS Release](./ex-so-stla-ja__release-25.md) - Next LTS release features
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Modern Java development practices
-- [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Common mistakes to avoid
+- [Java 17 LTS Release](./ex-so-prla-ja__release-17.md) - Previous LTS release features
+- [Java 25 LTS Release](./ex-so-prla-ja__release-25.md) - Next LTS release features
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - Modern Java development practices
+- [Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) - Common mistakes to avoid
 
 ## Sources
 

@@ -2,7 +2,7 @@
 title: Java Type Safety
 description: Achieving type safety and minimizing runtime errors in modern Java applications
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - type-safety
@@ -14,7 +14,7 @@ tags:
   - checker-framework
   - error-prone
 related:
-  - ./ex-so-stla-ja__best-practices.md
+  - ./ex-so-prla-ja__best-practices.md
 principles:
   - explicit-over-implicit
 last_updated: 2026-01-24
@@ -40,11 +40,11 @@ last_updated: 2026-01-24
 
 **Related Documentation:**
 
-- [Java Idioms](./ex-so-stla-ja__idioms.md) - Modern Java patterns
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Clean code guidelines
-- [Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md) - Common mistakes
-- [Java Security](./ex-so-stla-ja__security.md) - Secure application development
-- [Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md) - DDD with type-safe models
+- [Java Idioms](./ex-so-prla-ja__idioms.md) - Modern Java patterns
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - Clean code guidelines
+- [Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md) - Common mistakes
+- [Java Security](./ex-so-prla-ja__security.md) - Secure application development
+- [Domain-Driven Design](./ex-so-prla-ja__domain-driven-design.md) - DDD with type-safe models
 
 Type safety in Java enforces the [Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md) principle - making nullable/non-nullable explicit, making type hierarchies explicit, and catching errors at compile-time rather than runtime. This alignment is critical for Shariah-compliant systems where financial calculations must be verifiable and correct.
 
@@ -137,7 +137,7 @@ public void processPayment(AccountId fromAccount, AccountId toAccount, Money amo
 }
 ```
 
-**For comprehensive Money value object with type-safe operations**, see [Domain-Driven Design - Value Objects](./ex-so-stla-ja__domain-driven-design.md#example-money-value-object).
+**For comprehensive Money value object with type-safe operations**, see [Domain-Driven Design - Value Objects](./ex-so-prla-ja__domain-driven-design.md#example-money-value-object).
 
 ### 3. Prefer Compile-Time Errors Over Runtime Errors
 
@@ -211,7 +211,7 @@ public String describe(Status status) {
 }
 ```
 
-**For comprehensive TransactionResult sealed interface with financial examples**, see [Error Handling - Sealed Types](./ex-so-stla-ja__error-handling.md#sealed-types-for-exhaustive-error-handling).
+**For comprehensive TransactionResult sealed interface with financial examples**, see [Error Handling - Sealed Types](./ex-so-prla-ja__error-handling.md#sealed-types-for-exhaustive-error-handling).
 
 **Sealed Type Exhaustiveness:**
 
@@ -1862,21 +1862,21 @@ Optional boxing is negligible for non-hot paths.
 
 ### Core Java Documentation
 
-- **[Java Idioms](./ex-so-stla-ja__idioms.md)** - Modern Java patterns including Optional, sealed classes, pattern matching
-- **[Java Best Practices](./ex-so-stla-ja__best-practices.md)** - Clean code guidelines with type safety emphasis
-- **[Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md)** - Common mistakes including null pointer errors
+- **[Java Idioms](./ex-so-prla-ja__idioms.md)** - Modern Java patterns including Optional, sealed classes, pattern matching
+- **[Java Best Practices](./ex-so-prla-ja__best-practices.md)** - Clean code guidelines with type safety emphasis
+- **[Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md)** - Common mistakes including null pointer errors
 
 ### Specialized Topics
 
-- **[Java Security](./ex-so-stla-ja__security.md)** - Type safety for security (tainting checker, input validation)
-- **[Java Concurrency](./ex-so-stla-ja__concurrency-and-parallelism.md)** - Thread-safe types and immutability
-- **[Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md)** - Type-safe domain models with records and sealed classes
+- **[Java Security](./ex-so-prla-ja__security.md)** - Type safety for security (tainting checker, input validation)
+- **[Java Concurrency](./ex-so-prla-ja__concurrency-and-parallelism.md)** - Thread-safe types and immutability
+- **[Domain-Driven Design](./ex-so-prla-ja__domain-driven-design.md)** - Type-safe domain models with records and sealed classes
 
 ### Release Documentation
 
-- **[Java 17 LTS](./ex-so-stla-ja__release-17.md)** - Sealed classes introduction
-- **[Java 21 LTS](./ex-so-stla-ja__release-21.md)** - Pattern matching finalized, record patterns
-- **[Java 25 LTS](./ex-so-stla-ja__release-25.md)** - Pattern matching for primitives (preview)
+- **[Java 17 LTS](./ex-so-prla-ja__release-17.md)** - Sealed classes introduction
+- **[Java 21 LTS](./ex-so-prla-ja__release-21.md)** - Pattern matching finalized, record patterns
+- **[Java 25 LTS](./ex-so-prla-ja__release-25.md)** - Pattern matching for primitives (preview)
 
 ### Platform Documentation
 

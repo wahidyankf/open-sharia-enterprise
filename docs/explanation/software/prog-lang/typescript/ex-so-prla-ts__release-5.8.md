@@ -2,7 +2,7 @@
 title: "TypeScript 5.8 Release"
 description: Release notes for TypeScript 5.8 highlighting new features, type system improvements, and breaking changes
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - release-notes

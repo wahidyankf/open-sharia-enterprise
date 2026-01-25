@@ -2,7 +2,7 @@
 title: "TypeScript Documentation Index"
 description: Comprehensive TypeScript guide for OSE Platform
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - typescript
   - javascript
@@ -52,19 +52,19 @@ TypeScript is the primary language for OSE Platform development. It provides sta
 
 All TypeScript code MUST follow the standards documented here:
 
-1. **[Idioms](./ex-so-stla-ts__idioms.md)** - TypeScript-specific patterns and conventions
-2. **[Best Practices](./ex-so-stla-ts__best-practices.md)** - Clean code standards
-3. **[Anti-Patterns](./ex-so-stla-ts__anti-patterns.md)** - Common mistakes to avoid
+1. **[Idioms](./ex-so-prla-ts__idioms.md)** - TypeScript-specific patterns and conventions
+2. **[Best Practices](./ex-so-prla-ts__best-practices.md)** - Clean code standards
+3. **[Anti-Patterns](./ex-so-prla-ts__anti-patterns.md)** - Common mistakes to avoid
 
 **For Agents**: Reference this documentation when writing TypeScript code. The `swe-programming-typescript` skill provides quick access to these standards.
 
 ### Quick Standards Reference
 
-- **Naming Conventions**: See [Best Practices - Code Organization](./ex-so-stla-ts__best-practices.md#code-organization)
-- **Error Handling**: See [Error Handling](./ex-so-stla-ts__error-handling.md)
-- **Type Safety**: See [Type Safety](./ex-so-stla-ts__type-safety.md)
-- **Testing Standards**: See [Test-Driven Development](./ex-so-stla-ts__test-driven-development.md)
-- **Security Practices**: See [Security](./ex-so-stla-ts__security.md)
+- **Naming Conventions**: See [Best Practices - Code Organization](./ex-so-prla-ts__best-practices.md#code-organization)
+- **Error Handling**: See [Error Handling](./ex-so-prla-ts__error-handling.md)
+- **Type Safety**: See [Type Safety](./ex-so-prla-ts__type-safety.md)
+- **Testing Standards**: See [Test-Driven Development](./ex-so-prla-ts__test-driven-development.md)
+- **Security Practices**: See [Security](./ex-so-prla-ts__security.md)
 
 **Related**: [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
 
@@ -78,7 +78,7 @@ TypeScript development in this platform follows the five software engineering pr
 4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - TypeScript supports through first-class functions, arrow functions, functional core/imperative shell architecture
 5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - TypeScript enables through Volta pinning, package-lock.json, strict tsconfig, deterministic builds
 
-**See Also**: [Functional Programming](./ex-so-stla-ts__functional-programming.md) for pure functions patterns, [Best Practices](./ex-so-stla-ts__best-practices.md) for explicit coding standards, [Type Safety](./ex-so-stla-ts__type-safety.md) for immutable type patterns.
+**See Also**: [Functional Programming](./ex-so-prla-ts__functional-programming.md) for pure functions patterns, [Best Practices](./ex-so-prla-ts__best-practices.md) for explicit coding standards, [Type Safety](./ex-so-prla-ts__type-safety.md) for immutable type patterns.
 
 ## TypeScript Version Strategy
 
@@ -157,43 +157,43 @@ timeline
 
 | Document                                                             | Description                  | Lines | Topics                                 |
 | -------------------------------------------------------------------- | ---------------------------- | ----- | -------------------------------------- |
-| [Best Practices](./ex-so-stla-ts__best-practices.md)                 | Core principles and patterns | 1,800 | Clarity, SRP, Immutability, Testing    |
-| [Idioms](./ex-so-stla-ts__idioms.md)                                 | TypeScript-specific patterns | 1,152 | Type guards, Utility types, Generics   |
-| [Type Safety](./ex-so-stla-ts__type-safety.md)                       | Advanced type patterns       | 763   | Branded types, Discriminated unions    |
-| [Error Handling](./ex-so-stla-ts__error-handling.md)                 | Result/Either patterns       | 591   | Custom errors, Async errors            |
-| [Interfaces & Types](./ex-so-stla-ts__interfaces-and-types.md)       | Type system deep dive        | 303   | Interfaces, Generics, Mapped types     |
-| [Functional Programming](./ex-so-stla-ts__functional-programming.md) | FP in TypeScript             | 187   | Pure functions, Composition, Monads    |
-| [Concurrency](./ex-so-stla-ts__concurrency-and-parallelism.md)       | Async patterns               | 169   | Promises, Web Workers, AbortController |
-| [Modules](./ex-so-stla-ts__modules-and-dependencies.md)              | Module systems               | 159   | ESM, npm/pnpm/bun, Monorepos           |
+| [Best Practices](./ex-so-prla-ts__best-practices.md)                 | Core principles and patterns | 1,800 | Clarity, SRP, Immutability, Testing    |
+| [Idioms](./ex-so-prla-ts__idioms.md)                                 | TypeScript-specific patterns | 1,152 | Type guards, Utility types, Generics   |
+| [Type Safety](./ex-so-prla-ts__type-safety.md)                       | Advanced type patterns       | 763   | Branded types, Discriminated unions    |
+| [Error Handling](./ex-so-prla-ts__error-handling.md)                 | Result/Either patterns       | 591   | Custom errors, Async errors            |
+| [Interfaces & Types](./ex-so-prla-ts__interfaces-and-types.md)       | Type system deep dive        | 303   | Interfaces, Generics, Mapped types     |
+| [Functional Programming](./ex-so-prla-ts__functional-programming.md) | FP in TypeScript             | 187   | Pure functions, Composition, Monads    |
+| [Concurrency](./ex-so-prla-ts__concurrency-and-parallelism.md)       | Async patterns               | 169   | Promises, Web Workers, AbortController |
+| [Modules](./ex-so-prla-ts__modules-and-dependencies.md)              | Module systems               | 159   | ESM, npm/pnpm/bun, Monorepos           |
 
 ### Advanced Topics
 
 | Document                                                          | Description             | Lines | Topics                                      |
 | ----------------------------------------------------------------- | ----------------------- | ----- | ------------------------------------------- |
-| [Domain-Driven Design](./ex-so-stla-ts__domain-driven-design.md)  | DDD patterns            | 2,200 | Entities, Value Objects, Aggregates, Events |
-| [Web Services](./ex-so-stla-ts__web-services.md)                  | API development         | 2,000 | Express, Fastify, NestJS, tRPC, Hono        |
-| [Security](./ex-so-stla-ts__security.md)                          | Security best practices | 1,900 | XSS, Injection, Auth, OWASP Top 10          |
-| [Performance](./ex-so-stla-ts__performance.md)                    | Optimization            | 1,800 | Profiling, Caching, Database, Async         |
-| [Memory Management](./ex-so-stla-ts__memory-management.md)        | V8 GC & Memory          | 1,600 | Heap, GC, Leaks, Streaming                  |
-| [Finite State Machines](./ex-so-stla-ts__finite-state-machine.md) | State patterns          | 1,600 | FSM, XState, Payment flows                  |
-| [Anti-Patterns](./ex-so-stla-ts__anti-patterns.md)                | Common mistakes         | 1,800 | Type safety, Error handling, Design         |
+| [Domain-Driven Design](./ex-so-prla-ts__domain-driven-design.md)  | DDD patterns            | 2,200 | Entities, Value Objects, Aggregates, Events |
+| [Web Services](./ex-so-prla-ts__web-services.md)                  | API development         | 2,000 | Express, Fastify, NestJS, tRPC, Hono        |
+| [Security](./ex-so-prla-ts__security.md)                          | Security best practices | 1,900 | XSS, Injection, Auth, OWASP Top 10          |
+| [Performance](./ex-so-prla-ts__performance.md)                    | Optimization            | 1,800 | Profiling, Caching, Database, Async         |
+| [Memory Management](./ex-so-prla-ts__memory-management.md)        | V8 GC & Memory          | 1,600 | Heap, GC, Leaks, Streaming                  |
+| [Finite State Machines](./ex-so-prla-ts__finite-state-machine.md) | State patterns          | 1,600 | FSM, XState, Payment flows                  |
+| [Anti-Patterns](./ex-so-prla-ts__anti-patterns.md)                | Common mistakes         | 1,800 | Type safety, Error handling, Design         |
 
 ### Testing & Quality
 
 | Document                                                                         | Description      | Lines | Topics                           |
 | -------------------------------------------------------------------------------- | ---------------- | ----- | -------------------------------- |
-| [Test-Driven Development](./ex-so-stla-ts__test-driven-development.md)           | TDD practices    | 1,800 | Jest, Vitest, Property testing   |
-| [Behaviour-Driven Development](./ex-so-stla-ts__behaviour-driven-development.md) | BDD with Gherkin | 1,500 | Cucumber, Playwright, E2E        |
-| [Linting & Formatting](./ex-so-stla-ts__linting-and-formatting.md)               | Code quality     | 1,400 | ESLint 9.x/10.x, Prettier, Hooks |
+| [Test-Driven Development](./ex-so-prla-ts__test-driven-development.md)           | TDD practices    | 1,800 | Jest, Vitest, Property testing   |
+| [Behaviour-Driven Development](./ex-so-prla-ts__behaviour-driven-development.md) | BDD with Gherkin | 1,500 | Cucumber, Playwright, E2E        |
+| [Linting & Formatting](./ex-so-prla-ts__linting-and-formatting.md)               | Code quality     | 1,400 | ESLint 9.x/10.x, Prettier, Hooks |
 
 ### Version-Specific Documentation
 
 | Version                                           | Description       | Key Features                       |
 | ------------------------------------------------- | ----------------- | ---------------------------------- |
-| [TypeScript 5.0](./ex-so-stla-ts__release-5.0.md) | Baseline version  | Decorators, const type parameters  |
-| [TypeScript 5.4](./ex-so-stla-ts__release-5.4.md) | Milestone version | NoInfer utility, Closure narrowing |
-| [TypeScript 5.6](./ex-so-stla-ts__release-5.6.md) | Stable version    | Iterator helpers, Strict checks    |
-| [TypeScript 5.9](./ex-so-stla-ts__release-5.9.md) | Latest version    | Path rewriting, Relative checks    |
+| [TypeScript 5.0](./ex-so-prla-ts__release-5.0.md) | Baseline version  | Decorators, const type parameters  |
+| [TypeScript 5.4](./ex-so-prla-ts__release-5.4.md) | Milestone version | NoInfer utility, Closure narrowing |
+| [TypeScript 5.6](./ex-so-prla-ts__release-5.6.md) | Stable version    | Iterator helpers, Strict checks    |
+| [TypeScript 5.9](./ex-so-prla-ts__release-5.9.md) | Latest version    | Path rewriting, Relative checks    |
 
 ### DDD Templates
 
@@ -1366,34 +1366,34 @@ end
 
 New to TypeScript? Start here:
 
-1. [Best Practices](./ex-so-stla-ts__best-practices.md) - Core principles
-2. [Interfaces & Types](./ex-so-stla-ts__interfaces-and-types.md) - Type basics
-3. [Error Handling](./ex-so-stla-ts__error-handling.md) - Result pattern
-4. [Idioms](./ex-so-stla-ts__idioms.md) - TypeScript patterns
-5. [Modules](./ex-so-stla-ts__modules-and-dependencies.md) - Module systems
-6. [Test-Driven Development](./ex-so-stla-ts__test-driven-development.md) - Testing basics
-7. [Linting & Formatting](./ex-so-stla-ts__linting-and-formatting.md) - Code quality
+1. [Best Practices](./ex-so-prla-ts__best-practices.md) - Core principles
+2. [Interfaces & Types](./ex-so-prla-ts__interfaces-and-types.md) - Type basics
+3. [Error Handling](./ex-so-prla-ts__error-handling.md) - Result pattern
+4. [Idioms](./ex-so-prla-ts__idioms.md) - TypeScript patterns
+5. [Modules](./ex-so-prla-ts__modules-and-dependencies.md) - Module systems
+6. [Test-Driven Development](./ex-so-prla-ts__test-driven-development.md) - Testing basics
+7. [Linting & Formatting](./ex-so-prla-ts__linting-and-formatting.md) - Code quality
 
 ### Intermediate Path
 
 Comfortable with TypeScript? Level up:
 
-1. [Type Safety](./ex-so-stla-ts__type-safety.md) - Advanced types
-2. [Functional Programming](./ex-so-stla-ts__functional-programming.md) - FP patterns
-3. [Concurrency](./ex-so-stla-ts__concurrency-and-parallelism.md) - Async patterns
-4. [Domain-Driven Design](./ex-so-stla-ts__domain-driven-design.md) - DDD patterns
-5. [Web Services](./ex-so-stla-ts__web-services.md) - API development
-6. [Performance](./ex-so-stla-ts__performance.md) - Optimization
-7. [Behaviour-Driven Development](./ex-so-stla-ts__behaviour-driven-development.md) - BDD
-8. [Anti-Patterns](./ex-so-stla-ts__anti-patterns.md) - Avoid mistakes
+1. [Type Safety](./ex-so-prla-ts__type-safety.md) - Advanced types
+2. [Functional Programming](./ex-so-prla-ts__functional-programming.md) - FP patterns
+3. [Concurrency](./ex-so-prla-ts__concurrency-and-parallelism.md) - Async patterns
+4. [Domain-Driven Design](./ex-so-prla-ts__domain-driven-design.md) - DDD patterns
+5. [Web Services](./ex-so-prla-ts__web-services.md) - API development
+6. [Performance](./ex-so-prla-ts__performance.md) - Optimization
+7. [Behaviour-Driven Development](./ex-so-prla-ts__behaviour-driven-development.md) - BDD
+8. [Anti-Patterns](./ex-so-prla-ts__anti-patterns.md) - Avoid mistakes
 
 ### Advanced Path
 
 Master-level TypeScript development:
 
-1. [Security](./ex-so-stla-ts__security.md) - Security hardening
-2. [Memory Management](./ex-so-stla-ts__memory-management.md) - V8 internals
-3. [Finite State Machines](./ex-so-stla-ts__finite-state-machine.md) - Complex state
+1. [Security](./ex-so-prla-ts__security.md) - Security hardening
+2. [Memory Management](./ex-so-prla-ts__memory-management.md) - V8 internals
+3. [Finite State Machines](./ex-so-prla-ts__finite-state-machine.md) - Complex state
 4. Version-specific docs (5.0, 5.4, 5.6, 5.9) - Latest features
 5. Templates - Production patterns
 

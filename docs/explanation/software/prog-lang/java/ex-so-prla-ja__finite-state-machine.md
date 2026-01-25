@@ -2,7 +2,7 @@
 title: "Java Finite State Machines"
 description: State machine patterns for managing state transitions in Java 17-25
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - java
   - finite-state-machine
@@ -14,7 +14,7 @@ tags:
   - java-21
   - spring-state-machine
 related:
-  - ./ex-so-stla-ja__best-practices.md
+  - ./ex-so-prla-ja__best-practices.md
 principles:
   - explicit-over-implicit
   - immutability
@@ -64,10 +64,10 @@ This guide targets Java developers building enterprise financial systems. It ass
 
 **Related Documentation:**
 
-- [Java Idioms](./ex-so-stla-ja__idioms.md) - Records, sealed classes, pattern matching
-- [Java Best Practices](./ex-so-stla-ja__best-practices.md) - Code quality standards
-- [Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md) - Aggregate state modeling
-- [Test-Driven Development](./ex-so-stla-ja__test-driven-development.md) - Testing FSMs
+- [Java Idioms](./ex-so-prla-ja__idioms.md) - Records, sealed classes, pattern matching
+- [Java Best Practices](./ex-so-prla-ja__best-practices.md) - Code quality standards
+- [Domain-Driven Design](./ex-so-prla-ja__domain-driven-design.md) - Aggregate state modeling
+- [Test-Driven Development](./ex-so-prla-ja__test-driven-development.md) - Testing FSMs
 
 FSM patterns align with [software engineering principles](../../../../../governance/principles/software-engineering/README.md):
 
@@ -2162,15 +2162,15 @@ stateDiagram-v2
 
 ### Core Java Documentation
 
-- **[Java Idioms](./ex-so-stla-ja__idioms.md)** - Records, sealed classes, pattern matching for FSMs
-- **[Java Best Practices](./ex-so-stla-ja__best-practices.md)** - Code quality and design patterns
-- **[Java Anti-Patterns](./ex-so-stla-ja__anti-patterns.md)** - Common FSM mistakes to avoid
+- **[Java Idioms](./ex-so-prla-ja__idioms.md)** - Records, sealed classes, pattern matching for FSMs
+- **[Java Best Practices](./ex-so-prla-ja__best-practices.md)** - Code quality and design patterns
+- **[Java Anti-Patterns](./ex-so-prla-ja__anti-patterns.md)** - Common FSM mistakes to avoid
 
 ### Specialized Topics
 
-- **[Domain-Driven Design](./ex-so-stla-ja__domain-driven-design.md)** - Aggregate state modeling
-- **[Test-Driven Development](./ex-so-stla-ja__test-driven-development.md)** - Testing FSMs
-- **[Concurrency and Parallelism](./ex-so-stla-ja__concurrency-and-parallelism.md)** - Thread-safe state machines
+- **[Domain-Driven Design](./ex-so-prla-ja__domain-driven-design.md)** - Aggregate state modeling
+- **[Test-Driven Development](./ex-so-prla-ja__test-driven-development.md)** - Testing FSMs
+- **[Concurrency and Parallelism](./ex-so-prla-ja__concurrency-and-parallelism.md)** - Thread-safe state machines
 
 ### Platform Documentation
 

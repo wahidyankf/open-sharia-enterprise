@@ -2,7 +2,7 @@
 title: Go Best Practices
 description: Comprehensive guide to Go best practices for code organization, naming, testing, performance, and maintainability
 category: explanation
-subcategory: stack-lang
+subcategory: prog-lang
 tags:
   - golang
   - best-practices
@@ -163,7 +163,7 @@ func Calculate(wealth, nisab float64) float64 {
 
 **Islamic Finance Application**: Automated Zakat calculation verification ensures consistent nisab threshold checking across all transactions, preventing manual miscalculations that could lead to underpayment (haram).
 
-**See Also**: [Go Linting and Formatting](./ex-so-stla-go__linting-and-formatting.md)
+**See Also**: [Go Linting and Formatting](./ex-so-prla-go__linting-and-formatting.md)
 
 ### 2. Explicit Over Implicit
 
@@ -1365,7 +1365,7 @@ var (
 
 ## Error Handling
 
-See [Error Handling Documentation](./ex-so-stla-go__error-handling.md) for comprehensive coverage.
+See [Error Handling Documentation](./ex-so-prla-go__error-handling.md) for comprehensive coverage.
 
 ### ⚠️ Error Handling Patterns
 
@@ -1838,7 +1838,7 @@ func ProcessString(data string) {
 
 ## Concurrency
 
-See [Concurrency and Parallelism Documentation](./ex-so-stla-go__concurrency-and-parallelism.md) for comprehensive coverage.
+See [Concurrency and Parallelism Documentation](./ex-so-prla-go__concurrency-and-parallelism.md) for comprehensive coverage.
 
 ### Key Practices
 
@@ -2623,10 +2623,10 @@ Use this checklist to ensure your Go code follows best practices:
 
 **Related Documentation**:
 
-- [Go Idioms](./ex-so-stla-go__idioms.md)
-- [Error Handling](./ex-so-stla-go__error-handling.md)
-- [Concurrency and Parallelism](./ex-so-stla-go__concurrency-and-parallelism.md)
-- [Interfaces and Composition](./ex-so-stla-go__interfaces-and-composition.md)
+- [Go Idioms](./ex-so-prla-go__idioms.md)
+- [Error Handling](./ex-so-prla-go__error-handling.md)
+- [Concurrency and Parallelism](./ex-so-prla-go__concurrency-and-parallelism.md)
+- [Interfaces and Composition](./ex-so-prla-go__interfaces-and-composition.md)
 
 **Navigation**: [← Back to Golang Overview](./README.md)
 
