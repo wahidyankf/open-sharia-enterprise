@@ -10,7 +10,7 @@ tags:
   - monitoring
   - observability
 related:
-  - ./ex-so-stli-jvsb__best-practices.md
+  - ./ex-so-stli-jvspbo__best-practices.md
 last_updated: 2026-01-25
 ---
 
@@ -20,7 +20,7 @@ last_updated: 2026-01-25
 
 Production monitoring and observability with Spring Boot Actuator, Micrometer, and distributed tracing.
 
-See [Best Practices - Observability](./ex-so-stli-jvsb__best-practices.md#observability) for implementation details.
+See [Best Practices - Observability](./ex-so-stli-jvspbo__best-practices.md#observability) for implementation details.
 
 ## Key Topics
 

@@ -10,8 +10,8 @@ tags:
   - mistakes
   - avoid
 related:
-  - ./ex-so-stli-jvsb__idioms.md
-  - ./ex-so-stli-jvsb__best-practices.md
+  - ./ex-so-stli-jvspbo__idioms.md
+  - ./ex-so-stli-jvspbo__best-practices.md
 last_updated: 2026-01-25
 ---
 
@@ -1139,10 +1139,10 @@ class ZakatCalculationIntegrationTest {
 
 ## Related Documentation
 
-- **[Spring Boot Idioms](./ex-so-stli-jvsb__idioms.md)** - Correct patterns
-- **[Spring Boot Best Practices](./ex-so-stli-jvsb__best-practices.md)** - Production standards
+- **[Spring Boot Idioms](./ex-so-stli-jvspbo__idioms.md)** - Correct patterns
+- **[Spring Boot Best Practices](./ex-so-stli-jvspbo__best-practices.md)** - Production standards
 - **[Java Anti-Patterns](../../stack-lang/java/ex-so-stla-ja__anti-patterns.md)** - Java mistakes
-- **[Testing](./ex-so-stli-jvsb__testing.md)** - Testing strategies
+- **[Testing](./ex-so-stli-jvspbo__testing.md)** - Testing strategies
 
 ---
 

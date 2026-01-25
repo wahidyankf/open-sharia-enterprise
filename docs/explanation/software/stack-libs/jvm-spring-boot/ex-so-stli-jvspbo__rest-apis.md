@@ -10,7 +10,7 @@ tags:
   - validation
   - http
 related:
-  - ./ex-so-stli-jvsb__best-practices.md
+  - ./ex-so-stli-jvspbo__best-practices.md
 last_updated: 2026-01-25
 ---
 
@@ -20,7 +20,7 @@ last_updated: 2026-01-25
 
 Comprehensive guide to building production-ready RESTful APIs with Spring Boot, covering controllers, validation, exception handling, and HTTP semantics.
 
-See [Best Practices - REST API Design](./ex-so-stli-jvsb__best-practices.md#rest-api-design) and [Anti-Patterns - API Issues](./ex-so-stli-jvsb__anti-patterns.md#api-anti-patterns) for detailed patterns.
+See [Best Practices - REST API Design](./ex-so-stli-jvspbo__best-practices.md#rest-api-design) and [Anti-Patterns - API Issues](./ex-so-stli-jvspbo__anti-patterns.md#api-anti-patterns) for detailed patterns.
 
 ## Key Topics
 

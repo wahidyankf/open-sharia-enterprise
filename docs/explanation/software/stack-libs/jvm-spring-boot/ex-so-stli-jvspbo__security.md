@@ -10,7 +10,7 @@ tags:
   - jwt
   - authentication
 related:
-  - ./ex-so-stli-jvsb__best-practices.md
+  - ./ex-so-stli-jvspbo__best-practices.md
 last_updated: 2026-01-25
 ---
 
@@ -20,7 +20,7 @@ last_updated: 2026-01-25
 
 Comprehensive guide to securing Spring Boot applications with Spring Security, OAuth2, and JWT authentication.
 
-See [Best Practices - Security](./ex-so-stli-jvsb__best-practices.md#security-configuration) for detailed security patterns.
+See [Best Practices - Security](./ex-so-stli-jvspbo__best-practices.md#security-configuration) for detailed security patterns.
 
 ## Key Topics
 

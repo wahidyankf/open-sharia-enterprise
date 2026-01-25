@@ -9,7 +9,7 @@ tags:
   - immutability
   - pure-functions
 related:
-  - ./ex-so-stli-jvsb__idioms.md
+  - ./ex-so-stli-jvspbo__idioms.md
 principles:
   - immutability
   - pure-functions

@@ -98,20 +98,20 @@ Spring Boot is the primary backend framework for building REST APIs, domain serv
 **Comprehensive Documentation Coverage**:
 
 - **[Framework Overview](./jvm-spring-boot/README.md)** - Version strategy, architecture integration, getting started
-- **[Idioms](./jvm-spring-boot/ex-so-stli-jvsb__idioms.md)** - Framework-specific patterns (auto-configuration, DI, profiles)
-- **[Best Practices](./jvm-spring-boot/ex-so-stli-jvsb__best-practices.md)** - Production standards (project structure, error handling, testing)
-- **[Anti-Patterns](./jvm-spring-boot/ex-so-stli-jvsb__anti-patterns.md)** - Common mistakes to avoid
-- **[Configuration](./jvm-spring-boot/ex-so-stli-jvsb__configuration.md)** - Environment management, properties, profiles
-- **[Dependency Injection](./jvm-spring-boot/ex-so-stli-jvsb__dependency-injection.md)** - IoC container, bean scopes, lifecycle
-- **[REST APIs](./jvm-spring-boot/ex-so-stli-jvsb__rest-apis.md)** - RESTful services, validation, exception handling
-- **[Data Access](./jvm-spring-boot/ex-so-stli-jvsb__data-access.md)** - Spring Data JPA, repositories, transactions
-- **[Security](./jvm-spring-boot/ex-so-stli-jvsb__security.md)** - Spring Security, OAuth2, JWT, method security
-- **[Testing](./jvm-spring-boot/ex-so-stli-jvsb__testing.md)** - Unit, integration, slice tests, TestContainers
-- **[Observability](./jvm-spring-boot/ex-so-stli-jvsb__observability.md)** - Actuator, metrics, health checks, tracing
-- **[Performance](./jvm-spring-boot/ex-so-stli-jvsb__performance.md)** - Optimization, caching, async processing
-- **[Domain-Driven Design](./jvm-spring-boot/ex-so-stli-jvsb__domain-driven-design.md)** - DDD tactical patterns with Spring
-- **[Functional Programming](./jvm-spring-boot/ex-so-stli-jvsb__functional-programming.md)** - FP patterns, immutability
-- **[Version Migration](./jvm-spring-boot/ex-so-stli-jvsb__version-migration.md)** - Spring Boot 2.x to 3.x upgrade guide
+- **[Idioms](./jvm-spring-boot/ex-so-stli-jvspbo__idioms.md)** - Framework-specific patterns (auto-configuration, DI, profiles)
+- **[Best Practices](./jvm-spring-boot/ex-so-stli-jvspbo__best-practices.md)** - Production standards (project structure, error handling, testing)
+- **[Anti-Patterns](./jvm-spring-boot/ex-so-stli-jvspbo__anti-patterns.md)** - Common mistakes to avoid
+- **[Configuration](./jvm-spring-boot/ex-so-stli-jvspbo__configuration.md)** - Environment management, properties, profiles
+- **[Dependency Injection](./jvm-spring-boot/ex-so-stli-jvspbo__dependency-injection.md)** - IoC container, bean scopes, lifecycle
+- **[REST APIs](./jvm-spring-boot/ex-so-stli-jvspbo__rest-apis.md)** - RESTful services, validation, exception handling
+- **[Data Access](./jvm-spring-boot/ex-so-stli-jvspbo__data-access.md)** - Spring Data JPA, repositories, transactions
+- **[Security](./jvm-spring-boot/ex-so-stli-jvspbo__security.md)** - Spring Security, OAuth2, JWT, method security
+- **[Testing](./jvm-spring-boot/ex-so-stli-jvspbo__testing.md)** - Unit, integration, slice tests, TestContainers
+- **[Observability](./jvm-spring-boot/ex-so-stli-jvspbo__observability.md)** - Actuator, metrics, health checks, tracing
+- **[Performance](./jvm-spring-boot/ex-so-stli-jvspbo__performance.md)** - Optimization, caching, async processing
+- **[Domain-Driven Design](./jvm-spring-boot/ex-so-stli-jvspbo__domain-driven-design.md)** - DDD tactical patterns with Spring
+- **[Functional Programming](./jvm-spring-boot/ex-so-stli-jvspbo__functional-programming.md)** - FP patterns, immutability
+- **[Version Migration](./jvm-spring-boot/ex-so-stli-jvspbo__version-migration.md)** - Spring Boot 2.x to 3.x upgrade guide
 - **[Code Templates](./jvm-spring-boot/templates/README.md)** - Production-ready templates (REST controllers, services, repositories, configuration)
 
 **Key Features**:
@@ -129,8 +129,8 @@ Spring Boot applications in the platform follow Domain-Driven Design principles 
 **Quick Start**:
 
 1. Review [Spring Boot README](./jvm-spring-boot/README.md) for version strategy and architecture
-2. Study [Idioms](./jvm-spring-boot/ex-so-stli-jvsb__idioms.md) for framework patterns
-3. Follow [Best Practices](./jvm-spring-boot/ex-so-stli-jvsb__best-practices.md) for production standards
+2. Study [Idioms](./jvm-spring-boot/ex-so-stli-jvspbo__idioms.md) for framework patterns
+3. Follow [Best Practices](./jvm-spring-boot/ex-so-stli-jvspbo__best-practices.md) for production standards
 4. Use [Code Templates](./jvm-spring-boot/templates/README.md) for consistent implementation
 5. Apply [Java coding standards](../stack-lang/java/README.md) for language-specific idioms
 
