@@ -36,11 +36,11 @@ This directory contains 26 skill packages that provide progressive knowledge del
 
 ### 💻 Programming Language Skills
 
-- **programming-elixir** - Elixir coding standards quick reference
-- **programming-golang** - Go coding standards quick reference
-- **programming-java** - Java coding standards quick reference
-- **programming-python** - Python coding standards quick reference
-- **programming-typescript** - TypeScript coding standards quick reference
+- **swe-programming-elixir** - Elixir coding standards quick reference
+- **swe-programming-golang** - Go coding standards quick reference
+- **swe-programming-java** - Java coding standards quick reference
+- **swe-programming-python** - Python coding standards quick reference
+- **swe-programming-typescript** - TypeScript coding standards quick reference
 
 ### 🌐 Application-Specific Skills
 

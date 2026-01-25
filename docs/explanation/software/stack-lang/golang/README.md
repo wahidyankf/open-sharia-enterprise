@@ -43,7 +43,7 @@ All Go code MUST follow the standards documented here:
 2. **[Best Practices](./ex-so-stla-go__best-practices.md)** - Clean code standards
 3. **[Anti-Patterns](./ex-so-stla-go__anti-patterns.md)** - Common mistakes to avoid
 
-**For Agents**: Reference this documentation when writing Go code. The `programming-golang` skill provides quick access to these standards.
+**For Agents**: Reference this documentation when writing Go code. The `swe-programming-golang` skill provides quick access to these standards.
 
 ### Quick Standards Reference
 

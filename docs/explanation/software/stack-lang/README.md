@@ -75,11 +75,11 @@ All code written in the languages documented here MUST follow the standards, pat
 
 **Skills Available**:
 
-- `programming-java` - Java standards quick reference
-- `programming-typescript` - TypeScript standards quick reference
-- `programming-golang` - Go standards quick reference
-- `programming-python` - Python standards quick reference
-- `programming-elixir` - Elixir standards quick reference
+- `swe-programming-java` - Java standards quick reference
+- `swe-programming-typescript` - TypeScript standards quick reference
+- `swe-programming-golang` - Go standards quick reference
+- `swe-programming-python` - Python standards quick reference
+- `swe-programming-elixir` - Elixir standards quick reference
 
 **Governance**: See [Software Design Reference](../../../../governance/conventions/programming/software-design-reference.md) for the relationship between this documentation and repository governance.
 
