@@ -1,3 +1,19 @@
+---
+title: DDD Templates
+description: Ready-to-use templates for documenting Domain-Driven Design artifacts including bounded contexts, context mapping, aggregates, entities, and domain events
+category: explanation
+subcategory: architecture
+tags:
+  - ddd
+  - templates
+  - bounded-context
+  - context-mapping
+  - aggregates
+  - domain-events
+created: 2026-01-25
+updated: 2026-01-25
+---
+
 # DDD Templates
 
 This directory provides ready-to-use templates for documenting Domain-Driven Design (DDD) artifacts. These templates support strategic design (bounded contexts, context mapping) and tactical design (aggregates, entities, value objects, domain events).
@@ -303,10 +319,10 @@ All Mermaid diagrams in templates use the [Color Palette](./ex-so-ar-dodrdedd-te
 
 ### Repository Standards
 
-- **[Diátaxis Framework](../../../../../governance/conventions/meta/diataxis-framework.md)** - Documentation organization philosophy
-- **[Diagram Standards](../../../../../governance/conventions/formatting/diagrams.md)** - Repository-wide diagram conventions
-- **[Content Quality](../../../../../governance/conventions/content/quality.md)** - Markdown content quality standards
-- **[Accessibility First Principle](../../../../../governance/principles/content/accessibility-first.md)** - WCAG AA compliance requirements
+- **[Diátaxis Framework](../../../../../../governance/conventions/meta/diataxis-framework.md)** - Documentation organization philosophy
+- **[Diagram Standards](../../../../../../governance/conventions/formatting/diagrams.md)** - Repository-wide diagram conventions
+- **[Content Quality](../../../../../../governance/conventions/content/quality.md)** - Markdown content quality standards
+- **[Accessibility First Principle](../../../../../../governance/principles/content/accessibility-first.md)** - WCAG AA compliance requirements
 
 ---
 
@@ -367,5 +383,5 @@ If you identify a missing DDD artifact template:
 ### OSE Platform Resources
 
 - [OSE Platform Documentation](https://oseplatform.com/docs) - Platform-specific DDD examples
-- [Repository Architecture](../../../../../governance/repository-governance-architecture.md) - Six-layer governance hierarchy
+- [Repository Architecture](../../../../../../governance/repository-governance-architecture.md) - Six-layer governance hierarchy
 - [AyoKoding DDD Tutorials](https://ayokoding.com/tutorials/domain-driven-design) - Indonesian/English DDD learning resources

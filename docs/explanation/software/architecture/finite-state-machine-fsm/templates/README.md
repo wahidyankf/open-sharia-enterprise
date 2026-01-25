@@ -1,16 +1,16 @@
 ---
 title: "FSM Templates - Overview"
 description: Production-ready templates for FSM design, implementation, and testing
+category: explanation
+subcategory: architecture
 tags:
-  - explanation
-  - software
-  - architecture
-  - finite-state-machine
   - fsm
+  - finite-state-machine
   - templates
-  - readme
   - islamic-finance
-last_updated: 2026-01-21
+  - patterns
+created: 2026-01-21
+updated: 2026-01-25
 ---
 
 # FSM Templates

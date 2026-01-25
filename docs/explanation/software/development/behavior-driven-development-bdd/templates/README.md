@@ -1,3 +1,18 @@
+---
+title: BDD Templates
+description: Ready-to-use Gherkin scenario templates for behavior-driven development and acceptance testing
+category: explanation
+subcategory: development
+tags:
+  - bdd
+  - templates
+  - gherkin
+  - scenarios
+  - acceptance-testing
+created: 2026-01-25
+updated: 2026-01-25
+---
+
 # BDD Templates
 
 **Stop staring at blank Gherkin files. Start with proven scenarios.**

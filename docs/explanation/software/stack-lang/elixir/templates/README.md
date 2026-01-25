@@ -1,3 +1,18 @@
+---
+title: Elixir DDD Templates
+description: Production-ready Domain-Driven Design templates adapted for Elixir's functional programming model
+category: explanation
+subcategory: stack-lang
+tags:
+  - elixir
+  - templates
+  - ddd
+  - functional-programming
+  - domain-modeling
+created: 2026-01-25
+updated: 2026-01-25
+---
+
 # Domain-Driven Design Templates for Elixir
 
 **Category**: DDD Templates

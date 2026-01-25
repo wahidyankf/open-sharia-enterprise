@@ -17,6 +17,14 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
+principles:
+  - automation-over-manual
+  - explicit-over-implicit
+  - immutability
+  - pure-functions
+  - reproducibility
+created: 2026-01-25
+updated: 2026-01-25
 ---
 
 # Golang

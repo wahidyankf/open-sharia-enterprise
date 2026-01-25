@@ -1,3 +1,25 @@
+---
+title: Behavior-Driven Development (BDD)
+description: BDD practices using Gherkin syntax for collaborative specification, living documentation, and acceptance testing
+category: explanation
+subcategory: development
+tags:
+  - bdd
+  - behavior-driven-development
+  - gherkin
+  - testing
+  - acceptance-criteria
+  - cucumber
+  - specification
+  - index
+principles:
+  - documentation-first
+  - explicit-over-implicit
+  - automation-over-manual
+created: 2026-01-25
+updated: 2026-01-25
+---
+
 # Behavior-Driven Development (BDD) Documentation
 
 Comprehensive documentation on Behavior-Driven Development patterns, principles, and practices for building software through concrete examples and stakeholder collaboration. This documentation covers Gherkin syntax, Three Amigos practice, Example Mapping, and BDD integration with Test-Driven Development and Domain-Driven Design, with examples from finance and business domains.

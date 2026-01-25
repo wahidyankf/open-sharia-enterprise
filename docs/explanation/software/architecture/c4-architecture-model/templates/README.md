@@ -9,7 +9,7 @@ tags:
   - starter-kit
   - diagrams
 created: 2026-01-20
-updated: 2026-01-20
+updated: 2026-01-25
 ---
 
 # C4 Diagram Templates

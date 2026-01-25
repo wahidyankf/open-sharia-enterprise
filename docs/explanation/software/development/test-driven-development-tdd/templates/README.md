@@ -1,3 +1,18 @@
+---
+title: TDD Templates
+description: Ready-to-use templates for practicing test-driven development with various test types and patterns
+category: explanation
+subcategory: development
+tags:
+  - tdd
+  - templates
+  - testing
+  - unit-tests
+  - red-green-refactor
+created: 2026-01-25
+updated: 2026-01-25
+---
+
 # TDD Templates
 
 ## Metadata
