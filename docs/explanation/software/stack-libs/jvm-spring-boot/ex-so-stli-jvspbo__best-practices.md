@@ -10,8 +10,8 @@ tags:
   - code-quality
   - standards
 related:
-  - ./ex-so-stli-jvsb__idioms.md
-  - ./ex-so-stli-jvsb__anti-patterns.md
+  - ./ex-so-stli-jvspbo__idioms.md
+  - ./ex-so-stli-jvspbo__anti-patterns.md
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -1339,13 +1339,13 @@ public class NisabRateService {
 
 ## Related Documentation
 
-- **[Spring Boot Idioms](./ex-so-stli-jvsb__idioms.md)** - Framework patterns
-- **[Spring Boot Anti-Patterns](./ex-so-stli-jvsb__anti-patterns.md)** - Common mistakes
-- **[Configuration](./ex-so-stli-jvsb__configuration.md)** - Configuration management
-- **[REST APIs](./ex-so-stli-jvsb__rest-apis.md)** - RESTful services
-- **[Data Access](./ex-so-stli-jvsb__data-access.md)** - Spring Data JPA
-- **[Security](./ex-so-stli-jvsb__security.md)** - Spring Security
-- **[Testing](./ex-so-stli-jvsb__testing.md)** - Testing strategies
+- **[Spring Boot Idioms](./ex-so-stli-jvspbo__idioms.md)** - Framework patterns
+- **[Spring Boot Anti-Patterns](./ex-so-stli-jvspbo__anti-patterns.md)** - Common mistakes
+- **[Configuration](./ex-so-stli-jvspbo__configuration.md)** - Configuration management
+- **[REST APIs](./ex-so-stli-jvspbo__rest-apis.md)** - RESTful services
+- **[Data Access](./ex-so-stli-jvspbo__data-access.md)** - Spring Data JPA
+- **[Security](./ex-so-stli-jvspbo__security.md)** - Spring Security
+- **[Testing](./ex-so-stli-jvspbo__testing.md)** - Testing strategies
 - **[Java Best Practices](../../stack-lang/java/ex-so-stla-ja__best-practices.md)** - Java standards
 
 ---

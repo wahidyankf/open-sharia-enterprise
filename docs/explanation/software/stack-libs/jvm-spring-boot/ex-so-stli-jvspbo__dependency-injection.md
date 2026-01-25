@@ -10,7 +10,7 @@ tags:
   - beans
   - constructor-injection
 related:
-  - ./ex-so-stli-jvsb__idioms.md
+  - ./ex-so-stli-jvspbo__idioms.md
 principles:
   - explicit-over-implicit
 last_updated: 2026-01-25
@@ -111,8 +111,8 @@ public class CacheConfig {
 
 ## Related Documentation
 
-- **[Idioms](./ex-so-stli-jvsb__idioms.md#constructor-injection-over-field-injection)** - DI patterns
-- **[Anti-Patterns](./ex-so-stli-jvsb__anti-patterns.md#1-field-injection)** - DI mistakes
+- **[Idioms](./ex-so-stli-jvspbo__idioms.md#constructor-injection-over-field-injection)** - DI patterns
+- **[Anti-Patterns](./ex-so-stli-jvspbo__anti-patterns.md#1-field-injection)** - DI mistakes
 
 ---
 

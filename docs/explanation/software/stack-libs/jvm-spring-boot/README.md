@@ -38,11 +38,11 @@ This documentation covers Spring Boot 3.x (latest stable) with Java 17+ targetin
 
 All Spring Boot applications MUST follow the patterns and practices documented here:
 
-1. **[Idioms](./ex-so-stli-jvsb__idioms.md)** - Spring Boot-specific patterns
-2. **[Best Practices](./ex-so-stli-jvsb__best-practices.md)** - Framework standards
-3. **[Anti-Patterns](./ex-so-stli-jvsb__anti-patterns.md)** - Common mistakes
-4. **[Configuration](./ex-so-stli-jvsb__configuration.md)** - Configuration management
-5. **[Dependency Injection](./ex-so-stli-jvsb__dependency-injection.md)** - DI patterns
+1. **[Idioms](./ex-so-stli-jvspbo__idioms.md)** - Spring Boot-specific patterns
+2. **[Best Practices](./ex-so-stli-jvspbo__best-practices.md)** - Framework standards
+3. **[Anti-Patterns](./ex-so-stli-jvspbo__anti-patterns.md)** - Common mistakes
+4. **[Configuration](./ex-so-stli-jvspbo__configuration.md)** - Configuration management
+5. **[Dependency Injection](./ex-so-stli-jvspbo__dependency-injection.md)** - DI patterns
 
 **For Agents**: Reference this documentation when building Spring Boot applications.
 
@@ -51,10 +51,10 @@ All Spring Boot applications MUST follow the patterns and practices documented h
 ### Quick Standards Reference
 
 - **Project Structure**: See [Architecture Integration](#architecture-integration)
-- **REST APIs**: See [REST APIs](./ex-so-stli-jvsb__rest-apis.md)
-- **Data Access**: See [Data Access](./ex-so-stli-jvsb__data-access.md)
-- **Security**: See [Security](./ex-so-stli-jvsb__security.md)
-- **Testing**: See [Testing](./ex-so-stli-jvsb__testing.md)
+- **REST APIs**: See [REST APIs](./ex-so-stli-jvspbo__rest-apis.md)
+- **Data Access**: See [Data Access](./ex-so-stli-jvspbo__data-access.md)
+- **Security**: See [Security](./ex-so-stli-jvspbo__security.md)
+- **Testing**: See [Testing](./ex-so-stli-jvspbo__testing.md)
 
 ## Software Engineering Principles
 
@@ -66,7 +66,7 @@ Spring Boot usage in this platform follows the five software engineering princip
 4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Apply functional core/imperative shell: pure domain logic, side effects at boundaries
 5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Spring Boot enables through version pinning (Maven/Gradle wrapper), dependency management, environment-specific profiles
 
-**See Also**: [Functional Programming](./ex-so-stli-jvsb__functional-programming.md) for FP patterns with Spring Boot.
+**See Also**: [Functional Programming](./ex-so-stli-jvspbo__functional-programming.md) for FP patterns with Spring Boot.
 
 ## Quick Reference
 
@@ -90,20 +90,20 @@ Spring Boot usage in this platform follows the five software engineering princip
 
 **Core Documentation:**
 
-- [Idioms](./ex-so-stli-jvsb__idioms.md) - Spring Boot patterns (auto-configuration, component scanning, profiles)
-- [Best Practices](./ex-so-stli-jvsb__best-practices.md) - Framework coding standards
-- [Anti-Patterns](./ex-so-stli-jvsb__anti-patterns.md) - Common Spring Boot mistakes
-- [Configuration](./ex-so-stli-jvsb__configuration.md) - application.yml, profiles, externalized config
-- [Dependency Injection](./ex-so-stli-jvsb__dependency-injection.md) - Constructor injection, bean scopes
-- [REST APIs](./ex-so-stli-jvsb__rest-apis.md) - RESTful services, validation, exception handling
-- [Data Access](./ex-so-stli-jvsb__data-access.md) - Spring Data JPA, repositories, transactions
-- [Security](./ex-so-stli-jvsb__security.md) - Spring Security, OAuth2, JWT
-- [Testing](./ex-so-stli-jvsb__testing.md) - @SpringBootTest, slices, TestContainers
-- [Observability](./ex-so-stli-jvsb__observability.md) - Actuator, metrics, health checks
-- [Performance](./ex-so-stli-jvsb__performance.md) - Optimization, caching, async processing
-- [Domain-Driven Design](./ex-so-stli-jvsb__domain-driven-design.md) - DDD with Spring Boot
-- [Functional Programming](./ex-so-stli-jvsb__functional-programming.md) - FP patterns with Spring
-- [Version Migration](./ex-so-stli-jvsb__version-migration.md) - Upgrading Spring Boot versions
+- [Idioms](./ex-so-stli-jvspbo__idioms.md) - Spring Boot patterns (auto-configuration, component scanning, profiles)
+- [Best Practices](./ex-so-stli-jvspbo__best-practices.md) - Framework coding standards
+- [Anti-Patterns](./ex-so-stli-jvspbo__anti-patterns.md) - Common Spring Boot mistakes
+- [Configuration](./ex-so-stli-jvspbo__configuration.md) - application.yml, profiles, externalized config
+- [Dependency Injection](./ex-so-stli-jvspbo__dependency-injection.md) - Constructor injection, bean scopes
+- [REST APIs](./ex-so-stli-jvspbo__rest-apis.md) - RESTful services, validation, exception handling
+- [Data Access](./ex-so-stli-jvspbo__data-access.md) - Spring Data JPA, repositories, transactions
+- [Security](./ex-so-stli-jvspbo__security.md) - Spring Security, OAuth2, JWT
+- [Testing](./ex-so-stli-jvspbo__testing.md) - @SpringBootTest, slices, TestContainers
+- [Observability](./ex-so-stli-jvspbo__observability.md) - Actuator, metrics, health checks
+- [Performance](./ex-so-stli-jvspbo__performance.md) - Optimization, caching, async processing
+- [Domain-Driven Design](./ex-so-stli-jvspbo__domain-driven-design.md) - DDD with Spring Boot
+- [Functional Programming](./ex-so-stli-jvspbo__functional-programming.md) - FP patterns with Spring
+- [Version Migration](./ex-so-stli-jvspbo__version-migration.md) - Upgrading Spring Boot versions
 
 ## Spring Boot Version Strategy
 
@@ -161,7 +161,7 @@ timeline
 
 ## Documentation Structure
 
-### [Spring Boot Idioms](./ex-so-stli-jvsb__idioms.md)
+### [Spring Boot Idioms](./ex-so-stli-jvspbo__idioms.md)
 
 Framework-specific patterns for writing idiomatic Spring Boot applications.
 
@@ -178,7 +178,7 @@ Framework-specific patterns for writing idiomatic Spring Boot applications.
 - Custom auto-configuration
 - Spring Boot DevTools for development
 
-### [Spring Boot Best Practices](./ex-so-stli-jvsb__best-practices.md)
+### [Spring Boot Best Practices](./ex-so-stli-jvspbo__best-practices.md)
 
 Proven approaches for building production-ready Spring Boot applications.
 
@@ -195,7 +195,7 @@ Proven approaches for building production-ready Spring Boot applications.
 - Performance optimization (caching, connection pooling)
 - Error handling and validation
 
-### [Spring Boot Anti-Patterns](./ex-so-stli-jvsb__anti-patterns.md)
+### [Spring Boot Anti-Patterns](./ex-so-stli-jvspbo__anti-patterns.md)
 
 Common mistakes and problematic patterns to avoid.
 
@@ -260,7 +260,7 @@ flowchart TD
 
 Deep-dive documentation on critical Spring Boot areas:
 
-#### [Spring Boot Configuration](./ex-so-stli-jvsb__configuration.md)
+#### [Spring Boot Configuration](./ex-so-stli-jvspbo__configuration.md)
 
 Comprehensive guide to configuration management.
 
@@ -277,7 +277,7 @@ Comprehensive guide to configuration management.
 - Custom property sources
 - Configuration testing
 
-#### [Spring Boot Dependency Injection](./ex-so-stli-jvsb__dependency-injection.md)
+#### [Spring Boot Dependency Injection](./ex-so-stli-jvspbo__dependency-injection.md)
 
 Comprehensive guide to Spring's IoC container and dependency injection.
 
@@ -294,7 +294,7 @@ Comprehensive guide to Spring's IoC container and dependency injection.
 - Circular dependency resolution
 - Testing with dependency injection
 
-#### [Spring Boot REST APIs](./ex-so-stli-jvsb__rest-apis.md)
+#### [Spring Boot REST APIs](./ex-so-stli-jvspbo__rest-apis.md)
 
 Comprehensive guide to building RESTful web services.
 
@@ -313,7 +313,7 @@ Comprehensive guide to building RESTful web services.
 - API documentation with SpringDoc OpenAPI
 - Financial examples: Zakat APIs, Murabaha contracts
 
-#### [Spring Boot Data Access](./ex-so-stli-jvsb__data-access.md)
+#### [Spring Boot Data Access](./ex-so-stli-jvspbo__data-access.md)
 
 Comprehensive guide to data persistence with Spring Data JPA.
 
@@ -332,7 +332,7 @@ Comprehensive guide to data persistence with Spring Data JPA.
 - Database testing with @DataJpaTest
 - TestContainers for integration tests
 
-#### [Spring Boot Security](./ex-so-stli-jvsb__security.md)
+#### [Spring Boot Security](./ex-so-stli-jvspbo__security.md)
 
 Comprehensive guide to Spring Security integration.
 
@@ -350,7 +350,7 @@ Comprehensive guide to Spring Security integration.
 - JWT token validation
 - Security best practices (OWASP)
 
-#### [Spring Boot Testing](./ex-so-stli-jvsb__testing.md)
+#### [Spring Boot Testing](./ex-so-stli-jvspbo__testing.md)
 
 Comprehensive guide to testing Spring Boot applications.
 
@@ -369,7 +369,7 @@ Comprehensive guide to testing Spring Boot applications.
 - TDD workflow with Spring Boot
 - BDD with Cucumber and Spring Boot
 
-#### [Spring Boot Observability](./ex-so-stli-jvsb__observability.md)
+#### [Spring Boot Observability](./ex-so-stli-jvspbo__observability.md)
 
 Comprehensive guide to production monitoring and observability.
 
@@ -386,7 +386,7 @@ Comprehensive guide to production monitoring and observability.
 - Application monitoring dashboards (Grafana, Prometheus)
 - Performance profiling and debugging
 
-#### [Spring Boot Performance](./ex-so-stli-jvsb__performance.md)
+#### [Spring Boot Performance](./ex-so-stli-jvspbo__performance.md)
 
 Comprehensive guide to optimization and performance tuning.
 
@@ -403,7 +403,7 @@ Comprehensive guide to optimization and performance tuning.
 - Profiling Spring Boot apps (JFR, async-profiler)
 - Load testing (JMeter, Gatling)
 
-#### [Spring Boot Domain-Driven Design](./ex-so-stli-jvsb__domain-driven-design.md)
+#### [Spring Boot Domain-Driven Design](./ex-so-stli-jvspbo__domain-driven-design.md)
 
 Comprehensive guide to implementing DDD patterns with Spring Boot.
 
@@ -421,7 +421,7 @@ Comprehensive guide to implementing DDD patterns with Spring Boot.
 - Hexagonal architecture structure
 - Financial examples: Zakat, Murabaha, Waqf aggregates
 
-#### [Spring Boot Functional Programming](./ex-so-stli-jvsb__functional-programming.md)
+#### [Spring Boot Functional Programming](./ex-so-stli-jvspbo__functional-programming.md)
 
 Comprehensive guide to functional programming patterns with Spring Boot.
 
@@ -437,7 +437,7 @@ Comprehensive guide to functional programming patterns with Spring Boot.
 - Function composition patterns
 - Functional testing strategies
 
-#### [Spring Boot Version Migration](./ex-so-stli-jvsb__version-migration.md)
+#### [Spring Boot Version Migration](./ex-so-stli-jvspbo__version-migration.md)
 
 Comprehensive guide to upgrading Spring Boot versions.
 
@@ -1001,7 +1001,7 @@ class ZakatCalculationControllerTest {
 
 ### 1. Start with Idioms
 
-Read [Spring Boot Idioms](./ex-so-stli-jvsb__idioms.md) to understand framework patterns:
+Read [Spring Boot Idioms](./ex-so-stli-jvspbo__idioms.md) to understand framework patterns:
 
 - Auto-configuration and how it works
 - Component scanning and stereotypes
@@ -1011,7 +1011,7 @@ Read [Spring Boot Idioms](./ex-so-stli-jvsb__idioms.md) to understand framework 
 
 ### 2. Apply Best Practices
 
-Read [Spring Boot Best Practices](./ex-so-stli-jvsb__best-practices.md) for production standards:
+Read [Spring Boot Best Practices](./ex-so-stli-jvspbo__best-practices.md) for production standards:
 
 - Project structure and organization
 - Configuration management
@@ -1022,7 +1022,7 @@ Read [Spring Boot Best Practices](./ex-so-stli-jvsb__best-practices.md) for prod
 
 ### 3. Avoid Anti-Patterns
 
-Read [Spring Boot Anti-Patterns](./ex-so-stli-jvsb__anti-patterns.md) to prevent common mistakes:
+Read [Spring Boot Anti-Patterns](./ex-so-stli-jvspbo__anti-patterns.md) to prevent common mistakes:
 
 - Field injection problems
 - Exposing entities in APIs
@@ -1034,9 +1034,9 @@ Read [Spring Boot Anti-Patterns](./ex-so-stli-jvsb__anti-patterns.md) to prevent
 
 Read complementary documentation:
 
-- [Domain-Driven Design](./ex-so-stli-jvsb__domain-driven-design.md)
+- [Domain-Driven Design](./ex-so-stli-jvspbo__domain-driven-design.md)
 - [Java DDD Patterns](../../stack-lang/java/ex-so-stla-ja__domain-driven-design.md)
-- [Functional Programming](./ex-so-stli-jvsb__functional-programming.md)
+- [Functional Programming](./ex-so-stli-jvspbo__functional-programming.md)
 
 ## Code Examples from Platform
 
@@ -1574,29 +1574,29 @@ CMD ["./gradlew", "bootRun", "--no-daemon"]
 
 ### Core Spring Boot Documentation
 
-- **[Spring Boot Idioms](./ex-so-stli-jvsb__idioms.md)** - Framework patterns
-- **[Spring Boot Best Practices](./ex-so-stli-jvsb__best-practices.md)** - Production standards
-- **[Spring Boot Anti-Patterns](./ex-so-stli-jvsb__anti-patterns.md)** - Common mistakes
+- **[Spring Boot Idioms](./ex-so-stli-jvspbo__idioms.md)** - Framework patterns
+- **[Spring Boot Best Practices](./ex-so-stli-jvspbo__best-practices.md)** - Production standards
+- **[Spring Boot Anti-Patterns](./ex-so-stli-jvspbo__anti-patterns.md)** - Common mistakes
 
 ### Application Layer Documentation
 
-- **[Configuration](./ex-so-stli-jvsb__configuration.md)** - Configuration management
-- **[Dependency Injection](./ex-so-stli-jvsb__dependency-injection.md)** - IoC container
-- **[REST APIs](./ex-so-stli-jvsb__rest-apis.md)** - RESTful web services
-- **[Data Access](./ex-so-stli-jvsb__data-access.md)** - Spring Data JPA
+- **[Configuration](./ex-so-stli-jvspbo__configuration.md)** - Configuration management
+- **[Dependency Injection](./ex-so-stli-jvspbo__dependency-injection.md)** - IoC container
+- **[REST APIs](./ex-so-stli-jvspbo__rest-apis.md)** - RESTful web services
+- **[Data Access](./ex-so-stli-jvspbo__data-access.md)** - Spring Data JPA
 
 ### Advanced Topics
 
-- **[Security](./ex-so-stli-jvsb__security.md)** - Spring Security integration
-- **[Testing](./ex-so-stli-jvsb__testing.md)** - Testing strategies
-- **[Observability](./ex-so-stli-jvsb__observability.md)** - Monitoring and metrics
-- **[Performance](./ex-so-stli-jvsb__performance.md)** - Optimization
+- **[Security](./ex-so-stli-jvspbo__security.md)** - Spring Security integration
+- **[Testing](./ex-so-stli-jvspbo__testing.md)** - Testing strategies
+- **[Observability](./ex-so-stli-jvspbo__observability.md)** - Monitoring and metrics
+- **[Performance](./ex-so-stli-jvspbo__performance.md)** - Optimization
 
 ### Integration Documentation
 
-- **[Domain-Driven Design](./ex-so-stli-jvsb__domain-driven-design.md)** - DDD with Spring Boot
-- **[Functional Programming](./ex-so-stli-jvsb__functional-programming.md)** - FP patterns
-- **[Version Migration](./ex-so-stli-jvsb__version-migration.md)** - Upgrading versions
+- **[Domain-Driven Design](./ex-so-stli-jvspbo__domain-driven-design.md)** - DDD with Spring Boot
+- **[Functional Programming](./ex-so-stli-jvspbo__functional-programming.md)** - FP patterns
+- **[Version Migration](./ex-so-stli-jvspbo__version-migration.md)** - Upgrading versions
 
 ### Platform Documentation
 

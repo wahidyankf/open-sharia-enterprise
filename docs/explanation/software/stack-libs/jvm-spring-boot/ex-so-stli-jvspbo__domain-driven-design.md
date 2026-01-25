@@ -10,7 +10,7 @@ tags:
   - aggregates
   - repositories
 related:
-  - ./ex-so-stli-jvsb__idioms.md
+  - ./ex-so-stli-jvspbo__idioms.md
 last_updated: 2026-01-25
 ---
 
