@@ -470,6 +470,27 @@ The repository underwent a comprehensive 3-phase reorganization to introduce sub
 - Maintained global uniqueness through subdirectory encoding
 - All traceability sections preserved
 
+### Directory Rename (2026-01-25)
+
+Renamed software documentation directories for semantic clarity:
+
+**Changes**:
+
+- `stack-lang/` → `prog-lang/` (prefix: `ex-so-stla` → `ex-so-prla`)
+- `stack-libs/` → `platform-web/` (prefix: `ex-so-stli` → `ex-so-plwe`)
+
+**Impact**: 258 files renamed, 40 reference files updated, 2,150+ internal references
+
+**Rationale**:
+
+- `prog-lang` - Clearer abbreviation for "programming languages"
+- `platform-web` - Aligns with platform web technology focus (Spring Boot, Phoenix, React)
+
+**Prefix Abbreviations**:
+
+- `prla` = `pr` (prog) + `la` (lang) - hyphenated compound rule
+- `plwe` = `pl` (platform) + `we` (web) - hyphenated compound rule
+
 ## Related Documentation
 
 - [Linking Convention](../formatting/linking.md) - How to link between documentation files
@@ -478,4 +499,4 @@ The repository underwent a comprehensive 3-phase reorganization to introduce sub
 
 ---
 
-**Last Updated**: 2026-01-01
+**Last Updated**: 2026-01-25
