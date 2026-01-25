@@ -59,7 +59,7 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 ## Coding Standards
 
-**Authoritative Reference**: `docs/explanation/software/stack-lang/java/README.md`
+**Authoritative Reference**: `docs/explanation/software/prog-lang/java/README.md`
 
 All Java code MUST follow the platform coding standards:
 
@@ -88,10 +88,10 @@ All Java code MUST follow the platform coding standards:
 
 **Coding Standards** (Authoritative):
 
-- [docs/explanation/software/stack-lang/java/README.md](../../docs/explanation/software/stack-lang/java/README.md)
-- [docs/explanation/software/stack-lang/java/ex-so-stla-ja__idioms.md](../../docs/explanation/software/stack-lang/java/ex-so-stla-ja__idioms.md)
-- [docs/explanation/software/stack-lang/java/ex-so-stla-ja__best-practices.md](../../docs/explanation/software/stack-lang/java/ex-so-stla-ja__best-practices.md)
-- [docs/explanation/software/stack-lang/java/ex-so-stla-ja__anti-patterns.md](../../docs/explanation/software/stack-lang/java/ex-so-stla-ja__anti-patterns.md)
+- [docs/explanation/software/prog-lang/java/README.md](../../docs/explanation/software/prog-lang/java/README.md)
+- [docs/explanation/software/prog-lang/java/ex-so-prla-ja\_\_idioms.md](../../docs/explanation/software/prog-lang/java/ex-so-prla-ja__idioms.md)
+- [docs/explanation/software/prog-lang/java/ex-so-prla-ja\_\_best-practices.md](../../docs/explanation/software/prog-lang/java/ex-so-prla-ja__best-practices.md)
+- [docs/explanation/software/prog-lang/java/ex-so-prla-ja\_\_anti-patterns.md](../../docs/explanation/software/prog-lang/java/ex-so-prla-ja__anti-patterns.md)
 
 **Development Practices**:
 

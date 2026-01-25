@@ -59,7 +59,7 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 ## Coding Standards
 
-**Authoritative Reference**: `docs/explanation/software/stack-lang/typescript/README.md`
+**Authoritative Reference**: `docs/explanation/software/prog-lang/typescript/README.md`
 
 All TypeScript code MUST follow the platform coding standards:
 
@@ -88,10 +88,10 @@ All TypeScript code MUST follow the platform coding standards:
 
 **Coding Standards** (Authoritative):
 
-- [docs/explanation/software/stack-lang/typescript/README.md](../../docs/explanation/software/stack-lang/typescript/README.md)
-- [docs/explanation/software/stack-lang/typescript/ex-so-stla-ts__idioms.md](../../docs/explanation/software/stack-lang/typescript/ex-so-stla-ts__idioms.md)
-- [docs/explanation/software/stack-lang/typescript/ex-so-stla-ts__best-practices.md](../../docs/explanation/software/stack-lang/typescript/ex-so-stla-ts__best-practices.md)
-- [docs/explanation/software/stack-lang/typescript/ex-so-stla-ts__anti-patterns.md](../../docs/explanation/software/stack-lang/typescript/ex-so-stla-ts__anti-patterns.md)
+- [docs/explanation/software/prog-lang/typescript/README.md](../../docs/explanation/software/prog-lang/typescript/README.md)
+- [docs/explanation/software/prog-lang/typescript/ex-so-prla-ts\_\_idioms.md](../../docs/explanation/software/prog-lang/typescript/ex-so-prla-ts__idioms.md)
+- [docs/explanation/software/prog-lang/typescript/ex-so-prla-ts\_\_best-practices.md](../../docs/explanation/software/prog-lang/typescript/ex-so-prla-ts__best-practices.md)
+- [docs/explanation/software/prog-lang/typescript/ex-so-prla-ts\_\_anti-patterns.md](../../docs/explanation/software/prog-lang/typescript/ex-so-prla-ts__anti-patterns.md)
 
 **Development Practices**:
 

@@ -1,6 +1,6 @@
 ---
 name: swe-programming-golang
-description: Go coding standards from authoritative docs/explanation/software/stack-lang/golang/ documentation
+description: Go coding standards from authoritative docs/explanation/software/prog-lang/golang/ documentation
 ---
 
 # Go Coding Standards
@@ -9,7 +9,7 @@ description: Go coding standards from authoritative docs/explanation/software/st
 
 Progressive disclosure of Go coding standards for agents writing Go code.
 
-**Authoritative Source**: [docs/explanation/software/stack-lang/golang/README.md](../../../docs/explanation/software/stack-lang/golang/README.md)
+**Authoritative Source**: [docs/explanation/software/prog-lang/golang/README.md](../../../docs/explanation/software/prog-lang/golang/README.md)
 
 **Usage**: Auto-loaded for agents when writing Go code. Provides quick reference to idioms, best practices, and antipatterns.
 
@@ -183,9 +183,9 @@ defer cancel()
 
 For detailed guidance, refer to:
 
-- **[Idioms](../../../docs/explanation/software/stack-lang/golang/ex-so-stla-go__idioms.md)** - Go-specific patterns
-- **[Best Practices](../../../docs/explanation/software/stack-lang/golang/ex-so-stla-go__best-practices.md)** - Clean code standards
-- **[Anti-Patterns](../../../docs/explanation/software/stack-lang/golang/ex-so-stla-go__anti-patterns.md)** - Common mistakes
+- **[Idioms](../../../docs/explanation/software/prog-lang/golang/ex-so-prla-go__idioms.md)** - Go-specific patterns
+- **[Best Practices](../../../docs/explanation/software/prog-lang/golang/ex-so-prla-go__best-practices.md)** - Clean code standards
+- **[Anti-Patterns](../../../docs/explanation/software/prog-lang/golang/ex-so-prla-go__anti-patterns.md)** - Common mistakes
 
 ## Related Skills
 
@@ -194,5 +194,5 @@ For detailed guidance, refer to:
 
 ## References
 
-- [Go README](../../../docs/explanation/software/stack-lang/golang/README.md)
+- [Go README](../../../docs/explanation/software/prog-lang/golang/README.md)
 - [Functional Programming](../../../governance/development/pattern/functional-programming.md)

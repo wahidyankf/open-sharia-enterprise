@@ -1,6 +1,6 @@
 ---
 name: swe-programming-typescript
-description: TypeScript coding standards from authoritative docs/explanation/software/stack-lang/typescript/ documentation
+description: TypeScript coding standards from authoritative docs/explanation/software/prog-lang/typescript/ documentation
 ---
 
 # TypeScript Coding Standards
@@ -9,7 +9,7 @@ description: TypeScript coding standards from authoritative docs/explanation/sof
 
 Progressive disclosure of TypeScript coding standards for agents writing TypeScript code.
 
-**Authoritative Source**: [docs/explanation/software/stack-lang/typescript/README.md](../../../docs/explanation/software/stack-lang/typescript/README.md)
+**Authoritative Source**: [docs/explanation/software/prog-lang/typescript/README.md](../../docs/explanation/software/prog-lang/typescript/README.md)
 
 **Usage**: Auto-loaded for agents when writing TypeScript code. Provides quick reference to idioms, best practices, and antipatterns.
 
@@ -132,9 +132,9 @@ it("should return user", () => {
 
 For detailed guidance, refer to:
 
-- **[Idioms](../../../docs/explanation/software/stack-lang/typescript/ex-so-stla-ts__idioms.md)** - TypeScript-specific patterns
-- **[Best Practices](../../../docs/explanation/software/stack-lang/typescript/ex-so-stla-ts__best-practices.md)** - Clean code standards
-- **[Anti-Patterns](../../../docs/explanation/software/stack-lang/typescript/ex-so-stla-ts__anti-patterns.md)** - Common mistakes
+- **[Idioms](../../docs/explanation/software/prog-lang/typescript/ex-so-prla-ts__idioms.md)** - TypeScript-specific patterns
+- **[Best Practices](../../docs/explanation/software/prog-lang/typescript/ex-so-prla-ts__best-practices.md)** - Clean code standards
+- **[Anti-Patterns](../../docs/explanation/software/prog-lang/typescript/ex-so-prla-ts__anti-patterns.md)** - Common mistakes
 
 ## Related Skills
 
@@ -143,5 +143,5 @@ For detailed guidance, refer to:
 
 ## References
 
-- [TypeScript README](../../../docs/explanation/software/stack-lang/typescript/README.md)
-- [Functional Programming](../../../governance/development/pattern/functional-programming.md)
+- [TypeScript README](../../docs/explanation/software/prog-lang/typescript/README.md)
+- [Functional Programming](../../governance/development/pattern/functional-programming.md)
