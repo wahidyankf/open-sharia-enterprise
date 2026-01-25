@@ -830,7 +830,7 @@ Expected: `ex-so-prla-ja__security-practices.md`
      - `title:` (required)
      - `description:` (required)
      - `category:` (required, should be "software")
-     - `subcategory:` (required, e.g., "stack-lang", "platform-web")
+     - `subcategory:` (required, e.g., "prog-lang", "platform-web")
      - `tags:` (required, non-empty list)
      - `principles:` (recommended for most docs)
    - Check frontmatter follows YAML syntax
