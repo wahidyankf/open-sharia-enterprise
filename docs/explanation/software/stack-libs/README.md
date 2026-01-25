@@ -85,6 +85,8 @@ Each framework directory typically contains:
 
 Spring Boot is the primary backend framework for building REST APIs, domain services, and microservices. It provides auto-configuration, embedded servers, production-ready features, and seamless integration with the Spring ecosystem.
 
+**Current Version**: Spring Boot 3.3+ (Java 17+ baseline, Java 21+ recommended, Jakarta EE 10)
+
 **Use Spring Boot when you need:**
 
 - Production-ready REST APIs with minimal configuration
@@ -92,6 +94,45 @@ Spring Boot is the primary backend framework for building REST APIs, domain serv
 - Enterprise features (transactions, scheduling, caching)
 - Convention-over-configuration approach
 - Comprehensive monitoring and metrics
+
+**Comprehensive Documentation Coverage**:
+
+- **[Framework Overview](./jvm-spring-boot/README.md)** - Version strategy, architecture integration, getting started
+- **[Idioms](./jvm-spring-boot/ex-so-stli-jvsb__idioms.md)** - Framework-specific patterns (auto-configuration, DI, profiles)
+- **[Best Practices](./jvm-spring-boot/ex-so-stli-jvsb__best-practices.md)** - Production standards (project structure, error handling, testing)
+- **[Anti-Patterns](./jvm-spring-boot/ex-so-stli-jvsb__anti-patterns.md)** - Common mistakes to avoid
+- **[Configuration](./jvm-spring-boot/ex-so-stli-jvsb__configuration.md)** - Environment management, properties, profiles
+- **[Dependency Injection](./jvm-spring-boot/ex-so-stli-jvsb__dependency-injection.md)** - IoC container, bean scopes, lifecycle
+- **[REST APIs](./jvm-spring-boot/ex-so-stli-jvsb__rest-apis.md)** - RESTful services, validation, exception handling
+- **[Data Access](./jvm-spring-boot/ex-so-stli-jvsb__data-access.md)** - Spring Data JPA, repositories, transactions
+- **[Security](./jvm-spring-boot/ex-so-stli-jvsb__security.md)** - Spring Security, OAuth2, JWT, method security
+- **[Testing](./jvm-spring-boot/ex-so-stli-jvsb__testing.md)** - Unit, integration, slice tests, TestContainers
+- **[Observability](./jvm-spring-boot/ex-so-stli-jvsb__observability.md)** - Actuator, metrics, health checks, tracing
+- **[Performance](./jvm-spring-boot/ex-so-stli-jvsb__performance.md)** - Optimization, caching, async processing
+- **[Domain-Driven Design](./jvm-spring-boot/ex-so-stli-jvsb__domain-driven-design.md)** - DDD tactical patterns with Spring
+- **[Functional Programming](./jvm-spring-boot/ex-so-stli-jvsb__functional-programming.md)** - FP patterns, immutability
+- **[Version Migration](./jvm-spring-boot/ex-so-stli-jvsb__version-migration.md)** - Spring Boot 2.x to 3.x upgrade guide
+- **[Code Templates](./jvm-spring-boot/templates/README.md)** - Production-ready templates (REST controllers, services, repositories, configuration)
+
+**Key Features**:
+
+- **Auto-Configuration** - Intelligent defaults based on classpath and properties
+- **Embedded Servers** - Tomcat, Jetty, Undertow for standalone deployment
+- **Starter Dependencies** - Curated dependency sets (spring-boot-starter-web, -data-jpa, -security)
+- **Production Metrics** - Actuator endpoints for health, metrics, and monitoring
+- **Spring Ecosystem** - Seamless integration with Spring Data, Security, Cloud, Batch
+
+**Architecture Integration**:
+
+Spring Boot applications in the platform follow Domain-Driven Design principles with functional core/imperative shell separation. Services coordinate pure domain logic with side effects (persistence, events, external APIs).
+
+**Quick Start**:
+
+1. Review [Spring Boot README](./jvm-spring-boot/README.md) for version strategy and architecture
+2. Study [Idioms](./jvm-spring-boot/ex-so-stli-jvsb__idioms.md) for framework patterns
+3. Follow [Best Practices](./jvm-spring-boot/ex-so-stli-jvsb__best-practices.md) for production standards
+4. Use [Code Templates](./jvm-spring-boot/templates/README.md) for consistent implementation
+5. Apply [Java coding standards](../stack-lang/java/README.md) for language-specific idioms
 
 ### 🔥 [Phoenix (Elixir)](./elixir-phoenix/README.md)
 
