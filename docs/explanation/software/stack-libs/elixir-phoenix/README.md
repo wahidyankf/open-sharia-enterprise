@@ -348,6 +348,55 @@ def handle_call({:add_item, item}, _from, items) do
 end
 ```
 
+## Detailed Documentation
+
+### Core Framework Patterns
+
+- **[Phoenix Idioms](./ex-so-stli-elph__idioms.md)** - Framework-specific patterns and idiomatic usage
+- **[Best Practices](./ex-so-stli-elph__best-practices.md)** - Production-ready development standards
+- **[Anti-Patterns](./ex-so-stli-elph__anti-patterns.md)** - Common mistakes and how to avoid them
+
+### Application Architecture
+
+- **[Contexts](./ex-so-stli-elph__contexts.md)** - Context design, boundaries, and API patterns
+- **[Configuration](./ex-so-stli-elph__configuration.md)** - Application configuration and secrets management
+- **[Testing](./ex-so-stli-elph__testing.md)** - Testing strategies and test organization
+
+### Real-Time Features
+
+- **[Phoenix Channels](./ex-so-stli-elph__channels.md)** - WebSocket communication and real-time patterns
+- **[Phoenix LiveView](./ex-so-stli-elph__liveview.md)** - Server-rendered interactive UIs
+- **[PubSub](./ex-so-stli-elph__idioms.md#6-pubsub-broadcasting)** - Event broadcasting and distribution
+
+### Data Access and Persistence
+
+- **[Data Access](./ex-so-stli-elph__data-access.md)** - Ecto schemas, queries, and database patterns
+- **[REST APIs](./ex-so-stli-elph__rest-apis.md)** - RESTful API design and JSON standards
+
+### Security and Authentication
+
+- **[Security](./ex-so-stli-elph__security.md)** - Authentication, authorization, and security best practices
+
+### Production Operations
+
+- **[Performance](./ex-so-stli-elph__performance.md)** - Optimization, caching, and scalability
+- **[Observability](./ex-so-stli-elph__observability.md)** - Logging, metrics, and monitoring
+- **[Deployment](./ex-so-stli-elph__deployment.md)** - Release management and deployment strategies
+
+### Migration and Upgrade
+
+- **[Version Migration](./ex-so-stli-elph__version-migration.md)** - Upgrading from Phoenix 1.6 to 1.7+
+
+### Code Templates
+
+- **[Templates](./templates/README.md)** - Production-ready code templates
+  - [Context Template](./templates/ex-so-stli-elph-te__context-template.md)
+  - [Controller Template](./templates/ex-so-stli-elph-te__controller-template.md)
+  - [Channel Template](./templates/ex-so-stli-elph-te__channel-template.md)
+  - [LiveView Template](./templates/ex-so-stli-elph-te__liveview-template.md)
+  - [Schema Template](./templates/ex-so-stli-elph-te__schema-template.md)
+  - [Test Template](./templates/ex-so-stli-elph-te__test-template.md)
+
 ## Learning Resources
 
 ### Official Documentation
