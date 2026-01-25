@@ -512,7 +512,7 @@ FSM concepts complement testing and development practices (documentation in prog
 
 While this documentation is language-agnostic, implementation guidance exists for:
 
-- **Java**: [Java Idioms](../../stack-lang/java/) - State Pattern, Spring State Machine integration
+- **Java**: [Java Idioms](../../prog-lang/java/) - State Pattern, Spring State Machine integration
 - **TypeScript**: (Future) XState integration, type-safe FSMs
 - **Haskell/Elm**: (Future) ADT-based FSMs
 
