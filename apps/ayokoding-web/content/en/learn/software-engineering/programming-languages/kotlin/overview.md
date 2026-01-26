@@ -20,43 +20,33 @@ description: Complete learning path from zero to expert Kotlin development - 6 c
 
 ### All Tutorials Complete
 
-All 6 tutorials in the Kotlin Full Set are now available:
+All 4 tutorials in the Kotlin Full Set are now available:
 
-#### Level 1: Initial Setup (0-5%)
+#### Level 1: Beginner (0-60%)
 
-[Initial Setup for Kotlin](/en/learn/software-engineering/programming-languages/kotlin/tutorials/initial-setup) - Install Kotlin, verify installation, run your first program.
+[Complete Beginner's Guide to Kotlin](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner) - Comprehensive type system, OOP, functional programming, collections, testing.
 
-#### Level 2: Quick Start (5-30%)
+#### Level 2: Intermediate (60-85%)
 
-[Kotlin Quick Start](/en/learn/software-engineering/programming-languages/kotlin/tutorials/quick-start) - 12 core concepts through touchpoint examples.
+[Intermediate Kotlin](/en/learn/software-engineering/programming-languages/kotlin/by-concept/intermediate) - Coroutines, design patterns, performance, databases, REST APIs.
 
-#### Level 3: Beginner (0-60%)
+#### Level 3: Advanced (85-95%)
 
-[Complete Beginner's Guide to Kotlin](/en/learn/software-engineering/programming-languages/kotlin/tutorials/beginner) - Comprehensive type system, OOP, functional programming, collections, testing.
-
-#### Level 4: Intermediate (60-85%)
-
-[Intermediate Kotlin](/en/learn/software-engineering/programming-languages/kotlin/tutorials/intermediate) - Coroutines, design patterns, performance, databases, REST APIs.
-
-#### Level 5: Advanced (85-95%)
-
-[Advanced Kotlin](/en/learn/software-engineering/programming-languages/kotlin/tutorials/advanced) - Compiler internals, reflection, metaprogramming, advanced coroutines, optimization.
+[Advanced Kotlin](/en/learn/software-engineering/programming-languages/kotlin/by-concept/advanced) - Compiler internals, reflection, metaprogramming, advanced coroutines, optimization.
 
 #### Cookbook: Practical Recipes (Reference)
-
-[Kotlin Cookbook](/en/learn/software-engineering/programming-languages/kotlin/how-to/cookbook) - 30+ copy-paste-ready recipes for daily use.
 
 ---
 
 ## Choose Your Path
 
-| Experience                     | Path                                               |
-| ------------------------------ | -------------------------------------------------- |
-| **Beginner**                   | Initial Setup → Beginner → Intermediate → Advanced |
-| **Experienced, new to Kotlin** | Quick Start → Beginner → Intermediate → Advanced   |
-| **Want production skills**     | Intermediate → Advanced                            |
-| **Seeking mastery**            | Advanced (+ reference earlier tutorials)           |
-| **Need quick reference**       | Cookbook (+ tutorials as needed)                   |
+| Experience                     | Path                                     |
+| ------------------------------ | ---------------------------------------- |
+| **Beginner**                   | Beginner → Intermediate → Advanced       |
+| **Experienced, new to Kotlin** | Beginner → Intermediate → Advanced       |
+| **Want production skills**     | Intermediate → Advanced                  |
+| **Seeking mastery**            | Advanced (+ reference earlier tutorials) |
+| **Need quick reference**       | Cookbook (+ tutorials as needed)         |
 
 ---
 
@@ -64,14 +54,12 @@ All 6 tutorials in the Kotlin Full Set are now available:
 
 ### Start Here
 
-- **Complete beginner**: [Initial Setup](/en/learn/software-engineering/programming-languages/kotlin/tutorials/initial-setup) then [Beginner](/en/learn/software-engineering/programming-languages/kotlin/tutorials/beginner)
-- **Programmer new to Kotlin**: [Quick Start](/en/learn/software-engineering/programming-languages/kotlin/tutorials/quick-start) then [Beginner](/en/learn/software-engineering/programming-languages/kotlin/tutorials/beginner)
-- **Professional developer**: [Intermediate](/en/learn/software-engineering/programming-languages/kotlin/tutorials/intermediate)
-- **Expert seeking mastery**: [Advanced](/en/learn/software-engineering/programming-languages/kotlin/tutorials/advanced)
+- **Complete beginner**: [Beginner](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner)
+- **Programmer new to Kotlin**: [Beginner](/en/learn/software-engineering/programming-languages/kotlin/by-concept/beginner)
+- **Professional developer**: [Intermediate](/en/learn/software-engineering/programming-languages/kotlin/by-concept/intermediate)
+- **Expert seeking mastery**: [Advanced](/en/learn/software-engineering/programming-languages/kotlin/by-concept/advanced)
 
 ### Use Anytime
-
-[Cookbook](/en/learn/software-engineering/programming-languages/kotlin/how-to/cookbook) for recipes and day-to-day solutions
 
 ---
 

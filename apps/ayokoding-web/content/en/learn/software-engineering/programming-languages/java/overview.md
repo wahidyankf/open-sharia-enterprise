@@ -20,43 +20,33 @@ description: Complete learning path from zero to expert Java development - 6 com
 
 ### All Tutorials Complete
 
-All 6 tutorials in the Java Full Set are now available:
+All 4 tutorials in the Java Full Set are now available:
 
-#### Level 1: Initial Setup (0-5%)
+#### Level 1: Beginner (0-60%)
 
-[Initial Setup for Java](/en/learn/software-engineering/programming-languages/java/tutorials/initial-setup) - Install JDK, verify installation, run your first program.
+[Complete Beginner's Guide to Java](/en/learn/software-engineering/programming-languages/java/by-concept/beginner) - Comprehensive OOP, collections, testing, streams.
 
-#### Level 2: Quick Start (5-30%)
+#### Level 2: Intermediate (60-85%)
 
-[Java Quick Start](/en/learn/software-engineering/programming-languages/java/tutorials/quick-start) - 10 core concepts through touchpoint examples.
+[Intermediate Java](/en/learn/software-engineering/programming-languages/java/by-concept/intermediate) - Design patterns, SOLID, concurrency, Maven/Gradle, JDBC.
 
-#### Level 3: Beginner (0-60%)
+#### Level 3: Advanced (85-95%)
 
-[Complete Beginner's Guide to Java](/en/learn/software-engineering/programming-languages/java/tutorials/beginner) - Comprehensive OOP, collections, testing, streams.
-
-#### Level 4: Intermediate (60-85%)
-
-[Intermediate Java](/en/learn/software-engineering/programming-languages/java/tutorials/intermediate) - Design patterns, SOLID, concurrency, Maven/Gradle, JDBC.
-
-#### Level 5: Advanced (85-95%)
-
-[Advanced Java](/en/learn/software-engineering/programming-languages/java/tutorials/advanced) - JVM internals, GC, reflection, system design.
+[Advanced Java](/en/learn/software-engineering/programming-languages/java/by-concept/advanced) - JVM internals, GC, reflection, system design.
 
 #### Cookbook: Practical Recipes (Reference)
-
-[Java Cookbook](/en/learn/software-engineering/programming-languages/java/how-to/cookbook) - 30+ copy-paste-ready recipes for daily use.
 
 ---
 
 ## Choose Your Path
 
-| Experience                   | Path                                               |
-| ---------------------------- | -------------------------------------------------- |
-| **Beginner**                 | Initial Setup → Beginner → Intermediate → Advanced |
-| **Experienced, new to Java** | Quick Start → Beginner → Intermediate → Advanced   |
-| **Want production skills**   | Intermediate → Advanced                            |
-| **Seeking mastery**          | Advanced (+ reference earlier tutorials)           |
-| **Need quick reference**     | Cookbook (+ tutorials as needed)                   |
+| Experience                   | Path                                     |
+| ---------------------------- | ---------------------------------------- |
+| **Beginner**                 | Beginner → Intermediate → Advanced       |
+| **Experienced, new to Java** | Beginner → Intermediate → Advanced       |
+| **Want production skills**   | Intermediate → Advanced                  |
+| **Seeking mastery**          | Advanced (+ reference earlier tutorials) |
+| **Need quick reference**     | Cookbook (+ tutorials as needed)         |
 
 ---
 
@@ -64,14 +54,12 @@ All 6 tutorials in the Java Full Set are now available:
 
 ### Start Here
 
-- **Complete beginner**: [Initial Setup](/en/learn/software-engineering/programming-languages/java/tutorials/initial-setup) then [Beginner](/en/learn/software-engineering/programming-languages/java/tutorials/beginner)
-- **Programmer new to Java**: [Quick Start](/en/learn/software-engineering/programming-languages/java/tutorials/quick-start) then [Beginner](/en/learn/software-engineering/programming-languages/java/tutorials/beginner)
-- **Professional developer**: [Intermediate](/en/learn/software-engineering/programming-languages/java/tutorials/intermediate)
-- **Expert seeking mastery**: [Advanced](/en/learn/software-engineering/programming-languages/java/tutorials/advanced)
+- **Complete beginner**: [Beginner](/en/learn/software-engineering/programming-languages/java/by-concept/beginner)
+- **Programmer new to Java**: [Beginner](/en/learn/software-engineering/programming-languages/java/by-concept/beginner)
+- **Professional developer**: [Intermediate](/en/learn/software-engineering/programming-languages/java/by-concept/intermediate)
+- **Expert seeking mastery**: [Advanced](/en/learn/software-engineering/programming-languages/java/by-concept/advanced)
 
 ### Use Anytime
-
-[Cookbook](/en/learn/software-engineering/programming-languages/java/how-to/cookbook) for recipes and day-to-day solutions
 
 ---
 

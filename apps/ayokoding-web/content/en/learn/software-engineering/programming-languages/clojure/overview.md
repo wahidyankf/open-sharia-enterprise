@@ -43,9 +43,4 @@ Clojure excels in domains requiring robust data processing, complex business log
 
 ## Learning Path
 
-This content follows a dual-path approach:
-
-1. **By Concept**: Narrative-driven tutorials building from fundamentals to advanced topics
-2. **By Example**: Code-first learning with 80 annotated, runnable examples for experienced developers
-
-Choose by-concept for comprehensive understanding or by-example for rapid exploration.
+This content follows a **by-example approach**: code-first learning with 80 annotated, runnable examples covering beginner through advanced topics. Perfect for experienced developers who want to explore Clojure through practical code.

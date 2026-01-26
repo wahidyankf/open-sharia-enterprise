@@ -41,10 +41,8 @@ This guide serves:
 
 We provide progressive content organized by the Diataxis framework:
 
-### Tutorials (5 Levels)
+### Tutorials (3 Levels)
 
-- **Initial Setup** (0-5%): Install Elixir, write "Hello, World!"
-- **Quick Start** (5-30%): Core concepts to start coding quickly
 - **Beginner** (0-60%): Complete language fundamentals
 - **Intermediate** (60-85%): OTP, Phoenix, Ecto, production patterns
 - **Advanced** (85-95%): BEAM internals, distributed systems, metaprogramming
@@ -118,11 +116,11 @@ All examples run on Elixir 1.14+ and are forward-compatible with newer versions.
 
 ## How to Use This Guide
 
-1. **Complete Beginners**: Start with Initial Setup → Quick Start → Beginner
-2. **Experienced Programmers**: Jump to Quick Start, then Intermediate
+1. **Complete Beginners**: Start with Beginner tutorial
+2. **Experienced Programmers**: Begin with Beginner, advance to Intermediate
 3. **Specific Problems**: Use Cookbook or How-To Guides
 4. **Best Practices**: Read Explanation documents after tutorials
 
 Each tutorial builds on previous knowledge. Cross-references link related content.
 
-Ready to start? Begin with the [Initial Setup tutorial](/en/learn/software-engineering/programming-languages/elixir/tutorials/initial-setup).
+Ready to start? Begin with the [Beginner tutorial](/en/learn/software-engineering/programming-languages/elixir/by-concept/beginner).

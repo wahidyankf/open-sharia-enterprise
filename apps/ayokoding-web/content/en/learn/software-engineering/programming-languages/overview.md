@@ -15,9 +15,8 @@ Languages are ordered pedagogically from easiest to most specialized:
 
 Start here if you're new to programming. Python's simple syntax lets you focus on concepts, not memorizing rules.
 
-- [Tutorials](/en/learn/software-engineering/programming-languages/python/tutorials) - Initial Setup, Quick Start, Beginner, Intermediate, Advanced
-- [How-To Guides](/en/learn/software-engineering/programming-languages/python/how-to) - Practical solutions for common problems
-- [Explanation](/en/learn/software-engineering/programming-languages/python/explanation) - Best practices and anti-patterns
+- [By Example](/en/learn/software-engineering/programming-languages/python/by-example) - Code-first learning with 80+ annotated examples
+- [By Concept](/en/learn/software-engineering/programming-languages/python/by-concept) - Narrative tutorials from fundamentals to advanced
 
 **Why Python first?** Simplest syntax, dynamically typed, focuses on problem-solving over syntax rules, extensive libraries, widely used in education and industry.
 
@@ -25,9 +24,8 @@ Start here if you're new to programming. Python's simple syntax lets you focus o
 
 Learn static typing and object-oriented programming principles. Java's verbosity teaches explicit thinking and is an industry standard.
 
-- [Tutorials](/en/learn/software-engineering/programming-languages/java/tutorials) - Initial Setup, Quick Start, Beginner, Intermediate, Advanced
-- [How-To Guides](/en/learn/software-engineering/programming-languages/java/how-to) - Practical solutions for common problems
-- [Explanation](/en/learn/software-engineering/programming-languages/java/explanation) - Best practices and anti-patterns
+- [By Example](/en/learn/software-engineering/programming-languages/java/by-example) - Code-first learning with 80+ annotated examples
+- [By Concept](/en/learn/software-engineering/programming-languages/java/by-concept) - Narrative tutorials from fundamentals to advanced
 
 **Why Java second?** Introduces static typing explicitly, teaches OOP clearly, enterprise-grade, builds on programming concepts from Python.
 
@@ -35,9 +33,8 @@ Learn static typing and object-oriented programming principles. Java's verbosity
 
 Modern Java alternative with concise syntax, null safety, and functional programming features. Best learned after understanding Java.
 
-- [Tutorials](/en/learn/software-engineering/programming-languages/kotlin/tutorials) - Initial Setup, Quick Start, Beginner, Intermediate, Advanced
-- [How-To Guides](/en/learn/software-engineering/programming-languages/kotlin/how-to) - Practical solutions for common problems
-- [Explanation](/en/learn/software-engineering/programming-languages/kotlin/explanation) - Best practices and anti-patterns
+- [By Example](/en/learn/software-engineering/programming-languages/kotlin/by-example) - Code-first learning with 80+ annotated examples
+- [By Concept](/en/learn/software-engineering/programming-languages/kotlin/by-concept) - Narrative tutorials from fundamentals to advanced
 
 **Why Kotlin third?** Interoperates with Java, more concise, modern features (null safety, coroutines), functional + OOP hybrid.
 
@@ -45,9 +42,8 @@ Modern Java alternative with concise syntax, null safety, and functional program
 
 Minimalist language focused on simplicity and concurrency. Different paradigm from Python/Java/Kotlin, best as third or fourth language.
 
-- [Tutorials](/en/learn/software-engineering/programming-languages/golang/tutorials) - Initial Setup, Quick Start, Beginner, Intermediate, Advanced
-- [How-To Guides](/en/learn/software-engineering/programming-languages/golang/how-to) - Practical solutions for common problems
-- [Explanation](/en/learn/software-engineering/programming-languages/golang/explanation) - Best practices and anti-patterns
+- [By Example](/en/learn/software-engineering/programming-languages/golang/by-example) - Code-first learning with 80+ annotated examples
+- [By Concept](/en/learn/software-engineering/programming-languages/golang/by-concept) - Narrative tutorials from fundamentals to advanced
 
 **Why Golang fourth?** Different paradigm (simplicity over features), concurrency primitives (goroutines, channels), systems programming concepts.
 
@@ -55,9 +51,8 @@ Minimalist language focused on simplicity and concurrency. Different paradigm fr
 
 Advanced systems language with ownership model for memory safety without garbage collection. Steep learning curve, best learned after solid foundation in other languages.
 
-- [Tutorials](/en/learn/software-engineering/programming-languages/rust/tutorials) - Initial Setup, Quick Start, Beginner, Intermediate, Advanced
-- [How-To Guides](/en/learn/software-engineering/programming-languages/rust/how-to) - Practical solutions for common problems
-- [Explanation](/en/learn/software-engineering/programming-languages/rust/explanation) - Best practices and anti-patterns
+- [By Example](/en/learn/software-engineering/programming-languages/rust/by-example) - Code-first learning with 80+ annotated examples
+- [By Concept](/en/learn/software-engineering/programming-languages/rust/by-concept) - Narrative tutorials from fundamentals to advanced
 
 **Why Rust fifth?** Unique ownership system (requires strong fundamentals), compile-time memory safety (prevents entire bug classes), zero-cost abstractions, fearless concurrency, ideal for performance-critical systems.
 
