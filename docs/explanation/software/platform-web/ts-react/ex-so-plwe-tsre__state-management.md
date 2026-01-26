@@ -500,6 +500,46 @@ export const Dashboard: React.FC = () => {
 };
 ```
 
+### Context Propagation
+
+Context values propagate down the component tree to all descendants:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A[AuthProvider] --> B[App Component]
+    A -.->|Provides Auth Context| B
+    B --> C[Dashboard]
+    B --> D[Profile]
+    B --> E[Settings]
+    C -.->|useAuth#40;#41;| F[User Display]
+    C -.->|useAuth#40;#41;| G[Logout Button]
+    D -.->|useAuth#40;#41;| H[User Info]
+    D -.->|useAuth#40;#41;| I[Edit Profile]
+    E -.->|useAuth#40;#41;| J[Preferences]
+
+    style A fill:#0173B2
+    style B fill:#029E73
+    style C fill:#DE8F05
+    style D fill:#DE8F05
+    style E fill:#DE8F05
+    style F fill:#CC78BC
+    style G fill:#CC78BC
+    style H fill:#CC78BC
+    style I fill:#CC78BC
+    style J fill:#CC78BC
+```
+
+**Key Points**:
+
+- Provider wraps component tree (AuthProvider)
+- Context available to all descendants
+- Components access context via useAuth() hook
+- Changes propagate to all consumers automatically
+- No prop drilling required
+
 ### Context with Reducer
 
 Combine Context with useReducer for complex state:
@@ -1111,6 +1151,9 @@ export const InfiniteDonationsList: React.FC = () => {
 ## State Management Decision Tree
 
 ```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
 graph TD
     A[Need to manage state?] --> B{Single component?}
     B -->|Yes| C[useState/useReducer]
@@ -1129,10 +1172,10 @@ graph TD
     K -->|Yes| F
     K -->|No| L[Keep as props]
 
-    style C fill:#90EE90
-    style G fill:#87CEEB
-    style I fill:#FFD700
-    style J fill:#FF6347
+    style C fill:#029E73
+    style G fill:#0173B2
+    style I fill:#DE8F05
+    style J fill:#CC78BC
 ```
 
 ## Related Documentation

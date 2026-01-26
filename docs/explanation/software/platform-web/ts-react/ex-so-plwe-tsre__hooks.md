@@ -225,6 +225,42 @@ export const RealtimeDonations: React.FC = () => {
 };
 ```
 
+### useEffect Lifecycle
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A[Component Mounts] --> B[Run Effect]
+    B --> C{Has Dependencies?}
+    C -->|Yes| D[Watch Dependencies]
+    C -->|No| E[Effect Runs Once]
+    D --> F{Dependencies Changed?}
+    F -->|Yes| G[Run Cleanup]
+    F -->|No| H[Skip Effect]
+    G --> B
+    H --> I[Component Renders]
+    E --> I
+    I --> J{Component Unmounting?}
+    J -->|Yes| K[Run Final Cleanup]
+    J -->|No| F
+    K --> L[Component Unmounted]
+
+    style A fill:#0173B2
+    style B fill:#029E73
+    style G fill:#DE8F05
+    style K fill:#DE8F05
+    style L fill:#CC78BC
+```
+
+The lifecycle follows this pattern:
+
+1. **Mount**: Effect runs after first render
+2. **Update**: Effect runs after every render (if dependencies changed)
+3. **Cleanup**: Runs before re-running effect or unmounting
+4. **Unmount**: Final cleanup before component removal
+
 ### Dependency Array Rules
 
 ```typescript

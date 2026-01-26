@@ -38,6 +38,51 @@ Performance optimization ensures React applications remain responsive as complex
 
 **React Version**: React 18.2+ with TypeScript 5+
 
+### Performance Optimization Strategy
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A[Performance Issue?] --> B{Identify Problem}
+
+    B -->|Slow Renders| C[Memoization]
+    B -->|Large Bundle| D[Code Splitting]
+    B -->|Long Lists| E[Virtualization]
+    B -->|Heavy Computation| F[Web Workers]
+
+    C --> G[React.memo]
+    C --> H[useMemo]
+    C --> I[useCallback]
+
+    D --> J[React.lazy]
+    D --> K[Dynamic Import]
+    D --> L[Route-Based Splitting]
+
+    E --> M[react-window]
+    E --> N[react-virtualized]
+
+    F --> O[Offload to Worker]
+    F --> P[Process in Background]
+
+    style A fill:#0173B2
+    style C fill:#029E73
+    style D fill:#DE8F05
+    style E fill:#CC78BC
+    style F fill:#DE8F05
+    style G fill:#029E73
+    style J fill:#DE8F05
+    style M fill:#CC78BC
+```
+
+**Optimization Tools**:
+
+- **Memoization** - Prevent unnecessary re-renders and recalculations
+- **Code Splitting** - Load code on demand, reduce initial bundle size
+- **Virtualization** - Render only visible items in large lists
+- **Web Workers** - Offload heavy computations to background threads
+
 ## Memoization
 
 ### React.memo
