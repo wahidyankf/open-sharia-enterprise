@@ -8,7 +8,5 @@ layout: list
 ---
 
 - [Tutorials](/en/learn/software-engineering/infrastructure/tools/ansible/tutorials)
-  - [Overview](/en/learn/software-engineering/infrastructure/tools/ansible/tutorials/overview)
-  - [Initial Setup](/en/learn/software-engineering/infrastructure/tools/ansible/tutorials/initial-setup)
-  - [Quick Start](/en/learn/software-engineering/infrastructure/tools/ansible/tutorials/quick-start)
-  - [By Example](/en/learn/software-engineering/infrastructure/tools/ansible/tutorials/by-example)
+  - [Overview](/en/learn/software-engineering/infrastructure/tools/ansible/overview)
+  - [By Example](/en/learn/software-engineering/infrastructure/tools/ansible/by-example)

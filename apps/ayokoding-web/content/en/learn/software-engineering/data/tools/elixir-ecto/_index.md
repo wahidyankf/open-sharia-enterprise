@@ -9,7 +9,5 @@ layout: list
 
 - [Overview](/en/learn/software-engineering/data/tools/elixir-ecto/overview)
 - [Tutorials](/en/learn/software-engineering/data/tools/elixir-ecto/tutorials)
-  - [Overview](/en/learn/software-engineering/data/tools/elixir-ecto/tutorials/overview)
-  - [Initial Setup](/en/learn/software-engineering/data/tools/elixir-ecto/tutorials/initial-setup)
-  - [Quick Start](/en/learn/software-engineering/data/tools/elixir-ecto/tutorials/quick-start)
-  - [By Example](/en/learn/software-engineering/data/tools/elixir-ecto/tutorials/by-example)
+  - [Overview](/en/learn/software-engineering/data/tools/elixir-ecto/overview)
+  - [By Example](/en/learn/software-engineering/data/tools/elixir-ecto/by-example)

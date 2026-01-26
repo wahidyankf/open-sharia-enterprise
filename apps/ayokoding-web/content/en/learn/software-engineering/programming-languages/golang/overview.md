@@ -20,43 +20,27 @@ description: Complete learning path from installation to expert mastery - 6 comp
 
 ## Complete Full Set (Sequential Learning Path)
 
-The 5-tutorial sequential track provides a complete learning journey from 0% to 95% proficiency:
+The 3-tutorial sequential track provides a complete learning journey from beginner to expert:
 
-### 1. Golang Initial Setup
+### 1. Complete Beginner's Guide to Go
 
-- **File**: [initial-setup](/en/learn/software-engineering/programming-languages/golang/tutorials/initial-setup)
-- **Coverage**: 0-5% (Installation and Hello World)
-- **What you'll do**: Install Go, verify installation, run your first program
-- **Goal**: Get Go working on your system
-- **Best for**: Complete beginners with no Go experience
-
-### 2. Golang Quick Start
-
-- **File**: [quick-start](/en/learn/software-engineering/programming-languages/golang/tutorials/quick-start)
-- **Coverage**: 5-30% (Touchpoints and core concepts)
-- **What you'll learn**: Variables, functions, control flow, goroutines basics, error handling
-- **Goal**: Learn enough to explore Go independently
-- **Best for**: Developers familiar with other languages wanting a quick overview
-
-### 3. Complete Beginner's Guide to Go
-
-- **File**: [beginner](/en/learn/software-engineering/programming-languages/golang/tutorials/beginner)
+- **File**: [beginner](/en/learn/software-engineering/programming-languages/golang/by-concept/beginner)
 - **Coverage**: 0-60% (Comprehensive fundamentals)
 - **What you'll learn**: Complete coverage of Go basics with 4 levels of hands-on exercises
 - **Goal**: Build a solid foundation for real applications
 - **Best for**: Developers wanting comprehensive coverage and practice
 
-### 4. Intermediate Go Programming
+### 2. Intermediate Go Programming
 
-- **File**: [intermediate](/en/learn/software-engineering/programming-languages/golang/tutorials/intermediate)
+- **File**: [intermediate](/en/learn/software-engineering/programming-languages/golang/by-concept/intermediate)
 - **Coverage**: 60-85% (Production-grade techniques)
 - **What you'll learn**: Advanced concurrency, error handling, testing, architecture patterns, performance optimization, security, deployment
 - **Goal**: Build production-grade systems
 - **Best for**: Developers building real projects who need professional techniques
 
-### 5. Advanced Go Programming
+### 3. Advanced Go Programming
 
-- **File**: [advanced](/en/learn/software-engineering/programming-languages/golang/tutorials/advanced)
+- **File**: [advanced](/en/learn/software-engineering/programming-languages/golang/by-concept/advanced)
 - **Coverage**: 85-95% (Expert mastery)
 - **What you'll learn**: Runtime internals, memory optimization, lock-free concurrency, reflection, system design patterns, debugging
 - **Goal**: Achieve expert-level mastery
@@ -66,22 +50,21 @@ The 5-tutorial sequential track provides a complete learning journey from 0% to 
 
 In addition to the sequential path, use this reference for specific patterns:
 
-- [**Golang Cookbook**](/en/learn/software-engineering/programming-languages/golang/how-to/cookbook) - Practical recipes and patterns for real-world problems
-  - **Prerequisites**: Complete the [Beginner](/en/learn/software-engineering/programming-languages/golang/tutorials/beginner) tutorial
-  - Generics patterns, concurrency recipes, error handling, design patterns, web development
+- **Prerequisites**: Complete the [Beginner](/en/learn/software-engineering/programming-languages/golang/by-concept/beginner) tutorial
+- Generics patterns, concurrency recipes, error handling, design patterns, web development
 
 ## How to Choose Your Starting Point
 
 **Choose based on your experience level:**
 
-| Experience Level                      | Recommended Path                                                   |
-| ------------------------------------- | ------------------------------------------------------------------ |
-| **No programming experience**         | Initial Setup → Quick Start → Beginner → Intermediate → Advanced   |
-| **Experienced programmer, new to Go** | Quick Start → Beginner → Intermediate → Advanced                   |
-| **Familiar with some Go, want depth** | Beginner → Intermediate → Advanced                                 |
-| **Building production systems now**   | Intermediate → Advanced (reference Quick Start/Beginner as needed) |
-| **Seeking expert mastery**            | Advanced (assume Intermediate knowledge)                           |
-| **Need a specific pattern?**          | Cookbook (reference relevant tutorials as needed)                  |
+| Experience Level                      | Recommended Path                                       |
+| ------------------------------------- | ------------------------------------------------------ |
+| **No programming experience**         | Beginner → Intermediate → Advanced                     |
+| **Experienced programmer, new to Go** | Beginner → Intermediate → Advanced                     |
+| **Familiar with some Go, want depth** | Beginner → Intermediate → Advanced                     |
+| **Building production systems now**   | Intermediate → Advanced (reference Beginner as needed) |
+| **Seeking expert mastery**            | Advanced (assume Intermediate knowledge)               |
+| **Need a specific pattern?**          | Cookbook (reference relevant tutorials as needed)      |
 
 ## Tutorial Structure
 

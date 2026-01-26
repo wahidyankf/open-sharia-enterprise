@@ -58,7 +58,7 @@ Through our PostgreSQL tutorials, you'll master:
 
 Learn PostgreSQL through **85 annotated SQL examples** covering 95% of the database - ideal for experienced developers who prefer learning through working code rather than narrative explanations.
 
-- **[PostgreSQL By-Example](/en/learn/software-engineering/data/databases/postgresql/tutorials/by-example)** - Start here for rapid, hands-on learning
+- **[PostgreSQL By-Example](/en/learn/software-engineering/data/databases/postgresql/by-example)** - Start here for rapid, hands-on learning
 
 What you'll get:
 
@@ -119,10 +119,10 @@ PostgreSQL excels in scenarios requiring:
 
 Start your PostgreSQL journey:
 
-1. **[PostgreSQL By-Example Overview](/en/learn/software-engineering/data/databases/postgresql/tutorials/by-example/overview)** - Understand the by-example approach
-2. **[Beginner Examples](/en/learn/software-engineering/data/databases/postgresql/tutorials/by-example/beginner)** - Master fundamentals (Examples 1-30)
-3. **[Intermediate Examples](/en/learn/software-engineering/data/databases/postgresql/tutorials/by-example/intermediate)** - Production patterns (Examples 31-60)
-4. **[Advanced Examples](/en/learn/software-engineering/data/databases/postgresql/tutorials/by-example/advanced)** - Expert mastery (Examples 61-85)
+1. **[PostgreSQL By-Example Overview](/en/learn/software-engineering/data/databases/postgresql/by-example/overview)** - Understand the by-example approach
+2. **[Beginner Examples](/en/learn/software-engineering/data/databases/postgresql/by-example/beginner)** - Master fundamentals (Examples 1-30)
+3. **[Intermediate Examples](/en/learn/software-engineering/data/databases/postgresql/by-example/intermediate)** - Production patterns (Examples 31-60)
+4. **[Advanced Examples](/en/learn/software-engineering/data/databases/postgresql/by-example/advanced)** - Expert mastery (Examples 61-85)
 
 Prefer narrative learning? Traditional beginner, intermediate, and advanced tutorials coming soon.
 

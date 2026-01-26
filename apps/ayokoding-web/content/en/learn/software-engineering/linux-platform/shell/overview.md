@@ -105,8 +105,8 @@ Command-line proficiency develops through stages:
 
 ## Available Content
 
-Comprehensive tutorials covering command-line fundamentals, shell scripting, and practical examples are under development. The by-example tutorials will provide hands-on experience with real-world command patterns.
+Comprehensive by-example tutorials covering command-line fundamentals, shell scripting, and practical examples are under development. The by-example content will provide hands-on experience with real-world command patterns.
 
 ## Next Steps
 
-Explore the tutorials section to begin your command-line journey, starting with fundamental operations and progressing to advanced shell scripting and automation techniques.
+Explore the [by-example section](/en/learn/software-engineering/linux-platform/shell/by-example) to begin your command-line journey, starting with fundamental operations and progressing to advanced shell scripting and automation techniques.

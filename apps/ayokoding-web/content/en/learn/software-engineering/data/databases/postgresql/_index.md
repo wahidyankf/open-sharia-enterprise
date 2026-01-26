@@ -9,7 +9,5 @@ layout: list
 
 - [Overview](/en/learn/software-engineering/data/databases/postgresql/overview)
 - [Tutorials](/en/learn/software-engineering/data/databases/postgresql/tutorials)
-  - [Overview](/en/learn/software-engineering/data/databases/postgresql/tutorials/overview)
-  - [Initial Setup](/en/learn/software-engineering/data/databases/postgresql/tutorials/initial-setup)
-  - [Quick Start](/en/learn/software-engineering/data/databases/postgresql/tutorials/quick-start)
-  - [By Example](/en/learn/software-engineering/data/databases/postgresql/tutorials/by-example)
+  - [Overview](/en/learn/software-engineering/data/databases/postgresql/overview)
+  - [By Example](/en/learn/software-engineering/data/databases/postgresql/by-example)

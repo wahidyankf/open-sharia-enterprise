@@ -79,13 +79,13 @@ Start with foundational tutorials:
 
 1. **Quick Start** (Coming Soon) - Get up and running in minutes
 2. **Beginner Tutorial** (Coming Soon) - Learn SQL from scratch
-3. **By Example** - [85 annotated examples](/en/learn/software-engineering/data/databases/sql/tutorials/by-example) (code-first approach)
+3. **By Example** - [85 annotated examples](/en/learn/software-engineering/data/databases/sql/by-example) (code-first approach)
 
 ### For Experienced Developers
 
 Jump directly to:
 
-1. **[By Example Tutorial](/en/learn/software-engineering/data/databases/sql/tutorials/by-example)** - 85 examples covering 95% of SQL through heavily annotated code
+1. **[By Example Tutorial](/en/learn/software-engineering/data/databases/sql/by-example)** - 85 examples covering 95% of SQL through heavily annotated code
 2. **Advanced Tutorial** (Coming Soon) - Deep dives into optimization and production patterns
 
 ### For Problem Solvers
@@ -126,7 +126,7 @@ docker exec -it sqlite-tutorial sqlite3 /data/tutorial.db
 sqlite3 tutorial.db
 ```
 
-See [By Example Tutorial - Overview](/en/learn/software-engineering/data/databases/sql/tutorials/by-example/overview) for detailed setup instructions.
+See [By Example Tutorial - Overview](/en/learn/software-engineering/data/databases/sql/by-example/overview) for detailed setup instructions.
 
 ## How SQL Fits in Your Tech Stack
 
@@ -148,7 +148,7 @@ SQL complements:
 
 Ready to start learning?
 
-1. **[By Example Tutorial](/en/learn/software-engineering/data/databases/sql/tutorials/by-example)** - Start here for code-first learning (85 examples)
+1. **[By Example Tutorial](/en/learn/software-engineering/data/databases/sql/by-example)** - Start here for code-first learning (85 examples)
 2. **Beginner Tutorial** (Coming Soon) - Narrative-driven comprehensive guide
 3. **Advanced Tutorial** (Coming Soon) - Query optimization and production patterns
 
