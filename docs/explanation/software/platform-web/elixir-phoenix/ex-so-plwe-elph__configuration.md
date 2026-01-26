@@ -14,6 +14,11 @@ related:
   - ex-so-plwe-elph__deployment.md
   - ex-so-plwe-elph__security.md
   - ex-so-plwe-elph__best-practices.md
+principles:
+  - explicit-over-implicit
+  - immutability
+  - pure-functions
+  - reproducibility
 last_updated: 2026-01-25
 ---
 
@@ -58,6 +63,107 @@ Phoenix uses Elixir's configuration system with compile-time (`config.exs`) and 
 - **Secrets Externalized** - Never hardcode secrets
 - **Environment-Specific** - Different configs for dev/test/prod
 - **Runtime-Configurable** - Use `runtime.exs` for environment-dependent values
+
+### Configuration Loading Hierarchy
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A[Application Startup] --> B[Load config/config.exs]
+    B --> C{MIX_ENV?}
+
+    C -->|dev| D[Load config/dev.exs]
+    C -->|test| E[Load config/test.exs]
+    C -->|prod| F[Load config/prod.exs]
+
+    D --> G[Merge Configurations]
+    E --> G
+    F --> G
+
+    G --> H[Compile Application]
+
+    H --> I[Release Build]
+    I --> J[Load config/runtime.exs]
+
+    J --> K{Environment Variables?}
+    K -->|DATABASE_URL| L[Override Database Config]
+    K -->|SECRET_KEY_BASE| M[Override Secret Config]
+    K -->|PHX_HOST| N[Override Endpoint Config]
+    K -->|Custom Vars| O[Override Custom Config]
+
+    L --> P[Final Application Config]
+    M --> P
+    N --> P
+    O --> P
+
+    P --> Q[Application.get_env#40;#41;]
+    Q --> R[Running Application]
+
+    subgraph "Compile Time #40;Mix#41;"
+        B
+        C
+        D
+        E
+        F
+        G
+        H
+    end
+
+    subgraph "Runtime #40;Release#41;"
+        I
+        J
+        K
+        L
+        M
+        N
+        O
+        P
+    end
+
+    style B fill:#0173B2,color:#fff
+    style D fill:#0173B2,color:#fff
+    style E fill:#0173B2,color:#fff
+    style F fill:#0173B2,color:#fff
+    style J fill:#029E73,color:#fff
+    style L fill:#029E73,color:#fff
+    style M fill:#029E73,color:#fff
+    style N fill:#029E73,color:#fff
+    style P fill:#DE8F05,color:#fff
+    style R fill:#CC78BC,color:#fff
+```
+
+**Configuration Loading Phases**:
+
+1. **Compile Time** (blue):
+   - `config/config.exs` loaded first (base configuration)
+   - Environment-specific file loaded based on `MIX_ENV`
+   - Configurations merged (env-specific overrides base)
+   - Application compiled with these values
+
+2. **Runtime** (teal):
+   - `config/runtime.exs` loaded when release starts
+   - Environment variables read from system
+   - Runtime config overrides compile-time config
+   - Enables dynamic configuration without recompilation
+
+3. **Final Config** (orange):
+   - Merged configuration available via `Application.get_env/3`
+   - Used by running application
+
+**Priority Order** (highest to lowest):
+
+1. `config/runtime.exs` + environment variables (highest)
+2. `config/{dev,test,prod}.exs`
+3. `config/config.exs` (lowest)
+
+**Best Practices**:
+
+- **Compile-time**: Static values (feature flags, defaults)
+- **Runtime**: Dynamic values (database URLs, secrets, host)
+- **Secrets**: Always use environment variables in `runtime.exs`
+- **Validation**: Validate required config in `runtime.exs`
 
 ## Configuration Files
 

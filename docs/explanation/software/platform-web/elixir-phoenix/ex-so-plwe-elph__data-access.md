@@ -17,6 +17,11 @@ related:
   - ex-so-plwe-elph__performance.md
   - ex-so-plwe-elph__testing.md
   - ex-so-plwe-elph__best-practices.md
+principles:
+  - explicit-over-implicit
+  - immutability
+  - pure-functions
+  - reproducibility
 last_updated: 2026-01-25
 ---
 
@@ -538,6 +543,76 @@ attrs = %{
 ```
 
 ## Querying
+
+### Ecto Query Flow
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A[Context Function] --> B[Ecto.Query]
+    B --> C{Query Type}
+
+    C -->|Simple| D[Repo.all#40;schema#41;]
+    C -->|Filtered| E[from#40;s in Schema,<br/>where: condition#41;]
+    C -->|Joined| F[from#40;s in Schema,<br/>join: assoc#41;]
+    C -->|Aggregate| G[from#40;s in Schema,<br/>select: aggregate#41;]
+
+    D --> H[Ecto.Adapters.Postgres]
+    E --> H
+    F --> H
+    G --> H
+
+    H --> I[SQL Generation]
+    I --> J{Prepared?}
+    J -->|No| K[Prepare Statement]
+    J -->|Yes| L[Use Cached]
+    K --> M[Query Cache]
+    L --> N[Execute Query]
+    M --> N
+
+    N --> O[PostgreSQL Database]
+    O --> P{Result}
+
+    P -->|Success| Q[Parse Rows]
+    P -->|Error| R[Ecto.QueryError]
+
+    Q --> S{Preload?}
+    S -->|Yes| T[Additional Queries]
+    S -->|No| U[Return Structs]
+    T --> U
+
+    U --> V[Context Returns Result]
+    R --> W[Context Handles Error]
+
+    style A fill:#CC78BC,color:#fff
+    style B fill:#029E73,color:#fff
+    style H fill:#029E73,color:#fff
+    style O fill:#DE8F05,color:#fff
+    style U fill:#0173B2,color:#fff
+    style V fill:#CC78BC,color:#fff
+
+```
+
+**Query Execution Flow**:
+
+1. **Context layer** (purple): Business logic calls query
+2. **Query building** (teal): Ecto.Query constructs query
+3. **Adapter layer** (teal): Postgres adapter generates SQL
+4. **Query cache**: Prepared statements cached for reuse
+5. **Database** (orange): PostgreSQL executes query
+6. **Result parsing** (blue): Rows converted to Elixir structs
+7. **Preloading**: Additional queries for associations (if needed)
+8. **Return** (purple): Structs returned to context
+
+**Performance Optimizations**:
+
+- **Prepared statements**: Queries cached and reused
+- **Connection pooling**: DBConnection manages pool (default: 10)
+- **Preloading**: Single query vs N+1 (use `Repo.preload/2`)
+- **Select specific fields**: Reduce data transfer with `select:`
+- **Batching**: Use `Repo.all/1` instead of multiple `Repo.get/2`
 
 ### Basic Queries
 

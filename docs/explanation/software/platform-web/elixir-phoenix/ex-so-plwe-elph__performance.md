@@ -16,7 +16,11 @@ related:
   - ex-so-plwe-elph__data-access.md
   - ex-so-plwe-elph__deployment.md
   - ex-so-plwe-elph__observability.md
-last_updated: 2026-01-25
+principles:
+  - explicit-over-implicit
+  - immutability
+  - pure-functions
+  - reproducibility
 ---
 
 # Phoenix Performance Guide
@@ -43,6 +47,92 @@ Phoenix applications can handle millions of concurrent connections, but performa
 **Target Audience**: Developers optimizing Phoenix application performance for production workloads.
 
 **Versions**: Phoenix 1.7+, Elixir 1.14+, Ecto 3.10+
+
+### Performance Optimization Strategy
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A[Performance Issue Identified] --> B{Bottleneck Type?}
+
+    B -->|Slow Queries| C[Database Optimization]
+    B -->|High Latency| D[Response Time]
+    B -->|Memory Issues| E[Memory Optimization]
+    B -->|CPU Intensive| F[Computation]
+
+    C --> C1{Query Analysis}
+    C1 -->|N+1 Queries| C2[Add Preloads]
+    C1 -->|Missing Index| C3[Add Database Index]
+    C1 -->|Slow Join| C4[Optimize Query Structure]
+    C1 -->|Large Dataset| C5[Add Pagination]
+
+    D --> D1{Latency Source?}
+    D1 -->|External API| D2[Async Tasks + Cache]
+    D1 -->|Multiple Queries| D3[Batch Operations]
+    D1 -->|Computation| D4[Move to Background Job]
+    D1 -->|Network| D5[Enable HTTP/2 + Compression]
+
+    E --> E1{Memory Type?}
+    E1 -->|Process Memory| E2[Reduce Process State]
+    E1 -->|Binary Leaks| E3[Binary Optimization]
+    E1 -->|Cache Overflow| E4[Add TTL to Cache]
+    E1 -->|Too Many Processes| E5[Pool Connections]
+
+    F --> F1{Computation Type?}
+    F1 -->|Repeated Calc| F2[Add Caching #40;ETS/Redis#41;]
+    F1 -->|Heavy Logic| F3[Optimize Algorithm]
+    F1 -->|Serialization| F4[Use :erlang.term_to_binary]
+    F1 -->|Parallel Work| F5[Use Task.async_stream]
+
+    C2 --> G[Profile After Fix]
+    C3 --> G
+    C4 --> G
+    C5 --> G
+    D2 --> G
+    D3 --> G
+    D4 --> G
+    D5 --> G
+    E2 --> G
+    E3 --> G
+    E4 --> G
+    E5 --> G
+    F2 --> G
+    F3 --> G
+    F4 --> G
+    F5 --> G
+
+    G --> H{Target Met?}
+    H -->|No| I[Identify Next Bottleneck]
+    H -->|Yes| J[Monitor in Production]
+    I --> B
+
+    style A fill:#0173B2,color:#fff
+    style C fill:#DE8F05,color:#fff
+    style D fill:#DE8F05,color:#fff
+    style E fill:#DE8F05,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#029E73,color:#fff
+    style J fill:#CC78BC,color:#fff
+```
+
+**Optimization Process**:
+
+1. **Identify bottleneck**: Use profiling tools (`:observer`, `:fprof`, Telemetry)
+2. **Categorize issue**: Database, latency, memory, or CPU
+3. **Apply targeted fix**: Choose appropriate optimization from decision tree
+4. **Profile after fix**: Measure improvement with same tools
+5. **Iterate**: If target not met, find next bottleneck
+6. **Monitor production**: Set up alerts for regressions
+
+**Profiling Tools**:
+
+- **`:observer`** - Real-time system monitoring (processes, memory, CPU)
+- **`:fprof`** - Function-level profiling
+- **Telemetry** - Custom metrics and monitoring
+- **EXPLAIN ANALYZE** - Database query analysis
+- **k6/Bombardier** - Load testing
 
 ## Table of Contents
 

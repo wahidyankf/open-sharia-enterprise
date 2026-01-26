@@ -17,7 +17,11 @@ related:
   - ex-so-plwe-elph__liveview.md
   - ex-so-plwe-elph__rest-apis.md
   - ex-so-plwe-elph__best-practices.md
-last_updated: 2026-01-25
+principles:
+  - explicit-over-implicit
+  - immutability
+  - pure-functions
+  - reproducibility
 ---
 
 # Phoenix Security Guide

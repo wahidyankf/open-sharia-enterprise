@@ -16,7 +16,11 @@ related:
   - ex-so-plwe-elph__liveview.md
   - ex-so-plwe-elph__data-access.md
   - ex-so-plwe-elph__best-practices.md
-last_updated: 2026-01-25
+principles:
+  - explicit-over-implicit
+  - immutability
+  - pure-functions
+  - reproducibility
 ---
 
 # Phoenix Testing Guide
@@ -39,6 +43,102 @@ Testing is essential for maintaining Phoenix applications. Phoenix provides exce
 **Target Audience**: Developers implementing comprehensive test suites for Phoenix applications, particularly for Islamic finance platforms requiring reliable Zakat calculations, donation processing, and Waqf management.
 
 **Versions**: Phoenix 1.7+, ExUnit (built-in), Elixir 1.14+
+
+### Phoenix Testing Pyramid
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    subgraph "Test Pyramid"
+        subgraph "E2E Tests #40;Few#41;"
+            E2E[End-to-End Tests<br/>Full application flow<br/>Browser automation]
+        end
+
+        subgraph "Integration Tests #40;Some#41;"
+            LV[LiveView Tests<br/>Interactive UI]
+            CH[Channel Tests<br/>WebSocket communication]
+            API[API/Controller Tests<br/>HTTP endpoints]
+        end
+
+        subgraph "Unit Tests #40;Many#41;"
+            CTX[Context Tests<br/>Business logic]
+            SCH[Schema/Changeset Tests<br/>Data validation]
+            VIEW[View Tests<br/>Template rendering]
+        end
+    end
+
+    subgraph "Test Support"
+        DC[DataCase<br/>Database setup/teardown]
+        CC[ConnCase<br/>HTTP connection setup]
+        LC[ChannelCase<br/>Channel setup]
+        FIX[Fixtures<br/>Test data factories]
+    end
+
+    E2E -.Uses.-> LV
+    E2E -.Uses.-> API
+
+    LV -.Uses.-> LC
+    CH -.Uses.-> LC
+    API -.Uses.-> CC
+
+    CTX -.Uses.-> DC
+    SCH -.Uses.-> DC
+    VIEW -.Uses.-> CC
+
+    DC -.Provides.-> FIX
+    CC -.Provides.-> FIX
+    LC -.Provides.-> FIX
+
+    style E2E fill:#CC78BC,color:#fff
+    style LV fill:#029E73,color:#fff
+    style CH fill:#029E73,color:#fff
+    style API fill:#029E73,color:#fff
+    style CTX fill:#0173B2,color:#fff
+    style SCH fill:#0173B2,color:#fff
+    style VIEW fill:#0173B2,color:#fff
+    style DC fill:#DE8F05,color:#fff
+    style CC fill:#DE8F05,color:#fff
+    style LC fill:#DE8F05,color:#fff
+```
+
+**Testing Layers** (bottom to top):
+
+1. **Unit Tests** (blue) - 70% of tests:
+   - Context functions (business logic)
+   - Schema validation (changesets)
+   - View rendering (templates)
+   - Fast execution (microseconds)
+   - No database/HTTP required
+
+2. **Integration Tests** (teal) - 25% of tests:
+   - Controllers/API endpoints
+   - Channels (WebSocket)
+   - LiveView (interactive UI)
+   - Medium speed (milliseconds)
+   - Database + HTTP required
+
+3. **E2E Tests** (purple) - 5% of tests:
+   - Full application workflows
+   - Browser automation (Wallaby/Hound)
+   - Slow execution (seconds)
+   - Complete stack required
+
+**Test Support** (orange):
+
+- **DataCase**: Database transactions, fixtures
+- **ConnCase**: HTTP connection helpers
+- **ChannelCase**: WebSocket connection helpers
+- **Fixtures**: Factory functions for test data
+
+**Best Practices**:
+
+- **Fast feedback**: Run unit tests frequently (watch mode)
+- **Isolated tests**: Each test independent, can run in any order
+- **Descriptive names**: `test "calculates zakat correctly for nisab threshold"`
+- **Database cleanup**: Ecto.Adapters.SQL.Sandbox for isolation
+- **Async tests**: `use ExUnit.Case, async: true` when possible
 
 ## Test Structure
 

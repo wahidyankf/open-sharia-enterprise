@@ -15,7 +15,11 @@ related:
   - ex-so-plwe-elph__configuration.md
   - ex-so-plwe-elph__performance.md
   - ex-so-plwe-elph__observability.md
-last_updated: 2026-01-25
+principles:
+  - explicit-over-implicit
+  - immutability
+  - pure-functions
+  - reproducibility
 ---
 
 # Phoenix Deployment Guide
@@ -339,6 +343,106 @@ docker-compose down
 ```
 
 ## Kubernetes Deployment
+
+### Deployment Architecture
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    subgraph "External Traffic"
+        U[Users]
+        LB[Load Balancer]
+    end
+
+    subgraph "Kubernetes Cluster"
+        subgraph "Ingress Layer"
+            ING[Ingress Controller<br/>nginx/Traefik]
+        end
+
+        subgraph "Application Layer"
+            SVC[Service<br/>ClusterIP]
+            POD1[Phoenix Pod 1<br/>4000:4000]
+            POD2[Phoenix Pod 2<br/>4000:4000]
+            POD3[Phoenix Pod 3<br/>4000:4000]
+        end
+
+        subgraph "Data Layer"
+            PGSVC[PostgreSQL Service]
+            PG[(PostgreSQL<br/>StatefulSet)]
+            REDISSVC[Redis Service]
+            RD[(Redis<br/>StatefulSet)]
+        end
+
+        subgraph "Configuration"
+            CM[ConfigMaps<br/>Runtime Config]
+            SEC[Secrets<br/>Credentials]
+        end
+
+        subgraph "Storage"
+            PV[Persistent Volumes]
+        end
+    end
+
+    U -->|HTTPS| LB
+    LB -->|HTTP/WS| ING
+    ING -->|Route| SVC
+    SVC -->|Round Robin| POD1
+    SVC -->|Round Robin| POD2
+    SVC -->|Round Robin| POD3
+
+    POD1 -.->|Env Vars| CM
+    POD1 -.->|Secrets| SEC
+    POD2 -.->|Env Vars| CM
+    POD2 -.->|Secrets| SEC
+    POD3 -.->|Env Vars| CM
+    POD3 -.->|Secrets| SEC
+
+    POD1 -->|SQL| PGSVC
+    POD2 -->|SQL| PGSVC
+    POD3 -->|SQL| PGSVC
+    PGSVC --> PG
+
+    POD1 -->|Cache| REDISSVC
+    POD2 -->|Cache| REDISSVC
+    POD3 -->|Cache| REDISSVC
+    REDISSVC --> RD
+
+    PG -.->|Mount| PV
+    RD -.->|Mount| PV
+
+    POD1 -.Clustering.-> POD2
+    POD2 -.Clustering.-> POD3
+    POD3 -.Clustering.-> POD1
+
+    style U fill:#0173B2,color:#fff
+    style LB fill:#0173B2,color:#fff
+    style ING fill:#029E73,color:#fff
+    style POD1 fill:#DE8F05,color:#fff
+    style POD2 fill:#DE8F05,color:#fff
+    style POD3 fill:#DE8F05,color:#fff
+    style PG fill:#CC78BC,color:#fff
+    style RD fill:#CC78BC,color:#fff
+```
+
+**Architecture Components**:
+
+- **Load Balancer** (blue): External traffic entry point (AWS ELB, GCP Load Balancer)
+- **Ingress Controller** (teal): Routes HTTPS/WebSocket traffic to services
+- **Phoenix Pods** (orange): Clustered application instances (3+ replicas)
+- **Services**: ClusterIP services for internal routing
+- **Databases** (purple): StatefulSets for PostgreSQL and Redis
+- **Configuration**: ConfigMaps for runtime config, Secrets for credentials
+- **Storage**: Persistent volumes for database data
+
+**Key Features**:
+
+- **Rolling updates**: Zero-downtime deployment with maxUnavailable: 0
+- **Health checks**: Liveness and readiness probes
+- **Clustering**: Pods discover each other via libcluster + DNS
+- **Horizontal scaling**: Add pods with `kubectl scale deployment`
+- **Resource limits**: CPU/memory requests and limits per pod
 
 ### Deployment Manifest
 

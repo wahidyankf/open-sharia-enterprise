@@ -17,6 +17,10 @@ related:
   - ex-so-plwe-elph__security.md
   - ex-so-plwe-elph__testing.md
   - ex-so-plwe-elph__observability.md
+principles:
+  - explicit-over-implicit
+  - immutability
+  - pure-functions
 last_updated: 2026-01-25
 ---
 
@@ -46,6 +50,84 @@ Phoenix Channels provide a powerful abstraction for real-time, bidirectional com
 ### Channel Architecture
 
 Channels operate on a publish-subscribe model with several key components:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    subgraph "Client Layer"
+        C1[WebSocket Client 1]
+        C2[WebSocket Client 2]
+        C3[WebSocket Client 3]
+    end
+
+    subgraph "Phoenix Node 1"
+        S1[UserSocket]
+        CH1[DonationChannel]
+        CH2[ZakatChannel]
+        PS1[PubSub Adapter]
+    end
+
+    subgraph "Phoenix Node 2"
+        S2[UserSocket]
+        CH3[DonationChannel]
+        CH4[ZakatChannel]
+        PS2[PubSub Adapter]
+    end
+
+    subgraph "PubSub Backend"
+        PG[Phoenix.PubSub.PG2<br/>Distributed Backend]
+    end
+
+    subgraph "Application Layer"
+        CTX[Context Modules]
+    end
+
+    C1 -.WebSocket.-> S1
+    C2 -.WebSocket.-> S1
+    C3 -.WebSocket.-> S2
+
+    S1 --> CH1
+    S1 --> CH2
+    S2 --> CH3
+    S2 --> CH4
+
+    CH1 <-->|subscribe/broadcast| PS1
+    CH2 <-->|subscribe/broadcast| PS1
+    CH3 <-->|subscribe/broadcast| PS2
+    CH4 <-->|subscribe/broadcast| PS2
+
+    PS1 <-->|distributed| PG
+    PS2 <-->|distributed| PG
+
+    CTX -->|broadcast events| PS1
+    CTX -->|broadcast events| PS2
+
+    style C1 fill:#0173B2,color:#fff
+    style C2 fill:#0173B2,color:#fff
+    style C3 fill:#0173B2,color:#fff
+    style CH1 fill:#029E73,color:#fff
+    style CH2 fill:#029E73,color:#fff
+    style CH3 fill:#029E73,color:#fff
+    style CH4 fill:#029E73,color:#fff
+    style PG fill:#DE8F05,color:#fff
+    style CTX fill:#CC78BC,color:#fff
+```
+
+**Architecture Layers**:
+
+- **Client Layer** (blue): WebSocket clients connecting from browsers/mobile apps
+- **Channel Processes** (teal): One process per client connection, handles join/leave/messages
+- **PubSub Backend** (orange): Distributed message bus, routes messages across nodes
+- **Application Layer** (purple): Business logic contexts that broadcast domain events
+
+**Key Benefits**:
+
+- **Process isolation**: Each connection is isolated process (crash won't affect others)
+- **Horizontal scaling**: PubSub distributes messages across multiple nodes
+- **Fault tolerance**: Supervisor trees restart crashed channels automatically
+- **Soft real-time**: Microsecond message latency with millions of concurrent connections
 
 ```elixir
 # User Socket - Connection authentication and channel routing
@@ -342,6 +424,53 @@ end
 ```
 
 ## Broadcasting Patterns
+
+### Channel Communication Architecture
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+sequenceDiagram
+    participant C1 as Client 1
+    participant CH1 as Channel Process 1
+    participant PS as PubSub
+    participant CH2 as Channel Process 2
+    participant C2 as Client 2
+    participant CH3 as Channel Process 3
+    participant C3 as Client 3
+
+    Note over C1,C3: Client sends donation event
+    C1->>+CH1: phx_push#40;"new_donation"#41;
+    CH1->>CH1: handle_in#40;"new_donation"#41;
+    CH1->>CH1: Donations.create#40;attrs#41;
+
+    Note over C1,C3: Broadcast to all subscribers
+    CH1->>PS: broadcast#40;"donations:campaign:123", event#41;
+    PS-->>CH1: :ok
+    PS-->>CH2: event
+    PS-->>CH3: event
+
+    Note over C1,C3: Channels handle broadcast
+    CH2->>CH2: handle_out#40;"donation_created"#41;
+    CH2->>C2: phx_reply#40;event#41;
+    CH3->>CH3: handle_out#40;"donation_created"#41;
+    CH3->>C3: phx_reply#40;event#41;
+
+    CH1->>C1: phx_reply#40;:ok#41;
+    deactivate CH1
+
+    Note over C1,C3: All clients updated in real-time
+```
+
+**Communication Flow**:
+
+1. **Client sends event**: Client 1 sends "new_donation" via WebSocket
+2. **Channel handles**: Channel process handles event, creates donation
+3. **Broadcast**: Channel broadcasts to PubSub topic
+4. **Distribution**: PubSub delivers to all subscribed channel processes
+5. **Transform**: Each channel can transform event via `handle_out/3`
+6. **Push to clients**: Channels push events to their connected clients
 
 ### Topic-Based Broadcasting
 

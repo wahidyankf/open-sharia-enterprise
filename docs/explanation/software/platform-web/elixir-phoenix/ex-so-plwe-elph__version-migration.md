@@ -12,7 +12,11 @@ tags:
 related:
   - ex-so-plwe-elph__best-practices.md
   - ex-so-plwe-elph__liveview.md
-last_updated: 2026-01-25
+principles:
+  - explicit-over-implicit
+  - immutability
+  - pure-functions
+  - reproducibility
 ---
 
 # Phoenix Version Migration Guide
