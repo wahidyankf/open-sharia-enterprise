@@ -1160,6 +1160,52 @@ end
 
 ## Cross-Context Communication
 
+### Context Boundaries in OSE Platform
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    subgraph "Domain Contexts"
+        Zakat[Zakat Context<br/>Obligatory Charity]
+        Donations[Donations Context<br/>Voluntary Giving]
+        Murabaha[Murabaha Context<br/>Islamic Financing]
+        Waqf[Waqf Context<br/>Endowments]
+    end
+
+    subgraph "Shared Contexts"
+        Accounts[Accounts Context<br/>User Management]
+        Notifications[Notifications Context<br/>Email/SMS/Push]
+        Uploads[Uploads Context<br/>File Storage]
+    end
+
+    Zakat -.->|Public API| Accounts
+    Zakat -.->|Public API| Notifications
+    Donations -.->|Public API| Accounts
+    Donations -.->|Public API| Notifications
+    Murabaha -.->|Public API| Accounts
+    Murabaha -.->|Public API| Notifications
+    Murabaha -.->|Public API| Uploads
+    Waqf -.->|Public API| Accounts
+    Waqf -.->|Public API| Notifications
+
+    style Zakat fill:#0173B2,color:#fff
+    style Donations fill:#0173B2,color:#fff
+    style Murabaha fill:#0173B2,color:#fff
+    style Waqf fill:#0173B2,color:#fff
+    style Accounts fill:#029E73,color:#fff
+    style Notifications fill:#029E73,color:#fff
+    style Uploads fill:#029E73,color:#fff
+```
+
+**Key Principles**:
+
+- **Domain contexts** (blue) encapsulate specific business domains
+- **Shared contexts** (teal) provide cross-cutting functionality
+- Contexts communicate only through **public APIs** (dashed lines)
+- No direct schema or internal module access between contexts
+
 ### Using Public APIs
 
 **Rule**: Contexts communicate only through public APIs, never by accessing schemas or internal modules directly.
@@ -1264,6 +1310,50 @@ defmodule OsePlatform.Reports do
   end
 end
 ```
+
+### Communication Patterns
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+sequenceDiagram
+    participant D as Donations Context
+    participant Z as Zakat Context
+    participant P as PubSub
+    participant R as Reports Context
+    participant N as Notifications Context
+
+    Note over D,N: Direct API Communication
+    D->>+Z: Zakat.get_calculation#40;zakat_id#41;
+    Z-->>-D: {:ok, calculation}
+    D->>D: validate_zakat_eligible#40;#41;
+    D->>D: create_donation#40;#41;
+    D->>+N: Notifications.send_receipt#40;donation#41;
+    N-->>-D: :ok
+
+    Note over D,N: Event-Based Communication
+    Z->>Z: calculate_zakat#40;attrs#41;
+    Z->>P: broadcast#40;:zakat_calculated#41;
+    P-->>R: {:zakat_calculated, calculation}
+    R->>R: update_user_report#40;#41;
+    P-->>N: {:zakat_calculated, calculation}
+    N->>N: send_calculation_summary#40;#41;
+```
+
+**Two Communication Patterns**:
+
+1. **Direct API calls** (top half):
+   - Synchronous communication
+   - Direct dependency on context's public API
+   - Used when you need the result immediately
+   - Example: Getting Zakat calculation before creating donation
+
+2. **Event-based** (bottom half):
+   - Asynchronous communication via PubSub
+   - Loose coupling - publisher doesn't know subscribers
+   - Used for side effects and notifications
+   - Example: Broadcasting Zakat calculation for reports and notifications
 
 ## Shared Contexts
 

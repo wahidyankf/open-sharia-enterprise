@@ -16,7 +16,11 @@ related:
   - ex-so-plwe-elph__performance.md
   - ex-so-plwe-elph__deployment.md
   - ex-so-plwe-elph__channels.md
-last_updated: 2026-01-25
+principles:
+  - explicit-over-implicit
+  - immutability
+  - pure-functions
+  - reproducibility
 ---
 
 # Phoenix Observability Guide
@@ -299,6 +303,96 @@ end
 ```
 
 ## Telemetry Events
+
+### Telemetry Architecture
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    subgraph "Application Layer"
+        CTX[Context Modules]
+        CH[Channels/LiveView]
+        CTRL[Controllers]
+        BG[Background Jobs]
+    end
+
+    subgraph "Phoenix Framework"
+        EP[Endpoint]
+        RT[Router]
+        REPO[Ecto.Repo]
+        LV[LiveView]
+    end
+
+    subgraph "Telemetry Core"
+        TE[Telemetry.execute#40;#41;]
+        TH[Telemetry Handlers]
+    end
+
+    subgraph "Metrics & Reporting"
+        TM[Telemetry.Metrics]
+        LD[Phoenix.LiveDashboard]
+        PROM[Prometheus Exporter]
+        OTEL[OpenTelemetry]
+        SENT[Sentry]
+    end
+
+    subgraph "Storage & Visualization"
+        PS[(Prometheus)]
+        GF[Grafana]
+        JAEG[Jaeger Tracing]
+        LOG[Structured Logs]
+    end
+
+    CTX -->|custom events| TE
+    CH -->|phoenix.channel.*| TE
+    CTRL -->|phoenix.router.*| TE
+    BG -->|custom events| TE
+
+    EP -->|phoenix.endpoint.*| TE
+    RT -->|phoenix.router.*| TE
+    REPO -->|repo.query.*| TE
+    LV -->|phoenix.live_view.*| TE
+
+    TE --> TH
+    TH --> TM
+    TH --> LD
+    TH --> PROM
+    TH --> OTEL
+    TH --> SENT
+
+    PROM --> PS
+    PS --> GF
+    OTEL --> JAEG
+    TM --> LD
+    TH --> LOG
+
+    style CTX fill:#CC78BC,color:#fff
+    style TE fill:#DE8F05,color:#fff
+    style TH fill:#DE8F05,color:#fff
+    style LD fill:#029E73,color:#fff
+    style PROM fill:#029E73,color:#fff
+    style PS fill:#0173B2,color:#fff
+    style GF fill:#0173B2,color:#fff
+```
+
+**Event Flow**:
+
+1. **Event sources** (purple): Application code and Phoenix framework emit telemetry events
+2. **Telemetry core** (orange): Central event bus routes events to handlers
+3. **Handlers**: Attached functions process events (aggregate, export, log)
+4. **Metrics & Reporting** (teal): Various backends collect and format metrics
+5. **Storage** (blue): Time-series databases and visualization tools
+
+**Built-in Event Categories**:
+
+- `phoenix.endpoint.*` - HTTP request lifecycle (start, stop)
+- `phoenix.router_dispatch.*` - Router dispatch events
+- `phoenix.live_view.*` - LiveView mount, render, events
+- `phoenix.channel.*` - Channel join, handle_in, broadcast
+- `[app].repo.query.*` - Database query execution (Ecto)
+- Custom events - Application-specific business events
 
 ### Built-in Phoenix Events
 
