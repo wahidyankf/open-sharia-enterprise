@@ -12,7 +12,7 @@ Learn Elixir fundamentals through 30 annotated code examples. Each example is se
 
 ## Group 1: First Steps
 
-### Example 1: Hello World and Basic Syntax
+## Example 1: Hello World and Basic Syntax
 
 Elixir programs run on the BEAM virtual machine (Erlang's runtime). Code can be executed interactively in IEx or compiled from `.ex` files. This example shows the simplest Elixir program and how the compilation pipeline works.
 
@@ -53,7 +53,7 @@ Hello.world() # => :ok
 
 ---
 
-### Example 2: Variables and Immutability
+## Example 2: Variables and Immutability
 
 Elixir variables don't hold values—they **bind** to values. The `=` operator is the **match operator**, not assignment. Once data is created, it cannot be changed (immutability), but variables can be rebound to new values.
 
@@ -89,7 +89,7 @@ new_list # => [0, 1, 2, 3]
 
 ---
 
-### Example 3: Basic Data Types
+## Example 3: Basic Data Types
 
 Elixir has several basic types: integers, floats, booleans, atoms, and strings. Atoms are constants where their name is their value. Strings are UTF-8 encoded binaries.
 
@@ -162,7 +162,7 @@ TypeChecker.format_value(42) # => "Number: 42"
 
 ## Group 2: Pattern Matching Foundation
 
-### Example 4: Pattern Matching Basics
+## Example 4: Pattern Matching Basics
 
 The `=` operator is the **match operator**, not assignment. The left side (pattern) is matched against the right side (value). If they match, variables in the pattern are bound to corresponding values. If not, a `MatchError` is raised.
 
@@ -217,7 +217,7 @@ third # => 3
 
 ---
 
-### Example 5: Pin Operator (^)
+## Example 5: Pin Operator (^)
 
 By default, variables in patterns rebind to new values. The **pin operator** `^` prevents rebinding and instead matches against the variable's existing value.
 
@@ -261,7 +261,7 @@ first # => 1
 
 ---
 
-### Example 6: Destructuring Collections
+## Example 6: Destructuring Collections
 
 Pattern matching shines when destructuring complex nested data structures. You can extract deeply nested values in a single match operation.
 
@@ -313,7 +313,7 @@ body # => "Success"
 
 ## Group 3: Core Data Structures
 
-### Example 7: Lists and Tuples
+## Example 7: Lists and Tuples
 
 Lists are linked lists (efficient for prepending, linear access). Tuples are contiguous memory arrays (efficient for random access, fixed size). Choose based on access patterns.
 
@@ -373,7 +373,7 @@ tuple_size(tuple) # => 3
 
 ---
 
-### Example 8: Maps
+## Example 8: Maps
 
 Maps are key-value data structures (like hash maps or dictionaries in other languages). They're efficient for lookups and updates. Keys can be any type, but atoms are most common.
 
@@ -420,7 +420,7 @@ updated_nested = put_in(nested, [:user, :profile, :bio], "Hi there!")
 
 ---
 
-### Example 9: Keyword Lists
+## Example 9: Keyword Lists
 
 Keyword lists are lists of tuples where the first element is an atom. They look like maps but maintain order and allow duplicate keys. Commonly used for function options.
 
@@ -469,7 +469,7 @@ a # => 25
 
 ## Group 4: Functions
 
-### Example 10: Anonymous Functions
+## Example 10: Anonymous Functions
 
 Functions are first-class values in Elixir—you can assign them to variables, pass them as arguments, and return them from other functions. Anonymous functions use the `fn` syntax or capture operator `&`.
 
@@ -541,7 +541,7 @@ Enum.filter(numbers, &(rem(&1, 2) == 0)) # => [2, 4]
 
 ---
 
-### Example 11: Named Functions in Modules
+## Example 11: Named Functions in Modules
 
 Named functions are defined in modules using `def` (public) or `defp` (private). They support pattern matching, guards, and default arguments. Multiple clauses enable elegant branching logic.
 
@@ -616,7 +616,7 @@ Example.func(3, 4) # => 7
 
 ---
 
-### Example 12: Pipe Operator (|>)
+## Example 12: Pipe Operator (|>)
 
 The pipe operator `|>` takes the result of an expression and passes it as the first argument to the next function. This enables readable left-to-right data transformations instead of nested function calls.
 
@@ -677,7 +677,7 @@ result = value
 
 ## Group 5: Control Flow and Basics
 
-### Example 13: Case and Cond
+## Example 13: Case and Cond
 
 `case` enables pattern matching on values with multiple clauses. `cond` evaluates multiple conditions and returns the result of the first truthy clause. Both provide structured branching logic.
 
@@ -758,7 +758,7 @@ loan_status # => "Eligible for $50k loan"
 
 ---
 
-### Example 14: Recursion Basics
+## Example 14: Recursion Basics
 
 Recursion is the primary looping mechanism in Elixir (no while/for loops). A recursive function calls itself with different arguments until reaching a base case. Tail-call optimization prevents stack overflow.
 
@@ -844,7 +844,7 @@ Recursion.filter([1, 2, 3, 4, 5], fn x -> rem(x, 2) == 0 end) # => [2, 4]
 
 ---
 
-### Example 15: Enum Module Essentials
+## Example 15: Enum Module Essentials
 
 The `Enum` module provides functions for working with enumerable collections (lists, maps, ranges). Core operations include `map`, `filter`, `reduce`, `each`, and many more. Essential for functional data processing.
 
@@ -928,7 +928,7 @@ Enum.filter(user_map, fn {_k, v} -> is_number(v) end) # => [age: 30]
 
 ---
 
-### Example 16: Ranges and Range Operations
+## Example 16: Ranges and Range Operations
 
 Ranges represent sequences of integers from start to end. They're memory-efficient (don't store all values) and work seamlessly with Enum functions. Use them for iterations, list generation, and pattern matching.
 
@@ -995,7 +995,7 @@ Enum.random(1..100) # => 42 (varies - random number between 1 and 100)
 
 ---
 
-### Example 17: String Interpolation Advanced
+## Example 17: String Interpolation Advanced
 
 String interpolation embeds expressions inside strings using `#{}`. Any Elixir expression can be interpolated, and the result is automatically converted to a string. Use it for dynamic string construction.
 
@@ -1077,7 +1077,7 @@ result # => "Result: 30"
 
 ---
 
-### Example 18: List Operators and Head/Tail
+## Example 18: List Operators and Head/Tail
 
 Lists support special operators for prepending and pattern matching. The head/tail pattern `[head | tail]` is fundamental to recursive list processing in Elixir.
 
@@ -1177,7 +1177,7 @@ tail # => [[3, 4]]
 
 ---
 
-### Example 19: If and Unless Expressions
+## Example 19: If and Unless Expressions
 
 `if` and `unless` are macros that evaluate conditions and return values. Unlike many languages, they're expressions (return values), not statements. Use them for simple two-branch conditionals.
 
@@ -1274,7 +1274,7 @@ unless x == 0, do: "Not zero" # => More readable
 
 ---
 
-### Example 20: Multiple Function Clauses
+## Example 20: Multiple Function Clauses
 
 Functions with multiple clauses use pattern matching to dispatch to the correct implementation. Clauses are tried top-to-bottom until one matches. This enables elegant branching without if/else.
 
@@ -1388,7 +1388,7 @@ OrderMatters.classify(10) # => "Positive"
 
 ---
 
-### Example 21: Default Arguments
+## Example 21: Default Arguments
 
 Default arguments provide fallback values when arguments aren't supplied. Define them with `\\` syntax. Functions with defaults generate multiple arities automatically.
 
@@ -1501,7 +1501,7 @@ Builder.build("task", timeout: 10000) # => {"task", 10000, false}
 
 ---
 
-### Example 22: First-Class Functions
+## Example 22: First-Class Functions
 
 Functions are first-class values—they can be assigned to variables, passed as arguments, and returned from other functions. This enables higher-order functions and functional programming patterns.
 
@@ -1621,7 +1621,7 @@ execute.({:multiply, 5, 3}) # => 15
 
 ---
 
-### Example 23: Module Compilation and Loading
+## Example 23: Module Compilation and Loading
 
 Modules are compiled to BEAM bytecode when loaded. Understanding compilation, recompilation, and the code loading process helps with development workflow and debugging.
 
@@ -1729,7 +1729,7 @@ Dynamic.get_attr() # => "custom value"
 
 ---
 
-### Example 24: IEx Basics and Helpers
+## Example 24: IEx Basics and Helpers
 
 IEx (Interactive Elixir) is the REPL for running Elixir code interactively. It provides helpers for documentation, introspection, compilation, and debugging.
 
@@ -1833,7 +1833,7 @@ runtime_info(:system) # => Shows system memory
 
 ---
 
-### Example 25: Boolean and Comparison Operators
+## Example 25: Boolean and Comparison Operators
 
 Elixir provides boolean operators (`and`, `or`, `not`) and comparison operators (`==`, `===`, `!=`, `<`, `>`, etc.). Boolean operators are strict (require booleans), while `&&`, `||`, `!` work with truthy/falsy values.
 
@@ -1942,7 +1942,7 @@ Compare.within_range?(15, 1, 10) # => false
 
 ---
 
-### Example 26: Truthy and Falsy Values
+## Example 26: Truthy and Falsy Values
 
 In Elixir, only `false` and `nil` are falsy—everything else is truthy. This differs from many languages where `0`, `""`, `[]` are falsy. Understanding truthiness is essential for conditionals.
 
@@ -2042,7 +2042,7 @@ SafeMath.divide(nil, 2) # => nil
 
 ---
 
-### Example 27: String Concatenation
+## Example 27: String Concatenation
 
 Strings can be concatenated with the `<>` operator or built with interpolation and IO lists. Understanding performance trade-offs between methods is important for production code.
 
@@ -2136,7 +2136,7 @@ Enum.reduce(1..10_000, "", fn x, acc -> acc <> to_string(x) end)
 
 ---
 
-### Example 28: List Comprehensions Basics
+## Example 28: List Comprehensions Basics
 
 List comprehensions provide concise syntax for generating lists from enumerables. They combine mapping, filtering, and flattening operations in readable syntax.
 
@@ -2224,7 +2224,7 @@ for x <- ["a", "b", "c"], into: "", do: String.upcase(x)
 
 ---
 
-### Example 29: Tuple Matching and Destructuring
+## Example 29: Tuple Matching and Destructuring
 
 Tuples are fixed-size collections matched by position. Pattern matching on tuples enables elegant error handling with tagged tuples like `{:ok, value}` and `{:error, reason}`.
 
@@ -2340,7 +2340,7 @@ Matcher.process({:multiply, 5, 3}) # => 15
 
 ---
 
-### Example 30: Range Patterns and Membership
+## Example 30: Range Patterns and Membership
 
 Ranges can be used in pattern matching with guards and membership checks. The `in` operator provides readable range validation, essential for boundary checking.
 

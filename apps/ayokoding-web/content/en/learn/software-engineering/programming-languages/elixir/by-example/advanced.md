@@ -11,7 +11,7 @@ Master advanced Elixir concepts with 25 examples covering OTP, GenServer, Superv
 
 ## Group 1: GenServer Deep Dive
 
-### Example 61: GenServer Basics
+## Example 61: GenServer Basics
 
 GenServer (Generic Server) is OTP's abstraction for stateful processes with synchronous and asynchronous message handling. It provides a standardized way to build servers that maintain state and handle concurrent requests.
 
@@ -147,7 +147,7 @@ UserRegistry.list_all()  # => %{"alice" => %{...}, "bob" => %{...}}
 
 ---
 
-### Example 62: GenServer State Management
+## Example 62: GenServer State Management
 
 GenServer state is immutable. Updates return new state, and the GenServer maintains the current state across calls. Understanding state transitions is crucial for building reliable servers.
 
@@ -312,7 +312,7 @@ TodoList.list_items(todo)  # => [%{id: 1, description: "Buy groceries", complete
 
 ---
 
-### Example 63: GenServer Error Handling
+## Example 63: GenServer Error Handling
 
 GenServers can timeout, crash, or handle unexpected messages. Understanding error handling patterns ensures robust servers that fail gracefully.
 
@@ -433,7 +433,7 @@ SafeServer.divide(pid, 10, 0)  # => {:error, :division_by_zero}
 
 ---
 
-### Example 64: GenServer Named Processes
+## Example 64: GenServer Named Processes
 
 Named GenServers can be referenced by atom name instead of PID. This enables easier process discovery and module-level APIs that don't require passing PIDs around.
 
@@ -559,7 +559,7 @@ Worker.ping(:worker_2)  # => :pong (pings worker_2 by name)
 
 ---
 
-### Example 65: GenServer Best Practices
+## Example 65: GenServer Best Practices
 
 Well-designed GenServers separate client API from server implementation, keep callbacks simple, and provide clear error handling. Following patterns improves maintainability and testability.
 
@@ -721,7 +721,7 @@ end
 
 ## Group 2: Supervision
 
-### Example 66: Supervisor Basics
+## Example 66: Supervisor Basics
 
 Supervisors monitor child processes and restart them on failure. They're the foundation of OTP's fault tolerance—processes are organized into supervision trees where supervisors restart failed children.
 
@@ -839,7 +839,7 @@ child_spec = %{
 
 ---
 
-### Example 67: Restart Strategies
+## Example 67: Restart Strategies
 
 Supervisors support different restart strategies based on child process dependencies. Choose the strategy that matches your process relationships.
 
@@ -1009,7 +1009,7 @@ end
 
 ---
 
-### Example 68: Dynamic Supervisors
+## Example 68: Dynamic Supervisors
 
 DynamicSupervisors start children on demand rather than at supervisor init. Use them for variable numbers of workers (connection pools, user sessions, task queues).
 
@@ -1201,7 +1201,7 @@ ConnectionPool.remove_connection(conn1)  # => :ok (closes local connection)
 
 ## Group 3: OTP Applications
 
-### Example 69: Application Module
+## Example 69: Application Module
 
 Applications are OTP's top-level component. They bundle code, define dependencies, and specify a supervision tree. Every Mix project is an application.
 
@@ -1332,7 +1332,7 @@ end
 
 ---
 
-### Example 70: Application Configuration
+## Example 70: Application Configuration
 
 Application configuration uses `config/*.exs` files to manage environment-specific settings. Access config with `Application.get_env/3` and use runtime config for deployment.
 
@@ -1488,7 +1488,7 @@ Application.get_all_env(:my_app)  # => returns all config for :my_app
 
 ---
 
-### Example 71: Umbrella Projects
+## Example 71: Umbrella Projects
 
 Umbrella projects bundle multiple applications that share code and dependencies. Use them for large systems with distinct domains or to separate web interface from business logic.
 
@@ -1607,7 +1607,7 @@ end
 
 ## Group 4: Metaprogramming and Macros
 
-### Example 72: Quote and Unquote
+## Example 72: Quote and Unquote
 
 `quote` captures code as an Abstract Syntax Tree (AST). `unquote` injects values into quoted expressions. Understanding AST is fundamental to metaprogramming.
 
@@ -1734,7 +1734,7 @@ Macro.expand(quote(do: unless true, do: :no), __ENV__)  # => expands unless macr
 
 ---
 
-### Example 73: Writing Simple Macros
+## Example 73: Writing Simple Macros
 
 Macros receive code as AST and return transformed AST. They run at compile time, enabling code generation and custom syntax.
 
@@ -1893,7 +1893,7 @@ MiniTest.assert(1 + 1 == 2)  # => macro expands, evaluates 1+1, compares to 2, p
 
 ---
 
-### Example 74: Use Macro Pattern
+## Example 74: Use Macro Pattern
 
 The `use` macro is Elixir's mechanism for injecting code into modules. When you `use SomeModule`, it calls `SomeModule.__using__/1`, which typically injects functions or configuration.
 
@@ -2036,7 +2036,7 @@ end
 
 ---
 
-### Example 75: Macro Best Practices
+## Example 75: Macro Best Practices
 
 Macros are powerful but overuse leads to complex, hard-to-debug code. Follow best practices: prefer functions, use macros only when necessary, and keep them simple.
 
@@ -2214,7 +2214,7 @@ end
 
 ---
 
-### Example 76: Reflection and Module Introspection
+## Example 76: Reflection and Module Introspection
 
 Elixir provides functions to introspect modules at runtime. Use `__info__/1`, `Module` functions, and code reflection to discover functions, attributes, and module properties.
 
@@ -2360,7 +2360,7 @@ implementations = Protocol.consolidated?(Enumerable)
 
 ## Group 5: Advanced Concurrency
 
-### Example 77: Agent for Simple State
+## Example 77: Agent for Simple State
 
 Agent wraps GenServer for simple state storage with functional API. Use for caches, configuration, or any simple state that doesn't need custom message handling.
 
@@ -2502,7 +2502,7 @@ Agent.stop(agent)
 
 ---
 
-### Example 78: Registry for Process Discovery
+## Example 78: Registry for Process Discovery
 
 Registry maps keys to processes, enabling process lookup and pub/sub patterns. Use it to avoid global names and support multiple processes per key.
 
@@ -2640,7 +2640,7 @@ Registry.count_match(MyRegistry, :user, %{role: :admin})  # => 1
 
 ---
 
-### Example 79: ETS Tables (In-Memory Storage)
+## Example 79: ETS Tables (In-Memory Storage)
 
 ETS (Erlang Term Storage) provides fast in-memory key-value storage. Tables are owned by processes and survive process crashes (if heir is set). Use for caches, lookup tables, and shared state.
 
@@ -2813,7 +2813,7 @@ Enum.each(1..1_000_000, fn i -> :ets.insert(large_table, {i, i * 2}) end)
 
 ---
 
-### Example 80: Erlang Interop
+## Example 80: Erlang Interop
 
 Elixir runs on the BEAM and can call Erlang modules directly. Use `:module_name` atom syntax to call Erlang functions. Access powerful Erlang libraries like `:timer`, `:crypto`, `:observer`.
 
@@ -2932,7 +2932,7 @@ tree = :gb_trees.insert(:b, 2, tree)  # => {2, ...}
 
 ## Group 6: Advanced Language Features
 
-### Example 81: Behaviours (Contracts)
+## Example 81: Behaviours (Contracts)
 
 Behaviours define contracts for modules. They specify required callbacks, enabling compile-time verification and polymorphism. Built-in behaviours include GenServer, Supervisor, and Application.
 
@@ -3087,7 +3087,7 @@ end
 
 ---
 
-### Example 82: Comprehensions Deep Dive
+## Example 82: Comprehensions Deep Dive
 
 Comprehensions generate collections from enumerables with filtering and transformations. They support lists, maps, and binaries with optional filters.
 
@@ -3227,7 +3227,7 @@ for x <- [1, 2, 2, 3, 3, 3], uniq: true, do: x
 
 ---
 
-### Example 83: Bitstring Pattern Matching
+## Example 83: Bitstring Pattern Matching
 
 Bitstrings enable binary pattern matching with precise control over bit sizes and types. Use for parsing binary protocols, image manipulation, and low-level data processing.
 
@@ -3407,7 +3407,7 @@ c  # => 0 (remaining 6 bits)
 
 ---
 
-### Example 84: Performance: Profiling and Optimization
+## Example 84: Performance: Profiling and Optimization
 
 Profiling identifies bottlenecks. Use `:timer.tc/1` for timing, `:observer.start()` for system monitoring, and Benchee for comprehensive benchmarking.
 
@@ -3537,7 +3537,7 @@ end)
 
 ---
 
-### Example 85: Debugging Tools
+## Example 85: Debugging Tools
 
 Elixir provides tools for debugging: `IEx.pry` for breakpoints, `IO.inspect` with labels, `dbg` for pipeline debugging (Elixir 1.14+), and `:debugger` for GUI debugging.
 

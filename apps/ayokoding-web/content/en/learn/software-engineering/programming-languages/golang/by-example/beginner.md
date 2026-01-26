@@ -9,7 +9,7 @@ tags: ["golang", "go", "tutorial", "by-example", "beginner", "fundamentals"]
 
 ## Group 1: First Steps
 
-### Example 1: Hello World and Go Compilation
+## Example 1: Hello World and Go Compilation
 
 Go is a compiled language - you write source code, compile it into a binary executable, then run that binary. Understanding this pipeline reveals why Go is fast and portable.
 
@@ -61,7 +61,7 @@ func main() { // => Entry point - every executable needs main() in main package
 
 **Why It Matters**: Single-binary deployment makes Go ideal for containers and microservices, where `go build` produces a statically-linked executable with no runtime dependencies unlike Java (requires JVM) or Python (requires interpreter and packages). Docker containers for Go services are 5-10MB (vs 200MB+ for equivalent Java apps), enabling faster deployments, reduced attack surface, and simplified distribution as a single file that runs anywhere.
 
-### Example 2: Variables and Types
+## Example 2: Variables and Types
 
 Go is statically typed but uses type inference - the compiler deduces types from initial values. Two ways to declare variables: explicit type with `var`, or short declaration with `:=` that infers the type.
 
@@ -131,7 +131,7 @@ func main() {
 
 **Why It Matters**: Go's static typing prevents entire classes of runtime errors that plague dynamically typed languages. The compiler catches type mismatches before deployment. Zero values are a game-changer for API design—uninitialized fields have predictable, safe defaults (empty strings, zero numbers), so you never encounter `nil` errors from forgetting initialization. This design choice makes Go code more reliable and easier to reason about than languages requiring explicit null checks everywhere.
 
-### Example 3: Constants and iota
+## Example 3: Constants and iota
 
 Constants are immutable values determined at compile-time. The `iota` enumerator automatically assigns incrementing values, useful for creating enumeration patterns without manually numbering each value.
 
@@ -219,7 +219,7 @@ func main() {
 
 **Why It Matters**: Constants with `iota` enable defining related integer sequences (HTTP status codes, enumeration values, bit flags) with compile-time verification, where typos or invalid values are caught before runtime. Unlike dynamic languages where magic numbers scatter through code, Go's constants provide type-safe enumerations without the complexity of traditional enum systems, making configuration and state machines clear and maintainable.
 
-### Example 4: Arrays and Slices
+## Example 4: Arrays and Slices
 
 Arrays have fixed size declared upfront. Slices are dynamic collections backed by arrays - they're flexible and commonly used. Understanding the underlying array backing reveals why slices are so efficient.
 
@@ -331,7 +331,7 @@ func main() {
 
 **Why It Matters**: Slices are Go's killer feature—they combine safety, flexibility, and performance. Understanding backing arrays explains why slices are passed by value efficiently (only 24 bytes of metadata, not the entire data). Capacity growth matters for performance: when you know approximately how many elements you need, pre-allocate with `make([]T, 0, capacity)` to avoid expensive reallocations. This knowledge separates inefficient Go code (repeated allocations) from production-grade code that minimizes GC pressure. Sharing slices via views with reslicing is powerful but requires care—unintended aliasing can cause subtle bugs.
 
-### Example 5: Maps
+## Example 5: Maps
 
 Maps are unordered key-value collections. Unlike slices which maintain order, map iteration order is randomized - never rely on iteration order. The comma-ok idiom tests whether a key exists and its value.
 
@@ -422,7 +422,7 @@ func main() {
 
 **Why It Matters**: Maps provide O(1) average-case lookup for key-value storage without external dependencies, where Go's built-in maps handle hash collisions and resizing automatically unlike C (requires external libraries) or Java (verbose HashMap boilerplate). The comma-ok idiom for existence checking prevents nil pointer panics, making maps safe for caching, configuration lookups, and deduplication in production without defensive programming overhead.
 
-### Example 6: Structs
+## Example 6: Structs
 
 Structs group related data into named fields. Methods can operate on structs by specifying a receiver. The distinction between value and pointer receivers becomes important later - for now, understand the receiver is what `this` or `self` would be in other languages.
 
@@ -536,7 +536,7 @@ func main() {
 
 ## Group 3: Functions and Control Flow
 
-### Example 7: Functions
+## Example 7: Functions
 
 Functions are central to Go. Unlike many languages, multiple return values are standard - this idiom appears everywhere, especially for error handling. Named return values can be used to document what a function returns.
 
@@ -634,7 +634,7 @@ func greet(lang string) (language string, message string) { // => Named return v
 
 **Why It Matters**: Named return values enable self-documenting function signatures and simplified error handling in defer blocks, where cleanup code can modify return values before function exit. Multiple return values eliminate the exception-handling overhead of try/catch, making error paths explicit and forcing developers to handle failures rather than ignoring them, the philosophy that makes Go production code more reliable than exception-based languages.
 
-### Example 8: Control Flow
+## Example 8: Control Flow
 
 Go has only one loop construct (`for`) that handles all looping patterns. `if` and `switch` are straightforward but more powerful than in many languages. The `defer` statement schedules cleanup code to run when the function returns.
 
@@ -770,7 +770,7 @@ func main() {
 
 **Why It Matters**: Explicit control flow without exceptions forces developers to handle error cases immediately, preventing silent failures that propagate through call stacks in try/catch systems. Go's switch statement doesn't fall through by default (eliminating a common C bug), supports multiple values per case, and works without parentheses, making conditional logic cleaner and less error-prone than C-style switches that require break statements everywhere.
 
-### Example 9: Pointers
+## Example 9: Pointers
 
 Pointers hold memory addresses. The `&` operator takes an address, `*` dereferences it. Understanding pointers is essential for understanding Go's pass-by-value semantics and when values are copied versus when they're shared.
 
@@ -885,7 +885,7 @@ func modifyValueCopy(val int) { // => val is copy of argument (type: int)
 
 ## Group 4: Methods and Interfaces
 
-### Example 10: Methods
+## Example 10: Methods
 
 Methods are functions attached to a type via a receiver. Go distinguishes value receivers (copy data) from pointer receivers (share data). This distinction is crucial - choosing the wrong receiver type causes subtle bugs or inefficiency.
 
@@ -1020,7 +1020,7 @@ func (p *Person) UpdateNamePointer(newName string) { // => p is pointer
 
 **Why It Matters**: Methods on types enable attaching behavior to data without classes, where method receivers make the relationship between data and operations explicit. Pointer receivers allow mutation and avoid copying large structs on every method call (performance), while value receivers provide immutability guarantees and safety for concurrent access. This enables building APIs that are both efficient and clear about their side effects.
 
-### Example 11: Interfaces
+## Example 11: Interfaces
 
 Interfaces define method contracts. A type satisfies an interface implicitly - no explicit declaration needed. This duck typing is powerful but requires understanding: if a type has all methods an interface requires, it automatically satisfies that interface.
 
@@ -1169,7 +1169,7 @@ func printValue(v interface{}) {       // => v can hold any value of any type
 
 **Why It Matters**: Implicit interface satisfaction is Go's secret weapon for loose coupling and composition. Unlike languages requiring explicit `implements` declarations, Go lets unrelated types suddenly satisfy interfaces. This enables powerful patterns: pass an `io.Reader` to any function expecting that interface, whether it's reading from a file, network, buffer, or custom source. Small, focused interfaces (like `io.Writer` with just `Write()`) are reusable across the entire ecosystem. This philosophy makes Go code highly modular without verbose inheritance hierarchies.
 
-### Example 12: Error Handling
+## Example 12: Error Handling
 
 Go uses explicit error returns instead of exceptions. The `error` interface is simple - just a method returning a string. This pattern permeates Go code: function returns (result, error). Always check for errors before using results.
 
@@ -1288,7 +1288,7 @@ func divide(a, b int) (int, error) { // => Returns (result, error) tuple
 
 **Why It Matters**: Explicit error handling makes failure paths visible in code, preventing the hidden control flow of exceptions that obscure where errors originate. Returning errors forces callers to decide how to handle failures (propagate, wrap, retry, log), making production code resilient by design. Custom error types enable rich context (wrapping with `fmt.Errorf`, error chains with `errors.Is`), supporting debugging without stack traces that exceptions provide but with explicit control flow.
 
-### Example 13: Packages and Imports
+## Example 13: Packages and Imports
 
 Go organizes code with packages. Every file starts with `package`, and a directory is one package. Capitalized names are exported (visible from other packages), lowercase names are unexported (private). Imports make external packages available.
 
@@ -1381,7 +1381,7 @@ const unexportedConst = 200     // => Lowercase u - unexported
 
 **Why It Matters**: Package-level organization enforces modularity, where circular dependencies are compile errors rather than runtime crashes. The `internal/` package prevents external use, enabling API evolution without breaking consumers. Capitalized exports make public APIs explicit, eliminating "what's safe to use" confusion in large codebases. Init functions enable ordered startup (database connections, configuration) with compile-time sequencing guarantees.
 
-### Example 14: Basic Testing
+## Example 14: Basic Testing
 
 Go's testing is built-in via the `testing` package. Test files end in `_test.go`. Test functions named `TestXxx(t *testing.T)`. Table-driven tests let you test many cases efficiently.
 
@@ -1466,7 +1466,7 @@ func TestDivide(t *testing.T) {  // => Test function for divide()
 
 **Why It Matters**: Built-in testing with `go test` eliminates external test frameworks and dependencies, where table-driven tests enable comprehensive coverage with minimal code duplication. Testing is first-class in Go tooling (coverage reports, benchmarks, examples as tests), making TDD practical without setup overhead. Fast compilation enables running tests hundreds of times per day, supporting refactoring confidence and rapid iteration cycles.
 
-### Example 15: Strings and Formatting
+## Example 15: Strings and Formatting
 
 Strings in Go are immutable sequences of bytes (usually UTF-8). The `strings` package provides manipulation functions. `fmt.Sprintf` formats without printing. `strings.Builder` efficiently concatenates strings.
 
@@ -1581,7 +1581,7 @@ func main() {
 
 **Why It Matters**: UTF-8 native strings prevent encoding bugs that plague ASCII-based languages, where emoji, international characters, and multi-byte sequences work correctly by default. The rune type exposes Unicode code points explicitly, making character-level processing clear and correct for international text. Format verbs (`%v`, `%T`, `%+v`) provide consistent debugging output across all types, eliminating custom toString() boilerplate.
 
-### Example 16: Bitwise and Compound Assignment Operators
+## Example 16: Bitwise and Compound Assignment Operators
 
 Go supports bitwise operations on integers and compound assignment operators that combine arithmetic with assignment. These operators are essential for low-level programming, bit manipulation, and concise code.
 
@@ -1733,7 +1733,7 @@ func main() {
 
 **Why It Matters**: Bitwise operators enable efficient flag manipulation and low-level protocol implementation, where setting multiple boolean flags in a single integer saves memory and improves cache locality in high-performance code. Compound assignments (`+=`, `&=`) reduce verbosity while making mutation intent clear. Understanding bit operations is essential for implementing binary protocols, compression algorithms, and systems programming where byte-level control matters.
 
-### Example 17: Variadic Functions
+## Example 17: Variadic Functions
 
 Variadic functions accept a variable number of arguments using the `...` syntax. The variadic parameter becomes a slice inside the function. This pattern is useful for functions like `fmt.Println` that accept any number of arguments.
 
@@ -1837,7 +1837,7 @@ func printWithPrefix(prefix string, messages ...string) {
 
 **Why It Matters**: Variadic functions enable flexible APIs like `fmt.Printf()` without method overloading, where a single function handles arbitrary argument counts type-safely. The `...` syntax unpacks slices into variadic calls, enabling dynamic argument lists from runtime data. This powers logging, formatting, and builder patterns without the complexity of method overloading or default parameters that plague Java and C++.
 
-### Example 18: Anonymous Functions and Closures
+## Example 18: Anonymous Functions and Closures
 
 Anonymous functions (functions without names) can be assigned to variables or executed immediately. Closures capture variables from their surrounding scope, enabling powerful patterns like creating function factories.
 
@@ -1989,7 +1989,7 @@ func makeCounter() func() int {    // => Returns function type: func() int
 
 **Why It Matters**: Closures capture lexical scope, enabling callbacks, event handlers, and functional patterns without explicit context objects. Anonymous functions eliminate trivial one-off function declarations, making code concise where small operations (sorting comparators, filter predicates) appear inline. Closures power deferred cleanup, goroutine launches with captured state, and middleware patterns that wrap behavior without boilerplate.
 
-### Example 19: Defer, Panic, and Recover
+## Example 19: Defer, Panic, and Recover
 
 `defer` schedules function calls to run when the surrounding function returns. `panic` stops execution and starts unwinding the stack. `recover` catches panics in deferred functions, enabling graceful error recovery.
 
@@ -2112,7 +2112,7 @@ func safeDivide(a, b int) {        // => Function that may panic
 
 **Why It Matters**: Defer guarantees cleanup executes even during panics, preventing resource leaks (file handles, database connections, mutexes) that crash-on-error languages require try/finally to handle. LIFO execution order makes defer stacks predictable for nested resource acquisition. Panic/recover enables fail-fast for truly exceptional conditions (broken invariants) while recover in defer blocks allows graceful shutdown, protecting long-running services from crashes.
 
-### Example 20: File Reading and Writing
+## Example 20: File Reading and Writing
 
 Go's `os` and `io/ioutil` (now `os` in Go 1.16+) packages provide file operations. Reading and writing files requires error handling at each step. Understanding file modes and permissions is essential for production code.
 
@@ -2211,7 +2211,7 @@ func main() {
 
 **Why It Matters**: Standard library file I/O provides consistent interfaces (`io.Reader`, `io.Writer`) that compose with network, compression, and encryption without special cases. Defer file.Close() guarantees cleanup, preventing file descriptor leaks that exhaust system resources in long-running services. Buffered I/O through `bufio.Scanner` handles line-by-line reading efficiently, processing multi-GB log files without loading entire contents into memory.
 
-### Example 21: Command-Line Arguments
+## Example 21: Command-Line Arguments
 
 Command-line programs parse arguments from `os.Args`. The `flag` package provides structured argument parsing with type checking, default values, and automatic help messages.
 
@@ -2303,7 +2303,7 @@ func main() {
 
 **Why It Matters**: `os.Args` and `flag` package enable building CLI tools with standard Unix conventions (flags, arguments, help text) without external dependencies. Flag parsing handles types (int, string, bool) and validation automatically, reducing boilerplate in command-line tools. This powers production utilities where consistent flag handling (`-v`, `-h`, `--config`) follows user expectations and integrates with shell scripts.
 
-### Example 22: Time Manipulation
+## Example 22: Time Manipulation
 
 The `time` package handles dates, durations, timers, and time zones. Understanding duration arithmetic and time formatting is essential for scheduling, timeouts, and timestamp handling.
 
@@ -2417,7 +2417,7 @@ func main() {
 
 **Why It Matters**: Time handling prevents common pitfalls (naive string comparisons, timezone bugs) through strong typing, where `time.Time` enforces correct arithmetic and comparisons. Duration literals (1\*time.Second) make timeouts and delays readable and type-safe. This is critical for scheduling, timeouts, and logging where incorrect time handling causes production bugs (DST transitions, leap seconds, timezone conversions) that naive timestamp arithmetic cannot handle.
 
-### Example 23: Regular Expressions
+## Example 23: Regular Expressions
 
 The `regexp` package provides pattern matching and extraction. Regular expressions find, match, and extract text based on patterns. Understanding regex fundamentals unlocks powerful text processing.
 
@@ -2518,7 +2518,7 @@ func main() {
 
 **Why It Matters**: Compiled regular expressions provide powerful pattern matching for validation (email, URLs), parsing (log lines, configuration), and transformation without external libraries. The `regexp` package prevents ReDoS attacks through linear-time guarantees, unlike PCRE's backtracking. Precompiling with `regexp.MustCompile` catches syntax errors at startup rather than runtime, making regex-heavy code (parsers, validators) reliable in production.
 
-### Example 24: String Rune Iteration
+## Example 24: String Rune Iteration
 
 Strings in Go are UTF-8 encoded byte sequences. Iterating by index gives bytes, but `range` gives runes (Unicode code points). Understanding this distinction prevents bugs when handling international text.
 
@@ -2606,7 +2606,7 @@ func main() {
 
 **Why It Matters**: Rune iteration handles multi-byte Unicode correctly, where `range` over strings yields runes (code points) rather than bytes, preventing corruption of emoji, Chinese characters, and accented letters that naive byte iteration mangles. Understanding byte vs rune distinction is essential for international text processing, where counting characters, substring extraction, and validation must respect UTF-8 encoding rather than assuming ASCII.
 
-### Example 25: Map Manipulation Patterns
+## Example 25: Map Manipulation Patterns
 
 Maps support advanced patterns beyond basic get/set. Checking existence, deleting keys, iterating in deterministic order, and using structs as keys unlock powerful data organization.
 
@@ -2716,7 +2716,7 @@ func main() {
 
 **Why It Matters**: Map iteration is intentionally randomized to prevent dependence on key order, encouraging developers to write order-independent code that doesn't break when hash implementations change. The delete() function makes map cleanup explicit and efficient (O(1) average case), critical for caches and in-memory stores. Checking existence with comma-ok prevents nil value confusion, where map["missing"] returns zero value rather than error.
 
-### Example 26: Array vs Slice Deep Dive
+## Example 26: Array vs Slice Deep Dive
 
 Arrays and slices have critical differences in behavior, especially when passing to functions. Arrays are values (copied), slices are references (shared). Understanding backing arrays prevents subtle bugs.
 
@@ -2842,7 +2842,7 @@ func modifySlice(slice []int) {     // => Parameter: []int (reference type)
 
 **Why It Matters**: Understanding array vs slice semantics prevents subtle bugs where slicing creates shared backing arrays, causing unintended mutations across seemingly independent slices. Arrays have fixed size known at compile-time (stack allocation, predictable memory), while slices provide dynamic growth (heap allocation, flexible sizing). This trade-off matters for performance-critical code where stack allocation avoids GC pressure, and for correctness where sharing vs copying must be explicit.
 
-### Example 27: Type Assertions and Type Switches
+## Example 27: Type Assertions and Type Switches
 
 Interfaces hold values of any type. Type assertions extract the underlying concrete type. Type switches enable pattern matching on type. This is essential when working with `interface{}` or generic interfaces.
 
@@ -2980,7 +2980,7 @@ func handleWriter(w Writer) {       // => Parameter: Writer interface
 
 **Why It Matters**: Type assertions and switches enable safe dynamic typing, where `interface{}` provides flexibility (JSON unmarshaling, generic containers) and type assertions restore compile-time safety before use. The comma-ok idiom prevents runtime panics when assertions fail, making type checking explicit rather than exception-based. This pattern powers frameworks (database drivers, web servers) that work with unknown types and delegate to user code.
 
-### Example 28: Package Initialization and init Functions
+## Example 28: Package Initialization and init Functions
 
 Package-level variables initialize before `main()`. The `init()` function runs once per package at program startup, useful for setup tasks. Understanding initialization order prevents subtle bugs.
 
@@ -3043,7 +3043,7 @@ func main() {                   // => Program entry point
 
 **Why It Matters**: Init functions enable ordered package initialization (database connections, global caches, configuration loading) with compile-time sequencing guarantees, preventing race conditions during startup. Unlike constructors that require explicit calling, init() runs automatically, ensuring setup completes before main() or tests run. This is critical for stateful packages (database drivers, metric systems) where initialization order determines correctness.
 
-### Example 29: Formatted Printing Verbs
+## Example 29: Formatted Printing Verbs
 
 The `fmt` package provides powerful formatting verbs for printing. Understanding `%v`, `%T`, `%#v`, `%+v` and others enables precise output control for debugging and logging.
 
@@ -3149,7 +3149,7 @@ func main() {
 
 **Why It Matters**: Format verbs provide consistent debugging output across all types, where `%+v` shows struct field names and `%#v` shows Go syntax representation, eliminating custom toString() methods. The `%T` verb exposes runtime type information for debugging interface{} values. Understanding format verbs is essential for logging and debugging, where choosing `%v` vs `%s` vs `%q` affects output clarity (quotes for strings, hex for bytes).
 
-### Example 30: Testing Subtests and Helpers
+## Example 30: Testing Subtests and Helpers
 
 Go 1.7+ introduced subtests for organizing related test cases. Test helpers mark functions as helpers to improve failure messages. Table-driven tests with subtests enable precise test organization.
 

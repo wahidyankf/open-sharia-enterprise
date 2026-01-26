@@ -11,7 +11,7 @@ Build on your Elixir foundations with 30 intermediate examples covering advanced
 
 ## Group 1: Advanced Pattern Matching
 
-### Example 31: Guards in Depth
+## Example 31: Guards in Depth
 
 Guards are boolean expressions that add additional constraints to pattern matches in function heads, case clauses, and other contexts. They enable more precise pattern matching based on types and values.
 
@@ -181,7 +181,7 @@ Guards.can_vote(16)
 
 ---
 
-### Example 32: Pattern Matching in Function Heads
+## Example 32: Pattern Matching in Function Heads
 
 Multi-clause functions use pattern matching in function heads to elegantly handle different input shapes. Clauses are tried in order from top to bottom until one matches.
 
@@ -370,7 +370,7 @@ FunctionMatching.send_message(%{email: "b@example.com"}, "Hi", [])
 
 ---
 
-### Example 33: With Expression (Happy Path)
+## Example 33: With Expression (Happy Path)
 
 The `with` expression chains pattern matches, short-circuiting on the first mismatch. It's ideal for "happy path" coding where you expect success and want to handle errors at the end.
 
@@ -567,7 +567,7 @@ WithExamples.process_number(-10)
 
 ## Group 2: Data Structures Advanced
 
-### Example 34: Structs
+## Example 34: Structs
 
 Structs are extensions of maps with compile-time guarantees and default values. They enforce a predefined set of keys, enabling clearer data modeling and better error messages.
 
@@ -689,7 +689,7 @@ account = %Account{id: 1, balance: 1000}
 
 ---
 
-### Example 35: Streams (Lazy Enumeration)
+## Example 35: Streams (Lazy Enumeration)
 
 Streams are lazy enumerables that build a recipe for computation without executing it immediately. They enable efficient processing of large or infinite datasets by composing transformations.
 
@@ -837,7 +837,7 @@ Enum.take(stream_resource, 3)
 
 ---
 
-### Example 36: MapSet for Uniqueness
+## Example 36: MapSet for Uniqueness
 
 MapSets are unordered collections of unique values. They provide efficient membership testing and set operations (union, intersection, difference). Use them when uniqueness matters and order doesn't.
 
@@ -968,7 +968,7 @@ MapSet.intersection(post1_tags, post2_tags)
 
 ## Group 3: Module Organization
 
-### Example 37: Module Attributes
+## Example 37: Module Attributes
 
 Module attributes are compile-time constants defined with `@`. They're commonly used for documentation (`@moduledoc`, `@doc`), compile-time configuration, and storing values computed during compilation.
 
@@ -1098,7 +1098,7 @@ MyModule.colors()
 
 ---
 
-### Example 38: Import, Alias, Require
+## Example 38: Import, Alias, Require
 
 `import`, `alias`, and `require` control how modules are referenced in your code. They reduce verbosity and manage namespaces cleanly.
 
@@ -1311,7 +1311,7 @@ end
 
 ---
 
-### Example 39: Protocols (Polymorphism)
+## Example 39: Protocols (Polymorphism)
 
 Protocols enable polymorphism—defining a function that works differently for different data types. They're Elixir's mechanism for ad-hoc polymorphism, similar to interfaces in other languages.
 
@@ -1551,7 +1551,7 @@ Describable.describe([1, 2, 3])
 
 ## Group 4: Error Handling
 
-### Example 40: Result Tuples (:ok/:error)
+## Example 40: Result Tuples (:ok/:error)
 
 Elixir idiomatically uses tagged tuples `{:ok, value}` or `{:error, reason}` to represent success and failure. This explicit error handling is preferred over exceptions for expected error cases.
 
@@ -1775,7 +1775,7 @@ Bang.divide!(10, 2)
 
 ---
 
-### Example 41: Try/Rescue/After
+## Example 41: Try/Rescue/After
 
 `try/rescue/after` handles exceptions. Use `rescue` to catch exceptions, `after` for cleanup code that always runs (like `finally` in other languages). Prefer result tuples for expected errors.
 
@@ -1997,7 +1997,7 @@ end
 
 ---
 
-### Example 42: Raise and Custom Exceptions
+## Example 42: Raise and Custom Exceptions
 
 Use `raise` to throw exceptions. Define custom exception modules for domain-specific errors. Exceptions should be for unexpected situations, not control flow.
 
@@ -2220,7 +2220,7 @@ UserRepo.fetch!(1)
 
 ## Group 5: Processes and Concurrency
 
-### Example 43: Spawning Processes
+## Example 43: Spawning Processes
 
 Processes are Elixir's lightweight concurrency primitive. Each process has its own memory and communicates via message passing. Use `spawn/1` or `spawn_link/1` to create processes.
 
@@ -2433,7 +2433,7 @@ Isolation.demonstrate()
 
 ---
 
-### Example 44: Send and Receive
+## Example 44: Send and Receive
 
 Processes communicate by sending and receiving messages. Messages go into a process mailbox and are processed with `receive`. This is asynchronous message passing—the sender doesn't block.
 
@@ -2705,7 +2705,7 @@ flush()
 
 ---
 
-### Example 45: Process Monitoring
+## Example 45: Process Monitoring
 
 Process monitoring allows you to detect when other processes crash or exit. Use `Process.monitor/1` to watch a process and receive a message when it exits.
 
@@ -2957,7 +2957,7 @@ TimeoutHelper.call_with_timeout(fn -> :timer.sleep(2000); 42 end, 1000)  # => {:
 
 ---
 
-### Example 46: Task Module (Async/Await)
+## Example 46: Task Module (Async/Await)
 
 The `Task` module provides a simple abstraction for spawning processes and awaiting results. It's built on processes but handles boilerplate for async/await patterns.
 
@@ -3199,7 +3199,7 @@ end
 
 ## Group 6: Testing and Tools
 
-### Example 47: ExUnit Basics
+## Example 47: ExUnit Basics
 
 ExUnit is Elixir's built-in testing framework. Tests are organized into test modules, and assertions verify expected behavior. Running `mix test` executes all tests in your project.
 
@@ -3495,7 +3495,7 @@ end
 
 ---
 
-### Example 48: Mix Project Structure
+## Example 48: Mix Project Structure
 
 Mix is Elixir's build tool. It manages dependencies, compiles code, runs tests, and provides project scaffolding. Understanding the standard project structure is essential for Elixir development.
 
@@ -3691,7 +3691,7 @@ timeout = Application.get_env(:my_app, :timeout, 3000)  # Default 3000
 
 ---
 
-### Example 49: Doctests
+## Example 49: Doctests
 
 Doctests embed tests in documentation using `@doc` comments. They verify that code examples in documentation actually work, keeping docs accurate and tested.
 
@@ -3929,7 +3929,7 @@ end
 
 ---
 
-### Example 50: String Manipulation Advanced
+## Example 50: String Manipulation Advanced
 
 Elixir strings are UTF-8 binaries. The `String` module provides extensive manipulation functions. Understanding binaries, charlists, and Unicode handling is essential for text processing.
 
@@ -4229,7 +4229,7 @@ name = "Alice"
 
 ---
 
-### Example 51: GenServer Session Manager (Production Pattern)
+## Example 51: GenServer Session Manager (Production Pattern)
 
 GenServer is OTP's generic server behavior - a process that maintains state and handles synchronous/asynchronous requests. Production systems use GenServer for session storage, caches, connection pools, and stateful services. This example demonstrates a thread-safe session manager with TTL cleanup.
 
@@ -4665,7 +4665,7 @@ SessionManager.get("user_123")  # => {:error, :expired}
 
 ---
 
-### Example 52: Supervisor Child Specifications
+## Example 52: Supervisor Child Specifications
 
 Supervisors define child processes using child specifications that control restart behavior, shutdown timeouts, and process types. Understanding child specs enables fine-grained control over supervision trees.
 
@@ -4970,7 +4970,7 @@ Supervisor.count_children(sup_pid)
 
 ---
 
-### Example 53: Application Callbacks and Lifecycle
+## Example 53: Application Callbacks and Lifecycle
 
 Applications are OTP's top-level abstraction. Implement `start/2` and `stop/1` callbacks to manage supervision trees and resources during app lifecycle.
 
@@ -5223,7 +5223,7 @@ Application.spec(:my_app, :vsn)
 
 ---
 
-### Example 54: Custom Mix Tasks
+## Example 54: Custom Mix Tasks
 
 Mix tasks automate project operations. Create custom tasks for deployment, seeding, migrations, or cleanup operations.
 
@@ -5441,7 +5441,7 @@ Mix.Task.all_modules()
 
 ---
 
-### Example 55: Runtime Configuration
+## Example 55: Runtime Configuration
 
 Runtime configuration loads settings when the application starts (not compile time). Use `config/runtime.exs` for environment variables and production secrets.
 
@@ -5644,7 +5644,7 @@ Application.fetch_env(:my_app, :secret_key)
 
 ---
 
-### Example 56: Process Links and Crash Propagation
+## Example 56: Process Links and Crash Propagation
 
 Linked processes crash together—when one exits abnormally, linked processes receive exit signals. Use linking for tightly-coupled processes that should fail together.
 
@@ -5873,7 +5873,7 @@ Process.unlink(pid1)
 
 ---
 
-### Example 57: Message Mailbox Management
+## Example 57: Message Mailbox Management
 
 Process mailboxes queue incoming messages. Understanding mailbox behavior prevents memory leaks and enables selective message processing.
 
@@ -6130,7 +6130,7 @@ Process.info(pid, :message_queue_len)
 
 ---
 
-### Example 58: Anonymous GenServers and Local Names
+## Example 58: Anonymous GenServers and Local Names
 
 GenServers can run anonymously (PID-based) or with local/global names. Anonymous GenServers prevent name conflicts and enable multiple instances.
 
@@ -6389,7 +6389,7 @@ RegistryCounter.get("user_456")
 
 ---
 
-### Example 59: Telemetry Events and Metrics
+## Example 59: Telemetry Events and Metrics
 
 Telemetry provides instrumentation for measuring application behavior. Emit events for metrics, logging, and observability without coupling code to specific reporters.
 
@@ -6610,7 +6610,7 @@ MyApp.Database.query("SELECT * FROM users")
 
 ---
 
-### Example 60: Type Specifications with @spec
+## Example 60: Type Specifications with @spec
 
 Type specs document function signatures and enable static analysis with Dialyzer. They improve code documentation and catch type errors at compile time.
 

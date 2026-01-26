@@ -13,7 +13,7 @@ Examples 29-57 cover production patterns and idiomatic Rust (40-75% coverage). Y
 
 ---
 
-### Example 29: Lifetime Annotations Basics
+## Example 29: Lifetime Annotations Basics
 
 Lifetimes ensure references remain valid by tracking how long borrowed data lives. Lifetime annotations explicitly connect input and output reference lifetimes, allowing the compiler to verify that returned references don't outlive the data they point to.
 
@@ -95,7 +95,7 @@ fn working_example() {
 
 ---
 
-### Example 30: Lifetime Elision Rules
+## Example 30: Lifetime Elision Rules
 
 Rust infers lifetimes in common patterns through elision rules, eliminating explicit annotations when the relationship is unambiguous. Three elision rules cover most cases: (1) each parameter gets its own lifetime, (2) if one input lifetime, output gets it, (3) if `&self` or `&mut self`, output gets self's lifetime.
 
@@ -181,7 +181,7 @@ fn main() {
 
 ---
 
-### Example 31: Struct Lifetimes
+## Example 31: Struct Lifetimes
 
 Structs holding references need lifetime annotations to ensure referenced data outlives the struct instance. The lifetime parameter declares a relationship: "this struct cannot outlive the data it references."
 
@@ -277,7 +277,7 @@ fn broken_example() {
 
 ---
 
-### Example 32: Static Lifetime
+## Example 32: Static Lifetime
 
 The `'static` lifetime indicates references valid for the entire program duration, typically for string literals stored in the binary. It's the longest possible lifetime and should be used sparingly.
 
@@ -359,7 +359,7 @@ fn leak_example() {
 
 ---
 
-### Example 33: Traits Basics
+## Example 33: Traits Basics
 
 Traits define shared behavior across types, similar to interfaces in other languages. Types implement traits to gain functionality and enable polymorphism. Traits enable compile-time polymorphism without runtime overhead.
 
@@ -452,7 +452,7 @@ impl Display for Tweet {             // => Tweet can implement multiple traits
 
 ---
 
-### Example 34: Default Trait Implementations
+## Example 34: Default Trait Implementations
 
 Traits can provide default method implementations that types can use or override, reducing boilerplate for common patterns. Default methods can call other trait methods, enabling composition.
 
@@ -553,7 +553,7 @@ fn advanced_example() {
 
 ---
 
-### Example 35: Trait Bounds
+## Example 35: Trait Bounds
 
 Generic functions can require types to implement specific traits using trait bounds, enabling operations only valid for those traits. Trait bounds provide compile-time guarantees about type capabilities.
 
@@ -676,7 +676,7 @@ fn blanket_example() {
 
 ---
 
-### Example 36: Generics with Structs and Enums
+## Example 36: Generics with Structs and Enums
 
 Structs and enums can be generic over types, enabling reusable data structures like `Option<T>` and `Result<T, E>`. Generics are monomorphized at compile time, creating specialized versions for each concrete type with zero runtime cost.
 
@@ -786,7 +786,7 @@ fn main() {
 
 ---
 
-### Example 37: Iterator Trait
+## Example 37: Iterator Trait
 
 Iterators enable sequential processing of collections through the `Iterator` trait, which requires implementing `next()` method. Iterators are lazy (compute on demand) and provide zero-cost abstractions.
 
@@ -854,7 +854,7 @@ fn main() {
 
 ---
 
-### Example 38: Closures Basics
+## Example 38: Closures Basics
 
 Closures are anonymous functions that capture their environment, enabling functional programming patterns and callbacks. Rust automatically infers the minimal capture mode (immutable borrow, mutable borrow, or move) based on closure body usage.
 
@@ -945,7 +945,7 @@ fn main() {
 
 ---
 
-### Example 39: Closure Type Inference
+## Example 39: Closure Type Inference
 
 Closures have unique anonymous types inferred from usage, implementing `Fn`, `FnMut`, or `FnOnce` traits based on how they capture variables.
 
@@ -988,7 +988,7 @@ fn main() {
 
 ---
 
-### Example 40: Iterator Methods
+## Example 40: Iterator Methods
 
 Iterator methods enable declarative data processing with methods like `map()`, `filter()`, `fold()`, and `collect()`.
 
@@ -1028,7 +1028,7 @@ fn main() {
 
 ---
 
-### Example 41: Box Smart Pointer
+## Example 41: Box Smart Pointer
 
 `Box<T>` allocates data on the heap with single ownership, enabling recursive types and trait objects. Unlike stack allocation with fixed size, Box provides indirection through a pointer, allowing dynamically-sized types and breaking infinite size recursion in type definitions.
 
@@ -1169,7 +1169,7 @@ fn trait_object_example() {
 
 ---
 
-### Example 42: Rc Smart Pointer
+## Example 42: Rc Smart Pointer
 
 `Rc<T>` (Reference Counted) enables multiple ownership through runtime reference counting, useful for shared read-only data. Unlike Box's single ownership, Rc allows multiple owners with automatic deallocation when the reference count reaches zero.
 
@@ -1313,7 +1313,7 @@ fn graph_example() {
 
 ---
 
-### Example 43: RefCell and Interior Mutability
+## Example 43: RefCell and Interior Mutability
 
 `RefCell<T>` enables interior mutability through runtime borrow checking, allowing mutation of data behind shared references. It moves Rust's borrowing rules from compile time to runtime, enabling patterns impossible with standard borrowing while maintaining safety through runtime panics.
 
@@ -1483,7 +1483,7 @@ fn main() {
 
 ---
 
-### Example 44: Rc and RefCell Combined
+## Example 44: Rc and RefCell Combined
 
 Combining `Rc<RefCell<T>>` enables multiple ownership of mutable data, a common pattern for shared mutable state. This powerful combination allows multiple owners to mutate shared data while maintaining memory safety through runtime checks.
 
@@ -1651,7 +1651,7 @@ fn main() {
 
 ---
 
-### Example 45: Thread Basics
+## Example 45: Thread Basics
 
 Threads enable concurrent execution through `std::thread::spawn`, which takes a closure and returns a `JoinHandle`. Rust's ownership system prevents data races at compile time, making concurrent programming safe by default.
 
@@ -1793,7 +1793,7 @@ fn main() {
 
 ---
 
-### Example 46: Move Semantics with Threads
+## Example 46: Move Semantics with Threads
 
 Threads require ownership of captured variables through `move` closures to prevent data races across thread boundaries. This ensures thread safety at compile time by transferring ownership rather than borrowing.
 
@@ -1925,7 +1925,7 @@ fn main() {
 
 ---
 
-### Example 47: Message Passing with Channels
+## Example 47: Message Passing with Channels
 
 Channels enable safe message passing between threads through `mpsc` (multiple producer, single consumer) channels. Ownership transfer through channels prevents data races while enabling concurrent communication.
 
@@ -2137,7 +2137,7 @@ fn main() {
 
 ---
 
-### Example 48: Shared State with Mutex
+## Example 48: Shared State with Mutex
 
 `Mutex<T>` enables shared mutable state across threads through mutual exclusion locks, ensuring only one thread accesses data at a time. However, Mutex alone doesn't provide multiple ownership—it needs Arc for multi-threaded sharing.
 
@@ -2275,7 +2275,7 @@ fn main() {
 
 ---
 
-### Example 49: Arc and Mutex Combined
+## Example 49: Arc and Mutex Combined
 
 `Arc<Mutex<T>>` combines atomic reference counting with mutual exclusion, enabling thread-safe shared mutable state. This is the standard pattern for sharing mutable data across threads in Rust.
 
@@ -2484,7 +2484,7 @@ fn main() {
 
 ---
 
-### Example 50: Send and Sync Traits
+## Example 50: Send and Sync Traits
 
 `Send` and `Sync` marker traits ensure types are safe to transfer or share across threads, with compiler enforcing thread safety. These auto traits are the foundation of Rust's fearless concurrency.
 
@@ -2645,7 +2645,7 @@ fn main() {
 
 ---
 
-### Example 51: Error Propagation Patterns
+## Example 51: Error Propagation Patterns
 
 Combining `Result`, `?` operator, and custom error types enables robust error handling in production code. The `?` operator propagates errors up the call stack, converting error types automatically when `From` trait is implemented.
 
@@ -2784,7 +2784,7 @@ fn main() {
 
 ---
 
-### Example 52: Custom Error Types
+## Example 52: Custom Error Types
 
 Custom error types with `std::error::Error` trait enable domain-specific error handling with rich context. Implementing `From` trait allows automatic error conversions with the `?` operator, reducing boilerplate while maintaining type safety.
 
@@ -2966,7 +2966,7 @@ fn main() {
 
 ---
 
-### Example 53: Panic and Unwinding
+## Example 53: Panic and Unwinding
 
 `panic!` aborts execution for unrecoverable errors, unwinding the stack and running destructors unless compiled with `panic=abort`. Panics indicate programming bugs rather than expected errors, making them fundamentally different from `Result` which handles recoverable failures.
 
@@ -3129,7 +3129,7 @@ fn main() {
 
 ---
 
-### Example 54: Testing Basics
+## Example 54: Testing Basics
 
 Rust's built-in test framework uses `#[test]` attribute and `cargo test` command for unit and integration tests. Tests are compiled only when running `cargo test`, keeping production binaries clean.
 
@@ -3320,7 +3320,7 @@ mod tests {                          // => Module containing tests
 
 ---
 
-### Example 55: Documentation Tests
+## Example 55: Documentation Tests
 
 Documentation examples in `///` comments are automatically tested, ensuring documentation stays accurate. Doc tests are extracted, compiled, and run as separate test programs, validating both code examples and documentation correctness.
 
@@ -3514,7 +3514,7 @@ pub fn compile_examples() {
 
 ---
 
-### Example 56: Common Traits (Debug, Clone, Copy)
+## Example 56: Common Traits (Debug, Clone, Copy)
 
 Deriving common traits reduces boilerplate for types needing debug printing, cloning, or copy semantics. `Debug` enables formatting, `Clone` provides explicit deep copying, and `Copy` allows implicit stack-based copying for simple types.
 
@@ -3681,7 +3681,7 @@ fn main() {
 
 ---
 
-### Example 57: PartialEq and Eq Traits
+## Example 57: PartialEq and Eq Traits
 
 `PartialEq` enables equality comparison (`==`, `!=`), while `Eq` marks types with reflexive equality (a == a always true). `PartialEq` allows for partial equivalence (like floats with NaN), whereas `Eq` requires full equivalence relation.
 
