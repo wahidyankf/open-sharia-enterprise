@@ -22,7 +22,7 @@ Master intermediate Java concepts through 20 annotated code examples. Each examp
 
 ## Group 1: Advanced OOP
 
-### Example 31: Abstract Classes and Template Method Pattern
+## Example 31: Abstract Classes and Template Method Pattern
 
 Abstract classes provide partial implementations with abstract methods that subclasses must implement. The template method pattern defines algorithm skeletons in abstract classes with customizable steps.
 
@@ -158,7 +158,7 @@ json.process();
 
 ---
 
-### Example 32: Composition Over Inheritance
+## Example 32: Composition Over Inheritance
 
 Composition builds objects from reusable components rather than inheriting from parent classes. It provides flexibility by assembling behaviors dynamically rather than being locked into inheritance hierarchies.
 
@@ -279,7 +279,7 @@ gasManual.drive();
 
 ---
 
-### Example 33: Nested and Inner Classes
+## Example 33: Nested and Inner Classes
 
 Java supports nested classes (static) and inner classes (non-static) that provide encapsulation and logical grouping. Inner classes access outer class instance members, while nested classes are independent.
 
@@ -408,7 +408,7 @@ r.run();
 
 ---
 
-### Example 34: Reflection API - Runtime Introspection
+## Example 34: Reflection API - Runtime Introspection
 
 Reflection allows runtime inspection and manipulation of classes, methods, and fields. It enables frameworks to work with user-defined classes without compile-time knowledge.
 
@@ -536,7 +536,7 @@ for (Method method : clazz.getDeclaredMethods()) {
 
 ---
 
-### Example 35: Annotations and Custom Metadata
+## Example 35: Annotations and Custom Metadata
 
 Annotations add metadata to code that can be processed at compile-time or runtime. Custom annotations enable declarative programming patterns used extensively in frameworks.
 
@@ -641,7 +641,7 @@ class Example {
 
 ## Group 2: Advanced Collections and Generics
 
-### Example 36: Generic Methods and Bounded Type Parameters
+## Example 36: Generic Methods and Bounded Type Parameters
 
 Generic methods enable type-safe method implementations that work with any type. Bounded type parameters restrict generic types to subclasses of a bound, enabling access to bound class methods.
 
@@ -745,7 +745,7 @@ String value = stringBox.get();  // => No cast needed
 
 ---
 
-### Example 37: Wildcards and Type Variance
+## Example 37: Wildcards and Type Variance
 
 Wildcards (`?`) represent unknown types in generics. Upper-bounded wildcards (`? extends Type`) enable reading, lower-bounded wildcards (`? super Type`) enable writing, following covariance and contravariance rules.
 
@@ -841,7 +841,7 @@ copy(src, dst);                  // => Copies Integer to Number list
 
 ---
 
-### Example 38: Collections Framework Deep Dive
+## Example 38: Collections Framework Deep Dive
 
 The Collections Framework provides algorithms for sorting, searching, and transforming collections. Understanding time complexities and choosing appropriate implementations is critical for performance.
 
@@ -915,7 +915,7 @@ Map<String, Integer> immutableMap = Map.of("A", 1, "B", 2);
 
 ---
 
-### Example 39: Concurrent Collections for Thread Safety
+## Example 39: Concurrent Collections for Thread Safety
 
 Concurrent collections provide thread-safe operations without external synchronization. They use lock-free algorithms and fine-grained locking for better concurrency than synchronized collections.
 
@@ -1013,7 +1013,7 @@ Map<String, Integer> syncMap = Collections.synchronizedMap(new HashMap<>());
 
 ## Group 3: Functional Programming
 
-### Example 40: Stream Pipeline Optimization
+## Example 40: Stream Pipeline Optimization
 
 Stream operations are lazy (intermediate) or eager (terminal). Understanding laziness enables building efficient pipelines that short-circuit and minimize iterations.
 
@@ -1106,7 +1106,7 @@ numbers.stream()
 
 ---
 
-### Example 41: Collectors and Stream Reduction
+## Example 41: Collectors and Stream Reduction
 
 Collectors transform stream results into collections, maps, or aggregated values. Custom collectors enable complex reductions beyond built-in options.
 
@@ -1223,7 +1223,7 @@ Map<String, Object> stats = words.stream()
 
 ---
 
-### Example 42: Method References and Function Composition
+## Example 42: Method References and Function Composition
 
 Method references provide shorthand for lambdas that delegate to existing methods. Composing functions creates reusable transformation pipelines.
 
@@ -1310,7 +1310,7 @@ List<String> processed = inputs.stream()
 
 ## Group 4: I/O and Serialization
 
-### Example 43: NIO.2 File Operations and Path API
+## Example 43: NIO.2 File Operations and Path API
 
 NIO.2 (java.nio.file) provides modern file I/O with Path abstraction, symbolic link support, and directory traversal. It replaces legacy java.io.File with clearer semantics.
 
@@ -1408,7 +1408,7 @@ try {
 
 ---
 
-### Example 44: JSON Processing with Jackson
+## Example 44: JSON Processing with Jackson
 
 Jackson is Java's de facto JSON library, providing object mapping, streaming, and tree model APIs. It enables serialization/deserialization between Java objects and JSON.
 
@@ -1493,7 +1493,7 @@ String createdJson = mapper.writeValueAsString(node);
 
 ## Group 5: Testing
 
-### Example 45: JUnit 5 Testing Fundamentals
+## Example 45: JUnit 5 Testing Fundamentals
 
 JUnit 5 provides annotations, assertions, and lifecycle methods for unit testing. It enables test-driven development and ensures code correctness through automated verification.
 
@@ -1603,7 +1603,7 @@ class CalculatorTest {
 
 ---
 
-### Example 46: Mockito for Dependency Mocking
+## Example 46: Mockito for Dependency Mocking
 
 Mockito creates mock objects for testing, isolating units from dependencies. It enables testing code that depends on databases, external APIs, or complex objects without actual implementations.
 
@@ -1736,7 +1736,7 @@ class UserServiceTest {
 
 ## Group 6: Concurrency
 
-### Example 47: Thread Basics and Runnable
+## Example 47: Thread Basics and Runnable
 
 Threads enable concurrent execution. Java provides Runnable interface for defining thread tasks and Thread class for execution management.
 
@@ -1799,7 +1799,7 @@ int priority = current.getPriority();
 
 ---
 
-### Example 48: Synchronization and Thread Safety
+## Example 48: Synchronization and Thread Safety
 
 Shared mutable state requires synchronization to prevent race conditions. Java provides synchronized keyword, locks, and atomic classes for thread safety.
 
@@ -1934,7 +1934,7 @@ System.out.println("Final count: " + counter.getCount());
 
 ---
 
-### Example 49: ExecutorService and Thread Pools
+## Example 49: ExecutorService and Thread Pools
 
 ExecutorService manages thread pools for executing tasks without manual Thread creation. It provides lifecycle management, Future results, and efficient thread reuse.
 
@@ -2023,7 +2023,7 @@ try {
 
 ---
 
-### Example 50: CompletableFuture for Async Programming
+## Example 50: CompletableFuture for Async Programming
 
 CompletableFuture enables composable asynchronous operations with functional-style transformations. It replaces callback hell with declarative async pipelines.
 

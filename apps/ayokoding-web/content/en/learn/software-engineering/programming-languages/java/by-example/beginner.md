@@ -11,7 +11,7 @@ Learn Java fundamentals through 30 annotated code examples. Each example is self
 
 ## Group 1: First Steps
 
-### Example 1: Hello World and JVM Compilation
+## Example 1: Hello World and JVM Compilation
 
 Java programs run on the JVM (Java Virtual Machine). Code is compiled to bytecode (`.class` files) that the JVM executes. This example shows the simplest Java program and how the compilation pipeline works.
 
@@ -52,7 +52,7 @@ public class HelloWorld {                          // => Public class, accessibl
 
 ---
 
-### Example 2: Variables and Type System
+## Example 2: Variables and Type System
 
 Java is statically typed with two categories: primitive types (stored on stack) and reference types (stored on heap). Types can be declared explicitly or inferred with `var`.
 
@@ -88,7 +88,7 @@ System.out.println(str);         // => Output: Hello
 
 ---
 
-### Example 3: Basic Input/Output with Scanner
+## Example 3: Basic Input/Output with Scanner
 
 Java's `Scanner` class reads formatted input from various sources (console, files, strings). It's the standard way to handle user input in console applications and parse structured text data.
 
@@ -137,7 +137,7 @@ scanner.close();                 // => Close scanner to release resources
 
 ---
 
-### Example 4: Control Flow - If/Else and Switch
+## Example 4: Control Flow - If/Else and Switch
 
 Java provides `if/else` for conditional branching and `switch` for multi-way branching. Modern Java (14+) adds switch expressions for more concise pattern matching.
 
@@ -189,7 +189,7 @@ System.out.println(numLetters);  // => Output: 6
 
 ---
 
-### Example 5: Loops - For, While, Do-While
+## Example 5: Loops - For, While, Do-While
 
 Java provides three loop constructs: `for` (known iteration count), `while` (condition-based), and `do-while` (execute-then-check). Enhanced for-loop simplifies collection iteration.
 
@@ -267,7 +267,7 @@ for (int n : numbers) {          // => "for each n in numbers" (enhanced for-loo
 
 ---
 
-### Example 6: Arrays and Array Operations
+## Example 6: Arrays and Array Operations
 
 Arrays are fixed-size, indexed collections storing elements of a single type. They're the foundation of Java's collection framework and critical for performance-sensitive code.
 
@@ -322,7 +322,7 @@ int value = matrix[1][2];        // => value is 6 (row 1, column 2)
 
 ---
 
-### Example 7: Classes and Objects
+## Example 7: Classes and Objects
 
 Classes are blueprints for objects, defining fields (state) and methods (behavior). Objects are instances of classes created with the `new` keyword.
 
@@ -391,7 +391,7 @@ System.out.println(alice.name);  // => Output: Alice (direct field access)
 
 ---
 
-### Example 8: Inheritance and Polymorphism
+## Example 8: Inheritance and Polymorphism
 
 Inheritance creates class hierarchies where subclasses extend superclasses, inheriting fields and methods. Polymorphism allows treating specialized objects through general types.
 
@@ -454,7 +454,7 @@ for (Animal a : animals) {       // => Iterate using Animal type
 
 ---
 
-### Example 9: Interfaces and Abstraction
+## Example 9: Interfaces and Abstraction
 
 Interfaces define contracts (what methods a class must implement) without implementation. Classes can implement multiple interfaces, enabling flexible type hierarchies.
 
@@ -517,7 +517,7 @@ shape2.draw();                   // => Output: Drawing a square
 
 ## Group 2: Collections and Data Structures
 
-### Example 10: ArrayList - Dynamic Arrays
+## Example 10: ArrayList - Dynamic Arrays
 
 ArrayList is a resizable array implementation providing fast random access and automatic growth. It's Java's most commonly used collection type for ordered, index-accessible elements.
 
@@ -597,7 +597,7 @@ int index = names.indexOf("Dave");
 
 ---
 
-### Example 11: HashMap - Key-Value Mappings
+## Example 11: HashMap - Key-Value Mappings
 
 HashMap stores key-value pairs with O(1) average-case lookup using hash-based indexing. It's essential for fast associative data structures like caches, indexes, and dictionaries.
 
@@ -676,7 +676,7 @@ for (Map.Entry<String, Integer> entry : ages.entrySet()) {
 
 ---
 
-### Example 12: HashSet - Unique Collections
+## Example 12: HashSet - Unique Collections
 
 HashSet stores unique elements with O(1) add/contains operations. It's backed by HashMap internally, using elements as keys with a dummy value.
 
@@ -723,7 +723,7 @@ set1.addAll(set2);               // => Union: set1 is {1, 2, 3, 4, 5}
 
 ---
 
-### Example 13: Control Flow - Ternary and Operators
+## Example 13: Control Flow - Ternary and Operators
 
 Beyond if/else, Java provides the ternary operator (`? :`) for inline conditional expressions and short-circuit logical operators for efficient boolean evaluation.
 
@@ -785,7 +785,7 @@ boolean valueEqual = s1.equals(s2);
 
 ---
 
-### Example 14: Enhanced Loops and Iterators
+## Example 14: Enhanced Loops and Iterators
 
 Java's enhanced for-loop simplifies iteration over arrays and collections. Under the hood, it uses the Iterator pattern for type-safe traversal.
 
@@ -836,7 +836,7 @@ numbers.removeIf(num -> num % 2 == 0);
 
 ---
 
-### Example 15: Methods and Parameter Passing
+## Example 15: Methods and Parameter Passing
 
 Java methods encapsulate reusable logic with parameters and return values. Parameters are pass-by-value—primitives copy values, objects copy references (both are value copies, but object references point to same heap object).
 
@@ -920,7 +920,7 @@ public static void printMessage(String msg) {
 
 ---
 
-### Example 16: Exception Handling - Try/Catch/Finally
+## Example 16: Exception Handling - Try/Catch/Finally
 
 Exceptions handle errors gracefully without crashing programs. Java distinguishes checked exceptions (must handle or declare) from unchecked exceptions (runtime errors).
 
@@ -990,7 +990,7 @@ try {
 
 ---
 
-### Example 17: String Manipulation - Common Operations
+## Example 17: String Manipulation - Common Operations
 
 Strings are immutable character sequences with extensive manipulation methods. String operations create new String objects rather than modifying existing ones.
 
@@ -1056,7 +1056,7 @@ System.out.println(modified);    // => Output: JAVA
 
 ---
 
-### Example 18: StringBuilder - Efficient String Construction
+## Example 18: StringBuilder - Efficient String Construction
 
 StringBuilder provides mutable string buffers for efficient string construction in loops or repeated modifications. Unlike String concatenation, StringBuilder modifies internal buffer instead of creating new objects.
 
@@ -1107,7 +1107,7 @@ StringBuilder sized = new StringBuilder(1000);
 
 ---
 
-### Example 19: Generics - Type-Safe Collections
+## Example 19: Generics - Type-Safe Collections
 
 Generics enable type-safe collections and methods by parameterizing types. They provide compile-time type checking, eliminating ClassCastException errors at runtime.
 
@@ -1183,7 +1183,7 @@ printList(nums);                 // => Output: 1 2 3
 
 ---
 
-### Example 20: Varargs - Variable-Length Arguments
+## Example 20: Varargs - Variable-Length Arguments
 
 Varargs allows methods to accept variable numbers of arguments using `...` syntax. Arguments are treated as arrays inside the method.
 
@@ -1247,7 +1247,7 @@ printVarargs(1, 2, 3);           // => No explicit array creation needed
 
 ---
 
-### Example 21: Autoboxing and Wrapper Classes
+## Example 21: Autoboxing and Wrapper Classes
 
 Java provides wrapper classes (Integer, Double, Boolean, etc.) to treat primitives as objects. Autoboxing automatically converts primitives to wrappers and vice versa.
 
@@ -1309,7 +1309,7 @@ System.out.println(c.equals(d)); // => Output: true (value equality)
 
 ---
 
-### Example 22: Static Members and Initialization
+## Example 22: Static Members and Initialization
 
 Static members belong to the class rather than instances. They're shared across all objects and accessible without creating instances. Static blocks initialize static fields.
 
@@ -1373,7 +1373,7 @@ double area = PI * sqrt(25);     // => Use PI and sqrt directly (no Math. prefix
 
 ---
 
-### Example 23: Access Modifiers and Encapsulation
+## Example 23: Access Modifiers and Encapsulation
 
 Access modifiers control visibility of classes, fields, and methods. Encapsulation hides implementation details, exposing only public API while keeping internals private.
 
@@ -1456,7 +1456,7 @@ double bal = account.getBalance(); // => bal is 1500
 
 ---
 
-### Example 24: Packages and Imports
+## Example 24: Packages and Imports
 
 Packages organize classes into namespaces, preventing name collisions. Import statements make classes from other packages accessible without fully qualified names.
 
@@ -1522,7 +1522,7 @@ java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
 
 ---
 
-### Example 25: Enums - Type-Safe Constants
+## Example 25: Enums - Type-Safe Constants
 
 Enums define fixed sets of named constants with type safety. Unlike integer constants, enums provide compile-time safety, namespacing, and can have fields and methods.
 
@@ -1600,7 +1600,7 @@ for (Day day : Day.values()) {
 
 ---
 
-### Example 26: File I/O - Reading and Writing Files
+## Example 26: File I/O - Reading and Writing Files
 
 Java provides multiple APIs for file operations. Modern NIO.2 (java.nio.file) offers simpler, more powerful file I/O than legacy java.io classes.
 
@@ -1683,7 +1683,7 @@ try {
 
 ---
 
-### Example 27: Lambda Expressions and Functional Interfaces
+## Example 27: Lambda Expressions and Functional Interfaces
 
 Lambda expressions provide concise syntax for anonymous functions, enabling functional programming patterns. Functional interfaces (interfaces with one abstract method) can be implemented with lambdas.
 
@@ -1776,7 +1776,7 @@ words.forEach(System.out::println);
 
 ---
 
-### Example 28: Streams API - Functional Collection Processing
+## Example 28: Streams API - Functional Collection Processing
 
 Streams provide declarative, functional-style operations on collections. They enable filtering, mapping, and reducing operations without explicit loops, supporting both sequential and parallel execution.
 
@@ -1867,7 +1867,7 @@ IntStream range = IntStream.range(1, 10);
 
 ---
 
-### Example 29: Optional - Null-Safe Value Containers
+## Example 29: Optional - Null-Safe Value Containers
 
 Optional is a container for values that may be absent, providing null-safe operations. It forces explicit handling of missing values, preventing NullPointerException.
 
@@ -1955,7 +1955,7 @@ user.ifPresent(name -> System.out.println("Found: " + name));
 
 ---
 
-### Example 30: Date and Time API - Modern Temporal Types
+## Example 30: Date and Time API - Modern Temporal Types
 
 Java 8's java.time package provides immutable, thread-safe date/time types replacing the notoriously buggy java.util.Date and Calendar. The new API clearly separates date, time, and datetime concepts.
 

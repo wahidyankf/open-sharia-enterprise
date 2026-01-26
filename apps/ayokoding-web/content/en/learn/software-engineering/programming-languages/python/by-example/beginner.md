@@ -13,7 +13,7 @@ This level covers Python fundamentals through 27 self-contained examples. Each e
 
 ---
 
-### Example 1: Hello World and Print
+## Example 1: Hello World and Print
 
 Python's `print()` function outputs text to stdout, supporting multiple arguments, string formatting, and custom separators. It's the most basic way to produce visible output and debug programs.
 
@@ -43,7 +43,7 @@ print("Name:", name, "Age:", age) # => Output: Name: Alice Age: 30
 
 ---
 
-### Example 2: Variables and Dynamic Typing
+## Example 2: Variables and Dynamic Typing
 
 Python uses dynamic typing where variables can reference any type and types are determined at runtime. Variable names are case-sensitive and follow snake_case convention.
 
@@ -75,7 +75,7 @@ print(x, y, z)                    # => Output: 0 0 0
 
 ---
 
-### Example 3: Numbers and Arithmetic
+## Example 3: Numbers and Arithmetic
 
 Python supports integers (unlimited precision), floats (IEEE 754), and complex numbers with standard arithmetic operators plus floor division and exponentiation.
 
@@ -113,7 +113,7 @@ print(abs(z))                     # => Output: 5.0 (magnitude: √(3²+4²))
 
 ---
 
-### Example 4: Strings and String Methods
+## Example 4: Strings and String Methods
 
 Strings in Python are immutable sequences of Unicode characters with rich methods for manipulation, formatting, and searching.
 
@@ -190,7 +190,7 @@ print(poem)                       # => Output: (3 lines)
 
 ---
 
-### Example 5: Boolean Logic and Comparisons
+## Example 5: Boolean Logic and Comparisons
 
 Python provides boolean type with `True`/`False` values, comparison operators, and logical operators with short-circuit evaluation.
 
@@ -268,7 +268,7 @@ print(bool("text"))               # => Output: True (non-empty strings truthy)
 
 ---
 
-### Example 6: Conditional Statements (if/elif/else)
+## Example 6: Conditional Statements (if/elif/else)
 
 Python uses indentation-based blocks for conditionals with `if`, `elif` (else-if), and `else` keywords. No parentheses required around conditions.
 
@@ -358,7 +358,7 @@ else:
 
 ---
 
-### Example 7: While Loops
+## Example 7: While Loops
 
 The `while` loop repeats a block as long as a condition remains true, with `break` for early exit and `continue` for skipping iterations.
 
@@ -417,7 +417,7 @@ user_input = ""                   # => user_input is ""
 
 ---
 
-### Example 8: For Loops and Range
+## Example 8: For Loops and Range
 
 Python's `for` loop iterates over sequences (lists, strings, ranges) with `range()` for numeric sequences and unpacking for tuples.
 
@@ -490,7 +490,7 @@ for i in range(3):                # => Outer loop: 0, 1, 2
 
 ---
 
-### Example 9: Lists - Creation and Access
+## Example 9: Lists - Creation and Access
 
 Lists are mutable, ordered sequences that can contain mixed types, support indexing (including negative indices), and slicing.
 
@@ -582,7 +582,7 @@ print(has_three, has_ten)         # => Output: True False
 
 ---
 
-### Example 10: Lists - Modification Methods
+## Example 10: Lists - Modification Methods
 
 Lists are mutable with methods for adding, removing, and modifying elements. All modification methods change the list in-place (return `None`).
 
@@ -653,7 +653,7 @@ print(sorted_copy)                # => Output: [1, 3, 4]
 
 ---
 
-### Example 11: Tuples - Immutable Sequences
+## Example 11: Tuples - Immutable Sequences
 
 Tuples are immutable ordered sequences, often used for fixed collections of related values. Once created, elements cannot be changed, added, or removed.
 
@@ -724,7 +724,7 @@ print(p[0], p[1])                 # => Output: 3 4 (still indexable)
 
 ---
 
-### Example 12: Dictionaries - Key-Value Pairs
+## Example 12: Dictionaries - Key-Value Pairs
 
 Dictionaries store key-value pairs with fast lookup by key. Keys must be immutable (strings, numbers, tuples), while values can be any type.
 
@@ -836,7 +836,7 @@ print(grades)                     # => Output: {..., 'history': 80}
 
 ---
 
-### Example 13: Sets - Unique Collections
+## Example 13: Sets - Unique Collections
 
 Sets are unordered collections of unique elements supporting mathematical set operations (union, intersection, difference).
 
@@ -918,7 +918,7 @@ print(is_subset, is_superset)     # => Output: True True
 
 ---
 
-### Example 14: Functions - Definition and Calls
+## Example 14: Functions - Definition and Calls
 
 Functions encapsulate reusable code blocks with parameters, return values, and default arguments. Python functions are first-class objects.
 
@@ -1022,7 +1022,7 @@ complex_func(1, 2, 3, 4, kwarg1="custom", extra="value")
 
 ---
 
-### Example 15: Function Scope and Global Variables
+## Example 15: Function Scope and Global Variables
 
 Python uses LEGB scope resolution (Local, Enclosing, Global, Built-in) with explicit `global`/`nonlocal` keywords for modifying outer scopes.
 
@@ -1136,7 +1136,7 @@ print(is_debug())                 # => Output: True
 
 ---
 
-### Example 16: Lambda Functions
+## Example 16: Lambda Functions
 
 Lambda functions are anonymous, single-expression functions often used for short operations passed to higher-order functions.
 
@@ -1231,7 +1231,7 @@ print(squares_comp)               # => Output: [1, 4, 9, 16, 25]
 
 ---
 
-### Example 17: List Comprehensions
+## Example 17: List Comprehensions
 
 List comprehensions provide concise syntax for creating lists by transforming and filtering existing sequences in a single readable expression.
 
@@ -1319,7 +1319,7 @@ print(complex)                    # => Output: [2, 4, 6, 8, 10, 2, 4, 6, 8]
 
 ---
 
-### Example 18: Dictionary and Set Comprehensions
+## Example 18: Dictionary and Set Comprehensions
 
 Python supports comprehensions for dictionaries and sets with similar syntax to list comprehensions, enabling concise creation of these data structures.
 
@@ -1406,7 +1406,7 @@ print(passing)                    # => Output: {'Alice': 95, 'Charlie': 88}
 
 ---
 
-### Example 19: Exception Handling - Try/Except
+## Example 19: Exception Handling - Try/Except
 
 Python uses try/except blocks to handle errors gracefully, with optional else (runs if no exception) and finally (always runs) clauses.
 
@@ -1566,7 +1566,7 @@ except ValueError:
 
 ---
 
-### Example 20: File I/O - Reading and Writing
+## Example 20: File I/O - Reading and Writing
 
 Python provides simple file operations with automatic resource management using context managers (`with` statement).
 
@@ -1708,7 +1708,7 @@ result = safe_read("nonexistent.txt")
 
 ---
 
-### Example 21: Classes - Basics
+## Example 21: Classes - Basics
 
 Classes define custom types with data (attributes) and behavior (methods). Python uses `self` to reference the instance within methods.
 
@@ -1847,7 +1847,7 @@ print(account._balance)           # => Output: 150 (discouraged but possible)
 
 ---
 
-### Example 22: Classes - Inheritance
+## Example 22: Classes - Inheritance
 
 Inheritance allows classes to extend other classes, inheriting attributes and methods while adding or overriding functionality.
 
@@ -2021,7 +2021,7 @@ print(manager.annual_salary())    # => Output: 70000 (5000×12 + 10000)
 
 ---
 
-### Example 23: Class Properties and Magic Methods
+## Example 23: Class Properties and Magic Methods
 
 Properties provide controlled access to attributes, while magic methods (double underscores) enable operator overloading and Python protocol implementations.
 
@@ -2213,7 +2213,7 @@ print(times_three(5))             # => Output: 15
 
 ---
 
-### Example 24: Modules and Imports
+## Example 24: Modules and Imports
 
 Modules organize code into reusable files, with imports enabling access to functions, classes, and variables from other modules.
 
@@ -2383,7 +2383,7 @@ print(numbers)                    # => Output: [3, 1, 5, 2, 4] (example, randomi
 
 ---
 
-### Example 25: String Formatting
+## Example 25: String Formatting
 
 Python offers multiple string formatting approaches: f-strings (modern, preferred), `.format()`, and `%` formatting (legacy).
 
@@ -2516,7 +2516,7 @@ print(f"{value:+08.2f}")          # => Output: +0042.70 (sign, zero-pad, width 8
 
 ---
 
-### Example 26: Iterators and the Iterator Protocol
+## Example 26: Iterators and the Iterator Protocol
 
 Python's iterator protocol enables lazy evaluation and memory-efficient iteration over sequences, with built-in support via `__iter__` and `__next__` methods.
 
@@ -2716,7 +2716,7 @@ print(f"Iterator size: {sys.getsizeof(iter_range)} bytes")
 
 ---
 
-### Example 27: Basic Error Handling Patterns
+## Example 27: Basic Error Handling Patterns
 
 Common patterns for handling errors include EAFP (Easier to Ask for Forgiveness than Permission), LBYL (Look Before You Leap), custom exceptions, and exception chaining.
 

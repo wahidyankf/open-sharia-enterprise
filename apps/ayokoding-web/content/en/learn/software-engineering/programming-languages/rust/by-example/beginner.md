@@ -13,7 +13,7 @@ Examples 1-28 cover Rust fundamentals and the ownership model (0-40% coverage). 
 
 ---
 
-### Example 1: Hello World
+## Example 1: Hello World
 
 Every Rust program starts with a `main` function, which is the entry point the Rust runtime calls first. The `println!` macro (note the `!` suffix) prints text to stdout with automatic newline and expands at compile-time. String literals like `"Hello, World!"` have type `&str`. Unlike C/C++, Rust requires no headers or includes for basic programs.
 
@@ -33,7 +33,7 @@ fn main() {
 
 ---
 
-### Example 2: Variables and Mutability
+## Example 2: Variables and Mutability
 
 Rust variables are immutable by default, requiring explicit `mut` keyword for mutation. This prevents accidental state changes and makes mutation explicit in code. This design choice eliminates entire classes of bugs found in languages with mutable-by-default variables.
 
@@ -63,7 +63,7 @@ fn main() {
 
 ---
 
-### Example 3: Variable Shadowing
+## Example 3: Variable Shadowing
 
 Rust allows redeclaring variables with the same name, which creates a new binding while the old one goes out of scope. This differs from mutation and allows type changes. Shadowing is a unique Rust feature that enables transformation pipelines without mutability.
 
@@ -116,7 +116,7 @@ fn main() {
 
 ---
 
-### Example 4: Data Types
+## Example 4: Data Types
 
 Rust has scalar types (integers, floats, booleans, characters) and compound types (tuples, arrays). Type inference is powerful but explicit annotations are sometimes needed. All types have known sizes at compile-time, enabling zero-cost abstractions.
 
@@ -164,7 +164,7 @@ fn main() {
 
 ---
 
-### Example 5: Functions
+## Example 5: Functions
 
 Functions use `fn` keyword with explicit parameter types and optional return type. The last expression (without semicolon) is the return value. This expression-based syntax eliminates redundant return keywords while maintaining clarity.
 
@@ -212,7 +212,7 @@ fn double_explicit(x: i32) -> i32 {
 
 ---
 
-### Example 6: Control Flow - If/Else
+## Example 6: Control Flow - If/Else
 
 `if` expressions in Rust can return values, making them useful for conditional assignment. All branches must return the same type. Unlike many languages, Rust doesn't need parentheses around conditions but requires braces for blocks.
 
@@ -285,7 +285,7 @@ fn main() {
 
 ---
 
-### Example 7: Control Flow - Loops
+## Example 7: Control Flow - Loops
 
 Rust has three loop types: `loop` (infinite), `while` (conditional), and `for` (iterator). Loops can return values via `break`. Rust's loop constructs are expressions, not just statements, enabling functional programming patterns.
 
@@ -375,7 +375,7 @@ fn main() {
 
 ---
 
-### Example 8: Ownership Basics
+## Example 8: Ownership Basics
 
 Rust's ownership model ensures memory safety without garbage collection. Each value has exactly one owner, and when the owner goes out of scope, the value is dropped. This eliminates entire classes of bugs: use-after-free, double-free, and memory leaks.
 
@@ -454,7 +454,7 @@ fn main() {
 
 ---
 
-### Example 9: Move Semantics
+## Example 9: Move Semantics
 
 When assigning heap-allocated values, Rust moves ownership rather than copying, invalidating the original binding to prevent double-free errors. This is a fundamental difference from languages with garbage collection or manual memory management.
 
@@ -559,7 +559,7 @@ fn makes_copy(x: i32) {              // => x is copy of parameter
 
 ---
 
-### Example 10: Clone for Deep Copy
+## Example 10: Clone for Deep Copy
 
 When you need multiple owners of heap data, explicitly clone it. Cloning creates a deep copy with independent ownership. Unlike move semantics, cloning duplicates heap data, which is expensive but sometimes necessary.
 
@@ -649,7 +649,7 @@ fn takes_ownership_clone(s: String) {
 
 ---
 
-### Example 11: References and Borrowing
+## Example 11: References and Borrowing
 
 References allow accessing values without taking ownership. Borrowing enables multiple read-only references or one mutable reference at a time. This is Rust's zero-cost abstraction for safe aliasing without runtime overhead.
 
@@ -748,7 +748,7 @@ fn calculate_length(s: &String) -> usize {
 
 ---
 
-### Example 12: Mutable References
+## Example 12: Mutable References
 
 Mutable references allow modifying borrowed data, but Rust enforces at most one mutable reference at a time to prevent data races. This exclusive access rule eliminates data races at compile-time with zero runtime cost.
 
@@ -860,7 +860,7 @@ fn change(s: &mut String) {          // => s is mutable reference (write access)
 
 ---
 
-### Example 13: Borrowing Rules
+## Example 13: Borrowing Rules
 
 Rust enforces borrowing rules at compile time: multiple immutable references OR one mutable reference, never both simultaneously. This prevents data races by construction, not convention.
 
@@ -992,7 +992,7 @@ fn main() {
 
 ---
 
-### Example 14: Slices
+## Example 14: Slices
 
 Slices are references to contiguous sequences without ownership. String slices (`&str`) reference portions of strings without copying. Slices are fat pointers (pointer + length) that prevent common string manipulation bugs.
 
@@ -1109,7 +1109,7 @@ fn main() {
 
 ---
 
-### Example 15: Structs
+## Example 15: Structs
 
 Structs group related data into named fields. They're Rust's primary way to create custom types with named components. Each field has explicit type and ownership semantics.
 
@@ -1264,7 +1264,7 @@ fn main() {
 
 ---
 
-### Example 16: Tuple Structs
+## Example 16: Tuple Structs
 
 Tuple structs are named tuples useful when struct field names add no meaning. They create distinct types even with identical field types, providing type safety through newtype pattern.
 
@@ -1368,7 +1368,7 @@ fn main() {
 
 ---
 
-### Example 17: Methods
+## Example 17: Methods
 
 Methods are functions defined within `impl` blocks associated with structs. The first parameter is `self`, representing the instance. Methods enable object-oriented style while preserving ownership semantics.
 
@@ -1501,7 +1501,7 @@ fn main() {
 
 ---
 
-### Example 18: Associated Functions
+## Example 18: Associated Functions
 
 Associated functions (static methods) don't take `self` and are called with `::` syntax. Often used for constructors and factory methods. They belong to the type itself, not instances.
 
@@ -1633,7 +1633,7 @@ fn main() {
 
 ---
 
-### Example 19: Enums
+## Example 19: Enums
 
 Enums define types that can be one of several variants, each potentially holding different data. More powerful than C-style enums, they're algebraic data types (sum types) enabling type-safe modeling.
 
@@ -1781,7 +1781,7 @@ fn route(ip: IpAddr) {               // => ip: IpAddr enum (any variant)
 
 ---
 
-### Example 20: Pattern Matching with Match
+## Example 20: Pattern Matching with Match
 
 `match` expressions exhaustively check all enum variants at compile time, ensuring every case is handled. They're Rust's primary control flow for enums and the foundation of type-safe pattern matching.
 
@@ -1951,7 +1951,7 @@ fn main() {
 
 ---
 
-### Example 21: Option Enum
+## Example 21: Option Enum
 
 `Option<T>` represents optional values: `Some(T)` for present values or `None` for absence. Rust has no null, eliminating null pointer errors. Every optional value must be explicitly handled through pattern matching.
 
@@ -2031,7 +2031,7 @@ fn main() {
 
 ---
 
-### Example 22: If Let Syntax
+## Example 22: If Let Syntax
 
 `if let` provides concise syntax for matching one pattern while ignoring others, avoiding verbose `match` when only one case matters. It's syntactic sugar that improves readability when you don't need exhaustive matching.
 
@@ -2130,7 +2130,7 @@ fn main() {
 
 ---
 
-### Example 23: Result for Error Handling
+## Example 23: Result for Error Handling
 
 `Result<T, E>` represents operations that can succeed (`Ok(T)`) or fail (`Err(E)`). Rust has no exceptions, forcing explicit error handling. Every fallible operation must be handled through pattern matching or propagation.
 
@@ -2231,7 +2231,7 @@ fn main() {
 
 ---
 
-### Example 24: Unwrap and Expect
+## Example 24: Unwrap and Expect
 
 `unwrap()` extracts success values or panics on error. `expect()` is similar but provides custom panic messages. Use for prototyping or when error is impossible. In production, prefer explicit error handling.
 
@@ -2322,7 +2322,7 @@ fn main() {
 
 ---
 
-### Example 25: Question Mark Operator
+## Example 25: Question Mark Operator
 
 The `?` operator propagates errors up the call stack, returning early with `Err` if present. It makes error handling concise without nested `match` statements. Only works in functions that return `Result` or `Option`.
 
@@ -2443,7 +2443,7 @@ fn main() {
 
 ---
 
-### Example 26: Vectors
+## Example 26: Vectors
 
 Vectors (`Vec<T>`) are growable arrays allocated on the heap. They're the most common collection type for dynamic sequences. Unlike arrays, vectors can grow and shrink at runtime.
 
@@ -2570,7 +2570,7 @@ fn main() {
 
 ---
 
-### Example 27: Strings
+## Example 27: Strings
 
 Rust has two string types: `String` (owned, growable, heap-allocated) and `&str` (borrowed, immutable string slice). This distinction prevents many string-related bugs. All strings are valid UTF-8.
 
@@ -2701,7 +2701,7 @@ fn main() {
 
 ---
 
-### Example 28: Hash Maps
+## Example 28: Hash Maps
 
 Hash maps (`HashMap<K, V>`) store key-value pairs with O(1) average lookup. Keys must implement `Eq` and `Hash` traits. Hash maps take ownership of owned types like `String`.
 
