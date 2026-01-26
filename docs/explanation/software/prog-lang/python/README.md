@@ -774,9 +774,9 @@ def calculate_zakat_v2(wealth: int, nisab: int) -> int:
 
 ## Documentation Structure
 
-This documentation comprises 35 files organized into core topics and reusable templates:
+This documentation comprises 23 core documentation files organized into foundation, patterns, practices, and advanced topics:
 
-### Core Documentation (23 Files)
+### Core Documentation
 
 **Foundation** (5 files):
 
@@ -814,35 +814,6 @@ This documentation comprises 35 files organized into core topics and reusable te
 
 - `ex-so-prla-py__release-3.11.md` - Baseline Python 3.11 features
 - `ex-so-prla-py__release-3.12.md` - Stable Python 3.12 features
-
-**Templates Directory** (1 file):
-
-- `templates/README.md` - Templates overview and usage guide
-
-### Templates (12 Files)
-
-**Domain-Driven Design** (6 templates):
-
-- `templates/entity-template.md` - Entity pattern with Pydantic
-- `templates/value-object-template.md` - Immutable value objects
-- `templates/aggregate-template.md` - Aggregate root pattern
-- `templates/domain-event-template.md` - Domain event pattern
-- `templates/repository-template.md` - Repository pattern with async
-- `templates/service-layer-template.md` - Application service pattern
-
-**Testing** (2 templates):
-
-- `templates/unit-test-template.md` - pytest unit test pattern
-- `templates/integration-test-template.md` - pytest integration test pattern
-
-**API Development** (2 templates):
-
-- `templates/fastapi-endpoint-template.md` - FastAPI REST endpoint pattern
-- `templates/async-worker-template.md` - Celery/Dramatiq async worker pattern
-
-**Build Configuration** (1 template):
-
-- `templates/build-configuration-template.md` - pyproject.toml configuration
 
 ## Learning Paths
 
@@ -1406,7 +1377,7 @@ strict = true
 
 **Last Updated**: 2026-01-24
 **Python Versions**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.14.2 (latest stable)
-**Total Documentation Files**: 23 core files + 3 version files + 1 templates index + 12 templates = 39 files
+**Total Documentation Files**: 23 core files + 3 version files = 26 files
 **Maintainers**: OSE Platform Documentation Team
 
 ## Python Ecosystem

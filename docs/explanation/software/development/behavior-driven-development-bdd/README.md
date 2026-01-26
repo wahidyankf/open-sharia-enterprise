@@ -210,19 +210,6 @@ Best practices and common issues:
 
 - **[16. FAQ](./ex-so-de-bdd__16-faq.md)** - Common questions, misconceptions, troubleshooting BDD adoption
 
-### Templates
-
-Reusable templates for applying BDD:
-
-- **[Templates Directory](./templates/)** - Practical templates for BDD artifacts:
-  - **[Feature File Template](./templates/ex-so-de-bdd-te__feature-file-template.md)** - Islamic Finance Tax calculation example
-  - **[Scenario Template](./templates/ex-so-de-bdd-te__scenario-template.md)** - Given-When-Then structure with Islamic Finance domain
-  - **[User Story with Acceptance Criteria](./templates/ex-so-de-bdd-te__user-story-with-acceptance-criteria.md)** - Story format + Gherkin scenarios
-  - **[Example Mapping Session](./templates/ex-so-de-bdd-te__example-mapping-session.md)** - Color-coded cards, Tax rules/examples/questions
-  - **[Step Definition Template](./templates/ex-so-de-bdd-te__step-definition-template.md)** - TypeScript/JavaScript implementation patterns
-  - **[Scenario Outline Template](./templates/ex-so-de-bdd-te__scenario-outline-template.md)** - Data-driven scenarios with Examples table
-  - **[Three Amigos Session Template](./templates/ex-so-de-bdd-te__three-amigos-session-template.md)** - Agenda, participants, outputs
-
 ## Learning Paths
 
 Choose a learning path based on your goals and available time.
@@ -515,10 +502,10 @@ Ready to apply BDD to your project? Start here:
 
 1. **Assess suitability**: Use [Decision Matrix](#when-to-use-bdd-decision-matrix) to score your project
 2. **Learn Gherkin**: Read [Gherkin Syntax](./ex-so-de-bdd__02-gherkin-syntax-and-scenarios.md) and write first scenario
-3. **Run Three Amigos**: Schedule session using [Three Amigos Template](./templates/ex-so-de-bdd-te__three-amigos-session-template.md)
+3. **Run Three Amigos**: Schedule session with Business, Development, and QA representatives
 4. **Try Example Mapping**: Visual workshop using [Example Mapping Guide](./ex-so-de-bdd__05-example-mapping.md)
 5. **Choose framework**: Review [BDD Frameworks](./ex-so-de-bdd__11-bdd-frameworks.md) comparison
-6. **Write first feature**: Use [Feature File Template](./templates/ex-so-de-bdd-te__feature-file-template.md)
+6. **Write first feature**: Create feature file with Given-When-Then scenarios
 7. **Implement steps**: Follow [Step Definitions Guide](./ex-so-de-bdd__09-step-definitions.md)
 
 ## Related Principles

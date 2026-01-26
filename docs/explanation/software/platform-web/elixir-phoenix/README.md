@@ -430,16 +430,6 @@ end
 
 - **[Version Migration](./ex-so-plwe-elph__version-migration.md)** - Upgrading from Phoenix 1.6 to 1.7+
 
-### Code Templates
-
-- **[Templates](./templates/README.md)** - Production-ready code templates
-  - [Context Template](./templates/ex-so-plwe-elph-te__context-template.md)
-  - [Controller Template](./templates/ex-so-plwe-elph-te__controller-template.md)
-  - [Channel Template](./templates/ex-so-plwe-elph-te__channel-template.md)
-  - [LiveView Template](./templates/ex-so-plwe-elph-te__liveview-template.md)
-  - [Schema Template](./templates/ex-so-plwe-elph-te__schema-template.md)
-  - [Test Template](./templates/ex-so-plwe-elph-te__test-template.md)
-
 ## Learning Resources
 
 ### Official Documentation

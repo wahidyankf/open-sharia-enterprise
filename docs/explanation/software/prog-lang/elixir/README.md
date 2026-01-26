@@ -57,19 +57,19 @@ Elixir is a dynamic, functional programming language designed for building scala
 
 All Elixir code MUST follow the standards documented here:
 
-1. **[Idioms](./ex-so-prla-ex__idioms.md)** - Elixir-specific patterns and conventions
-2. **[Best Practices](./ex-so-prla-ex__best-practices.md)** - Clean code standards
-3. **[Anti-Patterns](./ex-so-prla-ex__anti-patterns.md)** - Common mistakes to avoid
+1. **[Idioms](./ex-so-prla-el__idioms.md)** - Elixir-specific patterns and conventions
+2. **[Best Practices](./ex-so-prla-el__best-practices.md)** - Clean code standards
+3. **[Anti-Patterns](./ex-so-prla-el__anti-patterns.md)** - Common mistakes to avoid
 
 **For Agents**: Reference this documentation when writing Elixir code. The `swe-programming-elixir` skill provides quick access to these standards.
 
 ### Quick Standards Reference
 
-- **Naming Conventions**: See [Best Practices - Code Organization](./ex-so-prla-ex__best-practices.md#code-organization)
-- **Error Handling**: See [Error Handling](./ex-so-prla-ex__error-handling.md)
-- **Type Safety**: See [Type Safety](./ex-so-prla-ex__type-safety.md)
-- **Testing Standards**: See [Test-Driven Development](./ex-so-prla-ex__test-driven-development.md)
-- **Security Practices**: See [Security](./ex-so-prla-ex__security.md)
+- **Naming Conventions**: See [Best Practices - Code Organization](./ex-so-prla-el__best-practices.md#code-organization)
+- **Error Handling**: See [Error Handling](./ex-so-prla-el__error-handling.md)
+- **Type Safety**: See [Type Safety](./ex-so-prla-el__type-safety.md)
+- **Testing Standards**: See [Test-Driven Development](./ex-so-prla-el__test-driven-development.md)
+- **Security Practices**: See [Security](./ex-so-prla-el__security.md)
 
 **Related**: [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
 
@@ -204,20 +204,6 @@ Elixir-specific OTP design patterns:
 - [OTP Supervisor](./ex-so-prla-el__otp-supervisor.md) - Supervision strategies, restart policies, fault tolerance
 - [OTP Application](./ex-so-prla-el__otp-application.md) - Application structure, supervision trees, umbrella projects
 
-### DDD Templates (7 templates)
-
-Production-ready templates adapted for Elixir's functional paradigm:
-
-- [Entity Template](./templates/entity-template.md) - Ecto schemas with identity and changesets
-- [Value Object Template](./templates/value-object-template.md) - Elixir structs with validation and protocols
-- [Aggregate Template](./templates/aggregate-template.md) - Bounded contexts with Ecto and consistency boundaries
-- [Domain Event Template](./templates/domain-event-template.md) - Event sourcing patterns with GenServer/GenStage
-- [Repository Template](./templates/repository-template.md) - Ecto Repo abstraction with query patterns
-- [Service Layer Template](./templates/service-layer-template.md) - Business logic orchestration with context modules
-- [Build Configuration Template](./templates/build-configuration-template.md) - Mix.exs, config/, releases, Docker, CI/CD
-
-See [templates/README.md](./templates/README.md) for template overview and usage guide.
-
 ## Elixir Version Strategy
 
 ```mermaid
@@ -321,11 +307,6 @@ timeline
 **For Developers Applying Domain-Driven Design**:
 
 1. [Domain-Driven Design](./ex-so-prla-el__domain-driven-design.md) - Adapt DDD to functional paradigm
-2. [Entity Template](./templates/entity-template.md) - Model entities with Ecto
-3. [Value Object Template](./templates/value-object-template.md) - Create immutable value objects
-4. [Aggregate Template](./templates/aggregate-template.md) - Define consistency boundaries
-5. [Repository Template](./templates/repository-template.md) - Abstract data access
-6. [Service Layer Template](./templates/service-layer-template.md) - Orchestrate domain logic
 
 **For Developers Building Web Services**:
 

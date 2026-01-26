@@ -112,10 +112,6 @@ Go development in this platform follows the five software engineering principles
 - [Test-Driven Development](./ex-so-prla-go__test-driven-development.md) - TDD with testing package, testify
 - [Behaviour-Driven Development](./ex-so-prla-go__behaviour-driven-development.md) - BDD with Godog (Gherkin for Go)
 
-**DDD Templates:**
-
-- [Templates](./templates/README.md) - DDD templates (Entity, Value Object, Aggregate, Domain Event, Repository, Service Layer, Build Configuration)
-
 ## Go Version Strategy
 
 ```mermaid
@@ -535,22 +531,6 @@ Comprehensive guide to FSM patterns for enterprise state management in Go.
 - Patterns and anti-patterns (entry/exit actions, guards)
 - Real-world examples (Zakat payment processing, Murabaha loans, Waqf contracts)
 - Financial domain: Payment workflows, loan lifecycle management, compliance state tracking
-
-### DDD Templates
-
-Production-ready templates for Domain-Driven Design patterns in Go:
-
-**See**: [Templates README](./templates/README.md) for complete documentation
-
-**Available Templates**:
-
-- **[Entity Template](./templates/entity-template.md)** - Identity-based objects with lifecycle management
-- **[Value Object Template](./templates/value-object-template.md)** - Immutable value types with validation
-- **[Aggregate Template](./templates/aggregate-template.md)** - Consistency boundaries with domain events
-- **[Domain Event Template](./templates/domain-event-template.md)** - Event sourcing and event-driven patterns
-- **[Repository Template](./templates/repository-template.md)** - Persistence abstraction with business queries
-- **[Service Layer Template](./templates/service-layer-template.md)** - Application services orchestrating domain logic
-- **[Build Configuration Template](./templates/build-configuration-template.md)** - Makefile, go.mod, golangci-lint, Docker, CI/CD
 
 ## Go in the Platform
 
@@ -1057,17 +1037,6 @@ Essential Go philosophy from Rob Pike:
 - **[Go Domain-Driven Design](./ex-so-prla-go__domain-driven-design.md)** - DDD without classes
 - **[Go Test-Driven Development](./ex-so-prla-go__test-driven-development.md)** - TDD with testing package
 - **[Go Behaviour-Driven Development](./ex-so-prla-go__behaviour-driven-development.md)** - BDD with Godog
-
-### DDD Templates
-
-- **[Templates README](./templates/README.md)** - Complete DDD templates guide
-- **[Entity Template](./templates/entity-template.md)** - Identity-based objects
-- **[Value Object Template](./templates/value-object-template.md)** - Immutable values
-- **[Aggregate Template](./templates/aggregate-template.md)** - Consistency boundaries
-- **[Domain Event Template](./templates/domain-event-template.md)** - Event sourcing patterns
-- **[Repository Template](./templates/repository-template.md)** - Persistence abstraction
-- **[Service Layer Template](./templates/service-layer-template.md)** - Application orchestration
-- **[Build Configuration Template](./templates/build-configuration-template.md)** - Complete build setup
 
 ### Platform Documentation
 
