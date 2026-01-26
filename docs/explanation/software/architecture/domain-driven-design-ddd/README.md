@@ -87,17 +87,6 @@ Integration with programming paradigms and architectures:
 - **[17. DDD and C4 Integration](./ex-so-ar-dodrdedd__17-ddd-and-c4-integration.md)** - Mapping DDD to C4 architecture diagrams
 - **[18. FAQ](./ex-so-ar-dodrdedd__18-faq.md)** - Common questions and misconceptions
 
-### Templates
-
-Reusable templates for applying DDD patterns:
-
-- **[19. Templates Directory](./templates/)** - Practical templates for DDD artifacts:
-  - **[Bounded Context Canvas](./templates/ex-so-ar-dodrdedd-te__bounded-context-canvas.md)** - Document context details
-  - **[Context Map Diagram](./templates/ex-so-ar-dodrdedd-te__context-map-diagram.md)** - Visualize context relationships
-  - **[Ubiquitous Language Glossary](./templates/ex-so-ar-dodrdedd-te__ubiquitous-language-glossary.md)** - Track domain terminology
-  - **[Aggregate Design Template](./templates/ex-so-ar-dodrdedd-te__aggregate-design-template.md)** - Structure aggregate documentation
-  - **[Domain Event Catalog](./templates/ex-so-ar-dodrdedd-te__domain-event-catalog.md)** - Document domain events
-
 ## Learning Paths
 
 Choose a learning path based on your goals and available time.
@@ -129,7 +118,7 @@ Choose a learning path based on your goals and available time.
    - [Entities](./ex-so-ar-dodrdedd__07-entities.md#what-is-an-entity) - Identity and lifecycle (3 min)
 
 3. **Apply** (5 minutes)
-   - Use [Bounded Context Canvas Template](./templates/ex-so-ar-dodrdedd-te__bounded-context-canvas.md)
+   - Use Bounded Context Canvas approach
    - Design one bounded context for your domain
 
 **Outcome**: Documented bounded context with key aggregates and value objects identified.
@@ -255,7 +244,7 @@ Focus on collaboration and model validation:
 4. [Bounded Contexts](./ex-so-ar-dodrdedd__03-bounded-contexts.md#identifying-bounded-contexts) - Recognizing domain boundaries
 5. [Subdomains](./ex-so-ar-dodrdedd__05-subdomains.md) - Core vs. Supporting business capabilities
 6. [Domain Events](./ex-so-ar-dodrdedd__12-domain-events.md) - Capturing business occurrences
-7. Use [Ubiquitous Language Glossary Template](./templates/ex-so-ar-dodrdedd-te__ubiquitous-language-glossary.md) to document terms
+7. Create Ubiquitous Language glossary to document domain terms
 
 **Key Insight**: Domain experts don't need to understand code, but should validate that the model accurately represents business reality.
 
@@ -401,64 +390,6 @@ See individual pattern documentation for detailed principle applications and exa
 
 ## Templates and Tools
 
-### Bounded Context Canvas
-
-**[Bounded Context Canvas Template](./templates/ex-so-ar-dodrdedd-te__bounded-context-canvas.md)**
-
-Comprehensive canvas for designing a bounded context:
-
-- Name, description, strategic classification
-- Ubiquitous language terms
-- Business decisions and rules
-- Key aggregates, entities, value objects
-- Inbound/outbound dependencies
-- Domain events published/consumed
-
-### Context Map Diagram
-
-**[Context Map Diagram Template](./templates/ex-so-ar-dodrdedd-te__context-map-diagram.md)**
-
-Mermaid diagram template for visualizing bounded context relationships with all 9 integration patterns.
-
-### Event Storming Output
-
-**[Event Storming Output Template](./templates/ex-so-ar-dodrdedd-te__event-storming-output.md)**
-
-Structured format for documenting Event Storming workshop results across all 9 phases.
-
-### Ubiquitous Language Glossary
-
-**[Ubiquitous Language Glossary Template](./templates/ex-so-ar-dodrdedd-te__ubiquitous-language-glossary.md)**
-
-Track domain terms with definitions, examples, and related concepts.
-
-### Aggregate Design Template
-
-**[Aggregate Design Template](./templates/ex-so-ar-dodrdedd-te__aggregate-design-template.md)**
-
-Structured format for documenting aggregate design including invariants, commands, events, and contained entities/value objects.
-
-### Color Palette
-
-**[WCAG AA-Compliant Color Palette](./templates/ex-so-ar-dodrdedd-te__color-palette.md)**
-
-Accessible colors for Mermaid diagrams:
-
-- Blue `#0173B2` - Bounded Contexts, Aggregate Roots
-- Teal `#029E73` - Entities, Supporting Subdomains
-- Orange `#DE8F05` - Value Objects, Domain Events
-- Purple `#CC78BC` - External Systems
-- Brown `#CA9161` - Legacy Systems
-- Gray `#808080` - Infrastructure
-
-All colors meet WCAG AA contrast standards (4.5:1 minimum).
-
-### Starter Full Documentation
-
-**[Starter Full Documentation Template](./templates/ex-so-ar-dodrdedd-te__starter-full-documentation.md)**
-
-Complete DDD documentation set starter for new bounded contexts.
-
 ## Common Questions
 
 ### Should I start with strategic or tactical patterns?
@@ -499,10 +430,10 @@ Ready to apply DDD to your project? Follow this checklist:
 
 - [ ] Conduct Event Storming workshop with domain experts
 - [ ] Identify bounded contexts using [identification techniques](./ex-so-ar-dodrdedd__03-bounded-contexts.md#identifying-bounded-contexts)
-- [ ] Create Ubiquitous Language glossary using [template](./templates/ex-so-ar-dodrdedd-te__ubiquitous-language-glossary.md)
+- [ ] Create Ubiquitous Language glossary for domain terminology
 - [ ] Map context relationships using [Context Mapping patterns](./ex-so-ar-dodrdedd__04-context-mapping.md)
 - [ ] Classify subdomains (Core, Supporting, Generic) using [Subdomains guide](./ex-so-ar-dodrdedd__05-subdomains.md)
-- [ ] Document each bounded context using [Bounded Context Canvas](./templates/ex-so-ar-dodrdedd-te__bounded-context-canvas.md)
+- [ ] Document each bounded context using Bounded Context Canvas approach
 
 **Tactical Design (per Bounded Context):**
 
@@ -550,8 +481,7 @@ This documentation evolves as we apply DDD to the Open Compliance Enterprise pla
 
 - **Examples**: Additional finance and business domain examples
 - **Clarifications**: Improved explanations of complex concepts
-- **Diagrams**: Enhanced Mermaid diagrams (use [Color Palette](./templates/ex-so-ar-dodrdedd-te__color-palette.md))
-- **Templates**: New templates for DDD practices
+- **Diagrams**: Enhanced Mermaid diagrams using WCAG AA-compliant colors
 - **Cross-references**: Links to related governance and development docs
 
 See [Repository Governance Architecture](../../../../../governance/repository-governance-architecture.md) for contribution guidelines.

@@ -177,7 +177,7 @@ The open-sharia-enterprise project applies both C4 and DDD principles:
 1. **Understand visualization approaches** - Read [C4 System Context](./architecture/c4-architecture-model/ex-so-ar-c4armo__01-level-1-system-context.md)
 2. **Master strategic design** - Read [DDD Bounded Contexts](./architecture/domain-driven-design-ddd/ex-so-ar-dodrdedd__03-bounded-contexts.md) and [Context Mapping](./architecture/domain-driven-design-ddd/ex-so-ar-dodrdedd__04-context-mapping.md)
 3. **Learn integration** - Read [DDD and C4 Integration](./architecture/domain-driven-design-ddd/ex-so-ar-dodrdedd__17-ddd-and-c4-integration.md)
-4. **Apply to projects** - Use templates from [C4 Templates](./architecture/c4-architecture-model/templates/) and [DDD Templates](./architecture/domain-driven-design-ddd/templates/)
+4. **Apply to projects** - Apply C4 and DDD patterns to your architecture
 
 ### For Developers
 

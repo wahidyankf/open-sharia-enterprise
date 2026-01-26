@@ -112,7 +112,6 @@ Spring Boot is the primary backend framework for building REST APIs, domain serv
 - **[Domain-Driven Design](./jvm-spring-boot/ex-so-plwe-jvspbo__domain-driven-design.md)** - DDD tactical patterns with Spring
 - **[Functional Programming](./jvm-spring-boot/ex-so-plwe-jvspbo__functional-programming.md)** - FP patterns, immutability
 - **[Version Migration](./jvm-spring-boot/ex-so-plwe-jvspbo__version-migration.md)** - Spring Boot 2.x to 3.x upgrade guide
-- **[Code Templates](./jvm-spring-boot/templates/README.md)** - Production-ready templates (REST controllers, services, repositories, configuration)
 
 **Key Features**:
 
@@ -131,7 +130,7 @@ Spring Boot applications in the platform follow Domain-Driven Design principles 
 1. Review [Spring Boot README](./jvm-spring-boot/README.md) for version strategy and architecture
 2. Study [Idioms](./jvm-spring-boot/ex-so-plwe-jvspbo__idioms.md) for framework patterns
 3. Follow [Best Practices](./jvm-spring-boot/ex-so-plwe-jvspbo__best-practices.md) for production standards
-4. Use [Code Templates](./jvm-spring-boot/templates/README.md) for consistent implementation
+4. Apply consistent implementation patterns
 5. Apply [Java coding standards](../prog-lang/java/README.md) for language-specific idioms
 
 ### 🔥 [Phoenix (Elixir)](./elixir-phoenix/README.md)

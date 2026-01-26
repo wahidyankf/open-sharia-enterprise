@@ -237,21 +237,6 @@ Best practices and anti-patterns:
 - **[16. TDD in Nx Monorepo](./ex-so-de-tedrdeve__16-tdd-in-nx-monorepo.md)** - Testing in Nx workspace, affected tests, shared utilities
 - **[17. FAQ](./ex-so-de-tedrdeve__17-faq.md)** - Common questions about TDD practice
 
-### Templates
-
-Reusable templates for applying TDD:
-
-- **[Templates Directory](./templates/)** - Practical templates for TDD workflows:
-  - **[Unit Test Template](./templates/ex-so-de-tedrdeve-te__unit-test-template.md)** - Standard unit test structure with AAA pattern
-  - **[Integration Test Template](./templates/ex-so-de-tedrdeve-te__integration-test-template.md)** - Database and API integration tests
-  - **[Test Data Builder Template](./templates/ex-so-de-tedrdeve-te__test-data-builder-template.md)** - Builder pattern for test fixtures
-  - **[Property-Based Test Template](./templates/ex-so-de-tedrdeve-te__property-based-test-template.md)** - Property-based testing with fast-check
-  - **[TDD Workflow Checklist](./templates/ex-so-de-tedrdeve-te__tdd-workflow-checklist.md)** - Step-by-step Red-Green-Refactor guide
-  - **[Coverage Planning Canvas](./templates/ex-so-de-tedrdeve-te__coverage-planning-canvas.md)** - Module-level test coverage strategy
-  - **[Test Organization Template](./templates/ex-so-de-tedrdeve-te__test-organization-template.md)** - Test suite file structure and naming
-  - **[CI/CD Pipeline Template](./templates/ex-so-de-tedrdeve-te__ci-cd-pipeline-template.md)** - Automated testing in continuous integration
-  - **[Starter Full Test Suite](./templates/ex-so-de-tedrdeve-te__starter-full-test-suite.md)** - Complete test suite example
-
 ## Learning Paths
 
 Choose a learning path based on your goals and available time.
@@ -400,7 +385,7 @@ Full TDD from day one:
 2. [Red-Green-Refactor Cycle](./ex-so-de-tedrdeve__02-red-green-refactor-cycle.md) - Establish rhythm early
 3. [Unit Testing Fundamentals](./ex-so-de-tedrdeve__04-unit-testing-fundamentals.md) - Build testable code from start
 4. [Test Data Builders](./ex-so-de-tedrdeve__07-test-data-builders.md) - Set up fixture infrastructure
-5. [TDD Workflow Checklist Template](./templates/ex-so-de-tedrdeve-te__tdd-workflow-checklist.md) - Establish team practices
+5. Establish team TDD practices and workflow
 6. [TDD in Nx Monorepo](./ex-so-de-tedrdeve__16-tdd-in-nx-monorepo.md) - Configure testing from start
 
 **For Brownfield Projects** (existing codebase without tests):
@@ -411,7 +396,7 @@ Incremental adoption of TDD:
 2. [Red-Green-Refactor Cycle](./ex-so-de-tedrdeve__02-red-green-refactor-cycle.md) - Apply TDD to new features
 3. [Refactoring with Tests](./ex-so-de-tedrdeve__14-refactoring-with-tests.md) - Safe improvement of existing code
 4. [Integration Testing](./ex-so-de-tedrdeve__09-integration-testing.md) - High-level tests for legacy boundaries
-5. [Coverage Planning Canvas Template](./templates/ex-so-de-tedrdeve-te__coverage-planning-canvas.md) - Prioritize critical paths
+5. Prioritize critical paths and plan test coverage
 6. [Decision Trees and Best Practices](./ex-so-de-tedrdeve__15-decision-trees-and-best-practices.md) - Practical strategies for incremental adoption
 
 **Migration Strategy**:

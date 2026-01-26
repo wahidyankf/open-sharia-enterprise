@@ -258,7 +258,7 @@ For developers ready to implement their first FSM:
    - OOP → **[OOP Implementation Patterns](./ex-so-ar-fsm__08-oop-implementation-patterns.md)**
    - FP → **[FP Implementation Patterns](./ex-so-ar-fsm__09-fp-implementation-patterns.md)**
    - Declarative → **[Declarative and DSL Approaches](./ex-so-ar-fsm__10-declarative-and-dsl-approaches.md)**
-4. Use **[Blank State Machine Diagram](./templates/ex-so-ar-fsm-te__blank-state-machine-diagram.md)** template
+4. Design state machine diagram with clear states and transitions
 
 **Outcome**: Can design and implement a basic FSM in your chosen paradigm.
 
@@ -333,7 +333,7 @@ For architects and senior developers designing complex FSMs:
 2. **[OOP Implementation Patterns](./ex-so-ar-fsm__08-oop-implementation-patterns.md)** - State Pattern foundation
 3. **[Framework: Spring State Machine & XState](./ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md)** - Spring SSM section
 4. **[Testing FSM Implementations](./ex-so-ar-fsm__12-testing-fsm-implementations.md)**
-5. **[Framework Integration Template](./templates/ex-so-ar-fsm-te__framework-spring-state-machine.md)**
+5. Integrate with Spring State Machine framework
 
 #### XState (JavaScript/TypeScript)
 
@@ -341,14 +341,14 @@ For architects and senior developers designing complex FSMs:
 2. **[Core Concepts and Terminology](./ex-so-ar-fsm__02-core-concepts-and-terminology.md)**
 3. **[Framework: Spring State Machine & XState](./ex-so-ar-fsm__13-framework-spring-state-machine-xstate.md)** - XState section
 4. **[Debugging and Visualization](./ex-so-ar-fsm__15-debugging-and-visualization.md)** - XState Viz
-5. **[Framework Integration Template](./templates/ex-so-ar-fsm-te__framework-xstate.md)**
+5. Integrate with XState framework
 
 #### Temporal/Cadence (Workflow Orchestration)
 
 1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)** - FSM vs workflow engines
 2. **[Event-Driven and Reactive FSM](./ex-so-ar-fsm__11-event-driven-and-reactive-fsm.md)** - Saga patterns
 3. **[Framework: Statecharts & Temporal/Cadence](./ex-so-ar-fsm__14-framework-statecharts-temporal-cadence.md)** - Temporal section
-4. **[Event-Driven Saga Pattern Template](./templates/ex-so-ar-fsm-te__event-driven-saga-pattern.md)**
+4. Apply Event-Driven Saga patterns
 
 ### By Architecture
 
@@ -370,7 +370,7 @@ For architects and senior developers designing complex FSMs:
 1. **[Introduction and Philosophy](./ex-so-ar-fsm__01-introduction-and-philosophy.md)**
 2. **[Event-Driven and Reactive FSM](./ex-so-ar-fsm__11-event-driven-and-reactive-fsm.md)** - Event sourcing with FSMs
 3. **[Integration with DDD and Architecture](./ex-so-ar-fsm__19-integration-with-ddd-and-architecture.md)** - CQRS + Event Sourcing
-4. **[Event-Driven Saga Pattern Template](./templates/ex-so-ar-fsm-te__event-driven-saga-pattern.md)**
+4. Apply Event-Driven Saga patterns
 
 ## OSE Domain Examples Index
 
@@ -417,72 +417,6 @@ All examples in this documentation use the Open Sharia Enterprise domain (Islami
 - **Fund Distribution**: `REQUESTED` → `VERIFIED` → `APPROVED` → `SCHEDULED` → `DISBURSED`
 
 **Files**: 01, [Declarative and DSL](./ex-so-ar-fsm__10-declarative-and-dsl-approaches.md), [Testing](./ex-so-ar-fsm__12-testing-fsm-implementations.md)
-
-## Templates
-
-The `templates/` directory contains production-ready templates for FSM design and implementation:
-
-### Diagram Templates
-
-1. **[Blank State Machine Diagram](./templates/ex-so-ar-fsm-te__blank-state-machine-diagram.md)**
-   - Purpose: Visual FSM representation with Mermaid syntax, WCAG AA colors
-   - Example: Zakat Campaign State Machine
-   - Sections: Mermaid diagram, legend, state table, transition table
-
-2. **[Hierarchical State Machine Diagram](./templates/ex-so-ar-fsm-te__hierarchical-state-machine-diagram.md)**
-   - Purpose: Nested states with substates and parallel regions
-   - Example: Islamic Contract Lifecycle
-   - Sections: Composite states, state hierarchy table, parallel regions
-
-3. **[State Transition Table](./templates/ex-so-ar-fsm-te__state-transition-table.md)**
-   - Purpose: Tabular documentation of all valid transitions
-   - Example: Qard Hasan State Machine
-   - Sections: Transition table, invalid transitions, guard specs, action specs
-
-### Documentation Templates
-
-1. **[FSM Implementation Checklist](./templates/ex-so-ar-fsm-te__implementation-checklist.md)**
-   - Purpose: Step-by-step implementation guide
-   - Example: Zakat Calculation Workflow
-   - Sections: Pre-implementation, design, implementation (OOP/FP/Declarative/Event-Driven), testing, deployment
-
-2. **[State Machine Specification](./templates/ex-so-ar-fsm-te__state-machine-specification.md)**
-   - Purpose: Formal FSM documentation as implementation contract
-   - Example: Donation Campaign FSM
-   - Sections: Overview, state specs, event catalog, transition specs, guards, actions, concurrency, error handling, persistence
-
-3. **[FSM Testing Strategy](./templates/ex-so-ar-fsm-te__testing-strategy.md)**
-   - Purpose: Comprehensive testing approach
-   - Example: Islamic Financial Contract FSM
-   - Sections: Testing philosophy, state/transition coverage, guard tests, action tests, end-to-end workflows, concurrency tests
-
-4. **[Starter Full Documentation](./templates/ex-so-ar-fsm-te__starter-full-documentation.md)**
-   - Purpose: Complete FSM documentation set combining all artifacts
-   - Example: Murabaha Contract FSM
-   - Sections: Overview, diagram, specification, transition table, testing strategy, implementation, deployment
-
-### Implementation Templates
-
-1. **[Framework Integration: Spring State Machine](./templates/ex-so-ar-fsm-te__framework-spring-state-machine.md)**
-   - Purpose: Complete Spring State Machine configuration
-   - Example: Zakat Distribution FSM
-   - Sections: Dependencies, configuration classes, persistence, listeners, testing
-
-2. **[Framework Integration: XState](./templates/ex-so-ar-fsm-te__framework-xstate.md)**
-   - Purpose: Complete XState (TypeScript) configuration
-   - Example: Donation Campaign FSM
-   - Sections: Installation, machine definition, context, services, React integration, testing
-
-3. **[Event-Driven FSM: Saga Pattern](./templates/ex-so-ar-fsm-te__event-driven-saga-pattern.md)**
-   - Purpose: FSM implementation using saga pattern
-   - Example: Islamic Contract Approval Saga
-   - Sections: Orchestration vs choreography, saga states, event catalog, compensation logic, idempotency
-
-### Template README
-
-1. **[Templates README](./templates/README.md)**
-   - Purpose: Navigation guide for all templates
-   - Sections: Available templates, quick start, template selection matrix, usage workflow
 
 ## Relationship to Other Documentation
 
@@ -547,7 +481,7 @@ Ready to design your first FSM? Follow this checklist:
 - [ ] Map all transitions (event → target state)
 - [ ] Identify guards (boolean conditions)
 - [ ] Specify actions (entry/exit/transition side effects)
-- [ ] Use **[Blank State Machine Diagram](./templates/ex-so-ar-fsm-te__blank-state-machine-diagram.md)** template
+- [ ] Create state machine diagram with clear states and transitions
 
 ### 5. Choose Implementation Approach
 
@@ -558,9 +492,9 @@ Ready to design your first FSM? Follow this checklist:
 
 ### 6. Implement
 
-- [ ] Use **[FSM Implementation Checklist](./templates/ex-so-ar-fsm-te__implementation-checklist.md)**
-- [ ] Use framework integration template ([Spring SSM](./templates/ex-so-ar-fsm-te__framework-spring-state-machine.md), [XState](./templates/ex-so-ar-fsm-te__framework-xstate.md), or [Saga Pattern](./templates/ex-so-ar-fsm-te__event-driven-saga-pattern.md))
-- [ ] Write state machine specification using **[State Machine Specification](./templates/ex-so-ar-fsm-te__state-machine-specification.md)** template
+- [ ] Follow FSM implementation checklist
+- [ ] Integrate with framework (Spring SSM, XState, or Saga Pattern)
+- [ ] Write state machine specification documenting all states and transitions
 
 ### 7. Test
 
@@ -568,7 +502,7 @@ Ready to design your first FSM? Follow this checklist:
 - [ ] Achieve transition coverage (all transitions exercised)
 - [ ] Test guards with boundary values
 - [ ] Verify actions execute correctly
-- [ ] Use **[FSM Testing Strategy](./templates/ex-so-ar-fsm-te__testing-strategy.md)** template
+- [ ] Apply comprehensive FSM testing strategy
 
 ### 8. Document and Deploy
 
@@ -576,7 +510,7 @@ Ready to design your first FSM? Follow this checklist:
 - [ ] Document state transition table
 - [ ] Create audit log for state transitions
 - [ ] Integrate with DDD aggregates if applicable
-- [ ] Use **[Starter Full Documentation](./templates/ex-so-ar-fsm-te__starter-full-documentation.md)** template
+- [ ] Create comprehensive FSM documentation
 
 ## Summary
 

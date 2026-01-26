@@ -119,17 +119,6 @@ This C4 model documentation is organized into multiple interconnected guides:
 3. **[Simple Application Examples](./ex-so-ar-c4armo__12-simple-app-examples.md)** - When diagrams add value vs. overkill for straightforward systems
 4. **[Event-Driven Architectures](./ex-so-ar-c4armo__13-event-driven-architectures.md)** - Applying C4 to event sourcing, CQRS, saga patterns, and event streaming
 
-### Templates & Starter Kits
-
-1. **[C4 Diagram Templates](./templates/)** - Ready-to-use templates for Context, Container, Component, Dynamic, and Deployment diagrams
-   - [Blank Context Diagram](./templates/ex-so-ar-c4armo-te__blank-context-diagram.md)
-   - [Blank Container Diagram](./templates/ex-so-ar-c4armo-te__blank-container-diagram.md)
-   - [Blank Component Diagram](./templates/ex-so-ar-c4armo-te__blank-component-diagram.md)
-   - [Blank Dynamic Diagram](./templates/ex-so-ar-c4armo-te__blank-dynamic-diagram.md)
-   - [Blank Deployment Diagram](./templates/ex-so-ar-c4armo-te__blank-deployment-diagram.md)
-   - [Color Palette Reference](./templates/ex-so-ar-c4armo-te__color-palette.md) - WCAG AA-compliant colors
-   - [Starter Full Documentation](./templates/ex-so-ar-c4armo-te__starter-full-documentation.md) - Complete C4 documentation set for new systems
-
 ## Quick Start Guide
 
 Choose your path based on available time and learning goals:

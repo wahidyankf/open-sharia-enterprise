@@ -78,7 +78,6 @@ Test-Driven Development is a software development approach where tests are writt
 - [Test Doubles](./test-driven-development-tdd/ex-so-de-tedrdeve__05-test-doubles.md) - Mocks, stubs, spies, fakes
 - [TDD and Functional Programming](./test-driven-development-tdd/ex-so-de-tedrdeve__11-tdd-and-functional-programming.md) - Testing pure functions
 - [TDD and DDD](./test-driven-development-tdd/ex-so-de-tedrdeve__12-tdd-and-ddd.md) - Testing domain models
-- [Templates](./test-driven-development-tdd/templates/) - Test templates and checklists
 
 **Use TDD when you want to:**
 
@@ -104,7 +103,6 @@ Behavior-Driven Development extends TDD by focusing on behavior specification th
 - [Feature Files and Organization](./behavior-driven-development-bdd/ex-so-de-bdd__08-feature-files-and-organization.md) - Directory structure and conventions
 - [BDD and TDD](./behavior-driven-development-bdd/ex-so-de-bdd__13-bdd-and-tdd.md) - Complementary relationship
 - [BDD and DDD](./behavior-driven-development-bdd/ex-so-de-bdd__14-bdd-and-ddd.md) - Ubiquitous language in scenarios
-- [Templates](./behavior-driven-development-bdd/templates/) - Feature file templates and session guides
 
 **Use BDD when you have:**
 
@@ -189,7 +187,7 @@ See [BDD and TDD Integration](./behavior-driven-development-bdd/ex-so-de-bdd__13
 
 1. **Understand BDD philosophy** - Read [BDD Introduction](./behavior-driven-development-bdd/ex-so-de-bdd__01-introduction-and-philosophy.md)
 2. **Learn discovery techniques** - Read [Three Amigos](./behavior-driven-development-bdd/ex-so-de-bdd__04-three-amigos-practice.md) and [Example Mapping](./behavior-driven-development-bdd/ex-so-de-bdd__05-example-mapping.md)
-3. **Practice Gherkin writing** - Use [Feature File Template](./behavior-driven-development-bdd/templates/ex-so-de-bdd-te__feature-file-template.md)
+3. **Practice Gherkin writing** - Practice writing Given-When-Then scenarios for your domain
 4. **Integrate with TDD** - Read [BDD and TDD](./behavior-driven-development-bdd/ex-so-de-bdd__13-bdd-and-tdd.md)
 5. **Connect to domain modeling** - Read [BDD and DDD](./behavior-driven-development-bdd/ex-so-de-bdd__14-bdd-and-ddd.md)
 

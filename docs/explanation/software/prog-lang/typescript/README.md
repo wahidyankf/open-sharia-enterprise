@@ -195,23 +195,6 @@ timeline
 | [TypeScript 5.6](./ex-so-prla-ts__release-5.6.md) | Stable version    | Iterator helpers, Strict checks    |
 | [TypeScript 5.9](./ex-so-prla-ts__release-5.9.md) | Latest version    | Path rewriting, Relative checks    |
 
-### DDD Templates
-
-| Template                                  | Purpose                  |
-| ----------------------------------------- | ------------------------ |
-| [Templates README](./templates/README.md) | Template usage guide     |
-| domain-entity.template.ts                 | Entity with identity     |
-| value-object.template.ts                  | Immutable value object   |
-| aggregate-root.template.ts                | Aggregate boundary       |
-| domain-event.template.ts                  | Domain events            |
-| repository-interface.template.ts          | Persistence abstraction  |
-| service-layer.template.ts                 | Domain services          |
-| use-case.template.ts                      | Application use cases    |
-| dto.template.ts                           | Data transfer objects    |
-| api-controller.template.ts                | API controllers          |
-| error-hierarchy.template.ts               | Custom errors            |
-| tsconfig.template.json                    | Strict TypeScript config |
-
 ## TypeScript in the Platform
 
 ### Primary Use Cases
@@ -1509,7 +1492,7 @@ async function processDonation(data: DonationInput): Promise<Result<Donation, Er
 
 **Last Updated**: 2026-01-24
 **TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.9.3+ (latest stable)
-**Total Documentation Files**: 23 core files + 4 version files + 11 templates = 38 files
+**Total Documentation Files**: 23 core files + 4 version files = 27 files
 **Maintainers**: OSE Documentation Team
 
 ## TypeScript Type System
