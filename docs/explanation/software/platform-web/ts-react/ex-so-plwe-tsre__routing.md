@@ -63,6 +63,50 @@ export const App: React.FC = () => (
 );
 ```
 
+### Route Hierarchy
+
+React Router organizes routes in a tree structure:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A[BrowserRouter] --> B[Routes]
+    B --> C[Route /]
+    B --> D[Route /dashboard]
+    B --> E[Route /zakat]
+    B --> F[Route /donations]
+    B --> G[Route *]
+
+    C --> H[HomePage]
+    D --> I[DashboardPage]
+    E --> J[ZakatCalculator]
+    F --> K[DonationsList]
+    G --> L[NotFoundPage]
+
+    D --> M[Nested Routes]
+    M --> N[/dashboard/overview]
+    M --> O[/dashboard/reports]
+    M --> P[/dashboard/settings]
+
+    style A fill:#0173B2
+    style B fill:#029E73
+    style C fill:#DE8F05
+    style D fill:#DE8F05
+    style E fill:#DE8F05
+    style F fill:#DE8F05
+    style G fill:#CC78BC
+    style M fill:#029E73
+```
+
+**Route Structure**:
+
+- **BrowserRouter** - Top-level router component
+- **Routes** - Container for route definitions
+- **Route** - Individual route with path and element
+- **Nested Routes** - Routes within parent routes (using Outlet)
+
 ### Nested Routes
 
 ```typescript

@@ -130,6 +130,55 @@ export const DonationForm: React.FC = () => {
 
 ### Form Validation
 
+Form validation follows a clear flow from user input to error display:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+
+graph TD
+    A[User Input] --> B{onChange Event}
+    B --> C[Update Field Value]
+    C --> D[Clear Field Error]
+    D --> E[Update State]
+
+    E --> F{onBlur Event}
+    F --> G[Mark Field Touched]
+    G --> H[Validate Field]
+    H --> I{Valid?}
+
+    I -->|Yes| J[Clear Error]
+    I -->|No| K[Set Error Message]
+
+    J --> L[Continue]
+    K --> L
+
+    L --> M{Form Submit}
+    M --> N[Validate All Fields]
+    N --> O{All Valid?}
+
+    O -->|Yes| P[Submit Data]
+    O -->|No| Q[Display Errors]
+
+    P --> R[Success]
+    Q --> S[User Corrects]
+    S --> A
+
+    style A fill:#0173B2
+    style H fill:#029E73
+    style K fill:#DE8F05
+    style P fill:#029E73
+    style Q fill:#DE8F05
+    style R fill:#029E73
+```
+
+**Validation Strategy**:
+
+1. **onChange**: Clear errors as user types
+2. **onBlur**: Validate individual fields when focus leaves
+3. **onSubmit**: Validate all fields before submission
+4. **Display**: Show errors only for touched fields
+
 ```typescript
 interface FormErrors {
   campaignId?: string;
