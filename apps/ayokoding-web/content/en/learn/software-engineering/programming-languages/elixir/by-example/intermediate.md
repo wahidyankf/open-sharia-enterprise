@@ -9,8 +9,6 @@ tags: ["elixir", "tutorial", "by-example", "intermediate", "otp", "processes", "
 
 Build on your Elixir foundations with 30 intermediate examples covering advanced patterns, practical OTP usage, error handling, and testing strategies. Each example is self-contained and heavily annotated.
 
-## Group 1: Advanced Pattern Matching
-
 ## Example 31: Guards in Depth
 
 Guards are boolean expressions that add additional constraints to pattern matches in function heads, case clauses, and other contexts. They enable more precise pattern matching based on types and values.
@@ -565,8 +563,6 @@ WithExamples.process_number(-10)
 
 ---
 
-## Group 2: Data Structures Advanced
-
 ## Example 34: Structs
 
 Structs are extensions of maps with compile-time guarantees and default values. They enforce a predefined set of keys, enabling clearer data modeling and better error messages.
@@ -965,8 +961,6 @@ MapSet.intersection(post1_tags, post2_tags)
 **Why It Matters**: Selective receive enables processes to prioritize messages by pattern matching mailbox contents out of order. The BEAM maintains a per-process save pointer, making selective receive O(1) for early matches. In production, this enables priority handling—a GenServer can process :urgent messages before :normal ones, while Erlang's priority_receive extension supports real-time systems with predictable latency requirements.
 
 ---
-
-## Group 3: Module Organization
 
 ## Example 37: Module Attributes
 
@@ -1548,8 +1542,6 @@ Describable.describe([1, 2, 3])
 **Why It Matters**: Agents provide simple state storage through functional transformations of immutable state. Unlike mutable variables, Agent updates are serialized through message passing, preventing race conditions. In production, Agents implement shared caches (configuration, feature flags) that thousands of processes read concurrently without locks. The BEAM's process-based isolation means Agent crashes are isolated—a corrupt cache kills the Agent, not the readers, and supervisors restart with clean state.
 
 ---
-
-## Group 4: Error Handling
 
 ## Example 40: Result Tuples (:ok/:error)
 
@@ -2217,8 +2209,6 @@ UserRepo.fetch!(1)
 **Why It Matters**: GenServer is OTP's abstraction for stateful processes with synchronous (call) and asynchronous (cast) message handling. The BEAM optimizes GenServer message dispatch through selective receive patterns. In production, GenServers implement connection pools (DBConnection), rate limiters, and stateful business logic (shopping carts, game state). Phoenix channels use GenServers per connection, enabling 2M concurrent WebSocket connections per server with isolated state.
 
 ---
-
-## Group 5: Processes and Concurrency
 
 ## Example 43: Spawning Processes
 
@@ -3196,8 +3186,6 @@ end
 **Why It Matters**: DynamicSupervisor enables runtime child management for variable workloads. Unlike regular Supervisors with static children, DynamicSupervisor spawns children on demand and terminates idle ones. In production, this powers Phoenix connection pools that scale workers based on load, background job processors that spawn workers per job, and WebSocket supervisors that create one process per connected client, enabling systems to scale from zero to millions of processes dynamically.
 
 ---
-
-## Group 6: Testing and Tools
 
 ## Example 47: ExUnit Basics
 

@@ -7,8 +7,6 @@ description: "Examples 61-85: Advanced concurrency, generics, reflection, advanc
 tags: ["golang", "go", "tutorial", "by-example", "advanced", "generics", "concurrency", "profiling"]
 ---
 
-## Group 1: Advanced Concurrency Patterns
-
 ## Example 61: Pipeline Pattern
 
 Pipelines process data through stages, each stage running concurrently. Each stage is a function that receives input from one channel and sends output to another. This composition enables elegant data processing.
@@ -560,8 +558,6 @@ func main() {
 
 **Why It Matters**: Atomic operations eliminate mutex overhead for simple counters and flags in high-throughput services, where atomic.AddInt64() provides 10-100x better performance than mutex-protected increments for metrics collection that happens millions of times per second. Compare-and-swap (CAS) enables building lock-free data structures like concurrent queues used in Prometheus for metric ingestion, achieving microsecond latencies that mutexes cannot provide.
 
-## Group 2: Advanced Standard Library
-
 ## Example 66: Reflection
 
 Reflection inspects types and values at runtime. The `reflect` package enables dynamic code - examine struct fields, call methods, or build values whose type isn't known until runtime. Use sparingly - reflection is powerful but slow and hard to understand.
@@ -975,8 +971,6 @@ Users:
 
 **Why It Matters**: Templates generate dynamic HTML, emails, and configuration files while preventing injection attacks through automatic escaping in html/template. Production systems use templates for rendering web pages (Hugo static site generator), generating Kubernetes manifests from values, and composing email notifications with user data, where text/template's lack of escaping would allow XSS attacks if user input reaches the output.
 
-## Group 3: Generics (Go 1.18+)
-
 ## Example 70: Generic Functions
 
 Generics enable functions to work with different types while maintaining type safety. Type parameters in square brackets define constraints. Go 1.18+ introduces this powerful feature.
@@ -1288,8 +1282,6 @@ func getValue[K MapKey, V any](m map[K]V, key K) V { // => Two type parameters
 **Key Takeaway**: `constraints.Ordered` = types supporting comparison operators. `constraints.Integer` = integer types. `comparable` = types supporting `==` and `!=`. Custom constraints combine interfaces and types.
 
 **Why It Matters**: Type constraints enable generic functions to use operators (comparable for ==, constraints.Ordered for <>) while maintaining type safety, solving the pre-generics problem where generic code couldn't perform comparisons without reflection. The comparable constraint powers generic contains() functions and Set[T] implementations, while constraints.Ordered enables generic min/max/sort functions, providing operator support that interface{} could never offer.
-
-## Group 4: Advanced Patterns
 
 ## Example 73: Options Pattern
 
@@ -1657,8 +1649,6 @@ func (s *UserService) GetUser(id int) string {
 
 **Why It Matters**: Dependency injection through interfaces enables testing with mock implementations, where production code uses real databases while tests use in-memory mocks, achieving 100x faster test execution without external dependencies. This pattern decouples business logic from infrastructure (database, HTTP client, message queue), enabling testing in isolation and swapping implementations without modifying core logic, the foundation of testable production systems.
 
-## Group 5: Testing and Tooling
-
 ## Example 78: Subtests
 
 Subtests organize tests hierarchically with `t.Run()`. Each subtest can have setup/teardown and reports individually. Subtests can run in parallel with `t.Parallel()`.
@@ -1995,8 +1985,6 @@ func main() {
 **Key Takeaway**: CGO imports C code and calls C functions. Use `C.CString()` to convert Go strings to C strings. Remember to `free()` C-allocated memory. CGO is complex - use only when necessary.
 
 **Why It Matters**: CGO enables leveraging optimized C libraries (SQLite embedded database, OpenSSL cryptography) and platform-specific APIs unavailable in pure Go, where performance-critical code or legacy system integration requires calling C. However, CGO disables cross-compilation, prevents stack traces across the C boundary, and introduces manual memory management (remember to free!), making it a last resort after evaluating pure-Go alternatives for portability and safety.
-
-## Group 6: Modern Go and Best Practices
 
 ## Example 82: Workspaces (Go 1.18+)
 

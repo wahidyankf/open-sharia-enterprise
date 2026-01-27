@@ -9,8 +9,6 @@ tags: ["elixir", "tutorial", "by-example", "advanced", "genserver", "supervisor"
 
 Master advanced Elixir concepts with 25 examples covering OTP, GenServer, Supervisor, metaprogramming, macros, and advanced concurrency patterns. These examples assume familiarity with intermediate Elixir.
 
-## Group 1: GenServer Deep Dive
-
 ## Example 61: GenServer Basics
 
 GenServer (Generic Server) is OTP's abstraction for stateful processes with synchronous and asynchronous message handling. It provides a standardized way to build servers that maintain state and handle concurrent requests.
@@ -719,8 +717,6 @@ end
 
 ---
 
-## Group 2: Supervision
-
 ## Example 66: Supervisor Basics
 
 Supervisors monitor child processes and restart them on failure. They're the foundation of OTP's fault tolerance—processes are organized into supervision trees where supervisors restart failed children.
@@ -1199,8 +1195,6 @@ ConnectionPool.remove_connection(conn1)  # => :ok (closes local connection)
 
 ---
 
-## Group 3: OTP Applications
-
 ## Example 69: Application Module
 
 Applications are OTP's top-level component. They bundle code, define dependencies, and specify a supervision tree. Every Mix project is an application.
@@ -1604,8 +1598,6 @@ end
 **Why It Matters**: Umbrella projects organize large systems as multiple apps sharing dependencies, enabling independent deployment and clear boundaries. Each app has own supervision tree, mix.exs, and release, while sharing deps and build artifacts. In production, this enables deploying web app separately from background workers, microservice architecture with shared business logic, and independent scaling (10 web instances, 2 worker instances). Nerves uses umbrellas for firmware (core app) + UI app architecture.
 
 ---
-
-## Group 4: Metaprogramming and Macros
 
 ## Example 72: Quote and Unquote
 
@@ -2358,8 +2350,6 @@ implementations = Protocol.consolidated?(Enumerable)
 
 ---
 
-## Group 5: Advanced Concurrency
-
 ## Example 77: Agent for Simple State
 
 Agent wraps GenServer for simple state storage with functional API. Use for caches, configuration, or any simple state that doesn't need custom message handling.
@@ -2929,8 +2919,6 @@ tree = :gb_trees.insert(:b, 2, tree)  # => {2, ...}
 **Why It Matters**: Erlang interop provides access to battle-tested libraries—:crypto for cryptography, :observer for system monitoring, :ssl for TLS. Elixir compiles to same BEAM bytecode as Erlang, enabling zero-overhead calls. In production, this leverages decades of Erlang libraries—:httpc for HTTP client, :mnesia for distributed database, :ssh for SSH server—while Elixir provides better syntax and tooling (Mix, Hex). String handling differs (Erlang charlists vs Elixir binaries), requiring conversion at boundaries.
 
 ---
-
-## Group 6: Advanced Language Features
 
 ## Example 81: Behaviours (Contracts)
 

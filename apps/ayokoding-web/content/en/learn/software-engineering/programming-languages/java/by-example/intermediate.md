@@ -20,8 +20,6 @@ tags:
 
 Master intermediate Java concepts through 20 annotated code examples. Each example builds on beginner foundations, introducing advanced OOP, generics, functional programming, and concurrency patterns.
 
-## Group 1: Advanced OOP
-
 ## Example 31: Abstract Classes and Template Method Pattern
 
 Abstract classes provide partial implementations with abstract methods that subclasses must implement. The template method pattern defines algorithm skeletons in abstract classes with customizable steps.
@@ -639,8 +637,6 @@ class Example {
 
 ---
 
-## Group 2: Advanced Collections and Generics
-
 ## Example 36: Generic Methods and Bounded Type Parameters
 
 Generic methods enable type-safe method implementations that work with any type. Bounded type parameters restrict generic types to subclasses of a bound, enabling access to bound class methods.
@@ -1011,8 +1007,6 @@ Map<String, Integer> syncMap = Collections.synchronizedMap(new HashMap<>());
 
 ---
 
-## Group 3: Functional Programming
-
 ## Example 40: Stream Pipeline Optimization
 
 Stream operations are lazy (intermediate) or eager (terminal). Understanding laziness enables building efficient pipelines that short-circuit and minimize iterations.
@@ -1308,8 +1302,6 @@ List<String> processed = inputs.stream()
 
 ---
 
-## Group 4: I/O and Serialization
-
 ## Example 43: NIO.2 File Operations and Path API
 
 NIO.2 (java.nio.file) provides modern file I/O with Path abstraction, symbolic link support, and directory traversal. It replaces legacy java.io.File with clearer semantics.
@@ -1490,8 +1482,6 @@ String createdJson = mapper.writeValueAsString(node);
 **Why It Matters**: JSON processing powers REST APIs, configuration files, and data interchange in modern Java applications. Jackson's annotation-based mapping eliminates manual JSON parsing that plagued early Java (manual JSONObject.getString() calls). The library's performance (faster than Gson through bytecode generation) makes it standard in Spring Boot, JAX-RS, and most Java REST frameworks. However, Jackson's reflection-based approach has limitations: it requires default constructors and getters/setters (violating immutability), and deserialization can instantiate arbitrary classes (security risk). Modern alternatives like kotlinx.serialization use compile-time code generation, but Jackson's ecosystem and Spring integration keep it dominant.
 
 ---
-
-## Group 5: Testing
 
 ## Example 45: JUnit 5 Testing Fundamentals
 
@@ -1733,8 +1723,6 @@ class UserServiceTest {
 **Why It Matters**: Mockito enables unit testing code with external dependencies (databases, REST APIs, file systems) without requiring actual infrastructure. Before mocking frameworks, tests required test databases or in-memory implementations—slow and brittle. Mockito's when/thenReturn syntax provides readable test setup compared to hand-written stub classes. However, over-mocking creates "test smells": mocking everything tests implementation details rather than behavior, making tests fragile to refactoring. The "mock vs. stub vs. fake" debate continues: mocks verify interactions (verify calls), stubs provide canned responses, and fakes are working implementations (H2 in-memory database). Mockito handles mocks and stubs; fakes require manual implementation or test containers.
 
 ---
-
-## Group 6: Concurrency
 
 ## Example 47: Thread Basics and Runnable
 

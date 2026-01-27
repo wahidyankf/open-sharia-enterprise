@@ -10,8 +10,6 @@ categories: ["learn"]
 
 Learn Elixir fundamentals through 30 annotated code examples. Each example is self-contained, runnable in IEx, and heavily commented to show what each line does, expected outputs, and intermediate values.
 
-## Group 1: First Steps
-
 ## Example 1: Hello World and Basic Syntax
 
 Elixir programs run on the BEAM virtual machine (Erlang's runtime). Code can be executed interactively in IEx or compiled from `.ex` files. This example shows the simplest Elixir program and how the compilation pipeline works.
@@ -159,8 +157,6 @@ TypeChecker.format_value(42) # => "Number: 42"
 **Why It Matters**: Elixir's UTF-8 native strings and arbitrary-precision integers eliminate entire classes of bugs common in systems languages. The BEAM can handle integers of any size without overflow—critical for financial calculations and cryptographic operations. Atoms are stored globally with O(1) equality checks, making them perfect for message passing between distributed nodes, though you should avoid creating atoms dynamically to prevent atom table exhaustion in long-running systems.
 
 ---
-
-## Group 2: Pattern Matching Foundation
 
 ## Example 4: Pattern Matching Basics
 
@@ -310,8 +306,6 @@ body # => "Success"
 **Why It Matters**: Elixir lists are implemented as singly-linked lists in the BEAM, making head access O(1) but indexed access O(n)—this design choice optimizes for the functional programming pattern of recursive head/tail processing. The `[head | tail]` destructuring syntax aligns perfectly with this structure, enabling efficient iteration without mutation or index tracking. In production, this means you write recursive algorithms that leverage the BEAM's tail-call optimization naturally, processing millions of elements with constant stack space while maintaining referential transparency for easier reasoning about concurrent systems.
 
 ---
-
-## Group 3: Core Data Structures
 
 ## Example 7: Lists and Tuples
 
@@ -466,8 +460,6 @@ a # => 25
 **Why It Matters**: Keyword lists power Elixir's DSL capabilities through their order preservation and duplicate key support. Phoenix routers, Ecto queries, and GenServer options all rely on keyword lists for flexible configuration. The order guarantees enable pipeline-style transformations where later options override earlier ones, while duplicate keys support middleware-style composition where multiple `:before` hooks can coexist in supervisor child specs.
 
 ---
-
-## Group 4: Functions
 
 ## Example 10: Anonymous Functions
 
@@ -674,8 +666,6 @@ result = value
 **Why It Matters**: Guard clauses execute at function dispatch time using BEAM-optimized predicates, making type checking and validation nearly free. The BEAM inlines guard expressions into pattern matching, enabling millions of guarded function calls per second. In production systems, guards validate inputs at boundaries (Phoenix controllers, GenServer callbacks) without the overhead of runtime type checking libraries, while compile-time validation catches guard expression errors.
 
 ---
-
-## Group 5: Control Flow and Basics
 
 ## Example 13: Case and Cond
 

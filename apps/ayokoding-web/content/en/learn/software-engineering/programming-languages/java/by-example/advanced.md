@@ -21,8 +21,6 @@ tags:
 
 Master advanced Java concepts through 25 annotated code examples. Build on intermediate foundations to explore advanced concurrency, JVM internals, design patterns, and modern Java features.
 
-## Group 1: Advanced Concurrency
-
 ## Example 61: Concurrent Collections
 
 Concurrent collections provide thread safety with better performance than synchronized wrappers. `ConcurrentHashMap` offers lock striping. `BlockingQueue` supports producer-consumer patterns.
@@ -478,8 +476,6 @@ long parallelSum = java.util.stream.LongStream.range(1, 10001)
 **Why It Matters**: Fork/Join framework parallelizes divide-and-conquer algorithms—merge sort, quicksort, tree processing. Work-stealing load balancing ensures even CPU utilization—idle threads steal tasks from busy threads. RecursiveTask/RecursiveAction hide thread pool complexity, enabling focus on problem decomposition. However, overhead limits effectiveness to large tasks—small tasks underperform sequential code. Understanding task granularity (split until work exceeds threshold) optimizes performance. Fork/Join powers parallel streams and is essential for CPU-bound parallel algorithms on multi-core hardware, enabling scalability without manual thread management.
 
 ---
-
-## Group 2: Advanced Language Features
 
 ## Example 65: Annotations and Reflection
 
@@ -1041,8 +1037,6 @@ var number = 1; // int or Integer or long? Better: int number = 1;
 **Why It Matters**: var (Java 10+) reduces boilerplate through local variable type inference—eliminating redundant type declarations while maintaining compile-time type safety. It improves readability for obvious types (var list = new ArrayList<String>()) but can harm clarity when type isn't evident. Understanding where var works (local variables with initializers) vs where it doesn't (fields, parameters, method returns) prevents misuse. var doesn't make Java dynamically typed—it's purely compile-time sugar. Use it to reduce verbosity without sacrificing type safety, improving code maintainability by focusing on logic rather than repetitive type declarations.
 
 ---
-
-## Group 3: JVM and Performance
 
 ## Example 70: Garbage Collection Basics
 
@@ -1622,8 +1616,6 @@ Map<String, String> cache = new LinkedHashMap<>(100, 0.75f, true) {
 **Why It Matters**: Common performance patterns (object pooling, lazy initialization, caching, batching) optimize hot paths in production code. Understanding when to apply each pattern prevents both premature optimization and performance bugs. Object pooling reduces allocation in high-throughput paths (connection pools, buffer pools). Lazy initialization defers expensive work until needed. Caching trades memory for speed—memoizing expensive computations. Batching reduces per-operation overhead (batch database inserts, network requests). However, patterns have costs—pooling adds complexity, caching adds memory pressure, batching adds latency. Measure before optimizing, and understand trade-offs.
 
 ---
-
-## Group 4: Design Patterns
 
 ## Example 74: Connection Pool Factory Pattern
 
@@ -2772,8 +2764,6 @@ class OrderProcessor {
 
 ---
 
-## Group 5: Advanced Topics
-
 ## Example 79: Custom ClassLoaders
 
 ClassLoaders dynamically load classes into the JVM. The delegation model ensures core classes load first. Custom loaders enable plugins, hot-reloading, and bytecode manipulation. Each loader creates an isolation boundary.
@@ -3612,8 +3602,6 @@ Flux.fromIterable(urls)
 **Why It Matters**: Concurrent collections provide building blocks for scalable systems—ConcurrentHashMap for caches, CopyOnWriteArrayList for event listeners, BlockingQueue for producer-consumer patterns. Understanding performance characteristics (ConcurrentHashMap: fast reads/writes, CopyOnWrite: fast reads/slow writes, BlockingQueue: coordination) enables choosing appropriately. Weakly consistent iterators prevent ConcurrentModificationException during traversal. These collections prevent manual synchronization bugs (deadlocks, races) while providing better performance than synchronized wrappers. They're foundational to concurrent system design.
 
 ---
-
-## Group 6: Modern Java
 
 ## Example 84: Virtual Threads (Project Loom, Java 21+)
 
