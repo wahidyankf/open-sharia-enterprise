@@ -1090,207 +1090,123 @@ MyModule.colors()
 
 `import`, `alias`, and `require` control how modules are referenced in your code. They reduce verbosity and manage namespaces cleanly.
 
+### Directive Comparison
+
+| Directive | Purpose                    | When to Use                             |
+| --------- | -------------------------- | --------------------------------------- |
+| `alias`   | Shorten module names       | Always (safe, compile-time)             |
+| `import`  | Bring functions into scope | Sparingly (namespace pollution risk)    |
+| `require` | Enable macros              | Only for macros (Logger, custom macros) |
+
+### Scoping Rules
+
+- **Module-level**: Affects all functions in module
+- **Function-level**: Only affects that function
+- **import/require**: Function-level when inside `def`, module-level when outside
+
 **Code**:
 
 ```elixir
 defmodule ImportAliasRequire do
-  # => Module compiled at compile time with all directives processed
-
-  # alias - shortens module names
   alias MyApp.Accounts.User
-  # => Creates local binding: User = MyApp.Accounts.User
-  # => Available throughout this module
-  # => Now use User instead of MyApp.Accounts.User
+  # => User = MyApp.Accounts.User (shorthand)
 
   alias MyApp.Accounts.Admin, as: A
-  # => Creates custom local binding: A = MyApp.Accounts.Admin
-  # => Custom name: A instead of Admin
-  # => Useful to avoid naming conflicts
+  # => Custom alias: A = MyApp.Accounts.Admin
 
   def create_user(name) do
-    # => Function defined with parameter name
     %User{name: name}
-    # => Creates %MyApp.Accounts.User{name: name} (alias expands at compile time)
-    # => Returns User struct
-    # => Without alias, would need full path: %MyApp.Accounts.User{name: name}
+    # => Expands to %MyApp.Accounts.User{name: name}
   end
 
   def create_admin(name) do
-    # => Function defined with parameter name
     %A{name: name}
-    # => Creates %MyApp.Accounts.Admin{name: name} using custom alias
-    # => Returns Admin struct with default role: :admin
-    # => Custom alias A makes code more concise
+    # => Expands to %MyApp.Accounts.Admin{name: name}
   end
 
-  # import - brings functions into scope (no module prefix needed)
   import Enum, only: [map: 2, filter: 2]
-  # => Only imports Enum.map/2 and Enum.filter/2
-  # => Now callable as map(...) and filter(...) without Enum prefix
-  # => Selective import prevents namespace pollution
-  # => Other Enum functions still require Enum.function_name()
+  # => Selective import: only map/2 and filter/2
 
   def process_numbers(list) do
-    # => Function accepts list parameter
     list
-    # => Initial list value
     |> map(fn x -> x * 2 end)
-    # => Calls imported Enum.map/2 without prefix
-    # => Doubles each element
-    # => Returns new list (immutable transformation)
+    # => Calls Enum.map/2 without prefix
     |> filter(fn x -> x > 10 end)
-    # => Calls imported Enum.filter/2 without prefix
-    # => Keeps only elements greater than 10
-    # => Returns filtered list
-    # => Final result: list with doubled values > 10
+    # => Calls Enum.filter/2 without prefix
   end
 
-  # import with except
   import String, except: [split: 1]
-  # => Imports all String functions EXCEPT String.split/1
-  # => String.split/1 still accessible as String.split/1
-  # => All other String functions callable without prefix
-  # => Useful when one function conflicts with existing code
+  # => All String functions except split/1
 
   def upcase_string(str) do
-    # => Function accepts string parameter
     upcase(str)
-    # => Calls imported String.upcase/1 without prefix
-    # => Returns uppercased string
-    # => Without import, would need String.upcase(str)
+    # => Calls String.upcase/1 without prefix
   end
 
-  # require - needed for macros
   require Logger
-  # => Makes Logger macros available
-  # => Logger functions are macros, not regular functions
-  # => Macros must be required before use
-  # => Regular functions don't need require
+  # => Required for Logger macros
 
   def log_something do
-    # => Function with no parameters
     Logger.info("This is a log message")
-    # => Calls Logger.info/1 macro (requires 'require Logger')
-    # => Logs at :info level
-    # => Returns :ok
-    # => Macros expand at compile time, enabling compile-time optimizations
+    # => Macro expands at compile time
   end
 
-  # Multiple aliases at once (Elixir 1.2+)
   alias MyApp.{Accounts, Billing, Reports}
-  # => Creates three aliases at once:
-  # => Accounts = MyApp.Accounts
-  # => Billing = MyApp.Billing
-  # => Reports = MyApp.Reports
-  # => Shorthand for three separate alias declarations
-  # => All modules must exist under MyApp parent module
+  # => Multiple aliases: Accounts, Billing, Reports
 
   def get_account_report do
-    # => Function with no parameters
     account = Accounts.get()
-    # => Calls MyApp.Accounts.get/0 using alias
-    # => Binds result to account variable
-    # => Returns account data structure
-
+    # => MyApp.Accounts.get/0
     billing = Billing.get()
-    # => Calls MyApp.Billing.get/0 using alias
-    # => Binds result to billing variable
-    # => Returns billing data structure
-
+    # => MyApp.Billing.get/0
     Reports.generate(account, billing)
-    # => Calls MyApp.Reports.generate/2 using alias
-    # => Passes account and billing data
-    # => Returns generated report
-    # => Final return value of function
+    # => MyApp.Reports.generate/2
   end
 end
-# => End of ImportAliasRequire module
 
 defmodule MyApp.Accounts.User do
-  # => Module defining User struct
   defstruct name: nil, email: nil
-  # => Struct with two fields, both default to nil
-  # => Creates %MyApp.Accounts.User{name: nil, email: nil}
 end
 
 defmodule MyApp.Accounts.Admin do
-  # => Module defining Admin struct
   defstruct name: nil, role: :admin
-  # => Struct with name (default nil) and role (default :admin)
-  # => Creates %MyApp.Accounts.Admin{name: nil, role: :admin}
 end
 
 defmodule ScopingExample do
-  # => Module demonstrating import scoping rules
-
   def func1 do
-    # => Function demonstrating function-level import
     import Enum
-    # => Import only available within func1 scope
-    # => All Enum functions callable without prefix in func1
-    # => Does NOT affect other functions in module
-
+    # => Function-level import (only in func1)
     map([1, 2, 3], fn x -> x * 2 end)
-    # => Calls imported Enum.map/2 without prefix
-    # => Doubles each element: [1, 2, 3] -> [2, 4, 6]
     # => Returns [2, 4, 6]
   end
 
   def func2 do
-    # => Function where func1's import is NOT available
-    # map([1, 2, 3], fn x -> x * 2 end)
-    # => Would raise CompileError: undefined function map/2
-    # => func1's import doesn't leak into func2
-
     Enum.map([1, 2, 3], fn x -> x * 2 end)
-    # => Must use full module name Enum.map/2
-    # => Doubles each element: [1, 2, 3] -> [2, 4, 6]
-    # => Returns [2, 4, 6]
+    # => Must use full module name (func1's import not available)
   end
 
-  # Module-level import (available in all functions)
   import String
-  # => Import at module level (outside function definitions)
-  # => All String functions available in func3, func4, and any other function
-  # => Module-level scope affects entire module
+  # => Module-level import (available in all functions)
 
   def func3, do: upcase("hello")
-  # => Uses imported String.upcase/1 without prefix
-  # => Converts "hello" to "HELLO"
-  # => Returns "HELLO"
-  # => Works because import String is at module level
+  # => Returns "HELLO" (uses imported upcase/1)
 
   def func4, do: downcase("WORLD")
-  # => Uses imported String.downcase/1 without prefix
-  # => Converts "WORLD" to "world"
-  # => Returns "world"
-  # => Works because import String is at module level
+  # => Returns "world" (uses imported downcase/1)
 end
-# => End of ScopingExample module
 
-# Example usage:
 # ImportAliasRequire.create_user("Alice")
-# => Returns %MyApp.Accounts.User{name: "Alice", email: nil}
-
-# ImportAliasRequire.create_admin("Bob")
-# => Returns %MyApp.Accounts.Admin{name: "Bob", role: :admin}
+# => %MyApp.Accounts.User{name: "Alice", email: nil}
 
 # ImportAliasRequire.process_numbers([1, 2, 3, 4, 5, 6, 7, 8])
 # => Doubles: [2, 4, 6, 8, 10, 12, 14, 16]
 # => Filters > 10: [12, 14, 16]
-# => Returns [12, 14, 16]
 
 # ScopingExample.func1()
-# => Returns [2, 4, 6]
-
-# ScopingExample.func2()
-# => Returns [2, 4, 6]
+# => [2, 4, 6]
 
 # ScopingExample.func3()
-# => Returns "HELLO"
-
-# ScopingExample.func4()
-# => Returns "world"
+# => "HELLO"
 ```
 
 **Key Takeaway**: Use `alias` to shorten module names, `import` to bring functions into scope (sparingly!), and `require` for macros. These directives manage namespaces and reduce verbosity.
@@ -2910,6 +2826,26 @@ end
 
 ExUnit is Elixir's built-in testing framework. Tests are organized into test modules, and assertions verify expected behavior. Running `mix test` executes all tests in your project.
 
+### Key ExUnit Features
+
+| Feature              | Purpose                 | Example                             |
+| -------------------- | ----------------------- | ----------------------------------- |
+| `use ExUnit.Case`    | Import test macros      | Required in test modules            |
+| `test "description"` | Define test case        | `test "adds numbers" do ... end`    |
+| `assert`             | Verify truthy value     | `assert 1 + 1 == 2`                 |
+| `refute`             | Verify falsy value      | `refute 1 > 2`                      |
+| `assert_raise`       | Verify exception        | `assert_raise Error, fn -> ... end` |
+| `setup`              | Per-test initialization | Runs before each test               |
+| `setup_all`          | One-time initialization | Runs before all tests               |
+| `@tag`               | Categorize tests        | `@tag :slow` for selective runs     |
+
+### Test Organization
+
+- **Module naming**: `<ModuleName>Test` convention
+- **File location**: `test/` directory
+- **Discovery**: `mix test` auto-discovers test modules
+- **Execution**: Tests run in random order (ensures independence)
+
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
@@ -2933,267 +2869,113 @@ graph TD
 
 ```elixir
 defmodule MathTest do
-  # => Test module definition
-  # => Module name convention: <ModuleName>Test
-  use ExUnit.Case  # Makes this a test module
-  # => use ExUnit.Case: imports test macros and assertions
-  # => Macros: test, assert, refute, assert_raise, setup, etc.
-  # => Module automatically discovered by `mix test`
+  use ExUnit.Case
+  # => Imports test macros (test, assert, refute, setup)
 
-  # Simple test
   test "addition works" do
-    # => test/2 macro: defines a test case
-    # => First arg: test description (string)
-    # => Second arg: do...end block with test code
     assert 1 + 1 == 2
-    # => assert/1: verifies expression is truthy
-    # => 1 + 1 == 2 evaluates to true
-    # => Test passes (no output)
-    # => If false: test fails with detailed error message
+    # => Passes if expression truthy
   end
-  # => Test completes successfully
-  # => ExUnit tracks: 1 test, 0 failures
 
-  # Test with description
   test "subtraction works" do
-    # => Second test case (independent from first)
-    # => Tests run in random order by default
     assert 5 - 3 == 2
-    # => assert: verifies 5 - 3 == 2 is true
-    # => True: test passes
+    # => Tests run in random order
   end
 
-  # Multiple assertions in one test
   test "multiplication and division" do
-    # => Single test with multiple assertions
-    # => If any assertion fails, test stops (remaining assertions skipped)
     assert 2 * 3 == 6
-    # => Assertion 1: 2 * 3 == 6 is true
-    # => Passes, continue to next assertion
+    # => Multiple assertions per test
     assert 10 / 2 == 5.0
-    # => Assertion 2: 10 / 2 == 5.0 is true
-    # => Note: division returns float (5.0)
-    # => Passes, continue to next assertion
+    # => Division returns float
     assert rem(10, 3) == 1
-    # => Assertion 3: rem(10, 3) == 1 is true
-    # => rem/2: remainder function (10 mod 3 = 1)
-    # => All 3 assertions pass: test succeeds
+    # => rem/2: remainder function
   end
-  # => Best practice: one logical concept per test
-  # => Multiple assertions OK if testing same behavior
 
-  # assert and refute
   test "boolean assertions" do
-    # => Demonstrates assert (expect truthy) and refute (expect falsy)
     assert true
-    # => assert true: always passes
-    # => Verifies value is truthy (not nil or false)
+    # => Verifies truthy value
     refute false
-    # => refute false: always passes
-    # => Verifies value is falsy (nil or false)
-    # => refute: inverse of assert
+    # => Verifies falsy value (inverse of assert)
     assert 1 < 2
-    # => assert: 1 < 2 is true
-    # => Comparison operators work in assertions
     refute 1 > 2
-    # => refute: 1 > 2 is false
-    # => Same as: assert !(1 > 2)
-    # => All 4 assertions pass
   end
 
-  # Pattern matching in assertions
   test "pattern matching" do
-    # => Assertions support pattern matching
-    # => Useful for testing function return shapes
     assert {:ok, value} = {:ok, 42}
-    # => Pattern: {:ok, value} matches {:ok, 42}
-    # => value bound to 42
-    # => Pattern match succeeds: assertion passes
-    # => If pattern fails: MatchError raised, test fails
+    # => Pattern match in assertion
     assert value == 42
-    # => Verify value was correctly extracted
-    # => value is 42 (from previous pattern match)
-    # => Assertion passes
+    # => value bound to 42
   end
-  # => Pattern: test both shape (tuple) and content (value)
 
-  # assert_raise for exceptions
   test "raises exception" do
-    # => assert_raise/2: verifies code raises specific exception
-    # => Essential for testing error cases
     assert_raise ArithmeticError, fn ->
-      # => Expects ArithmeticError exception
-      # => fn: anonymous function containing code to test
       1 / 0
-      # => Division by zero in Elixir
-      # => Raises ArithmeticError exception
-      # => Exception type matches expectation: assertion passes
+      # => Division by zero raises ArithmeticError
     end
-    # => If wrong exception or no exception: test fails
-    # => If correct exception: test passes
   end
 
-  # assert_raise with message matching
   test "raises with message" do
-    # => assert_raise/3: verifies exception AND message
-    # => More precise than assert_raise/2
     assert_raise ArgumentError, "Invalid", fn ->
-      # => Expects ArgumentError with message "Invalid"
-      # => Message: exact string match (not substring)
       raise ArgumentError, "Invalid"
-      # => Raises ArgumentError exception
-      # => Message: "Invalid"
-      # => Both exception type and message match: test passes
+      # => Exact message match required
     end
-    # => If message differs: test fails
-    # => Example: "Invalid input" != "Invalid" (fails)
   end
 
-  # setup - runs before each test
   setup do
-    # => setup/1: callback runs before EACH test in module
-    # => Use for: creating test data, initializing state
-    # => Runs before: "addition works", "subtraction works", etc.
-    # => Fresh setup per test (tests isolated)
-    # Setup code here
     {:ok, user: %{name: "Alice", age: 30}}
-    # => Returns: {:ok, <keyword_list>}
-    # => Keyword list becomes test context (map)
-    # => user: %{name: "Alice", age: 30} available to tests
-    # => Context injected into tests that accept it
+    # => Runs before EACH test, returns context
   end
-  # => setup runs N times for N tests
-  # => Each test gets fresh user map
 
   test "uses setup data", %{user: user} do
-    # => Second arg: pattern matches context from setup
-    # => %{user: user}: extracts user from context map
-    # => user: bound to %{name: "Alice", age: 30}
     assert user.name == "Alice"
-    # => Verify user.name is "Alice" (from setup)
-    # => Assertion passes
+    # => Pattern matches context from setup
     assert user.age == 30
-    # => Verify user.age is 30 (from setup)
-    # => Assertion passes
   end
-  # => Demonstrates: setup provides test data to tests
-  # => Tests can be parameterized via context
-
-  # setup_all - runs once before all tests
-  # => setup_all: runs ONCE before all tests
-  # => Use for: expensive setup (database connection, file loading)
-  # => Shared across all tests (not isolated)
-  # on_exit - cleanup after test
-  # => on_exit: registers cleanup callback
-  # => Runs after test completes (success or failure)
-  # => Use for: closing connections, deleting temp files
 end
-# => Module complete: all tests defined
-# => Run with: mix test test/math_test.exs
 
-# Calculator module - code under test
 defmodule Calculator do
-  # => Module with functions to test
-  # => Demonstrates testing a real module
   def add(a, b), do: a + b
-  # => add/2: simple addition function
-  # => Returns: sum of a and b
   def subtract(a, b), do: a - b
-  # => subtract/2: simple subtraction function
   def multiply(a, b), do: a * b
-  # => multiply/2: simple multiplication function
   def divide(_a, 0), do: {:error, :division_by_zero}
-  # => divide/2: first clause handles division by zero
-  # => Pattern: matches when b is 0
-  # => _a: ignore numerator (not needed)
-  # => Returns: {:error, :division_by_zero} (error tuple)
-  # => Prevents ArithmeticError, returns graceful error
+  # => First clause: handles div by zero
   def divide(a, b), do: {:ok, a / b}
-  # => divide/2: second clause handles valid division
-  # => Pattern: matches when b is not 0 (first clause didn't match)
-  # => Returns: {:ok, quotient} (success tuple)
-  # => Result is float (Elixir / always returns float)
+  # => Second clause: normal division
 end
-# => Calculator module complete
-# => Demonstrates: multi-clause functions with error handling
 
-# Calculator tests
 defmodule CalculatorTest do
-  # => Test module for Calculator
   use ExUnit.Case
-  # => Import testing macros
 
   test "add/2 adds two numbers" do
-    # => Test add/2 function
     assert Calculator.add(2, 3) == 5
-    # => Verify 2 + 3 == 5
-    # => Assertion passes
     assert Calculator.add(-1, 1) == 0
-    # => Verify -1 + 1 == 0 (edge case: negative + positive)
-    # => Assertion passes
   end
-  # => Both assertions pass: test succeeds
-  # => Tests positive and negative inputs
 
   test "divide/2 returns ok tuple" do
-    # => Test successful division
     assert Calculator.divide(10, 2) == {:ok, 5.0}
-    # => Verify divide(10, 2) returns {:ok, 5.0}
-    # => Pattern: {:ok, float_result}
-    # => 10 / 2 = 5.0 (float, not integer)
-    # => Assertion passes
+    # => Success case: {:ok, float}
   end
-  # => Tests happy path (valid division)
 
   test "divide/2 handles division by zero" do
-    # => Test error case (division by zero)
     assert Calculator.divide(10, 0) == {:error, :division_by_zero}
-    # => Verify divide(10, 0) returns error tuple
-    # => First clause matches (b == 0)
-    # => Returns: {:error, :division_by_zero}
-    # => Assertion passes
+    # => Error case: {:error, atom}
   end
-  # => Tests error path (graceful error handling)
-  # => No exception raised (handled with error tuple)
 
-  # Test tags
   @tag :slow
-  # => @tag: module attribute that tags the following test
-  # => :slow: tag name (atom)
-  # => Use for: categorizing tests (slow, integration, external)
-  # => Run only slow tests: mix test --only slow
-  # => Exclude slow tests: mix test --exclude slow
+  # => Tag for selective test execution
   test "slow test" do
-    # => Test tagged with :slow
     :timer.sleep(2000)
-    # => Simulates slow operation (2 seconds)
-    # => Sleeps 2000ms
+    # => Use: mix test --only slow OR --exclude slow
     assert true
-    # => Trivial assertion (always passes)
-    # => Real slow tests would test actual slow operations
   end
-  # => Tag allows selective test execution
-  # => Useful for CI: skip slow tests in fast pipeline
 
-  # Skip test
   @tag :skip
-  # => @tag :skip: special tag that skips test execution
-  # => Test not run by default
-  # => Run skipped tests: mix test --include skip
-  # => Use for: WIP tests, temporarily broken tests
+  # => Skips test execution
   test "skipped test" do
-    # => Test will not run (skipped)
     assert false
-    # => Would fail if run
-    # => But never executed due to :skip tag
+    # => Use: mix test --include skip to run
   end
-  # => Skipped tests show in output: "X tests, Y failures, Z skipped"
-  # => Better than commenting out (documents intent)
 end
-# => CalculatorTest complete: 5 tests defined
-# => 3 normal, 1 slow, 1 skipped
-
-
 ```
 
 **Key Takeaway**: ExUnit provides testing with `assert`, `refute`, and `assert_raise`. Tests are organized in modules with `use ExUnit.Case`. Use `setup` for per-test initialization and tags to organize tests.
@@ -3206,190 +2988,115 @@ end
 
 Mix is Elixir's build tool. It manages dependencies, compiles code, runs tests, and provides project scaffolding. Understanding the standard project structure is essential for Elixir development.
 
+### Standard Project Structure
+
+```
+my_app/
+├── mix.exs              # Project configuration
+├── lib/                 # Application code
+│   └── my_app.ex        # Main module
+├── test/                # Test files
+│   └── my_app_test.exs  # Tests
+└── config/              # Configuration
+    ├── config.exs       # Default config
+    └── dev.exs          # Environment-specific
+```
+
+### mix.exs Key Fields
+
+| Field                | Purpose            | Example                |
+| -------------------- | ------------------ | ---------------------- |
+| `app`                | Application name   | `:my_app`              |
+| `version`            | Semantic version   | `"0.1.0"`              |
+| `elixir`             | Min Elixir version | `"~> 1.15"`            |
+| `deps`               | Dependencies list  | `[{:jason, "~> 1.4"}]` |
+| `extra_applications` | OTP apps to start  | `[:logger]`            |
+
 **Code**:
 
 ```elixir
-# mix.exs file - project configuration
+# mix.exs - project configuration
 defmodule MyApp.MixProject do
-  # => Mix project module (always in mix.exs file)
-  # => Module name convention: <AppName>.MixProject
-  # => File location: project root (mix.exs)
   use Mix.Project
-  # => use Mix.Project: imports Mix project macros
-  # => Required for Mix to recognize this as project configuration
-  # => Provides: project/0, application/0, deps/0 functions
+  # => Imports Mix project macros
 
   def project do
-    # => project/0: returns project configuration keyword list
-    # => Called by Mix during compilation and build
-    # => Required function for all Mix projects
     [
-      # => Keyword list with project settings
-      # => Order doesn't matter (keyword list)
       app: :my_app,
-      # => app: application name (atom)
-      # => Used for: releases, application tree, dependencies
-      # => Convention: snake_case atoms
+      # => Application name (atom)
       version: "0.1.0",
-      # => version: semantic versioning string
-      # => Format: "MAJOR.MINOR.PATCH"
-      # => Used for: releases, dependency resolution
+      # => Semantic versioning: MAJOR.MINOR.PATCH
       elixir: "~> 1.15",
-      # => elixir: minimum Elixir version requirement
-      # => ~> 1.15: allows 1.15.x (not 1.16 or 2.0)
-      # => Pessimistic version constraint (semantic versioning)
+      # => ~> 1.15: allows 1.15.x (pessimistic constraint)
       start_permanent: Mix.env() == :prod,
-      # => start_permanent: restart strategy for application
-      # => Mix.env(): current environment (:dev, :test, :prod)
-      # => true in :prod: application restarts on crash
-      # => false in :dev/:test: application doesn't restart (easier debugging)
+      # => Restart on crash in :prod only
       deps: deps()
-      # => deps: calls deps/0 function below
-      # => Returns list of dependencies
-      # => Mix fetches and compiles these
+      # => Dependencies defined below
     ]
-    # => Returns keyword list to Mix
   end
 
   def application do
-    # => application/0: OTP application configuration
-    # => Optional function (can omit if no special config)
-    # => Defines application behavior and dependencies
     [
-      # => Keyword list with application settings
       extra_applications: [:logger]
-      # => extra_applications: OTP apps to start before this app
-      # => :logger: Elixir's logging application (built-in)
-      # => Automatically starts Logger when app starts
-      # => Other common: [:crypto, :ssl, :runtime_tools]
+      # => Start Logger before this app
     ]
-    # => Returns keyword list to Mix
   end
 
   defp deps do
-    # => deps/0: private function returning dependencies
-    # => defp: private (only callable within this module)
-    # => Convention: separate function for better organization
     [
-      # => List of dependency tuples
-      # => Format: {name, version} or {name, version, options}
-      {:httpoison, "~> 2.0"},     # HTTP client
-      # => Dependency: HTTPoison HTTP client library
-      # => "~> 2.0": allows 2.x versions (not 3.0)
-      # => Mix fetches from Hex.pm (default package registry)
-      # => Compiled and available in project
-      {:jason, "~> 1.4"},         # JSON parser
-      # => Dependency: Jason JSON parser
-      # => "~> 1.4": allows 1.4.x versions
-      # => Fast JSON encoder/decoder
-      {:ex_doc, "~> 0.30", only: :dev}  # Documentation generator
-      # => Dependency: ExDoc documentation generator
-      # => only: :dev: only in development environment
-      # => Not included in production releases
-      # => Generates HTML docs from @moduledoc/@doc
+      {:httpoison, "~> 2.0"},               # HTTP client
+      {:jason, "~> 1.4"},                   # JSON parser
+      {:ex_doc, "~> 0.30", only: :dev}      # Docs (dev only)
+      # => Fetched from Hex.pm package registry
     ]
-    # => Returns list of dependencies
-    # => Mix resolves, fetches, and compiles them
   end
-  # => deps/0 defines all project dependencies
 end
-# => mix.exs complete: defines project structure
 
-
-# lib/my_app.ex - main application module
+# lib/my_app.ex - main module
 defmodule MyApp do
-  # => Main application module
-  # => File location: lib/my_app.ex
-  # => Entry point for application logic
   @moduledoc """
   Documentation for `MyApp`.
   """
-  # => @moduledoc: module-level documentation
-  # => Appears in generated docs (ExDoc)
-  # => Markdown format supported
-  # => Accessed via: h MyApp (in IEx)
+  # => Module-level docs (appears in ExDoc)
 
   @doc """
   Hello world function.
   """
-  # => @doc: function-level documentation
-  # => Documents the function below
-  # => Appears in generated docs and IEx
-  # => Can include examples (doctests)
+  # => Function-level docs
   def hello do
-    # => Public function (def, not defp)
-    # => Simple example function
     :world
     # => Returns :world atom
   end
-  # => hello/0 complete
 end
-# => MyApp module complete
 
-# test/my_app_test.exs - test file
+# test/my_app_test.exs - tests
 defmodule MyAppTest do
-  # => Test module for MyApp
-  # => File location: test/my_app_test.exs
-  # => Convention: <ModuleName>Test
   use ExUnit.Case
-  # => Import ExUnit testing macros
-  # => Enables: test, assert, doctest, etc.
-  doctest MyApp  # Runs doctests from @doc
-  # => doctest/1: extracts and runs examples from @doc comments
-  # => Scans MyApp module for ## Examples sections
-  # => Verifies examples produce expected output
-  # => Keeps documentation accurate (tested)
+  doctest MyApp
+  # => Runs doctests from @doc comments
 
   test "greets the world" do
-    # => Regular unit test
-    # => Tests MyApp.hello/0 function
     assert MyApp.hello() == :world
-    # => Verify hello/0 returns :world
-    # => Assertion passes
   end
-  # => Test complete
 end
-# => Test module complete
 
-
-# config/config.exs - application configuration
+# config/config.exs - configuration
 import Config
-# => import Config: imports configuration macros
-# => Enables: config/3 macro
-# => Required at top of config files
+# => Imports config/3 macro
 
 config :my_app,
-# => config/2: configures application :my_app
-# => First arg: application name (atom)
-# => Second arg: keyword list of settings
   api_key: "development_key",
-  # => api_key: configuration value
   # => Available via Application.get_env/2
-  # => Default value for development
   timeout: 5000
-  # => timeout: 5000ms timeout setting
-  # => Configuration values are atoms/strings/numbers/lists/maps
-# => Configuration stored in application environment
 
-import_config "#{Mix.env()}.exs"  # Environment-specific config
-# => import_config/1: imports environment-specific config
-# => Mix.env(): current environment (:dev, :test, :prod)
-# => Loads: config/dev.exs, config/test.exs, or config/prod.exs
-# => Environment-specific values override defaults above
-# => Pattern: config.exs (defaults) + env.exs (overrides)
+import_config "#{Mix.env()}.exs"
+# => Loads dev.exs, test.exs, or prod.exs
 
-# Accessing configuration at runtime
+# Runtime config access
 api_key = Application.get_env(:my_app, :api_key)
-# => Application.get_env/2: retrieves config value
-# => First arg: application name (:my_app)
-# => Second arg: config key (:api_key)
-# => Returns: "development_key" (or value from env.exs)
-# => Returns: nil if key not found
-timeout = Application.get_env(:my_app, :timeout, 3000)  # Default 3000
-# => Application.get_env/3: retrieves config with default
-# => Third arg: default value if key not found
-# => Returns: 5000 (from config) or 3000 (if not configured)
-# => Pattern: always provide defaults for robustness
+# => Returns "development_key" or nil
+timeout = Application.get_env(:my_app, :timeout, 3000)
+# => Returns 5000 or default 3000
 ```
 
 **Key Takeaway**: Mix provides project scaffolding, dependency management, and build tools. Standard structure: `lib/` for code, `test/` for tests, `mix.exs` for configuration. Use `mix` commands to compile, test, and manage projects.
@@ -5442,229 +5149,139 @@ MyApp.Database.query("SELECT * FROM users")
 
 Type specs document function signatures and enable static analysis with Dialyzer. They improve code documentation and catch type errors at compile time.
 
+### @spec Syntax
+
+`@spec` declares type specifications for functions:
+
+- `@spec function_name(param_types) :: return_type`
+- Place before function definition
+- `::` separates parameters from return type
+- Dialyzer verifies implementation matches spec
+
+### Common Built-in Types
+
+| Type         | Description           | Example Values                    |
+| ------------ | --------------------- | --------------------------------- |
+| `integer()`  | Whole numbers         | `-2, -1, 0, 1, 2, ...`            |
+| `float()`    | Decimal numbers       | `3.14, 2.5, -1.0`                 |
+| `number()`   | Integer or float      | Any numeric value                 |
+| `String.t()` | UTF-8 binary string   | `"hello", "world"`                |
+| `atom()`     | Atom literals         | `:ok, :error, :atom`              |
+| `boolean()`  | True/false            | `true, false`                     |
+| `list(type)` | List of specific type | `[1, 2, 3]` for `list(integer())` |
+| `map()`      | Any map               | `%{key: value}`                   |
+| `tuple()`    | Any tuple             | `{:ok, "value"}`                  |
+| `pid()`      | Process identifier    | Result of `spawn/1`               |
+| `term()`     | Any Elixir term       | Wildcard type                     |
+| `keyword()`  | Keyword list          | `[key: value, ...]`               |
+| `any()`      | Any type              | Wildcard, no constraints          |
+
+### Union Types
+
+Use `|` to specify multiple possible types:
+
+- `{:ok, float()} | {:error, atom()}` - Either success or error tuple
+- `integer() | nil` - Integer or nil (optional value)
+- Common pattern: Result tuples with union types
+
 **Code**:
 
 ```elixir
 defmodule Calculator do
-  # => Calculator module with type specifications
-  # => Type specs enable static analysis (Dialyzer)
   @spec add(integer(), integer()) :: integer()
-  # => @spec: type specification attribute
-  # => add/2: function name and arity
-  # => (integer(), integer()): parameter types (both integers)
-  # => :: : separates params from return type
-  # => integer(): return type (integer)
-  # => Dialyzer warns if implementation doesn't match spec
+  # => Spec: two integers → integer
   def add(a, b), do: a + b
-  # => add/2: implementation
-  # => a + b: returns integer (matches spec)
-  # => Pattern: spec documents contract, Dialyzer verifies
+  # => Returns: sum (integer)
 
   @spec divide(number(), number()) :: {:ok, float()} | {:error, atom()}
-  # => divide/2 spec: multiple return types (union type)
-  # => (number(), number()): params (integer or float)
-  # => :: {:ok, float()} | {:error, atom()}: union return type
-  # => | : union operator (either this OR that)
-  # => {:ok, float()}: success case (float result)
-  # => {:error, atom()}: error case (atom reason)
-  # => Pattern: result tuple for error handling
+  # => Spec: union type (success OR error)
   def divide(_a, 0), do: {:error, :division_by_zero}
-  # => First clause: handles division by zero
-  # => Returns {:error, :division_by_zero} (matches spec)
-  # => :division_by_zero is atom() type
+  # => Returns: error tuple
   def divide(a, b), do: {:ok, a / b}
-  # => Second clause: normal division
-  # => a / b: returns float
-  # => {:ok, float()}: matches spec success case
+  # => Returns: success tuple with float
 
   @spec sum(list(number())) :: number()
-  # => sum/1 spec: list of numbers → number
-  # => list(number()): parameterized type (list containing numbers)
-  # => number(): integer or float
-  # => Returns: number() (could be integer or float)
+  # => Spec: list of numbers → number
   def sum(numbers), do: Enum.sum(numbers)
-  # => sum/1: implementation using Enum.sum
-  # => Enum.sum([1, 2, 3]) → 6 (integer)
-  # => Enum.sum([1.5, 2.5]) → 4.0 (float)
+  # => Enum.sum: returns sum (integer or float)
 
-  # Multiple clauses with same spec
-  # => Single @spec covers all function clauses
-  # => Place @spec before first clause
   @spec abs(integer()) :: integer()
-  # => abs/1: absolute value function
-  # => integer() → integer()
+  # => Single spec covers all clauses
   def abs(n) when n < 0, do: -n
-  # => First clause: negative numbers
-  # => n < 0: guard condition
-  # => -n: makes negative positive
+  # => Clause 1: negative → positive
   def abs(n), do: n
-  # => Second clause: positive numbers
-  # => Returns n unchanged
-  # => Both clauses match single @spec
+  # => Clause 2: positive → unchanged
 end
-# => Calculator module complete
 
 defmodule User do
-  # => User module with custom type and struct
   @type t :: %__MODULE__{
-    # => @type: defines custom type
-    # => t: type name (convention: t for module's main type)
-    # => :: : type definition
-    # => %__MODULE__{...}: struct type for this module
     id: integer(),
-    # => id field: integer type
     name: String.t(),
-    # => name field: String type
-    # => String.t(): Elixir string (not charlist)
     email: String.t(),
-    # => email field: String type
     age: integer() | nil
-    # => age field: integer OR nil (union type)
-    # => | nil: allows nil value (optional field)
   }
-  # => Type t defined: User struct with specified field types
+  # => Custom type: User.t with field types
 
   defstruct [:id, :name, :email, :age]
-  # => defstruct: defines struct fields
-  # => Fields must match @type definition
-  # => Default values: nil for all fields
 
   @spec new(integer(), String.t(), String.t()) :: t()
-  # => new/3 spec: creates User struct
-  # => Parameters: id (integer), name (String), email (String)
-  # => Returns: t() (User.t custom type)
-  # => t(): refers to User module's @type t
+  # => Returns: User.t custom type
   def new(id, name, email) do
-    # => new/3: constructor function
     %__MODULE__{id: id, name: name, email: email}
-    # => Creates User struct
-    # => __MODULE__: resolves to User
-    # => age: nil (not provided, defaults to nil)
-    # => Returns: %User{id: id, name: name, email: email, age: nil}
+    # => age defaults to nil
   end
-  # => new/3 complete
 
   @spec update_age(t(), integer()) :: t()
-  # => update_age/2 spec: updates user's age
-  # => First param: t() (User struct)
-  # => Second param: integer() (new age)
-  # => Returns: t() (updated User struct)
+  # => Spec: User.t, integer → User.t
   def update_age(user, age) do
-    # => update_age/2: updates age field
     %{user | age: age}
-    # => Map update syntax: %{struct | field: value}
-    # => Returns: new User struct with updated age
-    # => Immutability: original user unchanged
+    # => Returns: updated User struct
   end
 
   @spec display(t()) :: String.t()
-  # => display/1 spec: formats user as string
-  # => Parameter: t() (User struct)
-  # => Returns: String.t() (formatted string)
+  # => Spec: User.t → String
   def display(%__MODULE__{name: name, email: email}) do
-    # => display/1: pattern matches User struct
-    # => Extracts name and email fields
-    # => age and id: ignored (not needed)
     "#{name} (#{email})"
-    # => String interpolation: "Alice (alice@example.com)"
-    # => Returns: String
+    # => Returns: formatted string
   end
-  # => display/1 complete
 end
-# => User module complete
 
 defmodule StringHelper do
-  # => StringHelper module with string manipulation functions
   @spec reverse(String.t()) :: String.t()
-  # => reverse/1 spec: String → String
-  # => String.t(): Elixir string type (UTF-8 binary)
   def reverse(string), do: String.reverse(string)
-  # => reverse/1: reverses string
-  # => String.reverse/1: built-in function
   # => "hello" → "olleh"
 
   @spec split(String.t(), String.t()) :: list(String.t())
-  # => split/2 spec: String, separator → list of Strings
-  # => list(String.t()): list containing strings
-  # => Parameterized type: list contains specific type
+  # => Spec: string, separator → list of strings
   def split(string, separator), do: String.split(string, separator)
-  # => split/2: splits string by separator
   # => "a,b,c" split by "," → ["a", "b", "c"]
 
   @spec join(list(String.t()), String.t()) :: String.t()
-  # => join/2 spec: list of Strings, separator → String
-  # => First param: list(String.t())
-  # => Second param: String.t() (separator)
-  # => Returns: joined String
+  # => Spec: list of strings, separator → string
   def join(parts, separator), do: Enum.join(parts, separator)
-  # => join/2: joins list with separator
-  # => ["a", "b", "c"] joined by "," → "a,b,c"
+  # => ["a", "b", "c"] with "," → "a,b,c"
 end
-# => StringHelper module complete
 
-# Common type specs
-# => Reference: common built-in types
-@spec func(integer()) :: String.t()
-# => Integer to string
-# => integer(): whole numbers (-2, -1, 0, 1, 2, ...)
-# => String.t(): binary strings
-@spec func(list(atom())) :: map()
-# => List of atoms to map
-# => list(atom()): [:a, :b, :c]
-# => map(): any map
-@spec func(pid()) :: :ok | {:error, term()}
-# => Process-related function
-# => pid(): process identifier
-# => :ok | {:error, term()}: union type (success or error)
-# => term(): any term (wildcard type)
-@spec func(keyword()) :: any()
-# => Keyword list input
-# => keyword(): [key: value, ...] (atom keys)
-# => any(): returns anything
-@spec func(tuple()) :: boolean()
-# => Any tuple
-# => tuple(): any size tuple
-# => boolean(): true or false
-
-# Complex types
-# => @type: defines reusable type aliases
+# Custom type aliases
 @type result :: {:ok, String.t()} | {:error, atom()}
-# => result type: success or error tuple
-# => {:ok, String.t()}: success case with string
-# => {:error, atom()}: error case with atom reason
-# => Union type: | separates alternatives
+# => Reusable type: success or error tuple
 @type user_id :: integer()
-# => user_id type: alias for integer
-# => Semantic naming: documents intent
-# => More readable than raw integer() in specs
+# => Semantic alias: clearer intent than raw integer()
 @type user_map :: %{id: user_id(), name: String.t()}
-# => user_map type: map with specific keys
-# => %{key: type, ...}: map type with required keys
-# => id: user_id() (integer alias)
-# => name: String.t()
+# => Map type with required keys
 
 @spec find_user(user_id()) :: result()
-# => find_user/1 spec: uses custom types
-# => Parameter: user_id() (integer alias)
-# => Returns: result() (success/error union)
-# => Custom types make specs more readable
+# => Uses custom types for readability
 def find_user(id) when id > 0, do: {:ok, "User #{id}"}
-# => First clause: valid id (> 0)
-# => Returns: {:ok, string} (matches result type)
+# => Valid id: returns success tuple
 def find_user(_id), do: {:error, :invalid_id}
-# => Second clause: invalid id
-# => Returns: {:error, atom} (matches result type)
+# => Invalid id: returns error tuple
 
-# Run Dialyzer (in terminal)
-# => Dialyzer: static analysis tool for type checking
-# => Reads @spec annotations and analyzes code
-# => Finds type errors, unreachable code, pattern match issues
 # mix dialyzer
-# => Command: mix dialyzer
-# => First run: builds PLT (persistent lookup table) - slow
-# => Subsequent runs: fast incremental checks
-# => Reports: type mismatches, spec violations, impossible patterns
-# => Example output: "Function returns {:ok, integer()} but spec says String.t()"
+# => Runs static type analysis
+# => First run: builds PLT (slow)
+# => Subsequent: fast incremental checks
+# => Reports: type mismatches, spec violations
 ```
 
 **Key Takeaway**: Use `@spec` to document function types. Define custom types with `@type`. Type specs enable Dialyzer to catch type errors and improve documentation. Common types: `integer()`, `String.t()`, `list(type)`, `map()`, `{:ok, type} | {:error, reason}`.
