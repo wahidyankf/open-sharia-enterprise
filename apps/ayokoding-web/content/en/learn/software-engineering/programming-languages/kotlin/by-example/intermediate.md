@@ -2996,7 +2996,9 @@ fun main() {
 
     // Destructuring in lambda parameter
     println("=== Full Destructuring ===")
+    products.forEach { (id, name, price) ->      // => Destructure Product into (id, name, price) via component1/2/3
         println("Product $id: $name - $$price")
+                                             // => $$ escapes dollar sign in string template
     }
     // => Output: Product 1: Laptop - $999.99
     // => Output: Product 2: Mouse - $29.99
@@ -3005,6 +3007,7 @@ fun main() {
     // Partial destructuring with underscore
     println("\n=== Partial Destructuring (ignore price) ===")
     products.forEach { (id, name, _) ->      // => Destructure only id and name, ignore price (underscore)
+        println("ID $id: $name")             // => price not accessible (ignored via _)
     }
     // => Output: ID 1: Laptop
     // => Output: ID 2: Mouse
@@ -3019,8 +3022,9 @@ fun main() {
     )                                        // => productMap is Map<String, Double>, size=3
                                              // => Map.Entry has component1() (key) and component2() (value)
 
-                                             // => Destructures into (name, price) via component1() and component2()
+    productMap.forEach { (name, price) ->    // => Destructures into (name, price) via component1() and component2()
                                              // => name = entry.component1() (key), price = entry.component2() (value)
+        println("$name costs $$price")       // => $$ escapes dollar sign in template
     }
     // => Output: Laptop costs $999.99
     // => Output: Mouse costs $29.99

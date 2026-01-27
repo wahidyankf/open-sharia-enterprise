@@ -2935,6 +2935,7 @@ value class Email(val value: String) {      // => Wraps String with validation
 // Value class with operators
 value class Meters(val value: Double) {     // => Type-safe distance measurement
     operator fun plus(other: Meters) = Meters(value + other.value)
+                                             // => Returns new Meters (addition result)
     operator fun times(scalar: Int) = Meters(value * scalar)
                                              // => Scalar multiplication (Int * Meters)
                                              // => Type-safe: can't multiply Meters * Meters
@@ -2943,10 +2944,12 @@ value class Meters(val value: Double) {     // => Type-safe distance measurement
 // Type-safe function signatures with value classes
 fun sendNotification(userId: UserId, email: Email, message: String) {
     println("Sending to user ${userId.value} at ${email.value}: $message")
+                                             // => .value extracts wrapped primitives
 }
 
 fun calculateDistance(d1: Meters, d2: Meters): Meters {
     return d1 + d2                           // => Invokes plus operator (type-safe addition)
+                                             // => Returns Meters (sum of d1 and d2)
 }
 
 // Boxing scenarios (when value class becomes object)
@@ -2963,9 +2966,11 @@ fun main() {
     // Zero allocation creation
     val email = Email("user@example.com")    // => Inlined to String reference
                                              // => No wrapper object created
+    val userId = UserId(42)                  // => Inlined to Int 42
 
     // Type-safe function calls
     sendNotification(userId, email, "Welcome!")
+                                             // => Output: Sending to user 42 at user@example.com: Welcome!
     // sendNotification(UserId(1), UserId(2), "test")
     //                                       // => Compile error: type mismatch (expected Email, got UserId)
 
@@ -3117,13 +3122,22 @@ fun main() {
     println("--- List (Eager Evaluation) ---")
     var startTime = System.currentTimeMillis()
                                              // => Record benchmark start time
+    val listResult = range.toList()          // => Allocate 10M-element ArrayList
+        .map { it + 1000 }                   // => Allocate 10M-element list for mapped values
+        .filter { it % 2 == 0 }              // => Allocate large list for filtered values
+        .take(10)                            // => Extract first 10 elements (allocate 10-element list)
                                              // => Filters entire 10M mapped list
     println("List result: $listResult")      // => Output: [1002, 1004, 1006, 1008, 1010, 1012, 1014, 1016, 1018, 1020]
     println("Time: ${System.currentTimeMillis() - startTime}ms\n")
+                                             // => Typical: 500-2000ms (full iteration cost)
 
     // Lazy sequence operations (computes on demand, no intermediate allocations)
     println("--- Sequence (Lazy Evaluation) ---")
     startTime = System.currentTimeMillis()   // => Reset timer
+    val seqResult = range.asSequence()       // => No allocation (lazy wrapper)
+        .map { it + 1000 }                   // => Lazy transformer (not executed yet)
+        .filter { it % 2 == 0 }              // => Lazy predicate (not executed yet)
+        .take(10)                            // => Lazy take (defines stop condition)
         .toList()                            // => TERMINAL operation triggers computation
                                              // => Processes elements one-by-one until 10 found
     println("Sequence result: $seqResult")   // => Output: [1002, 1004, 1006, 1008, 1010, 1012, 1014, 1016, 1018, 1020]
@@ -3137,18 +3151,25 @@ fun main() {
 
     // Eager list: completes each operation before next
     println("List operations (eager):")
+    (1..5).map {                             // => map() completes first (all 5 elements)
+        println("  Map: $it")                // => Output order: Map: 1, Map: 2, Map: 3, Map: 4, Map: 5
         it * 2                               // => Transform: [2, 4, 6, 8, 10]
     }.filter {                               // => Then filter ALL 5 transformed elements
+        println("  Filter: $it")             // => Output order: Filter: 2, Filter: 4, Filter: 6, Filter: 8, Filter: 10
         it > 4                               // => Predicate result: [6, 8, 10]
+    }
 
     // Lazy sequence: processes elements one-by-one (interleaved)
     println("\nSequence operations (lazy):")
     (1..5).asSequence().map {                // => Create lazy map transformer
+        println("  Map: $it")                // => Executed per element (not all at once)
         it * 2                               // => Transform applied per element
+    }.filter {                               // => Lazy filter (interleaved with map)
         println("  Filter: $it")             // => Interleaved: Map 1 → Filter 2 → Map 2 → Filter 4...
         it > 4                               // => Predicate check per element
-                                             // => Output order: Map: 1, Filter: 2, Map: 2, Filter: 4, Map: 3, Filter: 6, Map: 4, Filter: 8
-                                             // => Only processes 4 elements (stops early)
+    }.toList()                               // => Terminal operation (triggers evaluation)
+                                             // => Output order: Map: 1, Filter: 2, Map: 2, Filter: 4, Map: 3, Filter: 6, Map: 4, Filter: 8, Map: 5, Filter: 10
+                                             // => Processes all 5 elements (no early termination without take())
 
     // Infinite sequences (impossible with eager lists)
     println("\n--- Infinite Sequences ---")
@@ -3951,8 +3972,9 @@ class UserServiceTest {
 
         // Stub findUser behavior for specific inputs
         every { repo.findUser(1) } returns User(1, "Alice")
-
+                                             // => When findUser(1) called, return User(1, "Alice")
         every { repo.findUser(2) } returns null
+                                             // => When findUser(2) called, return null
 
         // => service is UserService with mocked repository
         // => Dependency injection via constructor
@@ -3961,35 +3983,40 @@ class UserServiceTest {
         // Test stubbed behavior for id=1
         // => user1 is User? (nullable type)
         val user1 = service.getUser(1)
-
+                                             // => user1 = User(1, "Alice") from stubbed behavior
         // => Assertion verifies stubbed value returned correctly
         assertEquals("Alice", user1?.name)
-
+                                             // => user1?.name = "Alice" (safe call on User)
         // Test stubbed behavior for id=2
         // => user2 is null (User? type)
         val user2 = service.getUser(2)
-
-        assertEquals(null, user2)
+                                             // => user2 = null from stubbed behavior
+        assertEquals(null, user2)            // => Assertion passes (null == null)
 
         // Verify method call interactions
-        verify { repo.findUser(1) }
-
-        verify { repo.findUser(2) }
-
+        verify { repo.findUser(1) }          // => Confirms findUser(1) was called at least once
+                                             // => Verification passes (called in user1 test)
+        verify { repo.findUser(2) }          // => Confirms findUser(2) was called at least once
+                                             // => Verification passes (called in user2 test)
         verify(exactly = 2) { repo.findUser(any()) }
+                                             // => Confirms findUser called exactly twice (any argument)
+                                             // => Verification passes (findUser(1) + findUser(2) = 2 calls)
     }
 
     @Test
     fun testSaveUser() {
         val repo = mockk<UserRepository>(relaxed = true)
-
+                                             // => relaxed = true: unstubbed methods return default values
         // => service uses relaxed mock (no saveUser stub needed)
         val service = UserService(repo)
 
         val user = service.createUser("Bob")
-
+                                             // => user = User(0, "Bob") from service
+                                             // => saveUser called internally (no stub needed, relaxed mock)
         // Verify saveUser called with user matching name
         verify { repo.saveUser(match { it.name == "Bob" }) }
+                                             // => match { } validates argument predicate
+                                             // => Verification passes (saveUser called with User(0, "Bob"))
     }
 
     @Test
@@ -4084,7 +4111,8 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 plugins {
-    kotlin("jvm") version "1.9.21"
+    kotlin("jvm") version "1.9.21"           // => Applies Kotlin JVM plugin version 1.9.21
+                                             // => Enables Kotlin compilation and kotlin() DSL function
 }
 
 // => repositories { } configures dependency sources
@@ -4097,11 +4125,12 @@ repositories {
 // => testImplementation() adds test-only dependencies
 dependencies {
     // => kotlin("stdlib") resolves to org.jetbrains.kotlin:kotlin-stdlib
-    implementation(kotlin("stdlib"))
-
+    implementation(kotlin("stdlib"))         // => Adds Kotlin standard library to compile + runtime classpaths
+                                             // => Required for all Kotlin code
     // => kotlin("test") resolves to Kotlin test framework
     // => Includes JUnit integration and assertion DSL
-    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test"))       // => Adds Kotlin test lib to test classpath only
+                                             // => Provides kotlin.test.assertEquals, @Test, etc.
 }
 
 // Simple custom task registration
@@ -4124,30 +4153,31 @@ tasks.register("hello") {
 // Task with typed properties (custom task class)
 // => abstract class GreetTask extends DefaultTask
 abstract class GreetTask : DefaultTask() {
-    @get:Input
+    @get:Input                               // => @Input marks property for up-to-date checking
     abstract val greeting: Property<String>
-
+                                             // => Property<String> is Gradle's lazy property type
     // => abstract val requires Gradle to provide implementation
     @get:Input
     abstract val name: Property<String>
 
-    @TaskAction
+    @TaskAction                              // => @TaskAction marks method as task execution entry point
     fun greet() {
         // => name.get() retrieves name value
         // => Output: Hello, Kotlin Developer! (with default config below)
         println("${greeting.get()}, ${name.get()}!")
+                                             // => greeting.get() = "Hello", name.get() = "Kotlin Developer"
     }
 }
 
 // Register typed task with configuration
 tasks.register<GreetTask>("greet") {
-    group = "custom"
-    description = "Greets someone"
+    group = "custom"                         // => Task appears in "custom" group (gradle tasks --group custom)
+    description = "Greets someone"           // => Task description in gradle tasks output
 
     // => Value stored for later retrieval in @TaskAction
-    greeting.set("Hello")
-
-    name.set("Kotlin Developer")
+    greeting.set("Hello")                    // => greeting Property configured to "Hello"
+                                             // => Retrieved via greeting.get() in greet()
+    name.set("Kotlin Developer")             // => name Property configured to "Kotlin Developer"
 }
 
 // Task with file output and build metadata
@@ -4338,10 +4368,11 @@ data class User(
     val name: String,
     // => email stored permanently on construction
     val email: String,
-    val roles: List<String> = emptyList(),
+    val roles: List<String> = emptyList(),   // => Default empty list (no roles by default)
     // => Map<String, String> is read-only interface
     // => Metadata for extensibility without schema changes
     val metadata: Map<String, String> = emptyMap()
+                                             // => Default empty map (no metadata by default)
 ) {
     // => withName() follows naming convention for immutable updates
     // => copy() is auto-generated by data class modifier
@@ -4350,12 +4381,14 @@ data class User(
 
     // => addRole() doesn't modify roles list (immutable)
     fun addRole(role: String): User = copy(roles = roles + role)
+                                             // => roles + role creates new list with added element
     // => + operator on List<T> is syntactic sugar for plus()
     // => Original roles list unchanged (List is read-only interface)
 
     // => metadata + (key to value) uses map addition operator
     fun updateMetadata(key: String, value: String): User =
         copy(metadata = metadata + (key to value))
+                                             // => key to value creates Pair(key, value)
     // => If key exists, value overwritten in new map (old map unchanged)
 }
 
@@ -4387,16 +4420,18 @@ data class Order(
     // => Doesn't mutate this instance (follows immutability principle)
     fun addItem(item: OrderItem): Order {
         // => items is read-only List<OrderItem> (no mutating add())
-        val newItems = items + item
+        val newItems = items + item          // => Create new list with added item
         // => it.price * it.quantity computes line item total
         val newTotal = newItems.sumOf { it.price * it.quantity }
+                                             // => Recalculate total from all items (prevents inconsistency)
         // => Double.sumOf() ensures floating-point arithmetic
         return copy(items = newItems, total = newTotal)
+                                             // => Return new Order with updated items and total
         // => Original Order unchanged (id, status preserved)
     }
 
     fun updateStatus(newStatus: OrderStatus): Order =
-        copy(status = newStatus)
+        copy(status = newStatus)             // => Create new Order with updated status
     // => Only status changed, items and total preserved
 
     // => removeItem() filters out item by ID and recalculates total
