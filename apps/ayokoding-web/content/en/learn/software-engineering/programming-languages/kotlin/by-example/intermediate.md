@@ -13,6 +13,16 @@ This section covers production Kotlin patterns from examples 28-54, achieving 40
 
 Coroutines enable asynchronous programming without blocking threads. `runBlocking` creates a coroutine scope that blocks the current thread until all child coroutines complete. `launch` starts a fire-and-forget coroutine that runs concurrently.
 
+**Coroutine Builders**:
+
+- **runBlocking**: Blocks the current thread while bridging blocking and suspending code. Use for main functions and tests.
+- **launch**: Fire-and-forget coroutine builder that returns a Job. Structured concurrency ensures parent waits for children.
+- **delay**: Non-blocking suspension that releases the thread for other work (unlike Thread.sleep).
+
+**Structured Concurrency**: Child coroutines (launched) are tracked by parent scope (runBlocking). If parent cancels, children auto-cancel. Uncaught exceptions propagate to parent and cancel entire scope.
+
+**Thread Behavior**: `delay` suspends the coroutine without blocking the thread. The thread can execute other coroutines during suspension. When the coroutine resumes, it may execute on a different thread from the thread pool.
+
 ```mermaid
 %% Coroutine execution flow showing suspension without blocking
 sequenceDiagram
@@ -38,88 +48,54 @@ sequenceDiagram
 
 ```kotlin
 import kotlinx.coroutines.*
-// => kotlinx.coroutines provides coroutine builders (launch, async, runBlocking)
 // => Requires 'org.jetbrains.kotlinx:kotlinx-coroutines-core' dependency
 
 fun main() = runBlocking {
-    // => runBlocking: coroutine builder that BLOCKS the current thread (main thread here)
-    // => Use case: bridge between blocking world (main) and suspending world (coroutines)
+    // => runBlocking blocks main thread until all children complete
 
     println("Main starts")
     // => Output: Main starts
-    // => Thread: main thread, NOT a separate coroutine thread
-    // => Timestamp: T=0ms (baseline for timing measurements)
+    // => T=0ms on main thread
 
-    // Launch fire-and-forget coroutine
     launch {
-        // => launch: coroutine builder for fire-and-forget concurrent execution
-        // => Job state: NEW -> ACTIVE immediately (starts executing)
-        // => Thread pool: uses Dispatchers.Default (shared thread pool) if not specified
-        // => Parent-child: this coroutine is a CHILD of runBlocking scope (structured concurrency)
-        // => Cancellation: if runBlocking scope cancels, this coroutine auto-cancels (structured concurrency)
-        // => Exception: uncaught exception here propagates to parent and cancels entire scope
-        // => Return value: Job object (Job state machine: NEW/ACTIVE/COMPLETING/COMPLETED/CANCELLING/CANCELLED)
+        // => launch returns Job, starts child coroutine
+        // => Child inherits parent scope (structured concurrency)
 
         println("Coroutine starts")
-        // => Output: Coroutine starts
-        // => Execution order: runs AFTER "Main continues" (launch is scheduled, not immediate)
-        // => Timestamp: T=~0-1ms (minimal scheduling delay)
+        // => Output: Coroutine starts (runs AFTER "Main continues")
+        // => T=~0-1ms on dispatcher thread
 
         delay(1000)
-        // => Thread behavior: thread that executed "Coroutine starts" can now run OTHER coroutines
+        // => Suspends coroutine, releases thread for other work
 
         println("Coroutine ends")
         // => Output: Coroutine ends
-        // => Execution: runs AFTER 1000ms delay completes
-        // => Thread: may execute on DIFFERENT thread than "Coroutine starts" (thread pool reuses threads)
-        // => Job state: coroutine transitions to COMPLETING (body finished, but cleanup pending)
-        // => Parent notification: signals runBlocking scope that this child is complete
-        // => Order: appears BEFORE "Main ends" because main delay is 1500ms
+        // => T=1000ms, may execute on different thread
     }
-    // => Job state: ACTIVE (coroutine is running concurrently)
-    // => Structured concurrency: runBlocking tracks this Job as child coroutine
+    // => launch doesn't block - main continues immediately
 
     println("Main continues")
     // => Output: Main continues
-    // => Concurrency proof: this line proves launch doesn't block - main continues executing
+    // => Proves launch is non-blocking
 
     delay(1500)
-    // => Thread behavior: main thread is BLOCKED (runBlocking blocks thread until completion)
-    // => Why 1500ms: ensures launched coroutine (1000ms delay) has time to complete
-    // => Suspension: runBlocking coroutine suspends, BUT main thread remains blocked
-    // => Critical difference: delay in runBlocking still blocks main thread (runBlocking semantics)
-    // => Scheduler: uses same DelayedTaskScheduler as launched coroutine's delay
-    // => Resume: runBlocking coroutine resumes at T=1500ms on main thread
+    // => Suspends runBlocking coroutine, main thread BLOCKED
+    // => Ensures launched coroutine has time to complete
 
     println("Main ends")
     // => Output: Main ends
-    // => Thread: main thread (runBlocking coroutine resumed)
-    // => Job state: runBlocking Job transitions to COMPLETING -> COMPLETED
+    // => T=1500ms on main thread
 }
-// => Total execution time: ~1500ms (determined by longest delay in scope)
-// => Thread pool: dispatcher threads remain alive (shared across application)
-
-// => Execution order (chronological):
-// => T=0ms:     "Main starts" (main thread, runBlocking body starts)
-// => T=0ms:     "Main continues" (main thread, launch doesn't block)
-// => T=~0-1ms:  "Coroutine starts" (dispatcher thread, launched coroutine begins)
-// => T=~1ms:    delay(1000) in launched coroutine (suspends, thread released)
-// => T=~1ms:    delay(1500) in runBlocking (suspends, main thread BLOCKED)
-// => T=1000ms:  "Coroutine ends" (dispatcher thread, launched coroutine resumes and completes)
-// => T=1500ms:  "Main ends" (main thread, runBlocking resumes and completes)
-
-// => Thread usage comparison:
-// => Traditional blocking (Thread.sleep):
-// => Coroutines (delay):
-// =>   - Total: 1 thread blocked, 1 thread efficiently reused = ~1MB wasted vs 2MB
-
-// => Key concepts demonstrated:
-// => 1. runBlocking: bridge from blocking to suspending world (blocks thread)
-// => 3. delay: non-blocking suspension (releases thread for other work)
-// => 4. Structured concurrency: parent waits for children (runBlocking waits for launched coroutine)
-// => 5. Thread efficiency: dispatcher threads reused during suspension (no thread blocking)
-// => 6. Execution order: launch queues coroutine, doesn't execute immediately
+// => Total execution: ~1500ms (longest delay in scope)
 ```
+
+**Execution Order**:
+
+- T=0ms: "Main starts" (main thread)
+- T=0ms: "Main continues" (main thread, launch doesn't block)
+- T=~0-1ms: "Coroutine starts" (dispatcher thread)
+- T=1000ms: "Coroutine ends" (dispatcher thread)
+- T=1500ms: "Main ends" (main thread)
 
 **Key Takeaway**: Use `runBlocking` for bridging blocking and coroutine code, `launch` for fire-and-forget concurrent tasks, and `delay` for non-blocking suspension.
 
@@ -427,135 +403,99 @@ fun main() = runBlocking {
 
 ## Example 31: Coroutine Context and Dispatchers
 
-Dispatchers control which thread pool executes coroutines. `Dispatchers.Default` for CPU work, `Dispatchers.IO` for I/O operations, `Dispatchers.Main` for UI updates.
+Dispatchers control which thread pool executes coroutines.
+
+**Dispatcher Types**:
+
+- **Dispatchers.Default**: CPU-intensive work. Pool size = CPU cores (e.g., 8 threads on 8-core CPU). Use for computation, parsing, sorting.
+- **Dispatchers.IO**: I/O operations. Pool size = max(64, CPU cores × 2). Use for file I/O, database queries, network requests. Shares underlying threads with Default but different limits.
+- **Dispatchers.Unconfined**: No thread affinity. Starts on caller thread, resumes wherever suspension completes. AVOID in production (unpredictable threading).
+- **Custom dispatchers**: Create dedicated thread pools. Use `newSingleThreadContext()` for serial execution, actor model, thread-confined state. Must call `close()` to release resources.
+
+**Thread Behavior**: Coroutines may resume on different threads after suspension (no thread affinity in Default/IO pools). Threads released during `delay()` for other coroutines to use.
 
 ```kotlin
 import kotlinx.coroutines.*
-// => Import dispatchers (Default, IO, Unconfined) and context management
-// => Dispatchers: thread pool abstractions for different workload types
-// => Context: carries metadata (dispatcher, job, exception handler) for coroutines
 
 fun main() = runBlocking {
-    // => Default context: uses main thread's dispatcher (NOT pooled)
-    // => Scope: provides CoroutineScope receiver for launching child coroutines with custom dispatchers
-
-    // Default dispatcher (optimized for CPU-intensive work)
+    // Default dispatcher (CPU-intensive work)
     launch(Dispatchers.Default) {
-        // => Dispatchers.Default: shared thread pool for CPU-bound work (NOT I/O)
-        // => Pool size: number of CPU cores (e.g., 8 threads on 8-core machine)
-        // => Use case: compute-intensive tasks (sorting, parsing, calculations)
-        // => Thread sharing: multiple coroutines share pool threads (cooperative multitasking)
-        // => Context inheritance: inherits job and exception handler from parent (runBlocking)
-        // => Override: explicit dispatcher REPLACES parent's dispatcher (doesn't inherit)
+        // => Uses Default thread pool (CPU cores threads)
 
         val threadName = Thread.currentThread().name
-        // => Captures current thread name executing this coroutine
-        // => Thread pool: thread from Default dispatcher's pool (NOT main thread)
-        // => Worker naming: "DefaultDispatcher-worker-N" where N is worker index
+        // => e.g., "DefaultDispatcher-worker-1"
 
         println("Default: $threadName")
         // => Output: Default: DefaultDispatcher-worker-1
-        // => Worker index: may vary (worker-1, worker-2, etc.) depending on availability
-        // => Comparison: NOT main thread (different from runBlocking's default)
 
         repeat(3) { i ->
-            // => CPU work simulation: represents compute-intensive operations
-            // => Use case: sorting large arrays, parsing JSON, cryptographic operations
-
             println("CPU work $i")
             // => Output: CPU work 0, CPU work 1, CPU work 2
-            // => Simulates: progress reporting during computation
-            // => Timestamp: T=0ms, 100ms, 200ms (with delays)
-
             delay(100)
-            // => Thread: released back to Default pool during delay
-            // => Cooperative: yields execution to other coroutines in pool
-            // => Resume: may resume on DIFFERENT thread in same pool (thread non-affinity)
+            // => Thread released during delay, may resume on different thread
         }
-        // => Thread usage: efficiently shares threads with other coroutines during delays
     }
 
-    // IO dispatcher (optimized for I/O operations, larger thread pool)
+    // IO dispatcher (I/O operations, larger pool)
     launch(Dispatchers.IO) {
-        // => Dispatchers.IO: larger thread pool than Default (optimized for blocking I/O)
-        // => Pool size: max(64, CPU cores × 2) threads (e.g., 64 threads default)
-        // => Use case: file I/O, database queries, network requests
-        // => Blocking tolerance: can handle more blocking operations than Default
-        // => Shares threads: IO pool shares threads from Default pool (both backed by same threads)
-        // => Difference from Default: different pool limits and scheduling priorities
+        // => Uses IO thread pool (64+ threads)
 
         val threadName = Thread.currentThread().name
-        // => Captures IO dispatcher thread name
-        // => Pool sharing: may use same physical threads as Default dispatcher
-        // => Naming: same "DefaultDispatcher-worker-N" naming (shared underlying pool)
-
         println("IO: $threadName")
         // => Output: IO: DefaultDispatcher-worker-2
-        // => Not main: different from runBlocking's main thread
 
-        // Simulate file I/O or network call
         delay(500)
-        // => Suspends for 500ms (simulates I/O operation)
-        // => Thread: released during delay (non-blocking)
-        // => Real-world: replace with actual blocking I/O (File.readText, HTTP request)
+        // => Simulates I/O operation (file read, HTTP request)
 
         println("IO complete")
         // => Output: IO complete
-        // => Thread: may resume on different IO pool thread
     }
 
-    // Unconfined dispatcher (runs on caller thread initially, then resumes on different threads)
+    // Unconfined dispatcher (unpredictable threading)
     launch(Dispatchers.Unconfined) {
-        // => Use case: testing, performance optimization (avoids thread switching)
-        // => Production warning: AVOID in most cases (unpredictable thread behavior)
-        // => Thread affinity: NO thread affinity (can switch threads at any suspension point)
-
         println("Unconfined initial: ${Thread.currentThread().name}")
-        // => Output: Unconfined initial: main
+        // => Output: Unconfined initial: main (starts on caller thread)
 
         delay(100)
-        // => Suspends for 100ms
-        // => Thread: main thread released during delay
-        // => Resumption: continuation scheduled on delay scheduler's thread (NOT main)
+        // => Suspends, releases main thread
 
         println("Unconfined resumed: ${Thread.currentThread().name}")
         // => Output: Unconfined resumed: kotlinx.coroutines.DefaultExecutor
-        // => Thread switch: main -> DefaultExecutor (unpredictable thread hopping)
-        // => Production risk: unpredictable threading makes debugging difficult
+        // => Thread switch: main -> DefaultExecutor (unpredictable)
     }
 
-    // Custom dispatcher with single thread
+    // Custom dispatcher (single dedicated thread)
     val customDispatcher = newSingleThreadContext("CustomThread")
-    // => Thread pool: SINGLE dedicated thread (serial execution)
-    // => Use case: sequential execution, actor model, thread-confined state
-    // => Thread name: "CustomThread" (custom name for debugging)
-    // => Lifecycle: must explicitly close() when done (resource management)
-    // => Warning: newSingleThreadContext deprecated (use newSingleThreadExecutor in production)
+    // => Creates dedicated thread named "CustomThread"
+    // => Must call close() when done
 
     launch(customDispatcher) {
-        // => Thread: "CustomThread" (dedicated thread from custom dispatcher)
-        // => Isolation: coroutines on this dispatcher don't share threads with Default/IO
-
         println("Custom: ${Thread.currentThread().name}")
         // => Output: Custom: CustomThread
-        // => Thread isolation: NOT main, NOT Default pool, NOT IO pool
     }
-    // => Custom dispatcher coroutine completes
-    // => Thread: CustomThread thread remains alive until dispatcher.close()
 
     customDispatcher.close()
-    // => Closes custom dispatcher: terminates "CustomThread" thread
-    // => Warning: launching on closed dispatcher throws IllegalStateException
+    // => Closes dispatcher, terminates CustomThread
 
     delay(1000)
-    // => Thread: main thread released during delay
-    // => Children: Default (300ms), IO (500ms), Unconfined (100ms), Custom (<10ms)
+    // => Waits for all child coroutines to complete
 }
-// => Dispatcher comparison:
-// => Default: CPU cores threads, CPU-bound work, shared pool
-// => IO: 64+ threads, I/O-bound work, larger pool (shares Default threads)
-// => Custom: single thread, sequential execution, must close() (resource management)
 ```
+
+**Dispatcher Comparison**:
+
+- **Default**: CPU cores threads, CPU-bound work (computation, parsing)
+- **IO**: 64+ threads, I/O-bound work (file I/O, network, database)
+- **Unconfined**: No dedicated threads, testing only (unpredictable in production)
+- **Custom**: Dedicated threads, sequential execution, must manage lifecycle
+
+**Use Cases**:
+
+- Default: Sorting large arrays, parsing JSON, cryptographic operations
+- IO: File reads/writes, HTTP requests, database queries
+- Custom: Actor model, thread-confined mutable state, sequential processing
+
+````
 
 **Key Takeaway**: Choose `Dispatchers.Default` for CPU work, `Dispatchers.IO` for blocking I/O, and create custom dispatchers for specific threading needs.
 
@@ -594,7 +534,7 @@ sequenceDiagram
     Producer->>Channel: close()
     Note over Channel: No more sends allowed
 
-```
+````
 
 ```kotlin
 import kotlinx.coroutines.*
@@ -1111,6 +1051,12 @@ fun main() = runBlocking {
 
 `StateFlow` holds a single state value with initial state; subscribers get current state immediately. `SharedFlow` broadcasts events to all collectors without state retention.
 
+**StateFlow vs SharedFlow:**
+
+- **StateFlow**: Hot stream with state retention. Requires initial value. New collectors get current state immediately. Conflation: rapid updates merged (latest wins). Use case: observable state (UI state, ViewModel state)
+- **SharedFlow**: Hot stream for event broadcasting. No state retention (unless replay > 0). No initial value. New collectors miss past events (replay=0 default). Use case: one-time events (button clicks, errors, navigation)
+- **Hot vs Cold**: Hot streams (StateFlow/SharedFlow) emit regardless of collectors with single shared stream. Cold streams create new instance per collector
+
 **StateFlow Behavior:**
 
 ```mermaid
@@ -1141,235 +1087,142 @@ graph TD
     style SHFC2 fill:#CC78BC,color:#000
 ```
 
+**Implementation Pattern:**
+
+- **Encapsulation**: Private mutable flows (`MutableStateFlow`, `MutableSharedFlow`), public read-only interfaces (`StateFlow`, `SharedFlow`)
+- **MutableSharedFlow defaults**: replay=0, extraBufferCapacity=0, onBufferOverflow=SUSPEND
+- **Thread-safety**: Both StateFlow.value and SharedFlow.emit() are thread-safe
+- **Lifecycle**: Flows exist as long as containing instance exists
+
 ```kotlin
 import kotlinx.coroutines.*
-// => Provides: runBlocking (main bridge), launch (fire-and-forget), delay (suspension)
-// => Dependency: org.jetbrains.kotlinx:kotlinx-coroutines-core
+// => Provides runBlocking, launch, delay
 
 import kotlinx.coroutines.flow.*
-// => Import Flow types and builders for hot and cold streams
-// => Provides: StateFlow (hot state stream), SharedFlow (hot event stream)
-// => MutableStateFlow/MutableSharedFlow: writable versions of hot flows
-// => Hot stream: emits values regardless of collectors (vs cold: only on collect)
+// => Provides StateFlow, SharedFlow, MutableStateFlow, MutableSharedFlow
 
 class Counter {
-    // => Encapsulation: private mutable flows, public read-only interfaces
-
     private val _stateFlow = MutableStateFlow(0)
-    // => MutableStateFlow<Int>: hot flow holding current state value
-    // => Initial value: 0 (REQUIRED - StateFlow MUST have initial value)
-    // => Conflation: if multiple values emitted rapidly, only latest delivered
-    // => Visibility: private to prevent external mutation (internal state)
-    // => Lifecycle: exists as long as Counter instance exists
-
+    // => Initial value: 0 (required for StateFlow)
     val stateFlow: StateFlow<Int> = _stateFlow
-    // => StateFlow<Int>: public read-only interface to _stateFlow
-    // => Assignment: references same underlying flow as _stateFlow
-    // => Collectors: get current value IMMEDIATELY upon collection
+    // => Public read-only interface
 
     private val _sharedFlow = MutableSharedFlow<String>()
-    // => MutableSharedFlow<String>: hot flow for broadcasting events
-    // => Default config: replay=0 (new collectors don't get past events)
-    // => extraBufferCapacity=0 (no buffer beyond replay)
-    // => onBufferOverflow=SUSPEND (blocks emitter if buffer full)
-    // => Thread-safety: .emit() is thread-safe (suspends on contention)
-    // => Visibility: private to control emission (only Counter can emit)
-
+    // => Default: replay=0 (no past events for new collectors)
     val sharedFlow: SharedFlow<String> = _sharedFlow
-    // => SharedFlow<String>: public read-only interface to _sharedFlow
-    // => Assignment: references same underlying flow as _sharedFlow
-    // => Collectors: do NOT get past events (replay=0 by default)
-    // => Use case: expose events to multiple observers (UI components, analytics)
+    // => Public read-only interface
 
     fun increment() {
-
         _stateFlow.value++
-        // => _stateFlow.value: current state value (read)
-        // => Increment: value = value + 1 (atomic read-modify-write)
-        // => Notification: ALL active collectors notified of new value
-        // => Comparison: StateFlow.update { it + 1 } safer for concurrent updates
-
+        // => Notifies ALL active collectors
+        // => Alternative: StateFlow.update { it + 1 } (safer for concurrent updates)
         println("State updated: ${_stateFlow.value}")
-        // => String template: embeds value in output string
     }
 
     suspend fun emitEvent(event: String) {
-        // => suspend modifier: .emit() is suspending (can pause if buffer full)
-
         _sharedFlow.emit(event)
-        // => Broadcast: sends to ALL active collectors simultaneously
-        // => Suspension: suspends if buffer full (default: suspend on overflow)
-
+        // => Broadcasts to ALL active collectors
+        // => Suspends if buffer full
         println("Event emitted: $event")
-        // => Confirmation: proves event was successfully emitted
     }
 }
 
 fun main() = runBlocking {
-    // => Scope: CoroutineScope for launching child coroutines
-
     val counter = Counter()
-    // => counter: instance of Counter class with StateFlow and SharedFlow
-    // => Initialization: _stateFlow created with value=0, _sharedFlow empty
-    // => State: _stateFlow.value = 0 (initial), no SharedFlow events yet
+    // => _stateFlow.value = 0, no SharedFlow events yet
 
     // StateFlow collector 1 (gets initial value immediately)
     launch {
-        // => launch: starts coroutine for StateFlow collection
-        // => Dispatcher: default (shared thread pool)
-        // => Lifecycle: collect {} runs indefinitely (StateFlow never completes)
-        // => Parent: runBlocking scope (structured concurrency)
-
         counter.stateFlow.collect { value ->
-            // => collect: terminal operator that subscribes to StateFlow
-            // => Hot stream: receives current value (0) IMMEDIATELY upon collection
-            // => Suspension: collect never completes (StateFlow is infinite)
-            // => Initial emission: value = 0 (immediate upon collection)
-            // => Conflation: if state updates rapidly, only latest value received
-
+            // => Receives 0 immediately (current state)
+            // => Then 1, then 2 as state updates
             println("Collector 1 state: $value")
-            // => Output: Collector 1 state: 0 (initial, T=~0ms)
-            // => Thread: dispatcher thread (not main thread)
-            // => Order: collector 1 gets ALL state updates (0, 1, 2)
+            // => Output: Collector 1 state: 0 (T=~0ms)
+            // => Output: Collector 1 state: 1 (T=~200ms)
+            // => Output: Collector 1 state: 2 (T=~300ms)
         }
-        // => Cancellation: only when parent scope (runBlocking) cancels
     }
-    // => Job state: ACTIVE (coroutine collecting StateFlow)
-    // => Collector 1: already received initial value 0 by this point
 
     delay(100)
-    // => delay(100): suspends runBlocking for 100ms
-    // => Thread: main thread BLOCKED (runBlocking semantics)
+    // => T=100ms
 
     // StateFlow collector 2 (gets current state immediately)
     launch {
-        // => Current state: _stateFlow.value = 0 (no increments yet)
-        // => New collector: gets CURRENT state immediately (hot stream behavior)
-
         counter.stateFlow.collect { value ->
-            // => Hot stream: multiple collectors share same flow (not independent)
-            // => Initial emission: value = 0 (current state at T=100ms)
-            // => Late subscriber: gets current state, NOT full history
-            // => Conflation: same conflation behavior as collector 1
-
+            // => Receives 0 immediately (current state at T=100ms)
+            // => Misses no history because StateFlow always has current value
             println("Collector 2 state: $value")
-            // => Output: Collector 2 state: 0 (initial, T=~100ms)
-            // => Thread: dispatcher thread (separate from collector 1)
-            // => Order: interleaved with collector 1 outputs (both active)
+            // => Output: Collector 2 state: 0 (T=~100ms)
+            // => Output: Collector 2 state: 1 (T=~200ms)
+            // => Output: Collector 2 state: 2 (T=~300ms)
         }
     }
-    // => Two collectors: both active, both receiving state updates
 
     delay(100)
-    // => delay(100): suspends runBlocking for another 100ms
-    // => Timing: T=200ms total (100ms + 100ms)
+    // => T=200ms
 
     counter.increment()
-    // => State change: _stateFlow.value: 0 -> 1
+    // => _stateFlow.value: 0 -> 1
     // => Output: State updated: 1
-    // => Notification: BOTH collectors notified asynchronously
-    // => Timing: T=~200ms
+    // => Both collectors notified
 
     delay(100)
-    // => Timing: T=300ms total
-    // => State: both collectors processed value 1 by now
+    // => T=300ms
 
     counter.increment()
-    // => State change: _stateFlow.value: 1 -> 2
+    // => _stateFlow.value: 1 -> 2
     // => Output: State updated: 2
-    // => Notification: BOTH collectors notified of value 2
-    // => Timing: T=~300ms
+    // => Both collectors notified
 
     // SharedFlow collectors
     launch {
-        // => launch: starts SharedFlow collector 1
-        // => Replay: 0 (default), so no past events received
-
         counter.sharedFlow.collect { event ->
-            // => collect: subscribes to SharedFlow events
-            // => No immediate emission: SharedFlow has no current value
-            // => Only future events: receives events emitted AFTER this collection starts
-
+            // => No immediate emission (SharedFlow has no current value)
+            // => Only receives events emitted AFTER collection starts
             println("SharedFlow collector 1: $event")
             // => Output: SharedFlow collector 1: Event A (T=~400ms)
             // => Output: SharedFlow collector 1: Event B (T=~500ms)
-            // => No initial output: collector waits for events
-            // => Thread: dispatcher thread
         }
     }
 
     launch {
-        // => launch: starts SharedFlow collector 2
-        // => Timing: T=~300ms (nearly simultaneous with collector 1)
-        // => Independent: separate coroutine, but receives SAME events
-
         counter.sharedFlow.collect { event ->
-            // => Hot stream: multiple collectors receive ALL events
-
             println("SharedFlow collector 2: $event")
             // => Output: SharedFlow collector 2: Event A (T=~400ms)
             // => Output: SharedFlow collector 2: Event B (T=~500ms)
-            // => Order: interleaved with collector 1 (both receive simultaneously)
-            // => Thread: dispatcher thread (separate from collector 1)
         }
     }
-    // => Two SharedFlow collectors: both active, both waiting for events
 
     delay(100)
-    // => Timing: T=400ms total
+    // => T=400ms
 
     counter.emitEvent("Event A")
-    // => Event: "Event A" broadcasted to BOTH collectors
     // => Output: Event emitted: Event A
-    // => Timing: T=~400ms
-    // => Suspension: emitEvent suspends if buffer full (not here, buffer empty)
-    // => Broadcast: both collectors receive event simultaneously
+    // => Both collectors receive Event A
 
     delay(100)
-    // => Timing: T=500ms total
+    // => T=500ms
 
     counter.emitEvent("Event B")
-    // => Event: "Event B" broadcasted to BOTH collectors
     // => Output: Event emitted: Event B
-    // => Timing: T=~500ms
-    // => No replay: if new collector starts now, misses Events A and B
+    // => Both collectors receive Event B
+    // => New collectors starting now would miss Events A and B (replay=0)
 
     delay(500)
-    // => Timing: T=1000ms total
+    // => T=1000ms total
 }
-// => runBlocking completes here
-// => Total execution: ~1000ms (determined by final delay)
-
-// => StateFlow summary:
-// => - Hot stream: active without collectors
-// => - State retention: always has current value
-// => - New collectors: get current state IMMEDIATELY
-// => - Conflation: rapid updates merged (latest wins)
-// => - Use case: observable state (UI state, ViewModel state)
-
-// => SharedFlow summary:
-// => - Hot stream: active without collectors
-// => - No state: events not retained (unless replay > 0)
-// => - No initial value: no concept of current state
-// => - New collectors: miss past events (replay=0)
-// => - Use case: one-time events (button clicks, errors, navigation)
-
-// => Hot vs Cold streams:
-// => - Hot (StateFlow/SharedFlow): emit regardless of collectors
-// => - Hot: single shared stream, multiple collectors
-// => - Cold: new stream instance per collector
-
-// => Comparison with Android LiveData:
-// => - LiveData: lifecycle-aware, nullable, not coroutine-native
-// => - StateFlow: not lifecycle-aware, non-null, coroutine-native
-// => - LiveData.setValue(): main thread only
-// => - StateFlow.value: thread-safe, any thread
-
-// => Performance characteristics:
-// => - StateFlow collectors: O(N) notification (N = number of collectors)
-// => - Conflation: prevents UI overload (only latest value matters)
-// => - Thread-safety: built-in (no external synchronization needed)
 ```
+
+**Comparison with Android LiveData:**
+
+- **LiveData**: Lifecycle-aware, nullable, not coroutine-native, setValue() main thread only
+- **StateFlow**: Not lifecycle-aware, non-null, coroutine-native, value assignment thread-safe
+
+**Performance:**
+
+- **StateFlow collectors**: O(N) notification where N = number of collectors
+- **Conflation**: Prevents UI overload (only latest value matters)
+- **Thread-safety**: Built-in (no external synchronization needed)
 
 **Key Takeaway**: Use `StateFlow` for observable state with initial value and conflation; use `SharedFlow` for event broadcasting without state.
 
@@ -1379,61 +1232,46 @@ fun main() = runBlocking {
 
 Kotlin provides rich functional operations on collections. These operations don't modify original collections but return new ones.
 
+**Operation Categories**:
+
+- **map**: One-to-one transformation (input size = output size). Can change element type.
+- **filter**: Selection by predicate (input size ≥ output size). Keeps only matching elements.
+- **reduce**: Many-to-one aggregation. Uses first element as initial accumulator. Throws on empty collection.
+- **fold**: Like reduce but with explicit initial value. Safe on empty collections.
+- **flatMap**: One-to-many transformation with flattening. Maps nested structures to flat list.
+
+**Immutability**: All operations return new collections. Original collection remains unchanged (thread-safe).
+
+**Performance**: O(N) time per operation. Use `asSequence()` for lazy evaluation on large collections.
+
+**reduce vs fold**: `reduce` requires non-empty collection and uses first element as accumulator. `fold` accepts explicit initial value and works on empty collections (safer for production code).
+
 ```kotlin
 fun main() {
-    // => Functional operations: transform, filter, aggregate without mutation
-
     val numbers = listOf(1, 2, 3, 4, 5, 6)
-    // => Elements: [1, 2, 3, 4, 5, 6]
-    // => Use case: source data for transformation operations
+    // => [1, 2, 3, 4, 5, 6]
 
     // map: transform each element
     val doubled = numbers.map { it * 2 }
-    // => Transformation: it * 2 (multiply by 2)
-    // => Process: [1*2, 2*2, 3*2, 4*2, 5*2, 6*2] = [2, 4, 6, 8, 10, 12]
-    // => Original: numbers still [1, 2, 3, 4, 5, 6] (immutable)
-    // => One-to-one mapping: input size = output size (6 elements -> 6 elements)
+    // => [2, 4, 6, 8, 10, 12]
 
     val strings = numbers.map { "N$it" }
-    // => map(): same operation, different transformation
-    // => Transformation: "N$it" (string concatenation with prefix)
-    // => String template: "N$it" evaluates to "N1", "N2", "N3", "N4", "N5", "N6"
-    // => Process: [1, 2, 3, 4, 5, 6] -> ["N1", "N2", "N3", "N4", "N5", "N6"]
-    // => Type transformation: Int -> String (map can change element type)
+    // => ["N1", "N2", "N3", "N4", "N5", "N6"] (Int -> String)
 
     println("Doubled: $doubled")
     // => Output: Doubled: [2, 4, 6, 8, 10, 12]
-    // => $doubled: template substitution, List.toString() formats as [elem1, elem2, ...]
 
     println("Strings: $strings")
     // => Output: Strings: [N1, N2, N3, N4, N5, N6]
-    // => $strings: List<String> formatted with toString()
 
     // filter: keep elements matching predicate
     val evens = numbers.filter { it % 2 == 0 }
-    // => Predicate: it % 2 == 0 (true if even, false if odd)
-    // => Evaluation:
-    // =>   - 1 % 2 == 0 -> false (skip)
-    // =>   - 2 % 2 == 0 -> true (keep)
-    // =>   - 3 % 2 == 0 -> false (skip)
-    // =>   - 4 % 2 == 0 -> true (keep)
-    // =>   - 5 % 2 == 0 -> false (skip)
-    // =>   - 6 % 2 == 0 -> true (keep)
-    // => Result: [2, 4, 6] (only even numbers)
-    // => Size change: 6 elements -> 3 elements (filtering reduces size)
+    // => Keeps 2, 4, 6 (even numbers)
+    // => [2, 4, 6]
 
     val greaterThan3 = numbers.filter { it > 3 }
-    // => filter(): different predicate, same mechanism
-    // => Predicate: it > 3 (true if value greater than 3)
-    // => Evaluation:
-    // =>   - 1 > 3 -> false (skip)
-    // =>   - 2 > 3 -> false (skip)
-    // =>   - 3 > 3 -> false (skip, equality not satisfied)
-    // =>   - 4 > 3 -> true (keep)
-    // =>   - 5 > 3 -> true (keep)
-    // =>   - 6 > 3 -> true (keep)
-    // => Result: [4, 5, 6] (values greater than 3)
-    // => Size change: 6 elements -> 3 elements
+    // => Keeps 4, 5, 6
+    // => [4, 5, 6]
 
     println("Evens: $evens")
     // => Output: Evens: [2, 4, 6]
@@ -1443,122 +1281,68 @@ fun main() {
 
     // reduce: accumulate values (requires non-empty collection)
     val sum = numbers.reduce { acc, value -> acc + value }
-    // => reduce(): accumulates elements using binary operation
-    // => Initial acc: FIRST element (1) - no separate initial value
-    // => Process (left-to-right accumulation):
-    // =>   - Step 2: acc=3, value=3 -> acc+value = 3+3 = 6
-    // =>   - Step 3: acc=6, value=4 -> acc+value = 6+4 = 10
-    // =>   - Step 4: acc=10, value=5 -> acc+value = 10+5 = 15
-    // =>   - Step 5: acc=15, value=6 -> acc+value = 15+6 = 21
-    // => Requirement: collection MUST be non-empty (throws on empty)
-    // => Use case: sum, product, max, min operations without initial value
+    // => acc starts at 1 (first element)
+    // => 1+2=3, 3+3=6, 6+4=10, 10+5=15, 15+6=21
+    // => 21
 
     val product = numbers.reduce { acc, value -> acc * value }
-    // => reduce(): same mechanism, multiplication operation
-    // => Process (multiplication accumulation):
-    // =>   - Step 1: acc=1, value=2 -> acc*value = 1*2 = 2
-    // =>   - Step 2: acc=2, value=3 -> acc*value = 2*3 = 6
-    // =>   - Step 3: acc=6, value=4 -> acc*value = 6*4 = 24
-    // =>   - Step 4: acc=24, value=5 -> acc*value = 24*5 = 120
-    // =>   - Step 5: acc=120, value=6 -> acc*value = 120*6 = 720
-    // => Danger: empty list throws UnsupportedOperationException
+    // => 1*2=2, 2*3=6, 6*4=24, 24*5=120, 120*6=720
+    // => 720
 
     println("Sum: $sum")
     // => Output: Sum: 21
-    // => Verification: 1+2+3+4+5+6 = 21
 
     println("Product: $product")
     // => Output: Product: 720
-    // => Verification: 1*2*3*4*5*6 = 720
 
     // fold: reduce with initial value (works on empty collections)
     val sumWithInitial = numbers.fold(100) { acc, value -> acc + value }
-    // => fold(100): accumulation with EXPLICIT initial value
-    // => Process (left-to-right with initial value):
-    // =>   - Step 1: acc=100, value=1 -> acc+value = 100+1 = 101
-    // =>   - Step 2: acc=101, value=2 -> acc+value = 101+2 = 103
-    // =>   - Step 3: acc=103, value=3 -> acc+value = 103+3 = 106
-    // =>   - Step 4: acc=106, value=4 -> acc+value = 106+4 = 110
-    // =>   - Step 5: acc=110, value=5 -> acc+value = 110+5 = 115
-    // =>   - Step 6: acc=115, value=6 -> acc+value = 115+6 = 121
-    // => Result: 121 (initial 100 + sum of elements 21 = 121)
-    // => Comparison: fold safer than reduce (no exception on empty)
+    // => acc starts at 100 (explicit initial value)
+    // => 100+1=101, 101+2=103, ..., 115+6=121
+    // => 121
 
     val emptyList = emptyList<Int>()
-    // => Elements: [] (zero elements)
-    // => Use case: demonstrate fold safety on empty collections
+    // => []
 
     val safeSum = emptyList.fold(0) { acc, value -> acc + value }
-    // => fold(0): safe accumulation on empty list
-    // => Initial value: 0
-    // => Use case: safe aggregation when collection might be empty
-    // => Comparison: reduce(emptyList) throws UnsupportedOperationException
+    // => Safe on empty (returns initial value 0)
+    // => 0
 
     println("Sum with initial: $sumWithInitial")
     // => Output: Sum with initial: 121
-    // => Verification: 100 + (1+2+3+4+5+6) = 121
 
     println("Safe sum: $safeSum")
     // => Output: Safe sum: 0
 
     // flatMap: map and flatten
     val nestedLists = listOf(listOf(1, 2), listOf(3, 4), listOf(5))
-    // => Elements: [[1, 2], [3, 4], [5]] (3 inner lists)
-    // => Use case: hierarchical data (e.g., orders with line items)
+    // => [[1, 2], [3, 4], [5]]
 
     val flattened = nestedLists.flatMap { it }
-    // => Process:
-    // => Result: [1, 2] + [3, 4] + [5] = [1, 2, 3, 4, 5]
-    // => Type change: List<List<Int>> -> List<Int> (one level flatter)
+    // => Flattens nested lists
+    // => [1, 2, 3, 4, 5]
 
     val doubledFlat = nestedLists.flatMap { list -> list.map { it * 2 } }
-    // => flatMap(): map with transformation, then flatten
-    // => Process:
-    // =>   - Step 1: [1, 2] -> [1, 2].map{it*2} -> [2, 4]
-    // =>   - Step 2: [3, 4] -> [3, 4].map{it*2} -> [6, 8]
-    // =>   - Step 3: [5] -> [5].map{it*2} -> [10]
-    // => Flatten: concatenates transformed lists
-    // => Result: [2, 4] + [6, 8] + [10] = [2, 4, 6, 8, 10]
-    // => Use case: transform nested structures and flatten in one operation
+    // => Maps each inner list (doubles elements), then flattens
+    // => [[2, 4], [6, 8], [10]] -> [2, 4, 6, 8, 10]
 
     println("Flattened: $flattened")
     // => Output: Flattened: [1, 2, 3, 4, 5]
-    // => Verification: nested lists flattened to single list
 
     println("Doubled flat: $doubledFlat")
     // => Output: Doubled flat: [2, 4, 6, 8, 10]
-    // => Verification: nested lists transformed and flattened
 }
-// => Program end
-
-// => Collection operations summary:
-// => - map: one-to-one transformation (input size = output size)
-// => - filter: one-to-zero-or-one selection (input size >= output size)
-// => - fold: many-to-one aggregation (safe on empty, explicit initial value)
-// => - flatMap: one-to-many transformation with flattening (nested -> flat)
-
-// => Immutability benefits:
-// => - Thread-safety: original collections never mutate (safe to share across threads)
-// => - Predictability: transformations don't have side effects
-// => - Referential transparency: same input always produces same output
-// => - Debugging: easier to trace data flow (no hidden mutations)
-
-// => Performance characteristics:
-// => - Time: O(N) per operation (linear scan)
-// => - Optimization: use asSequence() for lazy evaluation on large collections
-
-// => Common use cases:
-// => - map: transform DTOs, convert types, format data
-// => - filter: select valid records, remove nulls, apply business rules
-// => - reduce: calculate totals, find max/min, combine values
-// => - fold: safe aggregation, build complex objects from elements
-// => - flatMap: process nested JSON, flatten hierarchical structures
-
-// => Comparison with Java Streams:
-// => - Kotlin: operations available directly on collections (no .stream() needed)
-// => - Kotlin: eager by default (Java Streams lazy by default)
-// => - Kotlin: better type inference (less verbose generic declarations)
 ```
+
+**Common Use Cases**:
+
+- **map**: Transform DTOs, convert types, format data
+- **filter**: Select valid records, remove nulls, apply business rules
+- **reduce**: Calculate totals, find max/min, combine values
+- **fold**: Safe aggregation, build complex objects from elements
+- **flatMap**: Process nested JSON, flatten hierarchical structures
+
+**Comparison with Java Streams**: Kotlin operations work directly on collections (no `.stream().collect()` ceremony). Kotlin is eager by default while Java Streams are lazy. Better type inference reduces verbosity.
 
 **Key Takeaway**: Collection operations create new collections without mutating originals; use `map` for transformation, `filter` for selection, `reduce`/`fold` for aggregation, `flatMap` for nested structures.
 
@@ -1568,16 +1352,26 @@ fun main() {
 
 Advanced collection operations enable complex data transformations and grouping.
 
+**Operation Categories**:
+
+- **groupBy**: Groups elements by key into `Map<K, List<V>>`. Elements with same key grouped in list.
+- **partition**: Binary split into `Pair<List<T>, List<T>>` based on predicate. Returns (trueList, falseList).
+- **associate**: Creates `Map<K, V>` from collection using key-value pairs. Duplicate keys: last wins (potential data loss).
+- **associateBy**: Uses element as value, selector provides key. Creates lookup map.
+- **associateWith**: Uses element as key, lambda provides value. Precompute operations.
+
+**Comparison**:
+
+- **groupBy vs associate**: groupBy allows multiple values per key (Map<K, List<V>>). associate allows one value per key (Map<K, V>).
+- **partition vs groupBy**: partition creates 2 fixed groups. groupBy creates dynamic N groups.
+
+**Performance**: O(N) time, O(N) space. Thread-safe (immutable results).
+
 ```kotlin
 data class Person(val name: String, val age: Int, val city: String)
-// => Properties: name (String), age (Int), city (String)
-// => Auto-generated: equals(), hashCode(), toString(), copy(), componentN()
-// => Use case: domain model for demonstrating collection grouping operations
+// => Auto-generated: equals(), hashCode(), toString(), copy()
 
 fun main() {
-    // => main(): entry point demonstrating advanced collection transformations
-    // => Focus: grouping, partitioning, and map association operations
-
     val people = listOf(
         Person("Alice", 30, "NYC"),
         Person("Bob", 25, "LA"),
@@ -1585,198 +1379,90 @@ fun main() {
         Person("Diana", 25, "LA"),
         Person("Eve", 35, "NYC")
     )
-    // => Elements: 5 Person instances
-    // =>   - Alice: age=30, city=NYC
-    // =>   - Bob: age=25, city=LA
-    // =>   - Charlie: age=30, city=NYC (shares age with Alice)
-    // =>   - Diana: age=25, city=LA (shares age with Bob, city with Bob)
-    // =>   - Eve: age=35, city=NYC (unique age, shares city with Alice/Charlie)
-    // => Data characteristics:
-    // =>   - Age groups: 25 (Bob, Diana), 30 (Alice, Charlie), 35 (Eve)
-    // =>   - City groups: NYC (Alice, Charlie, Eve), LA (Bob, Diana)
+    // => 5 people: ages 25/30/35, cities NYC/LA
 
     // groupBy: group elements by key
     val byAge = people.groupBy { it.age }
-    // => groupBy(): groups elements into Map<K, List<V>> using key selector
-    // => Process:
-    // =>   - Alice (age=30) -> map[30] = [Alice]
-    // =>   - Bob (age=25) -> map[25] = [Bob]
-    // =>   - Charlie (age=30) -> map[30] = [Alice, Charlie] (append to existing)
-    // =>   - Diana (age=25) -> map[25] = [Bob, Diana] (append to existing)
-    // =>   - Eve (age=35) -> map[35] = [Eve]
-    // => Result: {25=[Bob, Diana], 30=[Alice, Charlie], 35=[Eve]}
-    // => Map structure: 3 entries (one per unique age)
-    // => Ordering: map entries NOT ordered (LinkedHashMap preserves insertion order)
-    // => Use case: categorize data by attribute (e.g., users by subscription tier)
+    // => Groups by age: {25=[Bob, Diana], 30=[Alice, Charlie], 35=[Eve]}
 
     println("Grouped by age:")
     // => Output: Grouped by age:
-    // => Header for age grouping results
 
     byAge.forEach { (age, persons) ->
-        // => Destructuring: (age, persons) extracts key and value from Map.Entry
-        // => age: Int (map key, e.g., 25, 30, 35)
-
+        // => Destructures Map.Entry<Int, List<Person>>
         println("  Age $age: ${persons.map { it.name }}")
-        // => persons.map { it.name }: transforms List<Person> to List<String>
-        // => Result for age 25: [Bob, Diana] -> ["Bob", "Diana"]
-        // => Result for age 30: [Alice, Charlie] -> ["Alice", "Charlie"]
-        // => Result for age 35: [Eve] -> ["Eve"]
-        // => String template: "  Age $age: [names]"
-        // => Output:
-        // =>   Age 25: [Bob, Diana]
-        // =>   Age 30: [Alice, Charlie]
-        // =>   Age 35: [Eve]
+        // => Output: Age 25: [Bob, Diana]
+        // =>         Age 30: [Alice, Charlie]
+        // =>         Age 35: [Eve]
     }
 
     val byCity = people.groupBy { it.city }
-    // => groupBy(): same operation, different key selector
-    // => Process:
-    // =>   - Alice (city=NYC) -> map["NYC"] = [Alice]
-    // =>   - Bob (city=LA) -> map["LA"] = [Bob]
-    // =>   - Charlie (city=NYC) -> map["NYC"] = [Alice, Charlie]
-    // =>   - Diana (city=LA) -> map["LA"] = [Bob, Diana]
-    // =>   - Eve (city=NYC) -> map["NYC"] = [Alice, Charlie, Eve]
-    // => Result: {"NYC"=[Alice, Charlie, Eve], "LA"=[Bob, Diana]}
-    // => Map structure: 2 entries (NYC has 3 people, LA has 2)
+    // => Groups by city: {NYC=[Alice, Charlie, Eve], LA=[Bob, Diana]}
 
     println("Grouped by city:")
-    // => Output: Grouped by city:
-
     byCity.forEach { (city, persons) ->
-        // => Destructuring: (city, persons) = Map.Entry<String, List<Person>>
-        // => city: String (e.g., "NYC", "LA")
-        // => persons: List<Person> (people in that city)
-
         println("  $city: ${persons.map { it.name }}")
-        // => persons.map { it.name }: extract names from people in this city
-        // => Output:
-        // =>   NYC: [Alice, Charlie, Eve]
-        // =>   LA: [Bob, Diana]
+        // => Output: NYC: [Alice, Charlie, Eve]
+        // =>         LA: [Bob, Diana]
     }
 
     // partition: split into two lists based on predicate
     val (under30, over30) = people.partition { it.age < 30 }
-    // => partition(): splits collection into Pair<List<T>, List<T>>
-    // => Predicate: it.age < 30 (true for under 30, false for 30+)
-    // => Process:
-    // => Result: ([Bob, Diana], [Alice, Charlie, Eve])
-    // => Destructuring: (under30, over30) extracts Pair components
-    // => under30: List<Person> = [Bob, Diana] (age < 30)
-    // => over30: List<Person> = [Alice, Charlie, Eve] (age >= 30)
+    // => Splits at age<30: ([Bob, Diana], [Alice, Charlie, Eve])
+    // => Destructuring extracts both lists
 
     println("\nUnder 30: ${under30.map { it.name }}")
-    // => under30.map { it.name }: extract names from under-30 list
-    // => Result: [Bob, Diana] -> ["Bob", "Diana"]
     // => Output: Under 30: [Bob, Diana]
 
     println("30 and over: ${over30.map { it.name }}")
-    // => over30.map { it.name }: extract names from 30+ list
-    // => Result: [Alice, Charlie, Eve] -> ["Alice", "Charlie", "Eve"]
     // => Output: 30 and over: [Alice, Charlie, Eve]
 
     // associate: create map from collection
     val nameToAge = people.associate { it.name to it.age }
-    // => associate(): transforms collection to Map<K, V> using key-value pairs
-    // => Process:
-    // =>   - Alice -> "Alice" to 30 -> map["Alice"] = 30
-    // =>   - Bob -> "Bob" to 25 -> map["Bob"] = 25
-    // =>   - Charlie -> "Charlie" to 30 -> map["Charlie"] = 30
-    // =>   - Diana -> "Diana" to 25 -> map["Diana"] = 25
-    // =>   - Eve -> "Eve" to 35 -> map["Eve"] = 35
-    // => Result: {"Alice"=30, "Bob"=25, "Charlie"=30, "Diana"=25, "Eve"=35}
-    // => Map size: 5 entries (one per person)
-    // => Duplicate keys: later values OVERWRITE earlier (not applicable here, names unique)
-    // => Use case: create lookup tables, index data by identifier
+    // => Creates key-value pairs: {Alice=30, Bob=25, Charlie=30, Diana=25, Eve=35}
 
     println("\nName to age: $nameToAge")
     // => Output: Name to age: {Alice=30, Bob=25, Charlie=30, Diana=25, Eve=35}
-    // => Map.toString(): formats as {key1=value1, key2=value2, ...}
 
     // associateBy: use key selector
     val peopleByName = people.associateBy { it.name }
-    // => Key selector: it.name (use name as map key)
-    // => Process:
-    // =>   - Alice -> map["Alice"] = Person("Alice", 30, "NYC")
-    // =>   - Bob -> map["Bob"] = Person("Bob", 25, "LA")
-    // =>   - Charlie -> map["Charlie"] = Person("Charlie", 30, "NYC")
-    // =>   - Diana -> map["Diana"] = Person("Diana", 25, "LA")
-    // =>   - Eve -> map["Eve"] = Person("Eve", 35, "NYC")
-    // => Result: {"Alice"=Person(...), "Bob"=Person(...), ...}
-    // => Comparison: associate requires explicit key-value pair, associateBy just key
-    // => Use case: create lookup map for quick access by identifier
+    // => Name as key, Person as value: {Alice=Person(...), Bob=Person(...), ...}
 
     println("Person by name: ${peopleByName["Alice"]}")
-    // => peopleByName["Alice"]: map lookup by key "Alice"
-    // => Result: Person(name=Alice, age=30, city=NYC)
     // => Output: Person by name: Person(name=Alice, age=30, city=NYC)
-    // => Data class toString(): formats as ClassName(prop1=val1, prop2=val2, ...)
 
     // associateWith: use value generator
     val numbers = listOf(1, 2, 3, 4)
-    // => Use case: demonstrate associateWith with numeric transformation
-
     val squares = numbers.associateWith { it * it }
-    // => Value generator: it * it (square the number)
-    // => Process:
-    // =>   - 1 -> map[1] = 1*1 = 1
-    // =>   - 2 -> map[2] = 2*2 = 4
-    // =>   - 3 -> map[3] = 3*3 = 9
-    // =>   - 4 -> map[4] = 4*4 = 16
-    // => Result: {1=1, 2=4, 3=9, 4=16}
-    // => Key: original element (1, 2, 3, 4)
-    // => Value: computed from element (square)
-    // => Comparison: associateBy uses element as VALUE, associateWith uses element as KEY
-    // => Use case: precompute expensive operations, create lookup caches
+    // => Number as key, square as value: {1=1, 2=4, 3=9, 4=16}
 
     println("Squares: $squares")
     // => Output: Squares: {1=1, 2=4, 3=9, 4=16}
-    // => Map.toString(): {key=value, ...} format
 }
-// => Program end
-
-// => Associate family comparison:
-// => - associate { key to value }: full control, specify both key and value
-
-// => groupBy vs associate:
-// => - groupBy: Map<K, List<V>> (one key -> multiple values in list)
-// => - associate: Map<K, V> (one key -> one value, duplicates overwritten)
-// => - associate: last duplicate key wins (potential data loss)
-
-// => partition vs groupBy:
-// => - partition: binary split (Pair<List, List>, two categories)
-// => - groupBy: multi-way split (Map<K, List<V>>, unlimited categories)
-// => - partition: fixed 2 groups, groupBy: dynamic N groups
-
-// => Performance characteristics:
-// => - groupBy: O(N) time, O(N) space (N = collection size)
-
-// => Common use cases:
-// => - groupBy: categorize data (orders by status, users by role)
-// => - partition: binary classification (valid/invalid, active/inactive)
-// => - associate: create lookups (ID -> entity, code -> description)
-// => - associateBy: index collections (user list -> map by userId)
-// => - associateWith: precompute values (number -> formatted string)
-
-// => Comparison with Java:
-// => - Java: Collectors.groupingBy() with nested collectors (verbose)
-// => - Kotlin: associate/associateBy/associateWith (concise, expressive)
-
-// => - Thread-safety: immutable results safe to share across threads
-
-// => Error handling:
-// => - groupBy: never fails (empty collection -> empty map)
-// => - partition: never fails (empty collection -> empty pair of lists)
-// => - associate: duplicate keys -> later value OVERWRITES earlier (silent data loss)
-// => - associateBy: same behavior (last duplicate wins)
-// => - associateWith: keys from collection (duplicates impossible if collection unique)
-
-// => val ordersByCustomer = orders.groupBy { it.customerId }
-// => val (paidOrders, unpaidOrders) = orders.partition { it.isPaid }
-// => val productById = products.associateBy { it.id }
-// => val userEmails = users.associate { it.id to it.email }
-// => val configDefaults = configKeys.associateWith { getDefaultValue(it) }
 ```
+
+**Associate Family Comparison**:
+
+- **associate**: Full control (specify both key and value). `people.associate { it.id to it.email }`
+- **associateBy**: Element as value, selector as key. `products.associateBy { it.id }`
+- **associateWith**: Element as key, lambda as value. `configKeys.associateWith { getDefaultValue(it) }`
+
+**Common Use Cases**:
+
+- **groupBy**: Categorize data (orders by customer, users by role)
+- **partition**: Binary classification (paid/unpaid, valid/invalid)
+- **associate**: Create lookups (ID → entity, code → description)
+- **associateBy**: Index collections (user list → map by userId)
+- **associateWith**: Precompute values (config key → default value)
+
+**Comparison with Java**: Java's `Collectors.groupingBy()` requires verbose nested collectors. Kotlin returns simple `Map<K, List<V>>` without ceremony.
+
+**Error Handling**:
+
+- **groupBy**: Never fails (empty collection → empty map)
+- **partition**: Never fails (empty collection → pair of empty lists)
+- **associate/associateBy**: Duplicate keys → last value overwrites (silent data loss, be careful)
+- **associateWith**: Keys from collection (duplicates impossible if collection unique)
 
 **Key Takeaway**: Use `groupBy` for creating maps of grouped elements, `partition` for binary splits, `associate` family for transforming collections into maps.
 
@@ -1785,6 +1471,13 @@ fun main() {
 ## Example 38: Sequences for Lazy Evaluation
 
 Sequences compute elements lazily, avoiding intermediate collection creation. Use sequences for multi-step transformations on large collections.
+
+**Eager vs Lazy Evaluation:**
+
+- **Eager (List)**: Processes ALL elements immediately. Each operation (map, filter) creates intermediate collections. For 1M elements with 3 operations: creates 3 temporary million-element lists (~8MB garbage). Total operations: ~2 million
+- **Lazy (Sequence)**: Processes elements on-demand, one at a time. No intermediate collections. Each element flows through entire pipeline before next element starts. Total operations: only what's needed (~1,015 for 5 results from 1M elements)
+- **Performance**: Sequences are 2000x fewer operations, 200x faster execution, 75% less memory
+- **Use cases**: Eager for small collections or when all elements needed. Lazy for large data, early termination, infinite sequences
 
 **Eager Evaluation (List):**
 
@@ -1834,183 +1527,120 @@ graph TD
     style Result fill:#CC78BC,color:#fff
 ```
 
+**Execution Order Comparison:**
+
+- **Eager**: All map operations first, then all filter operations (batched by operation type)
+- **Lazy**: Element-by-element through entire pipeline (interleaved operations)
+
 ```kotlin
 fun main() {
     // Eager evaluation with list (creates intermediate lists)
     val listResult = (1..1_000_000)
-        // => IntRange from 1 to 1,000,000 (1 million elements)
+        // => IntRange 1 to 1,000,000
 
         .map { it * 2 }
-        // => EAGER operation: processes ALL 1 million elements IMMEDIATELY
-        // => Execution: iterates 1..1_000_000, applies { it * 2 }, stores in new list
-        // => Result: [2, 4, 6, 8, ..., 2_000_000] (1 million element list)
-        // => Performance: O(n) time complexity, O(n) space complexity
+        // => EAGER: processes ALL 1M elements immediately
+        // => Creates [2, 4, 6, ..., 2_000_000] (1M element list)
 
         .filter { it > 1000 }
-        // => Execution: iterates mapped list [2, 4, ..., 2_000_000], applies predicate
-        // => Result: [1002, 1004, 1006, ..., 2_000_000] (values > 1000)
-        // => Still no short-circuiting: processes entire list even though only 5 needed
+        // => Processes entire mapped list
+        // => No short-circuiting (computes 999,995 unnecessary elements)
 
         .take(5)
-        // => Result: [1002, 1004, 1006, 1008, 1010] (final output)
-        // => Total intermediate garbage: ~8MB (two intermediate lists discarded)
-        // => Total operations: 1M map + 1M filter + 5 copy = ~2 million operations
-        // => Efficiency: wasteful - computed 999,995 unnecessary elements
+        // => Result: [1002, 1004, 1006, 1008, 1010]
+        // => ~8MB intermediate garbage, ~2M operations
 
     println("List result: $listResult")
     // => Output: List result: [1002, 1004, 1006, 1008, 1010]
 
     // Lazy evaluation with sequence (no intermediate collections)
     val seqResult = (1..1_000_000).asSequence()
-        // => asSequence(): converts IntRange to Sequence<Int>
-        // => Execution: NO computation yet - sequences are LAZY
-        // => Behavior: defines a plan to iterate range, but doesn't execute
-        // => Overhead: tiny wrapper object (~32 bytes for sequence object)
-        // => Iterator state: not created yet (deferred until terminal operation)
+        // => asSequence(): converts to Sequence<Int>
+        // => NO computation yet (lazy)
 
         .map { it * 2 }
-        // => LAZY operation: does NOT execute immediately
-        // => Execution: ZERO elements processed at this line
-        // => Pipeline building: map operation added to processing pipeline
+        // => LAZY: does NOT execute immediately
+        // => Adds to processing pipeline
 
         .filter { it > 1000 }
-        // => LAZY operation: does NOT execute immediately
-        // => Execution: ZERO elements processed at this line
-        // => Behavior: chains filter predicate to be applied later
-        // => Sequential chaining: filter will process map output element-by-element
+        // => LAZY: does NOT execute immediately
+        // => Chains to pipeline
 
         .take(5)
-        // => LAZY operation: does NOT execute immediately
-        // => Execution: ZERO elements processed at this line
-        // => Pipeline state: map -> filter -> take (3 operations chained)
+        // => LAZY: does NOT execute immediately
 
         .toList()
-        // => TERMINAL operation: triggers ACTUAL execution of pipeline
-        // => Execution: NOW the sequence iterates and processes elements
-        // => Processing: element-by-element through entire pipeline
-        // => Total operations: ~505 map + ~505 filter + 5 collect = ~1,015 operations
-        // => Efficiency: 2000x fewer operations than eager (1,015 vs 2 million)
+        // => TERMINAL operation: triggers execution
+        // => Processes element-by-element through pipeline
+        // => ~1,015 operations (2000x fewer than eager)
 
     println("Sequence result: $seqResult")
     // => Output: Sequence result: [1002, 1004, 1006, 1008, 1010]
-    // => Execution time: ~1-2ms (200x faster than eager list)
-    // => Identical output: same result as eager, but vastly more efficient
+    // => ~1-2ms execution (200x faster than eager)
 
     // Demonstrate lazy evaluation with side effects
     println("\nList operations (eager):")
 
     (1..5).map {
-        // => Execution order: map(1), map(2), map(3), map(4), map(5)
-
         println("  Map: $it")
-        // =>          Map: 2
-        // =>          Map: 3
-        // =>          Map: 4
-        // =>          Map: 5
-
         it * 2
-        // => This list passed to filter operation
     }.filter {
-        // => EAGER filter: processes ALL 5 mapped elements
-        // => Execution order: filter(2), filter(4), filter(6), filter(8), filter(10)
-
         println("  Filter: $it")
-        // =>          Filter: 4
-        // =>          Filter: 6
-        // =>          Filter: 8
-        // =>          Filter: 10
-
         it > 4
-        // => Predicate evaluates to: false, false, false, true, true
     }.take(2)
-        // => Final result: [6, 8]
-        // => Execution: processes ALL elements even though only 2 needed
 
-    // => Output order (eager evaluation):
+    // => Output order (eager - batched):
+    // =>   Map: 1
     // =>   Map: 2
     // =>   Map: 3
     // =>   Map: 4
     // =>   Map: 5
+    // =>   Filter: 2
     // =>   Filter: 4
     // =>   Filter: 6
     // =>   Filter: 8
     // =>   Filter: 10
-    // => Clear separation: map phase completes, THEN filter phase runs
+    // => All maps complete, then all filters run
 
     println("\nSequence operations (lazy):")
 
     (1..5).asSequence().map {
-        // => LAZY map: processes elements ONE AT A TIME as needed
-        // => Execution: map(1), filter(2), map(2), filter(4), ... (interleaved)
-
         println("  Map: $it")
-
         it * 2
     }.filter {
-
         println("  Filter: $it")
-
         it > 4
-        // => Predicate evaluates per element: false, false, false, true, true
-        // => NO intermediate list created
-        // => Results passed one-by-one to take operation
     }.take(2).toList()
-        // => Only processes elements until 2 pass filter (elements 3 and 4)
-        // => Element 5 NEVER processed (lazy evaluation stops early)
-        // => Terminal operation: toList() triggers execution and materializes result
-        // => Final result: [6, 8]
 
-    // => Output order (lazy evaluation):
-    // =>   Map: 1         <- process element 1
-    // =>   Filter: 2      <- filter mapped result (2) - rejected
-    // =>   Map: 2         <- process element 2
-    // =>   Filter: 4      <- filter mapped result (4) - rejected
-    // =>   Map: 3         <- process element 3
-    // =>   Filter: 6      <- filter mapped result (6) - accepted (1st result)
-    // =>   Map: 4         <- process element 4
-    // =>   Filter: 8      <- filter mapped result (8) - accepted (2nd result)
-    // => Stops here: take(2) satisfied, element 5 never processed
+    // => Output order (lazy - interleaved):
+    // =>   Map: 1
+    // =>   Filter: 2       <- rejected
+    // =>   Map: 2
+    // =>   Filter: 4       <- rejected
+    // =>   Map: 3
+    // =>   Filter: 6       <- accepted (1st result)
+    // =>   Map: 4
+    // =>   Filter: 8       <- accepted (2nd result)
+    // => Stops here: element 5 never processed
 
     // generateSequence for infinite sequences
     val fibonacci = generateSequence(Pair(0, 1)) { (a, b) -> Pair(b, a + b) }
-        // => Seed value: Pair(0, 1) (initial state: fib(0)=0, fib(1)=1)
-        // => Execution: LAZY - generates values on-demand, not upfront
+        // => Seed: Pair(0, 1) (fib(0)=0, fib(1)=1)
+        // => LAZY: generates on-demand
 
         .map { it.first }
-        // => Transformation: Pair(0,1) -> 0, Pair(1,1) -> 1, Pair(1,2) -> 1, etc.
-        // => Execution: NOT executed yet (lazy)
+        // => Transforms: Pair(0,1) -> 0, Pair(1,1) -> 1, etc.
 
         .take(10)
-        // => Short-circuit: prevents infinite sequence from executing forever
-        // => Execution: NOT executed yet (still lazy)
+        // => Limits infinite sequence
 
         .toList()
-        // => TERMINAL operation: materializes sequence to List<Int>
-        // => Execution: NOW sequence generates values
-        // => Values generated: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34
-        // => Generation order:
-        //    Pair(0,1) -> map -> 0
-        //    Pair(1,1) -> map -> 1
-        //    Pair(1,2) -> map -> 1
-        //    Pair(2,3) -> map -> 2
-        //    Pair(3,5) -> map -> 3
-        //    Pair(5,8) -> map -> 5
-        //    Pair(8,13) -> map -> 8
-        //    Pair(13,21) -> map -> 13
-        //    Pair(21,34) -> map -> 21
-        //    Pair(34,55) -> map -> 34
-        //    STOP (take(10) limit reached)
-        // => Result: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
-        // => Efficiency: only 10 Fibonacci calculations, no intermediate storage
+        // => TERMINAL: materializes to List<Int>
+        // => Generates: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34
 
     println("\nFibonacci: $fibonacci")
     // => Output: Fibonacci: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
 }
-// => Lazy (sequence): processes ONLY needed elements, NO intermediate collections
-// => Performance comparison: eager ~2M operations vs lazy ~1K operations
-// => Use cases:
-//   - Eager: when you need entire result (small collections, all elements used)
-//   - Lazy: when processing large data, early termination, infinite sequences
 ```
 
 **Key Takeaway**: Sequences optimize multi-step transformations by evaluating lazily element-by-element; use `asSequence()` for large collections or infinite streams.
@@ -2022,6 +1652,25 @@ fun main() {
 ## Example 39: Property Delegation - Lazy and Observable
 
 Delegate property implementations to reusable delegate objects. `lazy` computes value on first access, `observable` triggers callbacks on changes.
+
+**Delegation Types:**
+
+- **lazy**: Executes initializer once on first access, caches result. Thread-safe by default (SYNCHRONIZED mode). Use for expensive initialization that may never be needed (database connections, configuration parsing)
+- **observable**: Triggers callback AFTER property change. Use for logging, UI updates, audit trail (post-change notifications)
+- **vetoable**: Validates BEFORE property change. Returns boolean to approve/reject. NOT thread-safe. Use for input validation, business rule enforcement
+
+**Thread Safety Modes (lazy):**
+
+- **SYNCHRONIZED** (default): Thread-safe singleton initialization
+- **PUBLICATION**: Allows multiple initializations, uses first completion
+- **NONE**: No thread safety (single-threaded only)
+
+**Delegation Benefits:**
+
+- **Reusability**: Standard delegates work with any property type
+- **Separation**: Cross-cutting concerns separated from business logic
+- **Declarative**: Intent clear from `by lazy`, `by observable`, `by vetoable` syntax
+- **Zero boilerplate**: No manual getter/setter implementation
 
 ```mermaid
 %% Property delegation flow showing lazy initialization and observable pattern
@@ -2056,156 +1705,84 @@ graph TD
 
 ```kotlin
 import kotlin.properties.Delegates
-// => Provides: observable(), vetoable(), notNull() delegate implementations
-// => Package: kotlin.properties (part of Kotlin stdlib, no additional dependencies)
+// => Provides observable(), vetoable(), notNull()
 
 class User {
     // Lazy initialization (computed once on first access)
     val expensiveData: String by lazy {
-        // => Syntax: by lazy { initializer }
-        // => Thread safety: SYNCHRONIZED by default (thread-safe singleton initialization)
-        // => Modes: lazy(LazyThreadSafetyMode.SYNCHRONIZED) <- default
-        //           lazy(LazyThreadSafetyMode.PUBLICATION) <- allows multiple initializations, uses first
-        //           lazy(LazyThreadSafetyMode.NONE) <- no thread safety, single-threaded only
-        // => Use case: expensive initialization that may never be needed
-        // => Comparison: Java requires manual double-checked locking (error-prone)
+        // => by lazy: delegates getValue to Lazy<String>
+        // => Default: SYNCHRONIZED (thread-safe)
 
         println("Computing expensive data...")
-        // => Output: "Computing expensive data..." on FIRST access only
+        // => Output on FIRST access only
 
         Thread.sleep(1000)
-        // => Production use: replace with actual expensive operation
 
         "Computed data"
-        // => Storage: stored in lazy delegate's internal field
-        // => Lifetime: cached until object garbage collected
-        // => Thread safety: value assignment is atomic and thread-safe
+        // => Cached until object garbage collected
     }
-    // => Delegation: 'by lazy' delegates getValue to Lazy<String>
-    // => Access: user.expensiveData invokes lazy delegate's getValue()
 
     // Observable property (callback on change)
     var name: String by Delegates.observable("Initial") { property, oldValue, newValue ->
-        // => Use case: logging, UI updates, validation logging (post-change notifications)
-
         println("${property.name} changed: $oldValue -> $newValue")
-        // => oldValue: value BEFORE assignment
-        // => newValue: value AFTER assignment
-        // => Production use: trigger UI updates, log audit trail, invalidate caches
+        // => oldValue: BEFORE assignment
+        // => newValue: AFTER assignment
     }
-    // => Delegation: 'by Delegates.observable' delegates getValue/setValue
 
     // Vetoable property (validate before change)
     var age: Int by Delegates.vetoable(0) { property, oldValue, newValue ->
-        // => Thread safety: NOT thread-safe (validator can race with concurrent writes)
-        // => Use case: input validation, business rule enforcement, constraint checking
-
         val valid = newValue >= 0
-        // => Production: replace with complex validation (regex, range, database check)
 
         if (!valid) println("Rejected age: $newValue")
-        // => Output: "Rejected age: -5" if newValue < 0
-        // => Production: throw exception, log error, show user error message
 
         valid
-        // => Return validation result: determines if assignment proceeds
-        // => Comparison: Java requires manual validation in setter (boilerplate)
+        // => Returns validation result: true = approve, false = veto
     }
-    // => Delegation: 'by Delegates.vetoable' delegates getValue/setValue with validation
-    // => Setter behavior: user.age = -5 invokes validator, vetos if false, assigns if true
-    // => Getter behavior: user.age invokes delegate.getValue() (no validation)
 }
-// => Reusability: delegates encapsulate cross-cutting concerns (lazy init, observation, validation)
-// => Separation: business logic (User) separated from infrastructure (delegation)
 
 fun main() {
     val user = User()
-    // => Object creation: instantiates User with delegated properties
-    // => Delegate state: lazy uninitialized, observable holding "Initial", vetoable holding 0
+    // => Delegate state: lazy uninitialized, name="Initial", age=0
 
     // Lazy property demonstration
     println("Before accessing expensiveData")
-    // => Lazy state: initializer NOT executed yet (value not computed)
-    // => Performance: no expensive computation yet (0ms elapsed)
+    // => Lazy state: initializer NOT executed yet
 
     println(user.expensiveData)
-    // => Execution flow:
-    //    1. user.expensiveData invokes lazy delegate's getValue()
-    //    2. Delegate checks if value cached (not cached on first access)
-    //    3. Delegate acquires synchronization lock (thread-safe initialization)
-    //    4. Delegate executes initializer lambda: println + sleep + return "Computed data"
-    //    5. Delegate caches return value "Computed data"
-    //    6. Delegate releases lock
-    //    7. Delegate returns cached value "Computed data"
-    // => Output: Computing expensive data... (from initializer)
-    //           Computed data (return value)
-    // => Timing: ~1000ms execution time (sleep duration)
-    // => State change: lazy delegate now holds cached value "Computed data"
+    // => First access: acquires lock, executes initializer, caches result, releases lock
+    // => Output: Computing expensive data...
+    //           Computed data
+    // => Timing: ~1000ms
 
     println(user.expensiveData)
-    // => Execution flow:
-    //    1. user.expensiveData invokes lazy delegate's getValue()
-    //    2. Delegate checks if value cached (YES, cached from first access)
-    //    3. Delegate returns cached value "Computed data" immediately
-    // => Output: Computed data (ONLY this, no "Computing..." message)
-    // => Timing: ~0ms execution time (instant return)
+    // => Second access: returns cached value immediately
+    // => Output: Computed data
+    // => Timing: ~0ms
 
     // Observable property demonstration
     user.name = "Alice"
-    // => Property assignment: triggers observable delegate's setValue()
-    // => Execution flow:
-    //    1. Setter invoked with newValue = "Alice"
-    //    2. Delegate stores oldValue = "Initial" (current value before change)
-    //    3. Delegate updates property value to "Alice"
-    //    4. Delegate invokes callback with (property="name", oldValue="Initial", newValue="Alice")
-    //    5. Callback executes: println("name changed: Initial -> Alice")
+    // => Triggers observable callback: (property="name", oldValue="Initial", newValue="Alice")
     // => Output: name changed: Initial -> Alice
 
     user.name = "Bob"
-    // => Execution: same flow as above, oldValue = "Alice", newValue = "Bob"
     // => Output: name changed: Alice -> Bob
-    // => State: name = "Bob"
 
     // Vetoable property demonstration
     user.age = 25
-    // => Valid assignment: triggers vetoable delegate's setValue()
-    // => Execution flow:
-    //    1. Setter invoked with newValue = 25
-    //    2. Delegate stores oldValue = 0 (current value)
-    //    3. Delegate invokes validator callback with (property="age", oldValue=0, newValue=25)
-    //    4. Validator executes: valid = (25 >= 0) = true
-    //    5. Validator returns true (approval)
-    //    6. Delegate updates property value to 25 (change ACCEPTED)
-    // => No output from validator (validation passed, no rejection message)
-    // => State change: age = 25
+    // => Validator executes: valid = (25 >= 0) = true
+    // => Change ACCEPTED: age = 25
 
     println("Age: ${user.age}")
-    // => Property read: invokes vetoable delegate's getValue()
     // => Output: Age: 25
-    // => State: age = 25 (confirmed)
 
     user.age = -5
-    // => Invalid assignment: triggers validation veto
-    // => Execution flow:
-    //    1. Setter invoked with newValue = -5
-    //    2. Delegate stores oldValue = 25 (current value)
-    //    3. Delegate invokes validator callback with (property="age", oldValue=25, newValue=-5)
-    //    4. Validator executes: valid = (-5 >= 0) = false
-    //    5. Validator prints "Rejected age: -5" (validation failure side effect)
-    //    6. Validator returns false (rejection)
-    //    7. Delegate DOES NOT update property value (change VETOED)
+    // => Validator executes: valid = (-5 >= 0) = false
+    // => Change VETOED: age remains 25
     // => Output: Rejected age: -5
-    // => State: age remains 25 (assignment vetoed, value unchanged)
-    // => Protection: invalid state prevented by delegation (business rule enforced)
 
     println("Age after veto: ${user.age}")
-    // => Verification: age still 25 (veto prevented -5 assignment)
+    // => Output: Age after veto: 25
 }
-// => Delegation benefits:
-//   - Reusability: standard delegates work with any property type
-//   - Separation: cross-cutting concerns separated from business logic
-//   - Declarative: intent clear from 'by lazy', 'by observable', 'by vetoable' syntax
-//   - Zero boilerplate: no manual getter/setter implementation needed
 ```
 
 **Key Takeaway**: Use `lazy` for expensive computations that should execute once, `observable` for change notifications, `vetoable` for validated property changes.
@@ -2217,6 +1794,27 @@ fun main() {
 ## Example 40: Custom Property Delegates
 
 Create custom delegates by implementing `getValue` and `setValue` operators. Delegates encapsulate property access logic.
+
+**Delegation Protocol:**
+
+- **operator fun getValue(thisRef: Any?, property: KProperty<\*>): T** - Required for read access
+- **operator fun setValue(thisRef: Any?, property: KProperty<\*>, newValue: T)** - Required for write access
+- **Contract**: ReadWriteProperty interface (both getValue + setValue)
+- **Thread safety**: NOT thread-safe by default (concurrent writes can race)
+
+**Custom Delegate Use Cases:**
+
+- **Cross-cutting concerns**: Logging, validation, persistence, caching
+- **Value transformation**: Format conversion, normalization, encryption
+- **Access control**: Permission checks, lazy loading, proxy patterns
+- **Reusability**: Single delegate implementation for multiple properties
+
+**Production Examples:**
+
+- **SharedPreferences delegate** (Android): Auto-persist property changes
+- **Validation delegate**: Enforce business rules on assignment
+- **Audit delegate**: Log all property changes for compliance
+- **Cache delegate**: Lazy load from database, cache in memory
 
 ```mermaid
 %% Custom delegate getValue/setValue flow
@@ -2242,184 +1840,86 @@ sequenceDiagram
 
 ```kotlin
 import kotlin.reflect.KProperty
-// => Package: kotlin.reflect (part of Kotlin stdlib, no additional dependencies)
 
 class LoggingDelegate<T>(private var value: T) {
-    // => Type safety: T ensures type consistency across getValue/setValue
-    // => Reusability: single implementation works for String, Int, any type
+    // => Generic type T: works for String, Int, any type
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        // => Function name: getValue (fixed name, required by delegation protocol)
-        // => Contract: ReadWriteProperty interface (getValue + setValue)
+        // => operator fun: required for delegation protocol
 
         println("[GET] ${property.name} = $value")
-        // => Production use: audit logging, performance monitoring, cache hit tracking
+        // => Logs property access (audit trail, monitoring)
 
         return value
     }
-    // => Delegation contract: getValue required for read-only or read-write delegation
 
     operator fun setValue(thisRef: Any?, property: KProperty<*>, newValue: T) {
-        // => Function name: setValue (fixed name, required by mutable delegation protocol)
-        // => Contract: ReadWriteProperty interface requires both getValue and setValue
-
         println("[SET] ${property.name}: $value -> $newValue")
-        // => Production use: audit trail, change notification, database persistence trigger
+        // => Logs old -> new value transition
 
         value = newValue
-        // => Assignment: newValue of type T stored in value field
-        // => State change: delegate now holds new value for future reads
     }
-    // => Thread safety: NOT thread-safe (concurrent writes can race)
 }
 
 class UppercaseDelegate {
-    // => Specialized delegate: transforms String values
-    // => Use case: enforce data format (always uppercase output, lowercase storage)
+    // => Transforms String values: lowercase storage, uppercase presentation
 
     private var value: String = ""
-    // => Initialization: starts with empty string (delegate's default value)
-    // => Visibility: private (encapsulated storage, accessed only via getValue/setValue)
-    // => Lifetime: persists for delegate instance lifetime
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): String {
-        // => Contract: same signature as LoggingDelegate.getValue
-
         return value.uppercase()
-        // => Behavior: client always sees uppercase, regardless of stored case
-        // => Use case: display formatting, case-insensitive comparison, API compatibility
+        // => Client always sees uppercase
     }
 
     operator fun setValue(thisRef: Any?, property: KProperty<*>, newValue: String) {
-        // => Contract: same signature as LoggingDelegate.setValue
-        // => Transformation: stores normalized version of input value
-
         value = newValue.lowercase()
-        // => Storage: value field stores lowercase version
-        // => Normalization: ensures consistent internal format (lowercase)
-        // => Use case: case-insensitive storage, search optimization, database normalization
-        // => Invariant: value field always holds lowercase string
+        // => Stores normalized lowercase version
+        // => Invariant: value always lowercase
     }
-    // => Write transformation: normalizes value during assignment
-    // => Storage strategy: lowercase storage + uppercase retrieval (separation of concerns)
 }
-// => Pattern: data normalization with presentation formatting
 
 class Config {
-    // => Delegation: properties delegate to different delegate types
-    // => Composition: delegates provide cross-cutting behavior (logging, transformation)
-
     var theme: String by LoggingDelegate("light")
-    // => Initial value: "light" (passed to LoggingDelegate constructor)
-    // => Backing storage: LoggingDelegate.value field stores actual value
+    // => Initial value: "light"
 
     var username: String by UppercaseDelegate()
-    // => Initial value: "" (UppercaseDelegate default value)
-    // => Transformation: automatic case conversion on read/write
-    // => Backing storage: UppercaseDelegate.value field stores lowercase value
+    // => Initial value: "" (default)
 }
-// => Composition: delegates encapsulate cross-cutting concerns (Config focuses on business logic)
 
 fun main() {
     val config = Config()
-    // => Object creation: instantiates Config with delegated properties
-    // => Delegate initialization:
-    //    - LoggingDelegate<String>("light") created for theme property
-    //    - UppercaseDelegate() created for username property
-    // => State: theme delegate holds "light", username delegate holds ""
+    // => Delegate state: theme="light", username=""
 
     // LoggingDelegate demonstration
     println(config.theme)
-    // => Property read: invokes LoggingDelegate.getValue()
-    // => Execution flow:
-    //    1. config.theme triggers getValue(config, theme property)
-    //    2. Delegate logs: "[GET] theme = light"
-    //    3. Delegate returns: "light"
-    //    4. println outputs: "light"
+    // => Invokes LoggingDelegate.getValue()
     // => Output: [GET] theme = light
     //           light
-    // => Delegate interception: logging happens transparently during read
 
     config.theme = "dark"
-    // => Property write: invokes LoggingDelegate.setValue()
-    // => Execution flow:
-    //    1. config.theme = "dark" triggers setValue(config, theme property, "dark")
-    //    2. Delegate logs: "[SET] theme: light -> dark"
-    //    3. Delegate updates: value = "dark"
+    // => Invokes LoggingDelegate.setValue()
     // => Output: [SET] theme: light -> dark
-    // => State change: theme delegate now holds "dark"
-    // => Audit trail: old and new values logged
 
     println(config.theme)
-    // => Property read: invokes LoggingDelegate.getValue() again
-    // => Execution flow:
-    //    1. config.theme triggers getValue(config, theme property)
-    //    2. Delegate logs: "[GET] theme = dark"
-    //    3. Delegate returns: "dark"
-    //    4. println outputs: "dark"
     // => Output: [GET] theme = dark
     //           dark
-    // => Verification: updated value retrieved and logged
 
     // UppercaseDelegate demonstration
     config.username = "Alice"
-    // => Property write: invokes UppercaseDelegate.setValue()
-    // => Execution flow:
-    //    1. config.username = "Alice" triggers setValue(config, username property, "Alice")
-    //    2. Delegate normalizes: value = "Alice".lowercase() = "alice"
-    //    3. Delegate stores: "alice" in backing field
-    // => State: username delegate now holds "alice" (lowercase)
-    // => Transformation: input "Alice" stored as "alice"
+    // => Stores "alice" (lowercase)
 
     println(config.username)
-    // => Property read: invokes UppercaseDelegate.getValue()
-    // => Execution flow:
-    //    1. config.username triggers getValue(config, username property)
-    //    2. Delegate transforms: value.uppercase() = "alice".uppercase() = "ALICE"
-    //    3. Delegate returns: "ALICE"
-    //    4. println outputs: "ALICE"
+    // => Returns "ALICE" (uppercase transformation)
     // => Output: ALICE
-    // => Transformation: stored "alice" returned as "ALICE"
-    // => Storage vs presentation: lowercase storage, uppercase presentation
-    // => Client sees: always uppercase (transformation transparent)
 
     config.username = "BOB"
-    // => Property write: invokes UppercaseDelegate.setValue()
-    // => Execution flow:
-    //    1. config.username = "BOB" triggers setValue(config, username property, "BOB")
-    //    2. Delegate normalizes: value = "BOB".lowercase() = "bob"
-    //    3. Delegate stores: "bob" in backing field
-    // => State: username delegate now holds "bob" (lowercase)
-    // => Normalization: input "BOB" stored as "bob"
-    // => Idempotent: multiple writes with different cases produce same storage
+    // => Stores "bob" (lowercase)
 
     println(config.username)
-    // => Property read: invokes UppercaseDelegate.getValue()
-    // => Execution flow:
-    //    1. config.username triggers getValue(config, username property)
-    //    2. Delegate transforms: value.uppercase() = "bob".uppercase() = "BOB"
-    //    3. Delegate returns: "BOB"
-    //    4. println outputs: "BOB"
+    // => Returns "BOB" (uppercase transformation)
     // => Output: BOB
-    // => Transformation: stored "bob" returned as "BOB"
     // => Consistency: always uppercase output regardless of input case
 }
-// => Custom delegates enable:
-//   - Cross-cutting concerns: logging, validation, persistence, caching
-//   - Value transformation: format conversion, normalization, encryption
-//   - Access control: permission checks, lazy loading, proxy patterns
-//   - Reusability: single delegate implementation for multiple properties
-// => Delegation protocol:
-//   - operator fun getValue(thisRef: Any?, property: KProperty<*>): T
-//   - operator fun setValue(thisRef: Any?, property: KProperty<*>, newValue: T)
-// => Comparison to Java:
-//   - Java: manual getter/setter boilerplate for each property
-//   - Kotlin: single delegate implementation reused across all properties
-// => Production use cases:
-//   - SharedPreferences delegate (Android): auto-persist property changes
-//   - Validation delegate: enforce business rules on assignment
-//   - Audit delegate: log all property changes for compliance
-//   - Cache delegate: lazy load from database, cache in memory
 ```
 
 **Key Takeaway**: Implement `getValue`/`setValue` operators to create custom property delegates that encapsulate access logic like logging, validation, or transformation.

@@ -18,9 +18,12 @@ Every Kotlin program starts with a main function. Unlike Java, Kotlin doesn't re
 **Contrast with Java**: Kotlin eliminates the boilerplate ceremony: `public class Main { public static void main(String[] args) { } }` becomes just `fun main() { }`.
 
 ```kotlin
-fun main() {
+fun main() {                        // => Entry point function
+                                    // => No class wrapper needed (unlike Java)
     println("Hello, Kotlin!")       // => Output: Hello, Kotlin!
+                                    // => println auto-imported from kotlin.io
 }                                   // => Program completes, exit code 0
+                                    // => Returns Unit (equivalent to void)
 ```
 
 **Key Takeaway**: Kotlin's `main` function can exist at the top level without a class, and semicolons are optional, making code more concise than Java while compiling to equivalent JVM bytecode.
@@ -61,18 +64,32 @@ graph TD
 
 ```kotlin
 fun main() {
-
-    age = 26                         // => age is now 26
+    val name = "Alice"               // => name is "Alice" (immutable, type inferred as String)
+                                     // => Cannot reassign: name = "Bob" would cause compile error
+    var age = 25                     // => age is 25 (mutable, type inferred as Int)
+                                     // => Can reassign later because var allows mutation
+    age = 26                         // => age is now 26 (reassignment succeeds)
+                                     // => Type must match: var ensures Int type consistency
     // age = "twenty-six"            // => ERROR: type mismatch (Int ≠ String)
+                                     // => Compiler prevents type-unsafe reassignment
 
-    val city: String = "Jakarta"     // => city is "Jakarta" (explicit type)
-    var temperature: Double = 28.5   // => temperature is 28.5 (Double explicit)
-    temperature = 29.0               // => temperature is now 29.0
+    val city: String = "Jakarta"     // => city is "Jakarta" (explicit type annotation)
+                                     // => String type explicit, though compiler could infer it
+    var temperature: Double = 28.5   // => temperature is 28.5 (explicit Double type)
+                                     // => Double type prevents Int assignment without .toDouble()
+    temperature = 29.0               // => temperature is now 29.0 (mutable var allows change)
+                                     // => 29.0 literal is Double, so type matches
 
-    val nullableName: String? = null // => nullableName is null (nullable type)
+    val nullableName: String? = null // => nullableName is null (nullable type with ? suffix)
+                                     // => String? allows null, String would reject null at compile-time
+                                     // => Compiler enforces null checks before use
 
     println("$name is $age years old") // => Output: Alice is 26 years old
+                                       // => $name and $age interpolated into string
+                                       // => Compiled to StringBuilder for efficiency
     println("$city: ${temperature}°C") // => Output: Jakarta: 29.0°C
+                                       // => ${temperature} expression interpolation with curly braces
+                                       // => Returns Unit (like void), no return value
 }
 ```
 
@@ -94,18 +111,35 @@ Kotlin has a rich type system with proper primitives that are represented as obj
 
 ```kotlin
 fun main() {
-    val byteValue: Byte = 127        // => byteValue is 127 (Byte: 8-bit)
-    val shortValue: Short = 32767    // => shortValue is 32767 (Short: 16-bit)
-    val longValue = 3_000_000_000L   // => longValue is 3000000000 (L = Long)
-
-    val floatValue = 3.14f           // => floatValue is 3.14 (f = Float)
-
+    val byteValue: Byte = 127        // => byteValue is 127 (Byte: 8-bit, range -128 to 127)
+                                     // => Explicit type required: 127 literal defaults to Int
+                                     // => Byte saves memory for large arrays (1 byte vs 4)
+    val shortValue: Short = 32767    // => shortValue is 32767 (Short: 16-bit, 2 bytes)
+                                     // => Explicit type required: numeric literals default to Int
+                                     // => Max Short value (2^15 - 1), overflow wraps to -32768
+    val longValue = 3_000_000_000L   // => longValue is 3000000000 (L suffix forces Long type)
+                                     // => 3 billion exceeds Int.MAX_VALUE (2,147,483,647)
+                                     // => Underscores improve readability, ignored by compiler
+    val intValue = 42                // => intValue is 42 (Int: 32-bit, default integer type)
+                                     // => No suffix needed, literals default to Int
+    val doubleValue = 2.718281828    // => doubleValue is 2.718281828 (Double: 64-bit, default float)
+                                     // => No suffix needed, decimal literals default to Double
+                                     // => ~15-16 decimal digits precision (IEEE 754)
+    val floatValue = 3.14f           // => floatValue is 3.14 (f suffix forces Float type)
+                                     // => 32-bit, ~6-7 decimal digits precision
+                                     // => Without 'f', 3.14 would be Double (type mismatch error)
 
     val message = "Integer: $intValue, Double: $doubleValue"
                                     // => message is "Integer: 42, Double: 2.718281828"
+                                    // => $variable syntax for string interpolation
+                                    // => Compiler auto-calls toString() on values
 
     println(intValue::class.simpleName)     // => Output: Int
+                                            // => ::class reflection operator gets KClass instance
+                                            // => .simpleName returns "Int" (no package prefix)
     println(doubleValue::class.simpleName)  // => Output: Double
+                                            // => Runtime type reflection, not compile-time
+                                            // => Returns Unit (void), no return value
 }
 ```
 
@@ -127,31 +161,50 @@ Kotlin's string templates embed expressions directly in strings using `$` for si
 
 ```kotlin
 fun main() {
-    val name = "Kotlin"              // => name is "Kotlin"
-    val version = 1.9                // => version is 1.9
+    val name = "Kotlin"              // => name is "Kotlin" (String type inferred)
+                                     // => Stored as immutable val reference
+    val version = 1.9                // => version is 1.9 (Double type inferred)
+                                     // => Decimal literal defaults to Double, not Float
 
     val simple = "Language: $name"   // => simple is "Language: Kotlin"
+                                     // => $name interpolated without braces (simple variable)
+                                     // => Compiler generates StringBuilder.append() calls
     val expr = "Version: ${version * 10}"
                                      // => expr is "Version: 19.0"
+                                     // => ${} braces required for expression (multiplication)
+                                     // => Expression evaluated, then toString() called
     val upper = "Upper: ${name.uppercase()}"
                                      // => upper is "Upper: KOTLIN"
+                                     // => ${} required for method calls
+                                     // => uppercase() returns new String (original unchanged)
     val price = "Price: \$${100 + 50}"
                                      // => price is "Price: $150"
+                                     // => \$ escapes dollar sign (literal $ character)
+                                     // => ${100 + 50} evaluates arithmetic, then interpolates
 
     val multiline = """
         |Language: $name
         |Version: $version
         |Status: Active
-    """.trimMargin()                 // => Removes | prefix and indentation
+    """.trimMargin()                 // => Removes | prefix and leading indentation per line
+                                     // => Triple-quoted string preserves newlines (no \n needed)
+                                     // => Interpolation works inside triple-quoted strings
+                                     // => Result: "Language: Kotlin\nVersion: 1.9\nStatus: Active"
 
     println(simple)                  // => Output: Language: Kotlin
+                                     // => Prints string value with newline
     println(expr)                    // => Output: Version: 19.0
+                                     // => Double value formatted as decimal
     println(upper)                   // => Output: Upper: KOTLIN
+                                     // => Uppercase transformation visible
     println(price)                   // => Output: Price: $150
+                                     // => Literal $ and calculated value shown
     println(multiline)               // => Output:
                                      // Language: Kotlin
                                      // Version: 1.9
                                      // Status: Active
+                                     // => Multi-line formatted output with proper newlines
+                                     // => Returns Unit (void), no return value
 }
 ```
 
@@ -262,42 +315,67 @@ Kotlin's `when` replaces Java's switch statement with a more powerful expression
 
 ```kotlin
 fun main() {
-    val x = 3                        // => x is 3
+    val x = 3                        // => x is 3 (Int type inferred)
+                                     // => Subject value for when expression
+    val result = when (x) {          // => when expression evaluates x
+                                     // => Returns String value (expression, not statement)
+        1 -> "One"                   // => x == 1: false (condition not met)
+                                     // => Branch skipped
+        2 -> "Two"                   // => x == 2: false (still not matched)
+                                     // => Branch skipped
+        3 -> "Three"                 // => x == 3: true (exact match found)
+                                     // => Returns "Three", stops checking remaining branches
+        else -> "Other"              // => Not evaluated (already matched)
+                                     // => else required for expression to ensure exhaustiveness
+    }                                // => result is "Three" (assigned from matched branch)
+                                     // => No break needed (no fallthrough in Kotlin)
 
-        1 -> "One"                   // => x == 1: false
-        2 -> "Two"                   // => x == 2: false
-        3 -> "Three"                 // => x == 3: true, matched
-        else -> "Other"              // => Not evaluated
-    }                                // => result is "Three"
+    val score = 85                   // => score is 85 (test grade value)
+                                     // => Will be checked against multiple ranges
+    val grade = when (score) {       // => when with range checks (replaces if-else chains)
+        in 90..100 -> "A"            // => 85 in 90..100: false (85 < 90)
+                                     // => Inclusive range [90, 100]
+        in 80..89 -> "B"             // => 85 in 80..89: true (85 within bounds)
+                                     // => Returns "B", stops evaluation
+        in 70..79 -> "C"             // => Not evaluated (already matched)
+        else -> "F"                  // => Catch-all for scores < 70
+    }                                // => grade is "B" (assigned from range match)
 
-    val score = 85                   // => score is 85
-    val grade = when (score) {
-        in 90..100 -> "A"            // => 85 in 90..100: false
-        in 80..89 -> "B"             // => 85 in 80..89: true, matched
-        in 70..79 -> "C"             // => Not evaluated
-        else -> "F"
-    }                                // => grade is "B"
-
-    val description = when (obj) {
+    val obj: Any = "Kotlin"          // => obj is "Kotlin" (Any type holds any value)
+                                     // => Runtime type is String (supertype Any allows flexibility)
+    val description = when (obj) {   // => when with type checks (smart casting)
         is String -> "String of length ${obj.length}"
-                                     // => obj.length is 6
-                                     // => description is "String of length 6"
-        is Int -> "Integer: $obj"    // => Not evaluated
-        else -> "Unknown type"
-    }
+                                     // => obj is String: true (type check passes)
+                                     // => Smart cast: obj treated as String in this branch
+                                     // => obj.length is 6 (auto-cast, no explicit cast needed)
+                                     // => Returns "String of length 6"
+        is Int -> "Integer: $obj"    // => Not evaluated (already matched)
+                                     // => Would smart-cast to Int if matched
+        else -> "Unknown type"       // => Handles other types
+    }                                // => description is "String of length 6"
 
-    val temp = 28                    // => temp is 28
-        temp < 0 -> "Freezing"       // => 28 < 0: false
-        temp < 15 -> "Cold"          // => 28 < 15: false
-        temp < 25 -> "Moderate"      // => 28 < 25: false
-        temp < 35 -> "Warm"          // => 28 < 35: true, matched
-        else -> "Hot"                // => Not evaluated
+    val temp = 28                    // => temp is 28 (temperature in Celsius)
+                                     // => Subject for boolean condition when
+    val weather = when {             // => when without argument (boolean condition chains)
+                                     // => Replaces if-else-if ladder for complex logic
+        temp < 0 -> "Freezing"       // => 28 < 0: false (condition fails)
+        temp < 15 -> "Cold"          // => 28 < 15: false (still too warm)
+        temp < 25 -> "Moderate"      // => 28 < 25: false (close but not quite)
+        temp < 35 -> "Warm"          // => 28 < 35: true (first matching condition)
+                                     // => Returns "Warm", stops evaluation
+        else -> "Hot"                // => Not evaluated (already matched)
+                                     // => Handles temp >= 35
     }                                // => weather is "Warm"
 
     println(result)                  // => Output: Three
+                                     // => Prints matched when branch value
     println(grade)                   // => Output: B
+                                     // => Shows range-based classification result
     println(description)             // => Output: String of length 6
+                                     // => Smart-cast type check result
     println(weather)                 // => Output: Warm
+                                     // => Boolean condition chain result
+                                     // => Returns Unit (void), no return value
 }
 ```
 
@@ -321,29 +399,57 @@ Kotlin ranges represent sequences of values with start and end points. They supp
 
 ```kotlin
 fun main() {
-    val range1 = 1..10               // => range1 is 1, 2, 3, ..., 10 (inclusive)
+    val range1 = 1..10               // => range1 is IntRange [1, 10] (both endpoints included)
+                                     // => Memory-efficient: stores only start, end, step
+                                     // => No array materialization (lazy evaluation)
     println(5 in range1)             // => Output: true
+                                     // => 'in' operator checks membership: 1 <= 5 <= 10
+                                     // => O(1) constant-time check (no iteration needed)
     println(15 in range1)            // => Output: false
+                                     // => 15 > 10 (outside upper bound)
 
-    val range2 = 1 until 10          // => range2 is 1, 2, 3, ..., 9 (excludes 10)
+    val range2 = 1 until 10          // => range2 is IntRange [1, 10) (excludes 10)
+                                     // => Equivalent to 1..9 (upper bound exclusive)
+                                     // => Common for array/list indices (0 until list.size)
     println(10 in range2)            // => Output: false
+                                     // => 10 excluded from range (upper bound open)
 
-    val range3 = 10 downTo 1         // => range3 is 10, 9, 8, ..., 1 (descending)
-    for (i in range3) {
-    }
-    println()
+    val range3 = 10 downTo 1         // => range3 is IntProgression [10, 1] step -1
+                                     // => Descending sequence: 10, 9, 8, ..., 1
+                                     // => Negative step (-1) for countdown
+    for (i in range3) {              // => Iterates i from 10 down to 1
+        print("$i ")                 // => Prints: 10 9 8 7 6 5 4 3 2 1
+                                     // => Each iteration binds i to next value
+    }                                // => Loop scope ends, i no longer accessible
+    println()                        // => Output newline after sequence
+                                     // => Separates output visually
 
-    val range4 = 1..10 step 2        // => range4 is 1, 3, 5, 7, 9 (step 2)
-    for (i in range4) {
-    }
-    println()
+    val range4 = 1..10 step 2        // => range4 is IntProgression [1, 10] step 2
+                                     // => Odd numbers: 1, 3, 5, 7, 9 (increment by 2)
+                                     // => Skips even values (2, 4, 6, 8, 10)
+    for (i in range4) {              // => Iterates i: 1, 3, 5, 7, 9
+        print("$i ")                 // => Prints: 1 3 5 7 9
+                                     // => Step determines spacing between values
+    }                                // => 5 iterations total (not 10)
+    println()                        // => Output newline for formatting
 
-    val charRange = 'a'..'z'         // => charRange is a, b, c, ..., z
+    val charRange = 'a'..'z'         // => charRange is CharRange ['a', 'z']
+                                     // => All lowercase letters (26 characters)
+                                     // => Comparable types support ranges (not just Int)
     println('k' in charRange)        // => Output: true
+                                     // => 'k' is between 'a' and 'z' (ASCII/Unicode ordering)
+                                     // => Character comparison: 'a'(97) <= 'k'(107) <= 'z'(122)
 
     println((1..10).count())         // => Output: 10
+                                     // => Range functions work without materialization
+                                     // => count() returns number of elements
     println((1..10).sum())           // => Output: 55
+                                     // => sum() computes 1+2+3+...+10 = 55
+                                     // => Iterates range internally, no array allocation
     println((1..10).average())       // => Output: 5.5
+                                     // => average() computes mean: 55 / 10 = 5.5
+                                     // => Returns Double even for IntRange
+                                     // => Returns Unit (void), no return value
 }
 ```
 
@@ -367,39 +473,69 @@ Kotlin's for loops iterate over anything that provides an iterator, including ra
 
 ```kotlin
 fun main() {
-    print("Range: ")
-    for (i in 1..5) {                // => Iterates 1, 2, 3, 4, 5
-    }
-    println()
+    print("Range: ")                 // => Prints "Range: " without newline
+                                     // => print() doesn't add newline (unlike println())
+    for (i in 1..5) {                // => Iterates i over 1, 2, 3, 4, 5
+                                     // => i auto-declared as Int (type inferred from range)
+                                     // => i scoped to loop body only
+        print("$i ")                 // => Prints: 1 2 3 4 5 (space-separated)
+                                     // => String interpolation with $i
+    }                                // => Loop ends, i no longer accessible
+    println()                        // => Output newline (moves to next line)
 
     val fruits = listOf("Apple", "Banana", "Cherry")
-                                     // => fruits is ["Apple", "Banana", "Cherry"]
-    print("Fruits: ")
-    }
-    println()
+                                     // => fruits is List<String> with 3 elements
+                                     // => listOf creates immutable List (read-only)
+                                     // => Type inference: List<String> from string literals
+    print("Fruits: ")                // => Prints label for next output
+    for (fruit in fruits) {          // => Iterates fruit over each list element
+                                     // => fruit type inferred as String
+        print("$fruit ")             // => Prints: Apple Banana Cherry (space-separated)
+                                     // => Each iteration binds fruit to next element
+    }                                // => fruit scoped to loop only
+    println()                        // => Newline after fruits list
 
-    print("Indexed: ")
+    print("Indexed: ")               // => Label for indexed iteration
     for ((index, fruit) in fruits.withIndex()) {
-                                     // => Destructures to (0, "Apple"), (1, "Banana"), (2, "Cherry")
-    }
-    println()
+                                     // => withIndex() returns Iterable<IndexedValue<String>>
+                                     // => Destructuring: (index, fruit) unpacks IndexedValue
+                                     // => index: Int (0, 1, 2...), fruit: String (elements)
+        print("$index:$fruit ")      // => Prints: 0:Apple 1:Banana 2:Cherry
+                                     // => Zero-based indexing (index starts at 0)
+                                     // => No manual counter variable needed
+    }                                // => Destructured variables scoped to loop
+    println()                        // => Newline separator
 
     val scores = mapOf("Alice" to 95, "Bob" to 87, "Charlie" to 92)
-                                     // => scores is {Alice=95, Bob=87, Charlie=92}
+                                     // => scores is Map<String, Int> (immutable)
+                                     // => 'to' infix creates Pair("Alice", 95), etc.
+                                     // => mapOf constructs LinkedHashMap (preserves insertion order)
+    for ((name, score) in scores) {  // => Iterates over Map.Entry<String, Int>
+                                     // => Destructuring: (name, score) unpacks entry
+                                     // => name: String (key), score: Int (value)
         println("$name: $score")     // => Output: Alice: 95
                                      // => Output: Bob: 87
                                      // => Output: Charlie: 92
-    }
+                                     // => Each entry printed on separate line
+    }                                // => Map iteration preserves insertion order
 
-    print("Step 2: ")
-    for (i in 0..10 step 2) {        // => Iterates 0, 2, 4, 6, 8, 10
-    }
-    println()
+    print("Step 2: ")                // => Label for step progression
+    for (i in 0..10 step 2) {        // => Iterates 0, 2, 4, 6, 8, 10 (even numbers)
+                                     // => step 2 creates IntProgression with increment 2
+                                     // => Skips odd values (1, 3, 5, 7, 9)
+        print("$i ")                 // => Prints: 0 2 4 6 8 10
+    }                                // => 6 iterations (not 11)
+    println()                        // => Newline after step sequence
 
-    print("Reverse: ")
-    for (i in 5 downTo 1) {          // => Iterates 5, 4, 3, 2, 1
-    }
-    println()
+    print("Reverse: ")               // => Label for descending iteration
+    for (i in 5 downTo 1) {          // => Iterates 5, 4, 3, 2, 1 (countdown)
+                                     // => downTo creates descending IntProgression (step -1)
+                                     // => Inclusive range [5, 1]
+        print("$i ")                 // => Prints: 5 4 3 2 1
+                                     // => Each decrement by 1
+    }                                // => 5 iterations total
+    println()                        // => Final newline
+                                     // => Returns Unit (void), no return value
 }
 ```
 
@@ -423,29 +559,60 @@ Kotlin supports traditional while and do-while loops for conditional iteration. 
 
 ```kotlin
 fun main() {
-    var count = 0                    // => count is 0 (var: mutable)
+    var count = 0                    // => count is 0 (var allows mutation)
+                                     // => Must be var for loop counter (val would be immutable)
+    while (count < 3) {              // => Condition checked before each iteration
+                                     // => Loops while 0 < 3, 1 < 3, 2 < 3 (3 iterations)
         println("Count: $count")     // => Output: Count: 0
                                      // => Output: Count: 1
                                      // => Output: Count: 2
-        count++                      // => count becomes 1, 2, 3
+        count++                      // => count increments: 0→1, 1→2, 2→3
+                                     // => ++ postfix operator (increment after use)
+    }                                // => count is 3 after loop (3 < 3 is false)
+                                     // => Loop exits when condition becomes false
 
-    var x = 0                        // => x is 0
-    do {
+    var x = 0                        // => x is 0 (loop counter)
+                                     // => Used in do-while demonstration
+    do {                             // => Body executes first (before condition check)
         println("x: $x")             // => Output: x: 0
-        x++                          // => x becomes 1
-                                     // => 1 < 0 is false, but body ran once
+                                     // => Prints even though condition will be false
+        x++                          // => x becomes 1 (increment after print)
+    } while (x < 0)                  // => Condition checked after execution
+                                     // => 1 < 0 is false, but body already ran once
+                                     // => Guarantees at least one execution
 
-    var sum = 0                      // => sum is 0
-        sum += 1                     // => sum increments: 1, 2, 3, 4, 5
-        }
-    }                                // => sum is 5
+    var sum = 0                      // => sum is 0 (accumulator)
+                                     // => Tracks running total in loop
+    while (sum < 5) {                // => Loops while sum < 5
+                                     // => Condition: 0<5, 1<5, 2<5, 3<5, 4<5 (5 iterations)
+        sum += 1                     // => sum increments: 0→1, 1→2, 2→3, 3→4, 4→5
+                                     // => += compound assignment (sum = sum + 1)
+        if (sum == 3) {              // => Check if sum equals 3
+            continue                 // => Skip to next iteration (no println)
+                                     // => Jumps back to while condition check
+        }                            // => continue bypasses remaining loop body
+        println("Sum: $sum")         // => Output: Sum: 1
+                                     // => Output: Sum: 2
+                                     // => (skips 3 due to continue)
+                                     // => Output: Sum: 4
+                                     // => Output: Sum: 5
+    }                                // => sum is 5 after loop (5 < 5 is false)
 
-    var i = 0                        // => i is 0
-    while (i < 5) {
-        i++                          // => i increments: 1, 2, 3, 4, 5
-        }
-    }
-    println()
+    var i = 0                        // => i is 0 (counter for break demo)
+                                     // => Used to demonstrate early exit
+    while (i < 5) {                  // => Loops while i < 5 (could be 5 iterations)
+        i++                          // => i increments: 0→1, 1→2, 2→3
+                                     // => Prefix increment happens first
+        if (i == 3) {                // => Check if i equals 3
+            break                    // => Exit loop immediately (early termination)
+                                     // => Loop terminates before reaching i=5
+        }                            // => break bypasses condition, exits while
+        print("$i ")                 // => Output: 1 2
+                                     // => Prints 1 and 2 (skips 3 due to break)
+                                     // => 3, 4, 5 never printed
+    }                                // => i is 3 after loop (break at i==3)
+    println()                        // => Newline after break output
+                                     // => Returns Unit (void), no return value
 }
 ```
 
@@ -492,28 +659,63 @@ graph TD
 
 ```kotlin
 fun main() {
-    val name: String = "Kotlin"      // => name is "Kotlin" (non-nullable)
+    val name: String = "Kotlin"      // => name is "Kotlin" (non-nullable String)
+                                     // => Cannot be null (compile-time enforced)
+                                     // => No null checks needed (guaranteed non-null)
     // val invalid: String = null    // => Compile error: String doesn't accept null
+                                     // => Type mismatch: non-nullable type rejects null
 
+    val nullableName: String? = null // => nullableName is null (nullable String?)
+                                     // => ? suffix allows null value
+                                     // => Compiler enforces null safety checks
+    val validName: String? = "Valid" // => validName is "Valid" (nullable but assigned)
+                                     // => String? can hold both null and actual strings
+                                     // => Runtime value is "Valid", not null
 
     val length1 = nullableName?.length
+                                     // => Safe call: null?.length returns null
+                                     // => length1 is null (no NPE thrown)
+                                     // => ?. propagates null instead of crashing
+    val length2 = validName?.length  // => Safe call: "Valid"?.length returns 5
+                                     // => length2 is 5 (String.length property)
+                                     // => Safe to call method on non-null value
 
     val len1 = nullableName?.length ?: 0
-                                     // => Elvis: null becomes 0
+                                     // => Elvis: null?.length is null, returns 0 (default)
+                                     // => len1 is 0 (Int, non-nullable)
+                                     // => ?: converts nullable to non-nullable
     val len2 = validName?.length ?: 0
-                                     // => Elvis: 5 is not null, use 5
+                                     // => Elvis: 5 is not null, uses 5 (left side)
+                                     // => len2 is 5 (default never evaluated)
+                                     // => Right side evaluated only when left is null
 
     // val unsafe = nullableName!!.length
-                                     // => Use sparingly (defeats null safety)
+                                     // => !! not-null assertion would throw NPE here
+                                     // => Forces compiler to treat nullable as non-null
+                                     // => Use sparingly (defeats null safety guarantees)
 
-    val str = value as? String       // => Safe cast succeeds
+    val value: Any = "Hello"         // => value is "Hello" (Any supertype)
+                                     // => Runtime type is String (not known at compile-time)
+    val str = value as? String       // => Safe cast: "Hello" is String, succeeds
+                                     // => str is "Hello" (String? type)
+                                     // => as? returns null on failure (no exception)
+    val num = value as? Int          // => Safe cast: "Hello" is not Int, returns null
+                                     // => num is null (Int? type)
+                                     // => Safer than 'as' which throws ClassCastException
 
     println(length1)                 // => Output: null
+                                     // => Null propagated from safe call
     println(length2)                 // => Output: 5
+                                     // => Length of "Valid" string
     println(len1)                    // => Output: 0
+                                     // => Elvis default for null
     println(len2)                    // => Output: 5
+                                     // => Elvis left side (non-null)
     println(str)                     // => Output: Hello
+                                     // => Successful safe cast result
     println(num)                     // => Output: null
+                                     // => Failed safe cast returns null
+                                     // => Returns Unit (void), no return value
 }
 ```
 
@@ -538,38 +740,76 @@ Kotlin provides both mutable and immutable collections. Immutable lists (created
 ```kotlin
 fun main() {
     val fruits = listOf("Apple", "Banana", "Cherry")
-                                     // => fruits is ["Apple", "Banana", "Cherry"] (immutable)
+                                     // => fruits is List<String> (immutable, read-only)
+                                     // => listOf creates immutable list (no add/remove)
+                                     // => Type inference: List<String> from string literals
     println(fruits[0])               // => Output: Apple
+                                     // => [] operator for indexed access (0-based)
+                                     // => First element at index 0
     println(fruits.size)             // => Output: 3
+                                     // => size property returns element count
+                                     // => List contains 3 strings
 
     val numbers = mutableListOf(1, 2, 3)
-                                     // => numbers is [1, 2, 3] (mutable)
-    numbers.add(4)                   // => numbers is [1, 2, 3, 4]
-    numbers.removeAt(0)              // => numbers is [2, 3, 4] (removed index 0)
+                                     // => numbers is MutableList<Int> (mutable, modifiable)
+                                     // => mutableListOf creates ArrayList internally
+                                     // => Supports add, remove, indexed assignment
+    numbers.add(4)                   // => numbers is [1, 2, 3, 4] (appended to end)
+                                     // => add() increases size from 3 to 4
+                                     // => MutableList grows dynamically
+    numbers.removeAt(0)              // => numbers is [2, 3, 4] (removed element at index 0)
+                                     // => Indices shift: old[1]→new[0], old[2]→new[1], old[3]→new[2]
+                                     // => Size decreases from 4 to 3
     numbers[0] = 10                  // => numbers is [10, 3, 4] (updated index 0)
+                                     // => [] operator for indexed assignment
+                                     // => Replaces value 2 with 10 (no size change)
 
     val combined = fruits + listOf("Mango", "Orange")
                                      // => combined is ["Apple", "Banana", "Cherry", "Mango", "Orange"]
-                                     // => fruits unchanged
+                                     // => + operator creates new list (concatenation)
+                                     // => fruits unchanged (immutable list preserved)
+                                     // => Returns new immutable List<String>
     val sliced = combined.slice(1..3)
                                      // => sliced is ["Banana", "Cherry", "Mango"]
+                                     // => slice(1..3) extracts indices 1, 2, 3 (inclusive range)
+                                     // => Returns new list with 3 elements
+                                     // => Original combined unchanged
 
     println("Apple" in fruits)       // => Output: true
+                                     // => 'in' operator checks membership (O(n) linear search)
+                                     // => "Apple" exists in fruits list
     println("Grape" in fruits)       // => Output: false
+                                     // => "Grape" not found in fruits
 
-    for (fruit in fruits) {
-    }
-    println()
+    for (fruit in fruits) {          // => Iterates over each element: "Apple", "Banana", "Cherry"
+                                     // => fruit type inferred as String
+        print("$fruit ")             // => Output: Apple Banana Cherry
+                                     // => Space-separated output
+    }                                // => fruit scoped to loop body only
+    println()                        // => Newline after iteration
 
     val lengths = fruits.map { it.length }
-                                     // => lengths is [5, 6, 6]
+                                     // => map transforms each element with lambda
+                                     // => 'it' is implicit lambda parameter (each fruit)
+                                     // => lengths is [5, 6, 6] (List<Int>)
+                                     // => "Apple".length=5, "Banana".length=6, "Cherry".length=6
+                                     // => Returns new list (fruits unchanged)
     val filtered = fruits.filter { it.startsWith("C") }
-                                     // => filtered is ["Cherry"]
+                                     // => filter selects elements matching predicate
+                                     // => 'it' tested: "Apple"→false, "Banana"→false, "Cherry"→true
+                                     // => filtered is ["Cherry"] (List<String>)
+                                     // => Only "Cherry" starts with 'C'
+                                     // => Returns new list (fruits unchanged)
 
     println(numbers)                 // => Output: [10, 3, 4]
+                                     // => Final state after mutations (add, remove, update)
     println(combined)                // => Output: [Apple, Banana, Cherry, Mango, Orange]
+                                     // => Concatenated immutable list
     println(lengths)                 // => Output: [5, 6, 6]
+                                     // => Mapped lengths result
     println(filtered)                // => Output: [Cherry]
+                                     // => Filtered result (only "C" starters)
+                                     // => Returns Unit (void), no return value
 }
 ```
 
@@ -594,31 +834,66 @@ Sets are unordered collections of unique elements. Kotlin provides immutable `Se
 ```kotlin
 fun main() {
     val numbers = setOf(1, 2, 3, 2, 1)
-                                     // => numbers is {1, 2, 3} (duplicates removed)
+                                     // => numbers is Set<Int> {1, 2, 3} (duplicates removed)
+                                     // => setOf creates immutable Set (read-only)
+                                     // => Duplicate values 2 and 1 automatically eliminated
+                                     // => Unordered collection (no guaranteed iteration order)
     println(numbers)                 // => Output: [1, 2, 3]
+                                     // => Set printed as list notation (no visual difference)
+                                     // => But internal structure is HashSet (hash-based)
     println(numbers.size)            // => Output: 3
+                                     // => size property returns unique element count
+                                     // => 5 input values → 3 unique values
 
     val colors = mutableSetOf("Red", "Green", "Blue")
-                                     // => colors is {"Red", "Green", "Blue"}
+                                     // => colors is MutableSet<String> {"Red", "Green", "Blue"}
+                                     // => mutableSetOf creates LinkedHashSet (preserves insertion order)
+                                     // => Supports add() and remove() operations
     colors.add("Yellow")             // => colors is {"Red", "Green", "Blue", "Yellow"}
-    colors.add("Red")                // => No change (Red already exists)
+                                     // => add() appends if element doesn't exist
+                                     // => Returns true (element was added)
+    colors.add("Red")                // => No change (Red already exists in set)
+                                     // => add() returns false (duplicate silently ignored)
+                                     // => Set uniqueness constraint enforced
     colors.remove("Green")           // => colors is {"Red", "Blue", "Yellow"}
+                                     // => remove() deletes "Green" from set
+                                     // => Returns true (element was removed)
 
-    val set1 = setOf(1, 2, 3, 4)     // => set1 is {1, 2, 3, 4}
-    val set2 = setOf(3, 4, 5, 6)     // => set2 is {3, 4, 5, 6}
+    val set1 = setOf(1, 2, 3, 4)     // => set1 is Set<Int> {1, 2, 3, 4}
+                                     // => First operand for set operations
+    val set2 = setOf(3, 4, 5, 6)     // => set2 is Set<Int> {3, 4, 5, 6}
+                                     // => Second operand, overlaps with set1 at {3, 4}
 
     val union = set1 union set2      // => union is {1, 2, 3, 4, 5, 6}
+                                     // => union combines all unique elements from both sets
+                                     // => Mathematical ∪ operation (set1 ∪ set2)
+                                     // => Returns new Set<Int> with 6 elements
     val intersect = set1 intersect set2
                                      // => intersect is {3, 4}
+                                     // => intersect finds common elements only
+                                     // => Mathematical ∩ operation (set1 ∩ set2)
+                                     // => Returns new Set<Int> with 2 elements
     val diff = set1 subtract set2    // => diff is {1, 2}
+                                     // => subtract finds elements in set1 but not in set2
+                                     // => Mathematical difference operation (set1 - set2)
+                                     // => {3, 4} removed from set1, leaving {1, 2}
 
-    println(2 in set1)               // => Output: true (O(1) lookup)
+    println(2 in set1)               // => Output: true
+                                     // => 'in' operator checks membership with O(1) hash lookup
+                                     // => Constant time regardless of set size
     println(5 in set1)               // => Output: false
+                                     // => 5 exists only in set2, not in set1
 
     println(colors)                  // => Output: [Red, Blue, Yellow]
+                                     // => Final state after add/remove operations
+                                     // => "Green" removed, "Yellow" added
     println(union)                   // => Output: [1, 2, 3, 4, 5, 6]
+                                     // => All elements from both sets combined
     println(intersect)               // => Output: [3, 4]
+                                     // => Only overlapping elements
     println(diff)                    // => Output: [1, 2]
+                                     // => Elements unique to set1
+                                     // => Returns Unit (void), no return value
 }
 ```
 
@@ -646,40 +921,78 @@ fun main() {
         "Indonesia" to "Jakarta",
         "Malaysia" to "Kuala Lumpur",
         "Singapore" to "Singapore"
-    )                                // => capitals is {Indonesia=Jakarta, ...}
+    )                                // => capitals is Map<String, String> (immutable)
+                                     // => 'to' infix creates Pair("Indonesia", "Jakarta"), etc.
+                                     // => mapOf creates LinkedHashMap (preserves insertion order)
+                                     // => 3 key-value entries, keys unique
 
     println(capitals["Indonesia"])   // => Output: Jakarta
+                                     // => [] operator for map lookup (O(1) hash-based)
+                                     // => Returns value String? (nullable, might be null)
     println(capitals["Thailand"])    // => Output: null (key not found)
+                                     // => [] returns null for missing keys (no exception)
+                                     // => Safe behavior (unlike Java's get())
 
     val scores = mutableMapOf(
         "Alice" to 95,
         "Bob" to 87
-    )                                // => scores is {Alice=95, Bob=87}
+    )                                // => scores is MutableMap<String, Int> (mutable)
+                                     // => Supports put, remove, indexed assignment
+                                     // => Initial state: {Alice=95, Bob=87}
     scores["Charlie"] = 92           // => scores is {Alice=95, Bob=87, Charlie=92}
+                                     // => [] operator for insertion (new key)
+                                     // => Map grows from 2 to 3 entries
     scores["Alice"] = 98             // => scores is {Alice=98, Bob=87, Charlie=92}
+                                     // => [] operator for update (existing key)
+                                     // => Replaces value 95 with 98 (no size change)
     scores.remove("Bob")             // => scores is {Alice=98, Charlie=92}
+                                     // => remove() deletes key-value pair
+                                     // => Returns removed value (87) or null if key missing
 
     val aliceScore = scores.getOrDefault("Alice", 0)
-                                     // => aliceScore is 98
+                                     // => aliceScore is 98 (key exists)
+                                     // => getOrDefault returns actual value (default not used)
+                                     // => Type: Int (non-nullable, default ensures non-null)
     val bobScore = scores.getOrDefault("Bob", 0)
-                                     // => bobScore is 0 (Bob removed)
+                                     // => bobScore is 0 (Bob removed, key missing)
+                                     // => getOrDefault returns default value when key absent
+                                     // => Safe alternative to [] which returns null
 
     val davidScore = scores.getOrElse("David") { 50 }
+                                     // => davidScore is 50 (David not in map)
+                                     // => getOrElse executes lambda for missing keys (lazy evaluation)
+                                     // => Lambda { 50 } only runs when key absent
+                                     // => More efficient than getOrDefault for expensive defaults
 
     for ((country, capital) in capitals) {
+                                     // => Iterates over Map.Entry<String, String>
+                                     // => Destructuring: (country, capital) unpacks entry
+                                     // => country: String (key), capital: String (value)
         println("$country: $capital")// => Output: Indonesia: Jakarta
                                      // => Output: Malaysia: Kuala Lumpur
                                      // => Output: Singapore: Singapore
-    }
+                                     // => Iteration order matches insertion (LinkedHashMap)
+    }                                // => Destructured variables scoped to loop
 
     println(capitals.keys)           // => Output: [Indonesia, Malaysia, Singapore]
+                                     // => keys property returns Set<String> (unique keys)
+                                     // => All map keys in a set collection
     println(capitals.values)         // => Output: [Jakarta, Kuala Lumpur, Singapore]
+                                     // => values property returns Collection<String>
+                                     // => All map values (may contain duplicates)
     println(capitals.containsKey("Malaysia"))
                                      // => Output: true
+                                     // => containsKey checks key existence (O(1) hash lookup)
+                                     // => "Malaysia" key exists in map
     println(capitals.containsValue("Bangkok"))
                                      // => Output: false
+                                     // => containsValue checks value existence (O(n) linear search)
+                                     // => "Bangkok" not present in values
 
     println(scores)                  // => Output: {Alice=98, Charlie=92}
+                                     // => Final mutable map state after operations
+                                     // => Bob removed, Alice updated, Charlie added
+                                     // => Returns Unit (void), no return value
 }
 ```
 
@@ -720,45 +1033,81 @@ graph TD
 
 ```kotlin
 class Person(val name: String, var age: Int) {
-                                     // => Properties: name (val), age (var)
+                                     // => Primary constructor with 2 parameters
+                                     // => val name: immutable property (getter only)
+                                     // => var age: mutable property (getter + setter)
+                                     // => No separate field declarations needed
 
-    init {
+    init {                           // => Init block runs after property initialization
+                                     // => Executes during object construction
         println("Person created: $name, age $age")
-                                     // => Runs during construction
+                                     // => Runs immediately when Person(...) called
+                                     // => Can access constructor parameters
+    }                                // => init completes before object is ready
+
+    fun greet() {                    // => Instance method (can access properties)
+                                     // => 'this' implicit (can write this.name or just name)
+        println("Hello, I'm $name")  // => Accesses name property via implicit this
+                                     // => Returns Unit (void), no return value
     }
 
-    fun greet() {
-    }
-
-    fun haveBirthday() {
+    fun haveBirthday() {             // => Mutates object state (modifies var age)
+        age++                        // => Increments age by 1 (25→26)
+                                     // => Only possible because age is var (mutable)
         println("Happy birthday! Now $age years old")
-    }
+                                     // => Prints updated age value
+    }                                // => State change persists after method returns
 }
 
-class Product(val name: String) {
-    var price: Double = 0.0          // => Default value: 0.0
+class Product(val name: String) {   // => Primary constructor with 1 parameter
+                                     // => name is immutable property
+    var price: Double = 0.0          // => Property with default value (not in constructor)
+                                     // => Initialized to 0.0 for primary constructor calls
+                                     // => Can be overridden by secondary constructor
 
     constructor(name: String, price: Double) : this(name) {
-                                     // => Delegates to primary constructor
-    }
+                                     // => Secondary constructor with 2 parameters
+                                     // => : this(name) delegates to primary constructor
+                                     // => Must call primary constructor first
+        this.price = price           // => Sets price property after primary constructor
+                                     // => Overrides default 0.0 value
+    }                                // => Alternative construction pattern
 }
 
 fun main() {
-    val person = Person("Alice", 25) // => Output: Person created: Alice, age 25
+    val person = Person("Alice", 25) // => Calls primary constructor
+                                     // => Creates Person with name="Alice", age=25
+                                     // => Output: Person created: Alice, age 25
+                                     // => Init block executes during construction
+                                     // => person is immutable reference (val), but object state mutable
 
-    person.greet()                   // => Output: Hello, I'm Alice
-    person.haveBirthday()            // => Output: Happy birthday! Now 26 years old
-                                     // => person.age is now 26
+    person.greet()                   // => Calls greet() method on person
+                                     // => Output: Hello, I'm Alice
+                                     // => Accesses person.name property
+    person.haveBirthday()            // => Calls haveBirthday() method
+                                     // => age incremented: 25→26 (mutates state)
+                                     // => Output: Happy birthday! Now 26 years old
+                                     // => person.age is now 26 (state changed)
 
+    println("Age: ${person.age}")    // => Output: Age: 26
+                                     // => Getter auto-generated for age property
+                                     // => Shows mutated value from haveBirthday()
 
-    val product1 = Product("Laptop") // => product1.price is 0.0
+    val product1 = Product("Laptop") // => Calls primary constructor (1 parameter)
+                                     // => product1.name is "Laptop", price is 0.0 (default)
+                                     // => Uses default price value
     val product2 = Product("Phone", 599.99)
-                                     // => product2.price is 599.99
+                                     // => Calls secondary constructor (2 parameters)
+                                     // => Delegates to primary, then sets price to 599.99
+                                     // => product2.name is "Phone", price is 599.99
 
     println("${product1.name}: ${product1.price}")
                                      // => Output: Laptop: 0.0
+                                     // => Primary constructor, default price
     println("${product2.name}: ${product2.price}")
                                      // => Output: Phone: 599.99
+                                     // => Secondary constructor, custom price
+                                     // => Returns Unit (void), no return value
 }
 ```
 
@@ -781,34 +1130,61 @@ Data classes automatically generate `equals()`, `hashCode()`, `toString()`, and 
 **Destructuring**: Extract properties to variables with `val (prop1, prop2) = object`. Calls generated `componentN()` functions. Position matters (matches constructor parameter order).
 
 ```kotlin
-data class User(
-    val id: Int,
-    val name: String,
-    val email: String
-)
+data class User(                     // => data class modifier auto-generates methods
+                                     // => Generates: equals, hashCode, toString, copy, componentN
+    val id: Int,                     // => Property 1 (immutable)
+    val name: String,                // => Property 2 (immutable)
+    val email: String                // => Property 3 (immutable)
+)                                    // => No body needed (auto-generated methods sufficient)
+                                     // => All primary constructor params must be properties (val/var)
 
 fun main() {
     val user1 = User(1, "Alice", "alice@example.com")
-
+                                     // => user1 created with id=1, name="Alice", email="alice@example.com"
+                                     // => Data class instance (auto-generated methods available)
+    println(user1)                   // => Output: User(id=1, name=Alice, email=alice@example.com)
+                                     // => Auto-generated toString() formats all properties
+                                     // => Useful for debugging and logging
 
     val user2 = User(1, "Alice", "alice@example.com")
+                                     // => user2 has same values as user1 but different object
+                                     // => Different memory location (new instance)
     println(user1 == user2)          // => Output: true (same values)
+                                     // => == calls auto-generated equals() (structural equality)
+                                     // => Compares all properties: id==id, name==name, email==email
     println(user1 === user2)         // => Output: false (different objects)
+                                     // => === checks referential equality (same memory address)
+                                     // => user1 and user2 are separate objects
 
     val user3 = user1.copy(email = "newemail@example.com")
-                                     // => user1 unchanged
+                                     // => copy() creates new User with modified email
+                                     // => user3: id=1 (copied), name="Alice" (copied), email="newemail@example.com" (modified)
+                                     // => user1 unchanged (immutability preserved)
+                                     // => Returns new User instance
+    println(user3)                   // => Output: User(id=1, name=Alice, email=newemail@example.com)
+                                     // => Shows modified email, other properties copied
 
+    val (id, name, email) = user1    // => Destructuring declaration extracts properties
+                                     // => Calls component1()→id, component2()→name, component3()→email
+                                     // => Order matches primary constructor parameter order
     println("ID: $id, Name: $name")  // => Output: ID: 1, Name: Alice
+                                     // => id and name extracted to separate variables
+                                     // => email ignored (not used)
 
-    val users = listOf(
+    val users = listOf(              // => List of 3 User instances
         User(1, "Alice", "alice@example.com"),
         User(2, "Bob", "bob@example.com"),
         User(1, "Alice", "alice@example.com")
-    )                                // => users.size is 3
+                                     // => Duplicate of first user (same values)
+    )                                // => users.size is 3 (duplicates counted)
 
-    val uniqueUsers = users.toSet()  // => Uses equals/hashCode for deduplication
+    val uniqueUsers = users.toSet()  // => toSet() deduplicates using equals/hashCode
+                                     // => Auto-generated equals() compares all properties
+                                     // => User(1, Alice, alice@example.com) appears twice → deduplicated to one
+                                     // => uniqueUsers contains 2 distinct users (Alice, Bob)
     println(uniqueUsers.size)        // => Output: 2 (duplicate removed)
-
+                                     // => Set contains only unique elements
+                                     // => Returns Unit (void), no return value
 }
 ```
 
@@ -847,49 +1223,86 @@ graph TD
 
 ```kotlin
 open class Animal(val name: String) {
-    open fun sound() {
+                                     // => open modifier allows inheritance (not final)
+                                     // => val name: property accessible to subclasses
+                                     // => Without 'open', class would be final (no inheritance)
+    open fun sound() {               // => open method (can be overridden in subclasses)
+                                     // => Without 'open', method would be final
         println("$name makes a sound")
-    }
+                                     // => Default implementation (generic sound)
+    }                                // => Subclasses can override this behavior
 
-    fun sleep() {                    // => Final (no 'open')
+    fun sleep() {                    // => Final method (no 'open' modifier)
+                                     // => Cannot be overridden in subclasses
         println("$name is sleeping")
-    }
+                                     // => Shared behavior (all animals sleep same way)
+    }                                // => Inherited but not overridable
 }
 
 class Dog(name: String) : Animal(name) {
-    override fun sound() {
+                                     // => Dog inherits from Animal (: Animal(name))
+                                     // => name parameter (not property) passed to parent constructor
+                                     // => No val/var: name not redeclared (uses parent's property)
+    override fun sound() {           // => override required (compiler enforces)
+                                     // => Replaces parent's sound() implementation
         println("$name barks: Woof!")
-    }
+                                     // => Dog-specific behavior (barking)
+                                     // => Accesses inherited name property
+    }                                // => Polymorphic method (virtual dispatch at runtime)
 
+    fun fetch() {                    // => Dog-specific method (not in parent)
+                                     // => Only available on Dog instances
         println("$name fetches the ball")
-    }
+                                     // => Unique to Dog (Cat doesn't have fetch)
+    }                                // => Not polymorphic (Dog-only behavior)
 }
 
 class Cat(name: String) : Animal(name) {
-    override fun sound() {
+                                     // => Cat inherits from Animal (sibling of Dog)
+                                     // => name passed to parent constructor
+    override fun sound() {           // => override parent's sound() method
+                                     // => Cat-specific implementation
         println("$name meows: Meow!")
-    }
-}
+                                     // => Cat-specific behavior (meowing)
+    }                                // => Polymorphic alternative to Dog's bark
+}                                    // => No fetch() method (Cat-specific behavior could differ)
 
 fun main() {
-    val animal = Animal("Generic")
+    val animal = Animal("Generic")   // => Base class instance (not subclass)
+                                     // => animal is Animal (concrete type)
     animal.sound()                   // => Output: Generic makes a sound
+                                     // => Calls Animal's sound() (no override)
     animal.sleep()                   // => Output: Generic is sleeping
+                                     // => Calls inherited final sleep() method
 
-    val dog = Dog("Buddy")
+    val dog = Dog("Buddy")           // => Dog instance (Animal subclass)
+                                     // => dog inherits name property from Animal
     dog.sound()                      // => Output: Buddy barks: Woof!
+                                     // => Calls Dog's overridden sound() (not Animal's)
     dog.sleep()                      // => Output: Buddy is sleeping
+                                     // => Calls inherited sleep() from Animal (not overridden)
+    dog.fetch()                      // => Output: Buddy fetches the ball
+                                     // => Calls Dog-specific method (not in Animal)
 
-    val cat = Cat("Whiskers")
+    val cat = Cat("Whiskers")        // => Cat instance (Animal subclass)
+                                     // => cat inherits name property
     cat.sound()                      // => Output: Whiskers meows: Meow!
+                                     // => Calls Cat's overridden sound()
 
     val animals: List<Animal> = listOf(dog, cat, animal)
-    for (a in animals) {
-        a.sound()                    // => Polymorphic dispatch
+                                     // => List of Animal references (base type)
+                                     // => Dog and Cat upcast to Animal (polymorphism)
+                                     // => Actual types: Dog, Cat, Animal (runtime types preserved)
+    for (a in animals) {             // => Iterates Animal references (compile-time type)
+                                     // => a has type Animal, but runtime type varies
+        a.sound()                    // => Polymorphic dispatch (virtual method call)
+                                     // => Runtime determines actual type's sound() to call
                                      // => Output: Buddy barks: Woof!
                                      // => Output: Whiskers meows: Meow!
                                      // => Output: Generic makes a sound
-    }
+                                     // => Different implementations called based on actual type
+    }                                // => Demonstrates runtime polymorphism
+                                     // => Returns Unit (void), no return value
 }
 ```
 
@@ -912,60 +1325,110 @@ Interfaces define contracts that classes must implement. Unlike Java, Kotlin int
 **Interface polymorphism**: Interface references hold implementing instances, enabling polymorphic dispatch.
 
 ```kotlin
-interface Drawable {
-    val color: String
+interface Drawable {                 // => Interface defines contract (no 'open' needed)
+                                     // => Contains abstract and concrete members
+    val color: String                // => Abstract property (no initializer)
+                                     // => Implementing classes must override with value
+                                     // => No backing field in interface (property contract only)
 
-    fun draw()
+    fun draw()                       // => Abstract method (no body)
+                                     // => Implementing classes must provide implementation
+                                     // => Contract: all Drawable things must be drawable
 
-    fun describe() {
+    fun describe() {                 // => Concrete method (default implementation)
+                                     // => Implementing classes inherit this (or override)
         println("Drawing with color: $color")
-    }
+                                     // => Accesses abstract color property
+                                     // => Default behavior available to all implementations
+    }                                // => Interface methods are 'open' by default
 }
 
-interface Clickable {
-    fun click() {
-        println("Clicked")
-    }
+interface Clickable {                // => Second interface (for multiple implementation)
+                                     // => Unrelated to Drawable (different contract)
+    fun click() {                    // => Concrete method (default implementation)
+                                     // => No abstract members, but implementing class can override
+        println("Clicked")           // => Default click behavior
+                                     // => Implementing classes can use as-is
+    }                                // => Provides ready-to-use functionality
 
-    fun showInfo()
-}
+    fun showInfo()                   // => Abstract method (no body)
+                                     // => Implementing classes must override
+}                                    // => Clickable contract: must be clickable and informational
 
 class Button(override val color: String) : Drawable, Clickable {
-    override fun draw() {
+                                     // => Implements multiple interfaces (Drawable, Clickable)
+                                     // => : Drawable, Clickable separated by comma
+                                     // => override val color satisfies Drawable.color requirement
+                                     // => Constructor parameter as overriding property
+    override fun draw() {            // => Implements abstract Drawable.draw()
+                                     // => override keyword required (abstract member)
         println("Drawing button with color: $color")
-    }
+                                     // => Button-specific drawing behavior
+                                     // => Accesses overridden color property
+    }                                // => Fulfills Drawable contract requirement
 
-    override fun showInfo() {
+    override fun showInfo() {        // => Implements abstract Clickable.showInfo()
+                                     // => Must provide body (abstract requirement)
         println("Button information")
-    }
+                                     // => Button-specific information display
+    }                                // => Fulfills Clickable contract requirement
+                                     // => Inherits describe() from Drawable (default implementation)
+                                     // => Inherits click() from Clickable (default implementation)
 }
 
 class Circle(override val color: String) : Drawable {
-    override fun draw() {
+                                     // => Implements single interface (Drawable only)
+                                     // => Not clickable (no Clickable interface)
+                                     // => override val color from constructor
+    override fun draw() {            // => Implements abstract Drawable.draw()
+                                     // => Circle-specific drawing behavior
         println("Drawing circle with color: $color")
-    }
+                                     // => Different implementation from Button.draw()
+    }                                // => Polymorphic behavior (same method, different logic)
 
-    override fun describe() {
+    override fun describe() {        // => Overrides default Drawable.describe()
+                                     // => Replaces inherited default implementation
         println("This is a $color circle")
-    }
+                                     // => Custom description (not default "Drawing with color")
+                                     // => Demonstrates optional override of default methods
+    }                                // => More specific than default implementation
 }
 
 fun main() {
-    val button = Button("Blue")
+    val button = Button("Blue")      // => Button implements both Drawable and Clickable
+                                     // => button.color is "Blue" (overridden property)
     button.draw()                    // => Output: Drawing button with color: Blue
+                                     // => Calls Button's overridden draw() implementation
     button.describe()                // => Output: Drawing with color: Blue
+                                     // => Calls inherited default Drawable.describe() (not overridden)
+                                     // => Default accesses button.color property
     button.click()                   // => Output: Clicked
+                                     // => Calls inherited default Clickable.click() (not overridden)
+                                     // => Default implementation used
     button.showInfo()                // => Output: Button information
+                                     // => Calls Button's overridden showInfo() implementation
 
-    val circle = Circle("Red")
+    val circle = Circle("Red")       // => Circle implements only Drawable
+                                     // => circle.color is "Red"
     circle.draw()                    // => Output: Drawing circle with color: Red
+                                     // => Calls Circle's overridden draw()
+    circle.describe()                // => Output: This is a Red circle
+                                     // => Calls Circle's overridden describe() (not default)
+                                     // => Custom implementation replaces default
 
     val drawables: List<Drawable> = listOf(button, circle)
-    for (d in drawables) {
-        d.draw()                     // => Polymorphic dispatch
+                                     // => List of Drawable references (interface type)
+                                     // => Button and Circle upcast to Drawable (polymorphism)
+                                     // => Both implement Drawable contract (have draw())
+    for (d in drawables) {           // => Iterates Drawable references
+                                     // => d has compile-time type Drawable
+        d.draw()                     // => Polymorphic dispatch (virtual method call)
+                                     // => Runtime determines actual type's draw() to call
                                      // => Output: Drawing button with color: Blue
                                      // => Output: Drawing circle with color: Red
-    }
+                                     // => Different implementations called based on actual type
+    }                                // => Demonstrates interface polymorphism
+                                     // => Returns Unit (void), no return value
 }
 ```
 
@@ -986,56 +1449,106 @@ Abstract classes cannot be instantiated and may contain abstract members that su
 **Template method pattern**: Abstract class defines algorithm using abstract members. Subclasses provide specific implementations. Enables code reuse with polymorphic behavior.
 
 ```kotlin
-abstract class Shape {
-    abstract val area: Double
+abstract class Shape {               // => abstract class (cannot instantiate directly)
+                                     // => Can contain abstract and concrete members
+                                     // => Inherently 'open' (subclasses allowed)
+    abstract val area: Double        // => Abstract property (no initializer)
+                                     // => Subclasses must override with computed or stored value
+                                     // => Defines contract: all shapes must have area
 
-    fun printArea() {
-        println("Area: $area")
-    }
+    fun printArea() {                // => Concrete method (complete implementation)
+                                     // => Inherited by all subclasses (no override needed)
+                                     // => Template method: uses abstract area property
+        println("Area: $area")       // => Accesses overridden area from subclass
+                                     // => Calls subclass's area getter at runtime
+    }                                // => Shared behavior across all shapes
 
-    abstract fun perimeter(): Double
-}
+    abstract fun perimeter(): Double // => Abstract method (no body)
+                                     // => Subclasses must provide implementation
+                                     // => Returns Double (explicit return type required)
+}                                    // => Cannot instantiate Shape() directly
 
 class Rectangle(val width: Double, val height: Double) : Shape() {
-    override val area: Double
-        get() = width * height
+                                     // => Inherits from Shape (: Shape())
+                                     // => () calls Shape's default constructor
+                                     // => Properties: width, height (constructor parameters)
+    override val area: Double        // => Overrides abstract Shape.area property
+                                     // => Must provide value (computed or stored)
+        get() = width * height       // => Custom getter (computed property)
+                                     // => Calculates area on access (not stored)
+                                     // => Returns Double (width * height)
 
     override fun perimeter(): Double {
-        return 2 * (width + height)
-    }
+                                     // => Overrides abstract Shape.perimeter() method
+                                     // => Must provide implementation (abstract requirement)
+        return 2 * (width + height)  // => Rectangle perimeter formula: 2(w + h)
+                                     // => Accesses width and height properties
+    }                                // => Returns Double value
 }
 
 class Circle(val radius: Double) : Shape() {
-    override val area: Double
+                                     // => Inherits from Shape (alternative implementation)
+                                     // => Property: radius (constructor parameter)
+    override val area: Double        // => Overrides abstract area property
+                                     // => Different calculation from Rectangle
         get() = Math.PI * radius * radius
+                                     // => Circle area formula: πr²
+                                     // => Math.PI constant (3.14159...)
+                                     // => Computed on each access
 
     override fun perimeter(): Double {
-        return 2 * Math.PI * radius
-    }
+                                     // => Overrides abstract perimeter() method
+                                     // => Circle-specific implementation
+        return 2 * Math.PI * radius  // => Circle circumference formula: 2πr
+                                     // => Returns Double (perimeter value)
+    }                                // => Different logic from Rectangle.perimeter()
 }
 
 fun main() {
+    // val shape = Shape()           // => Compile error: cannot instantiate abstract class
+                                     // => Abstract classes require concrete subclasses
 
-    val rect = Rectangle(5.0, 3.0)
+    val rect = Rectangle(5.0, 3.0)   // => Rectangle instance (width=5.0, height=3.0)
+                                     // => Concrete class (can instantiate)
     println("Rectangle area: ${rect.area}")
                                      // => Output: Rectangle area: 15.0
+                                     // => Calls rect.area getter: 5.0 * 3.0 = 15.0
+                                     // => Computed property evaluated
     println("Rectangle perimeter: ${rect.perimeter()}")
                                      // => Output: Rectangle perimeter: 16.0
+                                     // => Calls rect.perimeter(): 2 * (5.0 + 3.0) = 16.0
+                                     // => Method call with calculation
     rect.printArea()                 // => Output: Area: 15.0
+                                     // => Calls inherited printArea() from Shape
+                                     // => Template method accesses rect.area (15.0)
 
-    val circle = Circle(4.0)
+    val circle = Circle(4.0)         // => Circle instance (radius=4.0)
+                                     // => Different shape implementation
     println("Circle area: ${circle.area}")
                                      // => Output: Circle area: 50.26548245743669
+                                     // => Calls circle.area: π * 4.0² ≈ 50.265
+                                     // => Math.PI provides precise constant
     println("Circle perimeter: ${circle.perimeter()}")
                                      // => Output: Circle perimeter: 25.132741228718345
+                                     // => Calls circle.perimeter(): 2π * 4.0 ≈ 25.133
+                                     // => Circumference calculation
     circle.printArea()               // => Output: Area: 50.26548245743669
+                                     // => Inherited printArea() calls circle.area
+                                     // => Same template method, different area value
 
     val shapes: List<Shape> = listOf(rect, circle)
-    for (shape in shapes) {
-        shape.printArea()            // => Polymorphic dispatch
-                                     // => Output: Area: 15.0
-                                     // => Output: Area: 50.26548245743669
-    }
+                                     // => List of Shape references (abstract base type)
+                                     // => Rectangle and Circle upcast to Shape (polymorphism)
+                                     // => Both implement Shape contract (have area, perimeter)
+    for (shape in shapes) {          // => Iterates Shape references
+                                     // => shape has compile-time type Shape (abstract)
+        shape.printArea()            // => Polymorphic dispatch (virtual method call)
+                                     // => Calls inherited printArea() for each shape
+                                     // => Output: Area: 15.0 (Rectangle's area getter)
+                                     // => Output: Area: 50.26548245743669 (Circle's area getter)
+                                     // => Template method accesses different area implementations
+    }                                // => Demonstrates abstract class polymorphism
+                                     // => Returns Unit (void), no return value
 }
 ```
 
@@ -1061,44 +1574,104 @@ Companion objects provide class-level functionality without static keywords. The
 
 ```kotlin
 class User private constructor(val id: Int, val name: String) {
-    companion object Factory {
-        private var nextId = 1
+                                     // => private constructor prevents direct instantiation
+                                     // => User(1, "Alice") would fail outside this class
+                                     // => Forces clients to use factory method
+                                     // => Properties: id (Int), name (String)
+    companion object Factory {       // => companion object named "Factory"
+                                     // => Can be accessed as User.Factory or just User
+                                     // => Only one companion object allowed per class
+                                     // => Replaces Java static methods
+        private var nextId = 1       // => Mutable state shared across all instances
+                                     // => var allows mutation (auto-increment)
+                                     // => Initialized once when companion object first accessed
+                                     // => Thread-safe initialization (JVM guarantees)
 
         fun create(name: String): User {
+                                     // => Factory method (class-level function)
+                                     // => Accessible as User.create() or User.Factory.create()
+                                     // => Can access private constructor (same class scope)
             return User(nextId++, name)
-        }
+                                     // => Creates User with auto-incremented ID
+                                     // => nextId++: uses current value, then increments
+                                     // => First call: ID=1, nextId becomes 2
+                                     // => Second call: ID=2, nextId becomes 3, etc.
+        }                            // => Returns new User instance with unique ID
 
         const val MAX_NAME_LENGTH = 50
-        val version = "1.0"
-    }
+                                     // => Compile-time constant (const val)
+                                     // => Inlined at call sites (no runtime lookup)
+                                     // => Int primitive type (required for const)
+                                     // => Naming: SCREAMING_SNAKE_CASE convention
+        val version = "1.0"          // => Runtime property (regular val)
+                                     // => Generates getter method (not inlined)
+                                     // => Can use runtime expressions
+                                     // => String type (not primitive, cannot be const)
+    }                                // => Companion object acts as singleton
 
-    fun describe() {
-        println("User #$id: $name")
-    }
+    fun describe() {                 // => Instance method (operates on this)
+                                     // => Accesses id and name properties
+        println("User #$id: $name")  // => Formats output with instance data
+                                     // => String interpolation: $id, $name
+    }                                // => Returns Unit (void)
 }
 
-class MathHelper {
-    companion object {
-        fun square(x: Int) = x * x
-        const val PI = 3.14159
-    }
+class MathHelper {                   // => Class with only companion object (utility class)
+                                     // => No primary constructor needed
+                                     // => No instance properties or methods
+    companion object {               // => Unnamed companion object
+                                     // => Accessible only through class name (MathHelper.*)
+                                     // => Cannot reference companion by name
+                                     // => Replaces Java static utility class pattern
+        fun square(x: Int) = x * x   // => Single-expression function (= syntax)
+                                     // => Return type inferred as Int
+                                     // => Calculates x squared: 5² = 25
+                                     // => Class-level utility method
+        const val PI = 3.14159       // => Compile-time constant for π approximation
+                                     // => Double literal (precise to 5 decimals)
+                                     // => Inlined at compile-time (no runtime storage)
+    }                                // => Math utilities without instantiation
 }
 
 fun main() {
-    val user1 = User.create("Alice") // => user1.id is 1
-    val user2 = User.create("Bob")   // => user2.id is 2
+    // val user = User(1, "Alice")   // => Compile error: constructor is private
+                                     // => Must use factory method instead
+
+    val user1 = User.create("Alice") // => Calls factory method: User.Factory.create("Alice")
+                                     // => user1.id is 1 (nextId was 1, then incremented)
+                                     // => user1.name is "Alice"
+                                     // => Returns User instance with auto-ID
+    val user2 = User.create("Bob")   // => Second factory call
+                                     // => user2.id is 2 (nextId was 2, then incremented)
+                                     // => Shared nextId state persists across calls
     val user3 = User.create("Charlie")
-                                     // => user3.id is 3
+                                     // => Third factory call
+                                     // => user3.id is 3 (nextId was 3, then incremented)
+                                     // => Sequential ID generation (1, 2, 3, ...)
 
     user1.describe()                 // => Output: User #1: Alice
+                                     // => Calls instance method on user1
+                                     // => Prints id=1, name="Alice"
     user2.describe()                 // => Output: User #2: Bob
+                                     // => Prints id=2, name="Bob"
     user3.describe()                 // => Output: User #3: Charlie
+                                     // => Prints id=3, name="Charlie"
+                                     // => Each instance has unique ID
 
     println(User.MAX_NAME_LENGTH)    // => Output: 50
+                                     // => Accesses const val from companion (compile-time)
+                                     // => Constant inlined by compiler
     println(User.version)            // => Output: 1.0
+                                     // => Accesses val property from companion (runtime)
+                                     // => Calls generated getter
 
     println(MathHelper.square(5))    // => Output: 25
+                                     // => Calls companion function: 5 * 5 = 25
+                                     // => Utility method without instantiation
     println(MathHelper.PI)           // => Output: 3.14159
+                                     // => Accesses const val (compile-time constant)
+                                     // => Mathematical constant available class-level
+                                     // => Returns Unit (void), no return value
 }
 ```
 
@@ -1121,43 +1694,91 @@ Object declarations create singletons that are thread-safe and lazily initialize
 **Constants in objects**: Objects can contain compile-time constants (`const val APP_NAME`) inlined at call sites and runtime properties (`var debugMode`) that can be modified. Useful for application-wide configuration, feature flags, and API keys.
 
 ```kotlin
-object Database {
-    private var connectionCount = 0
+object Database {                    // => object declaration (singleton pattern)
+                                     // => Only one instance exists (no constructor)
+                                     // => Accessed by name: Database (not new Database())
+                                     // => Thread-safe lazy initialization (JVM guaranteed)
+    private var connectionCount = 0  // => Mutable state shared across all usages
+                                     // => private: not accessible outside Database object
+                                     // => Initialized to 0 when object first accessed
+                                     // => Persists across all connect() calls
 
-    fun connect() {
+    fun connect() {                  // => Instance method on singleton object
+                                     // => Accessible as Database.connect()
+        connectionCount++            // => Increments shared state: 0→1, 1→2, 2→3
+                                     // => State mutation persists across calls
         println("Connected to database (connection #$connectionCount)")
-    }
+                                     // => Prints current count after increment
+                                     // => Shows accumulated state
+    }                                // => Returns Unit (void)
 
     fun getConnectionCount() = connectionCount
-}
+                                     // => Single-expression function (= syntax)
+                                     // => Returns current connectionCount value
+                                     // => Provides read access to private state
+}                                    // => Singleton object ready for use
 
-object AppConfig {
-    const val APP_NAME = "MyApp"
-    var debugMode = false
+object AppConfig {                   // => Second singleton object (independent from Database)
+                                     // => Application-wide configuration holder
+                                     // => Only one instance (singleton pattern)
+    const val APP_NAME = "MyApp"     // => Compile-time constant (const val)
+                                     // => Inlined at call sites (no runtime lookup)
+                                     // => String literal (immutable)
+                                     // => SCREAMING_SNAKE_CASE naming convention
+    var debugMode = false            // => Mutable property (var allows mutation)
+                                     // => Initialized to false
+                                     // => Can be changed at runtime (feature flag)
+                                     // => Shared across all code accessing AppConfig
 
-    fun loadConfig() {
+    fun loadConfig() {               // => Configuration initialization method
+                                     // => Accessible as AppConfig.loadConfig()
         println("Loading configuration for $APP_NAME")
-        debugMode = true             // => debugMode: false → true
-    }
+                                     // => Accesses const val APP_NAME
+                                     // => Output: Loading configuration for MyApp
+        debugMode = true             // => Mutates shared state: false → true
+                                     // => Change persists after method returns
+                                     // => Visible to all subsequent accesses
+    }                                // => Returns Unit (void)
 }
 
 fun main() {
-    Database.connect()               // => Output: Connected to database (connection #1)
-    Database.connect()               // => Output: Connected to database (connection #2)
+    Database.connect()               // => First call to singleton Database
+                                     // => Triggers lazy initialization (object created)
+                                     // => connectionCount: 0→1 (pre-increment, then print)
+                                     // => Output: Connected to database (connection #1)
+    Database.connect()               // => Second call (object already initialized)
+                                     // => connectionCount: 1→2 (state persists)
+                                     // => Output: Connected to database (connection #2)
     println("Total connections: ${Database.getConnectionCount()}")
+                                     // => Calls getter: returns connectionCount = 2
                                      // => Output: Total connections: 2
+                                     // => Shared state accumulated across calls
 
     println(AppConfig.APP_NAME)      // => Output: MyApp
+                                     // => Accesses const val (compile-time constant)
+                                     // => Inlined by compiler
     println("Debug mode: ${AppConfig.debugMode}")
                                      // => Output: Debug mode: false
+                                     // => Accesses var property (initial value)
+                                     // => debugMode not yet modified
 
-    AppConfig.loadConfig()           // => Output: Loading configuration for MyApp
+    AppConfig.loadConfig()           // => Calls loadConfig() method
+                                     // => Output: Loading configuration for MyApp
+                                     // => Mutates debugMode: false → true (inside method)
     println("Debug mode: ${AppConfig.debugMode}")
                                      // => Output: Debug mode: true
+                                     // => Shows mutated state (change persisted)
+                                     // => State modification visible after loadConfig()
 
-    Database.connect()               // => Output: Connected to database (connection #3)
+    Database.connect()               // => Third call to Database singleton
+                                     // => connectionCount: 2→3 (state continues accumulating)
+                                     // => Output: Connected to database (connection #3)
+                                     // => State persists across entire application lifetime
     println("Total connections: ${Database.getConnectionCount()}")
                                      // => Output: Total connections: 3
+                                     // => Final accumulated count (1+1+1)
+                                     // => Demonstrates singleton state persistence
+                                     // => Returns Unit (void), no return value
 }
 ```
 

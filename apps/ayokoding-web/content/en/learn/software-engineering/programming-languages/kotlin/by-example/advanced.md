@@ -150,6 +150,8 @@ suspend fun processWithSupervisorScope() {
                 // => Output: Task 2 error: Failed to fetch 2
                 println("Task 2 error: ${e.message}")
             }
+        } // => Child 2 failure handled locally (t=100ms)
+        // => Sibling Child 3 continues uninterrupted
 
         // => Launch Child 3: fetch data with id=3
         launch {
@@ -162,11 +164,15 @@ suspend fun processWithSupervisorScope() {
         } // => Child 3 completes successfully (t=300ms)
 
         // => Execution flow:
+        // => t=100ms: Child 1 succeeds, Child 2 fails (handled locally)
         // => t=200ms: Child 3 continues (delay completes)
+        // => t=300ms: Child 3 succeeds, all children completed
     }
     // => supervisorScope completed successfully (no propagation)
+    // => All children processed independently despite Child 2 failure
     // => Output: Supervisor scope completed successfully
     println("Supervisor scope completed successfully")
+    // => Returns Unit after successful completion
 }
 
 fun main() = runBlocking {
@@ -2082,72 +2088,111 @@ import io.ktor.http.*                       // => For HttpStatusCode
 import kotlinx.serialization.Serializable   // => @Serializable annotation
 
 // Serializable data class for response
+@Serializable                                // => Enables kotlinx.serialization code generation
+                                             // => Generates serializer at compile-time
 data class User(
     val id: Int,                             // => Serialized as "id" in JSON
+                                             // => Type: Int (numeric field)
     val name: String,                        // => Serialized as "name" in JSON
+                                             // => Type: String (text field)
     val email: String                        // => Serialized as "email" in JSON
+                                             // => Type: String (validated as email format)
+)                                            // => Output format: {"id":1,"name":"...","email":"..."}
 
 // Serializable data class for request
+@Serializable                                // => Enables deserialization from JSON request body
+                                             // => Compiler generates deserializer code
 data class CreateUserRequest(
     val name: String,                        // => Parsed from JSON "name" field
+                                             // => Required field (throws if missing)
     val email: String                        // => Parsed from JSON "email" field
+                                             // => Required field (throws if missing)
 )                                            // => Type-safe validation during deserialization
+                                             // => Throws SerializationException if JSON malformed
 
 // Application module configuration
 fun Application.module() {
     // Install content negotiation plugin
     install(ContentNegotiation) {            // => Configure content negotiation
+                                             // => Enables automatic serialization/deserialization
         json()                               // => Enable JSON support with kotlinx.serialization
+                                             // => Uses default JSON configuration
+    }                                        // => Plugin installed on application
 
     routing {                                // => Define HTTP routes
+                                             // => Routing DSL for endpoint configuration
         // GET with automatic JSON serialization
         get("/users/{id}") {                 // => Handle GET /users/{id}
+                                             // => Path parameter: {id} extracted from URL
             val id = call.parameters["id"]?.toIntOrNull()
-                                             // => id is Int? type here
+                                             // => Extract "id" path parameter
+                                             // => ?.toIntOrNull() converts String? → Int?
+                                             // => id is Int? type here (nullable)
 
             if (id == null) {                // => Validate ID is present and numeric
+                                             // => Handles null (missing) or invalid (non-numeric) IDs
                 call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Invalid ID"))
                                              // => Respond with 400 Bad Request
+                                             // => mapOf creates error response object
                                              // => Content-Type header: application/json
+                return@get                   // => Exit route handler early
+            }                                // => id is smart-cast to Int (non-null) after check
 
             val user = User(id, "User $id", "user$id@example.com")
                                              // => Create User object (mock data)
+                                             // => e.g., User(5, "User 5", "user5@example.com")
             call.respond(user)               // => Automatic JSON serialization via ContentNegotiation
                                              // => Plugin detects @Serializable annotation
                                              // => Sends 200 OK response with JSON body
+                                             // => Output: {"id":5,"name":"User 5","email":"user5@example.com"}
         }                                    // => Route complete
 
         // GET list (array response)
+        get("/users") {                      // => Handle GET /users (list all)
+                                             // => No path parameters (collection endpoint)
             val users = listOf(              // => Create list of users (mock data)
                 User(1, "Alice", "alice@example.com"),
+                                             // => User object 1
                 User(2, "Bob", "bob@example.com")
+                                             // => User object 2
             )                                // => users is List<User> (2 items)
             call.respond(users)              // => Serialize list to JSON array
+                                             // => Plugin automatically handles List<T> serialization
                                              // => Output: [{"id":1,"name":"Alice",...},{"id":2,"name":"Bob",...}]
                                              // => 200 OK response
-        }
+        }                                    // => Array endpoint complete
 
         // POST with automatic JSON deserialization
         post("/users") {                     // => Handle POST /users
                                              // => Expects JSON body in request
+                                             // => Content-Type: application/json required
             val request = call.receive<CreateUserRequest>()
                                              // => Automatic JSON deserialization to CreateUserRequest
                                              // => Parses JSON to CreateUserRequest object
                                              // => Throws SerializationException if JSON invalid (missing fields, wrong types)
                                              // => request is CreateUserRequest type here
+                                             // => Type-safe access to name and email fields
             println("Creating user: ${request.name}")
+                                             // => Log user creation (server-side logging)
                                              // => e.g., "Creating user: Charlie"
 
             val newUser = User(              // => Create new User object from request
                 id = 100,                    // => Mock ID (in production: generate from database)
+                                             // => Typically auto-incremented or UUID
                 name = request.name,         // => Copy name from request
+                                             // => Validated as String (non-null)
                 email = request.email        // => Copy email from request
+                                             // => Validated as String (non-null)
             )                                // => newUser is User object
+                                             // => Ready for JSON serialization
 
             call.respond(HttpStatusCode.Created, newUser)
                                              // => Respond with 201 Created status
+                                             // => HTTP status code for resource creation
                                              // => Serialize newUser to JSON body
+                                             // => Returns created resource to client
         }                                    // => Route complete
+                                             // => Returns Unit (void)
 
         // Error handling with try-catch
         get("/users/{id}/details") {         // => Handle GET /users/{id}/details
@@ -2352,43 +2397,73 @@ fun main() {
 
     // Success case: fold handles both paths
     repo.findUser(1).fold(
+                                             // => findUser(1) returns Either<UserError, User>
+                                             // => ID 1 exists: Right(User(1, "Alice", "alice@example.com"))
         { error -> println("Error: $error") },
                                              // => Left handler: executed if Left returned
                                              // => error is UserError type
+                                             // => NOT executed (Right path taken)
         { user -> println("Found: $user") }
                                              // => Right handler: executed if Right returned
-                                             // => user is User type
+                                             // => user is User type (unwrapped)
+                                             // => Output: Found: User(id=1, name=Alice, email=alice@example.com)
+    )                                        // => fold returns Unit
 
     // Error case: invalid ID
+    repo.findUser(0).fold(
+                                             // => findUser(0) checks id <= 0
+                                             // => Returns Left(InvalidId(0))
         { error -> println("Error: $error") },
                                              // => Left handler executed
+                                             // => error is InvalidId(0)
+                                             // => Output: Error: InvalidId(id=0)
         { user -> println("Found: $user") }
                                              // => Right handler NOT executed
     )                                        // => Output: Error: InvalidId(id=0)
+                                             // => fold returns Unit
 
     // Error case: not found
+    repo.findUser(999).fold(
+                                             // => findUser(999) checks containsKey(999)
+                                             // => Key 999 not in map: Returns Left(NotFound)
         { error -> println("Error: $error") },
                                              // => Left handler executed
+                                             // => error is NotFound singleton
+                                             // => Output: Error: NotFound
         { user -> println("Found: $user") }
+                                             // => Right handler NOT executed
     )                                        // => Output: Error: NotFound
+                                             // => fold returns Unit
 
     // Chaining operations with map and flatMap
     println("\n=== Chaining Either Operations ===")
 
+    val result = repo.findUser(1)            // => Returns Either<UserError, User>
+                                             // => Right(User(1, "Alice", "alice@example.com"))
         .map { user -> user.copy(name = user.name.uppercase()) }
                                              // => map: transform Right value
                                              // => user is User (unwrapped from Right)
+                                             // => user.name.uppercase(): "Alice" → "ALICE"
+                                             // => Returns Right(User(1, "ALICE", "alice@example.com"))
                                              // => If Left: propagate error unchanged
         .flatMap { user ->                   // => flatMap: chain another Either operation
                                              // => user is User (unwrapped from Right)
+                                             // => user has uppercase name "ALICE"
             repo.validateEmail(user.email).map { user }
+                                             // => validateEmail returns Either<UserError, String>
+                                             // => "alice@example.com" contains "@": Right("alice@example.com")
                                              // => .map { user } wraps user in Right if email valid
+                                             // => Returns Right(User(1, "ALICE", "alice@example.com"))
                                              // => flatMap flattens Either<Either<>> to Either<>
         }                                    // => Final result: Either<UserError, User>
+                                             // => result is Right(User(1, "ALICE", "alice@example.com"))
 
     result.fold(
         { error -> println("Final error: $error") },
+                                             // => NOT executed (Right path)
         { user -> println("Final user: $user") }
+                                             // => Output: Final user: User(id=1, name=ALICE, email=alice@example.com)
+    )                                        // => fold returns Unit
 
     // Creating user with validation
     println("\n=== Create User ===")
@@ -2426,14 +2501,23 @@ fun main() {
     // flatMap: chain Either-returning operation
     val flatMapped: Either<UserError, User> = repo.findUser(1)
                                              // => Either<UserError, User>
-            if (user.id == 1) {
+                                             // => Right(User(1, "Alice", "alice@example.com"))
+        .flatMap { user ->                   // => flatMap expects Either-returning lambda
+                                             // => user is User (unwrapped)
+            if (user.id == 1) {              // => Condition check: true (id is 1)
                 user.copy(name = "Alice Updated").right()
+                                             // => Creates Right(User(1, "Alice Updated", ...))
+                                             // => Lambda returns Either<UserError, User>
             } else {
-                UserError.NotFound.left()
-            }
+                UserError.NotFound.left()   // => Would create Left(NotFound)
+                                             // => Not executed (condition false)
+            }                                // => Lambda result: Right(User)
         }                                    // => flatMap flattens to Either<UserError, User>
                                              // => Without flatMap: Either<UserError, Either<UserError, User>> (nested!)
+                                             // => flatMapped is Right(User(1, "Alice Updated", ...))
     println("FlatMapped: ${flatMapped.getOrNull()}")
+                                             // => getOrNull() extracts Right value
+                                             // => Output: FlatMapped: User(id=1, name=Alice Updated, email=alice@example.com)
 
     // Error propagation in chains
     println("\n=== Error Propagation ===")
@@ -2537,44 +2621,57 @@ graph TD
 
 ```kotlin
 import arrow.core.*                          // => Core Arrow types
+                                             // => Provides Validated, ValidatedNel, zipOrAccumulate
 
 // Domain error type
 data class ValidationError(
     val field: String,                       // => Field that failed validation
     val message: String                      // => Human-readable error message
+)                                            // => Data class for structured errors
+                                             // => Used in Invalid() results
 
 // Domain model
 data class User(
     val name: String,                        // => User name
     val email: String,                       // => User email
     val age: Int                             // => User age
-)
+)                                            // => Domain model for validated user
 
 object UserValidator {
+                                             // => Validation logic container
     // Validate name field
     fun validateName(name: String): Validated<ValidationError, String> =
+                                             // => Return type: Validated<Error, Success>
                                              // => Valid = success, Invalid = error
         if (name.isNotBlank() && name.length >= 2) {
                                              // => Check: not blank AND at least 2 chars
+                                             // => Examples: "" fails, "A" fails, "Alice" passes
             name.valid()                     // => Valid(name): success path
+                                             // => Wraps name in Valid container
         } else {
             ValidationError("name", "Name must be at least 2 characters").invalid()
                                              // => Invalid(error): error path
+                                             // => Wraps error in Invalid container
         }                                    // => Return Validated (either Valid or Invalid)
 
     // Validate email field
     fun validateEmail(email: String): Validated<ValidationError, String> =
+                                             // => Return Validated<Error, String>
         if (email.contains("@") && email.contains(".")) {
                                              // => Simple validation: contains @ and .
+                                             // => Examples: "invalid" fails, "alice@example.com" passes
             email.valid()                    // => Valid(email): success
         } else {
             ValidationError("email", "Invalid email format").invalid()
                                              // => Invalid(error): validation failure
+                                             // => Creates ValidationError for email field
         }
 
     // Validate age field
     fun validateAge(age: Int): Validated<ValidationError, Int> =
+                                             // => Return Validated<Error, Int>
         if (age in 18..120) {                // => Range check: 18 to 120 inclusive
+                                             // => Examples: 17 fails, 150 fails, 30 passes
             age.valid()                      // => Valid(age): success
         } else {
             ValidationError("age", "Age must be between 18 and 120").invalid()
@@ -2585,20 +2682,28 @@ object UserValidator {
     fun createUser(name: String, email: String, age: Int): ValidatedNel<ValidationError, User> {
                                              // => Nel = Non-Empty List (guaranteed at least 1 error if Invalid)
                                              // => ValidatedNel = Validated<NonEmptyList<E>, A>
+                                             // => Return type: ValidatedNel<ValidationError, User>
         return zipOrAccumulate(              // => Applicative functor: combine independent validations
+                                             // => Runs ALL validations regardless of failures
             validateName(name).toValidatedNel(),
                                              // => Convert Validated<E, String> to ValidatedNel<E, String>
                                              // => toValidatedNel() wraps error in NonEmptyList
+                                             // => If Invalid: NonEmptyList(error), if Valid: unchanged
             validateEmail(email).toValidatedNel(),
                                              // => Convert email validation to ValidatedNel
+                                             // => Runs independently of name validation
             validateAge(age).toValidatedNel()
                                              // => Convert age validation to ValidatedNel
+                                             // => Runs independently of name and email validations
         ) { validName, validEmail, validAge ->
+                                             // => Lambda executed ONLY if ALL validations succeed
                                              // => validName: String (unwrapped from Valid)
                                              // => validEmail: String (unwrapped from Valid)
                                              // => validAge: Int (unwrapped from Valid)
             User(validName, validEmail, validAge)
                                              // => Create User with validated values
+                                             // => Returns Valid(User)
+        }                                    // => If any validation fails: returns Invalid(NonEmptyList(errors))
     }
 }
 
@@ -2668,53 +2773,79 @@ fun main() {
     println("\n=== Validated vs Either Comparison ===")
 
     // Simulated Either behavior (fail-fast)
-    println("Either (fail-fast):")
+    println("Either (fail-fast):")           // => Output: Either (fail-fast):
     val eitherResult = UserValidator.validateName("")
+                                             // => validateName("") fails: empty string
+                                             // => Returns Invalid(ValidationError("name", ...))
         .toEither()                          // => Convert Validated to Either
+                                             // => Returns Left(ValidationError)
         .flatMap { name ->                   // => NOT executed (Invalid propagates)
+                                             // => flatMap skipped because Left propagates
             UserValidator.validateEmail("invalid").toEither().map { name to it }
         }
         .flatMap { (name, email) ->          // => NOT executed
+                                             // => Second flatMap skipped
             UserValidator.validateAge(150).toEither().map { Triple(name, email, it) }
         }
 
     eitherResult.fold(
+                                             // => eitherResult = Left(ValidationError("name", ...))
         { error -> println("  First error: $error") },
+                                             // => Left handler executed
                                              // => Only name error reported (fail-fast)
-        { _ -> println("  Valid") }
+                                             // => Output:   First error: ValidationError(field=name, ...)
+        { _ -> println("  Valid") }          // => Right handler not executed
     )
 
     // Validated behavior (accumulate)
-    println("Validated (accumulate):")
+    println("Validated (accumulate):")       // => Output: Validated (accumulate):
     val validatedResult = UserValidator.createUser("", "invalid", 150)
+                                             // => validateName("") fails
+                                             // => validateEmail("invalid") fails
+                                             // => validateAge(150) fails
                                              // => Collects ALL 3 errors
+                                             // => Returns Invalid(NonEmptyList(3 errors))
 
     validatedResult.fold(
         { errors -> println("  All errors (${errors.size}): ${errors.map { it.field }}") },
+                                             // => Invalid handler executed
+                                             // => errors.size = 3
+                                             // => errors.map { it.field } = ["name", "email", "age"]
                                              // => ALL errors reported
-        { _ -> println("  Valid") }
+                                             // => Output:   All errors (3): [name, email, age]
+        { _ -> println("  Valid") }          // => Valid handler not executed
     )
 
     // Using getOrNull
-    println("\n=== Extract Values ===")
+    println("\n=== Extract Values ===")      // => Output: === Extract Values ===
 
     val validUser = UserValidator.createUser("Alice", "alice@example.com", 30)
+                                             // => validUser = Valid(User(name="Alice", ...))
     println("Valid user extracted: ${validUser.getOrNull()}")
                                              // => getOrNull(): extract value if Valid, null if Invalid
+                                             // => validUser.getOrNull() = User(name="Alice", ...)
                                              // => Output: Valid user extracted: User(name=Alice, ...)
 
     val invalidUser = UserValidator.createUser("", "", 0)
+                                             // => invalidUser = Invalid(NonEmptyList(3 errors))
     println("Invalid user extracted: ${invalidUser.getOrNull()}")
+                                             // => invalidUser.getOrNull() = null
                                              // => Output: Invalid user extracted: null
 
     // Mapping over Validated
     println("\n=== Transform Valid Values ===")
+                                             // => Output: === Transform Valid Values ===
 
     val mapped = UserValidator.createUser("Bob", "bob@example.com", 25)
+                                             // => Returns Valid(User(name="Bob", ...))
         .map { user -> user.copy(name = user.name.uppercase()) }
                                              // => map: transform Valid value
+                                             // => user.copy(name = "BOB")
+                                             // => Returns Valid(User(name="BOB", ...))
                                              // => If Invalid: propagate errors unchanged
     println("Mapped: ${mapped.getOrNull()}")
+                                             // => mapped.getOrNull() = User(name="BOB", ...)
+                                             // => Output: Mapped: User(name=BOB, email=bob@example.com, age=25)
 
     /*
     Key Validated operations:
@@ -3165,75 +3296,108 @@ import io.kotest.assertions.throwables.shouldThrow
 
 // StringSpec: simplest specification style
 class UserServiceTest : StringSpec({         // => Inherits StringSpec base class
+                                             // => Lambda initializes test cases
     // Test format: "test name" { test body }
     "user creation should generate valid user" {
                                              // => Test name as string literal
                                              // => Describes expected behavior
         val user = createUser("Alice", "alice@example.com")
+                                             // => user = User(name="Alice", email="alice@example.com")
                                              // => Setup: create test user
-        user.email should include("@")       // => String contains matcher
+        user.email should include("@")       // => email = "alice@example.com"
+                                             // => String contains matcher
+                                             // => Passes if "@" found in email
     }
 
     "email validation should reject invalid emails" {
         val invalidResult = validateEmail("invalid")
+                                             // => invalidResult = false
                                              // => Test invalid email (no @ symbol)
         invalidResult shouldBe false         // => Assert rejection
+                                             // => Test passes
 
         val validResult = validateEmail("test@example.com")
+                                             // => validResult = true
                                              // => Test valid email
         validResult shouldBe true            // => Assert acceptance
+                                             // => Test passes
     }
 
     "user list should not be empty" {
         val users = listOf(                  // => Create test user list
             createUser("Alice", "alice@example.com"),
+                                             // => User(name="Alice", email="alice@example.com")
             createUser("Bob", "bob@example.com")
-        )                                    // => List<User> with 2 elements
+                                             // => User(name="Bob", email="bob@example.com")
+        )                                    // => users = List<User> with 2 elements
         users shouldHaveSize 2               // => Collection size matcher
+                                             // => Verifies size == 2
+                                             // => Test passes
         users.map { it.name } shouldContainAll listOf("Alice", "Bob")
+                                             // => Maps to ["Alice", "Bob"]
                                              // => Collection content matcher (order-independent)
+                                             // => Verifies all names present
+                                             // => Test passes
     }
 
     "should throw exception for invalid data" {
                                              // => Testing exception scenarios
         shouldThrow<IllegalArgumentException> {
                                              // => Generic exception type check
+                                             // => Expects IllegalArgumentException
             createUser("", "invalid")        // => Invalid input (empty name)
-        }                                    // => Fails if no exception or wrong exception type
+                                             // => User init block throws IllegalArgumentException
+        }                                    // => Catches exception, test passes
+                                             // => Fails if no exception or wrong exception type
     }
 })
 
 // FunSpec: structured specification with context blocks
 class CalculatorTest : FunSpec({             // => Inherits FunSpec (supports nested structure)
+                                             // => Lambda initializes test contexts
 
     // context: groups related tests (like describe in other frameworks)
     context("addition operations") {         // => Test group for addition tests
+                                             // => Groups related addition tests
 
         // test: individual test case within context
         test("should add positive numbers") {
                                              // => Test name (combined with context)
-            val result = 2 + 3               // => Perform addition
+                                             // => Full test name: "addition operations should add positive numbers"
+            val result = 2 + 3               // => result = 5
+                                             // => Perform addition
             result shouldBe 5                // => Assert expected result
+                                             // => Test passes
         }
 
         test("should add negative numbers") {
-            val result = -2 + -3             // => Negative number addition
+            val result = -2 + -3             // => result = -5
+                                             // => Negative number addition
             result shouldBe -5               // => Assert negative result
+                                             // => Test passes
         }
 
         test("should handle zero") {         // => Edge case testing
-            val result = 5 + 0               // => Addition with zero
+            val result = 5 + 0               // => result = 5
+                                             // => Addition with zero
+                                             // => Identity property of addition
+            result shouldBe 5                // => Test passes
         }
     }
 
+    context("division operations") {         // => Test group for division tests
         test("should divide evenly") {
-            val result = 10 / 2              // => Even division
+            val result = 10 / 2              // => result = 5
+                                             // => Even division
             result shouldBe 5                // => Integer result
+                                             // => Test passes
         }
 
         test("should handle integer division") {
-            val result = 10 / 3              // => Integer division (truncates)
+            val result = 10 / 3              // => result = 3 (not 3.333...)
+                                             // => Integer division (truncates)
             result shouldBe 3                // => Kotlin Int division truncates (not rounds)
+                                             // => Test passes
         }
 
         test("division by zero should throw") {
@@ -3242,23 +3406,33 @@ class CalculatorTest : FunSpec({             // => Inherits FunSpec (supports ne
                                              // => Expect ArithmeticException
                 @Suppress("DIVISION_BY_ZERO")
                 10 / 0                       // => Division by zero
+                                             // => Throws ArithmeticException
+            }                                // => Catches exception, test passes
         }
     }
 
     // Nested contexts for deeper organization
     context("multiplication operations") {
         context("positive numbers") {        // => Nested context (2 levels deep)
+                                             // => Groups positive number multiplication tests
             test("should multiply two positives") {
-                (3 * 4) shouldBe 12          // => Nested test execution
+                val result = 3 * 4           // => result = 12
+                result shouldBe 12           // => Nested test execution
+                                             // => Test passes
+            }
         }
 
         context("negative numbers") {
             test("should handle negative * positive") {
-                (-3 * 4) shouldBe -12        // => Sign rules
+                val result = -3 * 4          // => result = -12
+                result shouldBe -12          // => Sign rules
+                                             // => Test passes
             }
 
             test("should handle negative * negative") {
-                (-3 * -4) shouldBe 12        // => Double negative = positive
+                val result = -3 * -4         // => result = 12
+                result shouldBe 12           // => Double negative = positive
+                                             // => Test passes
             }
         }
     }
@@ -3266,56 +3440,81 @@ class CalculatorTest : FunSpec({             // => Inherits FunSpec (supports ne
 
 // DescribeSpec: BDD-style specification
 class DataProcessorSpec : DescribeSpec({     // => BDD-style: describe/it blocks
+                                             // => Lambda initializes describe blocks
 
     // describe: describes component/feature being tested
     describe("data processor") {             // => Top-level describe block
                                              // => Groups tests for "data processor" component
 
         // it: describes specific behavior
-            val input = "hello"              // => Setup test input
-            val output = input.uppercase()   // => Perform transformation
+        it("should transform data") {
+            val input = "hello"              // => input = "hello"
+                                             // => Setup test input
+            val output = input.uppercase()   // => output = "HELLO"
+                                             // => Perform transformation
             output shouldBe "HELLO"          // => Assert transformation result
+                                             // => Test passes
         }
 
         it("should filter data") {
             val numbers = listOf(1, 2, 3, 4, 5)
+                                             // => numbers = [1, 2, 3, 4, 5]
                                              // => Input collection
             val evens = numbers.filter { it % 2 == 0 }
+                                             // => evens = [2, 4]
                                              // => Filter even numbers
             evens shouldContainExactly listOf(2, 4)
                                              // => Exact match matcher (order matters)
                                              // => Failure if order differs: [4, 2] fails
+                                             // => Test passes
         }
 
         it("should handle empty input") {    // => Edge case: empty collection
-            val empty = emptyList<Int>()     // => Empty list
+            val empty = emptyList<Int>()     // => empty = []
+                                             // => Empty list
             val result = empty.filter { it > 0 }
+                                             // => result = []
+                                             // => Empty filter result
+            result shouldBe emptyList()      // => Test passes
         }
 
         // Nested describe for subsystems
         describe("validation") {             // => Nested describe (2 levels)
+                                             // => Groups validation tests
             it("should reject invalid input") {
                 val result = validateEmail("not-an-email")
+                                             // => result = false
                 result shouldBe false        // => Validation rejection
+                                             // => Test passes
             }
 
             it("should accept valid input") {
                 val result = validateEmail("valid@example.com")
+                                             // => result = true
                 result shouldBe true         // => Validation acceptance
+                                             // => Test passes
             }
         }
     }
 
+    describe("error handling") {             // => Top-level describe for error scenarios
         it("should handle null input gracefully") {
-            val input: String? = null        // => Nullable input
+            val input: String? = null        // => input = null
+                                             // => Nullable input
+            val result = input?.uppercase()  // => result = null
+                                             // => Safe call operator
             result shouldBe null             // => Expect null result
+                                             // => Test passes
         }
 
         it("should propagate exceptions") {
             shouldThrow<IllegalArgumentException> {
+                                             // => Expects IllegalArgumentException
                 require(false) { "Test error" }
                                              // => Force exception
-            }                                // => Verify exception propagation
+                                             // => Throws IllegalArgumentException with message
+            }                                // => Catches exception, test passes
+                                             // => Verify exception propagation
         }
     }
 })
@@ -3324,88 +3523,136 @@ class DataProcessorSpec : DescribeSpec({     // => BDD-style: describe/it blocks
 class MatchersExampleSpec : StringSpec({     // => Demonstrate rich matcher library
 
     "string matchers showcase" {
-        val email = "alice@example.com"
+        val email = "alice@example.com"      // => email = "alice@example.com"
 
         // String content matchers
         email shouldStartWith "alice"        // => Prefix check
+                                             // => Test passes
         email shouldEndWith ".com"           // => Suffix check
+                                             // => Test passes
         email should include("@")            // => Contains check
+                                             // => Test passes
         email shouldMatch Regex("\\w+@\\w+\\.\\w+")
+                                             // => Regex pattern match
+                                             // => Pattern: word+@word+.word+
+                                             // => Test passes
     }
 
     "collection matchers showcase" {
-        val numbers = listOf(1, 2, 3, 4, 5)
+        val numbers = listOf(1, 2, 3, 4, 5)  // => numbers = [1, 2, 3, 4, 5]
 
         // Size matchers
         numbers shouldHaveSize 5             // => Exact size
+                                             // => size = 5
+                                             // => Test passes
         numbers.size shouldBeGreaterThan 3   // => Size comparison
+                                             // => 5 > 3
                                              // => Numeric comparison matcher
+                                             // => Test passes
 
         // Content matchers
         numbers shouldContain 3              // => Single element check
+                                             // => 3 is in list
+                                             // => Test passes
         numbers shouldContainAll listOf(2, 4)
                                              // => Multiple elements (order-independent)
+                                             // => Both 2 and 4 present
+                                             // => Test passes
         numbers shouldContainExactly listOf(1, 2, 3, 4, 5)
                                              // => Exact match with order
+                                             // => Same elements, same order
+                                             // => Test passes
         numbers shouldContainInOrder listOf(1, 3, 5)
                                              // => Subset with order preserved
                                              // => [1, 3, 5] in that order (others ignored)
+                                             // => Test passes
     }
 
     "nullable matchers showcase" {
-        val nullable: String? = "value"
-        val nullValue: String? = null
+        val nullable: String? = "value"      // => nullable = "value"
+        val nullValue: String? = null        // => nullValue = null
 
         nullValue shouldBe null              // => Expect null
+                                             // => Test passes
 
+        nullable shouldNotBe null            // => Non-null assertion
+                                             // => Test passes
         // After non-null assertion, smart cast works
+        nullable.length shouldBe 5           // => Smart-casted to String
+                                             // => length = 5
+                                             // => Test passes
     }
 
     "exception matchers showcase" {
         // Exception type check
         val exception = shouldThrow<IllegalArgumentException> {
+                                             // => Captures thrown exception
             require(false) { "Custom message" }
+                                             // => Throws IllegalArgumentException
+        }                                    // => exception = caught exception object
         exception.message shouldBe "Custom message"
+                                             // => message = "Custom message"
                                              // => Assert exception message content
+                                             // => Test passes
 
         // Exception should NOT be thrown
-            val result = 5 + 3               // => Safe operation
-        }                                    // => Fails if any exception thrown
+        shouldNotThrow<Exception> {          // => Expects no exceptions
+            val result = 5 + 3               // => result = 8
+                                             // => Safe operation
+        }                                    // => No exception, test passes
+                                             // => Fails if any exception thrown
     }
 
     "numeric comparison matchers" {
-        val value = 42
+        val value = 42                       // => value = 42
 
-        value shouldBeGreaterThan 40         // => Greater than check
-        value shouldBeLessThan 50            // => Less than check
-        value shouldBeInRange 40..50         // => Range inclusion check
+        value shouldBeGreaterThan 40         // => 42 > 40
+                                             // => Greater than check
+                                             // => Test passes
+        value shouldBeLessThan 50            // => 42 < 50
+                                             // => Less than check
+                                             // => Test passes
+        value shouldBeInRange 40..50         // => 42 in [40, 50]
+                                             // => Range inclusion check
                                              // => Closed range (includes endpoints)
+                                             // => Test passes
         value shouldBe 42                    // => Exact equality
+                                             // => Test passes
     }
 
     "boolean matchers" {
-        val condition = true
+        val condition = true                 // => condition = true
 
         condition shouldBe true              // => Boolean equality
+                                             // => Test passes
         // Alternative: more expressive
+        condition.shouldBeTrue()             // => More readable
+                                             // => Test passes
         false.shouldBeFalse()                // => Negation check
+                                             // => Test passes
     }
 })
 
 // Helper functions for tests
 data class User(val name: String, val email: String) {
-    init {
+                                             // => Data class with 2 properties
+    init {                                   // => Initialization block
         require(name.isNotBlank()) { "Name cannot be blank" }
                                              // => Validation in data class
+                                             // => Throws IllegalArgumentException if blank
         require(email.contains("@")) { "Invalid email format" }
+                                             // => Email validation
+                                             // => Throws IllegalArgumentException if no @
     }
 }
 
 fun createUser(name: String, email: String) = User(name, email)
                                              // => Delegates to User constructor
+                                             // => Returns User instance
 
 fun validateEmail(email: String): Boolean = email.contains("@")
                                              // => Simple email validation (contains @)
+                                             // => Returns true if @ present
 ```
 
 **Key Takeaway**: Kotest provides multiple specification styles (StringSpec, FunSpec, DescribeSpec) with expressive matchers for readable tests.
@@ -4873,168 +5120,115 @@ graph TD
     style Safety fill:#CC78BC,color:#fff
 ```
 
+**Variance Summary:**
+
+- **out T (covariant)**: Producer, read-only, subtype → supertype. Producer\<Dog\> is subtype of Producer\<Animal\>. Safe because only produces values
+- **in T (contravariant)**: Consumer, write-only, supertype → subtype. Consumer\<Animal\> is subtype of Consumer\<Dog\>. Safe because only consumes values
+- **T (invariant)**: Read-write, exact type match required. Box\<String\> is NOT subtype of Box\<Any\>. Mutable, requires exact type
+- **\* (star projection)**: Unknown type. Can read as Any?, cannot write. Read-only view of unknown-type list
+
+**Why Variance Matters:**
+
+- **Covariance safety**: Producer\<String\>.produce() returns String, always compatible with Any. No way to put wrong type (read-only)
+- **Contravariance safety**: Consumer\<Any\> can accept any value, including String. Any consumer can handle String input
+- **Invariance necessity**: MutableList\<String\> cannot be MutableList\<Any\> because mutableAny.add(123) would violate type safety
+- **List covariance**: List\<String\> can be List\<Any\> because List is immutable (no add method), reading String as Any is always safe
+
+**Declaration-site vs Use-site:**
+
+- **Declaration-site**: class Producer\<out T\> (Kotlin preference - cleaner)
+- **Use-site**: fun process(items: List\<out Number\>) (Java-style wildcards)
+- **Kotlin supports both** for flexibility
+
 ```kotlin
 // Covariance (out) - producer only
-    fun produce(): T = value                 // => Can return T (produce)
-    // fun consume(value: T) {}              // => ERROR: can't consume T with out
-}                                            // => Producer<Dog> is subtype of Producer<Animal>
-                                             // => Safe because only produces values
+class Producer<out T>(private val value: T) {
+    fun produce(): T = value
+    // => Can return T (produce)
+    // fun consume(value: T) {} // => ERROR: can't consume T with out
+}
 
 // Contravariance (in) - consumer only
-        println("Consumed: $value")          // => Process input value
-    }                                        // => Implementation can only accept, not return T
-    // fun produce(): T {}                   // => ERROR: can't produce T with in
-}                                            // => Consumer<Animal> is subtype of Consumer<Dog>
-                                             // => Safe because only consumes values
+class Consumer<in T> {
+    fun consume(value: T) {
+        println("Consumed: $value")
+    }
+    // fun produce(): T {} // => ERROR: can't produce T with in
+}
 
 // Invariant - both producer and consumer
-class Box<T>(var value: T) {                 // => No 'out' or 'in', invariant by default
-    fun get(): T = value                     // => Can produce T
-    fun set(newValue: T) { value = newValue }// => Can consume T
-}                                            // => Box<String> is NOT subtype of Box<Any>
-                                             // => Invariant because both reads and writes
-                                             // => Mutable, requires exact type match
+class Box<T>(var value: T) {
+    // => No 'out' or 'in', invariant by default
+    fun get(): T = value
+    fun set(newValue: T) { value = newValue }
+}
 
 // Star projection - unknown type
-fun printAll(items: List<*>) {               // => List<*> is star projection
-    for (item in items) {                    // => item has type Any?
-        println(item)                        // => Can read as Any? (safe)
-    // items.add(something)                  // => ERROR: can't add to List<*>
-                                             // => Can read but not write
+fun printAll(items: List<*>) {
+    // => List<*> is star projection
+    for (item in items) {
+        // => item has type Any?
+        println(item)
+    }
+    // items.add(something) // => ERROR: can't add to List<*>
+}
 
 // Upper bound - restrict type parameter
 fun <T : Number> sum(values: List<T>): Double {
-}                                            // => Constraint ensures type safety
-                                             // => Prevents sum(listOf("a", "b"))
+    return values.sumOf { it.toDouble() }
+    // => Constraint ensures type safety, prevents sum(listOf("a", "b"))
+}
 
 // Multiple bounds using where clause
 interface Named {
-    val name: String                         // => Contract for named entities
+    val name: String
+}
 
 fun <T> printName(item: T) where T : Named, T : Comparable<T> {
-                                             // => T must satisfy BOTH constraints
-    println(item.name)                       // => Access name (from Named)
-}                                            // => Multiple bounds enforce multiple contracts
-                                             // => where clause for complex constraints
-                                             // => T must implement both interfaces
+    // => T must satisfy BOTH constraints
+    println(item.name)
+}
 
 fun main() {
     println("=== Variance and Generics ===\n")
-                                             // => Output: === Variance and Generics ===
+    // => Output: === Variance and Generics ===
 
     // Covariance example - subtype to supertype
     val stringProducer: Producer<String> = Producer("Hello")
-                                             // => Create Producer<String>
     val anyProducer: Producer<Any> = stringProducer
-                                             // => OK: String is subtype of Any (covariant)
-                                             // => Covariance preserves subtype relationship
+    // => OK: String is subtype of Any (covariant)
     println("Produced: ${anyProducer.produce()}")
-                                             // => Output: Produced: Hello
-                                             // => Safe because only producing, not consuming
-
-    // Why covariance is safe:
-    // - stringProducer.produce() returns String
-    // - String is always compatible with Any
-    // - No way to put wrong type into producer (read-only)
-    //                                          // => Producer only outputs, never inputs
+    // => Output: Produced: Hello
 
     // Contravariance example - supertype to subtype
     val anyConsumer: Consumer<Any> = Consumer()
-                                             // => Create Consumer<Any>
     val stringConsumer: Consumer<String> = anyConsumer
-                                             // => OK: can consume String as Any (contravariant)
-                                             // => Contravariance reverses subtype relationship
-    stringConsumer.consume("Test")           // => Output: Consumed: Test
-                                             // => String passed to Consumer<Any>
-
-    // Why contravariance is safe:
-    // - Consumer<Any> can accept any value
-    // - String is a valid Any
-    // - Any consumer can handle String input
-    //                                          // => Consumer only inputs, never outputs
+    // => OK: can consume String as Any (contravariant)
+    stringConsumer.consume("Test")
+    // => Output: Consumed: Test
 
     // Star projection - type-safe unknown type
-    val numbers = listOf(1, 2, 3)            // => List<Int>
-    val strings = listOf("a", "b", "c")      // => List<String>
-    printAll(numbers)                        // => Works with List<Int>
-                                             // => Output: 1 \n 2 \n 3
-    printAll(strings)                        // => Works with List<String>
-                                             // => Output: a \n b \n c
-                                             // => Elements read as Any?
-
-    // Star projection restrictions:
-    // - Can read elements as Any?
-    // - Cannot add elements (unknown type)
-    // - Type-safe unknown type
-    //                                          // => Read-only view of unknown-type list
+    val numbers = listOf(1, 2, 3)
+    val strings = listOf("a", "b", "c")
+    printAll(numbers)
+    // => Output: 1 \n 2 \n 3
+    printAll(strings)
+    // => Output: a \n b \n c
 
     // Upper bound - generic constraints
     println("\nSum of integers: ${sum(listOf(1, 2, 3))}")
-                                             // => Output: Sum of integers: 6.0
-                                             // => List<Int> satisfies T : Number
-                                             // => 1 + 2 + 3 = 6.0
+    // => Output: Sum of integers: 6.0
     println("Sum of doubles: ${sum(listOf(1.5, 2.5, 3.0))}")
-                                             // => Output: Sum of doubles: 7.0
-                                             // => List<Double> satisfies T : Number
-                                             // => 1.5 + 2.5 + 3.0 = 7.0
-
-    // Upper bound ensures:
-    // - Only Number subtypes allowed
-    // - toDouble() method guaranteed
-    // - Type-safe numeric operations
-    //                                          // => Compile-time type safety
+    // => Output: Sum of doubles: 7.0
 
     // Type variance in collections
     val mutableList: MutableList<String> = mutableListOf("a", "b")
-                                             // => MutableList<String> created
     // val mutableAny: MutableList<Any> = mutableList
-    //                                          // => ERROR: MutableList is invariant
-
-    // Why MutableList is invariant:
-    // - If allowed: mutableAny.add(123) would compile
-    // - Original mutableList would contain Integer
-    // - Accessing as String would cause ClassCastException
-    //                                          // => Invariance prevents this type violation
+    // => ERROR: MutableList is invariant
 
     val readOnlyList: List<String> = mutableList
-                                             // => List<String> is read-only view
     val readOnlyAny: List<Any> = readOnlyList
-                                             // => OK: List is covariant (out)
-                                             // => Safe because List is read-only
-
-    // Why List is covariant:
-    // - List is immutable (no add method)
-    // - Can only read elements
-    // - Reading String as Any is always safe
-    //                                          // => No way to violate type safety
-
-    // Use-site variance (Java-style wildcards in Kotlin)
-    // fun copy(from: List<out Any>, to: MutableList<Any>) {
-    //     for (item in from) to.add(item)
-    // }
-    //                                          // => 'out' at use-site, not declaration-site
-    //                                          // => from is producer (covariant)
-
-    // fun fill(dest: MutableList<in String>, value: String) {
-    //     dest.add(value)
-    // }
-    //                                          // => 'in' at use-site
-    //                                          // => dest is consumer (contravariant)
-    //                                          // => Can pass MutableList<Any> for MutableList<in String>
-
-    // Declaration-site vs use-site variance:
-    // - Declaration-site: class Producer<out T>
-    // - Use-site: fun process(items: List<out Number>)
-    //                                          // => Kotlin prefers declaration-site (cleaner)
-    //                                          // => Java requires use-site (? extends, ? super)
-    //                                          // => Kotlin supports both for flexibility
-
-    // Variance summary:
-    // - out T (covariant): Producer, read-only, subtype → supertype
-    // - in T (contravariant): Consumer, write-only, supertype → subtype
-    // - T (invariant): Read-write, exact type match required
-    // - * (star projection): Unknown type, read as Any?, cannot write
-    //                                          // => Producers are covariant, consumers contravariant
+    // => OK: List is covariant (out)
 }
 ```
 
