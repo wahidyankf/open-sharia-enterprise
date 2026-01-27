@@ -9,8 +9,6 @@ tags: ["java", "tutorial", "by-example", "beginner", "basics", "oop", "collectio
 
 Learn Java fundamentals through 30 annotated code examples. Each example is self-contained, runnable in JShell or as standalone classes, and heavily commented to show what each line does, expected outputs, and intermediate values.
 
-## Group 1: First Steps
-
 ## Example 1: Hello World and JVM Compilation
 
 Java programs run on the JVM (Java Virtual Machine). Code is compiled to bytecode (`.class` files) that the JVM executes. This example shows the simplest Java program and how the compilation pipeline works.
@@ -514,8 +512,6 @@ shape2.draw();                   // => Output: Drawing a square
 **Why It Matters**: Interfaces solve Java's single-inheritance limitation—while a class can only extend one superclass, it can implement unlimited interfaces, enabling role-based composition. This design pattern (interface segregation) prevents the brittle base class problem where changing a superclass breaks all subclasses. Modern Java frameworks depend entirely on interfaces: Spring's dependency injection wires interface types, JPA repositories extend interface hierarchies, and servlet containers call interface methods (Servlet, Filter, Listener). Java 8's default methods (interface methods with bodies) later enabled interface evolution without breaking implementations, crucial for adding stream operations to Collections framework after 15 years.
 
 ---
-
-## Group 2: Collections and Data Structures
 
 ## Example 10: ArrayList - Dynamic Arrays
 

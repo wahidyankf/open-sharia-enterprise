@@ -8,8 +8,6 @@ tags:
   ["golang", "go", "tutorial", "by-example", "intermediate", "concurrency", "http", "testing", "database", "context"]
 ---
 
-## Group 1: Advanced Interfaces and Types
-
 ## Example 31: Type Embedding and Composition
 
 Embedding allows structs to inherit fields and methods from other types without inheritance chains. This composition-over-inheritance pattern is Go's philosophy - simpler and more flexible than traditional OOP inheritance.
@@ -328,8 +326,6 @@ type APIResponse struct {
 ```
 
 **Key Takeaway**: Struct tags control JSON field mapping - essential when Go names differ from JSON names. Struct field names must be capitalized for JSON encoding. Use `json.Marshal()` for compact JSON and `json.MarshalIndent()` for pretty-printed JSON.
-
-## Group 2: Concurrency Basics
 
 ## Example 34: Goroutines
 
@@ -789,8 +785,6 @@ func main() {
 
 **Why It Matters**: Goroutines enable lightweight concurrency that scales to millions of concurrent operations. This is the foundation for building high-performance web servers and data processing pipelines in Go.
 
-## Group 3: I/O and File Handling
-
 ## Example 38: File I/O
 
 File operations are fundamental. Go provides multiple layers: low-level (`os` package), buffered (`bufio`), and convenience functions. The `defer file.Close()` pattern ensures files close even if errors occur.
@@ -1092,8 +1086,6 @@ func (h *DataHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 **Key Takeaway**: Register handlers with `HandleFunc` (for functions) or `Handle` (for types). Handler functions receive `ResponseWriter` and `*Request`. Use `w.Write()` or `w.WriteString()` to send responses. Set headers and status codes before writing the body.
 
 **Why It Matters**: Testing in Go is first-class and built into the toolchain. Understanding Go testing patterns enables confident refactoring and reliable deployments.
-
-## Group 4: Standard Library Deep Dive
 
 ## Example 41: Time and Duration
 
@@ -1509,8 +1501,6 @@ func main() {
 
 **Why It Matters**: Pointers enable efficient data sharing and modification. Understanding pointer semantics is key to writing performant Go code.
 
-## Group 5: Production Patterns
-
 ## Example 45: HTTP Middleware Pattern
 
 Middleware intercepts requests and responses, enabling cross-cutting concerns like logging, authentication, and error handling. Middleware wraps handlers with decorator pattern - each middleware can inspect requests and responses.
@@ -1798,8 +1788,6 @@ func worker(id int, jobs <-chan int, wg *sync.WaitGroup) {
 **Key Takeaway**: Create a channel for jobs. Start fixed number of workers that receive from the channel. Send jobs to the channel. Workers process jobs concurrently, bounded by number of workers.
 
 **Why It Matters**: Channels provide safe communication between goroutines without shared memory. This pattern prevents race conditions and deadlocks that plague concurrent programs in other languages.
-
-## Group 6: Advanced Testing
 
 ## Example 48: Benchmarking
 

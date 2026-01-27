@@ -7,8 +7,6 @@ description: "Examples 1-30: Go fundamentals covering syntax, data structures, f
 tags: ["golang", "go", "tutorial", "by-example", "beginner", "fundamentals"]
 ---
 
-## Group 1: First Steps
-
 ## Example 1: Hello World and Go Compilation
 
 Go is a compiled language - you write source code, compile it into a binary executable, then run that binary. Understanding this pipeline reveals why Go is fast and portable.
@@ -214,8 +212,6 @@ func main() {
 ```
 
 **Key Takeaway**: Use `const` for values that must be known at compile-time. `iota` eliminates manual numbering in enumeration-like patterns, automatically incrementing within a `const` block.
-
-## Group 2: Core Data Structures
 
 **Why It Matters**: Constants with `iota` enable defining related integer sequences (HTTP status codes, enumeration values, bit flags) with compile-time verification, where typos or invalid values are caught before runtime. Unlike dynamic languages where magic numbers scatter through code, Go's constants provide type-safe enumerations without the complexity of traditional enum systems, making configuration and state machines clear and maintainable.
 
@@ -533,8 +529,6 @@ func main() {
 **Key Takeaway**: Structs are Go's primary way to group related data. Use named fields when creating structs for readability. Capital letters in field names mean the field is exported and accessible from other packages.
 
 **Why It Matters**: Value vs pointer semantics is crucial in Go and separates beginners from professionals. Passing structs by value (no pointer) creates copies—safe but expensive for large structs. Passing pointers is efficient but requires discipline to avoid shared state bugs. Methods define the receiver type: value receiver (safe, isolated) vs pointer receiver (can modify). In production Go, you constantly make this choice. Understanding field capitalization (export control without explicit `public`/`private` keywords) is the Go way of managing visibility elegantly.
-
-## Group 3: Functions and Control Flow
 
 ## Example 7: Functions
 
@@ -882,8 +876,6 @@ func modifyValueCopy(val int) { // => val is copy of argument (type: int)
 **Key Takeaway**: Pointers hold addresses. `&` gets an address, `*` dereferences it to access the value. Pointers enable functions to modify variables. Nil pointers require careful handling - dereferencing nil causes runtime panic.
 
 **Why It Matters**: Pointers are central to understanding Go's pass-by-value semantics. Every function call copies its arguments—understanding this reveals why large structs should be passed as pointers (avoid expensive copies) and why small values can be passed by value (safe, isolated changes). Nil pointers are Go's version of null references, but they're explicit and cause panics rather than silent failures. Production Go code constantly navigates this: when to share state via pointers, when to isolate via values, and defensive nil checking before dereferencing.
-
-## Group 4: Methods and Interfaces
 
 ## Example 10: Methods
 
@@ -1284,8 +1276,6 @@ func divide(a, b int) (int, error) { // => Returns (result, error) tuple
 
 **Key Takeaway**: Go uses explicit error returns - check `if err != nil` before using results. Return `nil` for no error. Use `errors.New()` or `fmt.Errorf()` to create errors. Error wrapping with `%w` preserves error chains for debugging.
 
-## Group 5: Packages and Testing
-
 **Why It Matters**: Explicit error handling makes failure paths visible in code, preventing the hidden control flow of exceptions that obscure where errors originate. Returning errors forces callers to decide how to handle failures (propagate, wrap, retry, log), making production code resilient by design. Custom error types enable rich context (wrapping with `fmt.Errorf`, error chains with `errors.Is`), supporting debugging without stack traces that exceptions provide but with explicit control flow.
 
 ## Example 13: Packages and Imports
@@ -1576,8 +1566,6 @@ func main() {
 ```
 
 **Key Takeaway**: Strings are immutable. Use `strings` package for common operations like `Split`, `Join`, `Contains`. Use `strings.Builder` for efficient concatenation in loops. Use `fmt.Sprintf` to format strings without printing.
-
-## Group 6: Operators and More Basics
 
 **Why It Matters**: UTF-8 native strings prevent encoding bugs that plague ASCII-based languages, where emoji, international characters, and multi-byte sequences work correctly by default. The rune type exposes Unicode code points explicitly, making character-level processing clear and correct for international text. Format verbs (`%v`, `%T`, `%+v`) provide consistent debugging output across all types, eliminating custom toString() boilerplate.
 
