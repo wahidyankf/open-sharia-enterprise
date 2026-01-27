@@ -1716,129 +1716,207 @@ Classes define custom types with data (attributes) and behavior (methods). Pytho
 # Basic class definition
 class Dog:
     """Represents a dog with name and age."""
+    # => Defines new type called Dog
+    # => Can create multiple Dog objects (instances)
 
     def __init__(self, name, age):
         """Initialize dog with name and age."""
-        self.name = name          # => Instance attribute name
-        self.age = age            # => Instance attribute age
+        # => __init__ = constructor method
+        # => Called automatically when creating instances
+        # => self = reference to the instance being created
+        self.name = name          # => Create instance attribute name
+                                  # => self.name stores name for THIS dog
+        self.age = age            # => Create instance attribute age
+                                  # => Each dog has its own age
 
     def bark(self):
         """Make the dog bark."""
+        # => Instance method (has self parameter)
+        # => Can access instance attributes via self
         return f"{self.name} says Woof!"
+                                  # => Returns string using this dog's name
 
 # Creating instances
-dog1 = Dog("Buddy", 3)            # => dog1 is Dog object with name="Buddy", age=3
-dog2 = Dog("Max", 5)              # => dog2 is Dog object with name="Max", age=5
+dog1 = Dog("Buddy", 3)            # => Calls Dog.__init__(dog1, "Buddy", 3)
+                                  # => dog1 is Dog object with name="Buddy", age=3
+                                  # => Instance variables: dog1.name, dog1.age
+dog2 = Dog("Max", 5)              # => Creates DIFFERENT Dog object
+                                  # => dog2.name="Max", dog2.age=5
+                                  # => Separate from dog1
 
 # Accessing attributes
-print(dog1.name)                  # => Output: Buddy
-print(dog2.age)                   # => Output: 5
+print(dog1.name)                  # => Access instance attribute
+                                  # => Output: Buddy
+print(dog2.age)                   # => Access different instance's attribute
+                                  # => Output: 5
 
 # Calling methods
-print(dog1.bark())                # => Output: Buddy says Woof!
-print(dog2.bark())                # => Output: Max says Woof!
+print(dog1.bark())                # => Calls bark method on dog1
+                                  # => self=dog1, uses dog1.name
+                                  # => Output: Buddy says Woof!
+print(dog2.bark())                # => Calls bark method on dog2
+                                  # => self=dog2, uses dog2.name
+                                  # => Output: Max says Woof!
 
 # Class attributes (shared by all instances)
 class Circle:
     """Represents a circle."""
     pi = 3.14159                  # => Class attribute (shared)
+                                  # => Defined at class level (not in __init__)
+                                  # => All Circle instances share same pi value
 
     def __init__(self, radius):
+        # => Constructor for Circle
         self.radius = radius      # => Instance attribute (unique per instance)
+                                  # => Each circle has its own radius
 
     def area(self):
         """Calculate circle area."""
+        # => Method uses both class attribute (pi) and instance attribute (radius)
         return Circle.pi * self.radius ** 2
+                                  # => Circle.pi accesses class attribute
+                                  # => self.radius accesses instance attribute
+                                  # => Returns area = π × r²
 
-circle1 = Circle(5)               # => circle1 has radius=5
-circle2 = Circle(10)              # => circle2 has radius=10
+circle1 = Circle(5)               # => circle1 = Circle object with radius=5
+                                  # => circle1.radius = 5
+circle2 = Circle(10)              # => circle2 = Circle object with radius=10
+                                  # => circle2.radius = 10
 
-print(circle1.area())             # => Output: 78.53975 (π × 5²)
-print(circle2.area())             # => Output: 314.159 (π × 10²)
+print(circle1.area())             # => Calls area() on circle1
+                                  # => 3.14159 × 5² = 78.53975
+                                  # => Output: 78.53975
+print(circle2.area())             # => Calls area() on circle2
+                                  # => 3.14159 × 10² = 314.159
+                                  # => Output: 314.159
 
 # Access class attribute through class or instance
-print(Circle.pi)                  # => Output: 3.14159 (via class)
-print(circle1.pi)                 # => Output: 3.14159 (via instance)
+print(Circle.pi)                  # => Access via class name
+                                  # => Output: 3.14159 (via class)
+print(circle1.pi)                 # => Access via instance
+                                  # => Python looks in instance first, then class
+                                  # => Output: 3.14159 (via instance)
 
 # Instance methods vs static methods vs class methods
 class MathOperations:
     """Demonstrates different method types."""
 
     multiplier = 2                # => Class attribute
+                                  # => Shared by all instances
 
     def instance_method(self, x):
         """Instance method (has access to self)."""
-        return x * self.multiplier
+        # => Regular method with self parameter
+        # => Can access instance and class attributes
+        return x * self.multiplier  # => Uses class attribute via instance
+                                  # => 5 * 2 = 10
 
     @staticmethod
     def static_method(x, y):
         """Static method (no access to self or cls)."""
-        return x + y
+        # => No self or cls parameter
+        # => Cannot access instance or class attributes
+        # => Just a regular function in class namespace
+        return x + y              # => Simple addition
+                                  # => 3 + 4 = 7
 
     @classmethod
     def class_method(cls, x):
         """Class method (has access to cls, not self)."""
-        return x * cls.multiplier
+        # => Has cls parameter (class itself)
+        # => Can access class attributes, not instance attributes
+        return x * cls.multiplier  # => Uses class attribute via cls
+                                  # => 5 * 2 = 10
 
-math = MathOperations()
+math = MathOperations()           # => Create instance of MathOperations
 
 # Instance method (needs instance)
-print(math.instance_method(5))    # => Output: 10 (5 × 2)
+print(math.instance_method(5))    # => Calls with instance (self=math)
+                                  # => 5 * math.multiplier = 5 * 2
+                                  # => Output: 10
 
 # Static method (can call on class or instance)
 print(MathOperations.static_method(3, 4))
+                                  # => Call via class name
+                                  # => No self/cls passed
                                   # => Output: 7 (3 + 4)
-print(math.static_method(3, 4))   # => Output: 7 (same via instance)
+print(math.static_method(3, 4))   # => Call via instance
+                                  # => Still no self passed
+                                  # => Output: 7 (same result)
 
 # Class method (can call on class or instance)
 print(MathOperations.class_method(5))
+                                  # => Call via class (cls=MathOperations)
+                                  # => 5 * MathOperations.multiplier
                                   # => Output: 10 (5 × 2)
-print(math.class_method(5))       # => Output: 10 (same via instance)
+print(math.class_method(5))       # => Call via instance
+                                  # => cls still = MathOperations
+                                  # => Output: 10 (same result)
 
 # String representation
 class Point:
     """Represents a 2D point."""
 
     def __init__(self, x, y):
-        self.x = x
-        self.y = y
+        # => Constructor sets x and y coordinates
+        self.x = x                # => x coordinate
+        self.y = y                # => y coordinate
 
     def __str__(self):
         """Human-readable string representation."""
+        # => Called by print() and str()
+        # => Returns user-friendly format
         return f"Point({self.x}, {self.y})"
 
     def __repr__(self):
         """Developer-friendly representation."""
+        # => Called by repr() and in REPL
+        # => Returns unambiguous format
         return f"Point(x={self.x}, y={self.y})"
 
-p = Point(3, 4)                   # => p is Point object
-print(p)                          # => Output: Point(3, 4) (uses __str__)
-print(repr(p))                    # => Output: Point(x=3, y=4) (uses __repr__)
+p = Point(3, 4)                   # => p is Point object with x=3, y=4
+print(p)                          # => Calls p.__str__()
+                                  # => Output: Point(3, 4)
+print(repr(p))                    # => Calls p.__repr__()
+                                  # => Output: Point(x=3, y=4)
 
 # Private attributes (convention: prefix with _)
 class BankAccount:
     """Represents a bank account."""
 
     def __init__(self, balance):
-        self._balance = balance   # => "Private" by convention (not enforced)
+        # => Initialize with starting balance
+        self._balance = balance   # => "Private" by convention (single underscore)
+                                  # => Not enforced by Python
+                                  # => Signals "internal use only"
 
     def deposit(self, amount):
         """Deposit money."""
-        if amount > 0:
-            self._balance += amount
-            return True
-        return False
+        # => Public method to safely modify balance
+        if amount > 0:            # => Validate amount is positive
+            self._balance += amount  # => Update private attribute
+                                  # => _balance = 100 + 50 = 150
+            return True           # => Indicate success
+        return False              # => Indicate failure for invalid amount
 
     def get_balance(self):
         """Get current balance."""
-        return self._balance
+        # => Getter method for private attribute
+        return self._balance      # => Returns current balance
 
-account = BankAccount(100)        # => account has _balance=100
-account.deposit(50)               # => _balance is now 150
-print(account.get_balance())      # => Output: 150
+account = BankAccount(100)        # => account._balance = 100
+                                  # => Initial balance set
+account.deposit(50)               # => Calls deposit with amount=50
+                                  # => _balance = 100 + 50 = 150
+                                  # => Returns True
+print(account.get_balance())      # => Calls getter method
+                                  # => Returns _balance = 150
+                                  # => Output: 150
 
 # Can still access "private" attribute (not truly private!)
-print(account._balance)           # => Output: 150 (discouraged but possible)
+print(account._balance)           # => Direct access possible
+                                  # => Python doesn't enforce privacy
+                                  # => Output: 150 (discouraged but works)
 ```
 
 **Key Takeaway**: Use `__init__` for initialization, `self` to reference instance attributes/methods, and class attributes for shared data - follow conventions like single underscore prefix for "private" attributes (not enforced, just convention) and implement `__str__`/`__repr__` for readable object representations.
@@ -1872,45 +1950,74 @@ graph TD
 # Base class
 class Animal:
     """Base class for all animals."""
+    # => Parent class that other classes inherit from
 
     def __init__(self, name, species):
-        self.name = name
-        self.species = species
+        # => Constructor for base class
+        self.name = name          # => Instance attribute name
+        self.species = species    # => Instance attribute species
 
     def speak(self):
         """Generic animal sound."""
+        # => Base implementation (can be overridden)
         return f"{self.name} makes a sound"
+                                  # => Generic message for any animal
 
     def info(self):
         """Return animal information."""
+        # => Method available to all animals
         return f"{self.name} is a {self.species}"
+                                  # => Returns name and species
 
 # Derived class (inherits from Animal)
 class Dog(Animal):
     """Dog class inheriting from Animal."""
+    # => Dog(Animal) means Dog inherits from Animal
+    # => Dog gets all Animal's methods and attributes
 
     def __init__(self, name, breed):
+        # => Dog constructor
+        # => Takes name and breed (NOT species)
         # Call parent __init__
-        super().__init__(name, "Dog")# => Initialize parent attributes
-        self.breed = breed        # => Additional attribute
+        super().__init__(name, "Dog")
+                                  # => super() calls Animal.__init__
+                                  # => Sets self.name = name
+                                  # => Sets self.species = "Dog"
+        self.breed = breed        # => Additional Dog-specific attribute
+                                  # => Not in Animal class
 
     # Override parent method
     def speak(self):
         """Dog-specific sound."""
+        # => Replaces Animal.speak() for Dog instances
+        # => Called instead of parent version
         return f"{self.name} says Woof!"
+                                  # => Dog-specific implementation
 
     # Additional method
     def fetch(self):
         """Dog-specific behavior."""
+        # => New method NOT in Animal class
+        # => Only Dog instances have this
         return f"{self.name} fetches the ball"
 
 # Using derived class
 dog = Dog("Buddy", "Golden Retriever")
-                                  # => dog is Dog object with name, species, breed
+                                  # => Calls Dog.__init__("Buddy", "Golden Retriever")
+                                  # => Which calls Animal.__init__("Buddy", "Dog")
+                                  # => dog.name = "Buddy"
+                                  # => dog.species = "Dog"
+                                  # => dog.breed = "Golden Retriever"
 
-print(dog.info())                 # => Output: Buddy is a Dog (inherited method)
-print(dog.speak())                # => Output: Buddy says Woof! (overridden)
-print(dog.fetch())                # => Output: Buddy fetches the ball (new method)
+print(dog.info())                 # => Calls inherited Animal.info()
+                                  # => Dog didn't override this method
+                                  # => Output: Buddy is a Dog
+print(dog.speak())                # => Calls overridden Dog.speak()
+                                  # => NOT Animal.speak()
+                                  # => Output: Buddy says Woof!
+print(dog.fetch())                # => Calls Dog-specific method
+                                  # => Not available on Animal
+                                  # => Output: Buddy fetches the ball
 
 # Another derived class
 class Cat(Animal):
