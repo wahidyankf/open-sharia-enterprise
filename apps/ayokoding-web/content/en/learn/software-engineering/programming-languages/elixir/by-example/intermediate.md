@@ -582,6 +582,14 @@ graph TD
     style Defaults fill:#CA9161,color:#fff
 ```
 
+### Struct Features
+
+**Tagged Maps**: Structs are maps with special `__struct__` key (module name)
+**Default Values**: Define defaults for fields (e.g., `active: true`)
+**Enforced Keys**: `@enforce_keys` requires fields at creation (compile-time check)
+**Pattern Matching**: Match on struct type for type-safe function dispatch
+**Immutability**: Updates create new structs (original unchanged)
+
 **Code**:
 
 ```elixir
@@ -589,41 +597,35 @@ defmodule User do
   # Define struct with default values
   defstruct name: nil, age: nil, email: nil, active: true
   # => All fields optional with defaults
-  # => name, age, email default to nil
-  # => active defaults to true
-  # => Creates %User{} constructor
+  # => active defaults to true (others nil)
 
   # Alternative: enforced keys (compile-time check)
   # @enforce_keys [:name, :age]
-  # => Compile error if these keys not provided at creation
+  # => Compile error if keys not provided at creation
   # defstruct [:name, :age, email: nil, active: true]
-  # => Shorthand: atom list for required keys + keyword for defaults
 end
 
 defmodule Account do
   @enforce_keys [:id, :balance]
-  # => MUST provide :id and :balance when creating struct
-  # => Raises ArgumentError at runtime if missing
+  # => MUST provide :id and :balance at creation
+  # => Raises ArgumentError if missing
   defstruct [:id, :balance, status: :active, transactions: []]
-  # => :id, :balance required (no defaults)
-  # => status defaults to :active
-  # => transactions defaults to []
+  # => :id, :balance required; status/:transactions have defaults
 end
 
 # Create struct with all fields
 user = %User{name: "Alice", age: 30, email: "alice@example.com"}
 # => Syntax: %ModuleName{key: value, ...}
-# => active field uses default (true)
+# => active uses default (true)
 # => %User{name: "Alice", age: 30, email: "alice@example.com", active: true}
 
-# Create struct with partial fields (use defaults for rest)
+# Create struct with partial fields
 user_partial = %User{name: "Bob", age: 25}
-# => email defaults to nil, active defaults to true
-# => %User{name: "Bob", age: 25, email: nil, active: true}
+# => email: nil (default), active: true (default)
 
 # Access struct fields (dot notation)
 user.name
-# => "Alice" (field access)
+# => "Alice"
 user.age
 # => 30
 user.active
@@ -633,26 +635,21 @@ user.active
 updated_user = %{user | age: 31, email: "alice.new@example.com"}
 # => Syntax: %{struct | field: new_value, ...}
 # => Returns NEW struct (original unchanged)
-# => %User{name: "Alice", age: 31, email: "alice.new@example.com", active: true}
 user.age
-# => 30 (original unchanged - immutability!)
-# => updated_user is separate copy
+# => 30 (original unchanged - immutability)
 
-# Struct is a tagged map (special __struct__ field)
+# Struct is a tagged map
 user.__struct__
-# => User (module name)
-# => Hidden field added by defstruct
+# => User (module name stored in __struct__ field)
 is_map(user)
 # => true (structs ARE maps)
-# => Can use map functions on structs
 Map.keys(user)
 # => [:__struct__, :active, :age, :email, :name]
-# => __struct__ is first key (implementation detail)
 
 # Pattern matching on structs
 %User{name: name, age: age} = user
 # => Destructures struct fields
-# => Pattern matches User struct (not other structs or plain maps)
+# => Only matches User structs (not other types)
 name
 # => "Alice"
 age
@@ -661,12 +658,10 @@ age
 # Pattern matching in function heads (type safety)
 def greet_user(%User{name: name}), do: "Hello, #{name}!"
 # => Only accepts User structs (not Account or plain maps)
-# => Extracts name field
-# => Type-safe dispatch!
+# => Type-safe dispatch
 greet_user(user)
 # => "Hello, Alice!"
 # greet_user(%{name: "Bob"}) would raise FunctionClauseError
-# => Plain map doesn't match %User{} pattern
 
 # Enforced keys example
 account = %Account{id: 1, balance: 1000}
@@ -676,12 +671,11 @@ account = %Account{id: 1, balance: 1000}
 
 # account_invalid = %Account{id: 1}
 # => ** (ArgumentError) missing required keys: [:balance]
-# => Compile-time/runtime check prevents invalid structs
 ```
 
 **Key Takeaway**: Structs are tagged maps with enforced keys and default values. They provide compile-time guarantees and clearer domain modeling compared to plain maps.
 
-**Why It Matters**: Monitors enable one-way crash detection without the bilateral coupling of links. A GenServer can monitor a database connection process to detect disconnects without being killed by them, enabling graceful degradation. In production, monitors implement health checks—Phoenix connection pools monitor worker processes and spawn replacements for crashed workers, while the workers themselves remain unaware of monitoring, maintaining clean separation of concerns.
+**Why It Matters**: Structs enable compile-time type safety and clearer domain modeling in Elixir applications. In production, Phoenix uses structs extensively (`%Plug.Conn{}` for HTTP requests, `%Ecto.Changeset{}` for validations), providing pattern matching on struct types to catch errors early (e.g., passing wrong data type to function) and `@enforce_keys` ensuring critical fields like `:id` are never forgotten. Struct-based APIs make codebases self-documenting and enable IDEs to provide better autocomplete and error detection.
 
 ---
 
@@ -1993,220 +1987,141 @@ end
 
 Use `raise` to throw exceptions. Define custom exception modules for domain-specific errors. Exceptions should be for unexpected situations, not control flow.
 
+### Exception Conventions
+
+**Custom Exceptions**: Define with `defexception` (creates struct with `__exception__: true`)
+**Message Protocol**: Implement `message/1` for formatted error messages
+**Bang Functions**: `!` suffix indicates function may raise (e.g., `fetch!/1` vs `fetch/1`)
+**Return Tuples**: Safe functions return `{:ok, value}` or `{:error, reason}`
+
+### Safe vs Bang Functions
+
+| Pattern    | Return Type                        | Error Handling        | Use Case                           |
+| ---------- | ---------------------------------- | --------------------- | ---------------------------------- |
+| `fetch/1`  | `{:ok, value} \| {:error, reason}` | Explicit error tuples | Caller handles errors              |
+| `fetch!/1` | `value`                            | Raises exception      | Errors unexpected or unrecoverable |
+
 **Code**:
 
 ```elixir
-
-
 defmodule MyApp.ValidationError do
-  # => defexception: defines custom exception module
-  # => Exceptions are structs with __exception__: true field
-  # => Fields: message (default "Validation failed"), field (default nil)
+  # => Custom exception with default values
   defexception message: "Validation failed", field: nil
-  # => Default values: used when not explicitly set during raise
-  # => message: string, field: atom or nil
-  # => Struct: %MyApp.ValidationError{message: "...", field: nil, __exception__: true}
+  # => Fields: message (string), field (atom or nil)
 
   @impl true
-  # => @impl: indicates implementing Exception protocol callback
-  # => Required when custom message/1 function overrides default
   def message(exception) do
-    # => message/1: Exception protocol callback
-    # => Input: exception struct %MyApp.ValidationError{...}
-    # => Returns: formatted error message string
+    # => Exception protocol callback for formatted messages
     "Validation failed for field: #{exception.field}"
     # => Interpolates field name into message
-    # => Example: field=:age => "Validation failed for field: age"
-    # => Used by error reporting, logs, and exception displays
   end
 end
 
 defmodule MyApp.NotFoundError do
-  # => defexception with list: defines fields without defaults
-  # => All fields default to nil
+  # => Custom exception with list syntax (all fields default to nil)
   defexception [:resource, :id]
-  # => Fields: resource (atom/string), id (any type)
-  # => No default message field (Exception protocol provides default)
-  # => Struct: %MyApp.NotFoundError{resource: nil, id: nil, __exception__: true}
+  # => Fields: resource (type), id (identifier)
 
   @impl true
-  # => Overrides default Exception.message/1 implementation
   def message(exception) do
-    # => Custom message format for NotFoundError
-    # => exception.resource: type of resource (e.g., "User", "Post")
-    # => exception.id: identifier (e.g., 123, "abc-def")
+    # => Custom message format
     "#{exception.resource} with id #{exception.id} not found"
-    # => Example: resource="User", id=999 => "User with id 999 not found"
-    # => Human-readable error for 404-style failures
+    # => Human-readable 404-style error
   end
 end
 
-
-
 defmodule UserValidator do
-  # => Module demonstrating validation with custom exceptions
-  # => Bang functions (!): raise exceptions on invalid input
-  # => Follows convention: ! suffix means may raise
+  # => Validation module with bang functions (! means may raise)
 
   def validate_age!(age) when is_integer(age) and age >= 0 and age < 150, do: :ok
-  # => Clause 1: happy path guard
-  # => Guard: is_integer(age) checks type
-  # => Guard: age >= 0 ensures non-negative
-  # => Guard: age < 150 ensures reasonable upper bound
-  # => Returns: :ok (success atom)
-  # => If all guards pass, validation succeeds
+  # => Happy path: age is integer in valid range [0, 150)
+  # => Returns: :ok
 
   def validate_age!(age) when is_integer(age) do
-    # => Clause 2: integer but out of range
-    # => Guard: is_integer(age) true BUT previous guards failed
-    # => Means: age < 0 or age >= 150
+    # => Integer but out of range (age < 0 or age >= 150)
     raise MyApp.ValidationError, field: :age, message: "Age must be between 0 and 150, got: #{age}"
-    # => raise: throws MyApp.ValidationError exception
-    # => field: :age identifies which field failed
-    # => message: overrides default, includes actual value
-    # => Process crashes unless caught with try/rescue
+    # => Raises with specific error message
   end
 
   def validate_age!(_age) do
-    # => Clause 3: not an integer (catch-all)
-    # => _age: pattern matches anything (previous clauses didn't)
-    # => Means: age is not integer (e.g., "30", 30.5, nil)
+    # => Catch-all: not an integer
     raise MyApp.ValidationError, field: :age, message: "Age must be an integer"
-    # => Raises with type error message
-    # => No value interpolation (could be any type)
   end
 
   def validate_email!(email) when is_binary(email) do
-    # => Email validation with bang convention
-    # => Guard: is_binary(email) ensures email is string
-    # => Binary = string in Elixir (UTF-8 encoded)
+    # => Email validation (is_binary checks string type)
     if String.contains?(email, "@") do
-      # => Check: email contains @ symbol (basic validation)
-      # => String.contains?/2 returns boolean
       :ok
-      # => Success: email has @ character
-      # => Returns :ok atom
+      # => Success: email has @ symbol
     else
-      # => Failure: no @ in email
       raise MyApp.ValidationError, field: :email, message: "Email must contain @"
-      # => Raises exception for invalid format
       # => Basic validation (production would use regex)
     end
   end
 
   def validate_email!(_email) do
     # => Catch-all: email is not a string
-    # => _email: not binary (e.g., 123, :atom, nil)
     raise MyApp.ValidationError, field: :email, message: "Email must be a string"
-    # => Type error: email must be string
   end
 end
 
 UserValidator.validate_age!(30)
-# => Calls validate_age! with 30
-# => Clause 1: is_integer(30) → true, 30 >= 0 → true, 30 < 150 → true
-# => All guards pass → returns :ok
-# => No exception raised
+# => Valid age: returns :ok
 
 UserValidator.validate_email!("alice@example.com")
-# => Calls validate_email! with string
-# => Guard: is_binary("alice@example.com") → true
-# => if: String.contains?("alice@example.com", "@") → true
-# => Returns :ok
-# => Valid email format
+# => Valid email: returns :ok
 
 # Example: age validation failure (out of range)
 # UserValidator.validate_age!(200)
-# => Clause 1: 200 < 150 → false, guard fails
-# => Clause 2: is_integer(200) → true, matches!
-# => Raises MyApp.ValidationError with message: "Age must be between 0 and 150, got: 200"
-# => Process crashes with exception
+# => Raises MyApp.ValidationError: "Age must be between 0 and 150, got: 200"
 
 # Example: age validation failure (wrong type)
 # UserValidator.validate_age!("30")
-# => Clause 1: is_integer("30") → false, guard fails
-# => Clause 2: is_integer("30") → false, guard fails
-# => Clause 3: _age pattern matches "30"
-# => Raises MyApp.ValidationError with message: "Age must be an integer"
-# => Process crashes with exception
+# => Raises MyApp.ValidationError: "Age must be an integer"
 
 defmodule UserRepo do
-  # => Repository module demonstrating safe/unsafe function pairs
-  # => Safe function: fetch/1 returns {:ok, user} | {:error, reason}
-  # => Unsafe function: fetch!/1 unwraps or raises exception
+  # => Repository demonstrating safe/bang function pairs
 
   def fetch(id) when id > 0 and id < 100 do
     # => Safe fetch: returns result tuple
-    # => Guard: id must be positive and less than 100
-    # => Simulates valid ID range (1-99)
     {:ok, %{id: id, name: "User #{id}"}}
-    # => Success case: returns {:ok, user_map}
-    # => user_map: %{id: <id>, name: "User <id>"}
-    # => Type: {:ok, map()}
+    # => Success: {:ok, user_map}
   end
 
   def fetch(_id), do: {:error, :not_found}
-  # => Catch-all: invalid ID
-  # => Matches when guard fails (id <= 0 or id >= 100)
-  # => Returns {:error, :not_found} tuple
-  # => Caller can pattern match and handle gracefully
+  # => Catch-all: invalid ID returns error tuple
 
   def fetch!(id) do
-    # => Bang version: unwraps result or raises exception
-    # => Follows Elixir convention: ! suffix indicates may raise
+    # => Bang version: unwraps result or raises
     case fetch(id) do
-      # => Delegates to safe fetch/1
       {:ok, user} -> user
       # => Success: unwrap tuple, return bare user map
-      # => Converts {:ok, %{...}} to %{...}
-      # => Type: map()
 
       {:error, :not_found} ->
         # => Failure: raise custom exception
         raise MyApp.NotFoundError, resource: "User", id: id
-        # => raise with keyword list: sets struct fields
-        # => resource: "User" (type of resource)
-        # => id: <id> (identifier that wasn't found)
         # => Exception message: "User with id <id> not found"
     end
   end
 end
 
 UserRepo.fetch(1)
-# => Calls fetch with id=1
-# => Guard: 1 > 0 → true, 1 < 100 → true
-# => Returns {:ok, %{id: 1, name: "User 1"}}
-# => Type: {:ok, map()}
+# => Returns: {:ok, %{id: 1, name: "User 1"}}
 
 UserRepo.fetch(999)
-# => Calls fetch with id=999
-# => Guard: 999 < 100 → false, guard fails
-# => Catch-all clause matches
-# => Returns {:error, :not_found}
-# => Type: {:error, atom()}
+# => Returns: {:error, :not_found}
 
 UserRepo.fetch!(1)
-# => Calls fetch!(1) → delegates to fetch(1)
-# => fetch(1) → {:ok, %{id: 1, name: "User 1"}}
-# => Pattern matches {:ok, user}
-# => Returns unwrapped user map: %{id: 1, name: "User 1"}
-# => Type: map() (not tuple)
+# => Returns: %{id: 1, name: "User 1"} (unwrapped)
 
 # Example: bang function raising exception
 # UserRepo.fetch!(999)
-# => Calls fetch!(999) → delegates to fetch(999)
-# => fetch(999) → {:error, :not_found}
-# => Pattern matches {:error, :not_found}
-# => Raises MyApp.NotFoundError with resource="User", id=999
-# => Exception message: "User with id 999 not found"
-# => Process crashes unless caught
-
-
+# => Raises MyApp.NotFoundError: "User with id 999 not found"
 ```
 
 **Key Takeaway**: Raise exceptions for unexpected, unrecoverable errors. Define custom exceptions for domain-specific errors. Use the `!` convention: functions ending with `!` raise exceptions, non-bang versions return result tuples.
 
-**Why It Matters**: GenServer is OTP's abstraction for stateful processes with synchronous (call) and asynchronous (cast) message handling. The BEAM optimizes GenServer message dispatch through selective receive patterns. In production, GenServers implement connection pools (DBConnection), rate limiters, and stateful business logic (shopping carts, game state). Phoenix channels use GenServers per connection, enabling 2M concurrent WebSocket connections per server with isolated state.
+**Why It Matters**: The safe/bang function pattern enables explicit error handling while maintaining convenience for happy paths. In production, Phoenix controller actions use bang functions when errors are exceptional (`Repo.get!/2` for authenticated user lookups that should always succeed), while background jobs use safe functions (`Repo.fetch/1`) to handle not-found cases gracefully. Custom exceptions like `Ecto.NoResultsError` and `Phoenix.Router.NoRouteError` provide domain-specific error information for debugging and error tracking services, while the `!` suffix signals to developers which functions require error handling and which assume success.
 
 ---
 
@@ -2235,191 +2150,148 @@ graph TD
     style Send fill:#CC78BC,color:#fff
 ```
 
+### Process Lifecycle
+
+**Spawning**: `spawn/1` or `spawn/3` creates new BEAM process with isolated memory
+**Execution**: Process runs concurrently (non-blocking), executes function, then exits
+**Isolation**: Each process has separate memory (data copied, not shared)
+**Lifecycle**: Check status with `Process.alive?/1`, inspect with `Process.info/1`
+
+### spawn/1 vs spawn_link/1
+
+| Function       | Behavior                                           | Use Case                            |
+| -------------- | -------------------------------------------------- | ----------------------------------- |
+| `spawn/1`      | Isolated processes (crashes don't propagate)       | Independent tasks, fire-and-forget  |
+| `spawn_link/1` | Linked processes (bidirectional crash propagation) | Supervised tasks, dependent workers |
+
 **Code**:
 
 ```elixir
 # Basic process spawning
 pid = spawn(fn -> IO.puts("Hello from spawned process!") end)
-# => spawn/1: creates new BEAM process
-# => fn: anonymous function that defines process behavior
-# => Process executes concurrently with parent
+# => Creates new BEAM process executing function concurrently
 # => Returns: PID (process identifier) e.g. #PID<0.150.0>
-# => Process runs independently, exits when function completes
-# => IO.puts runs immediately in spawned process
-# => Parent process doesn't wait (non-blocking)
+# => Process exits when function completes (non-blocking)
 
 Process.alive?(pid)
-# => Checks if process with given PID is still running
-# => Usually returns false (process already finished)
-# => IO.puts executes in microseconds, process exits immediately
-# => Returns: false (boolean)
+# => Checks if process is still running
+# => Returns: false (process finished in microseconds)
 
 # Long-running process example
 long_process = spawn(fn ->
-  # => Spawns process that sleeps before completing
+  # => Process sleeps before completing
   :timer.sleep(1000)
-  # => :timer.sleep/1: blocks process for 1000 milliseconds (1 second)
-  # => Only affects spawned process (parent continues immediately)
-  # => Erlang :timer module function
+  # => Blocks process for 1 second (parent continues immediately)
   IO.puts("Finished after 1 second")
-  # => Prints after sleep completes
-  # => Then process exits
 end)
 # => Returns: PID of long-running process
-# => Process is running concurrently
 
 Process.alive?(long_process)
-# => Checks if long-running process is still alive
-# => Returns: true (process still sleeping for ~1 second)
-# => Type: boolean
+# => Returns: true (process still sleeping)
 
 :timer.sleep(1500)
-# => Parent process sleeps for 1.5 seconds
-# => Ensures child process has time to finish (after 1 second)
-# => Blocking call in parent process
+# => Parent sleeps 1.5s (ensures child finishes)
 
 Process.alive?(long_process)
-# => Checks again after parent sleep
-# => Returns: false (child finished after 1 second, parent slept 1.5 seconds)
-# => Child process exited ~0.5 seconds ago
+# => Returns: false (child exited ~0.5s ago)
 
 # Getting current process PID
 self()
 # => Returns PID of current (calling) process
-# => Example: #PID<0.100.0> (actual PID varies by runtime)
-# => self/0: built-in function
-# => Useful for sending messages to self or debugging
+# => Example: #PID<0.100.0>
 
 # Spawning multiple processes
 pids = Enum.map(1..5, fn i ->
-  # => Iterates over range 1 to 5
   # => Creates 5 concurrent processes
   spawn(fn -> IO.puts("Process #{i}") end)
-  # => Each process prints its number
   # => Processes run concurrently (order not guaranteed)
   # => i: captured from parent scope (closure)
 end)
-# => Returns: list of 5 PIDs
-# => Type: [#PID<0.151.0>, #PID<0.152.0>, ...]
-# => All 5 processes execute concurrently
+# => Returns: list of 5 PIDs [#PID<0.151.0>, ...]
 
 # Using module function with spawn
 defmodule Worker do
-  # => Module defining worker functions
   def work(n) do
-    # => Worker function that simulates task processing
+    # => Worker function simulating task processing
     IO.puts("Working on task #{n}")
-    # => Prints start message
     :timer.sleep(100)
-    # => Simulates work (100ms delay)
+    # => Simulates 100ms work
     IO.puts("Task #{n} done!")
-    # => Prints completion message
   end
 end
 
 spawn(Worker, :work, [1])
-# => spawn/3: spawns process calling module function
-# => Worker: module name
-# => :work: function atom (function to call)
-# => [1]: arguments list (passed to Worker.work/1)
+# => spawn/3: spawns process calling Worker.work(1)
 # => Equivalent to: spawn(fn -> Worker.work(1) end)
 # => Returns: PID
-# => More efficient than closure for module functions
 
 # Linked processes (crash propagation)
 parent_pid = self()
 # => Stores parent PID for reference
-# => Parent is the process calling this code
 child = spawn_link(fn ->
-  # => spawn_link/1: spawns process LINKED to parent
-  # => Link: bidirectional connection (if either crashes, both crash)
-  # => Different from spawn/1 (isolated processes)
+  # => spawn_link/1: creates bidirectional link
+  # => If either crashes, both crash (unless trapping exits)
   :timer.sleep(500)
-  # => Child sleeps for 0.5 seconds
   raise "Child process crashed!"
-  # => Raises exception after sleep
-  # => Child process crashes
-  # => Crash propagates to parent via link
-  # => Parent also crashes (unless trapping exits)
+  # => Child crashes, propagates to parent via link
+  # => WARNING: Parent crashes unless trapping exits
 end)
 # => Returns: PID of linked child
-# => WARNING: Parent will crash in ~500ms when child raises
-# => Use Process.flag(:trap_exit, true) to handle child crashes
 
 # Process introspection
 pid = spawn(fn -> :timer.sleep(5000) end)
-# => Spawns process that sleeps for 5 seconds
-# => Long-lived process for inspection
+# => Long-lived process (5s sleep) for inspection
 
 Process.info(pid)
 # => Returns: keyword list with process information
 # => [{:registered_name, []}, {:current_function, {:timer, :sleep, 1}}, ...]
-# => Includes: status, heap_size, message_queue_len, etc.
 # => Returns nil if process not alive
-# => Type: [{atom(), term()}] | nil
 
 Process.info(pid, :status)
-# => Queries specific process info field
-# => :status field shows current process state
-# => Returns: {:status, :waiting} (process waiting in sleep)
-# => Other states: :running, :runnable, :suspended, :garbage_collecting
-# => Type: {atom(), term()} | nil
+# => Queries specific field (e.g., :status)
+# => Returns: {:status, :waiting} (process in sleep)
+# => States: :running, :runnable, :suspended, :garbage_collecting
 
 # Mass process creation (demonstrates lightweight processes)
 Enum.each(1..10_000, fn _ ->
-  # => Creates 10,000 processes
-  # => Demonstrates BEAM's ability to handle massive concurrency
+  # => Creates 10,000 concurrent processes
   spawn(fn -> :timer.sleep(10_000) end)
-  # => Each process sleeps for 10 seconds
-  # => 10,000 concurrent sleeping processes
+  # => Each process sleeps 10s
   # => Memory per process: ~2KB (very lightweight)
-  # => Total memory: ~20MB for 10,000 processes
+  # => Total: ~20MB for 10,000 processes
 end)
-# => All 10,000 processes run concurrently
-# => BEAM scheduler distributes across CPU cores
-# => No blocking (parent continues immediately)
+# => All processes run concurrently (BEAM scheduler distributes across cores)
 
 # Memory isolation demonstration
 defmodule Isolation do
-  # => Module demonstrating process memory isolation
   def demonstrate do
-    # => Function showing data is copied, not shared
+    # => Shows data is copied, not shared between processes
     list = [1, 2, 3]
-    # => Parent process has list [1, 2, 3]
+    # => Parent has list [1, 2, 3]
     spawn(fn ->
-      # => Child process receives COPY of list
-      # => No shared memory between processes
-      # Each process has its own copy
+      # => Child receives COPY of list (no shared memory)
       modified_list = [0 | list]
-      # => Child prepends 0 to its copy
-      # => modified_list is [0, 1, 2, 3]
-      # => Parent's list unchanged ([1, 2, 3])
-      # => Head syntax: [0 | list] creates new list
+      # => Child prepends 0: [0, 1, 2, 3]
+      # => Parent's list unchanged
       IO.inspect(modified_list, label: "Child process")
       # => Prints: Child process: [0, 1, 2, 3]
-      # => Child sees modified version
     end)
     :timer.sleep(100)
-    # => Wait for child to print (ensure ordering)
+    # => Wait for child to print
     IO.inspect(list, label: "Parent process")
     # => Prints: Parent process: [1, 2, 3]
-    # => Parent's list unchanged (not affected by child)
     # => Proves: processes have isolated memory
   end
 end
 
 Isolation.demonstrate()
-# => Calls demonstration function
-# => Output:
-# =>   Child process: [0, 1, 2, 3]
-# =>   Parent process: [1, 2, 3]
-# => Shows: parent and child have different lists
+# => Output shows parent and child have different lists
 # => Memory isolation: no shared state between processes
 ```
 
 **Key Takeaway**: Processes are lightweight, isolated, and communicate via messages. Use `spawn/1` for independent processes, `spawn_link/1` for linked processes. Elixir can run millions of processes concurrently.
 
-**Why It Matters**: GenServer call with timeout prevents deadlocks and cascading failures. When a caller blocks on GenServer.call with 5-second timeout, it crashes on timeout rather than hanging forever. In production, this implements circuit breakers—HTTP clients using GenServer for connection pooling timeout on slow backends, triggering supervision restarts that might resolve the issue, rather than accumulating blocked processes that exhaust system resources.
+**Why It Matters**: BEAM's lightweight process model enables massive concurrency on modest hardware. Each process consumes only ~2KB memory, allowing systems to spawn millions of processes for handling concurrent connections, background jobs, or parallel data processing. In production, this powers Phoenix applications serving 2+ million WebSocket connections per server, parallel ETL pipelines processing millions of records concurrently, and real-time systems maintaining one process per user session without resource exhaustion.
 
 ---
 
@@ -2699,251 +2571,165 @@ flush()
 
 Process monitoring allows you to detect when other processes crash or exit. Use `Process.monitor/1` to watch a process and receive a message when it exits.
 
+### Monitoring vs Linking
+
+| Feature           | Monitoring                                  | Linking                             |
+| ----------------- | ------------------------------------------- | ----------------------------------- |
+| Direction         | Unidirectional (one watches another)        | Bidirectional (both crash together) |
+| Crash Propagation | No (monitor survives, gets `:DOWN` message) | Yes (both processes crash)          |
+| Use Case          | Detect failures, health checks              | Supervised tasks, dependent workers |
+| Message           | `:DOWN` tuple with exit reason              | `:EXIT` signal (unless trapping)    |
+
+### Monitor Message Format
+
+`:DOWN` message: `{:DOWN, ref, :process, pid, reason}`
+
+- `ref`: Monitor reference (from `Process.monitor/1`)
+- `pid`: Monitored process PID
+- `reason`: Exit reason (`:normal`, exception tuple, `:killed`, etc.)
+
 **Code**:
 
 ```elixir
 # Basic process monitoring (crash detection)
 pid = spawn(fn ->
-  # => Spawns process that will crash
+  # => Spawns process that crashes after 1s
   :timer.sleep(1000)
-  # => Waits 1 second before crashing
-  # => Simulates delayed failure
   raise "Process crashed!"
-  # => Raises RuntimeError exception
-  # => Process exits abnormally with reason {:EXIT, {%RuntimeError{...}, stacktrace}}
+  # => Raises RuntimeError, exits abnormally
 end)
-# => Returns: PID of spawned process
-# => Process running in background
 
 ref = Process.monitor(pid)
-# => Process.monitor/1: starts monitoring the process
-# => ref: unique reference (type: reference)
-# => Monitor is unidirectional: this process watches pid
-# => If pid crashes, this process receives :DOWN message
-# => Unlike spawn_link: monitor doesn't crash the monitoring process
+# => Starts monitoring (unidirectional: this watches pid)
 # => Returns: reference e.g. #Reference<0.1234.5678>
+# => Monitor doesn't crash monitoring process (unlike link)
 
 receive do
-  # => Waits for :DOWN message from monitor
-  # => Pattern matches monitor exit notification
   {:DOWN, ^ref, :process, ^pid, reason} ->
     # => Pattern: {:DOWN, ref, :process, pid, exit_reason}
-    # => ^ref: pin operator ensures matches our monitor reference
-    # => ^pid: pin operator ensures matches our monitored process
-    # => reason: bound to exit reason (why process died)
-    # => Exit reason structure: {%RuntimeError{message: "Process crashed!"}, stacktrace}
+    # => ^ref, ^pid: pin operators ensure correct monitor/process
+    # => reason: crash reason (exception tuple + stacktrace)
     IO.puts("Process #{inspect(pid)} exited with reason: #{inspect(reason)}")
-    # => Prints PID and crash reason
-    # => inspect/1: converts complex term to readable string
-    # => Example: "Process #PID<0.150.0> exited with reason: {%RuntimeError{...}, [...]}"
 after
-  # => Timeout clause: executes if no :DOWN received
   2000 -> IO.puts("No exit message received")
-  # => 2000ms timeout (2 seconds)
-  # => Should not trigger: process crashes in 1 second
-  # => Safety net for unexpected delays
+  # => Timeout: 2s (safety net)
 end
-# => receive block completes after handling :DOWN message
-# => Monitor automatically removed after :DOWN received
+# => Monitor auto-removed after :DOWN received
 
 # Monitoring normal exit
 pid = spawn(fn ->
-  # => Spawns process that exits normally
+  # => Process exits normally after 0.5s
   :timer.sleep(500)
-  # => Waits 0.5 seconds
   :ok  # Normal exit
-  # => Returns :ok (no exception)
-  # => Process exits with reason :normal
+  # => Exits with reason :normal
 end)
-# => Returns: PID of new process
 
 ref = Process.monitor(pid)
-# => Creates new monitor for this process
-# => New reference (different from previous)
 # => Monitors normal and abnormal exits
 
 receive do
   {:DOWN, ^ref, :process, ^pid, reason} ->
-    # => Pattern: same :DOWN structure as crash case
-    # => reason: will be :normal (not error tuple)
-    # => Normal exit reason: atom :normal
-    # => Abnormal exit reason: error tuple or atom like :killed
+    # => reason: :normal (not error tuple)
     IO.puts("Process exited normally with reason: #{inspect(reason)}")
     # => Prints: "Process exited normally with reason: :normal"
-    # => Demonstrates monitors catch ALL exits (normal and abnormal)
 after
   1000 -> IO.puts("No exit")
-  # => 1000ms timeout
-  # => Should not trigger: process exits in 500ms
 end
 
 # Demonitor - stop monitoring
 pid = spawn(fn -> :timer.sleep(10_000) end)
-# => Spawns long-running process (10 seconds)
-# => Will be killed before natural exit
+# => Long-running process (10s)
 ref = Process.monitor(pid)
-# => Start monitoring the process
-# => ref: monitor reference
+# => Start monitoring
 Process.demonitor(ref)  # Stop monitoring
-# => Process.demonitor/1: removes the monitor
-# => No :DOWN message will be received when pid exits
-# => Monitor reference becomes invalid
-# => Process still running, just not monitored
+# => Removes monitor, no :DOWN message sent
+# => Process still runs, just not monitored
 Process.exit(pid, :kill)  # Kill the process
-# => Process.exit/2: forcefully terminates the process
-# => :kill: brutal kill (cannot be trapped)
-# => Process dies immediately
-# => No :DOWN message (already demonitored)
-# => Demonstrates: demonitor prevents :DOWN notifications
+# => :kill: brutal termination (cannot be trapped)
+# => No :DOWN (already demonitored)
 
 # Monitor multiple processes (parallel work tracker)
 pids = Enum.map(1..5, fn i ->
-  # => Creates 5 processes with staggered completion times
+  # => Creates 5 processes with staggered completion (100-500ms)
   spawn(fn ->
-    # => Each process has unique sleep duration
     :timer.sleep(i * 100)
     # => Process 1: 100ms, Process 2: 200ms, ..., Process 5: 500ms
-    # => Simulates parallel work with different durations
     IO.puts("Process #{i} done")
-    # => Prints completion message
-    # => Output order: 1, 2, 3, 4, 5 (deterministic timing)
   end)
-  # => Returns PID
 end)
-# => pids: list of 5 PIDs
-# => All processes running concurrently
-# => pids is [#PID<0.150.0>, #PID<0.151.0>, ...]
+# => All processes run concurrently
 
 refs = Enum.map(pids, &Process.monitor/1)
 # => Monitor all processes
-# => &Process.monitor/1: capture syntax for function reference
-# => Equivalent to: fn pid -> Process.monitor(pid) end
+# => &Process.monitor/1: function capture syntax
 # => refs: list of 5 monitor references
-# => Each ref corresponds to a PID (same order)
-# => refs is [#Reference<...>, #Reference<...>, ...]
 
 Enum.each(refs, fn ref ->
-  # => Iterate through monitor references
   # => Wait for each process to complete
-  # => Sequential waiting (not parallel)
   receive do
     {:DOWN, ^ref, :process, _pid, :normal} -> :ok
-    # => Pattern: match specific ref (pin operator ^ref)
-    # => _pid: ignore PID (don't need it)
-    # => :normal: expect normal exit (all processes should succeed)
-    # => Returns :ok for each completed process
+    # => Match specific ref (^ref pin operator)
+    # => Expect normal exit
   end
-  # => No timeout: waits indefinitely for each process
-  # => Longest wait: 500ms (Process 5)
 end)
-# => Blocks until all 5 processes finish
-# => Total wait time: ~500ms (not 1500ms, processes run concurrently)
-# => Ensures all parallel work completes before continuing
+# => Total wait: ~500ms (concurrent, not sequential)
 IO.puts("All processes finished")
-# => Prints after all :DOWN messages received
-# => Coordination pattern: wait for multiple concurrent tasks
-
+# => Coordination pattern: wait for multiple tasks
 
 # TimeoutHelper - production pattern for process timeout
 defmodule TimeoutHelper do
-  # => Module implementing timeout pattern with monitoring
-  # => Common pattern: execute function with deadline
-  # => Returns result or timeout error
+  # => Implements timeout pattern with monitoring
   def call_with_timeout(fun, timeout) do
-    # => call_with_timeout/2: executes fun with timeout limit
-    # => fun: function to execute (type: function)
-    # => timeout: maximum wait time in milliseconds (type: integer)
+    # => Executes fun with timeout limit
     parent = self()
-    # => Capture parent PID (needed for child to send result)
-    # => Child process needs parent's PID to send message
+    # => Capture parent PID (child sends result here)
     pid = spawn(fn ->
       # => Spawn child to execute function
-      # => Child isolated: crash won't affect parent
       result = fun.()
-      # => Execute the provided function
-      # => result: function return value (any type)
-      # => If fun crashes, child dies (parent gets :DOWN)
+      # => Execute function (crashes child if fun raises)
       send(parent, {:result, self(), result})
-      # => Send result back to parent
-      # => Message: {:result, <child_pid>, <result_value>}
-      # => self(): child's own PID (for verification)
-      # => Parent can match on child PID to ensure correct source
+      # => Send result to parent
     end)
-    # => pid: child PID
-    # => Child running concurrently with parent
+
     ref = Process.monitor(pid)
-    # => Monitor child process
-    # => Detects if child crashes before sending result
-    # => Monitor + timeout: comprehensive failure handling
+    # => Monitor child (detects crash before result sent)
 
     receive do
-      # => Wait for result or crash or timeout
-      # => Three possible outcomes
       {:result, ^pid, result} ->
-        # => Pattern 1: success case
-        # => ^pid: ensure result from correct child (pin operator)
-        # => result: bound to function return value
+        # => Success: function completed
         Process.demonitor(ref, [:flush])
-        # => Cleanup: remove monitor
-        # => [:flush]: also remove any pending :DOWN messages
-        # => Important: child may exit right after send (race condition)
-        # => flush prevents stale :DOWN in mailbox
+        # => Cleanup: remove monitor and flush pending :DOWN
         {:ok, result}
-        # => Returns: {:ok, <result_value>}
-        # => Success tuple for pattern matching
 
       {:DOWN, ^ref, :process, ^pid, reason} ->
-        # => Pattern 2: child crashed
-        # => ^ref, ^pid: ensure matching our child (pin operators)
-        # => reason: crash reason (exception, :killed, etc.)
+        # => Child crashed before completing
         {:error, {:process_died, reason}}
-        # => Returns: {:error, {:process_died, <crash_reason>}}
-        # => Nested tuple: distinguishes crash from timeout
-        # => Caller can handle crash vs timeout differently
     after
-      # => Pattern 3: timeout
       timeout ->
-        # => Executes if no result and no crash in timeout milliseconds
-        # => Child still running but too slow
+        # => Timeout: child too slow
         Process.exit(pid, :kill)
-        # => Kill the child process
-        # => :kill: brutal termination (cannot be trapped)
-        # => Prevents zombie processes (child stops consuming resources)
+        # => Kill child (prevents zombie processes)
         Process.demonitor(ref, [:flush])
-        # => Cleanup: remove monitor and flush :DOWN
-        # => :DOWN will arrive after kill (but flushed)
+        # => Cleanup monitor
         {:error, :timeout}
-        # => Returns: {:error, :timeout}
-        # => Timeout error for caller to handle
     end
-    # => Returns one of: {:ok, result}, {:error, {:process_died, reason}}, {:error, :timeout}
+    # => Returns: {:ok, result} | {:error, {:process_died, reason}} | {:error, :timeout}
   end
 end
 
-# Success case - function completes within timeout
+# Success case - completes within timeout
 TimeoutHelper.call_with_timeout(fn -> :timer.sleep(500); 42 end, 1000)  # => {:ok, 42}
-# => fn: sleeps 500ms then returns 42
-# => timeout: 1000ms (1 second)
 # => 500ms < 1000ms: completes successfully
-# => Result received before timeout
-# => Returns: {:ok, 42}
-# => Monitor cleaned up with [:flush]
 
-# Timeout case - function exceeds timeout
+# Timeout case - exceeds timeout
 TimeoutHelper.call_with_timeout(fn -> :timer.sleep(2000); 42 end, 1000)  # => {:error, :timeout}
-# => fn: sleeps 2000ms (2 seconds) then would return 42
-# => timeout: 1000ms (1 second)
 # => 2000ms > 1000ms: exceeds timeout
-# => after clause triggers at 1000ms
-# => Child process killed with Process.exit(pid, :kill)
-# => Child never reaches return 42
-# => Returns: {:error, :timeout}
-# => Monitor cleaned up, child terminated
+# => Child killed, returns {:error, :timeout}
 ```
 
 **Key Takeaway**: Use `Process.monitor/1` to watch processes and receive `:DOWN` messages when they exit. Monitoring is unidirectional (unlike linking) and ideal for detecting process failures without crashing.
 
-**Why It Matters**: Supervisors implement the 'let it crash' philosophy through restart strategies that restore clean state after failures. one_for_one restarts only the crashed child, rest_for_one restarts crashed child plus later siblings, one_for_all restarts all children. In production, Phoenix apps use one_for_one for independent workers (connection pools), rest_for_one for dependent services (database -> cache -> API), creating self-healing systems that recover from transient failures without manual intervention.
+**Why It Matters**: Process monitoring enables unidirectional failure detection, crucial for building resilient systems. In production, GenServers monitor database connection processes to detect disconnects without being killed themselves (enabling graceful degradation), Phoenix connection pools monitor worker processes and spawn replacements for crashed workers, and distributed Erlang nodes monitor remote processes to detect network partitions. The `TimeoutHelper` pattern prevents deadlocks by killing slow processes, implementing circuit breakers that timeout on unresponsive backends rather than accumulating blocked processes that exhaust system resources.
 
 ---
 
@@ -2951,239 +2737,172 @@ TimeoutHelper.call_with_timeout(fn -> :timer.sleep(2000); 42 end, 1000)  # => {:
 
 The `Task` module provides a simple abstraction for spawning processes and awaiting results. It's built on processes but handles boilerplate for async/await patterns.
 
+### Task Functions Comparison
+
+| Function              | Return Type            | Blocking | Use Case             | Cleanup  |
+| --------------------- | ---------------------- | -------- | -------------------- | -------- |
+| `Task.async/1`        | `%Task{}`              | No       | Await result later   | Linked   |
+| `Task.await/2`        | `result`               | Yes      | Get task result      | Auto     |
+| `Task.yield/2`        | `{:ok, result} \| nil` | No       | Poll without error   | Manual   |
+| `Task.start/1`        | `{:ok, pid}`           | No       | Fire-and-forget      | Unlinked |
+| `Task.async_stream/3` | `Stream.t()`           | No       | Parallel collections | Auto     |
+
+### Timeout Behavior
+
+- **`Task.await/2`**: Raises `Task.TimeoutError` on timeout (default: 5000ms)
+- **`Task.yield/2`**: Returns `nil` on timeout (non-blocking check)
+- **Orphaned tasks**: Continue running after timeout (potential leak)
+
 **Code**:
 
 ```elixir
 # Basic async/await pattern
 task = Task.async(fn ->
-  # => Task.async/1: spawns process to execute function
-  # => Returns Task struct (not just PID)
-  # => Task struct: %Task{pid: <pid>, ref: <ref>, owner: <owner>}
-  # => Process runs concurrently with caller
+  # => Spawns process to execute function concurrently
+  # => Returns: %Task{pid: <pid>, ref: <ref>, owner: <owner>}
   :timer.sleep(1000)
-  # => Simulates async computation (1 second)
-  # => Task process sleeps, caller continues
+  # => Simulates 1s computation (task runs, caller continues)
   42
-  # => Function return value
-  # => Will be returned by Task.await/1
+  # => Return value for Task.await/1
 end)
-# => task: %Task{pid: #PID<0.150.0>, ref: #Reference<...>, owner: #PID<0.140.0>}
-# => owner: current process (caller)
-# => Task process running in background
+# => Task struct: %Task{pid: #PID<0.150.0>, ...}
 
 IO.puts("Task started, doing other work...")
 # => Prints immediately (non-blocking)
-# => Main process continues while task sleeps
-# => Demonstrates concurrent execution
 
 result = Task.await(task)  # => 42
-# => Task.await/1: blocks until task completes
-# => Default timeout: 5000ms (5 seconds)
-# => Waits ~1 second for task to finish sleeping
-# => Returns: task function's return value (42)
-# => Task process terminated after returning value
-# => result is 42 (integer)
+# => Blocks until task completes (~1s wait)
+# => Returns: task function's return value
 IO.puts("Task result: #{result}")
 # => Prints: "Task result: 42"
-# => Demonstrates async/await pattern
 
 # Multiple parallel tasks
 tasks = Enum.map(1..5, fn i ->
-  # => Creates 5 tasks with staggered durations
+  # => Creates 5 concurrent tasks
   Task.async(fn ->
-    # => Each task spawns separate process
-    # => All 5 processes run concurrently
+    # => Each task in separate process
     :timer.sleep(i * 200)
     # => Task 1: 200ms, Task 2: 400ms, ..., Task 5: 1000ms
-    # => Parallel execution: all sleep simultaneously
     i * i
-    # => Compute square: 1*1=1, 2*2=4, 3*3=9, 4*4=16, 5*5=25
-    # => Return value for each task
+    # => Return square: 1, 4, 9, 16, 25
   end)
-  # => Returns Task struct
 end)
-# => tasks: list of 5 Task structs
-# => All 5 processes running concurrently
-# => tasks is [%Task{...}, %Task{...}, ...]
+# => 5 Task structs, all processes running concurrently
 
 results = Enum.map(tasks, &Task.await/1)  # => [1, 4, 9, 16, 25]
 # => Await all tasks sequentially
 # => &Task.await/1: function capture syntax
-# => Equivalent to: fn task -> Task.await(task) end
-# => Wait for Task 1 (200ms), then Task 2 (already done), ...
-# => Task 2-5 complete while waiting for Task 1
-# => Total wait: ~1000ms (not 3000ms, tasks run concurrently)
-# => Returns: [1, 4, 9, 16, 25]
-# => All task processes terminated
+# => Total wait: ~1000ms (concurrent, not 3000ms sequential)
 IO.inspect(results)
 # => Prints: [1, 4, 9, 16, 25]
-# => Demonstrates parallel task execution
 
 # Task timeout with exception
 task = Task.async(fn ->
   # => Spawns slow task (10 seconds)
   :timer.sleep(10_000)
-  # => Sleeps for 10 seconds
-  # => Will be interrupted by timeout
   :done
   # => Never reached (timeout occurs first)
 end)
-# => Task running in background
 
 try do
-  # => try/rescue: exception handling block
-  # => Catches Task.TimeoutError
   Task.await(task, 1000)  # Timeout after 1 second
-  # => Task.await/2: second arg is timeout in milliseconds
-  # => Timeout: 1000ms (1 second)
-  # => 1000ms < 10000ms: task won't complete in time
-  # => Raises Task.TimeoutError after 1 second
-  # => Task process keeps running after timeout (not killed)
+  # => Wait max 1000ms (task needs 10000ms)
+  # => Raises Task.TimeoutError after 1s
+  # => WARNING: Task process keeps running (orphaned)
 rescue
-  # => Catches exceptions from try block
   e in Task.TimeoutError ->
-    # => Pattern: match Task.TimeoutError exception
-    # => e: bound to exception struct
-    # => %Task.TimeoutError{task: <task>, timeout: 1000}
+    # => Catches timeout exception
     IO.puts("Task timed out: #{inspect(e)}")
     # => Prints timeout error details
-    # => Example: "Task timed out: %Task.TimeoutError{task: %Task{...}, timeout: 1000}"
-    # => Task process still running in background (orphaned)
 end
-# => Exception handled, program continues
-# => WARNING: Task process not cleaned up (potential resource leak)
+# => Task process still running in background
 
 # Task.yield - non-blocking check
 task = Task.async(fn ->
-  # => Spawns task that takes 2 seconds
+  # => Task takes 2 seconds
   :timer.sleep(2000)
-  # => Sleeps for 2 seconds
   :result
-  # => Returns :result atom
 end)
-# => Task running in background
 
 case Task.yield(task, 500) do
-  # => Task.yield/2: checks if task completed within timeout
-  # => Timeout: 500ms
-  # => Non-blocking: returns immediately after timeout
+  # => Non-blocking: returns immediately after 500ms
   # => Does NOT raise exception on timeout
   {:ok, result} -> IO.puts("Got result: #{result}")
-  # => Pattern 1: task completed within 500ms
-  # => result: task return value
-  # => Won't match: task needs 2000ms
+  # => Task completed within 500ms (won't match, needs 2000ms)
   nil -> IO.puts("Task still running after 500ms")
-  # => Pattern 2: task not completed within timeout
-  # => Returns nil (not error tuple)
-  # => Task still running in background
+  # => Task not completed, returns nil (not error tuple)
   # => Prints: "Task still running after 500ms"
 end
 # => Task process still alive (continues running)
-# => Total elapsed: ~500ms
 
 case Task.yield(task, 2000) do
   # => Second yield: wait up to 2000ms more
-  # => Task has ~1500ms remaining (2000ms - 500ms)
-  # => Sufficient time for task to complete
+  # => Task has ~1500ms remaining (completes in time)
   {:ok, result} -> IO.puts("Got result: #{result}")
-  # => Pattern 1: task completed within 2000ms
-  # => result is :result
+  # => Task completed, returns {:ok, :result}
   # => Prints: "Got result: result"
-  # => Task process terminated
   nil -> IO.puts("Still running")
-  # => Pattern 2: task not completed (won't match)
-  # => Task completes in ~1500ms, well within 2000ms timeout
+  # => Won't match (task completes in ~1500ms)
 end
 # => Total elapsed: ~2000ms (500ms + 1500ms)
-# => Demonstrates: yield allows polling without exceptions
 
 # Task.start - fire and forget
 Task.start(fn ->
-  # => Task.start/1: spawns unlinked task
-  # => Returns {:ok, pid} (not Task struct)
+  # => Spawns unlinked task (returns {:ok, pid}, not %Task{})
   # => No await needed (fire-and-forget pattern)
-  # => Task not linked to caller (crash won't affect caller)
   :timer.sleep(1000)
-  # => Background work: sleeps 1 second
   IO.puts("Background task completed")
-  # => Prints after 1 second
-  # => Side effect: output happens asynchronously
+  # => Prints after 1 second asynchronously
 end)
 # => Returns: {:ok, #PID<0.160.0>}
-# => No Task struct (can't await)
 IO.puts("Main process continues immediately")
-# => Prints immediately (doesn't wait for task)
-# => Demonstrates: fire-and-forget pattern
-# => Background task completes ~1 second later
+# => Prints immediately (doesn't wait)
 
 # Task.async_stream - parallel collection processing
 results = 1..10
           |> Task.async_stream(fn i ->
-            # => Task.async_stream/3: processes collection in parallel
-            # => Creates tasks for each element
-            # => max_concurrency: limits concurrent tasks
-            # => Processes elements in order (preserves ordering)
+            # => Processes collection in parallel with bounded concurrency
+            # => Preserves element ordering in results
             :timer.sleep(100)
             # => Each task sleeps 100ms
-            # => Simulates work per element
             i * i
-            # => Compute square for each element
-            # => Returns: 1, 4, 9, 16, 25, 36, 49, 64, 81, 100
+            # => Compute square: 1, 4, 9, ..., 100
           end, max_concurrency: 4)
-          # => max_concurrency: 4: at most 4 tasks run simultaneously
-          # => First 4 tasks: process 1-4 concurrently
-          # => As tasks complete, new tasks start (5-10)
-          # => Returns stream of {:ok, result} tuples
-          # => Stream is lazy (not yet executed)
+          # => At most 4 tasks run simultaneously
+          # => As tasks complete, new tasks start (batched execution)
+          # => Returns: stream of {:ok, result} tuples
           |> Enum.to_list()
-          # => Force stream evaluation
-          # => Blocks until all 10 tasks complete
+          # => Force stream evaluation (blocks until all complete)
           # => Total time: ~300ms (10 elements / 4 concurrency * 100ms)
-          # => Not 1000ms (sequential) or 100ms (fully parallel)
-# => results: [{:ok, 1}, {:ok, 4}, {:ok, 9}, ..., {:ok, 100}]
-# => Each result wrapped in {:ok, value} tuple
-# => Ordering preserved (1, 4, 9, not random order)
+# => [{:ok, 1}, {:ok, 4}, {:ok, 9}, ..., {:ok, 100}]
 
 # Error handling in tasks
 task = Task.async(fn ->
-  # => Spawns task that will crash
+  # => Task that crashes
   raise "Task error!"
-  # => Raises RuntimeError exception
-  # => Task process crashes
+  # => Task process crashes immediately
 end)
-# => Task running (will crash immediately)
 
 try do
-  # => Exception handling for task errors
   Task.await(task)
-  # => Waits for task to complete
-  # => Task crashes, exception propagated to caller
-  # => Raises same exception in caller's context
+  # => Task crashed, exception propagated to caller
+  # => Re-raises RuntimeError in caller's context
 rescue
-  # => Catches exception from crashed task
   e -> IO.puts("Caught error: #{inspect(e)}")
-  # => Pattern: match any exception
-  # => e: %RuntimeError{message: "Task error!"}
-  # => Prints: "Caught error: %RuntimeError{message: \"Task error!\"}"
-  # => Exception handled, program continues
+  # => Catches %RuntimeError{message: "Task error!"}
 end
 # => Task process terminated (crashed)
-# => Demonstrates: Task.await/1 re-raises task exceptions
 
 # Task.Supervisor - supervised tasks
 {:ok, result} = Task.Supervisor.start_link()
-# => Task.Supervisor.start_link/0: starts task supervisor
-# => Supervisor manages task processes
+# => Starts task supervisor for managed task processes
 # => Provides isolation: task crashes don't affect caller
 # => Returns: {:ok, #PID<supervisor_pid>}
-# => result: supervisor PID
-# => Supervisor running and ready to spawn tasks
-# => Use with Task.Supervisor.async/2 for supervised tasks
 ```
 
 **Key Takeaway**: `Task` provides async/await abstraction over processes. Use `Task.async/1` and `Task.await/1` for parallel work with results. Use `Task.async_stream/3` for processing collections in parallel.
 
-**Why It Matters**: DynamicSupervisor enables runtime child management for variable workloads. Unlike regular Supervisors with static children, DynamicSupervisor spawns children on demand and terminates idle ones. In production, this powers Phoenix connection pools that scale workers based on load, background job processors that spawn workers per job, and WebSocket supervisors that create one process per connected client, enabling systems to scale from zero to millions of processes dynamically.
+**Why It Matters**: Task module simplifies concurrent programming with async/await semantics familiar to developers from other languages. In production, `Task.async_stream/3` with bounded concurrency prevents resource exhaustion when processing large datasets (e.g., 1 million API calls limited to 100 concurrent), `Task.yield/2` enables polling patterns for graceful degradation under load, and supervised tasks via `Task.Supervisor` isolate failures in background job processors. The lightweight process model enables tens of thousands of concurrent tasks on modest hardware.
 
 ---
 
@@ -3921,301 +3640,174 @@ end
 
 Elixir strings are UTF-8 binaries. The `String` module provides extensive manipulation functions. Understanding binaries, charlists, and Unicode handling is essential for text processing.
 
+**Brief Explanation**: Strings in Elixir are UTF-8 encoded binaries, not character lists. The `String` module provides grapheme-aware functions for proper Unicode handling. Key concepts include: binary vs charlist distinction, graphemes (visual characters) vs codepoints (Unicode units), and UTF-8 multibyte character support.
+
 **Code**:
 
 ```elixir
 # Strings are UTF-8 binaries
-string = "Hello, 世界!"  # => "Hello, 世界!"
-# => String literal: double quotes
-# => UTF-8 encoded binary (Unicode support)
-# => Contains English and Chinese characters
-is_binary(string)  # => true
-# => is_binary/1: checks if value is binary type
-# => Strings are binaries in Elixir (not character lists)
-# => Returns: true
+string = "Hello, 世界!"
+# => "Hello, 世界!" (UTF-8 encoded, Unicode support)
+is_binary(string)
+# => true (strings are binaries, not character lists)
 
-# String length vs byte size (Unicode aware)
-String.length("Hello")  # => 5
-# => String.length/1: counts graphemes (visual characters)
-# => "Hello": 5 graphemes (H, e, l, l, o)
-# => Returns: 5
-String.length("世界")  # => 2
-# => "世界": 2 graphemes (世, 界)
-# => String.length counts characters, not bytes
-# => Returns: 2 (not 6!)
-byte_size("世界")  # => 6 (3 bytes per character)
-# => byte_size/1: counts bytes in binary
-# => Each Chinese character: 3 bytes in UTF-8
-# => 世 (3 bytes) + 界 (3 bytes) = 6 bytes total
-# => Returns: 6
-# => Key: String.length != byte_size for multibyte characters
+# String length vs byte size
+String.length("Hello")
+# => 5 (counts graphemes)
+String.length("世界")
+# => 2 (graphemes, not bytes)
+byte_size("世界")
+# => 6 (3 bytes per Chinese character in UTF-8)
 
 # Charlists vs Strings
-charlist = 'hello'  # => 'hello'
-# => Charlist literal: single quotes
-# => List of integer code points
-# => Different from string (binary)
-is_list(charlist)  # => true
-# => Charlists are lists, not binaries
-# => Returns: true
-charlist === [104, 101, 108, 108, 111]  # => true
-# => Charlist is list of ASCII codes
-# => 104='h', 101='e', 108='l', 108='l', 111='o'
-# => === strict equality (type and value)
-# => Returns: true
+charlist = 'hello'
+# => 'hello' (single quotes = list of integers)
+is_list(charlist)
+# => true
+charlist === [104, 101, 108, 108, 111]
+# => true (charlist is list of ASCII codes)
 
 # Converting between strings and charlists
-String.to_charlist("hello")  # => 'hello'
-# => String.to_charlist/1: binary → charlist
-# => "hello" (binary) → 'hello' (list of integers)
-# => Returns: [104, 101, 108, 108, 111]
-# => Use when interfacing with Erlang (expects charlists)
-List.to_string('hello')  # => "hello"
-# => List.to_string/1: charlist → binary
-# => 'hello' (list) → "hello" (binary)
-# => Returns: "hello"
+String.to_charlist("hello")
+# => 'hello' (binary → charlist for Erlang interop)
+List.to_string('hello')
+# => "hello" (charlist → binary)
 
 # String slicing
-String.slice("Hello", 0, 3)  # => "Hel"
-# => String.slice/3: extracts substring
-# => Args: string, start_index (0-based), length
-# => Start at index 0 ('H'), take 3 characters
-# => Returns: "Hel"
-String.slice("Hello", 1..-1)  # => "ello"
-# => Range syntax: 1..-1 (index 1 to end)
-# => Start at 'e', take to last character
-# => Returns: "ello"
-String.slice("Hello", -3, 3)  # => "llo"
-# => Negative index: counts from end
-# => -3: third from end ('l')
-# => Take 3 characters from there
-# => Returns: "llo"
+String.slice("Hello", 0, 3)
+# => "Hel" (start index 0, length 3)
+String.slice("Hello", 1..-1)
+# => "ello" (range: index 1 to end)
+String.slice("Hello", -3, 3)
+# => "llo" (negative index from end)
 
 # String character access
-String.at("Hello", 1)  # => "e"
-# => String.at/2: gets character at index
-# => Index 1: second character (0-based)
-# => Returns: "e" (string, not character)
-String.at("Hello", -1)  # => "o"
-# => Negative index: last character
-# => -1: final character
-# => Returns: "o"
+String.at("Hello", 1)
+# => "e" (0-based index)
+String.at("Hello", -1)
+# => "o" (negative = from end)
 
 # String searching
-String.contains?("Hello World", "World")  # => true
-# => String.contains?/2: checks substring presence
-# => "Hello World" contains "World"
-# => Case-sensitive
-# => Returns: true
-String.contains?("Hello World", ["Hi", "Hello"])  # => true
-# => Second arg: list of substrings (OR logic)
-# => Checks if any substring present
-# => "Hello" found in "Hello World"
-# => Returns: true
-String.starts_with?("Hello", "He")  # => true
-# => String.starts_with?/2: checks prefix
-# => "Hello" starts with "He"
-# => Returns: true
-String.ends_with?("Hello", "lo")  # => true
-# => String.ends_with?/2: checks suffix
-# => "Hello" ends with "lo"
-# => Returns: true
+String.contains?("Hello World", "World")
+# => true (case-sensitive)
+String.contains?("Hello World", ["Hi", "Hello"])
+# => true (OR logic: any substring matches)
+String.starts_with?("Hello", "He")
+# => true
+String.ends_with?("Hello", "lo")
+# => true
 
 # Case conversion
-String.upcase("hello")  # => "HELLO"
-# => String.upcase/1: converts to uppercase
-# => "hello" → "HELLO"
-# => Returns: "HELLO"
-String.downcase("HELLO")  # => "hello"
-# => String.downcase/1: converts to lowercase
-# => "HELLO" → "hello"
-# => Returns: "hello"
-String.capitalize("hello world")  # => "Hello world"
-# => String.capitalize/1: uppercase first char, lowercase rest
-# => "hello world" → "Hello world"
-# => Only first character affected (not each word)
-# => Returns: "Hello world"
+String.upcase("hello")
+# => "HELLO"
+String.downcase("HELLO")
+# => "hello"
+String.capitalize("hello world")
+# => "Hello world" (only first char)
 
 # Whitespace trimming
-String.trim("  hello  ")  # => "hello"
-# => String.trim/1: removes leading and trailing whitespace
-# => "  hello  " → "hello"
-# => Returns: "hello"
-String.trim_leading("  hello  ")  # => "hello  "
-# => String.trim_leading/1: removes only leading whitespace
-# => "  hello  " → "hello  " (trailing preserved)
-# => Returns: "hello  "
-String.trim_trailing("  hello  ")  # => "  hello"
-# => String.trim_trailing/1: removes only trailing whitespace
-# => "  hello  " → "  hello" (leading preserved)
-# => Returns: "  hello"
+String.trim("  hello  ")
+# => "hello"
+String.trim_leading("  hello  ")
+# => "hello  " (trailing preserved)
+String.trim_trailing("  hello  ")
+# => "  hello" (leading preserved)
 
 # String splitting and joining
-String.split("one,two,three", ",")  # => ["one", "two", "three"]
-# => String.split/2: splits string by delimiter
-# => Delimiter: ","
-# => Returns: list of substrings
+String.split("one,two,three", ",")
 # => ["one", "two", "three"]
-String.split("hello world")  # => ["hello", "world"] (splits on whitespace)
-# => String.split/1: splits on whitespace (default)
-# => Any whitespace character: space, tab, newline
-# => Returns: ["hello", "world"]
-Enum.join(["a", "b", "c"], "-")  # => "a-b-c"
-# => Enum.join/2: joins list into string
-# => Separator: "-"
-# => ["a", "b", "c"] → "a-b-c"
-# => Returns: "a-b-c"
+String.split("hello world")
+# => ["hello", "world"] (splits on whitespace by default)
+Enum.join(["a", "b", "c"], "-")
+# => "a-b-c"
 
 # String replacement
-String.replace("hello world", "world", "Elixir")  # => "hello Elixir"
-# => String.replace/3: replaces substring
-# => Finds "world", replaces with "Elixir"
-# => Default: replaces all occurrences
-# => Returns: "hello Elixir"
-String.replace("aaa", "a", "b")  # => "bbb" (replaces all)
-# => Replaces all 3 "a" with "b"
-# => "aaa" → "bbb"
-# => Returns: "bbb"
-String.replace("aaa", "a", "b", global: false)  # => "baa" (first only)
-# => global: false option: replace only first occurrence
-# => First "a" → "b", rest unchanged
-# => "aaa" → "baa"
-# => Returns: "baa"
+String.replace("hello world", "world", "Elixir")
+# => "hello Elixir" (replaces all occurrences)
+String.replace("aaa", "a", "b")
+# => "bbb" (replaces all)
+String.replace("aaa", "a", "b", global: false)
+# => "baa" (first only)
 
 # String padding
-String.pad_leading("42", 5, "0")  # => "00042"
-# => String.pad_leading/3: adds padding to left
-# => Pad "42" to width 5 with "0"
-# => "42" → "00042" (3 zeros added)
-# => Returns: "00042"
-String.pad_trailing("42", 5, "0")  # => "42000"
-# => String.pad_trailing/3: adds padding to right
-# => Pad "42" to width 5 with "0"
-# => "42" → "42000" (3 zeros added)
-# => Returns: "42000"
+String.pad_leading("42", 5, "0")
+# => "00042"
+String.pad_trailing("42", 5, "0")
+# => "42000"
 
-# Regular expressions - matching
-Regex.match?(~r/hello/, "hello world")  # => true
-# => Regex.match?/2: checks if regex matches string
-# => ~r/hello/: regex sigil (literal regex)
-# => "hello world" contains "hello"
-# => Returns: true
-Regex.match?(~r/\d+/, "abc123")  # => true
-# => \d+: one or more digits
-# => "abc123" contains digits "123"
-# => Returns: true
+# Regular expressions
+Regex.match?(~r/hello/, "hello world")
+# => true
+Regex.match?(~r/\d+/, "abc123")
+# => true (matches digits)
 
-# Regular expressions - scanning
-Regex.scan(~r/\d+/, "abc 123 def 456")  # => [["123"], ["456"]]
-# => Regex.scan/2: finds all matches
-# => \d+: one or more digits
-# => Returns: list of captures (nested lists)
-# => [["123"], ["456"]]
-# => Each match is list (supports capture groups)
+Regex.scan(~r/\d+/, "abc 123 def 456")
+# => [["123"], ["456"]] (all matches)
 
-# Regular expressions - replacing
-Regex.replace(~r/\d/, "Room 123", "X")  # => "Room XXX"
-# => Regex.replace/3: replaces regex matches
-# => \d: single digit
-# => Replaces all occurrences: 1→X, 2→X, 3→X
-# => Returns: "Room XXX"
+Regex.replace(~r/\d/, "Room 123", "X")
+# => "Room XXX"
 
-# Regular expressions - named captures
 ~r/(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/
-# => Named capture groups: (?<name>pattern)
-# => year: 4 digits, month: 2 digits, day: 2 digits
-# => Pattern: YYYY-MM-DD
 |> Regex.named_captures("Date: 2024-12-23")
-# => Regex.named_captures/2: extract named groups
-# => Returns: %{"year" => "2024", "month" => "12", "day" => "23"}
-# => Map with group names as keys
+# => %{"year" => "2024", "month" => "12", "day" => "23"}
 
 # String to number conversion
-String.to_integer("42")  # => 42
-# => String.to_integer/1: parses decimal integer
-# => "42" → 42
-# => Raises ArgumentError if invalid
-# => Returns: 42
-String.to_integer("2A", 16)  # => 42
-# => String.to_integer/2: parses with base
-# => Second arg: base (2-36)
-# => "2A" in base 16 (hex) = 2*16 + 10 = 42
-# => Returns: 42
-String.to_float("3.14")  # => 3.14
-# => String.to_float/1: parses float
-# => "3.14" → 3.14
-# => Requires decimal point (not "3")
-# => Returns: 3.14
-Integer.parse("42 units")  # => {42, " units"}
-# => Integer.parse/1: parses integer with remainder
-# => Stops at first non-digit
-# => Returns: {parsed_value, remaining_string}
-# => {42, " units"}
-Float.parse("3.14 pi")  # => {3.14, " pi"}
-# => Float.parse/1: parses float with remainder
-# => Stops at first non-float character
-# => Returns: {3.14, " pi"}
+String.to_integer("42")
+# => 42
+String.to_integer("2A", 16)
+# => 42 (hex: 2*16 + 10)
+String.to_float("3.14")
+# => 3.14
+Integer.parse("42 units")
+# => {42, " units"} (stops at non-digit)
+Float.parse("3.14 pi")
+# => {3.14, " pi"}
 
-# Graphemes vs Codepoints (Unicode)
-String.graphemes("Hello")  # => ["H", "e", "l", "l", "o"]
-# => String.graphemes/1: splits into visual characters
-# => Basic ASCII: 1 grapheme = 1 codepoint
-# => Returns: ["H", "e", "l", "l", "o"]
-String.graphemes("👨‍👩‍👧‍👦")  # => ["👨‍👩‍👧‍👦"] (family emoji as single grapheme!)
-# => Family emoji: single visual character
-# => Composed of multiple codepoints with zero-width joiners
-# => graphemes respects visual boundaries
-# => Returns: ["👨‍👩‍👧‍👦"] (one element!)
+# Graphemes vs Codepoints
+String.graphemes("Hello")
+# => ["H", "e", "l", "l", "o"]
+String.graphemes("👨‍👩‍👧‍👦")
+# => ["👨‍👩‍👧‍👦"] (single visual character)
 
-String.codepoints("Hello")  # => ["H", "e", "l", "l", "o"]
-# => String.codepoints/1: splits into Unicode codepoints
-# => Basic ASCII: same as graphemes
-# => Returns: ["H", "e", "l", "l", "o"]
-String.codepoints("👨‍👩‍👧‍👦")  # => ["👨", "‍", "👩", "‍", "👧", "‍", "👦"] (multiple codepoints)
-# => Family emoji: 7 codepoints
-# => 👨 (man), ‍ (joiner), 👩 (woman), ‍, 👧 (girl), ‍, 👦 (boy)
-# => codepoints shows internal structure
-# => Returns: 7 elements
-# => Key: graphemes for user-visible chars, codepoints for Unicode internals
+String.codepoints("Hello")
+# => ["H", "e", "l", "l", "o"]
+String.codepoints("👨‍👩‍👧‍👦")
+# => ["👨", "‍", "👩", "‍", "👧", "‍", "👦"] (7 codepoints for family emoji)
 
 # String interpolation
 name = "Alice"
-# => Variable assignment
-"Hello, #{name}!"  # => "Hello, Alice!"
-# => #{...}: interpolation syntax
-# => Evaluates expression, converts to string, embeds result
-# => name → "Alice"
-# => Returns: "Hello, Alice!"
-# => Interpolation works in double-quoted strings only
+"Hello, #{name}!"
+# => "Hello, Alice!" (double quotes only)
 
 # String sigils
-~s(String with "quotes")  # => "String with \"quotes\""
-# => ~s sigil: lowercase (allows interpolation)
-# => ( ) delimiters (can use any matching pair: {}, [], etc.)
-# => Avoids escaping quotes inside
-# => Returns: "String with \"quotes\""
-~S(No interpolation #{name})  # => "No interpolation \#{name}"
-# => ~S sigil: uppercase (no interpolation)
-# => #{name} treated as literal text (not evaluated)
-# => Returns: "No interpolation \#{name}"
-# => Use when you need literal #{...} in string
-~r/regex/  # Regex sigil
-# => ~r sigil: creates regex
-# => Equivalent to Regex.compile!/1
-# => Pattern: /regex/
-~w(one two three)  # => ["one", "two", "three"] (word list)
-# => ~w sigil: word list
-# => Splits on whitespace, creates list of strings
-# => Equivalent to String.split/1
-# => Returns: ["one", "two", "three"]
-# => Modifiers: ~w(...)a for atoms, ~w(...)c for charlists
+~s(String with "quotes")
+# => "String with \"quotes\"" (lowercase sigil allows interpolation)
+~S(No interpolation #{name})
+# => "No interpolation \#{name}" (uppercase = literal)
+~r/regex/
+# => Regex sigil
+~w(one two three)
+# => ["one", "two", "three"] (word list)
 ```
+
+**Unicode Handling**:
+
+- **Graphemes**: User-visible characters (use for string length, iteration)
+- **Codepoints**: Unicode units (use for Unicode internals, low-level operations)
+- **Bytes**: UTF-8 encoding size (use for memory/network calculations)
+
+**Charlist vs String**:
+
+| Feature   | String (binary) | Charlist (list)  |
+| --------- | --------------- | ---------------- |
+| Literal   | `"hello"`       | `'hello'`        |
+| Type      | Binary          | List of integers |
+| Usage     | Modern Elixir   | Erlang interop   |
+| Functions | String module   | List module      |
 
 **Key Takeaway**: Strings are UTF-8 binaries with grapheme-aware functions. Use the `String` module for manipulation, regex for pattern matching, and understand the difference between graphemes (visual characters) and codepoints (Unicode units).
 
-**Why It Matters**: Phoenix Contexts implement DDD-style bounded contexts as modules with public APIs backed by GenServers or plain functions. Contexts enforce business logic boundaries—Accounts context manages users, Blog context manages posts, with no direct cross-context database access. In production, this architecture enables independent scaling (more Accounts workers than Blog workers), simplified testing (mock contexts, not databases), and team autonomy (backend teams own contexts, frontend teams consume public APIs).
-
----
+**Why It Matters**: Proper Unicode handling is critical for international applications. Elixir's grapheme-aware string functions prevent common bugs (counting bytes instead of characters, breaking multi-codepoint characters). The String module provides high-level operations while maintaining UTF-8 correctness, essential for user input processing, API responses, and database storage in production systems.
 
 ## Example 51: GenServer Session Manager (Production Pattern)
 
@@ -4657,1466 +4249,714 @@ SessionManager.get("user_123")  # => {:error, :expired}
 
 Supervisors define child processes using child specifications that control restart behavior, shutdown timeouts, and process types. Understanding child specs enables fine-grained control over supervision trees.
 
+### Child Specification Structure
+
+| Field       | Type        | Purpose                             | Common Values                            |
+| ----------- | ----------- | ----------------------------------- | ---------------------------------------- |
+| `:id`       | `term()`    | Unique identifier within supervisor | Module name, atom, tuple                 |
+| `:start`    | `{m, f, a}` | MFA tuple to start child            | `{MyWorker, :start_link, [opts]}`        |
+| `:restart`  | `atom()`    | When to restart child               | `:permanent`, `:transient`, `:temporary` |
+| `:shutdown` | `timeout()` | Graceful shutdown duration          | `5000` (ms), `:infinity`, `:brutal_kill` |
+| `:type`     | `atom()`    | Process type                        | `:worker`, `:supervisor`                 |
+
+### Restart Strategies
+
+**`:permanent`** - Always restart (critical services)
+
+- Use for: database connections, core services, state machines
+- Behavior: Any exit (normal or crash) triggers restart
+
+**`:transient`** - Restart only on abnormal exit
+
+- Use for: tasks that complete successfully, retryable operations
+- Behavior: Normal exit (`:normal`, `:shutdown`) → no restart; crash → restart
+
+**`:temporary`** - Never restart (one-time tasks)
+
+- Use for: fire-and-forget operations, disposable workers
+- Behavior: Any exit → remove from supervision tree
+
 **Code**:
 
 ```elixir
-# Basic child specification
+# Basic child specification map
 child_spec = %{
-  # => Child spec: map defining how supervisor manages child process
-  # => Supervisor uses this to start, restart, and shutdown child
+  # => Child spec: defines how supervisor manages process lifecycle
   id: MyWorker,
-  # => id: unique identifier for child in supervisor
-  # => Must be unique within supervisor (no two children same id)
-  # => Type: atom, module name, or any term
-  # => Used to identify child in Supervisor.which_children/1
+  # => Unique identifier within supervisor
   start: {MyWorker, :start_link, [[name: :worker_1]]},
-  # => start: MFA tuple (module, function, arguments)
-  # => Supervisor calls MyWorker.start_link([name: :worker_1])
+  # => MFA tuple: supervisor calls MyWorker.start_link([name: :worker_1])
   # => Must return {:ok, pid} or {:ok, pid, info}
-  # => Type: {module(), atom(), [term()]}
   restart: :permanent,
-  # => restart: defines restart strategy when child exits
-  # => :permanent - always restart (critical processes)
-  # => :temporary - never restart (one-time tasks, stateless workers)
-  # => :transient - restart only on abnormal exit (exit code != :normal)
-  # => Default: :permanent (use GenServer)
+  # => :permanent - always restart on exit (critical processes)
+  # => :transient - restart only on abnormal exit
+  # => :temporary - never restart (one-time tasks)
   shutdown: 5000,
-  # => shutdown: milliseconds to wait for graceful shutdown
-  # => Supervisor sends :shutdown exit signal to child
-  # => If child doesn't exit within timeout, supervisor sends :kill
-  # => Type: non_neg_integer() | :infinity | :brutal_kill
-  # => :brutal_kill - immediately sends :kill (no graceful period)
-  # => :infinity - wait forever (use for supervisors, risky for workers)
+  # => Graceful shutdown timeout: 5000ms
+  # => After timeout, supervisor sends :kill signal
+  # => :brutal_kill - immediate kill, :infinity - wait forever
   type: :worker
-  # => type: :worker or :supervisor
-  # => :worker - leaf process (GenServer, Task, Agent)
-  # => :supervisor - another supervisor (nested supervision tree)
-  # => Affects shutdown order (supervisors shutdown last)
+  # => :worker - leaf process, :supervisor - nested supervisor
 }
-# => Returns: child spec map
-# => Used by Supervisor.start_link/2 or Supervisor.init/2
+# => Returns: child spec map for Supervisor.start_link/2
 
 # Worker module implementing child_spec/1
 defmodule MyWorker do
-  # => Worker module with GenServer behavior
-  # => Demonstrates child_spec/1 callback for custom configuration
+  # => Worker with custom child_spec/1 for flexible configuration
   use GenServer
-  # => use GenServer: imports default child_spec/1 implementation
-  # => Default restart: :permanent, shutdown: 5000, type: :worker
-  # => Can override child_spec/1 below
+  # => Imports default child_spec/1 implementation
 
   def start_link(opts) do
-    # => start_link/1: starts GenServer process (linked to caller)
-    # => opts: keyword list with configuration
-    # => Pattern: accept opts for flexibility
+    # => Starts GenServer linked to caller
     name = Keyword.get(opts, :name, __MODULE__)
     # => Extract :name from opts, default to module name
-    # => Keyword.get/3: gets value or default
-    # => __MODULE__: current module name (MyWorker)
-    # => name: atom for process registration
     GenServer.start_link(__MODULE__, opts, name: name)
-    # => Start GenServer with init callback receiving opts
-    # => name: name option registers process with atom
-    # => Returns: {:ok, pid} on success
+    # => Start GenServer and register with name
+    # => Returns: {:ok, pid}
   end
-  # => start_link/1 complete
 
   # Override default child spec
   def child_spec(opts) do
-    # => child_spec/1: callback for custom child specification
-    # => Overrides default from use GenServer
-    # => opts: arguments passed to child (from supervisor)
-    # => Called when supervisor starts child
+    # => Custom child specification callback
+    # => Called by supervisor when starting child
     %{
-      # => Returns custom child spec map
-      # => Supervisor uses this instead of default
       id: Keyword.get(opts, :name, __MODULE__),
-      # => id: extracted from opts :name key
-      # => Enables multiple workers with different ids
-      # => Default: __MODULE__ (MyWorker) if :name not in opts
-      # => Pattern: dynamic id from opts for multiple instances
+      # => Dynamic id from opts enables multiple instances
+      # => Each instance needs unique id in supervisor
       start: {__MODULE__, :start_link, [opts]},
-      # => start: calls MyWorker.start_link(opts)
-      # => opts: passed through from supervisor to start_link
-      # => __MODULE__: resolves to MyWorker
+      # => Pass opts through to start_link
       restart: :permanent,
-      # => Custom restart: :permanent (always restart on exit)
-      # => Overrides default :permanent (same in this case)
-      # => Could be :temporary or :transient for different workers
+      # => Always restart on exit (critical worker)
       shutdown: 10_000
-      # => Custom shutdown: 10 seconds (10000ms)
-      # => Longer than default 5000ms
-      # => Reason: worker may need time for cleanup (flush queues, close connections)
-      # => After 10s, supervisor sends :kill signal
+      # => 10s timeout for cleanup (flush queues, close connections)
     }
-    # => Returns: child spec map with custom values
-    # => Supervisor uses this to manage worker lifecycle
+    # => Returns: custom child spec map
   end
-  # => child_spec/1 complete
 
   @impl true
   def init(opts), do: {:ok, opts}
-  # => init/1: GenServer callback, stores opts as state
-  # => Returns: {:ok, opts} (opts becomes GenServer state)
-  # => Minimal implementation for example
+  # => Store opts as GenServer state
 end
-# => MyWorker module complete
+# => MyWorker complete
 
-# Restart strategies
-# :permanent - Always restart (default for critical workers)
-# => Always restart: child crashes → supervisor restarts immediately
-# => Use for: database connections, core services, state machines
-# => Exit reason ignored (normal or abnormal, always restart)
-# :temporary - Never restart (one-time tasks)
-# => Never restart: child exits → supervisor removes from tree
-# => Use for: one-off tasks, disposable workers, fire-and-forget operations
-# => Exit reason ignored (normal or crash, never restart)
-# :transient - Restart only on abnormal exit (expected failures are OK)
-# => Restart on crash: abnormal exit → restart, normal exit → remove
-# => Use for: workers that complete successfully (Task), retryable operations
-# => Normal exit: :normal, :shutdown, {:shutdown, term} → NO restart
-# => Abnormal exit: any other reason → restart
-# => Pattern: processes that should finish cleanly without restart
-
+# Critical worker example (permanent restart)
 defmodule Database do
-  # => Database module: critical worker with permanent restart
-  # => Demonstrates :permanent restart for essential services
+  # => Database worker: critical service with permanent restart
   use GenServer
-  # => use GenServer: GenServer behavior with default child_spec
 
   def child_spec(_opts) do
-    # => child_spec/1: custom spec for database worker
-    # => _opts: ignored (database has no configuration in this example)
+    # => Custom child spec for database process
     %{
       id: __MODULE__,
-      # => id: Database (module name)
-      # => Single instance (not multiple like MyWorker)
+      # => Single instance (module name as id)
       start: {__MODULE__, :start_link, []},
-      # => start: calls Database.start_link() with no args
-      # => Empty list: no configuration needed
+      # => No configuration needed
       restart: :permanent,
       # => Critical: database must always run
-      # => If database crashes, app cannot function → restart immediately
-      # => Supervisor restarts on any exit (normal or abnormal)
+      # => Any exit triggers immediate restart
       shutdown: 30_000
-      # => Long shutdown: 30 seconds
-      # => Reason: database needs time for:
-      # =>   - Flushing pending writes to disk
-      # =>   - Closing connections gracefully
-      # =>   - Releasing locks
-      # =>   - Completing transactions
+      # => Long timeout: flush writes, close connections, release locks
       # => After 30s, supervisor sends :kill (may lose data)
     }
     # => Returns: child spec with critical worker settings
   end
-  # => child_spec/1 complete
 
   def start_link, do: GenServer.start_link(__MODULE__, [], name: __MODULE__)
-  # => start_link/0: starts database GenServer
-  # => Registers with name Database (module name)
-  # => Returns: {:ok, pid}
+  # => Start and register as Database
+
   @impl true
   def init(_), do: {:ok, %{}}
-  # => init/1: initializes empty state map
-  # => Real database would connect here
-  # => Returns: {:ok, %{}} (empty map as state)
+  # => Initialize empty state (real DB would connect here)
 end
-# => Database module complete
+# => Database complete
 
+# Optional service example (transient restart)
 defmodule Cache do
-  # => Cache module: transient worker (restart on crash, not normal exit)
-  # => Demonstrates :transient restart for optional services
+  # => Cache worker: transient restart (crash → restart, normal exit → remove)
   use GenServer
-  # => use GenServer: GenServer behavior
 
   def child_spec(_opts) do
-    # => child_spec/1: custom spec for cache worker
-    # => _opts: ignored (no configuration)
+    # => Custom child spec for cache process
     %{
       id: __MODULE__,
-      # => id: Cache (module name)
       # => Single instance
       start: {__MODULE__, :start_link, []},
-      # => start: calls Cache.start_link()
-      # => No args: cache self-contained
+      # => Self-contained cache (no configuration)
       restart: :transient,
-      # => Transient: restart on crash, not on normal exit
-      # => Normal exit (cache clears itself): no restart
-      # => Crash (bug, memory): restart
-      # => Pattern: processes that can complete successfully
-      # => Example: cache might exit :normal after TTL expiry
+      # => Restart on crash only
+      # => Normal exit (cache clears): no restart
+      # => Abnormal exit (bug, OOM): restart
       shutdown: 5_000
-      # => Standard shutdown: 5 seconds
-      # => Cache can flush quickly (in-memory data)
-      # => No persistent state to save
+      # => Standard timeout (in-memory data flushes quickly)
     }
     # => Returns: child spec with transient restart
   end
-  # => child_spec/1 complete
 
   def start_link, do: GenServer.start_link(__MODULE__, [], name: __MODULE__)
-  # => start_link/0: starts cache GenServer
-  # => Registered as Cache
-  # => Returns: {:ok, pid}
+  # => Start and register as Cache
+
   @impl true
   def init(_), do: {:ok, %{}}
-  # => init/1: initializes empty cache state
-  # => Real cache would load data here
-  # => Returns: {:ok, %{}}
+  # => Initialize empty cache
 end
-# => Cache module complete
+# => Cache complete
 
-# Supervisor with child specs
+# Supervisor with multiple children
 defmodule MyApp.Supervisor do
   # => Application supervisor managing multiple children
-  # => Demonstrates supervisor with mixed child specs
   use Supervisor
-  # => use Supervisor: Supervisor behavior
-  # => Enables Supervisor.init/2, start_link/3
 
   def start_link(opts) do
-    # => start_link/1: starts supervisor process
-    # => opts: configuration for supervisor
+    # => Start supervisor process
     Supervisor.start_link(__MODULE__, opts, name: __MODULE__)
     # => Calls init/1 callback with opts
-    # => name: MyApp.Supervisor: registers supervisor
-    # => Returns: {:ok, pid} on success
+    # => Returns: {:ok, pid}
   end
-  # => start_link/1 complete
 
   @impl true
   def init(_opts) do
-    # => init/1: supervisor callback defining children
-    # => _opts: ignored (no configuration needed)
-    # => Called when supervisor starts
+    # => Supervisor callback: define children and strategy
     children = [
-      # => List of child specifications
-      # => Supervisor starts children in order (top to bottom)
+      # => Children started in order (top to bottom)
       Database,
       # => Module form: calls Database.child_spec([])
-      # => Passes empty list to child_spec/1
-      # => Database.child_spec([]) → returns child spec map
-      # => Supervisor extracts :start field and calls start_link
-      # => Result: Database started with :permanent restart
+      # => Shorthand for {Database, []}
       Cache,
-      # => Module form: calls Cache.child_spec([])
-      # => Cache started with :transient restart
-      # => Started after Database (dependency order)
+      # => Cache started after Database (dependency order)
       {MyWorker, name: :worker_1},
-      # => Tuple form: {module, args}
+      # => Tuple form: {module, opts}
       # => Calls MyWorker.child_spec([name: :worker_1])
-      # => args: passed to child_spec/1
-      # => id: :worker_1 (from opts)
-      # => Enables multiple MyWorker instances with different ids
+      # => id: :worker_1 from opts
       {MyWorker, name: :worker_2}
-      # => Second MyWorker instance with id :worker_2
-      # => Different id enables two workers (no conflict)
-      # => Both use MyWorker.child_spec but different ids
+      # => Second instance with different id (no conflict)
     ]
-    # => children: list of 4 child specs
-    # => Order: Database → Cache → worker_1 → worker_2
-    # => Start order matters (database before workers using database)
+    # => 4 children: Database, Cache, worker_1, worker_2
 
     Supervisor.init(children, strategy: :one_for_one)
-    # => Supervisor.init/2: initializes supervisor with children and strategy
-    # => children: list of child specs (modules or tuples)
-    # => strategy: :one_for_one (restart only failed child)
+    # => :one_for_one: restart only failed child (not siblings)
     # => Other strategies: :one_for_all, :rest_for_one
     # => Returns: {:ok, {supervisor_flags, children}}
-    # => Supervisor then starts all children in order
   end
-  # => init/1 complete
 end
-# => MyApp.Supervisor module complete
+# => MyApp.Supervisor complete
 
 # Starting the supervisor
 {:ok, sup_pid} = MyApp.Supervisor.start_link([])
-# => Starts supervisor with empty opts
-# => Supervisor calls init/1 → starts all 4 children
-# => Database started first, then Cache, then workers
+# => Supervisor starts all 4 children in order
+# => Database → Cache → worker_1 → worker_2
 # => Returns: {:ok, pid} where pid is supervisor process
-# => Type: {:ok, pid()}
 
 Supervisor.which_children(sup_pid)
-# => Lists all children managed by supervisor
-# => Returns: [{id, pid, type, modules}, ...]
+# => Lists all children: [{id, pid, type, modules}, ...]
 # => Example: [{Database, #PID<0.200.0>, :worker, [Database]}, ...]
-# => Shows: id, child pid, type (:worker/:supervisor), modules
 
 Supervisor.count_children(sup_pid)
-# => Counts children by type
 # => Returns: %{active: 4, specs: 4, supervisors: 0, workers: 4}
-# => active: running children
-# => specs: total child specs
-# => supervisors: children that are supervisors (0 here)
-# => workers: children that are workers (4 here)
+# => active: running children, specs: total child specs
 ```
 
 **Key Takeaway**: Child specs control how supervisors manage children. Use `:permanent` for critical processes, `:transient` for expected failures, `:temporary` for one-time tasks. Implement `child_spec/1` to customize restart and shutdown behavior.
 
-**Why It Matters**: Ecto changesets provide validation and type casting separate from database operations. Cast/validate/apply pattern enables validation errors without database round-trips, while changeset composition enables multi-step validation flows. In production, changesets validate user input in Phoenix controllers before database writes, track field changes for audit logs, and enable dry-run validations for complex workflows. Changeset.apply_changes extracts valid data without persistence, enabling preview modes.
+**Why It Matters**: Child specifications enable fine-grained control over process lifecycle management. In production, `:permanent` restart ensures critical services (databases, connection pools) always recover from failures, `:transient` restart handles workers that may complete successfully (background jobs, retryable operations), and custom `shutdown` timeouts prevent data loss during graceful shutdowns. Dynamic ids from `child_spec/1` enable multiple instances of the same worker module with different configurations, while start order ensures dependencies (database before workers) initialize correctly.
 
 ---
 
 ## Example 53: Application Callbacks and Lifecycle
 
-Applications are OTP's top-level abstraction. Implement `start/2` and `stop/1` callbacks to manage supervision trees and resources during app lifecycle.
+Application behavior defines callbacks for application startup and shutdown. Implement `start/2` to initialize supervision trees and `stop/1` for cleanup.
+
+**Brief Explanation**: The Application behavior manages application lifecycle through callbacks. `start/2` initializes the application (typically starts a supervision tree), receives startup type and arguments. `stop/1` handles graceful shutdown (cleanup resources). Applications are OTP's top-level abstraction for managing related processes and resources.
 
 **Code**:
 
 ```elixir
 defmodule MyApp.Application do
-  # => Application module: OTP application behavior
-  # => Top-level abstraction for starting/stopping supervision trees
-  # => One application per OTP app
+  # => Application module (conventionally: AppName.Application)
   use Application
-  # => use Application: imports Application behavior
-  # => Requires: start/2 callback (mandatory)
-  # => Optional: stop/1, prep_stop/1 callbacks
-  # => Application lifecycle: start → running → prep_stop → stop
+  # => Implements Application behavior (requires start/2)
 
   @impl true
   def start(_type, _args) do
-    # => start/2: callback invoked when application starts
-    # => Called by OTP application controller
-    # => Must return {:ok, pid} or {:ok, pid, state}
-    # _type = :normal | {:takeover, node} | {:failover, node}
-    # => :normal - standard startup (99% of cases)
-    # => {:takeover, node} - distributed: taking over from another node
-    # => {:failover, node} - distributed: node crashed, failover to this node
-    # _args from mix.exs application/0
-    # => _args: arguments passed from mix.exs mod: {MyApp.Application, args}
-    # => Usually empty list [] (no args needed for most apps)
-
-    IO.puts("Starting MyApp...")
-    # => Startup message for debugging/logging
-    # => Printed to console when app starts
-    # => Production: use Logger instead of IO.puts
+    # => start/2: called when application starts
+    # => _type: startup type (:normal, :takeover, :failover)
+    # => _args: application arguments from config
+    # => Returns: {:ok, pid} or {:error, reason}
 
     children = [
-      # => List of child specifications for supervision tree
-      # => Supervisor starts children in order (top to bottom)
-      # List of child processes to supervise
-      {Registry, keys: :unique, name: MyApp.Registry},
-      # => Registry: distributed process registry (built-in OTP)
-      # => keys: :unique - each key registered once (no duplicates)
-      # => name: MyApp.Registry - global name for registry
-      # => Tuple form: {module, opts} → calls Registry.child_spec(opts)
-      # => Registry started first (other children may depend on it)
-      MyApp.Cache,
-      # => Cache: custom GenServer (module form)
-      # => Calls MyApp.Cache.child_spec([])
-      # => Started after Registry (may use Registry for lookups)
-      MyApp.Workers.Supervisor
-      # => Workers supervisor: nested supervisor managing worker processes
-      # => Started last (workers depend on Cache and Registry)
-      # => Supervision tree: Application → Workers.Supervisor → Worker1, Worker2, ...
+      # => Child specifications for supervision tree
+      {MyApp.Repo, []},
+      # => Database connection pool
+      {MyApp.Endpoint, []},
+      # => Phoenix web server endpoint
+      {MyApp.Worker, []}
+      # => Custom worker process
     ]
-    # => children: 3 child specs (Registry, Cache, Workers supervisor)
-    # => Start order critical for dependencies
+    # => List of child specs
 
     opts = [strategy: :one_for_one, name: MyApp.Supervisor]
     # => Supervisor options
-    # => strategy: :one_for_one (restart only crashed child)
-    # => name: MyApp.Supervisor (global name for supervisor)
-    # => Other strategies: :one_for_all (restart all), :rest_for_one (restart crashed + subsequent)
+    # => strategy: :one_for_one (restart only failed child)
+    # => name: registered name for supervisor
+
     Supervisor.start_link(children, opts)
-    # => Supervisor.start_link/2: starts root supervisor
-    # => children: list of child specs
-    # => opts: supervisor configuration
-    # => Returns: {:ok, pid} on success
-    # => pid: supervisor process ID (root of supervision tree)
-    # => OTP stores this pid as application root
-    # => Application crash if supervisor crashes
+    # => Starts supervision tree
+    # => Returns: {:ok, supervisor_pid}
   end
-  # => start/2 complete
-  # => Application now running with supervision tree
 
   @impl true
   def stop(_state) do
-    # => stop/1: callback invoked before application stops
-    # => Called when: Application.stop/1, system shutdown, or release upgrade
-    # => _state: state returned from start/2 (if {:ok, pid, state})
-    # => Usually not used (most apps return {:ok, pid} without state)
-    # => Supervisor already stopped children (in reverse order)
-    # Perform cleanup here
-    IO.puts("Stopping MyApp...")
-    # => Cleanup message for debugging
-    # => Cleanup tasks: close external connections, flush buffers, save state
-    # => Supervisor already stopped/killed all children
-    # => This is for application-level cleanup only
+    # => stop/1: called before application stops
+    # => _state: state returned from start/2 (usually ignored)
+    # => Cleanup resources (close connections, flush buffers)
     :ok
     # => Must return :ok
-    # => Any other return value ignored
-    # => Errors here don't prevent shutdown (logged but ignored)
   end
-  # => stop/1 complete
-  # => Application shutdown complete after this returns
 end
-# => MyApp.Application module complete
 
-# mix.exs configuration
-defmodule MyApp.MixProject do
-  # => Mix project configuration
-  # => Defines project metadata and dependencies
-  use Mix.Project
-  # => use Mix.Project: Mix project behavior
-  # => Required for all Mix projects
-
-  def application do
-    # => application/0: OTP application specification
-    # => Called by Mix when building releases
-    # => Returns keyword list of application settings
-    [
-      # => Application configuration list
-      mod: {MyApp.Application, []},
-      # => mod: {module, args} - application callback module
-      # => module: MyApp.Application (implements start/2)
-      # => args: [] - passed to start/2 as second argument
-      # => OTP calls MyApp.Application.start(:normal, []) on app start
-      # => Without mod, application has no callback (library apps)
-      extra_applications: [:logger, :runtime_tools]
-      # => extra_applications: OTP apps to start before this app
-      # => :logger - Elixir's logging system (always needed)
-      # => :runtime_tools - debugging/profiling tools
-      # => Common: [:crypto, :ssl, :inets, :sasl]
-      # => OTP starts these before MyApp
-      # => Dependency order: logger → runtime_tools → my_app
-    ]
-    # => Returns: application specification
-    # => Used by: mix compile, mix release, Application.start/1
-  end
-  # => application/0 complete
-end
-# => MyApp.MixProject complete
-
-# Application environment config
-def start(_type, _args) do
-  # => Alternative start/2 implementation with environment config
-  # => Pattern: read config values at startup (runtime configuration)
-  port = Application.get_env(:my_app, :port, 4000)
-  # => Application.get_env/3: reads application environment
-  # => :my_app - application name (atom)
-  # => :port - config key (atom)
-  # => 4000 - default value if key not found
-  # => Config set in: config/config.exs, config/runtime.exs, or Application.put_env/3
-  # => Returns: configured value or 4000
-  # => Type: any() (usually integer, string, atom, or complex term)
-  env = Application.get_env(:my_app, :env, :dev)
-  # => Read environment: :dev, :test, or :prod
-  # => Default: :dev (development)
-  # => Config usually set in config/runtime.exs from MIX_ENV
-
-  IO.puts("Starting on port #{port} in #{env} environment")
-  # => Startup message with config values
-  # => Example output: "Starting on port 4000 in dev environment"
-  # => Interpolation: #{port} and #{env} embed values in string
-
-  children = [
-    # => Child specs with runtime config
-    {MyApp.Server, port: port}
-    # => MyApp.Server: custom GenServer
-    # => port: port - passes runtime config to child
-    # => Calls MyApp.Server.child_spec([port: port])
-    # => Server receives port in init/1 callback
-    # => Pattern: runtime config → supervisor → child
-  ]
-  # => children: 1 child spec with dynamic port
-
-  Supervisor.start_link(children, strategy: :one_for_one)
-  # => Start supervisor with configured children
-  # => Returns: {:ok, pid}
-end
-# => start/2 with environment config complete
-
-# Conditional children based on environment
-def start(_type, _args) do
-  # => Alternative start/2 with conditional children
-  # => Pattern: different supervision tree based on config
-  children = base_children()
-  # => base_children/0: returns core children (always started)
-  # => Returns: [MyApp.Cache, MyApp.Database]
-  # => Core services needed in all environments
-
-  children =
-    # => Conditional child addition based on feature flag
-    if Application.get_env(:my_app, :enable_metrics, false) do
-      # => Check :enable_metrics config (default: false)
-      # => true in production, false in dev/test (reduce overhead)
-      # => Guard: condition → true branch
-      children ++ [MyApp.MetricsReporter]
-      # => ++ : list concatenation
-      # => Adds MetricsReporter to children list
-      # => Result: [MyApp.Cache, MyApp.Database, MyApp.MetricsReporter]
-      # => MetricsReporter started last (depends on Cache/Database)
-    else
-      # => Guard: condition → false branch (metrics disabled)
-      children
-      # => Return base children unchanged
-      # => Result: [MyApp.Cache, MyApp.Database]
-      # => No metrics overhead in dev/test
-    end
-  # => children: base children + conditional metrics reporter
-  # => Pattern: environment-specific supervision tree
-
-  Supervisor.start_link(children, strategy: :one_for_one)
-  # => Start supervisor with conditional children
-  # => Returns: {:ok, pid}
-  # => Supervision tree varies by environment
-end
-# => start/2 with conditional children complete
-
-defp base_children do
-  # => base_children/0: returns core child specs
-  # => defp: private function (internal helper)
-  # => Called by start/2 to get base supervision tree
-  [MyApp.Cache, MyApp.Database]
-  # => Core children: Cache and Database
-  # => Always started regardless of environment
-  # => Order: Cache first, Database second
-  # => Returns: list of 2 child specs
-end
-# => base_children/0 complete
-
-# Application lifecycle example
-Application.start(:my_app)
-# => Starts application programmatically
-# => OTP calls MyApp.Application.start(:normal, [])
-# => Supervisor starts all children
-# => Returns: :ok or {:error, reason}
-# => Usually automatic (Mix starts all deps)
-
-Application.stop(:my_app)
-# => Stops application programmatically
-# => Supervisor stops all children (reverse order)
-# => OTP calls MyApp.Application.stop(state)
-# => Returns: :ok or {:error, reason}
-
-Application.started_applications()
-# => Lists all started applications
-# => Returns: [{app, description, version}, ...]
-# => Example: [{:my_app, 'my_app', '0.1.0'}, {:logger, 'logger', '1.15.0'}, ...]
-# => Type: [{atom(), charlist(), charlist()}]
-
-Application.spec(:my_app, :vsn)
-# => Queries application specification
-# => :vsn - version number
-# => Other keys: :description, :modules, :registered, :applications
-# => Returns: '0.1.0' (charlist) or nil
+# config/config.exs
+# use MyApp.Application, otp_app: :my_app
+# => Registers MyApp.Application as application module
+# => OTP starts this module during boot
 ```
 
-**Key Takeaway**: Applications start supervision trees via `start/2` callback and clean up in `stop/1`. Configure children based on environment. The return value of `start/2` becomes the supervision tree root.
+**Application Lifecycle**:
 
-**Why It Matters**: Ecto transactions use database transactions with rollback on process crashes or explicit Repo.rollback. Multi/run pattern enables complex multi-step operations with automatic rollback on any step failure. In production, this ensures data consistency—payment processing runs in transaction (charge card, create order, send email), rolling back all steps if any fails. Ecto's savepoint support enables nested transactions for complex workflows with partial rollback capabilities.
+| Phase    | Callback  | Purpose                 | Return       |
+| -------- | --------- | ----------------------- | ------------ |
+| Startup  | `start/2` | Initialize processes    | `{:ok, pid}` |
+| Running  | -         | Supervision tree active | -            |
+| Shutdown | `stop/1`  | Cleanup resources       | `:ok`        |
 
----
+**Startup Types**:
+
+- **`:normal`** - Standard application start
+- **`:takeover`** - Taking over from another node (distributed)
+- **`:failover`** - Failover from failed node (distributed)
+
+**Best Practices**:
+
+- **Keep start/2 fast**: Heavy initialization in child processes
+- **Return supervision tree PID**: Application monitors top supervisor
+- **Cleanup in stop/1**: Close connections, flush logs, release resources
+- **Use child specs**: Leverage Supervisor for process management
+
+**Key Takeaway**: Applications implement `start/2` to initialize supervision trees and `stop/1` for cleanup. The Application behavior is OTP's top-level abstraction for managing related processes. Return `{:ok, supervisor_pid}` from `start/2`, `:ok` from `stop/1`.
+
+**Why It Matters**: Application callbacks enable hot code upgrades and graceful shutdowns. In production, OTP stops applications during releases (calls `stop/1`), upgrades code, then restarts (calls `start/2`)—zero-downtime deployments. Phoenix apps use this for rolling updates: drain connections in `stop/1`, upgrade code, restart in `start/2` (new requests to new code, old requests complete on old code).
 
 ## Example 54: Custom Mix Tasks
 
-Mix tasks automate project operations. Create custom tasks for deployment, seeding, migrations, or cleanup operations.
+Mix tasks automate project operations. Create custom tasks by implementing `Mix.Task` behavior with `run/1` function.
+
+**Brief Explanation**: Custom Mix tasks extend Mix's functionality for project-specific automation. Tasks implement the `Mix.Task` behavior with a `run/1` entry point that receives command-line arguments. Use `OptionParser.parse/2` for argument parsing, `Mix.shell().info/1` for output, and module attributes (`@shortdoc`, `@moduledoc`) for documentation.
 
 **Code**:
 
 ```elixir
-defmodule Mix.Tasks.MyApp.Hello do
-  # => Custom Mix task module
-  # => Naming: Mix.Tasks.<namespace>.<task_name>
-  # => Invoked: mix my_app.hello (lowercase, dots become underscores)
-  # => Convention: Mix.Tasks.MyApp.Hello → mix my_app.hello
-  @moduledoc "Prints hello message"
-  # => @moduledoc: task description for help system
-  # => Appears in: mix help (task documentation)
-  # => Should explain what task does and usage
-  @shortdoc "Say hello"
-  # => @shortdoc: brief summary (one line)
-  # => Appears in: mix help (task listing)
-  # => Keep under 80 characters
-
+defmodule Mix.Tasks.Hello do
+  # => Custom Mix task: mix hello
+  # => Module name: Mix.Tasks.TaskName (CamelCase)
   use Mix.Task
-  # => use Mix.Task: imports Mix.Task behavior
-  # => Requires: run/1 callback
-  # => Enables: Mix.Task.run/1, Mix.Task.reenable/1
-  # => Task becomes available to Mix CLI
+  # => Implements Mix.Task behavior (requires run/1)
+  # => Imports task infrastructure
+
+  @shortdoc "Prints hello message"
+  # => Short description (shown in mix help)
+  # => Displayed in task list
+
+  @moduledoc """
+  Greets the user with a hello message.
+
+  ## Usage
+      mix hello
+      mix hello --name Alice
+  """
+  # => Full documentation (shown in mix help hello)
+  # => Markdown format supported
 
   @impl Mix.Task
   def run(args) do
-    # => run/1: task entry point (required callback)
-    # => Called when: mix my_app.hello [args]
+    # => run/1: task entry point
     # => args: list of command-line arguments (strings)
-    # args = command line arguments as list
-    # => Example: mix my_app.hello --name Alice → ["--name", "Alice"]
-    # => Type: [String.t()]
-
-    {opts, args, _invalid} = OptionParser.parse(args,
-      # => OptionParser.parse/2: parses command-line arguments
-      # => First arg: args list (from run/1)
-      # => Second arg: options (switches, aliases, strict mode)
-      # => Returns: {parsed_opts, remaining_args, invalid_opts}
-      switches: [name: :string, upcase: :boolean],
-      # => switches: defines option types
-      # => name: :string - expects string value (--name Alice)
-      # => upcase: :boolean - flag (--upcase, no value needed)
-      # => Other types: :integer, :float, :count
-      # => Count: --verbose --verbose → {verbose: 2}
-      aliases: [n: :name, u: :upcase]
-      # => aliases: short forms for options
-      # => n: :name - maps -n to --name
-      # => u: :upcase - maps -u to --upcase
-      # => Example: -n Alice -u → {name: "Alice", upcase: true}
-    )
-    # => Returns: {opts, args, invalid}
-    # => opts: keyword list [{:name, "Alice"}, {:upcase, true}]
-    # => args: non-option arguments (positional args)
-    # => _invalid: invalid options (ignored with _)
+    {opts, _, _} = OptionParser.parse(args, switches: [name: :string])
+    # => Parses args: --name Alice → [name: "Alice"]
+    # => opts: keyword list of parsed options
+    # => switches: expected option types
 
     name = opts[:name] || "World"
-    # => Extract :name from opts, default "World"
+    # => Gets name option with default fallback
     # => opts[:name]: nil if not provided
-    # => || : logical OR (returns "World" if nil)
-    # => Type: String.t()
-    message = "Hello, #{name}!"
-    # => Build message with name interpolation
-    # => #{name}: embeds name variable in string
-    # => "Hello, Alice!" if name = "Alice"
 
-    message = if opts[:upcase], do: String.upcase(message), else: message
-    # => Conditional uppercasing based on :upcase flag
-    # => opts[:upcase]: true if --upcase flag present, nil otherwise
-    # => if nil: falsy in Elixir → else branch (message unchanged)
-    # => if true: truthy → do branch (String.upcase applied)
-    # => String.upcase("Hello, Alice!") → "HELLO, ALICE!"
-
-    IO.puts(message)
-    # => Output message to console
-    # => IO.puts/1: prints string with newline
-    # => Returns: :ok
+    Mix.shell().info("Hello, #{name}!")
+    # => Output to console via Mix shell
+    # => Output: "Hello, World!" or "Hello, Alice!"
+    # => Mix.shell(): current shell IO interface
   end
-  # => run/1 complete
-  # => Task exits after run/1 returns
 end
-# => Mix.Tasks.MyApp.Hello complete
 
-# Run: mix my_app.hello --name Alice --upcase
-# => Command: mix invokes Mix.Tasks.MyApp.Hello.run/1
-# => Arguments: ["--name", "Alice", "--upcase"]
-# => Parsed: opts = [name: "Alice", upcase: true], args = []
-# => Output: HELLO, ALICE!
-# => Alternative: mix my_app.hello -n Alice -u (using aliases)
-
-defmodule Mix.Tasks.MyApp.Db.Seed do
-  # => Database seeding task
-  # => Invoked: mix my_app.db.seed
-  # => Naming: Mix.Tasks.MyApp.Db.Seed → mix my_app.db.seed
-  # => Convention: namespaces with Db for database operations
-  @moduledoc "Seeds database with sample data"
-  # => Task documentation
-  # => Explains: inserts sample users into database
-  use Mix.Task
-  # => Mix.Task behavior
-
-  @requirements ["app.start"]
-  # => @requirements: list of tasks to run before this task
-  # => "app.start" - starts application and dependencies
-  # => Mix automatically runs: mix app.start → MyApp.Application.start/2
-  # => Ensures: database connection available (from supervision tree)
-  # => Common: ["app.start", "ecto.create", "ecto.migrate"]
-  # => Order: app.start runs → then run/1 executes
-
-  @impl Mix.Task
-  def run(_args) do
-    # => run/1: seed execution
-    # => _args: ignored (seed task takes no arguments)
-    # => App already started (due to @requirements)
-    # App and its dependencies are started
-    # => MyApp.Application supervision tree running
-    # => MyApp.Repo process available for database operations
-    MyApp.Repo.insert!(%User{name: "Alice", email: "alice@example.com"})
-    # => Repo.insert!/1: inserts struct, raises on error
-    # => %User{...}: creates User struct with fields
-    # => Database: INSERT INTO users (name, email) VALUES ('Alice', 'alice@example.com')
-    # => Returns: inserted struct with id
-    # => ! : bang version (raises on constraint violation, validation error)
-    MyApp.Repo.insert!(%User{name: "Bob", email: "bob@example.com"})
-    # => Insert second user
-    # => Both inserts in separate transactions (no explicit transaction)
-
-    IO.puts("Database seeded successfully")
-    # => Success message
-    # => Printed after both inserts complete
-  end
-  # => run/1 complete
-  # => Task exits, app keeps running (started by @requirements)
-end
-# => Mix.Tasks.MyApp.Db.Seed complete
-
-defmodule Mix.Tasks.MyApp.Stats do
-  # => Application statistics task
-  # => Invoked: mix my_app.stats
-  # => Purpose: query application state and display metrics
-  @moduledoc "Show application statistics"
-  # => Task documentation
-  use Mix.Task
-  # => Mix.Task behavior
-
-  @impl Mix.Task
-  def run(_args) do
-    # => run/1: stats gathering
-    # => _args: ignored (no arguments)
-    # => NO @requirements (starts app manually below)
-    Mix.Task.run("app.start")
-    # => Mix.Task.run/1: invokes another Mix task programmatically
-    # => "app.start" - starts application and dependencies
-    # => Idempotent: if already started, does nothing
-    # => Alternative: @requirements ["app.start"] (declarative)
-    # => Pattern: manual start for control (vs @requirements)
-    # => Returns: task return value (usually :ok)
-
-    # Gather stats
-    # => Application running, can query modules
-    user_count = MyApp.Users.count()
-    # => Calls MyApp.Users.count/0 function
-    # => Queries database for user count
-    # => Example: SELECT COUNT(*) FROM users
-    # => Returns: integer (e.g., 150)
-    active_sessions = MyApp.SessionManager.count()
-    # => Calls SessionManager GenServer
-    # => Queries GenServer state for active session count
-    # => Pattern: GenServer.call(SessionManager, :count)
-    # => Returns: integer (e.g., 23)
-
-    IO.puts("""
-    Application Statistics:
-    - Users: #{user_count}
-    - Active Sessions: #{active_sessions}
-    """)
-    # => IO.puts/1 with heredoc (triple-quoted string)
-    # => Heredoc: preserves formatting (newlines, indentation)
-    # => #{user_count}: interpolates user count
-    # => #{active_sessions}: interpolates session count
-    # => Example output:
-    # =>   Application Statistics:
-    # =>   - Users: 150
-    # =>   - Active Sessions: 23
-  end
-  # => run/1 complete
-end
-# => Mix.Tasks.MyApp.Stats complete
-
-# Task discovery and invocation
-Mix.Task.run("my_app.hello", ["--name", "Charlie"])
-# => Programmatic task invocation
-# => First arg: task name (string)
-# => Second arg: arguments list
-# => Equivalent to: mix my_app.hello --name Charlie
-# => Returns: task return value
-
-Mix.Task.reenable("my_app.stats")
-# => Reenable task to run again in same session
-# => Tasks run once per Mix session by default
-# => reenable/1: allows task to run again
-# => Use case: running task multiple times in scripts
-
-Mix.Task.all_modules()
-# => Lists all available Mix tasks (modules)
-# => Returns: [Mix.Tasks.Compile, Mix.Tasks.MyApp.Hello, ...]
-# => Type: [module()]
-# => Includes: built-in tasks (compile, test) and custom tasks
+# Usage: mix hello --name Alice
+# => Runs custom task from command line
+# => Output: "Hello, Alice!"
 ```
 
-**Key Takeaway**: Custom Mix tasks extend build tool functionality. Use `@requirements` to ensure app dependencies are met. Parse arguments with `OptionParser` for flexible CLI interfaces.
+**Mix Task Anatomy**:
 
-**Why It Matters**: Phoenix endpoints implement Plug-based request pipelines where each plug transforms conn (connection struct). Plugs compose through pipelines—router calls controller plugs, which delegate to context functions. In production, this architecture enables middleware composition (authentication -> logging -> rate limiting) with compile-time pipeline validation. Plug.Conn's immutability prevents action-at-distance bugs—each plug returns modified conn without side effects, making request flow traceable.
+| Component        | Purpose                          | Required      |
+| ---------------- | -------------------------------- | ------------- |
+| `use Mix.Task`   | Imports behavior                 | Yes           |
+| `@shortdoc`      | Brief description (mix help)     | Recommended   |
+| `@moduledoc`     | Full documentation               | Recommended   |
+| `run/1`          | Entry point (receives args)      | Yes           |
+| `@impl Mix.Task` | Explicit behavior implementation | Best practice |
 
----
+**Argument Parsing**:
+
+```elixir
+# OptionParser.parse(args, switches: [...])
+{opts, positional, invalid} = OptionParser.parse(
+  args,
+  switches: [
+    name: :string,    # --name Alice
+    count: :integer,  # --count 5
+    verbose: :boolean # --verbose
+  ]
+)
+# => opts: [name: "Alice", count: 5, verbose: true]
+# => positional: unnamed arguments list
+# => invalid: unrecognized options
+```
+
+**Key Takeaway**: Custom Mix tasks automate project operations. Implement `Mix.Task` behavior with `run/1`, parse arguments with `OptionParser`, and document with `@shortdoc`/`@moduledoc`. Run tasks with `mix task_name [args]`.
+
+**Why It Matters**: Mix tasks enable project automation (database seeds, code generation, deployment scripts). In production, custom tasks handle one-off operations (data migrations, cache warming, health checks) without building separate executables. Tasks access the full application context, making them ideal for admin operations and maintenance scripts in live systems.
 
 ## Example 55: Runtime Configuration
 
 Runtime configuration loads settings when the application starts (not compile time). Use `config/runtime.exs` for environment variables and production secrets.
 
+**Brief Explanation**: Runtime configuration (`config/runtime.exs`) loads settings at application startup, enabling environment-specific configuration and secrets management. Unlike `config/config.exs` (compile-time), runtime config values aren't baked into releases, making it safe for secrets. Use `Application.get_env/2` to read config, `Application.fetch_env!/2` for required values.
+
 **Code**:
 
 ```elixir
 # config/runtime.exs - runs at application startup
-# => File location: config/runtime.exs (Mix convention)
-# => Executed: at application startup (runtime, not compile time)
-# => Purpose: load secrets, environment variables, production config
-# => Difference from config.exs: config.exs runs at compile time
-# => WARNING: config.exs baked into release (don't put secrets there!)
 import Config
-# => import Config: imports config/2 macro
-# => Enables: config/2, config/3 functions
-# => Required at top of all config files
+# => Required for config/2 macro
 
 config :my_app,
-  # => config/2: configures application :my_app
-  # => Sets key-value pairs in application environment
-  # => Reads at runtime: Application.get_env/2
+  # => Configures application :my_app
   secret_key: System.get_env("SECRET_KEY") || raise("SECRET_KEY not set"),
-  # => secret_key: reads SECRET_KEY environment variable
-  # => System.get_env/1: returns env var value or nil
-  # => Environment variable: set in shell (export SECRET_KEY=abc123)
-  # => || raise: if nil, raises error (required config)
-  # => raise/1: raises RuntimeError with message
-  # => Application won't start without SECRET_KEY
-  # => Pattern: fail fast on missing required config
+  # => Reads SECRET_KEY env var, raises if missing (required config)
   database_url: System.get_env("DATABASE_URL") || raise("DATABASE_URL not set"),
-  # => database_url: database connection string
-  # => Example: postgres://user:pass@localhost/myapp_prod
-  # => Required in production (raises if not set)
+  # => Database connection string, required in production
   port: String.to_integer(System.get_env("PORT") || "4000")
-  # => port: HTTP port number
-  # => System.get_env("PORT"): reads PORT env var (string or nil)
-  # => || "4000": default to "4000" if PORT not set
-  # => String.to_integer/1: converts "4000" → 4000 (integer)
-  # => Type conversion required (env vars always strings)
-# => config/2 complete: all values stored in application environment
+  # => HTTP port, defaults to 4000, converts string → integer
 
 if config_env() == :prod do
-  # => config_env/0: returns current environment (:dev, :test, :prod)
-  # => Set by: MIX_ENV=prod (shell variable)
-  # => Guards: conditional config for specific environments
-  # => Production-only config (not in dev/test)
+  # => Production-only config
   config :my_app, MyApp.Repo,
-    # => config/3: configures specific key (:my_app app, MyApp.Repo key)
-    # => Pattern: app-level config (config/2) vs module-level (config/3)
-    # => Ecto repos use module-level config
+    # => Ecto repo configuration
     url: System.get_env("DATABASE_URL"),
-    # => url: database URL for Ecto
-    # => Overrides database_url from config/2 above
+    # => Database URL
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
-    # => pool_size: database connection pool size
-    # => Default: 10 connections
-    # => Production: scale based on server capacity
-    # => POOL_SIZE=20 for high-traffic servers
+    # => Connection pool size, defaults to 10
 end
-# => Production config complete (only runs in prod environment)
 
 # Application reads runtime config
 defmodule MyApp.Application do
-  # => Application module reading runtime config
   use Application
 
   def start(_type, _args) do
-    # => start/2: application callback
-    # => Reads config set in runtime.exs above
+    # => Application startup callback
     port = Application.get_env(:my_app, :port)
-    # => Application.get_env/2: reads config value
-    # => :my_app - application name
-    # => :port - config key
-    # => Returns: value set in runtime.exs (4000 or PORT env var)
-    # => From runtime.exs
-    # => nil if key doesn't exist (use get_env/3 with default)
+    # => Reads port from runtime config
     secret = Application.get_env(:my_app, :secret_key)
     # => Reads secret_key from runtime config
-    # => Value: SECRET_KEY environment variable
-    # => Set at application startup (not compile time)
 
     IO.puts("Starting on port #{port}")
-    # => Debug message with runtime config value
-    # => Example: "Starting on port 4000"
+    # => Output: "Starting on port 4000"
 
     children = [
-      # => Child specs with runtime config
       {MyApp.Server, port: port, secret: secret}
       # => Passes runtime config to child process
-      # => port: dynamic value from environment
-      # => secret: loaded at runtime (not baked into release)
-      # => Pattern: runtime config → application → children
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one)
-    # => Starts supervision tree with configured children
+    # => Starts supervision tree
   end
-  # => start/2 complete
 end
-# => Application reads runtime config successfully
 
-# Helper module for config access
+# Config accessor module (best practice)
 defmodule MyApp.Config do
-  # => Config accessor module: centralizes config access
-  # => Pattern: single source of truth for config keys
-  # => Benefits: type safety, defaults, error handling
+  # => Centralizes config access with defaults
+
   def port, do: Application.get_env(:my_app, :port, 4000)
-  # => port/0: returns port with default
-  # => Application.get_env/3: third arg is default (4000)
-  # => Returns: configured port or 4000 if not set
-  # => Pattern: always provide defaults for optional config
+  # => Returns port with default 4000
+
   def secret_key, do: Application.fetch_env!(:my_app, :secret_key)
-  # => secret_key/0: returns secret_key or raises
-  # => Application.fetch_env!/2: raises if key missing
-  # => ! : bang version (raises on error)
-  # => Raises if missing
-  # => Pattern: required config uses fetch_env! (fail fast)
+  # => Returns secret_key, raises if missing (required config)
+
   def database_url, do: Application.fetch_env!(:my_app, :database_url)
-  # => database_url/0: required config (raises if missing)
-  # => Production: DATABASE_URL must be set or app won't start
+  # => Returns database_url, raises if missing
 
   def timeout, do: Application.get_env(:my_app, :timeout, 5000)
-  # => timeout/0: optional config with default
-  # => Default: 5000ms (5 seconds)
-  # => Can be overridden in config files
+  # => Returns timeout with default 5000ms
 end
-# => MyApp.Config complete
-# => Usage: MyApp.Config.port() instead of Application.get_env(...)
-
-# Compile-time vs Runtime config
-# config/config.exs (compile time - DON'T use for secrets)
-# => File: config/config.exs
-# => Execution: compile time (when running mix compile)
-# => Problem: values baked into compiled release
-# => Security risk: secrets in source code → release file
-# => Use for: defaults, non-secret values
-config :my_app,
-  # => Compile-time config (SAFE for non-secrets)
-  default_locale: "en",
-  # => OK - not secret
-  # => Hardcoded value (same for all environments)
-  # => No security risk (public information)
-  api_version: "v1"
-  # => Version number (public information)
-  # => Safe to commit to version control
-
-# config/runtime.exs (runtime - USE for secrets)
-# => File: config/runtime.exs
-# => Execution: runtime (when application starts)
-# => Benefit: reads environment variables at startup
-# => Security: secrets not in source code or release
-# => Pattern: 12-factor app (config in environment)
-config :my_app,
-  # => Runtime config (SAFE for secrets)
-  api_key: System.get_env("API_KEY")
-  # => OK - loaded at runtime
-  # => System.get_env/1: reads environment variable
-  # => API_KEY: set on production server (not in source code)
-  # => Value changes without recompiling
-  # => Pattern: production server sets API_KEY=xyz123
-# => Runtime config complete
-
-# Config precedence
-# 1. runtime.exs (highest priority, runtime)
-# => Overrides all other config files
-# => Last to execute (startup time)
-# 2. prod.exs/dev.exs/test.exs (environment-specific, compile time)
-# => Overrides config.exs
-# => Selected by MIX_ENV
-# 3. config.exs (lowest priority, compile time)
-# => Base configuration
-# => First to execute (compile time)
-# => Pattern: config.exs (defaults) → env.exs (overrides) → runtime.exs (final overrides)
-
-# Reading config in different ways
-Application.get_env(:my_app, :port)
-# => Returns: value or nil (if key doesn't exist)
-# => Safe for optional config
-
-Application.get_env(:my_app, :port, 4000)
-# => Returns: value or default (4000)
-# => Pattern: always provide defaults for optional config
-
-Application.fetch_env!(:my_app, :secret_key)
-# => Returns: value or raises ArgumentError
-# => Pattern: required config (fail fast if missing)
-
-Application.fetch_env(:my_app, :secret_key)
-# => Returns: {:ok, value} or :error
-# => Pattern: match on result for error handling
-# => case Application.fetch_env(...) do
-# =>   {:ok, value} -> use value
-# =>   :error -> handle missing config
-# => end
 ```
 
-**Key Takeaway**: Use `config/runtime.exs` for environment-dependent configuration and secrets. Runtime config loads when app starts, not at compile time. Never commit secrets to `config.exs`—use environment variables in `runtime.exs`.
+**Compile-Time vs Runtime Config**:
 
-**Why It Matters**: Phoenix channels implement WebSocket and long-polling PubSub over Plug connections. Each channel is a GenServer, enabling stateful bidirectional communication with handle_in callbacks. In production, channels power real-time features—chat (Discord), collaborative editing (Notion), live dashboards (LiveView). Phoenix PubSub enables inter-node broadcasting, so channels on server A receive messages from server B, while channel process isolation means one crashed channel doesn't affect others.
+| Feature   | config/config.exs (Compile-Time) | config/runtime.exs (Runtime) |
+| --------- | -------------------------------- | ---------------------------- |
+| Execution | Mix compile                      | Application startup          |
+| Values    | Baked into release               | Loaded from environment      |
+| Use Case  | Defaults, non-secrets            | Secrets, env variables       |
+| Security  | ❌ Don't use for secrets         | ✅ Safe for secrets          |
 
----
+**Best Practices**:
+
+- **Required config**: Use `|| raise()` or `fetch_env!/2` (fail fast)
+- **Optional config**: Use `get_env/3` with defaults
+- **Type conversion**: Environment variables are always strings
+- **Config accessor**: Create module for centralized access (e.g., `MyApp.Config`)
+
+**Key Takeaway**: Use `config/runtime.exs` for secrets and environment-specific configuration. Runtime config loads at startup (not compile time), making it safe for production secrets. Use `Application.get_env/2` for optional config, `Application.fetch_env!/2` for required config.
+
+**Why It Matters**: Runtime configuration enables 12-factor app deployment. Environment variables configure production without rebuilding releases. Secrets never enter source control or compiled artifacts. In production, change DATABASE_URL or API keys without recompiling—critical for zero-downtime deployments and container orchestration (Docker, Kubernetes).
 
 ## Example 56: Process Links and Crash Propagation
 
 Linked processes crash together—when one exits abnormally, linked processes receive exit signals. Use linking for tightly-coupled processes that should fail together.
 
+**Brief Explanation**: Links create bidirectional connections between processes for crash propagation. When a linked process crashes, all connected processes receive exit signals and crash too (unless trapping exits). This pattern enables supervisor-like behavior where parent processes detect and handle child crashes. The `:trap_exit` flag converts exit signals into messages, preventing crash propagation.
+
 **Code**:
 
 ```elixir
-# spawn_link creates linked process
-# => Links: bidirectional connections between processes
-# => Crash propagation: one crashes → linked processes crash too
-# => Use case: tightly-coupled processes (fail together)
 parent = self()
-# => self/0: returns current process PID
-# => Stores parent PID for reference
+# => Current process PID
 # => Type: pid()
 
 child = spawn_link(fn ->
   # => spawn_link/1: spawns process AND links it to caller
-  # => Difference from spawn/1: creates bidirectional link
-  # => Link: if either crashes, both receive exit signal
-  # => Pattern: fail-together processes (worker + manager)
+  # => Creates bidirectional link (crash propagation enabled)
   :timer.sleep(1000)
-  # => Sleep for 1 second (1000ms)
-  # => Child process waits before crashing
+  # => Sleep 1 second before crashing
   raise "Child crashed!"
-  # => raise/1: raises RuntimeError
-  # => Child process exits abnormally
-  # => Exit reason: {%RuntimeError{message: "Child crashed!"}, stacktrace}
-  # => Parent will crash too!
-  # => Crash propagates via link to parent process
+  # => Child exits abnormally → parent crashes too
+  # => Exit signal propagates via link
 end)
-# => Returns: child PID
-# => Child and parent now linked bidirectionally
+# => Returns child PID, linked bidirectionally
+# => child: pid()
 
 Process.alive?(child)
-# => Process.alive?/1: checks if process still running
-# => Returns: true (child still sleeping)
-# => true
-# => Child hasn't crashed yet (sleeping for 1 second)
+# => true (child still sleeping)
 :timer.sleep(1500)
-# => Parent sleeps 1.5 seconds
-# => Gives child time to crash (after 1 second)
-# => Parent will crash when child raises (after ~1 second)
+# => Wait for child to crash (after 1 second)
 Process.alive?(child)
-# => Check child again after parent sleep
-# => Returns: false (child crashed after 1 second)
-# => false
-# => Child process exited abnormally
-# Parent process also crashed!
-# => Parent crashed due to link (child crashed → parent crashes)
-# => Both processes dead
-# => Pattern: linked processes fail together
+# => false (child crashed after 1 second)
+# Parent process also crashed due to link!
 
-# Manual linking
-# => Process.link/1: manually create link between processes
-# => Alternative to spawn_link (link after spawn)
+# Manual linking with Process.link/1
 pid1 = spawn(fn -> :timer.sleep(10_000) end)
 # => Spawn process (NOT linked yet)
-# => Process sleeps for 10 seconds
-# => Independent process (no link)
+# => Independent process, sleeps 10 seconds
 pid2 = spawn(fn -> :timer.sleep(10_000) end)
 # => Second independent process
-# => Also sleeps for 10 seconds
+# => Also sleeps 10 seconds
 
 Process.link(pid1)
-# => Process.link/1: links current process to pid1
-# => Link current process to pid1
-# => Bidirectional link created
-# => Current crashes → pid1 receives exit signal
-# => pid1 crashes → current receives exit signal
+# => Links current process to pid1 bidirectionally
+# => Current crashes → pid1 crashes; pid1 crashes → current crashes
 Process.link(pid2)
-# => Link to pid2
-# => Current process now linked to both pid1 and pid2
+# => Links current process to pid2
 # => Triangle: current ↔ pid1, current ↔ pid2 (no direct pid1 ↔ pid2)
 
 Process.exit(pid1, :kill)
-# => Process.exit/2: sends exit signal to process
-# => First arg: target PID (pid1)
-# => Second arg: exit reason (:kill)
-# => :kill - forceful termination (cannot be trapped)
-# => Kills pid1, current process also receives exit signal
-# => pid1 dies immediately
-# => Exit signal propagated to current process via link
-# => Current process also crashes (unless trapping exits)
+# => Kills pid1 with :kill reason
+# => Exit signal propagates to current process
+# => Current process crashes (unless trapping exits)
 
-# Trap exits to handle linked process crashes
-# => :trap_exit flag: converts exit signals into messages
-# => Prevents crash propagation (handle exits gracefully)
+# Trap exits to handle crashes gracefully
 Process.flag(:trap_exit, true)
-# => Process.flag/2: sets process flag
-# => :trap_exit flag: changes exit signal behavior
-# => true: exit signals → {:EXIT, pid, reason} messages
-# => false (default): exit signals → process crashes
-# => Convert exit signals to messages
+# => Converts exit signals to {:EXIT, pid, reason} messages
 # => Process won't crash when linked process exits
-# => Pattern: supervisor-like behavior (handle child crashes)
+# => Returns: false (previous trap_exit value)
 
 linked_pid = spawn_link(fn ->
   # => Spawn and link child
-  # => Child will crash after 500ms
   :timer.sleep(500)
   # => Sleep 0.5 seconds
   raise "Linked process error!"
   # => Child crashes with RuntimeError
-  # => Normally parent would crash
-  # => BUT: parent has :trap_exit → message instead
+  # => Exit signal → message (parent trapping exits)
 end)
-# => Returns: child PID
-# => Child linked to parent (trap_exit enabled)
+# => Returns child PID
 
 receive do
-  # => receive block: waits for messages
-  # => Exit signal converted to message (due to :trap_exit)
+  # => Wait for exit message
   {:EXIT, ^linked_pid, reason} ->
-    # => Pattern match: {:EXIT, pid, reason} message
+    # => Pattern match exit message
     # => ^linked_pid: pin operator (match exact PID)
-    # => reason: exit reason from crashed process
-    # => Tuple: {%RuntimeError{...}, stacktrace}
     IO.puts("Linked process exited with reason: #{inspect(reason)}")
-    # => Print exit reason
-    # => inspect/1: converts any term to readable string
-    # => Example: "Linked process exited with reason: {%RuntimeError{message: \"Linked process error!\"}, [...]}"
-    # => Current process continues running!
-    # => Parent survives child crash (handled gracefully)
-    # => Pattern: supervisor behavior (monitor children, handle crashes)
+    # => Output: "Linked process exited with reason: {%RuntimeError{...}, ...}"
+    # => Parent continues running (handled gracefully)
 end
 # => receive complete
-# => Parent process still alive (didn't crash)
+# => Parent process still alive
 
-# Supervisor uses links internally
-# => OTP supervisors use spawn_link + trap_exit
-# => Supervisor traps exits → handles child crashes → restarts children
+# Supervisor pattern uses links
 defmodule Worker do
-  # => Worker GenServer for supervisor example
+  # => GenServer worker for supervisor example
   use GenServer
-  # => GenServer behavior
 
   def start_link(id) do
-    # => start_link/1: starts worker (linked to caller)
-    # => Supervisor calls this with spawn_link semantics
+    # => Starts worker linked to caller (supervisor)
     GenServer.start_link(__MODULE__, id)
-    # => Starts GenServer, links to caller (supervisor)
     # => Returns: {:ok, pid}
   end
 
   @impl true
   def init(id) do
-    # => init/1: GenServer initialization
-    # => id: worker identifier
+    # => GenServer initialization callback
     IO.puts("Worker #{id} started")
-    # => Startup message
-    # => Example: "Worker 1 started"
+    # => Output: "Worker 1 started"
     {:ok, id}
     # => Returns: {:ok, state}
-    # => state: stores id
   end
 
   @impl true
   def handle_cast(:crash, _state) do
-    # => handle_cast/2: handles asynchronous messages
-    # => :crash message: intentional crash for testing
-    # => _state: ignored (worker about to crash)
+    # => Handles :crash message
     raise "Worker crashed!"
-    # => Worker crashes with RuntimeError
-    # => Supervisor will restart this worker
-    # => Supervisor receives {:EXIT, worker_pid, reason} message
-    # => Supervisor applies restart strategy (:permanent → restart immediately)
+    # => Worker exits abnormally
+    # => Supervisor receives {:EXIT, worker_pid, reason}
+    # => Supervisor restarts worker per restart strategy
   end
-  # => handle_cast complete
 end
-# => Worker module complete
-# => Usage: Supervisor starts Worker with start_link → linked → supervisor restarts on crash
 
-# Exit reasons
-# => Exit reason determines crash propagation behavior
+# Exit reasons determine propagation behavior
 # :normal - graceful exit (doesn't crash linked processes)
-# => :normal - process completed successfully
-# => Linked processes: NO crash (normal termination expected)
-# => Example: Task completes work → exit(:normal)
-# => Pattern: expected completion (not an error)
-# :kill - forceful kill (cannot be trapped)
-# => :kill - immediate termination (cannot be trapped)
-# => Process.flag(:trap_exit, true) IGNORED for :kill
-# => Linked processes: crash immediately (no message)
-# => Use: emergency shutdown (process stuck, not responding)
-# => WARNING: destructive (process cannot cleanup)
-# any other - abnormal exit (crashes linked processes)
-# => Any other reason: abnormal exit
-# => Examples: :shutdown, {:shutdown, term}, error tuples
-# => Linked processes: crash (unless trapping exits)
-# => Trapping: {:EXIT, pid, reason} message (can handle gracefully)
-
 spawn_link(fn -> exit(:normal) end)
-# => Spawn linked process that exits normally
-# => exit(:normal): explicit normal exit
+# => Exits normally
 # => Won't crash parent
-# => Parent receives {:EXIT, pid, :normal} if trapping (otherwise ignored)
-# => Pattern: worker completes successfully
+# => Parent receives {:EXIT, pid, :normal} if trapping
 
+# :kill - forceful kill (cannot be trapped)
+# spawn_link(fn -> exit(:kill) end)
+# => Exits with :kill
+# => Crashes parent immediately
+# => trap_exit ignored for :kill
+
+# any other - abnormal exit (crashes linked unless trapping)
 spawn_link(fn -> exit(:abnormal) end)
-# => Spawn linked process that exits abnormally
-# => exit(:abnormal): explicit abnormal exit
-# => Will crash parent
-# => Parent crashes unless trapping exits
+# => Exits abnormally
+# => Crashes parent unless trapping exits
 # => If trapping: {:EXIT, pid, :abnormal} message
-# => Pattern: worker fails (parent should handle or crash)
 
 # Unlinking processes
 Process.unlink(pid1)
-# => Process.unlink/1: removes link to process
-# => pid1: process to unlink from
-# => Bidirectional link removed
+# => Removes bidirectional link to pid1
 # => Crashes no longer propagate
 # => Returns: true
-# => Pattern: temporary coupling (link → work → unlink)
-
-# Monitoring vs Linking
-# => Linking: bidirectional crash propagation (fail together)
-# => Monitoring: unidirectional crash detection (observer pattern)
-# => Linking use case: supervisor pattern (parent restarts child)
-# => Monitoring use case: notification pattern (watcher notified, doesn't crash)
 ```
+
+**Exit Reason Behavior**:
+
+- **`:normal`** - Graceful exit, doesn't crash linked processes (worker completed successfully)
+- **`:kill`** - Forceful termination, cannot be trapped (emergency shutdown)
+- **`other`** - Abnormal exit, crashes linked processes unless trapping
+
+**Linking vs Monitoring**:
+
+- **Linking**: Bidirectional crash propagation (fail-together pattern for supervisor)
+- **Monitoring**: Unidirectional crash detection (observer pattern for notifications)
 
 **Key Takeaway**: Linked processes crash together. Use `spawn_link/1` for coupled processes. Trap exits with `Process.flag(:trap_exit, true)` to handle crashes gracefully. Supervisors use links to detect worker crashes.
 
-**Why It Matters**: LiveView eliminates JavaScript for interactive UIs through server-rendered HTML over WebSockets with minimal wire format. LiveView process maintains state and renders HTML diffs, sending only changed DOM to client. In production, this simplifies architecture—one Elixir codebase for backend and frontend, no REST/GraphQL API needed, while the BEAM's concurrency enables 10K+ LiveView connections per server. LiveView's state management prevents the state synchronization bugs that plague SPAs with separate backend/frontend state.
-
----
+**Why It Matters**: Links enable the BEAM's "let it crash" philosophy. Supervisors use links to detect failures and restart workers automatically. This pattern creates self-healing systems where isolated failures don't bring down the entire application. In production, supervision trees with proper linking ensure service reliability—a crashed GenServer worker is automatically restarted by its supervisor within milliseconds.
 
 ## Example 57: Message Mailbox Management
 
 Process mailboxes queue incoming messages. Understanding mailbox behavior prevents memory leaks and enables selective message processing.
 
+**Brief Explanation**: Every process has a mailbox that queues messages in FIFO order. Messages accumulate until processed by `receive` blocks. Selective receive pattern-matches messages, potentially scanning the entire mailbox. Monitor mailbox size with `Process.info/2` to detect message buildup and prevent memory leaks.
+
 **Code**:
 
 ```elixir
 # Messages accumulate in mailbox
-# => Mailbox: FIFO queue for incoming messages
-# => Every process has one mailbox
-# => Messages stay queued until received
 pid = self()
 # => Current process PID
-# => Sending messages to ourselves for demonstration
+
 send(pid, :msg1)
-# => send/2: sends message to process
-# => First arg: recipient PID
-# => Second arg: message (any term)
-# => :msg1 added to mailbox (position 1)
-# => Returns: :msg1 (the message sent)
+# => Adds :msg1 to mailbox (position 1)
 send(pid, :msg2)
-# => :msg2 added to mailbox (position 2)
-# => Mailbox now: [:msg1, :msg2]
+# => Adds :msg2 to mailbox (position 2)
 send(pid, :msg3)
-# => :msg3 added to mailbox (position 3)
-# => Mailbox now: [:msg1, :msg2, :msg3]
+# => Adds :msg3 to mailbox (position 3)
+# => Mailbox: [:msg1, :msg2, :msg3]
 
 Process.info(pid, :message_queue_len)
-# => Process.info/2: queries process information
-# => Second arg: :message_queue_len (number of queued messages)
-# => Returns: {:message_queue_len, 3}
 # => {:message_queue_len, 3}
-# => 3 messages waiting in mailbox
-# => Type: {atom(), non_neg_integer()}
+# => Returns message count in mailbox
 
-# receive processes messages in FIFO order
-# => FIFO: First In, First Out (queue order)
-# => Messages processed in arrival order (unless selective receive)
+# FIFO processing
 receive do
-  # => receive block: waits for message
-  # => Blocks until message arrives (unless timeout)
   msg -> IO.inspect(msg, label: "Received")
-  # => Pattern: msg (matches any message)
-  # => Processes first message in mailbox
-  # => :msg1 (first in queue)
-  # => IO.inspect/2: prints value with label
+  # => Processes first message: :msg1
   # => Output: "Received: :msg1"
-  # => :msg1
-  # => Message removed from mailbox after processing
 end
-# => receive complete
 # => Mailbox now: [:msg2, :msg3]
 
 Process.info(pid, :message_queue_len)
-# => Check mailbox again
-# => Returns: {:message_queue_len, 2}
 # => {:message_queue_len, 2}
-# => One message removed (:msg1 processed)
-# => Remaining: :msg2, :msg3
 
-# Selective receive with pattern matching
-# => Selective receive: pattern matching in mailbox
-# => Scans mailbox for first match (may skip messages)
+# Selective receive (pattern matching)
 send(self(), {:priority, "urgent"})
-# => Tuple message: {:priority, "urgent"}
-# => Added to mailbox position 1 (after :msg2, :msg3)
+# => Mailbox: [:msg2, :msg3, {:priority, "urgent"}]
 send(self(), {:normal, "task1"})
-# => {:normal, "task1"} added to position 2
-send(self(), {:normal, "task2"})
-# => {:normal, "task2"} added to position 3
-# => Mailbox: [:msg2, :msg3, {:priority, "urgent"}, {:normal, "task1"}, {:normal, "task2"}]
+# => Mailbox: [:msg2, :msg3, {:priority, "urgent"}, {:normal, "task1"}]
 
 receive do
-  # => Pattern match: {:priority, msg}
-  # => Scans mailbox from start looking for matching pattern
-  {:priority, msg} -> IO.puts("Priority: #{msg}")
-  # => Matches {:priority, "urgent"} (position 3 in mailbox)
-  # => SKIPS :msg2 and :msg3 (don't match pattern)
-  # => msg bound to "urgent"
-  # => Prints: "Priority: urgent"
-  # => Matches first
-  # => {:priority, "urgent"} removed from mailbox
-  # => Mailbox: [:msg2, :msg3, {:normal, "task1"}, {:normal, "task2"}]
+  {:priority, content} -> IO.puts("Priority: #{content}")
+  # => Scans mailbox for first match
+  # => Finds {:priority, "urgent"} at position 3
+  # => Skips :msg2 and :msg3
+  # => Output: "Priority: urgent"
 end
-# => receive complete
-# => Non-matching messages (:msg2, :msg3) remain in mailbox
+# => Mailbox: [:msg2, :msg3, {:normal, "task1"}]
+# => Skipped messages remain in mailbox
 
-# flush/0 clears entire mailbox
-# => flush/0: IEx helper (prints and removes all messages)
-# => Not available in compiled code (IEx only)
-send(self(), :a)
-# => Add :a to mailbox
-send(self(), :b)
-# => Add :b to mailbox
-send(self(), :c)
-# => Add :c to mailbox
-# => Mailbox: [...previous messages..., :a, :b, :c]
-flush()
-# => flush/0: prints all messages and empties mailbox
-# => Prints all and clears mailbox
-# => Output: :a\n:b\n:c
-# => Mailbox now empty
-# => Returns: :ok
-# => Pattern: debugging (see queued messages)
-
-# Timeout prevents infinite blocking
-# => Timeout clause: "after N milliseconds"
-# => Prevents process from blocking forever
+# Flush mailbox (process all messages)
 receive do
-  # => Wait for :expected_message
-  :expected_message -> IO.puts("Got it")
-  # => Pattern: :expected_message atom
-  # => Never arrives (no one sends it)
+  msg -> IO.inspect(msg)
+  # => Process one message
 after
-  # => after clause: timeout fallback
-  # => Executes if no message received within timeout
-  1000 -> IO.puts("Timeout after 1 second")
-  # => 1000ms = 1 second timeout
-  # => After 1 second with no message: print timeout message
-  # => Prints: "Timeout after 1 second"
-  # => receive exits (doesn't block forever)
+  0 -> :ok
+  # => Timeout 0ms: if no messages, exit immediately
 end
-# => receive complete after timeout
-# => Pattern: prevent deadlock (always have timeout for external messages)
-
-# Mailbox scanning (inefficient for large mailboxes)
-# => Recursive receive pattern for draining mailbox
-# => WARNING: performance degrades with large mailboxes
-defmodule Mailbox do
-  # => Helper module for mailbox operations
-  def drain do
-    # => drain/0: recursively processes all messages
-    receive do
-      # => Wait for any message
-      msg ->
-        # => Pattern: msg (matches anything)
-        IO.inspect(msg)
-        # => Print message
-        drain()
-        # => Recursive call: process next message
-        # => Recursive drain
-        # => Keeps calling until mailbox empty
-    after
-      # => Timeout: 0ms (immediate)
-      0 -> :ok
-      # => 0ms timeout: returns immediately if no messages
-      # => Immediate timeout = no more messages
-      # => Base case: mailbox empty → return :ok
-    end
-    # => receive complete
-  end
-  # => drain/0 complete
-end
-# => Mailbox module complete
-
-send(self(), 1)
-# => Send integer 1 to mailbox
-send(self(), 2)
-# => Send integer 2
-send(self(), 3)
-# => Send integer 3
-# => Mailbox: [1, 2, 3]
-Mailbox.drain()
-# => Call drain/0: processes all messages
-# => Prints: 1, 2, 3
-# => Recursively processes: 1 → drain → 2 → drain → 3 → drain → timeout :ok
-# => Mailbox now empty
-# => Returns: :ok
-
-# Handle unexpected messages
-# => GenServer pattern: handle_info/2 for unhandled messages
-# => All messages not matching handle_call/cast go to handle_info
-defmodule Worker do
-  # => Worker GenServer demonstrating handle_info
-  use GenServer
-  # => GenServer behavior
-
-  @impl true
-  def handle_info(msg, state) do
-    # => handle_info/2: callback for unexpected messages
-    # => msg: any message sent via send/2 (not call/cast)
-    # => state: current GenServer state
-    # => Catches all unexpected messages
-    # => Pattern: catch-all for messages that don't match other handlers
-    IO.warn("Unexpected message: #{inspect(msg)}")
-    # => IO.warn/1: prints warning with [warn] prefix
-    # => inspect(msg): converts message to string
-    # => Example: "[warn] Unexpected message: {:unknown, data}"
-    {:noreply, state}
-    # => Returns: {:noreply, state}
-    # => Ignore and continue
-    # => GenServer continues with same state
-    # => Message processed (removed from mailbox)
-  end
-  # => handle_info/2 complete
-  # => Pattern: prevent mailbox overflow from unexpected messages
-end
-# => Worker module complete
-
-# Mailbox memory leaks (avoid!)
-# => WARNING: processes that never receive cause memory leaks
-# => Mailbox grows unbounded → memory exhaustion
-defmodule BadWorker do
-  # => Anti-pattern: process that ignores mailbox
-  def loop do
-    # => loop/0: infinite loop without receive
-    # => Never processes messages - mailbox grows forever!
-    # => Sleeps without checking mailbox
-    :timer.sleep(1000)
-    # => Sleep 1 second
-    # => Mailbox keeps accumulating during sleep
-    loop()
-    # => Recursive call: infinite loop
-    # => Never returns
-  end
-  # => loop/0 complete (never exits)
-end
-# => BadWorker module complete
-# => ANTI-PATTERN: don't use in production
-
-pid = spawn(&BadWorker.loop/0)
-# => Spawn process running BadWorker.loop/0
-# => &Module.function/arity syntax (function capture)
-# => Process running infinite loop (no receive)
-Enum.each(1..10_000, fn i -> send(pid, {:task, i}) end)
-# => Send 10,000 messages to pid
-# => Enum.each/2: iterates range 1..10_000
-# => Each iteration: send(pid, {:task, i})
-# => {:task, 1}, {:task, 2}, ..., {:task, 10000} all queued
-# => BadWorker never receives → all messages accumulate
-Process.info(pid, :message_queue_len)
-# => Query mailbox length
-# => Returns: {:message_queue_len, 10000}
-# => {:message_queue_len, 10000} - LEAK!
-# => All 10,000 messages queued (none processed)
-# => Memory leak: mailbox consuming memory
-# => Solution: always process messages in loops
-
-# Mailbox best practices
-# 1. Always use receive in process loops
-# => Every loop iteration should check mailbox
-# 2. Use timeouts to prevent deadlocks
-# => receive ... after N -> timeout_handler end
-# 3. Implement handle_info/2 in GenServers
-# => Catch unexpected messages (prevent accumulation)
-# 4. Monitor mailbox size for debugging
-# => Process.info(pid, :message_queue_len) to detect leaks
-# 5. Selective receive for priority messages
-# => Pattern match high-priority messages first
+# => Processes messages until mailbox empty
 ```
 
-**Key Takeaway**: Messages queue in mailbox until processed. Use `receive` with timeouts to prevent blocking. Implement `handle_info/2` in GenServer to handle unexpected messages. Avoid mailbox leaks by processing all messages.
+**Mailbox Behavior**:
 
-**Why It Matters**: Phoenix contexts as bounded contexts enable clean separation between web layer (controllers, views) and business logic (contexts). Controllers delegate to contexts, never calling Ecto directly. In production, this enables testing business logic without web layer, swapping storage backends (SQL to NoSQL) by changing context internals, and horizontal scaling by load balancing specific contexts across servers. Contexts force developers to think about business operations, not database queries.
+| Operation                | Effect             | Performance      |
+| ------------------------ | ------------------ | ---------------- |
+| `send/2`                 | Adds to end (FIFO) | O(1)             |
+| `receive` (no pattern)   | Removes first      | O(1)             |
+| `receive` (with pattern) | Scans until match  | O(n)             |
+| Unmatched messages       | Stay in mailbox    | Memory leak risk |
 
----
+**Selective Receive Costs**:
+
+- **Best case**: Match at front of mailbox (O(1))
+- **Worst case**: Scan entire mailbox (O(n))
+- **Memory risk**: Unmatched messages accumulate
+
+**Key Takeaway**: Process mailboxes queue messages in FIFO order. Use `receive` to process messages. Selective receive scans the mailbox for pattern matches, potentially skipping messages. Monitor mailbox size with `Process.info/2` to prevent memory leaks from unmatched messages.
+
+**Why It Matters**: Mailbox management is critical for GenServer reliability. Unbounded mailboxes cause memory leaks (millions of messages queued). In production, monitor mailbox size with telemetry, implement message timeouts, and use selective receive sparingly (expensive for large queues). Phoenix tracks mailbox sizes per LiveView process, alerting on buildup before out-of-memory errors.
 
 ## Example 58: Anonymous GenServers and Local Names
 
