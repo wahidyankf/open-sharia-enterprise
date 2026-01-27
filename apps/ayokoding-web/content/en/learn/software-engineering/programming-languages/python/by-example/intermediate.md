@@ -30,17 +30,28 @@ graph TD
 def trace(func):
     """Decorator that logs function calls"""
     def wrapper(*args, **kwargs):
-        print(f"Calling {func.__name__}")  # => Logs function name
-        result = func(*args, **kwargs)     # => Execute original function
-        print(f"Returned {result}")        # => Logs return value
-        return result                      # => Return original result
-    return wrapper                         # => Return wrapper function
+        """Wrapper that adds logging behavior"""
+        print(f"Calling {func.__name__}")  # => Output: Calling add
+                                            # => Logs function name
+        result = func(*args, **kwargs)      # => Execute original function
+                                            # => result = add(3, 5) = 8
+        print(f"Returned {result}")         # => Output: Returned 8
+                                            # => Logs return value
+        return result                       # => Return original result
+                                            # => Returns 8
+    return wrapper                          # => Return wrapper function
+                                            # => Closure captures func
 
-@trace                                     # => Apply decorator
+@trace                                      # => Apply decorator
+                                            # => Equivalent to: add = trace(add)
 def add(a, b):
-    return a + b                           # => Original function logic
+    """Add two numbers"""
+    return a + b                            # => Original function logic
 
-result = add(3, 5)  # => Calling add, Returned 8, result = 8
+result = add(3, 5)                          # => Calls wrapper(3, 5)
+                                            # => Output: Calling add
+                                            # => Output: Returned 8
+                                            # => result = 8
 ```
 
 **Key Takeaway**: Decorators use closure to wrap functions, enabling cross-cutting concerns like logging and timing.
@@ -69,21 +80,35 @@ graph TD
 ```python
 def repeat(times):
     """Decorator factory that repeats function calls"""
+    # => times parameter configures behavior
+    # => Returns a decorator function
     def decorator(func):                   # => Actual decorator
+                                            # => func = original function
         def wrapper(*args, **kwargs):
-            results = []
+            """Innermost wrapper that executes multiple times"""
+            results = []                   # => Collect all results
             for i in range(times):         # => Repeat 'times' times
-                result = func(*args, **kwargs)
-                results.append(result)     # => Collect results
-            return results                 # => Return all results
-        return wrapper
-    return decorator                       # => Return configured decorator
+                                            # => Loop 3 times in this example
+                result = func(*args, **kwargs)  # => Call original function
+                                            # => result = greet("Alice")
+                results.append(result)      # => Add to results list
+                                            # => results = ['Hello, Alice!', ...]
+            return results                  # => Return list of all results
+                                            # => ['Hello, Alice!', 'Hello, Alice!', 'Hello, Alice!']
+        return wrapper                      # => Return configured wrapper
+    return decorator                        # => Return decorator function
+                                            # => Closure captures 'times'
 
-@repeat(3)                                 # => Call decorator factory
+@repeat(3)                                  # => Call repeat(3)
+                                            # => Returns decorator
+                                            # => Then: greet = decorator(greet)
 def greet(name):
-    return f"Hello, {name}!"
+    """Greet someone"""
+    return f"Hello, {name}!"                # => Original function
 
-messages = greet("Alice")  # => ['Hello, Alice!', 'Hello, Alice!', 'Hello, Alice!']
+messages = greet("Alice")                   # => Calls wrapper("Alice")
+                                            # => Executes greet("Alice") 3 times
+                                            # => messages = ['Hello, Alice!', 'Hello, Alice!', 'Hello, Alice!']
 ```
 
 **Key Takeaway**: Decorator factories return decorators configured with parameters, enabling reusable behavior customization.
@@ -98,20 +123,32 @@ Use functools.wraps to preserve original function metadata in decorated function
 from functools import wraps
 
 def debug(func):
-    @wraps(func)                           # => Preserves __name__, __doc__, etc.
+    """Decorator with metadata preservation"""
+    @wraps(func)                           # => Copies __name__, __doc__, __module__ from func
+                                           # => Without this, wrapper.__name__ would be 'wrapper'
     def wrapper(*args, **kwargs):
-        result = func(*args, **kwargs)
-        print(f"{func.__name__}: {result}")  # => Uses original name
-        return result
-    return wrapper
+        """Inner wrapper function"""
+        result = func(*args, **kwargs)     # => Call original function
+                                           # => result = calculate(x, y)
+        print(f"{func.__name__}: {result}")  # => Uses original function name
+                                             # => Output: calculate: [result]
+        return result                      # => Return original result
+    return wrapper                         # => Return decorated wrapper
 
-@debug
+@debug                                     # => calculate = debug(calculate)
 def calculate(x, y):
-    """Adds two numbers"""               # => Original docstring
-    return x + y
+    """Adds two numbers"""                # => Original docstring preserved
+    return x + y                           # => Original function logic
 
-print(calculate.__name__)  # => 'calculate' (not 'wrapper')
-print(calculate.__doc__)   # => 'Adds two numbers'
+result = calculate(3, 5)                   # => Calls wrapper(3, 5)
+                                           # => Output: calculate: 8
+                                           # => result = 8
+print(calculate.__name__)                  # => Output: 'calculate' (not 'wrapper')
+                                           # => Thanks to @wraps
+print(calculate.__doc__)                   # => Output: 'Adds two numbers'
+                                           # => Original docstring preserved
+print(calculate.__module__)                # => Output: '__main__' (or module name)
+                                           # => Module info preserved
 ```
 
 **Key Takeaway**: functools.wraps copies metadata from decorated function to wrapper, preserving introspection capabilities.
@@ -142,18 +179,36 @@ stateDiagram-v2
 ```python
 def countdown(n):
     """Generate numbers from n down to 1"""
-    while n > 0:
-        yield n                            # => Pause and return value
-        n -= 1                             # => Continue on next iteration
+    while n > 0:                            # => Loop condition
+        yield n                             # => Pause and return current value
+                                            # => Function state preserved
+                                            # => Returns n to caller
+        n -= 1                              # => Decrement for next iteration
+                                            # => Executes when next() called again
 
-gen = countdown(3)                         # => Creates generator object
-print(next(gen))  # => 3 (first yield)
-print(next(gen))  # => 2 (second yield)
-print(next(gen))  # => 1 (third yield)
-# next(gen) would raise StopIteration
+gen = countdown(3)                          # => Creates generator object
+                                            # => Does NOT execute function yet
+                                            # => gen is iterator
+print(next(gen))                            # => First next() call
+                                            # => Executes until first yield
+                                            # => Returns 3, n becomes 2
+                                            # => Output: 3
+print(next(gen))                            # => Second next() call
+                                            # => Resumes from yield
+                                            # => Returns 2, n becomes 1
+                                            # => Output: 2
+print(next(gen))                            # => Third next() call
+                                            # => Returns 1, n becomes 0
+                                            # => Output: 1
+# next(gen)                                 # => Fourth next() call
+                                            # => while condition false (n=0)
+                                            # => Raises StopIteration
 
-for num in countdown(3):                   # => Generators are iterable
-    print(num)                             # => 3, 2, 1
+for num in countdown(3):                    # => for loop calls next() automatically
+                                            # => Stops on StopIteration
+    print(num)                              # => Output: 3
+                                            # => Output: 2
+                                            # => Output: 1
 ```
 
 **Key Takeaway**: Generators compute values on demand using yield, ideal for large or infinite sequences.
@@ -166,16 +221,30 @@ Generator expressions provide concise syntax for simple generators with minimal 
 
 ```python
 # List comprehension (creates full list in memory)
-squares_list = [x**2 for x in range(5)]    # => [0, 1, 4, 9, 16]
+squares_list = [x**2 for x in range(5)]    # => Creates list immediately
+                                            # => [0, 1, 4, 9, 16]
+                                            # => All values computed and stored
+                                            # => Uses memory for entire list
 
 # Generator expression (computes values on demand)
-squares_gen = (x**2 for x in range(5))     # => Generator object
+squares_gen = (x**2 for x in range(5))     # => Generator object (lazy)
+                                            # => Parentheses instead of brackets
+                                            # => No values computed yet
+                                            # => <generator object> in memory
 
-print(next(squares_gen))  # => 0
-print(next(squares_gen))  # => 1
+print(next(squares_gen))                    # => First call: compute 0**2
+                                            # => Output: 0
+                                            # => Generator advances to next
+print(next(squares_gen))                    # => Second call: compute 1**2
+                                            # => Output: 1
+                                            # => Previous value forgotten
 
 # Use in sum (generator consumed automatically)
 total = sum(x**2 for x in range(1000000))  # => Memory efficient
+                                            # => Computes one value at a time
+                                            # => No 1M-element list created
+                                            # => total = 333332833333500000
+                                            # => Generator exhausted after sum
 ```
 
 **Key Takeaway**: Generator expressions use parentheses instead of brackets, computing values lazily without storing intermediate lists.
@@ -210,25 +279,37 @@ sequenceDiagram
 
 ```python
 class FileManager:
+    """Context manager for file operations"""
     def __init__(self, filename, mode):
-        self.filename = filename
-        self.mode = mode
-        self.file = None
+        self.filename = filename           # => Store filename
+        self.mode = mode                   # => Store mode ('w', 'r', etc.)
+        self.file = None                   # => File handle placeholder
 
     def __enter__(self):
         """Called when entering 'with' block"""
         self.file = open(self.filename, self.mode)  # => Open file
-        return self.file                            # => Return to 'as' variable
+                                            # => self.file = file object
+        return self.file                    # => Return to 'as' variable
+                                            # => This becomes 'f' in with statement
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Called when exiting 'with' block"""
-        if self.file:
-            self.file.close()                       # => Always close file
-        # Return False to propagate exceptions, True to suppress
+        # => exc_type: Exception class if exception occurred, else None
+        # => exc_val: Exception instance if exception occurred, else None
+        # => exc_tb: Traceback object if exception occurred, else None
+        if self.file:                       # => Check if file was opened
+            self.file.close()                # => Always close file
+                                             # => Guaranteed cleanup
+        return False                        # => Return False → propagate exceptions
+                                             # => Return True → suppress exceptions
 
 with FileManager('data.txt', 'w') as f:    # => Calls __enter__
-    f.write('Hello, World!')               # => File is open
-# => Calls __exit__ automatically (file closed even if error occurs)
+                                            # => f = returned file object
+    f.write('Hello, World!')                # => File is open
+                                            # => Write to file
+# => Exits 'with' block
+# => Calls __exit__(None, None, None) automatically
+# => File closed even if exception occurs
 ```
 
 **Key Takeaway**: Context managers guarantee cleanup code execution via **exit**, preventing resource leaks.
@@ -260,19 +341,30 @@ graph TD
 from contextlib import contextmanager
 import time
 
-@contextmanager
+@contextmanager                            # => Decorator converts generator to context manager
 def timer(label):
     """Context manager that measures execution time"""
-    start = time.time()                    # => Setup: record start time
+    start = time.time()                    # => Setup code: record start time
+                                           # => Runs BEFORE yield
     try:
-        yield                              # => Execute with block
+        yield                              # => Pause generator
+                                           # => Control returns to 'with' block
+                                           # => Code inside 'with' executes here
     finally:
-        end = time.time()                  # => Cleanup: calculate duration
-        print(f"{label}: {end - start:.3f}s")
+        end = time.time()                  # => Cleanup code: record end time
+                                           # => Runs AFTER 'with' block
+        duration = end - start             # => Calculate elapsed time
+        print(f"{label}: {duration:.3f}s") # => Output: Processing: 0.XXX
 
-with timer("Processing"):                  # => Calls setup (start timer)
-    total = sum(range(1000000))            # => Execute code
-# => Calls cleanup (print duration)
+with timer("Processing"):                  # => Calls timer("Processing")
+                                           # => Executes setup (start = time.time())
+                                           # => Pauses at yield
+    total = sum(range(1000000))            # => Execute code being timed
+                                           # => total = 499999500000
+# => Exits 'with' block
+# => Resumes generator at finally
+# => Executes cleanup (print duration)
+# => Output: Processing: 0.045s (example)
 ```
 
 **Key Takeaway**: @contextmanager simplifies context manager creation using yield for separation of setup/cleanup logic.
@@ -288,19 +380,36 @@ import re
 
 # Pattern matching
 text = "Email: user@example.com, Phone: 555-1234"
+                                            # => Text to search
 email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+                                            # => Raw string pattern (r'' prefix)
+                                            # => \b = word boundary
+                                            # => + = one or more, . = any char
+                                            # => @ required, {2,} = 2+ chars
 
 match = re.search(email_pattern, text)     # => Find first match
-if match:
-    print(match.group())  # => 'user@example.com'
+                                            # => Searches entire text
+                                            # => Returns Match object or None
+if match:                                   # => Check if pattern found
+    print(match.group())                    # => Output: 'user@example.com'
+                                            # => .group() returns matched string
 
 # Find all matches
-phone_pattern = r'\d{3}-\d{4}'
-phones = re.findall(phone_pattern, text)   # => ['555-1234']
+phone_pattern = r'\d{3}-\d{4}'             # => \d = digit [0-9]
+                                            # => {3} = exactly 3 digits
+                                            # => - literal hyphen
+                                            # => {4} = exactly 4 digits
+phones = re.findall(phone_pattern, text)   # => Returns list of all matches
+                                            # => phones = ['555-1234']
+                                            # => findall returns strings, not Match objects
 
 # Compiled pattern (faster for repeated use)
 email_re = re.compile(email_pattern)       # => Compile once
+                                            # => Pre-processes pattern
+                                            # => Improves performance for multiple uses
 result = email_re.search(text)             # => Reuse compiled pattern
+                                            # => result = Match object
+                                            # => result.group() = 'user@example.com'
 ```
 
 **Key Takeaway**: Compile patterns for repeated use; use search for first match, findall for all matches.
@@ -316,18 +425,32 @@ import re
 
 # Capture groups with named groups
 pattern = r'(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})'
-text = "Date: 2025-12-30"
+                                            # => (?P<name>...) = named capture group
+                                            # => \d{4} = exactly 4 digits (year)
+                                            # => \d{2} = exactly 2 digits (month, day)
+text = "Date: 2025-12-30"                   # => Text with date format
 
-match = re.search(pattern, text)
-if match:
-    print(match.group('year'))   # => '2025'
-    print(match.group('month'))  # => '12'
-    print(match.groups())        # => ('2025', '12', '30')
+match = re.search(pattern, text)            # => Search for date pattern
+                                            # => Returns Match object with groups
+if match:                                   # => Check if date found
+    print(match.group('year'))              # => Access by name: '2025'
+                                            # => Named group improves readability
+    print(match.group('month'))             # => Access by name: '12'
+                                            # => Better than numeric indices
+    print(match.groups())                   # => Returns all groups as tuple
+                                            # => Output: ('2025', '12', '30')
+                                            # => Ordered by appearance in pattern
 
 # Substitution with backreferences
-phone_text = "Call 555-1234 or 555-5678"
+phone_text = "Call 555-1234 or 555-5678"   # => Text with phone numbers
 formatted = re.sub(r'(\d{3})-(\d{4})', r'(\1) \2', phone_text)
-# => 'Call (555) 1234 or (555) 5678'
+                                            # => sub(pattern, replacement, text)
+                                            # => (\d{3}) = group 1 (area code)
+                                            # => (\d{4}) = group 2 (number)
+                                            # => \1 = reference to group 1
+                                            # => \2 = reference to group 2
+                                            # => formatted = 'Call (555) 1234 or (555) 5678'
+                                            # => Replaces ALL occurrences
 ```
 
 **Key Takeaway**: Named groups improve readability; backreferences in sub enable pattern-based transformations.
@@ -347,21 +470,36 @@ data = {
     'age': 30,
     'skills': ['Python', 'SQL'],
     'active': True
-}
+}                                           # => Python dict with various types
+                                            # => dict → JSON object
+                                            # => list → JSON array
+                                            # => bool → JSON boolean
 
 json_str = json.dumps(data, indent=2)      # => Convert to JSON string
-# => '{\n  "name": "Alice",\n  "age": 30, ...'
+                                            # => dumps = "dump string"
+                                            # => indent=2 for readable formatting
+                                            # => json_str = '{\n  "name": "Alice",\n  "age": 30, ...'
+                                            # => Returns string
 
 # JSON to Python
 parsed = json.loads(json_str)              # => Parse JSON string
-print(parsed['name'])  # => 'Alice'
+                                            # => loads = "load string"
+                                            # => Returns Python dict
+                                            # => parsed = {'name': 'Alice', 'age': 30, ...}
+print(parsed['name'])                       # => Output: 'Alice'
+                                            # => Access dict key
 
 # File operations
-with open('data.json', 'w') as f:
-    json.dump(data, f, indent=2)           # => Write to file
+with open('data.json', 'w') as f:          # => Open file for writing
+    json.dump(data, f, indent=2)           # => Write JSON directly to file
+                                            # => dump (no 's') for files
+                                            # => Creates formatted JSON file
 
-with open('data.json', 'r') as f:
-    loaded = json.load(f)                  # => Read from file
+with open('data.json', 'r') as f:          # => Open file for reading
+    loaded = json.load(f)                  # => Read JSON from file
+                                            # => load (no 's') for files
+                                            # => Returns Python dict
+                                            # => loaded = {'name': 'Alice', ...}
 ```
 
 **Key Takeaway**: Use dumps/loads for strings, dump/load for files; indent parameter enables readable formatting.
@@ -380,24 +518,40 @@ data = [
     ['Name', 'Age', 'City'],
     ['Alice', '30', 'NYC'],
     ['Bob', '25', 'LA']
-]
+]                                               # => List of lists (rows)
+                                                # => First row is header
 
-with open('people.csv', 'w', newline='') as f:  # => newline='' prevents blank rows
-    writer = csv.writer(f)
-    writer.writerows(data)                      # => Write all rows
+with open('people.csv', 'w', newline='') as f:  # => Open for writing
+                                                # => newline='' prevents blank rows on Windows
+                                                # => Required for csv module
+    writer = csv.writer(f)                      # => Create writer object
+                                                # => Handles escaping automatically
+    writer.writerows(data)                      # => Write all rows at once
+                                                # => Creates: Name,Age,City
+                                                # =>          Alice,30,NYC
+                                                # =>          Bob,25,LA
 
 # Reading CSV
-with open('people.csv', 'r') as f:
-    reader = csv.reader(f)
-    header = next(reader)                       # => ['Name', 'Age', 'City']
-    for row in reader:
-        print(f"{row[0]} is {row[1]}")          # => Alice is 30, Bob is 25
+with open('people.csv', 'r') as f:             # => Open for reading
+    reader = csv.reader(f)                     # => Create reader object
+                                                # => Returns iterator of rows
+    header = next(reader)                       # => Get first row
+                                                # => header = ['Name', 'Age', 'City']
+    for row in reader:                          # => Iterate remaining rows
+                                                # => row = ['Alice', '30', 'NYC']
+        print(f"{row[0]} is {row[1]}")          # => Access by index
+                                                # => Output: Alice is 30
+                                                # => Output: Bob is 25
 
 # DictReader (dict per row)
-with open('people.csv', 'r') as f:
-    reader = csv.DictReader(f)                  # => Uses first row as keys
-    for row in reader:
-        print(row['Name'])                      # => Alice, Bob
+with open('people.csv', 'r') as f:             # => Open for reading
+    reader = csv.DictReader(f)                  # => Creates OrderedDict per row
+                                                # => Uses first row as keys
+                                                # => More readable than indices
+    for row in reader:                          # => row = {'Name': 'Alice', 'Age': '30', 'City': 'NYC'}
+        print(row['Name'])                      # => Access by column name
+                                                # => Output: Alice
+                                                # => Output: Bob
 ```
 
 **Key Takeaway**: Use newline='' for writers; DictReader provides dict access for more readable code.
@@ -526,19 +680,32 @@ from collections import defaultdict
 
 # Group items by first letter
 words = ['apple', 'apricot', 'banana', 'blueberry', 'cherry']
+                                              # => List of words to group
 groups = defaultdict(list)                    # => Default factory: list()
+                                              # => Missing keys auto-create empty list
 
-for word in words:
-    groups[word[0]].append(word)              # => No KeyError for new keys
+for word in words:                            # => Iterate: 'apple', 'apricot', ...
+    groups[word[0]].append(word)              # => word[0] = first letter
+                                              # => groups['a'] auto-creates []
+                                              # => No KeyError for new keys
+                                              # => groups['a'].append('apple')
+                                              # => groups = {'a': ['apple', 'apricot'], ...}
 
-print(dict(groups))  # => {'a': ['apple', 'apricot'], 'b': [...], 'c': [...]}
+print(dict(groups))                           # => Convert to regular dict
+                                              # => Output: {'a': ['apple', 'apricot'],
+                                              # =>          'b': ['banana', 'blueberry'],
+                                              # =>          'c': ['cherry']}
 
 # Count with defaultdict(int)
 counts = defaultdict(int)                     # => Default factory: int() = 0
-for char in "mississippi":
-    counts[char] += 1                         # => No need to check if key exists
+                                              # => Missing keys return 0
+for char in "mississippi":                    # => Iterate each character
+    counts[char] += 1                         # => First access: counts['m'] = 0
+                                              # => Then increment: counts['m'] = 1
+                                              # => No KeyError check needed
+                                              # => counts = {'m': 1, 'i': 4, 's': 4, 'p': 2}
 
-print(dict(counts))  # => {'m': 1, 'i': 4, 's': 4, 'p': 2}
+print(dict(counts))                           # => Output: {'m': 1, 'i': 4, 's': 4, 'p': 2}
 ```
 
 **Key Takeaway**: defaultdict eliminates missing key checks by calling factory function for new keys.
@@ -606,20 +773,30 @@ partial creates new functions with pre-filled arguments.
 from functools import partial
 
 def power(base, exponent):
-    return base ** exponent                   # => Calculate power
+    return base ** exponent                   # => Calculate base^exponent
+                                              # => power(2, 3) = 2^3 = 8
 
 # Create specialized functions
-square = partial(power, exponent=2)           # => Pre-fill exponent
-cube = partial(power, exponent=3)
+square = partial(power, exponent=2)           # => Pre-fill exponent parameter
+                                              # => square = power(base=?, exponent=2)
+                                              # => Creates new function with one parameter
+cube = partial(power, exponent=3)             # => cube = power(base=?, exponent=3)
+                                              # => Another specialized version
 
-print(square(4))  # => 16 (4^2)
-print(cube(4))    # => 64 (4^3)
+print(square(4))                              # => Calls power(4, exponent=2)
+                                              # => Output: 16 (4^2)
+print(cube(4))                                # => Calls power(4, exponent=3)
+                                              # => Output: 64 (4^3)
 
 # Useful for callbacks with extra context
-from operator import mul
-double = partial(mul, 2)                      # => Multiply by 2
-numbers = [1, 2, 3, 4]
-doubled = list(map(double, numbers))          # => [2, 4, 6, 8]
+from operator import mul                      # => mul(a, b) = a * b
+double = partial(mul, 2)                      # => Pre-fill first argument
+                                              # => double(x) = mul(2, x) = 2 * x
+numbers = [1, 2, 3, 4]                        # => List to process
+doubled = list(map(double, numbers))          # => Apply double to each
+                                              # => map(double, [1, 2, 3, 4])
+                                              # => [double(1), double(2), double(3), double(4)]
+                                              # => [2, 4, 6, 8]
 ```
 
 **Key Takeaway**: partial binds arguments to functions, creating specialized versions without wrapper functions.
@@ -654,23 +831,39 @@ graph TD
 from functools import lru_cache
 
 @lru_cache(maxsize=128)                       # => Cache up to 128 results
+                                              # => LRU = Least Recently Used
+                                              # => Evicts oldest when full
 def fibonacci(n):
     """Compute nth Fibonacci number"""
-    if n < 2:
-        return n
-    return fibonacci(n-1) + fibonacci(n-2)    # => Recursive calls cached
+    if n < 2:                                 # => Base cases
+        return n                              # => fib(0)=0, fib(1)=1
+    return fibonacci(n-1) + fibonacci(n-2)    # => Recursive calls
+                                              # => WITHOUT cache: exponential time
+                                              # => WITH cache: linear time
+                                              # => Each n computed once
 
 # First call computes and caches
-print(fibonacci(10))  # => 55 (computes full tree)
+print(fibonacci(10))                          # => Output: 55
+                                              # => Computes fib(0) to fib(10)
+                                              # => Stores all intermediate results
+                                              # => fibonacci(9) + fibonacci(8)
 
 # Subsequent calls use cache
-print(fibonacci(10))  # => 55 (instant, from cache)
+print(fibonacci(10))                          # => Output: 55
+                                              # => Instant retrieval from cache
+                                              # => No recomputation
+                                              # => Cache hit
 
 # Cache statistics
-print(fibonacci.cache_info())  # => hits, misses, maxsize, currsize
+print(fibonacci.cache_info())                 # => Output: CacheInfo(hits=..., misses=..., maxsize=128, currsize=...)
+                                              # => hits: successful cache lookups
+                                              # => misses: cache misses (computed)
+                                              # => currsize: entries in cache
 
 # Clear cache if needed
 fibonacci.cache_clear()                       # => Remove all cached results
+                                              # => Resets hits/misses to 0
+                                              # => Next call will recompute
 ```
 
 **Key Takeaway**: lru_cache dramatically speeds up recursive functions by caching results keyed by arguments.
@@ -767,27 +960,44 @@ from typing import List, Dict, Optional, Union
 
 def greet(name: str) -> str:
     """Function with type hints"""
+    # => name: str = parameter type hint
+    # => -> str = return type hint
     return f"Hello, {name}!"                  # => Return type: str
+                                              # => Matches declared return type
 
 def process_items(items: List[int]) -> int:
     """Process list of integers"""
-    return sum(items)                         # => items must be List[int]
+    # => items: List[int] = list containing ints
+    # => Generic type with type parameter
+    return sum(items)                         # => Returns int (sum of list)
+                                              # => Matches declared -> int
 
 # Optional (can be None)
 def find_user(user_id: int) -> Optional[Dict[str, str]]:
     """Returns user dict or None"""
-    if user_id == 1:
-        return {'name': 'Alice', 'role': 'admin'}
-    return None                               # => Valid (Optional allows None)
+    # => Optional[X] = Union[X, None]
+    # => Can return Dict[str, str] OR None
+    # => Dict[str, str] = dict with str keys and str values
+    if user_id == 1:                          # => Check condition
+        return {'name': 'Alice', 'role': 'admin'}  # => Return dict (valid)
+    return None                               # => Return None (also valid)
+                                              # => Optional allows both
 
 # Union (multiple types)
 def format_value(val: Union[int, str]) -> str:
     """Accept int or str"""
-    return str(val)                           # => val can be int or str
+    # => Union[int, str] = can be int OR str
+    # => Type checker accepts both types
+    return str(val)                           # => Convert to string
+                                              # => Works for both int and str
 
 # Usage (types are hints, not enforced at runtime)
-result = greet("Bob")                         # => Works fine
-# result = greet(123)                         # => Works but mypy warns
+result = greet("Bob")                         # => Correct type: str
+                                              # => Output: "Hello, Bob!"
+                                              # => Type checker happy
+# result = greet(123)                         # => Wrong type: int
+                                              # => Still works at runtime (dynamic)
+                                              # => But mypy/pyright warns: Expected str, got int
 ```
 
 **Key Takeaway**: Type hints document expected types for tools like mypy without affecting runtime behavior.
@@ -801,29 +1011,47 @@ Dataclasses reduce boilerplate for classes primarily used for storing data.
 ```python
 from dataclasses import dataclass, field
 
-@dataclass
+@dataclass                                    # => Decorator auto-generates methods
 class Product:
     """Product with automatic __init__, __repr__, __eq__"""
-    name: str
-    price: float
-    quantity: int = 0                         # => Default value
+    name: str                                 # => Required field (no default)
+                                              # => Type annotation required
+    price: float                              # => Required field
+    quantity: int = 0                         # => Optional with default
+                                              # => Default values allowed
     tags: list = field(default_factory=list)  # => Mutable default (safe)
+                                              # => field() prevents shared list bug
+                                              # => default_factory calls list() per instance
 
     def total_value(self) -> float:
-        return self.price * self.quantity     # => Custom method
+        return self.price * self.quantity     # => Custom method still works
+                                              # => self.price = 999.99
+                                              # => self.quantity = 5
+                                              # => Returns 4999.95
 
 # Automatic __init__
-p1 = Product("Laptop", 999.99, 5)            # => No need to write __init__
+p1 = Product("Laptop", 999.99, 5)            # => No __init__ method written
+                                              # => @dataclass creates it
+                                              # => p1.name = "Laptop"
+                                              # => p1.price = 999.99
+                                              # => p1.quantity = 5
 
 # Automatic __repr__
-print(p1)  # => Product(name='Laptop', price=999.99, quantity=5, tags=[])
+print(p1)                                     # => Output: Product(name='Laptop', price=999.99, quantity=5, tags=[])
+                                              # => Readable representation
+                                              # => Shows all field values
 
 # Automatic __eq__
-p2 = Product("Laptop", 999.99, 5)
-print(p1 == p2)  # => True (compares all fields)
+p2 = Product("Laptop", 999.99, 5)            # => Create second product
+print(p1 == p2)                               # => Output: True
+                                              # => Compares all fields
+                                              # => name=='Laptop', price==999.99, etc.
 
 # field() for complex defaults
 p3 = Product("Mouse", 29.99, tags=["wireless", "ergonomic"])
+                                              # => p3.tags = ["wireless", "ergonomic"]
+                                              # => Each instance gets its own list
+                                              # => No shared mutable default bug
 ```
 
 **Key Takeaway**: @dataclass auto-generates **init**, **repr**, **eq** reducing boilerplate for data-focused classes.
@@ -903,28 +1131,42 @@ from abc import ABC, abstractmethod
 
 class PaymentProcessor(ABC):
     """Abstract payment processor interface"""
+    # => ABC = Abstract Base Class
+    # => Cannot be instantiated directly
+    # => Enforces interface contract
 
-    @abstractmethod
+    @abstractmethod                         # => Decorator marks method as abstract
     def process_payment(self, amount: float) -> bool:
         """All subclasses must implement this method"""
-        pass
+        pass                                # => No implementation in base class
+                                             # => Subclasses MUST override this
 
     @abstractmethod
     def refund(self, transaction_id: str) -> bool:
         """All subclasses must implement this method"""
-        pass
+        pass                                # => Abstract methods use pass
 
 class StripeProcessor(PaymentProcessor):
+    """Concrete implementation of payment processor"""
+    # => Must implement ALL abstract methods
+    # => Otherwise TypeError on instantiation
+
     def process_payment(self, amount: float) -> bool:
-        print(f"Processing ${amount} via Stripe")
-        return True                           # => Implementation required
+        """Concrete implementation for Stripe"""
+        print(f"Processing ${amount} via Stripe")  # => Output: Processing $100.00 via Stripe
+        return True                           # => Return success status
 
     def refund(self, transaction_id: str) -> bool:
-        print(f"Refunding transaction {transaction_id}")
-        return True                           # => Implementation required
+        """Concrete implementation for refunds"""
+        print(f"Refunding transaction {transaction_id}")  # => Output: Refunding transaction TXN123
+        return True                           # => Return success status
 
-# processor = PaymentProcessor()  # => TypeError: Can't instantiate abstract class
-processor = StripeProcessor()     # => OK, implements all abstract methods
+# processor = PaymentProcessor()            # => TypeError: Can't instantiate abstract class
+                                             # => Abstract classes cannot be instantiated
+processor = StripeProcessor()                # => OK, implements all abstract methods
+                                             # => Creates concrete instance
+processor.process_payment(100.00)            # => Output: Processing $100.00 via Stripe
+                                             # => Returns True
 ```
 
 **Key Takeaway**: ABCs enforce interface contracts at instantiation time preventing incomplete implementations.
@@ -938,25 +1180,35 @@ pytest provides powerful testing with minimal boilerplate.
 ```python
 # test_calculator.py
 def add(a, b):
-    return a + b
+    """Function to test"""
+    return a + b                              # => Returns sum of a and b
 
 def test_add_positive_numbers():
     """Test addition of positive numbers"""
-    assert add(2, 3) == 5                     # => Simple assertion
+    assert add(2, 3) == 5                     # => Verify 2 + 3 equals 5
+                                               # => If false, pytest shows: AssertionError
+                                               # => ✓ PASS (assertion true)
 
 def test_add_negative_numbers():
     """Test addition of negative numbers"""
-    assert add(-1, -1) == -2
+    assert add(-1, -1) == -2                  # => Verify -1 + -1 equals -2
+                                               # => ✓ PASS
 
 def test_add_zero():
     """Test addition with zero"""
-    assert add(5, 0) == 5
-    assert add(0, 5) == 5
+    assert add(5, 0) == 5                     # => Verify 5 + 0 equals 5
+                                               # => ✓ PASS
+    assert add(0, 5) == 5                     # => Verify 0 + 5 equals 5
+                                               # => ✓ PASS
 
 # Run with: pytest test_calculator.py
-# pytest discovers tests (test_*.py, *_test.py)
-# Collects functions starting with test_
-# Reports pass/fail with helpful assertion messages
+# => pytest discovers test files (test_*.py, *_test.py)
+# => Collects functions starting with test_
+# => Executes each test function
+# => Reports: test_add_positive_numbers PASSED
+# =>         test_add_negative_numbers PASSED
+# =>         test_add_zero PASSED
+# => Summary: 3 passed in 0.01s
 ```
 
 **Key Takeaway**: pytest uses simple assert statements with automatic discovery of test files and functions.
@@ -970,27 +1222,42 @@ Fixtures provide reusable test data and setup/teardown logic.
 ```python
 import pytest
 
-@pytest.fixture
+@pytest.fixture                               # => Decorator marks function as fixture
 def sample_data():
     """Fixture providing sample data"""
-    data = [1, 2, 3, 4, 5]
-    print("Setup: creating data")             # => Run before test
-    yield data                                # => Provide to test
-    print("Teardown: cleaning up")            # => Run after test
+    data = [1, 2, 3, 4, 5]                    # => Create test data
+    print("Setup: creating data")             # => Run BEFORE test executes
+                                               # => Output during test run
+    yield data                                # => Provide data to test function
+                                               # => Test receives data as parameter
+    print("Teardown: cleaning up")            # => Run AFTER test completes
+                                               # => Cleanup code here
 
 def test_sum_with_fixture(sample_data):
     """Test using fixture (injected as parameter)"""
-    assert sum(sample_data) == 15             # => Use fixture data
+    # => pytest sees 'sample_data' parameter
+    # => Calls sample_data() fixture
+    # => Injects returned value
+    # => sample_data = [1, 2, 3, 4, 5]
+    assert sum(sample_data) == 15             # => Verify sum is 15
+                                               # => ✓ PASS (15 == 15)
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="module")               # => Module-scoped fixture
+                                               # => Created once per test module
+                                               # => Shared across all tests in module
 def database_connection():
     """Module-scoped fixture (created once per module)"""
-    conn = "DB_CONNECTION"                    # => Setup once
-    yield conn
-    # Close connection (teardown)             # => Cleanup once
+    conn = "DB_CONNECTION"                    # => Setup once (expensive operation)
+                                               # => Shared by all tests
+    yield conn                                # => Provide to tests
+    # Cleanup code here                       # => Runs once at module end
+    # conn.close()                            # => Close connection
 
 def test_query(database_connection):
-    assert database_connection == "DB_CONNECTION"
+    """Test using shared connection"""
+    # => database_connection = "DB_CONNECTION"
+    # => Same instance used by all module tests
+    assert database_connection == "DB_CONNECTION"  # => ✓ PASS
 ```
 
 **Key Takeaway**: Fixtures enable DRY tests with dependency injection and automatic setup/teardown.
@@ -1005,31 +1272,43 @@ Parametrize runs same test with different inputs avoiding repetitive test functi
 import pytest
 
 def is_palindrome(s):
-    return s == s[::-1]
+    """Check if string is palindrome"""
+    return s == s[::-1]                       # => Compare string with reversed version
 
-@pytest.mark.parametrize("text,expected", [
-    ("racecar", True),                        # => Test case 1
-    ("hello", False),                         # => Test case 2
-    ("level", True),                          # => Test case 3
-    ("python", False),                        # => Test case 4
-])
+@pytest.mark.parametrize("text,expected", [  # => Decorator with parameter combinations
+    ("racecar", True),                        # => Test case 1: palindrome
+    ("hello", False),                         # => Test case 2: not palindrome
+    ("level", True),                          # => Test case 3: palindrome
+    ("python", False),                        # => Test case 4: not palindrome
+])                                            # => Creates 4 test instances
 def test_palindrome(text, expected):
     """Single test function, multiple executions"""
-    assert is_palindrome(text) == expected    # => Run for each parameter set
+    # => pytest injects (text, expected) for each tuple
+    # => Execution 1: text="racecar", expected=True
+    # => Execution 2: text="hello", expected=False
+    # => Execution 3: text="level", expected=True
+    # => Execution 4: text="python", expected=False
+    assert is_palindrome(text) == expected    # => Verify against expected result
+                                               # => ✓ All 4 test cases PASS
 
 # pytest generates 4 separate test runs:
-# test_palindrome[racecar-True]
-# test_palindrome[hello-False]
-# test_palindrome[level-True]
-# test_palindrome[python-False]
+# => test_palindrome[racecar-True] PASSED
+# => test_palindrome[hello-False] PASSED
+# => test_palindrome[level-True] PASSED
+# => test_palindrome[python-False] PASSED
 
-@pytest.mark.parametrize("a,b,expected", [
-    (2, 3, 5),
-    (0, 0, 0),
-    (-1, 1, 0),
-])
+@pytest.mark.parametrize("a,b,expected", [   # => Another parametrized test
+    (2, 3, 5),                                # => 2 + 3 should equal 5
+    (0, 0, 0),                                # => 0 + 0 should equal 0
+    (-1, 1, 0),                               # => -1 + 1 should equal 0
+])                                            # => Creates 3 test instances
 def test_add(a, b, expected):
-    assert a + b == expected
+    """Test addition with multiple cases"""
+    # => Execution 1: a=2, b=3, expected=5
+    # => Execution 2: a=0, b=0, expected=0
+    # => Execution 3: a=-1, b=1, expected=0
+    assert a + b == expected                  # => Verify each case
+                                               # => ✓ All 3 cases PASS
 ```
 
 **Key Takeaway**: @pytest.mark.parametrize eliminates duplicate test code by running same logic with different inputs.
