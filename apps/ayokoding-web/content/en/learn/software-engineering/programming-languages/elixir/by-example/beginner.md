@@ -5,7 +5,6 @@ draft: false
 weight: 10000001
 description: "Learn Elixir basics through 30 annotated examples: variables, pattern matching, data structures, functions, control flow, ranges, and operators"
 tags: ["elixir", "tutorial", "by-example", "beginner", "basics", "pattern-matching"]
-categories: ["learn"]
 ---
 
 Learn Elixir fundamentals through 30 annotated code examples. Each example is self-contained, runnable in IEx, and heavily commented to show what each line does, expected outputs, and intermediate values.
@@ -32,15 +31,19 @@ graph TD
 **Code**:
 
 ```elixir
-defmodule Hello do
-  # Define a public function using `def`
-  def world do
-    # IO.puts writes to standard output and returns :ok
-    IO.puts("Hello, World!") # => :ok (printed output: "Hello, World!")
-  end
-end
+defmodule Hello do            # => Defines module named Hello
+                               # => Modules group related functions
+  def world do                 # => Defines public function world/0 (0 arity = no params)
+                               # => Public functions callable outside module
+    IO.puts("Hello, World!")   # => Calls IO.puts with string argument
+                               # => Prints "Hello, World!" to stdout
+                               # => Returns :ok atom (success indicator)
+  end                          # => Ends function definition
+end                            # => Ends module definition
 
-Hello.world() # => :ok
+Hello.world()                  # => Calls world function on Hello module
+                               # => Output: Hello, World!
+                               # => Returns :ok
 
 
 ```
@@ -58,27 +61,38 @@ Elixir variables don't hold values—they **bind** to values. The `=` operator i
 **Code**:
 
 ```elixir
-x = 1 # => 1
-x # => 1
+x = 1                          # => Match operator binds x to value 1
+                               # => x is now 1 (type: integer)
+x                              # => Returns current binding: 1
 
-x = 2 # => 2
-x # => 2
+x = 2                          # => Rebinds x to new value 2 (old binding discarded)
+                               # => x is now 2 (variable rebound, not mutated)
+x                              # => Returns current binding: 2
 
-y = 1 # => 1
-x = 2 # => 2
+y = 1                          # => Binds y to value 1
+                               # => y is 1 (type: integer)
+x = 2                          # => Rebinds x again to 2
+                               # => x is 2, y is still 1 (independent bindings)
 
-user_name = "Alice" # => "Alice"
-user_age = 30 # => 30
+user_name = "Alice"            # => Binds user_name to string "Alice"
+                               # => user_name is "Alice" (type: binary/string)
+user_age = 30                  # => Binds user_age to integer 30
+                               # => user_age is 30 (type: integer)
 
-a = b = c = 5 # => 5
-a # => 5
-b # => 5
-c # => 5
+a = b = c = 5                  # => Right-to-left evaluation: c=5, b=c, a=b
+                               # => All three variables bound to value 5
+a                              # => Returns 5
+b                              # => Returns 5
+c                              # => Returns 5
 
-list = [1, 2, 3] # => [1, 2, 3]
-new_list = [0 | list] # => [0, 1, 2, 3]
-list # => [1, 2, 3] (unchanged!)
-new_list # => [0, 1, 2, 3]
+list = [1, 2, 3]               # => Binds list to new list structure [1, 2, 3]
+                               # => list is [1, 2, 3] (linked list in memory)
+new_list = [0 | list]          # => Prepends 0 to list using cons operator |
+                               # => Creates NEW list structure [0, 1, 2, 3]
+                               # => Structural sharing: [1,2,3] portion reused
+list                           # => Original list unchanged: [1, 2, 3]
+                               # => Immutability: original data never modified
+new_list                       # => New list with prepended element: [0, 1, 2, 3]
 ```
 
 **Key Takeaway**: Variables bind to values (they don't contain values), and data is immutable. You create new data structures instead of modifying existing ones, which enables safe concurrency.
@@ -94,60 +108,94 @@ Elixir has several basic types: integers, floats, booleans, atoms, and strings. 
 **Code**:
 
 ```elixir
-integer = 42 # => 42
-large_integer = 1_000_000_000_000 # => 1000000000000 (underscores for readability)
-hex = 0x1F # => 31 (hexadecimal)
-binary = 0b1010 # => 10 (binary)
+integer = 42                   # => Binds integer to value 42
+                               # => integer is 42 (type: integer, arbitrary precision)
+large_integer = 1_000_000_000_000  # => Underscores for readability (ignored by compiler)
+                                    # => large_integer is 1000000000000 (1 trillion)
+hex = 0x1F                     # => Hexadecimal literal (0x prefix)
+                               # => hex is 31 (decimal equivalent)
+binary = 0b1010                # => Binary literal (0b prefix)
+                               # => binary is 10 (decimal equivalent)
 
-float = 3.14 # => 3.14
-scientific = 1.0e-10 # => 1.0e-10
+float = 3.14                   # => Floating point number
+                               # => float is 3.14 (type: float, 64-bit)
+scientific = 1.0e-10           # => Scientific notation (1.0 × 10^-10)
+                               # => scientific is 1.0e-10 (very small number)
 
-bool_true = true # => true
-bool_false = false # => false
+bool_true = true               # => Boolean literal true
+                               # => bool_true is true (type: atom, actually :true)
+bool_false = false             # => Boolean literal false
+                               # => bool_false is false (type: atom, actually :false)
 
-atom = :hello # => :hello
-atom_with_spaces = :"hello world" # => :"hello world"
+atom = :hello                  # => Atom literal (constant, name is value)
+                               # => atom is :hello (type: atom, stored globally)
+atom_with_spaces = :"hello world"  # => Quoted atom syntax for spaces/special chars
+                                    # => atom_with_spaces is :"hello world"
 
-string = "Hello, 世界!" # => "Hello, 世界!"
-multiline = """
-This is a
-multiline string
-""" # => "This is a\nmultiline string\n"
+string = "Hello, 世界!"        # => UTF-8 string (supports Unicode)
+                               # => string is "Hello, 世界!" (type: binary)
+multiline = """                # => Triple-quote syntax for multiline strings
+This is a                      # => Line 1 of multiline content
+multiline string               # => Line 2 of multiline content
+"""                            # => Closing triple-quote
+                               # => multiline is "This is a\nmultiline string\n" (with newlines)
 
-name = "Alice" # => "Alice"
-greeting = "Hello, #{name}!" # => "Hello, Alice!"
+name = "Alice"                 # => Binds name to string "Alice"
+greeting = "Hello, #{name}!"   # => String interpolation with #{...} syntax
+                               # => Evaluates name and inserts value
+                               # => greeting is "Hello, Alice!"
 
-is_integer(42) # => true
-is_float(3.14) # => true
-is_boolean(true) # => true
-is_atom(:hello) # => true
-is_binary("hello") # => true (strings are binaries)
+is_integer(42)                 # => Type check function for integers
+                               # => Returns true (42 is an integer)
+is_float(3.14)                 # => Type check function for floats
+                               # => Returns true (3.14 is a float)
+is_boolean(true)               # => Type check function for booleans
+                               # => Returns true (true is a boolean atom)
+is_atom(:hello)                # => Type check function for atoms
+                               # => Returns true (:hello is an atom)
+is_binary("hello")             # => Type check function for binaries (strings)
+                               # => Returns true (strings are UTF-8 binaries)
 
-i 42 # In IEx, shows: Term: 42, Data type: Integer
+i 42                           # => IEx helper: inspects term structure
+                               # => Output: Term: 42, Data type: Integer
 
-x = 42 # => 42 (x holds an integer)
-x = "hello" # => "hello" (x now holds a string, no error!)
-x = :atom # => :atom (x now holds an atom)
+x = 42                         # => Binds x to integer 42
+                               # => x is 42 (type: integer)
+x = "hello"                    # => Rebinds x to string "hello" (no type error!)
+                               # => x is "hello" (type: binary, dynamic typing allows this)
+x = :atom                      # => Rebinds x to atom :atom
+                               # => x is :atom (type: atom, variables not typed)
 
-
-defmodule TypeChecker do
-  def process_number(value) when is_number(value) do
-    value * 2
+defmodule TypeChecker do       # => Defines module for type checking demonstrations
+  def process_number(value) when is_number(value) do  # => Guard: when is_number(value)
+                                                        # => Only accepts numbers (int or float)
+    value * 2                  # => Doubles the input value
+                               # => Returns result (no explicit return keyword)
   end
 
-  # Guards provide runtime type checking in function clauses
-  def format_value(val) when is_binary(val) do
-    "String: #{val}"
+  def format_value(val) when is_binary(val) do  # => Guard: when is_binary(val)
+                                                  # => First clause: matches strings
+    "String: #{val}"           # => Formats as "String: <value>"
+                               # => Returns formatted string
   end
 
-  def format_value(val) when is_integer(val) do
-    "Number: #{val}"
+  def format_value(val) when is_integer(val) do  # => Guard: when is_integer(val)
+                                                   # => Second clause: matches integers
+    "Number: #{val}"           # => Formats as "Number: <value>"
+                               # => Returns formatted string
   end
-end
+end                            # => Ends module definition
 
-TypeChecker.process_number(21) # => 42 (works - is_number(21) is true)
-TypeChecker.format_value("hello") # => "String: hello"
-TypeChecker.format_value(42) # => "Number: 42"
+TypeChecker.process_number(21)  # => Calls process_number with 21
+                                 # => Guard is_number(21) is true, clause matches
+                                 # => 21 * 2 = 42
+                                 # => Returns 42
+TypeChecker.format_value("hello")  # => Calls format_value with string "hello"
+                                    # => Guard is_binary("hello") is true, first clause matches
+                                    # => Returns "String: hello"
+TypeChecker.format_value(42)   # => Calls format_value with integer 42
+                               # => Guard is_integer(42) is true, second clause matches
+                               # => Returns "Number: 42"
 ```
 
 **Dynamic Typing Explained**: Elixir checks types at runtime, not compile time. This gives flexibility—the same variable can hold any type. However, functions expect specific types, so runtime errors occur if you pass the wrong type. Use **guards** (the `when` keyword in function clauses) to enforce type safety and pattern match on multiple type signatures. For complex scenarios, optional type specs with `@spec` (covered in advanced sections) document expected types.
@@ -182,29 +230,41 @@ graph TD
 **Code**:
 
 ```elixir
-x = 1 # => 1
+x = 1                          # => Binds x to value 1
+                               # => x is 1 (type: integer)
 
-1 = x # => 1 (works! 1 equals 1)
+1 = x                          # => Pattern 1 matches value of x (which is 1)
+                               # => Match succeeds, returns 1
+                               # => No new bindings (1 is literal, not variable)
 
+{a, b, c} = {1, 2, 3}          # => Tuple pattern {a,b,c} matches tuple {1,2,3}
+                               # => Destructures: a=1, b=2, c=3
+                               # => Returns matched value {1, 2, 3}
+a                              # => Returns 1 (first element)
+b                              # => Returns 2 (second element)
+c                              # => Returns 3 (third element)
 
-{a, b, c} = {1, 2, 3} # => {1, 2, 3}
-a # => 1
-b # => 2
-c # => 3
+[first, second, third] = [1, 2, 3]  # => List pattern matches list structure
+                                     # => Destructures: first=1, second=2, third=3
+                                     # => Returns matched value [1, 2, 3]
+first                          # => Returns 1 (first element)
+second                         # => Returns 2 (second element)
+third                          # => Returns 3 (third element)
 
-[first, second, third] = [1, 2, 3] # => [1, 2, 3]
-first # => 1
-second # => 2
-third # => 3
+{:ok, result} = {:ok, 42}      # => Tagged tuple pattern matches
+                               # => :ok atom matches, result binds to 42
+                               # => Returns {:ok, 42}
+result                         # => Returns extracted value: 42
 
-{:ok, result} = {:ok, 42} # => {:ok, 42}
-result # => 42
+{:ok, _} = {:ok, 42}           # => Underscore _ ignores second element
+                               # => :ok atom must match, 42 is discarded
+                               # => Returns {:ok, 42}
+                               # => No binding for ignored value
 
-
-{:ok, _} = {:ok, 42} # => {:ok, 42} (42 is ignored)
-
-{_, _, third} = {1, 2, 3} # => {1, 2, 3}
-third # => 3
+{_, _, third} = {1, 2, 3}      # => First two elements ignored with _
+                               # => Only third element bound to variable
+                               # => Returns {1, 2, 3}
+third                          # => Returns 3 (third element extracted)
 ```
 
 **Key Takeaway**: Pattern matching is Elixir's core feature. The `=` operator matches structures and binds variables, enabling powerful data extraction and validation in one operation.
@@ -220,35 +280,61 @@ By default, variables in patterns rebind to new values. The **pin operator** `^`
 **Code**:
 
 ```elixir
-x = 1 # => 1
-x = 2 # => 2 (x is now 2)
-x # => 2
+x = 1                          # => Binds x to value 1
+                               # => x is 1 (initial binding)
+x = 2                          # => Rebinds x to value 2 (default behavior)
+                               # => x is now 2 (previous value discarded)
+x                              # => Returns current binding: 2
 
-x = 1 # => 1
-^x = 1 # => 1 (works! 1 matches 1)
+x = 1                          # => Resets x to value 1
+                               # => x is 1 (fresh binding)
+^x = 1                         # => Pin operator ^ prevents rebinding
+                               # => Matches x's current value (1) against right side (1)
+                               # => Match succeeds: 1 == 1
+                               # => Returns 1 (no rebinding, just validation)
 
-status = :ok # => :ok
+status = :ok                   # => Binds status to atom :ok
+                               # => status is :ok
 
-{^status, result} = {:ok, 42} # => {:ok, 42} (works!)
-result # => 42
+{^status, result} = {:ok, 42}  # => Pattern with pinned status
+                               # => ^status matches :ok (first element must be :ok)
+                               # => result binds to 42 (second element)
+                               # => Match succeeds because {:ok, ...} structure matches
+                               # => Returns {:ok, 42}
+result                         # => Returns 42 (extracted from tuple)
 
+expected_status = :ok          # => Binds expected_status to :ok at module scope
+                               # => expected_status is :ok
 
-expected_status = :ok # => :ok
-
-defmodule Matcher do
-  def match_value(^expected_status, result) do
-    # ^ pins expected_status from outer scope - only matches if first arg is :ok
-    result
+defmodule Matcher do           # => Defines module Matcher
+  def match_value(^expected_status, result) do  # => Function with pinned parameter
+                                                 # => ^expected_status pins to outer scope value (:ok)
+                                                 # => First arg MUST be :ok for clause to match
+                                                 # => result is second parameter (any value)
+    result                     # => Returns result unchanged
+                               # => Body executes only if first arg is :ok
   end
-end
+end                            # => Ends module definition
 
-Matcher.match_value(:ok, 42) # => 42 (works - first arg matches pinned :ok)
+Matcher.match_value(:ok, 42)   # => Calls match_value with :ok and 42
+                               # => First arg :ok matches pinned ^expected_status (:ok)
+                               # => result binds to 42
+                               # => Returns 42
 
-list = [1, 2, 3] # => [1, 2, 3]
-[first | _] = list # => [1, 2, 3]
-first # => 1
+list = [1, 2, 3]               # => Creates list for demonstration
+                               # => list is [1, 2, 3]
+[first | _] = list             # => Destructures list without pinning
+                               # => first binds to 1 (head element)
+                               # => _ ignores tail [2, 3]
+                               # => Returns [1, 2, 3]
+first                          # => Returns 1 (head value)
 
-[^first | _] = list # => [1, 2, 3] (works - first element matches pinned value)
+[^first | _] = list            # => Destructures with pinned first
+                               # => ^first matches against current value (1)
+                               # => Head of list must be 1 for match to succeed
+                               # => Match succeeds: [1, 2, 3] head is 1
+                               # => Returns [1, 2, 3]
+                               # => first not rebound (pin prevents rebinding)
 ```
 
 **Key Takeaway**: Use `^` when you want to match against a variable's current value instead of rebinding it. Essential for validating expected values in pattern matching.
@@ -264,41 +350,73 @@ Pattern matching shines when destructuring complex nested data structures. You c
 **Code**:
 
 ```elixir
-[head | tail] = [1, 2, 3, 4, 5] # => [1, 2, 3, 4, 5]
-head # => 1
-tail # => [2, 3, 4, 5]
+[head | tail] = [1, 2, 3, 4, 5]        # => Head|tail pattern splits list
+                                        # => head binds to 1 (first element)
+                                        # => tail binds to [2, 3, 4, 5] (rest)
+                                        # => Returns [1, 2, 3, 4, 5]
+head                                   # => Returns 1 (first element)
+tail                                   # => Returns [2, 3, 4, 5] (remaining list)
 
-[first, second | rest] = [1, 2, 3, 4, 5] # => [1, 2, 3, 4, 5]
-first # => 1
-second # => 2
-rest # => [3, 4, 5]
+[first, second | rest] = [1, 2, 3, 4, 5]  # => Extracts first two explicitly
+                                           # => first binds to 1
+                                           # => second binds to 2
+                                           # => rest binds to [3, 4, 5]
+                                           # => Returns [1, 2, 3, 4, 5]
+first                                  # => Returns 1
+second                                 # => Returns 2
+rest                                   # => Returns [3, 4, 5] (remaining elements)
 
-[head | tail] = [1] # => [1]
-head # => 1
-tail # => [] (empty list)
+[head | tail] = [1]                    # => Matches single-element list
+                                        # => head binds to 1
+                                        # => tail binds to [] (empty list, no more elements)
+                                        # => Returns [1]
+head                                   # => Returns 1
+tail                                   # => Returns [] (empty list)
 
-user = {"Alice", 30, {:address, "123 Main St", "NYC"}} # => {...}
-{name, age, {:address, street, city}} = user # => {...}
-name # => "Alice"
-age # => 30
-street # => "123 Main St"
-city # => "NYC"
+user = {"Alice", 30, {:address, "123 Main St", "NYC"}}  # => Creates nested tuple
+                                                         # => user is 3-element tuple with nested address tuple
+{name, age, {:address, street, city}} = user  # => Destructures nested structure in one operation
+                                               # => name binds to "Alice"
+                                               # => age binds to 30
+                                               # => Nested {:address, street, city} matches {:address, "123 Main St", "NYC"}
+                                               # => street binds to "123 Main St"
+                                               # => city binds to "NYC"
+                                               # => Returns original tuple
+name                                   # => Returns "Alice"
+age                                    # => Returns 30
+street                                 # => Returns "123 Main St"
+city                                   # => Returns "NYC"
 
-user_map = %{name: "Bob", age: 25, city: "SF"} # => %{...}
-%{name: user_name, city: user_city} = user_map # => %{...}
-user_name # => "Bob"
-user_city # => "SF"
+user_map = %{name: "Bob", age: 25, city: "SF"}  # => Creates map with atom keys
+                                                 # => user_map is %{age: 25, city: "SF", name: "Bob"}
+%{name: user_name, city: user_city} = user_map  # => Map pattern extracts specific keys
+                                                 # => user_name binds to value at :name ("Bob")
+                                                 # => user_city binds to value at :city ("SF")
+                                                 # => :age key ignored (not in pattern)
+                                                 # => Returns original map
+user_name                              # => Returns "Bob"
+user_city                              # => Returns "SF"
 
-nested = [[1, 2], [3, 4], [5, 6]] # => [[1, 2], [3, 4], [5, 6]]
-[[a, b], [c, d], [e, f]] = nested # => [[1, 2], [3, 4], [5, 6]]
-a # => 1
-c # => 3
-e # => 5
+nested = [[1, 2], [3, 4], [5, 6]]      # => Creates list of three 2-element lists
+                                        # => nested is [[1,2], [3,4], [5,6]]
+[[a, b], [c, d], [e, f]] = nested      # => Nested list pattern matches structure
+                                        # => First sublist [1,2]: a=1, b=2
+                                        # => Second sublist [3,4]: c=3, d=4
+                                        # => Third sublist [5,6]: e=5, f=6
+                                        # => Returns [[1, 2], [3, 4], [5, 6]]
+a                                      # => Returns 1 (first element of first sublist)
+c                                      # => Returns 3 (first element of second sublist)
+e                                      # => Returns 5 (first element of third sublist)
 
-response = {:ok, %{status: 200, body: "Success"}} # => {...}
-{:ok, %{status: status_code, body: body}} = response # => {...}
-status_code # => 200
-body # => "Success"
+response = {:ok, %{status: 200, body: "Success"}}  # => Creates tagged tuple with map
+                                                    # => Common HTTP response pattern
+{:ok, %{status: status_code, body: body}} = response  # => Matches :ok tag AND map structure
+                                                       # => :ok atom must match
+                                                       # => status_code binds to 200
+                                                       # => body binds to "Success"
+                                                       # => Returns original tuple
+status_code                            # => Returns 200
+body                                   # => Returns "Success"
 ```
 
 **Key Takeaway**: Pattern matching destructures nested data elegantly. Extract exactly what you need from complex structures in one operation, making code concise and readable.
@@ -331,34 +449,63 @@ graph TD
 **Code**:
 
 ```elixir
-list = [1, 2, 3] # => [1, 2, 3]
+list = [1, 2, 3]                       # => Creates linked list [1, 2, 3]
+                                        # => list is [1, 2, 3] (singly-linked structure)
 
-new_list = [0 | list] # => [0, 1, 2, 3]
-list # => [1, 2, 3] (unchanged, immutability!)
+new_list = [0 | list]                  # => Prepends 0 using cons operator |
+                                        # => O(1) operation, new head pointer to list
+                                        # => new_list is [0, 1, 2, 3]
+list                                   # => Original list unchanged: [1, 2, 3]
+                                        # => Immutability guarantees original intact
 
-[1, 2] ++ [3, 4] # => [1, 2, 3, 4]
+[1, 2] ++ [3, 4]                       # => Concatenates two lists
+                                        # => O(n) operation, copies first list
+                                        # => Returns [1, 2, 3, 4]
 
-[1, 2, 3, 2, 1] -- [2] # => [1, 3, 2, 1] (removes first 2)
-[1, 2, 3] -- [3, 2] # => [1]
+[1, 2, 3, 2, 1] -- [2]                 # => Subtraction removes first occurrence of 2
+                                        # => Returns [1, 3, 2, 1] (only first 2 removed)
+[1, 2, 3] -- [3, 2]                    # => Removes first occurrence of 3, then first 2
+                                        # => Returns [1] (both 2 and 3 removed)
 
-Enum.at([1, 2, 3], 0) # => 1
-Enum.at([1, 2, 3], 2) # => 3
+Enum.at([1, 2, 3], 0)                  # => Accesses element at index 0
+                                        # => O(n) for lists (traverses from head)
+                                        # => Returns 1
+Enum.at([1, 2, 3], 2)                  # => Accesses element at index 2
+                                        # => Traverses two hops from head
+                                        # => Returns 3
 
-length([1, 2, 3, 4, 5]) # => 5
+length([1, 2, 3, 4, 5])                # => Counts list elements
+                                        # => O(n) operation (traverses entire list)
+                                        # => Returns 5
 
-tuple = {1, 2, 3} # => {1, 2, 3}
+tuple = {1, 2, 3}                      # => Creates tuple (contiguous memory)
+                                        # => tuple is {1, 2, 3} (fixed-size structure)
 
-elem(tuple, 0) # => 1
-elem(tuple, 2) # => 3
+elem(tuple, 0)                         # => Accesses element at index 0
+                                        # => O(1) for tuples (direct memory access)
+                                        # => Returns 1
+elem(tuple, 2)                         # => Accesses element at index 2
+                                        # => O(1) access
+                                        # => Returns 3
 
-new_tuple = put_elem(tuple, 1, 999) # => {1, 999, 3}
-tuple # => {1, 2, 3} (unchanged!)
+new_tuple = put_elem(tuple, 1, 999)    # => Creates new tuple with index 1 updated
+                                        # => Copies and modifies (immutability)
+                                        # => new_tuple is {1, 999, 3}
+tuple                                  # => Original tuple unchanged: {1, 2, 3}
+                                        # => Immutability preserved
 
-tuple_size(tuple) # => 3
+tuple_size(tuple)                      # => Returns tuple size
+                                        # => O(1) operation (size stored in header)
+                                        # => Returns 3
 
-
-{:ok, result} = {:ok, 42} # => {:ok, 42}
-{:error, reason} = {:error, "not found"} # => {:error, "not found"}
+{:ok, result} = {:ok, 42}              # => Tagged tuple pattern for success
+                                        # => :ok indicates success state
+                                        # => result binds to 42
+                                        # => Returns {:ok, 42}
+{:error, reason} = {:error, "not found"}  # => Tagged tuple pattern for error
+                                           # => :error indicates failure state
+                                           # => reason binds to "not found"
+                                           # => Returns {:error, "not found"}
 ```
 
 **Key Takeaway**: Lists are for sequential access and variable length (prepend is fast). Tuples are for fixed-size data and random access (indexing is fast). Different performance characteristics guide your choice.
@@ -374,38 +521,69 @@ Maps are key-value data structures (like hash maps or dictionaries in other lang
 **Code**:
 
 ```elixir
-map = %{"name" => "Alice", "age" => 30} # => %{"age" => 30, "name" => "Alice"}
+map = %{"name" => "Alice", "age" => 30}  # => Creates map with string keys
+                                          # => map is %{"age" => 30, "name" => "Alice"}
+                                          # => Keys sorted alphabetically in output
 
-map["name"] # => "Alice"
-map["age"] # => 30
-map["missing"] # => nil
+map["name"]                            # => Accesses value by string key
+                                        # => Returns "Alice"
+map["age"]                             # => Accesses age value
+                                        # => Returns 30
+map["missing"]                         # => Accesses non-existent key
+                                        # => Returns nil (no error, safe access)
 
-user = %{name: "Bob", age: 25, city: "NYC"} # => %{age: 25, city: "NYC", name: "Bob"}
+user = %{name: "Bob", age: 25, city: "NYC"}  # => Creates map with atom keys
+                                              # => Atom key syntax: key: value
+                                              # => user is %{age: 25, city: "NYC", name: "Bob"}
 
-%{name: "Bob"} === %{:name => "Bob"} # => true
+%{name: "Bob"} === %{:name => "Bob"}   # => Both syntaxes equivalent for atom keys
+                                        # => name: "Bob" is sugar for :name => "Bob"
+                                        # => Returns true
 
-user.name # => "Bob"
-user.age # => 25
+user.name                              # => Dot notation for atom keys only
+                                        # => Raises KeyError if key missing
+                                        # => Returns "Bob"
+user.age                               # => Dot access for :age
+                                        # => Returns 25
 
-Map.get(user, :name) # => "Bob"
-Map.get(user, :missing) # => nil
-Map.get(user, :missing, "N/A") # => "N/A" (default)
+Map.get(user, :name)                   # => Safe access function
+                                        # => Returns "Bob"
+Map.get(user, :missing)                # => Returns nil for missing key
+                                        # => No error raised
+                                        # => Returns nil
+Map.get(user, :missing, "N/A")         # => Provides default value for missing key
+                                        # => Returns "N/A" (default)
 
-updated_user = %{user | age: 26} # => %{age: 26, city: "NYC", name: "Bob"}
-user # => %{age: 25, city: "NYC", name: "Bob"} (unchanged!)
+updated_user = %{user | age: 26}       # => Update syntax | for existing keys only
+                                        # => Creates new map with age changed
+                                        # => updated_user is %{age: 26, city: "NYC", name: "Bob"}
+user                                   # => Original map unchanged: %{age: 25, ...}
+                                        # => Immutability preserved
 
+with_country = Map.put(user, :country, "USA")  # => Adds new key to map
+                                                # => Works for both new and existing keys
+                                                # => with_country is %{age: 25, city: "NYC", country: "USA", name: "Bob"}
 
-with_country = Map.put(user, :country, "USA")
+without_age = Map.delete(user, :age)   # => Removes key from map
+                                        # => Creates new map without :age
+                                        # => without_age is %{city: "NYC", name: "Bob"}
 
-without_age = Map.delete(user, :age) # => %{city: "NYC", name: "Bob"}
+%{name: person_name} = user            # => Pattern matches to extract :name value
+                                        # => person_name binds to "Bob"
+                                        # => Other keys (:age, :city) ignored
+                                        # => Returns %{age: 25, city: "NYC", name: "Bob"}
+person_name                            # => Returns "Bob"
 
-%{name: person_name} = user # => %{age: 25, city: "NYC", name: "Bob"}
-person_name # => "Bob"
+%{name: n, age: a} = user              # => Extracts multiple keys in pattern
+                                        # => n binds to "Bob"
+                                        # => a binds to 25
+                                        # => Returns original map
 
-%{name: n, age: a} = user # => %{...}
-
-nested = %{user: %{profile: %{bio: "Hello"}}} # => %{...}
-updated_nested = put_in(nested, [:user, :profile, :bio], "Hi there!")
+nested = %{user: %{profile: %{bio: "Hello"}}}  # => Creates deeply nested map structure
+                                                # => nested is %{user: %{profile: %{bio: "Hello"}}}
+updated_nested = put_in(nested, [:user, :profile, :bio], "Hi there!")  # => Updates nested value by path
+                                                                         # => Creates new structure with :bio changed
+                                                                         # => updated_nested is %{user: %{profile: %{bio: "Hi there!"}}}
 ```
 
 **Key Takeaway**: Maps are the go-to data structure for key-value pairs. Use atom keys for performance and dot notation convenience. Updates create new maps (immutability).
@@ -421,36 +599,63 @@ Keyword lists are lists of tuples where the first element is an atom. They look 
 **Code**:
 
 ```elixir
-keyword = [name: "Alice", age: 30] # => [name: "Alice", age: 30]
+keyword = [name: "Alice", age: 30]  # => Creates keyword list (syntactic sugar)
+                                     # => keyword is [name: "Alice", age: 30]
+                                     # => Actually list of tuples: [{:name, "Alice"}, {:age, 30}]
 
-keyword === [{:name, "Alice"}, {:age, 30}] # => true
+keyword === [{:name, "Alice"}, {:age, 30}]  # => Compares keyword syntax vs tuple syntax
+                                             # => Both representations are identical
+                                             # => Returns true (same structure)
 
-options = [timeout: 1000, timeout: 2000] # => [timeout: 1000, timeout: 2000]
+options = [timeout: 1000, timeout: 2000]  # => Keyword list with DUPLICATE keys
+                                           # => Maintains insertion order
+                                           # => options is [timeout: 1000, timeout: 2000]
 
-Keyword.get(keyword, :name) # => "Alice"
-Keyword.get(keyword, :missing) # => nil
-Keyword.get(keyword, :missing, "default") # => "default"
+Keyword.get(keyword, :name)      # => Gets value for key :name
+                                  # => Returns "Alice" (first matching key)
+Keyword.get(keyword, :missing)   # => Gets value for non-existent key
+                                  # => Returns nil (key not found)
+Keyword.get(keyword, :missing, "default")  # => Gets value with default fallback
+                                            # => Key :missing not found
+                                            # => Returns "default" (provided default)
 
-Keyword.get(options, :timeout) # => 1000
+Keyword.get(options, :timeout)   # => Gets first value for duplicate key
+                                  # => Returns 1000 (first :timeout value)
 
-Keyword.get_values(options, :timeout) # => [1000, 2000]
+Keyword.get_values(options, :timeout)  # => Gets ALL values for duplicate key
+                                        # => Returns [1000, 2000] (both values)
 
-defmodule Server do
-  def start(name, opts \\ []) do
-    # Extract options with defaults
-    port = Keyword.get(opts, :port, 8080) # => 8080 if not provided
-    timeout = Keyword.get(opts, :timeout, 5000) # => 5000 if not provided
-    {name, port, timeout}
+defmodule Server do              # => Defines Server module
+  def start(name, opts \\ []) do  # => Function with default parameter
+                                  # => opts defaults to [] (empty keyword list)
+    port = Keyword.get(opts, :port, 8080)  # => Extracts :port with default 8080
+                                            # => If opts has :port, use it; else 8080
+    timeout = Keyword.get(opts, :timeout, 5000)  # => Extracts :timeout with default 5000
+                                                  # => If opts has :timeout, use it; else 5000
+    {name, port, timeout}        # => Returns 3-element tuple
+                                  # => Tuple contains: server name, port, timeout
   end
 end
 
-Server.start("MyServer") # => {"MyServer", 8080, 5000}
-Server.start("MyServer", port: 3000) # => {"MyServer", 3000, 5000}
-Server.start("MyServer", port: 3000, timeout: 10000) # => {"MyServer", 3000, 10000}
+Server.start("MyServer")         # => Calls start with only name arg
+                                  # => opts defaults to []
+                                  # => port = 8080 (default), timeout = 5000 (default)
+                                  # => Returns {"MyServer", 8080, 5000}
+Server.start("MyServer", port: 3000)  # => Calls start with name and port option
+                                       # => opts is [port: 3000]
+                                       # => port = 3000 (from opts), timeout = 5000 (default)
+                                       # => Returns {"MyServer", 3000, 5000}
+Server.start("MyServer", port: 3000, timeout: 10000)  # => Calls start with both options
+                                                       # => opts is [port: 3000, timeout: 10000]
+                                                       # => port = 3000, timeout = 10000
+                                                       # => Returns {"MyServer", 3000, 10000}
 
-[name: n, age: a] = [name: "Bob", age: 25] # => [name: "Bob", age: 25]
-n # => "Bob"
-a # => 25
+[name: n, age: a] = [name: "Bob", age: 25]  # => Pattern matches keyword list
+                                             # => name: n binds n to "Bob"
+                                             # => age: a binds a to 25
+                                             # => Returns [name: "Bob", age: 25]
+n                                # => Returns "Bob" (extracted value)
+a                                # => Returns 25 (extracted value)
 
 
 ```
@@ -483,48 +688,81 @@ graph TD
 **Code**:
 
 ```elixir
-add = fn a, b -> a + b end # => #Function<...>
+add = fn a, b -> a + b end     # => Creates anonymous function with 2 parameters
+                                # => add is #Function<...> (function value)
 
-add.(5, 3) # => 8
+add.(5, 3)                     # => Calls anonymous function with . syntax
+                                # => 5 + 3 evaluated
+                                # => Returns 8
 
-fizzbuzz = fn
-  0, 0, _ -> "FizzBuzz"
-  0, _, _ -> "Fizz"
-  _, 0, _ -> "Buzz"
-  _, _, x -> x
-end
+fizzbuzz = fn                  # => Multi-clause anonymous function
+  0, 0, _ -> "FizzBuzz"        # => First clause: both 0 → "FizzBuzz"
+  0, _, _ -> "Fizz"            # => Second clause: first 0 → "Fizz"
+  _, 0, _ -> "Buzz"            # => Third clause: second 0 → "Buzz"
+  _, _, x -> x                 # => Default clause: returns third arg
+end                            # => fizzbuzz is #Function<...>
 
-fizzbuzz.(0, 0, 1) # => "FizzBuzz"
-fizzbuzz.(0, 1, 2) # => "Fizz"
-fizzbuzz.(1, 0, 3) # => "Buzz"
-fizzbuzz.(1, 1, 4) # => 4
+fizzbuzz.(0, 0, 1)             # => First clause matches (0, 0, _)
+                                # => Returns "FizzBuzz"
+fizzbuzz.(0, 1, 2)             # => Second clause matches (0, _, _)
+                                # => Returns "Fizz"
+fizzbuzz.(1, 0, 3)             # => Third clause matches (_, 0, _)
+                                # => Returns "Buzz"
+fizzbuzz.(1, 1, 4)             # => Default clause matches (_, _, x)
+                                # => x binds to 4, returns 4
 
-multiply = &(&1 * &2) # => #Function<...>
-multiply.(4, 5) # => 20
+multiply = &(&1 * &2)          # => Capture operator & creates function
+                                # => &1 is first arg, &2 is second arg
+                                # => multiply is #Function<...>
+multiply.(4, 5)                # => Calls captured function: 4 * 5
+                                # => Returns 20
 
-int_to_string = &Integer.to_string/1 # => &Integer.to_string/1
-int_to_string.(42) # => "42"
+int_to_string = &Integer.to_string/1  # => Captures existing function by name/arity
+                                       # => Creates wrapper function
+                                       # => int_to_string is &Integer.to_string/1
+int_to_string.(42)             # => Calls Integer.to_string(42)
+                                # => Returns "42" (string)
 
-apply_twice = fn f, x -> f.(f.(x)) end # => #Function<...>
-increment = fn x -> x + 1 end # => #Function<...>
-apply_twice.(increment, 5) # => 7 (5 + 1 + 1)
+apply_twice = fn f, x -> f.(f.(x)) end  # => Higher-order function
+                                          # => Takes function f and value x
+                                          # => Applies f twice: f(f(x))
+increment = fn x -> x + 1 end  # => Simple increment function
+                                # => increment is #Function<...>
+apply_twice.(increment, 5)     # => First call: increment.(5) → 6
+                                # => Second call: increment.(6) → 7
+                                # => Returns 7
 
-multiplier = fn factor ->
-  fn x -> x * factor end
-end
-double = multiplier.(2) # => #Function<...>
-triple = multiplier.(3) # => #Function<...>
-double.(5) # => 10
-triple.(5) # => 15
+multiplier = fn factor ->      # => Function that returns function (closure)
+  fn x -> x * factor end       # => Inner function captures factor from outer scope
+end                            # => multiplier is #Function<...>
+double = multiplier.(2)        # => Creates closure with factor=2
+                                # => double is #Function<...> (captures 2)
+triple = multiplier.(3)        # => Creates closure with factor=3
+                                # => triple is #Function<...> (captures 3)
+double.(5)                     # => Calls inner function: 5 * 2 (captured)
+                                # => Returns 10
+triple.(5)                     # => Calls inner function: 5 * 3 (captured)
+                                # => Returns 15
 
-numbers = [1, 2, 3, 4, 5] # => [1, 2, 3, 4, 5]
+numbers = [1, 2, 3, 4, 5]      # => Creates list for transformation examples
+                                # => numbers is [1, 2, 3, 4, 5]
 
-Enum.map(numbers, fn x -> x * 2 end) # => [2, 4, 6, 8, 10]
-Enum.filter(numbers, fn x -> rem(x, 2) == 0 end) # => [2, 4]
-Enum.reduce(numbers, 0, fn x, acc -> x + acc end) # => 15
+Enum.map(numbers, fn x -> x * 2 end)  # => Transforms each element: x * 2
+                                       # => [1→2, 2→4, 3→6, 4→8, 5→10]
+                                       # => Returns [2, 4, 6, 8, 10]
+Enum.filter(numbers, fn x -> rem(x, 2) == 0 end)  # => Keeps only even numbers
+                                                   # => rem(x, 2) == 0 checks divisibility
+                                                   # => Returns [2, 4]
+Enum.reduce(numbers, 0, fn x, acc -> x + acc end)  # => Accumulates sum starting from 0
+                                                    # => 0+1=1, 1+2=3, 3+3=6, 6+4=10, 10+5=15
+                                                    # => Returns 15
 
-Enum.map(numbers, &(&1 * 2)) # => [2, 4, 6, 8, 10]
-Enum.filter(numbers, &(rem(&1, 2) == 0)) # => [2, 4]
+Enum.map(numbers, &(&1 * 2))   # => Same as fn x -> x * 2 end (capture syntax)
+                                # => &1 is first argument (each element)
+                                # => Returns [2, 4, 6, 8, 10]
+Enum.filter(numbers, &(rem(&1, 2) == 0))  # => Same as fn x -> rem(x, 2) == 0 end
+                                           # => Capture syntax for filter predicate
+                                           # => Returns [2, 4]
 ```
 
 **Key Takeaway**: Functions are values that can be passed around, stored, and returned. The capture operator `&` provides concise syntax. Anonymous functions enable functional programming patterns.
@@ -540,66 +778,110 @@ Named functions are defined in modules using `def` (public) or `defp` (private).
 **Code**:
 
 ```elixir
-defmodule Math do
-  # Public function with def
-  def add(a, b) do
-    a + b
+defmodule Math do              # => Defines module Math (namespace for functions)
+  def add(a, b) do             # => Public function add/2 (def = exported)
+                               # => Takes 2 parameters: a and b
+    a + b                      # => Returns sum of a and b
+                               # => No explicit return keyword needed
+  end                          # => Ends function definition
+
+  def subtract(a, b), do: a - b  # => Single-line function syntax (do: shorthand)
+                                  # => Public function subtract/2
+                                  # => Returns a - b
+
+  defp internal_multiply(a, b), do: a * b  # => Private function (defp = not exported)
+                                            # => Only callable within Math module
+                                            # => Returns a * b
+
+  def describe(0), do: "zero"  # => First clause: pattern matches 0 exactly
+                               # => Returns "zero" when arg is 0
+  def describe(n) when n > 0, do: "positive"  # => Second clause: guard n > 0
+                                               # => Returns "positive" when arg > 0
+  def describe(n) when n < 0, do: "negative"  # => Third clause: guard n < 0
+                                               # => Returns "negative" when arg < 0
+
+  def greet(name, greeting \\ "Hello") do  # => Default argument: greeting defaults to "Hello"
+                                            # => \\ syntax defines default value
+    "#{greeting}, #{name}!"    # => String interpolation
+                               # => Returns formatted greeting string
   end
 
-  # Single-line syntax for simple functions
-  def subtract(a, b), do: a - b
+  def factorial(0), do: 1      # => Base case: factorial of 0 is 1
+                               # => Stops recursion
+  def factorial(n) when n > 0, do: n * factorial(n - 1)  # => Recursive case: n * factorial(n-1)
+                                                          # => Guard ensures n > 0
+                                                          # => Calls itself with n-1
 
-  # Private function with defp (only callable within module)
-  defp internal_multiply(a, b), do: a * b
+  def sum_list([]), do: 0      # => Base case: empty list sums to 0
+                               # => Stops recursion
+  def sum_list([head | tail]), do: head + sum_list(tail)  # => Recursive case: head + sum of tail
+                                                           # => Pattern matches [head | tail]
+                                                           # => Processes list recursively
 
-  # Multi-clause functions (pattern matching)
-  def describe(0), do: "zero"
-  def describe(n) when n > 0, do: "positive"
-  def describe(n) when n < 0, do: "negative"
-
-  # Default arguments with \\
-  def greet(name, greeting \\ "Hello") do
-    "#{greeting}, #{name}!"
+  def divide(_, 0), do: {:error, "division by zero"}  # => First clause: catches division by zero
+                                                       # => _ ignores first argument
+                                                       # => Returns error tuple
+  def divide(a, b) when is_number(a) and is_number(b) do  # => Second clause: validates both args are numbers
+                                                            # => Guard: is_number(a) and is_number(b)
+    {:ok, a / b}               # => Returns success tuple with result
+                               # => Division always returns float
   end
+end                            # => Ends module definition
 
-  # Recursive functions
-  def factorial(0), do: 1
-  def factorial(n) when n > 0, do: n * factorial(n - 1)
+Math.add(5, 3)                 # => Calls add/2 with 5 and 3
+                               # => 5 + 3 = 8
+                               # => Returns 8
+Math.subtract(10, 4)           # => Calls subtract/2 with 10 and 4
+                               # => 10 - 4 = 6
+                               # => Returns 6
 
-  # Pattern matching in function heads
-  def sum_list([]), do: 0
-  def sum_list([head | tail]), do: head + sum_list(tail)
+Math.describe(0)               # => Calls describe/1 with 0
+                               # => Matches first clause (exact match 0)
+                               # => Returns "zero"
+Math.describe(5)               # => Calls describe/1 with 5
+                               # => Matches second clause (5 > 0 is true)
+                               # => Returns "positive"
+Math.describe(-3)              # => Calls describe/1 with -3
+                               # => Matches third clause (-3 < 0 is true)
+                               # => Returns "negative"
 
-  # Guards for validation
-  def divide(_, 0), do: {:error, "division by zero"}
-  def divide(a, b) when is_number(a) and is_number(b) do
-    {:ok, a / b}
-  end
-end
+Math.greet("Alice")            # => Calls greet/2 with "Alice" and default "Hello"
+                               # => greeting defaults to "Hello"
+                               # => Returns "Hello, Alice!"
+Math.greet("Bob", "Hi")        # => Calls greet/2 with "Bob" and custom "Hi"
+                               # => greeting is "Hi" (overrides default)
+                               # => Returns "Hi, Bob!"
 
-Math.add(5, 3) # => 8
-Math.subtract(10, 4) # => 6
+Math.factorial(5)              # => Calls factorial/1 with 5
+                               # => Recursion: 5 * factorial(4) * ... * factorial(0)
+                               # => 5 * 4 * 3 * 2 * 1 = 120
+                               # => Returns 120
+Math.sum_list([1, 2, 3, 4])    # => Calls sum_list/1 with [1, 2, 3, 4]
+                               # => Recursion: 1 + sum_list([2,3,4]) → 1+2+3+4
+                               # => Returns 10
 
-Math.describe(0) # => "zero"
-Math.describe(5) # => "positive"
-Math.describe(-3) # => "negative"
+Math.divide(10, 2)             # => Calls divide/2 with 10 and 2
+                               # => Both args are numbers, guard passes
+                               # => 10 / 2 = 5.0
+                               # => Returns {:ok, 5.0}
+Math.divide(10, 0)             # => Calls divide/2 with 10 and 0
+                               # => Second arg is 0, matches first clause
+                               # => Returns {:error, "division by zero"}
 
-Math.greet("Alice") # => "Hello, Alice!" (default greeting)
-Math.greet("Bob", "Hi") # => "Hi, Bob!" (custom greeting)
+defmodule Example do           # => Defines module Example
+  def func(a), do: a           # => Function func/1 (arity 1)
+                               # => Returns a unchanged
+  def func(a, b), do: a + b    # => Function func/2 (arity 2, different function!)
+                               # => Returns sum of a and b
+end                            # => Ends module definition
 
-Math.factorial(5) # => 120
-Math.sum_list([1, 2, 3, 4]) # => 10
-
-Math.divide(10, 2) # => {:ok, 5.0}
-Math.divide(10, 0) # => {:error, "division by zero"}
-
-defmodule Example do
-  def func(a), do: a
-  def func(a, b), do: a + b
-end
-
-Example.func(5) # => 5
-Example.func(3, 4) # => 7
+Example.func(5)                # => Calls func/1 with 5
+                               # => Matches first definition (arity 1)
+                               # => Returns 5
+Example.func(3, 4)             # => Calls func/2 with 3 and 4
+                               # => Matches second definition (arity 2)
+                               # => 3 + 4 = 7
+                               # => Returns 7
 ```
 
 **Key Takeaway**: Named functions use pattern matching in function heads, enabling elegant multi-clause logic. Use `def` for public, `defp` for private. Arity (number of arguments) differentiates functions.
@@ -615,50 +897,78 @@ The pipe operator `|>` takes the result of an expression and passes it as the fi
 **Code**:
 
 ```elixir
-result = String.upcase(String.trim("  hello  ")) # => "HELLO"
+result = String.upcase(String.trim("  hello  "))  # => Nested function calls (inside-out reading)
+                                                    # => String.trim("  hello  ") returns "hello"
+                                                    # => String.upcase("hello") returns "HELLO"
+                                                    # => result is "HELLO" (hard to read flow)
 
-result = "  hello  "
-         |> String.trim()      # => "hello"
-         |> String.upcase()    # => "HELLO"
+result = "  hello  "         # => Starts with input string
+         |> String.trim()    # => Pipe passes "  hello  " as first arg to String.trim()
+                             # => Returns "hello" (whitespace trimmed)
+         |> String.upcase()  # => Pipe passes "hello" as first arg to String.upcase()
+                             # => Returns "HELLO"
+                             # => result is "HELLO" (readable left-to-right flow)
 
-numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # => Creates list for pipeline demo
 
-sum = Enum.reduce(
-  Enum.filter(
-    Enum.map(numbers, fn x -> x * x end),
-    fn x -> rem(x, 2) == 0 end
+sum = Enum.reduce(            # => Nested version: hard to read
+  Enum.filter(                # => Third operation (innermost)
+    Enum.map(numbers, fn x -> x * x end),  # => First operation (deepest)
+    fn x -> rem(x, 2) == 0 end  # => Second operation (middle)
   ),
-  0,
-  fn x, acc -> x + acc end
-) # => 220 (4 + 16 + 36 + 64 + 100)
+  0,                          # => Fourth operation (accumulator)
+  fn x, acc -> x + acc end    # => Fifth operation (reducer)
+)                             # => Returns 220 (4 + 16 + 36 + 64 + 100)
+                              # => Reading order: 4→5→1→2→3 (confusing!)
 
-sum = numbers
-      |> Enum.map(fn x -> x * x end)           # => [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
-      |> Enum.filter(fn x -> rem(x, 2) == 0 end) # => [4, 16, 36, 64, 100]
-      |> Enum.reduce(0, fn x, acc -> x + acc end) # => 220
+sum = numbers                 # => Pipeline version: clear data flow
+      |> Enum.map(fn x -> x * x end)  # => Step 1: Square each number
+                              # => [1→1, 2→4, 3→9, ..., 10→100]
+                              # => Returns [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+      |> Enum.filter(fn x -> rem(x, 2) == 0 end)  # => Step 2: Keep only even numbers
+                              # => Filters: [4, 16, 36, 64, 100]
+                              # => Returns [4, 16, 36, 64, 100]
+      |> Enum.reduce(0, fn x, acc -> x + acc end)  # => Step 3: Sum all values
+                              # => 0+4=4, 4+16=20, 20+36=56, 56+64=120, 120+100=220
+                              # => Returns 220
 
-"hello" |> String.upcase() # => "HELLO"
+"hello" |> String.upcase()   # => Simple one-step pipeline
+                              # => Pipes "hello" to String.upcase()
+                              # => Returns "HELLO"
 
-5 |> (&(&1 * 2)).() # => 10
-"world" |> String.duplicate(3) # => "worldworldworld"
+5 |> (&(&1 * 2)).()          # => Pipes 5 to anonymous function
+                              # => &(&1 * 2) is fn x -> x * 2 end
+                              # => 5 * 2 = 10
+                              # => Returns 10
+"world" |> String.duplicate(3)  # => Pipes "world" to String.duplicate()
+                                 # => Duplicates string 3 times
+                                 # => Returns "worldworldworld"
 
-user_names = [
-  "  Alice  ",
-  "  bob  ",
-  " CHARLIE ",
-  "  dave  "
+user_names = [                # => Creates list of names with whitespace/case issues
+  "  Alice  ",                # => Extra whitespace, proper case
+  "  bob  ",                  # => Extra whitespace, lowercase
+  " CHARLIE ",                # => Extra whitespace, uppercase
+  "  dave  "                  # => Extra whitespace, lowercase
 ]
 
-formatted_names = user_names
-                  |> Enum.map(&String.trim/1)           # => ["Alice", "bob", "CHARLIE", "dave"]
-                  |> Enum.map(&String.capitalize/1)     # => ["Alice", "Bob", "Charlie", "Dave"]
-                  |> Enum.sort()                        # => ["Alice", "Bob", "Charlie", "Dave"]
-                  |> Enum.join(", ")                    # => "Alice, Bob, Charlie, Dave"
+formatted_names = user_names  # => Multi-step transformation pipeline
+                  |> Enum.map(&String.trim/1)  # => Step 1: Remove whitespace from each
+                              # => ["Alice", "bob", "CHARLIE", "dave"]
+                  |> Enum.map(&String.capitalize/1)  # => Step 2: Capitalize each name
+                              # => ["Alice", "Bob", "Charlie", "Dave"]
+                  |> Enum.sort()  # => Step 3: Sort alphabetically
+                              # => ["Alice", "Bob", "Charlie", "Dave"]
+                  |> Enum.join(", ")  # => Step 4: Join with comma separator
+                              # => Returns "Alice, Bob, Charlie, Dave"
 
-{:ok, value} = {:ok, 42}
-result = value
-         |> (&(&1 * 2)).() # => 84
-         |> Integer.to_string() # => "84"
+{:ok, value} = {:ok, 42}     # => Pattern matches to extract value
+                              # => value is 42
+result = value                # => Starts pipeline with 42
+         |> (&(&1 * 2)).()    # => Step 1: Multiply by 2
+                              # => 42 * 2 = 84
+         |> Integer.to_string()  # => Step 2: Convert to string
+                              # => Returns "84"
+                              # => result is "84" (type: string)
 ```
 
 **Key Takeaway**: The pipe operator `|>` transforms nested function calls into readable left-to-right data flows. It passes the left side as the first argument to the right side function.
@@ -674,72 +984,82 @@ result = value
 **Code**:
 
 ```elixir
-user_status = {:ok, "Alice"}
+user_status = {:ok, "Alice"}   # => Creates tagged tuple for user status
+                                # => user_status is {:ok, "Alice"}
 
-result = case user_status do
-  {:ok, name} -> "Welcome, #{name}!"           # => "Welcome, Alice!"
-  {:error, reason} -> "Error: #{reason}"
-  _ -> "Unknown status"
-end
-result # => "Welcome, Alice!"
+result = case user_status do   # => Pattern matches on user_status value
+  {:ok, name} -> "Welcome, #{name}!"  # => First clause matches {:ok, "Alice"}
+                                       # => name binds to "Alice"
+                                       # => Returns "Welcome, Alice!"
+  {:error, reason} -> "Error: #{reason}"  # => Second clause (not matched)
+  _ -> "Unknown status"        # => Catch-all clause (not matched)
+end                            # => case expression evaluates to first match
+                                # => result is "Welcome, Alice!"
+result                         # => Returns "Welcome, Alice!"
 
-number = 15
+number = 15                    # => Binds number to 15 for classification
 
-classification = case number do
-  n when n < 0 -> "negative"
-  0 -> "zero"
-  n when n > 0 and n <= 10 -> "small positive"
-  n when n > 10 and n <= 100 -> "medium positive"
-  n when n > 100 -> "large positive"
-end
-classification # => "medium positive"
+classification = case number do  # => Matches number against guard patterns
+  n when n < 0 -> "negative"   # => Guard: n < 0 (false for 15, not matched)
+  0 -> "zero"                  # => Exact match: 0 (false for 15, not matched)
+  n when n > 0 and n <= 10 -> "small positive"  # => Guard: 0 < n ≤ 10 (false, not matched)
+  n when n > 10 and n <= 100 -> "medium positive"  # => Guard: 10 < n ≤ 100 (TRUE for 15)
+                                                    # => n binds to 15
+                                                    # => Returns "medium positive"
+  n when n > 100 -> "large positive"  # => Not evaluated (already matched)
+end                            # => classification is "medium positive"
+classification                 # => Returns "medium positive"
 
+age = 25                       # => Binds age to 25 for condition checking
 
-age = 25
+description = cond do          # => Evaluates conditions top-to-bottom
+  age < 13 -> "child"          # => 25 < 13 is false, not matched
+  age < 20 -> "teenager"       # => 25 < 20 is false, not matched
+  age < 60 -> "adult"          # => 25 < 60 is TRUE, first match
+                                # => Returns "adult"
+  age >= 60 -> "senior"        # => Not evaluated (already matched)
+  true -> "unknown"            # => Default case (always true if reached)
+end                            # => description is "adult"
+description                    # => Returns "adult"
 
-description = cond do
-  age < 13 -> "child"
-  age < 20 -> "teenager"
-  age < 60 -> "adult"
-  age >= 60 -> "senior"
-  true -> "unknown" # Default case (always true)
-end
-description # => "adult"
+score = 85                     # => Binds score to 85 for grading
 
-score = 85
+grade = cond do                # => Evaluates grade conditions
+  score >= 90 -> "A"           # => 85 >= 90 is false, not matched
+  score >= 80 -> "B"           # => 85 >= 80 is TRUE, first match
+                                # => Returns "B"
+  score >= 70 -> "C"           # => Not evaluated (already matched)
+  score >= 60 -> "D"           # => Not evaluated
+  true -> "F"                  # => Default case (not reached)
+end                            # => grade is "B"
+grade                          # => Returns "B"
 
-grade = cond do
-  score >= 90 -> "A"
-  score >= 80 -> "B"
-  score >= 70 -> "C"
-  score >= 60 -> "D"
-  true -> "F"
-end
-grade # => "B"
+http_response = {:ok, 200, "Success"}  # => Creates 3-element HTTP response tuple
+                                        # => http_response is {:ok, 200, "Success"}
 
+message = case http_response do  # => Pattern matches on response structure
+  {:ok, 200, body} -> "OK: #{body}"  # => Matches {:ok, 200, "Success"}
+                                      # => body binds to "Success"
+                                      # => Returns "OK: Success"
+  {:ok, 404, _} -> "Not Found"  # => Not matched (status is 200, not 404)
+  {:ok, 500, _} -> "Server Error"  # => Not matched (status is 200, not 500)
+  {:error, reason} -> "Failed: #{reason}"  # => Not matched (tag is :ok, not :error)
+  _ -> "Unknown response"      # => Catch-all (not reached)
+end                            # => message is "OK: Success"
+message                        # => Returns "OK: Success"
 
-http_response = {:ok, 200, "Success"}
+income = 50000                 # => Binds income to 50000
+has_debt = false               # => Binds has_debt to false
 
-message = case http_response do
-  {:ok, 200, body} -> "OK: #{body}"
-  {:ok, 404, _} -> "Not Found"
-  {:ok, 500, _} -> "Server Error"
-  {:error, reason} -> "Failed: #{reason}"
-  _ -> "Unknown response"
-end
-message # => "OK: Success"
-
-income = 50000
-has_debt = false
-
-loan_status = cond do
-  income < 20000 -> "Not eligible - income too low"
-  has_debt -> "Not eligible - existing debt"
-  income >= 20000 and income < 50000 -> "Eligible for $10k loan"
-  income >= 50000 -> "Eligible for $50k loan"
-  true -> "Unknown status"
-end
-loan_status # => "Eligible for $50k loan"
+loan_status = cond do          # => Evaluates loan eligibility conditions
+  income < 20000 -> "Not eligible - income too low"  # => 50000 < 20000 is false
+  has_debt -> "Not eligible - existing debt"  # => false is false, not matched
+  income >= 20000 and income < 50000 -> "Eligible for $10k loan"  # => 50000 >= 20000 and 50000 < 50000 is false
+  income >= 50000 -> "Eligible for $50k loan"  # => 50000 >= 50000 is TRUE, first match
+                                                # => Returns "Eligible for $50k loan"
+  true -> "Unknown status"     # => Default case (not reached)
+end                            # => loan_status is "Eligible for $50k loan"
+loan_status                    # => Returns "Eligible for $50k loan"
 ```
 
 **Key Takeaway**: Use `case` for pattern matching on values, `cond` for evaluating multiple conditions. Both require at least one clause to match, providing exhaustiveness checking.
@@ -755,77 +1075,110 @@ Recursion is the primary looping mechanism in Elixir (no while/for loops). A rec
 **Code**:
 
 ```elixir
-defmodule Recursion do
-  # Basic recursion - factorial
-  def factorial(0), do: 1  # Base case
-  def factorial(n) when n > 0 do
-    n * factorial(n - 1)   # Recursive case
+defmodule Recursion do           # => Defines module for recursion examples
+  def factorial(0), do: 1        # => Base case: factorial(0) = 1
+                                  # => Stops recursion (essential!)
+  def factorial(n) when n > 0 do  # => Recursive case: n > 0
+                                   # => Guard ensures positive input
+    n * factorial(n - 1)          # => n × factorial(n-1)
+                                   # => Recursively calls with n-1
+                                   # => NOT tail-recursive (multiplication after call)
   end
 
-  # Tail-recursive factorial (optimized)
-  def factorial_tail(n), do: factorial_tail(n, 1)
+  def factorial_tail(n), do: factorial_tail(n, 1)  # => Public wrapper function
+                                                     # => Initializes accumulator to 1
+                                                     # => Calls private helper
 
-  defp factorial_tail(0, acc), do: acc  # Base case with accumulator
-  defp factorial_tail(n, acc) when n > 0 do
-    factorial_tail(n - 1, n * acc)  # Tail call - last operation is recursive call
+  defp factorial_tail(0, acc), do: acc  # => Base case: when n reaches 0
+                                         # => Returns accumulated result
+  defp factorial_tail(n, acc) when n > 0 do  # => Recursive case with accumulator
+    factorial_tail(n - 1, n * acc)  # => Tail call: recursive call is LAST operation
+                                     # => Accumulator carries result (n * acc)
+                                     # => BEAM optimizes: constant stack space
   end
 
-  # Sum list recursively
-  def sum([]), do: 0  # Base case - empty list
-  def sum([head | tail]) do
-    head + sum(tail)  # Recursive case - process head, recurse on tail
+  def sum([]), do: 0               # => Base case: empty list sums to 0
+  def sum([head | tail]) do        # => Recursive case: [head | tail] pattern
+    head + sum(tail)               # => Adds head to sum of tail
+                                   # => Recursively processes remaining elements
+                                   # => NOT tail-recursive (addition after call)
   end
 
-  # Length of list
-  def length([]), do: 0
-  def length([_ | tail]), do: 1 + length(tail)
+  def length([]), do: 0            # => Base case: empty list has length 0
+  def length([_ | tail]), do: 1 + length(tail)  # => Recursive case: ignore head with _
+                                                  # => Count 1 + length of tail
+                                                  # => NOT tail-recursive
 
-  # Reverse list (not tail-recursive)
-  def reverse([]), do: []
-  def reverse([head | tail]) do
-    reverse(tail) ++ [head]  # Inefficient - appends to end each time
+  def reverse([]), do: []          # => Base case: reverse of empty list is []
+  def reverse([head | tail]) do    # => Recursive case: split list
+    reverse(tail) ++ [head]        # => Reverses tail FIRST, then appends head
+                                   # => ++ is O(n) operation (inefficient!)
+                                   # => NOT tail-recursive (append after call)
   end
 
-  # Reverse list (tail-recursive, efficient)
-  def reverse_tail(list), do: reverse_tail(list, [])
+  def reverse_tail(list), do: reverse_tail(list, [])  # => Public wrapper
+                                                        # => Initializes accumulator to []
 
-  defp reverse_tail([], acc), do: acc
-  defp reverse_tail([head | tail], acc) do
-    reverse_tail(tail, [head | acc])  # Prepend to accumulator (O(1))
+  defp reverse_tail([], acc), do: acc  # => Base case: empty input, return accumulator
+  defp reverse_tail([head | tail], acc) do  # => Recursive case with accumulator
+    reverse_tail(tail, [head | acc])  # => Prepends head to accumulator
+                                       # => Tail call: recursive call is LAST
+                                       # => O(1) prepend operation (efficient!)
   end
 
-  # Map function - transform each element
-  def map([], _func), do: []
-  def map([head | tail], func) do
-    [func.(head) | map(tail, func)]
+  def map([], _func), do: []       # => Base case: mapping empty list returns []
+                                   # => _func ignored (underscore convention)
+  def map([head | tail], func) do  # => Recursive case: process head and tail
+    [func.(head) | map(tail, func)]  # => Applies func to head
+                                      # => Recursively maps tail
+                                      # => Constructs result list with |
   end
 
-  # Filter function - keep elements matching predicate
-  def filter([], _func), do: []
-  def filter([head | tail], func) do
-    if func.(head) do
-      [head | filter(tail, func)]
-    else
-      filter(tail, func)
+  def filter([], _func), do: []    # => Base case: filtering empty list returns []
+  def filter([head | tail], func) do  # => Recursive case: test head against predicate
+    if func.(head) do              # => Calls predicate function on head
+      [head | filter(tail, func)]  # => If true: include head in result
+                                   # => Recursively filter tail
+    else                           # => If false: exclude head
+      filter(tail, func)           # => Recursively filter tail without head
     end
   end
-end
+end                                # => Ends module definition
 
-Recursion.factorial(5) # => 120 (5 * 4 * 3 * 2 * 1)
+Recursion.factorial(5)             # => Calls non-tail-recursive factorial
+                                   # => 5 * factorial(4) * ... * factorial(0)
+                                   # => 5 * 4 * 3 * 2 * 1 = 120
+                                   # => Returns 120
 
-Recursion.factorial_tail(5) # => 120
-Recursion.factorial_tail(10000) # => huge number (works without stack overflow!)
+Recursion.factorial_tail(5)       # => Calls tail-recursive factorial
+                                   # => Accumulator: 1→5→20→60→120
+                                   # => Returns 120 (same result, optimized)
+Recursion.factorial_tail(10000)   # => Calls with very large input
+                                   # => Tail-call optimization: no stack overflow
+                                   # => Returns huge number (constant stack space!)
 
-Recursion.sum([1, 2, 3, 4, 5]) # => 15
+Recursion.sum([1, 2, 3, 4, 5])    # => Sums list recursively
+                                   # => 1 + sum([2,3,4,5]) → 1+2+3+4+5
+                                   # => Returns 15
 
-Recursion.length([1, 2, 3]) # => 3
+Recursion.length([1, 2, 3])       # => Counts list elements
+                                   # => 1 + length([2,3]) → 1+1+1
+                                   # => Returns 3
 
-Recursion.reverse([1, 2, 3]) # => [3, 2, 1]
-Recursion.reverse_tail([1, 2, 3]) # => [3, 2, 1] (faster for large lists)
+Recursion.reverse([1, 2, 3])      # => Non-tail-recursive reverse
+                                   # => reverse([2,3]) ++ [1] → [3,2] ++ [1]
+                                   # => Returns [3, 2, 1]
+Recursion.reverse_tail([1, 2, 3])  # => Tail-recursive reverse (optimized)
+                                    # => Accumulator: []→[1]→[2,1]→[3,2,1]
+                                    # => Returns [3, 2, 1] (faster for large lists)
 
-Recursion.map([1, 2, 3], fn x -> x * 2 end) # => [2, 4, 6]
+Recursion.map([1, 2, 3], fn x -> x * 2 end)  # => Maps doubling function over list
+                                              # => [1→2, 2→4, 3→6]
+                                              # => Returns [2, 4, 6]
 
-Recursion.filter([1, 2, 3, 4, 5], fn x -> rem(x, 2) == 0 end) # => [2, 4]
+Recursion.filter([1, 2, 3, 4, 5], fn x -> rem(x, 2) == 0 end)  # => Filters even numbers
+                                                                 # => Tests: 1→false, 2→true, 3→false, 4→true, 5→false
+                                                                 # => Returns [2, 4]
 ```
 
 **Key Takeaway**: Recursion replaces loops in Elixir. Always provide a base case to stop recursion. Tail-recursive functions (where recursive call is the last operation) are optimized to avoid stack overflow.
@@ -862,54 +1215,96 @@ graph TD
 **Code**:
 
 ```elixir
-numbers = [1, 2, 3, 4, 5]
+numbers = [1, 2, 3, 4, 5]      # => Creates list for Enum examples
+                                # => numbers is [1, 2, 3, 4, 5]
 
-doubled = Enum.map(numbers, fn x -> x * 2 end) # => [2, 4, 6, 8, 10]
+doubled = Enum.map(numbers, fn x -> x * 2 end)  # => Transforms each element: [1→2, 2→4, 3→6, 4→8, 5→10]
+                                                 # => Returns [2, 4, 6, 8, 10]
 
-evens = Enum.filter(numbers, fn x -> rem(x, 2) == 0 end) # => [2, 4]
-odds = Enum.filter(numbers, fn x -> rem(x, 2) != 0 end) # => [1, 3, 5]
+evens = Enum.filter(numbers, fn x -> rem(x, 2) == 0 end)  # => Keeps only even numbers
+                                                           # => rem(x, 2) == 0 checks divisibility by 2
+                                                           # => Returns [2, 4]
+odds = Enum.filter(numbers, fn x -> rem(x, 2) != 0 end)   # => Keeps only odd numbers
+                                                           # => rem(x, 2) != 0 checks not divisible by 2
+                                                           # => Returns [1, 3, 5]
 
-sum = Enum.reduce(numbers, 0, fn x, acc -> x + acc end) # => 15
-product = Enum.reduce(numbers, 1, fn x, acc -> x * acc end) # => 120
+sum = Enum.reduce(numbers, 0, fn x, acc -> x + acc end)  # => Accumulates sum from initial 0
+                                                          # => 0+1=1, 1+2=3, 3+3=6, 6+4=10, 10+5=15
+                                                          # => Returns 15
+product = Enum.reduce(numbers, 1, fn x, acc -> x * acc end)  # => Accumulates product from initial 1
+                                                              # => 1*1=1, 1*2=2, 2*3=6, 6*4=24, 24*5=120
+                                                              # => Returns 120
 
-Enum.each(numbers, fn x -> IO.puts(x) end) # Prints 1\n2\n3\n4\n5\n, returns :ok
+Enum.each(numbers, fn x -> IO.puts(x) end)  # => Iterates for side effects (printing)
+                                             # => Prints: 1\n2\n3\n4\n5\n (each on new line)
+                                             # => Returns :ok (no transformation, just side effects)
 
-first_even = Enum.find(numbers, fn x -> rem(x, 2) == 0 end) # => 2
-missing = Enum.find(numbers, fn x -> x > 10 end) # => nil
+first_even = Enum.find(numbers, fn x -> rem(x, 2) == 0 end)  # => Finds first element matching predicate
+                                                              # => 2 matches rem(2, 2) == 0
+                                                              # => Returns 2 (first even)
+missing = Enum.find(numbers, fn x -> x > 10 end)  # => No element satisfies x > 10
+                                                   # => Returns nil (not found)
 
-count = Enum.count(numbers) # => 5
-count_evens = Enum.count(numbers, fn x -> rem(x, 2) == 0 end) # => 2
+count = Enum.count(numbers)    # => Counts all elements
+                                # => Returns 5 (list length)
+count_evens = Enum.count(numbers, fn x -> rem(x, 2) == 0 end)  # => Counts elements matching predicate
+                                                                # => 2 and 4 match
+                                                                # => Returns 2
 
-sum = Enum.sum(numbers) # => 15
-product = Enum.product(numbers) # => 120
+sum = Enum.sum(numbers)        # => Sums all numeric elements
+                                # => 1+2+3+4+5 = 15
+                                # => Returns 15
+product = Enum.product(numbers)  # => Multiplies all numeric elements
+                                  # => 1*2*3*4*5 = 120
+                                  # => Returns 120
 
-sorted = Enum.sort([3, 1, 4, 1, 5, 9]) # => [1, 1, 3, 4, 5, 9]
-sorted_desc = Enum.sort([3, 1, 4], fn a, b -> a > b end) # => [4, 3, 1]
+sorted = Enum.sort([3, 1, 4, 1, 5, 9])  # => Sorts in ascending order (default)
+                                         # => Returns [1, 1, 3, 4, 5, 9]
+sorted_desc = Enum.sort([3, 1, 4], fn a, b -> a > b end)  # => Custom comparator: descending
+                                                           # => a > b returns true if a should come before b
+                                                           # => Returns [4, 3, 1]
 
-first_three = Enum.take(numbers, 3) # => [1, 2, 3]
-last_two = Enum.drop(numbers, 3) # => [4, 5]
+first_three = Enum.take(numbers, 3)  # => Takes first 3 elements
+                                      # => Returns [1, 2, 3]
+last_two = Enum.drop(numbers, 3)  # => Drops first 3 elements, keeps rest
+                                   # => Returns [4, 5]
 
-names = ["Alice", "Bob", "Charlie"]
-ages = [30, 25, 35]
-zipped = Enum.zip(names, ages) # => [{"Alice", 30}, {"Bob", 25}, {"Charlie", 35}]
+names = ["Alice", "Bob", "Charlie"]  # => Creates list of names
+ages = [30, 25, 35]               # => Creates list of ages
+zipped = Enum.zip(names, ages)    # => Pairs corresponding elements into tuples
+                                   # => [("Alice", 30), ("Bob", 25), ("Charlie", 35)]
+                                   # => Returns [{"Alice", 30}, {"Bob", 25}, {"Charlie", 35}]
 
-nested = [[1, 2], [3, 4], [5, 6]]
-flattened = Enum.flat_map(nested, fn x -> x end) # => [1, 2, 3, 4, 5, 6]
+nested = [[1, 2], [3, 4], [5, 6]]  # => Creates nested list structure
+flattened = Enum.flat_map(nested, fn x -> x end)  # => Maps then flattens one level
+                                                   # => Each sublist returned as-is, then flattened
+                                                   # => Returns [1, 2, 3, 4, 5, 6]
 
-words = ["apple", "ant", "banana", "bear", "cherry"]
-grouped = Enum.group_by(words, fn word -> String.first(word) end)
+words = ["apple", "ant", "banana", "bear", "cherry"]  # => List for grouping demo
+grouped = Enum.group_by(words, fn word -> String.first(word) end)  # => Groups by first letter
+                                                                    # => "a" → ["apple", "ant"]
+                                                                    # => "b" → ["banana", "bear"]
+                                                                    # => "c" → ["cherry"]
+                                                                    # => Returns %{"a" => ["apple", "ant"], "b" => ["banana", "bear"], "c" => ["cherry"]}
 
-result = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-         |> Enum.filter(fn x -> rem(x, 2) == 0 end)  # => [2, 4, 6, 8, 10]
-         |> Enum.map(fn x -> x * x end)              # => [4, 16, 36, 64, 100]
-         |> Enum.sum()                               # => 220
+result = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # => Starting list for pipeline
+         |> Enum.filter(fn x -> rem(x, 2) == 0 end)  # => Step 1: Keep evens [2, 4, 6, 8, 10]
+         |> Enum.map(fn x -> x * x end)              # => Step 2: Square each [4, 16, 36, 64, 100]
+         |> Enum.sum()                               # => Step 3: Sum all: 4+16+36+64+100=220
+                                                      # => Returns 220
 
-Enum.to_list(1..10) # => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-Enum.map(1..5, fn x -> x * x end) # => [1, 4, 9, 16, 25]
+Enum.to_list(1..10)            # => Converts range to list
+                                # => Returns [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+Enum.map(1..5, fn x -> x * x end)  # => Maps over range (lazy evaluation)
+                                    # => [1→1, 2→4, 3→9, 4→16, 5→25]
+                                    # => Returns [1, 4, 9, 16, 25]
 
-user_map = %{name: "Alice", age: 30, city: "NYC"}
-Enum.map(user_map, fn {k, v} -> {k, v} end) # => [age: 30, city: "NYC", name: "Alice"]
-Enum.filter(user_map, fn {_k, v} -> is_number(v) end) # => [age: 30]
+user_map = %{name: "Alice", age: 30, city: "NYC"}  # => Map for enumeration demo
+Enum.map(user_map, fn {k, v} -> {k, v} end)  # => Enumerates map as key-value tuples
+                                              # => Returns list: [age: 30, city: "NYC", name: "Alice"]
+Enum.filter(user_map, fn {_k, v} -> is_number(v) end)  # => Filters map entries where value is number
+                                                        # => Only :age has numeric value (30)
+                                                        # => Returns [age: 30]
 ```
 
 **Key Takeaway**: `Enum` module is the Swiss Army knife for collections. `map` transforms, `filter` selects, `reduce` accumulates. Chain operations with pipe operator for readable data transformations.
@@ -925,58 +1320,87 @@ Ranges represent sequences of integers from start to end. They're memory-efficie
 **Code**:
 
 ```elixir
-# Create ranges
-range1 = 1..10 # => 1..10 (includes both endpoints)
-range2 = 1..10//1 # => 1..10//1 (explicit step of 1)
-range3 = 10..1//-1 # => 10..1//-1 (descending range, step -1)
+range1 = 1..10                     # => Creates range from 1 to 10 (inclusive both endpoints)
+                                   # => range1 is 1..10 (type: Range)
+range2 = 1..10//1                  # => Creates range with explicit step of 1
+                                   # => Same as 1..10, but step is explicit
+                                   # => range2 is 1..10//1
+range3 = 10..1//-1                 # => Creates descending range (10 down to 1)
+                                   # => Step -1 makes range go backwards
+                                   # => range3 is 10..1//-1
 
-# Check if value in range
-5 in 1..10 # => true
-15 in 1..10 # => false
-0 in 1..10 # => false
+5 in 1..10                         # => Tests if 5 is in range 1..10
+                                   # => Returns true (5 is between 1 and 10)
+15 in 1..10                        # => Tests if 15 is in range 1..10
+                                   # => Returns false (15 exceeds 10)
+0 in 1..10                         # => Tests if 0 is in range 1..10
+                                   # => Returns false (0 below 1)
 
-# Convert to list
-Enum.to_list(1..5) # => [1, 2, 3, 4, 5]
-Enum.to_list(10..1//-1) # => [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+Enum.to_list(1..5)                 # => Converts range to list
+                                   # => Materializes all values: [1, 2, 3, 4, 5]
+                                   # => Returns [1, 2, 3, 4, 5]
+Enum.to_list(10..1//-1)            # => Converts descending range to list
+                                   # => Materializes: [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+                                   # => Returns [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 
-# Ranges with steps
-evens = 0..10//2 # => 0..10//2
-Enum.to_list(evens) # => [0, 2, 4, 6, 8, 10]
+evens = 0..10//2                   # => Creates range with step 2 (every even number)
+                                   # => evens is 0..10//2 (0, 2, 4, 6, 8, 10)
+Enum.to_list(evens)                # => Converts to list
+                                   # => Returns [0, 2, 4, 6, 8, 10]
 
-odds = 1..10//2 # => 1..10//2
-Enum.to_list(odds) # => [1, 3, 5, 7, 9]
+odds = 1..10//2                    # => Creates range with step 2 starting at 1
+                                   # => odds is 1..10//2 (1, 3, 5, 7, 9)
+Enum.to_list(odds)                 # => Converts to list
+                                   # => Returns [1, 3, 5, 7, 9]
 
-# Range size
-Enum.count(1..100) # => 100
-Enum.count(1..10//2) # => 5
+Enum.count(1..100)                 # => Counts elements in range (O(1) operation)
+                                   # => 100 - 1 + 1 = 100 elements
+                                   # => Returns 100
+Enum.count(1..10//2)               # => Counts elements in stepped range
+                                   # => 1, 3, 5, 7, 9 = 5 elements
+                                   # => Returns 5
 
-# Use ranges with Enum
-Enum.map(1..5, fn x -> x * x end) # => [1, 4, 9, 16, 25]
-Enum.filter(1..20, fn x -> rem(x, 3) == 0 end) # => [3, 6, 9, 12, 15, 18]
-Enum.sum(1..10) # => 55 (1+2+3+...+10)
+Enum.map(1..5, fn x -> x * x end)  # => Maps squaring function over range
+                                   # => [1→1, 2→4, 3→9, 4→16, 5→25]
+                                   # => Returns [1, 4, 9, 16, 25]
+Enum.filter(1..20, fn x -> rem(x, 3) == 0 end)  # => Filters multiples of 3
+                                                 # => rem(x, 3) == 0 checks divisibility by 3
+                                                 # => Returns [3, 6, 9, 12, 15, 18]
+Enum.sum(1..10)                    # => Sums all elements in range
+                                   # => 1+2+3+4+5+6+7+8+9+10 = 55
+                                   # => Returns 55
 
-# Pattern matching with ranges
-case 5 do
-  x when x in 1..10 -> "In range" # => "In range" (matches!)
-  _ -> "Out of range"
-end
+case 5 do                          # => Pattern matches on value 5
+  x when x in 1..10 -> "In range"  # => First clause: guard checks x in 1..10
+                                   # => 5 in 1..10 is true
+                                   # => Returns "In range"
+  _ -> "Out of range"              # => Second clause: catch-all (not matched)
+end                                # => case expression evaluates to "In range"
 
-# Ranges in for comprehensions
-for x <- 1..5, do: x * 2 # => [2, 4, 6, 8, 10]
+for x <- 1..5, do: x * 2           # => Comprehension iterates range 1..5
+                                   # => Doubles each value: [1→2, 2→4, 3→6, 4→8, 5→10]
+                                   # => Returns [2, 4, 6, 8, 10]
 
-# Character ranges
-Enum.to_list(?a..?z) # => [97, 98, 99, ..., 122] (ASCII codes)
-Enum.map(?a..?z, fn c -> <<c>> end) # => ["a", "b", "c", ..., "z"]
+Enum.to_list(?a..?z)               # => Converts character range to list
+                                   # => ?a is 97, ?z is 122 (ASCII codes)
+                                   # => Returns [97, 98, 99, ..., 122]
+Enum.map(?a..?z, fn c -> <<c>> end)  # => Maps ASCII codes to character strings
+                                      # => <<c>> converts code to single-char string
+                                      # => Returns ["a", "b", "c", ..., "z"]
 
-# Reverse a range
-Enum.reverse(1..5) # => [5, 4, 3, 2, 1]
+Enum.reverse(1..5)                 # => Reverses order of range elements
+                                   # => [1, 2, 3, 4, 5] → [5, 4, 3, 2, 1]
+                                   # => Returns [5, 4, 3, 2, 1]
 
-# Take from range
-Enum.take(1..100, 5) # => [1, 2, 3, 4, 5]
-Enum.take(1..100, -3) # => [98, 99, 100] (last 3)
+Enum.take(1..100, 5)               # => Takes first 5 elements from range
+                                   # => Returns [1, 2, 3, 4, 5]
+Enum.take(1..100, -3)              # => Takes last 3 elements from range
+                                   # => Negative count takes from end
+                                   # => Returns [98, 99, 100]
 
-# Random from range
-Enum.random(1..100) # => 42 (varies - random number between 1 and 100)
+Enum.random(1..100)                # => Selects random element from range
+                                   # => Result varies each call (example: 42)
+                                   # => Returns integer between 1 and 100 (inclusive)
 ```
 
 **Key Takeaway**: Ranges are memory-efficient sequences perfect for iterations and numeric operations. They work with all Enum functions and support pattern matching with `in` operator.
@@ -992,73 +1416,106 @@ String interpolation embeds expressions inside strings using `#{}`. Any Elixir e
 **Code**:
 
 ```elixir
-# Basic interpolation
-name = "Alice" # => "Alice"
-"Hello, #{name}!" # => "Hello, Alice!"
+name = "Alice"                     # => Binds name to string "Alice"
+                                   # => name is "Alice" (type: String)
+"Hello, #{name}!"                  # => String interpolation with #{} syntax
+                                   # => Evaluates name and embeds it in string
+                                   # => Returns "Hello, Alice!"
 
-# Multiple variables
-first = "Bob" # => "Bob"
-last = "Smith" # => "Smith"
-"Full name: #{first} #{last}" # => "Full name: Bob Smith"
+first = "Bob"                      # => Binds first to "Bob"
+                                   # => first is "Bob"
+last = "Smith"                     # => Binds last to "Smith"
+                                   # => last is "Smith"
+"Full name: #{first} #{last}"      # => Interpolates multiple variables
+                                   # => first is "Bob", last is "Smith"
+                                   # => Returns "Full name: Bob Smith"
 
-# Expressions in interpolation
-x = 10 # => 10
-y = 20 # => 20
-"Sum: #{x + y}" # => "Sum: 30"
-"Product: #{x * y}" # => "Product: 200"
+x = 10                             # => Binds x to integer 10
+                                   # => x is 10
+y = 20                             # => Binds y to integer 20
+                                   # => y is 20
+"Sum: #{x + y}"                    # => Interpolates expression x + y
+                                   # => Evaluates 10 + 20 = 30
+                                   # => Returns "Sum: 30"
+"Product: #{x * y}"                # => Interpolates expression x * y
+                                   # => Evaluates 10 * 20 = 200
+                                   # => Returns "Product: 200"
 
-# Function calls in interpolation
-"Uppercase: #{String.upcase("hello")}" # => "Uppercase: HELLO"
-"Length: #{String.length("Elixir")}" # => "Length: 6"
+"Uppercase: #{String.upcase("hello")}"  # => Interpolates function call result
+                                         # => String.upcase("hello") returns "HELLO"
+                                         # => Returns "Uppercase: HELLO"
+"Length: #{String.length("Elixir")}"  # => Interpolates function result
+                                       # => String.length("Elixir") returns 6
+                                       # => Returns "Length: 6"
 
-# Nested interpolation
-user = %{name: "Charlie", age: 25} # => %{age: 25, name: "Charlie"}
-"User: #{user.name}, Age: #{user.age}" # => "User: Charlie, Age: 25"
+user = %{name: "Charlie", age: 25}  # => Creates map with name and age keys
+                                     # => user is %{age: 25, name: "Charlie"}
+"User: #{user.name}, Age: #{user.age}"  # => Interpolates map field access
+                                         # => user.name is "Charlie", user.age is 25
+                                         # => Returns "User: Charlie, Age: 25"
 
-# Conditional expressions
-status = :active # => :active
-"Status: #{if status == :active, do: "Active", else: "Inactive"}" # => "Status: Active"
+status = :active                   # => Binds status to atom :active
+                                   # => status is :active
+"Status: #{if status == :active, do: "Active", else: "Inactive"}"  # => Interpolates if expression
+                                                                     # => status == :active is true
+                                                                     # => Evaluates do clause: "Active"
+                                                                     # => Returns "Status: Active"
 
-# Case expressions
-level = 5 # => 5
-"Level: #{case level do
-  n when n < 5 -> "Beginner"
-  n when n < 10 -> "Intermediate"
-  _ -> "Advanced"
-end}" # => "Level: Intermediate"
+level = 5                          # => Binds level to 5
+                                   # => level is 5
+"Level: #{case level do            # => Interpolates case expression
+  n when n < 5 -> "Beginner"       # => First clause: n < 5 is false (5 not < 5)
+  n when n < 10 -> "Intermediate"  # => Second clause: n < 10 is true (5 < 10)
+                                   # => Evaluates to "Intermediate"
+  _ -> "Advanced"                  # => Third clause: not matched
+end}"                              # => case returns "Intermediate"
+                                   # => Returns "Level: Intermediate"
 
-# List interpolation (inspect required)
-numbers = [1, 2, 3] # => [1, 2, 3]
-"Numbers: #{inspect(numbers)}" # => "Numbers: [1, 2, 3]"
+numbers = [1, 2, 3]                # => Creates list [1, 2, 3]
+                                   # => numbers is [1, 2, 3]
+"Numbers: #{inspect(numbers)}"     # => inspect/1 converts data to string representation
+                                   # => inspect([1, 2, 3]) returns "[1, 2, 3]"
+                                   # => Returns "Numbers: [1, 2, 3]"
 
-# Map interpolation
-data = %{a: 1, b: 2} # => %{a: 1, b: 2}
-"Data: #{inspect(data)}" # => "Data: %{a: 1, b: 2}"
+data = %{a: 1, b: 2}               # => Creates map with keys :a and :b
+                                   # => data is %{a: 1, b: 2}
+"Data: #{inspect(data)}"           # => inspect/1 converts map to string
+                                   # => inspect(%{a: 1, b: 2}) returns "%{a: 1, b: 2}"
+                                   # => Returns "Data: %{a: 1, b: 2}"
 
-# Multiline string with interpolation
-greeting = """
-Hello, #{name}!
-Welcome to Elixir.
-Your age is #{user.age}.
-""" # => "Hello, Alice!\nWelcome to Elixir.\nYour age is 25.\n"
+greeting = """                     # => Multiline string with heredoc syntax
+Hello, #{name}!                    # => Interpolates name ("Alice")
+Welcome to Elixir.                 # => Static text line
+Your age is #{user.age}.           # => Interpolates user.age (25)
+"""                                # => Closing heredoc delimiter
+                                   # => greeting is "Hello, Alice!\nWelcome to Elixir.\nYour age is 25.\n"
 
-# Pipe operator in interpolation
-result = "Result: #{1..10 |> Enum.filter(&(rem(&1, 2) == 0)) |> Enum.sum()}"
-result # => "Result: 30"
+result = "Result: #{1..10 |> Enum.filter(&(rem(&1, 2) == 0)) |> Enum.sum()}"  # => Interpolates pipeline expression
+                                                                                # => 1..10 filtered to evens [2,4,6,8,10]
+                                                                                # => Sum: 2+4+6+8+10 = 30
+result                             # => Returns "Result: 30"
 
-# Escaping interpolation
-"The syntax is: \#{variable}" # => "The syntax is: #{variable}"
+"The syntax is: \#{variable}"      # => Backslash escapes interpolation
+                                   # => \#{} prevents evaluation
+                                   # => Returns "The syntax is: #{variable}" (literal)
 
-# Empty interpolation
-"Value: #{nil}" # => "Value: " (nil converts to empty string)
-"Value: #{[]}" # => "Value: []"
+"Value: #{nil}"                    # => Interpolates nil
+                                   # => nil converts to empty string
+                                   # => Returns "Value: " (nothing after colon)
+"Value: #{[]}"                     # => Interpolates empty list
+                                   # => [] converts to "[]"
+                                   # => Returns "Value: []"
 
-# Boolean interpolation
-"Active: #{true}" # => "Active: true"
-"Inactive: #{false}" # => "Inactive: false"
+"Active: #{true}"                  # => Interpolates boolean true
+                                   # => true converts to "true"
+                                   # => Returns "Active: true"
+"Inactive: #{false}"               # => Interpolates boolean false
+                                   # => false converts to "false"
+                                   # => Returns "Inactive: false"
 
-# Atom interpolation
-"Status: #{:ok}" # => "Status: ok"
+"Status: #{:ok}"                   # => Interpolates atom :ok
+                                   # => :ok converts to "ok" (without colon)
+                                   # => Returns "Status: ok"
 ```
 
 **Key Takeaway**: String interpolation with `#{}` evaluates any Elixir expression and converts it to a string. Use `inspect/1` for complex data structures and escape with `\#{}` when needed.
@@ -1091,74 +1548,105 @@ graph TD
 **Code**:
 
 ```elixir
-# Prepend with | operator (O(1) - constant time)
-list = [2, 3, 4] # => [2, 3, 4]
-new_list = [1 | list] # => [1, 2, 3, 4]
-list # => [2, 3, 4] (unchanged - immutability!)
+list = [2, 3, 4]                   # => Creates list [2, 3, 4]
+                                   # => list is [2, 3, 4]
+new_list = [1 | list]              # => Prepends 1 to list (O(1) constant time)
+                                   # => [1 | [2, 3, 4]] constructs [1, 2, 3, 4]
+                                   # => new_list is [1, 2, 3, 4]
+list                               # => Returns [2, 3, 4] (original unchanged - immutable!)
 
-# Multiple prepends
-[0 | [1 | [2 | [3]]]] # => [0, 1, 2, 3]
+[0 | [1 | [2 | [3]]]]              # => Multiple nested prepends
+                                   # => Innermost: [2 | [3]] = [2, 3]
+                                   # => Middle: [1 | [2, 3]] = [1, 2, 3]
+                                   # => Outermost: [0 | [1, 2, 3]] = [0, 1, 2, 3]
+                                   # => Returns [0, 1, 2, 3]
 
-# Destructure with pattern matching
-[head | tail] = [1, 2, 3, 4, 5] # => [1, 2, 3, 4, 5]
-head # => 1
-tail # => [2, 3, 4, 5]
+[head | tail] = [1, 2, 3, 4, 5]    # => Pattern matches list into head and tail
+                                   # => head binds to first element: 1
+                                   # => tail binds to remaining list: [2, 3, 4, 5]
+head                               # => Returns 1
+tail                               # => Returns [2, 3, 4, 5]
 
-# Extract multiple elements
-[first, second | rest] = [1, 2, 3, 4, 5] # => [1, 2, 3, 4, 5]
-first # => 1
-second # => 2
-rest # => [3, 4, 5]
+[first, second | rest] = [1, 2, 3, 4, 5]  # => Pattern extracts multiple elements
+                                           # => first binds to 1
+                                           # => second binds to 2
+                                           # => rest binds to [3, 4, 5]
+first                              # => Returns 1
+second                             # => Returns 2
+rest                               # => Returns [3, 4, 5]
 
-# Single element list
-[head | tail] = [42] # => [42]
-head # => 42
-tail # => []
+[head | tail] = [42]               # => Pattern matches single-element list
+                                   # => head binds to 42
+                                   # => tail binds to empty list []
+head                               # => Returns 42
+tail                               # => Returns []
 
-# Empty list pattern
-[head | tail] = [] # => ** (MatchError) - can't match empty list
+[head | tail] = []                 # => Attempts to match empty list
+                                   # => No head to extract
+                                   # => Raises ** (MatchError) can't match empty list
 
-# List concatenation ++ (O(n) - linear time)
-[1, 2] ++ [3, 4] # => [1, 2, 3, 4]
-[1] ++ [2] ++ [3] # => [1, 2, 3]
+[1, 2] ++ [3, 4]                   # => Concatenates two lists (O(n) linear time)
+                                   # => Left list traversed and copied
+                                   # => Returns [1, 2, 3, 4]
+[1] ++ [2] ++ [3]                  # => Multiple concatenations (left-to-right)
+                                   # => [1] ++ [2] = [1, 2], then [1, 2] ++ [3]
+                                   # => Returns [1, 2, 3]
 
-# List subtraction -- (removes first occurrence)
-[1, 2, 3, 2, 1] -- [2] # => [1, 3, 2, 1] (first 2 removed)
-[1, 2, 3, 4, 5] -- [2, 4] # => [1, 3, 5]
+[1, 2, 3, 2, 1] -- [2]             # => Subtracts first occurrence of 2
+                                   # => Removes only the first matching 2
+                                   # => Returns [1, 3, 2, 1]
+[1, 2, 3, 4, 5] -- [2, 4]          # => Subtracts first occurrence of each element
+                                   # => Removes 2 and 4
+                                   # => Returns [1, 3, 5]
 
-# Membership check
-1 in [1, 2, 3] # => true
-5 in [1, 2, 3] # => false
+1 in [1, 2, 3]                     # => Tests membership of 1 in list
+                                   # => 1 is present in list
+                                   # => Returns true
+5 in [1, 2, 3]                     # => Tests membership of 5 in list
+                                   # => 5 is not present
+                                   # => Returns false
 
-# Build list with prepends (efficient)
-defmodule ListBuilder do
-  def build_reverse(0, acc), do: acc
-  def build_reverse(n, acc) when n > 0 do
-    build_reverse(n - 1, [n | acc]) # => Prepend is O(1)
-  end
-end
+defmodule ListBuilder do           # => Defines module ListBuilder
+  def build_reverse(0, acc), do: acc  # => Base case: n is 0, return accumulator
+                                      # => Stops recursion
+  def build_reverse(n, acc) when n > 0 do  # => Recursive case: n > 0
+    build_reverse(n - 1, [n | acc])  # => Prepends n to acc (O(1) operation)
+                                      # => Recursively calls with n-1
+                                      # => Tail-call optimized
+  end                                # => Ends function definition
+end                                # => Ends module definition
 
-ListBuilder.build_reverse(5, []) # => [1, 2, 3, 4, 5]
+ListBuilder.build_reverse(5, [])   # => Calls with n=5, acc=[]
+                                   # => Builds: []→[5]→[4,5]→[3,4,5]→[2,3,4,5]→[1,2,3,4,5]
+                                   # => Returns [1, 2, 3, 4, 5]
 
-# Improper list (rarely used)
-[1 | 2] # => [1 | 2] (tail is not a list!)
-[1, 2 | 3] # => [1, 2 | 3]
+[1 | 2]                            # => Creates improper list (tail not a list!)
+                                   # => Rarely used, mostly in low-level code
+                                   # => Returns [1 | 2]
+[1, 2 | 3]                         # => Another improper list
+                                   # => [1, 2] prepended to non-list 3
+                                   # => Returns [1, 2 | 3]
 
-# Pattern matching in functions
-defmodule Sum do
-  def sum([]), do: 0 # => Base case
-  def sum([head | tail]) do
-    head + sum(tail) # => Recursive case
-  end
-end
+defmodule Sum do                   # => Defines module Sum
+  def sum([]), do: 0               # => Base case: empty list sums to 0
+                                   # => Stops recursion
+  def sum([head | tail]) do        # => Recursive case: [head | tail] pattern
+    head + sum(tail)               # => Adds head to sum of tail
+                                   # => Recursively processes remaining elements
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-Sum.sum([1, 2, 3, 4, 5]) # => 15
+Sum.sum([1, 2, 3, 4, 5])           # => Calls sum with [1, 2, 3, 4, 5]
+                                   # => Recursion: 1 + sum([2,3,4,5]) → 1+2+3+4+5
+                                   # => Returns 15
 
-# Nested lists
-[[1, 2], [3, 4]] # => [[1, 2], [3, 4]]
-[head | tail] = [[1, 2], [3, 4]] # => [[1, 2], [3, 4]]
-head # => [1, 2]
-tail # => [[3, 4]]
+[[1, 2], [3, 4]]                   # => Creates nested list (list of lists)
+                                   # => Returns [[1, 2], [3, 4]]
+[head | tail] = [[1, 2], [3, 4]]   # => Pattern matches nested list
+                                   # => head binds to first sublist [1, 2]
+                                   # => tail binds to remaining [[3, 4]]
+head                               # => Returns [1, 2] (first sublist)
+tail                               # => Returns [[3, 4]] (list containing [3, 4])
 ```
 
 **Key Takeaway**: Use `[head | tail]` for efficient prepending (O(1)) and pattern matching. Avoid `++` for building lists (use prepend + reverse instead). Head/tail destructuring is the foundation of recursive list processing.
@@ -1174,88 +1662,126 @@ tail # => [[3, 4]]
 **Code**:
 
 ```elixir
-# Basic if expression
-x = 10 # => 10
-result = if x > 5 do
-  "Greater than 5" # => "Greater than 5"
-else
-  "Less than or equal to 5"
-end
-result # => "Greater than 5"
+x = 10                             # => Binds x to 10
+                                   # => x is 10 (type: integer)
+result = if x > 5 do               # => if expression evaluates condition x > 5
+  "Greater than 5"                 # => do clause: x > 5 is true (10 > 5)
+                                   # => Returns "Greater than 5"
+else                               # => else clause: not evaluated (condition true)
+  "Less than or equal to 5"        # => Would return this if x <= 5
+end                                # => if expression ends
+result                             # => result is "Greater than 5"
 
-# If without else (returns nil if false)
-if true, do: "Yes" # => "Yes"
-if false, do: "No" # => nil
+if true, do: "Yes"                 # => One-line if with true condition
+                                   # => Evaluates do clause
+                                   # => Returns "Yes"
+if false, do: "No"                 # => One-line if with false condition
+                                   # => No else clause provided
+                                   # => Returns nil (default for missing else)
 
-# One-line syntax
-if 2 + 2 == 4, do: "Math works", else: "Math broken" # => "Math works"
+if 2 + 2 == 4, do: "Math works", else: "Math broken"  # => One-line if/else
+                                                       # => 2 + 2 == 4 is true
+                                                       # => Evaluates do clause
+                                                       # => Returns "Math works"
 
-# Unless (opposite of if)
-unless false, do: "This runs" # => "This runs"
-unless true, do: "This doesn't run" # => nil
+unless false, do: "This runs"      # => unless is opposite of if
+                                   # => Runs do clause when condition is false
+                                   # => false is false, so do clause executes
+                                   # => Returns "This runs"
+unless true, do: "This doesn't run"  # => unless with true condition
+                                      # => Do clause skipped (condition true)
+                                      # => Returns nil
 
-# Unless with else
-unless 5 > 10 do
-  "5 is not greater than 10" # => "5 is not greater than 10"
-else
-  "5 is greater than 10"
-end
+unless 5 > 10 do                   # => unless expression evaluates 5 > 10
+  "5 is not greater than 10"       # => do clause: 5 > 10 is false
+                                   # => Runs when condition false (inverse of if)
+                                   # => Returns "5 is not greater than 10"
+else                               # => else clause: not evaluated
+  "5 is greater than 10"           # => Would return this if 5 > 10 were true
+end                                # => unless expression ends
 
-# Nested if
-age = 25 # => 25
-category = if age < 18 do
-  "Minor"
-else
-  if age < 65 do
-    "Adult" # => "Adult"
-  else
-    "Senior"
-  end
-end
-category # => "Adult"
+age = 25                           # => Binds age to 25
+                                   # => age is 25
+category = if age < 18 do          # => Outer if: evaluates age < 18
+  "Minor"                          # => First clause: age < 18 is false (25 not < 18)
+else                               # => else clause executes
+  if age < 65 do                   # => Inner if: evaluates age < 65
+    "Adult"                        # => Inner do: age < 65 is true (25 < 65)
+                                   # => Returns "Adult"
+  else                             # => Inner else: not evaluated
+    "Senior"                       # => Would return "Senior" if age >= 65
+  end                              # => Inner if ends, returns "Adult"
+end                                # => Outer if ends, returns "Adult"
+category                           # => category is "Adult"
 
-# If with pattern matching
-user = {:ok, "Alice"} # => {:ok, "Alice"}
-if match?({:ok, _name}, user) do
-  {:ok, name} = user
-  "Welcome, #{name}!" # => "Welcome, Alice!"
-else
-  "Error"
-end
+user = {:ok, "Alice"}              # => Creates tagged tuple
+                                   # => user is {:ok, "Alice"}
+if match?({:ok, _name}, user) do   # => match?/2 checks pattern without binding
+  {:ok, name} = user               # => Pattern matches to extract name
+                                   # => name binds to "Alice"
+  "Welcome, #{name}!"              # => Interpolates name
+                                   # => Returns "Welcome, Alice!"
+else                               # => else clause: not evaluated (match succeeded)
+  "Error"                          # => Would return if pattern didn't match
+end                                # => if expression returns "Welcome, Alice!"
 
-# Truthy values (everything except false and nil)
-if 0, do: "Zero is truthy" # => "Zero is truthy"
-if "", do: "Empty string is truthy" # => "Empty string is truthy"
-if [], do: "Empty list is truthy" # => "Empty list is truthy"
-if nil, do: "Nil is truthy", else: "Nil is falsy" # => "Nil is falsy"
-if false, do: "False is truthy", else: "False is falsy" # => "False is falsy"
+if 0, do: "Zero is truthy"         # => Tests 0 for truthiness
+                                   # => 0 is truthy (not false or nil)
+                                   # => Returns "Zero is truthy"
+if "", do: "Empty string is truthy"  # => Tests empty string for truthiness
+                                      # => "" is truthy (not false or nil)
+                                      # => Returns "Empty string is truthy"
+if [], do: "Empty list is truthy"  # => Tests empty list for truthiness
+                                   # => [] is truthy (not false or nil)
+                                   # => Returns "Empty list is truthy"
+if nil, do: "Nil is truthy", else: "Nil is falsy"  # => Tests nil
+                                                     # => nil is falsy (one of two falsy values)
+                                                     # => else clause executes
+                                                     # => Returns "Nil is falsy"
+if false, do: "False is truthy", else: "False is falsy"  # => Tests false
+                                                          # => false is falsy (the other falsy value)
+                                                          # => else clause executes
+                                                          # => Returns "False is falsy"
 
-# If as last expression in function
-defmodule Validator do
-  def check_age(age) do
-    if age >= 18 do
-      {:ok, "Adult"} # => Returns this tuple if true
-    else
-      {:error, "Minor"}
-    end
-  end
-end
+defmodule Validator do             # => Defines module Validator
+  def check_age(age) do            # => Public function check_age/1
+    if age >= 18 do                # => if expression: evaluates age >= 18
+      {:ok, "Adult"}               # => do clause: age >= 18 true
+                                   # => Returns success tuple
+    else                           # => else clause: age < 18
+      {:error, "Minor"}            # => Returns error tuple
+    end                            # => if expression ends
+  end                              # => Function ends, returns if result
+end                                # => Module ends
 
-Validator.check_age(25) # => {:ok, "Adult"}
-Validator.check_age(15) # => {:error, "Minor"}
+Validator.check_age(25)            # => Calls check_age/1 with 25
+                                   # => 25 >= 18 is true
+                                   # => Returns {:ok, "Adult"}
+Validator.check_age(15)            # => Calls check_age/1 with 15
+                                   # => 15 >= 18 is false
+                                   # => Returns {:error, "Minor"}
 
-# Assign result of if
-status = :active # => :active
-message = if status == :active, do: "Running", else: "Stopped"
-message # => "Running"
+status = :active                   # => Binds status to atom :active
+                                   # => status is :active
+message = if status == :active, do: "Running", else: "Stopped"  # => One-line if
+                                                                 # => status == :active is true
+                                                                 # => Returns "Running"
+message                            # => message is "Running"
 
-# Guard-like conditions
-x = 5 # => 5
-if is_integer(x) and x > 0, do: "Positive integer" # => "Positive integer"
+x = 5                              # => Binds x to 5
+                                   # => x is 5
+if is_integer(x) and x > 0, do: "Positive integer"  # => Compound condition
+                                                     # => is_integer(5) is true
+                                                     # => 5 > 0 is true
+                                                     # => Both true: and returns true
+                                                     # => Returns "Positive integer"
 
-# Unless for negative conditions (more readable)
-if not (x == 0), do: "Not zero" # => Less readable
-unless x == 0, do: "Not zero" # => More readable
+if not (x == 0), do: "Not zero"    # => Negated condition (less readable)
+                                   # => x == 0 is false, not false is true
+                                   # => Returns "Not zero"
+unless x == 0, do: "Not zero"      # => unless for negative condition (clearer)
+                                   # => x == 0 is false, unless executes do clause
+                                   # => Returns "Not zero"
 ```
 
 **Key Takeaway**: `if` and `unless` are expressions that return values. Only `false` and `nil` are falsy; everything else is truthy. Use `unless` for negative conditions to improve readability.
@@ -1271,105 +1797,177 @@ Functions with multiple clauses use pattern matching to dispatch to the correct 
 **Code**:
 
 ```elixir
-# Multiple clauses with different patterns
-defmodule Math do
-  def abs(n) when n < 0, do: -n # => First clause: negative numbers
-  def abs(n) when n >= 0, do: n # => Second clause: positive and zero
-end
+defmodule Math do                  # => Defines module Math
+  def abs(n) when n < 0, do: -n    # => First clause: guard n < 0
+                                   # => Returns -n (negates negative to positive)
+  def abs(n) when n >= 0, do: n    # => Second clause: guard n >= 0
+                                   # => Returns n unchanged (positive or zero)
+end                                # => Ends module definition
 
-Math.abs(-5) # => 5
-Math.abs(10) # => 10
-Math.abs(0) # => 0
+Math.abs(-5)                       # => Calls abs/1 with -5
+                                   # => First clause matches (n < 0 is true)
+                                   # => Returns -(-5) = 5
+Math.abs(10)                       # => Calls abs/1 with 10
+                                   # => Second clause matches (n >= 0 is true)
+                                   # => Returns 10
+Math.abs(0)                        # => Calls abs/1 with 0
+                                   # => Second clause matches (0 >= 0 is true)
+                                   # => Returns 0
 
-# Pattern matching on data types
-defmodule TypeHandler do
-  def handle(x) when is_integer(x), do: "Integer: #{x}"
-  def handle(x) when is_binary(x), do: "String: #{x}"
-  def handle(x) when is_atom(x), do: "Atom: #{inspect(x)}"
-  def handle(_), do: "Unknown type"
-end
+defmodule TypeHandler do           # => Defines module TypeHandler
+  def handle(x) when is_integer(x), do: "Integer: #{x}"  # => First clause: integer guard
+                                                          # => Returns formatted integer string
+  def handle(x) when is_binary(x), do: "String: #{x}"  # => Second clause: binary (string) guard
+                                                        # => Returns formatted string
+  def handle(x) when is_atom(x), do: "Atom: #{inspect(x)}"  # => Third clause: atom guard
+                                                              # => Returns formatted atom string
+  def handle(_), do: "Unknown type"  # => Fourth clause: catch-all pattern
+                                     # => Returns "Unknown type" for unmatched types
+end                                # => Ends module definition
 
-TypeHandler.handle(42) # => "Integer: 42"
-TypeHandler.handle("hello") # => "String: hello"
-TypeHandler.handle(:ok) # => "Atom: :ok"
-TypeHandler.handle([1, 2]) # => "Unknown type"
+TypeHandler.handle(42)             # => Calls handle/1 with integer 42
+                                   # => First clause matches (is_integer(42) is true)
+                                   # => Returns "Integer: 42"
+TypeHandler.handle("hello")        # => Calls handle/1 with string "hello"
+                                   # => Second clause matches (is_binary("hello") is true)
+                                   # => Returns "String: hello"
+TypeHandler.handle(:ok)            # => Calls handle/1 with atom :ok
+                                   # => Third clause matches (is_atom(:ok) is true)
+                                   # => Returns "Atom: :ok"
+TypeHandler.handle([1, 2])         # => Calls handle/1 with list [1, 2]
+                                   # => No guard matches, fourth clause (catch-all) matches
+                                   # => Returns "Unknown type"
 
-# Pattern matching on tuples
-defmodule Response do
-  def format({:ok, data}), do: "Success: #{data}"
-  def format({:error, reason}), do: "Error: #{reason}"
-  def format(_), do: "Unknown response"
-end
+defmodule Response do              # => Defines module Response
+  def format({:ok, data}), do: "Success: #{data}"  # => First clause: pattern matches {:ok, data} tuple
+                                                    # => data binds to second element
+                                                    # => Returns success message
+  def format({:error, reason}), do: "Error: #{reason}"  # => Second clause: pattern matches {:error, reason}
+                                                         # => reason binds to second element
+                                                         # => Returns error message
+  def format(_), do: "Unknown response"  # => Third clause: catch-all pattern
+                                         # => Returns unknown response message
+end                                # => Ends module definition
 
-Response.format({:ok, "Data loaded"}) # => "Success: Data loaded"
-Response.format({:error, "Not found"}) # => "Error: Not found"
-Response.format(:unknown) # => "Unknown response"
+Response.format({:ok, "Data loaded"})  # => Calls format/1 with {:ok, "Data loaded"}
+                                       # => First clause matches
+                                       # => data binds to "Data loaded"
+                                       # => Returns "Success: Data loaded"
+Response.format({:error, "Not found"})  # => Calls format/1 with {:error, "Not found"}
+                                        # => Second clause matches
+                                        # => reason binds to "Not found"
+                                        # => Returns "Error: Not found"
+Response.format(:unknown)          # => Calls format/1 with atom :unknown
+                                   # => Third clause matches (catch-all)
+                                   # => Returns "Unknown response"
 
-# Pattern matching on lists
-defmodule ListOps do
-  def first([]), do: nil # => Empty list
-  def first([head | _tail]), do: head # => Non-empty list
-end
+defmodule ListOps do               # => Defines module ListOps
+  def first([]), do: nil           # => First clause: pattern matches empty list []
+                                   # => Returns nil for empty list
+  def first([head | _tail]), do: head  # => Second clause: pattern matches [head | tail]
+                                        # => head binds to first element
+                                        # => _tail ignored (underscore convention)
+                                        # => Returns head
+end                                # => Ends module definition
 
-ListOps.first([1, 2, 3]) # => 1
-ListOps.first([]) # => nil
+ListOps.first([1, 2, 3])           # => Calls first/1 with [1, 2, 3]
+                                   # => Second clause matches
+                                   # => head binds to 1
+                                   # => Returns 1
+ListOps.first([])                  # => Calls first/1 with []
+                                   # => First clause matches
+                                   # => Returns nil
 
-# Combining patterns and guards
-defmodule Grade do
-  def letter_grade(score) when score >= 90, do: "A"
-  def letter_grade(score) when score >= 80, do: "B"
-  def letter_grade(score) when score >= 70, do: "C"
-  def letter_grade(score) when score >= 60, do: "D"
-  def letter_grade(_score), do: "F"
-end
+defmodule Grade do                 # => Defines module Grade
+  def letter_grade(score) when score >= 90, do: "A"  # => First clause: guard score >= 90
+                                                      # => Returns "A"
+  def letter_grade(score) when score >= 80, do: "B"  # => Second clause: guard score >= 80
+                                                      # => Returns "B"
+  def letter_grade(score) when score >= 70, do: "C"  # => Third clause: guard score >= 70
+                                                      # => Returns "C"
+  def letter_grade(score) when score >= 60, do: "D"  # => Fourth clause: guard score >= 60
+                                                      # => Returns "D"
+  def letter_grade(_score), do: "F"  # => Fifth clause: catch-all pattern
+                                     # => Returns "F" for scores < 60
+end                                # => Ends module definition
 
-Grade.letter_grade(95) # => "A"
-Grade.letter_grade(75) # => "C"
-Grade.letter_grade(55) # => "F"
+Grade.letter_grade(95)             # => Calls letter_grade/1 with 95
+                                   # => First clause matches (95 >= 90 is true)
+                                   # => Returns "A"
+Grade.letter_grade(75)             # => Calls letter_grade/1 with 75
+                                   # => Third clause matches (75 >= 70 is true)
+                                   # => Returns "C"
+Grade.letter_grade(55)             # => Calls letter_grade/1 with 55
+                                   # => Fifth clause matches (catch-all)
+                                   # => Returns "F"
 
-# Different arities (different number of arguments)
-defmodule Greeter do
-  def greet(name), do: "Hello, #{name}!"
-  def greet(name, greeting), do: "#{greeting}, #{name}!"
-end
+defmodule Greeter do               # => Defines module Greeter
+  def greet(name), do: "Hello, #{name}!"  # => greet/1 (arity 1): single argument
+                                           # => Returns "Hello, {name}!"
+  def greet(name, greeting), do: "#{greeting}, #{name}!"  # => greet/2 (arity 2): two arguments
+                                                           # => Different function (arity differentiates)
+                                                           # => Returns "{greeting}, {name}!"
+end                                # => Ends module definition
 
-Greeter.greet("Alice") # => "Hello, Alice!"
-Greeter.greet("Bob", "Hi") # => "Hi, Bob!"
+Greeter.greet("Alice")             # => Calls greet/1 with "Alice"
+                                   # => First function matches (arity 1)
+                                   # => Returns "Hello, Alice!"
+Greeter.greet("Bob", "Hi")         # => Calls greet/2 with "Bob" and "Hi"
+                                   # => Second function matches (arity 2)
+                                   # => Returns "Hi, Bob!"
 
-# Map pattern matching
-defmodule UserHandler do
-  def role(%{role: :admin}), do: "Administrator"
-  def role(%{role: :user}), do: "Regular User"
-  def role(_), do: "Guest"
-end
+defmodule UserHandler do           # => Defines module UserHandler
+  def role(%{role: :admin}), do: "Administrator"  # => First clause: pattern matches map with role: :admin
+                                                   # => Returns "Administrator"
+  def role(%{role: :user}), do: "Regular User"  # => Second clause: pattern matches map with role: :user
+                                                 # => Returns "Regular User"
+  def role(_), do: "Guest"         # => Third clause: catch-all pattern
+                                   # => Returns "Guest" for any other map
+end                                # => Ends module definition
 
-UserHandler.role(%{role: :admin, name: "Alice"}) # => "Administrator"
-UserHandler.role(%{role: :user, name: "Bob"}) # => "Regular User"
-UserHandler.role(%{name: "Charlie"}) # => "Guest"
+UserHandler.role(%{role: :admin, name: "Alice"})  # => Calls role/1 with map
+                                                   # => First clause matches (role: :admin present)
+                                                   # => Returns "Administrator"
+UserHandler.role(%{role: :user, name: "Bob"})  # => Calls role/1 with map
+                                               # => Second clause matches (role: :user present)
+                                               # => Returns "Regular User"
+UserHandler.role(%{name: "Charlie"})  # => Calls role/1 with map without role key
+                                      # => Third clause matches (catch-all)
+                                      # => Returns "Guest"
 
-# Recursive clauses with pattern matching
-defmodule Factorial do
-  def calc(0), do: 1 # => Base case
-  def calc(n) when n > 0, do: n * calc(n - 1) # => Recursive case
-end
+defmodule Factorial do             # => Defines module Factorial
+  def calc(0), do: 1               # => Base case: pattern matches 0
+                                   # => Returns 1 (factorial of 0 is 1)
+  def calc(n) when n > 0, do: n * calc(n - 1)  # => Recursive case: guard n > 0
+                                                # => Returns n * calc(n-1)
+                                                # => Tail-recursive call
+end                                # => Ends module definition
 
-Factorial.calc(5) # => 120
+Factorial.calc(5)                  # => Calls calc/1 with 5
+                                   # => Recursion: 5 * calc(4) * ... * calc(0)
+                                   # => 5 * 4 * 3 * 2 * 1 = 120
+                                   # => Returns 120
 
-# Order matters! Specific before general
-defmodule OrderMatters do
-  # CORRECT order: specific first
-  def classify(0), do: "Zero"
-  def classify(n) when n < 0, do: "Negative"
-  def classify(n) when n > 0, do: "Positive"
+defmodule OrderMatters do          # => Defines module OrderMatters
+  def classify(0), do: "Zero"      # => First clause: specific pattern for 0
+                                   # => Returns "Zero"
+  def classify(n) when n < 0, do: "Negative"  # => Second clause: guard n < 0
+                                               # => Returns "Negative"
+  def classify(n) when n > 0, do: "Positive"  # => Third clause: guard n > 0
+                                               # => Returns "Positive"
+end                                # => Ends module definition
+                                   # => Order matters: specific patterns before general!
+                                   # => WRONG would be: def classify(n) first (matches everything)
 
-  # WRONG order would be:
-  # def classify(n), do: "Number"  # This would match everything!
-  # def classify(0), do: "Zero"    # Never reached
-end
-
-OrderMatters.classify(0) # => "Zero"
-OrderMatters.classify(-5) # => "Negative"
-OrderMatters.classify(10) # => "Positive"
+OrderMatters.classify(0)           # => Calls classify/1 with 0
+                                   # => First clause matches (exact pattern 0)
+                                   # => Returns "Zero"
+OrderMatters.classify(-5)          # => Calls classify/1 with -5
+                                   # => Second clause matches (n < 0 is true)
+                                   # => Returns "Negative"
+OrderMatters.classify(10)          # => Calls classify/1 with 10
+                                   # => Third clause matches (n > 0 is true)
+                                   # => Returns "Positive"
 ```
 
 **Key Takeaway**: Multiple function clauses enable pattern-based dispatch. Order matters—place specific patterns before general ones. Use guards for value-based conditions and pattern matching for structure-based branching.
@@ -1385,104 +1983,165 @@ Default arguments provide fallback values when arguments aren't supplied. Define
 **Code**:
 
 ```elixir
-# Basic default argument
-defmodule Greeter do
-  def greet(name, greeting \\ "Hello") do
-    "#{greeting}, #{name}!"
-  end
-end
+defmodule Greeter do               # => Defines module Greeter
+  def greet(name, greeting \\ "Hello") do  # => Function with default argument
+                                            # => greeting defaults to "Hello"
+                                            # => \\ syntax defines default value
+    "#{greeting}, #{name}!"        # => Interpolates greeting and name
+                                   # => Returns formatted greeting string
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-Greeter.greet("Alice") # => "Hello, Alice!" (uses default)
-Greeter.greet("Bob", "Hi") # => "Hi, Bob!" (overrides default)
+Greeter.greet("Alice")             # => Calls greet/1 (only name provided)
+                                   # => greeting uses default "Hello"
+                                   # => Returns "Hello, Alice!"
+Greeter.greet("Bob", "Hi")         # => Calls greet/2 (both arguments provided)
+                                   # => greeting overrides default with "Hi"
+                                   # => Returns "Hi, Bob!"
 
-# Multiple default arguments
-defmodule Server do
-  def start(name, port \\ 8080, timeout \\ 5000) do
-    {name, port, timeout}
-  end
-end
+defmodule Server do                # => Defines module Server
+  def start(name, port \\ 8080, timeout \\ 5000) do  # => Two default arguments
+                                                      # => port defaults to 8080
+                                                      # => timeout defaults to 5000
+    {name, port, timeout}          # => Returns tuple with all three values
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-Server.start("MyServer") # => {"MyServer", 8080, 5000}
-Server.start("MyServer", 3000) # => {"MyServer", 3000, 5000}
-Server.start("MyServer", 3000, 10000) # => {"MyServer", 3000, 10000}
+Server.start("MyServer")           # => Calls start/1 (only name provided)
+                                   # => port uses default 8080
+                                   # => timeout uses default 5000
+                                   # => Returns {"MyServer", 8080, 5000}
+Server.start("MyServer", 3000)     # => Calls start/2 (name and port provided)
+                                   # => port overrides default with 3000
+                                   # => timeout uses default 5000
+                                   # => Returns {"MyServer", 3000, 5000}
+Server.start("MyServer", 3000, 10000)  # => Calls start/3 (all arguments provided)
+                                       # => Both defaults overridden
+                                       # => Returns {"MyServer", 3000, 10000}
 
-# Default with expressions (evaluated at call time)
-defmodule Logger do
-  def log(message, timestamp \\ DateTime.utc_now()) do
-    "#{timestamp}: #{message}"
-  end
-end
+defmodule Logger do                # => Defines module Logger
+  def log(message, timestamp \\ DateTime.utc_now()) do  # => Default evaluated at call time
+                                                         # => DateTime.utc_now() called each time
+    "#{timestamp}: #{message}"     # => Interpolates timestamp and message
+                                   # => Returns formatted log string
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-Logger.log("Event happened") # => "2024-12-23 10:30:45Z: Event happened"
-:timer.sleep(1000)
-Logger.log("Another event") # => "2024-12-23 10:30:46Z: Another event" (different time!)
+Logger.log("Event happened")       # => Calls log/1
+                                   # => timestamp evaluates to current time
+                                   # => Returns "2024-12-23 10:30:45Z: Event happened"
+:timer.sleep(1000)                 # => Sleeps for 1000 milliseconds (1 second)
+Logger.log("Another event")        # => Calls log/1 again
+                                   # => timestamp evaluates to NEW current time
+                                   # => Returns "2024-12-23 10:30:46Z: Another event" (1 second later!)
 
-# Default arguments with pattern matching
-defmodule User do
-  def create(name, age \\ 0, role \\ :user) do
-    %{name: name, age: age, role: role}
-  end
-end
+defmodule User do                  # => Defines module User
+  def create(name, age \\ 0, role \\ :user) do  # => Two defaults: age=0, role=:user
+    %{name: name, age: age, role: role}  # => Creates map with three fields
+                                          # => Returns user map
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-User.create("Alice") # => %{age: 0, name: "Alice", role: :user}
-User.create("Bob", 25) # => %{age: 25, name: "Bob", role: :user}
-User.create("Charlie", 30, :admin) # => %{age: 30, name: "Charlie", role: :admin}
+User.create("Alice")               # => Calls create/1 (only name)
+                                   # => age uses default 0
+                                   # => role uses default :user
+                                   # => Returns %{age: 0, name: "Alice", role: :user}
+User.create("Bob", 25)             # => Calls create/2 (name and age)
+                                   # => age overrides default with 25
+                                   # => role uses default :user
+                                   # => Returns %{age: 25, name: "Bob", role: :user}
+User.create("Charlie", 30, :admin)  # => Calls create/3 (all arguments)
+                                    # => Both defaults overridden
+                                    # => Returns %{age: 30, name: "Charlie", role: :admin}
 
-# Defaults with guards
-defmodule Calculator do
-  def divide(a, b \\ 1) when b != 0 do
-    a / b
-  end
-end
+defmodule Calculator do            # => Defines module Calculator
+  def divide(a, b \\ 1) when b != 0 do  # => Default b=1 with guard b != 0
+                                         # => Guard prevents division by zero
+    a / b                          # => Divides a by b
+                                   # => Returns float result
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-Calculator.divide(10) # => 10.0 (10 / 1)
-Calculator.divide(10, 2) # => 5.0
+Calculator.divide(10)              # => Calls divide/1 with a=10
+                                   # => b uses default 1
+                                   # => 10 / 1 = 10.0
+                                   # => Returns 10.0
+Calculator.divide(10, 2)           # => Calls divide/2 with a=10, b=2
+                                   # => b overrides default with 2
+                                   # => 10 / 2 = 5.0
+                                   # => Returns 5.0
 
-# Default arguments in multiple clauses (tricky!)
-defmodule MultiClause do
-  # When using defaults with multiple clauses, define a function head
-  def process(data, opts \\ [])
-  def process(data, opts) when is_list(opts) do
-    {data, Keyword.get(opts, :mode, :default)}
-  end
-end
+defmodule MultiClause do           # => Defines module MultiClause
+  def process(data, opts \\ [])    # => Function head with default (required for multi-clause)
+                                   # => opts defaults to empty list []
+  def process(data, opts) when is_list(opts) do  # => Implementation clause with guard
+                                                  # => Guard ensures opts is list
+    {data, Keyword.get(opts, :mode, :default)}  # => Gets :mode key or :default fallback
+                                                 # => Returns tuple
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-MultiClause.process("data") # => {"data", :default}
-MultiClause.process("data", mode: :custom) # => {"data", :custom}
+MultiClause.process("data")        # => Calls process/1 with "data"
+                                   # => opts uses default []
+                                   # => Keyword.get([], :mode, :default) returns :default
+                                   # => Returns {"data", :default}
+MultiClause.process("data", mode: :custom)  # => Calls process/2 with keyword list
+                                            # => opts is [mode: :custom]
+                                            # => Keyword.get([mode: :custom], :mode, :default) returns :custom
+                                            # => Returns {"data", :custom}
 
-# Default with map/struct
-defmodule Config do
-  def build(name, opts \\ %{}) do
-    Map.merge(%{timeout: 5000, retries: 3}, opts)
-    |> Map.put(:name, name)
-  end
-end
+defmodule Config do                # => Defines module Config
+  def build(name, opts \\ %{}) do  # => Default opts to empty map %{}
+    Map.merge(%{timeout: 5000, retries: 3}, opts)  # => Merges defaults with opts
+                                                    # => opts overrides defaults
+    |> Map.put(:name, name)        # => Pipes result to Map.put
+                                   # => Adds :name key with name value
+                                   # => Returns final config map
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-Config.build("app") # => %{name: "app", retries: 3, timeout: 5000}
-Config.build("app", %{timeout: 10000}) # => %{name: "app", retries: 3, timeout: 10000}
+Config.build("app")                # => Calls build/1 with "app"
+                                   # => opts uses default %{}
+                                   # => Merges %{timeout: 5000, retries: 3} with %{}
+                                   # => Adds name: "app"
+                                   # => Returns %{name: "app", retries: 3, timeout: 5000}
+Config.build("app", %{timeout: 10000})  # => Calls build/2
+                                        # => opts is %{timeout: 10000}
+                                        # => Merge overrides timeout to 10000
+                                        # => Returns %{name: "app", retries: 3, timeout: 10000}
 
-# Default empty list for accumulator
-defmodule ListOps do
-  def reverse(list, acc \\ [])
-  def reverse([], acc), do: acc
-  def reverse([head | tail], acc) do
-    reverse(tail, [head | acc])
-  end
-end
+defmodule ListOps do               # => Defines module ListOps
+  def reverse(list, acc \\ [])     # => Function head with default acc=[]
+                                   # => Required for multi-clause defaults
+  def reverse([], acc), do: acc    # => Base case: empty list returns accumulator
+  def reverse([head | tail], acc) do  # => Recursive case: [head | tail] pattern
+    reverse(tail, [head | acc])    # => Tail-recursive: prepends head to acc
+                                   # => Calls recursively with tail
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-ListOps.reverse([1, 2, 3]) # => [3, 2, 1]
+ListOps.reverse([1, 2, 3])         # => Calls reverse/1 with [1, 2, 3]
+                                   # => acc uses default []
+                                   # => Recursion: []→[1]→[2,1]→[3,2,1]
+                                   # => Returns [3, 2, 1]
 
-# Keyword list defaults
-defmodule Builder do
-  def build(name, opts \\ [timeout: 5000, async: false]) do
-    timeout = Keyword.get(opts, :timeout)
-    async = Keyword.get(opts, :async)
-    {name, timeout, async}
-  end
-end
+defmodule Builder do               # => Defines module Builder
+  def build(name, opts \\ [timeout: 5000, async: false]) do  # => Default keyword list
+    timeout = Keyword.get(opts, :timeout)  # => Extracts :timeout value from opts
+                                            # => Returns value or nil
+    async = Keyword.get(opts, :async)  # => Extracts :async value from opts
+    {name, timeout, async}         # => Returns tuple with extracted values
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-Builder.build("task") # => {"task", 5000, false}
-Builder.build("task", timeout: 10000) # => {"task", 10000, false}
+Builder.build("task")              # => Calls build/1 with "task"
+                                   # => opts uses default [timeout: 5000, async: false]
+                                   # => Extracts timeout=5000, async=false
+                                   # => Returns {"task", 5000, false}
+Builder.build("task", timeout: 10000)  # => Calls build/2 with keyword list
+                                       # => opts is [timeout: 10000]
+                                       # => Keyword.get returns timeout=10000, async=nil
+                                       # => Returns {"task", 10000, false}
 ```
 
 **Key Takeaway**: Default arguments use `\\` syntax and are evaluated at call time. When using defaults with multiple clauses, define a function head. Defaults create multiple arities automatically.
@@ -1498,111 +2157,184 @@ Functions are first-class values—they can be assigned to variables, passed as 
 **Code**:
 
 ```elixir
-# Assign function to variable
-add = fn a, b -> a + b end # => #Function<...>
-add.(5, 3) # => 8
+add = fn a, b -> a + b end         # => Creates anonymous function with 2 parameters
+                                   # => add is #Function<...> (function reference)
+add.(5, 3)                         # => Calls function with dot notation
+                                   # => 5 + 3 = 8
+                                   # => Returns 8
 
-# Pass function as argument
-defmodule Math do
-  def apply_twice(f, x) do
-    f.(f.(x)) # => Call function twice
-  end
-end
+defmodule Math do                  # => Defines module Math
+  def apply_twice(f, x) do         # => Takes function f and value x
+    f.(f.(x))                      # => Calls f on x, then calls f on result
+                                   # => Nested function calls
+                                   # => Returns final result
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-increment = fn x -> x + 1 end # => #Function<...>
-Math.apply_twice(increment, 5) # => 7 (5 + 1 + 1)
+increment = fn x -> x + 1 end      # => Creates function that adds 1
+                                   # => increment is #Function<...>
+Math.apply_twice(increment, 5)     # => Calls apply_twice with increment and 5
+                                   # => First call: increment.(5) = 6
+                                   # => Second call: increment.(6) = 7
+                                   # => Returns 7
 
-double = fn x -> x * 2 end # => #Function<...>
-Math.apply_twice(double, 3) # => 12 (3 * 2 * 2)
+double = fn x -> x * 2 end         # => Creates function that doubles
+                                   # => double is #Function<...>
+Math.apply_twice(double, 3)        # => Calls apply_twice with double and 3
+                                   # => First call: double.(3) = 6
+                                   # => Second call: double.(6) = 12
+                                   # => Returns 12
 
-# Return function from function
-defmodule FunctionFactory do
-  def multiplier(factor) do
-    fn x -> x * factor end # => Return anonymous function
-  end
-end
+defmodule FunctionFactory do       # => Defines module FunctionFactory
+  def multiplier(factor) do        # => Takes factor parameter
+    fn x -> x * factor end         # => Returns anonymous function that closes over factor
+                                   # => Closure captures factor value
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-times_three = FunctionFactory.multiplier(3) # => #Function<...>
-times_three.(10) # => 30
+times_three = FunctionFactory.multiplier(3)  # => Calls multiplier with 3
+                                             # => Returns function that multiplies by 3
+                                             # => times_three is #Function<...>
+times_three.(10)                   # => Calls returned function with 10
+                                   # => 10 * 3 = 30
+                                   # => Returns 30
 
-times_five = FunctionFactory.multiplier(5) # => #Function<...>
-times_five.(10) # => 50
+times_five = FunctionFactory.multiplier(5)  # => Calls multiplier with 5
+                                            # => Returns function that multiplies by 5
+                                            # => times_five is #Function<...>
+times_five.(10)                    # => Calls returned function with 10
+                                   # => 10 * 5 = 50
+                                   # => Returns 50
 
-# Capture operator & shorthand
-square = &(&1 * &1) # => #Function<...>
-square.(7) # => 49
+square = &(&1 * &1)                # => Capture operator & creates function
+                                   # => &1 is first parameter placeholder
+                                   # => square is #Function<...>
+square.(7)                         # => Calls function with 7
+                                   # => 7 * 7 = 49
+                                   # => Returns 49
 
-add_captured = &(&1 + &2) # => #Function<...>
-add_captured.(10, 20) # => 30
+add_captured = &(&1 + &2)          # => Capture with two parameters
+                                   # => &1 is first parameter, &2 is second
+                                   # => add_captured is #Function<...>
+add_captured.(10, 20)              # => Calls with 10 and 20
+                                   # => 10 + 20 = 30
+                                   # => Returns 30
 
-# Capture existing function
-int_to_string = &Integer.to_string/1 # => &Integer.to_string/1
-int_to_string.(42) # => "42"
+int_to_string = &Integer.to_string/1  # => Captures existing function by name/arity
+                                       # => int_to_string is &Integer.to_string/1
+int_to_string.(42)                 # => Calls captured function with 42
+                                   # => Integer.to_string(42) converts to "42"
+                                   # => Returns "42"
 
-string_length = &String.length/1 # => &String.length/1
-string_length.("hello") # => 5
+string_length = &String.length/1   # => Captures String.length/1 function
+                                   # => string_length is &String.length/1
+string_length.("hello")            # => Calls captured function with "hello"
+                                   # => String.length("hello") returns 5
+                                   # => Returns 5
 
-# Higher-order functions with Enum
-numbers = [1, 2, 3, 4, 5] # => [1, 2, 3, 4, 5]
+numbers = [1, 2, 3, 4, 5]          # => Creates list for higher-order function demos
+                                   # => numbers is [1, 2, 3, 4, 5]
 
-Enum.map(numbers, fn x -> x * 2 end) # => [2, 4, 6, 8, 10]
-Enum.map(numbers, &(&1 * 2)) # => [2, 4, 6, 8, 10] (same, shorter)
+Enum.map(numbers, fn x -> x * 2 end)  # => Maps anonymous function over list
+                                       # => Doubles each element: [1→2, 2→4, 3→6, 4→8, 5→10]
+                                       # => Returns [2, 4, 6, 8, 10]
+Enum.map(numbers, &(&1 * 2))       # => Same map using capture syntax (shorter)
+                                   # => &1 refers to each element
+                                   # => Returns [2, 4, 6, 8, 10]
 
-Enum.filter(numbers, fn x -> rem(x, 2) == 0 end) # => [2, 4]
-Enum.filter(numbers, &(rem(&1, 2) == 0)) # => [2, 4]
+Enum.filter(numbers, fn x -> rem(x, 2) == 0 end)  # => Filters with anonymous function
+                                                   # => Keeps only even numbers
+                                                   # => Returns [2, 4]
+Enum.filter(numbers, &(rem(&1, 2) == 0))  # => Same filter using capture syntax
+                                          # => Returns [2, 4]
 
-# Store functions in data structures
-operations = %{
-  add: fn a, b -> a + b end,
-  subtract: fn a, b -> a - b end,
-  multiply: fn a, b -> a * b end
-}
+operations = %{                    # => Creates map storing functions
+  add: fn a, b -> a + b end,       # => :add key maps to addition function
+  subtract: fn a, b -> a - b end,  # => :subtract key maps to subtraction function
+  multiply: fn a, b -> a * b end   # => :multiply key maps to multiplication function
+}                                  # => operations is map of functions
 
-operations[:add].(10, 5) # => 15
-operations[:multiply].(10, 5) # => 50
+operations[:add].(10, 5)           # => Accesses :add function from map
+                                   # => Calls function with 10 and 5
+                                   # => 10 + 5 = 15
+                                   # => Returns 15
+operations[:multiply].(10, 5)      # => Accesses :multiply function from map
+                                   # => 10 * 5 = 50
+                                   # => Returns 50
 
-# Closures (capture surrounding variables)
-x = 10 # => 10
-add_x = fn y -> x + y end # => Captures x
-add_x.(5) # => 15
+x = 10                             # => Binds x to 10
+                                   # => x is 10
+add_x = fn y -> x + y end          # => Creates closure that captures x
+                                   # => Captures current value of x (10)
+                                   # => add_x is #Function<...> (closure)
+add_x.(5)                          # => Calls closure with 5
+                                   # => Uses captured x = 10
+                                   # => 10 + 5 = 15
+                                   # => Returns 15
 
-x = 20 # => 20 (rebind x)
-add_x.(5) # => 15 (still uses original x = 10!)
+x = 20                             # => Rebinds x to new value 20
+                                   # => x is now 20 (variable rebound)
+add_x.(5)                          # => Calls same closure with 5
+                                   # => Closure still uses original captured x = 10
+                                   # => 10 + 5 = 15 (not 20 + 5!)
+                                   # => Returns 15
 
-# Function composition
-defmodule Compose do
-  def compose(f, g) do
-    fn x -> f.(g.(x)) end
-  end
-end
+defmodule Compose do               # => Defines module Compose
+  def compose(f, g) do             # => Takes two functions f and g
+    fn x -> f.(g.(x)) end          # => Returns function that composes f after g
+                                   # => g applied first, then f on result
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-add_one = fn x -> x + 1 end # => #Function<...>
-double_fn = fn x -> x * 2 end # => #Function<...>
+add_one = fn x -> x + 1 end        # => Function that adds 1
+                                   # => add_one is #Function<...>
+double_fn = fn x -> x * 2 end      # => Function that doubles
+                                   # => double_fn is #Function<...>
 
-double_then_add = Compose.compose(add_one, double_fn) # => #Function<...>
-double_then_add.(5) # => 11 (5 * 2 + 1)
+double_then_add = Compose.compose(add_one, double_fn)  # => Composes functions
+                                                        # => double_fn first, then add_one
+                                                        # => Returns composed function
+double_then_add.(5)                # => Calls composed function with 5
+                                   # => double_fn.(5) = 10
+                                   # => add_one.(10) = 11
+                                   # => Returns 11
 
-# Partial application
-defmodule Partial do
-  def partial(f, a) do
-    fn b -> f.(a, b) end
-  end
-end
+defmodule Partial do               # => Defines module Partial
+  def partial(f, a) do             # => Takes function f and first argument a
+    fn b -> f.(a, b) end           # => Returns function with a pre-filled
+                                   # => Partial application of f
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-add_fn = fn a, b -> a + b end # => #Function<...>
-add_10 = Partial.partial(add_fn, 10) # => #Function<...>
-add_10.(5) # => 15
-add_10.(20) # => 30
+add_fn = fn a, b -> a + b end      # => Two-argument addition function
+                                   # => add_fn is #Function<...>
+add_10 = Partial.partial(add_fn, 10)  # => Partially applies add_fn with first arg 10
+                                       # => Returns function waiting for second arg
+                                       # => add_10 is #Function<...>
+add_10.(5)                         # => Calls partial function with 5
+                                   # => add_fn.(10, 5) = 15
+                                   # => Returns 15
+add_10.(20)                        # => Calls partial function with 20
+                                   # => add_fn.(10, 20) = 30
+                                   # => Returns 30
 
-# Functions in pattern matching
-execute = fn
-  {:add, a, b} -> a + b
-  {:multiply, a, b} -> a * b
-  {:subtract, a, b} -> a - b
-end
+execute = fn                       # => Multi-clause anonymous function
+  {:add, a, b} -> a + b            # => First clause: matches {:add, a, b} tuple
+                                   # => Returns sum
+  {:multiply, a, b} -> a * b       # => Second clause: matches {:multiply, a, b}
+                                   # => Returns product
+  {:subtract, a, b} -> a - b       # => Third clause: matches {:subtract, a, b}
+                                   # => Returns difference
+end                                # => execute is #Function<...>
 
-execute.({:add, 5, 3}) # => 8
-execute.({:multiply, 5, 3}) # => 15
+execute.({:add, 5, 3})             # => Calls function with {:add, 5, 3}
+                                   # => First clause matches
+                                   # => 5 + 3 = 8
+                                   # => Returns 8
+execute.({:multiply, 5, 3})        # => Calls function with {:multiply, 5, 3}
+                                   # => Second clause matches
+                                   # => 5 * 3 = 15
+                                   # => Returns 15
 ```
 
 **Key Takeaway**: Functions are first-class values that can be assigned, passed, and returned. Use `&` for capture syntax. Closures capture surrounding variables. Higher-order functions enable powerful functional patterns.
@@ -1618,99 +2350,127 @@ Modules are compiled to BEAM bytecode when loaded. Understanding compilation, re
 **Code**:
 
 ```elixir
-# Define a simple module
-defmodule Example do
-  def hello, do: "Hello, World!"
-end
+defmodule Example do               # => Defines module Example
+  def hello, do: "Hello, World!"   # => Public function hello/0
+                                   # => Returns greeting string
+end                                # => Ends module definition
+                                   # => Module compiled to BEAM bytecode
 
-Example.hello() # => "Hello, World!"
+Example.hello()                    # => Calls hello/0 function
+                                   # => Returns "Hello, World!"
 
-# Check if module is loaded
-Code.ensure_loaded?(Example) # => true
-Code.ensure_loaded?(:non_existent) # => false
+Code.ensure_loaded?(Example)       # => Checks if Example module is loaded
+                                   # => Returns true (module defined above)
+Code.ensure_loaded?(:non_existent)  # => Checks if non-existent module loaded
+                                    # => Returns false (module doesn't exist)
 
-# Get module info
-Example.__info__(:functions) # => [hello: 0]
-Example.__info__(:module) # => Example
+Example.__info__(:functions)       # => Introspects module functions
+                                   # => Returns list of {name, arity} tuples
+                                   # => Returns [hello: 0]
+Example.__info__(:module)          # => Gets module name
+                                   # => Returns Example
 
-# Module attributes compiled into module
-defmodule Versioned do
-  @version "1.0.0" # => Compile-time constant
+defmodule Versioned do             # => Defines module Versioned
+  @version "1.0.0"                 # => Module attribute (compile-time constant)
+                                   # => @version evaluated at compilation
 
-  def version, do: @version
-end
+  def version, do: @version        # => Function returns compiled attribute value
+                                   # => @version inlined at compile time
+end                                # => Ends module definition
 
-Versioned.version() # => "1.0.0"
+Versioned.version()                # => Calls version/0
+                                   # => Returns "1.0.0" (compiled constant)
 
-# Redefine module (in IEx)
-defmodule Example do
-  def hello, do: "Hi there!" # => Redefined
-end
+defmodule Example do               # => Redefines module Example (IEx only!)
+  def hello, do: "Hi there!"       # => New hello/0 implementation
+                                   # => Replaces previous definition
+end                                # => Recompilation creates new version
 
-Example.hello() # => "Hi there!" (new definition)
+Example.hello()                    # => Calls newly defined hello/0
+                                   # => Returns "Hi there!" (new definition active)
 
-# Get module compilation info
-defmodule Compiled do
-  def created_at, do: DateTime.utc_now()
-end
+defmodule Compiled do              # => Defines module Compiled
+  def created_at, do: DateTime.utc_now()  # => Function body compiled once
+                                          # => DateTime.utc_now() NOT called at compile time
+end                                # => Module compiled to bytecode
 
-# Module is compiled once, function returns same time
-time1 = Compiled.created_at() # => 2024-12-23 10:30:00Z
-:timer.sleep(1000)
-time2 = Compiled.created_at() # => 2024-12-23 10:30:00Z (same!)
+time1 = Compiled.created_at()      # => Calls created_at/0
+                                   # => DateTime.utc_now() evaluated at runtime
+                                   # => time1 is current timestamp (e.g., 2024-12-23 10:30:00Z)
+:timer.sleep(1000)                 # => Sleeps for 1000ms (1 second)
+time2 = Compiled.created_at()      # => Calls created_at/0 again
+                                   # => DateTime.utc_now() re-evaluated
+                                   # => time2 is NEW timestamp (e.g., 2024-12-23 10:30:00Z, same in this case!)
 
-# Lazy module compilation
-defmodule Lazy do
-  @computed_value Enum.sum(1..1000) # => Computed at compile time
+defmodule Lazy do                  # => Defines module Lazy
+  @computed_value Enum.sum(1..1000)  # => Module attribute evaluated at compile time
+                                      # => Enum.sum(1..1000) computed during compilation
+                                      # => Result stored in bytecode
 
-  def value, do: @computed_value
-end
+  def value, do: @computed_value   # => Returns pre-computed value
+                                   # => No runtime calculation
+end                                # => Module compiled with computed value
 
-Lazy.value() # => 500500 (already computed, no runtime calculation)
+Lazy.value()                       # => Calls value/0
+                                   # => Returns 500500 (pre-computed sum)
+                                   # => No Enum.sum called at runtime (already done!)
 
-# Check where module is defined (file path)
-defmodule MyModule do
-  def location, do: __ENV__.file
-end
+defmodule MyModule do              # => Defines module MyModule
+  def location, do: __ENV__.file   # => __ENV__ macro provides compilation environment
+                                   # => .file accesses source file path
+end                                # => Returns file path where module defined
 
-# Get all loaded modules
-:code.all_loaded()
-|> Enum.filter(fn {mod, _path} ->
-  mod |> to_string() |> String.starts_with?("Elixir.")
-end)
-|> Enum.take(5) # => [{Elixir.Enum, ...}, {Elixir.String, ...}, ...]
+:code.all_loaded()                 # => Gets all loaded BEAM modules
+                                   # => Returns list of {module, path} tuples
+|> Enum.filter(fn {mod, _path} ->  # => Filters modules
+  mod |> to_string() |> String.starts_with?("Elixir.")  # => Keeps only Elixir modules
+                                                         # => (excludes Erlang modules)
+end)                               # => Returns filtered list
+|> Enum.take(5)                    # => Takes first 5 modules
+                                   # => Returns [{Elixir.Enum, ...}, {Elixir.String, ...}, ...]
 
-# Purge and reload module (development only!)
-:code.purge(Example) # => true (removes old code)
-:code.delete(Example) # => true (marks for deletion)
+:code.purge(Example)               # => Purges old Example module code from memory
+                                   # => Removes previous version
+                                   # => Returns true (success)
+:code.delete(Example)              # => Marks Example module for deletion
+                                   # => Prepares for reload
+                                   # => Returns true (success)
 
-# Module defined inside function (unusual but valid)
-defmodule Outer do
-  def create_module do
-    defmodule Inner do
-      def greet, do: "Hello from inner!"
-    end
-    Inner.greet()
-  end
-end
+defmodule Outer do                 # => Defines module Outer
+  def create_module do             # => Function that defines nested module
+    defmodule Inner do             # => Defines Inner module inside function
+      def greet, do: "Hello from inner!"  # => Inner module function
+    end                            # => Inner module compiled
+    Inner.greet()                  # => Calls Inner.greet/0
+                                   # => Returns greeting
+  end                              # => Ends function definition
+end                                # => Ends Outer module definition
 
-Outer.create_module() # => "Hello from inner!"
-Outer.Inner.greet() # => "Hello from inner!" (accessible!)
+Outer.create_module()              # => Calls create_module/0
+                                   # => Defines Outer.Inner module
+                                   # => Calls and returns Inner.greet/0 result
+                                   # => Returns "Hello from inner!"
+Outer.Inner.greet()                # => Calls Inner module directly
+                                   # => Module accessible as Outer.Inner
+                                   # => Returns "Hello from inner!"
 
-# Check module exports
-Example.module_info(:exports) # => [hello: 0, module_info: 0, module_info: 1]
+Example.module_info(:exports)      # => Gets module's exported functions
+                                   # => Returns list including auto-generated functions
+                                   # => Returns [hello: 0, module_info: 0, module_info: 1]
 
-# Module defined with Macro
-defmodule Dynamic do
-  Module.register_attribute(__MODULE__, :custom_attr, persist: true)
-  @custom_attr "custom value"
+defmodule Dynamic do               # => Defines module Dynamic
+  Module.register_attribute(__MODULE__, :custom_attr, persist: true)  # => Registers custom attribute
+                                                                       # => persist: true stores in bytecode
+  @custom_attr "custom value"      # => Sets custom attribute value
+                                   # => Stored in compiled module
 
-  def get_attr do
-    @custom_attr
-  end
-end
+  def get_attr do                  # => Function to retrieve attribute
+    @custom_attr                   # => Returns compiled attribute value
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-Dynamic.get_attr() # => "custom value"
+Dynamic.get_attr()                 # => Calls get_attr/0
+                                   # => Returns "custom value" (compiled constant)
 ```
 
 **Key Takeaway**: Modules compile to BEAM bytecode when defined. Module attributes are compile-time constants. Use `Code.ensure_loaded?/1` to check loading status. In production, modules are compiled once; in IEx, redefinition is allowed for development.
@@ -1830,100 +2590,146 @@ Elixir provides boolean operators (`and`, `or`, `not`) and comparison operators 
 **Code**:
 
 ```elixir
-# Boolean operators (strict - require true/false)
-true and true # => true
-true and false # => false
-false or true # => true
-false or false # => false
-not true # => false
-not false # => true
+true and true                      # => Boolean and operator (strict)
+                                   # => Both true, returns true
+true and false                     # => First true, second false
+                                   # => Returns false
+false or true                      # => Boolean or operator
+                                   # => First false, second true
+                                   # => Returns true
+false or false                     # => Both false
+                                   # => Returns false
+not true                           # => Boolean not operator
+                                   # => Returns false
+not false                          # => Returns true
 
-# Relaxed boolean operators (work with any values)
-1 && 2 # => 2 (returns last truthy value)
-nil && 5 # => nil (returns first falsy)
-false && "never" # => false
+1 && 2                             # => Relaxed and operator (works with any values)
+                                   # => Both truthy, returns last value: 2
+nil && 5                           # => First falsy (nil), short-circuits
+                                   # => Returns nil (doesn't evaluate 5)
+false && "never"                   # => First falsy (false), short-circuits
+                                   # => Returns false
 
-1 || 2 # => 1 (returns first truthy)
-nil || false || 5 # => 5 (returns first truthy)
-false || nil || "default" # => "default"
+1 || 2                             # => Relaxed or operator
+                                   # => First truthy (1), short-circuits
+                                   # => Returns 1 (doesn't evaluate 2)
+nil || false || 5                  # => First two falsy, third truthy
+                                   # => Returns 5 (first truthy value)
+false || nil || "default"          # => Both falsy, evaluates to last
+                                   # => Returns "default"
 
-!true # => false
-!false # => true
-!nil # => true (nil is falsy)
-!5 # => false (5 is truthy)
+!true                              # => Boolean not (relaxed)
+                                   # => Returns false
+!false                             # => Returns true
+!nil                               # => nil is falsy
+                                   # => Returns true
+!5                                 # => 5 is truthy
+                                   # => Returns false
 
-# Comparison operators
-1 == 1 # => true
-1 == 1.0 # => true (value equality)
-1 === 1 # => true
-1 === 1.0 # => false (strict equality - different types)
+1 == 1                             # => Value equality operator
+                                   # => Same value, returns true
+1 == 1.0                           # => Value equality (ignores type difference)
+                                   # => 1 equals 1.0, returns true
+1 === 1                            # => Strict equality (checks type)
+                                   # => Same value and type, returns true
+1 === 1.0                          # => Strict equality
+                                   # => Different types (integer vs float)
+                                   # => Returns false
 
-1 != 2 # => true
-1 !== 1.0 # => true (strict inequality)
+1 != 2                             # => Inequality operator
+                                   # => 1 not equal to 2, returns true
+1 !== 1.0                          # => Strict inequality (checks type)
+                                   # => Different types, returns true
 
-# Ordering
-1 < 2 # => true
-2 > 1 # => true
-1 <= 1 # => true
-2 >= 1 # => true
+1 < 2                              # => Less than operator
+                                   # => 1 is less than 2, returns true
+2 > 1                              # => Greater than operator
+                                   # => 2 is greater than 1, returns true
+1 <= 1                             # => Less than or equal
+                                   # => 1 equals 1, returns true
+2 >= 1                             # => Greater than or equal
+                                   # => 2 is greater, returns true
 
-# String comparison
-"a" < "b" # => true
-"apple" < "banana" # => true
+"a" < "b"                          # => String comparison (lexicographic)
+                                   # => "a" comes before "b", returns true
+"apple" < "banana"                 # => Lexicographic comparison
+                                   # => "apple" comes before "banana", returns true
 
-# Atom comparison
-:atom < :beta # => true
+:atom < :beta                      # => Atom comparison (lexicographic)
+                                   # => :atom comes before :beta, returns true
 
-# Different type comparison (defined ordering)
-1 < :atom # => true
-:atom < "string" # => true
-"string" < [1, 2] # => true
-[1, 2] < {1, 2} # => true
+1 < :atom                          # => Cross-type comparison (defined ordering)
+                                   # => number < atom, returns true
+:atom < "string"                   # => atom < string, returns true
+"string" < [1, 2]                  # => string < list, returns true
+[1, 2] < {1, 2}                    # => list < tuple, returns true
 
-# Type ordering: number < atom < reference < function < port < pid < tuple < map < list < bitstring
+true or raise("Never raised")      # => Short-circuit evaluation
+                                   # => Left side true, doesn't evaluate right
+                                   # => Returns true (never raises)
+false and raise("Never raised")    # => Left side false, short-circuits
+                                   # => Doesn't evaluate right side
+                                   # => Returns false
 
-# Short-circuit evaluation
-true or raise("Never raised") # => true (doesn't evaluate right side)
-false and raise("Never raised") # => false
+x = 10                             # => Binds x to 10
+                                   # => x is 10
+case x do                          # => Pattern matches on x
+  n when n > 0 and n < 100 -> "In range"  # => Guard: n > 0 and n < 100
+                                           # => 10 > 0 and 10 < 100 is true
+                                           # => Returns "In range"
+  _ -> "Out of range"              # => Catch-all clause (not matched)
+end                                # => case returns "In range"
 
-# Pattern matching with guards
-x = 10 # => 10
-case x do
-  n when n > 0 and n < 100 -> "In range" # => "In range"
-  _ -> "Out of range"
-end
+x = 50                             # => Binds x to 50
+                                   # => x is 50
+x > 0 and x < 100                  # => Compound boolean expression
+                                   # => 50 > 0 is true, 50 < 100 is true
+                                   # => Returns true
 
-# Combining comparisons
-x = 50 # => 50
-x > 0 and x < 100 # => true
+age = 25                           # => Binds age to 25
+                                   # => age is 25
+age >= 18 and age < 65             # => Compound condition
+                                   # => 25 >= 18 is true, 25 < 65 is true
+                                   # => Returns true
 
-age = 25 # => 25
-age >= 18 and age < 65 # => true
+if 0, do: "Zero is truthy!"        # => Tests 0 for truthiness
+                                   # => 0 is truthy (not false or nil)
+                                   # => Returns "Zero is truthy!"
+if "", do: "Empty string is truthy!"  # => Tests empty string
+                                       # => "" is truthy, returns "Empty string is truthy!"
+if [], do: "Empty list is truthy!"  # => Tests empty list
+                                    # => [] is truthy, returns "Empty list is truthy!"
+if nil, do: "Nil is truthy", else: "Nil is falsy"  # => Tests nil
+                                                     # => nil is falsy (one of two falsy values)
+                                                     # => Returns "Nil is falsy"
 
-# Truthy/falsy in conditions
-if 0, do: "Zero is truthy!" # => "Zero is truthy!"
-if "", do: "Empty string is truthy!" # => "Empty string is truthy!"
-if [], do: "Empty list is truthy!" # => "Empty list is truthy!"
-if nil, do: "Nil is truthy", else: "Nil is falsy" # => "Nil is falsy"
+Kernel.==(1, 1)                    # => Calls == as function
+                                   # => Same as 1 == 1
+                                   # => Returns true
+Kernel.===(1, 1.0)                 # => Calls === as function
+                                   # => Different types (integer vs float)
+                                   # => Returns false
 
-# Comparison functions
-Kernel.==(1, 1) # => true (same as 1 == 1)
-Kernel.===(1, 1.0) # => false
+min(5, 10)                         # => Returns smaller of two values
+                                   # => Returns 5
+max(5, 10)                         # => Returns larger of two values
+                                   # => Returns 10
+min("apple", "banana")             # => String comparison
+                                   # => Returns "apple" (comes first)
 
-# Min and max with comparison
-min(5, 10) # => 5
-max(5, 10) # => 10
-min("apple", "banana") # => "apple"
+defmodule Compare do               # => Defines module Compare
+  def within_range?(value, min, max) do  # => Function with three parameters
+    value >= min and value <= max  # => Checks if value between min and max
+                                   # => Returns boolean result
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-# Custom comparison
-defmodule Compare do
-  def within_range?(value, min, max) do
-    value >= min and value <= max
-  end
-end
-
-Compare.within_range?(5, 1, 10) # => true
-Compare.within_range?(15, 1, 10) # => false
+Compare.within_range?(5, 1, 10)    # => Calls with 5, 1, 10
+                                   # => 5 >= 1 and 5 <= 10 is true
+                                   # => Returns true
+Compare.within_range?(15, 1, 10)   # => Calls with 15, 1, 10
+                                   # => 15 >= 1 and 15 <= 10 is false (15 > 10)
+                                   # => Returns false
 ```
 
 **Key Takeaway**: Use `and`/`or`/`not` for strict boolean logic, `&&`/`||`/`!` for truthy/falsy values. `==` for value equality, `===` for strict type equality. All types are comparable with defined ordering.
@@ -1939,91 +2745,162 @@ In Elixir, only `false` and `nil` are falsy—everything else is truthy. This di
 **Code**:
 
 ```elixir
-# Only false and nil are falsy
-if false, do: "Truthy", else: "Falsy" # => "Falsy"
-if nil, do: "Truthy", else: "Falsy" # => "Falsy"
+if false, do: "Truthy", else: "Falsy"  # => Tests false for truthiness
+                                        # => false is falsy (one of two falsy values)
+                                        # => else clause executes
+                                        # => Returns "Falsy"
+if nil, do: "Truthy", else: "Falsy"  # => Tests nil for truthiness
+                                      # => nil is falsy (the other falsy value)
+                                      # => else clause executes
+                                      # => Returns "Falsy"
 
-# Everything else is truthy
-if true, do: "Truthy" # => "Truthy"
-if 0, do: "Truthy" # => "Truthy" (unlike JavaScript, Python)
-if "", do: "Truthy" # => "Truthy"
-if [], do: "Truthy" # => "Truthy"
-if {}, do: "Truthy" # => "Truthy"
-if %{}, do: "Truthy" # => "Truthy"
+if true, do: "Truthy"              # => Tests true for truthiness
+                                   # => true is truthy
+                                   # => Returns "Truthy"
+if 0, do: "Truthy"                 # => Tests 0 for truthiness
+                                   # => 0 is truthy (unlike JavaScript/Python!)
+                                   # => Returns "Truthy"
+if "", do: "Truthy"                # => Tests empty string for truthiness
+                                   # => "" is truthy
+                                   # => Returns "Truthy"
+if [], do: "Truthy"                # => Tests empty list for truthiness
+                                   # => [] is truthy
+                                   # => Returns "Truthy"
+if {}, do: "Truthy"                # => Tests empty tuple for truthiness
+                                   # => {} is truthy
+                                   # => Returns "Truthy"
+if %{}, do: "Truthy"               # => Tests empty map for truthiness
+                                   # => %{} is truthy
+                                   # => Returns "Truthy"
 
-# Atoms are truthy (except false and nil)
-if :ok, do: "Truthy" # => "Truthy"
-if :error, do: "Truthy" # => "Truthy"
+if :ok, do: "Truthy"               # => Tests atom :ok for truthiness
+                                   # => :ok is truthy (all atoms except false and nil)
+                                   # => Returns "Truthy"
+if :error, do: "Truthy"            # => Tests atom :error for truthiness
+                                   # => :error is truthy
+                                   # => Returns "Truthy"
 
-# Using truthy/falsy with ||
-nil || false || 0 # => 0 (first truthy value)
-nil || false || nil || "default" # => "default"
+nil || false || 0                  # => || returns first truthy value
+                                   # => nil is falsy, false is falsy
+                                   # => 0 is truthy, returns 0
+nil || false || nil || "default"   # => All nil and false are falsy
+                                   # => "default" is first truthy
+                                   # => Returns "default"
 
-# Using truthy/falsy with &&
-true && "value" # => "value"
-5 && 10 # => 10 (both truthy, returns last)
-nil && "never" # => nil (stops at first falsy)
+true && "value"                    # => && returns last value if all truthy
+                                   # => true is truthy, evaluates second
+                                   # => Returns "value"
+5 && 10                            # => Both truthy
+                                   # => Returns last value: 10
+nil && "never"                     # => First value nil (falsy), short-circuits
+                                   # => Doesn't evaluate "never"
+                                   # => Returns nil
 
-# Default values with ||
-name = nil # => nil
-display_name = name || "Guest" # => "Guest"
+name = nil                         # => Binds name to nil
+                                   # => name is nil
+display_name = name || "Guest"     # => || for default value pattern
+                                   # => name is nil (falsy)
+                                   # => Returns "Guest"
 
-config = %{timeout: nil} # => %{timeout: nil}
-timeout = config[:timeout] || 5000 # => 5000
+config = %{timeout: nil}           # => Creates map with nil timeout
+                                   # => config is %{timeout: nil}
+timeout = config[:timeout] || 5000  # => Accesses :timeout key (nil)
+                                    # => nil is falsy, uses default 5000
+                                    # => Returns 5000
 
-# Presence checks
-defmodule User do
-  def display_name(user) do
-    user[:name] || "Anonymous" # => Use name or default
-  end
-end
+defmodule User do                  # => Defines module User
+  def display_name(user) do        # => Function takes user map
+    user[:name] || "Anonymous"     # => Accesses :name key or defaults
+                                   # => Returns name or "Anonymous"
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-User.display_name(%{name: "Alice"}) # => "Alice"
-User.display_name(%{}) # => "Anonymous"
-User.display_name(%{name: nil}) # => "Anonymous"
+User.display_name(%{name: "Alice"})  # => Calls with map containing :name
+                                      # => user[:name] is "Alice" (truthy)
+                                      # => Returns "Alice"
+User.display_name(%{})             # => Calls with empty map
+                                   # => user[:name] is nil (key missing)
+                                   # => Returns "Anonymous"
+User.display_name(%{name: nil})    # => Calls with :name key set to nil
+                                   # => user[:name] is nil (falsy)
+                                   # => Returns "Anonymous"
 
-# Converting to boolean explicitly
-!!true # => true
-!!false # => false
-!!nil # => false
-!!0 # => true
-!!"hello" # => true
+!!true                             # => Double negation converts to boolean
+                                   # => !true = false, !false = true
+                                   # => Returns true
+!!false                            # => !false = true, !true = false
+                                   # => Returns false
+!!nil                              # => !nil = true (nil is falsy), !true = false
+                                   # => Returns false
+!!0                                # => !0 = false (0 is truthy), !false = true
+                                   # => Returns true
+!!"hello"                          # => !"hello" = false, !false = true
+                                   # => Returns true
 
-# Pattern matching with nil check
-defmodule NilHandler do
-  def handle(nil), do: "Got nil"
-  def handle(value), do: "Got value: #{value}"
-end
+defmodule NilHandler do            # => Defines module NilHandler
+  def handle(nil), do: "Got nil"   # => First clause: pattern matches nil
+                                   # => Returns "Got nil"
+  def handle(value), do: "Got value: #{value}"  # => Second clause: matches any value
+                                                 # => Interpolates value
+                                                 # => Returns formatted string
+end                                # => Ends module definition
 
-NilHandler.handle(nil) # => "Got nil"
-NilHandler.handle(0) # => "Got value: 0"
-NilHandler.handle(false) # => "Got value: false"
+NilHandler.handle(nil)             # => Calls with nil
+                                   # => First clause matches
+                                   # => Returns "Got nil"
+NilHandler.handle(0)               # => Calls with 0
+                                   # => Second clause matches
+                                   # => Returns "Got value: 0"
+NilHandler.handle(false)           # => Calls with false
+                                   # => Second clause matches
+                                   # => Returns "Got value: false"
 
-# Conditional execution with &&
-user = %{admin: true} # => %{admin: true}
-user[:admin] && IO.puts("Admin action") # Prints: Admin action, returns :ok
+user = %{admin: true}              # => Creates map with admin: true
+                                   # => user is %{admin: true}
+user[:admin] && IO.puts("Admin action")  # => Accesses :admin (true), truthy
+                                         # => Evaluates second part (prints)
+                                         # => Prints "Admin action", returns :ok
 
-user = %{admin: false} # => %{admin: false}
-user[:admin] && IO.puts("Admin action") # => false (doesn't print)
+user = %{admin: false}             # => Rebinds user to map with admin: false
+                                   # => user is %{admin: false}
+user[:admin] && IO.puts("Admin action")  # => Accesses :admin (false), falsy
+                                         # => Short-circuits, doesn't evaluate right
+                                         # => Returns false (doesn't print)
 
-# Safe navigation with truthy checks
-data = nil # => nil
-data && data.field # => nil (safe - doesn't try to access field)
+data = nil                         # => Binds data to nil
+                                   # => data is nil
+data && data.field                 # => data is nil (falsy), short-circuits
+                                   # => Doesn't try to access .field (safe!)
+                                   # => Returns nil
 
-data = %{field: "value"} # => %{field: "value"}
-data && data.field # => "value"
+data = %{field: "value"}           # => Rebinds data to map
+                                   # => data is %{field: "value"}
+data && data.field                 # => data is truthy, evaluates second part
+                                   # => Accesses .field
+                                   # => Returns "value"
 
-# Guard against nil in functions
-defmodule SafeMath do
-  def divide(a, b) when not is_nil(a) and not is_nil(b) and b != 0 do
-    a / b
-  end
-  def divide(_a, _b), do: nil
-end
+defmodule SafeMath do              # => Defines module SafeMath
+  def divide(a, b) when not is_nil(a) and not is_nil(b) and b != 0 do  # => Guard checks nil and zero
+                                                                         # => not is_nil(a) and not is_nil(b) and b != 0
+    a / b                          # => Divides a by b
+                                   # => Returns float result
+  end                              # => Ends first clause
+  def divide(_a, _b), do: nil      # => Catch-all clause (guards failed)
+                                   # => Returns nil for invalid inputs
+end                                # => Ends module definition
 
-SafeMath.divide(10, 2) # => 5.0
-SafeMath.divide(10, nil) # => nil
-SafeMath.divide(nil, 2) # => nil
+SafeMath.divide(10, 2)             # => Calls with 10 and 2
+                                   # => Guards pass (not nil, b != 0)
+                                   # => 10 / 2 = 5.0
+                                   # => Returns 5.0
+SafeMath.divide(10, nil)           # => Calls with 10 and nil
+                                   # => Guard fails (is_nil(b))
+                                   # => Second clause matches
+                                   # => Returns nil
+SafeMath.divide(nil, 2)            # => Calls with nil and 2
+                                   # => Guard fails (is_nil(a))
+                                   # => Second clause matches
+                                   # => Returns nil
 ```
 
 **Key Takeaway**: Only `false` and `nil` are falsy; everything else (including `0`, `""`, `[]`) is truthy. Use `||` for default values and `&&` for conditional execution. This differs from many other languages.
@@ -2039,85 +2916,111 @@ Strings can be concatenated with the `<>` operator or built with interpolation a
 **Code**:
 
 ```elixir
-# Basic concatenation with <>
-"Hello" <> " " <> "World" # => "Hello World"
+"Hello" <> " " <> "World"          # => String concatenation with <> operator
+                                   # => Concatenates three strings: "Hello", " ", "World"
+                                   # => Returns "Hello World"
 
-# Concatenate multiple strings
-"a" <> "b" <> "c" <> "d" # => "abcd"
+"a" <> "b" <> "c" <> "d"           # => Multiple concatenations (left-to-right)
+                                   # => ("a" <> "b") = "ab", ("ab" <> "c") = "abc", etc.
+                                   # => Returns "abcd"
 
-# Variables
-first = "Hello" # => "Hello"
-second = "World" # => "World"
-first <> " " <> second # => "Hello World"
+first = "Hello"                    # => Binds first to "Hello"
+                                   # => first is "Hello"
+second = "World"                   # => Binds second to "World"
+                                   # => second is "World"
+first <> " " <> second             # => Concatenates three strings
+                                   # => "Hello" <> " " <> "World"
+                                   # => Returns "Hello World"
 
-# Concatenation with interpolation (often clearer)
-name = "Alice" # => "Alice"
-"Hello, " <> name <> "!" # => "Hello, Alice!"
-"Hello, #{name}!" # => "Hello, Alice!" (cleaner!)
+name = "Alice"                     # => Binds name to "Alice"
+                                   # => name is "Alice"
+"Hello, " <> name <> "!"           # => Concatenation using <> operator
+                                   # => Returns "Hello, Alice!"
+"Hello, #{name}!"                  # => Same result using interpolation (cleaner!)
+                                   # => Returns "Hello, Alice!"
 
-# Building strings in loop (inefficient)
-Enum.reduce(1..1000, "", fn x, acc ->
-  acc <> to_string(x) <> "," # => Creates new string each iteration (slow!)
-end)
+Enum.reduce(1..1000, "", fn x, acc ->  # => INEFFICIENT: builds string in loop
+  acc <> to_string(x) <> ","       # => Creates new string each iteration
+                                   # => O(n²) complexity (slow!)
+end)                               # => Returns "1,2,3,...,1000," (but slow)
 
-# Better: use IO list and convert once
-iolist = Enum.map(1..1000, fn x -> [to_string(x), ","] end)
-IO.iodata_to_binary(iolist) # => "1,2,3,...,1000," (efficient!)
+iolist = Enum.map(1..1000, fn x -> [to_string(x), ","] end)  # => Creates IO list (efficient)
+                                                               # => Each element is list, not concatenated
+IO.iodata_to_binary(iolist)        # => Converts IO list to binary in single pass
+                                   # => O(n) complexity (fast!)
+                                   # => Returns "1,2,3,...,1000,"
 
-# String builder pattern
-defmodule StringBuilder do
-  def build(parts) when is_list(parts) do
-    Enum.join(parts, "") # => Efficient join
-  end
-end
+defmodule StringBuilder do         # => Defines module StringBuilder
+  def build(parts) when is_list(parts) do  # => Takes list of string parts
+                                            # => Guard ensures parts is list
+    Enum.join(parts, "")           # => Joins list elements with empty separator
+                                   # => Efficient single-pass operation
+                                   # => Returns concatenated string
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-StringBuilder.build(["Hello", " ", "World"]) # => "Hello World"
+StringBuilder.build(["Hello", " ", "World"])  # => Calls build with list of parts
+                                               # => Joins ["Hello", " ", "World"] with ""
+                                               # => Returns "Hello World"
 
-# Concatenate with Enum.join
-words = ["Elixir", "is", "awesome"] # => ["Elixir", "is", "awesome"]
-Enum.join(words, " ") # => "Elixir is awesome"
+words = ["Elixir", "is", "awesome"]  # => Creates list of words
+                                      # => words is ["Elixir", "is", "awesome"]
+Enum.join(words, " ")              # => Joins list with space separator
+                                   # => "Elixir" + " " + "is" + " " + "awesome"
+                                   # => Returns "Elixir is awesome"
 
-# Custom separator
-Enum.join(["a", "b", "c"], "-") # => "a-b-c"
-Enum.join(1..5, ", ") # => "1, 2, 3, 4, 5"
+Enum.join(["a", "b", "c"], "-")    # => Joins with custom separator "-"
+                                   # => Returns "a-b-c"
+Enum.join(1..5, ", ")              # => Joins range elements with ", "
+                                   # => Range converted to strings: "1", "2", etc.
+                                   # => Returns "1, 2, 3, 4, 5"
 
-# Empty strings
-"" <> "hello" # => "hello"
-"hello" <> "" # => "hello"
+"" <> "hello"                      # => Concatenates empty string with "hello"
+                                   # => Empty string has no effect
+                                   # => Returns "hello"
+"hello" <> ""                      # => Concatenates "hello" with empty string
+                                   # => Returns "hello"
 
-# Multiline string concatenation
-long_string = "This is line 1. " <>
-              "This is line 2. " <>
-              "This is line 3."
-long_string # => "This is line 1. This is line 2. This is line 3."
+long_string = "This is line 1. " <>  # => Multiline concatenation
+              "This is line 2. " <>  # => Strings concatenated across lines
+              "This is line 3."      # => Final string
+long_string                        # => Returns "This is line 1. This is line 2. This is line 3."
 
-# Pattern matching with string concatenation
-"Hello " <> name = "Hello Alice" # => "Hello Alice"
-name # => "Alice"
+"Hello " <> name = "Hello Alice"   # => Pattern matches string with concatenation
+                                   # => "Hello " matches prefix
+                                   # => name binds to remaining: "Alice"
+name                               # => Returns "Alice"
 
-# Concatenation in function
-defmodule Formatter do
-  def format_name(first, last) do
-    first <> " " <> last
-  end
+defmodule Formatter do             # => Defines module Formatter
+  def format_name(first, last) do  # => Function with two parameters
+    first <> " " <> last           # => Concatenates first, space, last
+                                   # => Returns full name
+  end                              # => Ends function definition
 
-  def format_title(title, name) do
-    "#{title}. #{name}" # => Interpolation often cleaner
-  end
-end
+  def format_title(title, name) do  # => Function with two parameters
+    "#{title}. #{name}"            # => Uses interpolation (cleaner than <>)
+                                   # => Returns formatted title and name
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-Formatter.format_name("John", "Doe") # => "John Doe"
-Formatter.format_title("Dr", "Smith") # => "Dr. Smith"
+Formatter.format_name("John", "Doe")  # => Calls format_name with "John" and "Doe"
+                                       # => "John" <> " " <> "Doe"
+                                       # => Returns "John Doe"
+Formatter.format_title("Dr", "Smith")  # => Calls format_title with "Dr" and "Smith"
+                                        # => Interpolates: "Dr. Smith"
+                                        # => Returns "Dr. Smith"
 
-# Performance comparison
-# SLOW (creates intermediate strings):
-Enum.reduce(1..10_000, "", fn x, acc -> acc <> to_string(x) end)
+Enum.reduce(1..10_000, "", fn x, acc -> acc <> to_string(x) end)  # => SLOW approach
+                                                                    # => Creates 10,000 intermediate strings
+                                                                    # => O(n²) time complexity
 
-# FAST (IO list, single allocation):
-1..10_000 |> Enum.map(&to_string/1) |> Enum.join()
+1..10_000 |> Enum.map(&to_string/1) |> Enum.join()  # => FAST approach
+                                                     # => Builds list, joins once
+                                                     # => O(n) time complexity
 
-# Binary concatenation (same as string)
-<<1, 2>> <> <<3, 4>> # => <<1, 2, 3, 4>>
+<<1, 2>> <> <<3, 4>>               # => Binary concatenation (same as strings)
+                                   # => Binaries are strings at byte level
+                                   # => Returns <<1, 2, 3, 4>>
 ```
 
 **Key Takeaway**: Use `<>` for simple concatenation, interpolation for readability, and `Enum.join/2` or IO lists for building strings in loops. Avoid repeated `<>` in loops (creates intermediate strings).
@@ -2221,107 +3124,143 @@ Tuples are fixed-size collections matched by position. Pattern matching on tuple
 **Code**:
 
 ```elixir
-# Basic tuple matching
-{a, b, c} = {1, 2, 3} # => {1, 2, 3}
-a # => 1
-b # => 2
-c # => 3
+{a, b, c} = {1, 2, 3}              # => Pattern matches tuple with three elements
+                                   # => a binds to 1, b binds to 2, c binds to 3
+a                                  # => Returns 1
+b                                  # => Returns 2
+c                                  # => Returns 3
 
-# Nested tuple matching
-{x, {y, z}} = {1, {2, 3}} # => {1, {2, 3}}
-x # => 1
-y # => 2
-z # => 3
+{x, {y, z}} = {1, {2, 3}}          # => Nested tuple pattern matching
+                                   # => x binds to 1 (first element)
+                                   # => {y, z} matches nested tuple {2, 3}
+                                   # => y binds to 2, z binds to 3
+x                                  # => Returns 1
+y                                  # => Returns 2
+z                                  # => Returns 3
 
-# Ignore values with _
-{first, _, third} = {1, 2, 3} # => {1, 2, 3}
-first # => 1
-third # => 3
+{first, _, third} = {1, 2, 3}      # => Pattern matches, ignores middle element
+                                   # => first binds to 1
+                                   # => _ ignores 2 (underscore convention)
+                                   # => third binds to 3
+first                              # => Returns 1
+third                              # => Returns 3
 
-# Tagged tuples (common Elixir pattern)
-{:ok, value} = {:ok, 42} # => {:ok, 42}
-value # => 42
+{:ok, value} = {:ok, 42}           # => Tagged tuple pattern (common Elixir idiom)
+                                   # => :ok matches atom tag
+                                   # => value binds to 42
+value                              # => Returns 42
 
-{:error, reason} = {:error, "not found"} # => {:error, "not found"}
-reason # => "not found"
+{:error, reason} = {:error, "not found"}  # => Error tuple pattern
+                                           # => :error matches atom tag
+                                           # => reason binds to "not found"
+reason                             # => Returns "not found"
 
-# Function return tuples
-defmodule FileOps do
-  def read_file(path) do
-    case File.read(path) do
-      {:ok, content} -> {:ok, String.upcase(content)}
-      {:error, reason} -> {:error, reason}
-    end
-  end
-end
+defmodule FileOps do               # => Defines module FileOps
+  def read_file(path) do           # => Function takes file path
+    case File.read(path) do        # => Pattern matches on File.read result
+      {:ok, content} -> {:ok, String.upcase(content)}  # => Success case: upcase content
+                                                         # => Returns {:ok, uppercased}
+      {:error, reason} -> {:error, reason}  # => Error case: pass through error
+                                             # => Returns {:error, reason}
+    end                            # => Ends case expression
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-# Pattern matching in case
-result = {:ok, "data"}
-case result do
-  {:ok, data} -> "Success: #{data}" # => "Success: data"
-  {:error, reason} -> "Error: #{reason}"
-end
+result = {:ok, "data"}             # => Binds result to success tuple
+                                   # => result is {:ok, "data"}
+case result do                     # => Pattern matches on result
+  {:ok, data} -> "Success: #{data}"  # => Matches {:ok, data} pattern
+                                      # => data binds to "data"
+                                      # => Returns "Success: data"
+  {:error, reason} -> "Error: #{reason}"  # => Second clause (not matched)
+end                                # => case returns "Success: data"
 
-# Pattern matching in function heads
-defmodule Handler do
-  def handle({:ok, data}), do: "Got: #{data}"
-  def handle({:error, reason}), do: "Failed: #{reason}"
-  def handle(_), do: "Unknown"
-end
+defmodule Handler do               # => Defines module Handler
+  def handle({:ok, data}), do: "Got: #{data}"  # => First clause: matches {:ok, data}
+                                                # => Returns success message
+  def handle({:error, reason}), do: "Failed: #{reason}"  # => Second clause: matches {:error, reason}
+                                                          # => Returns failure message
+  def handle(_), do: "Unknown"     # => Third clause: catch-all pattern
+                                   # => Returns "Unknown"
+end                                # => Ends module definition
 
-Handler.handle({:ok, "value"}) # => "Got: value"
-Handler.handle({:error, "timeout"}) # => "Failed: timeout"
+Handler.handle({:ok, "value"})     # => Calls handle/1 with {:ok, "value"}
+                                   # => First clause matches
+                                   # => data binds to "value"
+                                   # => Returns "Got: value"
+Handler.handle({:error, "timeout"})  # => Calls handle/1 with {:error, "timeout"}
+                                      # => Second clause matches
+                                      # => reason binds to "timeout"
+                                      # => Returns "Failed: timeout"
 
-# Multiple return values
-defmodule Math do
-  def div_rem(a, b) do
-    {div(a, b), rem(a, b)} # => Return tuple
-  end
-end
+defmodule Math do                  # => Defines module Math
+  def div_rem(a, b) do             # => Function with two parameters
+    {div(a, b), rem(a, b)}         # => Creates tuple with division and remainder
+                                   # => Returns tuple with two elements
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-{quotient, remainder} = Math.div_rem(17, 5)
-quotient # => 3
-remainder # => 2
+{quotient, remainder} = Math.div_rem(17, 5)  # => Calls div_rem and destructures result
+                                              # => div(17, 5) = 3, rem(17, 5) = 2
+                                              # => quotient binds to 3, remainder binds to 2
+quotient                           # => Returns 3
+remainder                          # => Returns 2
 
-# Tuple size checking
-tuple = {1, 2, 3} # => {1, 2, 3}
-tuple_size(tuple) # => 3
+tuple = {1, 2, 3}                  # => Creates tuple with three elements
+                                   # => tuple is {1, 2, 3}
+tuple_size(tuple)                  # => Gets tuple size (number of elements)
+                                   # => Returns 3
 
-# Accessing tuple elements
-elem(tuple, 0) # => 1
-elem(tuple, 2) # => 3
+elem(tuple, 0)                     # => Accesses element at index 0
+                                   # => Returns 1 (first element)
+elem(tuple, 2)                     # => Accesses element at index 2
+                                   # => Returns 3 (third element)
 
-# Updating tuple (creates new tuple)
-put_elem(tuple, 1, 99) # => {1, 99, 3}
-tuple # => {1, 2, 3} (unchanged - immutability!)
+put_elem(tuple, 1, 99)             # => Creates new tuple with element at index 1 replaced
+                                   # => Returns {1, 99, 3} (new tuple)
+tuple                              # => Original tuple unchanged (immutability!)
+                                   # => Returns {1, 2, 3}
 
-# Common patterns: coordinates
-{x, y} = {10, 20} # => {10, 20}
+{x, y} = {10, 20}                  # => Coordinate pattern (common use case)
+                                   # => x binds to 10, y binds to 20
 
-# RGB colors
-{r, g, b} = {255, 128, 0} # => {255, 128, 0}
+{r, g, b} = {255, 128, 0}          # => RGB color pattern
+                                   # => r binds to 255, g binds to 128, b binds to 0
 
-# Key-value pairs (before maps)
-{:name, "Alice"} # => {:name, "Alice"}
-{:age, 30} # => {:age, 30}
+{:name, "Alice"}                   # => Key-value pair tuple (pre-map era pattern)
+                                   # => Creates {:name, "Alice"}
+{:age, 30}                         # => Another key-value tuple
+                                   # => Creates {:age, 30}
 
-# Process communication
-pid = self() # => #PID<0.123.0>
-send(pid, {:message, "Hello"}) # => {:message, "Hello"}
+pid = self()                       # => Gets current process PID
+                                   # => pid is #PID<0.123.0> (varies)
+send(pid, {:message, "Hello"})     # => Sends tagged tuple message to process
+                                   # => Message goes to process mailbox
+                                   # => Returns {:message, "Hello"}
 
-receive do
-  {:message, text} -> "Received: #{text}" # => "Received: Hello"
-end
+receive do                         # => Receives message from mailbox
+  {:message, text} -> "Received: #{text}"  # => Pattern matches {:message, text}
+                                            # => text binds to "Hello"
+                                            # => Returns "Received: Hello"
+end                                # => receive expression ends
 
-# Match on specific tag
-defmodule Matcher do
-  def process({:add, a, b}), do: a + b
-  def process({:multiply, a, b}), do: a * b
-  def process({:subtract, a, b}), do: a - b
-end
+defmodule Matcher do               # => Defines module Matcher
+  def process({:add, a, b}), do: a + b  # => First clause: matches {:add, a, b}
+                                         # => Returns sum a + b
+  def process({:multiply, a, b}), do: a * b  # => Second clause: matches {:multiply, a, b}
+                                              # => Returns product a * b
+  def process({:subtract, a, b}), do: a - b  # => Third clause: matches {:subtract, a, b}
+                                              # => Returns difference a - b
+end                                # => Ends module definition
 
-Matcher.process({:add, 5, 3}) # => 8
-Matcher.process({:multiply, 5, 3}) # => 15
+Matcher.process({:add, 5, 3})      # => Calls process/1 with {:add, 5, 3}
+                                   # => First clause matches
+                                   # => 5 + 3 = 8
+                                   # => Returns 8
+Matcher.process({:multiply, 5, 3})  # => Calls process/1 with {:multiply, 5, 3}
+                                    # => Second clause matches
+                                    # => 5 * 3 = 15
+                                    # => Returns 15
 ```
 
 **Key Takeaway**: Tuples enable fixed-size pattern matching. Tagged tuples like `{:ok, value}` and `{:error, reason}` are idiomatic for error handling. Use pattern matching in function heads for elegant dispatch.
@@ -2337,94 +3276,147 @@ Ranges can be used in pattern matching with guards and membership checks. The `i
 **Code**:
 
 ```elixir
-# Check membership with in
-5 in 1..10 # => true
-15 in 1..10 # => false
-0 in 1..10 # => false
-10 in 1..10 # => true (inclusive!)
+5 in 1..10                         # => Membership check with in operator
+                                   # => 5 is between 1 and 10 (inclusive)
+                                   # => Returns true
+15 in 1..10                        # => Tests if 15 in range
+                                   # => 15 exceeds upper bound 10
+                                   # => Returns false
+0 in 1..10                         # => Tests if 0 in range
+                                   # => 0 below lower bound 1
+                                   # => Returns false
+10 in 1..10                        # => Tests upper bound
+                                   # => 10 equals upper bound (inclusive!)
+                                   # => Returns true
 
-# Pattern matching with guards
-defmodule RangeChecker do
-  def classify(x) when x in 1..10, do: "Single digit"
-  def classify(x) when x in 11..99, do: "Double digit"
-  def classify(x) when x in 100..999, do: "Triple digit"
-  def classify(_), do: "Other"
-end
+defmodule RangeChecker do          # => Defines module RangeChecker
+  def classify(x) when x in 1..10, do: "Single digit"  # => First clause: guard x in 1..10
+                                                        # => Returns "Single digit"
+  def classify(x) when x in 11..99, do: "Double digit"  # => Second clause: guard x in 11..99
+                                                         # => Returns "Double digit"
+  def classify(x) when x in 100..999, do: "Triple digit"  # => Third clause: guard x in 100..999
+                                                           # => Returns "Triple digit"
+  def classify(_), do: "Other"     # => Fourth clause: catch-all
+                                   # => Returns "Other"
+end                                # => Ends module definition
 
-RangeChecker.classify(5) # => "Single digit"
-RangeChecker.classify(42) # => "Double digit"
-RangeChecker.classify(500) # => "Triple digit"
+RangeChecker.classify(5)           # => Calls classify/1 with 5
+                                   # => First clause matches (5 in 1..10)
+                                   # => Returns "Single digit"
+RangeChecker.classify(42)          # => Calls classify/1 with 42
+                                   # => Second clause matches (42 in 11..99)
+                                   # => Returns "Double digit"
+RangeChecker.classify(500)         # => Calls classify/1 with 500
+                                   # => Third clause matches (500 in 100..999)
+                                   # => Returns "Triple digit"
 
-# Case with range guards
-age = 25 # => 25
-category = case age do
-  x when x in 0..12 -> "Child"
-  x when x in 13..19 -> "Teenager"
-  x when x in 20..64 -> "Adult" # => "Adult"
-  x when x >= 65 -> "Senior"
-end
-category # => "Adult"
+age = 25                           # => Binds age to 25
+                                   # => age is 25
+category = case age do             # => Pattern matches on age value
+  x when x in 0..12 -> "Child"     # => First clause: x in 0..12 (false, 25 not in range)
+  x when x in 13..19 -> "Teenager"  # => Second clause: x in 13..19 (false)
+  x when x in 20..64 -> "Adult"    # => Third clause: x in 20..64 (true! 25 in range)
+                                   # => Returns "Adult"
+  x when x >= 65 -> "Senior"       # => Fourth clause: not evaluated
+end                                # => case returns "Adult"
+category                           # => category is "Adult"
 
-# Multiple range checks
-score = 85 # => 85
-grade = case score do
-  s when s in 90..100 -> "A"
-  s when s in 80..89 -> "B" # => "B"
-  s when s in 70..79 -> "C"
-  s when s in 60..69 -> "D"
-  _ -> "F"
-end
-grade # => "B"
+score = 85                         # => Binds score to 85
+                                   # => score is 85
+grade = case score do              # => Pattern matches on score
+  s when s in 90..100 -> "A"       # => First clause: s in 90..100 (false, 85 < 90)
+  s when s in 80..89 -> "B"        # => Second clause: s in 80..89 (true! 85 in range)
+                                   # => Returns "B"
+  s when s in 70..79 -> "C"        # => Third clause: not evaluated
+  s when s in 60..69 -> "D"        # => Fourth clause: not evaluated
+  _ -> "F"                         # => Catch-all: not evaluated
+end                                # => case returns "B"
+grade                              # => grade is "B"
 
-# Range in conditional
-x = 50 # => 50
-if x in 1..100, do: "Valid", else: "Invalid" # => "Valid"
+x = 50                             # => Binds x to 50
+                                   # => x is 50
+if x in 1..100, do: "Valid", else: "Invalid"  # => if with range guard
+                                               # => x in 1..100 is true (50 in range)
+                                               # => Returns "Valid"
 
-# Filter with ranges
-numbers = [1, 5, 10, 15, 20, 25, 30]
-Enum.filter(numbers, fn x -> x in 10..20 end) # => [10, 15, 20]
+numbers = [1, 5, 10, 15, 20, 25, 30]  # => Creates list for filtering
+                                       # => numbers is [1, 5, 10, 15, 20, 25, 30]
+Enum.filter(numbers, fn x -> x in 10..20 end)  # => Filters elements in range 10..20
+                                                # => Keeps: 10 (in range), 15 (in range), 20 (in range)
+                                                # => Excludes: 1, 5, 25, 30
+                                                # => Returns [10, 15, 20]
 
-# Comprehension with range filter
-for x <- 1..100, x in 50..60, do: x
-# => [50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60]
+for x <- 1..100, x in 50..60, do: x  # => Comprehension with range filter
+                                      # => Iterates 1..100, filters x in 50..60
+                                      # => Keeps only values 50-60 (inclusive)
+                                      # => Returns [50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60]
 
-# Character ranges
-letter = ?m # => 109 (ASCII code for 'm')
-letter in ?a..?z # => true (lowercase letter)
-letter in ?A..?Z # => false
+letter = ?m                        # => Character literal (ASCII code)
+                                   # => letter is 109 (ASCII for 'm')
+letter in ?a..?z                   # => Tests if letter in lowercase range
+                                   # => 109 in 97..122 (true, 'm' is lowercase)
+                                   # => Returns true
+letter in ?A..?Z                   # => Tests if letter in uppercase range
+                                   # => 109 not in 65..90 (false, 'm' not uppercase)
+                                   # => Returns false
 
-# Validate input ranges
-defmodule Validator do
-  def valid_age?(age) when age in 0..150, do: true
-  def valid_age?(_), do: false
+defmodule Validator do             # => Defines module Validator
+  def valid_age?(age) when age in 0..150, do: true  # => Guard validates age range
+                                                     # => Returns true if in range
+  def valid_age?(_), do: false     # => Catch-all: returns false for invalid
 
-  def valid_percentage?(pct) when pct in 0..100, do: true
-  def valid_percentage?(_), do: false
-end
+  def valid_percentage?(pct) when pct in 0..100, do: true  # => Guard validates percentage range
+                                                            # => Returns true if 0-100
+  def valid_percentage?(_), do: false  # => Catch-all: returns false for invalid
+end                                # => Ends module definition
 
-Validator.valid_age?(25) # => true
-Validator.valid_age?(200) # => false
-Validator.valid_percentage?(95) # => true
-Validator.valid_percentage?(150) # => false
+Validator.valid_age?(25)           # => Calls valid_age?/1 with 25
+                                   # => 25 in 0..150 is true
+                                   # => Returns true
+Validator.valid_age?(200)          # => Calls valid_age?/1 with 200
+                                   # => 200 not in 0..150 (exceeds 150)
+                                   # => Second clause matches
+                                   # => Returns false
+Validator.valid_percentage?(95)    # => Calls valid_percentage?/1 with 95
+                                   # => 95 in 0..100 is true
+                                   # => Returns true
+Validator.valid_percentage?(150)   # => Calls valid_percentage?/1 with 150
+                                   # => 150 not in 0..100 (exceeds 100)
+                                   # => Second clause matches
+                                   # => Returns false
 
-# Range overlap check
-defmodule RangeOps do
-  def overlaps?(a..b, c..d) do
-    max(a, c) <= min(b, d)
-  end
-end
+defmodule RangeOps do              # => Defines module RangeOps
+  def overlaps?(a..b, c..d) do     # => Function checks if two ranges overlap
+    max(a, c) <= min(b, d)         # => Overlap condition: max of starts <= min of ends
+                                   # => Returns boolean
+  end                              # => Ends function definition
+end                                # => Ends module definition
 
-RangeOps.overlaps?(1..10, 5..15) # => true (overlap: 5..10)
-RangeOps.overlaps?(1..5, 10..15) # => false (no overlap)
+RangeOps.overlaps?(1..10, 5..15)   # => Calls with ranges 1..10 and 5..15
+                                   # => max(1, 5) = 5, min(10, 15) = 10
+                                   # => 5 <= 10 is true (overlap: 5..10)
+                                   # => Returns true
+RangeOps.overlaps?(1..5, 10..15)   # => Calls with ranges 1..5 and 10..15
+                                   # => max(1, 10) = 10, min(5, 15) = 5
+                                   # => 10 <= 5 is false (no overlap)
+                                   # => Returns false
 
-# Descending ranges
-10 in 10..1//-1 # => true
-5 in 10..1//-1 # => true
-15 in 10..1//-1 # => false
+10 in 10..1//-1                    # => Descending range with step -1
+                                   # => 10 is start of range (inclusive)
+                                   # => Returns true
+5 in 10..1//-1                     # => Tests 5 in descending range
+                                   # => 5 is between 10 and 1
+                                   # => Returns true
+15 in 10..1//-1                    # => Tests 15 in descending range
+                                   # => 15 exceeds start 10
+                                   # => Returns false
 
-# Range with step
-5 in 0..10//2 # => false (0, 2, 4, 6, 8, 10 - skips 5)
-6 in 0..10//2 # => true
+5 in 0..10//2                      # => Range with step 2: 0, 2, 4, 6, 8, 10
+                                   # => 5 not in sequence (skipped by step)
+                                   # => Returns false
+6 in 0..10//2                      # => Tests 6 in stepped range
+                                   # => 6 is in sequence (0, 2, 4, 6, 8, 10)
+                                   # => Returns true
 ```
 
 **Key Takeaway**: Use `in` operator for readable range membership checks. Combine ranges with guards for elegant boundary validation. Ranges are inclusive of both endpoints.
