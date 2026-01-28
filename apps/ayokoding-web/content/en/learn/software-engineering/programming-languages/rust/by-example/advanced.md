@@ -3064,47 +3064,67 @@ graph TD
 
 ```rust
 fn print_array<T: std::fmt::Debug, const N: usize>(arr: [T; N]) {
-                                     // => const N: generic over array SIZE
-                                     // => N is compile-time constant (not runtime value)
-                                     // => Function works for ANY array size
+                                     // => Generic function with TWO parameters:
+                                     // => T: type parameter (array element type)
+                                     // => const N: usize: constant value parameter (array SIZE)
+                                     // => N is compile-time constant (known at build, not runtime)
+                                     // => Function works for ANY array size at zero runtime cost
     for item in arr.iter() {         // => Iterate over array elements
-        println!("{:?}", item);      // => Print each element (T must be Debug)
-    }
+                                     // => iter() creates iterator over &T references
+        println!("{:?}", item);      // => Print each element using Debug trait
+                                     // => T must implement Debug (trait bound)
+    }                                // => Loop optimized at compile time (N known)
 }
 
 fn main() {
     let arr1 = [1, 2, 3];            // => [i32; 3] - array of 3 integers
+                                     // => Type includes size: [i32; 3] (not [i32])
+                                     // => Size 3 is part of type signature
     let arr2 = [1, 2, 3, 4, 5];      // => [i32; 5] - array of 5 integers
+                                     // => Different type: [i32; 5] (not compatible with [i32; 3])
 
     print_array(arr1);               // => Compiler infers: T=i32, N=3
                                      // => Monomorphizes to print_array::<i32, 3>
+                                     // => Generates specialized function for [i32; 3]
+                                     // => Output: 1, 2, 3
     print_array(arr2);               // => Compiler infers: T=i32, N=5
                                      // => Different monomorphization: print_array::<i32, 5>
-                                     // => Two separate functions in binary
+                                     // => Generates different function for [i32; 5]
+                                     // => Two separate specialized functions in binary
+                                     // => Output: 1, 2, 3, 4, 5
 }
 
 // Generic struct with const parameter
 struct ArrayWrapper<T, const N: usize> {
-    data: [T; N],                    // => Array field with const generic size
-                                     // => Size known at compile time
+                                     // => Struct generic over type T and size N
+                                     // => N is const: size known at compile time
+    data: [T; N],                    // => Fixed-size array: size in type
+                                     // => Size known at compile time (not stored separately)
+                                     // => Zero overhead: no separate length field needed
 }
 
 impl<T, const N: usize> ArrayWrapper<T, N> {
-                                     // => Impl block also generic over N
-    fn len(&self) -> usize {
-        N                            // => Return const N (compile-time constant)
-                                     // => No need to store length separately!
+                                     // => Implementation for all T types and all N sizes
+                                     // => Monomorphizes for each (T, N) combination used
+    fn len(&self) -> usize {         // => Return array length
+        N                            // => Return const N directly (compile-time constant)
+                                     // => No need to store or calculate length!
+                                     // => Inlined to constant value at compile time
     }
 
-    fn first(&self) -> Option<&T>
+    fn first(&self) -> Option<&T>    // => Return reference to first element if exists
     where
-        T: std::fmt::Debug,          // => Trait bound on T
+        T: std::fmt::Debug,          // => Trait bound: T must be Debug
+                                     // => Required for Debug formatting
     {
-        if N > 0 {                   // => Const N can be used in conditionals
-            Some(&self.data[0])      // => Return first element if array non-empty
-        } else {
-            None                     // => Empty array (N=0)
-        }
+        if N > 0 {                   // => Const N used in conditional
+                                     // => Compiler can optimize: condition known at compile time
+                                     // => If N=0, compiler removes entire if branch (dead code)
+            Some(&self.data[0])      // => Return Some with reference to first element
+                                     // => Safe: N > 0 guarantees element exists
+        } else {                     // => N = 0 case (empty array)
+            None                     // => No first element in empty array
+        }                            // => Return type: Option<&T>
     }
 }
 
@@ -3120,21 +3140,33 @@ impl<T, const N: usize> ArrayWrapper<T, N> {
 
 // With const generics: single implementation for all sizes
 fn sum_array<const N: usize>(arr: [i32; N]) -> i32 {
-                                     // => Generic over array size N
-    let mut sum = 0;
-    for i in 0..N {                  // => Loop bounds known at compile time
-        sum += arr[i];               // => Compiler can optimize (unroll loop)
-    }
-    sum
+                                     // => Generic function over array size N
+                                     // => Works for any fixed-size [i32; N] array
+                                     // => Single source code, multiple monomorphizations
+    let mut sum = 0;                 // => Accumulator initialized to 0
+                                     // => Type: i32 (inferred from return type)
+    for i in 0..N {                  // => Loop from 0 to N-1
+                                     // => Loop bounds known at compile time (N is const)
+                                     // => Compiler can optimize: unroll small loops, vectorize large loops
+        sum += arr[i];               // => Add each element to sum
+                                     // => Array access bounds-checked at compile time (i < N)
+    }                                // => Loop optimized based on const N value
+    sum                              // => Return total sum
 }
 
 fn test_sum() {
-    let small = [1, 2, 3];           // => N=3
+    let small = [1, 2, 3];           // => Type: [i32; 3], N=3
+                                     // => Stack-allocated array of 3 integers
     let large = [1, 2, 3, 4, 5, 6, 7, 8];
-                                     // => N=8
+                                     // => Type: [i32; 8], N=8
+                                     // => Different size = different type
     println!("Sum small: {}", sum_array(small));
-                                     // => Output: Sum small: 6 (1+2+3)
+                                     // => Calls sum_array::<3> (monomorphized for N=3)
+                                     // => Compiler may unroll loop: sum = 1 + 2 + 3
+                                     // => Output: Sum small: 6
     println!("Sum large: {}", sum_array(large));
+                                     // => Calls sum_array::<8> (different specialization)
+                                     // => May use SIMD or loop unrolling
                                      // => Output: Sum large: 36
 }
 
