@@ -6,6 +6,6 @@ draft: false
 ---
 
 - [N8n](/en/learn/software-engineering/automation/tools/n8n)
+  - [By Example](/en/learn/software-engineering/automation/tools/n8n/by-example)
   - [Overview](/en/learn/software-engineering/automation/tools/n8n/overview)
-  - [Tutorials](/en/learn/software-engineering/automation/tools/n8n/tutorials)
 - [Overview](/en/learn/software-engineering/automation/tools/overview)

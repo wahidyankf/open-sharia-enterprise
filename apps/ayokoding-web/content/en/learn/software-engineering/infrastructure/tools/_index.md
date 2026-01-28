@@ -8,10 +8,10 @@ layout: list
 ---
 
 - [Ansible](/en/learn/software-engineering/infrastructure/tools/ansible)
-  - [Tutorials](/en/learn/software-engineering/infrastructure/tools/ansible/tutorials)
+  - [By Example](/en/learn/software-engineering/infrastructure/tools/ansible/by-example)
 - [Terraform](/en/learn/software-engineering/infrastructure/tools/terraform)
-  - [Tutorials](/en/learn/software-engineering/infrastructure/tools/terraform/tutorials)
+  - [By Example](/en/learn/software-engineering/infrastructure/tools/terraform/by-example)
 - [Docker](/en/learn/software-engineering/infrastructure/tools/docker)
-  - [Tutorials](/en/learn/software-engineering/infrastructure/tools/docker/tutorials)
+  - [By Example](/en/learn/software-engineering/infrastructure/tools/docker/by-example)
 - [Kubernetes](/en/learn/software-engineering/infrastructure/tools/kubernetes)
-  - [Tutorials](/en/learn/software-engineering/infrastructure/tools/kubernetes/tutorials)
+  - [By Example](/en/learn/software-engineering/infrastructure/tools/kubernetes/by-example)

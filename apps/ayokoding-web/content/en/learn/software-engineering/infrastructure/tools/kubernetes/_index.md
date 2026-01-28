@@ -7,6 +7,8 @@ type: docs
 layout: list
 ---
 
-- [Tutorials](/en/learn/software-engineering/infrastructure/tools/kubernetes/tutorials)
-  - [Overview](/en/learn/software-engineering/infrastructure/tools/kubernetes/overview)
-  - [By Example](/en/learn/software-engineering/infrastructure/tools/kubernetes/by-example)
+- [By Example](/en/learn/software-engineering/infrastructure/tools/kubernetes/by-example)
+  - [Overview](/en/learn/software-engineering/infrastructure/tools/kubernetes/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/infrastructure/tools/kubernetes/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/infrastructure/tools/kubernetes/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/infrastructure/tools/kubernetes/by-example/advanced)

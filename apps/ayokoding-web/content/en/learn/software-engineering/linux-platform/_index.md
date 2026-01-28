@@ -10,4 +10,4 @@ layout: list
 - [Overview](/en/learn/software-engineering/linux-platform/overview)
 - [Shell](/en/learn/software-engineering/linux-platform/shell)
   - [Overview](/en/learn/software-engineering/linux-platform/shell/overview)
-  - [Tutorials](/en/learn/software-engineering/linux-platform/shell/tutorials)
+  - [By Example](/en/learn/software-engineering/linux-platform/shell/by-example)
