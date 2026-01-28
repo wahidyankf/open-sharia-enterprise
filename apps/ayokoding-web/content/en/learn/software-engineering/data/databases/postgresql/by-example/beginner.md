@@ -7,9 +7,9 @@ description: "Examples 1-30: PostgreSQL fundamentals covering installation, data
 tags: ["postgresql", "database", "tutorial", "by-example", "beginner", "fundamentals", "sql"]
 ---
 
-## Group 1: First Steps
+Learn PostgreSQL fundamentals through 30 annotated examples. Each example is self-contained, runnable in a PostgreSQL container, and heavily commented to show what each statement does, expected outputs, and intermediate states.
 
-### Example 1: Installing PostgreSQL and First Query
+## Example 1: Installing PostgreSQL and First Query
 
 PostgreSQL runs in a Docker container for isolated, reproducible environments across all platforms. This setup creates a fresh PostgreSQL 16 instance you can experiment with safely without affecting your system.
 
@@ -73,7 +73,9 @@ SELECT 2 + 2 AS result;
 
 **Why It Matters**: Docker-based PostgreSQL ensures every developer works with identical database versions across Windows, macOS, and Linux, eliminating "works on my machine" issues that plague traditional installations. PostgreSQL's architecture supports thousands of concurrent connections per server, making it the database of choice for high-traffic applications like Instagram (storing 300+ billion photos) and Uber (processing 10+ million queries per second). The container approach enables instant teardown and recreation for testing, reducing database setup time from hours to seconds.
 
-### Example 2: Creating Your First Database
+---
+
+## Example 2: Creating Your First Database
 
 Databases organize related tables and data. Each PostgreSQL server can host multiple databases, and you connect to one database at a time. The `\c` command switches between databases.
 
@@ -114,7 +116,9 @@ DROP DATABASE first_db;
 
 **Why It Matters**: Database isolation prevents schema conflicts in multi-tenant systems and enables independent deployment cycles for microservices architectures. Companies like Heroku provision thousands of PostgreSQL databases per day using this approach, allowing customers to scale from development to production without architectural changes. The \c command's instant switching enables developers to test schema migrations across multiple databases in seconds, compared to minutes required for MySQL's more cumbersome USE command.
 
-### Example 3: Basic SELECT Queries
+---
+
+## Example 3: Basic SELECT Queries
 
 SELECT retrieves data from tables. Even without tables, you can query expressions, functions, and system information. The asterisk (`*`) selects all columns, while specific column names give precise control.
 
@@ -168,7 +172,9 @@ SELECT name, age, age + 10 AS age_in_10_years FROM users;
 
 **Why It Matters**: Basic SELECT queries with column selection and expressions form the foundation of all database interactions, enabling companies like Airbnb to query billions of reservation records daily with sub-second response times. PostgreSQL's expression support in SELECT eliminates the need for post-query processing in application code, reducing data transfer overhead by up to 90% when calculating derived values like age_in_10_years directly in the database. The `*` wildcard operator simplifies schema changes during development but should be avoided in production code to prevent breaking changes when columns are added or removed.
 
-### Example 4: Inserting Data with INSERT
+---
+
+## Example 4: Inserting Data with INSERT
 
 INSERT adds new rows to tables. You can insert single rows, multiple rows at once, or specify only certain columns (others get NULL or default values).
 
@@ -240,7 +246,9 @@ SELECT * FROM products;
 
 **Why It Matters**: Multi-row INSERT statements enable bulk loading operations that process millions of rows per second, making PostgreSQL the engine of choice for high-throughput data pipelines at companies like Segment (processing 200+ billion events monthly). Explicit column specification prevents data corruption during schema evolution when new columns are added with default values, while PostgreSQL's MVCC architecture allows concurrent reads during INSERT operations without blocking. The ability to insert partial columns with NULL values enables flexible data ingestion from incomplete external sources without preprocessing.
 
-### Example 5: Updating and Deleting Rows
+---
+
+## Example 5: Updating and Deleting Rows
 
 UPDATE modifies existing rows matching a WHERE condition. DELETE removes rows. Both are dangerous without WHERE clauses - they affect ALL rows.
 
@@ -326,9 +334,9 @@ DELETE FROM inventory;
 
 **Why It Matters**: Accidental UPDATE/DELETE without WHERE clauses causes the majority of catastrophic data loss incidents in production databases, making pre-execution SELECT testing a critical safety practice enforced by database change management tools like Liquibase. PostgreSQL's transactional UPDATE enables atomic multi-row modifications that either all succeed or all fail, preventing partial updates that leave data in inconsistent states during concurrent operations. The ability to update with calculations (price = price \* 1.10) enables efficient bulk price adjustments across millions of products without application-level loops.
 
-## Group 2: Data Types
+---
 
-### Example 6: Numeric Types (INTEGER, BIGINT, DECIMAL, NUMERIC)
+## Example 6: Numeric Types (INTEGER, BIGINT, DECIMAL, NUMERIC)
 
 PostgreSQL offers multiple numeric types for different ranges and precision needs. INTEGER for whole numbers, BIGINT for larger ranges, DECIMAL/NUMERIC for exact precision (financial calculations).
 
@@ -380,7 +388,9 @@ FROM numeric_types;
 
 **Why It Matters**: DECIMAL/NUMERIC types provide exact precision arithmetic essential for financial applications where rounding errors can compound to millions of dollars, making PostgreSQL compliant with accounting standards that forbid floating-point calculations for monetary values. BIGINT's 19-digit range supports unique identifiers for systems handling trillions of records like Twitter's Snowflake ID generation (generating 100,000+ unique IDs per second across distributed nodes), while SERIAL auto-increment simplifies primary key management compared to application-level ID generation. The choice between exact (DECIMAL) and approximate (DOUBLE PRECISION) types impacts not just accuracy but also query performance, with floating-point operations running 2-3x faster when precision requirements allow.
 
-### Example 7: Text Types (VARCHAR, TEXT, CHAR)
+---
+
+## Example 7: Text Types (VARCHAR, TEXT, CHAR)
 
 PostgreSQL provides three text types: VARCHAR with length limit, TEXT for unlimited length, and CHAR for fixed-length strings (space-padded).
 
@@ -428,7 +438,9 @@ WHERE id = 1;
 
 **Why It Matters**: TEXT columns in PostgreSQL have no performance penalty compared to VARCHAR for most operations, eliminating the need to estimate maximum string lengths during schema design and preventing data truncation errors that plague MySQL's VARCHAR implementation. The space-padding behavior of CHAR creates hidden bugs when string comparisons fail ('AB' ≠ 'AB '), making it a legacy type maintained primarily for SQL standard compliance rather than practical use. PostgreSQL stores all text types using the same internal TOAST mechanism, compressing and moving large values to separate storage automatically, enabling efficient handling of multi-megabyte text documents without special configuration.
 
-### Example 8: Date and Time Types
+---
+
+## Example 8: Date and Time Types
 
 PostgreSQL has separate types for dates, times, and timestamps. TIMESTAMP stores date and time without timezone, TIMESTAMPTZ stores with timezone. INTERVAL represents durations.
 
@@ -499,7 +511,9 @@ FROM events;```
 
 **Why It Matters**: TIMESTAMPTZ automatically converts timestamps to UTC for storage and back to the client's timezone for display, preventing timezone-related bugs that cause systems like airlines to show incorrect flight times across time zones. INTERVAL arithmetic enables natural date calculations (event_date + '7 days') that would require complex date manipulation code in application layers, while PostgreSQL's microsecond precision supports high-frequency trading systems where millisecond accuracy determines transaction ordering. The distinction between TIMESTAMP and TIMESTAMPTZ has caused production incidents at global companies when timestamps were interpreted incorrectly across regions, making TIMESTAMPTZ the recommended default for all timestamp columns.
 
-### Example 9: Boolean and UUID Types
+---
+
+## Example 9: Boolean and UUID Types
 
 BOOLEAN stores true/false values. UUID stores universally unique identifiers - useful for distributed systems where auto-incrementing IDs create conflicts.
 
@@ -552,7 +566,9 @@ SELECT gen_random_uuid() AS random_id;
 
 **Why It Matters**: UUID v4 generation produces 122 random bits providing a collision probability so low (1 in 2^61 for 1 billion UUIDs) that distributed systems at companies like Instagram generate trillions of unique identifiers without central coordination. PostgreSQL's native UUID support with gen_random_uuid() eliminates application-layer ID generation and the associated network round-trips required for centralized ID servers, while the 16-byte storage overhead is negligible compared to the operational simplicity of distributed ID generation. BOOLEAN storage uses only 1 byte compared to INTEGER's 4 bytes, reducing table size by 75% for flag columns when multiplied across billions of rows in tables like user preferences.
 
-### Example 10: Working with NULL Values
+---
+
+## Example 10: Working with NULL Values
 
 NULL represents missing or unknown data - it's not zero, empty string, or false. NULL has special comparison behavior: `NULL = NULL` is NULL (not true).
 
@@ -632,9 +648,9 @@ FROM contacts;
 
 **Why It Matters**: NULL represents the absence of data differently from empty strings or zero, a distinction required by SQL standards but commonly misunderstood, causing bugs when `WHERE email = NULL` silently returns zero rows instead of erroring. COALESCE eliminates NULL values at query time rather than application code, reducing data transfer by providing defaults directly in the database and enabling consistent NULL handling across multiple application languages. PostgreSQL's three-valued logic (true/false/NULL) means that `NULL = NULL` evaluates to NULL rather than true, a subtlety that breaks untested queries and requires IS NULL checks, making NULL handling one of the most common sources of production database bugs.
 
-## Group 3: Basic Queries
+---
 
-### Example 11: WHERE Clauses and Comparisons
+## Example 11: WHERE Clauses and Comparisons
 
 WHERE filters rows based on conditions. You can combine multiple conditions with AND/OR, use comparison operators, and test for NULL, ranges, and pattern matching.
 
@@ -723,7 +739,9 @@ WHERE NOT stock = 0;
 
 **Why It Matters**: WHERE clause filtering at the database level reduces network traffic by up to 99% compared to application-level filtering when querying tables with millions of rows, making it essential for responsive web applications serving thousands of concurrent users. BETWEEN and IN operators enable readable query syntax that PostgreSQL's query planner can optimize more effectively than equivalent OR chains, while the combination of AND/OR operators with proper parentheses prevents logical errors that cause incorrect result sets in production. Index usage depends critically on WHERE clause structure, with indexed columns in WHERE conditions enabling sub-millisecond lookups compared to seconds-long sequential scans on large tables.
 
-### Example 12: Sorting with ORDER BY
+---
+
+## Example 12: Sorting with ORDER BY
 
 ORDER BY sorts query results by one or more columns. Default is ascending (ASC), use DESC for descending. Multiple columns create hierarchical sorting (secondary sort when primary values tie).
 
@@ -797,7 +815,9 @@ ORDER BY salary * 1.10 DESC;
 
 **Why It Matters**: ORDER BY with appropriate indexes enables efficient retrieval of sorted data without in-memory sorting, making leaderboard queries on gaming platforms with billions of scores return results in milliseconds rather than minutes. Multi-column sorting (ORDER BY department, salary DESC) reflects real business requirements like organizational hierarchies, while expression-based sorting enables complex排序 logic (ORDER BY CASE WHEN status = 'urgent' THEN 1 ELSE 2 END) that would require multiple queries or application-level sorting. PostgreSQL's query planner can use indexes for ORDER BY when the index column order matches the sort order, achieving 100-1000x speedups on large result sets compared to sorting after retrieval.
 
-### Example 13: Limiting Results with LIMIT and OFFSET
+---
+
+## Example 13: Limiting Results with LIMIT and OFFSET
 
 LIMIT restricts the number of rows returned. OFFSET skips rows before returning results. Combined, they enable pagination - retrieving large result sets in chunks.
 
@@ -890,7 +910,9 @@ LIMIT 5;
 
 **Why It Matters**: LIMIT/OFFSET pagination enables infinite scrolling interfaces used by social media platforms to serve billions of users efficiently by retrieving only the visible page rather than entire result sets, though cursor-based pagination (using WHERE id > last_seen_id) performs better for deep pagination beyond page 100. The combination of ORDER BY and LIMIT allows PostgreSQL's planner to use index-only scans and stop scanning once LIMIT rows are found, making "top N" queries extremely efficient even on billion-row tables. OFFSET becomes inefficient for large offsets (page 10,000 requires scanning and discarding 10 million rows), causing performance degradation that forces companies like Twitter to use cursor-based pagination for timeline queries.
 
-### Example 14: Basic Aggregations (COUNT, SUM, AVG, MIN, MAX)
+---
+
+## Example 14: Basic Aggregations (COUNT, SUM, AVG, MIN, MAX)
 
 Aggregate functions compute single values from multiple rows - count rows, sum values, calculate averages, find minimums and maximums. They ignore NULL values except COUNT(\*).
 
@@ -981,7 +1003,9 @@ FROM sales;
 
 **Why It Matters**: Aggregate functions power business intelligence dashboards that executives use to make million-dollar decisions, computing real-time metrics like total revenue or average order value across billions of transactions without loading all data into memory. COUNT(\*) optimizes to return row counts from table metadata when possible, making row count queries instant even on tables with billions of rows, while COUNT(column) counts only non-NULL values enabling data quality checks. The NULL-ignoring behavior of aggregates (except COUNT(\*)) prevents skewed averages from missing data but can hide data quality issues, requiring explicit NULL handling with COALESCE in production queries.
 
-### Example 15: Grouping Data with GROUP BY
+---
+
+## Example 15: Grouping Data with GROUP BY
 
 GROUP BY splits rows into groups based on column values, then applies aggregate functions to each group independently. HAVING filters groups (WHERE filters individual rows before grouping).
 
@@ -1103,9 +1127,9 @@ GROUP BY customer;
 
 **Why It Matters**: GROUP BY powers business intelligence queries that drive trillion-dollar decisions at companies like Amazon (analyzing sales patterns across millions of products) and Netflix (tracking viewing habits across 200+ million subscribers). PostgreSQL's GROUP BY implementation outperforms MySQL by 2-3x on large datasets due to superior hash aggregation algorithms, making it the preferred choice for analytics workloads. The HAVING clause enables complex multi-stage filtering that would require nested subqueries in databases without this feature, reducing query complexity from 50+ lines to 10-15 lines.
 
-## Group 4: Schema Design
+---
 
-### Example 16: Creating Tables with Constraints
+## Example 16: Creating Tables with Constraints
 
 Constraints enforce data integrity rules at the database level. NOT NULL prevents NULL values, CHECK validates conditions, and column types ensure data matches expected formats.
 
@@ -1178,7 +1202,9 @@ VALUES ('eve@example.com', 27, 70000, 'pending');
 
 **Why It Matters**: Database-level constraints enforce data integrity across all applications accessing the database, preventing the "invalid data written by legacy system" scenarios that plague organizations with multiple services writing to shared databases. CHECK constraints enable complex business rules (age >= 18, status IN ('active', 'inactive')) directly in the schema, eliminating the need to duplicate validation logic across microservices written in different languages. DEFAULT values with functions like CURRENT_DATE ensure consistent timestamp setting across all inserts, preventing timezone-related bugs caused by application servers in different regions using local time for timestamps.
 
-### Example 17: Primary Keys and Auto-Increment (SERIAL)
+---
+
+## Example 17: Primary Keys and Auto-Increment (SERIAL)
 
 Primary keys uniquely identify each row and automatically create a unique index. SERIAL is shorthand for INTEGER with an auto-incrementing sequence - perfect for surrogate keys.
 
@@ -1242,7 +1268,9 @@ VALUES (1, 101, 10);
 
 **Why It Matters**: Primary keys automatically create unique indexes enabling O(log n) lookups compared to O(n) sequential scans, making the difference between millisecond and minute response times on billion-row tables used by companies like Facebook. SERIAL sequences generate monotonically increasing IDs without gaps under normal operation, though concurrent transactions can create gaps during rollbacks, a trade-off that enables high-throughput ID generation without locks. Composite primary keys in junction tables (order_id, product_id) enable many-to-many relationships essential for e-commerce systems where orders contain multiple products and products appear in multiple orders, while automatically creating covering indexes for join queries.
 
-### Example 18: Foreign Keys and Referential Integrity
+---
+
+## Example 18: Foreign Keys and Referential Integrity
 
 Foreign keys enforce relationships between tables - they ensure referenced rows exist in the parent table, preventing orphaned records. ON DELETE and ON UPDATE clauses control cascading behavior.
 
@@ -1313,7 +1341,9 @@ DELETE FROM orders WHERE id = 1;
 
 **Why It Matters**: Foreign key constraints prevent orphaned records that cause application errors when joins return missing data, eliminating entire classes of data integrity bugs that require expensive data cleanup migrations to fix in production. ON DELETE CASCADE enables automatic cleanup of dependent data (deleting a user automatically deletes their orders) but requires careful consideration of business logic to prevent accidental data loss, while ON DELETE RESTRICT (default) enforces explicit deletion ordering that makes data deletion intentional. PostgreSQL's foreign key implementation uses indexes on both sides of the relationship for efficient validation, though this comes with INSERT/UPDATE overhead that can impact high-throughput write workloads requiring batched constraint validation.
 
-### Example 19: Unique and Check Constraints
+---
+
+## Example 19: Unique and Check Constraints
 
 UNIQUE ensures column values are distinct across all rows. CHECK validates arbitrary conditions. Both constraints can span multiple columns for complex validation rules.
 
@@ -1394,7 +1424,9 @@ VALUES ('PostgreSQL', '16.0');
 
 **Why It Matters**: UNIQUE constraints on email addresses prevent duplicate user registrations that cause authentication failures and security vulnerabilities when users can't determine which account to use, while composite UNIQUE constraints on (name, version) enable software versioning schemes used by package managers like npm. CHECK constraints encode business rules directly in the database schema (price > 0, age >= 18), making them enforceable across all applications and preventing invalid data from ever entering the system compared to application-level validation that can be bypassed. Named constraints (CONSTRAINT valid_location CHECK (...)) provide meaningful error messages to users instead of cryptic database error codes, improving user experience and reducing support tickets.
 
-### Example 20: NOT NULL and Default Values
+---
+
+## Example 20: NOT NULL and Default Values
 
 NOT NULL prevents NULL values - critical for columns that must always have data. DEFAULT provides automatic values when none specified, reducing boilerplate in INSERT statements.
 
@@ -1446,9 +1478,9 @@ ALTER TABLE comments ALTER COLUMN text SET NOT NULL;
 
 **Why It Matters**: NOT NULL constraints prevent the "billion dollar mistake" of NULL references that cause NullPointerExceptions and undefined behavior across programming languages, making PostgreSQL's strict NULL handling a reliability advantage over MySQL's permissive mode. DEFAULT values like CURRENT_TIMESTAMP ensure audit trail accuracy across all inserts without requiring application code to set timestamps, preventing timestamp inconsistencies caused by application servers in different timezones or with incorrect system clocks. The combination of NOT NULL with DEFAULT enables zero-downtime schema migrations (add column with default, backfill if needed, remove default) compared to ALTER TABLE operations that require exclusive locks on the entire table.
 
-## Group 5: Basic Joins
+---
 
-### Example 21: Inner Joins
+## Example 21: Inner Joins
 
 INNER JOIN returns rows where the join condition matches in both tables. Non-matching rows are excluded. This is the most common join type for retrieving related data.
 
@@ -1573,7 +1605,9 @@ INNER JOIN products p ON oi.product_id = p.id;
 
 **Why It Matters**: INNER JOINs enable relational database queries that combine data across normalized tables without denormalizing into single wide tables, reducing storage by 50-90% through deduplication while maintaining query performance through indexed join keys. PostgreSQL's query planner automatically chooses optimal join strategies (Hash Join, Merge Join, Nested Loop) based on table statistics and indexes, making multi-table queries on billions of rows complete in seconds without manual query optimization. The explicit JOIN syntax (compared to implicit comma-joins in WHERE clause) improves query readability and reduces bugs from missing join conditions that cause accidental cartesian products returning millions of unwanted rows.
 
-### Example 22: Left Outer Joins
+---
+
+## Example 22: Left Outer Joins
 
 LEFT JOIN returns all rows from the left table, with matching rows from the right table. Non-matching right table columns become NULL. Use this to find "which left rows have no matches".
 
@@ -1653,7 +1687,9 @@ ORDER BY total_spent DESC;
 
 **Why It Matters**: LEFT JOINs solve the "show all customers with their orders, including customers with no orders" requirement fundamental to reporting systems, enabling queries that combine reference data with transactional data while preserving all reference rows. The anti-join pattern (LEFT JOIN ... WHERE right.id IS NULL) efficiently finds orphaned rows (customers with no orders) without expensive NOT IN or NOT EXISTS subqueries, making it essential for data quality audits and cleanup operations. PostgreSQL's query planner can push WHERE conditions from the main query into the ON clause for optimization, but conditions on the right table in WHERE clause convert LEFT JOIN to INNER JOIN, a subtle behavior that causes production bugs when misunderstood.
 
-### Example 23: Right Outer Joins
+---
+
+## Example 23: Right Outer Joins
 
 RIGHT JOIN returns all rows from the right table, with matching rows from the left table. Non-matching left table columns become NULL. Equivalent to reversing the tables and using LEFT JOIN.
 
@@ -1713,7 +1749,9 @@ WHERE e.id IS NULL;
 
 **Why It Matters**: RIGHT JOINs exist primarily for SQL standard compliance and query rewriting flexibility, but most SQL style guides recommend avoiding them in favor of LEFT JOIN with swapped table order for consistency across codebases. The semantic equivalence between RIGHT JOIN and LEFT JOIN with reversed table order means learning only LEFT JOIN covers 99% of use cases, reducing cognitive load for developers. PostgreSQL's query planner treats RIGHT JOIN and LEFT JOIN identically after table reordering during optimization, meaning there's zero performance difference, making the choice purely stylistic.
 
-### Example 24: Full Outer Joins
+---
+
+## Example 24: Full Outer Joins
 
 FULL JOIN returns all rows from both tables, with NULLs where no match exists. Useful for finding "orphans" on both sides - rows in either table without matches.
 
@@ -1773,7 +1811,9 @@ WHERE a.id IS NULL;
 
 **Why It Matters**: FULL OUTER JOINs enable data reconciliation queries that identify mismatches between two authoritative systems (inventory database vs shipping database), showing records present in either system to detect synchronization failures requiring manual resolution. The combination of all rows from both tables regardless of matches makes FULL OUTER JOIN essential for merger scenarios where two companies combine customer databases without losing any customer records from either source. However, FULL OUTER JOIN queries typically perform slower than INNER or LEFT JOINs because they cannot be optimized with hash or merge join strategies as effectively, making them suitable for reporting rather than high-frequency transactional queries.
 
-### Example 25: Self Joins
+---
+
+## Example 25: Self Joins
 
 Self joins join a table to itself - useful for hierarchical data (employees and managers) or comparing rows within the same table. Use table aliases to distinguish the two "versions" of the table.
 
@@ -1841,9 +1881,9 @@ WHERE reports.id IS NULL;
 
 **Why It Matters**: Self joins enable organizational hierarchy queries (employees reporting to managers who report to executives) fundamental to enterprise systems without requiring separate tables for each level, making PostgreSQL suitable for recursive structures common in business applications. The pattern of joining a table to itself with different aliases solves graph traversal problems (social networks finding friends-of-friends, recommendation engines finding similar products) without recursive CTEs for shallow hierarchies. However, self joins on large tables without proper indexes cause quadratic query time growth (O(N²)), making index design on foreign key columns critical for performance when tables exceed millions of rows.
 
-## Group 6: Data Manipulation
+---
 
-### Example 26: String Functions (CONCAT, SUBSTRING, LENGTH, UPPER, LOWER)
+## Example 26: String Functions (CONCAT, SUBSTRING, LENGTH, UPPER, LOWER)
 
 String functions manipulate text - concatenation, substring extraction, case conversion, length calculation. Essential for formatting output and cleaning data.
 
@@ -1939,7 +1979,9 @@ FROM users;
 
 **Why It Matters**: String manipulation functions eliminate the need for application-layer string processing, reducing data transfer by performing transformations directly in the database where data resides, making full-text search preprocessing and email normalization operations 10-100x faster. UPPER/LOWER conversions enable case-insensitive comparisons and searches essential for user authentication systems where user@example.com and USER@EXAMPLE.COM must be treated identically. CONCAT's NULL handling (treating NULL as empty string) differs from `||`'s NULL propagation, a subtle distinction that causes production bugs when developers assume one behavior but get the other, making explicit COALESCE wrapping a best practice for critical string concatenations.
 
-### Example 27: Date Functions (NOW, DATE_PART, AGE, INTERVAL)
+---
+
+## Example 27: Date Functions (NOW, DATE_PART, AGE, INTERVAL)
 
 Date functions calculate current time, extract components, compute differences, and perform date arithmetic using INTERVAL.
 
@@ -2042,7 +2084,9 @@ FROM events;
 
 **Why It Matters**: Date arithmetic with INTERVAL enables business logic like "find subscriptions expiring in 30 days" without application-layer date manipulation, while PostgreSQL's timezone-aware TIMESTAMPTZ handling prevents the daylight saving time bugs that cause incorrect billing cycles in subscription systems. AGE function calculations (age('2025-12-25', '2000-01-01')) return human-readable intervals ("25 years 11 months") essential for age verification, account tenure rewards, and compliance reporting without complex date math. TO_CHAR formatting enables locale-specific date display (TO_CHAR(date, 'DD/MM/YYYY') for European format) directly in SQL queries, eliminating the need to transfer raw timestamps to application servers for formatting.
 
-### Example 28: Type Casting and Conversions
+---
+
+## Example 28: Type Casting and Conversions
 
 PostgreSQL requires explicit type conversions - use CAST or `::` operator. Convert between text, numbers, dates, and other types for calculations or formatting.
 
@@ -2100,7 +2144,9 @@ SELECT
 
 **Why It Matters**: PostgreSQL's strict type system prevents implicit conversions that cause data corruption in MySQL (WHERE price = '100' silently converts string to number with potential precision loss), making explicit CAST/:: syntax a safety feature that catches type mismatch bugs at query time rather than in production. The `::type` syntax (PostgreSQL-specific) offers concise type conversion preferred by PostgreSQL developers, though CAST(x AS type) provides SQL standard portability across databases when cross-platform compatibility matters. Invalid cast errors (CAST('invalid' AS INTEGER)) prevent corrupt data from entering the database compared to MySQL's permissive mode that silently converts invalid values to zero, making PostgreSQL's approach align with fail-fast principles.
 
-### Example 29: CASE Expressions
+---
+
+## Example 29: CASE Expressions
 
 CASE implements conditional logic in queries - like if/else statements. Use simple CASE for equality checks, searched CASE for complex conditions.
 
@@ -2176,7 +2222,9 @@ ORDER BY
 
 **Why It Matters**: CASE expressions enable complex business logic (tiered pricing, status categorization, conditional formatting) directly in SQL without requiring multiple queries or application-layer conditionals, reducing round-trips and simplifying code. Conditional aggregation with CASE (SUM(CASE WHEN status = 'paid' THEN amount END)) enables pivot-table-style reporting that would otherwise require multiple queries with UNION, making single-query dashboards possible. ORDER BY with CASE expressions enables custom sort orders (urgent items first, then by date) that reflect business priorities without creating computed columns or using multiple queries with UNION ALL to combine ordered subsets.
 
-### Example 30: Subqueries in SELECT
+---
+
+## Example 30: Subqueries in SELECT
 
 Subqueries are queries nested inside other queries - use them in SELECT (scalar subqueries), WHERE (filtering), and FROM (derived tables). Scalar subqueries return single values.
 

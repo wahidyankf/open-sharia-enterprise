@@ -2,14 +2,14 @@
 title: "Beginner"
 date: 2025-12-29T09:07:25+07:00
 draft: false
-weight: 100000001
+weight: 10000001
 description: "Examples 1-30: SQL fundamentals covering installation, data types, basic queries, schema design, joins, and data manipulation (0-40% coverage)"
 tags: ["sql", "database", "tutorial", "by-example", "beginner", "fundamentals", "standard-sql"]
 ---
 
-## Group 1: First Steps
+Learn SQL fundamentals through 30 annotated examples. Each example is self-contained, runnable in SQLite, and heavily commented to show what each statement does, expected outputs, and intermediate table states.
 
-### Example 1: Installing SQLite and First Query
+## Example 1: Installing SQLite and First Query
 
 SQLite runs in a Docker container for isolated, reproducible environments across all platforms. This setup creates a lightweight database you can experiment with safely without installing server software.
 
@@ -69,7 +69,9 @@ SELECT datetime('now') AS current_time;
 
 **Why It Matters**: Reproducible development environments prevent "works on my machine" issues across teams. Docker-based database setups enable consistent testing, onboarding, and CI/CD pipelines. Production applications typically use managed database services, but local containerized databases are essential for development and testing without affecting production data.
 
-### Example 2: Creating Your First Table
+---
+
+## Example 2: Creating Your First Table
 
 Tables store related data in rows and columns. Each column has a name and data type. Tables are the fundamental storage unit in relational databases.
 
@@ -102,7 +104,9 @@ SELECT COUNT(*) FROM users;
 
 **Why It Matters**: Schema design decisions impact application performance and maintainability for years. Choosing appropriate data types affects storage efficiency, query speed, and data integrity. Production databases evolve through migrations that carefully add, modify, or remove columns while preserving existing data—schema changes in production require planning and testing.
 
-### Example 3: Basic SELECT Queries
+---
+
+## Example 3: Basic SELECT Queries
 
 SELECT retrieves data from tables. The asterisk (`*`) selects all columns, while specific column names give precise control over what data returns.
 
@@ -143,7 +147,9 @@ SELECT name, price, price * 1.10 AS price_with_tax FROM products;
 
 **Why It Matters**: Selecting only needed columns reduces network bandwidth and memory usage—critical for high-traffic applications. Production systems avoid `SELECT *` because it fetches unnecessary data and breaks when schema changes add columns. Computed columns enable business logic in queries without duplicating data storage, keeping derived values always up-to-date.
 
-### Example 4: Inserting Data with INSERT
+---
+
+## Example 4: Inserting Data with INSERT
 
 INSERT adds new rows to tables. You can insert single rows, multiple rows at once, or specify only certain columns (others become NULL).
 
@@ -202,7 +208,9 @@ SELECT * FROM inventory;
 
 **Why It Matters**: Bulk inserts dramatically improve performance for data imports—inserting 10,000 rows individually takes minutes, while a single multi-row INSERT completes in seconds. Production ETL pipelines batch inserts to reduce network round-trips and transaction overhead. Explicit column lists protect against schema changes breaking INSERT statements.
 
-### Example 5: Updating and Deleting Rows
+---
+
+## Example 5: Updating and Deleting Rows
 
 UPDATE modifies existing rows matching a WHERE condition. DELETE removes rows. Both are dangerous without WHERE clauses - they affect ALL rows.
 
@@ -262,9 +270,9 @@ DELETE FROM stock;
 
 **Why It Matters**: Accidental mass updates and deletes are among the most devastating database mistakes—one missing WHERE clause can destroy production data in seconds. Production environments use transaction wrappers, require review for destructive queries, and maintain backups. The "SELECT first" practice catches errors before they become disasters.
 
-## Group 2: Data Types
+---
 
-### Example 6: Numeric Types (INTEGER and REAL)
+## Example 6: Numeric Types (INTEGER and REAL)
 
 SQLite uses dynamic typing with type affinity. INTEGER stores whole numbers, REAL stores floating-point numbers. Unlike other databases, SQLite is flexible about type enforcement.
 
@@ -337,7 +345,9 @@ WHERE id = 1;
 
 **Why It Matters**: Floating-point errors accumulate in financial calculations—0.1 + 0.2 doesn't equal 0.3 in binary floating-point. Production financial systems use integer cents or dedicated decimal types to avoid rounding errors that cause accounting discrepancies. Type mismatches between application code and database can cause silent data corruption.
 
-### Example 7: Text Types and String Operations
+---
+
+## Example 7: Text Types and String Operations
 
 TEXT stores character data of any length. SQLite treats TEXT, VARCHAR, and CHAR identically (unlike other databases where length matters).
 
@@ -389,7 +399,9 @@ WHERE id = 2;
 
 **Why It Matters**: String operations power search features, data cleaning, and report formatting. Production systems use LIKE patterns for user search functionality, string functions for data normalization, and proper text handling prevents injection attacks. Understanding string collation affects sorting and comparison behavior across different languages.
 
-### Example 8: NULL Handling
+---
+
+## Example 8: NULL Handling
 
 NULL represents missing or unknown data. NULL is NOT equal to anything, including itself. Special operators IS NULL and IS NOT NULL test for NULL values.
 
@@ -469,7 +481,9 @@ FROM employees;
 
 **Why It Matters**: NULL bugs are among the most common database errors—using `= NULL` instead of `IS NULL` returns zero rows and silently fails. Production applications must handle NULL in aggregations (COUNT ignores NULL), joins (NULL never matches), and display logic. COALESCE provides sensible defaults that prevent NULL propagation through calculations.
 
-### Example 9: Date and Time Types
+---
+
+## Example 9: Date and Time Types
 
 SQLite stores dates and times as TEXT (ISO8601), REAL (Julian day), or INTEGER (Unix timestamp). Use date/time functions for manipulation and formatting.
 
@@ -551,7 +565,9 @@ FROM events;
 
 **Why It Matters**: Date handling is notoriously error-prone—timezone bugs cause scheduling failures, date format inconsistencies break data imports, and incorrect date arithmetic leads to billing errors. Production systems standardize on UTC storage with timezone conversion at display time. ISO8601 format ensures consistent sorting and cross-system compatibility.
 
-### Example 10: Boolean Values and Truthiness
+---
+
+## Example 10: Boolean Values and Truthiness
 
 SQLite has no dedicated BOOLEAN type. Use INTEGER with 0 (false) and 1 (true) by convention. Comparisons and logical operators produce 0 or 1.
 
@@ -600,9 +616,9 @@ FROM settings;
 
 **Why It Matters**: Boolean flags control feature toggles, user permissions, and state management. Production systems use boolean columns for is_active, is_deleted, and is_verified fields that enable soft deletes and staged rollouts. Understanding truthiness prevents bugs where 0 might be treated as false in application code but stored differently in the database.
 
-## Group 3: Filtering and Sorting
+---
 
-### Example 11: WHERE Clause Filtering
+## Example 11: WHERE Clause Filtering
 
 WHERE filters rows based on conditions. Only rows where the condition evaluates to true (non-zero) are returned. Combine multiple conditions with AND/OR.
 
@@ -658,7 +674,9 @@ SELECT * FROM orders WHERE customer IN ('Alice', 'Bob');
 
 **Why It Matters**: WHERE clauses determine query performance—filtering early reduces data processing. Production queries must use indexed columns in WHERE for acceptable response times. IN clauses enable parameterized queries that prevent SQL injection while filtering by lists of IDs from application code.
 
-### Example 12: Sorting with ORDER BY
+---
+
+## Example 12: Sorting with ORDER BY
 
 ORDER BY sorts query results by one or more columns. Default is ascending (ASC), use DESC for descending. Multiple columns create hierarchical sorting.
 
@@ -708,7 +726,9 @@ SELECT * FROM students ORDER BY score;
 
 **Why It Matters**: Consistent ordering is essential for pagination and user experience—without ORDER BY, results may vary between queries due to internal database behavior. Production systems add secondary sort columns (like ID) to handle ties and ensure stable pagination. ORDER BY on non-indexed columns can cause full table scans.
 
-### Example 13: Limiting Results with LIMIT and OFFSET
+---
+
+## Example 13: Limiting Results with LIMIT and OFFSET
 
 LIMIT restricts the number of rows returned. OFFSET skips a specified number of rows before returning results. Together they enable pagination.
 
@@ -762,7 +782,9 @@ SELECT * FROM products OFFSET 5;
 
 **Why It Matters**: Unbounded queries can overwhelm applications with millions of rows—LIMIT protects against memory exhaustion and response timeouts. However, OFFSET-based pagination degrades at high page numbers (must scan skipped rows). Production systems use cursor-based pagination with keyset conditions for consistent performance at scale.
 
-### Example 14: DISTINCT for Unique Values
+---
+
+## Example 14: DISTINCT for Unique Values
 
 DISTINCT removes duplicate rows from results. When used with multiple columns, it considers the entire row for uniqueness.
 
@@ -811,7 +833,9 @@ SELECT COUNT(DISTINCT customer) AS unique_customers FROM purchases;
 
 **Why It Matters**: DISTINCT is essential for analytics (unique visitors, distinct products purchased) but can be expensive on large tables without supporting indexes. Production dashboards use DISTINCT for deduplication while being aware of performance implications. COUNT(DISTINCT) enables metrics like "unique active users" that drive business decisions.
 
-### Example 15: Pattern Matching with LIKE and GLOB
+---
+
+## Example 15: Pattern Matching with LIKE and GLOB
 
 LIKE performs case-insensitive pattern matching with wildcards: `%` (any characters) and `_` (single character). GLOB is case-sensitive with `*` and `?` wildcards.
 
@@ -862,9 +886,9 @@ SELECT * FROM files WHERE filename NOT LIKE '%.pdf';
 
 **Why It Matters**: Pattern matching powers search features throughout applications. However, leading wildcard patterns (`LIKE '%search%'`) can't use indexes and cause full table scans. Production search typically uses full-text search indexes for performance. LIKE patterns must escape special characters to prevent unexpected matches and potential security issues.
 
-## Group 4: Aggregation
+---
 
-### Example 16: COUNT, SUM, AVG, MIN, MAX
+## Example 16: COUNT, SUM, AVG, MIN, MAX
 
 Aggregate functions compute single values from multiple rows. COUNT counts rows, SUM adds values, AVG calculates mean, MIN/MAX find extremes.
 
@@ -941,7 +965,9 @@ SELECT SUM(quantity * price) AS total_revenue FROM sales;
 
 **Why It Matters**: Aggregates power dashboards, reports, and analytics that drive business decisions. Database-level aggregation is vastly faster than fetching rows and computing in application code. Production systems use aggregate queries for real-time metrics (total sales, active users) and batch reports (monthly summaries, trend analysis).
 
-### Example 17: GROUP BY for Categorized Aggregation
+---
+
+## Example 17: GROUP BY for Categorized Aggregation
 
 GROUP BY partitions rows into groups and applies aggregate functions to each group separately. Commonly combined with aggregates to produce per-category statistics.
 
@@ -1010,7 +1036,9 @@ GROUP BY account;
 
 **Why It Matters**: GROUP BY enables segmented analysis—sales by region, users by signup month, errors by type. This categorization is fundamental to business intelligence. Production reports rely on GROUP BY for breakdowns that reveal trends invisible in aggregate totals, like identifying which product categories are growing fastest.
 
-### Example 18: HAVING Clause for Filtering Groups
+---
+
+## Example 18: HAVING Clause for Filtering Groups
 
 HAVING filters groups AFTER aggregation (unlike WHERE which filters rows BEFORE aggregation). Use HAVING to filter based on aggregate results.
 
@@ -1075,9 +1103,9 @@ HAVING total_revenue > 1500;
 
 **Why It Matters**: HAVING enables threshold-based reporting—finding high-value customers (SUM > 10000), active users (COUNT > 5 logins), or anomalies (AVG deviating from normal). Production monitoring uses HAVING to surface outliers that need attention, like servers with unusually high error rates or customers with abnormal activity patterns.
 
-## Group 5: Joins
+---
 
-### Example 19: INNER JOIN for Matching Rows
+## Example 19: INNER JOIN for Matching Rows
 
 INNER JOIN combines rows from two tables where the join condition matches. Only rows with matches in both tables appear in results.
 
@@ -1166,7 +1194,9 @@ GROUP BY c.id, c.name;
 
 **Why It Matters**: JOINs are the foundation of relational database queries—combining normalized data from multiple tables. Production applications use JOINs to assemble complete records (users with orders, posts with authors). Understanding JOIN performance is critical—missing indexes on join columns cause exponential slowdowns as tables grow.
 
-### Example 20: LEFT JOIN for Optional Matches
+---
+
+## Example 20: LEFT JOIN for Optional Matches
 
 LEFT JOIN returns all rows from the left table, with matched rows from the right table. When no match exists, right table columns become NULL.
 
@@ -1252,7 +1282,9 @@ WHERE d.name IN ('Engineering', 'Sales');
 
 **Why It Matters**: LEFT JOIN handles optional relationships essential for real-world data—users who haven't ordered yet, products without reviews, employees without managers. Finding missing data (WHERE joined.id IS NULL) powers data quality reports that identify incomplete records requiring attention.
 
-### Example 21: Self-Joins for Hierarchical Data
+---
+
+## Example 21: Self-Joins for Hierarchical Data
 
 Self-joins join a table to itself, useful for hierarchical relationships (employees and managers) or comparing rows within the same table.
 
@@ -1318,7 +1350,9 @@ INNER JOIN employees m ON e1.manager_id = m.id;
 
 **Why It Matters**: Organizational hierarchies, category trees, and threaded comments require self-referential relationships. Production org charts, permission inheritance, and nested structures all use self-joins. Understanding recursive patterns (WITH RECURSIVE) extends this to unlimited depth hierarchies.
 
-### Example 22: Multiple Joins
+---
+
+## Example 22: Multiple Joins
 
 Complex queries often join three or more tables. Each JOIN adds another table to the result set, combining data from multiple sources.
 
@@ -1394,9 +1428,9 @@ WHERE p.country = 'USA';
 
 **Why It Matters**: Real applications require combining many tables—an order detail view joins orders, customers, products, shipping addresses, and payment methods. Production queries must balance completeness with performance, using appropriate join types and ensuring indexes exist on all join columns.
 
-## Group 6: Schema Design
+---
 
-### Example 23: Primary Keys for Unique Identification
+## Example 23: Primary Keys for Unique Identification
 
 Primary keys uniquely identify each row in a table. Use INTEGER PRIMARY KEY for auto-incrementing IDs. Primary keys cannot be NULL and must be unique.
 
@@ -1442,7 +1476,9 @@ SELECT * FROM users WHERE id = 2;
 
 **Why It Matters**: Primary keys are the foundation of data integrity—every row must be uniquely identifiable. Production systems use auto-increment IDs for simplicity or UUIDs for distributed systems. UNIQUE constraints on business keys (email, username) prevent duplicate accounts that cause user confusion and data integrity issues.
 
-### Example 24: Foreign Keys for Relationships
+---
+
+## Example 24: Foreign Keys for Relationships
 
 Foreign keys link tables by referencing primary keys in other tables. They enforce referential integrity - prevent orphaned records that reference non-existent parents.
 
@@ -1498,7 +1534,9 @@ DELETE FROM categories WHERE id = 1;
 
 **Why It Matters**: Foreign keys prevent data corruption that application bugs would otherwise cause—orders referencing deleted customers, comments on non-existent posts. Production databases rely on foreign keys to maintain consistency even when application code has bugs. The database becomes the last line of defense for data integrity.
 
-### Example 25: Constraints (NOT NULL, CHECK, DEFAULT)
+---
+
+## Example 25: Constraints (NOT NULL, CHECK, DEFAULT)
 
 Constraints enforce data integrity rules. NOT NULL prevents NULL values, CHECK validates conditions, DEFAULT provides fallback values.
 
@@ -1552,7 +1590,9 @@ CREATE TABLE accounts (
 
 **Why It Matters**: Database constraints catch data issues that slip past application validation—concurrent requests, direct database access, data migrations. Production systems use constraints as the authoritative source of business rules. CHECK constraints prevent impossible states (negative prices, future birth dates) that would corrupt reports and calculations.
 
-### Example 26: Indexes for Query Performance
+---
+
+## Example 26: Indexes for Query Performance
 
 Indexes speed up queries by creating sorted lookup structures. B-tree indexes (default) work for equality and range queries. Trade-off: faster reads, slower writes.
 
@@ -1624,7 +1664,9 @@ DROP INDEX idx_customers_email;
 
 **Why It Matters**: Indexes are the primary tool for database performance tuning. Production queries that scan millions of rows without indexes cause timeouts and server overload. However, over-indexing slows writes and wastes storage. EXPLAIN QUERY PLAN reveals whether queries use indexes, guiding optimization efforts.
 
-### Example 27: Transactions for Data Consistency
+---
+
+## Example 27: Transactions for Data Consistency
 
 Transactions group multiple statements into atomic units - either all succeed or all fail. Use BEGIN to start, COMMIT to save, ROLLBACK to cancel.
 
@@ -1686,7 +1728,9 @@ UPDATE accounts SET balance = balance - 1000 WHERE owner = 'Alice';
 
 **Why It Matters**: Transactions prevent partial updates that corrupt data—transferring money must debit one account AND credit another, never just one. Production systems wrap related operations in transactions to maintain consistency. Without transactions, system crashes mid-operation leave data in invalid states that require manual cleanup.
 
-### Example 28: Views for Query Simplification
+---
+
+## Example 28: Views for Query Simplification
 
 Views are saved queries that act like virtual tables. They simplify complex queries, provide abstraction, and can restrict data access.
 
@@ -1755,9 +1799,9 @@ DROP VIEW high_earners;
 
 **Why It Matters**: Views encapsulate complex query logic that would otherwise be duplicated across application code. Production systems use views to provide stable interfaces while underlying tables evolve, hide sensitive columns from certain users, and pre-join common table combinations for simpler application queries.
 
-## Group 7: Advanced Queries
+---
 
-### Example 29: Subqueries in WHERE
+## Example 29: Subqueries in WHERE
 
 Subqueries are queries nested inside other queries. Use in WHERE clauses to filter based on results from another query.
 
@@ -1824,7 +1868,9 @@ WHERE EXISTS (
 
 **Why It Matters**: Subqueries solve complex filtering problems—finding above-average performers, records matching criteria from another table, or existence checks. Production analytics use subqueries for cohort analysis and complex business rules. EXISTS subqueries are often more efficient than IN for large datasets.
 
-### Example 30: CASE Expressions for Conditional Logic
+---
+
+## Example 30: CASE Expressions for Conditional Logic
 
 CASE expressions provide if-then-else logic within SQL. Use for conditional values, categorization, or pivot-like transformations.
 

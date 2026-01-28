@@ -7,9 +7,9 @@ description: "Examples 31-60: PostgreSQL production patterns covering advanced q
 tags: ["postgresql", "database", "tutorial", "by-example", "intermediate", "indexes", "json", "transactions"]
 ---
 
-## Group 1: Advanced Queries
+Master PostgreSQL production patterns through 30 annotated examples. Each example builds on beginner concepts, covering advanced queries, indexes, JSON operations, transactions, and real-world patterns.
 
-### Example 31: Common Table Expressions (WITH clause)
+## Example 31: Common Table Expressions (WITH clause)
 
 CTEs improve query readability by naming subqueries - the WITH clause defines temporary named result sets you can reference multiple times in the main query.
 
@@ -156,7 +156,9 @@ FROM monthly_revenue;
 
 **Why It Matters**: CTEs make complex queries maintainable by breaking them into named logical steps that document query intent, reducing the "query archaeology" time required when modifying analytics code months after it was written. PostgreSQL's CTE optimizer materializes CTE results, which can improve or hurt performance depending on whether result reuse outweighs materialization cost, making CTE placement a performance tuning decision. The ability to chain CTEs (WITH cte1 AS (...), cte2 AS (SELECT \* FROM cte1)) enables incremental query development where each step can be tested independently before combining into the final query.
 
-### Example 32: Window Functions (ROW_NUMBER, RANK, DENSE_RANK)
+---
+
+## Example 32: Window Functions (ROW_NUMBER, RANK, DENSE_RANK)
 
 Window functions compute values across sets of rows related to the current row without collapsing rows like GROUP BY. ROW_NUMBER assigns sequential numbers, RANK skips numbers after ties, DENSE_RANK doesn't skip.
 
@@ -275,7 +277,9 @@ WHERE rank = 1;
 
 **Why It Matters**: Window functions eliminate the need for complex self-joins and correlated subqueries that plague MySQL queries, reducing execution time from minutes to seconds on million-row datasets. Companies like Stripe use window functions to calculate running balances across billions of transactions without loading entire datasets into memory. PostgreSQL's window function implementation is SQL standard-compliant (unlike MySQL's limited support before 8.0), enabling portable analytics code across database systems.
 
-### Example 33: Window Functions with Partitioning
+---
+
+## Example 33: Window Functions with Partitioning
 
 PARTITION BY divides result sets into groups before applying window functions - each partition gets independent calculations. Combine with ORDER BY for sophisticated analytics.
 
@@ -404,7 +408,9 @@ ORDER BY account, transaction_date;
 
 **Why It Matters**: Window function PARTITION BY enables per-group analytics (running totals per customer, rankings per category) without the performance penalty of grouping and rejoining that characterizes MySQL's pre-8.0 analytics workarounds. The ROWS/RANGE window frame controls enable precise calculations like "sum of last 7 days" or "average of previous 3 rows" essential for moving averages in financial dashboards. PostgreSQL's efficient window function implementation processes billion-row datasets with complex windowing operations in seconds compared to minutes required for equivalent self-join approaches.
 
-### Example 34: Recursive CTEs
+---
+
+## Example 34: Recursive CTEs
 
 Recursive CTEs call themselves - essential for hierarchical data (org charts, category trees, graph traversal). Base case provides initial rows, recursive case references the CTE itself.
 
@@ -508,7 +514,9 @@ SELECT name FROM ancestors;
 
 **Why It Matters**: Recursive CTEs enable hierarchical queries (org charts with unlimited depth, bill of materials with nested components) directly in SQL without application-level recursion that requires O(N) round-trips to the database. PostgreSQL's recursive CTE implementation efficiently traverses graphs and trees using depth-first or breadth-first strategies, making it suitable for social network traversal (friends-of-friends) and dependency resolution (package managers). The mandatory termination condition prevents infinite loops that would crash application-layer recursion, while cycle detection (checking if rows repeat) enables safe traversal of cyclic graphs like circular dependencies.
 
-### Example 35: UNION, INTERSECT, EXCEPT
+---
+
+## Example 35: UNION, INTERSECT, EXCEPT
 
 Set operations combine results from multiple queries - UNION merges results (removes duplicates), INTERSECT finds common rows, EXCEPT finds rows in first query but not second.
 
@@ -583,9 +591,9 @@ ORDER BY email, year;
 
 **Why It Matters**: UNION ALL outperforms UNION by 50-90% when duplicates are acceptable because it skips the deduplication step, making it essential for combining large result sets like multi-table aggregations across sharded databases. INTERSECT and EXCEPT enable set-based queries (find users in both premium and trial groups, find products with sales but no inventory) that would require complex joins and filtering, improving query readability. Set operations enable progressive query construction where different filtering/sorting strategies are applied to the same base data and combined, making A/B test result analysis and multi-source data reconciliation queries simpler.
 
-## Group 2: Indexes and Performance
+---
 
-### Example 36: Creating B-tree Indexes
+## Example 36: Creating B-tree Indexes
 
 B-tree indexes (default) speed up lookups, range queries, and sorting. Create indexes on columns frequently used in WHERE, JOIN, and ORDER BY clauses.
 
@@ -697,7 +705,9 @@ DROP INDEX idx_products_category;
 
 **Why It Matters**: B-tree indexes reduce query time from O(N) sequential scans to O(log N) index lookups, making the difference between 10-second and 10-millisecond queries on million-row tables used by companies like Shopify. Automatic primary key indexing prevents developers from forgetting to index foreign key columns, a common source of performance problems in MySQL databases where foreign keys don't automatically create indexes. However, each additional index increases INSERT/UPDATE/DELETE time by 10-30% as indexes must be maintained, requiring careful analysis of query patterns versus write performance when deciding which columns to index.
 
-### Example 37: Unique Indexes
+---
+
+## Example 37: Unique Indexes
 
 Unique indexes enforce uniqueness like UNIQUE constraints but can be partial or conditional. Use them for natural keys, business identifiers, or ensuring data integrity.
 
@@ -781,7 +791,9 @@ VALUES ('PostgreSQL', '16');
 
 **Why It Matters**: Unique indexes provide both data integrity enforcement and query performance optimization in a single database object, eliminating the need for separate constraint checks and index creation. Partial unique indexes enable business rules like "email must be unique for active users only" directly in the database schema, preventing the race conditions that plague application-layer uniqueness checks in concurrent environments. The automatic index creation when declaring UNIQUE constraints means developers get performance benefits without explicitly thinking about indexing, though understanding this behavior is critical when analyzing query performance.
 
-### Example 38: Multi-Column Indexes
+---
+
+## Example 38: Multi-Column Indexes
 
 Multi-column indexes speed up queries filtering on multiple columns. Column order matters - queries must use leftmost columns to benefit from index.
 
@@ -896,7 +908,9 @@ WHERE customer_id = 42
 
 **Why It Matters**: Multi-column index column order determines query optimization effectiveness, with leftmost column selectivity being critical - an index on (customer_id, status) cannot be used for queries filtering only on status, requiring duplicate indexes that increase storage and write overhead. PostgreSQL's B-tree multi-column indexes enable covering index optimizations where all query columns exist in the index, eliminating table lookups and achieving 10-100x speedups on analytical queries. The leftmost-prefix rule means careful analysis of query patterns is essential before creating multi-column indexes, as incorrect column ordering can render expensive indexes completely unused.
 
-### Example 39: Partial Indexes
+---
+
+## Example 39: Partial Indexes
 
 Partial indexes include only rows matching a WHERE condition - smaller, faster, and perfect for queries filtering on specific values or ranges.
 
@@ -1003,7 +1017,9 @@ WHERE tablename = 'orders';
 
 **Why It Matters**: Partial indexes reduce index size by 70-95% when indexing frequently queried subsets (active records, pending transactions), making index scans faster and reducing storage costs at scale where companies like Uber index billions of recent trips without indexing years of historical data. The WHERE clause in partial indexes enables business logic enforcement (unique email for active users only) directly in index definitions, preventing application-layer race conditions. PostgreSQL's partial index feature has no equivalent in MySQL, making it a unique optimization technique that combines storage efficiency with query performance improvements.
 
-### Example 40: Using EXPLAIN to Analyze Queries
+---
+
+## Example 40: Using EXPLAIN to Analyze Queries
 
 EXPLAIN shows query execution plans - how PostgreSQL retrieves data. EXPLAIN ANALYZE executes queries and shows actual runtimes, revealing performance bottlenecks.
 
@@ -1129,9 +1145,9 @@ SELECT * FROM products WHERE price > 900;
 
 **Why It Matters**: EXPLAIN ANALYZE reveals the actual execution plan and timing that distinguish theoretical optimization from real-world performance, exposing cases where PostgreSQL's planner chooses sequential scans over indexes due to outdated statistics or small table sizes. The cost estimates shown in EXPLAIN output guide index creation decisions, with high-cost sequential scans on large tables being the primary indicator for missing indexes that cause 100-1000x performance degradations. Companies like GitLab use EXPLAIN ANALYZE in their database review process to catch performance regressions before they reach production, making it an essential tool for database-driven application development.
 
-## Group 3: Advanced Data Types
+---
 
-### Example 41: Arrays
+## Example 41: Arrays
 
 PostgreSQL supports array columns - store multiple values in single column. Useful for tags, categories, or ordered lists without separate junction tables.
 
@@ -1232,7 +1248,9 @@ GROUP BY id, title;
 
 **Why It Matters**: PostgreSQL's native array support eliminates the need for junction tables in scenarios like product tags or user permissions, reducing query complexity and storage overhead by 60-80% compared to normalized many-to-many relationships. The GIN index support for arrays enables fast containment queries (find products with tag 'electronics') that would require joins in traditional relational designs, making arrays ideal for lightweight multi-value attributes. However, arrays lack the query optimization capabilities of normalized tables, making them unsuitable for frequently filtered relationships where proper indexing and query planning on junction tables provides better performance at scale.
 
-### Example 42: JSON and JSONB Types
+---
+
+## Example 42: JSON and JSONB Types
 
 JSON stores text-based JSON, JSONB stores binary JSON (faster, supports indexing). JSONB is preferred for most use cases - it enables efficient querying and indexing.
 
@@ -1294,7 +1312,9 @@ WHERE name = 'Diana';
 
 **Why It Matters**: JSONB makes PostgreSQL the only traditional RDBMS that can compete with MongoDB for flexible schema applications, enabling companies like Robinhood to store user configurations with varying fields without schema migrations. GIN indexes on JSONB enable millisecond-speed queries on nested JSON documents containing millions of key-value pairs, compared to seconds required for JSON string parsing in MySQL. The binary format reduces storage by 20-30% compared to text-based JSON while enabling 5-10x faster queries, making it ideal for logging systems that ingest terabytes of semi-structured data daily.
 
-### Example 43: Querying JSON with -> and ->>
+---
+
+## Example 43: Querying JSON with -> and ->>
 
 PostgreSQL provides operators to extract JSON values - `->` returns JSON, `->>` returns text. Navigate nested objects with chained operators.
 
@@ -1379,7 +1399,9 @@ WHERE details -> 'specs' ? 'gpu';  -- => Has 'gpu' key in specs
 
 **Why It Matters**: The distinction between `->` (returns JSON) and `->>` (returns text) determines query composability and performance, with `->` enabling method chaining for deep nested access while `->>` enables direct WHERE clause filtering and display without casting. PostgreSQL's JSON path traversal operators eliminate the need for application-layer JSON parsing when filtering on nested values, reducing data transfer and enabling database-side filtering that scales to billions of JSON documents. The automatic text conversion with `->>` simplifies queries but requires explicit casting to numeric/date types for calculations, a common source of type mismatch errors when developers forget the string representation.
 
-### Example 44: JSONB Operators and Functions
+---
+
+## Example 44: JSONB Operators and Functions
 
 JSONB supports operators for containment, existence checks, and set operations. Functions enable updates, merges, and deep inspection of JSON structures.
 
@@ -1511,7 +1533,9 @@ FROM events;
 
 **Why It Matters**: JSONB containment operators (@>) enable efficient querying of semi-structured data without schema migrations, making PostgreSQL suitable for applications like Slack where message metadata varies across message types without requiring ALTER TABLE operations. GIN indexes on JSONB columns enable millisecond-speed containment queries on billions of documents, competing directly with MongoDB while maintaining ACID guarantees and relational query capabilities that NoSQL databases lack. The `||` merge operator and `jsonb_set()` function enable partial updates of nested JSON without reading and rewriting entire documents, reducing write amplification by 80-95% compared to full document replacement.
 
-### Example 45: Range Types (daterange, int4range)
+---
+
+## Example 45: Range Types (daterange, int4range)
 
 Range types store ranges of values (dates, numbers) with inclusive/exclusive boundaries. Perfect for reservations, scheduling, and availability tracking.
 
@@ -1617,9 +1641,9 @@ ORDER BY room, lower(stay);
 
 **Why It Matters**: Range types enable booking systems to detect conflicting reservations with simple overlap queries (`&&` operator) that would require complex date comparison logic in applications lacking native range support, preventing double-bookings that cause customer service nightmares. The inclusive/exclusive boundary semantics (`[start, end)`) match real-world scenarios where checkout time equals next checkin time, making DATERANGE('2025-01-01', '2025-01-03') naturally exclude 2025-01-03 for non-conflicting consecutive bookings. GiST indexes on range columns enable sub-millisecond overlap detection across millions of reservations, making PostgreSQL the database of choice for hotel and scheduling systems requiring instant availability checks.
 
-## Group 4: Transactions
+---
 
-### Example 46: BEGIN, COMMIT, ROLLBACK
+## Example 46: BEGIN, COMMIT, ROLLBACK
 
 Transactions group multiple statements into atomic units - either all succeed (COMMIT) or all fail (ROLLBACK). Essential for data consistency.
 
@@ -1724,7 +1748,9 @@ SELECT name, balance FROM accounts;
 
 **Why It Matters**: Transactions ensure atomic money transfers where debit and credit operations either both succeed or both fail, preventing the financial disasters that occur when systems crash mid-operation leaving accounts in inconsistent states. PostgreSQL's MVCC implementation allows concurrent transactions to proceed without locking, enabling thousands of transactions per second on systems like payment processors where traditional locking would create bottlenecks. The automatic rollback on errors eliminates entire classes of data corruption bugs that require manual database recovery in systems without proper transaction support.
 
-### Example 47: Transaction Isolation Levels
+---
+
+## Example 47: Transaction Isolation Levels
 
 Isolation levels control what transactions see of concurrent changes. READ COMMITTED (default) sees committed data, REPEATABLE READ sees snapshot at transaction start, SERIALIZABLE prevents all anomalies.
 
@@ -1849,7 +1875,9 @@ SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL REPEATABLE READ;
 
 **Why It Matters**: Isolation levels determine whether analytical reports see consistent snapshots or inconsistent mid-transaction states, with REPEATABLE READ preventing the "phantom read" anomalies that cause financial reports to show mismatched totals when run twice. READ COMMITTED (default) maximizes concurrency for web applications where seeing slightly stale data is acceptable, while SERIALIZABLE prevents all anomalies at the cost of transaction retry overhead (5-20% performance penalty). The choice between isolation levels represents the fundamental trade-off between data consistency and system throughput that every database-backed application must navigate.
 
-### Example 48: ACID Properties in Practice
+---
+
+## Example 48: ACID Properties in Practice
 
 ACID ensures reliable transactions - Atomicity (all-or-nothing), Consistency (valid states), Isolation (concurrent safety), Durability (permanent after commit).
 
@@ -1926,7 +1954,9 @@ SELECT name, balance FROM accounts;
 
 **Why It Matters**: ACID guarantees make PostgreSQL suitable for financial systems where partial transactions or data loss would cause regulatory violations and legal liability, compared to NoSQL databases that trade ACID compliance for performance. Durability ensures that committed transactions survive crashes and power failures through write-ahead logging, eliminating the data loss windows that plague systems relying on eventual consistency models. The combination of all four ACID properties enables applications to trust that database state reflects business logic execution, simplifying application code that would otherwise need to implement complex error recovery and consistency checking.
 
-### Example 49: Savepoints
+---
+
+## Example 49: Savepoints
 
 Savepoints create checkpoints within transactions - you can rollback to specific savepoints without aborting the entire transaction.
 
@@ -2020,7 +2050,9 @@ COMMIT;
 
 **Why It Matters**: Savepoints enable complex multi-step transactions to recover from individual step failures without abandoning all work, making batch processing systems resilient where processing 10,000 records with occasional errors can rollback just the failed record instead of restarting from zero. The ability to create nested transaction checkpoints enables framework-level error handling (ORM savepoints around each operation) that provides granular rollback without application-layer complexity. Savepoints combined with exception handling enable the "process as much as possible" pattern where batch jobs continue despite errors, logging failures for later review instead of failing completely.
 
-### Example 50: Deadlock Detection and Handling
+---
+
+## Example 50: Deadlock Detection and Handling
 
 Deadlocks occur when transactions wait for each other's locks. PostgreSQL detects deadlocks automatically and aborts one transaction (victim) to resolve.
 
@@ -2108,9 +2140,9 @@ ROLLBACK;
 
 **Why It Matters**: Deadlock detection automatically recovers from circular lock dependencies that would otherwise freeze database systems indefinitely, aborting one transaction to allow others to proceed rather than requiring manual intervention. Consistent lock ordering (always lock records by ascending ID) prevents deadlocks in concurrent financial systems where simultaneous transfers between the same accounts in opposite directions would otherwise create circular wait conditions. The deadlock_timeout setting (default 1 second) balances detection speed against false positives from slow queries, with automatic victim selection preferring to abort smaller transactions that have done less work.
 
-## Group 5: Views and Functions
+---
 
-### Example 51: Creating Views
+## Example 51: Creating Views
 
 Views are saved queries that act like tables - use them to simplify complex queries, restrict column access, or provide consistent interfaces.
 
@@ -2230,7 +2262,9 @@ DROP VIEW employee_projects;
 
 **Why It Matters**: Views encapsulate complex join logic behind simple table-like interfaces, enabling application refactoring without query changes across dozens of codebases that query the database. Security-focused views hide sensitive columns (salary, SSN) from developers who need access to other user data, implementing column-level security without application-layer filtering. CREATE OR REPLACE enables schema evolution where view definitions change (adding computed columns, changing join strategies) without breaking dependent queries, making views a stability layer between applications and evolving database schemas.
 
-### Example 52: Materialized Views
+---
+
+## Example 52: Materialized Views
 
 Materialized views store query results physically - faster than regular views but require manual refresh. Use for expensive queries on slowly-changing data.
 
@@ -2337,7 +2371,9 @@ DROP MATERIALIZED VIEW monthly_sales;```
 
 **Why It Matters**: Materialized views turn 30-second dashboard queries into 50-millisecond lookups by pre-computing aggregations across billions of rows, making real-time analytics dashboards responsive without expensive caching infrastructure. REFRESH MATVIEW CONCURRENTLY enables zero-downtime updates where users continue querying stale data while refresh builds new version in parallel, eliminating the query blackout windows required for non-concurrent refreshes. The trade-off between data freshness and query performance makes materialized views ideal for hourly/daily reporting where slight staleness is acceptable for 100-1000x query speedups.
 
-### Example 53: Creating Functions (PL/pgSQL)
+---
+
+## Example 53: Creating Functions (PL/pgSQL)
 
 Functions encapsulate reusable logic - use PL/pgSQL (PostgreSQL's procedural language) for complex calculations, data transformations, or business rules.
 
@@ -2455,7 +2491,9 @@ SELECT * FROM calculate_discount(100.00, 20);
 
 **Why It Matters**: Database functions execute closer to data compared to application-layer functions, eliminating network round-trips and enabling set-based operations that process millions of rows where equivalent application code requires expensive row-by-row iteration. PL/pgSQL functions enable complex business logic (tax calculations, inventory allocation) to be versioned and deployed atomically with database schema changes, preventing the logic-data mismatches that occur when application and database deployments drift. RETURNS TABLE functions enable server-side data transformations that return ready-to-display datasets, reducing application complexity and ensuring consistent business logic across multiple client applications.
 
-### Example 54: Function Parameters and Return Types
+---
+
+## Example 54: Function Parameters and Return Types
 
 Functions support multiple parameter modes (IN, OUT, INOUT) and various return types (scalars, records, tables). Choose based on use case.
 
@@ -2577,7 +2615,9 @@ SELECT sum_all(10, 20);
 
 **Why It Matters**: OUT parameters enable functions to return multiple related values (latitude, longitude, address) without creating custom composite types, simplifying function signatures and reducing boilerplate. DEFAULT parameter values enable backward-compatible function evolution where new parameters are added without breaking existing function calls across the codebase, making database API evolution safer. VARIADIC parameters enable flexible functions like calculate_average(VARIADIC values NUMERIC[]) that accept any number of arguments, matching the flexibility of application-layer variadic functions while executing server-side for performance.
 
-### Example 55: Triggers
+---
+
+## Example 55: Triggers
 
 Triggers automatically execute functions before or after INSERT, UPDATE, or DELETE operations - use for auditing, validation, or derived columns.
 
@@ -2712,9 +2752,9 @@ DROP TRIGGER audit_products_insert ON products;```
 
 **Why It Matters**: Triggers enforce business rules (audit logging, denormalization updates, cascade notifications) directly in the database where they cannot be bypassed by rogue applications or forgotten during manual data fixes. BEFORE triggers enable data validation and transformation (normalizing phone numbers, computing derived fields) that executes atomically with the write operation, ensuring data quality without application-layer checks that can be skipped. The automatic execution on every write makes triggers powerful but dangerous - poorly performing trigger functions can cause 10-100x write slowdowns, requiring careful testing before production deployment.
 
-## Group 6: Advanced Patterns
+---
 
-### Example 56: Upsert with ON CONFLICT
+## Example 56: Upsert with ON CONFLICT
 
 ON CONFLICT handles insert conflicts by updating existing rows or ignoring duplicates - essential for idempotent operations and data synchronization.
 
@@ -2805,7 +2845,9 @@ SELECT login_count FROM users WHERE email = 'alice@example.com';
 
 **Why It Matters**: ON CONFLICT makes data synchronization idempotent, enabling safe retry logic where the same upsert statement can be executed multiple times with identical results, eliminating complex application-layer "check if exists then update else insert" logic prone to race conditions. The EXCLUDED keyword provides access to would-be-inserted values, enabling updates like "increment counter by attempted increment" (SET counter = counter + EXCLUDED.delta) essential for conflict-free distributed counters. DO NOTHING enables efficient duplicate suppression without triggering constraint violation errors, making bulk imports resilient to partial failures and enabling continuous ingestion pipelines that replay data without deduplication overhead.
 
-### Example 57: Bulk Insert with COPY
+---
+
+## Example 57: Bulk Insert with COPY
 
 COPY imports data from files or stdin - much faster than individual INSERTs for bulk loading. Use for data migrations, imports, or large datasets.
 
@@ -2919,7 +2961,9 @@ FROM generate_series(1, 10000);
 
 **Why It Matters**: COPY achieves 10-100x faster bulk data loading compared to individual INSERT statements by bypassing SQL parsing and using optimized binary protocols, making it essential for data migration and nightly ETL jobs processing millions of rows. The CSV format support with automatic header detection enables direct import from Excel exports and data warehouse extracts without preprocessing, while COPY TO provides matching export functionality for data pipeline integration. However, COPY locks tables during import and triggers fire for each row, making it unsuitable for importing into heavily-used production tables without careful planning around maintenance windows.
 
-### Example 58: Generate Series for Test Data
+---
+
+## Example 58: Generate Series for Test Data
 
 GENERATE_SERIES creates sequences of values - combine with random functions to generate test data for development and performance testing.
 
@@ -3044,7 +3088,9 @@ SELECT id, parent_id, name FROM categories WHERE parent_id IS NULL;
 
 **Why It Matters**: GENERATE_SERIES eliminates the need for external data generation scripts when creating test datasets, enabling single-query population of millions of realistic test records with proper distributions and relationships for load testing. The date/timestamp series generation enables creation of complete time series datasets without gaps (one row per hour for a year), essential for testing time-series queries and ensuring calendar logic handles edge cases like daylight saving transitions. Combined with random() and array constructors, GENERATE_SERIES creates representative test data directly in SQL without application code, making database performance testing reproducible and independent of application deployment.
 
-### Example 59: Lateral Joins
+---
+
+## Example 59: Lateral Joins
 
 LATERAL allows subqueries to reference columns from preceding tables in FROM clause - enables correlated joins and "for each" patterns.
 
@@ -3195,7 +3241,9 @@ WHERE row_num = 1;
 
 **Why It Matters**: LATERAL joins solve the "top N per group" problem (find 3 most recent orders per customer) efficiently without window functions or self-joins, making complex queries more readable and often faster through better query plan optimization. The ability to reference outer query columns in FROM clause subqueries enables per-row calculations that would otherwise require inefficient correlated subqueries or application-level iteration, reducing query complexity by 50-80% for certain patterns. LATERAL's flexibility makes it the preferred solution for queries requiring dynamic row-level computation, though window functions remain simpler and more efficient for standard ranking and aggregation tasks.
 
-### Example 60: Composite Types
+---
+
+## Example 60: Composite Types
 
 Composite types define custom structured types combining multiple fields - use for function return types, nested data, or domain modeling.
 

@@ -2,7 +2,7 @@
 title: "Overview"
 date: 2025-12-29T09:07:25+07:00
 draft: false
-weight: 100000000
+weight: 10000000
 description: "Learn SQL through 85 annotated examples covering 95% of standard SQL - ideal for experienced developers switching to SQL databases"
 tags: ["sql", "database", "tutorial", "by-example", "code-first", "standard-sql"]
 ---
@@ -164,3 +164,42 @@ Other technologies at ayokoding.com have similar by-example tutorials:
 - **Elixir By-Example**: 75-90 examples covering functional programming, pattern matching, OTP
 
 The SQL version follows the same philosophy and structure but emphasizes SQL's declarative nature: you describe what you want, not how to compute it. SQL is fundamentally different from imperative languages - this tutorial helps you think in sets and transformations rather than loops and conditionals.
+
+## Learning Strategies
+
+### For Python/Data Science Developers
+
+SQL is your primary data manipulation tool. Focus on aggregation (Examples 16-18), window functions (34-38), and analytics (61-70) to leverage your data analysis skills.
+
+### For Frontend/JavaScript Developers
+
+SQL databases power your APIs. Focus on basic queries (Examples 3-5), schema design (Examples 23-28), and JSON handling (Examples 47-48) to understand backend data access.
+
+### For Backend/Java/C# Developers
+
+SQL integrates directly with your applications. Focus on transactions (Example 27), subqueries (Examples 44-46), and optimization (Examples 51-55) for production-ready patterns.
+
+### For Complete Database Beginners
+
+Start from Example 1 and follow sequentially through all 30 beginner examples for a comprehensive foundation in SQL fundamentals.
+
+## Code-First Philosophy
+
+This tutorial prioritizes working code over theoretical discussion:
+
+- **No lengthy prose**: Concepts are demonstrated, not explained at length
+- **Runnable examples**: Every example runs in a SQLite container or local SQLite installation
+- **Learn by doing**: Understanding comes from running and modifying SQL queries
+- **Pattern recognition**: See the same patterns in different contexts across 85 examples
+
+If you prefer narrative explanations, consider the **by-concept tutorial** (available separately). By-example learning works best when you learn through experimentation.
+
+## Ready to Start?
+
+Jump into the beginner examples to start learning SQL through code:
+
+- [Beginner Examples (1-30)](/en/learn/software-engineering/data/databases/sql/by-example/beginner) - Basic syntax, SELECT queries, WHERE clauses, schema design, aggregations
+- [Intermediate Examples (31-60)](/en/learn/software-engineering/data/databases/sql/by-example/intermediate) - Window functions, CTEs, subqueries, transactions, views
+- [Advanced Examples (61-85)](/en/learn/software-engineering/data/databases/sql/by-example/advanced) - Query optimization, recursive CTEs, full-text search, advanced patterns
+
+Each example is self-contained and runnable. Start with Example 1, or jump to topics that interest you most.
