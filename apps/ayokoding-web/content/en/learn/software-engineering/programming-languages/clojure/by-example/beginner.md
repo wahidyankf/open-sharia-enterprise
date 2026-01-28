@@ -251,37 +251,53 @@ Destructuring allows extracting values from collections directly in bindings (`l
 ```clojure
 ;; Basic vector destructuring
 (let [[a b c] [1 2 3]]              ;; => a is 1, b is 2, c is 3
+                                    ;; => Extracts elements by position
   (+ a b c))                        ;; => 6
+                                    ;; => Sums extracted values
 
 ;; Destructuring with fewer bindings (ignores extras)
 (let [[first second] [1 2 3 4]]     ;; => first is 1, second is 2 (3 and 4 ignored)
+                                    ;; => Extra elements not destructured
   (+ first second))                 ;; => 3
+                                    ;; => Only first two values used
 
 ;; Using & to capture rest
 (let [[head & tail] [1 2 3 4]]      ;; => head is 1, tail is (2 3 4)
+                                    ;; => & captures remaining elements as seq
   {:head head :tail tail})          ;; => {:head 1, :tail (2 3 4)}
+                                    ;; => Maps head and tail into result
 
 ;; Using :as to bind entire collection
 (let [[a b :as all] [1 2 3]]        ;; => a is 1, b is 2, all is [1 2 3]
+                                    ;; => :as captures entire original vector
   {:first a :second b :all all})    ;; => {:first 1, :second 2, :all [1 2 3]}
+                                    ;; => Can access both parts and whole
 
 ;; Nested destructuring
 (let [[[a b] [c d]] [[1 2] [3 4]]]  ;; => a is 1, b is 2, c is 3, d is 4
+                                    ;; => Destructures nested vectors recursively
   (+ a b c d))                      ;; => 10
+                                    ;; => Sums all four extracted values
 
 ;; Function parameter destructuring
 (defn sum-first-two [[a b]]         ;; => Destructures vector argument
+                                    ;; => Parameters destructure on call
   (+ a b))                          ;; => #'user/sum-first-two
 
 (sum-first-two [10 20 30])          ;; => 30 (only first two used)
+                                    ;; => Function ignores third element
 
 ;; Destructuring with defaults (not built-in, manual check)
 (defn greet [[name] ]
   (let [name (or name "Guest")]     ;; => Use "Guest" if name is nil
+                                    ;; => Manual nil check and fallback
     (str "Hello, " name "!")))      ;; => #'user/greet
+                                    ;; => Constructs greeting string
 
 (greet ["Alice"])                   ;; => "Hello, Alice!"
+                                    ;; => Name provided, uses it
 (greet [nil])                       ;; => "Hello, Guest!"
+                                    ;; => Name is nil, uses default
 ```
 
 **Key Takeaway**: Vector destructuring uses positional matching. Use `& rest` to capture remaining elements and `:as` to bind the entire collection while also destructuring parts.
@@ -311,48 +327,63 @@ graph TD
 ;; Destructuring with :keys (keyword keys)
 (let [{:keys [name age]} {:name "Alice" :age 30}]
                                     ;; => name is "Alice", age is 30
+                                    ;; => :keys extracts values from map
   (str name " is " age))            ;; => "Alice is 30"
+                                    ;; => Returns concatenated string
 
 ;; Function parameter destructuring
 (defn greet-person [{:keys [name age]}]
                                     ;; => Destructures map argument
+                                    ;; => Parameters auto-extracted from map
   (str "Hello " name ", age " age)) ;; => #'user/greet-person
 
 (greet-person {:name "Bob" :age 25})
                                     ;; => "Hello Bob, age 25"
+                                    ;; => Passes map, destructuring extracts values
 
 ;; Destructuring with defaults using :or
 (defn greet-with-default [{:keys [name age] :or {age 18}}]
                                     ;; => age defaults to 18 if key missing
+                                    ;; => :or provides fallback values
   (str name " is " age))            ;; => #'user/greet-with-default
 
 (greet-with-default {:name "Charlie"})
                                     ;; => "Charlie is 18" (default used)
+                                    ;; => age not in map, uses :or default
 
 (greet-with-default {:name "Diana" :age 35})
                                     ;; => "Diana is 35" (provided value)
+                                    ;; => :or ignored when key exists
 
 ;; Using :as to bind entire map
 (let [{:keys [name] :as person} {:name "Eve" :age 40}]
                                     ;; => name is "Eve", person is entire map
+                                    ;; => :as captures original map
   {:greeting (str "Hello " name)
    :data person})                   ;; => {:greeting "Hello Eve", :data {:name "Eve", :age 40}}
+                                    ;; => Returns new map with greeting and original data
 
 ;; Destructuring with :strs (string keys)
 (let [{:strs [name age]} {"name" "Frank" "age" 50}]
                                     ;; => For maps with string keys
+                                    ;; => :strs extracts from string-keyed maps
   (str name " is " age))            ;; => "Frank is 50"
+                                    ;; => String keys treated as variables
 
 ;; Destructuring with :syms (symbol keys)
 (let [{:syms [name age]} {'name "Grace" 'age 60}]
                                     ;; => For maps with symbol keys (rare)
+                                    ;; => :syms handles symbol-keyed maps
   (str name " is " age))            ;; => "Grace is 60"
+                                    ;; => Symbol keys converted to variables
 
 ;; Nested map destructuring
 (let [{:keys [name address]} {:name "Henry"
                                :address {:city "NYC" :zip 10001}}
       {:keys [city]} address]       ;; => Destructure nested address map
+                                    ;; => Two-level destructuring: outer, then nested
   (str name " lives in " city))     ;; => "Henry lives in NYC"
+                                    ;; => Accesses nested city from address
 ```
 
 **Key Takeaway**: Use `:keys` for keyword-keyed maps (idiomatic Clojure), `:or` for default values, and `:as` to access both destructured parts and the entire map. This pattern is ubiquitous in Clojure codebases.
@@ -371,8 +402,10 @@ Clojure provides several conditional forms: `if` for binary branching, `when` fo
   "yes"                             ;; => Then branch
   "no")                             ;; => Else branch
                                     ;; => "yes" (condition is true)
+                                    ;; => if is expression, returns value
 
 (if false "yes" "no")               ;; => "no" (condition is false)
+                                    ;; => Else branch executed
 
 ;; if without else returns nil
 (if false "yes")                    ;; => nil (no else branch)
@@ -1076,20 +1109,29 @@ Clojure uses Java regex with `#"pattern"` literal syntax. The `re-*` functions p
 ```clojure
 ;; Regex literals
 #"hello"                            ;; => #"hello" (regex pattern object)
+                                    ;; => Compiled at read-time
 #"\d+"                              ;; => #"\d+" (one or more digits)
+                                    ;; => \d matches digit characters
 #"[a-z]+"                           ;; => #"[a-z]+" (one or more lowercase letters)
+                                    ;; => [...] character class
 
 ;; Pattern matching with re-find
 (re-find #"\d+" "abc123def")        ;; => "123" (first match)
+                                    ;; => Finds first occurrence
 (re-find #"\d+" "no numbers")       ;; => nil (no match)
+                                    ;; => Returns nil if no match found
 
 ;; re-matches (entire string must match)
 (re-matches #"\d+" "123")           ;; => "123" (entire string is digits)
+                                    ;; => Must match entire string
 (re-matches #"\d+" "123abc")        ;; => nil (extra chars don't match)
+                                    ;; => Extra characters fail match
 
 ;; re-seq (sequence of all matches)
 (re-seq #"\d+" "a1b22c333")         ;; => ("1" "22" "333") (all digit sequences)
+                                    ;; => Returns lazy seq of all matches
 (re-seq #"\w+" "hello world test")  ;; => ("hello" "world" "test") (all words)
+                                    ;; => \w matches word characters
 
 ;; Capturing groups
 (re-find #"(\w+)@(\w+)" "user@domain")
@@ -1098,29 +1140,37 @@ Clojure uses Java regex with `#"pattern"` literal syntax. The `re-*` functions p
 
 (let [[full user domain] (re-find #"(\w+)@(\w+)" "alice@example")]
   {:user user :domain domain})     ;; => {:user "alice", :domain "example"}
+                                    ;; => Destructures match vector
 
 ;; re-matches with groups
 (re-matches #"(\d{3})-(\d{4})" "555-1234")
                                     ;; => ["555-1234" "555" "1234"]
+                                    ;; => \d{3} matches exactly 3 digits
 
 ;; Replacing with clojure.string
 (require '[clojure.string :as str])
+                                    ;; => Loads string namespace
 (str/replace "hello123world" #"\d+" "XXX")
                                     ;; => "helloXXXworld" (replace all matches)
+                                    ;; => Replaces all digit sequences
 
 ;; Replace with function
 (str/replace "a1b2c3" #"\d"
   (fn [match] (str "<" match ">"))) ;; => "a<1>b<2>c<3>"
+                                    ;; => Function called for each match
 
 ;; Case-insensitive matching
 (re-find #"(?i)hello" "HELLO")      ;; => "HELLO" (case-insensitive flag)
+                                    ;; => (?i) makes pattern case-insensitive
 
 ;; Multiline matching
 (re-seq #"(?m)^line" "line1\nline2")
                                     ;; => ("line" "line") (^ matches line start)
+                                    ;; => (?m) makes ^ match line boundaries
 
 ;; Split with regex (clojure.string)
 (str/split "a1b22c333" #"\d+")      ;; => ["a" "b" "c" ""] (split by digits)
+                                    ;; => Splits string by regex matches
 ```
 
 **Key Takeaway**: Use `#"pattern"` for regex literals. `re-find` returns first match, `re-seq` returns all matches, and `re-matches` requires entire string to match. Capturing groups return vectors with full match and groups.
@@ -1136,51 +1186,74 @@ Clojure provides two syntaxes for anonymous functions: `fn` (full syntax) and `#
 ```clojure
 ;; Full fn syntax
 (fn [x] (* x x))                    ;; => #function[...] (anonymous function)
+                                    ;; => Takes parameter x, returns x * x
 
 ((fn [x] (* x x)) 5)                ;; => 25 (immediately invoked)
+                                    ;; => Fn defined inline and called with 5
 
 ;; Multi-arity anonymous function
 (fn
   ([x] (* x x))                     ;; => One-arg arity: square
   ([x y] (* x y)))                  ;; => Two-arg arity: multiply
-                                    ;; => #function[...]
+                                    ;; => #function[...] (dispatch by arity)
 
 ((fn ([x] (* x x)) ([x y] (* x y))) 5)
                                     ;; => 25 (one-arg arity)
+                                    ;; => Dispatch: 1 arg matches first arity
+
 ((fn ([x] (* x x)) ([x y] (* x y))) 3 4)
                                     ;; => 12 (two-arg arity)
+                                    ;; => Dispatch: 2 args matches second arity
 
 ;; Shorthand #() syntax
 #(* % %)                            ;; => #function[...] (% is first arg)
+                                    ;; => Concise syntax for simple functions
+
 (#(* % %) 5)                        ;; => 25
+                                    ;; => Defines and calls inline
 
 ;; Multiple arguments with %1, %2, etc.
 #(+ %1 %2)                          ;; => #function[...] (%1 first, %2 second)
+                                    ;; => %1 and %2 are positional parameters
+
 (#(+ %1 %2) 3 4)                    ;; => 7
+                                    ;; => %1 = 3, %2 = 4
 
 ;; % is synonym for %1
 #(- % 10)                           ;; => #function[...] (% is first arg)
+                                    ;; => % shorthand for %1 when single arg
+
 (#(- % 10) 15)                      ;; => 5
+                                    ;; => % = 15, computes 15 - 10
 
 ;; Variadic with %&
 #(apply + %&)                       ;; => #function[...] (%& is rest args)
+                                    ;; => %& collects all remaining arguments
+
 (#(apply + %&) 1 2 3 4 5)           ;; => 15 (sum all args)
+                                    ;; => apply distributes %& to +
 
 ;; Common usage: passed to higher-order functions
 (map #(* 2 %) [1 2 3])              ;; => (2 4 6)
+                                    ;; => Anonymous fn passed to map
 (filter #(> % 5) [3 6 9 2 8])       ;; => (6 9 8)
+                                    ;; => Predicate function filters elements
+
 (reduce #(+ %1 %2) [1 2 3 4])       ;; => 10
+                                    ;; => Reduces with addition accumulator
 
 ;; When to use fn vs #()
 ;; Use fn for:
 ;; - Multi-line bodies
 (fn [x]
-  (println "Processing:" x)         ;; => Side effect
+  (println "Processing:" x)         ;; => Side effect: prints message
   (* x x))                          ;; => Return squared value
+                                    ;; => fn allows multiple expressions
 
 ;; - Named parameters for clarity
 (fn [name age]
   (str name " is " age " years old"))
+                                    ;; => Named params improve readability
 
 ;; Use #() for:
 ;; - Simple one-liners
@@ -1191,9 +1264,10 @@ Clojure provides two syntaxes for anonymous functions: `fn` (full syntax) and `#
 
 ;; Nested anonymous functions (prefer fn for readability)
 (map (fn [x]
-       (map (fn [y] (* x y))        ;; => Inner function
-            [1 2 3]))               ;; => Outer function
-     [10 20])                       ;; => ((10 20 30) (20 40 60))
+       (map (fn [y] (* x y))        ;; => Inner function: multiply x and y
+            [1 2 3]))               ;; => Apply to each [1 2 3]
+     [10 20])                       ;; => Outer function: call for each in [10 20]
+                                    ;; => Result: ((10 20 30) (20 40 60))
 ```
 
 **Key Takeaway**: Use `#()` for simple one-line functions in higher-order contexts. Use `fn` for multi-line bodies, multiple arities, or when parameter names improve clarity. `%` is first arg, `%1 %2 ...` for positional, `%&` for rest args.
@@ -1372,61 +1446,70 @@ graph TD
 ```clojure
 ;; update (apply function to value at key)
 (def user {:name "Alice" :age 30})  ;; => #'user/user
+                                    ;; => Initial user map
 
 (update user :age inc)              ;; => {:name "Alice", :age 31}
-                                    ;; => Original user unchanged
+                                    ;; => Applies inc to :age value (30 + 1)
 
 ;; update with additional args
 (update user :age + 5)              ;; => {:name "Alice", :age 35}
-                                    ;; => (+ (:age user) 5)
+                                    ;; => (+ (:age user) 5) = 30 + 5
 
 ;; update with custom function
 (update {:count 10} :count #(* % 2))
                                     ;; => {:count 20}
+                                    ;; => Doubles :count value (10 * 2)
 
 ;; update with missing key (applies to nil)
 (update {} :count (fnil inc 0))     ;; => {:count 1}
-                                    ;; => fnil wraps inc with default 0 for nil
+                                    ;; => fnil provides default 0 for nil
 
 ;; update-in (nested path)
 (def data {:user {:profile {:name "Bob" :age 25}}})
-                                    ;; => #'user/data
+                                    ;; => #'user/data (nested structure)
 
 (update-in data [:user :profile :age] inc)
                                     ;; => {:user {:profile {:name "Bob", :age 26}}}
+                                    ;; => Navigates path, increments age
 
 ;; update-in with additional args
 (update-in data [:user :profile :age] + 10)
                                     ;; => {:user {:profile {:name "Bob", :age 35}}}
+                                    ;; => Additional args: age + 10 = 25 + 10
 
 ;; update-in with vector paths
 (def matrix {:rows [[1 2] [3 4]]})  ;; => #'user/matrix
+                                    ;; => Vectors nested in map
 
 (update-in matrix [:rows 0 1] * 10) ;; => {:rows [[1 20] [3 4]]}
-                                    ;; => Update row 0, index 1
+                                    ;; => Row 0, index 1: 2 * 10 = 20
 
 ;; Combining update-in and assoc
 (-> data
     (update-in [:user :profile :age] inc)
     (assoc-in [:user :profile :city] "NYC"))
                                     ;; => {:user {:profile {:name "Bob", :age 26, :city "NYC"}}}
+                                    ;; => Update age, then add city
 
 ;; fnil with update (default for nil)
 (defn increment-count [m key]
   (update m key (fnil inc 0)))      ;; => inc with default 0 for nil
-                                    ;; => #'user/increment-count
+                                    ;; => #'user/increment-count (wraps update)
 
 (increment-count {} :visitors)      ;; => {:visitors 1} (nil -> 0 -> 1)
+                                    ;; => Missing key treated as 0, then incremented
 (increment-count {:visitors 5} :visitors)
                                     ;; => {:visitors 6} (5 -> 6)
+                                    ;; => Existing key incremented normally
 
 ;; Real-world: updating nested counters
 (def stats {:pages {:home {:views 0}
                     :about {:views 0}}})
-                                    ;; => #'user/stats
+                                    ;; => #'user/stats (nested counter structure)
 
 (update-in stats [:pages :home :views] inc)
                                     ;; => {:pages {:home {:views 1}, :about {:views 0}}}
+                                    ;; => Only home.views incremented
 
 ;; Pipeline with multiple updates
 (-> {:users [{:name "Alice" :score 10}
@@ -1435,6 +1518,7 @@ graph TD
     (update-in [:users 1 :score] * 2))
                                     ;; => {:users [{:name "Alice", :score 15}
                                     ;;             {:name "Bob", :score 40}]}
+                                    ;; => Update both user scores sequentially
 ```
 
 **Key Takeaway**: Use `update` to transform values at keys and `update-in` for nested paths. Combine with `fnil` to provide defaults for missing keys. All operations return new structures (immutable).
@@ -1450,76 +1534,101 @@ graph TD
 ```clojure
 ;; get from map
 (get {:name "Alice" :age 30} :name) ;; => "Alice"
+                                    ;; => Looks up :name key in map
 (get {:name "Alice" :age 30} :email)
                                     ;; => nil (key doesn't exist)
+                                    ;; => Returns nil for missing keys by default
 
 ;; get with default value
 (get {:name "Alice"} :email "N/A")  ;; => "N/A" (default when key missing)
+                                    ;; => Third arg provides fallback value
 
 ;; get from vector (by index)
 (get [10 20 30] 0)                  ;; => 10 (index 0)
+                                    ;; => get works on vectors too (by index)
 (get [10 20 30] 5)                  ;; => nil (out of bounds)
+                                    ;; => Out-of-bounds returns nil
 (get [10 20 30] 5 :default)         ;; => :default (default when out of bounds)
+                                    ;; => Default works for vectors too
 
 ;; get from set (membership test)
 (get #{:a :b :c} :a)                ;; => :a (element exists)
+                                    ;; => get checks set membership
 (get #{:a :b :c} :d)                ;; => nil (element doesn't exist)
+                                    ;; => Missing elements return nil
 
 ;; Keyword as function (idiomatic for maps)
 (:name {:name "Alice" :age 30})     ;; => "Alice" (keyword looks itself up)
+                                    ;; => Keywords are functions when applied to maps
 (:email {:name "Alice"} "N/A")      ;; => "N/A" (keyword with default)
+                                    ;; => Keywords support default values too
 
 ;; Map as function
 ({:name "Alice" :age 30} :name)     ;; => "Alice" (map looks up key)
+                                    ;; => Maps are functions of their keys
 ({:a 1 :b 2} :c :default)           ;; => :default (with default)
+                                    ;; => Maps also support defaults
 
 ;; get-in (nested path access)
 (def data {:user {:profile {:name "Bob" :age 25}}})
-                                    ;; => #'user/data
+                                    ;; => #'user/data (deeply nested structure)
 
 (get-in data [:user :profile :name])
                                     ;; => "Bob" (navigate path)
+                                    ;; => Follows path through nested maps
 
 (get-in data [:user :profile :email])
                                     ;; => nil (path doesn't exist)
+                                    ;; => Returns nil if any key missing
 
 (get-in data [:user :profile :email] "N/A")
                                     ;; => "N/A" (default for missing path)
+                                    ;; => Default returned if path incomplete
 
 ;; get-in with vector indices
 (def matrix {:rows [[1 2 3]
-                    [4 5 6]]})      ;; => #'user/matrix
+                    [4 5 6]]})      ;; => #'user/matrix (vectors in map)
 
 (get-in matrix [:rows 0 1])         ;; => 2 (row 0, index 1)
+                                    ;; => Navigate: :rows → index 0 → index 1
 (get-in matrix [:rows 1 2])         ;; => 6 (row 1, index 2)
+                                    ;; => Each path element resolves level by level
 (get-in matrix [:rows 3 0] :none)   ;; => :none (row doesn't exist)
+                                    ;; => Default returned for invalid indices
 
 ;; get-in with mixed structures
 (def complex {:users [{:name "Alice" :scores [10 20 30]}
                       {:name "Bob" :scores [40 50 60]}]})
-                                    ;; => #'user/complex
+                                    ;; => #'user/complex (mixed vectors and maps)
 
 (get-in complex [:users 0 :scores 1])
                                     ;; => 20 (first user, second score)
+                                    ;; => Navigate: :users → index 0 → :scores → index 1
 
 ;; Safe navigation with get-in
 (get-in nil [:user :name])          ;; => nil (safe with nil input)
+                                    ;; => get-in handles nil gracefully
 (get-in {} [:user :name] "Guest")   ;; => "Guest" (empty map)
+                                    ;; => Default returned for empty maps too
 
 ;; Combining with update-in
 (-> data
     (update-in [:user :profile :age] inc)
     (get-in [:user :profile :age])) ;; => 26 (updated then retrieved)
+                                    ;; => Thread: update age, then get-in to read it
 
 ;; Using get-in in function
 (defn get-user-age [db user-id]
   (get-in db [:users user-id :age] 0))
                                     ;; => #'user/get-user-age
+                                    ;; => Function wraps get-in with dynamic path
 
 (get-user-age {:users {123 {:name "Alice" :age 30}}} 123)
                                     ;; => 30
+                                    ;; => Resolves: :users → 123 → :age
 
 (get-user-age {:users {}} 999)      ;; => 0 (default for missing user)
+                                    ;; => Default 0 returned when path incomplete
 ```
 
 **Key Takeaway**: Use `get` with default values for safe lookups. `get-in` is essential for nested data access. Keywords-as-functions (`:name map`) are idiomatic for map lookups in Clojure.
@@ -1535,66 +1644,87 @@ graph TD
 ```clojure
 ;; assoc in map (add or update)
 (assoc {:name "Alice"} :age 30)     ;; => {:name "Alice", :age 30} (add key)
+                                    ;; => Returns new map with added :age
 (assoc {:name "Alice" :age 30} :age 31)
                                     ;; => {:name "Alice", :age 31} (update key)
+                                    ;; => Updates existing key to new value
 
 ;; assoc multiple keys
 (assoc {:name "Alice"} :age 30 :city "NYC")
                                     ;; => {:name "Alice", :age 30, :city "NYC"}
+                                    ;; => Multiple key-value pairs added in one call
 
 ;; assoc in empty map
 (assoc {} :key "value")             ;; => {:key "value"}
+                                    ;; => Creates new map from empty map
 
 ;; assoc in vector (update by index)
 (assoc [10 20 30] 1 99)             ;; => [10 99 30] (update index 1)
+                                    ;; => Replaces element at index 1
 (assoc [10 20 30] 0 :first)         ;; => [:first 20 30]
+                                    ;; => Can replace with different types
 
 ;; assoc can't extend vector (use conj)
 (assoc [10 20] 2 30)                ;; => [10 20 30] (add at exact next index)
+                                    ;; => Exact next index works (length = next index)
 (assoc [10 20] 5 30)                ;; => IndexOutOfBoundsException (can't skip indices)
+                                    ;; => Can't skip indices (5 > 2)
 
 ;; assoc-in (nested path)
 (def data {:user {:profile {:name "Bob"}}})
-                                    ;; => #'user/data
+                                    ;; => #'user/data (nested structure)
 
 (assoc-in data [:user :profile :age] 25)
                                     ;; => {:user {:profile {:name "Bob", :age 25}}}
+                                    ;; => Updates nested path, preserves rest
 
 ;; assoc-in creates intermediate maps if missing
 (assoc-in {} [:a :b :c] 42)         ;; => {:a {:b {:c 42}}} (creates path)
+                                    ;; => Auto-creates intermediate maps
 
 ;; assoc-in with vectors
 (def matrix {:rows [[1 2] [3 4]]})  ;; => #'user/matrix
+                                    ;; => Vectors nested in map
 
 (assoc-in matrix [:rows 0 1] 99)    ;; => {:rows [[1 99] [3 4]]}
-                                    ;; => Update row 0, index 1
+                                    ;; => Update row 0, index 1 to 99
 
 ;; Chaining assoc with threading
 (-> {}
     (assoc :name "Charlie")         ;; => {:name "Charlie"}
+                                    ;; => First, add :name
     (assoc :age 35)                 ;; => {:name "Charlie", :age 35}
+                                    ;; => Then add :age
     (assoc :city "SF"))             ;; => {:name "Charlie", :age 35, :city "SF"}
+                                    ;; => Finally add :city
 
 ;; Combining assoc and dissoc
 (-> {:a 1 :b 2 :c 3}
     (assoc :d 4)                    ;; => Add :d
+                                    ;; => Adds new key :d
     (dissoc :b))                    ;; => {:a 1, :c 3, :d 4} (remove :b)
+                                    ;; => dissoc removes :b key
 
 ;; Real-world: building nested structure
 (-> {}
     (assoc-in [:config :db :host] "localhost")
+                                    ;; => Creates nested config.db.host
     (assoc-in [:config :db :port] 5432)
+                                    ;; => Adds db.port to existing structure
     (assoc-in [:config :app :name] "MyApp"))
-                                    ;; => {:config {:db {:host "localhost", :port 5432}
-                                    ;;              :app {:name "MyApp"}}}
+                                    ;; => Adds app.name under config
+                                    ;; => Result: {:config {:db {:host "localhost", :port 5432}
+                                    ;;                      :app {:name "MyApp"}}}
 
 ;; Merging with assoc (overrides)
 (def base {:a 1 :b 2})              ;; => #'user/base
 (assoc base :b 99 :c 3)             ;; => {:a 1, :b 99, :c 3} (b overridden)
+                                    ;; => assoc overwrites :b, adds :c
 
 ;; assoc vs merge
 (merge {:a 1 :b 2} {:b 99 :c 3})    ;; => {:a 1, :b 99, :c 3} (same result)
                                     ;; => merge combines maps, assoc adds keys
+                                    ;; => Similar result, different approaches
 ```
 
 **Key Takeaway**: Use `assoc` to add/update keys in maps or indices in vectors. `assoc-in` creates intermediate structures if needed, perfect for building nested data. Both are immutable (return new structures).
@@ -1610,6 +1740,7 @@ graph TD
 ```clojure
 ;; Basic merge
 (merge {:a 1 :b 2} {:c 3})          ;; => {:a 1, :b 2, :c 3}
+                                    ;; => Combines two maps, no conflicts
 
 ;; Merge with override (right-most wins)
 (merge {:a 1 :b 2} {:b 99 :c 3})    ;; => {:a 1, :b 99, :c 3}
@@ -1617,9 +1748,11 @@ graph TD
 
 ;; Merge multiple maps
 (merge {:a 1} {:b 2} {:c 3} {:d 4}) ;; => {:a 1, :b 2, :c 3, :d 4}
+                                    ;; => Each subsequent map adds/overrides keys
 
 ;; Merge with nil (ignored)
 (merge {:a 1} nil {:b 2})           ;; => {:a 1, :b 2} (nil maps ignored)
+                                    ;; => nil values treated as empty maps
 
 ;; merge-with (custom conflict resolution)
 (merge-with + {:a 1 :b 2} {:b 3 :c 4})
@@ -1628,6 +1761,7 @@ graph TD
 
 ;; merge-with multiple maps
 (merge-with + {:a 1} {:a 2} {:a 3}) ;; => {:a 6} (1 + 2 + 3)
+                                    ;; => + function called twice for conflicts
 
 ;; merge-with with different functions
 (merge-with * {:a 2 :b 3} {:b 4 :c 5})
@@ -1636,27 +1770,32 @@ graph TD
 
 (merge-with str {:a "hello"} {:a "world"})
                                     ;; => {:a "helloworld"} (concatenate strings)
+                                    ;; => str function creates combined value
 
 ;; merge-with for collections
 (merge-with concat
   {:tags [:a :b]}
   {:tags [:c :d]})                  ;; => {:tags (:a :b :c :d)}
+                                    ;; => concat function joins tag lists
 
 (merge-with into
   {:items #{1 2}}
   {:items #{2 3}})                  ;; => {:items #{1 3 2}} (union sets)
+                                    ;; => into function merges set membership
 
 ;; Real-world: aggregating stats
 (defn aggregate-stats [stats-list]
   (apply merge-with +
     (map #(select-keys % [:views :clicks :shares])
          stats-list)))              ;; => #'user/aggregate-stats
+                                    ;; => Extracts key fields, aggregates with +
 
 (aggregate-stats
   [{:views 100 :clicks 10 :shares 5 :other :data}
    {:views 200 :clicks 15 :shares 3}
    {:views 150 :clicks 20 :shares 7}])
                                     ;; => {:views 450, :clicks 45, :shares 15}
+                                    ;; => Sums all matching keys, ignores :other
 
 ;; Deep merge (recursive)
 (defn deep-merge [& maps]
@@ -1666,15 +1805,18 @@ graph TD
         (deep-merge a b)            ;; => Recursively merge nested maps
         b))                         ;; => Otherwise take newer value
     maps))                          ;; => #'user/deep-merge
+                                    ;; => Closure recursively merges nested structures
 
 (deep-merge
   {:user {:name "Alice" :age 30}}
   {:user {:age 31 :city "NYC"}})    ;; => {:user {:name "Alice", :age 31, :city "NYC"}}
+                                    ;; => Nested merge: name preserved, age + city merged
 
 ;; Combining merge with update
 (-> {:a 1 :b 2}
     (merge {:c 3})                  ;; => {:a 1, :b 2, :c 3}
     (update :a inc))                ;; => {:a 2, :b 2, :c 3}
+                                    ;; => Thread: merge adds :c, then inc updates :a
 ```
 
 **Key Takeaway**: `merge` is for simple map combination (last wins). `merge-with` provides custom conflict resolution with a function. Use `merge-with +` for aggregation, `merge-with concat` for combining collections.
@@ -1690,10 +1832,13 @@ graph TD
 ```clojure
 ;; Basic filter
 (filter even? [1 2 3 4 5 6])        ;; => (2 4 6) (keep even numbers)
+                                    ;; => even? predicate evaluates each element
 (filter odd? [1 2 3 4 5 6])         ;; => (1 3 5) (keep odd numbers)
+                                    ;; => Returns lazy sequence, not evaluated yet
 
 ;; filter with custom predicate
 (filter #(> % 10) [5 15 8 20 3 12]) ;; => (15 20 12) (keep numbers > 10)
+                                    ;; => Anonymous predicate: % > 10
 
 ;; filter with keyword (truthy check)
 (filter :active
@@ -1701,17 +1846,21 @@ graph TD
    {:name "Bob" :active false}
    {:name "Charlie" :active true}]) ;; => ({:name "Alice", :active true}
                                     ;;     {:name "Charlie", :active true})
+                                    ;; => Keywords act as predicates: check truthiness
 
 ;; remove (opposite of filter)
 (remove even? [1 2 3 4 5 6])        ;; => (1 3 5) (remove even numbers)
+                                    ;; => Discards matching elements
 (remove #(> % 10) [5 15 8 20])      ;; => (5 8) (remove numbers > 10)
+                                    ;; => Opposite of filter: keep non-matches
 
 ;; filter and remove are lazy
 (def filtered
   (filter even? (range 1000000)))   ;; => Lazy seq, not evaluated yet
-                                    ;; => #'user/filtered
+                                    ;; => #'user/filtered (nothing computed yet)
 
 (take 5 filtered)                   ;; => (0 2 4 6 8) (evaluate first 5)
+                                    ;; => Only 5 elements computed on demand
 
 ;; Combining filter with other operations
 (->> [1 2 3 4 5 6 7 8 9 10]
@@ -1719,37 +1868,45 @@ graph TD
      (map #(* % 2))                 ;; => (4 8 12 16 20)
      (filter #(> % 10))             ;; => (12 16 20)
      (reduce +))                    ;; => 48
+                                    ;; => Chained: filter → map → filter → reduce
 
 ;; filter with nil-safe predicates
 (filter some? [1 nil 2 nil 3])      ;; => (1 2 3) (remove nils)
+                                    ;; => some? keeps non-nil values
 (remove nil? [1 nil 2 nil 3])       ;; => (1 2 3) (same result)
+                                    ;; => nil? removes nil values (same effect)
 
 ;; filterv (eager vector result)
 (filterv even? [1 2 3 4 5 6])       ;; => [2 4 6] (vector, not lazy seq)
+                                    ;; => filterv evaluates immediately to vector
 
 ;; Real-world: filtering users
 (def users
   [{:name "Alice" :age 25 :active true}
    {:name "Bob" :age 17 :active false}
    {:name "Charlie" :age 30 :active true}])
-                                    ;; => #'user/users
+                                    ;; => #'user/users (list of user maps)
 
 (filter :active users)              ;; => Active users
                                     ;; => ({:name "Alice", :age 25, :active true}
                                     ;;     {:name "Charlie", :age 30, :active true})
+                                    ;; => Keyword :active checks map value truthiness
 
 (filter #(>= (:age %) 18) users)    ;; => Adult users
                                     ;; => ({:name "Alice", :age 25, :active true}
                                     ;;     {:name "Charlie", :age 30, :active true})
+                                    ;; => Custom predicate: extract :age, check >= 18
 
 (->> users
      (filter :active)               ;; => Active users
      (filter #(>= (:age %) 18))     ;; => Active adults
      (map :name))                   ;; => ("Alice" "Charlie")
+                                    ;; => Pipeline: filter active, then adults, extract names
 
 ;; keep (filter + map combined)
 (keep #(when (even? %) (* 2 %))     ;; => Double evens, discard odds
       [1 2 3 4 5 6])                ;; => (4 8 12) (nils from odds filtered)
+                                    ;; => keep discards nils: filter + map combined
 ```
 
 **Key Takeaway**: `filter` and `remove` are lazy and complementary (use whichever reads better). Combine with `map` and `reduce` in pipelines. Use `keep` to filter and transform in one pass.

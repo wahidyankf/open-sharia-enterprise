@@ -136,49 +136,28 @@ graph TD
 Records provide efficient map-like data structures with type identity.
 
 ```clojure
-(defrecord User [id name email])             ;; => Define User record with 3 fields
-                                             ;; => Generates ->User and map->User constructors
-                                             ;; => User record type created
+(defrecord User [id name email])             ;; => Generates ->User and map->User constructors
 
 (def user (->User 1 "Alice" "alice@example.com")) ;; => Positional constructor
-                                             ;; => user is #user.User{:id 1, :name "Alice", :email "alice@example.com"}
-
 (def user2 (map->User {:id 2 :name "Bob" :email "bob@example.com"})) ;; => Map constructor (keyword args)
-                                             ;; => user2 is #user.User{:id 2, :name "Bob", :email "bob@example.com"}
 
 ;; Records are maps
-(println (:name user))                       ;; => Keyword lookup works
-                                             ;; => Output: Alice
-                                             ;; => nil (println returns nil)
-
-(println (assoc user :role "admin"))         ;; => assoc adds new key (returns new record)
-                                             ;; => Output: #user.User{:id 1, :name "Alice", :email "alice@example.com", :role "admin"}
-                                             ;; => nil
-
-(println (keys user))                        ;; => keys returns record fields
-                                             ;; => Output: (:id :name :email)
-                                             ;; => nil
+(println (:name user))                       ;; => Output: Alice
+(println (assoc user :role "admin"))         ;; => assoc adds new key
+(println (keys user))                        ;; => Output: (:id :name :email)
 
 ;; But have type identity
-(println (instance? User user))              ;; => Type check via instance?
-                                             ;; => Output: true (user is a User instance)
-                                             ;; => nil
+(println (instance? User user))              ;; => Output: true (type check via instance?)
+(println (= user {:id 1 :name "Alice" :email "alice@example.com"})) ;; => Output: true (structural equality)
 
-(println (= user {:id 1 :name "Alice" :email "alice@example.com"})) ;; => Structural equality with plain map
-                                             ;; => Output: true (same data)
-                                             ;; => nil
-
-;; deftype for lower-level control (no map behavior)
-(deftype Point [x y]                         ;; => Define Point type with x,y fields
-  Object                                     ;; => Implement Java Object methods
+;; deftype for lower-level control
+(deftype Point [x y]
+  Object
   (toString [this]                           ;; => Override toString method
-    (str "Point(" x ", " y ")")))            ;; => Custom string representation
-                                             ;; => Point type created
+    (str "Point(" x ", " y ")")))            ;; => Point(3, 4)
 
-(let [p (Point. 3 4)]                        ;; => Create Point instance with x=3, y=4
-  (println (.toString p)))                   ;; => Call Java method via .method syntax
-                                             ;; => Output: Point(3, 4)
-                                             ;; => nil (println returns nil)
+(let [p (Point. 3 4)]                        ;; => Create Point instance
+  (println (.toString p)))                   ;; => Output: Point(3, 4)
 ```
 
 **Key Takeaway**: Records combine map convenience with type identity and performance; types offer full control.
@@ -190,38 +169,21 @@ Records provide efficient map-like data structures with type identity.
 Macros transform code at compile time enabling custom syntax.
 
 ```clojure
-(defmacro unless [test then-form]            ;; => Define unless macro (inverts if logic)
-  `(if (not ~test) ~then-form))              ;; => Syntax quote ` preserves structure
-                                             ;; => Unquote ~test inserts evaluated value
-                                             ;; => Returns (if (not test) then-form)
-                                             ;; => #'user/unless (macro created)
+(defmacro unless [test then-form]            ;; => Inverts if logic via syntax quote
+  `(if (not ~test) ~then-form))
 
-(unless false (println "Executed"))          ;; => Expands to (if (not false) (println ...))
-                                             ;; => (not false) is true
-                                             ;; => Executes println
-                                             ;; => Output: Executed
-                                             ;; => nil (println returns nil)
-
-(unless true (println "Not executed"))       ;; => Expands to (if (not true) (println ...))
-                                             ;; => (not true) is false
-                                             ;; => Does not execute println
-                                             ;; => nil (if returns nil for false branch)
+(unless false (println "Executed"))          ;; => Output: Executed
+(unless true (println "Not executed"))       ;; => (if condition is false, doesn't execute)
 
 ;; Macro with multiple forms
-(defmacro with-timing [expr]                 ;; => Macro wrapping expression with timing
-  `(let [start# (System/nanoTime)            ;; => Auto-gensym start# creates unique symbol
-                                             ;; => Captures start time in nanoseconds
-         result# ~expr                       ;; => Auto-gensym result# stores expression result
-                                             ;; => Unquote ~expr evaluates user's expression
-         end# (System/nanoTime)]             ;; => Auto-gensym end# captures end time
-     (println "Elapsed:" (/ (- end# start#) 1e6) "ms") ;; => Calculate duration in milliseconds
-                                             ;; => Output: Elapsed: X ms
-     result#))                               ;; => Return expression result (preserves value)
-                                             ;; => #'user/with-timing (macro created)
+(defmacro with-timing [expr]                 ;; => Macro capturing execution time
+  `(let [start# (System/nanoTime)
+         result# ~expr
+         end# (System/nanoTime)]
+     (println "Elapsed:" (/ (- end# start#) 1e6) "ms")
+     result#))
 
-(with-timing (reduce + (range 1000000)))     ;; => Expands to (let [start# ... result# ...] ...)
-                                             ;; => Measures time for sum 0..999999
-                                             ;; => Output: Elapsed: X ms (varies by CPU)
+(with-timing (reduce + (range 1000000)))     ;; => Output: Elapsed: X ms
                                              ;; => 499999500000 (sum result)
 ```
 
@@ -236,9 +198,8 @@ Avoid variable capture in macros using gensym or auto-gensym.
 ```clojure
 ;; Bad: variable capture
 (defmacro bad-twice [expr]                   ;; => Macro doubling expression value
-  `(let [x# ~expr]                           ;; => x# is gensym (unique per expansion)
-                                             ;; => ~expr evaluates user expression
-     (+ x# x#)))                             ;; => Adds value to itself
+  `(let [x# ~expr]
+     (+ x# x#)))
                                              ;; => #'user/bad-twice (macro created)
 
 ;; If user code has x, no conflict
@@ -249,26 +210,19 @@ Avoid variable capture in macros using gensym or auto-gensym.
                                              ;; => Comment says "10 (not 20!)" but this is CORRECT
 
 ;; Good: explicit gensym
-(defmacro good-twice [expr]                  ;; => Macro with explicit gensym
-  (let [result (gensym "result")]            ;; => (gensym "result") creates result12345
-                                             ;; => result is symbol result12345
-    `(let [~result ~expr]                    ;; => Unquote ~result inserts result12345 symbol
-                                             ;; => ~expr evaluates user expression
-       (+ ~result ~result))))                ;; => Adds value to itself
-                                             ;; => #'user/good-twice (macro created)
+(defmacro good-twice [expr]
+  (let [result (gensym "result")]
+    `(let [~result ~expr]
+       (+ ~result ~result))))
 
-(good-twice 5)                               ;; => Expands to (let [result12345 5] (+ result12345 result12345))
-                                             ;; => 10 (5 + 5)
+(good-twice 5)                               ;; => 10 (5 + 5)
 
 ;; Auto-gensym with # suffix
-(defmacro auto-twice [expr]                  ;; => Macro with auto-gensym
-  `(let [result# ~expr]                      ;; => result# creates unique symbol result__456
-                                             ;; => ~expr evaluates user expression
-     (+ result# result#)))                   ;; => result# resolves to same unique symbol
-                                             ;; => #'user/auto-twice (macro created)
+(defmacro auto-twice [expr]
+  `(let [result# ~expr]
+     (+ result# result#)))
 
-(auto-twice 5)                               ;; => Expands to (let [result__456 5] (+ result__456 result__456))
-                                             ;; => 10 (5 + 5)
+(auto-twice 5)                               ;; => 10 (5 + 5)
 ```
 
 **Key Takeaway**: Use auto-gensym (#) or explicit gensym to prevent variable capture in macros.
@@ -298,32 +252,20 @@ stateDiagram-v2
 ```
 
 ```clojure
-(def counter (atom 0))                       ;; => Create atom with initial value 0
+(def counter (atom 0))
 
 (println @counter)                           ;; => 0 (dereference with @)
-                                              ;; => @ reads current value atomically
-
 (swap! counter inc)                          ;; => 1 (atomically increment)
-                                              ;; => Retries if CAS fails due to contention
-(println @counter)                           ;; => 1 (counter now 1)
-
-(swap! counter + 5)                          ;; => 6 (apply + with args)
-                                              ;; => swap! calls (+ counter 5)
-(println @counter)                           ;; => 6 (counter now 6)
-
-(reset! counter 0)                           ;; => 0 (set to value directly)
-                                              ;; => No function application, just assignment
-(println @counter)                           ;; => 0 (counter reset to 0)
+(println @counter)                           ;; => 1
+(swap! counter + 5)                          ;; => 6 (swap! calls (+ counter 5))
+(println @counter)                           ;; => 6
+(reset! counter 0)                           ;; => Direct assignment
 
 ;; Atoms with complex state
-(def app-state (atom {:users [] :count 0})) ;; => Atom with map state
+(def app-state (atom {:users [] :count 0}))
 
 (swap! app-state update :count inc)          ;; => {:users [], :count 1}
-                                              ;; => update applies inc to :count value
-(swap! app-state update :users conj {:name "Alice"})
-                                              ;; => {:users [{:name "Alice"}], :count 1}
-                                              ;; => conj adds user to vector
-
+(swap! app-state update :users conj {:name "Alice"}) ;; => {:users [{:name "Alice"}], :count 1}
 (println @app-state)                         ;; => {:users [{:name "Alice"}], :count 1}
 ```
 
@@ -362,50 +304,29 @@ sequenceDiagram
 ```
 
 ```clojure
-(def account-a (ref 1000))                   ;; => Create ref with initial value 1000
-                                             ;; => account-a is #ref[1000]
-(def account-b (ref 500))                    ;; => Create ref with initial value 500
-                                             ;; => account-b is #ref[500]
+(def account-a (ref 1000))
+(def account-b (ref 500))
 
-(defn transfer [from to amount]              ;; => Function transferring money between accounts
-  (dosync                                    ;; => Transaction boundary (STM transaction starts)
-                                             ;; => All ref updates within dosync are atomic
-    (alter from - amount)                    ;; => alter applies (- from amount)
-                                             ;; => Deduct amount from source account
-    (alter to + amount)))                    ;; => alter applies (+ to amount)
-                                             ;; => Add amount to destination account
-                                             ;; => Transaction commits if no conflicts
-                                             ;; => Retries automatically if conflict detected
+(defn transfer [from to amount]
+  (dosync                                    ;; => STM transaction (atomic)
+    (alter from - amount)
+    (alter to + amount)))
 
-(println @account-a @account-b)              ;; => @ dereferences refs
-                                             ;; => Output: 1000 500
-                                             ;; => nil (println returns nil)
+(println @account-a @account-b)              ;; => Output: 1000 500
 
-(transfer account-a account-b 200)           ;; => Call transfer with 200
-                                             ;; => dosync: alter account-a - 200 → 800
-                                             ;; => dosync: alter account-b + 200 → 700
-                                             ;; => Transaction commits successfully
-                                             ;; => nil (function returns nil)
-
-(println @account-a @account-b)              ;; => Dereference updated refs
-                                             ;; => Output: 800 700
-                                             ;; => nil
+(transfer account-a account-b 200)           ;; => Atomically transfer 200
+(println @account-a @account-b)              ;; => Output: 800 700
 
 ;; Transactions are atomic - all succeed or all fail
-(try                                         ;; => try-catch for exception handling
-  (dosync                                    ;; => Transaction boundary starts
-    (alter account-a - 100)                  ;; => Tentatively deduct 100 from account-a
-                                             ;; => account-a would be 700 (not committed yet)
-    (throw (Exception. "Error!"))            ;; => Throw exception (simulates error)
-                                             ;; => Transaction ABORTED (all changes rolled back)
-    (alter account-b + 100))                 ;; => Never executed (unreachable after throw)
-  (catch Exception e                         ;; => Catch exception
-    (println "Transaction failed")))         ;; => Output: Transaction failed
-                                             ;; => nil
+(try
+  (dosync
+    (alter account-a - 100)
+    (throw (Exception. "Error!"))            ;; => Transaction aborted - all changes rolled back
+    (alter account-b + 100))
+  (catch Exception e
+    (println "Transaction failed")))
 
-(println @account-a @account-b)              ;; => Dereference refs after failed transaction
-                                             ;; => Output: 800 700 (unchanged - rollback worked)
-                                             ;; => nil
+(println @account-a @account-b)              ;; => Output: 800 700 (unchanged)
 ```
 
 **Key Takeaway**: Refs with STM provide coordinated atomic transactions across multiple state changes.
@@ -439,65 +360,31 @@ graph TD
 ```
 
 ```clojure
-(def logger (agent []))                      ;; => Create agent with initial value []
-                                             ;; => logger is #agent[[] :status :ready]
+(def logger (agent []))
 
-(send logger conj "First log")               ;; => Async update (queued to fixed thread pool)
-                                             ;; => Action: (conj [] "First log") → ["First log"]
-                                             ;; => Returns immediately (non-blocking)
-                                             ;; => #agent[...] (agent reference)
+(send logger conj "First log")               ;; => Async update (queued to thread pool)
+(send logger conj "Second log")              ;; => Queued after first action
 
-(send logger conj "Second log")              ;; => Async update (queued after first action)
-                                             ;; => Action: (conj ["First log"] "Second log")
-                                             ;; => → ["First log" "Second log"]
-                                             ;; => #agent[...]
-
-(Thread/sleep 100)                           ;; => Wait 100ms for async updates to complete
-                                             ;; => nil (sleep returns nil)
-
-(println @logger)                            ;; => @ dereferences agent's current value
-                                             ;; => Output: ["First log" "Second log"]
-                                             ;; => nil (println returns nil)
+(Thread/sleep 100)
+(println @logger)                            ;; => Output: ["First log" "Second log"]
 
 ;; send-off for blocking operations
-(def file-writer (agent nil))               ;; => Create agent with initial value nil
-                                             ;; => file-writer is #agent[nil :status :ready]
+(def file-writer (agent nil))
 
-(send-off file-writer                        ;; => send-off uses expandable thread pool
-                                             ;; => For blocking I/O operations
-  (fn [_]                                    ;; => Anonymous function (ignores current state)
-    (Thread/sleep 1000)                      ;; => Simulate blocking file write (1 second)
-                                             ;; => nil (sleep returns nil)
-    (println "File written")                 ;; => Output: File written
-                                             ;; => nil (println returns nil)
-    :done))                                  ;; => Return :done as new agent state
-                                             ;; => Agent state becomes :done
-                                             ;; => #agent[...]
+(send-off file-writer
+  (fn [_]
+    (Thread/sleep 1000)
+    (println "File written")
+    :done))
 
 ;; Error handling
-(def error-agent (agent 0))                  ;; => Create agent with initial value 0
-                                             ;; => error-agent is #agent[0 :status :ready]
+(def error-agent (agent 0))
+(send error-agent / 0)                       ;; => ArithmeticException (Division by zero)
+(Thread/sleep 100)
 
-(send error-agent / 0)                       ;; => Async action: (/ 0 0) → Division by zero
-                                             ;; => ArithmeticException thrown
-                                             ;; => Agent enters :failed status
-                                             ;; => #agent[0 :status :failed]
-
-(Thread/sleep 100)                           ;; => Wait for async action to fail
-                                             ;; => nil
-
-(println (agent-error error-agent))          ;; => agent-error returns exception object
-                                             ;; => Output: #error {...ArithmeticException...}
-                                             ;; => nil
-
-(restart-agent error-agent 0)                ;; => Restart agent with new state 0
-                                             ;; => Clears error status
-                                             ;; => error-agent is #agent[0 :status :ready]
-                                             ;; => 0 (returns new state)
-
-(send error-agent inc)                       ;; => Async action: (inc 0) → 1
-                                             ;; => Agent now works again
-                                             ;; => #agent[1 :status :ready]
+(println (agent-error error-agent))          ;; => Output: exception object
+(restart-agent error-agent 0)                ;; => Clears error status
+(send error-agent inc)                       ;; => Works again
 ```
 
 **Key Takeaway**: Agents provide asynchronous state updates with sequential processing guarantees.
@@ -532,70 +419,33 @@ graph TD
 
 ```clojure
 (require '[clojure.core.async :refer [chan go >! <! >!! <!! timeout close!]])
-                                             ;; => Import core.async channel operations
-                                             ;; => chan: create channel
-                                             ;; => go: create go block (lightweight thread)
-                                             ;; => >! <! : parking put/take (inside go blocks)
-                                             ;; => >!! <!! : blocking put/take (outside go blocks)
-                                             ;; => timeout: timer channel
-                                             ;; => close!: close channel
+                                             ;; => Import core.async operations
 
 (def ch (chan))                              ;; => Create unbuffered channel
-                                             ;; => ch is channel object (capacity 0)
 
-;; Producer (in go block)
-(go                                          ;; => Launch go block (async lightweight thread)
-  (>! ch "Hello")                            ;; => Put "Hello" on channel (parks until taken)
-                                             ;; => Thread released during park
-                                             ;; => Returns true (successful put)
-  (>! ch "World"))                           ;; => Put "World" on channel
-                                             ;; => Returns true
-                                             ;; => go block returns channel with final value
+;; Producer
+(go
+  (>! ch "Hello")                            ;; => Put value (parks until taken)
+  (>! ch "World"))
 
-;; Consumer (in go block)
-(go                                          ;; => Launch consumer go block
-  (println (<! ch))                          ;; => Take value from channel (parks until available)
-                                             ;; => <! returns "Hello"
-                                             ;; => Output: Hello
-                                             ;; => nil (println returns nil)
-  (println (<! ch)))                         ;; => Take next value
-                                             ;; => <! returns "World"
-                                             ;; => Output: World
-                                             ;; => nil
+;; Consumer
+(go
+  (println (<! ch))                          ;; => Output: Hello
+  (println (<! ch)))                         ;; => Output: World
                                              ;; => go block returns channel
 
 ;; Blocking put/take (outside go blocks)
-(def ch2 (chan))                             ;; => Create channel ch2
-                                             ;; => ch2 is channel object
+(def ch2 (chan))
 
-(future (>!! ch2 "Data"))                    ;; => Launch future (OS thread)
-                                             ;; => >!! blocks until value taken (blocking put)
-                                             ;; => Returns future object
-                                             ;; => Future thread blocks waiting
-
-(println (<!! ch2))                          ;; => <!! blocks until value available (blocking take)
-                                             ;; => Returns "Data"
-                                             ;; => Future unblocks, completes
-                                             ;; => Output: Data
-                                             ;; => nil
+(future (>!! ch2 "Data"))                    ;; => Blocking put in future
+(println (<!! ch2))                          ;; => Output: Data
 
 ;; Buffered channels
-(def buffered (chan 10))                     ;; => Create channel with buffer size 10
-                                             ;; => buffered is channel (capacity 10)
+(def buffered (chan 10))
 
-(>!! buffered 1)                             ;; => Blocking put (doesn't block, buffer has space)
-                                             ;; => Buffer: [1]
-                                             ;; => true (successful)
-
-(>!! buffered 2)                             ;; => Blocking put
-                                             ;; => Buffer: [1 2]
-                                             ;; => true
-
-(println (<!! buffered))                     ;; => Blocking take
-                                             ;; => Returns 1 (FIFO order)
-                                             ;; => Buffer: [2]
-                                             ;; => Output: 1
-                                             ;; => nil
+(>!! buffered 1)                             ;; => Blocking put
+(>!! buffered 2)                             ;; => Buffer: [1 2]
+(println (<!! buffered))                     ;; => Output: 1 (FIFO order)
 ```
 
 **Key Takeaway**: Channels decouple producers from consumers enabling async coordination.
@@ -633,59 +483,31 @@ sequenceDiagram
 
 ```clojure
 (require '[clojure.core.async :refer [go chan >! <! timeout]])
-                                             ;; => Import go block and channel operations
 
-(def ch (chan))                              ;; => Create channel for task coordination
-                                             ;; => ch is channel object
+(def ch (chan))
 
-(go                                          ;; => Launch producer go block
-  (println "Starting task...")               ;; => Output: Starting task...
-                                             ;; => nil (println returns nil)
-  (<! (timeout 1000))                        ;; => timeout 1000 creates timer channel
-                                             ;; => <! parks on timer for 1000ms
-                                             ;; => Thread released during park
-                                             ;; => Returns nil after 1000ms
-  (>! ch "Task complete")                    ;; => Put "Task complete" on channel ch
-                                             ;; => Parks if no taker
-                                             ;; => true (successful put)
-  (println "Task done"))                     ;; => Output: Task done
-                                             ;; => nil
-                                             ;; => go block returns channel
+(go
+  (println "Starting task...")
+  (<! (timeout 1000))                        ;; => Park for 1000ms
+  (>! ch "Task complete")
+  (println "Task done"))
 
-(go                                          ;; => Launch consumer go block
-  (println "Waiting for result...")          ;; => Output: Waiting for result...
-                                             ;; => nil
-  (println "Result:" (<! ch)))               ;; => <! parks until value available
-                                             ;; => Returns "Task complete" (after ~1000ms)
-                                             ;; => Output: Result: Task complete
-                                             ;; => nil
-                                             ;; => go block returns channel
+(go
+  (println "Waiting for result...")
+  (println "Result:" (<! ch)))               ;; => Output: Result: Task complete
 
 ;; Multiple parallel tasks
-(defn async-task [id delay-ms]               ;; => Function creating async task
-  (go                                        ;; => Launch go block (returns channel immediately)
-    (println "Task" id "starting")           ;; => Output: Task X starting
-                                             ;; => nil
-    (<! (timeout delay-ms))                  ;; => Park for delay-ms milliseconds
-                                             ;; => nil (timeout returns nil)
-    (println "Task" id "completed")          ;; => Output: Task X completed
-                                             ;; => nil
-    id))                                     ;; => Return task id as final go block value
-                                             ;; => Channel containing id
+(defn async-task [id delay-ms]
+  (go
+    (println "Task" id "starting")
+    (<! (timeout delay-ms))
+    (println "Task" id "completed")
+    id))
 
-(go                                          ;; => Launch coordinator go block
+(go
   (let [results (doall (map #(async-task % (* % 100)) (range 5)))]
-                                             ;; => (range 5) is (0 1 2 3 4)
-                                             ;; => map creates 5 tasks with delays 0, 100, 200, 300, 400ms
-                                             ;; => async-task returns channel immediately (non-blocking)
-                                             ;; => doall forces realization (all go blocks launched)
-                                             ;; => results is [ch0 ch1 ch2 ch3 ch4] (5 channels)
-    (doseq [result results]                  ;; => Iterate over result channels
-      (println "Completed:" (<! result)))))  ;; => <! takes value from channel (blocks until complete)
-                                             ;; => Prints "Completed: 0", "Completed: 1", etc.
-                                             ;; => Tasks complete in order 0, 1, 2, 3, 4 (by delay)
-                                             ;; => nil
-                                             ;; => go block returns channel
+    (doseq [result results]
+      (println "Completed:" (<! result)))))
 ```
 
 **Key Takeaway**: go blocks enable lightweight async computation with automatic channel coordination.
@@ -697,60 +519,27 @@ sequenceDiagram
 spec defines data shape specifications for validation and generation.
 
 ```clojure
-(require '[clojure.spec.alpha :as s])        ;; => Import spec library (aliased as s)
+(require '[clojure.spec.alpha :as s])
 
 ;; Simple predicates
-(s/def ::age pos-int?)                       ;; => Define spec :user/age as positive integer
-                                             ;; => pos-int? is predicate (1, 2, 3... true, -5 false)
-                                             ;; => ::age is namespaced keyword :user/age
-                                             ;; => :user/age (returns spec keyword)
+(s/def ::age pos-int?)
+(s/def ::name string?)
 
-(s/def ::name string?)                       ;; => Define spec :user/name as string
-                                             ;; => string? is predicate
-                                             ;; => :user/name
-
-(s/valid? ::age 25)                          ;; => Check if 25 satisfies ::age spec
-                                             ;; => (pos-int? 25) is true
-                                             ;; => true (valid)
-
-(s/valid? ::age -5)                          ;; => Check if -5 satisfies ::age spec
-                                             ;; => (pos-int? -5) is false
-                                             ;; => false (invalid)
+(s/valid? ::age 25)                          ;; => true (valid)
+(s/valid? ::age -5)                          ;; => false (invalid)
 
 ;; Composite specs
-(s/def ::user (s/keys :req [::name ::age]))  ;; => Define ::user as map with required keys
-                                             ;; => :req [::name ::age] means both keys required
-                                             ;; => s/keys creates map spec
-                                             ;; => :user/user
+(s/def ::user (s/keys :req [::name ::age]))
 
-(s/valid? ::user {::name "Alice" ::age 30})  ;; => Check map has required keys
-                                             ;; => ::name present: "Alice" (string? true)
-                                             ;; => ::age present: 30 (pos-int? true)
-                                             ;; => true (valid)
-
-(s/valid? ::user {::name "Bob"})             ;; => Check map missing ::age
-                                             ;; => ::name present: "Bob" (string? true)
-                                             ;; => ::age missing (required key absent)
-                                             ;; => false (invalid - missing ::age)
+(s/valid? ::user {::name "Alice" ::age 30})  ;; => true (valid)
+(s/valid? ::user {::name "Bob"})             ;; => false (missing ::age)
 
 ;; explain for validation errors
-(s/explain ::user {::name "Bob"})            ;; => Detailed explanation of validation failure
-                                             ;; => Prints: val: {:user/name "Bob"} fails spec...
-                                             ;; => ...at: [:user/age] predicate: pos-int?
-                                             ;; => Shows missing key and expected predicate
-                                             ;; => nil (explain returns nil)
-;; => val: {:user/name "Bob"} fails spec: :user/user at: [:user/age] predicate: pos-int?
+(s/explain ::user {::name "Bob"})            ;; => Prints error: missing ::age
 
 ;; conform transforms data
 (s/def ::number-string (s/conformer #(Integer/parseInt %)))
-                                             ;; => Define conformer that parses string to integer
-                                             ;; => s/conformer creates transformation spec
-                                             ;; => #(Integer/parseInt %) is parsing function
-                                             ;; => :user/number-string
-
-(s/conform ::number-string "42")             ;; => Parse string "42" to integer
-                                             ;; => Calls (Integer/parseInt "42")
-                                             ;; => 42 (integer, not string)
+(s/conform ::number-string "42")             ;; => 42 (parsed to integer)
 ```
 
 **Key Takeaway**: spec provides declarative validation with rich error messages and data transformation.
@@ -762,46 +551,26 @@ spec defines data shape specifications for validation and generation.
 Define specs for function arguments and return values.
 
 ```clojure
-(require '[clojure.spec.alpha :as s])        ;; => Import spec library
-(require '[clojure.spec.test.alpha :as stest]) ;; => Import spec testing library
+(require '[clojure.spec.alpha :as s])
+(require '[clojure.spec.test.alpha :as stest])
 
-(s/def ::x number?)                          ;; => Define ::x spec as number predicate
-                                             ;; => :user/x
+(s/def ::x number?)
+(s/def ::y number?)
 
-(s/def ::y number?)                          ;; => Define ::y spec as number predicate
-                                             ;; => :user/y
+(defn add [x y]
+  (+ x y))
 
-(defn add [x y]                              ;; => Simple addition function
-  (+ x y))                                   ;; => Returns sum of x and y
-                                             ;; => #'user/add
-
-(s/fdef add                                  ;; => Define function spec for add
-  :args (s/cat :x ::x :y ::y)                ;; => Arguments spec: two numbers named :x and :y
-                                             ;; => s/cat creates sequence spec
-  :ret number?)                              ;; => Return value must be number
-                                             ;; => :user/add (returns spec keyword)
+(s/fdef add
+  :args (s/cat :x ::x :y ::y)
+  :ret number?)
 
 ;; Instrument for runtime checking
-(stest/instrument `add)                      ;; => Enable runtime validation for add function
-                                             ;; => `add is syntax-quoted symbol
-                                             ;; => Validates arguments on every call
-                                             ;; => [user/add] (returns list of instrumented functions)
+(stest/instrument `add)                      ;; => Enable validation for add
 
-(add 2 3)                                    ;; => Call add with valid arguments
-                                             ;; => Args validated: (number? 2) true, (number? 3) true
-                                             ;; => (+ 2 3)
-                                             ;; => 5 (valid return)
-
-;; (add "2" 3)                               ;; => Would call add with invalid arg
-                                             ;; => Validation fails: (number? "2") is false
-                                             ;; => ExceptionInfo: invalid arguments
-                                             ;; => Error includes spec explanation
+(add 2 3)                                    ;; => 5 (valid arguments)
 
 ;; Generative testing
-(stest/check `add)                           ;; => Run property-based tests
-                                             ;; => Generates 1000 random valid inputs
-                                             ;; => Tests that (number? (add x y)) for all inputs
-                                             ;; => Returns test results map
+(stest/check `add)                           ;; => Runs 1000 random tests
                                              ;; => {:result true, :num-tests 1000, ...}
 ```
 
@@ -843,52 +612,35 @@ graph TD
 
 ```clojure
 ;; Regular sequence operations (create intermediates)
-(->> (range 1000000)                         ;; => Lazy sequence 0..999999
-     (map inc)                               ;; => Lazy seq: 1..1000000 (intermediate created)
-                                             ;; => Not yet realized
-     (filter even?)                          ;; => Lazy seq: 2, 4, 6, ... (another intermediate)
-                                             ;; => Chains two lazy sequences
-     (take 10))                              ;; => Realizes first 10 even numbers
-                                             ;; => (2 4 6 8 10 12 14 16 18 20)
+(->> (range 1000000)
+     (map inc)
+     (filter even?)
+     (take 10))                              ;; => (2 4 6 8 10 12 14 16 18 20)
 
 ;; Transducer (no intermediate sequences)
-(def xf                                      ;; => Define transducer (no context, just transformation)
-  (comp                                      ;; => Compose transformations right-to-left
-    (map inc)                                ;; => Transformation: increment each element
-                                             ;; => NOT a lazy seq, just transformation function
-    (filter even?)))                         ;; => Transformation: keep even numbers only
-                                             ;; => xf is transducer (composable transformation)
+(def xf
+  (comp
+    (map inc)
+    (filter even?)))
 
-(into [] xf (range 10))                      ;; => Apply transducer to (range 10) = (0..9)
-                                             ;; => Single pass: 0+1→1(odd skip), 1+1→2(even keep)...
-                                             ;; => No intermediate collections created
-                                             ;; => [2 4 6 8 10] (vector result)
-
-(sequence xf (range 10))                     ;; => Apply transducer, return lazy sequence
-                                             ;; => (2 4 6 8 10) (lazy, not fully realized)
+(into [] xf (range 10))                      ;; => [2 4 6 8 10] (single pass, no intermediates)
+(sequence xf (range 10))                     ;; => (2 4 6 8 10) (lazy sequence)
 
 ;; With transduce (reduce-like)
-(transduce xf + (range 10))                  ;; => Apply transducer with reducing function +
-                                             ;; => Single pass: accumulate sum of (map inc (filter even? ...))
-                                             ;; => 0→skip, 1→2(+), 2→skip, 3→4(+), 4→skip, 5→6(+), ...
-                                             ;; => 2+4+6+8+10 = 30
+(transduce xf + (range 10))                  ;; => 30 (2+4+6+8+10)
 
 ;; Custom transducer
-(defn take-while-xf [pred]                   ;; => Create take-while transducer
-  (fn [rf]                                   ;; => Transducer receives reducing function rf
-    (fn                                      ;; => Returns new reducing function (3-arity)
-      ([] (rf))                              ;; => Init: call rf with no args
-      ([result] (rf result))                 ;; => Completion: call rf with result
-      ([result input]                        ;; => Step: process input
-       (if (pred input)                      ;; => Test predicate on input
-         (rf result input)                   ;; => If true: continue reducing
-         (reduced result))))))               ;; => If false: early termination (stop reducing)
-                                             ;; => Returns transducer function
+(defn take-while-xf [pred]
+  (fn [rf]
+    (fn
+      ([] (rf))
+      ([result] (rf result))
+      ([result input]
+       (if (pred input)
+         (rf result input)
+         (reduced result))))))
 
-(into [] (take-while-xf #(< % 5)) (range 10)) ;; => Apply take-while-xf with predicate #(< % 5)
-                                             ;; => (range 10) = (0 1 2 3 4 5 6 7 8 9)
-                                             ;; => Process: 0(<5 true keep), 1(keep), ...4(keep), 5(≥5 stop)
-                                             ;; => [0 1 2 3 4] (stops at 5)
+(into [] (take-while-xf #(< % 5)) (range 10)) ;; => [0 1 2 3 4]
 ```
 
 **Key Takeaway**: Transducers eliminate intermediate collections providing efficient composable transformations.
@@ -900,30 +652,21 @@ graph TD
 Handle errors with try/catch and ex-info for custom exceptions.
 
 ```clojure
-(defn divide [a b]                           ;; => Division function with validation
-  (if (zero? b)                              ;; => Check if b is zero
-    (throw (ex-info "Division by zero"       ;; => Throw ExceptionInfo with message
-                    {:a a :b b}))            ;; => Attach data map {:a a, :b b}
-                                             ;; => ex-info creates exception with data
-    (/ a b)))                                ;; => If b≠0: perform division
-                                             ;; => #'user/divide
+(defn divide [a b]
+  (if (zero? b)
+    (throw (ex-info "Division by zero" {:a a :b b}))
+    (/ a b)))
 
-(try                                         ;; => try block for exception handling
-  (divide 10 0)                              ;; => Call divide with b=0
-                                             ;; => Throws ExceptionInfo
-  (catch Exception e                         ;; => Catch any Exception (ExceptionInfo extends Exception)
-    (println "Error:" (.getMessage e))       ;; => Get exception message string
-                                             ;; => Output: Error: Division by zero
-                                             ;; => nil
-    (println "Data:" (ex-data e))))          ;; => ex-data extracts attached data map
-                                             ;; => Output: Data: {:a 10, :b 0}
-                                             ;; => nil
+(try
+  (divide 10 0)
+  (catch Exception e
+    (println "Error:" (.getMessage e))       ;; => Output: Error: Division by zero
+    (println "Data:" (ex-data e))))          ;; => Output: Data: {:a 10, :b 0}
 
 ;; Multiple catch blocks
-(try                                         ;; => try with multiple catch blocks
-  (Integer/parseInt "not-a-number")          ;; => Parse invalid string
-                                             ;; => Throws NumberFormatException
-  (catch NumberFormatException e             ;; => Catch specific exception type first
+(try
+  (Integer/parseInt "not-a-number")
+  (catch NumberFormatException e
     (println "Invalid number"))              ;; => Output: Invalid number
                                              ;; => nil (this catch executed)
   (catch Exception e                         ;; => Catch general exceptions (not reached)
@@ -981,43 +724,25 @@ graph TD
 
 ```clojure
 ;; Infinite sequence
-(def naturals (iterate inc 0))               ;; => Create infinite lazy sequence
-                                             ;; => iterate applies inc repeatedly: 0, 1, 2, 3, ...
-                                             ;; => NOT computed yet (lazy)
-                                             ;; => naturals is lazy sequence object
+(def naturals (iterate inc 0))               ;; => Infinite lazy sequence (0, 1, 2, 3...)
 
-(take 5 naturals)                            ;; => Take first 5 elements (forces realization)
-                                             ;; => Computes: 0, (inc 0)→1, (inc 1)→2, (inc 2)→3, (inc 3)→4
-                                             ;; => (0 1 2 3 4) (realized list)
+(take 5 naturals)                            ;; => (0 1 2 3 4) (forces realization)
 
-;; Lazy map/filter
-(def evens (filter even? naturals))          ;; => Create lazy sequence filtering naturals
-                                             ;; => filter NOT computed yet (lazy composition)
-                                             ;; => evens is lazy sequence object
-
-(take 5 evens)                               ;; => Take first 5 even numbers
-                                             ;; => Computes on demand: 0(even keep), 1(odd skip), 2(keep), ...
-                                             ;; => (0 2 4 6 8) (realized list)
+;; Lazy filter
+(def evens (filter even? naturals))
+(take 5 evens)                               ;; => (0 2 4 6 8)
 
 ;; Custom lazy sequence
-(defn fib-seq                                ;; => Fibonacci sequence generator
-  ([] (fib-seq 0 1))                         ;; => 0-arity: start with 0, 1
-                                             ;; => Calls 2-arity with initial values
-  ([a b]                                     ;; => 2-arity: current and next fibonacci numbers
-   (lazy-seq                                 ;; => Lazy sequence constructor (delays computation)
-     (cons a (fib-seq b (+ a b))))))         ;; => cons a to recursive call
-                                             ;; => (fib-seq b (+ a b)) shifts: next becomes current
-                                             ;; => (+ a b) computes new next
-                                             ;; => Lazy sequence: a, b, (+ a b), ...
+(defn fib-seq
+  ([] (fib-seq 0 1))
+  ([a b]
+   (lazy-seq
+     (cons a (fib-seq b (+ a b))))))
 
-(take 10 (fib-seq))                          ;; => Take first 10 fibonacci numbers
-                                             ;; => Computes on demand: 0, 1, (0+1)→1, (1+1)→2, (1+2)→3, ...
-                                             ;; => (0 1 1 2 3 5 8 13 21 34)
+(take 10 (fib-seq))                          ;; => (0 1 1 2 3 5 8 13 21 34)
 
 ;; Force realization
-(def realized (doall (take 5 naturals)))     ;; => Force full computation (not lazy anymore)
-                                             ;; => take 5 is lazy, doall realizes entire sequence
-                                             ;; => realized is (0 1 2 3 4) (fully realized list)
+(def realized (doall (take 5 naturals)))     ;; => (0 1 2 3 4)
 ```
 
 **Key Takeaway**: Lazy sequences enable memory-efficient processing of large or infinite data.
@@ -1029,26 +754,19 @@ graph TD
 Write unit tests using clojure.test framework.
 
 ```clojure
-(ns myapp.core-test                          ;; => Define test namespace
-  (:require [clojure.test :refer :all]       ;; => Import test macros (deftest, is, testing)
-            [myapp.core :refer :all]))       ;; => Import functions to test
+(ns myapp.core-test
+  (:require [clojure.test :refer :all]
+            [myapp.core :refer :all]))
 
-(deftest addition-test                       ;; => Define test named addition-test
-  (testing "Addition of positive numbers"    ;; => Nested test context with description
-    (is (= 5 (+ 2 3)))                       ;; => Assertion: (+ 2 3) equals 5
-                                             ;; => (= 5 5) is true → test PASSES
-    (is (= 10 (+ 4 6)))))                    ;; => Assertion: (+ 4 6) equals 10
-                                             ;; => (= 10 10) is true → test PASSES
-                                             ;; => #'myapp.core-test/addition-test
+(deftest addition-test
+  (testing "Addition of positive numbers"
+    (is (= 5 (+ 2 3)))                       ;; => Test passes
+    (is (= 10 (+ 4 6)))))
 
-(deftest division-test                       ;; => Define test named division-test
-  (testing "Division"                        ;; => Test context
-    (is (= 2 (/ 10 5)))                      ;; => Assertion: (/ 10 5) equals 2
-                                             ;; => (= 2 2) is true → PASSES
-    (is (thrown? ArithmeticException (/ 1 0))))) ;; => Assert exception thrown
-                                             ;; => (/ 1 0) throws ArithmeticException
-                                             ;; => Exception type matches → PASSES
-                                             ;; => #'myapp.core-test/division-test
+(deftest division-test
+  (testing "Division"
+    (is (= 2 (/ 10 5)))
+    (is (thrown? ArithmeticException (/ 1 0))))) ;; => Exception thrown as expected
 
 ;; Fixtures (setup/teardown)
 (defn database-fixture [f]                   ;; => Fixture function wrapping test
@@ -1117,41 +835,25 @@ Modern dependency management with deps.edn instead of leiningen.
 Organize code into namespaces with proper require/refer patterns.
 
 ```clojure
-(ns myapp.user                               ;; => Define namespace myapp.user
-  (:require [clojure.string :as str]         ;; => Require clojure.string with alias str
-                                             ;; => Access as str/upper-case, str/includes?, etc.
-            [clojure.set :refer [union intersection]] ;; => Refer specific functions (no prefix needed)
-                                             ;; => Can call union, intersection directly
-            [myapp.database :as db]))        ;; => Project namespace with alias db
-                                             ;; => Access as db/find-user, db/save!, etc.
+(ns myapp.user
+  (:require [clojure.string :as str]
+            [clojure.set :refer [union intersection]]
+            [myapp.database :as db]))
 
-(defn create-user [name email]               ;; => Create user function
-  {:id (random-uuid)                         ;; => Generate random UUID for id
-                                             ;; => random-uuid returns UUID object
-   :name (str/upper-case name)               ;; => Use aliased str namespace
-                                             ;; => str/upper-case "alice" → "ALICE"
-   :email email})                            ;; => Email as-is
-                                             ;; => Returns map {:id UUID, :name "ALICE", :email email}
+(defn create-user [name email]
+  {:id (random-uuid)
+   :name (str/upper-case name)               ;; => Aliased str namespace
+   :email email})
 
-(defn find-common-roles [user1 user2]       ;; => Find shared roles between users
-  (intersection (:roles user1) (:roles user2))) ;; => intersection is referred (no prefix)
-                                             ;; => (:roles user1) extracts roles set
-                                             ;; => (:roles user2) extracts roles set
-                                             ;; => intersection returns shared elements
-                                             ;; => Returns set of common roles
+(defn find-common-roles [user1 user2]
+  (intersection (:roles user1) (:roles user2)))
 
 ;; Private functions
-(defn- validate-email [email]                ;; => Private function (defn- adds :private metadata)
-                                             ;; => Not accessible from other namespaces
-  (str/includes? email "@"))                 ;; => Check if email contains "@"
-                                             ;; => str/includes? "test@example.com" "@" → true
-                                             ;; => Returns boolean
+(defn- validate-email [email]                ;; => Private function (defn-)
+  (str/includes? email "@"))
 
 ;; Load from file
-;; (load "myapp/utils")                      ;; => Load file relative to classpath
-                                             ;; => Reads myapp/utils.clj (or .cljc)
-                                             ;; => Evaluates all forms in file
-                                             ;; => Useful for splitting large namespaces
+;; (load "myapp/utils")
 ```
 
 **Key Takeaway**: Namespaces organize code with explicit dependencies via require/refer.
@@ -1164,50 +866,25 @@ Attach metadata to values for documentation and tools.
 
 ```clojure
 ;; Function metadata
-(defn greet                                  ;; => Define function with metadata
-  "Greets a person by name"                  ;; => Docstring (added to metadata)
-  {:added "1.0" :author "Alice"}             ;; => Additional metadata map
-                                             ;; => Merged with function var metadata
-  [name]                                     ;; => Single parameter
-  (str "Hello, " name))                      ;; => Concatenate "Hello, " with name
-                                             ;; => #'user/greet
+(defn greet
+  "Greets a person by name"
+  {:added "1.0" :author "Alice"}
+  [name]
+  (str "Hello, " name))
 
-(meta #'greet)                               ;; => Get metadata from var (not function value)
-                                             ;; => #'greet is var object
-                                             ;; => Returns {:doc "Greets a person...", :added "1.0", :author "Alice", ...}
-                                             ;; => Includes namespace, name, line, file, etc.
+(meta #'greet)                               ;; => Returns docstring, author, added metadata
 
 ;; Value metadata
 (def config ^{:private true} {:host "localhost"})
-                                             ;; => Define var with metadata
-                                             ;; => ^{:private true} attaches metadata to var
-                                             ;; => config is {:host "localhost"} (value)
-                                             ;; => Var has :private metadata
-
-(meta #'config)                              ;; => Get var metadata
-                                             ;; => Returns {:private true, :line N, :column M, ...}
+(meta #'config)                              ;; => Returns {:private true, ...}
 
 ;; Type hints for performance
-(defn fast-add ^long [^long a ^long b]      ;; => Function with type hints
-                                             ;; => ^long before function: return type hint (long)
-                                             ;; => ^long a, ^long b: parameter type hints
-                                             ;; => Eliminates reflection for primitive math
-                                             ;; => 10-100x faster for numeric operations
-  (+ a b))                                   ;; => Primitive long addition (no boxing)
-                                             ;; => Returns long (primitive)
+(defn fast-add ^long [^long a ^long b]       ;; => Type hints eliminate reflection
+  (+ a b))                                   ;; => 10-100x faster for numeric ops
 
 ;; Reader metadata
-(def data ^:dynamic *db-conn*)               ;; => ^:dynamic is shorthand for ^{:dynamic true}
-                                             ;; => Marks var as dynamic (thread-local binding allowed)
-                                             ;; => *db-conn* is unbound (no initial value)
-                                             ;; => Convention: dynamic vars use *name* (earmuffs)
-
+(def data ^:dynamic *db-conn*)               ;; => Dynamic var for thread-local binding
 (with-meta {:name "Alice"} {:timestamp 123}) ;; => Attach metadata to value
-                                             ;; => First arg: value {:name "Alice"}
-                                             ;; => Second arg: metadata map {:timestamp 123}
-                                             ;; => Returns {:name "Alice"} with attached metadata
-                                             ;; => Metadata doesn't affect equality or hash
-;; => {:name "Alice"} with metadata {:timestamp 123}
 ```
 
 **Key Takeaway**: Metadata provides out-of-band information without affecting value equality.
@@ -1221,61 +898,34 @@ Advanced destructuring patterns for complex data extraction.
 ```clojure
 ;; Nested destructuring
 (let [{:keys [name address]} {:name "Alice" :address {:city "NYC" :zip 10001}}
-                                             ;; => Destructure top-level: name="Alice", address={:city "NYC", :zip 10001}
-      {city :city} address]                  ;; => Nested destructuring: extract :city from address
-                                             ;; => city="NYC"
+      {city :city} address]
   (println name city))                       ;; => Output: Alice NYC
-                                             ;; => nil
 
 ;; :as for original value
-(let [[a b :as all] [1 2 3 4]]               ;; => Vector destructuring: a=1, b=2
-                                             ;; => :as all captures entire original vector
-                                             ;; => all=[1 2 3 4]
+(let [[a b :as all] [1 2 3 4]]
   (println "a:" a "b:" b "all:" all))        ;; => Output: a: 1 b: 2 all: [1 2 3 4]
-                                             ;; => nil
 
 ;; :or for defaults
-(let [{:keys [x y]                           ;; => Destructure :x and :y from map
-       :or {x 0 y 0}} {:y 5}]                ;; => Map has :y but not :x
-                                             ;; => :or provides defaults: x defaults to 0
-                                             ;; => x=0 (default), y=5 (from map)
+(let [{:keys [x y] :or {x 0 y 0}} {:y 5}]
   (println "x:" x "y:" y))                   ;; => Output: x: 0 y: 5
-                                             ;; => nil
 
 ;; String keys
 (let [{:strs [name age]} {"name" "Bob" "age" 25}]
-                                             ;; => :strs destructures string keys (not keywords)
-                                             ;; => "name" → name (symbol), "age" → age (symbol)
-                                             ;; => name="Bob", age=25
   (println name age))                        ;; => Output: Bob 25
-                                             ;; => nil
 
 ;; Symbol keys
-(let [{:syms [x y]} {'x 10 'y 20}]           ;; => :syms destructures symbol keys
-                                             ;; => 'x → x (symbol), 'y → y (symbol)
-                                             ;; => x=10, y=20
+(let [{:syms [x y]} {'x 10 'y 20}]
   (println x y))                             ;; => Output: 10 20
-                                             ;; => nil
 
 ;; Function argument destructuring
 (defn print-point [{:keys [x y] :or {x 0 y 0}}]
-                                             ;; => Function parameter destructures map
-                                             ;; => :keys [x y] extracts :x and :y
-                                             ;; => :or {x 0 y 0} provides defaults
-  (println "Point:" x y))                    ;; => Output: Point: x y
-                                             ;; => nil
-                                             ;; => #'user/print-point
+  (println "Point:" x y))
 
-(print-point {:x 3 :y 4})                    ;; => Calls with both keys present
-                                             ;; => x=3, y=4
-                                             ;; => Output: Point: 3 4
-                                             ;; => nil
-
-(print-point {})                             ;; => Calls with empty map
-                                             ;; => x=0 (default), y=0 (default)
-                                             ;; => Output: Point: 0 0
-                                             ;; => nil
+(print-point {:x 3 :y 4})                    ;; => Output: Point: 3 4
+(print-point {})                             ;; => Output: Point: 0 0
 ```
+
+````
 
 **Key Takeaway**: Advanced destructuring enables concise extraction from nested complex structures.
 
@@ -1287,70 +937,36 @@ Advanced Java interoperability patterns.
 
 ```clojure
 ;; Static methods and fields
-(Math/pow 2 3)                               ;; => Call static method Math.pow(2, 3)
-                                             ;; => 2^3 = 8.0 (double)
-
-Math/PI                                      ;; => Access static field Math.PI
-                                             ;; => 3.141592653589793 (double constant)
+(Math/pow 2 3)                               ;; => 8.0
+Math/PI                                      ;; => 3.141592653589793
 
 ;; Instance methods
-(.toUpperCase "hello")                       ;; => Call instance method on string object
-                                             ;; => "hello".toUpperCase() in Java
-                                             ;; => "HELLO" (new string)
-
-(.length "world")                            ;; => Call instance method on string
-                                             ;; => "world".length() in Java
-                                             ;; => 5 (int)
+(.toUpperCase "hello")                       ;; => "HELLO"
+(.length "world")                            ;; => 5
 
 ;; Constructor
-(java.util.Date.)                            ;; => Call Date constructor (no args)
-                                             ;; => new java.util.Date() in Java
-                                             ;; => Date object with current timestamp
+(java.util.Date.)                            ;; => Date object
 
 ;; Chaining (..)
-(.. (java.util.Date.) (toString) (toUpperCase))
-                                             ;; => Chain multiple method calls
-                                             ;; => new Date().toString().toUpperCase() in Java
-                                             ;; => Step 1: Date() → Date object
-                                             ;; => Step 2: .toString() → "Wed Dec 30 ..."
-                                             ;; => Step 3: .toUpperCase() → "WED DEC 30 ..."
-                                             ;; => "WED DEC 30 ..." (string)
+(.. (java.util.Date.) (toString) (toUpperCase)) ;; => "WED DEC 30..."
 
 ;; doto for mutation
-(doto (java.util.ArrayList.)                 ;; => Create ArrayList and mutate it
-                                             ;; => doto returns the original object
-  (.add "first")                             ;; => Mutate: add "first"
-                                             ;; => .add returns boolean (ignored by doto)
-  (.add "second")                            ;; => Mutate: add "second"
-  (.add "third"))                            ;; => Mutate: add "third"
-                                             ;; => Returns ArrayList ["first" "second" "third"]
+(doto (java.util.ArrayList.)
+  (.add "first")
+  (.add "second")
+  (.add "third"))                            ;; => ["first" "second" "third"]
 
 ;; Type hints for performance
-(defn fast-array-sum ^long [^"[J" arr]      ;; => Function with array type hint
-                                             ;; => ^"[J" means long[] (Java primitive long array)
-                                             ;; => ^long means returns long (not Long object)
-                                             ;; => Eliminates reflection on array access
-  (aget arr 0))                              ;; => aget accesses array at index 0
-                                             ;; => arr[0] in Java
-                                             ;; => Returns long (primitive)
+(defn fast-array-sum ^long [^"[J" arr]       ;; => Array type hints eliminate reflection
+  (aget arr 0))
 
 ;; Implementing interfaces
-(defn create-runnable [f]                    ;; => Function creating Runnable implementation
-  (reify java.lang.Runnable                  ;; => reify creates anonymous interface impl
-                                             ;; => Implements java.lang.Runnable interface
-    (run [this]                              ;; => Implement run() method
-                                             ;; => this is the reified object
-      (f))))                                 ;; => Call function f (closure over f)
-                                             ;; => Returns Runnable object
+(defn create-runnable [f]
+  (reify java.lang.Runnable
+    (run [this] (f))))
 
 (let [task (create-runnable #(println "Running!"))]
-                                             ;; => Create Runnable wrapping anonymous function
-                                             ;; => task is Runnable instance
-  (.start (Thread. task)))                   ;; => Create Thread with task
-                                             ;; => new Thread(task).start() in Java
-                                             ;; => Thread executes task.run() asynchronously
-                                             ;; => Output: Running! (from thread)
-                                             ;; => nil (start returns nil)
+  (.start (Thread. task)))                   ;; => Output: Running!
 ```
 
 **Key Takeaway**: Clojure provides seamless Java interop with concise syntax for methods, fields, and interfaces.
@@ -1362,53 +978,29 @@ Math/PI                                      ;; => Access static field Math.PI
 Reducers enable parallel fold operations on collections.
 
 ```clojure
-(require '[clojure.core.reducers :as r])     ;; => Import reducers library (aliased as r)
+(require '[clojure.core.reducers :as r])
 
 ;; Sequential reduce
-(reduce + (range 1000000))                   ;; => Sequential reduction: sum 0..999999
-                                             ;; => Single thread processes all elements
-                                             ;; => (+ 0 1 2 3 ... 999999)
-                                             ;; => 499999500000 (sum result)
+(reduce + (range 1000000))                   ;; => 499999500000
 
 ;; Parallel fold
-(r/fold + (vec (range 1000000)))             ;; => Parallel fold using fork-join pool
-                                             ;; => (range 1000000) must be vector (not lazy seq)
-                                             ;; => vec realizes sequence as vector
-                                             ;; => r/fold splits work across CPU cores
-                                             ;; => Each core sums partition, then combines results
-                                             ;; => 499999500000 (same result, much faster)
+(r/fold + (vec (range 1000000)))             ;; => 499999500000 (parallel, faster)
 
-;; Reducer transformations (like transducers)
-(->> (range 1000000)                         ;; => Source sequence 0..999999
-     vec                                     ;; => Realize as vector (reducers need collection)
-     (r/map inc)                             ;; => Parallel map: increment each element
-                                             ;; => NOT lazy, executes in parallel
-                                             ;; => Returns reducer (not realized yet)
-     (r/filter even?)                        ;; => Parallel filter: keep even numbers only
-                                             ;; => Chains with map (still not realized)
-                                             ;; => Returns reducer
-     (r/fold +))                             ;; => Parallel reduction: sum filtered results
-                                             ;; => Executes map+filter+fold in parallel
-                                             ;; => 250000500000 (sum of even numbers 0..999998)
+;; Reducer transformations
+(->> (range 1000000)
+     vec
+     (r/map inc)                             ;; => Parallel map
+     (r/filter even?)                        ;; => Parallel filter
+     (r/fold +))                             ;; => 250000500000 (parallel reduction)
 
 ;; Custom folder
-(defn parallel-count [coll]                  ;; => Count collection elements in parallel
-  (r/fold                                    ;; => Parallel fold with custom functions
-    (fn ([] 0) ([a b] (+ a b)))              ;; => Combine function (2-arity)
-                                             ;; => 0-arity: initial value for partition
-                                             ;; => 2-arity: combine two partition results
-                                             ;; => (+ a b) merges counts from partitions
-    (fn ([acc _] (inc acc)))                 ;; => Reduce function (2-arity)
-                                             ;; => acc is accumulator (count so far)
-                                             ;; => _ ignores element value (just counts)
-                                             ;; => (inc acc) increments count
-    coll))                                   ;; => Collection to count
-                                             ;; => Returns count (combining all partitions)
+(defn parallel-count [coll]
+  (r/fold
+    (fn ([] 0) ([a b] (+ a b)))              ;; => Combine function
+    (fn ([acc _] (inc acc)))                 ;; => Reduce function (count)
+    coll))
 
-(parallel-count (vec (range 1000000)))       ;; => Count 1000000 elements in parallel
-                                             ;; => Each partition counts its elements
-                                             ;; => Results combined with +
-                                             ;; => 1000000
+(parallel-count (vec (range 1000000)))       ;; => 1000000
 ```
 
 **Key Takeaway**: Reducers enable parallel processing with fork-join for performance-critical reductions.
@@ -1449,66 +1041,33 @@ sequenceDiagram
 
 ```clojure
 ;; Future (async computation)
-(def result (future                          ;; => Launch computation in thread pool
-              (Thread/sleep 1000)            ;; => Sleep 1000ms (simulates work)
-                                             ;; => nil (sleep returns nil)
-              (+ 1 2)))                      ;; => Compute 1 + 2
-                                             ;; => 3 (last expression in future body)
-                                             ;; => result is future object (not value yet)
+(def result (future
+              (Thread/sleep 1000)
+              (+ 1 2)))
 
-(println "Computing...")                     ;; => Main thread continues immediately
-                                             ;; => Output: Computing...
-                                             ;; => nil
-
-(println @result)                            ;; => @ dereferences future (blocks until complete)
-                                             ;; => Waits ~1000ms for future to finish
-                                             ;; => Returns 3
-                                             ;; => Output: 3
-                                             ;; => nil
-
-(println (realized? result))                 ;; => Check if future completed
-                                             ;; => true (already computed after @result)
-                                             ;; => Output: true
-                                             ;; => nil
+(println "Computing...")
+(println @result)                            ;; => 3 (blocks ~1000ms)
+(println (realized? result))                 ;; => true
 
 ;; Promise (synchronization point)
-(def p (promise))                            ;; => Create promise (unfulfilled)
-                                             ;; => p is promise object (no value yet)
+(def p (promise))
 
-(future                                      ;; => Launch async task
-  (Thread/sleep 1000)                        ;; => Sleep 1000ms
-                                             ;; => nil
-  (deliver p "Async result"))                ;; => Deliver value to promise p
-                                             ;; => p now contains "Async result"
-                                             ;; => Unblocks any threads waiting on @p
-                                             ;; => "Async result" (deliver returns value)
+(future
+  (Thread/sleep 1000)
+  (deliver p "Async result"))
 
-(println "Waiting...")                       ;; => Main thread continues
-                                             ;; => Output: Waiting...
-                                             ;; => nil
-
-(println @p)                                 ;; => @ dereferences promise (blocks until delivered)
-                                             ;; => Waits ~1000ms for future to deliver
-                                             ;; => Returns "Async result"
-                                             ;; => Output: Async result
-                                             ;; => nil
+(println "Waiting...")
+(println @p)                                 ;; => Async result (blocks ~1000ms)
 
 ;; Combining futures and promises
-(defn async-add [a b]                        ;; => Function performing async addition
-  (let [p (promise)]                         ;; => Create promise for result
-    (future                                  ;; => Launch async computation
-      (Thread/sleep 500)                     ;; => Simulate 500ms work
-                                             ;; => nil
-      (deliver p (+ a b)))                   ;; => Compute sum and deliver to promise
-                                             ;; => Unblocks any waiters on p
-    p))                                      ;; => Return promise immediately (non-blocking)
-                                             ;; => Promise will contain sum after 500ms
+(defn async-add [a b]
+  (let [p (promise)]
+    (future
+      (Thread/sleep 500)
+      (deliver p (+ a b)))
+    p))
 
-(println @(async-add 10 20))                 ;; => Call async-add, deref promise (blocks)
-                                             ;; => Waits ~500ms for delivery
-                                             ;; => Returns 30 (10 + 20)
-                                             ;; => Output: 30
-                                             ;; => nil
+(println @(async-add 10 20))                 ;; => 30
 ```
 
 **Key Takeaway**: Futures enable fire-and-forget async; promises enable result coordination.
@@ -1520,54 +1079,26 @@ sequenceDiagram
 Delays defer computation until first dereference with caching.
 
 ```clojure
-(def expensive (delay                        ;; => Create delay (computation not executed yet)
-                 (println "Computing...")    ;; => This will print when delay dereferenced
-                 (Thread/sleep 1000)         ;; => This will sleep when delay dereferenced
-                 42))                        ;; => This is the result value
-                                             ;; => expensive is delay object (not 42 yet)
+(def expensive (delay
+                 (println "Computing...")
+                 (Thread/sleep 1000)
+                 42))
 
-(println "Created delay")                    ;; => Executes immediately (delay not dereferenced)
-                                             ;; => Output: Created delay
-                                             ;; => nil
+(println "Created delay")
+(println @expensive)                         ;; => Output: Computing... 42 (first dereference)
+(println @expensive)                         ;; => Output: 42 (cached, no recomputation)
+(println (realized? expensive))              ;; => true
 
-(println @expensive)                         ;; => First dereference triggers computation
-                                             ;; => Executes delay body: prints "Computing...", sleeps 1000ms
-                                             ;; => Output: Computing...
-                                             ;; => Returns 42 and caches result
-                                             ;; => Output: 42
-                                             ;; => nil
+;; Useful for expensive initializations
+(defn load-config []
+  (delay
+    (println "Loading config...")
+    {:db "localhost" :port 5432}))
 
-(println @expensive)                         ;; => Second dereference returns cached value
-                                             ;; => NO recomputation (cached)
-                                             ;; => No println "Computing..." this time
-                                             ;; => Output: 42
-                                             ;; => nil
+(def config (load-config))                   ;; => Delay created (config NOT loaded yet)
 
-(println (realized? expensive))              ;; => Check if delay computed
-                                             ;; => true (already dereferenced once)
-                                             ;; => Output: true
-                                             ;; => nil
-
-;; Useful for optional expensive initializations
-(defn load-config []                         ;; => Function returning delay
-  (delay                                     ;; => Delay wraps expensive config loading
-    (println "Loading config...")            ;; => Prints when config first accessed
-    {:db "localhost" :port 5432}))           ;; => Config map (result value)
-                                             ;; => Returns delay object
-
-(def config (load-config))                   ;; => Create delay (config NOT loaded yet)
-                                             ;; => config is delay object
-
-;; Config loaded only if needed
-(when-let [db (:db @config)]                 ;; => @config dereferences delay (triggers loading)
-                                             ;; => First access: prints "Loading config..."
-                                             ;; => Returns {:db "localhost", :port 5432}
-                                             ;; => (:db config) extracts "localhost"
-                                             ;; => db is "localhost"
-                                             ;; => when-let body executes (db is truthy)
-  (println "Connecting to" db))              ;; => Output: Loading config...
-                                             ;; => Output: Connecting to localhost
-                                             ;; => nil
+(when-let [db (:db @config)]                 ;; => Output: Loading config...
+  (println "Connecting to" db))              ;; => Output: Connecting to localhost
 ```
 
 **Key Takeaway**: Delays provide lazy initialization with memoization for expensive one-time computations.
@@ -1579,39 +1110,23 @@ Delays defer computation until first dereference with caching.
 Read and write files using clojure.java.io.
 
 ```clojure
-(require '[clojure.java.io :as io])          ;; => Import clojure.java.io (aliased as io)
+(require '[clojure.java.io :as io])
 
 ;; Write to file
-(spit "data.txt" "Hello, World!")            ;; => Write string to file (overwrites if exists)
-                                             ;; => Creates file data.txt in current directory
-                                             ;; => Content: "Hello, World!"
-                                             ;; => nil (spit returns nil)
+(spit "data.txt" "Hello, World!")            ;; => Writes to data.txt
 
 ;; Append to file
-(spit "data.txt" "\nNew line" :append true)  ;; => Append string to existing file
-                                             ;; => :append true prevents overwrite
-                                             ;; => Adds "\nNew line" to end
-                                             ;; => Content now: "Hello, World!\nNew line"
-                                             ;; => nil
+(spit "data.txt" "\nNew line" :append true)  ;; => Appends to file
 
 ;; Read from file
-(println (slurp "data.txt"))                 ;; => Read entire file as string
-                                             ;; => slurp loads full content into memory
-                                             ;; => Returns "Hello, World!\nNew line"
-                                             ;; => Output: Hello, World!
+(println (slurp "data.txt"))                 ;; => Output: Hello, World!
                                              ;; => Output: New line
-                                             ;; => nil (println returns nil)
 
 ;; Line-by-line reading
-(with-open [rdr (io/reader "data.txt")]      ;; => Open reader (auto-closes after block)
-                                             ;; => rdr is BufferedReader
-  (doseq [line (line-seq rdr)]               ;; => line-seq creates lazy sequence of lines
-                                             ;; => Reads lines on demand (memory efficient)
-                                             ;; => doseq iterates: line="Hello, World!", line="New line"
+(with-open [rdr (io/reader "data.txt")]
+  (doseq [line (line-seq rdr)]               ;; => Lazy sequence of lines
     (println "Line:" line)))                 ;; => Output: Line: Hello, World!
                                              ;; => Output: Line: New line
-                                             ;; => nil
-                                             ;; => rdr auto-closed after doseq
 
 ;; Write lines
 (with-open [wtr (io/writer "output.txt")]    ;; => Open writer (auto-closes after block)
@@ -1643,65 +1158,29 @@ Advanced atom usage patterns for complex state management.
 
 ```clojure
 ;; Atom with validators
-(def positive-count                          ;; => Create atom with validator
-  (atom 0                                    ;; => Initial value 0
-    :validator pos-int?))                    ;; => Validator function: only positive integers allowed
-                                             ;; => pos-int? checks value > 0
-                                             ;; => positive-count is atom with validator
+(def positive-count
+  (atom 0 :validator pos-int?))              ;; => Only positive integers allowed
 
-(reset! positive-count 5)                    ;; => Set atom to 5
-                                             ;; => Validator (pos-int? 5) returns true
-                                             ;; => Allowed, atom value now 5
-                                             ;; => 5 (returns new value)
+(reset! positive-count 5)                    ;; => Sets to 5 (validated)
 
-;; (reset! positive-count -1)                ;; => Attempt to set to -1
-                                             ;; => Validator (pos-int? -1) returns false
-                                             ;; => Throws IllegalStateException: Invalid reference state
-                                             ;; => Atom value unchanged (still 5)
+;; (reset! positive-count -1)                ;; => Throws: validator rejects negative values
 
 ;; Atom with watchers
-(def watched-atom (atom 0))                  ;; => Create atom with initial value 0
-                                             ;; => watched-atom is atom object
+(def watched-atom (atom 0))
 
-(add-watch watched-atom :logger              ;; => Add watcher with key :logger
-                                             ;; => Watcher function called on every state change
-  (fn [key ref old-val new-val]              ;; => Watcher function (4 args)
-                                             ;; => key: :logger (watcher identifier)
-                                             ;; => ref: atom object
-                                             ;; => old-val: previous value
-                                             ;; => new-val: new value
-    (println "Changed from" old-val "to" new-val))) ;; => Print state transition
-                                             ;; => #atom[0 0x...]
+(add-watch watched-atom :logger
+  (fn [key ref old-val new-val]
+    (println "Changed from" old-val "to" new-val)))
 
-(reset! watched-atom 10)                     ;; => Set atom to 10
-                                             ;; => Watcher triggered: old-val=0, new-val=10
-                                             ;; => Output: Changed from 0 to 10
-                                             ;; => 10 (returns new value)
-
-(swap! watched-atom inc)                     ;; => Increment atom atomically
-                                             ;; => (inc 10) → 11
-                                             ;; => Watcher triggered: old-val=10, new-val=11
-                                             ;; => Output: Changed from 10 to 11
-                                             ;; => 11
-
-(remove-watch watched-atom :logger)          ;; => Remove watcher by key
-                                             ;; => :logger watcher no longer active
-                                             ;; => Future changes won't trigger logging
-                                             ;; => #atom[11 0x...]
+(reset! watched-atom 10)                     ;; => Output: Changed from 0 to 10
+(swap! watched-atom inc)                     ;; => Output: Changed from 10 to 11
+(remove-watch watched-atom :logger)
 
 ;; Compare and set
-(def counter (atom 0))                       ;; => Create atom with initial value 0
-                                             ;; => counter is atom object
+(def counter (atom 0))
 
-(compare-and-set! counter 0 1)               ;; => Compare-and-set: if current=0, set to 1
-                                             ;; => Current value is 0 (matches)
-                                             ;; => Sets counter to 1 atomically
-                                             ;; => true (successful)
-
-(compare-and-set! counter 0 2)               ;; => Compare-and-set: if current=0, set to 2
-                                             ;; => Current value is 1 (does NOT match 0)
-                                             ;; => Does NOT change counter (still 1)
-                                             ;; => false (failed comparison)
+(compare-and-set! counter 0 1)               ;; => true (value matched, set to 1)
+(compare-and-set! counter 0 2)               ;; => false (value 1 doesn't match 0)
 ```
 
 **Key Takeaway**: Validators enforce constraints; watchers enable reactive updates; compare-and-set provides CAS semantics.
@@ -1713,66 +1192,39 @@ Advanced atom usage patterns for complex state management.
 Clojure sets support relational algebra operations.
 
 ```clojure
-(require '[clojure.set :as set])             ;; => Import clojure.set library (aliased as set)
+(require '[clojure.set :as set])
 
-(def set1 #{1 2 3 4})                        ;; => Define set with elements 1, 2, 3, 4
-                                             ;; => set1 is #{1 2 3 4}
-
-(def set2 #{3 4 5 6})                        ;; => Define set with elements 3, 4, 5, 6
-                                             ;; => set2 is #{3 4 5 6}
+(def set1 #{1 2 3 4})
+(def set2 #{3 4 5 6})
 
 ;; Union
-(set/union set1 set2)                        ;; => Union: all elements from both sets
-                                             ;; => Combines {1 2 3 4} ∪ {3 4 5 6}
-                                             ;; => #{1 2 3 4 5 6} (duplicates removed)
+(set/union set1 set2)                        ;; => #{1 2 3 4 5 6}
 
 ;; Intersection
-(set/intersection set1 set2)                 ;; => Intersection: common elements
-                                             ;; => {1 2 3 4} ∩ {3 4 5 6}
-                                             ;; => #{3 4} (only elements in both sets)
+(set/intersection set1 set2)                 ;; => #{3 4}
 
 ;; Difference
-(set/difference set1 set2)                   ;; => Difference: elements in set1 but not set2
-                                             ;; => {1 2 3 4} - {3 4 5 6}
-                                             ;; => #{1 2} (elements unique to set1)
+(set/difference set1 set2)                   ;; => #{1 2}
 
 ;; Relational operations
 (def users #{{:id 1 :name "Alice" :dept "IT"}
              {:id 2 :name "Bob" :dept "HR"}
              {:id 3 :name "Charlie" :dept "IT"}})
-                                             ;; => Set of user maps (table-like structure)
-                                             ;; => 3 user records
 
 (def depts #{{:dept "IT" :budget 100000}
-             {:dept "HR" :budget 50000}})    ;; => Set of department maps
-                                             ;; => 2 department records
+             {:dept "HR" :budget 50000}})
 
 ;; Join
-(set/join users depts)                       ;; => Natural join on common key :dept
-                                             ;; => Matches users and depts where :dept values equal
-                                             ;; => Result: [{:id 1, :name "Alice", :dept "IT", :budget 100000},
-                                             ;; =>          {:id 2, :name "Bob", :dept "HR", :budget 50000},
-                                             ;; =>          {:id 3, :name "Charlie", :dept "IT", :budget 100000}]
+(set/join users depts)                       ;; => Joins on :dept key
 
 ;; Select (filter)
-(set/select #(= (:dept %) "IT") users)       ;; => Filter users where :dept is "IT"
-                                             ;; => Predicate function: (= (:dept map) "IT")
-                                             ;; => Returns #{{:id 1, :name "Alice", :dept "IT"},
-                                             ;; =>           {:id 3, :name "Charlie", :dept "IT"}}
+(set/select #(= (:dept %) "IT") users)       ;; => Filters to IT department
 
 ;; Project (column selection)
-(set/project users [:name :dept])            ;; => Select only :name and :dept columns
-                                             ;; => Drops :id key from each map
-                                             ;; => Returns #{{:name "Alice", :dept "IT"},
-                                             ;; =>           {:name "Bob", :dept "HR"},
-                                             ;; =>           {:name "Charlie", :dept "IT"}}
+(set/project users [:name :dept])            ;; => Keeps only name and dept columns
 
 ;; Rename
-(set/rename users {:name :full-name})        ;; => Rename :name key to :full-name
-                                             ;; => {:name "Alice"} becomes {:full-name "Alice"}
-                                             ;; => Returns #{{:id 1, :full-name "Alice", :dept "IT"},
-                                             ;; =>           {:id 2, :full-name "Bob", :dept "HR"},
-                                             ;; =>           {:id 3, :full-name "Charlie", :dept "IT"}}
+(set/rename users {:name :full-name})        ;; => Renames :name to :full-name
 ```
 
 **Key Takeaway**: Set operations provide relational algebra for in-memory data manipulation.
@@ -1782,3 +1234,4 @@ Clojure sets support relational algebra operations.
 ## Summary
 
 Intermediate Clojure (examples 28-54) covers production patterns for real-world development: multimethods and protocols for polymorphism, macros for metaprogramming, STM and async coordination, core.async for CSP-style concurrency, spec for validation, transducers for efficient transformations, comprehensive error handling, lazy sequences, testing, dependency management, and advanced Java interop. Master these patterns to write maintainable, concurrent Clojure applications operating at 75% language coverage.
+````

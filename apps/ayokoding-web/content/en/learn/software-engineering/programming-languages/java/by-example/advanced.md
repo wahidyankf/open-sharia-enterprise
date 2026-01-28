@@ -379,61 +379,132 @@ graph TD
 import java.util.concurrent.*;
 
 // CountDownLatch - wait for multiple events
-CountDownLatch latch = new CountDownLatch(3); // Wait for 3 events
+CountDownLatch latch = new CountDownLatch(3);
+                                 // => Creates latch with count = 3
+                                 // => Latch starts with internal counter at 3
+                                 // => Thread calling await() blocks until count reaches 0
+                                 // => One-time use: cannot reset after reaching 0
 
 // Worker threads count down
 for (int i = 0; i < 3; i++) {
-    int taskId = i;
-    new Thread(() -> {
+                                 // => Creates 3 worker threads
+                                 // => Each thread will decrement latch counter
+    int taskId = i;              // => Capture loop variable for lambda
+                                 // => Effectively final for lambda closure
+    new Thread(() -> {           // => Creates and starts new worker thread
+                                 // => Lambda runs in separate thread
         System.out.println("Task " + taskId + " starting");
+                                 // => Output: "Task 0 starting", "Task 1 starting", etc.
+                                 // => Order non-deterministic (thread scheduling)
         try { Thread.sleep(1000); } catch (InterruptedException e) {}
+                                 // => Simulates 1 second of work
+                                 // => Sleep may be interrupted (cooperative cancellation)
         System.out.println("Task " + taskId + " done");
-        latch.countDown(); // Decrement count
-    }).start();
+                                 // => Output: "Task 0 done", etc. after ~1 second
+                                 // => Signals work completion
+        latch.countDown();       // => Decrements latch counter by 1
+                                 // => Atomic operation: thread-safe decrement
+                                 // => When counter reaches 0, releases all waiting threads
+                                 // => Does NOT block: decrements and returns immediately
+    }).start();                  // => Starts thread execution
+                                 // => start() returns immediately (non-blocking)
 }
 
 // Main thread waits for all tasks
-latch.await(); // Blocks until count reaches 0
-System.out.println("All tasks completed!"); // Prints after all 3 tasks done
+latch.await();                   // => Blocks current thread until count reaches 0
+                                 // => Waits for all 3 countDown() calls
+                                 // => Can throw InterruptedException (not caught here)
+                                 // => After release: main thread continues execution
+System.out.println("All tasks completed!");
+                                 // => Output: "All tasks completed!" after all 3 tasks finish
+                                 // => Guaranteed to print AFTER all "Task N done" messages
+                                 // => Coordination primitive ensures happens-after relationship
 
 // CyclicBarrier - synchronize threads at barrier
 CyclicBarrier barrier = new CyclicBarrier(3, () -> {
-    System.out.println("All threads reached barrier!"); // Barrier action
-});
+                                 // => Creates barrier for 3 threads (parties)
+                                 // => Second argument: barrier action (runs when all threads arrive)
+                                 // => Barrier action executes in last thread to arrive
+    System.out.println("All threads reached barrier!");
+                                 // => Output: "All threads reached barrier!" when all 3 threads call await()
+                                 // => Prints ONCE per barrier cycle
+                                 // => Runs before any thread continues past barrier
+});                              // => Barrier is reusable after all threads pass
 
 // Threads wait at barrier
 for (int i = 0; i < 3; i++) {
-    int threadId = i;
-    new Thread(() -> {
+                                 // => Creates 3 threads for barrier synchronization
+    int threadId = i;            // => Capture loop variable for lambda
+                                 // => Effectively final for closure
+    new Thread(() -> {           // => Creates new thread with lambda runnable
         try {
             System.out.println("Thread " + threadId + " working");
-            Thread.sleep(1000);
+                                 // => Output: "Thread 0 working", etc.
+                                 // => Order non-deterministic
+            Thread.sleep(1000);  // => Simulates 1 second of work
+                                 // => Each thread works independently before barrier
             System.out.println("Thread " + threadId + " waiting at barrier");
-            barrier.await(); // Wait for all threads
+                                 // => Output: "Thread 0 waiting at barrier", etc.
+                                 // => Signals thread arrival at synchronization point
+            barrier.await();     // => Blocks until all 3 threads call await()
+                                 // => When last thread arrives, barrier action runs
+                                 // => Then ALL threads released simultaneously
+                                 // => Barrier resets automatically for next cycle
             System.out.println("Thread " + threadId + " continues after barrier");
-        } catch (Exception e) {}
-    }).start();
+                                 // => Output: "Thread 0 continues after barrier", etc.
+                                 // => All 3 messages print nearly simultaneously
+                                 // => Happens-after relationship with barrier action
+        } catch (Exception e) {} // => Catches InterruptedException, BrokenBarrierException
+                                 // => BrokenBarrierException if another thread interrupted
+    }).start();                  // => Starts thread execution
 }
 
 // Barrier can be reused (cyclic)
+                                 // => "Cyclic" means barrier resets after all threads pass
+                                 // => Same barrier can coordinate multiple rounds
+                                 // => Unlike CountDownLatch (one-time use only)
 // After all threads pass, barrier resets for next use
+                                 // => Internal count returns to 3 (parties value)
+                                 // => Ready for next synchronization round
 
 // Semaphore - control access to limited resources
-Semaphore semaphore = new Semaphore(2); // Allow 2 concurrent accesses
+Semaphore semaphore = new Semaphore(2);
+                                 // => Creates semaphore with 2 permits
+                                 // => Allows 2 threads to acquire permit simultaneously
+                                 // => Third thread blocks until permit released
+                                 // => Fair=false (default): no FIFO guarantee
 
-Runnable task = () -> {
+Runnable task = () -> {          // => Task definition (runs in each thread)
     try {
-        semaphore.acquire(); // Acquire permit (blocks if none available)
+        semaphore.acquire();     // => Acquires 1 permit from semaphore
+                                 // => Blocks if no permits available (waits for release)
+                                 // => Decrements available permits by 1
+                                 // => Throws InterruptedException if interrupted while waiting
         System.out.println(Thread.currentThread().getName() + " acquired permit");
-        Thread.sleep(2000); // Simulate work
+                                 // => Output: "Thread-0 acquired permit", etc.
+                                 // => At most 2 threads print this simultaneously
+                                 // => Third thread waits until one releases
+        Thread.sleep(2000);      // => Simulates 2 seconds of work with permit
+                                 // => Holds permit for 2 seconds (resource usage)
         System.out.println(Thread.currentThread().getName() + " releasing permit");
-        semaphore.release(); // Release permit
+                                 // => Output: "Thread-0 releasing permit", etc.
+                                 // => Signals permit about to be returned
+        semaphore.release();     // => Releases permit back to semaphore
+                                 // => Increments available permits by 1
+                                 // => Unblocks one waiting thread (if any)
+                                 // => MUST match acquire (no try-finally = leak risk)
     } catch (InterruptedException e) {}
+                                 // => Catches interrupt during acquire() or sleep()
 };
 
 // 5 threads compete for 2 permits
 for (int i = 0; i < 5; i++) {
+                                 // => Creates 5 threads competing for 2 permits
+                                 // => Threads 0-1 acquire immediately
+                                 // => Threads 2-4 wait until permit available
     new Thread(task, "Thread-" + i).start();
+                                 // => Starts thread with custom name "Thread-0", etc.
+                                 // => All threads execute same task runnable
 }
 ```
 
@@ -756,87 +827,171 @@ Enums are type-safe constants that can have fields, methods, and constant-specif
 
 ```java
 // Basic enum
-enum Day {
+enum Day {                       // => Defines enum type Day
+                                 // => Enum class implicitly extends java.lang.Enum
+                                 // => Cannot extend other classes (single inheritance)
     MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
+                                 // => Enum constants (instances of Day)
+                                 // => Created once at class loading (singletons)
+                                 // => Implicitly public static final
 }
 
-Day today = Day.MONDAY;
-System.out.println(today); // => MONDAY
-System.out.println(today.ordinal()); // => 0 (position in enum)
+Day today = Day.MONDAY;          // => References MONDAY constant
+                                 // => Type-safe: can only assign Day enum values
+                                 // => Cannot be null unless explicitly assigned
+System.out.println(today);       // => Calls toString(): "MONDAY"
+                                 // => Output: MONDAY
+                                 // => toString() returns constant name by default
+System.out.println(today.ordinal());
+                                 // => Returns position in enum declaration (0-based)
+                                 // => Output: 0 (MONDAY is first constant)
+                                 // => TUESDAY.ordinal() would be 1, etc.
 
 // Enum with fields and methods
-enum Planet {
-    MERCURY(3.303e23, 2.4397e6),
-    VENUS(4.869e24, 6.0518e6),
-    EARTH(5.976e24, 6.37814e6),
-    MARS(6.421e23, 3.3972e6);
+enum Planet {                    // => Enum with instance fields and methods
+    MERCURY(3.303e23, 2.4397e6), // => Calls constructor Planet(double, double)
+                                 // => mass = 3.303e23 kg, radius = 2.4397e6 m
+                                 // => Each constant is separate instance with own fields
+    VENUS(4.869e24, 6.0518e6),   // => Venus instance with different mass/radius
+    EARTH(5.976e24, 6.37814e6),  // => Earth instance
+    MARS(6.421e23, 3.3972e6);    // => Mars instance (semicolon required before members)
 
-    private final double mass; // kg
-    private final double radius; // meters
+    private final double mass;   // => Instance field (each constant has own)
+                                 // => Final: immutable after construction
+                                 // => Private: encapsulated (accessible via methods)
+    private final double radius; // => Radius in meters
+                                 // => All enum constants have these fields
 
     // Constructor (always private)
     Planet(double mass, double radius) {
-        this.mass = mass;
-        this.radius = radius;
+                                 // => Constructor implicitly private (cannot be public)
+                                 // => Called once per constant during class loading
+                                 // => Cannot create new Planet instances externally
+        this.mass = mass;        // => Initializes instance field
+                                 // => Each constant stores its own mass
+        this.radius = radius;    // => Initializes radius field
+                                 // => Fields immutable after constructor completes
     }
 
     public double surfaceGravity() {
+                                 // => Instance method (each constant can call)
+                                 // => Calculates gravity using this constant's mass/radius
         final double G = 6.67300E-11;
+                                 // => Gravitational constant (m³/kg·s²)
+                                 // => Final local variable
         return G * mass / (radius * radius);
+                                 // => Newton's law: g = GM/r²
+                                 // => Returns gravity in m/s²
     }
 
     public double surfaceWeight(double otherMass) {
+                                 // => Calculates weight on this planet's surface
+                                 // => otherMass in kg
         return otherMass * surfaceGravity();
+                                 // => Weight = mass × gravity
+                                 // => Returns weight in Newtons
     }
 }
 
-double earthWeight = 75.0; // kg
-double marsWeight = Planet.MARS.surfaceWeight(earthWeight); // => ~28.4 kg
+double earthWeight = 75.0;       // => Person's weight on Earth (kg)
+                                 // => Will calculate equivalent weight on Mars
+double marsWeight = Planet.MARS.surfaceWeight(earthWeight);
+                                 // => Calls MARS instance's surfaceWeight method
+                                 // => MARS.surfaceGravity() ≈ 3.71 m/s²
+                                 // => Result: 75 × 3.71 ≈ 28.4 kg
+                                 // => Output: ~28.4 (Mars gravity is 38% of Earth's)
 
 // Enum with abstract methods (constant-specific behavior)
-enum Operation {
-    PLUS {
-        @Override
+enum Operation {                 // => Enum with constant-specific method implementations
+    PLUS {                       // => Anonymous class body for PLUS constant
+        @Override                // => Overrides abstract apply method
         public double apply(double x, double y) { return x + y; }
+                                 // => PLUS-specific implementation: addition
+                                 // => This implementation only for PLUS constant
     },
-    MINUS {
+    MINUS {                      // => MINUS constant with subtraction implementation
         @Override
         public double apply(double x, double y) { return x - y; }
+                                 // => MINUS-specific: subtraction
     },
-    TIMES {
+    TIMES {                      // => TIMES constant with multiplication
         @Override
         public double apply(double x, double y) { return x * y; }
+                                 // => TIMES-specific: multiplication
     },
-    DIVIDE {
+    DIVIDE {                     // => DIVIDE constant with division
         @Override
         public double apply(double x, double y) { return x / y; }
+                                 // => DIVIDE-specific: division (no zero check)
     };
 
     public abstract double apply(double x, double y);
+                                 // => Abstract method: each constant must implement
+                                 // => Forces constant-specific behavior
+                                 // => Enables polymorphism via enum constants
 }
 
-double result = Operation.PLUS.apply(5, 3); // => 8.0
-double product = Operation.TIMES.apply(4, 7); // => 28.0
+double result = Operation.PLUS.apply(5, 3);
+                                 // => Calls PLUS constant's apply implementation
+                                 // => Returns 5 + 3 = 8.0
+                                 // => Output: 8.0
+double product = Operation.TIMES.apply(4, 7);
+                                 // => Calls TIMES constant's apply implementation
+                                 // => Returns 4 × 7 = 28.0
+                                 // => Output: 28.0
 
 // Enum methods
-Day[] days = Day.values(); // => [MONDAY, TUESDAY, ...]
-Day day = Day.valueOf("FRIDAY"); // => FRIDAY
+Day[] days = Day.values();       // => Returns array of all enum constants
+                                 // => Returns: [MONDAY, TUESDAY, ..., SUNDAY]
+                                 // => New array each call (defensive copy)
+                                 // => Order matches declaration order
+Day day = Day.valueOf("FRIDAY"); // => Converts string to enum constant
+                                 // => Case-sensitive: must exactly match constant name
+                                 // => Returns: Day.FRIDAY
+                                 // => Throws IllegalArgumentException if name invalid
 
 // Switch with enum (exhaustive in modern Java)
 String typeOfDay = switch (today) {
+                                 // => Switch expression (Java 14+)
+                                 // => Returns value assigned to typeOfDay
+                                 // => Compiler checks exhaustiveness for enums
     case MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY -> "Weekday";
+                                 // => Multiple cases with arrow syntax
+                                 // => Returns: "Weekday" for any weekday
+                                 // => No fall-through (arrow syntax)
     case SATURDAY, SUNDAY -> "Weekend";
-};
+                                 // => Handles weekend cases
+                                 // => Returns: "Weekend"
+                                 // => All 7 days covered: exhaustive
+};                               // => Semicolon required for switch expression
+                                 // => Compiler enforces: all enum constants handled
 
 // EnumSet - efficient set implementation for enums
 import java.util.*;
 EnumSet<Day> weekend = EnumSet.of(Day.SATURDAY, Day.SUNDAY);
+                                 // => Creates EnumSet with SATURDAY and SUNDAY
+                                 // => Internally uses bit vector (very efficient)
+                                 // => EnumSet faster than HashSet for enums
+                                 // => No nulls allowed
 EnumSet<Day> weekdays = EnumSet.range(Day.MONDAY, Day.FRIDAY);
+                                 // => Creates EnumSet with range (inclusive)
+                                 // => Contains: MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY
+                                 // => Uses ordinal values for range calculation
+                                 // => O(1) operations due to bit vector
 
 // EnumMap - efficient map with enum keys
 EnumMap<Day, String> schedule = new EnumMap<>(Day.class);
+                                 // => Creates EnumMap with Day keys
+                                 // => Requires enum class token for initialization
+                                 // => Internally uses array (faster than HashMap)
+                                 // => Maintains natural enum order
 schedule.put(Day.MONDAY, "Team meeting");
+                                 // => Maps MONDAY to "Team meeting"
+                                 // => O(1) put operation (array-based)
+                                 // => schedule.get(MONDAY) returns "Team meeting"
 schedule.put(Day.WEDNESDAY, "Code review");
+                                 // => Maps WEDNESDAY to "Code review"
+                                 // => Null values allowed, null keys not allowed
 ```
 
 **Key Takeaway**: Enums are type-safe constants with fields, methods, and constructors. Constant-specific behavior via abstract methods enables polymorphism. `values()` and `valueOf()` provide iteration and lookup. `EnumSet` and `EnumMap` offer efficient enum-based collections.
@@ -871,89 +1026,190 @@ graph TD
 ```java
 // Sealed class - restricted inheritance hierarchy
 sealed class Shape permits Circle, Rectangle, Triangle {
+                                 // => sealed keyword restricts which classes can extend Shape
+                                 // => permits clause lists allowed subclasses explicitly
+                                 // => Compiler enforces: only Circle, Rectangle, Triangle can extend
+                                 // => Enables exhaustive pattern matching (all subtypes known)
     // Only Circle, Rectangle, Triangle can extend Shape
+                                 // => Attempting to create other subclasses causes compile error
+                                 // => Permits must be in same module or package
 }
 
 // Permitted subclasses must be final, sealed, or non-sealed
 final class Circle extends Shape {
-    private final double radius;
+                                 // => final: Circle cannot be further subclassed
+                                 // => Required choice for sealed subclass
+                                 // => Closes inheritance hierarchy at this level
+    private final double radius; // => Immutable field (final)
     public Circle(double radius) { this.radius = radius; }
+                                 // => Constructor initializes immutable radius
+                                 // => this.radius cannot change after construction
     public double area() { return Math.PI * radius * radius; }
+                                 // => Calculates circle area: πr²
+                                 // => Uses Math.PI constant (≈ 3.14159...)
 }
 
 final class Rectangle extends Shape {
+                                 // => final: Rectangle cannot be subclassed
+                                 // => Second permitted subclass of Shape
     private final double width, height;
+                                 // => Two immutable fields
+                                 // => Compact field declaration (both final double)
     public Rectangle(double width, double height) {
-        this.width = width;
-        this.height = height;
+                                 // => Constructor for rectangle dimensions
+        this.width = width;      // => Initializes width field
+        this.height = height;    // => Initializes height field
     }
     public double area() { return width * height; }
+                                 // => Rectangle area: width × height
 }
 
 non-sealed class Triangle extends Shape {
+                                 // => non-sealed: Triangle CAN be further subclassed
+                                 // => Opens inheritance hierarchy at this level
+                                 // => Allows external classes to extend Triangle
     // non-sealed: allows further subclassing
+                                 // => RightTriangle, IsoscelesTriangle, etc. can extend Triangle
+                                 // => Breaks sealed constraint intentionally
     private final double base, height;
+                                 // => Triangle dimensions (immutable)
     public Triangle(double base, double height) {
-        this.base = base;
-        this.height = height;
+                                 // => Constructor for triangle dimensions
+        this.base = base;        // => Base of triangle
+        this.height = height;    // => Height of triangle
     }
     public double area() { return 0.5 * base * height; }
+                                 // => Triangle area: ½ × base × height
 }
 
 // Pattern matching for instanceof (Java 16+)
-Object obj = "Hello";
-if (obj instanceof String s) {
+Object obj = "Hello";            // => Object reference to String instance
+                                 // => Runtime type is String, compile-time type is Object
+if (obj instanceof String s) {   // => instanceof with pattern variable
+                                 // => Tests if obj is String AND assigns to s
+                                 // => s is automatically cast to String
+                                 // => No explicit cast needed: (String) obj
     // s is automatically cast to String in this scope
-    System.out.println(s.toUpperCase()); // => "HELLO"
+                                 // => s is String type, not Object
+                                 // => Scope: s available only in if block
+    System.out.println(s.toUpperCase());
+                                 // => Calls String.toUpperCase() directly on s
+                                 // => Output: "HELLO"
+                                 // => No ClassCastException risk (already verified by instanceof)
 }
 
 // Pattern matching with sealed classes
-Shape shape = new Circle(5.0);
+Shape shape = new Circle(5.0);   // => Creates Circle with radius 5.0
+                                 // => Shape reference (polymorphism)
+                                 // => Runtime type is Circle
 
 // Switch pattern matching (Java 17+, enhanced in Java 21)
-double area = switch (shape) {
+double area = switch (shape) {   // => Switch on sealed type (exhaustive)
+                                 // => Compiler knows all subtypes: Circle, Rectangle, Triangle
+                                 // => No default case needed (exhaustive)
     case Circle c -> Math.PI * c.radius * c.radius;
+                                 // => Pattern variable c (type Circle)
+                                 // => Direct access to c.radius (no cast)
+                                 // => Returns πr² for circles
     case Rectangle r -> r.width * r.height;
+                                 // => Pattern variable r (type Rectangle)
+                                 // => Returns width × height for rectangles
     case Triangle t -> 0.5 * t.base * t.height;
+                                 // => Pattern variable t (type Triangle)
+                                 // => Returns ½bh for triangles
     // Exhaustive: compiler knows all possible subtypes
-};
+                                 // => All Shape subtypes covered
+                                 // => Compile error if any subtype missing
+};                               // => Switch expression returns double
+                                 // => area = calculated area value
 
 // Pattern matching with guards (Java 21+)
 String description = switch (shape) {
+                                 // => Switch with guard conditions (when clause)
+                                 // => More specific cases checked first
     case Circle c when c.radius > 10 -> "Large circle";
+                                 // => Guard: c.radius > 10 must be true
+                                 // => Returns "Large circle" if radius > 10
+                                 // => Falls through to next Circle case if false
     case Circle c -> "Small circle";
+                                 // => Catches all other Circle cases (radius ≤ 10)
+                                 // => Returns "Small circle"
     case Rectangle r when r.width == r.height -> "Square";
+                                 // => Guard: width == height (square detection)
+                                 // => Returns "Square" for rectangles with equal sides
     case Rectangle r -> "Rectangle";
+                                 // => Catches non-square rectangles
     case Triangle t -> "Triangle";
-};
+                                 // => All triangles (no guard)
+};                               // => description = matched string value
 
 // Record patterns (Java 19+, finalized in Java 21)
-record Point(int x, int y) {}
+record Point(int x, int y) {}    // => Record with x, y components
+                                 // => Auto-generates constructor, getters, equals, hashCode
+                                 // => Immutable: components final
 
-Object point = new Point(10, 20);
+Object point = new Point(10, 20);// => Creates Point(10, 20)
+                                 // => Reference type Object (upcasting)
 if (point instanceof Point(int x, int y)) {
-    System.out.println("x: " + x + ", y: " + y); // => x: 10, y: 20
+                                 // => Record pattern: destructures Point into x, y
+                                 // => Checks if point is Point AND extracts components
+                                 // => x = 10, y = 20 (pattern variables)
+                                 // => No need for point.x(), point.y() calls
+    System.out.println("x: " + x + ", y: " + y);
+                                 // => Direct access to destructured variables
+                                 // => Output: "x: 10, y: 20"
 }
 
 // Nested record patterns
 record ColoredPoint(Point point, String color) {}
+                                 // => Record containing another record
+                                 // => point field is Point type
+                                 // => color field is String type
 
 Object cp = new ColoredPoint(new Point(5, 10), "red");
+                                 // => Creates ColoredPoint with nested Point
+                                 // => cp.point() returns Point(5, 10)
+                                 // => cp.color() returns "red"
 if (cp instanceof ColoredPoint(Point(int x, int y), String color)) {
+                                 // => Nested record pattern: destructures TWO levels
+                                 // => First level: ColoredPoint → Point, String
+                                 // => Second level: Point → int x, int y
+                                 // => Pattern variables: x, y, color
     System.out.println("Point at (" + x + ", " + y + ") is " + color);
-    // => Point at (5, 10) is red
+                                 // => Accesses x, y, color directly (no getters)
+                                 // => Output: "Point at (5, 10) is red"
 }
 
 // Sealed interfaces
 sealed interface Result permits Success, Failure {}
+                                 // => Sealed interface (Java 17+)
+                                 // => Only Success and Failure can implement Result
+                                 // => Enables exhaustive switch on Result type
 record Success(String data) implements Result {}
+                                 // => Success record implements Result
+                                 // => Implicitly final (records cannot be extended)
+                                 // => data field accessible via data() getter
 record Failure(String error) implements Result {}
+                                 // => Failure record implements Result
+                                 // => error field accessible via error() getter
 
 Result result = new Success("Data loaded");
+                                 // => Creates Success with "Data loaded"
+                                 // => Result reference (polymorphism)
+                                 // => Runtime type is Success
 String message = switch (result) {
+                                 // => Switch on sealed interface Result
+                                 // => Exhaustive: Success and Failure are only implementations
     case Success(String data) -> "Success: " + data;
+                                 // => Record pattern on Success
+                                 // => Destructures: data = "Data loaded"
+                                 // => Returns "Success: Data loaded"
     case Failure(String error) -> "Error: " + error;
-};
+                                 // => Record pattern on Failure
+                                 // => Destructures: error = failure message
+                                 // => Returns "Error: " + error
+};                               // => message = "Success: Data loaded"
+                                 // => No default case needed (exhaustive)
 ```
 
 **Key Takeaway**: Sealed classes restrict inheritance with `sealed` and `permits`. Subclasses must be `final`, `sealed`, or `non-sealed`. Pattern matching for `instanceof` eliminates casts. Switch pattern matching enables exhaustive type checking. Record patterns destructure records in pattern matching.
@@ -970,67 +1226,142 @@ Modules provide stronger encapsulation than packages, enabling better dependency
 
 ```java
 // module-info.java in com.example.myapp module
-module com.example.myapp {
+module com.example.myapp {      // => Module declaration (must match directory structure)
+                                 // => File: module-info.java at module root
+                                 // => Module name: com.example.myapp (follows reverse domain convention)
     // Require other modules
-    requires java.base; // Implicit, always available
-    requires java.sql; // Explicit dependency on SQL module
-    requires transitive java.logging; // Transitive: consumers get logging too
+    requires java.base;          // => Dependency on java.base module
+                                 // => Implicit: all modules automatically require java.base
+                                 // => Contains core classes: Object, String, System, etc.
+    requires java.sql;           // => Explicit dependency on SQL module
+                                 // => Adds JDBC classes: Connection, Statement, etc.
+                                 // => Module graph: myapp → java.sql → java.base
+    requires transitive java.logging;
+                                 // => Transitive dependency on logging module
+                                 // => Modules requiring myapp also get java.logging
+                                 // => Implied readability: propagates dependency to consumers
 
     // Export packages (make them accessible to other modules)
-    exports com.example.myapp.api; // Public API
-    exports com.example.myapp.internal to com.example.test; // Qualified export
+    exports com.example.myapp.api;
+                                 // => Makes api package public to all modules
+                                 // => Classes in api package accessible via import
+                                 // => Non-exported packages remain internal (strong encapsulation)
+    exports com.example.myapp.internal to com.example.test;
+                                 // => Qualified export: only to com.example.test module
+                                 // => internal package accessible ONLY to test module
+                                 // => Enables white-box testing of internals
 
     // Open packages for reflection (for frameworks like Spring, Hibernate)
-    opens com.example.myapp.model; // Deep reflection allowed
-    opens com.example.myapp.entity to org.hibernate.orm; // Qualified open
+    opens com.example.myapp.model;
+                                 // => Allows deep reflection on model package
+                                 // => Frameworks can access private fields/methods via reflection
+                                 // => Needed for serialization, DI, ORM frameworks
+    opens com.example.myapp.entity to org.hibernate.orm;
+                                 // => Qualified open: reflection only for Hibernate
+                                 // => Restricts reflection access to specific framework
+                                 // => More secure than unconditional opens
 
     // Provide service implementation
     provides com.example.myapp.api.Service
+                                 // => Service provider declaration (SPI)
+                                 // => Service interface: com.example.myapp.api.Service
         with com.example.myapp.impl.ServiceImpl;
+                                 // => Implementation class: ServiceImpl
+                                 // => ServiceLoader can discover this implementation
+                                 // => Enables plugin architecture
 
     // Use service
     uses com.example.myapp.api.Service;
+                                 // => Service consumer declaration
+                                 // => Declares module will use ServiceLoader for Service
+                                 // => Not required but documents service usage
 }
 
 // Without modules (pre-Java 9), all public classes are globally accessible
+                                 // => Classpath: all public classes accessible everywhere
+                                 // => No encapsulation beyond public/private/protected
 // With modules, only exported packages are accessible
+                                 // => Module system: strong encapsulation at package level
+                                 // => Public classes in non-exported packages are inaccessible
 
 // Checking module from code
 Module module = String.class.getModule();
-System.out.println(module.getName()); // => "java.base"
-System.out.println(module.isNamed()); // => true
+                                 // => Gets module containing String class
+                                 // => Module reflection API (java.lang.Module)
+System.out.println(module.getName());
+                                 // => Prints: "java.base"
+                                 // => String is in java.base module (core module)
+System.out.println(module.isNamed());
+                                 // => Prints: true
+                                 // => Named module: has explicit module-info.java
+                                 // => Unnamed module: classpath code (no module-info)
 
 // Unnamed module (classpath code)
+                                 // => Code on classpath runs in unnamed module
+                                 // => Unnamed module can read all named modules
+                                 // => Named modules cannot read unnamed module (one-way)
 // Code on classpath runs in unnamed module, can access all modules
+                                 // => Enables gradual migration: mix classpath and modules
+                                 // => Unnamed module exports all packages (for compatibility)
 
 // Module layers and layers
 ModuleLayer bootLayer = ModuleLayer.boot();
+                                 // => Boot layer: contains platform modules (java.base, etc.)
+                                 // => All application modules in boot layer by default
+                                 // => ModuleLayer: container for set of modules
 Set<Module> modules = bootLayer.modules();
+                                 // => Gets all modules in boot layer
+                                 // => Returns Set<Module> (platform + application)
 modules.forEach(m -> System.out.println(m.getName()));
+                                 // => Prints all module names in boot layer
+                                 // => Output: java.base, java.sql, com.example.myapp, etc.
 
 // Creating custom runtime images with jlink
 // jlink --module-path $JAVA_HOME/jmods:mods --add-modules com.example.myapp --output customjre
+                                 // => jlink tool creates custom JRE
+                                 // => --module-path: where to find modules
+                                 // => --add-modules: root module to include
+                                 // => Transitive closure: includes all dependencies
 // Creates minimal JRE with only required modules
+                                 // => Only includes modules needed by myapp
+                                 // => Smaller JRE: ~50MB vs ~300MB full JDK
+                                 // => Faster startup: fewer modules to load
 
 // Module visibility example
 // In com.example.myapp.api package (exported):
-package com.example.myapp.api;
-public class PublicService {
+package com.example.myapp.api;   // => Exported package (public API)
+public class PublicService {     // => Public class in exported package
+                                 // => Accessible: other modules can import and use
     // Accessible to other modules
+                                 // => Methods, fields accessible per visibility (public/protected)
 }
 
 // In com.example.myapp.internal package (not exported):
 package com.example.myapp.internal;
-public class InternalUtil {
+                                 // => Non-exported package (internal implementation)
+public class InternalUtil {      // => Public class BUT in non-exported package
+                                 // => NOT accessible: even though public, package not exported
     // NOT accessible to other modules, even though public
+                                 // => Strong encapsulation: public doesn't mean globally accessible
     // Stronger encapsulation than package-private
+                                 // => Package-private: accessible in same package
+                                 // => Non-exported public: not accessible outside module
 }
 
 // Module benefits:
 // 1. Reliable configuration: missing dependencies detected at startup
+                                 // => Module system validates dependencies at startup
+                                 // => Fail fast: missing module causes immediate error
+                                 // => vs classpath: NoClassDefFoundError at runtime
 // 2. Strong encapsulation: internal packages truly internal
+                                 // => Non-exported packages inaccessible (even public classes)
+                                 // => Prevents accidental internal API usage
 // 3. Scalable: module graph prevents accidental dependencies
+                                 // => Explicit requires: no hidden dependencies
+                                 // => Prevents circular dependencies (compile error)
 // 4. Smaller deployments: jlink creates custom runtime images
+                                 // => Include only needed modules
+                                 // => Reduces deployment size significantly
 ```
 
 **Key Takeaway**: Modules provide stronger encapsulation via `module-info.java`. `requires` declares dependencies, `exports` makes packages accessible. `opens` allows deep reflection. `transitive` propagates dependencies. Modules enable reliable configuration and smaller runtime images with jlink.
@@ -1047,79 +1378,136 @@ public class InternalUtil {
 
 ```java
 // var for local variables (Java 10+)
-var message = "Hello"; // Inferred as String
-var count = 42; // Inferred as int
-var price = 19.99; // Inferred as double
+var message = "Hello";           // => Compiler infers type from initializer
+                                 // => Inferred type: String (from string literal)
+                                 // => Equivalent to: String message = "Hello";
+                                 // => Still statically typed (compile-time inference)
+var count = 42;                  // => Inferred as int (integer literal)
+                                 // => Not Integer (wrapper): primitives preferred for literals
+var price = 19.99;               // => Inferred as double (floating-point literal)
+                                 // => Not float: double is default for decimals
 
 // Works with generics (reduces verbosity)
-var list = new ArrayList<String>(); // Inferred as ArrayList<String>
-var map = new HashMap<String, Integer>(); // HashMap<String, Integer>
+var list = new ArrayList<String>();
+                                 // => Inferred as ArrayList<String>
+                                 // => Right side specifies generic type explicitly
+                                 // => Removes redundant type declaration on left
+var map = new HashMap<String, Integer>();
+                                 // => Inferred as HashMap<String, Integer>
+                                 // => Complex generic type: var improves readability
 
 // Diamond operator with var
-var names = new ArrayList<>(); // Inferred as ArrayList<Object> (be careful!)
-var scores = List.of(95, 87, 92); // Inferred as List<Integer>
+var names = new ArrayList<>();   // => Diamond operator <> with no type argument
+                                 // => Inferred as ArrayList<Object> (default generic)
+                                 // => Be careful! Loses type safety without explicit generic
+var scores = List.of(95, 87, 92);// => Inferred as List<Integer>
+                                 // => List.of() factory method provides Integer elements
+                                 // => Type inference from method return and arguments
 
 // var in loops
 var numbers = List.of(1, 2, 3, 4, 5);
-for (var num : numbers) { // num inferred as Integer
-    System.out.println(num);
+                                 // => Inferred as List<Integer>
+for (var num : numbers) {        // => Enhanced for loop with var
+                                 // => num inferred as Integer (from List<Integer>)
+                                 // => Compiler knows collection element type
+    System.out.println(num);     // => Output: 1, 2, 3, 4, 5
 }
 
-for (var i = 0; i < 10; i++) { // i inferred as int
-    System.out.println(i);
+for (var i = 0; i < 10; i++) {   // => Traditional for loop with var
+                                 // => i inferred as int (from literal 0)
+                                 // => Loop counter: int is appropriate
+    System.out.println(i);       // => Output: 0, 1, 2, ..., 9
 }
 
 // var with streams
-var stream = numbers.stream()
-    .filter(n -> n > 2)
-    .map(n -> n * 2); // Inferred as Stream<Integer>
+var stream = numbers.stream()    // => Stream<Integer> from List<Integer>
+    .filter(n -> n > 2)          // => Filter keeps Integer type
+    .map(n -> n * 2);            // => Map returns Integer (int * int = int)
+                                 // => Inferred type: Stream<Integer>
+                                 // => var avoids verbose Stream<Integer> declaration
 
 // When var improves readability
-var userRepository = new UserRepositoryImpl(); // Type obvious from right side
+var userRepository = new UserRepositoryImpl();
+                                 // => Type obvious from right side: UserRepositoryImpl
+                                 // => Constructor name clearly indicates type
+                                 // => var eliminates redundancy
 var configuration = ConfigurationLoader.load("config.json");
+                                 // => Type from method return: Configuration (presumably)
+                                 // => Method name suggests return type
 
 // When var reduces readability (avoid these)
-var data = process(); // What type is data? Unclear!
-var x = calculate(y); // What is x? Need to check calculate() return type
+var data = process();            // => What type is data? Not obvious from method name
+                                 // => Need to check process() signature
+                                 // => Avoid var when type unclear: reduces code clarity
+var x = calculate(y);            // => What is x? Single-letter name + unclear method
+                                 // => Need to check calculate() return type
+                                 // => Double readability problem: vague name + var
 
 // var limitations
 // Cannot use without initializer
-// var x; // ERROR: cannot infer type
+// var x;                        // => ERROR: cannot infer type without initializer
+                                 // => Compiler needs right-hand side to infer type
+                                 // => Inference requires assignment
 
 // Cannot use with null
-// var name = null; // ERROR: cannot infer from null
+// var name = null;              // => ERROR: cannot infer from null
+                                 // => null has no specific type (compatible with all reference types)
+                                 // => Ambiguous: could be any reference type
 
 // Cannot use for fields
 class Example {
-    // var field = "value"; // ERROR: var only for local variables
+    // var field = "value";       // => ERROR: var only for local variables
+                                 // => Fields require explicit type declaration
+                                 // => Class structure clarity: types should be visible
 }
 
 // Cannot use for method parameters
-// void method(var param) {} // ERROR
+// void method(var param) {}     // => ERROR: var not allowed for parameters
+                                 // => Method signatures require explicit types
+                                 // => API contract: parameter types must be explicit
 
 // Cannot use for method return types
-// var getValue() { return 42; } // ERROR
+// var getValue() { return 42; } // => ERROR: var not allowed for return types
+                                 // => Return type must be explicit in signature
+                                 // => Method contract: return type must be declared
 
 // var with method references
-var comparator = Comparator.comparing(String::length); // Comparator<String>
+var comparator = Comparator.comparing(String::length);
+                                 // => Inferred as Comparator<String>
+                                 // => Method reference String::length returns int
+                                 // => Comparator.comparing() returns Comparator<String>
 
 // var doesn't change semantics, only reduces verbosity
-var text = "Hello"; // Still statically typed as String
-// text = 42; // ERROR: incompatible types
+var text = "Hello";              // => Still statically typed as String
+                                 // => Type locked at compile time
+                                 // => Not dynamic typing (like JavaScript var)
+// text = 42;                    // => ERROR: incompatible types (int cannot be String)
+                                 // => Type checking enforced at compile time
+                                 // => var doesn't weaken type safety
 
 // Best practices
 // ✅ Use var when type is obvious from right-hand side
 var users = userService.getAllUsers();
+                                 // => Method name clearly suggests returns users
+                                 // => Improves readability: focus on logic, not types
 
 // ✅ Use var for complex generic types
 var result = new HashMap<String, List<Map<String, Object>>>();
+                                 // => Complex nested generics: verbose to repeat
+                                 // => Right side specifies full type clearly
+                                 // => var eliminates redundant left-side declaration
 
 // ❌ Avoid var when type isn't clear
-var value = compute(); // What type? Check method signature
+var value = compute();           // => Compute what? Type unclear
+                                 // => Better: explicit type or better variable name
+                                 // => Harms readability and maintainability
 
 // ❌ Avoid var for primitives when literal type unclear
-var flag = false; // Is it boolean or Boolean? Obvious here, but...
-var number = 1; // int or Integer or long? Better: int number = 1;
+var flag = false;                // => Inferred as boolean (not Boolean)
+                                 // => Obvious here, but ambiguity possible
+var number = 1;                  // => Inferred as int, but could be long
+                                 // => Better: int number = 1; (explicit primitive)
+                                 // => Clarity over brevity for primitive literals
 ```
 
 **Key Takeaway**: `var` infers local variable types from initializers, reducing boilerplate while preserving static typing. Use when types are obvious from context. Limited to local variables—not fields, parameters, or return types. Doesn't change semantics, only syntax.
@@ -1350,75 +1738,105 @@ import java.util.*;
 
 // Strong reference (default) - prevents GC
 String strong = new String("Cannot be collected while referenced");
-strong = null; // Now eligible for GC
+                                 // => Strong reference prevents GC
+                                 // => Object stays in memory while strong references exist
+strong = null;                   // => Removes strong reference
+                                 // => Object now eligible for GC
 
 // Soft reference - memory-sensitive caching
 class ImageCache {
     private Map<String, SoftReference<byte[]>> cache = new HashMap<>();
+                                 // => Map keys = cache keys (String)
+                                 // => Map values = SoftReference wrapping byte[] images
 
     public void addImage(String key, byte[] image) {
         cache.put(key, new SoftReference<>(image));
+                                 // => Wraps image in SoftReference
+                                 // => GC can collect image if memory pressure
     }
 
     public byte[] getImage(String key) {
         SoftReference<byte[]> ref = cache.get(key);
-        if (ref != null) {
+                                 // => Retrieves SoftReference from map
+        if (ref != null) {       // => Check if key exists in cache
             byte[] image = ref.get();
+                                 // => Extract wrapped image
+                                 // => Returns null if GC collected it
             if (image != null) {
-                return image; // Cache hit
+                return image;    // => Cache hit: image still in memory
             } else {
-                cache.remove(key); // Was collected, remove entry
+                cache.remove(key);
+                                 // => Image was collected, clean up map entry
             }
         }
-        return null; // Cache miss
+        return null;             // => Cache miss: key not found or collected
     }
 }
 
 // Soft references cleared only when heap is nearly full
+                                 // => JVM clears soft refs before OutOfMemoryError
 // Ideal for caches that can be regenerated
+                                 // => Data loss acceptable if memory needed
 
 // Weak reference - collected at next GC
 WeakReference<String> weak = new WeakReference<>(new String("Collected soon"));
-String value = weak.get();
+                                 // => Wraps new String in WeakReference
+                                 // => String collected at next GC regardless of memory
+String value = weak.get();       // => Retrieves wrapped object
+                                 // => Returns null if already collected
 if (value != null) {
-    System.out.println(value);
+    System.out.println(value);   // => Prints if object still alive
 } else {
     System.out.println("Already collected");
+                                 // => Prints if GC ran and collected object
 }
 
 // WeakHashMap - auto-remove entries when keys collected
 WeakHashMap<Object, String> weakMap = new WeakHashMap<>();
-Object key = new Object();
-weakMap.put(key, "value");
-System.out.println(weakMap.size()); // => 1
+                                 // => Map with weak keys
+                                 // => Entries auto-removed when key collected
+Object key = new Object();       // => Strong reference to key object
+weakMap.put(key, "value");       // => Add entry with weak key
+System.out.println(weakMap.size());
+                                 // => Output: 1 (entry present)
 
-key = null; // Key becomes weakly reachable
-System.gc(); // Suggest GC
-Thread.sleep(100); // Give GC time
-System.out.println(weakMap.size()); // => 0 (entry auto-removed)
+key = null;                      // => Remove strong reference
+                                 // => Key becomes weakly reachable (only weakMap holds it)
+System.gc();                     // => Suggest GC (may collect weakly reachable objects)
+Thread.sleep(100);               // => Wait for GC to run
+System.out.println(weakMap.size());
+                                 // => Output: 0 (entry auto-removed after key collected)
 
 // Phantom reference - for cleanup notification
 class ResourceWithCleanup {
     private static ReferenceQueue<ResourceWithCleanup> queue =
-        new ReferenceQueue<>();
+        new ReferenceQueue<>();  // => Queue receives phantom refs after finalization
+                                 // => Enables post-GC cleanup notifications
     private static Set<PhantomReference<ResourceWithCleanup>> refs =
-        new HashSet<>();
+        new HashSet<>();         // => Track all phantom refs to prevent collection
+                                 // => PhantomReference itself must be strongly reachable
 
     private String resourceId;
 
     ResourceWithCleanup(String id) {
         this.resourceId = id;
         refs.add(new PhantomReference<>(this, queue));
+                                 // => Register phantom ref for this instance
+                                 // => Added to queue after object finalized
     }
 
     static void cleanupThread() {
-        new Thread(() -> {
+        new Thread(() -> {       // => Background cleanup thread
             while (true) {
                 try {
-                    Reference<?> ref = queue.remove(); // Blocks until available
+                    Reference<?> ref = queue.remove();
+                                 // => Blocks until phantom ref added to queue
+                                 // => Indicates object finalized, ready for cleanup
                     // Object has been finalized, perform cleanup
                     System.out.println("Cleanup triggered");
+                                 // => Custom cleanup logic here
                     refs.remove(ref);
+                                 // => Remove from tracking set
                 } catch (InterruptedException e) {}
             }
         }).start();
@@ -1426,39 +1844,60 @@ class ResourceWithCleanup {
 }
 
 // Reference comparison
-Object obj = new Object();
+Object obj = new Object();       // => Strong reference to Object
 
 // Strong: obj -> Object (prevents GC)
+                                 // => obj is GC root, prevents collection
 SoftReference<Object> soft = new SoftReference<>(obj);
+                                 // => Soft reference to same Object
 // Soft: obj -> SoftRef -> Object (GC if memory pressure)
+                                 // => Object still protected by strong ref (obj)
+                                 // => If obj set to null, only soft ref remains
 
 WeakReference<Object> weak2 = new WeakReference<>(obj);
+                                 // => Weak reference to same Object
 // Weak: obj -> WeakRef -> Object (GC at next cycle)
+                                 // => Object still protected by strong ref (obj)
+                                 // => If obj set to null, collected at next GC
 
 PhantomReference<Object> phantom = new PhantomReference<>(obj, new ReferenceQueue<>());
+                                 // => Phantom reference to same Object
 // Phantom: obj -> PhantomRef -> Object (get() always null, for cleanup)
+                                 // => get() always returns null (can't retrieve object)
+                                 // => Used for cleanup notification, not object access
 
 // Reachability hierarchy (from strongest to weakest)
 // 1. Strongly reachable: via strong reference chain from GC root
+                                 // => Regular references (local vars, fields, etc.)
 // 2. Softly reachable: only via soft references
+                                 // => No strong refs, only soft refs
 // 3. Weakly reachable: only via weak references
+                                 // => No strong/soft refs, only weak refs
 // 4. Phantom reachable: finalized, only phantom refs remain
+                                 // => Finalized but not yet reclaimed
 // 5. Unreachable: no references, ready for collection
+                                 // => Memory can be reclaimed
 
 // Practical: metadata cache with weak keys
 class MetadataCache {
     private WeakHashMap<Class<?>, String> metadata = new WeakHashMap<>();
+                                 // => Weak keys: Class<?> objects
+                                 // => Entries removed when Class unloaded
 
     public void register(Class<?> clazz, String meta) {
         metadata.put(clazz, meta);
+                                 // => Associates metadata with class
     }
 
     public String get(Class<?> clazz) {
         return metadata.get(clazz);
+                                 // => Retrieves metadata for class
     }
 
     // When Class<?> objects are unloaded (classloader gone),
+                                 // => Classloader unload triggers Class unload
     // entries auto-removed from map
+                                 // => WeakHashMap automatically cleans up entries
 }
 ```
 
@@ -1479,79 +1918,117 @@ import java.lang.management.*;
 import javax.management.*;
 
 // JMX - Java Management Extensions
-ManagementFactory.getRuntimeMXBean().getName(); // => "12345@hostname" (PID@host)
+ManagementFactory.getRuntimeMXBean().getName();
+                                 // => Returns "PID@hostname" format
+                                 // => Example: "12345@myserver.com"
 
 // Memory monitoring
 MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
+                                 // => MBean for heap/non-heap memory monitoring
 MemoryUsage heapUsage = memoryBean.getHeapMemoryUsage();
+                                 // => Current heap memory usage statistics
 System.out.println("Heap used: " + heapUsage.getUsed() / 1024 / 1024 + " MB");
+                                 // => Prints current heap usage in megabytes
 System.out.println("Heap max: " + heapUsage.getMax() / 1024 / 1024 + " MB");
+                                 // => Prints maximum heap size (-Xmx)
 
 // Thread monitoring
 ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
+                                 // => MBean for thread monitoring
 System.out.println("Live threads: " + threadBean.getThreadCount());
+                                 // => Current number of live threads
 System.out.println("Peak threads: " + threadBean.getPeakThreadCount());
+                                 // => Maximum thread count since JVM start
 
 // Detect deadlocks
 long[] deadlockedThreads = threadBean.findDeadlockedThreads();
+                                 // => Returns thread IDs in deadlock
+                                 // => null if no deadlock detected
 if (deadlockedThreads != null) {
     System.out.println("Deadlock detected!");
+                                 // => Warning when threads deadlocked
 }
 
 // GC monitoring
 List<GarbageCollectorMXBean> gcBeans = ManagementFactory.getGarbageCollectorMXBeans();
+                                 // => List of GC MBeans (young, old generation)
 for (GarbageCollectorMXBean gcBean : gcBeans) {
     System.out.println("GC: " + gcBean.getName());
+                                 // => GC name: "G1 Young Generation", "G1 Old Generation", etc.
     System.out.println("  Collections: " + gcBean.getCollectionCount());
+                                 // => Number of GC collections performed
     System.out.println("  Time (ms): " + gcBean.getCollectionTime());
+                                 // => Total time spent in GC (milliseconds)
 }
 
 // CPU time for current thread
 long cpuTime = threadBean.getCurrentThreadCpuTime();
+                                 // => CPU time for current thread (nanoseconds)
 long userTime = threadBean.getCurrentThreadUserTime();
+                                 // => User-mode CPU time (excludes kernel time)
 System.out.println("CPU time (ns): " + cpuTime);
+                                 // => Prints CPU time in nanoseconds
 
 // Class loading monitoring
 ClassLoadingMXBean classBean = ManagementFactory.getClassLoadingMXBean();
+                                 // => MBean for class loading statistics
 System.out.println("Loaded classes: " + classBean.getLoadedClassCount());
+                                 // => Currently loaded classes
 System.out.println("Total loaded: " + classBean.getTotalLoadedClassCount());
+                                 // => Total classes loaded since JVM start
 
 // Compilation monitoring (JIT)
 CompilationMXBean compBean = ManagementFactory.getCompilationMXBean();
+                                 // => MBean for JIT compiler monitoring
 System.out.println("JIT compilation time (ms): " + compBean.getTotalCompilationTime());
+                                 // => Total time JIT spent compiling (milliseconds)
 
 // Simple performance measurement
-long start = System.nanoTime();
+long start = System.nanoTime();  // => High-precision timestamp (nanoseconds)
 // Code to measure
 for (int i = 0; i < 1000000; i++) {
-    Math.sqrt(i);
+    Math.sqrt(i);                // => CPU-bound operation to measure
 }
-long end = System.nanoTime();
+long end = System.nanoTime();    // => End timestamp
 System.out.println("Elapsed (ms): " + (end - start) / 1_000_000);
+                                 // => Converts nanoseconds to milliseconds
+                                 // => Warning: nanoTime has measurement overhead
 
 // JMH (Java Microbenchmark Harness) - external library
 // More accurate than System.nanoTime() due to warmup, JIT, etc.
+                                 // => JMH handles JIT warmup, dead code elimination
+                                 // => Provides statistical analysis of results
 /*
 @Benchmark
 public void benchmarkMethod() {
     // Code to benchmark
-    doWork();
+    doWork();                    // => JMH manages iterations, warmup, statistics
 }
 */
 
 // JFR (Java Flight Recorder) - low-overhead profiling
 // Start: java -XX:StartFlightRecording=duration=60s,filename=recording.jfr MyApp
+                                 // => Records JVM events for 60 seconds
+                                 // => Low overhead: ~1% typical
 // Analyze with JDK Mission Control
+                                 // => GUI tool for analyzing JFR recordings
 
 // Common profiling tools (external)
 // - jconsole: GUI for JMX monitoring
+                                 // => Real-time monitoring of MBeans
 // - jvisualvm: Profiling, heap dumps, thread dumps
+                                 // => Free, bundled with JDK
 // - JDK Mission Control: JFR analysis
+                                 // => Advanced profiling, flame graphs
 // - Async-profiler: Low-overhead CPU/memory profiling
+                                 // => Production-safe, native profiler
 // - YourKit, JProfiler: Commercial profilers
+                                 // => Feature-rich, paid tools
 
 // Heap dump on OutOfMemoryError
 // -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/path/to/dump
+                                 // => Automatically dumps heap on OOM
+                                 // => Enables post-mortem analysis
 
 // Thread dump
 // kill -3 <pid> (sends SIGQUIT, prints thread dump to stdout)
@@ -1581,17 +2058,22 @@ Choosing appropriate data structures and algorithms dramatically impacts perform
 import java.util.*;
 
 // String concatenation - avoid in loops
-String bad = "";
+String bad = "";                 // => Immutable empty string
 for (int i = 0; i < 1000; i++) {
-    bad += i; // Creates new String each iteration (O(n²) complexity)
+    bad += i;                    // => Creates new String each iteration
+                                 // => O(n²) complexity: copy entire string each time
+                                 // => 1000 iterations = ~500,000 character copies
 }
 
 // Use StringBuilder instead
 StringBuilder good = new StringBuilder();
+                                 // => Mutable character buffer
+                                 // => Grows dynamically without copying
 for (int i = 0; i < 1000; i++) {
-    good.append(i); // O(n) complexity
+    good.append(i);              // => O(1) amortized append
+                                 // => O(n) total complexity
 }
-String result = good.toString();
+String result = good.toString(); // => Convert to immutable String
 
 // ArrayList vs LinkedList
 List<Integer> arrayList = new ArrayList<>();

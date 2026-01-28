@@ -285,44 +285,91 @@ graph TD
 ```python
 # Boolean values
 is_active = True                  # => is_active is True (type: bool)
+                                  # => True is a boolean literal (capitalized)
 is_deleted = False                # => is_deleted is False (type: bool)
+                                  # => False is a boolean literal (capitalized)
 
 # Comparison operators
-x = 10                            # => x is 10
-y = 20                            # => y is 20
+x = 10                            # => x is 10 (type: int)
+y = 20                            # => y is 20 (type: int)
+                                  # => Comparisons return bool values
 
-print(x == y)                     # => Output: False (equal)
-print(x != y)                     # => Output: True (not equal)
-print(x < y)                      # => Output: True (less than)
-print(x <= y)                     # => Output: True (less than or equal)
-print(x > y)                      # => Output: False (greater than)
-print(x >= y)                     # => Output: False (greater than or equal)
+print(x == y)                     # => Compares: 10 == 20
+                                  # => Returns False (values not equal)
+                                  # => Output: False
+print(x != y)                     # => Compares: 10 != 20
+                                  # => Returns True (values differ)
+                                  # => Output: True
+print(x < y)                      # => Compares: 10 < 20
+                                  # => Returns True (x less than y)
+                                  # => Output: True
+print(x <= y)                     # => Compares: 10 <= 20
+                                  # => Returns True (x less or equal)
+                                  # => Output: True
+print(x > y)                      # => Compares: 10 > 20
+                                  # => Returns False (x not greater)
+                                  # => Output: False
+print(x >= y)                     # => Compares: 10 >= 20
+                                  # => Returns False (x not greater or equal)
+                                  # => Output: False
 
 # Logical operators (and, or, not)
-a = True                          # => a is True
-b = False                         # => b is False
+a = True                          # => a is True (type: bool)
+b = False                         # => b is False (type: bool)
+                                  # => Testing logical operations
 
-print(a and b)                    # => Output: False (both must be True)
-print(a or b)                     # => Output: True (at least one True)
-print(not a)                      # => Output: False (negation)
+print(a and b)                    # => Evaluates: True and False
+                                  # => Both must be True for and
+                                  # => Returns False (not both True)
+                                  # => Output: False
+print(a or b)                     # => Evaluates: True or False
+                                  # => At least one must be True for or
+                                  # => Returns True (a is True)
+                                  # => Output: True
+print(not a)                      # => Evaluates: not True
+                                  # => Negates boolean value
+                                  # => Returns False (opposite of True)
+                                  # => Output: False
 
 # Short-circuit evaluation
 def expensive():
+    # => Function simulates expensive operation
     print("Expensive function called")
-    return True
+    # => Side effect: prints message
+    return True               # => Returns True (but only if called)
 
-result = False and expensive()    # => expensive() NOT called (short-circuit!)
-print(result)                     # => Output: False (no "Expensive..." printed)
+result = False and expensive()    # => Left side: False
+                                  # => 'and' with False always False
+                                  # => expensive() NOT called (short-circuit!)
+                                  # => Python stops evaluation early
+                                  # => result is False
+print(result)                     # => Output: False
+                                  # => No "Expensive..." message printed
 
-result = True or expensive()      # => expensive() NOT called (short-circuit!)
-print(result)                     # => Output: True (no "Expensive..." printed)
+result = True or expensive()      # => Left side: True
+                                  # => 'or' with True always True
+                                  # => expensive() NOT called (short-circuit!)
+                                  # => Python stops evaluation early
+                                  # => result is True
+print(result)                     # => Output: True
+                                  # => No "Expensive..." message printed
 
 # Truthy and falsy values
-print(bool(0))                    # => Output: False (0 is falsy)
-print(bool(""))                   # => Output: False (empty string is falsy)
-print(bool([]))                   # => Output: False (empty list is falsy)
-print(bool(42))                   # => Output: True (non-zero numbers truthy)
-print(bool("text"))               # => Output: True (non-empty strings truthy)
+print(bool(0))                    # => Converts 0 to bool
+                                  # => 0 is falsy (evaluates to False)
+                                  # => Output: False
+print(bool(""))                   # => Converts empty string to bool
+                                  # => Empty string is falsy
+                                  # => Output: False
+print(bool([]))                   # => Converts empty list to bool
+                                  # => Empty containers are falsy
+                                  # => Output: False
+print(bool(42))                   # => Converts 42 to bool
+                                  # => Non-zero numbers are truthy
+                                  # => Output: True
+print(bool("text"))               # => Converts "text" to bool
+                                  # => Non-empty strings are truthy
+                                  # => Output: True
 ```
 
 **Key Takeaway**: Python uses short-circuit evaluation for `and`/`or` operators (stops evaluating once result is determined), and many values are falsy (0, empty strings/lists/dicts, None) - use explicit comparisons when checking for specific values.
@@ -363,55 +410,101 @@ graph TD
 
 ```python
 # Basic if statement
-age = 18                          # => age is 18
+age = 18                          # => age is 18 (type: int)
+                                  # => Evaluates condition next
 if age >= 18:
-    print("Adult")                # => Output: Adult (condition is True)
+    # => Comparison: 18 >= 18 evaluates to True
+    # => Enters if block (body must be indented)
+    print("Adult")                # => Executes because condition True
+                                  # => Output: Adult
 
 # if-else
-score = 75                        # => score is 75
+score = 75                        # => score is 75 (type: int)
+                                  # => Two possible execution paths
 if score >= 80:
+    # => Comparison: 75 >= 80 evaluates to False
+    # => Skips this block (not executed)
     grade = "A"
 else:
+    # => Executes when if condition False
+    # => Provides alternative path
     grade = "B"                   # => grade is "B" (score < 80)
-print(f"Grade: {grade}")          # => Output: Grade: B
+                                  # => else block executed
+print(f"Grade: {grade}")          # => Prints final grade value
+                                  # => Output: Grade: B
 
 # if-elif-else chain
-temperature = 15                  # => temperature is 15
+temperature = 15                  # => temperature is 15 (type: int)
+                                  # => Multiple conditions tested in order
 if temperature > 30:
+    # => First check: 15 > 30 is False
+    # => Skips to next condition (elif)
     status = "Hot"
 elif temperature > 20:
+    # => Second check: 15 > 20 is False
+    # => Skips to next condition (elif)
     status = "Warm"
 elif temperature > 10:
+    # => Third check: 15 > 10 is True
+    # => Enters this block, skips rest
     status = "Cool"               # => status is "Cool" (10 < temp <= 20)
+                                  # => Matches third condition
 else:
+    # => Catch-all if all conditions False
+    # => Not executed (third condition matched)
     status = "Cold"
-print(f"Status: {status}")        # => Output: Status: Cool
+print(f"Status: {status}")        # => Prints matched status
+                                  # => Output: Status: Cool
 
 # Nested conditions
-x = 10                            # => x is 10
-y = 20                            # => y is 20
+x = 10                            # => x is 10 (type: int)
+y = 20                            # => y is 20 (type: int)
+                                  # => Checking both conditions with nesting
 if x > 0:
+    # => Outer check: 10 > 0 is True
+    # => Enters outer if block
     if y > 0:
-        print("Both positive")    # => Output: Both positive
+        # => Inner check: 20 > 0 is True
+        # => Enters inner if block (nested)
+        print("Both positive")    # => Both conditions True
+                                  # => Output: Both positive
     else:
+        # => Inner else (if y <= 0)
+        # => Not executed (y > 0 was True)
         print("x positive, y not")
 else:
+    # => Outer else (if x <= 0)
+    # => Not executed (x > 0 was True)
     print("x not positive")
 
 # Ternary operator (conditional expression)
-age = 25                          # => age is 25
+age = 25                          # => age is 25 (type: int)
+                                  # => Compact if-else in single line
 status = "adult" if age >= 18 else "minor"
-                                  # => status is "adult" (age >= 18)
+                                  # => Condition: 25 >= 18 is True
+                                  # => Evaluates to "adult" (left side)
+                                  # => If False, would evaluate to "minor" (right side)
+                                  # => status is "adult"
 print(status)                     # => Output: adult
 
 # Multiple conditions with logical operators
-has_ticket = True                 # => has_ticket is True
-is_vip = False                    # => is_vip is False
+has_ticket = True                 # => has_ticket is True (type: bool)
+is_vip = False                    # => is_vip is False (type: bool)
+                                  # => Using 'and' and 'or' operators
 if has_ticket and is_vip:
+    # => First check: True and False evaluates to False
+    # => Both must be True for 'and' (short-circuit)
+    # => Skips this block
     print("VIP entrance")
 elif has_ticket:
-    print("Regular entrance")     # => Output: Regular entrance
+    # => Second check: has_ticket is True
+    # => Only one condition needs to be True for elif
+    # => Enters this block
+    print("Regular entrance")     # => has_ticket is True, is_vip doesn't matter
+                                  # => Output: Regular entrance
 else:
+    # => Executes if all conditions False
+    # => Not reached (has_ticket matched)
     print("No entrance")
 ```
 
@@ -427,51 +520,92 @@ The `while` loop repeats a block as long as a condition remains true, with `brea
 
 ```python
 # Basic while loop
-count = 0                         # => count is 0
+count = 0                         # => count is 0 (initialization)
+                                  # => Loop counter starts at 0
 while count < 5:
-    print(f"Count: {count}")      # => Output: Count: 0, Count: 1, ..., Count: 4
-    count += 1                    # => count increments: 1, 2, 3, 4, 5
-                                  # => Loop exits when count is 5
+    # => Condition: count < 5
+    # => Checked before each iteration
+    # => Loop body executes while True
+    print(f"Count: {count}")      # => Prints current count value
+                                  # => Output: Count: 0, Count: 1, ..., Count: 4
+    count += 1                    # => Increment counter by 1
+                                  # => count becomes 1, 2, 3, 4, 5
+                                  # => Loop exits when count is 5 (5 < 5 is False)
 
 # While with break
-n = 0                             # => n is 0
-while True:                       # => Infinite loop
+n = 0                             # => n is 0 (initialization)
+while True:                       # => Infinite loop (condition always True)
+                                  # => Must use break to exit
+                                  # => Useful for event loops
     if n >= 3:
-        break                     # => Exit loop when n is 3
-    print(f"n: {n}")              # => Output: n: 0, n: 1, n: 2
-    n += 1                        # => n increments: 1, 2, 3
+        # => Check exit condition
+        # => n >= 3 evaluates to True when n is 3
+        break                     # => break exits loop immediately
+                                  # => Exits to after while block
+    print(f"n: {n}")              # => Prints before break check
+                                  # => Output: n: 0, n: 1, n: 2
+    n += 1                        # => Increment: n becomes 1, 2, 3
+                                  # => When n=3, break executes next iteration
 
 # While with continue
-i = 0                             # => i is 0
+i = 0                             # => i is 0 (initialization)
 while i < 5:
-    i += 1                        # => i increments: 1, 2, 3, 4, 5
+    # => Condition: i < 5
+    i += 1                        # => Increment FIRST (important!)
+                                  # => i becomes 1, 2, 3, 4, 5
+                                  # => Increment before continue avoids infinite loop
     if i % 2 == 0:
-        continue                  # => Skip even numbers (2, 4)
-    print(f"Odd: {i}")            # => Output: Odd: 1, Odd: 3, Odd: 5
+        # => Check if i is even (remainder 0)
+        # => True for i = 2, 4
+        continue                  # => continue skips rest of loop body
+                                  # => Jumps back to while condition
+    print(f"Odd: {i}")            # => Prints only for odd numbers
+                                  # => Output: Odd: 1, Odd: 3, Odd: 5
+                                  # => Even numbers skipped by continue
 
 # While-else (else executes if loop completes without break)
-x = 0                             # => x is 0
+x = 0                             # => x is 0 (initialization)
 while x < 3:
-    print(f"x: {x}")              # => Output: x: 0, x: 1, x: 2
-    x += 1                        # => x increments: 1, 2, 3
+    # => Condition: x < 3
+    print(f"x: {x}")              # => Prints x value each iteration
+                                  # => Output: x: 0, x: 1, x: 2
+    x += 1                        # => Increment: x becomes 1, 2, 3
+                                  # => When x=3, condition False, exits to else
 else:
+    # => else block after while
+    # => Executes if loop exits normally (condition False)
+    # => Does NOT execute if break used
     print("Loop completed")       # => Output: Loop completed (no break occurred)
 
 # While-else with break (else skipped)
-y = 0                             # => y is 0
+y = 0                             # => y is 0 (initialization)
 while y < 10:
+    # => Condition: y < 10
+    # => Could iterate 10 times normally
     if y == 2:
-        break                     # => Exit early at y=2
-    y += 1
+        # => Early exit condition
+        # => True when y is 2
+        break                     # => break exits loop immediately
+                                  # => Skips else block
+    y += 1                        # => Increment (but doesn't reach after break)
+                                  # => y becomes 1, 2 (then break)
 else:
-    print("This won't print")     # => NOT executed (break occurred)
+    # => else block after while
+    # => NOT executed because break occurred
+    print("This won't print")     # => Skipped (break caused early exit)
 
 # Sentinel-controlled loop
-user_input = ""                   # => user_input is ""
+user_input = ""                   # => user_input is "" (initialization)
+                                  # => Sentinel value pattern
+                                  # => Loop until specific value entered
 # Uncomment to test interactively:
 # while user_input != "quit":
+#     # => Condition: continues until "quit" entered
+#     # => Sentinel value is "quit"
 #     user_input = input("Enter 'quit' to exit: ")
+#     # => Reads user input each iteration
 #     print(f"You entered: {user_input}")
+#     # => Echoes input back to user
 ```
 
 **Key Takeaway**: Use `while` for indefinite iteration when you don't know the loop count in advance - prefer `for` loops for iterating over sequences. The `while-else` clause is rarely needed but useful when you need to distinguish between normal completion and early exit.
@@ -602,40 +736,64 @@ Python lists support both positive indexing (starting from 0) and negative index
 ```python
 # List creation
 numbers = [1, 2, 3, 4, 5]         # => numbers is [1, 2, 3, 4, 5] (type: list)
-mixed = [1, "two", 3.0, True]     # => mixed is [1, "two", 3.0, True] (mixed types OK)
+                                  # => Lists created with square brackets
+                                  # => Elements separated by commas
+mixed = [1, "two", 3.0, True]     # => mixed is [1, "two", 3.0, True]
+                                  # => Lists can contain mixed types (unlike arrays in Java/C++)
+                                  # => Python's dynamic typing enables heterogeneous collections
 empty = []                        # => empty is [] (empty list)
+                                  # => No elements, length is 0
 
 # Indexing (0-based)
 first = numbers[0]                # => first is 1 (index 0)
+                                  # => Lists use 0-based indexing (like C/Java)
 second = numbers[1]               # => second is 2 (index 1)
+                                  # => Accesses second element
 last = numbers[-1]                # => last is 5 (negative index from end)
+                                  # => -1 means last element (Python feature)
 second_last = numbers[-2]         # => second_last is 4
+                                  # => -2 means second from end
 
-print(first, last)                # => Output: 1 5
+print(first, last)                # => Prints first and last values
+                                  # => Output: 1 5
 
 # Slicing [start:stop:step]
-subset = numbers[1:4]             # => subset is [2, 3, 4] (indices 1, 2, 3)
+subset = numbers[1:4]             # => Slice from index 1 to 4 (exclusive)
+                                  # => Extracts elements at indices 1, 2, 3
+                                  # => subset is [2, 3, 4]
 print(subset)                     # => Output: [2, 3, 4]
 
-first_three = numbers[:3]         # => first_three is [1, 2, 3] (start to index 3)
+first_three = numbers[:3]         # => Slice from start to index 3 (exclusive)
+                                  # => Omitted start defaults to 0
+                                  # => first_three is [1, 2, 3]
 print(first_three)                # => Output: [1, 2, 3]
 
-last_two = numbers[-2:]           # => last_two is [4, 5] (last 2 elements)
+last_two = numbers[-2:]           # => Slice from -2 to end
+                                  # => Omitted stop defaults to end of list
+                                  # => last_two is [4, 5]
 print(last_two)                   # => Output: [4, 5]
 
-every_second = numbers[::2]       # => every_second is [1, 3, 5] (step of 2)
+every_second = numbers[::2]       # => Slice with step of 2
+                                  # => Takes every 2nd element (0, 2, 4)
+                                  # => every_second is [1, 3, 5]
 print(every_second)               # => Output: [1, 3, 5]
 
-reversed_list = numbers[::-1]     # => reversed_list is [5, 4, 3, 2, 1] (reversed)
+reversed_list = numbers[::-1]     # => Slice with negative step reverses
+                                  # => Step of -1 iterates backwards
+                                  # => reversed_list is [5, 4, 3, 2, 1]
 print(reversed_list)              # => Output: [5, 4, 3, 2, 1]
 
 # List length
-length = len(numbers)             # => length is 5
+length = len(numbers)             # => len() returns number of elements
+                                  # => length is 5
 print(f"Length: {length}")        # => Output: Length: 5
 
 # Membership testing
-has_three = 3 in numbers          # => has_three is True (3 exists in list)
-has_ten = 10 in numbers           # => has_ten is False (10 not in list)
+has_three = 3 in numbers          # => 'in' operator checks membership
+                                  # => Linear search O(n) for lists
+                                  # => has_three is True (3 exists in list)
+has_ten = 10 in numbers           # => Checks if 10 in list
+                                  # => has_ten is False (10 not found)
 print(has_three, has_ten)         # => Output: True False
 ```
 
@@ -723,62 +881,98 @@ Tuples are immutable ordered sequences, often used for fixed collections of rela
 ```python
 # Tuple creation
 point = (3, 4)                    # => point is (3, 4) (type: tuple)
+                                  # => Tuples use parentheses ()
+                                  # => Immutable sequence type
 colors = ("red", "green", "blue") # => colors is ("red", "green", "blue")
-single = (42,)                    # => single is (42,) (comma required for single element!)
+                                  # => Multiple elements separated by commas
+single = (42,)                    # => single is (42,) (comma required!)
+                                  # => Trailing comma makes it tuple
+                                  # => Without comma, it's just parentheses
 not_tuple = (42)                  # => not_tuple is 42 (type: int, NOT tuple!)
+                                  # => No comma = just int in parentheses
 
 print(type(point))                # => Output: <class 'tuple'>
 print(type(single))               # => Output: <class 'tuple'>
-print(type(not_tuple))            # => Output: <class 'int'>
+print(type(not_tuple))            # => Output: <class 'int'> (gotcha!)
 
 # Indexing and slicing (same as lists)
-first = point[0]                  # => first is 3
-second = point[1]                 # => second is 4
-subset = colors[1:]               # => subset is ("green", "blue")
+first = point[0]                  # => first is 3 (index 0)
+                                  # => 0-based indexing like lists
+second = point[1]                 # => second is 4 (index 1)
+subset = colors[1:]               # => Slice from index 1 to end
+                                  # => subset is ("green", "blue")
+                                  # => Slicing returns new tuple
 print(first, second)              # => Output: 3 4
 print(subset)                     # => Output: ('green', 'blue')
 
 # Unpacking
-x, y = point                      # => x is 3, y is 4
+x, y = point                      # => Unpacks point into two variables
+                                  # => x gets point[0], y gets point[1]
+                                  # => x is 3, y is 4
 print(f"x={x}, y={y}")            # => Output: x=3, y=4
 
 # Multiple unpacking
-r, g, b = colors                  # => r is "red", g is "green", b is "blue"
+r, g, b = colors                  # => Unpacks three elements
+                                  # => r is "red", g is "green", b is "blue"
+                                  # => Must match element count
 print(r, g, b)                    # => Output: red green blue
 
 # Unpacking with * (rest)
 numbers = (1, 2, 3, 4, 5)         # => numbers is (1, 2, 3, 4, 5)
-first, *rest, last = numbers      # => first is 1, rest is [2, 3, 4], last is 5
+                                  # => Tuple with 5 elements
+first, *rest, last = numbers      # => * captures middle elements
+                                  # => first is 1 (first element)
+                                  # => rest is [2, 3, 4] (middle as list!)
+                                  # => last is 5 (last element)
 print(first)                      # => Output: 1
-print(rest)                       # => Output: [2, 3, 4] (list!)
+print(rest)                       # => Output: [2, 3, 4] (list, not tuple!)
 print(last)                       # => Output: 5
 
 # Immutability
 try:
-    point[0] = 10                 # => Attempt to modify
+    # => Attempt to modify tuple element
+    point[0] = 10                 # => Tries to assign to point[0]
+                                  # => Tuples are immutable (no item assignment)
 except TypeError as e:
+    # => Catches TypeError from attempted modification
     print(f"Error: {e}")          # => Output: Error: 'tuple' object does not support item assignment
+                                  # => Demonstrates immutability
 
 # Tuple methods (limited due to immutability)
 nums = (1, 2, 3, 2, 1)            # => nums is (1, 2, 3, 2, 1)
-count_of_twos = nums.count(2)     # => count_of_twos is 2 (two occurrences of 2)
-index_of_three = nums.index(3)    # => index_of_three is 2 (3 is at index 2)
-print(count_of_twos, index_of_three)# => Output: 2 2
+                                  # => Has duplicate values
+count_of_twos = nums.count(2)     # => count() returns occurrences
+                                  # => count_of_twos is 2 (two 2s in tuple)
+index_of_three = nums.index(3)    # => index() returns first occurrence position
+                                  # => index_of_three is 2 (3 at index 2)
+print(count_of_twos, index_of_three)
+                                  # => Output: 2 2
 
 # Tuple as dictionary key (lists can't do this!)
 locations = {}                    # => locations is {} (empty dict)
-locations[(0, 0)] = "origin"      # => Tuple as key works!
-locations[(1, 1)] = "diagonal"
-print(locations[(0, 0)])          # => Output: origin
+                                  # => Dict needs hashable keys
+locations[(0, 0)] = "origin"      # => Tuple as key works! (immutable = hashable)
+                                  # => (0, 0) is hashable, can be dict key
+locations[(1, 1)] = "diagonal"    # => Another tuple key
+                                  # => Lists can't be keys (mutable)
+print(locations[(0, 0)])          # => Accesses dict with tuple key
+                                  # => Output: origin
 
 # Named tuples (more readable alternative - requires import)
 from collections import namedtuple
+                                  # => Imports namedtuple factory
 
 Point = namedtuple("Point", ["x", "y"])
-                                  # => Define Point type with x, y fields
-p = Point(3, 4)                   # => p is Point(x=3, y=4)
-print(p.x, p.y)                   # => Output: 3 4 (access by name)
-print(p[0], p[1])                 # => Output: 3 4 (still indexable)
+                                  # => Creates Point class with named fields
+                                  # => First arg: class name
+                                  # => Second arg: field names
+p = Point(3, 4)                   # => Creates Point instance
+                                  # => p.x is 3, p.y is 4
+                                  # => Named access more readable than indices
+print(p.x, p.y)                   # => Access by field name
+                                  # => Output: 3 4
+print(p[0], p[1])                 # => Still supports index access
+                                  # => Output: 3 4 (backwards compatible)
 ```
 
 **Key Takeaway**: Use tuples for fixed collections where immutability is desired (function return values, dictionary keys) - they're more memory-efficient than lists and signal intent that data shouldn't change. Named tuples provide readability benefits for complex tuple structures.
@@ -906,72 +1100,111 @@ Sets are unordered collections of unique elements supporting mathematical set op
 ```python
 # Set creation
 numbers = {1, 2, 3, 4, 5}         # => numbers is {1, 2, 3, 4, 5} (type: set)
+                                  # => Sets use curly braces {}
+                                  # => Unordered, unique elements
 empty_set = set()                 # => empty_set is set() (use set(), NOT {})
+                                  # => set() function creates empty set
 not_empty_set = {}                # => This is an empty DICT, not set!
+                                  # => {} creates dict, not set (gotcha!)
 
-print(type(numbers))              # => Output: <class 'set'>
+print(type(numbers))              # => type() returns class
+                                  # => Output: <class 'set'>
 print(type(empty_set))            # => Output: <class 'set'>
-print(type(not_empty_set))        # => Output: <class 'dict'>
+print(type(not_empty_set))        # => Output: <class 'dict'> (not set!)
 
 # Duplicate elimination
-duplicates = {1, 2, 2, 3, 3, 3}   # => duplicates is {1, 2, 3} (duplicates removed)
+duplicates = {1, 2, 2, 3, 3, 3}   # => Sets automatically remove duplicates
+                                  # => Only unique values stored
+                                  # => duplicates is {1, 2, 3}
 print(duplicates)                 # => Output: {1, 2, 3}
 
 # Set from list (removes duplicates)
 list_with_dupes = [1, 2, 2, 3, 3, 3]
-unique = set(list_with_dupes)     # => unique is {1, 2, 3}
+                                  # => List with duplicate values
+unique = set(list_with_dupes)     # => set() converts list to set
+                                  # => Removes duplicates automatically
+                                  # => unique is {1, 2, 3}
 print(unique)                     # => Output: {1, 2, 3}
 
 # Add and remove elements
 fruits = {"apple", "banana"}      # => fruits is {"apple", "banana"}
-fruits.add("cherry")              # => fruits is {"apple", "banana", "cherry"}
+                                  # => Initial set with 2 elements
+fruits.add("cherry")              # => add() inserts single element
+                                  # => fruits is {"apple", "banana", "cherry"}
+                                  # => Modifies set in-place
 print(fruits)                     # => Output: {'apple', 'banana', 'cherry'}
 
-fruits.remove("banana")           # => fruits is {"apple", "cherry"}
+fruits.remove("banana")           # => remove() deletes element
+                                  # => fruits is {"apple", "cherry"}
+                                  # => Raises KeyError if not found
 print(fruits)                     # => Output: {'apple', 'cherry'}
 
 # discard() vs remove() - discard doesn't raise error if missing
-fruits.discard("banana")          # => No error (banana already removed)
+fruits.discard("banana")          # => discard() deletes if present
+                                  # => No error if element missing
+                                  # => Safe removal method
 try:
-    fruits.remove("banana")       # => Raises KeyError (banana not in set)
+    fruits.remove("banana")       # => remove() raises KeyError if not found
+                                  # => "banana" not in set (already removed)
 except KeyError:
+    # => Catches KeyError from remove()
     print("KeyError: banana not found")
                                   # => Output: KeyError: banana not found
 
 # Membership testing
-has_apple = "apple" in fruits     # => has_apple is True
-has_banana = "banana" in fruits   # => has_banana is False
+has_apple = "apple" in fruits     # => 'in' operator checks membership
+                                  # => O(1) average time complexity (hash table)
+                                  # => has_apple is True
+has_banana = "banana" in fruits   # => "banana" not in fruits
+                                  # => has_banana is False
 print(has_apple, has_banana)      # => Output: True False
 
 # Set operations
 a = {1, 2, 3, 4}                  # => a is {1, 2, 3, 4}
 b = {3, 4, 5, 6}                  # => b is {3, 4, 5, 6}
+                                  # => Sets with overlapping elements
 
 # Union (all elements from both sets)
-union = a | b                     # => union is {1, 2, 3, 4, 5, 6}
-union_method = a.union(b)         # => Same result
+union = a | b                     # => Pipe operator | performs union
+                                  # => Combines all unique elements
+                                  # => union is {1, 2, 3, 4, 5, 6}
+union_method = a.union(b)         # => union() method same result
+                                  # => More explicit than |
 print(union)                      # => Output: {1, 2, 3, 4, 5, 6}
 
 # Intersection (common elements)
-intersection = a & b              # => intersection is {3, 4}
-intersection_method = a.intersection(b)# => Same result
+intersection = a & b              # => Ampersand & performs intersection
+                                  # => Elements present in BOTH sets
+                                  # => intersection is {3, 4}
+intersection_method = a.intersection(b)
+                                  # => intersection() method same result
 print(intersection)               # => Output: {3, 4}
 
 # Difference (elements in a but not in b)
-difference = a - b                # => difference is {1, 2}
-difference_method = a.difference(b)# => Same result
+difference = a - b                # => Minus - performs difference
+                                  # => Elements in a that are NOT in b
+                                  # => difference is {1, 2}
+difference_method = a.difference(b)
+                                  # => difference() method same result
 print(difference)                 # => Output: {1, 2}
 
 # Symmetric difference (elements in either set but not both)
-sym_diff = a ^ b                  # => sym_diff is {1, 2, 5, 6}
-sym_diff_method = a.symmetric_difference(b)# => Same result
+sym_diff = a ^ b                  # => Caret ^ performs symmetric difference
+                                  # => Elements in a OR b but NOT both
+                                  # => sym_diff is {1, 2, 5, 6}
+sym_diff_method = a.symmetric_difference(b)
+                                  # => symmetric_difference() method same result
 print(sym_diff)                   # => Output: {1, 2, 5, 6}
 
 # Subset and superset
 small = {1, 2}                    # => small is {1, 2}
 large = {1, 2, 3, 4}              # => large is {1, 2, 3, 4}
-is_subset = small.issubset(large) # => is_subset is True (small ⊆ large)
-is_superset = large.issuperset(small)# => is_superset is True (large ⊇ small)
+                                  # => small elements all in large
+is_subset = small.issubset(large) # => issubset() checks if all elements in other
+                                  # => is_subset is True (small ⊆ large)
+is_superset = large.issuperset(small)
+                                  # => issuperset() checks if contains all of other
+                                  # => is_superset is True (large ⊇ small)
 print(is_subset, is_superset)     # => Output: True True
 ```
 
@@ -1117,80 +1350,129 @@ graph TD
 ```python
 # Global variable
 counter = 0                       # => counter is 0 (global scope)
+                                  # => Accessible from all functions
 
 def increment():
-    global counter                # => Declare intent to modify global counter
-    counter += 1                  # => counter is now 1 (modifies global)
-    return counter
+    # => Function needs to modify global counter
+    global counter                # => Declares intent to use global counter
+                                  # => Without this, counter += 1 would error
+                                  # => (UnboundLocalError: can't read before assignment)
+    counter += 1                  # => Modifies global counter (not local)
+                                  # => counter is now 1
+    return counter                # => Returns updated value (1)
 
-result = increment()              # => result is 1, global counter is 1
+result = increment()              # => Calls function, modifies global
+                                  # => result is 1 (return value)
+                                  # => global counter also 1 (modified)
 print(f"Result: {result}, Global: {counter}")
+                                  # => Both show 1 (same value)
                                   # => Output: Result: 1, Global: 1
 
 # Without global keyword (creates local variable)
-x = 10                            # => x is 10 (global)
+x = 10                            # => x is 10 (global scope)
+                                  # => Function can't modify without 'global'
 
 def set_x():
-    x = 20                        # => Creates local x (shadows global)
-    print(f"Local x: {x}")        # => Output: Local x: 20
+    # => No 'global' keyword, so assignment creates local
+    x = 20                        # => Creates NEW local variable x
+                                  # => Shadows global x (different variable!)
+                                  # => Local x is 20, global x still 10
+    print(f"Local x: {x}")        # => Prints local x value
+                                  # => Output: Local x: 20
 
-set_x()
-print(f"Global x: {x}")           # => Output: Global x: 10 (unchanged!)
+set_x()                           # => Function creates and modifies local x
+                                  # => Global x untouched
+print(f"Global x: {x}")           # => Prints global x (unchanged)
+                                  # => Output: Global x: 10
 
 # Enclosing scope with nonlocal
 def outer():
+    # => Outer function with enclosing scope
     y = 5                         # => y is 5 (enclosing scope)
+                                  # => Visible to inner function
 
     def inner():
-        nonlocal y                # => Declare intent to modify enclosing y
-        y += 1                    # => y is now 6 (modifies enclosing)
-        print(f"Inner y: {y}")    # => Output: Inner y: 6
+        # => Inner function needs to modify enclosing y
+        nonlocal y                # => Declares intent to use enclosing y
+                                  # => Without this, y += 1 would error
+        y += 1                    # => Modifies enclosing y (not local)
+                                  # => y is now 6 in enclosing scope
+        print(f"Inner y: {y}")    # => Prints modified enclosing y
+                                  # => Output: Inner y: 6
 
-    inner()
-    print(f"Outer y: {y}")        # => Output: Outer y: 6 (modified by inner!)
+    inner()                       # => Calls inner, modifies enclosing y
+                                  # => outer's y now 6
+    print(f"Outer y: {y}")        # => Prints enclosing y (modified by inner)
+                                  # => Output: Outer y: 6
 
-outer()
+outer()                           # => Demonstrates nonlocal modification
 
 # Without nonlocal (creates local variable)
 def outer2():
+    # => Similar structure but no 'nonlocal' in inner
     z = 10                        # => z is 10 (enclosing scope)
 
     def inner2():
-        z = 20                    # => Creates local z (shadows enclosing)
-        print(f"Inner z: {z}")    # => Output: Inner z: 20
+        # => No 'nonlocal' keyword
+        z = 20                    # => Creates NEW local z (shadows enclosing)
+                                  # => Local z is 20, enclosing z still 10
+        print(f"Inner z: {z}")    # => Prints local z
+                                  # => Output: Inner z: 20
 
-    inner2()
-    print(f"Outer z: {z}")        # => Output: Outer z: 10 (unchanged!)
+    inner2()                      # => Function creates local z
+                                  # => Enclosing z untouched
+    print(f"Outer z: {z}")        # => Prints enclosing z (unchanged)
+                                  # => Output: Outer z: 10
 
-outer2()
+outer2()                          # => Demonstrates shadowing without nonlocal
 
 # LEGB demonstration
-builtin_len = len                 # => Save built-in len function
-x = "global"                      # => x is "global" (Global)
+builtin_len = len                 # => Saves reference to built-in len
+                                  # => Demonstrates Built-in scope (B in LEGB)
+x = "global"                      # => x is "global" (Global scope)
+                                  # => Outermost scope (G in LEGB)
 
 def outer():
-    x = "enclosing"               # => x is "enclosing" (Enclosing)
+    # => Creates enclosing scope (E in LEGB)
+    x = "enclosing"               # => x is "enclosing" (Enclosing scope)
+                                  # => Shadows global x
 
     def inner():
-        x = "local"               # => x is "local" (Local)
-        print(f"Local: {x}")      # => Output: Local: local
+        # => Creates local scope (L in LEGB)
+        x = "local"               # => x is "local" (Local scope)
+                                  # => Shadows both enclosing and global x
+        print(f"Local: {x}")      # => Prints local x (L in LEGB)
+                                  # => Output: Local: local
         print(f"Built-in len: {builtin_len([1, 2, 3])}")
+                                  # => Uses built-in function (B in LEGB)
+                                  # => Calls len on [1,2,3], returns 3
                                   # => Output: Built-in len: 3
 
-    inner()
-    print(f"Enclosing: {x}")      # => Output: Enclosing: enclosing
+    inner()                       # => Executes inner function
+                                  # => Shows Local and Built-in scopes
+    print(f"Enclosing: {x}")      # => Prints enclosing x (E in LEGB)
+                                  # => Local x out of scope now
+                                  # => Output: Enclosing: enclosing
 
-outer()
-print(f"Global: {x}")             # => Output: Global: global
+outer()                           # => Executes outer function
+                                  # => Shows Enclosing scope
+print(f"Global: {x}")             # => Prints global x (G in LEGB)
+                                  # => Enclosing x out of scope now
+                                  # => Output: Global: global
 
 # Reading global without global keyword (allowed)
-config = {"debug": True}          # => config is dict (global)
+config = {"debug": True}          # => config is dict (global scope)
+                                  # => Reading doesn't need 'global' keyword
 
 def is_debug():
-    # Reading global is OK (no global keyword needed)
-    return config["debug"]        # => Returns True (reads global config)
+    # => Function reads global config (no 'global' needed)
+    # => Reading is allowed, assignment would create local
+    return config["debug"]        # => Accesses global config dict
+                                  # => Reads "debug" key, returns True
+                                  # => No 'global' keyword required for reading
 
-print(is_debug())                 # => Output: True
+print(is_debug())                 # => Calls function, reads global
+                                  # => Output: True
 ```
 
 **Key Takeaway**: Use `global` to modify global variables from functions and `nonlocal` for enclosing function scopes - but prefer passing values as parameters and returning results over modifying outer scopes, as it makes functions more testable and reduces coupling.
@@ -1500,127 +1782,267 @@ graph TD
 ```python
 # Basic try/except
 def divide(a, b):
+    # => Function demonstrates basic exception handling
+    # => try-except structure for error recovery
     try:
-        result = a / b            # => May raise ZeroDivisionError
-        return result
+        # => try block contains code that might raise exception
+        # => Executes until exception or completion
+        result = a / b            # => Division operation
+                                  # => May raise ZeroDivisionError if b == 0
+                                  # => Returns float result if successful
+        return result             # => Returns result if no exception
     except ZeroDivisionError:
+        # => except block handles specific exception type
+        # => Executes only if ZeroDivisionError raised in try
         print("Error: Division by zero")
-        return None               # => Return None on error
+                                  # => Prints error message
+        return None               # => Return None to indicate error
+                                  # => Alternative error signaling
 
-print(divide(10, 2))              # => Output: 5.0
-print(divide(10, 0))              # => Output: Error: Division by zero, then None
+print(divide(10, 2))              # => Call: 10 / 2 = 5.0
+                                  # => No exception, returns 5.0
+                                  # => Output: 5.0
+print(divide(10, 0))              # => Call: 10 / 0 raises ZeroDivisionError
+                                  # => Caught by except, prints error
+                                  # => Returns None
+                                  # => Output: Error: Division by zero (then None)
 
 # Multiple except clauses
 def convert_to_int(value):
+    # => Function shows handling multiple exception types
+    # => Different handlers for different errors
     try:
-        return int(value)         # => May raise ValueError or TypeError
+        # => try block with conversion operation
+        return int(value)         # => Convert value to int
+                                  # => May raise ValueError (invalid format)
+                                  # => May raise TypeError (wrong type)
     except ValueError:
+        # => First except handles ValueError specifically
+        # => Executes for format conversion errors
         print(f"ValueError: '{value}' is not a valid integer")
-        return None
+                                  # => Descriptive error message
+        return None               # => Error indicator
     except TypeError:
+        # => Second except handles TypeError specifically
+        # => Executes for type compatibility errors
         print(f"TypeError: Cannot convert {type(value)} to int")
-        return None
+                                  # => Shows type that failed
+        return None               # => Error indicator
 
-print(convert_to_int("42"))       # => Output: 42
-print(convert_to_int("abc"))      # => Output: ValueError: 'abc' is not a valid integer, then None
-print(convert_to_int([1, 2]))     # => Output: TypeError: Cannot convert <class 'list'> to int, then None
+print(convert_to_int("42"))       # => "42" is valid int format
+                                  # => int("42") succeeds, returns 42
+                                  # => Output: 42
+print(convert_to_int("abc"))      # => "abc" not valid int format
+                                  # => int("abc") raises ValueError
+                                  # => Caught by first except
+                                  # => Output: ValueError: 'abc' is not a valid integer (then None)
+print(convert_to_int([1, 2]))     # => List cannot convert to int
+                                  # => int([1,2]) raises TypeError
+                                  # => Caught by second except
+                                  # => Output: TypeError: Cannot convert <class 'list'> to int (then None)
 
 # Catching multiple exceptions in one clause
 def safe_operation(x, y):
+    # => Function demonstrates catching multiple exception types together
+    # => Tuple of exception types in single except
     try:
-        result = int(x) / int(y)  # => May raise ValueError or ZeroDivisionError
-        return result
+        # => Complex operation with multiple failure modes
+        result = int(x) / int(y)  # => First: int(x) may raise ValueError
+                                  # => Second: int(y) may raise ValueError
+                                  # => Third: division may raise ZeroDivisionError
+        return result             # => Returns result if all succeed
     except (ValueError, ZeroDivisionError) as e:
+        # => Catches either ValueError OR ZeroDivisionError
+        # => Tuple of exception types in parentheses
+        # => 'as e' captures exception object
         print(f"Error: {type(e).__name__}: {e}")
-        return None
+                                  # => Prints exception type name and message
+                                  # => Single handler for both error types
+        return None               # => Error indicator
 
-print(safe_operation("10", "2"))  # => Output: 5.0
-print(safe_operation("abc", "2")) # => Output: Error: ValueError: invalid literal...
-print(safe_operation("10", "0"))  # => Output: Error: ZeroDivisionError: division by zero
+print(safe_operation("10", "2"))  # => Converts: int("10")=10, int("2")=2
+                                  # => Division: 10 / 2 = 5.0
+                                  # => No exception, returns 5.0
+                                  # => Output: 5.0
+print(safe_operation("abc", "2")) # => Convert: int("abc") raises ValueError
+                                  # => Caught by except clause
+                                  # => Output: Error: ValueError: invalid literal...
+print(safe_operation("10", "0"))  # => Convert: int("10")=10, int("0")=0
+                                  # => Division: 10 / 0 raises ZeroDivisionError
+                                  # => Caught by except clause
+                                  # => Output: Error: ZeroDivisionError: division by zero
 
 # Accessing exception object
 def parse_number(text):
+    # => Function demonstrates exception object access
+    # => 'as e' captures exception for inspection
     try:
-        return float(text)
+        # => Attempt float conversion
+        return float(text)        # => Convert text to float
+                                  # => May raise ValueError
     except ValueError as e:
+        # => Catches ValueError, stores in variable 'e'
+        # => e is exception object with attributes
         print(f"Caught exception: {e}")
+                                  # => Prints exception message (e.__str__())
+                                  # => Shows what went wrong
         print(f"Exception type: {type(e)}")
-        return 0.0
+                                  # => Prints exception class
+                                  # => Shows exception hierarchy
+        return 0.0                # => Returns default value on error
+                                  # => 0.0 as fallback
 
 result = parse_number("invalid")
+                                  # => "invalid" not convertible to float
+                                  # => float("invalid") raises ValueError
+                                  # => Caught and handled
 # => Output: Caught exception: could not convert string to float: 'invalid'
 #    Exception type: <class 'ValueError'>
-print(result)                     # => Output: 0.0
+print(result)                     # => result is 0.0 (fallback value)
+                                  # => Output: 0.0
 
 # Try/except/else/finally
 def process_file(filename):
+    # => Function demonstrates complete exception handling structure
+    # => try/except/else/finally all present
     try:
-        # Simulate file opening (not actual file I/O)
+        # => try block: code that might raise exception
+        # => Simulates file processing
         if filename == "":
+            # => Validation check
             raise ValueError("Empty filename")
-        data = f"Data from {filename}"# => Success path
+                                  # => Explicitly raises exception
+                                  # => Validates input
+        data = f"Data from {filename}"
+                                  # => Success path (no exception)
+                                  # => Creates result data
     except ValueError as e:
-        print(f"Error: {e}")
-        data = None
+        # => except block: handles ValueError
+        # => Executes if exception raised in try
+        print(f"Error: {e}")      # => Prints error message
+        data = None               # => Sets data to None on error
+                                  # => Error indicator
     else:
-        # Runs only if no exception occurred
+        # => else block: runs ONLY if no exception in try
+        # => Skipped if exception occurred
+        # => Success-only code (not error handling)
         print("File processed successfully")
+                                  # => Success message
+                                  # => Confirms no exception
     finally:
-        # Always runs (cleanup code)
+        # => finally block: ALWAYS runs
+        # => Executes after try/except/else regardless
+        # => Used for cleanup (close files, release resources)
         print("Cleanup complete")
+                                  # => Cleanup message
+                                  # => Guaranteed execution
 
-    return data
+    return data                   # => Returns result (data or None)
+                                  # => After all blocks executed
 
 print(process_file("data.txt"))
+                                  # => filename is "data.txt" (not empty)
+                                  # => No exception in try
+                                  # => else block executes
+                                  # => finally block executes
 # => Output: File processed successfully
 #    Cleanup complete
 #    Data from data.txt
 
 print(process_file(""))
+                                  # => filename is "" (empty)
+                                  # => raise ValueError in try
+                                  # => except block executes
+                                  # => else block skipped
+                                  # => finally block executes
 # => Output: Error: Empty filename
 #    Cleanup complete
 #    None
 
 # Bare except (catches all exceptions - use sparingly!)
 def risky_operation():
+    # => Function demonstrates bare except (no exception type)
+    # => NOT RECOMMENDED - too broad, hard to debug
     try:
-        # Some risky code
-        x = 1 / 0                 # => Raises ZeroDivisionError
+        # => try block with risky code
+        x = 1 / 0                 # => Division by zero
+                                  # => Raises ZeroDivisionError
     except:
+        # => Bare except catches ALL exceptions
+        # => Includes KeyboardInterrupt, SystemExit (bad!)
+        # => No exception object access (no 'as e')
         print("Something went wrong")
-        # Problem: Can't tell what went wrong!
+                                  # => Generic error message
+                                  # => Problem: Can't tell what went wrong!
+                                  # => Hides exception details
 
-risky_operation()                 # => Output: Something went wrong
+risky_operation()                 # => Calls function
+                                  # => ZeroDivisionError caught by bare except
+                                  # => Output: Something went wrong
+                                  # => No information about actual error
 
 # Better: Catch specific exceptions
 def better_operation():
+    # => Improved version with specific exception handling
+    # => Explicit exception types = better debugging
     try:
-        x = 1 / 0
+        # => Same risky code
+        x = 1 / 0                 # => Raises ZeroDivisionError
     except ZeroDivisionError:
+        # => Specific handler for division by zero
+        # => Only catches expected error
         print("Attempted division by zero")
+                                  # => Descriptive error message
+                                  # => Clear what went wrong
     except Exception as e:
-        # Catch other exceptions with access to details
+        # => General handler for unexpected exceptions
+        # => Catches Exception subclasses (not SystemExit/KeyboardInterrupt)
+        # => 'as e' provides exception details
         print(f"Unexpected error: {type(e).__name__}: {e}")
+                                  # => Shows exception type and message
+                                  # => Better debugging information
 
-better_operation()                # => Output: Attempted division by zero
+better_operation()                # => Calls improved function
+                                  # => ZeroDivisionError matches first except
+                                  # => Output: Attempted division by zero
+                                  # => Clear error identification
 
 # Re-raising exceptions
 def validate_age(age):
+    # => Function demonstrates re-raising exceptions
+    # => Logs error but lets caller handle it
     try:
-        age_int = int(age)
+        # => Conversion and validation
+        age_int = int(age)        # => Convert to int (may raise ValueError)
         if age_int < 0:
+            # => Business logic validation
             raise ValueError("Age cannot be negative")
-        return age_int
+                                  # => Explicitly raises ValueError
+                                  # => Custom error message
+        return age_int            # => Returns valid age
     except ValueError as e:
+        # => Catches ValueError from int() or validation
+        # => Logs but doesn't suppress
         print(f"Validation failed: {e}")
-        raise                     # => Re-raise the same exception
+                                  # => Logs error for monitoring
+        raise                     # => Re-raises THE SAME exception
+                                  # => 'raise' with no args re-raises caught exception
+                                  # => Preserves exception traceback
+                                  # => Lets caller decide how to handle
 
 try:
-    validate_age("-5")
+    # => Outer try to catch re-raised exception
+    validate_age("-5")            # => "-5" converts to -5
+                                  # => -5 < 0 fails validation
+                                  # => Raises ValueError in validate_age
+                                  # => Caught, logged, re-raised
 except ValueError:
+    # => Catches re-raised ValueError from validate_age
+    # => Exception propagated from inner function
     print("Caught re-raised exception")
-# => Output: Validation failed: Age cannot be negative
-#    Caught re-raised exception
+                                  # => Confirms exception received
+# => Output: Validation failed: Age cannot be negative (from validate_age)
+#    Caught re-raised exception (from outer except)
 ```
 
 **Key Takeaway**: Always catch specific exceptions rather than bare `except` to avoid masking unexpected errors - use `else` for code that should only run on success, and `finally` for cleanup that must always happen regardless of exceptions (like closing files or releasing locks).
@@ -2199,178 +2621,322 @@ Properties provide controlled access to attributes, while magic methods (double 
 # Properties with @property decorator
 class Temperature:
     """Temperature class with Celsius and Fahrenheit."""
+    # => Defines class for temperature conversions
+    # => Uses properties for controlled attribute access
 
     def __init__(self, celsius):
-        self._celsius = celsius   # => Private attribute
+        # => Constructor takes initial Celsius value
+        self._celsius = celsius   # => Private attribute (underscore convention)
+                                  # => Stores internal state in Celsius
 
     @property
     def celsius(self):
         """Get Celsius temperature."""
-        return self._celsius
+        # => @property decorator makes method accessible as attribute
+        # => Getter method for celsius (no parentheses needed)
+        return self._celsius      # => Returns private _celsius value
+                                  # => Enables controlled read access
 
     @celsius.setter
     def celsius(self, value):
         """Set Celsius temperature."""
+        # => @celsius.setter creates setter for celsius property
+        # => Enables validation when setting temperature
         if value < -273.15:
+            # => Checks for absolute zero (-273.15°C)
             raise ValueError("Temperature below absolute zero")
-        self._celsius = value
+            # => Raises exception for invalid temperature
+        self._celsius = value     # => Updates private attribute if valid
+                                  # => Maintains class invariants
 
     @property
     def fahrenheit(self):
         """Get Fahrenheit temperature (computed)."""
+        # => Property computed from celsius (no stored value)
+        # => Conversion formula: F = C × 9/5 + 32
         return self._celsius * 9/5 + 32
+        # => Always calculates from current celsius
+        # => Ensures consistency (no stale data)
 
     @fahrenheit.setter
     def fahrenheit(self, value):
         """Set Fahrenheit temperature (updates Celsius)."""
+        # => Setting fahrenheit updates underlying celsius
+        # => Conversion formula: C = (F - 32) × 5/9
         self._celsius = (value - 32) * 5/9
+        # => Stores result in celsius (single source of truth)
+        # => Maintains consistency between representations
 
-temp = Temperature(25)            # => temp has _celsius=25
+temp = Temperature(25)            # => Constructs Temperature with 25°C
+                                  # => temp._celsius is 25 (type: float)
+                                  # => Properties available for access
 
 # Access via property (looks like attribute)
-print(temp.celsius)               # => Output: 25 (calls getter)
-print(temp.fahrenheit)            # => Output: 77.0 (computed)
+print(temp.celsius)               # => Accesses celsius property (calls getter)
+                                  # => Output: 25
+print(temp.fahrenheit)            # => Accesses fahrenheit property (calls getter)
+                                  # => Computed: 25 * 9/5 + 32 = 77.0
+                                  # => Output: 77.0
 
 # Set via property (calls setter)
-temp.celsius = 30                 # => _celsius is now 30
+temp.celsius = 30                 # => Calls celsius.setter with value 30
+                                  # => Validates: 30 >= -273.15 (passes)
+                                  # => temp._celsius is now 30
 print(temp.celsius)               # => Output: 30
-print(temp.fahrenheit)            # => Output: 86.0
+print(temp.fahrenheit)            # => Recomputed: 30 * 9/5 + 32 = 86.0
+                                  # => Output: 86.0
 
-temp.fahrenheit = 68              # => _celsius updated to 20
+temp.fahrenheit = 68              # => Calls fahrenheit.setter with value 68
+                                  # => Converts: (68 - 32) * 5/9 = 20.0
+                                  # => temp._celsius updated to 20.0
 print(temp.celsius)               # => Output: 20.0
+                                  # => Shows updated celsius value
 
 # Validation in setter
 try:
-    temp.celsius = -300           # => Below absolute zero
+    temp.celsius = -300           # => Attempts invalid temperature
+                                  # => -300 < -273.15 (below absolute zero)
 except ValueError as e:
+    # => Catches ValueError from setter validation
     print(f"Error: {e}")          # => Output: Error: Temperature below absolute zero
+                                  # => Exception message from setter
 
 # Magic methods for arithmetic
 class Vector:
     """2D vector with operator overloading."""
+    # => Defines 2D vector class with x, y coordinates
+    # => Implements magic methods for operators (+, -, *, ==)
 
     def __init__(self, x, y):
-        self.x = x
-        self.y = y
+        # => Constructor takes x and y coordinates
+        self.x = x                # => Stores x coordinate (type: int/float)
+        self.y = y                # => Stores y coordinate (type: int/float)
 
     def __str__(self):
         """String representation."""
+        # => __str__ defines string representation for print()
+        # => Called by str() and print() functions
         return f"Vector({self.x}, {self.y})"
+        # => Returns formatted string showing coordinates
 
     def __add__(self, other):
         """Vector addition (v1 + v2)."""
+        # => __add__ enables + operator: v1 + v2
+        # => Component-wise addition: (x1+x2, y1+y2)
         return Vector(self.x + other.x, self.y + other.y)
+        # => Returns NEW Vector (doesn't modify originals)
+        # => Addition is commutative in math, here too
 
     def __sub__(self, other):
         """Vector subtraction (v1 - v2)."""
+        # => __sub__ enables - operator: v1 - v2
+        # => Component-wise subtraction: (x1-x2, y1-y2)
         return Vector(self.x - other.x, self.y - other.y)
+        # => Returns NEW Vector (immutable operation)
+        # => Creates vector from self to other
 
     def __mul__(self, scalar):
         """Scalar multiplication (v * scalar)."""
+        # => __mul__ enables * operator: v * scalar
+        # => Scales both components by scalar
         return Vector(self.x * scalar, self.y * scalar)
+        # => Returns NEW Vector with scaled components
+        # => Useful for scaling, direction changes
 
     def __eq__(self, other):
         """Equality comparison (v1 == v2)."""
+        # => __eq__ enables == operator: v1 == v2
+        # => Compares both x and y components
         return self.x == other.x and self.y == other.y
+        # => Returns True if both components equal
+        # => Returns False if ANY component differs
 
     def __len__(self):
         """Length (magnitude) of vector."""
+        # => __len__ enables len() function: len(v)
+        # => Calculates magnitude: √(x²+y²)
         return int((self.x ** 2 + self.y ** 2) ** 0.5)
+        # => Pythagorean theorem for magnitude
+        # => Returns int (len() requires integer)
 
-v1 = Vector(3, 4)                 # => v1 is Vector(3, 4)
-v2 = Vector(1, 2)                 # => v2 is Vector(1, 2)
+v1 = Vector(3, 4)                 # => Constructs Vector with x=3, y=4
+                                  # => v1.x is 3, v1.y is 4
+v2 = Vector(1, 2)                 # => Constructs Vector with x=1, y=2
+                                  # => v2.x is 1, v2.y is 2
 
-print(v1 + v2)                    # => Output: Vector(4, 6) (uses __add__)
-print(v1 - v2)                    # => Output: Vector(2, 2) (uses __sub__)
-print(v1 * 2)                     # => Output: Vector(6, 8) (uses __mul__)
-print(v1 == v2)                   # => Output: False (uses __eq__)
-print(v1 == Vector(3, 4))         # => Output: True
-print(len(v1))                    # => Output: 5 (uses __len__, √(3²+4²))
+print(v1 + v2)                    # => Calls v1.__add__(v2)
+                                  # => Component-wise: (3+1, 4+2) = (4, 6)
+                                  # => Output: Vector(4, 6)
+print(v1 - v2)                    # => Calls v1.__sub__(v2)
+                                  # => Component-wise: (3-1, 4-2) = (2, 2)
+                                  # => Output: Vector(2, 2)
+print(v1 * 2)                     # => Calls v1.__mul__(2)
+                                  # => Scales: (3*2, 4*2) = (6, 8)
+                                  # => Output: Vector(6, 8)
+print(v1 == v2)                   # => Calls v1.__eq__(v2)
+                                  # => Compares: (3,4) vs (1,2)
+                                  # => Output: False (coordinates differ)
+print(v1 == Vector(3, 4))         # => Creates temporary Vector(3, 4)
+                                  # => Compares: (3,4) vs (3,4)
+                                  # => Output: True (coordinates match)
+print(len(v1))                    # => Calls v1.__len__()
+                                  # => Magnitude: √(3²+4²) = √25 = 5
+                                  # => Output: 5
 
 # Magic methods for containers
 class Playlist:
     """Music playlist with container magic methods."""
+    # => Implements container protocol (__len__, __getitem__, etc.)
+    # => Behaves like built-in list but with custom behavior
 
     def __init__(self):
-        self._songs = []
+        # => Constructor initializes empty song list
+        self._songs = []          # => Private list to store songs
+                                  # => Encapsulates internal storage
 
     def add(self, song):
         """Add song to playlist."""
-        self._songs.append(song)
+        # => Public method to add songs
+        self._songs.append(song)  # => Appends song to internal list
+                                  # => Maintains insertion order
 
     def __len__(self):
         """Number of songs (len(playlist))."""
-        return len(self._songs)
+        # => __len__ enables len() function
+        # => Delegates to internal list's length
+        return len(self._songs)   # => Returns count of songs
+                                  # => Required for container protocol
 
     def __getitem__(self, index):
         """Access song by index (playlist[0])."""
-        return self._songs[index]
+        # => __getitem__ enables bracket notation: playlist[i]
+        # => Supports positive and negative indices
+        return self._songs[index] # => Returns song at index
+                                  # => Raises IndexError if out of bounds
 
     def __setitem__(self, index, song):
         """Set song at index (playlist[0] = "song")."""
-        self._songs[index] = song
+        # => __setitem__ enables assignment: playlist[i] = song
+        # => Allows in-place modification
+        self._songs[index] = song # => Updates song at index
+                                  # => Maintains list mutability
 
     def __contains__(self, song):
         """Check if song in playlist ("song" in playlist)."""
+        # => __contains__ enables 'in' operator
+        # => Membership testing
         return song in self._songs
+        # => Returns True if song found
+        # => Returns False if song not in playlist
 
     def __iter__(self):
         """Make playlist iterable."""
-        return iter(self._songs)
+        # => __iter__ enables for loops: for song in playlist
+        # => Returns iterator over songs
+        return iter(self._songs)  # => Delegates to list's iterator
+                                  # => Enables foreach-style iteration
 
-playlist = Playlist()             # => playlist is empty Playlist
+playlist = Playlist()             # => Constructs empty Playlist
+                                  # => playlist._songs is []
 
-playlist.add("Song A")            # => _songs is ["Song A"]
-playlist.add("Song B")            # => _songs is ["Song A", "Song B"]
-playlist.add("Song C")            # => _songs is ["Song A", "Song B", "Song C"]
+playlist.add("Song A")            # => Appends "Song A" to internal list
+                                  # => playlist._songs is ["Song A"]
+playlist.add("Song B")            # => Appends "Song B" to list
+                                  # => playlist._songs is ["Song A", "Song B"]
+playlist.add("Song C")            # => Appends "Song C" to list
+                                  # => playlist._songs is ["Song A", "Song B", "Song C"]
 
-print(len(playlist))              # => Output: 3 (uses __len__)
-print(playlist[0])                # => Output: Song A (uses __getitem__)
-print("Song B" in playlist)       # => Output: True (uses __contains__)
+print(len(playlist))              # => Calls playlist.__len__()
+                                  # => Returns 3 (number of songs)
+                                  # => Output: 3
+print(playlist[0])                # => Calls playlist.__getitem__(0)
+                                  # => Returns first song
+                                  # => Output: Song A
+print("Song B" in playlist)       # => Calls playlist.__contains__("Song B")
+                                  # => Checks membership
+                                  # => Output: True
 
 # Iterate over playlist
-for song in playlist:             # => Uses __iter__
-    print(song)                   # => Output: Song A, Song B, Song C
+for song in playlist:             # => Calls playlist.__iter__()
+                                  # => Gets iterator, loops over songs
+    print(song)                   # => Prints each song
+                                  # => Output: Song A (first iteration)
+                                  # => Output: Song B (second iteration)
+                                  # => Output: Song C (third iteration)
 
-playlist[1] = "Song X"            # => Replace Song B (uses __setitem__)
-print(playlist[1])                # => Output: Song X
+playlist[1] = "Song X"            # => Calls playlist.__setitem__(1, "Song X")
+                                  # => Replaces "Song B" with "Song X"
+                                  # => playlist._songs is ["Song A", "Song X", "Song C"]
+print(playlist[1])                # => Calls playlist.__getitem__(1)
+                                  # => Returns updated song at index 1
+                                  # => Output: Song X
 
 # Context manager magic methods
 class FileLogger:
     """Context manager for file logging."""
+    # => Implements context manager protocol (__enter__, __exit__)
+    # => Enables 'with' statement for automatic resource cleanup
 
     def __init__(self, filename):
-        self.filename = filename
+        # => Constructor stores filename for later use
+        self.filename = filename  # => Stores filename as instance attribute
+                                  # => File not opened yet (lazy opening)
 
     def __enter__(self):
         """Called when entering with block."""
+        # => __enter__ called automatically at start of 'with' block
+        # => Performs setup operations (opening file)
         print(f"Opening {self.filename}")
+        # => Diagnostic output showing entry
         self.file = open(self.filename, "w")
-        return self.file          # => Returned as "as" variable
+        # => Opens file for writing (creates if not exists)
+        # => Stores file handle as instance attribute
+        return self.file          # => Returns file object
+                                  # => Becomes value of 'as' variable
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Called when exiting with block (even on exception)."""
+        # => __exit__ called automatically at end of 'with' block
+        # => Performs cleanup (closing file) even if exception occurred
+        # => Parameters: exception type, value, traceback (or None)
         print(f"Closing {self.filename}")
-        self.file.close()
+        # => Diagnostic output showing exit
+        self.file.close()         # => Closes file handle (flushes buffers)
+                                  # => Releases system resources
         return False              # => False means propagate exceptions
+                                  # => True would suppress exceptions
 
 # Use custom context manager
 with FileLogger("log.txt") as log_file:
+    # => Calls FileLogger("log.txt").__enter__()
+    # => log_file receives returned file object
+    # => Output: Opening log.txt
     log_file.write("Log entry 1\n")
+    # => Writes first line to file
+    # => Buffered until close
     log_file.write("Log entry 2\n")
-# => Output: Opening log.txt
-#    Closing log.txt (automatic cleanup)
+    # => Writes second line to file
+# => Calls __exit__ automatically after block
+# => Output: Closing log.txt
+# => File closed and flushed (even if exception occurred)
 
 # Callable objects
 class Multiplier:
     """Callable class that multiplies by a factor."""
+    # => Class instances can be called like functions
+    # => Implements __call__ magic method
 
     def __init__(self, factor):
-        self.factor = factor
+        # => Constructor stores multiplication factor
+        self.factor = factor      # => Stores factor as instance attribute
+                                  # => Each instance has its own factor
 
     def __call__(self, x):
         """Make instance callable like a function."""
-        return x * self.factor
+        # => __call__ enables instance(x) syntax
+        # => Instance behaves like function
+        return x * self.factor    # => Multiplies argument by stored factor
+                                  # => Returns computed result
 
 times_three = Multiplier(3)       # => times_three is Multiplier object
 print(times_three(10))            # => Output: 30 (uses __call__)
@@ -2894,171 +3460,336 @@ Common patterns for handling errors include EAFP (Easier to Ask for Forgiveness 
 # EAFP (Easier to Ask for Forgiveness than Permission) - Pythonic
 def eafp_example(data, key):
     """Try operation, handle exception if it fails."""
+    # => EAFP philosophy: Try first, handle errors later
+    # => Pythonic approach for cleaner code
     try:
-        return data[key]          # => Try to access key
+        # => Attempt operation without checking first
+        return data[key]          # => Try to access key in dict
+                                  # => If key exists, returns value
+                                  # => If key missing, raises KeyError
     except KeyError:
-        return "Key not found"    # => Handle if key doesn't exist
+        # => Exception handling catches KeyError
+        # => Executes only if key not found
+        return "Key not found"    # => Returns default message
+                                  # => No exception propagates
 
 data = {"name": "Alice", "age": 30}
-print(eafp_example(data, "name")) # => Output: Alice
-print(eafp_example(data, "city")) # => Output: Key not found
+                                  # => data is dict with 2 keys
+                                  # => Test EAFP approach
+print(eafp_example(data, "name")) # => Key "name" exists
+                                  # => Returns "Alice" from try block
+                                  # => Output: Alice
+print(eafp_example(data, "city")) # => Key "city" doesn't exist
+                                  # => Raises KeyError in try
+                                  # => Caught by except, returns "Key not found"
+                                  # => Output: Key not found
 
 # LBYL (Look Before You Leap) - Check before action
 def lbyl_example(data, key):
     """Check condition before operation."""
-    if key in data:               # => Check first
-        return data[key]
+    # => LBYL philosophy: Check preconditions first
+    # => More defensive programming style
+    if key in data:               # => Check if key exists first
+                                  # => Prevents exception from occurring
+                                  # => 'in' operator checks membership
+        return data[key]          # => Safe access (key confirmed to exist)
+                                  # => Returns value for existing key
     else:
-        return "Key not found"
+        # => Key doesn't exist path
+        return "Key not found"    # => Returns default without exception
 
-print(lbyl_example(data, "name")) # => Output: Alice
-print(lbyl_example(data, "city")) # => Output: Key not found
+print(lbyl_example(data, "name")) # => Check: "name" in data → True
+                                  # => Executes if block, returns "Alice"
+                                  # => Output: Alice
+print(lbyl_example(data, "city")) # => Check: "city" in data → False
+                                  # => Executes else block
+                                  # => Output: Key not found
 
 # EAFP vs LBYL comparison
-# EAFP: More Pythonic, handles race conditions better
-# LBYL: Clearer for simple cases, but verbose and prone to races
+# => EAFP: More Pythonic, handles race conditions better
+#    - Assumes success, handles failures
+#    - Single dict access (faster when key exists)
+#    - Thread-safe (no TOCTOU race between check and use)
+# => LBYL: Clearer for simple cases, but verbose and prone to races
+#    - Explicit precondition checking
+#    - Double dict access (check + get)
+#    - Race condition possible in multithreaded code
 
 # Custom exceptions
 class InvalidAgeError(ValueError):
     """Raised when age is invalid."""
-    pass
+    # => Custom exception extends ValueError
+    # => Inherits all ValueError behavior
+    # => Allows specific age validation errors
+    pass                          # => No additional methods needed
+                                  # => Uses parent class implementation
 
 class NegativeAgeError(InvalidAgeError):
     """Raised when age is negative."""
-    pass
+    # => Specialized exception for negative ages
+    # => Extends InvalidAgeError (exception hierarchy)
+    # => Allows catching specific or general age errors
+    pass                          # => No additional implementation
+                                  # => Inherits from InvalidAgeError
 
 def validate_age(age):
     """Validate age with custom exceptions."""
+    # => Function validates age with multiple checks
+    # => Raises specific exceptions for different errors
     if not isinstance(age, int):
+        # => Type check: ensures age is integer
+        # => isinstance() checks type at runtime
         raise InvalidAgeError(f"Age must be integer, got {type(age)}")
+        # => Raises InvalidAgeError with descriptive message
+        # => Function exits here if type wrong
     if age < 0:
+        # => Value check: negative ages invalid
+        # => Comparison: age < 0
         raise NegativeAgeError(f"Age cannot be negative: {age}")
+        # => Raises more specific exception
+        # => NegativeAgeError is subclass of InvalidAgeError
     if age > 150:
+        # => Realistic upper bound check
+        # => Prevents obviously wrong values
         raise InvalidAgeError(f"Age unrealistic: {age}")
-    return age
+        # => Raises general InvalidAgeError
+        # => Not specific enough for own exception class
+    return age                    # => Returns age if all validations pass
+                                  # => No exception raised
 
 # Using custom exceptions
 try:
-    validate_age(25)              # => Output: (nothing - valid age)
-    print("Valid age")
+    # => Validation test case 1: valid age
+    validate_age(25)              # => 25 passes all checks
+                                  # => Returns 25, no exception
+                                  # => try block continues
+    print("Valid age")            # => Prints success message
+                                  # => Output: Valid age
 except InvalidAgeError as e:
+    # => Exception handler (not executed for valid age)
     print(f"Error: {e}")
 
 try:
-    validate_age(-5)              # => Raises NegativeAgeError
+    # => Validation test case 2: negative age
+    validate_age(-5)              # => -5 fails age < 0 check
+                                  # => Raises NegativeAgeError
+                                  # => try block exits immediately
 except NegativeAgeError as e:
+    # => Catches NegativeAgeError specifically
+    # => e holds exception object with message
     print(f"Negative age error: {e}")
+                                  # => Prints exception message
                                   # => Output: Negative age error: Age cannot be negative: -5
 
 try:
-    validate_age("thirty")        # => Raises InvalidAgeError
+    # => Validation test case 3: wrong type
+    validate_age("thirty")        # => "thirty" fails isinstance() check
+                                  # => Raises InvalidAgeError (not int)
 except InvalidAgeError as e:
+    # => Catches InvalidAgeError
+    # => Parent exception catches type error
     print(f"Invalid age error: {e}")
                                   # => Output: Invalid age error: Age must be integer...
 
 # Catching exception hierarchy
 try:
-    validate_age(-10)
-except InvalidAgeError as e:      # => Catches NegativeAgeError too (parent class)
+    # => Demonstrating exception hierarchy
+    validate_age(-10)             # => -10 raises NegativeAgeError
+                                  # => NegativeAgeError extends InvalidAgeError
+except InvalidAgeError as e:      # => Catches parent class InvalidAgeError
+                                  # => Also catches subclass NegativeAgeError
+                                  # => Exception hierarchy enables polymorphic handling
     print(f"Caught via parent: {e}")
+                                  # => Catches child exception via parent
                                   # => Output: Caught via parent: Age cannot be negative: -10
 
 # Exception chaining (Python 3+)
 def process_data(data):
     """Process data with exception chaining."""
+    # => Demonstrates exception chaining (from keyword)
+    # => Preserves original exception context
     try:
-        result = int(data)        # => May raise ValueError
-        return result
+        result = int(data)        # => Attempts string to int conversion
+                                  # => May raise ValueError if data not numeric
+        return result             # => Returns converted int if successful
     except ValueError as e:
-        # Chain original exception to new exception
+        # => Catches ValueError from int() conversion
+        # => Chains new exception to original
         raise InvalidAgeError(f"Failed to process data: {data}") from e
+        # => 'from e' chains original exception
+        # => New exception has __cause__ attribute = e
+        # => Preserves error context for debugging
 
 try:
-    process_data("invalid")
+    # => Test exception chaining
+    process_data("invalid")       # => "invalid" not convertible to int
+                                  # => int("invalid") raises ValueError
+                                  # => Caught and re-raised as InvalidAgeError
 except InvalidAgeError as e:
-    print(f"Error: {e}")          # => Output: Error: Failed to process data: invalid
+    # => Catches chained exception
+    print(f"Error: {e}")          # => Prints new exception message
+                                  # => Output: Error: Failed to process data: invalid
     print(f"Original: {e.__cause__}")
+                                  # => __cause__ attribute holds original ValueError
                                   # => Output: Original: invalid literal for int()...
+                                  # => Preserves root cause for debugging
 
 # Suppressing exception context (discouraged, hides root cause)
 try:
     try:
-        int("invalid")
+        # => Inner try block
+        int("invalid")            # => Raises ValueError
     except ValueError:
+        # => Catches ValueError
         raise InvalidAgeError("Processing failed") from None
-                                  # => Suppress original exception (no __cause__)
+                                  # => 'from None' suppresses original exception
+                                  # => No __cause__ attribute (None)
+                                  # => Hides root cause (bad practice!)
 except InvalidAgeError as e:
-    print(f"Error: {e}")          # => Output: Error: Processing failed
-    print(f"Cause: {e.__cause__}") # => Output: Cause: None
+    # => Catches raised exception
+    print(f"Error: {e}")          # => Prints new exception only
+                                  # => Output: Error: Processing failed
+    print(f"Cause: {e.__cause__}") # => __cause__ is None (suppressed)
+                                  # => Output: Cause: None
+                                  # => Root cause hidden (hard to debug)
 
 # Multiple exception types
 def divide_and_convert(a, b):
     """Demonstrate handling multiple exception types."""
+    # => Function shows multiple except clauses
+    # => Different handlers for different exception types
     try:
-        result = a / b            # => May raise ZeroDivisionError
-        return int(result)        # => May raise ValueError (unlikely here)
+        result = a / b            # => Division operation
+                                  # => May raise ZeroDivisionError if b == 0
+                                  # => Returns float result
+        return int(result)        # => Converts float to int
+                                  # => May raise ValueError (rare)
+                                  # => Returns int result
     except ZeroDivisionError:
+        # => Specific handler for division by zero
+        # => Catches only ZeroDivisionError
         print("Division by zero")
-        return None
+                                  # => Prints error message
+        return None               # => Returns None as error indicator
     except ValueError:
+        # => Specific handler for conversion errors
+        # => Catches only ValueError
         print("Conversion failed")
-        return None
+        return None               # => Returns None as error indicator
     except Exception as e:
+        # => General handler for unexpected exceptions
+        # => Catches any Exception not caught above
+        # => Catch-all for unexpected errors
         print(f"Unexpected error: {type(e).__name__}: {e}")
-        return None
+                                  # => Prints exception type and message
+        return None               # => Returns None for any error
 
-print(divide_and_convert(10, 2))  # => Output: 5
-print(divide_and_convert(10, 0))  # => Output: Division by zero, then None
+print(divide_and_convert(10, 2))  # => Division: 10 / 2 = 5.0
+                                  # => Conversion: int(5.0) = 5
+                                  # => No exception, returns 5
+                                  # => Output: 5
+print(divide_and_convert(10, 0))  # => Division: 10 / 0 raises ZeroDivisionError
+                                  # => Caught by first except
+                                  # => Prints "Division by zero"
+                                  # => Returns None
+                                  # => Output: Division by zero (then None)
 
 # Context manager for automatic cleanup (exception-safe)
 class Transaction:
     """Context manager for transactional operations."""
+    # => Implements context manager protocol
+    # => __enter__ and __exit__ magic methods
 
     def __enter__(self):
+        # => Called when entering 'with' block
+        # => Performs setup operations
         print("Starting transaction")
-        return self
+                                  # => Diagnostic output
+        return self               # => Returns object for 'as' clause
+                                  # => Becomes context variable
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        # => Called when exiting 'with' block
+        # => Always executes (even on exception)
+        # => Parameters: exception type, value, traceback
         if exc_type is None:
+            # => No exception occurred
+            # => Block completed successfully
             print("Committing transaction")
+                                  # => Success path
         else:
+            # => Exception occurred in block
+            # => exc_type is exception class
             print(f"Rolling back transaction: {exc_type.__name__}")
-        return False              # => Propagate exceptions
+                                  # => Error path with exception name
+                                  # => Rollback on failure
+        return False              # => False means propagate exceptions
+                                  # => True would suppress exceptions
 
 # Success case
 with Transaction():
+    # => Calls Transaction().__enter__()
+    # => Output: Starting transaction
     print("Performing operation")
-# => Output: Starting transaction
-#    Performing operation
-#    Committing transaction
+                                  # => Normal operation
+                                  # => Output: Performing operation
+# => Calls __exit__(None, None, None) after block
+# => exc_type is None (success)
+# => Output: Committing transaction
+# => Transaction committed automatically
 
 # Failure case
 try:
+    # => Outer try to catch exception
     with Transaction():
+        # => Calls __enter__
+        # => Output: Starting transaction
         print("Performing operation")
+                                  # => Output: Performing operation
         raise ValueError("Operation failed")
+                                  # => Raises exception in context
+                                  # => Triggers __exit__ with exception info
 except ValueError:
+    # => Catches exception after __exit__
+    # => __exit__ returned False (propagated)
     print("Caught exception")
-# => Output: Starting transaction
-#    Performing operation
-#    Rolling back transaction: ValueError
-#    Caught exception
+# => Output sequence:
+#    1. Starting transaction (__enter__)
+#    2. Performing operation (block execution)
+#    3. Rolling back transaction: ValueError (__exit__)
+#    4. Caught exception (except handler)
 
 # Logging exceptions
-import logging
+import logging                    # => Imports standard logging module
+                                  # => Provides structured error logging
 
 logging.basicConfig(level=logging.ERROR)
+                                  # => Configures logging to show ERROR and above
+                                  # => Sets global logging configuration
 
 def safe_divide(a, b):
     """Divide with error logging."""
+    # => Function demonstrates exception logging
+    # => Logs errors instead of just printing
     try:
-        return a / b
+        # => Attempt division
+        return a / b              # => Division operation
+                                  # => May raise ZeroDivisionError
     except ZeroDivisionError:
+        # => Catches division by zero
         logging.error(f"Division by zero: {a} / {b}")
-        return None
+                                  # => Logs error with context
+                                  # => Includes operand values
+                                  # => Better than print for production
+        return None               # => Returns None to indicate error
+                                  # => Allows caller to detect failure
 
-result = safe_divide(10, 0)       # => Logs error message
+result = safe_divide(10, 0)       # => Division by zero
+                                  # => Catches exception
+                                  # => Logs error message via logging
+                                  # => result is None
 print(result)                     # => Output: None
+                                  # => Logging output appears separately
 ```
 
 **Key Takeaway**: Prefer EAFP (try/except) over LBYL (if checks) for Pythonic code - use custom exceptions to provide clear error semantics, implement exception chaining with `raise ... from e` to preserve root causes, and leverage context managers for automatic resource cleanup even when exceptions occur.

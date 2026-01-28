@@ -38,45 +38,67 @@ func main() {
     // Create Employee with embedded Person
     emp := Employee{
         Person: Person{Name: "Alice", Age: 30}, // => Person is embedded type, must be named in initialization
+        // => Creates Person struct with Name="Alice", Age=30
         Title:  "Engineer",                      // => Employee's own field
     }                                            // => emp is Employee{Person: Person{Name: "Alice", Age: 30}, Title: "Engineer"}
+    // => emp has 3 accessible fields: Name, Age (promoted), Title (own)
 
     // Access embedded fields directly (field promotion)
     fmt.Println(emp.Name)    // => Output: Alice (emp.Name promoted from emp.Person.Name)
+    // => Can access embedded Person.Name directly through emp.Name
+    // => No need to write emp.Person.Name (though that also works)
     fmt.Println(emp.Title)   // => Output: Engineer (emp's own field)
+    // => Title belongs to Employee, not promoted
     fmt.Println(emp.Age)     // => Output: 30 (emp.Age promoted from emp.Person.Age)
+    // => Age promoted from embedded Person
 
     // Call embedded methods (method promotion)
     emp.Describe()           // => Calls Person.Describe() on embedded Person
-                             // => Output: Alice is 30 years old
+    // => Person.Describe() promoted to Employee
+    // => Equivalent to emp.Person.Describe()
+    // => Method receiver sees emp.Person (the embedded Person value)
+    // => Output: Alice is 30 years old
 
     // Explicit access to embedded type
     fmt.Println(emp.Person.Name) // => Output: Alice (explicit access, same as emp.Name)
+    // => Can explicitly access through emp.Person if needed
+    // => Both emp.Name and emp.Person.Name refer to same field
     fmt.Println(emp.Person.Age)  // => Output: 30 (explicit access, same as emp.Age)
 
     // Modify embedded field
-    emp.Name = "Bob"         // => Sets emp.Person.Name = "Bob"
-    emp.Age = 35             // => Sets emp.Person.Age = 35
-    emp.Describe()           // => Output: Bob is 35 years old
+    emp.Name = "Bob"         // => Sets emp.Person.Name = "Bob" (promoted access)
+    // => Changes the Name field of embedded Person
+    emp.Age = 35             // => Sets emp.Person.Age = 35 (promoted access)
+    // => Changes the Age field of embedded Person
+    emp.Describe()           // => Calls promoted Describe method
+    // => Output: Bob is 35 years old (reflects updated values)
 
     // Embedded type is a value, not a pointer - changes don't affect original
-    p := Person{Name: "Charlie", Age: 40}
+    p := Person{Name: "Charlie", Age: 40} // => Create separate Person instance
+    // => p is independent Person struct
     emp2 := Employee{Person: p, Title: "Manager"}
+    // => emp2.Person is COPY of p (value embedding, not pointer)
+    // => Changes to emp2.Person won't affect p
     emp2.Name = "David"      // => Changes emp2.Person.Name, NOT p.Name
-    fmt.Println(p.Name)      // => Output: Charlie (p unchanged)
+    // => emp2.Person.Name is now "David"
+    // => p.Name remains "Charlie" (independent copy)
+    fmt.Println(p.Name)      // => Output: Charlie (p unchanged, still original value)
+    // => Proves emp2.Person is copy, not reference to p
     fmt.Println(emp2.Name)   // => Output: David (emp2.Person.Name changed)
+    // => emp2 has its own copy with modified name
 }
 
 // Person type definition
 type Person struct {
-    Name string              // => Person's name field
-    Age  int                 // => Person's age field
-}
+    Name string              // => Person's name field (exported, capital N)
+    Age  int                 // => Person's age field (exported, capital A)
+}                            // => Person is simple struct with two fields
 
 // Person method - available on Person and promoted to Employee
 func (p Person) Describe() { // => Method receiver is Person (value receiver)
+    // => Value receiver receives copy of Person (not pointer)
     fmt.Printf("%s is %d years old\n", p.Name, p.Age)
-    // => Formats and prints description
+    // => Formats and prints description using Name and Age fields
     // => Example output: Alice is 30 years old
 }
 
@@ -84,7 +106,9 @@ func (p Person) Describe() { // => Method receiver is Person (value receiver)
 type Employee struct {
     Person // => Embedded field (anonymous field) - all Person fields/methods promoted to Employee
            // => Employee now has Name, Age (from Person) and Title (own field)
-    Title  string // => Employee's own field
+           // => Embedding is composition, not inheritance
+           // => No explicit field name (anonymous embedding)
+    Title  string // => Employee's own field (not from Person)
 }
 ```
 
@@ -109,16 +133,23 @@ import (
 func main() {
     // Custom error with additional context
     err := performOperation()              // => err is *OperationError (implements error interface)
+    // => performOperation returns error type (actually *OperationError underneath)
     if err != nil {                        // => err is not nil, error occurred
         // Type assertion to extract custom error type
         var opErr *OperationError          // => Declare variable of custom error type
+        // => opErr is nil initially (will be set by errors.As)
         if errors.As(err, &opErr) {        // => errors.As extracts underlying type into opErr
-            // => opErr now points to the actual *OperationError
+            // => Checks if err wraps *OperationError anywhere in chain
+            // => Sets opErr to point to the actual *OperationError
+            // => Returns true because err IS *OperationError
             fmt.Printf("Operation failed: %s (Code: %d)\n", opErr.Message, opErr.Code)
             // => Output: Operation failed: invalid input (Code: 400)
+            // => Can now access custom Message and Code fields
 
             // Access custom fields
             if opErr.Code >= 400 && opErr.Code < 500 {
+                // => Code 400-499 indicates client error (user's fault)
+                // => Code 500-599 would indicate server error
                 fmt.Println("  Category: Client error")
                 // => Output:   Category: Client error
             }
@@ -127,18 +158,25 @@ func main() {
 
     // Error wrapping preserves error chain
     err = divideWithWrapping(10, 0)        // => err wraps ErrDivisionByZero
-    if err != nil {                        // => err is not nil
+    // => divideWithWrapping returns wrapped error (two-layer error)
+    // => Outer: "division failed: ...", Inner: ErrDivisionByZero
+    if err != nil {                        // => err is not nil (division by zero occurred)
         fmt.Println("Wrapped error:", err)
+        // => Prints outer error message (includes wrapped error)
         // => Output: Wrapped error: division failed: cannot divide by zero
 
         // errors.Unwrap extracts wrapped error
         original := errors.Unwrap(err)     // => original is ErrDivisionByZero
+        // => Unwrap removes outer layer, returns inner error
+        // => original is the sentinel error (cannot divide by zero)
         fmt.Println("Original:", original)
         // => Output: Original: cannot divide by zero
 
         // Check if error chain contains specific error
         if errors.Is(err, ErrDivisionByZero) {
             // => errors.Is walks error chain to find ErrDivisionByZero
+            // => Works with wrapped errors (checks outer, then inner, recursively)
+            // => Returns true because inner error IS ErrDivisionByZero
             fmt.Println("Detected division by zero error")
             // => Output: Detected division by zero error
         }
@@ -146,12 +184,19 @@ func main() {
 
     // Multiple error wrapping layers
     err = topLevelOperation()              // => err wraps multiple layers
-    if err != nil {
+    // => Layer 3: "top operation failed: ..."
+    // => Layer 2: "division failed: ..."
+    // => Layer 1: ErrDivisionByZero sentinel
+    if err != nil {                        // => err is not nil
         fmt.Println("\nMulti-layer error:", err)
+        // => Prints outermost error message (includes all wrapped messages)
         // => Output: Multi-layer error: top operation failed: division failed: cannot divide by zero
 
         // errors.Is still finds ErrDivisionByZero through all layers
         if errors.Is(err, ErrDivisionByZero) {
+            // => errors.Is recursively unwraps: Layer 3 → Layer 2 → Layer 1
+            // => Finds ErrDivisionByZero at Layer 1 (innermost)
+            // => Returns true (sentinel error found in chain)
             fmt.Println("Root cause: division by zero")
             // => Output: Root cause: division by zero
         }
@@ -160,45 +205,61 @@ func main() {
 
 // Custom error type implementing error interface
 type OperationError struct {
-    Message string               // => Human-readable error message
+    Message string               // => Human-readable error message field
     Code    int                  // => HTTP-style error code (400, 500, etc.)
+    // => Additional fields provide context beyond simple error string
 }
 
 // Error() method satisfies error interface (must return string)
 func (e *OperationError) Error() string {
     // => Pointer receiver (*OperationError) allows errors.As to match both value and pointer
+    // => This method is REQUIRED to implement error interface
     return fmt.Sprintf("operation error: %s", e.Message)
+    // => Returns formatted string "operation error: invalid input"
+    // => This string is used when error is printed or converted to string
 }
 
 // performOperation returns custom error type
 func performOperation() error {
     // => Returns *OperationError as error interface
+    // => Return type is error (interface), actual value is *OperationError
     return &OperationError{
         Message: "invalid input",    // => Custom error with context
-        Code:    400,                // => Client error code
-    }
+        Code:    400,                // => Client error code (HTTP 400 Bad Request)
+    }                                // => Returns pointer to OperationError (satisfies error interface)
 }
 
 // Sentinel error - predefined error value for comparison
 var ErrDivisionByZero = errors.New("cannot divide by zero")
 // => Global error variable, use errors.Is() to check for this specific error
+// => Sentinel errors are package-level constants for well-known error conditions
+// => Created once, reused everywhere (compare by identity, not message)
+// => errors.New creates error with constant message
 
 func divideWithWrapping(a, b int) error {
-    if b == 0 {
+    if b == 0 {                      // => Check denominator (b must be non-zero)
+        // => Division by zero is invalid operation
         // => %w verb wraps error, preserving it in error chain
         return fmt.Errorf("division failed: %w", ErrDivisionByZero)
         // => Returns error that wraps ErrDivisionByZero
+        // => Outer message: "division failed: cannot divide by zero"
+        // => Inner error: ErrDivisionByZero (accessible via Unwrap)
     }
-    return nil                       // => No error
+    return nil                       // => No error (b is non-zero, division valid)
 }
 
 func topLevelOperation() error {
     err := divideWithWrapping(10, 0) // => err wraps ErrDivisionByZero
-    if err != nil {
+    // => err is "division failed: cannot divide by zero" (wrapped error)
+    if err != nil {                  // => Check if division failed
         // => Wrap again, creating multi-layer error chain
         return fmt.Errorf("top operation failed: %w", err)
+        // => Creates 3-layer error chain:
+        // => Layer 3 (outermost): "top operation failed: ..."
+        // => Layer 2: "division failed: ..."
+        // => Layer 1 (innermost): ErrDivisionByZero
     }
-    return nil
+    return nil                       // => No error (division succeeded)
 }
 ```
 
@@ -251,57 +312,73 @@ func main() {
 
     jsonBytes, err := json.Marshal(user) // => json.Marshal serializes struct to JSON bytes
     // => Marshal only serializes exported (capitalized) fields
-    if err != nil {                      // => Check for marshal errors
+    // => Returns []byte (JSON as bytes) and error
+    if err != nil {                      // => Check for marshal errors (rare, usually type issues)
         fmt.Println("Marshal error:", err)
+        // => Output: Marshal error: [error details]
         return
     }
-    fmt.Println(string(jsonBytes))
+    fmt.Println(string(jsonBytes))   // => Convert []byte to string for printing
     // => Output: {"Name":"Alice","Age":30,"Email":"alice@example.com"}
-    // => JSON field names match Go field names (capitalized)
+    // => JSON field names match Go field names (capitalized, not ideal for APIs)
 
     // Unmarshal - JSON string to Go struct
     jsonStr := `{"name":"Bob","age":25,"email":"bob@example.com"}` // => JSON with lowercase field names
+    // => Raw string literal (backticks allow unescaped quotes)
     var person Person                    // => person is zero value Person{Name: "", Age: 0, Email: ""}
+    // => Declare variable to receive unmarshaled data
     err = json.Unmarshal([]byte(jsonStr), &person) // => Unmarshal requires pointer to modify person
     // => json.Unmarshal uses struct tags to map JSON fields to Go fields
-    if err != nil {                      // => Check for unmarshal errors
+    // => &person allows json.Unmarshal to modify person in-place
+    // => []byte(jsonStr) converts string to byte slice (required by Unmarshal)
+    if err != nil {                      // => Check for unmarshal errors (invalid JSON, type mismatches)
         fmt.Println("Unmarshal error:", err)
+        // => Output: Unmarshal error: invalid character... (example)
         return
     }
-    fmt.Println(person)
+    fmt.Println(person)                  // => Print person struct
     // => Output: {Bob 25 bob@example.com}
     // => person is now Person{Name: "Bob", Age: 25, Email: "bob@example.com"}
+    // => Struct tags mapped lowercase JSON fields to capitalized Go fields
 
     // Custom type with different JSON representation
     apiResponse := APIResponse{
-        Status: 200,                     // => APIResponse.Status = 200
+        Status: 200,                     // => APIResponse.Status = 200 (HTTP OK)
         Data:   person,                  // => APIResponse.Data = person (Person struct)
     }                                    // => apiResponse is APIResponse{Status: 200, Data: Person{...}}
+    // => Nested struct (Person inside APIResponse)
 
     responseJSON, _ := json.MarshalIndent(apiResponse, "", "  ")
     // => json.MarshalIndent pretty-prints JSON with indentation
-    // => "" prefix for each line, "  " indentation (2 spaces)
-    fmt.Println(string(responseJSON))
-    // => Output: {
-    //            "status": 200,
-    //            "data": {
-    //              "name": "Bob",
-    //              "age": 25,
-    //              "email": "bob@example.com"
-    //            }
-    //          }
+    // => First param: value to marshal (apiResponse)
+    // => Second param: "" (prefix for each line, typically empty)
+    // => Third param: "  " (indentation string, 2 spaces per level)
+    fmt.Println(string(responseJSON)) // => Convert []byte to string and print
+    // => Output (formatted with indentation):
+    // => {
+    // =>   "status": 200,
+    // =>   "data": {
+    // =>     "name": "Bob",
+    // =>     "age": 25,
+    // =>     "email": "bob@example.com"
+    // =>   }
+    // => }
+    // => Nested Person struct marshaled recursively
 
     // Handling unknown fields
-    unknownJSON := `{"name":"Charlie","age":28,"unknown":"ignored"}`
-    var person2 Person
+    unknownJSON := `{"name":"Charlie","age":28,"unknown":"ignored"}` // => JSON with extra field
+    // => "unknown" field not in Person struct
+    var person2 Person               // => person2 is zero value Person
     err = json.Unmarshal([]byte(unknownJSON), &person2)
     // => Unknown fields ("unknown") are silently ignored during unmarshal
-    if err != nil {
+    // => Only known fields (name, age, email) are extracted
+    if err != nil {                  // => Check for unmarshal errors
         fmt.Println("Unmarshal error:", err)
     }
-    fmt.Println(person2)
+    fmt.Println(person2)             // => Print person2 struct
     // => Output: {Charlie 28 }
     // => person2 is Person{Name: "Charlie", Age: 28, Email: ""}
+    // => Email is empty string (not in JSON, default value used)
 }
 
 // User - field names must be capitalized for json.Marshal to see them
@@ -586,63 +663,88 @@ import (
 
 func main() {
     // Select between two channels
-    ch1 := make(chan string)           // => Unbuffered channel 1
+    ch1 := make(chan string)           // => Unbuffered channel 1 (no buffer, sends block)
     ch2 := make(chan string)           // => Unbuffered channel 2
+    // => Both channels start empty (no data available)
 
-    go func() {
-        time.Sleep(100 * time.Millisecond) // => Simulate work
+    go func() {                        // => Launch goroutine 1
+        time.Sleep(100 * time.Millisecond) // => Simulate work (goroutine sleeps 100ms)
+        // => Goroutine pauses for 100ms before sending
         ch1 <- "from channel 1"        // => Send after 100ms delay
         // => This send blocks until select receives
+        // => At 100ms mark, ch1 becomes ready for select
     }()
 
-    go func() {
-        time.Sleep(200 * time.Millisecond) // => Simulate longer work
+    go func() {                        // => Launch goroutine 2
+        time.Sleep(200 * time.Millisecond) // => Simulate longer work (200ms sleep)
+        // => Goroutine pauses for 200ms before sending
         ch2 <- "from channel 2"        // => Send after 200ms delay
+        // => At 200ms mark, ch2 becomes ready for select
     }()
 
     // Wait for either channel (select blocks until one is ready)
     for i := 0; i < 2; i++ {           // => Loop twice to receive from both channels
+        // => First iteration at i=0, second at i=1
         select {                       // => select waits for ANY case to be ready
+        // => Blocks until at least one channel has data
         case msg1 := <-ch1:            // => If ch1 has data, receive it
+            // => Receives value from ch1, assigns to msg1
             fmt.Println("Received:", msg1)
             // => First iteration: msg1 is "from channel 1" (ch1 ready at 100ms)
+            // => Output: Received: from channel 1
         case msg2 := <-ch2:            // => If ch2 has data, receive it
+            // => Receives value from ch2, assigns to msg2
             fmt.Println("Received:", msg2)
             // => Second iteration: msg2 is "from channel 2" (ch2 ready at 200ms)
+            // => Output: Received: from channel 2
         }
         // => select executes whichever case is ready first
+        // => Only ONE case executes per select (not all ready cases)
     }
-    // => Output: Received: from channel 1
-    // =>         Received: from channel 2
+    // => Final output (in order):
+    // => Received: from channel 1
+    // => Received: from channel 2
 
     // Select with timeout pattern
-    timeoutCh := make(chan string)     // => Channel that never receives
-    select {
-    case msg := <-timeoutCh:           // => Wait for message
+    timeoutCh := make(chan string)     // => Channel that never receives data
+    // => timeoutCh will never have data (no goroutine sends to it)
+    select {                           // => Wait for message OR timeout
+    case msg := <-timeoutCh:           // => Wait for message from timeoutCh
+        // => This case will never execute (timeoutCh never sends)
         fmt.Println("Got message:", msg)
     case <-time.After(100 * time.Millisecond): // => time.After returns channel that sends after duration
-        // => time.After(100ms) sends on returned channel after 100ms
+        // => time.After(100ms) creates channel, sends value after 100ms
+        // => We ignore the value (<-), only care that timeout fired
         fmt.Println("Timeout - no message received")
+        // => This case executes at 100ms (timeout reached)
     }
     // => Output: Timeout - no message received (timeoutCh never sends)
 
     // Default case - non-blocking receive
-    results := make(chan int)          // => Empty channel
-    select {
-    case result := <-results:          // => Try to receive
+    results := make(chan int)          // => Empty unbuffered channel
+    // => No data available in results channel
+    select {                           // => Try to receive, don't block
+    case result := <-results:          // => Try to receive from results
+        // => Would block normally, but default case prevents blocking
         fmt.Println("Got result:", result)
     default:                           // => Executes IMMEDIATELY if no other case ready
-        // => default makes select non-blocking
+        // => default makes select non-blocking (no wait)
+        // => If no case ready, default executes instantly
         fmt.Println("No result available")
+        // => This executes because results is empty
     }
     // => Output: No result available (results is empty, default executes)
 
     // Select with send operations
     data := make(chan int, 1)          // => Buffered channel, capacity 1
-    select {
-    case data <- 42:                   // => Try to send (succeeds, buffer has space)
+    // => Buffer has space for 1 value before send blocks
+    select {                           // => Try to send, don't block
+    case data <- 42:                   // => Try to send 42 to data channel
+        // => Succeeds because buffer has space (0/1 used)
+        // => data channel now contains 42 (1/1 buffer full)
         fmt.Println("Sent 42")
-    default:
+        // => This executes because send succeeded
+    default:                           // => Would execute if send would block
         fmt.Println("Channel full")
     }
     // => Output: Sent 42
@@ -700,19 +802,28 @@ func main() {
     // WaitGroup - coordinate multiple goroutines
     var wg sync.WaitGroup // => WaitGroup is counter for active goroutines
     // => wg internal counter starts at 0
+    // => WaitGroup is value type (pass by pointer to share state)
 
-    for i := 0; i < 3; i++ {
+    for i := 0; i < 3; i++ {         // => Launch 3 goroutines
         wg.Add(1)          // => Increment counter by 1 (now counter = i+1)
         // => MUST call Add() before spawning goroutine
-        go func(id int) {
+        // => If Add() called inside goroutine, race condition possible
+        go func(id int) {  // => Launch goroutine with id parameter
             defer wg.Done() // => Decrement counter when goroutine completes
             // => defer ensures Done() called even if goroutine panics
+            // => Done() is shorthand for Add(-1)
             fmt.Printf("Worker %d processing\n", id)
-            time.Sleep(100 * time.Millisecond) // => Simulate work
+            // => Output: Worker [0-2] processing (order varies)
+            time.Sleep(100 * time.Millisecond) // => Simulate work (goroutine sleeps)
+            // => Goroutine pauses 100ms before completing
         }(i)               // => Pass i as argument (avoids closure pitfall)
+        // => Without (i), all goroutines would see final i value (3)
+        // => With (i), each goroutine gets copy of current i
     }                      // => After loop: wg counter is 3, 3 goroutines running
 
     wg.Wait()              // => Block until counter reaches 0 (all Done() called)
+    // => Main goroutine blocks here waiting for all workers
+    // => When counter = 0, Wait() unblocks and continues
     fmt.Println("All workers complete")
     // => Output (order may vary):
     // => Worker 0 processing
@@ -722,68 +833,89 @@ func main() {
 
     // Mutex - protect shared data from race conditions
     var mu sync.Mutex      // => Mutex provides mutual exclusion lock
+    // => mu starts unlocked (available for first Lock() call)
     var counter int        // => Shared variable (accessed by multiple goroutines)
-    var wg2 sync.WaitGroup
+    // => counter is NOT safe for concurrent access without synchronization
+    var wg2 sync.WaitGroup // => Separate WaitGroup for this example
 
-    for i := 0; i < 5; i++ {
-        wg2.Add(1)         // => Add 1 to wg2 counter
-        go func() {
-            defer wg2.Done()
+    for i := 0; i < 5; i++ {         // => Launch 5 concurrent goroutines
+        wg2.Add(1)         // => Add 1 to wg2 counter (counter = i+1)
+        go func() {        // => Launch goroutine (no parameters needed)
+            defer wg2.Done() // => Ensure Done() called when goroutine completes
             mu.Lock()       // => Acquire exclusive lock (blocks if another goroutine holds lock)
             // => Only ONE goroutine can hold lock at a time
+            // => If lock held, Lock() blocks until lock released
             counter++       // => Safely modify counter (no race condition)
-            // => Without mutex, counter++ would be racy (lost updates)
+            // => counter++ is 3 operations: read, increment, write
+            // => Without mutex, counter++ would be racy (lost updates possible)
+            // => Mutex ensures atomic execution of counter++
             mu.Unlock()     // => Release lock (other goroutines can now acquire)
-        }()
+            // => Must unlock same goroutine that locked (not transferable)
+        }()                // => No closure variable issue (counter/mu are package-level)
     }
 
     wg2.Wait()             // => Wait for all 5 goroutines to complete
+    // => Blocks until wg2 counter reaches 0
     fmt.Println("Counter:", counter) // => Output: Counter: 5 (all increments preserved)
+    // => Without mutex, counter might be < 5 (lost updates due to race)
 
     // RWMutex - multiple readers OR single writer
     var rwmu sync.RWMutex  // => RWMutex allows concurrent reads, exclusive writes
-    var data = "initial"   // => Shared data
+    // => Optimizes for read-heavy workloads (many reads, few writes)
+    var data = "initial"   // => Shared data (string variable)
     // => RWMutex has two lock modes: RLock (read) and Lock (write)
+    // => Read locks don't block each other, write lock blocks everything
 
     // Multiple readers can run concurrently
-    var wg3 sync.WaitGroup
-    for i := 0; i < 3; i++ {
-        wg3.Add(1)
-        go func(id int) {
-            defer wg3.Done()
+    var wg3 sync.WaitGroup // => WaitGroup for coordinating readers
+    for i := 0; i < 3; i++ {         // => Launch 3 concurrent readers
+        wg3.Add(1)         // => Increment wg3 counter
+        go func(id int) {  // => Launch reader goroutine with id
+            defer wg3.Done() // => Ensure Done() called when reader completes
             rwmu.RLock()    // => Acquire READ lock (multiple readers allowed concurrently)
-            // => RLock does NOT block other RLock calls
-            // => RLock DOES block Lock calls (writer must wait)
+            // => RLock does NOT block other RLock calls (readers don't block readers)
+            // => RLock DOES block Lock calls (writer must wait for readers)
+            // => Multiple readers can hold RLock simultaneously
             fmt.Printf("Reader %d: %s\n", id, data)
-            time.Sleep(10 * time.Millisecond) // => Hold read lock briefly
+            // => Output: Reader [0-2]: initial (all see same value)
+            time.Sleep(10 * time.Millisecond) // => Hold read lock briefly (simulate read operation)
+            // => All readers hold lock concurrently during this sleep
             rwmu.RUnlock()  // => Release read lock
+            // => When all RUnlock() called, writers can acquire Lock
         }(i)
     }
 
     wg3.Wait()             // => Wait for all readers to complete
+    // => Blocks until all 3 readers finish
     // => Output (order may vary, all readers run concurrently):
     // => Reader 0: initial
     // => Reader 1: initial
     // => Reader 2: initial
 
     // Writer with RWMutex
-    var wg4 sync.WaitGroup
-    wg4.Add(1)
-    go func() {
-        defer wg4.Done()
+    var wg4 sync.WaitGroup // => WaitGroup for writer
+    wg4.Add(1)             // => Increment counter for 1 writer
+    go func() {            // => Launch writer goroutine
+        defer wg4.Done()   // => Ensure Done() called when writer completes
         rwmu.Lock()        // => Acquire WRITE lock (exclusive, blocks all other locks)
-        // => Lock blocks until all RLocks released
-        // => Lock blocks other Lock and RLock calls
-        data = "updated"   // => Safely modify data
+        // => Lock blocks until all RLocks released (waits for readers)
+        // => Lock blocks other Lock and RLock calls (exclusive access)
+        // => Only ONE writer can hold Lock at a time
+        data = "updated"   // => Safely modify data (no readers or writers interfere)
+        // => data changes from "initial" to "updated"
         rwmu.Unlock()      // => Release write lock
+        // => Readers and writers can now acquire locks again
     }()
 
-    wg4.Wait()
+    wg4.Wait()             // => Wait for writer to complete
+    // => Blocks until writer finishes
     fmt.Println("Data after write:", data) // => Output: Data after write: updated
+    // => Confirms data was modified by writer
 
     // CRITICAL: WaitGroup counter must never go negative
-    // var badWg sync.WaitGroup
+    // var badWg sync.WaitGroup // => Create WaitGroup (counter = 0)
     // badWg.Done()       // => PANIC: negative WaitGroup counter (Done called before Add)
+    // => Done() decrements counter: 0 - 1 = -1 (invalid, causes panic)
 }
 ```
 
@@ -808,88 +940,111 @@ import (
 
 func main() {
     // Write to file
-    filename := "/tmp/test.txt"      // => File path
+    filename := "/tmp/test.txt"      // => File path (absolute path to temp directory)
     file, err := os.Create(filename) // => Create file (truncates if exists)
-    // => Returns *os.File and error
-    if err != nil {                  // => Check if creation failed
+    // => Returns *os.File (file handle) and error
+    // => If file exists, content is deleted (truncated to 0 bytes)
+    if err != nil {                  // => Check if creation failed (permissions, path issues)
         fmt.Println("Error creating file:", err)
+        // => Output: Error creating file: permission denied (example)
         return
     }
     defer file.Close()               // => defer ensures file closed when function exits
     // => CRITICAL: Always defer file.Close() to prevent resource leaks
+    // => File descriptors are limited (typically 1024 per process)
 
     // Write data to file
     n, err := file.WriteString("Line 1\n")    // => Write string, returns bytes written
-    // => n is 7 (len("Line 1\n"))
-    if err != nil {
+    // => n is 7 (len("Line 1\n")), err is nil if success
+    // => WriteString converts string to []byte internally
+    if err != nil {                  // => Check write errors (disk full, I/O error)
         fmt.Println("Write error:", err)
+        // => Output: Write error: no space left on device (example)
     }
     file.WriteString("Line 2\n")     // => Write another line
-    // => File now contains "Line 1\nLine 2\n"
+    // => Returns (7, nil) for successful write
+    // => File now contains "Line 1\nLine 2\n" (14 bytes total)
 
     // Read entire file into memory
-    data, err := os.ReadFile(filename) // => Read all bytes at once
+    data, err := os.ReadFile(filename) // => Read all bytes at once (convenience function)
     // => data is []byte containing entire file contents
-    if err != nil {
+    // => Opens file, reads all, closes automatically
+    if err != nil {                  // => Check for read errors (file not found, permissions)
         fmt.Println("Error reading file:", err)
         return
     }
-    fmt.Println("File contents:")
+    fmt.Println("File contents:")    // => Output: File contents:
     fmt.Println(string(data))        // => Convert []byte to string
     // => Output:
-    // => File contents:
     // => Line 1
     // => Line 2
 
     // Read line by line (buffered, memory efficient)
-    file, err = os.Open(filename)    // => Open file for reading
-    // => Returns *os.File (read-only mode)
-    if err != nil {
+    file, err = os.Open(filename)    // => Open file for reading (read-only mode)
+    // => Returns *os.File (file handle) and error
+    // => Does NOT truncate file (unlike os.Create)
+    if err != nil {                  // => Check open errors (file not found, permissions)
         fmt.Println("Error opening file:", err)
         return
     }
-    defer file.Close()               // => Close when done
+    defer file.Close()               // => Close when done (defer stacks, will execute in reverse)
 
-    scanner := bufio.NewScanner(file) // => Create scanner (buffers reads)
-    // => scanner reads file in chunks, not all at once
-    lineNum := 0
-    for scanner.Scan() {              // => Read next line, returns false at EOF
-        line := scanner.Text()        // => Get current line (without \n)
-        lineNum++
+    scanner := bufio.NewScanner(file) // => Create scanner (buffers reads for efficiency)
+    // => scanner reads file in chunks (default 64KB buffer), not all at once
+    // => Memory efficient for large files
+    lineNum := 0                     // => Line counter
+    for scanner.Scan() {              // => Read next line, returns false at EOF or error
+        // => Scan advances to next line and returns true if successful
+        line := scanner.Text()        // => Get current line (without \n newline)
+        // => line is string containing line content
+        lineNum++                    // => Increment line counter
         fmt.Printf("Read line %d: %s\n", lineNum, line)
-    }
-    // => Output:
+        // => Output: Read line 1: Line 1
+    }                                // => Loop exits when scanner.Scan() returns false (EOF)
+    // => Final output:
     // => Read line 1: Line 1
     // => Read line 2: Line 2
 
-    if err := scanner.Err(); err != nil { // => Check for scanner errors
+    if err := scanner.Err(); err != nil { // => Check for scanner errors (I/O errors during scan)
+        // => scanner.Err() returns nil if EOF reached normally
+        // => Returns error if read failed due to I/O issue
         fmt.Println("Scanner error:", err)
     }
 
     // File info (metadata)
-    info, err := os.Stat(filename)   // => Get file info without opening
-    // => Returns FileInfo interface
-    if err != nil {
+    info, err := os.Stat(filename)   // => Get file info without opening file
+    // => Returns FileInfo interface (metadata only, no file handle)
+    // => os.Stat follows symlinks (use os.Lstat for symlink info)
+    if err != nil {                  // => Check stat errors (file not found, permissions)
         fmt.Println("Error getting info:", err)
         return
     }
-    fmt.Printf("File name: %s\n", info.Name())     // => Base name
-    fmt.Printf("File size: %d bytes\n", info.Size()) // => Size in bytes
-    fmt.Printf("Modified: %v\n", info.ModTime())   // => Last modification time
-    fmt.Printf("Is directory: %t\n", info.IsDir()) // => false (it's a file)
-    fmt.Printf("Permissions: %v\n", info.Mode())   // => File mode (permissions)
+    fmt.Printf("File name: %s\n", info.Name())     // => Base name (test.txt, not full path)
+    // => Output: File name: test.txt
+    fmt.Printf("File size: %d bytes\n", info.Size()) // => Size in bytes (14 for "Line 1\nLine 2\n")
+    // => Output: File size: 14 bytes
+    fmt.Printf("Modified: %v\n", info.ModTime())   // => Last modification time (time.Time)
+    // => Output: Modified: 2025-12-25 10:30:45 +0700 WIB
+    fmt.Printf("Is directory: %t\n", info.IsDir()) // => false (it's a file, not directory)
+    // => Output: Is directory: false
+    fmt.Printf("Permissions: %v\n", info.Mode())   // => File mode (permissions like -rw-r--r--)
+    // => Output: Permissions: -rw-r--r--
 
     // Append to file
     appendFile, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY, 0644)
-    // => Open with append flag (writes go to end of file)
-    if err != nil {
+    // => Open with append flag (writes go to end of file, not beginning)
+    // => os.O_APPEND | os.O_WRONLY combines flags with bitwise OR
+    // => 0644 is permissions (rw-r--r--, used only if file created)
+    if err != nil {                  // => Check open errors
         fmt.Println("Error opening for append:", err)
         return
     }
-    defer appendFile.Close()
+    defer appendFile.Close()         // => Close append file handle
 
-    appendFile.WriteString("Line 3\n") // => Appends to end of file
-    // => File now contains "Line 1\nLine 2\nLine 3\n"
+    appendFile.WriteString("Line 3\n") // => Appends to end of file (after "Line 2\n")
+    // => Returns (7, nil) for successful write
+    // => File now contains "Line 1\nLine 2\nLine 3\n" (21 bytes total)
+    // => Next read will show all 3 lines
 }
 ```
 
@@ -916,74 +1071,94 @@ import (
 func main() {
     // Simple GET request with default client
     resp, err := http.Get("https://api.example.com/users") // => http.Get uses default client
-    // => Returns *http.Response and error
+    // => Makes GET request to URL, returns response and error
+    // => Default client has no timeout (can hang forever)
     if err != nil {                      // => Check for network/DNS errors
-        fmt.Println("Error:", err)
+        fmt.Println("Error:", err)       // => Output: Error: [network error details]
         return
     }
     defer resp.Body.Close()              // => CRITICAL: Always close response body to prevent leaks
     // => Body is io.ReadCloser, must be closed manually
+    // => Leaked bodies exhaust file descriptors and memory
 
     // Read response body
-    body, err := io.ReadAll(resp.Body)   // => Read all bytes from body
+    body, err := io.ReadAll(resp.Body)   // => Read all bytes from body into memory
     // => body is []byte containing response content
-    if err != nil {
-        fmt.Println("Read error:", err)
+    // => io.ReadAll buffers entire response (risky for large responses)
+    if err != nil {                      // => Check for I/O errors during read
+        fmt.Println("Read error:", err)  // => Output: Read error: [read failure details]
         return
     }
     fmt.Println("Status:", resp.Status)  // => resp.Status is "200 OK" (string)
+    // => Output: Status: 200 OK
     fmt.Println("Status Code:", resp.StatusCode) // => resp.StatusCode is 200 (int)
+    // => Output: Status Code: 200
     fmt.Println("Body:", string(body))   // => Convert []byte to string
+    // => Output: Body: [JSON or HTML response content]
 
     // Custom client with timeout
-    client := &http.Client{
+    client := &http.Client{              // => Create custom HTTP client
         Timeout: 5 * time.Second,        // => Overall request timeout (includes connection, read, etc.)
         // => If request takes > 5s, client.Do returns timeout error
-    }
+        // => Prevents hanging on slow/unresponsive servers
+    }                                    // => client is *http.Client with 5s timeout
 
     // Create custom request with headers
     req, err := http.NewRequest("GET", "https://api.example.com/users", nil)
     // => Creates GET request, nil body (GET requests typically have no body)
-    if err != nil {
+    // => req is *http.Request with URL, method, and empty body
+    if err != nil {                      // => Check for request creation errors (rare)
         fmt.Println("Request creation error:", err)
         return
     }
 
     req.Header.Add("Authorization", "Bearer token123") // => Add authorization header
+    // => Sets Authorization: Bearer token123 in request
     req.Header.Add("Content-Type", "application/json") // => Add content type
+    // => Sets Content-Type: application/json
     req.Header.Set("User-Agent", "MyApp/1.0")          // => Set user agent (replaces existing)
+    // => Set replaces, Add appends (for multi-value headers)
     // => req.Header is http.Header (map[string][]string)
 
     resp, err = client.Do(req)           // => Execute request with custom client
+    // => Sends request with all custom headers and timeout
     if err != nil {                      // => Check for timeout or network errors
-        fmt.Println("Error:", err)
+        fmt.Println("Error:", err)       // => Output: Error: context deadline exceeded (timeout)
         return
     }
-    defer resp.Body.Close()
+    defer resp.Body.Close()              // => Close response body to prevent leaks
 
     // Check status code
     if resp.StatusCode == http.StatusOK { // => http.StatusOK is constant 200
-        fmt.Println("Request successful")
+        fmt.Println("Request successful") // => Output: Request successful
     } else if resp.StatusCode >= 400 {   // => 4xx or 5xx indicates error
         fmt.Printf("Request failed with status: %d\n", resp.StatusCode)
+        // => Output: Request failed with status: 404 (example)
     }
 
     // Query parameters
-    baseURL := "https://api.example.com/search"
+    baseURL := "https://api.example.com/search" // => Base URL without query string
     params := url.Values{}               // => url.Values is map[string][]string
-    params.Add("q", "golang")            // => Add query parameter
-    params.Add("limit", "10")
+    // => Constructs query parameters safely with proper escaping
+    params.Add("q", "golang")            // => Add query parameter q=golang
+    // => params is map[string][]string{"q": ["golang"]}
+    params.Add("limit", "10")            // => Add limit=10 parameter
+    // => params is map[string][]string{"q": ["golang"], "limit": ["10"]}
     fullURL := baseURL + "?" + params.Encode()
+    // => params.Encode() converts to URL-encoded query string
     // => fullURL is "https://api.example.com/search?q=golang&limit=10"
-    // => params.Encode() properly escapes values
+    // => Properly escapes special characters (spaces, &, =, etc.)
 
-    req2, _ := http.NewRequest("GET", fullURL, nil)
-    resp2, err := client.Do(req2)
-    if err != nil {
+    req2, _ := http.NewRequest("GET", fullURL, nil) // => Create request with query params
+    // => req2 URL includes ?q=golang&limit=10
+    resp2, err := client.Do(req2)        // => Execute request with 5s timeout
+    // => Sends GET https://api.example.com/search?q=golang&limit=10
+    if err != nil {                      // => Check for errors (timeout, network, etc.)
         fmt.Println("Error:", err)
         return
     }
-    defer resp2.Body.Close()
+    defer resp2.Body.Close()             // => Close second response body
+    // => Always close bodies to prevent resource leaks
 }
 ```
 
@@ -1110,74 +1285,110 @@ import (
 func main() {
     // Current time
     now := time.Now()               // => Get current time (local timezone)
+    // => Returns time.Time struct with monotonic clock component
     fmt.Println("Now:", now)        // => Output: 2025-12-30 10:30:45.123456789 +0700 WIB
     // => now is time.Time value (not pointer)
+    // => Includes nanosecond precision
 
     // Time arithmetic with Duration
     tomorrow := now.Add(24 * time.Hour) // => Add 24 hours (24 * time.Hour = 24h duration)
-    // => time.Hour is constant (1 hour duration)
+    // => time.Hour is constant (1 hour duration = 3600 seconds)
+    // => Multiplication creates Duration (24 hours)
     fmt.Println("Tomorrow:", tomorrow)
     // => Output: 2025-12-31 10:30:45.123456789 +0700 WIB
+    // => Same time next day (24 hours later)
 
     yesterday := now.Add(-24 * time.Hour) // => Subtract 24 hours (negative duration)
+    // => Negative Duration goes backward in time
     fmt.Println("Yesterday:", yesterday)
+    // => Output: 2025-12-29 10:30:45.123456789 +0700 WIB
 
     oneWeekLater := now.AddDate(0, 0, 7) // => Add years, months, days
+    // => AddDate(years, months, days) - calendar arithmetic
     // => AddDate(0, 0, 7) adds 7 days (handles month boundaries correctly)
+    // => Use AddDate for date arithmetic, Add for time.Duration
     fmt.Println("One week later:", oneWeekLater)
+    // => Output: 2026-01-06 10:30:45.123456789 +0700 WIB
 
     // Parse time from string
     layout := "2006-01-02"          // => Go reference time: Mon Jan 2 15:04:05 MST 2006
     // => Use this exact date/time in layout (it's how Go knows format)
+    // => 2006 = year, 01 = month, 02 = day (magic constant)
     parsed, err := time.Parse(layout, "2025-12-23") // => Parse string to time.Time
-    if err != nil {
+    // => Parses "2025-12-23" using layout "2006-01-02"
+    // => Returns time.Time and error
+    if err != nil {                 // => Check for parse errors (invalid format, bad date)
         fmt.Println("Parse error:", err)
     }
     fmt.Println("Parsed:", parsed)  // => Output: 2025-12-23 00:00:00 +0000 UTC
+    // => Parsed time is midnight UTC (no timezone in input)
 
     // Format time to string
     formatted := now.Format("January 2, 2006") // => Format using layout
+    // => Use reference time "2006-01-02 15:04:05" components in desired format
+    // => "January 2, 2006" formats as "Month Day, Year"
     fmt.Println("Formatted:", formatted)        // => Output: December 30, 2025
     formatted2 := now.Format("2006-01-02 15:04:05") // => Custom format
+    // => ISO 8601-like format: year-month-day hour:minute:second
     fmt.Println("Formatted2:", formatted2)          // => Output: 2025-12-30 10:30:45
 
     // Duration measurement
-    start := time.Now()             // => Capture start time
-    time.Sleep(100 * time.Millisecond) // => Sleep for 100ms
+    start := time.Now()             // => Capture start time (for timing operations)
+    // => start is time.Time snapshot
+    time.Sleep(100 * time.Millisecond) // => Sleep for 100ms (blocks goroutine)
+    // => time.Millisecond is Duration constant (1ms)
+    // => 100 * time.Millisecond = 100ms Duration
     elapsed := time.Since(start)    // => Calculate time.Duration since start
     // => elapsed is ~100ms (slightly more due to overhead)
+    // => time.Since(start) equivalent to time.Now().Sub(start)
     fmt.Printf("Elapsed: %v\n", elapsed)            // => Output: Elapsed: 100.234567ms
+    // => %v formats Duration as human-readable string
     fmt.Printf("Elapsed (ms): %d\n", elapsed.Milliseconds()) // => Output: Elapsed (ms): 100
+    // => Milliseconds() converts Duration to int64 milliseconds
 
     // Compare times
-    future := now.Add(1 * time.Hour)
+    future := now.Add(1 * time.Hour) // => future is 1 hour after now
+    // => future is time.Time value (now + 1 hour)
     if future.After(now) {          // => Check if future is after now
+        // => After returns true if future > now
         fmt.Println("Future is after now")
+        // => Output: Future is after now
     }
     if now.Before(future) {         // => Check if now is before future
+        // => Before returns true if now < future
         fmt.Println("Now is before future")
+        // => Output: Now is before future
     }
 
     // Timer - one-shot notification
     timer := time.NewTimer(200 * time.Millisecond) // => Create timer (fires after 200ms)
+    // => timer is *time.Timer with channel timer.C
     // => timer.C is channel that receives time when timer fires
     <-timer.C                       // => Block until timer fires (receive from timer.C)
+    // => Receives time.Time value when 200ms elapsed
     fmt.Println("Timer fired")      // => Output: Timer fired (after ~200ms)
+    // => Timer fires once then stops
 
     // Ticker - repeating notifications
     ticker := time.NewTicker(100 * time.Millisecond) // => Create ticker (fires every 100ms)
+    // => ticker is *time.Ticker with channel ticker.C
     // => ticker.C is channel that receives time every 100ms
-    go func() {
-        for i := 0; i < 3; i++ {
+    // => Unlike Timer, Ticker fires repeatedly until Stop() called
+    go func() {                     // => Launch goroutine to receive ticks
+        for i := 0; i < 3; i++ {    // => Loop 3 times (receive 3 ticks)
             t := <-ticker.C         // => Receive from ticker.C (blocks until tick)
             // => t is time.Time when tick occurred
+            // => Blocks ~100ms between each iteration
             fmt.Printf("Tick %d at %s\n", i, t.Format("15:04:05.000"))
+            // => 15:04:05.000 formats as HH:MM:SS.mmm
         }
         ticker.Stop()               // => Stop ticker (prevents goroutine leak)
         // => After Stop(), no more sends on ticker.C
+        // => CRITICAL: Always Stop() ticker to free resources
     }()
 
     time.Sleep(400 * time.Millisecond) // => Wait for goroutine to finish
+    // => Sleep 400ms allows 3 ticks (at 100ms, 200ms, 300ms)
     // => Output:
     // => Tick 0 at 10:30:45.100
     // => Tick 1 at 10:30:45.200
@@ -1206,65 +1417,92 @@ import (
 func main() {
     // Compile pattern (returns error)
     pattern, err := regexp.Compile(`^[a-z]+@[a-z]+\.[a-z]+$`) // => Compile regex pattern
-    // => pattern is *regexp.Regexp, err is error
-    if err != nil {
+    // => pattern is *regexp.Regexp (compiled regex), err is error
+    // => ^ anchors to start, $ anchors to end
+    // => [a-z]+ matches one or more lowercase letters
+    if err != nil {                 // => Check compilation errors (invalid regex syntax)
         fmt.Println("Compile error:", err)
         return
     }
 
     // Test if string matches pattern
-    if pattern.MatchString("alice@example.com") { // => Returns bool
+    if pattern.MatchString("alice@example.com") { // => Returns bool (true if matches)
         // => "alice@example.com" matches ^[a-z]+@[a-z]+\.[a-z]+$
+        // => All characters are lowercase, structure matches email pattern
         fmt.Println("Valid email")
+        // => Output: Valid email
     }
     if !pattern.MatchString("Alice@example.com") {
         // => "Alice@example.com" does NOT match (capital A not in [a-z])
+        // => Pattern requires lowercase only, fails on uppercase
         fmt.Println("Invalid email (uppercase)")
+        // => Output: Invalid email (uppercase)
     }
 
     // MustCompile panics on error (use for known-good patterns)
     re := regexp.MustCompile(`\d+`)  // => Compile pattern, panic if invalid
-    // => `\d+` matches one or more digits
+    // => `\d+` matches one or more digits (0-9)
+    // => MustCompile panics instead of returning error (safe for literals)
     matches := re.FindAllString("abc 123 def 456 xyz", -1)
-    // => FindAllString returns []string, -1 means find all matches
-    // => matches is ["123", "456"]
+    // => FindAllString returns []string (all matching substrings)
+    // => -1 means find all matches (no limit)
+    // => matches is ["123", "456"] (two digit sequences found)
     fmt.Println("Numbers:", matches) // => Output: Numbers: [123 456]
 
     // Replace matches
-    text := "Hello World"
+    text := "Hello World"            // => Text with two words
     replaced := regexp.MustCompile(`\w+`).ReplaceAllString(text, "[word]")
-    // => `\w+` matches one or more word characters
-    // => Replaces each match with "[word]"
+    // => `\w+` matches one or more word characters (letters, digits, underscore)
+    // => ReplaceAllString replaces each match with "[word]"
+    // => "Hello" → "[word]", "World" → "[word]"
     fmt.Println("Replaced:", replaced) // => Output: Replaced: [word] [word]
 
     // Replace with function
     replaced2 := regexp.MustCompile(`\d+`).ReplaceAllStringFunc("The answer is 42", func(s string) string {
-        // => Called for each match (s is matched string)
-        num, _ := strconv.Atoi(s)    // => Convert string to int
-        return fmt.Sprintf("%d", num*2) // => Double the number
+        // => Called for each match (s is matched string "42")
+        // => Function receives matched substring and returns replacement
+        num, _ := strconv.Atoi(s)    // => Convert string "42" to int 42
+        // => strconv.Atoi parses decimal integer from string
+        return fmt.Sprintf("%d", num*2) // => Double the number: 42 * 2 = 84
+        // => Returns "84" as replacement string
     })
+    // => Final string: "The answer is 84"
     fmt.Println("Replaced2:", replaced2) // => Output: Replaced2: The answer is 84
 
     // Extract capture groups
     re = regexp.MustCompile(`(\w+)@(\w+)\.(\w+)`) // => Pattern with 3 capture groups ()
+    // => () creates numbered capture groups
     // => (\w+) captures username, (\w+) captures domain, (\w+) captures TLD
     matches = re.FindStringSubmatch("alice@example.com")
     // => FindStringSubmatch returns []string with full match + capture groups
-    if len(matches) > 0 {
+    // => matches is ["alice@example.com", "alice", "example", "com"]
+    // => matches[0] is full match, matches[1-3] are capture groups
+    if len(matches) > 0 {            // => Check if pattern matched (len > 0 means match found)
         fmt.Println("Full:", matches[0])   // => matches[0] is full match: alice@example.com
+        // => Output: Full: alice@example.com
         fmt.Println("User:", matches[1])   // => matches[1] is first capture group: alice
+        // => Output: User: alice
         fmt.Println("Domain:", matches[2]) // => matches[2] is second capture group: example
+        // => Output: Domain: example
         fmt.Println("TLD:", matches[3])    // => matches[3] is third capture group: com
+        // => Output: TLD: com
     }
 
     // Find all with capture groups
     re2 := regexp.MustCompile(`(\d+):(\d+)`) // => Pattern: number:number
+    // => (\d+) captures first number (hour), (\d+) captures second number (minute)
+    // => Pattern matches time format like "10:30"
     allMatches := re2.FindAllStringSubmatch("10:30 and 14:45", -1)
-    // => Returns [][]string, each []string has full match + capture groups
-    for i, match := range allMatches {
+    // => Returns [][]string (slice of slice of strings)
+    // => Each []string has full match + capture groups
+    // => allMatches is [["10:30", "10", "30"], ["14:45", "14", "45"]]
+    for i, match := range allMatches { // => Iterate over all matches
         // => First iteration: match is ["10:30", "10", "30"]
         // => Second iteration: match is ["14:45", "14", "45"]
         fmt.Printf("Match %d: %s (hour: %s, minute: %s)\n", i, match[0], match[1], match[2])
+        // => match[0] is full match, match[1] is hour, match[2] is minute
+        // => Output: Match 0: 10:30 (hour: 10, minute: 30)
+        // => Output: Match 1: 14:45 (hour: 14, minute: 45)
     }
     // => Output:
     // => Match 0: 10:30 (hour: 10, minute: 30)
@@ -1333,80 +1571,112 @@ import (
 func main() {
     // Context with timeout - operation must complete within duration
     ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+    // => context.Background() returns empty root context
+    // => WithTimeout wraps it with 2-second timeout
     // => ctx is context.Context with 2-second deadline
-    // => cancel is function to cancel context early
+    // => cancel is function to cancel context early (releases timer resources)
     defer cancel()                  // => CRITICAL: Always defer cancel() to release resources
     // => defer ensures cancel called even if function panics
+    // => Prevents goroutine leaks from timeout timer
 
     result := doWork(ctx)           // => Pass context to doWork
+    // => doWork receives ctx and respects cancellation/timeout
     fmt.Println("Result:", result)  // => Output: Result: cancelled (timeout after 2s)
 
     // Context with manual cancellation
     ctx2, cancel2 := context.WithCancel(context.Background())
     // => ctx2 has no deadline, only manual cancellation
-    // => cancel2 is function to cancel ctx2
+    // => cancel2 is function to cancel ctx2 manually
+    // => Use WithCancel when you control cancellation timing
 
-    go func() {
-        time.Sleep(500 * time.Millisecond) // => Wait 500ms
+    go func() {                     // => Launch goroutine to cancel after delay
+        time.Sleep(500 * time.Millisecond) // => Wait 500ms before cancellation
+        // => Goroutine sleeps, then cancels context
         cancel2()                   // => Cancel context manually
         // => Causes ctx2.Done() channel to close
+        // => All goroutines listening on ctx2.Done() receive signal
     }()
 
     doWork(ctx2)                    // => doWork checks ctx2.Done()
+    // => doWork will be cancelled after 500ms when cancel2() called
     fmt.Println("After cancellation") // => Output: After cancellation
+    // => Prints after doWork returns due to cancellation
 
     // Context with deadline - cancel at specific time
-    deadline := time.Now().Add(1 * time.Second)
+    deadline := time.Now().Add(1 * time.Second) // => Deadline is 1 second from now
+    // => time.Now().Add() creates absolute time point (not relative duration)
     ctx3, cancel3 := context.WithDeadline(context.Background(), deadline)
-    // => ctx3 expires at specific time (not relative duration)
-    defer cancel3()
+    // => ctx3 expires at specific time (not relative duration like WithTimeout)
+    // => WithDeadline(t) vs WithTimeout(d): absolute time vs relative duration
+    defer cancel3()                 // => Release resources when done
 
-    <-ctx3.Done()                   // => Block until deadline
+    <-ctx3.Done()                   // => Block until deadline reached or cancel called
+    // => ctx3.Done() returns channel that closes at deadline
+    // => Receive blocks until channel closed (at 1s deadline)
     fmt.Println("Deadline reached:", ctx3.Err())
+    // => ctx3.Err() returns error explaining why context cancelled
     // => Output: Deadline reached: context deadline exceeded
 
     // Context values (use sparingly for request-scoped data)
-    type contextKey string          // => Define typed key (avoids collisions)
-    key := contextKey("user_id")
+    type contextKey string          // => Define typed key (avoids collisions with other packages)
+    // => Custom type prevents accidental key conflicts (string vs contextKey)
+    key := contextKey("user_id")    // => Create typed key "user_id"
     ctx4 := context.WithValue(context.Background(), key, 123)
     // => ctx4 carries value 123 associated with key "user_id"
     // => Context values are immutable, each WithValue creates new context
+    // => Original context unchanged, ctx4 is new context with value
 
     userID := ctx4.Value(key)       // => Retrieve value by key
+    // => Returns interface{} (must type assert to use)
+    // => userID is interface{} containing 123
     // => userID is interface{}, type assert to get actual value
     if id, ok := userID.(int); ok { // => Type assertion
+        // => id is int 123 if assertion succeeds, ok is true
+        // => Safe type assertion checks ok before using id
         fmt.Println("User ID:", id) // => Output: User ID: 123
     }
 
     // Context chaining - child contexts inherit parent cancellation
     parentCtx, parentCancel := context.WithCancel(context.Background())
+    // => parentCtx is cancellable context (no timeout)
+    // => parentCancel is function to cancel parentCtx
     childCtx, childCancel := context.WithTimeout(parentCtx, 5*time.Second)
+    // => childCtx is child of parentCtx with 5-second timeout
     // => childCtx cancelled when: (1) parentCtx cancelled, OR (2) 5s timeout
-    defer childCancel()
+    // => Child contexts inherit parent cancellation (cascading cancellation)
+    defer childCancel()             // => Release child resources
 
-    parentCancel()                  // => Cancel parent
+    parentCancel()                  // => Cancel parent immediately
     // => This also cancels childCtx (and any other children)
-    <-childCtx.Done()
+    // => Cancellation propagates down hierarchy
+    <-childCtx.Done()               // => Wait for child cancellation
+    // => Returns immediately (parent already cancelled)
     fmt.Println("Child cancelled:", childCtx.Err())
+    // => ctx.Err() returns cancellation reason
     // => Output: Child cancelled: context canceled (parent cancellation)
 }
 
 func doWork(ctx context.Context) string {
     // => ctx is passed down call chain to enable cancellation
-    for {
-        select {
+    // => Function signature accepts context as first parameter (Go convention)
+    for {                           // => Infinite loop (runs until cancelled)
+        select {                    // => Multiplex context cancellation and work
         case <-ctx.Done():          // => ctx.Done() is channel that closes when context cancelled
             // => Receiving from closed channel returns immediately
             err := ctx.Err()        // => ctx.Err() returns cancellation reason
             // => err is context.Canceled (manual cancel) or context.DeadlineExceeded (timeout)
             fmt.Println("Work cancelled:", err)
-            return "cancelled"
+            // => Output: Work cancelled: context deadline exceeded
+            return "cancelled"      // => Return early, cleanup work
         case <-time.After(500 * time.Millisecond):
             // => Simulate work every 500ms
-            fmt.Println("Working...")
+            // => time.After sends on channel after 500ms
+            fmt.Println("Working...") // => Output: Working... (every 500ms until cancelled)
+            // => Continues looping if context not cancelled
         }
     }
     // => Loop continues until ctx.Done() fires
+    // => Ensures work respects cancellation signals
 }
 ```
 
