@@ -38,39 +38,52 @@ graph TD
 
 ```clojure
 (defmacro debug-all [& forms]            ;; => Macro accepts variable args
-  `(do                                   ;; => Wraps in do block
-     ~@(map (fn [form]                   ;; => Map over each form
-              `(let [result# ~form]      ;; => Eval form, bind to gensym
+  `(do                                   ;; => Wraps in do block for sequencing
+     ~@(map (fn [form]                   ;; => Map over each form in forms list
+              `(let [result# ~form]      ;; => Eval form once, bind to gensym result#
+                                         ;; => Gensym prevents capture collisions
                  (println '~form "=>" result#)
-                                         ;; => Print quoted form and result
-                 result#))               ;; => Return result
-            forms)))                     ;; => #'user/debug-all
+                                         ;; => Print quoted form (unevaluated) and result
+                                         ;; => Syntax-quote preserves namespace
+                 result#))               ;; => Return result for do sequencing
+            forms)))                     ;; => forms is variadic arg list
+                                         ;; => #'user/debug-all (macro defined)
 
-(debug-all                               ;; => Invoke debug macro
-  (+ 1 2)                                ;; => First form: addition
+(debug-all                               ;; => Invoke debug macro at compile-time
+  (+ 1 2)                                ;; => First form: addition expression
+                                         ;; => Expands to (let [result# (+ 1 2)] ...)
   (* 3 4)                                ;; => Second form: multiplication
+                                         ;; => Generates separate let binding
   (/ 10 2))                              ;; => Third form: division
+                                         ;; => Each form evaluated independently
 ;; => Output: (+ 1 2) => 3
 ;; => Output: (* 3 4) => 12
 ;; => Output: (/ 10 2) => 5
-;; => Returns: 5 (last result)
+;; => Returns: 5 (last result from do block)
 
-;; Recursive code walker
-(defn walk-expr [form transform]         ;; => Recursively walk AST
+;; Recursive code walker for AST transformation
+(defn walk-expr [form transform]         ;; => form is AST node to walk
+                                         ;; => transform is leaf transformation fn
   (cond
     (seq? form) (map #(walk-expr % transform) form)
-                                         ;; => Recursively walk sequences
+                                         ;; => Recursively walk sequence elements
+                                         ;; => Preserves list structure
     (vector? form) (vec (map #(walk-expr % transform) form))
-                                         ;; => Walk vectors, keep vector type
+                                         ;; => Walk vector elements, coerce back to vec
+                                         ;; => Maintains vector type after mapping
     (map? form) (into {} (map (fn [[k v]] [k (walk-expr v transform)]) form))
-                                         ;; => Walk map entries, keep map type
-    :else (transform form)))             ;; => Transform leaf nodes
-                                         ;; => #'user/walk-expr
+                                         ;; => Walk map values, preserve keys
+                                         ;; => Reconstructs map with into
+    :else (transform form)))             ;; => Leaf node: apply transformation
+                                         ;; => Base case for recursion
+                                         ;; => #'user/walk-expr (function defined)
 
 (walk-expr '(+ 1 (* 2 3)) #(if (number? %) (* % 10) %))
-                                         ;; => Walk expression tree
-                                         ;; => Transform numbers by * 10
-;; => (+ 10 (* 20 30)) (all numbers scaled)
+                                         ;; => Walk nested expression tree
+                                         ;; => Transform fn scales numbers by 10
+                                         ;; => Non-numbers (symbols) unchanged
+;; => (+ 10 (* 20 30)) (all numeric leaves scaled)
+                                         ;; => Structure preserved, values transformed
 ```
 
 **Key Takeaway**: Code walkers enable deep transformation of arbitrarily nested code structures.
@@ -101,36 +114,52 @@ graph TD
 
 ```clojure
 (defmacro when-valid [test & body]       ;; => Custom validation macro
-  `(if ~test                             ;; => Check condition
-     (do ~@body)                         ;; => Execute body if valid
-     (println "Validation failed")))     ;; => Else print failure
-                                         ;; => #'user/when-valid
+                                         ;; => test is condition form
+                                         ;; => body is variadic forms list
+  `(if ~test                             ;; => Syntax-quote wraps if form
+                                         ;; => Unquote test for runtime eval
+     (do ~@body)                         ;; => do sequences multiple body forms
+                                         ;; => Unquote-splice inlines body list
+     (println "Validation failed")))     ;; => Else branch prints failure message
+                                         ;; => #'user/when-valid (macro defined)
 
-;; Expand once
+;; Expand once to see first level
 (macroexpand-1 '(when-valid (pos? 5) (println "Valid")))
-                                         ;; => Expand single macro level
+                                         ;; => Expands when-valid macro only
+                                         ;; => Inner macros NOT expanded
+                                         ;; => Quote prevents evaluation
 ;; => (if (pos? 5) (do (println "Valid")) (println "Validation failed"))
-                                         ;; => Shows first expansion only
+                                         ;; => if/do are special forms, not macros
+                                         ;; => No further expansion possible
 
-;; Expand all nested macros
+;; Expand all nested macros recursively
 (macroexpand '(when-valid (pos? 5) (println "Valid")))
-                                         ;; => Recursively expand all macros
-                                         ;; => Same result (no nested macros here)
+                                         ;; => Recursively expand all macro layers
+                                         ;; => Continues until no macros remain
+;; => (if (pos? 5) (do (println "Valid")) (println "Validation failed"))
+                                         ;; => Same result: no nested macros here
+                                         ;; => when-valid → if/do (both not macros)
 
-;; Use macroexpand-1 to see single level expansion
-(defmacro unless [test & body]           ;; => Inverse of when-valid
-  `(when-valid (not ~test) ~@body))      ;; => Negate test, delegate to when-valid
-                                         ;; => #'user/unless
+;; Nested macro example showing multi-level expansion
+(defmacro unless [test & body]           ;; => Inverse condition macro
+                                         ;; => Delegates to when-valid
+  `(when-valid (not ~test) ~@body))      ;; => Negates test before passing
+                                         ;; => Unquote-splice preserves body forms
+                                         ;; => #'user/unless (macro defined)
 
 (macroexpand-1 '(unless false (println "OK")))
-                                         ;; => Expand unless once
+                                         ;; => Expands ONLY unless (first level)
+                                         ;; => when-valid call remains unexpanded
 ;; => (when-valid (not false) (println "OK"))
-                                         ;; => Shows when-valid call (not expanded)
+                                         ;; => Nested macro when-valid NOT expanded
+                                         ;; => Shows intermediate expansion state
 
 (macroexpand '(unless false (println "OK")))
-                                         ;; => Fully expand unless
+                                         ;; => Fully expands ALL macro layers
+                                         ;; => unless → when-valid → if/do
 ;; => (if (not false) (do (println "OK")) (println "Validation failed"))
-                                         ;; => Shows final code after all expansions
+                                         ;; => Shows final code after complete expansion
+                                         ;; => Two macro layers expanded
 ```
 
 **Key Takeaway**: macroexpand/macroexpand-1 reveal generated code for debugging macro behavior.
@@ -142,31 +171,44 @@ graph TD
 Write portable code targeting Clojure and ClojureScript.
 
 ```clojure
-;; .cljc file (Clojure common)
-(ns myapp.utils)                         ;; => Multiplatform namespace
+;; .cljc file (Clojure common - cross-platform source)
+(ns myapp.utils)                         ;; => Namespace declaration
+                                         ;; => Works in both Clojure and ClojureScript
 
 (defn current-time []                    ;; => Cross-platform time function
-  #?(:clj  (System/currentTimeMillis)    ;; => JVM: milliseconds since epoch
-     :cljs (.getTime (js/Date.))))       ;; => JS: Date.getTime() method
-                                         ;; => #'myapp.utils/current-time
+  #?(:clj  (System/currentTimeMillis)    ;; => JVM platform: Java System call
+                                         ;; => Returns long: millis since Unix epoch
+     :cljs (.getTime (js/Date.))))       ;; => JS platform: JavaScript Date method
+                                         ;; => Reader selects branch at READ time
+                                         ;; => Returns number: millis since epoch
+                                         ;; => #'myapp.utils/current-time (defined)
 
-(defn log [message]                      ;; => Cross-platform logging
-  #?(:clj  (println message)             ;; => JVM: uses println
-     :cljs (.log js/console message)))   ;; => JS: uses console.log
-                                         ;; => #'myapp.utils/log
+(defn log [message]                      ;; => Cross-platform logging function
+                                         ;; => message is string to log
+  #?(:clj  (println message)             ;; => JVM: uses clojure.core/println
+                                         ;; => Outputs to *out* stream
+     :cljs (.log js/console message)))   ;; => JS: uses browser console API
+                                         ;; => Direct JavaScript interop
+                                         ;; => #'myapp.utils/log (defined)
 
-;; Reader conditional splice
-(defn process-data [data]                ;; => Platform-specific processing
-  [data                                  ;; => Original data always included
-   #?@(:clj  [(str "JVM: " data)]        ;; => JVM: splice single item
-       :cljs [(str "JS: " data)])])      ;; => JS: splice single item
-                                         ;; => #'myapp.utils/process-data
-                                         ;; => Returns 2-element vector
+;; Reader conditional splice for variadic expansion
+(defn process-data [data]                ;; => Platform-specific data processing
+                                         ;; => data is input value
+  [data                                  ;; => Original data as first element
+                                         ;; => Base case: always included
+   #?@(:clj  [(str "JVM: " data)]        ;; => JVM: splice CONTENTS of vector
+                                         ;; => #?@ inlines elements, not vector itself
+       :cljs [(str "JS: " data)])])      ;; => JS: splice alternative string
+                                         ;; => Without @, vector would nest
+                                         ;; => #'myapp.utils/process-data (defined)
+                                         ;; => Returns 2-element vector on both platforms
 
-;; Feature expressions
-#?(:clj (import 'java.util.Date)         ;; => JVM: import Java Date class
-   :cljs (def Date js/Date))             ;; => JS: bind JS Date to Clojure var
-                                         ;; => Enables uniform Date usage
+;; Feature expressions for platform-specific imports
+#?(:clj (import 'java.util.Date)         ;; => JVM: import Java class at compile-time
+                                         ;; => Date now available as java.util.Date
+   :cljs (def Date js/Date))             ;; => JS: create Clojure var pointing to JS Date
+                                         ;; => Enables uniform Date reference
+                                         ;; => Both platforms: Date symbol now usable
 ```
 
 **Key Takeaway**: Reader conditionals enable shared code with platform-specific implementations.
@@ -197,36 +239,51 @@ graph TD
 ```
 
 ```clojure
-;; Without type hints (reflection warning)
-(defn slow-add [a b]                     ;; => No type information
-  (.add a b))                            ;; => Reflection: runtime method lookup
-                                         ;; => #'user/slow-add (slow execution)
+;; Without type hints (causes reflection warning)
+(defn slow-add [a b]                     ;; => Parameters: no type information
+                                         ;; => Compiler doesn't know a/b types
+  (.add a b))                            ;; => Method call: .add requires runtime lookup
+                                         ;; => JVM searches class hierarchy at runtime
+                                         ;; => Reflection overhead: 10-100x slower
+                                         ;; => #'user/slow-add (defined with warning)
 
-;; With type hints (no reflection)
+;; With type hints (eliminates reflection)
 (defn fast-add [^java.math.BigDecimal a ^java.math.BigDecimal b]
-                                         ;; => Type hints on parameters
-  (.add a b))                            ;; => Direct method call (no reflection)
-                                         ;; => #'user/fast-add (fast execution)
+                                         ;; => Type hints: metadata on parameters
+                                         ;; => Compiler knows exact types at compile-time
+  (.add a b))                            ;; => Direct method invocation
+                                         ;; => No reflection: JVM invokes exact method
+                                         ;; => Bytecode contains direct method reference
+                                         ;; => #'user/fast-add (optimized, no warning)
 
-;; Return type hint
-(defn compute ^long []                   ;; => Return type: primitive long
-  (+ 1 2))                               ;; => Returns 3 as long
-                                         ;; => #'user/compute (no boxing)
+;; Return type hint for primitive optimization
+(defn compute ^long []                   ;; => Return type hint: primitive long
+                                         ;; => Prevents boxing to java.lang.Long
+  (+ 1 2))                               ;; => Addition returns primitive long
+                                         ;; => Result stays unboxed
+                                         ;; => #'user/compute (no boxing overhead)
 
-;; Array type hints
-(defn sum-array ^long [^longs arr]       ;; => Parameter: long[] array, returns long
+;; Array type hints for fast array access
+(defn sum-array ^long [^longs arr]       ;; => Parameter hint: long[] primitive array
+                                         ;; => Return hint: unboxed long
   (aget arr 0))                          ;; => Fast primitive array access
-                                         ;; => #'user/sum-array (optimized)
+                                         ;; => No array type check at runtime
+                                         ;; => Direct memory access
+                                         ;; => #'user/sum-array (fully optimized)
 
-;; Set compiler warnings
-(set! *warn-on-reflection* true)         ;; => true (warnings now enabled)
-                                         ;; => Compiler will warn on reflection
+;; Enable compiler warnings for reflection
+(set! *warn-on-reflection* true)         ;; => Sets dynamic var to true
+                                         ;; => Compiler now emits warnings
+                                         ;; => Helps identify reflection hotspots
+;; => true (reflection warnings enabled)
 
-;; Measure performance
+;; Measure performance difference
 (time (dotimes [_ 1000000] (fast-add (bigdec 1) (bigdec 2))))
-                                         ;; => Benchmark 1M iterations
-                                         ;; => Output: "Elapsed time: X msecs"
-                                         ;; => Shows performance with type hints
+                                         ;; => Benchmark: 1 million iterations
+                                         ;; => dotimes: zero-overhead loop
+                                         ;; => Each iteration: fast direct invocation
+;; => Output: "Elapsed time: ~X msecs" (with type hints)
+                                         ;; => Compare to slow-add: 10-50x faster
 ```
 
 **Key Takeaway**: Type hints eliminate reflection overhead for significant performance improvements.
@@ -260,41 +317,67 @@ sequenceDiagram
 ```
 
 ```clojure
-(defn dedupe-consecutive []              ;; => Stateful transducer factory
-  (fn [rf]                               ;; => Returns transducer function
-    (let [prev (volatile! ::none)]       ;; => Volatile state: previous value
-      (fn                                ;; => 3-arity reducing function
-        ([] (rf))                        ;; => 0-arity: init
-        ([result] (rf result))           ;; => 1-arity: completion
-        ([result input]                  ;; => 2-arity: step
-         (let [p @prev]                  ;; => p is previous value
+(defn dedupe-consecutive []              ;; => Stateful transducer factory function
+                                         ;; => Returns transducer (not reducing fn)
+  (fn [rf]                               ;; => rf is reducing function to wrap
+                                         ;; => Returns wrapped reducing function
+    (let [prev (volatile! ::none)]       ;; => Volatile: thread-local mutable cell
+                                         ;; => Initial value: sentinel ::none keyword
+                                         ;; => Zero CAS overhead (vs atom)
+      (fn                                ;; => 3-arity reducing function protocol
+        ([] (rf))                        ;; => 0-arity: initialize accumulator
+                                         ;; => Delegates to wrapped rf init
+        ([result] (rf result))           ;; => 1-arity: completion step
+                                         ;; => Finalizes result, delegates to rf
+        ([result input]                  ;; => 2-arity: reduction step function
+                                         ;; => result is accumulator, input is element
+         (let [p @prev]                  ;; => Deref prev to get previous value
+                                         ;; => p is last seen element
            (vreset! prev input)          ;; => Update prev to current input
-           (if (= p input)               ;; => Check if duplicate
-             result                      ;; => Skip duplicate (no emit)
-             (rf result input))))))))    ;; => Emit if different
+                                         ;; => Sets volatile to new value
+           (if (= p input)               ;; => Check: is input duplicate of prev?
+             result                      ;; => YES: skip emit, return unchanged result
+                                         ;; => Filters out consecutive duplicates
+             (rf result input))))))))    ;; => NO: emit by calling wrapped rf
+                                         ;; => Passes through non-duplicates
 
 (into [] (dedupe-consecutive) [1 1 2 2 2 3 3 1])
-                                         ;; => Apply transducer to collection
-                                         ;; => State tracks consecutive values
-;; => [1 2 3 1] (consecutive duplicates removed, non-consecutive kept)
+                                         ;; => Apply transducer to vector
+                                         ;; => into uses transducer for transformation
+                                         ;; => State (prev) isolated per call
+;; => [1 2 3 1] (consecutive duplicates removed)
+                                         ;; => Non-consecutive 1 values kept
+                                         ;; => State resets between into calls
 
-;; Running average transducer
-(defn running-average []                 ;; => Stateful transducer: cumulative avg
-  (fn [rf]                               ;; => Returns transducer function
-    (let [sum (volatile! 0)              ;; => Volatile state: running sum
-          count (volatile! 0)]           ;; => Volatile state: element count
-      (fn                                ;; => 3-arity reducing function
-        ([] (rf))                        ;; => 0-arity: init
-        ([result] (rf result))           ;; => 1-arity: completion
-        ([result input]                  ;; => 2-arity: step
-         (vswap! sum + input)            ;; => Add input to sum
-         (vswap! count inc)              ;; => Increment count
+;; Running average stateful transducer
+(defn running-average []                 ;; => Stateful transducer: calculates cumulative avg
+                                         ;; => Maintains running sum and count
+  (fn [rf]                               ;; => rf is reducing function to wrap
+                                         ;; => Returns wrapped reducing function
+    (let [sum (volatile! 0)              ;; => Volatile state: cumulative sum
+                                         ;; => Initial value: 0
+          count (volatile! 0)]           ;; => Volatile state: element count seen
+                                         ;; => Initial value: 0
+      (fn                                ;; => 3-arity reducing function protocol
+        ([] (rf))                        ;; => 0-arity: init accumulator
+                                         ;; => Delegates to wrapped rf
+        ([result] (rf result))           ;; => 1-arity: completion step
+                                         ;; => Finalizes result
+        ([result input]                  ;; => 2-arity: reduction step
+                                         ;; => result is accumulator, input is value
+         (vswap! sum + input)            ;; => Atomically update sum: (+ sum input)
+                                         ;; => vswap! applies function to volatile
+         (vswap! count inc)              ;; => Atomically increment count by 1
+                                         ;; => count tracks elements processed
          (rf result (/ @sum @count)))))))
-                                         ;; => Emit running average
+                                         ;; => Emit average: sum/count (rational)
+                                         ;; => Calls wrapped rf with computed avg
 
 (into [] (running-average) [1 2 3 4 5]) ;; => Apply running average transducer
-                                         ;; => [1/1, 3/2, 6/3, 10/4, 15/5]
+                                         ;; => Computes: 1/1, 3/2, 6/3, 10/4, 15/5
 ;; => [1 3/2 2 5/2 3] (running averages as rationals)
+                                         ;; => Each element is cumulative average
+                                         ;; => Clojure preserves exact rationals
 ```
 
 **Key Takeaway**: Volatile refs enable efficient mutable state within transducers.
@@ -330,37 +413,61 @@ graph TD
 ```clojure
 (require '[clojure.core.reducers :as r])
                                          ;; => Load reducers namespace
+                                         ;; => Provides parallel processing via fork-join
 
 ;; Transform large collection in parallel
 (defn parallel-process [n]              ;; => Process n elements in parallel
-  (->> (range n)                        ;; => Generate 0 to n-1
+                                         ;; => n is collection size
+  (->> (range n)                        ;; => Generate lazy sequence: 0 to n-1
+                                         ;; => Lazy: not realized yet
        vec                              ;; => Convert to vector (required for fold)
-       (r/map inc)                      ;; => Increment each (lazy, parallel-ready)
-       (r/filter even?)                 ;; => Keep even numbers (lazy)
+                                         ;; => fold requires indexed collection
+       (r/map inc)                      ;; => Increment each element by 1
+                                         ;; => Returns reducer (not seq)
+                                         ;; => Parallel-ready transformation
+       (r/filter even?)                 ;; => Keep only even numbers
+                                         ;; => Chains with r/map (still lazy)
        (r/fold +)))                     ;; => Fork-join parallel sum
-                                        ;; => #'user/parallel-process
+                                         ;; => Splits work across cores
+                                         ;; => Uses + as combine and reduce fn
+                                        ;; => #'user/parallel-process (defined)
 
-(time (parallel-process 10000000))      ;; => Benchmark 10M elements
+(time (parallel-process 10000000))      ;; => Benchmark with 10 million elements
+                                        ;; => time macro measures elapsed wall time
                                         ;; => Output: "Elapsed time: X msecs"
-                                        ;; => Utilizes multiple cores
+                                        ;; => Utilizes all available CPU cores
+                                        ;; => Returns sum of even numbers after inc
 
-;; Custom combiner
-(defn parallel-max [coll]               ;; => Find max in parallel
+;; Custom combiner for parallel max
+(defn parallel-max [coll]               ;; => Find max value in parallel
+                                         ;; => coll must be vector (indexed)
   (r/fold
-    max                                 ;; => Combine function (merges chunks)
-    (fn ([acc x] (max acc x)))          ;; => Reduce function (within chunks)
-    coll))                              ;; => #'user/parallel-max
+    max                                 ;; => Combine function: merges chunk results
+                                         ;; => max of chunk maxes is global max
+    (fn ([acc x] (max acc x)))          ;; => Reduce function: max within chunk
+                                         ;; => 2-arity: accumulator and element
+    coll))                              ;; => Input collection to process
+                                        ;; => #'user/parallel-max (defined)
 
 (parallel-max (vec (shuffle (range 1000000))))
-                                        ;; => Find max of shuffled 1M elements
+                                        ;; => Find max of shuffled million elements
+                                        ;; => shuffle randomizes order
+                                        ;; => vec converts to indexed collection
 ;; => 999999 (max value found in parallel)
+                                        ;; => Fork-join splits work across cores
 
-;; Control parallelism
-(r/fold 512                             ;; => Chunk size: 512 elements per task
-        +                               ;; => Combine function: sum chunks
+;; Control parallelism with explicit chunk size
+(r/fold 512                             ;; => First arg: chunk size in elements
+                                         ;; => Each task processes 512 elements
+                                         ;; => Smaller chunks: more parallelism overhead
+        +                               ;; => Combine function: sum chunk results
+                                         ;; => Merges results from parallel tasks
         (fn [acc x] (+ acc x))          ;; => Reduce function: sum within chunk
-        (vec (range 1000000)))          ;; => Process 1M elements
-                                        ;; => Returns sum with controlled chunking
+                                         ;; => Sequential processing per chunk
+        (vec (range 1000000)))          ;; => Process 1M element vector
+                                         ;; => Creates ~1953 tasks (1M / 512)
+;; => Returns sum with controlled chunking
+                                         ;; => Chunk size tunes parallelism granularity
 ```
 
 **Key Takeaway**: Reducers enable automatic parallelization with fork-join for CPU-bound operations.
@@ -393,38 +500,59 @@ graph TD
 
 ```clojure
 (defprotocol Serializable                ;; => Protocol definition
-  (serialize [this])                     ;; => Convert to serialized form
-  (deserialize [this data]))             ;; => Reconstruct from data
-                                         ;; => #'user/Serializable
+                                         ;; => Defines polymorphic interface
+  (serialize [this])                     ;; => Method: convert to serialized form
+                                         ;; => this is dispatch parameter
+  (deserialize [this data]))             ;; => Method: reconstruct from data
+                                         ;; => this enables type dispatch
+                                         ;; => #'user/Serializable (protocol defined)
 
-;; Extend to existing types
+;; Extend protocol to existing types
 (extend-protocol Serializable            ;; => Extend multiple types at once
-  java.lang.String                       ;; => String implementation
-  (serialize [s] (.getBytes s))          ;; => s converted to byte array
-  (deserialize [_ data] (String. data))  ;; => data (bytes) to String
+                                         ;; => Bulk extension for efficiency
+  java.lang.String                       ;; => First type: Java String class
+                                         ;; => Retroactive extension (no subclassing)
+  (serialize [s] (.getBytes s))          ;; => s (String) converted to byte array
+                                         ;; => Calls Java method .getBytes
+  (deserialize [_ data] (String. data))  ;; => data (byte[]) to String
+                                         ;; => _ ignores first arg (unused this)
+                                         ;; => Calls String constructor
 
-  clojure.lang.PersistentVector          ;; => Vector implementation
-  (serialize [v] (pr-str v))             ;; => v converted to string "[1 2 3]"
+  clojure.lang.PersistentVector          ;; => Second type: Clojure vector
+                                         ;; => Native Clojure data structure
+  (serialize [v] (pr-str v))             ;; => v (vector) to string "[1 2 3]"
+                                         ;; => pr-str prints readable representation
   (deserialize [_ data] (read-string data)))
                                          ;; => data (string) to vector
+                                         ;; => read-string parses Clojure data
                                          ;; => nil (extend-protocol returns nil)
 
-(serialize "Hello")                      ;; => #<byte[] [B@...>
-                                         ;; => Byte array representation
-(serialize [1 2 3])                      ;; => "[1 2 3]"
-                                         ;; => String representation
+(serialize "Hello")                      ;; => Dispatches to String implementation
+                                         ;; => Calls (.getBytes "Hello")
+;; => #<byte[] [B@...> (byte array object)
+                                         ;; => Byte array representation of "Hello"
+(serialize [1 2 3])                      ;; => Dispatches to PersistentVector impl
+                                         ;; => Calls (pr-str [1 2 3])
+;; => "[1 2 3]" (string representation)
+                                         ;; => Printable string format
 
-;; Inline extension
-(extend-type java.util.Date              ;; => Extend single type
+;; Inline single-type extension
+(extend-type java.util.Date              ;; => Extend single type: Java Date
+                                         ;; => Use extend-type for one type
   Serializable                           ;; => Implement Serializable protocol
-  (serialize [d] (.getTime d))           ;; => d converted to epoch millis (long)
+                                         ;; => Adds protocol methods to Date
+  (serialize [d] (.getTime d))           ;; => d (Date) to epoch milliseconds (long)
+                                         ;; => Calls Date.getTime() method
   (deserialize [_ data] (java.util.Date. data)))
-                                         ;; => data (long) to Date
+                                         ;; => data (long) to Date object
+                                         ;; => Calls Date(long) constructor
                                          ;; => nil (extend-type returns nil)
 
-;; Check protocol implementation
-(satisfies? Serializable "text")         ;; => true (String implements it)
-(satisfies? Serializable 42)             ;; => false (Integer doesn't)
+;; Check protocol implementation at runtime
+(satisfies? Serializable "text")         ;; => true (String now implements protocol)
+                                         ;; => Protocol extended above
+(satisfies? Serializable 42)             ;; => false (Integer not extended)
+                                         ;; => No implementation for Integer type
 ```
 
 **Key Takeaway**: Protocols enable extensible polymorphism for existing and new types.
@@ -456,40 +584,57 @@ graph TD
 ```
 
 ```clojure
-;; Define hierarchy
-(derive ::dog ::animal)                  ;; => ::dog is a ::animal
-                                         ;; => nil (derive returns nil)
-(derive ::cat ::animal)                  ;; => ::cat is a ::animal
-(derive ::parrot ::animal)               ;; => ::parrot is a ::animal
-(derive ::parrot ::bird)                 ;; => ::parrot is also a ::bird
-                                         ;; => Multiple inheritance supported
+;; Define custom type hierarchy
+(derive ::dog ::animal)                  ;; => ::dog is-a ::animal (subtype relation)
+                                         ;; => Creates hierarchy edge in global hierarchy
+                                         ;; => nil (derive returns nil, mutates hierarchy)
+(derive ::cat ::animal)                  ;; => ::cat is-a ::animal
+                                         ;; => Second animal subtype
+(derive ::parrot ::animal)               ;; => ::parrot is-a ::animal
+                                         ;; => Third animal subtype
+(derive ::parrot ::bird)                 ;; => ::parrot is ALSO a ::bird
+                                         ;; => Multiple inheritance: one type, two parents
+                                         ;; => Diamond problem avoided by Clojure's preference rules
 
-;; Multimethod using hierarchy
+;; Multimethod dispatching on hierarchy
 (defmulti speak (fn [animal] (:type animal)))
-                                         ;; => Dispatch on :type key
-                                         ;; => #'user/speak
+                                         ;; => Dispatch function extracts :type from map
+                                         ;; => Returns keyword for method selection
+                                         ;; => #'user/speak (multimethod defined)
 
-(defmethod speak ::dog [_] "Woof!")      ;; => Method for ::dog
-                                         ;; => #multifn[speak ...]
-(defmethod speak ::cat [_] "Meow!")      ;; => Method for ::cat
+(defmethod speak ::dog [_] "Woof!")      ;; => Method for ::dog dispatch value
+                                         ;; => _ ignores argument (unused)
+                                         ;; => #multifn[speak ...] (method added)
+(defmethod speak ::cat [_] "Meow!")      ;; => Method for ::cat dispatch value
+                                         ;; => Second method implementation
 (defmethod speak ::animal [_] "Some sound")
-                                         ;; => Fallback for any ::animal subtype
+                                         ;; => Fallback for ANY ::animal subtype
+                                         ;; => Matches ::dog, ::cat, ::parrot via hierarchy
+                                         ;; => Most specific method wins
 
-(speak {:type ::dog})                    ;; => {:type ::dog} dispatches to ::dog
-                                         ;; => "Woof!"
-(speak {:type ::parrot})                 ;; => {:type ::parrot} no direct method
-                                         ;; => Inherits from ::animal
-                                         ;; => "Some sound"
+(speak {:type ::dog})                    ;; => Map with :type ::dog
+                                         ;; => Dispatch fn returns ::dog
+                                         ;; => Matches ::dog method directly
+;; => "Woof!" (specific implementation)
+(speak {:type ::parrot})                 ;; => Map with :type ::parrot
+                                         ;; => Dispatch fn returns ::parrot
+                                         ;; => No direct ::parrot method
+                                         ;; => Falls back to ::animal (via hierarchy)
+;; => "Some sound" (inherited from ::animal)
 
-;; Check relationships
+;; Check type relationships
 (isa? ::dog ::animal)                    ;; => true (::dog derived from ::animal)
+                                         ;; => Checks hierarchy relationship
 (isa? ::parrot ::bird)                   ;; => true (::parrot derived from ::bird)
+                                         ;; => Multiple inheritance verified
 
-;; Get parents/ancestors
+;; Inspect hierarchy structure
 (parents ::parrot)                       ;; => #{:user/animal :user/bird}
-                                         ;; => Direct parents only
+                                         ;; => Direct parents only (immediate ancestors)
+                                         ;; => Shows multiple inheritance
 (ancestors ::dog)                        ;; => #{:user/animal}
-                                         ;; => All ancestors (transitive)
+                                         ;; => All ancestors (transitive closure)
+                                         ;; => ::dog → ::animal (one level)
 ```
 
 **Key Takeaway**: Hierarchies enable rich inheritance relationships for multimethod dispatch.
@@ -526,39 +671,74 @@ graph TD
 
 ```clojure
 (require '[com.stuartsierra.component :as component])
+                                         ;; => Load component library for lifecycle management
 
 (defrecord Database [host port connection]
-  component/Lifecycle
+                                         ;; => Database component record
+                                         ;; => Fields: host, port, connection
+  component/Lifecycle                    ;; => Implements Lifecycle protocol
+                                         ;; => Protocol defines start/stop methods
   (start [this]                              ;; => Start: establish connection
+                                         ;; => this is Database record instance
     (println "Starting database connection")
-    (assoc this :connection {:host host :port port})) ;; => :connection now contains db handle
+                                         ;; => Log start action
+    (assoc this :connection {:host host :port port}))
+                                         ;; => Return NEW record with :connection populated
+                                         ;; => Simulates DB connection handle
+                                         ;; => Immutable update: original unchanged
   (stop [this]                               ;; => Stop: tear down connection
+                                         ;; => this is started Database instance
     (println "Stopping database connection")
-    (assoc this :connection nil)))           ;; => :connection set to nil (disconnected))
+                                         ;; => Log stop action
+    (assoc this :connection nil)))           ;; => Return record with :connection cleared
+                                         ;; => Simulates closing DB connection
 
 (defrecord WebServer [port database handler]
-  component/Lifecycle
-  (start [this]
+                                         ;; => WebServer component record
+                                         ;; => Depends on database component
+  component/Lifecycle                    ;; => Implements Lifecycle protocol
+  (start [this]                          ;; => Start: bind HTTP server
+                                         ;; => this is WebServer record
     (println "Starting web server on port" port)
+                                         ;; => Log start with port number
     (assoc this :handler {:port port :db (:connection database)}))
-  (stop [this]
+                                         ;; => Populate :handler with server state
+                                         ;; => Accesses injected database's connection
+  (stop [this]                           ;; => Stop: unbind server
     (println "Stopping web server")
-    (assoc this :handler nil)))
+                                         ;; => Log stop action
+    (assoc this :handler nil)))          ;; => Clear :handler field
+                                         ;; => Simulates server shutdown
 
-;; Build system
-(defn create-system []
-  (component/system-map
+;; Build system with dependency injection
+(defn create-system []                   ;; => Factory function for system
+  (component/system-map                  ;; => Creates component system map
     :database (map->Database {:host "localhost" :port 5432})
+                                         ;; => Database component: no dependencies
+                                         ;; => map->Database converts map to record
     :web-server (component/using
                   (map->WebServer {:port 8080})
-                  {:database :database})))     ;; => Dependency injection
+                                         ;; => WebServer component depends on database
+                  {:database :database})))     ;; => Dependency injection declaration
+                                         ;; => Key :database in record populated from system :database
 
-(def system (create-system))
+(def system (create-system))             ;; => Create unstarted system
+                                         ;; => System map with two components
 (alter-var-root #'system component/start-system)
-;; => Starting database connection, Starting web server on port 8080
+                                         ;; => Start system in dependency order
+                                         ;; => Database starts first (no deps)
+                                         ;; => WebServer starts second (depends on database)
+;; => Starting database connection
+;; => Starting web server on port 8080
+                                         ;; => Outputs show correct start order
 
 (alter-var-root #'system component/stop-system)
-;; => Stopping web server, Stopping database connection
+                                         ;; => Stop system in reverse dependency order
+                                         ;; => WebServer stops first
+                                         ;; => Database stops second (after dependents)
+;; => Stopping web server
+;; => Stopping database connection
+                                         ;; => Outputs show correct stop order (reversed)
 ```
 
 **Key Takeaway**: Component pattern provides dependency injection and lifecycle management for applications.
@@ -571,34 +751,60 @@ Alternative to Component using global state with lifecycle.
 
 ```clojure
 (require '[mount.core :refer [defstate start stop]])
+                                         ;; => Load mount for state management
+                                         ;; => Imports defstate, start, stop macros
 
-(defstate database
-  :start (do
+(defstate database                       ;; => Define stateful component: database
+                                         ;; => Creates var holding lifecycle
+  :start (do                             ;; => Start expression
+                                         ;; => Executes when mount/start called
            (println "Connecting to database")
-           {:connection "db-conn"})
-  :stop (do
+                                         ;; => Log connection action
+           {:connection "db-conn"})      ;; => Return value becomes @database
+                                         ;; => Simulates DB connection handle
+  :stop (do                              ;; => Stop expression
+                                         ;; => Executes when mount/stop called
           (println "Closing database")
-          nil))
+                                         ;; => Log disconnection action
+          nil))                          ;; => Return value (nil means stopped)
 
-(defstate web-server
-  :start (do
+(defstate web-server                     ;; => Define stateful component: web-server
+                                         ;; => Depends implicitly on database var
+  :start (do                             ;; => Start expression
+                                         ;; => Executes after database starts (dependency order)
            (println "Starting server with" database)
+                                         ;; => Log with database reference
+                                         ;; => database var dereferenced automatically
            {:server "running" :db database})
-  :stop (do
+                                         ;; => Return map with server state
+                                         ;; => Embeds database value
+  :stop (do                              ;; => Stop expression
+                                         ;; => Executes before database stops
           (println "Stopping server")
-          nil))
+                                         ;; => Log shutdown
+          nil))                          ;; => Return nil (stopped state)
 
-;; Start all states
-(start)                                      ;; => Connects DB, starts server
+;; Start all states in dependency order
+(start)                                      ;; => Starts all defstate vars
+                                         ;; => Mount analyzes namespace dependencies
+                                         ;; => Starts database first, then web-server
+;; => Connects DB, starts server (printed messages)
 
-;; Access state
-@web-server                                  ;; => {:server "running" :db {...}}
+;; Access state via deref
+@web-server                                  ;; => Dereferences web-server var
+                                         ;; => Returns current state value
+;; => {:server "running" :db {...}} (started state)
 
-;; Stop all states
-(stop)                                       ;; => Stops server, closes DB
+;; Stop all states in reverse dependency order
+(stop)                                       ;; => Stops all defstate vars
+                                         ;; => web-server stops first
+                                         ;; => database stops second
+;; => Stops server, closes DB (reverse order)
 
-;; Start specific states
-(start #'database)                           ;; => Only database
+;; Start specific state selectively
+(start #'database)                           ;; => Start only database var
+                                         ;; => #' quotes var (not value)
+                                         ;; => Other states remain stopped
 ```
 
 **Key Takeaway**: Mount provides simpler state management than Component with global state vars.
@@ -634,31 +840,53 @@ sequenceDiagram
 
 ```clojure
 (require '[ring.adapter.jetty :refer [run-jetty]])
+                                         ;; => Load Ring Jetty adapter for HTTP server
 
-(defn wrap-logging [handler]
-  (fn [request]
-    (println "Request:" (:uri request))
-    (let [response (handler request)]
+(defn wrap-logging [handler]            ;; => Middleware: logs requests and responses
+                                         ;; => handler is wrapped handler function
+  (fn [request]                          ;; => Returns request handler function
+                                         ;; => request is Ring request map
+    (println "Request:" (:uri request))  ;; => Log incoming request URI
+                                         ;; => Side effect before handler call
+    (let [response (handler request)]    ;; => Call wrapped handler
+                                         ;; => Captures response for logging
       (println "Response:" (:status response))
-      response)))
+                                         ;; => Log response status code
+                                         ;; => Side effect after handler call
+      response)))                        ;; => Return response unchanged
+                                         ;; => Passes through to client
 
-(defn wrap-auth [handler]
-  (fn [request]
+(defn wrap-auth [handler]               ;; => Middleware: checks authorization
+                                         ;; => handler is wrapped handler
+  (fn [request]                          ;; => Returns request handler function
     (if (get-in request [:headers "authorization"])
-      (handler request)
+                                         ;; => Check for authorization header
+                                         ;; => get-in navigates nested map
+      (handler request)                  ;; => YES: call wrapped handler
+                                         ;; => Request authorized, continue processing
       {:status 401 :body "Unauthorized"})))
+                                         ;; => NO: return 401 error immediately
+                                         ;; => Short-circuit: handler not called
 
-;; Base handler
-(defn app [request]
-  {:status 200 :body "Hello, World!"})
+;; Base handler (innermost function)
+(defn app [request]                      ;; => Core application logic
+                                         ;; => Receives authorized, logged request
+  {:status 200 :body "Hello, World!"})   ;; => Return 200 OK response
+                                         ;; => Simple success response
 
-;; Compose middleware (bottom-up application)
-(def wrapped-app
-  (-> app
-      wrap-auth                              ;; => Applied first (inner)
-      wrap-logging))                         ;; => Applied second (outer)
+;; Compose middleware using thread-first macro
+(def wrapped-app                         ;; => Final composed handler
+  (-> app                                ;; => Start with base handler
+      wrap-auth                          ;; => Wrap with auth (applied FIRST at runtime)
+                                         ;; => Inner layer: checks authorization
+      wrap-logging))                         ;; => Wrap with logging (applied SECOND)
+                                         ;; => Outer layer: logs request/response
+                                         ;; => Execution order: logging → auth → app
 
+;; Start server (commented out for example)
 ;; (run-jetty wrapped-app {:port 8080})
+                                         ;; => Runs Jetty server on port 8080
+                                         ;; => wrapped-app handles all requests
 ```
 
 **Key Takeaway**: Ring middleware wraps handlers for cross-cutting concerns like auth and logging.
@@ -671,26 +899,47 @@ Define routes with Compojure DSL for web applications.
 
 ```clojure
 (require '[compojure.core :refer [defroutes GET POST]]
-         '[compojure.route :as route])
+                                         ;; => Load Compojure routing DSL macros
+         '[compojure.route :as route])   ;; => Load route utilities (not-found, etc.)
 
-(defroutes app-routes
-  (GET "/" [] "Home page")                   ;; => Route pattern
+(defroutes app-routes                    ;; => Define route handler using DSL
+                                         ;; => Compiles to function matching routes
+  (GET "/" [] "Home page")                   ;; => Route: GET / (root path)
+                                         ;; => [] empty destructuring (no params)
+                                         ;; => Returns string body (Ring response)
+                                         ;; => Automatically wrapped in {:status 200 :body ...}
 
-  (GET "/users/:id" [id]                     ;; => Path parameter
-    (str "User ID: " id))
+  (GET "/users/:id" [id]                     ;; => Route: GET /users/:id
+                                         ;; => :id is path parameter placeholder
+                                         ;; => [id] destructures :id from params map
+                                         ;; => id is bound to extracted value
+    (str "User ID: " id))                ;; => Return string with id
+                                         ;; => Example: /users/123 → id="123"
 
-  (GET "/search" [q limit]                   ;; => Query parameters
+  (GET "/search" [q limit]                   ;; => Route: GET /search?q=...&limit=...
+                                         ;; => [q limit] destructures query params
+                                         ;; => q and limit extracted from query string
     (str "Search: " q " (limit: " limit ")"))
+                                         ;; => Return formatted search string
+                                         ;; => Example: /search?q=clojure&limit=10
 
-  (POST "/users" [name email]                ;; => POST route
-    {:status 201
-     :body (str "Created user: " name)})
+  (POST "/users" [name email]                ;; => Route: POST /users
+                                         ;; => [name email] destructures POST body params
+                                         ;; => Expects form-encoded or JSON body
+    {:status 201                         ;; => Explicit Ring response map
+                                         ;; => 201 Created status code
+     :body (str "Created user: " name)}) ;; => Response body with name
 
-  (route/not-found "Not found"))             ;; => 404 handler
+  (route/not-found "Not found"))             ;; => Fallback route for unmatched requests
+                                         ;; => Returns {:status 404 :body "Not found"}
+                                         ;; => Must be last route (catch-all)
 
-;; Request/response format
-;; Request: {:uri "/users/123" :request-method :get}
-;; Response: {:status 200 :body "..." :headers {...}}
+;; Ring request/response contract
+;; Request example: {:uri "/users/123" :request-method :get}
+                                         ;; => Ring request is map with keys
+                                         ;; => :uri, :request-method, :headers, :params, etc.
+;; Response example: {:status 200 :body "..." :headers {...}}
+                                         ;; => Ring response is map with :status, :body, :headers
 ```
 
 **Key Takeaway**: Compojure provides concise DSL for HTTP routing with parameter extraction.
@@ -702,30 +951,50 @@ Define routes with Compojure DSL for web applications.
 Make HTTP requests using clj-http library.
 
 ```clojure
-(require '[clj-http.client :as http])
+(require '[clj-http.client :as http])    ;; => Load clj-http HTTP client library
 
-;; GET request
+;; Simple GET request
 (let [response (http/get "https://api.example.com/users/1")]
-  (println (:status response))               ;; => 200
-  (println (:body response)))                ;; => JSON string
+                                         ;; => Makes HTTP GET request
+                                         ;; => Returns response map
+  (println (:status response))               ;; => HTTP status code
+                                         ;; => Example: 200 (OK)
+  (println (:body response)))                ;; => Response body as string
+                                         ;; => Typically JSON string
 
 ;; GET with query parameters
 (http/get "https://api.example.com/search"
+                                         ;; => Base URL without query string
           {:query-params {:q "clojure" :limit 10}})
+                                         ;; => :query-params map converted to ?q=clojure&limit=10
+                                         ;; => Automatic URL encoding
+                                         ;; => Final URL: .../search?q=clojure&limit=10
 
-;; POST with JSON
+;; POST with JSON body
 (http/post "https://api.example.com/users"
-           {:content-type :json
+                                         ;; => Makes HTTP POST request
+           {:content-type :json          ;; => Sets Content-Type: application/json header
             :body (json/write-str {:name "Alice" :email "alice@example.com"})})
+                                         ;; => :body is serialized JSON string
+                                         ;; => json/write-str converts map to JSON
+                                         ;; => Server receives JSON payload
 
 ;; Automatic JSON parsing
 (http/get "https://api.example.com/users/1"
-          {:as :json})                       ;; => Parses response as JSON
+          {:as :json})                       ;; => Automatic response body parsing
+                                         ;; => :as :json parses JSON to Clojure map
+                                         ;; => Returns response with :body as map (not string)
+                                         ;; => Eliminates manual json/read-str call
 
-;; Headers and authentication
+;; Headers and authentication with error handling
 (http/get "https://api.example.com/private"
+                                         ;; => GET request to protected endpoint
           {:headers {"Authorization" "Bearer TOKEN"}
-           :throw-exceptions false})         ;; => Don't throw on 4xx/5xx
+                                         ;; => :headers map adds HTTP headers
+                                         ;; => Authorization header with Bearer token
+           :throw-exceptions false})         ;; => Don't throw on 4xx/5xx status codes
+                                         ;; => Returns response map even for errors
+                                         ;; => Default: throws on error status
 ```
 
 **Key Takeaway**: clj-http simplifies HTTP requests with automatic JSON handling and configuration.
@@ -737,36 +1006,66 @@ Make HTTP requests using clj-http library.
 Access relational databases using next.jdbc.
 
 ```clojure
-(require '[next.jdbc :as jdbc]
-         '[next.jdbc.sql :as sql])
+(require '[next.jdbc :as jdbc]           ;; => Load next.jdbc JDBC wrapper
+         '[next.jdbc.sql :as sql])       ;; => Load SQL convenience functions
 
-(def db {:dbtype "postgresql"
-         :dbname "myapp"
-         :host "localhost"
-         :user "postgres"
-         :password "secret"})
+(def db {:dbtype "postgresql"            ;; => Database connection spec map
+         :dbname "myapp"                 ;; => Database name
+         :host "localhost"               ;; => Database host
+         :user "postgres"                ;; => Username for authentication
+         :password "secret"})            ;; => Password for authentication
+                                         ;; => Map used to create JDBC connection
 
-;; Query
+;; Query with parameterized SQL
 (sql/query db ["SELECT * FROM users WHERE id = ?" 1])
+                                         ;; => db is connection spec
+                                         ;; => Vector: [SQL-string & params]
+                                         ;; => ? is placeholder, 1 is parameter
+                                         ;; => Prevents SQL injection
 ;; => [{:users/id 1 :users/name "Alice" :users/email "..."}]
+                                         ;; => Returns vector of maps
+                                         ;; => Qualified keywords :users/id prevent collisions
 
-;; Insert
+;; Insert row into table
 (sql/insert! db :users {:name "Bob" :email "bob@example.com"})
+                                         ;; => db is connection spec
+                                         ;; => :users is table name (keyword)
+                                         ;; => Map provides column values
 ;; => {:users/id 2 :users/name "Bob" :users/email "bob@example.com"}
+                                         ;; => Returns inserted row with generated ID
+                                         ;; => ID auto-generated by database
 
-;; Update
+;; Update existing row
 (sql/update! db :users {:email "newemail@example.com"} ["id = ?" 1])
-;; => {:next.jdbc/update-count 1} (1 row updated)
+                                         ;; => db is connection spec
+                                         ;; => :users is table
+                                         ;; => Map provides SET clause values
+                                         ;; => Vector provides WHERE clause
+;; => {:next.jdbc/update-count 1}
+                                         ;; => Returns update count (1 row modified)
+                                         ;; => Qualified keyword for metadata
 
-;; Delete
+;; Delete row from table
 (sql/delete! db :users ["id = ?" 2])
-;; => {:next.jdbc/update-count 1} (1 row deleted)
+                                         ;; => db is connection spec
+                                         ;; => :users is table
+                                         ;; => Vector provides WHERE clause
+;; => {:next.jdbc/update-count 1}
+                                         ;; => Returns delete count (1 row removed)
 
-;; Transaction
-(jdbc/with-transaction [tx db]
+;; Transaction: all-or-nothing semantics
+(jdbc/with-transaction [tx db]           ;; => tx is transaction-bound connection
+                                         ;; => db is original connection spec
+                                         ;; => Begins transaction
   (sql/insert! tx :users {:name "Charlie"})
+                                         ;; => First insert in transaction
+                                         ;; => Uses tx, not db
   (sql/insert! tx :orders {:user_id 3 :amount 100}))
+                                         ;; => Second insert in transaction
+                                         ;; => Depends on first insert succeeding
 ;; => All-or-nothing commit
+                                         ;; => Both inserts commit together
+                                         ;; => Exception rolls back both operations
 ```
 
 **Key Takeaway**: next.jdbc provides modern JDBC wrapper with transactions and named parameters.
@@ -802,30 +1101,61 @@ graph TD
 ```
 
 ```clojure
-(require '[clojure.spec.alpha :as s]
+(require '[clojure.spec.alpha :as s]     ;; => Load spec library for validation
          '[clojure.spec.gen.alpha :as gen]
+                                         ;; => Load spec generators
          '[clojure.spec.test.alpha :as stest])
+                                         ;; => Load spec testing utilities
 
 (s/def ::age (s/and int? #(<= 0 % 120)))
+                                         ;; => Spec for age: integer between 0-120
+                                         ;; => s/and combines predicates (all must pass)
+                                         ;; => #(<= 0 % 120) is range predicate
 (s/def ::name (s/and string? #(< 0 (count %) 50)))
+                                         ;; => Spec for name: non-empty string max 50 chars
+                                         ;; => string? checks type
+                                         ;; => (< 0 (count %) 50) checks length bounds
 (s/def ::email (s/and string? #(re-matches #".+@.+\..+" %)))
+                                         ;; => Spec for email: string matching pattern
+                                         ;; => re-matches validates email format regex
+                                         ;; => Pattern: text@text.text
 
 (s/def ::user (s/keys :req [::name ::age ::email]))
+                                         ;; => Spec for user map
+                                         ;; => :req lists required qualified keys
+                                         ;; => Map must contain all three keys
 
-;; Generate sample data
-(gen/sample (s/gen ::age))                   ;; => [0 1 0 0 2 ...]
-(gen/sample (s/gen ::user))
+;; Generate sample data from spec
+(gen/sample (s/gen ::age))                   ;; => Creates generator from ::age spec
+                                         ;; => Generates valid ages (0-120)
+;; => [0 1 0 0 2 ...] (random valid ages)
+                                         ;; => gen/sample returns 10 samples by default
+(gen/sample (s/gen ::user))              ;; => Creates generator from ::user spec
+                                         ;; => Generates valid user maps
 ;; => [{::name "a" ::age 0 ::email "a@b.c"} ...]
+                                         ;; => Random valid users conforming to spec
 
-;; Property-based testing
-(s/fdef create-user
+;; Property-based testing with specs
+(s/fdef create-user                      ;; => Function spec for create-user
+                                         ;; => Defines contract: args → ret
   :args (s/cat :name ::name :age ::age :email ::email)
-  :ret ::user)
+                                         ;; => :args spec: concatenated positional args
+                                         ;; => :name, :age, :email labeled parameters
+  :ret ::user)                           ;; => :ret spec: return value must satisfy ::user
+                                         ;; => Validates function output
 
-(defn create-user [name age email]
+(defn create-user [name age email]       ;; => Function implementation
+                                         ;; => Takes three parameters
   {::name name ::age age ::email email})
+                                         ;; => Returns user map
+                                         ;; => Conforms to ::user spec
 
-(stest/check `create-user {:num-tests 100})  ;; => Run 100 generated tests
+(stest/check `create-user {:num-tests 100})
+                                         ;; => Generative testing: 100 random tests
+                                         ;; => Generates valid inputs from :args spec
+                                         ;; => Validates outputs against :ret spec
+;; => Run 100 generated tests
+                                         ;; => Reports pass/fail with counterexamples
 ```
 
 **Key Takeaway**: Spec generators enable automatic property-based testing from specifications.
@@ -837,36 +1167,60 @@ graph TD
 Write generative property-based tests.
 
 ```clojure
-(require '[clojure.test.check :as tc]
+(require '[clojure.test.check :as tc]    ;; => Load test.check for property testing
          '[clojure.test.check.generators :as gen]
+                                         ;; => Load data generators
          '[clojure.test.check.properties :as prop])
+                                         ;; => Load property definition utilities
 
-;; Property: reverse twice equals original
-(def reverse-property
+;; Property: reverse twice equals original (involution)
+(def reverse-property                    ;; => Define property as var
   (prop/for-all [v (gen/vector gen/int)]
-    (= v (reverse (reverse v)))))
+                                         ;; => for-all: universal quantification
+                                         ;; => v is generated vector of ints
+                                         ;; => (gen/vector gen/int) generates random int vectors
+    (= v (reverse (reverse v)))))        ;; => Property: reversing twice is identity
+                                         ;; => Must hold for ALL generated vectors
 
-(tc/quick-check 100 reverse-property)        ;; => Run 100 random tests
-;; => {:result true :num-tests 100 :seed 1234567890} (all tests passed)
+(tc/quick-check 100 reverse-property)        ;; => Run property test 100 times
+                                         ;; => Generates 100 random vectors
+                                         ;; => Verifies property holds for each
+;; => {:result true :num-tests 100 :seed 1234567890}
+                                         ;; => All tests passed
+                                         ;; => Seed enables reproducibility
 
-;; Property: sort is idempotent
-(def sort-property
+;; Property: sort is idempotent (sorting sorted is identity)
+(def sort-property                       ;; => Define idempotence property
   (prop/for-all [v (gen/vector gen/int)]
-    (= (sort v) (sort (sort v)))))
+                                         ;; => v is generated vector of ints
+    (= (sort v) (sort (sort v)))))       ;; => Sorting once vs twice yields same result
+                                         ;; => Idempotence invariant
 
-(tc/quick-check 100 sort-property)           ;; => Run 100 random tests
-;; => {:result true :num-tests 100} (sort idempotence verified)
+(tc/quick-check 100 sort-property)           ;; => Run property test 100 times
+                                         ;; => Tests idempotence with random vectors
+;; => {:result true :num-tests 100}
+                                         ;; => Sort idempotence verified on 100 inputs
 
-;; Custom generators
-(def email-gen
-  (gen/fmap
+;; Custom generator for domain-specific data
+(def email-gen                           ;; => Generator for email addresses
+  (gen/fmap                              ;; => fmap: apply function to generated value
+                                         ;; => Transforms base generators
     (fn [[name domain]] (str name "@" domain ".com"))
-    (gen/tuple
+                                         ;; => Combines name and domain into email
+                                         ;; => [name domain] destructures tuple
+    (gen/tuple                           ;; => Generate 2-element tuple
+                                         ;; => Combines two generators
       (gen/not-empty gen/string-alphanumeric)
+                                         ;; => First element: non-empty alphanumeric string
+                                         ;; => Username part of email
       (gen/not-empty gen/string-alphanumeric))))
+                                         ;; => Second element: non-empty alphanumeric
+                                         ;; => Domain part of email
 
-(gen/sample email-gen)
+(gen/sample email-gen)                   ;; => Generate 10 sample emails
+                                         ;; => Uses custom generator
 ;; => ["a@b.com" "c@d.com" ...]
+                                         ;; => Valid email format strings
 ```
 
 **Key Takeaway**: test.check enables property-based testing with custom generators.
@@ -904,31 +1258,51 @@ graph TD
 ```
 
 ```clojure
-(require '[criterium.core :as crit])
+(require '[criterium.core :as crit])     ;; => Load Criterium benchmarking library
 
-;; Benchmark function
-(defn fib [n]
-  (if (<= n 1)
-    n
-    (+ (fib (- n 1)) (fib (- n 2)))))
+;; Function to benchmark: recursive fibonacci
+(defn fib [n]                            ;; => Naive recursive implementation
+  (if (<= n 1)                           ;; => Base case: n <= 1
+    n                                    ;; => Return n (0 or 1)
+    (+ (fib (- n 1)) (fib (- n 2)))))    ;; => Recursive case: sum of previous two
+                                         ;; => Exponential time complexity
 
-(crit/bench (fib 20))                        ;; => Detailed timing statistics
+(crit/bench (fib 20))                        ;; => Comprehensive benchmark
+                                         ;; => JVM warmup phase
+                                         ;; => Multiple iterations for statistics
+;; => Detailed timing statistics
+                                         ;; => Mean, std dev, percentiles, CI
 
-;; Quick benchmark
+;; Quick benchmark (fewer iterations)
 (crit/quick-bench (reduce + (range 10000)))
+                                         ;; => Faster benchmark with less warmup
+                                         ;; => Still accounts for JIT compilation
+                                         ;; => Suitable for simple operations
 
-;; Profile with time
-(time (reduce + (range 1000000)))            ;; => "Elapsed time: X msecs"
+;; Simple timing with time macro
+(time (reduce + (range 1000000)))            ;; => Basic elapsed time measurement
+                                         ;; => No JVM warmup accounting
+                                         ;; => Single execution measurement
+;; => "Elapsed time: X msecs"
+                                         ;; => Returns value and prints timing
 
-;; Memory profiling
-(defn measure-memory [f]
-  (let [runtime (Runtime/getRuntime)
-        before (.totalMemory runtime)]
-    (f)
-    (let [after (.totalMemory runtime)]
-      (- after before))))
+;; Memory profiling function
+(defn measure-memory [f]                 ;; => Measures memory delta
+                                         ;; => f is function to profile
+  (let [runtime (Runtime/getRuntime)     ;; => Get JVM runtime instance
+        before (.totalMemory runtime)]   ;; => Capture total memory before
+                                         ;; => Includes allocated heap
+    (f)                                  ;; => Execute function (side effects happen)
+    (let [after (.totalMemory runtime)]  ;; => Capture total memory after
+                                         ;; => May include GC effects
+      (- after before))))                ;; => Return memory delta in bytes
+                                         ;; => Positive: memory allocated
+                                         ;; => Negative: GC occurred
 
-(measure-memory #(vec (range 1000000)))      ;; => Memory used in bytes
+(measure-memory #(vec (range 1000000)))      ;; => Profile vector creation
+                                         ;; => Creates 1M element vector
+;; => Memory used in bytes
+                                         ;; => Approximate heap allocation
 ```
 
 **Key Takeaway**: Criterium provides accurate benchmarking accounting for JVM warmup and GC.
@@ -963,33 +1337,59 @@ graph TD
 ```
 
 ```clojure
-(defn slow-fib [n]
-  (if (<= n 1)
+(defn slow-fib [n]                       ;; => Naive recursive fibonacci
+                                         ;; => Exponential time: O(2^n)
+  (if (<= n 1)                           ;; => Base case: fib(0)=0, fib(1)=1
     n
     (+ (slow-fib (- n 1)) (slow-fib (- n 2)))))
+                                         ;; => Recalculates overlapping subproblems
+                                         ;; => Extremely inefficient for large n
 
-(time (slow-fib 35))                         ;; => ~5 seconds
+(time (slow-fib 35))                         ;; => Benchmark without memoization
+                                         ;; => Millions of redundant calculations
+;; => ~5 seconds (extremely slow)
+                                         ;; => Elapsed time for fib(35)
 
-;; Memoized version
-(def fast-fib (memoize slow-fib))
+;; Memoized version with automatic caching
+(def fast-fib (memoize slow-fib))        ;; => Wraps slow-fib with cache
+                                         ;; => Cache: args → result map
+                                         ;; => Thread-safe (uses atom internally)
 
-(time (fast-fib 35))                         ;; => ~5 seconds first time
-(time (fast-fib 35))                         ;; => Instant (cached)
+(time (fast-fib 35))                         ;; => First call: cache miss
+                                         ;; => Computes result, stores in cache
+;; => ~5 seconds first time (same as slow-fib)
+                                         ;; => Populates cache during recursion
+(time (fast-fib 35))                         ;; => Second call: cache hit
+                                         ;; => Retrieves from cache instantly
+;; => Instant (cached) (~0ms)
+                                         ;; => No recomputation needed
 
-;; Custom memoization with limited cache
-(defn memoize-limited [f limit]
-  (let [cache (atom {})]
-    (fn [& args]
-      (if-let [result (get @cache args)]
-        result
-        (let [result (apply f args)]
-          (swap! cache (fn [c]
+;; Custom memoization with bounded cache size
+(defn memoize-limited [f limit]          ;; => Memoization with LRU-like eviction
+                                         ;; => f is function to memoize
+                                         ;; => limit is max cache entries
+  (let [cache (atom {})]                 ;; => Mutable cache: args → result map
+                                         ;; => Thread-safe via atom
+    (fn [& args]                         ;; => Wrapped function (variadic)
+      (if-let [result (get @cache args)] ;; => Check cache for args
+                                         ;; => if-let binds result if found
+        result                           ;; => Cache hit: return cached result
+                                         ;; => No computation needed
+        (let [result (apply f args)]     ;; => Cache miss: compute result
+                                         ;; => apply spreads args to f
+          (swap! cache (fn [c]           ;; => Update cache atomically
+                                         ;; => c is current cache map
                         (if (>= (count c) limit)
-                          {args result}      ;; => Evict old entries
+                                         ;; => Check if cache full
+                          {args result}      ;; => YES: evict ALL, keep only new entry
+                                         ;; => Simple eviction (not true LRU)
                           (assoc c args result))))
-          result)))))
+                                         ;; => NO: add new entry to cache
+          result)))))                    ;; => Return computed result
 
 (def limited-fib (memoize-limited slow-fib 10))
+                                         ;; => Memoized fib with max 10 cached entries
+                                         ;; => Prevents unbounded memory growth
 ```
 
 **Key Takeaway**: Memoization trades memory for speed caching expensive computation results.
@@ -1001,25 +1401,41 @@ graph TD
 Ahead-of-time compile for faster startup and deployment.
 
 ```clojure
-;; project.clj
-{:aot [myapp.core]                           ;; => Compile this namespace
- :main myapp.core                            ;; => Main entry point
+;; project.clj (Leiningen configuration)
+{:aot [myapp.core]                           ;; => Ahead-of-time compile myapp.core namespace
+                                         ;; => Generates .class files at build time
+ :main myapp.core                            ;; => Main entry point for uberjar
+                                         ;; => Specifies namespace containing -main
  :uberjar-name "myapp-standalone.jar"}
+                                         ;; => Output filename for standalone JAR
+                                         ;; => Contains all dependencies
 
-;; myapp/core.clj
-(ns myapp.core
-  (:gen-class))                              ;; => Required for -main
+;; myapp/core.clj (Application entry point)
+(ns myapp.core                           ;; => Namespace declaration
+  (:gen-class))                              ;; => Generate Java class for -main method
+                                         ;; => Required for java -jar execution
+                                         ;; => Creates myapp.core class with main()
 
-(defn -main [& args]
-  (println "Starting application...")
-  (println "Args:" args))
+(defn -main [& args]                     ;; => Main function (-main naming required)
+                                         ;; => args is command-line arguments vector
+  (println "Starting application...")    ;; => Print startup message
+  (println "Args:" args))                ;; => Print received arguments
+                                         ;; => args is sequence of strings
 
-;; Compile
+;; Build commands (shell)
 ;; lein compile
+                                         ;; => AOT compiles :aot namespaces
+                                         ;; => Generates .class files in target/classes
 ;; lein uberjar
+                                         ;; => Creates standalone JAR with all deps
+                                         ;; => Includes Clojure runtime
+                                         ;; => Output: target/myapp-standalone.jar
 
-;; Run
+;; Run compiled application (shell)
 ;; java -jar target/myapp-standalone.jar arg1 arg2
+                                         ;; => Runs standalone JAR
+                                         ;; => arg1 arg2 passed to -main as args
+                                         ;; => No Clojure installation required
 ```
 
 **Key Takeaway**: AOT compilation produces standalone JARs with faster startup times.
@@ -1031,32 +1447,53 @@ Ahead-of-time compile for faster startup and deployment.
 Structured logging with timbre library.
 
 ```clojure
-(require '[taoensso.timbre :as log])
+(require '[taoensso.timbre :as log])     ;; => Load Timbre logging library
 
-;; Configure logging
-(log/set-level! :info)                       ;; => Set global level
+;; Configure global logging level
+(log/set-level! :info)                       ;; => Set minimum level to :info
+                                         ;; => Levels: :trace, :debug, :info, :warn, :error, :fatal
+                                         ;; => Messages below :info are filtered
+;; => :info (returns set level)
 
-;; Log messages
-(log/info "Application started")             ;; => [INFO] Application started
-(log/warn "Low memory" {:free-mb 50})        ;; => [WARN] Low memory {...}
+;; Log messages at different levels
+(log/info "Application started")             ;; => Info-level log message
+                                         ;; => String message only
+;; => [INFO] Application started (console output)
+
+(log/warn "Low memory" {:free-mb 50})        ;; => Warning with structured data
+                                         ;; => Second arg: data map
+;; => [WARN] Low memory {:free-mb 50}
+                                         ;; => Structured data serialized
+
 (log/error "Connection failed" (Exception. "Timeout"))
+                                         ;; => Error with exception object
+                                         ;; => Exception printed with stack trace
 
-;; Structured logging
-(log/info {:event :user-login
-           :user-id 123
-           :ip "192.168.1.1"})
+;; Structured logging with pure data
+(log/info {:event :user-login            ;; => Log map directly (no message string)
+           :user-id 123                  ;; => Structured fields
+           :ip "192.168.1.1"})           ;; => Machine-parseable data
+                                         ;; => Ideal for log aggregation
 
-;; Conditional logging
-(log/spy (* 2 3))                            ;; => Logs and returns (* 2 3) => 6
+;; Conditional logging with spy
+(log/spy (* 2 3))                            ;; => Logs expression and result
+                                         ;; => Evaluates (* 2 3)
+                                         ;; => Logs: (* 2 3) => 6
+;; => Returns 6 (value of expression)
+                                         ;; => Useful for debugging pipelines
 
-;; Custom appenders
-(log/merge-config!
-  {:appenders
-   {:file {:enabled? true
-           :fn (fn [data]
-                 (spit "app.log"
+;; Custom appenders for output destinations
+(log/merge-config!                       ;; => Merge new config into current
+  {:appenders                            ;; => Map of appender definitions
+   {:file {:enabled? true                ;; => File appender enabled
+           :fn (fn [data]                ;; => Appender function receives log data
+                                         ;; => data map contains :output_, :level, etc.
+                 (spit "app.log"         ;; => Write to app.log file
                        (str (:output_ data) "\n")
+                                         ;; => :output_ is formatted string
                        :append true))}}})
+                                         ;; => :append true preserves existing logs
+                                         ;; => Each log appends to file
 ```
 
 **Key Takeaway**: Timbre provides flexible logging with structured data and custom appenders.
@@ -1068,26 +1505,47 @@ Structured logging with timbre library.
 Parse and generate JSON and EDN data formats.
 
 ```clojure
-(require '[clojure.data.json :as json]
-         '[clojure.edn :as edn])
+(require '[clojure.data.json :as json]   ;; => Load JSON library
+         '[clojure.edn :as edn])         ;; => Load EDN (Extensible Data Notation)
 
-;; JSON
+;; JSON parsing and generation
 (def json-str "{\"name\":\"Alice\",\"age\":30}")
-(json/read-str json-str)                     ;; => {"name" "Alice" "age" 30}
-(json/read-str json-str :key-fn keyword)     ;; => {:name "Alice" :age 30}
+                                         ;; => JSON string with escaped quotes
+(json/read-str json-str)                     ;; => Parse JSON to Clojure map
+                                         ;; => Default: string keys
+;; => {"name" "Alice" "age" 30}
+                                         ;; => Map with string keys (not keywords)
+(json/read-str json-str :key-fn keyword)     ;; => Parse with keyword conversion
+                                         ;; => :key-fn transforms keys
+;; => {:name "Alice" :age 30}
+                                         ;; => Map with keyword keys (idiomatic)
 
-(json/write-str {:name "Bob" :age 25})       ;; => "{\"name\":\"Bob\",\"age\":25}"
+(json/write-str {:name "Bob" :age 25})       ;; => Serialize Clojure map to JSON
+                                         ;; => Keywords become strings
+;; => "{\"name\":\"Bob\",\"age\":25}"
+                                         ;; => JSON string with escaped quotes
 
-;; EDN (Clojure data format)
+;; EDN parsing (Clojure's native data format)
 (def edn-str "{:name \"Alice\" :age 30 :roles #{:admin :user}}")
-(edn/read-string edn-str)                    ;; => {:name "Alice" :age 30 :roles #{:admin :user}}
+                                         ;; => EDN string preserves Clojure types
+(edn/read-string edn-str)                    ;; => Parse EDN to Clojure data
+                                         ;; => Preserves keywords and sets
+;; => {:name "Alice" :age 30 :roles #{:admin :user}}
+                                         ;; => Exact round-trip with original data
 
-(pr-str {:name "Bob" :age 25})               ;; => "{:name \"Bob\", :age 25}"
+(pr-str {:name "Bob" :age 25})               ;; => Serialize to EDN string
+                                         ;; => pr-str: printable representation
+;; => "{:name \"Bob\", :age 25}"
+                                         ;; => EDN string (keywords preserved)
 
-;; EDN supports more types than JSON
-(pr-str {:date #inst "2025-12-30"
+;; EDN supports types unavailable in JSON
+(pr-str {:date #inst "2025-12-30"        ;; => Instant literal (date/time)
          :uuid #uuid "550e8400-e29b-41d4-a716-446655440000"
-         :tags #{:clojure :lisp}})
+                                         ;; => UUID literal
+         :tags #{:clojure :lisp}})       ;; => Set literal (JSON has arrays only)
+;; => Serialized with tagged literals
+                                         ;; => #inst and #uuid are EDN tags
+                                         ;; => Round-trips Clojure types perfectly
 ```
 
 **Key Takeaway**: EDN preserves Clojure types better than JSON for Clojure-to-Clojure communication.
@@ -1099,27 +1557,45 @@ Parse and generate JSON and EDN data formats.
 Package application with all dependencies into standalone JAR.
 
 ```clojure
-;; deps.edn approach
-{:aliases
- {:uberjar
+;; deps.edn approach (tools.deps configuration)
+{:aliases                                ;; => Alias definitions for build tasks
+ {:uberjar                               ;; => Alias name: :uberjar
   {:replace-deps {com.github.seancorfield/depstar {:mvn/version "2.1.303"}}
-   :exec-fn hf.depstar/uberjar
-   :exec-args {:jar "target/myapp.jar"
-               :main-class myapp.core
-               :aot true}}}}
+                                         ;; => Override dependencies with depstar tool
+                                         ;; => depstar: uberjar builder for tools.deps
+   :exec-fn hf.depstar/uberjar           ;; => Function to execute: depstar's uberjar
+                                         ;; => Namespace-qualified function
+   :exec-args {:jar "target/myapp.jar"   ;; => Output JAR path
+               :main-class myapp.core    ;; => Main class for manifest
+                                         ;; => Entry point for java -jar
+               :aot true}}}}             ;; => Ahead-of-time compile namespaces
+                                         ;; => Generates .class files
 
-;; Build uberjar
+;; Build uberjar command (shell)
 ;; clj -X:uberjar
+                                         ;; => Execute :uberjar alias
+                                         ;; => Compiles and packages standalone JAR
+                                         ;; => Output: target/myapp.jar
 
-;; Run
+;; Run standalone JAR (shell)
 ;; java -jar target/myapp.jar
+                                         ;; => Runs application from JAR
+                                         ;; => No Clojure CLI required
+                                         ;; => Self-contained deployment
 
-;; leiningen approach (project.clj)
-{:main myapp.core
- :aot [myapp.core]
- :uberjar-name "myapp-standalone.jar"}
+;; Leiningen approach (project.clj configuration)
+{:main myapp.core                        ;; => Main namespace for uberjar
+                                         ;; => Contains -main function
+ :aot [myapp.core]                       ;; => Ahead-of-time compile myapp.core
+                                         ;; => Generates Java .class files
+ :uberjar-name "myapp-standalone.jar"}   ;; => Output JAR filename
+                                         ;; => Placed in target/ directory
 
+;; Build uberjar with Leiningen (shell)
 ;; lein uberjar
+                                         ;; => Compiles, packages JAR with all deps
+                                         ;; => Output: target/myapp-standalone.jar
+                                         ;; => Includes Clojure runtime
 ```
 
 **Key Takeaway**: Uberjars bundle application and dependencies for simple deployment.
@@ -1131,30 +1607,51 @@ Package application with all dependencies into standalone JAR.
 Manage environment-specific configuration.
 
 ```clojure
-(require '[environ.core :refer [env]])
+(require '[environ.core :refer [env]])   ;; => Load environ library
+                                         ;; => Provides env function for config
 
-;; Read from environment variables
-(def db-url (env :database-url))             ;; => From DATABASE_URL env var
-(def port (Integer/parseInt (env :port "8080"))) ;; => Default 8080
+;; Read from environment variables with environ
+(def db-url (env :database-url))             ;; => Reads DATABASE_URL env var
+                                         ;; => env converts :database-url → DATABASE_URL
+                                         ;; => Hyphen to underscore, uppercased
+                                         ;; => Returns string or nil
+(def port (Integer/parseInt (env :port "8080")))
+                                         ;; => Reads PORT env var
+                                         ;; => Second arg "8080" is default if unset
+                                         ;; => Parses string to integer
 
-;; .lein-env for development
+;; Development config file: .lein-env (Leiningen)
 ;; {:database-url "jdbc:postgresql://localhost/dev"
 ;;  :port "3000"}
+                                         ;; => Map of dev environment config
+                                         ;; => environ loads this in dev mode
+                                         ;; => Overrides system env vars
 
-;; Production env vars
+;; Production environment variables (shell)
 ;; export DATABASE_URL=jdbc:postgresql://prod-host/db
+                                         ;; => System environment variable
 ;; export PORT=8080
+                                         ;; => environ reads these in production
 
-;; Config map pattern
-(defn load-config []
-  {:database {:url (env :database-url)
-              :user (env :db-user)
+;; Config map pattern (structured configuration)
+(defn load-config []                     ;; => Factory function for config map
+  {:database {:url (env :database-url)   ;; => Database config section
+                                         ;; => Reads DATABASE_URL
+              :user (env :db-user)       ;; => DB_USER env var
               :password (env :db-password)}
+                                         ;; => DB_PASSWORD env var (sensitive)
    :server {:port (Integer/parseInt (env :port "8080"))
+                                         ;; => Server port with default
             :host (env :host "0.0.0.0")}
+                                         ;; => Server bind address
    :logging {:level (keyword (env :log-level "info"))}})
+                                         ;; => LOG_LEVEL env var as keyword
+                                         ;; => Default: :info level
+                                         ;; => Returns structured config map
 
-(def config (load-config))
+(def config (load-config))               ;; => Load config at startup
+                                         ;; => Freezes env vars at app init
+                                         ;; => Prevents runtime env changes
 ```
 
 **Key Takeaway**: Environment variables enable configuration without code changes across environments.
@@ -1189,41 +1686,66 @@ graph TD
 ```clojure
 ;; 1. AOT compilation for faster startup
 ;;    :aot [myapp.core] in project.clj
+                                         ;; => Compiles Clojure to .class files
+                                         ;; => Reduces startup time from seconds to milliseconds
+                                         ;; => Required for standalone JAR execution
 
 ;; 2. Uberjar for standalone deployment
 ;;    lein uberjar or clj -X:uberjar
+                                         ;; => Packages app + all dependencies
+                                         ;; => Single JAR deployment artifact
+                                         ;; => No external dependency management
 
-;; 3. JVM tuning
+;; 3. JVM tuning for production
 ;;    java -Xmx2g -server -jar myapp.jar
+                                         ;; => -Xmx2g: max heap 2GB
+                                         ;; => -server: server JIT compiler (optimized)
+                                         ;; => Tune GC, threads based on workload
 
-;; 4. Logging configuration
+;; 4. Logging configuration from environment
 (log/set-level! (keyword (env :log-level "info")))
-(log/merge-config!
+                                         ;; => Read log level from LOG_LEVEL env var
+                                         ;; => Converts string to keyword
+                                         ;; => Default :info if unset
+(log/merge-config!                       ;; => Merge appender config
   {:appenders {:file {:enabled? true}}})
+                                         ;; => Enable file appender for production
+                                         ;; => Logs persisted for debugging
 
-;; 5. Health check endpoint
-(GET "/health" []
-  {:status 200 :body "OK"})
+;; 5. Health check endpoint for monitoring
+(GET "/health" []                        ;; => Simple health check route
+                                         ;; => Load balancer polls this endpoint
+  {:status 200 :body "OK"})              ;; => Returns 200 if app healthy
+                                         ;; => No logic: checks app responsiveness
 
-;; 6. Graceful shutdown
-(defn shutdown-hook []
-  (println "Shutting down...")
-  (stop))                                    ;; => Stop components
+;; 6. Graceful shutdown for clean resource cleanup
+(defn shutdown-hook []                   ;; => Shutdown callback function
+  (println "Shutting down...")           ;; => Log shutdown event
+  (stop))                                    ;; => Stop components (DB, servers, etc.)
+                                         ;; => Ensures clean resource release
 
-(.addShutdownHook (Runtime/getRuntime)
+(.addShutdownHook (Runtime/getRuntime)   ;; => Register JVM shutdown hook
+                                         ;; => Triggers on SIGTERM, SIGINT, JVM exit
                   (Thread. shutdown-hook))
+                                         ;; => Runs shutdown-hook in separate thread
+                                         ;; => Prevents abrupt termination
 
-;; 7. Error handling and monitoring
-(defn wrap-error-handling [handler]
-  (fn [request]
+;; 7. Error handling middleware for reliability
+(defn wrap-error-handling [handler]      ;; => Middleware: catch-all error handling
+  (fn [request]                          ;; => Wraps handler function
     (try
-      (handler request)
-      (catch Exception e
-        (log/error e "Request failed")
+      (handler request)                  ;; => Execute wrapped handler
+      (catch Exception e                 ;; => Catch any exception
+        (log/error e "Request failed")   ;; => Log error with stack trace
         {:status 500 :body "Internal error"}))))
+                                         ;; => Return 500 error response
+                                         ;; => Prevents unhandled exceptions crashing app
 
-;; 8. Database connection pooling
+;; 8. Database connection pooling for performance
 ;; Use HikariCP with next.jdbc
+                                         ;; => Connection pool: reuse DB connections
+                                         ;; => Eliminates connection overhead per request
+                                         ;; => HikariCP: high-performance JDBC pool
 ```
 
 **Key Takeaway**: Production deployment requires AOT compilation, proper JVM tuning, logging, and error handling.
@@ -1235,27 +1757,44 @@ graph TD
 Write frontend code in ClojureScript compiling to JavaScript.
 
 ```clojure
-;; src/myapp/core.cljs
-(ns myapp.core
-  (:require [reagent.core :as r]))
+;; src/myapp/core.cljs (ClojureScript source file)
+(ns myapp.core                           ;; => Namespace declaration
+  (:require [reagent.core :as r]))       ;; => Load Reagent React wrapper
 
-;; Reagent component (React wrapper)
-(defn counter []
-  (let [count (r/atom 0)]                    ;; => Reagent atom (reactive)
-    (fn []
-      [:div
-       [:h1 "Count: " @count]
+;; Reagent component using React under the hood
+(defn counter []                         ;; => Component factory function
+  (let [count (r/atom 0)]                    ;; => Reagent atom: reactive state
+                                         ;; => r/atom creates observable state
+                                         ;; => Changes trigger re-render automatically
+    (fn []                               ;; => Render function (called on every render)
+                                         ;; => Returns Hiccup (Reagent's JSX alternative)
+      [:div                              ;; => div element
+       [:h1 "Count: " @count]            ;; => h1 with dereferenced count value
+                                         ;; => @count subscribes to atom changes
        [:button {:on-click #(swap! count inc)} "Increment"]])))
+                                         ;; => button with click handler
+                                         ;; => #(...) anonymous function
+                                         ;; => swap! updates atom, triggers re-render
 
-(defn mount-app []
-  (r/render [counter]
+(defn mount-app []                       ;; => Mount component to DOM
+  (r/render [counter]                    ;; => Render counter component
+                                         ;; => [counter] is Reagent component syntax
             (.getElementById js/document "app")))
+                                         ;; => Mounts to DOM element with id="app"
+                                         ;; => .getElementById is JS interop
 
-(mount-app)
+(mount-app)                              ;; => Initialize app on page load
+                                         ;; => Calls mount-app to start rendering
 
-;; JavaScript interop
+;; JavaScript interop examples
 (.log js/console "Hello from ClojureScript")
+                                         ;; => Call JS console.log method
+                                         ;; => . prefix for method calls
+                                         ;; => js/console accesses global console object
 (set! (.-title js/document) "My App")
+                                         ;; => Set property on JS object
+                                         ;; => .- prefix for property access
+                                         ;; => js/document is global document object
 ```
 
 **Key Takeaway**: ClojureScript brings Clojure to browser with React integration via Reagent.
@@ -1267,38 +1806,62 @@ Write frontend code in ClojureScript compiling to JavaScript.
 Embrace functional programming with immutability and purity.
 
 ```clojure
-;; Pure functions (no side effects)
-(defn calculate-total [items]
-  (reduce + (map :price items)))             ;; => Deterministic, no mutations
+;; Pure functions: no side effects, deterministic
+(defn calculate-total [items]            ;; => Pure function
+                                         ;; => Same input always produces same output
+  (reduce + (map :price items)))             ;; => Computes total from :price fields
+                                         ;; => No mutations, no I/O, no state changes
+                                         ;; => Deterministic: easy to test and reason about
 
-;; Immutable updates
-(def user {:name "Alice" :age 30})
+;; Immutable updates: original data never modified
+(def user {:name "Alice" :age 30})       ;; => Original user map
 
-(assoc user :email "alice@example.com")      ;; => New map, original unchanged
-(update user :age inc)                       ;; => New map with age+1
+(assoc user :email "alice@example.com")      ;; => Returns NEW map with :email added
+                                         ;; => user unchanged (immutable)
+                                         ;; => New map: {:name "Alice" :age 30 :email "..."}
+(update user :age inc)                       ;; => Returns NEW map with :age incremented
+                                         ;; => Original user still {:name "Alice" :age 30}
+                                         ;; => New map: {:name "Alice" :age 31}
 
-;; Threading for readability
-(->> users
-     (filter :active)
-     (map :email)
-     (take 10))                              ;; => Thread-last macro
+;; Threading macros for pipeline readability
+(->> users                               ;; => Thread-last macro: data flows last
+     (filter :active)                    ;; => Keep users where :active is truthy
+                                         ;; => (filter :active users)
+     (map :email)                        ;; => Extract :email from each user
+                                         ;; => (map :email (filter :active users))
+     (take 10))                              ;; => Take first 10 results
+                                         ;; => (take 10 (map :email (filter :active users)))
+                                         ;; => Thread-last: inserts previous result as LAST arg
 
-(-> request
-    (assoc :user current-user)
-    (update :headers merge auth-headers))    ;; => Thread-first macro
+(-> request                              ;; => Thread-first macro: data flows first
+    (assoc :user current-user)           ;; => Add :user key
+                                         ;; => (assoc request :user current-user)
+    (update :headers merge auth-headers))    ;; => Merge into :headers
+                                         ;; => (update (assoc request ...) :headers merge ...)
+                                         ;; => Thread-first: inserts result as FIRST arg
 
-;; Avoid mutations
-(defn bad-add! [coll item]
-  (.add coll item))                          ;; => Mutates collection!
+;; Avoid mutations: mutability breaks referential transparency
+(defn bad-add! [coll item]               ;; => Anti-pattern: mutates collection
+  (.add coll item))                          ;; => Calls Java mutable .add method
+                                         ;; => Side effect: modifies coll in-place
+                                         ;; => Breaks immutability guarantees
 
-(defn good-add [coll item]
-  (conj coll item))                          ;; => Returns new collection
+(defn good-add [coll item]               ;; => Functional pattern: returns new collection
+  (conj coll item))                          ;; => conj: add item, return new collection
+                                         ;; => Original coll unchanged
+                                         ;; => Preserves immutability
 
-;; Persistent data structures
-(def v [1 2 3])
-(def v2 (conj v 4))                          ;; => [1 2 3 4] (shares structure)
-(identical? (pop v2) v)                      ;; => false (different objects)
-(= (pop v2) v)                               ;; => true (equal values)
+;; Persistent data structures: structural sharing
+(def v [1 2 3])                          ;; => Original vector
+(def v2 (conj v 4))                          ;; => New vector: [1 2 3 4]
+                                         ;; => Shares structure with v (efficient)
+                                         ;; => Only new node allocated, rest shared
+(identical? (pop v2) v)                      ;; => false (different object references)
+                                         ;; => pop returns new vector [1 2 3]
+                                         ;; => Not pointer-identical to v
+(= (pop v2) v)                               ;; => true (value equality)
+                                         ;; => Both contain [1 2 3]
+                                         ;; => Structural equality via = function
 ```
 
 **Key Takeaway**: Immutability and pure functions eliminate entire categories of bugs and enable safe concurrency.

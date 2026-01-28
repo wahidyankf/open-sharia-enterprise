@@ -765,20 +765,31 @@ double sum = sum(intList);       // => Calls sum<Integer>(List<Integer>)
 
 // GENERIC CLASS with type parameter
 class Box<T> {
-    private T content;
+                                 // => Generic class with type parameter T
+                                 // => T is placeholder, replaced at instantiation
+    private T content;           // => Field of type T (unknown until instantiation)
 
     public void set(T content) {
-        this.content = content;
+                                 // => Method parameter type T
+                                 // => Enforces type safety at compile time
+        this.content = content;  // => Stores value of type T
     }
 
     public T get() {
-        return content;
+                                 // => Return type T (same type as set)
+        return content;          // => Returns stored value (type T)
     }
 }
 
 Box<String> stringBox = new Box<>();
+                                 // => Diamond operator <> infers type from left side
+                                 // => T = String for this instance
+                                 // => Creates Box<String>
 stringBox.set("Hello");          // => Type-safe: only String allowed
-String value = stringBox.get();  // => No cast needed
+                                 // => Compiler enforces: set(String)
+                                 // => Calling set(123) would be compile error
+String value = stringBox.get();  // => No cast needed (compiler knows returns String)
+                                 // => value is "Hello" (type: String)
 ```
 
 **Key Takeaway**: Generic methods use `<T>` before return type to declare type parameters. Bounded type parameters (`<T extends Class>`) restrict acceptable types and enable calling methods of the bound class. Multiple bounds require `<T extends Class & Interface1 & Interface2>` syntax with class first.
@@ -818,10 +829,17 @@ import java.util.*;
 // UNBOUNDED WILDCARD - unknown type
 public static void printList(List<?> list) {
                                  // => Accepts List of any type
-    for (Object elem : list) {   // => Can only read as Object
+                                 // => ? means "unknown type" (wildcard)
+                                 // => Works with List<Integer>, List<String>, List<Object>, etc.
+    for (Object elem : list) {   // => Can only read as Object (safest supertype)
+                                 // => Cannot assume specific type (unknown)
+                                 // => elem could be Integer, String, anything
         System.out.print(elem + " ");
+                                 // => Prints using Object.toString()
     }
     System.out.println();
+    // list.add("x");            // => ERROR: cannot write to List<?>
+                                 // => Compiler doesn't know element type
 }
 
 // UPPER-BOUNDED WILDCARD - covariance (reading)
@@ -841,40 +859,72 @@ public static double sumNumbers(List<? extends Number> numbers) {
 
 // LOWER-BOUNDED WILDCARD - contravariance (writing)
 public static void addIntegers(List<? super Integer> list) {
+                                 // => ? super Integer means "unknown type that's Integer or superclass"
                                  // => Accepts List<Integer>, List<Number>, List<Object>
-    list.add(1);                 // => Can write Integer
-    list.add(2);
+                                 // => Cannot accept List<Double> (Double not super of Integer)
+    list.add(1);                 // => Can write Integer (safe for any supertype)
+                                 // => Integer IS-A Number, Integer IS-A Object
+                                 // => Guaranteed safe to add Integer to list
+    list.add(2);                 // => Another Integer safely added
     // Integer val = list.get(0); // => ERROR: can only read as Object
-}
+                                 // => Could be List<Number> (returns Number, not Integer)
+                                 // => Could be List<Object> (returns Object, not Integer)
+                                 // => Only safe return type is Object
 
 // USAGE
 List<Integer> ints = Arrays.asList(1, 2, 3);
+                                 // => Fixed-size List<Integer>
 List<Double> doubles = Arrays.asList(1.0, 2.0, 3.0);
+                                 // => Fixed-size List<Double>
 
-printList(ints);                 // => Output: 1 2 3
-printList(doubles);              // => Output: 1.0 2.0 3.0
+printList(ints);                 // => Calls printList(List<?>)
+                                 // => Accepts List<Integer> (wildcard matches)
+                                 // => Output: 1 2 3
+printList(doubles);              // => Calls printList(List<?>)
+                                 // => Accepts List<Double> (wildcard matches)
+                                 // => Output: 1.0 2.0 3.0
 
-double sum1 = sumNumbers(ints);  // => sum1 is 6.0
-double sum2 = sumNumbers(doubles); // => sum2 is 6.0
+double sum1 = sumNumbers(ints);  // => List<Integer> matches List<? extends Number>
+                                 // => Integer extends Number
+                                 // => sum1 is 6.0 (1+2+3)
+double sum2 = sumNumbers(doubles); // => List<Double> matches List<? extends Number>
+                                 // => Double extends Number
+                                 // => sum2 is 6.0 (1.0+2.0+3.0)
 
 List<Number> numbers = new ArrayList<>();
-addIntegers(numbers);            // => Can add to List<Number>
-System.out.println(numbers);     // => Output: [1, 2]
+                                 // => Mutable List<Number> (ArrayList)
+addIntegers(numbers);            // => List<Number> matches List<? super Integer>
+                                 // => Number is super of Integer
+                                 // => Can safely add Integers to List<Number>
+System.out.println(numbers);     // => numbers now contains [1, 2]
+                                 // => Output: [1, 2]
 
 // PECS RULE: Producer Extends, Consumer Super
 // Producer (reading): use <? extends T>
 // Consumer (writing): use <? super T>
 
 public static <T> void copy(List<? extends T> source, List<? super T> dest) {
-                                 // => source produces T, dest consumes T
+                                 // => Generic method with two wildcard parameters
+                                 // => source produces T (extends: covariance)
+                                 // => dest consumes T (super: contravariance)
+                                 // => Enables copying from subtype to supertype
     for (T item : source) {
-        dest.add(item);          // => Read from source, write to dest
+                                 // => Reads from source (produces T)
+                                 // => item has type T
+        dest.add(item);          // => Writes to dest (consumes T)
+                                 // => Safe: dest accepts T or supertype
     }
 }
 
 List<Integer> src = Arrays.asList(1, 2, 3);
+                                 // => Source: List<Integer>
 List<Number> dst = new ArrayList<>();
-copy(src, dst);                  // => Copies Integer to Number list
+                                 // => Destination: List<Number> (supertype of Integer)
+copy(src, dst);                  // => T = Integer (inferred)
+                                 // => source: List<? extends Integer> (List<Integer> matches)
+                                 // => dest: List<? super Integer> (List<Number> matches)
+                                 // => Copies [1, 2, 3] from src to dst
+                                 // => dst now contains [1, 2, 3]
 ```
 
 **Key Takeaway**: Use `? extends Type` for reading (covariance), `? super Type` for writing (contravariance), and `?` for both reading (as Object) and no writing. Follow PECS rule: "Producer Extends, Consumer Super"—if a method produces values from a collection, use `extends`; if it consumes values into a collection, use `super`.
@@ -1177,20 +1227,44 @@ List<String> words = Arrays.asList("apple", "banana", "apricot", "blueberry", "a
 
 // COLLECTING TO COLLECTIONS
 List<String> list = words.stream()
+                                 // => Creates stream from words list
+                                 // => Stream<String> containing 5 words
     .filter(w -> w.startsWith("a"))
-    .collect(Collectors.toList()); // => list is [apple, apricot, avocado]
+                                 // => Lambda: w -> w.startsWith("a")
+                                 // => Keeps only: apple, apricot, avocado
+                                 // => Filters out: banana, blueberry
+    .collect(Collectors.toList());
+                                 // => Terminal operation: collects to ArrayList
+                                 // => list is [apple, apricot, avocado]
+                                 // => Type: List<String> with 3 elements
 
 Set<String> set = words.stream()
-    .collect(Collectors.toSet()); // => Removes duplicates
+                                 // => Creates new stream (previous consumed)
+                                 // => Stream<String> with all 5 words
+    .collect(Collectors.toSet());
+                                 // => Terminal operation: collects to HashSet
+                                 // => Removes duplicates (none in this example)
+                                 // => set contains {apple, banana, apricot, blueberry, avocado}
+                                 // => Unordered collection
 
 // JOINING STRINGS
 String joined = words.stream()
+                                 // => Stream<String> from words list
     .collect(Collectors.joining(", "));
+                                 // => joining() concatenates with delimiter
+                                 // => Delimiter: ", " (comma-space)
                                  // => joined is "apple, banana, apricot, blueberry, avocado"
+                                 // => Single string combining all elements
 
 String prefixed = words.stream()
+                                 // => New stream from same source
     .collect(Collectors.joining(", ", "[", "]"));
+                                 // => joining(delimiter, prefix, suffix)
+                                 // => Delimiter: ", " between elements
+                                 // => Prefix: "[" at start
+                                 // => Suffix: "]" at end
                                  // => prefixed is "[apple, banana, apricot, blueberry, avocado]"
+                                 // => Wrapped in brackets
 
 // GROUPING BY
 Map<Character, List<String>> grouped = words.stream()
@@ -1218,43 +1292,93 @@ Map<Character, Long> counts = words.stream()
 
 // PARTITIONING (boolean predicate)
 Map<Boolean, List<String>> partitioned = words.stream()
+                                 // => Stream<String> from words
     .collect(Collectors.partitioningBy(w -> w.length() > 6));
+                                 // => partitioningBy() splits into 2 groups based on predicate
+                                 // => Lambda: w -> w.length() > 6 (true/false)
+                                 // => TRUE key: words longer than 6 chars
+                                 // => FALSE key: words 6 chars or shorter
                                  // => {false=[apple, banana], true=[apricot, blueberry, avocado]}
+                                 // => Always returns Map<Boolean, List<T>>
 
 // MAPPING WITHIN GROUPING
 Map<Character, List<Integer>> lengths = words.stream()
+                                 // => Stream<String> from words
     .collect(Collectors.groupingBy(
-        w -> w.charAt(0),
+                                 // => groupingBy() with downstream collector
+        w -> w.charAt(0),        // => Classifier: extract first character
+                                 // => Groups by: 'a', 'b'
         Collectors.mapping(String::length, Collectors.toList())
-    ));                          // => {a=[5, 7, 7], b=[6, 9]}
+                                 // => Downstream: mapping() transforms grouped values
+                                 // => String::length converts each word to its length
+                                 // => toList() collects transformed values
+                                 // => Maps String → Integer → List<Integer>
+    ));
+                                 // => {a=[5, 7, 7], b=[6, 9]}
+                                 // => 'a' group: [apple(5), apricot(7), avocado(7)]
+                                 // => 'b' group: [banana(6), blueberry(9)]
 
 // CUSTOM COLLECTOR - joining with custom logic
 String custom = words.stream()
+                                 // => Stream<String> from words
     .collect(Collector.of(
-        StringBuilder::new,      // Supplier: creates mutable container
-        (sb, s) -> sb.append(s).append(" "), // Accumulator: adds elements
-        (sb1, sb2) -> sb1.append(sb2), // Combiner: merges parallel results
-        StringBuilder::toString  // Finisher: final transformation
+                                 // => Collector.of() creates custom collector
+                                 // => 4 components: supplier, accumulator, combiner, finisher
+        StringBuilder::new,      // => Supplier: creates mutable container
+                                 // => Method reference: () -> new StringBuilder()
+                                 // => Called once per thread (parallel) or once total (sequential)
+        (sb, s) -> sb.append(s).append(" "),
+                                 // => Accumulator: processes each element
+                                 // => BiConsumer<StringBuilder, String>
+                                 // => Appends word + space to StringBuilder
+                                 // => Called for each word: "apple ", "banana ", etc.
+        (sb1, sb2) -> sb1.append(sb2),
+                                 // => Combiner: merges results from parallel streams
+                                 // => BinaryOperator<StringBuilder>
+                                 // => Combines partial results if stream.parallel()
+        StringBuilder::toString  // => Finisher: final transformation
+                                 // => Function<StringBuilder, String>
+                                 // => Converts mutable StringBuilder to immutable String
     ));
-// => custom is "apple banana apricot blueberry avocado "
+                                 // => custom is "apple banana apricot blueberry avocado "
+                                 // => Note: trailing space from append logic
 
 // REDUCING
 int totalLength = words.stream()
+                                 // => Stream<String> from words
     .collect(Collectors.summingInt(String::length));
-                                 // => totalLength is 34 (sum of all lengths)
+                                 // => summingInt() converts to int and sums
+                                 // => String::length method reference
+                                 // => apple(5) + banana(6) + apricot(7) + blueberry(9) + avocado(7)
+                                 // => totalLength is 34 (sum of all word lengths)
 
 Optional<String> longest = words.stream()
+                                 // => Stream<String> from words
     .collect(Collectors.maxBy(Comparator.comparing(String::length)));
+                                 // => maxBy() finds maximum by comparator
+                                 // => Comparator.comparing(String::length) compares by length
+                                 // => Finds word with maximum length
+                                 // => blueberry has 9 characters (longest)
                                  // => longest is Optional[blueberry]
+                                 // => Optional in case stream was empty
 
 // TEEING (Java 12+) - apply two collectors and merge results
 Map<String, Object> stats = words.stream()
+                                 // => Stream<String> from words
     .collect(Collectors.teeing(
-        Collectors.counting(),
-        Collectors.joining(","),
+                                 // => teeing() applies 2 collectors, merges results
+                                 // => Solves "one stream, two collectors" problem
+        Collectors.counting(),   // => First collector: counts elements
+                                 // => Result: 5L (Long)
+        Collectors.joining(","), // => Second collector: joins with comma
+                                 // => Result: "apple,banana,apricot,blueberry,avocado"
         (count, joined) -> Map.of("count", count, "words", joined)
+                                 // => Merger: BiFunction<Long, String, Map>
+                                 // => Combines both collector results into single Map
+                                 // => Creates Map with 2 entries
     ));
-// => {count=5, words=apple,banana,apricot,blueberry,avocado}
+                                 // => {count=5, words=apple,banana,apricot,blueberry,avocado}
+                                 // => Single pass through stream produces both results
 ```
 
 **Key Takeaway**: Use built-in Collectors for common operations: toList(), toSet(), groupingBy(), partitioningBy(), joining(). Compose collectors with mapping(), counting(), summingInt() for complex aggregations. Create custom collectors via Collector.of() for specialized reduction logic.
@@ -1290,56 +1414,101 @@ String greeting = greeter.apply("World");
 // 3. INSTANCE METHOD REFERENCE (on arbitrary object)
 Function<String, Integer> lengthGetter = String::length;
                                  // => Equivalent to: s -> s.length()
+                                 // => Calls length() on parameter (not specific object)
+                                 // => Type: Function<String, Integer>
 int length = lengthGetter.apply("test");
+                                 // => Applies function to "test" string
+                                 // => "test".length() returns 4
                                  // => length is 4
 
 // 4. CONSTRUCTOR REFERENCE
 Supplier<List<String>> listMaker = ArrayList::new;
                                  // => Equivalent to: () -> new ArrayList<>()
+                                 // => References no-arg constructor
+                                 // => Type: Supplier<List<String>>
 List<String> list = listMaker.get();
+                                 // => Calls ArrayList::new (creates new ArrayList)
+                                 // => list is empty ArrayList<String>
 
 Function<String, Person> personMaker = Person::new;
+                                 // => References Person constructor taking String
+                                 // => Equivalent to: name -> new Person(name)
                                  // => Calls Person(String name) constructor
 
 // FUNCTION COMPOSITION - chaining transformations
 Function<String, String> trim = String::trim;
+                                 // => Function: removes leading/trailing whitespace
 Function<String, String> upper = String::toUpperCase;
+                                 // => Function: converts to uppercase
 Function<String, Integer> length = String::length;
+                                 // => Function: returns string length
 
 Function<String, Integer> pipeline = trim.andThen(upper).andThen(length);
-                                 // => trim → upper → length (left to right)
+                                 // => andThen() chains functions left-to-right
+                                 // => trim first, then upper, then length
+                                 // => Type: Function<String, Integer>
+                                 // => Execution order: trim → upper → length
 int result = pipeline.apply("  hello  ");
-                                 // => result is 5 ("  hello  " → "hello" → "HELLO" → 5)
+                                 // => Step 1: trim("  hello  ") → "hello"
+                                 // => Step 2: upper("hello") → "HELLO"
+                                 // => Step 3: length("HELLO") → 5
+                                 // => result is 5
 
 Function<String, Integer> composed = length.compose(upper).compose(trim);
-                                 // => compose applies right to left (reverse order)
+                                 // => compose() chains right-to-left (reverse order)
+                                 // => trim first, then upper, then length
+                                 // => Same result as andThen, different syntax
 
 // PREDICATE COMPOSITION - combining conditions
 Predicate<String> startsWithA = s -> s.startsWith("a");
+                                 // => Predicate: tests if string starts with 'a'
 Predicate<String> longerThan5 = s -> s.length() > 5;
+                                 // => Predicate: tests if string length > 5
 
 Predicate<String> combined = startsWithA.and(longerThan5);
-                                 // => AND: both conditions must be true
+                                 // => and() creates logical AND predicate
+                                 // => Both conditions must be true
+                                 // => Type: Predicate<String>
 boolean test1 = combined.test("apple");
-                                 // => false (5 chars, not > 5)
+                                 // => "apple" starts with 'a': true
+                                 // => "apple".length() is 5, not > 5: false
+                                 // => AND result: false
 boolean test2 = combined.test("apricot");
-                                 // => true (starts with 'a' AND length > 5)
+                                 // => "apricot" starts with 'a': true
+                                 // => "apricot".length() is 7 > 5: true
+                                 // => AND result: true
 
 Predicate<String> either = startsWithA.or(longerThan5);
-                                 // => OR: at least one condition true
+                                 // => or() creates logical OR predicate
+                                 // => At least one condition must be true
+                                 // => Type: Predicate<String>
 
 Predicate<String> negated = startsWithA.negate();
-                                 // => NOT: inverts condition
+                                 // => negate() inverts predicate result
+                                 // => Returns true if string does NOT start with 'a'
 
 // PRACTICAL EXAMPLE - reusable transformations
 List<String> inputs = Arrays.asList("  apple  ", "  BANANA  ", "  cherry  ");
+                                 // => Input list with whitespace and mixed case
 
 List<String> processed = inputs.stream()
-    .map(String::trim)           // => Method reference
-    .map(String::toLowerCase)    // => Chained transformations
+                                 // => Creates Stream<String> from list
+    .map(String::trim)           // => Method reference: removes whitespace
+                                 // => "  apple  " → "apple"
+                                 // => "  BANANA  " → "BANANA"
+                                 // => "  cherry  " → "cherry"
+    .map(String::toLowerCase)    // => Method reference: converts to lowercase
+                                 // => "apple" → "apple" (no change)
+                                 // => "BANANA" → "banana"
+                                 // => "cherry" → "cherry" (no change)
     .filter(s -> s.length() > 5)
+                                 // => Lambda predicate: keeps strings with length > 5
+                                 // => "apple" (5 chars): false (filtered out)
+                                 // => "banana" (6 chars): true (kept)
+                                 // => "cherry" (6 chars): true (kept)
     .collect(Collectors.toList());
-// => processed is ["banana", "cherry"]
+                                 // => Collects remaining elements to List
+                                 // => processed is ["banana", "cherry"]
 ```
 
 **Key Takeaway**: Method references (`Class::method`) provide concise alternatives to lambdas that just call a method. Use `andThen()` for left-to-right function composition and `compose()` for right-to-left. Compose predicates with `and()`, `or()`, and `negate()` to build complex conditions from simple ones.
@@ -1361,55 +1530,107 @@ import java.util.stream.Stream;
 
 // PATH OPERATIONS - modern file path abstraction
 Path path = Paths.get("data", "file.txt");
+                                 // => Factory method creates Path object
+                                 // => Joins path components with system separator
                                  // => Creates path to data/file.txt
+                                 // => Type: Path (interface, implementation varies by OS)
 Path absolute = path.toAbsolutePath();
-                                 // => Converts to absolute path
-Path parent = path.getParent();  // => parent is "data"
-Path filename = path.getFileName(); // => filename is "file.txt"
+                                 // => Converts relative path to absolute
+                                 // => Prepends current working directory
+                                 // => Example: /home/user/project/data/file.txt
+Path parent = path.getParent();
+                                 // => Extracts parent directory path
+                                 // => parent is "data"
+Path filename = path.getFileName();
+                                 // => Extracts file name component
+                                 // => filename is "file.txt"
 
 // FILE OPERATIONS
 try {
     // Create file
-    Files.createFile(path);      // => Creates file (throws if exists)
+    Files.createFile(path);      // => Creates empty file at path
+                                 // => Throws FileAlreadyExistsException if file exists
+                                 // => Atomic operation (guaranteed by OS)
 
     // Write content
     String content = "Hello, NIO.2!";
+                                 // => Content string to write
     Files.writeString(path, content);
-                                 // => Writes string to file (overwrites existing)
+                                 // => Writes string to file using UTF-8
+                                 // => Overwrites existing content completely
+                                 // => Convenient for small text files
 
     // Read content
     String read = Files.readString(path);
-                                 // => Reads entire file as String
+                                 // => Reads entire file into String
+                                 // => Uses UTF-8 encoding by default
+                                 // => read is "Hello, NIO.2!"
+                                 // => Suitable for small files (loads all into memory)
 
     // Append content
     Files.writeString(path, "\nNew line", StandardOpenOption.APPEND);
+                                 // => StandardOpenOption.APPEND: adds to end
+                                 // => "\n" creates new line before text
+                                 // => Preserves existing content
+                                 // => File now contains 2 lines
 
     // Read all lines
     List<String> lines = Files.readAllLines(path);
+                                 // => Reads file, splits by line breaks
+                                 // => Returns List<String> with each line
                                  // => lines is ["Hello, NIO.2!", "New line"]
+                                 // => Entire file loaded into memory
 
     // STREAMING LINES (for large files)
     try (Stream<String> stream = Files.lines(path)) {
+                                 // => Creates Stream<String> lazily reading lines
+                                 // => Efficient for large files (doesn't load all into memory)
+                                 // => try-with-resources ensures stream closed
         stream.filter(line -> line.startsWith("Hello"))
+                                 // => Filters lines starting with "Hello"
+                                 // => Keeps only: "Hello, NIO.2!"
               .forEach(System.out::println);
-    }                            // => Stream auto-closed (try-with-resources)
+                                 // => Prints each matching line
+                                 // => Output: Hello, NIO.2!
+    }                            // => Stream auto-closed here
 
     // FILE METADATA
     boolean exists = Files.exists(path);
+                                 // => Checks if file exists on filesystem
+                                 // => exists is true (we just created it)
     boolean isReadable = Files.isReadable(path);
+                                 // => Checks read permission
+                                 // => isReadable likely true (depends on permissions)
     boolean isDirectory = Files.isDirectory(path);
-    long size = Files.size(path); // => Size in bytes
+                                 // => Tests if path is directory
+                                 // => isDirectory is false (it's a file)
+    long size = Files.size(path);
+                                 // => Returns file size in bytes
+                                 // => size depends on content written
 
     // COPY and MOVE
     Path backup = Paths.get("data", "backup.txt");
+                                 // => Target path for copy operation
     Files.copy(path, backup, StandardCopyOption.REPLACE_EXISTING);
+                                 // => Copies file to backup location
+                                 // => REPLACE_EXISTING: overwrites if backup.txt exists
+                                 // => Creates new file with same content
 
     Path moved = Paths.get("data", "moved.txt");
+                                 // => Target path for move operation
     Files.move(backup, moved, StandardCopyOption.ATOMIC_MOVE);
+                                 // => Moves backup.txt to moved.txt
+                                 // => ATOMIC_MOVE: guaranteed atomic on same filesystem
+                                 // => backup.txt deleted, moved.txt created
+                                 // => Original path (backup) no longer exists
 
     // DELETE
-    Files.delete(moved);         // => Deletes file (throws if not exists)
-    Files.deleteIfExists(path);  // => Deletes if exists (no exception)
+    Files.delete(moved);         // => Deletes moved.txt file
+                                 // => Throws NoSuchFileException if file doesn't exist
+                                 // => Throws DirectoryNotEmptyException if directory with contents
+    Files.deleteIfExists(path);  // => Deletes file.txt if it exists
+                                 // => Returns boolean: true if deleted, false if didn't exist
+                                 // => No exception if file not found
 
 } catch (IOException e) {
     e.printStackTrace();
@@ -1418,24 +1639,43 @@ try {
 // DIRECTORY OPERATIONS
 try {
     Path dir = Paths.get("mydir");
+                                 // => Creates Path to directory "mydir"
     Files.createDirectory(dir);  // => Creates single directory
+                                 // => Throws if parent doesn't exist
+                                 // => Throws if directory already exists
 
     Path nested = Paths.get("my/nested/dir");
+                                 // => Path to deeply nested directory
     Files.createDirectories(nested);
-                                 // => Creates all parent directories
+                                 // => Creates all parent directories if needed
+                                 // => Creates "my", "my/nested", "my/nested/dir"
+                                 // => No error if directory already exists
 
     // LIST DIRECTORY CONTENTS
     try (Stream<Path> paths = Files.list(dir)) {
+                                 // => Returns Stream<Path> of direct children
+                                 // => NOT recursive (only immediate children)
+                                 // => try-with-resources closes stream
         paths.forEach(System.out::println);
+                                 // => Prints each child path
+                                 // => Output: one line per file/directory in mydir
     }
 
     // WALK DIRECTORY TREE (recursive)
     try (Stream<Path> paths = Files.walk(nested)) {
+                                 // => Returns Stream<Path> recursively traversing tree
+                                 // => Includes all descendants (files and directories)
+                                 // => Depth-first traversal
         paths.filter(Files::isRegularFile)
+                                 // => Filters to only regular files (not directories)
+                                 // => Method reference to Files.isRegularFile(Path)
              .forEach(System.out::println);
+                                 // => Prints path of each file in tree
+                                 // => Output: all files in nested and subdirectories
     }
 
 } catch (IOException e) {
+                                 // => Handles I/O exceptions from directory operations
     e.printStackTrace();
 }
 ```
@@ -1482,45 +1722,81 @@ class Person {
 
 // OBJECT MAPPER - main Jackson entry point
 ObjectMapper mapper = new ObjectMapper();
+                                 // => Central Jackson component for conversions
+                                 // => Handles serialization and deserialization
+                                 // => Reusable (thread-safe after configuration)
 
 // SERIALIZE (Java object → JSON)
 Person person = new Person("Alice", 30, "alice@example.com");
+                                 // => Creates Person object with 3 fields
 String json = mapper.writeValueAsString(person);
-// => json is {"name":"Alice","age":30,"email_address":"alice@example.com"}
+                                 // => Serializes object to JSON string
+                                 // => Uses reflection to read fields
+                                 // => Calls getters for field values
+                                 // => json is {"name":"Alice","age":30,"email_address":"alice@example.com"}
+                                 // => Note: "email_address" from @JsonProperty annotation
 
 // DESERIALIZE (JSON → Java object)
 String jsonInput = "{\"name\":\"Bob\",\"age\":25,\"email_address\":\"bob@example.com\"}";
+                                 // => JSON string with 3 fields
 Person deserializedPerson = mapper.readValue(jsonInput, Person.class);
-// => deserializedPerson.name is "Bob"
+                                 // => Parses JSON to Person object
+                                 // => Calls default constructor Person()
+                                 // => Uses setters to populate fields
+                                 // => Maps "email_address" to email field
+                                 // => deserializedPerson.name is "Bob"
+                                 // => deserializedPerson.age is 25
+                                 // => deserializedPerson.email is "bob@example.com"
 
 // WORKING WITH COLLECTIONS
 List<Person> people = Arrays.asList(
+                                 // => Creates list of 2 Person objects
     new Person("Alice", 30, "alice@example.com"),
     new Person("Bob", 25, "bob@example.com")
 );
 
 String jsonArray = mapper.writeValueAsString(people);
-// => [{"name":"Alice",...},{"name":"Bob",...}]
+                                 // => Serializes entire list to JSON array
+                                 // => Each Person becomes JSON object
+                                 // => jsonArray is [{"name":"Alice",...},{"name":"Bob",...}]
+                                 // => Square brackets indicate JSON array
 
 // DESERIALIZE TO LIST
 List<Person> deserializedList = mapper.readValue(
-    jsonArray,
+    jsonArray,               // => JSON array string to parse
     mapper.getTypeFactory().constructCollectionType(List.class, Person.class)
+                                 // => TypeFactory handles generic type erasure
+                                 // => Specifies: List<Person> (not just List)
+                                 // => Needed because generics erased at runtime
 );
+                                 // => deserializedList contains 2 Person objects
+                                 // => Fully populated from JSON
 
 // TREE MODEL - for dynamic JSON
 JsonNode root = mapper.readTree(jsonInput);
+                                 // => Parses JSON to tree structure
+                                 // => JsonNode is abstract representation
+                                 // => No POJO class required
 String name = root.get("name").asText();
+                                 // => Navigates to "name" field
+                                 // => Extracts as text/String
                                  // => name is "Bob"
 int age = root.get("age").asInt();
+                                 // => Navigates to "age" field
+                                 // => Extracts as integer
                                  // => age is 25
 
 // CREATE JSON TREE
 ObjectNode node = mapper.createObjectNode();
-node.put("name", "Charlie");
-node.put("age", 35);
+                                 // => Creates new JSON object node
+                                 // => Mutable tree structure
+node.put("name", "Charlie");     // => Adds string field
+                                 // => Key: "name", value: "Charlie"
+node.put("age", 35);             // => Adds integer field
+                                 // => Key: "age", value: 35
 String createdJson = mapper.writeValueAsString(node);
-// => {"name":"Charlie","age":35}
+                                 // => Serializes tree to JSON string
+                                 // => createdJson is {"name":"Charlie","age":35}
 ```
 
 **Key Takeaway**: Use ObjectMapper for JSON serialization (writeValueAsString) and deserialization (readValue). Annotate POJOs with @JsonProperty for field mapping and @JsonIgnore to exclude fields. Use JsonNode tree model for dynamic JSON without predefined Java classes.
@@ -1800,31 +2076,55 @@ class PrintTask implements Runnable {
 
 // CREATE AND START THREADS
 Thread thread1 = new Thread(new PrintTask("Thread-1"));
+                                 // => Creates Thread with Runnable task
+                                 // => PrintTask implements Runnable interface
+                                 // => Thread not started yet (NEW state)
 Thread thread2 = new Thread(new PrintTask("Thread-2"));
+                                 // => Second independent thread
+                                 // => Each has separate execution context
 
 thread1.start();                 // => Starts thread (calls run() in new thread)
-thread2.start();                 // => Both threads run concurrently
+                                 // => Creates OS thread, enters RUNNABLE state
+                                 // => run() executes concurrently with main thread
+thread2.start();                 // => Starts second thread concurrently
+                                 // => Both threads execute independently
+                                 // => Output interleaved (non-deterministic order)
 
 // WAIT FOR COMPLETION
 try {
-    thread1.join();              // => Wait for thread1 to complete
-    thread2.join();              // => Wait for thread2 to complete
+    thread1.join();              // => Blocks until thread1 completes
+                                 // => Main thread waits for thread1 to finish
+                                 // => Ensures thread1 done before proceeding
+    thread2.join();              // => Blocks until thread2 completes
+                                 // => Main thread waits for thread2 to finish
+                                 // => Both threads guaranteed finished after this
 } catch (InterruptedException e) {
+                                 // => Thrown if waiting thread interrupted
     e.printStackTrace();
 }
 
 // LAMBDA SYNTAX (Java 8+)
 Thread thread3 = new Thread(() -> {
+                                 // => Lambda implements Runnable.run()
+                                 // => Concise syntax for simple tasks
     System.out.println("Lambda thread running");
+                                 // => Output: Lambda thread running
 });
-thread3.start();
+thread3.start();                 // => Starts thread executing lambda
 
 // THREAD PROPERTIES
 Thread current = Thread.currentThread();
-String name = current.getName(); // => Thread name
-long id = current.getId();       // => Unique thread ID
+                                 // => Gets reference to currently executing thread
+                                 // => In main: returns main thread
+String name = current.getName();
+                                 // => Thread name (default: Thread-N)
+                                 // => name might be "main" if in main thread
+long id = current.getId();       // => Unique thread ID (positive long)
+                                 // => Assigned by JVM, never reused
 int priority = current.getPriority();
-                                 // => Priority (1-10, default 5)
+                                 // => Priority hint for scheduler (1-10)
+                                 // => Default: 5 (Thread.NORM_PRIORITY)
+                                 // => Higher priority MAY get more CPU time
 ```
 
 **Key Takeaway**: Implement Runnable to define thread tasks, create Thread objects wrapping Runnable, and call start() to begin execution. Use join() to wait for thread completion. Never call run() directly—it executes in current thread without concurrency.
@@ -1894,27 +2194,40 @@ class SynchronizedCounter {
 
 // SYNCHRONIZED BLOCK - finer-grained locking
 class BlockCounter {
-    private int count = 0;
+    private int count = 0;       // => Shared mutable state
     private final Object lock = new Object();
+                                 // => Explicit lock object (any Object works)
+                                 // => final ensures lock reference never changes
 
     public void increment() {
-        synchronized(lock) {     // => Lock only critical section
-            count++;
-        }
+        // Non-critical code here executes without lock
+        synchronized(lock) {     // => Acquires lock on specific object
+                                 // => Only locks critical section (not entire method)
+                                 // => Allows better concurrency vs method-level sync
+            count++;             // => Critical section: thread-safe increment
+        }                        // => Lock automatically released here
+        // Non-critical code here executes without lock
     }
 }
 
 // EXPLICIT LOCK - ReentrantLock for advanced control
 class LockCounter {
-    private int count = 0;
+    private int count = 0;       // => Shared mutable state
     private final Lock lock = new ReentrantLock();
+                                 // => Explicit Lock interface (more flexible than synchronized)
+                                 // => "Reentrant" means same thread can acquire multiple times
 
     public void increment() {
-        lock.lock();             // => Explicitly acquire lock
+        lock.lock();             // => Explicitly acquires lock
+                                 // => Blocks if another thread holds lock
+                                 // => Must manually unlock (unlike synchronized)
         try {
-            count++;
+            count++;             // => Critical section
+                                 // => Thread-safe modification
         } finally {
-            lock.unlock();       // => Always unlock in finally
+            lock.unlock();       // => MUST unlock in finally block
+                                 // => Ensures unlock even if exception thrown
+                                 // => Failure to unlock causes deadlock
         }
     }
 }
@@ -1922,44 +2235,68 @@ class LockCounter {
 // ATOMIC CLASSES - lock-free thread safety
 class AtomicCounter {
     private final AtomicInteger count = new AtomicInteger(0);
+                                 // => AtomicInteger provides thread-safe operations
+                                 // => Uses compare-and-swap (CAS) hardware instructions
+                                 // => Lock-free (no blocking, better performance)
+                                 // => Initialized to 0
 
     public void increment() {
-        count.incrementAndGet(); // => Atomic operation (thread-safe without locks)
+        count.incrementAndGet(); // => Atomically increments and returns new value
+                                 // => Thread-safe without synchronized/locks
+                                 // => Equivalent to: ++count in thread-safe way
+                                 // => Uses CAS loop internally
     }
 
     public int getCount() {
-        return count.get();
+        return count.get();      // => Atomically reads current value
+                                 // => Thread-safe read operation
+                                 // => Returns int value
     }
 }
 
 // DEMONSTRATION
 SynchronizedCounter counter = new SynchronizedCounter();
+                                 // => Creates shared counter object
+                                 // => Will be accessed by multiple threads
 
 // Multiple threads incrementing
 Thread t1 = new Thread(() -> {
+                                 // => Lambda defines thread task
     for (int i = 0; i < 1000; i++) {
-        counter.increment();
+                                 // => Loop 1000 times
+        counter.increment();     // => Each call acquires lock, increments, releases lock
+                                 // => Synchronized method ensures thread safety
     }
 });
 
 Thread t2 = new Thread(() -> {
+                                 // => Second thread with same task
     for (int i = 0; i < 1000; i++) {
-        counter.increment();
+                                 // => Also loops 1000 times
+        counter.increment();     // => Competes with t1 for lock
+                                 // => May block waiting for t1 to release lock
     }
 });
 
-t1.start();
-t2.start();
+t1.start();                      // => Starts first thread
+                                 // => Begins executing loop
+t2.start();                      // => Starts second thread concurrently
+                                 // => Both threads run simultaneously
 
 try {
-    t1.join();
-    t2.join();
+    t1.join();                   // => Main thread waits for t1 to finish
+                                 // => Blocks until t1 completes all 1000 increments
+    t2.join();                   // => Main thread waits for t2 to finish
+                                 // => Blocks until t2 completes all 1000 increments
 } catch (InterruptedException e) {
     e.printStackTrace();
 }
 
 System.out.println("Final count: " + counter.getCount());
+                                 // => Both threads finished, reads final value
+                                 // => t1 did 1000 increments, t2 did 1000 increments
                                  // => Output: Final count: 2000 (correct with synchronization)
+                                 // => Without synchronization: value would be < 2000 (lost updates)
 ```
 
 **Key Takeaway**: Use synchronized methods or blocks to protect shared mutable state. Explicit locks (ReentrantLock) provide more control (try-lock, timed lock). Atomic classes (AtomicInteger) offer lock-free thread safety for simple operations. Without synchronization, concurrent access causes race conditions leading to incorrect results.
@@ -1980,74 +2317,136 @@ import java.util.*;
 
 // FIXED THREAD POOL - reuses fixed number of threads
 ExecutorService executor = Executors.newFixedThreadPool(3);
-                                 // => Creates pool of 3 threads
+                                 // => Factory method creates thread pool
+                                 // => Pool contains exactly 3 worker threads
+                                 // => Threads reused across tasks (efficient)
+                                 // => Tasks queue if all 3 threads busy
 
 // SUBMIT RUNNABLE tasks
 executor.submit(() -> {
+                                 // => Lambda implements Runnable
+                                 // => submit() returns Future<?> (no result)
     System.out.println("Task 1 running in " + Thread.currentThread().getName());
+                                 // => Output: Task 1 running in pool-1-thread-1
+                                 // => Thread name shows pool and thread number
 });
 
 executor.submit(() -> {
+                                 // => Second task submitted to same pool
+                                 // => Executed by any available thread
     System.out.println("Task 2 running in " + Thread.currentThread().getName());
+                                 // => Output: Task 2 running in pool-1-thread-2 (or thread-1 if reused)
+                                 // => Thread allocation non-deterministic
 });
 
 // SUBMIT CALLABLE tasks (return values)
 Future<Integer> future = executor.submit(() -> {
-    Thread.sleep(1000);
-    return 42;                   // => Returns value (Callable<Integer>)
+                                 // => Lambda implements Callable<Integer>
+                                 // => Callable differs from Runnable: returns value
+                                 // => submit() returns Future<Integer> (represents async result)
+    Thread.sleep(1000);          // => Simulates long-running computation
+                                 // => Sleeps 1 second
+    return 42;                   // => Returns value from task
+                                 // => Type: Integer (Callable<Integer> return type)
 });
 
 try {
-    Integer result = future.get(); // => Blocks until result available
+    Integer result = future.get();
+                                 // => Blocks current thread until task completes
+                                 // => Retrieves result from Future
+                                 // => Waits up to 1 second (task's sleep time)
+                                 // => result is 42
     System.out.println("Result: " + result);
                                  // => Output: Result: 42
 } catch (InterruptedException | ExecutionException e) {
+                                 // => InterruptedException: if waiting interrupted
+                                 // => ExecutionException: if task threw exception
     e.printStackTrace();
 }
 
 // SUBMIT MULTIPLE TASKS
 List<Callable<Integer>> tasks = Arrays.asList(
+                                 // => Creates list of 3 Callable tasks
     () -> { Thread.sleep(500); return 1; },
+                                 // => Task 1: sleeps 500ms, returns 1
     () -> { Thread.sleep(300); return 2; },
+                                 // => Task 2: sleeps 300ms, returns 2 (faster)
     () -> { Thread.sleep(100); return 3; }
+                                 // => Task 3: sleeps 100ms, returns 3 (fastest)
 );
 
 try {
     // invokeAll - waits for all tasks to complete
     List<Future<Integer>> futures = executor.invokeAll(tasks);
+                                 // => Submits all 3 tasks to pool
+                                 // => Blocks until ALL tasks complete
+                                 // => Returns List<Future<Integer>> with results
+                                 // => futures.size() is 3
     for (Future<Integer> f : futures) {
+                                 // => Iterates over completed futures
         System.out.println("Result: " + f.get());
+                                 // => f.get() doesn't block (already complete)
+                                 // => Output: Result: 1
+                                 // =>         Result: 2
+                                 // =>         Result: 3
+                                 // => Order matches submission order, not completion order
     }
 
     // invokeAny - returns first completed result
     Integer first = executor.invokeAny(tasks);
+                                 // => Submits all tasks, returns result of first to complete
+                                 // => Task 3 completes first (100ms sleep)
+                                 // => Cancels remaining tasks after first completes
+                                 // => Blocks until at least one task finishes
     System.out.println("First result: " + first);
-                                 // => Returns 3 (fastest task)
+                                 // => first is 3 (fastest task)
+                                 // => Output: First result: 3
 } catch (InterruptedException | ExecutionException e) {
     e.printStackTrace();
 }
 
 // SCHEDULED EXECUTOR - delayed/periodic tasks
 ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
+                                 // => Creates pool with 2 threads for scheduled tasks
+                                 // => Supports delays and periodic execution
 
 // Execute after delay
 scheduler.schedule(() -> {
+                                 // => schedule() runs task once after delay
     System.out.println("Delayed task");
-}, 2, TimeUnit.SECONDS);         // => Runs after 2 seconds
+                                 // => Output: Delayed task (after 2 seconds)
+}, 2, TimeUnit.SECONDS);         // => Initial delay: 2 seconds
+                                 // => TimeUnit.SECONDS specifies unit
+                                 // => Task runs once, not repeated
 
 // Execute periodically
 scheduler.scheduleAtFixedRate(() -> {
+                                 // => scheduleAtFixedRate() repeats task at fixed intervals
     System.out.println("Periodic task");
-}, 0, 1, TimeUnit.SECONDS);      // => Runs every 1 second (initial delay 0)
+                                 // => Output: Periodic task (every 1 second)
+}, 0, 1, TimeUnit.SECONDS);      // => Initial delay: 0 (starts immediately)
+                                 // => Period: 1 second between executions
+                                 // => Runs: 0s, 1s, 2s, 3s, ... (until shutdown)
 
 // SHUTDOWN
-executor.shutdown();             // => No new tasks accepted, existing tasks complete
+executor.shutdown();             // => Initiates graceful shutdown
+                                 // => No new tasks accepted after this call
+                                 // => Previously submitted tasks continue executing
+                                 // => Doesn't block (returns immediately)
 try {
     if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                                 // => Waits up to 60 seconds for tasks to complete
+                                 // => Returns true if all tasks finished
+                                 // => Returns false if timeout occurred
         executor.shutdownNow();  // => Force shutdown if timeout
+                                 // => Attempts to stop executing tasks
+                                 // => Interrupts threads running tasks
+                                 // => Returns list of tasks that never started
     }
 } catch (InterruptedException e) {
-    executor.shutdownNow();
+                                 // => If current thread interrupted while waiting
+    executor.shutdownNow();      // => Force shutdown on interruption
+                                 // => Propagates interrupt signal
 }
 ```
 
@@ -2068,30 +2467,58 @@ import java.util.concurrent.*;
 
 // BASIC COMPLETABLEFUTURE
 CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
-    // Runs in ForkJoinPool.commonPool()
+                                 // => supplyAsync() runs lambda in background thread
+                                 // => Returns CompletableFuture<String>
+                                 // => Executes in ForkJoinPool.commonPool() by default
     try {
-        Thread.sleep(1000);
+        Thread.sleep(1000);      // => Simulates long-running task
+                                 // => Sleeps 1 second
     } catch (InterruptedException e) {
         throw new RuntimeException(e);
     }
-    return "Hello";
+    return "Hello";              // => Returns value when task completes
+                                 // => Result available after 1 second
 });
 
 // CHAINING OPERATIONS
 CompletableFuture<String> result = future
-    .thenApply(s -> s + " World")     // => Transform result
-    .thenApply(String::toUpperCase);  // => Chain transformations
+                                 // => Start with CompletableFuture<String> from above
+    .thenApply(s -> s + " World")
+                                 // => thenApply() transforms result when available
+                                 // => Lambda: s -> s + " World"
+                                 // => Input: "Hello" (from previous stage)
+                                 // => Output: "Hello World"
+                                 // => Returns CompletableFuture<String>
+    .thenApply(String::toUpperCase);
+                                 // => Method reference: transforms to uppercase
+                                 // => Input: "Hello World"
+                                 // => Output: "HELLO WORLD"
+                                 // => Returns CompletableFuture<String>
 
 result.thenAccept(s -> System.out.println("Result: " + s));
-                                 // => Output: Result: HELLO WORLD (when complete)
+                                 // => thenAccept() consumes result (no return value)
+                                 // => Lambda executes when result available
+                                 // => s is "HELLO WORLD"
+                                 // => Output: Result: HELLO WORLD (after 1+ seconds)
+                                 // => Returns CompletableFuture<Void>
 
 // COMBINING FUTURES
 CompletableFuture<Integer> future1 = CompletableFuture.supplyAsync(() -> 10);
+                                 // => Creates async task returning 10
+                                 // => Runs in background thread
 CompletableFuture<Integer> future2 = CompletableFuture.supplyAsync(() -> 20);
+                                 // => Creates second independent async task returning 20
+                                 // => Both futures execute concurrently
 
 CompletableFuture<Integer> combined = future1.thenCombine(future2, (a, b) -> a + b);
-                                 // => Waits for both, combines results
+                                 // => thenCombine() waits for BOTH futures to complete
+                                 // => BiFunction: (a, b) -> a + b combines results
+                                 // => a = 10 (from future1)
+                                 // => b = 20 (from future2)
+                                 // => Result: 30
+                                 // => Returns CompletableFuture<Integer>
 combined.thenAccept(sum -> System.out.println("Sum: " + sum));
+                                 // => sum is 30 (combined result)
                                  // => Output: Sum: 30
 
 // SEQUENTIAL COMPOSITION
@@ -2107,38 +2534,72 @@ CompletableFuture<String> sequential = CompletableFuture.supplyAsync(() -> "user
 
 // EXCEPTION HANDLING
 CompletableFuture<String> withError = CompletableFuture.supplyAsync(() -> {
+                                 // => Async task that will throw exception
     if (true) throw new RuntimeException("Error!");
-    return "Success";
+                                 // => Always throws exception
+    return "Success";            // => Never reached
 })
 .exceptionally(ex -> {
+                                 // => exceptionally() handles exceptions
+                                 // => Called if previous stage threw exception
+                                 // => ex is the thrown exception
     System.out.println("Caught: " + ex.getMessage());
+                                 // => Output: Caught: Error!
     return "Fallback value";     // => Returns fallback on exception
+                                 // => Replaces exception with normal value
 })
 .thenApply(s -> s.toUpperCase());
+                                 // => Continues pipeline with fallback value
+                                 // => s is "Fallback value"
+                                 // => Result: "FALLBACK VALUE"
 
 // TIMEOUT (Java 9+)
 CompletableFuture<String> withTimeout = CompletableFuture.supplyAsync(() -> {
+                                 // => Async task that takes too long
     try {
-        Thread.sleep(5000);
+        Thread.sleep(5000);      // => Sleeps 5 seconds (too slow)
     } catch (InterruptedException e) {}
-    return "Slow result";
+    return "Slow result";        // => Would return after 5 seconds
 })
-.orTimeout(2, TimeUnit.SECONDS); // => Completes exceptionally if timeout
+.orTimeout(2, TimeUnit.SECONDS);
+                                 // => orTimeout() fails future if exceeds 2 seconds
+                                 // => Completes exceptionally with TimeoutException
+                                 // => Task cancelled if times out
 
 // ALLOF - wait for all futures
 CompletableFuture<Void> allDone = CompletableFuture.allOf(future1, future2, sequential);
+                                 // => allOf() waits for ALL futures to complete
+                                 // => Returns CompletableFuture<Void> (no combined result)
+                                 // => Completes when all inputs complete
 allDone.thenRun(() -> System.out.println("All futures complete"));
+                                 // => thenRun() executes when all done
+                                 // => Output: All futures complete
 
 // ANYOF - wait for any future
 CompletableFuture<Object> anyDone = CompletableFuture.anyOf(future1, future2);
+                                 // => anyOf() completes when ANY future completes
+                                 // => Returns CompletableFuture<Object> (type-unsafe)
+                                 // => Result is value from first completed future
 anyDone.thenAccept(result -> System.out.println("First result: " + result));
+                                 // => result is whichever completes first
+                                 // => Output: First result: 10 or First result: 20
 
 // BLOCKING WAIT (use sparingly)
 try {
-    String finalResult = result.get();  // => Blocks until complete
+    String finalResult = result.get();
+                                 // => Blocks current thread until future completes
+                                 // => Returns result value ("HELLO WORLD")
+                                 // => Defeats async purpose (use thenAccept instead)
+                                 // => May wait indefinitely if future never completes
     String timeoutResult = result.get(1, TimeUnit.SECONDS);
-                                 // => Blocks with timeout
+                                 // => Blocks with timeout (maximum 1 second)
+                                 // => Returns result if completes within timeout
+                                 // => Throws TimeoutException if exceeds 1 second
+                                 // => Better than get() for potentially long operations
 } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                                 // => InterruptedException: if thread interrupted while waiting
+                                 // => ExecutionException: if future completed with exception
+                                 // => TimeoutException: if timeout exceeded
     e.printStackTrace();
 }
 ```
