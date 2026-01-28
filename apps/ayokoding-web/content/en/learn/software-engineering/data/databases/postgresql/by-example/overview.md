@@ -150,3 +150,42 @@ Other technologies at ayokoding.com have similar by-example tutorials:
 - **Elixir By-Example**: 75-90 examples covering functional programming, pattern matching, OTP
 
 The PostgreSQL version follows the same philosophy and structure but emphasizes PostgreSQL-specific strengths: ACID compliance, extensibility, advanced data types (JSON, arrays, ranges), full-text search, and robust transaction handling.
+
+## Learning Strategies
+
+### For Python/Data Science Developers
+
+PostgreSQL's advanced analytics match your data needs. Focus on window functions (Examples 34-38), JSON/JSONB operations (Examples 47-50), and full-text search (Examples 51-55).
+
+### For Frontend/JavaScript Developers
+
+PostgreSQL's JSON support bridges server and client data models. Focus on basic queries (Examples 3-5), JSONB operations (Examples 47-50), and schema design (Examples 23-28).
+
+### For Backend/Java/C# Developers
+
+PostgreSQL's production features align with enterprise patterns. Focus on transactions and concurrency (Examples 27-30), advanced indexes (Examples 51-55), and administration (Examples 76-85).
+
+### For Complete Database Beginners
+
+Start from Example 1 and progress through all 30 beginner examples for a structured PostgreSQL foundation.
+
+## Code-First Philosophy
+
+This tutorial prioritizes working code over theoretical discussion:
+
+- **No lengthy prose**: Concepts are demonstrated, not explained at length
+- **Runnable examples**: Every example runs in a PostgreSQL 16 Docker container
+- **Learn by doing**: Understanding comes from running and modifying SQL queries
+- **Pattern recognition**: See the same patterns in different contexts across 85 examples
+
+If you prefer narrative explanations, consider the **by-concept tutorial** (available separately). By-example learning works best when you learn through experimentation.
+
+## Ready to Start?
+
+Jump into the beginner examples to start learning PostgreSQL through code:
+
+- [Beginner Examples (1-30)](/en/learn/software-engineering/data/databases/postgresql/by-example/beginner) - Basic syntax, SELECT queries, WHERE clauses, schema design, aggregations
+- [Intermediate Examples (31-60)](/en/learn/software-engineering/data/databases/postgresql/by-example/intermediate) - Window functions, CTEs, JSONB operations, transactions, views
+- [Advanced Examples (61-85)](/en/learn/software-engineering/data/databases/postgresql/by-example/advanced) - Full-text search, partitioning, administration, advanced indexes, replication
+
+Each example is self-contained and runnable. Start with Example 1, or jump to topics that interest you most.

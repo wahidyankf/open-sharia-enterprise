@@ -2,14 +2,14 @@
 title: "Intermediate"
 date: 2025-12-29T09:07:25+07:00
 draft: false
-weight: 100000002
+weight: 10000002
 description: "Examples 31-60: Advanced queries, window functions, CTEs, JSON handling, and production patterns (40-75% coverage)"
 tags: ["sql", "database", "tutorial", "by-example", "intermediate", "advanced-queries"]
 ---
 
-## Group 8: Common Table Expressions (CTEs)
+Master intermediate SQL patterns through 30 annotated examples. Each example builds on beginner concepts, covering advanced queries, window functions, CTEs, JSON handling, and production optimization patterns.
 
-### Example 31: Basic CTEs with WITH
+## Example 31: Basic CTEs with WITH
 
 Common Table Expressions (CTEs) create temporary named result sets that exist only for the duration of a query. They improve readability and enable recursive queries.
 
@@ -90,7 +90,9 @@ GROUP BY hvs.product;
 
 **Why It Matters**: CTEs transform unreadable nested subqueries into maintainable code. Production analytics pipelines use CTEs extensively for multi-step transformations—calculating KPIs, preparing dashboards, and building data marts. Teams adopting CTEs reduce debugging time because each named step can be tested independently.
 
-### Example 32: Recursive CTEs for Hierarchical Data
+---
+
+## Example 32: Recursive CTEs for Hierarchical Data
 
 Recursive CTEs call themselves to traverse hierarchical data structures like organizational charts or file systems. They have base case and recursive case.
 
@@ -195,7 +197,9 @@ SELECT * FROM numbers;
 
 **Why It Matters**: Hierarchical data appears everywhere—org charts, folder structures, category trees, bill-of-materials, network routing. Without recursive CTEs, these queries require multiple round-trips or application code. A single recursive CTE replaces hundreds of lines of application logic for tree traversal, ancestor lookups, and path calculations.
 
-### Example 33: CTEs for Complex Aggregations
+---
+
+## Example 33: CTEs for Complex Aggregations
 
 CTEs simplify multi-step aggregations by breaking logic into readable stages. Each CTE builds on previous results.
 
@@ -257,9 +261,9 @@ WHERE ct.total_spent > av.avg_total;
 
 **Why It Matters**: Business questions rarely involve single aggregations—they require comparing to averages, filtering by thresholds, and ranking against peers. Chained CTEs make these multi-step analyses readable and modifiable. Data analysts use this pattern daily for cohort analysis, funnel metrics, and comparative reporting.
 
-## Group 9: Window Functions
+---
 
-### Example 34: ROW_NUMBER for Sequential Numbering
+## Example 34: ROW_NUMBER for Sequential Numbering
 
 ROW_NUMBER assigns sequential numbers to rows within partitions. Unlike regular aggregates, window functions preserve individual rows while computing across groups.
 
@@ -340,7 +344,9 @@ WHERE rank <= 2;
 
 **Why It Matters**: "Top N per group" queries are ubiquitous—show each customer's 3 most recent orders, display top products per category, find best-performing sales reps per region. ROW_NUMBER with PARTITION BY solves these elegantly in one query, replacing complex application logic or multiple queries.
 
-### Example 35: RANK and DENSE_RANK for Ranking
+---
+
+## Example 35: RANK and DENSE_RANK for Ranking
 
 RANK and DENSE_RANK handle ties differently. RANK skips numbers after ties, DENSE_RANK doesn't. Use RANK for traditional sports rankings.
 
@@ -403,7 +409,9 @@ FROM exam_scores;
 
 **Why It Matters**: Leaderboards, competition results, and performance rankings drive user engagement and business decisions. Choosing the wrong ranking function creates unfair results or confusing displays. Understanding the tie-handling differences prevents embarrassing "rank 1, 1, 3" displays when "rank 1, 1, 2" was expected.
 
-### Example 36: LAG and LEAD for Accessing Adjacent Rows
+---
+
+## Example 36: LAG and LEAD for Accessing Adjacent Rows
 
 LAG accesses previous row values, LEAD accesses next row values. Useful for comparing consecutive rows (day-over-day changes, before/after states).
 
@@ -484,7 +492,9 @@ FROM stock_prices;
 
 **Why It Matters**: Day-over-day metrics, month-over-month growth, and sequential event analysis require comparing adjacent rows. LAG/LEAD eliminate self-joins and application-level calculations. Financial dashboards, operational monitoring, and A/B test analysis depend on these functions for computing deltas and trends.
 
-### Example 37: SUM, AVG, MIN, MAX as Window Functions
+---
+
+## Example 37: SUM, AVG, MIN, MAX as Window Functions
 
 Aggregate functions become window functions when used with OVER. They compute running totals, moving averages, and cumulative statistics without collapsing rows.
 
@@ -561,7 +571,9 @@ FROM monthly_revenue;
 
 **Why It Matters**: Running totals power progress bars, cumulative metrics, and year-to-date calculations. Moving averages smooth noisy data for trend analysis. Finance dashboards, inventory systems, and sales reports all need these patterns. Window aggregates compute them efficiently without expensive self-joins or application-level loops.
 
-### Example 38: PARTITION BY with Window Functions
+---
+
+## Example 38: PARTITION BY with Window Functions
 
 PARTITION BY divides data into independent groups for window function computation. Each partition gets its own running totals, rankings, etc.
 
@@ -659,9 +671,9 @@ FROM sales_by_region;
 
 **Why It Matters**: Real-world analytics almost always require segmentation—metrics per region, per product, per customer cohort. PARTITION BY enables "for each group, calculate X" patterns in a single pass. Without it, you'd need multiple queries or complex self-joins to achieve the same result, with worse performance and maintainability.
 
-## Group 10: String and Date Functions
+---
 
-### Example 39: String Manipulation (SUBSTR, REPLACE, TRIM)
+## Example 39: String Manipulation (SUBSTR, REPLACE, TRIM)
 
 String functions extract substrings, replace text, remove whitespace, and transform case. Essential for data cleaning and formatting.
 
@@ -733,7 +745,9 @@ FROM user_data;
 
 **Why It Matters**: Real-world data arrives dirty—extra whitespace, inconsistent casing, embedded format characters. String functions clean data at the database level before it reaches applications. Email normalization, phone number standardization, and text extraction for search are production necessities that these functions handle efficiently.
 
-### Example 40: Date Arithmetic and Formatting
+---
+
+## Example 40: Date Arithmetic and Formatting
 
 Date functions enable date calculations, formatting, and extraction of date components. SQLite stores dates as TEXT, REAL, or INTEGER.
 
@@ -809,7 +823,9 @@ WHERE JULIANDAY(event_date) - JULIANDAY('now') BETWEEN 0 AND 60;
 
 **Why It Matters**: Date calculations are everywhere—subscription expiration, event scheduling, report periods, age calculations. Doing date math in application code leads to timezone bugs and inconsistent results across services. SQL date functions ensure consistent, efficient date handling regardless of which application queries the data.
 
-### Example 41: COALESCE and NULLIF for NULL Handling
+---
+
+## Example 41: COALESCE and NULLIF for NULL Handling
 
 COALESCE returns first non-NULL value from a list. NULLIF returns NULL if two values are equal, otherwise returns first value.
 
@@ -884,9 +900,9 @@ FROM products;
 
 **Why It Matters**: NULL handling bugs cause application crashes, incorrect calculations, and confusing displays. COALESCE prevents "undefined" from showing in UIs. NULLIF prevents division-by-zero errors in percentage calculations. Production systems use these functions defensively throughout their query layer to ensure robust data handling.
 
-## Group 11: Set Operations
+---
 
-### Example 42: UNION and UNION ALL
+## Example 42: UNION and UNION ALL
 
 UNION combines results from multiple queries, removing duplicates. UNION ALL keeps duplicates. Both require matching column counts and compatible types.
 
@@ -975,7 +991,9 @@ INNER JOIN customers_2025 c2 ON c1.email = c2.email;
 
 **Why It Matters**: Merging data from partitioned tables, combining results from different time periods, or building compound reports require UNION operations. The performance difference between UNION and UNION ALL can be significant—use UNION ALL when you know there are no duplicates or duplicates are acceptable.
 
-### Example 43: INTERSECT and EXCEPT
+---
+
+## Example 43: INTERSECT and EXCEPT
 
 INTERSECT returns rows present in both queries. EXCEPT returns rows in first query but not in second. Both remove duplicates automatically.
 
@@ -1063,9 +1081,9 @@ FROM (
 
 **Why It Matters**: Finding common customers between datasets, identifying products missing from inventory, or detecting configuration drift between environments—these business problems map directly to INTERSECT and EXCEPT. They express set logic declaratively, making intent clear and code maintainable.
 
-## Group 12: Subqueries
+---
 
-### Example 44: Correlated Subqueries
+## Example 44: Correlated Subqueries
 
 Correlated subqueries reference columns from outer query. They execute once per outer row. Useful for row-by-row comparisons against aggregates.
 
@@ -1143,7 +1161,9 @@ WHERE EXISTS (
 
 **Why It Matters**: Finding employees paid above department average, orders exceeding customer's typical spend, or products priced above category median—all require comparing each row against a group aggregate. Correlated subqueries solve these "compare to my group" problems elegantly without application-level loops.
 
-### Example 45: Scalar Subqueries in SELECT
+---
+
+## Example 45: Scalar Subqueries in SELECT
 
 Scalar subqueries return single values and can appear in SELECT clauses. They add computed columns based on related data.
 
@@ -1216,7 +1236,9 @@ FROM customers c;
 
 **Why It Matters**: Adding computed fields like "customer's total orders" or "employee's department headcount" to query results without complex joins simplifies reporting. Scalar subqueries enable denormalized views for dashboards and exports while keeping the underlying schema normalized.
 
-### Example 46: IN and NOT IN with Subqueries
+---
+
+## Example 46: IN and NOT IN with Subqueries
 
 IN tests if value exists in subquery results. NOT IN tests if value doesn't exist. Useful for filtering based on membership in another query's results.
 
@@ -1296,9 +1318,9 @@ SELECT 'Yes' WHERE 3 NOT IN (SELECT value FROM test_values);
 
 **Why It Matters**: Filtering by membership in another table is fundamental—find orders for active customers, products in stock, users with permissions. The NOT IN NULL gotcha causes silent bugs in production; understanding this prevents hours of debugging incorrect empty results.
 
-## Group 13: JSON Support
+---
 
-### Example 47: JSON Creation and Extraction
+## Example 47: JSON Creation and Extraction
 
 SQLite's JSON1 extension provides JSON creation, extraction, and manipulation functions. JSON data stored as TEXT can be queried and transformed.
 
@@ -1393,7 +1415,9 @@ WHERE JSON_EXTRACT(metadata, '$.city') IS NOT NULL;
 
 **Why It Matters**: Modern applications store flexible metadata, user preferences, and audit logs as JSON. Querying JSON directly in SQL eliminates deserializing data in application code. This enables efficient filtering, aggregation, and reporting on semi-structured data without ETL pipelines.
 
-### Example 48: JSON Array Operations
+---
+
+## Example 48: JSON Array Operations
 
 JSON arrays can be queried, filtered, and transformed using JSON functions. Use JSON_EACH to unnest arrays into rows.
 
@@ -1468,9 +1492,9 @@ FROM projects;
 
 **Why It Matters**: Tags, categories, permissions, and feature flags often stored as JSON arrays. JSON_EACH transforms array storage into queryable rows—find all projects with "urgent" tag, count users per role, aggregate metrics across multi-value attributes. This bridges document and relational models.
 
-## Group 14: Full-Text Search
+---
 
-### Example 49: FTS5 Virtual Tables
+## Example 49: FTS5 Virtual Tables
 
 FTS5 (Full-Text Search) enables fast text search across large documents. Create virtual tables with FTS5 for efficient searching, ranking, and highlighting.
 
@@ -1549,7 +1573,9 @@ WHERE articles_fts MATCH 'SQL';
 
 **Why It Matters**: Users expect instant search across articles, products, and documents. LIKE queries are too slow for large datasets and miss relevance ranking. FTS5 provides Google-like search capabilities—phrase matching, boolean logic, result highlighting—without external search engines like Elasticsearch.
 
-### Example 50: FTS5 Advanced Queries
+---
+
+## Example 50: FTS5 Advanced Queries
 
 FTS5 supports proximity search, column weighting, and custom tokenizers. These features enable sophisticated search applications.
 
@@ -1619,9 +1645,9 @@ WHERE documents_fts MATCH 'RUNNING';
 
 **Why It Matters**: Stemming means "running" matches "run"—critical for natural language search. Proximity search finds related terms near each other. Column weighting prioritizes title matches over body matches. These features transform basic substring search into intelligent information retrieval.
 
-## Group 15: Performance and Optimization
+---
 
-### Example 51: EXPLAIN QUERY PLAN Analysis
+## Example 51: EXPLAIN QUERY PLAN Analysis
 
 EXPLAIN QUERY PLAN shows how SQLite executes a query. Use it to identify table scans, verify index usage, and optimize slow queries.
 
@@ -1724,7 +1750,9 @@ WHERE c.country = 'USA';
 
 **Why It Matters**: Query performance problems are invisible until you look at execution plans. A query taking 10 seconds might take 10ms with the right index. EXPLAIN QUERY PLAN is the diagnostic tool that reveals whether indexes are being used—essential knowledge for database performance tuning.
 
-### Example 52: Covering Indexes
+---
+
+## Example 52: Covering Indexes
 
 Covering indexes include all columns needed by a query, eliminating the need to access the table. This reduces I/O and improves performance.
 
@@ -1801,7 +1829,9 @@ ORDER BY price;
 
 **Why It Matters**: Covering indexes can provide 10x+ speedup for read-heavy queries by eliminating table lookups entirely. Dashboard queries, API endpoints, and reports that run thousands of times daily benefit enormously. The larger index size is a worthwhile trade-off for critical query paths.
 
-### Example 53: Partial Indexes
+---
+
+## Example 53: Partial Indexes
 
 Partial indexes index only rows matching a condition. They reduce index size and improve performance for queries targeting specific subsets.
 
@@ -1868,7 +1898,9 @@ WHERE customer_id IS NOT NULL;
 
 **Why It Matters**: If 99% of queries filter for "status = 'active'" and only 5% of rows are active, a full index wastes 95% of its space on rows you'll never query. Partial indexes are smaller, faster to maintain, and fit better in memory—providing better performance for less resource cost.
 
-### Example 54: Query Optimization Techniques
+---
+
+## Example 54: Query Optimization Techniques
 
 Combine multiple optimization strategies to improve query performance: proper indexing, avoiding functions in WHERE, using LIMIT, and query restructuring.
 
@@ -1963,7 +1995,9 @@ WHERE e.user_id IS NULL;
 
 **Why It Matters**: These patterns are the difference between a query that times out and one that returns instantly. Each anti-pattern (function in WHERE, SELECT \*, NOT IN with NULLs) appears innocent but causes full table scans. Knowing these transforms debugging slow queries from guesswork to methodical optimization.
 
-### Example 55: Transaction Performance
+---
+
+## Example 55: Transaction Performance
 
 Batch operations in transactions improve performance dramatically. Single transaction for multiple inserts is ~100x faster than individual commits.
 
@@ -2045,9 +2079,9 @@ PRAGMA synchronous = FULL;
 
 **Why It Matters**: Bulk imports, data migrations, and batch processing can take hours without transactions. Wrapping 10,000 inserts in one transaction can reduce time from minutes to milliseconds. This knowledge is essential for ETL pipelines, data loading, and any operation touching many rows.
 
-## Group 16: Advanced Patterns
+---
 
-### Example 56: Pivoting Data with CASE
+## Example 56: Pivoting Data with CASE
 
 Pivoting transforms rows into columns using CASE expressions and GROUP BY. Common for reports showing data in matrix format.
 
@@ -2126,7 +2160,9 @@ GROUP BY question;
 
 **Why It Matters**: Business users expect spreadsheet-style reports with quarters as columns. Pivot queries transform normalized data into presentation format without ETL tools or application code. Financial reports, sales matrices, and comparison tables all use this pattern.
 
-### Example 57: Running Totals and Moving Averages
+---
+
+## Example 57: Running Totals and Moving Averages
 
 Window functions with frame specifications compute running totals and moving averages - essential for time-series analysis and trending.
 
@@ -2214,7 +2250,9 @@ ORDER BY sale_date;
 
 **Why It Matters**: Time-series dashboards need running totals for progress tracking and moving averages for trend smoothing. Stock charts, fitness apps, and operational metrics all display these calculations. Window functions compute them efficiently in SQL without post-processing in application code.
 
-### Example 58: Upsert with INSERT OR REPLACE
+---
+
+## Example 58: Upsert with INSERT OR REPLACE
 
 Upsert operations insert new rows or update existing ones. SQLite provides INSERT OR REPLACE and INSERT ... ON CONFLICT for merging data.
 
@@ -2287,7 +2325,9 @@ VALUES (1, 'ignored', 'ignored', 0, datetime('now'));
 
 **Why It Matters**: Sync operations, configuration updates, and cache refreshes need "insert if new, update if exists" logic. Without upsert, you'd need SELECT-then-INSERT-or-UPDATE with race condition risks. Upsert is atomic and efficient—essential for data synchronization patterns.
 
-### Example 59: Generating Series and Calendar Queries
+---
+
+## Example 59: Generating Series and Calendar Queries
 
 Generate sequences of numbers or dates using recursive CTEs. Useful for filling gaps, creating calendars, or generating test data.
 
@@ -2389,7 +2429,9 @@ FROM dates;
 
 **Why It Matters**: Reports must show all dates even when no activity occurred—a chart with missing days is misleading. Generated date series with LEFT JOIN fill these gaps with zeros. This pattern is essential for accurate time-series visualization and trend analysis.
 
-### Example 60: Hierarchical Aggregation
+---
+
+## Example 60: Hierarchical Aggregation
 
 Aggregate data at multiple levels simultaneously using window functions and GROUPING SETS (simulated in SQLite with UNION ALL).
 

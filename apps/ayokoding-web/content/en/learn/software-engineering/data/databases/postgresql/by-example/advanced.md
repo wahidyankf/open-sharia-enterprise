@@ -7,9 +7,9 @@ description: "Examples 61-85: PostgreSQL expert mastery covering advanced indexi
 tags: ["postgresql", "database", "tutorial", "by-example", "advanced", "optimization", "partitioning", "administration"]
 ---
 
-## Group 1: Advanced Indexing
+Achieve PostgreSQL expertise through 25 annotated examples. Each example tackles advanced indexing, query optimization, full-text search, partitioning, and database administration patterns.
 
-### Example 61: GIN Indexes for Full-Text Search
+## Example 61: GIN Indexes for Full-Text Search
 
 GIN (Generalized Inverted Index) indexes excel at indexing arrays, JSONB, and full-text search. Essential for fast text searches and JSONB queries.
 
@@ -107,7 +107,9 @@ SELECT * FROM products WHERE data @> '{"specs": {"ram": 16}}';
 
 **Why It Matters**: GIN indexes make PostgreSQL competitive with document databases like MongoDB for JSON querying, enabling millisecond-speed containment queries on billions of JSONB documents without sacrificing ACID guarantees or relational query capabilities. Array containment queries with GIN indexes (@> operator) are 100-1000x faster than ANY() predicates on unindexed arrays, making GIN essential for tag-based filtering systems handling millions of tagged items. Full-text search with GIN indexes on tsvector columns enables Google-like search functionality directly in PostgreSQL, eliminating the need for external search engines like Elasticsearch for many use cases.
 
-### Example 62: GiST Indexes for Geometric Data
+---
+
+## Example 62: GiST Indexes for Geometric Data
 
 GiST (Generalized Search Tree) indexes support geometric types, range types, and custom types. Essential for spatial queries and range overlap checks.
 
@@ -209,7 +211,9 @@ WHERE content_tsv @@ to_tsquery('english', 'postgresql');
 
 **Why It Matters**: GiST indexes enable geospatial applications (ride-sharing, delivery optimization, real estate search) to perform nearest-neighbor queries finding the closest 10 drivers to a pickup location in milliseconds across millions of geographic points. Range overlap queries with GiST on DATERANGE columns detect reservation conflicts 100x faster than equivalent date comparison logic, making booking systems responsive even with billions of reservation records. The extensibility of GiST enables custom operator classes for domain-specific data types, making PostgreSQL suitable for specialized applications (chemical structure search, network topology queries) without requiring external specialized databases.
 
-### Example 63: Expression Indexes
+---
+
+## Example 63: Expression Indexes
 
 Expression indexes index computed values (functions, operators) instead of raw columns - speeds up queries filtering on expressions.
 
@@ -311,7 +315,9 @@ WHERE SUBSTRING(email FROM POSITION('@' IN email) + 1) = 'example.com';
 
 **Why It Matters**: Expression indexes eliminate the need for computed columns when indexing derived values (LOWER(email) for case-insensitive searches, date_trunc('day', timestamp) for day-level aggregations), reducing storage overhead and preventing data synchronization issues between base and computed columns. Case-insensitive email lookups with LOWER() indexes are essential for user authentication systems where user@example.com and USER@EXAMPLE.COM must be treated identically without expensive sequential scans. However, expression indexes require exact query match (WHERE LOWER(email) = LOWER('user@example.com')), making them unsuitable for ad-hoc queries where expression varies, limiting their applicability to well-defined query patterns.
 
-### Example 64: Covering Indexes (INCLUDE clause)
+---
+
+## Example 64: Covering Indexes (INCLUDE clause)
 
 Covering indexes include extra columns in leaf nodes using INCLUDE - queries can retrieve all needed columns from index alone (index-only scans).
 
@@ -429,7 +435,9 @@ WHERE tablename = 'orders';
 
 **Why It Matters**: Covering indexes with INCLUDE clause eliminate table heap access for queries retrieving indexed + included columns, achieving 5-10x speedups on queries that would otherwise require index scan followed by heap fetch. The separation between index key columns and INCLUDE columns enables optimal index structure where frequently filtered columns remain in B-tree structure while display-only columns ride along for free without affecting index efficiency. INCLUDE allows adding frequently accessed columns to unique indexes without making them part of the uniqueness constraint, enabling covering index benefits on unique indexes that would otherwise be limited to key columns only.
 
-### Example 65: Index-Only Scans
+---
+
+## Example 65: Index-Only Scans
 
 Index-only scans retrieve all needed columns from index - no table access required. Requires covering index or visibility map indicating no dead tuples.
 
@@ -520,9 +528,9 @@ RESET enable_indexonlyscan;
 
 **Why It Matters**: Index-only scans reduce query I/O by 80-95% compared to regular index scans that must access heap tuples for visibility checking, making frequently-queried covering indexes essential for high-throughput read-heavy workloads. The visibility map dependency means index-only scan benefits degrade on heavily-updated tables until VACUUM runs, creating a performance cliff where query speed varies by 5-10x depending on last VACUUM timing. Autovacuum's automatic visibility map maintenance makes index-only scans reliable in production, but manual VACUUM scheduling is critical after bulk UPDATE/DELETE operations to restore index-only scan performance immediately.
 
-## Group 2: Query Optimization
+---
 
-### Example 66: Analyzing Query Plans with EXPLAIN ANALYZE
+## Example 66: Analyzing Query Plans with EXPLAIN ANALYZE
 
 EXPLAIN ANALYZE reveals actual execution metrics - use it to identify bottlenecks, verify index usage, and measure performance improvements.
 
@@ -667,7 +675,9 @@ ANALYZE orders;
 
 **Why It Matters**: EXPLAIN ANALYZE reveals the gap between estimated and actual row counts that causes query planner mistakes leading to wrong index choices or suboptimal join strategies, making it essential for diagnosing performance issues in production queries. The BUFFERS option exposes cache hit ratios showing whether queries run from memory (shared buffers hit) or disk (read), guiding decisions on shared_buffers sizing and query optimization priorities. Companies like GitLab mandate EXPLAIN ANALYZE for all database migrations to catch performance regressions before deployment, preventing incidents where poorly-optimized queries degrade user experience for millions of users.
 
-### Example 67: Join Order Optimization
+---
+
+## Example 67: Join Order Optimization
 
 PostgreSQL's query planner chooses join order based on statistics - smaller tables typically joined first. Use ANALYZE to update statistics for optimal join order.
 
@@ -792,7 +802,9 @@ LIMIT 100;
 
 **Why It Matters**: Automatic join reordering optimizes queries where developers write joins in suboptimal order, enabling consistent performance regardless of FROM clause ordering and reducing the expertise gap between novice and expert SQL developers. Stale statistics cause the planner to choose wrong join orders (joining 10M rows instead of 1K), creating performance cliffs where queries slow by 100-1000x after data distribution changes until ANALYZE runs. The choice between Hash Join (build hashtable on smaller relation), Merge Join (presorted inputs), and Nested Loop (small outer, indexed inner) determines whether joins complete in milliseconds or minutes, making index design critical for join performance.
 
-### Example 68: Subquery vs JOIN Performance
+---
+
+## Example 68: Subquery vs JOIN Performance
 
 Subqueries can be rewritten as JOINs - JOINs are often faster because planner can optimize join order and strategies. Use EXPLAIN ANALYZE to compare.
 
@@ -937,7 +949,9 @@ WHERE o.id IS NULL;
 
 **Why It Matters**: Correlated subqueries execute once per outer row creating O(N×M) performance compared to O(N+M) for equivalent JOINs, causing queries to slow from milliseconds to hours as data grows from thousands to millions of rows. PostgreSQL's query optimizer can often rewrite uncorrelated subqueries to joins automatically, but correlated subqueries defeat optimization and require manual rewriting for acceptable performance. The semantic equivalence between many subquery and JOIN patterns means developers can choose readability over performance initially, then refactor to JOINs when EXPLAIN ANALYZE reveals performance issues, making iterative optimization practical.
 
-### Example 69: Query Hints and Statistics
+---
+
+## Example 69: Query Hints and Statistics
 
 PostgreSQL doesn't support query hints directly, but you can influence planner with statistics targets, costs, and enable/disable settings.
 
@@ -1040,7 +1054,9 @@ ALTER TABLE products ALTER COLUMN category SET STATISTICS -1;
 
 **Why It Matters**: Increasing statistics*target from default 100 to 1000+ on high-cardinality columns improves estimate accuracy for skewed distributions, preventing the planner from choosing sequential scans when indexes would be 100x faster. Cost parameter tuning (lowering random_page_cost for SSD storage) aligns planner assumptions with actual hardware characteristics, making PostgreSQL choose optimal plans on modern storage rather than defaults calibrated for spinning disks from the 1990s. However, PostgreSQL intentionally lacks SQL-level query hints (unlike Oracle's /*+ INDEX \_/ syntax), forcing optimization through statistics and cost parameters rather than hard-coded hints that become stale as data evolves.
 
-### Example 70: Vacuum and Analyze
+---
+
+## Example 70: Vacuum and Analyze
 
 VACUUM reclaims space from dead tuples, ANALYZE updates statistics for query planner. Both essential for maintaining performance.
 
@@ -1139,9 +1155,9 @@ ANALYZE logs (message);
 
 **Why It Matters**: VACUUM prevents table bloat where deleted rows accumulate as dead tuples consuming disk space and slowing queries, with neglected tables growing to 10x their optimal size and degrading query performance proportionally. ANALYZE updates table statistics that guide query planner decisions, with stale statistics causing wrong index choices that make queries 100-1000x slower until fresh statistics are collected. Autovacuum's automatic operation makes PostgreSQL self-maintaining in production, but aggressive UPDATE/DELETE workloads require tuning autovacuum_vacuum_scale_factor to prevent bloat between autovacuum runs during high-write periods.
 
-## Group 3: Advanced Features
+---
 
-### Example 71: Full-Text Search with tsvector
+## Example 71: Full-Text Search with tsvector
 
 Full-text search finds documents matching queries - tsvector stores searchable text, tsquery represents search queries. Much faster than LIKE for text searches.
 
@@ -1278,7 +1294,9 @@ SELECT title, search_vector FROM articles WHERE title = 'PostgreSQL Performance'
 
 **Why It Matters**: PostgreSQL's full-text search provides Google-like search functionality directly in the database without external search engines like Elasticsearch, reducing infrastructure complexity and eliminating synchronization lag between database and search index. GIN indexes on tsvector columns enable millisecond-speed searches across millions of documents with stemming (running matches run/runs/ran) and ranking that sorts results by relevance rather than arbitrary ordering. The trigger-based auto-update pattern keeps search vectors synchronized with source text automatically, preventing the stale search results that plague systems relying on manual reindexing or batch updates.
 
-### Example 72: Table Partitioning (Range Partitioning)
+---
+
+## Example 72: Table Partitioning (Range Partitioning)
 
 Range partitioning splits tables by value ranges (dates, numbers) - improves query performance by scanning only relevant partitions.
 
@@ -1398,7 +1416,9 @@ WHERE parent.relname = 'events';
 
 **Why It Matters**: Partitioning enables companies like Timescale (built on PostgreSQL) to handle 10+ million metrics per second by limiting query scans to relevant time ranges, reducing query time from hours to seconds on multi-terabyte datasets. Partition pruning automatically excludes irrelevant partitions from query plans, achieving 10-100x speedups on time-range queries compared to non-partitioned tables. The ability to attach/detach partitions enables zero-downtime archival of old data, allowing organizations to maintain decades of historical data while keeping hot data queries fast.
 
-### Example 73: Table Partitioning (List Partitioning)
+---
+
+## Example 73: Table Partitioning (List Partitioning)
 
 List partitioning splits tables by discrete values (countries, categories, statuses) - useful when data naturally groups by specific values.
 
@@ -1523,7 +1543,9 @@ INNER JOIN customers c ON o.customer_id = c.id AND o.region = c.region;
 
 **Why It Matters**: List partitioning enables multi-tenant applications to physically isolate customer data (one partition per customer/region) for compliance requirements mandating data residency, while maintaining query transparency through partition routing. The DEFAULT partition prevents insertion failures when new categories emerge, making list partitioning resilient to schema evolution compared to strict value lists that require ALTER TABLE for every new value. Partition-wise joins between similarly partitioned tables (both partitioned by region) enable parallel query execution across partition pairs, achieving near-linear scalability for analytics queries on trillion-row datasets.
 
-### Example 74: Foreign Data Wrappers
+---
+
+## Example 74: Foreign Data Wrappers
 
 Foreign Data Wrappers (FDW) enable querying external data sources (other PostgreSQL servers, MySQL, files) as if they were local tables.
 
@@ -1618,7 +1640,9 @@ DROP SERVER remote_server CASCADE;
 
 **Why It Matters**: Foreign Data Wrappers enable JOIN queries spanning PostgreSQL, MySQL, Oracle, and MongoDB databases without ETL processes, making PostgreSQL the central query layer for heterogeneous data environments at companies running legacy systems alongside modern stacks. Predicate pushdown optimization sends WHERE clauses to remote servers reducing network transfer by 90-99% compared to naive "fetch all then filter" approaches, making cross-database joins practical for production use. However, FDW queries suffer from network latency (1-100ms per round-trip) making them unsuitable for high-frequency transactional queries where local data replication via logical replication provides 100-1000x better performance.
 
-### Example 75: Logical Replication Basics
+---
+
+## Example 75: Logical Replication Basics
 
 Logical replication replicates data changes (INSERT/UPDATE/DELETE) to subscriber databases - enables selective replication, upgrades, and multi-master patterns.
 
@@ -1737,9 +1761,9 @@ DROP PUBLICATION products_pub;```
 
 **Why It Matters**: Logical replication enables zero-downtime major version upgrades (9.6 → 14) by replicating to new version cluster and switching over when synchronized, eliminating the maintenance windows that plague pg_upgrade approaches requiring application downtime. Selective table replication enables read replica segregation where analytics queries run against subscribers containing only necessary tables (not all 500 tables), reducing replica storage costs by 80-95%. However, logical replication replays logical changes (INSERT/UPDATE/DELETE) rather than physical blocks, causing 2-5x higher subscriber CPU usage compared to streaming replication and making it unsuitable for disaster recovery where streaming replication provides byte-exact copies.
 
-## Group 4: Administration
+---
 
-### Example 76: User Roles and Permissions
+## Example 76: User Roles and Permissions
 
 Roles manage authentication and authorization - create roles for users, grant specific permissions, follow principle of least privilege.
 
@@ -1839,7 +1863,9 @@ DROP ROLE charlie;```
 
 **Why It Matters**: Role-based access control enables centralized permission management where adding a user to the "analysts" role grants all necessary table privileges without individual GRANT statements, reducing administrative overhead and preventing permission drift. The principle of least privilege enforced through selective GRANTs limits blast radius when credentials are compromised, with read-only roles preventing data modification even if SQL injection vulnerabilities exist in application code. ALTER DEFAULT PRIVILEGES ensures future tables automatically grant appropriate permissions, preventing the "new table created but forgot to grant access" incidents that cause production outages when background workers can't access newly created tables.
 
-### Example 77: Row-Level Security (RLS)
+---
+
+## Example 77: Row-Level Security (RLS)
 
 Row-Level Security restricts which rows users can see or modify - enables multi-tenant systems, data isolation, and fine-grained access control.
 
@@ -1979,7 +2005,9 @@ DROP POLICY public_documents ON documents;```
 
 **Why It Matters**: RLS eliminates application-layer filtering bugs that cause data breaches, enforcing tenant isolation at the database level where it cannot be bypassed by coding errors. Companies like Citus Data (Hyperscale PostgreSQL) use RLS to enable thousands of tenants to share the same database tables while ensuring complete data isolation required by GDPR and HIPAA compliance. RLS policies add negligible overhead (<1% query slowdown) compared to application-layer filtering, while providing defense-in-depth security that survives SQL injection attacks and application bugs.
 
-### Example 78: Backup with pg_dump
+---
+
+## Example 78: Backup with pg_dump
 
 pg_dump creates logical backups of databases - exports schema and data as SQL or custom format for restoration.
 
@@ -2061,7 +2089,9 @@ docker exec postgres-tutorial pg_restore -U postgres -d example_78_restored -j 4
 
 **Why It Matters**: pg_dump logical backups are version-independent enabling restore to newer PostgreSQL versions (11 → 15) unlike physical backups requiring exact version match, making them essential for upgrade workflows and cross-platform migrations. Compression with custom format reduces backup size by 70-90% compared to plain SQL, while parallel dump (`-j 4`) utilizes multi-core systems to back up large databases 3-4x faster than single-threaded dumps. However, pg_dump creates transactionally-consistent snapshots only within single database, requiring pg_dumpall for cross-database consistency if foreign tables or logical replication span databases, a gotcha that causes restore failures in multi-database environments.
 
-### Example 79: Restore with pg_restore
+---
+
+## Example 79: Restore with pg_restore
 
 pg_restore restores databases from custom or directory format backups - supports selective restore, parallel jobs, and flexible options.
 
@@ -2123,7 +2153,9 @@ docker exec postgres-tutorial pg_restore -U postgres -d example_78_restored -e e
 
 **Why It Matters**: Selective restore enables recovery of specific tables without restoring entire 1TB database, making targeted disaster recovery complete in minutes rather than hours when only critical tables need immediate restoration. Parallel restore (`-j 8`) utilizes multiple CPU cores reducing restore time from 6 hours to 45 minutes on modern servers, making production recovery windows achievable within business SLAs. The `--clean` option's "drop before restore" behavior requires careful use as it drops objects even if restore fails partway through, making test restores to verify backup integrity a critical practice before relying on backups for disaster recovery.
 
-### Example 80: Monitoring with pg_stat Views
+---
+
+## Example 80: Monitoring with pg_stat Views
 
 PostgreSQL provides pg*stat*\* views for monitoring activity, performance, and resource usage - essential for production database health.
 
@@ -2293,9 +2325,9 @@ SELECT pg_stat_reset();
 
 **Why It Matters**: Cache hit ratio monitoring (pg_stat_database) reveals whether working set fits in shared_buffers, with ratios below 95% indicating need for memory increases that can improve query performance by 10-100x by eliminating disk I/O. pg_stat_statements extension identifies the actual slow queries consuming 80% of database time, enabling targeted optimization rather than guessing which queries need indexing. Unused index detection (idx_scan = 0 in pg_stat_user_indexes) reveals maintenance overhead from indexes never used by queries, with removal of unused indexes reducing INSERT/UPDATE overhead by 10-30% per removed index while freeing disk space.
 
-## Group 5: Advanced Patterns
+---
 
-### Example 81: Advisory Locks
+## Example 81: Advisory Locks
 
 Advisory locks are application-level locks - PostgreSQL tracks them but doesn't enforce automatically. Use for distributed locking, job queues, or resource coordination.
 
@@ -2426,7 +2458,9 @@ SELECT pg_advisory_unlock_all();```
 
 **Why It Matters**: Advisory locks enable distributed job coordination across application servers without external systems like Redis, with pg_try_advisory_lock() providing non-blocking "leader election" where exactly one worker processes each job preventing duplicate work. Session-level advisory locks automatically release on connection close providing automatic cleanup that prevents orphaned locks requiring manual intervention, unlike application-level flags that require complex timeout and recovery logic. However, advisory locks are in-memory only and don't survive database restarts, making them unsuitable for critical locks requiring persistence across server maintenance windows where database-backed locks provide stronger guarantees.
 
-### Example 82: Listen/Notify for Event Notifications
+---
+
+## Example 82: Listen/Notify for Event Notifications
 
 LISTEN/NOTIFY enables pub/sub messaging - applications subscribe to channels and receive notifications from other sessions.
 
@@ -2560,7 +2594,9 @@ VALUES ('cpu_usage', 75.5);
 
 **Why It Matters**: LISTEN/NOTIFY eliminates polling overhead for cache invalidation enabling reactive systems where application caches clear immediately upon database updates rather than waiting 60 seconds for next poll, reducing cache staleness by 95-99%. The pub/sub pattern enables real-time dashboards where browser connections receive instant updates on data changes without websocket server infrastructure, making PostgreSQL suitable for real-time applications without external message brokers. However, NOTIFY payloads limited to 8000 bytes and messages lost if subscribers disconnect mean LISTEN/NOTIFY suits notifications ("data changed, refresh") rather than data transfer ("here's the full update"), requiring separate queries to fetch updated data.
 
-### Example 83: Write-Ahead Logging (WAL)
+---
+
+## Example 83: Write-Ahead Logging (WAL)
 
 WAL ensures durability - all changes logged before applied to data files. Essential for crash recovery, replication, and point-in-time recovery.
 
@@ -2673,7 +2709,9 @@ FROM pg_ls_waldir();
 
 **Why It Matters**: Write-ahead logging provides the durability guarantee in ACID transactions, ensuring committed data survives crashes and power failures through sequential disk writes that are 10x faster than random writes required for direct data file updates. WAL archiving enables point-in-time recovery where databases restore to "yesterday at 2PM before bad UPDATE ran", providing recovery granularity impossible with snapshot backups that restore only to backup time. However, aggressive checkpoint_timeout settings trade write performance for faster crash recovery, with default 5-minute checkpoints requiring replaying at most 5 minutes of WAL on startup compared to 30-minute checkpoints reducing I/O by 50% but extending crash recovery proportionally.
 
-### Example 84: Connection Pooling with pgBouncer
+---
+
+## Example 84: Connection Pooling with pgBouncer
 
 Connection pooling reduces connection overhead - pgBouncer maintains persistent connections to PostgreSQL, serves application connections from pool.
 
@@ -2791,7 +2829,9 @@ RESUME;
 
 **Why It Matters**: Connection pooling enables web applications with 10,000 concurrent users to operate with only 100 database connections, reducing PostgreSQL memory usage by 99% (10MB per connection × 10K = 100GB vs 1GB) and eliminating connection establishment overhead that adds 50-100ms latency to every request. Transaction-mode pooling provides 5-10x higher throughput than session-mode by eliminating idle-in-transaction connections that waste database resources, though at cost of losing prepared statements and temporary tables across transactions. pgBouncer's lightweight architecture (single-threaded, async I/O) handles 10,000 client connections using only 50MB RAM compared to pgpool-II's multi-threaded approach, making pgBouncer the preferred pooler for high-connection-count scenarios.
 
-### Example 85: Performance Tuning Parameters
+---
+
+## Example 85: Performance Tuning Parameters
 
 PostgreSQL has many tunable parameters - optimize for workload (OLTP, OLAP, mixed). Key parameters for memory, connections, and query performance.
 

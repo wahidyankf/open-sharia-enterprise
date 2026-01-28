@@ -2,14 +2,14 @@
 title: "Advanced"
 date: 2025-12-29T09:07:25+07:00
 draft: false
-weight: 100000003
+weight: 10000003
 description: "Examples 61-85: Query optimization, complex analytics, data modeling, and production patterns (75-95% coverage)"
 tags: ["sql", "database", "tutorial", "by-example", "advanced", "optimization", "analytics"]
 ---
 
-## Group 17: Advanced Analytics
+Achieve SQL expertise through 25 annotated examples. Each example tackles advanced analytics, complex data modeling, and production-grade query patterns that appear in real-world applications.
 
-### Example 61: Percentile and Quartile Calculations
+## Example 61: Percentile and Quartile Calculations
 
 Percentiles divide data into 100 equal parts, quartiles into 4 parts. Use NTILE window function or manual calculation for statistical analysis.
 
@@ -134,7 +134,9 @@ ORDER BY salary;
 
 **Why It Matters**: Salary benchmarking, performance ratings, and fraud detection all need percentile analysis. "Top 10% of performers" or "below 25th percentile response time" are common business metrics. NTILE eliminates spreadsheet exports and manual calculations, keeping analytics in the database.
 
-### Example 62: Cohort Analysis
+---
+
+## Example 62: Cohort Analysis
 
 Cohort analysis groups users by shared characteristics (signup date) and tracks behavior over time. Essential for retention and engagement metrics.
 
@@ -245,7 +247,9 @@ ORDER BY cohort_week;
 
 **Why It Matters**: "Did last month's signup cohort retain better than the previous month?" drives product decisions worth millions. Cohort retention tables are the foundation of investor presentations and product roadmaps. Understanding whether changes improve retention requires cohort comparison.
 
-### Example 63: Funnel Analysis
+---
+
+## Example 63: Funnel Analysis
 
 Funnel analysis tracks conversion through multi-step processes. Calculate drop-off rates at each stage to identify bottlenecks.
 
@@ -371,7 +375,9 @@ ORDER BY max_stage;
 
 **Why It Matters**: A 1% improvement in checkout conversion can mean millions in revenue. Funnel analysis identifies exactly where users drop off—signup form? payment page? confirmation?—enabling targeted optimization. Every growth team relies on funnel metrics for prioritization.
 
-### Example 64: Sessionization
+---
+
+## Example 64: Sessionization
 
 Sessionization groups events into sessions using time-based windows. Essential for analytics when explicit session IDs aren't available.
 
@@ -474,7 +480,9 @@ FROM session_metrics;
 
 **Why It Matters**: "Average session duration" and "pages per session" are core web metrics, but raw event logs don't have session IDs. Sessionization creates these groupings from timestamps. Without it, you can't answer "how long do users spend before converting?" or "what's the typical browse pattern?"
 
-### Example 65: Survival Analysis (Customer Lifetime)
+---
+
+## Example 65: Survival Analysis (Customer Lifetime)
 
 Survival analysis tracks how long entities (customers, products) remain active. Calculate survival curves and churn rates over time.
 
@@ -581,9 +589,9 @@ ORDER BY cohort_month;
 
 **Why It Matters**: Customer lifetime value (CLV) predictions drive acquisition spending and pricing. "What percentage of customers survive past 90 days?" directly impacts revenue forecasting. Survival curves reveal whether churn is front-loaded (onboarding problem) or gradual (value problem).
 
-## Group 18: Data Modeling Patterns
+---
 
-### Example 66: One-to-Many Relationship Modeling
+## Example 66: One-to-Many Relationship Modeling
 
 One-to-many relationships link one parent record to multiple child records. Use foreign keys to maintain referential integrity.
 
@@ -654,7 +662,9 @@ SELECT * FROM books;
 
 **Why It Matters**: Nearly every application has one-to-many relationships. Understanding CASCADE behavior prevents orphaned records. Knowing when to use LEFT JOIN vs INNER JOIN determines whether you see parents without children. This is foundational for any database-backed application.
 
-### Example 67: Many-to-Many Relationship with Junction Table
+---
+
+## Example 67: Many-to-Many Relationship with Junction Table
 
 Many-to-many relationships require junction tables (also called bridge or associative tables) to link two entities bidirectionally.
 
@@ -774,7 +784,9 @@ WHERE e.course_id IN (SELECT course_id FROM alice_courses)
 
 **Why It Matters**: Tags, categories, permissions, and product attributes all require many-to-many relationships. The junction table pattern appears in every non-trivial application. Storing additional attributes on the junction (like enrollment_date or permission_level) enables rich relationship metadata.
 
-### Example 68: Self-Referencing Foreign Keys
+---
+
+## Example 68: Self-Referencing Foreign Keys
 
 Self-referencing tables model hierarchical relationships (employees/managers, categories/subcategories, comments/replies).
 
@@ -860,7 +872,9 @@ FROM descendants;
 
 **Why It Matters**: Category trees, org charts, folder structures, and threaded comments all need self-referencing relationships. Building breadcrumb navigation, calculating total team size, or finding all descendants requires recursive traversal. This pattern is ubiquitous in content management and organizational systems.
 
-### Example 69: Polymorphic Associations
+---
+
+## Example 69: Polymorphic Associations
 
 Polymorphic associations allow one table to reference multiple parent tables. Implemented with type and id columns. (Note: Not enforced by foreign keys in standard SQL)
 
@@ -959,7 +973,9 @@ GROUP BY commentable_type;
 
 **Why It Matters**: "Users can comment on posts, photos, and videos" is a common requirement. Without polymorphic associations, you'd need separate comment tables per entity. Understanding the trade-off (flexibility vs. referential integrity) helps you choose the right approach for your application's needs.
 
-### Example 70: Slowly Changing Dimensions (Type 2)
+---
+
+## Example 70: Slowly Changing Dimensions (Type 2)
 
 Type 2 SCDs track historical changes by creating new rows with effective dates. Essential for data warehousing and historical reporting.
 
@@ -1050,9 +1066,9 @@ SELECT * FROM customers_current;
 
 **Why It Matters**: "What was the customer's address when they placed this order?" is a common audit question. Without SCD Type 2, you lose historical context. Regulatory compliance, legal disputes, and analytics all require point-in-time data reconstruction. This pattern is foundational for data warehousing.
 
-## Group 19: Performance Tuning
+---
 
-### Example 71: Analyzing Query Performance with EXPLAIN
+## Example 71: Analyzing Query Performance with EXPLAIN
 
 EXPLAIN QUERY PLAN reveals query execution strategy. Identify inefficiencies like table scans, missing indexes, and suboptimal join orders.
 
@@ -1158,7 +1174,9 @@ WHERE o.total > 300;
 
 **Why It Matters**: A 10-second query blocking your API is a production incident. EXPLAIN reveals whether the database is doing a full table scan (millions of rows) or an efficient index lookup (milliseconds). This tool is your first step when investigating slow query complaints.
 
-### Example 72: Index Strategies and Trade-offs
+---
+
+## Example 72: Index Strategies and Trade-offs
 
 Indexes speed reads but slow writes. Choose index types and columns strategically based on query patterns.
 
@@ -1244,7 +1262,9 @@ DROP INDEX idx_products_category;  -- Redundant (covered by composite index)
 
 **Why It Matters**: Index strategy determines whether your database scales. Wrong indexes mean slow reads; too many indexes mean slow writes. Understanding composite index column order, covering indexes for read-heavy queries, and partial indexes for filtered data enables informed trade-off decisions.
 
-### Example 73: Query Rewriting for Performance
+---
+
+## Example 73: Query Rewriting for Performance
 
 Rewrite queries to use indexes, avoid functions in WHERE, and leverage database optimizer.
 
@@ -1341,7 +1361,9 @@ FROM events;
 
 **Why It Matters**: These rewriting patterns turn slow queries into fast ones without schema changes. Knowing that `WHERE DATE(created_at) = '2025-01-15'` prevents index usage (use range instead) or that `NOT IN` with NULLs returns empty results prevents production bugs and performance problems.
 
-### Example 74: Batch Operations and Bulk Loading
+---
+
+## Example 74: Batch Operations and Bulk Loading
 
 Batch operations in transactions dramatically improve performance. Use pragmas and multi-row inserts for bulk loading.
 
@@ -1437,7 +1459,9 @@ VACUUM;
 
 **Why It Matters**: Data migrations, ETL pipelines, and bulk imports can take hours without batching. A single transaction for 100,000 rows is 100x faster than 100,000 individual commits. This knowledge transforms day-long imports into minute-long operations.
 
-### Example 75: Denormalization for Read Performance
+---
+
+## Example 75: Denormalization for Read Performance
 
 Denormalization duplicates data to avoid joins. Trade-off: faster reads, slower writes, higher storage, data consistency challenges.
 
@@ -1581,9 +1605,9 @@ GROUP BY c.id, c.name;
 
 **Why It Matters**: Dashboard queries joining 5 tables across millions of rows can't meet sub-second SLAs. Denormalized summary tables provide instant responses. Understanding when to denormalize (read-heavy, stale-data-tolerant) vs. normalize (write-heavy, consistency-critical) is a key architectural decision.
 
-## Group 20: Production Patterns
+---
 
-### Example 76: Soft Deletes
+## Example 76: Soft Deletes
 
 Soft deletes mark records as deleted instead of removing them. Enables undelete and maintains referential integrity for historical data.
 
@@ -1670,7 +1694,9 @@ WHERE deleted_at IS NOT NULL
 
 **Why It Matters**: "Oops, I deleted the wrong user" is recoverable with soft deletes. Hard deletes break foreign key references and lose audit history. Production systems need undelete capability, and compliance often requires data retention. Soft deletes solve all these while keeping application code simple.
 
-### Example 77: Audit Logging
+---
+
+## Example 77: Audit Logging
 
 Audit logs track who changed what and when. Essential for compliance, debugging, and security.
 
@@ -1815,7 +1841,9 @@ END;
 
 **Why It Matters**: "Who changed this price and when?" is a question regulators, auditors, and angry managers ask. Audit logs answer it definitively. SOX compliance, HIPAA, GDPR—all require audit trails. Beyond compliance, audit logs enable debugging production issues by reconstructing past states.
 
-### Example 78: Optimistic Locking with Version Numbers
+---
+
+## Example 78: Optimistic Locking with Version Numbers
 
 Optimistic locking prevents lost updates in concurrent environments using version numbers or timestamps.
 
@@ -1905,7 +1933,9 @@ WHERE id = 1 AND updated_at = '2025-12-29 02:07:25';
 
 **Why It Matters**: Two users editing the same document simultaneously—whose changes win? Without optimistic locking, last-write-wins causes silent data loss. Optimistic locking detects conflicts, letting applications handle them gracefully. This pattern is essential for any multi-user system with concurrent edits.
 
-### Example 79: Idempotent Operations with Unique Constraints
+---
+
+## Example 79: Idempotent Operations with Unique Constraints
 
 Idempotent operations can be retried safely without side effects. Use unique constraints and INSERT OR IGNORE for idempotency.
 
@@ -1988,7 +2018,9 @@ WHERE order_number = 'ORD-001'
 
 **Why It Matters**: Network failures cause retries. Payment submitted twice shouldn't charge twice. Idempotency keys ensure "at-least-once" delivery doesn't become "multiple times" execution. This pattern is mandatory for payment processing, message queues, and any retry-prone operation.
 
-### Example 80: Rate Limiting with Time Windows
+---
+
+## Example 80: Rate Limiting with Time Windows
 
 Rate limiting prevents abuse by restricting actions per time window. Track events and enforce limits.
 
@@ -2094,7 +2126,9 @@ WHERE request_time < datetime('now', '-24 hours');
 
 **Why It Matters**: Without rate limiting, a single bad actor can overwhelm your API or brute-force passwords. Database-backed rate limiting persists across server restarts and works in distributed deployments. This is a fundamental security and stability pattern for any public-facing service.
 
-### Example 81: Feature Flags
+---
+
+## Example 81: Feature Flags
 
 Feature flags enable/disable features without code deployment. Control rollout, A/B testing, and emergency shutdowns.
 
@@ -2198,7 +2232,9 @@ WHERE user_id = 'user-42' AND test_name = 'dashboard_redesign';
 
 **Why It Matters**: "Ship fast, fix fast" requires the ability to instantly disable broken features. Gradual rollouts (1% → 10% → 50% → 100%) catch problems before they affect all users. Database-backed feature flags work across all servers without code deployment, enabling true continuous delivery.
 
-### Example 82: Time-Series Data Partitioning
+---
+
+## Example 82: Time-Series Data Partitioning
 
 Partition time-series data by time period for efficient queries and data retention management.
 
@@ -2304,7 +2340,9 @@ DELETE FROM events_partitioned WHERE partition_key < '2024-12';
 
 **Why It Matters**: A table with 10 years of logs becomes slow to query and impossible to manage. Partitioning enables "query last week" to scan only 7 partitions instead of billions of rows. Data retention becomes "DROP old partition" instead of "DELETE billions of rows." This is essential for any time-series data.
 
-### Example 83: Connection Pooling Simulation
+---
+
+## Example 83: Connection Pooling Simulation
 
 Connection pooling reuses database connections for efficiency. Simulate pool behavior and understand connection lifecycle.
 
@@ -2412,7 +2450,9 @@ WHERE connection_id IN (
 
 **Why It Matters**: Opening a database connection takes 50-100ms. In a web application handling 1000 requests/second, creating new connections per request is impossible. Connection pooling reuses connections, making high-throughput applications feasible. Understanding pool dynamics helps diagnose "connection exhausted" errors.
 
-### Example 84: Multi-Tenancy with Row-Level Filtering
+---
+
+## Example 84: Multi-Tenancy with Row-Level Filtering
 
 Multi-tenancy isolates data by tenant using row-level filtering. Single database serves multiple tenants securely.
 
@@ -2531,7 +2571,9 @@ GROUP BY t.id, t.name;
 
 **Why It Matters**: SaaS applications serve multiple customers from one database. A missing tenant_id filter exposes customer A's data to customer B—a catastrophic security breach. Multi-tenancy patterns ensure data isolation while sharing infrastructure. This is the foundation of cost-effective SaaS architecture.
 
-### Example 85: Database Health Monitoring
+---
+
+## Example 85: Database Health Monitoring
 
 Monitor database health with query performance metrics, connection stats, and resource usage.
 
