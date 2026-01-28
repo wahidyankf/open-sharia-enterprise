@@ -7,7 +7,9 @@ type: docs
 layout: list
 ---
 
+- [By Example](/en/learn/software-engineering/data/tools/spring-data-jpa/by-example)
+  - [Overview](/en/learn/software-engineering/data/tools/spring-data-jpa/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/data/tools/spring-data-jpa/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/data/tools/spring-data-jpa/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/data/tools/spring-data-jpa/by-example/advanced)
 - [Overview](/en/learn/software-engineering/data/tools/spring-data-jpa/overview)
-- [Tutorials](/en/learn/software-engineering/data/tools/spring-data-jpa/tutorials)
-  - [Overview](/en/learn/software-engineering/data/tools/spring-data-jpa/overview)
-  - [By Example](/en/learn/software-engineering/data/tools/spring-data-jpa/by-example)

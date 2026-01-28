@@ -8,6 +8,8 @@ layout: list
 ---
 
 - [Overview](/en/learn/software-engineering/linux-platform/shell/overview)
-- [Tutorials](/en/learn/software-engineering/linux-platform/shell/tutorials)
-  - [Overview](/en/learn/software-engineering/linux-platform/shell/overview)
-  - [By Example](/en/learn/software-engineering/linux-platform/shell/by-example)
+- [By Example](/en/learn/software-engineering/linux-platform/shell/by-example)
+  - [Overview](/en/learn/software-engineering/linux-platform/shell/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/linux-platform/shell/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/linux-platform/shell/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/linux-platform/shell/by-example/advanced)

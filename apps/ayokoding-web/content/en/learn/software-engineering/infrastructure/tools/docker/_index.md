@@ -7,6 +7,8 @@ type: docs
 layout: list
 ---
 
-- [Tutorials](/en/learn/software-engineering/infrastructure/tools/docker/tutorials)
-  - [Overview](/en/learn/software-engineering/infrastructure/tools/docker/overview)
-  - [By Example](/en/learn/software-engineering/infrastructure/tools/docker/by-example)
+- [By Example](/en/learn/software-engineering/infrastructure/tools/docker/by-example)
+  - [Overview](/en/learn/software-engineering/infrastructure/tools/docker/by-example/overview)
+  - [Beginner](/en/learn/software-engineering/infrastructure/tools/docker/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/infrastructure/tools/docker/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/infrastructure/tools/docker/by-example/advanced)

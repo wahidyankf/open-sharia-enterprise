@@ -7,7 +7,9 @@ type: docs
 layout: list
 ---
 
+- [By Example](/en/learn/software-engineering/data/tools/elixir-ecto/by-example)
+  - [Advanced](/en/learn/software-engineering/data/tools/elixir-ecto/by-example/advanced)
+  - [Beginner](/en/learn/software-engineering/data/tools/elixir-ecto/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/data/tools/elixir-ecto/by-example/intermediate)
+  - [Overview](/en/learn/software-engineering/data/tools/elixir-ecto/by-example/overview)
 - [Overview](/en/learn/software-engineering/data/tools/elixir-ecto/overview)
-- [Tutorials](/en/learn/software-engineering/data/tools/elixir-ecto/tutorials)
-  - [Overview](/en/learn/software-engineering/data/tools/elixir-ecto/overview)
-  - [By Example](/en/learn/software-engineering/data/tools/elixir-ecto/by-example)

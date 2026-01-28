@@ -7,7 +7,7 @@ type: docs
 layout: list
 ---
 
-- [Advanced](/en/learn/software-engineering/data/databases/sql/by-example/advanced)
+- [Overview](/en/learn/software-engineering/data/databases/sql/by-example/overview)
 - [Beginner](/en/learn/software-engineering/data/databases/sql/by-example/beginner)
 - [Intermediate](/en/learn/software-engineering/data/databases/sql/by-example/intermediate)
-- [Overview](/en/learn/software-engineering/data/databases/sql/by-example/overview)
+- [Advanced](/en/learn/software-engineering/data/databases/sql/by-example/advanced)
